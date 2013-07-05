@@ -2,11 +2,9 @@
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
 
-Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const Scene_interface* scene_interface):
+Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const Scene_interface*):
   poly_item(poly_item_),
-  scene(scene_interface),
   manipulable(false),
-  can_clone(true),
   frame(new ManipulatedFrame()),
   poly(poly_item->polyhedron()),
   center_(pos) { frame->setPosition(pos); }

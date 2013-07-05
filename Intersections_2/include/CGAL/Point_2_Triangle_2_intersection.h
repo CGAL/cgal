@@ -32,7 +32,6 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Straight_2.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 
@@ -129,7 +128,8 @@ intersection_point() const
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
+::result_type
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Triangle_2 &tr,
 	     const K&)
@@ -139,15 +139,16 @@ intersection(const typename K::Point_2 &pt,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return make_object(pt);
+        return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Triangle_2>(pt);
     }
 }
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Point_2, typename K::Triangle_2>
+::result_type
 intersection(const typename K::Triangle_2 &tr,
 	     const typename K::Point_2 &pt, 
 	     const K&k)
@@ -157,40 +158,8 @@ intersection(const typename K::Triangle_2 &tr,
 
 } // namespace internal
 
-
-template <class K>
-inline 
-bool
-do_intersect(const Triangle_2<K> &tr, const Point_2<K> &pt)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(pt, tr);
-}
-
-template <class K>
-inline 
-bool 
-do_intersect(const Point_2<K> &pt, const Triangle_2<K> &tr)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(pt, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Triangle_2<K> &tr, const Point_2<K> &pt)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Point_2<K> &pt, const Triangle_2<K> &tr)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, tr);
-}
+CGAL_INTERSECTION_FUNCTION(Point_2, Triangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Point_2, Triangle_2, 2)
 
 } //namespace CGAL
 

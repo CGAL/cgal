@@ -37,25 +37,25 @@ public:
 /*! 
 The point type. It must be a model of `Kernel::Point_3`. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 The vector type. It must be a model of 
 `Kernel::Vector_3`. 
 */ 
-typedef Hidden_type Vector_3; 
+typedef unspecified_type Vector_3; 
 
 /*! 
 The offset type. It must be a 
 model of the concept `Periodic_3Offset_3`. 
 */ 
-typedef Hidden_type Periodic_3_offset_3; 
+typedef unspecified_type Periodic_3_offset_3; 
 
 /*! 
 A type representing an axis-aligned 
 cuboid. It must be a model of `Kernel::Iso_cuboid_3`. 
 */ 
-typedef Hidden_type Iso_cuboid_3; 
+typedef unspecified_type Iso_cuboid_3; 
 
 /// @}
 
@@ -69,19 +69,19 @@ typedef Hidden_type Iso_cuboid_3;
 /*! 
 A segment type. It must be a model of `Kernel::Segment_3`. 
 */ 
-typedef Hidden_type Segment_3; 
+typedef unspecified_type Segment_3; 
 
 /*! 
 A triangle type. It must be a model of 
 `Kernel::Triangle_3`. 
 */ 
-typedef Hidden_type Triangle_3; 
+typedef unspecified_type Triangle_3; 
 
 /*! 
 A tetrahedron type. It must be a model 
 of `Kernel::Tetrahedron_3`. 
 */ 
-typedef Hidden_type Tetrahedron_3; 
+typedef unspecified_type Tetrahedron_3; 
 
 /*! 
 A predicate object that must provide the function operators 
@@ -97,7 +97,7 @@ Otherwise it must return a consistent order for any two points chosen
 in a same line. 
 \pre `p`, `q` lie inside the domain. 
 */ 
-typedef Hidden_type Compare_xyz_3; 
+typedef unspecified_type Compare_xyz_3; 
 
 /*! 
 A predicate object that must provide the function operators 
@@ -118,7 +118,7 @@ returns `NEGATIVE` if `(s,o_s)` lies on the negative side of
 `h`, and returns `COPLANAR` if `(s,o_s)` lies on `h`. 
 \pre `p`, `q`, `r`, `s` lie inside the domain. 
 */ 
-typedef Hidden_type Orientation_3; 
+typedef unspecified_type Orientation_3; 
 
 /*! 
 A predicate object that must provide the function operators 
@@ -135,7 +135,7 @@ which determines on which side of the oriented sphere circumscribing
 `(t,o_t)` lies. 
 \pre `p`, `q`, `r`, `s`, `t` lie inside the domain. 
 */ 
-typedef Hidden_type Side_of_oriented_sphere_3; 
+typedef unspecified_type Side_of_oriented_sphere_3; 
 
 /*! 
 A predicate object that must provide the function operators 
@@ -151,7 +151,7 @@ which compares the distance between `(p,o_p)` and `(q,o_q)` to
 the distance between `(p,o_p)` and `(r,o_r)`. 
 \pre `p`, `q`, `r` lie inside the domain. 
 */ 
-typedef Hidden_type Compare_distance_3; 
+typedef unspecified_type Compare_distance_3; 
 
 /// @}
 
@@ -175,7 +175,7 @@ collinear; otherwise it must return a consistent orientation for any
 three point-offset pairs chosen in a same plane. 
 \pre `p`, `q`, `r` lie inside the domain. 
 */ 
-typedef Hidden_type Coplanar_orientation_3; 
+typedef unspecified_type Coplanar_orientation_3; 
 
 /*! 
 A predicate object that must provide the function operators 
@@ -192,7 +192,7 @@ which determines the bounded side of the circle defined by
 `(s,o_s)` lies. 
 \pre `p,q,r`, and `s` are coplanar and `p,q`, and `r` are not collinear, `(p,o_p),(q,o_q),(r,o_r)`, and `(s,o_s)` are coplanar and `(p,o_p),(q,o_q)`, and `(r,o_r)` are not collinear, respectively, and `p`, `q`, `r`, `s`, `t` lie inside the domain. 
 */ 
-typedef Hidden_type Coplanar_side_of_bounded_circle_3; 
+typedef unspecified_type Coplanar_side_of_bounded_circle_3; 
 
 /// @}
 
@@ -239,7 +239,7 @@ which returns the relative position of the point-offset pair
 `(p,o_p), (q,o_q), (r,o_r)`, and `(s,o_s)` does not matter. 
 \pre `p, q, r`, and `s` are not coplanar, `(p,o_p), (q,o_q), (r,o_r)`, and `(s,o_s)` are not coplanar, `p`, `q`, `r`, `s`, `t` lie inside the domain. 
 */ 
-typedef Hidden_type Side_of_bounded_sphere_3; 
+typedef unspecified_type Side_of_bounded_sphere_3; 
 
 /// @}
 
@@ -256,7 +256,7 @@ A constructor object that must provide the function operator
 which constructs a point from a point-offset pair. 
 \pre `p` lies inside the domain. 
 */ 
-typedef Hidden_type Construct_point_3; 
+typedef unspecified_type Construct_point_3; 
 
 /*! 
 A constructor object that must provide the function operators 
@@ -270,7 +270,7 @@ which constructs a segment from two points and
 which constructs a segment from two point-offset pairs. 
 \pre `p`, `q` lie inside the domain. 
 */ 
-typedef Hidden_type Construct_segment_3; 
+typedef unspecified_type Construct_segment_3; 
 
 /*! 
 A constructor object that must provide the function operators 
@@ -284,7 +284,7 @@ which constructs a triangle from three points and
 which constructs a triangle from three point-offset pairs. 
 \pre `p`, `q`, `r` lie inside the domain. 
 */ 
-typedef Hidden_type Construct_triangle_3; 
+typedef unspecified_type Construct_triangle_3; 
 
 /*! 
 A constructor object that must provide the function operators 
@@ -298,7 +298,7 @@ which constructs a tetrahedron from four points and
 which constructs a tetrahedron from four point-offset pairs. 
 \pre `p`, `q`, `r`, `s` lie inside the domain. 
 */ 
-typedef Hidden_type Construct_tetrahedron_3; 
+typedef unspecified_type Construct_tetrahedron_3; 
 
 /// @}
 
@@ -319,7 +319,7 @@ which constructs the circumcenter of four points and
 which constructs the circumcenter of four point-offset pairs. 
 \pre `p`, `q`, `r` and `s` as well as `(p,o_p)`, `(q,o_q)`, `(r,o_r)` and `(s,o_s)` must be non coplanar. `p`, `q`, `r`, `s` lie inside the domain. 
 */ 
-typedef Hidden_type Construct_circumcenter_3; 
+typedef unspecified_type Construct_circumcenter_3; 
 
 /// @} 
 

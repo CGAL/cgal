@@ -18,6 +18,8 @@ int main()
 
 #include <CGAL/IO/Geomview_stream.h>
 
+#include <cassert>
+
 typedef CGAL::Cartesian<double> K;
 
 void test_parse_point()
@@ -26,7 +28,7 @@ void test_parse_point()
   double x, y, z, w;
   CGAL::Geomview_stream::parse_point(test_point, x, y, z, w);
   K::Point_3 p(x, y, z, w);
-  CGAL_assertion(p == K::Point_3(123, 456, 789));
+  assert(p == K::Point_3(123, 456, 789));
 }
 
 int main()

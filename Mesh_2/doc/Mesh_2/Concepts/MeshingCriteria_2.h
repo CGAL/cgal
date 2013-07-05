@@ -53,14 +53,14 @@ public:
 /*! 
 Handle to a face of the triangulation. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 
 /*! 
 Default constructible, copy constructible, 
 assignable, and less-than comparable type. 
 */ 
-typedef Hidden_type Quality; 
+typedef unspecified_type Quality; 
 
 
 /*! 
@@ -83,7 +83,7 @@ Predicate object. Must provide two operators.
   - `CGAL::Mesh_2::IMPERATIVELY_BAD` if `q` represents the quality of a bad
   triangle that should be refined unconditionally.
 */ 
-typedef Hidden_type Is_bad; 
+typedef unspecified_type Is_bad; 
 
 /// @} 
 

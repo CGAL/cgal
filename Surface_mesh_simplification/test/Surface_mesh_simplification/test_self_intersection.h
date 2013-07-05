@@ -50,7 +50,7 @@ struct Intersect_facets
     }
     if ( v != Halfedge_const_handle()) {
         // found shared vertex:
-        CGAL_assertion( h->vertex() == v->vertex());
+        assert( h->vertex() == v->vertex());
         // geomtric check if the opposite segments intersect the triangles
         Triangle t1( h->vertex()->point(),
                       h->next()->vertex()->point(),

@@ -33,13 +33,13 @@ number type to represent the box
 boundaries. Allowed are the built-in types `int`, `unsigned 
 int`, `float`, and `double`. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 type for the box `id`-number, 
 must be a model of the `LessThanComparable` concept. 
 */ 
-typedef Hidden_type ID; 
+typedef unspecified_type ID; 
 
 /*! 
 returns the dimension of the box. 

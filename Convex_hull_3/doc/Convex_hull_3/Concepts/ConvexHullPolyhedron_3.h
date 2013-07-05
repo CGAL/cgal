@@ -17,47 +17,47 @@ public:
 /*! 
 type of point stored in a vertex 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 a model of `ConvexHullPolyhedronVertex_3` 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 a model of `ConvexHullPolyhedronHalfedge_3` 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*! 
 a model of `ConvexHullPolyhedronFacet_3` 
 */ 
-typedef Hidden_type Facet; 
+typedef unspecified_type Facet; 
 
 /*! 
 halfedge data structure 
 */ 
-typedef Hidden_type Halfedge_data_structure; 
+typedef unspecified_type Halfedge_data_structure; 
 
 /*! 
 handle to halfedge 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*! 
 iterator for halfedge 
 */ 
-typedef Hidden_type Halfedge_iterator; 
+typedef unspecified_type Halfedge_iterator; 
 
 /*! 
 handle to facet 
 */ 
-typedef Hidden_type Facet_handle; 
+typedef unspecified_type Facet_handle; 
 
 /*! 
 iterator for facet 
 */ 
-typedef Hidden_type Facet_iterator; 
+typedef unspecified_type Facet_iterator; 
 
 /// @} 
 

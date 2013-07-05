@@ -30,6 +30,7 @@
 #include <vector>
 
 #include <CGAL/Line_2_Line_2_intersection.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -101,19 +102,19 @@ void _cut_off(Pointlist_2_<K> &list,
                 const typename K::Line_2 &cutter)
 {
     int i;
-    int add = 0;
+    const int list_size=list.size;
     Pointlist_2_rec_<K> *cur, *last=0, *newrec;
-    for (i=0, cur = list.first; i<list.size; i++, cur = cur->next) {
+    for (i=0, cur = list.first; i<list_size; i++, cur = cur->next) {
         cur->side = cutter.oriented_side(cur->point);
         last = cur;
     }
-    for (cur = list.first, i=0; i<list.size; i++, cur = cur->next) {
+    for (cur = list.first, i=0; i<list_size; i++, cur = cur->next) {
         if ((cur->side == ON_POSITIVE_SIDE
              && last->side == ON_NEGATIVE_SIDE)
            || (cur->side == ON_NEGATIVE_SIDE
                && last->side == ON_POSITIVE_SIDE)) {
             // add a vertex after cur
-            add++;
+            ++list.size;
             typename K::Line_2 l(cur->point, last->point);
             newrec = new Pointlist_2_rec_<K>;
             newrec->next = last->next;
@@ -127,21 +128,21 @@ void _cut_off(Pointlist_2_<K> &list,
         }
         last = cur;
     }
-    CGAL_kernel_assertion(add <= 2);
+    CGAL_kernel_assertion(list.size-list_size <= 2);
     Pointlist_2_rec_<K> **curpt;
     curpt = &list.first;
     while (*curpt != 0) {
         cur = *curpt;
         if (cur->side == ON_NEGATIVE_SIDE) {
-            add--;
+            --list.size;
             *curpt = cur->next;
             delete cur;
         } else {
             curpt = &cur->next;
         }
     }
-    if (list.size == 2 && add == 1) {
-        add = 0;
+    if (list_size == 2 && list.size-list_size == 1) {
+        --list.size;
         cur = list.first;
         if (cur->side == ON_ORIENTED_BOUNDARY) {
             list.first = cur->next;
@@ -153,7 +154,6 @@ void _cut_off(Pointlist_2_<K> &list,
             delete cur;
         }
     }
-    list.size += add;
 }
 
 
@@ -318,7 +318,8 @@ Triangle_2_Triangle_2_pair<K>::intersection_point() const
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Triangle_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Triangle_2 &tr1, 
 	     const typename K::Triangle_2 &tr2,
 	     const K&)
@@ -328,24 +329,26 @@ intersection(const typename K::Triangle_2 &tr1,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return make_object(ispair.intersection_point());
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return make_object(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
     case is_t::TRIANGLE:
-        return make_object(ispair.intersection_triangle());
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
     case is_t::POLYGON: {
         typedef std::vector<typename K::Point_2> Container;
         Container points(ispair.vertex_count());
         for (int i =0; i < ispair.vertex_count(); i++) {
             points[i] = ispair.vertex(i);
         }
-        return make_object(points);
+        return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(points);
     }
     }
 }
 
 } // namespace internal
+
+CGAL_INTERSECTION_FUNCTION_SELF(Triangle_2, 2)
 
 } //namespace CGAL

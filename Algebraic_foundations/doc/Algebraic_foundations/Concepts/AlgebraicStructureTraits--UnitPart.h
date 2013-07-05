@@ -37,12 +37,12 @@ public:
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type result_type; 
+typedef unspecified_type result_type; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type argument_type; 
+typedef unspecified_type argument_type; 
 
 /// @} 
 

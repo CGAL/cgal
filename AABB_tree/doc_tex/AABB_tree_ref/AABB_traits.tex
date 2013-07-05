@@ -22,7 +22,7 @@
 The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handles any type of 3D geometric primitives provided that the proper intersection tests and constructions are implemented. It handles points, rays, lines and segments as query types for intersection detection and computations, and it handles points as query type for distance queries. 
 
 \ccParameters
-The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}. The template parameter \ccc{Primitive} provides the type of primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive}.
+The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}. The template parameter \ccc{Primitive} provides the type of primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive} or of the concept \ccc{AABBPrimitiveWithSharedData}.
 
 \ccInclude{CGAL/AABB_traits.h}
 
@@ -33,6 +33,14 @@ The template parameter \ccc{GeomTraits} provides the geometric types as well as 
 \ccTypedef{typedef GeomTraits::Point_3  Point_3;}{}
 \ccGlue
 \ccTypedef{typedef CGAL::Bbox_3  Bounding_box;}{}
+\ccGlue
+\ccTypedef{typedef GeomTraits::Line_3 Line_3;}{Line query type.}
+\ccGlue
+\ccTypedef{typedef GeomTraits::Segment_3 Segment_3;}{Segment query type.}
+\ccGlue
+\ccNestedType{size_type}{Unsigned integral type.}
+\ccGlue
+\ccNestedType{Intersection}{The function object used for Intersection computation.}
 
 %\ccCreation
 \ccCreationVariable{traits} 
@@ -44,6 +52,7 @@ The template parameter \ccc{GeomTraits} provides the geometric types as well as 
 \ccc{AABBTraits},\\
 \ccc{AABB_tree<AT>}, \\
 \ccc{AABBPrimitive}\\
+\ccc{AABBPrimitiveWithSharedData}\\
 
 
 \end{ccRefClass}

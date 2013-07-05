@@ -7,6 +7,9 @@
 #include <CGAL/iterator.h>
 #include <CGAL/use.h>
 
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
+
 struct A{};
 struct B{};
 
@@ -37,7 +40,7 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   > Dropper;
   
   assert(data1.size()==4);
-  T1 cont_1[4];
+  T1 cont_1[6];
   std::vector<T2> cont_2;
   
   Dispatcher disp=CGAL::dispatch_output<T1,T2>( cont_1,std::back_inserter(cont_2) );
@@ -66,15 +69,66 @@ void complete_test(std::vector<T1> data1,std::list<T2> data2){
   check_types(disp);
   check_types(drop);
   
-	disp = disp;
-	drop = drop;
+  disp = disp;
+  drop = drop;
 
   std::back_insert_iterator<std::vector<T2> > bck_ins(cont_2);
   
   T1* d;
 
-	CGAL::cpp11::tie(d, bck_ins) = disp;
-	CGAL::cpp11::tie(d, bck_ins) = drop;
+  CGAL::cpp11::tie(d, bck_ins) = disp;
+  CGAL::cpp11::tie(d, bck_ins) = drop;
+
+  //testing putting the tuple directly
+  CGAL::cpp11::tuple<T1,T2> tuple =
+    CGAL::cpp11::make_tuple(*data1.begin(), *data2.begin());
+
+  *disp++ = tuple;
+  assert(cont_2.size()==2 * data2.size()+1);
+
+  *drop++ = tuple;
+  assert(cont_2.size()==2 * data2.size()+2);
+}
+
+void variant_test() {
+  typedef boost::variant<int, char, double> var;
+  typedef boost::optional< var > ovar;
+  std::vector<int> a;
+  std::vector<double> b;
+  std::vector<char> c;
+  typedef CGAL::Dispatch_output_iterator< 
+    CGAL::cpp0x::tuple<int, double, char>,
+    CGAL::cpp0x::tuple<std::back_insert_iterator< std::vector<int> >,
+                       std::back_insert_iterator< std::vector<double> >,
+                       std::back_insert_iterator< std::vector<char> > 
+                       > > Dispatch;
+  Dispatch disp = CGAL::dispatch_output<int, double, char>(std::back_inserter(a),
+                                                           std::back_inserter(b),
+                                                           std::back_inserter(c));
+  {
+    var va = 23; var vb = 4.2; var vc = 'x';
+    *disp++ = va; *disp++ = vb; *disp++ = vc; *disp++ = 42;
+  }
+  assert(a.size() == 2);
+  assert(a.front() == 23);
+  assert(a.back() == 42);
+  assert(b.size() == 1);
+  assert(b.front() == 4.2);
+  assert(c.size() == 1);
+  assert(c.front() == 'x');
+  a.clear(); b.clear(); c.clear();
+
+  {
+    ovar va = var(23); ovar vb = var(4.2); ovar vc = var('x');
+    *disp++ = va; *disp++ = vb; *disp++ = vc; *disp++ = 42; *disp++ = ovar();
+  }
+  assert(a.size() == 2);
+  assert(a.front() == 23);
+  assert(a.back() == 42);
+  assert(b.size() == 1);
+  assert(b.front() == 4.2);
+  assert(c.size() == 1);
+  assert(c.front() == 'x');
 }
 
 
@@ -94,5 +148,7 @@ int main(){
   complete_test(vect2,list1);
   complete_test(vect2,list2);
   
+  variant_test();
+
   return 0;
 }

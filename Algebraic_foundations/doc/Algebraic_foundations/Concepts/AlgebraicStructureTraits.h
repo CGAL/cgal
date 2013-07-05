@@ -42,7 +42,7 @@ public:
 /*! 
 The associated type. 
 */ 
-typedef Hidden_type Type; 
+typedef unspecified_type Type; 
 
 /*! 
 Tag indicating the algebraic structure of the associated type. 
@@ -104,7 +104,7 @@ no algebraic concept
 </TABLE> 
 
 */ 
-typedef Hidden_type Algebraic_category; 
+typedef unspecified_type Algebraic_category; 
 
 /*! 
 Tag indicating whether `Type` is exact. 
@@ -121,7 +121,7 @@ e.g. an exact `Field` may have a `Sqrt` functor that
 is not exact. 
 
 */ 
-typedef Hidden_type Is_exact; 
+typedef unspecified_type Is_exact; 
 
 /*! 
 Tag indicating whether `Type` is numerical sensitive. 
@@ -133,7 +133,7 @@ if the performance of the type is sensitive to the condition
 number of an algorithm. 
 
 */ 
-typedef Hidden_type Is_numerical_sensitive; 
+typedef unspecified_type Is_numerical_sensitive; 
 
 /*! 
 This type specifies the return type of the predicates provided 
@@ -143,7 +143,7 @@ cases such as interval arithmetic, in which it is `Uncertain<bool>`
 or some similar type. 
 
 */ 
-typedef Hidden_type Boolean; 
+typedef unspecified_type Boolean; 
 
 /// @} 
 
@@ -160,7 +160,7 @@ In case `Type` is also model of `RealEmbeddable` this is a
 model of `RealEmbeddableTraits_::IsZero`. 
 
 */ 
-typedef Hidden_type Is_zero; 
+typedef unspecified_type Is_zero; 
 
 /*! 
 
@@ -169,7 +169,7 @@ A model of `AlgebraicStructureTraits_::IsOne`.
 Required by the concept `IntegralDomainWithoutDivision`. 
 
 */ 
-typedef Hidden_type Is_one; 
+typedef unspecified_type Is_one; 
 
 /*! 
 
@@ -178,7 +178,7 @@ A model of `AlgebraicStructureTraits_::Square`.
 Required by the concept `IntegralDomainWithoutDivision`. 
 
 */ 
-typedef Hidden_type Square; 
+typedef unspecified_type Square; 
 
 /*! 
 
@@ -187,7 +187,7 @@ A model of `AlgebraicStructureTraits_::Simplify`.
 Required by the concept `IntegralDomainWithoutDivision`. 
 
 */ 
-typedef Hidden_type Simplify; 
+typedef unspecified_type Simplify; 
 
 /*! 
 
@@ -196,7 +196,7 @@ A model of `AlgebraicStructureTraits_::UnitPart`.
 Required by the concept `IntegralDomainWithoutDivision`. 
 
 */ 
-typedef Hidden_type Unit_part; 
+typedef unspecified_type Unit_part; 
 
 /*! 
 
@@ -205,7 +205,7 @@ A model of `AlgebraicStructureTraits_::IntegralDivision`.
 Required by the concept `IntegralDomain`. 
 
 */ 
-typedef Hidden_type Integral_division; 
+typedef unspecified_type Integral_division; 
 
 /*! 
 
@@ -214,7 +214,7 @@ A model of `AlgebraicStructureTraits_::Divides`.
 Required by the concept `IntegralDomain`. 
 
 */ 
-typedef Hidden_type Divides; 
+typedef unspecified_type Divides; 
 
 /*! 
 
@@ -223,7 +223,7 @@ A model of `AlgebraicStructureTraits_::IsSquare`.
 Required by the concept `IntegralDomainWithoutDivision`. 
 
 */ 
-typedef Hidden_type Is_square; 
+typedef unspecified_type Is_square; 
 
 /*! 
 
@@ -232,7 +232,7 @@ A model of `AlgebraicStructureTraits_::Gcd`.
 Required by the concept `UniqueFactorizationDomain`. 
 
 */ 
-typedef Hidden_type Gcd; 
+typedef unspecified_type Gcd; 
 
 /*! 
 
@@ -241,7 +241,7 @@ A model of `AlgebraicStructureTraits_::Mod`.
 Required by the concept `EuclideanRing`. 
 
 */ 
-typedef Hidden_type Mod; 
+typedef unspecified_type Mod; 
 
 /*! 
 
@@ -250,7 +250,7 @@ A model of `AlgebraicStructureTraits_::Div`.
 Required by the concept `EuclideanRing`. 
 
 */ 
-typedef Hidden_type Div; 
+typedef unspecified_type Div; 
 
 /*! 
 
@@ -259,7 +259,7 @@ A model of `AlgebraicStructureTraits_::DivMod`.
 Required by the concept `EuclideanRing`. 
 
 */ 
-typedef Hidden_type Div_mod; 
+typedef unspecified_type Div_mod; 
 
 /*! 
 
@@ -268,7 +268,7 @@ A model of `AlgebraicStructureTraits_::Inverse`.
 Required by the concept `Field`. 
 
 */ 
-typedef Hidden_type Inverse; 
+typedef unspecified_type Inverse; 
 
 /*! 
 
@@ -277,7 +277,7 @@ A model of `AlgebraicStructureTraits_::Sqrt`.
 Required by the concept `FieldWithSqrt`. 
 
 */ 
-typedef Hidden_type Sqrt; 
+typedef unspecified_type Sqrt; 
 
 /*! 
 
@@ -286,7 +286,7 @@ A model of `AlgebraicStructureTraits_::KthRoot`.
 Required by the concept `FieldWithKthRoot`. 
 
 */ 
-typedef Hidden_type Kth_root; 
+typedef unspecified_type Kth_root; 
 
 /*! 
 
@@ -295,7 +295,7 @@ A model of `AlgebraicStructureTraits_::RootOf`.
 Required by the concept `FieldWithRootOf`. 
 
 */ 
-typedef Hidden_type Root_of; 
+typedef unspecified_type Root_of; 
 
 /// @}
 

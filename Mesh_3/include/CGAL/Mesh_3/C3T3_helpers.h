@@ -90,16 +90,16 @@ public:
 	while(first != last){
       if((ch != Type(*first)) && ((*first)->next_intrusive()==Type_handle())){
         // not yet inserted
-        ch->next_intrusive() = *first;
-        (*first)->previous_intrusive() = ch;
+        ch->set_next_intrusive(*first);
+        (*first)->set_previous_intrusive(ch);
         ch = *first;
         ++n;
       }
       ++first;
     } 
     b = ch;
-    b->next_intrusive() = f;
-    f->previous_intrusive() = b;
+    b->set_next_intrusive(f);
+    f->set_previous_intrusive(b);
   }
 #endif
 
@@ -153,9 +153,11 @@ public:
       while( f!= b ){
         Type_handle h = f;
         f=f->next_intrusive();
-        h->previous_intrusive() = h->next_intrusive() = Type_handle();
+        h->set_previous_intrusive(Type_handle());
+        h->set_next_intrusive(Type_handle());
       }
-      b->previous_intrusive() = b->next_intrusive() = Type_handle();
+      b->set_previous_intrusive(Type_handle());
+      b->set_next_intrusive(Type_handle());
       f = b = Type_handle();
     }
     n = 0;
@@ -258,7 +260,7 @@ public:
     return b;
   }
 
-  iterator insert(iterator position, 
+  iterator insert(iterator /* position */,
                   const Type_handle& ch)
   {
     CGAL_assertion( (ch->next_intrusive() == Type_handle() && ch->previous_intrusive() == Type_handle()) || 
@@ -285,12 +287,13 @@ public:
     }
     if(empty()){
       f = b = ch;
-      ch->next_intrusive() = ch->previous_intrusive() = ch;
+      ch->set_next_intrusive(ch);
+      ch->set_previous_intrusive(ch);
     } else {
-      ch->next_intrusive() = f;
-      ch->previous_intrusive() = b;
-      f->previous_intrusive() = ch;
-      b->next_intrusive() = ch;
+      ch->set_next_intrusive(f);
+      ch->set_previous_intrusive(b);
+      f->set_previous_intrusive(ch);
+      b->set_next_intrusive(ch);
       b = ch;
     }
     n++;
@@ -317,10 +320,11 @@ public:
         b = b->previous_intrusive();
       }
       Type_handle p = ch->previous_intrusive(), n = ch->next_intrusive();
-      p->next_intrusive() = n;
-      n->previous_intrusive() = p;
+      p->set_next_intrusive(n);
+      n->set_previous_intrusive(p);
     }
-    ch->next_intrusive() = ch->previous_intrusive() = Type_handle();
+    ch->set_next_intrusive(Type_handle());
+    ch->set_previous_intrusive(Type_handle());
     CGAL_assertion(ch->next_intrusive() == Type_handle());
     CGAL_assertion(ch->previous_intrusive() == Type_handle());
     n--;
@@ -1710,7 +1714,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
   // Updates cells
   while ( first_cell != last_cell )
   {
-    const Cell_handle& cell = *first_cell++;
+    const Cell_handle cell = *first_cell++;
     c3t3_.remove_from_complex(cell);
     updater(cell);
   }
@@ -2397,7 +2401,8 @@ number_of_incident_slivers(const Vertex_handle& v,
   typedef Counter<Cell_handle,Is_sliver<Sc> > C;
 
   std::size_t count = 0;
-  C c(Is_sliver<Sc>(c3t3_,criterion,sliver_bound), count);
+  Is_sliver<Sc> is_sliver(c3t3_,criterion,sliver_bound);
+  C c(is_sliver, count);
   tr_.incident_cells(v, boost::make_function_output_iterator(c));
 
   return count;

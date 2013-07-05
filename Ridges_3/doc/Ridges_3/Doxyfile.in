@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Approximation of Ridges and Umbilics on Triangulated Surface Meshes"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Ridges_3/doc/Ridges_3/
+
+
+

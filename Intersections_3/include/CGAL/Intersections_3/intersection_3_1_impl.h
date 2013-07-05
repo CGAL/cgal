@@ -26,16 +26,139 @@
 
 #include <CGAL/wmult.h>
 #include <boost/next_prior.hpp>
+#include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
+
+
+// the special plane_3 function
+template <class K>
+inline 
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
+typename cpp11::result_of<typename K::Intersect_3(typename K::Plane_3, typename K::Plane_3, typename K::Plane_3)>::type
+#endif
+intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
+             const Plane_3<K> &plane3)
+{
+  return K().intersect_3_object()(plane1, plane2, plane3);
+}
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Line_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Line_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Plane_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Line_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Line_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Segment_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Line_3, Segment_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Line_3, Segment_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Line_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Line_3, Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Segment_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Segment_3, Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Sphere_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Sphere_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Sphere_3, 3)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Sphere_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Ray_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Segment_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Plane_3, Segment_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Plane_3, Triangle_3, 3)
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Line_3, Bbox_3)>::type
+intersection(const Line_3<K> &a,
+	     const Bbox_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Line_3, Bbox_3)>::type
+intersection(const Bbox_3 &a,
+             const Line_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Ray_3, Bbox_3)>::type
+intersection(const Ray_3<K> &a,
+	     const Bbox_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Ray_3, Bbox_3)>::type
+intersection(const Bbox_3 &a,
+             const Ray_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
+intersection(const Segment_3<K> &a,
+	     const Bbox_3 &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+template <class K>
+inline typename
+cpp11::result_of<typename K::Intersect_3(typename K::Segment_3, Bbox_3)>::type
+intersection(const Bbox_3 &a,
+             const Segment_3<K> &b) {
+  return K().intersect_3_object()(a, b);
+}
+
+CGAL_INTERSECTION_FUNCTION(Line_3, Iso_cuboid_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Ray_3, Iso_cuboid_3, 3)
+
+CGAL_INTERSECTION_FUNCTION(Segment_3, Iso_cuboid_3, 3)
+
+CGAL_INTERSECTION_FUNCTION_SELF(Iso_cuboid_3, 3)
+
+CGAL_DO_INTERSECT_FUNCTION_SELF(Plane_3, 3)
+
+template <class R>
+inline bool
+do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
+             const Plane_3<R> &plane3) {
+  return R().do_intersect_3_object()(plane1, plane2, plane3);
+}
+
+CGAL_DO_INTERSECT_FUNCTION_SELF(Iso_cuboid_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Line_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Ray_3, 3)
+CGAL_DO_INTERSECT_FUNCTION(Iso_cuboid_3, Segment_3, 3)
 
 namespace internal {
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
 intersection(const typename K::Plane_3  &plane, 
 	     const typename K::Line_3 &line, 
-	     const K& k)
+	     const K& /*k*/)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -51,13 +174,13 @@ intersection(const typename K::Plane_3  &plane,
     if (den == 0) {
         if (num == 0) {
             // all line
-            return make_object(line);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Line_3>(line);
         } else {
             // no intersection
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Line_3>();
         }
     }
-    return make_object(k.construct_point_3_object()(
+    return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Line_3>(Point_3(
         den*line_pt.hx()-num*line_dir.dx(),
         den*line_pt.hy()-num*line_dir.dy(),
         den*line_pt.hz()-num*line_dir.dz(),
@@ -66,7 +189,7 @@ intersection(const typename K::Plane_3  &plane,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
 intersection(const typename K::Line_3 &line, 
 	     const typename K::Plane_3  &plane, 
 	     const K& k)
@@ -75,7 +198,7 @@ intersection(const typename K::Line_3 &line,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type
 intersection(const typename K::Plane_3 &plane1, 
 	     const typename K::Plane_3 &plane2, 
 	     const K&)
@@ -98,63 +221,119 @@ intersection(const typename K::Plane_3 &plane1,
     if (det != 0) {
         Point_3 is_pt = Point_3(b*s-d*q, p*d-a*s, 0, det);
         Direction_3 is_dir = Direction_3(b*r-c*q, p*c-a*r, det);
-        return make_object(Line_3(is_pt, is_dir));
+        return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(Line_3(is_pt, is_dir));
     }
     det = a*r-p*c;
     if (det != 0) {
         Point_3 is_pt = Point_3(c*s-d*r, 0, p*d-a*s, det);
         Direction_3 is_dir = Direction_3(c*q-b*r, det, p*b-a*q);
-        return make_object(Line_3(is_pt, is_dir));
+        return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(Line_3(is_pt, is_dir));
     }
     det = b*r-c*q;
     if (det != 0) {
         Point_3 is_pt = Point_3(0, c*s-d*r, d*q-b*s, det);
         Direction_3 is_dir = Direction_3(det, c*p-a*r, a*q-b*p);
-        return make_object(Line_3(is_pt, is_dir));
+        return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(Line_3(is_pt, is_dir));
     }
 // degenerate case
     if (a!=0 || p!=0) {
         if (a*s == p*d)
-            return make_object(plane1);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
         else
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>();
     }
     if (b!=0 || q!=0) {
         if (b*s == q*d)
-            return make_object(plane1);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
         else
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>();
     }
     if (c!=0 || r!=0) {
         if (c*s == r*d)
-            return make_object(plane1);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
         else
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>();
     }
-    return make_object(plane1);
+    return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
 }
 
 template <class K>
-Object
+#if CGAL_INTERSECTION_VERSION < 2
+CGAL::Object
+#else
+boost::optional< boost::variant<typename K::Point_3,
+                                typename K::Line_3,
+                                typename K::Plane_3> >
+#endif
 intersection(const typename K::Plane_3 &plane1,
 	     const typename K::Plane_3 &plane2,
 	     const typename K::Plane_3 &plane3,
 	     const K& k)
 {
+    #if CGAL_INTERSECTION_VERSION > 1
+    typedef 
+      typename boost::optional< 
+      boost::variant<typename K::Point_3,
+                     typename K::Line_3,
+                     typename K::Plane_3> > 
+    result_type;
+    #endif
+
+
+    typedef typename K::Point_3      Point_3;
     typedef typename K::Line_3       Line_3;
     typedef typename K::Plane_3      Plane_3;
 
     // Intersection between plane1 and plane2 can either be
     // a line, a plane, or empty.
-    Object o12 = internal::intersection(plane1, plane2, k);
-
-    if (const Line_3 *l = object_cast<Line_3>(&o12))
-        return internal::intersection(plane3, *l, k);
-
-    if (const Plane_3 *pl = object_cast<Plane_3>(&o12))
-        return internal::intersection(plane3, *pl, k);
-
+    typename Intersection_traits<K, Plane_3, Plane_3>::result_type
+      o12 = internal::intersection(plane1, plane2, k);
+    
+    if(o12) {
+      if(const Line_3* l = intersect_get<Line_3>(o12)) {
+        // either point or line
+        typename Intersection_traits<K, Plane_3, Line_3>::result_type 
+          v = internal::intersection(plane3, *l, k);
+        if(v) {
+          if(const Point_3* p = intersect_get<Point_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
+            return make_object(*p);
+            #else
+            return result_type(*p);
+            #endif
+          else if(const Line_3* l = intersect_get<Line_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
+            return make_object(*l);
+            #else
+            return result_type(*l);
+            #endif
+        }
+      } else if(const Plane_3 *pl = intersect_get<Plane_3>(o12)) {
+        // either line or plane
+        typename Intersection_traits<K, Plane_3, Plane_3>::result_type 
+          v = internal::intersection(plane3, *pl, k);
+        if(v) {
+          if(const Plane_3* p = intersect_get<Plane_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
+            return make_object(*p);
+            #else
+            return result_type(*p);
+            #endif
+          else if(const Line_3* l = intersect_get<Line_3>(v))
+            #if CGAL_INTERSECTION_VERSION < 2
+            return make_object(*l);
+            #else
+            return result_type(*l);
+            #endif
+        }
+      }
+    }
+    
+    #if CGAL_INTERSECTION_VERSION < 2
     return Object();
+    #else
+    return result_type();
+    #endif
 }
 
 
@@ -196,7 +375,7 @@ do_intersect(const typename K::Line_3 &line,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type
 intersection(const typename K::Line_3 &l1,
 	     const typename K::Line_3 &l2,
 	     const K&)
@@ -211,23 +390,23 @@ intersection(const typename K::Line_3 &l1,
     if((v1.x() * v2.y() == v1.y() * v2.x()) &&
        (v1.x() * v2.z() == v1.z() * v2.x()) &&
        (v1.y() * v2.z() == v1.z() * v2.y()))
-      return make_object(l1);
+      return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>(l1);
   }
   
-  if(K().are_parallel_3_object()(l1,l2)) return Object();
+  if(K().are_parallel_3_object()(l1,l2)) return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const Point_3 &p1 = l1.point();
   const Point_3 &p3 = l2.point();
   const Vector_3 &v1 = l1.to_vector();
   const Vector_3 &v2 = l2.to_vector();
   const Point_3 p2 = p1 + v1;
   const Point_3 p4 = p2 + v2;
-  if(!K().coplanar_3_object()(p1,p2,p3,p4)) return Object();
+  if(!K().coplanar_3_object()(p1,p2,p3,p4)) return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const Vector_3 v3 = p3 - p1;
  const Vector_3 v3v2 = cross_product(v3,v2);
   const Vector_3 v1v2 = cross_product(v1,v2);
   const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) /
                (v1v2.squared_length());
-  return make_object(p1 + (v1 * t));
+  return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>(p1 + (v1 * t));
 }
 
 template <class K>
@@ -251,60 +430,96 @@ do_intersect(const typename K::Line_3 &l1,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type
 intersection_collinear_segments(const typename K::Segment_3 &s1,
                                 const typename K::Segment_3 &s2,
                                 const K& k)
 {
   CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
+
   const typename K::Point_3& p=s1[0],q=s1[1],r=s2[0],s=s2[1];
   typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
   
   if ( cln_order(p,r,q) ){
     if ( cln_order(p,s,q) )
-      return make_object(s2);
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(s2);
     if ( cln_order(r,p,s) ){
-      if (r!=p) return make_object( typename K::Segment_3(r,p) );
-      if ( cln_order(r,q,s) ) return make_object(s1);
-      return make_object(p);
+      if (r!=p) return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>( typename K::Segment_3(r,p) );
+      if ( cln_order(r,q,s) ) return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(s1);
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(p);
     }
-    return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
+    return r!=q ? intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>( typename K::Segment_3(r,q) ) 
+      : intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(q);
   }
 
   if ( cln_order(p,s,q) ){
     if ( cln_order(r,p,s) ){
-      if (s!=p) return make_object( typename K::Segment_3(s,p) );
-      if (cln_order(r,q,s)) return make_object(s1);  
-      return make_object(p);
+      if (s!=p) return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>( typename K::Segment_3(s,p) );
+      if (cln_order(r,q,s)) return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(s1);  
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(p);
     }
-   return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
+   return s!=q ? intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>( typename K::Segment_3(s,q) ) 
+     : intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(q);
   }
   
   if ( cln_order(r,p,s) )
-    return make_object(s1); 
-  return Object();
+    return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(s1); 
+  return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
 }
 
+template<class K>
+struct L_p_visitor : public boost::static_visitor< 
+  typename Intersection_traits<K, typename K::Segment_3, 
+                               typename K::Segment_3>::result_type
+  > 
+{
+
+  typedef typename Intersection_traits<K, typename K::Segment_3, 
+                                         typename K::Segment_3>::result_type result_type;
+  L_p_visitor(const typename K::Segment_3& s1, const typename K::Segment_3& s2) :
+    s1(s1), s2(s2) { }
+  const typename K::Segment_3& s1;
+  const typename K::Segment_3& s2;
+
+  result_type
+  operator()(const typename K::Point_3& p) const {
+    typename K::Collinear_are_ordered_along_line_3 cln_order=K().collinear_are_ordered_along_line_3_object();
+    if ( cln_order(s1[0],p,s1[1]) && cln_order(s2[0],p,s2[1]) )
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>(p);
+    else
+      return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
+}
+
+  result_type
+  operator()(const typename K::Line_3&) const {
+    return intersection_collinear_segments(s1,s2,K());
+  }
+};
+
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type
 intersection(const typename K::Segment_3 &s1,
 	     const typename K::Segment_3 &s2,
-	     const K& k)
+	     const K&)
 {
   CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
-  Object res = intersection(s1.supporting_line(),s2.supporting_line());
-  const typename K::Point_3* p=object_cast<typename K::Point_3> (&res);
-  if (p!=NULL){
-    typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
-    if ( cln_order(s1[0],*p,s1[1]) && cln_order(s2[0],*p,s2[1]) )
-      return res;
-  }
-  else{
-    const typename K::Line_3* l=object_cast<typename K::Line_3> (&res);
-    if (l!=NULL)
-      return intersection_collinear_segments(s1,s2,k);
-  }
-  return Object();
+
+  typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type 
+    v = internal::intersection(s1.supporting_line(),s2.supporting_line(), K());
+
+  if(v) {
+    #if CGAL_INTERSECTION_VERSION < 2
+    // abuse the visitor to do the visitation manually
+    L_p_visitor<K> visitor(s1, s2);
+    if(const typename K::Point_3* p = object_cast<typename K::Point_3>(&v))
+      return visitor(*p);
+    if(const typename K::Line_3* l = object_cast<typename K::Line_3>(&v))
+      return visitor(*l);
+    #else
+    return apply_visitor(L_p_visitor<K>(s1, s2) , *v);
+    #endif
+  } else
+    return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Segment_3>();
 }
 
 template <class K>
@@ -341,33 +556,38 @@ do_intersect(const typename K::Segment_3  &s1,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
 intersection(const typename K::Line_3 &l,
 	     const typename K::Segment_3 &s,
 	     const K& k)
 {
   CGAL_precondition(! l.is_degenerate () && ! s.is_degenerate () );
-  Object res = intersection(l,s.supporting_line());
-  const typename K::Point_3* p=object_cast<typename K::Point_3> (&res);
-  if (p!=NULL){
+  
+  typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type 
+    v = internal::intersection(l,s.supporting_line(), K());
+
+  if(v) {
+    if(const typename K::Point_3* p = intersect_get<typename K::Point_3> (v)) {
     typename K::Collinear_are_ordered_along_line_3 cln_order=k.collinear_are_ordered_along_line_3_object();
-    if ( cln_order(s[0],*p,s[1]) ) return res;
+      if(cln_order(s[0],*p,s[1])) 
+        return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Segment_3>(*p);
+    } else {
+      return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Segment_3>(s);
   }
-  else{
-    const typename K::Line_3* l2=object_cast<typename K::Line_3> (&res);
-    if (l2!=NULL) return make_object(s);
   }
-  return Object();
+  
+  return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Segment_3>();
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
 intersection(const typename K::Segment_3 &s,
 	     const typename K::Line_3 &l,
 	     const K& k)
 {
   return intersection(l,s,k);
 }
+
 template <class K>
 inline
 bool
@@ -420,26 +640,29 @@ Ray_3_has_on_collinear_Point_3(
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Line_3, typename K::Ray_3>::result_type
 intersection(const typename K::Line_3 &l,
 	     const typename K::Ray_3 &r,
 	     const K& k)
 {
   CGAL_precondition(! l.is_degenerate () && ! r.is_degenerate () );
-  Object res = intersection(l,r.supporting_line());
-  const typename K::Point_3* p=object_cast<typename K::Point_3> (&res);
-  if (p!=NULL){
-    if( Ray_3_has_on_collinear_Point_3(r,*p,k) ) return res;
+
+  typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type 
+    v = internal::intersection(l,r.supporting_line(), k);
+  
+  if(v) {
+    if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v)) {
+      if( Ray_3_has_on_collinear_Point_3(r,*p,k) ) 
+        return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Ray_3>(*p);
+    } else if(intersect_get<typename K::Line_3>(v)) {
+      return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Ray_3>(r);
   }
-  else{
-    const typename K::Line_3* l2=object_cast<typename K::Line_3> (&res);
-    if (l2!=NULL) return make_object(r);
   }
-  return Object();
+  return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Ray_3>();
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Ray_3, typename K::Line_3>::result_type
 intersection(const typename K::Ray_3 &r,
 	     const typename K::Line_3 &l,
 	     const K& k)
@@ -476,48 +699,52 @@ do_intersect(const typename K::Ray_3  &r,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Segment_3, typename K::Ray_3>::result_type
 intersection(const typename K::Segment_3 &s,
 	     const typename K::Ray_3 &r,
 	     const K& k)
 {
   CGAL_precondition(! s.is_degenerate () && ! r.is_degenerate () );
-  Object res = intersection(r.supporting_line(),s);
-  const typename K::Point_3* p=object_cast<typename K::Point_3> (&res);
-  if (p!=NULL){
-    if( Ray_3_has_on_collinear_Point_3(r,*p,k) ) return res;
-  }
-  else{
-    const typename K::Segment_3* s2=object_cast<typename K::Segment_3> (&res);
-    if (s2!=NULL){
+
+  typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type 
+    v = internal::intersection(r.supporting_line(),s, K());
+
+  if(v) {
+    if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v)) {
+      if( Ray_3_has_on_collinear_Point_3(r,*p,k) ) 
+        return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>(*p);
+    } else if(const typename K::Segment_3* s2 = intersect_get<typename K::Segment_3>(v)) {
       bool has_source=Ray_3_has_on_collinear_Point_3(r,s.source(),k);
       bool has_target=Ray_3_has_on_collinear_Point_3(r,s.target(),k);
       if (has_source){
         if (has_target)
-          return res;
+          return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>(*s2);
         else
         {
           if (k.equal_3_object() (r.source(),s.source()))
-            return make_object(r.source());
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>(r.source());
           else
-            return make_object(k.construct_segment_3_object()(r.source(),s.source()));
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>(
+              k.construct_segment_3_object()(r.source(),s.source()));
         }
       }
       else{
         if (has_target){
           if (k.equal_3_object() (r.source(),s.target()))
-            return make_object(r.source());          
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>(r.source());          
           else
-          return make_object(k.construct_segment_3_object()(r.source(),s.target()));
+            return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>(
+              k.construct_segment_3_object()(r.source(),s.target()));
         }
       }
     }
   }
-  return Object();
+
+  return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Ray_3>();
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Ray_3, typename K::Segment_3>::result_type
 intersection(const typename K::Ray_3 &r,
 	     const typename K::Segment_3 &s,
 	     const K& k)
@@ -560,40 +787,44 @@ do_intersect(const typename K::Ray_3  &r,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Ray_3, typename K::Ray_3>::result_type
 intersection(const typename K::Ray_3 &r1,
 	     const typename K::Ray_3 &r2,
 	     const K& k)
 {
   CGAL_precondition(! r1.is_degenerate () && ! r2.is_degenerate () );
-  Object res = intersection(r1.supporting_line(),r2);
-  const typename K::Point_3* p=object_cast<typename K::Point_3> (&res);
-  if (p!=NULL){
-    if ( Ray_3_has_on_collinear_Point_3(r1,*p,k) ) return res;
-  }
-  else{
-    const typename K::Ray_3* r=object_cast<typename K::Ray_3> (&res);
-    if (r!=NULL){
+
+  typename Intersection_traits<K, typename K::Line_3, typename K::Ray_3>::result_type 
+    v = internal::intersection(r1.supporting_line(),r2, k);
+
+  if(v) {
+    if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v)) {
+      if(Ray_3_has_on_collinear_Point_3(r1,*p,k)) 
+        return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Ray_3>(*p);
+    } else if(const typename K::Ray_3* r = intersect_get<typename K::Ray_3>(v)) {
       bool r1_has_s2=Ray_3_has_on_collinear_Point_3(r1,r2.source(),k);
       bool r2_has_s1=Ray_3_has_on_collinear_Point_3(r2,r1.source(),k);
       if (r1_has_s2){
         if (r2_has_s1)
         {
           if (k.equal_3_object()(r1.source(),r2.source()))
-            return make_object(r1.source());
-          else
-            return make_object(k.construct_segment_3_object()(r1.source(),r2.source()));
+            return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Ray_3>(r1.source());
+          else {
+            return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Ray_3>(
+              k.construct_segment_3_object()(r1.source(),r2.source()));          
+          }
         }
         else
-          return res;
+          return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Ray_3>(*r);
       }
       else{
         if (r2_has_s1)
-          return make_object(r1);
+          return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Ray_3>(r1);
       }
     }
   }
-  return Object();
+  return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Ray_3>();
+
 }
 
 template <class K>
@@ -622,7 +853,7 @@ do_intersect(const typename K::Ray_3  &r1,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Sphere_3>::result_type
 intersection(const typename K::Plane_3 &p,
              const typename K::Sphere_3 &s,
              const K&)
@@ -636,12 +867,12 @@ intersection(const typename K::Plane_3 &p,
       (square(p.a()) + square(p.b()) + square(p.c()));
   const FT cmp = d2 - s.squared_radius();
   if(CGAL_NTS is_zero(cmp)) { // tangent
-    return make_object(p.projection(s.center()));
+    return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Sphere_3>(p.projection(s.center()));
   } else if(CGAL_NTS is_negative(cmp)) { // intersect
     Point_3 center = p.projection(s.center());
-    return make_object(Circle_3(center,s.squared_radius() - d2,p));
+    return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Sphere_3>(Circle_3(center,s.squared_radius() - d2,p));
   } // do not intersect
-  return Object();
+  return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Sphere_3>();
 }
 
 template <class K>
@@ -672,7 +903,7 @@ do_intersect(const typename K::Sphere_3 &s,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Sphere_3, typename K::Plane_3>::result_type
 intersection(const typename K::Sphere_3 &s,
              const typename K::Plane_3 &p,
              const K& k)
@@ -682,7 +913,7 @@ intersection(const typename K::Sphere_3 &s,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Sphere_3, typename K::Sphere_3>::result_type
 intersection(const typename K::Sphere_3 &s1,
              const typename K::Sphere_3 &s2,
              const K& k)
@@ -690,12 +921,25 @@ intersection(const typename K::Sphere_3 &s1,
   typedef typename K::Plane_3 Plane_3;
   if(s1.center() == s2.center()) {
     if(s1.squared_radius() == s2.squared_radius()) {
-      if(is_zero(s1.squared_radius())) return make_object(s1.center());
-      else return make_object(s1);
-    } else return Object();  // cocentrics
+      if(is_zero(s1.squared_radius())) return intersection_return<typename K::Intersect_3, typename K::Sphere_3, typename K::Sphere_3>(s1.center());
+      else return intersection_return<typename K::Intersect_3, typename K::Sphere_3, typename K::Sphere_3>(s1);
+    } else return intersection_return<typename K::Intersect_3, typename K::Sphere_3, typename K::Sphere_3>();  // cocentrics
   }
   Plane_3 p = K().construct_radical_plane_3_object()(s1,s2);
-  return intersection(p, s1, k);
+  
+  
+  typename Intersection_traits<K, typename K::Sphere_3, typename K::Plane_3>::result_type 
+    v = intersection(p, s1, k);
+
+
+  if(v) {
+    if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
+      return intersection_return<typename K::Intersect_3, typename K::Sphere_3, typename K::Sphere_3>(*p);
+    else if(const typename K::Circle_3* c = intersect_get<typename K::Circle_3>(v))
+      return intersection_return<typename K::Intersect_3, typename K::Sphere_3, typename K::Sphere_3>(*c);
+  }
+
+  return intersection_return<typename K::Intersect_3, typename K::Sphere_3, typename K::Sphere_3>();
 }
 
 template <class K>
@@ -714,29 +958,34 @@ do_intersect(const typename K::Sphere_3 &s1,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Ray_3>::result_type
 intersection(const typename K::Plane_3 &plane, 
 	     const typename K::Ray_3 &ray, 
 	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
-    const Object line_intersection =
-            intersection(plane, ray.supporting_line(), k);
-    if (const Point_3 *isp = object_cast<Point_3>(&line_intersection)) {
-        if (ray.collinear_has_on(*isp))
-            return line_intersection;
+
+    typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type 
+      v = internal::intersection(plane, ray.supporting_line(), k);
+
+    if(v) {
+      if(const Point_3* p = intersect_get<Point_3>(v)) {
+        if (ray.collinear_has_on(*p))
+          return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Ray_3>(*p);
         else
-            return Object();
+          return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Ray_3>();
     }
-    if (line_intersection.is_empty())
-        return line_intersection;
-    return make_object(ray);
+    } else {
+      return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Ray_3>();
+    }
+
+    return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Ray_3>(ray);
 }
 
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Ray_3, typename K::Plane_3>::result_type
 intersection(const typename K::Ray_3 &ray, 
 	     const typename K::Plane_3 &plane, 
 	     const K& k)
@@ -753,12 +1002,16 @@ do_intersect(const typename K::Plane_3 &plane,
 	     const K& k)
 {
     typedef typename K::Point_3 Point_3;
-    const Object line_intersection =
-            intersection(plane, ray.supporting_line(), k);
-    if (line_intersection.is_empty())
+    
+    typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>
+      ::result_type 
+      line_intersection = internal::intersection(plane, ray.supporting_line(), k);
+
+    if(!line_intersection)
         return false;
-    if (const Point_3 *isp = object_cast<Point_3>(&line_intersection))
+    if(const Point_3 *isp = intersect_get<Point_3>(line_intersection))
         return ray.collinear_has_on(*isp);
+    
     return true;
 }
 
@@ -775,7 +1028,7 @@ do_intersect(const typename K::Ray_3 &ray,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Segment_3>::result_type
 intersection(const typename K::Plane_3 &plane, 
 	     const typename K::Segment_3 &seg, 
 	     const K& k)
@@ -790,52 +1043,58 @@ intersection(const typename K::Plane_3 &plane,
     switch (source_side) {
     case ON_ORIENTED_BOUNDARY:
         if (target_side == ON_ORIENTED_BOUNDARY)
-            return make_object(seg);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(seg);
         else
-            return make_object(source);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(source);
     case ON_POSITIVE_SIDE:
         switch (target_side) {
         case ON_ORIENTED_BOUNDARY:
-            return make_object(target);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(target);
         case ON_POSITIVE_SIDE:
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();
         case ON_NEGATIVE_SIDE:
           { 
             // intersection object should be a point, but rounding errors 
             // could lead to a line. In such case, return seg.
-            Object obj = intersection(plane, seg.supporting_line(), k);
-            if ( NULL == object_cast<typename K::Line_3>(&obj) )
-              return obj;
+            typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
+              v = internal::intersection(plane, seg.supporting_line(), k);
+            if(v) {
+              if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
+                return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(*p);
             else
-              return make_object(seg);
+                return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(seg);
+            }
           }
         }
     case ON_NEGATIVE_SIDE:
         switch (target_side) {
         case ON_ORIENTED_BOUNDARY:
-            return make_object(target);
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(target);
         case ON_POSITIVE_SIDE:
           { 
             // intersection object should be a point, but rounding errors 
             // could lead to a line. In such case, return seg.
-            Object obj = intersection(plane, seg.supporting_line(), k);
-            if ( NULL == object_cast<typename K::Line_3>(&obj) )
-              return obj;
+            typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
+              v = internal::intersection(plane, seg.supporting_line(), k);
+            if(v) {
+              if(const typename K::Point_3* p = intersect_get<typename K::Point_3>(v))
+                return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(*p);
             else 
-              return make_object(seg);
+                return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>(seg);
+            }
           }
         case ON_NEGATIVE_SIDE:
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();
         }
     }
     CGAL_kernel_assertion_msg(false, "Supposedly unreachable code.");
-    return Object();
+    return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Segment_3>();
 }
 
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Segment_3, typename K::Plane_3>::result_type
 intersection(const typename K::Segment_3 &seg, 
 	     const typename K::Plane_3 &plane, 
 	     const K& k)
@@ -877,11 +1136,15 @@ do_intersect(const typename K::Segment_3 &seg,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Plane_3, typename K::Triangle_3>::result_type
 intersection(const typename K::Plane_3 &plane, 
 	     const typename K::Triangle_3 &tri, 
 	     const K& k)
 {
+  typedef 
+  typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type 
+  pl_res;
+
   typename K::Construct_vertex_3 vertex_on =
     k.construct_vertex_3_object();
   
@@ -892,21 +1155,24 @@ intersection(const typename K::Plane_3 &plane,
   if (or0==ON_ORIENTED_BOUNDARY){
     if (or1==ON_ORIENTED_BOUNDARY){
       if (or2==ON_ORIENTED_BOUNDARY) 
-        return make_object(tri);
+        return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(tri);
       else 
-        return make_object(k.construct_segment_3_object()(tri.vertex(0),tri.vertex(1)));
+        return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
+                                                                                   (tri.vertex(0),tri.vertex(1)));
     }
     else{
       if (or2==ON_ORIENTED_BOUNDARY)
-        return make_object(k.construct_segment_3_object()(tri.vertex(0),tri.vertex(2)));
+        return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
+                                                                                   (tri.vertex(0),tri.vertex(2)));
       else{
         if (or1==or2)
-          return make_object(tri.vertex(0));
+          return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(tri.vertex(0));
         else{
-          Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
-          const typename K::Point_3* p=object_cast<typename K::Point_3>(&obj);
+          pl_res v = internal::intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
+          const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
           CGAL_kernel_assertion(p!=NULL);
-          return make_object(k.construct_segment_3_object()(*p,tri.vertex(0)));
+          return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
+                                                                                     (*p,tri.vertex(0)));
         }
       }
     }
@@ -914,25 +1180,28 @@ intersection(const typename K::Plane_3 &plane,
 
   if (or1==ON_ORIENTED_BOUNDARY){
     if (or2==ON_ORIENTED_BOUNDARY)
-      return make_object(k.construct_segment_3_object()(tri.vertex(1),tri.vertex(2)));
+      return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
+                                                                                 (tri.vertex(1),tri.vertex(2)));
     if (or2==or0)
-      return make_object(tri.vertex(1));
+      return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(tri.vertex(1));
     else{
-      Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
-      const typename K::Point_3* p=object_cast<typename K::Point_3>(&obj);
+      pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
+      const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
       CGAL_kernel_assertion(p!=NULL);
-      return make_object(k.construct_segment_3_object()(*p,tri.vertex(1)));      
+      return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
+                                                                                 (*p,tri.vertex(1)));      
     }
   }
   
   if (or2==ON_ORIENTED_BOUNDARY){
     if (or1==or0)
-      return make_object(tri.vertex(2));
+      return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(tri.vertex(2));
     else{
-      Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
-      const typename K::Point_3* p=object_cast<typename K::Point_3>(&obj);
+      pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
+      const typename K::Point_3* p = intersect_get<typename K::Point_3>(v);
       CGAL_kernel_assertion(p!=NULL);
-      return make_object(k.construct_segment_3_object()(*p,tri.vertex(2)));      
+      return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(k.construct_segment_3_object()
+                                                                                 (*p,tri.vertex(2)));      
     }
   }
   
@@ -940,34 +1209,35 @@ intersection(const typename K::Plane_3 &plane,
   std::vector<typename K::Point_3> pts;
   pts.reserve(2);
   if (or0!=or1){
-    Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
-    const typename K::Point_3* pt_ptr=object_cast<typename K::Point_3>(&obj);
+    pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(1)), k);
+    const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
     CGAL_kernel_assertion( pt_ptr!=NULL );    
     pts.push_back( *pt_ptr );
   }
   if (or0!=or2){
-    Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
-    const typename K::Point_3* pt_ptr=object_cast<typename K::Point_3>(&obj);
+    pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(0),tri.vertex(2)), k);
+    const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
     CGAL_kernel_assertion( pt_ptr!=NULL );    
     pts.push_back( *pt_ptr );    
   }
   if (or1!=or2){
-    Object obj = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
-    const typename K::Point_3* pt_ptr=object_cast<typename K::Point_3>(&obj);
+    pl_res v = intersection(plane, k.construct_line_3_object()(tri.vertex(1),tri.vertex(2)), k);
+    const typename K::Point_3* pt_ptr = intersect_get<typename K::Point_3>(v);
     CGAL_kernel_assertion( pt_ptr!=NULL );    
     pts.push_back( *pt_ptr );
   }
   
-  if (pts.empty()) return CGAL::Object();
+  if (pts.empty()) return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>();
   
   CGAL_kernel_assertion(pts.size()==2);
   
-  return make_object( k.construct_segment_3_object()(*pts.begin(),*boost::prior(pts.end())) );
+  return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>( k.construct_segment_3_object()
+                                                                              (*pts.begin(),*boost::prior(pts.end())) );
 }
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Triangle_3, typename K::Plane_3>::result_type
 intersection(const typename K::Triangle_3 &triangle,
 	     const typename K::Plane_3  &plane,
 	     const K& k)
@@ -976,7 +1246,7 @@ intersection(const typename K::Triangle_3 &triangle,
 }
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
 intersection(const typename K::Line_3 &line,
 	     const Bbox_3 &box, 
 	     const K&)
@@ -999,7 +1269,7 @@ intersection(const typename K::Line_3 &line,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, Bbox_3, typename K::Line_3>::result_type
 intersection(const Bbox_3 &box, 
 	     const typename K::Line_3 &line, 
 	     const K& k)
@@ -1009,7 +1279,7 @@ intersection(const Bbox_3 &box,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
 intersection(const typename K::Ray_3 &ray,
 	     const Bbox_3 &box, 
 	     const K&)
@@ -1032,7 +1302,7 @@ intersection(const typename K::Ray_3 &ray,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, Bbox_3, typename K::Ray_3>::result_type
 intersection(const Bbox_3 &box, 
 	     const typename K::Ray_3 &ray, 
 	     const K& k)
@@ -1043,7 +1313,7 @@ intersection(const Bbox_3 &box,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
 intersection(const typename K::Segment_3 &seg, 
 	     const Bbox_3 &box, 
 	     const K&)
@@ -1066,7 +1336,7 @@ intersection(const typename K::Segment_3 &seg,
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, Bbox_3, typename K::Segment_3>::result_type
 intersection(const Bbox_3 &box, 
 	     const typename K::Segment_3 &seg, 
 	     const K& k)
@@ -1076,7 +1346,7 @@ intersection(const Bbox_3 &box,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Line_3, typename K::Iso_cuboid_3>::result_type
 intersection(const typename K::Line_3 &line,
 	     const typename K::Iso_cuboid_3 &box, 
 	     const K&)
@@ -1094,10 +1364,10 @@ intersection(const typename K::Line_3 &line,
     for (int i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Iso_cuboid_3>();
             }
             if (_ref_point.cartesian(i) > _iso_max.cartesian(i)) {
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Iso_cuboid_3>();
             }
         } else {
             FT newmin, newmax;
@@ -1121,7 +1391,7 @@ intersection(const typename K::Line_3 &line,
                 if (newmax < _max)
                     _max = newmax;
                 if (_max < _min) {
-                    return Object();
+                    return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Iso_cuboid_3>();
                 }
             }
             all_values = false;
@@ -1129,16 +1399,16 @@ intersection(const typename K::Line_3 &line,
     }
     CGAL_kernel_assertion(!all_values);
     if (_max == _min) {
-        return make_object(Point_3(_ref_point + _dir * _min ));
+        return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Iso_cuboid_3>(Point_3(_ref_point + _dir * _min ));
     }
-    return make_object(
+    return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Iso_cuboid_3>(
         Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
 }
 
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Line_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &box, 
 	     const typename K::Line_3 &line, 
 	     const K& k)
@@ -1149,7 +1419,7 @@ intersection(const typename K::Iso_cuboid_3 &box,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Ray_3, typename K::Iso_cuboid_3>::result_type
 intersection(const typename K::Ray_3 &ray,
 	     const typename K::Iso_cuboid_3 &box, 
 	     const K&)
@@ -1168,10 +1438,10 @@ intersection(const typename K::Ray_3 &ray,
     for (int i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Iso_cuboid_3>();
             }
             if (_ref_point.cartesian(i) > _iso_max.cartesian(i)) {
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Iso_cuboid_3>();
             }
         } else {
             FT newmin, newmax;
@@ -1195,22 +1465,22 @@ intersection(const typename K::Ray_3 &ray,
             if (newmin > _min)
                  _min = newmin;
             if (_max < _min)
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Iso_cuboid_3>();
             all_values = false;
         }
     }
     CGAL_kernel_assertion(!all_values);
     if (_max == _min) {
-        return make_object(Point_3(_ref_point + _dir * _min ));
+        return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Iso_cuboid_3>(Point_3(_ref_point + _dir * _min ));
     }
-    return make_object(
+    return intersection_return<typename K::Intersect_3, typename K::Ray_3, typename K::Iso_cuboid_3>(
         Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
 }
 
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Ray_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &box, 
 	     const typename K::Ray_3 &ray,
 	     const K& k)
@@ -1220,7 +1490,7 @@ intersection(const typename K::Iso_cuboid_3 &box,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Segment_3, typename K::Iso_cuboid_3>::result_type
 intersection(const typename K::Segment_3 &seg,
 	     const typename K::Iso_cuboid_3 &box, 
 	     const K&)
@@ -1245,10 +1515,10 @@ intersection(const typename K::Segment_3 &seg,
     for (int i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>();
             }
             if (_ref_point.cartesian(i) > _iso_max.cartesian(i)) {
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>();
             }
         } else {
             FT newmin, newmax;
@@ -1268,20 +1538,20 @@ intersection(const typename K::Segment_3 &seg,
             if (newmin > _min)
                  _min = newmin;
             if (_max < _min)
-                return Object();
+                return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>();
         }
     }
     if (_max == _min) {
-        return make_object(Point_3(_ref_point + _dir * _min ));
+        return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>(Point_3(_ref_point + _dir * _min ));
     }
-    return make_object(
+    return intersection_return<typename K::Intersect_3, typename K::Segment_3, typename K::Iso_cuboid_3>(
         Segment_3(_ref_point + _dir*_min, _ref_point + _dir*_max));
 }
 
 
 template <class K>
 inline
-Object
+typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Segment_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &box, 
 	     const typename K::Segment_3 &seg,
 	     const K& k)
@@ -1291,7 +1561,7 @@ intersection(const typename K::Iso_cuboid_3 &box,
 
 
 template <class K>
-Object
+typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3>::result_type
 intersection(
     const typename K::Iso_cuboid_3 &icub1,
     const typename K::Iso_cuboid_3 &icub2, 
@@ -1319,7 +1589,7 @@ intersection(
         if (min_idx[dim] != max_idx[dim]
                 && max_points[max_idx[dim]].cartesian(dim)
                    < min_points[min_idx[dim]].cartesian(dim))
-            return Object();
+            return intersection_return<typename K::Intersect_3, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3>();
     }
     if (min_idx[0] == min_idx[1] && min_idx[0] == min_idx[2]) {
         newmin = min_points[min_idx[0]];
@@ -1357,286 +1627,75 @@ intersection(
             ,
             wmult_hw((K*)0, max_points[0].hw(), max_points[1]) );
     }
-    Object result = make_object(Iso_cuboid_3(newmin, newmax));
-    return result;
+    return intersection_return<typename K::Intersect_3, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3>(Iso_cuboid_3(newmin, newmax));
 }
 
+template <class R>
+inline bool
+do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
+{
+  return intersection(plane1, plane2);
+}
+
+
+template <class R>
+inline bool
+do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
+             const Plane_3<R> &plane3, const R&)
+{
+  return intersection(plane1, plane2, plane3);
+}
+
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &i, const Iso_cuboid_3<R> &j, const R&)
+{
+	return CGAL::intersection(i, j);
+}
+
+template <class R>
+inline bool
+do_intersect(const Line_3<R> &l, const Iso_cuboid_3<R> &j, const R&)
+{
+	return CGAL::intersection(l, j);
+}
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
+{
+	return CGAL::intersection(l, j);
+}
+
+template <class R>
+inline bool
+do_intersect(const Ray_3<R> &r, const Iso_cuboid_3<R> &j, const R&)
+{
+	return CGAL::intersection(r, j);
+}
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &j, const Ray_3<R> &r, const R&)
+{
+	return CGAL::intersection(r, j);
+}
+
+template <class R>
+inline bool
+do_intersect(const Segment_3<R> &s, const Iso_cuboid_3<R> &j, const R&)
+{
+	return CGAL::intersection(s, j);
+}
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &j, const Segment_3<R> &s, const R&)
+{
+	return CGAL::intersection(s, j);
+}
 
 } // namespace internal
-
-
-
-
-
-
-template <class K>
-inline
-Object 
-intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2)
-{
-  return typename K::Intersect_3()(plane1, plane2);
-}
-
-template <class K>
-inline
-Object 
-intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
-             const Plane_3<K> &plane3)
-{
-  return typename K::Intersect_3()(plane1, plane2, plane3);
-}
-
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K>  &plane, const Line_3<K> &line)
-{
-  return typename K::Intersect_3()(plane, line);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K> &plane, const Line_3<K> &line)
-{
-  return typename K::Do_intersect_3()(plane, line);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &plane, const Ray_3<K> &ray)
-{
-  return typename K::Intersect_3()(plane, ray);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K> &plane, const Ray_3<K> &ray)
-{
-  return typename K::Do_intersect_3()(plane, ray);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &plane, const Segment_3<K> &seg)
-{
-  return typename K::Intersect_3()(plane, seg);
-}
-
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K>  &plane, const Segment_3<K> &seg)
-{
-  return typename K::Do_intersect_3()(plane, seg);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &plane, const Triangle_3<K> &tri)
-{
-  return typename K::Intersect_3()(plane, tri);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &line,
-	     const Bbox_3 &box)
-{
-  return typename K::Intersect_3()(line, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &ray,
-	     const Bbox_3 &box)
-{
-  return typename K::Intersect_3()(ray, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &seg,
-	     const Bbox_3 &box)
-{
-  return typename K::Intersect_3()(seg, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &line,
-	     const Iso_cuboid_3<K> &box)
-{
-  return typename K::Intersect_3()(line, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &ray,
-	     const Iso_cuboid_3<K> &box)
-{
-  return typename K::Intersect_3()(ray, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &seg,
-	     const Iso_cuboid_3<K> &box)
-{
-  return typename K::Intersect_3()(seg, box);
-}
-
-
-template <class K>
-inline
-Object
-intersection(const Iso_cuboid_3<K> &icub1,
-	     const Iso_cuboid_3<K> &icub2)
-{
-  return typename K::Intersect_3()(icub1, icub2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l1,
-             const Line_3<K> &l2) {
-  return typename K::Intersect_3()(l1, l2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Line_3<K> &l1,
-             const Line_3<K> &l2)
-{
-  return typename K::Do_intersect_3()(l1, l2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &s1,
-             const Segment_3<K> &s2) {
-  return typename K::Intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Segment_3<K> &s1, const Segment_3<K> &s2)
-{
-  return typename K::Do_intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l,
-             const Segment_3<K> &s) {
-  return typename K::Intersect_3()(l, s);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l,
-             const Ray_3<K> &r) {
-  return typename K::Intersect_3()(l, r);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &r,
-             const Segment_3<K> &s) {
-  return typename K::Intersect_3()(r, s);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &r1,
-             const Ray_3<K> &r2) {
-  return typename K::Intersect_3()(r1, r2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Line_3<K> &l, const Segment_3<K> &s)
-{
-  return typename K::Do_intersect_3()(l, s);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Line_3<K> &l, const Ray_3<K> &r)
-{
-  return typename K::Do_intersect_3()(l, r);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Ray_3<K> &r, const Segment_3<K> &s)
-{
-  return typename K::Do_intersect_3()(r, s);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Ray_3<K> &r1, const Ray_3<K> &r2)
-{
-  return typename K::Do_intersect_3()(r1, r2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Sphere_3<K> &s1,
-             const Sphere_3<K> &s2) {
-  return typename K::Intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Sphere_3<K> &s1,
-             const Sphere_3<K> &s2)
-{
-  return typename K::Do_intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &p,
-             const Sphere_3<K> &s) {
-  return typename K::Intersect_3()(p, s);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K> &p,
-             const Sphere_3<K> &s)
-{
-  return typename K::Do_intersect_3()(p, s);
-}
 
 } //namespace CGAL

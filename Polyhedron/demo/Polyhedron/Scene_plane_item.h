@@ -63,7 +63,7 @@ public:
 
   QString toolTip() const {
     const qglviewer::Vec& pos = frame->position();
-    const qglviewer::Vec& n = frame->orientation().axis(); 
+    const qglviewer::Vec& n = frame->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
     return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />")
       .arg(this->name())

@@ -19,7 +19,7 @@ public:
 A container type to get (and put) the three special values 
 (\f$ \alpha_1, \alpha_2, \alpha_3\f$) associated with an alpha shape edge. 
 */ 
-typedef Hidden_type Interval_3; 
+typedef unspecified_type Interval_3; 
 
 /*! 
 A coordinate type.
@@ -29,7 +29,7 @@ declaration and initialization with a small integer constant
 (cf. requirements for number types). An obvious choice would be 
 coordinate type of the point class 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /// @} 
 

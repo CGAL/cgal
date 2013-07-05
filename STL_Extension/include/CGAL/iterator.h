@@ -33,6 +33,8 @@
 #include <vector>
 #include <map>
 #include <CGAL/tuple.h>
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
 
 #include <boost/config.hpp>
 
@@ -1187,6 +1189,22 @@ inline Filter_output_iterator< I, P >
 filter_output_iterator(I e, const P& p)
 { return Filter_output_iterator< I, P >(e, p); }
 
+namespace internal {
+
+template<typename OutputIterator>
+struct Output_visitor : boost::static_visitor<OutputIterator&> {
+  Output_visitor(OutputIterator* it) : out(it) {}
+  OutputIterator* out;
+  
+  template<typename T>
+  OutputIterator& operator()(const T& t) {
+    *(*out)++ = t;
+    return *out;
+  }
+};
+
+} // internal
+
 
 #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
 
@@ -1199,6 +1217,9 @@ struct Derivator
   typedef Derivator<D, V, O> Self;
   Self& operator=(const Self&) = delete;
 #endif
+  template <class Tuple>
+  void tuple_dispatch(const Tuple&)
+  {}
 };
 
 template < typename D, typename V1, typename O1, typename... V, typename... O>
@@ -1218,6 +1239,14 @@ struct Derivator<D, cpp11::tuple<V1, V...>, cpp11::tuple<O1, O...> >
   {
     * cpp11::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = v;
     return static_cast<D&>(*this);
+  }
+
+  template <class Tuple>
+  void tuple_dispatch(const Tuple& t)
+  {
+    * cpp11::get< D::size - sizeof...(V) - 1 >(static_cast<typename D::Iterator_tuple&>(static_cast<D&>(*this))) ++ = 
+        cpp11::get< D::size - sizeof...(V) - 1 >(t);
+    static_cast<Base&>(*this).tuple_dispatch(t);
   }
 };
 
@@ -1261,6 +1290,7 @@ private:
 public:
 
   using Base::operator=;
+  using Base::tuple_dispatch;
 
   Dispatch_output_iterator(O... o) : cpp11::tuple<O...>(o...) {}
 
@@ -1270,11 +1300,31 @@ public:
     return *this;
   }
 
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
   Self& operator++() { return *this; }
   Self& operator++(int) { return *this; }
   Self& operator*() { return *this; }
 
   const Iterator_tuple& get_iterator_tuple() const { return *this; }
+  
+  Self& operator=(const cpp11::tuple<V...>& t)
+  {
+    tuple_dispatch(t);
+    return *this;
+  }
 };
 
 template < typename... V, typename... O>
@@ -1365,9 +1415,28 @@ public:
     *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
-  
+
+  Self& operator=(const cpp11::tuple<V1>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
+    return *this;
+  }
+  
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
     return *this;
   }
   
@@ -1412,7 +1481,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1466,12 +1540,32 @@ public:
     *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }
-  
+
+  Self& operator=(const cpp11::tuple<V1, V2>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
   const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
@@ -1518,7 +1612,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1577,12 +1676,33 @@ public:
     *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    return *this;
+  }
   
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
   const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
@@ -1637,7 +1757,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1701,12 +1826,34 @@ public:
     *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    return *this;
+  }
   
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
   const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
@@ -1766,7 +1913,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1835,12 +1987,36 @@ public:
     *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4, V5>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<4>(obj);
+    return *this;
+  }
   
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
+
   const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
@@ -1905,7 +2081,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4,V5>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -1979,12 +2160,36 @@ public:
     *cpp11::get<5>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
-  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4, V5, V6>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<4>(obj);
+    *cpp11::get<5>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<5>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
   const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
@@ -2054,7 +2259,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4,V5,V6>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)
@@ -2133,12 +2343,37 @@ public:
     *cpp11::get<6>(static_cast<Iterator_tuple& >(*this))++=obj;
     return *this;
   }  
-  
+
+  Self& operator=(const cpp11::tuple<V1, V2, V3, V4, V5, V6, V7>& obj){
+    *cpp11::get<0>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<0>(obj);
+    *cpp11::get<1>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<1>(obj);
+    *cpp11::get<2>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<2>(obj);
+    *cpp11::get<3>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<3>(obj);
+    *cpp11::get<4>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<4>(obj);
+    *cpp11::get<5>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<5>(obj);
+    *cpp11::get<6>(static_cast<Iterator_tuple& >(*this))++=cpp11::get<6>(obj);
+    return *this;
+  }
+
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
   }
   
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    boost::apply_visitor(visitor, t);
+    return *this;
+  }
+
+  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
+  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t) boost::apply_visitor(visitor, *t);
+    return *this;
+  }
+
   const Iterator_tuple& get_iterator_tuple() const
   { return *this; }
   
@@ -2213,7 +2448,12 @@ public:
   Self& operator=(const Self& s){
     static_cast< Iterator_tuple& >(*this) = static_cast< const Iterator_tuple& >(s);
     return *this;
-  }    
+  }
+
+  Self& operator=(const cpp11::tuple<V1,V2,V3,V4,V5,V6,V7>& t){
+    static_cast< Base& >(*this) = t;
+    return *this;
+  }
   #else
   using Base::operator=;
   #endif //defined(__EDG__)

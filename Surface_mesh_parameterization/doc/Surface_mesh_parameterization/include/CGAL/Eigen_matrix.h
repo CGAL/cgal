@@ -31,7 +31,7 @@ public:
 /*! 
 The internal matrix type from \ref thirdpartyEigen "Eigen". 
 */ 
-typedef Hidden_type EigenType; 
+typedef unspecified_type EigenType; 
 
 /// @}
 
@@ -70,7 +70,7 @@ public:
 /*! 
 The internal matrix type from \ref thirdpartyEigen "Eigen". 
 */ 
-typedef Hidden_type EigenType; 
+typedef unspecified_type EigenType; 
 
 /// @}
 

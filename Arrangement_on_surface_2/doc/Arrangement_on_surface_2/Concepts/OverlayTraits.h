@@ -27,47 +27,47 @@ public:
 /*! 
 a constant handle a vertex in `Dcel_A`. 
 */ 
-typedef Hidden_type Vertex_handle_A; 
+typedef unspecified_type Vertex_handle_A; 
 
 /*! 
 a constant handle to a halfedge in `Dcel_A`. 
 */ 
-typedef Hidden_type Halfedge_handle_A; 
+typedef unspecified_type Halfedge_handle_A; 
 
 /*! 
 a constant handle to a face `Dcel_A`. 
 */ 
-typedef Hidden_type Face_handle_A; 
+typedef unspecified_type Face_handle_A; 
 
 /*! 
 a constant handle to a vertex in `Dcel_B`. 
 */ 
-typedef Hidden_type Vertex_handle_B; 
+typedef unspecified_type Vertex_handle_B; 
 
 /*! 
 a constant handle to a halfedge in `Dcel_B`. 
 */ 
-typedef Hidden_type Halfedge_handle_B; 
+typedef unspecified_type Halfedge_handle_B; 
 
 /*! 
 a constant handle to a face in `Dcel_B`. 
 */ 
-typedef Hidden_type Face_handle_B; 
+typedef unspecified_type Face_handle_B; 
 
 /*! 
 a handle to a vertex in `Dcel_R`. 
 */ 
-typedef Hidden_type Vertex_handle_R; 
+typedef unspecified_type Vertex_handle_R; 
 
 /*! 
 a handle to a halfedge in `Dcel_R`. 
 */ 
-typedef Hidden_type Halfedge_handle_R; 
+typedef unspecified_type Halfedge_handle_R; 
 
 /*! 
 a handle to a faces in `Dcel_R`. 
 */ 
-typedef Hidden_type Face_handle_R; 
+typedef unspecified_type Face_handle_R; 
 
 /// @} 
 

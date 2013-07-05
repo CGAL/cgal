@@ -161,28 +161,28 @@ typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator;
 /*! 
 iterator over finite cells 
 */ 
-typedef Hidden_type Finite_cells_iterator; 
+typedef unspecified_type Finite_cells_iterator; 
 
 /*! 
 iterator over finite facets 
 */ 
-typedef Hidden_type Finite_facets_iterator; 
+typedef unspecified_type Finite_facets_iterator; 
 
 /*! 
 iterator over finite edges 
 */ 
-typedef Hidden_type Finite_edges_iterator; 
+typedef unspecified_type Finite_edges_iterator; 
 
 /*! 
 iterator over finite vertices 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 iterator over the points corresponding to the 
 finite vertices of the triangulation. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 circulator over all cells incident to a given edge 
@@ -278,11 +278,12 @@ const TriangulationDataStructure_3 & tds() const;
 
 
 /*! 
-Returns a reference to the triangulation data structure. 
-\cgalAdvanced This method is mainly a help for users implementing their own triangulation algorithms.
-
-\cgalAdvanced The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
-*/ 
+Returns a reference to the triangulation data structure.
+\cgalAdvancedBegin
+This method is mainly a help for users implementing their own triangulation algorithms.
+The responsibility of keeping a valid triangulation belongs to the user when using advanced operations allowing a direct manipulation of the `tds`.
+\cgalAdvancedEnd
+*/
 TriangulationDataStructure_3 & tds(); 
 
 /*! 
@@ -304,6 +305,15 @@ size_type number_of_cells() const;
 Returns the infinite vertex. 
 */ 
 Vertex_handle infinite_vertex(); 
+
+/*!
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+Sets the infinite vertex.
+\cgalAdvancedEnd
+*/ 
+void set_infinite_vertex(Vertex_handle v);
 
 /*! 
 Returns a cell incident to the infinite vertex. 
@@ -585,11 +595,11 @@ Cell_handle
 locate(const Point & query, Vertex_handle hint) const; 
 
 /*!
-Same as above but uses a `Cell_handle` as starting hint, and inexact predicates. 
-This function returns a `Cell_handle` which is a good approximation of the exact
-location of `query`, while being faster. Note that it may return a `Cell_handle` of which 
-`query` is not in the interior. For example, in provides a good `Cell_handle start` for
-the above `locate(query, start)` function.
+Same as `locate()` but uses inexact predicates. 
+This function returns a handle on a cell that is a good approximation of the exact
+location of `query`, while being faster. Note that it may return a handle on a cell 
+whose interior does not contain `query`.
+When the triangulation has dimension smaller than 3, `start` is returned.
 */
 Cell_handle
 inexact_locate(const Point & query, Cell_handle start = Cell_handle()) const;
@@ -1262,23 +1272,29 @@ Facet mirror_facet(Facet f) const;
 /// @{
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the triangulation. Checks also the 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). 
 When `verbose` is set to true, 
 messages describing the first invalidity encountered are printed. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(bool verbose = false) const; 
 
 /*! 
-\cgalDebug Checks the combinatorial validity of the cell by calling the 
+\cgalDebugFunction
+\cgalDebugBegin
+Checks the combinatorial validity of the cell by calling the 
 `is_valid` method of the `TriangulationDataStructure_3` cell class. Also checks the 
 geometric validity of `c`, if `c` is finite. (See 
 Section \ref Triangulation3secintro.) 
 
 When `verbose` is set to `true`, messages are printed to give 
 a precise indication of the kind of invalidity encountered. 
+\cgalDebugEnd
 */ 
 bool 
 is_valid(Cell_handle c, bool verbose = false) const; 

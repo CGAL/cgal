@@ -25,7 +25,7 @@ public:
 /*! 
 The associated type. 
 */ 
-typedef Hidden_type Type ; 
+typedef unspecified_type Type ; 
 
 /*! 
 
@@ -33,7 +33,7 @@ Tag indicating whether the associated type is modularizable.
 
 This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Is_modularizable; 
+typedef unspecified_type Is_modularizable; 
 
 /*! 
 
@@ -42,7 +42,7 @@ The type of the modular image.
 In case the associated type is not a model of `Modularizable` this is undefined. 
 
 */ 
-typedef Hidden_type Residue_type; 
+typedef unspecified_type Residue_type; 
 
 /// @} 
 
@@ -55,12 +55,12 @@ typedef Hidden_type Residue_type;
 /*! 
 A model of `ModularTraits::ModularImage` 
 */ 
-typedef Hidden_type Modular_image; 
+typedef unspecified_type Modular_image; 
 
 /*! 
 A model of `ModularTraits::ModularImageRepresentative` 
 */ 
-typedef Hidden_type Modular_image_representative; 
+typedef unspecified_type Modular_image_representative; 
 
 /// @}
 

@@ -18,23 +18,26 @@
 //
 // Author(s)     : Stéphane Tayeb, Pierre Alliez
 //
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
 
 #ifndef CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 #define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_triangle_primitive.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_FaceGraph_triangle_primitive.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
 namespace CGAL {
     /// \ingroup PkgAABB_tree
-    /// The class AABB_polyhedron_triangle_primitive is a model of the concept
-    /// \ref AABBPrimitive. It wraps a facet handle of a polyhedron,
+    /// \deprecated This class is deprecated since \cgal 4.3, the class
+    /// `AABB_HalfedgeGraph_triangle_primitive` should be used instead.
+    ///
+    /// Primitive type that wraps a facet handle of a polyhedron,
     /// which is used as id, and allows the construction of the datum on
     /// the fly. Since only the facet handle is stored in this primitive,
     /// the polyhedron from which the AABB tree is built should not be
     /// deleted while the AABB tree is in use.
     ///
+    /// \cgalModels `AABBPrimitive`
     /// \tparam GeomTraits must provides a \c %Point_3
     /// type, used as \c Point, and a \c %Triangle_3 type, used as \c
     /// Datum and constructible from three arguments of type \c
@@ -74,7 +77,7 @@ namespace CGAL {
             : m_facet_handle(*ptr)  { };
         template <class Iterator>
         AABB_polyhedron_triangle_primitive( Iterator it,
-                                            typename boost::enable_if< 
+                                            typename boost::enable_if<
                                                        boost::is_same<Id,typename Iterator::value_type>
                                             >::type* =0
         ) : m_facet_handle(*it)  { }

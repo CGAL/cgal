@@ -21,17 +21,17 @@ public:
 /*! 
 the size type (convertible to `size_t`). 
 */ 
-typedef Hidden_type Size; 
+typedef unspecified_type Size; 
 
 /*! 
 the corresponding diagram-vertex type. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 the \f$ x\f$-monotone curve type. 
 */ 
-typedef Hidden_type X_monotone_curve_2; 
+typedef unspecified_type X_monotone_curve_2; 
 
 /// @} 
 

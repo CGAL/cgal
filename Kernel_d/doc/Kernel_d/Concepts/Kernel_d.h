@@ -30,12 +30,12 @@ public:
 /*! 
 a number type that is a model for `FieldNumberType` 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 a number type that is a model for `RingNumberType` 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /// @} 
 
@@ -46,7 +46,7 @@ typedef Hidden_type RT;
 a type that allows to iterate over 
 the %Cartesian coordinates 
 */ 
-typedef Hidden_type Cartesian_const_iterator_d; 
+typedef unspecified_type Cartesian_const_iterator_d; 
 
 /// @} 
 
@@ -56,52 +56,52 @@ typedef Hidden_type Cartesian_const_iterator_d;
 /*! 
 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vector_d; 
+typedef unspecified_type Vector_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Direction_d; 
+typedef unspecified_type Direction_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Hyperplane_d; 
+typedef unspecified_type Hyperplane_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Line_d; 
+typedef unspecified_type Line_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Ray_d; 
+typedef unspecified_type Ray_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Segment_d; 
+typedef unspecified_type Segment_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Iso_box_d; 
+typedef unspecified_type Iso_box_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Sphere_d; 
+typedef unspecified_type Sphere_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Aff_transformation_d; 
+typedef unspecified_type Aff_transformation_d; 
 
 /// @} 
 
@@ -111,127 +111,127 @@ typedef Hidden_type Aff_transformation_d;
 /*! 
 
 */ 
-typedef Hidden_type Barycentric_coordinates_d; 
+typedef unspecified_type Barycentric_coordinates_d; 
 
 /*! 
 a model of `Kernel_d::Center_of_sphere_d` 
 */ 
-typedef Hidden_type Center_of_sphere_d; 
+typedef unspecified_type Center_of_sphere_d; 
 
 /*! 
 a model of `Kernel_d::Compute_coordinate_d` 
 */ 
-typedef Hidden_type Compute_coordinate_d; 
+typedef unspecified_type Compute_coordinate_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_point_d; 
+typedef unspecified_type Construct_point_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_vector_d; 
+typedef unspecified_type Construct_vector_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_direction_d; 
+typedef unspecified_type Construct_direction_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_hyperplane_d; 
+typedef unspecified_type Construct_hyperplane_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_segment_d; 
+typedef unspecified_type Construct_segment_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_iso_box_d; 
+typedef unspecified_type Construct_iso_box_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_line_d; 
+typedef unspecified_type Construct_line_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_ray_d; 
+typedef unspecified_type Construct_ray_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_sphere_d; 
+typedef unspecified_type Construct_sphere_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_aff_transformation_d; 
+typedef unspecified_type Construct_aff_transformation_d; 
 
 /*! 
 a model of `Kernel_d::ConstructCartesianConstIterator_d` 
 */ 
-typedef Hidden_type Construct_cartesian_const_iterator_d; 
+typedef unspecified_type Construct_cartesian_const_iterator_d; 
 
 /*! 
 a model of `Kernel_d::Intersect_d` 
 */ 
-typedef Hidden_type Intersect_d; 
+typedef unspecified_type Intersect_d; 
 
 /*! 
 a model of `Kernel_d::Lift_to_paraboloid_d` 
 */ 
-typedef Hidden_type Lift_to_paraboloid_d; 
+typedef unspecified_type Lift_to_paraboloid_d; 
 
 /*! 
 a model of `Kernel_d::Linear_base_d` 
 */ 
-typedef Hidden_type Linear_base_d; 
+typedef unspecified_type Linear_base_d; 
 
 /*! 
 a model of `Kernel_d::Midpoint_d` 
 */ 
-typedef Hidden_type Midpoint_d; 
+typedef unspecified_type Midpoint_d; 
 
 /*! 
 a model of `Kernel_d::Orthogonal_vector_d` 
 */ 
-typedef Hidden_type Orthogonal_vector_d; 
+typedef unspecified_type Orthogonal_vector_d; 
 
 /*! 
 a model of `Kernel_d::Point_of_sphere_d` 
 */ 
-typedef Hidden_type Point_of_sphere_d; 
+typedef unspecified_type Point_of_sphere_d; 
 
 /*! 
 a model of `Kernel_d::Point_to_vector_d` 
 */ 
-typedef Hidden_type Point_to_vector_d; 
+typedef unspecified_type Point_to_vector_d; 
 
 /*! 
 a model of `Kernel_d::Project_along_d_axis_d` 
 */ 
-typedef Hidden_type Project_along_d_axis_d; 
+typedef unspecified_type Project_along_d_axis_d; 
 
 /*! 
 a model of `Kernel_d::Squared_distance_d` 
 */ 
-typedef Hidden_type Squared_distance_d; 
+typedef unspecified_type Squared_distance_d; 
 
 /*! 
 a model of `Kernel_d::Value_at_d` 
 */ 
-typedef Hidden_type Value_at_d; 
+typedef unspecified_type Value_at_d; 
 
 /*! 
 a model of `Kernel_d::Vector_to_point_d` 
 */ 
-typedef Hidden_type Vector_to_point_d; 
+typedef unspecified_type Vector_to_point_d; 
 
 /// @} 
 
@@ -241,102 +241,102 @@ typedef Hidden_type Vector_to_point_d;
 /*! 
 a model of `Kernel_d::Affine_rank_d` 
 */ 
-typedef Hidden_type Affine_rank_d; 
+typedef unspecified_type Affine_rank_d; 
 
 /*! 
 a model of `Kernel_d::Affinely_independent_d` 
 */ 
-typedef Hidden_type Affinely_independent_d; 
+typedef unspecified_type Affinely_independent_d; 
 
 /*! 
 a model of `Kernel_d::Compare_lexicographically_d` 
 */ 
-typedef Hidden_type Compare_lexicographically_d; 
+typedef unspecified_type Compare_lexicographically_d; 
 
 /*! 
 a model of `Kernel_d::Component_accessor_d` 
 */ 
-typedef Hidden_type Component_accessor_d; 
+typedef unspecified_type Component_accessor_d; 
 
 /*! 
 a model of `Kernel_d::Contained_in_affine_hull_d` 
 */ 
-typedef Hidden_type Contained_in_affine_hull_d; 
+typedef unspecified_type Contained_in_affine_hull_d; 
 
 /*! 
 a model of `Kernel_d::Contained_in_linear_hull_d` 
 */ 
-typedef Hidden_type Contained_in_linear_hull_d; 
+typedef unspecified_type Contained_in_linear_hull_d; 
 
 /*! 
 a model of `Kernel_d::Contained_in_simplex_d` 
 */ 
-typedef Hidden_type Contained_in_simplex_d; 
+typedef unspecified_type Contained_in_simplex_d; 
 
 /*! 
 a model of `Kernel_d::Equal_d` 
 */ 
-typedef Hidden_type Equal_d; 
+typedef unspecified_type Equal_d; 
 
 /*! 
 a model of `Kernel_d::Has_on_positive_side_d` 
 */ 
-typedef Hidden_type Has_on_positive_side_d; 
+typedef unspecified_type Has_on_positive_side_d; 
 
 /*! 
 a model of `Kernel_d::Less_coordinate_d` 
 */ 
-typedef Hidden_type Less_coordinate_d; 
+typedef unspecified_type Less_coordinate_d; 
 
 /*! 
 a model of `Kernel_d::Less_lexicographically_d` 
 */ 
-typedef Hidden_type Less_lexicographically_d; 
+typedef unspecified_type Less_lexicographically_d; 
 
 /*! 
 a model of `Kernel_d::Less_or_equal_lexicographically_d` 
 */ 
-typedef Hidden_type Less_or_equal_lexicographically_d; 
+typedef unspecified_type Less_or_equal_lexicographically_d; 
 
 /*! 
 a model of `Kernel_d::Linear_rank_d` 
 */ 
-typedef Hidden_type Linear_rank_d; 
+typedef unspecified_type Linear_rank_d; 
 
 /*! 
 a model of `Kernel_d::Linearly_independent_d` 
 */ 
-typedef Hidden_type Linearly_independent_d; 
+typedef unspecified_type Linearly_independent_d; 
 
 /*! 
 a model of `Kernel_d::Orientation_d` 
 */ 
-typedef Hidden_type Orientation_d; 
+typedef unspecified_type Orientation_d; 
 
 /*! 
 a model of `Kernel_d::Oriented_side_d` 
 */ 
-typedef Hidden_type Oriented_side_d; 
+typedef unspecified_type Oriented_side_d; 
 
 /*! 
 a model of `Kernel_d::Point_dimension_d` 
 */ 
-typedef Hidden_type Point_dimension_d; 
+typedef unspecified_type Point_dimension_d; 
 
 /*! 
 
 */ 
-typedef Hidden_type Position_on_line_d; 
+typedef unspecified_type Position_on_line_d; 
 
 /*! 
 a model of `Kernel_d::Side_of_bounded_sphere_d` 
 */ 
-typedef Hidden_type Side_of_bounded_sphere_d; 
+typedef unspecified_type Side_of_bounded_sphere_d; 
 
 /*! 
 a model of `Kernel_d::Side_of_oriented_sphere_d` 
 */ 
-typedef Hidden_type Side_of_oriented_sphere_d; 
+typedef unspecified_type Side_of_oriented_sphere_d; 
 
 /// @} 
 

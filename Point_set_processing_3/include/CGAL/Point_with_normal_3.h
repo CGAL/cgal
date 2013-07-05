@@ -26,6 +26,8 @@
 #include <CGAL/Origin.h>
 #include <CGAL/value_type_traits.h>
 
+#include <CGAL/property_map.h>
+
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 104000
   #include <boost/property_map/property_map.hpp>
@@ -126,12 +128,56 @@ private:
 
 //=========================================================================
 
+#ifndef CGAL_USE_PROPERTY_MAPS_API_V1
+/// Property map that accesses the normal vector from a Point_with_normal_3 object
+///
+/// @heading Is Model for the Concepts:
+/// \cgalModels `LvaluePropertyMap`
+///
+/// @heading Parameters:
+/// @param Gt Geometric traits class.
 
+template <class Gt>
+struct Normal_of_point_with_normal_pmap
+{
+  typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
+  typedef typename Gt::Vector_3 Vector; /// normal
+
+  typedef Point_with_normal key_type;
+  typedef Vector value_type;
+  typedef value_type& reference;
+  typedef boost::lvalue_property_map_tag category;
+
+  /// Access a property map element
+  reference operator[](key_type& pwn) const { return pwn.normal(); }
+
+  typedef Normal_of_point_with_normal_pmap<Gt> Self;
+  /// \name Put/get free functions
+  /// @{
+  friend const value_type& get(const Self&,const key_type& k) {return k.normal();}
+  friend         reference get(const Self&,      key_type& k) {return k.normal();}
+  friend void put(const Self&,key_type& k, const value_type& v) {k.normal()=v;}
+  /// @};}
+};
+
+/// Free function to create a Normal_of_point_with_normal_pmap property map.
+///
+/// @relates Normal_of_point_with_normal_pmap
+
+template <class Point_with_normal> // Point_with_normal type
+Normal_of_point_with_normal_pmap<
+  typename CGAL::Kernel_traits<Point_with_normal>::Kernel>
+  make_normal_of_point_with_normal_pmap(Point_with_normal)
+{
+  return Normal_of_point_with_normal_pmap<typename CGAL::Kernel_traits<Point_with_normal>::Kernel>();
+}
+
+#else
 /// Property map that accesses the normal vector from a Point_with_normal_3* pointer
 /// (or in general an iterator over Point_with_normal_3 elements).
 ///
 /// @heading Is Model for the Concepts:
-/// Model of `LvaluePropertyMap` concept.
+/// \cgalModels `LvaluePropertyMap`
 ///
 /// @heading Parameters:
 /// @param Gt Geometric traits class.
@@ -169,6 +215,7 @@ make_normal_of_point_with_normal_pmap(Iter)
   typedef typename CGAL::Kernel_traits<Value_type>::Kernel Kernel;
   return Normal_of_point_with_normal_pmap<Kernel>();
 }
+#endif
 
 /// \endcond
 

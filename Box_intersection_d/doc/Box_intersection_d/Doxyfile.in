@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Intersecting Sequences of dD Iso-oriented Boxes"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Box_intersection_d/doc/Box_intersection_d/
+
+
+

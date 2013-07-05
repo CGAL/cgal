@@ -14,11 +14,13 @@ More specifically, the concept `MeshVertexBase_3` provides read-write access
 to an integer representing the dimension of the lowest dimensional face 
 of the input 3D complex on which the vertex lies, 
 and to an index characteristic of this face. 
+The concept `MeshVertexBase_3` provides storage and read-write access to a boolean, a `FT` value, 
+and two `Vertex_handle` called 'intrusive'.
 
 \cgalRefines `TriangulationVertexBase_3` 
 \cgalRefines `SurfaceMeshVertexBase_3`
 
-\cgalHasModel `CGAL::Mesh_vertex_base_3<MD,Gt,Vb>` 
+\cgalHasModel `CGAL::Mesh_vertex_base_3<Gt,MD,Vb>` 
 
 \sa `CGAL::make_mesh_3()` 
 \sa `CGAL::refine_mesh_3()` 
@@ -35,12 +37,12 @@ public:
 /*! 
 Index type. Must match the type `MeshDomain_3::Index`. 
 */ 
-typedef Hidden_type Index;; 
+typedef unspecified_type Index;
 
 /*! 
 Numerical type. 
 */ 
-typedef Hidden_type FT;; 
+typedef unspecified_type FT; 
 
 /// @} 
 
@@ -70,10 +72,20 @@ void set_index(Index);
 /// @} 
 
 /*! \name Internal 
-These functions are used internally by mesh optimizers. The user is 
+These functions are used internally. The user is 
 not encouraged to use them directly as they may change in the future. 
 */
 /// @{
+
+/*!
+Returns a boolean, used for feature edges protection.
+*/
+bool is_special();
+
+/*!
+Sets the special aspect of the vertex.
+*/
+void set_special(bool); 
 
 /*! 
 
@@ -84,6 +96,27 @@ FT meshing_info() const;
 
 */ 
 void set_meshing_info(FT); 
+
+/*!
+
+*/
+Vertex_handle next_intrusive() const;
+
+/*!
+
+*/
+void set_next_intrusive(Vertex_handle);
+
+/*!
+
+*/
+Vertex_handle previous_intrusive() const;
+
+/*!
+
+*/
+void set_previous_intrusive(Vertex_handle);
+
 
 /// @}
 

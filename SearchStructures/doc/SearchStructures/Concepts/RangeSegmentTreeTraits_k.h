@@ -85,46 +85,46 @@ public:
 /*! 
 The k-dimensional key type. 
 */ 
-typedef Hidden_type Key; 
+typedef unspecified_type Key; 
 
 /*! 
 The k-dimensional interval type. 
 */ 
-typedef Hidden_type Interval; 
+typedef unspecified_type Interval; 
 
 /*! 
 The type in dimension \f$ i\f$, with \f$ 1\leq i 
 \leq k\f$. 
 */ 
-typedef Hidden_type Key_i; 
+typedef unspecified_type Key_i; 
 
 /*! 
 function object providing an 
 `operator()` that takes an argument of type `Key` and returns 
 a component of type `Key_i`. 
 */ 
-typedef Hidden_type key_i; 
+typedef unspecified_type key_i; 
 
 /*! 
 function object providing an 
 `operator()` that takes an argument of type `Interval` and returns 
 a component of type `Key_i`. 
 */ 
-typedef Hidden_type low_i; 
+typedef unspecified_type low_i; 
 
 /*! 
 function object providing an 
 `operator()` that takes an argument of type `Interval` and returns 
 a component of type `Key_i`. 
 */ 
-typedef Hidden_type high_i; 
+typedef unspecified_type high_i; 
 
 /*! 
 function object providing an 
 `operator()` that takes two arguments argument \f$ a\f$, \f$ b\f$ of type `Key_i` and returns 
 true if \f$ a<b\f$, false otherwise. 
 */ 
-typedef Hidden_type compare_i; 
+typedef unspecified_type compare_i; 
 
 /// @}
 

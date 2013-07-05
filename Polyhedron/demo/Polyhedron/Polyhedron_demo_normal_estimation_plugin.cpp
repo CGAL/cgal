@@ -126,7 +126,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
 
       // Estimates normals direction.
       CGAL::pca_estimate_normals(points->begin(), points->end(),
-                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
@@ -144,7 +144,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
 
       // Estimates normals direction.
       CGAL::jet_estimate_normals(points->begin(), points->end(),
-                                CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                 dialog.directionNbNeighbors());
 
       // Mark all normals as unoriented
@@ -166,7 +166,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
     // Tries to orient normals
     first_unoriented_point =
       CGAL::mst_orient_normals(points->begin(), points->end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(points->begin()),
+                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                               dialog.orientationNbNeighbors());
 
     std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());

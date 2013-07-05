@@ -45,7 +45,8 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const std::pair<T,T>& pair)
 {
-  return os << "<" << pair.first << "," << pair.second << ">";
+  return !!(os << "<" << pair.first << "," << pair.second << ">");
+  // call operator!() twice, because operator bool() is C++11
 }
 #endif
   

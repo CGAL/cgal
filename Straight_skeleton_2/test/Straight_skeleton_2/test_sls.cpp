@@ -829,7 +829,7 @@ int test_zone ( Zone& rZone )
         
         OSlsPtr lOSkeleton = CvtSls(*rZone.PartialSkeleton) ;
         
-        CGAL_assertion( lOSkeleton->is_valid() ) ;
+        assert( lOSkeleton->is_valid() ) ;
         
         IOffsetBuilderVisitor lWatchdog(check_timeout);
         

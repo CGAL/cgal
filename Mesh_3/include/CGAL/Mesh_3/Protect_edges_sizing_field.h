@@ -125,14 +125,6 @@ private:
   Vertex_handle get_vertex_corner_from_point(const Bare_point& p,
                                              const Index& p_index) const;
   
-  /// Insert point p as a curve segment point, using querying the sizing field to
-  /// get the weight.
-  Vertex_handle insert_curve_point(const Bare_point& p, const Index& p_index);
-  
-  /// Insert point p as a curve segment point, with a given weight.
-  Vertex_handle insert_curve_point(const Bare_point& p, const Index& p_index,
-                                   const Weight weight);
-
   /// Insert point(p,w) into triangulation and set its dimension to \c dim and
   /// it's index to \c index.
   /// The handle of the newly created vertex is returned.
@@ -767,8 +759,23 @@ insert_balls_on_edges()
         // if the curve is a cycle.
         if(!c3t3_.triangulation().is_vertex(Weighted_point(p), vp))
         {
-          // if 'p' is not a corner
-          vp = insert_curve_point(p,p_index);
+          // if 'p' is not a corner, find out a second point 'q' on the
+          // curve, "far" from 'p', and limit the radius of the ball of 'p'
+          // with the third of the distance from 'p' to 'q'.
+          FT p_size = query_size(p, 1, p_index);
+
+          FT curve_lenght = domain_.geodesic_distance(p, p, curve_index);
+
+          Bare_point other_point =
+            domain_.construct_point_on_curve_segment(p,
+                                                     curve_index,
+                                                     curve_lenght / 2);
+          p_size = (std::min)(p_size,
+                              compute_distance(p, other_point) / 3);
+          vp = smart_insert_point(p,
+                                  CGAL::square(p_size),
+                                  1,
+                                  p_index);
         }
         // No 'else' because in that case 'is_vertex(..)' already filled
         // the variable 'vp'.
@@ -795,7 +802,7 @@ insert_balls_on_edges()
 template <typename C3T3, typename MD, typename Sf>
 typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
 Protect_edges_sizing_field<C3T3, MD, Sf>::
-get_vertex_corner_from_point(const Bare_point& p, const Index& p_index) const
+get_vertex_corner_from_point(const Bare_point& p, const Index&) const
 {
   // Get vertex_handle associated to corner (dim=0) point
   Vertex_handle v;
@@ -808,26 +815,6 @@ get_vertex_corner_from_point(const Bare_point& p, const Index& p_index) const
 }
 
 
-template <typename C3T3, typename MD, typename Sf>
-inline
-typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
-Protect_edges_sizing_field<C3T3, MD, Sf>::
-insert_curve_point(const Bare_point& p, const Index& p_index)
-{
-  return insert_curve_point(p, p_index, 
-                            CGAL::square(query_size(p, 1, p_index)));
-}
-  
-template <typename C3T3, typename MD, typename Sf>
-inline
-typename Protect_edges_sizing_field<C3T3, MD, Sf>::Vertex_handle
-Protect_edges_sizing_field<C3T3, MD, Sf>::
-insert_curve_point(const Bare_point& p, const Index& p_index, 
-                   const Weight p_weight)
-{
-  return smart_insert_point(p, p_weight, 1, p_index);
-}
-  
 template <typename C3T3, typename MD, typename Sf>
 void
 Protect_edges_sizing_field<C3T3, MD, Sf>::
@@ -1138,8 +1125,6 @@ bool
 Protect_edges_sizing_field<C3T3, MD, Sf>::
 do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 {
-  typedef typename Gt::Sphere_3 Sphere_3;
-    
   typename Gt::Construct_sphere_3 sphere = 
     c3t3_.triangulation().geom_traits().construct_sphere_3_object();
     

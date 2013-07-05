@@ -33,8 +33,8 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Line_2_Line_2_intersection.h>
-#include <CGAL/Object.h>
 #include <CGAL/Uncertain.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -431,10 +431,9 @@ Segment_2_Segment_2_pair<K>::intersection_segment() const
 }
 
 
-
-
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Segment_2, typename K::Segment_2>::result_type
 intersection(const typename K::Segment_2 &seg1, 
 	     const typename K::Segment_2 &seg2,
 	     const K&)
@@ -444,35 +443,18 @@ intersection(const typename K::Segment_2 &seg1,
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Segment_2, typename K::Segment_2>();
     case is_t::POINT:
-        return make_object(ispair.intersection_point());
+        return intersection_return<typename K::Intersect_2, typename K::Segment_2, typename K::Segment_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return make_object(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Segment_2, typename K::Segment_2>(ispair.intersection_segment());
     }
 }
 
 } // namespace internal
 
-template <class K>
-inline
-bool
-do_intersect(const Segment_2<K> &seg1, 
-	     const Segment_2<K> &seg2)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(seg1, seg2);
-}
-
-
-template <class K>
-Object
-intersection(const Segment_2<K> &seg1, 
-	     const Segment_2<K> &seg2)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(seg1, seg2);
-}
+CGAL_INTERSECTION_FUNCTION_SELF(Segment_2, 2)
+CGAL_DO_INTERSECT_FUNCTION_SELF(Segment_2, 2)
 
 } //namespace CGAL
 

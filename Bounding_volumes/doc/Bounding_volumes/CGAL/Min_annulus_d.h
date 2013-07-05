@@ -62,21 +62,21 @@ public:
 typedef to `Traits::Point_d`. 
 Point type used to represent the input points. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /*! 
 typedef to `Traits::FT`. 
 Number type used to return the squared radii of the smallest 
 enclosing annulus. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `Traits::ET`. 
 Number type used to do the exact computations in the underlying 
 solver for quadratic programs (cf. <B>Implementation</B>). 
 */ 
-typedef Hidden_type ET; 
+typedef unspecified_type ET; 
 
 /*! 
 
@@ -84,7 +84,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the points 
 of the smallest enclosing annulus. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 
@@ -92,7 +92,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the support points 
 of the smallest enclosing annulus. 
 */ 
-typedef Hidden_type Support_point_iterator; 
+typedef unspecified_type Support_point_iterator; 
 
 /*! 
 
@@ -100,7 +100,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the inner support points 
 of the smallest enclosing annulus. 
 */ 
-typedef Hidden_type Inner_support_point_iterator; 
+typedef unspecified_type Inner_support_point_iterator; 
 
 /*! 
 
@@ -108,7 +108,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `Point`. Used to access the outer support points 
 of the smallest enclosing annulus. 
 */ 
-typedef Hidden_type Outer_support_point_iterator; 
+typedef unspecified_type Outer_support_point_iterator; 
 
 /*! 
 
@@ -116,7 +116,7 @@ non-mutable model of the \stl concept <I>RandomAccessIterator</I>
 with value type `ET`. Used to access the coordinates of 
 the center of the smallest enclosing annulus. 
 */ 
-typedef Hidden_type Coordinate_iterator; 
+typedef unspecified_type Coordinate_iterator; 
 
 /// @} 
 

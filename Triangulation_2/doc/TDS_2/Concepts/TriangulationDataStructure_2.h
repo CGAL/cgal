@@ -81,34 +81,34 @@ public:
 /*! 
 Size type (unsigned integral type) 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 Difference type (signed integral type) 
 */ 
-typedef Hidden_type difference_type; 
+typedef unspecified_type difference_type; 
 
 /*! 
 The vertex type, requirements for this type are described in concept `TriangulationDataStructure_2::Vertex`.
 */ 
-typedef Hidden_type Vertex;
+typedef unspecified_type Vertex;
 
 /*! 
 The face type, requirements for this type are described in concept `TriangulationDataStructure_2::Face`.
 */ 
-typedef Hidden_type Face;
+typedef unspecified_type Face;
 
 /*! 
 Handle to a vertex.
 \cgalModels `Handle`
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 Handle to a face. 
 \cgalModels `Handle`
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 This template class allows to get the type of a triangulation 
@@ -118,7 +118,7 @@ one whose `TriangulationDSVertexBase_2` will be `Vb2`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename Vb2> 
-using Rebind_vertex = Hidden_type;
+using Rebind_vertex = unspecified_type;
 
 /*! 
 This template class allows to get the type of a triangulation 
@@ -128,7 +128,7 @@ one whose `TriangulationDSFaceBase_2` will be `Fb2`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename Fb2> 
-using Rebind_face = Hidden_type;
+using Rebind_face = unspecified_type;
 
 /*! 
 The edge type. 
@@ -166,32 +166,32 @@ typedef std::pair<Face_handle,int> Edge;
 /*! 
 
 */ 
-typedef Hidden_type Face_iterator; 
+typedef unspecified_type Face_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Edge_iterator; 
+typedef unspecified_type Edge_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_iterator; 
+typedef unspecified_type Vertex_iterator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Face_circulator; 
+typedef unspecified_type Face_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Edge_circulator; 
+typedef unspecified_type Edge_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_circulator; 
+typedef unspecified_type Vertex_circulator; 
 
 /// @} 
 
@@ -229,6 +229,28 @@ Vertex_handle
 copy_tds(const TriangulationDataStructure_2 & tds1, 
 Vertex_handle v = Vertex_handle()); 
 
+/*!
+`tds_src` is copied into `this`. As the vertex and face types might be different
+and incompatible, the creation of new faces and vertices is made thanks to the
+functors `convert_vertex` and `convert_face`, that convert vertex and face types.
+For each vertex `v_src` in `tds_src`, the corresponding vertex `v_tgt` in `this` is a
+copy of the vertex returned by `convert_vertex(v_src)`. The same operations are
+done for faces with the functor convert_face. If `v != TDS_src::Vertex_handle()`,
+a handle to the vertex created in `this` that is the copy of `v` is returned,
+otherwise `Vertex_handle()` is returned.
+
+ - A model of `ConvertVertex` must provide two operator()'s that are responsible for converting the source vertex `v_src` into the target vertex:
+  - `Vertex operator()(const TDS_src::Vertex& v_src);` This operator is used to create the vertex from `v_src`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt);` This operator is meant to be used in case heavy data should transferred to `v_tgt`. 
+ - A model of ConvertFace must provide two operator()'s that are responsible for converting the source face `f_src` into the target face:
+  - `Face operator()(const TDS_src::Face& f_src);` This operator is used to create the face from `f_src`.
+  - `void operator()(const TDS_src::Face& f_src, Face& f_tgt);` This operator is meant to be used in case heavy data should transferred to `f_tgt`.
+
+\pre The optional argument `v` is a vertex of `tds_src` or is `Vertex_handle()`.
+*/
+template <class TDS_src, class ConvertVertex, class ConvertFace>
+Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertFace& convert_face);
+
 /*! 
 Swaps the triangulation data structure and `tds1`. 
 Should be preferred to an assignment or copy constructor
@@ -247,7 +269,10 @@ void clear();
 /// @{
 
 /*! 
-  \cgalAdvanced returns the dimension of the triangulation data structure. 
+  \cgalAdvancedFunction
+  \cgalAdvancedBegin
+  returns the dimension of the triangulation data structure. 
+  \cgalAdvancedEnd
 */ 
 int dimension() const; 
 
@@ -709,7 +734,7 @@ public:
 <I>Optional for the triangulation data 
 structure used alone</I>.
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 
@@ -732,12 +757,18 @@ Face_handle face() const;
 /// @{
 
 /*! 
-\cgalAdvanced sets the geometric information to `p`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+sets the geometric information to `p`. 
+\cgalAdvancedEnd
 */ 
 void set_point(const Point& p); 
 
 /*! 
-\cgalAdvanced sets the incident face to `f`. 
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+sets the incident face to `f`. 
+\cgalAdvancedEnd
 */ 
 void set_face(Face_handle f); 
 

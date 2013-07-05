@@ -112,7 +112,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   Textured_polyhedron::Vertex_iterator it2;
   for(it1 = pMesh->vertices_begin(), 
     it2 = pTex_polyhedron->vertices_begin();
-    it1 != pMesh->vertices_end(),
+    it1 != pMesh->vertices_end() &&
     it2 != pTex_polyhedron->vertices_end();
   it1++, it2++)
   {

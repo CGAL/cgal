@@ -45,18 +45,18 @@ public:
 /*! 
 The constant iterator type. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /*! 
 The iterator type. It must be convertible to `const_iterator`. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 An unsigned integral type that can represent the 
 size of a range. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /// @} 
 

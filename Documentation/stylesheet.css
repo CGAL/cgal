@@ -944,62 +944,115 @@ dl.section
 
 dl.note
 {
-        margin-left:-7px;
-        padding-left: 3px;
+        /* margin-left:-7px; */
+        padding-left: 5px !important;
         border-left:4px solid;
         border-color: #D0C000;
 }
 
 dl.warning, dl.attention
 {
-        margin-left:-7px;
-        padding-left: 3px;
+        /* margin-left:-7px; */
+        padding-left: 5px !important;
         border-left:4px solid;
         border-color: #FF0000;
 }
 
 dl.pre, dl.post, dl.invariant
 {
-        margin-left:-7px;
-        padding-left: 3px;
+        /* margin-left:-7px; */
+        padding-left: 5px !important;
         border-left:4px solid;
         border-color: #00D000;
 }
 
-dl.deprecated
-{
-        margin-left:-7px;
-        padding-left: 3px;
-        border-left:4px solid;
-        border-color: #505050;
-}
-
 dl.todo
 {
-        margin-left:-7px;
-        padding-left: 3px;
+        /* margin-left:-7px; */
+        padding-left: 5px !important;
         border-left:4px solid;
         border-color: #00C0E0;
 }
 
 dl.test
 {
-        margin-left:-7px;
-        padding-left: 3px;
+        /* margin-left:-7px; */
+        padding-left: 5px !important;
         border-left:4px solid;
         border-color: #3030E0;
 }
 
 dl.bug
 {
-        margin-left:-7px;
-        padding-left: 3px;
+        /* margin-left:-7px; */
+        padding-left: 5px !important;
         border-left:4px solid;
         border-color: #C08050;
 }
 
 dl.section dd {
 	margin-bottom: 6px;
+}
+
+
+div.CGALAdvanced
+{
+  background:     #eeb;
+  border:         1px solid #9e9e7d;
+  box-shadow:     0.5ex 0.5ex #ccc;
+}
+div.CGALDebug
+{
+  background:     #c8a8d0;
+  border:         1px solid #846f8a;
+  box-shadow:     0.5ex 0.5ex #777;
+}
+dl.deprecated
+{
+  background:     #d8c0a0;
+  border:         1px solid #94836e;
+  box-shadow:     0.5ex 0.5ex #aaa;
+}
+
+div.CGALAdvanced,
+div.CGALDebug,
+dl.deprecated
+{
+  border-radius:  1ex;
+  padding-top:    0.5ex;
+  padding-bottom: 0.25ex;
+  padding-left:   1ex;
+  padding-right:  1ex;
+  margin-bottom:  1ex;
+}
+
+/* The first div in CGALAdvanced sections is the "Advanced" header */
+div.CGALAdvanced > div,
+div.CGALDebug > div,
+dl.deprecated > dt > b > a
+{
+  font-style:  italic;
+  font-weight: bold;
+}
+/* Everything else is noise and should stay in the normal font */
+div.CGALAdvanced > div ~ div,
+div.CGALDebug > div ~ div,
+dl.deprecated > dt ~ dt
+{
+  font-style:  normal;
+  font-weight: normal;
+}
+
+/* More indentation for the text body */
+div.CGALAdvanced > p,
+div.CGALDebug > p,
+dl.deprecated > dd
+{
+  margin-left:   0;
+  margin-top:    1ex;
+  margin-bottom: 1ex;
+  padding-left:  1em;
+  padding-right: 1em;
 }
 
 

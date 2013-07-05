@@ -9,7 +9,7 @@ construction of polyhedral surfaces, which is for example convenient
 when constructing polyhedral surfaces from file formats, such as the 
 %Object File Format (OFF) \cite cgal:p-gmgv16-96, 
 OpenInventor \cite cgal:w-impoo-94 or 
-VRML \cite cgal:bpp-vrml-95, \cite cgal:vrmls-96. 
+VRML \cite cgal:bpp-vrml-95, \cite cgal:vrmls-97.
 `Polyhedron_incremental_builder_3` needs access to the internal halfedge data 
 structure of type `HDS` of the polyhedral surface. It is intended 
 to be used within a modifier, see `Modifier_base`. 
@@ -68,17 +68,17 @@ public:
 /*! 
 halfedge data structure `HDS`. 
 */ 
-typedef Hidden_type HalfedgeDS; 
+typedef unspecified_type HalfedgeDS; 
 
 /*! 
 point type of the vertex. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 size type. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 

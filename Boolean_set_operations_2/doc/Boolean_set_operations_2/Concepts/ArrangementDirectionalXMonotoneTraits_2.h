@@ -37,32 +37,32 @@ public:
 /*! 
 models the concept `ArrDirectionalTraits::CompareEndpointsXy_2`. 
 */ 
-typedef Hidden_type Compare_endpoints_xy_2; 
+typedef unspecified_type Compare_endpoints_xy_2; 
 
 /*! 
 models the concept `ArrDirectionalTraits::ConstructOpposite_2`. 
 */ 
-typedef Hidden_type Construct_opposite_2; 
+typedef unspecified_type Construct_opposite_2; 
 
 /*! 
 models the concept `ArrDirectionalTraits::Intersect_2`. 
 */ 
-typedef Hidden_type Intersect_2; 
+typedef unspecified_type Intersect_2; 
 
 /*! 
 models the concept `ArrDirectionalTraits::Split_2`. 
 */ 
-typedef Hidden_type Split_2; 
+typedef unspecified_type Split_2; 
 
 /*! 
 models the concept `ArrDirectionalTraits::AreMergeable_2`. 
 */ 
-typedef Hidden_type Are_mergeable_2; 
+typedef unspecified_type Are_mergeable_2; 
 
 /*! 
 models the concept `ArrDirectionalTraits::Merge_2`. 
 */ 
-typedef Hidden_type Merge_2; 
+typedef unspecified_type Merge_2; 
 
 /// @} 
 

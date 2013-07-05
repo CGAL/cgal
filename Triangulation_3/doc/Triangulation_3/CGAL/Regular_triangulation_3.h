@@ -202,6 +202,17 @@ Removes the vertex `v` from the triangulation.
 */ 
 void remove(Vertex_handle v); 
 
+/*! 
+Removes the vertices specified by the iterator range `[first, beyond)`. 
+The function `remove(Vertex_handle)` is called over each element of the range. 
+The number of vertices removed is returned. 
+\pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
+
+\tparam InputIterator must be an input iterator with value type `Vertex_handle`.
+*/ 
+template < typename InputIterator > 
+int remove(InputIterator first, InputIterator beyond); 
+
 /// @} 
 
 /*! \name Queries 
@@ -380,7 +391,7 @@ OutputIteratorCells cit,
 OutputIteratorInternalFacets ifit); 
 
 /*! 
-This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
+\deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
 OutputIterator 
@@ -457,7 +468,7 @@ bool is_Gabriel(Vertex_handle v);
 Returns the weighted circumcenter of the four vertices of c. 
 \pre `rt`.`dimension()`\f$ =3\f$ and `c` is not infinite. 
 */ 
-Weighted_point dual(Cell_handle c) const; 
+Bare_point dual(Cell_handle c) const; 
 
 /*! 
 Returns the dual of facet `f`, which is 
@@ -485,7 +496,9 @@ template <class Stream> Stream & draw_dual(Stream & os);
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
+\cgalDebugFunction
+\cgalDebugBegin
 Checks the combinatorial validity of the triangulation and the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). Also checks that all the 
@@ -496,7 +509,7 @@ is set to true, messages describing the first invalidity encountered
 are printed. 
 This method is mainly a debugging help for the users of 
 advanced features. 
-
+\cgalDebugEnd
 */ 
 bool 
 is_valid(bool verbose = false) const; 

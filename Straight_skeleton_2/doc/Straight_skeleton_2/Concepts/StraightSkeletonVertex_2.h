@@ -26,32 +26,32 @@ public:
 /*! 
 The type of the 2D point being the geometric embedding of the vertex 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 A model of the `FieldWithSqrt` concept representing the time of a vertex (an Euclidean distance) 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 
 */ 
-typedef Hidden_type Halfedge_around_vertex_const_circulator; 
+typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
 /*! 
 The circulator type used to visit all the incident halfedges around a vertex 
 */ 
-typedef Hidden_type Halfedge_around_vertex_circulator; 
+typedef unspecified_type Halfedge_around_vertex_circulator; 
 
 /*! 
 
 */ 
-typedef Hidden_type Defining_contour_halfedge_const_circulator; 
+typedef unspecified_type Defining_contour_halfedge_const_circulator; 
 
 /*! 
 The circulator type used to visit all the defining contour halfedges of a vertex 
 */ 
-typedef Hidden_type Defining_contour_halfedge_circulator; 
+typedef unspecified_type Defining_contour_halfedge_circulator; 
 
 /// @} 
 

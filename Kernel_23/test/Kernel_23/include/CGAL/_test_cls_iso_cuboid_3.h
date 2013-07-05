@@ -81,6 +81,9 @@ _test_cls_iso_cuboid_3(const R& )
  CGAL::Iso_cuboid_3<R> r13(p1, p2, p1, p2, p1, p2);
  CGAL::Iso_cuboid_3<R> r14(p3, p4, p1, p2, p5, p6);
 
+ CGAL::Iso_cuboid_3<R> r15( r14.bbox() );
+ typename R::Iso_cuboid_3 r16( r15.bbox() );
+
  assert( r1 == r1 );
  assert( r0 == r1 );
  assert( r1 == r2 );

@@ -571,8 +571,7 @@ You can avoid the explicit construction of the type
 `Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>` 
 if you only need an expression of it, e.g. to pass it directly 
 as an argument to the solving function. Here is an alternative
-version of 
-\ref QP_solver/solve_convex_hull_containment_lp.h
+version of `QP_solver/solve_convex_hull_containment_lp.h`
 that shows how this works. In effect, you get shorter and more
 readable code.
 

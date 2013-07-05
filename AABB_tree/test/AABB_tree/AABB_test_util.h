@@ -27,9 +27,11 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
-#include <CGAL/AABB_polyhedron_segment_primitive.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
+#include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
+#include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
+#include <boost/mem_fn.hpp>
 
 double random_in(const double a,
                  const double b)
@@ -68,11 +70,8 @@ void test_all_intersection_query_types(Tree& tree)
     typedef typename K::Ray_3 Ray;
     typedef typename K::Line_3 Line;
     typedef typename K::Point_3 Point;
-    // typedef typename K::Vector_3 Vector;
     typedef typename K::Segment_3 Segment;
     typedef typename Tree::Primitive Primitive;
-    // typedef typename Tree::Point_and_primitive_id Point_and_primitive_id;
-    typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
 
     Point p((FT)-0.5, (FT)-0.5, (FT)-0.5);
     Point q((FT) 0.5, (FT) 0.5, (FT) 0.5);
@@ -99,10 +98,17 @@ void test_all_intersection_query_types(Tree& tree)
     tree.all_intersected_primitives(segment,std::back_inserter(primitives));
 
     // any_intersection
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef typename Tree::Object_and_primitive_id Object_and_primitive_id;
     boost::optional<Object_and_primitive_id> optional_object_and_primitive;
     optional_object_and_primitive = tree.any_intersection(ray);
     optional_object_and_primitive = tree.any_intersection(line);
     optional_object_and_primitive = tree.any_intersection(segment);
+    #else
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);    
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
+    #endif
 
     // any_intersected_primitive
     boost::optional<typename Primitive::Id> optional_primitive;
@@ -111,10 +117,19 @@ void test_all_intersection_query_types(Tree& tree)
     optional_primitive = tree.any_intersected_primitive(segment);
 
     // all_intersections
+    #if CGAL_INTERSECTION_VERSION < 2
     std::list<Object_and_primitive_id> intersections;
     tree.all_intersections(ray,std::back_inserter(intersections));
     tree.all_intersections(line,std::back_inserter(intersections));
     tree.all_intersections(segment,std::back_inserter(intersections));
+    #else
+    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > > intersections_r;
+    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > > intersections_l;
+    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > > intersections_s;
+    tree.all_intersections(ray,std::back_inserter(intersections_r));
+    tree.all_intersections(line,std::back_inserter(intersections_l));
+    tree.all_intersections(segment,std::back_inserter(intersections_s));
+    #endif
 }
 
 
@@ -199,7 +214,7 @@ struct Primitive_generator {};
 template<class K, class Polyhedron>
 struct Primitive_generator<SEGMENT, K, Polyhedron>
 {
-    typedef CGAL::AABB_polyhedron_segment_primitive<K,Polyhedron> Primitive;
+    typedef CGAL::AABB_HalfedgeGraph_segment_primitive<Polyhedron> Primitive;
 
     typedef typename Polyhedron::Edge_iterator iterator;
     iterator begin(Polyhedron& p) { return p.edges_begin(); }
@@ -209,7 +224,7 @@ struct Primitive_generator<SEGMENT, K, Polyhedron>
 template<class K, class Polyhedron>
 struct Primitive_generator<TRIANGLE, K, Polyhedron>
 {
-    typedef CGAL::AABB_polyhedron_triangle_primitive<K,Polyhedron> Primitive;
+    typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
 
     typedef typename Polyhedron::Facet_iterator iterator;
     iterator begin(Polyhedron& p) { return p.facets_begin(); }
@@ -315,15 +330,18 @@ class Naive_implementations
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef boost::optional<Object_and_primitive_id> Intersection_result;
-
+  
+  const Traits& m_traits;
 public:
+  Naive_implementations(const Traits& traits):m_traits(traits){}
+
   template<typename Query>
   bool do_intersect(const Query& query, Polyhedron& p) const
   {
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         return true;
     }
 
@@ -339,7 +357,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         ++result;
     }
 
@@ -354,7 +372,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( Traits().do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
         *out++ = Pr(it).id();
     }
 
@@ -369,7 +387,13 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      Intersection_result intersection  = Traits().intersection_object()(query, Pr(it));
+      #if CGAL_INTERSECTION_VERSION < 2
+      Intersection_result 
+        intersection  = Traits().intersection_object()(query, Pr(it));
+      #else
+      boost::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
+        intersection  = m_traits.intersection_object()(query, Pr(it));
+      #endif
       if ( intersection )
         *out++ = *intersection;
     }
@@ -385,11 +409,11 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Point closest_point = Pr(it).reference_point();
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(Pr(it),m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      closest_point = Traits().closest_point_object()(query, Pr(it), closest_point);
+      closest_point = m_traits.closest_point_object()(query, Pr(it), closest_point);
     }
 
     return closest_point;
@@ -404,12 +428,12 @@ public:
 
     // Get a point on the primitive
     Pr closest_primitive = Pr(it);
-    Point closest_point = closest_primitive.reference_point();
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(closest_primitive,m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
       Pr tmp_pr(it);
-      Point tmp_pt = Traits().closest_point_object()(query, tmp_pr, closest_point);
+      Point tmp_pt = m_traits.closest_point_object()(query, tmp_pr, closest_point);
       if ( tmp_pt != closest_point )
       {
         closest_point = tmp_pt;
@@ -446,7 +470,7 @@ public:
   Tree_vs_naive(Tree& tree, Polyhedron& p)
     : m_tree(tree)
     , m_polyhedron(p)
-    , m_naive()
+    , m_naive(m_tree.traits())
     , m_naive_time(0)
     , m_tree_time(0)    {}
 
@@ -675,7 +699,17 @@ private:
                Tree& tree,
                const Naive_implementation& naive) const
     {
-      typedef std::vector<Object_and_primitive_id> Obj_Id_vector;
+      typedef
+        #if CGAL_INTERSECTION_VERSION < 2
+        Object_and_primitive_id
+        #else
+        typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type
+        #endif
+        Obj_type;
+
+      typedef 
+        std::vector<Obj_type> 
+      Obj_Id_vector;
 
       Obj_Id_vector intersections_naive;
       naive_timer.start();
@@ -694,7 +728,8 @@ private:
       std::transform(intersections_naive.begin(),
                      intersections_naive.end(),
                      std::back_inserter(intersections_naive_id),
-                     primitive_id);
+                     boost::mem_fn(&Obj_type::second)
+        );
 
       for ( typename Obj_Id_vector::iterator it = intersections_tree.begin() ;
             it != intersections_tree.end() ;
@@ -707,8 +742,12 @@ private:
       }
 
       // Any intersection test (do not count time here)
-      typedef boost::optional<Object_and_primitive_id> Any_intersection;
-      Any_intersection intersection = tree.any_intersection(query);
+      #if CGAL_INTERSECTION_VERSION < 2
+      boost::optional<Object_and_primitive_id>
+      #else
+      boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type >
+      #endif
+        intersection = tree.any_intersection(query);
 
       // Check: verify we do get the result by naive method
       if ( intersection )
@@ -723,7 +762,7 @@ private:
 
     }
 
-    static typename Primitive::Id primitive_id(const Object_and_primitive_id& o)
+    static typename Primitive::Id primitive_id_o(const Object_and_primitive_id& o)
     {
       return o.second;
     }

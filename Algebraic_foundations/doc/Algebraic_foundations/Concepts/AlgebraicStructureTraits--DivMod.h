@@ -206,27 +206,27 @@ public:
 /*! 
 Is void. 
 */ 
-typedef Hidden_type result_type; 
+typedef unspecified_type result_type; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type first_argument_type; 
+typedef unspecified_type first_argument_type; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type second_argument_type; 
+typedef unspecified_type second_argument_type; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type&`. 
 */ 
-typedef Hidden_type third_argument_type; 
+typedef unspecified_type third_argument_type; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type&`. 
 */ 
-typedef Hidden_type fourth_argument_type; 
+typedef unspecified_type fourth_argument_type; 
 
 /// @} 
 

@@ -54,49 +54,49 @@ public:
 the standard affine kernel. 
 
 */ 
-typedef Hidden_type Standard_kernel; 
+typedef unspecified_type Standard_kernel; 
 
 /*! 
 the standard ring type. 
 
 */ 
-typedef Hidden_type Standard_RT; 
+typedef unspecified_type Standard_RT; 
 
 /*! 
 standard points. 
 
 */ 
-typedef Hidden_type Standard_point_2; 
+typedef unspecified_type Standard_point_2; 
 
 /*! 
 standard segments. 
 
 */ 
-typedef Hidden_type Standard_segment_2; 
+typedef unspecified_type Standard_segment_2; 
 
 /*! 
 standard oriented lines. 
 
 */ 
-typedef Hidden_type Standard_line_2; 
+typedef unspecified_type Standard_line_2; 
 
 /*! 
 standard directions. 
 
 */ 
-typedef Hidden_type Standard_direction_2; 
+typedef unspecified_type Standard_direction_2; 
 
 /*! 
 standard rays. 
 
 */ 
-typedef Hidden_type Standard_ray_2; 
+typedef unspecified_type Standard_ray_2; 
 
 /*! 
 standard affine transformations. 
 
 */ 
-typedef Hidden_type Standard_aff_transformation_2; 
+typedef unspecified_type Standard_aff_transformation_2; 
 
 /// @} 
 
@@ -107,25 +107,25 @@ typedef Hidden_type Standard_aff_transformation_2;
 the ring type of our extended kernel. 
 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 extended points. 
 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 extended segments. 
 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 extended directions. 
 
 */ 
-typedef Hidden_type Direction_2; 
+typedef unspecified_type Direction_2; 
 
 /*! 
 a type descriptor for extended points. 

@@ -415,6 +415,9 @@ public:
 
   Vertex_handle infinite_vertex() const
     { return infinite; }
+    
+  void set_infinite_vertex(Vertex_handle v)
+    { infinite=v;}
 
   Cell_handle infinite_cell() const
     {

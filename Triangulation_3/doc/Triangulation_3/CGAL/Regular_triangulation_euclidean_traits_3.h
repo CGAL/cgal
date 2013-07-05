@@ -57,13 +57,13 @@ Weighted_point_3;
 A predicate type for power test. Belongs to the 
 `RegularTriangulationTraits_3` concept. 
 */ 
-typedef Hidden_type Power_test_3; 
+typedef unspecified_type Power_test_3; 
 
 /*! 
 A predicate type to compare power distance. Belongs to the 
 `RegularTriangulationTraits_3` concept. 
 */ 
-typedef Hidden_type Compare_power_distance_3; 
+typedef unspecified_type Compare_power_distance_3; 
 
 /*! 
 A predicate type. The operator() takes weighted point(s) as arguments, 
@@ -79,7 +79,7 @@ orthogonal to the weighted points with the input weight.
 `Comparison_result operator()( Weighted_point_3 p, FT w) ;` 
 
 */ 
-typedef Hidden_type Compare_weighted_squared_radius_3; 
+typedef unspecified_type Compare_weighted_squared_radius_3; 
 
 /*! 
 A predicate type. The operator() takes weighted points as arguments 
@@ -95,7 +95,7 @@ with respect to the smallest sphere orthogonal to the others.
 `Sign operator()( Weighted_point_3 p, 		 Weighted_point_3 q) ;` 
 
 */ 
-typedef Hidden_type In_smallest_orthogonal_sphere_3; 
+typedef unspecified_type In_smallest_orthogonal_sphere_3; 
 
 /*! 
 A predicate type. The operator() is similar to the operator() of 
@@ -113,7 +113,7 @@ corresponding respectively to
 `Bounded_side operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r) ; ` 
 
 */ 
-typedef Hidden_type Side_of_bounded_orthogonal_sphere_3; 
+typedef unspecified_type Side_of_bounded_orthogonal_sphere_3; 
 
 /*! 
 A predicate type. The operator() 
@@ -136,7 +136,7 @@ This predicate is useful for flow computations.
 `Bounded_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q) ; ` 
 
 */ 
-typedef Hidden_type Does_simplex_intersect_dual_support_3; 
+typedef unspecified_type Does_simplex_intersect_dual_support_3; 
 
 /// @} 
 
@@ -155,7 +155,7 @@ weighted points.
 `Bare_point operator() ( Weighted_point_3 p, 			 Weighted_point_3 q);` 
 
 */ 
-typedef Hidden_type Construct_weighted_circumcenter_3; 
+typedef unspecified_type Construct_weighted_circumcenter_3; 
 
 /*! 
 A functor type. The operator() computes the power distance between its 
@@ -164,7 +164,7 @@ arguments.
 `FT operator() ( Weighted_point_3 p, 		 Weighted_point_3 q) ; ` 
 
 */ 
-typedef Hidden_type Compute_power_product_3; 
+typedef unspecified_type Compute_power_product_3; 
 
 /*! 
 A functor type. The operator() computes the squared radius of the 
@@ -179,7 +179,7 @@ smallest sphere orthogonal to the argument(s).
 `FT operator() ( Weighted_point_3 p);` 
 
 */ 
-typedef Hidden_type Compute_squared_radius_smallest_orthogonal_sphere_3; 
+typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3; 
 
 /*! 
 A functor type. The operator() takes weighted points as arguments 
@@ -194,7 +194,7 @@ for a given last point should be needed.
 `FT operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t);` 
 
 */ 
-typedef Hidden_type Compute_critical_squared_radius_3; 
+typedef unspecified_type Compute_critical_squared_radius_3; 
 
 /// @} 
 

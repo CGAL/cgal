@@ -35,27 +35,27 @@ Sort(Traits tr);
 /*! 
 The type of the visitor. 
 */ 
-typedef Hidden_type Visitor; 
+typedef unspecified_type Visitor; 
 
 /*! 
 The traits type. 
 */ 
-typedef Hidden_type Traits; 
+typedef unspecified_type Traits; 
 
 /*! 
 The handle used to refer to vertex in the sorted list. Derefernecing this returns a `Key` into the `ActiveObjectsTable`. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 A reference counted pointer to be used for storing references to the object. 
 */ 
-typedef Hidden_type Handle; 
+typedef unspecified_type Handle; 
 
 /*! 
 A reference counted pointer to be used for storing references to the object. 
 */ 
-typedef Hidden_type Const_handle; 
+typedef unspecified_type Const_handle; 
 
 /// @} 
 

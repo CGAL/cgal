@@ -53,35 +53,35 @@ because in an undirected graph
 the edges `(u,v)` and `(v,u)` must be equal. This is not the case 
 for the Edge type of the triangulation. 
 */ 
-typedef Hidden_type edge_descriptor; 
+typedef unspecified_type edge_descriptor; 
 
 /*! 
 The vertex iterator type. Its value type is `vertex_descriptor`. 
 */ 
-typedef Hidden_type vertex_iterator; 
+typedef unspecified_type vertex_iterator; 
 
 /*! 
 The edge iterator type, Its value type is `edge_descriptor`. 
 */ 
-typedef Hidden_type edge_iterator; 
+typedef unspecified_type edge_iterator; 
 
 /*! 
 An iterator for the outgoing edges incident to a vertex. 
 Its value type is `edge_descriptor`. 
 */ 
-typedef Hidden_type out_edge_iterator; 
+typedef unspecified_type out_edge_iterator; 
 
 /*! 
 An iterator for the incoming edges incident to a vertex. 
 Its value type is `edge_descriptor`. 
 */ 
-typedef Hidden_type in_edge_iterator; 
+typedef unspecified_type in_edge_iterator; 
 
 /*! 
 An iterator for the vertices adjacent to a vertex. 
 Its value type is `vertex_descriptor`. 
 */ 
-typedef Hidden_type adjacency_iterator; 
+typedef unspecified_type adjacency_iterator; 
 
 /*! 
 

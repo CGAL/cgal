@@ -13,7 +13,6 @@
 
 \ccDefinition
 %============
-
 The \ccRefName\ class implements the incremental randomized algorithm
 introduced by Mulmuley~\cite{m-fppa-90} as presented by
 Seidel~\cite{s-sfira-91} (see also~\cite[Chapter~6]{bkos-cgaa-00}).
@@ -37,6 +36,7 @@ This strategy supports arbitrary subdivisions, including unbounded ones.
 \ccInclude{CGAL/Arr_trapezoid_ric_point_location.h}
 
 \ccIsModel
+%============
   \ccc{ArrangementPointLocation_2} \\
   \ccc{ArrangementVerticalRayShoot_2}
 
@@ -55,6 +55,12 @@ This strategy supports arbitrary subdivisions, including unbounded ones.
 \ccMethod{void with_guarantees (bool with_guarantees);}
   {If with\_guarantees is set to true, the structure will guarantee linear size and logarithmic query time, that is, this function may cause a reconstruction of the data structure. }
 
+\ccSeeAlso
+%============
+\ccRefConceptPage{ArrangementPointLocation_2}\\
+\ccRefConceptPage{ArrangementVerticalRayShoot_2}\\
+\ccRefIdfierPage{CGAL::Arr_point_location_result<Arrangement>}
+\ccRefIdfierPage{CGAL_ARR_POINT_LOCATION_VERSION}
 
 \end{ccRefClass}
 

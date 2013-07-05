@@ -276,44 +276,44 @@ typedef Tds::Vertex_iterator All_vertices_iterator;
 /*! 
 iterator over finite faces. 
 */ 
-typedef Hidden_type Finite_faces_iterator; 
+typedef unspecified_type Finite_faces_iterator; 
 
 /*! 
 iterator over finite edges. 
 */ 
-typedef Hidden_type Finite_edges_iterator 
+typedef unspecified_type Finite_edges_iterator 
 ; 
 
 /*! 
 iterator over finite vertices. 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 iterator over the points corresponding the 
 finite vertices of the triangulation. 
 */ 
-typedef Hidden_type Point_iterator; 
+typedef unspecified_type Point_iterator; 
 
 /*! 
 circulator over all faces intersected by a line. 
 */ 
-typedef Hidden_type Line_face_circulator; 
+typedef unspecified_type Line_face_circulator; 
 
 /*! 
 circulator over all faces incident to a given vertex. 
 */ 
-typedef Hidden_type Face_circulator; 
+typedef unspecified_type Face_circulator; 
 
 /*! 
 circulator over all edges incident to a given vertex. 
 */ 
-typedef Hidden_type Edge_circulator; 
+typedef unspecified_type Edge_circulator; 
 
 /*! 
 circulator over all vertices incident to a given vertex. 
 */ 
-typedef Hidden_type Vertex_circulator; 
+typedef unspecified_type Vertex_circulator; 
 
 /*!
 specifies which case occurs when locating a point in the triangulation. 
@@ -549,6 +549,18 @@ of where the locate process has to start its search.
 Face_handle 
 locate(const Point& query, 
 Face_handle f = Face_handle()) const; 
+
+/*!
+Same as `locate()` but uses inexact predicates. 
+This function returns a handle on a face that is a good approximation of the exact
+location of `query`, while being faster. 
+Note that it may return a handle on a face whose interior does not contain 
+`query`.
+When the triangulation has dimension smaller than 2, `start` is returned.
+*/
+Face_handle
+inexact_locate(const Point & query, 
+Face_handle start = Face_handle()) const;
 
 /*! 
 Same as above. Additionally, the parameters `lt` 
@@ -1069,18 +1081,24 @@ Point circumcenter(Face_handle f) const;
 /// @{
 
 /*! 
-  \cgalAdvanced
+\cgalAdvancedFunction
+\cgalAdvancedBegin
+This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
+Sets the infinite vertex.
+\cgalAdvancedEnd
 */ 
 void set_infinite_vertex(const Vertex_handle& v); 
 
 /// @} 
 
 /// \name Checking 
-/// \cgalAdvanced The responsibility of keeping a valid triangulation
+/// \cgalAdvancedBegin
+/// The responsibility of keeping a valid triangulation
 /// belongs to the users if advanced operations are used. Obviously
 /// the advanced user, who implements higher levels operations may
 /// have to make a triangulation invalid at some times. The following
 /// method is provided to help the debugging.
+/// \cgalAdvancedEnd
 /// @{
 
 /*! 

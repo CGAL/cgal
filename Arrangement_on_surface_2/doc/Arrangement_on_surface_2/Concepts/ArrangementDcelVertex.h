@@ -29,18 +29,18 @@ public:
 /*! 
 the corresponding <span class="textsc">Dcel</span> halfedge type. 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*! 
 the corresponding <span class="textsc">Dcel</span> isolated 
 vertex-information type. 
 */ 
-typedef Hidden_type Isolated_vertex; 
+typedef unspecified_type Isolated_vertex; 
 
 /*! 
 the point type associated with the vertex. 
 */ 
-typedef Hidden_type Point; 
+typedef unspecified_type Point; 
 
 /// @} 
 

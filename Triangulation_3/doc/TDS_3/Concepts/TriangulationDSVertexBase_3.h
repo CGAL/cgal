@@ -50,7 +50,7 @@ class of `Triangulation_data_structure_3::Vertex`.
 \note It can be implemented using a nested template class.
 */ 
 template <typename TDS2> 
-using Rebind_TDS = Hidden_type; 
+using Rebind_TDS = unspecified_type; 
 
 /*! 
 
@@ -108,8 +108,11 @@ void set_cell(Cell_handle c);
 /// @{
 
 /*! 
-\cgalDebug Performs any desired test on a vertex. Checks that the 
+\cgalDebugFunction
+\cgalDebugBegin
+Performs any desired test on a vertex. Checks that the 
 pointer to an incident cell is not the default constructed handle. 
+\cgalDebugEnd
 */ 
 bool is_valid(bool verbose=false, int level=0) const; 
 

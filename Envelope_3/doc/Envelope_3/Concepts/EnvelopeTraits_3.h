@@ -32,12 +32,12 @@ public:
 /*! 
 represents an arbitrary surface in \f$ \mathbb{R}^3\f$. 
 */ 
-typedef Hidden_type Surface_3; 
+typedef unspecified_type Surface_3; 
 
 /*! 
 represents a weakly \f$ xy\f$-monotone surface in \f$ \mathbb{R}^3\f$. 
 */ 
-typedef Hidden_type Xy_monotone_surface_3; 
+typedef unspecified_type Xy_monotone_surface_3; 
 
 /// @} 
 
@@ -58,7 +58,7 @@ The value-type of `OutputIterator` is `Xy_monotone_surface_3`.
 The operator returns a past-the-end iterator for the output sequence. 
 </UL> 
 */ 
-typedef Hidden_type Make_xy_monotone_3; 
+typedef unspecified_type Make_xy_monotone_3; 
 
 /*! 
 provides the operator (templated by the `OutputIterator` type) : 
@@ -82,7 +82,7 @@ value is `ON_ORIENTED_BOUNDARY`. The operator returns a past-the-end
 iterator for the output sequence. 
 </UL> 
 */ 
-typedef Hidden_type Construct_projected_boundary_2; 
+typedef unspecified_type Construct_projected_boundary_2; 
 
 /*! 
 provides the operator (templated by the `OutputIterator` type) : 
@@ -102,7 +102,7 @@ isolated intersection point, or of a vertical intersection curve).
 The operator returns a past-the-end iterator for the output sequence. 
 </UL> 
 */ 
-typedef Hidden_type Construct_projected_intersections_2; 
+typedef unspecified_type Construct_projected_intersections_2; 
 
 /*! 
 provides the operators : 
@@ -133,7 +133,7 @@ This operator is required iff the category tag `Has_boundary_category`
 is defined as `Tag_true`. 
 </UL> 
 */ 
-typedef Hidden_type Compare_z_at_xy_3; 
+typedef unspecified_type Compare_z_at_xy_3; 
 
 /*! 
 provides the operator : 
@@ -150,7 +150,7 @@ defined "above" \f$ c\f$, and their relative \f$ z\f$-order is the same for
 some small enough neighborhood of points above \f$ c\f$. 
 </UL> 
 */ 
-typedef Hidden_type Compare_z_at_xy_above_3; 
+typedef unspecified_type Compare_z_at_xy_above_3; 
 
 /*! 
 provides the operator : 
@@ -167,7 +167,7 @@ defined "below" \f$ c\f$, and their relative \f$ z\f$-order is the same for
 some small enough neighborhood of points below \f$ c\f$. 
 </UL> 
 */ 
-typedef Hidden_type Compare_z_at_xy_below_3; 
+typedef unspecified_type Compare_z_at_xy_below_3; 
 
 /// @} 
 

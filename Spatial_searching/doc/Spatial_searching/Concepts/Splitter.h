@@ -2,7 +2,9 @@
 \ingroup PkgSpatialSearchingDConcepts
 \cgalConcept
 
-\cgalAdvanced The concept `Splitter` defines the requirements for a function object class implementing a splitting rule. 
+\cgalAdvancedBegin
+The concept `Splitter` defines the requirements for a function object class implementing a splitting rule. 
+\cgalAdvancedEnd
 
 \cgalHasModel `CGAL::Fair<Traits, SpatialSeparator>`
 \cgalHasModel `CGAL::Median_of_rectangle<Traits, SpatialSeparator>`
@@ -24,17 +26,17 @@ public:
 /*! 
 Number type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 Separator. 
 */ 
-typedef Hidden_type Separator; 
+typedef unspecified_type Separator; 
 
 /*! 
 Typedef to an instantiation of `CGAL::Point_container<Traits>`. 
 */ 
-typedef Hidden_type Container; 
+typedef unspecified_type Container; 
 
 /// @} 
 

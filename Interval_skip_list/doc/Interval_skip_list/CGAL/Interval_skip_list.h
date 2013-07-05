@@ -33,7 +33,7 @@ typedef Interval::Value Value;
 /*! 
 An iterator over all intervals. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /// @} 
 

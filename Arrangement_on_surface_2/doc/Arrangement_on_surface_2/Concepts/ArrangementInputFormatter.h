@@ -21,7 +21,7 @@ public:
 /*! 
 the type of arrangement to input. 
 */ 
-typedef Hidden_type Arrangement_2; 
+typedef unspecified_type Arrangement_2; 
 
 /*! 
 the point type. 

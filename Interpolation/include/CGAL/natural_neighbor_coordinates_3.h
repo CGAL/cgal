@@ -123,7 +123,7 @@ laplace_natural_neighbor_coordinates_3(const Dt& dt,
       Cell_handle cc1=f1.first;
       if (dt.is_infinite(cc1))
 	return make_triple(nn_out,norm_coeff=Coord_type(1), false);//point outside the convex-hull
-      Cell_handle cc2=cc1->neighbor(f1.second);
+      CGAL_triangulation_assertion_code(Cell_handle cc2=cc1->neighbor(f1.second);)
       CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc1)!=cells.end());//TODO : Delete
       CGAL_triangulation_assertion(std::find(cells.begin(),cells.end(),cc2)==cells.end());//TODO : Delete   
       Point C_1 = construct_circumcenter<Dt>(f1,Q); 	      

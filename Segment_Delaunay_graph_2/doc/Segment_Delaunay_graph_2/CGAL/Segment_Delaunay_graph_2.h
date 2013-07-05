@@ -88,7 +88,7 @@ typedef typename Gt::Site_2 Site_2;
 /*! 
 A type for the container of points. 
 */ 
-typedef Hidden_type Point_container; 
+typedef unspecified_type Point_container; 
 
 /*! 
 A handle for points in the point container. 
@@ -178,17 +178,17 @@ typedef typename DS::Edge_iterator All_edges_iterator;
 /*! 
 A type for an iterator over finite vertices. 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 A type for an iterator over finite faces. 
 */ 
-typedef Hidden_type Finite_faces_iterator; 
+typedef unspecified_type Finite_faces_iterator; 
 
 /*! 
 A type for an iterator over finite edges. 
 */ 
-typedef Hidden_type Finite_edges_iterator; 
+typedef unspecified_type Finite_edges_iterator; 
 
 /// @}
 
@@ -207,13 +207,13 @@ typedef Hidden_type Finite_edges_iterator;
 /*! 
 A type for a bidirectional iterator over all input sites. 
 */ 
-typedef Hidden_type Input_sites_iterator; 
+typedef unspecified_type Input_sites_iterator; 
 
 /*! 
 A type for a bidirectional iterator over all output sites (the sites 
 in the Delaunay graph). 
 */ 
-typedef Hidden_type Output_sites_iterator; 
+typedef unspecified_type Output_sites_iterator; 
 
 /// @} 
 

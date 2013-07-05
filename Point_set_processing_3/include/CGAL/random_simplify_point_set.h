@@ -54,7 +54,7 @@ ForwardIterator
 random_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap /*point_pmap*/, ///< property map ForwardIterator -> Point_3
+  PointPMap /*point_pmap*/, ///< property map: value_type of ForwardIterator -> Point_3
   double removed_percentage, ///< percentage of points to remove.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -81,7 +81,7 @@ ForwardIterator
 random_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
   double removed_percentage) ///< percentage of points to remove
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -95,7 +95,7 @@ random_simplify_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
 template <typename ForwardIterator
 >
 ForwardIterator
@@ -106,7 +106,12 @@ random_simplify_point_set(
 {
   return random_simplify_point_set(
     first,beyond,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
+#else
+    make_identity_property_map(
+    typename std::iterator_traits<ForwardIterator>::value_type()),
+#endif
     removed_percentage);
 }
 /// @endcond

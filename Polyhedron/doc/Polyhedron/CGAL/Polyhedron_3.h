@@ -173,82 +173,82 @@ public:
     /*! 
       type of incident vertices. 
     */ 
-    typedef Hidden_type Vertex; 
+    typedef unspecified_type Vertex; 
 
     /*! 
       type of incident facets. 
     */ 
-    typedef Hidden_type Facet; 
+    typedef unspecified_type Facet; 
 
     /*! 
       handle to vertex. 
     */ 
-    typedef Hidden_type Vertex_handle; 
+    typedef unspecified_type Vertex_handle; 
 
     /*! 
       handle to halfedge. 
     */ 
-    typedef Hidden_type Halfedge_handle; 
+    typedef unspecified_type Halfedge_handle; 
 
     /*! 
       handle to facet. 
     */ 
-    typedef Hidden_type Facet_handle; 
+    typedef unspecified_type Facet_handle; 
 
     /*! 
       circulator of 
       halfedges around a vertex. 
     */ 
-    typedef Hidden_type Halfedge_around_vertex_circulator; 
+    typedef unspecified_type Halfedge_around_vertex_circulator; 
 
     /*! 
       circulator of 
       halfedges around a facet. 
     */ 
-    typedef Hidden_type Halfedge_around_facet_circulator; 
+    typedef unspecified_type Halfedge_around_facet_circulator; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Vertex_const_handle; 
+    typedef unspecified_type Vertex_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_const_handle; 
+    typedef unspecified_type Halfedge_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Facet_const_handle; 
+    typedef unspecified_type Facet_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_around_vertex_const_circulator; 
+    typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_around_facet_const_circulator; 
+    typedef unspecified_type Halfedge_around_facet_const_circulator; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_halfedge_prev; 
+    typedef unspecified_type Supports_halfedge_prev; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_halfedge_vertex; 
+    typedef unspecified_type Supports_halfedge_vertex; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_halfedge_face; 
+    typedef unspecified_type Supports_halfedge_face; 
 
     /// @} 
 
@@ -450,70 +450,70 @@ public:
     /*! 
       type of incident vertices. 
     */ 
-    typedef Hidden_type Vertex; 
+    typedef unspecified_type Vertex; 
 
     /*! 
       type of incident halfedges. 
     */ 
-    typedef Hidden_type Halfedge; 
+    typedef unspecified_type Halfedge; 
 
     /*! 
       plane equation type stored in facets. 
     */ 
-    typedef Hidden_type Plane_3; 
+    typedef unspecified_type Plane_3; 
 
     /*! 
       handle to vertex. 
     */ 
-    typedef Hidden_type Vertex_handle; 
+    typedef unspecified_type Vertex_handle; 
 
     /*! 
       handle to halfedge. 
     */ 
-    typedef Hidden_type Halfedge_handle; 
+    typedef unspecified_type Halfedge_handle; 
 
     /*! 
       handle to facet. 
     */ 
-    typedef Hidden_type Facet_handle; 
+    typedef unspecified_type Facet_handle; 
 
     /*! 
       circulator of 
       halfedges around a facet. 
     */ 
-    typedef Hidden_type Halfedge_around_facet_circulator; 
+    typedef unspecified_type Halfedge_around_facet_circulator; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Vertex_const_handle; 
+    typedef unspecified_type Vertex_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_const_handle; 
+    typedef unspecified_type Halfedge_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Facet_const_handle; 
+    typedef unspecified_type Facet_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_around_facet_const_circulator; 
+    typedef unspecified_type Halfedge_around_facet_const_circulator; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_facet_halfedge; 
+    typedef unspecified_type Supports_facet_halfedge; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_facet_plane; 
+    typedef unspecified_type Supports_facet_plane; 
 
     /// @} 
 
@@ -623,70 +623,70 @@ public:
     /*! 
       type of incident halfedges. 
     */ 
-    typedef Hidden_type Halfedge; 
+    typedef unspecified_type Halfedge; 
 
     /*! 
       type of incident facets. 
     */ 
-    typedef Hidden_type Facet; 
+    typedef unspecified_type Facet; 
 
     /*! 
       point type stored in vertices. 
     */ 
-    typedef Hidden_type Point_3; 
+    typedef unspecified_type Point_3; 
 
     /*! 
       handle to vertex. 
     */ 
-    typedef Hidden_type Vertex_handle; 
+    typedef unspecified_type Vertex_handle; 
 
     /*! 
       handle to halfedge. 
     */ 
-    typedef Hidden_type Halfedge_handle; 
+    typedef unspecified_type Halfedge_handle; 
 
     /*! 
       handle to facet. 
     */ 
-    typedef Hidden_type Facet_handle; 
+    typedef unspecified_type Facet_handle; 
 
     /*! 
       circulator of 
       halfedges around a vertex. 
     */ 
-    typedef Hidden_type Halfedge_around_vertex_circulator; 
+    typedef unspecified_type Halfedge_around_vertex_circulator; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Vertex_const_handle; 
+    typedef unspecified_type Vertex_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_const_handle; 
+    typedef unspecified_type Halfedge_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Facet_const_handle; 
+    typedef unspecified_type Facet_const_handle; 
 
     /*! 
 
      */ 
-    typedef Hidden_type Halfedge_around_vertex_const_circulator; 
+    typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_vertex_halfedge; 
+    typedef unspecified_type Supports_vertex_halfedge; 
 
     /*! 
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
-    typedef Hidden_type Supports_vertex_point; 
+    typedef unspecified_type Supports_vertex_point; 
 
     /// @} 
 
@@ -778,45 +778,45 @@ public:
   /*! 
     traits class selected for `PolyhedronTraits_3`. 
   */ 
-  typedef Hidden_type Traits; 
+  typedef unspecified_type Traits; 
 
   /*! 
     items class selected for `PolyhedronItems_3`. 
   */ 
-  typedef Hidden_type Items; 
+  typedef unspecified_type Items; 
 
   /*! 
     instantiated halfedge data structure. 
   */ 
-  typedef Hidden_type HalfedgeDS; 
+  typedef unspecified_type HalfedgeDS; 
 
   /*! 
     size type of `HalfedgeDS`. 
   */ 
-  typedef Hidden_type size_type; 
+  typedef unspecified_type size_type; 
 
   /*! 
     difference type of `HalfedgeDS`. 
   */ 
-  typedef Hidden_type difference_type; 
+  typedef unspecified_type difference_type; 
 
   /*! 
     iterator category of `HalfedgeDS` 
     for all iterators. 
   */ 
-  typedef Hidden_type iterator_category; 
+  typedef unspecified_type iterator_category; 
 
   /*! 
     circulator category of all circulators; 
     bidirectional category if the `Items::Halfedge` provides a `Halfedge::prev()` 
     member function, otherwise forward category. 
   */ 
-  typedef Hidden_type circulator_category; 
+  typedef unspecified_type circulator_category; 
 
   /*! 
     allocator type `Alloc`. 
   */ 
-  typedef Hidden_type allocator_type; 
+  typedef unspecified_type allocator_type; 
 
   /// @}
 
@@ -841,69 +841,69 @@ public:
   /*! 
     point stored in vertices. 
   */ 
-  typedef Hidden_type Point_3; 
+  typedef unspecified_type Point_3; 
 
   /*! 
     plane equation stored in facets (if supported). 
   */ 
-  typedef Hidden_type Plane_3; 
+  typedef unspecified_type Plane_3; 
 
   /*! 
     handle to vertex. 
   */ 
-  typedef Hidden_type Vertex_handle; 
+  typedef unspecified_type Vertex_handle; 
 
   /*! 
     handle to halfedge. 
   */ 
-  typedef Hidden_type Halfedge_handle; 
+  typedef unspecified_type Halfedge_handle; 
 
   /*! 
     handle to facet. 
   */ 
-  typedef Hidden_type Facet_handle; 
+  typedef unspecified_type Facet_handle; 
 
   /*! 
     iterator over all vertices. 
   */ 
-  typedef Hidden_type Vertex_iterator; 
+  typedef unspecified_type Vertex_iterator; 
 
   /*! 
     iterator over all halfedges. 
   */ 
-  typedef Hidden_type Halfedge_iterator; 
+  typedef unspecified_type Halfedge_iterator; 
 
   /*! 
     iterator over all facets. 
   */ 
-  typedef Hidden_type Facet_iterator; 
+  typedef unspecified_type Facet_iterator; 
 
   /*! 
     circulator of 
     halfedges around a vertex (cw). 
   */ 
-  typedef Hidden_type Halfedge_around_vertex_circulator; 
+  typedef unspecified_type Halfedge_around_vertex_circulator; 
 
   /*! 
     circulator of 
     halfedges around a facet (ccw). 
   */ 
-  typedef Hidden_type Halfedge_around_facet_circulator; 
+  typedef unspecified_type Halfedge_around_facet_circulator; 
 
   /*! 
     iterator over all edges (every other halfedge). 
   */ 
-  typedef Hidden_type Edge_iterator; 
+  typedef unspecified_type Edge_iterator; 
 
   /*! 
     iterator over all points. 
   */ 
-  typedef Hidden_type Point_iterator; 
+  typedef unspecified_type Point_iterator; 
 
   /*! 
     iterator over all plane equations. 
   */ 
-  typedef Hidden_type Plane_iterator; 
+  typedef unspecified_type Plane_iterator; 
 
   /// @} 
 
@@ -916,42 +916,42 @@ public:
   /*! 
     `Vertex::halfedge()`. 
   */ 
-  typedef Hidden_type Supports_vertex_halfedge; 
+  typedef unspecified_type Supports_vertex_halfedge; 
 
   /*! 
     `Vertex::point()`. 
   */ 
-  typedef Hidden_type Supports_vertex_point; 
+  typedef unspecified_type Supports_vertex_point; 
 
   /*! 
     `Halfedge::prev()`. 
   */ 
-  typedef Hidden_type Supports_halfedge_prev; 
+  typedef unspecified_type Supports_halfedge_prev; 
 
   /*! 
     `Halfedge::vertex()`. 
   */ 
-  typedef Hidden_type Supports_halfedge_vertex; 
+  typedef unspecified_type Supports_halfedge_vertex; 
 
   /*! 
     `Halfedge::facet()`. 
   */ 
-  typedef Hidden_type Supports_halfedge_facet; 
+  typedef unspecified_type Supports_halfedge_facet; 
 
   /*! 
     `Facet::halfedge()`. 
   */ 
-  typedef Hidden_type Supports_facet_halfedge; 
+  typedef unspecified_type Supports_facet_halfedge; 
 
   /*! 
     `Facet::plane()`. 
   */ 
-  typedef Hidden_type Supports_facet_plane; 
+  typedef unspecified_type Supports_facet_plane; 
 
   /*! 
     supports removal of individual elements. 
   */ 
-  typedef Hidden_type Supports_removal; 
+  typedef unspecified_type Supports_removal; 
 
   /// @} 
 
@@ -1466,7 +1466,8 @@ n  */
   /*!
     \name Operations with Border Halfedges 
 
-    \cgalAdvanced Halfedges incident to a hole are called <I>border
+    \cgalAdvancedBegin
+    Halfedges incident to a hole are called <I>border
     halfedges</I>. An halfedge is a <I>border edge</I> if itself or its
     opposite halfedge are border halfedges. The only requirement to work
     with border halfedges is that the `Halfedge` class provides a member
@@ -1484,6 +1485,7 @@ n  */
     the data structure. Halfedge insertion or removal and changing the
     border status of a halfedge invalidate these values. They are not
     automatically updated.
+    \cgalAdvancedEnd
   */
   /// @{
 
@@ -1564,7 +1566,10 @@ n  */
   bool normalized_border_is_valid( bool verbose = false) const; 
 
   /*!  
-    \cgalAdvanced calls the `Modifier_base::operator()()` of the modifier `m`.
+    \cgalAdvancedFunction
+    \cgalAdvancedBegin
+    calls the `Modifier_base::operator()()` of the modifier `m`.
+    \cgalAdvancedEnd
     \pre The polyhedral surface must be valid when the modifier returns from execution. 
   */ 
   void delegate( CGAL::Modifier_base<HDS>& m); 

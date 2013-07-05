@@ -81,9 +81,8 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
 
   #include <CGAL/Circular_kernel_2/interface_macros.h>
 
-	typedef LinearFunctors::Construct_line_2<CircularKernel> Construct_line_2;
+  typedef LinearFunctors::Construct_line_2<CircularKernel> Construct_line_2;
   Construct_line_2 construct_line_2_object() const { return Construct_line_2(); }
-
 };
 
 } // namespace internal

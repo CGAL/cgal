@@ -92,13 +92,13 @@ public:
 the `NtTraits::Rational` type 
 (and also the `RatKernel::FT` type). 
 */ 
-typedef Hidden_type Rational; 
+typedef unspecified_type Rational; 
 
 /*! 
 the `NtTraits::Algebraic` type 
 (and also the `AlgKernel::FT` type). 
 */ 
-typedef Hidden_type Algebraic; 
+typedef unspecified_type Algebraic; 
 
 /// @}
 

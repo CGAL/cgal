@@ -23,13 +23,13 @@ public:
 The type used to access items in the queue in order 
 to change or delete them. 
 */ 
-typedef Hidden_type Key; 
+typedef unspecified_type Key; 
 
 /*! 
 The priority type for items in the queue. This 
 is typically the same as `Kinetic::Simulator::Time` 
 */ 
-typedef Hidden_type Priority; 
+typedef unspecified_type Priority; 
 
 /// @} 
 

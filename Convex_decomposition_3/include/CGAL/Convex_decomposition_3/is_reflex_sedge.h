@@ -27,6 +27,8 @@
 
 namespace CGAL {
 
+/// @cond SKIP
+
 /*
   int is_reflex_edge(Halfedge_handle e) {    
     SHalfedge_around_svertex_circulator 
@@ -166,6 +168,8 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
 
   return result;
 }
+
+/// \endcond
 
 } //namespace CGAL
 #endif // CGAL_CD3_IS_REFLEX_SEDGE_H

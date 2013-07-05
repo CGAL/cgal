@@ -41,13 +41,13 @@ public:
 The line type. This type is required only if 
 some dual functions are called. 
 */ 
-typedef Hidden_type Line_2; 
+typedef unspecified_type Line_2; 
 
 /*! 
 The type for ray. This type is required only if 
 some dual functions are called. 
 */ 
-typedef Hidden_type Ray_2; 
+typedef unspecified_type Ray_2; 
 
 /*! 
 A function object to perform an incircle test for a point and three other points.
@@ -59,7 +59,7 @@ which takes four points `p, q, r, s` as arguments and returns
 `ON_ORIENTED_BOUNDARY` according to the position of points `s` 
 with respect to the oriented circle through `p, q` and `r`. 
 */ 
-typedef Hidden_type Side_of_oriented_circle_2; 
+typedef unspecified_type Side_of_oriented_circle_2; 
 
 /*! 
 A function object to compare two distances for three points. 
@@ -71,7 +71,7 @@ according to the distance between p and q being smaller, equal or larger
 than the distance between p and r. This type is only require if 
 `nearest_vertex` queries are issued. 
 */ 
-typedef Hidden_type Compare_distance_2; 
+typedef unspecified_type Compare_distance_2; 
 
 /*! 
 A function object to construct the circumcenter of three points. 
@@ -82,7 +82,7 @@ the circumcenter of the three points `p, q` and `r`.
 This type is required only if functions 
 relative to the dual Voronoi diagram are called. 
 */ 
-typedef Hidden_type Construct_circumcenter_2; 
+typedef unspecified_type Construct_circumcenter_2; 
 
 /*! 
 A function object to construct the bisector of two points. 
@@ -94,7 +94,7 @@ bisector line of points `p` and `q`.
 This type is required only if functions 
 relative to the dual Voronoi diagram are called. 
 */ 
-typedef Hidden_type Construct_bisector_2; 
+typedef unspecified_type Construct_bisector_2; 
 
 /*! 
 A function object to build a ray from a point and a line. 
@@ -102,7 +102,7 @@ Provides the operator:
 
 `Ray_2 operator() ( Point_2 p, Line_2 l);` 
 */ 
-typedef Hidden_type Construct_ray_2; 
+typedef unspecified_type Construct_ray_2; 
 
 /// @} 
 

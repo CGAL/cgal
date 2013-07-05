@@ -13,7 +13,7 @@
 \cgalPkgManuals{Chapter_3D_Fast_Intersection_and_Distance_Computation,PkgAABB_tree}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{1.0}
+\cgalPkgSince{3.5}
 \cgalPkgBib{cgal:atw-aabb}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{AABB Tree,AABB_demo.zip}
@@ -24,6 +24,7 @@
 
 ## Concepts ##
 - `AABBPrimitive`
+- `AABBPrimitiveWithSharedData`
 - `AABBTraits`
 - `AABBGeomTraits`
 
@@ -31,4 +32,10 @@
 - `CGAL::AABB_traits<GeomTraits,Primitive>`
 - `CGAL::AABB_tree<AT>`
 
+## Primitives ##
+- `CGAL::AABB_triangle_primitive<Iterator,cache_datum>`
+- `CGAL::AABB_segment_primitive<Iterator,cache_datum>`
+- `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>`
+- `CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
+- `CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
 */

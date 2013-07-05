@@ -3,7 +3,7 @@
 \ingroup PkgSphericalKernel3GeometricConcepts
 \cgalConcept
 
-\brief Testing whether two curves intersect. 
+\brief Testing whether two curves or surfaces intersect. 
 
 \cgalRefines `Kernel::DoIntersect_3`
 

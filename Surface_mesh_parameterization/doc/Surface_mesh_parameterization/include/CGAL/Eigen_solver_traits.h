@@ -63,7 +63,7 @@ If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`, `Matr
 and `CGAL::Eigen_sparse_matrix<T>` otherwise. 
 
 */ 
-typedef Hidden_type Matrix; 
+typedef unspecified_type Matrix; 
 
 /// @} 
 

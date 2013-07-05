@@ -31,7 +31,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 #include "AABB_test_util.h"
 

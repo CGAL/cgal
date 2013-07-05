@@ -57,20 +57,24 @@ namespace internal {
        );
   }
 
+  template <class K>
+  bool do_intersect(const CGAL::Bbox_3& bbox,
+                    const typename K::Ray_3& ray,
+                    const K&) {
+    return do_intersect(ray, bbox, K());
+  }
 } // namespace internal
 
-template <class K>
-bool do_intersect(const CGAL::Ray_3<K>& ray,
-		  const CGAL::Bbox_3& bbox)
-{
-  return typename K::Do_intersect_3()(ray, bbox);
+template<typename K>
+bool do_intersect(const CGAL::Bbox_3 a,
+                  const Ray_3<K>& b) {
+  return K().do_intersect_3_object()(a, b);
 }
 
-template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-		  const CGAL::Ray_3<K>& ray)
-{
-  return typename K::Do_intersect_3()(ray, bbox);
+template<typename K>
+bool do_intersect(const Ray_3<K>& a,
+                  const CGAL::Bbox_3& b) {
+  return K().do_intersect_3_object()(a, b);
 }
 
 } //namespace CGAL

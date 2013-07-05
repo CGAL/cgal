@@ -33,57 +33,48 @@ namespace CGAL {
  * A generator for the landmarks point-locatoion class, which uses a
  * random set of points as its set of landmarks.
 */
-
-template <class Arrangement_,
-          class Nearest_neighbor_  =
-            Arr_landmarks_nearest_neighbor<typename
-                                           Arrangement_::Geometry_traits_2> >
+template <typename Arrangement_,
+          typename Nearest_neighbor_ =
+            Arr_landmarks_nearest_neighbor<Arrangement_> >
 class Arr_random_landmarks_generator :
     public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
   typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef Nearest_neighbor_                             Nearest_neighbor;
 
-  typedef Arr_landmarks_generator_base<Arrangement_2,
-                                       Nearest_neighbor>    Base;
-  typedef Arr_random_landmarks_generator<Arrangement_2,
-                                         Nearest_neighbor>  Self;
+private:
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>
+                                                        Base;
+  typedef Arr_random_landmarks_generator<Arrangement_2, Nearest_neighbor>
+                                                        Self;
 
+public:
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Point_2               Point_2;
   typedef typename Base::Points_set                     Points_set;
-
-  typedef typename Arrangement_2::Vertex_const_iterator
-                                                Vertex_const_iterator;
+  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
 
 protected:
-
   // Data members:
   unsigned int     num_landmarks; 
 
 private:
-
   /*! Copy constructor - not supported. */
   Arr_random_landmarks_generator (const Self& );
 
   /*! Assignment operator - not supported. */
   Self& operator= (const Self& );
 
-  
 public: 
-
   /*! Constructor. */
   Arr_random_landmarks_generator (const Arrangement_2& arr,
                                   unsigned int n_landmarks = 0) :
     Base (arr),
     num_landmarks (n_landmarks)
-  {
-    this->build_landmark_set();
-  }
+  { this->build_landmark_set(); }
 
 protected:
-
   /*!
    * Create a set of random points (the number of points is given as a
    * parameter to the constructor, or is taken from the arrangement size).
@@ -101,19 +92,16 @@ protected:
     double                  x, y;
     bool                    first = true;
 
-    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
-    {
+    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
       x = CGAL::to_double(vit->point().x());
       y = CGAL::to_double(vit->point().y());
 
-      if (first)
-      {
+      if (first) {
         x_min = x_max = x;
         y_min = y_max = y;
         first = false;
       }
-      else
-      {
+      else {
         if (x < x_min)
           x_min = x;
         else if (x > x_max)

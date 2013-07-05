@@ -26,6 +26,7 @@
 #define CGAL_SPHERICAL_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_SPHERE_H
 
 #include <CGAL/kernel_basic.h>
+#include <CGAL/is_iterator.h>
 
 #include <CGAL/Spherical_kernel_intersections.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_point_3.h>
@@ -38,8 +39,7 @@
 #include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Circular_kernel_3/internal_function_compare_to_right_spherical_kernel.h>
-#include <CGAL/Object.h>
-
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
 
 namespace CGAL {
 	
@@ -1098,26 +1098,26 @@ template < class SK > \
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Circle_3                 Circular_arc_point_3;
   
   public:
-
-	  typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
+    typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
   
     using SK::Linear_kernel::Do_intersect_3::operator();
 
-#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B) \
-  result_type \
-  operator()(const A & c1, const B & c2) const \
-  { std::vector< Object > res; \
-    typename SK::Intersect_3()(c1,c2,std::back_inserter(res)); \
-	  return res.size() != 0; }
+#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B)            \
+    result_type                                                         \
+    operator()(const A & c1, const B & c2) const                        \
+    { std::vector< typename SK3_Intersection_traits<SK, A, B>::type > res; \
+      typename SK::Intersect_3()(c1,c2,std::back_inserter(res));        \
+      return !res.empty(); }
 	
-#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C) \
-  result_type \
-  operator()(const A & c1, const B & c2, const C & c3) const \
-  { std::vector< Object > res; \
-    typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res)); \
-	  return res.size() != 0; }
+#define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C)          \
+    result_type                                                         \
+    operator()(const A & c1, const B & c2, const C & c3) const          \
+    { std::vector< typename SK3_Intersection_traits<SK, A, B, C>::type > res; \
+      typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));     \
+      return !res.empty(); }
 
 	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_3)
 	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
@@ -1158,23 +1158,67 @@ template < class SK > \
 
   template < class SK >
   class Intersect_3
-    : public SK::Linear_kernel::Intersect_3
+  //The inheritance is commented as for some reason this does not work when
+  //using the Lazy_kernel as linear kernel.
+  //  : public SK::Linear_kernel::Intersect_3
   {
-  
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
     typedef typename SK::Line_arc_3               Line_arc_3;
     typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
+    typedef typename SK::Point_3                  Point_3;
     typedef typename SK::Circle_3                 Circle_3;
-    
-    public:
+    typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
 
-		typedef typename SK::Linear_kernel::Intersect_3::result_type result_type;
-                                
-    typedef typename SK::Object_3 Object_3;
-    
-    using SK::Linear_kernel::Intersect_3::operator();
+  public:
+
+    template <typename>
+    struct result;
+
+    // the binary overload always goes to Linear::Intersect_3
+    template <typename F, typename A, typename B>
+    struct result<F(A, B)>
+    { typedef typename Intersection_traits<SK, A, B>::result_type type; };
+
+    // This one is only for the spherical kernel, O is an output iterator
+    template <typename F, typename A, typename B, typename OutputIterator>
+    struct result<F(A, B, OutputIterator)>
+    { typedef OutputIterator type;};
+
+    // there is no quaternary form in the linear Kernel
+    template <typename F, typename A, typename B, typename C, typename OutputIterator>
+    struct result<F(A, B, C, OutputIterator)>
+    { typedef OutputIterator type; };
+
+    //only ternary from the linear kernel
+    template<typename F>
+    struct result<F(Plane_3, Plane_3, Plane_3)> {
+      #if CGAL_INTERSECTION_VERSION < 2
+      typedef CGAL::Object type;
+      #else
+      typedef boost::optional< 
+        boost::variant< Point_3, 
+                        Line_3, 
+                        Plane_3 > > type;
+      #endif
+    };
+
+    //using SK::Linear_kernel::Intersect_3::operator();
+
+    typedef typename SK::Linear_kernel::Intersect_3 Intersect_linear_3;
+
+    template<class A, class B>
+    typename Intersection_traits<SK, A, B>::result_type
+    operator()(const A& a, const B& b) const{
+      return Intersect_linear_3()(a,b);
+    }
+
+    typename result<Intersect_linear_3(Plane_3, Plane_3, Plane_3)>::type
+    operator()(const Plane_3& p, const Plane_3& q, const Plane_3& r) const
+    {
+      return Intersect_linear_3()(p, q, r);
+    }
 
     template < class OutputIterator >
     OutputIterator
@@ -1182,10 +1226,10 @@ template < class SK > \
 	       OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
     
-     template < class OutputIterator >
+    template < class OutputIterator >
     OutputIterator
-      operator()(const Line_3 & l,const Sphere_3 & s, 
-	       OutputIterator res) const
+    operator()(const Line_3 & l,const Sphere_3 & s, 
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >

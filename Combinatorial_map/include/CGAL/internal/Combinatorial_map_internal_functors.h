@@ -22,7 +22,10 @@
 
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Dimension.h>
+#include <CGAL/Kernel_traits.h>
 #include <vector>
+#include <boost/mpl/has_xxx.hpp>
 
 /* Definition of functors used internally to manage attributes (we need
  * functors as attributes are stored in tuple, thus all the access must be
@@ -58,6 +61,21 @@
  *
  * internal::Set_i_attribute_of_dart_functor<CMap, i> to set the i-attribute
  *   of a given dart.
+ *
+ * internal::Test_is_same_attribute_functor<Map1, Map2> to test if two
+ *   i-attributes of two darts are isomorphic.
+ *
+ * internal::Is_attribute_has_non_void_info<Attr> to test if the attribute
+ *   Attr is non Void and has an non void Info as inner type
+ *
+ * internal::Is_attribute_has_point<Attr> to test if the attribute
+ *   Attr is non Void and has a Point inner type
+ *
+ * internal::Reverse_orientation_of_map_functor<CMap> to reverse the
+ *   orientation of a whole combinatorial map
+ *
+ * internal::Reverse_orientation_of_connected_component_functor to reverse
+ *   the orientation of a connected component in a cmap
  */
 
 namespace CGAL
@@ -65,64 +83,21 @@ namespace CGAL
 // ****************************************************************************
 namespace internal
 {
-// Struct to test if the given class has a functor with a map as first
-// parameter.
-template <typename CMap, typename Attribute, typename Functor>
-struct FuctorWithMap
-{
-  template <typename T, T> struct TypeCheck;
-
-  typedef char Yes;
-  struct No{ char c[2]; };
-
-  template <typename T> struct Fct
-  {
-    // The function we want to test.
-    typedef void (T::*fptr)(CMap*, Attribute&, Attribute&);
-  };
-
-  template <typename T>
-  static Yes
-  HasFunctorWithMap(TypeCheck< typename Fct<T>::fptr, &T::operator() >*);
-  template <typename T> static No  HasFunctorWithMap(...);
-
-public:
-  static bool const
-  value=(sizeof(HasFunctorWithMap<Functor>(0))==sizeof(Yes));
-};
 // ****************************************************************************
 // Functor which call Functor::operator() on the two given cell_attributes
-template<typename CMap, typename Cell_attribute, typename Functor,
-         bool FunctorWithMap=
-         FuctorWithMap<CMap, Cell_attribute, Functor>::value>
+ template<typename CMap, typename Cell_attribute, typename Functor>
 struct Apply_cell_functor
 {
-  static void run(CMap*, Cell_attribute& acell1, Cell_attribute& acell2)
+  static void run(Cell_attribute& acell1, Cell_attribute& acell2)
   {
-    Functor() (acell1,acell2);
-  }
-};
-template<typename CMap, typename Cell_attribute, typename Functor>
-struct Apply_cell_functor<CMap, Cell_attribute, Functor, true>
-{
-  static void run(CMap* amap, Cell_attribute& acell1, Cell_attribute& acell2)
-  {
-    Functor() (amap, acell1, acell2);
+    Functor() (acell1, acell2);
   }
 };
 //...except for Null_functor.
-template<typename CMap, typename Cell_attribute, bool FunctorWithMap>
-struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor,
-    FunctorWithMap>
-{
-  static void run(CMap*, Cell_attribute&, Cell_attribute&)
-  {}
-};
-//...even with true.
 template<typename CMap, typename Cell_attribute>
-struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor, true>
+struct Apply_cell_functor<CMap, Cell_attribute, CGAL::Null_functor>
 {
-  static void run(CMap*, Cell_attribute&, Cell_attribute&)
+  static void run(Cell_attribute&, Cell_attribute&)
   {}
 };
 // ****************************************************************************
@@ -143,15 +118,15 @@ struct Call_split_functor
   {
     // Static version
     CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
-        run(amap, *(adart1->template attribute<i>()),
+      run(*(adart1->template attribute<i>()),
           *(adart2->template attribute<i>()));
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onsplit_functors) )
       CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-          (amap->m_onsplit_functors)
-          (*(adart1->template attribute<i>()),
-           *(adart2->template attribute<i>()));
+        (amap->m_onsplit_functors)
+        (*(adart1->template attribute<i>()),
+         *(adart2->template attribute<i>()));
   }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
@@ -159,12 +134,12 @@ struct Call_split_functor
   {
     // Static version
     CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
-        run(amap, *a1, *a2);
+      run(*a1, *a2);
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onsplit_functors) )
       CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-          (amap->m_onsplit_functors)(*a1, *a2);
+        (amap->m_onsplit_functors) (*a1, *a2);
   }
 };
 // Specialization for disabled attributes.
@@ -193,15 +168,15 @@ struct Call_merge_functor
   {
     // Static version
     CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
-        run(amap, *(adart1->template attribute<i>()),
-            *(adart2->template attribute<i>()));
+      run(*(adart1->template attribute<i>()),
+          *(adart2->template attribute<i>()));
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onmerge_functors) )
       CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-          (amap->m_onmerge_functors)
-          (*(adart1->template attribute<i>()),
-           *(adart2->template attribute<i>()));
+        (amap->m_onmerge_functors)
+        (*(adart1->template attribute<i>()),
+         *(adart2->template attribute<i>()));
   }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
@@ -209,12 +184,12 @@ struct Call_merge_functor
   {
     // Static version
     CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
-        run(amap, *a1, *a2);
+      run(*a1, *a2);
     // Dynamic version
     if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
          (amap->m_onmerge_functors) )
       CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-          (amap->m_onmerge_functors)(*a1, *a2);
+        (amap->m_onmerge_functors) (*a1, *a2);
   }
 };
 // Specialization for disabled attributes.
@@ -411,6 +386,446 @@ struct Set_i_attribute_of_dart_functor<CMap, i, CGAL::Void>
   static void run( CMap*, typename CMap::Dart_handle,
                    typename CMap::template Attribute_handle<i>::type)
   {}
+};
+// ****************************************************************************
+// Functor allowing to test if two info are the same or not
+template< typename Attr1, typename Attr2,
+          typename Info1=typename Attr1::Info,
+          typename Info2=typename Attr2::Info >
+struct Is_same_info
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return false; }
+};
+
+template< typename Attr1, typename Attr2, typename Info1 >
+struct Is_same_info<Attr1, Attr2, Info1, void>
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return false; }
+};
+
+template< typename Attr1, typename Attr2, typename Info2 >
+struct Is_same_info<Attr1, Attr2, void, Info2>
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return false; }
+};
+
+template< typename Attr1, typename Attr2 >
+struct Is_same_info<Attr1, Attr2, void, void>
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return true; }
+};
+
+template< typename Attr1, typename Attr2, typename Info >
+struct Is_same_info<Attr1, Attr2, Info, Info>
+{
+  static bool run(const Attr1&a1, const Attr2&a2)
+  { return a1.info()==a2.info(); }
+};
+
+// Case of two non void type
+template<typename Map1, typename Map2,
+         typename T1, typename T2, int i>
+struct Is_same_attribute_info_functor
+{
+  static bool run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle dh2)
+  {
+    if (dh1->template attribute<i>()==NULL &&
+        dh2->template attribute<i>()==NULL)
+      return true;
+
+    if (dh1->template attribute<i>()==NULL ||
+        dh2->template attribute<i>()==NULL)
+      return false;
+
+    return
+        Is_same_info<T1,T2>::run(*(dh1->template attribute<i>()),
+                                 *(dh2->template attribute<i>()));
+  }
+};
+
+// Case T1==void
+template <typename Map1, typename Map2,
+          typename T2, int i>
+struct Is_same_attribute_info_functor<Map1, Map2, Void, T2, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle dh2)
+  {
+    return dh2->template attribute<i>()==NULL ||
+        Is_same_info<int,T2,void,typename T2::Info>::
+        run(0, *(dh2->template attribute<i>()));
+  }
+};
+
+// Case T2==void
+template <typename Map1, typename Map2,
+          typename T1, int i>
+struct Is_same_attribute_info_functor<Map1, Map2, T1, Void, i>
+{
+  static bool run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle)
+  {
+    return dh1->template attribute<i>()==NULL ||
+        Is_same_info<T1, int, typename T1::Info, void>::
+        run(*(dh1->template attribute<i>()), 0);
+  }
+};
+
+// Case T1==T2==void
+template <typename Map1, typename Map2, int i>
+struct Is_same_attribute_info_functor<Map1, Map2, Void, Void, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return true; }
+};
+
+// ****************************************************************************
+// Functor allowing to test if two points are the same or not.
+// Here we know both attributes have points.
+template< typename Attr1, typename Attr2,
+          typename Point1=typename Attr1::Point,
+          typename Point2=typename Attr2::Point,
+          typename T1=typename Ambient_dimension<Point1>::type >
+struct Is_same_point
+{
+  static bool run(const Attr1&, const Attr2&)
+  { return false; }
+};
+
+template< typename Attr1, typename Attr2, typename Point>
+struct Is_same_point<Attr1, Attr2, Point, Point, Dimension_tag<2> >
+{
+  static bool run(const Attr1& a1, const Attr2& a2)
+  { return typename Kernel_traits<Point>::Kernel::Equal_2()
+        (a1.point(),a2.point()); }
+};
+
+template< typename Attr1, typename Attr2, typename Point>
+struct Is_same_point<Attr1, Attr2, Point, Point, Dimension_tag<3> >
+{
+  static bool run(const Attr1& a1, const Attr2& a2)
+  { return typename Kernel_traits<Point>::Kernel::Equal_3()
+        (a1.point(),a2.point()); }
+};
+
+template< typename Attr1, typename Attr2, typename Point>
+struct Is_same_point<Attr1, Attr2, Point, Point, Dynamic_dimension_tag >
+{
+  static bool run(const Attr1& a1, const Attr2& a2)
+  { return typename Kernel_traits<Point>::Kernel::Equal_d()
+        (a1.point(),a2.point()); }
+};
+
+// Case of two non void type, with two points
+template<typename Map1, typename Map2,
+         typename T1, typename T2, bool Withpoint1, bool Withpoint2, int i>
+struct Is_same_attribute_point_functor
+{
+  static bool run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle dh2)
+  {
+    CGAL_static_assertion( Withpoint1==true && Withpoint2==true );
+    if (dh1->template attribute<i>()==NULL &&
+        dh2->template attribute<i>()==NULL)
+      return true;
+
+    if (dh1->template attribute<i>()==NULL ||
+        dh2->template attribute<i>()==NULL)
+      return false;
+
+    return
+        Is_same_point<T1,T2>::run(*(dh1->template attribute<i>()),
+                                  *(dh2->template attribute<i>()));
+  }
+};
+
+// Case of two non void type, first without point
+template<typename Map1, typename Map2,
+         typename T1, typename T2, int i>
+struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, true, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return false; }
+};
+
+// Case of two non void type, second without point
+template<typename Map1, typename Map2,
+         typename T1, typename T2, int i>
+struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, true, false, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return false; }
+};
+
+// Case of two non void type, both without point
+template<typename Map1, typename Map2,
+         typename T1, typename T2, int i>
+struct Is_same_attribute_point_functor<Map1, Map2, T1, T2, false, false, i>
+{
+  static bool run(typename Map1::Dart_const_handle,
+                  typename Map2::Dart_const_handle)
+  { return true; }
+};
+// ****************************************************************************
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_point,Point,false)
+
+template<typename Attr, typename Info=typename Attr::Info>
+struct Is_nonvoid_attribute_has_non_void_info
+{
+  static const bool value=true;
+};
+template<typename Attr>
+struct Is_nonvoid_attribute_has_non_void_info<Attr, void>
+{
+  static const bool value=false;
+};
+
+template<typename Attr>
+struct Is_attribute_has_non_void_info
+{
+  static const bool value=Is_nonvoid_attribute_has_non_void_info<Attr>::value;
+};
+template<>
+struct Is_attribute_has_non_void_info<CGAL::Void>
+{
+  static const bool value=false;
+};
+// ****************************************************************************
+template<typename Attr>
+struct Is_attribute_has_point
+{ static const bool value=Has_point<Attr>::value; };
+// ****************************************************************************
+/// Test if the two darts are associated with the same attribute.
+template<typename Map1, typename Map2>
+struct Test_is_same_attribute_functor
+{
+  template<unsigned int i>
+  static void run(typename Map1::Dart_const_handle dh1,
+                  typename Map2::Dart_const_handle dh2 )
+  {
+    if (value)
+    {
+      value = Is_same_attribute_info_functor
+        <Map1, Map2,
+         typename Map1::template Attribute_type<i>::type,
+         typename Map2::template Attribute_type<i>::type,
+         i>::run(dh1, dh2);
+    }
+    if (value)
+    {
+      value = Is_same_attribute_point_functor
+          <Map1, Map2,
+          typename Map1::template Attribute_type<i>::type,
+          typename Map2::template Attribute_type<i>::type,
+          Is_attribute_has_point<typename Map1::template
+          Attribute_type<i>::type>::value,
+          Is_attribute_has_point<typename Map2::template
+          Attribute_type<i>::type>::value, i>::run(dh1, dh2);
+    }
+  }
+  static bool value;
+};
+template<typename Map1, typename Map2>
+bool Test_is_same_attribute_functor<Map1, Map2>::value = true;
+// ****************************************************************************
+/// Functor to reverse the orientation of a combinatorial map
+template <typename CMap, typename Attrib =
+          typename CMap::Helper::template Attribute_type<0>::type>
+struct Reverse_orientation_of_map_functor
+{
+  static void run(CMap *amap)
+  {
+    int mark = amap->get_new_mark();
+    CGAL_precondition(amap->is_whole_map_unmarked(mark));
+    CGAL_precondition(amap->is_valid());
+    for (typename CMap::Dart_range::iterator current_dart=amap->darts().begin(),
+           last_dart = amap->darts().end(); current_dart!=last_dart;
+         ++current_dart)
+    {
+      if (amap->is_marked(current_dart, mark)) continue;
+      typename CMap::Dart_handle first_dart_in_cell= current_dart;
+      typename CMap::Dart_handle current_dart_in_cell=
+        first_dart_in_cell->beta(1);
+      typename CMap::Helper::template Attribute_handle<0>::type
+        attribute_for_first_dart=current_dart_in_cell->template attribute<0>();
+      attribute_for_first_dart->inc_nb_refs();
+      do {
+        amap->mark(current_dart_in_cell, mark);
+        typename CMap::Dart_handle previous_dart_in_cell=
+          current_dart_in_cell->beta(0);
+        typename CMap::Dart_handle next_dart_in_cell=
+          current_dart_in_cell->beta(1);
+        typename CMap::Helper::template Attribute_handle<0>::type
+          next_attribute=next_dart_in_cell->template attribute<0>();
+        // One line error???
+        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+          run(amap, current_dart_in_cell, next_attribute);
+        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
+        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+        current_dart_in_cell = current_dart_in_cell->beta(0);
+      }
+      while (current_dart_in_cell != first_dart_in_cell);
+      amap->mark(current_dart_in_cell, mark);
+      typename CMap::Dart_handle previous_dart_in_cell=
+        current_dart_in_cell->beta(0);
+      typename CMap::Dart_handle next_dart_in_cell=
+        current_dart_in_cell->beta(1);
+      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+        run(amap, current_dart_in_cell, attribute_for_first_dart);
+      attribute_for_first_dart->dec_nb_refs();
+      current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
+      current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+    }
+    amap->negate_mark(mark);
+    CGAL_postcondition(amap->is_whole_map_unmarked(mark));
+    CGAL_postcondition(amap->is_valid());
+    amap->free_mark(mark);
+  }
+};
+// ****************************************************************************
+// Specialization for void 0-attributes
+template <typename CMap>
+struct Reverse_orientation_of_map_functor<CMap, CGAL::Void>
+{
+  static void run(CMap *amap)
+  {
+    int mark = amap->get_new_mark();
+    CGAL_precondition(amap->is_whole_map_unmarked(mark));
+    CGAL_precondition(amap->is_valid());
+    for (typename CMap::Dart_range::iterator current_dart=amap->darts().begin(),
+         last_dart = amap->darts().end(); current_dart!=last_dart;
+         ++current_dart)
+    {
+      if (amap->is_marked(current_dart, mark)) continue;
+      for (typename CMap::template Dart_of_cell_range<2>::iterator
+             current_dart_in_cell=amap->template darts_of_cell<2>(current_dart).
+             begin(), last_dart_in_cell=amap->template darts_of_cell<2>
+             (current_dart).end(); current_dart_in_cell!=last_dart_in_cell;
+           ++current_dart_in_cell)
+      {
+        amap->mark(current_dart_in_cell, mark);
+        typename CMap::Dart_handle previous_dart_in_cell=
+          current_dart_in_cell->beta(0);
+        typename CMap::Dart_handle next_dart_in_cell=
+          current_dart_in_cell->beta(1);
+        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
+        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+      }
+    }
+    amap->negate_mark(mark);
+    CGAL_postcondition(amap->is_whole_map_unmarked(mark));
+    CGAL_postcondition(amap->is_valid());
+    amap->free_mark(mark);
+  }
+};
+// ****************************************************************************
+/// Functor to reverse the orientation of a connected component in a given map
+template <typename CMap, typename Attrib=
+          typename CMap::Helper::template Attribute_type<0>::type>
+struct Reverse_orientation_of_connected_component_functor
+{
+  static void run(CMap *amap, typename CMap::Dart_handle adart)
+  {
+    int mark = amap->get_new_mark();
+    CGAL_precondition(amap->is_whole_map_unmarked(mark));
+    for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
+           current_dart=amap->template darts_of_cell<CMap::dimension+1>(adart).
+           begin(), last_dart=amap->template darts_of_cell<CMap::dimension+1>
+           (adart).end(); current_dart!=last_dart; ++current_dart)
+    {
+      if (amap->is_marked(current_dart, mark)) continue;
+      typename CMap::Dart_handle first_dart_in_cell=current_dart;
+      typename CMap::Dart_handle current_dart_in_cell=
+        first_dart_in_cell->beta(1);
+      typename CMap::Helper::template Attribute_handle<0>::type
+        attribute_for_first_dart=current_dart_in_cell->template attribute<0>();
+      attribute_for_first_dart->inc_nb_refs();
+      do {
+        amap->mark(current_dart_in_cell, mark);
+        typename CMap::Dart_handle previous_dart_in_cell=
+          current_dart_in_cell->beta(0);
+        typename CMap::Dart_handle next_dart_in_cell=
+          current_dart_in_cell->beta(1);
+        typename CMap::Helper::template Attribute_handle<0>::type
+          next_attribute=next_dart_in_cell->template attribute<0>();
+
+        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+          run(amap, current_dart_in_cell, next_attribute);
+        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
+        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+        current_dart_in_cell = current_dart_in_cell->beta(0);
+      }
+      while (current_dart_in_cell != first_dart_in_cell);
+      amap->mark(current_dart_in_cell, mark);
+      typename CMap::Dart_handle previous_dart_in_cell=
+        current_dart_in_cell->beta(0);
+      typename CMap::Dart_handle next_dart_in_cell=
+        current_dart_in_cell->beta(1);
+      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
+          run(amap, current_dart_in_cell, attribute_for_first_dart);
+      attribute_for_first_dart->dec_nb_refs();
+      current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
+      current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+    }
+    for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
+           current_dart=amap->template darts_of_cell<CMap::dimension+1>(adart).
+           begin(), last_dart=amap->template darts_of_cell<CMap::dimension+1>
+           (adart).end(); current_dart!=last_dart; ++current_dart)
+    {
+      amap->unmark(current_dart, mark);
+    }
+    CGAL_postcondition(amap->is_whole_map_unmarked(mark));
+    amap->free_mark(mark);
+  }
+};
+// ****************************************************************************
+// Specialization for void 0-attributes
+template <typename CMap>
+struct Reverse_orientation_of_connected_component_functor<CMap, CGAL::Void>
+{
+  static void run(CMap *amap, typename CMap::Dart_handle adart)
+  {
+    int mark = amap->get_new_mark();
+    CGAL_precondition(amap->is_whole_map_unmarked(mark));
+    for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
+           current_dart=amap->template darts_of_cell<CMap::dimension+1>(adart).
+           begin(), last_dart=amap->template darts_of_cell<CMap::dimension+1>
+           (adart).end(); current_dart!=last_dart; ++current_dart)
+    {
+      if (amap->is_marked(current_dart, mark)) continue;
+      for (typename CMap::template Dart_of_cell_range<2>::iterator
+             current_dart_in_cell=amap->template darts_of_cell<2>(current_dart).
+             begin(), last_dart_in_cell=amap->template darts_of_cell<2>
+             (current_dart).end(); current_dart_in_cell!=last_dart_in_cell;
+           ++current_dart_in_cell)
+      {
+        amap->mark(current_dart_in_cell, mark);
+        typename CMap::Dart_handle previous_dart_in_cell=
+          current_dart_in_cell->beta(0);
+        typename CMap::Dart_handle next_dart_in_cell=
+          current_dart_in_cell->beta(1);
+        current_dart_in_cell->basic_link_beta(previous_dart_in_cell, 1);
+        current_dart_in_cell->basic_link_beta(next_dart_in_cell, 0);
+      }
+    }
+    for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
+           current_dart=amap->template darts_of_cell<CMap::dimension+1>(adart).
+           begin(), last_dart=amap->template darts_of_cell<CMap::dimension+1>
+           (adart).end(); current_dart!=last_dart; ++current_dart)
+    {
+      amap->unmark(current_dart, mark);
+    }
+    CGAL_postcondition(amap->is_whole_map_unmarked(mark));
+    amap->free_mark(mark);
+  }
 };
 // ****************************************************************************
 // Beta functor, used to combine several beta.

@@ -17,7 +17,7 @@ typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 
 typedef std::list<Triangle>::iterator Iterator;
-typedef CGAL::AABB_triangle_primitive<K,Iterator> Primitive;
+typedef CGAL::AABB_triangle_primitive<K, Iterator> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> AABB_triangle_traits;
 typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;
 

@@ -1,0 +1,9 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Straight Skeleton and Polygon Offsetting"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Straight_skeleton_2/doc/Straight_skeleton_2/
+
+
+

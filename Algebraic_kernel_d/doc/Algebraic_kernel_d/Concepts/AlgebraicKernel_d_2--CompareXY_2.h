@@ -21,7 +21,7 @@ public:
 /*! 
 Type convertible to `CGAL::Comparison_result` 
 */ 
-typedef Hidden_type result_type; 
+typedef unspecified_type result_type; 
 
 /*! 
 

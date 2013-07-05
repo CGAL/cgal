@@ -222,6 +222,7 @@ bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
 }
 
 void Scene_combinatorial_map_item::direct_draw() const {
+  #if 0
   typedef Combinatorial_map_3::One_dart_per_cell_const_range<3> Volume_dart_range;
   typedef Combinatorial_map_3::One_dart_per_incident_cell_const_range<2,3> Facet_in_volume_drange;
   typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
@@ -247,6 +248,68 @@ void Scene_combinatorial_map_item::direct_draw() const {
       ::glEnd(); 
     }
   }
+  #else
+  std::size_t index = 0;
+  int voltreated = combinatorial_map().get_new_mark();
+  int facetreated = combinatorial_map().get_new_mark();
+  Combinatorial_map_3::Dart_const_range::const_iterator
+    darts_it=combinatorial_map().darts().begin(), darts_end=combinatorial_map().darts().end();
+  for( ; darts_it!=darts_end; ++darts_it)
+  {
+    if ( !combinatorial_map().is_marked(darts_it,voltreated) )
+    {
+      ++index;
+      //iterate over all the darts of the volume
+      Combinatorial_map_3::Dart_of_cell_const_range<3>::const_iterator
+        vol_it=combinatorial_map().darts_of_cell<3>(darts_it).begin(),
+        vol_end=combinatorial_map().darts_of_cell<3>(darts_it).end();
+      if ( volume_to_display!=0 && index!=volume_to_display )
+      {
+        //only mark darts if the volume is not the one to display
+        for ( ;vol_it!=vol_end; ++vol_it )
+        {
+          combinatorial_map().mark(vol_it,facetreated);
+          combinatorial_map().mark(vol_it, voltreated);
+        }
+      }
+      else
+      {
+        for ( ;vol_it!=vol_end; ++vol_it )
+        {
+          if ( !combinatorial_map().is_marked(vol_it,facetreated) )
+          {
+            Kernel::Vector_3 normal = compute_face_normal(vol_it);
+            ::glBegin(GL_POLYGON);
+            ::glNormal3d(normal.x(),normal.y(),normal.z());
+
+            //iterate over all darts of facets
+            for ( Combinatorial_map_3::Dart_of_orbit_const_range<1>::const_iterator
+                  face_it=combinatorial_map().darts_of_orbit<1>(vol_it).begin(),
+                  face_end=combinatorial_map().darts_of_orbit<1>(vol_it).end();
+                  face_it!=face_end; ++face_it)
+            {
+              const Kernel::Point_3& p= face_it->attribute<0>()->point();
+              ::glVertex3d(p.x(),p.y(),p.z());
+              combinatorial_map().mark(face_it,facetreated);
+              combinatorial_map().mark(face_it, voltreated);
+            }
+            ::glEnd();
+          }
+        }
+      }
+      if ( index==volume_to_display ) break;
+    }
+  }
+  //mark remaining darts to have an O(1) free_mark
+  for( ;  darts_it!=darts_end; ++darts_it)
+  {
+    combinatorial_map().mark(darts_it, facetreated);
+    combinatorial_map().mark(darts_it, voltreated);
+  }
+
+  combinatorial_map().free_mark(facetreated);
+  combinatorial_map().free_mark(voltreated);
+  #endif
 }
 
 void Scene_combinatorial_map_item::direct_draw_edges() const {

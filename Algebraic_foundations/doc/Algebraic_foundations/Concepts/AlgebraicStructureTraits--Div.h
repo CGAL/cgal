@@ -25,17 +25,17 @@ public:
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type result_type; 
+typedef unspecified_type result_type; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type first_argument; 
+typedef unspecified_type first_argument; 
 
 /*! 
 Is `AlgebraicStructureTraits::Type`. 
 */ 
-typedef Hidden_type second_argument; 
+typedef unspecified_type second_argument; 
 
 /// @} 
 

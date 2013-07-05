@@ -18,18 +18,18 @@ public:
 /*! 
 the ring type of the components. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 the iterator type for accessing components. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 the const iterator type for accessing 
 components. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /// @} 
 

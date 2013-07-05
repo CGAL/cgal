@@ -104,7 +104,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
-
+  qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
+  qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -227,7 +228,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Polyhedron_3.cpp
 #      Viewer.cpp
 #      Scene.cpp
-#      MainWindow_curvature_estimation.cpp
       MainWindow_moc.cpp
       File_loader_dialog_moc.cpp
 #      Viewer_moc.cpp
@@ -365,6 +365,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
     polyhedron_demo_plugin(point_set_average_spacing_plugin Polyhedron_demo_point_set_average_spacing_plugin)
     target_link_libraries(point_set_average_spacing_plugin scene_points_with_normal_item)
+
+    polyhedron_demo_plugin(jet_fitting_plugin Polyhedron_demo_jet_fitting_plugin)
+    target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)
     
   else(EIGEN3_FOUND OR LAPACK_FOUND)
     message(STATUS "NOTICE: Nor Eigen 3.1 (or greater) nor LAPACK library were found. Normal estimation and smoothing will not be available.")
@@ -379,6 +382,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(mesh_simplification_plugin Polyhedron_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
+  polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_demo_polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
+  target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
+  
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 
@@ -398,6 +404,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
+  
+  polyhedron_demo_plugin(point_inside_polyhedron_plugin Polyhedron_demo_point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
+  target_link_libraries(point_inside_polyhedron_plugin scene_polyhedron_item scene_points_with_normal_item)
   
   qt4_wrap_ui(point_set_simplificationUI_FILES Polyhedron_demo_point_set_simplification_plugin.ui)
   polyhedron_demo_plugin(point_set_simplification_plugin Polyhedron_demo_point_set_simplification_plugin ${point_set_simplificationUI_FILES})

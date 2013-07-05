@@ -35,17 +35,17 @@ public:
 /*! 
 A key identifying an object in the table. 
 */ 
-typedef Hidden_type Key; 
+typedef unspecified_type Key; 
 
 /*! 
 The type being stored in the table. 
 */ 
-typedef Hidden_type Data; 
+typedef unspecified_type Data; 
 
 /*! 
 The base class to derive from for listening for runtime events. 
 */ 
-typedef Hidden_type Listener; 
+typedef unspecified_type Listener; 
 
 /// @}
 
@@ -58,22 +58,22 @@ typedef Hidden_type Listener;
 /*! 
 An iterator through all the valid keys in the table. 
 */ 
-typedef Hidden_type Key_iterator; 
+typedef unspecified_type Key_iterator; 
 
 /*! 
 An iterator through all the objects which have been changed in the last editing session. The iterator iterates through the objects in lexicographical order. 
 */ 
-typedef Hidden_type Changed_iterator; 
+typedef unspecified_type Changed_iterator; 
 
 /*! 
 An iterator through all the objects which were added in the last editing session. 
 */ 
-typedef Hidden_type Inserted_iterator; 
+typedef unspecified_type Inserted_iterator; 
 
 /*! 
 An iterator through all the objects which were deleted in the last editing session. 
 */ 
-typedef Hidden_type Erased_iterator; 
+typedef unspecified_type Erased_iterator; 
 
 /// @} 
 

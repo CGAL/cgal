@@ -47,12 +47,12 @@ public:
 /*! 
 The template argument triangulation. 
 */ 
-typedef Hidden_type Triangulation; 
+typedef unspecified_type Triangulation; 
 
 /*! 
 The template argument for the visitor. 
 */ 
-typedef Hidden_type Visitor; 
+typedef unspecified_type Visitor; 
 
 /// @} 
 

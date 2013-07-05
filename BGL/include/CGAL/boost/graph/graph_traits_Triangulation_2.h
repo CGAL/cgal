@@ -176,6 +176,17 @@ public:
     ++*this;
     return tmp;
   }
+
+  Self& operator--() {
+    --nt;
+    return *this;
+  }
+
+  Self  operator--(int) {
+    Self tmp = *this;
+    --*this;
+    return tmp;
+  }
 };
 
 
@@ -428,14 +439,14 @@ namespace boost {
 
   template <class Gt, class Tds>
   inline T2_vertex_id_map<Gt,Tds>
-  get(vertex_index_t, const CGAL::Triangulation_2<Gt,Tds>& g) {
+  get(vertex_index_t, const CGAL::Triangulation_2<Gt,Tds>&) {
     T2_vertex_id_map<Gt,Tds> m;
     return m;
   }
 
   template <class Gt, class Tds>
   inline T2_edge_id_map<Gt,Tds>
-  get(edge_index_t, const CGAL::Triangulation_2<Gt,Tds>& g) {
+  get(edge_index_t, const CGAL::Triangulation_2<Gt,Tds>&) {
     T2_edge_id_map<Gt,Tds> m;
     return m;
   }

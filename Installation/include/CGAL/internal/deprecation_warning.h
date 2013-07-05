@@ -29,6 +29,8 @@
 
 #include <CGAL/assertions.h>
 
+#ifndef CGAL_NO_DEPRECATION_WARNINGS
+
 #if defined(CGAL_NO_DEPRECATED_CODE)
 // No deprecated code.
 CGAL_static_assertion_msg(false, "A deprecated header has been included and CGAL_NO_DEPRECATED_CODE is defined.");
@@ -54,8 +56,10 @@ CGAL_static_assertion_msg(false, "A deprecated header has been included and CGAL
      // warning does not expand its arguments, issue a warning and add the message.
 #    warning "A deprecated header has been included."
 #    pragma message (CGAL_INTERNAL_DEPRECATED_MESSAGE)
-#endif //defined
+#  endif //defined
 #endif
+
+#endif // CGAL_NO_DEPRECATION_WARNINGS
 
 #if defined(CGAL_DEPRECATED_HEADER)
 #  undef CGAL_DEPRECATED_HEADER

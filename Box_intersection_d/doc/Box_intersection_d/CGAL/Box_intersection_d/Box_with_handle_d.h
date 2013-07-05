@@ -74,7 +74,7 @@ number type to represent the box
 boundaries. Allowed are the built-in types `int`, `unsigned 
 int`, `float`, and `double`. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 type for the box `id`-number. 

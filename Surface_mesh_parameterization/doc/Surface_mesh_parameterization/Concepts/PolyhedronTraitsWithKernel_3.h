@@ -33,7 +33,7 @@ public:
 a kernel type providing: a field type `FT`; 2D and 3D point types `Point_2` 
 and `Point_3`; 2D and 3D vector types `Vector_2` and `Vector_3`. 
 */ 
-typedef Hidden_type Kernel; 
+typedef unspecified_type Kernel; 
 
 /// @}
 

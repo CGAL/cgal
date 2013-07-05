@@ -285,8 +285,10 @@ Note that since \cgal 3.4, `CONTINUE` has the same effect as
 not possible anymore to let assertion failures simply continue (except by
 totally disabling them).
 
-\cgalAdvanced If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
+\cgalAdvancedBegin
+If the `EXIT_WITH_SUCCESS` value is set, the program will stop and
 return a value corresponding to successful execution and not dump the core.
+\cgalAdvancedEnd
 
 The value that is returned by `set_error_behaviour()` is the value that was in use before.
 

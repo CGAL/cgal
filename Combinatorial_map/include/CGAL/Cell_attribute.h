@@ -60,26 +60,26 @@ namespace CGAL {
 
   /// Cell_attribute_without_info
   template <class Refs, class Tag=Tag_true,
-            class OnMerge=Null_functor, 
+            class OnMerge=Null_functor,
             class OnSplit=Null_functor>
   class Cell_attribute_without_info;
 
   // Cell_attribute_without_info without dart support.
   template <class Refs, class OnMerge, class OnSplit>
-  class Cell_attribute_without_info<Refs, Tag_false, 
+  class Cell_attribute_without_info<Refs, Tag_false,
                                     OnMerge, OnSplit>
   {
     template < unsigned int d_, class Refs_,
                class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
-    
+
     template <int d, typename Refs_>
     friend struct Dart;
 
     template < unsigned int d_, class Refs_,
-	       class Items_, class Alloc_ >
+        class Items_, class Alloc_ >
     friend class Generalized_map_base;
-    
+
     template <int d, typename Refs_>
     friend struct GMap_dart;
 
@@ -88,6 +88,12 @@ namespace CGAL {
 
     template<typename CMap, unsigned int i, typename T>
     friend struct internal::Decrease_attribute_functor_run;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_map_functor;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Tag_false                            Supports_cell_dart;
@@ -101,7 +107,7 @@ namespace CGAL {
 
     /// operator =
     /// We do nothing since we must not copy mrefcounting.
-    Cell_attribute_without_info& 
+    Cell_attribute_without_info&
     operator=(const Cell_attribute_without_info& /*acell*/)
     { return *this; }
 
@@ -119,7 +125,13 @@ namespace CGAL {
     bool is_valid() const
     { return true; }
 
-  protected:
+    bool operator==(const Cell_attribute_without_info&) const
+    { return true; }
+
+    bool operator!=(const Cell_attribute_without_info& other) const
+    { return !operator==(other); }
+
+    // protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
     {}
@@ -129,25 +141,26 @@ namespace CGAL {
       mrefcounting(0)
     {}
 
+  protected:
     /// Increment the reference counting.
     void inc_nb_refs()
-    { ++mrefcounting; }
+    { mrefcounting+=4; } // 4 because this is the 3rd bit (ie 1<<2)
 
     /// Decrement the reference counting.
     void dec_nb_refs()
     {
-      CGAL_assertion( mrefcounting>0 );
-      --mrefcounting; 
+      CGAL_assertion( mrefcounting>3 );
+      mrefcounting-=4; // 4 because this is the 3rd bit (ie 1<<2)
     }
 
+  public:
     /// Get the reference counting.
     unsigned int get_nb_refs() const
-    { return mrefcounting; }
+    { return (mrefcounting>>2); } // >>2 to ignore the 2 least significant bits
 
-  public:
-    void * for_compact_container() const 
+    void * for_compact_container() const
     { return vp; }
-    void * & for_compact_container()       
+    void * & for_compact_container()
     { return vp; }
 
   private:
@@ -165,7 +178,7 @@ namespace CGAL {
    * The refs class must provide the type of Combinatorial_map used.
    */
   template <class Refs, class OnMerge, class OnSplit>
-  class Cell_attribute_without_info<Refs, Tag_true, 
+  class Cell_attribute_without_info<Refs, Tag_true,
                                     OnMerge, OnSplit>
   {
     template < unsigned int d_, class Refs_,
@@ -176,7 +189,7 @@ namespace CGAL {
     friend struct Dart;
 
     template < unsigned int d_, class Refs_,
-	       class Items_, class Alloc_ >
+        class Items_, class Alloc_ >
     friend class Generalized_map_base;
 
     template <int d, typename Refs_>
@@ -188,23 +201,29 @@ namespace CGAL {
     template<typename CMap, unsigned int i, typename T>
     friend struct internal::Decrease_attribute_functor_run;
 
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_map_functor;
+
+    template <typename CMap, typename Attrib>
+    friend struct internal::Reverse_orientation_of_connected_component_functor;
+
   public:
     typedef Tag_true                             Supports_cell_dart;
 
     typedef typename Refs::Dart_handle           Dart_handle;
     typedef typename Refs::Dart_const_handle     Dart_const_handle;
     typedef typename Refs::Alloc                 Alloc;
-    
+
     typedef OnMerge On_merge;
     typedef OnSplit On_split;
 
     /// operator =
     /// We must not copy mrefcounting.
-    Cell_attribute_without_info& 
+    Cell_attribute_without_info&
     operator=(const Cell_attribute_without_info& acell)
     {
       mdart = acell.mdart;
-      return *this; 
+      return *this;
     }
 
     /// Get the dart associated with the cell.
@@ -221,7 +240,13 @@ namespace CGAL {
     bool is_valid() const
     { return mdart!=NULL; }
 
-  protected:
+    bool operator==(const Cell_attribute_without_info&) const
+    { return true; }
+
+    bool operator!=(const Cell_attribute_without_info& other) const
+    { return !operator==(other); }
+
+    //  protected:
     /// Contructor without parameter.
     Cell_attribute_without_info() : mdart(NULL),
                                     mrefcounting(0)
@@ -233,6 +258,7 @@ namespace CGAL {
       mrefcounting(0)
     {}
 
+  protected:
     /// Increment the reference counting.
     void inc_nb_refs()
     { ++mrefcounting; }
@@ -241,7 +267,7 @@ namespace CGAL {
     void dec_nb_refs()
     {
       CGAL_assertion( mrefcounting>0 );
-      --mrefcounting; 
+      --mrefcounting;
     }
 
   public:
@@ -251,36 +277,36 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mdart.for_compact_container(); }
-    void * & for_compact_container()       
+    void * & for_compact_container()
     { return mdart.for_compact_container(); }
 
   private:
     /// The dart handle associated with the cell.
     Dart_handle mdart;
-   
+
     /// Reference counting: the number of darts linked to this cell.
     unsigned int mrefcounting;
   };
 
-  /// Cell associated with an attribute, with or without info depending 
+  /// Cell associated with an attribute, with or without info depending
   /// if Info==void.
-  template <class Refs, class Info_=void, class Tag_=Tag_true, 
-            class OnMerge=Null_functor, 
+  template <class Refs, class Info_=void, class Tag_=Tag_true,
+            class OnMerge=Null_functor,
             class OnSplit=Null_functor>
   class Cell_attribute;
-  
+
   /// Specialization when Info==void.
-  template <class Refs, class Tag_, 
+  template <class Refs, class Tag_,
             class OnMerge, class OnSplit>
-  class Cell_attribute<Refs, void, Tag_, 
-                       OnSplit, OnMerge> : 
-    public Cell_attribute_without_info<Refs, Tag_, 
+  class Cell_attribute<Refs, void, Tag_,
+                       OnSplit, OnMerge> :
+    public Cell_attribute_without_info<Refs, Tag_,
                                        OnSplit, OnMerge>
   {
     template < unsigned int d_, class Refs_,
                class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
-    
+
     template <class T, class Alloc_>
     friend class Compact_container;
 
@@ -291,8 +317,14 @@ namespace CGAL {
     typedef typename Refs::Alloc             Alloc;
     typedef OnMerge                          On_merge;
     typedef OnSplit                          On_split;
+    typedef void                             Info;
+
+    //  protected:
+    /// Default contructor.
+    Cell_attribute()
+    {}
   };
-  
+
 
   /// Specialization when Info!=void.
   template <class Refs, class Info_, class Tag_,
@@ -305,11 +337,13 @@ namespace CGAL {
     template < unsigned int d_, class Refs_,
                class Items_, class Alloc_ >
     friend class Combinatorial_map_base;
-    
+
     template <class T, class Alloc_>
     friend class Compact_container;
 
   public:
+    typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit> Self;
+
     typedef Tag_                             Supports_cell_dart;
     typedef typename Refs::Dart_handle       Dart_handle;
     typedef typename Refs::Dart_const_handle Dart_const_handle;
@@ -318,13 +352,21 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef Info_                            Info;
 
-  protected:
+    bool operator==(const Self& other) const
+    { return this->info()==other.info(); }
+
+    bool operator!=(const Self& other) const
+    { return !operator==(other); }
+
+
+    // protected:
     /// Default contructor.
     Cell_attribute()
     {}
 
-    /// Contructor with an attribute in parameter.
-    Cell_attribute(const Info_& ainfo) : Info_for_cell_attribute<Info_>(ainfo)
+    /// Contructor with an info in parameter.
+    Cell_attribute(const Info_& ainfo) :
+      Info_for_cell_attribute<Info_>(ainfo)
     {}
   };
 

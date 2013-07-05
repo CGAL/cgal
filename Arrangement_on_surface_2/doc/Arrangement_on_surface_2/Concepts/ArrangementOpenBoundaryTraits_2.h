@@ -61,25 +61,25 @@ public:
 Must be convertible to either `Arr_oblivious_side_tag` or 
 `Arr_open_side_tag`. 
 */ 
-typedef Hidden_type Left_side_category; 
+typedef unspecified_type Left_side_category; 
 
 /*! 
 Must be convertible to either `Arr_oblivious_side_tag` or 
 `Arr_open_side_tag`. 
 */ 
-typedef Hidden_type Bottom_side_category; 
+typedef unspecified_type Bottom_side_category; 
 
 /*! 
 Must be convertible to either `Arr_oblivious_side_tag` or 
 `Arr_open_side_tag`. 
 */ 
-typedef Hidden_type Top_side_category; 
+typedef unspecified_type Top_side_category; 
 
 /*! 
 Must be convertible to either `Arr_oblivious_side_tag` or 
 `Arr_open_side_tag`. 
 */ 
-typedef Hidden_type Right_side_category; 
+typedef unspecified_type Right_side_category; 
 
 /// @} 
 
@@ -93,7 +93,7 @@ approach the left or the right sides (the `Left_side_category`
 or the `Right_side_category` categories are convertible to 
 `Arr_open_side_tag`). 
 */ 
-typedef Hidden_type Parameter_space_in_x_2; 
+typedef unspecified_type Parameter_space_in_x_2; 
 
 /*! 
 models the concept `ArrTraits::CompareYNearBoundary_2`. 
@@ -102,7 +102,7 @@ approach the left or the right sides (the `Left_side_category`
 or the `Right_side_category` categories are convertible to 
 `Arr_open_side_tag`). 
 */ 
-typedef Hidden_type Compare_y_near_boundary_2; 
+typedef unspecified_type Compare_y_near_boundary_2; 
 
 /*! 
 models the concept `ArrTraits::ParameterSpaceInY_2`. 
@@ -111,7 +111,7 @@ approach the bottom or the top sides (the `Bottom_side_category`
 or the `Top_side_category` categories are convertible to 
 `Arr_open_side_tag`). 
 */ 
-typedef Hidden_type Parameter_space_in_y_2; 
+typedef unspecified_type Parameter_space_in_y_2; 
 
 /*! 
 models the concept `ArrTraits::CompareXAtLimit_2`. 
@@ -120,7 +120,7 @@ approach the bottom or the top sides (the `Bottom_side_category`
 or the `Top_side_category` categories are convertible to 
 `Arr_open_side_tag`). 
 */ 
-typedef Hidden_type Compare_x_at_limit_2; 
+typedef unspecified_type Compare_x_at_limit_2; 
 
 /*! 
 models the concept `ArrTraits::CompareXNearLimit_2`. 
@@ -129,7 +129,7 @@ approach the bottom or the top sides (the `Bottom_side_category`
 or the `Top_side_category` categories are convertible to 
 `Arr_open_side_tag`). 
 */ 
-typedef Hidden_type Compare_x_near_limit_2; 
+typedef unspecified_type Compare_x_near_limit_2; 
 
 /// @} 
 

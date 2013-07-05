@@ -32,19 +32,19 @@ public:
 /*! 
 The point type on which the partitioning algorithm operates. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The polygon type created by the partitioning 
 function. This type should provide a nested type `Vertex_const_iterator` 
 that is the type of the non-mutable iterator over the polygon vertices. 
 */ 
-typedef Hidden_type Polygon_2; 
+typedef unspecified_type Polygon_2; 
 
 /*! 
 A model of the concept `PolygonIsValid` 
 */ 
-typedef Hidden_type Is_valid; 
+typedef unspecified_type Is_valid; 
 
 /*! 
 
@@ -56,7 +56,7 @@ where \f$ p_x\f$ and \f$ p_y\f$ denote the \f$ x\f$ and \f$ y\f$ coordinates of 
 respectively. 
 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 
@@ -65,7 +65,7 @@ Predicate object type that provides
 returns `true` iff `r` lies to the left of the 
 oriented line through `p` and `q`. 
 */ 
-typedef Hidden_type Left_turn_2; 
+typedef unspecified_type Left_turn_2; 
 
 /*! 
 Predicate object type that provides 
@@ -75,7 +75,7 @@ line \f$ l\f$ defined by \f$ p\f$ and \f$ q\f$, returns `CGAL::RIGHT_TURN` if \f
 lies to the right of \f$ l\f$, and returns `CGAL::COLLINEAR` if \f$ r\f$ lies 
 on \f$ l\f$. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /// @} 
 

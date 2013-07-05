@@ -46,7 +46,7 @@ namespace CGAL {
 Creates a combinatorial tetrahedron (four combinatorial triangles linked
 together by \f$ \beta_2\f$), and adds it in `cm`.
 Returns a handle on one dart of this combinatorial tetrahedron.
-\pre `CMap::dimension`\f$ \geq\f$2.
+\pre `CMap::dimension`\f$ \geq\f$ 2.
 
 \sa `CGAL::make_edge<CMap>`
 \sa `CGAL::make_combinatorial_polygon<CMap>`

@@ -36,7 +36,7 @@ public:
 /*! 
 the `Kernel` model. 
 */ 
-typedef Hidden_type Kernel; 
+typedef unspecified_type Kernel; 
 
 /*! 
 

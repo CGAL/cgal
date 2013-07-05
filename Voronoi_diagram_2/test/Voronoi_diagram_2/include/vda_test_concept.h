@@ -228,7 +228,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
 	 vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(at.access_site_2_object()(vit));
     }
-    CGAL_assertion( v.size() > 0 );
+    assert( v.size() > 0 );
 
     // one-site insertion
     typename AT::Site_2 s = v[0];
@@ -265,12 +265,12 @@ void test_adaptation_traits_concept(const DG& dg, const AT& at)
   {
     AT at2(at);
     kill_warning(at2);
-    //    CGAL_assertion( at2.is_valid() );
+    //    assert( at2.is_valid() );
 
     AT at3;
     at3 = at;
     kill_warning(at3);
-    //    CGAL_assertion( at3.is_valid() );
+    //    assert( at3.is_valid() );
   }
 
   // testing clear and swap methods
@@ -278,19 +278,19 @@ void test_adaptation_traits_concept(const DG& dg, const AT& at)
   {
     AT at2(at);
     at2.clear();
-    CGAL_assertion( at2.is_valid() );
+    assert( at2.is_valid() );
 
     AT at3(at);
     at2.swap(at3);
 
-    CGAL_assertion( at2.is_valid() );
-    CGAL_assertion( at3.is_valid() );
+    assert( at2.is_valid() );
+    assert( at3.is_valid() );
   }
 
   // testing validity method
   bool b = at.is_valid();
   kill_warning( b );
-  CGAL_assertion( b );
+  assert( b );
 #endif
 
   // test nested concepts
@@ -324,34 +324,34 @@ void test_adaptation_policy_concept(const DG& dg, const AT& at, const AP& ap)
   // testing copy constructor and assignment operator
   {
     AP ap2(ap);
-    CGAL_assertion( ap2.is_valid() );
+    assert( ap2.is_valid() );
 
     AP ap3;
     ap3 = ap;
-    CGAL_assertion( ap3.is_valid() );
+    assert( ap3.is_valid() );
   }
 
   // testing clear and swap methods
   {
     AP ap2(ap);
     ap2.clear();
-    CGAL_assertion( ap2.is_valid() );
-    CGAL_assertion( ap2.is_valid(dg) );
+    assert( ap2.is_valid() );
+    assert( ap2.is_valid(dg) );
 
     AP ap3(ap);
     ap2.swap(ap3);
 
-    CGAL_assertion( ap2.is_valid() );
-    CGAL_assertion( ap2.is_valid(dg) );
-    CGAL_assertion( ap3.is_valid() );
-    CGAL_assertion( ap3.is_valid(dg) );
+    assert( ap2.is_valid() );
+    assert( ap2.is_valid(dg) );
+    assert( ap3.is_valid() );
+    assert( ap3.is_valid(dg) );
   }
 
   // testing validity method
   bool b = ap.is_valid();
   b = ap.is_valid(dg);
   kill_warning( b );
-  CGAL_assertion( b );
+  assert( b );
 
   // test nested concepts
   test_er_concept( dg, ap.edge_rejector_object() );
@@ -523,29 +523,29 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
 
   DG dg2;
 
-  CGAL_assertion( dg2.number_of_vertices() == 0 );
+  assert( dg2.number_of_vertices() == 0 );
 
   Site_2 t = at.access_site_2_object()(dg.finite_vertices_begin());
   result_type v = si(dg2, t);
   kill_warning( v );
 
-  CGAL_assertion( dg2.number_of_vertices() == 1 );
+  assert( dg2.number_of_vertices() == 1 );
 
   dg2.clear();
-  CGAL_assertion( dg2.number_of_vertices() == 0 );
+  assert( dg2.number_of_vertices() == 0 );
 
   typedef std::list<result_type>               res_list;
   typedef std::back_insert_iterator<res_list>  output_iterator;
 
   res_list v_list;
 
-  CGAL_assertion( v_list.size() == 0 );
+  assert( v_list.size() == 0 );
 
   output_iterator oit(v_list);
   oit = si(dg2, t, oit);
 
-  CGAL_assertion( v_list.size() == 1 );
-  CGAL_assertion( dg2.number_of_vertices() == 1 );  
+  assert( v_list.size() == 1 );
+  assert( dg2.number_of_vertices() == 1 );  
 }
 
 //============================================================================
@@ -588,7 +588,7 @@ void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true)
 
   result_type qr1 = ns(dg, p);
   bool b = (qr == qr1);
-  CGAL_assertion(b);
+  assert(b);
   kill_warning(b);
 }
 

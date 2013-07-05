@@ -277,6 +277,130 @@ void _test_solve(AK ak)
 	   std::back_inserter(res_spp_5));
   assert(res_spp_5.size() == 0);
 
+  // 1 circle and 1 plane && 1 plane and 1 circle
+
+  // circle - plane
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cp_1;
+  theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
+	                  theConstruct_1_3(0,1,0,0)),
+	                  theConstruct_1_3(0,1,0,10),
+	   std::back_inserter(res_cp_1));
+  assert(res_cp_1.size() == 0);
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cp_2;
+  theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
+	                  theConstruct_1_3(0,1,0,0)),
+	                  theConstruct_1_3(1,0,0,1),
+	   std::back_inserter(res_cp_2));
+  assert(res_cp_2.size() == 1);
+  assert(res_cp_2[0].second == 2u);
+  assert(res_cp_2[0].first == Root_for_spheres_2_3(-1, 0, 0));
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cp_3;
+  theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
+	                  theConstruct_1_3(0,1,0,0)),
+	                  theConstruct_1_3(1,0,0,0),
+	   std::back_inserter(res_cp_3));
+  assert(res_cp_3.size() == 2);
+  assert(res_cp_3[0].second == 1u);
+  assert(res_cp_3[0].first == 
+          Root_for_spheres_2_3(0, 0, -1));
+  assert(res_cp_3[1].second == 1u);
+  assert(res_cp_3[1].first == 
+          Root_for_spheres_2_3(0, 0, 1));
+
+  // plane - circle
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_pc_1;
+  theSolve(theConstruct_1_3(0,1,0,10),
+	       std::make_pair(theConstruct_2_3(0,0,0,1),
+			              theConstruct_1_3(0,1,0,0)),
+		   std::back_inserter(res_pc_1));
+  assert(res_pc_1.size() == 0);
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_pc_2;
+  theSolve(theConstruct_1_3(1,0,0,1),
+           std::make_pair(theConstruct_2_3(0,0,0,1),
+				          theConstruct_1_3(0,1,0,0)),
+		   std::back_inserter(res_pc_2));
+  assert(res_pc_2.size() == 1);
+  assert(res_pc_2[0].second == 2u);
+  assert(res_pc_2[0].first == Root_for_spheres_2_3(-1, 0, 0));
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_pc_3;
+  theSolve(theConstruct_1_3(1,0,0,0),
+           std::make_pair(theConstruct_2_3(0,0,0,1),
+		                  theConstruct_1_3(0,1,0,0)),
+		   std::back_inserter(res_pc_3));
+  assert(res_pc_3.size() == 2);
+  assert(res_pc_3[0].second == 1u);
+  assert(res_pc_3[0].first == 
+	          Root_for_spheres_2_3(0, 0, -1));
+  assert(res_pc_3[1].second == 1u);
+  assert(res_pc_3[1].first == 
+	          Root_for_spheres_2_3(0, 0, 1));
+	
+  // 1 circle and 1 sphere && 1 sphere and 1 circle	
+
+  // circle - sphere
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cs_1;
+  theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
+	                  theConstruct_1_3(0,1,0,0)),
+	                  theConstruct_2_3(2,2,2,1),
+	   std::back_inserter(res_cs_1));
+  assert(res_cs_1.size() == 0);
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cs_2;
+  theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
+	                  theConstruct_1_3(0,1,0,0)),
+	                  theConstruct_2_3(2,0,0,1),
+	   std::back_inserter(res_cs_2));
+  assert(res_cs_2.size() == 1);
+  assert(res_cs_2[0].second == 2u);
+  assert(res_cs_2[0].first == Root_for_spheres_2_3(1, 0, 0));
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cs_3;
+  theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),
+	                  theConstruct_1_3(0,1,0,0)),
+	                  theConstruct_2_3(1,0,0,1),
+	   std::back_inserter(res_cs_3));
+  assert(res_cs_3.size() == 2);
+  assert(res_cs_3[0].second == 1u);
+  assert(res_cs_3[0].first == 
+          Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),-FT(1,2),FT(3))));
+  assert(res_cs_3[1].second == 1u);
+  assert(res_cs_3[1].first == 
+          Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),FT(1,2),FT(3))));
+
+  // sphere - circle
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sc_1;
+  theSolve(theConstruct_2_3(2,2,2,1),
+	       std::make_pair(theConstruct_2_3(0,0,0,1),
+			              theConstruct_1_3(0,1,0,0)),
+		   std::back_inserter(res_sc_1));
+  assert(res_sc_1.size() == 0);
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sc_2;
+  theSolve(theConstruct_2_3(2,0,0,1),
+           std::make_pair(theConstruct_2_3(0,0,0,1),
+				          theConstruct_1_3(0,1,0,0)),
+		   std::back_inserter(res_sc_2));
+  assert(res_sc_2.size() == 1);
+  assert(res_sc_2[0].second == 2u);
+  assert(res_sc_2[0].first == Root_for_spheres_2_3(1, 0, 0));
+
+  std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_sc_3;
+  theSolve(theConstruct_2_3(1,0,0,1),
+           std::make_pair(theConstruct_2_3(0,0,0,1),
+				          theConstruct_1_3(0,1,0,0)),
+		   std::back_inserter(res_sc_3));
+  assert(res_sc_3.size() == 2);
+  assert(res_sc_3[0].second == 1u);
+  assert(res_sc_3[0].first == 
+	          Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),-FT(1,2),FT(3))));
+  assert(res_sc_3[1].second == 1u);
+  assert(res_sc_3[1].first == 
+	          Root_for_spheres_2_3(FT(1,2), 0, make_root_of_2(FT(0),FT(1,2),FT(3))));
+	
   // 2 circles
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_1;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,1),

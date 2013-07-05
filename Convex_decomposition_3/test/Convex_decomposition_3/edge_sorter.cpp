@@ -106,7 +106,7 @@ int main()
   e7->set_twin(t7);
   t7->set_twin(e7);
 
-  CGAL_assertion_code(std::less<Point_3> Less);
+  std::less<Point_3> Less;
   SplitTest st;
   Report_new_vertex<LEdge, LVertex> rnv;
   GesSM gesSM;
@@ -115,33 +115,33 @@ int main()
   edges.insert(e2);
   edges.insert(e0);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 2);
-  CGAL_assertion((*edges.begin())->source()->point() == Point_3(-1,0,-1));
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 2);
+  assert((*edges.begin())->source()->point() == Point_3(-1,0,-1));
 
   edges.clear();
   edges.insert(e3);
   edges.insert(e0);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 2);
-  CGAL_assertion((*edges.begin())->source()->point() == Point_3(-2,-1,-1));
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 2);
+  assert((*edges.begin())->source()->point() == Point_3(-2,-1,-1));
 
   edges.clear();
   edges.insert(e0);
   edges.insert(e4);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 2);
-  CGAL_assertion((*edges.begin())->source()->point() == Point_3(-2,-1,1)); 
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 2);
+  assert((*edges.begin())->source()->point() == Point_3(-2,-1,1)); 
 
   edges.clear();
   edges.insert(e5);
   edges.insert(e1);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 2);
-  CGAL_assertion((*edges.begin())->source()->point() == Point_3(-2,-1,0)); 
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 2);
+  assert((*edges.begin())->source()->point() == Point_3(-2,-1,0)); 
 
 
   edges.clear();
@@ -149,38 +149,38 @@ int main()
   edges.insert(e0);
   edges.insert(e1);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 4);
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 4);
   ci = edges.begin(); ++ci; ++ci;
-  CGAL_assertion(*ci == e0);
+  assert(*ci == e0);
   LEdge* en0 = (*ci)->twin();
-  CGAL_assertion(en0->source()->point() == Point_3(-1,0,0));
+  assert(en0->source()->point() == Point_3(-1,0,0));
   ++ci;
   LEdge* en1 = *ci;
-  CGAL_assertion(en1->source()->point() == Point_3(-1,0,0));
-  CGAL_assertion(en1->twin() == t0);
+  assert(en1->source()->point() == Point_3(-1,0,0));
+  assert(en1->twin() == t0);
 
   edges.clear();
   edges.insert(e0b);
   edges.insert(e1);
   edges.insert(e6);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 4);
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 4);
   ci = edges.begin(); ++ci;
   LEdge* en2 = (*ci)->twin();
-  CGAL_assertion(en2->source()->point() == Point_3(-1,0,0));
+  assert(en2->source()->point() == Point_3(-1,0,0));
   ++ci; ++ci;
   LEdge* en3 = *ci;
-  CGAL_assertion(en3->source()->point() == Point_3(-1,0,0));
+  assert(en3->source()->point() == Point_3(-1,0,0));
 
   edges.clear();
   edges.insert(e1);
   edges.insert(e7);
   gesSM(edges, st, rnv);
-  CGAL_assertion(check_sorting(edges.begin(), edges.end(), Less));
-  CGAL_assertion(edges.size() == 2);
-  CGAL_assertion((*edges.begin())->source()->point() == Point_3(-2,-1,0)); 
+  assert(check_sorting(edges.begin(), edges.end(), Less));
+  assert(edges.size() == 2);
+  assert((*edges.begin())->source()->point() == Point_3(-2,-1,0)); 
 
   delete e0;
   delete e0b;

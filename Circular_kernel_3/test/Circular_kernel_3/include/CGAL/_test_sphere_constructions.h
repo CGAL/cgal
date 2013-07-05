@@ -562,7 +562,7 @@ void _test_intersection_construct(SK sk) {
         // tangent case for line 1
         // non-intersection for line 2
         if(vx == -1) {
-					assert(theDo_intersect_3(s, l1));
+          assert(theDo_intersect_3(s, l1));
           assert(intersection_1.size() == 1);
           std::pair<Circular_arc_point_3, unsigned > the_pair1;
           assert(assign(the_pair1, intersection_1[0]));

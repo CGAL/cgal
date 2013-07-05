@@ -24,6 +24,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <cstddef>
+#include <cassert>
 #include <sstream>
 #include <CGAL/IO/Ostream_iterator.h>
 #include <CGAL/IO/Istream_iterator.h>
@@ -38,14 +39,14 @@ int main()
     {
         std::ostringstream  out;
         CGAL::set_ascii_mode( out);
-        CGAL_assertion( CGAL::is_ascii( out));
+        assert( CGAL::is_ascii( out));
         out << Point( 1, 2) << '\0';
         std::istringstream in( out.str() );
         CGAL::set_ascii_mode(in);
-        CGAL_assertion( CGAL::is_ascii(in));
+        assert( CGAL::is_ascii(in));
         Point p;
         in >> p;
-        CGAL_assertion( p == Point( 1, 2));
+        assert( p == Point( 1, 2));
     }
     {
         std::ostringstream  out;
@@ -57,7 +58,7 @@ int main()
         CGAL::set_ascii_mode( in);
         IteratorI   i(in);
         Point p = *i;
-        CGAL_assertion( p == Point( 1, 2));
+        assert( p == Point( 1, 2));
     }
     return 0;
 }

@@ -1,0 +1,2 @@
+export QTDIR=/usr/lib64/qt-3.3
+source /home/lrineau/infrastructure/reference-platforms/setup-common

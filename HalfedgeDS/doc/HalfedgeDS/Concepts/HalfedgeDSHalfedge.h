@@ -51,72 +51,72 @@ public:
 /*! 
 instantiated `HalfedgeDS` ( \f$ \equiv\f$ `Refs`). 
 */ 
-typedef Hidden_type HalfedgeDS; 
+typedef unspecified_type HalfedgeDS; 
 
 /*! 
 base class that allows modifications. 
 */ 
-typedef Hidden_type Base; 
+typedef unspecified_type Base; 
 
 /*! 
 base class to access `set_opposite()`. 
 */ 
-typedef Hidden_type Base_base; 
+typedef unspecified_type Base_base; 
 
 /*! 
 model of `HalfedgeDSVertex`. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 model of `HalfedgeDSFace`. 
 */ 
-typedef Hidden_type Face; 
+typedef unspecified_type Face; 
 
 /*! 
 handle to vertex. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 handle to halfedge. 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*! 
 handle to face. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_const_handle; 
+typedef unspecified_type Vertex_const_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Halfedge_const_handle; 
+typedef unspecified_type Halfedge_const_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Face_const_handle; 
+typedef unspecified_type Face_const_handle; 
 
 /*! 
 \link CGAL::Tag_true `CGAL::Tag_true`\endlink or \link CGAL::Tag_false `CGAL::Tag_false`\endlink. 
 */ 
-typedef Hidden_type Supports_halfedge_prev; 
+typedef unspecified_type Supports_halfedge_prev; 
 
 /*! 
 \link CGAL::Tag_true `CGAL::Tag_true`\endlink or \link CGAL::Tag_false `CGAL::Tag_false`\endlink.  
 */ 
-typedef Hidden_type Supports_halfedge_vertex; 
+typedef unspecified_type Supports_halfedge_vertex; 
 
 /*! 
 \link CGAL::Tag_true `CGAL::Tag_true`\endlink or \link CGAL::Tag_false `CGAL::Tag_false`\endlink. 
 */ 
-typedef Hidden_type Supports_halfedge_face; 
+typedef unspecified_type Supports_halfedge_face; 
 
 /// @} 
 

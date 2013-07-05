@@ -115,7 +115,7 @@ std::string replace1(const std::string& msg,const std::string& replacement)
 {
   std::string result(msg);
   const std::string::size_type pos = result.find('%');
-  CGAL_qpe_assertion(pos < result.size());
+  assert(pos < result.size());
   result.replace(pos,1,replacement);
   return result;
 }
@@ -385,7 +385,7 @@ bool process(const std::string& filename,
 
   // test readers
   CGAL::Quadratic_program_from_mps<IT> qp2(inout);
-  CGAL_qpe_assertion (qp2.is_valid());
+  assert (qp2.is_valid());
   if (!CGAL::QP_functions_detail::are_equal_qp (qp, qp2)) {
     cout << "Warning: MPS reader (QP) and MPS writer disagree.\n" << endl;
   }
@@ -545,6 +545,9 @@ int main(const int ac,const char **av) {
   using std::endl;
   using CGAL::Tag_true;
   using CGAL::Tag_false;
+
+  std::cerr.precision(17);
+  std::cout.precision(17);
 
   // determine in which mode we run:
   const bool readFromStdIn = ac == 1;

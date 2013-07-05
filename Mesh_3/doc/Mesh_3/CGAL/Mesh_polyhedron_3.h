@@ -27,7 +27,7 @@ public:
 `CGAL::Polyhedron_3<IGT>` type with customized `PolyhedronItems_3` 
 designed to handle sharp feature detection. 
 */ 
-typedef Hidden_type type; 
+typedef unspecified_type type; 
 
 /// @}
 

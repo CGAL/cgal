@@ -20,24 +20,24 @@ public:
 the dD point type on which the Delaunay 
 algorithm operates 
 */ 
-typedef Hidden_type Point_d; 
+typedef unspecified_type Point_d; 
 
 /*! 
 a dD sphere 
 */ 
-typedef Hidden_type Sphere_d; 
+typedef unspecified_type Sphere_d; 
 
 /*! 
 an arithmetic field type 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 Predicate object type that provides 
 `Point_d operator()(Sphere_d s, int i)`, which returns the \f$ i\f$th 
 point defining sphere `s`. 
 */ 
-typedef Hidden_type Point_of_sphere_d; 
+typedef unspecified_type Point_of_sphere_d; 
 
 /*! 
 Predicate object type that provides 
@@ -45,7 +45,7 @@ Predicate object type that provides
 last)`, which returns a dD sphere through the points in 
 `tuple[first,last)`. 
 */ 
-typedef Hidden_type Construct_sphere_d; 
+typedef unspecified_type Construct_sphere_d; 
 
 /*! 
 Predicate object type that 
@@ -53,14 +53,14 @@ provides `bool operator()(ForwardIterator first, ForwardIterator
 last, Point_d p)`, which determines if `p` is contained in 
 the closed simplex defined by the points in `tuple[first,last)`. 
 */ 
-typedef Hidden_type Contained_in_simplex_d; 
+typedef unspecified_type Contained_in_simplex_d; 
 
 /*! 
 Predicate object type that provides 
 `FT operator()(Point_d p,Point_d q)`, which determines the 
 squared distance from `p` to `q`. 
 */ 
-typedef Hidden_type Squared_distance_d; 
+typedef unspecified_type Squared_distance_d; 
 
 /*! 
 Predicate object type that 
@@ -68,7 +68,7 @@ provides `bool operator()(ForwardIterator first, ForwardIterator
 last)`, which determines if the points in `tuple[first,last)` are 
 affinely independent. 
 */ 
-typedef Hidden_type Affinely_independent_d; 
+typedef unspecified_type Affinely_independent_d; 
 
 /// @} 
 

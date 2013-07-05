@@ -1,6 +1,7 @@
 #include <CGAL/Combination_enumerator.h>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 
 using namespace std;
@@ -22,9 +23,9 @@ void test(const int K, const T & first, const T & beyond)
     long n(0);
 
     CGAL::Combination_enumerator<T> combi(K, first, beyond);
-    CGAL_assertion( first  == combi.min_element() );
-    CGAL_assertion( beyond == combi.beyond_element() );
-    CGAL_assertion( K      == combi.number_of_elements() );
+    assert( first  == combi.min_element() );
+    assert( beyond == combi.beyond_element() );
+    assert( K      == combi.number_of_elements() );
     while( ! combi.finished() )
     {
         ++n;
@@ -33,7 +34,7 @@ void test(const int K, const T & first, const T & beyond)
     long nelem = static_cast<long>(beyond - first);
     long num = fac(nelem - K + 1, nelem) / fac(2, K);
     cout << endl << "Enumerated " << n << " combinations. Should be " << num;
-    CGAL_assertion(n == num);
+    assert(n == num);
 }
 
 int main()

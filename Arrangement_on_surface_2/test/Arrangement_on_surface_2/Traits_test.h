@@ -572,7 +572,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
     exp_type = 0;
     const Point_2 * pt_ptr;
     pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
-    CGAL_assertion (pt_ptr != NULL);
+    assert (pt_ptr != NULL);
     if (!this->compare(type, exp_type, "type")) return false;
 
     if (!this->compare_points(this->m_points[id], *pt_ptr)) return false;
@@ -630,7 +630,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
     typedef std::pair<Point_2,Multiplicity> Point_2_pair;
     const Point_2_pair * pt_pair_ptr =
       CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
-    CGAL_assertion(pt_pair_ptr != NULL);
+    assert(pt_pair_ptr != NULL);
     if (!this->compare(type, exp_type, "type")) return false;
     if (!this->compare_points(this->m_points[id], (*pt_pair_ptr).first))
       return false;
@@ -805,7 +805,7 @@ parameter_space_in_x_wrapper_imp(std::istringstream& str_stream,
               << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
               << " ) ? ";
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::PARAMETER_SPACE);
+    assert(next_input.first == Base::PARAMETER_SPACE);
   } else if (next_input.first == Base::PARAMETER_SPACE) {
     std::cout << "Test: parameter_space_in_x( " << this->m_points[id] << " ) ? ";
   } else {
@@ -859,14 +859,14 @@ compare_y_near_boundary_wrapper_imp(std::istringstream& str_stream,
   str_stream >> id1 >> id2;
   std::pair<Enum_type, unsigned int> next_input =
     this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::CURVE_END);
+  assert(next_input.first == Base::CURVE_END);
   CGAL::Arr_curve_end cv_end =
     static_cast<CGAL::Arr_curve_end>(next_input.second);
   std::cout << "Test: compare_y_near_boundary( " << this->m_xcurves[id1] << " , "
             << this->m_xcurves[id2]<< " , "
             << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END") << " ) ? ";
   next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
+  assert(next_input.first == Base::SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
@@ -924,7 +924,7 @@ parameter_space_in_y_wrapper_imp(std::istringstream& str_stream,
               << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END")
               << " ) ? ";
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::PARAMETER_SPACE);
+    assert(next_input.first == Base::PARAMETER_SPACE);
   } else if (next_input.first == Base::PARAMETER_SPACE) {
     std::cout << "Test: parameter_space_in_y( " << this->m_points[id] << " ) ? ";
   } else {
@@ -983,7 +983,7 @@ compare_x_near_limit_wrapper_imp(std::istringstream& str_stream,
   str_stream >> id1 >> id2;
   std::pair<Enum_type, unsigned int> next_input =
     this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::CURVE_END);
+  assert(next_input.first == Base::CURVE_END);
   CGAL::Arr_curve_end cv_end =
     static_cast<CGAL::Arr_curve_end>(next_input.second);
   
@@ -992,7 +992,7 @@ compare_x_near_limit_wrapper_imp(std::istringstream& str_stream,
             << this->curve_end_str(cv_end) << " ) ? ";
 
   next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
+  assert(next_input.first == Base::SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
@@ -1051,7 +1051,7 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
   if (curves_op) {
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::CURVE_END);
+    assert(next_input.first == Base::CURVE_END);
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
       
     std::cout << this->m_points[id1] << " , "
@@ -1061,10 +1061,10 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
   else if (next_input.first == Base::CURVE_END) {
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::NUMBER);
+    assert(next_input.first == Base::NUMBER);
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::CURVE_END);
+    assert(next_input.first == Base::CURVE_END);
     cv_end2 = static_cast<CGAL::Arr_curve_end>(next_input.second);
 
     std::cout << this->m_xcurves[id1] << ", "
@@ -1075,7 +1075,7 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
   else CGAL_error();
 
   next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
+  assert(next_input.first == Base::SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
@@ -1126,7 +1126,7 @@ compare_x_near_boundary_wrapper_imp(std::istringstream& str_stream,
   str_stream >> id1 >> id2;
   std::pair<Enum_type, unsigned int> next_input =
     this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::CURVE_END);
+  assert(next_input.first == Base::CURVE_END);
   CGAL::Arr_curve_end cv_end =
     static_cast<CGAL::Arr_curve_end>(next_input.second);
   
@@ -1135,7 +1135,7 @@ compare_x_near_boundary_wrapper_imp(std::istringstream& str_stream,
             << this->curve_end_str(cv_end) << " ) ? ";
 
   next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
+  assert(next_input.first == Base::SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
@@ -1197,7 +1197,7 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
   if (curves_op) {
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::CURVE_END);
+    assert(next_input.first == Base::CURVE_END);
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
       
     std::cout << this->m_points[id1] << " , "
@@ -1207,10 +1207,10 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
   else if (next_input.first == Base::CURVE_END) {
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::NUMBER);
+    assert(next_input.first == Base::NUMBER);
     id2 = static_cast<unsigned int>(next_input.second);
     next_input = this->get_next_input(str_stream);
-    CGAL_assertion(next_input.first == Base::CURVE_END);
+    assert(next_input.first == Base::CURVE_END);
     cv_end2 = static_cast<CGAL::Arr_curve_end>(next_input.second);
 
     std::cout << this->m_xcurves[id1] << ", "
@@ -1221,7 +1221,7 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
   else CGAL_error();
 
   next_input = this->get_next_input(str_stream);
-  CGAL_assertion(next_input.first == Base::SIGN);
+  assert(next_input.first == Base::SIGN);
   CGAL::Comparison_result exp_answer = 
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":

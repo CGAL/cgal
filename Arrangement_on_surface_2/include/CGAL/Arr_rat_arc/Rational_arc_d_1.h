@@ -2259,7 +2259,7 @@ public:
    * \param c2 Output: The first resulting arc, lying to the right of p.
    * \pre p lies in the interior of the arc (not one of its endpoints).
    */
-  void split(const Algebraic_point_2& p, Self& c1, Self& c2, const Cache& cache) const
+  void split(const Algebraic_point_2& p, Self& c1, Self& c2, const Cache& CGAL_assertion_code(cache)) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
 

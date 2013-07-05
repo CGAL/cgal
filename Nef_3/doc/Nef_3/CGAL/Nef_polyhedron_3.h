@@ -103,32 +103,32 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   sphere point type stored in Halfedge. 
 */ 
-    typedef Hidden_type Sphere_point; 
+    typedef unspecified_type Sphere_point; 
 
 /*! 
   const handle to vertex. 
 */ 
-    typedef Hidden_type Vertex_const_handle; 
+    typedef unspecified_type Vertex_const_handle; 
 
 /*! 
   const handle to halfedge. 
 */ 
-    typedef Hidden_type Halfedge_const_handle; 
+    typedef unspecified_type Halfedge_const_handle; 
 
 /*! 
   const handle to SHalfedge. 
 */ 
-    typedef Hidden_type SHalfedge_const_handle; 
+    typedef unspecified_type SHalfedge_const_handle; 
 
 /*! 
   const handle to SFace. 
 */ 
-    typedef Hidden_type SFace_const_handle; 
+    typedef unspecified_type SFace_const_handle; 
 
 /// @} 
 
@@ -207,12 +207,12 @@ public:
 /*! 
   const handle to SHalfedge. 
 */ 
-    typedef Hidden_type SHalfedge_handle; 
+    typedef unspecified_type SHalfedge_handle; 
 
 /*! 
   const handle to SHalfloop. 
 */ 
-    typedef Hidden_type SHalfloop_handle; 
+    typedef unspecified_type SHalfloop_handle; 
 
 /// @} 
 
@@ -293,32 +293,32 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   plane type stored in Halffacet. 
 */ 
-    typedef Hidden_type Plane_3; 
+    typedef unspecified_type Plane_3; 
 
 /*! 
   list of Object handles. 
 */ 
-    typedef Hidden_type Object_list; 
+    typedef unspecified_type Object_list; 
 
 /*! 
   const handle to Halffacet. 
 */ 
-    typedef Hidden_type Halffacet_const_handle; 
+    typedef unspecified_type Halffacet_const_handle; 
 
 /*! 
   const handle to volume. 
 */ 
-    typedef Hidden_type Volume_const_handle; 
+    typedef unspecified_type Volume_const_handle; 
 
 /*! 
   const iterator over the entries to all halffacet cycles of a halffacet. 
 */ 
-    typedef Hidden_type Halffacet_cycle_const_iterator; 
+    typedef unspecified_type Halffacet_cycle_const_iterator; 
 
 /// @} 
 
@@ -384,17 +384,17 @@ public:
 /*! 
   const handle to SVertex. 
 */ 
-    typedef Hidden_type SVertex_handle; 
+    typedef unspecified_type SVertex_handle; 
 
 /*! 
   const handle to SHalfedge. 
 */ 
-    typedef Hidden_type SHalfedge_handle; 
+    typedef unspecified_type SHalfedge_handle; 
 
 /*! 
   const handle to SHalfloop. 
 */ 
-    typedef Hidden_type SHalfloop_handle; 
+    typedef unspecified_type SHalfloop_handle; 
 
 /// @} 
 
@@ -479,32 +479,32 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   list of Object handles. 
 */ 
-    typedef Hidden_type Object_list; 
+    typedef unspecified_type Object_list; 
 
 /*! 
   const handle to Vertex. 
 */ 
-    typedef Hidden_type Vertex_const_handle; 
+    typedef unspecified_type Vertex_const_handle; 
 
 /*! 
   const handle to Volume. 
 */ 
-    typedef Hidden_type Volume_const_handle; 
+    typedef unspecified_type Volume_const_handle; 
 
 /*! 
   const handle to SFace. 
 */ 
-    typedef Hidden_type SFace_const_handle; 
+    typedef unspecified_type SFace_const_handle; 
 
 /*! 
   const iterator over the entries to all sface cycles of a sface. 
 */ 
-    typedef Hidden_type SFace_cycle_const_iterator; 
+    typedef unspecified_type SFace_cycle_const_iterator; 
 
 /// @} 
 
@@ -599,32 +599,32 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   sphere circle type stored in SHalfedge. 
 */ 
-    typedef Hidden_type Sphere_circle; 
+    typedef unspecified_type Sphere_circle; 
 
 /*! 
   const handle to Halffacet. 
 */ 
-    typedef Hidden_type Halffacet_const_handle; 
+    typedef unspecified_type Halffacet_const_handle; 
 
 /*! 
   const handle to SVertex. 
 */ 
-    typedef Hidden_type SVertex_const_handle; 
+    typedef unspecified_type SVertex_const_handle; 
 
 /*! 
   const handle to SHalfedge. 
 */ 
-    typedef Hidden_type SHalfedge_const_handle; 
+    typedef unspecified_type SHalfedge_const_handle; 
 
 /*! 
   const handle to SFace. 
 */ 
-    typedef Hidden_type SFace_const_handle; 
+    typedef unspecified_type SFace_const_handle; 
 
 /// @} 
 
@@ -765,27 +765,27 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   sphere circle type stored in SHalfloop. 
 */ 
-    typedef Hidden_type Sphere_circle; 
+    typedef unspecified_type Sphere_circle; 
 
 /*! 
   const handle to Halffacet. 
 */ 
-    typedef Hidden_type Halffacet_const_handle; 
+    typedef unspecified_type Halffacet_const_handle; 
 
 /*! 
   const handle to SHalfloop. 
 */ 
-    typedef Hidden_type SHalfloop_const_handle; 
+    typedef unspecified_type SHalfloop_const_handle; 
 
 /*! 
   const handle to SFace. 
 */ 
-    typedef Hidden_type SFace_const_handle; 
+    typedef unspecified_type SFace_const_handle; 
 
 /// @} 
 
@@ -847,12 +847,12 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   point type stored in Vertex. 
 */ 
-    typedef Hidden_type Point_3; 
+    typedef unspecified_type Point_3; 
 
 /// @} 
 
@@ -901,22 +901,22 @@ public:
 /*! 
   type of mark. 
 */ 
-    typedef Hidden_type Mark; 
+    typedef unspecified_type Mark; 
 
 /*! 
   list of Object handles. 
 */ 
-    typedef Hidden_type Object_list; 
+    typedef unspecified_type Object_list; 
 
 /*! 
   const handle to Volume. 
 */ 
-    typedef Hidden_type Volume_const_handle; 
+    typedef unspecified_type Volume_const_handle; 
 
 /*! 
   const iterator over the entries to all shells adjacent to a volume. 
 */ 
-    typedef Hidden_type Shell_entry_const_iterator; 
+    typedef unspecified_type Shell_entry_const_iterator; 
 
 /// @} 
 
@@ -945,128 +945,128 @@ public:
 /*! 
   traits class selected for `Nef_polyhedronTraits_3`. 
 */ 
-  typedef Hidden_type Traits; 
+  typedef unspecified_type Traits; 
 
 /*! 
   All object (vertices, edges, etc.) are attributed by a Mark. 
   Mark equals bool. 
 */ 
-  typedef Hidden_type Mark; 
+  typedef unspecified_type Mark; 
 
 /*! 
   size type of `Nef_polyhedron_3`. 
 */ 
-  typedef Hidden_type size_type; 
+  typedef unspecified_type size_type; 
 
 /*! 
   non-mutable handle to a vertex. 
 */ 
-  typedef Hidden_type Vertex_const_handle; 
+  typedef unspecified_type Vertex_const_handle; 
 
 /*! 
   non-mutable handle to a halfedge. 
 */ 
-  typedef Hidden_type Halfedge_const_handle; 
+  typedef unspecified_type Halfedge_const_handle; 
 
 /*! 
   non-mutable handle to a halffacet. 
 */ 
-  typedef Hidden_type Halffacet_const_handle; 
+  typedef unspecified_type Halffacet_const_handle; 
 
 /*! 
   non-mutable handle to a volume. 
 */ 
-  typedef Hidden_type Volume_const_handle; 
+  typedef unspecified_type Volume_const_handle; 
 
 /*! 
   non-mutable handle to a svertex. 
 */ 
-  typedef Hidden_type SVertex_const_handle; 
+  typedef unspecified_type SVertex_const_handle; 
 
 /*! 
   non-mutable handle to a shalfedge. 
 */ 
-  typedef Hidden_type SHalfedge_const_handle; 
+  typedef unspecified_type SHalfedge_const_handle; 
 
 /*! 
   non-mutable handle to a shalfloop. 
 */ 
-  typedef Hidden_type SHalfloop_const_handle; 
+  typedef unspecified_type SHalfloop_const_handle; 
 
 /*! 
   non-mutable handle to a sface. 
 */ 
-  typedef Hidden_type SFace_const_handle; 
+  typedef unspecified_type SFace_const_handle; 
 
 /*! 
   non-mutable iterator over all vertices. 
 */ 
-  typedef Hidden_type Vertex_const_iterator; 
+  typedef unspecified_type Vertex_const_iterator; 
 
 /*! 
   non-mutable iterator over all halfeges. 
 */ 
-  typedef Hidden_type Halfedge_const_iterator; 
+  typedef unspecified_type Halfedge_const_iterator; 
 
 /*! 
   non-mutable iterator over all halffacets. 
 */ 
-  typedef Hidden_type Halffacet_const_iterator; 
+  typedef unspecified_type Halffacet_const_iterator; 
 
 /*! 
   non-mutable iterator over all volumes. 
 */ 
-  typedef Hidden_type Volume_const_iterator; 
+  typedef unspecified_type Volume_const_iterator; 
 
 /*! 
   non-mutable iterator over all svertices. 
 */ 
-  typedef Hidden_type SVertex_const_iterator; 
+  typedef unspecified_type SVertex_const_iterator; 
 
 /*! 
   non-mutable iterator over all shalfedges. 
 */ 
-  typedef Hidden_type SHalfedge_const_iterator; 
+  typedef unspecified_type SHalfedge_const_iterator; 
 
 /*! 
   non-mutable iterator over all shalfloops. 
 */ 
-  typedef Hidden_type SHalfloop_const_iterator; 
+  typedef unspecified_type SHalfloop_const_iterator; 
 
 /*! 
   non-mutable iterator over all sfaces. 
 */ 
-  typedef Hidden_type SFace_const_iterator; 
+  typedef unspecified_type SFace_const_iterator; 
 
 /*! 
   non-mutable circulator of shalfedges around a svertex (cw). 
 */ 
-  typedef Hidden_type SHalfedge_around_svertex_const_circulator; 
+  typedef unspecified_type SHalfedge_around_svertex_const_circulator; 
 
 /*! 
   non-mutable circulator of shalfedges around a sface (ccw). 
 */ 
-  typedef Hidden_type SHalfedge_around_sface_const_circulator; 
+  typedef unspecified_type SHalfedge_around_sface_const_circulator; 
 
 /*! 
   non-mutable circulator of shalfedges around a halffacet (ccw). 
 */ 
-  typedef Hidden_type SHalfedge_around_facet_const_circulator; 
+  typedef unspecified_type SHalfedge_around_facet_const_circulator; 
 
 /*! 
   non-mutable iterator over the cylces of a sface. 
 */ 
-  typedef Hidden_type SFace_cycle_const_iterator; 
+  typedef unspecified_type SFace_cycle_const_iterator; 
 
 /*! 
   non-mutable iterator over the cylces of a halffacet. 
 */ 
-  typedef Hidden_type Halffacet_cycle_const_iterator; 
+  typedef unspecified_type Halffacet_cycle_const_iterator; 
 
 /*! 
   non-mutable iterator providing an entry to each shell. 
 */ 
-  typedef Hidden_type Shell_entry_const_iterator; 
+  typedef unspecified_type Shell_entry_const_iterator; 
 
 /*! 
   a generic handle to an object. 
@@ -1093,37 +1093,37 @@ public:
   where each function returns `true` iff the assignment to 
   `h` could be accomplished. 
 */ 
-  typedef Hidden_type Object_handle; 
+  typedef unspecified_type Object_handle; 
 
 /*! 
   location of vertices. 
 */ 
-  typedef Hidden_type Point_3; 
+  typedef unspecified_type Point_3; 
 
 /*! 
   segment represented by a halfedge. 
 */ 
-  typedef Hidden_type Segment_3; 
+  typedef unspecified_type Segment_3; 
 
 /*! 
   direction of a halfedge. 
 */ 
-  typedef Hidden_type Vector_3; 
+  typedef unspecified_type Vector_3; 
 
 /*! 
   plane of a halffacet lies in. 
 */ 
-  typedef Hidden_type Plane_3; 
+  typedef unspecified_type Plane_3; 
 
 /*! 
   affine transformation. 
 */ 
-  typedef Hidden_type Aff_transformation_3; 
+  typedef unspecified_type Aff_transformation_3; 
 
 /*! 
   tag for calling polyline constructor. 
 */ 
-  typedef Hidden_type Polylines_tag; 
+  typedef unspecified_type Polylines_tag; 
 
 /*! 
   construction selection. 
@@ -1144,12 +1144,12 @@ public:
 /*! 
   a sphere map. 
 */ 
-  typedef Hidden_type Nef_polyhedron_S2; 
+  typedef unspecified_type Nef_polyhedron_S2; 
 
 /*! 
   a polyhedral surface. 
 */ 
-  typedef Hidden_type Polyhedron; 
+  typedef unspecified_type Polyhedron; 
 
 /// @} 
 

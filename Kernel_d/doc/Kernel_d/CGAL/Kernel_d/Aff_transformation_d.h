@@ -33,12 +33,12 @@ public:
 /*! 
 the linear algebra layer. 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /*! 
 the matrix type. 
 */ 
-typedef Hidden_type Matrix; 
+typedef unspecified_type Matrix; 
 
 /// @} 
 

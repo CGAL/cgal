@@ -59,12 +59,12 @@ public:
 /*! 
 models the concept `ArrTraits::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 models the concept `ArrTraits::XMonotoneCurve_2`. 
 */ 
-typedef Hidden_type X_monotone_curve_2; 
+typedef unspecified_type X_monotone_curve_2; 
 
 /// @} 
 
@@ -75,27 +75,27 @@ typedef Hidden_type X_monotone_curve_2;
 indicates whether the nested functor `Compare_at_x_left_2` is 
 provided. 
 */ 
-typedef Hidden_type Has_left_category; 
+typedef unspecified_type Has_left_category; 
 
 /*! 
 Must be convertible to `Arr_oblivious_side_tag`. 
 */ 
-typedef Hidden_type Left_side_category; 
+typedef unspecified_type Left_side_category; 
 
 /*! 
 Must be convertible to `Arr_oblivious_side_tag`. 
 */ 
-typedef Hidden_type Bottom_side_category; 
+typedef unspecified_type Bottom_side_category; 
 
 /*! 
 Must be convertible to `Arr_oblivious_side_tag`. 
 */ 
-typedef Hidden_type Top_side_category; 
+typedef unspecified_type Top_side_category; 
 
 /*! 
 Must be convertible to `Arr_oblivious_side_tag`. 
 */ 
-typedef Hidden_type Right_side_category; 
+typedef unspecified_type Right_side_category; 
 
 /// @} 
 
@@ -105,49 +105,49 @@ typedef Hidden_type Right_side_category;
 /*! 
 models the concept `ArrTraits::CompareX_2`. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 models the concept `ArrTraits::CompareXy_2`. 
 */ 
-typedef Hidden_type Compare_xy_2; 
+typedef unspecified_type Compare_xy_2; 
 
 /*! 
 models the concept `ArrTraits::ConstructMinVertex_2`. 
 */ 
-typedef Hidden_type Construct_min_vertex_2; 
+typedef unspecified_type Construct_min_vertex_2; 
 
 /*! 
 models the concept `ArrTraits::ConstructMaxVertex_2`. 
 */ 
-typedef Hidden_type Construct_max_vertex_2; 
+typedef unspecified_type Construct_max_vertex_2; 
 
 /*! 
 models the concept `ArrTraits::IsVertical_2`. 
 */ 
-typedef Hidden_type Is_vertical_2; 
+typedef unspecified_type Is_vertical_2; 
 
 /*! 
 models the concept `ArrTraits::CompareYAtX_2`. 
 */ 
-typedef Hidden_type Compare_y_at_x_2; 
+typedef unspecified_type Compare_y_at_x_2; 
 
 /*! 
 models the concept `ArrTraits::CompareYAtXLeft_2`. 
 Required only if the `Has_left_category` category is convertible to 
 `Tag_true`. 
 */ 
-typedef Hidden_type Compare_y_at_x_left_2; 
+typedef unspecified_type Compare_y_at_x_left_2; 
 
 /*! 
 models the concept `ArrTraits::CompareYAtXRight_2`. 
 */ 
-typedef Hidden_type Compare_y_at_x_right_2; 
+typedef unspecified_type Compare_y_at_x_right_2; 
 
 /*! 
 models the concept `ArrTraits::Equal_2`. 
 */ 
-typedef Hidden_type Equal_2; 
+typedef unspecified_type Equal_2; 
 
 /// @} 
 

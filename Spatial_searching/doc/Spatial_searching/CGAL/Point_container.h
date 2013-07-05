@@ -38,12 +38,12 @@ typedef Traits::Point_d Point_d;
 /*! 
 An iterator with value type `Point_d*`. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /*! 
 A const iterator with value type `const Point_d*`. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /// @} 
 

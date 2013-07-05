@@ -107,9 +107,9 @@ void _test_intersection_construct(K)
 
   for (int i=0;i<4;++i)
     for (int j=i+1;j<5;++j){
-      CGAL_assertion( CGAL::do_intersect(s[i],s[j]) );
-      CGAL_assertion( CGAL::do_intersect(s[i].supporting_line(),s[j]) );
-      CGAL_assertion( CGAL::do_intersect(s[i],s[j].supporting_line()) );
+      assert( CGAL::do_intersect(s[i],s[j]) );
+      assert( CGAL::do_intersect(s[i].supporting_line(),s[j]) );
+      assert( CGAL::do_intersect(s[i],s[j].supporting_line()) );
     }
   
   CGAL::Object objs[8];
@@ -123,23 +123,23 @@ void _test_intersection_construct(K)
   objs[7] = CGAL::intersection(s[2],s[1].supporting_line()); //s[2]    
   for (int k=0;k<5;++k){
     const Point_3* p=CGAL::object_cast<Point_3>(&(objs[k]));
-    CGAL_assertion(p!=NULL);
-    CGAL_assertion(*p==Point_3(0,0,0));
+    assert(p!=NULL);
+    assert(*p==Point_3(0,0,0));
   }
   
   const Segment_3* seg=CGAL::object_cast<Segment_3>(&(objs[5]));
-  CGAL_assertion(seg!=NULL);
-  CGAL_assertion(*seg==s[1]);
+  assert(seg!=NULL);
+  assert(*seg==s[1]);
   seg=CGAL::object_cast<Segment_3>(&(objs[7]));
-  CGAL_assertion(*seg==s[2]);  
+  assert(*seg==s[2]);  
   
   seg=CGAL::object_cast<Segment_3>(&(objs[6]));
-  CGAL_assertion(seg!=NULL);
-  CGAL_assertion(*seg==Segment_3( Point_3(0,0,0),Point_3(-1,0,0) ) || *seg==Segment_3( Point_3(-1,0,0),Point_3(0,0,0) ));  
+  assert(seg!=NULL);
+  assert(*seg==Segment_3( Point_3(0,0,0),Point_3(-1,0,0) ) || *seg==Segment_3( Point_3(-1,0,0),Point_3(0,0,0) ));  
 
   
-  CGAL_assertion( !CGAL::do_intersect(s[0],Segment_3(Point_3(-1,0,0),Point_3(-0.5,0,0))) );
-  CGAL_assertion( !CGAL::do_intersect(s[4],Segment_3(Point_3(-1,0,0),Point_3(-0.5,0,0))) );
+  assert( !CGAL::do_intersect(s[0],Segment_3(Point_3(-1,0,0),Point_3(-0.5,0,0))) );
+  assert( !CGAL::do_intersect(s[4],Segment_3(Point_3(-1,0,0),Point_3(-0.5,0,0))) );
   
   std::cout << "OK!" << std::endl;
 }

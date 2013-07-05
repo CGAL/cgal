@@ -44,7 +44,7 @@ read_xcurve(stream& is, typename T_Traits::X_monotone_curve_2& xcv)
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   xcv = typename T_Traits::X_monotone_curve_2(p1, p2);
   return true;
 }
@@ -58,7 +58,7 @@ IO_base_test<T_Traits>::read_curve(stream& is, typename T_Traits::Curve_2& cv)
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   cv = typename T_Traits::Curve_2(p1, p2);
   return true;
 }
@@ -898,9 +898,9 @@ bool IO_base_test<Traits>::read_point(stream& is, Point_2& p) {
      is >> x;
      Traits::X_monotone_curve_2 xcv;
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(bool check=)
+     bool check=
        read_xcurve(is, xcv);
-     CGAL_assertion(check);
+     assert(check);
     
      CGAL::swallow(is,')');
      p = construct_point_2(x, xcv);
@@ -910,9 +910,9 @@ bool IO_base_test<Traits>::read_point(stream& is, Point_2& p) {
      Traits::Algebraic_real_1 x;
      is >> x;
      Traits::Curve_2 c;
-     CGAL_assertion_code(bool check = )
+     bool check = 
        read_curve(is,c);
-     CGAL_assertion(check);
+     assert(check);
      int arcno=0;
      is >> arcno;
      p = construct_point_2(x, c, arcno);
@@ -941,35 +941,35 @@ bool IO_base_test<Traits>::read_xcurve(stream& is,
    case '1': {
      Curve_2 cv;
      Point_2 end_left,end_right;
-     CGAL_assertion_code(bool check=)
+     bool check=
      read_curve(is,cv);
-     CGAL_assertion(check);
+     assert(check);
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(check=)
+     check=
      read_point(is,end_left);
-     CGAL_assertion(check);
+     assert(check);
      CGAL::swallow(is,')');
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(check=)
+     check=
      read_point(is,end_right);
-     CGAL_assertion(check);
+     assert(check);
      CGAL::swallow(is,')');
      std::vector<Traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, end_left, end_right, std::back_inserter(xcvs));
-     CGAL_assertion(xcvs.size() == 1);
+     assert(xcvs.size() == 1);
      xcv = xcvs[0];
      break;
     }
    case '2': {
      Curve_2 cv;
      Point_2 p;
-     CGAL_assertion_code(bool check=)
+     bool check=
      read_curve(is,cv);
-     CGAL_assertion(check);
+     assert(check);
      CGAL::swallow(is,'(');
-     CGAL_assertion_code(check=)
+     check=
      read_point(is,p);
-     CGAL_assertion(check);
+     assert(check);
      CGAL::swallow(is,')');
      std::string site_of_p_string;
      Traits::Site_of_point site_of_p;
@@ -979,12 +979,12 @@ bool IO_base_test<Traits>::read_xcurve(stream& is,
      } else if (site_of_p_string=="MAX_ENDPOINT") {
        site_of_p=Traits::MAX_ENDPOINT;
      } else {
-       CGAL_assertion(site_of_p_string=="POINT_IN_INTERIOR");
+       assert(site_of_p_string=="POINT_IN_INTERIOR");
        site_of_p=Traits::POINT_IN_INTERIOR;
      }
      std::vector<Traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, p, site_of_p, std::back_inserter(xcvs));
-     CGAL_assertion(xcvs.size() == 1);
+     assert(xcvs.size() == 1);
      xcv = xcvs[0];
      break;
     }
@@ -1031,7 +1031,7 @@ bool IO_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
   Point_2 p1,p2;
   read_point(is, p1);
   read_point(is, p2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   xcv = X_monotone_curve_2(p1, p2);
   return true;
 }
@@ -1044,7 +1044,7 @@ bool IO_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
   Point_2 p1, p2;
   read_point(is, p1);
   read_point(is, p2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   cv = Curve_2(p1, p2);
   return true;
 }

@@ -28,7 +28,7 @@ public:
 the linear algebra layer. 
 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /// @} 
 

@@ -99,7 +99,7 @@ special_warnings(const char *,
             << std::endl;
 }
 
-int main (int argc, char * argv[])
+int main ()
 {
   std::cerr << "Modify the w-a-r-n-i-n-g-s handler...\n";
   CGAL::set_warning_handler(special_warnings);

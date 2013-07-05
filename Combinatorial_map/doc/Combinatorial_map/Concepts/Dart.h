@@ -39,26 +39,26 @@ static unsigned int dimension;
 /*!
 %Dart handle type.
 */
-typedef Hidden_type Dart_handle;
+typedef unspecified_type Dart_handle;
 
 /*!
 %Dart const handle type.
 */
-typedef Hidden_type Dart_const_handle;
+typedef unspecified_type Dart_const_handle;
 
 /*!
 `Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
-using Attribute_handle = Hidden_type;
+using Attribute_handle = unspecified_type;
 
 /*!
 `Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
-using Attribute_const_handle = Hidden_type;
+using Attribute_const_handle = unspecified_type;
 
 /// @}
 

@@ -25,7 +25,7 @@ public:
 The class used for representing matrices. 
 It has to be a model for `BasicMatrix`. 
 */ 
-typedef Hidden_type Matrix; 
+typedef unspecified_type Matrix; 
 
 /*! 
 The class used for 
@@ -39,7 +39,7 @@ class: `Value` \f$ \times\f$ `Value` \f$ \rightarrow\f$ `bool`
 defining a non-reflexive total order on `Value`. This 
 determines the direction of the search. 
 */ 
-typedef Hidden_type Compare_strictly; 
+typedef unspecified_type Compare_strictly; 
 
 /*! 
 An adaptable binary function 
@@ -47,7 +47,7 @@ class: `Value` \f$ \times\f$ `Value` \f$ \rightarrow\f$ `bool`
 defining the reflexive total order on `Value` corresponding 
 to `Compare_strictly`. 
 */ 
-typedef Hidden_type Compare_non_strictly; 
+typedef unspecified_type Compare_non_strictly; 
 
 /// @} 
 

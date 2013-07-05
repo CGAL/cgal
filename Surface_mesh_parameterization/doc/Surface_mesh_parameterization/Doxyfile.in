@@ -1,0 +1,13 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Planar Parameterization of Triangulated Surface Meshes"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/doc/Surface_mesh_parameterization/ \ 
+                              ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/include
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
+
+
+

@@ -26,8 +26,8 @@
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
+#include <CGAL/Circular_kernel_3/Intersection_traits.h>
 #include <boost/tuple/tuple.hpp>
-
 
 namespace CGAL {
   namespace internal{
@@ -164,7 +164,8 @@ namespace CGAL {
                      const Sphere_3 &s1, bool less_xyz_s1,
                      const Sphere_3 &s2, bool less_xyz_s2) 
       {
-         std::vector<Object> sols1, sols2;
+         typedef typename SK3_Intersection_traits<SK, Circle_3, Sphere_3>::type result_type;
+         std::vector<result_type> sols1, sols2;
          // The spheres must not include the circle
          CGAL_kernel_precondition(!SK().has_on_3_object()(s1,c));
          CGAL_kernel_precondition(!SK().has_on_3_object()(s2,c));
@@ -174,11 +175,11 @@ namespace CGAL {
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]
             );
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]
             );        
          // the source and target must be different
@@ -190,7 +191,8 @@ namespace CGAL {
                      const Plane_3 &p1, bool less_xyz_p1,
                      const Plane_3 &p2, bool less_xyz_p2) 
       {
-         std::vector<Object> sols1, sols2;
+        typedef typename SK3_Intersection_traits<SK, Circle_3, Plane_3>::type result_type;
+         std::vector<result_type> sols1, sols2;
          // The planes must not include the circle
          CGAL_kernel_precondition(!SK().has_on_3_object()(p1,c));
          CGAL_kernel_precondition(!SK().has_on_3_object()(p2,c));
@@ -200,11 +202,11 @@ namespace CGAL {
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+           *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols1[(sols1.size()==1)?(0):(less_xyz_p1?0:1)]
             );
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *object_cast<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+           *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols2[(sols2.size()==1)?(0):(less_xyz_p2?0:1)]
             );                
          // the source and target must be different
@@ -216,7 +218,7 @@ namespace CGAL {
 		     const Point_3 &middle,
 		     const Point_3 &end)
       {
-	CGAL_kernel_precondition(!CGAL::collinear(begin, middle, end));
+	CGAL_kernel_precondition(!typename SK::Collinear_3()(begin, middle, end));
 	const Circle_3 c = Circle_3(begin, middle, end);
 	base = Rep(c,begin,end);
         _sign_cross_product =

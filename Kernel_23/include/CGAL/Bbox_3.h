@@ -66,6 +66,7 @@ public:
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   Bbox_3  operator+(const Bbox_3& b) const;
+  Bbox_3& operator+=(const Bbox_3& b);
 };
 
 inline
@@ -152,6 +153,19 @@ Bbox_3::operator+(const Bbox_3& b) const
 }
 
 inline
+Bbox_3&
+Bbox_3::operator+=(const Bbox_3& b)
+{
+  rep[0] = (std::min)(xmin(), b.xmin());
+  rep[1] = (std::min)(ymin(), b.ymin());
+  rep[2] = (std::min)(zmin(), b.zmin());
+  rep[3] = (std::max)(xmax(), b.xmax());
+  rep[4] = (std::max)(ymax(), b.ymax());
+  rep[5] = (std::max)(zmax(), b.zmax());
+  return *this;
+}
+
+inline
 bool
 do_overlap(const Bbox_3& bb1, const Bbox_3& bb2)
 {
@@ -218,6 +232,28 @@ operator>>(std::istream &is, Bbox_3& b)
     b = Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
   return is;
 }
+
+template <class Input_iterator, class Traits>
+Bbox_3 bbox_3(Input_iterator begin, Input_iterator end, const Traits& traits)
+{
+  if (begin==end) return Bbox_3();
+  typename Traits::Construct_bbox_3 get_bbox = traits.construct_bbox_3_object();
+  Bbox_3 res = get_bbox( *begin );
+  for (++begin; begin!=end; ++begin)
+    res += get_bbox( *begin );
+  return res;
+}
+
+template <class Input_iterator>
+Bbox_3 bbox_3(Input_iterator begin, Input_iterator end)
+{
+  if (begin==end) return Bbox_3();
+  Bbox_3 res = begin->bbox();
+  for (++begin; begin!=end; ++begin)
+    res += begin->bbox();
+  return res;
+}
+
 
 } //namespace CGAL
 

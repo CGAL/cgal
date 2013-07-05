@@ -27,7 +27,7 @@ Delaunay_triangulation_recent_edges_visitor_2();
 /*! 
 The iterator through the recently created edges. 
 */ 
-typedef Hidden_type iterator; 
+typedef unspecified_type iterator; 
 
 /// @} 
 

@@ -20,7 +20,7 @@ public:
 /*! 
 The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
 */ 
-typedef Hidden_type ECM; 
+typedef unspecified_type ECM; 
 
 /*! 
 A <span class="textsc">Bgl</span> vertex descriptor representing a vertex of the surface. 

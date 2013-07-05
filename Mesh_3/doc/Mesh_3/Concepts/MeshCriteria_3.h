@@ -33,14 +33,14 @@ Functor that describes the criteria for
 surface facets. This type must be a model 
 of the concept `MeshFacetCriteria_3`. 
 */ 
-typedef Hidden_type Facet_criteria; 
+typedef unspecified_type Facet_criteria; 
 
 /*! 
 Functor that describes the criteria for 
 mesh tetrahedra. This type must be a model of the concept 
 `MeshCellCriteria_3`. 
 */ 
-typedef Hidden_type Cell_criteria; 
+typedef unspecified_type Cell_criteria; 
 
 /// @} 
 

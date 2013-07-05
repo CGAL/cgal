@@ -32,35 +32,30 @@
 #include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 #include <CGAL/Mesh_vertex_base_3.h>
-#include <CGAL/Mesh_cell_base_3.h>
-
-#ifdef CGAL_COMPACT_MESH_VERTEX_CELL
-#include <CGAL/Compact_mesh_vertex_base_3.h>
 #include <CGAL/Compact_mesh_cell_base_3.h>
-#endif // CGAL_COMPACT_MESH_VERTEX_CELL
 
 namespace CGAL {
-  
+
   namespace details {
-    
+
     template<typename K>
     struct Mesh_geom_traits_generator
     {
     private:
       typedef Robust_weighted_circumcenter_filtered_traits_3<K>
         Geom_traits;
-      
+
     public:
       typedef Geom_traits type;
       typedef type Type;
     };  // end struct Mesh_geom_traits_generator
-    
+
   }  // end namespace details
-  
-  
+
+
 // Struct Mesh_triangulation_3
 //
-template<class MD, 
+template<class MD,
          class K=typename Kernel_traits<MD>::Kernel,
          class Concurrency_tag = Default,
          class Vertex_base_ = Default,
@@ -69,31 +64,21 @@ struct Mesh_triangulation_3
   {
 private:
   typedef typename details::Mesh_geom_traits_generator<K>::type Geom_traits;
-#ifdef CGAL_COMPACT_MESH_VERTEX_CELL
+
   typedef typename Default::Get<
-    Vertex_base_, 
-    Compact_mesh_vertex_base_3<Geom_traits, MD>>::type          Vertex_base;
+    Vertex_base_,
+    Mesh_vertex_base_3<Geom_traits, MD> >::type                 Vertex_base;
   typedef typename Default::Get<
-    Cell_base_, 
-    Compact_mesh_cell_base_3<Geom_traits, MD>>::type            Cell_base;
-#else // NOT CGAL_COMPACT_MESH_VERTEX_CELL
-  typedef typename Default::Get<
-    Vertex_base_, 
-    Mesh_vertex_base_3<Geom_traits, MD>>::type                  Vertex_base;
-  typedef typename Default::Get<
-    Cell_base_, 
-    Mesh_cell_base_3<Geom_traits, MD>>::type                    Cell_base;
-#endif // NOT CGAL_COMPACT_MESH_VERTEX_CELL
+    Cell_base_,
+    Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
-  
+
 public:
   typedef Triangulation type;
   typedef type Type;
 };  // end struct Mesh_triangulation_3
-
-
 
 }  // end namespace CGAL
 

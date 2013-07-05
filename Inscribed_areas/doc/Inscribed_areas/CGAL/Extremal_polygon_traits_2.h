@@ -3,10 +3,13 @@ namespace CGAL {
 /*!
 \ingroup PkgInscribedAreas
 
-\cgalAdvanced The class `Extremal_polygon_area_traits_2` provides the types and 
+\cgalAdvancedClass
+\cgalAdvancedBegin
+The class `Extremal_polygon_area_traits_2` provides the types and 
 operations needed to compute a maximum area \f$ k\f$-gon \f$ P_k\f$ that can 
 be inscribed into a given convex polygon \f$ P\f$ using the function 
-`extremal_polygon_2`. 
+`extremal_polygon_2`.
+\cgalAdvancedEnd
 
 \tparam K must be a model of `Kernel`.
 
@@ -29,22 +32,22 @@ public:
 /*! 
 typedef to `K::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `K::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 typedef to `K::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 typedef to `K::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 AdaptableBinaryFunction class `op`: 
@@ -52,7 +55,7 @@ AdaptableBinaryFunction class `op`:
 For a fixed `Point_2` \f$ root\f$, `op`\f$ (p,\,q)\f$ returns 
 twice the area of the triangle \f$ (root,\, q,\, p)\f$. 
 */ 
-typedef Hidden_type Operation; 
+typedef unspecified_type Operation; 
 
 /// @} 
 
@@ -105,10 +108,13 @@ Orientation_2 orientation_2_object();
 /*!
 \ingroup PkgInscribedAreas
 
-\cgalAdvanced The class `Extremal_polygon_perimeter_traits_2` provides the
+\cgalAdvancedClass
+\cgalAdvancedBegin
+The class `Extremal_polygon_perimeter_traits_2` provides the
 types and operations needed to compute a maximum perimeter \f$
 k\f$-gon \f$ P_k\f$ that can be inscribed into a given convex polygon
 \f$ P\f$ using the function `extremal_polygon_2`.
+\cgalAdvancedEnd
 
 \tparam K must be a model of `Kernel`.
 
@@ -131,22 +137,22 @@ public:
 /*! 
 typedef to `K::FT`. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 typedef to `K::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 typedef to `K::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 typedef to `K::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 AdaptableBinaryFunction class `op`: 
@@ -155,7 +161,7 @@ For a fixed `Point_2` \f$ root\f$, `op`\f$ (p,\,q)\f$ returns
 \f$ d(r,\,p) + d(p,\,q) - d(r,\,q)\f$ where \f$ d\f$ denotes the Euclidean 
 distance. 
 */ 
-typedef Hidden_type Operation; 
+typedef unspecified_type Operation; 
 
 /// @} 
 

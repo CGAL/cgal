@@ -86,6 +86,8 @@ public:
                   const RT& max_hx, const RT& max_hy, const RT& hw)
     : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw)) {}
 
+  Iso_rectangle_2(const Bbox_2& bbox)
+    : Rep(typename R::Construct_iso_rectangle_2()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.xmax(), bbox.ymax())) {}
 
   typename cpp11::result_of<typename R::Construct_min_vertex_2( Iso_rectangle_2 )>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const

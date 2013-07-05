@@ -27,14 +27,14 @@ public:
 the general-polygon type used to 
 represent the outer boundary and each hole. Must model the `GeneralPolygon_2` concept. 
 */ 
-typedef Hidden_type General_polygon_2; 
+typedef unspecified_type General_polygon_2; 
 
 /*! 
 a bidirectional iterator 
 over the polygonal holes. Its value type is 
 `General_polygon_2`. 
 */ 
-typedef Hidden_type Hole_const_iterator; 
+typedef unspecified_type Hole_const_iterator; 
 
 /// @} 
 

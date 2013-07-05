@@ -71,6 +71,12 @@ const Kernel::RT& min_hx, const Kernel::RT& min_hy, const Kernel::RT& min_hz,
 const Kernel::RT& max_hx, const Kernel::RT& max_hy, const Kernel::RT& max_hz, 
 const Kernel::RT& hw = RT(1)); 
 
+/*!
+If `Kernel::RT` is constructible from double,
+introduces an iso-oriented cuboid from `bbox`.
+*/
+Iso_cuboid_3(const Bbox_3& bbox);
+
 /// @} 
 
 /// \name Operations 

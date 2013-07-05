@@ -87,54 +87,54 @@ public:
 The exact number type that was used to solve the 
 program. 
 */ 
-typedef Hidden_type ET; 
+typedef unspecified_type ET; 
 
 /*! 
 An iterator type with value type 
 `Quotient<ET>` to go over the values of the variables in the solution. 
 */ 
-typedef Hidden_type Variable_value_iterator; 
+typedef unspecified_type Variable_value_iterator; 
 
 /*! 
 An iterator type with value type 
 `ET` to go over the numerators of the variable values 
 with respect to a common denominator. 
 */ 
-typedef Hidden_type Variable_numerator_iterator; 
+typedef unspecified_type Variable_numerator_iterator; 
 
 /*! 
 An iterator type with value type `int` 
 to go over the indices of the basic variables and the basic constraints. 
 */ 
-typedef Hidden_type Index_iterator; 
+typedef unspecified_type Index_iterator; 
 
 /*! 
 An iterator type with 
 value type `Quotient<ET>` to go over an \f$ m\f$-vector \f$ \qplambda\f$ that proves 
 optimality of the solution. 
 */ 
-typedef Hidden_type Optimality_certificate_iterator; 
+typedef unspecified_type Optimality_certificate_iterator; 
 
 /*! 
 An iterator type 
 with value type `ET` to go over the numerators of the vector \f$ \qplambda\f$ 
 with respect to a common denominator. 
 */ 
-typedef Hidden_type Optimality_certificate_numerator_iterator; 
+typedef unspecified_type Optimality_certificate_numerator_iterator; 
 
 /*! 
 An iterator type with 
 value type `ET` to go over an \f$ m\f$-vector \f$ \qplambda\f$ that proves 
 infeasibility of the solution. 
 */ 
-typedef Hidden_type Infeasibility_certificate_iterator; 
+typedef unspecified_type Infeasibility_certificate_iterator; 
 
 /*! 
 An iterator type with 
 value type `ET` to go over an \f$ n\f$-vector \f$ \qpw\f$ that proves unboundedness 
 of the solution. 
 */ 
-typedef Hidden_type Unboundedness_certificate_iterator; 
+typedef unspecified_type Unboundedness_certificate_iterator; 
 
 /// @} 
 

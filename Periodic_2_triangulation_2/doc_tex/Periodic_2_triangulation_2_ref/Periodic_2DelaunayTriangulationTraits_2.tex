@@ -1,0 +1,148 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_2DelaunayTriangulationTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 16.03.2010 Nico Kruithof
+% | Package: Periodic_2_triangulation_2
+% | 
+\RCSdef{\RCSPeriodicDelaunayTriangulationTraitsRev}{$Id$}
+\RCSdefDate{\RCSPeriodicDelaunayTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Periodic_2DelaunayTriangulationTraits_2}
+
+\ccDefinition
+%
+The concept \ccRefName\ is the first template parameter of the class
+\ccc{Periodic_2_Delaunay_triangulation_2}. It refines the concept
+\ccc{Periodic_2TriangulationTraits_2} and
+\ccc{DelaunayTriangulationTraits_2} from the \cgal\ \ccRef[2D
+Triangulation]{Pkg:Triangulation2} package.  It redefines the
+geometric objects, predicates and constructions to work with
+point-offset pairs. In most cases the offsets will be (0,0) and the
+predicates from \ccc{DelaunayTriangulationTraits_2} can be used
+directly. For efficiency reasons we maintain for each functor the
+version without offsets.
+
+\ccRefines
+%
+\ccc{DelaunayTriangulationTraits_2} and \ccc{Periodic_2TriangulationTraits_2}
+
+In addition to the requirements of the concept
+\ccc{Periodic_2TriangulationTraits_2}, the concept \ccRefName\
+provides a predicate to check the empty circle property. The
+corresponding predicate type is called type
+\ccc{Side_of_oriented_circle_2}.
+
+The additional constructor object \ccc{Construct_circumcenter_2} is
+used to build the dual Voronoi diagram and are required only if the
+dual functions are called.  The additional predicate type
+\ccc{Compare_distance_2} is required if calls to
+\ccc{nearest_vertex(..)} are issued.
+
+
+\ccTypes
+%\ccTwo{Periodic_2DelaunayTriangulationTraits_2::Tetrahedron_2xx}{}
+%
+%\ccNestedType{Point_2}
+%{The point type. It must be a model of \ccc{Kernel::Point_2}. }
+%\ccGlue
+%\ccNestedType{Vector_2} {The vector type. It must be a model of
+% \ccc{Kernel::Vector_2}.}
+%\ccGlue
+%\ccNestedType{Periodic_2_offset_2} {The offset type. It must be a
+%  model of the concept \ccc{Periodic_2Offset_2}.}
+%\ccGlue
+%\ccNestedType{Iso_rectangle_2} {A type representing an axis-aligned rectangle. It must be a model of \ccc{Kernel::Iso_rectangle_2}.}
+%
+%The following two types represent geometric primitives in $\mathbb
+%R^2$. They are required to provide functions converting primitives
+%from $\mathbb T_c^2$ to $\mathbb R^2$, i.e.\ constructing
+%representatives in $\mathbb R^2$.
+%\ccNestedType{Segment_2} {A segment type. It must be a model of \ccc{Kernel::Segment_2}.}
+%\ccGlue
+%\ccNestedType{Triangle_2} {A triangle type. It must be a model of
+%  \ccc{Kernel::Triangle_2}. }
+
+\ccTwo{Periodic_2}{}
+\ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
+provide the operators\\
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s)} 
+which takes four points $p, q, r, s$ as arguments and returns
+\ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{s}
+with respect to the oriented circle through  through $p,q$
+and $r$ and\\
+%
+\ccc{Oriented_side operator()( Point p, Point q, Point r, Point s,
+  Periodic_2_offset_2 o_p, Periodic_2_offset_2 o_q Periodic_2_offset_2
+  o_r, Periodic_2_offset_2 o_s)}
+which takes four points $(p, o_p), (q, o_q), (r, o_r), (s, o_s)$ as arguments and returns
+\ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{(s, o_s)}
+with respect to the oriented circle through  through \ccc{(p, o_p), (q, o_q)}
+and \ccc{(r, o_r)}.\\
+%
+This type is required only if the function
+\ccc{side_of_oriented_circle(Face_handle f, Point p)} is called.}
+
+\ccNestedType{Construct_circumcenter_2}{Constructor
+  object. Provides the operators: \\
+  \ccc{Point operator()(Point p, Point q, Point r)} \\
+  which returns
+  the  circumcenter of the three points  \ccc{p, q} and \ccc{r}.\\
+%
+  \ccc{Point operator()(Point p, Point q, Point r, Periodic_2_offset_2
+    o_p, Periodic_2_offset_2 o_q Periodic_2_offset_2 o_r)} \\
+  which returns the circumcenter of the three points \ccc{(p, o_p),
+    (q, o_q)} and \ccc{(r, o_r)}.\\
+%
+  This type is required only if the function \ccc{Point
+    circumcenter(Face_handle f)}is called.}
+%
+\ccNestedType{Compare_distance_2} {Predicate type. Provides
+  the operators: \\
+  \ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)}
+  which returns \ccc{SMALLER}, \ccc{EQUAL} or \ccc{LARGER} according
+  to the distance between p and q being smaller, equal or larger than
+  the distance between p and r. \\
+%
+  \ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r,
+    Periodic_2_offset_2 o_p, Periodic_2_offset_2 o_q
+    Periodic_2_offset_2 o_r)} which returns \ccc{SMALLER}, \ccc{EQUAL}
+  or \ccc{LARGER} according to the distance between \ccc{(p, o_p)},
+  and \ccc{(q, o_q)} being smaller, equal or larger than
+  the distance between \ccc{(p, o_p)} and \ccc{(r, o_r)}. \\
+%
+ This type is only require if
+  \ccc{nearest_vertex} queries are issued.}
+
+\ccHeading{Predicate functions}
+\ccCreationVariable{traits}  %% choose variable name
+\ccThree{Construct_circumcenter_2}{traits.construct_circumcenter_2_object();}
+{}
+\ccMethod{Side_of_oriented_circle_2
+side_of_oriented_circle_2_object();}
+{Required only
+if \ccc{side_of_oriented_circle} is called
+called.}
+\ccGlue
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}
+{Required only if \ccc{circumcenter} is called.}
+\ccGlue
+\ccMethod{Compare_distance_2 compare_distance_2_object();}
+{Required only if \ccc{compare_distance} is called.}
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_2_Delaunay_triangulation_traits_2<Traits, Offset>} and \\
+\ccc{CGAL::Periodic_2_triangulation_traits_2<Traits, Offset>}, which
+implements additional the Delaunay predicates as well if the template
+parameter Traits is a model of \ccc{DelaunayTriangulationTraits_2}.
+
+\ccSeeAlso
+\ccc{DelaunayTriangulationTraits_2}
+
+\end{ccRefConcept}

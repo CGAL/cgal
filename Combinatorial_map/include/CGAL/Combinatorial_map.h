@@ -24,12 +24,14 @@
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
+#include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_min_items.h>
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
+#include <CGAL/Unique_hash_map.h>
 #include <bitset>
 #include <vector>
 #include <deque>
@@ -37,11 +39,6 @@
 #include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/config.h>
-
-// suppress bogus warning when compiling with gcc>=4.3
-#if CGAL_GCC_VERSION >= 40300
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#endif
 
 namespace CGAL {
 
@@ -65,6 +62,9 @@ namespace CGAL {
     friend struct CGAL::internal::Call_split_functor;
 
   public:
+    template < unsigned int A, class B, class I, class D >
+    friend class Combinatorial_map_base;
+
     /// Types definition
     typedef Combinatorial_map_base<d_, Refs, Items_,Alloc_>  Self;
 
@@ -151,6 +151,168 @@ namespace CGAL {
       }
 
       CGAL_assertion(number_of_darts()==0);
+    }
+
+    /** Copy the given combinatorial map into *this.
+     *  Note that both CMap can have different dimensions and/or non void attributes.
+     *  @param amap the combinatorial map to copy.
+     *  @post *this is valid.
+     */
+    template <typename CMap2, typename Converters, typename Pointconverter>
+    void copy(const CMap2& amap, const Converters& converters,
+              const Pointconverter& pointconverter)
+    {
+      this->clear();
+
+      this->mnb_used_marks = amap.mnb_used_marks;
+      this->mmask_marks    = amap.mmask_marks;
+
+      for (size_type i = 0; i < NB_MARKS; ++i)
+      {
+        this->mfree_marks_stack[i]        = amap.mfree_marks_stack[i];
+        this->mindex_marks[i]             = amap.mindex_marks[i];
+        this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
+        this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
+      }
+
+      // We must do this ony once, but problem because null_dart_handle
+      // is static !
+      if (mnull_dart_container.empty())
+      {
+        null_dart_handle =
+          mnull_dart_container.emplace(amap.null_dart_handle->mmarks);
+
+        for (unsigned int i = 0; i <= dimension; ++i)
+        {
+          null_dart_handle->unlink_beta(i);
+        }
+      }
+      else
+        null_dart_handle->mmarks = amap.null_dart_handle->mmarks;
+
+      // Create an mapping between darts of the two maps (originals->copies).
+      std::map<typename CMap2::Dart_const_handle, Dart_handle> dartmap;
+
+      for (typename CMap2::Dart_const_range::const_iterator
+             it=amap.darts().begin(), itend=amap.darts().end();
+           it!=itend; ++it)
+      {
+        dartmap[it]=mdarts.emplace(it->mmarks);
+      }
+
+      unsigned int min_dim=
+        (dimension<amap.dimension?dimension:amap.dimension);
+
+      typename std::map<typename CMap2::Dart_const_handle,Dart_handle>
+        ::iterator dartmap_iter, dartmap_iter_end=dartmap.end();
+      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+           ++dartmap_iter)
+      {
+        for (unsigned int i=0; i<=min_dim; i++)
+        {
+          if (dartmap_iter->first->beta(i)!=CMap2::null_dart_handle &&
+              (dartmap_iter->first)<(dartmap_iter->first->beta(i)))
+          {
+            basic_link_beta(dartmap_iter->second,
+                            dartmap[dartmap_iter->first->beta(i)], i);
+          }
+        }
+      }
+
+      /** Copy attributes */
+      for (dartmap_iter=dartmap.begin(); dartmap_iter!=dartmap_iter_end;
+           ++dartmap_iter)
+      {
+        Helper::template Foreach_enabled_attributes
+          < internal::Copy_attributes_functor <CMap2, Refs, Converters,
+            Pointconverter> >::
+          run(&amap, static_cast<Refs*>(this),
+              dartmap_iter->first, dartmap_iter->second,
+              converters, pointconverter);
+      }
+
+      CGAL_assertion (is_valid () == 1);
+    }
+
+    template <typename CMap2>
+    void copy(const CMap2& amap)
+    {
+      CGAL::cpp11::tuple<> converters;
+      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      return copy< CMap2, CGAL::cpp11::tuple<>,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
+          (amap, converters, pointconverter);
+    }
+
+    template <typename CMap2, typename Converters>
+    void copy(const CMap2& amap, const Converters& converters)
+    {
+      Default_converter_cmap_0attributes_with_point<CMap2, Refs> pointconverter;
+      return copy< CMap2, Converters,
+          Default_converter_cmap_0attributes_with_point<CMap2, Refs> >
+          (amap, converters, pointconverter);
+    }
+
+    // Copy constructor from a map having exactly the same type.
+    Combinatorial_map_base (const Self & amap)
+    { copy<Self>(amap); }
+
+    // "Copy constructor" from a map having different type.
+    template <typename CMap2>
+    Combinatorial_map_base(const CMap2& amap)
+    { copy<CMap2>(amap); }
+
+    // "Copy constructor" from a map having different type.
+    template <typename CMap2, typename Converters>
+    Combinatorial_map_base(const CMap2& amap, Converters& converters)
+    { copy<CMap2,Converters>(amap, converters); }
+
+    // "Copy constructor" from a map having different type.
+    template <typename CMap2, typename Converters, typename Pointconverter>
+    Combinatorial_map_base(const CMap2& amap, Converters& converters,
+                           const Pointconverter& pointconverter)
+    { copy<CMap2,Converters, Pointconverter>
+          (amap, converters, pointconverter); }
+
+    /** Affectation operation. Copies one map to the other.
+     * @param amap a combinatorial map.
+     * @return A copy of that combinatorial map.
+     */
+    Self & operator= (const Self & amap)
+    {
+      if (this!=&amap)
+      {
+        Self tmp(amap);
+        this->swap(tmp);
+      }
+      return *this;
+    }
+
+    /** Swap this combinatorial map with amap, a second combinatorial map.
+     * Note that the two maps have exactly the same type.
+     * @param amap a combinatorial map.
+     */
+    void swap(Self & amap)
+    {
+      if (this!=&amap)
+      {
+        amap.mdarts.swap(mdarts);
+
+        std::swap_ranges(mnb_times_reserved_marks,
+                         mnb_times_reserved_marks+NB_MARKS,
+                         amap.mnb_times_reserved_marks);
+        std::swap(mmask_marks,amap.mmask_marks);
+        std::swap(mnb_used_marks, amap.mnb_used_marks);
+        std::swap_ranges(mindex_marks,mindex_marks+NB_MARKS,
+                         amap.mindex_marks);
+        std::swap_ranges(mfree_marks_stack, mfree_marks_stack+NB_MARKS,
+                         amap.mfree_marks_stack);
+        std::swap_ranges(mused_marks_stack,mused_marks_stack+NB_MARKS,
+                         amap.mused_marks_stack);
+        std::swap_ranges(mnb_marked_darts,mnb_marked_darts+NB_MARKS,
+                         amap.mnb_marked_darts);
+        mattribute_containers.swap(amap.mattribute_containers);
+      }
     }
 
     /** Clear the combinatorial map. Remove all darts and all attributes.
@@ -611,7 +773,8 @@ namespace CGAL {
     {
       CGAL_assertion( is_reserved(amark) );
 
-      null_dart_handle->set_mark(amark, !mmask_marks[(size_type)amark]);
+      if ( null_dart_handle!=NULL ) // TODO to remove
+        null_dart_handle->set_mark(amark, !mmask_marks[(size_type)amark]);
     }
 
     /** Unmark null_dart.
@@ -621,7 +784,8 @@ namespace CGAL {
     {
       CGAL_assertion( is_reserved(amark) );
 
-      null_dart_handle->set_mark(amark, mmask_marks[(size_type)amark]);
+      if ( null_dart_handle!=NULL ) // TODO to remove
+        null_dart_handle->set_mark(amark, mmask_marks[(size_type)amark]);
     }
 
     /** Unmark all the darts of the map for a given mark.
@@ -1101,7 +1265,7 @@ namespace CGAL {
     {
       CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
                   "number_of_attributes<i> but i-attributes are disabled");
-      return  CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).size();
     }
 
@@ -1152,14 +1316,30 @@ namespace CGAL {
            "i-attributes are disabled");
 
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (m_onsplit_functors);
+        (m_onsplit_functors);
+    }
+
+    // Get the ith dynamic onsplit functor (by reference so that we can
+    // modify it directly).
+    template<int i>
+    const boost::function<void(typename Attribute_type<i>::type&,
+                               typename Attribute_type<i>::type&)>&
+    onsplit_functor() const
+    {
+      CGAL_static_assertion_msg
+          (Helper::template Dimension_index<i>::value>=0,
+           "onsplit_functor<i> but "
+           "i-attributes are disabled");
+
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onsplit_functors);
     }
 
     // Get the ith dynamic onmerge functor (by reference so that we can
     // modify it directly).
     template<int i>
     boost::function<void(typename Attribute_type<i>::type&,
-                         typename Attribute_type<i>::type&)>&
+                               typename Attribute_type<i>::type&)>&
     onmerge_functor()
     {
       CGAL_static_assertion_msg
@@ -1168,9 +1348,23 @@ namespace CGAL {
            "i-attributes are disabled");
 
       return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-          (m_onmerge_functors);
+        (m_onmerge_functors);
     }
+    // Get the ith dynamic onmerge functor (by reference so that we can
+    // modify it directly).
+    template<int i>
+    const boost::function<void(typename Attribute_type<i>::type&,
+                               typename Attribute_type<i>::type&)>&
+    onmerge_functor() const
+    {
+      CGAL_static_assertion_msg
+          (Helper::template Dimension_index<i>::value>=0,
+           "onsplit_functor<i> but "
+           "i-attributes are disabled");
 
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (m_onmerge_functors);
+    }
 
     /** Double link a dart with beta 0 to a second dart.
      * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
@@ -2005,6 +2199,27 @@ namespace CGAL {
     {
       if ( update_attributes ) unsew<i>(adart);
       else topo_unsew<i>(adart);
+    }
+
+    /** Reverse the orientation (swap beta 0 & 1 links) of the entire map.
+     * A valid map after this operation remains valid.
+     * @param none
+     * @return none
+     */
+    void reverse_orientation()
+    {
+      internal::Reverse_orientation_of_map_functor<Self>::run(this);
+    }
+
+    /** Reverse the orientation (swap beta 0 & 1 links) of the connected
+     * component containing the given dart.
+     * A valid map after this operation remains valid.
+     * @param adart handle to a dart
+     * @return none
+     */
+    void reverse_orientation_connected_component (Dart_handle adart)
+    {
+      internal::Reverse_orientation_of_connected_component_functor<Self>::run(this, adart);
     }
 
     /** Count the marked cells (at least one marked dart).
@@ -3084,6 +3299,220 @@ namespace CGAL {
       return res;
     }
 
+
+    /** Test if the connected component of cmap containing dart dh1 is
+     *  isomorphic to the connected component of map2 containing dart dh2,
+     *  starting from dh1 and dh2.
+     * @param dh1  initial dart for this map
+     * @param map2 the second combinatorial map
+     * @param dh2  initial dart for map2
+     * @param testAttributes Boolean to test the equality of attributes (true)
+     *                       or not (false)
+     * @return true iff the cc of map is isomorphic to the cc of map2 starting
+     *     from dh1 and dh2; by testing the equality of attributes if
+     *     testAttributes is true
+     */
+    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
+    bool are_cc_isomorphic(Dart_const_handle dh1,
+                           const Combinatorial_map_base
+                           <d2,Refs2,Items2,Alloc2>& map2,
+                           typename Combinatorial_map_base
+                           <d2,Refs2,Items2,Alloc2>::Dart_const_handle dh2,
+                           bool testAttributes=true) const
+    {
+      // CGAL_assertion(dimension==map2.dimension);
+      CGAL_assertion(dh1!=NULL && dh2!=NULL);
+
+      typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2> Map2;
+
+      bool match = true;
+
+      // Two stacks used to run through the two maps.
+      std::deque< Dart_const_handle > toTreat1;
+      std::deque< typename Map2::Dart_const_handle > toTreat2;
+
+      int m1 = get_new_mark();
+      int m2 = map2.get_new_mark();
+
+      toTreat1.push_back(dh1);
+      toTreat2.push_back(dh2);
+
+      Dart_const_handle current;
+      typename Map2::Dart_const_handle other;
+
+      unsigned int i = 0;
+      CGAL::Unique_hash_map<Dart_const_handle,
+                            typename Map2::Dart_const_handle> bijection;
+
+      if ( testAttributes )
+      {
+        internal::Test_is_same_attribute_functor<Self, Map2>::
+            value = true;
+        internal::Test_is_same_attribute_functor<Map2, Self>::
+            value = true;
+      }
+
+      while (match && !toTreat1.empty())
+      {
+        // Next dart
+        current = toTreat1.front();
+        toTreat1.pop_front();
+        other = toTreat2.front();
+        toTreat2.pop_front();
+
+        if (!is_marked(current, m1))
+        {
+          if (map2.is_marked(other, m2))
+            match=false;
+          else
+          {
+            bijection[current] = other;
+
+            mark(current, m1);
+            map2.mark(other, m2);
+
+            if (testAttributes)
+            {
+              // We need to test in both direction because
+              // Foreach_enabled_attributes only test non void attributes
+              // of Self.
+              Helper::template Foreach_enabled_attributes
+                < internal::Test_is_same_attribute_functor<Self, Map2> >::
+                run(current, other);
+              Map2::Helper::template Foreach_enabled_attributes
+                < internal::Test_is_same_attribute_functor<Map2, Self> >::
+                run(other, current);
+              if ( !internal::Test_is_same_attribute_functor<Self, Map2>::
+                   value ||
+                   !internal::Test_is_same_attribute_functor<Map2, Self>::
+                   value )
+                match=false;
+            }
+
+            // We test if the injection is valid with its neighboors.
+            // We go out as soon as it is not satisfied.
+            for (i = 0; match && i <= dimension; ++i)
+            {
+              if ( i>map2.dimension )
+              {
+                if (!current->is_free(i)) match=false;
+              }
+              else
+              {
+                if (current->is_free(i))
+                {
+                  if (!other->is_free(i))
+                    match = false;
+                }
+                else
+                {
+                  if (other->is_free(i))
+                    match = false;
+                  else
+                  {
+                    if (is_marked(current->beta (i), m1) !=
+                        map2.is_marked(other->beta(i), m2))
+                      match = false;
+                    else
+                    {
+                      if (!is_marked (current->beta(i), m1))
+                      {
+                        toTreat1.push_back(current->beta (i));
+                        toTreat2.push_back(other->beta (i));
+                      }
+                      else
+                      {
+                        if (bijection[current->beta(i)] !=
+                            other->beta(i))
+                          match = false;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            // Now we test if the second map has more beta links than the first
+            for ( i=dimension+1; match && i<=map2.dimension; ++i )
+            {
+              if (!other->is_free(i)) match=false;
+            }
+          }
+        }
+        else
+        {
+          if (!map2.is_marked(other, m2))
+            match = false;
+        }
+      }
+
+      // Here we test if both queue are empty
+      if ( !toTreat1.empty() || !toTreat2.empty() ) match = false;
+
+      // Here we unmark all the marked darts.
+      toTreat1.clear();
+      toTreat2.clear();
+
+      toTreat1.push_back(dh1);
+      toTreat2.push_back(dh2);
+
+      while (!toTreat1.empty())
+      {
+        current = toTreat1.front();
+        toTreat1.pop_front();
+        other = toTreat2.front();
+        toTreat2.pop_front();
+
+        unmark(current, m1);
+        map2.unmark(other, m2);
+
+        for (i = 0; match && i <= dimension; ++i)
+        {
+          if (!current->is_free(i) && is_marked(current->beta(i), m1))
+          {
+            CGAL_assertion(!other->is_free(i) &&
+                           map2.is_marked(other->beta(i), m2));
+            toTreat1.push_back(current->beta(i));
+            toTreat2.push_back(other->beta(i));
+          }
+        }
+      }
+
+      free_mark(m1);
+      map2.free_mark(m2);
+
+      return match;
+    }
+
+    /** Test if this cmap is isomorphic to map2.
+     * @pre cmap is connected.
+     * @param map2 the second combinatorial map
+     * @param testAttributes Boolean to test the equality of attributes (true)
+     *                       or not (false)
+     * @return true iff this map is isomorphic to map2, testing the equality
+     *         of attributes if testAttributes is true
+     */
+    template <unsigned int d2, typename Refs2, typename Items2, class Alloc2>
+    bool is_isomorphic_to(const Combinatorial_map_base
+                          <d2,Refs2,Items2,Alloc2>& map2,
+                          bool testAttributes=true)
+    {
+      // if ( dimension!=map2.dimension ) return false;
+
+      Dart_const_handle d1=darts().begin();
+
+      for (typename Combinatorial_map_base<d2,Refs2,Items2,Alloc2>::
+             Dart_range::const_iterator it(map2.darts().begin()),
+             itend(map2.darts().end()); it!=itend; ++it)
+      {
+        if (are_cc_isomorphic(d1, map2, it, testAttributes))
+        {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     /// Void dart. A dart d is i-free if beta_i(d)=null_dart_handle.
     static Dart_handle null_dart_handle;
 
@@ -3152,6 +3581,27 @@ namespace CGAL {
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
+
+    Combinatorial_map() : Base()
+    {}
+
+    Combinatorial_map(const Self & amap)
+    { Base::template copy<Self>(amap); }
+
+    template < class CMap >
+    Combinatorial_map(const CMap & amap)
+    { Base::template copy<CMap>(amap); }
+
+    template < class CMap, typename Converters >
+    Combinatorial_map(const CMap & amap, const Converters& converters)
+    { Base::template copy<CMap, Converters>
+          (amap, converters); }
+
+    template < class CMap, typename Converters, typename Pointconverter >
+    Combinatorial_map(const CMap & amap, const Converters& converters,
+                      const Pointconverter& pointconverter)
+    { Base::template copy<CMap, Converters, Pointconverter>
+          (amap, converters, pointconverter); }
   };
 
 } // namespace CGAL

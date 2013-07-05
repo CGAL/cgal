@@ -25,7 +25,7 @@ public:
     geometric Traits, this is a CGAL::Kernel concept. 
 
   */ 
-  typedef Hidden_type Traits; 
+  typedef unspecified_type Traits; 
 
   /*! 
     \cgalConcept
@@ -94,84 +94,84 @@ public:
     Handle to a facet. Model of the Handle concept. 
 
   */ 
-  typedef Hidden_type Facet_handle; 
+  typedef unspecified_type Facet_handle; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Facet_const_handle; 
+  typedef unspecified_type Facet_const_handle; 
 
   /*! 
 
     Iterator over all mesh facets. Model of the ForwardIterator concept. 
 
   */ 
-  typedef Hidden_type Facet_iterator; 
+  typedef unspecified_type Facet_iterator; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Facet_const_iterator; 
+  typedef unspecified_type Facet_const_iterator; 
 
   /*! 
 
     Handle to a vertex. Model of the Handle concept. 
 
   */ 
-  typedef Hidden_type Vertex_handle; 
+  typedef unspecified_type Vertex_handle; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Vertex_const_handle; 
+  typedef unspecified_type Vertex_const_handle; 
 
   /*! 
 
     Iterator over all vertices of a mesh. Model of the ForwardIterator concept. 
 
   */ 
-  typedef Hidden_type Vertex_iterator; 
+  typedef unspecified_type Vertex_iterator; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Vertex_const_iterator; 
+  typedef unspecified_type Vertex_const_iterator; 
 
   /*! 
 
     Handle to a halfedge. Model of the Handle concept. 
 
   */ 
-  typedef Hidden_type Halfedge_handle; 
+  typedef unspecified_type Halfedge_handle; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Halfedge_const_handle; 
+  typedef unspecified_type Halfedge_const_handle; 
 
   /*! 
 
     Iterator over all halfedges of a `TriangulatedSurfaceMesh` . Model of the ForwardIterator concept. 
 
   */ 
-  typedef Hidden_type Halfedge_iterator; 
+  typedef unspecified_type Halfedge_iterator; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Halfedge_const_iterator; 
+  typedef unspecified_type Halfedge_const_iterator; 
 
   /*! 
     Iterator over all points of a `TriangulatedSurfaceMesh` , its
     value type is `Traits::Point_3`. Model of the `ForwardIterator`
     concept.
   */ 
-  typedef Hidden_type Point_iterator; 
+  typedef unspecified_type Point_iterator; 
 
   /*! 
 
    */ 
-  typedef Hidden_type Point_const_iterator; 
+  typedef unspecified_type Point_const_iterator; 
 
   /// @} 
 

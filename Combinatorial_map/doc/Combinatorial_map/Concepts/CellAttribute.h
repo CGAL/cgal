@@ -23,24 +23,24 @@ public:
 /*!
 %Dart handle type.
 */
-typedef Hidden_type Dart_handle;
+typedef unspecified_type Dart_handle;
 
 /*!
 %Dart const handle type.
 */
-typedef Hidden_type Dart_const_handle;
+typedef unspecified_type Dart_const_handle;
 
 /*!
 Type of the information contained in the attribute.
 If `void`, the cell attribute does not have any information.
 */
-typedef Hidden_type Info;
+typedef unspecified_type Info;
 
 /*!
 Equals to \ref CGAL::Tag_true "Tag_true" to enable the storage of a
 `Dart_handle` of the associated cell, \ref CGAL::Tag_false "Tag_false" otherwise.
 */
-typedef Hidden_type Supports_cell_dart;
+typedef unspecified_type Supports_cell_dart;
 
 /*!
 Functor called before merging two attributes. Must be
@@ -49,7 +49,7 @@ concept having two references
 to a model of `CellAttribute` as type of both arguments and `void` as
 return type.
 */
-typedef Hidden_type On_merge;
+typedef unspecified_type On_merge;
 
 /*!
 Functor called after an attribute was split in two.
@@ -58,7 +58,7 @@ concept having two references
 to a model of `CellAttribute` as type of both arguments and `void` as
 return type.
 */
-typedef Hidden_type On_split;
+typedef unspecified_type On_split;
 
 /// @}
 

@@ -25,10 +25,12 @@ There are four default template arguments:
 `Items` is equal to `CGAL::Linear_cell_complex_min_items<d>` and
 `Alloc` is `CGAL_ALLOCATOR(int)`.
 
-\cgalAdvanced Note that there is an additional, and undocumented, template
+\cgalAdvancedBegin
+Note that there is an additional, and undocumented, template
 parameter `CMap` for
 `Linear_cell_complex<d,d2,LCCTraits,Items,Alloc,CMap>` allowing to
 inherit from any model of the `CombinatorialMap` concept.
+\cgalAdvancedEnd
 
 \sa `CombinatorialMap`
 \sa `CGAL::Combinatorial_map<d,Items,Alloc>`
@@ -111,33 +113,33 @@ typedef Traits::Vector Vector;
 %Type of 0-attributes, a model of `CellAttributeWithPoint` concept
 (a shortcut for \link CombinatorialMap::Attribute_type `Attribute_type<0>::type` \endlink).
 */
-typedef Hidden_type Vertex_attribute;
+typedef unspecified_type Vertex_attribute;
 
 /*!
 %Handle through 0-attributes
 (a shortcut for \link CombinatorialMap::Attribute_handle `Attribute_handle<0>::type` \endlink).
 */
-typedef Hidden_type Vertex_attribute_handle;
+typedef unspecified_type Vertex_attribute_handle;
 
 /*!
 Const handle through 0-attributes
 (a shortcut for \link CombinatorialMap::Attribute_const_handle `Attribute_const_handle<0>::type` \endlink).
 */
-typedef Hidden_type Vertex_attribute_const_handle;
+typedef unspecified_type Vertex_attribute_const_handle;
 
 /*!
 %Range of all the 0-attributes, a model of the `Range` concept
 (a shortcut for \link CombinatorialMap::Attribute_range `Attribute_range<0>::type` \endlink).
 %Iterator inner type is bidirectional iterator and value type is \ref Linear_cell_complex::Vertex_attribute "Vertex_attribute".
 */
-typedef Hidden_type Vertex_attribute_range;
+typedef unspecified_type Vertex_attribute_range;
 
 /*!
 %Const range of all the 0-attributes, a model of the `ConstRange` concept
 a shortcut for \link CombinatorialMap::Attribute_const_range `Attribute_const_range<0>::type` \endlink).
 %Iterator inner type is bidirectional iterator and value type is \ref Linear_cell_complex::Vertex_attribute "Vertex_attribute".
 */
-typedef Hidden_type Vertex_attribute_const_range;
+typedef unspecified_type Vertex_attribute_const_range;
 
 /// @}
 

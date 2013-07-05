@@ -56,27 +56,45 @@ namespace CGAL {
 
   /// Attribute associated with a point and an info.
   template < class LCC, class Info_=void, class Tag=Tag_true,
-             class Functor_on_merge_=Null_functor, 
+             class Functor_on_merge_=Null_functor,
              class Functor_on_split_=Null_functor >
   class Cell_attribute_with_point :
-    public Cell_attribute<LCC, Info_, Tag, 
+    public Cell_attribute<LCC, Info_, Tag,
                           Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
+    template < unsigned int d_, class Refs_,
+               class Items_, class Alloc_ >
+    friend class Combinatorial_map_base;
+
+    template <class T, class Alloc_>
+    friend class Compact_container;
+
   public:
-    typedef Cell_attribute<LCC, Info_, Tag, 
+    typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
+                                      Functor_on_split_> Self;
+
+    typedef Cell_attribute<LCC, Info_, Tag,
                            Functor_on_merge_, Functor_on_split_> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
-    
+
     typedef typename LCC::Point             Point;
     typedef typename LCC::Dart_handle       Dart_handle;
     typedef typename LCC::Dart_const_handle Dart_const_handle;
-    
+
     typedef Info_                Info;
     typedef Functor_on_merge_    Functor_on_merge;
     typedef Functor_on_split_    Functor_on_split;
 
-    
+    using Base1::info;
+
+    bool operator==(const Self& other) const
+    { return Base1::operator==(other) && this->point()==other.point(); }
+
+    bool operator!=(const Self& other) const
+    { return !operator==(other); }
+
+    // protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}
@@ -90,31 +108,47 @@ namespace CGAL {
       Base1(ainfo),
       Base2(apoint)
     {}
-
-    using Base1::info;
   };
 
   /// Attribute associated with a point and without info.
   template < class LCC, class Tag,
-             class Functor_on_merge_, 
+             class Functor_on_merge_,
              class Functor_on_split_ >
   class Cell_attribute_with_point<LCC, void, Tag,
                                   Functor_on_merge_, Functor_on_split_> :
     public Cell_attribute<LCC, void, Tag, Functor_on_merge_, Functor_on_split_>,
     public Point_for_cell<typename LCC::Point>
   {
+    template < unsigned int d_, class Refs_,
+               class Items_, class Alloc_ >
+    friend class Combinatorial_map_base;
+
+    template <class T, class Alloc_>
+    friend class Compact_container;
+
   public:
-    typedef Cell_attribute<LCC, void, Tag, 
+    typedef Cell_attribute<LCC, void, Tag,
                            Functor_on_merge_, Functor_on_split_> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
 
     typedef typename LCC::Point             Point;
     typedef typename LCC::Dart_handle       Dart_handle;
-    typedef typename LCC::Dart_const_handle Dart_const_handle;    
+    typedef typename LCC::Dart_const_handle Dart_const_handle;
 
     typedef Functor_on_merge_ Functor_on_merge;
     typedef Functor_on_split_ Functor_on_split;
 
+    bool operator==(const Cell_attribute_with_point& other) const
+    { return Base1::operator==(other) && this->point()==other.point(); }
+
+    bool operator!=(const Cell_attribute_with_point& other) const
+    { return !operator==(other); }
+
+    template<typename Cellattr>
+    bool operator==(const Cellattr&) const
+    { return false; }
+
+    //  protected:
     /// Default contructor.
     Cell_attribute_with_point()
     {}

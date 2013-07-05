@@ -20,12 +20,12 @@ public:
 /*! 
 Point type. Must match the type `MeshDomain_3::Point_3`. 
 */ 
-typedef Hidden_type value_type; 
+typedef unspecified_type value_type; 
 
 /*! 
 A constant iterator on points. Must be a model of Bidirectional iterator and have `value_type` as value type. 
 */ 
-typedef Hidden_type const_iterator; 
+typedef unspecified_type const_iterator; 
 
 /// @} 
 

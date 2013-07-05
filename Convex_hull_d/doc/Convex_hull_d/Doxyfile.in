@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - dD Convex Hulls and Delaunay Triangulations"
+
+
+INPUT                      =  ${CMAKE_SOURCE_DIR}/Convex_hull_d/doc/Convex_hull_d/
+
+
+
+EXAMPLE_PATH =

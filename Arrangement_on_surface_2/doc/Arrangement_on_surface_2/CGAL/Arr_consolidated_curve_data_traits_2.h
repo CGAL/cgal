@@ -53,12 +53,12 @@ typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2;
 /*! 
 a set of data objects that is associated with an \f$ x\f$-monotone curve. 
 */ 
-typedef Hidden_type typedef Data_container; 
+typedef unspecified_type typedef Data_container; 
 
 /*! 
 a non-mutable iterator for the data objects in the data container. 
 */ 
-typedef Hidden_type typedef Data_iterator; 
+typedef unspecified_type typedef Data_iterator; 
 
 /// @}
 

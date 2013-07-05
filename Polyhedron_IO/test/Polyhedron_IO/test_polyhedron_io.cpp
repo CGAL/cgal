@@ -44,6 +44,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
+#include <cassert>
 
 using namespace CGAL;
 
@@ -72,22 +73,22 @@ void test_file_IO_OFF() {
         Polyhedron P;
         std::istringstream in( triangle);
         in >> P;    /* 'in' is the stream where the object is read from. */
-        CGAL_assertion(! in.bad());
-        CGAL_assertion( P.is_triangle( P.halfedges_begin()));
+        assert(! in.bad());
+        assert( P.is_triangle( P.halfedges_begin()));
         std::stringstream stream;
         stream << P << '\0';
         P = Polyhedron();
         scan_OFF( stream, P, true);
-        CGAL_assertion( ! ! stream); // ! ! to fool VC7 CL1310
-        CGAL_assertion( P.is_triangle( P.halfedges_begin()));
+        assert( ! ! stream); // ! ! to fool VC7 CL1310
+        assert( P.is_triangle( P.halfedges_begin()));
 
         std::stringstream stream_new;
         print_polyhedron_OFF( stream_new, P, true);
         stream_new << '\0';
         P = Polyhedron();
         stream_new >> P;
-        CGAL_assertion( ! ! stream_new); // ! ! to fool VC7 CL1310
-        CGAL_assertion( P.is_triangle( P.halfedges_begin()));
+        assert( ! ! stream_new); // ! ! to fool VC7 CL1310
+        assert( P.is_triangle( P.halfedges_begin()));
         {
             std::ofstream out2( "triangle_binary.off");
             print_polyhedron_OFF( out2, P, true);
@@ -95,18 +96,18 @@ void test_file_IO_OFF() {
         std::ifstream filein( "triangle_binary.off");
         P = Polyhedron();
         filein >> P;
-        CGAL_assertion(! filein.bad());
-        CGAL_assertion( P.is_triangle( P.halfedges_begin()));
+        assert(! filein.bad());
+        assert( P.is_triangle( P.halfedges_begin()));
     }{
         Polyhedron P;
         std::istringstream in( tetra);
         in >> P;    /* 'in' is the stream where the object is read from. */
-        CGAL_assertion( P.is_tetrahedron( P.halfedges_begin()));
+        assert( P.is_tetrahedron( P.halfedges_begin()));
         std::stringstream stream;
         stream << P << '\0';
         P = Polyhedron();
         stream >> P;
-        CGAL_assertion( P.is_tetrahedron( P.halfedges_begin()));
+        assert( P.is_tetrahedron( P.halfedges_begin()));
         {
             std::ofstream out2( "tetra_binary.off");
             print_polyhedron_OFF( out2, P, true);
@@ -114,7 +115,7 @@ void test_file_IO_OFF() {
         std::ifstream filein( "tetra_binary.off");
         P = Polyhedron();
         filein >> P;
-        CGAL_assertion( P.is_tetrahedron( P.halfedges_begin()));
+        assert( P.is_tetrahedron( P.halfedges_begin()));
     }
 }
 void test_file_IO_wavefront() {}

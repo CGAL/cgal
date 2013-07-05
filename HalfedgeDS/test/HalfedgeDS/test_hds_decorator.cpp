@@ -31,6 +31,8 @@
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 
+#include <cassert>
+
 typedef CGAL::Cartesian<double> Kernel;
 struct Dummy_traits_2 {
     typedef Kernel::Point_2 Point_2;
@@ -47,97 +49,97 @@ void test_HalfedgeDS_decorator() {
     // Check create single loop.
     Halfedge_handle h = decorator.create_loop();
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_vertices() == 1);
-    CGAL_assertion( hds.size_of_halfedges() == 2);
-    CGAL_assertion( hds.size_of_faces() == 2);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_vertices() == 1);
+    assert( hds.size_of_halfedges() == 2);
+    assert( hds.size_of_faces() == 2);
+    assert( decorator.is_valid( false, 4));
 
     // Restart with open segment.
     hds.clear();
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
     h = decorator.create_segment();
-    CGAL_assertion( hds.size_of_vertices() == 2);
-    CGAL_assertion( hds.size_of_halfedges() == 2);
-    CGAL_assertion( hds.size_of_faces() == 1);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_vertices() == 2);
+    assert( hds.size_of_halfedges() == 2);
+    assert( hds.size_of_faces() == 1);
+    assert( decorator.is_valid( false, 4));
 
     // Create border edge and check normalization.
     decorator.set_face( h->opposite(), Face_handle());
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 1);
-    CGAL_assertion( hds.size_of_border_edges() == 1);
-    CGAL_assertion( decorator.normalized_border_is_valid());
+    assert( hds.size_of_border_halfedges() == 1);
+    assert( hds.size_of_border_edges() == 1);
+    assert( decorator.normalized_border_is_valid());
     decorator.set_face( h->opposite(), h->face());
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 0);
-    CGAL_assertion( hds.size_of_border_edges() == 0);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_border_halfedges() == 0);
+    assert( hds.size_of_border_edges() == 0);
+    assert( decorator.is_valid( false, 4));
 
     // Extend edge to two triangles.
     Halfedge_handle g = decorator.split_vertex( h, h);
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( h != g);
-    CGAL_assertion( h->next()->next() == g);
-    CGAL_assertion( h == g->next()->next());
-    CGAL_assertion( h->opposite() == g->next());
-    CGAL_assertion( g->opposite() == h->next());
+    assert( decorator.is_valid( false, 4));
+    assert( h != g);
+    assert( h->next()->next() == g);
+    assert( h == g->next()->next());
+    assert( h->opposite() == g->next());
+    assert( g->opposite() == h->next());
     Halfedge_handle g2 = decorator.split_face(h->opposite(),g->opposite());
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( h->opposite()->next() == g2);
-    CGAL_assertion( g2->next() == g);
+    assert( decorator.is_valid( false, 4));
+    assert( h->opposite()->next() == g2);
+    assert( g2->next() == g);
     decorator.split_vertex( g2, g->opposite());
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( g->next()->next()->next()->next() == g);
-    CGAL_assertion_code( Halfedge_handle g3 = 
-        decorator.split_face( g2->next()->opposite(), h); )
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( g->next()->next()->next()->next() == g);
-    CGAL_assertion( h->next()->next()->next() == h);
-    CGAL_assertion( g3->next()->next()->next() == g3);
-    CGAL_assertion( g3->next() == g->opposite());
-    CGAL_assertion( g3->opposite()->next() == g2->opposite());
-    CGAL_assertion( g3->opposite() == h->next());
+    assert( decorator.is_valid( false, 4));
+    assert( g->next()->next()->next()->next() == g);
+    Halfedge_handle g3 = 
+        decorator.split_face( g2->next()->opposite(), h);
+    assert( decorator.is_valid( false, 4));
+    assert( g->next()->next()->next()->next() == g);
+    assert( h->next()->next()->next() == h);
+    assert( g3->next()->next()->next() == g3);
+    assert( g3->next() == g->opposite());
+    assert( g3->opposite()->next() == g2->opposite());
+    assert( g3->opposite() == h->next());
 
     // Edge flip within the triangle.
-    CGAL_assertion_code( Halfedge_handle g4 = decorator.flip_edge( g3); )
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( g4 == g3);
-    CGAL_assertion( g3->next()->next() == g2->opposite());
-    CGAL_assertion( g3->opposite()->next() == h);
-    CGAL_assertion( g->next()->next()->next()->next() == g);
-    CGAL_assertion( h->next()->next()->next() == h);
-    CGAL_assertion( g3->next()->next()->next() == g3);
+    Halfedge_handle g4 = decorator.flip_edge( g3);
+    assert( decorator.is_valid( false, 4));
+    assert( g4 == g3);
+    assert( g3->next()->next() == g2->opposite());
+    assert( g3->opposite()->next() == h);
+    assert( g->next()->next()->next()->next() == g);
+    assert( h->next()->next()->next() == h);
+    assert( g3->next()->next()->next() == g3);
 
     // Reverse face orientation.
     decorator.inside_out();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
     decorator.inside_out();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
 
     // Check hole manipulations.
     decorator.make_hole(g);
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 4);
-    CGAL_assertion( hds.size_of_border_edges() == 4);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_border_halfedges() == 4);
+    assert( hds.size_of_border_edges() == 4);
+    assert( decorator.is_valid( false, 4));
 
     // Reverse face orientation, deal also with the hole..
     decorator.inside_out();
-    CGAL_assertion( decorator.is_valid( false, 3));
+    assert( decorator.is_valid( false, 3));
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
 
     // Check add_face_to_border.
     hds.clear();
     h = decorator.create_loop();
     decorator.make_hole( h->opposite());
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
     decorator.add_face_to_border( h->opposite(), h->opposite());
-    CGAL_assertion( hds.size_of_halfedges() == 4);
-    CGAL_assertion( hds.size_of_faces() == 2);
-    CGAL_assertion( decorator.is_valid( false, 3));
+    assert( hds.size_of_halfedges() == 4);
+    assert( hds.size_of_faces() == 2);
+    assert( decorator.is_valid( false, 3));
 }
 
 #include <CGAL/HalfedgeDS_vector.h>
@@ -160,81 +162,81 @@ void test_HalfedgeDS_decorator2() {
     // Check create single loop.
     Halfedge_handle h = decorator.create_loop();
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_vertices() == 1);
-    CGAL_assertion( hds.size_of_halfedges() == 2);
-    CGAL_assertion( hds.size_of_faces() == 2);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_vertices() == 1);
+    assert( hds.size_of_halfedges() == 2);
+    assert( hds.size_of_faces() == 2);
+    assert( decorator.is_valid( false, 4));
 
     // Restart with open segment.
     hds.clear();
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
     h = decorator.create_segment();
-    CGAL_assertion( hds.size_of_vertices() == 2);
-    CGAL_assertion( hds.size_of_halfedges() == 2);
-    CGAL_assertion( hds.size_of_faces() == 1);
-    CGAL_assertion( decorator.is_valid( false, 3));
+    assert( hds.size_of_vertices() == 2);
+    assert( hds.size_of_halfedges() == 2);
+    assert( hds.size_of_faces() == 1);
+    assert( decorator.is_valid( false, 3));
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
 
     // Create border edge and check normalization.
     decorator.set_face( h->opposite(), Face_handle());
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 1);
-    CGAL_assertion( hds.size_of_border_edges() == 1);
-    CGAL_assertion( decorator.normalized_border_is_valid());
+    assert( hds.size_of_border_halfedges() == 1);
+    assert( hds.size_of_border_edges() == 1);
+    assert( decorator.normalized_border_is_valid());
     decorator.set_face( h->opposite(), h->face());
     hds.normalize_border();
-    CGAL_assertion( hds.size_of_border_halfedges() == 0);
-    CGAL_assertion( hds.size_of_border_edges() == 0);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_border_halfedges() == 0);
+    assert( hds.size_of_border_edges() == 0);
+    assert( decorator.is_valid( false, 4));
 
     // Extend edge to two triangles.
     Halfedge_handle g = decorator.split_vertex( h, h);
-    CGAL_assertion( decorator.is_valid( false, 3));
+    assert( decorator.is_valid( false, 3));
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( h != g);
-    CGAL_assertion( h->next()->next() == g);
-    CGAL_assertion( h == g->next()->next());
-    CGAL_assertion( h->opposite() == g->next());
-    CGAL_assertion( g->opposite() == h->next());
+    assert( decorator.is_valid( false, 4));
+    assert( h != g);
+    assert( h->next()->next() == g);
+    assert( h == g->next()->next());
+    assert( h->opposite() == g->next());
+    assert( g->opposite() == h->next());
     Halfedge_handle g2 = decorator.split_face(h->opposite(),g->opposite());
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( h->opposite()->next() == g2);
-    CGAL_assertion( g2->next() == g);
+    assert( decorator.is_valid( false, 4));
+    assert( h->opposite()->next() == g2);
+    assert( g2->next() == g);
     decorator.split_vertex( g2, g->opposite());
-    CGAL_assertion( decorator.is_valid( false, 3));
+    assert( decorator.is_valid( false, 3));
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( g->next()->next()->next()->next() == g);
-    CGAL_assertion_code( Halfedge_handle g3 = 
-        decorator.split_face( g2->next()->opposite(), h); )
+    assert( decorator.is_valid( false, 4));
+    assert( g->next()->next()->next()->next() == g);
+    Halfedge_handle g3 = 
+        decorator.split_face( g2->next()->opposite(), h);
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( g->next()->next()->next()->next() == g);
-    CGAL_assertion( h->next()->next()->next() == h);
-    CGAL_assertion( g3->next()->next()->next() == g3);
-    CGAL_assertion( g3->next() == g->opposite());
-    CGAL_assertion( g3->opposite()->next() == g2->opposite());
-    CGAL_assertion( g3->opposite() == h->next());
+    assert( decorator.is_valid( false, 4));
+    assert( g->next()->next()->next()->next() == g);
+    assert( h->next()->next()->next() == h);
+    assert( g3->next()->next()->next() == g3);
+    assert( g3->next() == g->opposite());
+    assert( g3->opposite()->next() == g2->opposite());
+    assert( g3->opposite() == h->next());
 
     // Edge flip within the triangle.
-    CGAL_assertion_code( Halfedge_handle g4 = decorator.flip_edge( g3); )
-    CGAL_assertion( decorator.is_valid( false, 3));
+    Halfedge_handle g4 = decorator.flip_edge( g3);
+    assert( decorator.is_valid( false, 3));
     hds.normalize_border();
-    CGAL_assertion( decorator.is_valid( false, 4));
-    CGAL_assertion( g4 == g3);
-    CGAL_assertion( g3->next()->next() == g2->opposite());
-    CGAL_assertion( g3->opposite()->next() == h);
-    CGAL_assertion( g->next()->next()->next()->next() == g);
-    CGAL_assertion( h->next()->next()->next() == h);
-    CGAL_assertion( g3->next()->next()->next() == g3);
+    assert( decorator.is_valid( false, 4));
+    assert( g4 == g3);
+    assert( g3->next()->next() == g2->opposite());
+    assert( g3->opposite()->next() == h);
+    assert( g->next()->next()->next()->next() == g);
+    assert( h->next()->next()->next() == h);
+    assert( g3->next()->next()->next() == g3);
 
     // Reverse face orientation.
     decorator.inside_out();
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( decorator.is_valid( false, 4));
 }
 
 
@@ -296,10 +298,10 @@ void test_HalfedgeDS_decorator3() {
 
     hds.normalize_border();
 
-    CGAL_assertion( hds.size_of_vertices() == 4);
-    CGAL_assertion( hds.size_of_halfedges() == 10);
-    CGAL_assertion( hds.size_of_faces() == 2);
-    CGAL_assertion( decorator.is_valid( false, 4));
+    assert( hds.size_of_vertices() == 4);
+    assert( hds.size_of_halfedges() == 10);
+    assert( hds.size_of_faces() == 2);
+    assert( decorator.is_valid( false, 4));
 
     decorator.vertices_erase(hds.vertices_begin());
     decorator.vertices_erase(hds.vertices_begin(), hds.vertices_end());
@@ -307,9 +309,9 @@ void test_HalfedgeDS_decorator3() {
     decorator.faces_erase(hds.faces_begin());
     decorator.faces_erase(hds.faces_begin(), hds.faces_end());
 
-    CGAL_assertion( hds.size_of_vertices() == 0);
-    CGAL_assertion( hds.size_of_halfedges() == 10);
-    CGAL_assertion( hds.size_of_faces() == 0);
+    assert( hds.size_of_vertices() == 0);
+    assert( hds.size_of_halfedges() == 10);
+    assert( hds.size_of_faces() == 0);
 
 }
 int main() {

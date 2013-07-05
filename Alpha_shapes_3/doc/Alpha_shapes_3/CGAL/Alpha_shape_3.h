@@ -64,7 +64,7 @@ public:
 the alpha shape traits type. 
 It has to derive from a triangulation traits class. For example `Dt::Point` is a point class.
 */ 
-typedef Hidden_type Gt; 
+typedef unspecified_type Gt; 
 
 /*! 
 the number type of alpha values. 
@@ -83,19 +83,19 @@ it is valid and has not been modified.
 For convenience, classical comparison operators are provided for the type `FT`. 
 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The size type. 
 */ 
-typedef Hidden_type size_type; 
+typedef unspecified_type size_type; 
 
 /*! 
 A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different alpha values. 
 \pre Its `value_type` is `FT`. 
 */ 
-typedef Hidden_type Alpha_iterator; 
+typedef unspecified_type Alpha_iterator; 
 
 /*! 
 In GENERAL mode,  
@@ -398,7 +398,7 @@ Alpha_iterator find_optimal_alpha(size_type nb_components) const;
 /*! 
 Inserts the alpha shape `A` for the current alpha value into the stream `os`. 
 
-Defined in \ref CGAL/IO/io.h
+Defined in `CGAL/IO/io.h`
 
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_3 
@@ -410,7 +410,7 @@ const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`. 
 \pre The insert operator must be defined for `GT::Point` and `GT::Triangle`. 
 
-Defined in \ref CGAL/IO/Geomview_stream.h and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
+Defined in `CGAL/IO/Geomview_stream.h` and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
 
 \relates Alpha_shape_3 
 */ 

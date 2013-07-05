@@ -31,7 +31,8 @@
 #include <CGAL/Line_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
+
 
 namespace CGAL {
 
@@ -184,28 +185,29 @@ intersection_segment() const
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Line_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Line_2 &line, 
 	     const typename K::Iso_rectangle_2 &iso,
 	     const K&)
 {
-    typename K::Construct_object_2 construct_object;
     typedef Line_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&line, &iso);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Iso_rectangle_2>();
     case is_t::POINT:
-        return construct_object(ispair.intersection_point());
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Iso_rectangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
-        return construct_object(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Line_2, typename K::Iso_rectangle_2>(ispair.intersection_segment());
     }
 }
 
 template <class K>
 inline
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Line_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Line_2 &line, 
 	     const K& k)
@@ -215,40 +217,8 @@ intersection(const typename K::Iso_rectangle_2 &iso,
 
 } // namespace internal
 
-
-template <class K>
-inline bool do_intersect(
-    const Line_2<K> &p1,
-    const Iso_rectangle_2<K> &p2)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(p1, p2);
-}
-
-template <class K>
-inline bool do_intersect(
-    const Iso_rectangle_2<K> &p1,
-    const Line_2<K> &p2)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(p2, p1);
-}
-
-template <class K>
-Object
-intersection(const Line_2<K> &line, const Iso_rectangle_2<K> &iso)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(line, iso);
-}
-
-template <class K>
-inline Object
-intersection(const Iso_rectangle_2<K> &iso, const Line_2<K> &line)
-{
-  typedef typename K::Intersect_2 Intersect;
-    return Intersect()(line, iso);
-}
+CGAL_INTERSECTION_FUNCTION(Line_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Line_2, Iso_rectangle_2, 2)
 
 } //namespace CGAL
 

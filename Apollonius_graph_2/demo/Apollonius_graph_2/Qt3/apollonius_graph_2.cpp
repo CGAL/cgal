@@ -366,7 +366,6 @@ private slots:
     Apollonius_site_2 wp;
 
     int counter = 0;
-    std::cout << std::endl;
 
     CGAL::Timer timer;
     timer.start();

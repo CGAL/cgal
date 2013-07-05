@@ -31,17 +31,17 @@ static unsigned int ambient_dimension;
 /*!
 a number type that is a model of FieldNumberType.
 */
-typedef Hidden_type FT;
+typedef unspecified_type FT;
 
 /*!
 point type.
 */
-typedef Hidden_type Point;
+typedef unspecified_type Point;
 
 /*!
 vector type.
 */
-typedef Hidden_type Vector;
+typedef unspecified_type Vector;
 
 /// @}
 
@@ -55,7 +55,7 @@ which constructs the translation of point `p` by vector `v`, and
 which constructs the translation of a point at the origin by vector `v`
 (used in \ref CGAL::Linear_cell_complex::barycenter "Linear_cell_complex::barycenter").
 */
-typedef Hidden_type Construct_translated_point;
+typedef unspecified_type Construct_translated_point;
 
 /*!
 Functor that provides \ref LinearCellComplexTraits::Vector " Vector " `operator() (const ` \ref Point "Point"`& p1, const ` \ref Point " Point"`& p2)`
@@ -65,7 +65,7 @@ which constructs a vector as the difference of point `p` and a point at the orig
 (used in \ref CGAL::Linear_cell_complex::barycenter "Linear_cell_complex::barycenter"
 and `CGAL::import_from_plane_graph`).
 */
-typedef Hidden_type Construct_vector;
+typedef unspecified_type Construct_vector;
 
 /*!
 Functor that provides \ref LinearCellComplexTraits::Vector " Vector " `operator() (const` \ref LinearCellComplexTraits::Vector " Vector"`& v1, const` \ref LinearCellComplexTraits::Vector " Vector"`& v2)`
@@ -74,7 +74,7 @@ which constructs a vector as the sum of vectors `v1+v2`
 `CGAL::compute_normal_of_cell_0`
 and `CGAL::compute_normal_of_cell_2`).
 */
-typedef Hidden_type Construct_sum_of_vectors;
+typedef unspecified_type Construct_sum_of_vectors;
 
 /*!
 Functor that provides \ref LinearCellComplexTraits::Vector " Vector " `operator() (const` \ref LinearCellComplexTraits::Vector " Vector"`& v, ` \ref LinearCellComplexTraits::FT "FT" `scale)`
@@ -82,14 +82,14 @@ which constructs a vector equal to vector `v` scaled by `scale` factor
 (used in \ref CGAL::Linear_cell_complex::barycenter "Linear_cell_complex::barycenter",
 `CGAL::compute_normal_of_cell_0` and `CGAL::compute_normal_of_cell_2`).
 */
-typedef Hidden_type Construct_scaled_vector;
+typedef unspecified_type Construct_scaled_vector;
 
 /*!
 Functor that provides \ref LinearCellComplexTraits::Point "Point " `operator() (const ` \ref Point "Point"`& p1, const ` \ref Point "Point"`& p2)`
 which constructs the midpoint of points `p1` and `p2`
 (used in \ref CGAL::Linear_cell_complex::barycenter "Linear_cell_complex::barycenter").
 */
-typedef Hidden_type Construct_midpoint;
+typedef unspecified_type Construct_midpoint;
 
 /// @}
 
@@ -100,12 +100,12 @@ typedef Hidden_type Construct_midpoint;
 /*!
 a model of \ref Kernel::Direction_2 "Direction_2".
 */
-typedef Hidden_type Direction_2;
+typedef unspecified_type Direction_2;
 
 /*!
 a model of \ref Kernel::ConstructDirection_2 "ConstructDirection_2" (used in `CGAL::import_from_plane_graph`).
 */
-typedef Hidden_type Construct_direction_2;
+typedef unspecified_type Construct_direction_2;
 
 /// @}
 
@@ -116,12 +116,12 @@ typedef Hidden_type Construct_direction_2;
 /*!
 a model of \ref Kernel::ConstructNormal_3 "ConstructNormal_3" (used in `CGAL::compute_normal_of_cell_2`).
 */
-typedef Hidden_type Construct_normal_3;
+typedef unspecified_type Construct_normal_3;
 
 /*!
 a model of \ref Kernel::Collinear_3 "Collinear_3" (used in `CGAL::compute_normal_of_cell_2`).
 */
-typedef Hidden_type Collinear_3;
+typedef unspecified_type Collinear_3;
 
 /// @}
 

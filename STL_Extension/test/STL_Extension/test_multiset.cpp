@@ -33,6 +33,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <cassert>
 
 void test_massive_insert_and_erase();
 void test_iterators();
@@ -99,7 +100,7 @@ void test_massive_insert_and_erase ()
   {
     val = static_cast<int> (n * static_cast<double>(std::rand()) / RAND_MAX);
     set.insert (val);
-    CGAL_assertion (set.is_valid());
+    assert (set.is_valid());
   }
   std::cout << "Done." << std::endl;
 
@@ -117,7 +118,7 @@ void test_massive_insert_and_erase ()
   {
     val = static_cast<int> (n * static_cast<double>(std::rand()) / RAND_MAX);
     n_del += set.erase (val);
-    CGAL_assertion (set.is_valid());
+    assert (set.is_valid());
   }
   std::cout << "Done." << std::endl;
   std::cout << n_del << " numbers have been deleted." << std::endl;
@@ -289,10 +290,10 @@ void test_lookup ()
       range = cset.equal_range (words[k], String_word_index_compare());
 
       res = cset.find_lower (words[k], String_word_index_compare());
-      CGAL_assertion ((res.second && lower != upper) ||
+      assert ((res.second && lower != upper) ||
 		      (! res.second && lower == upper));
 	
-      CGAL_assertion (lower == range.first && upper == range.second);
+      assert (lower == range.first && upper == range.second);
 
       while (lower != upper)
       {
@@ -322,7 +323,7 @@ void test_comparison ()
 
   Set          set2 = set1;
 
-  CGAL_assertion (set1 == set2);
+  assert (set1 == set2);
 
   // Add elements, then compare.
   set2.insert (200);
@@ -348,8 +349,8 @@ void test_comparison ()
   // Swap the two sets.
   set1.swap (set2);
 
-  CGAL_assertion (set1.is_valid());
-  CGAL_assertion (set2.is_valid());
+  assert (set1.is_valid());
+  assert (set2.is_valid());
   
   std::cout << "After swapping the sets: ";
   if (set1 == set2)
@@ -397,9 +398,9 @@ void test_catenate ()
       }
 
       s1.catenate (s2);
-      CGAL_assertion (s1.is_valid());
+      assert (s1.is_valid());
       s1_rev.catenate (s2_rev);
-      CGAL_assertion (s1_rev.is_valid());
+      assert (s1_rev.is_valid());
 
       s1.clear();
       s1_rev.clear();
@@ -418,9 +419,9 @@ void test_catenate ()
       }
 
       s1.catenate (s2_rev);
-      CGAL_assertion (s1.is_valid());
+      assert (s1.is_valid());
       s1_rev.catenate (s2);
-      CGAL_assertion (s1_rev.is_valid());
+      assert (s1_rev.is_valid());
     }
   }
 
@@ -437,7 +438,7 @@ void test_catenate ()
                                    static_cast<double>(RAND_MAX));
     set1.insert (val);
   }
-  CGAL_assertion (set1.is_valid());
+  assert (set1.is_valid());
 
   std::cout << set1.size() << " numbers in the first set "
             << "(tree height is " << set1.height()
@@ -450,7 +451,7 @@ void test_catenate ()
                                           static_cast<double>(RAND_MAX));
     set2.insert (val);
   }
-  CGAL_assertion (set2.is_valid());
+  assert (set2.is_valid());
 
   std::cout << set2.size() << " numbers in the second set "
             << "(tree height is " << set2.height()
@@ -495,7 +496,7 @@ void test_split ()
     val = (k * (range /2)) % range;
     set.insert (val);
   }
-  CGAL_assertion (set.is_valid());
+  assert (set.is_valid());
 
   // Print the set.
   Set_iter    iter;
@@ -516,10 +517,10 @@ void test_split ()
 
     std::cout << "    Splitting at " << k << " ... " << std::flush;
     set1.split (k, set2);
-    CGAL_assertion (set1.is_valid());
-    CGAL_assertion (set2.is_valid());
+    assert (set1.is_valid());
+    assert (set2.is_valid());
 
-    CGAL_assertion (set.size() == set1.size() + set2.size());
+    assert (set.size() == set1.size() + set2.size());
     std::cout << "OK." << std::endl;
   }
 
@@ -566,7 +567,7 @@ void test_swap_and_replace ()
     val = M * (static_cast<double>(std::rand()) / RAND_MAX);
     handles[static_cast<int>(val)].push_back (set.insert (val));
   }
-  CGAL_assertion (set.is_valid());
+  assert (set.is_valid());
   std::cout << "Done." << std::endl;
 
   // Print the set.
@@ -586,7 +587,7 @@ void test_swap_and_replace ()
     if (handles[k].size() >= 2)
     {
       set.swap (handles[k].front(), handles[k].back());
-      CGAL_assertion (set.is_valid());
+      assert (set.is_valid());
     }
     else if (handles[k].size() == 1)
     {
@@ -617,7 +618,7 @@ void test_swap_and_replace ()
   for (iitr = iset.begin(); iitr != iset.end(); ++iitr)
     std::cout << *iitr << ' ';
   std::cout << std::endl;
-  CGAL_assertion (iset.is_valid());
+  assert (iset.is_valid());
 
   *pos1 = 1438;
   *pos2 = 1251;
@@ -626,7 +627,7 @@ void test_swap_and_replace ()
     std::cout << *iitr << ' ';
   std::cout << std::endl;
   // Note that the set is temporarily invalid!
-  CGAL_assertion (! iset.is_valid());
+  assert (! iset.is_valid());
 
   // Perform the swap to make it valid again.
   iset.swap (pos1, pos2);
@@ -634,7 +635,7 @@ void test_swap_and_replace ()
   for (iitr = iset.begin(); iitr != iset.end(); ++iitr)
     std::cout << *iitr << ' ';
   std::cout << std::endl;
-  CGAL_assertion (iset.is_valid());
+  assert (iset.is_valid());
 
   return;
 }

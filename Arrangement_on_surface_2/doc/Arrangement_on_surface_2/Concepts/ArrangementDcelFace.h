@@ -24,24 +24,24 @@ public:
 /*! 
 the corresponding <span class="textsc">Dcel</span> vertex type. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 the corresponding <span class="textsc">Dcel</span> halfedge type. 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*! 
 a bidirectional iterator over the holes in 
 inside the face. Its value-type is `Halfedge*`. 
 */ 
-typedef Hidden_type Hole_iterator; 
+typedef unspecified_type Hole_iterator; 
 
 /*! 
 a bidirectional iterator over the 
 isolated vertices in inside the face. Its value-type is `Vertex*`. 
 */ 
-typedef Hidden_type Isolated_vertex_iterator; 
+typedef unspecified_type Isolated_vertex_iterator; 
 
 /// @} 
 

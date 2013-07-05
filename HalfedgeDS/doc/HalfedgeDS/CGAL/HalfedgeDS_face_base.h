@@ -56,7 +56,7 @@ public:
 /*! 
 plane type for three argument version. 
 */ 
-typedef Hidden_type Plane; 
+typedef unspecified_type Plane; 
 
 /// @} 
 

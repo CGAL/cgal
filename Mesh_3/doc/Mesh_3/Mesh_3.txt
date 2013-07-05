@@ -338,8 +338,7 @@ The embedding 3D triangulation is required to be the nested type
 `CGAL::Mesh_triangulation_3`. The type for this triangulation is a 
 `CGAL::Regular_triangulation_3` whose vertex and cell base classes 
 are respectively models of the concepts `MeshVertexBase_3` and 
-`MeshCellBase_3`. Among other advantages, such a design allows the 
-user to customize the vertex and cell types of the embedding 3D triangulation.
+`MeshCellBase_3`.
 
 
 \subsection Mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
@@ -482,7 +481,8 @@ a sizing field to guide
 the sampling of 1-dimensional features with protecting balls centers.
 <UL>
 <LI><I>`edge_size`</I>. This constant or variable scalar field is used as an upper bound for the distance between two 
-protecting ball centers that are consecutive on a 1-feature.
+protecting ball centers that are consecutive on a 1-feature. This parameter has to be set to a positive value when  
+1-dimensional features protection is used.
 </UL>
 
 \subsection Mesh_3TheOptimizationParameters The Optimization Parameters

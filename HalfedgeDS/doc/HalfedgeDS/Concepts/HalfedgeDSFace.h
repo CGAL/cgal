@@ -40,58 +40,58 @@ public:
 /*! 
 instantiated `HalfedgeDS` ( \f$ \equiv\f$ `Refs`). 
 */ 
-typedef Hidden_type HalfedgeDS; 
+typedef unspecified_type HalfedgeDS; 
 
 /*! 
 base class that allows modifications. 
 */ 
-typedef Hidden_type Base; 
+typedef unspecified_type Base; 
 
 /*! 
 model of `HalfedgeDSVertex`. 
 */ 
-typedef Hidden_type Vertex; 
+typedef unspecified_type Vertex; 
 
 /*! 
 model of `HalfedgeDSHalfedge`. 
 */ 
-typedef Hidden_type Halfedge; 
+typedef unspecified_type Halfedge; 
 
 /*! 
 handle to vertex. 
 */ 
-typedef Hidden_type Vertex_handle; 
+typedef unspecified_type Vertex_handle; 
 
 /*! 
 handle to halfedge. 
 */ 
-typedef Hidden_type Halfedge_handle; 
+typedef unspecified_type Halfedge_handle; 
 
 /*! 
 handle to face. 
 */ 
-typedef Hidden_type Face_handle; 
+typedef unspecified_type Face_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Vertex_const_handle; 
+typedef unspecified_type Vertex_const_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Halfedge_const_handle; 
+typedef unspecified_type Halfedge_const_handle; 
 
 /*! 
 
 */ 
-typedef Hidden_type Face_const_handle; 
+typedef unspecified_type Face_const_handle; 
 
 /*! 
 `CGAL::Tag_true` or 
 `CGAL::Tag_false`. 
 */ 
-typedef Hidden_type Supports_face_halfedge; 
+typedef unspecified_type Supports_face_halfedge; 
 
 /// @} 
 

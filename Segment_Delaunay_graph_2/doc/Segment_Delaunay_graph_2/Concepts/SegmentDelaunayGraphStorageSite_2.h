@@ -34,7 +34,7 @@ public:
 /*! 
 The site type. 
 */ 
-typedef Hidden_type Site_2; 
+typedef unspecified_type Site_2; 
 
 /*! 
 The type for a handle to a point. 

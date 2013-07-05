@@ -17,9 +17,11 @@ Currently, the following coefficient types are supported:
 
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA) 
 
-\cgalAdvanced The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is 
+\cgalAdvancedBegin
+The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is 
 one of the types listed above. `ROOT` should be one of the integer types. 
 See also the documentation of `Sqrt_extension<NT,ROOT>`. 
+\cgalAdvancedEnd
 
 The current method to isolate roots is the bitstream Descartes method
 presented in \cite eigenwillig-phd-08.  The used method to refine the
@@ -44,17 +46,17 @@ public:
 /*! 
 Same type as the template argument `Coeff`. 
 */ 
-typedef Hidden_type Coefficient; 
+typedef unspecified_type Coefficient; 
 
 /*! 
 A model of `AlgebraicKernel_d_1::Polynomial_1`. 
 */ 
-typedef Hidden_type Polynomial_1; 
+typedef unspecified_type Polynomial_1; 
 
 /*! 
 A model of `AlgebraicKernel_d_1::AlgebraicReal_1`. 
 */ 
-typedef Hidden_type Algebraic_real_1; 
+typedef unspecified_type Algebraic_real_1; 
 
 /*! 
 The choice of `Coeff` also determines the provided bound, type. 
@@ -66,12 +68,12 @@ In case of `Coeff` is:
 
 - `leda_integer` or `leda_integer` this is `leda_rational`. 
 */ 
-typedef Hidden_type Bound; 
+typedef unspecified_type Bound; 
 
 /*! 
 The multiplicity type is `int`. 
 */ 
-typedef Hidden_type Multiplicity_type; 
+typedef unspecified_type Multiplicity_type; 
 
 /// @}
 

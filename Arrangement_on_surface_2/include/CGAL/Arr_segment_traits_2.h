@@ -531,7 +531,7 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  const Point_2& p) const
+                                  const Point_2& CGAL_assertion_code(p)) const
     {
       Kernel                        kernel;
 
@@ -582,7 +582,7 @@ public:
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
                                   const X_monotone_curve_2& cv2,
-                                  const Point_2& p) const
+                                  const Point_2& CGAL_assertion_code(p)) const
     {
       Kernel                        kernel;
 

@@ -28,7 +28,7 @@
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -55,72 +55,32 @@ do_intersect(const typename K::Iso_rectangle_2 &iso,
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Point_2 &pt,
 	     const typename K::Iso_rectangle_2 &iso,
 	     const K& k)
 {
   if (internal::do_intersect(pt,iso,k)) {
-    return make_object(pt);
-    }
-    return Object();
+    return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Iso_rectangle_2>(pt);
+  }
+  return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Iso_rectangle_2>();
 }
 
-
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Point_2 &pt,
 	     const K& k)
 {
-  if (internal::do_intersect(pt,iso,k)) {
-    return make_object(pt);
-    }
-    return Object();
+  return internal::intersection(pt, iso, k);
 }
 
 } // namespace internal
 
-
-template <class K>
-inline 
-bool
-do_intersect(const Iso_rectangle_2<K> &iso,
-	     const Point_2<K> &pt)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(pt, iso);
-}
-
-template <class K>
-inline 
-bool
-do_intersect(const Point_2<K> &pt,
-	     const Iso_rectangle_2<K> &iso)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(pt, iso);
-}
-
-template <class K>
-inline 
-Object
-intersection(const Iso_rectangle_2<K> &iso,
-	     const Point_2<K> &pt)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, iso);
-}
-
-template <class K>
-inline 
-Object
-intersection(const Point_2<K> &pt,
-	     const Iso_rectangle_2<K> &iso)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, iso);
-}
+CGAL_INTERSECTION_FUNCTION(Point_2, Iso_rectangle_2, 2)
+CGAL_DO_INTERSECT_FUNCTION(Point_2, Iso_rectangle_2, 2)
 
 } //namespace CGAL
 

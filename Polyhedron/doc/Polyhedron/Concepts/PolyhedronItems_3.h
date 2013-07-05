@@ -67,10 +67,10 @@ public:
 
     /// point type stored in vertices. A `HalfedgeDS
     /// has no dimension, so this type is named Point` and not `Point_3`
-    typedef Hidden_type Point;
+    typedef unspecified_type Point;
 
     /// \f$\equiv\f$ `CGAL::Tag_true`. A point is always required.
-    typedef Hidden_type Supports_vertex_point;
+    typedef unspecified_type Supports_vertex_point;
     /// @}
 
     /// \name Operations
@@ -94,11 +94,11 @@ public:
     /// plane type stored in faces. A `HalfedgeDS` has no
     /// dimension, so this type is named `Plane` and not
     /// `Plane_3`.
-    typedef Hidden_type Plane;
+    typedef unspecified_type Plane;
 
 
     /// either `CGAL::Tag_true` or `CGAL::Tag_false`.
-    typedef Hidden_type Supports_face_plane;
+    typedef unspecified_type Supports_face_plane;
     /// @}
 
     /// \name Only required when Supports_face_plane == Tag_true

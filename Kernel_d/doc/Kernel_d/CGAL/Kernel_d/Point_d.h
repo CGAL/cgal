@@ -39,19 +39,19 @@ public:
 /*! 
 the linear algebra layer. 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /*! 
 a read-only iterator for the 
 %Cartesian coordinates. 
 */ 
-typedef Hidden_type Cartesian_const_iterator; 
+typedef unspecified_type Cartesian_const_iterator; 
 
 /*! 
 a read-only iterator for the 
 homogeneous coordinates. 
 */ 
-typedef Hidden_type Homogeneous_const_iterator; 
+typedef unspecified_type Homogeneous_const_iterator; 
 
 /// @} 
 
@@ -90,7 +90,7 @@ introduces a
 variable `p` of type `Point_d<Kernel>` in dimension `d` 
 initialized to the point with homogeneous coordinates as defined by 
 `H = set [first,last)` and `D`: \f$ (\pm H[0], 
-\pm H[1], \ldots, \pm H[d-1], \pm D}\f$. 
+\pm H[1], \ldots, \pm H[d-1], \pm D)\f$. 
 The sign  chosen is the sign of \f$ D\f$.
 
 \pre `D` is non-zero, the iterator range defines a \f$ d\f$-tuple of `RT`. 

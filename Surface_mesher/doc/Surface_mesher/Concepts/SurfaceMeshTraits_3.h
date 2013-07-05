@@ -30,27 +30,27 @@ the point type of the
 three dimensional embedding triangulation 
 `C2T3::Triangulation_3`. 
 */ 
-typedef Hidden_type Point_3; 
+typedef unspecified_type Point_3; 
 
 /*! 
 The type of segments. 
 */ 
-typedef Hidden_type Segment_3; 
+typedef unspecified_type Segment_3; 
 
 /*! 
 The type of rays. 
 */ 
-typedef Hidden_type Ray_3; 
+typedef unspecified_type Ray_3; 
 
 /*! 
 The type of lines. 
 */ 
-typedef Hidden_type Line_3; 
+typedef unspecified_type Line_3; 
 
 /*! 
 The surface type. 
 */ 
-typedef Hidden_type Surface_3; 
+typedef unspecified_type Surface_3; 
 
 /*! 
 A model of this type provides the operator 
@@ -61,7 +61,7 @@ to compute the intersection of the surface
 with an object of type `Type1` which may be 
 `Segment_3`, `Ray_3` or `Line_3` . 
 */ 
-typedef Hidden_type Intersect_3; 
+typedef unspecified_type Intersect_3; 
 
 /*! 
 A model of this type provides the following operators 
@@ -79,7 +79,7 @@ which outputs a set of points on the surface,
 
 which outputs a set of `n` points on the surface. 
 */ 
-typedef Hidden_type Construct_initial_points; 
+typedef unspecified_type Construct_initial_points; 
 
 /// @} 
 

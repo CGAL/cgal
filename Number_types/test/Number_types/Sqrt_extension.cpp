@@ -732,7 +732,7 @@ void sqrt_extension_test(){
 #include <CGAL/internal/Exact_type_selector.h>
 void test_nt_converter()
 {
-  typedef CGAL::internal::Exact_type_selector<int>::Type NT;
+  typedef CGAL::internal::Exact_field_selector<int>::Type NT;
   typedef CGAL::Sqrt_extension<double,double> Source;
   typedef CGAL::Sqrt_extension<NT,NT> Target;
   

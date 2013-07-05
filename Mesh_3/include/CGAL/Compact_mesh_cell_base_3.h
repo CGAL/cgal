@@ -2,9 +2,10 @@
 // Copyright (c) 2008,2011 GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -33,7 +34,7 @@
 
 namespace CGAL {
   
-// Class Mesh_cell_base_3
+// Class Compact_mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
@@ -96,14 +97,14 @@ public:
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
     : circumcenter_(NULL)
-    , sliver_value_(rhs.sliver_value_)
-    , subdomain_index_(rhs.subdomain_index_) 
-    , bits_(0) 
-    , sliver_cache_validity_(false)
 #ifdef CGAL_INTRUSIVE_LIST
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
+    , sliver_value_(rhs.sliver_value_)
+    , subdomain_index_(rhs.subdomain_index_)
+    , bits_(0)
+    , sliver_cache_validity_(false)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
@@ -439,10 +440,16 @@ public:
 #ifdef CGAL_INTRUSIVE_LIST
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
-  Cell_handle& next_intrusive()      { return next_intrusive_; }
+  void set_next_intrusive(Cell_handle c)
+  { 
+    next_intrusive_ = c; 
+  }
    
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
-  Cell_handle& previous_intrusive()      { return previous_intrusive_; }
+  void set_previous_intrusive(Cell_handle c)
+  { 
+    previous_intrusive_ = c; 
+  }
 #endif // CGAL_INTRUSIVE_LIST
 
 

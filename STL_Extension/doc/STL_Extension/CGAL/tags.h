@@ -70,6 +70,20 @@ struct Null_functor {
 
 /*!
 \ingroup PkgStlExtensionUtilities
+Tag used to enable/disable concurrency.
+For example, it may be used by a user to request the sequential version of an algorithm.
+*/
+struct Sequential_tag {};
+
+/*!
+\ingroup PkgStlExtensionUtilities
+Tag used to enable/disable concurrency.
+For example, it may be used by a user to request the parallel version of an algorithm.
+*/
+struct Parallel_tag {};
+
+/*!
+\ingroup PkgStlExtensionUtilities
 
 General tag indicating that non of any other possible tags is valid. 
 

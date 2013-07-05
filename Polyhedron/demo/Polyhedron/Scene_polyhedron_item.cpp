@@ -6,12 +6,12 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
+#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
 
 #include <QVariant>
 #include <list>
 
-typedef CGAL::AABB_polyhedron_triangle_primitive<Kernel, Polyhedron> Primitive;
+typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
@@ -29,7 +29,8 @@ Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
     if(poly) {
       Input_facets_AABB_tree* tree = 
         new Input_facets_AABB_tree(poly->facets_begin(),
-                                   poly->facets_end());
+                                   poly->facets_end(),
+                                   *poly);
       item->setProperty(aabb_property_name, 
                         QVariant::fromValue<void*>(tree));
       return tree;

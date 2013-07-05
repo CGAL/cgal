@@ -36,9 +36,7 @@ public:
   
 private:
   const Scene_polyhedron_item* poly_item;
-  const Scene_interface* scene;
   bool manipulable;
-  bool can_clone;
   qglviewer::ManipulatedFrame* frame;
   const Polyhedron* poly;
   qglviewer::Vec center_;

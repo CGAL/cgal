@@ -240,6 +240,11 @@ struct Test_c3t3_io {
         return false;
       }
     }
+#ifdef WIN32
+#  ifdef _MSC_VER
+#    pragma message("warning: The Triangulation_3 facets iterator is not deterministic")
+#  endif
+#else // not WIN32
     for(typename Tr::Finite_facets_iterator 
           fit1 = t1.finite_facets_begin(),
           fit2 = t2.finite_facets_begin(),
@@ -262,6 +267,7 @@ struct Test_c3t3_io {
         return false;
       }
     }
+#endif // not WIN32
     for(typename Tr::Finite_cells_iterator 
           cit1 = t1.finite_cells_begin(),
           cit2 = t2.finite_cells_begin(),
@@ -276,8 +282,21 @@ struct Test_c3t3_io {
         assert(false);
         return false;
       }
+      for(int i = 0; i < 4; ++i) {
+        if( cit1->surface_patch_index(i) !=
+            cit2->surface_patch_index(i) )
+        {
+          std::cerr << "Error: cells are different:\n";
+          std::cerr << *cit1 << "\n"
+                    << *cit2 << "\n"
+                    << "surface_patch_index(" << i << "):\n"
+                    << cit1->surface_patch_index(i) << "\n"
+                    << cit2->surface_patch_index(i) << "\n";
+          assert(false);
+          return false;
+        }
+      }
     }
-          
     return true;
   }
 

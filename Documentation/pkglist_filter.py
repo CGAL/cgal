@@ -17,9 +17,9 @@ def main(argv):
             if(index > 0):
                 top_level = pkg[:index]
                 lower_level = pkg[index+1:]
-                filename="../" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+                filename="${CMAKE_SOURCE_DIR}/" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
             else:
-                filename="../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+                filename="${CMAKE_SOURCE_DIR}/" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
             pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
             do_print=False
             for l in pkgdesc:

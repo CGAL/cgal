@@ -214,10 +214,12 @@ update in the halfedge data structure is costly, thus it is advisable
 to reserve enough space in advance as indicated with the alternative
 constructor in the comment.
 
-\cgalAdvanced Note that the polyhedron and not the underlying halfedge data
+\cgalAdvancedBegin
+Note that the polyhedron and not the underlying halfedge data
 structure triggers the resize operation, since the resize operation
 requires some preconditions, such as valid incidences, to be fulfilled
 that only the polyhedron can guarantee.
+\cgalAdvancedEnd
 
 \cgalExample{Polyhedron/polyhedron_prog_vector.cpp}
 
@@ -306,7 +308,7 @@ CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 Additional formats supported for writing are OpenInventor (<TT>.iv</TT>)
 \cite cgal:w-impoo-94, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
-\cite cgal:bpp-vrml-95, \cite cgal:vrmls-96, \cite cgal:hw-vrml2h-96, and Wavefront Advanced
+\cite cgal:bpp-vrml-95, \cite cgal:vrmls-97, \cite cgal:hw-vrml2h-96, and Wavefront Advanced
 Visualizer object format (<TT>.obj</TT>). Another convenient output
 function writes a polyhedral surface to a Geomview process spawned
 from the \cgal program. These output functions are provided as

@@ -25,6 +25,8 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Inverse_index.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Cartesian_converter.h>
+#include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
 
@@ -49,7 +51,11 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
     typedef typename Poly::Vertex_const_iterator  Vertex_const_iterator;
     typedef typename Poly::Facet_const_iterator   Facet_const_iterator;
     typedef Inverse_index< Vertex_const_iterator> Index;
-    typedef typename HDS::Vertex::Point                   Point;
+  
+    Cartesian_converter< 
+      typename Kernel_traits<typename Poly::Vertex::Point>::Kernel,
+      typename Kernel_traits<typename HDS::Vertex::Point>::Kernel
+    > convert;
 
     target.clear();
     Polyhedron_incremental_builder_3<HDS> B( target);
@@ -59,7 +65,7 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
     for ( Vertex_const_iterator vi = source.vertices_begin();
           vi != source.vertices_end();
           ++vi) {
-        B.add_vertex( Point( vi->point()));
+        B.add_vertex( convert( vi->point()));
     }
     Index index( source.vertices_begin(), source.vertices_end());
 

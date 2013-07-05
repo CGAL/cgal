@@ -67,19 +67,21 @@ class Arrangement_on_surface_with_history_2 :
         typename GeomTraits_::Curve_2 *> >::other>::other>
 {
 public:
-
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef TopTraits_                                      Base_topology_traits;
+
+private:
   typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
                                                 Base_topology_traits>  Self;
 
+public:
   typedef typename Geometry_traits_2::Point_2             Point_2;
   typedef typename Geometry_traits_2::Curve_2             Curve_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
 
   typedef Arr_observer<Self>                              Observer;
-protected:
 
+protected:
   friend class Arr_observer<Self>;
   friend class Arr_accessor<Self>;
   friend class Arr_with_history_accessor<Self>;
@@ -180,19 +182,19 @@ protected:
                           public In_place_list_base<Curve_halfedges>
   {
     friend class Curve_halfedges_observer;
-    friend class Arrangement_on_surface_with_history_2<GeomTraits_,
-                                                       TopTraits_>;
-    friend class Arr_with_history_accessor<Self>;
+    friend class Arrangement_on_surface_with_history_2<Geometry_traits_2,
+                                                       Base_topology_traits>;
+    friend class Arr_with_history_accessor<
+      Arrangement_on_surface_with_history_2<Geometry_traits_2,
+                                            Base_topology_traits> >;
 
   private:
-
     typedef std::set<Halfedge_handle, Less_halfedge_handle>  Halfedges_set;
 
     // Data members:
     Halfedges_set m_halfedges;
 
   public:
-
     /*! Default constructor. */
     Curve_halfedges ()
     {}

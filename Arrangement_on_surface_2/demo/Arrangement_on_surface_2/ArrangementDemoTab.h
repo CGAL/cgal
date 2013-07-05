@@ -44,6 +44,7 @@ class ArrangementDemoTabBase : public QWidget
 
 public:
   ArrangementDemoTabBase( QWidget* parent );
+  virtual ~ArrangementDemoTabBase( );
 
   virtual QGraphicsScene* getScene( ) const;
   virtual ArrangementDemoGraphicsView* getView( ) const;

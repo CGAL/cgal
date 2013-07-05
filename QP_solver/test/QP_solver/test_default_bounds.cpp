@@ -46,7 +46,7 @@ int main()
 	    // generate empty program with all possible
 	    // defaults, and test solver / bound status functions
 	    CGAL::Quadratic_program<int> qp = CGAL::Quadratic_program<int>
-	      (CGAL::Comparison_result(r), static_cast<bool>(fl), l, static_cast<bool>(fu), u); 
+	      (CGAL::Comparison_result(r), (fl!=0), l, (fu!=0), u); 
 	    assert(qp.is_valid());
 	 
 	    // test solver

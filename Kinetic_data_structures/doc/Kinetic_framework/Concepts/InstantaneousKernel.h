@@ -22,12 +22,12 @@ public:
 /*! 
 A number type which can be used to represent the current time. This must be a ring or field type. 
 */ 
-typedef Hidden_type NT; 
+typedef unspecified_type NT; 
 
 /*! 
 The type used to represent the current time. This type must be comparable. 
 */ 
-typedef Hidden_type Time; 
+typedef unspecified_type Time; 
 
 /// @} 
 

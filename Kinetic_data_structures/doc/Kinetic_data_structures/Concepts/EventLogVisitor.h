@@ -20,7 +20,7 @@ public:
 /*! 
 An iterator through strings defining the events that occurred. Each event is represented by a `std::string`. 
 */ 
-typedef Hidden_type Event_iterator; 
+typedef unspecified_type Event_iterator; 
 
 /// @} 
 

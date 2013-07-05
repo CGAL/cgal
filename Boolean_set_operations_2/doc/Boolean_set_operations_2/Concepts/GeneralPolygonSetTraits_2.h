@@ -30,18 +30,18 @@ public:
 /*! 
 represents a general polygon. Must be a model of the `GpsTraitsGeneralPolygon_2` concept. 
 */ 
-typedef Hidden_type Polygon_2; 
+typedef unspecified_type Polygon_2; 
 
 /*! 
 represents a general polygon with holes. Must be a model of the `GpsTraitsGeneralPolygonWithHoles_2` concept. 
 */ 
-typedef Hidden_type Polygon_with_holes_2; 
+typedef unspecified_type Polygon_with_holes_2; 
 
 /*! 
 A const iterator of curves. Its value type is const 
 `X_monotone_curve_2`. 
 */ 
-typedef Hidden_type Curve_const_iterator; 
+typedef unspecified_type Curve_const_iterator; 
 
 /// @} 
 
@@ -56,7 +56,7 @@ a functor that constructs a general polygon from a range of
 
 parameterized by the `InputIterator` type. 
 */ 
-typedef Hidden_type Construct_polygon_2; 
+typedef unspecified_type Construct_polygon_2; 
 
 /*! 
 a functor that constructs a general polygon with holes from a general polygon and, optionally, a range of holes. It uses the operator 
@@ -65,28 +65,28 @@ a functor that constructs a general polygon with holes from a general polygon an
 
 `void operator() (const General_polygon_2& pgn_boundary, HolesInputIterator h_begin, HolesInputIterator h_end)` parameterized by the `HolesInputIterator` type. 
 */ 
-typedef Hidden_type Construct_general_polygon_with_holes_2; 
+typedef unspecified_type Construct_general_polygon_with_holes_2; 
 
 /*! 
 A functor for constructing the outer boundary of a polygon with holes. It uses the operator 
 
 `General_polygon_2 operator()(const General_polygon_with_holes_2& pol_wh)`. 
 */ 
-typedef Hidden_type Construct_outer_boundary; 
+typedef unspecified_type Construct_outer_boundary; 
 
 /*! 
 A functor for constructing the container of holes of a polygon with holes. It returns the begin/end iterators for the holes It uses the operator 
 
 `std::pair<Hole_const_iterator, Hole_const_iterator> operator()(const General_polygon_with_holes_2& pol_wh)`. 
 */ 
-typedef Hidden_type Construct_holes; 
+typedef unspecified_type Construct_holes; 
 
 /*! 
 A functor for checking if polygon with holes has no outer boundary. It uses the operator 
 
 `bool operator()(const General_polygon_with_holes_2& pol_wh)`. 
 */ 
-typedef Hidden_type Is_unbounded; 
+typedef unspecified_type Is_unbounded; 
 
 /// @} 
 

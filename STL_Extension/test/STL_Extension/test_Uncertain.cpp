@@ -71,10 +71,17 @@ void test()
 
 	// Exceptions
 	bool ok = true;
+
+        // It is important to let that protection with CGAL_assertion_code,
+        // because the following test checks that
+        // CGAL::get_certain(Uncertain) does throw an assertion, *but if
+        // CGAL_NDEBUG is set*.
+        // -- Laurent Rineau, 2013/03/26
 	CGAL_assertion_code( ok = false );
 	try { CGAL::get_certain(u); }
 	catch (CGAL::Assertion_exception) { ok = true; }
 	bool_assert(ok);
+
 	ok = false;
 	try {
 	  CGAL::make_certain(u);

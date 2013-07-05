@@ -39,7 +39,6 @@ The assertion flags for the polygons and polygon operations use
 
 ## Global Functions ##
 - `CGAL::area_2()`
-- `CGAL::bbox_2()`
 - `CGAL::bottom_vertex_2()`
 - `CGAL::bounded_side_2()`
 - `CGAL::is_convex_2()`

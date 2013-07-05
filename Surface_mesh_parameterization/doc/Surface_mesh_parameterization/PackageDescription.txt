@@ -38,7 +38,7 @@
 
 This \cgal package implements several parameterization methods:
 
- - Fixed border:
+- Fixed border:
   - Tutte Barycentric Mapping \cite t-hdg-63.
      One-to-one mapping is guaranteed for convex border.
   - Floater Mean Value Coordinates \cite cgal:f-mvc-03.
@@ -47,7 +47,7 @@ This \cgal package implements several parameterization methods:
     Conditionally guaranteed if all weights are positive and border is convex.
   - Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
     Conditionally guaranteed if all weights are positive and border is convex.
- - Free border:
+- Free border:
   - Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
 
 - `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
@@ -65,13 +65,13 @@ set of constraints (a constraint specifies two (u,v) coordinates for
 each instance of a vertex along the border).
 
 This package implements all common border parameterization methods:
- - For fixed border methods:
+- For fixed border methods:
    - the user can select a border
       parameterization among two common methods: uniform or
       arc-length parameterizations.
    - one convex shape specified by:
     - one shape among a set of standard ones (circle, square).
- - For free border methods: at least two constraints (the pinned
+- For free border methods: at least two constraints (the pinned
 vertices).
 
 - `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`

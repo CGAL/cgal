@@ -135,7 +135,7 @@ to protect a block of code from FPU rounding modes necessary for the
 computations with `Interval_nt<false>`. It does nothing for 
 `Interval_nt<true>`. It is implemented as `Protect_FPU_rounding<!Protected>`. 
 */ 
-typedef Hidden_type Protector; 
+typedef unspecified_type Protector; 
 
 /// @} 
 

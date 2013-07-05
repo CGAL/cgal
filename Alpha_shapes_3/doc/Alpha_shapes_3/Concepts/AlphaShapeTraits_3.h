@@ -35,7 +35,7 @@ public:
 A number type compatible with the type used for 
 the points coordinate. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 An object constructor able to compute: 
@@ -49,7 +49,7 @@ of 2 points `p0, p1`,
 - the squared radius of the smallest circumscribing sphere 
 to a single point `p0` (which is `FT(0)`). 
 */ 
-typedef Hidden_type Compute_squared_radius_3; 
+typedef unspecified_type Compute_squared_radius_3; 
 
 /// @} 
 

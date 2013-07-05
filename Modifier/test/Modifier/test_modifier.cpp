@@ -28,6 +28,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/Modifier_base.h>
 
+#include <cassert>
+
 using CGAL::Modifier_base;
 
 class A {
@@ -49,7 +51,7 @@ int main() {
     A a;
     Modifier m;
     a.delegate(m);
-    CGAL_assertion( a.get_i() == 42);
+    assert( a.get_i() == 42);
     return 0;
 }
 // EOF //

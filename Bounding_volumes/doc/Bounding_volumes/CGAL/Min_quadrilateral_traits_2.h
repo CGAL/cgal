@@ -27,37 +27,37 @@ public:
 /*! 
 `Kernel::Point_2`. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 `Kernel::Vector_2`. 
 */ 
-typedef Hidden_type Vector_2; 
+typedef unspecified_type Vector_2; 
 
 /*! 
 `Kernel::Direction_2`. 
 */ 
-typedef Hidden_type Direction_2; 
+typedef unspecified_type Direction_2; 
 
 /*! 
 `Kernel::Line_2`. 
 */ 
-typedef Hidden_type Line_2; 
+typedef unspecified_type Line_2; 
 
 /*! 
 internal type. 
 */ 
-typedef Hidden_type Rectangle_2; 
+typedef unspecified_type Rectangle_2; 
 
 /*! 
 internal type. 
 */ 
-typedef Hidden_type Parallelogram_2; 
+typedef unspecified_type Parallelogram_2; 
 
 /*! 
 internal type. 
 */ 
-typedef Hidden_type Strip_2; 
+typedef unspecified_type Strip_2; 
 
 /// @} 
 
@@ -67,32 +67,32 @@ typedef Hidden_type Strip_2;
 /*! 
 `Kernel::Equal_2`. 
 */ 
-typedef Hidden_type Equal_2; 
+typedef unspecified_type Equal_2; 
 
 /*! 
 `Kernel::Less_xy_2`. 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 `Kernel::Less_yx_2`. 
 */ 
-typedef Hidden_type Less_yx_2; 
+typedef unspecified_type Less_yx_2; 
 
 /*! 
 `Kernel::Orientation_2`. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 `Kernel::Has_on_negative_side_2`. 
 */ 
-typedef Hidden_type Has_on_negative_side_2; 
+typedef unspecified_type Has_on_negative_side_2; 
 
 /*! 
 `Kernel::Compare_angle_with_x_axis_2`. 
 */ 
-typedef Hidden_type Compare_angle_with_x_axis_2; 
+typedef unspecified_type Compare_angle_with_x_axis_2; 
 
 /*! 
 AdaptableBinaryFunction class 
@@ -102,7 +102,7 @@ AdaptableBinaryFunction class
 `op(r1,r2)` returns true, iff 
 the area of \f$ r1\f$ is strictly less than the area of \f$ r2\f$. 
 */ 
-typedef Hidden_type Area_less_rectangle_2; 
+typedef unspecified_type Area_less_rectangle_2; 
 
 /*! 
 AdaptableBinaryFunction 
@@ -113,7 +113,7 @@ class
 `op(p1,p2)` returns true, iff the area of \f$ p1\f$ is strictly 
 less than the area of \f$ p2\f$. 
 */ 
-typedef Hidden_type Area_less_parallelogram_2; 
+typedef unspecified_type Area_less_parallelogram_2; 
 
 /*! 
 AdaptableBinaryFunction class 
@@ -123,7 +123,7 @@ AdaptableBinaryFunction class
 `op(s1,s2)` returns true, iff the width of 
 \f$ s1\f$ is strictly less than the width of \f$ s2\f$. 
 */ 
-typedef Hidden_type Width_less_strip_2; 
+typedef unspecified_type Width_less_strip_2; 
 
 /// @} 
 
@@ -133,7 +133,7 @@ typedef Hidden_type Width_less_strip_2;
 /*! 
 `Kernel::Construct_vector_2`. 
 */ 
-typedef Hidden_type Construct_vector_2; 
+typedef unspecified_type Construct_vector_2; 
 
 /*! 
 AdaptableFunctor 
@@ -142,27 +142,27 @@ AdaptableFunctor
 
 `op(d)` returns a vector in direction `d`. 
 */ 
-typedef Hidden_type Construct_vector_from_direction_2; 
+typedef unspecified_type Construct_vector_from_direction_2; 
 
 /*! 
 `Kernel::Construct_perpendicular_vector_2`. 
 */ 
-typedef Hidden_type Construct_perpendicular_vector_2; 
+typedef unspecified_type Construct_perpendicular_vector_2; 
 
 /*! 
 `Kernel::Construct_direction_2`. 
 */ 
-typedef Hidden_type Construct_direction_2; 
+typedef unspecified_type Construct_direction_2; 
 
 /*! 
 `Kernel::Construct_opposite_direction_2`. 
 */ 
-typedef Hidden_type Construct_opposite_direction_2; 
+typedef unspecified_type Construct_opposite_direction_2; 
 
 /*! 
 `Kernel::Construct_line_2`. 
 */ 
-typedef Hidden_type Construct_line_2; 
+typedef unspecified_type Construct_line_2; 
 
 /*! 
 Function class 
@@ -176,7 +176,7 @@ convex polygon (oriented counterclockwise),
 `op(p1,d,p2,p3,p4)` returns the rectangle with one of the 
 points on each side and one sides parallel to `d`. 
 */ 
-typedef Hidden_type Construct_rectangle_2; 
+typedef unspecified_type Construct_rectangle_2; 
 
 /*! 
 Function class 
@@ -191,7 +191,7 @@ boundary of a convex polygon (oriented counterclockwise),
 of the points on each side and one side parallel to each of 
 `d1` and `d2`. 
 */ 
-typedef Hidden_type Construct_parallelogram_2; 
+typedef unspecified_type Construct_parallelogram_2; 
 
 /*! 
 Function class 
@@ -202,7 +202,7 @@ Function class
 strip bounded by the lines through `p1` resp. `p2` with 
 direction `d`. 
 */ 
-typedef Hidden_type Construct_strip_2; 
+typedef unspecified_type Construct_strip_2; 
 
 /// @} 
 

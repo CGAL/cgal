@@ -37,10 +37,12 @@ Currently, the following coefficient types are supported:
 - `CORE::BigInt`, `CORE::BigRat`, (requires configuration with external library GMP) 
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA) 
 
-\cgalAdvanced The template argument type can also be set to
+\cgalAdvancedBegin
+The template argument type can also be set to
 `Sqrt_extension<NT,ROOT>`, where `NT` is one of the types listed
 above. `ROOT` should be one of the integer types.  See also the
 documentation of `Sqrt_extension<NT,ROOT>`.
+\cgalAdvancedEnd
 
 \cgalModels `AlgebraicKernel_d_2`
 
@@ -60,17 +62,17 @@ public:
 /*! 
 Same type as the template argument `Coeff`. 
 */ 
-typedef Hidden_type Coefficient; 
+typedef unspecified_type Coefficient; 
 
 /*! 
 A model of `AlgebraicKernel_d_2::Polynomial_2` 
 */ 
-typedef Hidden_type Polynomial_2; 
+typedef unspecified_type Polynomial_2; 
 
 /*! 
 A model of `AlgebraicKernel_d_2::AlgebraicReal_2` 
 */ 
-typedef Hidden_type Algebraic_real_2; 
+typedef unspecified_type Algebraic_real_2; 
 
 /*! 
 The choice of `Coeff` also determines the provided bound, type. 
@@ -82,12 +84,12 @@ In case of `Coeff` is
 - `leda_integer` or `leda_integer` this is `leda_rational` 
 
 */ 
-typedef Hidden_type Bound; 
+typedef unspecified_type Bound; 
 
 /*! 
 The multiplicity type is `int`. 
 */ 
-typedef Hidden_type Multiplicity_type; 
+typedef unspecified_type Multiplicity_type; 
 
 /// @}
 

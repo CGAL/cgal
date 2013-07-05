@@ -34,7 +34,7 @@ typedef CGAL::Tag_true Has_features;
 /*!
 Numerical type.
 */
-typedef Hidden_type FT;
+typedef unspecified_type FT;
 
 /*!
 Type of indices for curve segments (\f$ 1\f$-dimensional features)
@@ -43,7 +43,7 @@ Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable. The default constructed value must be the value of an edge which
 does not approximate a 1-dimensional feature of the input domain.
 */
-typedef Hidden_type Curve_segment_index;
+typedef unspecified_type Curve_segment_index;
 
 /*!
 Type of indices for corners (i.e.\ 0-dimensional features)
@@ -51,7 +51,7 @@ of the input domain.
 Must be a model of CopyConstructible, Assignable, DefaultConstructible and
 LessThanComparable.
 */
-typedef Hidden_type Corner_index;
+typedef unspecified_type Corner_index;
 
 /// @}
 

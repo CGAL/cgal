@@ -415,9 +415,7 @@ public:
     operator()(const Query& q) const
     {
       CGAL_MESH_3_PROFILER(std::string("Mesh_3 profiler: ") + std::string(CGAL_PRETTY_FUNCTION));
-
-      typedef boost::optional<
-        typename AABB_tree_::Object_and_primitive_id> AABB_intersection;
+      typedef boost::optional< typename AABB_tree_::template Intersection_and_primitive_id<Query>::Type > AABB_intersection;
       typedef Point_3 Bare_point;
 
       AABB_intersection intersection;
@@ -425,8 +423,9 @@ public:
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id;
-        Object o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),
-                                              q);
+        typename cpp11::result_of<
+          typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
+            = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
         intersection = AABB_intersection(std::make_pair(o, primitive_id));
       } else 
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -440,11 +439,11 @@ public:
       if ( intersection )
       {
         // Get primitive
-        AABB_primitive_id primitive_id = (*intersection).second;
+        AABB_primitive_id primitive_id = intersection->second;
         
         // intersection may be either a point or a segment
         if ( const Bare_point* p_intersect_pt =
-                              object_cast<Bare_point>(&(*intersection).first) )
+             boost::get<Bare_point>( &(intersection->first) ) )
         {
           return Intersection(*p_intersect_pt,
                               r_domain_.index_from_surface_patch_index(
@@ -452,7 +451,7 @@ public:
                               2);
         }
         else if ( const Segment_3* p_intersect_seg =
-                              object_cast<Segment_3>(&(*intersection).first) )
+                  boost::get<Segment_3>(&(intersection->first)))
         {
           CGAL_MESH_3_PROFILER("Mesh_3 profiler: Intersection is a segment");
 

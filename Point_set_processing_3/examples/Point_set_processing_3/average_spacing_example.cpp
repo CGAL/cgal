@@ -47,9 +47,9 @@ int main(void)
     // Computes average spacing.
     const unsigned int nb_neighbors = 6; // 1 ring
     FT average_spacing = CGAL::compute_average_spacing(
-                          points.begin(), points.end(),
-                          CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>(),
-                          nb_neighbors);
+                            points.begin(), points.end(),
+                            CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>(),
+                            nb_neighbors);
     std::cout << "Average spacing: " << average_spacing << std::endl;
 
     return EXIT_SUCCESS;

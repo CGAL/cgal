@@ -37,18 +37,18 @@ public:
 /*! 
 the linear algebra layer. 
 */ 
-typedef Hidden_type LA; 
+typedef unspecified_type LA; 
 
 /*! 
 
 a read-only iterator for the deltas of `dir`. 
 */ 
-typedef Hidden_type Delta_const_iterator; 
+typedef unspecified_type Delta_const_iterator; 
 
 /*! 
 construction tag. 
 */ 
-typedef Hidden_type Base_direction; 
+typedef unspecified_type Base_direction; 
 
 /// @} 
 

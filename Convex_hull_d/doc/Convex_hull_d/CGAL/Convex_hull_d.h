@@ -101,65 +101,65 @@ to `Vertex_iterator` and `Vertex_handle`.
 /*!
 the representation class.
 */
-typedef Hidden_type R;
+typedef unspecified_type R;
 
 /*!
 the point type.
 */
-typedef Hidden_type Point_d;
+typedef unspecified_type Point_d;
 
 /*!
 the hyperplane type.
 */
-typedef Hidden_type Hyperplane_d;
+typedef unspecified_type Hyperplane_d;
 
 /*!
 handle for simplices.
 */
-typedef Hidden_type Simplex_handle;
+typedef unspecified_type Simplex_handle;
 
 /*!
 handle for facets.
 */
-typedef Hidden_type Facet_handle;
+typedef unspecified_type Facet_handle;
 
 /*!
 handle for vertices.
 */
-typedef Hidden_type Vertex_handle;
+typedef unspecified_type Vertex_handle;
 
 /*!
 iterator for simplices.
 */
-typedef Hidden_type Simplex_iterator;
+typedef unspecified_type Simplex_iterator;
 
 /*!
 iterator for facets.
 */
-typedef Hidden_type Facet_iterator;
+typedef unspecified_type Facet_iterator;
 
 /*!
 iterator for vertices.
 */
-typedef Hidden_type Vertex_iterator;
+typedef unspecified_type Vertex_iterator;
 
 /*!
 iterator for vertices that are
 part of the convex hull.
 */
-typedef Hidden_type Hull_vertex_iterator;
+typedef unspecified_type Hull_vertex_iterator;
 
 /*!
 const iterator for all inserted
 points.
 */
-typedef Hidden_type Point_const_iterator;
+typedef unspecified_type Point_const_iterator;
 
 /*!
 const iterator for all points
 that are part of the convex hull.
 */
-typedef Hidden_type Hull_point_const_iterator;
+typedef unspecified_type Hull_point_const_iterator;
 
 /// @}
 

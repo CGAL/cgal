@@ -34,10 +34,10 @@ fi
 
 [ -e "$NEW" ] && error "the destination directory already exists.\n"
 
-if [ -e "$OLD/.svn" ]; then
+if svn info >/dev/null 2>&1; then
   SVN=y
   $DEBUG svn cp "$OLD/" "$NEW" ||  error "Cannot \"svn cp\" from \"%s\" to \"%s\"\n" "$OLD" "$NEW"
-elif git rev-parse; then
+elif git rev-parse 2>/dev/null; then
   GIT=y
   $DEBUG git mv "$OLD/" "$NEW" ||  error "Cannot \"git mv\" from \"%s\" to \"%s\"\n" "$OLD" "$NEW"
 else

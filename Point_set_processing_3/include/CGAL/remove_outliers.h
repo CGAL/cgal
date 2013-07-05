@@ -128,7 +128,7 @@ InputIterator
 remove_outliers(
   InputIterator first,  ///< iterator over the first input point.
   InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   double threshold_percent, ///< percentage of points to remove.
   const Kernel& /*kernel*/) ///< geometric traits.
@@ -164,7 +164,11 @@ remove_outliers(
   std::vector<Point> kd_tree_points; 
   for(it = first; it != beyond; it++)
   {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     Point point = get(point_pmap, it);
+#else
+    Point point = get(point_pmap, *it);
+#endif 
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -173,7 +177,13 @@ remove_outliers(
   std::multimap<FT,Enriched_point> sorted_points;
   for(it = first; it != beyond; it++)
   {
-    FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(get(point_pmap,it), tree, k);
+    FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      get(point_pmap,it),
+#else
+      get(point_pmap,*it),
+#endif 
+      tree, k);
     sorted_points.insert( std::make_pair(sq_distance, *it) );
   }
 
@@ -205,7 +215,7 @@ InputIterator
 remove_outliers(
   InputIterator first, ///< iterator over the first input point
   InputIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map InputIterator -> Point_3
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   double threshold_percent) ///< percentage of points to remove
 {
@@ -220,7 +230,7 @@ remove_outliers(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Identity_property_map.
 template <typename InputIterator
 >
 InputIterator
@@ -232,7 +242,12 @@ remove_outliers(
 {
   return remove_outliers(
     first,beyond,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
+#else
+    make_identity_property_map(
+    typename std::iterator_traits<InputIterator>::value_type()),
+#endif
     k,threshold_percent);
 }
 /// @endcond

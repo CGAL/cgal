@@ -350,19 +350,19 @@ public:
 either `Iterator_tag` or
 `Circulator_tag`.
 */
-typedef Hidden_type category;
+typedef unspecified_type category;
 
 /*!
 
 corresponding iterator category for circulators.
 */
-typedef Hidden_type iterator_category;
+typedef unspecified_type iterator_category;
 
 /*!
 
 corresponding circulator category for iterator.
 */
-typedef Hidden_type circulator_category;
+typedef unspecified_type circulator_category;
 
 /// @}
 
@@ -377,8 +377,7 @@ namespace CGAL {
 The adaptor `Container_from_circulator` is a class that converts any
 circulator type `C` to a kind of container class, i.e.\ a class
 that provides an `iterator` and a `const_iterator`
-type and two member functions - `begin()` and `end()`
-- that return the appropriate iterators. By analogy to \stl container classes these member functions return a const iterator in
+type and two member functions (`begin()` and `end()`) that return the appropriate iterators. By analogy to \stl container classes these member functions return a const iterator in
 the case that the container itself is constant and a mutable iterator
 otherwise.
 
@@ -443,47 +442,47 @@ typedef C Circulator;
 /*!
 
 */
-typedef Hidden_type iterator;
+typedef unspecified_type iterator;
 
 /*!
 
 */
-typedef Hidden_type const_iterator;
+typedef unspecified_type const_iterator;
 
 /*!
 
 */
-typedef Hidden_type value_type;
+typedef unspecified_type value_type;
 
 /*!
 
 */
-typedef Hidden_type reference;
+typedef unspecified_type reference;
 
 /*!
 
 */
-typedef Hidden_type const_reference;
+typedef unspecified_type const_reference;
 
 /*!
 
 */
-typedef Hidden_type pointer;
+typedef unspecified_type pointer;
 
 /*!
 
 */
-typedef Hidden_type const_pointer;
+typedef unspecified_type const_pointer;
 
 /*!
 
 */
-typedef Hidden_type size_type;
+typedef unspecified_type size_type;
 
 /*!
 
 */
-typedef Hidden_type difference_type;
+typedef unspecified_type difference_type;
 
 /// @}
 

@@ -39,14 +39,14 @@ public:
 Export `ParameterizationMesh_3` template parameter. 
 
 */ 
-typedef Hidden_type Adaptor; 
+typedef unspecified_type Adaptor; 
 
 /*! 
 
 The various errors detected by this package. 
 
 */ 
-typedef Hidden_type Error_code; 
+typedef unspecified_type Error_code; 
 
 /// @} 
 

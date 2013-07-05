@@ -127,6 +127,14 @@ private:
     FT m_radius;
 };
 
+#include <CGAL/Kernel_traits.h>
+
+namespace CGAL{
+template<class Gt>
+struct Kernel_traits< ::UI_point_3<Gt> >{
+  typedef Gt Kernel;
+};
+} //end of CGAL namespace
 
 #endif //UI_POINT_3_H
 

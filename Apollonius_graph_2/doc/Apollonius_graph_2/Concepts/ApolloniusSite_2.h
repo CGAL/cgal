@@ -22,23 +22,23 @@ public:
 /*! 
 The point type. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The field number type. 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The ring number type. 
 */ 
-typedef Hidden_type RT; 
+typedef unspecified_type RT; 
 
 /*! 
 The weight type. 
 \pre It must be the same as `FT`. 
 */ 
-typedef Hidden_type Weight; 
+typedef unspecified_type Weight; 
 
 /// @} 
 

@@ -31,7 +31,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
   if ( !lcc.is_valid() )
     {
       std::cout<<"ERROR: the lcc is not valid."<<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
   
@@ -46,7 +46,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<", "<<nbcc<<") and we have"<<" ("<<nbc[0]<<", "<<nbc[1]<<", "
                <<nbc[2]<<", "<<nbc[3]<<", "<<nbc[4]<<", "<<nbc[5]<<")."
                <<std::endl;
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
 
@@ -56,7 +56,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
                <<"the number of vertex attributes ("
                <<lcc.number_of_vertex_attributes()<<")"<<std::endl;
 
-      CGAL_assertion(false);
+      assert(false);
       return false;
     }
   
@@ -265,7 +265,7 @@ bool test_LCC_4()
   if ( !lcc.template is_sewable<4>(dh1, dh2) )
   {
     std::cout<<"ERROR: the two 3-cells are not sewable."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return false;
   }
 
@@ -280,9 +280,50 @@ bool test_LCC_4()
   if ( lcc.template is_sewable<4>(dh1, dh2) )
   {
     std::cout<<"ERROR: the two 3-cells are sewable."<<std::endl;
-    CGAL_assertion(false);
+    assert(false);
     return false;
   }
+
+  lcc.clear();
+  dh1 = lcc.make_tetrahedron(apoint<LCC>(-1, 0, 0,0),apoint<LCC>(0, 2, 0,0),
+                             apoint<LCC>(1, 0, 0,0),apoint<LCC>(1, 1, 2,0));
+  dh2 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -1,0),apoint<LCC>(-1, 0, -1,0),
+                             apoint<LCC>(1, 0, -1,0),apoint<LCC>(1, 1, -3,0));
+  dh3 = lcc.make_tetrahedron(apoint<LCC>(0, 2, -4,0),apoint<LCC>(-1, 0, -4,0),
+                             apoint<LCC>(1, 0, -4,0),apoint<LCC>(1, 1, -5,0));
+  lcc.template sew<3>(dh1, dh2);
+  lcc.template sew<4>(dh1, dh3);
+
+  LCC lcc2(lcc);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation();
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation();
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc, false) )
+  { assert(false); return false; }
+
+  lcc.reverse_orientation_connected_component(dh1);
+  if ( !lcc.is_valid() ) { assert(false); return false; }
+  if ( !lcc2.is_isomorphic_to(lcc) )
+  { assert(false); return false; }
 
   /*    import_from_polyhedron<LCC>(lcc,ap);
 

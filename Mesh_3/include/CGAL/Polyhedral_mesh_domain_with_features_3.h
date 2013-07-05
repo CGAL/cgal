@@ -98,11 +98,11 @@ public:
   Polyhedral_mesh_domain_with_features_3(const std::string& filename);
 
   template <typename T1, typename T2>
-  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b) : Base(a, b) {};
+  Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b) : Base(a, b) {}
 
   template <typename T1, typename T2, typename T3>
   Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c)
-    : Base(a, b, c) {};
+    : Base(a, b, c) {}
 
   /// Destructor
   ~Polyhedral_mesh_domain_with_features_3() {}

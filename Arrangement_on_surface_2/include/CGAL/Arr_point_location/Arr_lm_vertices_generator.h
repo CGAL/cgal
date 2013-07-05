@@ -32,24 +32,24 @@ namespace CGAL {
  * A generator for the landmarks point-locatoion class, which uses the
  * arrangement vertices as its set of landmarks.
 */
-template <class Arrangement_,
-          class Nearest_neighbor_  =
-            Arr_landmarks_nearest_neighbor<typename
-                                           Arrangement_::Geometry_traits_2> >
+template <typename Arrangement_,
+          typename Nearest_neighbor_ =
+            Arr_landmarks_nearest_neighbor<Arrangement_> >
 class Arr_landmarks_vertices_generator :
     public Arr_landmarks_generator_base<Arrangement_, Nearest_neighbor_>
 {
 public:
-
   typedef Arrangement_                                  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef Nearest_neighbor_                             Nearest_neighbor;
 
-  typedef Arr_landmarks_generator_base<Arrangement_2,
-                                       Nearest_neighbor>      Base;
-  typedef Arr_landmarks_vertices_generator<Arrangement_2,
-                                           Nearest_neighbor>  Self;
-  
+private:
+  typedef Arr_landmarks_generator_base<Arrangement_2, Nearest_neighbor>
+                                                        Base;
+  typedef Arr_landmarks_vertices_generator<Arrangement_2, Nearest_neighbor>
+                                                        Self;
+
+public:
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
@@ -67,25 +67,22 @@ public:
   typedef std::list<NN_Point_2>                         NN_Point_list;
 
 protected:
-
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *m_traits;  // Its associated traits object.
+  const Traits_adaptor_2*  m_traits;  // Its associated traits object.
   int                      num_landmarks;
 
 private:
-
   /*! Copy constructor - not supported. */
-  Arr_landmarks_vertices_generator (const Self& );
+  Arr_landmarks_vertices_generator(const Self&);
 
   /*! Assignment operator - not supported. */
-  Self& operator= (const Self& );
+  Self& operator=(const Self&);
 
-public: 
-
+public:
   /*! Constructor. */
-  Arr_landmarks_vertices_generator (const Arrangement_2& arr) :
+  Arr_landmarks_vertices_generator(const Arrangement_2& arr) :
     Base (arr),
     num_landmarks(0)
   {
@@ -93,7 +90,7 @@ public:
     build_landmark_set();//this->
   }
 
-  virtual void _create_points_set (Points_set & /* points */)
+  virtual void _create_points_set(Points_set & /* points */)
   {
     std::cerr << "should not reach here!"<< std::endl;
     CGAL_error();
@@ -102,26 +99,22 @@ public:
   /*!
    * Creates the landmark set, using all arrangement vertices.
    */
-  virtual void build_landmark_set ()
+  virtual void build_landmark_set()
   {
     // Go over the arrangement, and insert all its vertices as landmarks.
-    NN_Point_list           nnp_list; 
-    const Arrangement_2    *arr = this->arrangement();
-    Vertex_const_iterator   vit;
-    Vertex_const_handle     vh;
-
+    NN_Point_list         nnp_list; 
+    const Arrangement_2*  arr = this->arrangement();
+    Vertex_const_iterator vit;
     num_landmarks = 0;
-    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit)
-    {
-      vh = vit;
-      nnp_list.push_back (NN_Point_2 (vh->point(),
-                                      CGAL::make_object (vh)));
+    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
+      Vertex_const_handle vh = vit;
+      nnp_list.push_back(NN_Point_2(vh->point(), this->pl_make_result(vh)));
       num_landmarks++;
     }
 
     // Update the search structure.
     this->nn.clear();
-    this->nn.init (nnp_list.begin(), nnp_list.end());
+    this->nn.init(nnp_list.begin(), nnp_list.end());
 
     this->num_small_not_updated_changes = 0;
     this->updated = true;
@@ -139,27 +132,22 @@ public:
   }
 
 protected:
-
   /*! Handle a local change. */
-  void _handle_local_change_notification ()
+  void _handle_local_change_notification()
   {
     // Rebuild the landmark set only if the number of small
     // changes is greater than sqrt(num_landmarks).
-    double    nl = static_cast<double> (num_landmarks);
-    const int sqrt_num_landmarks = 
-      static_cast<int> (std::sqrt (nl) + 0.5);
+    double    nl = static_cast<double>(num_landmarks);
+    const int sqrt_num_landmarks = static_cast<int> (std::sqrt (nl) + 0.5);
 
     this->num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||
         (this->num_small_not_updated_changes >=  sqrt_num_landmarks))
     {
       clear_landmark_set();
-      build_landmark_set();//this->
+      build_landmark_set();
     }
-
-    return;
   }
-
 };
 
 } //namespace CGAL

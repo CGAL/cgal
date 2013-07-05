@@ -38,58 +38,58 @@ public:
 /*! 
 
 */ 
-typedef Hidden_type FT; 
+typedef unspecified_type FT; 
 
 /*! 
 The point type. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The segment type. 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Construct_segment_2; 
+typedef unspecified_type Construct_segment_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Equal_2; 
+typedef unspecified_type Equal_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Less_xy_2; 
+typedef unspecified_type Less_xy_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Less_yx_2; 
+typedef unspecified_type Less_yx_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 Computes the signed area of the oriented 
 triangle defined by 3 `Point_2` passed as arguments. 
 */ 
-typedef Hidden_type Compute_area_2; 
+typedef unspecified_type Compute_area_2; 
 
 /// @} 
 

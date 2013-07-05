@@ -178,17 +178,17 @@ typedef Data_structure::size_type size_type;
 /*! 
 A type for an iterator over finite vertices. 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 A type for an iterator over finite faces. 
 */ 
-typedef Hidden_type Finite_faces_iterator; 
+typedef unspecified_type Finite_faces_iterator; 
 
 /*! 
 A type for an iterator over finite edges. 
 */ 
-typedef Hidden_type Finite_edges_iterator; 
+typedef unspecified_type Finite_edges_iterator; 
 
 /// @}
 
@@ -202,17 +202,17 @@ typedef Hidden_type Finite_edges_iterator;
 /*! 
 A type for an iterator over all sites. 
 */ 
-typedef Hidden_type Sites_iterator; 
+typedef unspecified_type Sites_iterator; 
 
 /*! 
 A type for an iterator over all visible sites. 
 */ 
-typedef Hidden_type Visible_sites_iterator; 
+typedef unspecified_type Visible_sites_iterator; 
 
 /*! 
 A type for an iterator over all hidden sites. 
 */ 
-typedef Hidden_type Hidden_sites_iterator; 
+typedef unspecified_type Hidden_sites_iterator; 
 
 /// @} 
 

@@ -23,6 +23,8 @@
 //
 //******************************************************************************
 
+#define CGAL_INTERSECTION_VERSION 1
+
 #include <fstream>
 #include <iostream>
 
@@ -37,7 +39,6 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_polyhedron_triangle_primitive.h>
 
 #include "AABB_test_util.h"
 

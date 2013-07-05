@@ -23,6 +23,10 @@
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Compact_mesh_cell_base_3.h>"
+#include <CGAL/internal/deprecation_warning.h>
+
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
@@ -142,10 +146,16 @@ public:
 #ifdef CGAL_INTRUSIVE_LIST
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
-  Cell_handle& next_intrusive()      { return next_intrusive_; }
+  void set_next_intrusive(Cell_handle c)
+  { 
+    next_intrusive_ = c; 
+  }
    
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
-  Cell_handle& previous_intrusive()      { return previous_intrusive_; }
+  void set_previous_intrusive(Cell_handle c)
+  { 
+    previous_intrusive_ = c; 
+  }
 #endif // CGAL_INTRUSIVE_LIST
   
 private:

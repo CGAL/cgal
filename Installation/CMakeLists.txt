@@ -96,6 +96,7 @@ endif (CGAL_BRANCH_BUILD )
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
+set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES_NAMES} PARENT_SCOPE)
 
 message(STATUS "Packagenames: ${CGAL_CONFIGURED_PACKAGES_NAMES}")
 message( "== Setting paths (DONE) ==\n" )
@@ -119,6 +120,11 @@ if ( CGAL_BRANCH_BUILD )
   else()
     set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
   endif()
+  
+  # Accessed in the documentation.
+  set(CGAL_CREATED_VERSION_NUM ${CGAL_CREATED_VERSION_NUM} PARENT_SCOPE)
+
+  
   
   # TODO EBEB set number of internal release (replace "900")
   set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-${CGAL_BUILD_VERSION}")

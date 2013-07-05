@@ -824,13 +824,13 @@ Display_incidences_to_curves_aux<MDwPF_,curve_id_is_streamable>::
 operator()(std::ostream& os, typename MDwPF_::Curve_segment_index id,
            const Container2& corners_tmp_incidences_of_id) const
 {
-  std::cerr << "Corner #" << id << " is incident to the following curves: {";
+  os << "Corner #" << id << " is incident to the following curves: {";
   BOOST_FOREACH(typename MDwPF_::Curve_segment_index curve_index,
                 corners_tmp_incidences_of_id)
   {
-    std::cerr << " " << curve_index;
+    os << " " << curve_index;
   }
-  std::cerr << " }\n";
+  os << " }\n";
 }
 
 template <class MDwPF_>
@@ -841,9 +841,9 @@ Display_incidences_to_curves_aux<MDwPF_,false>::
 operator()(std::ostream& os, typename MDwPF_::Curve_segment_index id,
            const Container2& corners_tmp_incidences_of_id) const
 {
-  std::cerr << "Corner #" << id << " is incident to "
-            << corners_tmp_incidences_of_id .size()
-            << " curve(s).\n";
+  os << "Corner #" << id << " is incident to "
+     << corners_tmp_incidences_of_id .size()
+     << " curve(s).\n";
 }
 
 template <typename MDwPF_, bool patch_id_is_streamable>
@@ -854,13 +854,13 @@ Display_incidences_to_patches_aux<MDwPF_,patch_id_is_streamable>::
 operator()(std::ostream& os, typename MDwPF_::Curve_segment_index id,
            const Container& corners_incidences_of_id) const
 {
-  std::cerr << "Corner #" << id << " is incident to the following patches: {";
+  os << "Corner #" << id << " is incident to the following patches: {";
   BOOST_FOREACH(typename MDwPF_::Surface_patch_index i,
                 corners_incidences_of_id)
   {
-      std::cerr << " " << i;
+    os << " " << i;
   }
-  std::cerr << " }\n";
+  os << " }\n";
 }
 
 template <class MDwPF_>
@@ -871,9 +871,9 @@ Display_incidences_to_patches_aux<MDwPF_,false>::
 operator()(std::ostream& os, typename MDwPF_::Curve_segment_index id,
            const Container& corners_incidences_id) const
 {
-  std::cerr << "Corner #" << id << " is incident to "
-            << corners_incidences_id.size()
-            << " surface patch(es).\n";
+  os << "Corner #" << id << " is incident to "
+     << corners_incidences_id.size()
+     << " surface patch(es).\n";
 }
 
 }} // end namespaces internal::Mesh_3:: and internal::

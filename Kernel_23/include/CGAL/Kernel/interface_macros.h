@@ -34,6 +34,12 @@
 #  define CGAL_Kernel_pred(X, Y)
 #endif
 
+// Those predicates for which Simple_cartesian is guaranteed not to use
+// any division.
+#ifndef CGAL_Kernel_pred_RT
+#  define CGAL_Kernel_pred_RT(X, Y) CGAL_Kernel_pred(X, Y)
+#endif
+
 #ifndef CGAL_Kernel_cons
 #  define CGAL_Kernel_cons(X, Y)
 #endif
@@ -534,23 +540,24 @@ CGAL_Kernel_pred(Less_y_3,
 		 less_y_3_object)
 CGAL_Kernel_pred(Less_z_3,
 		 less_z_3_object)
-CGAL_Kernel_pred(Orientation_2,
-		 orientation_2_object)
-CGAL_Kernel_pred(Orientation_3,
-		 orientation_3_object)
+CGAL_Kernel_pred_RT(Orientation_2,
+		    orientation_2_object)
+CGAL_Kernel_pred_RT(Orientation_3,
+		    orientation_3_object)
 CGAL_Kernel_pred(Oriented_side_2,
 		 oriented_side_2_object)
 CGAL_Kernel_pred(Oriented_side_3,
 		 oriented_side_3_object)
-CGAL_Kernel_pred(Side_of_bounded_circle_2,
-		 side_of_bounded_circle_2_object)
-CGAL_Kernel_pred(Side_of_bounded_sphere_3,
-		 side_of_bounded_sphere_3_object)
-CGAL_Kernel_pred(Side_of_oriented_circle_2,
-		 side_of_oriented_circle_2_object)
-CGAL_Kernel_pred(Side_of_oriented_sphere_3,
-		 side_of_oriented_sphere_3_object)
+CGAL_Kernel_pred_RT(Side_of_bounded_circle_2,
+		    side_of_bounded_circle_2_object)
+CGAL_Kernel_pred_RT(Side_of_bounded_sphere_3,
+		    side_of_bounded_sphere_3_object)
+CGAL_Kernel_pred_RT(Side_of_oriented_circle_2,
+		    side_of_oriented_circle_2_object)
+CGAL_Kernel_pred_RT(Side_of_oriented_sphere_3,
+		    side_of_oriented_sphere_3_object)
 
+#undef CGAL_Kernel_pred_RT
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons
 #undef CGAL_Kernel_obj

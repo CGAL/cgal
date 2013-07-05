@@ -29,17 +29,17 @@ public:
 /*! 
 The point type. 
 */ 
-typedef Hidden_type Point_2; 
+typedef unspecified_type Point_2; 
 
 /*! 
 The segment type. 
 */ 
-typedef Hidden_type Segment_2; 
+typedef unspecified_type Segment_2; 
 
 /*! 
 The triangle type. 
 */ 
-typedef Hidden_type Triangle_2; 
+typedef unspecified_type Triangle_2; 
 
 /*! 
 A function object to construct a `Segment_2`. 
@@ -50,7 +50,7 @@ Provides:
 
 which constructs a segment from two points. 
 */ 
-typedef Hidden_type Construct_segment_2; 
+typedef unspecified_type Construct_segment_2; 
 
 /*! 
 A function object to construct a `Triangle_2`. 
@@ -61,7 +61,7 @@ Provides:
 
 which constructs a triangle from three points. 
 */ 
-typedef Hidden_type Construct_triangle_2; 
+typedef unspecified_type Construct_triangle_2; 
 
 /*! 
 A function object to compare the x-coordinate of two points.
@@ -73,7 +73,7 @@ Provides the operator:
 which returns `true` if `p` is before `q` 
 according to the \f$ x\f$-ordering of points. 
 */ 
-typedef Hidden_type Less_x_2; 
+typedef unspecified_type Less_x_2; 
 
 /*! 
 A function object to compare the y-coordinate of two points.
@@ -85,7 +85,7 @@ Provides the operator:
 which returns `true` if `p` is before `q` 
 according to the \f$ y\f$-ordering of points. 
 */ 
-typedef Hidden_type Less_y_2; 
+typedef unspecified_type Less_y_2; 
 
 /*! 
 A function object to compare the x-coordinate of two points.
@@ -99,7 +99,7 @@ which returns
 according to the 
 \f$ x\f$-ordering of points `p` and `q`. 
 */ 
-typedef Hidden_type Compare_x_2; 
+typedef unspecified_type Compare_x_2; 
 
 /*! 
 A function object to compare the y-coordinate of two points.
@@ -112,7 +112,7 @@ which returns
 according to the 
 \f$ y\f$-ordering of points `p` and `q`. 
 */ 
-typedef Hidden_type Compare_y_2; 
+typedef unspecified_type Compare_y_2; 
 
 /*! 
 A function object to compute the orientation of three points.
@@ -126,7 +126,7 @@ depending on \f$ r\f$ being, with respect to
 the oriented line `pq`, 
 on the left side , on the right side or on the line. 
 */ 
-typedef Hidden_type Orientation_2; 
+typedef unspecified_type Orientation_2; 
 
 /*! 
 A function object to perform the incircle test for four points.
@@ -143,7 +143,7 @@ This type is required only if the function
 `side_of_oriented_circle(Face_handle f, Point p)` is 
 called. 
 */ 
-typedef Hidden_type Side_of_oriented_circle_2; 
+typedef unspecified_type Side_of_oriented_circle_2; 
 
 /*! 
 A function object to compute the circumcentr of three points.
@@ -156,7 +156,7 @@ the circumcenter of the three points `p, q` and `r`.
 This type is required only if the function 
 `Point circumcenter(Face_handle f)`is called. 
 */ 
-typedef Hidden_type Construct_circumcenter_2; 
+typedef unspecified_type Construct_circumcenter_2; 
 
 /// @} 
 

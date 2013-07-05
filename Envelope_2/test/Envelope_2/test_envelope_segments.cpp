@@ -23,7 +23,6 @@
 
 using std::strcmp;
 
-typedef CGAL::Gmpq                                      NT;
 typedef CGAL::Cartesian<NT>                             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2, 

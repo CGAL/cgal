@@ -169,19 +169,19 @@ typedef Traits::Weighted_point Weighted_point;
 An iterator that allows to enumerate the 
 vertices that are not hidden. 
 */ 
-typedef Hidden_type All_vertices_iterator; 
+typedef unspecified_type All_vertices_iterator; 
 
 /*! 
 An iterator that allows to enumerate the 
 finite vertices that are not hidden. 
 */ 
-typedef Hidden_type Finite_vertices_iterator; 
+typedef unspecified_type Finite_vertices_iterator; 
 
 /*! 
 An iterator that allows to enumerate the 
 hidden vertices. 
 */ 
-typedef Hidden_type Hidden_vertices_iterator; 
+typedef unspecified_type Hidden_vertices_iterator; 
 
 /// @} 
 
