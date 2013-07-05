@@ -146,7 +146,7 @@ public:
 
   Rich_grid() {}
 
-  void init(std::vector<Rich_point<Kernel>> &vert, Rich_box<Kernel>& box, const FT _radius); 
+  void init(std::vector<Rich_point<Kernel> > &vert, Rich_box<Kernel>& box, const FT _radius); 
 
   // Travel for the point set itself 
   void travel_itself(void (*self)(iterator starta, iterator enda, FT radius),
@@ -207,7 +207,7 @@ public:
 // divide spoints into some grids
 // and each grid has their points index in the index vector of sample.
 template <typename Kernel>
-void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel>> &vert, Rich_box<Kernel>& box, const typename Kernel::FT _radius) 
+void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert, Rich_box<Kernel>& box, const typename Kernel::FT _radius) 
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
@@ -476,7 +476,7 @@ void Rich_grid<Kernel>::find_other_neighbors(
 /// @return 
 template <typename Kernel>
 void compute_ball_neighbors_one_self(
-  std::vector<Rich_point<Kernel>>& points,
+  std::vector<Rich_point<Kernel> >& points,
   Rich_box<Kernel>& box,
   const typename Kernel::FT radius)
 {
@@ -502,8 +502,8 @@ void compute_ball_neighbors_one_self(
 /// @return 
 template <typename Kernel>
 void compute_ball_neighbors_one_to_another(
-  std::vector<Rich_point<Kernel>>& samples, ///< sample point set
-  std::vector<Rich_point<Kernel>>& original,///< original point set
+  std::vector<Rich_point<Kernel> >& samples, ///< sample point set
+  std::vector<Rich_point<Kernel> >& original,///< original point set
   Rich_box<Kernel>& box, ///< bounding box
   const typename Kernel::FT radius ///< neighbor radius
 )
@@ -544,7 +544,7 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<Rich_point<Kernel>> neighbor_original_points, ///< neighbor original points
+  const std::vector<Rich_point<Kernel> > neighbor_original_points, ///< neighbor original points
   const typename Kernel::FT radius, ///<accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set ///<if user need density
 )
@@ -597,7 +597,7 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<Rich_point<Kernel>> neighbor_sample_points, ///< neighbor sample points
+  const std::vector<Rich_point<Kernel> > neighbor_sample_points, ///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set ///< if user need density
 )
