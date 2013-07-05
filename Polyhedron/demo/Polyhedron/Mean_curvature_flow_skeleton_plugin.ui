@@ -142,11 +142,59 @@
      <string>zero_TH</string>
     </property>
    </widget>
-   <zorder>omega_L</zorder>
+   <widget class="QPushButton" name="pushButton_collapse">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>50</y>
+      <width>114</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Collapse</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_split">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>90</y>
+      <width>114</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Split</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_degeneracy">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>130</y>
+      <width>114</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Degeneracy</string>
+    </property>
+   </widget>
+   <zorder>zero_TH</zorder>
+   <zorder>omega_H</zorder>
+   <zorder>edgelength_TH</zorder>
+   <zorder>alpha</zorder>
+   <zorder>label_omega_H</zorder>
+   <zorder>label_edgelength_TH</zorder>
+   <zorder>label_zero_TH</zorder>
    <zorder>label_omega_L</zorder>
    <zorder>omega_L</zorder>
    <zorder>pushButton_contract</zorder>
-   <zorder></zorder>
+   <zorder>label_alpha</zorder>
+   <zorder>pushButton_collapse</zorder>
+   <zorder>pushButton_split</zorder>
+   <zorder>pushButton_degeneracy</zorder>
   </widget>
  </widget>
  <resources/>

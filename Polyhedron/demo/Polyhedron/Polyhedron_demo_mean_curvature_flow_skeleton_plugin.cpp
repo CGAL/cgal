@@ -82,6 +82,9 @@ public:
 public slots:
   void on_actionMCFSkeleton_triggered();
   void on_actionContract();
+  void on_actionCollapse();
+  void on_actionSplit();
+  void on_actionDegeneracy();
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -108,11 +111,18 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
     dockWidget->setFeatures(QDockWidget::DockWidgetMovable
                           | QDockWidget::DockWidgetFloatable
                           | QDockWidget::DockWidgetClosable);
-    dockWidget->setWindowTitle("Mean Curvature Flow Skeletion");
+    dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
     mw->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
     dockWidget->setFloating(true);
+
     connect(ui->pushButton_contract, SIGNAL(clicked()),
             this, SLOT(on_actionContract()));
+    connect(ui->pushButton_collapse, SIGNAL(clicked()),
+            this, SLOT(on_actionCollapse()));
+    connect(ui->pushButton_split, SIGNAL(clicked()),
+            this, SLOT(on_actionSplit()));
+    connect(ui->pushButton_degeneracy, SIGNAL(clicked()),
+            this, SLOT(on_actionDegeneracy()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -156,17 +166,99 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
       mcs->set_omega_L(omega_L);
       mcs->set_omega_H(omega_H);
       mcs->set_edgelength_TH(edgelength_TH);
-      mcs->set_TH_ALPHA(alpha);
       mcs->set_zero_TH(zero_TH);
     }
   }
 
   QTime time;
   time.start();
-  std::cout << "Skeletonize...\n";
+  std::cout << "Contract...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  mcs->contract();
+  mcs->contract_geometry();
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  // update scene
+  scene->itemChanged(index);
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+  if (mcs == NULL)
+  {
+    std::cerr << "invalide mesh\n";
+    return;
+  }
+
+  QTime time;
+  time.start();
+  std::cout << "Collapse...\n";
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  std::cout << "before collapse edges\n";
+  int num_collapses = mcs->collapse_short_edges();
+  std::cout << "collapse " << num_collapses << " edges.\n";
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  item->color();
+  // update scene
+  scene->itemChanged(index);
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+  if (mcs == NULL)
+  {
+    std::cerr << "invalide mesh\n";
+    return;
+  }
+
+  QTime time;
+  time.start();
+  std::cout << "Split...\n";
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  std::cout << "before split triangles\n";
+  int num_split = mcs->iteratively_split_triangles();
+  std::cout << "split " << num_split << " triangles.\n";
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  // update scene
+  scene->itemChanged(index);
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+  if (mcs == NULL)
+  {
+    std::cerr << "invalide mesh\n";
+    return;
+  }
+
+  QTime time;
+  time.start();
+  std::cout << "Degeneracy\n";
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  int num_split = mcs->detect_degeneracies();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 

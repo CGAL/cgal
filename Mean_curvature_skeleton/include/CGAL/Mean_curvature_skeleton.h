@@ -225,17 +225,27 @@ public:
 
   void assemble_LHS(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
+    std::cerr << "start LHS\n";
     int nver = boost::num_vertices(*polyhedron);
 
     vertex_iterator vb, ve;
     // initialize the Laplacian matrix
+    int cnt_fix = 0;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       int i = boost::get(vertex_id_pmap, *vb);
-      A.set_coef(i, i, 0.0, true);
+      if (i >= nver)
+      {
+        std::cerr << "id is too large\n";
+      }
+      if (i < 0)
+      {
+        std::cerr << "id is too small\n";
+      }
       if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
           && is_vertex_fixed_map[i])
       {
+        cnt_fix++;
         A.set_coef(i + nver, i, 1.0 / zero_TH, true);
       }
       else
@@ -244,6 +254,11 @@ public:
       }
     }
 
+//    for (int i = 0; i < nver; i++)
+//    {
+//      A.set_coef(i, i, 0.0, true);
+//      A.set_coef(i + nver, i, omega_H, true);
+//    }
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       int i = boost::get(vertex_id_pmap, *vb);
@@ -257,14 +272,17 @@ public:
         A.set_coef(i, j, wij * omega_L, true);
         diagonal += -wij;
       }
-      A.set_coef(i, i, diagonal);
+      A.set_coef(i, i, diagonal, true);
     }
+    std::cerr << "fix " << cnt_fix << " vertices\n";
+    std::cerr << "end LHS\n";
   }
 
   void assemble_RHS(typename SparseLinearAlgebraTraits_d::Vector& Bx,
                     typename SparseLinearAlgebraTraits_d::Vector& By,
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
   {
+    std::cerr << "start RHS\n";
     // assemble right columns of linear system
     int nver = boost::num_vertices(*polyhedron);
     vertex_iterator vb, ve;
@@ -274,6 +292,7 @@ public:
       By[i] = 0;
       Bz[i] = 0;
     }
+    int cnt_fix = 0;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       vertex_descriptor vi = *vb;
@@ -282,7 +301,7 @@ public:
       if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
           && is_vertex_fixed_map[i])
       {
-        std::cout << "fix\n";
+        cnt_fix++;
         omega = 1.0 / zero_TH;
       }
       else
@@ -293,16 +312,18 @@ public:
       By[i + nver] = vi->point().y() * omega;
       Bz[i + nver] = vi->point().z() * omega;
     }
+    std::cerr << "fix " << cnt_fix << " vertices in RHS\n";
+    std::cerr << "end RHS\n";
   }
 
   void update_vertex_id()
   {
-    std::cout << "update id\n";
+    std::cerr << "start update id\n";
     std::map<size_t, bool> is_vertex_fixed_map_new;
     is_vertex_fixed_map_new.clear();
 
     vertex_iterator vb, ve;
-    int vertex_id_count = 0;
+    int vertex_id = 0;
     int cnt = 0;
     std::vector<int> vertex_id_old;
     vertex_id_old.clear();
@@ -310,7 +331,14 @@ public:
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_id_old[cnt++] = boost::get(vertex_id_pmap, *vb);
-      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+      boost::put(vertex_id_pmap, *vb, vertex_id++);
+    }
+
+    edge_iterator eb, ee;
+    int edge_id = 0;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      boost::put(edge_id_pmap, *eb, edge_id++);
     }
 
     cnt = 0;
@@ -323,7 +351,7 @@ public:
         {
           int new_id = boost::get(vertex_id_pmap, *vb);
           is_vertex_fixed_map_new[new_id] = true;
-          std::cout << "fix " << new_id << "\n";
+          std::cerr << "fix " << new_id << "\n";
         }
       }
     }
@@ -336,10 +364,11 @@ public:
       {
         if (is_vertex_fixed_map[id])
         {
-          std::cout << "check fix " << id << "\n";
+          std::cerr << "check fix " << id << "\n";
         }
       }
     }
+    std::cerr << "end update id\n";
   }
 
   void contract_geometry()
@@ -358,12 +387,14 @@ public:
     typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nver * 2);
     assemble_RHS(Bx, By, Bz);
 
+    std::cerr << "before solve\n";
     // solve "At * A * X = At * B".
     double D;
     m_solver.pre_factor_non_symmetric(A, D);
     m_solver.linear_solver_non_symmetric(A, Bx, X);
     m_solver.linear_solver_non_symmetric(A, By, Y);
     m_solver.linear_solver_non_symmetric(A, Bz, Z);
+    std::cerr << "after solve\n";
 
     // copy to mesh
     vertex_iterator vb, ve;
@@ -374,9 +405,10 @@ public:
       Point p(X[i], Y[i], Z[i]);
       vi->point() = p;
     }
+    std::cerr << "leave contract geometry\n";
   }
 
-  int collapse_short_edges(double edgelength_TH)
+  int collapse_short_edges()
   {
     Constrains_map constrains_map;
 
@@ -393,6 +425,7 @@ public:
       {
         continue;
       }
+      std::cerr << "found fixed vertex in collapse\n";
       // if both vertices are fixed, the edge is fixed
       if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
       {
@@ -422,7 +455,7 @@ public:
 //      double dis = sqrtf(dis2);
 //      if (dis < edgelength_TH)
 //      {
-//        std::cout << "dis " << dis << "\n";
+//        std::cerr << "dis " << dis << "\n";
 //      }
 //    }
     return r;
@@ -448,6 +481,7 @@ public:
 
       if (ed->is_border())
       {
+        std::cerr << "compute_incident_angle: edge is border\n";
         halfedge_angle[e_id] = -1;
       }
       else
@@ -475,6 +509,14 @@ public:
         else
         {
           halfedge_angle[e_id] = acos((dis2_ik + dis2_jk - dis2_ij) / (2.0 * dis_ik * dis_jk));
+          if (halfedge_angle[e_id] > M_PI)
+          {
+            std::cerr << "angle too large\n";
+          }
+          if (halfedge_angle[e_id] < 0)
+          {
+            std::cerr << "angle too small\n";
+          }
         }
       }
     }
@@ -495,6 +537,7 @@ public:
 
   int split_flat_triangle()
   {
+    std::cerr << "TH_ALPHA " << TH_ALPHA << "\n";
     int ne = boost::num_edges(*polyhedron);
     compute_incident_angle();
 
@@ -559,7 +602,8 @@ public:
   int iteratively_split_triangles()
   {
     int num_splits = 0;
-    while(true)
+    int iter = 0;
+    while (true)
     {
       int cnt = split_flat_triangle();
       if (cnt == 0)
@@ -568,7 +612,14 @@ public:
       }
       else
       {
+        std::cerr << "split " << cnt << "\n";
         num_splits += cnt;
+        iter++;
+        return num_splits;
+        if (iter > 5)
+        {
+          break;
+        }
       }
     }
     return num_splits;
@@ -576,17 +627,19 @@ public:
 
   void update_topology()
   {
-    int num_collapses = collapse_short_edges(edgelength_TH);
-    std::cout << "collapse " << num_collapses << " edges.\n";
+    std::cerr << "before collapse edges\n";
+    int num_collapses = collapse_short_edges();
+    std::cerr << "collapse " << num_collapses << " edges.\n";
 
-    int num_splits = iteratively_split_triangles();
-    std::cout << "split " << num_splits << " edges.\n";
+//    int num_splits = iteratively_split_triangles();
+//    std::cerr << "split " << num_splits << " edges.\n";
   }
 
+  // TODO: check if the local neighborhood is a disk
   int detect_degeneracies()
   {
     int num_fixed = 0;
-    double elength_fixed = edgelength_TH * 1.1;
+    double elength_fixed = edgelength_TH * 0.5;
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
@@ -615,13 +668,13 @@ public:
         willbefixed = (bad_counter >= 2);
         if (willbefixed)
         {
-          std::cout << "detect " << idx << "\n";
+          std::cerr << "detect " << idx << "\n";
           is_vertex_fixed_map[idx] = willbefixed;
           num_fixed++;
         }
       }
     }
-    std::cout << "fixed " << num_fixed << " vertices.\n";
+    std::cerr << "fixed " << num_fixed << " vertices.\n";
     return num_fixed;
   }
 
@@ -634,7 +687,7 @@ public:
     vertex_descriptor vv, vl, vr;
     edge_descriptor  h1, h2;
 
-      // the edges v1-vl and vl-v0 must not be both boundary edges
+    // the edges v1-vl and vl-v0 must not be both boundary edges
     if (!(v0v1->is_border()))
     {
       vl = boost::target(v0v1->next(), *polyhedron);
@@ -729,8 +782,8 @@ public:
   void contract()
   {
     contract_geometry();
-    update_topology();
-    detect_degeneracies();
+//    update_topology();
+//    detect_degeneracies();
   }
 };
 
