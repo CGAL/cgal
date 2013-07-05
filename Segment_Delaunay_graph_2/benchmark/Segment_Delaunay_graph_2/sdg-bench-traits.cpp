@@ -74,7 +74,6 @@ int main(int argc, char** argv) {
   std::ifstream ifs(argv[1]);
   assert( ifs );
 
-  SDG2_wi          sdg;
   SDG2_wi::Site_2  site;
 
   std::vector<CK::Point_2> points;
@@ -94,7 +93,6 @@ int main(int argc, char** argv) {
     points.push_back( site.source_of_supporting_site() );
     indices.push_back( std::make_pair(k, k+1) );
     ++k;
-    sdg.insert( site ); 
   }
   indices.push_back( std::make_pair(k, 0) );
   ifs.close();
