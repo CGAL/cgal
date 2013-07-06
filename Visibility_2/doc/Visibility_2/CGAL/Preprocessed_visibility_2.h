@@ -5,9 +5,11 @@ namespace CGAL {
 This class is a model of the concept `Visibility_2` offers visibility queries within 
 an Arrangement. The algorithm it applies to obtain visibility is using preprocessing.
 
-\sa `Visibility_2` 
+\cgalModels `Visibility_2` 
+
+\sa 'CGAL::Visibility_2'
+\sa `CGAL::Simple_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 \sa `CGAL::Naive_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
-\sa
 
 */
 template <typename ArrExtensionTraits_2, typename Regularization_tag>
@@ -17,10 +19,11 @@ public:
 /// \name Types 
 /// @{
 
-    /*!
-     *The type of Arrangement extension traits.
-     */
-    typedef ArrExtensionTraits_2 Arr_extension_traits_2
+  /*!
+   The type of Arrangement extension traits.
+  */
+   typedef ArrExtensionTraits_2 Arr_extension_traits_2;
+
  /*!
   The type of input Arrangement.
   */
@@ -62,8 +65,6 @@ Naive_visibility_2(const Input_Arrangement_2& arr);
 
 /// \name functions 
 /// @{
-
-
 
 /*!
 Return whether the object is attached to an arrangement.

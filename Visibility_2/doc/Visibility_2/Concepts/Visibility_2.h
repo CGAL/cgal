@@ -6,12 +6,13 @@
 A model of the concept `Visibility_2` offers visibility queries within 
 an Arrangement. 
 
+\cgalHasModel `CGAL::Simple_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 \cgalHasModel `CGAL::Naive_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 \cgalHasModel `CGAL::Preprocessed_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 
+\sa `CGAL::Simple_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 \sa `CGAL::Naive_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 \sa `CGAL::Preprocessed_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
-\sa `CGAL::Simple_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 
 */
 class Visibility_2 {
@@ -31,19 +32,19 @@ public:
   typedef Hidden_type Output_Arrangement_2;
 
  /*! 
-   The supported Point_2 type which is used for queries . 
+   The supported Point_2 type of the input type, used for queries. 
  */ 
-  typedef Hidden_type Point_2; 
+  typedef Hidden_type Input_Arrangement_2::Point_2; 
 
   /*!
-   * The supported Face handle type of Arrangement.
+   * The supported Face handle type of the input Arrangement.
    */
-  typedef Hidden_type Face_handle;
+  typedef Hidden_type Input_Arrangement_2::Face_handle;
 
   /*!
-   * The supported Halfedge handle type of Arrangement.
+   * The supported Halfedge handle type of the input Arrangement.
    */
-  typedef Hidden_type Halfedge_handle;
+  typedef Hidden_type Input_Arrangement_2::Halfedge_handle;
 
   /*! 
     Tag identifying whether `Visibility_2` computes regularized visbility area. 
@@ -57,6 +58,11 @@ public:
 
 /// \name Constructors 
 /// @{
+
+/*! 
+default constructor. 
+*/ 
+Visibility_2(); 
 
 /*! 
 Constructs a `Visibility_2` object from a given `Arrangement_2` and a given Regularization tag.

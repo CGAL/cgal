@@ -3,10 +3,16 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offers visibility queries within 
-a simple polygon with no holes. Uses the linear algorithm of B.Joe and R.B.Simpson [1] to obtain 
-the visibility polygon.
+a simple polygon with no holes. Uses the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to obtain 
+the visibility polygon, based on a scan of the boundary of the polygon and the notion of angular
+displacement as a control variable. The time complexity is O(n) in the number of the vertices
+of the polygon.
 
-\sa `Visibility_2` 
+\cgalModels `Visibility_2` 
+
+\sa 'CGAL::Visibility_2'
+\sa `CGAL::Naive_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
+\sa `CGAL::Preprocessed_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 
 */
 template <typename ArrExtensionTraits_2, typename Regularization_tag>
@@ -31,9 +37,7 @@ public:
    The Point_2 type which is used for queries. 
  */ 
   typedef Input_Arrangement_2::Point_2 Point_2;
-
-
-
+  
   
 /// @}
 
