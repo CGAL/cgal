@@ -3,9 +3,19 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offers visibility queries within 
-an Arrangement. The algorithm it applies to obtain visibility is without preprocessing. ArrExtensionTraits_2 gives information of input/output Arrangement and the extension between them. Regularization_tag indicates whether the result is regularized, i.e., if user needs regularized output, defined it as `Tag_true`.
+an Arrangement. The algorithm it applies to obtain visibility is without preprocessing. 
+It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, 
+with a time complexity of O (n log n) in the number of vertices.
 
-\sa `Visibility_2` 
+ArrExtensionTraits_2 gives information about the input/output Arrangements and the extension between them. 
+The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
+specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
+
+\cgalModels `Visibility_2` 
+
+\sa 'CGAL::Visibility_2'
+\sa `CGAL::Simple_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
+\sa `CGAL::Preprocessed_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
 
 */
 template <typename ArrExtensionTraits_2, typename Regularization_tag>
@@ -29,7 +39,6 @@ public:
     */
    typedef Arr_extension_traits_2::Output_Arrangement_2 Output_Arrangement_2;
 
-	
 
  /*! 
    The Point_2 type which is used for queries. 
@@ -46,9 +55,6 @@ public:
    */
   typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
 
-
-
-  
 /// @}
 
 /// \name Constructors 
@@ -64,7 +70,6 @@ Naive_visibility_2(const Input_Arrangement_2& arr);
 
 /// \name functions 
 /// @{
-
 
 
 /*!
