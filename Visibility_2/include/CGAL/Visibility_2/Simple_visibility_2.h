@@ -58,29 +58,29 @@ public:
 
   		int parity = 0;
 
-  		std::vector<Point_2> translated_vertices;
+  		std::vector<Point_2> temp_vertices;
   		int index_v0 = 0;
   		int index = 0;
-  		double curr_min_x = 1000000;
-  		// Push all vertices and translate coordinate system such that query point is at the origin
+  		Point_2 curr_min = he->source()->point();
+
+  		// Push all vertices
   		do {
-			he = curr;  			
+			he = curr;  		
 			Point_2 curr_vertex = he->target()->point();
-			Point_2 translated_vertex = Point_2(curr_vertex.x() - q.x(), curr_vertex.y() - q.y());
-			if (CGAL::to_double(translated_vertex.x()) < curr_min_x && CGAL::to_double(translated_vertex.x()) > 0) {
-				curr_min_x = CGAL::to_double(translated_vertex.x());
+			if (curr_vertex.x() < curr_min.x() && curr_vertex.x() > 0) {
+				curr_min = curr_vertex;
 				index_v0 = index;
 			}
-			translated_vertices.push_back(translated_vertex);
+			temp_vertices.push_back(curr_vertex);
 			index++;
   		} while (++curr != circ);
 
   		// Now create vector so that first vertex v0 has the smallest positive x-coordinate (thus - visible from the query point)
-  		for (unsigned int k = index_v0 ; k < translated_vertices.size() ; k++) {
-  			vertices.push_back(translated_vertices[k]);
+  		for (unsigned int k = index_v0 ; k < temp_vertices.size() ; k++) {
+  			vertices.push_back(temp_vertices[k]);
   		}
   		for (unsigned int k = 0 ; k < index_v0 ; k++) {
-  			vertices.push_back(translated_vertices[k]);
+  			vertices.push_back(temp_vertices[k]);
   		}
   		// Push first vertex again to fulfill algo precondition
   		vertices.push_back(vertices[0]);
@@ -91,8 +91,8 @@ public:
   		}
 
 		Point_2 w;
-		Point_2 stored_q(q);
-		q = Point_2(0, 0);
+//		Point_2 stored_q(q);
+//		q = Point_2(0, 0);
 
 		if (CGAL::orientation(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN) {
 			std::cout << "left" << std::endl;
@@ -173,7 +173,7 @@ public:
 		
 		while(!s.empty()) {
 			Point_2 curr_pt = s.top();
-			Point_2 final_pt(curr_pt.x() + stored_q.x(), curr_pt.y() + stored_q.y());
+			Point_2 final_pt(curr_pt.x(), curr_pt.y());
 			std::cout << final_pt << std::endl;
 			s.pop();
 		}
