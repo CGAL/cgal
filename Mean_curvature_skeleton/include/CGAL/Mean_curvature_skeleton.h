@@ -211,6 +211,24 @@ public:
     return polyhedron;
   }
 
+  void get_fixed_points(std::vector<Point>& fixed_points)
+  {
+    fixed_points.clear();
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[id])
+        {
+          vertex_descriptor vd = *vb;
+          fixed_points.push_back(vd->point());
+        }
+      }
+    }
+  }
+
   // compute cotangent weights of all edges
   void compute_edge_weight()
   {

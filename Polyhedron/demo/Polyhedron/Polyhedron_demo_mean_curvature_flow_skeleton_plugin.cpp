@@ -3,6 +3,8 @@
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
 
 #include "Scene_polyhedron_item.h"
+#include "Scene_points_with_normal_item.h"
+#include "Scene_points_with_normal_item.cpp"
 #include "Polyhedron_type.h"
 
 #include <QApplication>
@@ -44,6 +46,9 @@ typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matri
 
 typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
 
+typedef Polyhedron::Traits         Kernel;
+typedef Kernel::Point_3            Point;
+
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -61,6 +66,7 @@ public:
     mcs = NULL;
     dockWidget = NULL;
     ui = NULL;
+    fixedPointsItemIndex = -1;
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
@@ -90,6 +96,7 @@ private:
   Mean_curvature_skeleton* mcs;
   QDockWidget* dockWidget;
   Ui::Mean_curvature_flow_skeleton_plugin* ui;
+  int fixedPointsItemIndex;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -262,6 +269,24 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
+  Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
+  std::vector<Point> fixedPoints;
+  mcs->get_fixed_points(fixedPoints);
+  Point_set *ps = fixedPointsItem->point_set();
+  for (size_t i = 0; i < fixedPoints.size(); i++)
+  {
+    UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
+    ps->select(&point);
+    ps->push_back(point);
+  }
+  if (fixedPointsItemIndex == -1)
+  {
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+  }
+  else
+  {
+    scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+  }
   // update scene
   scene->itemChanged(index);
   QApplication::restoreOverrideCursor();
