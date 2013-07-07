@@ -6,6 +6,8 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_points_with_normal_item.cpp"
 #include "Polyhedron_type.h"
+#include "MainWindow.h"
+#include "ui_MainWindow.h"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -91,6 +93,7 @@ public slots:
   void on_actionCollapse();
   void on_actionSplit();
   void on_actionDegeneracy();
+  void on_actionRun();
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -121,7 +124,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
     dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
     mw->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
     dockWidget->setFloating(true);
-
+//    dynamic_cast<Ui::MainWindow *>(mw)->consoleDockWidget->tabifyDockWidget(dockWidget);
+//    mw->addDockWidget(Qt::BottomDockWidgetArea, dockWidget);
+//    mw->tabifyDockWidget(dockWidget, dynamic_cast<Ui::MainWindow *>(mw)->consoleDockWidget);
     connect(ui->pushButton_contract, SIGNAL(clicked()),
             this, SLOT(on_actionContract()));
     connect(ui->pushButton_collapse, SIGNAL(clicked()),
@@ -130,6 +135,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionSplit()));
     connect(ui->pushButton_degeneracy, SIGNAL(clicked()),
             this, SLOT(on_actionDegeneracy()));
+    connect(ui->pushButton_run, SIGNAL(clicked()),
+            this, SLOT(on_actionRun()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -299,9 +306,83 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
   }
   // update scene
+  scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
   scene->setSelectedItem(index);
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
+
+  double omega_L = ui->omega_L->value();
+  double omega_H = ui->omega_H->value();
+  double edgelength_TH = ui->edgelength_TH->value();
+  double alpha = ui->alpha->value();
+  double zero_TH = ui->zero_TH->value();
+  double diag = scene->len_diagonal();
+
+  if (mcs == NULL)
+  {
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+  }
+  else
+  {
+    Polyhedron* mesh = mcs->get_polyhedron();
+    if (mesh != pMesh)
+    {
+      delete mcs;
+      init_ui(diag);
+      omega_L = ui->omega_L->value();
+      omega_H = ui->omega_H->value();
+      edgelength_TH = ui->edgelength_TH->value();
+      alpha = ui->alpha->value();
+      zero_TH = ui->zero_TH->value();
+      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+    }
+    else
+    {
+      mcs->set_omega_L(omega_L);
+      mcs->set_omega_H(omega_H);
+      mcs->set_edgelength_TH(edgelength_TH);
+      mcs->set_zero_TH(zero_TH);
+    }
+  }
+
+  QTime time;
+  time.start();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  mcs->contract();
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  // update scene
+  Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
+  std::vector<Point> fixedPoints;
+  mcs->get_fixed_points(fixedPoints);
+  Point_set *ps = fixedPointsItem->point_set();
+  for (size_t i = 0; i < fixedPoints.size(); i++)
+  {
+    UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
+    ps->select(&point);
+    ps->push_back(point);
+  }
+  if (fixedPointsItemIndex == -1)
+  {
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+  }
+  else
+  {
+    scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+  }
   scene->itemChanged(index);
+  scene->itemChanged(fixedPointsItemIndex);
+  scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
 

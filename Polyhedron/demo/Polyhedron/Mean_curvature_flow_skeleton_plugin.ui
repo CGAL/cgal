@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>235</height>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -181,6 +181,19 @@
      <string>Degeneracy</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_run">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>180</y>
+      <width>211</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>run one iteration</string>
+    </property>
+   </widget>
    <zorder>zero_TH</zorder>
    <zorder>omega_H</zorder>
    <zorder>edgelength_TH</zorder>
@@ -195,6 +208,7 @@
    <zorder>pushButton_collapse</zorder>
    <zorder>pushButton_split</zorder>
    <zorder>pushButton_degeneracy</zorder>
+   <zorder>pushButton_run</zorder>
   </widget>
  </widget>
  <resources/>
