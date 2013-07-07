@@ -87,6 +87,28 @@ public:
   }
 };
 
+template<class Polyhedron>
+class Cotangent_value_Meyer_secure
+{
+public:
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    Vector a(v1->point(), v0->point());
+    Vector b(v1->point(), v2->point());
+    double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    double dot_aa = a.squared_length();
+    double dot_bb = b.squared_length();
+    double lb = -0.999, ub = 0.999;
+    double cosine = dot_ab / sqrtf(dot_aa) / sqrtf(dot_bb);
+    cosine = (cosine < lb) ? lb : cosine;
+    cosine = (cosine > ub) ? ub : cosine;
+    double sine = sqrtf(1.0 - cosine * cosine);
+    return cosine / sine;
+  }
+};
+
 // Returns the cotangent value of half angle v0 v1 v2 by clamping between [1, 89] degrees
 // as suggested by -[Friedel] Unconstrained Spherical Parameterization-
 template<class Polyhedron, class CotangentValue = Cotangent_value_Meyer<Polyhedron> >

@@ -66,8 +66,8 @@ public:
     mcs = NULL;
     dockWidget = NULL;
     ui = NULL;
-    fixedPointsItemIndex = -1;
 
+    std::cerr << "init plugin\n";
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
@@ -133,16 +133,22 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 
     double diag = scene->len_diagonal();
     init_ui(diag);
+    fixedPointsItemIndex = -1;
   }
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 {
+  std::cerr << "on_actionContract 1\n";
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  std::cerr << "index " << index << "\n";
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  std::cerr << "got item\n";
   Polyhedron* pMesh = item->polyhedron();
+  std::cerr << "got mesh\n";
 
+  std::cerr << "on_actionContract 2\n";
   double omega_L = ui->omega_L->value();
   double omega_H = ui->omega_H->value();
   double edgelength_TH = ui->edgelength_TH->value();
@@ -150,6 +156,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
   double zero_TH = ui->zero_TH->value();
   double diag = scene->len_diagonal();
 
+  std::cerr << "on_actionContract 3\n";
   if (mcs == NULL)
   {
     mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
@@ -177,6 +184,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     }
   }
 
+  std::cerr << "on_actionContract 4\n";
   QTime time;
   time.start();
   std::cout << "Contract...\n";
@@ -251,6 +259,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  std::cerr << "mesh index " << index << "\n";
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
@@ -282,12 +291,16 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   if (fixedPointsItemIndex == -1)
   {
     fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+    std::cerr << "add item " << fixedPointsItemIndex << "\n";
   }
   else
   {
+    std::cerr << "replace item " << fixedPointsItemIndex << "\n";
     scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
   }
   // update scene
+  scene->itemChanged(fixedPointsItemIndex);
+  scene->setSelectedItem(index);
   scene->itemChanged(index);
   QApplication::restoreOverrideCursor();
 }

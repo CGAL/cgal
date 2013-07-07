@@ -82,7 +82,9 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
-  typedef typename internal::Cotangent_weight<Polyhedron>                      Weight_calculator;
+  typedef typename internal::Cotangent_weight<Polyhedron,
+  internal::Cotangent_value_minimum_zero<Polyhedron,
+  internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
 
   // Data members.
 private:
@@ -391,6 +393,7 @@ public:
 
   void contract_geometry()
   {
+    std::cerr << "before contract geometry";
     update_vertex_id();
 
     compute_edge_weight();
@@ -657,7 +660,7 @@ public:
   int detect_degeneracies()
   {
     int num_fixed = 0;
-    double elength_fixed = edgelength_TH * 0.5;
+    double elength_fixed = edgelength_TH * 0.8;
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
