@@ -3,6 +3,7 @@
 #include <CGAL/regularize_and_simplify_point_set_using_balltree.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/Timer.h>
 
 #include <vector>
 #include <fstream>
@@ -38,8 +39,9 @@ int main(void)
   std::vector<Point> points_sampled;
   points_sampled.resize(points.size() * (retain_percentage / 100.));
 
-  int starttime, stoptime, timeused;
-  starttime = clock();
+  CGAL::Timer task_timer;
+  task_timer.start();
+  std::cout << "Run algorithm example: " << std::endl;
 
    // Run algorithm and copy results to sample points using kdtree
   //std::copy(CGAL::regularize_and_simplify_point_set(
@@ -52,7 +54,7 @@ int main(void)
   //  points.end(), 
   //  points_sampled.begin());
 
-  // Run algorithm
+  // Run algorithm using balltree
   std::vector<Point>::const_iterator sample_points_begin =
     CGAL::regularize_and_simplify_point_set_using_balltree(
             points.begin(), 
@@ -61,15 +63,16 @@ int main(void)
             neighbor_radius,
             iter_number,
             need_compute_density);
-  // Copy results to sample points using balltree
+  // Copy results to sample points 
   std::copy(sample_points_begin,
             static_cast<std::vector<Point>::const_iterator>(points.end()),
             points_sampled.begin());
 
-  stoptime = clock();
-  timeused = stoptime - starttime;
-  std::cout << "##" << "  time used:  " << timeused / double(CLOCKS_PER_SEC) << " seconds." << std::endl;
-  
+
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "done: " << task_timer.time() << " seconds, " 
+    << (memory>>20) << " Mb allocated" << std::endl;
+  task_timer.stop();  
 
   // Saves point set.
   // Note: write_xyz_points_and_normals() requires an output iterator
@@ -91,40 +94,3 @@ int main(void)
 
 
 
-
-
-
-
-template <typename Kernel, typename IteratorType>
-void find_original_neighbors(
-  typename IteratorType::iterator starta, 
-  typename IteratorType::iterator enda, 
-  typename IteratorType::iterator startb, 
-  typename IteratorType::iterator endb, 
-  const typename Kernel::FT radius) 
-{
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::FT FT;
-  FT radius2 = radius*radius;
-  FT iradius16 = -4/radius2;
-  const FT PI = 3.1415926;
-
-  for(CGrid::iterator dest = starta; dest != enda; dest++) 
-  {
-    RichPoint<Kernel> &v = *(*dest);
-
-    Point &p = v.pt;
-    for(CGrid::iterator origin = startb; origin != endb; origin++)
-    {
-      RichPoint<Kernel> &t = *(*origin);
-      Point &q = t.pt;
-
-      double dist2 = CGAL::squared_distance(p, q);
-
-      if(dist2 < radius2) 
-      {                          
-        v.neighbors.push_back((*origin)->index);
-      }
-    }
-  }
-}

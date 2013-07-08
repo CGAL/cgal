@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Shihao Wu, Clement Jamin 
+// Author(s) : Shihao Wu, Cl¨¦ment Jamin 
 
 #ifndef CGAL_DENOSISE_POINTS_WITH_NORMALS_H
 #define CGAL_DENOSISE_POINTS_WITH_NORMALS_H
