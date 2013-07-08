@@ -6,6 +6,7 @@
 #include "Polyhedron_type.h"
 #include "ui_Selection_widget.h"
 #include "opengl_tools.h"
+#include <CGAL/gl_render.h>
 
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
@@ -112,23 +113,19 @@ public:
     // id field is used in operations
     poly_item->update_vertex_indices();
     poly_item->update_facet_indices();
-    // for rendering
-    std::size_t id = 0;
-    for (Polyhedron::Facet_iterator fit = polyhedron()->facets_begin(), 
-      fit_end = polyhedron()->facets_end(); fit != fit_end; ++fit, ++id)
-    { fit->set_patch_id(id); }
-    poly_item->color_vector().resize(id, poly_item->color());
   }
 
   void draw_edges() const {
     poly_item->draw_edges();
     if(rendering_mode == Wireframe) {
       draw_selected_vertices();
+      draw_selected_facets();
     }
   }  
   void draw() const {
     poly_item->draw();
     draw_selected_vertices();
+    draw_selected_facets();
   }
 
   void draw_selected_vertices() const {
@@ -154,6 +151,46 @@ public:
     ::glEnd();
 
     if(enable_back_lighting) { glEnable(GL_LIGHTING); }
+  }
+
+  void draw_selected_facets() const {
+    if(selected_facets.empty() ||
+       !ui_widget->Show_selection_check_box->isChecked())
+    {
+      return;
+    }
+
+    CGAL::GL::Color color;
+    color.set_rgb_color(0.f,1.f,0.f);
+
+    GLfloat offset_factor;
+    GLfloat offset_units;
+    ::glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+    ::glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+
+    ::glPolygonOffset(-1.f, 1.f);
+    ::glBegin(GL_TRIANGLES);
+    for(std::set<Facet_handle>::iterator
+          it = selected_facets.begin(),
+          end = selected_facets.end();
+        it != end; ++it)
+    {
+      const Kernel::Vector_3 n =
+        compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
+      ::glNormal3d(n.x(),n.y(),n.z());
+
+      typename Polyhedron::Halfedge_around_facet_circulator
+        he = (*it)->facet_begin(),
+        cend = he;
+
+      CGAL_For_all(he,cend)
+      {
+        const Kernel::Point_3& p = he->vertex()->point();
+        ::glVertex3d(p.x(),p.y(),p.z());
+      }
+    }
+    ::glEnd();
+    ::glPolygonOffset(offset_factor, offset_units);
   }
 
   void save_roi(const char* file_name) const { 
@@ -224,7 +261,6 @@ public:
       Polyhedron::Facet_iterator fb(polyhedron()->facets_begin()), fe(polyhedron()->facets_end());
       for( ;fb != fe; ++fb) {
         selected_facets.insert(fb);
-        poly_item->color_vector()[fb->patch_id()] = QColor(0,255,0);
       }
     }
     emit itemChanged();
