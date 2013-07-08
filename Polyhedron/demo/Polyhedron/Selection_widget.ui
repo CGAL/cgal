@@ -26,7 +26,10 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Selection Type:</string>
+         <string>Selection &amp;Type:</string>
+        </property>
+        <property name="buddy">
+         <cstring>Selection_type_combo_box</cstring>
         </property>
        </widget>
       </item>
@@ -94,7 +97,10 @@
                <item>
                 <widget class="QLabel" name="label">
                  <property name="text">
-                  <string>Brush size:</string>
+                  <string>Brush &amp;size:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>Brush_size_spin_box</cstring>
                  </property>
                 </widget>
                </item>
@@ -112,14 +118,14 @@
            <item>
             <widget class="QPushButton" name="Select_all_button">
              <property name="text">
-              <string>Select All</string>
+              <string>Select &amp;All</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="Clear_button">
              <property name="text">
-              <string>Clear</string>
+              <string>&amp;Clear</string>
              </property>
             </widget>
            </item>
@@ -143,7 +149,10 @@
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
-              <string>Isolated Component Size:</string>
+              <string>Isolated &amp;Component Size:</string>
+             </property>
+             <property name="buddy">
+              <cstring>Threshold_size_spin_box</cstring>
              </property>
             </widget>
            </item>
@@ -160,7 +169,7 @@
            <item>
             <widget class="QPushButton" name="Get_minimum_button">
              <property name="text">
-              <string>Get Minimum</string>
+              <string>&amp;Get Minimum</string>
              </property>
             </widget>
            </item>
@@ -169,7 +178,7 @@
          <item>
           <widget class="QPushButton" name="Select_isolated_components_button">
            <property name="text">
-            <string>Select Isolated Components Below Threshold</string>
+            <string>Select &amp;Isolated Components Below Threshold</string>
            </property>
           </widget>
          </item>
