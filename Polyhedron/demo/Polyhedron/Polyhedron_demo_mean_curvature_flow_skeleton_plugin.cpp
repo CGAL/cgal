@@ -359,6 +359,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   // update scene
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
+  fixedPointsItem->setName("fixed points");
   std::vector<Point> fixedPoints;
   mcs->get_fixed_points(fixedPoints);
   Point_set *ps = fixedPointsItem->point_set();

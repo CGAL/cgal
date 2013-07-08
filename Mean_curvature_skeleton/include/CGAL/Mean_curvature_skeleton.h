@@ -838,7 +838,7 @@ public:
   {
     contract_geometry();
     update_topology();
-//    detect_degeneracies();
+    detect_degeneracies();
   }
 };
 
