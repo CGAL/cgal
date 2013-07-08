@@ -46,7 +46,7 @@ namespace regularize_and_simplify_internal{
 
 // Item in the Kd-tree: position (Point_3) + index
 template <typename Kernel>
-class KdTreeElement : public Kernel::Point_3
+class KdTree_element : public Kernel::Point_3
 {
 public:
   unsigned int index;
@@ -55,13 +55,13 @@ public:
   typedef typename CGAL::Origin Origin;
   typedef typename Kernel::Point_3 Base;
 
-  KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
+  KdTree_element(const Origin& o = ORIGIN, unsigned int id=0)
     : Base(o), index(id)
   {}
-  KdTreeElement(const Base& p, unsigned int id=0)
+  KdTree_element(const Base& p, unsigned int id=0)
     : Base(p), index(id)
   {}
-  KdTreeElement(const KdTreeElement& other)
+  KdTree_element(const KdTree_element& other)
     : Base(other), index(other.index)
   {}
 };
@@ -71,11 +71,11 @@ template <typename Kernel>
 class KdTreeGT : public Kernel
 {
 public:
-  typedef KdTreeElement<Kernel> Point_3;
+  typedef KdTree_element<Kernel> Point_3;
 };
 
 template <typename Kernel>
-class KdTreeTraits : public CGAL::Search_traits_3<KdTreeGT<Kernel> >
+class KdTree_traits : public CGAL::Search_traits_3<KdTreeGT<Kernel> >
 {
 public:
   typedef typename Kernel::Point_3 PointType;
@@ -102,7 +102,7 @@ compute_max_spacing
   typedef typename Kernel::Point_3 Point;
 
   // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -162,7 +162,7 @@ compute_average_term(
   FT radius2 = radius * radius;
 
   // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -267,7 +267,7 @@ compute_repulsion_term(
   FT radius2 = radius * radius;
 
   // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -363,7 +363,7 @@ compute_density_weight_for_original_point(
   typedef typename Kernel::FT FT;
 
   // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -420,7 +420,7 @@ compute_density_weight_for_sample_point(
   typedef typename Kernel::FT FT;
 
   // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -477,7 +477,7 @@ guess_KNN_number_for_original_set(
 
 
   // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -556,8 +556,8 @@ regularize_and_simplify_point_set(
   typedef typename Kernel::FT FT;
 
   // types for K nearest neighbors search structure
-  typedef regularize_and_simplify_internal::KdTreeElement<Kernel> KdTreeElement;
-  typedef regularize_and_simplify_internal::KdTreeTraits<Kernel> Tree_traits;
+  typedef regularize_and_simplify_internal::KdTree_element<Kernel> KdTree_element;
+  typedef regularize_and_simplify_internal::KdTree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -594,11 +594,11 @@ regularize_and_simplify_point_set(
   task_timer.start();
   std::cout << "Initialization / Compute Density For Original" << endl;
 
-  std::vector<KdTreeElement> original_treeElements;
+  std::vector<KdTree_element> original_treeElements;
   for (it = first_original_point, i=0 ; it != beyond ; ++it, ++i)
   {
     Point& p0 = get(point_pmap,it);
-    original_treeElements.push_back(KdTreeElement(p0,i));
+    original_treeElements.push_back(KdTree_element(p0,i));
   }
   Tree original_tree(original_treeElements.begin(), 
                      original_treeElements.end());
@@ -660,7 +660,7 @@ regularize_and_simplify_point_set(
     for (i=0 ; i < sample_points.size(); i++)
     {
       Point& p0 = sample_points[i];
-      sample_treeElements.push_back(KdTreeElement(p0,i));
+      sample_treeElements.push_back(KdTree_element(p0,i));
     }
     Tree sample_tree(sample_treeElements.begin(), sample_treeElements.end());
 
