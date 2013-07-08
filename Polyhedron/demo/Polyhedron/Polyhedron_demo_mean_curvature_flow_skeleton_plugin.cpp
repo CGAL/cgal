@@ -123,10 +123,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
                           | QDockWidget::DockWidgetClosable);
     dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
     mw->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
-    dockWidget->setFloating(true);
+//    dockWidget->setFloating(true);
 //    dynamic_cast<Ui::MainWindow *>(mw)->consoleDockWidget->tabifyDockWidget(dockWidget);
 //    mw->addDockWidget(Qt::BottomDockWidgetArea, dockWidget);
 //    mw->tabifyDockWidget(dockWidget, dynamic_cast<Ui::MainWindow *>(mw)->consoleDockWidget);
+    mw->tabifyDockWidget(static_cast<MainWindow*>(mw)->get_ui()->consoleDockWidget, dockWidget);
+    dockWidget->show();
+    dockWidget->raise();
     connect(ui->pushButton_contract, SIGNAL(clicked()),
             this, SLOT(on_actionContract()));
     connect(ui->pushButton_collapse, SIGNAL(clicked()),
@@ -146,16 +149,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 {
-  std::cerr << "on_actionContract 1\n";
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  std::cerr << "index " << index << "\n";
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  std::cerr << "got item\n";
   Polyhedron* pMesh = item->polyhedron();
-  std::cerr << "got mesh\n";
 
-  std::cerr << "on_actionContract 2\n";
   double omega_L = ui->omega_L->value();
   double omega_H = ui->omega_H->value();
   double edgelength_TH = ui->edgelength_TH->value();
@@ -163,7 +161,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
   double zero_TH = ui->zero_TH->value();
   double diag = scene->len_diagonal();
 
-  std::cerr << "on_actionContract 3\n";
   if (mcs == NULL)
   {
     mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
@@ -191,7 +188,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     }
   }
 
-  std::cerr << "on_actionContract 4\n";
   QTime time;
   time.start();
   std::cout << "Contract...\n";

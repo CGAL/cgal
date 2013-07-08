@@ -464,6 +464,21 @@ public:
     // The simplification stops when the length of all edges is greater than the minimum threshold.
     CGAL::internal::Minimum_length_predicate<Polyhedron> stop(edgelength_TH);
 
+    int cnt = 0;
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[id])
+        {
+          cnt++;
+        }
+      }
+    }
+//    std::cerr << "before collapse " << cnt << " fixed vertices\n";
+
     int r = SMS::edge_collapse
                 (*polyhedron
                 ,stop
@@ -472,19 +487,19 @@ public:
                       .edge_is_border_map(constrains_map)
                 );
 
-//    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
-//    {
-//      vertex_descriptor vi = boost::source(*eb, *polyhedron);
-//      vertex_descriptor vj = boost::target(*eb, *polyhedron);
-//      Point pi = vi->point();
-//      Point pj = vj->point();
-//      double dis2 = squared_distance(pi, pj);
-//      double dis = sqrtf(dis2);
-//      if (dis < edgelength_TH)
-//      {
-//        std::cerr << "dis " << dis << "\n";
-//      }
-//    }
+    cnt = 0;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[id])
+        {
+          cnt++;
+        }
+      }
+    }
+//    std::cerr << "after collapse " << cnt << " fixed vertices\n";
     return r;
   }
 
@@ -823,7 +838,7 @@ public:
   {
     contract_geometry();
     update_topology();
-    detect_degeneracies();
+//    detect_degeneracies();
   }
 };
 
