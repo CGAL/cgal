@@ -44,10 +44,9 @@ namespace CGAL {
   // Private section
   // ----------------------------------------------------------------------------
   namespace denoise_points_with_normals_internal{
-
     // Item in the Kd-tree: position (Point_3) + index
     template <typename Kernel>
-    class KdTreeElement : public Kernel::Point_3
+    class Kd_tree_element : public Kernel::Point_3
     {
     public:
       unsigned int index;
@@ -56,27 +55,27 @@ namespace CGAL {
       typedef typename CGAL::Origin Origin;
       typedef typename Kernel::Point_3 Base;
 
-      KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
+      Kd_tree_element(const Origin& o = ORIGIN, unsigned int id=0)
         : Base(o), index(id)
       {}
-      KdTreeElement(const Base& p, unsigned int id=0)
+      Kd_tree_element(const Point& p, unsigned int id=0)
         : Base(p), index(id)
       {}
-      KdTreeElement(const KdTreeElement& other)
+      Kd_tree_element(const Kd_tree_element& other)
         : Base(other), index(other.index)
       {}
     };
 
     // Helper class for the Kd-tree
     template <typename Kernel>
-    class KdTreeGT : public Kernel
+    class Kd_tree_gt : public Kernel
     {
     public:
-      typedef KdTreeElement<Kernel> Point_3;
+      typedef Kd_tree_element<Kernel> Point_3;
     };
 
     template <typename Kernel>
-    class KdTreeTraits : public CGAL::Search_traits_3<KdTreeGT<Kernel> >
+    class Kd_tree_traits : public CGAL::Search_traits_3<Kd_tree_gt<Kernel> >
     {
     public:
       typedef typename Kernel::Point_3 PointType;
@@ -172,7 +171,7 @@ namespace CGAL {
       typedef CGAL::Point_with_normal_3<Kernel> Pwn;
 
       // types for K nearest neighbors search
-      typedef denoise_points_with_normals_internal::KdTreeTraits<Kernel> Tree_traits;
+      typedef denoise_points_with_normals_internal::Kd_tree_traits<Kernel> Tree_traits;
       typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
       typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -221,7 +220,7 @@ namespace CGAL {
       typedef CGAL::Point_with_normal_3<Kernel> Pwn;
 
       // types for K nearest neighbors search
-      typedef denoise_points_with_normals_internal::KdTreeTraits<Kernel> Tree_traits;
+      typedef denoise_points_with_normals_internal::Kd_tree_traits<Kernel> Tree_traits;
       typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
       typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -298,8 +297,8 @@ namespace CGAL {
 
     // types for K nearest neighbors search structure
     typedef denoise_points_with_normals_internal::
-      KdTreeElement<Kernel> KdTreeElement;
-    typedef denoise_points_with_normals_internal::KdTreeTraits<Kernel> Tree_traits;
+      Kd_tree_element<Kernel> Kd_tree_element;
+    typedef denoise_points_with_normals_internal::Kd_tree_traits<Kernel> Tree_traits;
     typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
     typedef typename Neighbor_search::Tree Tree;
     typedef typename Neighbor_search::iterator Search_iterator;
@@ -319,11 +318,11 @@ namespace CGAL {
 
     // initiate a KD-tree search for points
     unsigned int i;
-    std::vector<KdTreeElement> treeElements;
+    std::vector<Kd_tree_element> treeElements;
     for (i = 0 ; i < pwn_set.size(); i++)
     {
       Pwn& pwn = pwn_set[i];
-      treeElements.push_back(KdTreeElement(pwn, i));
+      treeElements.push_back(Kd_tree_element(pwn, i));
     }
     Tree tree(treeElements.begin(), treeElements.end());
 
