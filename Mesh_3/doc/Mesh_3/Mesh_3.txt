@@ -332,12 +332,14 @@ triangulation. In both functions, an instance of type `C3T3` is used to maintain
 approximating simplicial mesh 
 and to represent the final 3D mesh at the end
 of the procedure.
-The type `C3T3` is required to provide a nested type
-`C3T3::Triangulation_3` for the 3D triangulation
-embedding the mesh. 
-This triangulation is required to be a `Regular_triangulation_3`.
-with vertex and cell base classes that are respectively models of the
-concepts `MeshVertexBase_3` and `MeshCellBase_3`.
+
+The embedding 3D triangulation is required to be the nested type
+`CGAL::Mesh_triangulation_3::type`, provided by the meta functor 
+`CGAL::Mesh_triangulation_3`. The type for this triangulation is a 
+`CGAL::Regular_triangulation_3` whose vertex and cell base classes 
+are respectively models of the concepts `MeshVertexBase_3` and 
+`MeshCellBase_3`.
+
 
 \subsection Mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
 
