@@ -1740,7 +1740,7 @@ fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
   Face_circulator fc_start = incident_faces(v);
   Face_circulator fc = fc_start;
   Face_circulator fc_begin;
-  bool found = false;
+  CGAL_assertion_code( bool found = false; )
   do {
     int id = fc->index(v);
     Vertex_handle v_lrg_src = fc->vertex(ccw(id));

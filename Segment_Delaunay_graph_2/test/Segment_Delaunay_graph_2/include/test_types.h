@@ -3,6 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
+#include <CGAL/use.h>
 #include <iostream>
 #include <cctype>
 #include <algorithm>
@@ -92,6 +93,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   typedef typename SDG2::Site_2                    Site_2;
   typedef typename SDG2::Point_container           Point_container;
   typedef typename SDG2::Point_handle              Point_handle;
+  CGAL_USE_TYPE(Point_handle);
 
   typedef typename SDG2::Edge                      Edge;
   typedef typename SDG2::Vertex_handle             Vertex_handle;
