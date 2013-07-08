@@ -37,22 +37,18 @@ namespace CGAL {
 
   namespace polyline{
 
-
     /*! \class
      * Representation of a polyline.
      */
-    template <typename SegmentTraits_>
-    class Polyline_2
-    {
+    template <typename Segment_type_T, typename Point_type_T>
+    class Polyline_2 {
     public:
-
-      typedef SegmentTraits_                        Segment_traits_2;
-      typedef typename Segment_traits_2::Point_2    Point_2;
-      typedef typename Segment_traits_2::Curve_2    Segment_2;
+      typedef Segment_type_T                         Segment_type_2;
+      typedef Point_type_T                           Point_type_2;
 
     protected:
       // The segments that comprise the poyline:
-      typedef typename std::vector<Segment_2>        Segments_container;
+      typedef typename std::vector<Segment_type_2>   Segments_container;
       typedef typename Segments_container::size_type Segments_container_size;
       Segments_container                             m_segments;
 
@@ -60,7 +56,7 @@ namespace CGAL {
       /*! Default constructor. */
       Polyline_2() : m_segments() {}
 
-      Polyline_2(const Segment_2 &seg) : m_segments()
+      Polyline_2(const Segment_type_2& seg) : m_segments()
       {
         m_segments.push_back(seg);
       }
@@ -102,7 +98,7 @@ namespace CGAL {
         m_segments()
       {
         typedef typename std::iterator_traits<InputIterator>::value_type VT;
-        typedef typename boost::is_same<VT,Point_2>::type Is_point;
+        typedef typename boost::is_same<VT, Point_type_2>::type Is_point;
         construct_polyline(begin, end, Is_point());
       }
 
@@ -128,8 +124,9 @@ namespace CGAL {
        *      In other cases, an empty polyline will be created.
        */
       template <typename InputIterator>
-      CGAL_DEPRECATED void construct_polyline
-      (InputIterator begin, InputIterator end, boost::true_type)
+      CGAL_DEPRECATED void construct_polyline(InputIterator begin,
+                                              InputIterator end,
+                                              boost::true_type)
       {
         // Check if there are no points in the range:
         InputIterator  ps = begin;
@@ -143,16 +140,15 @@ namespace CGAL {
         // The range contains only one point. A degenerated polyline is
         // constructed.
         // With one degenerated segment, where source=target.
-        if (pt == end)
-          {
-            m_segments.push_back(Segment_2(*ps,*ps));
-            return;
-          }
+        if (pt == end) {
+          m_segments.push_back(Segment_type_2(*ps, *ps));
+          return;
+        }
 
         // Construct a segment from each to adjacent points.
         // The container has to contain at least two points.
         while (pt != end) {
-          m_segments.push_back(Segment_2(*ps, *pt));
+          m_segments.push_back(Segment_type_2(*ps, *pt));
           ++ps;
           ++pt;
         }
@@ -170,9 +166,9 @@ namespace CGAL {
        * \pre If the polyline is not empty, seg source must be the
        *      same as the target point of the last segment in the polyline.
        */
-      inline void push_back (const Segment_2& seg)
+      inline void push_back(const Segment_type_2& seg)
       {
-        this->m_segments.push_back (seg);
+        this->m_segments.push_back(seg);
       }
 
       /*!
@@ -180,12 +176,12 @@ namespace CGAL {
        * To properly implemented this function the traits class is needed,
        * thus it is deprecated.
        */
-      CGAL_DEPRECATED void push_back (const Point_2 & p)
+      CGAL_DEPRECATED void push_back(const Point_type_2& p)
       {
         CGAL_assertion(!m_segments.empty());
-        Point_2 pt = p;
-        Point_2 ps = m_segments.back().target();
-        m_segments.push_back (Segment_2 (ps, pt));
+        Point_type_2 pt = p;
+        Point_type_2 ps = m_segments.back().target();
+        m_segments.push_back(Segment_type_2(ps, pt));
       }
 
       /*!
@@ -194,19 +190,12 @@ namespace CGAL {
       Bbox_2 bbox() const
       {
         // Compute the union of the bounding boxes of all segments.
-        unsigned int  n = this->number_of_segments();
-        Bbox_2        bbox;
-        unsigned int  i;
-
-        for (i = 0; i < n; ++i)
-          {
-            if (i > 0)
-              bbox = bbox +(*this)[i].bbox();
-            else
-              bbox = (*this)[i].bbox();
-          }
-
-        return (bbox);
+        unsigned int n = this->number_of_segments();
+        Bbox_2 bbox;
+        for (unsigned int i = 0; i < n; ++i) {
+          bbox = (i > 0) ? (bbox + (*this)[i].bbox()) : (*this)[i].bbox();
+        }
+        return bbox;
       }
 
       class const_iterator;
@@ -215,21 +204,19 @@ namespace CGAL {
       const_reverse_iterator;
 
       /*! An iterator for the polyline points. */
-      CGAL_DEPRECATED class const_iterator
-      {
+      CGAL_DEPRECATED class const_iterator {
       public:
-
         // Type definitions:
         typedef std::bidirectional_iterator_tag     iterator_category;
-        typedef Point_2                             value_type;
+        typedef Point_type_2                        value_type;
         typedef std::ptrdiff_t                      difference_type;
         typedef size_t                              size_type;
         typedef const value_type&                   reference;
         typedef const value_type*                   pointer;
 
       private:
-
-        const Polyline_2<SegmentTraits_> * m_cvP;  // The polyline curve.
+        // The polyline curve.
+        const Polyline_2<Segment_type_2, Point_type_2>* m_cvP;
         int   m_num_pts;                            // Its number of points.
         int   m_index;                              // The current point.
 
@@ -238,15 +225,15 @@ namespace CGAL {
          * \param cv The scanned curve.
          * \param index The index of the segment.
          */
-        const_iterator (const Polyline_2<SegmentTraits_>* cvP, int index) :
+        const_iterator(const Polyline_2<Segment_type_2, Point_type_2>* cvP,
+                       int index) :
           m_cvP(cvP),
           m_index(index)
         {
           if (m_cvP == NULL)
             m_num_pts = 0;
           else
-            m_num_pts =
-              (m_cvP->number_of_segments() == 0) ?
+            m_num_pts = (m_cvP->number_of_segments() == 0) ?
               0 : static_cast<int>(m_cvP->number_of_segments() + 1);
         }
 
@@ -263,28 +250,26 @@ namespace CGAL {
          * Dereference operator.
          * \return The current point.
          */
-        const Point_2& operator*() const
+        const Point_type_2& operator*() const
         {
           CGAL_assertion(m_cvP != NULL);
-          CGAL_assertion(m_index >= 0 && m_index < m_num_pts);
+          CGAL_assertion((m_index >= 0) && (m_index < m_num_pts));
 
-          if (m_index == 0)
-            {
-              // First point is the source of the first segment.
-              return ((*m_cvP)[0]).source();
-            }
-          else
-            {
-              // Return the target of the(i-1)'st segment.
-              return ((*m_cvP)[m_index - 1]).target();
-            }
+          if (m_index == 0) {
+            // First point is the source of the first segment.
+            return ((*m_cvP)[0]).source();
+          }
+          else {
+            // Return the target of the(i-1)'st segment.
+            return ((*m_cvP)[m_index - 1]).target();
+          }
         }
 
         /*!
          * Arrow operator.
          * \return A pointer to the current point.
          */
-        const Point_2* operator-> () const
+        const Point_type_2* operator->() const
         {
           return (&(this->operator* ()));
         }
@@ -292,23 +277,23 @@ namespace CGAL {
         /*! Increment operators. */
         const_iterator& operator++()
         {
-          if (m_cvP != NULL && m_index < m_num_pts)
+          if ((m_cvP != NULL) && (m_index < m_num_pts))
             ++m_index;
           return (*this);
         }
 
-        const_iterator operator++ (int)
+        const_iterator operator++(int)
         {
           const_iterator  temp = *this;
-          if (m_cvP != NULL && m_index < m_num_pts)
+          if ((m_cvP != NULL) && (m_index < m_num_pts))
             ++m_index;
-          return (temp);
+          return temp;
         }
 
         /*! Decrement operators. */
         const_iterator& operator-- ()
         {
-          if (m_cvP != NULL && m_index >= 0)
+          if ((m_cvP != NULL) && (m_index >= 0))
             --m_index;
           return (*this);
         }
@@ -316,53 +301,53 @@ namespace CGAL {
         const_iterator operator--(int)
         {
           const_iterator  temp = *this;
-          if (m_cvP != NULL && m_index >= 0)
+          if ((m_cvP != NULL) && (m_index >= 0))
             --m_index;
-          return (temp);
+          return temp;
         }
 
         /*! Equality operators. */
         bool operator==(const const_iterator& it) const
         {
-          return (m_cvP == it.m_cvP && m_index == it.m_index);
+          return ((m_cvP == it.m_cvP) && (m_index == it.m_index));
         }
 
         bool operator!=(const const_iterator& it) const
         {
-          return (m_cvP != it.m_cvP || m_index != it.m_index);
+          return ((m_cvP != it.m_cvP) || (m_index != it.m_index));
         }
 
-        friend class Polyline_2<SegmentTraits_>;
+        friend class Polyline_2<Segment_type_2, Point_type_2>;
       };
 
       /* ! Get an iterator for the polyline points.*/
       CGAL_DEPRECATED const_iterator begin() const
       {
         if (number_of_segments() == 0)
-          return (const_iterator (NULL, -1));
+          return (const_iterator(NULL, -1));
         else
-          return (const_iterator (this, 0));
+          return (const_iterator(this, 0));
       }
 
       /*! Get a past-the-end iterator for the polyline points.*/
       CGAL_DEPRECATED const_iterator end() const
       {
         if (number_of_segments() == 0)
-          return (const_iterator (NULL, -1));
+          return (const_iterator(NULL, -1));
         else
-          return (const_iterator (this, number_of_segments() + 1));
+          return (const_iterator(this, number_of_segments() + 1));
       }
 
       /*! Get a reverse iterator for the polyline points. */
       CGAL_DEPRECATED const_reverse_iterator rbegin() const
       {
-        return (const_reverse_iterator (end()));
+        return (const_reverse_iterator(end()));
       }
 
       /*! Get a reverse past-the-end iterator for the polyline points. */
       CGAL_DEPRECATED const_reverse_iterator rend() const
       {
-        return (const_reverse_iterator (begin()));
+        return (const_reverse_iterator(begin()));
       }
 
       typedef typename Segments_container::const_iterator
@@ -380,11 +365,11 @@ namespace CGAL {
 
       /*! Get a reverse iterator for the polyline's segments. */
       Segment_const_reverse_iterator rbegin_segments() const
-      { return (Segment_const_reverse_iterator (end_segments())); }
+      { return (Segment_const_reverse_iterator(end_segments())); }
 
       /*! Get a reverse past-the-end iterator for the polyline points. */
       Segment_const_reverse_iterator rend_segments() const
-      { return (Segment_const_reverse_iterator (begin_segments())); }
+      { return (Segment_const_reverse_iterator(begin_segments())); }
 
       /*! Deprecated!
        * Get the number of points contained in the polyline.
@@ -419,14 +404,14 @@ namespace CGAL {
        * \param i The segment index(from 0 to size()-1).
        * \return A const reference to the segment.
        */
-      inline const Segment_2& operator[] (const unsigned int i) const
+      inline const Segment_type_2& operator[](const unsigned int i) const
       {
-        CGAL_assertion (i < number_of_segments());
+        CGAL_assertion(i < number_of_segments());
         return (m_segments[i]);
       }
 
       /*! Clear the polyline. */
-      inline void clear ()
+      inline void clear()
       {
         m_segments.clear();
       }
@@ -436,19 +421,20 @@ namespace CGAL {
      * Representation of an x-monotone polyline.
      * An x-monotone polyline is always directed from left to right.
      */
-    template <typename SegmentTraits_>
-    class X_monotone_polyline_2 : public Polyline_2<SegmentTraits_>
+    template <typename Segment_type_2_T, typename Point_type_2_T>
+    class X_monotone_polyline_2 :
+      public Polyline_2<Segment_type_2_T, Point_type_2_T>
     {
     public:
-      typedef SegmentTraits_                        Segment_traits_2;
-      typedef Polyline_2<SegmentTraits_>           Base;
-      typedef typename Segment_traits_2::Point_2    Point_2;
-      typedef typename Segment_traits_2::Curve_2    Segment_2;
+      typedef Segment_type_2_T                          Segment_type_2;
+      typedef Point_type_2_T                            Point_type_2;
+      
+      typedef Polyline_2<Segment_type_2, Point_type_2>  Base;
 
       /*! Default constructor. */
-      X_monotone_polyline_2() : Base () {}
+      X_monotone_polyline_2() : Base() {}
 
-      X_monotone_polyline_2(Segment_2 seg) : Base(seg){ }
+      X_monotone_polyline_2(Segment_type_2 seg) : Base(seg){ }
 
       /*! Constructor
        * Similar to the constructor of a general polyline.
@@ -461,7 +447,7 @@ namespace CGAL {
         Base(begin, end)
       {
         typedef typename std::iterator_traits<InputIterator>::value_type VT;
-        typedef typename boost::is_same<VT,Point_2>::type Is_point;
+        typedef typename boost::is_same<VT, Point_type_2>::type Is_point;
         construct_x_monotone_polyline(begin, end, Is_point());
       }
 
@@ -474,112 +460,53 @@ namespace CGAL {
       template <typename InputIterator>
       void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
                                          boost::false_type)
-      { }
+      {}
 
       /*!
        * Constructs from a range of points, defining the endpoints of the
        * polyline segments.
        */
       template <typename InputIterator>
-      CGAL_DEPRECATED void construct_x_monotone_polyline (
-                                                          InputIterator begin,
-                                                          InputIterator end,
-                                                          boost::true_type)
-      {
-        // Make sure the range of points contains at least two points.
-        Segment_traits_2 seg_traits;
-        InputIterator ps = begin;
-        CGAL_precondition (ps != end);
-        InputIterator pt = ps;
-        ++pt;
-        CGAL_precondition (pt != end);
-
-        CGAL_precondition_code(
-           typename Segment_traits_2::Compare_x_2 compare_x=
-              seg_traits.compare_x_2_object();
-                               );
-        CGAL_precondition_code(
-           typename Segment_traits_2::Compare_xy_2 compare_xy =
-              seg_traits.compare_xy_2_object();
-                               );
-
-
-        // Make sure there is no change of directions as we traverse the
-        // polyline.
-        CGAL_precondition_code (
-           const Comparison_result cmp_x_res = compare_x(*ps, *pt);
-                                );
-        const Comparison_result cmp_xy_res = compare_xy(*ps, *pt);
-        CGAL_precondition (cmp_xy_res != EQUAL);
-        ++ps; ++pt;
-        while (pt != end) {
-          CGAL_precondition (compare_xy(*ps, *pt) == cmp_xy_res);
-          CGAL_precondition (compare_x(*ps, *pt) == cmp_x_res);
-          ++ps; ++pt;
-        }
-
-        // Reverse the polyline so it always directed from left to right.
-        if (cmp_xy_res == LARGER)
-          _reverse();
-      }
-
-    private:
-      /*! Reverse the polyline. */
-      void _reverse()
-      {
-        typename Base::const_reverse_iterator  ps = this->rbegin();
-        typename Base::const_reverse_iterator  pt = ps;
-        ++pt;
-
-        std::vector<Segment_2>  rev_segs (this->number_of_segments());
-        unsigned int            i = 0;
-
-        while (pt != this->rend())
-          {
-            rev_segs[i] = Segment_2 (*ps, *pt);
-            ++ps; ++pt;
-            i++;
-          }
-
-        this->m_segments = rev_segs;
-        return;
-      }
-
+      CGAL_DEPRECATED void construct_x_monotone_polyline(InputIterator begin,
+                                                         InputIterator end,
+                                                         boost::true_type)
+      {}
     };
 
     /*! Output operator for a polyline. */
-    template <typename SegmentTraits>
-    std::ostream& operator<< (std::ostream & os,
-                              const Polyline_2<SegmentTraits>& cv)
+    template <typename Segment_type_2_T, typename Point_type_2_T>
+    std::ostream&
+    operator<<(std::ostream & os,
+               const Polyline_2<Segment_type_2_T, Point_type_2_T>& cv)
     {
-      typename Polyline_2<SegmentTraits>::Segment_const_iterator  iter =
-        cv.begin_segments();
+      typedef Segment_type_2_T                          Segment_type_2;
+      typedef Point_type_2_T                            Point_type_2;
+      typedef Polyline_2<Segment_type_2, Point_type_2>  Curve_2;
 
-      while (iter != cv.end_segments())
-        {
-          if (iter == cv.begin_segments())
-            {
-              os << " " << *iter;
-              ++iter;
-            }
-          else
-            {
-              os << " <-> " << *iter;
-              ++iter;
-            }
+      typename Curve_2::Segment_const_iterator iter = cv.begin_segments();
+      while (iter != cv.end_segments()) {
+        if (iter == cv.begin_segments()) {
+          os << " " << *iter;
+          ++iter;
         }
+        else {
+          os << " <-> " << *iter;
+          ++iter;
+        }
+      }
       return (os);
     }
 
 
     /*! Input operator for a polyline. */
-    template <typename SegmentTraits>
-    std::istream& operator>> (std::istream& is,
-                              Polyline_2<SegmentTraits>& pl)
+    template <typename Segment_type_2_T, typename Point_type_2_T>
+    std::istream&
+    operator>>(std::istream& is,
+               Polyline_2<Segment_type_2_T, Point_type_2_T>& pl)
     {
-      typedef Polyline_2<SegmentTraits>   Curve_2;
-      typedef typename Curve_2::Segment_2 Segment_2;
-      typedef typename Curve_2::Point_2   Point_2;
+      typedef Segment_type_2_T                          Segment_type_2;
+      typedef Point_type_2_T                            Point_type_2;
+      typedef Polyline_2<Segment_type_2, Point_type_2>  Curve_2;
 
       // Read the number of input points.
       unsigned int        n_pts;
@@ -590,32 +517,28 @@ namespace CGAL {
                             "Input must contain at least two points");
 
       // Read m_num_pts points to a list.
-      Point_2             p;
-      std::list<Point_2>  pts;
-      unsigned int        i;
+      Point_type_2 p;
+      std::list<Point_type_2> pts;
+      for (unsigned int i = 0; i < n_pts; ++i) {
+        is >> p;
+        pts.push_back(p);
+      }
 
-      for (i = 0; i < n_pts; ++i)
-        {
-          is >> p;
-          pts.push_back(p);
-        }
-
-      std::list<Segment_2> segments;
-      typename std::list<Point_2>::iterator curr = pts.begin();
-      typename std::list<Point_2>::iterator next = pts.begin();
+      std::list<Segment_type_2> segments;
+      typename std::list<Point_type_2>::iterator curr = pts.begin();
+      typename std::list<Point_type_2>::iterator next = pts.begin();
       ++next;
-      while (next != pts.end())
-        {
-          segments.push_back(Segment_2(*curr,*next));
-          ++curr;
-          ++next;
-        }
+      while (next != pts.end()) {
+        segments.push_back(Segment_type_2(*curr, *next));
+        ++curr;
+        ++next;
+      }
 
       // Create the polyline curve.
-      pl = Curve_2(segments.begin(),segments.end());
+      pl = Curve_2(segments.begin(), segments.end());
 
       return (is);
     }
-  }// namespace polyline
+  } // namespace polyline
 } //namespace CGAL
 #endif
