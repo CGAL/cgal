@@ -39,7 +39,7 @@ base class\ccIndexSubitem{base class}{faking}, see Figure \ref{Fig:Object}.
 \lcRawHtml{
 <CENTER>
 <IMG BORDER=0 SRC="fig/Object.gif"
-   ALT="Faked object heirarchies UML diagram"><BR>
+   ALT="Faked object hierarchies UML diagram"><BR>
 </CENTER>
 }
 \end{figure}
@@ -49,6 +49,12 @@ result type and wrap it into an object of type \ccc{Object}.
 Refer to the documentation of the 
 \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/STL_Extension_ref/Class_Object.html}{\ccc{Object}}
 class for more details.
+
+When the number of possible return types is limited (like in intersection), \cgal\ now recommands the use of
+\ccAnchor{http://www.boost.org/libs/variant}{\ccc{boost::variant}} (together with \ccAnchor{http://www.boost.org/libs/optional}{\ccc{boost::optional}}
+if emptiness needs to be covered). The intersection computation functors now uses this mechanism and supports the
+the \ccc{result_of} protocol. The advanges of \ccAnchor{http://www.boost.org/libs/variant}{\ccc{boost::variant}} are that
+the assignements are checked at compile time and that it is faster at runtime than the general polymorphic approaches.
 
 An alternative is to use a class handling several output iterators at the same time such as the classes
 \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/STL_Extension_ref/Class_Dispatch_output_iterator.html}{\ccc{Dispatch_output_iterator}}
