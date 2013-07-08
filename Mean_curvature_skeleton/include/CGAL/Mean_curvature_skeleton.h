@@ -441,16 +441,19 @@ public:
       size_t vi_idx = boost::get(vertex_id_pmap, vi);
       size_t vj_idx = boost::get(vertex_id_pmap, vj);
 
-      if (is_vertex_fixed_map.find(vi_idx) == is_vertex_fixed_map.end()
-       || is_vertex_fixed_map.find(vj_idx) == is_vertex_fixed_map.end())
+      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end())
       {
-        continue;
+        if (is_vertex_fixed_map[vi_idx])
+        {
+          constrains_map.set_is_constrained(*eb, true);
+        }
       }
-//      std::cerr << "found fixed vertex in collapse\n";
-      // if both vertices are fixed, the edge is fixed
-      if (is_vertex_fixed_map[vi_idx] || is_vertex_fixed_map[vj_idx])
+      if (is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
       {
-        constrains_map.set_is_constrained(*eb, true);
+        if (is_vertex_fixed_map[vj_idx])
+        {
+          constrains_map.set_is_constrained(*eb, true);
+        }
       }
     }
 

@@ -91,15 +91,18 @@ int main( int argc, char** argv )
   is_vertex_fixed_map.clear();
 
   // Randomly fix some points.
+  int count = 0;
   for (boost::tie(vb, ve) = boost::vertices(surface); vb != ve; vb++)
   {
     int r = rand() % 10000;
     if (r < 100)
     {
+      count++;
       vertex_descriptor vi = *vb;
       is_vertex_fixed_map[vi->id()] = true;
     }
   }
+  std::cout << "fixed " << count << " points\n";
 
   Constrains_map constrains_map ;
      
@@ -111,14 +114,19 @@ int main( int argc, char** argv )
     size_t vi_idx = vi->id();
     size_t vj_idx = vj->id();
 
-    if (is_vertex_fixed_map.find(vi_idx) == is_vertex_fixed_map.end()
-     || is_vertex_fixed_map.find(vj_idx) == is_vertex_fixed_map.end())
+    if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end())
     {
-      continue;
+      if (is_vertex_fixed_map[vi_idx])
+      {
+        constrains_map.set_is_constrained(*eb, true);
+      }
     }
-    if (is_vertex_fixed_map[vi_idx] || is_vertex_fixed_map[vj_idx])
+    if (is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
     {
-      constrains_map.set_is_constrained(*eb, true);
+      if (is_vertex_fixed_map[vj_idx])
+      {
+        constrains_map.set_is_constrained(*eb, true);
+      }
     }
   }
 
