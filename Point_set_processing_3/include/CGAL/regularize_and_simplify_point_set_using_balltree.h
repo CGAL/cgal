@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Shihao Wu, Clement Jamin 
+// Author(s) : Shihao Wu, Cl¨¦ment Jamin 
 
 #ifndef CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_BALL_TREE_H
 #define CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_BALL_TREE_H

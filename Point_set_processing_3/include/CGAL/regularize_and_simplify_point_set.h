@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Shihao Wu, Clement Jamin 
+// Author(s) : Shihao Wu, Cl¨¦ment Jamin 
 
 #ifndef CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_H
 #define CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_H
@@ -49,18 +49,16 @@ template <typename Kernel>
 class KdTreeElement : public Kernel::Point_3
 {
 public:
-  typedef typename Kernel::Point_3 Base;
-
   unsigned int index;
 
   // basic geometric types
   typedef typename CGAL::Origin Origin;
-  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Point_3 Base;
 
   KdTreeElement(const Origin& o = ORIGIN, unsigned int id=0)
     : Base(o), index(id)
   {}
-  KdTreeElement(const Point& p, unsigned int id=0)
+  KdTreeElement(const Base& p, unsigned int id=0)
     : Base(p), index(id)
   {}
   KdTreeElement(const KdTreeElement& other)
@@ -760,7 +758,7 @@ regularize_and_simplify_point_set(
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
+// This variant creates a default point property map = Dereference_property_map
 template <typename ForwardIterator>
 ForwardIterator
 regularize_and_simplify_point_set(

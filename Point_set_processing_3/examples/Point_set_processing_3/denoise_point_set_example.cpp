@@ -5,7 +5,8 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/denoise_point_set.h>
-
+#include <CGAL/Timer.h>
+//#include <CGAL/Memory_sizer.h>
 
 #include <utility> // defines std::pair
 #include <list>
@@ -58,16 +59,23 @@ int main(void)
     // 
     int k = 300;
     int iter_number = 5;
-    Timer time;
-    time.start("denoise");
+
+    CGAL::Timer task_timer;
+    task_timer.start();
+    std::cout << "Run algorithm example: " << std::endl;
+
     for (int i = 0; i < iter_number; i++)
     {
       CGAL::denoise_points_with_normals(points.begin(), points.end(),
-        CGAL::First_of_pair_property_map<PointVectorPair>(),
-        CGAL::Second_of_pair_property_map<PointVectorPair>(),
-        k);
+            CGAL::First_of_pair_property_map<PointVectorPair>(),
+            CGAL::Second_of_pair_property_map<PointVectorPair>(),
+            k);
     }
-    time.end();
+
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cout << "done: " << task_timer.time() << " seconds, " ;
+   /*   << (memory>>20) << " Mb allocated" << std::endl;*/
+    task_timer.stop();  
 
 
 
