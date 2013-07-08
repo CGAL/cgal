@@ -304,6 +304,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
   target_link_libraries(inside_out_plugin scene_polyhedron_item scene_polygon_soup_item)
 
+  polyhedron_demo_plugin(detect_sharp_edges_plugin
+    Polyhedron_demo_detect_sharp_edges_plugin)
+  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
+
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
