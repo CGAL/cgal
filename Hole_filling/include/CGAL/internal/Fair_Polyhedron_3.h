@@ -77,7 +77,7 @@ private:
     unsigned int depth)
   {
     if(depth == 0) {
-      std::map<Vertex_handle, std::size_t>::const_iterator vertex_id_it = vertex_id_map.find(v);
+      typename std::map<Vertex_handle, std::size_t>::const_iterator vertex_id_it = vertex_id_map.find(v);
       if(vertex_id_it != vertex_id_map.end()) {
         matrix.add_coef(row_id, vertex_id_it->second, multiplier);
       }
