@@ -12,7 +12,7 @@
 typedef CGAL::Simple_cartesian<double> K;
 
 // typedefs for the traits and the algorithm
-#include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
+#include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K> Gt;
