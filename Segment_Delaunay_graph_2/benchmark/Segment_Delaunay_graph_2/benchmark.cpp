@@ -138,12 +138,17 @@ insert_constraints_using_spatial_sort(SDG& sdg)
   for(Points_iterator it = points.begin(); it != points.end(); ++it) {
     indices.push_back(it);
   }
+  std::cerr << "Spatial sorting...";
+  CGAL::Timer timer;
+  timer.start();
   std::random_shuffle(indices.begin(), indices.end());
   CGAL::spatial_sort(indices.begin(), indices.end(),
                      sort_traits);
-
+  timer.stop();
+  std::cerr << " done (" << timer.time() << "s)\n";
+  
   std::cerr << "Inserting points...";
-  CGAL::Timer timer;
+  timer.reset();
   timer.start();
   Vertices vertices;
   vertices.resize(points.size());

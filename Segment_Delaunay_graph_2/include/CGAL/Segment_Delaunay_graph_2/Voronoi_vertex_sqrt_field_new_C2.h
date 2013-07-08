@@ -701,6 +701,8 @@ private:
 		 const Site_2& p, const Site_2& q, const Site_2& r,
 		 const SSS_Type&) const
   {
+    CGAL_USE(q);
+    CGAL_USE(r);
     CGAL_assertion( p.is_segment() && q.is_segment() && r.is_segment() );
 
     Line_2 l = compute_supporting_line(p.supporting_site());

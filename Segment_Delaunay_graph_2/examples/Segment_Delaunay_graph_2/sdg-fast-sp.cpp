@@ -3,8 +3,8 @@
 #include <fstream>
 #include <cassert>
 
-// example that uses the filtered traits and
-// the segment Delaunay graph hierarchy
+// example that uses the filtered traits,
+// the segment Delaunay graph and the spatial sorting
 
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
@@ -15,9 +15,9 @@ typedef CGAL::Simple_cartesian<double> K;
 #include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 
-typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<K> Gt;
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<K> Gt;
 
-typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt>  SDG2;
+typedef CGAL::Segment_Delaunay_graph_2<Gt>  SDG2;
 
 
 int main()
@@ -28,10 +28,14 @@ int main()
   SDG2          sdg;
   SDG2::Site_2  site;
 
-  // read the sites and insert them in the segment Delaunay graph
+  std::vector<SDG2::Site_2> sites;
+  // read the sites
   while ( ifs >> site ) {
-    sdg.insert(site);
+    sites.push_back(site);
   }
+
+  //insert the sites all at once using spatial sorting to speed the insertion
+  sdg.insert( sites.begin(), sites.end(),CGAL::Tag_true() );
 
   // validate the segment Delaunay graph
   assert( sdg.is_valid(true, 1) );

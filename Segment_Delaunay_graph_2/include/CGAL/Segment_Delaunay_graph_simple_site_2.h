@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
@@ -180,12 +181,14 @@ public:
   // order for this class to be a model of the
   // SegmentDelaunayGraphSite_2 concept.
   Self supporting_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_point() && i < 2 );
     CGAL_precondition( !is_input() );
     return Self::construct_site_2(p_[0], p_[0]);
   }
 
   Self crossing_site(unsigned int i) const {
+    CGAL_USE(i);
     CGAL_precondition( is_segment() && i < 2 );
     CGAL_precondition( !is_input(i) );
     return *this;
