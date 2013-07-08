@@ -31,8 +31,9 @@ int main(void)
   const unsigned int k = 500;              // number of neighbors.
   const double neighbor_radius = 0.31;      // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
-  const bool need_compute_density = true;  // if needed to compute density to generate more rugularized result, 
-  // especially when the density of input is uneven.
+  const bool need_compute_density = true;  // if needed to compute density to 
+                                           // generate more rugularized result, 
+                             // especially when the density of input is uneven.
 
 
   // Make room for sample points

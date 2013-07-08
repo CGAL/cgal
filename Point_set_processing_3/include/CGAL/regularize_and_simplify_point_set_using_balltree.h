@@ -60,9 +60,10 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> > neighbor_original_points,
+  const std::vector<rich_grid_internel::Rich_point<Kernel> > 
+                    neighbor_original_points,///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
-  const std::vector<typename Kernel::FT>& density_weight_set ///<
+  const std::vector<typename Kernel::FT>& density_weight_set ///< densities
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -113,9 +114,10 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> > neighbor_sample_points, ///< neighbor sample points
+  const std::vector<rich_grid_internel::Rich_point<Kernel> > 
+             neighbor_sample_points, ///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
-  const std::vector<typename Kernel::FT>& density_weight_set ///< if user need density
+  const std::vector<typename Kernel::FT>& density_weight_set ///< densities
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -174,8 +176,8 @@ template <typename Kernel>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<typename Kernel::Point_3> neighbor_original_points, ///< neighbor original points
-  const typename Kernel::FT radius
+  const std::vector<typename Kernel::Point_3> neighbor_original_points, ///< 
+  const typename Kernel::FT radius ///<accept neighborhood radius
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -214,7 +216,7 @@ template <typename Kernel>
 typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<typename Kernel::Point_3> neighbor_sample_points, ///< neighbor sample points
+  const std::vector<typename Kernel::Point_3> neighbor_sample_points, ///< 
   const typename Kernel::FT radius
 )
 {
@@ -250,16 +252,20 @@ compute_density_weight_for_sample_point(
 
 /// \ingroup PkgPointSetProcessing
 /// WLOP Algorithm: The simplification algorithm can produces a set of 
-///	denoised, outlier-free and evenly distributed particles over the original dense point cloud,
-///	so as to improve the reliability of current normal orientation algorithm. 
-///	The core of the algorithm is a Weighted Locally Optimal projection operator with a density uniformization term. 
-/// More deatail please see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
+///	denoised, outlier-free and evenly distributed particles over the original 
+/// dense point cloud, so as to improve the reliability of other algorithms. 
+///
+///	The core of the algorithm is a Weighted Locally Optimal projection operator
+/// with a density uniformization term. 
+/// More deatail please see:http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` 
+///         with a value_type = Point_3<Kernel>.
+///         It can be omitted if ForwardIterator value_type is convertible to 
+///         Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
 /// @return iterator of the first point to downsampled points.
 
@@ -273,8 +279,8 @@ regularize_and_simplify_point_set_using_balltree(
   double retain_percentage, ///< percentage of points to retain.
   const typename Kernel::FT neighbor_radius, ///< size of neighbors.
   const unsigned int iter_number,///< number of iterations.
-  const bool need_compute_density, ///< if needed to compute density to generate more rugularized result, 
-                                   ///  especially when the density of input is uneven.
+  const bool need_compute_density, ///< if needed to compute density to 
+                                   ///generate more rugularized result.                                
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
@@ -291,14 +297,16 @@ regularize_and_simplify_point_set_using_balltree(
   // to fix: should have at least three distinct points
   // but this is costly to check
   CGAL_point_set_processing_precondition(first != beyond);
-  CGAL_point_set_processing_precondition(retain_percentage >= 0 && retain_percentage <= 100);
+  CGAL_point_set_processing_precondition(retain_percentage >= 0 && 
+                                         retain_percentage <= 100);
 
   // Random shuffle
   std::random_shuffle (first, beyond);
 
   // Computes original(input) and sample points size 
   std::size_t nb_points_original = std::distance(first, beyond);
-  std::size_t nb_points_sample = (std::size_t)(FT(nb_points_original) * (retain_percentage/100.0));
+  std::size_t nb_points_sample = (std::size_t)(FT(nb_points_original) * 
+                                 (retain_percentage/100.0));
   std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
   // The first point iter of original and sample points
@@ -339,19 +347,23 @@ regularize_and_simplify_point_set_using_balltree(
     task_timer.start();
     std::cout << "Initialization / Compute Density For Original" << std::endl;
   
-    rich_grid_internel::compute_ball_neighbors_one_self(original_rich_point_set, box, neighbor_radius);
+    rich_grid_internel::compute_ball_neighbors_one_self(original_rich_point_set
+                                                       , box, neighbor_radius);
                         
     for (it = first_original_point, i = 0; it != beyond ; ++it, i++)
     {
       std::vector<Point> original_neighbors;
-      std::vector<unsigned int>& neighors_indexes = original_rich_point_set[i].neighbors;
+      std::vector<unsigned int>& neighors_indexes = 
+                                original_rich_point_set[i].neighbors;
       for (unsigned int j = 0; j < neighors_indexes.size(); j++)
       {
         original_neighbors.push_back(original_points[neighors_indexes[j]]);
       }
 
-      FT density = regularize_and_simplify_internal::compute_density_weight_for_original_point<Kernel>(get(point_pmap,it),
-                    original_neighbors, neighbor_radius);
+      FT density = regularize_and_simplify_internal::
+                   compute_density_weight_for_original_point<Kernel>(
+                   get(point_pmap,it),
+                   original_neighbors, neighbor_radius);
 
       original_density_weight_set.push_back(density);
       original_rich_point_set[i].neighbors.clear();
@@ -376,7 +388,8 @@ regularize_and_simplify_point_set_using_balltree(
       Rich_point rp(p0, i);
       sample_rich_point_set[i] = rp;
     }
-    rich_grid_internel::compute_ball_neighbors_one_self(sample_rich_point_set, box, neighbor_radius);
+    rich_grid_internel::compute_ball_neighbors_one_self(sample_rich_point_set,
+                                                        box, neighbor_radius);
 
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_density_weight_set;
@@ -385,23 +398,28 @@ regularize_and_simplify_point_set_using_balltree(
       for (i=0 ; i < sample_points.size(); i++)
       {
         std::vector<Point> sample_neighbors;
-        std::vector<unsigned int>& neighors_indexes = sample_rich_point_set[i].neighbors;
+        std::vector<unsigned int>& neighors_indexes = 
+                                   sample_rich_point_set[i].neighbors;
+
         for (unsigned int j = 0; j < neighors_indexes.size(); j++)
         {
           sample_neighbors.push_back(sample_points[neighors_indexes[j]]);
         }
 
-        FT density = regularize_and_simplify_internal::compute_density_weight_for_sample_point<Kernel>
-                      (sample_points[i], sample_neighbors, neighbor_radius);
+        FT density = regularize_and_simplify_internal::
+                     compute_density_weight_for_sample_point<Kernel>
+                     (sample_points[i], sample_neighbors, neighbor_radius);
+
         sample_density_weight_set.push_back(density);
       }
     }
 
     // Build Ball Tree For Sample-Original Neighbor
-    rich_grid_internel::compute_ball_neighbors_one_to_another(sample_rich_point_set,
-                                                              original_rich_point_set, box, neighbor_radius);
+    rich_grid_internel::compute_ball_neighbors_one_to_another
+                       (sample_rich_point_set,
+                        original_rich_point_set, box, neighbor_radius);
 
-    // Compute average term and repulsion term for each sample points separately,
+    // Compute average term and repulsion term for each sample points,
     // then update each sample points
     std::vector<Vector> average_set(nb_points_sample);
     std::vector<Vector> repulsion_set(nb_points_sample);
@@ -411,7 +429,8 @@ regularize_and_simplify_point_set_using_balltree(
     {
       Point& p = sample_points[i];
       std::vector<Rich_point> rich_original_neighbors;
-      std::vector<unsigned int>& neighors_indexes = sample_rich_point_set[i].original_neighbors;
+      std::vector<unsigned int>& neighors_indexes = 
+                                 sample_rich_point_set[i].original_neighbors;
 
       if (neighors_indexes.empty())
       {
@@ -426,14 +445,18 @@ regularize_and_simplify_point_set_using_balltree(
         rich_original_neighbors.push_back(rp);
       }
 
-      average_set[i] = regularize_and_simplify_internal::compute_average_term<Kernel>(p, rich_original_neighbors, neighbor_radius, original_density_weight_set); 
+      average_set[i] = regularize_and_simplify_internal::
+                       compute_average_term<Kernel>
+                       (p, rich_original_neighbors, neighbor_radius, 
+                        original_density_weight_set); 
     }
 
     //repulsion term
     for (i = 0; i < sample_points.size(); i++)
     {
       std::vector<Rich_point> rich_sample_neighbors;
-      std::vector<unsigned int>& neighors_indexes = sample_rich_point_set[i].neighbors;
+      std::vector<unsigned int>& neighors_indexes = 
+                                 sample_rich_point_set[i].neighbors;
         
       if (neighors_indexes.empty())
       {
@@ -449,7 +472,10 @@ regularize_and_simplify_point_set_using_balltree(
       }
 
       Point& p = sample_points[i];
-      repulsion_set[i] = regularize_and_simplify_internal::compute_repulsion_term<Kernel>(p, rich_sample_neighbors, neighbor_radius, sample_density_weight_set);
+      repulsion_set[i] = regularize_and_simplify_internal::
+                         compute_repulsion_term<Kernel>
+                         (p, rich_sample_neighbors, neighbor_radius, 
+                         sample_density_weight_set);
     }
     
     // update points positions according to average and repulsion term
@@ -464,7 +490,7 @@ regularize_and_simplify_point_set_using_balltree(
       << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.stop();
 
-    std::cout << "iterate:	" << iter_n + 1 <<  "	"<< std::endl << std::endl;;
+    std::cout << "iterate:	" << iter_n + 1 <<  "	"<< std::endl << std::endl;
   }
 
   //Copy back modified sample points to original points for output
@@ -489,8 +515,8 @@ regularize_and_simplify_point_set_using_balltree(
   double retain_percentage, ///< percentage of points to retain
   double neighbor_radius, ///< size of neighbors.
   const unsigned int iter_number, ///< number of iterations.
-  const bool need_compute_density  ///< if needed to compute density to generate more rugularized result, 
-                                   ///  especially when the density of input is uneven.
+  const bool need_compute_density  ///< if needed to compute density 
+                                   ///  to generate more rugularized result.                                 
 ) 
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -516,8 +542,8 @@ regularize_and_simplify_point_set_using_balltree(
   double retain_percentage, ///< percentage of points to retain
   double neighbor_radius, ///< size of neighbors.
   const unsigned int iter_number, ///< number of iterations.
-  const bool need_compute_density ///< if needed to compute density to generate more rugularized result, 
-                                  ///  especially when the density of input is uneven.
+  const bool need_compute_density ///< if needed to compute density to generate
+                                  ///  more rugularized result. 
 )
 {
   return regularize_and_simplify_point_set_using_balltree(
