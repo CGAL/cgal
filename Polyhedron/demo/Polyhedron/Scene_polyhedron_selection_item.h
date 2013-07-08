@@ -127,7 +127,7 @@ public:
     }
   }  
   void draw() const {
-    poly_item->direct_draw();
+    poly_item->draw();
     draw_selected_vertices();
   }
 

@@ -82,6 +82,8 @@ public slots:
     Scene_polyhedron_selection_item* selection_poly = new Scene_polyhedron_selection_item(poly_item, ui_widget);
     selection_poly->setColor(poly_item->color());
     selection_poly->setName(QString("%1 (selection)").arg(poly_item->name()));
+    selection_poly->setRenderingMode(poly_item->renderingMode());
+    selection_poly->setVisible(poly_item->visible());
 
     mw->installEventFilter(selection_poly); // filter mainwindows events for key(pressed/released)
     scene->replaceItem(i, selection_poly);
