@@ -30,7 +30,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 //
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface;
 
-typedef boost::graph_traits<Surface>::vertex_descriptor	        vertex_descriptor;
+typedef boost::graph_traits<Surface>::vertex_descriptor	         vertex_descriptor;
 typedef boost::graph_traits<Surface>::vertex_iterator            vertex_iterator;
 typedef boost::graph_traits<Surface>::edge_descriptor            edge_descriptor;
 typedef boost::graph_traits<Surface>::edge_iterator              edge_iterator;
@@ -90,6 +90,7 @@ int main( int argc, char** argv )
   std::map<size_t, bool> is_vertex_fixed_map;
   is_vertex_fixed_map.clear();
 
+  // Randomly fix some points.
   for (boost::tie(vb, ve) = boost::vertices(surface); vb != ve; vb++)
   {
     int r = rand() % 10000;
@@ -102,6 +103,7 @@ int main( int argc, char** argv )
 
   Constrains_map constrains_map ;
      
+  // Set the constrains map
   for (boost::tie(eb, ee) = boost::edges(surface); eb != ee; ++eb)
   {
     vertex_descriptor vi = boost::source(*eb, surface);
@@ -120,6 +122,7 @@ int main( int argc, char** argv )
     }
   }
 
+  // Count the fixed vertices before simplification
   int cnt = 0;
   for (boost::tie(vb, ve) = boost::vertices(surface); vb != ve; ++vb)
   {
@@ -132,7 +135,7 @@ int main( int argc, char** argv )
       }
     }
   }
-  std::cerr << "before collapse " << cnt << " fixed vertices\n";
+  std::cout << "before collapse " << cnt << " fixed vertices\n";
 
   // This the actual call to the simplification algorithm.
   // The surface and stop conditions are mandatory arguments.
@@ -146,6 +149,7 @@ int main( int argc, char** argv )
                       .edge_is_border_map(constrains_map)
             );
   
+  // Count the fixed vertices after simplification
   cnt = 0;
   for (boost::tie(vb, ve) = boost::vertices(surface); vb != ve; ++vb)
   {
@@ -158,7 +162,7 @@ int main( int argc, char** argv )
       }
     }
   }
-  std::cerr << "after collapse " << cnt << " fixed vertices\n";
+  std::cout << "after collapse " << cnt << " fixed vertices\n";
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface.size_of_halfedges()/2) << " final edges.\n" ;
