@@ -595,7 +595,7 @@ void MainWindow::on_actionClose_volume_triggered()
   timer.start();
 #endif
 
-  if ( scene.lcc->close(3) > 0 )
+  if ( scene.lcc->close<3>() > 0 )
   {
     init_all_new_volumes();
     statusBar ()->showMessage (QString ("All volume(s) closed"),

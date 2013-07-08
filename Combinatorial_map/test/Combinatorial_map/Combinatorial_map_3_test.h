@@ -167,8 +167,24 @@ void createAllBasicCases1()
 
  }
 
-template<class Map, class Functor>
-void createAllBasicCases2(int close1, int close2)
+
+template<class Map, int close>
+struct Myclose
+{
+  static void run(Map& map)
+  { map.template close<close>(); }
+};
+
+template<class Map>
+struct Myclose<Map,-1>
+{
+  static void run(Map&)
+  {}
+};
+
+
+template<class Map, class Functor, int close1, int close2>
+void createAllBasicCases2()
 {
   Map map; 
   Functor functor;
@@ -179,8 +195,8 @@ void createAllBasicCases2(int close1, int close2)
   dh  = map.create_dart();
   dh2 = map.create_dart();
   map.template sew<2>(dh,dh2);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh);
   map.clear();
 
@@ -189,8 +205,8 @@ void createAllBasicCases2(int close1, int close2)
   dh2 = map.create_dart();
   map.template sew<1>(dh,dh);
   map.template sew<2>(dh,dh2);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh);
   map.clear();
 
@@ -200,8 +216,8 @@ void createAllBasicCases2(int close1, int close2)
   dh3 = map.create_dart();
   map.template sew<1>(dh, dh2);
   map.template sew<2>(dh2,dh3);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh);
   map.clear();
 
@@ -211,8 +227,8 @@ void createAllBasicCases2(int close1, int close2)
   dh3 = map.create_dart();
   map.template sew<1>(dh, dh2);
   map.template sew<2>(dh2,dh3);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh2);
   map.clear();
 
@@ -223,8 +239,8 @@ void createAllBasicCases2(int close1, int close2)
   map.template sew<1>(dh, dh2);
   map.template sew<1>(dh2, dh);
   map.template sew<2>(dh2,dh3);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh);
   map.clear();
 
@@ -237,8 +253,8 @@ void createAllBasicCases2(int close1, int close2)
   map.template sew<2>(dh2,dh3);
   dh3 = map.create_dart();
   map.template sew<2>(dh,dh3);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh2);
   map.clear();
 
@@ -252,8 +268,8 @@ void createAllBasicCases2(int close1, int close2)
   map.template sew<2>(dh2,dh4);
   dh4 = map.create_dart();
   map.template sew<2>(dh3,dh4);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh);
   map.clear();
 
@@ -267,8 +283,8 @@ void createAllBasicCases2(int close1, int close2)
   map.template sew<2>(dh2,dh4);
   dh4 = map.create_dart();
   map.template sew<2>(dh3,dh4);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh2);
   map.clear();
 
@@ -281,8 +297,8 @@ void createAllBasicCases2(int close1, int close2)
   map.template sew<1>(dh3, dh);
   dh4 = map.create_dart();
   map.template sew<2>(dh,dh4);
-  if (close1!=-1) map.close(close1);
-  if (close2!=-1) map.close(close2);
+  Myclose<Map, close1>::run(map);
+  Myclose<Map, close2>::run(map);
   functor(map,dh);
   map.clear();
  }
@@ -795,10 +811,10 @@ bool test3D()
   createAllBasicCases1<Map,InsertVertex<Map> >();
 
   std::cout<<"************************* Test createAllBasicCases2 *************************"<<std::endl;
-  createAllBasicCases2<Map,InsertVertex<Map> >(-1,-1);
+  createAllBasicCases2<Map,InsertVertex<Map>,-1,-1>();
 
   std::cout<<"************************* Test createAllBasicCases2<3> *************************"<<std::endl;
-  createAllBasicCases2<Map,InsertVertex<Map> >(-1,3);
+  createAllBasicCases2<Map,InsertVertex<Map>,-1,3>();
 
   std::cout<<"************************* Test different cases *************************"<<std::endl;
   d1 = map.create_dart();
