@@ -614,92 +614,91 @@ namespace CGAL {
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
       {
         typedef typename Curve_2::Segment_const_iterator const_seg_iterator;
-        const_seg_iterator start_seg = cv.begin_segments();
-        const_seg_iterator end_seg = cv.end_segments();
+        
+        // If the polyline is empty, return.
+        if (cv.number_of_segments() == 0) return oi;
 
-        // Empty polyline:
-        if (start_seg == end_seg)
-          return oi;
-
-        const_seg_iterator it_next = start_seg;
-        ++it_next;
-
-        Construct_x_monotone_curve_2 construct_x_monotone_curve =
+        Construct_x_monotone_curve_2 ctr_x_curve =
           m_poly_traits.construct_x_monotone_curve_2_object();
+        
+        typename Segment_traits_2::Make_x_monotone_2 make_seg_x_monotone =
+          m_poly_traits.segment_traits_2()->make_x_monotone_2_object();
 
-        if (it_next == end_seg) {
-          // The polyline contains a single segment:
+        typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+          m_poly_traits.segment_traits_2()->compare_endpoints_xy_2_object();
+
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-          if (m_poly_traits.segment_traits_2()->
-              compare_endpoints_xy_2_object()(*start_seg) == LARGER) {
-            X_monotone_segment_2 seg = m_poly_traits.segment_traits_2()->
-              construct_opposite_2_object()(*start_seg);
-            *oi++ = make_object(construct_x_monotone_curve(seg));
+        typename Segment_traits_2::Construct_opposite_2 ctr_seg_opposite =
+          m_poly_traits.segment_traits_2()->construct_opposite_2_object();
+#endif
+        
+        // Convert the input polyline to a sequence of CGAL objects, such
+        // that each Object wraps an x-monotone segment.
+        std::vector<Object> x_seg_objects;
+        const_seg_iterator it_segs;
+        for (it_segs = cv.begin_segments(); it_segs != cv.end_segments();
+             ++it_segs)
+          make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
+
+        typename std::vector<Object>::iterator it = x_seg_objects.begin();
+        X_monotone_segment_2 x_seg;
+        bool check = CGAL::assign(x_seg, *it);
+        CGAL_assertion(check);
+
+        // If the polyline consists of a single x-monotone segment, return.
+        if (x_seg_objects.size() == 1) {
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+          if (cmp_seg_endpts(x_seg) == LARGER)
+            x_seg = ctr_seg_opposite(x_seg);
+#endif
+          *oi++ = make_object(ctr_x_curve(x_seg));
+          x_seg_objects.clear();
+          return oi;
+        }
+
+        // The polyline consists of at least 2 x-monotone segments:
+        Push_back_2 push_back = m_poly_traits.push_back_2_object();
+        
+        typename Segment_traits_2::Is_vertical_2 is_seg_vertical =
+          m_poly_traits.segment_traits_2()->is_vertical_2_object();
+
+        bool is_start_vertical = is_seg_vertical(x_seg);
+        Comparison_result start_dir = cmp_seg_endpts(x_seg);
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+        if (cmp_seg_endpts(x_seg) == LARGER)
+          x_seg = ctr_seg_opposite(x_seg);
+#endif
+        X_monotone_curve_2 x_polyline = ctr_x_curve(x_seg);
+
+        for (++it; it != x_seg_objects.end(); ++it) {
+          X_monotone_segment_2 x_seg;
+          bool check = CGAL::assign(x_seg, *it);
+          CGAL_assertion(check);
+          if ((cmp_seg_endpts(x_seg) != start_dir) ||
+              (is_seg_vertical(x_seg) != is_start_vertical))
+          {
+            // Construct an x-monotone curve from the sub-range which was found
+            *oi++ = make_object(x_polyline);
+            is_start_vertical = is_seg_vertical(x_seg);
+            start_dir = cmp_seg_endpts(x_seg);
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+            if (cmp_seg_endpts(x_seg) == LARGER)
+              x_seg = ctr_seg_opposite(x_seg);
+#endif
+            x_polyline = ctr_x_curve(x_seg);
           }
           else {
-            *oi++ = make_object(construct_x_monotone_curve(*start_seg));
-          }
-          return oi;
-#else
-          *oi++ = make_object(construct_x_monotone_curve(*start_seg));
-          return oi;
-#endif
-        }
-
-        // Polyline contains at least 2 segments!
-
-        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
-        // Functor defined in ArrangementDirectionalXMonotoneTraits_2
-        typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts_xy =
-          seg_traits->compare_endpoints_xy_2_object();
-        typename Segment_traits_2::Is_vertical_2 is_vertical =
-          seg_traits->is_vertical_2_object();
-
-        const_seg_iterator it_start = start_seg;
-        const_seg_iterator it_curr = start_seg;
-
-        bool is_start_vertical = is_vertical(*it_start);
-        Comparison_result start_dir = comp_endpts_xy(*it_start);
-
-        for (/*it_next was advanced earlier*/; it_next != end_seg; ++it_next) {
-          if (
-              comp_endpts_xy(*it_next) != start_dir ||
-              is_vertical(*it_next) != is_start_vertical
-              )
-          {
-            // Construct an x-monotone curve from the sub-range which
-            // was found
-
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-            if (comp_endpts_xy(*it_start) == LARGER) {
-              std::vector<X_monotone_segment_2> reversed_seg;
-              std::copy(it_start, it_next, reversed_seg.begin());
-              std::vector<X_monotone_segment_2>::iterator rev_it;
-              for (rev_it = reversed_seg.begin();
-                   rev_it != reversed_seg.end(); ++rev_it)
-              {
-                *rev_it = seg_traits->
-                  construct_opposite_2_object()(*rev_it);
-              }
-              *oi++ =
-                make_object(construct_x_monotone_curve(reversed_seg.rbegin(),
-                                                       reversed_seg.rend()));
-            }
-            else {
-              *oi++ =
-                make_object(construct_x_monotone_curve(it_start, it_next));
-            }
-#else
-            *oi++ =
-              make_object(construct_x_monotone_curve(it_start, it_next));
+            if (cmp_seg_endpts(x_seg) == LARGER)
+              x_seg = ctr_seg_opposite(x_seg);
 #endif
-            it_start = it_next;
-            is_start_vertical = is_vertical(*it_start);
-            start_dir = comp_endpts_xy(*it_start);
+            push_back(x_polyline, x_seg);
           }
-          it_curr = it_next;
         }
-        *oi++ = make_object(construct_x_monotone_curve(it_start, it_next));
+        if (x_polyline.number_of_segments() != 0)
+          *oi++ = make_object(x_polyline);
+        x_seg_objects.clear();
         return oi;
       }
     };
@@ -732,7 +731,7 @@ namespace CGAL {
         int last_seg = num_seg-1;
 
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
-        typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts=
+        typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
 
         /*
@@ -742,7 +741,7 @@ namespace CGAL {
          * following test determines which end of the last segment is
          * the target.
          */
-        if (comp_endpts(cv[last_seg]) == SMALLER) {
+        if (cmp_seg_endpts(cv[last_seg]) == SMALLER) {
           typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
             seg_traits->construct_max_vertex_2_object();
           cv.push_back(X_monotone_segment_2(get_max_v(cv[last_seg]),p));
@@ -757,7 +756,7 @@ namespace CGAL {
 
       /* see documentation in
          ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
-      void operator()(Curve_2& cv, const X_monotone_segment_2& seg) const
+      void operator()(Curve_2& cv, const Segment_2& seg) const
       {
         int num_seg = cv.number_of_segments();
 
@@ -772,15 +771,15 @@ namespace CGAL {
           seg_traits->construct_min_vertex_2_object();
         typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
           seg_traits->construct_max_vertex_2_object();
-        typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
         typename Segment_traits_2::Equal_2 equal =
           seg_traits->equal_2_object();
 
         Point_2 last_v;
 
-        Comparison_result xcv_dir = comp_endpts(cv[0]);
-        Comparison_result seg_dir = comp_endpts(seg);
+        Comparison_result xcv_dir = cmp_seg_endpts(cv[0]);
+        Comparison_result seg_dir = cmp_seg_endpts(seg);
 
         CGAL_precondition_msg(xcv_dir == seg_dir,
                               "Appended segment must have the same "
@@ -833,44 +832,45 @@ namespace CGAL {
 
       /* see documentation in
          ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
-      void operator()(const X_monotone_curve_2& xcv,
-                      X_monotone_segment_2& seg) const
+      void operator()(X_monotone_curve_2& xcv,
+                      const X_monotone_segment_2& seg) const
       {
         int num_seg = xcv.number_of_segments();
 
-        if (num_seg == 0)
-          {
-            xcv.push_back(seg);
-            return;
-          }
+        if (num_seg == 0) {
+          xcv.push_back(seg);
+          return;
+        }
 
         CGAL_precondition_code(
           const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
-          typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+          typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
-
-          CGAL_precondition_msg(comp_endpts(xcv[0]) == comp_endpts(seg),
-                                "xcv and seg should have the same orientation");
-
-          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-          seg_traits->construct_max_vertex_2_object();
-          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-          seg_traits->construct_min_vertex_2_object();
-          typename Segment_traits_2::Compare_xy_2 comp_xy =
-          seg_traits->compare_xy_2_object();
-          typename Segment_traits_2::Equal_2 equal =
-          seg_traits->equal_2_object();
-
-          CGAL_precondition_msg(
-            ((comp_endpts(seg) == SMALLER) &&
-             (equal(get_max_v(xcv[num_seg-1]),get_min_v(seg)))&&
-             (comp_xy(get_min_v(seg),get_max_v(seg)!=EQUAL))) ||
-            ((comp_endpts(seg) == LARGER) &&
-             (equal(get_min_v(xcv[num_seg-1]),get_max_v(seg)))&&
-             (comp_xy(get_min_v(seg),get_max_v(seg)!=EQUAL))),
-            "Seg must extend either to the left or to the "
-            "right of xcv depending on the orientation");
                                );
+
+        CGAL_precondition_msg(cmp_seg_endpts(xcv[0]) == cmp_seg_endpts(seg),
+                              "xcv and seg should have the same orientation");
+
+        CGAL_precondition_code(
+          typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
+            seg_traits->construct_max_vertex_2_object();
+          typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
+            seg_traits->construct_min_vertex_2_object();
+          typename Segment_traits_2::Compare_xy_2 comp_xy =
+            seg_traits->compare_xy_2_object();
+          typename Segment_traits_2::Equal_2 equal =
+            seg_traits->equal_2_object();
+                               );
+          CGAL_precondition_msg
+            (((cmp_seg_endpts(seg) == SMALLER) &&
+              equal(get_max_v(xcv[num_seg-1]), get_min_v(seg)) &&
+              (comp_xy(get_min_v(seg), get_max_v(seg)) != EQUAL)) ||
+             ((cmp_seg_endpts(seg) == LARGER) &&
+              equal(get_min_v(xcv[num_seg-1]), get_max_v(seg)) &&
+              (comp_xy(get_min_v(seg), get_max_v(seg)) != EQUAL)),
+             "Seg must extend either to the left or to the "
+             "right of xcv depending on the orientation");
+          
         xcv.push_back(seg);
       }
     };
@@ -908,7 +908,7 @@ namespace CGAL {
           seg_traits->construct_max_vertex_2_object();
         typename Segment_traits_2::Equal_2 equal =
           seg_traits->equal_2_object();
-        typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
 
         // Make sure the split point is not one of the curve endpoints.
@@ -920,7 +920,7 @@ namespace CGAL {
         CGAL_precondition_msg(xcv.number_of_segments() > 0,
                               "Cannot split a polyline of length zero.");
 
-        Comparison_result dir = comp_endpts(xcv[0]);
+        Comparison_result dir = cmp_seg_endpts(xcv[0]);
 
         // Locate the segment on the polyline xcv that contains p.
         unsigned int i = m_poly_traits.locate(xcv, p);
@@ -964,7 +964,7 @@ namespace CGAL {
             m_poly_traits.segment_traits_2()->
               split_2_object()(xcv[i], p, seg1, seg2);
 
-            if (comp_endpts(seg2) == LARGER){
+            if (cmp_seg_endpts(seg2) == LARGER){
               xcv1.push_back(seg2);
             }
             else{
@@ -974,7 +974,7 @@ namespace CGAL {
               xcv1.push_back(seg2);
             }
 
-            if (comp_endpts(seg1) == LARGER){
+            if (cmp_seg_endpts(seg1) == LARGER){
               xcv2.push_back(seg1);
             } else {
               // seg2 has to be reversed
@@ -1043,11 +1043,11 @@ namespace CGAL {
           seg_traits->intersect_2_object();
         typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
           seg_traits->compare_y_at_x_2_object();
-        typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+        typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
 
-        Comparison_result dir1 = comp_endpts(cv1[0]);
-        Comparison_result dir2 = comp_endpts(cv2[0]);
+        Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
+        Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
         const unsigned int n1 = cv1.number_of_segments();
         const unsigned int n2 = cv2.number_of_segments();
@@ -1308,7 +1308,7 @@ namespace CGAL {
           m_poly_traits.construct_max_vertex_2_object();
         typename Segment_traits_2::Equal_2 equal =
           seg_traits->equal_2_object();
-        typename Segment_traits_2::Is_vertical_2 is_vertical =
+        typename Segment_traits_2::Is_vertical_2 is_seg_vertical =
           seg_traits->is_vertical_2_object();
 
         Comparison_result dir1 =
@@ -1322,8 +1322,8 @@ namespace CGAL {
         const unsigned int n1 = cv1.number_of_segments();
         const unsigned int n2 = cv2.number_of_segments();
 
-        bool ver1 = is_vertical(cv1[0]);
-        bool ver2 = is_vertical(cv2[0]);
+        bool ver1 = is_seg_vertical(cv1[0]);
+        bool ver2 = is_seg_vertical(cv2[0]);
 
         return (
                 (
@@ -1383,17 +1383,17 @@ namespace CGAL {
           m_poly_traits.construct_min_vertex_2_object();
         Construct_max_vertex_2 get_max_v =
           m_poly_traits.construct_max_vertex_2_object();
-        Compare_endpoints_xy_2 comp_endpts =
+        Compare_endpoints_xy_2 cmp_seg_endpts =
           m_poly_traits.compare_endpoints_xy_2_object();
         Equal_2 equal = m_poly_traits.equal_2_object();
 
         c.clear();
         if (
             // Either both are left-to-right and cv2 is to the right of cv1
-            ((comp_endpts(cv1)==SMALLER) &&
+            ((cmp_seg_endpts(cv1)==SMALLER) &&
              (equal(get_max_v(cv1),get_min_v(cv2)))) ||
             // or both are right-to-left and cv2 is to the left of cv1
-            ((comp_endpts(cv1)==LARGER) &&
+            ((cmp_seg_endpts(cv1)==LARGER) &&
              (equal(get_min_v(cv1), get_max_v(cv2))))
             )
         {
@@ -1558,7 +1558,7 @@ namespace CGAL {
           (
            const Segment_traits_2* seg_traits =
            m_poly_traits.segment_traits_2();
-           typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+           typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
            seg_traits->compare_endpoints_xy_2_object();
            typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
            seg_traits->construct_min_vertex_2_object();
@@ -1584,12 +1584,12 @@ namespace CGAL {
             Point_2 curr_target;
             Point_2 next_source;
 
-            if (comp_endpts(*curr) == SMALLER)
+            if (cmp_seg_endpts(*curr) == SMALLER)
               curr_target = get_max_v(*curr);
             else
               curr_target = get_min_v(*curr);
 
-            if (comp_endpts(*next) == SMALLER)
+            if (cmp_seg_endpts(*next) == SMALLER)
               next_source = get_min_v(*next);
             else
               next_source = get_max_v(*next);
@@ -1773,7 +1773,7 @@ namespace CGAL {
 
         CGAL_precondition_code(
           const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
-          typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+          typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
           typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
           seg_traits->construct_min_vertex_2_object();
@@ -1795,12 +1795,12 @@ namespace CGAL {
 
           // Range contains at least two segments
 
-          Comparison_result init_dir = comp_endpts(*curr);
+          Comparison_result init_dir = cmp_seg_endpts(*curr);
           while (next != end){
             CGAL_precondition_msg(!equal(get_min_v(*next),get_max_v(*next)),
                                   "Cannot construct a polyline "
                                   "with degenerated segment");
-            CGAL_precondition_msg(init_dir == comp_endpts(*next),
+            CGAL_precondition_msg(init_dir == cmp_seg_endpts(*next),
                                   "Segments must form x-monotone polyline");
             if (init_dir == SMALLER){
               CGAL_precondition_msg(equal(get_max_v(*curr),get_min_v(*next)),
@@ -1989,7 +1989,7 @@ namespace CGAL {
 
       typename Segment_traits_2::Equal_2 equal =
         segment_traits_2()->equal_2_object();
-      typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpts =
+      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
         segment_traits_2()->compare_endpoints_xy_2_object();
       typename Segment_traits_2::Compare_x_2 comp_x =
         segment_traits_2()->compare_x_2_object();
@@ -2000,7 +2000,7 @@ namespace CGAL {
       typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
         segment_traits_2()->construct_min_vertex_2_object();
 
-      Comparison_result direction = comp_endpts(cv[i]);
+      Comparison_result direction = cmp_seg_endpts(cv[i]);
 
       if ((!is_vert(cv[0]) && (comp_x(get_min_v(cv[i]), q) == EQUAL)) ||
           (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))){
