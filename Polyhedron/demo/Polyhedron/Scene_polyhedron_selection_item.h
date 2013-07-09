@@ -25,26 +25,52 @@ struct One_ring_iterator {};
 
 template<>
 struct One_ring_iterator<Polyhedron::Vertex_handle> {
-  One_ring_iterator(Polyhedron::Vertex_handle v) : circ(v->vertex_begin()), end(circ) { }
+  One_ring_iterator(Polyhedron::Vertex_handle v) 
+    : circ(v->vertex_begin()), end(circ), first(true) { }
 
-  operator bool() { return circ != end; }
+  operator bool() { return first || circ != end; }
   operator Polyhedron::Vertex_handle() { return circ->opposite()->vertex(); }
-  One_ring_iterator& operator++() { ++circ; return *this;}
+  One_ring_iterator& operator++() { 
+    first = false;
+    ++circ; 
+    return *this;
+  }
 
   Polyhedron::Halfedge_around_vertex_circulator circ;
   Polyhedron::Halfedge_around_vertex_circulator end;
+  bool first;
 };
 
 template<>
 struct One_ring_iterator<Polyhedron::Facet_handle> {
-  One_ring_iterator(Polyhedron::Facet_handle f) : circ(f->facet_begin()), end(circ) { }
+  One_ring_iterator(Polyhedron::Facet_handle f)
+    : circ(f->facet_begin()), end(circ), first(true)
+  {
+    iterate_to_non_border(); // move it to valid location
+  }
 
-  operator bool() { return circ != end; }
-  operator Polyhedron::Facet_handle() { return circ->opposite()->facet(); }
-  One_ring_iterator& operator++() { ++circ; return *this;}
-
+  operator bool() { return first || circ != end; }
+  operator Polyhedron::Facet_handle() {
+    CGAL_assertion(!circ->opposite()->is_border());
+    return circ->opposite()->facet(); 
+  }
+  One_ring_iterator& operator++() {
+    first = false;
+    ++circ;
+    if(circ != end) { iterate_to_non_border(); }
+    return *this;
+  }
+  
+  void iterate_to_non_border() {
+    while(circ->opposite()->is_border()) {
+      first = false;
+      ++circ;
+      if(circ == end) { break; }
+    }
+  }
   Polyhedron::Halfedge_around_facet_circulator circ;
   Polyhedron::Halfedge_around_facet_circulator end;
+  bool first;
 };
 
 // to be used in get_minimum_isolated_component function
@@ -237,14 +263,14 @@ public:
       while(current_index < C.size()) {
         HandleType current = C[current_index++];
 
-        One_ring_iterator<HandleType> circ(current);
-        do {
+        for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
+        {
           HandleType nv = circ;
           if(!mark[nv->id()] && !is_selected(nv)) {
             mark[nv->id()] = true; 
             C.push_back(nv);
           }
-        } while(++circ);
+        }
       } // while(!Q.empty())
 
       visitor(C);
@@ -500,13 +526,13 @@ protected:
       v = Q.front();
       Q.pop();
 
-      One_ring_iterator<HandleType> circ(v);
-      do {
+      for(One_ring_iterator<HandleType> circ(v); circ; ++circ)
+      {
         HandleType new_v = circ;
         if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
           Q.push(new_v);
         }
-      } while(++circ);
+      }
     }
     return D;
   }
