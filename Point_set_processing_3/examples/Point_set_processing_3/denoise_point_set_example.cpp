@@ -38,8 +38,10 @@ int main(void)
     }
 
     // 
-    int k = 100;
-    int iter_number = 3;
+    int k = 100;  //neighborhood size
+    double sharpness_sigma = 60; // control sharpness(0-90), 
+                                 // the bigger, the smoother.
+    int iter_number = 5; 
 
     CGAL::Timer task_timer;
     task_timer.start();
@@ -47,12 +49,15 @@ int main(void)
 
     for (int i = 0; i < iter_number; i++)
     {
+      std::cout << std::endl << "Iteration: " << i+1 << std::endl;
+     
+      double error = 
       CGAL::denoise_points_with_normals(points.begin(), points.end(),
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            k);
+            k, sharpness_sigma);
 
-      std::cout << "Iteration: " << i << std::endl;
+      std::cout << std::endl << "move error: " << error << std::endl;
     }
 
     long memory = CGAL::Memory_sizer().virtual_size();

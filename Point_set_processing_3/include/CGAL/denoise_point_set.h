@@ -31,6 +31,8 @@
 #include <algorithm>
 #include <cmath>
 #include <ctime>
+#include <CGAL/Timer.h>
+#include <CGAL/Memory_sizer.h>
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 104000
@@ -92,7 +94,7 @@ public:
 /// compute bilateral projection for each point
 /// according to their KNN neighborhood points
 /// 
-/// \pre `k >= 2`, radius > 0
+/// \pre `k >= 2`, radius > 0 , sharpness_sigma > 0 && sharpness_sigma < 90
 ///
 /// @tparam Kernel Geometric traits class.
 /// @tparam Tree KD-tree.
@@ -101,13 +103,16 @@ public:
 
 template <typename Kernel>
 CGAL::Point_with_normal_3<Kernel>
-  compute_denoise_projection(
+compute_denoise_projection(
   const CGAL::Point_with_normal_3<Kernel>& query,      ///< 3D point to project
   const std::vector<CGAL::Point_with_normal_3<Kernel> >& neighbor_pwns,  ///< 
-  const typename Kernel::FT radius          ///< accept neighborhood radius
-  )
+  const typename Kernel::FT radius,          ///< accept neighborhood radius
+  const typename Kernel::FT sharpness_sigma  ///< control sharpness(0-90)
+)
 {
   CGAL_point_set_processing_precondition(radius > 0);
+  CGAL_point_set_processing_precondition(sharpness_sigma > 0
+                                        && sharpness_sigma < 90);
 
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -164,14 +169,13 @@ CGAL::Point_with_normal_3<Kernel>
 /// @tparam Tree KD-tree.
 ///
 /// @return neighbors pwn of query point.
-template < typename Kernel,
-  typename Tree >
-  std::vector<CGAL::Point_with_normal_3<Kernel> >
-  compute_kdtree_neighbors(
+template < typename Kernel,typename Tree >
+std::vector<CGAL::Point_with_normal_3<Kernel> >
+compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                            ///< KD-tree
-  unsigned int k                        ///< number of neighbors                       
-  )                       
+  unsigned int k                        ///< number of neighbors         
+)                       
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -217,7 +221,7 @@ template < typename Kernel,
 template < typename Kernel,
   typename Tree >
   typename Kernel::FT
-  compute_max_spacing(
+compute_max_spacing(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                            ///< KD-tree
   unsigned int k)                        ///< number of neighbors
@@ -285,12 +289,13 @@ template <typename ForwardIterator,
 >
 double
 denoise_points_with_normals(
-ForwardIterator first,  ///< iterator over the first input point.
-ForwardIterator beyond, ///< past-the-end iterator over the input points.
-PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
-const unsigned int k, ///< number of neighbors.
-const Kernel& /*kernel*/) ///< geometric traits.
+  ForwardIterator first,  ///< iterator over the first input point.
+  ForwardIterator beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+  const unsigned int k, ///< number of neighbors.
+  const typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
@@ -329,6 +334,9 @@ const Kernel& /*kernel*/) ///< geometric traits.
 
   unsigned int nb_points = pwn_set.size();
 
+  CGAL::Timer task_timer;
+  task_timer.start();
+  std::cout << "Initilization and guess spacing: " << std::endl;
 
   // initiate a KD-tree search for points
   unsigned int i;
@@ -350,6 +358,13 @@ const Kernel& /*kernel*/) ///< geometric traits.
   }
   guess_neighbor_radius *= 0.95;
 
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "done: " << task_timer.time() << " seconds, "
+    << (memory>>20) << " Mb allocated" << std::endl;
+
+  task_timer.start();
+  std::cout << "Compute all neighbors: " << std::endl;
+
   // compute all neighbors
   std::vector< Pwn_set> pwn_neighbors_set(nb_points);
   for (i = 0 ; i < nb_points; i++)
@@ -359,6 +374,14 @@ const Kernel& /*kernel*/) ///< geometric traits.
       compute_kdtree_neighbors<Kernel, Tree>(pwn, tree, k);
   }
 
+  memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "done: " << task_timer.time() << " seconds, "
+    << (memory>>20) << " Mb allocated" << std::endl;
+  task_timer.stop();  
+
+
+  task_timer.start();
+  std::cout << "Compute update points and normals: " << std::endl;
   // update points and normals
   Pwn_set update_pwn_set(nb_points);
   for (i = 0 ; i < nb_points; i++)
@@ -366,9 +389,14 @@ const Kernel& /*kernel*/) ///< geometric traits.
     Pwn pwn = pwn_set[i];
 
     update_pwn_set[i] = denoise_points_internal::
-      compute_denoise_projection<Kernel>(
-      pwn, pwn_neighbors_set[i], guess_neighbor_radius) ;
+                        compute_denoise_projection<Kernel>(
+           pwn, pwn_neighbors_set[i], guess_neighbor_radius, sharpness_sigma) ;
   }
+
+  memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "done: " << task_timer.time() << " seconds, "
+    << (memory>>20) << " Mb allocated" << std::endl;
+  task_timer.stop(); 
 
   // save results
   FT sum_move_error = 0;
@@ -398,16 +426,16 @@ const Kernel& /*kernel*/) ///< geometric traits.
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
 template <typename ForwardIterator,
-  typename PointPMap,
-  typename NormalPMap
->
+          typename PointPMap,
+          typename NormalPMap>
 double
 denoise_points_with_normals(
-ForwardIterator first, ///< first input point.
-ForwardIterator beyond, ///< past-the-end input point.
-PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-NormalPMap normal_pmap,
-const unsigned int k ///< number of neighbors.
+  ForwardIterator first, ///< first input point.
+  ForwardIterator beyond, ///< past-the-end input point.
+  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
+  NormalPMap normal_pmap,
+  const unsigned int k, ///< number of neighbors.
+  double sharpness_sigma  ///< control sharpness(0-90)
 ) ///< property map OutputIterator -> Vector_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -417,6 +445,7 @@ const unsigned int k ///< number of neighbors.
     point_pmap,
     normal_pmap,
     k,
+    sharpness_sigma,
     Kernel());
 }
 /// @endcond
@@ -424,14 +453,14 @@ const unsigned int k ///< number of neighbors.
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
 template <typename ForwardIterator,
-  typename NormalPMap
->
+          typename NormalPMap>
 double
 denoise_points_with_normals(
-ForwardIterator first, ///< first input point.
-ForwardIterator beyond, ///< past-the-end input point.
-const unsigned int k, ///< number of neighbors.
-NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  ForwardIterator first, ///< first input point.
+  ForwardIterator beyond, ///< past-the-end input point.
+  const unsigned int k, ///< number of neighbors.
+  double sharpness_sigma,  ///< control sharpness(0-90)
+  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
 {
   return denoise_points_with_normals(
     first, beyond,
@@ -442,7 +471,8 @@ NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
     typename std::iterator_traits<ForwardIterator>::value_type()),
 #endif
     normal_pmap, 
-    k);
+    k,
+    sharpness_sigma);
 }
 /// @endcond
 
