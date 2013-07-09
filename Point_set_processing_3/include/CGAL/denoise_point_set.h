@@ -44,27 +44,28 @@ namespace CGAL {
   // Private section
   // ----------------------------------------------------------------------------
   namespace denoise_points_with_normals_internal{
-    // Item in the Kd-tree: position (Point_3) + index
-    template <typename Kernel>
-    class Kd_tree_element : public Kernel::Point_3
-    {
-    public:
-      unsigned int index;
+ // Item in the Kd-tree: position (Point_3) + index
+template <typename Kernel>
+class Kd_tree_element : public Kernel::Point_3
+{
+public:
+  unsigned int index;
 
-      // basic geometric types
-      typedef typename CGAL::Origin Origin;
-      typedef typename Kernel::Point_3 Base;
+  // basic geometric types
+  typedef typename CGAL::Origin Origin;
+  typedef typename Kernel::Point_3 Base;
 
-      Kd_tree_element(const Origin& o = ORIGIN, unsigned int id=0)
-        : Base(o), index(id)
-      {}
-      Kd_tree_element(const Point& p, unsigned int id=0)
-        : Base(p), index(id)
-      {}
-      Kd_tree_element(const Kd_tree_element& other)
-        : Base(other), index(other.index)
-      {}
-    };
+  Kd_tree_element(const Origin& o = ORIGIN, unsigned int id=0)
+    : Base(o), index(id)
+  {}
+  Kd_tree_element(const Base& p, unsigned int id=0)
+    : Base(p), index(id)
+  {}
+  Kd_tree_element(const Kd_tree_element& other)
+    : Base(other), index(other.index)
+  {}
+};
+
 
     // Helper class for the Kd-tree
     template <typename Kernel>
@@ -415,12 +416,13 @@ namespace CGAL {
   {
     return denoise_points_with_normals(
       first, beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       make_dereference_property_map(first),
-#else
-      make_identity_property_map(
-      typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
+//#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+//      make_dereference_property_map(first),
+//#else
+//      make_identity_property_map(
+//      typename std::iterator_traits<ForwardIterator>::value_type()),
+//#endif
       normal_pmap, 
       k);
   }

@@ -25,11 +25,14 @@
 #include <CGAL/Rich_grid.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
-
 #include <iterator>
-#include <algorithm>
-#include <cmath>
 
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 104000
+  #include <boost/property_map/property_map.hpp>
+#else
+  #include <boost/property_map.hpp>
+#endif
 
 //#include <tbb/parallel_for.h>
 //#include <tbb/blocked_range.h>
@@ -319,22 +322,33 @@ regularize_and_simplify_point_set_using_balltree(
   std::vector<Point> sample_points(nb_points_sample);
   unsigned int i; // sample point index
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
-    sample_points[i] = get(point_pmap, it);
-
+  {
+  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      sample_points[i] = get(point_pmap, *it);
+  #else
+      sample_points[i] = get(point_pmap, *it);
+  #endif
+  }
+    
   //Copy original points(Maybe not the best choice)
   std::vector<Point> original_points(nb_points_original);
   for(it = first_original_point, i = 0; it != beyond; ++it, i++)
-    original_points[i] = get(point_pmap, it);
-
+  {
+  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+     original_points[i] = get(point_pmap, it);
+  #else
+     original_points[i] = get(point_pmap, *it);
+  #endif
+  }
 
   // Initilization
   std::vector<Rich_point> original_rich_point_set(nb_points_original);
   std::vector<Rich_point> sample_rich_point_set(nb_points_sample);
 
   rich_grid_internel::Rich_box<Kernel> box;
-  for (it = first_original_point, i = 0; it != beyond ; ++it, i++)
+  for (i = 0; i < nb_points_original; i++)
   {  
-    Point& p0 = get(point_pmap,it);
+    Point& p0 = original_points[i];
     Rich_point rp(p0, i);
     original_rich_point_set[i] = rp;
     box.add_point(rp.pt);
@@ -350,19 +364,22 @@ regularize_and_simplify_point_set_using_balltree(
     rich_grid_internel::compute_ball_neighbors_one_self(original_rich_point_set
                                                        , box, neighbor_radius);
                         
-    for (it = first_original_point, i = 0; it != beyond ; ++it, i++)
+    for (i = 0; i < nb_points_original; i++)
     {
+      // get original point positions from indexes
       std::vector<Point> original_neighbors;
       std::vector<unsigned int>& neighors_indexes = 
                                 original_rich_point_set[i].neighbors;
+
       for (unsigned int j = 0; j < neighors_indexes.size(); j++)
       {
         original_neighbors.push_back(original_points[neighors_indexes[j]]);
       }
 
+      // compute density
       FT density = regularize_and_simplify_internal::
                    compute_density_weight_for_original_point<Kernel>(
-                   get(point_pmap,it),
+                   original_points[i],
                    original_neighbors, neighbor_radius);
 
       original_density_weight_set.push_back(density);
@@ -496,9 +513,15 @@ regularize_and_simplify_point_set_using_balltree(
   //Copy back modified sample points to original points for output
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
   {
-    Point& original_p = get(point_pmap, it);
-    const Point& sample_p = sample_points[i];
-    original_p = sample_p;
+    //Point& original_p = get(point_pmap, it);
+    Point& sample_p = sample_points[i];
+   // original_p = sample_p;
+
+  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      put(point_pmap, sample_p, it);
+  #else
+      put(point_pmap, sample_p, *it);
+  #endif
   }
 
   return first_sample_point;
@@ -548,7 +571,12 @@ regularize_and_simplify_point_set_using_balltree(
 {
   return regularize_and_simplify_point_set_using_balltree(
     first, beyond,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
+#else
+    make_identity_property_map(typename std::iterator_traits<ForwardIterator>::
+                               value_type()),
+#endif
     retain_percentage, neighbor_radius, iter_number, need_compute_density);
 }
 /// @endcond
