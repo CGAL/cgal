@@ -39,7 +39,7 @@ int main()
     traits.construct_curve_2_object();
   Geom_traits_2::Make_x_monotone_2 mk_x_monotone =
     traits.make_x_monotone_2_object();
-  
+
   Point_2 points1[5];
   points1[0] = Point_2(0, 0);
   points1[1] = Point_2(2, 4);
@@ -47,7 +47,7 @@ int main()
   points1[3] = Point_2(4, 4);
   points1[4] = Point_2(6, 0);
   Polyline_2 pi1 = polyline_construct(&points1[0], &points1[5]);
-  
+
   std::list<Point_2> points2;
   points2.push_back(Point_2(1, 3));
   points2.push_back(Point_2(0, 2));
