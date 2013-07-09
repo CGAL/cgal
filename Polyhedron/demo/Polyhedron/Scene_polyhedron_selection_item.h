@@ -436,7 +436,7 @@ public slots:
   }
   void vertex_has_been_selected(void* void_ptr) 
   {
-    if(ui_widget->Selection_type_combo_box->currentIndex() != 0) { return; }
+    if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 0) { return; }
     Vertex_handle clicked_vertex = static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex();
     bool is_insert = ui_widget->Insertion_radio_button->isChecked();
     int k_ring = ui_widget->Brush_size_spin_box->value();
@@ -456,7 +456,7 @@ public slots:
   }
   void facet_has_been_selected(void* void_ptr)
   {
-    if(ui_widget->Selection_type_combo_box->currentIndex() != 1) { return; }
+    if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 1) { return; }
     Facet_handle clicked_facet = static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet();
     bool is_insert = ui_widget->Insertion_radio_button->isChecked();
     int k_ring = ui_widget->Brush_size_spin_box->value();
@@ -500,8 +500,6 @@ protected:
         state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
       }   
     }
-
-    if(!poly_item->visible()) { return false; } // if not visible just update event state but don't do any action
 
     // use mouse move event for paint-like selection
     if(event->type() == QEvent::MouseMove &&
@@ -591,6 +589,7 @@ protected:
 // members
   Ui::Selection* ui_widget;
   Mouse_keyboard_state state;
+  //qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())
 public:
   Selection_set_vertex selected_vertices;
   Selection_set_facet  selected_facets;
