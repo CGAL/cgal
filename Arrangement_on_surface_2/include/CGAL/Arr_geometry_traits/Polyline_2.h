@@ -49,10 +49,11 @@ namespace CGAL {
     protected:
       // The segments that comprise the poyline:
       typedef typename std::vector<Segment_type_2>   Segments_container;
-      typedef typename Segments_container::size_type Segments_container_size;
       Segments_container                             m_segments;
 
     public:
+      typedef typename Segments_container::size_type Segments_size_type;
+
       /*! Default constructor. */
       Polyline_2() : m_segments() {}
 
@@ -172,6 +173,19 @@ namespace CGAL {
       }
 
       /*!
+       * Append a segment to the (x-monotone) polyline.
+       * Warning: This is a risky function! Don't use it! Prefer the
+       *          provided implementation in the traits class.
+       * \param seg The new segment to be appended to the polyline.
+       * \pre If the polyline is not empty, seg source must be the
+       *      same as the target point of the last segment in the polyline.
+       */
+      inline void push_front(const Segment_type_2& seg)
+      {
+        this->m_segments.insert(this->m_segments.begin(), seg);
+      }
+
+      /*!
        * Append a point to the polyline.
        * To properly implemented this function the traits class is needed,
        * thus it is deprecated.
@@ -190,7 +204,7 @@ namespace CGAL {
       Bbox_2 bbox() const
       {
         // Compute the union of the bounding boxes of all segments.
-        unsigned int n = this->number_of_segments();
+        Segments_size_type n = this->number_of_segments();
         Bbox_2 bbox;
         for (unsigned int i = 0; i < n; ++i) {
           bbox = (i > 0) ? (bbox + (*this)[i].bbox()) : (*this)[i].bbox();
@@ -234,7 +248,7 @@ namespace CGAL {
             m_num_pts = 0;
           else
             m_num_pts = (m_cvP->number_of_segments() == 0) ?
-              0 : static_cast<int>(m_cvP->number_of_segments() + 1);
+              0 : (m_cvP->number_of_segments() + 1);
         }
 
       public:
@@ -387,16 +401,14 @@ namespace CGAL {
        * Get the number of segments that comprise the poyline.
        * \return The number of segments.
        */
-      CGAL_DEPRECATED Segments_container_size size() const
-      {
-        return Segments_container_size(m_segments.size());
-      }
+      CGAL_DEPRECATED Segments_size_type size() const
+      { return m_segments.size(); }
 
       /*!
        * Get the number of segments that comprise the poyline.
        * \return The number of segments.
        */
-      Segments_container_size number_of_segments() const
+      Segments_size_type number_of_segments() const
       { return m_segments.size(); }
 
       /*!
@@ -428,7 +440,7 @@ namespace CGAL {
     public:
       typedef Segment_type_2_T                          Segment_type_2;
       typedef Point_type_2_T                            Point_type_2;
-      
+
       typedef Polyline_2<Segment_type_2, Point_type_2>  Base;
 
       /*! Default constructor. */
