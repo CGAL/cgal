@@ -451,10 +451,10 @@ public slots:
   }
 
 signals:
-  void vertex_inserted(Vertex_handle v);
-  void vertex_erased(Vertex_handle v);
-  void facet_inserted(Facet_handle f);
-  void facet_erased(Facet_handle f);
+  void inserted(Vertex_handle v);
+  void inserted(Facet_handle f);
+  void erased(Vertex_handle v);
+  void erased(Facet_handle f);
 
 protected:
   template<class HandleType>
@@ -567,13 +567,6 @@ protected:
       visitor(C);
     }
   }
-
-  // callbacks from Selection_set
-  void inserted(Vertex_handle v) { emit vertex_inserted(v); }
-  void erased(Vertex_handle v) { emit vertex_erased(v); }
-  void inserted(Facet_handle f) { emit facet_inserted(f); }
-  void erased(Facet_handle f) { emit facet_erased(f); }
-  ///////////////////////////////////////
 
   typedef Selection_set<Vertex_handle, Scene_polyhedron_selection_item> Selection_set_vertex;
   typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
