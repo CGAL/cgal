@@ -44,6 +44,8 @@ public:
     connect(ui_widget.Show_selection_check_box, SIGNAL(stateChanged(int)), this, SLOT(on_Show_selection_check_box_stateChanged(int)));
     connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
     connect(ui_widget.Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
+    connect(ui_widget.select_marked_edges_button,  SIGNAL(clicked()),
+            this, SLOT(on_select_marked_edges_button_clicked()));
 
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int))); } 
@@ -132,6 +134,21 @@ public slots:
       { scene->itemChanged(selection_item); } // just for redraw
     }  
   }
+
+  void on_select_marked_edges_button_clicked()
+  {
+    for(Scene_interface::Item_id i = 0,
+          end = scene->numberOfEntries();
+        i < end; ++i)
+    {
+      Scene_polyhedron_selection_item* selection_item =
+        qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
+      if(selection_item) {
+        selection_item->select_marked_edges();
+      }
+    }
+  }
+
   // Convert new coming item to selection item
   void new_item_created(int item_id)
   {

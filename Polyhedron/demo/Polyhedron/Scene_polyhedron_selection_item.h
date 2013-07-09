@@ -15,6 +15,7 @@
 #include <queue>
 #include <vector>
 #include <fstream>
+#include <boost/foreach.hpp>
 
 // Bunch of structs used in Scene_polyhedron_selection_item //
 
@@ -283,6 +284,52 @@ public:
     }
     else {
       get_minimum_isolated_facet_component();
+    }
+  }
+
+  void select_marked_edges() {
+    if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
+      selected_vertices.clear();
+    } else {
+      selected_facets.clear();
+    }
+    for(Polyhedron::Edge_iterator
+          eit = polyhedron()->edges_begin(),
+          end = polyhedron()->edges_end(); eit != end; ++eit)
+    {
+      if(!eit->is_feature_edge()) continue;
+      if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
+        selected_vertices.insert(eit->vertex());
+        selected_vertices.insert(eit->opposite()->vertex());
+      } else {
+        selected_facets.insert(eit->face());
+        selected_facets.insert(eit->opposite()->face());
+      }
+    }
+    for(int i = 0; i < ui_widget->neighb_size->value(); ++i) {
+      if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
+        std::set<Vertex_handle> new_set(selected_vertices);
+        BOOST_FOREACH(Vertex_handle v, selected_vertices)
+        {
+          Polyhedron::Halfedge_around_vertex_circulator
+            he_circ = v->vertex_begin(), end = he_circ;
+          if(he_circ != NULL) do {
+              new_set.insert(he_circ->opposite()->vertex());
+            } while (++he_circ != end);
+        }
+        new_set.swap(selected_vertices);
+      } else {
+        std::set<Facet_handle> new_set(selected_facets);
+        BOOST_FOREACH(Facet_handle f, selected_facets)
+        {
+          Polyhedron::Halfedge_around_facet_circulator
+            he_circ = f->facet_begin(), end = he_circ;
+          if(he_circ != NULL) do {
+              new_set.insert(he_circ->opposite()->facet());
+            } while (++he_circ != end);
+        }
+        new_set.swap(selected_facets);
+      }
     }
   }
 
