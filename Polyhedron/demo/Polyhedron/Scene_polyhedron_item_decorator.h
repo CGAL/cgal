@@ -10,7 +10,7 @@ class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator
 public:  
   /// Create an Scene_polyhedron_item_decorator from a Scene_polyhedron_item.
 
-  Scene_polyhedron_item_decorator(Scene_polyhedron_item* poly_item);
+  Scene_polyhedron_item_decorator(Scene_polyhedron_item* poly_item, bool delete_item = true);
   ~Scene_polyhedron_item_decorator();
 
   /// Returns 0, so that one cannot clone decorator
@@ -45,6 +45,9 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
 
+  bool delete_item() { return delete_poly_item; }
+  void set_delete_item(bool delete_item) { delete_poly_item = delete_item; }
+
 public slots:
   void changed();
   void select(double orig_x,
@@ -56,7 +59,7 @@ public slots:
 
 protected:
   Scene_polyhedron_item* poly_item;
-
+  bool delete_poly_item;
 }; // end class Scene_polyhedron_item_decorator
 
 #endif // SCENE_POLYHEDRON_ITEM_DECORATOR_H

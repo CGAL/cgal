@@ -1,12 +1,15 @@
 #include "Scene_polyhedron_item_decorator.h"
 #include "Polyhedron_type.h"
 
-Scene_polyhedron_item_decorator::Scene_polyhedron_item_decorator(Scene_polyhedron_item* poly_item)
-  : poly_item(poly_item)
+Scene_polyhedron_item_decorator::Scene_polyhedron_item_decorator
+  (Scene_polyhedron_item* poly_item, bool delete_item)
+  : poly_item(poly_item), delete_poly_item(delete_item)
 { }
 
 Scene_polyhedron_item_decorator::~Scene_polyhedron_item_decorator()
-{ delete poly_item; }
+{ 
+  if(delete_poly_item) { delete poly_item; }
+}
 
 Scene_polyhedron_item_decorator* 
 Scene_polyhedron_item_decorator::clone() const {
