@@ -180,7 +180,7 @@ public:
         compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
       ::glNormal3d(n.x(),n.y(),n.z());
 
-      typename Polyhedron::Halfedge_around_facet_circulator
+      Polyhedron::Halfedge_around_facet_circulator
         he = (*it)->facet_begin(),
         cend = he;
 
