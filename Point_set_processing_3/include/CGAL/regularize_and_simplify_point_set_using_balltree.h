@@ -279,7 +279,7 @@ regularize_and_simplify_point_set_using_balltree(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  double retain_percentage, ///< percentage of points to retain.
+  const typename Kernel::FT retain_percentage, ///< percentage to retain.
   const typename Kernel::FT neighbor_radius, ///< size of neighbors.
   const unsigned int iter_number,///< number of iterations.
   const bool need_compute_density, ///< if needed to compute density to 

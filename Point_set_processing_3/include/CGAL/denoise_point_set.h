@@ -174,7 +174,7 @@ std::vector<CGAL::Point_with_normal_3<Kernel> >
 compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                            ///< KD-tree
-  unsigned int k                        ///< number of neighbors         
+  unsigned int k                         ///< number of neighbors         
 )                       
 {
   // basic geometric types

@@ -25,7 +25,7 @@ int main(void)
     // Reads a .xyz point set file in points[].
     std::list<PointVectorPair> points;
     std::ifstream stream("data/fin90_with_PCA_normals.xyz");
-    //std::ifstream stream("data/oni.xyz");
+    //std::ifstream stream("data/sphere_20k_normal.xyz");
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(stream,
                        std::back_inserter(points),
@@ -40,8 +40,8 @@ int main(void)
     // 
     int k = 10;  //neighborhood size
     double sharpness_sigma = 15; // control sharpness(0-90), 
-                                 // the bigger, the smoother.
-    int iter_number = 3; 
+                                 // the bigger, the result will be smoother.
+    int iter_number = 5; //times of projection
 
     CGAL::Timer task_timer;
     task_timer.start();
@@ -72,6 +72,7 @@ int main(void)
     //// over points as well as property maps to access each
     //// point position and normal.
     std::ofstream out("data/fin90_with_PCA_normals_denoised.xyz");  
+    //std::ofstream out("data/sphere_20k_denoised.xyz");  
     if (!out ||
       !CGAL::write_xyz_points_and_normals(
       out, points.begin(), points.end(), 
