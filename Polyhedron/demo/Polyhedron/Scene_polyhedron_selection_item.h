@@ -173,7 +173,7 @@ public:
   typedef Polyhedron::Facet_handle Facet_handle;
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, Ui::Selection* ui_widget) 
-    : Scene_polyhedron_item_decorator(poly_item), 
+    : Scene_polyhedron_item_decorator(poly_item, false), 
       ui_widget(ui_widget),
       selected_vertices(this),
       selected_facets(this)
@@ -191,24 +191,12 @@ public:
     poly_item->update_facet_indices();
   }
 // drawing
-  void draw_edges() const {
-    poly_item->draw_edges();
-    if(rendering_mode == Wireframe) {
-      draw_selected_vertices();
-      draw_selected_facets();
-    }
-  }  
-
   void draw() const {
-    poly_item->draw();
     draw_selected_vertices();
     draw_selected_facets();
   }
 
   void draw_selected_vertices() const {
-    if(selected_vertices.empty() || !ui_widget->Show_selection_check_box->isChecked())
-    { return; }
-
     GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
     glDisable(GL_LIGHTING);
 
@@ -231,12 +219,6 @@ public:
   }
 
   void draw_selected_facets() const {
-    if(selected_facets.empty() ||
-       !ui_widget->Show_selection_check_box->isChecked())
-    {
-      return;
-    }
-
     CGAL::GL::Color color;
     color.set_rgb_color(0.f,1.f,0.f);
 
@@ -270,6 +252,7 @@ public:
     ::glPolygonOffset(offset_factor, offset_units);
   }
 
+  bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
   //void save_roi(const char* file_name) const { 
   //  std::ofstream out(file_name);
   //  // save roi

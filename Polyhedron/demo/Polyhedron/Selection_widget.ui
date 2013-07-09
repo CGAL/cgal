@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>327</width>
-    <height>331</height>
+    <height>337</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,16 +44,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="Show_selection_check_box">
-        <property name="text">
-         <string>Show Selection</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>
@@ -216,6 +206,13 @@
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_selection_item_button">
+      <property name="text">
+       <string>Create Selection Item</string>
+      </property>
      </widget>
     </item>
    </layout>
