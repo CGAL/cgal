@@ -1,4 +1,3 @@
-//kan's version
 #ifndef CGAL_NAIVE_VISIBILITY_2_H
 #define CGAL_NAIVE_VISIBILITY_2_H
 
@@ -12,9 +11,9 @@
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 
-namespace CGAL {
+//namespace CGAL {
 
-namespace Visibility_2 {
+//namespace Visibility_2 {
 
 //debug
 template<typename Point_handle>
@@ -350,27 +349,56 @@ private:
         return Segment_2(e->source()->point(), e->target()->point());
     }
 
+    //check whether two halfedges are the same segment.
+    bool is_same_edge(Halfedge_const_handle e1, Halfedge_const_handle e2) {
+
+    }
+
+    //given two edges incident to a vision ray at the same point, find which one is first seen in sweeping.
+    bool is_closer(const Ray_2 &ray, Halfedge_const_handle seg1, Halfedge_const_handle seg2) {
+        Point_2 shared = intersection_point(ray, seg1);
+        Point_2 end1, end2;
+        if (shared == seg1->source()->point())
+            end1 = seg1->target()->point();
+        else
+            end1 = seg1->source()->point();
+
+        if (shared == seg2->source()->point())
+            end2 = seg2->target()->point();
+        else
+            end2 = seg2->source()->point();
+        if (CGAL::right_turn(ray.source(), shared, end1) && !CGAL::right_turn(ray.source(), shared, end2))
+            return true;
+        if (CGAL::right_turn(ray.source(), shared, end2) && !CGAL::right_turn(ray.source(), shared, end1))
+            return false;
+        switch (CGAL::orientation(ray.source(), shared, end1)) {
+        case CGAL::COLLINEAR:
+            return (CGAL::left_turn(ray.source(), shared, end2));
+        case CGAL::RIGHT_TURN:
+            return (CGAL::right_turn(end1, shared, end2));
+        case CGAL::LEFT_TURN:
+            return (CGAL::left_turn(end1, shared, end2));
+        }
+    }
 
     //insert newly-discovered edges into active_edges according to its intersection with the view ray.
     void insert_halfedge(std::vector<Halfedge_const_handle> &active_edges, const Ray_2 &ray, Halfedge_const_handle edge)
     {
-        Point_2 cross_of_e = intersection_point(ray, halfedge2seg(edge));
+        Point_2 cross_of_e = intersection_point(ray, edge);
         if (cross_of_e != ray.source())
         {
-            typename std::vector<Halfedge_const_handle>::iterator first = active_edges.begin();
-            while (first != active_edges.end())
+            typename std::vector<Halfedge_const_handle>::iterator curr = active_edges.begin();
+            while (curr != active_edges.end())
             {
 
-                Point_2 cross_of_first = intersection_point(ray, halfedge2seg(*first));
-                if (CGAL::compare_distance_to_point(ray.source(), cross_of_e, cross_of_first) == CGAL::SMALLER) {
+                Point_2 cross_of_curr = intersection_point(ray, *curr);
+                if (CGAL::compare_distance_to_point(ray.source(), cross_of_e, cross_of_curr) == CGAL::SMALLER)
+                    break;                
+                if (cross_of_curr == cross_of_e && is_closer(ray, edge, *curr))
                     break;
-                }
-                if (CGAL::compare_distance_to_point(ray.source(), cross_of_e, cross_of_first) == CGAL::EQUAL && CGAL::right_turn((*first)->source()->point(), cross_of_e, edge->source()->point()) ) {
-                    break;
-                }
-                ++first;
+                ++curr;
             }
-            active_edges.insert(first, edge);
+            active_edges.insert(curr, edge);
         }
     }
 
@@ -378,18 +406,18 @@ private:
 
 
     //check whether any edges incident to the vertice, vh, are on the right side of view ray. if yes, then it blocks the view ray.
-    bool Is_block(Vertex_const_handle vh, const Ray_2& ray)
-    {
-        typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
-        first = curr = vh->incident_halfedges();
-        do {
-            Vertex_const_handle u = curr->source();
-            if (CGAL::right_turn(ray.source(), vh->point(), u->point())) {
-                return true;
-            }
-        } while (++curr != first);
-        return false;
-    }
+//    bool Is_block(Vertex_const_handle vh, const Ray_2& ray)
+//    {
+//        typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+//        first = curr = vh->incident_halfedges();
+//        do {
+//            Vertex_const_handle u = curr->source();
+//            if (CGAL::right_turn(ray.source(), vh->point(), u->point())) {
+//                return true;
+//            }
+//        } while (++curr != first);
+//        return false;
+//    }
 
     //insert vh into vertices by the angle between ray<p, vh> and positive x-ray.
     //if the angles are the same, compare their distances to p.
@@ -547,21 +575,23 @@ private:
         return Direction_2(Vector_2(r.source(), p)) == Direction_2(r);
     }
 
-    Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, Point_2& furthest_p) {
-        typename std::vector<Halfedge_const_handle>::iterator eit = edges.begin();
+    Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, Point_2& furthest_p, std::vector<Vertex_const_handle>& collinear_vertices) {
+        typename std::vector<Halfedge_const_handle>::iterator curr = edges.begin();
         Point_2 p = r.source(), target_p, source_p;
+        Vertex_const_handle curr_v;
         do {
-            target_p = (*eit)->target()->point();
-            source_p = (*eit)->source()->point();
+            target_p = (*curr)->target()->point();
+            source_p = (*curr)->source()->point();
+
             if (target_p != p) {
                 p = target_p;
-                Point_2 intersection = intersection_point(r, *eit);
+                Point_2 intersection = intersection_point(r, *curr);
                 if (intersection != target_p && intersection != source_p) {
                     furthest_p = intersection;
                     return INNER;
                 }
                 bool has_right(false), has_left(false);
-                Vertex_const_handle vertex = (*eit)->target();
+                Vertex_const_handle vertex = (*curr)->target();
                 typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
                 first = curr = vertex->incident_halfedges();
                 do {
@@ -579,10 +609,10 @@ private:
                     return CORNER;
                 }
             }
-        } while (++eit != edges.end());
+        } while (++curr != edges.end());
         return UNBOUNDED;
     }
-
+//debug
     void print_active(std::vector<Halfedge_const_handle>& edges){
         for (int i = 0; i != edges.size(); i++) {
             Point_2 p1, p2;
@@ -656,7 +686,7 @@ private:
 
 };
 
-//debug. Print all edges of arrangements into console.
+//For debug. Print all edges of arrangements into console.
 template <typename Arrangement_2>
 void print_arrangement(const Arrangement_2 &arr) {
     typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
@@ -666,8 +696,8 @@ void print_arrangement(const Arrangement_2 &arr) {
       std::cout << "[" << eit->curve() << "]" << std::endl;
 }
 
-} // namespace Visibility_2
-} // namespace CGAL
+//} // namespace Visibility_2
+//} // namespace CGAL
 
 #endif
 
