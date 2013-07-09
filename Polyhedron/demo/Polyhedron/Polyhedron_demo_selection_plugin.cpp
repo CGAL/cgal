@@ -34,17 +34,16 @@ public:
 
     dock_widget = new QDockWidget("Selection", mw);
     dock_widget->setVisible(false);
-    ui_widget = new Ui::Selection();
 
-    ui_widget->setupUi(dock_widget);
+    ui_widget.setupUi(dock_widget);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
     connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
-    connect(ui_widget->Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
-    connect(ui_widget->Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));  
-    connect(ui_widget->Show_selection_check_box, SIGNAL(stateChanged(int)), this, SLOT(on_Show_selection_check_box_stateChanged(int)));
-    connect(ui_widget->Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
-    connect(ui_widget->Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
+    connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
+    connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
+    connect(ui_widget.Show_selection_check_box, SIGNAL(stateChanged(int)), this, SLOT(on_Show_selection_check_box_stateChanged(int)));
+    connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
+    connect(ui_widget.Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
 
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int))); } 
@@ -79,7 +78,8 @@ public slots:
     if(!poly_item) { return NULL; }
 
     QString poly_item_name = poly_item->name();
-    Scene_polyhedron_selection_item* selection_poly = new Scene_polyhedron_selection_item(poly_item, ui_widget);
+    Scene_polyhedron_selection_item* selection_poly =
+      new Scene_polyhedron_selection_item(poly_item, &ui_widget);
     selection_poly->setColor(poly_item->color());
     selection_poly->setName(QString("%1 (selection)").arg(poly_item->name()));
     selection_poly->setRenderingMode(poly_item->renderingMode());
@@ -146,7 +146,7 @@ private:
   QAction* actionSelection;
 
   QDockWidget* dock_widget;
-  Ui::Selection* ui_widget;
+  Ui::Selection ui_widget;
 
 }; // end Polyhedron_demo_selection_plugin
 
