@@ -2149,7 +2149,7 @@ point type, i.e., `Point_2` from the substituted line-segment traits,
 and defines the nested types `Curve_2` and `X_monotone_curve_2`, which
 are used to represent polylines and \f$ x\f$-monotone polylines,
 respectively. A curve of one of these two type is stored as a vector
-of `SegmentTraits::X_monotone_curve_2` objects (namely line segments). 
+of `SegmentTraits::X_monotone_curve_2` objects (namely line segments).
 The nested `X_monotone_curve_2` type inherits from the nested type
 `Curve_2`.
 
@@ -2194,8 +2194,8 @@ directly. Instead, it solely relies on the functionality of the
 substituted segment-traits class. For example, when we need to
 determine the position of a point with respect to an \f$x\f$-monotone
 polyline, we use binary search to locate the relevant segment that
-contains the point in its $x$-range. Then, we compute the position of
-the point with respect to this segment. Thus, operations on $x$-monotone
+contains the point in its \f$x\f$-range. Then, we compute the position of
+the point with respect to this segment. Thus, operations on \f$x\f$-monotone
 polylines of size \f$m\f$ typically take \f$O(\log m)\f$ time.
 
 You are free to choose the underlying line-segment traits class. Your
