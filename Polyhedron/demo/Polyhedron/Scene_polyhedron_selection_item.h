@@ -16,7 +16,7 @@
 #include <vector>
 #include <fstream>
 #include <boost/foreach.hpp>
-
+#include <boost/function_output_iterator.hpp>
 // Bunch of structs used in Scene_polyhedron_selection_item //
 
 // For iterating on one ring neighbor
@@ -115,6 +115,52 @@ struct Mouse_keyboard_state
   Mouse_keyboard_state() : shift_pressing(false), left_button_pressing(false) { }
   bool shift_pressing, left_button_pressing;
 };
+
+// Wrapper for holding selected entities
+template <class Entity, class Listener>
+class Selection_set : public std::set<Entity>
+{
+private:
+  typedef std::set<Entity>                Base;
+  typedef Selection_set<Entity, Listener> Self;
+
+public:
+  Selection_set(Listener* listener = NULL) : listener(listener)
+  { }
+
+  struct Selection_set_inserter {
+    Selection_set_inserter(Self* container) : container(container) { }
+    void operator()(const Entity & e) const {
+      container->insert(e);
+    }
+    Self* container;
+  };
+// types from base
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
+// functions from base
+  using Base::begin;
+  using Base::end;
+  using Base::empty;
+  using Base::clear;
+
+  bool insert(const Entity& entity) {
+    if(listener != NULL) { listener->inserted(entity); } // no matter entity is inserted or not, call notifier
+    return Base::insert(entity).second;
+  }
+
+  bool erase(const Entity& entity) {
+    if(listener != NULL) { listener->erased(entity); } // no matter entity is erased or not, call notifier
+    return Base::erase(entity) != 0;
+  }
+
+  bool is_selected(const Entity& entity) {
+    return Base::find(entity) != end();
+  }
+
+// members
+  Listener* listener;
+};
 //////////////////////////////////////////////////////////////////////////
 
 class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item 
@@ -127,7 +173,10 @@ public:
   typedef Polyhedron::Facet_handle Facet_handle;
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, Ui::Selection* ui_widget) 
-    : Scene_polyhedron_item_decorator(poly_item), ui_widget(ui_widget)
+    : Scene_polyhedron_item_decorator(poly_item), 
+      ui_widget(ui_widget),
+      selected_vertices(this),
+      selected_facets(this)
   { 
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
@@ -141,7 +190,7 @@ public:
     poly_item->update_vertex_indices();
     poly_item->update_facet_indices();
   }
-
+// drawing
   void draw_edges() const {
     poly_item->draw_edges();
     if(rendering_mode == Wireframe) {
@@ -149,6 +198,7 @@ public:
       draw_selected_facets();
     }
   }  
+
   void draw() const {
     poly_item->draw();
     draw_selected_vertices();
@@ -167,7 +217,7 @@ public:
     color.set_rgb_color(0, 1.f, 0);
 
     ::glBegin(GL_POINTS);
-    for(std::set<Vertex_handle>::iterator 
+    for(Selection_set_vertex::iterator 
       it = selected_vertices.begin(),
       end = selected_vertices.end();
     it != end; ++it)
@@ -197,7 +247,7 @@ public:
 
     ::glPolygonOffset(-1.f, 1.f);
     ::glBegin(GL_TRIANGLES);
-    for(std::set<Facet_handle>::iterator
+    for(Selection_set_facet::iterator
           it = selected_facets.begin(),
           end = selected_facets.end();
         it != end; ++it)
@@ -220,62 +270,31 @@ public:
     ::glPolygonOffset(offset_factor, offset_units);
   }
 
-  void save_roi(const char* file_name) const { 
-    std::ofstream out(file_name);
-    // save roi
-    for(std::set<Vertex_handle>::iterator it = selected_vertices.begin();
-      it != selected_vertices.end(); ++it) {
-        out << (*it)->id() << " ";
-    }
-    out.close();
-  }
-  void load_roi(const char* file_name) {
-    // put vertices to vector
-    std::vector<Polyhedron::Vertex_handle> all_vertices;
-    all_vertices.reserve(polyhedron()->size_of_vertices());
-    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
-    for( ;vb != ve; ++vb) {
-      all_vertices.push_back(vb);
-    }
-    // read roi
-    std::ifstream in(file_name);
-    std::size_t idx;
-    while(in >> idx) {
-      selected_vertices.insert(all_vertices[idx]);
-    }
-    in.close();
-  }
-
-  template<class HandleType, class Visitor, class InputIterator>
-  void travel_not_selected_connected_components(
-    Visitor& visitor, InputIterator begin, InputIterator end, std::size_t size) 
-  {
-    std::vector<bool> mark(size, false);
-    for( ;begin != end; ++begin) 
-    {
-      if(mark[begin->id()] || is_selected(begin)) { continue; }
-
-      std::vector<HandleType> C;
-      C.push_back(begin);
-      mark[begin->id()] = true;
-      std::size_t current_index = 0;
-
-      while(current_index < C.size()) {
-        HandleType current = C[current_index++];
-
-        for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
-        {
-          HandleType nv = circ;
-          if(!mark[nv->id()] && !is_selected(nv)) {
-            mark[nv->id()] = true; 
-            C.push_back(nv);
-          }
-        }
-      } // while(!Q.empty())
-
-      visitor(C);
-    }
-  }
+  //void save_roi(const char* file_name) const { 
+  //  std::ofstream out(file_name);
+  //  // save roi
+  //  for(std::set<Vertex_handle>::iterator it = selected_vertices.begin();
+  //    it != selected_vertices.end(); ++it) {
+  //      out << (*it)->id() << " ";
+  //  }
+  //  out.close();
+  //}
+  //void load_roi(const char* file_name) {
+  //  // put vertices to vector
+  //  std::vector<Polyhedron::Vertex_handle> all_vertices;
+  //  all_vertices.reserve(polyhedron()->size_of_vertices());
+  //  Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
+  //  for( ;vb != ve; ++vb) {
+  //    all_vertices.push_back(vb);
+  //  }
+  //  // read roi
+  //  std::ifstream in(file_name);
+  //  std::size_t idx;
+  //  while(in >> idx) {
+  //    selected_vertices.insert(all_vertices[idx]);
+  //  }
+  //  in.close();
+  //}
 
   void select_all() {
     if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
@@ -334,7 +353,7 @@ public:
     }
     for(int i = 0; i < ui_widget->neighb_size->value(); ++i) {
       if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
-        std::set<Vertex_handle> new_set(selected_vertices);
+        std::set<Vertex_handle> new_set;//(selected_vertices);
         BOOST_FOREACH(Vertex_handle v, selected_vertices)
         {
           Polyhedron::Halfedge_around_vertex_circulator
@@ -343,9 +362,11 @@ public:
               new_set.insert(he_circ->opposite()->vertex());
             } while (++he_circ != end);
         }
-        new_set.swap(selected_vertices);
+        BOOST_FOREACH(Vertex_handle v, new_set) {
+          selected_vertices.insert(v);
+        }
       } else {
-        std::set<Facet_handle> new_set(selected_facets);
+        std::set<Facet_handle> new_set;//(selected_facets);
         BOOST_FOREACH(Facet_handle f, selected_facets)
         {
           Polyhedron::Halfedge_around_facet_circulator
@@ -354,7 +375,9 @@ public:
               new_set.insert(he_circ->opposite()->facet());
             } while (++he_circ != end);
         }
-        new_set.swap(selected_facets);
+        BOOST_FOREACH(Facet_handle f, new_set) {
+          selected_facets.insert(f);
+        }
       }
     }
   }
@@ -387,8 +410,9 @@ public:
   }
 
   void select_isolated_vertex_components() {
-    typedef std::insert_iterator<std::set<Vertex_handle> > Output_iterator;
-    Output_iterator out(selected_vertices, selected_vertices.begin());
+    typedef boost::function_output_iterator<
+      Selection_set_vertex::Selection_set_inserter> Output_iterator;
+    Output_iterator out(&selected_vertices);
 
     Selection_visitor<Output_iterator> visitor(ui_widget->Threshold_size_spin_box->value() , out);
     travel_not_selected_connected_components<Vertex_handle>
@@ -401,8 +425,9 @@ public:
   }
 
   void select_isolated_facet_components() {
-    typedef std::insert_iterator<std::set<Facet_handle> > Output_iterator;
-    Output_iterator out(selected_facets, selected_facets.begin());
+    typedef boost::function_output_iterator<
+      Selection_set_facet::Selection_set_inserter> Output_iterator;
+    Output_iterator out(&selected_facets);
 
     Selection_visitor<Output_iterator> visitor(ui_widget->Threshold_size_spin_box->value() , out);
     travel_not_selected_connected_components<Facet_handle>
@@ -419,8 +444,9 @@ public:
     emit itemChanged();
   }
 
-  bool is_selected(Vertex_handle v) { return selected_vertices.find(v) != selected_vertices.end(); }
-  bool is_selected(Facet_handle f) { return selected_facets.find(f) != selected_facets.end(); }
+  bool is_selected(Vertex_handle v) { return selected_vertices.is_selected(v); }
+  bool is_selected(Facet_handle f) { return selected_facets.is_selected(f); }
+
 public slots:
   void changed() {
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -436,11 +462,11 @@ public slots:
     bool any_change = false;
     if(is_insert) {
       for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.insert(it->first).second;
+        any_change |= selected_vertices.insert(it->first);
       }
     }else {
       for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.erase(it->first) != 0;
+        any_change |= selected_vertices.erase(it->first);
       }
     }
     if(any_change) { emit itemChanged(); }
@@ -453,26 +479,25 @@ public slots:
     int k_ring = ui_widget->Brush_size_spin_box->value();
     std::map<Facet_handle, int> selection = extract_k_ring(*polyhedron(), clicked_facet, k_ring);
 
-    std::size_t size_before = selected_facets.size();
+    bool any_change = false;
     if(is_insert) {
       for(std::map<Facet_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        if(selected_facets.insert(it->first).second) {
-          std::cout << "inserted" << std::endl;
-          poly_item->color_vector()[it->first->patch_id()] = QColor(0,255,0);
-        }
+        any_change |= selected_facets.insert(it->first);
       }
     }else {
       for(std::map<Facet_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        if(selected_facets.erase(it->first) != 0) {
-          poly_item->color_vector()[it->first->patch_id()] = poly_item->color();
-        }
+        any_change |= selected_facets.erase(it->first);
       }
     }
     
-    if(size_before != selected_facets.size() /* any change */) {
-      emit itemChanged(); 
-    }
+    if(any_change) { emit itemChanged(); }
   }
+
+signals:
+  void vertex_inserted(Vertex_handle v);
+  void vertex_erased(Vertex_handle v);
+  void facet_inserted(Facet_handle f);
+  void facet_erased(Facet_handle f);
 
 protected:
   bool eventFilter(QObject* /*target*/, QEvent *event)
@@ -514,6 +539,7 @@ protected:
     }//end MouseMove
     return false;
   }
+
   template<class HandleType>
   std::map<HandleType, int> extract_k_ring(const Polyhedron &P, HandleType v, int k)
   {
@@ -537,12 +563,54 @@ protected:
     return D;
   }
 
+  template<class HandleType, class Visitor, class InputIterator>
+  void travel_not_selected_connected_components(
+    Visitor& visitor, InputIterator begin, InputIterator end, std::size_t size) 
+  {
+    std::vector<bool> mark(size, false);
+    for( ;begin != end; ++begin) 
+    {
+      if(mark[begin->id()] || is_selected(begin)) { continue; }
+
+      std::vector<HandleType> C;
+      C.push_back(begin);
+      mark[begin->id()] = true;
+      std::size_t current_index = 0;
+
+      while(current_index < C.size()) {
+        HandleType current = C[current_index++];
+
+        for(One_ring_iterator<HandleType> circ(current); circ; ++circ)
+        {
+          HandleType nv = circ;
+          if(!mark[nv->id()] && !is_selected(nv)) {
+            mark[nv->id()] = true; 
+            C.push_back(nv);
+          }
+        }
+      } // while(!Q.empty())
+
+      visitor(C);
+    }
+  }
+
+  // callbacks from Selection_set
+  void inserted(Vertex_handle v) { emit vertex_inserted(v); }
+  void erased(Vertex_handle v) { emit vertex_erased(v); }
+  void inserted(Facet_handle f) { emit facet_inserted(f); }
+  void erased(Facet_handle f) { emit facet_erased(f); }
+  ///////////////////////////////////////
+
+  typedef Selection_set<Vertex_handle, Scene_polyhedron_selection_item> Selection_set_vertex;
+  typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
+  friend class Selection_set_vertex;
+  friend class Selection_set_facet;
 // members
   Ui::Selection* ui_widget;
   Mouse_keyboard_state state;
 public:
-  std::set<Vertex_handle> selected_vertices;
-  std::set<Facet_handle>  selected_facets;
+  Selection_set_vertex selected_vertices;
+  Selection_set_facet  selected_facets;
 };
 
 #endif 
