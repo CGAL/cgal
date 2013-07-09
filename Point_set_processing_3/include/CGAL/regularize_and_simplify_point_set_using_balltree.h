@@ -513,15 +513,21 @@ regularize_and_simplify_point_set_using_balltree(
   //Copy back modified sample points to original points for output
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
   {
-    //Point& original_p = get(point_pmap, it);
     Point& sample_p = sample_points[i];
-   // original_p = sample_p;
 
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      put(point_pmap, sample_p, it);
+    Point& original_p = get(point_pmap, it);
+    original_p = sample_p;
   #else
-      put(point_pmap, sample_p, *it);
+    Point& original_p = get(point_pmap, *it);
+    original_p = sample_p;
   #endif
+
+  //#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+  //    put(point_pmap, sample_p, it);
+  //#else
+  //    put(point_pmap, sample_p, *it);
+  //#endif
   }
 
   return first_sample_point;
