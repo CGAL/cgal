@@ -10,6 +10,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_visibility_2.h>
 #include <CGAL/test_model_methods.h>
+#include <CGAL/test_utils.h>
 #include <CGAL/Simple_visibility_2.h>
 
 int main() {
@@ -40,5 +41,8 @@ int main() {
     assert(false == (CGAL::test_is_attached<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2> >(visibility)));
     visibility.attach(arr);
     assert(true == (CGAL::test_is_attached<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2> >(visibility)));
+
+    assert(true == (CGAL::test_are_equal<Arrangement_2>(arr, arr)));
+
     return 0;
 }
