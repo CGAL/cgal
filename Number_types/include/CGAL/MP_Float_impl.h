@@ -80,7 +80,6 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     // This is subtle, because ints are not symetric against 0.
 
     // First, scale d, and adjust exp accordingly.
-    exp = 0;
     while (d <  INTERN_MP_FLOAT::trunc_min || d >  INTERN_MP_FLOAT::trunc_max) {
       ++exp;
       d /=  INTERN_MP_FLOAT::base;
@@ -120,21 +119,21 @@ void MP_Float::construct_from_builtin_fp_type(T d)
 }
 
 inline
-MP_Float::MP_Float(float d)
+MP_Float::MP_Float(float d):exp(0)
 {
     construct_from_builtin_fp_type(d);
     CGAL_expensive_assertion(CGAL::to_double(*this) == d);
 }
 
 inline
-MP_Float::MP_Float(double d)
+MP_Float::MP_Float(double d):exp(0)
 {
     construct_from_builtin_fp_type(d);
     CGAL_expensive_assertion(CGAL::to_double(*this) == d);
 }
 
 inline
-MP_Float::MP_Float(long double d)
+MP_Float::MP_Float(long double d):exp(0)
 {
     construct_from_builtin_fp_type(d);
     // CGAL_expensive_assertion(CGAL::to_double(*this) == d);
