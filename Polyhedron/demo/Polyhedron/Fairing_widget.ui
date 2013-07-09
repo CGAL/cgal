@@ -10,12 +10,6 @@
     <height>91</height>
    </rect>
   </property>
-  <property name="toolTip">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adsf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-  </property>
-  <property name="whatsThis">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-  </property>
   <property name="windowTitle">
    <string>Fairing</string>
   </property>

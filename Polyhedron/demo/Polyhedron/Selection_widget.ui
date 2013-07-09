@@ -7,14 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>443</width>
-    <height>311</height>
+    <height>329</height>
    </rect>
-  </property>
-  <property name="toolTip">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adsf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-  </property>
-  <property name="whatsThis">
-   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;adf&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
   </property>
   <property name="windowTitle">
    <string>Selection</string>
