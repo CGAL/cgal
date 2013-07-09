@@ -13,7 +13,7 @@ namespace CGAL {
 
 template <class _Visibility_2>
 bool test_is_attached(_Visibility_2 visibility) {
-    return true;
+    return visibility.is_attached();
 }
 
 } // end CGAL namespace

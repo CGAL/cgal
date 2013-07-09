@@ -25,15 +25,17 @@ public:
 	typedef typename Geometry_traits_2::Vector_2					Vector_2;
 	typedef typename Geometry_traits_2::Segment_2					Segment_2;
 
+	Simple_visibility_2() {};
+
 	/*! Constructor given an arrangement and the Regularization tag. */
-	Simple_visibility_2(const Input_Arrangement_2 &arr/*, Regularization_tag r_t*/): p_arr(arr) {};
+	Simple_visibility_2(const Input_Arrangement_2 &arr/*, Regularization_tag r_t*/): p_arr(&arr) {};
 
 	bool is_attached() {
 		return (p_arr != NULL);
 	}
 
 	void attach(const Input_Arrangement_2 &arr) {
-		p_arr = arr;
+		p_arr = &arr;
 	}
 
 	void detach() {
@@ -94,7 +96,7 @@ public:
 //		Point_2 stored_q(q);
 //		q = Point_2(0, 0);
 
-		if (CGAL::orientation(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN) {
+		if (orientation(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN) {
 			std::cout << "left" << std::endl;
 			upcase = LEFT;
 			i = 1;
@@ -186,14 +188,14 @@ public:
 
 	}
 protected:
-	Input_Arrangement_2 p_arr;
+	const Input_Arrangement_2 *p_arr;
 	std::stack<Point_2> s;
 	std::vector<Point_2> vertices;
 	enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
 
 	bool do_overlap(const Point_2 &a, const Point_2 &b, const Point_2 &c) {
 
-		if (CGAL::collinear(a, b, c)) {
+		if (collinear(a, b, c)) {
 			Segment_2 s1(a, b);
 			Segment_2 s2(a, c);
 			const Segment_2 *seg_overlap;
@@ -211,19 +213,19 @@ protected:
 			std::cout << "done" << std::endl;
 			upcase = FINISH;
 		}
-		else if (CGAL::orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN) {
+		else if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN) {
 			std::cout << "left::left turn with i =" << i << std::endl;
 			upcase = LEFT;
 			s.push(vertices[i+1]);
 			w = vertices[i+1];
 			i++;
 		}
-		else if (CGAL::orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
+		else if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
 			Point_2 s_t = s.top();
 			s.pop();
 			Point_2 s_t_prev = s.top();
 			s.pop();
-			if (CGAL::orientation(s_t_prev, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
+			if (orientation(s_t_prev, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
 				upcase = SCANA;
 				i++;
 			}
@@ -251,24 +253,24 @@ protected:
 				Point_2 s_j_prev = s.top();
 
 				// Check condition (a)
-				if ((CGAL::orientation(query_pt, s_j, vertices[i]) == CGAL::RIGHT_TURN)
-					&& (CGAL::orientation(query_pt, s_j_prev, vertices[i]) == CGAL::LEFT_TURN)) {
+				if ((orientation(query_pt, s_j, vertices[i]) == CGAL::RIGHT_TURN)
+					&& (orientation(query_pt, s_j_prev, vertices[i]) == CGAL::LEFT_TURN)) {
 					found = true;
 					Segment_2 s1(s_j_prev, s_j);
 					Segment_2 s2(query_pt, vertices[i]);
-					CGAL::Object result = CGAL::intersection(s1, s2);
+					CGAL::Object result = intersection(s1, s2);
 					if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
 						s_j = *ipoint;
 					}
 
-					if (CGAL::orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
+					if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
 						upcase = RIGHT;
 						s.push(s_j);
 						i++;
 						w = vertices[i];
 					}
-					else if ((CGAL::orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN)
-							&& (CGAL::orientation(vertices[i-1], vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN)) {
+					else if ((orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN)
+							&& (orientation(vertices[i-1], vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN)) {
 
 						upcase = LEFT;
 						i++;
@@ -286,7 +288,7 @@ protected:
 				else { // Case (b)
 					Segment_2 s1(s_j_prev, s_j);
 					Segment_2 s2(vertices[i-1], vertices[i]);
-					CGAL::Object result = CGAL::intersection(s1, s2);
+					CGAL::Object result = intersection(s1, s2);
 					if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
 						// Keep s_j off the stack
 						upcase = SCAND;
@@ -305,7 +307,7 @@ protected:
 		while (k+1 < vertices.size()-1) {
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(query_pt, s.top());
-			CGAL::Object result = CGAL::intersection(s1, s2);
+			CGAL::Object result = intersection(s1, s2);
 			if (ipoint = CGAL::object_cast<Point_2>(&result)) { 
 				found = true;
 				break;
@@ -313,21 +315,21 @@ protected:
 			k++;
 		}
 		if (found) {
-			if ((CGAL::orientation(query_pt, vertices[k], vertices[k+1]) == CGAL::RIGHT_TURN)
+			if ((orientation(query_pt, vertices[k], vertices[k+1]) == CGAL::RIGHT_TURN)
 				&& (do_overlap(query_pt, s.top(), *ipoint))) {
 
 				upcase = RIGHT;
 				i = k+1;
 				w = *ipoint;
 			}
-			else if ((CGAL::orientation(query_pt, vertices[k], vertices[k+1]) == CGAL::RIGHT_TURN)
+			else if ((orientation(query_pt, vertices[k], vertices[k+1]) == CGAL::RIGHT_TURN)
 				&& (!do_overlap(query_pt, s.top(), *ipoint))) {
 
 				upcase = SCAND;
 				i = k+1;
 				w = *ipoint;
 			}
-			else if ((CGAL::orientation(query_pt, vertices[k], vertices[k+1]) == CGAL::LEFT_TURN)
+			else if ((orientation(query_pt, vertices[k], vertices[k+1]) == CGAL::LEFT_TURN)
 				&& (!do_overlap(query_pt, s.top(), *ipoint))) {
 
 				upcase = LEFT;
@@ -351,7 +353,7 @@ protected:
 		while (k+1 < vertices.size()-1) {
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(s_t, vertices[vertices.size()-1]);
-			CGAL::Object result = CGAL::intersection(s1, s2);
+			CGAL::Object result = intersection(s1, s2);
 			if (ipoint = CGAL::object_cast<Point_2>(&result)) { 
 				found = true;
 				break;
@@ -381,7 +383,7 @@ protected:
 		while (k+1 < vertices.size()-1) {
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(s_t, w);
-			CGAL::Object result = CGAL::intersection(s1, s2);
+			CGAL::Object result = intersection(s1, s2);
 			if (ipoint = CGAL::object_cast<Point_2>(&result)) {
 				found = true;
 				break;
@@ -404,7 +406,7 @@ protected:
 		while (k+1 < vertices.size()-1) {
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(s_t, w);
-			CGAL::Object result = CGAL::intersection(s1, s2);
+			CGAL::Object result = intersection(s1, s2);
 			if (ipoint = CGAL::object_cast<Point_2>(&result)) {
 				found = true;
 				break;
