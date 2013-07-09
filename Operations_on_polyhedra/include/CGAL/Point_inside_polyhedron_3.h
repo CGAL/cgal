@@ -22,15 +22,12 @@
 #ifndef CGAL_POINT_INSIDE_POLYHEDRON_H
 #define CGAL_POINT_INSIDE_POLYHEDRON_H
 
-#include <CGAL/internal/Operations_on_polyhedra/Ray_3_Triangle_3_traversal_traits.h>
+#include <CGAL/internal/Operations_on_polyhedra/Point_inside_vertical_ray_cast.h>
 #include <CGAL/internal/Operations_on_polyhedra/AABB_triangle_accessor_3_primitive.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/point_generators_3.h>
 #include <CGAL/Triangle_accessor_3.h>
-
-#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -57,16 +54,13 @@ class Point_inside_polyhedron_3{
   // typedefs
   typedef CGAL::internal::AABB_triangle_accessor_3_primitive<Kernel, TriangleAccessor_3> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
-  typedef typename Traits::Bounding_box Bounding_box;
   typedef CGAL::AABB_tree<Traits> Tree;
   typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Ray_3 Ray;
+
   //members
   typename Kernel::Construct_ray_3     ray_functor;
   typename Kernel::Construct_vector_3  vector_functor;
   Tree tree;
-
-  const static unsigned int seed = 1340818006;
 
 public:
   /**
@@ -137,53 +131,8 @@ public:
    */
   Bounded_side operator()(const Point& point) const
   {
-    const Bounding_box& bbox = tree.bbox();
-
-    if(   point.x() < bbox.xmin() || point.x() > bbox.xmax()
-       || point.y() < bbox.ymin() || point.y() > bbox.ymax()
-       || point.z() < bbox.zmin() || point.z() > bbox.zmax() )
-    {
-      return ON_UNBOUNDED_SIDE;
-    }
-
-    //the direction of the vertical ray depends on the position of the point in the bbox
-    //in order to limit the expected number of nodes visited.
-    Ray query = ray_functor(point, vector_functor(0,0,(2*point.z() <  tree.bbox().zmax()+tree.bbox().zmin()?-1:1)));
-    boost::optional<Bounded_side> res = is_inside_ray_tree_traversal<Ray,true>(query);
-
-    if(!res) {
-      CGAL::Random rg(seed); // seed some value for make it easy to debug
-      Random_points_on_sphere_3<Point> random_point(1.,rg);
-
-      do { //retry with a random ray
-        query = ray_functor(point, vector_functor(CGAL::ORIGIN,*random_point++));
-        res = is_inside_ray_tree_traversal<Ray,false>(query);
-      } while (!res);
-    }
-    return *res;
+    return internal::Point_inside_vertical_ray_cast<Kernel, Tree>()(point, tree, ray_functor, vector_functor);
   }
-
-private:
-  template <class Query,bool ray_is_vertical>
-  boost::optional<Bounded_side>
-  is_inside_ray_tree_traversal(const Query& query) const
-  {
-    std::pair<boost::logic::tribool,std::size_t> status( boost::logic::tribool(boost::logic::indeterminate), 0);
-
-    internal::Ray_3_Triangle_3_traversal_traits<Traits,Kernel,Boolean_tag<ray_is_vertical> > traversal_traits(status);
-    tree.traversal(query, traversal_traits);
-
-    if ( !boost::logic::indeterminate(status.first) )
-    {
-      if (status.first) {
-        return (status.second&1) == 1 ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
-      }
-      //otherwise the point is on the facet
-      return ON_BOUNDARY;
-    }
-    return boost::optional<Bounded_side>(); // indeterminate
-  }
- 
 };
 
 } // namespace CGAL
