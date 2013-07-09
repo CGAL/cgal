@@ -6,7 +6,7 @@
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/denoise_point_set.h>
 #include <CGAL/Timer.h>
-//#include <CGAL/Memory_sizer.h>
+#include <CGAL/Memory_sizer.h>
 
 #include <utility> // defines std::pair
 #include <list>
@@ -32,13 +32,14 @@ int main(void)
                        CGAL::First_of_pair_property_map<PointVectorPair>(),
                        CGAL::Second_of_pair_property_map<PointVectorPair>()))
     {
-        std::cerr << "Error: cannot read file data/sphere_20k_normal.xyz" << std::endl;
+        std::cerr << "Error: cannot read file data/sphere_20k_normal.xyz" 
+                  << std::endl;
         return EXIT_FAILURE;
     }
 
     // 
-    int k = 200;
-    int iter_number = 5;
+    int k = 100;
+    int iter_number = 3;
 
     CGAL::Timer task_timer;
     task_timer.start();
@@ -50,11 +51,13 @@ int main(void)
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
             k);
+
+      std::cout << "Iteration: " << i << std::endl;
     }
 
     long memory = CGAL::Memory_sizer().virtual_size();
-    std::cout << "done: " << task_timer.time() << " seconds, " ;
-   /*   << (memory>>20) << " Mb allocated" << std::endl;*/
+    std::cout << "done: " << task_timer.time() << " seconds, "
+              << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.stop();  
 
 
@@ -72,6 +75,8 @@ int main(void)
     {
       return EXIT_FAILURE;
     }
+
+    system("Pause");
 
     return EXIT_SUCCESS;
 }
