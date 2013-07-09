@@ -33,7 +33,7 @@ int main(void)
   const unsigned int iter_number = 30;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density to 
                                            // generate more rugularized result, 
-                             // especially when the density of input is uneven.
+                        // especially when the distribution of input is uneven.
 
 
   // Make room for sample points
@@ -64,6 +64,7 @@ int main(void)
             neighbor_radius,
             iter_number,
             need_compute_density);
+
   // Copy results to sample points 
   std::copy(sample_points_begin,
             static_cast<std::vector<Point>::const_iterator>(points.end()),

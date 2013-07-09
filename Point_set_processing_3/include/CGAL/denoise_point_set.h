@@ -32,6 +32,12 @@
 #include <cmath>
 #include <ctime>
 
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 104000
+#include <boost/property_map/property_map.hpp>
+#else
+#include <boost/property_map.hpp>
+#endif
 
 //#include "tbb/parallel_for.h"
 //#include "tbb/blocked_range.h"
@@ -46,14 +52,14 @@ namespace CGAL {
   namespace denoise_points_with_normals_internal{
  // Item in the Kd-tree: position (Point_3) + index
 template <typename Kernel>
-class Kd_tree_element : public Kernel::Point_3
+class Kd_tree_element : public Point_with_normal_3<Kernel>
 {
 public:
   unsigned int index;
 
   // basic geometric types
   typedef typename CGAL::Origin Origin;
-  typedef typename Kernel::Point_3 Base;
+  typedef CGAL::Point_with_normal_3<Kernel> Base;
 
   Kd_tree_element(const Origin& o = ORIGIN, unsigned int id=0)
     : Base(o), index(id)
@@ -308,11 +314,17 @@ public:
     Pwn_set pwn_set;
     for(ForwardIterator it = first; it != beyond; ++it)
     {
-      Point& p  = get(point_pmap, *it);
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      Point& p = get(point_pmap, it);
+      Vector& n = get(normal_pmap, it);
+
+      pwn_set.push_back(Pwn(p, n));
+#else
+      Point& p = get(point_pmap, *it);
       Vector& n = get(normal_pmap, *it);
 
-      Pwn pwn(p, n);
-      pwn_set.push_back(pwn);
+      pwn_set.push_back(Pwn(p, n));
+#endif      
     }
     unsigned int nb_points = pwn_set.size();
 
@@ -333,7 +345,7 @@ public:
     {
       FT max_spacing = denoise_points_with_normals_internal::
         compute_max_spacing<Kernel,Tree>(pwn_set[i], tree, k);
-      guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
+        guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
     }
     guess_neighbor_radius *= 0.95;
 
@@ -348,6 +360,8 @@ public:
       pwn_neighbors_set[i] = denoise_points_with_normals_internal::
         compute_kdtree_neighbors<Kernel, Tree>(pwn, tree, k);
     }
+    std::cout << "computed all neighbors" << std::endl;
+
     // update points and normals
     Pwn_set update_pwn_set(nb_points);
     for (i = 0 ; i < nb_points; i++)
@@ -358,6 +372,7 @@ public:
         compute_denoise_projection<Kernel>(
         pwn, pwn_neighbors_set[i], guess_neighbor_radius) ;
     }
+    std::cout << "computed all compute_denoise_projection" << std::endl;
 
 
     // save results
@@ -365,12 +380,21 @@ public:
     ForwardIterator it;
     for(i = 0, it = first; it != beyond; ++it, i++)
     {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      Point& p = get(point_pmap, it);
+      Vector& n = get(normal_pmap, it);
+
+      sum_move_error += CGAL::squared_distance(p, update_pwn_set[i].position());
+      p = update_pwn_set[i].position();
+      n = update_pwn_set[i].normal();
+#else
       Point& p = get(point_pmap, *it);
       Vector& n = get(normal_pmap, *it);
 
       sum_move_error += CGAL::squared_distance(p, update_pwn_set[i].position());
       p = update_pwn_set[i].position();
       n = update_pwn_set[i].normal();
+#endif  
     }
 
     return sum_move_error / nb_points;
@@ -416,13 +440,12 @@ public:
   {
     return denoise_points_with_normals(
       first, beyond,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       make_dereference_property_map(first),
-//#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-//      make_dereference_property_map(first),
-//#else
-//      make_identity_property_map(
-//      typename std::iterator_traits<ForwardIterator>::value_type()),
-//#endif
+#else
+      make_identity_property_map(
+      typename std::iterator_traits<ForwardIterator>::value_type()),
+#endif
       normal_pmap, 
       k);
   }
