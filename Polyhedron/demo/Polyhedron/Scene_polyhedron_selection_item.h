@@ -430,6 +430,11 @@ public:
   bool is_selected(Vertex_handle v) { return selected_vertices.is_selected(v); }
   bool is_selected(Facet_handle f) { return selected_facets.is_selected(f); }
 
+  bool insert(Vertex_handle v) { return selected_vertices.insert(v); }
+  bool insert(Facet_handle f) { return selected_facets.insert(f); }
+  bool erase(Vertex_handle v) { return selected_vertices.erase(v); }
+  bool erase(Facet_handle f) { return selected_facets.erase(f); }
+
 public slots:
   void changed() {
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -437,43 +442,12 @@ public slots:
   void vertex_has_been_selected(void* void_ptr) 
   {
     if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 0) { return; }
-    Vertex_handle clicked_vertex = static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex();
-    bool is_insert = ui_widget->Insertion_radio_button->isChecked();
-    int k_ring = ui_widget->Brush_size_spin_box->value();
-    std::map<Vertex_handle, int> selection = extract_k_ring(*polyhedron(), clicked_vertex, k_ring);
-
-    bool any_change = false;
-    if(is_insert) {
-      for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.insert(it->first);
-      }
-    }else {
-      for(std::map<Vertex_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_vertices.erase(it->first);
-      }
-    }
-    if(any_change) { emit itemChanged(); }
+    has_been_selected( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
   }
   void facet_has_been_selected(void* void_ptr)
   {
     if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 1) { return; }
-    Facet_handle clicked_facet = static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet();
-    bool is_insert = ui_widget->Insertion_radio_button->isChecked();
-    int k_ring = ui_widget->Brush_size_spin_box->value();
-    std::map<Facet_handle, int> selection = extract_k_ring(*polyhedron(), clicked_facet, k_ring);
-
-    bool any_change = false;
-    if(is_insert) {
-      for(std::map<Facet_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_facets.insert(it->first);
-      }
-    }else {
-      for(std::map<Facet_handle, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
-        any_change |= selected_facets.erase(it->first);
-      }
-    }
-    
-    if(any_change) { emit itemChanged(); }
+    has_been_selected( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
   }
 
 signals:
@@ -483,6 +457,25 @@ signals:
   void facet_erased(Facet_handle f);
 
 protected:
+  template<class HandleType>
+  void has_been_selected(HandleType clicked) {
+    bool is_insert = ui_widget->Insertion_radio_button->isChecked();
+    int k_ring = ui_widget->Brush_size_spin_box->value();
+    std::map<HandleType, int> selection = extract_k_ring(*polyhedron(), clicked, k_ring);
+
+    bool any_change = false;
+    if(is_insert) {
+      for(typename std::map<HandleType, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
+        any_change |= insert(it->first);
+      }
+    }else {
+      for(typename std::map<HandleType, int>::iterator it = selection.begin(); it != selection.end(); ++it) {
+        any_change |= erase(it->first);
+      }
+    }
+    if(any_change) { emit itemChanged(); }
+  }
+
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {
     // This filter is both filtering events from 'viewer' and 'main window'
