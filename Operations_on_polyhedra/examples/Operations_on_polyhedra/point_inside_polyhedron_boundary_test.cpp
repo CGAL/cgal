@@ -85,7 +85,6 @@ void test(
   std::cerr << "  Preprocessing took " << timer.time() << " sec." << std::endl;
   timer.reset();  
 
-  timer.start();
   int nb_inside = 0;
   int nb_boundary = 0;
   for(std::size_t i = 0; i < points.size(); ++i) {
