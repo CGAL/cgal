@@ -25,7 +25,7 @@ public:
 	typedef typename Geometry_traits_2::Vector_2					Vector_2;
 	typedef typename Geometry_traits_2::Segment_2					Segment_2;
 
-	Simple_visibility_2() {};
+	Simple_visibility_2() : p_arr(NULL) {};
 
 	/*! Constructor given an arrangement and the Regularization tag. */
 	Simple_visibility_2(const Input_Arrangement_2 &arr/*, Regularization_tag r_t*/): p_arr(&arr) {};
@@ -43,7 +43,7 @@ public:
 	}
 
 	Input_Arrangement_2 arr() {
-		return p_arr;
+		return *p_arr;
 	}
 
 	void visibility_region(Point_2 &q, 
