@@ -59,6 +59,276 @@ edge_descriptor mesh_split(Polyhedron *polyhedron, edge_descriptor ei, Point pn)
   return en;
 }
 
+template <class Polyhedron, class Graph,
+          class PolyhedronVertexIndexMap, class PolyhedronEdgeIndexMap>
+class CurveSkeleton
+{
+// Public types
+public:
+
+  // Geometric types
+  typedef typename Polyhedron::Traits         Kernel;
+  typedef typename Kernel::Vector_3           Vector;
+  typedef typename Kernel::Point_3            Point;
+
+  // Repeat Polyhedron types
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
+  typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
+  typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+
+// Data members
+private:
+  Graph graph;
+  std::vector<std::vector<int> > edge_to_face;
+  std::vector<std::vector<int> > edge_to_vertex;
+  std::vector<std::vector<int> > vertex_to_edge;
+  std::vector<std::vector<int> > face_to_edge;
+  std::vector<bool> is_vertex_deleted;
+  std::vector<bool> is_edge_deleted;
+  std::vector<bool> is_face_deleted;
+
+  PolyhedronVertexIndexMap vertex_id_pmap;
+  PolyhedronEdgeIndexMap edge_id_pmap;
+
+  Polyhedron *polyhedron;
+
+  struct Edge
+  {
+    int id;
+    double length;
+
+    bool operator <(const Edge& rhs) const
+    {
+      return length < rhs.length;
+    }
+  };
+
+// Public methods
+public:
+  CurveSkeleton(Polyhedron* polyhedron) : polyhedron(polyhedron)
+  {
+    init();
+  }
+
+// Private methods
+private:
+  void init()
+  {
+    int num_edges = boost::num_edges(*polyhedron) / 2;
+    int num_faces = polyhedron->size_of_facets();
+    int num_vertices = boost::num_vertices(*polyhedron);
+    edge_to_face.clear();
+    edge_to_face.resize(num_edges);
+    edge_to_vertex.clear();
+    edge_to_vertex.resize(num_edges);
+    vertex_to_edge.clear();
+    vertex_to_edge.resize(num_vertices);
+    face_to_edge.clear();
+    face_to_edge.resize(num_faces);
+
+    is_vertex_deleted.clear();
+    is_vertex_deleted.resize(num_vertices, false);
+    is_edge_deleted.clear();
+    is_edge_deleted.resize(num_edges, false);
+    is_face_deleted.clear();
+    is_face_deleted.resize(num_faces, false);
+
+    // assign vertex id
+    vertex_iterator vb, ve;
+    vertex_id_count = 0;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+    }
+
+    // assign edge id, the two halfedges belonging to the same edge get the same id
+    edge_iterator eb, ee;
+    int idx = 0;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      boost::put(edge_id_pmap, *eb, -1);
+    }
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edge_descriptor ed = *eb;
+      int id = boost::get(edge_id_pmap, ed);
+      if (id == -1)
+      {
+        boost::put(edge_id_pmap, ed, idx);
+        edge_descriptor ed_opposite = ed->opposite();
+        boost::put(edge_id_pmap, ed_opposite, idx);
+        idx++;
+      }
+    }
+
+    // assign face id and compute edge-face connectivity
+    int face_id = 0;
+    for (Facet_iterator i = polyhedron->facets_begin(); i != polyhedron->facets_end(); ++i)
+    {
+      Halfedge_facet_circulator j = i->facet_begin();
+      // Facets in polyhedral surfaces are at least triangles.
+      CGAL_assertion(CGAL::circulator_size(j) >= 3);
+      do
+      {
+        edge_descriptor ed = *j;
+        int id = boost::get(edge_id_pmap, ed);
+        face_to_edge[face_id].push_back(id);
+        edge_to_face[id].push_back(face_id);
+      } while (++j != i->facet_begin());
+      face_id++;
+    }
+
+    // compute vertex-edge connectivity
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      vertex_descriptor vd = *vb;
+      int vid = boost::get(vertex_id_pmap, vd);
+      in_edge_iterator e, end;
+      for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; e++)
+      {
+        edge_descriptor ed = *e;
+        int eid = boost::get(edge_id_pmap, ed);
+        vertex_to_edge[vid].push_back(eid);
+        edge_to_vertex[eid].push_back(vid);
+      }
+    }
+  }
+
+  void collapse()
+  {
+    std::set<Edge> queue;
+
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      Edge edge;
+
+      edge_descriptor ed = *eb;
+      edge.id = boost::get(edge_id_pmap, ed);
+
+      vertex_descriptor v1 = ed->vertex();
+      vertex_descriptor v2 = ed->opposite()->vertex();
+
+      Point source = v1->point();
+      Point target = v2->point();
+      edge.length = sqrtf(squared_distance(source, target));
+
+      queue.insert(edge);
+    }
+
+    while (!queue.empty())
+    {
+      Edge edge = *(set.begin());
+      set.erase(set.begin());
+
+      int eid = edge.id;
+      // mark the edge and incident faces as deleted
+      is_edge_deleted[eid] = true;
+      for (size_t i = 0; i < edge_to_face[eid].size(); i++)
+      {
+        int fid = edge_to_face[eid][i];
+        is_face_deleted[fid] = true;
+      }
+
+      CGAL_assertion(edge_to_vertex[eid].size() == 2);
+      // p1 to be deleted
+      int p1 = edge_to_vertex[eid][0];
+      int p2 = edge_to_vertex[eid][1];
+      is_vertex_deleted[p1] = true;
+
+      for (size_t i = 0; i < edge_to_face[eid].size(); i++)
+      {
+        int fid = edge_to_face[eid][i];
+        // e1 to be deleted
+        int e1_id, e2_id;
+        for (size_t j = 0; j < face_to_edge[fid].size(); j++)
+        {
+          int ej_id = face_to_edge[fid][j];
+          if (ej_id == eid)
+          {
+            continue;
+          }
+          int ej_p1 = edge_to_vertex[ej_id][0];
+          int ej_p2 = edge_to_vertex[ej_id][1];
+          if (ej_p1 == p1 || ej_p2 == p1)
+          {
+            e1_id = ej_id;
+          }
+          if (ej_p1 == p2 || ej_p2 == p2)
+          {
+            e2_id = ej_id;
+          }
+        }
+        // delete e1 from p1's incident edges
+        for (size_t j = 0; j < vertex_to_edge[p1].size(); j++)
+        {
+          if (vertex_to_edge[p1][j] == e1_id)
+          {
+            vertex_to_edge[p1].erase(vertex_to_edge[p1].begin() + j);
+            break;
+          }
+        }
+
+        // delete the incident face for e2
+        for (size_t j = 0; j < edge_to_face[e2_id].size(); j++)
+        {
+          if (edge_to_face[e2_id][j] == fid)
+          {
+            edge_to_face[e2_id].erase(edge_to_face[e2_id].begin() + j);
+            break;
+          }
+        }
+        // add the new incident face for e2
+        // add e2 for the new incident face
+        for (size_t j = 0; j < edge_to_face[e1_id].size(); j++)
+        {
+          int new_fid = edge_to_face[e1_id][j];
+          if (new_fid != fid && !is_face_deleted[new_fid])
+          {
+            // avoid duplicate
+            if (std::find(edge_to_face[e2_id].begin(),
+                          edge_to_face[e2_id].end(),
+                          new_fid)
+                != edge_to_face[e2_id].end())
+            {
+              edge_to_face[e2_id].push_back(new_fid);
+              face_to_edge[new_fid].push_back(e2_id);
+            }
+          }
+        }
+      }
+
+      // update p2 and new incident edges connectivity
+      for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
+      {
+        int new_eid = vertex_to_edge[p1][i];
+        if (new_eid != eid && !is_edge_deleted[new_eid])
+        {
+          // avoid duplicate
+          if (std::find(vertex_to_edge[p2].begin(),
+                        vertex_to_edge[p2].end(),
+                        new_eid)
+              != vertex_to_edge[p2].end())
+          {
+            vertex_to_edge[p2].push_back(new_eid);
+            for (size_t j = 0; j < edge_to_vertex[new_eid].size(); j++)
+            {
+              if (edge_to_vertex[new_eid][j] == p1)
+              {
+                edge_to_vertex[new_eid][j] = p2;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
 } //namespace internal
 } //namespace CGAL
 
@@ -86,7 +356,7 @@ public:
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
 
-  // Data members.
+// Data members
 private:
 
   Polyhedron* polyhedron;
@@ -143,7 +413,7 @@ private:
 
   };
 
-  // Public methods
+// Public methods
 public:
 
   // The constructor gets the polyhedron that we will model
@@ -274,11 +544,6 @@ public:
       }
     }
 
-//    for (int i = 0; i < nver; i++)
-//    {
-//      A.set_coef(i, i, 0.0, true);
-//      A.set_coef(i + nver, i, omega_H, true);
-//    }
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       int i = boost::get(vertex_id_pmap, *vb);
