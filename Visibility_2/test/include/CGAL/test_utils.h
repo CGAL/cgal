@@ -9,6 +9,8 @@
 #define CGAL_TEST_UTILS_H
 
 #include <cassert>
+#include <fstream>
+#include <vector>
 
 namespace CGAL {
 
@@ -104,6 +106,34 @@ bool test_are_equal(_Arrangement_2 &arr1, _Arrangement_2 &arr2) {
     }
     return true;
 }
+
+template <class _Arrangement_2>
+bool create_arrangement_from_input(_Arrangement_2 &arr, std::ifstream& input) {
+
+    typedef _Arrangement_2 								  Arrangement_2;
+    typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
+    typedef typename Geometry_traits_2::Segment_2         Segment_2;
+    typedef typename Geometry_traits_2::Point_2	          Point_2;
+
+    std::vector<Point_2> points;
+    std::vector<Segment_2> segments;
+    int number_of_points;
+    input >> number_of_points;
+    for (int i = 0; i != number_of_points; i++) {
+        double x,y;
+        input >> x >> y;
+        points.push_back(Point_2(x, y));
+    }
+    int number_of_edges;
+    input >> number_of_edges;
+    for (int i = 0; i != number_of_edges; i++) {
+        unsigned i1,i2;
+        input >> i1 >> i2;
+        segments.push_back(Segment_2(points[i1], points[i2]));
+    }
+    CGAL::insert(arr, segments.begin(), segments.end());
+}
+
 } // end namespace CGAL
 
 #endif 

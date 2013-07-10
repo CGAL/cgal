@@ -402,23 +402,6 @@ private:
         }
     }
 
-
-
-
-    //check whether any edges incident to the vertice, vh, are on the right side of view ray. if yes, then it blocks the view ray.
-//    bool Is_block(Vertex_const_handle vh, const Ray_2& ray)
-//    {
-//        typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
-//        first = curr = vh->incident_halfedges();
-//        do {
-//            Vertex_const_handle u = curr->source();
-//            if (CGAL::right_turn(ray.source(), vh->point(), u->point())) {
-//                return true;
-//            }
-//        } while (++curr != first);
-//        return false;
-//    }
-
     //insert vh into vertices by the angle between ray<p, vh> and positive x-ray.
     //if the angles are the same, compare their distances to p.
     void sort_vertex(std::vector<Vertex_const_handle>& vertices, Vertex_const_handle vh, const Point_2& p)
@@ -577,35 +560,55 @@ private:
 
     Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, Point_2& furthest_p, std::vector<Vertex_const_handle>& collinear_vertices) {
         typename std::vector<Halfedge_const_handle>::iterator curr = edges.begin();
-        Point_2 p = r.source(), target_p, source_p;
-        Vertex_const_handle curr_v;
+        Point_2 p = r.source(), end1, end2;
+        Vertex_const_handle vision_v, vertex1, vertex2;
+        //flag shows whether the left side or right side of needle is blocked.
+        bool block_left, block_right;
         do {
-            target_p = (*curr)->target()->point();
-            source_p = (*curr)->source()->point();
+            Point_2 cross = intersection_point(r, *curr);
+            if (cross != (*curr)->source()->point() && cross != (*curr)->target()->point())
+                return INNER;
+            if (cross == (*curr)->source()->point()) {
+                vertex1 = (*curr)->source();
+                vertex2 = (*curr)->target();
+            }
+            else {
+                vertex1 = (*curr)->target();
+                vertex2 = (*curr)->source();
+            }
+            if (collinear_vertices.empty() || vertex1 != collinear_vertices.back()) {
+                collinear_vertices.push_back(vertex1);
+                //flag shows whether the left side or right side of current vertex is blocked.
+                //has_predecessor indicates whether this vertex is incident to an edge whose another end is between the source of ray and it,
+                //because that will effect the value of block_left, block_right.
+                bool left_v(false), right_v(false), has_predecessor(false);
 
-            if (target_p != p) {
-                p = target_p;
-                Point_2 intersection = intersection_point(r, *curr);
-                if (intersection != target_p && intersection != source_p) {
-                    furthest_p = intersection;
-                    return INNER;
-                }
-                bool has_right(false), has_left(false);
-                Vertex_const_handle vertex = (*curr)->target();
-                typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
-                first = curr = vertex->incident_halfedges();
+                typename Arrangement_2::Halfedge_around_vertex_const_circulator first_edge, curr_edge;
+                first_edge = curr_edge = vh->incident_halfedges();
                 do {
-                    switch (CGAL::orientation(r.source(), curr->target()->point(), curr->source()->point())) {
-                    case CGAL::RIGHT_TURN:
-                        has_right = true;
+                    switch (CGAL::orientation(r.source(), curr_edge->target()->point(), curr_edge->source()->point())) {
+                    case CGAL::RIGHT_TURN :
+                        right_v = true;
                         break;
-                    case CGAL::LEFT_TURN:
-                        has_left = true;
+                    case CGAL::LEFT_TURN :
+                        left_v = true;
                         break;
+                    case CGAL::COLLINEAR :
+                        if (CGAL::compare_distance_to_point(r.source(), curr_edge->target()->point(), curr_edge->source()->point()) == CGAL::LARGER) {
+                            has_predecessor = true;
+                        }
                     }
-                } while (++curr != first);
-                if (has_right && has_left) {
-                    furthest_p = intersection;
+
+                } while (++curr_edge != first_edge);
+                if (has_predecessor) {
+                    block_left = block_left || left_v;
+                    block_right = block_right || right_v;
+                }
+                else {
+                    block_left = left_v;
+                    block_right = right_v;
+                }
+                if (block_left && block_right) {
                     return CORNER;
                 }
             }
