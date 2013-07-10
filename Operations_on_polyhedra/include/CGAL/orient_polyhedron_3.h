@@ -55,14 +55,18 @@ typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
 } // namespace internal
 
 /** 
- * Test whether a polyhedron has correct orientation
- * @pre @a polyhedron.is_closed()
+ * Tests whether a closed polyhedron has a positive orientation. 
+ * A polyhedron is considered to have positive orientation if the normal vectors 
+ * of the facets point outside of the polyhedron. For each facet, its normal vector
+ * is considered to point on the side of the facet where the sequence of vertices of 
+ * the facet is seen counterclockwise.
+ * @pre @a `polyhedron`.is_closed()
+ * @pre @a `polyhedron` is consistently oriented
  *
  * @tparam Polyhedron a %CGAL polyhedron
  *
  * @param polyhedron a closed polyhedron to be tested
  *
- * @return true if orientation is OK
  * @code
  * // use inside out to fix orientation
  * if(!is_oriented(polyhedron)) {
