@@ -22,7 +22,7 @@ typedef std::pair<Point, Vector> PointVectorPair;
 int main(void)
 {
   // Reads a .xyz point set file in points[].
-  std::list<PointVectorPair> points;
+  std::vector<PointVectorPair> points;
   std::ifstream stream("data/before_upsample.xyz");
 
   if (!stream ||
@@ -50,6 +50,7 @@ int main(void)
    CGAL::upsample_point_set(
             points.begin(), 
             points.end(), 
+            std::back_inserter(points),
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
             sharpness_sigma, 

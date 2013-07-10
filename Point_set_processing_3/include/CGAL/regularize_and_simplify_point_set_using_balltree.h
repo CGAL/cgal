@@ -369,7 +369,7 @@ regularize_and_simplify_point_set_using_balltree(
       // get original point positions from indexes
       std::vector<Point> original_neighbors;
       std::vector<unsigned int>& neighors_indexes = 
-                                original_rich_point_set[i].neighbors;
+                                 original_rich_point_set[i].neighbors;
 
       for (unsigned int j = 0; j < neighors_indexes.size(); j++)
       {

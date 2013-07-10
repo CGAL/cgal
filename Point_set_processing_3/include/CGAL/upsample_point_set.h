@@ -74,14 +74,17 @@ base_point_selection(
 
 
   FT best_dist2 = -10.0;
-  Rich_point& v = query;
+  const Rich_point& v = query;
   for (unsigned int i = 0; i < neighbor_points.size(); i++)
   {
-    Rich_point& t = neighbor_points[i];
-    Point mid_point = (v.pt + t.pt) / FT(2.0);
-
-    Vector& vm = v.normal;
-    Vector& tm = t.normal;
+    const Rich_point& t = neighbor_points[i];
+  
+    const Vector& vm = v.normal;
+    const Vector& tm = t.normal;
+    
+    Vector diff_v_t = t.pt - v.pt;
+    Point mid_point = v.pt + diff_v_t / FT(2.0);
+    
     FT dot_produce = pow((FT(2.0) - vm * tm), edge_senstivity);
 
     Vector diff_t_mid = mid_point - t.pt;
@@ -90,9 +93,9 @@ base_point_selection(
 
     for (unsigned int j = 0; j < neighbor_points.size(); j++)
     {
-      Rich_point& s = neighbor_points[j];
+      const Rich_point& s = neighbor_points[j];
       Vector diff_s_mid = mid_point - s.pt;
-      FT prject_s = diff_s_mid * s.normal;
+      FT project_s = diff_s_mid * s.normal;
 
       FT proj_min2 = diff_s_mid.squared_length() - project_s * project_s;
 
@@ -110,7 +113,7 @@ base_point_selection(
     }
   }
 
-  return best_dist2;
+  return sqrt(best_dist2);
 }
 
 } // namespace upsample_internal
@@ -134,17 +137,20 @@ base_point_selection(
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return iterator of the first point to downsampled points.
+/// @return void
 
 // This variant requires all parameters.
-template <typename ForwardIterator, 
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename ForwardIterator, 
           typename PointPMap, 
           typename NormalPMap,
           typename Kernel>
-ForwardIterator
+void
 upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
+  OutputIterator output, ///< output iterator over points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   const typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
@@ -154,8 +160,9 @@ upsample_point_set(
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
-  CGAL_point_set_processing_precondition(neighbor_radius > 0);
-  Timer task_timer;
+  // value_type_traits is a workaround as back_insert_iterator's value_type is void
+  //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+  typedef OutputIteratorValueType Point_with_normal;
 
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
@@ -175,6 +182,8 @@ upsample_point_set(
 
   std::size_t number_of_input = std::distance(first, beyond);
   CGAL_point_set_processing_precondition(number_of_output > number_of_input);
+
+  Timer task_timer;
 
   // copy rich point set
   ForwardIterator it;// point iterator
@@ -200,72 +209,238 @@ upsample_point_set(
                                                       box,
                                                       neighbor_radius);
 
+  unsigned int current_points_size = rich_point_set.size();
+  for (i = 0; i < current_points_size; i++)
+  {
+    Rich_point& v = rich_point_set[i];
+   
+    // extract neighbor rich points by index
+    std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
+    for (unsigned int n = 0; n < v.neighbors.size(); n++)
+    {
+      neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
+    }
 
+    unsigned int base_index = 0;
+    FT density_length = upsample_internal::
+                        base_point_selection(v,
+                                             neighbor_rich_points,
+                                             edge_senstivity,
+                                             base_index);
+    
+    // insert a new rich point
+    Rich_point new_v;
+    Rich_point& base = rich_point_set[base_index];
+    Vector diff_v_base = base.pt - v.pt;
+    new_v.pt = v.pt + diff_v_base / FT(2.0);
+    new_v.index = rich_point_set.size();
 
+    rich_point_set.push_back(new_v);
 
+    // update normal and position of new rich point(bilateral projection)
+//...
+  }
 
-  return first;
+  for (i = number_of_input; i < rich_point_set.size(); i++)
+  {
+    Rich_point& v = rich_point_set[i];
+    Point point = v.pt;
+    Vector normal = v.normal;
+
+    Point_with_normal pwn;
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+    put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+#else
+    put(point_pmap,  pwn, point);  // point_pmap[pwn] = point
+    put(normal_pmap, pwn, normal); // normal_pmap[pwn] = normal
+#endif
+    *output++ = pwn;
+  }
+ 
+  return;
 }
 
+
+
 /// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
-template <typename ForwardIterator, typename PointPMap, typename NormalPMap>
-ForwardIterator
+template <typename OutputIterator,
+          typename ForwardIterator,
+          typename PointPMap,
+          typename NormalPMap,
+          typename Kernel
+>
+void
 upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap, ///< property map:  OutputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
   double sharpness_sigma,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
-  const unsigned int number_of_output_points///< number of iterations.                                  
-) 
+  const unsigned int number_of_output_points,///< number of iterations. 
+  const Kernel& kernel) ///< geometric traits.
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return upsample_point_set(
+  // just deduce value_type of OutputIterator
+  return upsample_point_set
+    <typename value_type_traits<OutputIterator>::type>(
     first, beyond,
+    output,
     point_pmap,
     normal_pmap,
-    sharpness_sigma,
+    sharpness_sigma, 
     edge_senstivity,
-    neighbor_radius,
+    neighbor_radius, 
     number_of_output_points,
-    Kernel());
+    kernel);
 }
+//-----------------------------------------------------------------------------
 /// @endcond
 
+
+
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map.
-template <typename ForwardIterator, typename NormalPMap>
-ForwardIterator
+// This variant deduces the kernel from the point property map.
+//-----------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename ForwardIterator,
+          typename PointPMap,
+          typename NormalPMap
+>
+void
 upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
   double sharpness_sigma,  ///< control sharpness(0-90)
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
-)
+  )
 {
-  return upsample_point_set(
+  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel Kernel;
+  return upsample_point_set
+    <OutputIteratorValueType>(
     first, beyond,
+    output,
+    point_pmap,
+    normal_pmap,
+    sharpness_sigma, 
+    edge_senstivity,
+    neighbor_radius, 
+    number_of_output_points,
+    Kernel());
+}
+
+template <typename OutputIterator,
+          typename ForwardIterator,
+          typename PointPMap,
+          typename NormalPMap
+>
+void
+upsample_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  OutputIterator output, ///< output iterator over points.
+  PointPMap point_pmap, ///< property map: OutputIterator -> Point_3.
+  NormalPMap normal_pmap, ///< property map: OutputIterator -> Vector_3.
+  double sharpness_sigma,  ///< control sharpness(0-90)
+  double edge_senstivity,  ///< edge senstivity(0-5)
+  double neighbor_radius, ///< initial size of neighbors.
+  const unsigned int number_of_output_points///< number of iterations.    
+  )
+{
+  // just deduce value_type of OutputIterator
+  return upsample_point_set
+    <typename value_type_traits<OutputIterator>::type>(// not sure
+    first, beyond,
+    output,
+    point_pmap,
+    normal_pmap,
+    sharpness_sigma, 
+    edge_senstivity,
+    neighbor_radius, 
+    number_of_output_points);
+}
+
+
+
+
+
+//-----------------------------------------------------------------------------
+/// @endcond
+
+/// @cond SKIP_IN_MANUAL
+// This variant creates a default point property map = Identity_property_map.
+//-----------------------------------------------------------------------------
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename ForwardIterator,
+          typename NormalPMap
+>
+void
+upsample_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  OutputIterator output, ///< output iterator over points.
+  NormalPMap normal_pmap,///< property map: OutputIterator->Vector_3.
+  double sharpness_sigma,  ///< control sharpness(0-90)
+  double edge_senstivity,  ///< edge senstivity(0-5)
+  double neighbor_radius, ///< initial size of neighbors.
+  const unsigned int number_of_output_points///< number of iterations.   
+  ) 
+{
+  return upsample_point_set
+    <OutputIteratorValueType>(
+    first, beyond,
+    output,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
+    make_dereference_property_map(output),
 #else
-    make_identity_property_map(typename std::iterator_traits<ForwardIterator>::
-                               value_type()),
+    make_identity_property_map(OutputIteratorValueType()),
 #endif
     normal_pmap,
     sharpness_sigma, 
     edge_senstivity,
     neighbor_radius, 
-    number_of_output_points
-    );
+    number_of_output_points);
 }
-/// @endcond
+
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename ForwardIterator,
+          typename NormalPMap
+>
+bool
+upsample_point_set(
+  ForwardIterator first, ///< iterator over the first input point
+  ForwardIterator beyond, ///< past-the-end iterator
+  OutputIterator output, ///< output iterator over points.
+  NormalPMap normal_pmap, ///< property map:  OutputIterator -> Vector_3.
+  double sharpness_sigma,  ///< control sharpness(0-90)
+  double edge_senstivity,  ///< edge senstivity(0-5)
+  double neighbor_radius, ///< initial size of neighbors.
+  const unsigned int number_of_output_points///< number of iterations.     
+  )
+{
+  // just deduce value_type of OutputIterator
+  return upsample_point_set
+    <typename value_type_traits<OutputIterator>::type>(
+    first, beyond,
+    output,
+    normal_pmap,
+    sharpness_sigma, 
+    edge_senstivity,
+    neighbor_radius, 
+    number_of_output_points);
+}
+
 
 } //namespace CGAL
 
