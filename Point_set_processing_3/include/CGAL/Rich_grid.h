@@ -22,6 +22,10 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/Vector_3.h>
+#include <CGAL/Origin.h>
+#include <CGAL/value_type_traits.h>
 
 #include <iterator>
 #include <algorithm>
@@ -56,16 +60,20 @@ class Rich_point
 {
 public:
   typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
 public:
-  Rich_point(){}
-  Rich_point(const Point& p, const int& i):pt(p),index(i){} 
+  Rich_point(const Point& p = CGAL::ORIGIN,
+             const int& i = 0,
+             const Vector& v = CGAL::NULL_VECTOR
+             ):pt(p),index(i),normal(v){} 
 
   Point pt;
+  Vector normal;
   unsigned int index;
   std::vector<unsigned int> neighbors;
-  std::vector<unsigned int> original_neighbors;
+  std::vector<unsigned int> original_neighbors;//is not necessary
 };
 
 template <typename Kernel>
