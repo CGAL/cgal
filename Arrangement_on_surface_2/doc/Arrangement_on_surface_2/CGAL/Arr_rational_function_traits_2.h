@@ -15,7 +15,7 @@ namespace CGAL {
   A rational function \f$ y = \frac{P(x)}{Q(x)}\f$ is defined by two polynomials 
   \f$ P\f$ and \f$ Q\f$ of arbitrary degrees. 
   If \f$ Q(x) = 1\f$ then the function is a simple polynomial function. 
-  Usually the domain is \f$ \R\f$ but the function may also be 
+  Usually the domain is \f$ \mathbb{R}\f$ but the function may also be 
   restricted to a bounded interval \f$ [x_{\rm min}, x_{\rm max}]\f$ 
   or defined over a ray \f$ (-\infty, x_{\rm max}]\f$ or over \f$ [x_{\rm min}, \infty)\f$. 
   Rational functions are represented by the nested type `Curve_2`. 

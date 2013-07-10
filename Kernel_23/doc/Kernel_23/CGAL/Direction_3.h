@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup kernel_classes3
 
 An object of the class `Direction_3` is a vector in the three-dimensional 
-vector space \f$ \R^3\f$ where we forget about their length. They can be 
+vector space \f$ \mathbb{R}^3\f$ where we forget about their length. They can be 
 viewed as unit vectors, although there is no normalization internally, 
 since this is error prone. Directions are used whenever the length of 
 a vector does not matter. 

@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3TriangulationClasses
 
-Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \R^3\f$. Let 
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. Let 
 \f$ {p}^{(w)}=(p,w_p), p\in\R^3, w_p\in\R\f$ and 
 \f$ {z}^{(w)}=(z,w_z), z\in\R^3, w_z\in\R\f$ be two weighted points. 
 A weighted point 

@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup kernel_classes2
 
 An object `v` of the class `Vector_2` is a vector in the two-dimensional 
-vector space \f$ \R^2\f$. Geometrically spoken, a vector is the difference 
+vector space \f$ \mathbb{R}^2\f$. Geometrically spoken, a vector is the difference 
 of two points \f$ p_2\f$, \f$ p_1\f$ and denotes the direction and the distance 
 from \f$ p_1\f$ to \f$ p_2\f$. 
 

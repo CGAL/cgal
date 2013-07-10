@@ -33,7 +33,7 @@ public:
 /// @{
 
 /*! 
-is the constant 3, i.e.\ the dimension of \f$ \R^3\f$. 
+is the constant 3, i.e.\ the dimension of \f$ \mathbb{R}^3\f$. 
 */ 
 typedef unspecified_type D; 
 

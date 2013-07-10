@@ -15,19 +15,19 @@ geometric information related to the position of vertices.
 \cgal provides 3D geometric triangulations in which these
 two aspects are clearly separated.
 As described in Chapter \ref chapterTriangulation3 "3D Triangulations", a geometric
-triangulation of a set of points in \f$ \R^d\f$, \f$ d\leq 3\f$ is a partition of the
-whole space \f$ \R^d\f$ into cells having \f$ d+1\f$ vertices. Some of them
+triangulation of a set of points in \f$ \mathbb{R}^d\f$, \f$ d\leq 3\f$ is a partition of the
+whole space \f$ \mathbb{R}^d\f$ into cells having \f$ d+1\f$ vertices. Some of them
 are infinite, they are obtained by linking an additional vertex at
 infinity to each facet of the convex hull of the points (see
 Section \ref Triangulation3secintro). 
 The underlying combinatorial graph of such a triangulation
-without boundary of \f$ \R^d\f$ can be seen as a triangulation of the
-topological sphere \f$ S^d\f$ in \f$ \R^{d+1}\f$.
+without boundary of \f$ \mathbb{R}^d\f$ can be seen as a triangulation of the
+topological sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$.
 
 This chapter deals with 3D-triangulation data structures, meant to
 maintain the combinatorial information for 3D-geometric
 triangulations. The reader interested in geometric triangulations of
-\f$ \R^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations".
+\f$ \mathbb{R}^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations".
 
 \section TDS3secintro Representation 
 
@@ -69,7 +69,7 @@ As \cgal explicitly deals with all degenerate cases, a
 the dimension of the triangulation is lower than 3.
 
 Thus, a 3D-triangulation data structure can store a triangulation of a
-topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.
+topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.
 
 Let us give, for each dimension, the example corresponding to the
 triangulation data structure having a minimal number of vertices, i.e.\ a 
@@ -153,7 +153,7 @@ and \f$ c_2\f$ are adjacent and share a facet with vertices \f$ u,v,w\f$, then
 the vertices of \f$ c_1\f$ are numbered \f$ (v_0^1 = u, v_1^1 = v, v_2^1 = w,
 v_3^1)\f$, and the vertices of \f$ c_2\f$ are numbered \f$ (v_0^2 = v, v_1^2 = u,
 v_2^2 = w, v_3^2)\f$, up to positive permutations of \f$ (0,1,2,3)\f$. In
-other words, if we embed the triangulation in \f$ \R^3\f$, then the fourth
+other words, if we embed the triangulation in \f$ \mathbb{R}^3\f$, then the fourth
 vertices \f$ v_3^1\f$ and \f$ v_3^2\f$ of \f$ c_1\f$ and \f$ c_2\f$ see the common facet
 in opposite orientations. See \cgalFigureRef{TDS3figcomborient}.
 
@@ -320,7 +320,7 @@ structures whose vertices respectively store vertex handles of the other one.
 \section TDS_3Design Design and Implementation History
 
 Monique Teillaud introduced the triangulation of the topological
-sphere \f$ S^d\f$ in \f$ \R^{d+1}\f$ to manage the underlying graph of geometric
+sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$ to manage the underlying graph of geometric
 triangulations and handle degenerate dimensions \cite t-tdtc-99.
 
 Sylvain Pion improved the software in several ways, in particular

@@ -11,11 +11,11 @@ namespace CGAL {
 \image html triangulation3.png
 
 The basic 3D-triangulation class of \cgal is primarily designed to
-represent the triangulations of a set of points \f$ A\f$ in \f$ \R^3\f$. It is
+represent the triangulations of a set of points \f$ A\f$ in \f$ \mathbb{R}^3\f$. It is
 a partition of the convex hull of \f$ A\f$ into tetrahedra whose vertices
 are the points of \f$ A\f$. Together with the unbounded cell having the
 convex hull boundary as its frontier, the triangulation forms a
-partition of \f$ \R^3\f$. Its cells (\f$ 3\f$-faces) are such that two cells
+partition of \f$ \mathbb{R}^3\f$. Its cells (\f$ 3\f$-faces) are such that two cells
 either do not intersect or share a common facet (\f$ 2\f$-face), edge
 (\f$ 1\f$-face) or vertex (\f$ 0\f$-face).
 
@@ -42,7 +42,7 @@ cells. Each vertex gives access to one of its incident cells.
 
 The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
 orientation, the positive orientation being defined by the orientation
-of the underlying Euclidean space \f$ \R^3\f$ (see
+of the underlying Euclidean space \f$ \mathbb{R}^3\f$ (see
 \cgalFigureRef{Triangulation3figorient}). The neighbors of a cell are also
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
@@ -66,7 +66,7 @@ endpoints are the vertices of `c` with indices `i` and
 
 The class `Triangulation_3` can also deal with
 triangulations whose dimension \f$ d\f$ is less than 3. A triangulation of a
-set of points in \f$ \R^d\f$ covers the whole space \f$ \R^d\f$ and consists of
+set of points in \f$ \mathbb{R}^d\f$ covers the whole space \f$ \mathbb{R}^d\f$ and consists of
 cells having \f$ d+1\f$ vertices: some of them are infinite, they are
 obtained by linking the additional infinite vertex to each facet of
 the convex hull of the points.
@@ -96,7 +96,7 @@ dimension 2, each cell has only one facet of index 3, and 3 edges
 
 <b>Validity</b>
 
-A triangulation of \f$ \R^3\f$ is said to be *locally valid* iff
+A triangulation of \f$ \mathbb{R}^3\f$ is said to be *locally valid* iff
 
 <B>(a)-(b)</B> Its underlying combinatorial graph, the triangulation
 data structure, is *locally valid* 
@@ -142,7 +142,7 @@ and displacements of points.
 The class `Regular_triangulation_3` implements incremental regular
 triangulations, also known as weighted Delaunay triangulations.
 
-Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \R^3\f$. Let
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. Let
 \f$ {p}^{(w)}=(p,w_p), p\in\R^3, w_p\in\R\f$ and 
 \f$ {z}^{(w)}=(z,w_z), z\in\R^3, w_z\in\R\f$ be two weighted points. 
 A weighted point
@@ -175,7 +175,7 @@ A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
 The regular triangulation of
-\f$ {S}^{(w)}\f$ is in fact the projection onto \f$ \R^3\f$ of the convex hull 
+\f$ {S}^{(w)}\f$ is in fact the projection onto \f$ \mathbb{R}^3\f$ of the convex hull 
 of the four-dimensional points \f$ (p,\|p-O\|^2-w_p),\f$ for
 \f$ {p}^{(w)}=(p,w_p)\in{S}^{(w)}\f$. 
 Note that all points of \f$ {S}^{(w)}\f$ do not

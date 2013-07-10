@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgOptimalDistances
 
 Given a set of points \f$ \mathcal{S}=\left\{p_1,\ldots , p_n\right\}\f$ in 
-\f$ \R^3\f$. The width of \f$ \mathcal{S}\f$, denoted as \f$ \mathcal{W(S)}\f$, is defined 
+\f$ \mathbb{R}^3\f$. The width of \f$ \mathcal{S}\f$, denoted as \f$ \mathcal{W(S)}\f$, is defined 
 as the minimum distance between two parallel planes of support of 
 \f$ \mathit{conv(\mathcal{S})}\f$; where \f$ \mathit{conv(\mathcal{S})}\f$ denotes 
 the convex hull of \f$ \mathcal{S}\f$. The width in direction \f$ \mathbf{d}\f$, 

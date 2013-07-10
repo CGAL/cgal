@@ -164,7 +164,7 @@ to be meshed.
 \subsection Surface_mesherMeshingIsosurfacesDefinedby Meshing Isosurfaces Defined by Implicit Functions
 
 The first code example meshes a sphere
-given as the zero level set of a function \f$ \R^3 \longrightarrow \R\f$.
+given as the zero level set of a function \f$ \mathbb{R}^3 \longrightarrow \R\f$.
 More precisely,
 the surface to be meshed is created
 by the constructor

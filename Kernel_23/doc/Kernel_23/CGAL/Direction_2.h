@@ -3,7 +3,7 @@ namespace CGAL {
 \ingroup kernel_classes2
 
 An object `d` of the class `Direction_2` is a vector in the two-dimensional 
-vector space \f$ \R^2\f$ where we forget about its length. They can be 
+vector space \f$ \mathbb{R}^2\f$ where we forget about its length. They can be 
 viewed as unit vectors, although there is no normalization internally, 
 since this is error prone. Directions are used whenever the length of 
 a vector does not matter. 

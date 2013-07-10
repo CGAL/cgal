@@ -19,7 +19,7 @@ which is a linear approximation of the original shape \cite bb-srmua-97t.
 
 As mentioned in Edelsbrunner's and M&uuml;cke's paper \cite em-tdas-94,
 one can intuitively think of an alpha shape as the
-following. Imagine a huge mass of ice-cream making up the space \f$ \R^3\f$
+following. Imagine a huge mass of ice-cream making up the space \f$ \mathbb{R}^3\f$
 and containing the points as "hard" chocolate pieces. Using one of
 those sphere-formed ice-cream spoons we carve out all parts of the
 ice-cream block we can reach without bumping into chocolate pieces,

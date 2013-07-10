@@ -38,7 +38,7 @@ the dimension of the triangulation is lower than 3
 (see Section \ref TDS3secintro). 
 
 Thus, a 3D-triangulation data structure can store a triangulation of a 
-topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR> 
+topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR> 
 
  
 
@@ -544,8 +544,8 @@ handle.
 Vertex_handle insert_in_edge(Cell_handle c, int i, int j); 
 
 /*! 
-Transforms a triangulation of the sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$ into the 
-triangulation of the sphere \f$ S^{d+1}\f$ of \f$ \R^{d+2}\f$ by adding a new vertex 
+Transforms a triangulation of the sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$ into the 
+triangulation of the sphere \f$ S^{d+1}\f$ of \f$ \mathbb{R}^{d+2}\f$ by adding a new vertex 
 `v`: 
 `v` is linked to all the vertices to triangulate one of the two 
 half-spheres of dimension \f$ (d+1)\f$. Vertex `star` is used to 
@@ -602,8 +602,8 @@ Cell_handle begin, int i, Vertex_handle newv);
 
 /*! 
 This operation is the reciprocal of `insert_increase_dimension()`. 
-It transforms a triangulation of the sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$ into the 
-triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \R^{d}\f$ by removing the vertex 
+It transforms a triangulation of the sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$ into the 
+triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \mathbb{R}^{d}\f$ by removing the vertex 
 `v`. Delete the cells incident to `w`, keep the others. 
 \pre `tds`.`dimension()` \f$ = d \geq-1\f$. `tds`.`degree(v)` \f$ =\f$ `degree(w)` \f$ =\f$ `tds`.`number_of_vertices()` \f$ -1\f$. 
 
@@ -630,8 +630,8 @@ Cell_handle remove_from_maximal_dimension_simplex(Vertex_handle v);
 /*! 
 The link of a vertex \f$ v\f$ is formed by the facets 
 disjoint from \f$ v\f$ that are included in the cells incident to \f$ v\f$. When the link of `v = c->vertex(i)` contains all the other vertices, `decrease_dimension` crushes the 
-triangulation of the sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$ onto the 
-triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \R^{d}\f$ formed by the link of `v` 
+triangulation of the sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$ onto the 
+triangulation of the sphere \f$ S^{d-1}\f$ of \f$ \mathbb{R}^{d}\f$ formed by the link of `v` 
 augmented with the vertex `v` itself, for \f$ d\f$==2,3; this one is placed on the facet `(c, i)` 
 (see Fig. \ref TDS3dim_down). 
 \pre The dimension must be 2 or 3. The degree of `v` must be equal to the total number of vertices of the triangulation data structure minus 1. 

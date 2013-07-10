@@ -78,7 +78,7 @@ polygon vertices is referred to as the polygon <B>(outer) boundary</B>.
 Note that while polygon C has the same curves as polygon B, traversal of the curves leads to crossing over a previously traversed curve, and is therefore neither simple nor relatively simple. 
 
 <LI>A polygon in our context must be relatively simple and its outer boundary vertices must be ordered in a counterclockwise direction around the interior of the polygon.
-We extend the notion of a polygon to a <B>point set</B> in \f$ \R^2\f$
+We extend the notion of a polygon to a <B>point set</B> in \f$ \mathbb{R}^2\f$
 that has a topology of a polygon and its boundary edges must map to
 \f$ x\f$-monotone curves, and refer to it as a <B>general polygon</B>. We
 sometimes use the term <I>polygon</I> instead of general polygon for

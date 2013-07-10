@@ -109,14 +109,14 @@ are the <I>faces</I> of \f$ P\f$. The dimension of a face \f$ s\f$ is the
 dimension of its affine hull, \f$ \dim s := \dim \aff s\f$.
 
 In other words, a <I>face</I> \f$ s\f$ of \f$ P\f$ is a maximal non-empty subset
-of \f$ \R^d\f$ such that all of its points have the same local pyramid \f$ Q\f$
-denoted \f$ \pyr_P(s)\f$. This definition of a face partitions \f$ \R^d\f$ into
+of \f$ \mathbb{R}^d\f$ such that all of its points have the same local pyramid \f$ Q\f$
+denoted \f$ \pyr_P(s)\f$. This definition of a face partitions \f$ \mathbb{R}^d\f$ into
 faces of different dimension. A face \f$ s\f$ is either a subset of \f$ P\f$, or
 disjoint from \f$ P\f$. We use this later in our data structure and store
 a selection mark in each face indicating its set membership.
 
 Faces do not have to be connected. There are only two full-dimensional
-faces possible, one whose local pyramid is the space \f$ \R^d\f$ itself and
+faces possible, one whose local pyramid is the space \f$ \mathbb{R}^d\f$ itself and
 the other with the empty set as a local pyramid.
 All lower-dimensional faces form the <I>boundary</I> of
 the polyhedron. As usual, we call zero-dimensional faces <I>vertices</I> and one-dimensional faces <I>edges</I>. In the case of
