@@ -18,9 +18,9 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 void generate_near_boundary(const Polyhedron& poly, std::vector<Point>& points, std::vector<bool>& on_boundary) {
   CGAL_assertion(poly.is_pure_triangle());
 
-  std::size_t exp_size = poly.size_of_vertices() + poly.size_of_vertices() + poly.size_of_halfedges() / 2;
-  points.resize(exp_size);
-  on_boundary.resize(exp_size);
+  std::size_t exp_size = poly.size_of_vertices() + poly.size_of_facets() + poly.size_of_halfedges() / 2;
+  points.reserve(exp_size);
+  on_boundary.reserve(exp_size);
 
   // put vertices
   for(Polyhedron::Vertex_const_iterator vb = poly.vertices_begin(); vb != poly.vertices_end(); ++vb) {
