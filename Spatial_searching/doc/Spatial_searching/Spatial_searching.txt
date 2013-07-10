@@ -342,8 +342,8 @@ generalization of the binary search tree in higher dimensions. `k-d`
 trees hierarchically decompose space into a relatively small number of
 rectangles such that no rectangle contains too many input objects.
 For our purposes, a <I>rectangle</I> in real  `d` dimensional space,
-\f$ \R^d\f$, is the product of `d` closed intervals on the coordinate axes.
-`k-d` trees are obtained by partitioning point sets in \f$ \R^d\f$ using
+\f$ \mathbb{R}^d\f$, is the product of `d` closed intervals on the coordinate axes.
+`k-d` trees are obtained by partitioning point sets in \f$ \mathbb{R}^d\f$ using
 `(d-1)`-dimensional hyperplanes. Each node in the tree is split into
 two children by one such separating hyperplane. Several splitting
 rules (see Section \ref Spatial_SearchingSplitting_rule_section can

@@ -56,7 +56,7 @@ A type to represent upper and lower bounds of `AlgebraicKernel_d_1::Algebraic_re
 
 The type is `ExplicitInteroperable` with 
 `AlgebraicKernel_d_1::Coefficient` and must be a model 
-`IntegralDomain`, `RealEmbeddable` and dense in \f$ \R\f$. 
+`IntegralDomain`, `RealEmbeddable` and dense in \f$ \mathbb{R}\f$. 
 
 */ 
 typedef unspecified_type Bound; 

@@ -324,7 +324,7 @@ In \cgal we strictly distinguish between points, vectors and directions.
 A *point* is a point in the Euclidean space
 \f$ \E^d\f$, a *vector* is the difference of two points \f$ p_2\f$, \f$ p_1\f$
 and denotes the direction and the distance from \f$ p_1\f$ to \f$ p_2\f$ in the
-vector space \f$ \R^d\f$, and a *direction* is a vector where we forget
+vector space \f$ \mathbb{R}^d\f$, and a *direction* is a vector where we forget
 about its length.
 They are different mathematical concepts. For example, they behave
 different under affine transformations and an addition of two

@@ -37,7 +37,7 @@ public:
 /// @{
 
 /*! 
-is the constant 2, i.e.\ the dimension of \f$ \R^2\f$. 
+is the constant 2, i.e.\ the dimension of \f$ \mathbb{R}^2\f$. 
 */ 
 typedef unspecified_type D; 
 

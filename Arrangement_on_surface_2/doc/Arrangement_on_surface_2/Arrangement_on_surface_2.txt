@@ -1596,7 +1596,7 @@ Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location with respect to the
 bounding bounding rectangle:
 <OL>
-<LI>A vertex, associated with a point in \f$\R^2\f$ whose
+<LI>A vertex, associated with a point in \f$ \mathbb{R}^2\f$ whose
 coordinates are bounded. Such a vertex always lies inside the
 bounding rectangle.
 <LI> \anchor typeunbounded A vertex that represents an unbounded end of an \f$ x\f$-monotone curve
@@ -2415,7 +2415,7 @@ the landmark point-location strategy with this traits class.
 A rational function \f$ y = \frac{P(x)}{Q(x)}\f$ is defined by two
 polynomials \f$ P\f$ and \f$ Q\f$ of arbitrary degrees. If \f$ Q(x) = 1\f$ then
 the function is a simple polynomial function. Usually the domain is
-\f$ \R\f$ but the function may also be restricted to a bounded interval
+\f$ \mathbb{R}\f$ but the function may also be restricted to a bounded interval
 \f$ [x_{\rm min}, x_{\rm max}]\f$ or defined over a ray
 \f$ (-\infty, x_{\rm max}]\f$ or \f$ [x_{\rm min}, \infty)\f$. Rational
 functions are represented by the nested type `Curve_2`.

@@ -24,7 +24,7 @@
 \cgalPkgDescriptionEnd
 
 The triangulation data structure is able to represent a
-triangulation of a topological sphere \f$ S^d\f$ of \f$ \R^{d+1}\f$, for 
+triangulation of a topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for 
 \f$ d \in \{-1,0,1,2,3\}\f$. (See  \ref TDS3secintro.)
 
 The vertex class of a 3D-triangulation data structure must define

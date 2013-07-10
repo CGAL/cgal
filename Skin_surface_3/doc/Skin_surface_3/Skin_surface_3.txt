@@ -104,7 +104,7 @@ this set of weighted points:
 
 Here \f$ \mbox{conv}(\ssWpoint{P}) \subset \R^3\times\R\f$ is the convex
 hull of a set of weighted points \f$ \ssWpoint{P}\f$, whereas \f$ \partial\f$
-denotes the boundary - in \f$ \R^3\f$ - of the union of the corresponding
+denotes the boundary - in \f$ \mathbb{R}^3\f$ - of the union of the corresponding
 set of balls.
 
 Recall that each weighted point in the convex hull of the input
