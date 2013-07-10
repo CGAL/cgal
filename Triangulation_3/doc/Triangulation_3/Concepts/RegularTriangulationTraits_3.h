@@ -50,7 +50,7 @@ typedef unspecified_type Ray_3;
 /*! \name
 We use here the same notation as in Section \ref
 Triangulation3secclassRegulartriangulation. To simplify notation, \f$
-p\f$ will often denote in the sequel either the point \f$ p\in\R^3\f$
+p\f$ will often denote in the sequel either the point \f$ p\in\mathbb{R}^3\f$
 or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 */
 /// @{

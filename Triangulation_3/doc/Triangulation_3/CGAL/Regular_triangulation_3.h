@@ -5,8 +5,8 @@ namespace CGAL {
 \ingroup PkgTriangulation3TriangulationClasses
 
 Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. Let 
-\f$ {p}^{(w)}=(p,w_p), p\in\R^3, w_p\in\R\f$ and 
-\f$ {z}^{(w)}=(z,w_z), z\in\R^3, w_z\in\R\f$ be two weighted points. 
+\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
+\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^3, w_z\in\mathbb{R}\f$ be two weighted points. 
 A weighted point 
 \f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and 
 radius \f$ \sqrt{w_p}\f$. 
