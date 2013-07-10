@@ -233,7 +233,6 @@ public:
                  TriangleAccessor().triangles_end(bounding_polyhedron));
     tree_.build();
     bounding_tree_->build();
-    initialize_grid();
   }
   
   /** 
@@ -271,7 +270,6 @@ public:
                     TriangleAccessor().triangles_end(bounding_polyhedron));
       bounding_tree_ = &tree_;
     }
-    initialize_grid();
   }
 
   /** 
@@ -297,7 +295,6 @@ public:
       tree_.build();
     }
     bounding_tree_ = 0;
-    initialize_grid();
   }
 
   /// Destructor
@@ -572,47 +569,6 @@ protected:
     tree_.build();
   }
   
-  void initialize_grid()
-  {
-#ifdef CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
-    Bounding_box bbox = bounding_tree_->bbox();
-    grid_dx = bbox.xmax() - bbox.xmin();
-    grid_dy = bbox.ymax() - bbox.ymin();
-    grid_dz = bbox.zmax() - bbox.zmin();
-	
-    bbox = Bounding_box(bbox.xmin()-0.01*grid_dx, bbox.ymin()-0.01*grid_dy, bbox.zmin()-0.01*grid_dz,
-                        bbox.xmax()+0.01*grid_dx, bbox.ymax()+0.01*grid_dy, bbox.zmax()+0.01*grid_dz);
-    grid_dx = (bbox.xmax() - bbox.xmin())/19.0;
-    grid_dy = (bbox.ymax() - bbox.ymin())/19.0;
-    grid_dz = (bbox.zmax() - bbox.zmin())/19.0;
-    grid_base = Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin());
- 
-    grid.reserve(20*20*20);
-    int points_inside = 0, points_outside=0;
-    for(int i=0; i < 20; i++){
-      for(int j=0; j < 20; j++){
-        for(int k=0; k < 20; k++){
-          Point_3 p(bbox.xmin()+i*grid_dx, bbox.ymin()+j*grid_dy, bbox.zmin()+k*grid_dz);
-          if(i==0 || j==0 || k==0 || i==19 || j==19 || k==19){
-            grid.push_back(std::make_pair(p,false));
-              points_outside++;	
-          } else {
-            const Segment_3 segment(p, grid.back().first);
-            typename AABB_tree::size_type M = (grid.back().second)? 0 : 1;
-            bool inside = (bounding_tree_->number_of_intersected_primitives(segment)&1) == M;
-            if(inside){
-              points_inside++;
-            }else{
-              points_outside++;
-            }
-            grid.push_back(std::make_pair(p,inside));
-          }
-        }
-      }
-    }
-#endif
-  }
-
 private:
   /// The AABB tree: intersection detection and more
   AABB_tree_ tree_;
@@ -626,12 +582,6 @@ private:
   mutable AABB_primitive_id cached_primitive_id;
 
 public:
-
-#ifdef CGAL_POLYHEDRAL_MESH_DOMAIN_USE_GRID
-  Point_3 grid_base;
-  std::vector<std::pair<Point_3,bool> > grid;
-  double grid_dx, grid_dy, grid_dz;
-#endif
 
   template <typename Query>
   void cache_primitive(const Query& q, 
