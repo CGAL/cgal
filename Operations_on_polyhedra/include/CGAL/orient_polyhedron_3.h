@@ -79,7 +79,7 @@ bool is_oriented(const Polyhedron& polyhedron) {
     = std::min_element(polyhedron.vertices_begin(), polyhedron.vertices_end(), internal::Axis_compare<axis>());
   
   typedef typename Polyhedron::Traits K;
-  const typename K::Vector_3& normal_v_min = internal::compute_vertex_normal<K, typename Polyhedron::Vertex>(*v_min);
+  const typename K::Vector_3& normal_v_min = internal::compute_vertex_normal<K>(*v_min);
 
   CGAL_warning(normal_v_min[axis] != 0);
   return normal_v_min[axis] < 0;
