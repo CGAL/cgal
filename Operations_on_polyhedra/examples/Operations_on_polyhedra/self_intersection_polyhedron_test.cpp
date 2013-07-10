@@ -17,7 +17,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef Polyhedron::Facet_const_handle Facet_const_handle;
 
 int main() {
-  std::ifstream input("camel.off");
+  std::ifstream input("data/camel.off");
   Polyhedron poly;
   if ( !input || !(input >> poly) || poly.empty() ){
     std::cerr << "Error: can not read file.";

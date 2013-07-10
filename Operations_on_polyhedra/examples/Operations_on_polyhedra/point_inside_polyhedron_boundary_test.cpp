@@ -129,7 +129,7 @@ void from_file(const char* file_name, std::vector<Point>& points) {
 }
 
 int main() {
-  std::ifstream input("elephant.off");
+  std::ifstream input("data/elephant.off");
   Polyhedron poly;
   if ( !input || !(input >> poly) || poly.empty() ){
     std::cerr << "Error: can not read file.";
@@ -141,7 +141,6 @@ int main() {
   std::vector<bool> on_boundary;
   generate_near_boundary(poly, points, on_boundary);
   test(poly, points, on_boundary);
-  to_file("elephant_3_boundary.txt", points);
 
   points.clear();
   const int nb_query = (int)1.e6;
