@@ -50,6 +50,15 @@ Release date: September 2013
     bounding box of a range of geometric objects.
 
 
+* 2D Segment Delaunay Graph
+
+  - Add functions insert_points and insert_segments to insert a range of points
+    and segments. These functions uses the spatial sorting in order to speed up
+    the time needed for the insertion. The function insert(Input_iterator
+    first, Input_iterator beyond, Tag_true) has been updated to dispatch the
+    input when possible to these functions.
+
+
 * 2D Triangulations
 
   - Extend the concept TriangulationDataStructure_2 to require a more general
@@ -146,6 +155,36 @@ Release date: September 2013
     Point Sets. However, for most users this change should be transparent if
     the default property maps were used. For convenience, the former behavior
     can be enabled by defining the macro CGAL_USE_PROPERTY_MAPS_API_V1.
+
+
+* 3D Mesh Generation
+
+  - Speed-up Mesh_3 and in particular the global optimizers (Lloyd and ODT) by
+    introducing a parameter do_freeze to prevent from moving vertices which
+    would move of very small displacements.
+
+  - Introduce new data structures and options for speed-up and compacity. Note
+    that Compact_mesh_cell_base_3 and Mesh_vertex_base_3 are now our favoured
+    implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
+    Mesh_cell_base_3 is now deprecated.
+
+  - Introduce a new constructor for Polyhedral_mesh_domain_3 that takes a
+    bounding polyhedron to be meshed along with a polyhedral surface entirely
+    included in it. This allows the user to mesh a polyhedral domain with
+    internal surface(s) which can be non-watertight and even non-manifold.
+
+  - Several documentation bug fixes.
+
+  - Provide the ability to plug in custom cell_base/vertex_base classes into
+    the Mesh_triangulation_3 class.
+
+
+* Concurrency in CGAL
+
+  - Add a FindTBB CMake module so that one can easily link with TBB to write
+    shared-memory parallel code.
+
+  - Introduce two new tags: Sequential_tag and Parallel_tag
 
 
 -------------------------------- Release 4.2 --------------------------------
