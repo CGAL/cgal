@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <queue>
 
+#include <boost/function_output_iterator.hpp>
+
 class Polyhedron_demo_fairing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
@@ -51,6 +53,7 @@ public:
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
     connect(ui_widget->Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
+    connect(ui_widget->Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
   Scene_polyhedron_selection_item* get_selected_item() {
     int item_id = scene->mainSelectionIndex();
@@ -71,6 +74,10 @@ public slots:
     Scene_polyhedron_selection_item* selection_item = get_selected_item();
     if(!selection_item) { return; }
 
+    if(selection_item->selected_vertices.empty()) {
+      print_message("Error: please select a region of vertices!");
+    }
+
     int weight_index = ui_widget->weight_combo_box->currentIndex();
 
     if(weight_index == 1)
@@ -84,7 +91,33 @@ public slots:
     selection_item->changed_with_poly_item();
   }
 
+  void on_Refine_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item();
+    if(!selection_item) { return; }
+
+    if(selection_item->selected_facets.empty()) {
+      print_message("Error: please select a region of facets!");
+    }
+
+    double alpha = ui_widget->Density_control_factor_spin_box->value();
+    std::vector<Polyhedron::Facet_handle> new_facets;
+
+    CGAL::refine(*selection_item->polyhedron(), selection_item->selected_facets.begin(),
+      selection_item->selected_facets.end(), std::back_inserter(new_facets), Nop_out(), alpha, true);
+    // add new facets to selection
+    for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
+      selection_item->selected_facets.insert(*it);
+    }
+    selection_item->changed_with_poly_item();
+  }
+
 private:
+  struct Nop_functor {
+    template<class T>
+    void operator()(const T & /*t*/) const {}
+  };
+  typedef boost::function_output_iterator<Nop_functor> Nop_out;
+
   QMainWindow* mw;
   Scene_interface* scene;
   Messages_interface* messages;
