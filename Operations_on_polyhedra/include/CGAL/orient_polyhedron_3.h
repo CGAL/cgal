@@ -1,3 +1,6 @@
+#ifndef CGAL_ORIENT_POLYHEDRON_3
+#define CGAL_ORIENT_POLYHEDRON_3
+
 #include <algorithm>
 #include <CGAL/circulator.h>
 
@@ -89,3 +92,4 @@ bool is_oriented(const Polyhedron& polyhedron) {
   return normal_v_min[axis] < 0;
 } 
 } // namespace CGAL
+#endif // CGAL_ORIENT_POLYHEDRON_3

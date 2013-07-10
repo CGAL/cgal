@@ -19,8 +19,8 @@
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
 
 
-#ifndef CGAL_ORIENT_POLYHEDRON_3
-#define CGAL_ORIENT_POLYHEDRON_3
+#ifndef CGAL_ORIENT_POLYGON_SOUP
+#define CGAL_ORIENT_POLYGON_SOUP
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Modifier_base.h>
@@ -279,4 +279,4 @@ public:
 
 }// namespace CGAL
 
-#endif // CGAL_ORIENT_POLYHEDRON_3
+#endif // CGAL_ORIENT_POLYGON_SOUP
