@@ -154,7 +154,7 @@ private:
     return flips > 0;
   }
 
-  double average_length(Vertex_handle vh, const std::set<Facet_handle>& interior_map)
+  double average_length(Vertex_handle vh, const std::set<Facet_handle>& interior_map, bool accept_internal_facets)
   {
     const Point_3& vp = vh->point(); 
     Halfedge_around_vertex_circulator circ(vh->vertex_begin()), done(circ);
@@ -162,22 +162,26 @@ private:
     double sum = 0;
     do {
       Facet_handle f(circ->facet()), f_op(circ->opposite()->facet());
-      if(interior_map.find(f) != interior_map.end() && interior_map.find(f_op) != interior_map.end())
-      { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
+
+      if(!accept_internal_facets) {
+        if(interior_map.find(f) != interior_map.end() && interior_map.find(f_op) != interior_map.end())
+        { continue; } // which means current edge is an interior edge and should not be included in scale attribute calculation
+      }
 
       const Point_3& vq = circ->opposite()->vertex()->point();
       sum += std::sqrt(CGAL::squared_distance(vp, vq));
       ++deg;
     } while(++circ != done);
 
-    CGAL_assertion(deg != 0); // interior vertices are not accepted
+    CGAL_assertion(deg != 0); // this might happen when accept_internal_facets = false but there is
     return sum/deg;
   }
 
   void calculate_scale_attribute(
     const std::vector<Facet_handle>& facets, 
     const std::set<Facet_handle>& interior_map,
-    std::map<Vertex_handle, double>& scale_attribute) 
+    std::map<Vertex_handle, double>& scale_attribute,
+    bool accept_internal_facets) 
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
       Halfedge_around_facet_circulator circ((*f_it)->facet_begin()), done(circ);
@@ -186,7 +190,7 @@ private:
         std::pair<typename std::map<Vertex_handle, double>::iterator, bool> v_insert 
           = scale_attribute.insert(std::make_pair(v, 0));
         if(!v_insert.second) { continue; } // already calculated
-        v_insert.first->second = average_length(v, interior_map);
+        v_insert.first->second = average_length(v, interior_map, accept_internal_facets);
       } while(++circ != done);
     }
   }
@@ -197,13 +201,14 @@ public:
     InputIterator facet_end, 
     FacetOutputIterator& facet_out,
     VertexOutputIterator& vertex_out,
-    double alpha)
+    double alpha,
+    bool accept_internal_facets)
   {
     std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<Facet_handle> interior_map(facet_begin, facet_end);
 
     std::map<Vertex_handle, double> scale_attribute;
-    calculate_scale_attribute(facets, interior_map, scale_attribute);
+    calculate_scale_attribute(facets, interior_map, scale_attribute, accept_internal_facets);
 
     int i = 0;
     do {
@@ -231,7 +236,7 @@ public:
 
 /** 
  * @brief Function refining a region on surface mesh
- * @warning There should be no interior facets inside the given region
+ * @warning There should be no interior facets inside the given region with default `accept_internal_facets` parameter
  *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam InputIterator iterator over input facets
@@ -248,7 +253,6 @@ public:
  *
  * @return pair of `facet_out` and `vertex_out`
  *
- * @todo we can accept interior facets by changing how we calculate 'average_length'
  * @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
  */
 template<class Polyhedron, class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
@@ -258,11 +262,12 @@ refine(Polyhedron& poly,
   InputIterator facet_end,
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0)
-  )
+  double density_control_factor = std::sqrt(2.0),
+  bool accept_internal_facets = false)
 {
   internal::Refine_Polyhedron_3<Polyhedron> refine_functor;
-  refine_functor.refine(poly, facet_begin, facet_end, facet_out, vertex_out, density_control_factor);
+  refine_functor.refine
+    (poly, facet_begin, facet_end, facet_out, vertex_out, density_control_factor, accept_internal_facets);
   return std::make_pair(facet_out, vertex_out);
 }
 
