@@ -46,14 +46,16 @@ int main(void)
   task_timer.start();
   std::cout << "Run upsample algorithm example: " << std::endl;
 
-  // Run algorithm using ball-tree
-   //CGAL::upsample_point_set(
-   //         points.begin(), 
-   //         points.end(), 
-   //         sharpness_sigma, 
-   //         edge_senstivity,
-   //         neighbor_radius,
-   //         number_of_output_points);
+   //Run algorithm using ball-tree
+   CGAL::upsample_point_set(
+            points.begin(), 
+            points.end(), 
+            CGAL::First_of_pair_property_map<PointVectorPair>(),
+            CGAL::Second_of_pair_property_map<PointVectorPair>(),
+            sharpness_sigma, 
+            edge_senstivity,
+            neighbor_radius,
+            number_of_output_points);
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "done: " << task_timer.time() << " seconds, " 

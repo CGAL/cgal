@@ -63,7 +63,7 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> > 
+  const std::vector<rich_grid_internel::Rich_point<Kernel> >& 
                     neighbor_original_points,///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set ///< densities
@@ -117,7 +117,7 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> > 
+  const std::vector<rich_grid_internel::Rich_point<Kernel> >& 
              neighbor_sample_points, ///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set ///< densities
@@ -179,7 +179,7 @@ template <typename Kernel>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<typename Kernel::Point_3> neighbor_original_points, ///< 
+  const std::vector<typename Kernel::Point_3>& neighbor_original_points, ///< 
   const typename Kernel::FT radius ///<accept neighborhood radius
 )
 {
@@ -219,7 +219,7 @@ template <typename Kernel>
 typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<typename Kernel::Point_3> neighbor_sample_points, ///< 
+  const std::vector<typename Kernel::Point_3>& neighbor_sample_points, ///< 
   const typename Kernel::FT radius
 )
 {

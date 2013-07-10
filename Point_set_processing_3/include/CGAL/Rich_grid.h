@@ -69,6 +69,7 @@ public:
              const Vector& v = CGAL::NULL_VECTOR
              ):pt(p),index(i),normal(v){} 
 
+public:
   Point pt;
   Vector normal;
   unsigned int index;

@@ -283,10 +283,9 @@ compute_max_spacing(
 
 // This variant requires all parameters.
 template <typename ForwardIterator,
-  typename PointPMap,
-  typename NormalPMap,
-  typename Kernel
->
+          typename PointPMap,
+          typename NormalPMap,
+          typename Kernel>
 double
 denoise_points_with_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -433,7 +432,7 @@ denoise_points_with_normals(
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
   PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap,
+  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   const unsigned int k, ///< number of neighbors.
   double sharpness_sigma  ///< control sharpness(0-90)
 ) ///< property map OutputIterator -> Vector_3.
