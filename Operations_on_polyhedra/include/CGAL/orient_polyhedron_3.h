@@ -72,7 +72,7 @@ typename Kernel::Vector_3 compute_vertex_normal(const Vertex& v)
  */
 template<class Polyhedron>
 bool is_oriented(const Polyhedron& polyhedron) {
-  CGAL_assertion(polyhedron.is_closed());
+  CGAL_precondition(polyhedron.is_closed());
   const unsigned int axis = 0;
 
   typename Polyhedron::Vertex_const_iterator v_min 
