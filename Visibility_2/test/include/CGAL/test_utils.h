@@ -23,7 +23,7 @@ namespace CGAL {
  * from each arrangements, then it walks the edges and compares them
  */
 template <class _Arrangement_2> 
-bool test_are_equal(_Arrangement_2 &arr1, _Arrangement_2 &arr2) {
+bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
 
 	typedef _Arrangement_2 								  Arrangement_2;
 	typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
