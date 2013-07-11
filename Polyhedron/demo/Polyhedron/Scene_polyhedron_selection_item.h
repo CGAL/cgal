@@ -39,6 +39,10 @@ struct One_ring_iterator<Polyhedron::Vertex_handle> {
   Polyhedron::Halfedge_around_vertex_circulator circ;
   Polyhedron::Halfedge_around_vertex_circulator end;
   bool first;
+  // to be used in One_ring_iterator<Halfedge_handle>
+  operator Polyhedron::Halfedge_handle() { 
+    return &*circ < &*circ->opposite() ? circ : circ->opposite(); 
+  }
 };
 
 template<>
@@ -71,6 +75,26 @@ struct One_ring_iterator<Polyhedron::Facet_handle> {
   Polyhedron::Halfedge_around_facet_circulator circ;
   Polyhedron::Halfedge_around_facet_circulator end;
   bool first;
+};
+
+template<>
+struct One_ring_iterator<Polyhedron::Halfedge_handle> {
+  One_ring_iterator(Polyhedron::Halfedge_handle h)
+    : it_1(h->vertex()), it_2(h->opposite()->vertex())
+  { }
+
+  operator bool() { return it_1 || it_2; }
+  operator Polyhedron::Halfedge_handle() {
+     if(it_1) { return it_1; }
+     return it_2;
+  }
+  One_ring_iterator& operator++() {
+    it_1 ? ++it_1 : ++it_2;
+    return *this;
+  }
+
+  One_ring_iterator<Polyhedron::Vertex_handle> it_1;
+  One_ring_iterator<Polyhedron::Vertex_handle> it_2;
 };
 
 // to be used in get_minimum_isolated_component function
@@ -161,6 +185,28 @@ public:
 // members
   Listener* listener;
 };
+
+//
+struct Minimum_address_halfedge_iterator {
+  typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
+  Minimum_address_halfedge_iterator(Halfedge_iterator hb, Halfedge_iterator he)
+    : hb(hb), he(he), current(hb) { }
+
+  Minimum_address_halfedge_iterator& operator++() {
+    ++current;
+    while(current != he && (&*current > &*current->opposite())) {
+      ++current;
+    }
+    return *this;
+  }
+  operator Polyhedron::Halfedge_handle() { return current; }
+  bool operator!=(const Minimum_address_halfedge_iterator& other) {
+    return current != other.he;
+  }
+  Halfedge_iterator operator->() {return current;}
+
+  Halfedge_iterator hb, he, current;
+};
 //////////////////////////////////////////////////////////////////////////
 
 class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item 
@@ -170,16 +216,19 @@ class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item
 
 public:
   typedef Polyhedron::Vertex_handle Vertex_handle;
-  typedef Polyhedron::Facet_handle Facet_handle;
+  typedef Polyhedron::Facet_handle  Facet_handle;
+  typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, Ui::Selection* ui_widget) 
     : Scene_polyhedron_item_decorator(poly_item, false), 
       ui_widget(ui_widget),
       selected_vertices(this),
-      selected_facets(this)
+      selected_facets(this),
+      selected_edges(this)
   { 
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
+    connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -189,11 +238,13 @@ public:
     // id field is used in operations
     poly_item->update_vertex_indices();
     poly_item->update_facet_indices();
+    poly_item->update_halfedge_indices();
   }
 // drawing
   void draw() const {
     draw_selected_vertices();
     draw_selected_facets();
+    draw_selected_edges();
   }
 
   void draw_selected_vertices() const {
@@ -252,6 +303,25 @@ public:
     ::glPolygonOffset(offset_factor, offset_units);
   }
 
+  void draw_selected_edges() const {
+    GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
+    glDisable(GL_LIGHTING);
+
+    CGAL::GL::Color color;
+    color.set_rgb_color(0.f,1.f,0.f);
+    ::glLineWidth(3.f);
+    ::glBegin(GL_LINES);
+    for(Selection_set_edge::iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) {
+      const Kernel::Point_3& a = (*it)->vertex()->point();
+      const Kernel::Point_3& b = (*it)->opposite()->vertex()->point();
+      ::glVertex3d(a.x(),a.y(),a.z());
+      ::glVertex3d(b.x(),b.y(),b.z());
+    }
+    ::glEnd();
+
+    if(enable_back_lighting) { glEnable(GL_LIGHTING); }
+  }
+
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
   //void save_roi(const char* file_name) const { 
   //  std::ofstream out(file_name);
@@ -286,10 +356,16 @@ public:
         selected_vertices.insert(vb);
       }
     }
-    else {
+    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1){
       Polyhedron::Facet_iterator fb(polyhedron()->facets_begin()), fe(polyhedron()->facets_end());
       for( ;fb != fe; ++fb) {
         selected_facets.insert(fb);
+      }
+    }
+    else {
+      Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
+      for( ;hb != he; ++hb) {
+        selected_edges.insert(hb);
       }
     }
     emit itemChanged();
@@ -299,9 +375,11 @@ public:
     if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
       selected_vertices.clear();
     }
-    else {
+    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1) {
       selected_facets.clear();
-      std::fill(poly_item->color_vector().begin(), poly_item->color_vector().end(), poly_item->color());
+    }
+    else {
+      selected_edges.clear();
     }
     emit itemChanged();
   }
@@ -310,8 +388,11 @@ public:
     if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
       get_minimum_isolated_vertex_component();
     }
-    else {
+    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1) {
       get_minimum_isolated_facet_component();
+    }
+    else {
+      get_minimum_isolated_edge_component();
     }
   }
 
@@ -373,11 +454,19 @@ public:
       ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
     }
   }
-
   void get_minimum_isolated_facet_component() {
     Minimum_visitor visitor;
     travel_not_selected_connected_components<Facet_handle>
       (visitor, polyhedron()->facets_begin(), polyhedron()->facets_end(), polyhedron()->size_of_facets());
+    if(visitor.minimum) {
+      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
+    }
+  }
+  void get_minimum_isolated_edge_component() {
+    Minimum_visitor visitor;
+    Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
+    travel_not_selected_connected_components<Halfedge_handle>
+      (visitor, hb, he, polyhedron()->size_of_halfedges()); // do not divide by 2
     if(visitor.minimum) {
       ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
     }
@@ -387,8 +476,11 @@ public:
     if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
       select_isolated_vertex_components();
     }
-    else {
+    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1){
       select_isolated_facet_components();
+    }
+    else {
+      select_isolated_edge_components();
     }
   }
 
@@ -406,7 +498,6 @@ public:
       ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
     }
   }
-
   void select_isolated_facet_components() {
     typedef boost::function_output_iterator<
       Selection_set_facet::Selection_set_inserter> Output_iterator;
@@ -422,6 +513,21 @@ public:
     }
   }
 
+  void select_isolated_edge_components() {
+    typedef boost::function_output_iterator<
+      Selection_set_edge::Selection_set_inserter> Output_iterator;
+    Output_iterator out(&selected_edges);
+    Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
+    Selection_visitor<Output_iterator> visitor(ui_widget->Threshold_size_spin_box->value() , out);
+    travel_not_selected_connected_components<Halfedge_handle>
+      (visitor, hb, he, polyhedron()->size_of_halfedges()); // do not divide by 2
+
+    if(visitor.any_inserted) { emit itemChanged(); }
+    if(visitor.minimum_visitor.minimum) {
+      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
+    }
+  }
+
   void changed_with_poly_item() {
     poly_item->changed();
     emit itemChanged();
@@ -429,11 +535,15 @@ public:
 
   bool is_selected(Vertex_handle v) { return selected_vertices.is_selected(v); }
   bool is_selected(Facet_handle f) { return selected_facets.is_selected(f); }
+  bool is_selected(Halfedge_handle h) { return selected_edges.is_selected(h); }
 
   bool insert(Vertex_handle v) { return selected_vertices.insert(v); }
   bool insert(Facet_handle f) { return selected_facets.insert(f); }
+  bool insert(Halfedge_handle h) { return selected_edges.insert(h); }
+
   bool erase(Vertex_handle v) { return selected_vertices.erase(v); }
   bool erase(Facet_handle f) { return selected_facets.erase(f); }
+  bool erase(Halfedge_handle h) { return selected_edges.erase(h); }
 
 public slots:
   void changed() {
@@ -449,12 +559,20 @@ public slots:
     if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 1) { return; }
     has_been_selected( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
   }
+  void edge_has_been_selected(void* void_ptr) 
+  {
+    if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 2) { return; }
+    has_been_selected( static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite() );
+  }
 
 signals:
   void inserted(Vertex_handle v);
   void inserted(Facet_handle f);
+  void inserted(Halfedge_handle f);
+
   void erased(Vertex_handle v);
   void erased(Facet_handle f);
+  void erased(Halfedge_handle f);
 
 protected:
   template<class HandleType>
@@ -570,8 +688,10 @@ protected:
 
   typedef Selection_set<Vertex_handle, Scene_polyhedron_selection_item> Selection_set_vertex;
   typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
+  typedef Selection_set<Halfedge_handle, Scene_polyhedron_selection_item> Selection_set_edge;
   friend class Selection_set_vertex;
   friend class Selection_set_facet;
+  friend class Selection_set_edge;
 // members
   Ui::Selection* ui_widget;
   Mouse_keyboard_state state;
@@ -579,6 +699,7 @@ protected:
 public:
   Selection_set_vertex selected_vertices;
   Selection_set_facet  selected_facets;
+  Selection_set_edge   selected_edges;
 };
 
 #endif 
