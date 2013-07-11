@@ -7,6 +7,8 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 
+#include <boost/graph/copy.hpp>
+
 // Compute cotangent Laplacian
 #include <CGAL/internal/Mean_curvature_skeleton/Weights.h>
 
@@ -82,7 +84,6 @@ public:
 
 // Data members
 private:
-  Graph graph;
   std::vector<std::vector<int> > edge_to_face;
   std::vector<std::vector<int> > edge_to_vertex;
   std::vector<std::vector<int> > vertex_to_edge;
@@ -397,6 +398,48 @@ private:
     }
     std::cerr << "num of faces " << cnt << "\n";
   }
+
+  // extract the skeleton to a boost::graph data structure
+  void extract_skeleton(Graph& graph, std::vector<Point>& points)
+  {
+    std::vector<int> new_vertex_id;
+    new_vertex_id.clear();
+    new_vertex_id.resize(vertex_to_edge.size(), -1);
+
+    int id = 0;
+    for (size_t i = 0; i < is_vertex_deleted.size(); i++)
+    {
+      if (!is_vertex_deleted[i])
+      {
+        new_vertex_id[i] = id++;
+      }
+    }
+
+    Graph temp_graph(id);
+
+    for (size_t i = 0; i < is_edge_deleted.size(); i++)
+    {
+      if (!is_edge_deleted[i])
+      {
+        int p1 = edge_to_vertex[i][0];
+        int p2 = edge_to_vertex[i][1];
+        int p1_id = new_vertex_id[p1];
+        int p2_id = new_vertex_id[p2];
+        boost::add_edge(p1_id, p2_id, temp_graph);
+      }
+    }
+
+    vertex_iterator vb, ve;
+    points.resize(id);
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      int new_id = new_vertex_id[id];
+      Point pos = vb->point();
+      points[new_id] = pos;
+    }
+    boost::copy_graph(temp_graph, graph);
+  }
 };
 
 } //namespace internal
@@ -479,7 +522,7 @@ private:
 
   private:
 
-    CGAL::Unique_hash_map<key_type, bool> mConstrains ;
+    CGAL::Unique_hash_map<key_type, bool> mConstrains;
 
   };
 
