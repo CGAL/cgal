@@ -112,6 +112,7 @@ public:
   CurveSkeleton(Polyhedron* polyhedron) : polyhedron(polyhedron)
   {
     init();
+    collapse();
   }
 
 // Private methods
@@ -139,15 +140,16 @@ private:
 
     // assign vertex id
     vertex_iterator vb, ve;
-    vertex_id_count = 0;
+    int idx = 0;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
-      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+      boost::put(vertex_id_pmap, *vb, idx++);
     }
 
-    // assign edge id, the two halfedges belonging to the same edge get the same id
+    // assign edge id
+    // the two halfedges representing the same edge get the same id
     edge_iterator eb, ee;
-    int idx = 0;
+    idx = 0;
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       boost::put(edge_id_pmap, *eb, -1);
@@ -187,7 +189,7 @@ private:
     {
       vertex_descriptor vd = *vb;
       int vid = boost::get(vertex_id_pmap, vd);
-      in_edge_iterator e, end;
+      in_edge_iterator e, e_end;
       for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; e++)
       {
         edge_descriptor ed = *e;
@@ -196,12 +198,43 @@ private:
         edge_to_vertex[eid].push_back(vid);
       }
     }
+
+    // for debugging purpose
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edge_descriptor ed = *eb;
+      int id = boost::get(edge_id_pmap, ed);
+      int f = edge_to_face[id].size();
+      if (f > 2)
+      {
+        std::cerr << "too many faces " << f << "\n";
+      }
+      int v = edge_to_vertex[id].size();
+      if (v != 2)
+      {
+        std::cerr << "wrong number of vertices " << v << "\n";
+      }
+    }
+    face_id = 0;
+    for (Facet_iterator i = polyhedron->facets_begin(); i != polyhedron->facets_end(); ++i)
+    {
+      int e = face_to_edge[face_id];
+      if (e != 3)
+      {
+        std::cerr << "wrong number of edges " << e << "\n";
+      }
+      face_id++;
+    }
   }
 
   void collapse()
   {
     std::set<Edge> queue;
+    queue.clear();
 
+    // put all the edges into a priority queue
+    // shorter edge has higher priority
+    edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       Edge edge;
@@ -219,10 +252,11 @@ private:
       queue.insert(edge);
     }
 
+    // start collapsing edges until all the edges have no incident faces
     while (!queue.empty())
     {
-      Edge edge = *(set.begin());
-      set.erase(set.begin());
+      Edge edge = *(queue.begin());
+      queue.erase(queue.begin());
 
       int eid = edge.id;
       // mark the edge and incident faces as deleted
@@ -233,7 +267,6 @@ private:
         is_face_deleted[fid] = true;
       }
 
-      CGAL_assertion(edge_to_vertex[eid].size() == 2);
       // p1 to be deleted
       int p1 = edge_to_vertex[eid][0];
       int p2 = edge_to_vertex[eid][1];
@@ -244,6 +277,7 @@ private:
         int fid = edge_to_face[eid][i];
         // e1 to be deleted
         int e1_id, e2_id;
+        // find edge e1, which is incident to p1
         for (size_t j = 0; j < face_to_edge[fid].size(); j++)
         {
           int ej_id = face_to_edge[fid][j];
@@ -271,6 +305,7 @@ private:
             break;
           }
         }
+        is_edge_deleted[e1_id] = true;
 
         // delete the incident face for e2
         for (size_t j = 0; j < edge_to_face[e2_id].size(); j++)
@@ -305,7 +340,7 @@ private:
       for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
       {
         int new_eid = vertex_to_edge[p1][i];
-        if (new_eid != eid && !is_edge_deleted[new_eid])
+        if (!is_edge_deleted[new_eid])
         {
           // avoid duplicate
           if (std::find(vertex_to_edge[p2].begin(),
@@ -326,6 +361,41 @@ private:
         }
       }
     }
+
+    // for debugging purpose
+    int cnt = 0;
+    for (size_t i = 0; i < is_vertex_deleted.size(); i++)
+    {
+      if (!is_vertex_deleted[i])
+      {
+        cnt++;
+      }
+    }
+    std::cerr << "num of vertices " << cnt << "\n";
+
+    cnt = 0;
+    for (size_t i = 0; i < is_edge_deleted.size(); i++)
+    {
+      if (!is_edge_deleted[i])
+      {
+        cnt++;
+      }
+      if (edge_to_face[i].size() > 0)
+      {
+        std::cerr << "should not have faces: " << edge_to_face[i].size() << "\n";
+      }
+    }
+    std::cerr << "num of edges " << cnt << "\n";
+
+    cnt = 0;
+    for (size_t i = 0; i < is_face_deleted.size(); i++)
+    {
+      if (!is_face_deleted[i])
+      {
+        cnt++;
+      }
+    }
+    std::cerr << "num of faces " << cnt << "\n";
   }
 };
 
