@@ -806,20 +806,23 @@ private:
   }
 };
 
+namespace Periodic_2_triangulation_2_internal
+{
 template <class T>
 class Domain_tester
 {
-  const T *t;
-
-public:
-  Domain_tester() {}
-  Domain_tester(const T *tr) : t(tr) {}
-
-  bool operator()(const typename T::Vertex_iterator & v) const
-  {
-    return (t->get_offset(v) != typename T::Offset(0, 0));
-  }
+    const T *t;
+    
+  public:
+    Domain_tester() {}
+    Domain_tester(const T *tr) : t(tr) {}
+    
+    bool operator()(const typename T::Vertex_iterator & v) const
+    {
+        return (t->get_offset(v) != typename T::Offset(0, 0));
+    }
 };
+}
 
 // Iterates over the vertices in a periodic triangulation that are
 // located inside the original cube.
@@ -830,13 +833,15 @@ public:
 // between a normal Vertex_iterator and this iterator
 template <class T>
 class Periodic_2_triangulation_unique_vertex_iterator_2
-  : public Filter_iterator<typename T::Vertex_iterator, Domain_tester<T> >
+        : public Filter_iterator<typename T::Vertex_iterator, Periodic_2_triangulation_2_internal::Domain_tester<T> >
 {
 
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Vertex_iterator Vertex_iterator;
 
-  typedef Filter_iterator<Vertex_iterator, Domain_tester<T> > Base;
+  typedef typename Periodic_2_triangulation_2_internal::Domain_tester<T> Tester;
+
+  typedef Filter_iterator<Vertex_iterator, Tester > Base;
   typedef Periodic_2_triangulation_unique_vertex_iterator_2 Self;
 public:
 
