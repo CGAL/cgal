@@ -105,6 +105,13 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     Polyhedron* pMesh = tuple.second;
     if(!pMesh) continue;
 
+    for(Polyhedron::Edge_iterator
+          eit = pMesh->edges_begin(),
+          end = pMesh->edges_end(); eit != end; ++eit)
+    {
+      eit->set_feature_edge(false);
+    }
+
     // Detect edges in current polyhedron
     detect_features.detect_sharp_edges(*pMesh, angle);
     
