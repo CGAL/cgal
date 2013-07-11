@@ -136,7 +136,7 @@ Number_type string2num(const std::string& s) {
 }
 
 template <class _Arrangement_2>
-void create_arrangement_from_input(_Arrangement_2 &arr, std::ifstream& input) {
+void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     typedef _Arrangement_2 								  Arrangement_2;
     typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
     typedef typename Geometry_traits_2::Segment_2         Segment_2;
@@ -176,7 +176,7 @@ void create_arrangement_from_input(_Arrangement_2 &arr, std::ifstream& input) {
 }
 
 template <class _Arrangement_2>
-void create_polygons_from_input(_Arrangement_2 &arr, std::ifstream& input) {
+void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     typedef _Arrangement_2 								  Arrangement_2;
     typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
     typedef typename Geometry_traits_2::Segment_2         Segment_2;
