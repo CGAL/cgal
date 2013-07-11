@@ -381,6 +381,30 @@ Scene_polyhedron_item::select(double orig_x,
             std::cerr << "Selected vertex: " << v->point() << std::endl;
             emit selected_vertex((void*)(&*nearest_v));
           }
+
+          if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
+            || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0)
+          {
+            Polyhedron::Halfedge_around_facet_circulator 
+              he_it = selected_fh->facet_begin(),
+              around_end = he_it;
+
+            Polyhedron::Halfedge_handle nearest_h = he_it;
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+              Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+
+            while(++he_it != around_end) {
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_h = he_it;
+              }
+            }
+
+            emit selected_halfedge((void*)(&*nearest_h));
+            emit selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
+          }
           
           emit selected_facet((void*)(&*selected_fh));
           if(erase_next_picked_facet_m) {
