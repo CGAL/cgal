@@ -70,10 +70,11 @@ bool test1(const char* points_filename, const char* xcurves_filename,
            const char* curves_filename, const char* commands_filename,
            const char* queries_filename)
 {
-  Point_location_dynamic_test<Traits> pl_test;
+  Traits traits;
+  Point_location_dynamic_test<Traits> pl_test(traits);
   pl_test.set_filenames(points_filename, xcurves_filename, curves_filename,
                         commands_filename, queries_filename);
-  
+
   if (!pl_test.allocate_arrangement()) return false;
   if (!pl_test.construct_pl_strategies()) return false;
   if (!pl_test.init()) return false;
@@ -83,7 +84,7 @@ bool test1(const char* points_filename, const char* xcurves_filename,
   pl_test.clear();
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
-  
+
   return true;
 }
 

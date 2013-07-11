@@ -16,9 +16,14 @@ public:
   typedef typename Base::Point_2                        Point_2;
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Base::Curve_2                        Curve_2;
-  
+
   typedef typename Base::Arrangement_2                  Arrangement_2;
-  
+
+  /*! Constructor */
+  Point_location_dynamic_test(const Traits& traits) :
+    Point_location_test<Traits>(traits)
+  {}
+
   /*! Destructor */
   virtual ~Point_location_dynamic_test()
   {
@@ -38,14 +43,14 @@ public:
                         curves_filename, queries_filename);
     m_filename_commands.assign(commands_filename);
   }
-  
+
   bool construct_arrangement();
 
 private:
   bool read_perform_opts(std::istream& is);
 
   bool remove(const X_monotone_curve_2& xcv);
-  
+
   /*! The input data file of commands*/
   std::string m_filename_commands;
 };
@@ -66,16 +71,16 @@ bool Point_location_dynamic_test<T_Traits>::construct_arrangement()
     this->print_error(std::string("cannot open file ").append(this->m_filename_commands));
     return false;
   }
-  
+
   if (!read_perform_opts(in_com)) {
     in_com.close();
     return false;
   }
-  in_com.close(); 
-  
+  in_com.close();
+
   // Print the size of the arrangement.
   std::cout << "V = " << this->m_arr->number_of_vertices()
-            << ",  E = " << this->m_arr->number_of_edges() 
+            << ",  E = " << this->m_arr->number_of_edges()
             << ",  F = " << this->m_arr->number_of_faces() << std::endl;
 
   return true;
@@ -87,7 +92,7 @@ bool Point_location_dynamic_test<T_Traits>::read_perform_opts(std::istream& is)
   bool rc = true;
 
   CGAL::Timer timer;
-  timer.reset(); 
+  timer.reset();
   timer.start();
 
   std::string sline;
@@ -103,7 +108,7 @@ bool Point_location_dynamic_test<T_Traits>::read_perform_opts(std::istream& is)
       CGAL::insert(*(this->m_arr), this->m_curves.begin(), this->m_curves.end());
       continue;
     }
-    
+
     unsigned int id;
     line >> id;
     if (id >= this->m_xcurves.size()) {
@@ -120,8 +125,8 @@ bool Point_location_dynamic_test<T_Traits>::read_perform_opts(std::istream& is)
     }
   }
   timer.stop(); ///END
-  std::cout << "Arrangement aggregate construction took " 
-            << timer.time() << std::endl;  
+  std::cout << "Arrangement aggregate construction took "
+            << timer.time() << std::endl;
 
   return rc;
 }
@@ -131,7 +136,7 @@ bool Point_location_dynamic_test<T_Traits>::remove(const X_monotone_curve_2& xcv
 {
   typedef T_Traits                                      Traits;
   bool rc = false;          // be pasimistic, assume nothing is removed.
-  
+
   const Traits* traits = this->m_arr->geometry_traits();
   typename Traits::Equal_2 equal = traits->equal_2_object();
 
