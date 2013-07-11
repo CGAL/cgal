@@ -26,6 +26,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <iterator>
+#include <set>
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 104000
@@ -62,7 +63,7 @@ base_point_selection(
   const rich_grid_internel::Rich_point<Kernel>& query, ///< 3D point to project
   const std::vector<rich_grid_internel::Rich_point<Kernel> >& 
                     neighbor_points,///< neighbor sample points
-  const typename Kernel::FT edge_senstivity,
+  const typename Kernel::FT edge_senstivity,///< edge senstivity parameter
   unsigned int& output_base_index ///< base point index
   )
 {
@@ -115,6 +116,146 @@ base_point_selection(
 
   return sqrt(best_dist2);
 }
+
+/// For each new inserted point, we need to do the following job
+/// 1, get neighbor information from the two "parent points"
+/// 2, update position and determine normal by bilateral projection 
+/// 3, update neighbor information again, and added to the neighbors' neighbor
+/// 
+///
+/// \pre `radius > 0`
+///
+/// @tparam Kernel Geometric traits class.
+///
+/// @return void
+template <typename Kernel>
+void
+update_new_point(
+  unsigned int new_point_index, ///< new inserted point
+  unsigned int father_index, ///< father point index
+  unsigned int mother_index, ///< mother point index
+  std::vector<rich_grid_internel::Rich_point<Kernel> >& rich_point_set,
+                                                           ///< all rich points
+  const typename Kernel::FT radius,          ///< accept neighborhood radius
+  const typename Kernel::FT sharpness_bandwidth  ///< control sharpness
+)
+{
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::FT FT;
+  typedef typename rich_grid_internel::Rich_point<Kernel> Rich_point;
+
+  unsigned int size = rich_point_set.size();
+  CGAL_point_set_processing_precondition(father_index >= 0 &&
+                                         father_index < size);
+    CGAL_point_set_processing_precondition(mother_index >= 0 &&
+                                           mother_index < size);
+  // 1, get neighbor information from the two "parent points"
+  Rich_point& new_v = rich_point_set[new_point_index];
+  Rich_point& father_v = rich_point_set[father_index];
+  Rich_point& mother_v = rich_point_set[mother_index];
+
+  std::set<int> neighbor_indexes;
+  unsigned int i;
+  for (i = 0; i < father_v.neighbors.size(); i++)
+  {
+    neighbor_indexes.insert(father_v.neighbors[i]);
+  }
+  for (i = 0; i < mother_v.neighbors.size(); i++)
+  {
+    neighbor_indexes.insert(mother_v.neighbors[i]);
+  }
+  neighbor_indexes.insert(father_v.index);
+  neighbor_indexes.insert(mother_v.index);
+
+  double radius2 = radius * radius;
+
+  new_v.neighbors.clear();
+  std::set<int>::iterator set_iter;
+  for (set_iter = neighbor_indexes.begin(); 
+       set_iter != neighbor_indexes.end(); ++set_iter)
+  {
+    Rich_point& t = rich_point_set[*set_iter];
+    FT dist2 =  CGAL::squared_distance(new_v.pt, t.pt);
+
+    if (dist2 < radius2)
+    {
+      new_v.neighbors.push_back(t.index);
+    }
+  }
+
+  // 2, update position and normal by bilateral projection 
+  const unsigned int candidate_num = 2; // we have two normal candidates:
+                                        // we say father's is 0
+                                        //        mother's is 1
+  std::vector<Vector> normal_cadidate(candidate_num);
+  normal_cadidate[0] = father_v.normal;
+  normal_cadidate[1] = mother_v.normal;
+
+  std::vector<FT> project_dist_sum(candidate_num, FT(0.0));
+  std::vector<FT> weight_sum(candidate_num, FT(0.0));
+  std::vector<Vector> normal_sum(candidate_num, NULL_VECTOR);
+   
+  FT radius16 = FT(-4.0) / radius2;
+
+  for (i = 0; i < new_v.neighbors.size(); i++)
+  {
+    Rich_point& t = rich_point_set[new_v.neighbors[i]];
+    FT dist2 = CGAL::squared_distance(new_v.pt, t.pt);
+    FT theta = std::exp(dist2 * radius16);
+
+    for (unsigned int j = 0; j < candidate_num; j++)
+    {
+
+      FT psi = std::exp(-std::pow(1 - normal_cadidate[j] * t.normal, 2)
+              /sharpness_bandwidth);
+      FT project_diff_t_v = (new_v.pt - t.pt) * t.normal;
+      FT weight = psi * theta;
+
+      project_dist_sum[j] += project_diff_t_v * weight;
+      normal_sum[j] = normal_sum[j] + t.normal * weight;
+      weight_sum[j] += weight;
+    }
+  }
+
+  // select best candidate
+  FT min_project_dist = (FT)(std::numeric_limits<double>::max)();
+  unsigned int best = 0;
+
+  for (i = 0; i < candidate_num; i++)
+  {
+    FT absolute_dist = abs(project_dist_sum[i] / weight_sum[i]);
+    if (absolute_dist < min_project_dist)
+    {
+      min_project_dist = absolute_dist;
+      best = i;
+    }
+  }
+
+  // update position and normal
+  Vector update_normal = normal_sum[best] / weight_sum[best];
+  new_v.normal = update_normal / sqrt(update_normal.squared_length());
+
+  FT project_dist = -project_dist_sum[best] / weight_sum[best];
+  new_v.pt = new_v.pt + new_v.normal * project_dist;
+
+  // 3, update neighbor information again
+  new_v.neighbors.clear();
+  for (set_iter = neighbor_indexes.begin(); 
+       set_iter != neighbor_indexes.end(); ++set_iter)
+  {
+    Rich_point& t = rich_point_set[*set_iter];
+    FT dist2 =  CGAL::squared_distance(new_v.pt, t.pt);
+
+    if (dist2 < radius2)
+    {
+      new_v.neighbors.push_back(t.index);
+      t.neighbors.push_back(new_v.index);
+    }
+  }
+}
+
 
 } // namespace upsample_internal
 
@@ -171,7 +312,6 @@ upsample_point_set(
   typedef typename rich_grid_internel::Rich_point<Kernel> Rich_point;
   typedef typename rich_grid_internel::Rich_box<Kernel> Rich_box;
 
-
   // preconditions
   CGAL_point_set_processing_precondition(first != beyond);
   CGAL_point_set_processing_precondition(sharpness_sigma >= 0 
@@ -209,37 +349,55 @@ upsample_point_set(
                                                       box,
                                                       neighbor_radius);
 
-  unsigned int current_points_size = rich_point_set.size();
-  for (i = 0; i < current_points_size; i++)
+
+  FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
+  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
+
+  double max_iter_time = 4;
+  for (int iter_time = 0; iter_time < max_iter_time; iter_time ++)
   {
-    Rich_point& v = rich_point_set[i];
-   
-    // extract neighbor rich points by index
-    std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
-    for (unsigned int n = 0; n < v.neighbors.size(); n++)
+    FT current_radius = neighbor_radius * ( 0.6 * iter_time);
+    unsigned int current_points_size = rich_point_set.size();
+    for (i = 0; i < current_points_size; i++)
     {
-      neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
+      Rich_point& v = rich_point_set[i];
+
+      // extract neighbor rich points by index
+      std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
+      for (unsigned int n = 0; n < v.neighbors.size(); n++)
+      {
+        neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
+      }
+
+      unsigned int base_index = 0;
+      FT density_length = upsample_internal::
+        base_point_selection(v,
+        neighbor_rich_points,
+        edge_senstivity,
+        base_index);
+
+      // insert a new rich point
+      Rich_point new_v;
+      Rich_point& base = rich_point_set[base_index];
+      Vector diff_v_base = base.pt - v.pt;
+      new_v.pt = v.pt + diff_v_base / FT(2.0);
+      new_v.index = rich_point_set.size();
+
+      unsigned int new_point_index = new_v.index;
+      unsigned int father_index = v.index;
+      unsigned int mother_index = base_index;
+      rich_point_set.push_back(new_v);
+
+      //update new rich point
+      upsample_internal::update_new_point(new_point_index, 
+        father_index, 
+        mother_index, 
+        rich_point_set, 
+        current_radius,
+        sharpness_bandwidth);
     }
-
-    unsigned int base_index = 0;
-    FT density_length = upsample_internal::
-                        base_point_selection(v,
-                                             neighbor_rich_points,
-                                             edge_senstivity,
-                                             base_index);
-    
-    // insert a new rich point
-    Rich_point new_v;
-    Rich_point& base = rich_point_set[base_index];
-    Vector diff_v_base = base.pt - v.pt;
-    new_v.pt = v.pt + diff_v_base / FT(2.0);
-    new_v.index = rich_point_set.size();
-
-    rich_point_set.push_back(new_v);
-
-    // update normal and position of new rich point(bilateral projection)
-//...
   }
+
 
   for (i = number_of_input; i < rich_point_set.size(); i++)
   {

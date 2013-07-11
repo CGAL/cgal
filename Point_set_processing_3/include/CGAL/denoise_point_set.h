@@ -127,8 +127,7 @@ compute_denoise_projection(
   FT project_weight_sum = FT(0.0);
   Vector normal_sum = CGAL::NULL_VECTOR; 
 
-  FT sigma = 45; // should be a parameter
-  FT cos_sigma = cos(sigma/180.0*3.1415926);
+  FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
 
   for (unsigned int i = 0; i < neighbor_pwns.size(); i++)
@@ -140,14 +139,13 @@ compute_denoise_projection(
     if (dist2 < radius2)
     {
       FT theta = std::exp(dist2 * iradius16);
-      FT psi = std::exp(-std::pow(1 - query.normal() * nn, 2)
-        / sharpness_bandwidth);
+      FT psi = std::exp(-std::pow(1-query.normal()*nn, 2)/sharpness_bandwidth);
 
       weight = theta * psi;
 
       project_dist_sum += ((query.position() - np) * nn) * weight;
       project_weight_sum += weight;
-      normal_sum = normal_sum + nn;
+      normal_sum = normal_sum + nn * weight;
     }
   }
 
@@ -388,8 +386,11 @@ denoise_points_with_normals(
     Pwn pwn = pwn_set[i];
 
     update_pwn_set[i] = denoise_points_internal::
-                        compute_denoise_projection<Kernel>(
-           pwn, pwn_neighbors_set[i], guess_neighbor_radius, sharpness_sigma) ;
+                        compute_denoise_projection<Kernel>
+                        (pwn, 
+                         pwn_neighbors_set[i], 
+                         guess_neighbor_radius, 
+                         sharpness_sigma);
   }
 
   memory = CGAL::Memory_sizer().virtual_size();
