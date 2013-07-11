@@ -1618,8 +1618,7 @@ namespace CGAL {
       Construct_curve_2(const Geometry_traits_2& traits) :
         m_poly_traits(traits) {}
 
-      /* see documentation in
-         ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
+      /* Returns an polyline connecting the two given endpoints. */
       Curve_2 operator()(const Point_2& p, const Point_2& q) const
       {
         CGAL_precondition_msg (!m_poly_traits.
@@ -1628,17 +1627,14 @@ namespace CGAL {
         return Curve_2(Segment_2(p,q));
       }
 
-      /*
-         \pre seg has to be not degenerated.
-         see documentation in
-         ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
+      /* Returns a polyline consists of one given segment. */
       Curve_2 operator()(const Segment_2& seg) const
       {
         return Curve_2(seg);
       }
 
-      /* see documentation in
-         ../../doc/Arrangement_on_surface_2/CGAL/Arr_polyline_traits_2.h */
+      /* Construct a well-oriented polyline from a range of either
+         `SegmentTraits::Point_2` or `SegmentTraits::Segment_2`. */
       template <typename ForwardIterator>
       Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
       {
