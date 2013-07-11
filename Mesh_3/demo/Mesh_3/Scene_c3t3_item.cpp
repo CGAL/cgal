@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_c3t3_item.h"
 
 #include <QVector>
@@ -219,6 +221,108 @@ Scene_c3t3_item::direct_draw(int mode) const {
        sb == ON_NEGATIVE_SIDE && 
        sc == ON_NEGATIVE_SIDE)
     {
+#ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
+      if(mode != DRAW_EDGES) 
+      {
+        Tr::Facet mirror_facet = c3t3().triangulation().mirror_facet(*fit);
+        //int mirror_index = c3t3().triangulation().mirror_index(cell, index);
+        bool blueOrRed = false;
+        if(cell->mark == index || mirror_facet.first->mark == mirror_facet.second) 
+        {
+          std::cerr << "================== BAD TRIANGLE =================" << std::endl;
+          blueOrRed = true;
+                    
+          if(cell->mark2 != -1)
+          {
+            const Kernel::Point_3& pa2 = cell->vertex((cell->mark2+1)&3)->point();
+            const Kernel::Point_3& pb2 = cell->vertex((cell->mark2+2)&3)->point();
+            const Kernel::Point_3& pc2 = cell->vertex((cell->mark2+3)&3)->point();
+          
+            CGALglcolor(QColor("blue"));  
+            std::cerr << "================== BLUE =================" << std::endl;
+            draw_triangle(pa2, pb2, pc2);
+            
+            const Tr::Facet f_blue(cell, cell->mark2);
+            Tr::Facet mirror_f_blue = c3t3().triangulation().mirror_facet(f_blue);
+            const Kernel::Point_3& dual_edge_pa = c3t3().triangulation().dual(f_blue.first);
+            const Kernel::Point_3& dual_edge_pb = c3t3().triangulation().dual(mirror_f_blue.first);
+            const Kernel::Point_3& dual_edge_pc = dual_edge_pa + Kernel::Vector_3(0.001, 0., 0.);
+            CGALglcolor(QColor("yellow"));
+            draw_triangle(dual_edge_pa, dual_edge_pb, dual_edge_pc);
+          }
+          else if(mirror_facet.first->mark2 != -1)
+          {
+            const Kernel::Point_3& pa2 = mirror_facet.first->vertex((mirror_facet.first->mark2+1)&3)->point();
+            const Kernel::Point_3& pb2 = mirror_facet.first->vertex((mirror_facet.first->mark2+2)&3)->point();
+            const Kernel::Point_3& pc2 = mirror_facet.first->vertex((mirror_facet.first->mark2+3)&3)->point();
+          
+            CGALglcolor(QColor("blue"));
+            std::cerr << "================== BLUE =================" << std::endl;
+            draw_triangle(pa2, pb2, pc2);
+
+            const Tr::Facet f_blue(mirror_facet.first, mirror_facet.first->mark2);
+            Tr::Facet mirror_f_blue = c3t3().triangulation().mirror_facet(f_blue);
+            const Kernel::Point_3& dual_edge_pa = c3t3().triangulation().dual(f_blue.first);
+            const Kernel::Point_3& dual_edge_pb = c3t3().triangulation().dual(mirror_f_blue.first);
+            const Kernel::Point_3& dual_edge_pc = dual_edge_pa + Kernel::Vector_3(0.001, 0., 0.);
+            CGALglcolor(QColor("yellow"));
+            draw_triangle(dual_edge_pa, dual_edge_pb, dual_edge_pc);
+          }
+
+          /*
+          //const Kernel::Point_3& dual_edge_pa = cell->circumcenter();
+          //const Kernel::Point_3& dual_edge_pb = mirror_facet.first->circumcenter();
+          const Kernel::Point_3& dual_edge_pa = c3t3().triangulation().dual(cell);
+          const Kernel::Point_3& dual_edge_pb = c3t3().triangulation().dual(mirror_facet.first);
+          const Kernel::Point_3& dual_edge_pc = dual_edge_pa + Kernel::Vector_3(0.001, 0., 0.);
+          CGALglcolor(QColor("yellow"));
+          draw_triangle(dual_edge_pa, dual_edge_pb, dual_edge_pc);
+          */
+        }
+        else
+        {
+          if(cell->subdomain_index() == 0) {
+            CGALglcolor(d->colors[cell->neighbor(index)->subdomain_index()]);
+          }
+          else {
+            CGALglcolor(d->colors[cell->subdomain_index()]);
+          }
+          draw_triangle(pa, pb, pc);
+        }
+      }
+
+      /*if(mode != DRAW_EDGES) {
+
+        Tr::Facet mirror_facet = c3t3().triangulation().mirror_facet(*fit);
+        //int mirror_index = c3t3().triangulation().mirror_index(cell, index);
+        bool blueOrRed = false;
+        if(cell->mark == index || mirror_facet.first->mark == mirror_facet.second) {
+        //if (cell->mark != -1 || cell->neighbor(index)->mark != -1) {
+          CGALglcolor(QColor("red"));
+          std::cerr << "================== RED =================" << std::endl;
+          blueOrRed = true;
+        }
+        
+        if(cell->mark2 == index || mirror_facet.first->mark2 == mirror_facet.second) {
+        //if(cell->mark2 != -1 || mirror_facet.first->mark2 != -1) {
+          CGALglcolor(QColor("blue"));
+          std::cerr << "================== BLUE =================" << std::endl;
+          blueOrRed = true;
+        }
+
+        if (!blueOrRed)
+        {
+          if(cell->subdomain_index() == 0) {
+            CGALglcolor(d->colors[cell->neighbor(index)->subdomain_index()]);
+          }
+          else {
+            CGALglcolor(d->colors[cell->subdomain_index()]);
+          }
+        }
+      }
+      draw_triangle(pa, pb, pc);*/
+
+#else
       if(mode != DRAW_EDGES) {
         if(cell->subdomain_index() == 0) {
           CGALglcolor(d->colors[cell->neighbor(index)->subdomain_index()]);
@@ -228,6 +332,7 @@ Scene_c3t3_item::direct_draw(int mode) const {
         }
       }
       draw_triangle(pa, pb, pc);
+#endif
     }
   }
   ::glEnd();
@@ -299,6 +404,20 @@ Scene_c3t3_item::graphicalToolTip() const
 void
 Scene_c3t3_item::build_histogram()
 {
+#ifdef CGAL_MESH_3_DEMO_BIGGER_HISTOGRAM_WITH_WHITE_BACKGROUNG
+  // Create an histogram_ and display it
+  const int height = 280;
+  const int top_margin = 5;
+  const int left_margin = 20;
+  const int drawing_height = height-top_margin*2;
+  const int width = 804;
+  const int cell_width = 4;
+  const int text_margin = 3;
+  const int text_height = 34;
+  
+  histogram_ = QPixmap(width,height+text_height);
+  histogram_.fill(QColor(255,255,255));
+#else
   // Create an histogram_ and display it
   const int height = 140;
   const int top_margin = 5;
@@ -311,7 +430,8 @@ Scene_c3t3_item::build_histogram()
   
   histogram_ = QPixmap(width,height+text_height);
   histogram_.fill(QColor(192,192,192));
-  
+#endif  
+
   QPainter painter(&histogram_);
   painter.setPen(Qt::black);
   painter.setBrush(QColor(128,128,128));
@@ -389,6 +509,14 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
 		if( !c3t3.is_in_complex(cit))
 			continue;
 		
+#ifdef CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
+    if (c3t3.in_dimension(cit->vertex(0)) <= 1
+     || c3t3.in_dimension(cit->vertex(1)) <= 1
+     || c3t3.in_dimension(cit->vertex(2)) <= 1
+     || c3t3.in_dimension(cit->vertex(3)) <= 1)
+      continue;
+#endif //CGAL_MESH_3_DEMO_DONT_COUNT_TETS_ADJACENT_TO_SHARP_FEATURES_FOR_HISTOGRAM
+		
 		const Point_3& p0 = cit->vertex(0)->point();
 		const Point_3& p1 = cit->vertex(1)->point();
 		const Point_3& p2 = cit->vertex(2)->point();
@@ -436,7 +564,7 @@ Scene_c3t3_item::get_histogram_color(const double v) const
   if ( v < 5 )            { return Qt::red; }
   else if ( v < 10 )      { return QColor(215,108,0); }
   else if ( v < 15 )      { return QColor(138,139,0); }
-  else if ( v < 165 )     { return Qt::darkGreen; }
+  else if ( v < 165 )     { return QColor(60,136,64); }
   else if ( v < 170 )     { return QColor(138,139,1); }
   else if ( v < 175 )     { return QColor(215,108,0); }
   else /* 175<v<=180 */   { return Qt::red; }

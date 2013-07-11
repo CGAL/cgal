@@ -60,7 +60,7 @@ int main()
   CGAL::perturb_mesh_3(c3t3, domain, time_limit=5, sliver_bound=12);
   
   // Exudation
-  CGAL::exude_mesh_3(c3t3);
+  CGAL::exude_mesh_3(c3t3, domain);
   
   // Output
   medit_file.open("out_optimized.mesh");

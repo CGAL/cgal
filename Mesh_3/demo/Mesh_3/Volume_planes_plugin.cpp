@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include <CGAL/Image_3.h>
 
 #include "Volume_plane.h"
