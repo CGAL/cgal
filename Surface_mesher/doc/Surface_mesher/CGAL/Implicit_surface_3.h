@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Implicit_surface_3` implements a surface described 
 as the zero level 
-set of a function \f$ f : \R^3 \longrightarrow \R\f$. 
+set of a function \f$ f : \mathbb{R}^3 \longrightarrow \mathbb{R}\f$. 
 
 For this type of surface, the library provides a partial specialization 
 of the surface mesher traits generator: 

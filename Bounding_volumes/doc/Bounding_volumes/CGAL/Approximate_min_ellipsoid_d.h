@@ -11,7 +11,7 @@ in \f$ d\f$-dimensional Euclidean space \f$ \E^d\f$, \f$ d\ge 2\f$.
 An <I>ellipsoid</I> in \f$ \E^d\f$ is a Cartesian pointset of the form \f$ \{ 
 x\in\E^d \mid x^T E x + x^T e + \eta\leq 0 \}\f$, where \f$ E\f$ is some 
 positive definite matrix from the set \f$ \mathbb{R}^{d\times d}\f$, \f$ e\f$ is some 
-real \f$ d\f$-vector, and \f$ \eta\in\R\f$. A pointset \f$ P\subseteq \E^d\f$ is 
+real \f$ d\f$-vector, and \f$ \eta\in\mathbb{R}\f$. A pointset \f$ P\subseteq \E^d\f$ is 
 called <I>full-dimensional</I> if its affine hull has dimension \f$ d\f$. 
 For a finite, full-dimensional pointset \f$ P\f$ we denote by \f$ \mel(P)\f$ the 
 smallest ellipsoid that contains all points of \f$ P\f$; this ellipsoid 
@@ -83,7 +83,7 @@ The ellipsoid \f$ {\cal E}\f$ computed by the algorithm satisfies the inclusions
 \frac{1}{(1+\epsilon')d} {\cal E} \subseteq \mathop{\rm conv}\nolimits(P) \subseteq {\cal E}
 \f] 
 where \f$ f {\cal E}\f$ denotes the ellipsoid \f$ {\cal E}\f$ scaled by the 
-factor \f$ f\in\R^+\f$ with respect to its center, and where \f$ \mathop{\rm 
+factor \f$ f\in\mathbb{R}^+\f$ with respect to its center, and where \f$ \mathop{\rm 
 conv}\nolimits(A)\f$ denotes the <I>convex hull</I> of a pointset 
 \f$ A\subset \E^d\f$. 
 

@@ -10,7 +10,7 @@ namespace CGAL {
 
 \section Convex_hull_dIntroduction Introduction
 
-A subset \f$ S \subseteq \R^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
+A subset \f$ S \subseteq \mathbb{R}^d\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
 in \f$ S\f$. The convex hull of a set \f$ S\f$
 is the smallest convex set containing

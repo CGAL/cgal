@@ -5,7 +5,7 @@
 
 The concept `ImplicitFunction` describes a function object 
 whose `operator()` computes the values of a function 
-\f$ f : \R^3 \longrightarrow \R\f$. 
+\f$ f : \mathbb{R}^3 \longrightarrow \mathbb{R}\f$. 
 
 \cgalHasModel `CGAL::Gray_level_image_3`
 \cgalHasModel any pointer to a function of type `FT (*)(Point)`
@@ -37,7 +37,7 @@ typedef unspecified_type Point;
 /// @{
 
 /*! 
-Returns the value \f$ f(p)\f$, where \f$ p \in\R^3\f$. 
+Returns the value \f$ f(p)\f$, where \f$ p \in\mathbb{R}^3\f$. 
 */ 
 FT operator()(Point p); 
 

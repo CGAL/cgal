@@ -5,7 +5,7 @@ namespace CGAL {
 
 An object `s` of the data type `Segment_2` is a directed 
 straight line segment in the two-dimensional Euclidean plane \f$ \E^2\f$, i.e.\ a 
-straight line segment \f$ [p,q]\f$ connecting two points \f$ p,q \in \R^2\f$. 
+straight line segment \f$ [p,q]\f$ connecting two points \f$ p,q \in \mathbb{R}^2\f$. 
 The segment is topologically closed, i.e.\ the end 
 points belong to it. Point `p` is called the <I>source</I> and `q` 
 is called the <I>target</I> of `s`. The length of `s` is the 

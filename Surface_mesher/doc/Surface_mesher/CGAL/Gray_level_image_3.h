@@ -7,13 +7,13 @@ namespace CGAL {
 A 3D gray image is a 
 tri-dimensional array that associates a scalar value to each triple of 
 integer \f$ (x, y, z)\f$ in the range of the image. A trilinear interpolation 
-algorithm provides a map \f$ f : \R^3 \longrightarrow \R\f$. 
+algorithm provides a map \f$ f : \mathbb{R}^3 \longrightarrow \mathbb{R}\f$. 
 
 The class `Gray_level_image_3` is a 3D gray image loader and a model 
 of the concept `ImplicitFunction`. 
 An object of the class `Gray_level_image_3` is created with a parameter 
 `iso_value` and then its `operator()` implements 
-the function `sign of (f(p) - iso)`, for \f$ p \in \R^3\f$. 
+the function `sign of (f(p) - iso)`, for \f$ p \in \mathbb{R}^3\f$. 
 Plugging such a function in the creation of the `Implicit_surface_3` 
 object given as parameter to `make_surface_mesh()` yields 
 a mesh approximating the level with value `iso` 

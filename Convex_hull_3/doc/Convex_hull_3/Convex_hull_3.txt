@@ -14,11 +14,11 @@ The convex hull of a model made of 192135 points.
 
 \section Convex_hull_3Introduction Introduction
 
-A subset \f$ S \subseteq \R^3\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
+A subset \f$ S \subseteq \mathbb{R}^3\f$ is convex if for any two points \f$ p\f$ and \f$ q\f$
 in the set the line segment with endpoints \f$ p\f$ and \f$ q\f$ is contained
 in \f$ S\f$. The convex hull of a set \f$ S\f$ 
 is the smallest convex set containing
-\f$ S\f$. The convex hull of a set of points \f$ P \in \R^3\f$ is a convex 
+\f$ S\f$. The convex hull of a set of points \f$ P \in \mathbb{R}^3\f$ is a convex 
 polytope with vertices in \f$ P\f$. A point in \f$ P\f$ is an extreme point 
 (with respect to \f$ P\f$) if it is a vertex of 
 the convex hull of \f$ P\f$. A set of points is said to be strongly convex if it consists of only extreme points.

@@ -34,9 +34,9 @@ namespace CGAL {
   from \f$ \{\leq, =, \geq\}\f$, 
 
   <LI>\f$ \qpl\f$ is an \f$ n\f$-dimensional vector of lower 
-  bounds for \f$ \qpx\f$, where \f$ l_j\in\R\cup\{-\infty\}\f$ for all \f$ j\f$ 
+  bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$ j\f$ 
   <LI>\f$ \qpu\f$ is an \f$ n\f$-dimensional vector of upper bounds for 
-  \f$ \qpx\f$, where \f$ u_j\in\R\cup\{\infty\}\f$ for all \f$ j\f$ 
+  \f$ \qpx\f$, where \f$ u_j\in\mathbb{R}\cup\{\infty\}\f$ for all \f$ j\f$ 
 
   <LI>\f$ \qpc\f$ is an \f$ n\f$-dimensional vector (the linear objective 
   function), and 
@@ -497,9 +497,9 @@ public:
   from \f$ \{\leq, =, \geq\}\f$, 
 
   <LI>\f$ \qpl\f$ is an \f$ n\f$-dimensional vector of lower 
-  bounds for \f$ \qpx\f$, where \f$ l_j\in\R\cup\{-\infty\}\f$ for all \f$ j\f$ 
+  bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$ j\f$ 
   <LI>\f$ \qpu\f$ is an \f$ n\f$-dimensional vector of upper bounds for 
-  \f$ \qpx\f$, where \f$ u_j\in\R\cup\{\infty\}\f$ for all \f$ j\f$ 
+  \f$ \qpx\f$, where \f$ u_j\in\mathbb{R}\cup\{\infty\}\f$ for all \f$ j\f$ 
 
   <LI>\f$ D\f$ is a symmetric positive-semidefinite \f$ n\times n\f$ matrix (the 
   quadratic objective function), 
@@ -602,9 +602,9 @@ public:
   from \f$ \{\leq, =, \geq\}\f$, 
 
   <LI>\f$ \qpl\f$ is an \f$ n\f$-dimensional vector of lower 
-  bounds for \f$ \qpx\f$, where \f$ l_j\in\R\cup\{-\infty\}\f$ for all \f$ j\f$ 
+  bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$ j\f$ 
   <LI>\f$ \qpu\f$ is an \f$ n\f$-dimensional vector of upper bounds for 
-  \f$ \qpx\f$, where \f$ u_j\in\R\cup\{\infty\}\f$ for all \f$ j\f$ 
+  \f$ \qpx\f$, where \f$ u_j\in\mathbb{R}\cup\{\infty\}\f$ for all \f$ j\f$ 
 
   <LI>\f$ D\f$ is a symmetric positive-semidefinite \f$ n\times n\f$ matrix (the 
   quadratic objective function), 
@@ -819,9 +819,9 @@ namespace CGAL {
   from \f$ \{\leq, =, \geq\}\f$, 
 
   <LI>\f$ \qpl\f$ is an \f$ n\f$-dimensional vector of lower 
-  bounds for \f$ \qpx\f$, where \f$ l_j\in\R\cup\{-\infty\}\f$ for all \f$ j\f$ 
+  bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$ j\f$ 
   <LI>\f$ \qpu\f$ is an \f$ n\f$-dimensional vector of upper bounds for 
-  \f$ \qpx\f$, where \f$ u_j\in\R\cup\{\infty\}\f$ for all \f$ j\f$ 
+  \f$ \qpx\f$, where \f$ u_j\in\mathbb{R}\cup\{\infty\}\f$ for all \f$ j\f$ 
 
   <LI>\f$ D\f$ is a symmetric positive-semidefinite \f$ n\times n\f$ matrix (the 
   quadratic objective function), 

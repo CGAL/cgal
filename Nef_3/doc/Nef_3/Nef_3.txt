@@ -78,7 +78,7 @@ dimensions. The class `Nef_polyhedron_3` implements a
 boundary representation for the 3-dimensional case.
 
 <B>Definition:</B> A <I>Nef-poly-he-dron</I> in dimension \f$ d\f$ is a point set \f$ P \subseteq
-\R^d\f$ generated from a finite number of open halfspaces by set
+\mathbb{R}^d\f$ generated from a finite number of open halfspaces by set
 complement and set intersection operations.
 
 Set union, difference and symmetric difference can be reduced to
@@ -90,19 +90,19 @@ A face of a Nef polyhedron is defined as an equivalence class of
 <I>local pyramids</I> that are a characterization of the local space
 around a point.
 
-<B>Definition:</B> A point set \f$ K \subseteq \R^d\f$ is called a <I>cone with apex \f$ 0\f$</I>,
-if \f$ K = \R^{+} K\f$ (i.e., \f$ \forall p \in K, \forall \lambda > 0: \lambda p
-\in K\f$) and it is called a <I>cone with apex \f$ x\f$</I>, \f$ x \in \R^d\f$,
-if \f$ K = x + \R^{+} (K - x)\f$. A cone \f$ K\f$ is called a <I>pyramid</I>
+<B>Definition:</B> A point set \f$ K \subseteq \mathbb{R}^d\f$ is called a <I>cone with apex \f$ 0\f$</I>,
+if \f$ K = \mathbb{R}^{+} K\f$ (i.e., \f$ \forall p \in K, \forall \lambda > 0: \lambda p
+\in K\f$) and it is called a <I>cone with apex \f$ x\f$</I>, \f$ x \in \mathbb{R}^d\f$,
+if \f$ K = x + \mathbb{R}^{+} (K - x)\f$. A cone \f$ K\f$ is called a <I>pyramid</I>
 if \f$ K\f$ is a polyhedron.
 
-Now let \f$ P \in \R^d\f$ be a polyhedron and \f$ x \in \R^d\f$. There is a 
-neighborhood \f$ U_0(x)\f$ of \f$ x\f$ such that the pyramid \f$ Q := x + \R^{+} 
+Now let \f$ P \in \mathbb{R}^d\f$ be a polyhedron and \f$ x \in \mathbb{R}^d\f$. There is a 
+neighborhood \f$ U_0(x)\f$ of \f$ x\f$ such that the pyramid \f$ Q := x + \mathbb{R}^{+} 
 ((P \cap U(x)) - x)\f$ is the same for all neighborhoods \f$ U(x) \subseteq
 U_0(x)\f$. \f$ Q\f$ is called the <I>local pyramid</I> of \f$ P\f$ in \f$ x\f$ and
 denoted \f$ \pyr_P(x)\f$. 
 
-<B>Definition:</B> Let \f$ P \in \R^d\f$ be a polyhedron and \f$ x, y \in \R^d\f$ be two points.
+<B>Definition:</B> Let \f$ P \in \mathbb{R}^d\f$ be a polyhedron and \f$ x, y \in \mathbb{R}^d\f$ be two points.
 We define an equivalence relation \f$ x \sim y\f$ iff
 \f$ \pyr_P(x) = \pyr_P(y)\f$. The equivalence classes of \f$ \sim\f$ 
 are the <I>faces</I> of \f$ P\f$. The dimension of a face \f$ s\f$ is the 
@@ -144,7 +144,7 @@ The left figure illustrates the polyhedron with
 its partially closed and partially open boundary, i.e., vertex 
 \f$ v_4, v_5, v_6\f$, and edges \f$ e_4\f$ and \f$ e_5\f$ are not part of \f$ P\f$.
 The local pyramids for the faces are \f$ \pyr_P(f_1) = \emptyset\f$
-and \f$ \pyr_P(f_2) = \R^2\f$. Examples for the local pyramids of edges
+and \f$ \pyr_P(f_2) = \mathbb{R}^2\f$. Examples for the local pyramids of edges
 are the closed halfspace \f$ h_2\f$ for the edge \f$ e_1\f$, \f$ \pyr_P(e_1) = h_2\f$,
 and the open halfspace that is the complement of \f$ h_4\f$ for the 
 edge \f$ e_5\f$, \f$ \pyr_P(e_5) =

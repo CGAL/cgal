@@ -51,7 +51,7 @@ they were originally introduced.
 
 A skin surface is defined in terms of a finite set of weighted points
 \f$ \ssWpoint{P}\f$ and a shrink factor \f$ s\f$, with \f$ 0\leq s\leq 1\f$. A
-weighted point \f$ \ssWpoint{p}=({p},\ssWeight{p})\in \R^3\times\R\f$
+weighted point \f$ \ssWpoint{p}=({p},\ssWeight{p})\in \mathbb{R}^3\times\mathbb{R}\f$
 corresponds to a ball with center \f$ {p}\f$ and radius
 \f$ \sqrt{\ssWeight{p}}\f$. A weighted point with zero weight is called an
 unweighted point.
@@ -102,7 +102,7 @@ this set of weighted points:
 \ssWpoint{p}\in \mbox{conv} (\ssWpoint{P})\}}.
 \f}
 
-Here \f$ \mbox{conv}(\ssWpoint{P}) \subset \R^3\times\R\f$ is the convex
+Here \f$ \mbox{conv}(\ssWpoint{P}) \subset \mathbb{R}^3\times\mathbb{R}\f$ is the convex
 hull of a set of weighted points \f$ \ssWpoint{P}\f$, whereas \f$ \partial\f$
 denotes the boundary - in \f$ \mathbb{R}^3\f$ - of the union of the corresponding
 set of balls.

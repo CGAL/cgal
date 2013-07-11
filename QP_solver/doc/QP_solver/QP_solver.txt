@@ -40,9 +40,9 @@ Here,
 from \f$ \{\leq, =, \geq\}\f$, 
 
 <LI>\f$ \qpl\f$ is an \f$ n\f$-dimensional vector of lower
-bounds for \f$ \qpx\f$, where \f$ l_j\in\R\cup\{-\infty\}\f$ for all \f$ j\f$
+bounds for \f$ \qpx\f$, where \f$ l_j\in\mathbb{R}\cup\{-\infty\}\f$ for all \f$ j\f$
 <LI>\f$ \qpu\f$ is an \f$ n\f$-dimensional vector of upper bounds for
-\f$ \qpx\f$, where \f$ u_j\in\R\cup\{\infty\}\f$ for all \f$ j\f$
+\f$ \qpx\f$, where \f$ u_j\in\mathbb{R}\cup\{\infty\}\f$ for all \f$ j\f$
 
 <LI>\f$ D\f$ is a symmetric positive-semidefinite \f$ n\times n\f$ matrix (the
 quadratic objective function),
@@ -525,7 +525,7 @@ p = \ccSum{j=1}{n}{~\lambda_j~p_j}, \quad \ccSum{j=1}{n}{~\lambda_j} = 1,
 The problem of testing the existence of such \f$ \lambda_j\f$ can 
 be expressed as a linear program. It becomes particularly easy
 when we use the homogeneous representations of the points: if
-\f$ q_1,\ldots,q_n,q\in\R^{d+1}\f$ are homogeneous coordinates for
+\f$ q_1,\ldots,q_n,q\in\mathbb{R}^{d+1}\f$ are homogeneous coordinates for
 \f$ p_1,\ldots,p_n,p\f$ with positive homogenizing coordinates 
 \f$ h_1,\ldots,h_n,h\f$, we have
 \f[$q_j = h_j \cdot (p_j \mid 1) \mbox{~for all $j$, and~} q = h \cdot
