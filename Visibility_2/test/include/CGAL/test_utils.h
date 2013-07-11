@@ -111,27 +111,28 @@ bool test_are_equal(_Arrangement_2 &arr1, _Arrangement_2 &arr2) {
     return true;
 }
 
+
+
 template<class Number_type>
 Number_type string2num(const std::string& s) {
     int i;
-    if (i = s.find('/')) {
+    if (s.find("/") != std::string::npos) {
+        i = s.find("/");
         std::string p = s.substr(0, i);
         std::string q = s.substr(i+1);
         std::stringstream convert(p);
         int n, d;
         convert >> n;
         std::stringstream convert2(q);
-        convert2 >> d;
-        Number_type num(n, d);
-        return num;
+        convert2 >> d;        
+        return Number_type(n)/Number_type(d);
 
     }
     else {
         std::stringstream convert(s);
         double n;
         convert >> n;
-        Number_type num(n);
-        return num;
+        return Number_type(n);
     }
 }
 
