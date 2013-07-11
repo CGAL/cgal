@@ -11,6 +11,10 @@
 #include <cassert>
 #include <fstream>
 #include <vector>
+#include <iostream>
+#include <string>
+#include <CGAL/Gmpq.h>
+
 
 namespace CGAL {
 
@@ -19,7 +23,7 @@ namespace CGAL {
  * from each arrangements, then it walks the edges and compares them
  */
 template <class _Arrangement_2> 
-bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
+bool test_are_equal(_Arrangement_2 &arr1, _Arrangement_2 &arr2) {
 
 	typedef _Arrangement_2 								  Arrangement_2;
 	typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
@@ -107,31 +111,111 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
     return true;
 }
 
-template <class _Arrangement_2>
-bool create_arrangement_from_input(_Arrangement_2 &arr, std::ifstream& input) {
+template<class Number_type>
+Number_type string2num(const std::string& s) {
+    int i;
+    if (i = s.find('/')) {
+        std::string p = s.substr(0, i);
+        std::string q = s.substr(i+1);
+        std::stringstream convert(p);
+        int n, d;
+        convert >> n;
+        std::stringstream convert2(q);
+        convert2 >> d;
+        Number_type num(n, d);
+        return num;
 
+    }
+    else {
+        std::stringstream convert(s);
+        double n;
+        convert >> n;
+        Number_type num(n);
+        return num;
+    }
+}
+
+template <class _Arrangement_2>
+void create_arrangement_from_input(_Arrangement_2 &arr, std::ifstream& input) {
     typedef _Arrangement_2 								  Arrangement_2;
     typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
     typedef typename Geometry_traits_2::Segment_2         Segment_2;
     typedef typename Geometry_traits_2::Point_2	          Point_2;
+    typedef typename Geometry_traits_2::FT                Number_type;
+    if (input) {
+        std::string line;
+        while (std::getline(input, line)) {
+            if (line[0] != '#' && line[0] != '/')
+                break;
+        }
+        std::vector<Point_2> points;
+        std::vector<Segment_2> segments;
+        std::stringstream convert(line);
+        int number_of_points;
+        convert >> number_of_points;
 
-    std::vector<Point_2> points;
-    std::vector<Segment_2> segments;
-    int number_of_points;
-    input >> number_of_points;
-    for (int i = 0; i != number_of_points; i++) {
-        double x,y;
-        input >> x >> y;
-        points.push_back(Point_2(x, y));
+        for (int i = 0; i != number_of_points; i++) {
+            std::getline(input, line);
+            std::string n1, n2;
+            std::istringstream iss(line);
+            iss>> n1 >> n2;
+            points.push_back(Point_2(string2num<Number_type>(n1), string2num<Number_type>(n2)));
+        }
+        int number_of_edges;
+        input >> number_of_edges;
+        for (int i = 0; i != number_of_edges; i++) {
+            unsigned i1,i2;
+            input >> i1 >> i2;
+            segments.push_back(Segment_2(points[i1], points[i2]));
+        }
+        CGAL::insert(arr, segments.begin(), segments.end());
     }
-    int number_of_edges;
-    input >> number_of_edges;
-    for (int i = 0; i != number_of_edges; i++) {
-        unsigned i1,i2;
-        input >> i1 >> i2;
-        segments.push_back(Segment_2(points[i1], points[i2]));
+    else {
+        std::cout<<"Can't open the file. Check the file name.";
     }
-    CGAL::insert(arr, segments.begin(), segments.end());
+}
+
+template <class _Arrangement_2>
+void create_polygons_from_input(_Arrangement_2 &arr, std::ifstream& input) {
+    typedef _Arrangement_2 								  Arrangement_2;
+    typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
+    typedef typename Geometry_traits_2::Segment_2         Segment_2;
+    typedef typename Geometry_traits_2::Point_2	          Point_2;
+    typedef typename Geometry_traits_2::FT                Number_type;
+    if (input) {
+        std::string line;
+        while (std::getline(input, line)) {
+            if (line[0] != '#' && line[0] != '/')
+                break;
+        }
+        std::stringstream convert(line);
+        int number_of_polygons;
+        convert >> number_of_polygons;
+        for (int i = 0; i != number_of_polygons; i++) {
+            std::vector<Point_2> points;
+            std::vector<Segment_2> segments;
+            int number_of_vertex;
+            input >> number_of_vertex;
+            for (int j = 0; j != number_of_vertex-1; j++) {
+                std::getline(input, line);
+                std::string n1, n2;
+                std::istringstream iss(line);
+                iss >> n1 >> n2;
+                points.push_back(Point_2(string2num<Number_type>(n1), string2num<Number_type>(n2)));
+            }
+            for (int j = 0; j != number_of_vertex-1; j++) {
+
+                segments.push_back(Segment_2(points[j], points[j+1]));
+            }
+            segments.push_back(Segment_2(points.front(), points.back()));
+            CGAL::insert(arr, segments.begin(), segments.end());
+        }
+
+    }
+    else {
+        std::cout<<"Can't open the file. Check the file name.";
+    }
+
 }
 
 } // end namespace CGAL
