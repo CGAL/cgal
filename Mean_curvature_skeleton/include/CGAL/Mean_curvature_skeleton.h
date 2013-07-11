@@ -104,20 +104,22 @@ private:
 
     bool operator <(const Edge& rhs) const
     {
-      return length < rhs.length;
+      return (length == rhs.length) ? (id < rhs.id) : length < rhs.length;
     }
   };
 
 // Public methods
 public:
+  CurveSkeleton() : polyhedron(NULL)
+  {
+  }
+
   CurveSkeleton(Polyhedron* polyhedron) : polyhedron(polyhedron)
   {
-    init();
-    collapse();
   }
 
 // Private methods
-private:
+//private:
   void init()
   {
     int num_edges = boost::num_edges(*polyhedron) / 2;
@@ -146,6 +148,7 @@ private:
     {
       boost::put(vertex_id_pmap, *vb, idx++);
     }
+    std::cerr << "vertex num " << idx << "\n";
 
     // assign edge id
     // the two halfedges representing the same edge get the same id
@@ -167,6 +170,7 @@ private:
         idx++;
       }
     }
+    std::cerr << "edge num " << idx << "\n";
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
@@ -177,13 +181,13 @@ private:
       CGAL_assertion(CGAL::circulator_size(j) >= 3);
       do
       {
-        edge_descriptor ed = *j;
-        int id = boost::get(edge_id_pmap, ed);
+        int id = j->id();
         face_to_edge[face_id].push_back(id);
         edge_to_face[id].push_back(face_id);
       } while (++j != i->facet_begin());
       face_id++;
     }
+    std::cerr << "face num " << face_id << "\n";
 
     // compute vertex-edge connectivity
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
@@ -210,6 +214,13 @@ private:
       {
         std::cerr << "too many faces " << f << "\n";
       }
+//      std::cerr << "edge " << id << ": ";
+//      for (int i = 0; i < f; i++)
+//      {
+//        std::cout << edge_to_face[id][i] << " ";
+//      }
+//      std::cerr << "\n";
+
       int v = edge_to_vertex[id].size();
       if (v != 2)
       {
@@ -219,7 +230,7 @@ private:
     face_id = 0;
     for (Facet_iterator i = polyhedron->facets_begin(); i != polyhedron->facets_end(); ++i)
     {
-      int e = face_to_edge[face_id];
+      int e = face_to_edge[face_id].size();
       if (e != 3)
       {
         std::cerr << "wrong number of edges " << e << "\n";
@@ -236,6 +247,9 @@ private:
     // put all the edges into a priority queue
     // shorter edge has higher priority
     edge_iterator eb, ee;
+    std::vector<bool> is_edge_inserted;
+    is_edge_inserted.clear();
+    is_edge_inserted.resize(edge_to_face.size(), false);
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       Edge edge;
@@ -243,6 +257,10 @@ private:
       edge_descriptor ed = *eb;
       edge.id = boost::get(edge_id_pmap, ed);
 
+      if (is_edge_inserted[edge.id])
+      {
+        continue;
+      }
       vertex_descriptor v1 = ed->vertex();
       vertex_descriptor v2 = ed->opposite()->vertex();
 
@@ -250,9 +268,12 @@ private:
       Point target = v2->point();
       edge.length = sqrtf(squared_distance(source, target));
 
+//      std::cerr << "insert edge " << edge.id << " with length " << edge.length << "\n";
       queue.insert(edge);
+      is_edge_inserted[edge.id] = true;
     }
 
+    std::cerr << "queue size " << queue.size() << "\n";
     // start collapsing edges until all the edges have no incident faces
     while (!queue.empty())
     {
@@ -260,12 +281,26 @@ private:
       queue.erase(queue.begin());
 
       int eid = edge.id;
+
+//      std::cerr << "pop edge " << eid << " length " << edge.length << "\n";
+      if (is_edge_deleted[eid])
+      {
+//        std::cerr << "edge already deleted\n";
+        continue;
+      }
+      if (edge_to_face[eid].size() == 0)
+      {
+//        std::cerr << "edge has no incident face\n";
+        continue;
+      }
+
       // mark the edge and incident faces as deleted
       is_edge_deleted[eid] = true;
       for (size_t i = 0; i < edge_to_face[eid].size(); i++)
       {
         int fid = edge_to_face[eid][i];
         is_face_deleted[fid] = true;
+//        std::cerr << "delete face " << fid << "\n";
       }
 
       // p1 to be deleted
@@ -311,8 +346,10 @@ private:
         // delete the incident face for e2
         for (size_t j = 0; j < edge_to_face[e2_id].size(); j++)
         {
+//          std::cerr << "edge " << e2_id << " face " << edge_to_face[e2_id][j] << "\n";
           if (edge_to_face[e2_id][j] == fid)
           {
+//            std::cerr << "delete face " << fid << "\n";
             edge_to_face[e2_id].erase(edge_to_face[e2_id].begin() + j);
             break;
           }
@@ -324,12 +361,14 @@ private:
           int new_fid = edge_to_face[e1_id][j];
           if (new_fid != fid && !is_face_deleted[new_fid])
           {
+//            std::cout << "found face " << new_fid << "\n";
             // avoid duplicate
             if (std::find(edge_to_face[e2_id].begin(),
                           edge_to_face[e2_id].end(),
                           new_fid)
-                != edge_to_face[e2_id].end())
+                == edge_to_face[e2_id].end())
             {
+//              std::cout << "insert face " << new_fid << " to edge " << e2_id << "\n";
               edge_to_face[e2_id].push_back(new_fid);
               face_to_edge[new_fid].push_back(e2_id);
             }
@@ -347,7 +386,7 @@ private:
           if (std::find(vertex_to_edge[p2].begin(),
                         vertex_to_edge[p2].end(),
                         new_eid)
-              != vertex_to_edge[p2].end())
+              == vertex_to_edge[p2].end())
           {
             vertex_to_edge[p2].push_back(new_eid);
             for (size_t j = 0; j < edge_to_vertex[new_eid].size(); j++)
@@ -361,9 +400,28 @@ private:
           }
         }
       }
+//      print_stat();
     }
 
     // for debugging purpose
+    std::cerr << "finish collapse\n";
+    print_detail_stat();
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edge_descriptor ed = *eb;
+      int id = boost::get(edge_id_pmap, ed);
+      if (!is_edge_deleted[id])
+      {
+        if (edge_to_face[id].size() > 0)
+        {
+          std::cerr << "edg should not have faces " << edge_to_face[id].size() << "\n";
+        }
+      }
+    }
+  }
+
+  void print_stat()
+  {
     int cnt = 0;
     for (size_t i = 0; i < is_vertex_deleted.size(); i++)
     {
@@ -381,12 +439,58 @@ private:
       {
         cnt++;
       }
-      if (edge_to_face[i].size() > 0)
+    }
+    std::cerr << "num of edges " << cnt << "\n";
+
+    cnt = 0;
+    for (size_t i = 0; i < is_face_deleted.size(); i++)
+    {
+      if (!is_face_deleted[i])
       {
-        std::cerr << "should not have faces: " << edge_to_face[i].size() << "\n";
+        cnt++;
+      }
+    }
+    std::cerr << "num of faces " << cnt << "\n";
+  }
+
+  void print_detail_stat()
+  {
+    int cnt = 0;
+    for (size_t i = 0; i < is_vertex_deleted.size(); i++)
+    {
+      if (!is_vertex_deleted[i])
+      {
+        cnt++;
+      }
+    }
+    std::cerr << "num of vertices " << cnt << "\n";
+
+    cnt = 0;
+    for (size_t i = 0; i < is_edge_deleted.size(); i++)
+    {
+      if (!is_edge_deleted[i])
+      {
+        cnt++;
       }
     }
     std::cerr << "num of edges " << cnt << "\n";
+
+    edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edge_descriptor ed = *eb;
+      int id = boost::get(edge_id_pmap, ed);
+      if (is_edge_deleted[id])
+      {
+        continue;
+      }
+      std::cerr << "edge to vertex: ";
+      for (int i = 0; i < edge_to_vertex[id].size(); i++)
+      {
+        std::cerr << edge_to_vertex[id][i] << " ";
+      }
+      std::cerr << "\n";
+    }
 
     cnt = 0;
     for (size_t i = 0; i < is_face_deleted.size(); i++)
@@ -402,6 +506,7 @@ private:
   // extract the skeleton to a boost::graph data structure
   void extract_skeleton(Graph& graph, std::vector<Point>& points)
   {
+    std::cerr << "here1\n";
     std::vector<int> new_vertex_id;
     new_vertex_id.clear();
     new_vertex_id.resize(vertex_to_edge.size(), -1);
@@ -417,6 +522,7 @@ private:
 
     Graph temp_graph(id);
 
+    std::cerr << "here2\n";
     for (size_t i = 0; i < is_edge_deleted.size(); i++)
     {
       if (!is_edge_deleted[i])
@@ -425,10 +531,12 @@ private:
         int p2 = edge_to_vertex[i][1];
         int p1_id = new_vertex_id[p1];
         int p2_id = new_vertex_id[p2];
+        std::cerr << "add edge " << p1_id << " " << p2_id << "\n";
         boost::add_edge(p1_id, p2_id, temp_graph);
       }
     }
 
+    std::cerr << "here3\n";
     vertex_iterator vb, ve;
     points.resize(id);
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
@@ -439,6 +547,7 @@ private:
       points[new_id] = pos;
     }
     boost::copy_graph(temp_graph, graph);
+    std::cerr << "here4\n";
   }
 };
 
