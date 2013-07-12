@@ -180,12 +180,14 @@ public slots:
     if(selection_item && selection_item->polyhedron_item() == NULL) {
       Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
       if(!poly_item) {
+        print_message("Error: please select corresponding polyhedron item from Geometric Objects list.");
         scene->erase(item_id);
         return;
       }
 
       selection_item->set_polyhedron_item(poly_item);
       if(!selection_item->actual_load()) {
+        print_message("Error: loading selection item is not successful!");
         scene->erase(item_id);
         return;
       }
