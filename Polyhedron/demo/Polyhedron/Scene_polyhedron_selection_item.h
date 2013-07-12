@@ -186,7 +186,7 @@ public:
   Listener* listener;
 };
 
-//
+// To iterate on each minimum address halfedge as edge
 struct Minimum_address_halfedge_iterator {
   typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
   Minimum_address_halfedge_iterator(Halfedge_iterator hb, Halfedge_iterator he)
@@ -219,12 +219,20 @@ public:
   typedef Polyhedron::Facet_handle  Facet_handle;
   typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
-  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, Ui::Selection* ui_widget) 
-    : Scene_polyhedron_item_decorator(poly_item, false), 
-      ui_widget(ui_widget),
+  enum ACTIVE_HANDLE_TYPE { VERTEX = 0, FACET = 1, EDGE = 2 };
+
+  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, 
+    ACTIVE_HANDLE_TYPE aht,
+    bool is_insert,
+    bool k_ring) 
+    : Scene_polyhedron_item_decorator(poly_item, false),
+      active_handle_type(aht),
+      is_insert(is_insert),
+      k_ring(k_ring),
       selected_vertices(this),
       selected_facets(this),
       selected_edges(this)
+
   { 
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
@@ -350,64 +358,68 @@ public:
   //}
 
   void select_all() {
-    if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
-      Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
-      for( ;vb != ve; ++vb) {
-        selected_vertices.insert(vb);
-      }
+    switch(active_handle_type) {
+    case VERTEX:
+      select_all_vertices(); break;
+    case FACET:
+      select_all_facets(); break;
+    case EDGE:
+      select_all_edges(); break;
     }
-    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1){
-      Polyhedron::Facet_iterator fb(polyhedron()->facets_begin()), fe(polyhedron()->facets_end());
-      for( ;fb != fe; ++fb) {
-        selected_facets.insert(fb);
-      }
-    }
-    else {
-      Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
-      for( ;hb != he; ++hb) {
-        selected_edges.insert(hb);
-      }
+  }
+  void select_all_vertices() {
+    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
+    for( ;vb != ve; ++vb) {
+      selected_vertices.insert(vb);
     }
     emit itemChanged();
   }
-
+  void select_all_facets() {
+    Polyhedron::Facet_iterator fb(polyhedron()->facets_begin()), fe(polyhedron()->facets_end());
+    for( ;fb != fe; ++fb) {
+      selected_facets.insert(fb);
+    }
+    emit itemChanged();
+  }
+  void select_all_edges() {
+    Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
+    for( ;hb != he; ++hb) {
+      selected_edges.insert(hb);
+    }
+    emit itemChanged();
+  }
+  
   void clear() {
-    if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
-      selected_vertices.clear();
+    switch(active_handle_type) {
+    case VERTEX:
+      clear_vertices(); break;
+    case FACET:
+      clear_facets(); break;
+    case EDGE:
+      clear_edges(); break;
     }
-    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1) {
-      selected_facets.clear();
-    }
-    else {
-      selected_edges.clear();
-    }
+  }
+  void clear_vertices() {
+    selected_vertices.clear();
+    emit itemChanged();
+  }
+  void clear_facets() {
+    selected_facets.clear();
+    emit itemChanged();
+  }
+  void clear_edges() {
+    selected_edges.clear();
     emit itemChanged();
   }
 
-  void get_minimum_isolated_component() {
-    if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
-      get_minimum_isolated_vertex_component();
-    }
-    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1) {
-      get_minimum_isolated_facet_component();
-    }
-    else {
-      get_minimum_isolated_edge_component();
-    }
-  }
-
-  void select_marked_edges() {
-    if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
-      selected_vertices.clear();
-    } else {
-      selected_facets.clear();
-    }
+  void select_marked_edges(int neighb_size) {
+    clear();
     for(Polyhedron::Edge_iterator
           eit = polyhedron()->edges_begin(),
           end = polyhedron()->edges_end(); eit != end; ++eit)
     {
       if(!eit->is_feature_edge()) continue;
-      if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
+      if(active_handle_type == VERTEX) {
         selected_vertices.insert(eit->vertex());
         selected_vertices.insert(eit->opposite()->vertex());
       } else {
@@ -415,8 +427,8 @@ public:
         selected_facets.insert(eit->opposite()->face());
       }
     }
-    for(int i = 0; i < ui_widget->neighb_size->value(); ++i) {
-      if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
+    for(int i = 0; i < neighb_size; ++i) {
+      if(active_handle_type == VERTEX) {
         std::set<Vertex_handle> new_set;//(selected_vertices);
         BOOST_FOREACH(Vertex_handle v, selected_vertices)
         {
@@ -446,86 +458,81 @@ public:
     }
   }
 
-  void get_minimum_isolated_vertex_component() {
+  boost::optional<std::size_t> get_minimum_isolated_component() {
+    switch(active_handle_type) {
+    case VERTEX:
+      return get_minimum_isolated_vertex_component();
+    case FACET:
+      return get_minimum_isolated_facet_component();
+    default:
+      return get_minimum_isolated_edge_component();
+    }
+  }
+  boost::optional<std::size_t> get_minimum_isolated_vertex_component() {
     Minimum_visitor visitor;
     travel_not_selected_connected_components<Vertex_handle>
       (visitor, polyhedron()->vertices_begin(), polyhedron()->vertices_end(), polyhedron()->size_of_vertices());
-    if(visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
-    }
+    return visitor.minimum;
   }
-  void get_minimum_isolated_facet_component() {
+  boost::optional<std::size_t> get_minimum_isolated_facet_component() {
     Minimum_visitor visitor;
     travel_not_selected_connected_components<Facet_handle>
       (visitor, polyhedron()->facets_begin(), polyhedron()->facets_end(), polyhedron()->size_of_facets());
-    if(visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
-    }
+    return visitor.minimum;
   }
-  void get_minimum_isolated_edge_component() {
+  boost::optional<std::size_t> get_minimum_isolated_edge_component() {
     Minimum_visitor visitor;
     Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
     travel_not_selected_connected_components<Halfedge_handle>
       (visitor, hb, he, polyhedron()->size_of_halfedges()); // do not divide by 2
-    if(visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
-    }
+    return visitor.minimum;
   }
 
-  void select_isolated_components() {
-    if(ui_widget->Selection_type_combo_box->currentIndex() == 0) {
-      select_isolated_vertex_components();
-    }
-    else if(ui_widget->Selection_type_combo_box->currentIndex() == 1){
-      select_isolated_facet_components();
-    }
-    else {
-      select_isolated_edge_components();
+  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+    switch(active_handle_type) {
+    case VERTEX:
+      return select_isolated_vertex_components(threshold);
+    case FACET:
+      return select_isolated_facet_components(threshold);
+    default:
+      return select_isolated_edge_components(threshold);
     }
   }
-
-  void select_isolated_vertex_components() {
+  boost::optional<std::size_t> select_isolated_vertex_components(std::size_t threshold) {
     typedef boost::function_output_iterator<
       Selection_set_vertex::Selection_set_inserter> Output_iterator;
     Output_iterator out(&selected_vertices);
 
-    Selection_visitor<Output_iterator> visitor(ui_widget->Threshold_size_spin_box->value() , out);
+    Selection_visitor<Output_iterator> visitor(threshold , out);
     travel_not_selected_connected_components<Vertex_handle>
       (visitor, polyhedron()->vertices_begin(), polyhedron()->vertices_end(), polyhedron()->size_of_vertices());
 
     if(visitor.any_inserted) { emit itemChanged(); }
-    if(visitor.minimum_visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
-    }
+    return visitor.minimum_visitor.minimum;
   }
-  void select_isolated_facet_components() {
+  boost::optional<std::size_t> select_isolated_facet_components(std::size_t threshold) {
     typedef boost::function_output_iterator<
       Selection_set_facet::Selection_set_inserter> Output_iterator;
     Output_iterator out(&selected_facets);
 
-    Selection_visitor<Output_iterator> visitor(ui_widget->Threshold_size_spin_box->value() , out);
+    Selection_visitor<Output_iterator> visitor(threshold , out);
     travel_not_selected_connected_components<Facet_handle>
       (visitor, polyhedron()->facets_begin(), polyhedron()->facets_end(), polyhedron()->size_of_facets());
 
     if(visitor.any_inserted) { emit itemChanged(); }
-    if(visitor.minimum_visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
-    }
+    return visitor.minimum_visitor.minimum;
   }
-
-  void select_isolated_edge_components() {
+  boost::optional<std::size_t> select_isolated_edge_components(std::size_t threshold) {
     typedef boost::function_output_iterator<
       Selection_set_edge::Selection_set_inserter> Output_iterator;
     Output_iterator out(&selected_edges);
     Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
-    Selection_visitor<Output_iterator> visitor(ui_widget->Threshold_size_spin_box->value() , out);
+    Selection_visitor<Output_iterator> visitor(threshold , out);
     travel_not_selected_connected_components<Halfedge_handle>
       (visitor, hb, he, polyhedron()->size_of_halfedges()); // do not divide by 2
 
     if(visitor.any_inserted) { emit itemChanged(); }
-    if(visitor.minimum_visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
-    }
+    return visitor.minimum_visitor.minimum;
   }
 
   void changed_with_poly_item() {
@@ -551,17 +558,17 @@ public slots:
   }
   void vertex_has_been_selected(void* void_ptr) 
   {
-    if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 0) { return; }
+    if(!visible() || active_handle_type != VERTEX) { return; }
     has_been_selected( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
   }
   void facet_has_been_selected(void* void_ptr)
   {
-    if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 1) { return; }
+    if(!visible() || active_handle_type != FACET) { return; }
     has_been_selected( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
   }
   void edge_has_been_selected(void* void_ptr) 
   {
-    if(!visible() || ui_widget->Selection_type_combo_box->currentIndex() != 2) { return; }
+    if(!visible() || active_handle_type != EDGE) { return; }
     has_been_selected( static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite() );
   }
 
@@ -577,8 +584,6 @@ signals:
 protected:
   template<class HandleType>
   void has_been_selected(HandleType clicked) {
-    bool is_insert = ui_widget->Insertion_radio_button->isChecked();
-    int k_ring = ui_widget->Brush_size_spin_box->value();
     std::map<HandleType, int> selection = extract_k_ring(*polyhedron(), clicked, k_ring);
 
     bool any_change = false;
@@ -693,10 +698,14 @@ protected:
   friend class Selection_set_facet;
   friend class Selection_set_edge;
 // members
-  Ui::Selection* ui_widget;
   Mouse_keyboard_state state;
   //qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())
 public:
+// action state
+  ACTIVE_HANDLE_TYPE active_handle_type;
+  bool is_insert;
+  int  k_ring;
+// selection
   Selection_set_vertex selected_vertices;
   Selection_set_facet  selected_facets;
   Selection_set_edge   selected_edges;
