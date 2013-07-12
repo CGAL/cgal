@@ -25,10 +25,64 @@
 #include <set>
 #include <vector>
 #include <boost/foreach.hpp>
+#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
 
 namespace Mesh_3 {
+
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_manifold_criterion)
+
+template <typename Criteria,
+          bool has_Has_manifold_criterion =
+          has_Has_manifold_criterion<Criteria>::value>
+struct Has_manifold_criterion :
+    public CGAL::Boolean_tag<Criteria::Has_manifold_criterion::value>
+// when Criteria has the nested type Has_manifold_criterion
+{};
+
+template <typename Criteria>
+struct Has_manifold_criterion<Criteria, false> : public CGAL::Tag_false
+// when Criteria does not have the nested type Has_manifold_criterion
+{};
+
+
+
+template <typename Criteria>
+bool get_with_manifold(const Criteria& c, CGAL::Tag_false)
+{
+  return false;
+}
+
+template <typename Criteria>
+bool get_with_manifold(const Criteria& c, CGAL::Tag_true)
+{
+  return (c.topology() & MANIFOLD_WITH_BOUNDARY) != 0;
+}
+
+template <typename Criteria>
+bool get_with_manifold(const Criteria& c)
+{
+  return get_with_manifold(c, Has_manifold_criterion<Criteria>());
+}
+
+template <typename Criteria>
+bool get_with_boundary(const Criteria& c, CGAL::Tag_false)
+{
+  return false;
+}
+
+template <typename Criteria>
+bool get_with_boundary(const Criteria& c, CGAL::Tag_true)
+{
+  return (c.topology() & NO_BOUNDARY) == 0;
+}
+
+template <typename Criteria>
+bool get_with_boundary(const Criteria& c)
+{
+  return get_with_boundary(c, Has_manifold_criterion<Criteria>());
+}
 
 template <
   typename Base_,
@@ -68,6 +122,7 @@ protected:
 
   mutable bool m_manifold_info_initialized;
   mutable bool m_bad_vertices_initialized;
+  bool m_with_manifold_criterion;
   bool m_with_boundary;
 
 private:
@@ -227,7 +282,7 @@ public:
                               const Criteria& criteria,
                               const Mesh_domain& oracle,
                               C3t3& c3t3,
-                              bool with_boundary = withBoundary)
+                              bool /*with_boundary*/ = withBoundary)
     : Base(triangulation,
            criteria,
            oracle,
@@ -236,14 +291,19 @@ public:
     , r_c3t3_(c3t3)
     , m_manifold_info_initialized(false)
     , m_bad_vertices_initialized(false)
-    , m_with_boundary(with_boundary)
+    , m_with_manifold_criterion(get_with_manifold(criteria))
+    , m_with_boundary(get_with_boundary(criteria))
   {
 #ifdef CGAL_MESH_3_DEBUG_CONSTRUCTORS
     std::cerr << "CONS: Refine_facets_manifold_base";
-    if(m_with_boundary)
-      std::cerr << " (with boundaries)\n";
-    else
-      std::cerr << " (without boundary)\n";
+    if(m_with_manifold_criterion) {
+      if(m_with_boundary)
+        std::cerr << " (with boundaries)\n";
+      else
+        std::cerr << " (without boundary)\n";
+    } else {
+      std::cerr << " (DEACTIVATED)\n";
+    }
 #endif
   }
 
@@ -328,6 +388,9 @@ public:
   bool no_longer_element_to_refine_impl() const {
     if(Base::no_longer_element_to_refine_impl())
     {
+      if(!m_with_manifold_criterion) return true;
+      // Disable the manifold criterion
+
       if( ! m_manifold_info_initialized ) initialize_manifold_info();
 
       if(m_bad_edges.empty())
@@ -492,17 +555,21 @@ public:
   std::string debug_info() const
   {
     std::stringstream s;
-    s << Base::debug_info()
-      << "," << m_bad_edges.size()
-      << "," << m_bad_vertices.size();
+    s << Base::debug_info();
+    if(m_with_manifold_criterion) {
+      s << "," << m_bad_edges.size()
+        << "," << m_bad_vertices.size();
+    }
     return s.str();
   }
 
   std::string debug_info_header() const
   {
     std::stringstream s;
-    s << Base::debug_info_header()
-      << ",#bad edges,#bad vertices";
+    s << Base::debug_info_header();
+    if(m_with_manifold_criterion) {
+      s << ",#bad edges,#bad vertices";
+    }
     return s.str();
   }
 };  // end Refine_facets_manifold_base
