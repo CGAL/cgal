@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>10</y>
+      <y>0</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -146,7 +146,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>50</y>
+      <y>40</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -159,7 +159,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>90</y>
+      <y>80</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -172,7 +172,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>130</y>
+      <y>120</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -194,6 +194,19 @@
      <string>run one iteration</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_skeletonize">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>160</y>
+      <width>114</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Skeletonize</string>
+    </property>
+   </widget>
    <zorder>zero_TH</zorder>
    <zorder>omega_H</zorder>
    <zorder>edgelength_TH</zorder>
@@ -209,6 +222,7 @@
    <zorder>pushButton_split</zorder>
    <zorder>pushButton_degeneracy</zorder>
    <zorder>pushButton_run</zorder>
+   <zorder>pushButton_skeletonize</zorder>
   </widget>
  </widget>
  <resources/>

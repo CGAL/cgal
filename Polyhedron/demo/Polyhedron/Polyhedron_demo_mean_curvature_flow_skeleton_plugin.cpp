@@ -17,6 +17,8 @@
 #include <Eigen/Sparse>
 
 #include <boost/property_map/property_map.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
@@ -47,6 +49,8 @@ typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_inde
 typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> > Sparse_linear_solver;
 
 typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
@@ -94,6 +98,7 @@ public slots:
   void on_actionSplit();
   void on_actionDegeneracy();
   void on_actionRun();
+  void on_actionSkeletonize();
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -123,13 +128,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
                           | QDockWidget::DockWidgetClosable);
     dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
     mw->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
-//    dockWidget->setFloating(true);
-//    dynamic_cast<Ui::MainWindow *>(mw)->consoleDockWidget->tabifyDockWidget(dockWidget);
-//    mw->addDockWidget(Qt::BottomDockWidgetArea, dockWidget);
-//    mw->tabifyDockWidget(dockWidget, dynamic_cast<Ui::MainWindow *>(mw)->consoleDockWidget);
     mw->tabifyDockWidget(static_cast<MainWindow*>(mw)->get_ui()->consoleDockWidget, dockWidget);
     dockWidget->show();
     dockWidget->raise();
+
     connect(ui->pushButton_contract, SIGNAL(clicked()),
             this, SLOT(on_actionContract()));
     connect(ui->pushButton_collapse, SIGNAL(clicked()),
@@ -140,6 +142,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionDegeneracy()));
     connect(ui->pushButton_run, SIGNAL(clicked()),
             this, SLOT(on_actionRun()));
+    connect(ui->pushButton_skeletonize, SIGNAL(clicked()),
+            this, SLOT(on_actionSkeletonize()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -380,6 +384,39 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
   scene->setSelectedItem(index);
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
+
+  if (mcs == NULL)
+  {
+    double omega_L = ui->omega_L->value();
+    double omega_H = ui->omega_H->value();
+    double edgelength_TH = ui->edgelength_TH->value();
+    double alpha = ui->alpha->value();
+    double zero_TH = ui->zero_TH->value();
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+  }
+
+  QTime time;
+  time.start();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  Graph g;
+  std::vector<Point> points;
+
+  mcs->convert_to_skeleton();
+  mcs->get_skeleton(g, points);
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  // update scene
   QApplication::restoreOverrideCursor();
 }
 

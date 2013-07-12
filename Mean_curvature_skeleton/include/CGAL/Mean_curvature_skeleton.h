@@ -1522,7 +1522,7 @@ public:
     detect_degeneracies();
   }
 
-  void convert_to_skeleton(Graph& g, std::vector<Point>& points)
+  void convert_to_skeleton()
   {
     Skeleton skeleton(polyhedron);
     skeleton.init();
