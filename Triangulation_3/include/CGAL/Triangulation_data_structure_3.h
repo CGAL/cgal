@@ -475,14 +475,14 @@ public:
   bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
   {
     CGAL::Spatial_grid_lock_data_structure_3<
-      Tag_priority_blocking> *p_lock_ds = 
+      Tag_priority_blocking> *lock_ds = 
       CGAL::Spatial_grid_lock_data_structure_3::get_global_lock_ds();
     bool locked = true;
-    if (p_lock_ds)
+    if (lock_ds)
     {
       for (int iVertex = 0 ; locked && iVertex < 4 ; ++iVertex)
       {
-        locked = p_lock_ds->is_locked_by_this_thread(
+        locked = lock_ds->is_locked_by_this_thread(
           cell_handle->vertex(iVertex)->point());
       }
     }

@@ -72,12 +72,12 @@ typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
 /*! 
 Creates an empty regular triangulation, possibly specifying a traits class 
 `traits`. 
-`p_lock_ds` is an optional pointer to the lock data structure for parallel operations. It
+`lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
 Regular_triangulation_3 
 (const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
-SpatialLockDataStructure_3 *p_lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = 0); 
 
 /*! 
 Copy constructor. 
@@ -95,14 +95,14 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
 const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3(), 
-SpatialLockDataStructure_3 *p_lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = 0); 
 
 /*! 
 Same as before, with last two parameters in reverse order.
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
-SpatialLockDataStructure_3 *p_lock_ds, 
+SpatialLockDataStructure_3 *lock_ds, 
 const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3());
 /// @} 
 

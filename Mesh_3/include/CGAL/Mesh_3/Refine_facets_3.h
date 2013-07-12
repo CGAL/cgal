@@ -411,8 +411,8 @@ public:
                   const MeshDomain& oracle,
                   Previous_level_& previous,
                   C3T3& c3t3,
-                  Lock_data_structure *p_lock_ds,
-                  Mesh_3::WorksharingDataStructureType *p_worksharing_ds);
+                  Lock_data_structure *lock_ds,
+                  Mesh_3::WorksharingDataStructureType *worksharing_ds);
 
   /// Destructor
   virtual ~Refine_facets_3() { }
@@ -826,8 +826,8 @@ Refine_facets_3(Tr& triangulation,
                 const MD& oracle,
                 P_& previous,
                 C3T3& c3t3,
-                Lock_data_structure *p_lock_ds,
-                Mesh_3::WorksharingDataStructureType *p_worksharing_ds)
+                Lock_data_structure *lock_ds,
+                Mesh_3::WorksharingDataStructureType *worksharing_ds)
   : Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , C_()
@@ -838,8 +838,8 @@ Refine_facets_3(Tr& triangulation,
   , r_oracle_(oracle)
   , r_c3t3_(c3t3)
 {
-  Base::set_lock_ds(p_lock_ds);
-  Base::set_worksharing_ds(p_worksharing_ds);
+  Base::set_lock_ds(lock_ds);
+  Base::set_worksharing_ds(worksharing_ds);
 }
 
 

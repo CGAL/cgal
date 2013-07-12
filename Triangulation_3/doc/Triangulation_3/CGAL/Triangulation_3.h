@@ -218,18 +218,18 @@ typedef TriangulationDataStructure_3::Concurrency_tag Concurrency_tag;
 /*! 
 Introduces a triangulation `t` having only one vertex which is the 
 infinite vertex.
-`p_lock_ds` is an optional pointer to the lock data structure for parallel operations. It
+`lock_ds` is an optional pointer to the lock data structure for parallel operations. It
 must be provided if concurrency is enabled.
 */ 
 Triangulation_3 
 (const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
- SpatialLockDataStructure_3 *p_lock_ds = 0);
+ SpatialLockDataStructure_3 *lock_ds = 0);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
 Triangulation_3 
-(SpatialLockDataStructure_3 *p_lock_ds = 0,
+(SpatialLockDataStructure_3 *lock_ds = 0,
  const TriangulationTraits_3 & traits = TriangulationTraits_3());
 
 /*! 
@@ -246,7 +246,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
 const TriangulationTraits_3 & traits = TriangulationTraits_3(),
-SpatialLockDataStructure_3 *p_lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = 0); 
 
 /// @} 
 
@@ -1404,7 +1404,7 @@ ostream& operator<< (ostream& os, const Triangulation_3 &t);
 /*! 
 Set the pointer to the lock data structure.
 */ 
-void set_lock_data_structure(SpatialLockDataStructure_3 *p_lock_ds) const;
+void set_lock_data_structure(SpatialLockDataStructure_3 *lock_ds) const;
 
 /// @} 
 

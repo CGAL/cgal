@@ -184,8 +184,8 @@ protected:
   Triangulation_3_base()
     : m_lock_ds(0) {}
 
-  Triangulation_3_base(Lock_data_structure *p_lock_ds)
-    : m_lock_ds(p_lock_ds) {}
+  Triangulation_3_base(Lock_data_structure *lock_ds)
+    : m_lock_ds(lock_ds) {}
 
   void swap(Triangulation_3_base<Parallel_tag, Lock_data_structure_> &tr)
   {
@@ -280,9 +280,9 @@ public:
     return m_lock_ds;
   }
 
-  void set_lock_data_structure(Lock_data_structure *p_lock_ds) const
+  void set_lock_data_structure(Lock_data_structure *lock_ds) const
   {
-    m_lock_ds = p_lock_ds;
+    m_lock_ds = lock_ds;
   }
 
   void unlock_all_elements() const
@@ -609,14 +609,14 @@ protected:
 public:
 
   // CONSTRUCTORS
-  Triangulation_3(const GT & gt = GT(), Lock_data_structure *p_lock_ds = 0)
-    : Base(p_lock_ds), _tds(), _gt(gt)
+  Triangulation_3(const GT & gt = GT(), Lock_data_structure *lock_ds = 0)
+    : Base(lock_ds), _tds(), _gt(gt)
     {
       init_tds();
     }
 
-  Triangulation_3(Lock_data_structure *p_lock_ds, const GT & gt = GT())
-    : Base(p_lock_ds), _tds(), _gt(gt)
+  Triangulation_3(Lock_data_structure *lock_ds, const GT & gt = GT())
+    : Base(lock_ds), _tds(), _gt(gt)
     {
       init_tds();
     }
@@ -632,8 +632,8 @@ public:
 
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
-                  const GT & gt = GT(), Lock_data_structure *p_lock_ds = 0)
-    : Base(p_lock_ds), _gt(gt)
+                  const GT & gt = GT(), Lock_data_structure *lock_ds = 0)
+    : Base(lock_ds), _gt(gt)
   {
       init_tds();
       insert(first, last);
@@ -643,8 +643,8 @@ public:
   // Precondition: p0, p1, p3 and p4 MUST BE positively oriented
   Triangulation_3(const Point &p0, const Point &p1,
                   const Point &p3, const Point &p4,
-                  const GT & gt = GT(), Lock_data_structure *p_lock_ds = 0)
-    : Base(p_lock_ds), _gt(gt)
+                  const GT & gt = GT(), Lock_data_structure *lock_ds = 0)
+    : Base(lock_ds), _gt(gt)
   {
     CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);
     init_tds(p0, p1, p3, p4);

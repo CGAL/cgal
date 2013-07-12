@@ -220,12 +220,12 @@ protected:
 
 public:
 
-  Delaunay_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *p_lock_ds = 0)
-    : Tr_Base(gt, p_lock_ds)
+  Delaunay_triangulation_3(const Gt& gt = Gt(), Lock_data_structure *lock_ds = 0)
+    : Tr_Base(gt, lock_ds)
   {}
 
-  Delaunay_triangulation_3(Lock_data_structure *p_lock_ds, const Gt& gt = Gt())
-    : Tr_Base(p_lock_ds, gt)
+  Delaunay_triangulation_3(Lock_data_structure *lock_ds, const Gt& gt = Gt())
+    : Tr_Base(lock_ds, gt)
   {}
 
   // Create a 3D triangulation from 4 points which must be well-oriented
@@ -233,8 +233,8 @@ public:
   Delaunay_triangulation_3(const Point &p0, const Point &p1,
                            const Point &p2, const Point &p3,
                            const Gt& gt = Gt(),
-                           Lock_data_structure *p_lock_ds = 0)
-    : Tr_Base(p0, p1, p2, p3, gt, p_lock_ds)
+                           Lock_data_structure *lock_ds = 0)
+    : Tr_Base(p0, p1, p2, p3, gt, lock_ds)
   {}
 
 
@@ -247,17 +247,17 @@ public:
 
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                           const Gt& gt = Gt(), Lock_data_structure *p_lock_ds = 0)
-    : Tr_Base(gt, p_lock_ds)
+                           const Gt& gt = Gt(), Lock_data_structure *lock_ds = 0)
+    : Tr_Base(gt, lock_ds)
   {
       insert(first, last);
   }
 
   template < typename InputIterator >
   Delaunay_triangulation_3(InputIterator first, InputIterator last,
-                           Lock_data_structure *p_lock_ds,
+                           Lock_data_structure *lock_ds,
                            const Gt& gt = Gt())
-    : Tr_Base(gt, p_lock_ds)
+    : Tr_Base(gt, lock_ds)
   {
       insert(first, last);
   }

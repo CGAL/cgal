@@ -449,8 +449,8 @@ protected:
   typedef typename Tr::Facet                Facet;
   typedef typename Tr::Lock_data_structure  Lock_data_structure;
 
-  C3T3_helpers_base(Lock_data_structure *p_lock_ds)
-    : m_lock_ds(p_lock_ds) {}
+  C3T3_helpers_base(Lock_data_structure *lock_ds)
+    : m_lock_ds(lock_ds) {}
 
 
 public:
@@ -646,8 +646,8 @@ public:
    * Constructor
    */
   C3T3_helpers(C3T3& c3t3, const MeshDomain& domain,
-               Lock_data_structure *p_lock_ds = 0)
-    : Base(p_lock_ds)
+               Lock_data_structure *lock_ds = 0)
+    : Base(lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())
     , domain_(domain) { }
