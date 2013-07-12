@@ -353,13 +353,32 @@ upsample_point_set(
   FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
 
-  double max_iter_time = 4;
-  for (int iter_time = 0; iter_time < max_iter_time; iter_time ++)
+  double max_iter_time = 3;
+  for (int iter_time = 0; iter_time < max_iter_time; iter_time++)
   {
-    FT current_radius = neighbor_radius * ( 0.6 * iter_time);
-    unsigned int current_points_size = rich_point_set.size();
-    for (i = 0; i < current_points_size; i++)
+
+    FT current_radius = neighbor_radius;
+
+    if (iter_time > 0)
     {
+      current_radius = neighbor_radius * (iter_time * 0.5);
+
+    }
+
+    unsigned int current_size = rich_point_set.size();
+    std::vector<FT> density_set(current_size);
+    std::vector<unsigned int> father_indexes(current_size);
+    std::vector<unsigned int> mother_indexes(current_size);
+    std::vector<bool> is_pass_threshold(current_size, false);
+    FT sum_density = 0.0;
+
+    for (i = 0; i < rich_point_set.size(); i++)
+    {
+      if (is_pass_threshold[i])
+      {
+        continue;
+      }
+
       Rich_point& v = rich_point_set[i];
 
       // extract neighbor rich points by index
@@ -370,33 +389,71 @@ upsample_point_set(
       }
 
       unsigned int base_index = 0;
-      FT density_length = upsample_internal::
-        base_point_selection(v,
-        neighbor_rich_points,
-        edge_senstivity,
-        base_index);
+      density_set[i] = upsample_internal::
+                            base_point_selection(v,
+                                                 neighbor_rich_points,
+                                                 edge_senstivity,
+                                                 base_index);
+      sum_density+= density_set[i];
+      father_indexes[i] = v.index;
+      mother_indexes[i] = base_index;
 
-      // insert a new rich point
-      Rich_point new_v;
-      Rich_point& base = rich_point_set[base_index];
-      Vector diff_v_base = base.pt - v.pt;
-      new_v.pt = v.pt + diff_v_base / FT(2.0);
-      new_v.index = rich_point_set.size();
+      
+   }
+   FT density_pass_threshold = (sum_density / current_size) * 0.5;
 
-      unsigned int new_point_index = new_v.index;
-      unsigned int father_index = v.index;
-      unsigned int mother_index = base_index;
-      rich_point_set.push_back(new_v);
 
-      //update new rich point
-      upsample_internal::update_new_point(new_point_index, 
-        father_index, 
-        mother_index, 
-        rich_point_set, 
-        current_radius,
-        sharpness_bandwidth);
+    // insert new points until all the points' density pass the threshold
+    
+    unsigned int max_loop_time = 5;
+    unsigned int loop = 0;
+    while (1)
+    {
+      unsigned int count_not_pass = 0;
+      loop++;
+      for (i = 0; i < rich_point_set.size(); i++)
+      {
+        if (is_pass_threshold[i])
+        {
+          continue;
+        }
+
+        if (density_set[i] < density_pass_threshold)
+        {
+          is_pass_threshold[i] = true;
+          continue;
+        }
+        count_not_pass++;
+
+        Rich_point& v = rich_point_set[i];
+        // insert a new rich point
+        Rich_point new_v;
+        Rich_point& base = rich_point_set[mother_indexes[i]];
+        Vector diff_v_base = base.pt - v.pt;
+        new_v.pt = v.pt + (diff_v_base / FT(2.0));
+        new_v.index = rich_point_set.size();
+
+        unsigned int new_point_index = new_v.index;
+        unsigned int father_index = father_indexes[i];
+        unsigned int mother_index = mother_indexes[i];
+        rich_point_set.push_back(new_v);
+
+        //update new rich point
+        upsample_internal::update_new_point(new_point_index, 
+                                            father_index, 
+                                            mother_index, 
+                                            rich_point_set, 
+                                            current_radius,
+                                            sharpness_bandwidth);
+
+
+
+
+      }
     }
   }
+
+
 
 
   for (i = number_of_input; i < rich_point_set.size(); i++)
