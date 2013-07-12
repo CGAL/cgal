@@ -233,7 +233,7 @@ public:
       selected_edges(this)
   { init(); }
 
-  void init() 
+protected: void init() 
   {
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
@@ -249,6 +249,8 @@ public:
     poly_item->update_facet_indices();
     poly_item->update_halfedge_indices();
   }
+
+public:
 // drawing
   void draw() const {
     draw_selected_vertices();
@@ -465,9 +467,12 @@ public:
       if(active_handle_type == VERTEX) {
         selected_vertices.insert(eit->vertex());
         selected_vertices.insert(eit->opposite()->vertex());
-      } else {
+      } else if(active_handle_type == FACET) {
         selected_facets.insert(eit->face());
         selected_facets.insert(eit->opposite()->face());
+      }
+      else {
+        selected_edges.insert(&*eit < &*eit->opposite() ? eit : eit->opposite());
       }
     }
     for(int i = 0; i < neighb_size; ++i) {
@@ -484,7 +489,7 @@ public:
         BOOST_FOREACH(Vertex_handle v, new_set) {
           selected_vertices.insert(v);
         }
-      } else {
+      } else if(active_handle_type == FACET){
         std::set<Facet_handle> new_set;//(selected_facets);
         BOOST_FOREACH(Facet_handle f, selected_facets)
         {
@@ -498,7 +503,20 @@ public:
           selected_facets.insert(f);
         }
       }
+      else {
+        std::set<Halfedge_handle> new_set;//(selected_facets);
+        BOOST_FOREACH(Halfedge_handle h, selected_edges)
+        {
+          for(One_ring_iterator<Halfedge_handle> circ(h); circ; ++circ) {
+            new_set.insert(circ);
+          }
+        }
+        BOOST_FOREACH(Halfedge_handle h, new_set) {
+          selected_edges.insert(h);
+        }
+      }
     }
+    emit itemChanged();
   }
 
   boost::optional<std::size_t> get_minimum_isolated_component() {
