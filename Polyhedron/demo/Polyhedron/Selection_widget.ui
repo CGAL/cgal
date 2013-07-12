@@ -215,6 +215,12 @@
     </item>
     <item>
      <widget class="QPushButton" name="Create_selection_item_button">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Create Selection Item</string>
       </property>
