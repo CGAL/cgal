@@ -91,7 +91,7 @@ Scene_polyhedron_item_decorator::select(double orig_x,
                        dir_z);
 }
 
-Scene_polyhedron_item* Scene_polyhedron_item_decorator::polyhedron_item() {
+Scene_polyhedron_item* Scene_polyhedron_item_decorator::polyhedron_item() const {
   return poly_item;
 }
 

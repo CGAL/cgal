@@ -37,7 +37,7 @@ public:
   Polyhedron*       polyhedron();
   const Polyhedron* polyhedron() const;
 
-  Scene_polyhedron_item* polyhedron_item();
+  Scene_polyhedron_item* polyhedron_item() const;
   void                   set_polyhedron_item(Scene_polyhedron_item* poly_item);
 
   // Get dimensions
