@@ -255,7 +255,6 @@ public:
     draw_selected_facets();
     draw_selected_edges();
   }
-
   void draw_selected_vertices() const {
     GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
     glDisable(GL_LIGHTING);
@@ -310,7 +309,6 @@ public:
     ::glEnd();
     ::glPolygonOffset(offset_factor, offset_units);
   }
-
   void draw_selected_edges() const {
     GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
     glDisable(GL_LIGHTING);
@@ -331,6 +329,7 @@ public:
   }
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
+
   bool save(const std::string& file_name) const {
     std::ofstream out(file_name);
     if(!out) { return false; }
@@ -352,7 +351,6 @@ public:
     file_name_holder = file_name;
     return true;
   }
-  
   bool actual_load() {
     init();
 
@@ -401,31 +399,6 @@ public:
     }
     return true;
   }
-
-  //  std::ofstream out(file_name);
-  //  // save roi
-  //  for(std::set<Vertex_handle>::iterator it = selected_vertices.begin();
-  //    it != selected_vertices.end(); ++it) {
-  //      out << (*it)->id() << " ";
-  //  }
-  //  out.close();
-  //}
-  //void load_roi(const char* file_name) {
-  //  // put vertices to vector
-  //  std::vector<Polyhedron::Vertex_handle> all_vertices;
-  //  all_vertices.reserve(polyhedron()->size_of_vertices());
-  //  Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
-  //  for( ;vb != ve; ++vb) {
-  //    all_vertices.push_back(vb);
-  //  }
-  //  // read roi
-  //  std::ifstream in(file_name);
-  //  std::size_t idx;
-  //  while(in >> idx) {
-  //    selected_vertices.insert(all_vertices[idx]);
-  //  }
-  //  in.close();
-  //}
 
   void select_all() {
     switch(active_handle_type) {
