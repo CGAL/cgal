@@ -207,7 +207,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
-  add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc ${selectionUI_FILES})
+  add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator)
   
   if(EIGEN3_FOUND OR TAUCS_FOUND)
