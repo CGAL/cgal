@@ -55,6 +55,7 @@ public:
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
       connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*)));
+      connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
     } 
   }
 
@@ -170,6 +171,31 @@ public slots:
   void on_Brush_size_spin_box_changed(int value) {
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->k_ring = value;
+    }
+  }
+  // To handle empty selection items coming from loader
+  void new_item_created(int item_id) {
+    Scene_polyhedron_selection_item* selection_item = 
+      qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
+    if(selection_item && selection_item->polyhedron_item() == NULL) {
+      Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+      if(!poly_item) {
+        scene->erase(item_id);
+        return;
+      }
+
+      selection_item->set_polyhedron_item(poly_item);
+      if(!selection_item->actual_load()) {
+        scene->erase(item_id);
+        return;
+      }
+
+      selection_item->active_handle_type = static_cast<ACTIVE_HANDLE_TYPE>(ui_widget.Selection_type_combo_box->currentIndex());
+      selection_item->is_insert = ui_widget.Insertion_radio_button->isChecked();
+      selection_item->k_ring = ui_widget.Brush_size_spin_box->value();
+
+      selection_item_map.insert(std::make_pair(poly_item, selection_item));
+      mw->installEventFilter(selection_item); // filter mainwindows events for key(pressed/released)
     }
   }
   void item_about_to_be_destroyed(Scene_item* scene_item) {

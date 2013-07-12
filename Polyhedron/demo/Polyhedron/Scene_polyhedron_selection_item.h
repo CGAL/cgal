@@ -215,8 +215,12 @@ public:
   typedef Polyhedron::Halfedge_handle Halfedge_handle;
 
   enum ACTIVE_HANDLE_TYPE { VERTEX = 0, FACET = 1, EDGE = 2 };
+  // To be used inside loader
+  Scene_polyhedron_selection_item() : Scene_polyhedron_item_decorator(NULL, false) 
+  { }
 
-  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, 
+  Scene_polyhedron_selection_item(
+    Scene_polyhedron_item* poly_item, 
     ACTIVE_HANDLE_TYPE aht,
     bool is_insert,
     bool k_ring) 
@@ -227,8 +231,10 @@ public:
       selected_vertices(this),
       selected_facets(this),
       selected_edges(this)
+  { init(); }
 
-  { 
+  void init() 
+  {
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
@@ -237,7 +243,7 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
-    
+
     // id field is used in operations
     poly_item->update_vertex_indices();
     poly_item->update_facet_indices();
@@ -271,7 +277,6 @@ public:
 
     if(enable_back_lighting) { glEnable(GL_LIGHTING); }
   }
-
   void draw_selected_facets() const {
     CGAL::GL::Color color;
     color.set_rgb_color(0.f,1.f,0.f);
@@ -326,7 +331,77 @@ public:
   }
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
-  //void save_roi(const char* file_name) const { 
+  bool save(const std::string& file_name) const {
+    std::ofstream out(file_name);
+    if(!out) { return false; }
+
+    for(Selection_set_vertex::const_iterator it = selected_vertices.begin(); it != selected_vertices.end(); ++it) 
+    { out << (*it)->id() << " "; }
+    out << std::endl;
+
+    for(Selection_set_facet::const_iterator it = selected_facets.begin(); it != selected_facets.end(); ++it) 
+    { out << (*it)->id() << " "; }
+    out << std::endl;
+
+    for(Selection_set_edge::const_iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) 
+    { out << (*it)->id() << " "; }
+    out << std::endl;
+    return true;
+  }
+  bool load(const std::string& file_name) {
+    file_name_holder = file_name;
+    return true;
+  }
+  
+  bool actual_load() {
+    init();
+
+    std::vector<Vertex_handle> all_vertices;
+    all_vertices.reserve(polyhedron()->size_of_vertices());
+    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
+    for(;vb != ve; ++vb) { all_vertices.push_back(vb); }
+    
+    std::vector<Facet_handle> all_facets;
+    all_facets.reserve(polyhedron()->size_of_facets());
+    Polyhedron::Facet_iterator fb(polyhedron()->facets_begin()), fe(polyhedron()->facets_end());
+    for(;fb != fe; ++fb) { all_facets.push_back(fb); }
+
+    std::vector<Halfedge_handle> all_halfedges;
+    all_facets.reserve(polyhedron()->size_of_halfedges());
+    Polyhedron::Halfedge_iterator hb(polyhedron()->halfedges_begin()), he(polyhedron()->halfedges_end());
+    for(;hb != he; ++hb) { all_halfedges.push_back(hb); }
+
+    std::ifstream in(file_name_holder);
+    if(!in) { return false; }
+
+    std::string line;
+    std::size_t id;
+
+    if(!std::getline(in, line)) { return false; }
+    std::istringstream vertex_line(line);
+    while(vertex_line >> id) {
+      if(id >= all_vertices.size()) { return false; }
+      selected_vertices.insert(all_vertices[id]);
+    }
+
+    if(!std::getline(in, line)) { return false; }
+    std::istringstream facet_line(line);
+    while(facet_line >> id) {
+      if(id >= all_facets.size()) { return false; }
+      selected_facets.insert(all_facets[id]);
+    }
+
+    if(!std::getline(in, line)) { return false; }
+    std::istringstream edge_line(line);
+    while(edge_line >> id) {
+      if(id >= all_halfedges.size()) { return false; }
+      Halfedge_handle h = all_halfedges[id];
+      h = &*h < &*h->opposite() ? h : h->opposite();
+      selected_edges.insert(h);
+    }
+    return true;
+  }
+
   //  std::ofstream out(file_name);
   //  // save roi
   //  for(std::set<Vertex_handle>::iterator it = selected_vertices.begin();
@@ -545,6 +620,10 @@ public:
   bool erase(Facet_handle f) { return selected_facets.erase(f); }
   bool erase(Halfedge_handle h) { return selected_edges.erase(h); }
 
+  virtual bool isEmpty() const { 
+    if(poly_item == NULL) { return true; }
+    return Scene_polyhedron_item_decorator::isEmpty();
+  }
 public slots:
   void changed() {
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -692,7 +771,7 @@ protected:
   friend class Selection_set_edge;
 // members
   Mouse_keyboard_state state;
-  //qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())
+  std::string file_name_holder;
 public:
 // action state
   ACTIVE_HANDLE_TYPE active_handle_type;
