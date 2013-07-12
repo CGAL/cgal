@@ -7,6 +7,9 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+
 #include <boost/graph/copy.hpp>
 
 // Compute cotangent Laplacian
@@ -737,7 +740,8 @@ public:
 namespace CGAL {
 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d,
-          class PolyhedronVertexIndexMap, class PolyhedronEdgeIndexMap>
+          class PolyhedronVertexIndexMap, class PolyhedronEdgeIndexMap,
+          class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
 class Mean_curvature_skeleton
 {
 // Public types
@@ -757,6 +761,10 @@ public:
   typedef typename internal::Cotangent_weight<Polyhedron,
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
+
+  // Skeleton types
+  typedef typename internal::CurveSkeleton<Polyhedron, Graph,
+  PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
 
 // Data members
 private:
@@ -779,6 +787,9 @@ private:
 
   std::map<size_t, bool> is_vertex_fixed_map;
   std::vector<double> halfedge_angle;
+
+  Graph g;
+  std::vector<Point> points;
 
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
@@ -1509,6 +1520,20 @@ public:
     contract_geometry();
     update_topology();
     detect_degeneracies();
+  }
+
+  void convert_to_skeleton(Graph& g, std::vector<Point>& points)
+  {
+    Skeleton skeleton(polyhedron);
+    skeleton.init();
+    skeleton.collapse();
+    skeleton.extract_skeleton(g, points);
+  }
+
+  void get_skeleton(Graph& g, std::vector<Point>& points)
+  {
+    g = this->g;
+    points = this->points;
   }
 };
 
