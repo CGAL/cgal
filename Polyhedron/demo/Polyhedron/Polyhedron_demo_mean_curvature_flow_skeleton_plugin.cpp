@@ -5,6 +5,9 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_points_with_normal_item.cpp"
+#include "Scene_polylines_item.h"
+#include "Scene_polylines_item.cpp"
+
 #include "Polyhedron_type.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
@@ -415,6 +418,21 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   mcs->get_skeleton(g, points);
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  Scene_polylines_item* skeleton = new Scene_polylines_item;
+
+  boost::graph_traits<Graph>::edge_iterator ei, ei_end;
+  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+  {
+    std::vector<Point> line;
+    line.clear();
+    Point s = points[boost::source(*ei, g)];
+    Point t = points[boost::target(*ei, g)];
+    line.push_back(s);
+    line.push_back(t);
+    skeleton->polylines.push_back(line);
+  }
+  scene->addItem(skeleton);
 
   // update scene
   QApplication::restoreOverrideCursor();
