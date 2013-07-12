@@ -14,7 +14,7 @@ structure. The following tags are available:
 return immediately) and uses atomics to perform lock operations.
 - `Tag_priority_blocking` provides both non-blocking and
 partially-blocking `try_lock` versions. The partially-blocking version will 
-block (spin) if the thread owning the lock has a "lower ID" (each thread is 
+block (spin) if the thread owning the lock has a lower \"ID\" (each thread is 
 given an arbitrary ID) or return immediately otherwise. It uses atomics to 
 perform lock operations.
 

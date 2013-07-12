@@ -9,7 +9,7 @@ Each template type called `P3` below must provide x(), y() and z() functions,
 returning the respective point coordinates as numbers whose type is a 
 model of the concept of `CGAL::RealEmbeddable`.
 
-Note that it is allowed to "lock too much". E.g., the embedded data structure 
+Note that it is allowed to \"lock too much\". E.g., the embedded data structure 
 may be a voxel grid and locking a point may be locking the voxel containing this point.
 The only requirement is that when a thread owns the lock of a point, no other
 thread can lock a point with the exact same coordinates.

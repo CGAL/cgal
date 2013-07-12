@@ -74,13 +74,13 @@ typedef Compact_container<Cell, Default, Cell_container_strategy> Cell_range;
 Strategy used by the `Compact_container` (or `Concurrent_compact_container` if the TDS
 is concurrency-safe) storing the vertices.
 */ 
-typedef Hidden_type Vertex_container_strategy;
+typedef unspecified_type Vertex_container_strategy;
 
 /*! 
 Strategy used by the `Compact_container` (or `Concurrent_compact_container` if the TDS
 is concurrency-safe) storing the cells.
 */ 
-typedef Hidden_type Cell_container_strategy;
+typedef unspecified_type Cell_container_strategy;
 /// @} 
 
 /// \name Operations 

@@ -94,7 +94,7 @@ elements have not been freed (i.e. when the `size()` is close to the
 `capacity()`). Iterating from `begin()` to `end()` takes 
 `O(capacity())` time, not `size()`. In the case where the container 
 has a small `size()` compared to its `capacity()`, we advise to 
-"defragment the memory" by copying the container if the iterator performance 
+\"defragment the memory\" by copying the container if the iterator performance 
 is needed. 
 
 The iterators themselves can be used as `T`, they provide the necessary 
@@ -135,18 +135,18 @@ class Concurrent_compact_container
 public:
 /// \name Types 
 /// @{ 
-  typedef Hidden_type                               value_type;
-  typedef Hidden_type                               allocator_type;
-  typedef Hidden_type                               reference;
-  typedef Hidden_type                               const_reference;
-  typedef Hidden_type                               pointer;
-  typedef Hidden_type                               const_pointer;
-  typedef Hidden_type                               size_type;
-  typedef Hidden_type                               difference_type;
-  typedef Hidden_type                               iterator;
-  typedef Hidden_type                               const_iterator;
-  typedef Hidden_type                               reverse_iterator;
-  typedef Hidden_type                               const_reverse_iterator;
+  typedef unspecified_type value_type;
+  typedef unspecified_type allocator_type;
+  typedef unspecified_type reference;
+  typedef unspecified_type const_reference;
+  typedef unspecified_type pointer;
+  typedef unspecified_type const_pointer;
+  typedef unspecified_type size_type;
+  typedef unspecified_type difference_type;
+  typedef unspecified_type iterator;
+  typedef unspecified_type const_iterator;
+  typedef unspecified_type reverse_iterator;
+  typedef unspecified_type const_reverse_iterator;
 /// @} 
 
 

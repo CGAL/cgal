@@ -36,7 +36,7 @@ public:
 Tells if this strategy uses an erase counter or not. 
 Can be `CGAL::Tag_true` or `CGAL::Tag_false`.
 */ 
-  typedef Hidden_type Uses_erase_counter;
+  typedef unspecified_type Uses_erase_counter;
   
 /// @} 
 
