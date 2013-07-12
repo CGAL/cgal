@@ -766,8 +766,9 @@ protected:
   typedef Selection_set<Vertex_handle, Scene_polyhedron_selection_item> Selection_set_vertex;
   typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
   typedef Selection_set<Halfedge_handle, Scene_polyhedron_selection_item> Selection_set_edge;
-  friend class Selection_set_vertex;
-  friend class Selection_set_facet;
+  friend class Selection_set<Vertex_handle, Scene_polyhedron_selection_item>;
+  friend class Selection_set<Facet_handle, Scene_polyhedron_selection_item>;
+
   friend class Selection_set_edge;
 // members
   Mouse_keyboard_state state;
