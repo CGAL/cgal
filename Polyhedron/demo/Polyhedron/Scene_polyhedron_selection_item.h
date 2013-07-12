@@ -152,13 +152,6 @@ public:
   Selection_set(Listener* listener = NULL) : listener(listener)
   { }
 
-  struct Selection_set_inserter {
-    Selection_set_inserter(Self* container) : container(container) { }
-    void operator()(const Entity & e) const {
-      container->insert(e);
-    }
-    Self* container;
-  };
 // types from base
   typedef typename Base::iterator iterator;
   typedef typename Base::const_iterator const_iterator;
@@ -182,6 +175,8 @@ public:
     return Base::find(entity) != end();
   }
 
+  // for back_insert_iterator
+  void push_back(const Entity& entity) { insert(entity); }
 // members
   Listener* listener;
 };
@@ -499,9 +494,8 @@ public:
     }
   }
   boost::optional<std::size_t> select_isolated_vertex_components(std::size_t threshold) {
-    typedef boost::function_output_iterator<
-      Selection_set_vertex::Selection_set_inserter> Output_iterator;
-    Output_iterator out(&selected_vertices);
+    typedef std::back_insert_iterator<Selection_set_vertex> Output_iterator;
+    Output_iterator out(selected_vertices);
 
     Selection_visitor<Output_iterator> visitor(threshold , out);
     travel_not_selected_connected_components<Vertex_handle>
@@ -511,9 +505,8 @@ public:
     return visitor.minimum_visitor.minimum;
   }
   boost::optional<std::size_t> select_isolated_facet_components(std::size_t threshold) {
-    typedef boost::function_output_iterator<
-      Selection_set_facet::Selection_set_inserter> Output_iterator;
-    Output_iterator out(&selected_facets);
+    typedef std::back_insert_iterator<Selection_set_facet> Output_iterator;
+    Output_iterator out(selected_facets);
 
     Selection_visitor<Output_iterator> visitor(threshold , out);
     travel_not_selected_connected_components<Facet_handle>
@@ -523,9 +516,9 @@ public:
     return visitor.minimum_visitor.minimum;
   }
   boost::optional<std::size_t> select_isolated_edge_components(std::size_t threshold) {
-    typedef boost::function_output_iterator<
-      Selection_set_edge::Selection_set_inserter> Output_iterator;
-    Output_iterator out(&selected_edges);
+    typedef std::back_insert_iterator<Selection_set_edge> Output_iterator;
+    Output_iterator out(selected_edges);
+
     Minimum_address_halfedge_iterator hb(polyhedron()->halfedges_begin(), polyhedron()->halfedges_end()), he(hb);
     Selection_visitor<Output_iterator> visitor(threshold , out);
     travel_not_selected_connected_components<Halfedge_handle>
