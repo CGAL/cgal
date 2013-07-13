@@ -1,6 +1,6 @@
 /*
- * Author: Francisc Bungiu 
- * E-mail: fbungiu@gmail.com
+ * Author: Francisc Bungiu, Kan Huang 
+ * E-mail: fbungiu@gmail.com, huangkandiy@gmail.com
  * Description: This file contains useful functions for testing the 
  * 				Visibility_2 package, such as comparing two Arrangements
  */

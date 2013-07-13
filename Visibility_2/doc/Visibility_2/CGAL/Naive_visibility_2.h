@@ -54,6 +54,10 @@ public:
    Halfedge_handle type of input Arrangement.
    */
   typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
+  /*!
+   * Face_handle type of output Arrangement.
+   */
+  typedef Output_Arrangement_2::Face_handle Out_face_handle;
 
 /// @}
 
@@ -100,7 +104,7 @@ Computes the visibility region for the given query point q.
 \pre out_arr is the output arrangement 
 
 */ 
-  void visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr); 
+  void visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr, Out_face_handle& out_face);
 
 /*! 
 Computes for the given query point q the visibility region that is on the side of the given halfedge.   
@@ -109,7 +113,7 @@ Computes for the given query point q the visibility region that is on the side o
 \pre out_arr is the output arrangement 
 
 */ 
-  void visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr); 
+  void visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr, Out_face_handle& out_face);
 
 /// @}
 

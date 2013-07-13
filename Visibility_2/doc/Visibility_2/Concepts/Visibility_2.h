@@ -34,17 +34,23 @@ public:
  /*! 
    The supported Point_2 type of the input type, used for queries. 
  */ 
-  typedef Hidden_type Input_Arrangement_2::Point_2; 
+  typedef Input_Arrangement_2::Point_2 Point_2;
 
   /*!
    * The supported Face handle type of the input Arrangement.
    */
-  typedef Hidden_type Input_Arrangement_2::Face_handle;
+  typedef Input_Arrangement_2::Face_handle Face_handle;
 
   /*!
    * The supported Halfedge handle type of the input Arrangement.
    */
-  typedef Hidden_type Input_Arrangement_2::Halfedge_handle;
+  typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
+  /*!
+   * The supported Face_handle type of output Arrangement.
+   */
+  typedef Output_Arrangement_2::Face_handle Out_face_handle;
+	
+
 
   /*! 
     Tag identifying whether `Visibility_2` computes regularized visbility area. 
@@ -99,20 +105,20 @@ Access to the attached Arrangement_2.
   Input_Arrangement_2 arr();
 
 /*! 
-Computes the visibility region for the given query point q. 
+Computes the visibility region for the given query point q. Visibility polygon of q and its face will be saved to out_arr and out_face.
 \pre face is a face of  this->arr()
 \pre p is in the interior of face 
 
 */ 
-  void visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr); 
+  void visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr, const Out_face_handle& out_face);
 
 /*! 
-Computes for the given query point q the visibility region that is on the side of the given halfedge.   
+Computes for the given query point q the visibility region that is on the side of the given halfedge. Visibility polygon of q and its face will be saved to out_arr and out_face.
 \pre half_edge is a half edge of  this->arr()
 \pre p is on halfedge  
 
 */ 
-  void visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr); 
+  void visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr, const Out_face_handle& out_face);
 
 /// @}
 
