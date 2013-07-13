@@ -12,6 +12,7 @@
 #include "Polyhedron_type.h"
 
 #include <CGAL/Hole_filling.h>
+#include <CGAL/Timer.h>
 
 #include <QTime>
 #include <QAction>
@@ -528,7 +529,7 @@ void Polyhedron_demo_hole_filling_plugin::fill
 
   int action_index = ui_widget->action_combo_box->currentIndex();
   double alpha = ui_widget->Density_control_factor_spin_box->value();
-
+  CGAL::Timer timer; timer.start();
   std::vector<Polyhedron::Facet_handle> patch;
   if(action_index == 0) {
     CGAL::triangulate_hole(poly, it, std::back_inserter(patch));
@@ -551,9 +552,28 @@ void Polyhedron_demo_hole_filling_plugin::fill
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }
   }
+  print_message(QString("Filled in %1 sec.").arg(timer.time()));
 
+  // Self intersection test
   if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
-    if(CGAL::self_intersect<Polyhedron::Traits>(poly)) {
+    timer.reset();
+
+    typedef std::vector<std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle> > Intersected_facets;
+    Intersected_facets intersected_facets;
+    CGAL::self_intersect<Polyhedron::Traits>(poly, std::back_inserter(intersected_facets));
+    // this part might need speed-up
+    bool intersected = false;
+    for(Intersected_facets::iterator it = intersected_facets.begin(); 
+      it != intersected_facets.end() && !intersected; ++it) {
+      for(std::vector<Polyhedron::Facet_handle>::iterator it_patch = patch.begin(); 
+        it_patch != patch.end() && !intersected; ++it_patch) {
+        if(it->first == (*it_patch) || it->second == (*it_patch)) {
+          intersected = true;
+        }
+      }
+    }
+    print_message(QString("Self intersecting test in %1 sec.").arg(timer.time()));
+    if(intersected) {
       for(std::vector<Polyhedron::Facet_handle>::iterator it = patch.begin(); it != patch.end(); ++it) {
         poly.erase_facet((*it)->halfedge());
       }
