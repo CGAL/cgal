@@ -208,11 +208,8 @@ public:
     }
   }
 
-  void collapse()
+  void init_queue(std::set<Edge>& queue)
   {
-    std::set<Edge> queue;
-    queue.clear();
-
     // put all the edges into a priority queue
     // shorter edge has higher priority
     edge_iterator eb, ee;
@@ -240,6 +237,14 @@ public:
       queue.insert(edge);
       is_edge_inserted[edge.id] = true;
     }
+  }
+
+  void collapse()
+  {
+    std::set<Edge> queue;
+    queue.clear();
+
+    init_queue(queue);
 
     // start collapsing edges until all the edges have no incident faces
     while (!queue.empty())
@@ -251,12 +256,10 @@ public:
 
       if (is_edge_deleted[eid])
       {
-        std::cerr << "edge already deleted\n";
         continue;
       }
       if (edge_to_face[eid].size() == 0)
       {
-        std::cerr << "edge has no incident face\n";
         continue;
       }
       else
@@ -266,7 +269,7 @@ public:
           int fid = edge_to_face[eid][i];
           if (is_face_deleted[fid])
           {
-//            std::cerr << "wtf\n";
+            std::cerr << "wtf\n";
             continue;
           }
         }
@@ -407,20 +410,8 @@ public:
 
     // for debugging purpose
     std::cerr << "finish collapse\n";
-    print_detail_stat();
-//    print_stat();
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
-    {
-      edge_descriptor ed = *eb;
-      int id = boost::get(edge_id_pmap, ed);
-      if (!is_edge_deleted[id])
-      {
-        if (edge_to_face[id].size() > 0)
-        {
-          std::cerr << "edge should not have faces " << edge_to_face[id].size() << "\n";
-        }
-      }
-    }
+    print_stat();
+    check_edge();
   }
 
   bool is_same_edge(int ei, int ej)
@@ -436,6 +427,23 @@ public:
       return true;
     }
     return false;
+  }
+
+  void check_edge()
+  {
+    edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edge_descriptor ed = *eb;
+      int id = boost::get(edge_id_pmap, ed);
+      if (!is_edge_deleted[id])
+      {
+        if (edge_to_face[id].size() > 0)
+        {
+          std::cerr << "edge should not have faces " << edge_to_face[id].size() << "\n";
+        }
+      }
+    }
   }
 
   void print_stat()
@@ -471,57 +479,6 @@ public:
     std::cerr << "num of faces " << cnt << "\n";
   }
 
-  void print_detail_stat()
-  {
-    int cnt = 0;
-    for (size_t i = 0; i < is_vertex_deleted.size(); i++)
-    {
-      if (!is_vertex_deleted[i])
-      {
-        cnt++;
-      }
-    }
-    std::cerr << "num of vertices " << cnt << "\n";
-
-    cnt = 0;
-    for (size_t i = 0; i < is_edge_deleted.size(); i++)
-    {
-      if (!is_edge_deleted[i])
-      {
-        cnt++;
-      }
-    }
-    std::cerr << "num of edges " << cnt << "\n";
-
-//    edge_iterator eb, ee;
-//    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
-//    {
-//      edge_descriptor ed = *eb;
-//      int id = boost::get(edge_id_pmap, ed);
-//      if (is_edge_deleted[id])
-//      {
-//        continue;
-//      }
-//      std::cerr << "edge to vertex: ";
-//      for (int i = 0; i < edge_to_vertex[id].size(); i++)
-//      {
-//        std::cerr << edge_to_vertex[id][i] << " ";
-//      }
-//      std::cerr << "\n";
-//    }
-
-    cnt = 0;
-    for (size_t i = 0; i < is_face_deleted.size(); i++)
-    {
-      if (!is_face_deleted[i])
-      {
-        cnt++;
-        std::cerr << "face " << i << "\n";
-      }
-    }
-    std::cerr << "num of faces " << cnt << "\n";
-  }
-
   // extract the skeleton to a boost::graph data structure
   void extract_skeleton(Graph& graph, std::vector<Point>& points)
   {
@@ -537,7 +494,6 @@ public:
         new_vertex_id[i] = id++;
       }
     }
-//    std::cerr << "num of vertices " << id << "\n";
 
     Graph temp_graph(id);
 
