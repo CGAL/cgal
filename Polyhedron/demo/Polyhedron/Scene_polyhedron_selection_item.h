@@ -162,8 +162,13 @@ public:
 // functions from base
   using Base::begin;
   using Base::end;
-  using Base::empty;
-  using Base::clear;
+
+  void clear() {
+    for(iterator it = begin(); it != end(); ++it) {
+      if(listener != NULL) { listener->erased(*it); }
+    }
+    Base::clear();
+  }
 
   bool insert(const Entity& entity) {
     if(listener != NULL) { listener->inserted(entity); } // no matter entity is inserted or not, call notifier
