@@ -53,16 +53,28 @@ private:
 
   Polyhedron *polyhedron;
 
-  struct Edge
-  {
-    int id;
-    double length;
+  std::vector<double> edge_lengths;
 
-    bool operator <(const Edge& rhs) const
-    {
-      return (length == rhs.length) ? (id < rhs.id) : length < rhs.length;
-    }
+  class EdgeCompareFunctor
+  {
+  public:
+      std::vector<double> edge_lengths;
+
+      EdgeCompareFunctor(std::vector<double>& lengths)
+      {
+          edge_lengths = lengths;
+      }
+
+      bool operator() (const int& e0, const int& e1) const
+      {
+          double p0 = edge_lengths[e0];
+          double p1 = edge_lengths[e1];
+          return (p0 == p1) ? (e0 < e1) : (p0 < p1);
+      }
   };
+
+  // type of priority queue for edges
+  typedef std::set<int, EdgeCompareFunctor>                                    Edge_queue;
 
 // Public methods
 public:
@@ -156,8 +168,12 @@ private:
     {
       record[i].push_back(i);
     }
+
     id_to_descriptor.clear();
     id_to_descriptor.resize(num_vertices);
+
+    edge_lengths.clear();
+    edge_lengths.resize(num_edges);
 
     // assign vertex id
     vertex_iterator vb, ve;
@@ -185,6 +201,14 @@ private:
         boost::put(edge_id_pmap, ed, idx);
         edge_descriptor ed_opposite = ed->opposite();
         boost::put(edge_id_pmap, ed_opposite, idx);
+
+        // also cache the length of the edge
+        vertex_descriptor v1 = ed->vertex();
+        vertex_descriptor v2 = ed->opposite()->vertex();
+        Point source = v1->point();
+        Point target = v2->point();
+        edge_lengths[idx] = sqrtf(squared_distance(source, target));
+
         idx++;
       }
     }
@@ -226,7 +250,7 @@ private:
     }
   }
 
-  void init_queue(std::set<Edge>& queue)
+  void init_queue(Edge_queue& queue)
   {
     // put all the edges into a priority queue
     // shorter edge has higher priority
@@ -236,30 +260,24 @@ private:
     is_edge_inserted.resize(edge_to_face.size(), false);
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
-      Edge edge;
-
       edge_descriptor ed = *eb;
-      edge.id = boost::get(edge_id_pmap, ed);
+      int id = boost::get(edge_id_pmap, ed);
 
-      if (is_edge_inserted[edge.id])
+      if (is_edge_inserted[id])
       {
         continue;
       }
-      vertex_descriptor v1 = ed->vertex();
-      vertex_descriptor v2 = ed->opposite()->vertex();
 
-      Point source = v1->point();
-      Point target = v2->point();
-      edge.length = sqrtf(squared_distance(source, target));
-
-      queue.insert(edge);
-      is_edge_inserted[edge.id] = true;
+      queue.insert(id);
+      is_edge_inserted[id] = true;
     }
   }
 
   void collapse()
   {
-    std::set<Edge> queue;
+    EdgeCompareFunctor edge_comparator(edge_lengths);
+    Edge_queue queue(edge_comparator);
+
     queue.clear();
 
     init_queue(queue);
@@ -267,10 +285,8 @@ private:
     // start collapsing edges until all the edges have no incident faces
     while (!queue.empty())
     {
-      Edge edge = *(queue.begin());
+      int eid = *(queue.begin());
       queue.erase(queue.begin());
-
-      int eid = edge.id;
 
       if (is_edge_deleted[eid])
       {
@@ -296,7 +312,7 @@ private:
       delete_edge(p1, p2, eid);
 
       // add the incident edges of p1 to p2
-      add_edge(p1, p2);
+      add_edge(queue, p1, p2);
 
       // remove duplicate edges
       std::vector<int> vertex_to_edge_p2(vertex_to_edge[p2]);
@@ -336,7 +352,7 @@ private:
     check_edge();
   }
 
-  void add_edge(int p1, int p2)
+  void add_edge(Edge_queue& queue, int p1, int p2)
   {
     for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
     {
@@ -346,6 +362,11 @@ private:
         continue;
       }
       vertex_to_edge[p2].push_back(edge);
+
+      // after change the incident vertex of an edge,
+      // we need to update the length of the edge
+      update_edge_length(queue, edge, p1, p2);
+
       // change the incident vertex to p2
       for (size_t j = 0; j < edge_to_vertex[edge].size(); j++)
       {
@@ -487,6 +508,39 @@ private:
     record[p1].clear();
   }
 
+  void update_edge_length(Edge_queue& queue, int eid, int p1, int p2)
+  {
+    int vid1 = edge_to_vertex[eid][0];
+    int vid2 = edge_to_vertex[eid][1];
+    if (vid1 == p1)
+    {
+      vid1 = p2;
+    }
+    else
+    {
+      vid2 = p2;
+    }
+    vertex_descriptor v1 = id_to_descriptor[vid1];
+    vertex_descriptor v2 = id_to_descriptor[vid2];
+
+    Point source = v1->point();
+    Point target = v2->point();
+    double new_len = sqrtf(squared_distance(source, target));
+
+    if (queue.find(eid) != queue.end())
+    {
+      int nerased = queue.erase(eid);
+
+      if (nerased != 1)
+      {
+        std::cerr << "I was supposed to erase one element, but I erased: " << nerased;
+      }
+
+      edge_lengths[eid] = new_len;
+      queue.insert(eid);
+    }
+  }
+
   void check_edge()
   {
     edge_iterator eb, ee;
@@ -541,4 +595,3 @@ private:
 } // namespace CGAL
 
 #endif // CURVE_SKELETON_H
-
