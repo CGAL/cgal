@@ -61,14 +61,57 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton() : polyhedron(NULL)
-  {
-  }
-
   Curve_skeleton(Polyhedron* polyhedron) : polyhedron(polyhedron)
   {
   }
 
+  // extract the skeleton to a boost::graph data structure
+  void extract_skeleton(Graph& graph, std::vector<Point>& points)
+  {
+    init();
+    collapse();
+
+    std::vector<int> new_vertex_id;
+    new_vertex_id.clear();
+    new_vertex_id.resize(vertex_to_edge.size(), -1);
+
+    int id = 0;
+    for (size_t i = 0; i < is_vertex_deleted.size(); i++)
+    {
+      if (!is_vertex_deleted[i])
+      {
+        new_vertex_id[i] = id++;
+      }
+    }
+
+    Graph curve(id);
+
+    for (size_t i = 0; i < is_edge_deleted.size(); i++)
+    {
+      if (!is_edge_deleted[i])
+      {
+        int p1 = edge_to_vertex[i][0];
+        int p2 = edge_to_vertex[i][1];
+        int p1_id = new_vertex_id[p1];
+        int p2_id = new_vertex_id[p2];
+        boost::add_edge(p1_id, p2_id, curve);
+      }
+    }
+
+    vertex_iterator vb, ve;
+    points.resize(id);
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      int new_id = new_vertex_id[id];
+      Point pos = vb->point();
+      points[new_id] = pos;
+    }
+    boost::copy_graph(curve, graph);
+  }
+
+// Private methods
+private:
   void init()
   {
     int num_edges = boost::num_edges(*polyhedron) / 2;
@@ -208,42 +251,9 @@ public:
       {
         continue;
       }
-      else
-      {
-        for (size_t i = 0; i < edge_to_face[eid].size(); i++)
-        {
-          int fid = edge_to_face[eid][i];
-          if (is_face_deleted[fid])
-          {
-            std::cerr << "wtf\n";
-            continue;
-          }
-        }
-      }
 
-      // mark the edge and incident faces as deleted
-      is_edge_deleted[eid] = true;
-//      std::cerr << "delete edge " << eid << "\n";
-      std::vector<int> faces(edge_to_face[eid]);
-      for (size_t i = 0; i < faces.size(); i++)
-      {
-        int fid = faces[i];
-        is_face_deleted[fid] = true;
-        // remove face from the incident edges
-        for (size_t j = 0; j < face_to_edge[fid].size(); j++)
-        {
-          int e = face_to_edge[fid][j];
-          for (size_t k = 0; k < edge_to_face[e].size(); k++)
-          {
-            if (edge_to_face[e][k] == fid)
-            {
-              edge_to_face[e].erase(edge_to_face[e].begin() + k);
-              break;
-            }
-          }
-        }
-//        std::cerr << "delete face " << fid << "\n";
-      }
+      // mark the incident faces as deleted
+      remove_incident_faces(eid);
 
       // p1 to be deleted
       int p1 = edge_to_vertex[eid][0];
@@ -251,41 +261,10 @@ public:
       is_vertex_deleted[p1] = true;
 
       // delete the edge from p1 and p2's incident edges
-      for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
-      {
-        if (vertex_to_edge[p1][i] == eid)
-        {
-          vertex_to_edge[p1].erase(vertex_to_edge[p1].begin() + i);
-          break;
-        }
-      }
-      for (size_t i = 0; i < vertex_to_edge[p2].size(); i++)
-      {
-        if (vertex_to_edge[p2][i] == eid)
-        {
-          vertex_to_edge[p2].erase(vertex_to_edge[p2].begin() + i);
-          break;
-        }
-      }
+      delete_edge(p1, p2, eid);
 
       // add the incident edges of p1 to p2
-      for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
-      {
-        int edge = vertex_to_edge[p1][i];
-        if (is_edge_deleted[edge])
-        {
-          continue;
-        }
-        vertex_to_edge[p2].push_back(edge);
-        // change the incident vertex to p2
-        for (size_t j = 0; j < edge_to_vertex[edge].size(); j++)
-        {
-          if (edge_to_vertex[edge][j] == p1)
-          {
-            edge_to_vertex[edge][j] = p2;
-          }
-        }
-      }
+      add_edge(p1, p2);
 
       std::vector<int> vertex_to_edge_p2(vertex_to_edge[p2]);
       for (size_t i = 0; i < vertex_to_edge_p2.size(); i++)
@@ -297,58 +276,22 @@ public:
           int ej = vertex_to_edge_p2[j];
           if (is_same_edge(ei, ej) || is_edge_deleted[ei])
           {
-            // remove ei from p2
-            for (size_t k = 0; k < vertex_to_edge[p2].size(); k++)
+            // look for ei from p2's incident edges
+            bool found;
+            int ind;
+            boost::tie(found, ind) = find_edge(vertex_to_edge[p2], ei);
+            if (!found)
             {
-              int ek = vertex_to_edge[p2][k];
-              // migrate faces from ei to ej
-              if (ei == ek)
-              {
-                for (size_t f = 0; f < edge_to_face[ei].size(); f++)
-                {
-                  int fid = edge_to_face[ei][f];
-                  if (!is_face_deleted[fid])
-                  {
-                    if (std::find(edge_to_face[ej].begin(),
-                                  edge_to_face[ej].end(),
-                                  fid)
-                        == edge_to_face[ej].end())
-                    {
-                      edge_to_face[ej].push_back(fid);
-                      for (size_t e = 0; e < face_to_edge[fid].size(); e++)
-                      {
-                        if (face_to_edge[fid][e] == ei)
-                        {
-                          face_to_edge[fid][e] = ej;
-                          break;
-                        }
-                      }
-                    }
-                  }
-                }
-                // finally remove ei from p2
-                vertex_to_edge[p2].erase(vertex_to_edge[p2].begin() + k);
-                // and also remove ei from the other end point
-                for (size_t t = 0; t < edge_to_vertex[ei].size(); t++)
-                {
-                  int vid = edge_to_vertex[ei][t];
-                  if (vid != p2)
-                  {
-                    for (size_t q = 0; q < vertex_to_edge[vid].size(); q++)
-                    {
-                      if (vertex_to_edge[vid][q] == ei)
-                      {
-                        vertex_to_edge[vid].erase(vertex_to_edge[vid].begin() + q);
-                        break;
-                      }
-                    }
-                  }
-                }
-                is_edge_deleted[ei] = true;
-//                std::cerr << "delete edge " << ei << "\n";
-                break;
-              }
+              continue;
             }
+
+            // migrate faces from ei to ej
+            move_face(ei, ej);
+
+            // finally remove ei from p2
+            remove_edge(p2, ei, ind);
+//            std::cerr << "delete edge " << ei << "\n";
+            break;
           }
         }
       }
@@ -358,6 +301,73 @@ public:
     std::cerr << "finish collapse\n";
     print_stat();
     check_edge();
+  }
+
+  void add_edge(int p1, int p2)
+  {
+    for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
+    {
+      int edge = vertex_to_edge[p1][i];
+      if (is_edge_deleted[edge])
+      {
+        continue;
+      }
+      vertex_to_edge[p2].push_back(edge);
+      // change the incident vertex to p2
+      for (size_t j = 0; j < edge_to_vertex[edge].size(); j++)
+      {
+        if (edge_to_vertex[edge][j] == p1)
+        {
+          edge_to_vertex[edge][j] = p2;
+        }
+      }
+    }
+  }
+
+  void remove_incident_faces(int eid)
+  {
+    std::vector<int> faces(edge_to_face[eid]);
+    for (size_t i = 0; i < faces.size(); i++)
+    {
+      int fid = faces[i];
+      is_face_deleted[fid] = true;
+      // remove face from the incident edges
+      for (size_t j = 0; j < face_to_edge[fid].size(); j++)
+      {
+        int e = face_to_edge[fid][j];
+        for (size_t k = 0; k < edge_to_face[e].size(); k++)
+        {
+          if (edge_to_face[e][k] == fid)
+          {
+            edge_to_face[e].erase(edge_to_face[e].begin() + k);
+            break;
+          }
+        }
+      }
+//      std::cerr << "delete face " << fid << "\n";
+    }
+  }
+
+  void delete_edge(int p1, int p2, int eid)
+  {
+    for (size_t i = 0; i < vertex_to_edge[p1].size(); i++)
+    {
+      if (vertex_to_edge[p1][i] == eid)
+      {
+        vertex_to_edge[p1].erase(vertex_to_edge[p1].begin() + i);
+        break;
+      }
+    }
+    for (size_t i = 0; i < vertex_to_edge[p2].size(); i++)
+    {
+      if (vertex_to_edge[p2][i] == eid)
+      {
+        vertex_to_edge[p2].erase(vertex_to_edge[p2].begin() + i);
+        break;
+      }
+    }
+    is_edge_deleted[eid] = true;
+//    std::cerr << "delete edge " << eid << "\n";
   }
 
   bool is_same_edge(int ei, int ej)
@@ -373,6 +383,66 @@ public:
       return true;
     }
     return false;
+  }
+
+  std::pair<bool, int> find_edge(std::vector<int>& edges, int eid)
+  {
+    for (size_t i = 0; i < edges.size(); i++)
+    {
+      if (eid == edges[i])
+      {
+        return std::make_pair(true, i);
+      }
+    }
+    return std::make_pair(false, -1);
+  }
+
+  void move_face(int ei, int ej)
+  {
+    for (size_t i = 0; i < edge_to_face[ei].size(); i++)
+    {
+      int fid = edge_to_face[ei][i];
+      if (!is_face_deleted[fid])
+      {
+        if (std::find(edge_to_face[ej].begin(),
+                      edge_to_face[ej].end(),
+                      fid)
+            == edge_to_face[ej].end())
+        {
+          edge_to_face[ej].push_back(fid);
+          for (size_t j = 0; j < face_to_edge[fid].size(); j++)
+          {
+            if (face_to_edge[fid][j] == ei)
+            {
+              face_to_edge[fid][j] = ej;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  void remove_edge(int v, int e, int ind)
+  {
+    vertex_to_edge[v].erase(vertex_to_edge[v].begin() + ind);
+    // and also remove ei from the other end point
+    for (size_t i = 0; i < edge_to_vertex[e].size(); i++)
+    {
+      int vid = edge_to_vertex[e][i];
+      if (vid != v)
+      {
+        for (size_t j = 0; j < vertex_to_edge[vid].size(); j++)
+        {
+          if (vertex_to_edge[vid][j] == e)
+          {
+            vertex_to_edge[vid].erase(vertex_to_edge[vid].begin() + j);
+            break;
+          }
+        }
+      }
+    }
+    is_edge_deleted[e] = true;
   }
 
   void check_edge()
@@ -423,48 +493,6 @@ public:
       }
     }
     std::cerr << "num of faces " << cnt << "\n";
-  }
-
-  // extract the skeleton to a boost::graph data structure
-  void extract_skeleton(Graph& graph, std::vector<Point>& points)
-  {
-    std::vector<int> new_vertex_id;
-    new_vertex_id.clear();
-    new_vertex_id.resize(vertex_to_edge.size(), -1);
-
-    int id = 0;
-    for (size_t i = 0; i < is_vertex_deleted.size(); i++)
-    {
-      if (!is_vertex_deleted[i])
-      {
-        new_vertex_id[i] = id++;
-      }
-    }
-
-    Graph temp_graph(id);
-
-    for (size_t i = 0; i < is_edge_deleted.size(); i++)
-    {
-      if (!is_edge_deleted[i])
-      {
-        int p1 = edge_to_vertex[i][0];
-        int p2 = edge_to_vertex[i][1];
-        int p1_id = new_vertex_id[p1];
-        int p2_id = new_vertex_id[p2];
-        boost::add_edge(p1_id, p2_id, temp_graph);
-      }
-    }
-
-    vertex_iterator vb, ve;
-    points.resize(id);
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
-    {
-      int id = boost::get(vertex_id_pmap, *vb);
-      int new_id = new_vertex_id[id];
-      Point pos = vb->point();
-      points[new_id] = pos;
-    }
-    boost::copy_graph(temp_graph, graph);
   }
 };
 
