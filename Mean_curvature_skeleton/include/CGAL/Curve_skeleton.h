@@ -109,6 +109,10 @@ public:
     {
       int id = boost::get(vertex_id_pmap, *vb);
       int new_id = new_vertex_id[id];
+      if (new_id == -1)
+      {
+        continue;
+      }
       Point pos = Point(0, 0, 0);
       for (size_t i = 0; i < record[id].size(); i++)
       {
