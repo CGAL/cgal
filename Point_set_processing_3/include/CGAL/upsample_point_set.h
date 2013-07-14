@@ -84,7 +84,7 @@ base_point_selection(
     const Vector& tm = t.normal;
     
     Vector diff_v_t = t.pt - v.pt;
-    Point mid_point = v.pt + diff_v_t / FT(2.0);
+    Point mid_point = v.pt + (diff_v_t * FT(0.5));
     
     FT dot_produce = pow((FT(2.0) - vm * tm), edge_senstivity);
 
@@ -114,7 +114,7 @@ base_point_selection(
     }
   }
 
-  return sqrt(best_dist2);
+  return sqrt(best_dist2); // maybe slow
 }
 
 /// For each new inserted point, we need to do the following job
@@ -207,10 +207,9 @@ update_new_point(
 
     for (unsigned int j = 0; j < candidate_num; j++)
     {
-
       FT psi = std::exp(-std::pow(1 - normal_cadidate[j] * t.normal, 2)
-              /sharpness_bandwidth);
-      FT project_diff_t_v = (new_v.pt - t.pt) * t.normal;
+                       / sharpness_bandwidth);
+      FT project_diff_t_v = (t.pt - new_v.pt) * t.normal;
       FT weight = psi * theta;
 
       project_dist_sum[j] += project_diff_t_v * weight;
@@ -237,8 +236,9 @@ update_new_point(
   Vector update_normal = normal_sum[best] / weight_sum[best];
   new_v.normal = update_normal / sqrt(update_normal.squared_length());
 
-  FT project_dist = -project_dist_sum[best] / weight_sum[best];
+  FT project_dist = project_dist_sum[best] / weight_sum[best];
   new_v.pt = new_v.pt + new_v.normal * project_dist;
+
 
   // 3, update neighbor information again
   new_v.neighbors.clear();
@@ -353,32 +353,23 @@ upsample_point_set(
   FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
 
-  double max_iter_time = 3;
+  double max_iter_time = 1;
   for (int iter_time = 0; iter_time < max_iter_time; iter_time++)
   {
+    std::cout << std::endl << "iter_time: " << iter_time + 1  << std::endl;
 
     FT current_radius = neighbor_radius;
 
     if (iter_time > 0)
     {
       current_radius = neighbor_radius * (iter_time * 0.5);
-
     }
 
     unsigned int current_size = rich_point_set.size();
-    std::vector<FT> density_set(current_size);
-    std::vector<unsigned int> father_indexes(current_size);
-    std::vector<unsigned int> mother_indexes(current_size);
     std::vector<bool> is_pass_threshold(current_size, false);
     FT sum_density = 0.0;
-
-    for (i = 0; i < rich_point_set.size(); i++)
+    for (i = 0; i < rich_point_set.size() * 0.05; i++)
     {
-      if (is_pass_threshold[i])
-      {
-        continue;
-      }
-
       Rich_point& v = rich_point_set[i];
 
       // extract neighbor rich points by index
@@ -389,26 +380,26 @@ upsample_point_set(
       }
 
       unsigned int base_index = 0;
-      density_set[i] = upsample_internal::
+      double density = upsample_internal::
                             base_point_selection(v,
                                                  neighbor_rich_points,
                                                  edge_senstivity,
                                                  base_index);
-      sum_density+= density_set[i];
-      father_indexes[i] = v.index;
-      mother_indexes[i] = base_index;
+      sum_density += density;
 
-      
    }
-   FT density_pass_threshold = (sum_density / current_size) * 0.5;
+   //FT density_pass_threshold = (sum_density / current_size) * 0.75;
+    FT density_pass_threshold = 0.03;
+   
+    std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
 
 
     // insert new points until all the points' density pass the threshold
-    
-    unsigned int max_loop_time = 5;
+    unsigned int max_loop_time = 1;
     unsigned int loop = 0;
     while (1)
     {
+      std::cout << "loop_time: " << loop + 1 << std::endl;
       unsigned int count_not_pass = 0;
       loop++;
       for (i = 0; i < rich_point_set.size(); i++)
@@ -418,25 +409,43 @@ upsample_point_set(
           continue;
         }
 
-        if (density_set[i] < density_pass_threshold)
+        Rich_point& v = rich_point_set[i];
+
+        // extract neighbor rich points by index
+        std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
+        for (unsigned int n = 0; n < v.neighbors.size(); n++)
+        {
+          neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
+        }
+
+        // select base point 
+        unsigned int base_index = 0;
+        FT density = upsample_internal::
+                              base_point_selection(v,
+                                                   neighbor_rich_points,
+                                                   edge_senstivity,
+                                                   base_index);
+        // test if it pass the density threshold
+        if (density < density_pass_threshold)
         {
           is_pass_threshold[i] = true;
           continue;
         }
         count_not_pass++;
 
-        Rich_point& v = rich_point_set[i];
         // insert a new rich point
+        unsigned int father_index = v.index;
+        unsigned int mother_index = base_index;
+
         Rich_point new_v;
-        Rich_point& base = rich_point_set[mother_indexes[i]];
+        Rich_point& base = rich_point_set[mother_index];
         Vector diff_v_base = base.pt - v.pt;
-        new_v.pt = v.pt + (diff_v_base / FT(2.0));
+        new_v.pt = v.pt + (diff_v_base * FT(0.5));
         new_v.index = rich_point_set.size();
 
         unsigned int new_point_index = new_v.index;
-        unsigned int father_index = father_indexes[i];
-        unsigned int mother_index = mother_indexes[i];
         rich_point_set.push_back(new_v);
+        is_pass_threshold.push_back(false);
 
         //update new rich point
         upsample_internal::update_new_point(new_point_index, 
@@ -446,13 +455,21 @@ upsample_point_set(
                                             current_radius,
                                             sharpness_bandwidth);
 
-
-
-
+        if (rich_point_set.size() >= number_of_output)
+        {
+          break;
+        }
       }
+
+      if (count_not_pass == 0 || 
+          loop >= max_loop_time || 
+          rich_point_set.size() >= number_of_output)
+      {
+        break;
+      }
+
     }
   }
-
 
 
 
