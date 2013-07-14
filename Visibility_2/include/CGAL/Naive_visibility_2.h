@@ -11,9 +11,9 @@
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 
-//namespace CGAL {
+namespace CGAL {
 
-//namespace Visibility_2 {
+namespace Visibility_2 {
 
 //debug
 template<typename Point_handle>
@@ -23,6 +23,11 @@ void print(std::vector<Point_handle> ps){
         std::cout<<ps[i]->point().x()<<","<<ps[i]->point().y()<<std::endl;
     }
 }
+template <typename Point_2>
+void print_point(const Point_2& p) {
+    std::cout<<"["<<p.x()<<","<<p.y()<<"]"<<std::endl;
+}
+
 
 template <typename Arrangement_2, typename Regularization_tag>
 class Naive_visibility_2 {
@@ -237,7 +242,7 @@ public:
                 }
             }
             else {
-                Point_2 right_p, left_p, mid_p, furthest_p;
+                Point_2 right_p, left_p, mid_p;
                 begin_it = vit;
                 end_it = vit;  //all vertices between begin_it and end_it(not included) are collinear with query point.
                 curr_vision_ray= Ray_2(query, (*begin_it)->point());
@@ -250,8 +255,8 @@ public:
                 add_edges(begin_it, end_it, active_edges, curr_vision_ray);
 
                 mid_p = intersection_point(curr_vision_ray, active_edges[0]);
-
-                Intersection_type i_type = needle(active_edges, curr_vision_ray, furthest_p);
+                std::vector<Point_2> collinear_vertices;
+                Intersection_type i_type = needle(active_edges, curr_vision_ray, collinear_vertices);
                 switch (i_type) {
                 case UNBOUNDED :
                     //remove right and collinear;
@@ -269,20 +274,21 @@ public:
                     remove_edges(active_edges, curr_vision_ray);
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
                     update_visibility(right_p, polygon, out_arr);
-                    update_visibility(furthest_p, polygon, out_arr);
-                    update_visibility(mid_p, polygon, out_arr);
+
+                    update_visibility(collinear_vertices, polygon, out_arr);
+//                    update_visibility(mid_p, polygon, out_arr);
                     update_visibility(left_p, polygon, out_arr);
                     break;
                 case INNER :
                     //remove right and collinear;
                     remove_edges(active_edges, curr_vision_ray);
-                    if (mid_p == furthest_p) {
+                    if (collinear_vertices.size() < 2) {
                         //this means mid_p = left_p = right_p = furthest_p. no new vertex is found.
                     }
                     else {
                         left_p = intersection_point(curr_vision_ray, active_edges[0]);
                         update_visibility(right_p, polygon, out_arr);
-                        update_visibility(mid_p, polygon, out_arr);
+                        update_visibility(collinear_vertices, polygon, out_arr);
                         update_visibility(left_p, polygon, out_arr);
                     }
                     break;
@@ -291,7 +297,7 @@ public:
             vit = end_it;
         }
         if (!is_init_empty) {
-            CGAL::insert_curve(out_arr, Segment_2(polygon.front(), polygon.back()));
+            CGAL::insert_curve(out_arr, Segment_2(polygon.front(),polygon.back()));
         }
     }
 
@@ -481,7 +487,7 @@ private:
 
 
     //insert new vertice to polygon. before insertion, check if this vertice has been added before.
-    void update_visibility(const Point_2 p, std::vector<Point_2> &polygon, Arrangement_2& arr){
+    void update_visibility(const Point_2 p, std::vector<Point_2>& polygon, Arrangement_2& arr){
         if (polygon.empty())
             polygon.push_back(p);
         else
@@ -492,6 +498,13 @@ private:
             }
         }
     }
+
+    void update_visibility(const std::vector<Point_2>& points, std::vector<Point_2>& polygon, Arrangement_2 &arr){
+        for (int i = 0; i != points.size(); i++) {
+            update_visibility(points[i], polygon, arr);
+        }
+    }
+
 
     //add a new edge when vision ray passes a vertex
     void add_edge(Vertex_const_handle vh,
@@ -519,7 +532,7 @@ private:
 
         //debug
         std::cout<<"after adding"<<std::endl;
-        print_active(edges);
+        print_edges(edges);
     }
 
     //remove edges that are not active any longer
@@ -548,26 +561,28 @@ private:
                 eit++;
             }
         }
-        //debug
-        std::cout<<"after remove"<<std::endl;
-        print_active(edges);
+
 
     }
 
     bool is_on_ray(const Ray_2& r, const Point_2& p) {
         return Direction_2(Vector_2(r.source(), p)) == Direction_2(r);
     }
-
-    Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, Point_2& furthest_p, std::vector<Vertex_const_handle>& collinear_vertices) {
+    //return the type of the needle.
+    //the vertices on the needle will be saved in collinear_vertices.
+    Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, std::vector<Point_2>& collinear_vertices) {
         typename std::vector<Halfedge_const_handle>::iterator curr = edges.begin();
-        Point_2 p = r.source(), end1, end2;
-        Vertex_const_handle vision_v, vertex1, vertex2;
+//        Point_2 p = r.source(), end1, end2;
+        Vertex_const_handle vertex1, vertex2;
         //flag shows whether the left side or right side of needle is blocked.
         bool block_left, block_right;
         do {
             Point_2 cross = intersection_point(r, *curr);
-            if (cross != (*curr)->source()->point() && cross != (*curr)->target()->point())
+            print_point(cross);
+            if (cross != (*curr)->source()->point() && cross != (*curr)->target()->point()) {
+                collinear_vertices.push_back(cross);
                 return INNER;
+            }
             if (cross == (*curr)->source()->point()) {
                 vertex1 = (*curr)->source();
                 vertex2 = (*curr)->target();
@@ -576,15 +591,15 @@ private:
                 vertex1 = (*curr)->target();
                 vertex2 = (*curr)->source();
             }
-            if (collinear_vertices.empty() || vertex1 != collinear_vertices.back()) {
-                collinear_vertices.push_back(vertex1);
+            if (collinear_vertices.empty() || vertex1->point() != collinear_vertices.back()) {
+                collinear_vertices.push_back(vertex1->point());
                 //flag shows whether the left side or right side of current vertex is blocked.
                 //has_predecessor indicates whether this vertex is incident to an edge whose another end is between the source of ray and it,
                 //because that will effect the value of block_left, block_right.
                 bool left_v(false), right_v(false), has_predecessor(false);
 
                 typename Arrangement_2::Halfedge_around_vertex_const_circulator first_edge, curr_edge;
-                first_edge = curr_edge = vh->incident_halfedges();
+                first_edge = curr_edge = vertex1->incident_halfedges();
                 do {
                     switch (CGAL::orientation(r.source(), curr_edge->target()->point(), curr_edge->source()->point())) {
                     case CGAL::RIGHT_TURN :
@@ -616,7 +631,7 @@ private:
         return UNBOUNDED;
     }
 //debug
-    void print_active(std::vector<Halfedge_const_handle>& edges){
+    void print_edges(std::vector<Halfedge_const_handle>& edges){
         for (int i = 0; i != edges.size(); i++) {
             Point_2 p1, p2;
             p1 = edges[i]->source()->point();
@@ -699,8 +714,12 @@ void print_arrangement(const Arrangement_2 &arr) {
       std::cout << "[" << eit->curve() << "]" << std::endl;
 }
 
-//} // namespace Visibility_2
-//} // namespace CGAL
+
+
+} // namespace Visibility_2
+} // namespace CGAL
+
+
 
 #endif
 
