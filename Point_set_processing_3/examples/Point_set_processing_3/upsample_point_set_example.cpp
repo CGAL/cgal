@@ -23,7 +23,8 @@ int main(void)
 {
   // Reads a .xyz point set file in points[].
   std::vector<PointVectorPair> points;
-  std::ifstream stream("data/before_upsample.xyz");
+  //std::ifstream stream("data/before_upsample.xyz");
+  std::ifstream stream("data/sphere_1k_after_regularization2.xyz");
 
   if (!stream ||
       !CGAL::read_xyz_points_and_normals(stream,
@@ -36,10 +37,10 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double sharpness_sigma = 30;   //control sharpness of the result.
+  const double sharpness_sigma = 90;   //control sharpness of the result.
   const double edge_senstivity = 0;    // more points will up-sample on edge.          
   const double neighbor_radius = 0.2;      // initial neighbors size.
-  const unsigned int number_of_output_points = points.size() * 70;   
+  const unsigned int number_of_output_points = points.size() * 100;   
 
 
   CGAL::Timer task_timer;
@@ -67,7 +68,10 @@ int main(void)
   // Note: write_xyz_points_and_normals() requires an output iterator
   // over points as well as property maps to access each
   // point position and normal.
-  std::ofstream out("data/after_upsample.xyz");  
+
+  //std::ofstream out("data/after_upsample.xyz");  
+  std::ofstream out("data/sphere_after_upsample.xyz");  
+
   if (!out ||
      !CGAL::write_xyz_points_and_normals(
       out, points.begin(), points.end(), 

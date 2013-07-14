@@ -387,7 +387,7 @@ upsample_point_set(
 
     if (iter_time == 0)
     {
-      //estimate density threshold
+      //estimate density threshold for the first time
       for (i = 0; i < rich_point_set.size() * 0.05; i++)
       {
         Rich_point& v = rich_point_set[i];
@@ -420,7 +420,7 @@ upsample_point_set(
                                  density_pass_threshold;
 
    
-    std::cout << "pass_threshold:  " << density_pass_threshold2 << std::endl;
+    std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
 
     // insert new points until all the points' density pass the threshold
     unsigned int max_loop_time = 3;
