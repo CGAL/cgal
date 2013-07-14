@@ -1,13 +1,19 @@
 #ifndef CGAL_IO_BASE_TEST_H
 #define CGAL_IO_BASE_TEST_H
 
-template <typename Traits_T>
+template <typename T_Geom_traits>
 class IO_base_test {
 public:
-  typedef Traits_T                                      Traits;
+  typedef T_Geom_traits                                 Traits;
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Curve_2                      Curve_2;
+
+  /*! Constructor */
+  IO_base_test(const Traits& traits);
+
+  /*! Destructor */
+  virtual ~IO_base_test() {}
 
   template <typename stream>
   bool read_point(stream& is, Point_2& p);
@@ -20,28 +26,36 @@ public:
 
 protected:
   /*! An instance of the traits */
-  Traits m_traits;
+  const Traits& m_traits;
 };
 
+/*!
+ * Constructor.
+ * Accepts test data file name.
+ */
+template <typename T_Geom_traits>
+IO_base_test<T_Geom_traits>::IO_base_test(const T_Geom_traits& geom_traits) :
+  m_traits(geom_traits) {}
+
 // Generic implementation
-template <typename Traits_T>
+template <typename T_Geom_traits>
 template <typename stream>
-bool IO_base_test<Traits_T>::read_point(stream& is,
-                                        typename Traits::Point_2& p)
+bool IO_base_test<T_Geom_traits>::read_point(stream& is,
+                                             typename Traits::Point_2& p)
 {
-  typedef Traits_T                                      Traits;
+  typedef T_Geom_traits                                      Traits;
   Basic_number_type x, y;
   is >> x >> y;
   p = typename Traits::Point_2(x, y);
   return true;
 }
 
-template <typename Traits_T>
+template <typename T_Geom_traits>
 template <typename stream>
-bool IO_base_test<Traits_T>::
-read_xcurve(stream& is, typename Traits_T::X_monotone_curve_2& xcv)
+bool IO_base_test<T_Geom_traits>::
+read_xcurve(stream& is, typename T_Geom_traits::X_monotone_curve_2& xcv)
 {
-  typedef Traits_T                                      Traits;
+  typedef T_Geom_traits                                      Traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
@@ -51,12 +65,13 @@ read_xcurve(stream& is, typename Traits_T::X_monotone_curve_2& xcv)
   return true;
 }
 
-template <typename Traits_T>
+template <typename T_Geom_traits>
 template <typename stream>
 bool
-IO_base_test<Traits_T>::read_curve(stream& is, typename Traits_T::Curve_2& cv)
+IO_base_test<T_Geom_traits>::read_curve(stream& is,
+                                        typename T_Geom_traits::Curve_2& cv)
 {
-  typedef Traits_T                                      Traits;
+  typedef T_Geom_traits                                 Traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
@@ -1014,10 +1029,10 @@ bool IO_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
   TEST_TRAITS == CIRCULAR_LINE_ARC_TRAITS
 
 /*! Read an arc point */
-template <typename Traits_T, typename stream>
-bool read_arc_point(stream& is, typename Traits_T::Point_2& p)
+template <typename T_Geom_traits, typename stream>
+bool read_arc_point(stream& is, typename T_Geom_traits::Point_2& p)
 {
-  typedef Traits_T                                      Traits;
+  typedef T_Geom_traits                                      Traits;
   Basic_number_type x, y;
   is >> x >> y;
   Circular_kernel::Point_2 lp(x, y);
