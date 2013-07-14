@@ -858,8 +858,6 @@ public:
   void convert_to_skeleton()
   {
     Skeleton skeleton(polyhedron);
-    skeleton.init();
-    skeleton.collapse();
     skeleton.extract_skeleton(g, points);
   }
 

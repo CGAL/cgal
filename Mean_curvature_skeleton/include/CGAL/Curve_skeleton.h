@@ -43,6 +43,11 @@ private:
   std::vector<bool> is_edge_deleted;
   std::vector<bool> is_face_deleted;
 
+  // records the vertices collapsed to a given vertex
+  std::vector<std::vector<int> > record;
+  // vertex id mapped to vertex descriptor
+  std::vector<vertex_descriptor> id_to_descriptor;
+
   PolyhedronVertexIndexMap vertex_id_pmap;
   PolyhedronEdgeIndexMap edge_id_pmap;
 
@@ -104,7 +109,15 @@ public:
     {
       int id = boost::get(vertex_id_pmap, *vb);
       int new_id = new_vertex_id[id];
-      Point pos = vb->point();
+      Point pos = Point(0, 0, 0);
+      for (size_t i = 0; i < record[id].size(); i++)
+      {
+        vertex_descriptor vd = id_to_descriptor[record[id][i]];
+        Point pv = vd->point();
+        pos = Point(pos.x() + pv.x(), pos.y() + pv.y(), pos.z() + pv.z());
+      }
+      double num = record[id].size();
+      pos = Point(pos.x() / num, pos.y() / num, pos.z() / num);
       points[new_id] = pos;
     }
     boost::copy_graph(curve, graph);
@@ -132,6 +145,15 @@ private:
     is_edge_deleted.resize(num_edges, false);
     is_face_deleted.clear();
     is_face_deleted.resize(num_faces, false);
+
+    record.clear();
+    record.resize(num_vertices);
+    for (size_t i = 0; i < record.size(); i++)
+    {
+      record[i].push_back(i);
+    }
+    id_to_descriptor.clear();
+    id_to_descriptor.resize(num_vertices);
 
     // assign vertex id
     vertex_iterator vb, ve;
@@ -194,6 +216,9 @@ private:
         vertex_to_edge[vid].push_back(eid);
         edge_to_vertex[eid].push_back(vid);
       }
+
+      // save the vertex descriptor
+      id_to_descriptor[vid] = vd;
     }
   }
 
@@ -260,12 +285,16 @@ private:
       int p2 = edge_to_vertex[eid][1];
       is_vertex_deleted[p1] = true;
 
+      // merge vertices collapsed on p1 to p2
+      update_record(p1, p2);
+
       // delete the edge from p1 and p2's incident edges
       delete_edge(p1, p2, eid);
 
       // add the incident edges of p1 to p2
       add_edge(p1, p2);
 
+      // remove duplicate edges
       std::vector<int> vertex_to_edge_p2(vertex_to_edge[p2]);
       for (size_t i = 0; i < vertex_to_edge_p2.size(); i++)
       {
@@ -443,6 +472,15 @@ private:
       }
     }
     is_edge_deleted[e] = true;
+  }
+
+  void update_record(int p1, int p2)
+  {
+    for (size_t i = 0; i < record[p1].size(); i++)
+    {
+      record[p2].push_back(record[p1][i]);
+    }
+    record[p1].clear();
   }
 
   void check_edge()
