@@ -128,7 +128,7 @@ public:
 protected:
 
   // Data members:
-  Subcurve_container  m_overlap_subCurves;
+  Subcurve_container m_overlap_subCurves;
                                      // Contains all of the new sub-curves
                                      // creaed by an overlap.
 
@@ -138,110 +138,100 @@ protected:
   std::vector<Object> m_x_objects;   // Auxiliary vector for storing the
                                      // intersection objects.
 
-  X_monotone_curve_2  sub_cv1;       // Auxiliary varibales
-  X_monotone_curve_2  sub_cv2;       // (for splitting curves).
+  X_monotone_curve_2 sub_cv1;        // Auxiliary varibales
+  X_monotone_curve_2 sub_cv2;        // (for splitting curves).
 
 public:
-
-  /*!
-   * Constructor.
+  /*! Constructor.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Sweep_line_2 (Visitor * visitor) :
+  Sweep_line_2 (Visitor* visitor) :
     Base(visitor),
     m_curves_pair_set(0)
   {}
-
 
   /*!
    * Constructor.
    * \param traits A pointer to a sweep-line traits object.
    * \param visitor A pointer to a sweep-line visitor object.
    */
-  Sweep_line_2 (const Traits_2 * traits, Visitor * visitor) :
+  Sweep_line_2(const Traits_2* traits, Visitor* visitor) :
     Base(traits, visitor),
     m_curves_pair_set(0)
   {}
 
   /*! Destrcutor. */
-  virtual ~Sweep_line_2()
-  {}
+  virtual ~Sweep_line_2() {}
 
 protected:
 
   /*! Initialize the data structures for the sweep-line algorithm. */
-  virtual void _init_structures ();
+  virtual void _init_structures();
 
   /*! Complete the sweep process (complete the data structures). */
-  virtual void _complete_sweep ();
+  virtual void _complete_sweep();
 
   /*! Handle the subcurves to the left of the current event point. */
-  virtual void _handle_left_curves ();
+  virtual void _handle_left_curves();
 
   /*! Handle the subcurves to the right of the current event point. */
-  virtual void _handle_right_curves ();
+  virtual void _handle_right_curves();
 
-  /*!
-   * Add a subcurve to the right of an event point.
+  /*! Add a subcurve to the right of an event point.
    * \param event The event point.
    * \param curve The subcurve to add.
    * \return (true) if an overlap occured; (false) otherwise.
    */
-  virtual bool _add_curve_to_right (Event * event, Subcurve * curve,
-                                    bool overlap_exist = false);
+  virtual bool _add_curve_to_right(Event* event, Subcurve* curve,
+                                   bool overlap_exist = false);
 
   /*! Fix overlapping subcurves before handling the current event. */
   void _fix_overlap_subcurves();
 
-  /*!
-   * Handle overlap at right insertion to event.
+  /*! Handle overlap at right insertion to event.
    * \param event The event point.
    * \param curve The subcurve representing the overlap.
    * \param iter An iterator for the curves.
    * \param overlap_exist
    */
-  void _handle_overlap (Event * event, Subcurve * curve,
-                        Event_subcurve_iterator iter, bool overlap_exist);
+  void _handle_overlap(Event* event, Subcurve* curve,
+                       Event_subcurve_iterator iter, bool overlap_exist);
   
-  /*! 
-   * Compute intersections between the two given curves.
+  /*! Compute intersections between the two given curves.
    * If the two curves intersect, create a new event (or use the event that 
    * already exits in the intersection point) and insert the curves to the
    * event.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    */ 
-  void _intersect (Subcurve * c1, Subcurve * c2);
+  void _intersect(Subcurve* c1, Subcurve* c2);
 
-  /*!
-   * When a curve is removed from the status line for good, its top and
+  /*! When a curve is removed from the status line for good, its top and
    * bottom neighbors become neighbors. This method finds these cases and
    * looks for the intersection point, if one exists.
    * \param leftCurve A pointer to the curve that is about to be deleted.
    * \param remove_for_good Whether the aubcurve is removed for good.
    */
-  void _remove_curve_from_status_line (Subcurve * leftCurve,
-                                       bool remove_for_good);
+  void _remove_curve_from_status_line(Subcurve* leftCurve,
+                                      bool remove_for_good);
 
-  /*!
-   * Create an intersection-point event between two curves.
+  /*! Create an intersection-point event between two curves.
    * \param xp The intersection point.
    * \param mult Its multiplicity.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
    * \param is_overlap Whether the two curves overlap at xp.
    */
-  void _create_intersection_point (const Point_2 & xp,
-                                   unsigned int mult,
-                                   Subcurve *& c1,
-                                   Subcurve *& c2,
-                                   bool is_overlap = false);
+  void _create_intersection_point(const Point_2& xp,
+                                  unsigned int mult,
+                                  Subcurve*& c1,
+                                  Subcurve*& c2,
+                                  bool is_overlap = false);
 
-  /*!
-   * Fix a subcurve that represents an overlap.
+  /*! Fix a subcurve that represents an overlap.
    * \param sc The subcurve.
    */
-  void _fix_finished_overlap_subcurve (Subcurve * sc);
+  void _fix_finished_overlap_subcurve(Subcurve* sc);
 
 };
 

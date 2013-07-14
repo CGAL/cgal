@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 #ifndef CGAL_ARR_LM_MIDDLE_EDGES_GENERATOR_H
@@ -29,15 +29,15 @@
 namespace CGAL {
 
 /*! \class
-* This class is related to the Landmarks point location, and given as 
-* a parameter (or template parameter) to it. 
-* It inherites from Arr_lm_generator and  implements the 
-* function called "void _create_point_list(Point_list &)" 
-* to creates the set of landmarks, which are the middle points of the 
+* This class is related to the Landmarks point location, and given as
+* a parameter (or template parameter) to it.
+* It inherites from Arr_lm_generator and  implements the
+* function called "void _create_point_list(Point_list &)"
+* to creates the set of landmarks, which are the middle points of the
 * arrangement edges, which must be segments !
 * IMPORTANT: THIS ALGORITHM WORKS ONLY FOR SEGMENTS !!!
 */
-template <typename Arrangement_, 
+template <typename Arrangement_,
           typename Nearest_neighbor_ =
             Arr_landmarks_nearest_neighbor<Arrangement_> >
 class Arr_middle_edges_landmarks_generator :
@@ -54,7 +54,7 @@ private:
                                                         Base;
 
 public:
-  typedef typename Arrangement_2::Traits_2		Traits_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Edge_const_iterator	Edge_const_iterator;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -67,29 +67,29 @@ public:
                                                         Ccb_halfedge_circulator;
   typedef typename Base::NN_Points_set                  NN_Points_set;
   typedef typename Base::NN_Point_2                     NN_Point_2;
-  
-  typedef typename Traits_2::Point_2		        Point_2;
+
+  typedef typename Geometry_traits_2::Point_2		Point_2;
   typedef std::vector<Point_2>			        Points_set;
 
   typedef typename Base::PL_result_type                 PL_result_type;
-  
+
 private:
   /*! Copy constructor - not supported. */
   Arr_middle_edges_landmarks_generator(const Self&);
-  
+
   /*! Assignment operator - not supported. */
   Self& operator=(const Self&);
-  
+
 public:
   /*! Constructor. */
   Arr_middle_edges_landmarks_generator(const Arrangement_2& arr,
-                                       int /* lm_num */ = -1) : 
+                                       int /* lm_num */ = -1) :
     Base(arr)
   {
     //CGAL_PRINT_DEBUG("Arr_middle_edges_landmarks_generator constructor.");
     this->build_landmark_set();
   }
-  
+
   // Observer functions that should be empty, because they
   // got nothing to do with middle edges
   //-------------------------------------------------
@@ -98,18 +98,18 @@ public:
                                  Face_handle /* new_f */, bool /* is_hole */)
   {}
   virtual void after_add_hole (Ccb_halfedge_circulator /* h */) {}
-  
+
   virtual void after_merge_face (Face_handle /* f */) {}
   virtual void after_move_hole (Ccb_halfedge_circulator /* h */) {}
   virtual void after_remove_vertex () {}
   virtual void after_remove_hole (Face_handle /* f */) {}
-  
+
 protected:
   /*!
-   * create a set of middle_edges points 
+   * create a set of middle_edges points
    * the number of points is equal to the number of edges in the arrangement.
    */
-  virtual void _create_nn_points_set(NN_Points_set& nn_points) 
+  virtual void _create_nn_points_set(NN_Points_set& nn_points)
   {
     //CGAL_PRINT_DEBUG("create_middle_edges_points_list");
     Edge_const_iterator    eit;
@@ -133,15 +133,15 @@ protected:
       const Point_2& p1 = hh->source()->point();
       const Point_2& p2 = hh->target()->point();
       Point_2 p ((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
-      
+
       //CGAL_PRINT_DEBUG("mid point is= " << p);
-      
-      PL_result_type obj = this->pl_make_result(hh); 
-      NN_Point_2 np(p, obj); 
+
+      PL_result_type obj = this->pl_make_result(hh);
+      NN_Point_2 np(p, obj);
       nn_points.push_back(np);
-    } 
+    }
   }
-  
+
   virtual void _create_points_set (Points_set & /* points */)
   {
     std::cerr << "should not reach here!"<< std::endl;

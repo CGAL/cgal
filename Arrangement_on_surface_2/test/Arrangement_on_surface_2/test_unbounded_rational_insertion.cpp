@@ -109,20 +109,22 @@ int main()
   // If a failure has already occured, abort.
   if (result < 0) return result;
   
+  std::cout << std::endl;
+
   // Construct the 2nd arrangement.
   Arrangement_2 arr2(&traits);
   insert(arr2, c2);
   
-  if (!arr1.is_valid()) {
-    std::cerr << "The first arrangement is not valid!" << std::endl;
+  if (!arr2.is_valid()) {
+    std::cerr << "The second arrangement is not valid!" << std::endl;
     return -1;
   }
 
-  sizes[0] = arr1.number_of_vertices();
-  sizes[1] = arr1.number_of_vertices_at_infinity();
-  sizes[2] = arr1.number_of_edges();
-  sizes[3] = arr1.number_of_faces();
-  sizes[4] = arr1.number_of_unbounded_faces();
+  sizes[0] = arr2.number_of_vertices();
+  sizes[1] = arr2.number_of_vertices_at_infinity();
+  sizes[2] = arr2.number_of_edges();
+  sizes[3] = arr2.number_of_faces();
+  sizes[4] = arr2.number_of_unbounded_faces();
 
   for (i = 0; i < 5; ++ i) {
     if (expected_sizes[i] != sizes[i]) {

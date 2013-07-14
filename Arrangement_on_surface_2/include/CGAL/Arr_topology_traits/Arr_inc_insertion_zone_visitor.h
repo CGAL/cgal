@@ -297,14 +297,14 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
       }
      
       // We should insert the curve in the interior of the face.
-      inserted_he = arr_access.insert_in_face_interior_ex (cv, face, left_v,
-                                                           right_v, SMALLER);
+      inserted_he = arr_access.insert_in_face_interior_ex (face, cv, ARR_LEFT_TO_RIGHT, 
+                                                           left_v, right_v);
     }
     else {
       // The right endpoint is associated with an arrangement vertex, and
       // we have the predecessor halfedge for the insertion.
-      inserted_he = arr_access.insert_from_vertex_ex (cv, prev_he_right,
-                                                      left_v, LARGER);
+      inserted_he = arr_access.insert_from_vertex_ex (prev_he_right, cv, ARR_RIGHT_TO_LEFT, 
+                                                      left_v);
 
       // The returned halfedge is directed to the newly created vertex
       // (the left one), so we take its twin.
@@ -325,8 +325,8 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
       }
      
       // Use the left predecessor for the insertion.
-      inserted_he = arr_access.insert_from_vertex_ex (cv, prev_he_left,
-                                                      right_v, SMALLER);
+      inserted_he = arr_access.insert_from_vertex_ex (prev_he_left, cv, ARR_LEFT_TO_RIGHT,
+                                                      right_v);
     }
     else {
       // The right endpoint is associated with an arrangement vertex, and

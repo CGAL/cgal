@@ -45,7 +45,6 @@ template <class Traits_,
 class Arr_spherical_overlay_helper
 {
 public:
-
   typedef Traits_                                         Traits_2; 
   typedef Arrangement_                                    Arrangement_2;
   typedef Event_                                          Event;
@@ -54,11 +53,16 @@ public:
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Point_2                      Point_2;
 
+  typedef typename Event::Subcurve_iterator               Subcurve_iterator;
+
+
   // The input arrangements (the "red" and the "blue" one):
   typedef ArrangementRed_                                 Arrangement_red_2;
+  typedef typename Arrangement_red_2::Topology_traits     Topology_traits_red;
   typedef typename Arrangement_red_2::Face_const_handle   Face_handle_red;
 
   typedef ArrangementBlue_                                Arrangement_blue_2;
+  typedef typename Arrangement_blue_2::Topology_traits    Topology_traits_blue;
   typedef typename Arrangement_blue_2::Face_const_handle  Face_handle_blue;
 
   // Define the helper class for the construction visitor.
@@ -67,8 +71,8 @@ public:
 
 protected:
   // Data members:
-  const typename Arrangement_red_2::Topology_traits * m_red_top_traits;
-  const typename Arrangement_blue_2::Topology_traits * m_blue_top_traits;
+  const Topology_traits_red* m_red_top_traits;
+  const Topology_traits_blue* m_blue_top_traits;
 
   //! Red spherical face
   Face_handle_red m_red_nf;
@@ -78,8 +82,8 @@ protected:
 
 public:
   /*! Constructor, given the input red and blue arrangements. */
-  Arr_spherical_overlay_helper(const Arrangement_red_2 * red_arr,
-                               const Arrangement_blue_2 * blue_arr) :
+  Arr_spherical_overlay_helper(const Arrangement_red_2* red_arr,
+                               const Arrangement_blue_2* blue_arr) :
     m_red_top_traits(red_arr->topology_traits()),
     m_blue_top_traits(blue_arr->topology_traits())
   {}
@@ -91,99 +95,132 @@ public:
   void before_sweep()
   {
     // Get the spherical faces in both arrangements.
-      /* RWRW:
-    m_red_nf = Face_handle_red(m_red_top_traits->spherical_face());
-    m_blue_nf = Face_handle_blue(m_blue_top_traits->spherical_face());
-      */
+    /* RWRW:
+     * m_red_nf = Face_handle_red(m_red_top_traits->spherical_face());
+     * m_blue_nf = Face_handle_blue(m_blue_top_traits->spherical_face());
+     */
     m_red_nf = Face_handle_red(m_red_top_traits->south_face());
     m_blue_nf = Face_handle_blue(m_blue_top_traits->south_face());
-    return;
   }
 
   /*! A notification invoked before the sweep-line starts handling the given
    * event.
    */  
-  void before_handle_event(Event * event)
+  void before_handle_event(Event* event)
   {
     if (event->parameter_space_in_y() != ARR_TOP_BOUNDARY &&
         event->parameter_space_in_x() != ARR_LEFT_BOUNDARY)
       return;
 
-    Arr_curve_end ind = (event->number_of_left_curves() == 0 &&
-                     event->number_of_right_curves() != 0) ?
+    Arr_curve_end ind = ((event->number_of_left_curves() == 0) &&
+                         (event->number_of_right_curves() != 0)) ?
       ARR_MIN_END : ARR_MAX_END;
 
-    const Subcurve  *sc = (ind == ARR_MIN_END) ?
-      (*(event->right_curves_begin())) :
-      (*(event->left_curves_begin()));
-
-    if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
-    {
-      // The curve is incident to the north pole.
-      switch (sc->color()) {
-       case Traits_2::RED :
-        if (ind == ARR_MIN_END)
-          m_red_nf = sc->red_halfedge_handle()->twin()->face();
-        else
-          m_red_nf = sc->red_halfedge_handle()->face();
-        break;
+    Subcurve_iterator it_red, it_blue, it_end;
+    if (ind == ARR_MIN_END) {
+      it_blue = it_red = event->right_curves_begin();
+      it_end = event->right_curves_end();
+    }
+    else {
+      it_blue = it_red = event->left_curves_begin();
+      it_end = event->left_curves_end();
+    }
+    
+    // red arrangement
+    while ((it_red != it_end) && ((*it_red)->color() == Traits_2::BLUE))
+      ++it_red;
+    
+    if (it_red != it_end) {
+      const Subcurve* sc_red = *it_red;
+      if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+        // The curve is incident to the north pole.
+        switch (sc_red->color()) {
+         case Traits_2::RED:
+          m_red_nf = (ind == ARR_MIN_END) ?
+            sc_red->red_halfedge_handle()->twin()->face() :
+            sc_red->red_halfedge_handle()->face();
+          break;
           
-       case Traits_2::BLUE :
-        if (ind == ARR_MIN_END)
-          m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-        else
-          m_blue_nf = sc->blue_halfedge_handle()->face();
-        break;
-
-       case Traits_2::RB_OVERLAP :
-        if (ind == ARR_MIN_END)
-        {
-          m_red_nf = sc->red_halfedge_handle()->twin()->face();
-          m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
+         case Traits_2::RB_OVERLAP:
+          m_red_nf = (ind == ARR_MIN_END) ?
+            sc_red->red_halfedge_handle()->twin()->face() :
+            sc_red->red_halfedge_handle()->face();
+          break;
+          
+         case Traits_2::BLUE: break;
         }
-        else
-        {
-          m_red_nf = sc->red_halfedge_handle()->face();
-          m_blue_nf = sc->blue_halfedge_handle()->face();
+      }
+      else {
+        // The curve extends to the right from the curve of discontinuity.
+        CGAL_assertion(ind == ARR_MIN_END);
+        switch (sc_red->color()) {
+        case Traits_2::RED:
+          m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
+          break;
+        case Traits_2::RB_OVERLAP:
+          m_red_nf = sc_red->red_halfedge_handle()->twin()->face();
+          break;
+        case Traits_2::BLUE: break;
         }
-        break;
       }
     }
-    else
-    {
-      // The curve extends to the right from the curve of discontinuity.
-      CGAL_assertion (ind == ARR_MIN_END);
-      switch (sc->color()) {
-       case Traits_2::RED :
-        m_red_nf = sc->red_halfedge_handle()->twin()->face();
-        break;
+    
+    // blue arrangement
+    while ((it_blue != it_end) && ((*it_blue)->color() == Traits_2::RED))
+      ++it_blue;
+    
+    if (it_blue != it_end) {
+      const Subcurve* sc_blue = *it_blue;
+      if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+        // The curve is incident to the north pole.
+        switch (sc_blue->color()) {
+         case Traits_2::BLUE:
+          m_blue_nf = (ind == ARR_MIN_END) ?
+            sc_blue->blue_halfedge_handle()->twin()->face() :
+            sc_blue->blue_halfedge_handle()->face();
+          break;
           
-       case Traits_2::BLUE :
-        m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-        break;
+         case Traits_2::RB_OVERLAP:
+          m_blue_nf = (ind == ARR_MIN_END) ?
+            sc_blue->blue_halfedge_handle()->twin()->face() :
+            sc_blue->blue_halfedge_handle()->face();
+          break;
 
-       case Traits_2::RB_OVERLAP :
-        m_red_nf = sc->red_halfedge_handle()->twin()->face();
-        m_blue_nf = sc->blue_halfedge_handle()->twin()->face();
-        break;
+         case Traits_2::RED: break;
+        }
+      }
+      else {
+        // The curve extends to the right from the curve of discontinuity.
+        CGAL_assertion(ind == ARR_MIN_END);
+        switch (sc_blue->color()) {
+         case Traits_2::BLUE:
+          m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
+          break;
+          
+         case Traits_2::RB_OVERLAP:
+          m_blue_nf = sc_blue->blue_halfedge_handle()->twin()->face();
+          break;
+          
+         case Traits_2::RED: break;
+        }
       }
     }
-
-    return;
   }
   //@}
 
   /*! Get the current red top face. */
-  Face_handle_red red_top_face() const
-  {
-    return m_red_nf;
-  }
+  Face_handle_red red_top_face() const { return m_red_nf; }
 
   /*! Get the current blue top face. */
-  Face_handle_blue blue_top_face() const
-  {
-    return m_blue_nf;
-  }
+  Face_handle_blue blue_top_face() const { return m_blue_nf; }
+
+  /*! Obtain the red topology traits. */
+  const Topology_traits_red* red_topology_traits() const
+  { return m_red_top_traits; }
+
+  /*! Obtain the blue topology traits. */
+  const Topology_traits_blue* blue_topology_traits() const
+  { return m_blue_top_traits; }
 };
 
 } //namespace CGAL

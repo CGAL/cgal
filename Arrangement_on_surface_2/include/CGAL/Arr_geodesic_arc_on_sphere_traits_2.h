@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 
@@ -62,7 +62,7 @@ class Arr_geodesic_arc_on_sphere_traits_2 : public T_Kernel {
 
 public:
   typedef T_Kernel                              Kernel;
-  
+
   // Category tags:
   typedef Tag_true                              Has_left_category;
   typedef Tag_true                              Has_merge_category;
@@ -111,9 +111,9 @@ protected:
   {
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     static const Direction_2 d(-1, 0);
-#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)    
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)
     static const Direction_2 d(-8, 6);
-#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)    
+#elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)
     static const Direction_2 d(-11, 7);
 #else
 #error CGAL_IDENTIFICATION_XY is not defined
@@ -168,36 +168,50 @@ protected:
    * \param d the direction in space
    * \return the sign of the y-coordinate of d
    */
-  inline static Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }  
+  inline static Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }
 
   /*! Obtain the sign of the z-coordinate of a direction in space
    * \param d the direction in space
    * \return the sign of the z-coordinate of d
    */
   inline static Sign z_sign(Direction_3 d) { return CGAL::sign(d.dz()); }
-  
+
   typedef Direction_2 (*Project)(const Direction_3& d) ;
-  
+
   /*! Project a 3D direction onto the xy-plane
    * \param d the 3D direction
    * \return the projection onto the xy-plane
    */
   inline static Direction_2 project_xy(const Direction_3& d)
   { return Direction_2(d.dx(), d.dy()); }
-  
+
   /*! Project a 3D direction onto the yz-plane
    * \param d the 3D direction
    * \return the projection onto the yz-plane
    */
   inline static Direction_2 project_yz(const Direction_3& d)
   { return Direction_2(d.dy(), d.dz()); }
-  
+
   /*! Project a 3D direction onto the zx-plane
    * \param d the 3D direction
    * \return the projection onto the xz-plane
    */
   inline static Direction_2 project_xz(const Direction_3& d)
   { return Direction_2(d.dx(), d.dz()); }
+
+  /*! Project a 3D direction onto the yz-plane and reflect the y coordinate
+   * \param d the 3D direction
+   * \return the projection onto the yz-plane
+   */
+  inline static Direction_2 project_minus_yz(const Direction_3& d)
+  { return Direction_2(-d.dy(), d.dz()); }
+
+  /*! Project a 3D direction onto the zx-plane and reflect the x coordinate
+   * \param d the 3D direction
+   * \return the projection onto the xz-plane
+   */
+  inline static Direction_2 project_minus_xz(const Direction_3& d)
+  { return Direction_2(-d.dx(), d.dz()); }
 
   /*! Compare the relative position of a direction and a plane given by its
    * normal.
@@ -210,11 +224,11 @@ protected:
     FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot);
   }
-  
+
   /*! Compute the orientation of two directions.
    * \param d1 the first direction.
    * \param d2 the second direction.
-   * \return the relative orientation of d1 and d2. 
+   * \return the relative orientation of d1 and d2.
    */
   static inline Orientation orientation(const Direction_2& d1,
                                         const Direction_2& d2)
@@ -235,7 +249,7 @@ protected:
     FT dot = normal.vector() * dir.vector();
     return CGAL::sign(dot) == ZERO;
   }
-  
+
 public:
   /*! Compare two endpoint directions by v.
    * \param d1 the first enpoint direction.
@@ -255,15 +269,15 @@ public:
 
     Sign s1 = CGAL::sign(dot_p1);
     Sign s2 = CGAL::sign(dot_p2);
-    
+
     if (s1 != s2) {
       if (s1 == NEGATIVE) return SMALLER;
       if (s1 == POSITIVE) return LARGER;
       if (s2 == NEGATIVE) return LARGER;
-      if (s2 == POSITIVE) return SMALLER;      
+      if (s2 == POSITIVE) return SMALLER;
     }
     if (s1 == ZERO) return EQUAL;
-    
+
     FT norm1 = v1 * v1;
     FT norm2 = v2 * v2;
 
@@ -288,7 +302,7 @@ public:
     return (kernel->counterclockwise_in_between_2_object()(d, d1, d2)) ?
       LARGER : SMALLER;
   }
-  
+
   /*! Compare two endpoint directions by u.
    * \param d1 the first enpoint direction.
    * \param d2 the second endpoint direction.
@@ -325,7 +339,7 @@ public:
     if (res == EQUAL) return compare_y(d1, d2);
     return res;
   }
-  
+
 public:
   // Traits objects
   typedef Arr_extended_direction_3<Kernel>                Point_2;
@@ -344,21 +358,21 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_x_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
-  public:    
+
+  public:
     /*! Compare the x-coordinates of two directional points.
      * \param p1 the first directional point.
      * \param p2 the second directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);
-     *         LARGER  - x(p1) > x(p2). 
+     *         LARGER  - x(p1) > x(p2).
      * \pre p1 does not lie on the boundary.
      * \pre p2 does not lie on the boundary.
     */
@@ -383,14 +397,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_xy_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Compare two directional points lexigoraphically: by x, then by y.
      * \param p1 the first enpoint directional point.
@@ -407,7 +421,7 @@ public:
     {
       CGAL_precondition(p1.is_no_boundary());
       CGAL_precondition(p2.is_no_boundary());
-      
+
       return m_traits->compare_xy(p1, p2);
     }
   };
@@ -472,14 +486,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_y_at_x_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Return the location of the given point with respect to the input arc.
      * \param xc the arc.
@@ -514,7 +528,7 @@ public:
       Oriented_side os = m_traits->oriented_side(xc.normal(), p);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xc.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
         ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
     }
   };
@@ -532,14 +546,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_y_at_x_left_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Compare the y value of two x-monotone curves immediately to the left
      * of their intersection point.
@@ -576,7 +590,7 @@ public:
         Oriented_side os = m_traits->oriented_side(xc1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
       if (!l2.is_no_boundary()) {
@@ -584,7 +598,7 @@ public:
         Oriented_side os = m_traits->oriented_side(xc2.normal(), l1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
 
@@ -593,14 +607,14 @@ public:
         Oriented_side os = m_traits->oriented_side(xc1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      // use l1 and xc2: 
+      // use l1 and xc2:
       Oriented_side os = m_traits->oriented_side(xc2.normal(), l1);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xc2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
         ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
     }
   };
@@ -608,7 +622,7 @@ public:
   /*! Obtain a Compare_y_at_x_left_2 function object */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(this); }
-  
+
   /*! A functor that compares the y-coordinates of two x-monotone arcs
    * immediately to the right of their intersection directional point.
    */
@@ -618,14 +632,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_y_at_x_right_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Compare the y value of two x-monotone curves immediately to the right
      * of their intersection point.
@@ -640,7 +654,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
-                                 const Point_2 &) const
+                                 const Point_2& p) const
     {
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
@@ -663,7 +677,7 @@ public:
         Oriented_side os = m_traits->oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
       if (!r2.is_no_boundary()) {
@@ -671,23 +685,49 @@ public:
         Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
-      if (m_traits->compare_xy(r1, r2) == LARGER) {
+      Comparison_result res = m_traits->compare_xy(r1, r2);
+      if (res == LARGER) {
         // use r2 and xc1:
         Oriented_side os = m_traits->oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xc1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      // use r1 and xc2: 
-      Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xc2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      if (res == SMALLER) {
+        // use r1 and xc2:
+        Oriented_side os = m_traits->oriented_side(xc2.normal(), r1);
+        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
+          (xc2.is_directed_right()) ?
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      }
+      // res == equal
+      // if p and r1 are antipodal, compare the plane normals
+      const Kernel* kernel = m_traits;
+      typename Kernel::Construct_opposite_direction_3 opposite_3 =
+        kernel->construct_opposite_direction_3_object();
+      if (!kernel->equal_3_object()(opposite_3(p), r1)) return EQUAL;
+
+      Sign xsign = Traits::x_sign(p);
+      Sign ysign = Traits::y_sign(p);
+      Project project = (xsign == ZERO) ?
+        ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
+        ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
+
+      Direction_2 n1 = project(xc1.normal());
+      Direction_2 n2 = project(xc2.normal());
+      typename Kernel::Construct_opposite_direction_2 opposite_2 =
+        kernel->construct_opposite_direction_2_object();
+      if (!xc1.is_directed_right()) n1 = opposite_2(n1);
+      if (!xc2.is_directed_right()) n2 = opposite_2(n2);
+      if (kernel->equal_2_object()(n1, n2)) return EQUAL;
+      const Direction_2 d(1, 0);
+      return (kernel->counterclockwise_in_between_2_object()(n1, d, n2)) ?
+        SMALLER : LARGER;
     }
   };
 
@@ -704,14 +744,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Equal_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Determines whether the two x-monotone curves are the same (have the
      * same graph).
@@ -725,10 +765,18 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal_3 = kernel->equal_3_object();
       if (xc1.is_full() || xc2.is_full()) {
-        return (xc1.is_full() && xc2.is_full() &&
-                equal_3(xc1.left(), xc2.left()));
+        if (!xc1.is_full() || !xc2.is_full()) return false;
+        typename Kernel::Construct_opposite_direction_3 opposite_3 =
+          kernel->construct_opposite_direction_3_object();
+        return (equal_3(xc1.normal(), xc2.normal()) ||
+                equal_3(opposite_3(xc1.normal()), xc2.normal()));
       }
-      
+
+      if (xc1.is_meridian() || xc2.is_meridian()) {
+        return (xc1.is_meridian() && xc2.is_meridian() &&
+                equal_3(xc1.normal(), xc2.normal()));
+      }
+
       return (equal_3(xc1.left(), xc2.left()) &&
               equal_3(xc1.right(), xc2.right()));
     }
@@ -807,7 +855,7 @@ public:
   /*! Obtain a Parameter_space_in_x_2 function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(); }
-  
+
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
    */
@@ -867,14 +915,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_x_on_boundary_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Compare the x-limit of a direction with the x-coordinate of an
      * arc end on the boundary.
@@ -886,7 +934,7 @@ public:
      * \return the comparison result:
      *         SMALLER - x(p) < x(xc, ce);
      *         EQUAL   - x(p) = x(xc, ce);
-     *         LARGER  - x(p) > x(xc, ce).     
+     *         LARGER  - x(p) > x(xc, ce).
      * \pre p lies in the interior of the parameter space.
      * \pre the ce end of the arc xcv lies on a pole (implying ce is vertical).
      * \pre xcv does not coincide with the vertical identification curve.
@@ -994,14 +1042,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_x_near_boundary_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
 
     /*! Compare the x-coordinates of 2 arc ends near the boundary of the
@@ -1045,7 +1093,7 @@ public:
   /*! Obtain a Compare_x_near_boundary_2 function object */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(this); }
-    
+
 
   /*! A functor that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -1056,14 +1104,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_y_near_boundary_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Compare the y-coordinates of 2 curves at their ends near the boundary
      * of the parameter space.
@@ -1120,26 +1168,26 @@ public:
         // Compare the y-coord. at the x-coord of the most left right-endpoint.
         CGAL_assertion(r1.is_no_boundary());
         CGAL_assertion(r2.is_no_boundary());
-        
+
         if (m_traits->compare_xy(r1, r2) == LARGER) {
           // use r2 and xcv1:
           Oriented_side os =
             m_traits->oriented_side(xcv1.normal(), r2);
           return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
             (xcv1.is_directed_right()) ?
-            ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
+            ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
             ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
         }
-        // use r1 and xcv2: 
+        // use r1 and xcv2:
         Oriented_side os = m_traits->oriented_side(xcv2.normal(), r1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xcv2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
 
       // ce == ARR_MAX_END
-      
+
       // Handle the north pole. It has the largest y coords:
       if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;
       if (r2.is_max_boundary()) return SMALLER;
@@ -1153,7 +1201,7 @@ public:
       if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
       if (xcv1.is_vertical()) return LARGER;
       if (xcv2.is_vertical()) return SMALLER;
-        
+
       // Compare to the left:
       Direction_2 p_r1 = Traits::project_xy(r1);
       cr = m_traits->compare_y(r1, r2);
@@ -1170,14 +1218,14 @@ public:
         Oriented_side os = m_traits->oriented_side(xcv1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
           (xcv1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      // use l1 and xcv2: 
+      // use l1 and xcv2:
       Oriented_side os = m_traits->oriented_side(xcv2.normal(), l1);
       return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
         (xcv2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
+        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
         ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
     }
   };
@@ -1185,14 +1233,14 @@ public:
   /*! Obtain a Compare_y_near_boundary_2 function object */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this); }
-  
+
   /*! A functor that indicates whether a geometric object lies on the
    * horizontal identification arc. In this setup there is no such entity.
    */
   class Is_on_x_identification_2 {
   protected:
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
-    
+
   public:
     /*! Determine whether a point lies on the horizontal identification arc.
      * \param p the point.
@@ -1217,11 +1265,11 @@ public:
       return false;
     }
   };
-  
+
   /*! Obtain a Is_on_x_identification_2 function object */
   Is_on_x_identification_2 is_on_x_identification_2_object() const
   { return Is_on_x_identification_2(); }
-  
+
   /*! A functor that indicates whether a geometric object lies on the
    * vertical identification arc.
    */
@@ -1231,14 +1279,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Is_on_y_identification_2(const Traits* traits) : m_traits(traits) {}
 
-    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;    
-    
+    friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
+
   public:
     /*! Determine whether a point lies on the vertical identification arc.
      * \param p the point.
@@ -1256,11 +1304,11 @@ public:
     bool operator()(const X_monotone_curve_2& xcv) const
     { return xcv.is_on_boundary(); }
   };
-  
+
   /*! Obtain a Is_on_y_identification_2 function object */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(this); }
-  
+
   /*! A functor that compares the y-coordinate of two given points
    * that lie on the vertical identification arc.
    */
@@ -1270,14 +1318,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Compare_y_on_boundary_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Compare the y-coordinate of two given points that lie on the vertical
      * identification curve.
@@ -1321,8 +1369,8 @@ public:
     Make_x_monotone_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
-  public:    
+
+  public:
     /*! Cut the given curve into x-monotone subcurves and insert them into the
      * given output iterator. As spherical_arcs are always x_monotone, only one
      * object will be contained in the iterator.
@@ -1352,7 +1400,7 @@ public:
       if (c.is_full()) {
         // The spherical arc is full
         if (c.is_vertical()) {
-          // The arc is vertical => divide it into 2 half arcs;
+          // The arc is vertical => divide it into 2 meridians;
           const Direction_3& np = m_traits->neg_pole();
           const Direction_3& pp = m_traits->pos_pole();
           X_monotone_curve_2 xc1(np, pp, c.normal(), true, true);
@@ -1380,7 +1428,7 @@ public:
 #endif
         return oi;
       }
-      
+
       const Point_2& source = c.source();
       const Point_2& target = c.target();
       const Direction_3& normal = c.normal();
@@ -1458,7 +1506,7 @@ public:
       const Kernel* kernel = m_traits;
       bool directed_right =
         kernel->counterclockwise_in_between_2_object()(d, s, t);
-      
+
       X_monotone_curve_2 xc1(source, p, normal, false, directed_right);
       X_monotone_curve_2 xc2(p, target, normal, false, directed_right);
       *oi++ = make_object(xc1);
@@ -1478,14 +1526,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Split_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Split a given x-monotone curve at a given point into two sub-curves.
      * \param xc the curve to split
@@ -1509,15 +1557,15 @@ public:
       CGAL_precondition(!equal_3(p, source));
       CGAL_precondition(!equal_3(p, target));
 
-      xc1.normal(xc.normal());
+      xc1.set_normal(xc.normal());
       xc1.set_is_vertical(xc.is_vertical());
       xc1.set_is_degenerate(false);
       xc1.set_is_empty(false);
 
-      xc2.normal(xc.normal());
+      xc2.set_normal(xc.normal());
       xc2.set_is_vertical(xc.is_vertical());
       xc2.set_is_empty(false);
-      
+
       if (xc.is_directed_right()) {
         xc1.set_source(source);
         xc1.set_target(p);
@@ -1546,7 +1594,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -1566,11 +1614,11 @@ public:
   /*! Obtain a Clockwise_in_between function object */
   Clockwise_in_between_2 clockwise_in_between_2_object() const
   { return Clockwise_in_between_2(this); }
-  
+
   /*! A functor that computes intersections between x-monotone arcs. */
   class Intersect_2 {
   private:
-    
+
     /*! Computes the intersection between two arcs contained in the same plane
      * \param l1_3
      * \param r1_3
@@ -1595,7 +1643,7 @@ public:
                                         Project project,
                                         OutputIterator oi) const
     {
-      typedef std::pair<Point_2,Multiplicity>                   Point_2_pair;
+      typedef std::pair<Point_2, Multiplicity>                  Point_2_pair;
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
@@ -1642,7 +1690,7 @@ public:
       *oi++ = make_object(xc);
       return oi;
     }
-    
+
     /*! Determine whether a direction pierces an arc.
      * \param point the direction.
      * \param xc the arc.
@@ -1654,7 +1702,7 @@ public:
     {
       const Kernel* kernel = m_traits;
       CGAL_precondition(m_traits->has_on(xc.normal(), point));
-      
+
       const Point_2& left = xc.left();
       const Point_2& right = xc.right();
 
@@ -1674,7 +1722,7 @@ public:
           plane_is_positive = xsign == POSITIVE;
           p_is_positive = Traits::y_sign(point) == POSITIVE;
         }
-        
+
         bool xc_is_positive = ((plane_is_positive && xc.is_directed_right()) ||
                                (!plane_is_positive && !xc.is_directed_right()));
 
@@ -1690,7 +1738,7 @@ public:
       }
 
       // The arc is not vertical. Compare the projections onto the xy-plane:
-      typename Kernel::Equal_2 equal_2 = kernel->equal_2_object(); 
+      typename Kernel::Equal_2 equal_2 = kernel->equal_2_object();
       Direction_2 p = Traits::project_xy(point);
       Direction_2 r = Traits::project_xy(right);
       if (equal_2(p, r)) return true;
@@ -1704,14 +1752,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Intersect_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Find the intersections of the two given curves and insert them into the
      * given output iterator. As two spherical_arcs may itersect only once,
@@ -1734,15 +1782,15 @@ public:
       typedef typename Kernel::Counterclockwise_in_between_2
         Counterclockwise_in_between_2;
       typedef typename Kernel::Equal_3                          Equal_3;
-        
-      typedef std::pair<Point_2,Multiplicity>         Point_2_pair;
+
+      typedef std::pair<Point_2, Multiplicity>                  Point_2_pair;
       const Kernel* kernel = m_traits;
 
       Equal_3 equal_3 = kernel->equal_3_object();
       const Direction_3& normal1 = xc1.normal();
       const Direction_3& normal2 = xc2.normal();
 
-      Direction_3 opposite_normal1 = 
+      Direction_3 opposite_normal1 =
         kernel->construct_opposite_direction_3_object()(normal1);
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
@@ -1764,7 +1812,7 @@ public:
               *oi++ = make_object(Point_2_pair(xc1.right(), 1));
             return oi;
           }
-            
+
           /*! If the endpoints of one arc coinside with the 2 poles resp,
            * the other arc is completely overlapping.
            */
@@ -1790,7 +1838,7 @@ public:
 
           Direction_3 normal = (xc1.is_directed_right()) ?
             normal1 : opposite_normal1;
-          
+
           bool p_x_is_positive = Traits::x_sign(point) == POSITIVE;
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
 
@@ -1829,7 +1877,7 @@ public:
         *oi++ = make_object(Point_2_pair(ed, 1));
         return oi;
       }
-      
+
       Vector_3 vo(kernel->construct_opposite_vector_3_object()(v));
       Point_2 edo(vo.direction());
       if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
@@ -1849,7 +1897,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -1869,25 +1917,23 @@ public:
     bool operator()(const X_monotone_curve_2& xc1,
                     const X_monotone_curve_2& xc2) const
     {
-      //! \todo temporary:
-      return false;
-      
       if (xc1.is_empty() || xc2.is_empty()) return true;
-      if (xc1.is_full() && xc2.is_full()) return false;
+      if ((xc1.is_full() || xc1.is_meridian()) &&
+          (xc2.is_full() || xc2.is_meridian())) return false;
 
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
       if (xc1.is_degenerate() && xc2.is_degenerate())
         return equal(xc1.left(), xc2.left());
-      if (xc1.is_full() && xc2.is_degenerate())
+      if ((xc1.is_full() || xc1.is_meridian()) && xc2.is_degenerate())
         return xc1.has_on(xc2.left());
-      if (xc2.is_full() && xc1.is_degenerate())
+      if ((xc2.is_full() || xc2.is_meridian()) && xc1.is_degenerate())
         return xc2.has_on(xc1.left());
 
       const Direction_3& normal1 = xc1.normal();
       const Direction_3& normal2 = xc2.normal();
-      Direction_3 opposite_normal1 = 
+      Direction_3 opposite_normal1 =
         kernel->construct_opposite_direction_3_object()(normal1);
       if (!equal(normal1, normal2) && !equal(opposite_normal1, normal2))
         return false;
@@ -1925,7 +1971,7 @@ public:
     Merge_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
-    
+
   public:
     /*! Merge two given x-monotone curves into a single curve (spherical_arc).
      * \param xc1 the first curve.
@@ -1948,14 +1994,14 @@ public:
         xc = xc1;
         return;
       }
-      
+
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
       xc.set_is_degenerate(false);
       xc.set_is_empty(false);
       xc.set_is_vertical(xc1.is_vertical());
-      
+
       bool eq1 = equal(xc1.right(), xc2.left());
 
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
@@ -1965,14 +2011,13 @@ public:
           xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
         xc.set_source(p);
         xc.set_target(p);
-        xc.normal(xc1.normal());
+        xc.set_normal(xc1.normal());
         xc.set_is_full(true);
       }
 #endif
-      
+
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
-        xc.normal(xc1.is_directed_right() ?
-                               xc1.normal() : xc2.normal());
+        xc.set_normal(xc1.is_directed_right() ? xc1.normal() : xc2.normal());
         xc.set_is_directed_right(true);
 
         if (eq1) {
@@ -1984,7 +2029,7 @@ public:
           xc.set_target(xc1.right());
         }
       } else {
-        xc.normal(xc1.normal());
+        xc.set_normal(xc1.normal());
         xc.set_is_directed_right(false);
 
         if (eq1) {
@@ -1996,7 +2041,7 @@ public:
           xc.set_target(xc2.left());
         }
       }
-    }      
+    }
   };
 
   /*! Obtain a Merge_2 function object */
@@ -2014,7 +2059,7 @@ public:
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
-     * \return an approximation of p's x-coordinate (if i == 0), or an 
+     * \return an approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) const
@@ -2048,7 +2093,7 @@ public:
 
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
- 
+
   class Compare_endpoints_xy_2 {
   public:
 
@@ -2107,9 +2152,9 @@ public:
   template <typename InputStream>
   friend InputStream& operator>>(InputStream& is, X_monotone_curve_2& arc)
   {
-    std::cerr << "Not implemented yet!" << std::endl;
+    CGAL_error_msg("Not implemented yet!");
     return is;
-  }  
+  }
 #endif
 };
 
@@ -2140,17 +2185,17 @@ private:
 
   inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
 
-  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }  
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
 
   inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
-  
+
 public:
   /*! Default constructor */
-  Arr_extended_direction_3() : 
+  Arr_extended_direction_3() :
     Direction_3(0, 0, 1),
     m_location(MAX_BOUNDARY_LOC)
   {}
-      
+
   /*! Constructor */
   Arr_extended_direction_3(const Direction_3& dir, Location_type location) :
     Direction_3(dir),
@@ -2164,19 +2209,20 @@ public:
    */
   Arr_extended_direction_3(const FT& x, const FT& y, const FT& z) :
     Direction_3(x, y, z)
-  { init(Direction_3(x, y, z)); }
-  
+  { init(); }
+
   /*! Constructor from a direction
    * \param dir the direction
    */
   Arr_extended_direction_3(const Direction_3& dir) : Direction_3(dir)
-  { init(dir); }
+  { init(); }
 
   /*! Initialize from a direction
    * \param dir the direction
    */
-  void init(const Direction_3& dir)
+  void init()
   {
+    const Direction_3& dir = *this;
 #if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     if (y_sign(dir) != ZERO) {
       m_location = NO_BOUNDARY_LOC;
@@ -2202,7 +2248,7 @@ public:
     m_location = equal_2(dir_xy, xy) ? MID_BOUNDARY_LOC : NO_BOUNDARY_LOC;
 #endif
   }
-  
+
   /*! Copy constructor */
   Arr_extended_direction_3(const Arr_extended_direction_3& ed) :
     Direction_3(static_cast<const Direction_3&>(ed))
@@ -2221,13 +2267,13 @@ public:
   /*! Obtain the discontinuity type of the point */
   Location_type discontinuity_type() const
   { return m_location; }
-  
+
   bool is_no_boundary() const { return (m_location == NO_BOUNDARY_LOC); }
-  
+
   bool is_min_boundary() const { return (m_location == MIN_BOUNDARY_LOC); }
-  
+
   bool is_mid_boundary() const { return (m_location == MID_BOUNDARY_LOC); }
-  
+
   bool is_max_boundary() const { return (m_location == MAX_BOUNDARY_LOC); }
 };
 
@@ -2241,14 +2287,14 @@ public:
  */
 template <typename T_Kernel>
 class Arr_x_monotone_geodesic_arc_on_sphere_3 {
-protected:
+public:
   typedef T_Kernel                                    Kernel;
-  
+  typedef typename Kernel::Direction_3                Direction_3;
   typedef typename Kernel::Plane_3                    Plane_3;
   typedef typename Kernel::Vector_3                   Vector_3;
   typedef typename Kernel::Direction_2                Direction_2;
-  typedef typename Kernel::Direction_3                Direction_3;
 
+protected:
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>      Arr_extended_direction_3;
 
@@ -2275,10 +2321,10 @@ protected:
 
   /*! The arc is empty */
   bool m_is_empty;
-  
+
   inline Sign x_sign(Direction_3 d) const { return CGAL::sign(d.dx()); }
 
-  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }  
+  inline Sign y_sign(Direction_3 d) const { return CGAL::sign(d.dy()); }
 
   inline Sign z_sign(Direction_3 d) const { return CGAL::sign(d.dz()); }
 
@@ -2304,7 +2350,7 @@ public:
     m_is_degenerate(false),
     m_is_empty(true)
   {}
-  
+
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc
@@ -2360,9 +2406,10 @@ public:
     m_is_empty = other.m_is_empty;
     return (*this);
   }
-  
-  /*! Construct a spherical_arc from two endpoint directions. It is assumed
-   * that the arc is the one with the smaller angle among the two.
+
+  /*! Construct the minor arc from two endpoint directions. The minor arc
+   *  is the one with the smaller angle among the two geodesic arcs with
+   * the given endpoints.
    * 1. Find out whether the arc is x-monotone.
    * 2. If it is x-monotone,
    *    2.1 Find out whether it is vertical, and
@@ -2373,7 +2420,7 @@ public:
    * \param source the source point.
    * \param target the target point.
    * \pre the source and target cannot be equal.
-   * \pre the source and target cannot be opposite of each other.
+   * \pre the source and target cannot be antipodal.
    */
   Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3& source,
@@ -2384,40 +2431,60 @@ public:
     m_is_degenerate(false),
     m_is_empty(false)
   {
+    CGAL_precondition_code(Kernel kernel);
+    CGAL_precondition(!kernel.equal_3_object()
+                      (kernel.construct_opposite_direction_3_object()(m_source),
+                       m_target));
+    m_normal = construct_normal_3(m_source, m_target);
+    init();
+  }
+
+  /*! Initialize a spherical_arc given that the two endpoint directions
+   * have been set. It is assumed that the arc is the one with the smaller
+   * angle among the two.
+   * 1. Find out whether the arc is x-monotone.
+   * 2. If it is x-monotone,
+   *    2.1 Find out whether it is vertical, and
+   *    2.2 whether the target is larger than the source (directed right).
+   * The arc is vertical, iff
+   * 1. one of its endpoint direction pierces a pole, or
+   * 2. the projections onto the xy-plane coincide.
+   * \param source the source point.
+   * \param target the target point.
+   * \pre the source and target cannot be equal.
+   */
+  void init()
+  {
     typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
 
     Kernel kernel;
-    CGAL_precondition(!kernel.equal_3_object()(source, target));
-    CGAL_precondition(!kernel.equal_3_object()
-                      (kernel.construct_opposite_direction_3_object()(source),
-                       target));
-    m_normal = construct_normal_3(source, target);
-      
+    CGAL_precondition(!kernel.equal_3_object()(m_source, m_target));
+
     // Check whether any one of the endpoint coincide with a pole:
-    if (source.is_max_boundary()) {
+    if (m_source.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
       return;
     }
-    if (source.is_min_boundary()) {
+    if (m_source.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
       return;
     }
-    if (target.is_max_boundary()) {
+    if (m_target.is_max_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(true);
       return;
     }
-    if (target.is_min_boundary()) {
+    if (m_target.is_min_boundary()) {
       set_is_vertical(true);
       set_is_directed_right(false);
       return;
     }
 
     // None of the enpoints coincide with a pole:
-    Direction_2 s = Traits::project_xy(source);
-    Direction_2 t = Traits::project_xy(target);
+    Direction_2 s = Traits::project_xy(m_source);
+    Direction_2 t = Traits::project_xy(m_target);
 
     Orientation orient = Traits::orientation(s, t);
     if (orient == COLLINEAR) {
@@ -2425,8 +2492,8 @@ public:
       const Direction_2& nx = Traits::neg_x_2();
       if (Traits::orientation(nx, s) == COLLINEAR) {
         // Project onto xz plane:
-        s = Traits::project_xz(source);
-        t = Traits::project_xz(target);
+        s = Traits::project_xz(m_source);
+        t = Traits::project_xz(m_target);
         const Direction_2& ny = Traits::neg_y_2();
         Orientation orient1 = Traits::orientation(ny, s);
         CGAL_assertion_code(Orientation orient2 = Traits::orientation(ny, t));
@@ -2441,8 +2508,8 @@ public:
         return;
       }
       // Project onto yz plane:
-      s = Traits::project_yz(source);
-      t = Traits::project_yz(target);
+      s = Traits::project_yz(m_source);
+      t = Traits::project_yz(m_target);
       const Direction_2& ny = Traits::neg_y_2();
       Orientation orient1 = Traits::orientation(ny, s);
       CGAL_assertion_code(Orientation orient2 = Traits::orientation(ny, t));
@@ -2458,11 +2525,11 @@ public:
       set_is_directed_right(orient == RIGHT_TURN);
       return;
     }
-    
+
     // The arc is not vertical!
     set_is_vertical(false);
     set_is_directed_right(orient == LEFT_TURN);
-    set_is_full(kernel.equal_3_object()(source, target));
+    set_is_full(kernel.equal_3_object()(m_source, m_target));
   }
 
   /*! Construct a full spherical_arc from a plane
@@ -2479,7 +2546,7 @@ public:
   {
     CGAL_precondition(z_sign(normal) != ZERO);
 
-#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)    
+#if (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_1_Y_0)
     Direction_3 d = (CGAL::sign(normal.dz()) == POSITIVE) ?
       Direction_3(-(normal.dz()), 0, normal.dx()) :
       Direction_3(normal.dz(), 0, -(normal.dx()));
@@ -2520,7 +2587,7 @@ public:
     CGAL_error_msg( "Full x-monotone arcs are not supported!");
 #endif
   }
-  
+
   /*! Construct a spherical_arc from two endpoints directions contained
    * in a plane.
    * \param plane the containing plane.
@@ -2581,7 +2648,7 @@ public:
       set_is_directed_right(ccw);
       return;
     }
-      
+
     // The arc is not vertical!
     set_is_vertical(false);
     set_is_directed_right(z_sign(normal) == POSITIVE);
@@ -2600,7 +2667,7 @@ public:
   /*! Set the direction of the underlying plane.
    * \param normal the plane direction.
    */
-  void normal(const Direction_3& normal) { m_normal = normal; }
+  void set_normal(const Direction_3& normal) { m_normal = normal; }
 
   void set_is_vertical(bool flag) { m_is_vertical = flag; }
   void set_is_directed_right(bool flag) { m_is_directed_right = flag; }
@@ -2613,7 +2680,7 @@ public:
 
   /*! Obtain the target */
   const Arr_extended_direction_3& target() const { return m_target; }
-    
+
   /*! Obtain the normal to the containing plane */
   const Direction_3& normal() const { return m_normal; }
 
@@ -2641,7 +2708,7 @@ public:
 
   /*! Determines whether the curve is degenerate */
   bool is_empty() const { return m_is_empty; }
-  
+
   /*! Determine whether the curve lie on the identification arc */
   bool is_on_boundary() const
   {
@@ -2676,13 +2743,13 @@ public:
     if (is_directed_right()) {
       return kernel.equal_2_object()(normal_xy, iden_normal_xy);
     } else {
-      Direction_2 opposite_normal_xy = 
+      Direction_2 opposite_normal_xy =
         kernel.construct_opposite_direction_2_object()(normal_xy);
       return kernel.equal_2_object()(opposite_normal_xy, iden_normal_xy);
     }
 #endif
   }
-  
+
   /*! Determine whether the given point is in the x-range of the
    * spherical_arc.
    * \param point the query point direction.
@@ -2696,7 +2763,7 @@ public:
 
     CGAL_precondition(!point.is_min_boundary());
     CGAL_precondition(!point.is_max_boundary());
-    
+
     Direction_2 p = Traits::project_xy(point);
     if (is_vertical()) {
       Direction_2 q = (is_directed_right()) ?
@@ -2715,6 +2782,10 @@ public:
     return kernel.counterclockwise_in_between_2_object()(p, l, r);
   }
 
+  /*! Determines whether the curve is a meridian */
+  bool is_meridian() const
+  { return left().is_min_boundary() && right().is_max_boundary(); }
+
 #if 0
   /*! Create a bounding box for the spherical_arc */
   Bbox_2 bbox() const
@@ -2725,7 +2796,7 @@ public:
     return kernel.construct_bbox_2_object()(seg);
   }
 #endif
-  
+
   /*! Flip the spherical_arc (swap it source and target) */
   Arr_x_monotone_geodesic_arc_on_sphere_3 opposite() const
   {
@@ -2765,14 +2836,18 @@ public:
 template <typename T_Kernel>
 class Arr_geodesic_arc_on_sphere_3 :
   public Arr_x_monotone_geodesic_arc_on_sphere_3<T_Kernel> {
-protected:
+public:
   typedef T_Kernel                                              Kernel;
-  typedef Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel> Base;
 
+protected:
+  typedef Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>       Base;
+
+public:
   typedef typename Base::Plane_3                                Plane_3;
   typedef typename Base::Direction_3                            Direction_3;
   typedef typename Base::Direction_2                            Direction_2;
-  
+
+protected:
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_extended_direction_3<Kernel>    Arr_extended_direction_3;
 
@@ -2782,11 +2857,11 @@ protected:
 
   /*! Indicates whether the arc is x-monotone */
   bool m_is_x_monotone;
-  
+
 public:
   /*! Default constructor - constructs an empty arc */
   Arr_geodesic_arc_on_sphere_3() : Base(), m_is_x_monotone(true) {}
-  
+
   /*! Copy constructor
    * \param other the other arc
    */
@@ -2795,7 +2870,7 @@ public:
   {
     m_is_x_monotone = other.m_is_x_monotone;
   }
-  
+
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc
@@ -2810,13 +2885,13 @@ public:
    * \pre plane contains trg
    */
   Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& src,
-                                     const Arr_extended_direction_3& trg,
-                                     const Direction_3& normal,
-                                     bool is_x_monotone, bool is_vertical,
-                                     bool is_directed_right,
-                                     bool is_full = false,
-                                     bool is_degenerate = false,
-                                     bool is_empty = false) :
+                               const Arr_extended_direction_3& trg,
+                               const Direction_3& normal,
+                               bool is_x_monotone, bool is_vertical,
+                               bool is_directed_right,
+                               bool is_full = false,
+                               bool is_degenerate = false,
+                               bool is_empty = false) :
     Base(src, trg, normal,
          is_vertical, is_directed_right, is_full, is_degenerate, is_empty),
     m_is_x_monotone(is_x_monotone)
@@ -2907,19 +2982,19 @@ public:
       this->set_is_directed_right(ccw);
       return;
     }
-    
+
     // The arc is not vertical!
     this->set_is_vertical(false);
     Direction_2 s = Traits::project_xy(source);
     Direction_2 t = Traits::project_xy(target);
     Orientation orient = Traits::orientation(s, t);
-    
+
     const Direction_2& d = Traits::identification_xy();
     if (orient == LEFT_TURN) {
       this->set_is_directed_right(true);
       set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, s, t));
       return;
-    }        
+    }
 
     // (orient == RIGHT_TURN)
     this->set_is_directed_right(false);
@@ -2932,6 +3007,7 @@ public:
    * \param plane the containing plane.
    * \param source the source-point direction.
    * \param target the target-point direction.
+   * \param normal the normal to the plane containing the arc
    * \pre plane contain the origin
    * \pre Both endpoints lie on the given plane.
    */
@@ -2943,7 +3019,7 @@ public:
 
     this->set_source(source);
     this->set_target(target);
-    this->normal(normal);
+    this->set_normal(normal);
     this->set_is_degenerate(false);
     this->set_is_empty(false);
 
@@ -2954,7 +3030,7 @@ public:
 
     if (z_sign(normal) == ZERO) {
       this->set_is_vertical(true);
-    
+
       // Check whether both endpoint coincide with the poles:
       if (source.is_min_boundary() && target.is_max_boundary()) {
         // Both endpoints coincide with the 2 poles respectively.
@@ -2963,7 +3039,7 @@ public:
         set_is_x_monotone(true);
         return;
       }
-      
+
       if (source.is_max_boundary() && target.is_min_boundary()) {
         // Both endpoints coincide with the 2 poles respectively.
         this->set_is_directed_right(false);
@@ -3021,7 +3097,7 @@ public:
        * This means that it is sufficient to check whether one pole lies
        * on the arc in order to determine x-monotonicity
        */
-      
+
       typename Traits::Project project =
         (xz_plane) ? Traits::project_xz : Traits::project_yz;
       Direction_2 s = project(source);
@@ -3037,13 +3113,13 @@ public:
       this->set_is_directed_right(ccw);
       return;
     }
-      
+
     // The arc is not vertical!
     this->set_is_vertical(false);
     this->set_is_directed_right(z_sign(normal) == POSITIVE);
     const Direction_2& d = Traits::identification_xy();
     Direction_2 s = Traits::project_xy(source);
-    Direction_2 t = Traits::project_xy(target);    
+    Direction_2 t = Traits::project_xy(target);
     typename Kernel::Counterclockwise_in_between_2 ccib =
       kernel.counterclockwise_in_between_2_object();
     bool plane_is_positive = (z_sign(normal) == POSITIVE);
@@ -3081,56 +3157,88 @@ template <typename Kernel, typename OutputStream>
 OutputStream& operator<<(OutputStream& os,
                          const Arr_extended_direction_3<Kernel>& ed)
 {
+#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   CGAL::To_double<typename Kernel::FT> todouble;
-#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
-  os << "(";
-#endif
-#if 0
-  os << ed.dx() << ", " << ed.dy() << ", " << ed.dz();
-#else
-  os << static_cast<float>(todouble(ed.dx())) << ", "
-     << static_cast<float>(todouble(ed.dy())) << ", "
-     << static_cast<float>(todouble(ed.dz()));
-#endif
-#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
+  os << "("
+     << ed.dx() << ", " << ed.dy() << ",  " << ed.dz();
   os << ")"
      << ", "
-     <<
-    (ed.is_min_boundary() ? "min" :
-     ed.is_max_boundary() ? "max" :
-     ed.is_mid_boundary() ? "dis" : "reg");
+     << (ed.is_min_boundary() ? "min" :
+         ed.is_max_boundary() ? "max" :
+         ed.is_mid_boundary() ? "dis" : "reg");
+#else
+  //    << static_cast<float>(todouble(ed.dx())) << ", "
+  //    << static_cast<float>(todouble(ed.dy())) << ", "
+  //    << static_cast<float>(todouble(ed.dz()));
 #endif
+  const typename Kernel::Direction_3* dir = &ed;
+  os << *dir;
   return os;
 }
 
 /*! Inserter for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename OutputStream>
-OutputStream &
+OutputStream&
 operator<<(OutputStream& os,
            const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
 {
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
-  os << "(";
-#endif
-  os << "(" << arc.source() << "), (" << arc.target() << ")";
-#if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
   os << "("
+     << "(" << arc.source() << "), (" << arc.target() << ")"
+     << "("
+     << ", (" << arc.normal() << ")"
      << ", " << (arc.is_vertical() ? " |" : "!|")
      << ", " << (arc.is_directed_right() ? "=>" : "<=")
      << ", " << (arc.is_full() ? "o" : "/");
+#else
+  os << arc.source() << " " << arc.target() << " ";
+  if (!arc.is_meridian()) os << "0";
+  else os << "1 " << arc.normal();
 #endif
   return os;
 }
 
+/*! Extractor for the spherical-arc point class used by the traits-class */
+template <typename Kernel, typename InputStream>
+InputStream&
+operator>>(InputStream& is, Arr_extended_direction_3<Kernel>& point)
+{
+  typename Kernel::Direction_3* dir = &point;
+  is >> *dir;
+  point.init();
+  return is;
+}
+
 /*! Extractor for the spherical_arc class used by the traits-class */
 template <typename Kernel, typename InputStream>
-InputStream &
+InputStream&
 operator>>(InputStream& is,
-           const Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>&)
+           Arr_x_monotone_geodesic_arc_on_sphere_3<Kernel>& arc)
 {
-  std::cerr << "Not implemented yet!" << std::endl;
+  Arr_extended_direction_3<Kernel> source, target;
+  is >> source >> target;
+  arc.set_source(source);
+  arc.set_target(target);
+  unsigned int flag;
+  is >> flag;
+  if (flag == 1) {
+    typename Kernel::Direction_3 normal;
+    is >> normal;
+    arc.set_normal(normal);
+  }
+  else {
+    Kernel kernel;
+    CGAL_precondition(!kernel.equal_3_object()
+                      (kernel.construct_opposite_direction_3_object()(source),
+                       target));
+    typename Kernel::Vector_3 v =
+      kernel.construct_cross_product_vector_3_object()(source.vector(),
+                                                       target.vector());
+    arc.set_normal(v.direction());
+  }
+  arc.init();
   return is;
-}  
+}
 
 } //namespace CGAL
 

@@ -15,9 +15,9 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_INSERTION_SL_VISITOR_H
 #define CGAL_ARR_INSERTION_SL_VISITOR_H
@@ -34,36 +34,31 @@ namespace CGAL {
  * A sweep-line visitor for inserting new curves into an existing arrangement
  * embedded on a surface.
  */
-template <class Helper_> 
+template <typename Helper_> 
 class Arr_insertion_sl_visitor : 
   public Arr_basic_insertion_sl_visitor<Helper_>
 {
 public:
-
-  typedef Helper_                                      Helper;
+  typedef Helper_                                       Helper;
  
-  typedef Arr_basic_insertion_sl_visitor<Helper>       Base;
+  typedef Arr_basic_insertion_sl_visitor<Helper>        Base;
 
-  typedef typename Base::Traits_2                      Traits_2;
-  typedef typename Base::Arrangement_2                 Arrangement_2;
-  typedef typename Base::Event                         Event;
-  typedef typename Base::Subcurve                      Subcurve;
+  typedef typename Base::Traits_2                       Traits_2;
+  typedef typename Base::Arrangement_2                  Arrangement_2;
+  typedef typename Base::Event                          Event;
+  typedef typename Base::Subcurve                       Subcurve;
   
-  typedef typename Base::Halfedge_handle          Halfedge_handle;
-  typedef typename Base::X_monotone_curve_2       X_monotone_curve_2;
-  typedef typename Base::Point_2                  Point_2;
+  typedef typename Base::Halfedge_handle                Halfedge_handle;
+  typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
+  typedef typename Base::Point_2                        Point_2;
 
 private:
-
-  X_monotone_curve_2   sub_cv1;         // Auxiliary variables
-  X_monotone_curve_2   sub_cv2;         // (used for splitting curves).
+  X_monotone_curve_2 sub_cv1;         // Auxiliary variables
+  X_monotone_curve_2 sub_cv2;         // (used for splitting curves).
 
 public:
-
   /*! Constructor. */
-  Arr_insertion_sl_visitor (Arrangement_2 *arr) :
-    Base (arr)
-  {}
+  Arr_insertion_sl_visitor (Arrangement_2* arr) : Base(arr) {}
 
   /// \name Edge-split functions (to be overridden by the child visitor).
   //@{
@@ -74,7 +69,7 @@ public:
    * \param sc The subcurve.
    * \param event The event.
    */
-  virtual bool is_split_event(Subcurve *sc, Event *event);
+  virtual bool is_split_event(Subcurve* sc, Event* event);
 
   /*!
    * Split the given edge edge.
@@ -83,9 +78,8 @@ public:
    * \param The split point.
    * \return A handle to the split edge.
    */
-  virtual Halfedge_handle split_edge (Halfedge_handle he,
-                                      Subcurve *sc,
-                                      const Point_2& pt);
+  virtual Halfedge_handle split_edge(Halfedge_handle he, Subcurve* sc,
+                                     const Point_2& pt);
   //@}   
 };
 
@@ -97,16 +91,14 @@ public:
 // Check if the halfedge associated with the given subcurve will be split
 // at the given event.
 //
-template <class Hlpr> 
-bool Arr_insertion_sl_visitor<Hlpr>::is_split_event
-    (Subcurve *sc, Event *event)
+template <typename Hlpr> 
+bool Arr_insertion_sl_visitor<Hlpr>::is_split_event(Subcurve* sc, Event* event)
 {
-  if(sc->last_curve().halfedge_handle() == Halfedge_handle(NULL))
-    return (false);
+  if (sc->last_curve().halfedge_handle() == Halfedge_handle(NULL))
+    return false;
 
-  if(! sc->originating_subcurve1())
-  {
-    return (reinterpret_cast<Event*>(sc->left_event())!= 
+  if (! sc->originating_subcurve1()) {
+    return (reinterpret_cast<Event*>(sc->left_event()) != 
             this->current_event());
   }
   return
@@ -119,31 +111,25 @@ bool Arr_insertion_sl_visitor<Hlpr>::is_split_event
 //-----------------------------------------------------------------------------
 // Split an edge.
 //
-template <class Hlpr>
+template <typename Hlpr>
 typename Arr_insertion_sl_visitor<Hlpr>::Halfedge_handle
-Arr_insertion_sl_visitor<Hlpr>::split_edge
-    (Halfedge_handle he, Subcurve *sc, const Point_2& pt)
+Arr_insertion_sl_visitor<Hlpr>::split_edge(Halfedge_handle he, Subcurve* sc,
+                                           const Point_2& pt)
 {
   // Make sure that the halfedge associated with sc is the directed from
   // right to left, since we always "look" above , and the incident face 
-  //is on the left of the  halfedge
+  // is on the left of the  halfedge
   CGAL_assertion (he->direction() == ARR_RIGHT_TO_LEFT);
-    
-  this->traits()->split_2_object() (he->curve(), pt, 
-                                    sub_cv2, sub_cv1);
 
+  this->traits()->split_2_object()(he->curve(), pt, sub_cv2, sub_cv1);
   Halfedge_handle new_he =  
-    this->m_arr_access.split_edge_ex (he,
-                                      pt.base(),
-                                      sub_cv1.base(),
-                                      sub_cv2.base());
-
+    this->m_arr_access.split_edge_ex(he, pt.base(),
+                                     sub_cv1.base(), sub_cv2.base());
   Event* last_event_on_sc = reinterpret_cast<Event*>(sc->last_event());
-
-  if(last_event_on_sc->halfedge_handle() == he)
+  if (last_event_on_sc->halfedge_handle() == he)
     last_event_on_sc->set_halfedge_handle(new_he->next());
 
-  return (new_he);
+  return new_he;
 }
 
 } //namespace CGAL

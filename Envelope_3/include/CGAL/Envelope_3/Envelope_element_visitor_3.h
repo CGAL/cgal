@@ -60,8 +60,8 @@ public:
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Minimization_diagram_2::Are_all_sides_oblivious_tag
-    Are_all_sides_oblivious_tag;
+  typedef typename Minimization_diagram_2::Are_all_sides_oblivious_category
+    Are_all_sides_oblivious_category;
 
 protected:
   class Copied_face_zone_visitor;
@@ -894,7 +894,7 @@ protected:
           //two infinite surfaces, no outer boundary or holes. 
           res =
             compare_distance_to_envelope(surf1, surf2, 
-                                         Are_all_sides_oblivious_tag());
+                                         Are_all_sides_oblivious_category());
         }
       }
       
@@ -1555,18 +1555,17 @@ protected:
           // copied_target
           Vertex_handle copied_source = 
             create_copied_vertex(hh, to_accessor, true, 
-                                 Are_all_sides_oblivious_tag());
+                                 Are_all_sides_oblivious_category());
           //to_accessor.create_vertex(hh->source()->point());
           Vertex_handle copied_target = 
             create_copied_vertex(hh, to_accessor, false, 
-                                 Are_all_sides_oblivious_tag());
+                                 Are_all_sides_oblivious_category());
           //to_accessor.create_vertex(hh->target()->point());
           copied_prev_he =
-            to_accessor.insert_in_face_interior_ex(current_cv,
-                                                   inside_face,
+            to_accessor.insert_in_face_interior_ex(inside_face,
+                                                   current_cv, (HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
                                                    copied_source,
-                                                   copied_target,
-                                                   HE_COMP_RES(hh));
+                                                   copied_target);
 
           map_copied_to_orig_halfedges[copied_prev_he] = hh;
           map_orig_to_copied_halfedges[hh] = copied_prev_he;
@@ -1600,12 +1599,14 @@ protected:
             // create vertex for the new target, and insert the new edge
             Vertex_handle copied_target = 
               create_copied_vertex(hh, to_accessor, false, 
-                                   Are_all_sides_oblivious_tag());
+                                   Are_all_sides_oblivious_category());
             //to_accessor.create_vertex(hh->target()->point());
-            copied_new_he = to_accessor.insert_from_vertex_ex(current_cv,
-                                                              copied_prev_he,
-                                                              copied_target,
-                                                              HE_COMP_RES(hh));
+            copied_new_he = to_accessor.insert_from_vertex_ex
+              (copied_prev_he,
+               current_cv,
+               (HE_COMP_RES(hh) == CGAL::SMALLER ?
+                ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+               copied_target);
 
             
             // the target of copied_new_he is the new vertex, so it is directed
@@ -1646,12 +1647,16 @@ protected:
               if (n_faces_closed == 1 &&
                   map_orig_to_copied_halfedges.is_defined(hh->next()))
               {
+                bool dummy_swapped_predecessors = false;
                 copied_new_he = to_accessor.insert_at_vertices_ex
-                  (current_cv,
-                   copied_prev_he,
-                   copied_prev_v2,
-                   HE_COMP_RES(hh),
-                   new_face);
+                  (copied_prev_he,
+                   current_cv, (HE_COMP_RES(hh) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                   copied_prev_v2->next(),
+                   new_face,
+                   dummy_swapped_predecessors);
+                // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+                // or do we have to disallow swapping?
+
                 CGAL_assertion(new_face);
               }
               else
@@ -1670,19 +1675,23 @@ protected:
             {
               // should always flip the side of the edge, because the face
               // that we close is never the copied face, even in strane
-              // situations like this: (two faces thouch in vertex)
+              // situations like this: (two faces touch in a vertex)
               //     ------         |\  /|
               //     | |\ |         | \/ |
               //     | | \|         | /\ |
               //     ---            |/  \|
               //
               //
+              bool dummy_swapped_predecessors = false;
               copied_new_he =
-                to_accessor.insert_at_vertices_ex(current_cv,
-                                                  copied_prev_v2,
-                                                  copied_prev_he,
-                                                  HE_COMP_RES(hh->twin()),
-                                                  new_face);
+                to_accessor.insert_at_vertices_ex(copied_prev_v2,
+                                                  current_cv, (HE_COMP_RES(hh->twin()) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                  copied_prev_he->next(),
+                                                  new_face,
+                                                  dummy_swapped_predecessors);
+              // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+              // or do we have to disallow swapping?
+              
               CGAL_assertion(new_face);
               copied_new_he = copied_new_he->twin();
             }
@@ -2321,10 +2330,9 @@ protected:
 
         Face_handle big_face = map_faces[he->face()];
         Halfedge_handle new_he =
-          big_arr_accessor.insert_in_face_interior_ex(he->curve(),
-                                                      big_face,
-                                                      big_v1, big_v2,
-                                                      HE_COMP_RES(he));
+          big_arr_accessor.insert_in_face_interior_ex(big_face,
+                                                      he->curve(), (HE_COMP_RES(he) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                      big_v1, big_v2);
 
         // update mapping of new edge
         // new_he is directed from big_v1 to big_v2, and he is directed from
@@ -2347,11 +2355,15 @@ protected:
         Halfedge_handle big_prev2 = map_halfedges[prev2];
 
         bool new_face;
+        bool dummy_swapped_predecessors = false;
         Halfedge_handle new_he =
-          big_arr_accessor.insert_at_vertices_ex(he->curve(),
-                                                 big_prev1, big_prev2,
-                                                 HE_COMP_RES(he),
-                                                 new_face);
+          big_arr_accessor.insert_at_vertices_ex(big_prev1, 
+                                                 he->curve(), (HE_COMP_RES(he) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                 big_prev2->next(),
+                                                 new_face,
+                                                 dummy_swapped_predecessors);
+        // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+        // or do we have to disallow swapping?
 
         // new_he should be directed as he
         CGAL_assertion(map_vertices.is_defined(he->source()) &&
@@ -2391,9 +2403,9 @@ protected:
         Halfedge_handle new_he;
         if (!v1_is_new)
         {
-          new_he = big_arr_accessor.insert_from_vertex_ex(he->curve(),
-                                                          big_prev, big_v2,
-                                                          HE_COMP_RES(he));
+          new_he = big_arr_accessor.insert_from_vertex_ex(big_prev, 
+                                                          he->curve(), (HE_COMP_RES(he) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                          big_v2);
 
           // update mapping of new edge
           // new_he is directed from big_v1 to big_v2 as he
@@ -2403,9 +2415,9 @@ protected:
         else
         {
           new_he =
-            big_arr_accessor.insert_from_vertex_ex(he->curve(),
-                                                   big_prev, big_v1,
-                                                   HE_COMP_RES(he->twin()));
+            big_arr_accessor.insert_from_vertex_ex(big_prev,
+                                                   he->curve(), (HE_COMP_RES(he->twin()) == SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                   big_v1);
 
           // update mapping of new edge
           // new_he is directed from big_v2 to big_v1 opposite of he

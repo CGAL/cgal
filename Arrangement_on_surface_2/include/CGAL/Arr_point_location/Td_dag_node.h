@@ -48,18 +48,18 @@ protected:
 
 public:
   //c'tors
-  
+
   Td_dag_node_base() {   init();   }
 
   Td_dag_node_base(const Td_dag_node_base<Traits>& x) : Handle(x) { }
 
-  
+
   //operators overloading
 
-  Td_dag_node_base& operator=(const Td_dag_node_base<Traits> & x) 
+  Td_dag_node_base& operator=(const Td_dag_node_base<Traits> & x)
   {
-    Handle::operator=(x); 
-    return *this; 
+    Handle::operator=(x);
+    return *this;
   }
 
   //bool operator!() const {  return PTR == 0;  } //MICHAL: maybe use ptr(), and also can change to is_null or something similar
@@ -67,7 +67,7 @@ public:
 protected:
   Rep * ptr() const { return (Rep*) PTR; }
   //Rep *& ptr() { return (Rep*) PTR; }
-  void set_ptr(Rep* rep) { PTR = rep; } 
+  void set_ptr(Rep* rep) { PTR = rep; }
 
 };
 
@@ -75,7 +75,7 @@ protected:
 
 
 /*! \class
- * Trapezoidal decomposition DAG node class derived from 
+ * Trapezoidal decomposition DAG node class derived from
  * Td_dag_node_base class
  */
 template<class Traits>
@@ -89,7 +89,7 @@ public:
 
   //type of Td_dag_node (Self)
   typedef Td_dag_node<Traits>        Self;
-  
+
   //type of td_map_item
   typedef typename Traits::Td_map_item Td_map_item;
 
@@ -116,7 +116,7 @@ protected:
     friend class Td_dag_node<Traits>;
 
   public:
-  
+
     class clear_neighbors_visitor : public boost::static_visitor< void  >
     {
     public:
@@ -133,20 +133,20 @@ protected:
     };
 
     //c'tors
-    Node(const Td_map_item& e,unsigned long depth=0) : 
-      m_data(e), m_left_child(), m_right_child(), 
+    Node(const Td_map_item& e,unsigned long depth=0) :
+      m_data(e), m_left_child(), m_right_child(),
       m_depth(depth), m_visited(false)
     {}
 
-    Node(const Td_map_item& e, const Td_dag_node_handle& left, 
-         const Td_dag_node_handle& right, unsigned long depth=0) : 
-      m_data(e), m_left_child(left), m_right_child(right), 
+    Node(const Td_map_item& e, const Td_dag_node_handle& left,
+         const Td_dag_node_handle& right, unsigned long depth=0) :
+      m_data(e), m_left_child(left), m_right_child(right),
       m_depth(depth), m_visited(false)
     {}
 
     //d'tor
-    ~Node() 
-    {  
+    ~Node()
+    {
       boost::apply_visitor(clear_neighbors_visitor(), m_data);
     }
 
@@ -159,18 +159,18 @@ protected:
     bool visited() const {  return m_visited; }
 
   protected:
-    //protected data members    
-    
+    //protected data members
+
     //information stored in node
-    Td_map_item m_data;			
+    Td_map_item m_data;
 
     //left & right child nodes
     Td_dag_node_handle m_left_child;
-    Td_dag_node_handle m_right_child; 
-    
+    Td_dag_node_handle m_right_child;
+
     //depth of the node in the DAG
-    mutable unsigned long m_depth; 
-    
+    mutable unsigned long m_depth;
+
     //visited flag for traversing the DAG
     mutable bool m_visited;
   };
@@ -181,9 +181,9 @@ public:
   //c'tors
 
   Td_dag_node() { }
-  
+
   Td_dag_node(const Td_dag_node_handle& dag) : Td_dag_node_handle(dag) { }
-  
+
   Td_dag_node(const Self& dag) : Td_dag_node_handle(dag) { }
 
   Td_dag_node(const Td_map_item& rootValue){  this->set_ptr(new Node(rootValue));  }
@@ -193,14 +193,14 @@ public:
 
   Td_dag_node(const Td_map_item& rootValue, const Self& left, const Self& right)
   {
-    this->set_ptr(new Node( rootValue, left, right)); 
+    this->set_ptr(new Node( rootValue, left, right));
     depth_propagation();
   }
 
   Td_dag_node(const Td_map_item& rootValue, const Self& left, const Self& right,
               unsigned long depth)
   {
-    this->set_ptr(new Node( rootValue, left, right, depth)); 
+    this->set_ptr(new Node( rootValue, left, right, depth));
     depth_propagation();
   }
 
@@ -212,13 +212,13 @@ public:
   const Self& left_child() const
   {
     CGAL_precondition(!this->is_null());
-    return *(const Self*)&this->node()->m_left_child;  
+    return *(const Self*)&this->node()->m_left_child;
   }
 
   Self& left_child()
   {
     CGAL_precondition(!this->is_null());
-    return (Self &)this->node()->m_left_child;  
+    return (Self &)this->node()->m_left_child;
   }
 
   const Self& right_child() const
@@ -255,7 +255,7 @@ public:
     return this->data_ptr();
   }
 
-  bool is_inner_node() const 
+  bool is_inner_node() const
   {
     return !this->is_null() && this->node()->is_inner_node();
   }
@@ -319,7 +319,7 @@ public:
   }
 
   //dynamic management:
-  
+
   //Shallow copy
   Self& operator=(const Self& b)
   {
@@ -329,9 +329,9 @@ public:
 
   void set_data(const Td_map_item& data)
   {
-    if (!this->is_null()) 
+    if (!this->is_null())
       node()->m_data = data;
-    else 
+    else
       operator=(Self(data));
   }
 
@@ -339,9 +339,9 @@ public:
   {
     CGAL_precondition(!this->is_null());
     node()->m_left_child = left;
-    if (left.depth() < depth()+1) 
+    if (left.depth() < depth()+1)
       left.depth() = depth()+1;
-    left.depth_propagation(); 
+    left.depth_propagation();
     // does nothing if left is a leaf
   }
 
@@ -349,9 +349,9 @@ public:
   {
     CGAL_precondition(!this->is_null());
     node()->m_right_child = right;
-    if (right.depth() < depth()+1) 
+    if (right.depth() < depth()+1)
       right.depth() = depth()+1;
-    right.depth_propagation(); 
+    right.depth_propagation();
     // does nothing if right is a leaf
   }
 
@@ -412,7 +412,7 @@ public:
   }
 
 #endif //CGAL_PRE_IN_POST_ORDER
-  
+
   template <class Container,class Predicate>
   Container& filter(Container& c,const Predicate& pr) const
   {
@@ -423,18 +423,18 @@ public:
   }
 
 
-  
+
 
 protected:
-  
+
   //
   //Propagating depth for left child & right child if they exist
   //
   void depth_propagation() //exponential
   {
-    if (!is_inner_node()) 
+    if (!is_inner_node())
       return;
-    
+
     if (left_child().depth() < depth() + 1)
     {
       left_child().depth() = depth() + 1;
@@ -446,12 +446,12 @@ protected:
       right_child().depth_propagation();
     }
   }
-  
+
   unsigned long recursive_depth() const
   {
     if (this->is_null() || node()->visited())
       return 0;
-    return 1 + (std::max)(left_child().recursive_depth(), 
+    return 1 + (std::max)(left_child().recursive_depth(),
                             right_child().recursive_depth());
   }
 #if 0
@@ -465,7 +465,7 @@ protected:
       std::cout << "passed " << rec_bound + 30 << ", stopping\n";
       return 0;
     }
-    return 1 + (std::max)(left_child().recursive_check(curr_rec_depth + 1, rec_bound), 
+    return 1 + (std::max)(left_child().recursive_check(curr_rec_depth + 1, rec_bound),
                           right_child().recursive_check(curr_rec_depth + 1, rec_bound));
   }
 #endif //0
@@ -476,7 +476,7 @@ protected:
       return 0;
     visit_node();
     if (is_inner_node())
-      return (std::max)(left_child().rec_max_depth(), 
+      return (std::max)(left_child().rec_max_depth(),
                         right_child().rec_max_depth());
     else
       return depth();
@@ -488,13 +488,13 @@ protected:
       return 1+ left_child().recursive_size_inaccurate() + right_child().recursive_size_inaccurate();
     return 0;
   }
-  
+
   unsigned long recursive_size() const
   {
     if (this->is_null() || node()->visited())
       return 0;
     visit_node();
-    return (1 + left_child().recursive_size() + right_child().recursive_size());  
+    return (1 + left_child().recursive_size() + right_child().recursive_size());
   }
 
   template <class Container,class Predicate>
@@ -502,7 +502,7 @@ protected:
   {
     if (this->is_null() || node()->visited())
       return c;
-    if (pr(operator*())) 
+    if (pr(operator*()))
       c.insert(c.end(),operator*());
     visit_node();
     left_child().recursive_filter(c, pr);
@@ -511,7 +511,7 @@ protected:
   }
 
 private:
-  
+
   Node* node() const {   return (Node*)Base::PTR;  }
 
 };
@@ -519,14 +519,14 @@ private:
 /*
 //io methods
 
-template<class T,class Traits> 
-std::ostream& write (std::ostream&  out, 
+template<class T,class Traits>
+std::ostream& write (std::ostream&  out,
                      const Td_dag_node<T>& t,
                      const Traits& traits)
 {
   static int depth;
   int i;
-  if (!t.is_null()) 
+  if (!t.is_null())
   {
     out << "\n";
     for(i=0; i<depth; i++)  out << ">";
@@ -552,13 +552,13 @@ std::ostream& write (std::ostream&  out,
   return out ;
 }
 
-template<class T> 
-std::ostream& operator<< (std::ostream&  out, 
+template<class T>
+std::ostream& operator<< (std::ostream&  out,
                           const Td_dag_node<T>& t)
 {
   static int depth;
   int i;
-  if (!t.is_null()) 
+  if (!t.is_null())
   {
     out << "\n";
     for(i=0; i<depth; i++)  out << ">";
@@ -588,10 +588,10 @@ std::ostream& operator<< (std::ostream&  out,
 #endif //CGAL_TD_DAG_NODE_H
 
 
-/* 
+/*
    tech notes:
    The code is Handle designed.
-   left_child(),right_child() are designed to cope with Handle(Handle& x) 
+   left_child(),right_child() are designed to cope with Handle(Handle& x)
      precondition x.PTR!=0
    operator=() performs shallow copy
    operator*() returns data type

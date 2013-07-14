@@ -54,8 +54,7 @@ namespace internal {
 
 //! type to provide left side tag (is oblivious if not existing)
 template < class Traits_, bool B >
-struct Get_left_side_category { 
-};
+struct Get_left_side_category {};
 
 template < class Traits_ >
 struct Get_left_side_category< Traits_, true > {
@@ -69,9 +68,7 @@ struct Get_left_side_category< Traits_, false > {
 
 template < class Traits_ >
 struct Arr_complete_left_side_category {
-
 public:
-
   typedef Traits_ Traits;
 
   typedef typename
@@ -236,19 +233,25 @@ struct Validate_right_side_category< GeometryTraits_2, false > {
   }
 };
 
-
-
-
 } // namespace internal
-  
-struct Arr_all_sides_oblivious_tag {};
-struct Arr_not_all_sides_oblivious_tag {};
 
-struct Arr_all_sides_open_tag {};
+struct Arr_boundary_cond_tag{};
+struct Arr_all_sides_oblivious_tag : public virtual Arr_boundary_cond_tag{};
+struct Arr_not_all_sides_oblivious_tag : public virtual Arr_boundary_cond_tag{};
+
+struct Arr_has_identified_side_tag :
+    public virtual Arr_not_all_sides_oblivious_tag{};
+struct Arr_has_contracted_side_tag :
+    public virtual Arr_not_all_sides_oblivious_tag{};
+struct Arr_has_closed_side_tag :
+    public virtual Arr_not_all_sides_oblivious_tag{};
+struct Arr_has_open_side_tag :
+    public virtual Arr_not_all_sides_oblivious_tag{};
+
+struct Arr_all_sides_open_tag : public virtual Arr_not_all_sides_oblivious_tag{};
 
 struct Arr_all_sides_non_open_tag {};
 struct Arr_not_all_sides_non_open_tag {};
-
 
 /*!\brief Struct to determine whether all side tags are "oblivious"
  */
@@ -441,6 +444,202 @@ public:
 
 };
 
-} //namespace CGAL
+/*! Checks whether one of two boundary sides are identified
+ * Observe that if one side is identified, the opposite side must be identified
+ * as well. Thus:
+ * (i)  When Arr_has_identified_sides is used to check whether two opposite
+ *      sides are identified, the check for the second side is redundant.
+ * (ii) When Arr_has_identified_sides is used to check whether two non-opposite
+ *      sides are identified, the check applies to all four sides.
+ */
+template <class ArrSideOneCategory, class ArrSideTwoCategory> 
+struct Arr_has_identified_sides {
+public:
+  //! This instance's first template parameter
+  typedef ArrSideOneCategory       Side_one_category;
+  
+  //! This instance's second template parameter
+  typedef ArrSideTwoCategory       Side_two_category;
+    
+private:
+  typedef boost::mpl::bool_<true> true_;
+  typedef boost::mpl::bool_<false> false_;
+  
+  typedef boost::mpl::if_< 
+    boost::is_same<Side_one_category, Arr_identified_side_tag>,
+    true_, false_>
+  Side_one_identified;
+
+  typedef boost::mpl::if_<
+    boost::is_same<Side_two_category, Arr_identified_side_tag>,
+    true_, false_> 
+  Side_two_identified;
+  
+public:
+  /*!\brief
+   * boolean tag that is bool_<true> if one side is identified,
+   * otherwise bool_<false>
+   */
+  typedef boost::mpl::or_<Side_one_identified, Side_two_identified> result;
+};
+
+/*! Checks whether one of two boundary sides are contracted 
+ */
+template <class ArrSideOneCategory, class ArrSideTwoCategory> 
+struct Arr_has_contracted_sides_two {
+public:
+  //! This instance's first template parameter
+  typedef ArrSideOneCategory       Side_one_category;
+  
+  //! This instance's second template parameter
+  typedef ArrSideTwoCategory       Side_two_category;
+    
+private:
+  typedef boost::mpl::bool_<true> true_;
+  typedef boost::mpl::bool_<false> false_;
+  
+  typedef boost::mpl::if_< 
+       boost::is_same<Side_one_category, Arr_contracted_side_tag>,
+       true_, false_> 
+  Side_one_contracted;
+
+  typedef boost::mpl::if_<
+       boost::is_same<Side_two_category, Arr_contracted_side_tag>,
+       true_, false_> 
+  Side_two_contracted;
+  
+public:
+  /*!\brief
+   * boolean tag that is bool_<true> if one side is identified,
+   * otherwise bool_<false>
+   */
+  typedef boost::mpl::or_<Side_one_contracted, Side_two_contracted> result;
+};
+
+/*! Checks whether one of two boundary sides are closed 
+ */
+template <class ArrSideOneCategory, class ArrSideTwoCategory> 
+struct Arr_has_closed_sides_two {
+public:
+  //! This instance's first template parameter
+  typedef ArrSideOneCategory       Side_one_category;
+  
+  //! This instance's second template parameter
+  typedef ArrSideTwoCategory       Side_two_category;
+    
+private:
+  typedef boost::mpl::bool_<true> true_;
+  typedef boost::mpl::bool_<false> false_;
+  
+  typedef boost::mpl::if_< 
+       boost::is_same<Side_one_category, Arr_closed_side_tag>,
+       true_, false_> 
+  Side_one_closed;
+
+  typedef boost::mpl::if_<
+       boost::is_same<Side_two_category, Arr_closed_side_tag>,
+       true_, false_> 
+  Side_two_closed;
+  
+public:
+  /*!\brief
+   * boolean tag that is bool_<true> if one side is identified,
+   * otherwise bool_<false>
+   */
+  typedef boost::mpl::or_<Side_one_closed, Side_two_closed> result;
+};
+
+/*! Checks whether one of two boundary sides are open 
+ */
+template <class ArrSideOneCategory, class ArrSideTwoCategory> 
+struct Arr_has_open_sides_two {
+public:
+  //! This instance's first template parameter
+  typedef ArrSideOneCategory       Side_one_category;
+  
+  //! This instance's second template parameter
+  typedef ArrSideTwoCategory       Side_two_category;
+    
+private:
+  typedef boost::mpl::bool_<true> true_;
+  typedef boost::mpl::bool_<false> false_;
+  
+  typedef boost::mpl::if_< 
+       boost::is_same<Side_one_category, Arr_open_side_tag>,
+       true_, false_> 
+  Side_one_open;
+
+  typedef boost::mpl::if_<
+       boost::is_same<Side_two_category, Arr_open_side_tag>,
+       true_, false_> 
+  Side_two_open;
+  
+public:
+  /*!\brief
+   * boolean tag that is bool_<true> if one side is identified,
+   * otherwise bool_<false>
+   */
+  typedef boost::mpl::or_<Side_one_open, Side_two_open> result;
+};
+
+/*! Categorizes two boundary sides:
+ * If one side is identified           => Arr_has_identified_side_tag
+ * Otherwise if one side is contracted => Arr_has_contracted_side_tag
+ * Otherwise if one side is closed     => Arr_has_closed_side_tag 
+ * Otherwise if one side is open       => Arr_has_open_side_tag
+ * Otherwise                           => Arr_all_sides_oblivious_tag
+ */
+template < class ArrSideOneCategory, class ArrSideTwoCategory> 
+struct Arr_two_sides_category {
+public:
+  //! This instance's first template parameter
+  typedef ArrSideOneCategory       Side_one_category;
+  
+  //! This instance's second template parameter
+  typedef ArrSideTwoCategory       Side_two_category;
+    
+private:
+  // One of the two sides is identified
+  typedef typename Arr_has_identified_sides<Side_one_category,
+                                            Side_two_category>::result
+    Is_identified;
+  
+  // One of the two sides is contracted
+  typedef typename Arr_has_contracted_sides_two<Side_one_category,
+                                                Side_two_category>::result
+    Is_contracted;
+
+  // One of the two sides is closed
+  typedef typename Arr_has_closed_sides_two<Side_one_category,
+                                            Side_two_category>::result
+    Is_closed;
+
+  // One of the two sides is open
+  typedef typename Arr_has_open_sides_two<Side_one_category,
+                                          Side_two_category>::result
+    Is_open;
+  
+public:
+  typedef typename boost::mpl::if_<Is_identified, Arr_has_identified_side_tag,
+    typename boost::mpl::if_<Is_contracted, Arr_has_contracted_side_tag,
+      typename boost::mpl::if_<Is_closed, Arr_has_closed_side_tag,
+        typename boost::mpl::if_<Is_open, Arr_has_open_side_tag,
+          Arr_all_sides_oblivious_tag>::type>::type>::type>::type
+    result;
+};
+
+/*! Categorizes all sides:
+ * If one side is identified           => Arr_has_identified_side_tag
+ * Otherwise if one side is contracted => Arr_has_contracted_side_tag
+ * Otherwise if one side is closed     => Arr_has_closed_side_tag
+ * Otherwise if one side is open       => Arr_has_open_side_tag
+ * Otherwise (all sides oblivious)     => Arr_all_sides_oblivious_tag
+ */
+template < class ArrSideOneCategory, class ArrSideTwoCategory> 
+struct Arr_all_sides_category {
+public:
+};
+
+} // namespace CGAL
 
 #endif

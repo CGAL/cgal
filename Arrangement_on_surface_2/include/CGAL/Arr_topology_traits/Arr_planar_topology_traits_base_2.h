@@ -160,29 +160,36 @@ public:
     return;
   }
 
+  /*! Determines whether the function should decide on swapping the predecssor
+   * halfedges that imply two ccb (and whose signs are given here).
+   * If true, swap_predecessors will be correctly set. If false,
+   * generic way of searching for lexicographically minimal point and checking
+   * its incident halfedges will do the job to decide on swapping
+   * \param signs1 signs of first implied ccb in x- and y-direction
+   * \param signs2 signs of second implied ccb in x- and y-direction
+   * \param swap_predecessors Output swap predeccesors or not;
+   *        set correctly only if true is returned
+   */
+  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
+                                   std::pair< CGAL::Sign, CGAL::Sign> signs2,
+                                   bool& swap_predecessors) const {
+    swap_predecessors = false;
+    return false;
+  }
+
+
   /*!
-   * Given two predecessor halfedges that belong to the same inner CCB of
-   * a face, determine what happens when we insert an edge connecting the
-   * target vertices of the two edges.
-   * \param prev1 The first predecessor halfedge.
-   * \param prev2 The second predecessor halfedge.
-   * \param cv The curve to be inserted
-   * \pre The two halfedges belong to the same inner CCB.
+   * Given signs of two ccbs that show up when splitting upon insertion of 
+   * curve into two, determine what happens to the face(s).
+   * \param signs1 signs in x and y of the first implied ccb
+   * \param signs2 signs in x and y of the secondd implied ccb
    * \return A pair indicating whether the insertion will cause the face
    *         to split (the first flag), and if so - whether the split face
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(const Halfedge *
-                                    CGAL_precondition_code(prev1),
-                                  const Halfedge *
-                                    CGAL_precondition_code(prev2),
-                                  const X_monotone_curve_2 & /* cv */) const
-  {
-    CGAL_precondition (prev1->is_on_inner_ccb());
-    CGAL_precondition (prev2->is_on_inner_ccb());
-    CGAL_precondition (prev1->inner_ccb() == prev2->inner_ccb());
-
+  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs1),
+                                  std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs2)) const {
     // In case of a planar topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
     return (std::make_pair (true, true));
@@ -242,78 +249,6 @@ public:
       return (false);
     }
   }
-
-  /*!
-   * Given two predecessor halfedges that will be used for inserting a
-   * new halfedge pair (prev1 will be the predecessor of the halfedge he1,
-   * and prev2 will be the predecessor of its twin he2), such that the
-   * insertion will create a new perimetric face that forms a hole inside
-   * an existing perimetric face, determine whether he1 will be incident to
-   * this new face.
-   * \param prev1 The first predecessor halfedge.
-   * \param prev2 The second predecessor halfedge.
-   * \param cv The x-monotone curve we use to connect prev1's target and
-   *           prev2's target vertex.
-   * \pre prev1 and prev2 belong to the same inner connected component.
-   * \return true if he1 (and prev1) lies in the interior of the face we
-   *         are about to create, false otherwise - in which case he2
-   *         (and prev2) must be incident to this new face.
-   */
-  bool is_on_new_perimetric_face_boundary (const Halfedge *,
-                                           const Halfedge *,
-                                           const X_monotone_curve_2&) const
-  {
-    // We can never have perimetric faces in a planar topology:
-    CGAL_error();
-    return (false);
-  }
-
-  /*!
-   * Determine whether the two halfedges, belonging to different outer CCBs,
-   * belong to the outer boundary of the same face.
-   * \param e1 The first halfedge.
-   * \param e2 The second halfedge.
-   * \return Whether the two halfedge belong to the outer boundary of the same
-   *         face.
-   */
-  bool boundaries_of_same_face (const Halfedge *,
-                                const Halfedge *) const
-  {
-    // This predicate is only used for case 3.3.2 of the insertion process,
-    // therefore it should never be invoked in the planar case.
-    CGAL_error();
-    return (false);
-  }
-
-
-#if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE || CGAL_NEW_FACE_SPLIT_STRATEGY
-  /*!
-   * Computes the sign of two halfedges approaching and leaving the
-   * boundary
-   * \param he1 The halfedge entering the boundary
-   * \param he2 The halfedge leaving the boundary
-   * \return the perimetricity of the subpath
-   */
-  CGAL::Sign _sign_of_subpath(const Halfedge* he1, const Halfedge* he2) 
-    const {
-    return CGAL::ZERO;
-  }
-    
-  /*!
-   * Computes the sign of a halfedge and a curve approaching and leaving the
-   * boundary
-   * \param he1 The halfedge entering the boundary
-   * \param cv2 The curve leaving the boundary
-   * \param end2 The end of the curve leaving the boundary
-   * \return the perimetricity of the subpath
-   */
-  CGAL::Sign _sign_of_subpath(const Halfedge* he1, 
-                              const bool target,
-                              const X_monotone_curve_2& cv2,
-                              const CGAL::Arr_curve_end& end2) const {
-    return CGAL::ZERO;
-  }
-#endif
 
   /*!
    * Determine whether the given point lies in the interior of the given face.
