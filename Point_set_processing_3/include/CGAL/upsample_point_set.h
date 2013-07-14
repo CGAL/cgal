@@ -25,6 +25,9 @@
 #include <CGAL/Rich_grid.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/compute_average_spacing.h>
+
+
 #include <iterator>
 #include <set>
 
@@ -114,7 +117,8 @@ base_point_selection(
     }
   }
 
-  return sqrt(best_dist2); // maybe slow
+  return best_dist2; // sqrt is very slow!
+
 }
 
 /// For each new inserted point, we need to do the following job
@@ -149,8 +153,9 @@ update_new_point(
   unsigned int size = rich_point_set.size();
   CGAL_point_set_processing_precondition(father_index >= 0 &&
                                          father_index < size);
-    CGAL_point_set_processing_precondition(mother_index >= 0 &&
+  CGAL_point_set_processing_precondition(mother_index >= 0 &&
                                            mother_index < size);
+
   // 1, get neighbor information from the two "parent points"
   Rich_point& new_v = rich_point_set[new_point_index];
   Rich_point& father_v = rich_point_set[father_index];
@@ -353,49 +358,72 @@ upsample_point_set(
   FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
 
-  double max_iter_time = 1;
+  FT sum_density = 0.0;
+  unsigned int count_density = 0;
+  double max_iter_time = 20;
+  FT current_radius = neighbor_radius;
+  FT density_pass_threshold = 0.0;
+
   for (int iter_time = 0; iter_time < max_iter_time; iter_time++)
   {
     std::cout << std::endl << "iter_time: " << iter_time + 1  << std::endl;
 
-    FT current_radius = neighbor_radius;
-
+    
     if (iter_time > 0)
     {
-      current_radius = neighbor_radius * (iter_time * 0.5);
+      current_radius *= 0.75;
+      if (current_radius < density_pass_threshold * 3) //3 ring
+      {
+        current_radius = density_pass_threshold * 3;
+      }
+      rich_grid_internel::compute_ball_neighbors_one_self(rich_point_set,
+                                                          box,
+                                                          current_radius);
     }
+    std::cout << "current radius: " << current_radius << std::endl; 
 
     unsigned int current_size = rich_point_set.size();
     std::vector<bool> is_pass_threshold(current_size, false);
-    FT sum_density = 0.0;
-    for (i = 0; i < rich_point_set.size() * 0.05; i++)
+
+    if (iter_time == 0)
     {
-      Rich_point& v = rich_point_set[i];
-
-      // extract neighbor rich points by index
-      std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
-      for (unsigned int n = 0; n < v.neighbors.size(); n++)
+      //estimate density threshold
+      for (i = 0; i < rich_point_set.size() * 0.05; i++)
       {
-        neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
+        Rich_point& v = rich_point_set[i];
+
+        // extract neighbor rich points by index
+        std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
+        for (unsigned int n = 0; n < v.neighbors.size(); n++)
+        {
+          neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
+        }
+
+        unsigned int base_index = 0;
+        double density2 = upsample_internal::
+                              base_point_selection(v,
+                                                    neighbor_rich_points,
+                                                    edge_senstivity,
+                                                    base_index);
+        sum_density += density2;
+        count_density++;
       }
+    }
 
-      unsigned int base_index = 0;
-      double density = upsample_internal::
-                            base_point_selection(v,
-                                                 neighbor_rich_points,
-                                                 edge_senstivity,
-                                                 base_index);
-      sum_density += density;
 
-   }
-   //FT density_pass_threshold = (sum_density / current_size) * 0.75;
-    FT density_pass_threshold = 0.03;
+    density_pass_threshold = sqrt(sum_density / count_density) * 0.65;
+    sum_density = 0.;
+    count_density = 0;
+
+    //FT density_pass_threshold = 0.02;
+    FT density_pass_threshold2 = density_pass_threshold * 
+                                 density_pass_threshold;
+
    
-    std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
-
+    std::cout << "pass_threshold:  " << density_pass_threshold2 << std::endl;
 
     // insert new points until all the points' density pass the threshold
-    unsigned int max_loop_time = 1;
+    unsigned int max_loop_time = 3;
     unsigned int loop = 0;
     while (1)
     {
@@ -420,18 +448,22 @@ upsample_point_set(
 
         // select base point 
         unsigned int base_index = 0;
-        FT density = upsample_internal::
+        FT density2 = upsample_internal::
                               base_point_selection(v,
                                                    neighbor_rich_points,
                                                    edge_senstivity,
                                                    base_index);
+
         // test if it pass the density threshold
-        if (density < density_pass_threshold)
+        if (density2 < density_pass_threshold2)
         {
           is_pass_threshold[i] = true;
           continue;
         }
         count_not_pass++;
+
+        sum_density += density2;
+        count_density++;
 
         // insert a new rich point
         unsigned int father_index = v.index;
@@ -461,6 +493,7 @@ upsample_point_set(
         }
       }
 
+      std::cout << "current size: " << rich_point_set.size() << std::endl;
       if (count_not_pass == 0 || 
           loop >= max_loop_time || 
           rich_point_set.size() >= number_of_output)
@@ -468,6 +501,11 @@ upsample_point_set(
         break;
       }
 
+    }
+
+    if (rich_point_set.size() >= number_of_output)
+    {
+      break;
     }
   }
 
