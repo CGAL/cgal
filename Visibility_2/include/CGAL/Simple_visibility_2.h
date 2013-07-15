@@ -51,14 +51,9 @@ public:
 						   Output_Arrangement_2 &out_arr
 						   ) {
 
-		int i = 0;
-		bool ccw = false;
-
 		typename Input_Arrangement_2::Ccb_halfedge_const_circulator circ = face->outer_ccb();
 		typename Input_Arrangement_2::Ccb_halfedge_const_circulator curr = circ;
   		typename Input_Arrangement_2::Halfedge_const_handle he = curr;
-
-  		int parity = 0;
 
   		std::vector<Point_2> temp_vertices;
   		int index_v0 = 0;
@@ -92,6 +87,83 @@ public:
   			std::cout << vertices[k] << std::endl;
   		}
 
+  		visibility_region_impl(q, out_arr);
+	}
+
+	void visibility_region(const Point_2 &q, 
+						   const Halfedge_const_handle he,
+						   Output_Arrangement_2 &out_arr
+						   ) {
+
+  		std::vector<Point_2> temp_vertices;
+  		bool query_point_on_source = false;
+
+		if (q != he->source()->point()) {
+			if (q != he->target()->point()) {
+				vertices.push_back(q);
+				vertices.push_back(he->target()->point());
+			}
+			else {
+				vertices.push_back(q);
+			}
+		}
+		else {
+			query_point_on_source = true;
+			vertices.push_back(q);
+			vertices.push_back(he->target()->point());
+		}
+
+		typename Input_Arrangement_2::Face_const_handle face = he->face();
+		typename Input_Arrangement_2::Ccb_halfedge_const_circulator circ = face->outer_ccb();
+		typename Input_Arrangement_2::Ccb_halfedge_const_circulator curr = circ;
+  		typename Input_Arrangement_2::Halfedge_const_handle he_handle = curr;
+
+  		while (he_handle != he) {
+  			he_handle = curr;
+  			curr++;
+  		}
+
+  		do {
+  			he_handle = curr;
+  			Point_2 curr_vertex = he->target()->point();
+  			temp_vertices.push_back(curr_vertex);
+
+  		} while (++curr != circ);
+
+  		if (!query_point_on_source) {
+  			vertices.push_back(he->source()->point());
+  		}
+
+  		std::cout << "Vertices:" << std::endl;
+  		for (unsigned int i = 0 ; i < vertices.size() ; i++) {
+  			std::cout << vertices[i] << std::endl;
+  		}
+  		std::cout << " end" << std::endl;
+  //		visibility_region_impl(q, out_arr);
+	}
+protected:
+	const Input_Arrangement_2 *p_arr;
+	std::stack<Point_2> s;
+	std::vector<Point_2> vertices;
+	enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
+
+	bool do_overlap(const Point_2 &a, const Point_2 &b, const Point_2 &c) {
+		if (collinear(a, b, c)) {
+			std::cout << a << " " << b << " " << c << " are collinear" << std::endl;
+			Segment_2 s1(a, b);
+			Segment_2 s2(a, c);
+			const Segment_2 *seg_overlap;
+			CGAL::Object result = CGAL::intersection(s1, s2);
+			if (seg_overlap = CGAL::object_cast<Segment_2>(&result)) { 
+					return true;
+			}
+		}
+		return false;
+	}
+
+	void visibility_region_impl(Point_2 &q, Output_Arrangement_2 &out_arr) {
+
+		int i = 0;
 		Point_2 w;
 
 		if (orientation(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN) {
@@ -114,9 +186,7 @@ public:
 			std::cout << "CASE: " << upcase << std::endl;
 			switch(upcase) {
 				case LEFT: 
-					std::cout << "before entering left" << std::endl;
 					left(i, w, q);
-					std::cout << "after exiting left" << std::endl;
 					break;
 				case RIGHT:
 					right(i, w, q);
@@ -167,9 +237,8 @@ public:
 					s.push(s_t);
 				}
 			}
-			std::cout << "gets out" << std::endl;
-			if (counter == 2) {
-			//	exit(0);	
+			if (counter == 8) {
+		//		exit(0);	
 			}
 			counter++;
 		} while(upcase != FINISH);
@@ -192,34 +261,8 @@ public:
 		CGAL::insert(out_arr, segments.begin(), segments.end());
 	}
 
-	void visibility_region(const Point_2 &q, 
-						   const Halfedge_const_handle he,
-						   Output_Arrangement_2 &out_arr
-						   ) {
-
-	}
-protected:
-	const Input_Arrangement_2 *p_arr;
-	std::stack<Point_2> s;
-	std::vector<Point_2> vertices;
-	enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
-
-	bool do_overlap(const Point_2 &a, const Point_2 &b, const Point_2 &c) {
-		if (collinear(a, b, c)) {
-			std::cout << a << " " << b << " " << c << " are collinear" << std::endl;
-			Segment_2 s1(a, b);
-			Segment_2 s2(a, c);
-			const Segment_2 *seg_overlap;
-			CGAL::Object result = CGAL::intersection(s1, s2);
-			if (seg_overlap = CGAL::object_cast<Segment_2>(&result)) { 
-					return true;
-			}
-		}
-		return false;
-	}
-
 	void left(int &i, Point_2 &w, const Point_2 &query_pt) {
-		std::cout << "begin with i = " << i << std::endl;
+		std::cout << "begin left with i = " << i << std::endl;
 		if (i == vertices.size() - 1) {
 			std::cout << "done" << std::endl;
 			upcase = FINISH;
@@ -227,28 +270,41 @@ protected:
 		else if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN) {
 			std::cout << "left::left turn with i =" << i << std::endl;
 			upcase = LEFT;
+			std::cout << "left::pushing1 " << vertices[i+1] << std::endl;
 			s.push(vertices[i+1]);
 			w = vertices[i+1];
 			i++;
 		}
 		else if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
+			std::cout << "left::right turn with i = " << i << std::endl; 
 			Point_2 s_t = s.top();
+			std::cout << "left:: s_t = " << s_t << std::endl;
 			s.pop();
 			Point_2 s_t_prev = s.top();
+			std::cout << "left:: s_t-i = " << s_t_prev << std::endl;
 			s.pop();
 			if (orientation(s_t_prev, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
+				std::cout << "left::switched to scana" << std::endl;
 				upcase = SCANA;
+				w = vertices[i+1];
+				i++;
+			} // Both conditions have to be met to move on. Thus same else branch as below
+			else {
+				std::cout << "left::switching to right mode branch1" << std::endl;
+				upcase = RIGHT;
+				w = vertices[i];
 				i++;
 			}
 			s.push(s_t_prev);
 			s.push(s_t);
-			w = vertices[i+1];
 		}
 		else {
+			std::cout << "left::switching to right mode" << std::endl;
 			upcase = RIGHT;
 			i++;
 			w = vertices[i];
 		}
+		std::cout << "leaving left with i = " << i << std::endl;
 	}
 
 	void right(int &i, Point_2 &w, const Point_2 &query_pt) {
@@ -256,58 +312,80 @@ protected:
 		// (a) (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
 		// (b) (z, s_j-1, s_j) is a forward move and (v_i-1, v_i) intersects (s_j-1, s_j)
 		bool found = false;
-
-		while(!found) {
-			Point_2 s_j = s.top();
-			if (!s.empty()) {
+		std::cout << "entered right with i = " << i << std::endl;
+		while(!found && !s.empty()) {
+				Point_2 s_j = s.top();
+				std::cout << "right:: considering s_j = " <<  s_j << std::endl;
 				s.pop();
-				Point_2 s_j_prev = s.top();
+				if (!s.empty()) {
+					Point_2 s_j_prev = s.top();
+					std::cout << "right:: s_j-1 = " << s_j_prev << std::endl;
 
-				// Check condition (a)
-				if ((orientation(query_pt, s_j, vertices[i]) == CGAL::RIGHT_TURN)
-					&& (orientation(query_pt, s_j_prev, vertices[i]) == CGAL::LEFT_TURN)) {
-					found = true;
-					Segment_2 s1(s_j_prev, s_j);
-					Segment_2 s2(query_pt, vertices[i]);
-					CGAL::Object result = intersection(s1, s2);
-					if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-						s_j = *ipoint;
+					// Check condition (a)
+					if ((orientation(query_pt, s_j, vertices[i]) == CGAL::RIGHT_TURN)
+						&& (orientation(query_pt, s_j_prev, vertices[i]) == CGAL::LEFT_TURN)) {
+						std::cout << "right:: case A" << std::endl;
+						found = true;
+						Segment_2 s1(s_j_prev, s_j);
+						Ray_2 s2(query_pt, vertices[i]);
+						CGAL::Object result = intersection(s1, s2);
+						if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+							std::cout << "s_j is now = " << *ipoint << std::endl;
+							s_j = *ipoint;
+						}
+
+						if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
+							std::cout << "case a1" << std::endl;
+							upcase = RIGHT;
+							s.push(s_j);
+							w = vertices[i];
+							i++;
+						}
+						else if ((orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN)
+								&& (orientation(vertices[i-1], vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN)) {
+							std::cout << "case a2: right::switch to left" << std::endl;
+							upcase = LEFT;
+							s.push(s_j);
+							s.push(vertices[i]);
+							s.push(vertices[i+1]);
+							w = vertices[i+1];
+							i++;
+						}
+						else {
+							std::cout << "case a3" << std::endl;
+							upcase = SCANC;
+							s.push(s_j);
+							w = vertices[i];
+							i++;		
+						}
 					}
-
-					if (orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN) {
-						upcase = RIGHT;
-						s.push(s_j);
-						i++;
-						w = vertices[i];
+					else if (do_overlap(query_pt, s_j_prev, s_j)) { // Case (b)
+						// Check if v_i-1, v_i intersects (s_j-1, s_j)
+						Segment_2 s1(s_j_prev, s_j);
+						Segment_2 s2(vertices[i-1], vertices[i]);
+						CGAL::Object result = intersection(s1, s2);
+						if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+							// Keep s_j off the stack
+							std::cout << "right:: case B" << std::endl;
+							found = true;
+							upcase = SCAND;
+							w = *ipoint;
+						}
 					}
-					else if ((orientation(query_pt, vertices[i], vertices[i+1]) == CGAL::LEFT_TURN)
-							&& (orientation(vertices[i-1], vertices[i], vertices[i+1]) == CGAL::RIGHT_TURN)) {
+					else if ((orientation(query_pt, s_j, vertices[i]) == CGAL::RIGHT_TURN)
+						&& (orientation(query_pt, s_j_prev, vertices[i]) == CGAL::COLLINEAR)) {
 
+						found = true;
 						upcase = LEFT;
-						i++;
-						s.push(s_j);
 						s.push(vertices[i]);
 						s.push(vertices[i+1]);
 						w = vertices[i+1];
-					}
-					else {
-						upcase = SCANC;
 						i++;
-						s.push(s_j);
 					}
+					std::cout << "right::FOUND? = " << found << std::endl;
 				}
-				else { // Case (b)
-					Segment_2 s1(s_j_prev, s_j);
-					Segment_2 s2(vertices[i-1], vertices[i]);
-					CGAL::Object result = intersection(s1, s2);
-					if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-						// Keep s_j off the stack
-						upcase = SCAND;
-						w = *ipoint;
-					}
-				}
-			}
 		}
+		std::cout << "leaving right with i = " << i << std::endl;
 	}
 
 	void scana(int &i, Point_2 &w, const Point_2 &query_pt) {
@@ -315,7 +393,7 @@ protected:
 		bool found = false;
 		int k = i;
 		Point_2 intersection_pt;
-		while (k+1 < vertices.size()-1) {
+		while (k+1 < vertices.size()) {
 			std::cout << "Considering edge: " << vertices[k] << " " << vertices[k+1] << std::endl;
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			std::cout << "With edge: " << query_pt << " " << s.top() << std::endl;
@@ -367,7 +445,7 @@ protected:
 		int k = i;
 		bool found = false;
 		Point_2 intersection_pt;
-		while (k+1 < vertices.size()-1) {
+		while (k+1 < vertices.size()) {
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(s_t, vertices[vertices.size()-1]);
 			CGAL::Object result = intersection(s1, s2);
@@ -394,16 +472,20 @@ protected:
 
 	void scanc(int &i,Point_2 &w, const Point_2 &query_pt) {
 		// Scan v_i, v_i+1, ..., v_n-1, v_n for the first edge to intersect (s_t, w)
+		std::cout << "entered scanc with i = " << i << std::endl;
 		Point_2 s_t = s.top();
 		int k = i;
 		bool found = false;
 		Point_2 intersection_pt;
-		while (k+1 < vertices.size()-1) {
+		std::cout << "size: " << vertices.size() << std::endl;
+		while (k+1 < vertices.size()) {
+			std::cout << "doesn't get here" << std::endl;
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(s_t, w);
 			CGAL::Object result = intersection(s1, s2);
 			if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
 				found = true;
+				std::cout << "scanc::found" << std::endl;
 				intersection_pt = *ipoint;
 				break;
 			}
@@ -414,6 +496,7 @@ protected:
 			i = k+1;
 			w = intersection_pt;
 		}
+		std::cout << "leaving scanc" << std::endl;
 	}
 
 	void scand(int &i, Point_2 &w, const Point_2 &query_pt) {
@@ -422,7 +505,7 @@ protected:
 		int k = i;
 		bool found = false;
 		Point_2 intersection_pt;
-		while (k+1 < vertices.size()-1) {
+		while (k+1 < vertices.size()) {
 			Segment_2 s1(vertices[k], vertices[k+1]);
 			Segment_2 s2(s_t, w);
 			CGAL::Object result = intersection(s1, s2);
