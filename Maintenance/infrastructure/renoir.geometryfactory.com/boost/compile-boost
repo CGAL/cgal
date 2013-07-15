@@ -23,6 +23,6 @@ ln -sf ../1_54/include "$BOOST_DIR/1_54-gcc41/"
 "$BJAM" --prefix="$BOOST_DIR/1_54" --libdir="$BOOST_DIR/1_54-gcc-cxxdebug/lib" --stagedir=stage-cxxdebug $OPTS toolset=gcc-cxxdebug install
 ln -sf ../1_54/include "$BOOST_DIR/1_54-gcc-cxxdebug/"
 
-source ~/infrastructure/reference-platforms/x86-64_Linux-Fedora16_IntelCompiler-12.0-with-g++-4.6.2/setup 
+source ~/infrastructure/reference-platforms/x86-64_Linux-Fedora17_IntelCompiler-13.1-with-g++-4.7-STL/setup 
 "$BJAM" --prefix="$BOOST_DIR/1_54" --libdir="$BOOST_DIR/1_54-intel/lib" --stagedir=stage-intel $OPTS toolset=intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8" install
 ln -sf ../1_54/include "$BOOST_DIR/1_54-intel/"
