@@ -41,9 +41,9 @@
 #include <boost/property_map.hpp>
 #endif
 
-//#include "tbb/parallel_for.h"
-//#include "tbb/blocked_range.h"
-
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+const bool is_use_parallel = true;
 
 /// \cond SKIP_IN_MANUAL
 
@@ -104,10 +104,10 @@ public:
 template <typename Kernel>
 CGAL::Point_with_normal_3<Kernel>
 compute_denoise_projection(
-  const CGAL::Point_with_normal_3<Kernel>& query,      ///< 3D point to project
-  const std::vector<CGAL::Point_with_normal_3<Kernel> >& neighbor_pwns,  ///< 
-  const typename Kernel::FT radius,          ///< accept neighborhood radius
-  const typename Kernel::FT sharpness_sigma  ///< control sharpness(0-90)
+  CGAL::Point_with_normal_3<Kernel>& query,      ///< 3D point to project
+  std::vector<CGAL::Point_with_normal_3<Kernel> >& neighbor_pwns,  ///< 
+  typename Kernel::FT radius,          ///< accept neighborhood radius
+  typename Kernel::FT sharpness_sigma  ///< control sharpness(0-90)
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -363,7 +363,7 @@ denoise_points_with_normals(
   std::cout << "Compute all neighbors: " << std::endl;
 
   // compute all neighbors
-  std::vector< Pwn_set> pwn_neighbors_set(nb_points);
+  std::vector<Pwn_set> pwn_neighbors_set(nb_points);
   for (i = 0 ; i < nb_points; i++)
   {
     Pwn pwn = pwn_set[i];
@@ -376,22 +376,38 @@ denoise_points_with_normals(
     << (memory>>20) << " Mb allocated" << std::endl;
   task_timer.stop();  
 
+  std::size_t num_elem = 1000;
+
 
   task_timer.start();
   std::cout << "Compute update points and normals: " << std::endl;
   // update points and normals
   Pwn_set update_pwn_set(nb_points);
-  for (i = 0 ; i < nb_points; i++)
-  {
-    Pwn pwn = pwn_set[i];
 
-    update_pwn_set[i] = denoise_points_internal::
-                        compute_denoise_projection<Kernel>
-                        (pwn, 
-                         pwn_neighbors_set[i], 
-                         guess_neighbor_radius, 
-                         sharpness_sigma);
+  if(is_use_parallel)
+  {
+    tbb::blocked_range<size_t> block(0, num_elem);
+    Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
+                                    &pwn_set,
+                                    &update_pwn_set,
+                                    &pwn_neighbors_set);
+    tbb::parallel_for(block, pwn_updater, tbb::simple_partitioner());
   }
+  else
+  {
+    for (i = 0 ; i < nb_points; i++)
+    {
+      Pwn pwn = pwn_set[i];
+
+      update_pwn_set[i] = denoise_points_internal::
+                          compute_denoise_projection<Kernel>
+                          (pwn, 
+                           pwn_neighbors_set[i], 
+                           guess_neighbor_radius, 
+                           sharpness_sigma);
+    }
+  }
+
 
   memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "done: " << task_timer.time() << " seconds, "
@@ -422,6 +438,39 @@ denoise_points_with_normals(
 
   return sum_move_error / nb_points;
 }
+
+template <typename Kernel>
+class Pwn_updater {
+  typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
+  typedef typename std::vector<Pwn> Pwn_set;
+  typedef typename Kernel::FT FT;
+
+  FT sharpness_sigma;
+  Pwn_set* pwn_set;
+  Pwn_set* update_pwn_set;
+  std::vector<Pwn_set>* pwn_neighbors_set;
+
+public: 
+  void operator() ( const tbb::blocked_range<size_t>& r ) const 
+  { 
+    for ( size_t i = r.begin(); i != r.end(); ++i ) 
+    {
+      (*update_pwn_set)[i] = denoise_points_internal::
+                              compute_denoise_projection<Kernel>
+                               ((*pwn_set)[i], 
+                                (*pwn_neighbors_set)[i], 
+                                0.15,
+                                sharpness_sigma);   
+    }
+  }
+  Pwn_updater(FT s, 
+              Pwn_set *in,
+              Pwn_set *out, 
+              std::vector<Pwn_set>* neighbors) :sharpness_sigma(s), 
+                                                pwn_set(in),
+                                                update_pwn_set(out),
+                                                pwn_neighbors_set(neighbors){ }
+};
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
