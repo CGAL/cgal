@@ -33,6 +33,8 @@
 // Curve skeleton data structure
 #include <CGAL/Curve_skeleton.h>
 
+#include <queue>
+
 namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
@@ -91,6 +93,7 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
+  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
   typedef typename internal::Cotangent_weight<Polyhedron,
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
@@ -704,6 +707,104 @@ public:
     std::cerr << "split " << num_splits << " edges.\n";
   }
 
+  bool is_vertex_degenerate(vertex_descriptor root)
+  {
+    std::set<edge_descriptor> edge_visited;
+    std::map<vertex_descriptor, int> vertex_visited;
+
+    std::map<vertex_descriptor, int> D;
+    std::queue<vertex_descriptor> Q;
+    Q.push(root);
+    D[root] = 0;
+    vertex_visited[root] = 0;
+
+    int dist_v;
+    double max_distance = 0.0;
+    // size of k-ring
+    int k = 2;
+    while (!Q.empty() && (dist_v = D[Q.front()]) < k)
+    {
+      vertex_descriptor v = Q.front();
+      Q.pop();
+
+      out_edge_iterator e, e_end;
+      for(boost::tie(e, e_end) = boost::out_edges(v, *polyhedron); e != e_end; e++)
+      {
+        edge_descriptor ed = *e;
+        if (edge_visited.find(ed) != edge_visited.end())
+        {
+          continue;
+        }
+
+        vertex_descriptor new_v = boost::target(ed, *polyhedron);
+        if (vertex_visited.find(new_v) != vertex_visited.end())
+        {
+          if (vertex_visited[new_v] != dist_v)
+          {
+//            std::cerr << vertex_visited[new_v] << " " << dist_v << "\n";
+            return true;
+          }
+        }
+        edge_visited.insert(ed);
+        edge_visited.insert(ed->opposite());
+        edge_visited.insert(ed->next());
+        edge_visited.insert(ed->next()->opposite());
+        vertex_visited[new_v] = dist_v;
+
+        if (D.insert(std::make_pair(new_v, dist_v + 1)).second)
+        {
+          max_distance = (std::max)((new_v->point() - root->point()).squared_length(), max_distance);
+          Q.push(new_v);
+        }
+      }
+    }
+    // now Q contains all nonprocessed
+//    while (!Q.empty())
+//    {
+//      vertex_descriptor v = Q.front();
+//      Q.pop();
+
+//      out_edge_iterator e, e_end;
+//      for (boost::tie(e, e_end) = boost::out_edges(v, *polyhedron); e != e_end; e++)
+//      {
+//        vertex_descriptor new_v = boost::target(*e, *polyhedron);
+//        double distance = (new_v->point() - root->point()).squared_length();
+//        if (distance < max_distance)
+//        {
+//          if (D.insert(std::make_pair(new_v, dist_v + 1)).second)
+//          {
+//            Q.push(new_v);
+//          }
+//        }
+//      }
+//    }
+    return false;
+  }
+
+  int detect_degeneracies_in_disk()
+  {
+    int num_fixed = 0;
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    {
+      vertex_descriptor v = *vb;
+      int idx = boost::get(vertex_id_pmap, v);
+
+      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
+      {
+        bool willbefixed = is_vertex_degenerate(v);
+        if (willbefixed)
+        {
+//          std::cerr << "detect " << idx << "\n";
+          is_vertex_fixed_map[idx] = willbefixed;
+          num_fixed++;
+        }
+      }
+    }
+    std::cerr << "fixed " << num_fixed << " vertices.\n";
+    return num_fixed;
+  }
+
   // TODO: check if the local neighborhood is a disk
   int detect_degeneracies()
   {
@@ -853,6 +954,7 @@ public:
     contract_geometry();
     update_topology();
     detect_degeneracies();
+//    detect_degeneracies_in_disk();
   }
 
   void convert_to_skeleton()
