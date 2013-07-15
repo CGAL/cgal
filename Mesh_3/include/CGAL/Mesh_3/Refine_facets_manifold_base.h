@@ -24,6 +24,9 @@
 #include <CGAL/utility.h>
 #include <set>
 #include <vector>
+#include <boost/bimap.hpp>
+#include <boost/bimap/unordered_set_of.hpp>
+#include <boost/bimap/multiset_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -117,7 +120,12 @@ protected:
 protected:
   Tr& r_tr_;
   C3t3& r_c3t3_;
-  mutable std::set <std::pair <Vertex_handle, Vertex_handle> > m_bad_edges;
+
+  typedef ::boost::bimap< EdgeVV,
+                          ::boost::bimaps::multiset_of<int> > Bad_edges;
+  typedef typename Bad_edges::value_type Bad_edge;
+
+  mutable Bad_edges m_bad_edges;
   mutable std::set<Vertex_handle> m_bad_vertices;
 
   mutable bool m_manifold_info_initialized;
@@ -140,13 +148,13 @@ private:
   // computes and returns the Edge type object from the EdgeVV object
   // use tr.is_edge(...)
   Edge edgevv_to_edge(const EdgeVV& arete) const {
-    Vertex_handle sommet1 = arete.first;
-    Vertex_handle sommet2 = arete.second;
+    Vertex_handle v1 = arete.first;
+    Vertex_handle v2 = arete.second;
     Cell_handle c;
     int index1, index2;
 
     CGAL_assertion_code(bool is_edge =)
-    r_tr_.is_edge(sommet1, sommet2, c, index1, index2);
+    r_tr_.is_edge(v1, v2, c, index1, index2);
     CGAL_assertion(is_edge);
 
     return make_triple( c, index1, index2 );
@@ -163,37 +171,43 @@ private:
     const Point& fcenter = f.first->get_facet_surface_center(f.second);
     const Point& vpoint = v->point();
 
-    return r_tr_.geom_traits().compute_squared_distance_3_object()(fcenter,
-                                                                vpoint );
+    return
+      r_tr_.geom_traits().compute_squared_distance_3_object()(fcenter.point(),
+                                                              vpoint.point())
+      - vpoint.weight();
   }
 
   Facet
-  biggest_incident_facet_in_complex(const Vertex_handle sommet) const
+  biggest_incident_facet_in_complex(const Vertex_handle v) const
   {
 
     std::vector<Facet> facets;
     facets.reserve(64);
-    r_tr_.incident_facets(sommet, std::back_inserter(facets));
+    r_tr_.incident_facets(v, std::back_inserter(facets));
 
     typename std::vector<Facet>::iterator fit = facets.begin();
     while(fit != facets.end() && !r_c3t3_.is_in_complex(*fit)) ++fit;
     CGAL_assertion(fit!=facets.end());
+    CGAL_assertion_code(std::size_t facet_counter = 1);
 
     Facet biggest_facet = *fit++;
     while(fit != facets.end() && !r_c3t3_.is_in_complex(*fit)) ++fit;
 
     for (; fit != facets.end(); )
     {
+      CGAL_assertion_code(++facet_counter);
       Facet current_facet = *fit;
       // is the current facet bigger than the current biggest one
-      if ( compute_distance_to_facet_center(current_facet, sommet) >
-           compute_distance_to_facet_center(biggest_facet, sommet) )
+      if ( compute_distance_to_facet_center(current_facet, v) >
+           compute_distance_to_facet_center(biggest_facet, v) )
       {
         biggest_facet = current_facet;
       }
       ++fit;
       while(fit != facets.end() && !r_c3t3_.is_in_complex(*fit)) ++fit;
     }
+    CGAL_assertion(v->cached_number_of_incident_facets() ==
+                   facet_counter);
     CGAL_assertion(r_c3t3_.is_in_complex(biggest_facet));
     return biggest_facet;
   }
@@ -202,6 +216,7 @@ private:
     // Find the first facet in the incident facets
     // of the edge which is in the Complex
     // use the list of incident facets in the complex
+    Vertex_handle fev = edge_to_edgevv(arete).first;
     Tr_facet_circulator fcirc = r_tr_.incident_facets(arete);
     while(!r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
     Facet first_facet = *fcirc;
@@ -212,21 +227,11 @@ private:
       while(!r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
       if(*fcirc == first_facet) break;
 
-      Vertex_handle fev = edge_to_edgevv(arete).first;
       // is the current facet bigger than the current biggest one
       if ( compute_distance_to_facet_center(*fcirc, fev) >
            compute_distance_to_facet_center(biggest_facet,
                                             fev) ) {
         biggest_facet = *fcirc;
-      }
-      else { // @TODO: il ne faut pas aller voir des deux cotes: c'est
-        // le meme centre de facet!!!
-        Facet autre_cote = r_tr_.mirror_facet(*fcirc);
-        // is the current facet bigger than the current biggest one
-        if ( compute_distance_to_facet_center(autre_cote, fev) >
-             compute_distance_to_facet_center(biggest_facet, fev) ) {
-          biggest_facet = autre_cote;
-        }
       }
     }
     return biggest_facet;
@@ -249,7 +254,7 @@ private:
         const int edge_index_vb = r_tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
-        m_bad_edges.erase( make_edgevv(edge_va, edge_vb));
+        m_bad_edges.left.erase( make_edgevv(edge_va, edge_vb));
       }
     }
   }
@@ -325,7 +330,9 @@ private:
            ( (!m_with_boundary) &&
              (r_c3t3_.face_status(*eit) == C3t3::BOUNDARY) ) )
       {
-        m_bad_edges.insert( edge_to_edgevv(*eit) );
+        m_bad_edges.insert(Bad_edge(edge_to_edgevv(*eit),
+                                    (r_c3t3_.face_status(*eit) ==
+                                     C3t3::SINGULAR ? 0 : 1)));
 #ifdef CGAL_MESH_3_VERBOSE
         ++n;
 #endif
@@ -393,7 +400,7 @@ public:
 
       if( ! m_manifold_info_initialized ) initialize_manifold_info();
 
-      if(m_bad_edges.empty())
+      if(m_bad_edges.left.empty())
       {
         if( ! m_bad_vertices_initialized ) initialize_bad_vertices();
 
@@ -413,15 +420,15 @@ public:
       return Base::get_next_element_impl();
     }
     else {
-      if(!m_bad_edges.empty()) {
+      if(!m_bad_edges.left.empty()) {
+        Edge first_bad_edge = edgevv_to_edge(m_bad_edges.right.begin()->second);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "Bad edge "
-                  << m_bad_edges.begin()->first->point()
+                  << first_bad_edge.first->point()
                   << " - "
-                  << m_bad_edges.begin()->second->point()
+                  << first_bad_edge.first.second->point()
                   << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
-        Edge first_bad_edge = edgevv_to_edge(*(m_bad_edges.begin()));
         return biggest_incident_facet_in_complex(first_bad_edge);
       } else {
         CGAL_assertion(!m_bad_vertices.empty());
@@ -501,10 +508,12 @@ public:
                  (r_c3t3_.face_status(edge) == C3t3::BOUNDARY) )
                )
           {
-            m_bad_edges.insert( edge_to_edgevv(edge) );
+            m_bad_edges.insert(Bad_edge(edge_to_edgevv(edge),
+                                        (r_c3t3_.face_status(edge) ==
+                                         C3t3::SINGULAR ? 0 : 1)));
           }
           else {
-            m_bad_edges.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
+            m_bad_edges.left.erase( edge_to_edgevv(edge) ); // @TODO: pourquoi?!
           }
         }
       }
@@ -557,7 +566,7 @@ public:
     std::stringstream s;
     s << Base::debug_info();
     if(m_with_manifold_criterion) {
-      s << "," << m_bad_edges.size()
+      s << "," << m_bad_edges.left.size()
         << "," << m_bad_vertices.size();
     }
     return s.str();
