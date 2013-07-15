@@ -458,10 +458,11 @@ public:
       if(!m_bad_edges.left.empty()) {
         Edge first_bad_edge = edgevv_to_edge(m_bad_edges.right.begin()->second);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        const EdgeVV& edgevv = m_bad_edges.right.begin()->second;
         std::cerr << "Bad edge "
-                  << first_bad_edge.first->point()
+                  << edgevv.first->point()
                   << " - "
-                  << first_bad_edge.first.second->point()
+                  << edgevv.second->point()
                   << "\n";
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         return biggest_incident_facet_in_complex(first_bad_edge);
