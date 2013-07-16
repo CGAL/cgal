@@ -1,0 +1,193 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_L_infinity_Segment_Delaunay_graphs
+\anchor chaptersdglinf
+\cgalAutoToc
+\authors Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
+
+This chapter describes the algorithm and the geometric traits for
+constructing the segment Delaunay graph under the \f$ L_{\infty} \f$
+distance.
+The traits also contain methods to draw the edges of the dual of
+the segment Delaunay graph under the \f$ L_{\infty} \f$ distance, i.e.,
+the segment Voronoi diagram under the \f$ L_{\infty} \f$ distance.
+The \f$ L_{\infty} \f$ algorithm and traits rely on the segment
+Delaunay graph algorithm and traits under the Euclidean (or \f$ L_{2} \f$)
+distance.
+
+Segment Voronoi diagrams in the \f$ L_{\infty} \f$ metric have applications
+in VLSI design \cite pl-svdlinf-2001.
+
+In section \ref secsdglinfdefinitions we give some definitions.
+In section \ref secsdglinfdesign we explain the design of the
+algorithm and traits.
+
+\cgalFigureBegin{figsvdlinf,svdlinfweak.png,svdlinfstrong.png}
+The \f$ L_{\infty} \f$ segment Voronoi diagram for a set of weakly (left) and
+strongly (right) intersecting sites.
+\cgalFigureEnd
+
+\section secsdglinfdefinitions Definitions
+
+Given two points \f$ p=(p_x,p_y) \f$, \f$ q=(q_x,q_y) \f$ in the
+plane, their \f$ L_{\infty} \f$ distance is
+\f[ d_{\infty}(p,q) = \max(|p_x-q_x|,|p_y-q_y|). \f]
+It is not difficult to see that the geometric locus of points at
+an equal fixed \f$ L_{\infty} \f$ distance \f$ r \f$ from a fixed
+point \f$ c \f$ is the axis-parallel square with center \f$ c \f$
+and side length \f$ 2r \f$ (the analog in \f$ L_2 \f$ is a circle
+with center \f$ c \f$ and diameter \f$ 2r \f$).
+
+\subsection subsecbis1dim Bisectors and 1-dimensionalization
+
+If we assume general position of sites, then the
+\f$ L_{\infty} \f$ bisectors between two points or between a point
+and a segment are polygonal chains; see figure
+\cgalFigureRef{figbislinf} for examples.
+This is in contrast with the \f$ L_{2} \f$ Voronoi diagram in which the
+bisector between a point and a segment is a parabolic arc.
+In the \f$ L_{\infty} \f$ Voronoi diagram, if the coordinates of
+the input sites are rational, then the coordinates of the vertices of
+the diagram are also rational, which is not true for the
+\f$ L_{2} \f$ diagram.
+For more details on \f$ L_{\infty} \f$ bisectors and the diagram,
+see \cite pl-svdlinf-2001.
+
+\cgalFigureBegin{figbislinf,bislinf.png}
+The \f$ L_{\infty} \f$ bisectors between two points and
+between a segment and a point.
+\cgalFigureEnd
+
+
+One very important difference in the \f$ L_{\infty} \f$ setting
+(in comparison to the \f$ L_{2} \f$ setting)
+is that in some special non-general position cases
+the \f$ L_{\infty} \f$ bisector
+between two sites can be bi-dimensional. Since this creates
+problems when drawing the diagram, we resort to a
+1-dimensionalization of these bisectors, by assigning portions of
+two-dimensional regions of a bisector to the two sites of the
+bisector. Moreover, this simplification of the diagram is
+acceptable in the VLSI applications, where the \f$ L_{\infty} \f$
+diagram is employed  \cite pl-svdlinf-2001.
+
+If two different points \f$ p \f$, \f$ q \f$ share one coordinate,
+then their \f$ L_{\infty} \f$ bisector is bi-dimensional as shown
+in figure \cgalFigureRef{figbispointsbidim}. In this special case,
+we 1-dimensionalize the bisector,
+by taking instead the Euclidean bisector of the two points.
+
+\cgalFigureBegin{figbispointsbidim,bidim1dim.png}
+The \f$ L_{\infty} \f$ bisector between two points with the same
+\f$ y \f$ coordinate and its 1-dimensionalization.
+\cgalFigureEnd
+
+Similarly, the bisector between the interior of an axis-parallel
+segment and one of its endpoints is also bi-dimensional as shown
+in figure \cgalFigureRef{figbisspbidim}. We 1-dimensionalize this
+bisector by taking instead the line passing through the endpoint
+that is perpendicular to the segment.
+
+\cgalFigureBegin{figbisspbidim,bidim1dimsp.png}
+The \f$ L_{\infty} \f$ bisector between a vertical segment and
+one of its endpoints and its 1-dimensionalization.
+\cgalFigureEnd
+
+\section secsdglinfdesign Software design
+
+In general, the software design of the algorithms and traits for the
+\f$ L_{\infty} \f$ Segment Delaunay graph are relying on the
+corresponding algorithms and traits for the \f$ L_{2} \f$ Segment
+Delaunay graph. We implement the \f$ L_{\infty} \f$ classes as
+subclasses of corresponding \f$ L_{2} \f$ classes from the
+Segment_Delaunay_graph_2 package.
+The names of the \f$ L_{\infty} \f$ classes contain an additional `_Linf` after
+`graph`, in comparison with the corresponding \f$ L_{2} \f$ classes.
+
+The order of complexity of the construction of the \f$ L_{\infty}
+\f$ diagram is the same as the one of the \f$ L_{2} \f$ diagram
+and thus we refer the end user to the 2D Segment Delaunay graph
+manual for complexity analysis.
+
+\subsection Segment_Delaunay_graph_Linf_2_Graph Segment Delaunay graph
+
+The  \f$ L_{\infty} \f$ Segment Delaunay graph class
+`Segment_Delaunay_graph_Linf_2<SegmentDelaunayGraphLinfTraits_2,SegmentDelaunayGraphDataStructure_2>`
+is a subclass of the corresponding
+`Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>`.
+In the \f$ L_{\infty} \f$ class, a few methods that
+are used when inserting a point in the interior of an existing
+segment are overridden. The details are not of interest to the end
+user, so we do not elaborate further.
+
+\subsection Segment_Delaunay_graph_Linf_2_Traits Segment Delaunay graph traits
+
+As in the case of \f$ L_{2} \f$, the geometric predicates are
+quite elaborate and we do not bother the end user with details.
+Our implementation tries to reuse the \f$ L_{2} \f$ traits,
+wherever possible, but there are
+extensive differences. We support geometric and arithmetic
+filtering, as the \f$ L_{2} \f$ predicates do.
+For more details,
+on these filtering techniques, see the Segment Delaunay graph package manual.
+
+In analogy with the  \f$ L_{2} \f$ setting,
+there are four models of the `SegmentDelaunayGraphLinfTraits_2`
+concept, two of which supporting strongly intersecting sites
+(`Segment_Delaunay_graph_Linf_traits_2<K,MTag>`,
+`Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>)
+and two of which support sites without intersections
+(`Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`,
+`Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>).
+For more details,
+see the Segment Delaunay graph package manual.
+
+
+\subsection Segment_Delaunay_graph_Linf_2_Hierarchy Segment Delaunay graph hierarchy
+
+The
+`Segment_Delaunay_graph_Linf_hierarchy_2<SegmentDelaunayGraphLinfTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
+class is equivalent to the Segment_Delaunay_graph_hierarchy_2,
+but it uses the `Segment_Delaunay_graph_Linf_2` class in each
+level of the hierarchy instead of `Segment_Delaunay_graph_2`.
+We refer the end user to the 
+Segment Delaunay graph package manual for a comparison of the
+performance of the plain graph class and the hierarchy class.
+
+\section secsdglinfexamples Examples
+
+The following examples show the usage of the \f$ L_{\infty} \f$
+algorithm and traits.
+They are similar to the examples in the \f$ L_{2} \f$
+Segment Delaunay graph package.
+
+\subsection Segment_Delaunay_graph_Linf_2FirstExample First Example
+
+The following example shows how to use the segment Delaunay graph traits
+in conjunction with the `Filtered_exact<CT,ET>` mechanism. In
+addition it shows how to use a few of the iterators provided by the
+`Segment_Delaunay_graph_Linf_2` class in order to count a few
+site-related quantities.
+
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-count-sites.cpp}
+
+\subsection Segment_Delaunay_graph_Linf_2SecondExample Second Example
+
+The following example shows how to use the segment Delaunay graph
+hierarchy along with the filtered traits class that supports
+intersecting sites.
+
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-filtered-traits.cpp}
+
+\subsection Segment_Delaunay_graph_Linf_2ThirdExample Third Example
+
+The following example demonstrates how to recover the defining sites
+for the edges of the Voronoi diagram (which are the duals of the
+edges of the segment Delaunay graph computed).
+
+\cgalExample{Segment_Delaunay_graph_Linf_2/sdg-voronoi-edges.cpp}
+
+*/
+} /* namespace CGAL */

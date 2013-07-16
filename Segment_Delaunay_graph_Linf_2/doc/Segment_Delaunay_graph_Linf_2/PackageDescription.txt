@@ -1,0 +1,64 @@
+/// \defgroup PkgSDGLinf L infinity Segment Delaunay graphs Reference
+/// \defgroup PkgSDGLinfConcepts Concepts
+/// \ingroup PkgSDGLinf
+
+/*!
+\addtogroup PkgSDGLinf
+\todo check generated documentation
+
+\cgalPkgDescriptionBegin{L infinity Segment Delaunay graph,
+PkgSDGLinfSummary}
+\cgalPkgPicture{sdglinf-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Panagiotis Cheilaris,
+Sandeep Kumar Dey, Evanthia Papadopoulou}
+\cgalPkgDesc{Geometric traits for computing the dual of
+the Voronoi diagram of a set of points and segments under the
+L infinity metric.}
+\cgalPkgManuals{Chapter_L_infinity_Segment_Delaunay_graph,PkgSDGLinf}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.X}
+\cgalPkgDependsOn{\ref PkgSegmentDelaunayGraph2Summary}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{DEMO 1,demo1.zip}
+\cgalPkgDemo{DEMO 2,demo2.zip}
+\cgalPkgShortInfoEnd
+
+\cgal provides geometric traits for computing the segment Delaunay 
+graph, i.e., the dual of the
+Voronoi diagram of segments, under the \f$ L_{\infty}\f$
+distance.
+These geometric traits have to be used in place of the parameter Gt of
+the class `CGAL::Segment_Delaunay_graph_2<Gt,DS>` for
+computing the 2D Delaunay graph of segments and points,
+under the \f$ L_{\infty}\f$ distance.
+The template parameter Gt must be a model of the
+`SegmentDelaunayGraphLinfTraits_2` concept, which
+is related to the geometric objects and predicates associated with
+computing segment Delaunay graphs, under the \f$ L_{\infty}\f$ distance.
+The classes `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`,
+`CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`
+`CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<K,MTag>`
+`CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<K,MTag>`
+are models of the `SegmentDelaunayGraphLinfTraits_2` concept.
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `SegmentDelaunayGraphLinfTraits_2`
+
+## Classes ##
+
+- `CGAL::Segment_Delaunay_graph_Linf_traits_2<K,MTag>`
+- `CGAL::Segment_Delaunay_graph_Linf_traits_without_intersections_2<K,MTag>`
+- `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+- `CGAL::Segment_Delaunay_graph_Linf_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
+
+*/

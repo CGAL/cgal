@@ -1,0 +1,7 @@
+/*!
+\example Segment_Delaunay_graph_Linf_2/sdg-count-sites.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-filtered-traits.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-info-set.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-red-blue-info.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-voronoi-edges.cpp
+*/
