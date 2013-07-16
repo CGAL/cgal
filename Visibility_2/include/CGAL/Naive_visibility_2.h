@@ -23,10 +23,10 @@ void print(std::vector<Point_handle> ps){
         std::cout<<ps[i]->point().x()<<","<<ps[i]->point().y()<<std::endl;
     }
 }
-template <typename Point_2>
-void print_point(const Point_2& p) {
-    std::cout<<"["<<p.x()<<","<<p.y()<<"]"<<std::endl;
-}
+//template <typename Point_2>
+//void print_point(const Point_2& p) {
+//    std::cout<<"["<<p.x()<<","<<p.y()<<"]"<<std::endl;
+//}
 
 
 template <typename Arrangement_2, typename Regularization_tag>
@@ -179,7 +179,6 @@ public:
         std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
         //preprocess the face
         input_face(fh, vertices, edges, query);
-        print(vertices);
         //initiation of vision ray
         Vector_2 dir;
         if (Direction_2(-1, 0) < Direction_2(Vector_2(query, (*vertices.rbegin())->point())))
@@ -530,9 +529,6 @@ private:
             add_edge(*begin_it, edges, r);
         } while (++begin_it != end_it);
 
-        //debug
-        std::cout<<"after adding"<<std::endl;
-        print_edges(edges);
     }
 
     //remove edges that are not active any longer
@@ -573,23 +569,25 @@ private:
     Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, std::vector<Point_2>& collinear_vertices) {
         typename std::vector<Halfedge_const_handle>::iterator curr = edges.begin();
 //        Point_2 p = r.source(), end1, end2;
-        Vertex_const_handle vertex1, vertex2;
+        Vertex_const_handle vertex1;
         //flag shows whether the left side or right side of needle is blocked.
         bool block_left, block_right;
         do {
             Point_2 cross = intersection_point(r, *curr);
-            print_point(cross);
             if (cross != (*curr)->source()->point() && cross != (*curr)->target()->point()) {
                 collinear_vertices.push_back(cross);
                 return INNER;
             }
-            if (cross == (*curr)->source()->point()) {
-                vertex1 = (*curr)->source();
-                vertex2 = (*curr)->target();
+            if (CGAL::orientation(r.source(), (*curr)->source()->point(), (*curr)->target()->point()) == CGAL::COLLINEAR) {
+                vertex1 = (*curr)->target();
             }
             else {
-                vertex1 = (*curr)->target();
-                vertex2 = (*curr)->source();
+                if (cross == (*curr)->source()->point()) {
+                    vertex1 = (*curr)->source();
+                }
+                else {
+                    vertex1 = (*curr)->target();
+                }
             }
             if (collinear_vertices.empty() || vertex1->point() != collinear_vertices.back()) {
                 collinear_vertices.push_back(vertex1->point());
