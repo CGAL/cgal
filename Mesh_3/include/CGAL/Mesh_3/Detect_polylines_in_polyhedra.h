@@ -152,17 +152,9 @@ struct Detect_polylines {
         Vertex_handle v = current_he->opposite()->vertex();
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
         std::cerr << "New corner vertex " << v->point() << std::endl;
-        std::cerr << "  indices were: ";
-        BOOST_FOREACH(typename Set_of_indices::value_type i,
-                      set_of_indices_of_current_edge) {
-          std::cerr << i << " ";
-        }
-        std::cerr << "\n           now: ";
-        BOOST_FOREACH(typename Set_of_indices::value_type i,
-                      set_of_indices_of_next_edge) {
-          std::cerr << i << " ";
-        }
-        std::cerr << "\n";
+        std::cerr << "  because of a border edge seen twice:\n"
+                  << "  (" << v->point()
+                  << " , " << current_he->vertex()->point() << ")\n";
 #endif
         ++v->nb_of_feature_edges;
         corner_vertices.insert(v);
