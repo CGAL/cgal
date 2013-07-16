@@ -27,40 +27,40 @@
 
 namespace CGAL { 
 
-template < class Traits_, class Predicate_ >
+template < class Traits_, class Functor_ >
 class Point_offset_adaptor {
   typedef Traits_ Traits;
-  typedef Predicate_ Predicate;
+  typedef Functor_ Functor;
 
   typedef typename Traits::Point_3       Point;
 
 public:
-  typedef typename Predicate::result_type result_type;
+  typedef typename Functor::result_type result_type;
 
- Point_offset_adaptor(const Predicate & pred) : _pred(pred) {}
+ Point_offset_adaptor(const Functor & functor) : _functor(functor) {}
 
   result_type operator()(const Point& p0, const Point& p1) const {
-    return _pred(p0.first, p1.first,
+    return _functor(p0.first, p1.first,
 	p0.second, p1.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
       const Point& p2) const {
-    return _pred(p0.first, p1.first, p2.first,
+    return _functor(p0.first, p1.first, p2.first,
 	p0.second, p1.second, p2.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
       const Point& p2, const Point& p3) const {
-    return _pred(p0.first, p1.first, p2.first, p3.first,
+    return _functor(p0.first, p1.first, p2.first, p3.first,
 	p0.second, p1.second, p2.second, p3.second);
   }
   result_type operator()(const Point& p0, const Point& p1,
       const Point& p2, const Point& p3, const Point& p4) const {
-    return _pred(p0.first, p1.first, p2.first, p3.first, p4.first,
+    return _functor(p0.first, p1.first, p2.first, p3.first, p4.first,
 	p0.second, p1.second, p2.second, p3.second, p4.second);
   }
 
 private:
-  Predicate _pred;
+  Functor _functor;
 };
 
 template < class P3DTTraits, class Off = typename CGAL::Periodic_3_offset_3 >
