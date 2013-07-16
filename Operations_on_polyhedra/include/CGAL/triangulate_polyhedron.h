@@ -28,9 +28,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
-
-// TODO: submit this file to CGAL too
-#include "CGAL/compute_normal.h"
+#include <CGAL/compute_normal.h>
 
 #include <queue>
 #include <vector>
@@ -104,7 +102,7 @@ public:
     {
       Facet_handle fit = *fit_it;
       typename Traits::Vector_3 normal = 
-        compute_facet_normal<Facet,Traits>(*fit);
+        CGAL::compute_facet_normal<Traits>(*fit);
 
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);
