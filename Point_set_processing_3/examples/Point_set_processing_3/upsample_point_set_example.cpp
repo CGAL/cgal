@@ -24,7 +24,7 @@ int main(void)
   // Reads a .xyz point set file in points[].
   std::vector<PointVectorPair> points;
   //std::ifstream stream("data/before_upsample.xyz");
-  std::ifstream stream("data/sphere_1k_after_regularization2.xyz");
+  std::ifstream stream("data/sphere_1k.xyz");
 
   if (!stream ||
       !CGAL::read_xyz_points_and_normals(stream,

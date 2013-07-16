@@ -167,7 +167,8 @@ compute_denoise_projection(
 /// @tparam Tree KD-tree.
 ///
 /// @return neighbors pwn of query point.
-template < typename Kernel,typename Tree >
+template < typename Kernel,
+           typename Tree>
 std::vector<CGAL::Point_with_normal_3<Kernel> >
 compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
@@ -258,6 +259,39 @@ compute_max_spacing(
 
 }
 
+template <typename Kernel>
+class Pwn_updater {
+  typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
+  typedef typename std::vector<Pwn> Pwn_set;
+  typedef typename Kernel::FT FT;
+
+  FT sharpness_sigma;
+  Pwn_set* pwn_set;
+  Pwn_set* update_pwn_set;
+  std::vector<Pwn_set>* pwn_neighbors_set;
+
+public: 
+  void operator() ( const tbb::blocked_range<size_t>& r ) const 
+  { 
+    for ( size_t i = r.begin(); i != r.end(); ++i ) 
+    {
+      (*update_pwn_set)[i] = denoise_points_internal::
+        compute_denoise_projection<Kernel>
+        ((*pwn_set)[i], 
+        (*pwn_neighbors_set)[i], 
+        0.15,
+        sharpness_sigma);   
+    }
+  }
+  Pwn_updater(FT s, 
+    Pwn_set *in,
+    Pwn_set *out, 
+    std::vector<Pwn_set>* neighbors) :sharpness_sigma(s), 
+    pwn_set(in),
+    update_pwn_set(out),
+    pwn_neighbors_set(neighbors){ }
+};
+
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
@@ -283,7 +317,8 @@ compute_max_spacing(
 template <typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
-          typename Kernel>
+          typename Kernel,
+          typename Concurrency_tag>
 double
 denoise_points_with_normals(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -439,38 +474,6 @@ denoise_points_with_normals(
   return sum_move_error / nb_points;
 }
 
-template <typename Kernel>
-class Pwn_updater {
-  typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn> Pwn_set;
-  typedef typename Kernel::FT FT;
-
-  FT sharpness_sigma;
-  Pwn_set* pwn_set;
-  Pwn_set* update_pwn_set;
-  std::vector<Pwn_set>* pwn_neighbors_set;
-
-public: 
-  void operator() ( const tbb::blocked_range<size_t>& r ) const 
-  { 
-    for ( size_t i = r.begin(); i != r.end(); ++i ) 
-    {
-      (*update_pwn_set)[i] = denoise_points_internal::
-                              compute_denoise_projection<Kernel>
-                               ((*pwn_set)[i], 
-                                (*pwn_neighbors_set)[i], 
-                                0.15,
-                                sharpness_sigma);   
-    }
-  }
-  Pwn_updater(FT s, 
-              Pwn_set *in,
-              Pwn_set *out, 
-              std::vector<Pwn_set>* neighbors) :sharpness_sigma(s), 
-                                                pwn_set(in),
-                                                update_pwn_set(out),
-                                                pwn_neighbors_set(neighbors){ }
-};
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
@@ -489,7 +492,7 @@ denoise_points_with_normals(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return denoise_points_with_normals(
+  return denoise_points_with_normals<Parallel_tag>(
     first, beyond,
     point_pmap,
     normal_pmap,
@@ -502,7 +505,8 @@ denoise_points_with_normals(
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
 template <typename ForwardIterator,
-          typename NormalPMap>
+          typename NormalPMap,
+          typename Concurrency_tag>
 double
 denoise_points_with_normals(
   ForwardIterator first, ///< first input point.

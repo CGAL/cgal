@@ -88,4 +88,16 @@ else()
 endif()
 
 
-
+# Activate concurrency?
+option(ACTIVATE_CONCURRENCY
+       "Enable concurrency"
+       ON)
+ 
+if( ACTIVATE_CONCURRENCY )
+  find_package( TBB REQUIRED )
+  if( TBB_FOUND )
+    add_definitions( -DNOMINMAX -DCGAL_LINKED_WITH_TBB )
+    include_directories ( ${TBB_INCLUDE_DIRS} )
+     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+  endif()
+endif()

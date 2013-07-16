@@ -7,6 +7,7 @@
 #include <CGAL/denoise_point_set.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/tags.h>
 
 #include <utility> // defines std::pair
 #include <list>
@@ -52,7 +53,9 @@ int main(void)
       std::cout << std::endl << "Iteration: " << i+1 << std::endl;
      
       double error = 
-      CGAL::denoise_points_with_normals(points.begin(), points.end(),
+      CGAL::denoise_points_with_normals/*<CGAL::Parallel_tag>*/(
+            points.begin(), 
+            points.end(),
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
             k, sharpness_sigma);
