@@ -419,8 +419,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
-  Scene_polylines_item* skeleton = new Scene_polylines_item;
-  skeleton->setName("skeleton");
+  Scene_polylines_item* skeleton = new Scene_polylines_item();
 
   boost::graph_traits<Graph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
@@ -433,6 +432,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     line.push_back(t);
     skeleton->polylines.push_back(line);
   }
+  skeleton->setName(QString("skeleton curve of %1").arg(item->name()) );
   scene->addItem(skeleton);
 
   // update scene
