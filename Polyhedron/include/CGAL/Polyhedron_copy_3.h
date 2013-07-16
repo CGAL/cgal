@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-template < class Poly, class HDS >
+template < class Poly, class HDS, bool clear_target_before = true >
 class Polyhedron_copy_3 : public Modifier_base<HDS> {
 protected:
     const Poly& source;
@@ -57,7 +57,9 @@ Polyhedron_copy_3<Poly,HDS>:: operator()( HDS& target) {
       typename Kernel_traits<typename HDS::Vertex::Point>::Kernel
     > convert;
 
-    target.clear();
+    if ( clear_target_before )
+      target.clear();
+
     Polyhedron_incremental_builder_3<HDS> B( target);
     B.begin_surface( source.size_of_vertices(),
                      source.size_of_facets(),
