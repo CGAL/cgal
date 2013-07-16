@@ -70,8 +70,10 @@ bool simple_polygon_halfedge_test_case(std::ifstream &input, std::ifstream &corr
         Segment_2 curr_seg(hit->source()->point(), hit->target()->point());
         if (curr_seg.has_on(query_pt)) {
             visibility.visibility_region(query_pt, hit, out_arr);
+            break;
         }
     }
+    std::cout << "exited" << std::endl;
     return true;
 //    return CGAL::test_are_equal<Arrangement_2>(correct_out_arr, out_arr);    
 }

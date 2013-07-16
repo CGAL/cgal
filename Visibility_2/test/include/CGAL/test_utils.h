@@ -88,13 +88,17 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
     }
     eit_fst_mid = eit_fst;
     eit_snd_mid = eit_snd;
+
     // Now we know where to start the edge comparisons from
     for (eit_fst, eit_snd ; eit_fst != arr1.edges_end(), 
          eit_snd != arr2.edges_end() ; ++eit_fst, ++eit_snd) {
 
         Segment_2 seg_fst = eit_fst->curve();
         Segment_2 seg_snd = eit_snd->curve();
-        if (seg_fst != seg_snd) {
+        std::cout << seg_fst << std::endl;
+        std::cout << seg_snd << std::endl;
+        if ((seg_fst.source() != seg_snd.source() || seg_fst.target() != seg_snd.target()) &&
+            (seg_fst.source() != seg_snd.target() || seg_fst.target() != seg_snd.source())) {
             return false;
         }
     }
