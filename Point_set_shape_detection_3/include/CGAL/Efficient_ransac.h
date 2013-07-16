@@ -237,19 +237,35 @@ class Primitive_ab
 
     virtual inline Point projection() const = 0;
     virtual inline Point projection(Point _p) const = 0;
+	virtual inline float squared_distance(Point _p) const = 0;
+	virtual inline float cos_to_normal(Point _p, Vector _n)  const = 0;
+        
+
     virtual void compute(std::set<int> &l_list_index_selected, const Fuzzy_sphere _query, Pwn_iterator &m_it_Point_Normal) = 0;
 
     //used only during region growing (at the end to attach the points)
-    virtual int score(const point_iterator _it_Points, const normal_iterator _it_Normals, std::vector<int> &index_point_to_process, const std::vector<bool> &is_available, const float coeff_ep = 1)	= 0;
-    //used by  computeBound
-    virtual int score(const std::vector<Tree*> *_t, const Fuzzy_sphere _query,const point_iterator _it_Points, const normal_iterator _it_Normals, const std::vector<bool> &is_available) = 0;
+    //virtual int score(const point_iterator _it_Points, const normal_iterator _it_Normals, std::vector<int> &index_point_to_process, const std::vector<bool> &is_available, const float coeff_ep = 1)	= 0;
+    int score(const point_iterator _it_Points, const normal_iterator _it_Normals, std::vector<int> &index_point_to_process, const std::vector<bool> &is_available, const float coeff_ep = 1);
+    
+	//used by  computeBound
+    //virtual int score(const std::vector<Tree*> *_t, const Fuzzy_sphere _query,const point_iterator _it_Points, const normal_iterator _it_Normals, const std::vector<bool> &is_available) = 0;
+    int score(const std::vector<Tree*> *_t, const Fuzzy_sphere _query,const point_iterator _it_Points, const normal_iterator _it_Normals, const std::vector<bool> &is_available,  const float coeff_ep = 1);
       
+
+
     //virtual int score(float gam,  std::vector<Point_and_int>* l_points, normal_iterator l_it_Normal)  = 0;
     virtual void info() = 0;
     virtual std::string type_str() const = 0;
 
+
 private:
-    
+    	// int (*pt2Func)(float, char, char)
+	//typedef bool (*type_cost_function)(const Primitive_ab<Kernel, inputDataType> *_this,
+	//const Point &_p, const Vector &_n, const float epsilon_distance, const float delta_dev_normal);
+
+	static bool default_cost_function (const Primitive_ab<Kernel, inputDataType> *_this,
+	const Point &_p, const Vector &_n, const float epsilon_distance, const float delta_dev_normal);
+
     template<typename T> bool isfinite(T arg)
     {
       return arg == arg && 
@@ -257,7 +273,11 @@ private:
             arg != -std::numeric_limits<T>::infinity();
     }
 
-      void inline init(){m_isValid = true;m_nb_subset_used = 0;m_sum_ExpectedValue = 0;m_lowerBound = std::numeric_limits<float>::min();m_upperBound = std::numeric_limits<float>::min();};
+      void inline init()
+	  {
+		  m_isValid = true;m_nb_subset_used = 0;m_sum_ExpectedValue = 0;
+		  m_lowerBound = std::numeric_limits<float>::min();m_upperBound = std::numeric_limits<float>::min();
+	  };
 
     void computeBound(const int sizeS1,const int sizeP,const float scoreS1){ hypergeometricalDist(-2-sizeS1, -2-sizeP, -1-scoreS1, m_lowerBound, m_upperBound);	m_lowerBound = -1-m_lowerBound;	m_upperBound = -1-m_upperBound;};
     void hypergeometricalDist(const int UN,const int x,const float n, float &low, float &high) 
@@ -398,6 +418,10 @@ class Plane : public Primitive_ab<Kernel,inputDataType>
     inline Point projection() const {return projection(pointOnPrimitive()) ;}
     Point projection(Point _p) const {return m_plane.projection (_p);}
     
+	inline float squared_distance(Point _p) const {return CGAL::squared_distance ( m_plane, _p);}
+	inline float cos_to_normal(Point _p, Vector _n) const{return _n*m_plane.orthogonal_vector ();}; //suppose _n is unary, _p not needed for plane
+
+	/*
     int score(const point_iterator _it_Points, const normal_iterator _it_Normals, std::vector<int> &index_point_to_process, const std::vector<bool> &_is_available, const float coeff_ep)
     {
 
@@ -461,49 +485,8 @@ class Plane : public Primitive_ab<Kernel,inputDataType>
                         bind2nd(std::not_equal_to<int>(),-1));
         return l_score;
     }
-
-
-    /*
-    int score(float gam,  std::vector<Point_and_int>* _points, normal_iterator _it_Normal)
-    {
-        std::vector<int> l_points( _points->size());
-
-        printf("before %d\n",l_points.size());
-        //points inside the gamma-band around the primitive and normal of those point within alpha 
-        //1 map (put -1 on every wrong point, index otherwise
-        is_gamma_band_and_normal_ok pred(m_plane,gam, m_normalThresh,_it_Normal); 
-        std::transform (_points->begin(),  _points->end(), l_points.begin(), pred);
-
-        //for now we skip the cc part
-        m_score = l_points.size() - (int) count (l_points.begin(), l_points.end(), -1);
-        return m_score;
-
-
-        //2. remove all the -1	  (not needed anymore, we test -1 and skip during 3.)
-        //std::vector<int>::iterator new_end = std::remove (l_points.begin(), l_points.end(), -1) ;
-        //l_points.erase(new_end, l_points.end());
-
-        //TODO implement me
-        //3. return largest cc
-        //3.1   project all the point in parameter space (in the plane)
-        std::vector<Point_2d> l_2D_points;
-        int count = 0;
-
-        for (	std::vector<int>::iterator it = l_points.begin(); it != l_points.end();it++, count++)
-        {	  
-          int index = *it;
-          if (index != -1)
-          {
-          Point p =  boost::get<0>((*_points)[count]);
-          l_2D_points.push_back(m_plane.to_2d(p));
-          }
-        }
-        //3.2 create bitmap
-        bbox_2d bb2d = bounding_box (l_2D_points.begin(), l_2D_points.end()) ;
-        printf("after %d\n",l_2D_points.size());
-        return 0;
-    };
-    */
+	*/
+	//////stop here
 };
 
 //m for members
@@ -1210,6 +1193,74 @@ void Primitive_ab<Kernel,inputDataType>::attachPoints(const point_iterator _it_P
 
 };
 
+/*
+template <typename Kernel, class inputDataType>
+class cost_RANSAC
+{
+	private:
+	Primitive_ab<Kernel, inputDataType>	_primitive;
+	point_iterator _it_Points;
+	normal_iterator _it_Normals;
+	std::vector<bool> _is_available;
+}
+*/
+
+template <typename Kernel, class inputDataType>
+bool Primitive_ab<Kernel, inputDataType>::default_cost_function( const Primitive_ab<Kernel, inputDataType> *_this,
+	const Point &_p, const Vector &_n, const float epsilon_distance, const float delta_dev_normal)
+{
+	if (_this->squared_distance(_p)  > epsilon_distance*epsilon_distance) return false;
+	if (_this->cos_to_normal(_p, _n) >  delta_dev_normal ) return false;
+	return true;
+}
+
+template <typename Kernel, class inputDataType>
+int Primitive_ab<Kernel, inputDataType>::score(const point_iterator _it_Points, const normal_iterator _it_Normals, std::vector<int> &index_point_to_process, const std::vector<bool> &_is_available, const float coeff_ep)
+    {
+	  const Primitive_ab<Kernel, inputDataType> *_this = this;
+	  float epsilon_distance = coeff_ep*m_epsilon;
+	  float delta_dev_normal = m_normalThresh;
+
+      auto callback =  [_this,&_it_Points, &_it_Normals, &_is_available, &epsilon_distance, &delta_dev_normal](const int& _elem)  -> int 							
+      {
+        if (!_is_available[_elem]) return -1;
+		if (!Primitive_ab<Kernel, inputDataType>::default_cost_function(_this,*(_it_Points+_elem), *(_it_Normals +_elem), epsilon_distance, delta_dev_normal)) return -1;
+		//if (!Primitive_ab<Kernel, inputDataType>::_cost_function(_this,*(_it_Points+_elem), *(_it_Normals +_elem), epsilon_distance, delta_dev_normal)) return -1;
+		return _elem;
+        };
+
+
+        std::transform (index_point_to_process.begin(), index_point_to_process.end(), index_point_to_process.begin(), callback);
+
+          
+      //for now we skip the cc part, and count the nb point not equal to -1
+        int l_score =  std:: count_if(index_point_to_process.begin(),
+                          index_point_to_process.end(), 
+                        bind2nd(std::not_equal_to<int>(),-1));
+        return l_score;
+         
+        return 0;
+    }	
+
+
+template <typename Kernel, class inputDataType>
+int Primitive_ab<Kernel, inputDataType>::score(const std::vector<Tree*> *_t, const Fuzzy_sphere _query, const point_iterator _it_Points, const normal_iterator _it_Normals, const std::vector<bool> &_is_available, const float coeff_ep)
+    {
+        //get the points as Point_and_int
+        std::vector<Point_and_int> l_points_s1;
+        _t->at(m_nb_subset_used)->search(std::back_inserter(l_points_s1),_query);
+
+		//get the int only
+        // See "Binding an overloaded function" in boost::bind documentation
+        int const& (Point_and_int::*get_int_from_PaI) () const = &Point_and_int::get<1>;
+        auto l_it_int_start = boost::make_transform_iterator(l_points_s1.begin(),boost::bind( get_int_from_PaI, _1));
+        auto l_it_int_end = boost::make_transform_iterator(l_points_s1.end(),boost::bind( get_int_from_PaI, _1));
+
+        std::vector<int> index_point_to_process(l_points_s1.size(),0);
+		std::copy(l_it_int_start, l_it_int_end, index_point_to_process.begin());
+
+		return score(_it_Points, _it_Normals, index_point_to_process,_is_available,coeff_ep);
+    }
 
 
 //basically add more subset to compute score
@@ -1260,5 +1311,6 @@ bool Primitive_ab<Kernel, inputDataType>::improveBound(const std::pair<std::vect
 };
 
 }}
+
 
 #endif
