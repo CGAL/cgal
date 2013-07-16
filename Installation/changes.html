@@ -119,6 +119,25 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
     </li>
   </ul>
 
+  <h3>Concurrency in CGAL</h3>
+  <ul>
+    <li>Add a <code>FindTBB</code> CMake module so that one can easily link with TBB to write shared-memory parallel code.</li>
+    <li>Introduce two new tags: Sequential_tag and Parallel_tag</li>
+  </ul>
+
+  <h3>Algebraic Foundations</h3>
+  <ul>
+    <li> For convenience, add an overload of <code>make_rational()</code> taking a pair of numbers.</li>
+  </ul>
+
+  <h3>2D Apollonius graphs</h3>
+  <ul>
+    <li>Modified insertion algorithm so that the code can handle
+      pseudo-circles as well.</li>
+    <li>Updated implementation of the vertex conflict predicate by a
+      faster version.</li>
+  </ul>
+
   <h3>2D Arrangements</h3>
   <ul>
     <li> The point location functionalities now uses a <code>boost::variant</code> instead of a <code>CGAL::Object</code>.
@@ -126,9 +145,47 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
     </li>
   </ul>
 
-  <h3>Algebraic Foundations</h3>
+  <h3>3D Boolean Operations on Nef Polyhedra</h3>
   <ul>
-    <li> For convenience, add an overload of <code>make_rational()</code> taking a pair of numbers.</li>
+    <li>Bug-fix in IO when using <code>Lazy_exact_nt</code> as number type or <code>Exact_predicates_exact_constructions_kernel</code> as kernel.</li>
+  </ul>
+
+  <h3>CGAL and Boost Property Maps</h3>
+  <ul>
+    <li> The <code>key_type</code> of the property maps provided by CGAL used to be an iterator. In order to be more easily re-used,
+         the <code>key_type</code> has been changed to be the <code>value_type</code> of the iterator.
+         The packages that have been updated to match these changes are <b>Point Set Processing</b> and <b>Surface Reconstruction from Point Sets</b>.
+         However, for most users this change should be transparent if the default property maps were used.
+         For convenience, the former behavior can be enabled by defining the macro <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>.
+    </li>
+  </ul>
+
+  <h3>Combinatorial Maps</h3>
+  <ul>
+    <li>Two bug fixes: do not use the 2 least significant bits for cell attribute without dart support; add share a mark in CMap_cell_iterator.</li>
+    <li>Add a constructor taking a given combinatorial map as argument, possibly with different dimension and/or different attributes. This allows to transform a combinatorial map.</li>
+    <li>Add operator= and swap method.</li>
+    <li>Add dynamic onmerge/onsplit functions that can be associated dynamically to i-attributes and which are automatically called when i-cells are split/merged.</li>
+      <li>Add a function allowing to reverse the orientation of a combinatorial map, and another one to reverse one connected component of a combinatorial map.</li>
+  </ul>
+
+  <h3>3D Fast Intersection and Distance Computation</h3>
+  <ul>
+    <li>Following the intersection API change, <code>Object_and_primitive_id</code> has been replaced by a template class
+        <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
+        query object type.
+    </li>
+    <li> Introduce the class <code>AABB_HalfedgeGraph_segment_primitive</code> which replaces the class <code>AABB_polyhedron_segment_primitive</code>  (which is now deprecated).
+         The new class is more general and can be used with any model of <code>HalfedgeGraph</code>.</li>
+    <li>Introduce the class <code>AABB_FaceGraph_triangle_primitive</code> which replaces the class <code>AABB_polyhedron_triangle_primitive</code>  (which is now deprecated).</li>
+    <li>Document the classes <code>AABB_segment_primitive</code> and <code>AABB_triangle_primitive</code> that were already used in some examples.</li>
+    <li>Add a generic primitive class <code>AABB_primitive</code> that allows to define a primitive type by defining only two property maps.</li>
+    <li>Introduce a new concept of primitive <code>AABBPrimitiveWithSharedData</code>. It allows to have some data shared between the primitives stored in a <code>AABB_tree</code>.
+        With this you can, for example have a primitive wrapping an integer which refers to the position of a geometric object in a <code>std::vector</code>.
+        Only one reference to this vector will be stored in the traits of the tree.
+        The concept <code>AABBTraits</code>, its model <code>AABB_traits</code> and the class <code>AABB_tree</code> have been updated accordingly.
+        However, everything is  backward compatible.</li>
+    <li> Fix a memory leak in the destructor of the class <code>AABB-tree</code></li>
   </ul>
 
   <h3>2D and 3D Geometry Kernel </h3>
@@ -154,12 +211,36 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
     </li>
   </ul>
 
+  <h3>3D Mesh Generation</h3>
+  <ul>
+    <li>Speed-up <code>Mesh_3</code> and in particular the global optimizers  (Lloyd and ODT) by
+          introducing a parameter <code>do_freeze</code> to prevent from moving vertices which would move of very small displacements.</li>
+    <li> Introduce new data structures and options for speed-up and compacity. Note that <code>Compact_mesh_cell_base_3</code> and
+          <code>Mesh_vertex_base_3</code> are now our favoured implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
+          <code>Mesh_cell_base_3</code> is now deprecated.
+	</li>
+    <li> Introduce a new constructor for <code> Polyhedral_mesh_domain_3</code> that takes a bounding polyhedron
+           to be meshed along with a polyhedral surface entirely included in it.
+          This allows the user to mesh a polyhedral domain with internal surface(s) which can be non-watertight and even non-manifold.
+	</li>
+    <li> Several documentation bug fixes.
+    </li>
+	<li> Provide the ability to plug in custom cell_base/vertex_base classes into the Mesh_triangulation_3 class. </li>
+  </ul>
+
   <h3>2D Segment Delaunay Graph</h3>
   <ul>
     <li>Add functions <code>insert_points</code> and <code>insert_segments</code> to insert a range
         of points and segments. These functions uses the spatial sorting in order to speed up the
         time needed for the insertion. The function <code>insert(Input_iterator first, Input_iterator beyond, Tag_true)</code>
         has been updated to dispatch the input when possible to these functions.
+    </li>
+  </ul>
+
+  <h3>STL Extensions for CGAL</h3>
+  <ul>
+    <li>Add to <code>Dispatch_output_iterator</code> and <code>Dispatch_or_drop_output_iterator</code>
+        an operator to accept and dispatch a tuple of values.
     </li>
   </ul>
 
@@ -177,89 +258,6 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
        function that allows a copy between TDS of different types. The CGAL model has been updated.</li>
     <li>Add an advanced function to set the infinite vertex of the triangulation for low level operations</li>
   </ul>
-
-  <h3>Combinatorial Maps</h3>
-  <ul>
-    <li>Two bug fixes: do not use the 2 least significant bits for cell attribute without dart support; add share a mark in CMap_cell_iterator.</li>
-    <li>Add a constructor taking a given combinatorial map as argument, possibly with different dimension and/or different attributes. This allows to transform a combinatorial map.</li>
-    <li>Add operator= and swap method.</li>
-    <li>Add dynamic onmerge/onsplit functions that can be associated dynamically to i-attributes and which are automatically called when i-cells are split/merged.</li>
-      <li>Add a function allowing to reverse the orientation of a combinatorial map, and another one to reverse one connected component of a combinatorial map.</li>
-  </ul>
-
-  <h3>2D Apollonius graphs</h3>
-  <ul>
-    <li>Modified insertion algorithm so that the code can handle
-      pseudo-circles as well.</li>
-    <li>Updated implementation of the vertex conflict predicate by a
-      faster version.</li>
-  </ul>
-
-  <h3>3D Boolean Operations on Nef Polyhedra</h3>
-  <ul>
-    <li>Bug-fix in IO when using <code>Lazy_exact_nt</code> as number type or <code>Exact_predicates_exact_constructions_kernel</code> as kernel.</li>
-  </ul>
-
-  <h3>3D Fast Intersection and Distance Computation</h3>
-  <ul>
-    <li>Following the intersection API change, <code>Object_and_primitive_id</code> has been replaced by a template class
-        <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
-        query object type.
-    </li>
-    <li> Introduce the class <code>AABB_HalfedgeGraph_segment_primitive</code> which replaces the class <code>AABB_polyhedron_segment_primitive</code>  (which is now deprecated).
-         The new class is more general and can be used with any model of <code>HalfedgeGraph</code>.</li>
-    <li>Introduce the class <code>AABB_FaceGraph_triangle_primitive</code> which replaces the class <code>AABB_polyhedron_triangle_primitive</code>  (which is now deprecated).</li>
-    <li>Document the classes <code>AABB_segment_primitive</code> and <code>AABB_triangle_primitive</code> that were already used in some examples.</li>
-    <li>Add a generic primitive class <code>AABB_primitive</code> that allows to define a primitive type by defining only two property maps.</li>
-    <li>Introduce a new concept of primitive <code>AABBPrimitiveWithSharedData</code>. It allows to have some data shared between the primitives stored in a <code>AABB_tree</code>.
-        With this you can, for example have a primitive wrapping an integer which refers to the position of a geometric object in a <code>std::vector</code>.
-        Only one reference to this vector will be stored in the traits of the tree.
-        The concept <code>AABBTraits</code>, its model <code>AABB_traits</code> and the class <code>AABB_tree</code> have been updated accordingly.
-        However, everything is  backward compatible.</li>
-    <li> Fix a memory leak in the destructor of the class <code>AABB-tree</code></li>
-  </ul>
-
-  <h3>STL Extensions for CGAL</h3>
-  <ul>
-    <li>Add to <code>Dispatch_output_iterator</code> and <code>Dispatch_or_drop_output_iterator</code>
-        an operator to accept and dispatch a tuple of values.
-    </li>
-  </ul>
-
-  <h3>CGAL and Boost Property Maps</h3>
-  <ul>
-    <li> The <code>key_type</code> of the property maps provided by CGAL used to be an iterator. In order to be more easily re-used,
-         the <code>key_type</code> has been changed to be the <code>value_type</code> of the iterator.
-         The packages that have been updated to match these changes are <b>Point Set Processing</b> and <b>Surface Reconstruction from Point Sets</b>.
-         However, for most users this change should be transparent if the default property maps were used.
-         For convenience, the former behavior can be enabled by defining the macro <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>.
-    </li>
-  </ul>
-
-  <h3>3D Mesh Generation</h3>
-  <ul>
-    <li>Speed-up <code>Mesh_3</code> and in particular the global optimizers  (Lloyd and ODT) by 
-          introducing a parameter <code>do_freeze</code> to prevent from moving vertices which would move of very small displacements.</li>
-    <li> Introduce new data structures and options for speed-up and compacity. Note that <code>Compact_mesh_cell_base_3</code> and
-          <code>Mesh_vertex_base_3</code> are now our favoured implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
-          <code>Mesh_cell_base_3</code> is now deprecated. 
-	</li>
-    <li> Introduce a new constructor for <code> Polyhedral_mesh_domain_3</code> that takes a bounding polyhedron 
-           to be meshed along with a polyhedral surface entirely included in it.
-          This allows the user to mesh a polyhedral domain with internal surface(s) which can be non-watertight and even non-manifold.
-	</li>
-    <li> Several documentation bug fixes.
-    </li>
-	<li> Provide the ability to plug in custom cell_base/vertex_base classes into the Mesh_triangulation_3 class. </li>
-  </ul>
-    
-  <h3>Concurrency in CGAL</h3>
-  <ul>
-    <li>Add a <code>FindTBB</code> CMake module so that one can easily link with TBB to write shared-memory parallel code.</li>
-    <li>Introduce two new tags: Sequential_tag and Parallel_tag</li>
-  </ul>
-    
-
 </div>
 
 <h2 id="release4.2">Release 4.2 </h2>
