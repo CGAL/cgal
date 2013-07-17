@@ -14,7 +14,7 @@
 #include <iostream>
 #include <string>
 #include <CGAL/Gmpq.h>
-
+#include <set>
 
 namespace CGAL {
 
@@ -140,6 +140,12 @@ Number_type string2num(const std::string& s) {
     }
 }
 
+template<class Number_type>
+std::string num2string(Number_type& n) {
+    std::stringstream ss;
+    ss<<n;
+    return ss.str();
+}
 template <class _Arrangement_2>
 void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     typedef _Arrangement_2 								  Arrangement_2;
@@ -222,6 +228,48 @@ void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     }
 
 }
+
+template<typename Arrangement_2>
+bool compare_arr_by_edges(const Arrangement_2& arr1, const Arrangement_2& arr2) {
+    std::set<std::string> s1;
+    typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
+    for (Edge_const_iterator eit = arr1.edges_begin(); eit != arr1.edges_end(); ++eit) {
+        s1.insert(edge2string(eit->target()->point(), eit->source()->point()));
+    }
+    std::set<std::string> s2;
+    for (Edge_const_iterator eit = arr2.edges_begin(); eit != arr2.edges_end(); ++eit) {
+        s2.insert(edge2string(eit->target()->point(), eit->source()->point()));
+    }
+    return s1==s2;
+}
+
+template<typename Point_2>
+bool is_ahead(Point_2& p1, Point_2& p2) {
+    if (p1.x() > p2.x()) {
+        return true;
+    }
+    if (p1.x() == p2.x() && p1.y() > p2.y()) {
+        return true;
+    }
+    return false;
+}
+
+
+template<typename Point_2>
+std::string edge2string(const Point_2& p1, const Point_2& p2) {
+    Point_2 q1, q2;
+    if (is_ahead(p1, p2)) {
+        q1 = p1;
+        q2 = p2;
+    }
+    else {
+        q1 = p2;
+        q2 = p1;
+    }
+    return num2string(q1.x()) + num2string(q1.y()) + num2string(q2.x()) + num2string(q2.y());
+}
+
+
 
 } // end namespace CGAL
 

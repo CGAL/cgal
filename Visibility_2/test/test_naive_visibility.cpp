@@ -62,6 +62,7 @@ int main() {
 //            CGAL::Visibility_2::print_arrangement(arr_vb);
 //            CGAL::Visibility_2::print_arrangement(arr_ans);
             std::cout<<(true == (CGAL::test_are_equal<Arrangement_2>(arr_ans, arr_vb)))<<std::endl;
+            std::cout<<CGAL::compare_arr_by_edges(arr_ans, arr_vb);
         }
     }
     //test kernel Exact_predicates_exact_constructions_kernel
