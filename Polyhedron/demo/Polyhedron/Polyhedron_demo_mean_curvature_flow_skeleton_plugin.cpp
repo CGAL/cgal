@@ -316,13 +316,16 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   std::cout << "Degeneracy\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  int num_split = mcs->detect_degeneracies();
+  mcs->detect_degeneracies();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
+  fixedPointsItem->setName(QString("fixed points of %1").arg(item->name()));
+
   std::vector<Point> fixedPoints;
   mcs->get_fixed_points(fixedPoints);
+
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); i++)
   {
@@ -330,6 +333,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     ps->select(&point);
     ps->push_back(point);
   }
+
   if (fixedPointsItemIndex == -1)
   {
     fixedPointsItemIndex = scene->addItem(fixedPointsItem);
@@ -402,9 +406,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   // update scene
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
-  fixedPointsItem->setName("fixed points");
+  fixedPointsItem->setName(QString("fixed points of %1").arg(item->name()));
+
   std::vector<Point> fixedPoints;
   mcs->get_fixed_points(fixedPoints);
+
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); i++)
   {
@@ -492,7 +498,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     line.push_back(t);
     skeleton->polylines.push_back(line);
   }
-  skeleton->setName(QString("skeleton curve of %1").arg(item->name()) );
+  skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);
 
   // update scene
@@ -554,9 +560,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
 
   // update scene
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
-  fixedPointsItem->setName("fixed points");
+  fixedPointsItem->setName(QString("fixed points of %1").arg(item->name()));
+
   std::vector<Point> fixedPoints;
   mcs->get_fixed_points(fixedPoints);
+
   Point_set *ps = fixedPointsItem->point_set();
   for (size_t i = 0; i < fixedPoints.size(); i++)
   {

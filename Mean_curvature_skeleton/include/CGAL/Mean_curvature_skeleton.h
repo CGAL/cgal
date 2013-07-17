@@ -27,9 +27,6 @@
 // Skip the geometric test
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Geometric_test_skipper.h>
 
-// Visitor base
-#include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
-
 // Adaptor for Polyhedron_3
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
@@ -173,25 +170,6 @@ private:
 
     CGAL::Unique_hash_map<key_type, bool> mConstrains;
 
-  };
-
-  struct Midpoint_placement_visitor : SMS::Edge_collapse_visitor_base<Polyhedron>
-  {
-    Midpoint_placement_visitor(){}
-
-    // Called AFTER each edge has been collapsed
-    void OnCollapsed(Profile const& edge_profile, Vertex_handle vertex_handle)
-    {
-//      std::cout << "here1\n";
-      vertex_descriptor v0 = edge_profile.v0();
-//      std::cout << "here2\n";
-      vertex_descriptor v1 = edge_profile.v1();
-//      std::cout << "here3\n";
-      vertex_handle->point() = Point((v0->point().x() + v1->point().x()) * 0.5,
-                                     (v0->point().y() + v1->point().y()) * 0.5,
-                                     (v0->point().z() + v1->point().z()) * 0.5);
-//      std::cout << "here4\n";
-    }
   };
 
 // Public methods
@@ -613,27 +591,13 @@ public:
         }
       }
     }
-//    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
-//    {
-//      vertex_descriptor vi = boost::source(*eb, *polyhedron);
-//      vertex_descriptor vj = boost::target(*eb, *polyhedron);
-//      Point pi = vi->point();
-//      Point pj = vj->point();
-//      double dis = sqrt(squared_distance(pi, pj));
-//      if (dis < edgelength_TH)
-//      {
-//        std::cerr << "dis " << dis << "\n";
-//      }
-//    }
 
-//    std::cerr << "after collapse " << cnt << " fixed vertices\n";
     return r;
   }
 
   int iteratively_collapse_edges()
   {
     int num_collapses = 0;
-    int iter = 0;
     while (true)
     {
       int cnt = collapse_short_edges();
@@ -643,7 +607,7 @@ public:
       }
       else
       {
-        std::cerr << "collapse " << cnt << "\n";
+//        std::cerr << "collapse " << cnt << "\n";
         num_collapses += cnt;
       }
     }
