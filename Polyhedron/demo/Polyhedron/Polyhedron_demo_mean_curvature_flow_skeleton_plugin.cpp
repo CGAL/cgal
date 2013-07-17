@@ -92,6 +92,8 @@ public:
     ui->alpha->setValue(0.15);
     ui->zero_TH->setDecimals(8);
     ui->zero_TH->setValue(1e-07);
+    ui->area_TH->setDecimals(8);
+    ui->area_TH->setValue(1e-5);
   }
 
 public slots:
@@ -102,12 +104,14 @@ public slots:
   void on_actionDegeneracy();
   void on_actionRun();
   void on_actionSkeletonize();
+  void on_actionConverge();
 
 private:
   Mean_curvature_skeleton* mcs;
   QDockWidget* dockWidget;
   Ui::Mean_curvature_flow_skeleton_plugin* ui;
   int fixedPointsItemIndex;
+  int nonFixedPointsItemIndex;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -147,10 +151,14 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionRun()));
     connect(ui->pushButton_skeletonize, SIGNAL(clicked()),
             this, SLOT(on_actionSkeletonize()));
+    connect(ui->pushButton_converge, SIGNAL(clicked()),
+            this, SLOT(on_actionConverge()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
+
     fixedPointsItemIndex = -1;
+    nonFixedPointsItemIndex = -1;
   }
 }
 
@@ -166,11 +174,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
   double edgelength_TH = ui->edgelength_TH->value();
   double alpha = ui->alpha->value();
   double zero_TH = ui->zero_TH->value();
+  double area_TH = ui->area_TH->value();
   double diag = scene->len_diagonal();
 
   if (mcs == NULL)
   {
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
   }
   else
   {
@@ -184,7 +194,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
       edgelength_TH = ui->edgelength_TH->value();
       alpha = ui->alpha->value();
       zero_TH = ui->zero_TH->value();
-      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+      area_TH = ui->area_TH->value();
+      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
     }
     else
     {
@@ -214,11 +226,18 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
 
   if (mcs == NULL)
   {
-    std::cerr << "invalide mesh\n";
-    return;
+    double omega_L = ui->omega_L->value();
+    double omega_H = ui->omega_H->value();
+    double edgelength_TH = ui->edgelength_TH->value();
+    double alpha = ui->alpha->value();
+    double zero_TH = ui->zero_TH->value();
+    double area_TH = ui->area_TH->value();
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
   }
 
   QTime time;
@@ -243,11 +262,18 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
 
   if (mcs == NULL)
   {
-    std::cerr << "invalide mesh\n";
-    return;
+    double omega_L = ui->omega_L->value();
+    double omega_H = ui->omega_H->value();
+    double edgelength_TH = ui->edgelength_TH->value();
+    double alpha = ui->alpha->value();
+    double zero_TH = ui->zero_TH->value();
+    double area_TH = ui->area_TH->value();
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
   }
 
   QTime time;
@@ -269,14 +295,20 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  std::cerr << "mesh index " << index << "\n";
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
 
   if (mcs == NULL)
   {
-    std::cerr << "invalide mesh\n";
-    return;
+    double omega_L = ui->omega_L->value();
+    double omega_H = ui->omega_H->value();
+    double edgelength_TH = ui->edgelength_TH->value();
+    double alpha = ui->alpha->value();
+    double zero_TH = ui->zero_TH->value();
+    double area_TH = ui->area_TH->value();
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
   }
 
   QTime time;
@@ -327,11 +359,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   double edgelength_TH = ui->edgelength_TH->value();
   double alpha = ui->alpha->value();
   double zero_TH = ui->zero_TH->value();
+  double area_TH = ui->area_TH->value();
   double diag = scene->len_diagonal();
 
   if (mcs == NULL)
   {
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
   }
   else
   {
@@ -345,7 +379,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
       edgelength_TH = ui->edgelength_TH->value();
       alpha = ui->alpha->value();
       zero_TH = ui->zero_TH->value();
-      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+      area_TH = ui->area_TH->value();
+      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
     }
     else
     {
@@ -384,8 +420,30 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   {
     scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
   }
+
+//  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
+//  nonFixedPointsItem->setName("non-fixed points");
+//  nonFixedPointsItem->setColor(QColor(0, 255, 0));
+//  std::vector<Point> nonFixedPoints;
+//  mcs->get_non_fixed_points(nonFixedPoints);
+//  ps = nonFixedPointsItem->point_set();
+//  for (size_t i = 0; i < nonFixedPoints.size(); i++)
+//  {
+//    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
+//    ps->push_back(point);
+//  }
+//  if (nonFixedPointsItemIndex == -1)
+//  {
+//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem);
+//  }
+//  else
+//  {
+//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem);
+//  }
+
   scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
+//  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
@@ -404,7 +462,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     double edgelength_TH = ui->edgelength_TH->value();
     double alpha = ui->alpha->value();
     double zero_TH = ui->zero_TH->value();
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(), omega_L, omega_H, edgelength_TH, zero_TH);
+    double area_TH = ui->area_TH->value();
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
   }
 
   QTime time;
@@ -436,6 +496,107 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   scene->addItem(skeleton);
 
   // update scene
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
+
+  double omega_L = ui->omega_L->value();
+  double omega_H = ui->omega_H->value();
+  double edgelength_TH = ui->edgelength_TH->value();
+  double alpha = ui->alpha->value();
+  double zero_TH = ui->zero_TH->value();
+  double area_TH = ui->area_TH->value();
+  double diag = scene->len_diagonal();
+
+  if (mcs == NULL)
+  {
+    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+  }
+  else
+  {
+    Polyhedron* mesh = mcs->get_polyhedron();
+    if (mesh != pMesh)
+    {
+      delete mcs;
+      init_ui(diag);
+      omega_L = ui->omega_L->value();
+      omega_H = ui->omega_H->value();
+      edgelength_TH = ui->edgelength_TH->value();
+      alpha = ui->alpha->value();
+      zero_TH = ui->zero_TH->value();
+      area_TH = ui->area_TH->value();
+      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+    }
+    else
+    {
+      mcs->set_omega_L(omega_L);
+      mcs->set_omega_H(omega_H);
+      mcs->set_edgelength_TH(edgelength_TH);
+      mcs->set_zero_TH(zero_TH);
+    }
+  }
+
+  QTime time;
+  time.start();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  mcs->run_to_converge();
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  // update scene
+  Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
+  fixedPointsItem->setName("fixed points");
+  std::vector<Point> fixedPoints;
+  mcs->get_fixed_points(fixedPoints);
+  Point_set *ps = fixedPointsItem->point_set();
+  for (size_t i = 0; i < fixedPoints.size(); i++)
+  {
+    UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
+    ps->select(&point);
+    ps->push_back(point);
+  }
+  if (fixedPointsItemIndex == -1)
+  {
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+  }
+  else
+  {
+    scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+  }
+
+//  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
+//  nonFixedPointsItem->setName("non-fixed points");
+//  nonFixedPointsItem->setColor(QColor(0, 255, 0));
+//  std::vector<Point> nonFixedPoints;
+//  mcs->get_non_fixed_points(nonFixedPoints);
+//  ps = nonFixedPointsItem->point_set();
+//  for (size_t i = 0; i < nonFixedPoints.size(); i++)
+//  {
+//    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
+//    ps->push_back(point);
+//  }
+//  if (nonFixedPointsItemIndex == -1)
+//  {
+//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem);
+//  }
+//  else
+//  {
+//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem);
+//  }
+
+  scene->itemChanged(index);
+  scene->itemChanged(fixedPointsItemIndex);
+//  scene->itemChanged(nonFixedPointsItemIndex);
+  scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
 

@@ -24,6 +24,9 @@
 // Non-default cost and placement policies
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
 
+// Visitor base
+#include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
+
 // Adaptor for Polyhedron_3
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
@@ -90,10 +93,13 @@ public:
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
+  typedef typename Polyhedron::Vertex_handle                                   Vertex_handle;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
+  typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
+  typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
   typedef typename internal::Cotangent_weight<Polyhedron,
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
@@ -101,6 +107,9 @@ public:
   // Skeleton types
   typedef Curve_skeleton<Polyhedron, Graph,
   PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
+
+  // Mesh simplification types
+  typedef SMS::Edge_profile<Polyhedron> Profile ;
 
 // Data members
 private:
@@ -118,6 +127,7 @@ private:
   double edgelength_TH;
   double TH_ALPHA;
   double zero_TH;
+  double area_TH;
 
   int vertex_id_count;
 
@@ -162,6 +172,25 @@ private:
 
   };
 
+  struct Midpoint_placement_visitor : SMS::Edge_collapse_visitor_base<Polyhedron>
+  {
+    Midpoint_placement_visitor(){}
+
+    // Called AFTER each edge has been collapsed
+    void OnCollapsed(Profile const& edge_profile, Vertex_handle vertex_handle)
+    {
+//      std::cout << "here1\n";
+      vertex_descriptor v0 = edge_profile.v0();
+//      std::cout << "here2\n";
+      vertex_descriptor v1 = edge_profile.v1();
+//      std::cout << "here3\n";
+      vertex_handle->point() = Point((v0->point().x() + v1->point().x()) * 0.5,
+                                     (v0->point().y() + v1->point().y()) * 0.5,
+                                     (v0->point().z() + v1->point().z()) * 0.5);
+//      std::cout << "here4\n";
+    }
+  };
+
 // Public methods
 public:
 
@@ -170,12 +199,12 @@ public:
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_L, double omega_H,
-                          double edgelength_TH, double zero_TH,
+                          double edgelength_TH, double zero_TH, double area_TH = 1e-5,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      weight_calculator(weight_calculator), zero_TH(zero_TH)
+      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH)
   {
     TH_ALPHA *= (M_PI / 180.0);
 
@@ -250,6 +279,49 @@ public:
     }
   }
 
+  void get_non_fixed_points(std::vector<Point>& non_fixed_points)
+  {
+    non_fixed_points.clear();
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      int id = boost::get(vertex_id_pmap, *vb);
+      if (is_vertex_fixed_map.find(id) == is_vertex_fixed_map.end())
+      {
+          vertex_descriptor vd = *vb;
+          non_fixed_points.push_back(vd->point());
+      }
+    }
+  }
+
+  double get_triangle_area(vertex_descriptor v1,
+                           vertex_descriptor v2,
+                           vertex_descriptor v3)
+  {
+    Point p1 = v1->point();
+    Point p2 = v2->point();
+    Point p3 = v3->point();
+    Vector v12(p1, p2);
+    Vector v13(p1, p3);
+    return sqrt(cross_product(v12, v13).squared_length()) * 0.5;
+  }
+
+  double get_surface_area()
+  {
+    double total_area = 0;
+    for (Facet_iterator i = polyhedron->facets_begin(); i != polyhedron->facets_end(); ++i)
+    {
+      Halfedge_facet_circulator j = i->facet_begin();
+      vertex_descriptor v1 = j->vertex();
+      ++j;
+      vertex_descriptor v2 = j->vertex();
+      ++j;
+      vertex_descriptor v3 = j->vertex();
+      total_area += get_triangle_area(v1, v2, v3);
+    }
+    return total_area;
+  }
+
   // compute cotangent weights of all edges
   void compute_edge_weight()
   {
@@ -281,6 +353,7 @@ public:
       {
         std::cerr << "id is too small\n";
       }
+      // if the vertex is fixed
       if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
           && is_vertex_fixed_map[i])
       {
@@ -296,6 +369,13 @@ public:
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       int i = boost::get(vertex_id_pmap, *vb);
+      double L = omega_L;
+      // if the vertex is fixed
+      if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
+          && is_vertex_fixed_map[i])
+      {
+        L = 0;
+      }
       double diagonal = 0;
       in_edge_iterator e, e_end;
       for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; e++)
@@ -303,7 +383,7 @@ public:
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         double wij = edge_weight[boost::get(edge_id_pmap, *e)] * 2.0;
         int j = boost::get(vertex_id_pmap, vj);
-        A.set_coef(i, j, wij * omega_L, true);
+        A.set_coef(i, j, wij * L, true);
         diagonal += -wij;
       }
       A.set_coef(i, i, diagonal, true);
@@ -469,6 +549,16 @@ public:
           constrains_map.set_is_constrained(*eb, true);
         }
       }
+
+//      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
+//       && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
+//      {
+//        if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
+//        {
+//          constrains_map.set_is_constrained(*eb, true);
+//        }
+//      }
+
     }
 
     int edge_id = 0;
@@ -496,10 +586,14 @@ public:
     }
 //    std::cerr << "before collapse " << cnt << " fixed vertices\n";
 
+//    std::cerr << "edgelength_TH" << edgelength_TH << "\n";
+
+    Midpoint_placement_visitor vis;
     int r = SMS::edge_collapse
                 (*polyhedron
                 ,stop
-                ,CGAL::get_cost     (SMS::Edge_length_cost  <Polyhedron>())
+                ,CGAL::get_cost(SMS::Edge_length_cost<Polyhedron>())
+//                      .visitor(vis)
                       .get_placement(SMS::Midpoint_placement<Polyhedron>())
                       .edge_is_border_map(constrains_map)
                 );
@@ -516,6 +610,19 @@ public:
         }
       }
     }
+//    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+//    {
+//      vertex_descriptor vi = boost::source(*eb, *polyhedron);
+//      vertex_descriptor vj = boost::target(*eb, *polyhedron);
+//      Point pi = vi->point();
+//      Point pj = vj->point();
+//      double dis = sqrt(squared_distance(pi, pj));
+//      if (dis < edgelength_TH)
+//      {
+//        std::cerr << "dis " << dis << "\n";
+//      }
+//    }
+
 //    std::cerr << "after collapse " << cnt << " fixed vertices\n";
     return r;
   }
@@ -533,7 +640,7 @@ public:
       }
       else
       {
-//        std::cerr << "collapse " << cnt << "\n";
+        std::cerr << "collapse " << cnt << "\n";
         num_collapses += cnt;
       }
     }
@@ -558,9 +665,9 @@ public:
       int e_id = boost::get(edge_id_pmap, *eb);
       edge_descriptor ed = *eb;
 
+      // for border edge, the angle is -1
       if (ed->is_border())
       {
-        std::cerr << "compute_incident_angle: edge is border\n";
         halfedge_angle[e_id] = -1;
       }
       else
@@ -581,7 +688,7 @@ public:
         double dis_jk = sqrt(dis2_jk);
 
         /// A degenerate triangle will never undergo a split (but rather a collapse...)
-        if (dis_ij < edgelength_TH || dis_ik < edgelength_TH || dis_jk < edgelength_TH)
+        if (dis_ij < zero_TH || dis_ik < zero_TH || dis_jk < zero_TH)
         {
           halfedge_angle[e_id] = -1;
         }
@@ -617,6 +724,7 @@ public:
   int split_flat_triangle()
   {
 //    std::cerr << "TH_ALPHA " << TH_ALPHA << "\n";
+//    std::cerr << "short " << zero_TH << "\n";
     int ne = boost::num_edges(*polyhedron);
     compute_incident_angle();
 
@@ -650,7 +758,6 @@ public:
         }
       }
 
-      // for border edge, the angle is -1
       double angle_i = halfedge_angle[ei_id];
       double angle_j = halfedge_angle[ej_id];
       if (angle_i < TH_ALPHA || angle_j < TH_ALPHA)
@@ -680,7 +787,9 @@ public:
 
   int iteratively_split_triangles()
   {
+//    std::cerr << "before split\n";
     int num_splits = 0;
+//    int num_call = 0;
     while (true)
     {
       int cnt = split_flat_triangle();
@@ -692,8 +801,11 @@ public:
       {
 //        std::cerr << "split " << cnt << "\n";
         num_splits += cnt;
+//        num_call++;
+//        if (num_call > 30) break;
       }
     }
+//    std::cerr << "after split\n";
     return num_splits;
   }
 
@@ -809,12 +921,13 @@ public:
   int detect_degeneracies()
   {
     int num_fixed = 0;
-    double elength_fixed = edgelength_TH * 0.7;
+    double elength_fixed = edgelength_TH;
     vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
+//      std::cerr << v->point() << "\n";
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
       {
         bool willbefixed = false;
@@ -827,6 +940,7 @@ public:
           vertex_descriptor v0 = boost::source(edge, *polyhedron);
           vertex_descriptor v1 = boost::target(edge, *polyhedron);
           double length = sqrt(squared_distance(v0->point(), v1->point()));
+//          std::cerr << length << "\n";
           if (length < elength_fixed)
           {
             if (!is_collapse_ok(edge))
@@ -835,6 +949,7 @@ public:
             }
           }
         }
+//        std::cerr << "bad " << bad_counter << "\n";
         willbefixed = (bad_counter >= 2);
         if (willbefixed)
         {
@@ -954,7 +1069,27 @@ public:
     contract_geometry();
     update_topology();
     detect_degeneracies();
+    double area = get_surface_area();
+    std::cout << "area " << area << "\n";
 //    detect_degeneracies_in_disk();
+  }
+
+  void run_to_converge()
+  {
+    double last_area = 0;
+    while (true)
+    {
+      contract_geometry();
+      update_topology();
+      detect_degeneracies();
+      double area = get_surface_area();
+      std::cout << "area " << area << "\n";
+      if (fabs(last_area - area) < area_TH)
+      {
+        break;
+      }
+      last_area = area;
+    }
   }
 
   void convert_to_skeleton()
