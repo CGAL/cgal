@@ -24,6 +24,9 @@
 // Non-default cost and placement policies
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
 
+// Skip the geometric test
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Geometric_test_skipper.h>
+
 // Visitor base
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 
@@ -588,13 +591,13 @@ public:
 
 //    std::cerr << "edgelength_TH" << edgelength_TH << "\n";
 
-    Midpoint_placement_visitor vis;
+    SMS::Geometric_test_skipper< SMS::Midpoint_placement<Polyhedron> > placement;
+
     int r = SMS::edge_collapse
                 (*polyhedron
                 ,stop
                 ,CGAL::get_cost(SMS::Edge_length_cost<Polyhedron>())
-//                      .visitor(vis)
-                      .get_placement(SMS::Midpoint_placement<Polyhedron>())
+                      .get_placement(placement)
                       .edge_is_border_map(constrains_map)
                 );
 
