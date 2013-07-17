@@ -717,9 +717,9 @@ public:
       Point pt = vt->point();
 
       if (is_vertex_fixed_map.find(vs_id) != is_vertex_fixed_map.end()
-       && is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
+       || is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
       {
-        if (is_vertex_fixed_map[vs_id] && is_vertex_fixed_map[vt_id])
+        if (is_vertex_fixed_map[vs_id] || is_vertex_fixed_map[vt_id])
         {
           continue;
         }
