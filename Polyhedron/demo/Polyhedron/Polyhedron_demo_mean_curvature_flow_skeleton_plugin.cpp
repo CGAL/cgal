@@ -129,20 +129,6 @@ public:
   // or has the same polyheron item
   // check if the mesh is a watertigh triangle mesh
   bool check_mesh(Polyhedron* pMesh) {
-    if (!pMesh->is_closed())
-    {
-      QMessageBox msgBox;
-      msgBox.setText("The mesh is not closed.");
-      msgBox.exec();
-      return false;
-    }
-    if (!pMesh->is_pure_triangle())
-    {
-      QMessageBox msgBox;
-      msgBox.setText("The mesh is not a pure triangle mesh.");
-      msgBox.exec();
-      return false;
-    }
     double omega_L = ui->omega_L->value();
     double omega_H = ui->omega_H->value();
     double edgelength_TH = ui->edgelength_TH->value();
@@ -153,6 +139,20 @@ public:
 
     if (mcs == NULL)
     {
+      if (!pMesh->is_closed())
+      {
+        QMessageBox msgBox;
+        msgBox.setText("The mesh is not closed.");
+        msgBox.exec();
+        return false;
+      }
+      if (!pMesh->is_pure_triangle())
+      {
+        QMessageBox msgBox;
+        msgBox.setText("The mesh is not a pure triangle mesh.");
+        msgBox.exec();
+        return false;
+      }
       mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
                                         omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
     }
@@ -161,7 +161,23 @@ public:
       Polyhedron* mesh = mcs->get_polyhedron();
       if (mesh != pMesh)
       {
+        if (!pMesh->is_closed())
+        {
+          QMessageBox msgBox;
+          msgBox.setText("The mesh is not closed.");
+          msgBox.exec();
+          return false;
+        }
+        if (!pMesh->is_pure_triangle())
+        {
+          QMessageBox msgBox;
+          msgBox.setText("The mesh is not a pure triangle mesh.");
+          msgBox.exec();
+          return false;
+        }
+
         delete mcs;
+
         diag = scene->len_diagonal();
         init_ui(diag);
         omega_L = ui->omega_L->value();
