@@ -391,7 +391,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   else
   {
     std::cerr << "replace item " << fixedPointsItemIndex << "\n";
-    scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    delete temp;
   }
   // update scene
   scene->itemChanged(index);
@@ -478,7 +479,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   }
   else
   {
-    scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    delete temp;
   }
 
 //  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
@@ -642,7 +644,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   }
   else
   {
-    scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    delete temp;
   }
 
 //  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
