@@ -41,11 +41,11 @@ int main() {
     assert(true == (CGAL::test_are_equal<Arrangement_2>(arr, visibility.arr())));  
 
     // Run test cases from https://cgal.geometryfactory.com/CGAL/Members/wiki/Visibility/TestCases
-    assert(true == (CGAL::simple_polygon_test_case_1<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
+ /*   assert(true == (CGAL::simple_polygon_test_case_1<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
     assert(true == (CGAL::simple_polygon_test_case_2<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
     assert(true == (CGAL::simple_polygon_test_case_3<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
-    assert(true == (CGAL::simple_polygon_test_case_4<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
-}
+    assert(true == (CGAL::simple_polygon_test_case_4<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));*/
+}/*
 {
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
@@ -70,6 +70,6 @@ int main() {
     assert(true == (CGAL::simple_polygon_test_case_1<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
     assert(true == (CGAL::simple_polygon_test_case_2<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
     assert(true == (CGAL::simple_polygon_test_case_3<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2>, Arrangement_2> ()));
-}
+}*/
     return 0;
 }
