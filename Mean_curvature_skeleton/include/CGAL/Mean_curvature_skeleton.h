@@ -776,7 +776,7 @@ public:
     return num_splits;
   }
 
-  void update_topology()
+  int update_topology()
   {
 //    std::cerr << "before collapse edges\n";
     int num_collapses = iteratively_collapse_edges();
@@ -784,6 +784,8 @@ public:
 
     int num_splits = iteratively_split_triangles();
     std::cerr << "split " << num_splits << " edges.\n";
+
+    return num_collapses + num_splits;
   }
 
   bool is_vertex_degenerate(vertex_descriptor root)
@@ -1047,11 +1049,15 @@ public:
     while (true)
     {
       contract_geometry();
-      update_topology();
+      int num_events = update_topology();
       detect_degeneracies();
       double area = get_surface_area();
-      std::cout << "area " << area << "\n";
-      if (fabs(last_area - area) < area_TH)
+//      std::cout << "area " << area << "\n";
+//      if (fabs(last_area - area) < area_TH)
+//      {
+//        break;
+//      }
+      if (num_events == 0)
       {
         break;
       }
