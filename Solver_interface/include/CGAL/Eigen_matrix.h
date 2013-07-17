@@ -72,7 +72,7 @@ public:
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
-    if (m_is_symmetric) {
+    if (is_symmetric) {
         CGAL_precondition(rows == columns);
     }
 
