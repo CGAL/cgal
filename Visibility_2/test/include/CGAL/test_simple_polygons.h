@@ -1,7 +1,23 @@
-/*
- * Author: Francisc Bungiu 
- * E-mail: fbungiu@gmail.com
- */
+// Copyright (c) 2013 Technical University Braunschweig (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s):  Francisc Bungiu <fbungiu@gmail.com>
+//             Michael Hemmer <michael.hemmer@cgal.org>
 
 #ifndef CGAL_TEST_SIMPLE_POLYGONS_H
 #define CGAL_TEST_SIMPLE_POLYGONS_H
@@ -73,9 +89,7 @@ bool simple_polygon_halfedge_test_case(std::ifstream &input, std::ifstream &corr
             break;
         }
     }
-    std::cout << "exited" << std::endl;
-    return true;
-//    return CGAL::test_are_equal<Arrangement_2>(correct_out_arr, out_arr);    
+    return CGAL::test_are_equal<Arrangement_2>(correct_out_arr, out_arr);    
 }
 
 template < class _Visibility_2, class _Arrangement_2 >
