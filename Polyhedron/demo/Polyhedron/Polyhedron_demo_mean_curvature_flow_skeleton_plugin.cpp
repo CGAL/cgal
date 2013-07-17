@@ -16,6 +16,7 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QTime>
+#include <QMessageBox>
 
 #include <Eigen/Sparse>
 
@@ -96,6 +97,17 @@ public:
     ui->area_TH->setValue(1e-5);
   }
 
+  bool check_item_index(int index) {
+    if (index < 0)
+    {
+      QMessageBox msgBox;
+      msgBox.setText("Please select an item first :)");
+      msgBox.exec();
+      return false;
+    }
+    return true;
+  }
+
 public slots:
   void on_actionMCFSkeleton_triggered();
   void on_actionContract();
@@ -165,6 +177,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
@@ -224,6 +241,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
@@ -260,6 +282,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
@@ -295,6 +322,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
@@ -354,6 +386,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
@@ -457,6 +494,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
@@ -508,6 +550,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
