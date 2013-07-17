@@ -125,6 +125,49 @@ public:
     return true;
   }
 
+  // check if the Mean_curvature_skeleton exists
+  // or has the same polyheron item
+  void check_mcs(Polyhedron* pMesh) {
+    double omega_L = ui->omega_L->value();
+    double omega_H = ui->omega_H->value();
+    double edgelength_TH = ui->edgelength_TH->value();
+    double alpha = ui->alpha->value();
+    double zero_TH = ui->zero_TH->value();
+    double area_TH = ui->area_TH->value();
+    double diag = scene->len_diagonal();
+
+    if (mcs == NULL)
+    {
+      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+    }
+    else
+    {
+      Polyhedron* mesh = mcs->get_polyhedron();
+      if (mesh != pMesh)
+      {
+        delete mcs;
+        init_ui(diag);
+        omega_L = ui->omega_L->value();
+        omega_H = ui->omega_H->value();
+        edgelength_TH = ui->edgelength_TH->value();
+        alpha = ui->alpha->value();
+        zero_TH = ui->zero_TH->value();
+        area_TH = ui->area_TH->value();
+        mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                          omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+        fixedPointsItemIndex = -1;
+      }
+      else
+      {
+        mcs->set_omega_L(omega_L);
+        mcs->set_omega_H(omega_H);
+        mcs->set_edgelength_TH(edgelength_TH);
+        mcs->set_zero_TH(zero_TH);
+      }
+    }
+  }
+
 public slots:
   void on_actionMCFSkeleton_triggered();
   void on_actionContract();
@@ -203,43 +246,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  double omega_L = ui->omega_L->value();
-  double omega_H = ui->omega_H->value();
-  double edgelength_TH = ui->edgelength_TH->value();
-  double alpha = ui->alpha->value();
-  double zero_TH = ui->zero_TH->value();
-  double area_TH = ui->area_TH->value();
-  double diag = scene->len_diagonal();
-
-  if (mcs == NULL)
-  {
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
-  else
-  {
-    Polyhedron* mesh = mcs->get_polyhedron();
-    if (mesh != pMesh)
-    {
-      delete mcs;
-      init_ui(diag);
-      omega_L = ui->omega_L->value();
-      omega_H = ui->omega_H->value();
-      edgelength_TH = ui->edgelength_TH->value();
-      alpha = ui->alpha->value();
-      zero_TH = ui->zero_TH->value();
-      area_TH = ui->area_TH->value();
-      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-    }
-    else
-    {
-      mcs->set_omega_L(omega_L);
-      mcs->set_omega_H(omega_H);
-      mcs->set_edgelength_TH(edgelength_TH);
-      mcs->set_zero_TH(zero_TH);
-    }
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
@@ -267,17 +274,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (mcs == NULL)
-  {
-    double omega_L = ui->omega_L->value();
-    double omega_H = ui->omega_H->value();
-    double edgelength_TH = ui->edgelength_TH->value();
-    double alpha = ui->alpha->value();
-    double zero_TH = ui->zero_TH->value();
-    double area_TH = ui->area_TH->value();
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
@@ -308,17 +305,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (mcs == NULL)
-  {
-    double omega_L = ui->omega_L->value();
-    double omega_H = ui->omega_H->value();
-    double edgelength_TH = ui->edgelength_TH->value();
-    double alpha = ui->alpha->value();
-    double zero_TH = ui->zero_TH->value();
-    double area_TH = ui->area_TH->value();
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
@@ -348,17 +335,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (mcs == NULL)
-  {
-    double omega_L = ui->omega_L->value();
-    double omega_H = ui->omega_H->value();
-    double edgelength_TH = ui->edgelength_TH->value();
-    double alpha = ui->alpha->value();
-    double zero_TH = ui->zero_TH->value();
-    double area_TH = ui->area_TH->value();
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
@@ -413,43 +390,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  double omega_L = ui->omega_L->value();
-  double omega_H = ui->omega_H->value();
-  double edgelength_TH = ui->edgelength_TH->value();
-  double alpha = ui->alpha->value();
-  double zero_TH = ui->zero_TH->value();
-  double area_TH = ui->area_TH->value();
-  double diag = scene->len_diagonal();
-
-  if (mcs == NULL)
-  {
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
-  else
-  {
-    Polyhedron* mesh = mcs->get_polyhedron();
-    if (mesh != pMesh)
-    {
-      delete mcs;
-      init_ui(diag);
-      omega_L = ui->omega_L->value();
-      omega_H = ui->omega_H->value();
-      edgelength_TH = ui->edgelength_TH->value();
-      alpha = ui->alpha->value();
-      zero_TH = ui->zero_TH->value();
-      area_TH = ui->area_TH->value();
-      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-    }
-    else
-    {
-      mcs->set_omega_L(omega_L);
-      mcs->set_omega_H(omega_H);
-      mcs->set_edgelength_TH(edgelength_TH);
-      mcs->set_zero_TH(zero_TH);
-    }
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
@@ -522,17 +463,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (mcs == NULL)
-  {
-    double omega_L = ui->omega_L->value();
-    double omega_H = ui->omega_H->value();
-    double edgelength_TH = ui->edgelength_TH->value();
-    double alpha = ui->alpha->value();
-    double zero_TH = ui->zero_TH->value();
-    double area_TH = ui->area_TH->value();
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
@@ -578,43 +509,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  double omega_L = ui->omega_L->value();
-  double omega_H = ui->omega_H->value();
-  double edgelength_TH = ui->edgelength_TH->value();
-  double alpha = ui->alpha->value();
-  double zero_TH = ui->zero_TH->value();
-  double area_TH = ui->area_TH->value();
-  double diag = scene->len_diagonal();
-
-  if (mcs == NULL)
-  {
-    mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-  }
-  else
-  {
-    Polyhedron* mesh = mcs->get_polyhedron();
-    if (mesh != pMesh)
-    {
-      delete mcs;
-      init_ui(diag);
-      omega_L = ui->omega_L->value();
-      omega_H = ui->omega_H->value();
-      edgelength_TH = ui->edgelength_TH->value();
-      alpha = ui->alpha->value();
-      zero_TH = ui->zero_TH->value();
-      area_TH = ui->area_TH->value();
-      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
-    }
-    else
-    {
-      mcs->set_omega_L(omega_L);
-      mcs->set_omega_H(omega_H);
-      mcs->set_edgelength_TH(edgelength_TH);
-      mcs->set_zero_TH(zero_TH);
-    }
-  }
+  check_mcs(pMesh);
 
   QTime time;
   time.start();
