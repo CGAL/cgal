@@ -127,7 +127,22 @@ public:
 
   // check if the Mean_curvature_skeleton exists
   // or has the same polyheron item
-  void check_mcs(Polyhedron* pMesh) {
+  // check if the mesh is a watertigh triangle mesh
+  bool check_mesh(Polyhedron* pMesh) {
+    if (!pMesh->is_closed())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("The mesh is not closed.");
+      msgBox.exec();
+      return false;
+    }
+    if (!pMesh->is_pure_triangle())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("The mesh is not a pure triangle mesh.");
+      msgBox.exec();
+      return false;
+    }
     double omega_L = ui->omega_L->value();
     double omega_H = ui->omega_H->value();
     double edgelength_TH = ui->edgelength_TH->value();
@@ -167,6 +182,7 @@ public:
         mcs->set_zero_TH(zero_TH);
       }
     }
+    return true;
   }
 
 public slots:
@@ -247,7 +263,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
@@ -275,7 +294,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
@@ -306,7 +328,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
@@ -336,7 +361,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
@@ -391,7 +419,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
@@ -464,7 +495,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
@@ -510,7 +544,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  check_mcs(pMesh);
+  if (!check_mesh(pMesh))
+  {
+    return;
+  }
 
   QTime time;
   time.start();
