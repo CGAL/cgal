@@ -147,6 +147,7 @@ public:
       if (mesh != pMesh)
       {
         delete mcs;
+        diag = scene->len_diagonal();
         init_ui(diag);
         omega_L = ui->omega_L->value();
         omega_H = ui->omega_H->value();
