@@ -87,14 +87,31 @@ public:
 
   void init_ui(double diag) {
     ui->omega_L->setValue(1);
+    ui->omega_L->setSingleStep(0.1);
     ui->omega_H->setValue(0.1);
+    ui->omega_H->setSingleStep(0.1);
     ui->edgelength_TH->setDecimals(7);
     ui->edgelength_TH->setValue(0.002 * diag);
+    ui->edgelength_TH->setSingleStep(0.0000001);
     ui->alpha->setValue(0.15);
+    ui->alpha->setSingleStep(0.01);
     ui->zero_TH->setDecimals(8);
     ui->zero_TH->setValue(1e-07);
+    ui->zero_TH->setSingleStep(0.0000001);
     ui->area_TH->setDecimals(8);
     ui->area_TH->setValue(1e-5);
+    ui->area_TH->setSingleStep(1e-7);
+
+    ui->label_omega_L->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
+    ui->label_omega_H->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
+    ui->label_edgelength_TH->setToolTip(QString("edges shorter than threshold will be collapsed"));
+    ui->pushButton_contract->setToolTip(QString("contract mesh based on mean curvature flow"));
+    ui->pushButton_collapse->setToolTip(QString("collapse short edges"));
+    ui->pushButton_split->setToolTip(QString("split obtuse triangles"));
+    ui->pushButton_degeneracy->setToolTip(QString("fix degenerate points"));
+    ui->pushButton_skeletonize->setToolTip(QString("Turn mesh to a skeleton curve"));
+    ui->pushButton_run->setToolTip(QString("run one iteration of contract, collapse, split, detect degeneracy"));
+    ui->pushButton_converge->setToolTip(QString("iteratively contract the mesh until convergence"));
   }
 
   bool check_item_index(int index) {

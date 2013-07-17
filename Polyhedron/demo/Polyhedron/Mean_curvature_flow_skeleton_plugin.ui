@@ -230,7 +230,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_zero_TH_2">
+   <widget class="QLabel" name="label_area_TH">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -261,7 +261,7 @@
    <zorder>pushButton_skeletonize</zorder>
    <zorder>pushButton_converge</zorder>
    <zorder>area_TH</zorder>
-   <zorder>label_zero_TH_2</zorder>
+   <zorder>label_area_TH</zorder>
   </widget>
  </widget>
  <resources/>
