@@ -74,6 +74,21 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
             return false;
         }
     }
+
+    for (unsigned int i = 0 ; i < halfedges_snd.size() ; i++) {
+        Halfedge he_curr = halfedges_snd[i];
+        bool found = false;
+        for (unsigned int j = 0 ; j < halfedges_fst.size() ; j++) {
+            if (he_curr.source()->point() == halfedges_fst[j].source()->point() &&
+                he_curr.target()->point() == halfedges_fst[j].target()->point()) {
+                found = true;
+                break;
+            }
+        }
+        if (found == false) {
+            return false;
+        }
+    }
     return true;
 }
 
