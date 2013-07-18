@@ -383,7 +383,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
   polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Polyhedron_demo_mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-  target_link_libraries(mean_curvature_flow_skeleton_plugin scene_polyhedron_item scene_polylines_item)
+  target_link_libraries(mean_curvature_flow_skeleton_plugin scene_polyhedron_item scene_polylines_item scene_points_with_normal_item)
 
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
