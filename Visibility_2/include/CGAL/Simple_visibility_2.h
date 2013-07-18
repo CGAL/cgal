@@ -1,3 +1,24 @@
+// Copyright (c) 2013 Technical University Braunschweig (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s):  Francisc Bungiu <fbungiu@gmail.com>
+//             Michael Hemmer <michael.hemmer@cgal.org>
+
 #ifndef CGAL_SIMPLE_VISIBILITY_2_H
 #define CGAL_SIMPLE_VISIBILITY_2_H
 
@@ -24,6 +45,9 @@ public:
 	typedef typename Geometry_traits_2::Point_2						Point_2;
 	typedef typename Geometry_traits_2::Ray_2						Ray_2;
 	typedef typename Geometry_traits_2::Segment_2					Segment_2;
+	typedef typename Geometry_traits_2::Vector_2                	Vector_2;
+	typedef typename Geometry_traits_2::FT                			Number_type;
+
 
 	Simple_visibility_2() : p_arr(NULL) {};
 
@@ -56,31 +80,42 @@ public:
   		typename Input_Arrangement_2::Halfedge_const_handle he = curr;
 
   		std::vector<Point_2> temp_vertices;
-  		int index_v0 = 0;
-  		int index = 0;
-  		Point_2 curr_min = he->source()->point();
+  		Point_2 intersect_pt;
+  		Point_2 min_intersect_pt;
 
-  		// Push all vertices
+		Segment_2 curr_edge(he->source()->point(), he->target()->point());
+		Point_2 curr_vertex = he->source()->point();
+		temp_vertices.push_back(curr_vertex);
+		Number_type min_dist = dist_point_to_segment(q, curr_edge, intersect_pt);
+
+		int min_dist_index = 0;
+		int index = 1;
+
+  		// Push all vertices and determine edge minimum in terms of squared distance to query point
   		do {
 			he = curr;  		
-			Point_2 curr_vertex = he->target()->point();
-			if (curr_vertex.x() < curr_min.x() && (curr_vertex.x() > q.x())) {
-				curr_min = curr_vertex;
-				index_v0 = index;
+			curr_edge = Segment_2(he->source()->point(), he->target()->point());
+			curr_vertex = Point_2(he->target()->point());
+
+			Number_type curr_dist = dist_point_to_segment(q, curr_edge, intersect_pt);
+			if (curr_dist < min_dist) {
+				min_dist = curr_dist;
+				min_dist_index = index;
+				min_intersect_pt = intersect_pt;
 			}
 			temp_vertices.push_back(curr_vertex);
 			index++;
   		} while (++curr != circ);
 
-  		// Now create vector so that first vertex v0 has the smallest positive x-coordinate (thus - visible from the query point)
-  		for (unsigned int k = index_v0 ; k < temp_vertices.size() ; k++) {
+  		// Now create vector so that first vertex v0 is visible
+  		for (unsigned int k = min_dist_index ; k < temp_vertices.size() ; k++) {
   			vertices.push_back(temp_vertices[k]);
   		}
-  		for (unsigned int k = 0 ; k < index_v0 ; k++) {
+  		for (unsigned int k = 0 ; k < min_dist_index ; k++) {
   			vertices.push_back(temp_vertices[k]);
   		}
   		// Push first vertex again to fulfill algo precondition
-  		vertices.push_back(vertices[0]);
+  	//	vertices.push_back(vertices[0]);
 
   		std::cout << "Vertices:\n";
   		for (unsigned int k = 0 ; k < vertices.size() ; k++) {
@@ -151,6 +186,27 @@ protected:
 	std::stack<Point_2> s;
 	std::vector<Point_2> vertices;
 	enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
+
+	Number_type dist_point_to_segment(const Point_2 &p, const Segment_2 &seg, Point_2 &intersect_pt) {
+
+		Vector_2 v(seg);
+		Vector_2 w(seg.source(), p);
+		Number_type c1 = w*v;
+		if (c1 <= 0) {
+			intersect_pt = seg.source();
+			return squared_distance(p, seg.source());
+		}
+
+		Number_type c2 = v*v;
+		if (c2 <= c1) {
+			intersect_pt = seg.target();
+			return squared_distance(p, seg.target());
+		}
+
+		Number_type b = c1/c2;
+		intersect_pt = Point_2(seg.source() + b*v);
+		return squared_distance(p, intersect_pt);
+	}
 
 	bool do_overlap(const Point_2 &a, const Point_2 &b, const Point_2 &c) {
 		if (collinear(a, b, c)) {
