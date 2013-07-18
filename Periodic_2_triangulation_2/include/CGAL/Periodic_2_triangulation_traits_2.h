@@ -38,11 +38,11 @@
 namespace CGAL
 {
 
-template < class K, class Functor_ >
+template < class K, class Predicate_ >
 class Traits_with_offsets_2_adaptor
 {
   typedef K Kernel;
-  typedef Functor_ Functor;
+  typedef Predicate_ Predicate;
 
   typedef typename Kernel::Point_2       Point;
   typedef typename Kernel::Offset_2      Offset;
@@ -53,41 +53,41 @@ public:
   typedef typename Kernel::Iso_rectangle_2  Iso_rectangle_2;
 
 public:
-  typedef typename Functor::result_type result_type;
+  typedef typename Predicate::result_type result_type;
 
   Traits_with_offsets_2_adaptor(const Iso_rectangle_2 * dom) : _domain(dom) { }
 
   result_type operator()(const Point& p0, const Point& p1,
                          const Offset& o0, const Offset& o1) const
   {
-    return Functor()(pp(p0, o0), pp(p1, o1));
+    return Predicate()(pp(p0, o0), pp(p1, o1));
   }
   result_type operator()(const Point& p0, const Point& p1, const Point& p2,
                          const Offset& o0, const Offset& o1, const Offset& o2) const
   {
-    return Functor()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
+    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
   }
   result_type operator()(const Point& p0, const Point& p1,
                          const Point& p2, const Point& p3,
                          const Offset& o0, const Offset& o1,
                          const Offset& o2, const Offset& o3) const
   {
-    return Functor()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
+    return Predicate()(pp(p0, o0), pp(p1, o1), pp(p2, o2), pp(p3, o3));
   }
 
   result_type operator()(const Point& p0, const Point& p1) const
   {
-    return Functor()(p0, p1);
+    return Predicate()(p0, p1);
   }
   result_type operator()(const Point& p0, const Point& p1,
                          const Point& p2) const
   {
-    return Functor()(p0, p1, p2);
+    return Predicate()(p0, p1, p2);
   }
   result_type operator()(const Point& p0, const Point& p1,
                          const Point& p2, const Point& p3) const
   {
-    return Functor()(p0, p1, p2, p3);
+    return Predicate()(p0, p1, p2, p3);
   }
 
 private:
@@ -153,10 +153,9 @@ public:
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Less_y_2>                   Less_y_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Compare_x_2>                Compare_x_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Compare_y_2>                Compare_y_2;
-  typedef Traits_with_offsets_2_adaptor<Self, typename K::Compare_xy_2>               Compare_xy_2;
+  typedef Traits_with_offsets_2_adaptor<Self, typename K::Compare_xy_2>                Compare_xy_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Orientation_2>              Orientation_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Side_of_oriented_circle_2>  Side_of_oriented_circle_2;
-  typedef Traits_with_offsets_2_adaptor<Self, typename K::Side_of_bounded_circle_2>   Side_of_bounded_circle_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Compute_squared_radius_2>   Compute_squared_radius_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Construct_center_2>         Construct_center_2;
   typedef Traits_with_offsets_2_adaptor<Self, typename K::Construct_circumcenter_2>   Construct_circumcenter_2;
@@ -189,7 +188,7 @@ public:
     return _domain;
   }
 
-  // Functors (&_domain)
+  // Predicates&_domain
 
   Compare_x_2
   compare_x_2_object() const
@@ -220,12 +219,6 @@ public:
   {
     return Side_of_oriented_circle_2(&_domain);
   }
-
-  Side_of_bounded_circle_2
-  side_of_bounded_circle_2_object() const
-    {
-        return Side_of_bounded_circle_2(&_domain);
-    }
 
   Construct_circumcenter_2
   construct_circumcenter_2_object() const
