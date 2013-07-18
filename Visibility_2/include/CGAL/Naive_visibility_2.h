@@ -31,19 +31,17 @@ void print(std::vector<Point_handle> ps){
 
 template <typename Arrangement_2, typename Regularization_tag>
 class Naive_visibility_2 {
-    typedef typename Arrangement_2::Traits_2             Traits_2;
-    typedef typename Traits_2::Kernel                    Kernel;
-    typedef typename Traits_2::Point_2                   Point_2;
-    typedef typename CGAL::Segment_2<Kernel>             Segment_2;
+    typedef typename Arrangement_2::Geometry_traits_2         Geometry_traits_2;
+    typedef typename Geometry_traits_2::Point_2						Point_2;
+    typedef typename Geometry_traits_2::Ray_2						Ray_2;
+    typedef typename Geometry_traits_2::Segment_2					Segment_2;
+    typedef typename Geometry_traits_2::Vector_2                    Vector_2;
+    typedef typename Geometry_traits_2::Direction_2                 Direction_2;
 
     typedef typename Arrangement_2::Halfedge             Halfedge;
     typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
     typedef typename Arrangement_2::Vertex_const_handle  Vertex_const_handle;
     typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
-
-    typedef typename CGAL::Vector_2<Kernel>              Vector_2;
-    typedef typename CGAL::Direction_2<Kernel>           Direction_2;
-    typedef typename CGAL::Ray_2<Kernel>                 Ray_2;
 
     enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
@@ -170,7 +168,7 @@ public:
             vit = end_it;
         }
         if (!is_init_empty) {
-            CGAL::insert_curve(out_arr, Segment_2(polygon[0], polygon.back()));
+            CGAL::insert(out_arr, Segment_2(polygon[0], polygon.back()));
         }
     }
 
@@ -258,6 +256,7 @@ public:
                 Intersection_type i_type = needle(active_edges, curr_vision_ray, collinear_vertices);
                 switch (i_type) {
                 case UNBOUNDED :
+                    //todo:this part is not finished.
                     //remove right and collinear;
                     remove_edges(active_edges, curr_vision_ray);
                     update_visibility(right_p, polygon, out_arr);
@@ -273,10 +272,10 @@ public:
                     remove_edges(active_edges, curr_vision_ray);
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
                     update_visibility(right_p, polygon, out_arr);
-
-                    update_visibility(collinear_vertices, polygon, out_arr);
+                    insert_needle(collinear_vertices, polygon, out_arr);
 //                    update_visibility(mid_p, polygon, out_arr);
-                    update_visibility(left_p, polygon, out_arr);
+//                    update_visibility(left_p, polygon, out_arr);
+                    polygon.push_back(left_p);
                     break;
                 case INNER :
                     //remove right and collinear;
@@ -287,8 +286,9 @@ public:
                     else {
                         left_p = intersection_point(curr_vision_ray, active_edges[0]);
                         update_visibility(right_p, polygon, out_arr);
-                        update_visibility(collinear_vertices, polygon, out_arr);
-                        update_visibility(left_p, polygon, out_arr);
+                        insert_needle(collinear_vertices, polygon, out_arr);
+//                        update_visibility(left_p, polygon, out_arr);
+                        polygon.push_back(left_p);
                     }
                     break;
                 }
@@ -296,7 +296,7 @@ public:
             vit = end_it;
         }
         if (!is_init_empty) {
-            CGAL::insert_curve(out_arr, Segment_2(polygon.front(),polygon.back()));
+            CGAL::insert(out_arr, Segment_2(polygon.back(),polygon.front()));
         }
     }
 
@@ -492,15 +492,17 @@ private:
         else
         {
             if (polygon.back() != p){
-                CGAL::insert_curve(arr, Segment_2(polygon.back(), p));
+                CGAL::insert(arr, Segment_2(polygon.back(), p));
                 polygon.push_back(p);
             }
         }
     }
 
-    void update_visibility(const std::vector<Point_2>& points, std::vector<Point_2>& polygon, Arrangement_2 &arr){
-        for (int i = 0; i != points.size(); i++) {
-            update_visibility(points[i], polygon, arr);
+    void insert_needle(const std::vector<Point_2>& points, std::vector<Point_2>& polygon, Arrangement_2 &arr){
+        if (points.size() > 1) {
+            for (int i = 0; i != points.size()-1; i++) {
+                CGAL::insert(arr, Segment_2(points[i], points[i+1]));
+            }
         }
     }
 

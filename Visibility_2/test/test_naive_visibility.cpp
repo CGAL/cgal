@@ -59,10 +59,10 @@ int main() {
                 if (!fit->is_unbounded()) break;
             } while (++fit != arr_in.faces_end());
             vb.visibility_region(Point_2(0, 0), fit, arr_vb);
-//            CGAL::Visibility_2::print_arrangement(arr_vb);
-//            CGAL::Visibility_2::print_arrangement(arr_ans);
+            CGAL::Visibility_2::print_arrangement(arr_vb);
+            CGAL::Visibility_2::print_arrangement(arr_ans);
             std::cout<<(true == (CGAL::test_are_equal<Arrangement_2>(arr_ans, arr_vb)))<<std::endl;
-            std::cout<<CGAL::compare_arr_by_edges(arr_ans, arr_vb);
+            std::cout<<CGAL::compare_arr_by_edges(arr_ans, arr_vb)<<std::endl;
         }
     }
     //test kernel Exact_predicates_exact_constructions_kernel
