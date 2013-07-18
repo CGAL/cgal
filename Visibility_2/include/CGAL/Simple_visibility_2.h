@@ -24,6 +24,7 @@
 
 #include <CGAL/Arrangement_2.h>
 #include <stack>
+#include <deque>
 
 namespace CGAL {
 
@@ -85,17 +86,15 @@ public:
 
 		Segment_2 curr_edge(he->source()->point(), he->target()->point());
 		Point_2 curr_vertex = he->source()->point();
-		temp_vertices.push_back(curr_vertex);
 		Number_type min_dist = dist_point_to_segment(q, curr_edge, intersect_pt);
 
 		int min_dist_index = 0;
-		int index = 1;
+		int index = 0;
 
   		// Push all vertices and determine edge minimum in terms of squared distance to query point
   		do {
 			he = curr;  		
 			curr_edge = Segment_2(he->source()->point(), he->target()->point());
-			curr_vertex = Point_2(he->target()->point());
 
 			Number_type curr_dist = dist_point_to_segment(q, curr_edge, intersect_pt);
 			if (curr_dist < min_dist) {
@@ -103,19 +102,24 @@ public:
 				min_dist_index = index;
 				min_intersect_pt = intersect_pt;
 			}
-			temp_vertices.push_back(curr_vertex);
+			temp_vertices.push_back(he->source()->point());
 			index++;
   		} while (++curr != circ);
 
+  		std::cout << "min_index = " << min_dist_index << std::endl;
+
+  		vertices.push_back(intersect_pt);
   		// Now create vector so that first vertex v0 is visible
   		for (unsigned int k = min_dist_index ; k < temp_vertices.size() ; k++) {
+  			std::cout << "Pushing " << temp_vertices[k] << std::endl;
   			vertices.push_back(temp_vertices[k]);
   		}
   		for (unsigned int k = 0 ; k < min_dist_index ; k++) {
+  			std::cout << "Pushing " << temp_vertices[k] << std::endl;
   			vertices.push_back(temp_vertices[k]);
   		}
   		// Push first vertex again to fulfill algo precondition
-  	//	vertices.push_back(vertices[0]);
+  		vertices.push_back(intersect_pt);
 
   		std::cout << "Vertices:\n";
   		for (unsigned int k = 0 ; k < vertices.size() ; k++) {
@@ -123,6 +127,49 @@ public:
   		}
 
   		visibility_region_impl(q, out_arr);
+
+  		std::cout << "RESULT: " << std::endl;
+		typename std::deque<Segment_2> segments;
+		if (!s.empty()) {
+			Point_2 prev_pt = s.top();
+			std::cout << "prev: " << prev_pt << std::endl;
+			if (prev_pt == intersect_pt) {
+				s.pop();
+				if (!s.empty()) {
+					prev_pt = s.top();
+				}
+			}
+			if (!s.empty()) {
+				s.pop();
+			}
+			while(!s.empty()) {
+				Point_2 curr_pt = s.top();
+				std::cout << "curr: " << curr_pt << std::endl;
+				if (curr_pt == intersect_pt) {
+					s.pop();
+				}
+				else {
+					segments.push_front(Segment_2(curr_pt, prev_pt));
+					prev_pt = curr_pt;
+					s.pop();
+				}
+			}
+		}
+
+		std::cout << "initial\n";
+		for (typename std::deque<Segment_2>::iterator it = segments.begin(); it != segments.end(); it++) {
+		    std::cout << it->source() << " " << it->target() << std::endl;
+		}
+
+		// Close the loop
+		std::cout << "src: " << segments[0].source() << std::endl;
+		std::cout << "trg: " << segments[segments.size()-1].target() << std::endl;
+		segments.push_back(Segment_2(segments[segments.size()-1].target(), segments[0].source()));
+
+		for (typename std::deque<Segment_2>::iterator it = segments.begin(); it != segments.end(); it++) {
+		    std::cout << it->source() << " " << it->target() << std::endl;
+		}
+		CGAL::insert(out_arr, segments.begin(), segments.end());
 	}
 
 	void visibility_region(const Point_2 &q, 
@@ -303,23 +350,6 @@ protected:
 //				exit(0);	
 			}
 		} while(upcase != FINISH);
-
-		std::cout << "RESULT: " << std::endl;
-		typename std::list<Segment_2> segments;
-		if (!s.empty()) {
-			Point_2 prev_pt = s.top();
-			s.pop();
-			while(!s.empty()) {
-				Point_2 curr_pt = s.top();
-				segments.push_front(Segment_2(curr_pt, prev_pt));
-				prev_pt = curr_pt;
-				s.pop();
-			}
-		}
-		for (typename std::list<Segment_2>::iterator it = segments.begin(); it != segments.end(); it++) {
-		    std::cout << it->source() << " " << it->target() << std::endl;
-		}
-		CGAL::insert(out_arr, segments.begin(), segments.end());
 	}
 
 	void left(int &i, Point_2 &w, const Point_2 &query_pt) {
