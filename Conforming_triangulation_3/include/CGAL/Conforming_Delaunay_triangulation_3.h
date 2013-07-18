@@ -38,12 +38,12 @@ namespace CGAL {
 template < class Tr > class Natural_neighbors_3;
 
 template < class Gt,
-           class Tds = Triangulation_data_structure_3 < Conforming_triangulation_vertex_base_3<Gt>,
+           class Tds_ = Triangulation_data_structure_3 < Conforming_triangulation_vertex_base_3<Gt>,
 														Conforming_triangulation_cell_base_3<Gt> >,
 		   class Itag = No_intersection_tag >
-class Conforming_Delaunay_triangulation_3: public Delaunay_triangulation_utils_3<Gt,Tds> {
+class Conforming_Delaunay_triangulation_3: public Delaunay_triangulation_utils_3<Gt,Tds_> {
 	//typedef Triangulation_data_structure						Tds;
-
+        typedef Tds_ Tds;
 	typedef Conforming_Delaunay_triangulation_3<Gt,Tds,Itag>	cDT;
 	typedef Delaunay_triangulation_utils_3<Gt,Tds>				DT;
 	typedef Triangulation_3<Gt,Tds>								Tr;

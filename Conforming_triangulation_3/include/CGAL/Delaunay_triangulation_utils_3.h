@@ -38,10 +38,10 @@ template < class DT > class Natural_neighbors_3;
 template < class Gt, class Tds > class Triangulation_cell_traverser_3;
 
 template < class Gt,
-           class Tds = Triangulation_data_structure_3 < Triangulation_vertex_base_3<Gt>, Triangulation_cell_base_3<Gt> > >
-class Delaunay_triangulation_utils_3: public Delaunay_triangulation_3<Gt, Tds> {
+           class Tds_ = Triangulation_data_structure_3 < Triangulation_vertex_base_3<Gt>, Triangulation_cell_base_3<Gt> > >
+class Delaunay_triangulation_utils_3: public Delaunay_triangulation_3<Gt, Tds_> {
 	//typedef Triangulation_data_structure						Tds;
-
+        typedef Tds_ Tds;
 	typedef Delaunay_triangulation_utils_3<Gt, Tds>				Self;
 	typedef Delaunay_triangulation_3<Gt, Tds>					DT;
 	typedef Triangulation_3<Gt,Tds>								Tr;
