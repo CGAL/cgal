@@ -72,12 +72,15 @@ public slots:
   virtual void deleteSelection();
   // Reset selection mark
   void resetSelection();
+  //Select duplicated points
+  void selectDuplicates();
 
 // Data
 private:
   Point_set* m_points;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
+  QAction* actionSelectDuplicatedPoints;
 }; // end class Scene_points_with_normal_item
 
 

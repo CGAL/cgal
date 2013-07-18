@@ -96,6 +96,15 @@ void Scene_points_with_normal_item::resetSelection()
   m_points->select(m_points->begin(), m_points->end(), false);
   emit itemChanged();
 }
+  //Select duplicated points
+void Scene_points_with_normal_item::selectDuplicates()
+{
+  std::set<Kernel::Point_3> unique_points;
+  for (Point_set::Point_iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
+    if ( !unique_points.insert(*ptit).second )
+      m_points->select(&(*ptit));
+  emit itemChanged();
+}
 
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
@@ -266,6 +275,11 @@ QMenu* Scene_points_with_normal_item::contextMenu()
     actionResetSelection = menu->addAction(tr("Reset Selection"));
     actionResetSelection->setObjectName("actionResetSelection");
     connect(actionResetSelection, SIGNAL(triggered()),this, SLOT(resetSelection()));
+
+    actionSelectDuplicatedPoints = menu->addAction(tr("Select duplicated points"));
+    actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
+    connect(actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
+
     menu->setProperty(prop_name, true);
   }
 
