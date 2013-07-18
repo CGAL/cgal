@@ -102,6 +102,13 @@
      <addaction name="actionFitLine"/>
      <addaction name="actionFitPlane"/>
     </widget>
+    <widget class="QMenu" name="menuMean_Curvature_Skeleton_2">
+     <property name="title">
+      <string>Mean Curvature Skeleton</string>
+     </property>
+     <addaction name="actionMCFSkeleton"/>
+     <addaction name="actionConvert_to_skeleton"/>
+    </widget>
     <addaction name="menuPCA"/>
     <addaction name="actionEstimateCurvature"/>
     <addaction name="actionSelfIntersection"/>
@@ -114,7 +121,7 @@
     <addaction name="menu_Boolean_operations"/>
     <addaction name="menuParameterization"/>
     <addaction name="actionInsideOut"/>
-    <addaction name="actionMCFSkeleton"/>
+    <addaction name="menuMean_Curvature_Skeleton_2"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -640,9 +647,24 @@
     <string>&amp;Preferences</string>
    </property>
   </action>
+  <action name="actionConvert_to_Skeleton">
+   <property name="text">
+    <string>Convert to Skeleton</string>
+   </property>
+  </action>
+  <action name="actionShow_dock_widget">
+   <property name="text">
+    <string>Show dock widget</string>
+   </property>
+  </action>
   <action name="actionMCFSkeleton">
    <property name="text">
-    <string>Mean Curvature Skeletonizaton</string>
+    <string>Show dock widget</string>
+   </property>
+  </action>
+  <action name="actionConvert_to_skeleton">
+   <property name="text">
+    <string>Convert to skeleton</string>
    </property>
   </action>
  </widget>

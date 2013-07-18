@@ -69,7 +69,7 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
 public:
   // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
-    return QStringList() << "actionMCFSkeleton";
+    return QStringList() << "actionMCFSkeleton" << "actionConvert_to_skeleton";
   }
 
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
@@ -203,6 +203,7 @@ public:
 
 public slots:
   void on_actionMCFSkeleton_triggered();
+  void on_actionConvert_to_skeleton_triggered();
   void on_actionContract();
   void on_actionCollapse();
   void on_actionSplit();
@@ -264,6 +265,66 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
 
     fixedPointsItemIndex = -1;
     nonFixedPointsItemIndex = -1;
+  }
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_skeleton_triggered()
+{
+  double diag = scene->len_diagonal();
+  double omega_L = 1;
+  double omega_H = 0.1;
+  double edgelength_TH = 0.002 * diag;
+  double alpha = 0.15;
+  double zero_TH = 1e-07;
+  double area_TH = 1e-5;
+
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+  if(item)
+  {
+    Polyhedron* pMesh = item->polyhedron();
+
+    if(!pMesh) return;
+
+    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                      omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+
+    QTime time;
+    time.start();
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    temp_mcs->run_to_converge();
+
+    Graph g;
+    std::vector<Point> points;
+
+    temp_mcs->convert_to_skeleton();
+    temp_mcs->get_skeleton(g, points);
+
+    std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+    Scene_polylines_item* skeleton = new Scene_polylines_item();
+
+    boost::graph_traits<Graph>::edge_iterator ei, ei_end;
+    for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+    {
+      std::vector<Point> line;
+      line.clear();
+      Point s = points[boost::source(*ei, g)];
+      Point t = points[boost::target(*ei, g)];
+      line.push_back(s);
+      line.push_back(t);
+      skeleton->polylines.push_back(line);
+    }
+    skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
+    scene->addItem(skeleton);
+
+    QApplication::restoreOverrideCursor();
+
+    delete temp_mcs;
   }
 }
 
