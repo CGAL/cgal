@@ -27,6 +27,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_skeleton.h>
+#include <CGAL/iterator.h>
+#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 
 template<class PolyhedronWithId, class KeyType>
 struct Polyhedron_with_id_property_map
@@ -134,6 +136,37 @@ public:
     return true;
   }
 
+  bool is_mesh_valid(Polyhedron *pMesh) {
+    if (!pMesh->is_closed())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("The mesh is not closed.");
+      msgBox.exec();
+      return false;
+    }
+    if (!pMesh->is_pure_triangle())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("The mesh is not a pure triangle mesh.");
+      msgBox.exec();
+      return false;
+    }
+
+    std::size_t num_component;
+    CGAL::Counting_output_iterator output_it(&num_component);
+    CGAL::internal::extract_connected_components(*pMesh, output_it);
+    ++output_it;
+    if (num_component != 1)
+    {
+      QMessageBox msgBox;
+      QString str = QString("The mesh is not a single closed mesh.\n It has %1 components.").arg(num_component);
+      msgBox.setText(str);
+      msgBox.exec();
+      return false;
+    }
+    return true;
+  }
+
   // check if the Mean_curvature_skeleton exists
   // or has the same polyheron item
   // check if the mesh is a watertigh triangle mesh
@@ -148,20 +181,11 @@ public:
 
     if (mcs == NULL)
     {
-      if (!pMesh->is_closed())
+      if (!is_mesh_valid(pMesh))
       {
-        QMessageBox msgBox;
-        msgBox.setText("The mesh is not closed.");
-        msgBox.exec();
         return false;
       }
-      if (!pMesh->is_pure_triangle())
-      {
-        QMessageBox msgBox;
-        msgBox.setText("The mesh is not a pure triangle mesh.");
-        msgBox.exec();
-        return false;
-      }
+
       mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
                                         omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
     }
@@ -170,18 +194,8 @@ public:
       Polyhedron* mesh = mcs->get_polyhedron();
       if (mesh != pMesh)
       {
-        if (!pMesh->is_closed())
+        if (!is_mesh_valid(pMesh))
         {
-          QMessageBox msgBox;
-          msgBox.setText("The mesh is not closed.");
-          msgBox.exec();
-          return false;
-        }
-        if (!pMesh->is_pure_triangle())
-        {
-          QMessageBox msgBox;
-          msgBox.setText("The mesh is not a pure triangle mesh.");
-          msgBox.exec();
           return false;
         }
 
