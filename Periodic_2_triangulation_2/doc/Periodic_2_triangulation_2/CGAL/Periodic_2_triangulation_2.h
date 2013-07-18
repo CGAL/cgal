@@ -738,33 +738,32 @@ public:
   /*!
   Starts at an arbitrary vertex
   */
-  Vertices_iterator vertices_begin() const;
+  Vertex_iterator vertices_begin() const;
 
   /*!
   Past-the-end iterator
   */
-  Vertices_iterator vertices_end() const;
+  Vertex_iterator vertices_end() const;
 
   /*!
   Starts at an arbitrary edge
   */
-  Edges_iterator edges_begin() const;
+  Edge_iterator edges_begin() const;
 
   /*!
   Past-the-end iterator
   */
-  Edges_iterator edges_end() const;
+  Edge_iterator edges_end() const;
 
   /*!
   Starts at an arbitrary face
   */
-  Faces_iterator faces_begin() const;
+  Face_iterator faces_begin() const;
 
   /*!
   Past-the-end iterator
   */
-  Faces_iterator faces_end()
-  const;
+  Face_iterator faces_end() const;
 
 /// @}
 
