@@ -31,19 +31,17 @@ void print(std::vector<Point_handle> ps){
 
 template <typename Arrangement_2, typename Regularization_tag>
 class Naive_visibility_2 {
-    typedef typename Arrangement_2::Traits_2             Traits_2;
-    typedef typename Traits_2::Kernel                    Kernel;
-    typedef typename Traits_2::Point_2                   Point_2;
-    typedef typename CGAL::Segment_2<Kernel>             Segment_2;
+    typedef typename Arrangement_2::Geometry_traits_2         Geometry_traits_2;
+    typedef typename Geometry_traits_2::Point_2						Point_2;
+    typedef typename Geometry_traits_2::Ray_2						Ray_2;
+    typedef typename Geometry_traits_2::Segment_2					Segment_2;
+    typedef typename Geometry_traits_2::Vector_2                    Vector_2;
+    typedef typename Geometry_traits_2::Direction_2                 Direction_2;
 
     typedef typename Arrangement_2::Halfedge             Halfedge;
     typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
     typedef typename Arrangement_2::Vertex_const_handle  Vertex_const_handle;
     typedef typename Arrangement_2::Face_const_handle    Face_const_handle;
-
-    typedef typename CGAL::Vector_2<Kernel>              Vector_2;
-    typedef typename CGAL::Direction_2<Kernel>           Direction_2;
-    typedef typename CGAL::Ray_2<Kernel>                 Ray_2;
 
     enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
@@ -170,7 +168,7 @@ public:
             vit = end_it;
         }
         if (!is_init_empty) {
-            CGAL::insert_curve(out_arr, Segment_2(polygon[0], polygon.back()));
+            CGAL::insert(out_arr, Segment_2(polygon[0], polygon.back()));
         }
     }
 
@@ -296,7 +294,7 @@ public:
             vit = end_it;
         }
         if (!is_init_empty) {
-            CGAL::insert_curve(out_arr, Segment_2(polygon.front(),polygon.back()));
+            CGAL::insert(out_arr, Segment_2(polygon.front(),polygon.back()));
         }
     }
 
@@ -492,7 +490,7 @@ private:
         else
         {
             if (polygon.back() != p){
-                CGAL::insert_curve(arr, Segment_2(polygon.back(), p));
+                CGAL::insert(arr, Segment_2(polygon.back(), p));
                 polygon.push_back(p);
             }
         }
