@@ -65,6 +65,8 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  QAction* actionMCFSkeleton;
+  QAction* actionConvert_to_skeleton;
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -77,8 +79,17 @@ public:
     dockWidget = NULL;
     ui = NULL;
 
-    std::cerr << "init plugin\n";
+    actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton"), mainWindow);
+    actionMCFSkeleton->setObjectName("actionMCFSkeleton");
+
+    actionConvert_to_skeleton = new QAction(tr("Extract Skeleton"), mainWindow);
+    actionConvert_to_skeleton->setObjectName("actionConvert_to_skeleton");
+
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+  }
+
+  QList<QAction*> actions() const {
+    return QList<QAction*>() << actionMCFSkeleton << actionConvert_to_skeleton;
   }
 
   bool applicable() const {
@@ -289,7 +300,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
 
     if(!pMesh) return;
 
-    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+    Polyhedron tempMesh = *pMesh;
+
+    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(&tempMesh, Vertex_index_map(), Edge_index_map(),
                                       omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
 
     QTime time;
@@ -321,6 +334,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton);
+    item->setVisible(false);
 
     QApplication::restoreOverrideCursor();
 
