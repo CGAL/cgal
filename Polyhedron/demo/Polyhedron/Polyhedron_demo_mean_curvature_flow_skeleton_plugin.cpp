@@ -4,9 +4,7 @@
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
-#include "Scene_points_with_normal_item.cpp"
 #include "Scene_polylines_item.h"
-#include "Scene_polylines_item.cpp"
 
 #include "Polyhedron_type.h"
 #include "MainWindow.h"
