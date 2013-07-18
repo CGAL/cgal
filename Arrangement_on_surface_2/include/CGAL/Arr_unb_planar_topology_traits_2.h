@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 Efi Fogel  <efif@post.tau.ac.il>
@@ -38,7 +38,7 @@
 namespace CGAL {
 
 // Forward declaration:
-template <class GeomTraits_, class TopTraits_> 
+template <class GeomTraits_, class TopTraits_>
 class Arrangement_on_surface_2;
 
 /*! \class Arr_unb_planar_topology_traits_2
@@ -75,41 +75,41 @@ public:
   typedef typename Base::Inner_ccb                        Inner_ccb;
   typedef typename Base::Isolated_vertex                  Isolated_vertex;
   //@}
-  
+
 
   //! \name Arrangement types
   //!@{
   typedef Arr_unb_planar_topology_traits_2<Geometry_traits_2, Dcel> Self;
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   //!@}
-  
+
   ///! \name The side tags
   //@{
   typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
   typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
   typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
-  
+
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Left_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Bottom_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Top_side_category, Arr_open_side_tag > >
       )
   );
   BOOST_MPL_ASSERT(
-      (boost::mpl::or_< 
+      (boost::mpl::or_<
        boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
        boost::is_same< Right_side_category, Arr_open_side_tag > >
       )
@@ -117,7 +117,7 @@ public:
   //@}
 
   /*! \struct
-   * An auxiliary structure for rebinding the topology traits with a new 
+   * An auxiliary structure for rebinding the topology traits with a new
    * geometry-traits class and a new DCEL class.
    */
   template<typename T, typename D>
@@ -229,7 +229,7 @@ private:
   typedef Arrangement_on_surface_2<Geometry_traits_2, Self>             Arr;
 
   // Type definition for the constuction sweep-line visitor.
-  typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve; 
+  typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve;
   typedef Arr_construction_event<Geometry_traits_2,
                                  CSubcurve,
                                  Arr>                          CEvent;
@@ -240,7 +240,7 @@ private:
 
   // Type definition for the basic insertion sweep-line visitor.
   typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr> BInsTraits;
-  typedef Arr_construction_subcurve<BInsTraits>                BISubcurve; 
+  typedef Arr_construction_subcurve<BInsTraits>                BISubcurve;
   typedef Arr_construction_event<BInsTraits,
                                  BISubcurve,
                                  Arr>                          BIEvent;
@@ -251,7 +251,7 @@ private:
 
   // Type definition for the insertion sweep-line visitor.
   typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>       InsTraits;
-  typedef Arr_construction_subcurve<InsTraits>                 ISubcurve; 
+  typedef Arr_construction_subcurve<InsTraits>                 ISubcurve;
   typedef Arr_construction_event<InsTraits,
                                  ISubcurve,
                                  Arr>                          IEvent;
@@ -312,7 +312,7 @@ public:
 
   typedef Sweep_line_construction_visitor
     Sweep_line_non_intersecting_construction_visitor;
-  
+
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
     Sweep_line_non_intersecting_insertion_visitor;
 
@@ -357,7 +357,7 @@ public:
         <_Overlay_helper<Arr_overlay_traits_2<Geometry_traits_2,
                                               ArrangementA_,
                                               ArrangementB_>,
-                         ArrangementA_, 
+                         ArrangementA_,
                          ArrangementB_>,
          OverlayTraits_>
   {
@@ -391,7 +391,7 @@ public:
 
   typedef Arr_inc_insertion_zone_visitor<Arr>
                                               Zone_insertion_visitor;
-  
+
   typedef Arr_walk_along_line_point_location<Arr>
                                               Default_point_location_strategy;
   //@}
@@ -485,6 +485,7 @@ public:
 
 
 #if CGAL_NEW_FACE_SPLIT_STRATEGY
+// TODO EBEB 2013-07-18 became obsolete with signs-handling, DELETE soon
   /*!
    * Given two predecessor halfedges that belong to the same inner CCB of
    * a face, determine what happens when we insert an edge connecting the
@@ -506,7 +507,7 @@ public:
   {
       // In case of a planar topology, connecting two vertices on the same
       // inner CCB closes a new face that becomes a hole in the original face:
-      bool prev2_outer = 
+      bool prev2_outer =
           (cv.location(CGAL::ARR_MAX_END) == CGAL::ARR_TOP_BOUNDARY);
 
       return (std::make_pair (true, prev2_outer));
@@ -557,7 +558,7 @@ public:
     assert(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
     return v_tr->halfedge()->outer_ccb()->face();
   }
- 
+
   //! reference_face (non-const version).
   /*! The function returns a reference face of the arrangement.
       All reference faces of arrangements of the same type have a common
@@ -679,7 +680,7 @@ protected:
 
   /// \name Auxiliary functions.
   //@{
-  
+
   /*!
    * Get the curve associated with a boundary vertex.
    * \param v The vertex as infinity.

@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011,2012,2013 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -122,7 +122,7 @@ public:
     m_dcel.delete_all();
 
     if (own_traits)
-      delete traits;    
+      delete traits;
   }
   //@}
 
@@ -179,7 +179,7 @@ public:
 
 
   /*!
-   * Given signs of two ccbs that show up when splitting upon insertion of 
+   * Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
@@ -196,6 +196,7 @@ public:
   }
 
 #if CGAL_NEW_FACE_SPLIT_STRATEGY
+// TODO EBEB 2013-07-18 became obsolete with signs-handling, DELETE soon
     /*!
    * Given two predecessor halfedges that belong to the same inner CCB of
    * a face, determine what happens when we insert an edge connecting the
@@ -222,6 +223,8 @@ public:
 #endif
 
 
+#if 0
+  // TODO EBEB 2013-07-18 became obsolete with _hole_creation_on_edge_removal - DELETE soon
   /*!
    * Determine whether the removal of the given edge will cause the creation
    * of a hole.
@@ -249,6 +252,7 @@ public:
       return (false);
     }
   }
+#endif
 
   /*!
    * Determine whether the given point lies in the interior of the given face.
@@ -316,11 +320,11 @@ void Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::assign
   // Clear the current DCEL and duplicate the other DCEL.
   m_dcel.delete_all();
   m_dcel.assign (other.m_dcel);
-  
+
   // Take care of the traits object.
   if (own_traits && traits != NULL)
     delete traits;
-  
+
   if (other.own_traits)
     traits = new Traits_adaptor_2;
   else
@@ -338,7 +342,7 @@ bool Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::
 is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
 {
   CGAL_precondition (v == NULL || ! v->has_null_point());
-  CGAL_precondition (v == NULL || 
+  CGAL_precondition (v == NULL ||
                      traits->equal_2_object()(p, v->point()));
 
   // In case the face is unbounded and has no outer ccbs, this is the single
@@ -359,19 +363,19 @@ is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
   // interior of the component.
   const Halfedge    *first = *(f->outer_ccbs_begin());
 
-  
-  // Some left ends of curves may not yet have the curve assigned, 
-  // In case they are at TOP/BOTTOM they are not comparable to p 
+
+  // Some left ends of curves may not yet have the curve assigned,
+  // In case they are at TOP/BOTTOM they are not comparable to p
   // We advance first until we find a comparable vertex to start with.
-  // We always find such a vertex since on the ccb there is at least one 
-  // interior vertex or a vertex at LEFT/RIGHT which are comparable. 
-  while( first->vertex()->parameter_space_in_x()==ARR_INTERIOR 
-      && first->has_null_curve() 
-      && first->next()->has_null_curve()){ 
-    first = first->next(); 
+  // We always find such a vertex since on the ccb there is at least one
+  // interior vertex or a vertex at LEFT/RIGHT which are comparable.
+  while( first->vertex()->parameter_space_in_x()==ARR_INTERIOR
+      && first->has_null_curve()
+      && first->next()->has_null_curve()){
+    first = first->next();
   }
 
-  
+
   const Halfedge    *curr = first;
   Comparison_result  res_source;
   Comparison_result  res_target;
@@ -390,15 +394,15 @@ is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
     // the component.
     if (curr->vertex() == v)
       return (false);
-    
-    // We jump over vertices at TOP/BOTTOM that do not yet have a curve 
-    if(    curr->vertex()->parameter_space_in_x()==ARR_INTERIOR 
-        && curr->has_null_curve() 
-        && curr->next()->has_null_curve()){ 
-      curr = curr->next(); 
+
+    // We jump over vertices at TOP/BOTTOM that do not yet have a curve
+    if(    curr->vertex()->parameter_space_in_x()==ARR_INTERIOR
+        && curr->has_null_curve()
+        && curr->next()->has_null_curve()){
+      curr = curr->next();
       continue;
     }
-    
+
     res_target = compare_xy (p, curr->vertex());
 
     // In case the current halfedge belongs to an "antenna", namely its
@@ -423,7 +427,7 @@ is_in_face(const Face *f, const Point_2& p, const Vertex *v) const
       if (res_y_at_x == SMALLER)
       {
         n_ray_intersections++;
-      }        
+      }
       else if (res_y_at_x == EQUAL)
       {
         // In this case p lies on the current edge, so it is obviously not

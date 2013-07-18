@@ -501,6 +501,8 @@ public:
     return (std::make_pair(true, true));
   }
 
+#if 0
+  // TODO EBEB 2013-07-18 became obsolete with _hole_creation_on_edge_removal - DELETE soon
   /*! Determine whether the removal of the given edge will cause the creation
    * of a hole.
    * \param he The halfedge to be removed.
@@ -521,6 +523,7 @@ public:
      */
     return (he->outer_ccb() == he->opposite()->outer_ccb());
   }
+#endif
 
   /*! Determine whether a given point lies in the interior of a given face.
    * \param f The face.
