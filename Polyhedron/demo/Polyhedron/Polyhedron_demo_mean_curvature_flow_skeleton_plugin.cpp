@@ -202,9 +202,9 @@ public:
         delete mcs;
 
         diag = scene->len_diagonal();
-        init_ui(diag);
         omega_L = ui->omega_L->value();
         omega_H = ui->omega_H->value();
+        ui->edgelength_TH->setValue(0.002 * diag);
         edgelength_TH = ui->edgelength_TH->value();
         alpha = ui->alpha->value();
         zero_TH = ui->zero_TH->value();
