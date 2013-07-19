@@ -1,6 +1,6 @@
 all: normal cxx0x
 
-CGAL_INC = -I/home/glisse/repos/cgal/master/Algebraic_foundations/include -I/home/glisse/repos/cgal/master/STL_Extension/include -I/home/glisse/repos/cgal/master/Number_types/include -I/data/repos/cgal/master/Algebraic_foundations/include -I/data/repos/cgal/master/STL_Extension/include -I/data/repos/cgal/master/Number_types/include -DCGAL_DISABLE_ROUNDING_MATH_CHECK
+CGAL_INC = -I../../../Algebraic_foundations/include -I../../../STL_Extension/include -I../../../Number_types/include -DCGAL_DISABLE_ROUNDING_MATH_CHECK
 
 EIGEN_INC = `pkg-config --cflags eigen3|sed -e 's/-I/-isystem/g'` -DCGAL_EIGEN3_ENABLED
 
