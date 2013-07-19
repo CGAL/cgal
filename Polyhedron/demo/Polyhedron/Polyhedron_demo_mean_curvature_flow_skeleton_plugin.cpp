@@ -45,6 +45,7 @@ public:
 };
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
@@ -186,6 +187,8 @@ public:
         return false;
       }
 
+      // save a copy before any operation
+      mCopy = *pMesh;
       mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
                                         omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
     }
@@ -209,6 +212,9 @@ public:
         alpha = ui->alpha->value();
         zero_TH = ui->zero_TH->value();
         area_TH = ui->area_TH->value();
+
+        // save a copy before any operation
+        mCopy = *pMesh;
         mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
                                           omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
         fixedPointsItemIndex = -1;
@@ -234,6 +240,7 @@ public slots:
   void on_actionRun();
   void on_actionSkeletonize();
   void on_actionConverge();
+  void on_actionCorrespondence();
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -241,6 +248,7 @@ private:
   Ui::Mean_curvature_flow_skeleton_plugin* ui;
   int fixedPointsItemIndex;
   int nonFixedPointsItemIndex;
+  Polyhedron mCopy;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -282,6 +290,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionSkeletonize()));
     connect(ui->pushButton_converge, SIGNAL(clicked()),
             this, SLOT(on_actionConverge()));
+    connect(ui->pushButton_correspondence, SIGNAL(clicked()),
+            this, SLOT(on_actionCorrespondence()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -708,6 +718,58 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   scene->itemChanged(fixedPointsItemIndex);
 //  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
+  QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCorrespondence()
+{
+  QTime time;
+  time.start();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  Graph g;
+  std::vector<Point> points;
+  std::vector<std::vector<int> > corr;
+
+  mcs->get_skeleton(g, points);
+  mcs->get_correspondent_vertices(corr);
+
+  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
+
+  vertex_iterator vb, ve;
+  std::vector<vertex_descriptor> id_to_vd;
+  id_to_vd.clear();
+  id_to_vd.resize(boost::num_vertices(mCopy));
+  int id = 0;
+  for (boost::tie(vb, ve) = boost::vertices(mCopy); vb != ve; vb++)
+  {
+    vertex_descriptor v = *vb;
+    id_to_vd[id++] = v;
+  }
+
+  Scene_polylines_item* lines = new Scene_polylines_item();
+
+  for (size_t i = 0; i < corr.size(); i++)
+  {
+    Point s = points[i];
+    if (corr[i].size() == 0)
+    {
+      std::cout << "no correspondent vertices\n";
+    }
+    for (size_t j = 0; j < corr[i].size(); j++)
+    {
+      std::vector<Point> line;
+      line.clear();
+      Point t = id_to_vd[corr[i][j]]->point();
+      line.push_back(s);
+      line.push_back(t);
+      lines->polylines.push_back(line);
+    }
+  }
+  lines->setName(QString("correpondent vertices"));
+  scene->addItem(lines);
+
+  // update scene
   QApplication::restoreOverrideCursor();
 }
 

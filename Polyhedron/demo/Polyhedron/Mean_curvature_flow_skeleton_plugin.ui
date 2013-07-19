@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
+    <width>564</width>
     <height>292</height>
    </rect>
   </property>
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>0</y>
+      <y>10</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -146,7 +146,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>40</y>
+      <y>50</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -159,7 +159,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>80</y>
+      <y>90</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -172,7 +172,7 @@
     <property name="geometry">
      <rect>
       <x>260</x>
-      <y>120</y>
+      <y>130</y>
       <width>114</width>
       <height>32</height>
      </rect>
@@ -184,22 +184,22 @@
    <widget class="QPushButton" name="pushButton_run">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>210</y>
+      <x>380</x>
+      <y>10</y>
       <width>171</width>
       <height>32</height>
      </rect>
     </property>
     <property name="text">
-     <string>run one iteration</string>
+     <string>Run one iteration</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_skeletonize">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>160</y>
-      <width>114</width>
+      <x>380</x>
+      <y>90</y>
+      <width>171</width>
       <height>32</height>
      </rect>
     </property>
@@ -210,14 +210,14 @@
    <widget class="QPushButton" name="pushButton_converge">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>210</y>
+      <x>380</x>
+      <y>50</y>
       <width>171</width>
       <height>32</height>
      </rect>
     </property>
     <property name="text">
-     <string>run to convergence</string>
+     <string>Run to convergence</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="area_TH">
@@ -243,6 +243,19 @@
      <string>area_TH</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_correspondence">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>130</y>
+      <width>171</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show correspondence</string>
+    </property>
+   </widget>
    <zorder>zero_TH</zorder>
    <zorder>omega_H</zorder>
    <zorder>edgelength_TH</zorder>
@@ -262,6 +275,7 @@
    <zorder>pushButton_converge</zorder>
    <zorder>area_TH</zorder>
    <zorder>label_area_TH</zorder>
+   <zorder>pushButton_correspondence</zorder>
   </widget>
  </widget>
  <resources/>
