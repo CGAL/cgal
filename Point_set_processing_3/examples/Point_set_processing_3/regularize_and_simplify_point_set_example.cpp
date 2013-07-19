@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/regularize_and_simplify_point_set.h>
-#include <CGAL/regularize_and_simplify_point_set_using_balltree.h>
+#include <CGAL/wlop_regularize_and_simplify_point_set_using_rich_grid.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
@@ -57,7 +57,7 @@ int main(void)
 
   // Run algorithm using balltree
   std::vector<Point>::const_iterator sample_points_begin =
-    CGAL::regularize_and_simplify_point_set_using_balltree(
+    CGAL::wlop_regularize_and_simplify_point_set_using_rich_grid(
             points.begin(), 
             points.end(), 
             retain_percentage, 
