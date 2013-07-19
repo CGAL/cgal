@@ -205,7 +205,7 @@ circumvented. With `Homogeneous_d<RingNumberType>`,
 `Homogeneous_d<RingNumberType,LinearAlgebra>::%LA` is mapped to the
 type `LinearAlgebra`.
 
-\subsection Epick_d Kernel
+\subsection Kernel_dEpickKernel Epick_d Kernel
 
 The kernel `Epick_d<Dimension>`, short for Exact Predicates Inexact
 Constructions Kernel is a kernel particularly useful when the dimension of

@@ -8,7 +8,7 @@ A model for `Kernel_d` that uses %Cartesian coordinates to represent the
 geometric objects. The parameter `Dimension` is the dimension of the
 ambient Euclidean space. It may be either `Dimension_tag<d>` or
 `Dynamic_dimension_tag`. It supports construction of points from `double`
-Cartesian coordinates. It provides exact geometric predicates, but
+%Cartesian coordinates. It provides exact geometric predicates, but
 inexact geometric constructions. The geometric predicates are made exact
 without sacrificing speed thanks to the use of filters.
 
@@ -25,7 +25,6 @@ dimension.
 \cgalModels `Kernel_d`
 \cgalModels `DelaunayTriangulationTraits`
 
-\sa `CGAL::Epick_d<Dimension>::Point_d`
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 \sa `CGAL::Homogeneous_d<RingNumberType>`
 
@@ -44,7 +43,7 @@ public:
 /*! introduces a point with coordinates (x0, x1, ...). */
 Point_d(double x0, double x1, ...);
 
-/*! returns the i'th coordinate of a point.r
+/*! returns the i'th coordinate of a point.
     \pre `i` is non-negative and less than the dimension */
 double operator[](int i)const;
 }
