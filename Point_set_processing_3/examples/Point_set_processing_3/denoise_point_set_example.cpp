@@ -4,7 +4,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/denoise_point_set.h>
+#include <CGAL/bilateral_smooth_point_set.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/tags.h>
@@ -53,7 +53,7 @@ int main(void)
       std::cout << std::endl << "Iteration: " << i+1 << std::endl;
      
       double error = 
-      CGAL::denoise_points_with_normals/*<CGAL::Parallel_tag>*/(
+      CGAL::bilateral_smooth_point_set/*<CGAL::Parallel_tag>*/(
             points.begin(), 
             points.end(),
             CGAL::First_of_pair_property_map<PointVectorPair>(),

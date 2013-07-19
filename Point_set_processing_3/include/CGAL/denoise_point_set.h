@@ -481,7 +481,7 @@ template <typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap>
 double
-denoise_points_with_normals(
+bilateral_smooth_point_set(
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
   PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
