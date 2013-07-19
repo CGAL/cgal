@@ -14,7 +14,7 @@ struct Cartesian_filter_NT : public Base_
     CGAL_CONSTEXPR Cartesian_filter_NT(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_change_FT<Kernel_base,Interval_nt_advanced> K1;
-    typedef typename internal::Exact_type_selector<typename Get_type<Kernel_base, FT_tag>::type>::Type  Exact_nt;
+    typedef typename internal::Exact_field_selector<typename Get_type<Kernel_base, FT_tag>::type>::Type  Exact_nt;
     typedef Cartesian_change_FT<Kernel_base,Exact_nt> K2;
 
     template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_NT,T>::type> struct Functor :

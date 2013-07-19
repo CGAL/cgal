@@ -14,14 +14,13 @@
 #define CGAL_MOVE(t) t
 #define CGAL_CONSTEXPR
 #endif
-#include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <CGAL/Rational_traits.h>
 #include <CGAL/tuple.h>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits.hpp>
 
 #ifdef CGAL_CXX0X
 #define BOOSTD std::
