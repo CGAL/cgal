@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Shihao Wu, Cl¨¦ment Jamin 
+// Author(s) : Shihao Wu, Cl¨¦ment Jamin, Pierre Alliez 
 
 #ifndef CGAL_UPSAMPLE_POINT_SET_H
 #define CGAL_UPSAMPLE_POINT_SET_H

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Shihao Wu, Cl¨¦ment Jamin 
+// Author(s) : Shihao Wu, Cl¨¦ment Jamin, Pierre Alliez  
 
 #ifndef CGAL_RICH_GRID_H
 #define CGAL_RICH_GRID_H
@@ -67,14 +67,14 @@ public:
   Rich_point(const Point& p = CGAL::ORIGIN,
              const int& i = 0,
              const Vector& v = CGAL::NULL_VECTOR
-             ):pt(p),index(i),normal(v){} 
+             ):pt(p), index(i), normal(v){} 
 
 public:
   Point pt;
   Vector normal;
   unsigned int index;
   std::vector<unsigned int> neighbors;
-  std::vector<unsigned int> original_neighbors;//is not necessary
+  std::vector<unsigned int> original_neighbors;//it's not necessary
 };
 
 template <typename Kernel>
@@ -84,7 +84,7 @@ public:
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
 
-  Rich_box(){init();}
+  Rich_box(){ init(); }
 
   void init()
   {
@@ -103,8 +103,8 @@ public:
     if (p.z() > max_z) max_z = p.z();
   }
 
-  Point get_min(){return Point(min_x, min_y, min_z);}
-  Point get_max(){return Point(max_x, max_y, max_z);}
+  Point get_min() { return Point(min_x, min_y, min_z); }
+  Point get_max() { return Point(max_x, max_y, max_z); }
 
 private:
   FT min_x, min_y, min_z, max_x, max_y, max_z;
@@ -129,38 +129,59 @@ public:
 
   // Travel for the point set itself 
   void travel_itself(void (*self)(iterator starta, iterator enda, FT radius),
-    void (*other)(iterator starta, iterator enda, 
-    iterator startb, iterator endb, FT radius));
+                    void (*other)(iterator starta, iterator enda, 
+                    iterator startb, iterator endb, FT radius));
 
   // Travel other self between two point set(original and samples) 
   void travel_others(Rich_grid &points, 
-    void (*travel_others)(iterator starta, iterator enda, 
-    iterator startb, iterator endb, FT radius));
+                     void (*travel_others)(iterator starta, 
+                                           iterator enda, 
+                                           iterator startb, 
+                                           iterator endb, 
+                                           FT radius));
 
 
-  void static __cdecl find_original_neighbors(iterator starta, iterator enda, 
-    iterator startb, iterator endb, FT radius);
+  // functions for neighborhood searching
+  void static __cdecl find_original_neighbors(iterator starta, 
+                                              iterator enda, 
+                                              iterator startb,
+                                              iterator endb, 
+                                              FT radius);
+
   void static  __cdecl find_self_neighbors(iterator start, 
-                                           iterator end, FT radius);
-  void static  __cdecl find_other_neighbors(iterator starta, iterator enda, 
-    iterator startb, iterator endb, FT radius);
+                                           iterator end, 
+                                           FT radius);
+ 
+  void static  __cdecl find_other_neighbors(iterator starta, 
+                                            iterator enda, 
+                                            iterator startb, 
+                                            iterator endb, 
+                                            FT radius);
 
 private:
   
   std::vector<Rich_point<Kernel>*> rich_points;  
   std::vector<int> index;   
-  int xside, yside, zside;
+  int x_side, y_side, z_side;
   FT radius;
 
-  int cell(int x, int y, int z) { return x + xside*(y + yside*z); }
-  bool isEmpty(int cell) { return index[cell+1] == index[cell]; }
-  iterator startV(int origin) { return rich_points.begin() + index[origin]; }  
-  iterator endV(int origin) { return rich_points.begin() + index[origin+1]; }
+  int cell(int x, int y, int z) { return x + x_side*(y + y_side*z); }
+  bool is_empty(int cell) { return index[cell+1] == index[cell]; }
+
+  iterator get_start_iter(int origin) 
+  { 
+    return rich_points.begin() + index[origin]; 
+  }  
+
+  iterator get_end_iter(int origin) 
+  { 
+    return rich_points.begin() + index[origin+1]; 
+  }
 };
 
 
 template <typename Kernel>
-class XSort {
+class X_Sort {
 public:
   bool operator()(const Rich_point<Kernel> *a, const Rich_point<Kernel> *b) {
     return a->pt.x() < b->pt.x();
@@ -168,7 +189,7 @@ public:
 };
 
 template <typename Kernel>
-class YSort {
+class Y_Sort {
 public:
   bool operator()(const Rich_point<Kernel> *a, const Rich_point<Kernel> *b) {
     return a->pt.y() < b->pt.y();
@@ -176,7 +197,7 @@ public:
 };
 
 template <typename Kernel>
-class ZSort {
+class Z_Sort {
 public:
   bool operator()(const Rich_point<Kernel> *a, const Rich_point<Kernel> *b) {
     return a->pt.z() < b->pt.z();
@@ -188,7 +209,8 @@ public:
 // and each grid has their points index in the index vector of sample.
 template <typename Kernel>
 void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert, 
-                      Rich_box<Kernel>& box, const typename Kernel::FT _radius) 
+                             Rich_box<Kernel>& box, 
+                             const typename Kernel::FT _radius) 
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
@@ -205,58 +227,58 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
     rich_points[i] = &vert[i];
   }
 
-  xside = (int)ceil((max.x() - min.x())/radius);
-  yside = (int)ceil((max.y() - min.y())/radius);
-  zside = (int)ceil((max.z() - min.z())/radius);
+  x_side = (int)ceil((max.x() - min.x())/radius);
+  y_side = (int)ceil((max.y() - min.y())/radius);
+  z_side = (int)ceil((max.z() - min.z())/radius);
 
-  xside = (xside > 0) ? xside : 1;
-  yside = (yside > 0) ? yside : 1;
-  zside = (zside > 0) ? zside : 1;
+  x_side = (x_side > 0) ? x_side : 1;
+  y_side = (y_side > 0) ? y_side : 1;
+  z_side = (z_side > 0) ? z_side : 1;
 
-  index.resize(xside*yside*zside + 1, -1);  
+  index.resize(x_side * y_side * z_side + 1, -1);  
 
-  std::sort(rich_points.begin(), rich_points.end(), ZSort<Kernel>()); 
+  std::sort(rich_points.begin(), rich_points.end(), Z_Sort<Kernel>()); 
 
-  unsigned int startz = 0;
-  for(unsigned int z = 0; z < zside; z++) 
+  unsigned int start_z = 0;
+  for(unsigned int z = 0; z < z_side; z++) 
   {
-    int endz = startz;
-    FT maxz = min.z() + (z+1)*radius;
-    while(endz < rich_points.size() && rich_points[endz]->pt.z()< maxz)
-      ++endz; 
+    int end_z = start_z;
+    FT max_z = min.z() + (z+1)*radius;
+    while(end_z < rich_points.size() && rich_points[end_z]->pt.z() < max_z)
+      ++end_z; 
 
-    sort(rich_points.begin()+startz, 
-         rich_points.begin()+endz, YSort<Kernel>());
+    sort(rich_points.begin() + start_z, 
+         rich_points.begin() + end_z, Y_Sort<Kernel>());
 
-    int starty = startz;
-    for(int y = 0; y < yside; y++) 
+    int start_y = start_z;
+    for(int y = 0; y < y_side; y++) 
     {
-      int endy = starty;        
-      FT maxy = min.y() + (y+1)*radius;
-      while(endy < endz && rich_points[endy]->pt.y() < maxy)
-        ++endy;
+      int end_y = start_y;        
+      FT max_y = min.y() + (y+1) * radius;
+      while(end_y < end_z && rich_points[end_y]->pt.y() < max_y)
+        ++end_y;
 
-      sort(rich_points.begin()+starty, 
-           rich_points.begin()+endy, XSort<Kernel>());
+      sort(rich_points.begin() + start_y, 
+           rich_points.begin() + end_y, X_Sort<Kernel>());
 
-      int startx = starty;
-      for(int x = 0; x < xside; x++) 
+      int start_x = start_y;
+      for(int x = 0; x < x_side; x++) 
       {
-        int endx = startx;
-        index[x + xside*y + xside*yside*z] = endx;          
-        FT maxx = min.x() + (x+1)*radius;
-        while(endx < endy && rich_points[endx]->pt.x() < maxx)
-          ++endx;
+        int end_x = start_x;
+        index[x + x_side * y + x_side * y_side * z] = end_x;          
+        FT max_x = min.x() + (x+1) * radius;
+        while(end_x < end_y && rich_points[end_x]->pt.x() < max_x)
+          ++end_x;
 
-        startx = endx;
+        start_x = end_x;
       }
-      starty = endy;
+      start_y = end_y;
     }
-    startz = endz;
+    start_z = end_z;
   }
 
   //compute the last grid's range
-  index[xside*yside*zside] = startz;
+  index[x_side * y_side * z_side] = start_z;
 }
 
 /// define how to travel in the same gird 
@@ -279,22 +301,22 @@ void Rich_grid<Kernel>::travel_itself(
     2, 3, 1, 3, 1, 2,                       
     1, 4, 2, 5, 3, 6 };
 
-  for(int z = 0; z < zside; z++) {
-    for(int y = 0; y < yside; y++) {
-      for(int x = 0; x < xside; x++) {
+  for(int z = 0; z < z_side; z++) {
+    for(int y = 0; y < y_side; y++) {
+      for(int x = 0; x < x_side; x++) {
         int origin = cell(x, y, z);
-        self(startV(origin), endV(origin), radius);   
+        self(get_start_iter(origin), get_end_iter(origin), radius);   
         // compute between other girds
         for(int d = 2; d < 28; d += 2) { // skipping self
           int *cs = corner + 3*diagonals[d];
           int *ce = corner + 3*diagonals[d+1];
-          if((x + cs[0] < xside) && (y + cs[1] < yside) && (z + cs[2] < zside) 
-          && (x + ce[0] < xside) && (y + ce[1] < yside) && (z + ce[2] < zside)) 
+          if((x + cs[0] < x_side) && (y + cs[1] < y_side) && (z + cs[2] < z_side) 
+          && (x + ce[0] < x_side) && (y + ce[1] < y_side) && (z + ce[2] < z_side)) 
           {
             origin = cell(x+cs[0], y+cs[1], z+cs[2]);
             int dest = cell(x+ce[0], y+ce[1], z+ce[2]);
-            other(startV(origin), endV(origin), 
-              startV(dest),   endV(dest), radius);        
+            other(get_start_iter(origin), get_end_iter(origin), 
+                  get_start_iter(dest),   get_end_iter(dest), radius);        
           }
         }   
       }
@@ -322,34 +344,40 @@ void Rich_grid<Kernel>::travel_others(
     2, 3, 1, 3, 1, 2,                       
     1, 4, 2, 5, 3, 6 };
 
-  for(int z = 0; z < zside; z++) {
-    for(int y = 0; y < yside; y++) {
-      for(int x = 0; x < xside; x++) {     
+  for(int z = 0; z < z_side; z++) {
+    for(int y = 0; y < y_side; y++) {
+      for(int x = 0; x < x_side; x++) {     
         int origin = cell(x, y, z);  
 
 
-        if(!isEmpty(origin) && !points.isEmpty(origin)) 
-          travel_others(startV(origin), endV(origin), 
-          points.startV(origin), points.endV(origin), radius);  
+        if(!is_empty(origin) && !points.is_empty(origin)) 
+          travel_others(get_start_iter(origin), get_end_iter(origin), 
+          points.get_start_iter(origin), points.get_end_iter(origin), radius);  
 
 
         for(int d = 2; d < 28; d += 2) { //skipping self
           int *cs = corner + 3*diagonals[d];
           int *ce = corner + 3*diagonals[d+1];
-          if((x+cs[0] < xside) && (y+cs[1] < yside) && (z+cs[2] < zside) &&
-            (x+ce[0] < xside) && (y+ce[1] < yside) && (z+ce[2] < zside)) {
+          if((x+cs[0] < x_side) && (y+cs[1] < y_side) && (z+cs[2] < z_side) &&
+            (x+ce[0] < x_side) && (y+ce[1] < y_side) && (z+ce[2] < z_side)) {
 
               origin   = cell(x+cs[0], y+cs[1], z+cs[2]);
 
               int dest = cell(x+ce[0], y+ce[1], z+ce[2]);
 
-              if(!isEmpty(origin) && !points.isEmpty(dest))        // Locally 
-                travel_others(startV(origin), endV(origin), 
-                points.startV(dest),   points.endV(dest), radius); 
+              if(!is_empty(origin) && !points.is_empty(dest))        
+                  travel_others(get_start_iter(origin), 
+                                get_end_iter(origin), 
+                                points.get_start_iter(dest),   
+                                points.get_end_iter(dest), 
+                                radius); 
 
-              if(!isEmpty(dest) && !points.isEmpty(origin))  
-                travel_others(startV(dest), endV(dest), 
-                points.startV(origin),   points.endV(origin), radius);        
+              if(!is_empty(dest) && !points.is_empty(origin))  
+                  travel_others(get_start_iter(dest), 
+                                get_end_iter(dest), 
+                                points.get_start_iter(origin),   
+                                points.get_end_iter(origin), 
+                                radius);        
           }
         }      
       }
@@ -360,11 +388,11 @@ void Rich_grid<Kernel>::travel_others(
 /// grid travel function to find the neighbors in the original point set
 template <typename Kernel>
 void Rich_grid<Kernel>::find_original_neighbors(
-  iterator starta, 
-  iterator enda, 
-  iterator startb, 
-  iterator endb,
-  FT radius
+    iterator starta, 
+    iterator enda, 
+    iterator startb, 
+    iterator endb,
+    FT radius
 )
 {
   typedef typename Kernel::Point_3 Point;
@@ -394,7 +422,7 @@ void Rich_grid<Kernel>::find_original_neighbors(
 /// grid travel function to find the neighbors in the same point set
 template <typename Kernel>
 void Rich_grid<Kernel>::find_self_neighbors(
-  iterator start, iterator end, FT radius)
+    iterator start, iterator end, FT radius)
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
