@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/upsample_point_set.h>
+#include <CGAL/edge_aware_upsample_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
@@ -48,7 +48,7 @@ int main(void)
   std::cout << "Run upsample algorithm example: " << std::endl;
 
    //Run algorithm using ball-tree
-   CGAL::upsample_point_set(
+   CGAL::edge_aware_upsample_point_set(
             points.begin(), 
             points.end(), 
             std::back_inserter(points),

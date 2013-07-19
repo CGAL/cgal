@@ -293,7 +293,7 @@ template <typename OutputIteratorValueType,
           typename NormalPMap,
           typename Kernel>
 void
-upsample_point_set(
+edge_aware_upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   OutputIterator output, ///< output iterator over points.
@@ -541,7 +541,7 @@ template <typename OutputIterator,
           typename Kernel
 >
 void
-upsample_point_set(
+edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
@@ -554,7 +554,7 @@ upsample_point_set(
   const Kernel& kernel) ///< geometric traits.
 {
   // just deduce value_type of OutputIterator
-  return upsample_point_set
+  return edge_aware_upsample_point_set
     <typename value_type_traits<OutputIterator>::type>(
     first, beyond,
     output,
@@ -581,7 +581,7 @@ template <typename OutputIteratorValueType,
           typename NormalPMap
 >
 void
-upsample_point_set(
+edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
@@ -595,7 +595,7 @@ upsample_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return upsample_point_set
+  return edge_aware_upsample_point_set
     <OutputIteratorValueType>(
     first, beyond,
     output,
@@ -614,7 +614,7 @@ template <typename OutputIterator,
           typename NormalPMap
 >
 void
-upsample_point_set(
+edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
@@ -627,7 +627,7 @@ upsample_point_set(
   )
 {
   // just deduce value_type of OutputIterator
-  return upsample_point_set
+  return edge_aware_upsample_point_set
     <typename value_type_traits<OutputIterator>::type>(// not sure
     first, beyond,
     output,
@@ -655,7 +655,7 @@ template <typename OutputIteratorValueType,
           typename NormalPMap
 >
 void
-upsample_point_set(
+edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
@@ -666,7 +666,7 @@ upsample_point_set(
   const unsigned int number_of_output_points///< number of iterations.   
   ) 
 {
-  return upsample_point_set
+  return edge_aware_upsample_point_set
     <OutputIteratorValueType>(
     first, beyond,
     output,
@@ -688,7 +688,7 @@ template <typename OutputIteratorValueType,
           typename NormalPMap
 >
 bool
-upsample_point_set(
+edge_aware_upsample_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   OutputIterator output, ///< output iterator over points.
