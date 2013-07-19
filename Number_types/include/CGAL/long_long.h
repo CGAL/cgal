@@ -88,6 +88,50 @@ template <> class Real_embeddable_traits< unsigned long long >
     };
 };
 
+#ifdef __SIZEOF_INT128__
+// __int128
+template<> class Algebraic_structure_traits< __int128 >
+  : public Algebraic_structure_traits_base< __int128,
+                                            Euclidean_ring_tag > {
+
+  public:
+    typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
+
+    typedef INTERN_AST::Div_per_operator< Type >  Div;
+    typedef INTERN_AST::Mod_per_operator< Type >  Mod;
+
+};
+
+template <> class Real_embeddable_traits< __int128 >
+  : public INTERN_RET::Real_embeddable_traits_base< __int128 , CGAL::Tag_true > {
+  public:
+
+    class To_interval
+      : public std::unary_function< Type, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Type& x ) const {
+	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+        }
+    };
+};
+
+// unsigned __int128
+template <> class Real_embeddable_traits< unsigned __int128 >
+  : public INTERN_RET::Real_embeddable_traits_base< unsigned __int128 , CGAL::Tag_true > {
+  public:
+
+    class To_interval
+      : public std::unary_function< Type, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Type& x ) const {
+	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+        }
+    };
+};
+#endif
+
+
 } //namespace CGAL
 
 #include <CGAL/Interval_nt.h>
