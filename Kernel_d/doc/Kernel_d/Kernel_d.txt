@@ -211,7 +211,8 @@ The kernel `Epick_d<Dimension>`, short for Exact Predicates Inexact
 Constructions Kernel is a kernel particularly useful when the dimension of
 the space is known at compile-time. It uses a Cartesian representation and
 supports construction of points from `double` coordinates. It provides exact
-geometric predicates, but inexact geometric constructions.
+geometric predicates, but the geometric constructions are not guaranteed to
+be exact.
 
 Note that it provides few interfaces in addition to those documented in the
 `Kernel_d` concept. In particular, the type of a point is only available as
