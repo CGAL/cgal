@@ -132,10 +132,13 @@ private:
   int vertex_id_count;
 
   std::map<size_t, bool> is_vertex_fixed_map;
+  std::map<int, int> new_id;
   std::vector<double> halfedge_angle;
 
   Graph g;
   std::vector<Point> points;
+  // record the correspondence between skeletal points and original surface points
+  std::vector<std::vector<int> > correspondence;
 
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
@@ -205,6 +208,8 @@ public:
     }
 
     is_vertex_fixed_map.clear();
+    correspondence.clear();
+    correspondence.resize(boost::num_vertices(*polyhedron));
   }
 
   // Release resources
@@ -325,7 +330,13 @@ public:
     int cnt_fix = 0;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
-      int i = boost::get(vertex_id_pmap, *vb);
+      int id = boost::get(vertex_id_pmap, *vb);
+      if (new_id.find(id) == new_id.end())
+      {
+        std::cerr << "id does not exist!\n";
+      }
+
+      int i = new_id[id];
       if (i >= nver)
       {
         std::cerr << "id is too large\n";
@@ -335,8 +346,8 @@ public:
         std::cerr << "id is too small\n";
       }
       // if the vertex is fixed
-      if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
-          && is_vertex_fixed_map[i])
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
+          && is_vertex_fixed_map[id])
       {
         cnt_fix++;
         A.set_coef(i + nver, i, 1.0 / zero_TH, true);
@@ -349,11 +360,12 @@ public:
 
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
-      int i = boost::get(vertex_id_pmap, *vb);
+      int id = boost::get(vertex_id_pmap, *vb);
+      int i = new_id[id];
       double L = omega_L;
       // if the vertex is fixed
-      if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
-          && is_vertex_fixed_map[i])
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
+          && is_vertex_fixed_map[id])
       {
         L = 0;
       }
@@ -363,7 +375,8 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         double wij = edge_weight[boost::get(edge_id_pmap, *e)] * 2.0;
-        int j = boost::get(vertex_id_pmap, vj);
+        int jd = boost::get(vertex_id_pmap, vj);
+        int j = new_id[jd];
         A.set_coef(i, j, wij * L, true);
         diagonal += -wij;
       }
@@ -391,10 +404,12 @@ public:
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       vertex_descriptor vi = *vb;
-      int i = boost::get(vertex_id_pmap, vi);
+      int id = boost::get(vertex_id_pmap, vi);
+      int i = new_id[id];
+
       double omega;
-      if (is_vertex_fixed_map.find(i) != is_vertex_fixed_map.end()
-          && is_vertex_fixed_map[i])
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
+          && is_vertex_fixed_map[id])
       {
         cnt_fix++;
         omega = 1.0 / zero_TH;
@@ -407,61 +422,19 @@ public:
       By[i + nver] = vi->point().y() * omega;
       Bz[i + nver] = vi->point().z() * omega;
     }
-//    std::cerr << "fix " << cnt_fix << " vertices in RHS\n";
 //    std::cerr << "end RHS\n";
   }
 
   void update_vertex_id()
   {
 //    std::cerr << "start update id\n";
-    std::map<size_t, bool> is_vertex_fixed_map_new;
-    is_vertex_fixed_map_new.clear();
-
-    vertex_iterator vb, ve;
-    int vertex_id = 0;
+    new_id.clear();
     int cnt = 0;
-    std::vector<int> vertex_id_old;
-    vertex_id_old.clear();
-    vertex_id_old.resize(boost::num_vertices(*polyhedron));
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
-    {
-      vertex_id_old[cnt++] = boost::get(vertex_id_pmap, *vb);
-      boost::put(vertex_id_pmap, *vb, vertex_id++);
-    }
-
-    edge_iterator eb, ee;
-    int edge_id = 0;
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
-    {
-      boost::put(edge_id_pmap, *eb, edge_id++);
-    }
-
-    cnt = 0;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
-    {
-      int old_id = vertex_id_old[cnt++];
-      if (is_vertex_fixed_map.find(old_id) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[old_id])
-        {
-          int new_id = boost::get(vertex_id_pmap, *vb);
-          is_vertex_fixed_map_new[new_id] = true;
-//          std::cerr << "fix " << new_id << "\n";
-        }
-      }
-    }
-    is_vertex_fixed_map = is_vertex_fixed_map_new;
-
+    vertex_iterator vb, ve;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[id])
-        {
-//          std::cerr << "check fix " << id << "\n";
-        }
-      }
+      new_id[id] = cnt++;
     }
 //    std::cerr << "end update id\n";
   }
@@ -497,7 +470,8 @@ public:
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       vertex_descriptor vi = *vb;
-      int i = boost::get(vertex_id_pmap, vi);
+      int id = boost::get(vertex_id_pmap, vi);
+      int i = new_id[id];
       Point p(X[i], Y[i], Z[i]);
       vi->point() = p;
     }
@@ -552,23 +526,7 @@ public:
     // The simplification stops when the length of all edges is greater than the minimum threshold.
     CGAL::internal::Minimum_length_predicate<Polyhedron> stop(edgelength_TH);
 
-    int cnt = 0;
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
-    {
-      int id = boost::get(vertex_id_pmap, *vb);
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[id])
-        {
-          cnt++;
-        }
-      }
-    }
-//    std::cerr << "before collapse " << cnt << " fixed vertices\n";
-
-//    std::cerr << "edgelength_TH" << edgelength_TH << "\n";
-
+    // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<Polyhedron> > placement;
 
     int r = SMS::edge_collapse
@@ -578,19 +536,6 @@ public:
                       .get_placement(placement)
                       .edge_is_border_map(constrains_map)
                 );
-
-    cnt = 0;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
-    {
-      int id = boost::get(vertex_id_pmap, *vb);
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[id])
-        {
-          cnt++;
-        }
-      }
-    }
 
     return r;
   }
@@ -756,7 +701,6 @@ public:
   {
 //    std::cerr << "before split\n";
     int num_splits = 0;
-//    int num_call = 0;
     while (true)
     {
       int cnt = split_flat_triangle();
@@ -768,8 +712,6 @@ public:
       {
 //        std::cerr << "split " << cnt << "\n";
         num_splits += cnt;
-//        num_call++;
-//        if (num_call > 30) break;
       }
     }
 //    std::cerr << "after split\n";
@@ -1038,8 +980,8 @@ public:
     contract_geometry();
     update_topology();
     detect_degeneracies();
-    double area = get_surface_area();
-    std::cout << "area " << area << "\n";
+//    double area = get_surface_area();
+//    std::cout << "area " << area << "\n";
 //    detect_degeneracies_in_disk();
   }
 
@@ -1051,7 +993,7 @@ public:
       contract_geometry();
       int num_events = update_topology();
       detect_degeneracies();
-      double area = get_surface_area();
+//      double area = get_surface_area();
 //      std::cout << "area " << area << "\n";
 //      if (fabs(last_area - area) < area_TH)
 //      {
@@ -1061,7 +1003,7 @@ public:
       {
         break;
       }
-      last_area = area;
+//      last_area = area;
     }
   }
 
