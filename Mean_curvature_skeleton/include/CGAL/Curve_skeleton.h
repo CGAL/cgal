@@ -43,6 +43,7 @@ private:
   std::vector<bool> is_edge_deleted;
   std::vector<bool> is_face_deleted;
 
+  std::vector<int> surface_vertex_id;
   // records the vertices collapsed to a given vertex
   std::vector<std::vector<int> > record;
   // vertex id mapped to vertex descriptor
@@ -83,25 +84,42 @@ public:
   }
 
   // extract the skeleton to a boost::graph data structure
-  void extract_skeleton(Graph& graph, std::vector<Point>& points)
+  void extract_skeleton(Graph& graph, std::vector<Point>& points,
+                        std::vector<std::vector<int> >& corr)
   {
     init();
     collapse();
 
     std::vector<int> new_vertex_id;
+    std::vector<int> orig_vertex_id;
     new_vertex_id.clear();
     new_vertex_id.resize(vertex_to_edge.size(), -1);
+    orig_vertex_id.clear();
+    orig_vertex_id.resize(vertex_to_edge.size(), -1);
 
     int id = 0;
     for (size_t i = 0; i < is_vertex_deleted.size(); i++)
     {
       if (!is_vertex_deleted[i])
       {
+        orig_vertex_id[id] = i;
         new_vertex_id[i] = id++;
       }
     }
 
     Graph curve(id);
+    corr.clear();
+    corr.resize(id);
+
+    for (int i = 0; i < id; i++)
+    {
+      int orig_id = orig_vertex_id[i];
+      corr[i] = record[orig_id];
+      for (size_t j = 0; j < corr[i].size(); j++)
+      {
+        corr[i][j] = surface_vertex_id[corr[i][j]];
+      }
+    }
 
     for (size_t i = 0; i < is_edge_deleted.size(); i++)
     {
@@ -176,10 +194,12 @@ private:
     edge_lengths.resize(num_edges);
 
     // assign vertex id
+    surface_vertex_id.resize(num_vertices);
     vertex_iterator vb, ve;
     int idx = 0;
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
+      surface_vertex_id[idx] = boost::get(vertex_id_pmap, *vb);
       boost::put(vertex_id_pmap, *vb, idx++);
     }
     std::cerr << "vertex num " << idx << "\n";

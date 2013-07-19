@@ -27,6 +27,9 @@
 // Skip the geometric test
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Geometric_test_skipper.h>
 
+// Visitor base
+#include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
+
 // Adaptor for Polyhedron_3
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
@@ -109,7 +112,7 @@ public:
   PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
 
   // Mesh simplification types
-  typedef SMS::Edge_profile<Polyhedron> Profile ;
+  typedef SMS::Edge_profile<Polyhedron>                                        Profile;
 
 // Data members
 private:
@@ -130,6 +133,7 @@ private:
   double area_TH;
 
   int vertex_id_count;
+  int max_id;
 
   std::map<size_t, bool> is_vertex_fixed_map;
   std::map<int, int> new_id;
@@ -137,8 +141,10 @@ private:
 
   Graph g;
   std::vector<Point> points;
+  // record the correspondence between final surface and original surface points
+  std::map<int, std::vector<int> > correspondence;
   // record the correspondence between skeletal points and original surface points
-  std::vector<std::vector<int> > correspondence;
+  std::vector<std::vector<int> > skeleton_to_surface;
 
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
@@ -172,7 +178,61 @@ private:
   private:
 
     CGAL::Unique_hash_map<key_type, bool> mConstrains;
+  };
 
+  struct Track_vertex_visitor : SMS::Edge_collapse_visitor_base<Polyhedron>
+  {
+    Track_vertex_visitor(std::map<int, std::vector<int> >* corr, int max_id) :
+      corr(corr), max_id(max_id){}
+
+    // Called AFTER each edge has been collapsed
+    void OnCollapsed(Profile const& edge, Vertex_handle v)
+    {
+//      std::cerr << "before onCollapse\n";
+      Vertex_handle v0 = edge.v0();
+      Vertex_handle v1 = edge.v1();
+      int id0 = v0->id();
+      int id1 = v1->id();
+      int vid = v->id();
+      int from, to;
+      if (id0 == vid)
+      {
+        from = id1;
+        to = id0;
+      }
+      else if (id1 == vid)
+      {
+        from = id0;
+        to = id1;
+      }
+      else
+      {
+        std::cerr << "very wrong\n";
+      }
+      if ((*corr).find(to) == (*corr).end())
+      {
+        (*corr)[to] = std::vector<int>();
+      }
+      // only track vertex in original mesh
+      if (from < max_id)
+      {
+        (*corr)[to].push_back(from);
+      }
+      std::map<int, std::vector<int> >::iterator iter = (*corr).find(from);
+      if (iter != (*corr).end())
+      {
+        for (size_t i = 0; i < (iter->second).size(); i++)
+        {
+          (*corr)[to].push_back((iter->second)[i]);
+        }
+        (iter->second).clear();
+        (*corr).erase(iter);
+      }
+//      std::cerr << "after onCollapse\n";
+    }
+
+    std::map<int, std::vector<int> >* corr;
+    int max_id;
   };
 
 // Public methods
@@ -199,6 +259,7 @@ public:
     {
       boost::put(vertex_id_pmap, *vb, vertex_id_count++);
     }
+    max_id = vertex_id_count;
 
     edge_iterator eb, ee;
     int idx = 0;
@@ -209,7 +270,6 @@ public:
 
     is_vertex_fixed_map.clear();
     correspondence.clear();
-    correspondence.resize(boost::num_vertices(*polyhedron));
   }
 
   // Release resources
@@ -529,11 +589,14 @@ public:
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<Polyhedron> > placement;
 
+    Track_vertex_visitor vis(&correspondence, max_id);
+
     int r = SMS::edge_collapse
                 (*polyhedron
                 ,stop
                 ,CGAL::get_cost(SMS::Edge_length_cost<Polyhedron>())
                       .get_placement(placement)
+                      .visitor(vis)
                       .edge_is_border_map(constrains_map)
                 );
 
@@ -987,7 +1050,7 @@ public:
 
   void run_to_converge()
   {
-    double last_area = 0;
+//    double last_area = 0;
     while (true)
     {
       contract_geometry();
@@ -1010,13 +1073,45 @@ public:
   void convert_to_skeleton()
   {
     Skeleton skeleton(polyhedron);
-    skeleton.extract_skeleton(g, points);
+    std::vector<std::vector<int> > record;
+    skeleton.extract_skeleton(g, points, record);
+
+    skeleton_to_surface.resize(record.size());
+    for (size_t i = 0; i < record.size(); i++)
+    {
+      for (size_t j = 0; j < record[i].size(); j++)
+      {
+        int id = record[i][j];
+        if (correspondence.find(id) != correspondence.end())
+        {
+          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
+                                        correspondence[id].begin(),
+                                        correspondence[id].end());
+        }
+
+        if (id < max_id)
+        {
+          skeleton_to_surface[i].push_back(id);
+        }
+      }
+    }
+    int cnt = 0;
+    for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+    {
+      cnt += skeleton_to_surface[i].size();
+    }
+    std::cout << "tracked " << cnt << " vertices\n";
   }
 
   void get_skeleton(Graph& g, std::vector<Point>& points)
   {
     g = this->g;
     points = this->points;
+  }
+
+  void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
+  {
+    corr = skeleton_to_surface;
   }
 };
 
