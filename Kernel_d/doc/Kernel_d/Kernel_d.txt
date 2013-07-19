@@ -109,17 +109,19 @@ argument for this parameter must fulfill certain requirements on
 syntax and semantics. The list of requirements defines an abstract
 kernel concept. In \cgal such a kernel concept is often also called a
 <I>representation class</I> and denoted by `R`. A representation
-class provides the actual implementations of the kernel objects. For
-all kernel objects `Kernel_object`, the types
-`CGAL::Kernel_object<R>` and `R::Kernel_object` are identical.
+class provides the actual implementations of the kernel objects.
+For all kernel objects `Kernel_object` of a representation class `R` based
+on `Cartesian_d` or `Homogeneous_d`, the types `CGAL::Kernel_object<R>` and
+`R::Kernel_object` are identical.
 
-\cgal offers two families of concrete models for the concept
-representation class, one based on the %Cartesian
+
+\cgal offers three families of concrete models for the concept
+representation class, two based on the %Cartesian
 representation of points and one based on the homogeneous
 representation of points. The interface of the kernel objects is
 designed such that it works well with both
 %Cartesian and homogeneous representation, for
-example, points have a constructor with a range of coordinates plus a
+example, points have a `Construct_point_d` functor that takes a range of coordinates plus a
 common denominator (the \f$ d+1\f$ homogeneous coordinates of the point).
 The common interfaces parameterized with a representation class allow
 one to develop code independent of the chosen representation. We said
