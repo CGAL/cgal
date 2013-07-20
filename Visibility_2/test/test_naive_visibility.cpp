@@ -12,6 +12,7 @@
 #include <CGAL/Naive_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
+#include <CGAL/Preprocessed_visibility_2.h>
 
 
 
