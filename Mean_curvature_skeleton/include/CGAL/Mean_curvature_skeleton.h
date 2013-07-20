@@ -103,9 +103,16 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
   typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+
+  // Cotangent weight calculator
   typedef typename internal::Cotangent_weight<Polyhedron,
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
+
+  // Repeat Graph types
+  typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
+  typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 
   // Skeleton types
   typedef Curve_skeleton<Polyhedron, Graph,
@@ -1101,6 +1108,131 @@ public:
       cnt += skeleton_to_surface[i].size();
     }
     std::cout << "tracked " << cnt << " vertices\n";
+
+    collapse_vertices_without_correspondence();
+  }
+
+  void collapse_vertices_without_correspondence()
+  {
+    int vertex_removed = 0;
+    while (true)
+    {
+      int cnt = 0;
+      for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+      {
+        if (skeleton_to_surface[i].size() == 0)
+        {
+          edge_desc ed;
+          int u;
+          bool found = false;
+          in_edge_iter eb, ee;
+          // look for a neighbor having non-zero correspondent vertices
+          for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; eb++)
+          {
+            ed = *eb;
+            u = boost::source(ed, g);
+            if (skeleton_to_surface[u].size() != 0)
+            {
+              found = true;
+              break;
+            }
+          }
+          if (found)
+          {
+            // add new edges
+            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; eb++)
+            {
+              edge_desc edge = *eb;
+              int v = boost::source(edge, g);
+              if (v == u)
+              {
+                continue;
+              }
+
+              bool exist;
+              boost::tie(edge, exist) = boost::edge(u, v, g);
+              // avoid adding parallel edges
+              if (!exist)
+              {
+                boost::add_edge(u, v, g);
+              }
+            }
+            // remove incident edges
+            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; eb++)
+            {
+              edge_desc edge = *eb;
+              boost::remove_edge(edge, g);
+            }
+            cnt++;
+          }
+        }
+      }
+      vertex_removed += cnt;
+      if (cnt == 0)
+      {
+        break;
+      }
+    }
+
+    std::cout << "removed " << vertex_removed << " vertices\n";
+
+    int new_size = skeleton_to_surface.size() - vertex_removed;
+    Graph new_g(new_size);
+
+    std::vector<int> new_id;
+    new_id.resize(skeleton_to_surface.size(), -1);
+
+    int id = 0;
+    for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+    {
+      if (skeleton_to_surface[i].size() != 0)
+      {
+        new_id[i] = id++;
+      }
+    }
+    edge_iter eb, ee;
+    for (boost::tie(eb, ee) = boost::edges(g); eb != ee; eb++)
+    {
+      edge_desc ed = *eb;
+      int s = boost::source(ed, g);
+      int t = boost::target(ed, g);
+      int ns = new_id[s];
+      int nt = new_id[t];
+      if (ns == -1 || nt == -1)
+      {
+        std::cerr << "wrong id\n";
+      }
+      boost::add_edge(ns, nt, new_g);
+    }
+
+    std::vector<Point> new_points;
+    new_points.resize(new_size);
+    for (size_t i = 0; i < points.size(); i++)
+    {
+      int index = new_id[i];
+      if (index != -1)
+      {
+        new_points[index] = points[i];
+      }
+    }
+
+    std::vector<std::vector<int> > new_skeleton_to_surface;
+    new_skeleton_to_surface.resize(new_size);
+    for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+    {
+      int index = new_id[i];
+      if (index != -1)
+      {
+        new_skeleton_to_surface[index] = skeleton_to_surface[i];
+      }
+    }
+
+    g = new_g;
+    points = new_points;
+    skeleton_to_surface = new_skeleton_to_surface;
+
+    std::cout << "new vertices " << boost::num_vertices(g) << "\n";
+    std::cout << "new edges " << boost::num_edges(g) << "\n";
   }
 
   void get_skeleton(Graph& g, std::vector<Point>& points)

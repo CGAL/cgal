@@ -752,10 +752,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCorrespondenc
   for (size_t i = 0; i < corr.size(); i++)
   {
     Point s = points[i];
-    if (corr[i].size() == 0)
-    {
-      std::cout << "no correspondent vertices\n";
-    }
     for (size_t j = 0; j < corr[i].size(); j++)
     {
       std::vector<Point> line;

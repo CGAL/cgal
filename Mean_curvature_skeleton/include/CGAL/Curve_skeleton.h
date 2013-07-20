@@ -33,6 +33,9 @@ public:
   typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
+  // Repeat Graph types
+  typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
+
 // Data members
 private:
   std::vector<std::vector<int> > edge_to_face;
@@ -129,7 +132,14 @@ public:
         int p2 = edge_to_vertex[i][1];
         int p1_id = new_vertex_id[p1];
         int p2_id = new_vertex_id[p2];
-        boost::add_edge(p1_id, p2_id, curve);
+
+        bool exist;
+        edge_desc edge;
+        boost::tie(edge, exist) = boost::edge(p1_id, p2_id, curve);
+        if (!exist)
+        {
+          boost::add_edge(p1_id, p2_id, curve);
+        }
       }
     }
 
@@ -143,6 +153,8 @@ public:
       {
         continue;
       }
+
+      // move to the centroid
       Point pos = Point(0, 0, 0);
       for (size_t i = 0; i < record[id].size(); i++)
       {
