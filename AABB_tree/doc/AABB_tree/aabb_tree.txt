@@ -52,7 +52,7 @@ which represents a static AABB tree constructed from an iterator range
 of geometric data. Once instantiated an AABB tree can be queried for
 intersection and distance queries.
 
-**Intersections.** Assume for example that the tree contains triangle
+\b Intersections. Assume for example that the tree contains triangle
 primitives. The tree can be queried for intersection against line
 objects (rays, segments or line) in various ways. We distinguish
 intersection *tests* which do not construct any intersection
@@ -84,7 +84,7 @@ intersection objects with the input primitives.
 encountered intersection and constructs the corresponding object. This
 function is fast as it stops after the first encountered intersection.
 
-**Distance.** An AABB tree computes the closest point from a
+\b Distance. An AABB tree computes the closest point from a
 given point query to the input primitives through the function
 `AABB_tree::closest_point()`. In addition, it can compute the id of the
 closest primitive from a given point query through the function
