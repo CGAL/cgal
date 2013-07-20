@@ -239,7 +239,6 @@ public slots:
   void on_actionRun();
   void on_actionSkeletonize();
   void on_actionConverge();
-  void on_actionCorrespondence();
   void on_actionUpdateBBox();
 
 private:
@@ -290,8 +289,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionSkeletonize()));
     connect(ui->pushButton_converge, SIGNAL(clicked()),
             this, SLOT(on_actionConverge()));
-    connect(ui->pushButton_correspondence, SIGNAL(clicked()),
-            this, SLOT(on_actionCorrespondence()));
     connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
             this, SLOT(on_actionUpdateBBox()));
 
@@ -627,9 +624,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   Graph g;
   std::vector<Point> points;
+  std::vector<std::vector<int> > corr;
 
   mcs->convert_to_skeleton();
   mcs->get_skeleton(g, points);
+  mcs->get_correspondent_vertices(corr);
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -648,6 +647,36 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   }
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);
+
+  vertex_iterator vb, ve;
+  std::vector<vertex_descriptor> id_to_vd;
+  id_to_vd.clear();
+  id_to_vd.resize(boost::num_vertices(mCopy));
+  int id = 0;
+  for (boost::tie(vb, ve) = boost::vertices(mCopy); vb != ve; vb++)
+  {
+    vertex_descriptor v = *vb;
+    id_to_vd[id++] = v;
+  }
+
+  Scene_polylines_item* lines = new Scene_polylines_item();
+
+  for (size_t i = 0; i < corr.size(); i++)
+  {
+    Point s = points[i];
+    for (size_t j = 0; j < corr[i].size(); j++)
+    {
+      std::vector<Point> line;
+      line.clear();
+      Point t = id_to_vd[corr[i][j]]->point();
+      line.push_back(s);
+      line.push_back(t);
+      lines->polylines.push_back(line);
+    }
+  }
+  lines->setName(QString("correpondent vertices of %1").arg(item->name()));
+  lines->setVisible(false);
+  scene->addItem(lines);
 
   // update scene
   QApplication::restoreOverrideCursor();
@@ -726,54 +755,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   scene->itemChanged(fixedPointsItemIndex);
 //  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
-  QApplication::restoreOverrideCursor();
-}
-
-void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCorrespondence()
-{
-  QTime time;
-  time.start();
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  Graph g;
-  std::vector<Point> points;
-  std::vector<std::vector<int> > corr;
-
-  mcs->get_skeleton(g, points);
-  mcs->get_correspondent_vertices(corr);
-
-  std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
-
-  vertex_iterator vb, ve;
-  std::vector<vertex_descriptor> id_to_vd;
-  id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(mCopy));
-  int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(mCopy); vb != ve; vb++)
-  {
-    vertex_descriptor v = *vb;
-    id_to_vd[id++] = v;
-  }
-
-  Scene_polylines_item* lines = new Scene_polylines_item();
-
-  for (size_t i = 0; i < corr.size(); i++)
-  {
-    Point s = points[i];
-    for (size_t j = 0; j < corr[i].size(); j++)
-    {
-      std::vector<Point> line;
-      line.clear();
-      Point t = id_to_vd[corr[i][j]]->point();
-      line.push_back(s);
-      line.push_back(t);
-      lines->polylines.push_back(line);
-    }
-  }
-  lines->setName(QString("correpondent vertices"));
-  scene->addItem(lines);
-
-  // update scene
   QApplication::restoreOverrideCursor();
 }
 

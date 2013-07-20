@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>564</width>
+    <width>429</width>
     <height>292</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <widget class="QLabel" name="label_omega_L">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>11</y>
       <width>57</width>
       <height>16</height>
@@ -30,9 +30,9 @@
    <widget class="QPushButton" name="pushButton_contract">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>10</y>
-      <width>114</width>
+      <x>10</x>
+      <y>220</y>
+      <width>101</width>
       <height>32</height>
      </rect>
     </property>
@@ -43,7 +43,7 @@
    <widget class="QLabel" name="label_alpha">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>116</y>
       <width>35</width>
       <height>16</height>
@@ -56,7 +56,7 @@
    <widget class="QDoubleSpinBox" name="zero_TH">
     <property name="geometry">
      <rect>
-      <x>144</x>
+      <x>124</x>
       <y>151</y>
       <width>101</width>
       <height>25</height>
@@ -66,7 +66,7 @@
    <widget class="QDoubleSpinBox" name="omega_H">
     <property name="geometry">
      <rect>
-      <x>144</x>
+      <x>124</x>
       <y>46</y>
       <width>101</width>
       <height>25</height>
@@ -76,7 +76,7 @@
    <widget class="QDoubleSpinBox" name="edgelength_TH">
     <property name="geometry">
      <rect>
-      <x>144</x>
+      <x>124</x>
       <y>81</y>
       <width>101</width>
       <height>25</height>
@@ -86,7 +86,7 @@
    <widget class="QDoubleSpinBox" name="alpha">
     <property name="geometry">
      <rect>
-      <x>144</x>
+      <x>124</x>
       <y>116</y>
       <width>101</width>
       <height>25</height>
@@ -96,7 +96,7 @@
    <widget class="QLabel" name="label_omega_H">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>46</y>
       <width>59</width>
       <height>16</height>
@@ -109,7 +109,7 @@
    <widget class="QDoubleSpinBox" name="omega_L">
     <property name="geometry">
      <rect>
-      <x>144</x>
+      <x>124</x>
       <y>11</y>
       <width>101</width>
       <height>25</height>
@@ -119,7 +119,7 @@
    <widget class="QLabel" name="label_edgelength_TH">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>81</y>
       <width>96</width>
       <height>16</height>
@@ -132,7 +132,7 @@
    <widget class="QLabel" name="label_zero_TH">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>150</y>
       <width>53</width>
       <height>16</height>
@@ -145,9 +145,9 @@
    <widget class="QPushButton" name="pushButton_collapse">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>50</y>
-      <width>114</width>
+      <x>110</x>
+      <y>220</y>
+      <width>101</width>
       <height>32</height>
      </rect>
     </property>
@@ -158,9 +158,9 @@
    <widget class="QPushButton" name="pushButton_split">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>90</y>
-      <width>114</width>
+      <x>210</x>
+      <y>220</y>
+      <width>101</width>
       <height>32</height>
      </rect>
     </property>
@@ -171,9 +171,9 @@
    <widget class="QPushButton" name="pushButton_degeneracy">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>130</y>
-      <width>114</width>
+      <x>310</x>
+      <y>220</y>
+      <width>101</width>
       <height>32</height>
      </rect>
     </property>
@@ -184,7 +184,7 @@
    <widget class="QPushButton" name="pushButton_run">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>240</x>
       <y>10</y>
       <width>171</width>
       <height>32</height>
@@ -197,7 +197,7 @@
    <widget class="QPushButton" name="pushButton_skeletonize">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>240</x>
       <y>90</y>
       <width>171</width>
       <height>32</height>
@@ -210,7 +210,7 @@
    <widget class="QPushButton" name="pushButton_converge">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>240</x>
       <y>50</y>
       <width>171</width>
       <height>32</height>
@@ -223,7 +223,7 @@
    <widget class="QDoubleSpinBox" name="area_TH">
     <property name="geometry">
      <rect>
-      <x>144</x>
+      <x>124</x>
       <y>185</y>
       <width>101</width>
       <height>25</height>
@@ -233,7 +233,7 @@
    <widget class="QLabel" name="label_area_TH">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>20</x>
       <y>185</y>
       <width>53</width>
       <height>16</height>
@@ -241,19 +241,6 @@
     </property>
     <property name="text">
      <string>area_TH</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_correspondence">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>130</y>
-      <width>171</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Show correspondence</string>
     </property>
    </widget>
    <zorder>zero_TH</zorder>
@@ -275,7 +262,6 @@
    <zorder>pushButton_converge</zorder>
    <zorder>area_TH</zorder>
    <zorder>label_area_TH</zorder>
-   <zorder>pushButton_correspondence</zorder>
   </widget>
  </widget>
  <resources/>
