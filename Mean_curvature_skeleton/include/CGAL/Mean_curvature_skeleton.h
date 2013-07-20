@@ -993,50 +993,50 @@ public:
   }
 
   // TODO: check if the local neighborhood is a disk
-//  int detect_degeneracies()
-//  {
-//    int num_fixed = 0;
-//    double elength_fixed = edgelength_TH;
-//    vertex_iterator vb, ve;
-//    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
-//    {
-//      vertex_descriptor v = *vb;
-//      int idx = boost::get(vertex_id_pmap, v);
-////      std::cerr << v->point() << "\n";
-//      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
-//      {
-//        bool willbefixed = false;
-//        int bad_counter = 0;
+  int detect_degeneracies()
+  {
+    int num_fixed = 0;
+    double elength_fixed = edgelength_TH;
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    {
+      vertex_descriptor v = *vb;
+      int idx = boost::get(vertex_id_pmap, v);
+//      std::cerr << v->point() << "\n";
+      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
+      {
+        bool willbefixed = false;
+        int bad_counter = 0;
 
-//        in_edge_iterator eb, ee;
-//        for (boost::tie(eb, ee) = boost::in_edges(v, *polyhedron); eb != ee; eb++)
-//        {
-//          edge_descriptor edge = *eb;
-//          vertex_descriptor v0 = boost::source(edge, *polyhedron);
-//          vertex_descriptor v1 = boost::target(edge, *polyhedron);
-//          double length = sqrt(squared_distance(v0->point(), v1->point()));
-////          std::cerr << length << "\n";
-//          if (length < elength_fixed)
-//          {
-//            if (!is_collapse_ok(edge))
-//            {
-//              bad_counter++;
-//            }
-//          }
-//        }
-////        std::cerr << "bad " << bad_counter << "\n";
-//        willbefixed = (bad_counter >= 2);
-//        if (willbefixed)
-//        {
-////          std::cerr << "detect " << idx << "\n";
-//          is_vertex_fixed_map[idx] = willbefixed;
-//          num_fixed++;
-//        }
-//      }
-//    }
-//    std::cerr << "fixed " << num_fixed << " vertices.\n";
-//    return num_fixed;
-//  }
+        in_edge_iterator eb, ee;
+        for (boost::tie(eb, ee) = boost::in_edges(v, *polyhedron); eb != ee; eb++)
+        {
+          edge_descriptor edge = *eb;
+          vertex_descriptor v0 = boost::source(edge, *polyhedron);
+          vertex_descriptor v1 = boost::target(edge, *polyhedron);
+          double length = sqrt(squared_distance(v0->point(), v1->point()));
+//          std::cerr << length << "\n";
+          if (length < elength_fixed)
+          {
+            if (!is_collapse_ok(edge))
+            {
+              bad_counter++;
+            }
+          }
+        }
+//        std::cerr << "bad " << bad_counter << "\n";
+        willbefixed = (bad_counter >= 2);
+        if (willbefixed)
+        {
+//          std::cerr << "detect " << idx << "\n";
+          is_vertex_fixed_map[idx] = willbefixed;
+          num_fixed++;
+        }
+      }
+    }
+    std::cerr << "fixed " << num_fixed << " vertices.\n";
+    return num_fixed;
+  }
 
   bool is_collapse_ok(edge_descriptor v0v1)
   {
@@ -1143,8 +1143,8 @@ public:
   {
     contract_geometry();
     update_topology();
-//    detect_degeneracies();
-    detect_degeneracies_in_disk();
+    detect_degeneracies();
+//    detect_degeneracies_in_disk();
 //    double area = get_surface_area();
 //    std::cout << "area " << area << "\n";
 //    detect_degeneracies_in_disk();
@@ -1157,8 +1157,8 @@ public:
     {
       contract_geometry();
       int num_events = update_topology();
-//      detect_degeneracies();
-      detect_degeneracies_in_disk();
+      detect_degeneracies();
+//      detect_degeneracies_in_disk();
 //      double area = get_surface_area();
 //      std::cout << "area " << area << "\n";
 //      if (fabs(last_area - area) < area_TH)
