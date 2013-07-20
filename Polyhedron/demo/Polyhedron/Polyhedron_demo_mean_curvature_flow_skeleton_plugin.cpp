@@ -1,10 +1,10 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
-
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene.h"
 
 #include "Polyhedron_type.h"
 #include "MainWindow.h"
@@ -204,10 +204,9 @@ public:
 
         delete mcs;
 
-        diag = scene->len_diagonal();
+
         omega_L = ui->omega_L->value();
         omega_H = ui->omega_H->value();
-        ui->edgelength_TH->setValue(0.002 * diag);
         edgelength_TH = ui->edgelength_TH->value();
         alpha = ui->alpha->value();
         zero_TH = ui->zero_TH->value();
@@ -241,6 +240,7 @@ public slots:
   void on_actionSkeletonize();
   void on_actionConverge();
   void on_actionCorrespondence();
+  void on_actionUpdateBBox();
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -292,6 +292,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionConverge()));
     connect(ui->pushButton_correspondence, SIGNAL(clicked()),
             this, SLOT(on_actionCorrespondence()));
+    connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
+            this, SLOT(on_actionUpdateBBox()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -299,6 +301,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
     fixedPointsItemIndex = -1;
     nonFixedPointsItemIndex = -1;
   }
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox()
+{
+  double diag = scene->len_diagonal();
+  ui->edgelength_TH->setValue(0.002 * diag);
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_skeleton_triggered()
