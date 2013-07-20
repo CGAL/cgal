@@ -489,7 +489,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   std::cout << "Degeneracy\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  mcs->detect_degeneracies();
+  mcs->detect_degeneracies_in_disk();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
