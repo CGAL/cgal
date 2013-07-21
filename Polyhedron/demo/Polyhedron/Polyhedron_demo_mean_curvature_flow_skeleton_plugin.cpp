@@ -102,6 +102,8 @@ public:
     ui->omega_L->setSingleStep(0.1);
     ui->omega_H->setValue(0.1);
     ui->omega_H->setSingleStep(0.1);
+    ui->omega_P->setValue(0.2);
+    ui->omega_P->setSingleStep(0.1);
     ui->edgelength_TH->setDecimals(7);
     ui->edgelength_TH->setValue(0.002 * diag);
     ui->edgelength_TH->setSingleStep(0.0000001);
@@ -113,9 +115,11 @@ public:
     ui->area_TH->setDecimals(8);
     ui->area_TH->setValue(1e-5);
     ui->area_TH->setSingleStep(1e-7);
+    ui->is_medially_centered->setChecked(false);
 
     ui->label_omega_L->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
     ui->label_omega_H->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
+    ui->label_omega_P->setToolTip(QString("omega_L / omega_P controls the smoothness of the medial approximation"));
     ui->label_edgelength_TH->setToolTip(QString("edges shorter than threshold will be collapsed"));
     ui->pushButton_contract->setToolTip(QString("contract mesh based on mean curvature flow"));
     ui->pushButton_collapse->setToolTip(QString("collapse short edges"));
@@ -174,11 +178,13 @@ public:
   bool check_mesh(Polyhedron* pMesh) {
     double omega_L = ui->omega_L->value();
     double omega_H = ui->omega_H->value();
+    double omega_P = ui->omega_P->value();
     double edgelength_TH = ui->edgelength_TH->value();
     double alpha = ui->alpha->value();
     double zero_TH = ui->zero_TH->value();
     double area_TH = ui->area_TH->value();
     double diag = scene->len_diagonal();
+    bool is_medially_centered = ui->is_medially_centered->isChecked();
 
     if (mcs == NULL)
     {
@@ -189,8 +195,17 @@ public:
 
       // save a copy before any operation
       mCopy = *pMesh;
-      mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                        omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+      if (is_medially_centered)
+      {
+        mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                          omega_L, omega_H, omega_P, edgelength_TH, zero_TH, true,
+                                          area_TH);
+      }
+      else
+      {
+        mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                          omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+      }
     }
     else
     {
@@ -204,24 +219,26 @@ public:
 
         delete mcs;
 
-
-        omega_L = ui->omega_L->value();
-        omega_H = ui->omega_H->value();
-        edgelength_TH = ui->edgelength_TH->value();
-        alpha = ui->alpha->value();
-        zero_TH = ui->zero_TH->value();
-        area_TH = ui->area_TH->value();
-
         // save a copy before any operation
         mCopy = *pMesh;
-        mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
-                                          omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+        if (is_medially_centered)
+        {
+          mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                            omega_L, omega_H, omega_P, edgelength_TH, zero_TH, true,
+                                            area_TH);
+        }
+        else
+        {
+          mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+                                            omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
+        }
         fixedPointsItemIndex = -1;
       }
       else
       {
         mcs->set_omega_L(omega_L);
         mcs->set_omega_H(omega_H);
+        mcs->set_omega_P(omega_P);
         mcs->set_edgelength_TH(edgelength_TH);
         mcs->set_zero_TH(zero_TH);
       }

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>429</width>
-    <height>292</height>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>220</y>
+      <y>250</y>
       <width>101</width>
       <height>32</height>
      </rect>
@@ -44,7 +44,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>116</y>
+      <y>151</y>
       <width>35</width>
       <height>16</height>
      </rect>
@@ -57,7 +57,7 @@
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>151</y>
+      <y>186</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -77,7 +77,7 @@
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>81</y>
+      <y>116</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -87,7 +87,7 @@
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>116</y>
+      <y>151</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -120,7 +120,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>81</y>
+      <y>116</y>
       <width>96</width>
       <height>16</height>
      </rect>
@@ -133,7 +133,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
+      <y>185</y>
       <width>53</width>
       <height>16</height>
      </rect>
@@ -146,7 +146,7 @@
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>220</y>
+      <y>250</y>
       <width>101</width>
       <height>32</height>
      </rect>
@@ -159,7 +159,7 @@
     <property name="geometry">
      <rect>
       <x>210</x>
-      <y>220</y>
+      <y>250</y>
       <width>101</width>
       <height>32</height>
      </rect>
@@ -172,7 +172,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>220</y>
+      <y>250</y>
       <width>101</width>
       <height>32</height>
      </rect>
@@ -185,7 +185,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>10</y>
+      <y>60</y>
       <width>171</width>
       <height>32</height>
      </rect>
@@ -198,7 +198,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>90</y>
+      <y>140</y>
       <width>171</width>
       <height>32</height>
      </rect>
@@ -211,7 +211,7 @@
     <property name="geometry">
      <rect>
       <x>240</x>
-      <y>50</y>
+      <y>100</y>
       <width>171</width>
       <height>32</height>
      </rect>
@@ -224,7 +224,7 @@
     <property name="geometry">
      <rect>
       <x>124</x>
-      <y>185</y>
+      <y>220</y>
       <width>101</width>
       <height>25</height>
      </rect>
@@ -234,13 +234,49 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>185</y>
+      <y>220</y>
       <width>53</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
      <string>area_TH</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_omega_P">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>59</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>omega_P</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="omega_P">
+    <property name="geometry">
+     <rect>
+      <x>124</x>
+      <y>80</y>
+      <width>101</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="is_medially_centered">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>20</y>
+      <width>151</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Is medially centered</string>
     </property>
    </widget>
    <zorder>zero_TH</zorder>
@@ -262,6 +298,9 @@
    <zorder>pushButton_converge</zorder>
    <zorder>area_TH</zorder>
    <zorder>label_area_TH</zorder>
+   <zorder>label_omega_P</zorder>
+   <zorder>omega_P</zorder>
+   <zorder>is_medially_centered</zorder>
   </widget>
  </widget>
  <resources/>

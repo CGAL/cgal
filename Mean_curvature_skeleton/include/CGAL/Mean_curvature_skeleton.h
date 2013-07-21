@@ -158,6 +158,7 @@ private:
 
   double omega_L;
   double omega_H;
+  double omega_P;
   double edgelength_TH;
   double TH_ALPHA;
   double zero_TH;
@@ -283,13 +284,55 @@ public:
                           PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_L, double omega_H,
                           double edgelength_TH, double zero_TH, double area_TH = 1e-5,
-                          bool is_medially_centered = false,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH)
+      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH),
+      is_medially_centered(false)
   {
+    TH_ALPHA *= (M_PI / 180.0);
+
+    // initialize index maps
+    vertex_iterator vb, ve;
+    vertex_id_count = 0;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    {
+      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+    }
+    max_id = vertex_id_count;
+
+    edge_iterator eb, ee;
+    int idx = 0;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      boost::put(edge_id_pmap, *eb, idx++);
+    }
+
+    is_vertex_fixed_map.clear();
+    correspondence.clear();
+
+    if (is_medially_centered)
+    {
+      compute_voronoi_pole();
+    }
+  }
+
+  Mean_curvature_skeleton(Polyhedron* P,
+                          PolyhedronVertexIndexMap Vertex_index_map,
+                          PolyhedronEdgeIndexMap Edge_index_map,
+                          double omega_L, double omega_H, double omega_P,
+                          double edgelength_TH, double zero_TH,
+                          bool is_medially_centered, double area_TH = 1e-5,
+                          Weight_calculator weight_calculator = Weight_calculator()
+                          )
+    :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
+      omega_L(omega_L), omega_H(omega_H), omega_P(omega_P),
+      edgelength_TH(edgelength_TH), TH_ALPHA(110),
+      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH),
+      is_medially_centered(is_medially_centered)
+  {
+    std::cout << "medially centered constructor: omega_P = " << omega_P << "\n";
     TH_ALPHA *= (M_PI / 180.0);
 
     // initialize index maps
@@ -330,6 +373,11 @@ public:
   void set_omega_H(double value)
   {
     omega_H = value;
+  }
+
+  void set_omega_P(double value)
+  {
+    omega_P = value;
   }
 
   void set_edgelength_TH(double value)
@@ -441,20 +489,8 @@ public:
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       int id = boost::get(vertex_id_pmap, *vb);
-      if (new_id.find(id) == new_id.end())
-      {
-        std::cerr << "id does not exist!\n";
-      }
 
       int i = new_id[id];
-      if (i >= nver)
-      {
-        std::cerr << "id is too large\n";
-      }
-      if (i < 0)
-      {
-        std::cerr << "id is too small\n";
-      }
       // if the vertex is fixed
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
           && is_vertex_fixed_map[id])
@@ -465,6 +501,13 @@ public:
       else
       {
         A.set_coef(i + nver, i, omega_H, true);
+        if (is_medially_centered)
+        {
+          if (id < max_id)
+          {
+            A.set_coef(i + nver * 2, i, omega_P, true);
+          }
+        }
       }
     }
 
@@ -492,7 +535,7 @@ public:
       }
       A.set_coef(i, i, diagonal, true);
     }
-//    std::cerr << "fix " << cnt_fix << " vertices\n";
+
 //    std::cerr << "end LHS\n";
   }
 
@@ -517,27 +560,38 @@ public:
       int id = boost::get(vertex_id_pmap, vi);
       int i = new_id[id];
 
-      double omega;
+      double oh, op = 0.0;
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
           && is_vertex_fixed_map[id])
       {
-        cnt_fix++;
-        omega = 1.0 / zero_TH;
+        oh = 1.0 / zero_TH;
       }
       else
       {
-        omega = omega_H;
+        oh = omega_H;
+        if (id < max_id)
+        {
+          op = omega_P;
+        }
       }
-      Bx[i + nver] = vi->point().x() * omega;
-      By[i + nver] = vi->point().y() * omega;
-      Bz[i + nver] = vi->point().z() * omega;
+      Bx[i + nver] = vi->point().x() * oh;
+      By[i + nver] = vi->point().y() * oh;
+      Bz[i + nver] = vi->point().z() * oh;
+      if (is_medially_centered)
+      {
+        double x = to_double(cell_dual[poles[id]].x());
+        double y = to_double(cell_dual[poles[id]].y());
+        double z = to_double(cell_dual[poles[id]].z());
+        Bx[i + nver * 2] = x * op;
+        By[i + nver * 2] = y * op;
+        Bz[i + nver * 2] = z * op;
+      }
     }
 //    std::cerr << "end RHS\n";
   }
 
   void update_vertex_id()
   {
-//    std::cerr << "start update id\n";
     new_id.clear();
     int cnt = 0;
     vertex_iterator vb, ve;
@@ -546,7 +600,6 @@ public:
       int id = boost::get(vertex_id_pmap, *vb);
       new_id[id] = cnt++;
     }
-//    std::cerr << "end update id\n";
   }
 
   void contract_geometry()
@@ -556,14 +609,23 @@ public:
 
     compute_edge_weight();
 
-    // Assemble linear system At * A * X = At * B
     int nver = boost::num_vertices(*polyhedron);
-    typename SparseLinearAlgebraTraits_d::Matrix A(nver * 2, nver);
+    int nrows;
+    if (is_medially_centered)
+    {
+      nrows = nver * 3;
+    }
+    else
+    {
+      nrows = nver * 2;
+    }
+    // Assemble linear system At * A * X = At * B
+    typename SparseLinearAlgebraTraits_d::Matrix A(nrows, nver);
     assemble_LHS(A);
 
-    typename SparseLinearAlgebraTraits_d::Vector X(nver), Bx(nver * 2);
-    typename SparseLinearAlgebraTraits_d::Vector Y(nver), By(nver * 2);
-    typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nver * 2);
+    typename SparseLinearAlgebraTraits_d::Vector X(nver), Bx(nrows);
+    typename SparseLinearAlgebraTraits_d::Vector Y(nver), By(nrows);
+    typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nrows);
     assemble_RHS(Bx, By, Bz);
 
 //    std::cerr << "before solve\n";
@@ -1386,6 +1448,7 @@ public:
 
   void compute_voronoi_pole()
   {
+    std::cout << "start compute_voronoi_pole\n";
     compute_vertex_normal();
 
     std::vector<std::pair<TriPoint, unsigned> > points;
