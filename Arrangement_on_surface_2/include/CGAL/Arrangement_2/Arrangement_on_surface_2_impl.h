@@ -5022,27 +5022,8 @@ _hole_creation_on_edge_removal(std::pair< CGAL::Sign, CGAL::Sign > signs1,
   CGAL::Sign sign1 = signs1.first;
   CGAL::Sign sign2 = signs2.first;
 
-  if (CGAL::ZERO == sign1) {
-    if (CGAL::ZERO == sign2) {
-      return same_face;
-    } else {
-      return true;
-    }
-  } else {
-    if (CGAL::ZERO == sign2) {
-      return true;
-    } else {
-      if (same_face) {
-        // TODO ask toptraits
-        return true;
-      } else {
-        return true;
-      }
-    }
-  }
-
-
-  return true;
+  if (same_face) return true;
+  return ((CGAL::ZERO != sign1) && (sign1 == opposite(sign2)));
 }
 
 //-----------------------------------------------------------------------------
