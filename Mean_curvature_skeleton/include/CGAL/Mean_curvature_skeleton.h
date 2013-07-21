@@ -15,6 +15,9 @@
 // Compute cotangent Laplacian
 #include <CGAL/internal/Mean_curvature_skeleton/Weights.h>
 
+// Compute the vertex normal
+#include <CGAL/internal/Mean_curvature_skeleton/get_normal.h>
+
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
@@ -38,6 +41,11 @@
 
 // Curve skeleton data structure
 #include <CGAL/Curve_skeleton.h>
+
+// For Voronoi diagram
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 #include <queue>
 
@@ -122,6 +130,21 @@ public:
   // Mesh simplification types
   typedef SMS::Edge_profile<Polyhedron>                                        Profile;
 
+  // Repeat Triangulation types
+  typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
+  typedef K::Vector_3                                                          Exact_vector;
+  typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>             Vb;
+  typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
+  typedef CGAL::Delaunay_triangulation_3<K, Tds>                               Delaunay;
+  typedef Delaunay::Point                                                      TriPoint;
+  typedef Delaunay::Cell_handle                                                Cell_handle;
+  typedef Delaunay::Vertex_handle                                              TriVertex_handle;
+  typedef Delaunay::Locate_type                                                Locate_type;
+  typedef Delaunay::Finite_vertices_iterator                                   Finite_vertices_iterator;
+  typedef Delaunay::Finite_edges_iterator                                      Finite_edges_iterator;
+  typedef Delaunay::Finite_facets_iterator                                     Finite_facets_iterator;
+  typedef Delaunay::Finite_cells_iterator                                      Finite_cells_iterator;
+
 // Data members
 private:
 
@@ -153,6 +176,14 @@ private:
   std::map<int, std::vector<int> > correspondence;
   // record the correspondence between skeletal points and original surface points
   std::vector<std::vector<int> > skeleton_to_surface;
+
+  bool is_medially_centered;
+  // record the corresponding pole of a point
+  std::map<int, int> poles;
+  // the normal of surface points
+  std::vector<Vector> normals;
+  // the dual of a cell in Triangulation(a Voronoi point)
+  std::vector<TriPoint> cell_dual;
 
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
@@ -252,6 +283,7 @@ public:
                           PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_L, double omega_H,
                           double edgelength_TH, double zero_TH, double area_TH = 1e-5,
+                          bool is_medially_centered = false,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
@@ -278,6 +310,11 @@ public:
 
     is_vertex_fixed_map.clear();
     correspondence.clear();
+
+    if (is_medially_centered)
+    {
+      compute_voronoi_pole();
+    }
   }
 
   // Release resources
@@ -308,6 +345,11 @@ public:
   void set_zero_TH(double value)
   {
     zero_TH = value;
+  }
+
+  void set_medially_centered(bool value)
+  {
+    is_medially_centered = value;
   }
 
   Polyhedron* get_polyhedron()
@@ -1152,24 +1194,24 @@ public:
 
   void run_to_converge()
   {
-//    double last_area = 0;
+    double last_area = 0;
     while (true)
     {
       contract_geometry();
       int num_events = update_topology();
       detect_degeneracies();
-//      detect_degeneracies_in_disk();
-//      double area = get_surface_area();
-//      std::cout << "area " << area << "\n";
-//      if (fabs(last_area - area) < area_TH)
-//      {
-//        break;
-//      }
+      detect_degeneracies_in_disk();
+      double area = get_surface_area();
+      std::cout << "area " << area << "\n";
+      if (fabs(last_area - area) < area_TH)
+      {
+        break;
+      }
       if (num_events == 0)
       {
         break;
       }
-//      last_area = area;
+      last_area = area;
     }
   }
 
@@ -1340,6 +1382,87 @@ public:
   void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
   {
     corr = skeleton_to_surface;
+  }
+
+  void compute_voronoi_pole()
+  {
+    compute_vertex_normal();
+
+    std::vector<std::pair<TriPoint, unsigned> > points;
+    std::vector<std::vector<int> > point_to_pole;
+
+    points.clear();
+    cell_dual.clear();
+    point_to_pole.clear();
+    point_to_pole.resize(boost::num_vertices(*polyhedron));
+
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    {
+      vertex_descriptor v = *vb;
+      int vid = boost::get(vertex_id_pmap, v);
+      TriPoint tp((v->point()).x(), (v->point()).y(), (v->point()).z());
+      points.push_back(std::make_pair(tp, vid));
+    }
+
+    Delaunay T(points.begin(), points.end());
+
+    Delaunay::size_type n = T.number_of_vertices();
+
+    Finite_cells_iterator cit;
+    int cell_id = 0;
+    for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
+    {
+      Cell_handle cell = cit;
+      TriPoint point = T.dual(cell);
+      cell_dual.push_back(point);
+      for (int i = 0; i < 4; i++)
+      {
+        TriVertex_handle vt = cell->vertex(i);
+        int id = vt->info();
+        point_to_pole[id].push_back(cell_id);
+      }
+      cell_id++;
+    }
+
+    poles.clear();
+    for (size_t i = 0; i < point_to_pole.size(); i++)
+    {
+      TriPoint surface_point = points[i].first;
+
+      K::FT max_neg_t = 1;
+      int max_neg_i = 0;
+
+      for (size_t j = 0; j < point_to_pole[i].size(); j++)
+      {
+        int pole_id = point_to_pole[i][j];
+        TriPoint cell_point = cell_dual[pole_id];
+        Exact_vector vt = cell_point - surface_point;
+        Exact_vector n(normals[i].x(), normals[i].y(), normals[i].z());
+
+        K::FT t = vt * n;
+        if (t < 0 && t < max_neg_t)
+        {
+          max_neg_i = pole_id;
+          max_neg_t = t;
+        }
+      }
+
+      poles[i] = max_neg_i;
+    }
+  }
+
+  void compute_vertex_normal()
+  {
+    normals.resize(boost::num_vertices(*polyhedron));
+
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    {
+      vertex_descriptor v = *vb;
+      int vid = boost::get(vertex_id_pmap, v);
+      normals[vid] = internal::get_vertex_normal<typename Polyhedron::Vertex,Kernel>(*v);
+    }
   }
 };
 
