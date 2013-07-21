@@ -37,8 +37,6 @@ int main()
 
   Geom_traits_2::Construct_curve_2 polyline_construct =
     traits.construct_curve_2_object();
-  Geom_traits_2::Make_x_monotone_2 mk_x_monotone =
-    traits.make_x_monotone_2_object();
 
   Point_2 points1[5];
   points1[0] = Point_2(0, 0);
