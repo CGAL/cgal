@@ -542,7 +542,8 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Face_pair
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
-find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
+find_faces_to_split(const Vertex_handle& v, const Site_2& t,
+    bool& flipf, bool& flipg) const
 {
   CGAL_precondition( v->is_segment() );
 
@@ -701,11 +702,28 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
     CGAL_SDG_DEBUG( std::cout <<
         "debug os2 = " << os2 << std::endl; );
 
+#ifndef CGAL_NO_ASSERTIONS
+    {
+      if (os1 == ON_ORIENTED_BOUNDARY) {
+        CGAL_assertion(os2 != ON_ORIENTED_BOUNDARY);
+      }
+      if (os2 == ON_ORIENTED_BOUNDARY) {
+        CGAL_assertion(os1 != ON_ORIENTED_BOUNDARY);
+      }
+    }
+#endif
+
     if ( !found_f1 &&
          os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
       f1 = ff2;
       found_f1 = true;
-      CGAL_SDG_DEBUG(std::cout << "debug impl found_f1 set to true" << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug impl found_f1 set to true "
+          << "with os1=" << os1 << std::endl;);
+      if (os1 == ON_ORIENTED_BOUNDARY) {
+        flipf = true;
+      } else {
+        flipf = false;
+      }
     }
 
     // philaris: change to be more symmetric:
@@ -715,7 +733,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 	 os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
       f2 = ff2;
       found_f2 = true;
-      CGAL_SDG_DEBUG(std::cout << "debug impl found_f2 set to true" << std::endl;);
+      CGAL_SDG_DEBUG(std::cout << "debug impl found_f2 set to true "
+          << "with os1=" << os1 << std::endl;);
+      if (os1 == ON_ORIENTED_BOUNDARY) {
+        flipg = true;
+      } else {
+        flipg = false;
+      }
     }
 
     CGAL_SDG_DEBUG(std::cout << "debug impl end (found_f1 found_f2)= "
@@ -787,11 +811,13 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   CGAL_assertion( t.is_point() );
   CGAL_assertion( t.is_input() );
 
+  bool flipf, flipg;
+
   Storage_site_2 ssitev = v->storage_site();  
 
   CGAL_assertion( ssitev.is_segment() );
 
-  Face_pair fpair = find_faces_to_split(v, t);
+  Face_pair fpair = find_faces_to_split(v, t, flipf, flipg);
 
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
@@ -806,8 +832,32 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   v2->set_site( ssv2 );
 
   Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
+
+  Face_handle otherf;
+  int f_i;
+  if (flipf) {
+    otherf = qqf->neighbor(qqf->index(v1));
+    f_i = this->_tds.mirror_index(qqf, qqf->index(v1));
+  }
+
+  Face_handle otherg;
+  int g_i;
+  if (flipg) {
+    Face_handle qqg = boost::tuples::get<3>(qq); //qq.fourth;
+    otherg = qqg->neighbor(qqg->index(v2));
+    g_i = this->_tds.mirror_index(qqg, qqg->index(v2));
+  }
+
   Vertex_handle vsx =
     this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
+
+  if (flipf) {
+    this->_tds.flip(otherf, f_i);
+  }
+
+  if (flipg) {
+    this->_tds.flip(otherg, g_i);
+  }
 
   vsx->set_site(ss);
   // merge info of point and segment; the point lies on the segment
@@ -827,15 +877,18 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   // on return the three vertices are, respectively, the point of
   // intersection and the two subsegments of v->site()
 
+  bool flipf, flipg;
+
   Storage_site_2 ssitev = v->storage_site();
-  Storage_site_2 ssx = st_.construct_storage_site_2_object()(ss, ssitev);
+  Storage_site_2 ssx =
+    storage_traits().construct_storage_site_2_object()(ss, ssitev);
 
   Site_2 sitev = ssitev.site();
   #ifdef CGAL_SDG_VERBOSE
   std::cout << "debug insert_point_on_segment intsec=" 
     << ssx.site() << " v=" << sitev << std::endl ;
   #endif
-  Face_pair fpair = find_faces_to_split(v, ssx.site());
+  Face_pair fpair = find_faces_to_split(v, ssx.site(), flipf, flipg);
 
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
@@ -845,10 +898,10 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   Vertex_handle v2 = boost::tuples::get<1>(qq); //qq.second;
 
   Storage_site_2 ssv1 =
-    st_.construct_storage_site_2_object()(ssitev, ss, true);
+    storage_traits().construct_storage_site_2_object()(ssitev, ss, true);
 
   Storage_site_2 ssv2 =
-    st_.construct_storage_site_2_object()(ssitev, ss, false);
+    storage_traits().construct_storage_site_2_object()(ssitev, ss, false);
 
   // philaris: the following variables are set but never used
   Site_2 sv1 = ssv1.site();
@@ -861,13 +914,38 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
   v2->set_site( ssv2 );
 
   Face_handle qqf = boost::tuples::get<2>(qq); //qq.third;
+
+  Face_handle otherf;
+  int f_i;
+  if (flipf) {
+    otherf = qqf->neighbor(qqf->index(v1));
+    f_i = this->_tds.mirror_index(qqf, qqf->index(v1));
+  }
+
+  Face_handle otherg;
+  int g_i;
+  if (flipg) {
+    Face_handle qqg = boost::tuples::get<3>(qq); //qq.fourth;
+    otherg = qqg->neighbor(qqg->index(v2));
+    g_i = this->_tds.mirror_index(qqg, qqg->index(v2));
+  }
+
   Vertex_handle vsx =
     this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
+
+  if (flipf) {
+    this->_tds.flip(otherf, f_i);
+  }
+
+  if (flipg) {
+    this->_tds.flip(otherg, g_i);
+  }
 
   vsx->set_site(ssx);
 
   return Vertex_triple(vsx, v1, v2);
 }
+
 
 //--------------------------------------------------------------------
 // insertion of a segment
