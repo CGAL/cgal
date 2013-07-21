@@ -121,7 +121,7 @@ representation of points and one based on the homogeneous
 representation of points. The interface of the kernel objects is
 designed such that it works well with both
 %Cartesian and homogeneous representation, for
-example, points have a `Construct_point_d` functor that takes a range of coordinates plus a
+example, points have a constructor with a range of coordinates plus a
 common denominator (the \f$ d+1\f$ homogeneous coordinates of the point).
 The common interfaces parameterized with a representation class allow
 one to develop code independent of the chosen representation. We said

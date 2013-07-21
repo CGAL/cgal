@@ -234,7 +234,7 @@ void test3(){
 
 int main(){
   test2<CGAL::Kernel_d_interface<KK> >();
-  test2<CGAL::Epick_d<2> >();
-  test3<CGAL::Epick_d<3> >();
-  test3<CGAL::Epick_d<CGAL::UNKNOWN_DIMENSION> >();
+  test2<CGAL::Epick_d<CGAL::Dimension_tag<2> > >();
+  test3<CGAL::Epick_d<CGAL::Dimension_tag<3> > >();
+  test3<CGAL::Epick_d<CGAL::Dynamic_dimension_tag> >();
 }

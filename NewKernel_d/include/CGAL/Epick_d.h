@@ -35,13 +35,11 @@ struct Epick_d_help2
 };
 #undef CGAL_BASE
 #define CGAL_BASE \
-  Kernel_d_interface< Cartesian_wrap< Epick_d_help2< \
-    typename boost::conditional< d_==UNKNOWN_DIMENSION, \
-                                 Dynamic_dimension_tag, \
-				 Dimension_tag<d_> \
-    >::type \
-  >, Epick_d<d_> > >
-template<int d_>
+  Kernel_d_interface< \
+    Cartesian_wrap< \
+      Epick_d_help2<Dim>, \
+      Epick_d<Dim> > >
+template<class Dim>
 struct Epick_d
 : CGAL_BASE
 {
