@@ -146,9 +146,11 @@ namespace Internal {
 } //namespace SegmentDelaunayGraph_2
 
 
-template<class Gt, class ST, class STag, class D_S, class LTag >
+template<class Gt, class ST, class STag, class D_S, class LTag, class SDGLx >
 class Segment_Delaunay_graph_hierarchy_2;
 
+template<class Gt, class ST, class D_S, class LTag >
+class Segment_Delaunay_graph_Linf_2;
 
 
 template<class Gt,
@@ -161,8 +163,15 @@ class Segment_Delaunay_graph_2
   : private Triangulation_2<
           Segment_Delaunay_graph_traits_wrapper_2<Gt>, D_S >
 {
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag>;
-  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag>;
+  friend class Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag,
+   Segment_Delaunay_graph_2<Gt,ST,D_S,LTag> >;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag,
+   Segment_Delaunay_graph_2<Gt,ST,D_S,LTag> >;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_true,D_S,LTag,
+   Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >;
+  friend class Segment_Delaunay_graph_hierarchy_2<Gt,ST,Tag_false,D_S,LTag,
+   Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >;
 protected:
   // LOCAL TYPES
   //------------
