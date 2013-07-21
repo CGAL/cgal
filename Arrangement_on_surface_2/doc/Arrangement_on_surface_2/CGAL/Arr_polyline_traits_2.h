@@ -136,6 +136,9 @@ namespace CGAL {
       polylines.  Thus, have the same overloads of the
       `operator()`. Note that when constructing `X_monotone_curve_2`
       all preconditions are tested.
+
+      If `CGAL_ALWAYS_LEFT_TO_RIGHT` is defined, then the resulting
+      \f$x\f$-monotone polyline will be oriented from left-to-right.
      */
     class Construct_x_monotone_curve_2 {};
 

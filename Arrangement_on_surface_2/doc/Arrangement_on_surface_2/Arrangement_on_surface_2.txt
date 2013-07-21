@@ -2129,18 +2129,18 @@ arrangements of polylines in an exact and robust manner.
 
 The `Arr_polyline_traits_2<SegmentTraits>` class template handles
 bounded polylines. The polyline-traits class template is a model of
-the concepts `ArrangementTraits_2`, `ArrangementLandmarkTraits_2`
-and `ArrangementDirectionalXMonotoneTraits_2` depending on the type
-that substitutes the `SegmentTraits` template parameter when the
-`Arr_polyline_traits_2<SegmentTraits>` class template is instantiated.
-The substituted type must be a geometry-traits class that handles
-segments and models the concepts `ArrangementXMonotoneTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`. If it also models the
+the concepts `ArrangementTraits_2`, `ArrangementLandmarkTraits_2` and
+`ArrangementDirectionalXMonotoneTraits_2`.  The substituted type must
+be a geometry-traits class that handles segments and models the
+concepts `ArrangementXMonotoneTraits_2` and
+`ArrangementDirectionalXMonotoneTraits_2`. If the type also models the
 `ArrangementTraits_2` concept, the instantiated
-`Arr_polyline_traits_2<SegmentTraits>` type models the concept
-`ArrangementTraits_2` as well. The same holds for the
-`ArrangementLandmarkTraits_2` concept. By default, the traits class
-`Arr_segment_traits_2` is used to substitute the template parameter.
+`Arr_polyline_traits_2<SegmentTraits>` type models this concept as
+well. The same holds for the `ArrangementLandmarkTraits_2`
+concept. Currently, we only support traits classes that handle \a
+linear segments. By default, the traits class `Arr_segment_traits_2`
+is used to substitute the template parameter.
+
 The curves handled by each operation defined by the type that
 substitutes the `SegmentTraits` parameter are restricted to line
 segments. (This precondition cannot be enforced by the compiler.) An
@@ -2148,46 +2148,72 @@ instance of the polyline traits class-template inherits its nested
 point type, i.e., `Point_2` from the substituted line-segment traits,
 and defines the nested types `Curve_2` and `X_monotone_curve_2`, which
 are used to represent polylines and \f$ x\f$-monotone polylines,
-respectively. A curve of one of these two type is stored as a vector
-of `SegmentTraits::X_monotone_curve_2` objects (namely line segments).
-The nested `X_monotone_curve_2` type inherits from the nested type
-`Curve_2`.
+respectively.  In general, the `Curve_2` and `X_monotone_curve_2`
+nested types are stored as vectors of `SegmentTraits::Curve_2` or
+`SegmentTraits::X_monotone_curve_2` objects respectively. The nested
+`X_monotone_curve_2` type inherits from the nested type
+`Curve_2`. Note that in practice, as soon as `Arr_segment_traits_2` is
+used as the `SegmentTraits`, then the segments that a polyline
+comprises are linear segments, and in this case
+`SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2` are
+the same.
 
 A polyline can be constructed given one of the following inputs:
 
 <OL>
+
 <LI> <b>A range of \a points</b>, where two succeeding points in the
   range represent the endpoints of a segment of the polyline.
-<LI> <b>A range of \a segments</b>.
+
+<LI> <b>A range of \a segments</b>. Note that , if the types
+`SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2` are
+not the same, then when `Make_x_monotone_2` is invoked the segments
+that constitute the polyline will be broken into \f$x\f$-monotone
+parts.
+
 <LI> A pair of points \a or a single segment. In this case a polyline
   that consists of a single segment is constructed.
+
 </OL>
 
 Note that degenerated polylines are not supported. That is, it is
 impossible to construct a polyline that contains a segment of length
 zero, or an isolated point. Finally, a polyline is
-<em>well-oriented</em>, that is the target of the \f$i\f$th segment is
-the source of the \f$i+1\f$st segment. For example, the general polyline
+<b><em>continuous</em></b> and <b><em>well-oriented</em></b>, that is
+the target of the \f$i\f$th segment is the source of the \f$i+1\f$st
+segment. For example, the general polyline
+
 \image html generic-polyline.png
 \image latex generic-polyline.pdf
+
 can be represented by one of the following two
+
 \image html well-oriented-polyline.png
 \image latex well-oriented-polyline.pdf
+
 Also, note, that a single polyline can be split into several
 \f$ x\f$-monotone polylines, and that the number of intersection
 points (or overlapping sections) between two polylines can also
 be large.
 
+\cgalAdvancedBegin
+
+Technically speaking, it is possible to construct a general polyline
+which is neither well-oriented nor continuous. However, it is
+impossible to use such constructed polylines for the sake of computing
+an arrangement.
+
+\cgalAdvancedEnd
+
 You can traverse over the range of defining segments of a given
 polyline. The \a first and \a past-the-end iterators can be obtained
-through the methods `begin_segments()` and `end_segments()`,
-respectively, of the polyline. The vertices of an \f$ x\f$-monotone
+through the access functions of the polyline `begin_segments()` and
+`end_segments()`, respectively. The vertices of an \f$ x\f$-monotone
 curve are always stored in a strongly monotonic lexicographical order.
 In other words, \f$x\f$-monotone polylines can be directed \a either
 left-to-right \a or right-to-left. If the macro
-#CGAL_ALWAYS_LEFT_TO_RIGHT is set to 1,
-then the \f$x\f$-monotone polylines are always directed from
-left-to-right.
+#CGAL_ALWAYS_LEFT_TO_RIGHT is set to 1, then the \f$x\f$-monotone
+polylines are always directed from left-to-right.
 
 The polyline-traits class does not perform any geometric operations
 directly. Instead, it solely relies on the functionality of the
@@ -2198,7 +2224,7 @@ contains the point in its \f$x\f$-range. Then, we compute the position of
 the point with respect to this segment. Thus, operations on \f$x\f$-monotone
 polylines of size \f$m\f$ typically take \f$O(\log m)\f$ time.
 
-You are free to choose the underlying line-segment traits class. Your
+You are free to choose the underlying segment traits class. Your
 decision could be based, for example, on the number of expected
 intersection points; see Section \ref arr_ssectr_segs. Moreover, it
 is possible to substitute the `SegmentTraits` template parameter
@@ -2212,7 +2238,7 @@ polylines, as constructed in `polylines.cpp`. Disks mark vertices
 associated with polyline endpoints, while circles mark vertices that
 correspond to intersection points. Note that \f$ \pi_2\f$ is split
 into three \f$ x\f$-monotone polylines, and that \f$ \pi_1\f$ and \f$
-\pi_3\f$ have two overlapping sections.  \cgalFigureEnd
+\pi_3\f$ have two overlapping sections. \cgalFigureEnd
 
 The following example program constructs an arrangement of three
 polylines, as depicted in \cgalFigureRef{arr_figex_12}. Note that
