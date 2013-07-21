@@ -222,8 +222,17 @@ private:
 
   struct Track_vertex_visitor : SMS::Edge_collapse_visitor_base<Polyhedron>
   {
+    Track_vertex_visitor(){}
+
     Track_vertex_visitor(std::map<int, std::vector<int> >* corr, int max_id) :
-      corr(corr), max_id(max_id){}
+      corr(corr), max_id(max_id), is_medially_centered(false){}
+
+    Track_vertex_visitor(std::map<int, std::vector<int> >* corr,
+                         std::map<int, int>* poles,
+                         std::vector<TriPoint>* cell_dual,
+                         int max_id) :
+      corr(corr), poles(poles), cell_dual(cell_dual), max_id(max_id),
+      is_medially_centered(true){}
 
     // Called AFTER each edge has been collapsed
     void OnCollapsed(Profile const& edge, Vertex_handle v)
@@ -268,11 +277,34 @@ private:
         (iter->second).clear();
         (*corr).erase(iter);
       }
+
+      if (is_medially_centered)
+      {
+        Point pole0 = Point(to_double((*cell_dual)[(*poles)[id0]].x()),
+                            to_double((*cell_dual)[(*poles)[id0]].y()),
+                            to_double((*cell_dual)[(*poles)[id0]].z()));
+        Point pole1 = Point(to_double((*cell_dual)[(*poles)[id1]].x()),
+                            to_double((*cell_dual)[(*poles)[id1]].y()),
+                            to_double((*cell_dual)[(*poles)[id1]].z()));
+        Point p1 = v1->point();
+        double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
+        double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
+        if (dis_to_pole0 < dis_to_pole1)
+        {
+          (*poles)[id1] = (*poles)[id0];
+        }
+        std::map<int, int>::iterator pole_iter = (*poles).find(id0);
+        (*poles).erase(pole_iter);
+      }
 //      std::cerr << "after onCollapse\n";
     }
 
     std::map<int, std::vector<int> >* corr;
     int max_id;
+
+    bool is_medially_centered;
+    std::map<int, int>* poles;
+    std::vector<TriPoint>* cell_dual;
   };
 
 // Public methods
@@ -701,7 +733,15 @@ public:
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<Polyhedron> > placement;
 
-    Track_vertex_visitor vis(&correspondence, max_id);
+    Track_vertex_visitor vis;
+    if (is_medially_centered)
+    {
+      vis = Track_vertex_visitor(&correspondence, &poles, &cell_dual, max_id);
+    }
+    else
+    {
+      vis = Track_vertex_visitor(&correspondence, max_id);
+    }
 
     int r = SMS::edge_collapse
                 (*polyhedron
