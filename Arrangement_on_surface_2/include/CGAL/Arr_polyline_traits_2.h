@@ -1858,17 +1858,20 @@ namespace CGAL {
       X_monotone_curve_2 operator()(const Point_2& p, const Point_2& q) const
       {
         CGAL_precondition_code
-          (
-           typename Segment_traits_2::Equal_2 equal =
-           m_poly_traits.segment_traits_2()->
-           equal_2_object();
-           );
+          (typename Segment_traits_2::Equal_2 equal =
+             m_poly_traits.segment_traits_2()->equal_2_object(););
         CGAL_precondition_msg
-          (
-           !equal(p,q),
-           "Cannot construct a degenerated segment as a polyline"
-           );
+          (!equal(p,q),
+           "Cannot construct a degenerated segment as a polyline");
         X_monotone_segment_2 seg(p, q);
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+        if (m_poly_traits.segment_traits_2()->compare_xy_2_object()(p,q) ==
+          LARGER)
+          seg = m_poly_traits.segment_traits_2()->
+            construct_opposite_2_object()(seg);
+#endif
+
         return X_monotone_curve_2(seg);
       }
 
@@ -1898,6 +1901,14 @@ namespace CGAL {
            CGAL_precondition_msg(!equal(get_min_v(seg),get_max_v(seg)),
                                  "Cannot construct a degenerated segment");
            );
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+        if (m_poly_traits.segment_traits_2()->
+            compare_endpoints_xy_2_object()(seg) == LARGER)
+          return X_monotone_segment_2(m_poly_traits.segment_traits_2()->
+                                      construct_opposite_2_object()(seg));
+#endif
+
         return X_monotone_curve_2(seg);
       }
 
@@ -1969,6 +1980,15 @@ namespace CGAL {
           segs.push_back(X_monotone_segment_2(*ps,*pt));
           ++ps; ++pt;
         }
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+        if (m_poly_traits.segment_traits_2()->
+          compare_endpoints_xy_2_object()(*segs.begin()) == LARGER)
+          {
+            X_monotone_curve_2 xcv(segs.begin(), segs.end());
+            return m_poly_traits.construct_opposite_2_object()(xcv);
+          }
+#endif
 
         return X_monotone_curve_2(segs.begin(), segs.end());
       }
@@ -2058,6 +2078,15 @@ namespace CGAL {
              ++next;
            }
            );
+
+#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
+        if (m_poly_traits.segment_traits_2()->
+          compare_endpoints_xy_2_object()(*begin) == LARGER)
+          {
+            X_monotone_curve_2 xcv(begin, end);
+            return m_poly_traits.construct_opposite_2_object()(xcv);
+          }
+#endif
 
         return X_monotone_curve_2(begin, end);
       }
