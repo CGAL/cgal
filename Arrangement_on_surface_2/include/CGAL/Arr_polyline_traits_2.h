@@ -39,9 +39,10 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
-#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_geometry_traits/Polyline_2.h>
+#include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_enums.h>
 
 namespace CGAL {
 
@@ -55,16 +56,16 @@ namespace CGAL {
     typedef Tag_true                                 Has_merge_category;
     typedef Tag_false                                Has_do_intersect_category;
 
-    typedef Arr_oblivious_side_tag                   Left_side_category;
-    typedef Arr_oblivious_side_tag                   Bottom_side_category;
-    typedef Arr_oblivious_side_tag                   Top_side_category;
-    typedef Arr_oblivious_side_tag                   Right_side_category;
+    typedef typename Segment_traits_2::Left_side_category   Left_side_category;
+    typedef typename Segment_traits_2::Bottom_side_category Bottom_side_category;
+    typedef typename Segment_traits_2::Top_side_category    Top_side_category;
+    typedef typename Segment_traits_2::Right_side_category  Right_side_category;
 
   private:
     typedef Arr_polyline_traits_2<Segment_traits_2>  Self;
 
     // Data members:
-    const Segment_traits_2*   m_seg_traits;    // The base segment-traits class.
+    const Segment_traits_2* m_seg_traits;    // The base segment-traits class.
     bool m_own_traits;
 
   private:
@@ -283,8 +284,7 @@ namespace CGAL {
                                    const X_monotone_curve_2& cv) const
       {
         // Get the index of the segment in cv containing p.
-        unsigned int i = // What is a smart way to call _locate()?
-          m_poly_traits.locate(cv, p);
+        unsigned int i = m_poly_traits.locate(cv, p);
         CGAL_precondition(i != INVALID_INDEX);
 
         // Compare the segment cv[i] and p.
@@ -326,8 +326,8 @@ namespace CGAL {
       {
         // Get the indices of the segments in cv1 and cv2 containing p and
         // defined to its left.
-        unsigned int i1=m_poly_traits.locate_side(cv1, p, false);
-        unsigned int i2=m_poly_traits.locate_side(cv2, p, false);
+        unsigned int i1 = m_poly_traits.locate_side(cv1, p, false);
+        unsigned int i2 = m_poly_traits.locate_side(cv2, p, false);
 
         CGAL_precondition(i1 != INVALID_INDEX);
         CGAL_precondition(i2 != INVALID_INDEX);
@@ -1172,9 +1172,138 @@ namespace CGAL {
 
     class Intersect_2 {
     protected:
+      typedef typename Arr_are_all_sides_oblivious_tag<
+        Left_side_category, Bottom_side_category,
+        Top_side_category, Right_side_category >::result
+      Are_all_sides_oblivious_tag;
+
       typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
       /*! The polyline traits (in case it has state) */
       const Geometry_traits_2& m_poly_traits;
+
+      Comparison_result compare_xy_max_impl(const X_monotone_segment_2& s1,
+                                            const X_monotone_segment_2& s2,
+                                            Arr_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+          seg_traits->construct_max_vertex_2_object();
+        typename Segment_traits_2::Compare_xy_2 compare_xy =
+          seg_traits->compare_xy_2_object();
+        return compare_xy(max_vertex(s1), max_vertex(s2));
+      }
+
+      Comparison_result compare_xy_max_impl(const X_monotone_segment_2& s1,
+                                            const X_monotone_segment_2& s2,
+                                            Arr_not_all_sides_oblivious_tag)
+        const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
+          seg_traits->parameter_space_in_x_2_object();
+        typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
+          seg_traits->parameter_space_in_y_2_object();
+        const Arr_parameter_space ps_x1 = ps_x(s1, ARR_MAX_END);
+        const Arr_parameter_space ps_y1 = ps_y(s1, ARR_MAX_END);
+        const Arr_parameter_space ps_x2 = ps_x(s2, ARR_MAX_END);
+        const Arr_parameter_space ps_y2 = ps_y(s2, ARR_MAX_END);
+
+        CGAL_assertion(ps_x1 != ARR_LEFT_BOUNDARY);
+        CGAL_assertion(ps_x2 != ARR_LEFT_BOUNDARY);
+        if (ps_x1 == ARR_INTERIOR) {
+          if (ps_x2 == ARR_INTERIOR) {
+            // EFEF: This is for the Sphere only
+            if (ps_y1 == ARR_INTERIOR) {
+              typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+                seg_traits->construct_max_vertex_2_object();
+              const Point_2& p1 = max_vertex(s1);
+              if (ps_y2 == ARR_INTERIOR)
+                return seg_traits->compare_xy_2_object()(p1, max_vertex(s2));
+              // ps_y1 == ARR_INTERIOR
+              // ps_y2 != ARR_INTERIOR
+              return
+                seg_traits->compare_x_on_boundary_2_object()(p1, s2,
+                                                             ARR_MAX_END);
+            }
+            // ps_y1 != ARR_INTERIOR
+            if (ps_y2 == ARR_INTERIOR) {
+              typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+                seg_traits->construct_max_vertex_2_object();
+              const Point_2& p2 = max_vertex(s2);
+              typename Segment_traits_2::Compare_x_on_boundary_2 compare =
+                seg_traits->compare_x_on_boundary_2_object();
+              return opposite(compare(p2, s1, ARR_MAX_END));
+            }
+            // ps_y1 != ARR_INTERIOR
+            // ps_y2 != ARR_INTERIOR
+            return
+              seg_traits->compare_x_on_boundary_2_object()(s1, ARR_MAX_END,
+                                                           s2, ARR_MAX_END);
+          }
+          return SMALLER;
+        }
+        // x1 right
+        if (ps_x2 == ARR_INTERIOR) return LARGER;
+        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+          seg_traits->construct_max_vertex_2_object();
+        return seg_traits->compare_y_on_boundary_2_object()(max_vertex(s1),
+                                                            max_vertex(s2));
+      }
+
+      Comparison_result compare_y_at_x_max_impl(const X_monotone_segment_2& s1,
+                                                const X_monotone_segment_2& s2,
+                                                Arr_all_sides_oblivious_tag)
+        const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+          seg_traits->construct_max_vertex_2_object();
+        typename Segment_traits_2::Compare_y_at_x_2 compare =
+          seg_traits->compare_y_at_x_2_object();
+        return compare(max_vertex(s1), s2);
+      }
+
+      Comparison_result compare_y_at_x_max_impl(const X_monotone_segment_2& s1,
+                                                const X_monotone_segment_2& s2,
+                                                Arr_not_all_sides_oblivious_tag)
+        const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
+          seg_traits->parameter_space_in_x_2_object();
+        typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
+          seg_traits->parameter_space_in_y_2_object();
+        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+          seg_traits->construct_max_vertex_2_object();
+        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
+          seg_traits->construct_min_vertex_2_object();
+        const Arr_parameter_space ps_x1 = ps_x(s1, ARR_MAX_END);
+        const Arr_parameter_space ps_y1 = ps_y(s1, ARR_MAX_END);
+
+        CGAL_assertion(ps_x1 != ARR_LEFT_BOUNDARY);
+
+        if (ps_x1 == ARR_INTERIOR) {
+          if (ps_y1 == ARR_TOP_BOUNDARY) {
+            typename Segment_traits_2::Equal_2 equal =
+              seg_traits->equal_2_object();
+            if (equal(max_vertex(s1), max_vertex(s2))) return EQUAL;
+            if (equal(max_vertex(s1), min_vertex(s2))) return EQUAL;
+            return LARGER;
+          }
+          if (ps_y1 == ARR_BOTTOM_BOUNDARY) {
+            typename Segment_traits_2::Equal_2 equal =
+              seg_traits->equal_2_object();
+            if (equal(max_vertex(s1), max_vertex(s2))) return EQUAL;
+            if (equal(max_vertex(s1), min_vertex(s2))) return EQUAL;
+            return SMALLER;
+          }
+          // ps_y1 == ARR_INTERIOR
+          return seg_traits->compare_y_at_x_2_object()(max_vertex(s1), s2);
+        }
+        // ps_x1 == ARR_RIGHT_BOUNDARY
+        return seg_traits->compare_y_on_boundary_2_object()(max_vertex(s1),
+                                                            max_vertex(s2));
+      }
 
     public:
       /*! Constructor. */
@@ -1191,7 +1320,7 @@ namespace CGAL {
        * \param oi The output iterator.
        * \return The past-the-end iterator.
        */
-      template<class OutputIterator>
+      template <typename OutputIterator>
       OutputIterator operator()(const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2,
                                 OutputIterator oi) const
@@ -1238,7 +1367,7 @@ namespace CGAL {
                 ((dir1 == LARGER) && (i1 == 0))){
               // cv1's right endpoint equals cv2's left endpoint
               // Thus we can return this single(!) intersection point
-              std::pair<Point_2,Multiplicity>  p(max_vertex(cv1[i1]), 0);
+              std::pair<Point_2, Multiplicity>  p(max_vertex(cv1[i1]), 0);
               *oi++ = make_object(p);
               return oi;
             }
@@ -1258,7 +1387,7 @@ namespace CGAL {
                 ((dir2 == LARGER) && (i2 == 0))){
               // cv2's right endpoint equals cv1's left endpoint
               // Thus we can return this single(!) intersection point
-              std::pair<Point_2,Multiplicity>  p(max_vertex(cv2[i2]), 0);
+              std::pair<Point_2, Multiplicity>  p(max_vertex(cv2[i2]), 0);
               *oi++ = make_object(p);
               return oi;
             }
@@ -1292,15 +1421,20 @@ namespace CGAL {
                ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) &&(i2 >= 0)&&
                 (i1 != INVALID_INDEX) && (i2 != INVALID_INDEX)))
           {
-            right_res = compare_xy(max_vertex(cv1[i1]), max_vertex(cv2[i2]));
+            right_res = compare_xy_max_impl(cv1[i1], cv2[i2],
+                                            Are_all_sides_oblivious_tag());
 
             right_coincides = (right_res == EQUAL);
             if (right_res == SMALLER)
-              right_coincides = (compare_y_at_x(max_vertex(cv1[i1]),
-                                                cv2[i2]) == EQUAL);
+              right_coincides =
+                (compare_y_at_x_max_impl(cv1[i1], cv2[i2],
+                                         Are_all_sides_oblivious_tag()) ==
+                 EQUAL);
             else if (right_res == LARGER)
-              right_coincides = (compare_y_at_x(max_vertex(cv2[i2]),
-                                                cv1[i1]) == EQUAL);
+              right_coincides =
+                (compare_y_at_x_max_impl(cv2[i2], cv1[i1],
+                                         Are_all_sides_oblivious_tag()) ==
+                 EQUAL);
 
             right_overlap = false;
 
@@ -1934,6 +2068,291 @@ namespace CGAL {
     { return Construct_x_monotone_curve_2(*this); }
     //@}
 
+    /*! A function object that obtains the parameter space of a geometric
+     * entity along the x-axis
+     */
+    class Parameter_space_in_x_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Geometry_traits_2& m_poly_traits;
+
+    public:
+      /*! Constructor. */
+      Parameter_space_in_x_2(const Geometry_traits_2& traits) :
+        m_poly_traits(traits)
+      {}
+
+      /*! Obtains the parameter space at the end of an arc along the x-axis .
+       * Note that if the arc end coincides with a pole, then unless the arc
+       * coincides with the identification arc, the arc end is considered to
+       * be approaching the boundary, but not on the boundary.
+       * If the arc coincides with the identification arc, it is assumed to
+       * be smaller than any other object.
+       * \param xcv the arc
+       * \param ce the arc end indicator:
+       *     ARR_MIN_END - the minimal end of xc or
+       *     ARR_MAX_END - the maximal end of xc
+       * \return the parameter space at the ce end of the arc xcv.
+       *   ARR_LEFT_BOUNDARY  - the arc approaches the identification arc from
+       *                        the right at the arc left end.
+       *   ARR_INTERIOR       - the arc does not approache the identification arc.
+       *   ARR_RIGHT_BOUNDARY - the arc approaches the identification arc from
+       *                        the left at the arc right end.
+       * \pre xcv does not coincide with the vertical identification arc.
+       */
+      Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+                                     Arr_curve_end ce) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        Comparison_result direction =
+          seg_traits->compare_endpoints_xy_2_object()(xcv[0]);
+        const X_monotone_segment_2& xs =
+          (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
+           ((direction == LARGER) && (ce == ARR_MIN_END))) ?
+          xcv[0] : xcv[xcv.number_of_segments()-1];
+        return seg_traits->parameter_space_in_x_2_object()(xs, ce);
+      }
+
+      /*! Obtains the parameter space at a point along the x-axis.
+       * \param p the point.
+       * \return the parameter space at p.
+       * \pre p does not lie on the vertical identification curve.
+       */
+      Arr_parameter_space operator()(const Point_2 p) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        return seg_traits->parameter_space_in_x_2_object()(p);
+      }
+    };
+
+    /*! Obtain a Parameter_space_in_x_2 function object */
+    Parameter_space_in_x_2 parameter_space_in_x_2_object() const
+    { return Parameter_space_in_x_2(*this); }
+
+    /*! A function object that obtains the parameter space of a geometric
+     * entity along the y-axis
+     */
+    class Parameter_space_in_y_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Geometry_traits_2& m_poly_traits;
+
+    public:
+      /*! Constructor. */
+      Parameter_space_in_y_2(const Geometry_traits_2& traits) :
+        m_poly_traits(traits)
+      {}
+
+      /*! Obtains the parameter space at the end of an arc along the y-axis .
+       * Note that if the arc end coincides with a pole, then unless the arc
+       * coincides with the identification arc, the arc end is considered to
+       * be approaching the boundary, but not on the boundary.
+       * If the arc coincides with the identification arc, it is assumed to
+       * be smaller than any other object.
+       * \param xcv the arc
+       * \param ce the arc end indicator:
+       *     ARR_MIN_END - the minimal end of xc or
+       *     ARR_MAX_END - the maximal end of xc
+       * \return the parameter space at the ce end of the arc xcv.
+       *   ARR_BOTTOM_BOUNDARY  - the arc approaches the south pole at the arc
+       *                          left end.
+       *   ARR_INTERIOR         - the arc does not approache a contraction point.
+       *   ARR_TOP_BOUNDARY     - the arc approaches the north pole at the arc
+       *                          right end.
+       * There are no horizontal identification arcs!
+       */
+      Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+                                     Arr_curve_end ce) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        Comparison_result direction =
+          seg_traits->compare_endpoints_xy_2_object()(xcv[0]);
+        const X_monotone_segment_2& xs =
+          (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
+           ((direction == LARGER) && (ce == ARR_MIN_END))) ?
+          xcv[0] : xcv[xcv.number_of_segments()-1];
+        return seg_traits->parameter_space_in_y_2_object()(xs, ce);
+      }
+
+      /*! Obtains the parameter space at a point along the y-axis.
+       * \param p the point.
+       * \return the parameter space at p.
+       * \pre p does not lie on the horizontal identification curve.
+       * There are no horizontal identification arcs!
+       */
+      Arr_parameter_space operator()(const Point_2 p) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        return seg_traits->parameter_space_in_y_2_object()(p);
+      }
+    };
+
+    /*! Obtain a Parameter_space_in_y_2 function object */
+    Parameter_space_in_y_2 parameter_space_in_y_2_object() const
+    { return Parameter_space_in_y_2(*this); }
+
+    /*! A functor that compares the x-coordinate of arc ends and points on the
+     * boundary of the parameter space.
+     */
+    class Compare_x_on_boundary_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Geometry_traits_2& m_poly_traits;
+
+    public:
+      /*! Constructor. */
+      Compare_x_on_boundary_2(const Geometry_traits_2& traits) :
+        m_poly_traits(traits)
+      {}
+
+      /*! Compare the x-limit of a point with the x-coordinate of an
+       * x-curve end on the boundary.
+       * \param point the point.
+       * \param xcv the x-curve, the endpoint of which is compared.
+       * \param ce the x-curve-end indicator -
+       *            ARR_MIN_END - the minimal end of xc or
+       *            ARR_MAX_END - the maximal end of xc.
+       * \return the comparison result:
+       *         SMALLER - x(p) < x(xc, ce);
+       *         EQUAL   - x(p) = x(xc, ce);
+       *         LARGER  - x(p) > x(xc, ce).
+       * \pre p lies in the interior of the parameter space.
+       * \pre the ce end of the x-curve xcv lies on the top boundary.
+       * \pre xcv does not coincide with the vertical identification curve.
+       */
+      Comparison_result operator()(const Point_2& point,
+                                   const X_monotone_curve_2& xcv,
+                                   Arr_curve_end ce) const
+      {
+        const Segment_traits_2* seg_traits =
+          m_poly_traits.segment_traits_2();
+        Comparison_result direction =
+          seg_traits->compare_endpoints_xy_2_object()(xcv[0]);
+        const X_monotone_segment_2& xs =
+          (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
+           ((direction == LARGER) && (ce == ARR_MIN_END))) ?
+          xcv[0] : xcv[xcv.number_of_segments()-1];
+        return seg_traits->compare_x_on_boundary_2_object()(point, xs, ce);
+      }
+
+      /*! Compare the x-coordinates of 2 arc ends near the boundary of the
+       * parameter space.
+       * \param xcv1 the first arc.
+       * \param ce1 the first arc end indicator -
+       *            ARR_MIN_END - the minimal end of xcv1 or
+       *            ARR_MAX_END - the maximal end of xcv1.
+       * \param xcv2 the second arc.
+       * \param ce2 the second arc end indicator -
+       *            ARR_MIN_END - the minimal end of xcv2 or
+       *            ARR_MAX_END - the maximal end of xcv2.
+       * \return the second comparison result:
+       *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
+       *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
+       *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+       * \pre the ce1 end of the arc xcv1 lies on a pole (implying ce1 is
+       *      vertical).
+       * \pre the ce2 end of the arc xcv2 lies on a pole (implying ce2 is
+       *      vertical).
+       * \pre xcv1 does not coincide with the vertical identification curve.
+       * \pre xcv2 does not coincide with the vertical identification curve.
+       */
+      Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_curve_2& xcv2,
+                                   Arr_curve_end ce2) const
+      {
+        const Segment_traits_2* seg_traits =
+          m_poly_traits.segment_traits_2();
+        Comparison_result direction1 =
+          seg_traits->compare_endpoints_xy_2_object()(xcv1[0]);
+        const X_monotone_segment_2& xs1 =
+          (((direction1 == SMALLER) && (ce1 == ARR_MAX_END)) ||
+           ((direction1 == LARGER) && (ce1 == ARR_MIN_END))) ?
+          xcv1[0] : xcv1[xcv1.number_of_segments()-1];
+        Comparison_result direction2 =
+          seg_traits->compare_endpoints_xy_2_object()(xcv2[0]);
+        const X_monotone_segment_2& xs2 =
+          (((direction2 == SMALLER) && (ce2 == ARR_MAX_END)) ||
+           ((direction2 == LARGER) && (ce2 == ARR_MIN_END))) ?
+          xcv2[0] : xcv2[xcv2.number_of_segments()-1];
+        return seg_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
+      }
+    };
+
+    /*! Obtain a Compare_x_on_boundary_2 function object. */
+    Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+    { return Compare_x_on_boundary_2(*this); }
+
+    /*! A functor that compares the y-coordinate of two given points
+     * that lie on the vertical identification arc.
+     */
+    class Compare_y_on_boundary_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Geometry_traits_2& m_poly_traits;
+
+    public:
+      /*! Constructor. */
+      Compare_y_on_boundary_2(const Geometry_traits_2& traits) :
+        m_poly_traits(traits)
+      {}
+
+      /*! Compare the y-coordinate of two given points that lie on the vertical
+       * identification curve.
+       * \param p1 the first point.
+       * \param p2 the second point.
+       * \return SMALLER - p1 is lexicographically smaller than p2;
+       *         EQUAL   - p1 and p2 coincides;
+       *         LARGER  - p1 is lexicographically larger than p2;
+       * \pre p1 lies on the vertical identification arc.
+       * \pre p2 lies on the vertical identification arc.
+       */
+      Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+      {
+        // EFEF: not implemented yet
+        CGAL_error();
+        return EQUAL;
+      }
+    };
+
+    /*! Obtain a Compare_y_on_boundary_2 function object */
+    Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
+    { return Compare_y_on_boundary_2(*this); }
+
+    /*! A functor that compares the y-coordinates of arc ends near the
+     * boundary of the parameter space.
+     */
+    class Compare_y_near_boundary_2 {
+    public:
+      /*! Compare the y-coordinates of 2 curves at their ends near the boundary
+       * of the parameter space.
+       * \param xcv1 the first arc.
+       * \param xcv2 the second arc.
+       * \param ce the arc end indicator.
+       * \return the second comparison result.
+       * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
+       *      boundary or on the right boundary of the parameter space (implying
+       *      that they cannot be vertical).
+       * There is no horizontal identification curve!
+       */
+      Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                   const X_monotone_curve_2& xcv2,
+                                   Arr_curve_end ce) const
+      {
+        // EFEF: not implemented yet
+        CGAL_error();
+        return EQUAL;
+      }
+    };
+
+    /*! Obtain a Compare_y_near_boundary_2 function object */
+    Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
+    { return Compare_y_near_boundary_2(); }
+
   private:
     /*
      * Roadmap: locate() should return an iterator to the located segment
@@ -2157,7 +2576,6 @@ namespace CGAL {
       return i;
     }
   };
-
 
 } //namespace CGAL
 
