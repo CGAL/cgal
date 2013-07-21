@@ -117,9 +117,9 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	//typedef typename Get_functor<Base, Oriented_side_tag>::type Oriented_side_d;
 	//typedef typename Get_functor<Base, Side_of_bounded_sphere_tag>::type Side_of_bounded_sphere_d;
 
-	//typedef typename Get_functor<Base, Center_of_sphere_tag>::type Center_of_sphere_d;
+	typedef typename Get_functor<Base, Center_of_sphere_tag>::type Center_of_sphere_d;
 	//typedef typename Get_functor<Base, Value_at_tag>::type Value_at_d;
-	//typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
+	typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
 	typedef typename Get_functor<Base, Orthogonal_vector_tag>::type Orthogonal_vector_d;
 	//typedef typename Get_functor<Base, Linear_base_tag>::type Linear_base_d;
 

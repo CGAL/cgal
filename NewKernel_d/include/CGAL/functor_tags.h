@@ -214,11 +214,13 @@ namespace CGAL {
 
 	// Really?
 	template<class A,class T,class B,class C>struct Get_functor_category<A,Convert_ttag<T>,B,C>{typedef Misc_tag type;};
+
 #define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
 	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Construct_tag type;}
 	DECL_CONSTRUCT(Midpoint,Point);
 	DECL_CONSTRUCT(Center_of_sphere,Point);
+	DECL_CONSTRUCT(Point_of_sphere,Point);
 	DECL_CONSTRUCT(Segment_extremity,Point);
 	DECL_CONSTRUCT(Sum_of_vectors,Vector);
 	DECL_CONSTRUCT(Difference_of_vectors,Vector);
