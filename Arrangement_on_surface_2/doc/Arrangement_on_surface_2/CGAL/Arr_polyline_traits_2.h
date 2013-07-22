@@ -12,13 +12,20 @@ namespace CGAL {
   /*!
     \ingroup PkgArrangement2TraitsClasses
 
-    The traits class `Arr_polyline_traits_2` is a model of the
-    `ArrangementTraits_2` concept. It handles piecewise linear curves,
-    commonly referred to as polylines. Each polyline is a chain of
-    segments, where each two neighboring segments in the chain share a
-    common endpoint. The traits class exploits the functionality of
-    the `SegmentTraits` template-parameter to handle the segments that
-    comprise the polyline curves.
+    The traits class `Arr_polyline_traits_2` handles piecewise linear
+    curves, commonly referred to as polylines. Each polyline is a
+    chain of segments, where each two neighboring segments in the
+    chain share a common endpoint; that is, the polyline is
+    continuous. Furthermore, the source of the \f$i\f$-th segement of
+    a polyline has to coincide with the target of the \f$i+1\f$-st
+    segment; that is, the polyline has to be \a well-oriented. Note
+    that since it is impossible to enforce this precondition, it is
+    possible to construct general polylines which are neither
+    continuous nor well-oriented. However, such polylines cannot be
+    used for the actual computation of arrangements. The traits class
+    exploits the functionality of the `SegmentTraits`
+    template-parameter to handle the segments that comprise the
+    polyline curves.
 
     The type substituting the template parameter `SegmentTraits` when
     the template Arr_polyline_traits_2 is instantiated must be a model
@@ -26,7 +33,10 @@ namespace CGAL {
       - `ArrangementTraits_2` and
       - `ArrangementDirectionalXMonotoneTraits_2`.
 
-    If no type is provided then `Arr_segment_traits_2` (with
+    If, in addition, `SegmentTraits` models the concept
+    `ArrangementLandmarkTraits_2` then `Arr_polyline_traits_2` will
+    model this concept as well. If no type is provided then
+    `Arr_segment_traits_2` (with
     `Exact_predicates_exact_constructions_kernel` as the kernel) will
     be used. Otherwise, `Arr_segment_traits_2<Kernel>` or
     `Arr_non_caching_segment_traits_2<Kernel>` can be used, where the
