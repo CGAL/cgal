@@ -35,7 +35,7 @@ struct Cartesian_filter_K : public Base_,
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
 	    typedef typename Get_functor<AK, T>::type AP;
 	    typedef typename Get_functor<EK, T>::type EP;
-	    typedef Filtered_predicate<EP,AP,C2E,C2A> type;
+	    typedef Filtered_predicate2<EP,AP,C2E,C2A> type;
     };
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :

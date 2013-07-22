@@ -26,6 +26,8 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/store_kernel.h>
+#include <boost/preprocessor.hpp>
 
 namespace CGAL {
 
@@ -47,7 +49,7 @@ namespace CGAL {
 
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
-class Filtered_predicate
+class Filtered_predicate2
 {
 //TODO: pack (at least use a tuple)
 //FIXME: is it better to store those, or just store enough to recreate them
@@ -66,100 +68,30 @@ public:
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
 
+  // FIXME: should use result_of, see emails by Nico
   typedef typename EP::result_type  result_type;
   // AP::result_type must be convertible to EP::result_type.
 
-  Filtered_predicate()
+  Filtered_predicate2()
   {}
 
   template <class K>
-  Filtered_predicate(const K& k)
+  Filtered_predicate2(const K& k)
     : ep(k.exact_kernel()), ap(k.approximate_kernel()), c2e(k,k.exact_kernel()), c2a(k,k.approximate_kernel())
   {}
 
-  template <class K, class EK, class AK>
-  Filtered_predicate(const K& k,const EK& ek,const AK& ak)
-    : ep(ek), ap(ak), c2e(k,ek), c2a(k,ak)
-  {}
-
-
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+#ifdef CGAL_CXX0X
   template <typename... Args>
   result_type
-  operator()(const Args&... args) const;
-#else
-
-  template <class A1>
-  result_type
-  operator()(const A1 &a1) const;
-
-  template <class A1, class A2>
-  result_type
-  operator()(const A1 &a1, const A2 &a2) const;
-
-  template <class A1, class A2, class A3>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const;
-
-  template <class A1, class A2, class A3, class A4>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const;
-
-  template <class A1, class A2, class A3, class A4, class A5>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const;
-
-  template <class A1, class A2, class A3, class A4, class A5, class A6>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const;
-
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7) const;
-
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7, class A8>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const;
-
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7, class A8, class A9>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
-             const A9 &a9) const;
-
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7, class A8, class A9, class A10>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
-             const A9 &a9, const A10 &a10) const;
-
-  // Idem for more than 10 arguments.  Do it on demand.
-
-#endif
-};
-
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <typename... Args>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const Args&... args) const
-{
+  operator()(Args&&... args) const
+  {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
     {
       Protect_FPU_rounding<Protection> p;
       try
 	{
+	  // No forward here, the arguments may still be needed
 	  Ares res = ap(c2a(args)...);
 	  if (is_certain(res))
 	    return get_certain(res);
@@ -168,252 +100,37 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(args)...);
-}
-
+    return ep(c2e(std::forward<Args>(args))...);
+  }
 #else
 
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  
-	  Ares res = ap(c2a(a1));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4, class A5>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4, class A5, class A6>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7, class A8>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7), c2a(a8));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
-              c2e(a8));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7, class A8, class A9>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
-             const A9 &a9) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7), c2a(a8), c2a(a9));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
-              c2e(a8), c2e(a9));
-}
-
-template <class EP, class AP, class C2E, class C2A, bool Protection>
-  template <class A1, class A2, class A3, class A4, class A5, class A6,
-            class A7, class A8, class A9, class A10>
-typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
-Filtered_predicate<EP,AP,C2E,C2A,Protection>::
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
-             const A9 &a9, const A10 &a10) const
-{
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> p;
-      try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7), c2a(a8), c2a(a9), c2a(a10));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
-      catch (Uncertain_conversion_exception) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
-    return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
-              c2e(a8), c2e(a9), c2e(a10));
-}
+#define VAR(Z,N,C) C(a##N)
+#define CODE(Z,N,_) \
+  template <BOOST_PP_ENUM_PARAMS(N,class A)> \
+  result_type \
+  operator()(BOOST_PP_ENUM_BINARY_PARAMS(N, A, const& a)) const \
+  { \
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp); \
+    { \
+      Protect_FPU_rounding<Protection> p; \
+      try \
+	{ \
+	  Ares res = ap(BOOST_PP_ENUM(N,VAR,c2a)); \
+	  if (is_certain(res)) \
+	    return get_certain(res); \
+	} \
+      catch (Uncertain_conversion_exception) {} \
+    } \
+    CGAL_BRANCH_PROFILER_BRANCH(tmp); \
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST); \
+    return ep(BOOST_PP_ENUM(N,VAR,c2e)); \
+  }
+  BOOST_PP_REPEAT_FROM_TO(1, 10, CODE, _ )
+#undef CODE
+#undef VAR
 
 #endif
+};
 
 } //namespace CGAL
 
