@@ -4562,7 +4562,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // face (case 3.2), we have to distinguish two sub-cases:
       // TODO EBEB 2012-07-30 replace with signs
       if (_hole_creation_on_edge_removal(signs1, signs2, true)) {
-        //  if (m_topol_traits.hole_creation_after_edge_removal(he1)) {
         // We have to create a new hole in the interior of the incident face
         // (case 3.2.1):
         //
@@ -4762,7 +4761,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // (case 3.4). We have to distinguish two possible sub-cases.
       // TODO EBEB 2012-07-30 replace with signs
     if (_hole_creation_on_edge_removal(signs1, signs2, false)) {
-      //if (m_topol_traits.hole_creation_after_edge_removal(he1)) {
       // We have to remove the outer CCBs of f1 and f2 that he1 and he2 lie
       // on, and create a new hole in the merged face (case 3.4.2).
       // We first remove the outer CCB oc1 from f1, and inform the observers

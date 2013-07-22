@@ -501,30 +501,6 @@ public:
     return (std::make_pair(true, true));
   }
 
-#if 0
-  // TODO EBEB 2013-07-18 became obsolete with _hole_creation_on_edge_removal - DELETE soon
-  /*! Determine whether the removal of the given edge will cause the creation
-   * of a hole.
-   * \param he The halfedge to be removed.
-   * \pre Both he and its twin lie on an outer CCB of their incident faces.
-   * \return Whether a new hole will be created.
-   */
-  bool hole_creation_after_edge_removal(const Halfedge* he) const
-  {
-    CGAL_precondition(!he->is_on_inner_ccb());
-    CGAL_precondition(!he->opposite()->is_on_inner_ccb());
-
-    /* Check whether the halfedge and its twin belong to the same outer CCB
-     * (and are therefore incident to the same face).
-     * If they do, cut an antenna. That is, seperate a new hole from the outer
-     * CCB of the face (return true).
-     * Otherwise, the edge separates two faces. When removed, these two faces
-     * will be merged, but no new hole will be created (return false).
-     */
-    return (he->outer_ccb() == he->opposite()->outer_ccb());
-  }
-#endif
-
   /*! Determine whether a given point lies in the interior of a given face.
    * \param f The face.
    * \param p The query point.
