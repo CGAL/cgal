@@ -380,7 +380,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
       skeleton->polylines.push_back(line);
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-    scene->addItem(skeleton);
+    scene->addItem(skeleton, false);
     item->setVisible(false);
 
     QApplication::restoreOverrideCursor();
@@ -444,7 +444,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
       skeleton->polylines.push_back(line);
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-    scene->addItem(skeleton);
+    scene->addItem(skeleton, false);
     item->setVisible(false);
 
     QApplication::restoreOverrideCursor();
@@ -594,13 +594,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 
   if (fixedPointsItemIndex == -1)
   {
-    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
     std::cerr << "add item " << fixedPointsItemIndex << "\n";
   }
   else
   {
     std::cerr << "replace item " << fixedPointsItemIndex << "\n";
-    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem, false);
     delete temp;
   }
   // update scene
@@ -651,11 +651,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   }
   if (fixedPointsItemIndex == -1)
   {
-    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
   }
   else
   {
-    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem, false);
     delete temp;
   }
 
@@ -672,11 +672,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 //  }
 //  if (nonFixedPointsItemIndex == -1)
 //  {
-//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem);
+//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
 //  }
 //  else
 //  {
-//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem);
+//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
 //  }
 
   scene->itemChanged(index);
@@ -731,7 +731,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     skeleton->polylines.push_back(line);
   }
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-  scene->addItem(skeleton);
+  scene->addItem(skeleton, false);
 
   vertex_iterator vb, ve;
   std::vector<vertex_descriptor> id_to_vd;
@@ -761,7 +761,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   }
   lines->setName(QString("correpondent vertices of %1").arg(item->name()));
   lines->setVisible(false);
-  scene->addItem(lines);
+  scene->addItem(lines, false);
 
   // set the fixed points and contracted mesh as invisible
   scene->item(fixedPointsItemIndex)->setVisible(false);
@@ -811,11 +811,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   }
   if (fixedPointsItemIndex == -1)
   {
-    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
   }
   else
   {
-    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem);
+    Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem, false);
     delete temp;
   }
 
@@ -832,11 +832,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
 //  }
 //  if (nonFixedPointsItemIndex == -1)
 //  {
-//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem);
+//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
 //  }
 //  else
 //  {
-//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem);
+//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
 //  }
 
   scene->itemChanged(index);
