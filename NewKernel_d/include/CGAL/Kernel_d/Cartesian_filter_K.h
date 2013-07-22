@@ -3,7 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_d/KernelD_converter.h>
-#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_predicate2.h>
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {
