@@ -116,9 +116,9 @@ public:
     ui->volume_TH->setDecimals(6);
     ui->volume_TH->setValue(1e-04);
     ui->volume_TH->setSingleStep(0.000001);
-    ui->area_TH->setDecimals(8);
-    ui->area_TH->setValue(1e-5);
-    ui->area_TH->setSingleStep(1e-7);
+    ui->area_TH->setDecimals(7);
+    ui->area_TH->setValue(1e-4);
+    ui->area_TH->setSingleStep(1e-5);
     ui->is_medially_centered->setChecked(false);
 
     ui->label_omega_L->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
@@ -211,6 +211,8 @@ public:
         mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
                                           omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
       }
+      fixedPointsItemIndex = -1;
+      nonFixedPointsItemIndex = -1;
 
       Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
       scene->addItem(item_copy);
@@ -243,6 +245,7 @@ public:
                                             omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
         }
         fixedPointsItemIndex = -1;
+        nonFixedPointsItemIndex = -1;
 
         Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
         scene->addItem(item_copy);
@@ -346,7 +349,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
   double omega_H = 0.1;
   double edgelength_TH = 0.002 * diag;
   double volume_TH = 1e-04;
-  double area_TH = 1e-5;
+  double area_TH = 1e-4;
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -410,7 +413,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
   double omega_P = 0.2;
   double edgelength_TH = 0.002 * diag;
   double volume_TH = 1e-04;
-  double area_TH = 1e-5;
+  double area_TH = 1e-4;
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -673,29 +676,29 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     delete temp;
   }
 
-//  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
-//  nonFixedPointsItem->setName("non-fixed points");
-//  nonFixedPointsItem->setColor(QColor(0, 255, 0));
-//  std::vector<Point> nonFixedPoints;
-//  mcs->get_non_fixed_points(nonFixedPoints);
-//  ps = nonFixedPointsItem->point_set();
-//  for (size_t i = 0; i < nonFixedPoints.size(); i++)
-//  {
-//    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
-//    ps->push_back(point);
-//  }
-//  if (nonFixedPointsItemIndex == -1)
-//  {
-//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
-//  }
-//  else
-//  {
-//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
-//  }
+  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
+  nonFixedPointsItem->setName("non-fixed points");
+  nonFixedPointsItem->setColor(QColor(0, 255, 0));
+  std::vector<Point> nonFixedPoints;
+  mcs->get_non_fixed_points(nonFixedPoints);
+  ps = nonFixedPointsItem->point_set();
+  for (size_t i = 0; i < nonFixedPoints.size(); i++)
+  {
+    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
+    ps->push_back(point);
+  }
+  if (nonFixedPointsItemIndex == -1)
+  {
+    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
+  }
+  else
+  {
+    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
+  }
 
   scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
-//  scene->itemChanged(nonFixedPointsItemIndex);
+  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
@@ -773,12 +776,15 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
       lines->polylines.push_back(line);
     }
   }
-  lines->setName(QString("correpondent vertices of %1").arg(item->name()));
+  lines->setName(QString("correspondent vertices of %1").arg(item->name()));
   lines->setVisible(false);
   scene->addItem(lines, false);
 
   // set the fixed points and contracted mesh as invisible
-  scene->item(fixedPointsItemIndex)->setVisible(false);
+  if (fixedPointsItemIndex >= 0)
+  {
+    scene->item(fixedPointsItemIndex)->setVisible(false);
+  }
   item->setVisible(false);
   // update scene
   QApplication::restoreOverrideCursor();

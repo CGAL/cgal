@@ -182,6 +182,7 @@ private:
   double TH_ALPHA;
   double zero_TH;
   double area_TH;
+  double original_area;
   double volume_TH;
   double original_volume;
   int iteration_TH;
@@ -349,7 +350,8 @@ public:
     double area = get_surface_area();
     area_TH = 0.0001 * area;
     original_volume = to_double(internal::volume(*polyhedron));
-    iteration_TH = 1000;
+    original_area = get_surface_area();
+    iteration_TH = 500;
 
     // initialize index maps
     vertex_iterator vb, ve;
@@ -395,7 +397,8 @@ public:
     double area = get_surface_area();
     area_TH = 0.0001 * area;
     original_volume = to_double(internal::volume(*polyhedron));
-    iteration_TH = 1000;
+    original_area = get_surface_area();
+    iteration_TH = 500;
 
     // initialize index maps
     vertex_iterator vb, ve;
@@ -1342,6 +1345,7 @@ public:
     update_topology();
     detect_degeneracies();
 //    detect_degeneracies_in_disk();
+
     double area = get_surface_area();
     std::cout << "area " << area << "\n";
     double volume = to_double(internal::volume(*polyhedron));
@@ -1357,24 +1361,27 @@ public:
       std::cout << "iteration " << num_iteration + 1 << "\n";
 
       contract_geometry();
-      int num_events = update_topology();
+      update_topology();
       detect_degeneracies();
-      detect_degeneracies_in_disk();
-//      double area = get_surface_area();
-//      std::cout << "area " << area << "\n";
-//      if (fabs(last_area - area) < area_TH)
-//      {
-//        break;
-//      }
-//      last_area = area;
+//      detect_degeneracies_in_disk();
 
-      double volume = to_double(internal::volume(*polyhedron));
-      std::cout << "volume_TH " << volume_TH << "\n";
-      std::cout << "volume " << volume << ", volume / original_volume " << volume / original_volume <<  "\n";
-      if (volume / original_volume < volume_TH)
+      double area = get_surface_area();
+      double area_ratio = fabs(last_area - area) / original_area;
+      std::cout << "area " << area << "\n";
+      std::cout << "|area - last_area| / original_area " << area_ratio << "\n";
+      if (area_ratio < area_TH)
       {
         break;
       }
+      last_area = area;
+
+//      double volume = to_double(internal::volume(*polyhedron));
+//      std::cout << "volume_TH " << volume_TH << "\n";
+//      std::cout << "volume " << volume << ", volume / original_volume " << volume / original_volume <<  "\n";
+//      if (volume / original_volume < volume_TH)
+//      {
+//        break;
+//      }
 
       num_iteration++;
       if (num_iteration >= iteration_TH)
@@ -1424,7 +1431,7 @@ public:
     }
     std::cout << "tracked " << cnt << " vertices\n";
 
-    collapse_vertices_without_correspondence();
+//    collapse_vertices_without_correspondence();
   }
 
   void collapse_vertices_without_correspondence()

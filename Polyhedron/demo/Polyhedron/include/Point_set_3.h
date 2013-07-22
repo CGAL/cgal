@@ -212,6 +212,7 @@ public:
     // Draw *non-selected* points
     if (m_nb_selected_points < size())
     {
+      ::glPointSize(4.f);
       ::glBegin(GL_POINTS);
       for (const_iterator it = begin(); it != end(); it++)
       {
