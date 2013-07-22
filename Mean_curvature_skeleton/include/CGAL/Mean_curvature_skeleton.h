@@ -83,6 +83,25 @@ edge_descriptor mesh_split(Polyhedron *polyhedron, edge_descriptor ei, Point pn)
   return en;
 }
 
+template<class Polyhedron>
+typename Polyhedron::Traits::FT volume(const Polyhedron& p)
+{
+  typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
+  typedef typename Polyhedron::Traits::Point_3 Point;
+  typename Kernel_traits<Point>::Kernel::Compute_volume_3 volume;
+  typename Polyhedron::Traits::FT res=0;
+  Point origin(0,0,0);
+  for (Facet_iterator f = p.facets_begin(); f != p.facets_end(); f++)
+  {
+    typename Polyhedron::Halfedge_const_handle he = f->facet_begin();
+    const Point& v1 = he->vertex()->point();
+    const Point& v2 = he->next()->vertex()->point();
+    const Point& v3 = he->next()->next()->vertex()->point();
+    res+=volume(origin,v1,v2,v3);
+  }
+  return res;
+}
+
 } //namespace internal
 } //namespace CGAL
 
@@ -163,6 +182,9 @@ private:
   double TH_ALPHA;
   double zero_TH;
   double area_TH;
+  double volume_TH;
+  double original_volume;
+  int iteration_TH;
 
   int vertex_id_count;
   int max_id;
@@ -324,6 +346,11 @@ public:
       is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
+    double area = get_surface_area();
+    area_TH = 0.0001 * area;
+    original_volume = to_double(internal::volume(*polyhedron));
+    volume_TH = 1e-6 * original_volume;
+    iteration_TH = 1000;
 
     // initialize index maps
     vertex_iterator vb, ve;
@@ -366,6 +393,11 @@ public:
   {
     std::cout << "medially centered constructor: omega_P = " << omega_P << "\n";
     TH_ALPHA *= (M_PI / 180.0);
+    double area = get_surface_area();
+    area_TH = 0.0001 * area;
+    original_volume = to_double(internal::volume(*polyhedron));
+    volume_TH = 0.0001 * original_volume;
+    iteration_TH = 1000;
 
     // initialize index maps
     vertex_iterator vb, ve;
@@ -694,29 +726,29 @@ public:
       size_t vi_idx = boost::get(vertex_id_pmap, vi);
       size_t vj_idx = boost::get(vertex_id_pmap, vj);
 
-      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[vi_idx])
-        {
-          constrains_map.set_is_constrained(*eb, true);
-        }
-      }
-      if (is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[vj_idx])
-        {
-          constrains_map.set_is_constrained(*eb, true);
-        }
-      }
-
-//      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
-//       && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
+//      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end())
 //      {
-//        if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
+//        if (is_vertex_fixed_map[vi_idx])
 //        {
 //          constrains_map.set_is_constrained(*eb, true);
 //        }
 //      }
+//      if (is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
+//      {
+//        if (is_vertex_fixed_map[vj_idx])
+//        {
+//          constrains_map.set_is_constrained(*eb, true);
+//        }
+//      }
+
+      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
+       && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
+        {
+          constrains_map.set_is_constrained(*eb, true);
+        }
+      }
 
     }
 
@@ -895,14 +927,14 @@ public:
       Point ps = vs->point();
       Point pt = vt->point();
 
-      if (is_vertex_fixed_map.find(vs_id) != is_vertex_fixed_map.end()
-       || is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
-      {
-        if (is_vertex_fixed_map[vs_id] || is_vertex_fixed_map[vt_id])
-        {
-          continue;
-        }
-      }
+//      if (is_vertex_fixed_map.find(vs_id) != is_vertex_fixed_map.end()
+//       || is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
+//      {
+//        if (is_vertex_fixed_map[vs_id] || is_vertex_fixed_map[vt_id])
+//        {
+//          continue;
+//        }
+//      }
 
       double angle_i = halfedge_angle[ei_id];
       double angle_j = halfedge_angle[ej_id];
@@ -1307,31 +1339,52 @@ public:
     update_topology();
     detect_degeneracies();
 //    detect_degeneracies_in_disk();
-//    double area = get_surface_area();
-//    std::cout << "area " << area << "\n";
-//    detect_degeneracies_in_disk();
+    double area = get_surface_area();
+    std::cout << "area " << area << "\n";
+    double volume = to_double(internal::volume(*polyhedron));
+    std::cout << "volume " << volume << ", volume / volume_TH " << volume / original_volume <<  "\n";
   }
 
   void run_to_converge()
   {
     double last_area = 0;
+    int num_iteration = 0;
     while (true)
     {
+      std::cout << "iteration " << num_iteration << "\n";
+
       contract_geometry();
       int num_events = update_topology();
       detect_degeneracies();
       detect_degeneracies_in_disk();
-      double area = get_surface_area();
-      std::cout << "area " << area << "\n";
-      if (fabs(last_area - area) < area_TH)
+//      double area = get_surface_area();
+//      std::cout << "area " << area << "\n";
+//      if (fabs(last_area - area) < area_TH)
+//      {
+//        break;
+//      }
+//      last_area = area;
+
+      double volume = to_double(internal::volume(*polyhedron));
+      if (volume < volume_TH)
       {
         break;
       }
-      if (num_events == 0)
+      std::cout << "volume " << volume << ", volume / volume_TH " << volume / original_volume <<  "\n";
+
+      num_iteration++;
+      if (num_iteration >= iteration_TH)
       {
         break;
       }
-      last_area = area;
+//      if (num_events == 0)
+//      {
+//        break;
+//      }
+//      if (num_events == 0 && fabs(last_area - area) < area_TH)
+//      {
+//        break;
+//      }
     }
   }
 
