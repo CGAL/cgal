@@ -179,7 +179,7 @@ public:
   // check if the Mean_curvature_skeleton exists
   // or has the same polyheron item
   // check if the mesh is a watertigh triangle mesh
-  bool check_mesh(Polyhedron* pMesh) {
+  bool check_mesh(Scene_polyhedron_item* item) {
     double omega_L = ui->omega_L->value();
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
@@ -189,6 +189,8 @@ public:
     double diag = scene->len_diagonal();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
+    Polyhedron *pMesh = item->polyhedron();
+
     if (mcs == NULL)
     {
       if (!is_mesh_valid(pMesh))
@@ -197,7 +199,7 @@ public:
       }
 
       // save a copy before any operation
-      mCopy = *pMesh;
+      mCopy = new Polyhedron(*pMesh);
       if (is_medially_centered)
       {
         mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
@@ -209,6 +211,11 @@ public:
         mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
                                           omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
       }
+
+      Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
+      scene->addItem(item_copy);
+      item_copy->setName(QString("original mesh of %1").arg(item->name()));
+      item_copy->setVisible(false);
     }
     else
     {
@@ -223,7 +230,7 @@ public:
         delete mcs;
 
         // save a copy before any operation
-        mCopy = *pMesh;
+        mCopy = new Polyhedron(*pMesh);
         if (is_medially_centered)
         {
           mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
@@ -236,6 +243,11 @@ public:
                                             omega_L, omega_H, edgelength_TH, zero_TH, area_TH);
         }
         fixedPointsItemIndex = -1;
+
+        Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
+        scene->addItem(item_copy);
+        item_copy->setName(QString("original mesh of %1").arg(item->name()));
+        item_copy->setVisible(false);
       }
       else
       {
@@ -268,7 +280,7 @@ private:
   Ui::Mean_curvature_flow_skeleton_plugin* ui;
   int fixedPointsItemIndex;
   int nonFixedPointsItemIndex;
-  Polyhedron mCopy;
+  Polyhedron *mCopy;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -467,7 +479,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
@@ -498,7 +510,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
@@ -532,7 +544,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
@@ -565,7 +577,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
@@ -624,7 +636,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
@@ -700,7 +712,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
@@ -738,9 +750,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   vertex_iterator vb, ve;
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(mCopy));
+  id_to_vd.resize(boost::num_vertices(*mCopy));
   int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(mCopy); vb != ve; vb++)
+  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; vb++)
   {
     vertex_descriptor v = *vb;
     id_to_vd[id++] = v;
@@ -784,7 +796,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   Polyhedron* pMesh = item->polyhedron();
 
-  if (!check_mesh(pMesh))
+  if (!check_mesh(item))
   {
     return;
   }
