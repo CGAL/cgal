@@ -1740,6 +1740,7 @@ namespace CGAL {
     /*! Get an Approximate_2 functor object. */
     Approximate_2 approximate_2_object() const
     { return segment_traits_2()->approximate_2_object(); }
+    //@}
 
     class Construct_curve_2 {
     protected:
@@ -2095,7 +2096,6 @@ namespace CGAL {
     /*! Get a Construct_x_monotone_curve_2 functor object. */
     Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
     { return Construct_x_monotone_curve_2(*this); }
-    //@}
 
     /*! A function object that obtains the parameter space of a geometric
      * entity along the x-axis
