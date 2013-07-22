@@ -1,6 +1,6 @@
 all: normal cxx0x
 
-CGAL_INC = -I../../../Algebraic_foundations/include -I../../../STL_Extension/include -I../../../Number_types/include -DCGAL_DISABLE_ROUNDING_MATH_CHECK
+CGAL_INC = -I../../../Algebraic_foundations/include -I../../../STL_Extension/include -I../../../Number_types/include -I../../../Kernel_23/include -DCGAL_DISABLE_ROUNDING_MATH_CHECK
 
 EIGEN_INC = `pkg-config --cflags eigen3|sed -e 's/-I/-isystem/g'` -DCGAL_EIGEN3_ENABLED
 
