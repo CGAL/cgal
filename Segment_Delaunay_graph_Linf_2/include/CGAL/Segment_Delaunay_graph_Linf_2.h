@@ -1114,6 +1114,33 @@ public:
       } while (++vc1 != vc2);
     }
 
+    os << std::endl;
+    os << "Neighbors of vertices in sdg:" << std::endl;
+    os << "-----------------------------" << std::endl;
+    for (avit = all_vertices_begin();
+         avit != all_vertices_end();
+         ++avit) {
+      vh = avit;
+      if (is_infinite(vh)) {
+        os << "neighs of " << inf_vertex << " =";
+      } else {
+        os << "neighs of " << avit->site() << " =";
+      }
+      Vertex_circulator vc = incident_vertices(vh);
+      Vertex_circulator vcstart = vc;
+      if (vc != 0) {
+        do {
+          vh = vc;
+          if (is_infinite(vh)) {
+            os << "  " << inf_vertex;
+          } else {
+            os << "  " << vc->site();
+          }
+        } while (++vc != vcstart);
+      }
+      os << std::endl;
+    }
+
     os << "=======================" << std::endl;
     os << "SDG verbose output ends" << std::endl;
     os << "=======================" << std::endl;
