@@ -44,8 +44,8 @@ public:
   Scene(QObject*  parent);
   ~Scene();
 
-  int addItem(Scene_item* item);
-  Scene_item* replaceItem(int index, Scene_item* item);
+  int addItem(Scene_item* item, bool update_view=true);
+  Scene_item* replaceItem(int index, Scene_item* item, bool update_view=true);
 
   Q_INVOKABLE int erase(int);  
   int erase(QList<int>);  

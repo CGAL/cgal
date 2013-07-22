@@ -61,8 +61,8 @@ public:
 
   virtual ~Scene_interface() {};
 
-  virtual Item_id addItem(Scene_item* item) = 0;
-  virtual Scene_item* replaceItem(Item_id, Scene_item*) = 0;
+  virtual Item_id addItem(Scene_item* item, bool update_view) = 0;
+  virtual Scene_item* replaceItem(Item_id, Scene_item*, bool update_view) = 0;
 
   virtual Item_id erase(Item_id) = 0;
   // Returns the index of the item just before the one that is erased,
