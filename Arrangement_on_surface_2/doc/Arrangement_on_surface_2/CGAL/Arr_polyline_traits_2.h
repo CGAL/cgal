@@ -19,11 +19,12 @@ namespace CGAL {
     continuous. Furthermore, the source of the \f$i\f$-th segement of
     a polyline has to coincide with the target of the \f$i+1\f$-st
     segment; that is, the polyline has to be \a well-oriented. Note
-    that since it is impossible to enforce this precondition, it is
-    possible to construct general polylines which are neither
-    continuous nor well-oriented. However, such polylines cannot be
-    used for the actual computation of arrangements. The traits class
-    exploits the functionality of the `SegmentTraits`
+    that it is possible to construct general polylines that are
+    neither continuous nor well-oriented, as it is impossible to
+    enforce this precondition (using the set of predicates required by
+    the relevant concepts, see below). However, such polylines cannot
+    be used for the actual computation of arrangements. The traits
+    class template exploits the functionality of the `SegmentTraits`
     template-parameter to handle the segments that comprise the
     polyline curves.
 
@@ -34,32 +35,35 @@ namespace CGAL {
       - `ArrangementDirectionalXMonotoneTraits_2`.
 
     If, in addition, `SegmentTraits` models the concept
-    `ArrangementLandmarkTraits_2` then `Arr_polyline_traits_2` will
-    model this concept as well. If no type is provided then
+    `ArrangementLandmarkTraits_2` then `Arr_polyline_traits_2` models
+    this concept as well. If no type is provided, then
     `Arr_segment_traits_2` (with
-    `Exact_predicates_exact_constructions_kernel` as the kernel) will
-    be used. Otherwise, `Arr_segment_traits_2<Kernel>` or
+    `Exact_predicates_exact_constructions_kernel` as the kernel) is
+    used. Otherwise, `Arr_segment_traits_2<Kernel>` or
     `Arr_non_caching_segment_traits_2<Kernel>` can be used, where the
     first alternative is recommended.
 
     The number type used by the injected segment traits should support
     exact rational arithmetic (that is, the number type should support
     the arithmetic operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and
-    \f$ \div\f$ that should be carried out without loss of precision),
-    in order to avoid robustness problems, although other inexact
-    number types could be used at the user's own risk.
+    \f$ \div\f$ carried out without loss of precision), in order to
+    avoid robustness problems, although other inexact number types
+    could be used at the user's own risk.
 
     `Arr_polyline_traits_2` uses `SegmentTraits::Point_2` as its point
-    type. Its nested type `Segment_2` is nothing but `SegmentTraits::Curve_2`.
+    type. Its nested types `Segment_2` and `X_monotone_segment_2` are
+    nothing but `SegmentTraits::Curve_2` and
+    `SegmentTraits::X_monotone_curve_2` respectively.
 
-    \cgalHeading{A note on Backwards compatibility}
-    In \cgal version 4.2 (and earlier) the `X_monotone_curve_2` nested type of
-    `Arr_polyline_traits_2` maintained a direction invariant, namely, its
-    vertices were ordered in an ascending lexicographical \f$(xy)\f$-order.
-    This restriction is no longer valid and `X_monotone_curve_2` can be now
-    directed either from right-to-left \a or left-to-right. If you wish to
-    maintain a left-to-right orientations of the \f$x\f$-monotone polylines set
-    the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
+    \cgalHeading{A note on Backwards compatibility} In \cgal version
+    4.2 (and earlier) the `X_monotone_curve_2` nested type of
+    `Arr_polyline_traits_2` maintained a direction invariant; namely,
+    its vertices were ordered in an \a ascending lexicographical
+    \f$(xy)\f$-order.  This restriction is no longer imposed and
+    `X_monotone_curve_2` can be now directed either from right-to-left
+    \a or left-to-right. If you wish to maintain a left-to-right
+    orientations of the \f$x\f$-monotone polylines, set the macro
+    `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
     included.
 
     \cgalModels `ArrangementTraits_2`
@@ -85,7 +89,8 @@ namespace CGAL {
 
     /*!
      */
-    typedef SegmentTraits::Curve_2            Segment_2;
+    typedef SegmentTraits::Curve_2                      Segment_2;
+    typedef SegmentTraits::X_monotone_curve_2        X_monotone_segment_2;
     /// @}
 
     /*!
