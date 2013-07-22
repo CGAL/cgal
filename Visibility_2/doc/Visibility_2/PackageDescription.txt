@@ -1,0 +1,33 @@
+/// \defgroup PkgVisibility_2 Visibility_2 Reference
+
+/// \defgroup PkgVisibility_2Concepts Concepts
+/// \ingroup PkgVisibility_2
+
+/*!
+\addtogroup PkgVisibility_2
+\cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2Summary}
+\cgalPkgPicture{visibility_2-teaser-thumb.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu}
+\cgalPkgDesc{The 2D Visibility component offers several variants for 
+viibility computation amidst liniar geometry in the plain.}
+\cgalPkgManuals{Chapter_2D_Visibility_Computation,PkgVisibility_2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{99.99}
+\cgalPkgBib{cgal:hhb-visibility-2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `Visibility_2`
+
+## Classes ##
+- `CGAL::Simple_visibility_2<Arr>
+- `CGAL::Naive_visibility_2<Arr> 
+- `CGAL::Preprocessed_visibility_2<Arr>
+
+*/

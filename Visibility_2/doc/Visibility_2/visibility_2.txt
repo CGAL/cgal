@@ -1,0 +1,67 @@
+namespace CGAL {
+
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_2D_Visibility_Computation
+\cgalAutoToc
+
+\authors Michael Hemmer, Kan Huang, Francisc Bungiu
+
+\section visibility_2_introduction Introduction
+
+\cgalFigureBegin{exaample_figure,visibility-teaser.png}
+An example figure. 
+\cgalFigureEnd
+
+\section visibility_2_interface Interface
+
+
+The following is a cut and paste from the minutes of the CGAL developer meeting in Nancy:
+
+Status of Visibility computation: 
+Currently there is some code within the Art Gallery project that does visibility computation without preprocessing. The output is essentially an arrangement. But it is probably better to start new code in CGAL style. 
+Design of Visibility package which should be the result of GSoC 2013: 
+Goals:
+
+    The package should be able to optionally handle degenerated outputs, i.e., one dimensional  needles -- this is why I put visibility "polygon" in "" 
+
+    the package should be able to associate the origin of an edge in the output to its counter part in the input or to the vertex that "caused" the creation of the edge.
+
+    there should be the option to do visibility computation with and without preprocessing 
+
+Principal design idea: 
+
+    The main concept is that of a visibility object that allows visibility queries.  We will have at least three different strategies in different classes:
+
+    simple visibility (for arrangements with no holes)
+
+    naive visibility -- without preprocessing 
+
+    visibility with preprocessing (some algo)
+
+    The object is constructed from a full arrangement which is stored and which allows preprocessing inside if needed. Visibility queries are then to that object. This allows to have both strategies in the same interface. It is worth considering distinguishing the regularized and non-regularized in compile time (e.g., using a template Boolean parameter.)
+
+    The constructor takes an additional bool whether the output should be regularized or not. This is already in the constructor as this may effect potential preprocessing 
+
+    Template parameters are the Arrangement type (allows access to traits and kernel) 
+
+    A query is a point and: 
+
+    a face if the point is inside the interior of the face 
+
+    a half edge if the point is on the boundary,  this avoid ambiguity  on which polygon is to be computed (e.g. which side of the edge is seen.)
+
+    Output: The output is an "extended" Arrangement (using [1]) such that additional data members of vertex/edge/face give pointers to their counterparts in the input arrangement if they exists. -- view edges don't have counter parts, but they can link to the vertex that caused them. The data member of the face can probably be empty (but it can not hurt to point to the original face either.) 
+
+    using the arrangement as output it easy to also report needles in case the (regularize) bool is not set. Otherwise we report the regularized version of the visibility area. Also as an extended arrangement. Though in this case it is indeed a polygon that could be reported. 
+
+[1] http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Arrangement_on_surface_2_ref/Class_Arr_extended_dcel.html
+
+
+
+
+
+*/
+
+}
