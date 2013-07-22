@@ -1390,7 +1390,8 @@ protected:
   void initialize_conflict_region(const Face_handle& f, List& l);
 
   std::pair<Face_handle,Face_handle>
-  find_faces_to_split(const Vertex_handle& v, const Site_2& t) const;
+  find_faces_to_split(const Vertex_handle& v, const Site_2& t,
+                      bool& flipf, bool& flipg) const;
 
   void expand_conflict_region(const Face_handle& f, const Site_2& t,
 			      const Storage_site_2& ss,
