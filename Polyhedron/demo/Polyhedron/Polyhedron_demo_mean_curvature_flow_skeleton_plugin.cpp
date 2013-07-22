@@ -696,6 +696,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   lines->setVisible(false);
   scene->addItem(lines);
 
+  // set the fixed points and contracted mesh as invisible
+  scene->item(fixedPointsItemIndex)->setVisible(false);
+  item->setVisible(false);
   // update scene
   QApplication::restoreOverrideCursor();
 }
