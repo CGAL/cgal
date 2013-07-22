@@ -585,6 +585,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   Face_circulator fc_start = fc1;
   Face_handle f1, f2;
   bool found_f1 = false, found_f2 = false;
+  bool os0_fc_start = false;
   Site_2 sitev = v->site();
   Site_2 sitev_supp = v->site().supporting_site();
 
@@ -745,11 +746,18 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
     CGAL_SDG_DEBUG(std::cout << "debug impl end (found_f1 found_f2)= "
                    << found_f1 << " " << found_f2 << std::endl;);
 
+    if ((fc_start == fc1) and (os1 == ON_ORIENTED_BOUNDARY)) {
+      CGAL_SDG_DEBUG(std::cout << "debug impl start face has os=0"
+          << std::endl;);
+      os0_fc_start = true;
+    }
+
     if ( found_f1 && found_f2 ) { break; }
 
     ++fc1, ++fc2;
-  } while ( fc_start != fc1 ); 
+  } while ( fc_start != fc1 );
 
+  CGAL_assertion( not os0_fc_start );
 
   CGAL_assertion( found_f1 && found_f2 );
   CGAL_assertion( f1 != f2 );
