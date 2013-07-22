@@ -2129,52 +2129,62 @@ arrangements of polylines in an exact and robust manner.
 
 The `Arr_polyline_traits_2<SegmentTraits>` class template handles
 bounded polylines. The polyline-traits class template is a model of
-the concepts `ArrangementTraits_2`, `ArrangementLandmarkTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`.  The substituted type must
-be a geometry-traits class that handles segments and models the
-concepts `ArrangementXMonotoneTraits_2` and
-`ArrangementDirectionalXMonotoneTraits_2`. If the type also models the
-`ArrangementTraits_2` concept, the instantiated
-`Arr_polyline_traits_2<SegmentTraits>` type models this concept as
-well. The same holds for the `ArrangementLandmarkTraits_2`
-concept. Currently, we only support traits classes that handle \a
-linear segments. By default, the traits class `Arr_segment_traits_2`
-is used to substitute the template parameter.
+the following concepts:
 
-The curves handled by each operation defined by the type that
-substitutes the `SegmentTraits` parameter are restricted to line
-segments. (This precondition cannot be enforced by the compiler.) An
-instance of the polyline traits class-template inherits its nested
-point type, i.e., `Point_2` from the substituted line-segment traits,
-and defines the nested types `Curve_2` and `X_monotone_curve_2`, which
-are used to represent polylines and \f$ x\f$-monotone polylines,
-respectively.  In general, the `Curve_2` and `X_monotone_curve_2`
-nested types are stored as vectors of `SegmentTraits::Curve_2` or
-`SegmentTraits::X_monotone_curve_2` objects respectively. The nested
-`X_monotone_curve_2` type inherits from the nested type
-`Curve_2`. Note that in practice, as soon as `Arr_segment_traits_2` is
-used as the `SegmentTraits`, then the segments that a polyline
-comprises are linear segments, and in this case
-`SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2` are
-the same.
+- `ArrangementTraits_2`,
+
+- `ArrangementDirectionalXMonotoneTraits_2` and
+
+- `ArrangementLandmarkTraits_2` if the provided `SegmentTraits` models
+  this concept on it own.
+
+The types `Curve_2` and `X_monotone_curve_2` which are nested
+in `Arr_polyline_traits_2<SegmentTraits>` represent polylines and
+\f$x\f$-monotone polylines respectively. The substituted type
+`SegmentTraits` must be a geometry-traits class that handles segments
+and models the following concepts
+
+- `ArrangementXMonotoneTraits_2` and
+
+- `ArrangementDirectionalXMonotoneTraits_2`.
+
+Roughly speaking, the curves handled by each operation defined by the
+type that substitutes the `SegmentTraits` parameter are restricted to
+line segments; this precondition cannot be enforced by the compiler
+(further details can be found below). An instance of the polyline
+traits class-template inherits its nested point type, i.e., `Point_2`
+from the substituted segment traits. The nested type `Curve_2` and
+`X_monotone_curve_2` represent polylines and \f$x\f$-monotone
+polylines respectively. The nested `X_monotone_curve_2` type inherits
+from the nested type `Curve_2`. A polyline and an \f$x\f$-monotone
+polyline are stored as vectors of `SegmentTraits::Curve_2` and
+`SegmentTraits::X_monotone_curve_2` respectively. Note that a segment
+of a \a general polyline is not necessarily \f$x\f$-monotone. In any
+case, the provided `SegmentTraits` must support a construction of a \a
+unique \f$x\f$-monotone segment given \a two input points. This
+restriction cannot be enforced by the compiler. For example,
+`Arr_segment_traits_2` supports this kind of construction. As a matter
+of fact, by default, `Arr_segment_traits_2` is used to substitute the
+template parameter in case where no such parameter is provided. Note
+that in practice, as soon as `Arr_segment_traits_2` is used as the
+`SegmentTraits`, then the segments that a polyline comprises are
+linear segments, and in this case `SegmentTraits::Curve_2` and
+`SegmentTraits::X_monotone_curve_2` are the same. Currently, we only
+support traits classes that handle \a linear segments.
 
 A polyline can be constructed given one of the following inputs:
 
-<OL>
-
-<LI> <b>A range of \a points</b>, where two succeeding points in the
+- <b>A range of \a points</b>, where two succeeding points in the
   range represent the endpoints of a segment of the polyline.
 
-<LI> <b>A range of \a segments</b>. Note that , if the types
+- <b>A range of \a segments</b>. Note that , if the types
 `SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2` are
 not the same, then when `Make_x_monotone_2` is invoked the segments
 that constitute the polyline will be broken into \f$x\f$-monotone
 parts.
 
-<LI> A pair of points \a or a single segment. In this case a polyline
+- A pair of points \a or a single segment. In this case a polyline
   that consists of a single segment is constructed.
-
-</OL>
 
 Note that degenerated polylines are not supported. That is, it is
 impossible to construct a polyline that contains a segment of length
