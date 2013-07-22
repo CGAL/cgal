@@ -381,7 +381,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton, false);
-    item->setVisible(false);
+    item->setGouraudMode();
+    item->switch_transparency_on_off();
 
     QApplication::restoreOverrideCursor();
 
@@ -445,7 +446,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton, false);
-    item->setVisible(false);
+    item->setGouraudMode();
+    item->switch_transparency_on_off();
 
     QApplication::restoreOverrideCursor();
 
