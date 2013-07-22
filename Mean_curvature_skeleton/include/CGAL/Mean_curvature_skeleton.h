@@ -184,7 +184,7 @@ private:
   // the normal of surface points
   std::vector<Vector> normals;
   // the dual of a cell in Triangulation(a Voronoi point)
-  std::vector<TriPoint> cell_dual;
+  std::vector<Point> cell_dual;
 
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
@@ -229,7 +229,7 @@ private:
 
     Track_vertex_visitor(std::map<int, std::vector<int> >* corr,
                          std::map<int, int>* poles,
-                         std::vector<TriPoint>* cell_dual,
+                         std::vector<Point>* cell_dual,
                          int max_id) :
       corr(corr), poles(poles), cell_dual(cell_dual), max_id(max_id),
       is_medially_centered(true){}
@@ -304,7 +304,7 @@ private:
 
     bool is_medially_centered;
     std::map<int, int>* poles;
-    std::vector<TriPoint>* cell_dual;
+    std::vector<Point>* cell_dual;
   };
 
 // Public methods
@@ -585,7 +585,7 @@ public:
       By[i] = 0;
       Bz[i] = 0;
     }
-    int cnt_fix = 0;
+
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
     {
       vertex_descriptor vi = *vb;
@@ -835,16 +835,35 @@ public:
     }
   }
 
-  Point project_vertex(const Point& ps, const Point& pt, const Point& pk)
+  Point project_vertex(const vertex_descriptor vs,
+                       const vertex_descriptor vt,
+                       const vertex_descriptor vk)
   {
+    Point ps = vs->point();
+    Point pt = vt->point();
+    Point pk = vk->point();
     CGAL::internal::Vector vec_st = CGAL::internal::Vector(ps, pt);
     CGAL::internal::Vector vec_sk = CGAL::internal::Vector(ps, pk);
 
     vec_st.normalize();
-    double len = vec_st.length();
     double t = vec_st.dot(vec_sk);
     Point st = Point(vec_st[0] * t, vec_st[1] * t, vec_st[2] * t);
     Point pn = Point(ps[0] + st[0], ps[1] + st[1], ps[2] + st[2]);
+
+    // project the pole
+    if (is_medially_centered)
+    {
+      int sid = boost::get(vertex_id_pmap, vs);
+      int tid = boost::get(vertex_id_pmap, vt);
+      Point pole_s = cell_dual[poles[sid]];
+      Point pole_t = cell_dual[poles[tid]];
+      Vector pole_st = pole_t - pole_s;
+      Vector p_projector = pole_st / sqrt(pole_st.squared_length());
+      Point pole_n = pole_s + p_projector * t;
+      poles[vertex_id_count] = cell_dual.size();
+      cell_dual.push_back(pole_n);
+//      std::cout << "new pole " << vertex_id_count << ": " << pole_n << "\n";
+    }
     return pn;
   }
 
@@ -902,8 +921,7 @@ public:
         ek = ej->next();
       }
       vertex_descriptor vk = boost::target(ek, *polyhedron);
-      Point pk = vk->point();
-      Point pn = project_vertex(ps, pt, pk);
+      Point pn = project_vertex(vs, vt, vk);
       edge_descriptor en = CGAL::internal::mesh_split(polyhedron, ei, pn);
       // set id for new vertex
       boost::put(vertex_id_pmap, en->vertex(), vertex_id_count++);
@@ -1518,7 +1536,8 @@ public:
     {
       Cell_handle cell = cit;
       TriPoint point = T.dual(cell);
-      cell_dual.push_back(point);
+      Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
+      cell_dual.push_back(pt);
       for (int i = 0; i < 4; i++)
       {
         TriVertex_handle vt = cell->vertex(i);
@@ -1531,19 +1550,21 @@ public:
     poles.clear();
     for (size_t i = 0; i < point_to_pole.size(); i++)
     {
-      TriPoint surface_point = points[i].first;
+      Point surface_point = Point(to_double(points[i].first.x()),
+                                  to_double(points[i].first.y()),
+                                  to_double(points[i].first.z()));
 
-      K::FT max_neg_t = 1;
+      double max_neg_t = 1;
       int max_neg_i = 0;
 
       for (size_t j = 0; j < point_to_pole[i].size(); j++)
       {
         int pole_id = point_to_pole[i][j];
-        TriPoint cell_point = cell_dual[pole_id];
-        Exact_vector vt = cell_point - surface_point;
-        Exact_vector n(normals[i].x(), normals[i].y(), normals[i].z());
+        Point cell_point = cell_dual[pole_id];
+        Vector vt = cell_point - surface_point;
+        Vector n = normals[i];
 
-        K::FT t = vt * n;
+        double t = vt * n;
         if (t < 0 && t < max_neg_t)
         {
           max_neg_i = pole_id;
