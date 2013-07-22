@@ -586,6 +586,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   Face_handle f1, f2;
   bool found_f1 = false, found_f2 = false;
   bool os0_fc_start = false;
+  bool first_found_f1 = false;
   Site_2 sitev = v->site();
   Site_2 sitev_supp = v->site().supporting_site();
 
@@ -713,6 +714,9 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
         flipf = true;
       } else {
         flipf = false;
+      }
+      if ( !found_f2 ) {
+        first_found_f1 = true;
       }
     }
 
