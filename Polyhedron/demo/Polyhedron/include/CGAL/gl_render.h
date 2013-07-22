@@ -37,6 +37,10 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
 
   int patch_id = 0;
 
+  //to cancel transparency emulation
+  ::glEnable(GL_DEPTH_TEST);
+  ::glEnable(GL_CULL_FACE);
+
   Facet_iterator f;
   for(f = polyhedron.facets_begin();
     f != polyhedron.facets_end();
