@@ -587,6 +587,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   bool found_f1 = false, found_f2 = false;
   bool os0_fc_start = false;
   bool first_found_f1 = false;
+  Face_handle f1_0, f2_0;
   Site_2 sitev = v->site();
   Site_2 sitev_supp = v->site().supporting_site();
 
@@ -733,6 +734,18 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
         flipg = true;
       } else {
         flipg = false;
+      }
+    }
+
+    if (os2 == ON_ORIENTED_BOUNDARY) {
+      if (os1 == ON_NEGATIVE_SIDE) {
+        f1_0 = ff2;
+        CGAL_SDG_DEBUG(std::cout << "debug impl found f1_0 "
+          << std::endl;);
+      } else if (os1 == ON_POSITIVE_SIDE) {
+        f2_0 = ff2;
+        CGAL_SDG_DEBUG(std::cout << "debug impl found f2_0 "
+          << std::endl;);
       }
     }
 
