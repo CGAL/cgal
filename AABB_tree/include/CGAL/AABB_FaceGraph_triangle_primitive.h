@@ -43,17 +43,17 @@ namespace CGAL {
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
  *\tparam OneFaceGraphPerTree must be set to `CGAL::Default`
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
- *\tparam cache_datum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is stored
+ *\tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is stored
  *        in the primitive, while in the latter it is constructed on the fly to reduce the memory footprint.
  *        The default is `CGAL::Tag_false` (datum is not stored).
  *\sa `AABBPrimitive`
- *\sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>`
- *\sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
+ *\sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
+ *\sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  */
 template < class FaceGraph,
            class VertexPointPMap = Default,
            class OneFaceGraphPerTree = Default,
-           class cache_datum=Tag_false >
+           class CacheDatum=Tag_false >
 class AABB_FaceGraph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
 : public AABB_primitive<  typename boost::mpl::if_<
@@ -64,7 +64,7 @@ class AABB_FaceGraph_triangle_primitive
                          Triangle_from_facet_handle_property_map<FaceGraph>,
                          One_point_from_facet_handle_property_map<FaceGraph>,
                          Tag_true,
-                         cache_datum >
+                         CacheDatum >
 #endif
 {
   typedef typename boost::mpl::if_<
@@ -78,7 +78,7 @@ class AABB_FaceGraph_triangle_primitive
                           Triangle_property_map,
                           Point_property_map,
                           Tag_true,
-                          cache_datum > Base;
+                          CacheDatum > Base;
 
 public:
   #ifdef DOXYGEN_RUNNING

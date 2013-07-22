@@ -46,9 +46,9 @@ The concept is similar to \ccc{AABBPrimitive} except that some data stored outsi
 The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Method \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly from the face handle or a \ccc{Triangle_3} stored internally. This provides a way for the user to trade memory for efficiency.
 
 \ccHasModels
-\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_true,cache_datum>},\\
-\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,Tag_true,cache_datum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,Tag_true,cache_datum>}.\\
+\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_true,CacheDatum>},\\
+\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,Tag_true,CacheDatum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,Tag_true,CacheDatum>}.\\
 
 
 \end{ccRefConcept}
