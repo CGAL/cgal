@@ -3,8 +3,8 @@
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -35,11 +35,22 @@
 #include <vector>
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/Default.h>
-#include <boost/mpl/has_xxx.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #  include <boost/thread/tss.hpp>
 #endif
+
+#include <boost/optional.hpp>
+#include <boost/variant.hpp>
+
+#include <boost/mpl/has_xxx.hpp>
+
+#include <boost/preprocessor/facilities/expand.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#include <boost/preprocessor/repetition/repeat.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/enum_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -89,17 +100,30 @@ depth(const Lazy<AT,ET,EFT,E2A>& l)
 }
 
 
+template<class T>
+inline T const & approx(T const& d) { return d; };
+template<class T>
+inline T const & exact (T const& d) { return d; };
+template<class T>
+inline unsigned  depth (T const&  ) { return 0; };
 /*
 #define CGAL_LAZY_FORWARD(T) \
-  inline T const & approx(T const& d) { return d; } \
-  inline T const & exact (T const& d) { return d; } \
-  inline unsigned  depth (T const&  ) { return 0; }
+  inline const T & approx(const T& d) { return d; } \
+  inline const T & exact (const T& d) { return d; } \
+  inline unsigned  depth (const T&  ) { return 0; }
 
 
+CGAL_LAZY_FORWARD(long double)
 CGAL_LAZY_FORWARD(double)
 CGAL_LAZY_FORWARD(float)
 CGAL_LAZY_FORWARD(int)
-CGAL_LAZY_FORWARD(unsigned)
+CGAL_LAZY_FORWARD(unsigned int)
+CGAL_LAZY_FORWARD(long)
+CGAL_LAZY_FORWARD(unsigned long)
+#ifdef CGAL_USE_LONG_LONG
+CGAL_LAZY_FORWARD(long long)
+CGAL_LAZY_FORWARD(unsigned long long)
+#endif
 CGAL_LAZY_FORWARD(Return_base_tag)
 CGAL_LAZY_FORWARD(Null_vector)
 CGAL_LAZY_FORWARD(Origin)
@@ -107,13 +131,7 @@ CGAL_LAZY_FORWARD(Orientation)
 CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
 */
-template<class T>
-inline T const & approx(T const& d) { return d; };
-template<class T>
-inline T const & exact (T const& d) { return d; };
-template<class T>
-inline unsigned  depth (T const&  ) { return 0; };
-
+#undef CGAL_LAZY_FORWARD
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 template <class T>
@@ -164,7 +182,7 @@ print_dag(double d, std::ostream& os, int level)
 
 inline
 void
-msg(std::ostream& os, int level, char* s)
+msg(std::ostream& os, int level, const char* s)
 {
     for(int i = 0; i < level; i++)
       os << "    ";
@@ -173,7 +191,7 @@ msg(std::ostream& os, int level, char* s)
 
 inline
 void
-print_dag(const Null_vector& nv, std::ostream& os, int level)
+print_dag(const Null_vector&, std::ostream& os, int level)
 {
   for(int i = 0; i < level; i++)
     os << "    ";
@@ -182,11 +200,20 @@ print_dag(const Null_vector& nv, std::ostream& os, int level)
 
 inline
 void
-print_dag(const Origin& nv, std::ostream& os, int level)
+print_dag(const Origin&, std::ostream& os, int level)
 {
   for(int i = 0; i < level; i++)
     os << "    ";
   os << "Origin" << std::endl;
+}
+
+inline
+void
+print_dag(const Return_base_tag&, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++)
+    os << "    ";
+  os << "Return_base_tag" << std::endl;
 }
 #endif
 
@@ -223,10 +250,10 @@ public:
   mutable ET *et;
 
   Lazy_rep ()
-    : at(), et(NULL) {}
+    : at(), et(NULL){}
 
   Lazy_rep (const AT& a)
-      : at(a), et(NULL) {}
+      : at(a), et(NULL){}
 
   Lazy_rep (const AT& a, const ET& e)
       : at(a), et(new ET(e)) {}
@@ -271,6 +298,12 @@ public:
       os << "Exact: ";
       print_at(os, *et);
       os << std::endl;
+#ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+      for(int i = 0; i < level; i++){
+	os << "    ";
+      }
+      os << "  (type: " << typeid(*et).name() << ")" << std::endl;
+#endif // CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
     }
   }
 
@@ -352,12 +385,19 @@ public:
     this->set_depth(CGAL::depth(l1_) + 1);
   }
 
+#ifdef CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+#  define CGAL_LAZY_PRINT_TYPEID CGAL::msg(os, level, typeid(AC).name());
+#else  // not CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+#  define CGAL_LAZY_PRINT_TYPEID
+#endif // not CGAL_LAZY_KERNEL_DEBUG_SHOW_TYPEID
+
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
   print_dag(std::ostream& os, int level) const
   {
     this->print_at_et(os, level);
     if(this->is_lazy()){
+      CGAL_LAZY_PRINT_TYPEID
       CGAL::msg(os, level, "DAG with one child node:");
       CGAL::print_dag(l1_, os, level+1);
     }
