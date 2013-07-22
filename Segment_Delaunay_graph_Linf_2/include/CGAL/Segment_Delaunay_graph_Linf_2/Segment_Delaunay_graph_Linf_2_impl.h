@@ -714,7 +714,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       if (os1 == ON_ORIENTED_BOUNDARY) {
         CGAL_SDG_DEBUG(std::cout << "debug impl flipf=true "
             << std::endl;);
-        flipf = true;
+        flipf = false;
       } else {
         flipf = false;
       }
@@ -735,7 +735,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       if (os1 == ON_ORIENTED_BOUNDARY) {
         CGAL_SDG_DEBUG(std::cout << "debug impl flipg=true "
             << std::endl;);
-        flipg = true;
+        flipg = false;
       } else {
         flipg = false;
       }
