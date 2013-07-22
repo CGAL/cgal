@@ -703,17 +703,6 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
     CGAL_SDG_DEBUG( std::cout <<
         "debug os2 = " << os2 << std::endl; );
 
-#ifndef CGAL_NO_ASSERTIONS
-    {
-      if (os1 == ON_ORIENTED_BOUNDARY) {
-        CGAL_assertion(os2 != ON_ORIENTED_BOUNDARY);
-      }
-      if (os2 == ON_ORIENTED_BOUNDARY) {
-        CGAL_assertion(os1 != ON_ORIENTED_BOUNDARY);
-      }
-    }
-#endif
-
     if ( !found_f1 &&
          os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
       f1 = ff2;
