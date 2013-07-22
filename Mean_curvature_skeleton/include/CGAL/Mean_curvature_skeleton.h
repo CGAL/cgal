@@ -336,20 +336,19 @@ public:
   Mean_curvature_skeleton(Polyhedron* P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
-                          double omega_L, double omega_H,
-                          double edgelength_TH, double zero_TH, double area_TH = 1e-5,
+                          double omega_L, double omega_H, double edgelength_TH,
+                          double volume_TH = 1e-4, double area_TH = 1e-5, double zero_TH = 1e-7,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH),
+      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
       is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
     double area = get_surface_area();
     area_TH = 0.0001 * area;
     original_volume = to_double(internal::volume(*polyhedron));
-    volume_TH = 1e-6 * original_volume;
     iteration_TH = 1000;
 
     // initialize index maps
@@ -381,13 +380,13 @@ public:
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_L, double omega_H, double omega_P,
-                          double edgelength_TH, double zero_TH,
-                          bool is_medially_centered, double area_TH = 1e-5,
+                          double edgelength_TH, bool is_medially_centered,
+                          double volume_TH = 1e-4, double area_TH = 1e-5, double zero_TH = 1e-7,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), omega_P(omega_P),
-      edgelength_TH(edgelength_TH), TH_ALPHA(110),
+      edgelength_TH(edgelength_TH), TH_ALPHA(110), volume_TH(volume_TH),
       weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH),
       is_medially_centered(is_medially_centered)
   {
@@ -396,7 +395,6 @@ public:
     double area = get_surface_area();
     area_TH = 0.0001 * area;
     original_volume = to_double(internal::volume(*polyhedron));
-    volume_TH = 0.0001 * original_volume;
     iteration_TH = 1000;
 
     // initialize index maps
@@ -457,6 +455,11 @@ public:
   void set_zero_TH(double value)
   {
     zero_TH = value;
+  }
+
+  void set_volume_TH(double value)
+  {
+    volume_TH = value;
   }
 
   void set_medially_centered(bool value)
@@ -1342,7 +1345,7 @@ public:
     double area = get_surface_area();
     std::cout << "area " << area << "\n";
     double volume = to_double(internal::volume(*polyhedron));
-    std::cout << "volume " << volume << ", volume / volume_TH " << volume / original_volume <<  "\n";
+    std::cout << "volume " << volume << ", volume / original_volume " << volume / original_volume <<  "\n";
   }
 
   void run_to_converge()
@@ -1351,7 +1354,7 @@ public:
     int num_iteration = 0;
     while (true)
     {
-      std::cout << "iteration " << num_iteration << "\n";
+      std::cout << "iteration " << num_iteration + 1 << "\n";
 
       contract_geometry();
       int num_events = update_topology();
@@ -1366,11 +1369,12 @@ public:
 //      last_area = area;
 
       double volume = to_double(internal::volume(*polyhedron));
-      if (volume < volume_TH)
+      std::cout << "volume_TH " << volume_TH << "\n";
+      std::cout << "volume " << volume << ", volume / original_volume " << volume / original_volume <<  "\n";
+      if (volume / original_volume < volume_TH)
       {
         break;
       }
-      std::cout << "volume " << volume << ", volume / volume_TH " << volume / original_volume <<  "\n";
 
       num_iteration++;
       if (num_iteration >= iteration_TH)

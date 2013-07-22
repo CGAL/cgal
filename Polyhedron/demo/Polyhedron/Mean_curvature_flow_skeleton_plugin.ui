@@ -40,7 +40,7 @@
      <string>Contract</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="zero_TH">
+   <widget class="QDoubleSpinBox" name="volume_TH">
     <property name="geometry">
      <rect>
       <x>124</x>
@@ -106,17 +106,17 @@
      <string>edgelength_TH</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_zero_TH">
+   <widget class="QLabel" name="label_volume_TH">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>155</y>
-      <width>53</width>
+      <width>81</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>zero_TH</string>
+     <string>volume_TH</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_collapse">
@@ -256,12 +256,12 @@
      <string>Is medially centered</string>
     </property>
    </widget>
-   <zorder>zero_TH</zorder>
+   <zorder>volume_TH</zorder>
    <zorder>omega_H</zorder>
    <zorder>edgelength_TH</zorder>
    <zorder>label_omega_H</zorder>
    <zorder>label_edgelength_TH</zorder>
-   <zorder>label_zero_TH</zorder>
+   <zorder>label_volume_TH</zorder>
    <zorder>label_omega_L</zorder>
    <zorder>omega_L</zorder>
    <zorder>pushButton_contract</zorder>
