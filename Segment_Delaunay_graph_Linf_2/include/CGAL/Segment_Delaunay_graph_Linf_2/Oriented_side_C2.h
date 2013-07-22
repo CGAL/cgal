@@ -65,59 +65,12 @@ public:
 
     Oriented_side retval = v.oriented_side(lp);
 
-    bool is_s1_pt = s1.is_point();
-    bool is_s2_pt = s2.is_point();
-    bool is_s3_pt = s3.is_point();
-
-    if (not is_site_h_or_v(s)) {
-      if (is_s1_pt or is_s2_pt or is_s3_pt) {
-        if (retval == ON_ORIENTED_BOUNDARY) {
-          unsigned int countpts =
-            ((is_s1_pt)? 1 : 0) +
-            ((is_s2_pt)? 1 : 0) +
-            ((is_s3_pt)? 1 : 0) ;
-          CGAL_assertion((countpts == 1) or (countpts == 2));
-
-          CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s3,s,p)= ("
-              << s1 << ") (" << s2 << ") (" << s3 << ") ("
-              << s << ") (" << p << ") "
-              << "ON_ORIENTED_BOUNDARY case with " << countpts
-              << " points" << std::endl;);
-          if (countpts == 1) {
-            // find point and give the inverse orientation
-            if (is_s1_pt) {
-              retval = - oriented_side_of_line(lp, s1.point());
-            } else if (is_s2_pt) {
-              retval = - oriented_side_of_line(lp, s2.point());
-            } else { // is_s3_pt
-              retval = - oriented_side_of_line(lp, s3.point());
-            }
-          } else { // countpts == 2
-            // find point among s1, s2, s3 which is closer to p
-
-            const Site_2& site1 = is_s1_pt ? s1 : s2;
-            const Site_2& site2 = (is_s1_pt and is_s2_pt) ? s2 : s3;
-
-            Comparison_result cmps1s2 =
-              compare_distance_to_point_linf(
-                  p.point(), site1.point(), site2.point());
-
-            if (cmps1s2 == SMALLER) {
-              retval = - oriented_side_of_line(lp, site1.point());
-            } else if (cmps1s2 == LARGER) {
-              retval = - oriented_side_of_line(lp, site2.point());
-            }
-
-          }
-        } // end of ON_ORIENTED_BOUNDARY case
-      } // end of if at least one point
-    } // end of if not is_site_h_or_v(s)
-
-    CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s3,s,p)= ("
-              << s1 << ") (" << s2 << ") (" << s3 << ") ("
-              << s << ") (" << p << ") "
-              << "returns " << retval
-              << std::endl;);
+    CGAL_SDG_DEBUG(std::cout
+        << "debug: Oriented_side_C2 (s1,s2,s3,s,p)= ("
+        << s1 << ") (" << s2 << ") (" << s3 << ") ("
+        << s << ") (" << p << ") "
+        << "returns " << retval
+        << std::endl;);
 
     return retval;
   }
