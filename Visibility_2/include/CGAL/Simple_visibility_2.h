@@ -50,6 +50,7 @@ public:
   typedef typename Geometry_traits_2::Vector_2          Vector_2;
   typedef typename Geometry_traits_2::Direction_2       Direction_2;
   typedef typename Geometry_traits_2::FT                Number_type;
+  typedef typename Geometry_traits_2::Object_2          Object_2;
 
   Simple_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
@@ -256,7 +257,7 @@ public:
       std::cout << "[" << eit->curve() << "]" << std::endl;
   }   
 
-protected:
+private:
   const Input_Arrangement_2 *p_arr;
   const Geometry_traits_2  *geom_traits;
   std::stack<Point_2> s;
@@ -278,13 +279,16 @@ protected:
                                 geom_traits->collinear_2_object();
     return collinear_fnct(p, q, r);
   }
-/*
-  Object_2 Intersect_2(const Segment_2 &s1, const Segment_2 &s2) {
-    typename Geometry_traits_2::Intersect_2 intersect_fnct = 
-                                            geom_traits->intersect_2_object();
+
+  template < class _Curve_first, class _Curve_second >
+  Object_2 Intersect_2(const _Curve_first &s1, const _Curve_second &s2) {
+    typedef typename Geometry_traits_2::Kernel Kernel;
+    const Kernel *kernel = static_cast<const Kernel*> (geom_traits);
+    typename Kernel::Intersect_2 intersect_fnct = 
+                                            kernel->intersect_2_object();
     return intersect_fnct(s1, s2);
   }
-*/
+
   Orientation Orientation_2(const Point_2 &p, const Point_2 &q, 
                                               const Point_2 &r) {
     typename Geometry_traits_2::Orientation_2 orient = 
@@ -310,7 +314,7 @@ protected:
       Segment_2 s1(a, b);
       Segment_2 s2(a, c);
       const Segment_2 *seg_overlap;
-      CGAL::Object result = CGAL::intersection(s1, s2);
+      Object_2 result = Intersect_2<Segment_2, Segment_2>(s1, s2);
       if (seg_overlap = CGAL::object_cast<Segment_2>(&result)) { 
         return true;
       }
@@ -446,11 +450,11 @@ protected:
         Point_2 s_t_prev = s.top();
         Segment_2 s1(s_t_prev, s_t);
         Segment_2 s2(q, vertices[vertices.size()-1]);
-        CGAL::Object result = CGAL::intersection(s1, s2);
+        Object_2 result = Intersect_2<Segment_2, Segment_2>(s1, s2);
 
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
           Segment_2 s3(s_t_prev, vertices[i]);
-          CGAL::Object result2 = CGAL::intersection(s3, s2);
+          Object_2 result2 = Intersect_2<Segment_2, Segment_2>(s3, s2);
           if (const Point_2 *vertex_new = CGAL::object_cast<Point_2>(&result2)){
             if ((*vertex_new) != (s_t_prev) && (*vertex_new != s_t)) {
               upcase = SCANB;
@@ -532,7 +536,7 @@ protected:
           found = true;
           Segment_2 s1(s_j_prev, s_j);
           Ray_2 s2(query_pt, vertices[i]);
-          CGAL::Object result = CGAL::intersection(s1, s2);
+          Object_2 result = Intersect_2<Segment_2, Ray_2>(s1, s2);
           if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
             s_j = *ipoint;
           }
@@ -569,7 +573,7 @@ protected:
           // Check if v_i-1, v_i intersects (s_j-1, s_j)
           Segment_2 s1(s_j_prev, s_j);
           Segment_2 s2(vertices[i-1], vertices[i]);
-          CGAL::Object result = CGAL::intersection(s1, s2);
+          Object_2 result = Intersect_2<Segment_2, Segment_2>(s1, s2);
           if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
             // Keep s_j off the stack
             found = true;
@@ -602,7 +606,7 @@ protected:
     while (k+1 < vertices.size()) {
       Segment_2 s1(vertices[k], vertices[k+1]);
       Ray_2 s2(query_pt, s.top());
-      CGAL::Object result = intersection(s1, s2);
+      Object_2 result = Intersect_2<Segment_2, Ray_2>(s1, s2);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
         found = true;
         intersection_pt = *ipoint;
@@ -657,7 +661,7 @@ protected:
     while (k+1 < vertices.size()) {
       Segment_2 s1(vertices[k], vertices[k+1]);
       Segment_2 s2(s_t, vertices[vertices.size()-1]);
-      CGAL::Object result = CGAL::intersection(s1, s2);
+      Object_2 result = Intersect_2<Segment_2, Segment_2>(s1, s2);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
         if (*ipoint != s_t) {
           intersection_pt = *ipoint;
@@ -696,7 +700,7 @@ protected:
     while (k+1 < vertices.size()) {
       Segment_2 s1(vertices[k], vertices[k+1]);
       Segment_2 s2(s_t, w);
-      CGAL::Object result = CGAL::intersection(s1, s2);
+      Object_2 result = Intersect_2<Segment_2, Segment_2>(s1, s2);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
         found = true;
         intersection_pt = *ipoint;
@@ -720,7 +724,7 @@ protected:
     while (k+1 < vertices.size()) {
       Segment_2 s1(vertices[k], vertices[k+1]);
       Segment_2 s2(s_t, w);
-      CGAL::Object result = CGAL::intersection(s1, s2);
+      Object_2 result = Intersect_2<Segment_2, Segment_2>(s1, s2);
       if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
         found = true;
         intersection_pt = *ipoint;
