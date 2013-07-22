@@ -1,6 +1,6 @@
 #ifndef CGAL_SURFACE_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_H
-
+#define CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
