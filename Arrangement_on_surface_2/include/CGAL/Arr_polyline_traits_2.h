@@ -1732,14 +1732,73 @@ namespace CGAL {
 
     /// \name Functor definitions for the landmarks point-location strategy.
     //@{
-    typedef typename Segment_traits_2::Approximate_number_type
-    Approximate_number_type;
-    typedef typename Segment_traits_2::Approximate_2    Approximate_2;
 
+#if 0
+    // The following block assumes that the segment traits template parameter
+    // is a model of the ArrangementLandmarkTraits concept; in other words, it
+    // defines the nested types Approximate_number_type and Approximate_2 and
+    // the member function approximate_2_object(). It cannot be used as is if
+    // the segment traits does not model the ArrangementLandmarkTraits concept.
+    // The functor Construct_x_monotone_curve_2 is provided regardless of the
+    // segment traits.
+
+    typedef typename Segment_traits_2::Approximate_number_type
+      Approximate_number_type;
+    typedef typename Segment_traits_2::Approximate_2    Approximate_2;
 
     /*! Get an Approximate_2 functor object. */
     Approximate_2 approximate_2_object() const
     { return segment_traits_2()->approximate_2_object(); }
+#else
+    // The following block defines the nested types Approximate_number_type and
+    // Approximate_2 and the member function approximate_2_object() based on the
+    // corresponding types and function definitions of the segment traits. If
+    // the segment traits does not provide these definitions, they are defined
+    // as dummies. Essentially, the polyline traits becomes a practical model of
+    // the ArrangementLandmarkTraits concept only if the segment traits is a
+    // model of this concept.
+    //
+    // The following implementation is inspired by
+    // http://stackoverflow.com/a/11816999/1915421
+
+    template <typename T>
+    struct Void {
+      typedef void type;
+    };
+
+    template <typename T, typename _ = void>
+    struct has_approximate_2 {
+      // Generic implementation
+      typedef void                      Approximate_number_type;
+      typedef void                      Approximate_2;
+    };
+
+    template <typename T>
+    struct has_approximate_2<T, typename Void<typename T::Approximate_2>::type>
+    {
+      // Specialization for types holding a nested type T::Approximate_2
+      typedef typename T::Approximate_number_type
+        Approximate_number_type;
+      typedef typename T::Approximate_2  Approximate_2;
+    };
+
+    typedef typename has_approximate_2<Segment_traits_2>::Approximate_number_type
+      Approximate_number_type;
+    typedef typename has_approximate_2<Segment_traits_2>::Approximate_2
+      Approximate_2;
+
+    /*! Get an Approximate_2 functor object. */
+    Approximate_2 approximate_2_object_impl(boost::false_type) const
+    { return segment_traits_2()->approximate_2_object(); }
+
+    Approximate_2 approximate_2_object_impl(boost::true_type) const { }
+
+    Approximate_2 approximate_2_object() const
+    {
+      typedef typename boost::is_same<void, Approximate_2>::type      Is_void;
+      return approximate_2_object_impl(Is_void());
+    }
+#endif
 
     class Construct_curve_2 {
     protected:
@@ -1773,7 +1832,7 @@ namespace CGAL {
       Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
       {
         typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-        typedef typename boost::is_same<VT,Point_2>::type Is_point;
+        typedef typename boost::is_same<VT, Point_2>::type Is_point;
         // Dispatch the range to the appropriate implementation.
         return constructor_impl(begin, end, Is_point());
       }
