@@ -107,8 +107,6 @@ public:
     ui->edgelength_TH->setDecimals(7);
     ui->edgelength_TH->setValue(0.002 * diag);
     ui->edgelength_TH->setSingleStep(0.0000001);
-    ui->alpha->setValue(0.15);
-    ui->alpha->setSingleStep(0.01);
     ui->zero_TH->setDecimals(8);
     ui->zero_TH->setValue(1e-07);
     ui->zero_TH->setSingleStep(0.0000001);
@@ -180,7 +178,6 @@ public:
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
     double edgelength_TH = ui->edgelength_TH->value();
-    double alpha = ui->alpha->value();
     double zero_TH = ui->zero_TH->value();
     double area_TH = ui->area_TH->value();
     double diag = scene->len_diagonal();
@@ -329,7 +326,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
   double omega_L = 1;
   double omega_H = 0.1;
   double edgelength_TH = 0.002 * diag;
-  double alpha = 0.15;
   double zero_TH = 1e-07;
   double area_TH = 1e-5;
 
