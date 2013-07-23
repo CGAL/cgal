@@ -426,6 +426,8 @@ public:
     file_name_holder = file_name;
     return true;
   }
+  // this function is called by selection_plugin, since at the time of the call of load(...) 
+  // we do not have access to selected polyhedron item
   bool actual_load() {
     init();
 
@@ -475,6 +477,7 @@ public:
     return true;
   }
 
+  // select all of `active_handle_type`(vertex, facet or edge)
   void select_all() {
     switch(active_handle_type) {
     case VERTEX:
@@ -485,6 +488,7 @@ public:
       select_all<Halfedge_handle>(); break;
     }
   }
+  // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, Halfedge_handle as template argument)
   template<class HandleType>
   void select_all() {
     typedef Selection_traits<HandleType> Tr;
@@ -494,7 +498,8 @@ public:
     }
     emit itemChanged();
   }
-  
+
+  // clear all of `active_handle_type`(vertex, facet or edge)
   void clear() {
     switch(active_handle_type) {
     case VERTEX:
@@ -505,6 +510,7 @@ public:
       clear<Halfedge_handle>(); break;
     }
   }
+  // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, Halfedge_handle as template argument)
   template<class HandleType>
   void clear() {
     Selection_traits<HandleType> tr(this);
@@ -532,7 +538,7 @@ public:
     }
     for(int i = 0; i < neighb_size; ++i) {
       if(active_handle_type == VERTEX) {
-        std::set<Vertex_handle> new_set;//(selected_vertices);
+        std::set<Vertex_handle> new_set;
         BOOST_FOREACH(Vertex_handle v, selected_vertices)
         {
           Polyhedron::Halfedge_around_vertex_circulator
@@ -545,7 +551,7 @@ public:
           selected_vertices.insert(v);
         }
       } else if(active_handle_type == FACET){
-        std::set<Facet_handle> new_set;//(selected_facets);
+        std::set<Facet_handle> new_set;
         BOOST_FOREACH(Facet_handle f, selected_facets)
         {
           Polyhedron::Halfedge_around_facet_circulator
@@ -559,7 +565,7 @@ public:
         }
       }
       else {
-        std::set<Halfedge_handle> new_set;//(selected_facets);
+        std::set<Halfedge_handle> new_set;
         BOOST_FOREACH(Halfedge_handle h, selected_edges)
         {
           for(One_ring_iterator<Halfedge_handle> circ(h); circ; ++circ) {
@@ -584,7 +590,7 @@ public:
       return get_minimum_isolated_component<Halfedge_handle>();
     }
   }
-  template<class HandleType>
+  template<class HandleType> // use Vertex_handle, Facet_handle, Halfedge_handle
   boost::optional<std::size_t> get_minimum_isolated_component() {
     Selection_traits<HandleType> tr(this);
     Minimum_visitor visitor;
@@ -603,7 +609,7 @@ public:
       return select_isolated_components<Halfedge_handle>(threshold);
     }
   }
-  template<class HandleType>
+  template<class HandleType> // use Vertex_handle, Facet_handle, Halfedge_handle
   boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     typedef Selection_traits<HandleType> Tr;
     Tr tr(this);
@@ -632,6 +638,7 @@ public slots:
   void changed() {
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
   }
+  // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
   {
     if(!visible() || active_handle_type != VERTEX) { return; }
@@ -649,10 +656,11 @@ public slots:
   }
 
 signals:
+  // signals are emitted regardless of inserted handle is previously exist
   void inserted(Vertex_handle v);
   void inserted(Facet_handle f);
   void inserted(Halfedge_handle f);
-
+  // signals are emitted regardless of erased handle is not previously exist
   void erased(Vertex_handle v);
   void erased(Facet_handle f);
   void erased(Halfedge_handle f);
@@ -781,7 +789,7 @@ public:
 // selection
   Selection_set_vertex selected_vertices;
   Selection_set_facet  selected_facets;
-  Selection_set_edge   selected_edges;
+  Selection_set_edge   selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
 };
 
 #endif 
