@@ -20,12 +20,6 @@
 //                 Ron Wein  <wein@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
-/*
- * TODO: Complete the documentation of the changes derived from the cleaning
- *       In particular, doxygen only the things that have to be exposed
- *       to the user.
- */
-
 #ifndef CGAL_ARR_POLYLINE_TRAITS_2_H
 #define CGAL_ARR_POLYLINE_TRAITS_2_H
 

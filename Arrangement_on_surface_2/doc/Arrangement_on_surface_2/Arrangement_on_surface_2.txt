@@ -2144,9 +2144,11 @@ in `Arr_polyline_traits_2<SegmentTraits>` represent polylines and
 `SegmentTraits` must be a geometry-traits class that handles segments
 and models the following concepts
 
-- `ArrangementXMonotoneTraits_2` and
+- `ArrangementTraits_2`,
 
-- `ArrangementDirectionalXMonotoneTraits_2`.
+- `ArrangementDirectionalXMonotoneTraits_2` and
+
+- optionally `ArrangementLandmarkTraits_2`.
 
 Roughly speaking, the curves handled by each operation defined by the
 type that substitutes the `SegmentTraits` parameter are restricted to
