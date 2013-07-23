@@ -15,8 +15,8 @@ The `Primitive` type can be, e.g., a wrapper around a `Handle`. Assume for insta
 \cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_false,CacheDatum>`
 \cgalHasModel `CGAL::AABB_segment_primitive<Iterator,CacheDatum>`
 \cgalHasModel `CGAL::AABB_triangle_primitive<Iterator,CacheDatum>`
-\cgalHasModel `CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,Tag_false,CacheDatum>`
-\cgalHasModel `CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph,Tag_false,CacheDatum>`
+\cgalHasModel `CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,Tag_false,CacheDatum>`
+\cgalHasModel `CGAL::AABB_face_graph_triangle_primitive<FaceGraph,Tag_false,CacheDatum>`
 */
 
 class AABBPrimitive {

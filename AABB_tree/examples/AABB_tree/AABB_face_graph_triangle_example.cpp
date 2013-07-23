@@ -6,7 +6,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/bind.hpp>
 
@@ -15,7 +15,7 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::AABB_FaceGraph_triangle_primitive<const Polyhedron> Primitive;
+typedef CGAL::AABB_face_graph_triangle_primitive<const Polyhedron> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 

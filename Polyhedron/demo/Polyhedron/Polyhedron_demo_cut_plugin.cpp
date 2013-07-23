@@ -10,7 +10,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -27,7 +27,7 @@
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
-typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron>     AABB_primitive;
+typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>     AABB_primitive;
 typedef CGAL::AABB_traits<Epic_kernel,AABB_primitive>           AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>                            AABB_tree;
 

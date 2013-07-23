@@ -116,11 +116,11 @@ Release date: September 2013
     replaced by a template class Intersection_and_primitive_id<Query> to
     determine the type depending on the query object type.
 
-  - Introduce the class AABB_HalfedgeGraph_segment_primitive which replaces the
+  - Introduce the class AABB_halfedge_graph_segment_primitive which replaces the
     class AABB_polyhedron_segment_primitive (which is now deprecated). The new
     class is more general and can be used with any model of HalfedgeGraph.
 
-  - Introduce the class AABB_FaceGraph_triangle_primitive which replaces the
+  - Introduce the class AABB_face_graph_triangle_primitive which replaces the
     class AABB_polyhedron_triangle_primitive (which is now deprecated).
 
   - Document the classes AABB_segment_primitive and AABB_triangle_primitive

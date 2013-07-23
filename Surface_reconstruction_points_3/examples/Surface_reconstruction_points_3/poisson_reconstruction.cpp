@@ -11,7 +11,7 @@
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
@@ -64,7 +64,7 @@ typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 typedef CGAL::Poisson_implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 // AABB tree
-typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
+typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 

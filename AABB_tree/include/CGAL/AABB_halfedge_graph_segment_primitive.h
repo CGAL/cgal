@@ -19,8 +19,8 @@
 // Author(s)     : Sebastien Loriot
 //
 
-#ifndef CGAL_AABB_HALFEDGEGRAPH_SEGMENT_PRIMITIVE_H
-#define CGAL_AABB_HALFEDGEGRAPH_SEGMENT_PRIMITIVE_H
+#ifndef CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
+#define CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/Polyhedron_3.h>
@@ -62,13 +62,13 @@ namespace CGAL {
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
  */
 template < class HalfedgeGraph,
            class VertexPointPMap = typename boost::property_map< HalfedgeGraph, vertex_point_t>::type,
            class OneHalfedgeGraphPerTree = Tag_true,
            class CacheDatum = Tag_false >
-class AABB_HalfedgeGraph_segment_primitive
+class AABB_halfedge_graph_segment_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
                             Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap>,
@@ -110,13 +110,13 @@ public:
   /*!
   Constructs a primitive.
   \tparam Iterator is an input iterator with `Id` as value type.
-  This \ref AABB_tree/AABB_HalfedgeGraph_edge_example.cpp "example" gives a way to call this constructor
+  This \ref AABB_tree/AABB_halfedge_graph_edge_example.cpp "example" gives a way to call this constructor
   using the insert-by-range method of the class `AABB_tree<Traits>`.
   If `VertexPointPMap` is the default of the class, an additional constructor
   is available with `vppm` set to `boost::get(vertex_point, graph)`.
   */
   template <class Iterator>
-  AABB_HalfedgeGraph_segment_primitive(Iterator it, HalfedgeGraph& graph, VertexPointPMap vppm)
+  AABB_halfedge_graph_segment_primitive(Iterator it, HalfedgeGraph& graph, VertexPointPMap vppm)
     : Base( Id_(*it),
             Segment_property_map(&graph, vppm),
             Point_property_map(&graph, vppm) )
@@ -124,14 +124,14 @@ public:
 
   #ifndef DOXYGEN_RUNNING
   template <class Iterator>
-  AABB_HalfedgeGraph_segment_primitive(Iterator it, HalfedgeGraph& graph)
+  AABB_halfedge_graph_segment_primitive(Iterator it, HalfedgeGraph& graph)
     : Base( Id_(*it),
             Segment_property_map(&graph),
             Point_property_map(&graph) ){}
   #endif
 
   /// For backward-compatibility with AABB_polyhedron_segment_primitive only
-  AABB_HalfedgeGraph_segment_primitive(Id_ id)
+  AABB_halfedge_graph_segment_primitive(Id_ id)
     : Base( id,
             Segment_property_map(NULL),
             Point_property_map(NULL) ){}
@@ -151,5 +151,5 @@ public:
 }  // end namespace CGAL
 
 
-#endif // CGAL_AABB_HALFEDGEGRAPH_SEGMENT_PRIMITIVE_H
+#endif // CGAL_AABB_HALFEDGE_GRAPH_SEGMENT_PRIMITIVE_H
 

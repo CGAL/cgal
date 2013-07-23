@@ -1,6 +1,6 @@
 \ccRefPageBegin
 
-\begin{ccRefClass}{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>}
+\begin{ccRefClass}{AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>}
 
 \ccDefinition
   
@@ -19,7 +19,7 @@ will be factorized so that the size of the primitive is reduced. In the latter c
 \ccc{CacheDatum} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
 the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
 
-\ccInclude{CGAL/AABB_HalfedgeGraph_segment_primitive.h}
+\ccInclude{CGAL/AABB_halfedge_graph_segment_primitive.h}
 
 \ccTypes
 \ccTypedef{typedef boost::property_traits< boost::property_map< HalfedgeGraph, vertex_point_t>::type >::value_type Point;}{The point type.}
@@ -33,7 +33,7 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 
 \ccConstructor{
 template <class Iterator>
-AABB_HalfedgeGraph_segment_primitive(Iterator it,const HalfedgeGraph& graph)}
+AABB_halfedge_graph_segment_primitive(Iterator it,const HalfedgeGraph& graph)}
 {Constructs a primitive. \ccc{Iterator} is an input iterator with \ccc{Id} as \ccc{value_type}.
 The example below gives a way to call this constructor the insert-by-range method of the class \ccc{CGAL::AABB_tree<Traits>}.}
 
@@ -42,9 +42,9 @@ The example below gives a way to call this constructor the insert-by-range metho
 
 \ccc{AABBPrimitive},\\
 \ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>}.\\
+\ccc{AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>}.\\
 
-\ccIncludeExampleCode{AABB_tree/AABB_HalfedgeGraph_edge_example.cpp}
+\ccIncludeExampleCode{AABB_tree/AABB_halfedge_graph_edge_example.cpp}
 
 \end{ccRefClass}
 
