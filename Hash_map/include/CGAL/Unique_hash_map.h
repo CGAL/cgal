@@ -34,22 +34,24 @@
 namespace CGAL {
 
 template <class Key_, class Data_, 
-          class UniqueHashFunction = Handle_hash_function>
+          class UniqueHashFunction = Handle_hash_function,
+          class Allocator_ = std::allocator<Data_> >
 class Unique_hash_map {
 public:
     typedef Key_                                     Key;
     typedef Data_                                    Data;
     typedef UniqueHashFunction                       Hash_function;
+    typedef Allocator_                               Allocator;
 
     // STL compliance
     typedef Key_                                     key_type;
     typedef Data_                                    data_type;
     typedef UniqueHashFunction                       hasher;
 
-    typedef Unique_hash_map<Key,Data,Hash_function>  Self;
+    typedef Unique_hash_map<Key,Data,Hash_function,Allocator> Self;
 
 private:
-    typedef internal::chained_map<Data>                 Map;
+    typedef internal::chained_map<Data, Allocator>   Map;
     typedef typename Map::item                       Item;
 
 private:
