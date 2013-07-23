@@ -48,7 +48,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Default.h>
 
 #include <CGAL/Spatial_grid_lock_data_structure_3.h>
@@ -63,6 +62,10 @@
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
+
+#ifdef CGAL_LINKED_WITH_TBB
+# include <tbb/scalable_allocator.h>
+#endif
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -117,6 +120,20 @@ protected:
   Triangulation_3_base(Lock_data_structure *) {}
 
   void swap(Triangulation_3_base<Concurrency_tag, Lock_data_structure_> &tr){}
+
+  template <typename Vertex_triple, typename Facet>
+  struct Vertex_triple_Facet_map_generator
+  {
+    typedef std::map<Vertex_triple, Facet> type;
+  };
+
+  template <typename Vertex_handle>
+  struct Vertex_handle_unique_hash_map_generator
+  {
+    typedef Unique_hash_map<Vertex_handle, 
+                            Vertex_handle,
+                            Handle_hash_function> type;
+  };
 
 public:
   bool is_parallel() const
@@ -191,6 +208,27 @@ protected:
   {
     std::swap(tr.m_lock_ds, m_lock_ds);
   }
+  
+  template <typename Vertex_triple, typename Facet>
+  struct Vertex_triple_Facet_map_generator
+  {
+    typedef std::map
+    <
+      Vertex_triple,
+      Facet, 
+      std::less<Vertex_triple>, 
+      tbb::scalable_allocator<std::pair<const Vertex_triple, Facet> >
+    > type;
+  };
+  
+  template <typename Vertex_handle>
+  struct Vertex_handle_unique_hash_map_generator
+  {
+    typedef Unique_hash_map<Vertex_handle, 
+                            Vertex_handle,
+                            Handle_hash_function,
+                            tbb::scalable_allocator<Vertex_handle> > type;
+  };
 
 public:
 
@@ -1505,7 +1543,11 @@ protected:
 private:
   typedef Facet Edge_2D;
   typedef Triple<Vertex_handle,Vertex_handle,Vertex_handle> Vertex_triple;
-
+  typedef typename Base::template Vertex_triple_Facet_map_generator<
+    Vertex_triple, Facet>::type Vertex_triple_Facet_map;
+  typedef typename Base::template Vertex_handle_unique_hash_map_generator<
+    Vertex_handle>::type Vertex_handle_unique_hash_map;
+  
   Vertex_triple make_vertex_triple(const Facet& f) const;
   void make_canonical(Vertex_triple& t) const;
 
@@ -1520,13 +1562,13 @@ private:
   template < class VertexRemover >
   void fill_hole_2D(std::list<Edge_2D> & hole, VertexRemover &remover);
 
-  void make_hole_3D( Vertex_handle v, std::map<Vertex_triple,Facet>& outer_map,
+  void make_hole_3D( Vertex_handle v, Vertex_triple_Facet_map& outer_map,
       std::vector<Cell_handle> & hole);
   // When the incident cells are already known
   void make_hole_3D(
     Vertex_handle v,
     const std::vector<Cell_handle> & incident_cells,
-          std::map<Vertex_triple,Facet>& outer_map);
+          Vertex_triple_Facet_map& outer_map);
 
   template < class VertexRemover >
   VertexRemover& remove_dim_down(Vertex_handle v, VertexRemover &remover);
@@ -4458,7 +4500,7 @@ template <class Gt, class Tds, class Lds>
 void
 Triangulation_3<Gt,Tds,Lds>::
 make_hole_3D( Vertex_handle v,
-              std::map<Vertex_triple,Facet>& outer_map,
+              Vertex_triple_Facet_map& outer_map,
               std::vector<Cell_handle> & hole)
 {
   CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
@@ -4484,8 +4526,8 @@ template <class Gt, class Tds, class Lds>
 void
 Triangulation_3<Gt,Tds,Lds>::
 make_hole_3D( Vertex_handle v,
-        const std::vector<Cell_handle> & incident_cells,
-              std::map<Vertex_triple,Facet>& outer_map)
+              const std::vector<Cell_handle> & incident_cells,
+              Vertex_triple_Facet_map& outer_map)
 {
   CGAL_triangulation_expensive_precondition( ! test_dim_down(v) );
 
@@ -4573,7 +4615,6 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
 
   // Construct the set of vertex triples on the boundary
   // with the facet just behind
-  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
@@ -4598,7 +4639,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover)
   // in *this
 
   unsigned int i = 0;
-  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+  Vertex_handle_unique_hash_map vmap;
   Cell_handle ch = Cell_handle();
 #ifdef CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
   size_t num_vertices = vertices.size();
@@ -4754,7 +4795,6 @@ remove_3D(Vertex_handle v, VertexRemover &remover,
 {
   // Construct the set of vertex triples on the boundary
   // with the facet just behind
-  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
@@ -4775,7 +4815,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover,
   // in *this
 
   unsigned int i = 0;
-  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+  Vertex_handle_unique_hash_map vmap;  
   Cell_handle ch = Cell_handle();
 #ifdef CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
   size_t num_vertices = adj_vertices.size();
@@ -5055,7 +5095,6 @@ remove_3D(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
 
   // Construct the set of vertex triples on the boundary
   // with the facet just behind
-  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
@@ -5081,7 +5120,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
 
-  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+  Vertex_handle_unique_hash_map vmap;  
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
@@ -5393,7 +5432,6 @@ move_if_no_collision(Vertex_handle v, const Point &p,
 
   // Construct the set of vertex triples on the boundary
   // with the facet just behind
-  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
@@ -5419,7 +5457,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
 
-  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+  Vertex_handle_unique_hash_map vmap;  
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
@@ -5771,7 +5809,6 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
 
   // Construct the set of vertex triples on the boundary
   // with the facet just behind
-  typedef std::map<Vertex_triple,Facet> Vertex_triple_Facet_map;
   Vertex_triple_Facet_map outer_map;
   Vertex_triple_Facet_map inner_map;
 
@@ -5800,7 +5837,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
 
-  Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+  Vertex_handle_unique_hash_map vmap;  
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
@@ -6063,7 +6100,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
 
     bool inf = false;
     std::size_t i;
-    Unique_hash_map<Vertex_handle,Vertex_handle> vmap;
+    Vertex_handle_unique_hash_map vmap;
     Cell_handle ch = Cell_handle();
 
     if(vsi > 100)
