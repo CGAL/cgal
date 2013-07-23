@@ -47,13 +47,12 @@ public:
 
     dock_widget = new QDockWidget("Fairing", mw);
     dock_widget->setVisible(false);
-    ui_widget = new Ui::Fairing();
 
-    ui_widget->setupUi(dock_widget);
+    ui_widget.setupUi(dock_widget);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
-    connect(ui_widget->Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
-    connect(ui_widget->Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
+    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
+    connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
   Scene_polyhedron_selection_item* get_selected_item() {
     int item_id = scene->mainSelectionIndex();
@@ -78,7 +77,7 @@ public slots:
       print_message("Error: please select a region of vertices!");
     }
 
-    int weight_index = ui_widget->weight_combo_box->currentIndex();
+    int weight_index = ui_widget.weight_combo_box->currentIndex();
 
     if(weight_index == 1)
       CGAL::fair(*selection_item->polyhedron(), selection_item->selected_vertices.begin(),
@@ -99,7 +98,7 @@ public slots:
       print_message("Error: please select a region of facets!");
     }
 
-    double alpha = ui_widget->Density_control_factor_spin_box->value();
+    double alpha = ui_widget.Density_control_factor_spin_box->value();
     std::vector<Polyhedron::Facet_handle> new_facets;
 
     CGAL::refine(*selection_item->polyhedron(), selection_item->selected_facets.begin(),
@@ -124,7 +123,7 @@ private:
   QAction* actionFairing;
 
   QDockWidget* dock_widget;
-  Ui::Fairing* ui_widget;
+  Ui::Fairing ui_widget;
 
 }; // end Polyhedron_demo_fairing_plugin
 
