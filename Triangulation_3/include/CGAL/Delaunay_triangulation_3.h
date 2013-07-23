@@ -690,7 +690,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     if (this->is_parallel())
     {
-      // CJTODO: avoid that by asking for ramdom-access iterators?
+      // CJTODO: avoid that by asking for random-access iterators?
       std::vector<Vertex_handle> vertices(first, beyond);
       tbb::concurrent_vector<Vertex_handle> vertices_to_remove_sequentially;
 
@@ -736,7 +736,8 @@ public:
     }
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-    std::cerr << "Points removed in " << t.elapsed() << " seconds." << std::endl;
+    double elapsed = t.elapsed();
+    std::cerr << "Points removed in " << elapsed << " seconds." << std::endl;
 #endif
     return n - number_of_vertices();
   }
