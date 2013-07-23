@@ -12,11 +12,8 @@ viewpoint that is in the interior or on the boundary of the polygon.
 The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
 polygon. For each scanned edge, at most 2 points are pushed on the stack. Overall, it
 will have at most 2n points pushed and popped, thus the time and space complexities of the 
-algorithm are O(n), where n is the number of the vertices of the polygon. Degenerate cases
-such as needles require a post-processing step, which is linear in the number of vertices
-forming the needles. In such cases, the overall time complexity is O(n*m), where n is the
-number of vertices of the polygon, and m is the number of vertices forming the largest needle
-in the output.
+algorithm are O(n) even in case of degeneracies such as needles, where n is the number of 
+the vertices of the polygon.
 
 The class also supports a regularization tag which allows the user to obtain an output
 with all the isolated vertices and edges that have the same face on both sides removed.
@@ -24,18 +21,18 @@ with all the isolated vertices and edges that have the same face on both sides r
 \cgalModels `Visibility_2` 
 
 \sa 'CGAL::Visibility_2'
-\sa `CGAL::Naive_visibility_2<ArrTraits_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_visibility_2<ArrTraits_2, Regularization_tag>`
+\sa `CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 
 */
-template <typename ArrTraits_2, typename Regularization_tag>
+template <typename Arrangement_2, typename Regularization_tag>
 class Simple_visibility_2 {
 public:
 
 /// \name Types 
 /// @{
 
-  typedef ArrTraits_2 Arr_traits_2;
+  typedef Arrangement_2 Arr_traits_2;
  /*!
    The Arrangement type is used for input.
  */
