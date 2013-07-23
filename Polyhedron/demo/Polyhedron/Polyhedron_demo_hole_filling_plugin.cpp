@@ -309,7 +309,7 @@ private:
   QAction* actionHoleFilling;
 
   QDockWidget* dock_widget;
-  Ui::HoleFilling* ui_widget;
+  Ui::HoleFilling ui_widget;
 
   // hold created facet for accept reject functionality
   std::vector<Polyhedron::Facet_handle> new_facets; 
@@ -320,20 +320,20 @@ private:
 
   void accept_reject_toggle(bool activate_accept_reject) {
     if(activate_accept_reject) {
-      ui_widget->Accept_button->setVisible(true);
-      ui_widget->Reject_button->setVisible(true);
+      ui_widget.Accept_button->setVisible(true);
+      ui_widget.Reject_button->setVisible(true);
 
-      foreach( QWidget* w, ui_widget->dockWidgetContents->findChildren<QWidget*>() )
+      foreach( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
       { w->setEnabled(false); }
 
-      ui_widget->Accept_button->setEnabled(true);
-      ui_widget->Reject_button->setEnabled(true);
+      ui_widget.Accept_button->setEnabled(true);
+      ui_widget.Reject_button->setEnabled(true);
     }
     else {
-      ui_widget->Accept_button->setVisible(false);
-      ui_widget->Reject_button->setVisible(false);
+      ui_widget.Accept_button->setVisible(false);
+      ui_widget.Reject_button->setVisible(false);
 
-      foreach( QWidget* w, ui_widget->dockWidgetContents->findChildren<QWidget*>() )
+      foreach( QWidget* w, ui_widget.dockWidgetContents->findChildren<QWidget*>() )
       { w->setEnabled(true); }
     }
   }
@@ -354,20 +354,19 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   dock_widget = new QDockWidget("Hole Filling", mw);
   dock_widget->setVisible(false);
-  ui_widget = new Ui::HoleFilling();
 
-  ui_widget->setupUi(dock_widget);
-  ui_widget->Accept_button->setVisible(false);
-  ui_widget->Reject_button->setVisible(false);
+  ui_widget.setupUi(dock_widget);
+  ui_widget.Accept_button->setVisible(false);
+  ui_widget.Reject_button->setVisible(false);
 
   mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
-  connect(ui_widget->Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
-  connect(ui_widget->Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
-  connect(ui_widget->Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));
-  connect(ui_widget->Accept_button,  SIGNAL(clicked()), this, SLOT(on_Accept_button()));
-  connect(ui_widget->Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
+  connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
+  connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
+  connect(ui_widget.Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));
+  connect(ui_widget.Accept_button,  SIGNAL(clicked()), this, SLOT(on_Accept_button()));
+  connect(ui_widget.Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
 
   if(Scene* scene_casted = dynamic_cast<Scene*>(scene_interface)) 
   { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*))); }
@@ -527,8 +526,8 @@ void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
 void Polyhedron_demo_hole_filling_plugin::fill
   (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
 
-  int action_index = ui_widget->action_combo_box->currentIndex();
-  double alpha = ui_widget->Density_control_factor_spin_box->value();
+  int action_index = ui_widget.action_combo_box->currentIndex();
+  double alpha = ui_widget.Density_control_factor_spin_box->value();
   CGAL::Timer timer; timer.start();
   std::vector<Polyhedron::Facet_handle> patch;
   if(action_index == 0) {
@@ -538,7 +537,7 @@ void Polyhedron_demo_hole_filling_plugin::fill
     CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha);
   }
   else {
-    int weight_index = ui_widget->weight_combo_box->currentIndex();
+    int weight_index = ui_widget.weight_combo_box->currentIndex();
 
     bool success;
     if(weight_index == 0) {
@@ -555,7 +554,7 @@ void Polyhedron_demo_hole_filling_plugin::fill
   print_message(QString("Filled in %1 sec.").arg(timer.time()));
 
   // Self intersection test
-  if(ui_widget->Skip_self_intersection_check_box->checkState() == Qt::Checked) {
+  if(ui_widget.Skip_self_intersection_check_box->checkState() == Qt::Checked) {
     timer.reset();
 
     typedef std::vector<std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle> > Intersected_facets;
