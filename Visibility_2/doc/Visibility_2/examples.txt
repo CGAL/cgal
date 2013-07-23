@@ -1,3 +1,3 @@
 /*!
-\example Visibility_2/Visibility_2_example.cpp
+\example Visibility_2/Simple_visibility_2_example.cpp
 */
