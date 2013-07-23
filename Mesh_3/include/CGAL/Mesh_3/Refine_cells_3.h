@@ -629,7 +629,8 @@ scan_triangulation_impl()
     std::cerr << " - Num cells to scan = " << cells.size() << "..." << std::endl;
 # endif
     tbb::parallel_for(tbb::blocked_range<size_t>(0, cells.size(), 1000),
-      [&]( const tbb::blocked_range<size_t>& r ) { // CJTODO: lambdas ok?
+      [&]( const tbb::blocked_range<size_t>& r ) // CJTODO: lambdas ok?
+      {
         for( size_t i = r.begin() ; i != r.end() ; ++i)
         {
           Cell_handle c = cells[i];
