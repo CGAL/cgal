@@ -61,6 +61,11 @@ namespace CGAL {
     typedef typename Segment_traits_2::Top_side_category    Top_side_category;
     typedef typename Segment_traits_2::Right_side_category  Right_side_category;
 
+    typedef typename Arr_are_all_sides_oblivious_tag
+    <Left_side_category, Bottom_side_category,
+     Top_side_category, Right_side_category>::result
+    Are_all_sides_oblivious_tag;
+
   private:
     typedef Arr_polyline_traits_2<Segment_traits_2>  Self;
 
@@ -121,18 +126,253 @@ namespace CGAL {
     typedef typename Segment_traits_2::Multiplicity       Multiplicity;
 
     /*! Compare the x-coordinates of two points. */
-    typedef typename Segment_traits_2::Compare_x_2        Compare_x_2;
+    class Compare_x_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
+
+      // Oblivious implementation
+      Comparison_result operator()(const X_monotone_segment_2& s1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& s2,
+                                   Arr_curve_end ce2,
+                                   Arr_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(s1) :
+          seg_traits->construct_min_vertex_2_object()(s1);
+        const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(s2) :
+          seg_traits->construct_min_vertex_2_object()(s2);
+        return seg_traits->compare_x_2_object()(p1, p2);
+      }
+
+      // Boundary implementation
+      Comparison_result operator()(const X_monotone_segment_2& s1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& s2,
+                                   Arr_curve_end ce2,
+                                   Arr_not_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
+          seg_traits->parameter_space_in_x_2_object();
+        const Arr_parameter_space ps_x1 = ps_x(s1, ce1);
+        const Arr_parameter_space ps_x2 = ps_x(s2, ce2);
+
+        if (ps_x1 == ps_x2) {
+          if (ps_x1 == ARR_INTERIOR) {
+            const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+              seg_traits->construct_max_vertex_2_object()(s1) :
+              seg_traits->construct_min_vertex_2_object()(s1);
+            const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+              seg_traits->construct_max_vertex_2_object()(s2) :
+              seg_traits->construct_min_vertex_2_object()(s2);
+            return seg_traits->compare_x_2_object()(p1, p2);
+          }
+          return EQUAL;
+        }
+
+        // ps_x1 != ps_x2
+        if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
+        if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
+        if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
+        if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
+      }
+
+    public:
+      /*! Constructor. */
+      Compare_x_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
+
+      /*! Compare the x-coordinates of two directional points.
+       * \param p1 the first directional point.
+       * \param p2 the second directional point.
+       * \return SMALLER - x(p1) < x(p2);
+       *         EQUAL   - x(p1) = x(p2);
+       *         LARGER  - x(p1) > x(p2).
+       * \pre p1 does not lie on the boundary.
+       * \pre p2 does not lie on the boundary.
+       */
+      Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+      { m_poly_traits.segment_traits_2()->compare_x_2_object()(p1, p2); }
+
+      /*! Compare two ends of x-monotone curves in x
+       * \param xs1 the first curve
+       * \param ce1 the end of the first x-monotone curve
+       * \param xs2 the second curve
+       * \param ce2 the end of the second x-monoton curve
+       */
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& xs2,
+                                   Arr_curve_end ce2)
+      { return operator()(xs1, ce1, xs2, ce2, Are_all_sides_oblivious_tag()); }
+    };
 
     /*! Get a Compare_x_2 functor object. */
     Compare_x_2 compare_x_2_object() const
-    { return segment_traits_2()->compare_x_2_object(); }
+    { return Compare_x_2(*this); }
 
-    /*! Compare two points lexigoraphically: by x, then by y. */
-    typedef typename Segment_traits_2::Compare_xy_2       Compare_xy_2;
+    /*! Compare two curve-ends or points lexigoraphically: by x, then by y. */
+    class Compare_xy_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
+
+      // Oblivious implementation
+      Comparison_result operator()(const X_monotone_segment_2& s1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& s2,
+                                   Arr_curve_end ce2,
+                                   Arr_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(s1) :
+          seg_traits->construct_min_vertex_2_object()(s1);
+        const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(s2) :
+          seg_traits->construct_min_vertex_2_object()(s2);
+        return seg_traits->compare_xy_2_object()(p1, p2);
+      }
+
+      // Boundary implementation
+      Comparison_result operator()(const X_monotone_segment_2& s1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& s2,
+                                   Arr_curve_end ce2,
+                                   Arr_not_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
+          seg_traits->parameter_space_in_x_2_object();
+        typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
+          seg_traits->parameter_space_in_y_2_object();
+        const Arr_parameter_space ps_x1 = ps_x(s1, ce1);
+        const Arr_parameter_space ps_y1 = ps_y(s1, ce1);
+        const Arr_parameter_space ps_x2 = ps_x(s2, ce2);
+        const Arr_parameter_space ps_y2 = ps_y(s2, ce2);
+
+        if (ps_x1 != ps_x2) {
+          if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
+          if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
+          if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
+          if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
+        }
+
+        if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
+          const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+            seg_traits->construct_max_vertex_2_object()(s1) :
+            seg_traits->construct_min_vertex_2_object()(s1);
+          // ps1 == ARR_INTERIOR
+
+          if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
+            const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+              seg_traits->construct_max_vertex_2_object()(s2) :
+              seg_traits->construct_min_vertex_2_object()(s2);
+
+            // ps1 == ARR_INTERIOR
+            // ps2 == ARR_INTERIOR
+            return seg_traits->compare_xy_2_object()(p1, p2);
+          }
+
+          // The cases ps_x2 == ARR_{LEFT,RIGHT}_BOUNDARY are handled above
+
+          // ps1 == ARR_INTERIOR
+          // ps_x2 == ARR_INTERIOR
+          // ps_y2 != ARR_INTERIOR
+          CGAL_assertion(ps_x2 == ARR_INTERIOR);
+          // EFEF: missing implementation for open boundary.
+          typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
+            seg_traits->compare_x_on_boundary_2_object();
+          Comparison_result res = cmp_x_on_bnd(p1, s2, ce2);
+          if (res != EQUAL) return res;
+          if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
+          CGAL_assertion(ps_y2 == ARR_BOTTOM_BOUNDARY);
+          return LARGER;
+        }
+
+        // ps1 != ARR_INTERIOR
+        if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
+          const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+            seg_traits->construct_max_vertex_2_object()(s2) :
+            seg_traits->construct_min_vertex_2_object()(s2);
+
+          // The cases ps_x1 == ARR_{LEFT,RIGHT}_BOUNDARY are handled above
+
+          // ps_x1 == ARR_INTERIOR
+          // ps_y1 != ARR_INTERIOR
+          // ps2 == ARR_INTERIOR
+          CGAL_assertion(ps_x1 == ARR_INTERIOR);
+          typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
+            seg_traits->compare_x_on_boundary_2_object();
+          Comparison_result res = cmp_x_on_bnd(p2, s1, ce1);
+          if (res != EQUAL) return opposite(res);
+          if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
+          CGAL_assertion(ps_y1 == ARR_BOTTOM_BOUNDARY);
+          return SMALLER;
+        }
+
+        // ps1 != ARR_INTERIOR
+        // ps2 != ARR_INTERIOR
+        // ps_x1 == ps_x2
+        if (ps_x1 == ARR_INTERIOR) {
+          // ps_y1 != ARR_INTERIOR
+          // ps_y2 != ARR_INTERIOR
+          Comparison_result res =
+            seg_traits->compare_x_on_boundary_2_object()(s1, ce1, s2, ce2);
+          if (res != EQUAL) return res;
+          if (ps_y1 == ps_y2) return EQUAL;
+          return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+        }
+
+        CGAL_assertion(ce1 == ce2);
+        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(s1) :
+          seg_traits->construct_min_vertex_2_object()(s1);
+        const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(s2) :
+          seg_traits->construct_min_vertex_2_object()(s2);
+        return seg_traits->compare_y_on_boundary_2_object()(p1, p2);
+      }
+
+    public:
+      /*! Constructor. */
+      Compare_xy_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
+
+      /*! Compare two directional points lexigoraphically: by x, then by y.
+       * \param p1 the first enpoint directional point.
+       * \param p2 the second endpoint directional point.
+       * \return SMALLER - x(p1) < x(p2);
+       *         SMALLER - x(p1) = x(p2) and y(p1) < y(p2);
+       *         EQUAL   - x(p1) = x(p2) and y(p1) = y(p2);
+       *         LARGER  - x(p1) = x(p2) and y(p1) > y(p2);
+       *         LARGER  - x(p1) > x(p2).
+       * \pre p1 does not lie on the boundary.
+       * \pre p2 does not lie on the boundary.
+       */
+      Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+      { return m_poly_traits.segment_traits_2()->compare_xy_2_object()(p1, p2); }
+
+      /*! Compare two ends of x-monotone curves lexicographically
+       * \param xs1 the first curve
+       * \param ce1 the end of the first x-monotone curve
+       * \param xs2 the second curve
+       * \param ce2 the end of the second x-monoton curve
+       */
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& xs2,
+                                   Arr_curve_end ce2)
+      { return operator()(xs1, ce1, xs2, ce2, Are_all_sides_oblivious_tag()); }
+    };
 
     /*! Get a Compare_xy_2 functor object. */
     Compare_xy_2 compare_xy_2_object() const
-    { return segment_traits_2()->compare_xy_2_object(); }
+    { return Compare_xy_2(*this); }
 
     ///@}
 
@@ -141,13 +381,13 @@ namespace CGAL {
 
     class Number_of_points_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /* The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /* Constructor. */
-      Number_of_points_2(const Geometry_traits_2& traits) :
+      Number_of_points_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -164,13 +404,13 @@ namespace CGAL {
 
     class Construct_min_vertex_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /* Constructor. */
-      Construct_min_vertex_2(const Geometry_traits_2& traits) :
+      Construct_min_vertex_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -199,13 +439,13 @@ namespace CGAL {
 
     class Construct_max_vertex_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Construct_max_vertex_2(const Geometry_traits_2& traits) :
+      Construct_max_vertex_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -234,13 +474,13 @@ namespace CGAL {
 
     class Is_vertical_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Is_vertical_2(const Geometry_traits_2& traits) : m_poly_traits(traits) {}
+      Is_vertical_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
 
       /*!
        * Check whether the given x-monotone curve is a vertical segment.
@@ -262,13 +502,13 @@ namespace CGAL {
 
     class Compare_y_at_x_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_y_at_x_2(const Geometry_traits_2& traits) :
+      Compare_y_at_x_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /*!
@@ -299,13 +539,13 @@ namespace CGAL {
 
     class Compare_y_at_x_left_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_y_at_x_left_2(const Geometry_traits_2& traits) :
+      Compare_y_at_x_left_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -344,13 +584,13 @@ namespace CGAL {
 
     class Compare_y_at_x_right_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_y_at_x_right_2(const Geometry_traits_2& traits) :
+      Compare_y_at_x_right_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -390,14 +630,14 @@ namespace CGAL {
     class Equal_2 {
     protected:
 
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
 
       /*! Constructor. */
-      Equal_2(const Geometry_traits_2& poly_tr) : m_poly_traits(poly_tr) {}
+      Equal_2(const Polyline_traits_2& poly_tr) : m_poly_traits(poly_tr) {}
 
       /*!
        * Check if the two points are the same.
@@ -521,13 +761,13 @@ namespace CGAL {
 
     class Compare_endpoints_xy_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2> Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2> Polyline_traits_2;
       /*! The traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_endpoints_xy_2(const Geometry_traits_2& traits) :
+      Compare_endpoints_xy_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /*!
@@ -550,13 +790,13 @@ namespace CGAL {
 
     class Construct_opposite_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2> Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2> Polyline_traits_2;
       /*! The traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor */
-      Construct_opposite_2(const Geometry_traits_2& traits) :
+      Construct_opposite_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /*!
@@ -591,13 +831,13 @@ namespace CGAL {
 
     class Make_x_monotone_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Make_x_monotone_2(const Geometry_traits_2& traits) :
+      Make_x_monotone_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /*!
@@ -751,13 +991,13 @@ namespace CGAL {
      */
     class Push_back_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Push_back_2(const Geometry_traits_2& traits) : m_poly_traits(traits) {}
+      Push_back_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
 
       /* Append a point `p` to an existing polyline `cv` at the back. */
       void operator()(Curve_2& cv, const Point_2& p) const
@@ -905,13 +1145,13 @@ namespace CGAL {
      */
     class Push_front_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Push_front_2(const Geometry_traits_2& traits) : m_poly_traits(traits) {}
+      Push_front_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
 
       /* Append a point `p` to an existing polyline `cv` at the front. */
       void operator()(Curve_2& cv, const Point_2& p) const
@@ -1047,13 +1287,13 @@ namespace CGAL {
 
     class Split_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Split_2(const Geometry_traits_2& traits) : m_poly_traits(traits) {}
+      Split_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
 
     public:
       /*!
@@ -1172,14 +1412,9 @@ namespace CGAL {
 
     class Intersect_2 {
     protected:
-      typedef typename Arr_are_all_sides_oblivious_tag<
-        Left_side_category, Bottom_side_category,
-        Top_side_category, Right_side_category >::result
-      Are_all_sides_oblivious_tag;
-
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
       Comparison_result compare_y_at_x_max_impl(const X_monotone_segment_2& s1,
                                                 const X_monotone_segment_2& s2,
@@ -1238,7 +1473,7 @@ namespace CGAL {
 
     public:
       /*! Constructor. */
-      Intersect_2(const Geometry_traits_2& traits) : m_poly_traits(traits) {}
+      Intersect_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
 
       /*!
        * Find the intersections of the two given curves and insert them into the
@@ -1263,8 +1498,6 @@ namespace CGAL {
           seg_traits->construct_max_vertex_2_object();
         typename Segment_traits_2::Equal_2                equal =
           seg_traits->equal_2_object();
-        typename Segment_traits_2::Compare_xy_2           compare_xy =
-          seg_traits->compare_xy_2_object();
         typename Segment_traits_2::Intersect_2            intersect =
           seg_traits->intersect_2_object();
         typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
@@ -1283,16 +1516,16 @@ namespace CGAL {
 
         X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
+        Compare_xy_2 compare_xy = m_poly_traits.compare_xy_2_object();
         Comparison_result left_res =
-          m_poly_traits.compare_xy_impl(cv1[i1], ARR_MIN_END,
-                                        cv2[i2], ARR_MIN_END,
-                                        Are_all_sides_oblivious_tag());
+          compare_xy(cv1[i1], ARR_MIN_END, cv2[i2], ARR_MIN_END);
 
         if (left_res == SMALLER) {
           // cv1's left endpoint is to the left of cv2's left endpoint:
           // Locate the index i1 of the segment in cv1 which contains cv2's
           // left endpoint.
-          i1 = m_poly_traits.locate(cv1, min_vertex(cv2[i2]));
+          i1 = m_poly_traits.locate_impl(cv1, cv2[i2], ARR_MIN_END,
+                                         Are_all_sides_oblivious_tag());
           if (i1 == INVALID_INDEX) return oi;
 
           if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
@@ -1312,7 +1545,8 @@ namespace CGAL {
           // cv1's left endpoint is to the right of cv2's left endpoint:
           // Locate the index i2 of the segment in cv2 which contains cv1's
           // left endpoint.
-          i2 = m_poly_traits.locate(cv2, min_vertex(cv1[i1]));
+          i2 = m_poly_traits.locate_impl(cv2, cv1[i1], ARR_MIN_END,
+                                         Are_all_sides_oblivious_tag());
           if (i2 == INVALID_INDEX) return oi;
 
           if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
@@ -1354,10 +1588,7 @@ namespace CGAL {
                ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) &&(i2 >= 0)&&
                 (i1 != INVALID_INDEX) && (i2 != INVALID_INDEX)))
           {
-            right_res =
-              m_poly_traits.compare_xy_impl(cv1[i1], ARR_MAX_END,
-                                            cv2[i2], ARR_MAX_END,
-                                            Are_all_sides_oblivious_tag());
+            right_res = compare_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
 
             right_coincides = (right_res == EQUAL);
             if (right_res == SMALLER)
@@ -1517,13 +1748,13 @@ namespace CGAL {
 
     class Are_mergeable_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Are_mergeable_2(const Geometry_traits_2& traits) :
+      Are_mergeable_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /*!
@@ -1738,13 +1969,13 @@ namespace CGAL {
 
     class Construct_curve_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Construct_curve_2(const Geometry_traits_2& traits) :
+      Construct_curve_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /* Returns an polyline connecting the two given endpoints. */
@@ -1835,13 +2066,13 @@ namespace CGAL {
 
     class Construct_x_monotone_curve_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>       Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Construct_x_monotone_curve_2(const Geometry_traits_2& traits) :
+      Construct_x_monotone_curve_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits) {}
 
       /*! Returns an x-monotone polyline connecting the two given endpoints.
@@ -2096,13 +2327,13 @@ namespace CGAL {
      */
     class Parameter_space_in_x_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Parameter_space_in_x_2(const Geometry_traits_2& traits) :
+      Parameter_space_in_x_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -2158,13 +2389,13 @@ namespace CGAL {
      */
     class Parameter_space_in_y_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Parameter_space_in_y_2(const Geometry_traits_2& traits) :
+      Parameter_space_in_y_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -2221,13 +2452,13 @@ namespace CGAL {
      */
     class Compare_x_on_boundary_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_x_on_boundary_2(const Geometry_traits_2& traits) :
+      Compare_x_on_boundary_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -2313,13 +2544,13 @@ namespace CGAL {
      */
     class Compare_y_on_boundary_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_y_on_boundary_2(const Geometry_traits_2& traits) :
+      Compare_y_on_boundary_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -2349,13 +2580,13 @@ namespace CGAL {
      */
     class Compare_y_near_boundary_2 {
     protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Geometry_traits_2;
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
-      const Geometry_traits_2& m_poly_traits;
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
-      Compare_y_near_boundary_2(const Geometry_traits_2& traits) :
+      Compare_y_near_boundary_2(const Polyline_traits_2& traits) :
         m_poly_traits(traits)
       {}
 
@@ -2409,17 +2640,11 @@ namespace CGAL {
      * \return An index i such that q is in the x-range of cv[i].
      *         If q is not in the x-range of cv, returns INVALID_INDEX.
      */
-    unsigned int locate(const X_monotone_curve_2& cv,
-                        const Point_2& q) const
+    template <typename Compare>
+    unsigned int locate_gen(const X_monotone_curve_2& cv,
+                            const Point_2& q,
+                            Compare compare) const
     {
-      typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        segment_traits_2()->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        segment_traits_2()->construct_max_vertex_2_object();
-      typename Segment_traits_2::Compare_x_2 compare_x =
-        segment_traits_2()->compare_x_2_object();
-
-
       // The direction of cv. SMALLER means left-to-right and
       // otherwise right-to-left
       Comparison_result direction = segment_traits_2()->
@@ -2434,108 +2659,110 @@ namespace CGAL {
         to = 0;
       }
 
-      // Test the case that cv is vertical
-      if (segment_traits_2()->is_vertical_2_object()(cv[0])) {
-        typename Segment_traits_2::Compare_xy_2 compare_xy =
-          segment_traits_2()->compare_xy_2_object();
+      typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
+        segment_traits_2()->construct_min_vertex_2_object();
+      typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+        segment_traits_2()->construct_max_vertex_2_object();
 
-        // Test if q is one of cv's end points
-        Comparison_result res_from;
-        res_from = compare_xy(min_vertex(cv[from]), q);
-        if (res_from == EQUAL) return from;
-
-        Comparison_result res_to;
-        res_to = compare_xy(max_vertex(cv[to]), q);
-        if (res_to == EQUAL) return to;
-
-        // Verify that q has the same x-coord as cv (which is vertical)
-        Comparison_result res = compare_x(max_vertex(cv[to]), q);
-        if ((res != EQUAL) || (res_to == res_from)) return INVALID_INDEX;
-
-        // Perform a binary search to locate the segment that contains q in its
-        // xy-range:
-        while (((direction == SMALLER) && (to > from)) ||
-               ((direction == LARGER) && (to < from))) {
-          unsigned int mid = (from + to) / 2;
-          if (((direction == SMALLER) && (mid > from)) ||
-              ((direction == LARGER) && (mid < from))) {
-            Comparison_result res_mid = compare_xy(min_vertex(cv[mid]), q);
-            if (res_mid == EQUAL) return mid;
-            if (res_mid == res_from) from = mid;
-            else if (direction == SMALLER)
-              to = mid - 1;
-            else
-              to = mid + 1;
-          }
-          else {
-            CGAL_assertion(((direction == SMALLER) && (mid < to)) ||
-                           ((direction == LARGER) && (mid > to)));
-            Comparison_result res_mid = compare_xy(max_vertex(cv[mid]), q);
-            if (res_mid == EQUAL) return mid;
-            if (res_mid == res_to) to = mid;
-            else if (direction == SMALLER)
-              from = mid + 1;
-            else
-              from = mid - 1;
-          }
-        }
-        // In case (from == to), and we know that the polyline contains the q:
-        CGAL_assertion(from == to);
-        return from;
-      }
-
-      // First check whether the polyline curve really contains q in
-      // its x-range.
-      Comparison_result res_from = compare_x(min_vertex(cv[from]), q);
+      // Test if q is one of cv's end points
+      Comparison_result res_from = compare(min_vertex(cv[from]), q);
       if (res_from == EQUAL) return from;
 
-      Comparison_result res_to = compare_x(max_vertex(cv[to]), q);
+      Comparison_result res_to = compare(max_vertex(cv[to]), q);
       if (res_to == EQUAL) return to;
 
-      // q is not in the x-range of cv:
-      if (res_from == res_to) return INVALID_INDEX;
+      if (res_to == res_from) return INVALID_INDEX;
 
-      // Perform a binary search and locate the segment that contains q in its
-      // x-range:
+      // Perform a binary search to locate the segment that contains q in its
+      // range:
       while (((direction == SMALLER) && (to > from)) ||
-             ((direction == LARGER)  && (to < from))) {
+             ((direction == LARGER) && (to < from)))
+      {
         unsigned int mid = (from + to) / 2;
-
         if (((direction == SMALLER) && (mid > from)) ||
-            ((direction == LARGER)  && (mid < from))) {
-          Comparison_result res_mid = compare_x(min_vertex(cv[mid]), q);
+            ((direction == LARGER) && (mid < from)))
+        {
+          Comparison_result res_mid = compare(min_vertex(cv[mid]), q);
           if (res_mid == EQUAL) {
             // Ensure that the returned segment contains the query point
             // on its right end (if possible)
-            if ((direction == SMALLER) && (mid > 0))
-              --mid;
-            else if ((direction == LARGER) &&
-                     ((mid + 1) < cv.number_of_segments()))
-              ++mid;
+            if ((direction == SMALLER) && (mid > 0)) --mid;
+             else if ((direction == LARGER) &&
+                      ((mid + 1) < cv.number_of_segments()))
+               ++mid;
             return mid;
           }
           if (res_mid == res_from) from = mid;
-          else if (direction == SMALLER)
-            to = mid - 1;
-          else
-            to = mid + 1;
+          else to = (direction == SMALLER) ? mid - 1 : mid + 1;
         }
         else {
           CGAL_assertion(((direction == SMALLER) && (mid < to)) ||
                          ((direction == LARGER) && (mid > to)));
-          Comparison_result res_mid = compare_x(max_vertex(cv[mid]), q);
+          Comparison_result res_mid = compare(max_vertex(cv[mid]), q);
           if (res_mid == EQUAL) return mid;
           if (res_mid == res_to) to = mid;
-          else if (direction == SMALLER)
-            from = mid + 1;
-          else
-            from = mid - 1;
+          else from = (direction == SMALLER) ? mid + 1 : mid - 1;
         }
       }
-
-      // In case(from == to), and we know that the polyline contains the q:
+      // In case (from == to), and we know that the polyline contains the q:
       CGAL_assertion(from == to);
       return from;
+    }
+
+    unsigned int locate_impl(const X_monotone_curve_2& xcv,
+                             const X_monotone_segment_2& xs,
+                             Arr_curve_end ce,
+                             Arr_not_all_sides_oblivious_tag) const
+    {
+      const Segment_traits_2* seg_traits = segment_traits_2();
+      if (seg_traits->is_vertical_2_object()(xcv[0])) {
+        // Verify that q has the same x-coord as xcv (which is vertical)
+        Compare_x_2 compare_x = compare_x_2_object();
+        Comparison_result res = compare_x(xcv[0], ARR_MIN_END, xs, ce);
+        if (res != EQUAL) return INVALID_INDEX;
+
+        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
+          seg_traits->construct_min_vertex_2_object();
+        const Point_2& p = (ce == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(xs) :
+          seg_traits->construct_min_vertex_2_object()(xs);
+        return locate_gen(xcv, p, seg_traits->compare_xy_2_object());
+      }
+
+      const Point_2& p = (ce == ARR_MAX_END) ?
+        seg_traits->construct_max_vertex_2_object()(xs) :
+        seg_traits->construct_min_vertex_2_object()(xs);
+      return locate_gen(xcv, p, seg_traits->compare_x_2_object());
+    }
+
+    unsigned int locate_impl(const X_monotone_curve_2& xcv,
+                             const X_monotone_segment_2& xs,
+                             Arr_curve_end ce,
+                             Arr_all_sides_oblivious_tag) const
+    {
+      const Segment_traits_2* seg_traits = segment_traits_2();
+      const Point_2& p = (ce == ARR_MAX_END) ?
+        seg_traits->construct_max_vertex_2_object()(xs) :
+        seg_traits->construct_min_vertex_2_object()(xs);
+      return locate(xcv, p);
+    }
+
+    unsigned int locate(const X_monotone_curve_2& cv,
+                        const Point_2& q) const
+    {
+      const Segment_traits_2* seg_traits = segment_traits_2();
+      if (seg_traits->is_vertical_2_object()(cv[0])) {
+        // Verify that q has the same x-coord as cv (which is vertical)
+        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
+          seg_traits->construct_min_vertex_2_object();
+        typename Segment_traits_2::Compare_x_2 compare_x =
+          seg_traits->compare_x_2_object();
+        Comparison_result res = compare_x(min_vertex(cv[0]), q);
+        if (res != EQUAL) return INVALID_INDEX;
+
+        return locate_gen(cv, q, seg_traits->compare_xy_2_object());
+      }
+      return locate_gen(cv, q, seg_traits->compare_x_2_object());
     }
 
     /*!
@@ -2553,8 +2780,7 @@ namespace CGAL {
     {
       // First locate a segment segments[i] that contains q in its x-range.
       unsigned int i = locate(cv, q);
-      if (i == INVALID_INDEX)
-        return INVALID_INDEX;
+      if (i == INVALID_INDEX) return INVALID_INDEX;
 
       typename Segment_traits_2::Equal_2 equal =
         segment_traits_2()->equal_2_object();
@@ -2617,125 +2843,7 @@ namespace CGAL {
       // In case q is in cv[i]'s interior:
       return i;
     }
-
-    // Compare two point lexicographically
-    Comparison_result compare_xy_impl(const X_monotone_segment_2& s1,
-                                      Arr_curve_end ce1,
-                                      const X_monotone_segment_2& s2,
-                                      Arr_curve_end ce2,
-                                      Arr_all_sides_oblivious_tag) const
-    {
-      const Segment_traits_2* seg_traits = segment_traits_2();
-      const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-        seg_traits->construct_max_vertex_2_object()(s1) :
-        seg_traits->construct_min_vertex_2_object()(s1);
-      const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-        seg_traits->construct_max_vertex_2_object()(s2) :
-        seg_traits->construct_min_vertex_2_object()(s2);
-      return seg_traits->compare_xy_2_object()(p1, p2);
-    }
-
-    Comparison_result compare_xy_impl(const X_monotone_segment_2& s1,
-                                      Arr_curve_end ce1,
-                                      const X_monotone_segment_2& s2,
-                                      Arr_curve_end ce2,
-                                      Arr_not_all_sides_oblivious_tag)
-      const
-    {
-      const Segment_traits_2* seg_traits = segment_traits_2();
-      typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
-        seg_traits->parameter_space_in_x_2_object();
-      typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
-        seg_traits->parameter_space_in_y_2_object();
-      const Arr_parameter_space ps_x1 = ps_x(s1, ce1);
-      const Arr_parameter_space ps_y1 = ps_y(s1, ce1);
-      const Arr_parameter_space ps_x2 = ps_x(s2, ce2);
-      const Arr_parameter_space ps_y2 = ps_y(s2, ce2);
-
-      if (ps_x1 != ps_x2) {
-        if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
-        if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
-      }
-
-      if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
-        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s1) :
-          seg_traits->construct_min_vertex_2_object()(s1);
-        // ps1 == ARR_INTERIOR
-
-        if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
-          const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-            seg_traits->construct_max_vertex_2_object()(s2) :
-            seg_traits->construct_min_vertex_2_object()(s2);
-
-          // ps1 == ARR_INTERIOR
-          // ps2 == ARR_INTERIOR
-          return seg_traits->compare_xy_2_object()(p1, p2);
-        }
-
-        // The cases ps_x2 == ARR_{LEFT,RIGHT}_BOUNDARY are handled above
-
-        // ps1 == ARR_INTERIOR
-        // ps_x2 == ARR_INTERIOR
-        // ps_y2 != ARR_INTERIOR
-        CGAL_assertion(ps_x2 == ARR_INTERIOR);
-        // EFEF: missing implementation for open boundary.
-        typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
-          seg_traits->compare_x_on_boundary_2_object();
-        Comparison_result res = cmp_x_on_bnd(p1, s2, ce2);
-        if (res != EQUAL) return res;
-        if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
-        CGAL_assertion(ps_y2 == ARR_BOTTOM_BOUNDARY);
-        return LARGER;
-      }
-
-      // ps1 != ARR_INTERIOR
-      if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
-        const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s2) :
-          seg_traits->construct_min_vertex_2_object()(s2);
-
-        // The cases ps_x1 == ARR_{LEFT,RIGHT}_BOUNDARY are handled above
-
-        // ps_x1 == ARR_INTERIOR
-        // ps_y1 != ARR_INTERIOR
-        // ps2 == ARR_INTERIOR
-        CGAL_assertion(ps_x1 == ARR_INTERIOR);
-        typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
-          seg_traits->compare_x_on_boundary_2_object();
-        Comparison_result res = cmp_x_on_bnd(p2, s1, ce1);
-        if (res != EQUAL) return opposite(res);
-        if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
-        CGAL_assertion(ps_y1 == ARR_BOTTOM_BOUNDARY);
-        return SMALLER;
-      }
-
-      // ps1 != ARR_INTERIOR
-      // ps2 != ARR_INTERIOR
-      // ps_x1 == ps_x2
-      if (ps_x1 == ARR_INTERIOR) {
-        // ps_y1 != ARR_INTERIOR
-        // ps_y2 != ARR_INTERIOR
-        Comparison_result res =
-          seg_traits->compare_x_on_boundary_2_object()(s1, ce1, s2, ce2);
-        if (res != EQUAL) return res;
-        if (ps_y1 == ps_y2) return EQUAL;
-        return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
-      }
-
-      CGAL_assertion(ce1 == ce2);
-      const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-        seg_traits->construct_max_vertex_2_object()(s1) :
-        seg_traits->construct_min_vertex_2_object()(s1);
-      const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-        seg_traits->construct_max_vertex_2_object()(s2) :
-        seg_traits->construct_min_vertex_2_object()(s2);
-      return seg_traits->compare_y_on_boundary_2_object()(p1, p2);
-    }
   };
-
 } //namespace CGAL
 
 #endif
