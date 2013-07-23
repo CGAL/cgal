@@ -10,54 +10,30 @@ namespace CGAL {
 
 \section visibility_2_introduction Introduction
 
-\cgalFigureBegin{exaample_figure,visibility-teaser.png}
+\cgalFigureBegin{example_figure,visibility-teaser.png}
 An example figure. 
 \cgalFigureEnd
 
+Given a set of segments \f$ E \f$ and a point \f$ p \f$ on 2D plane, we say a point \f$ q \f$ is visible from \f$ p \f$ iff segment \f$ pq \f$ doesn't intersect any segment in \f$ E \f$. The set of points that are visible from \f$ p \f$ is defined as the visibility region of \f$ p \f$ in \f$ E \f$. We refer to \f$ E \f$ as environment.
+
+In reality there are many ways to define 'intersect' in the definition above which leads to different visibility region. This package provides two kinds of visibility model.
+- Regularized Visibility :
+  \f$ p \f$ is visible from \f$ q \f$ iff \f$ E \f$ has no inner point from \f$ pq \f$. 
+- Non-regularized Visibility :
+  \f$ p \f$ is visible from \f$ q \f$ iff \f$ \forall \f$ neighbourhood \f$ B(q,\epsilon) \f$, there are two points, \f$ q_1 \f$ and \f$ q_2 \f$ such that no connected component of \f$ E \f$ has inner points from both \f$ pq_1 \f$ and \f$ pq_2 \f$.
+
+  Look at Figure for an example.
+  \cgalFigureBegin{definition_figure, visibility-definition.png}
+  All labellde points are collinear. Part (a) shows the regularized visiblity region from \f$ p \f$. During these points, only \f$ a \f$ is visible from \f$ p \f$. The result will be the boundary of the set of visible points, so \f$ b \f$ and \f$ c \f$ will be also reported. Part (b) shows the non-regularized visibility region. Along the ray \f$ pa \f$, \f$ p \f$ can see \f$ a \f$, \f$ b \f$, \f$ c \f$ and \f$ d \f$. \f$ p \f$ can't see \f$ e \f$, because of the red component of environment.
+  \cgalFigureEnd
+
 \section visibility_2_interface Interface
 
+CGAL provides three class templates, `Simple_visibility_2`, `Naive_visibility_2` and `Preprocessed_visibility_2`, to do visibility computing in simple polygons, arbitrary arrangement of segments and visibility query in arbitrary arrangement respectively. Every templates has two parameters, `ArrTraits_2` and `Regularization_tag`. All classes accept an arrangement as input. `ArrTraits_2` conveys the type information of input arrangement as well as functors that will link the vertices, edges and faces of  visibility region to the related part of input; for example, an edge of visibility polygon could be linked to the vertex of input that blocks the vision so that leads to that edge. Users are free to define their own `ArrTraits_2` class so that they can choose to keep what information obtained in the last result. `Regularization_tag` indicates whether the result should be regularized or not.
 
-The following is a cut and paste from the minutes of the CGAL developer meeting in Nancy:
+Let \f$ n \f$ be the number of vertices of input. `Simple_visibility_2` implements the algorithm of \cite bjrb-clvpa-87, which takes \f$ O(n) \f$ time and \f$ O(n) \f$ space. `Naive_visibility_2` implements the algorithm of \cite ta-aeafvpprh-85, which takes \f$ O(n\log n) \f$ time and \f$ O(n) \f$. `Preprocessed_visibility_2` uses the algortihm of \cite aaghi-vpsesp-85. The preprocessing needs \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space. The query time is \f$ O(n) \f$. 
 
-Status of Visibility computation: 
-Currently there is some code within the Art Gallery project that does visibility computation without preprocessing. The output is essentially an arrangement. But it is probably better to start new code in CGAL style. 
-Design of Visibility package which should be the result of GSoC 2013: 
-Goals:
-
-    The package should be able to optionally handle degenerated outputs, i.e., one dimensional  needles -- this is why I put visibility "polygon" in "" 
-
-    the package should be able to associate the origin of an edge in the output to its counter part in the input or to the vertex that "caused" the creation of the edge.
-
-    there should be the option to do visibility computation with and without preprocessing 
-
-Principal design idea: 
-
-    The main concept is that of a visibility object that allows visibility queries.  We will have at least three different strategies in different classes:
-
-    simple visibility (for arrangements with no holes)
-
-    naive visibility -- without preprocessing 
-
-    visibility with preprocessing (some algo)
-
-    The object is constructed from a full arrangement which is stored and which allows preprocessing inside if needed. Visibility queries are then to that object. This allows to have both strategies in the same interface. It is worth considering distinguishing the regularized and non-regularized in compile time (e.g., using a template Boolean parameter.)
-
-    The constructor takes an additional bool whether the output should be regularized or not. This is already in the constructor as this may effect potential preprocessing 
-
-    Template parameters are the Arrangement type (allows access to traits and kernel) 
-
-    A query is a point and: 
-
-    a face if the point is inside the interior of the face 
-
-    a half edge if the point is on the boundary,  this avoid ambiguity  on which polygon is to be computed (e.g. which side of the edge is seen.)
-
-    Output: The output is an "extended" Arrangement (using [1]) such that additional data members of vertex/edge/face give pointers to their counterparts in the input arrangement if they exists. -- view edges don't have counter parts, but they can link to the vertex that caused them. The data member of the face can probably be empty (but it can not hurt to point to the original face either.) 
-
-    using the arrangement as output it easy to also report needles in case the (regularize) bool is not set. Otherwise we report the regularized version of the visibility area. Also as an extended arrangement. Though in this case it is indeed a polygon that could be reported. 
-
-[1] http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Arrangement_on_surface_2_ref/Class_Arr_extended_dcel.html
-
+\section simple_visibility_example  Example of visibility query in simple polygon environment.
 
 
 
