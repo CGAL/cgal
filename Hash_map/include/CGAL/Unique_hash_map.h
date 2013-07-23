@@ -27,6 +27,7 @@
 #define CGAL_UNIQUE_HASH_MAP_H
 
 #include <CGAL/basic.h>
+#include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Tools/chained_map.h>
 #include <cstddef>
@@ -35,7 +36,7 @@ namespace CGAL {
 
 template <class Key_, class Data_, 
           class UniqueHashFunction = Handle_hash_function,
-          class Allocator_ = std::allocator<Data_> >
+          class Allocator_ = CGAL_ALLOCATOR(Data_) >
 class Unique_hash_map {
 public:
     typedef Key_                                     Key;

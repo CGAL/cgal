@@ -24,11 +24,13 @@
 #ifndef CGAL_CHAINED_MAP_H
 #define CGAL_CHAINED_MAP_H
 
+#include <CGAL/memory.h>
+
 namespace CGAL {
 
 namespace internal {
 
-template <typename T, typename Allocator = std::allocator<T> > class chained_map;
+template <typename T, typename Allocator = CGAL_ALLOCATOR(T) > class chained_map;
 template <typename T> class chained_map_elem;
 
 template <typename T>
