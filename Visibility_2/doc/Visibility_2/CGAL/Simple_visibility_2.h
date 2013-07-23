@@ -6,7 +6,7 @@ This class is a model of the concept `Visibility_2` offers visibility queries wi
 a simple polygon with no holes. Uses the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to 
 obtain the visibility polygon, based on a scan of the boundary of the polygon and the notion 
 of angular displacement as a control variable. The algorithm is a modification and extension 
-of the  linear time algorithm of Lee \cite TODO. It computes the visibility polygon from a 
+of the  linear time algorithm of Lee \cite dtl-voasp-83. It computes the visibility polygon from a 
 viewpoint that is in the interior or on the boundary of the polygon. 
 
 The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
@@ -15,8 +15,8 @@ will have at most 2n points pushed and popped, thus the time and space complexit
 algorithm are O(n) even in case of degeneracies such as needles, where n is the number of 
 the vertices of the polygon.
 
-The class also supports a regularization tag which allows the user to obtain an output
-with all the isolated vertices and edges that have the same face on both sides removed.
+The class also supports a regularization tag which, when set to CGAL::Tag_true, allows the user 
+to obtain an output with all the isolated vertices and edges that have the same face on both sides removed.
 
 \cgalModels `Visibility_2` 
 

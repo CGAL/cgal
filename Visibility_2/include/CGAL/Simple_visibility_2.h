@@ -23,6 +23,8 @@
 #define CGAL_SIMPLE_VISIBILITY_2_H
 
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/tags.h>
+#include <CGAL/enum.h>
 #include <stack>
 
 namespace CGAL {
@@ -39,6 +41,7 @@ public:
   typedef Arrangement_2                                 Output_Arrangement_2;
 
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
@@ -179,6 +182,8 @@ public:
     CGAL::insert_non_intersecting_curves(out_arr, 
                                          segments.begin(), 
                                          segments.end());
+    CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
+    conditional_regularize(out_arr, Regularization_tag());
   }
 
   void visibility_region(const Point_2 &q, const Halfedge_const_handle he,
@@ -246,7 +251,11 @@ public:
     std::reverse(points.begin(), points.end());
     std::vector<Segment_2> segments;
     treat_needles(q, points, segments);
-    CGAL::insert_non_intersecting_curves(out_arr, segments.begin(), segments.end());
+    CGAL::insert_non_intersecting_curves(out_arr, 
+                                         segments.begin(), 
+                                         segments.end());
+    CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
+    conditional_regularize(out_arr, Regularization_tag());
   }
 
   void print_arrangement(const Arrangement_2 &arr) {
@@ -263,8 +272,6 @@ private:
   std::stack<Point_2> s;
   std::vector<Point_2> vertices;
   enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
-
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
 
   bool LessDistanceToPoint_2(const Point_2 &p, const Point_2 &q, 
                                                const Point_2 &r) const {
@@ -320,6 +327,27 @@ private:
       }
     }
     return false;
+  }
+
+  void conditional_regularize(Output_Arrangement_2 &out_arr, CGAL::Tag_true) {
+    regularize_output(out_arr);
+  }
+
+  void conditional_regularize(Output_Arrangement_2 &out_arr, CGAL::Tag_false) {
+    //do nothing
+  }
+
+  void regularize_output(Output_Arrangement_2 &out_arr) {
+    typename Output_Arrangement_2::Edge_iterator e_itr;
+    for (e_itr = out_arr.edges_begin() ; 
+         e_itr != out_arr.edges_end() ; e_itr++) {
+
+      Halfedge_handle he = e_itr;
+      Halfedge_handle he_twin = he->twin();
+      if (he->face() == he_twin->face()) {
+        out_arr.remove_edge(he);
+      }
+    }
   }
 
   void treat_needles(const Point_2 &q, typename std::vector<Point_2> &points, 
