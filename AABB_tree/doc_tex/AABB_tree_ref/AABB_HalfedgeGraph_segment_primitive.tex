@@ -1,6 +1,6 @@
 \ccRefPageBegin
 
-\begin{ccRefClass}{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>}
+\begin{ccRefClass}{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>}
 
 \ccDefinition
   
@@ -16,7 +16,7 @@ while the AABB tree holding the primitive is in use.
 \ccc{HalfedgeGraph} is a model of the halfedge graph concept.\\
 \ccc{OneHalfedgeGraphPerTree} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, we guarantee that all the primitives will be from a common \ccc{HalfedgeGraph} and some data 
 will be factorized so that the size of the primitive is reduced. In the latter case, the primitives can be from different graphs and extra storage is required in the primitives. The default is \ccc{CGAL::Tag_true}.\\
-\ccc{cache_datum} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
+\ccc{CacheDatum} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
 the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
 
 \ccInclude{CGAL/AABB_HalfedgeGraph_segment_primitive.h}
@@ -41,8 +41,8 @@ The example below gives a way to call this constructor the insert-by-range metho
 \ccSeeAlso
 
 \ccc{AABBPrimitive},\\
-\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>}.\\
+\ccc{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>}.\\
 
 \ccIncludeExampleCode{AABB_tree/AABB_HalfedgeGraph_edge_example.cpp}
 

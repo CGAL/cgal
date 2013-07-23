@@ -12,11 +12,11 @@ The concept `AABBPrimitive` describes the requirements for the primitives stored
 
 The `Primitive` type can be, e.g., a wrapper around a `Handle`. Assume for instance that the input objects are the triangle faces of a mesh stored as a `CGAL::Polyhedron_3`. The `Datum` would be a `Triangle_3` and the `Id` would be a polyhedron `Face_handle`. Method `datum()` can return either a `Triangle_3` constructed on the fly from the face handle or a `Triangle_3` stored internally. This provides a way for the user to trade memory for efficiency. 
 
-\cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_false,cache_datum>`
-\cgalHasModel `CGAL::AABB_segment_primitive<Iterator,cache_datum>`
-\cgalHasModel `CGAL::AABB_triangle_primitive<Iterator,cache_datum>`
-\cgalHasModel `CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,Tag_false,cache_datum>`
-\cgalHasModel `CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph,Tag_false,cache_datum>`
+\cgalHasModel `CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,Tag_false,CacheDatum>`
+\cgalHasModel `CGAL::AABB_segment_primitive<Iterator,CacheDatum>`
+\cgalHasModel `CGAL::AABB_triangle_primitive<Iterator,CacheDatum>`
+\cgalHasModel `CGAL::AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,Tag_false,CacheDatum>`
+\cgalHasModel `CGAL::AABB_FaceGraph_triangle_primitive<FaceGraph,Tag_false,CacheDatum>`
 */
 
 class AABBPrimitive {

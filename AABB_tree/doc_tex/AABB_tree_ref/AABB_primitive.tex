@@ -1,5 +1,5 @@
 
-\begin{ccRefClass}{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>}
+\begin{ccRefClass}{AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>}
 
 
 \ccDefinition
@@ -16,7 +16,7 @@ with \ccc{Id} as \ccc{key_type}. It must be default constructible.\\
 \ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
 with \ccc{Id} as \ccc{key_type}. It must be default constructible.\\
 \ccc{ExternalPropertyMaps}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the property maps will be stored in the traits class, while in the latter they will be stored in the primitive (which increases the size of each primitive).\\
-\ccc{cache_datum}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
+\ccc{CacheDatum}: either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce
 the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored).
 
 \ccInclude{CGAL/AABB_primitive.h}
@@ -38,10 +38,10 @@ the memory footprint. The default is \ccc{CGAL::Tag_false} (datum is not stored)
 \ccSeeAlso
 
 \ccc{AABBPrimitive},\\
-\ccc{AABB_segment_primitive<Iterator,cache_datum>},\\
-\ccc{AABB_triangle_primitive<Iterator,cache_datum>},\\
-\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>},\\
-\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>}.
+\ccc{AABB_segment_primitive<Iterator,CacheDatum>},\\
+\ccc{AABB_triangle_primitive<Iterator,CacheDatum>},\\
+\ccc{AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>},\\
+\ccc{AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>}.
 
 
 \end{ccRefClass}

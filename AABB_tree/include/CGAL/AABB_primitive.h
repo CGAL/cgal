@@ -68,22 +68,22 @@ public:
  *          case, the property maps will be stored in the traits class, while
  *          in the latter they will be stored in the primitive
  *          (which increases the size of each primitive).
- * \tparam cache_datum either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
+ * \tparam CacheDatum either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *           the datum is stored in the primitive, while in the latter
  *           it is constructed on the fly to reduce the memory footprint.
  *           The default is `CGAL::Tag_false` (datum is not stored).
  *
  * \sa `AABBPrimitive`
- * \sa `AABB_segment_primitive<Iterator,cache_datum>`
- * \sa `AABB_triangle_primitive<Iterator,cache_datum>`
- * \sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,cache_datum>`
- * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
+ * \sa `AABB_segment_primitive<Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive<Iterator,CacheDatum>`
+ * \sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
+ * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
  */
 template <  class Id,
             class ObjectPropertyMap,
             class PointPropertyMap,
             class ExternalPropertyMaps,
-            class cache_datum>
+            class CacheDatum>
 struct AABB_primitive
 {
   /// \name Types
@@ -126,7 +126,7 @@ template <  class Id,
             class ObjectPropertyMap,
             class PointPropertyMap,
             class ExternalPropertyMaps,
-            class cache_datum>
+            class CacheDatum>
 class AABB_primitive;
 
 

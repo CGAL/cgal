@@ -56,25 +56,25 @@ namespace CGAL {
  * common `HalfedgeGraph` and some data will be factorized so that the size of
  * the primitive is reduced. In the latter case, the primitives can be from
  * different graphs and extra storage is required in the primitives. The default is `CGAL::Tag_true`.
- * \tparam cache_datum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is
+ * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is
  * stored in the primitive, while in the latter it is constructed on the fly to reduce
  * the memory footprint. The default is `CGAL::Tag_false` (datum is not stored).
  *
  * \sa `AABBPrimitive`
- * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,cache_datum>`
- * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,cache_datum>`
+ * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
+ * \sa `AABB_FaceGraph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
  */
 template < class HalfedgeGraph,
            class VertexPointPMap = typename boost::property_map< HalfedgeGraph, vertex_point_t>::type,
            class OneHalfedgeGraphPerTree = Tag_true,
-           class cache_datum = Tag_false >
+           class CacheDatum = Tag_false >
 class AABB_HalfedgeGraph_segment_primitive
 #ifndef DOXYGEN_RUNNING
   : public AABB_primitive<  typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
                             Segment_from_edge_descriptor_property_map<HalfedgeGraph,VertexPointPMap>,
                             Source_point_from_edge_descriptor<HalfedgeGraph,VertexPointPMap>,
                             OneHalfedgeGraphPerTree,
-                            cache_datum >
+                            CacheDatum >
 #endif
 {
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor Id_;
@@ -85,7 +85,7 @@ class AABB_HalfedgeGraph_segment_primitive
                           Segment_property_map,
                           Point_property_map,
                           Tag_true,
-                          cache_datum > Base;
+                          CacheDatum > Base;
 
 public:
 
