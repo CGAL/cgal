@@ -162,24 +162,43 @@ namespace CGAL {
         const Arr_parameter_space ps_x1 = ps_x(s1, ce1);
         const Arr_parameter_space ps_x2 = ps_x(s2, ce2);
 
-        if (ps_x1 == ps_x2) {
-          if (ps_x1 == ARR_INTERIOR) {
-            const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-              seg_traits->construct_max_vertex_2_object()(s1) :
-              seg_traits->construct_min_vertex_2_object()(s1);
+        if (ps_x1 != ps_x2) {
+          if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
+          if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
+          if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
+          if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
+        }
+
+        // ps_x1 == ps_x2
+        if (ps_x1 != ARR_INTERIOR) return EQUAL;
+
+        typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
+          seg_traits->parameter_space_in_y_2_object();
+        const Arr_parameter_space ps_y1 = ps_y(s1, ce1);
+        const Arr_parameter_space ps_y2 = ps_y(s2, ce2);
+        if (ps_y1 == ARR_INTERIOR) {
+          const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+            seg_traits->construct_max_vertex_2_object()(s1) :
+            seg_traits->construct_min_vertex_2_object()(s1);
+          if (ps_y2 == ARR_INTERIOR) {
             const Point_2& p2 = (ce2 == ARR_MAX_END) ?
               seg_traits->construct_max_vertex_2_object()(s2) :
               seg_traits->construct_min_vertex_2_object()(s2);
             return seg_traits->compare_x_2_object()(p1, p2);
           }
-          return EQUAL;
+          typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
+            seg_traits->compare_x_on_boundary_2_object();
+          return cmp_x_on_bnd(p1, s2, ce2);
         }
-
-        // ps_x1 != ps_x2
-        if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
-        if (ps_x1 == ARR_RIGHT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_LEFT_BOUNDARY) return SMALLER;
-        if (ps_x2 == ARR_RIGHT_BOUNDARY) return LARGER;
+        if (ps_y2 == ARR_INTERIOR) {
+          const Point_2& p2 = (ce2 == ARR_MAX_END) ?
+            seg_traits->construct_max_vertex_2_object()(s2) :
+            seg_traits->construct_min_vertex_2_object()(s2);
+          typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
+            seg_traits->compare_x_on_boundary_2_object();
+          return opposite(cmp_x_on_bnd(p2, s1, ce1));
+        }
+        return seg_traits->compare_x_on_boundary_2_object()(s1, ce1, s2, ce2);
       }
 
     public:
@@ -2642,7 +2661,6 @@ namespace CGAL {
      */
     template <typename Compare>
     unsigned int locate_gen(const X_monotone_curve_2& cv,
-                            const Point_2& q,
                             Compare compare) const
     {
       // The direction of cv. SMALLER means left-to-right and
@@ -2665,10 +2683,10 @@ namespace CGAL {
         segment_traits_2()->construct_max_vertex_2_object();
 
       // Test if q is one of cv's end points
-      Comparison_result res_from = compare(min_vertex(cv[from]), q);
+      Comparison_result res_from = compare(cv[from], ARR_MIN_END);
       if (res_from == EQUAL) return from;
 
-      Comparison_result res_to = compare(max_vertex(cv[to]), q);
+      Comparison_result res_to = compare(cv[to], ARR_MAX_END);
       if (res_to == EQUAL) return to;
 
       if (res_to == res_from) return INVALID_INDEX;
@@ -2682,7 +2700,7 @@ namespace CGAL {
         if (((direction == SMALLER) && (mid > from)) ||
             ((direction == LARGER) && (mid < from)))
         {
-          Comparison_result res_mid = compare(min_vertex(cv[mid]), q);
+          Comparison_result res_mid = compare(cv[mid], ARR_MIN_END);
           if (res_mid == EQUAL) {
             // Ensure that the returned segment contains the query point
             // on its right end (if possible)
@@ -2698,7 +2716,7 @@ namespace CGAL {
         else {
           CGAL_assertion(((direction == SMALLER) && (mid < to)) ||
                          ((direction == LARGER) && (mid > to)));
-          Comparison_result res_mid = compare(max_vertex(cv[mid]), q);
+          Comparison_result res_mid = compare(cv[mid], ARR_MAX_END);
           if (res_mid == EQUAL) return mid;
           if (res_mid == res_to) to = mid;
           else from = (direction == SMALLER) ? mid + 1 : mid - 1;
@@ -2709,6 +2727,65 @@ namespace CGAL {
       return from;
     }
 
+    // A utility class that compare a curve end with a point.
+    template <typename Comparer>
+    class Compare_points {
+    private:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
+
+      const Point_2& m_point;
+
+      Comparer m_compare;
+
+    public:
+      // Constructor
+      Compare_points(const Polyline_traits_2& traits, Comparer compare,
+                     const Point_2& p) :
+        m_poly_traits(traits),
+        m_point(p),
+        m_compare(compare)
+      {}
+
+      // Compare the given curve end with the stored point.
+      Comparison_result operator()(const X_monotone_segment_2& xs,
+                                   Arr_curve_end ce)
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        const Point_2& p = (ce == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(xs) :
+          seg_traits->construct_min_vertex_2_object()(xs);
+        return m_compare(p, m_point);
+      }
+    };
+
+    // A utility class that compare two curve ends.
+    template <typename Comparer>
+    class Compare_curve_ends {
+    private:
+      const X_monotone_segment_2& m_x_monotone_segment;
+
+      Arr_curve_end m_curve_end;
+
+      Comparer m_compare;
+
+    public:
+      // Constructor
+      Compare_curve_ends(Comparer compare,
+                         const X_monotone_segment_2& xs, Arr_curve_end ce) :
+        m_x_monotone_segment(xs),
+        m_curve_end(ce),
+        m_compare(compare)
+      {}
+
+      // Compare the given curve end with the stored point.
+      Comparison_result operator()(const X_monotone_segment_2& xs,
+                                   Arr_curve_end ce)
+      { return m_compare(xs, ce, m_x_monotone_segment, m_curve_end); }
+    };
+
+    //
     unsigned int locate_impl(const X_monotone_curve_2& xcv,
                              const X_monotone_segment_2& xs,
                              Arr_curve_end ce,
@@ -2721,20 +2798,15 @@ namespace CGAL {
         Comparison_result res = compare_x(xcv[0], ARR_MIN_END, xs, ce);
         if (res != EQUAL) return INVALID_INDEX;
 
-        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-          seg_traits->construct_min_vertex_2_object();
-        const Point_2& p = (ce == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(xs) :
-          seg_traits->construct_min_vertex_2_object()(xs);
-        return locate_gen(xcv, p, seg_traits->compare_xy_2_object());
+        Compare_curve_ends<Compare_xy_2> compare(compare_xy_2_object(), xs, ce);
+        return locate_gen(xcv, compare);
       }
 
-      const Point_2& p = (ce == ARR_MAX_END) ?
-        seg_traits->construct_max_vertex_2_object()(xs) :
-        seg_traits->construct_min_vertex_2_object()(xs);
-      return locate_gen(xcv, p, seg_traits->compare_x_2_object());
+      Compare_curve_ends<Compare_x_2> compare(compare_x_2_object(), xs, ce);
+      return locate_gen(xcv, compare);
     }
 
+    //
     unsigned int locate_impl(const X_monotone_curve_2& xcv,
                              const X_monotone_segment_2& xs,
                              Arr_curve_end ce,
@@ -2747,22 +2819,25 @@ namespace CGAL {
       return locate(xcv, p);
     }
 
-    unsigned int locate(const X_monotone_curve_2& cv,
-                        const Point_2& q) const
+    //
+    unsigned int locate(const X_monotone_curve_2& xcv, const Point_2& q) const
     {
       const Segment_traits_2* seg_traits = segment_traits_2();
-      if (seg_traits->is_vertical_2_object()(cv[0])) {
+      if (seg_traits->is_vertical_2_object()(xcv[0])) {
         // Verify that q has the same x-coord as cv (which is vertical)
         typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
           seg_traits->construct_min_vertex_2_object();
         typename Segment_traits_2::Compare_x_2 compare_x =
           seg_traits->compare_x_2_object();
-        Comparison_result res = compare_x(min_vertex(cv[0]), q);
+        Comparison_result res = compare_x(min_vertex(xcv[0]), q);
         if (res != EQUAL) return INVALID_INDEX;
 
-        return locate_gen(cv, q, seg_traits->compare_xy_2_object());
+        Compare_points<Compare_xy_2> compare(seg_traits, compare_xy_2_object(), q);
+        return locate_gen(xcv, compare);
       }
-      return locate_gen(cv, q, seg_traits->compare_x_2_object());
+
+      Compare_points<Compare_x_2> compare(seg_traits, compare_x_2_object(), q);
+      return locate_gen(xcv, compare);
     }
 
     /*!
