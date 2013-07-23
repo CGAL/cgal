@@ -132,6 +132,9 @@ public:
     ui->pushButton_skeletonize->setToolTip(QString("Turn mesh to a skeleton curve"));
     ui->pushButton_run->setToolTip(QString("run one iteration of contract, collapse, split, detect degeneracy"));
     ui->pushButton_converge->setToolTip(QString("iteratively contract the mesh until convergence"));
+
+    // only for debugging
+    ui->pushButton_voronoi->setVisible(false);
   }
 
   bool check_item_index(int index) {
@@ -213,9 +216,10 @@ public:
       }
       fixedPointsItemIndex = -1;
       nonFixedPointsItemIndex = -1;
+      poleLinesItemIndex = -1;
 
       Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
-      scene->addItem(item_copy);
+      copyItemIndex = scene->addItem(item_copy);
       item_copy->setName(QString("original mesh of %1").arg(item->name()));
       item_copy->setVisible(false);
     }
@@ -246,9 +250,10 @@ public:
         }
         fixedPointsItemIndex = -1;
         nonFixedPointsItemIndex = -1;
+        poleLinesItemIndex = -1;
 
         Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
-        scene->addItem(item_copy);
+        copyItemIndex = scene->addItem(item_copy);
         item_copy->setName(QString("original mesh of %1").arg(item->name()));
         item_copy->setVisible(false);
       }
@@ -276,13 +281,18 @@ public slots:
   void on_actionSkeletonize();
   void on_actionConverge();
   void on_actionUpdateBBox();
+  void on_actionVoronoi();
 
 private:
   Mean_curvature_skeleton* mcs;
   QDockWidget* dockWidget;
   Ui::Mean_curvature_flow_skeleton_plugin* ui;
+
   int fixedPointsItemIndex;
   int nonFixedPointsItemIndex;
+  int poleLinesItemIndex;
+  int copyItemIndex;
+
   Polyhedron *mCopy;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
@@ -327,12 +337,16 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionConverge()));
     connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
             this, SLOT(on_actionUpdateBBox()));
+    connect(ui->pushButton_voronoi, SIGNAL(clicked()),
+            this, SLOT(on_actionVoronoi()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
 
     fixedPointsItemIndex = -1;
     nonFixedPointsItemIndex = -1;
+    poleLinesItemIndex = -1;
+    copyItemIndex = -1;
   }
 }
 
@@ -340,6 +354,60 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox()
 {
   double diag = scene->len_diagonal();
   ui->edgelength_TH->setValue(0.002 * diag);
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionVoronoi()
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  if (!check_item_index(index))
+  {
+    return;
+  }
+
+  Scene_polyhedron_item* item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Polyhedron* pMesh = item->polyhedron();
+
+  if (!check_mesh(item))
+  {
+    return;
+  }
+
+  QTime time;
+  time.start();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  Scene_polylines_item* poleLinesItem = new Scene_polylines_item();
+
+  std::vector<Point> pole_points;
+  mcs->get_poles(pole_points);
+  vertex_iterator vb, ve;
+  int id = 0;
+  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; vb++)
+  {
+    std::vector<Point> line;
+    line.clear();
+
+    vertex_descriptor v = *vb;
+    Point s = v->point();
+    Point t = pole_points[id++];
+
+    line.push_back(s);
+    line.push_back(t);
+    poleLinesItem->polylines.push_back(line);
+  }
+  if (poleLinesItemIndex == -1)
+  {
+    poleLinesItemIndex = scene->addItem(poleLinesItem, false);
+  }
+  else
+  {
+    scene->replaceItem(poleLinesItemIndex, poleLinesItem, false);
+  }
+
+  scene->itemChanged(index);
+  scene->setSelectedItem(index);
+  QApplication::restoreOverrideCursor();
 }
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_skeleton_triggered()
@@ -676,29 +744,59 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     delete temp;
   }
 
-  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
-  nonFixedPointsItem->setName("non-fixed points");
-  nonFixedPointsItem->setColor(QColor(0, 255, 0));
-  std::vector<Point> nonFixedPoints;
-  mcs->get_non_fixed_points(nonFixedPoints);
-  ps = nonFixedPointsItem->point_set();
-  for (size_t i = 0; i < nonFixedPoints.size(); i++)
-  {
-    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
-    ps->push_back(point);
-  }
-  if (nonFixedPointsItemIndex == -1)
-  {
-    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
-  }
-  else
-  {
-    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
-  }
+  // draw non-fixed points
+//  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
+//  nonFixedPointsItem->setName("non-fixed points");
+//  nonFixedPointsItem->setColor(QColor(0, 255, 0));
+//  std::vector<Point> nonFixedPoints;
+//  mcs->get_non_fixed_points(nonFixedPoints);
+//  ps = nonFixedPointsItem->point_set();
+//  for (size_t i = 0; i < nonFixedPoints.size(); i++)
+//  {
+//    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
+//    ps->push_back(point);
+//  }
+//  if (nonFixedPointsItemIndex == -1)
+//  {
+//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
+//  }
+//  else
+//  {
+//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
+//  }
+
+  // draw lines connecting surface points and their correspondent poles
+//  Scene_polylines_item* poleLinesItem = new Scene_polylines_item();
+
+//  std::vector<Point> pole_points;
+//  mcs->get_poles(pole_points);
+//  vertex_iterator vb, ve;
+//  int id = 0;
+//  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; vb++)
+//  {
+//    std::vector<Point> line;
+//    line.clear();
+
+//    vertex_descriptor v = *vb;
+//    Point s = v->point();
+//    Point t = pole_points[id++];
+
+//    line.push_back(s);
+//    line.push_back(t);
+//    poleLinesItem->polylines.push_back(line);
+//  }
+//  if (poleLinesItemIndex == -1)
+//  {
+//    poleLinesItemIndex = scene->addItem(poleLinesItem, false);
+//  }
+//  else
+//  {
+//    scene->replaceItem(poleLinesItemIndex, poleLinesItem, false);
+//  }
 
   scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
-  scene->itemChanged(nonFixedPointsItemIndex);
+//  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
@@ -785,7 +883,15 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   {
     scene->item(fixedPointsItemIndex)->setVisible(false);
   }
+  // display the original mesh in transparent mode
   item->setVisible(false);
+  if (copyItemIndex >= 0)
+  {
+    scene->item(copyItemIndex)->setVisible(true);
+    dynamic_cast<Scene_polyhedron_item*>(scene->item(copyItemIndex))->switch_transparency_on_off();
+    scene->item(copyItemIndex)->setGouraudMode();
+  }
+
   // update scene
   QApplication::restoreOverrideCursor();
 }

@@ -256,6 +256,19 @@
      <string>Is medially centered</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_voronoi">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>180</y>
+      <width>171</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Compute Voronoi poles</string>
+    </property>
+   </widget>
    <zorder>volume_TH</zorder>
    <zorder>omega_H</zorder>
    <zorder>edgelength_TH</zorder>
@@ -276,6 +289,7 @@
    <zorder>label_omega_P</zorder>
    <zorder>omega_P</zorder>
    <zorder>is_medially_centered</zorder>
+   <zorder>pushButton_voronoi</zorder>
   </widget>
  </widget>
  <resources/>

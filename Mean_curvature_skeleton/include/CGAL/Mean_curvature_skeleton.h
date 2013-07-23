@@ -1592,8 +1592,6 @@ public:
 
     Delaunay T(points.begin(), points.end());
 
-    Delaunay::size_type n = T.number_of_vertices();
-
     Finite_cells_iterator cit;
     int cell_id = 0;
     for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
@@ -1650,6 +1648,19 @@ public:
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
       normals[vid] = internal::get_vertex_normal<typename Polyhedron::Vertex,Kernel>(*v);
+    }
+  }
+
+  void get_poles(std::vector<Point>& max_poles)
+  {
+    max_poles.resize(boost::num_vertices(*polyhedron));
+    vertex_iterator vb, ve;
+    int cnt = 0;
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    {
+      vertex_descriptor v = *vb;
+      int vid = boost::get(vertex_id_pmap, v);
+      max_poles[cnt++] = cell_dual[poles[vid]];
     }
   }
 };

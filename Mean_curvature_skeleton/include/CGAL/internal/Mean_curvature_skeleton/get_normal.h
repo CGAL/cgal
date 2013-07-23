@@ -28,6 +28,7 @@ typename Kernel::Vector_3 get_facet_normal(const Facet& f)
 template <class Vertex, class Kernel>
 typename Kernel::Vector_3 get_vertex_normal(const Vertex& v)
 {
+  typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Vertex::Halfedge_around_vertex_const_circulator HV_circulator;
   typedef typename Vertex::Facet Facet;
@@ -38,8 +39,26 @@ typename Kernel::Vector_3 get_vertex_normal(const Vertex& v)
   {
     if(!he->is_border())
     {
-      Vector n = get_facet_normal<Facet,Kernel>(*he->facet());
-      normal = normal + (n / std::sqrt(n*n));
+      const Point& prev = he->prev()->vertex()->point();
+      const Point& curr = he->vertex()->point();
+      const Point& next = he->next()->vertex()->point();
+
+      Vector p1 = next - curr;
+      p1 = p1 / std::sqrt(p1 * p1);
+      Vector p2 = prev - curr;
+      p2 = p2 / std::sqrt(p2 * p2);
+
+      double cosine = p1 * p2;
+      if      (cosine < -1.0) cosine = -1.0;
+      else if (cosine >  1.0) cosine =  1.0;
+      double angle = acos(cosine);
+
+      Vector n = CGAL::cross_product(next-curr,prev-curr);
+      n = n / std::sqrt(n * n);
+      n = n * angle;
+
+//      Vector n = get_facet_normal<Facet,Kernel>(*he->facet());
+      normal = normal + n;
     }
   }
   return normal / std::sqrt(normal * normal);
