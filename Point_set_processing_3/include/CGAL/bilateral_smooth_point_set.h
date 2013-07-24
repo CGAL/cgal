@@ -17,8 +17,8 @@
 //
 // Author(s) : Shihao Wu, Cl¨¦ment Jamin, Pierre Alliez 
 
-#ifndef CGAL_DENOSISE_POINTS_WITH_NORMALS_H
-#define CGAL_DENOSISE_POINTS_WITH_NORMALS_H
+#ifndef CGAL_BILATERAL_SMOOTH_POINT_SET_H
+#define CGAL_BILATERAL_SMOOTH_POINT_SET_H
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
@@ -51,7 +51,7 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace denoise_points_internal{
+namespace bilateral_smooth_point_set_internal{
  // Item in the Kd-tree: position (Point_3) + index
 template <typename Kernel>
 class Kd_tree_element : public Point_with_normal_3<Kernel>
@@ -181,7 +181,7 @@ compute_kdtree_neighbors(
   typedef CGAL::Point_with_normal_3<Kernel> Pwn;
 
   // types for K nearest neighbors search
-  typedef denoise_points_internal::Kd_tree_traits<Kernel> Tree_traits;
+  typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -230,7 +230,7 @@ compute_max_spacing(
   typedef CGAL::Point_with_normal_3<Kernel> Pwn;
 
   // types for K nearest neighbors search
-  typedef denoise_points_internal::Kd_tree_traits<Kernel> Tree_traits;
+  typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
 
@@ -275,7 +275,7 @@ public:
   { 
     for ( size_t i = r.begin(); i != r.end(); ++i ) 
     {
-      (*update_pwn_set)[i] = denoise_points_internal::
+      (*update_pwn_set)[i] = bilateral_smooth_point_set_internal::
         compute_denoise_projection<Kernel>
         ((*pwn_set)[i], 
         (*pwn_neighbors_set)[i], 
@@ -340,9 +340,9 @@ bilateral_smooth_point_set(
   CGAL_point_set_processing_precondition(k > 1);
 
   // types for K nearest neighbors search structure
-  typedef denoise_points_internal::
+  typedef bilateral_smooth_point_set_internal::
     Kd_tree_element<Kernel> Kd_tree_element;
-  typedef denoise_points_internal::Kd_tree_traits<Kernel> Tree_traits;
+  typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
@@ -384,7 +384,7 @@ bilateral_smooth_point_set(
   FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); 
   for(i = 0; i < nb_points; i++)
   {
-    FT max_spacing = denoise_points_internal::
+    FT max_spacing = bilateral_smooth_point_set_internal::
                      compute_max_spacing<Kernel,Tree>(pwn_set[i], tree, k);
       guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
   }
@@ -402,7 +402,7 @@ bilateral_smooth_point_set(
   for (i = 0 ; i < nb_points; i++)
   {
     Pwn pwn = pwn_set[i];
-    pwn_neighbors_set[i] = denoise_points_internal::
+    pwn_neighbors_set[i] = bilateral_smooth_point_set_internal::
       compute_kdtree_neighbors<Kernel, Tree>(pwn, tree, k);
   }
 
@@ -434,7 +434,7 @@ bilateral_smooth_point_set(
     {
       Pwn pwn = pwn_set[i];
 
-      update_pwn_set[i] = denoise_points_internal::
+      update_pwn_set[i] = bilateral_smooth_point_set_internal::
                           compute_denoise_projection<Kernel>
                           (pwn, 
                            pwn_neighbors_set[i], 
@@ -532,4 +532,4 @@ bilateral_smooth_point_set(
 
 } //namespace CGAL
 
-#endif // CGAL_REGULARIZE_AND_SIMPLIFY_POINT_SET_H
+#endif // CGAL_BILATERAL_SMOOTH_POINT_SET_H
