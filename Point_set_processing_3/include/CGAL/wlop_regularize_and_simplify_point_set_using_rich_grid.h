@@ -324,7 +324,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      sample_points[i] = get(point_pmap, *it);
+      sample_points[i] = get(point_pmap, it);
   #else
       sample_points[i] = get(point_pmap, *it);
   #endif
