@@ -7,10 +7,6 @@ namespace CGAL {
 The class `Delaunay_triangulation_3` represents a three-dimensional 
 Delaunay triangulation. 
 
-If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
-such as insertion/removal of a range of points, are performed in parallel. See 
-the documentation of the operations for more details.
-
 \tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
@@ -43,6 +39,10 @@ manual \ref Triangulation3exfastlocation.
         the TDS is concurrency-safe, and `void` otherwise.
         In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
         instance via the constructor or `set_lock_data_structure`.
+
+If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+such as insertion/removal of a range of points, are performed in parallel. See 
+the documentation of the operations for more details.
 
 \sa `CGAL::Regular_triangulation_3` 
 
@@ -278,10 +278,12 @@ The return value is only meaningful if *could_lock_zone is true:
 bool remove(Vertex_handle v, bool *could_lock_zone);
 
 /*! 
-Removes the vertices specified by the iterator range `[first, beyond)`. 
-The function `remove(Vertex_handle)` is called over each element of the range. 
-The number of vertices removed is returned. 
+Removes the vertices specified by the iterator range `[first, beyond)`.
+The number of vertices removed is returned.
 If parallelism is enabled, the points will be removed in parallel.
+Note that if at some step, the triangulation dimension becomes lower than 3,
+the removal of the remaining points will go on sequentially.
+
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.
@@ -293,7 +295,8 @@ int remove(InputIterator first, InputIterator beyond);
 This function has exactly the same result and the same preconditions as `remove(first, beyond)`. 
 The difference is in the implementation and efficiency. This version does not re-triangulate the hole after each 
 point removal but only after removing all vertices. This is more efficient if (and only if) the removed points 
-are organized in a small number of connected components of the Delaunay triangulation. 
+are organized in a small number of connected components of the Delaunay triangulation.
+Another difference is that there is no parallel version of this function.
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.
 */ 

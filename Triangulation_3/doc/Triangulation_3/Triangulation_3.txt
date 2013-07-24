@@ -226,7 +226,7 @@ Optionnally, the main Delaunay and regular triangulations algorithms (insert, re
 support multi-core shared-memory architectures to take advantage of available parallelism.
 For this purpose, a model of the concept `SpatialLockDataStructure_3`,
 such as the `Spatial_grid_lock_data_structure_3` class, is used. This data structure
-allows to lock point coordinates (x, y, z) in a 3D domain. When a thread owns the
+allows to lock points with coordinates (x, y, z) in a 3D domain. When a thread owns the
 lock on a point, no other thread can lock this point. Locking a facet (resp. a cell)
 boils down to locking all its 3 (resp. 4) incident vertices.
 

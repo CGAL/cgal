@@ -4,8 +4,9 @@
 \cgalConcept
 
 The concept `SpatialLockDataStructure_3` is intended to be used by concurrent
-algorithms. It allows to lock points (x, y, z) in a 3D bounding box.
-Each template type called `P3` below must provide x(), y() and z() functions,
+algorithms. It allows to lock points with coordinates (x, y, z).
+The template parameter type `P3` appearing in member functions
+must provide x(), y() and z() functions,
 returning the respective point coordinates as numbers whose type is a 
 model of the concept of `CGAL::RealEmbeddable`.
 
