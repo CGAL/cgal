@@ -341,7 +341,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   #endif
   }
 
-  // Initilization
+  // Initialization
   std::vector<Rich_point> original_rich_point_set(nb_points_original);
   std::vector<Rich_point> sample_rich_point_set(nb_points_sample);
 
@@ -398,7 +398,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     task_timer.start();
     std::cout << "Compute average term and repulsion term " << std::endl;
 
-    // Build Ball Tree For Sample Neighbor
+    // Build rich-grid For Sample Neighbor
     for (i=0 ; i < sample_points.size(); ++i)
     {
       Point& p0 = sample_points[i];
