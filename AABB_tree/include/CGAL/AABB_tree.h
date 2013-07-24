@@ -91,12 +91,17 @@ namespace CGAL {
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
     /*!
-    An alias to AABBTraits::Interesction_and_primitive_id
+    An alias to `AABBTraits::Intersection_and_primitive_id<Query>`
     */
+    #ifdef DOXYGEN_RUNNING
+    template<typename Query>
+    using Intersection_and_primitive_id = AABBTraits::Intersection_and_primitive_id<Query>;
+    #else
     template<typename Query>
     struct Intersection_and_primitive_id {
       typedef typename AABBTraits::template Intersection_and_primitive_id<Query>::Type Type;
     };
+    #endif
 
     
     ///@}

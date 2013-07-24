@@ -58,13 +58,14 @@ typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;
 typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;
 
 
-/*!  A nested class template providing as a pair the intersection result of a `Query` object
+/*!
+A nested class template providing as a pair the intersection result of a `Query` object
 and a `Primitive::Datum`, together with the `Primitive::Id` of the primitive intersected.
-The type of the pair is given by the nested type `Type`.
+The type of the pair is  `%Intersection_and_primitive_id<Query>::%Type`.
 */
 
-  template <typename Query>
-  struct Intersection_and_primitive_id{};
+template <typename Query>
+using Intersection_and_primitive_id = unspecified_type;
 
 /// @}
 
