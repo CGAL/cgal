@@ -384,7 +384,7 @@ public:
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
-    #if CGAL_INTERSECTION_VERSION < 2
+    #if CGAL_INTERSECTION_VERSION < 2 && !defined(DOXYGEN_RUNNING)
 		boost::optional<Object_and_primitive_id> 
     #else
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
