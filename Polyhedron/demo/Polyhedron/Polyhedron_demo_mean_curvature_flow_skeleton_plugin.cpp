@@ -845,6 +845,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     line.push_back(t);
     skeleton->polylines.push_back(line);
   }
+  skeleton->setColor(QColor(255, 0, 0));
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton, false);
 
@@ -891,6 +892,40 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     dynamic_cast<Scene_polyhedron_item*>(scene->item(copyItemIndex))->switch_transparency_on_off();
     scene->item(copyItemIndex)->setGouraudMode();
   }
+
+  // display the end points and junction points
+  Scene_points_with_normal_item* endPointsItem = new Scene_points_with_normal_item;
+  endPointsItem->setName(QString("end points of %1").arg(item->name()));
+  Scene_points_with_normal_item* junctionPointsItem = new Scene_points_with_normal_item;
+  junctionPointsItem->setName(QString("junction points of %1").arg(item->name()));
+
+  Point_set *end_ps = endPointsItem->point_set();
+  end_ps->set_selected_color(QColor(0, 0, 255));
+  end_ps->set_selected_diameter(6.0);
+  Point_set *junction_ps = junctionPointsItem->point_set();
+  junction_ps->set_selected_color(QColor(0, 255, 0));
+  junction_ps->set_selected_diameter(6.0);
+
+  boost::graph_traits<Graph>::vertex_iterator vi;
+  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
+  {
+    int deg = boost::out_degree(*vi, g);
+    if (deg == 1)
+    {
+      UI_point_3<Kernel> point(points[*vi].x(), points[*vi].y(), points[*vi].z());
+      end_ps->select(&point);
+      end_ps->push_back(point);
+    }
+    else if (deg > 2)
+    {
+      UI_point_3<Kernel> point(points[*vi].x(), points[*vi].y(), points[*vi].z());
+      junction_ps->select(&point);
+      junction_ps->push_back(point);
+    }
+  }
+
+  scene->addItem(endPointsItem, false);
+  scene->addItem(junctionPointsItem, false);
 
   // update scene
   QApplication::restoreOverrideCursor();

@@ -1431,7 +1431,7 @@ public:
     }
     std::cout << "tracked " << cnt << " vertices\n";
 
-//    collapse_vertices_without_correspondence();
+    collapse_vertices_without_correspondence();
   }
 
   void collapse_vertices_without_correspondence()
