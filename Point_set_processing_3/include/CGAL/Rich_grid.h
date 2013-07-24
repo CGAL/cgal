@@ -43,9 +43,9 @@ namespace CGAL {
 // ----------------------------------------------------------------------------
 // Rich Grid section
 // ----------------------------------------------------------------------------
-//namespace rich_grid_internel{
+//namespace rich_grid_internal{
 
-namespace rich_grid_internel{
+namespace rich_grid_internal{
  
 /// The Rich_point class represents a 3D point with inedxes of neighbor points;
 /// - a position,

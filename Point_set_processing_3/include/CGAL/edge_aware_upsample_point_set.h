@@ -63,8 +63,8 @@ namespace upsample_internal{
 template <typename Kernel>
 typename Kernel::FT
 base_point_selection(
-  const rich_grid_internel::Rich_point<Kernel>& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> >& 
+  const rich_grid_internal::Rich_point<Kernel>& query, ///< 3D point to project
+  const std::vector<rich_grid_internal::Rich_point<Kernel> >& 
                     neighbor_points,///< neighbor sample points
   const typename Kernel::FT edge_senstivity,///< edge senstivity parameter
   unsigned int& output_base_index ///< base point index
@@ -74,7 +74,7 @@ base_point_selection(
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
-  typedef typename rich_grid_internel::Rich_point<Kernel> Rich_point;
+  typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
 
   FT best_dist2 = -10.0;
@@ -138,7 +138,7 @@ update_new_point(
   unsigned int new_point_index, ///< new inserted point
   unsigned int father_index, ///< father point index
   unsigned int mother_index, ///< mother point index
-  std::vector<rich_grid_internel::Rich_point<Kernel> >& rich_point_set,
+  std::vector<rich_grid_internal::Rich_point<Kernel> >& rich_point_set,
                                                            ///< all rich points
   const typename Kernel::FT radius,          ///< accept neighborhood radius
   const typename Kernel::FT sharpness_bandwidth  ///< control sharpness
@@ -148,7 +148,7 @@ update_new_point(
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
-  typedef typename rich_grid_internel::Rich_point<Kernel> Rich_point;
+  typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   unsigned int size = rich_point_set.size();
   CGAL_point_set_processing_precondition(father_index >= 0 &&
@@ -314,8 +314,8 @@ edge_aware_upsample_point_set(
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
-  typedef typename rich_grid_internel::Rich_point<Kernel> Rich_point;
-  typedef typename rich_grid_internel::Rich_box<Kernel> Rich_box;
+  typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
+  typedef typename rich_grid_internal::Rich_box<Kernel> Rich_box;
 
   // preconditions
   CGAL_point_set_processing_precondition(first != beyond);
@@ -350,7 +350,7 @@ edge_aware_upsample_point_set(
   }
 
   // compute neighborhood
-  rich_grid_internel::compute_ball_neighbors_one_self(rich_point_set,
+  rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
                                                       box,
                                                       neighbor_radius);
 
@@ -376,7 +376,7 @@ edge_aware_upsample_point_set(
       {
         current_radius = density_pass_threshold * 3;
       }
-      rich_grid_internel::compute_ball_neighbors_one_self(rich_point_set,
+      rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
                                                           box,
                                                           current_radius);
     }

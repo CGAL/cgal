@@ -63,7 +63,7 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> >& 
+  const std::vector<rich_grid_internal::Rich_point<Kernel> >& 
                     neighbor_original_points,///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set ///< densities
@@ -117,7 +117,7 @@ template <typename Kernel>
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  const std::vector<rich_grid_internel::Rich_point<Kernel> >& 
+  const std::vector<rich_grid_internal::Rich_point<Kernel> >& 
              neighbor_sample_points, ///< neighbor sample points
   const typename Kernel::FT radius, ///<accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set ///< densities
@@ -294,7 +294,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
-  typedef typename rich_grid_internel::Rich_point<Kernel> Rich_point;
+  typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -345,7 +345,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   std::vector<Rich_point> original_rich_point_set(nb_points_original);
   std::vector<Rich_point> sample_rich_point_set(nb_points_sample);
 
-  rich_grid_internel::Rich_box<Kernel> box;
+  rich_grid_internal::Rich_box<Kernel> box;
   for (i = 0; i < nb_points_original; i++)
   {  
     Point& p0 = original_points[i];
@@ -361,7 +361,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     task_timer.start();
     std::cout << "Initialization / Compute Density For Original" << std::endl;
   
-    rich_grid_internel::compute_ball_neighbors_one_self(original_rich_point_set
+    rich_grid_internal::compute_ball_neighbors_one_self(original_rich_point_set
                                                        , box, neighbor_radius);
                         
     for (i = 0; i < nb_points_original; i++)
@@ -405,7 +405,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
       Rich_point rp(p0, i);
       sample_rich_point_set[i] = rp;
     }
-    rich_grid_internel::compute_ball_neighbors_one_self(sample_rich_point_set,
+    rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_point_set,
                                                         box, neighbor_radius);
 
     // Compute sample density weight for sample points if user needed
@@ -432,7 +432,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     }
 
     // Build Ball Tree For Sample-Original Neighbor
-    rich_grid_internel::compute_ball_neighbors_one_to_another
+    rich_grid_internal::compute_ball_neighbors_one_to_another
                        (sample_rich_point_set,
                         original_rich_point_set, box, neighbor_radius);
 
