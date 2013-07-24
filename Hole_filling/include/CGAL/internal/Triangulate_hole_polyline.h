@@ -7,8 +7,69 @@
 #include <limits>
 #include <CGAL/value_type_traits.h>
 
+#include <CGAL/Triangulation_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <boost/iterator/transform_iterator.hpp>
+
 namespace CGAL {
 namespace internal {
+
+template<typename K>
+class Triangulation_boundary_check {
+  typedef typename K::Point_3 Point_3;
+  typedef std::vector<Point_3> Polyline_3;
+
+  typedef Triangulation_vertex_base_with_info_3<int, K>  VB_with_id;
+  typedef Triangulation_data_structure_3<VB_with_id>     TDS;
+  typedef Delaunay_triangulation_3<K, TDS>               Triangulation;
+
+  template<class Point>
+  struct Auto_count {
+    typedef std::pair<Point, int> result_type;
+
+    Auto_count() : count(0)  { }
+
+    template<class Point>
+    std::pair<Point, int> operator()(const Point& p) const {
+      return std::make_pair(p, count++);
+    }
+
+    mutable int count;
+  };
+
+public:
+  bool check(Polyline_3& P) const {
+    if(P.front() != P.back()){ P.push_back(P.front()); }
+    if(P.size() < 5) { return true; }
+
+    typedef Triangulation::Finite_edges_iterator Finite_edges_iterator;
+    typedef Triangulation::Cell_handle    Cell_handle;
+    typedef Triangulation::Vertex_handle  Vertex_handle;
+
+    Triangulation T(boost::make_transform_iterator(P.begin(), Auto_count<Point_3>()),
+                    boost::make_transform_iterator(--P.end(), Auto_count<Point_3>()));
+
+    std::vector<bool> edge_exist(P.size()-1, false);
+    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) {
+      Cell_handle  ch = eb->first;
+      int v0_id = ch->vertex(eb->second)->info();
+      int v1_id = ch->vertex(eb->third)->info();
+      if(v0_id > v1_id) { std::swap(v0_id, v1_id); }
+
+      // check whether the edge is border edge
+      if(v0_id + 1 == v1_id) { edge_exist[v0_id] = true; }
+      else if(v0_id == 0 && v1_id == P.size() -2) { edge_exist[v1_id] = true; }
+    }
+
+    int not_exists = 0;
+    for(std::vector<bool>::iterator it = edge_exist.begin(); it != edge_exist.end(); ++it) {
+      if(!(*it)) { not_exists++; }
+    }
+    std::cout << "Not inside DT: " << not_exists << " of " << (P.size() - 1) << std::endl;
+    return not_exists == 0;
+  }
+};
 
 template <typename K>
 class Triangulate_hole_polyline {
