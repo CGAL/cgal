@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s) : Shihao Wu, Cl¨¦ment Jamin, Pierre Alliez  
+// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez  
 
 #ifndef CGAL_RICH_GRID_H
 #define CGAL_RICH_GRID_H
