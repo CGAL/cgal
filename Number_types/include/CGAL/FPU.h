@@ -152,8 +152,13 @@ inline double IA_force_to_double(double x)
 // In case one does not care about such "extreme" situations, one can
 // set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
 // LLVM doesn't have -frounding-math so needs extra protection.
+// GCC also migrates fesetround calls through FP instructions, so protect
+// everyone (but Microsoft for now).
+// TODO: reorganize the various protections, separating excess precision from
+// abusive optimizations.
 #if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__
+   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__ \
+   || !defined _MSC_VER
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
