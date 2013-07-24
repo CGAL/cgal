@@ -314,11 +314,11 @@ public:
 /// @return average point move error.
 
 // This variant requires all parameters.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+          typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
-          typename Kernel,
-          typename Concurrency_tag>
+          typename Kernel>
 double
 bilateral_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -477,7 +477,8 @@ bilateral_smooth_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+          typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap>
 double
@@ -492,7 +493,7 @@ bilateral_smooth_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return bilateral_smooth_point_set<Parallel_tag>(
+  return bilateral_smooth_point_set<Concurrency_tag>(
     first, beyond,
     point_pmap,
     normal_pmap,
@@ -504,9 +505,9 @@ bilateral_smooth_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
-template <typename ForwardIterator,
-          typename NormalPMap,
-          typename Concurrency_tag>
+template <typename Concurrency_tag,
+          typename ForwardIterator,
+          typename NormalPMap>
 double
 bilateral_smooth_point_set(
   ForwardIterator first, ///< first input point.
@@ -515,7 +516,7 @@ bilateral_smooth_point_set(
   double sharpness_sigma,  ///< control sharpness(0-90)
   NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
 {
-  return bilateral_smooth_point_set(
+  return bilateral_smooth_point_set<Concurrency_tag>(
     first, beyond,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),

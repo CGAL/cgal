@@ -49,7 +49,7 @@ namespace rich_grid_internal{
  
 /// The Rich_point class represents a 3D point with inedxes of neighbor points;
 /// - a position,
-/// - a index.
+/// - an index.
 /// - self point set neighbors.
 /// - other point set neighbors.
 ///
@@ -65,9 +65,9 @@ public:
 
 public:
   Rich_point(const Point& p = CGAL::ORIGIN,
-             const int& i = 0,
-             const Vector& v = CGAL::NULL_VECTOR
-             ):pt(p), index(i), normal(v){} 
+             int i = 0,
+             const Vector& n = CGAL::NULL_VECTOR
+             ):pt(p), index(i), normal(n){} 
 
 public:
   Point pt;
@@ -116,8 +116,8 @@ class Rich_grid
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
-  typedef std::vector<Rich_point<Kernel>*> Point_Pointer_vector;
-  typedef typename Point_Pointer_vector::iterator iterator;
+  typedef std::vector<Rich_point<Kernel>*> Point_ptr_vector;
+  typedef typename Point_ptr_vector::iterator iterator;
 
 public:
 
@@ -142,17 +142,17 @@ public:
 
 
   // functions for neighborhood searching
-  void static __cdecl find_original_neighbors(iterator starta, 
+  void static find_original_neighbors(iterator starta, 
                                               iterator enda, 
                                               iterator startb,
                                               iterator endb, 
                                               FT radius);
 
-  void static  __cdecl find_self_neighbors(iterator start, 
+  void static find_self_neighbors(iterator start, 
                                            iterator end, 
                                            FT radius);
  
-  void static  __cdecl find_other_neighbors(iterator starta, 
+  void static find_other_neighbors(iterator starta, 
                                             iterator enda, 
                                             iterator startb, 
                                             iterator endb, 
@@ -161,21 +161,21 @@ public:
 private:
   
   std::vector<Rich_point<Kernel>*> rich_points;  
-  std::vector<int> index;   
+  std::vector<int> indices;   
   int x_side, y_side, z_side;
   FT radius;
 
   int cell(int x, int y, int z) { return x + x_side*(y + y_side*z); }
-  bool is_empty(int cell) { return index[cell+1] == index[cell]; }
+  bool is_empty(int cell) { return indices[cell+1] == indices[cell]; }
 
   iterator get_start_iter(int origin) 
   { 
-    return rich_points.begin() + index[origin]; 
+    return rich_points.begin() + indices[origin]; 
   }  
 
   iterator get_end_iter(int origin) 
   { 
-    return rich_points.begin() + index[origin+1]; 
+    return rich_points.begin() + indices[origin+1]; 
   }
 };
 
@@ -221,7 +221,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   Point max = box.get_max();
 
   rich_points.resize(vert.size());
-  for(int i = 0; i < rich_points.size(); i++)
+  for(int i = 0; i < rich_points.size(); ++i)
   {
     Point& pt = vert[i].pt;  
     rich_points[i] = &vert[i];
@@ -235,7 +235,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   y_side = (y_side > 0) ? y_side : 1;
   z_side = (z_side > 0) ? z_side : 1;
 
-  index.resize(x_side * y_side * z_side + 1, -1);  
+  indices.resize(x_side * y_side * z_side + 1, -1);  
 
   std::sort(rich_points.begin(), rich_points.end(), Z_Sort<Kernel>()); 
 
@@ -265,7 +265,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
       for(int x = 0; x < x_side; x++) 
       {
         int end_x = start_x;
-        index[x + x_side * y + x_side * y_side * z] = end_x;          
+        indices[x + x_side * y + x_side * y_side * z] = end_x;          
         FT max_x = min.x() + (x+1) * radius;
         while(end_x < end_y && rich_points[end_x]->pt.x() < max_x)
           ++end_x;
@@ -278,7 +278,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   }
 
   //compute the last grid's range
-  index[x_side * y_side * z_side] = start_z;
+  indices[x_side * y_side * z_side] = start_z;
 }
 
 /// define how to travel in the same gird 
@@ -497,7 +497,7 @@ void compute_ball_neighbors_one_self(
   typedef typename Kernel::FT FT;
   CGAL_point_set_processing_precondition(radius > 0);
 
-  for (unsigned int i = 0; i < points.size(); i++)
+  for (unsigned int i = 0; i < points.size(); ++i)
   {
     points[i].neighbors.clear();
   }
@@ -529,7 +529,7 @@ void compute_ball_neighbors_one_to_another(
     return;
   }
 
-  for (unsigned int i = 0; i < samples.size(); i++)
+  for (unsigned int i = 0; i < samples.size(); ++i)
   {
     samples[i].original_neighbors.clear();
   }

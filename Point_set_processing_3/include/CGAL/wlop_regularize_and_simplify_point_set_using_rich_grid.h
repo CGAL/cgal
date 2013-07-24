@@ -84,7 +84,7 @@ compute_average_term(
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
   FT iradius16 = -(FT)4.0/radius2;
   Vector average = CGAL::NULL_VECTOR; 
-  for (unsigned int i = 0; i < neighbor_original_points.size(); i++)
+  for (unsigned int i = 0; i < neighbor_original_points.size(); ++i)
   {
     const Point& np = neighbor_original_points[i].pt;
     unsigned int idx_of_original = neighbor_original_points[i].index;
@@ -140,7 +140,7 @@ compute_repulsion_term(
   FT iradius16 = -(FT)4.0/radius2;
 
   Vector repulsion = CGAL::NULL_VECTOR; 
-  for (unsigned int i = 0; i < neighbor_sample_points.size(); i++)
+  for (unsigned int i = 0; i < neighbor_sample_points.size(); ++i)
   {
     const Point& np = neighbor_sample_points[i].pt;
     unsigned int idx_of_sample = neighbor_sample_points[i].index;
@@ -195,7 +195,7 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  for (unsigned int i = 0; i < neighbor_original_points.size(); i++)
+  for (unsigned int i = 0; i < neighbor_original_points.size(); ++i)
   {
     const Point& np = neighbor_original_points[i];
     FT dist2 = CGAL::squared_distance(query, np);
@@ -233,7 +233,7 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  for (unsigned int i = 0; i < neighbor_sample_points.size(); i++)
+  for (unsigned int i = 0; i < neighbor_sample_points.size(); ++i)
   {
     const Point& np = neighbor_sample_points[i];
     FT dist2 = CGAL::squared_distance(query, np);
@@ -321,7 +321,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   //Copy sample points
   std::vector<Point> sample_points(nb_points_sample);
   unsigned int i; // sample point index
-  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
+  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       sample_points[i] = get(point_pmap, *it);
@@ -332,7 +332,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     
   //Copy original points(Maybe not the best choice)
   std::vector<Point> original_points(nb_points_original);
-  for(it = first_original_point, i = 0; it != beyond; ++it, i++)
+  for(it = first_original_point, i = 0; it != beyond; ++it, ++i)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
      original_points[i] = get(point_pmap, it);
@@ -346,7 +346,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   std::vector<Rich_point> sample_rich_point_set(nb_points_sample);
 
   rich_grid_internal::Rich_box<Kernel> box;
-  for (i = 0; i < nb_points_original; i++)
+  for (i = 0; i < nb_points_original; ++i)
   {  
     Point& p0 = original_points[i];
     Rich_point rp(p0, i);
@@ -364,7 +364,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     rich_grid_internal::compute_ball_neighbors_one_self(original_rich_point_set
                                                        , box, neighbor_radius);
                         
-    for (i = 0; i < nb_points_original; i++)
+    for (i = 0; i < nb_points_original; ++i)
     {
       // get original point positions from indexes
       std::vector<Point> original_neighbors;
@@ -399,7 +399,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     std::cout << "Compute average term and repulsion term " << std::endl;
 
     // Build Ball Tree For Sample Neighbor
-    for (i=0 ; i < sample_points.size(); i++)
+    for (i=0 ; i < sample_points.size(); ++i)
     {
       Point& p0 = sample_points[i];
       Rich_point rp(p0, i);
@@ -412,7 +412,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     std::vector<FT> sample_density_weight_set;
     if (need_compute_density)
     {
-      for (i=0 ; i < sample_points.size(); i++)
+      for (i=0 ; i < sample_points.size(); ++i)
       {
         std::vector<Point> sample_neighbors;
         std::vector<unsigned int>& neighors_indexes = 
@@ -442,7 +442,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     std::vector<Vector> repulsion_set(nb_points_sample);
 
     // average term
-    for (i = 0; i < sample_points.size(); i++)
+    for (i = 0; i < sample_points.size(); ++i)
     {
       Point& p = sample_points[i];
       std::vector<Rich_point> rich_original_neighbors;
@@ -469,7 +469,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     }
 
     //repulsion term
-    for (i = 0; i < sample_points.size(); i++)
+    for (i = 0; i < sample_points.size(); ++i)
     {
       std::vector<Rich_point> rich_sample_neighbors;
       std::vector<unsigned int>& neighors_indexes = 
@@ -496,7 +496,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     }
     
     // update points positions according to average and repulsion term
-    for (i = 0; i < sample_points.size(); i++)
+    for (i = 0; i < sample_points.size(); ++i)
     {
       Point& p = sample_points[i];
       p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
@@ -511,7 +511,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   }
 
   //Copy back modified sample points to original points for output
-  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
+  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
   {
     Point& sample_p = sample_points[i];
 

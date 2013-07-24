@@ -79,7 +79,7 @@ base_point_selection(
 
   FT best_dist2 = -10.0;
   const Rich_point& v = query;
-  for (unsigned int i = 0; i < neighbor_points.size(); i++)
+  for (unsigned int i = 0; i < neighbor_points.size(); ++i)
   {
     const Rich_point& t = neighbor_points[i];
   
@@ -163,11 +163,11 @@ update_new_point(
 
   std::set<int> neighbor_indexes;
   unsigned int i;
-  for (i = 0; i < father_v.neighbors.size(); i++)
+  for (i = 0; i < father_v.neighbors.size(); ++i)
   {
     neighbor_indexes.insert(father_v.neighbors[i]);
   }
-  for (i = 0; i < mother_v.neighbors.size(); i++)
+  for (i = 0; i < mother_v.neighbors.size(); ++i)
   {
     neighbor_indexes.insert(mother_v.neighbors[i]);
   }
@@ -204,7 +204,7 @@ update_new_point(
    
   FT radius16 = FT(-4.0) / radius2;
 
-  for (i = 0; i < new_v.neighbors.size(); i++)
+  for (i = 0; i < new_v.neighbors.size(); ++i)
   {
     Rich_point& t = rich_point_set[new_v.neighbors[i]];
     FT dist2 = CGAL::squared_distance(new_v.pt, t.pt);
@@ -227,7 +227,7 @@ update_new_point(
   FT min_project_dist = (FT)(std::numeric_limits<double>::max)();
   unsigned int best = 0;
 
-  for (i = 0; i < candidate_num; i++)
+  for (i = 0; i < candidate_num; ++i)
   {
     FT absolute_dist = abs(project_dist_sum[i] / weight_sum[i]);
     if (absolute_dist < min_project_dist)
@@ -335,7 +335,7 @@ edge_aware_upsample_point_set(
   unsigned int i; 
   std::vector<Rich_point> rich_point_set(number_of_input);
   Rich_box box;
-  for(it = first, i = 0; it != beyond; ++it, i++)
+  for(it = first, i = 0; it != beyond; ++it, ++i)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     rich_point_set[i].pt = get(point_pmap, it);
@@ -388,7 +388,7 @@ edge_aware_upsample_point_set(
     if (iter_time == 0)
     {
       //estimate density threshold for the first time
-      for (i = 0; i < rich_point_set.size() * 0.05; i++)
+      for (i = 0; i < rich_point_set.size() * 0.05; ++i)
       {
         Rich_point& v = rich_point_set[i];
 
@@ -430,7 +430,7 @@ edge_aware_upsample_point_set(
       std::cout << "loop_time: " << loop + 1 << std::endl;
       unsigned int count_not_pass = 0;
       loop++;
-      for (i = 0; i < rich_point_set.size(); i++)
+      for (i = 0; i < rich_point_set.size(); ++i)
       {
         if (is_pass_threshold[i])
         {
@@ -511,7 +511,7 @@ edge_aware_upsample_point_set(
 
 
 
-  for (i = number_of_input; i < rich_point_set.size(); i++)
+  for (i = number_of_input; i < rich_point_set.size(); ++i)
   {
     Rich_point& v = rich_point_set[i];
     Point point = v.pt;
