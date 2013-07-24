@@ -13,7 +13,7 @@ while the AABB tree holding the primitive is in use.
 
 
 \ccParameters
-\ccc{FaceGraph} is a model of the face graph concept.\\
+\ccc{FaceGraph} is a CGAL polyhedron.\\
 \ccc{OneFaceGraphPerTree} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, we guarantee that all the primitives will be from a common \ccc{FaceGraph} and some data 
 will be factorized so that the size of the primitive is reduced. In the latter case, the primitives can be from different graphs and extra storage is required in the primitives. The default is \ccc{CGAL::Tag_true}.\\
 \ccc{CacheDatum} is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. In the former case, the datum is stored in the primitive, while in the latter it is constructed on the fly to reduce

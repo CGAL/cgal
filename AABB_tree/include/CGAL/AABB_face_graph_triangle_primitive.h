@@ -38,7 +38,7 @@ namespace CGAL {
  *
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
- *\tparam FaceGraph is a \cgal Polyhedron.
+ *\tparam FaceGraph is a \cgal polyhedron.
  *\tparam VertexPointPMap must be set to `CGAL::Default`
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
  *\tparam OneFaceGraphPerTree must be set to `CGAL::Default`
