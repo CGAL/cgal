@@ -14,29 +14,38 @@ namespace CGAL {
 An example figure. 
 \cgalFigureEnd
 
-Given a set of segments \f$ E \f$ and a point \f$ p \f$ on 2D plane, we say a point \f$ q \f$ is visible from \f$ p \f$ iff segment \f$ pq \f$ doesn't intersect any segment in \f$ E \f$. The set of points that are visible from \f$ p \f$ is defined as the visibility region of \f$ p \f$ in \f$ E \f$. We refer to \f$ E \f$ as environment.
+Given a polygon \f$ P \f$(might have holes) and  two points \f$ p \f$ and \f$ q \f$ are said to be visible  iff segment joining \f$ p \f$ and \f$ q \f$  contains no point on the exterior of \f$ P \f$ . The set of points that are visible from \f$ p \f$ is defined as the visibility region of \f$ p \f$.  We refer to \f$ P \f$ as environment. 
 
-In reality there are many ways to define 'intersect' in the definition above which leads to different visibility region. This package provides two kinds of visibility model.
-- Regularized Visibility :
-  \f$ p \f$ is visible from \f$ q \f$ iff \f$ E \f$ has no inner point from \f$ pq \f$. 
-- Non-regularized Visibility :
-  \f$ p \f$ is visible from \f$ q \f$ iff \f$ \forall \f$ neighbourhood \f$ B(q,\epsilon) \f$, there are two points, \f$ q_1 \f$ and \f$ q_2 \f$ such that no connected component of \f$ E \f$ has inner points from both \f$ pq_1 \f$ and \f$ pq_2 \f$.
+For some practical reasons, this package provides two kinds of visibility region:
+- Non-regularized : defined as above.
+- Regularized : the closure of interior of non-regularized region.
 
-  Look at Figure for an example.
-  \cgalFigureBegin{definition_figure, visibility-definition.png}
-  All labellde points are collinear. Part (a) shows the regularized visiblity region from \f$ p \f$. During these points, only \f$ a \f$ is visible from \f$ p \f$. The result will be the boundary of the set of visible points, so \f$ b \f$ and \f$ c \f$ will be also reported. Part (b) shows the non-regularized visibility region. Along the ray \f$ pa \f$, \f$ p \f$ can see \f$ a \f$, \f$ b \f$, \f$ c \f$ and \f$ d \f$. \f$ p \f$ can't see \f$ e \f$, because of the red component of environment.
+Look at Figure \cgalFigureRef{definition} as an example.
+
+  \cgalFigureBegin{definition, visibility-definition.png}
+  All labelled points are collinear. Part (1) shows the non-regularized visiblity region of \f$ p \f$. Part (2) is the regularzied visibility region of \f$ p \f$ . The difference between them is segement \f$ bc \f$.
   \cgalFigureEnd
 
-\section visibility_2_interface Interface
+\section visibility_2_classes Classes and Algorithms
 
-CGAL provides three class templates, `Simple_visibility_2`, `Naive_visibility_2` and `Preprocessed_visibility_2`, to do visibility computing in simple polygons, arbitrary arrangement of segments and visibility query in arbitrary arrangement respectively. Every templates has two parameters, `ArrTraits_2` and `Regularization_tag`. All classes accept an arrangement as input. `ArrTraits_2` conveys the type information of input arrangement as well as functors that will link the vertices, edges and faces of  visibility region to the related part of input; for example, an edge of visibility polygon could be linked to the vertex of input that blocks the vision so that leads to that edge. Users are free to define their own `ArrTraits_2` class so that they can choose to keep what information obtained in the last result. `Regularization_tag` indicates whether the result should be regularized or not.
+CGAL provides three class templates:
+Class 		|	Function |   Algorthm and Complexity 
+----------------|--------------- |---------------------------
+ `Simple_visibility_2`       | compute visibility in simple polygons                        |\cite cgal:bjrb-clvpa-87, \f$ O(n) \f$ time and \f$ O(n) \f$ space
+ `Naive_visibility_2`        |  compute visibility in an arbitrary arrangement of segments. |\cite cgal:ta-aeafvpprh-85, \f$ O(n\log n) \f$ time and \f$ O(n) \f$
+ `Preprocessed_visibility_2` | visibility query in arbitrary arrangement of segments.       |\cite cgal:aaghi-vpsesp-85. The preprocessing needs \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space. The query time is \f$ O(n) \f$. 
 
-Let \f$ n \f$ be the number of vertices of input. `Simple_visibility_2` implements the algorithm of \cite bjrb-clvpa-87, which takes \f$ O(n) \f$ time and \f$ O(n) \f$ space. `Naive_visibility_2` implements the algorithm of \cite ta-aeafvpprh-85, which takes \f$ O(n\log n) \f$ time and \f$ O(n) \f$. `Preprocessed_visibility_2` uses the algortihm of \cite aaghi-vpsesp-85. The preprocessing needs \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space. The query time is \f$ O(n) \f$. 
+where  \f$ n \f$ is the number of vertices of input polygon.
 
-\section simple_visibility_example  Example of visibility query in simple polygon environment.
+Every templates has two parameters, `Arrangement_2` and `Regularization_tag`. All classes accept an instance of `Arrangement_2` as the environment \f$ P \f$. `Regularization_tag` indicates whether the result should be regularized or not. 
 
+Each class has two overloads of `visibility_region` functions. One is for case that query point is in the interior of environment. One is for case that query point is on the boundary of environment. The answer is an instance of `Arrangement_2` that consists of edges on the boundary of visibility region.
 
+\section simple_visibility_example  Example of visibility in a simple polygon.
+The following example shows how to obtain the visibility region in Figure \cgalFigureRef{definition}(1).
+\cgalExample{Visibility_2/simple_visibility_2.cpp}
 
+\section polygon_with_hole_example Example of visibility in a polygon with holes.
 
 */
 
