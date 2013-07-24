@@ -23,11 +23,6 @@ public:
   
 /// \name Operations 
 /// @{ 
-  /// Set the bounding box of the domain
-  /// Depending on the way one manages the 3D domain, this may be an
-  /// empty function.
-  void set_bbox(const CGAL::Bbox_3 &bbox);
-  
   /// Test if `point` is locked (by this thread or by any other thread).
   template <typename P3>
   bool is_locked(const P3 &point);
