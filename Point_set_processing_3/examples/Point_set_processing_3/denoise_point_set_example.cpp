@@ -53,12 +53,13 @@ int main(void)
       std::cout << std::endl << "Iteration: " << i+1 << std::endl;
      
       double error = 
-      CGAL::bilateral_smooth_point_set/*<CGAL::Parallel_tag>*/(
+      CGAL::bilateral_smooth_point_set<CGAL::Parallel_tag>(
             points.begin(), 
             points.end(),
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            k, sharpness_sigma);
+            k,
+            sharpness_sigma);
 
       std::cout << std::endl << "move error: " << error << std::endl;
     }
