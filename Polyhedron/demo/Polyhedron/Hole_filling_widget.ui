@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>311</width>
-    <height>312</height>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -145,6 +145,13 @@
          </property>
          <property name="text">
           <string>Fill Selected Holes</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Create_polyline_items_button">
+         <property name="text">
+          <string>Create Polyline Items for Selected Holes</string>
          </property>
         </widget>
        </item>

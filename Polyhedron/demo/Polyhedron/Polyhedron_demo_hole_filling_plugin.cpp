@@ -306,6 +306,7 @@ public slots:
   void on_Fill_all_holes_button();
   void on_Visualize_holes_button();
   void on_Fill_selected_holes_button();
+  void on_Create_polyline_items_button();
   void on_Accept_button();
   void on_Reject_button();
   void item_about_to_be_destroyed(Scene_item*);
@@ -381,6 +382,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
   connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
   connect(ui_widget.Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));
+  connect(ui_widget.Create_polyline_items_button,  SIGNAL(clicked()), this, SLOT(on_Create_polyline_items_button()));
   connect(ui_widget.Accept_button,  SIGNAL(clicked()), this, SLOT(on_Accept_button()));
   connect(ui_widget.Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
 
@@ -508,6 +510,26 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   scene->itemChanged(poly_item);
   last_active_item = poly_item;
   accept_reject_toggle(true);
+}
+// Simply create polyline items and put them into scene - nothing related with other parts of the plugin
+void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
+  Scene_polylines_collection* polyline_item = get_selected_item<Scene_polylines_collection>();
+  if(!polyline_item) {
+    print_message("Error: please select a hole visualizer from Geometric Objects list!");
+    return;
+  }
+  if(polyline_item->selected_holes.empty()) {
+    print_message("Error: there is no selected holes in hole visualizer!");
+    return;
+  }
+  int counter = 0;
+  for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
+    it != polyline_item->selected_holes.end(); ++it) {
+      Scene_polylines_item* polyline_item = new Scene_polylines_item();
+      polyline_item->polylines = (*it)->polyline->polylines;
+      polyline_item->setName(QString("selected hole %1").arg(counter++));
+      scene->addItem(polyline_item);
+  }
 }
 void Polyhedron_demo_hole_filling_plugin::on_Accept_button() {
   if(last_active_item == NULL) { return; }
