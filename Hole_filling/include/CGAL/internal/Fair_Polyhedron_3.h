@@ -107,6 +107,8 @@ public:
   template<class InputIterator>
   bool fair(Polyhedron& polyhedron, InputIterator vb, InputIterator ve)
   {
+    const unsigned int depth = 2 /*L^2*/; /* TODO: actually it can become a parameter - L, L^2, L^3 or more */
+
     std::set<Vertex_handle> interior_vertices(vb, ve);
     if(interior_vertices.empty()) { return true; }
 
@@ -127,7 +129,7 @@ public:
 
     for(typename std::set<Vertex_handle>::iterator vb = interior_vertices.begin(); vb != interior_vertices.end(); ++vb) {
       std::size_t v_id = vertex_id_map[*vb];
-      compute_row(*vb, polyhedron, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, 2);
+      compute_row(*vb, polyhedron, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
     CGAL_TRACE_STREAM << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
 
@@ -149,13 +151,16 @@ public:
     }
     CGAL_TRACE_STREAM << "**Timer** System solver: " << timer.time() << std::endl; timer.reset();
 
-    // Warning: Eigen dependent
+    
+    /* This relative error is to large for cases that the results are not good */ 
+    /*
     double rel_err_x = (A.eigen_object()*X - Bx).norm() / Bx.norm();
     double rel_err_y = (A.eigen_object()*Y - By).norm() / By.norm();
     double rel_err_z = (A.eigen_object()*Z - Bz).norm() / Bz.norm();
     CGAL_TRACE_STREAM << "rel error: " << rel_err_x 
                                 << " " << rel_err_y
                                 << " " << rel_err_z << std::endl;
+                                */
 
     // update 
     id = 0;
