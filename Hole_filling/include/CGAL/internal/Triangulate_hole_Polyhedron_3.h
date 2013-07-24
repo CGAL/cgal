@@ -27,15 +27,15 @@ triangulate_hole(Polyhedron& polyhedron,
   OutputIterator output
   )
 {
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Traits::Point_3 Point_3;
+  typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
+  typedef typename Polyhedron::Halfedge_around_facet_circulator   Halfedge_around_facet_circulator;
+  typedef typename Polyhedron::Vertex_handle                      Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle                    Halfedge_handle;
+  typedef typename Polyhedron::Traits::Point_3                    Point_3;
 
-  std::vector<Point_3> P, Q;
+  std::vector<Point_3>         P, Q;
   std::vector<Halfedge_handle> P_edges;
-  std::set<Vertex_handle> vertex_set;
+  std::set<Vertex_handle>      vertex_set;
 
   Halfedge_around_facet_circulator circ(border_halfedge), done(circ);
   do{
@@ -44,14 +44,18 @@ triangulate_hole(Polyhedron& polyhedron,
     P_edges.push_back(circ);
     vertex_set.insert(circ->vertex());
   } while (++circ != done);
+
   CGAL::Timer timer; timer.start();
+
+  // fill hole using polyline function
   std::vector<boost::tuple<int, int, int> > tris;
   triangulate_hole_polyline(P.begin(), P.end(), Q.begin(), Q.end(), back_inserter(tris));
-  CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl;
-  timer.reset();
+
+  CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
 
   // construct patch
-  // TODO: performance might not be good
+  // TODO: performance might be improved,
+  //       although test on RedCircleBox.off shows that cost of this part is really insignificant compared to hole filling
   polyhedron.fill_hole(border_halfedge);
   *output++ = border_halfedge->facet();
   for(std::vector<boost::tuple<int, int, int> >::iterator tris_it = tris.begin(); tris_it != tris.end(); ++tris_it) {
@@ -65,8 +69,8 @@ triangulate_hole(Polyhedron& polyhedron,
       bool border_edge = (v0_id + 1 == v1_id) || (v0_id == 0 && v1_id == P.size() -1); 
       bool smaller = v0_id < v1_id;
 
-      if( smaller /* to process one edge just one time */ && 
-         !border_edge /* border edges don't require split */) 
+      if( smaller &&  /* to process one edge just one time */  
+         !border_edge /* border edges don't require split  */ ) 
       { // this part is going to be executed exactly N-3 times
 
         Vertex_handle v0 = P_edges[v0_id]->vertex();
@@ -78,13 +82,15 @@ triangulate_hole(Polyhedron& polyhedron,
         do { 
           circ_v1 = v1->vertex_begin();
           do {
-            if(circ_v0->facet() == circ_v1->facet()) {
+            if(circ_v0->facet() == circ_v1->facet()) 
+            {
               if(vertex_set.find(circ_v0->opposite()->vertex()) != vertex_set.end() &&
-                 vertex_set.find(circ_v1->opposite()->vertex()) != vertex_set.end())
+                 vertex_set.find(circ_v1->opposite()->vertex()) != vertex_set.end() )
               { found = true; }
             }
           } while(!found && ++circ_v1 != v1->vertex_begin());
         } while(!found && ++circ_v0 != v0->vertex_begin());
+
         CGAL_assertion(found);
         polyhedron.split_facet(circ_v0, circ_v1);
         *output++ = circ_v1->facet();
