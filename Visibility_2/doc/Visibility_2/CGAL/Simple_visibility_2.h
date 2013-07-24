@@ -32,16 +32,15 @@ public:
 /// \name Types 
 /// @{
 
-  typedef Arrangement_2 Arr_traits_2;
  /*!
    The Arrangement type is used for input.
  */
-  typedef Arr_traits_2::Input_Arrangement_2 Input_Arrangement_2;
+  typedef Arrangement_2 Input_Arrangement_2;
 
  /*!
   *The Arrangement type is used for output.
   */
-  typedef Arr_traits_2::Output_Arrangement_2 Output_Arrangement_2;
+  typedef Arrangement_2 Output_Arrangement_2;
 
  /*! 
    The Point_2 type which is used for queries. 
