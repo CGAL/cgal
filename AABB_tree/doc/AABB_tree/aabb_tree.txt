@@ -42,7 +42,7 @@ primitives. Similarly, each distance query can return the closest
 point from the point query as well as the id of the closest primitive.
 
 \cgalFigureBegin{aabbtree_meca,anchor.png}
-Left: surface triangle mesh of a mechanical part. Right AABB tree constructed.
+Left: surface triangle mesh of a mechanical part. Right: AABB tree constructed.
 \cgalFigureEnd
 
 \section aabb_tree_interface Interface
