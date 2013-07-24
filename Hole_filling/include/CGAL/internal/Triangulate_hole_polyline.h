@@ -185,9 +185,9 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
   typename Fill::Polyline_3 Q(qbegin, qend);
   if(P.front() != P.back()){
     P.push_back(P.front());
-  }
-  if(! Q.empty() && (Q.front() != Q.back())){
-    Q.push_back(Q.front());
+    if( !Q.empty() && P.size() > Q.size()) {
+      Q.push_back(Q.front());
+    }
   }
   Fill fill;
   return fill.template triangulate<OutputIteratorValueType>(P,Q,out);
