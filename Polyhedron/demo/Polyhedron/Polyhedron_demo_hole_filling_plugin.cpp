@@ -193,6 +193,7 @@ private:
   }
   // finds closest polyline from polyline_data_list and makes it active_hole
   bool activate_closest_hole(int x, int y) {
+    typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
     if(polyline_data_list.empty()) { return false; }
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -204,12 +205,27 @@ private:
 
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it)
     {
+#if 0
+      /* use center of polyline to measure distance - performance wise */
       const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->position);
       float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
       if(dist < min_dist) {
         min_dist = dist;
         min_it = it;
       }
+#else
+      /* use polyline points to measure distance - might hurt performance for large holes */
+      Halfedge_around_facet_circulator hf_around_facet = it->halfedge->facet_begin();
+      do {
+        const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();
+        const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(qglviewer::Vec(p.x(), p.y(), p.z()));
+        float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
+        if(dist < min_dist) {
+          min_dist = dist;
+          min_it = it;
+        }
+      } while(++hf_around_facet != it->halfedge->facet_begin());
+#endif
     }
 
     if(min_it == active_hole) { 
