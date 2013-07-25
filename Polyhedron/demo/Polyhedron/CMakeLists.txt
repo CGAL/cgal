@@ -382,6 +382,14 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(mesh_simplification_plugin Polyhedron_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
+  #detect the sdf segmentation package for using the segmentation function
+  find_path(SDF_SEGMENTATION_INCLUDE_DIR CGAL/mesh_segmentation.h DOC "Path to Segmenation package.")
+  if (SDF_SEGMENTATION_INCLUDE_DIR)
+    MESSAGE(STATUS "Found SDF Segmentation package, enable smoother segmentation")
+    add_definitions(-DCGAL_HAS_SDF_SEGMENTATION)
+    include_directories(${SDF_SEGMENTATION_INCLUDE_DIR})
+  endif()
+
   polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Polyhedron_demo_mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
   target_link_libraries(mean_curvature_flow_skeleton_plugin 
     scene_polyhedron_item 
