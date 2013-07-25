@@ -938,7 +938,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   // add segmentation
   std::vector<int> skeleton_segment;
+  std::vector<bool> deleted;
   skeleton_segment.resize(boost::num_vertices(g));
+  deleted.resize(boost::num_vertices(g), false);
   for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
   {
     int deg = boost::out_degree(*vi, g);
@@ -946,14 +948,19 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     {
       // for branching point, cut some incident edges to make it an end point
       out_edge_iter e, e_end;
-      int cnt = 0;
-      while (cnt < deg - 1)
+      deleted[*vi] = true;
+      bool move_corr = false;
+      for (boost::tie(e, e_end) = boost::out_edges(*vi, g); e != e_end; e++)
       {
-        for (boost::tie(e, e_end) = boost::out_edges(*vi, g); e != e_end; e++)
+        edge_desc ed = *e;
+        int target = boost::target(ed, g);
+        // delete the branching point and move correspondent vertices to another vertex
+        if (!move_corr && !deleted[target])
         {
-          edge_desc ed = *e;
-          boost::remove_edge(ed, g);
-          cnt++;
+          corr[target].insert(corr[target].end(),
+                              corr[*vi].begin(),
+                              corr[*vi].end());
+          move_corr = true;
           break;
         }
       }
@@ -972,6 +979,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
       qu.pop();
     }
 
+    // branching points have been deleted
+    if (deleted[vid])
+    {
+      continue;
+    }
+
     if (!visited[vid])
     {
       qu.push(vid);
@@ -986,7 +999,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
         {
           edge_desc ed = *e;
           int target = boost::target(ed, g);
-          if (!visited[target])
+          if (!visited[target] && !deleted[target])
           {
             qu.push(target);
           }
@@ -999,7 +1012,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   std::cout << "num segment " << num_segment << "\n";
 
   std::vector<int> segment_id;
-  segment_id.resize(boost::num_vertices(*mCopy));
+  segment_id.resize(boost::num_vertices(*mCopy), -1);
   for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
   {
     int vid = *vi;
@@ -1048,6 +1061,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     {
       id = sid1;
     }
+
     f->set_patch_id(id);
   }
 
