@@ -30,6 +30,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 
+#include <queue>
+
 template<class PolyhedronWithId, class KeyType>
 struct Polyhedron_with_id_property_map
     : public boost::put_get_helper<std::size_t&,
@@ -44,9 +46,11 @@ public:
     reference operator[](key_type key) const { return key->id(); }
 };
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
+typedef Polyhedron::Facet_iterator                                  Facet_iterator;
+typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
@@ -56,6 +60,11 @@ typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matri
 typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+
+typedef boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
+typedef boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
+typedef boost::graph_traits<Graph>::edge_iterator                   edge_iter;
+typedef boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
@@ -926,6 +935,126 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   scene->addItem(endPointsItem, false);
   scene->addItem(junctionPointsItem, false);
+
+  // add segmentation
+  std::vector<int> skeleton_segment;
+  skeleton_segment.resize(boost::num_vertices(g));
+  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
+  {
+    int deg = boost::out_degree(*vi, g);
+    if (deg > 2)
+    {
+      // for branching point, cut some incident edges to make it an end point
+      out_edge_iter e, e_end;
+      int cnt = 0;
+      while (cnt < deg - 1)
+      {
+        for (boost::tie(e, e_end) = boost::out_edges(*vi, g); e != e_end; e++)
+        {
+          edge_desc ed = *e;
+          boost::remove_edge(ed, g);
+          cnt++;
+          break;
+        }
+      }
+    }
+  }
+
+  int num_segment = 0;
+  std::vector<bool> visited;
+  visited.resize(boost::num_vertices(g), false);
+  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
+  {
+    int vid = *vi;
+    std::queue<int> qu;
+    while(!qu.empty())
+    {
+      qu.pop();
+    }
+
+    if (!visited[vid])
+    {
+      qu.push(vid);
+      while (!qu.empty())
+      {
+        int cur = qu.front();
+        qu.pop();
+        visited[cur] = true;
+        skeleton_segment[cur] = num_segment;
+        out_edge_iter e, e_end;
+        for (boost::tie(e, e_end) = boost::out_edges(cur, g); e != e_end; e++)
+        {
+          edge_desc ed = *e;
+          int target = boost::target(ed, g);
+          if (!visited[target])
+          {
+            qu.push(target);
+          }
+        }
+      }
+      num_segment++;
+    }
+  }
+
+  std::cout << "num segment " << num_segment << "\n";
+
+  std::vector<int> segment_id;
+  segment_id.resize(boost::num_vertices(*mCopy));
+  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
+  {
+    int vid = *vi;
+    int seg = skeleton_segment[vid];
+    for (size_t i = 0; i < corr[vid].size(); i++)
+    {
+      segment_id[corr[vid][i]] = seg;
+    }
+  }
+
+  Polyhedron *segment_mesh = new Polyhedron(*mCopy);
+  int vertex_id_count = 0;
+  for (boost::tie(vb, ve) = boost::vertices(*segment_mesh); vb != ve; ++vb)
+  {
+    vb->id() = vertex_id_count++;
+  }
+
+  for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
+  {
+    Polyhedron::Halfedge_const_handle he = f->facet_begin();
+    int vid1 = he->vertex()->id();
+    int vid2 = he->next()->vertex()->id();
+    int vid3 = he->next()->next()->vertex()->id();
+    int sid1 = segment_id[vid1];
+    int sid2 = segment_id[vid2];
+    int sid3 = segment_id[vid3];
+
+    int id;
+    if (sid1 == sid2 && sid2 == sid3)
+    {
+      id = sid1;
+    }
+    else if (sid1 == sid2)
+    {
+      id = sid1;
+    }
+    else if (sid1 == sid3)
+    {
+      id = sid1;
+    }
+    else if (sid2 == sid3)
+    {
+      id = sid3;
+    }
+    else
+    {
+      id = sid1;
+    }
+    f->set_patch_id(id);
+  }
+
+  Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segment_mesh);
+  scene->addItem(item_segmentation);
+  item_segmentation->setName(QString("segmentation of %1").arg(item->name()));
+  item_segmentation->setVisible(false);
 
   // update scene
   QApplication::restoreOverrideCursor();

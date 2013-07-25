@@ -139,6 +139,7 @@ public:
 
   // Repeat Graph types
   typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
+  typedef typename boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 
