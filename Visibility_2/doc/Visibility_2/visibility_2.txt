@@ -14,17 +14,26 @@ namespace CGAL {
 An example figure. 
 \cgalFigureEnd
 
-Given a polygonal region \f$ P \f$, which may have holes, and  two points \f$ p \f$ and \f$ q \f$ are said to be visible  iff segment joining \f$ p \f$ and \f$ q \f$  contains no point on the exterior of \f$ P \f$ . The set of points that are visible from \f$ p \f$ is defined as the visibility region of \f$ p \f$.  
+Given a polygonal region \f$ P \f$, which may have holes, and  two points \f$ p \f$ , \f$ q \f$, in general \f$ p \f$ is said to be visible from \f$ q \f$ iff any inner point on segment joining \f$ p \f$ and \f$ q \f$ is "transparent".  The set of points that are visible from \f$ q \f$ is defined as the visibility region of \f$ q \f$.  
 
-For some practical reasons, this package provides two kinds of visibility region:
-- Non-regularized : defined as above.
-- Regularized : the closure of interior of non-regularized region.
+\cgalFigureBegin{definition-fig, definition.png}
+\cgalFigureEnd
+Look at Figure \cgalFigureRef{definition-fig}. Part(1) is a polygon \f$ P \f$ with hole \f$ H \f$. The blue polygon apparently is the visibility region of \f$ q \f$ in \f$ P \f$. In some degenerate situations, the definition of visibility is not that clear. For example, in Part(2), \f$ H \f$ shrinks to a segment which is collinear to \f$ q \f$ and vertex \f$ a \f$ moves to the segment joining \f$ q \f$ and \f$ b \f$. As a result, there are two "needles" in the visibility region of \f$ q \f$: \f$ ed \f$ is an inward "needle"; \f$ bc \f$ is an outward one. 
 
-Look at Figure \cgalFigureRef{definition} as an example.
 
-  \cgalFigureBegin{definition, visibility-definition.png}
-  All labelled points are collinear. Part (1) shows the non-regularized visiblity region of \f$ p \f$. Part (2) is the regularzied visibility region of \f$ p \f$ . The difference between them is segement \f$ bc \f$.
-  \cgalFigureEnd
+We proceed to define "transparency" so that these "needles" are naturally contained.
+Given a polygon \f$ P \f$, which may have proper holes, degenerate holes(isolated edges and isolated vertices), there are two types of points that is transparent with respect to point \f$ q \f$.
+-  interior of \f$ P \f$.
+-  vertex \f$ v \f$ if \f$ v \f$ is not isolated and all edges incident to \f$ v \f$ is in the same open half plane defined by line \f$ vq \f$ except \f$v\f$ itself.
+
+
+The visibility region based on the definition of transparency above is denoted by \f$ V \f$. In many cases the user is just interested in the regularized visibility area \f$ \overline{V} \f$.Also for some algorithms it's actually easier to provide \f$ \overline{V}  \f$ only. Thus, some visibility computation strategies in this package offer to compute the regularized visibility
+area \f$ \overline{V} \f$ directly.
+
+To sum up, this package provides two kinds of visibility region: 
+- Non-regularized visibility area \f$ V \f$.
+- Regularized visibility area \f$ \overline{V} \f$. 
+
 
 \section visibility_2_classes Classes and Algorithms
 
@@ -42,11 +51,12 @@ Every templates has two parameters, `Arrangement_2` and `Regularization_tag`. Us
 Each class has two overloads of `visibility_region` functions to compute the visibility region of \f$ p \f$ in a face \f$ F \f$. \f$ F \f$ should be bounded. One function is for case that \f$ p \f$ is in the interior of \f$ F \f$. The other is for case that \f$ p \f$ is on the boundary of \f$ F \f$. The answer is an instance of `Arrangement_2` that consists of edges on the boundary of visibility region.
 
 \section simple_visibility_example  Example of visibility in a simple polygon.
-The following example shows how to obtain the visibility region in Figure \cgalFigureRef{definition}(1).
+\cgalFigureBegin{example1-fig, example1.png}
+\cgalFigureEnd
+The following example shows how to obtain the visibility region of Figure \cgalFigureRef{example1-fig} and the difference between regularized and non-regularized visibility.
 \cgalExample{Visibility_2/simple_visibility_2.cpp}
-
-\section polygon_with_hole_example Example of visibility in a polygon with holes.
 
 */
 
 }
+
