@@ -27,7 +27,7 @@
 #define CGAL_AABB_POLYHEDRON_SEGMENT_PRIMITIVE_H_
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_segment_primitive.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_HalfedgeGraph_segment_primitive.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_halfedge_graph_segment_primitive.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
 namespace CGAL {
@@ -35,7 +35,7 @@ namespace CGAL {
 /// \addtogroup PkgAABB_tree
 /// @{
     /// \deprecated This class is deprecated since \cgal 4.3, the class
-    /// `AABB_HalfedgeGraph_segment_primitive` should be used instead.
+    /// `AABB_halfedge_graph_segment_primitive` should be used instead.
     ///
     /// Primitive type that wraps a halfedge handle of a
     /// polyhedron, which is used as id, and allows the construction

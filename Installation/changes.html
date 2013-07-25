@@ -175,9 +175,9 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
         <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
         query object type.
     </li>
-    <li> Introduce the class <code>AABB_HalfedgeGraph_segment_primitive</code> which replaces the class <code>AABB_polyhedron_segment_primitive</code>  (which is now deprecated).
+    <li> Introduce the class <code>AABB_halfedge_graph_segment_primitive</code> which replaces the class <code>AABB_polyhedron_segment_primitive</code>  (which is now deprecated).
          The new class is more general and can be used with any model of <code>HalfedgeGraph</code>.</li>
-    <li>Introduce the class <code>AABB_FaceGraph_triangle_primitive</code> which replaces the class <code>AABB_polyhedron_triangle_primitive</code>  (which is now deprecated).</li>
+    <li>Introduce the class <code>AABB_face_graph_triangle_primitive</code> which replaces the class <code>AABB_polyhedron_triangle_primitive</code>  (which is now deprecated).</li>
     <li>Document the classes <code>AABB_segment_primitive</code> and <code>AABB_triangle_primitive</code> that were already used in some examples.</li>
     <li>Add a generic primitive class <code>AABB_primitive</code> that allows to define a primitive type by defining only two property maps.</li>
     <li>Introduce a new concept of primitive <code>AABBPrimitiveWithSharedData</code>. It allows to have some data shared between the primitives stored in a <code>AABB_tree</code>.

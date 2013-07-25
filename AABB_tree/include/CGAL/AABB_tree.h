@@ -91,12 +91,17 @@ namespace CGAL {
 		typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
 
     /*!
-    An alias to AABBTraits::Interesction_and_primitive_id
+    An alias to `AABBTraits::Intersection_and_primitive_id<Query>`
     */
+    #ifdef DOXYGEN_RUNNING
+    template<typename Query>
+    using Intersection_and_primitive_id = AABBTraits::Intersection_and_primitive_id<Query>;
+    #else
     template<typename Query>
     struct Intersection_and_primitive_id {
       typedef typename AABBTraits::template Intersection_and_primitive_id<Query>::Type Type;
     };
+    #endif
 
     
     ///@}
@@ -384,7 +389,7 @@ public:
     /// for which `do_intersect` predicates
     /// and intersections are defined in the traits class AABBTraits.
 		template <typename Query>
-    #if CGAL_INTERSECTION_VERSION < 2
+    #if CGAL_INTERSECTION_VERSION < 2 && !defined(DOXYGEN_RUNNING)
 		boost::optional<Object_and_primitive_id> 
     #else
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >

@@ -27,8 +27,8 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/AABB_FaceGraph_triangle_primitive.h>
-#include <CGAL/AABB_HalfedgeGraph_segment_primitive.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 #include <boost/mem_fn.hpp>
@@ -214,7 +214,7 @@ struct Primitive_generator {};
 template<class K, class Polyhedron>
 struct Primitive_generator<SEGMENT, K, Polyhedron>
 {
-    typedef CGAL::AABB_HalfedgeGraph_segment_primitive<Polyhedron> Primitive;
+    typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron> Primitive;
 
     typedef typename Polyhedron::Edge_iterator iterator;
     iterator begin(Polyhedron& p) { return p.edges_begin(); }
@@ -224,7 +224,7 @@ struct Primitive_generator<SEGMENT, K, Polyhedron>
 template<class K, class Polyhedron>
 struct Primitive_generator<TRIANGLE, K, Polyhedron>
 {
-    typedef CGAL::AABB_FaceGraph_triangle_primitive<Polyhedron> Primitive;
+    typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 
     typedef typename Polyhedron::Facet_iterator iterator;
     iterator begin(Polyhedron& p) { return p.facets_begin(); }

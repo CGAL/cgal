@@ -23,13 +23,13 @@
 #define CGAL_AABB_POLYHEDRON_TRIANGLE_PRIMITIVE_H_
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/AABB_polyhedron_triangle_primitive.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_FaceGraph_triangle_primitive.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_face_graph_triangle_primitive.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
 namespace CGAL {
     /// \ingroup PkgAABB_tree
     /// \deprecated This class is deprecated since \cgal 4.3, the class
-    /// `AABB_HalfedgeGraph_triangle_primitive` should be used instead.
+    /// `AABB_face_graph_triangle_primitive` should be used instead.
     ///
     /// Primitive type that wraps a facet handle of a polyhedron,
     /// which is used as id, and allows the construction of the datum on

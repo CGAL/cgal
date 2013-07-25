@@ -19,8 +19,8 @@
 // Author(s)     : Sebastien Loriot
 //
 
-#ifndef CGAL_AABB_FACEGRAPH_TRIANGLE_PRIMITIVE_H
-#define CGAL_AABB_FACEGRAPH_TRIANGLE_PRIMITIVE_H
+#ifndef CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
+#define CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
 
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/Polyhedron_3.h>
@@ -38,7 +38,7 @@ namespace CGAL {
  *
  * \cgalModels `AABBPrimitiveWithSharedData`
  *
- *\tparam FaceGraph is a \cgal Polyhedron.
+ *\tparam FaceGraph is a \cgal polyhedron.
  *\tparam VertexPointPMap must be set to `CGAL::Default`
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
  *\tparam OneFaceGraphPerTree must be set to `CGAL::Default`
@@ -48,13 +48,13 @@ namespace CGAL {
  *        The default is `CGAL::Tag_false` (datum is not stored).
  *\sa `AABBPrimitive`
  *\sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- *\sa `AABB_HalfedgeGraph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
+ *\sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
  */
 template < class FaceGraph,
            class VertexPointPMap = Default,
            class OneFaceGraphPerTree = Default,
            class CacheDatum=Tag_false >
-class AABB_FaceGraph_triangle_primitive
+class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
 : public AABB_primitive<  typename boost::mpl::if_<
                             typename boost::is_const<FaceGraph>::type,
@@ -105,14 +105,14 @@ public:
     Constructs a primitive.
   */
   template <class Iterator>
-  AABB_FaceGraph_triangle_primitive(Iterator it, FaceGraph& graph)
+  AABB_face_graph_triangle_primitive(Iterator it, FaceGraph& graph)
     : Base( Id_(it),
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
 
   /// For backward-compatibility with AABB_polyhedron_triangle_primitive only.
   /// `Id_` is `Facet_const_handle` if `FaceGraph` is const and `Facet_handle` otherwise.
-  AABB_FaceGraph_triangle_primitive(Id_ id)
+  AABB_face_graph_triangle_primitive(Id_ id)
     : Base( id,
             Triangle_property_map(NULL),
             Point_property_map(NULL) ){}
@@ -132,5 +132,5 @@ public:
 
 }  // end namespace CGAL
 
-#endif // CGAL_AABB_FACEGRAPH_TRIANGLE_PRIMITIVE_H
+#endif // CGAL_AABB_FACE_GRAPH_TRIANGLE_PRIMITIVE_H
 
