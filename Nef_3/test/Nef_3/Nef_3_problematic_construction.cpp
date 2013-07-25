@@ -112,7 +112,7 @@ private:
      std::strcat(fullname, name);
 
      std::ifstream off_file (fullname);
-     assert(off_file != NULL);
+     assert((bool) off_file);
 
      std::size_t discarded = CGAL::OFF_to_nef_3 (off_file, N, true);
      assert(discarded == 0);
