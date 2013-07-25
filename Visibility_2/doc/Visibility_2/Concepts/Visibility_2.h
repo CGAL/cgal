@@ -45,33 +45,25 @@ public:
    * The supported Halfedge handle type of the input Arrangement.
    */
   typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
-  /*!
-   * The supported Face_handle type of output Arrangement.
-   */
-  typedef Output_Arrangement_2::Face_handle Out_face_handle;
-	
-
 
   /*! 
-    Tag identifying whether `Visibility_2` computes regularized visbility area. 
+    Tag identifying whether `Visibility_2` computes regularized visibility area. 
   */
   typedef Hidden_type Regularization_tag; 
 
-
-
-  
 /// @}
 
 /// \name Constructors 
 /// @{
 
 /*! 
-default constructor. 
+Default constructor creates an empty `Visibility_2` object, that is not
+attached to any arrangement yet.
 */ 
 Visibility_2(); 
 
 /*! 
-Constructs a `Visibility_2` object from a given `Arrangement_2` and a given Regularization tag.
+Constructs a `Visibility_2` object from a given `Arrangement_2` and attaches it to `arr`.
 */ 
 Visibility_2(const Input_Arrangement_2 &arr);
 
@@ -87,7 +79,7 @@ Returns whether an arrangement is attached to the visibility object
   bool is_attached ();
 
 /*!
-Attaches the given arrangement to the visibility object.
+Attaches the given arrangement `arr` to the visibility object.
 */
   void attach (const Input_Arrangement_2 &arr);
 
@@ -100,23 +92,26 @@ Detaches the arrangement from the visibility object it is currently attached to
 /*!
 Access to the attached arrangement
 */
-  Input_Arrangement_2 arr();
+  const Input_Arrangement_2& arr();
 
 /*! 
-Computes the visibility region for the given query point q. Visibility polygon of q and its face will be saved to out_arr and out_face.
-\pre face is a face of  this->arr()
-\pre p is in the interior of face
-\pre out_arr is the output arrangement 
-\return a face handle to the bounded face of the output
+Computes the visibility region for the given query point `q` in the
+face `f` of the arrangement that is attached to the visibility object. 
+The visibility region of `q` will be saved to `out_arr`.
+\param out_arr is the output arrangement 
+\pre `f` is a face of  this->arr()
+\pre q is in the interior or on the foundary of the given face `f`
+\return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr);
+  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
 
 /*! 
-Computes for the given query point q the visibility region that is on the side of the given halfedge. Visibility polygon of q and its face will be saved to out_arr and out_face.
+Computes for the given query point `q` the visibility region that is on the side of `halfedge`. 
+The visibility region of `q` will be saved to `out_arr`.
+\param out_arr is the output arrangement  
 \pre half_edge is a half edge of  this->arr()
-\pre p is on halfedge
-\pre out_arr is the output arrangement  
-\return a face handle to the bounded face of the output
+\pre q is on halfedge
+\return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr);
 

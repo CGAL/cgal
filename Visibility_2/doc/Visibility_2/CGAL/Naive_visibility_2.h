@@ -7,38 +7,33 @@ an Arrangement. The algorithm it applies to obtain visibility is without preproc
 It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, 
 with a time complexity of O (n log n) in the number of vertices.
 
-ArrExtensionTraits_2 gives information about the input/output Arrangements and the extension between them. 
+Arrangement_2 gives information about the input/output Arrangements and the extension between them. 
 The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
 specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
 
 \cgalModels `Visibility_2` 
 
 \sa 'CGAL::Visibility_2'
-\sa `CGAL::Simple_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_visibility_2<ArrExtensionTraits_2, Regularization_tag>`
+\sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 
 */
-template <typename ArrExtensionTraits_2, typename Regularization_tag>
+template <typename Arrangement_2, typename Regularization_tag>
 class Naive_visibility_2 {
 public:
 
 /// \name Types 
 /// @{
-    /*!
-     *The type of Arrangement Extension Traits.
-     */
-    typedef ArrExtensionTraits_2 Arr_extension_traits_2;
-
+   
  /*!
   The type of input Arrangement.
   */
-   typedef Arr_extension_traits_2::Input_Arrangement_2  Input_Arrangement_2;
+  typedef Arrangement_2  Input_Arrangement_2;
 
    /*!
     The type of output Arrangement.
     */
-   typedef Arr_extension_traits_2::Output_Arrangement_2 Output_Arrangement_2;
-
+  typedef Arrangement_2 Output_Arrangement_2;
 
  /*! 
    The Point_2 type which is used for queries. 
@@ -54,71 +49,70 @@ public:
    Halfedge_handle type of input Arrangement.
    */
   typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
-  /*!
-   * Face_handle type of output Arrangement.
-   */
-  typedef Output_Arrangement_2::Face_handle Out_face_handle;
 
 /// @}
 
 /// \name Constructors 
 /// @{
 
+/*!
+Default constructor creates an empty 'Naive_visibility_2' object, that is not
+attached to any  arrangement yet.
+*/
+Naive_visibility_2();
+
 /*! 
-Constructs a `Visibility_2` object from a given `Input_Arrangement_2`
+Constructs a `Naive_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr`.
 */ 
 Naive_visibility_2(const Input_Arrangement_2& arr); 
 
 /// @}
 
-
 /// \name functions 
 /// @{
 
+/*!
+Returns whether an arrangement is attached to the visibility object
+*/
+  bool is_attached();
 
 /*!
-Return whether the object is attached to an arrangement.
+Attaches the given arrangement to the visibility object
 */
-  bool is_attached ();
-
-/*!
-Attaches visibility object to the given arrangement arr.
-*/
-  void attach ( Input_Arrangement_2 arr);
-
+  void attach(const Input_Arrangement_2 &arr);
   
 /*!
-Detaches the object from the arrangement it is currently attached to.
+Detaches the arrangement from the visibility object it is currently attached to
 */
-  void detach ();
+  void detach();
 
 /*!
-Access to the attached Arrangement.
+Access to the attached arrangement
 */
-  Input_Arrangement_2 arr();
+  const Input_Arrangement_2& arr();
 
 /*! 
-Computes the visibility region for the given query point q. 
-\pre face is a face of  this->arr()
-\pre p is in the interior of face
-\pre out_arr is the output arrangement 
-
+Computes the visibility region for the given query point `q` in the
+face `f` of the arrangement that is attached to the visibility object. 
+The visibility region of `q` will be stored in `out_arr`.
+\param out_arr is the output arrangement 
+\pre `f` is a face of  this->arr()
+\pre q is in the interior or on the foundary of the given face `f`
+\return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  void visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr, Out_face_handle& out_face);
+  Face_handle visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr);
 
 /*! 
-Computes for the given query point q the visibility region that is on the side of the given halfedge.   
+Computes for the given query point `q` the visibility region that is on the side of `halfedge`. 
+The visibility region of `q` will be stored in `out_arr`.
+\param out_arr is the output arrangement  
 \pre half_edge is a half edge of  this->arr()
-\pre p is on halfedge  
-\pre out_arr is the output arrangement 
-
+\pre q is on halfedge
+\return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  void visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr, Out_face_handle& out_face);
+  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr);
 
 /// @}
 
-
 }; /* end Visibility_2 */
-
-
 }
