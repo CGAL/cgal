@@ -23,6 +23,7 @@
 
 #include <string>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_base.h>
 #include <CGAL/is_streamable.h>
 #include <fstream>
 
