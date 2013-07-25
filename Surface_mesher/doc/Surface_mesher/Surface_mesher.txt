@@ -9,6 +9,7 @@ namespace CGAL {
 \cgalAutoToc
 
 \image html segmented_head.png
+\image latex segmented_head.png
 
 \section SurfaceMesher_section_intro Introduction 
 

@@ -495,6 +495,7 @@ For a sequence \f$ I:=(a_0,\ldots,a_n)\f$ of real numbers with \f$ a_0\neq 0\f$,
 where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form 
 
 \image html underbrace.png
+\image latex underbrace.png
 
 with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
 
@@ -546,6 +547,7 @@ For a sequence \f$ I:=(a_0,\ldots,a_n)\f$ of real numbers with \f$ a_0\neq 0\f$,
 where \f$ s\f$ is the number of subsequences of \f$ I\f$ of the form 
 
 \image html underbrace.png
+\image latex underbrace.png
 
 with \f$ a\neq 0,b\neq 0, k\geq 0\f$. 
 

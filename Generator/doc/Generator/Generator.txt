@@ -204,6 +204,7 @@ Generating 20 grid points in 4D
 \endverbatim
 
 \image html hypergrid.png
+\image latex hypergrid.png
 
 \section GeneratorExGenCombi Example Generating Combinations
 

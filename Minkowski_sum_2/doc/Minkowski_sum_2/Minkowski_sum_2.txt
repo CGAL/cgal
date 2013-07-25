@@ -203,12 +203,15 @@ is widely known as <I>offsetting</I> the polygon \f$ P\f$ by a radius \f$ r\f$.
 <tr>
 <td>
 \image html convex_offset.png
+\image latex convex_offset.png
 </td>
 <td>
 \image html offset_decomp.png
+\image latex offset_decomp.png
 </td>
 <td>
 \image html offset_conv.png
+\image latex offset_conv.png
 </td>
 <tr align="center"><td>(a)</td><td>(b)</td><td>(c)</td></tr>
 </table>

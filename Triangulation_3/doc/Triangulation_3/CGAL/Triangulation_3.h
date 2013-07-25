@@ -742,6 +742,7 @@ in convex position.
 
 \anchor Triangulation3figflips
 \image html flips.png "Flips"
+\image latex flips.png "Flips"
 
 The following methods guarantee the validity of the resulting 3D
 triangulation. Flips for a 2d triangulation are not implemented yet.
@@ -916,6 +917,7 @@ Figure \ref Triangulation3figinsert_outside_convex_hull.
 
 \anchor Triangulation3figinsert_outside_convex_hull
 \image html insert_outside_convex_hull.png "insert_outside_convex_hull() (2-dimensional case)"
+\image latex insert_outside_convex_hull.png "insert_outside_convex_hull() (2-dimensional case)"
 */ 
 Vertex_handle insert_outside_convex_hull(const Point & p, 
 Cell_handle c); 
@@ -932,6 +934,7 @@ triangulation.
 
 \anchor Triangulation3figinsert_outside_affine_hull
 \image html insert_outside_affine_hull.png "insert_outside_affine_hull() (2-dimensional case)"
+\image latex insert_outside_affine_hull.png "insert_outside_affine_hull() (2-dimensional case)"
 */ 
 Vertex_handle insert_outside_affine_hull(const Point & p); 
 

@@ -8,6 +8,7 @@ namespace CGAL {
 \author Mariette Yvinec
 
 \image html tr1dt1.png
+\image latex tr1dt1.png
 
 This chapter describes the two dimensional triangulations
 of \cgal. 
@@ -834,6 +835,7 @@ section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL>
 
 \image html constraints.png
+\image latex constraints.png
 
 A constrained triangulation is represented in the \cgal library as an
 object of the class `Constrained_triangulation_2<Traits,Tds,Itag>`.

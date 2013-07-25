@@ -9,6 +9,7 @@ namespace CGAL {
 \author Le-Jeng Andy Shiue
 
 \image html subdivision-teaser.jpg
+\image latex subdivision-teaser.jpg
 
 \section sectionSubIntro Introduction 
 
@@ -67,6 +68,7 @@ DQQ indicates the <I>D</I>ual <I>Q</I>uadtrateral <I>Q</I>uadrisection.
 the subdivision surface.
 
 \image html RefSchemes.png
+\image latex RefSchemes.png
 
 The figure demonstrates these four refinement patterns on 
 the 1-disk of a valence-5 vertex/facet.
@@ -86,6 +88,7 @@ top row indicate the corresponding stencils of the refined nodes
 in red.
 
 \image html PQQStencil.png
+\image latex PQQStencil.png
 
 Stencils with weights are called <I>geometry masks</I>.
 A subdivision method defines a geometry mask for each stencil, and 
@@ -96,6 +99,7 @@ The geometry masks of Catmull-Clark subdivision are shown
 below.
 
 \image html cc_mask.png
+\image latex cc_mask.png
 
 The weights shown here are unnormalized, and \f$ n\f$ is the valence 
 of the vertex. The generated point, in red, is computed by a summation
@@ -319,6 +323,7 @@ Respectively, they are used by Catmull-Clark, Loop, Doo-Sabin
 and \f$ \sqrt{3}\f$ subdivision.
 
 \image html RefSchemes.png
+\image latex RefSchemes.png
 
 \code{.cpp}
 
@@ -396,6 +401,7 @@ The function collects the vertex neighbors of the primitive handle
 based on the neighbors and the mask (i.e.\ the stencil weights).
 
 \image html cc_mask.png
+\image latex cc_mask.png
 
 This figure shows the geometry masks of
 Catmull-Clark subdivision. The weights shown here are unnormalized, 

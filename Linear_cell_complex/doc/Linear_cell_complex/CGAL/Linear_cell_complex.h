@@ -308,6 +308,7 @@ Returns a handle on the dart associated with `p0`.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2.
 
 \image html make_segment.png "Example of r=lcc.make_segment(p0,p1)."
+\image latex make_segment.png "Example of r=lcc.make_segment(p0,p1)."
 */
 Dart_handle make_segment(const Point& p0, const Point& p1);
 
@@ -317,6 +318,7 @@ Returns a handle on the dart associated with `p0`.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 1.
 
 \image html make_triangle.png "Example of r=lcc.make_triangle(p0,p1,p2)."
+\image latex make_triangle.png "Example of r=lcc.make_triangle(p0,p1,p2)."
 */
 Dart_handle make_triangle(const Point& p0, const Point& p1, const Point& p2);
 
@@ -327,6 +329,7 @@ Returns a handle on the dart associated with `p0`.
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 1.
 
 \image html make_quadrilateral.png "Example of r=lcc.make_quadrangle(p0,p1,p2,p3)."
+\image latex make_quadrilateral.png "Example of r=lcc.make_quadrangle(p0,p1,p2,p3)."
 */
 Dart_handle make_quadrangle(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
 
@@ -338,6 +341,7 @@ associated with `p0` and belonging to the 2-cell having
 \pre \ref CombinatorialMap::dimension "dimension"\f$ \geq\f$ 2.
 
 \image html make_tetrahedron.png "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3)."
+\image latex make_tetrahedron.png "Example of r=lcc.make_tetrahedron(p0,p1,p2,p3)."
 */
 Dart_handle make_tetrahedron(const Point& p0,const Point& p1,const Point& p2,const Point& p3);
 
@@ -350,6 +354,7 @@ as points.
 \pre \ref CombinatorialMap::dimension "dimension" \f$ \geq \f$ 2.
 
 \image html make_hexahedron.png "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7)."
+\image latex make_hexahedron.png "Example of r=lcc.make_hexahedron(p0,p1,p2,p3,p4,p5,p6,p7)."
 */
 Dart_handle make_hexahedron(const Point& p0,const Point& p1,const Point& p2,
                             const Point& p3,const Point& p4,const Point& p5,

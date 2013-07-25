@@ -164,6 +164,7 @@ further explanations and examples.
 \subsection Arrangement_on_surface_2ASimpleProgram A Simple Program
 
 \image html triangle.png
+\image latex triangle.png
 
 The simple program listed below constructs a planar map of three line
 segments forming a triangle. The constructed arrangement is instantiated
@@ -525,6 +526,7 @@ figure to the left).</LI>
 </OL>
 
 \image html connect_comp.png
+\image latex connect_comp.png
 
 The `Arrangement_2` class offers insertion functions named
 `insert_in_face_interior()`, `insert_from_left_vertex()`,
@@ -700,6 +702,7 @@ by \f$ (\frac{1}{2}, 3)\f$.
 \subsection arr_sssecadv_insert Advanced Insertion Functions 
 
 \image html pred_around_vertex.png
+\image latex pred_around_vertex.png
 
 \cgalAdvancedBegin
 Assume that the specialized insertion function
@@ -1422,6 +1425,7 @@ end vertices of `e` becomes isolated or redundant after the removal
 of the edge, it is removed as well.
 
 \image html h_shape.png
+\image latex h_shape.png
 
 The following example demonstrates the usage of the free removal
 functions. In creates an arrangement of four line segment forming

@@ -25,6 +25,7 @@ boundary, of course.}, only then the exact answer is computed on the
 complicated geometric primitives contained in the boxes.
 
 \image html box_inters.png
+\image latex box_inters.png
 
 We provide an efficient algorithm \cite cgal:ze-fsbi-02 for finding all
 intersecting pairs for large numbers of iso-oriented boxes, i.e.,

@@ -23,6 +23,7 @@ information, for example the halfedge pointers in faces or the
 storage of faces at all.
 
 \image html halfedge_small.png
+\image latex halfedge_small.png
 
 The halfedge data structure is a combinatorial data structure,
 geometric interpretation is added by classes built on top of the
@@ -141,6 +142,7 @@ type used for the point. The program creates a loop, consisting
 of two halfedges, one vertex and two faces, and checks its validity.
 
 \image html loop.png
+\image latex loop.png
 
 \cgalExample{HalfedgeDS/hds_prog_default.cpp}
 

@@ -27,6 +27,7 @@ extreme points and subsequences of hull points, such as the lower and
 upper hull of a set of points.
 
 \image html saarhull.png
+\image latex saarhull.png
 
 \section secconvex_hull_2 Convex Hull 
 

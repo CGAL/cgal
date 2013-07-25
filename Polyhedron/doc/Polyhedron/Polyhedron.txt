@@ -18,6 +18,7 @@ boundary. If the surface is closed we call it a <I>polyhedron</I>, for
 example, see the  following model of a hammerhead:
 
 \image html shark.png
+\image latex shark.png
 
 The polyhedral surface is realized as a container class that manages
 vertices, halfedges, facets with their incidences, and that maintains
@@ -37,6 +38,7 @@ halfedges with opposite orientations. The incidences stored with a
 halfedge are illustrated in the following figure:
 
 \image html halfedge_small.png
+\image latex halfedge_small.png
 
 Vertices represent points in space. Edges are straight line segments
 between two endpoints. Facets are planar polygons without
@@ -269,6 +271,7 @@ Figure shows six selected steps from the creation sequence. These steps
 are also marked in the program code.
 
 \image html make_cube.png
+\image latex make_cube.png
 
 \cgalExample{Polyhedron/polyhedron_prog_cube.cpp}
 
@@ -510,6 +513,7 @@ added to the end of the sequences. The program needs additional
 processing memory only for the smoothing step of the old vertices.
 
 \image html subdiv_small.png
+\image latex subdiv_small.png
 
 The above figure shows three example objects, each 
 subdivided four times. The initial object for the left sequence is

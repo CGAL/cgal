@@ -41,13 +41,16 @@ Let `vgone` be the removed vertex and `vkept` be the remaining vertex.
 The function returns vertex `vkept` (which can be either `v0` or `v1`). 
 
 \image html general_collapse.png
+\image latex general_collapse.png
 <center><b>
 General case. The following mesh elements are removed: triangles (\f$ v0,v1,vL\f$) and (\f$ v1,v0,vR\f$), edges \f$ (e,e')\f$, \f$ (ep,epo)\f$ and \f$ (ep',epo')\f$, and vertex \f$ v0\f$. 
 </b></center>
 
 \image html border_collapse3.png "When the collapsing edge is not itself a border, but is incident upon a border edge that is removed, the operation is the same as in the general case."
+\image latex border_collapse3.png "When the collapsing edge is not itself a border, but is incident upon a border edge that is removed, the operation is the same as in the general case."
 
 \image html border_collapse2.png
+\image latex border_collapse2.png
 <center><b>
 When the collapsing edge is not itself a border, but is incident upon
 a border edge that is <I>not</I> removed, the operation is still the
@@ -55,6 +58,7 @@ same as in the general case.
 </b></center>
 
 \image html border_collapse1.png
+\image latex border_collapse1.png
 <center><b>
 When the collapsing edge is itself a border, only 1 triangle is
 removed. Thus, even if \f$ (ep',epo')\f$ exists, it's not removed.
@@ -62,6 +66,7 @@ removed. Thus, even if \f$ (ep',epo')\f$ exists, it's not removed.
 
 \anchor CollapseFigure5 
 \image html border_collapse4.png
+\image latex border_collapse4.png
 <center><b>
 This figure illustrates the single exceptional case when removing \f$
 (v0,v1)\f$ neccesarily implies removing \f$ (v1)\f$, thus \f$ (v0)\f$

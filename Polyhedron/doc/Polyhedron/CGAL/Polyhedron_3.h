@@ -8,6 +8,7 @@ namespace CGAL {
   represented by two halfedges with opposite orientations. 
 
   \image html halfedge.png
+  \image latex halfedge.png
 
   Vertices represent points in 3d-space. Edges are straight line segments 
   between two endpoints. Facets are planar polygons without holes 
@@ -134,6 +135,7 @@ public:
 
     \anchor figurePolyOptionalMethods
     \image html poly_optional.png
+    \image latex poly_optional.png
     <center><b>The three classes `Vertex`, `Halfedge`, and `Facet` of the polyhedral surface. Member functions with shaded background are mandatory. The others are optionally supported.</b></center>
 
     The incidences encoded in `Halfedge::opposite()` and `Halfedge::next()` are 
@@ -1214,6 +1216,7 @@ public:
     \pre `h` and `g` are incident to the same facet. `h != g` (no loops). `h->%next() != g` and `g->%next() != h` (no multi-edges). 
 
     \image html euler_facet.png
+    \image latex euler_facet.png
 
   */ 
   Halfedge_handle split_facet( Halfedge_handle h, 
@@ -1231,6 +1234,7 @@ public:
     \cgalRequires     `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
 
     \image html euler_facet.png
+    \image latex euler_facet.png
 
 n  */ 
   Halfedge_handle join_facet( Halfedge_handle h); 
@@ -1251,6 +1255,7 @@ n  */
     \pre `h` and `g` are incident to the same vertex. `h != g` (antennas are not allowed). 
 
     \image html euler_vertex.png
+    \image latex euler_vertex.png
 
 \note
     A special application of the split is 
@@ -1275,6 +1280,7 @@ n  */
     \cgalRequires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image html euler_vertex.png
+    \image latex euler_vertex.png
   */ 
   Halfedge_handle join_vertex( Halfedge_handle h); 
 
@@ -1310,6 +1316,7 @@ n  */
     \pre `h` is not a border halfedge. 
 
     \image html euler_center.png
+    \image latex euler_center.png
 
   */ 
   Halfedge_handle create_center_vertex( Halfedge_handle h); 
@@ -1327,6 +1334,7 @@ n  */
     \cgalRequires    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
     \image html euler_center.png
+    \image latex euler_center.png
   */ 
   Halfedge_handle erase_center_vertex( Halfedge_handle g); 
 
@@ -1346,6 +1354,7 @@ n  */
     \pre `h`, `i`, `j` denote distinct, consecutive vertices of the polyhedron and form a cycle: i.e., `h->vertex() == i->%opposite()->vertex()`, \f$ \ldots\f$ , `j->vertex() == h->%opposite()->vertex()`. The six facets incident to `(h,i,j)` are all distinct. 
 
     \image html euler_loop.png 
+    \image latex euler_loop.png 
   */ 
   Halfedge_handle split_loop( Halfedge_handle h, 
                               Halfedge_handle i, 
@@ -1362,6 +1371,7 @@ n  */
     \cgalRequires     `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`. 
 
     \image html euler_loop.png
+    \image latex euler_loop.png
 
   */ 
   Halfedge_handle join_loop( Halfedge_handle h, Halfedge_handle g); 
@@ -1400,6 +1410,7 @@ n  */
     \pre `h->is_border()`, `g->is_border()`, `h != g`, and `g` can be reached along the same hole starting with `h`. 
 
     \image html add_facet1.png
+    \image latex add_facet1.png
   */ 
   Halfedge_handle add_vertex_and_facet_to_border( 
     Halfedge_handle h, Halfedge_handle g); 
@@ -1413,6 +1424,7 @@ n  */
     \pre `h->is_border()`, `g->is_border()`, `h != g`, `h->next() != g`, and `g` can be reached along the same hole starting with `h`. 
 
     \image html add_facet2.png
+    \image latex add_facet2.png
 
   */ 
   Halfedge_handle add_facet_to_border( Halfedge_handle h, 
@@ -1434,8 +1446,10 @@ n  */
     \cgalRequires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`
 
     \image html add_facet1.png
+    \image latex add_facet1.png
 
     \image html add_facet2.png
+    \image latex add_facet2.png
   */ 
   void erase_facet( Halfedge_handle h); 
 

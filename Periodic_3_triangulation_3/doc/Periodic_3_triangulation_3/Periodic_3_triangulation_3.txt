@@ -10,6 +10,7 @@ namespace CGAL {
 \authors Manuel Caroli and Monique Teillaud
 
 \image html p3Delaunay3.jpg
+\image latex p3Delaunay3.jpg
 
 The periodic 3D-triangulation class of \cgal is designed to
 represent the triangulations of a set of points in the

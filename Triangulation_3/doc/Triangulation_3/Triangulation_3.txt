@@ -9,6 +9,7 @@ namespace CGAL {
 \authors Sylvain Pion and Monique Teillaud
 
 \image html triangulation3.png
+\image latex triangulation3.png
 
 The basic 3D-triangulation class of \cgal is primarily designed to
 represent the triangulations of a set of points \f$ A\f$ in \f$ \mathbb{R}^3\f$. It is

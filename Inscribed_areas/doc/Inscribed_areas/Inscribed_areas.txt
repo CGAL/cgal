@@ -23,6 +23,7 @@ and the largest perimeter triangle (orange, containing the top point)
 of a point set are different in general.
 
 \image html max_triangle.png
+\image latex max_triangle.png
 
 
 
@@ -46,6 +47,7 @@ all iso-rectangles that are inside a given iso-rectangles, and
 that do not contain any point of the point set.
 
 \image html largestEmptyRect.png
+\image latex largestEmptyRect.png
 */ 
 } /* namespace CGAL */
 

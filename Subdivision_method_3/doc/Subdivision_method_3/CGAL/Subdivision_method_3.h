@@ -37,6 +37,7 @@ the geometry masks.
 `PQQ`, `PTQ`, `DQQ` and `Sqrt3`. 
 
 \image html RefSchemes.png
+\image latex RefSchemes.png
 
 \cgalHeading{Example}
 

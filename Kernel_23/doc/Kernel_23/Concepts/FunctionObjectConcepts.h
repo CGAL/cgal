@@ -1067,6 +1067,7 @@ public:
 
   \anchor fig-compare_x_at_y_2
   \image html compare_x_at_y.png
+  \image latex compare_x_at_y.png
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
@@ -1220,6 +1221,7 @@ public:
 
   \anchor fig-compare12
   \image html compare1.png
+  \image latex compare1.png
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -1306,6 +1308,7 @@ public:
   \cgalConcept
 
   \image html compare2.png
+  \image latex compare2.png
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
@@ -1426,6 +1429,7 @@ public:
 
   \anchor fig-compare14
   \image html compare1.png
+  \image latex compare1.png
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -6480,6 +6484,7 @@ public:
 \cgalConcept
 
 \image html IsoCuboid.png
+\image latex IsoCuboid.png
 
 \cgalRefines `AdaptableFunctor` (with two arguments) 
 

@@ -8,6 +8,7 @@ policy concept of geometric computations is used in
 `CGAL::Subdivision_method_3::DQQ<Polyhedron_3, Mask>`. 
 
 \image html DSCornerMask.png
+\image latex DSCornerMask.png
 
 \cgalHasModel `CGAL::DooSabin_mask_3<Polyhedron_3>`
 

@@ -14,6 +14,7 @@ hulls of two given point sets in \f$ d\f$-dimensional Euclidean space
 compute the width of a point set in three dimensions (`Width_3<Traits>`).
 
 \image html polydist.png
+\image latex polydist.png
 
 The obvious application is collision detection between convex bodies
 in space. In the spirit of the bounding volume application above, it

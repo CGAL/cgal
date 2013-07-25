@@ -9,6 +9,7 @@ and neighbors within a cell.
 
 \anchor Triangulation3figutils 
 \image html utils.png "Operations on indices."
+\image latex utils.png "Operations on indices."
 
 */
 

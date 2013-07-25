@@ -564,6 +564,7 @@ this shalfedge of opposite orientation.
 
 \anchor figureNefS2SVertexIncidences 
 \image html shalfedge.png "Incidences of an SHalfedge"
+\image latex shalfedge.png "Incidences of an SHalfedge"
 
 The `snext()` member function points 
 to the successor shalfedge around this sface while the `sprev()` member 
@@ -708,6 +709,7 @@ depicts the relationship between a shalfloop and sfaces on a sphere map.
 
 \anchor figureNefS2SHalfloopIncidences 
 \image html shalfloopB.png "Incidences of an SHalfloop "
+\image latex shalfloopB.png "Incidences of an SHalfloop "
 
 \cgalHeading{Creation}
 

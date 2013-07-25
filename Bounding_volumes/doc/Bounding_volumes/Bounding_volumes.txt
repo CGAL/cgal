@@ -9,6 +9,7 @@ namespace CGAL {
 \authors Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr
 
 \image html ball.png
+\image latex ball.png
 
 This chapter describes algorithms which for a given point set compute
 the <i>best</i> circumscribing object from a specific
@@ -38,6 +39,7 @@ minimum-volume enclosing ellipsoid with user-specified
 approximation ratio (`Approximate_min_ellipsoid_d<Traits>`).
 
 \image html annulus.png
+\image latex annulus.png
 
 Bounding volumes can be used to obtain simple approximations of
 complicated objects. For example, consider the problem of deciding
@@ -79,6 +81,7 @@ planar point set with between two and four minimal boxes
 three boxes; the center points are shown in red.
 
 \image html pcenter.png
+\image latex pcenter.png
 
 */ 
 } /* namespace CGAL */

@@ -9,6 +9,7 @@ namespace CGAL {
 \authors Fernando Cacciola
 
 \image html Illustration-Simplification-ALL.jpg
+\image latex Illustration-Simplification-ALL.jpg
 
 \section Surface_mesh_simplificationIntroduction Introduction
 

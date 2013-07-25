@@ -27,6 +27,7 @@ Here a small example:
 \endverbatim
 
 \image html import_graph.png "Example of import_graph reading the above file as istream."
+\image latex import_graph.png "Example of import_graph reading the above file as istream."
 
 <B>Left</B>: A planar graph embedded in the plane with 
 <I>P0</I>=(1.0,3.0), <I>P1</I>=(0.0,2.0), <I>P2</I>=(2.0,2.0), <I>P3</I>=(0.0,0.0), <I>P4</I>=(2.0,0.0). 

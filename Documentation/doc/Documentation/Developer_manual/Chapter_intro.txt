@@ -8,6 +8,7 @@
 
 <CENTER>
 \image html cgal_small.png 
+\image latex cgal_small.png 
 </CENTER>
 <CENTER><span class="textsc">Computational Geometry Algorithms Library</span></CENTER>
 

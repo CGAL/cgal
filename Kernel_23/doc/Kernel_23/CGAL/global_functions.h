@@ -896,6 +896,7 @@ described below.
 \ingroup compare_x_grp
 \anchor figcompare_x
 \image html compare1.png 
+\image latex compare1.png 
 */
 /// @{
 
@@ -1116,6 +1117,7 @@ Comparison_result
 
 \anchor figcomparexaty
 \image html compare_x_at_y.png
+\image latex compare_x_at_y.png
 
 \sa `compare_xy_grp`
 \sa `compare_xyz_grp`
@@ -1181,6 +1183,7 @@ const CGAL::Line_2<Kernel> &h2);
 
   \anchor figcompareyatx
   \image html compare2.png
+  \image latex compare2.png
 
   \sa `compare_xy_grp`
   \sa `compare_xyz_grp`
@@ -1317,6 +1320,7 @@ global function are available.
 
 \anchor figcompare13
 \image html compare1.png
+\image latex compare1.png
 
 */
 /// @{

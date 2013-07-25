@@ -281,6 +281,7 @@ new diagonal, the old face is to the left. The time is proportional
 to the distance from `h` to `g` around the face. 
 
 \image html euler_face.png
+\image latex euler_face.png
 
 */ 
 Halfedge_handle split_face( Halfedge_handle h, Halfedge_handle g); 
@@ -296,6 +297,7 @@ of the face removed and the time to compute `h->prev()`.
 \cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
 \image html euler_face.png
+\image latex euler_face.png
 
 */ 
 Halfedge_handle join_face( Halfedge_handle h); 
@@ -309,6 +311,7 @@ in the orientation towards the new vertex. The time is proportional
 to the distance from `h` to `g` around the vertex. 
 
 \image html euler_vertex.png
+\image latex euler_vertex.png
 
 */ 
 Halfedge_handle split_vertex( Halfedge_handle h, Halfedge_handle g); 
@@ -325,6 +328,7 @@ the time to compute `h->prev()` and `h->opposite()->prev()`.
 \cgalRequires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
 \image html euler_vertex.png
+\image latex euler_vertex.png
 
 */ 
 Halfedge_handle join_vertex( Halfedge_handle h); 
@@ -340,6 +344,7 @@ The time is proportional to the size of the face.
 \pre `h` is not a border halfedge. 
 
 \image html euler_center.png
+\image latex euler_center.png
 
 */ 
 Halfedge_handle create_center_vertex( Halfedge_handle h); 
@@ -358,6 +363,7 @@ The time is proportional to the sum of the size of all incident faces.
 \cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
 \image html euler_center.png
+\image latex euler_center.png
 */ 
 Halfedge_handle erase_center_vertex( Halfedge_handle g); 
 
@@ -374,6 +380,7 @@ data structure and form a cycle: i.e., `h->vertex() == i->opposite()->vertex()`,
 \f$\ldots\f$ , `j->vertex() == h->opposite()->vertex()`. 
 
 \image html euler_loop.png
+\image latex euler_loop.png
 
 */ 
 Halfedge_handle split_loop( Halfedge_handle h, 
@@ -391,6 +398,7 @@ data structure unchanged.
 \cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
 
 \image html euler_loop.png
+\image latex euler_loop.png
 */ 
 Halfedge_handle join_loop( Halfedge_handle h, Halfedge_handle g); 
 
