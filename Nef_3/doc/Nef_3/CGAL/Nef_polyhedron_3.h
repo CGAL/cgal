@@ -263,7 +263,7 @@ public:
 
 
   \anchor figureNef3FacetIncidences 
-  \image html snc.gif
+  \image html snc.png
 
   The member function `twin` returns the opposite halffacet, `incident_volume` 
   returns the incident volume. A Halffacet cycle either consists of consecutive 
@@ -553,7 +553,7 @@ public:
   this shalfedge of opposite orientation. 
 
   \anchor figureNef3HalfedgeIncidences 
-  \image  html shalfedge.gif
+  \image  html shalfedge.png
 
   The `snext()` member function points 
   to the successor shalfedge around this sface while the `sprev()` member 
@@ -738,7 +738,7 @@ public:
   this shalfloop of opposite orientation. 
 
   \anchor figureNef3HalfloopIncidences 
-  \image html shalfloopB.gif
+  \image html shalfloopB.png
 
   A sphere map having a shalfloop models the neighborhood of a vertex which is 
   isolated on a facet. That facet is returned by the member function 

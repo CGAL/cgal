@@ -66,7 +66,7 @@ DQQ indicates the <I>D</I>ual <I>Q</I>uadtrateral <I>Q</I>uadrisection.
 \f$ \sqrt{3}\f$ indicates the converging speed of the triangulation toward
 the subdivision surface.
 
-\image html RefSchemes.gif
+\image html RefSchemes.png
 
 The figure demonstrates these four refinement patterns on 
 the 1-disk of a valence-5 vertex/facet.
@@ -85,7 +85,7 @@ shown in the following figure. The blue neighborhoods in the
 top row indicate the corresponding stencils of the refined nodes 
 in red.
 
-\image html PQQStencil.gif
+\image html PQQStencil.png
 
 Stencils with weights are called <I>geometry masks</I>.
 A subdivision method defines a geometry mask for each stencil, and 
@@ -95,7 +95,7 @@ certain surface smoothness and shape quality.
 The geometry masks of Catmull-Clark subdivision are shown
 below.
 
-\image html cc_mask.gif
+\image html cc_mask.png
 
 The weights shown here are unnormalized, and \f$ n\f$ is the valence 
 of the vertex. The generated point, in red, is computed by a summation
@@ -318,7 +318,7 @@ quadrisection (DQQ) and \f$ \sqrt{3}\f$ triangulation.
 Respectively, they are used by Catmull-Clark, Loop, Doo-Sabin 
 and \f$ \sqrt{3}\f$ subdivision.
 
-\image html RefSchemes.gif
+\image html RefSchemes.png
 
 \code{.cpp}
 
@@ -395,7 +395,7 @@ The function collects the vertex neighbors of the primitive handle
 (i.e.\ nodes on the stencil), and computes the new point 
 based on the neighbors and the mask (i.e.\ the stencil weights).
 
-\image html cc_mask.gif
+\image html cc_mask.png
 
 This figure shows the geometry masks of
 Catmull-Clark subdivision. The weights shown here are unnormalized, 

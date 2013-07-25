@@ -26,10 +26,10 @@ guarantee the combinatorial validity of the resulting data structure.
 \cgalHeading{Illustrations}
 
 \anchor figtdssplitjoin 
-\image html join_split.gif "The join and split operations."
+\image html join_split.png "The join and split operations."
 
 \anchor figtdsirdeg2 
-\image html tds-insert_degree_2.gif "Insertion and removal of degree 2 vertices. "
+\image html tds-insert_degree_2.png "Insertion and removal of degree 2 vertices. "
 */
 template< typename Vb, typename Fb >
 class Triangulation_data_structure_2 {

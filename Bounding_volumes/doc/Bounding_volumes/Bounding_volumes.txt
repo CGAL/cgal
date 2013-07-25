@@ -8,7 +8,7 @@ namespace CGAL {
 \cgalAutoToc
 \authors Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr
 
-\image html ball.gif
+\image html ball.png
 
 This chapter describes algorithms which for a given point set compute
 the <i>best</i> circumscribing object from a specific
@@ -37,7 +37,7 @@ annuli (`Min_annulus_d<Traits>`), and approximate
 minimum-volume enclosing ellipsoid with user-specified
 approximation ratio (`Approximate_min_ellipsoid_d<Traits>`).
 
-\image html annulus.gif
+\image html annulus.png
 
 Bounding volumes can be used to obtain simple approximations of
 complicated objects. For example, consider the problem of deciding
@@ -78,7 +78,7 @@ planar point set with between two and four minimal boxes
 (`rectangular_p_center_2()`). Below is an example covering with
 three boxes; the center points are shown in red.
 
-\image html pcenter.gif
+\image html pcenter.png
 
 */ 
 } /* namespace CGAL */

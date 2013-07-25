@@ -285,7 +285,7 @@ kept synchronized with the number of vertices in the arrangement, so it
 should not be reused in calls to \sc{Bgl} functions in case the arrangement
 is modified in between these calls.
 
-\cgalFigureBegin{figex_bgl,ex_bgl.gif}
+\cgalFigureBegin{figex_bgl,ex_bgl.png}
 An arrangement of 7 line segments, as constructed by `ex_bgl_primal_adapter.cpp` and `ex_bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown is brackets.
 \cgalFigureEnd
 

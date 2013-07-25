@@ -13,7 +13,7 @@ Let
 is the outermost variable. 
 The \f$ i\f$-th subresultant (with \f$ i=0,\ldots,\min\{n,m\}\f$) is defined by 
 
-\image html subresultant_def.gif
+\image html subresultant_def.png
 
 where \f$ p_i\f$ and \f$ q_i\f$ are set to zero if \f$ i<0\f$. 
 In the case that \f$ n=m\f$, \f$ \mathrm{Sres_n}\f$ is set to \f$ q\f$. 

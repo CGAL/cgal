@@ -895,7 +895,7 @@ described below.
 \defgroup compare_x_linear_grp CGAL::compare_x() (2D/3D Linear Kernel)
 \ingroup compare_x_grp
 \anchor figcompare_x
-\image html compare1.gif 
+\image html compare1.png 
 */
 /// @{
 
@@ -1115,7 +1115,7 @@ Comparison_result
 \ingroup kernel_global_function
 
 \anchor figcomparexaty
-\image html compare_x_at_y.gif
+\image html compare_x_at_y.png
 
 \sa `compare_xy_grp`
 \sa `compare_xyz_grp`
@@ -1180,7 +1180,7 @@ const CGAL::Line_2<Kernel> &h2);
   \ingroup kernel_global_function
 
   \anchor figcompareyatx
-  \image html compare2.gif
+  \image html compare2.png
 
   \sa `compare_xy_grp`
   \sa `compare_xyz_grp`
@@ -1316,7 +1316,7 @@ global function are available.
 \details See Chapter \ref chapterkernel23 "2D and 3D Geometry Kernel"
 
 \anchor figcompare13
-\image html compare1.gif
+\image html compare1.png
 
 */
 /// @{

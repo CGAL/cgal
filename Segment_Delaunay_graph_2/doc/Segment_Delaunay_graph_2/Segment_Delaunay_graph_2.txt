@@ -20,7 +20,7 @@ described.
 
 \section secsdg2definitions Definitions 
 
-\cgalFigureBegin{figsvd,svd-weakly-bw.jpg,svd-strongly-bw.gif}
+\cgalFigureBegin{figsvd,svd-weakly-bw.jpg,svd-strongly-bw.png}
 The segment Voronoi diagram for a set of weakly (left) and
 strongly (right) intersecting sites.
 \cgalFigureEnd
@@ -254,7 +254,7 @@ More precisely, \f$ s_1s_2\f$ is represented by the segments \f$ t_1\f$ (the
 supporting segment of \f$ s_1q_1\f$), \f$ t_2\f$ (it defines \f$ s_1\f$ along with
 \f$ t_1\f$) and \f$ t_3\f$ (it defines \f$ s_2\f$ along with \f$ t_1\f$).
 
-\cgalFigureBegin{figsdg2siterep,sdg-rep.gif}
+\cgalFigureBegin{figsdg2siterep,sdg-rep.png}
 Site representation. The point \f$ s_1\f$ is represented by the four
 points \f$ p_1\f$, \f$ q_1\f$, \f$ p_2\f$ and \f$ q_2\f$. The segment
 \f$ p_1s_1\f$ is represented by the points \f$ p_1\f$, \f$ q_1\f$, \f$

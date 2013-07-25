@@ -563,7 +563,7 @@ the opposite direction. The `twin()` member function returns
 this shalfedge of opposite orientation. 
 
 \anchor figureNefS2SVertexIncidences 
-\image html shalfedge.gif "Incidences of an SHalfedge"
+\image html shalfedge.png "Incidences of an SHalfedge"
 
 The `snext()` member function points 
 to the successor shalfedge around this sface while the `sprev()` member 
@@ -707,7 +707,7 @@ The figure below
 depicts the relationship between a shalfloop and sfaces on a sphere map. 
 
 \anchor figureNefS2SHalfloopIncidences 
-\image html shalfloopB.gif "Incidences of an SHalfloop "
+\image html shalfloopB.png "Incidences of an SHalfloop "
 
 \cgalHeading{Creation}
 

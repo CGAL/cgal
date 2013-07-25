@@ -58,14 +58,14 @@ and
 Then each square is subdivided in the same way recursively.
 \cgalFigureRef{Spatial_sorting_fig_Hilbert8} illustrates this process.
 
-\cgalFigureBegin{Spatial_sorting_fig_Hilbert8,Hilbert8.gif}
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert8,Hilbert8.png}
 Hilbert mapping
 \cgalFigureEnd
 
 Now given a set of 2D points, they can be sorted in the order they have on such
 a space filling curve as illustrated in \cgalFigureRef{Spatial_sorting_fig_Hilbert_middle} :
 
-\cgalFigureBegin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.gif}
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.png}
 Hilbert sort with middle policy
 \cgalFigureEnd
 
@@ -82,7 +82,7 @@ we construct a 2-d tree adapted to the point set. This tree can be visited in a
 similar manner and we get also a suitable ordering of the points
 (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_median}).
 
-\cgalFigureBegin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.gif}
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.png}
 Hilbert sort with median policy
 \cgalFigureEnd
 

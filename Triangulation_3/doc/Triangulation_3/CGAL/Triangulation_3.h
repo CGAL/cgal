@@ -741,7 +741,7 @@ of the convex hull of the triangulation - the five points involved are
 in convex position. 
 
 \anchor Triangulation3figflips
-\image html flips.gif "Flips"
+\image html flips.png "Flips"
 
 The following methods guarantee the validity of the resulting 3D
 triangulation. Flips for a 2d triangulation are not implemented yet.
@@ -915,7 +915,7 @@ Figure \ref Triangulation3figinsert_outside_convex_hull.
 \pre `t.dimension() > 0`, `c`, and the \f$ k\f$-face represented by `c` is infinite and contains `t`. 
 
 \anchor Triangulation3figinsert_outside_convex_hull
-\image html insert_outside_convex_hull.gif "insert_outside_convex_hull() (2-dimensional case)"
+\image html insert_outside_convex_hull.png "insert_outside_convex_hull() (2-dimensional case)"
 */ 
 Vertex_handle insert_outside_convex_hull(const Point & p, 
 Cell_handle c); 
@@ -931,7 +931,7 @@ triangulation.
 \pre `t.dimension() < 3` and `p` lies outside the affine hull of the points. 
 
 \anchor Triangulation3figinsert_outside_affine_hull
-\image html insert_outside_affine_hull.gif "insert_outside_affine_hull() (2-dimensional case)"
+\image html insert_outside_affine_hull.png "insert_outside_affine_hull() (2-dimensional case)"
 */ 
 Vertex_handle insert_outside_affine_hull(const Point & p); 
 

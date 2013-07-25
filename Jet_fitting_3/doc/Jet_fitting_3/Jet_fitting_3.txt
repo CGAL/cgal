@@ -302,7 +302,7 @@ To begin with, observe the fitting problem involves three relevant
 direct orthonormal basis: the world-basis \f$ (w_x,w_y,w_z)\f$, the
 fitting-basis \f$ (f_x,f_y,f_z)\f$, the Monge basis \f$ (d_1,d_2,n)\f$.
 
-\cgalFigureBegin{figjet_fitting_basis,jet_fitting_basis.gif}
+\cgalFigureBegin{figjet_fitting_basis,jet_fitting_basis.png}
 The three bases involved in the estimation.
 \cgalFigureEnd
 

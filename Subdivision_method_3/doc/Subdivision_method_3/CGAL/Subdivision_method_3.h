@@ -36,7 +36,7 @@ the geometry masks.
 `Subdivision_method_3` supports four refinement hosts: 
 `PQQ`, `PTQ`, `DQQ` and `Sqrt3`. 
 
-\image html RefSchemes.gif
+\image html RefSchemes.png
 
 \cgalHeading{Example}
 

@@ -1066,7 +1066,7 @@ public:
   \cgalConcept
 
   \anchor fig-compare_x_at_y_2
-  \image html compare_x_at_y.gif
+  \image html compare_x_at_y.png
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
@@ -1219,7 +1219,7 @@ public:
   \cgalConcept
 
   \anchor fig-compare12
-  \image html compare1.gif
+  \image html compare1.png
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -1305,7 +1305,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \image html compare2.gif
+  \image html compare2.png
 
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
@@ -1425,7 +1425,7 @@ public:
   \cgalConcept
 
   \anchor fig-compare14
-  \image html compare1.gif
+  \image html compare1.png
 
   \cgalRefines `AdaptableFunctor` (with two arguments) 
 
@@ -6479,7 +6479,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
 \cgalConcept
 
-\image html IsoCuboid.gif
+\image html IsoCuboid.png
 
 \cgalRefines `AdaptableFunctor` (with two arguments) 
 

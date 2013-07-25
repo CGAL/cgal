@@ -20,7 +20,7 @@ operations. Also, Nef polyhedra are closed under topological unary
 set operations. Given a Nef polyhedron one can determine its interior, its
 boundary, and its closure.
 
-\cgalFigureBegin{nefsexamples,halfspace.gif,complex.gif}
+\cgalFigureBegin{nefsexamples,halfspace.png,complex.png}
 Two spherical Nef polyhedra. A closed halfspace on the left
 and a complex polyhedron on the right. The different colors indicate
 selected and unselected regions, lines and points.
@@ -38,7 +38,7 @@ with the \f$ \epsilon\f$-sphere, results in a halfsphere which is bounded by
 a great circle. A binary operation of two halfspheres cuts the great circles
 into great arcs.
 
-\image html shalfloopB.gif
+\image html shalfloopB.png
 
 The incidence structure of planar Nef polyhedra can be reused. The
 items are denoted as \em svertex, \em shalfedge and \em sface,

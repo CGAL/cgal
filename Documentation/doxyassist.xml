@@ -1108,8 +1108,8 @@ namespace for the XML file to be processed properly.  -->
             <item>../Nef_S2/demo</item>
           </list>
           <list name="HTML_EXTRA_FILES" append="true">
-            <item>../Nef_S2/doc/Nef_S2/fig/halfspace.gif</item>
-            <item>../Nef_S2/doc/Nef_S2/fig/complex.gif</item>
+            <item>../Nef_S2/doc/Nef_S2/fig/halfspace.png</item>
+            <item>../Nef_S2/doc/Nef_S2/fig/complex.png</item>
           </list>
           <list name="TAGFILES" append="true">
             <item>./tags/Nef_2.tag=../../CGAL.CGAL.2D-Boolean-Operations-on-Nef-Polygons/html</item>

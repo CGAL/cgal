@@ -160,7 +160,7 @@ functions are non trivial.
 
 The design concept is illustrated in the figure below.
 
-\cgalFigureBegin{Search_rsd,rsd.gif}
+\cgalFigureBegin{Search_rsd,rsd.png}
 Design of the range and segment tree data structure. The symbol triangle means that the lower class is derived from the upper class.
 \cgalFigureEnd
 
@@ -290,7 +290,7 @@ interval (`window_query`).
 
 The pictures below show a two-dimensional and a `d`-dimensional range tree.
 
-\cgalFigureBegin{Search_range2,range2.gif}
+\cgalFigureBegin{Search_range2,range2.png}
 A two and a d-dimensional range tree.
 \cgalFigureEnd
 
@@ -421,7 +421,7 @@ contained in a given ` d`-dimensional interval (*window query*).
 An example of a one-dimensional segment tree and an example
 of a two-dimensional segment tree are shown below.
 
-\cgalFigureBegin{Search_segment2,segment2.gif}
+\cgalFigureBegin{Search_segment2,segment2.png}
 A one and a two dimensional segment tree
 \cgalFigureEnd
 

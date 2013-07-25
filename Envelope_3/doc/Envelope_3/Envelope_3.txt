@@ -107,10 +107,10 @@ types:
 <TABLE border="0">
 <TR>
 <TD>
-\image html compare_over_point.gif
+\image html compare_over_point.png
 </TD>
 <TD>
-\image html compare_over_curve.gif
+\image html compare_over_curve.png
 </TD>
 </TR>
 <TR align="center"><TD>(a)</TD><TD>(b)</TD></TR>
@@ -215,9 +215,9 @@ traits classes is demonstrated in the next section.
 <CENTER>
 <TABLE border="0">
 <TR>
-<TD>\image html ex_triangles.gif</TD>
-<TD>\image html ex_tri_le.gif</TD>
-<TD>\image html ex_tri_ue.gif</TD>
+<TD>\image html ex_triangles.png</TD>
+<TD>\image html ex_tri_le.png</TD>
+<TD>\image html ex_tri_ue.png</TD>
 <TR ALIGN="center"><TD>(a)</TD><TD>(b)</TD><TD>(c)</TD></TR>
 </TABLE>
 </CENTER>

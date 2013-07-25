@@ -22,7 +22,7 @@ only. The example below shows that the largest area triangle (green)
 and the largest perimeter triangle (orange, containing the top point)
 of a point set are different in general.
 
-\image html max_triangle.gif
+\image html max_triangle.png
 
 
 
@@ -45,7 +45,7 @@ is a data structure that maintains an iso-rectangle with the largest area among
 all iso-rectangles that are inside a given iso-rectangles, and
 that do not contain any point of the point set.
 
-\image html largestEmptyRect.gif
+\image html largestEmptyRect.png
 */ 
 } /* namespace CGAL */
 

@@ -20,7 +20,7 @@ implementation of the package, and
 Section \ref Section_2D_Streamlines_Example details two example
 placements.
 
-\cgalFigureBegin{illustration,1.gif}
+\cgalFigureBegin{illustration,1.png}
 The core idea of the algorithm is to integrate the streamlines from
 the center of the biggest empty cavities in the domain (left). A
 Delaunay triangulation of all the sample points is used to model the
@@ -73,7 +73,7 @@ Second Order Runge-Kutta algorithm are implemented.
 
 \subsection Stream_lines_2EulerIntegrator Euler Integrator
 
-\cgalFigureBegin{euler_fig,euler_integrator.gif}
+\cgalFigureBegin{euler_fig,euler_integrator.png}
 Euler integrator.
 \cgalFigureEnd
 
@@ -87,7 +87,7 @@ and backward.
 
 \subsection Stream_lines_2SecondOrderRungeKuttaIntegrator Second Order Runge-Kutta Integrator
 
-\cgalFigureBegin{runge_kutta_fig,runge_kutta_integrator.gif}
+\cgalFigureBegin{runge_kutta_fig,runge_kutta_integrator.png}
 Runge-Kutta second order integrator (The empty circle represents the intermediate point, and the gray disk represents the Euler integrated point).
 \cgalFigureEnd
 

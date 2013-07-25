@@ -47,7 +47,7 @@ of the underlying Euclidean space \f$ \mathbb{R}^3\f$ (see
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.
 
-\cgalFigureBegin{Triangulation3figorient,orient.gif}
+\cgalFigureBegin{Triangulation3figorient,orient.png}
 Orientation of a cell (3-dimensional case).
 \cgalFigureEnd
 
@@ -156,7 +156,7 @@ where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
 are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{z}^{(w)})}
 = 0\f$ (see \cgalFigureRef{Triangulation3figortho)}.
 
-\cgalFigureBegin{Triangulation3figortho,ortho.gif}
+\cgalFigureBegin{Triangulation3figortho,ortho.png}
 Orthogonal weighted points (picture in 2D).
 \cgalFigureEnd
 
@@ -197,7 +197,7 @@ derivation diagram shown in \cgalFigureRef{t3_derivation}. This diagram
 also shows another class: `Triangulation_utils_3`, which provides
 a set of tools operating on the indices of vertices in cells.
 
-\cgalFigureBegin{t3_derivation,derivation.gif}
+\cgalFigureBegin{t3_derivation,derivation.png}
 Derivation diagram of the 3D triangulation classes.
 \cgalFigureEnd
 
@@ -287,7 +287,7 @@ kind of triangulation used, the requirements on the vertex and cell base
 classes vary, and are expressed by various concepts, following the refinement
 diagram shown in \cgalFigureRef{T3concepthierarchy}.
 
-\cgalFigureBegin{T3concepthierarchy,concept_hierarchy.gif}
+\cgalFigureBegin{T3concepthierarchy,concept_hierarchy.png}
 Concepts refinement hierarchy for the vertex and cell base classes parameters.
 \cgalFigureEnd
 
@@ -353,7 +353,7 @@ classes to `Triangulation_data_structure_3`. The
 provided, and the place where the user can insert his own vertex and/or cell
 base classes.
 
-\cgalFigureBegin{T3figlayers,design.gif}
+\cgalFigureBegin{T3figlayers,design.png}
 Triangulation software design.
 \cgalFigureEnd
 
@@ -965,7 +965,7 @@ Running times (seconds) for various kernels and data sets.
 \cgalFigureCaptionEnd
 
  
-\cgalFigureBegin{Triangulation3figdatasets,api1_01.gif,b35-1.gif,HD.gif}
+\cgalFigureBegin{Triangulation3figdatasets,api1_01.png,b35-1.png,HD.png}
 Data sets used in the benchmark of \cgalFigureRef{Triangulation3figkernelsanddatasets}.
 \cgalFigureEnd
 

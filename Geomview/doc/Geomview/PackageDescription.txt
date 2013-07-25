@@ -3,7 +3,7 @@
 \addtogroup PkgGeomview
 \todo check generated documentation
 \cgalPkgDescriptionBegin{Geomview,PkgGeomviewSummary}
-\cgalPkgPicture{geomview.gif}
+\cgalPkgPicture{geomview.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri and Sylvain Pion}
 \cgalPkgDesc{This package implements an interface to Geomview, an interactive 3D viewing program,  originally developed at the Geometry Center in Minneapolis.}

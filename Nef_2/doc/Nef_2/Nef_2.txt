@@ -40,7 +40,7 @@ interior, its boundary, and its closure, and also composed operations
 like regularization (defined to be the closure of the interior or a
 point set).
 
-\cgalFigureBegin{nefexamples,halfplane.gif}
+\cgalFigureBegin{nefexamples,halfplane.png}
 Two Nef polyhedra in the plane. A closed halfspace on the left and a
 complex polyhedron on the right. Note that the points on the squared
 boundary are at infinity.

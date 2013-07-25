@@ -101,7 +101,7 @@ Point_3<Kernel> vertex(int i) const;
 
 /*! 
 returns `vertex(i)`, as indicated in the figure below: 
-\image html IsoCuboid.gif
+\image html IsoCuboid.png
 */ 
 Point_3<Kernel> operator[](int i) const; 
 

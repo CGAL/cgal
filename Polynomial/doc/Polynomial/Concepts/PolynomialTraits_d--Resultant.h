@@ -17,7 +17,7 @@ where
 \f[ g = g_nx^n + \dots + g_0. \f] 
 The resultant of \f$ f\f$ and \f$ g\f$ is defined as the determinant of the <I>Sylvester matrix</I>: 
 
-\image html sylvester_matrix.gif
+\image html sylvester_matrix.png
 
 Note that this is a \f$ (n+m)\times(n+m)\f$ matrix as there are \f$ n\f$ rows for \f$ f\f$ 
 and \f$ m\f$ rows that are used for \f$ g\f$. The blank spaces are supposed to be 

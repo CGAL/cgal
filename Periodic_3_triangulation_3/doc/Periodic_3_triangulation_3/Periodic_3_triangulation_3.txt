@@ -58,7 +58,7 @@ The vector \f$ (0,0,0)\f$ corresponds to the representative in the original
 domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
 (cf. \cgalFigureRef{P3Triangulation3figoffsets}).
 
-\cgalFigureBegin{P3Triangulation3figoffsets,offsets.gif}
+\cgalFigureBegin{P3Triangulation3figoffsets,offsets.png}
 Offsets in a cell.
 \cgalFigureEnd
 
@@ -76,7 +76,7 @@ defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^3\f$ given by representatives determined by the respective offsets
 (see \cgalFigureRef{P3Triangulation3figorient}).
 
-\cgalFigureBegin{P3Triangulation3figorient,orient.gif}
+\cgalFigureBegin{P3Triangulation3figorient,orient.png}
 Orientation of a cell.
 \cgalFigureEnd
 

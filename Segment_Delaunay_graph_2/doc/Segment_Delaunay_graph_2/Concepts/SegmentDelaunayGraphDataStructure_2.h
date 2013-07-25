@@ -17,7 +17,7 @@ reverses the action of the other.
 
 \anchor figsdgdssplitjoin 
 
-\image html sdg-join_split.gif
+\image html sdg-join_split.png
 <center><b>
 The join and split operations. Left to right: The vertex `v` is split
 into \f$ v_1\f$ and \f$ v_2\f$. The faces \f$ f\f$ and \f$ g\f$ are

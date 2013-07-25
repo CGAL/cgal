@@ -167,7 +167,7 @@ the *infinite vertex* has no significant
 coordinates and that no geometric predicate can be applied on it
 nor on an infinite face.
 
-\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.png}
 Infinite vertex and infinite faces
 \cgalFigureEnd
 
@@ -205,7 +205,7 @@ of a face `f` which is opposed to the vertex indexed `i`,
 can be represented as well as an edge of the `neighbor(i)` of 
 `f`.
 
-\cgalFigureBegin{Triangulation_2D_Fig_neighbors1,rep_bis.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_neighbors1,rep_bis.png}
 Vertices and neighbors.
 \cgalFigureEnd
 
@@ -267,7 +267,7 @@ triangulation package, showing the three layers
 (base classes, triangulation data structure and triangulation)
 forming this design.
 
-\cgalFigureBegin{Triangulation_2D_Fig_three_levels,threelevels.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_three_levels,threelevels.png}
 The triangulations software design.
 \cgalFigureEnd
 
@@ -293,7 +293,7 @@ classes requires base classes implementing
 refinements 
 of the basic concepts.
 
-\cgalFigureBegin{Triangulation_2D_Fig_derivation_tree,derivation_tree.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_derivation_tree,derivation_tree.png}
 The derivation tree of 2D triangulations.
 \cgalFigureEnd
 
@@ -372,7 +372,7 @@ flipping of an edge. The flipping of an edge
 is possible when the union of the two incident faces
 forms a convex quadrilateral (see \cgalFigureRef{Triangulation_2D_fig_flip_bis}).
 
-\cgalFigureBegin{Triangulation_2D_fig_flip_bis,Flip.gif}
+\cgalFigureBegin{Triangulation_2D_fig_flip_bis,Flip.png}
 Flip.
 \cgalFigureEnd
 
@@ -833,7 +833,7 @@ section \ref Section_2D_Triangulations_Constrained_Plus.
 </UL>
 </UL>
 
-\image html constraints.gif
+\image html constraints.png
 
 A constrained triangulation is represented in the \cgal library as an
 object of the class `Constrained_triangulation_2<Traits,Tds,Itag>`.
@@ -1146,7 +1146,7 @@ by the triangulation data structure. Thus the vertex and base
 classes have to be themselves parameterized by the triangulation data
 structure, and there is a cyclic dependency on template parameter.
 
-\cgalFigureBegin{Triangulation_2D_Fig_three_levels_2,threelevels2.gif}
+\cgalFigureBegin{Triangulation_2D_Fig_three_levels_2,threelevels2.png}
 The cyclic dependency in triangulations software design.
 \cgalFigureEnd
 
