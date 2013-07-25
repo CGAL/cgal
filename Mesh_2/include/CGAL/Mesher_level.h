@@ -28,7 +28,6 @@
 #endif
 
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
-#include <CGAL/Bbox_3.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
 # define CGAL_PROFILE
