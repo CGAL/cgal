@@ -137,8 +137,14 @@ h_5: x + y \le 2,
 \f]
 we define our polyhedron \f$ P := ( h_1 \cap h_2 \cap h_3) - ( h_4 \cap h_5)\f$.
 
-\image html nef_example.gif
-\image html nef_pyramids.gif
+<center>
+<table border="0">
+<tr>
+<td>\image html nef_example.gif</td>
+<td>\image html nef_pyramids.gif</td>
+</tr>
+</table>
+</center>
 
 The left figure illustrates the polyhedron with
 its partially closed and partially open boundary, i.e., vertex 
