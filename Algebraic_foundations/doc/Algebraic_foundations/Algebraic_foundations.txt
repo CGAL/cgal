@@ -79,7 +79,7 @@ two-pass template compilation problems experienced with the old design
 using overloaded functions. However, for ease of use and backward 
 compatibility all functionality is also 
 accessible through global functions defined within namespace `CGAL`, 
-e.g., `CGAL::sqrt(x)`. This is realized via function templates using 
+e.g., \link sqrt `CGAL::sqrt(x)` \endlink. This is realized via function templates using
 the according functor of the traits class. For an overview see 
 Section \ref PkgAlgebraicFoundations in the reference manual.
 
