@@ -22,12 +22,12 @@ public:
 /// @{
   
  /*! 
-   The supported Arrangement type of input. 
+   The supported arrangement type of input. 
  */ 
   typedef Hidden_type Input_Arrangement_2; 
 
   /*!
-    The supported Arrangement type of output.
+    The supported arrangement type of output.
    */
   typedef Hidden_type Output_Arrangement_2;
 
@@ -99,8 +99,8 @@ Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be saved to `out_arr`.
 \param out_arr is the output arrangement 
-\pre `f` is a face of  this->arr()
-\pre q is in the interior or on the foundary of the given face `f`
+\pre `f` is a face of  `this->arr()`
+\pre `q` is in the interior or on the foundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
@@ -109,8 +109,8 @@ The visibility region of `q` will be saved to `out_arr`.
 Computes for the given query point `q` the visibility region that is on the side of `halfedge`. 
 The visibility region of `q` will be saved to `out_arr`.
 \param out_arr is the output arrangement  
-\pre half_edge is a half edge of  this->arr()
-\pre q is on halfedge
+\pre `half_edge` is a half edge of  `this->arr()`
+\pre `q` is on halfedge
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr);

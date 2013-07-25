@@ -19,12 +19,12 @@ public:
 /// @{
 
  /*!
-  The type of input Arrangement.
+  The type of input arrangement.
   */
    typedef Arrangement_2 Input_Arrangement_2;
 
  /*!
-  The type of output Arrangement.
+  The type of output arrangement.
   */
    typedef Arrangement_2 Output_Arrangement_2;
 
@@ -34,12 +34,12 @@ public:
   typedef Input_Arrangement_2::Point_2 Point_2; 
 
   /*!
-   Face_handle type of input Arrangement.
+   Face_handle type of input arrangement.
    */
   typedef Input_Arrangement_2::Face_handle Face_handle;
 
   /*!
-   Halfedge_handle type of input Arrangement.
+   Halfedge_handle type of input arrangement.
    */
   typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
 
@@ -50,7 +50,7 @@ public:
 
 /*!
 Default constructor creates an empty 'Preprocessed_visibility_2' object, that is not
-attached to any  arrangement yet.
+attached to any arrangement yet.
 */
 Preprocessed_visibility_2();
 
@@ -89,8 +89,8 @@ Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement 
-\pre `f` is a face of  this->arr()
-\pre q is in the interior or on the foundary of the given face `f`
+\pre `f` is a face of  `this->arr()`
+\pre `q` is in the interior or on the foundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face& face, Output_Arrangement_2& out_arr); 
@@ -99,8 +99,8 @@ The visibility region of `q` will be stored in `out_arr`.
 Computes for the given query point `q` the visibility region that is on the side of `halfedge`. 
 The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement  
-\pre half_edge is a half edge of  this->arr()
-\pre q is on halfedge
+\pre `half_edge` is a half edge of  `this->arr()`
+\pre `q` is on halfedge
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Halfedge& halfedge, Output_Arrangement_2& out_arr); 
