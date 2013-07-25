@@ -99,8 +99,11 @@ extern "C" {
 // exponent has a wider range.  This can produce double rounding effects and
 // other bad things that we need to protect against.
 // The typical offender is the traditional FPU of x86 (SSE2-only mode is not affected).
-// Are there others?
-#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined _MSC_VER
+// Are there others, besides itanium and m68k?
+// FIXME: windows also runs on ARM now.
+#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined _MSC_VER \
+  || defined __ia64__ \
+  || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1)
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
 
@@ -149,8 +152,13 @@ inline double IA_force_to_double(double x)
 // In case one does not care about such "extreme" situations, one can
 // set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
 // LLVM doesn't have -frounding-math so needs extra protection.
+// GCC also migrates fesetround calls through FP instructions, so protect
+// everyone (but Microsoft for now).
+// TODO: reorganize the various protections, separating excess precision from
+// abusive optimizations.
 #if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__
+   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__ \
+   || !defined _MSC_VER
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
@@ -200,7 +208,7 @@ inline double IA_bug_sqrt(double d)
 // that both arguments are constant before stopping one of them.
 // Use inline functions instead ?
 #define CGAL_IA_ADD(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)+CGAL_IA_STOP_CPROP(b))
-#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)-CGAL_IA_STOP_CPROP(b))
+#define CGAL_IA_SUB(a,b) CGAL_IA_FORCE_TO_DOUBLE(CGAL_IA_STOP_CPROP(a)-(b))
 #define CGAL_IA_MUL(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)*CGAL_IA_STOP_CPROP(b))
 #define CGAL_IA_DIV(a,b) CGAL_IA_FORCE_TO_DOUBLE((a)/CGAL_IA_STOP_CPROP(b))
 #define CGAL_IA_SQUARE(a) CGAL_IA_MUL(a,a)
