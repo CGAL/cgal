@@ -162,6 +162,9 @@ static  T EK; // static extended kernel
   struct Polylines {};
   struct Polygons {};
 
+  typedef Polylines Polylines_tag;
+  typedef Polygons Polygons_tag;
+
   enum Operation { JOIN=0 };
 
   enum Boundary { EXCLUDED=0, INCLUDED=1 };
