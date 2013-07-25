@@ -171,52 +171,52 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the traits class. 
 */ 
 typedef Traits Geom_traits; 
 
-/*! 
+/*!
 the triangulation data structure type. 
 */ 
 typedef Tds Triangulation_data_structure; 
 
-/*! 
+/*!
 the point type.
 */ 
 typedef Traits::Point_2 Point; 
 
-/*! 
+/*!
 the segment type.
 */ 
 typedef Traits::Segment_2 Segment; 
 
-/*! 
+/*!
 the triangle type.
 */ 
 typedef Traits::Triangle_2 Triangle; 
 
-/*! 
+/*!
 the vertex type. 
 */ 
 typedef Tds::Vertex Vertex; 
 
-/*! 
+/*!
 the face type. 
 */ 
 typedef Tds::Face Face; 
 
-/*! 
+/*!
 the edge type. 
 */ 
 typedef Tds::Edge Edge; 
 
-/*! 
+/*!
 Size type (an unsigned integral type).
 */ 
 typedef Tds::size_type size_type; 
 
-/*! 
+/*!
 Difference type (a signed integral type).
 */ 
 typedef Tds::difference_type difference_type; 
@@ -248,69 +248,69 @@ typedef Tds::difference_type difference_type;
 /// enum type to specify which case occurs when locating a point in
 /// the triangulation.
 
-/*! 
+/*!
 handle to a vertex.
 */ 
 typedef Tds::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 handle to a face.
 */ 
 typedef Tds::Face_handle Face_handle; 
 
-/*! 
+/*!
 iterator over all faces. 
 */ 
 typedef Tds::Face_iterator All_faces_iterator; 
 
-/*! 
+/*!
 iterator over all edges.
 */ 
 typedef Tds::Edge_iterator All_edges_iterator; 
 
-/*! 
+/*!
 iterator over all vertices.
 */ 
 typedef Tds::Vertex_iterator All_vertices_iterator; 
 
-/*! 
+/*!
 iterator over finite faces. 
 */ 
 typedef unspecified_type Finite_faces_iterator; 
 
-/*! 
+/*!
 iterator over finite edges. 
 */ 
 typedef unspecified_type Finite_edges_iterator 
 ; 
 
-/*! 
+/*!
 iterator over finite vertices. 
 */ 
 typedef unspecified_type Finite_vertices_iterator; 
 
-/*! 
+/*!
 iterator over the points corresponding the 
 finite vertices of the triangulation. 
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 circulator over all faces intersected by a line. 
 */ 
 typedef unspecified_type Line_face_circulator; 
 
-/*! 
+/*!
 circulator over all faces incident to a given vertex. 
 */ 
 typedef unspecified_type Face_circulator; 
 
-/*! 
+/*!
 circulator over all edges incident to a given vertex. 
 */ 
 typedef unspecified_type Edge_circulator; 
 
-/*! 
+/*!
 circulator over all vertices incident to a given vertex. 
 */ 
 typedef unspecified_type Vertex_circulator; 
@@ -333,13 +333,13 @@ specifies which case occurs when locating a point in the triangulation.
 /// @{
 
 
-/*! 
+/*!
 Introduces an empty triangulation. 
 */ 
 Triangulation_2( 
 const Traits& gt = Traits() ); 
 
-/*! 
+/*!
 Copy constructor. All the vertices and faces are duplicated. 
 After the copy, `*this` and `tr` 
 refer to different triangulations: 
@@ -348,7 +348,7 @@ if `tr` is modified, `*this` is not.
 Triangulation_2( 
 const Triangulation_2& tr); 
 
-/*! 
+/*!
 Assignment. All the vertices and faces are duplicated. 
 After the assignment, `*this` and `tr` 
 refer to different triangulations: 
@@ -356,14 +356,14 @@ if `tr` is modified, `*this` is not.
 */ 
 Triangulation_2 operator=(const Triangulation_2<Traits,Tds>& tr); 
 
-/*! 
+/*!
 The triangulations `tr` and `*this` are swapped. 
 This method should be used instead of assignment of copy construtor.
 if `tr` is deleted after that. 
 */ 
 void swap(Triangulation_2& tr); 
 
-/*! 
+/*!
 Deletes all faces and finite vertices 
 resulting in an empty triangulation. 
 */ 
@@ -374,12 +374,12 @@ void clear();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the triangulation traits object. 
 */ 
 const Geom_traits& geom_traits() const; 
 
-/*! 
+/*!
 Returns a const reference to the triangulation data structure. 
 */ 
 const TriangulationDataStructure_2 & tds() const; 
@@ -393,38 +393,38 @@ const TriangulationDataStructure_2 & tds() const;
 /// their own triangulation algorithms.
 /// @{
 
-/*! 
+/*!
 Returns a reference to the triangulation data structure. 
 */ 
 TriangulationDataStructure_2 & tds(); 
 
-/*! 
+/*!
 Returns the dimension of the convex hull. 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 Returns the number of finite vertices. 
 */ 
 size_type number_of_vertices() const; 
 
-/*! 
+/*!
 Returns the number of finite faces. 
 */ 
 size_type number_of_faces() const; 
 
-/*! 
+/*!
 a face incident to the infinite vertex. 
 */ 
 Face_handle infinite_face() const; 
 
-/*! 
+/*!
 the infinite vertex. 
 */ 
 Vertex_handle 
 infinite_vertex(); 
 
-/*! 
+/*!
 a vertex distinct from the infinite vertex. 
 */ 
 Vertex_handle finite_vertex() const; 
@@ -438,48 +438,48 @@ Vertex_handle finite_vertex() const;
 /// face).
 /// @{
 
-/*! 
+/*!
 `true` iff `v` is the infinite vertex. 
 */ 
 bool 
 is_infinite(Vertex_handle v) const; 
 
-/*! 
+/*!
 `true` iff face `f` is infinite. 
 */ 
 bool 
 is_infinite(Face_handle f) const; 
 
-/*! 
+/*!
 `true` iff edge `(f,i)` is infinite. 
 */ 
 bool is_infinite(Face_handle f, int i) const; 
 
-/*! 
+/*!
 `true` iff edge `e` is infinite. 
 */ 
 bool 
 is_infinite(Edge e) const; 
 
-/*! 
+/*!
 `true` iff edge `*ec` is infinite. 
 */ 
 bool 
 is_infinite(Edge_circulator ec) const; 
 
-/*! 
+/*!
 `true` iff edge `*ei` is infinite. 
 */ 
 bool 
 is_infinite(All_edges_iterator ei) const; 
 
-/*! 
+/*!
 `true` if there is an edge having `va` and `vb` as 
 vertices. 
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb); 
 
-/*! 
+/*!
 as above. In addition, if `true` is returned, the edge with 
 vertices `va` and `vb` is the edge `e=(fr,i)` where 
 `fr` is a handle to the face incident to `e` and 
@@ -488,7 +488,7 @@ on the right side of `e` oriented from `va` to `vb`.
 bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr, 
 int & i); 
 
-/*! 
+/*!
 `true` if the line segment from `va` to `vb` includes 
 an edge `e` incident to `va`. If `true`, `vb` becomes 
 the other vertex of `e`, `e` is the edge `(fr,i)` where 
@@ -498,13 +498,13 @@ on the right side `e` oriented from `va` to `vb`.
 bool includes_edge(Vertex_handle va, Vertex_handle & vb, 
 Face_handle& fr, int & i); 
 
-/*! 
+/*!
 `true` if there is a face having `v1`, `v2` and `v3` 
 as vertices. 
 */ 
 bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3); 
 
-/*! 
+/*!
 as above. In addition, if `true` is returned, fr is a handle 
 to the face with `v1`, `v2` and `v3` 
 as vertices. 
@@ -521,7 +521,7 @@ Face_handle &fr);
 /// triangulation.
 /// @{
 
-/*! 
+/*!
 If the point `query` lies inside the convex hull of the points, a face 
 that contains the query in its interior or on its 
 boundary is returned. 
@@ -562,7 +562,7 @@ Face_handle
 inexact_locate(const Point & query, 
 Face_handle start = Face_handle()) const;
 
-/*! 
+/*!
 Same as above. Additionally, the parameters `lt` 
 and `li` 
 describe where the query point is located. 
@@ -585,7 +585,7 @@ Locate_type& lt,
 int& li, 
 Face_handle h =Face_handle() ) const; 
 
-/*! 
+/*!
 Returns on which side of the oriented boundary of `f` lies 
 the point `p`. \pre `f` is finite. 
 */ 
@@ -593,7 +593,7 @@ Oriented_side
 oriented_side(Face_handle f, 
 const Point& p) const; 
 
-/*! 
+/*!
 Returns on which side of the circumcircle of face `f` lies 
 the point `p`. The circle is assumed to be counterclockwise 
 oriented, so its positive 
@@ -624,7 +624,7 @@ triangulation.
 */
 /// @{
 
-/*! 
+/*!
 Exchanges the edge incident to 
 `f` and `f->neighbor(i)` with the other 
 diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`. 
@@ -632,7 +632,7 @@ diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`.
 */ 
 void flip(Face_handle f, int i); 
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. 
 
@@ -660,7 +660,7 @@ algorithm of where to start.
 Vertex_handle insert(const Point& p, 
 Face_handle f = Face_handle()); 
 
-/*! 
+/*!
 Same as above except that the location of the point 
 `p` to be inserted is assumed to be given by 
 `(lt,loc,i)` (see the description of the `locate` method above.) 
@@ -670,12 +670,12 @@ insert(const Point& p,
 Locate_type lt, 
 Face_handle loc, int li ); 
 
-/*! 
+/*!
 Equivalent to `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
-/*! 
+/*!
 Inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 \pre The `value_type` of `InputIterator` is `Point`. 
@@ -684,14 +684,14 @@ template < class InputIterator >
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
-/*! 
+/*!
 Removes the vertex from the triangulation. The created hole is 
 re-triangulated. 
 \pre Vertex `v` must be finite. 
 */ 
 void remove(Vertex_handle v); 
 
-/*! 
+/*!
 if there is not already another vertex placed on `p`, 
 the triangulation is modified such that the new position of vertex `v` 
 is `p`, and `v` is returned. Otherwise, the triangulation is not 
@@ -700,7 +700,7 @@ modified and the vertex at point `p` is returned.
 */ 
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
-/*! 
+/*!
 same as above if there is no collision. Otherwise, `v` 
 is deleted and the vertex placed on `p` is returned. 
 \pre Vertex `v` must be finite. 
@@ -714,17 +714,17 @@ Vertex_handle move(Vertex_handle v, const Point & p);
 /// be in the corresponding case.
 /// @{
 
-/*! 
+/*!
 Inserts the first finite vertex . 
 */ 
 Vertex_handle insert_first(const Point& p); 
 
-/*! 
+/*!
 Inserts the second finite vertex . 
 */ 
 Vertex_handle insert_second(const Point& p); 
 
-/*! 
+/*!
 Inserts vertex `v` in face 
 `f`. Face `f` is modified, 
 two new faces are created. 
@@ -732,43 +732,43 @@ two new faces are created.
 */ 
 Vertex_handle insert_in_face(const Point& p,Face_handle f); 
 
-/*! 
+/*!
 Inserts vertex v in edge `i` of `f`. 
 \pre The point in vertex `v` lies on the edge opposite to the vertex `i` of face `f`. 
 */ 
 Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i); 
 
-/*! 
+/*!
 Inserts 
 a point which is outside the convex hull but in the affine hull. 
 \pre The handle `f` points to a face which is a proof of the location of`p`, see the description of the `locate` method above. 
 */ 
 Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f); 
 
-/*! 
+/*!
 Inserts 
 a point which is outside the affine hull. 
 */ 
 Vertex_handle insert_outside_affine_hull(const Point& p); 
 
-/*! 
+/*!
 Removes a vertex of degree three. Two of the incident faces are destroyed, 
 the third one is modified. 
 \pre Vertex `v` is a finite vertex with degree three. 
 */ 
 void remove_degree_3(Vertex_handle v); 
 
-/*! 
+/*!
 Removes the before last finite vertex. 
 */ 
 void remove_second(Vertex_handle v); 
 
-/*! 
+/*!
 Removes the last finite vertex. 
 */ 
 void remove_first(Vertex_handle v); 
 
-/*! 
+/*!
 creates a new vertex `v` and use it to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a handle to the new vertex. 
 
@@ -781,7 +781,7 @@ Vertex_handle star_hole( Point p,
 EdgeIt edge_begin, 
 EdgeIt edge_end); 
 
-/*! 
+/*!
 same as above, except that the algorithm 
 first recycles faces in the sequence `[face_begin, face_end)` 
 and create new ones only when the sequence is exhausted. 
@@ -807,43 +807,43 @@ FaceIt face_end);
 /// by any change in the triangulation. 
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary finite vertex 
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_vertices_iterator finite_vertices_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite edge 
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_edges_iterator finite_edges_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite face 
 */ 
 Finite_faces_iterator finite_faces_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_faces_iterator finite_faces_end() 
 const; 
 
-/*! 
+/*!
 
 */ 
 Point_iterator points_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Point_iterator points_end() const; 
@@ -859,32 +859,32 @@ Point_iterator points_end() const;
 /// triangulation.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary vertex 
 */ 
 All_vertices_iterator all_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_vertices_iterator all_vertices_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary edge 
 */ 
 All_edges_iterator all_edges_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_edges_iterator all_edges_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary face 
 */ 
 All_faces_iterator all_faces_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_faces_iterator all_faces_end() const; 
@@ -920,7 +920,7 @@ are not enumerated.
 */
 /// @{
 
-/*! 
+/*!
 This function returns a circulator that allows to visit the 
 faces intersected by the line `pq`. 
 If there is no such face the circulator has a singular value. 
@@ -955,38 +955,38 @@ line_walk(const Point& p, const Point& q, Face_handle f = Face_handle()) const;
 /// faces incident to the edge pointed to.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary face incident 
 to `v`. 
 */ 
 Face_circulator incident_faces(Vertex_handle v) const; 
 
-/*! 
+/*!
 Starts at face `f`. 
 \pre Face `f` is incident to vertex `v`. 
 */ 
 Face_circulator incident_faces(Vertex_handle v, Face_handle f) const; 
 
-/*! 
+/*!
 Starts at an arbitrary edge incident 
 to `v`. 
 */ 
 Edge_circulator incident_edges(Vertex_handle v) const; 
 
-/*! 
+/*!
 Starts at the first edge of `f` incident to 
 `v`, in counterclockwise order around `v`. 
 \pre Face `f` is incident to vertex `v`. 
 */ 
 Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const; 
 
-/*! 
+/*!
 Starts at an arbitrary vertex incident 
 to `v`. 
 */ 
 Vertex_circulator incident_vertices(Vertex_handle v) const; 
 
-/*! 
+/*!
 Starts at the first vertex of `f` adjacent to `v` 
 in counterclockwise order around `v`. 
 \pre Face `f` is incident to vertex `v`. 
@@ -998,20 +998,20 @@ Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;
 /// \name Traversal Between Adjacent Faces 
 /// @{
 
-/*! 
+/*!
 returns the vertex of the \f$ i^{th}\f$ neighbor of `f` that is 
 opposite to `f`. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Vertex_handle mirror_vertex(Face_handle f, int i) const; 
 
-/*! 
+/*!
 returns the index of `f` in its \f$ i^{th}\f$ neighbor. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 int mirror_index(Face_handle f, int i) const; 
 
-/*! 
+/*!
 returns the same edge seen from the other adjacent face. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
@@ -1022,24 +1022,24 @@ Edge mirror_edge(Edge e) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 Returns \f$ i+1\f$ modulo 3.\pre \f$ 0\leq i \leq2\f$. 
 */ 
 int ccw(int i) const; 
 
-/*! 
+/*!
 Returns \f$ i+2\f$ modulo 3.\pre \f$ 0\leq i \leq2\f$. 
 */ 
 int cw(int i) const; 
 
-/*! 
+/*!
 Returns the triangle formed by the three vertices of `f`. 
 \pre The face is finite. 
 */ 
 Triangle 
 triangle(Face_handle f) const; 
 
-/*! 
+/*!
 Returns the line segment formed by the vertices `ccw(i)` 
 and `cw(i)` of face `f`. 
 \pre \f$ 0\leq i \leq2\f$. The vertices `ccw(i)` and `cw(i)` of `f` are finite. 
@@ -1047,28 +1047,28 @@ and `cw(i)` of face `f`.
 Segment 
 segment(Face_handle f, int i) const; 
 
-/*! 
+/*!
 Returns the line segment corresponding to edge `e`. 
 \pre `e` is a finite edge. 
 */ 
 Segment 
 segment(const Edge& e) const; 
 
-/*! 
+/*!
 Returns the line segment corresponding to edge `*ec`. 
 \pre `*ec` is a finite edge. 
 */ 
 Segment 
 segment(const Edge_circulator& ec) const; 
 
-/*! 
+/*!
 Returns the line segment corresponding to edge `*ei`. 
 \pre `*ei` is a finite edge. 
 */ 
 Segment 
 segment(const Edge_iterator& ei) const; 
 
-/*! 
+/*!
 Compute the circumcenter of the face pointed to by f. This function 
 is available only if the corresponding function is provided in the 
 geometric traits. 
@@ -1080,7 +1080,7 @@ Point circumcenter(Face_handle f) const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 This method is meant to be used only if you have done a low-level operation on the underlying tds that invalidated the infinite vertex.
@@ -1101,7 +1101,7 @@ void set_infinite_vertex(const Vertex_handle& v);
 /// \cgalAdvancedEnd
 /// @{
 
-/*! 
+/*!
 Checks the combinatorial validity of the triangulation and 
 also the validity of its geometric embedding. 
 This method is mainly a debugging help 
@@ -1115,7 +1115,7 @@ is_valid(bool verbose = false, int level = 0) const;
 
 }; /* end Triangulation_2 */
 
-/*! 
+/*!
 Inserts the triangulation into the stream `os`. 
 \pre The insert operator must be defined for `Point`. 
 \relates Triangulation_2 
@@ -1123,7 +1123,7 @@ Inserts the triangulation into the stream `os`.
 ostream& operator<<(ostream& os, 
 const Triangulation_2<Traits,Tds>& T); 
 
-/*! 
+/*!
 Reads a triangulation from stream `is` and assigns it 
 to the triangulation. 
 \pre The extract operator must be defined for `Point`. 
@@ -1181,7 +1181,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Triangulation_cw_ccw_2(); 
@@ -1191,14 +1191,14 @@ Triangulation_cw_ccw_2();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the index of the neighbor or vertex that is next to 
 the neighbor or vertex with index `i` 
 in counterclockwise order around a face. 
 */ 
 int ccw(const int i) const; 
 
-/*! 
+/*!
 returns the index of the neighbor or vertex that is next to 
 the neighbor or vertex with index `i` 
 in counterclockwise order around a face. 

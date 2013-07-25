@@ -19,12 +19,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is void. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type argument_type; 
@@ -34,7 +34,7 @@ typedef unspecified_type argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 may simplify \f$ x\f$. 
 */ 
 result_type operator()(argument_type x); 

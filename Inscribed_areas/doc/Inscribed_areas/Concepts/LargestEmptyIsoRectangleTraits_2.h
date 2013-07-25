@@ -23,17 +23,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 The iso rectangle type. 
 */ 
 typedef unspecified_type Iso_rectangle_2; 
 
-/*! 
+/*!
 Predicate object. Must provide 
 the operator 
 `Comparison_result operator()(Point_2 p, Point_2 q)` 
@@ -44,7 +44,7 @@ according ding to the
 */ 
 typedef unspecified_type Compare_x_2; 
 
-/*! 
+/*!
 Predicate object. Must provide 
 the operator 
 `Comparison_result operator()(Point_2 p, Point_2 q)` 
@@ -55,7 +55,7 @@ according to the
 */ 
 typedef unspecified_type Compare_y_2; 
 
-/*! 
+/*!
 Predicate object. Must provide 
 the operator 
 `bool operator()(Point_2 p, Point_2 q)` 
@@ -64,7 +64,7 @@ whether `p` is less than `q` according to their \f$ x\f$-ordering.
 */ 
 typedef unspecified_type Less_x_2; 
 
-/*! 
+/*!
 Predicate object. Must provide 
 the operator 
 `bool operator()(Point_2 p, Point_2 q)` 
@@ -81,17 +81,17 @@ typedef unspecified_type Less_y_2;
 /// provided.
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 LargestEmptyIsoRectangleTraits_2(); 
 
-/*! 
+/*!
 Copy constructor 
 */ 
 LargestEmptyIsoRectangleTraits_2(LargestEmptyIsoRectangleTraits_2); 
 
-/*! 
+/*!
 Assignment operator. 
 */ 
 LargestEmptyIsoRectangleTraits_2 operator=(LargestEmptyIsoRectangleTraits_2 gtr); 
@@ -102,22 +102,22 @@ LargestEmptyIsoRectangleTraits_2 operator=(LargestEmptyIsoRectangleTraits_2 gtr)
 /// The following functions give access to the predicate and constructor objects.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_x_2 compare_x_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_y_2 compare_y_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_x_2 less_x_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_y_2 less_y_2_object(); 

@@ -54,19 +54,19 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>(); 
 
-/*! 
+/*!
 Copy 
 constructor. 
 */ 
 Apollonius_graph_filtered_traits_2 
 (Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM> other); 
 
-/*! 
+/*!
 Assignment 
 operator. 
 */ 

@@ -31,22 +31,22 @@ public:
 
 /// @{
 
-/*! 
+/*!
 The line type. 
 */ 
 typedef unspecified_type Line_3; 
 
-/*! 
+/*!
 The object type. 
 */ 
 typedef unspecified_type Object_3; 
 
-/*! 
+/*!
 The ray type. 
 */ 
 typedef unspecified_type Ray_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Bounded_side operator()(Point p, Point q, Point r, Point s)`, 
@@ -57,7 +57,7 @@ by `p`, `q`, and `r` on which `s` lies.
 */ 
 typedef unspecified_type Coplanar_side_of_bounded_circle_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Oriented_side operator()(Point p, Point q, Point r, Point s, Point t)`, 
@@ -67,7 +67,7 @@ which determines on which side of the oriented sphere circumscribing
 */ 
 typedef unspecified_type Side_of_oriented_sphere_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Comparison_result operator()(Point p, Point q, Point r)`, 
@@ -88,7 +88,7 @@ typedef unspecified_type Compare_distance_3;
 */
 /// @{
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Point_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
@@ -105,7 +105,7 @@ which constructs the circumcenter of three points.
 */ 
 typedef unspecified_type Construct_circumcenter_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operators 
 
 `Object_3 operator()(Point_3 p)`, 
@@ -118,7 +118,7 @@ that construct an object respectively from a point, a segment and a ray.
 */ 
 typedef unspecified_type Construct_object_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Line_3 operator()(Point_3 p1, Point_3 p2, Point_3 p3)`, 
@@ -128,7 +128,7 @@ which constructs the line which is at the same distance from the three points.
 */ 
 typedef unspecified_type Construct_equidistant_line_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Ray_3 operator()(Point_3 p, Line_3 l)`, 
@@ -143,12 +143,12 @@ typedef unspecified_type Construct_ray_3;
 /// The following functions give access to the predicate and construction objects:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object(); 
@@ -161,7 +161,7 @@ When using the `Fast_location` policy or the `CGAL::Delaunay_trioangulation_3::n
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_distance_3 compare_distance_3_object(); 
@@ -175,22 +175,22 @@ The following functions must be provided only if the methods of `Delaunay_triang
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_circumcenter_3 construct_circumcenter_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_object_3 construct_object_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_equidistant_line_3 construct_equidistant_line_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_ray_3 construct_ray_3_object(); 

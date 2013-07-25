@@ -25,7 +25,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
@@ -35,7 +35,7 @@ typedef PolynomialTraits_d::Polynomial_d result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 This function moves the variable at position \f$ i\f$ to its new position \f$ j\f$ and returns 
 the new polynomial. The relative order of the other variables is preserved. 

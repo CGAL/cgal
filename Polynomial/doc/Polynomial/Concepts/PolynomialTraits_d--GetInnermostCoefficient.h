@@ -22,17 +22,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Innermost_coefficient_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type ; 
 
-/*! 
+/*!
 
 */ 
   typedef CGAL::Exponent_vector second_argument_type; 
@@ -42,7 +42,7 @@ typedef PolynomialTraits_d::Polynomial_d first_argument_type ;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 For given polynomial \f$ p\f$ this operator returns the innermost coefficient of the 
 monomial corresponding to the given `CGAL::Exponent_vector` \f$ v\f$. 

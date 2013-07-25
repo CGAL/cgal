@@ -20,25 +20,25 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The geometric traits used for the 
 construction of the regular triangulation. 
 */ 
 typedef unspecified_type Geometric_traits; 
 
-/*! 
+/*!
 The `Weighted_point` type defined 
 by the `Geometric_traits`. 
 */ 
 typedef unspecified_type Weighted_point; 
 
-/*! 
+/*!
 The `Bare_point` type defined by the 
 `Geometric_traits`. 
 */ 
 typedef unspecified_type Bare_point; 
 
-/*! 
+/*!
 The `FT` type defined by the 
 `Geometric_traits`. This is the number type used by the 
 weighted points. 
@@ -50,7 +50,7 @@ typedef unspecified_type FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 The mandatory arguments to the constructor are 
 an iterator range `[begin,end)` of weighted points and a 
 shrink factor between 0 and 1. 
@@ -64,7 +64,7 @@ RT shrink_factor);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Constructs a coarse mesh in `p`.
 \tparam Polyhedron must be an instance of `Polyhedron_3`.
 \pre `Polyhedron::HDS` can be used as the template argument of the `CGAL::Polyhedron_incremental_builder_3<HDS>`. 
@@ -72,7 +72,7 @@ Constructs a coarse mesh in `p`.
 template <class Polyhedron> void 
 mesh_skin_surface_3 (Polyhedron &p); 
 
-/*! 
+/*!
 Subdivides the skin surface using `nSubdiv` 1-4 split 
 operations (each triangle is split into four sub-triangles) and 
 the new vertices are moved towards the skin surface. 

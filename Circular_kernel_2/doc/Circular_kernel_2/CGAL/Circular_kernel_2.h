@@ -34,12 +34,12 @@ public:
 /// well as `AlgebraicKernelForCircles::FT` and `Kernel::FT`.
 /// @{
 
-/*! 
+/*!
 Ring number type. 
 */ 
 typedef AlgebraicKernelForCircles::RT RT; 
 
-/*! 
+/*!
 Field number type. 
 */ 
 typedef AlgebraicKernelForCircles::FT FT; 
@@ -51,17 +51,17 @@ typedef AlgebraicKernelForCircles::FT FT;
 /// functionality on them described in the `CircularKernel` concept.
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Line_arc_2<Circular_kernel_2> Line_arc_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Circular_arc_2<Circular_kernel_2> Circular_arc_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Circular_arc_point_2<Circular_kernel_2> Circular_arc_point_2; 

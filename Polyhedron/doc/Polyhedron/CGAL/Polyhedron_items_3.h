@@ -39,13 +39,13 @@ public:
 /// @{
 
 `Polyhedron_items_3::Vertex_wrapper<Refs,Traits>::Vertex` 
-/*! 
+/*!
 
 */ 
 typedef Traits::Point_3 Point; 
 
 `Polyhedron_items_3::Vertex_wrapper<Refs,Traits>::Vertex` 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Supports_vertex_point; 
@@ -55,12 +55,12 @@ typedef CGAL::Tag_true Supports_vertex_point;
 /// \name Types in Polyhedron_items_3::Face_wrapper<Refs,Traits>::Face
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Plane_3 Plane; 
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Supports_face_plane; 
@@ -70,7 +70,7 @@ typedef CGAL::Tag_true Supports_face_plane;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Polyhedron_items_3(); 

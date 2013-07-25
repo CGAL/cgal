@@ -18,17 +18,17 @@ public:
 /// A model of this type must provide:
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::size_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_2 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_2 second_argument_type; 
@@ -38,7 +38,7 @@ typedef AlgebraicKernel_d_2::Polynomial_2 second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the number of real solutions of the bivariate polynomial system \f$ (f,g)\f$. 
 \pre \f$ f\f$ is square free. 
 \pre \f$ g\f$ is square free. 

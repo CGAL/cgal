@@ -121,12 +121,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 This type is inherited from the `Interface` template argument. It is a reference counted pointer type for the object providing notifications. 
 */ 
 typedef unspecified_type Notifier_handle; 
 
-/*! 
+/*!
 The type (usually an enum) used to distinguish different types of notifications. This is inherited from the `Interface` template argument. 
 */ 
 typedef unspecified_type Notification_type; 
@@ -136,7 +136,7 @@ typedef unspecified_type Notification_type;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 The `Listener` subscribes to events coming from the notifier and stores a pointer to the notifier. 
 */ 
 Listener(Notifier_handle np); 
@@ -146,12 +146,12 @@ Listener(Notifier_handle np);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Return a pointer to the notifier. 
 */ 
 Notifier_handle notifier(); 
 
-/*! 
+/*!
 This method is pure virtual. A class which wishes to receive events must inherit from this class and implement this method. The method will then be called whenever there is a notification. 
 */ 
 virtual void new_notification(Notification_type); 

@@ -26,17 +26,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
 */ 
 typedef unspecified_type Profile; 
 
-/*! 
+/*!
 The point type for the surface vertex. Must be a model of `Point_3`. 
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
-/*! 
+/*!
 The type of the result (an optional point). 
 */ 
 boost::optional<Point> result_type; 
@@ -46,7 +46,7 @@ boost::optional<Point> result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes and returns the placement, that is, the position of the vertex 
 which replaces the collapsing edge (represented by its profile). 
 */ 

@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 \param p is a parent object. 
 \param s is the scene where the circle is generated. 
 \param pointsOnCircle is the 
@@ -35,7 +35,7 @@ GraphicsViewCircleInput<T>(QObject *p, QGraphicsScene* s, int pointsOnCircle = 1
 /// \name Signals 
 /// @{
 
-/*! 
+/*!
 The object `o` contains a `std::pair<K::Point_2, K::FT>` 
 for center and radius, or a `std::pair<K::Point_2, K::Point_2>` for two points defining 
 the circle, or `CGAL::array<K::Point_2, 3>` for three points defining 

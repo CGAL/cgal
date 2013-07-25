@@ -17,7 +17,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 accepts an \f$ x\f$-monotone curve `xc` and returns its opposite curve, 
 namely a curve whose graph is the same as `xc`'s, and whose source and 
 target are swapped with respect to `xc`'s source and target. 

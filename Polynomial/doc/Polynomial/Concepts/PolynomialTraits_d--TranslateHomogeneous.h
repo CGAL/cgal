@@ -25,7 +25,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
@@ -35,7 +35,7 @@ typedef PolynomialTraits_d::Polynomial_d result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns \f$ b^{degree(p)}\cdot p(x+a/b)\f$, 
 with respect to the outermost variable. 
 */ 
@@ -43,7 +43,7 @@ result_type operator()(PolynomialTraits_d::Polynomial_d p,
 PolynomialTraits_d::Innermost_coefficient_type a, 
 PolynomialTraits_d::Innermost_coefficient_type b); 
 
-/*! 
+/*!
 Same as first operator but for variable \f$ x_i\f$. 
 \pre \f$ 0 \leq i < d\f$. 
 

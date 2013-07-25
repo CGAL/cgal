@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of points. 
 This type is required to match 
 the point type of the 
@@ -32,27 +32,27 @@ three dimensional embedding triangulation
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 The type of segments. 
 */ 
 typedef unspecified_type Segment_3; 
 
-/*! 
+/*!
 The type of rays. 
 */ 
 typedef unspecified_type Ray_3; 
 
-/*! 
+/*!
 The type of lines. 
 */ 
 typedef unspecified_type Line_3; 
 
-/*! 
+/*!
 The surface type. 
 */ 
 typedef unspecified_type Surface_3; 
 
-/*! 
+/*!
 A model of this type provides the operator 
 
 `CGAL::Object operator()(Surface_3 surface, Type1 type1)` 
@@ -63,7 +63,7 @@ with an object of type `Type1` which may be
 */ 
 typedef unspecified_type Intersect_3; 
 
-/*! 
+/*!
 A model of this type provides the following operators 
 to construct initial points on the surface: 
 
@@ -87,12 +87,12 @@ typedef unspecified_type Construct_initial_points;
 /// The following functions give access to the construction objects:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Intersect_3 intersect_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_initial_points construct_initial_points_object(); 

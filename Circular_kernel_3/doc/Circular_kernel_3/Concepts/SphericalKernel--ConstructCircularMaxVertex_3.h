@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Constructs the maximal vertex of `l` with lexicographically 
 largest coordinates. 
 */ 

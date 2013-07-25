@@ -46,12 +46,12 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Return a `Certifate` object for the corresponding certificate. 
 */ 
 Certificate operator()(Args, Time begin, Time end); 
 
-/*! 
+/*!
 Compute the sign of the 
 function at \f$ \lim_{\delta\rightarrow0} t+\delta\f$. This can be used to evaluate predicates at the current moment. 
 */ 

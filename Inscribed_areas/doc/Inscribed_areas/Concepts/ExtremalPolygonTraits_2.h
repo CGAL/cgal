@@ -29,30 +29,30 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 model for `FieldNumberType`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 model for 
 `Kernel::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 model for 
 `Kernel::Less_xy_2`. 
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 model for 
 `Kernel::Orientation_2`. 
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class `op`: 
 `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$ `FT`. 
 Together with `init` this operation recursively defines the 
@@ -71,14 +71,14 @@ typedef unspecified_type Operation;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the minimal \f$ k\f$ for 
 which a maximal \f$ k\f$-gon can be computed. (e.g. in the maximum 
 area case this is three.) 
 */ 
 int min_k() const; 
 
-/*! 
+/*!
 returns the value of the objective function for a 
 polygon consisting of the two points `p` and `q`. (e.g. 
 in the maximum area case this is `FT( 0)`.) 
@@ -86,14 +86,14 @@ in the maximum area case this is `FT( 0)`.)
 FT init( const Point_2& p, const Point_2& q) 
 const; 
 
-/*! 
+/*!
 return `Operation` where `p` is the fixed \f$ root\f$ 
 point. 
 */ 
 Operation operation( const Point_2& p) 
 const; 
 
-/*! 
+/*!
 writes the 
 points of [`points_begin`, `points_end`) forming a 
 `min_k()`-gon rooted at `points_begin[0]` of maximal 
@@ -105,12 +105,12 @@ OutputIterator > OutputIterator compute_min_k_gon(
 RandomAccessIterator points_begin, RandomAccessIterator 
 points_end, FT& max_area, OutputIterator o) const; 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 

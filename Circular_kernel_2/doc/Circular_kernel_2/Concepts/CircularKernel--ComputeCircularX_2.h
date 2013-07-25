@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Computes the `x`-coordinate of the point. 
 */ 
 CircularKernel::Root_of_2 

@@ -61,17 +61,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Coefficient_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d second_argument_type; 
@@ -81,7 +81,7 @@ typedef PolynomialTraits_d::Polynomial_d second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes the resultant of \f$ f\f$ and \f$ g\f$, 
 with respect to the outermost variable. 
 */ 

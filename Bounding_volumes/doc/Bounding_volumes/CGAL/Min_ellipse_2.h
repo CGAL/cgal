@@ -62,12 +62,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Typedef to `Traits::Point `. 
 */ 
 typedef unspecified_type Point ; 
 
-/*! 
+/*!
 Typedef to `Traits::Ellipse`. If you 
 are using the predefined traits class 
 `CGAL::Min_ellipse_2_traits_2<K>`, 
@@ -77,7 +77,7 @@ the example below.
 */ 
 typedef unspecified_type Ellipse; 
 
-/*! 
+/*!
 
 Non-mutable model of the \stl concept <I>BidirectionalIterator</I> 
 with value type `Point`. Used to access the points 
@@ -85,7 +85,7 @@ of the smallest enclosing ellipse.
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 
 Non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the support points 
@@ -103,7 +103,7 @@ typedef unspecified_type Support_point_iterator;
 /// support set \f$ S\f$ of \f$ P\f$.
 /// @{
 
-/*! 
+/*!
 
 initializes `min_ellipse` to \f$ me(P)\f$ with \f$ P\f$ being the set of points 
 in the range [`first`,`last`). If `randomize` is 
@@ -122,7 +122,7 @@ bool randomize,
 Random& random = default_random, 
 const Traits& traits = Traits() ); 
 
-/*! 
+/*!
 
 creates a variable `min_ellipse` of type `Min_ellipse_2`. 
 It is initialized to 
@@ -131,7 +131,7 @@ It is initialized to
 */ 
 Min_ellipse_2( const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_ellipse` to \f$ me(\{p\})\f$, the set \f$ \{p\}\f$. 
 \post `min_ellipse.is_degenerate()` = `true`. 
@@ -139,7 +139,7 @@ initializes `min_ellipse` to \f$ me(\{p\})\f$, the set \f$ \{p\}\f$.
 Min_ellipse_2( const Point& p, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_ellipse` to \f$ me(\{p,q\})\f$, 
 the set \f$ \{ (1-\lambda) p + \lambda q \mid 0 \leq \lambda \leq 1 \}\f$
@@ -149,7 +149,7 @@ Min_ellipse_2( const Point& p,
 const Point& q, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_ellipse` to \f$ me(\{p1,p2,p3\})\f$. 
 */ 
@@ -158,7 +158,7 @@ const Point& p2,
 const Point& p3, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_ellipse` to \f$ me(\{p1,p2,p3,p4\})\f$. 
 */ 
@@ -168,7 +168,7 @@ const Point& p3,
 const Point& p4, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_ellipse` to \f$ me(\{p1,p2,p3,p4,p5\})\f$. 
 */ 
@@ -184,43 +184,43 @@ const Traits& traits = Traits());
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the number of points of `min_ellipse`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `min_ellipse`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first point of `min_ellipse`. 
 */ 
 Point_iterator points_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Point_iterator points_end() const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first support point of `min_ellipse`. 
 */ 
 Support_point_iterator support_points_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_iterator support_points_end() const; 
 
-/*! 
+/*!
 
 returns the `i`-th support point of `min_ellipse`. Between two 
 modifying operations (see below) any call to 
@@ -230,7 +230,7 @@ the same point.
 */ 
 const Point& support_point( int i) const; 
 
-/*! 
+/*!
 
 returns the current ellipse of `min_ellipse`. 
 */ 
@@ -244,7 +244,7 @@ const Ellipse& ellipse( ) const;
 /// \E^2\f$.
 /// @{
 
-/*! 
+/*!
 
 returns `CGAL::ON_BOUNDED_SIDE`, 
 `CGAL::ON_BOUNDARY`, or 
@@ -254,33 +254,33 @@ inside, on the boundary of, or properly outside of `min_ellipse`, resp.
 CGAL::Bounded_side 
 bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly inside `min_ellipse`. 
 */ 
 bool has_on_bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies on the boundary 
 of `min_ellipse`. 
 */ 
 bool has_on_boundary( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly outside of `min_ellipse`. 
 */ 
 bool has_on_unbounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_ellipse` is empty (this implies 
 degeneracy). 
 */ 
 bool is_empty( ) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_ellipse` is degenerate, 
 i.e.\ if `min_ellipse` is empty, equal to a single point or equal to a 
@@ -299,14 +299,14 @@ bool is_degenerate( ) const;
 /// itself.
 /// @{
 
-/*! 
+/*!
 
 inserts `p` into `min_ellipse` and recomputes the smallest 
 enclosing ellipse. 
 */ 
 void insert( const Point& p); 
 
-/*! 
+/*!
 
 inserts the points in the range [`first`,`last`) 
 into `min_ellipse` and recomputes the smallest enclosing ellipse by 
@@ -318,7 +318,7 @@ template < class InputIterator >
 void insert( InputIterator first, 
 InputIterator last ); 
 
-/*! 
+/*!
 
 deletes all points in `min_ellipse` and sets `min_ellipse` to the empty set. 
 \post `min_ellipse.is_empty()` = `true`. 
@@ -336,7 +336,7 @@ void clear( );
 /// item is considered by the validity check.
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff `min_ellipse` contains all points of its 
 defining set \f$ P\f$. If `verbose` is `true`, some 
@@ -353,7 +353,7 @@ int level = 0 ) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 
@@ -365,7 +365,7 @@ const Traits& traits( ) const;
 }; /* end Min_ellipse_2 */
 
 
-/*! 
+/*!
 
 writes `min_ellipse` to output stream `os`. 
 \cgalRequires The output operator is defined for `Point` (and for `Ellipse`, if pretty printing is used). 
@@ -375,7 +375,7 @@ std::ostream&
 operator << ( std::ostream& os, 
 const Min_ellipse_2<Traits>& min_ellipse); 
 
-/*! 
+/*!
 
 reads `min_ellipse` from input stream `is`. 
 \cgalRequires The input operator is defined for `Point`. 

@@ -42,7 +42,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Insert the object o, into the table 
 t when processed. 
 */ 

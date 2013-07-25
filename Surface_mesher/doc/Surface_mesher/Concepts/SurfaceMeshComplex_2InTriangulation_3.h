@@ -43,44 +43,44 @@ public:
 /// `SurfaceMeshComplex_2InTriangulation_3` provides the following types.
 /// @{
 
-/*! 
+/*!
 The type of the 
 embedding 3D triangulation. Must be a model of 
 `SurfaceMeshTriangulation_3`. 
 */ 
 typedef unspecified_type Triangulation; 
 
-/*! 
+/*!
 The type of 
 the embedding triangulation vertex handles. 
 */ 
 typedef Triangulation::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 The type of 
 the embedding triangulation cell handles. 
 */ 
 typedef Triangulation::Cell_handle Cell_handle; 
 
-/*! 
+/*!
 The type of 
 the embedding triangulation facets. 
 */ 
 typedef Triangulation::Facet Facet; 
 
-/*! 
+/*!
 The type of 
 the embedding triangulation edges. 
 */ 
 typedef Triangulation::Edge Edge; 
 
-/*! 
+/*!
 Size type (an 
 unsigned integral type) 
 */ 
 typedef Triangulation::size_type size_type; 
 
-/*! 
+/*!
 A type to describe the status of a face (facet, edge, or vertex) with respect to 
 the 2D pure complex. A `NOT_IN_COMPLEX` face does not belong to the 2D complex. 
 Facets can only be `NOT_IN_COMPLEX` or `REGULAR` 
@@ -103,25 +103,25 @@ and `SINGULAR` in any other case.
 enum Face_status {NOT_IN_COMPLEX, BOUNDARY, REGULAR, 
 SINGULAR}; 
 
-/*! 
+/*!
 An iterator type to visit the facets 
 of the 2D complex. 
 */ 
 typedef unspecified_type Facet_iterator; 
 
-/*! 
+/*!
 An iterator type to visit the 
 edges of the 2D complex. 
 */ 
 typedef unspecified_type Edge_iterator; 
 
-/*! 
+/*!
 An iterator type to visit 
 vertices of the 2D complex. 
 */ 
 typedef unspecified_type Vertex_iterator; 
 
-/*! 
+/*!
 An iterator type to visit the 
 boundary edges of the 2D complex. 
 */ 
@@ -132,12 +132,12 @@ typedef unspecified_type Boundary_edges_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Builds an empty 2D complex embedded in the triangulation `t3` 
 */ 
 SurfaceMeshComplex_2InTriangulation_3(Triangulation& t3); 
 
-/*! 
+/*!
 Builds a 2D complex embedded in the triangulation `t3`, 
 including in the 2D complex the facets of `t3` for 
 which the predicate `select` returns `true`. 
@@ -155,7 +155,7 @@ FacetSelector select);
 /// \name Member access 
 /// @{
 
-/*! 
+/*!
 Returns the reference to the triangulation. 
 */ 
 Triangulation& triangulation(); 
@@ -165,22 +165,22 @@ Triangulation& triangulation();
 /// \name Modifications 
 /// @{
 
-/*! 
+/*!
 Adds facet `f` to the 2D complex. 
 */ 
 void add_to_complex(Facet f); 
 
-/*! 
+/*!
 Adds facet `(c,i)` to the 2D complex. 
 */ 
 void add_to_complex(Cell_handle c, int i); 
 
-/*! 
+/*!
 Removes facet `f` from the 2D complex. 
 */ 
 void remove_from_complex(Facet f); 
 
-/*! 
+/*!
 Removes facet `(c,i)` from the 2D complex. 
 */ 
 void remove_from_complex(Cell_handle c, int i); 
@@ -191,63 +191,63 @@ void remove_from_complex(Cell_handle c, int i);
 /// Queries on the status of individual face with respect to the 2D complex.
 /// @{
 
-/*! 
+/*!
 Returns the number of facets that belong to the 2D complex. 
 */ 
 size_type number_of_facets() const; 
 
-/*! 
+/*!
 Returns the status of the facet `f` with respect to the 2D complex. 
 */ 
 Face_status face_status(Facet f); 
 
-/*! 
+/*!
 Returns the status of the facet `(c,i)` with respect to the 2D complex. 
 */ 
 Face_status face_status(Cell_handle c, int i); 
 
-/*! 
+/*!
 Returns the status of edge `e` in the 2D complex. 
 */ 
 Face_status face_status(Edge e); 
 
-/*! 
+/*!
 Returns the status of edge `(c,i,j)` in the 2D complex. 
 */ 
 Face_status face_status(Cell_handle c, int 
 i, int j); 
 
-/*! 
+/*!
 Returns the status of vertex `v` in the 2D complex. 
 */ 
 Face_status face_status(Vertex_handle v); 
 
-/*! 
+/*!
 Returns `true`, if the facet `f` belongs to the 2D complex. 
 */ 
 bool is_in_complex(Facet f); 
 
-/*! 
+/*!
 Returns `true`, if the facet `(c,i)` belongs to the 2D complex. 
 */ 
 bool is_in_complex(Cell_handle c, int i); 
 
-/*! 
+/*!
 Returns `true`, if the edge `e` belongs to the 2D complex. 
 */ 
 bool is_in_complex(Edge e); 
 
-/*! 
+/*!
 Returns `true`, if the edge `(c,i,j)` belongs to the 2D complex. 
 */ 
 bool is_in_complex(Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 Returns `true`, if the vertex `v` belongs to the 2D complex. 
 */ 
 bool is_in_complex(Vertex_handle v); 
 
-/*! 
+/*!
 Returns true if the status of vertex `v` is `REGULAR` or `BOUNDARY`. 
 \pre All the edges of the complex incident to `v` are `REGULAR` or `BOUNDARY`. 
 */ 
@@ -261,51 +261,51 @@ bool is_regular_or_boundary_for_vertices (Vertex_handle v);
 /// and non mutable.
 /// @{
 
-/*! 
+/*!
 Returns an iterator with value type `Facet` to visit the facets 
 of the 2D complex. 
 */ 
 Facet_iterator facets_begin(); 
 
-/*! 
+/*!
 Returns the past the end iterator for the above iterator. 
 */ 
 Facet_iterator facets_end(); 
 
-/*! 
+/*!
 Returns an iterator with value type `Edge` to visit the 
 edges of the 2D complex which are not isolated. 
 */ 
 Edge_iterator edges_begin(); 
 
-/*! 
+/*!
 Returns the past the end iterator for the above iterator. 
 */ 
 Edge_iterator edges_end(); 
 
-/*! 
+/*!
 Returns an iterator with value type `Edge` to visit the 
 boundary edges of the complex. 
 */ 
 Boundary_edges_iterator boundary_edges_begin(); 
 
-/*! 
+/*!
 Returns the past the end iterator for the above iterator. 
 */ 
 Boundary_edges_iterator boundary_edges_end(); 
 
-/*! 
+/*!
 Returns an iterator with value type `Vertex_handle` to visit the 
 vertices of the 2D complex. 
 */ 
 Vertex_iterator vertices_begin(); 
 
-/*! 
+/*!
 Returns the past the end iterator for the above iterator. 
 */ 
 Vertex_iterator vertices_end(); 
 
-/*! 
+/*!
 Copies the facets of the complex incident to `v` to the output 
 iterator `facets`. 
 Returns the resulting output iterator. 
@@ -321,7 +321,7 @@ incident_facets(Vertex_handle v, OutputIterator facets);
 /// The following function is the basic function to walk on the 2D complex
 /// @{
 
-/*! 
+/*!
 Returns the facet of the complex which is the neighbor of 
 the facet `f` opposite to the vertex with index `j` of 
 `f`. 
@@ -334,7 +334,7 @@ If there is no such neighbor, or if the edge is singular the functions returns `
 */ 
 Facet neighbor(Facet f, int j); 
 
-/*! 
+/*!
 Returns the facet of the complex which is the neighbor of 
 the facet `f` opposite to the vertex with index `j` of `f`. 
 See above. 

@@ -42,17 +42,17 @@ public:
 /// In compliance with stl, the types `key_type`, `data_type`, and `hasher` are defined as well.
 /// @{
 
-/*! 
+/*!
 the `Key` type. 
 */ 
 typedef unspecified_type Key; 
 
-/*! 
+/*!
 the `Data` type. 
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 the unique hash function type. 
 */ 
 typedef unspecified_type Hash_function; 
@@ -62,7 +62,7 @@ typedef unspecified_type Hash_function;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 creates an injective function `map` from `Key` to the set of unused 
 variables of type `Data`, sets `default_data` to `default`, 
@@ -74,7 +74,7 @@ const Data& default = Data(),
 std::size_t table_size = 1, 
 const Hash_function& fct = Hash_function()); 
 
-/*! 
+/*!
 
 creates an injective function `map` from `Key` to the set of unused 
 variables of type `Data`, sets `default_data` to `default`, 
@@ -98,17 +98,17 @@ const Hash_function& fct = Hash_function());
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the current `default_value`. 
 */ 
 Data default_value() const; 
 
-/*! 
+/*!
 the current hash function. 
 */ 
 Hash_function hash_function() const; 
 
-/*! 
+/*!
 returns true if \f$ key\f$ is 
 defined in `map`. Note that there can be keys defined that have not 
 been inserted explicitly. Their variables are initialized to 
@@ -116,7 +116,7 @@ been inserted explicitly. Their variables are initialized to
 */ 
 bool is_defined( const Key& key) const; 
 
-/*! 
+/*!
 
 resets `map` to the injective function `map` from `Key` to the 
 set of unused variables of type `Data`. The `default_data` 
@@ -124,7 +124,7 @@ remains unchanged.
 */ 
 void clear(); 
 
-/*! 
+/*!
 
 resets `map` to the injective function `map` from `Key` to the 
 set of unused variables of type `Data` and sets `default_data` 
@@ -132,7 +132,7 @@ to `default`.
 */ 
 void clear(const Data& default); 
 
-/*! 
+/*!
 
 returns a reference to the variable `map``(key)`. If `key` 
 has not been inserted into `map` before, `key` is inserted and 
@@ -140,7 +140,7 @@ initialized with `default_value`.
 */ 
 Data& operator[](const Key& key); 
 
-/*! 
+/*!
 
 returns a const reference to the variable `map``(key)`. If `key` 
 has not been inserted into `map` before, a const reference to the 
@@ -149,7 +149,7 @@ into `map`.
 */ 
 const Data& operator[](const Key& key) const; 
 
-/*! 
+/*!
 
 inserts all keys from the range `[first1,beyond1)`. 
 The data variable for each inserted `key` is initilized with the 

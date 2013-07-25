@@ -16,7 +16,7 @@ public:
 /// @{
 
 
-/*! 
+/*!
 Constructs polynomial `ax+by+c`. 
 */ 
 AlgebraicKernelForCircles::Polynomial_1_2 

@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the side of \f$ p\f$ with respect to \f$ o\f$. `Kernel_object` 
 may be any of `Kernel_d::Sphere_d` or `Kernel_d::Hyperplane_d`. 
 \pre `p` and `o` have the same dimension. 

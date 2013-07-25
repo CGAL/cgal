@@ -14,7 +14,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Splits the arc `ca` into `x`-monotone arcs that are returned through the 
 output iterator. Note that, to ensure an easy interface with the 
 `Arrangement_2` package, the arcs are returned as `CGAL::Object`'s 

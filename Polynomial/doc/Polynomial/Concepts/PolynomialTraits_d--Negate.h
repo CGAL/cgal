@@ -26,12 +26,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -41,12 +41,12 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns \f$ p(-x)\f$, with respect to the outermost variable. 
 */ 
 result_type operator()(argument_type p); 
 
-/*! 
+/*!
 Returns \f$ p(-x)\f$, with respect to variable \f$ x_i\f$. 
 \pre \f$ 0 \leq i < d\f$. 
 

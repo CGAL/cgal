@@ -18,7 +18,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 */ 
 FromIntConstructible(int& i); 

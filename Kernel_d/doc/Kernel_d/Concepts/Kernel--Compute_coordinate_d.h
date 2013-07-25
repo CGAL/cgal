@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the \f$ i\f$th cartesian coordinate of \f$ p\f$ 
 */ 
 Kernel_d::FT operator()(const Kernel_d::Point_d& 

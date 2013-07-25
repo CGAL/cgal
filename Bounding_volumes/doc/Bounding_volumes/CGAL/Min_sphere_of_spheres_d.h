@@ -105,17 +105,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 is a typedef to `Traits::Sphere`. 
 */ 
 typedef unspecified_type Sphere; 
 
-/*! 
+/*!
 is a typedef to `Traits::FT`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 is the type of the radius and of the center 
 coordinates of the computed minsphere: When `FT` is an inexact 
 number type (`double`, for instance), then `Result` is 
@@ -129,7 +129,7 @@ member function `discriminant()` of class
 */ 
 typedef unspecified_type Result; 
 
-/*! 
+/*!
 is either `CGAL::LP_algorithm` or 
 `CGAL::Farthest_first_heuristic`. As is described in the 
 documentation of concept `MinSphereOfSpheresTraits`, the type 
@@ -141,7 +141,7 @@ release, then `Algorithm` will have another type.)
 */ 
 typedef unspecified_type Algorithm; 
 
-/*! 
+/*!
 non-mutable model of the STL 
 concept 
 `BidirectionalIterator` 
@@ -150,7 +150,7 @@ to access the support spheres defining the smallest enclosing sphere.
 */ 
 typedef unspecified_type Support_iterator; 
 
-/*! 
+/*!
 non-mutable model of the STL 
 concept 
 `BidirectionalIterator` 
@@ -163,7 +163,7 @@ typedef unspecified_type Cartesian_const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates a variable of type `Min_sphere_of_spheres_d` and initializes it to 
 \f$ ms(\emptyset)\f$. If the traits 
 parameter is not supplied, the class `Traits` must provide a 
@@ -171,7 +171,7 @@ default constructor.
 */ 
 Min_sphere_of_spheres_d(const Traits& traits = Traits()); 
 
-/*! 
+/*!
 creates a variable `minsphere` of type 
 `Min_sphere_of_spheres_d` and inserts (cf. 
 `insert()`) the spheres from 
@@ -188,19 +188,19 @@ const Traits& traits = Traits());
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns 
 an iterator referring to the first support sphere of `minsphere`. 
 */ 
 Support_iterator support_begin() const; 
 
-/*! 
+/*!
 returns the 
 corresponding past-the-end iterator. 
 */ 
 Support_iterator support_end() const; 
 
-/*! 
+/*!
 returns the 
 discriminant of `minsphere`. This number is undefined when `FT` is 
 an inexact number type. When `FT` is exact, the center 
@@ -210,7 +210,7 @@ returned by this function. \pre `minsphere` is not empty, and `FT` is an exact n
 */ 
 const FT& discriminant( ) const; 
 
-/*! 
+/*!
 returns the radius of 
 `minsphere`. If `FT` is an exact number type then the radius of the 
 minsphere is the real number \f$ a+b\sqrt{t}\f$, where \f$ t\f$ is the 
@@ -220,7 +220,7 @@ component of the pair returned by `radius()`.
 */ 
 Result radius( ) const; 
 
-/*! 
+/*!
 returns a const-iterator to the first of the 
 `Traits::%D` center coordinates of `minsphere`. The iterator returns 
 objects of type `Result`. If `FT` is an exact number type, 
@@ -231,7 +231,7 @@ discriminant (cf. `discriminant()`). \pre `minsphere` is not empty.
 Cartesian_const_iterator center_cartesian_begin( ) 
 const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator, i.e.\ 
 `center_cartesian_begin()+Traits::%D`. 
 \pre `minsphere` is not empty. 
@@ -244,7 +244,7 @@ const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 returns `true`, iff 
 `minsphere` is empty, i.e.\ iff \f$ ms(S)=\emptyset\f$. 
 */ 
@@ -255,13 +255,13 @@ bool is_empty( ) const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 
 resets `minsphere` to \f$ ms(\emptyset)\f$, with \f$ S:= \emptyset\f$. 
 */ 
 void clear (); 
 
-/*! 
+/*!
 sets `minsphere` to 
 the \f$ ms(S)\f$, where \f$ S\f$ is the set of spheres in the range 
 [`first`,`last`). 
@@ -270,13 +270,13 @@ the \f$ ms(S)\f$, where \f$ S\f$ is the set of spheres in the range
 template < class InputIterator > void 
 set( InputIterator first, InputIterator last ); 
 
-/*! 
+/*!
 inserts the 
 sphere `s` into the set \f$ S\f$ of instance `minsphere`. 
 */ 
 void insert( const Sphere& s ); 
 
-/*! 
+/*!
 inserts the spheres in 
 the range [`first`,`last`) into the set \f$ S\f$ of instance 
 `minsphere`. 
@@ -294,7 +294,7 @@ InputIterator first, InputIterator last );
 /// R\f$ is minimal, i.e., no support sphere is redundant. </UL>
 /// @{
 
-/*! 
+/*!
 returns `true`, iff 
 `minsphere` is valid. When `FT` is inexact, this routine always 
 returns `true`. 
@@ -306,7 +306,7 @@ bool is_valid() const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 

@@ -33,7 +33,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes the square-free factorization of \f$ p\f$ and returns the 
 past-the-end iterator of the written range. 
 \pre `std::iterator_traits< OutputIterator >::%value_type` must be constructible from `std::pair<PolynomialTraits_d::Polynomial_d,int>`. 
@@ -44,7 +44,7 @@ OutputIterator operator()(PolynomialTraits_d::Polynomial_d p,
 OutputIterator it, 
 PolynomialTraits_d::Innermost_coefficient_type& a); 
 
-/*! 
+/*!
 As the first operator, just not computing the factor \f$ a\f$. 
 */ 
 template<class OutputIterator> 

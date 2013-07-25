@@ -25,17 +25,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Innermost_coefficient_type second_argument_type; 
@@ -45,13 +45,13 @@ typedef PolynomialTraits_d::Innermost_coefficient_type second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns \f$ p(c\cdot x)\f$, with respect to the outermost variable. 
 */ 
 result_type operator()(first_argument_type p, 
 second_argument_type c); 
 
-/*! 
+/*!
 Same as first operator but for variable \f$ x_i\f$. 
 \pre \f$ 0 \leq i < d\f$. 
 

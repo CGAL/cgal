@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 determines whether \f$ v\f$ is contained in the 
 linear hull of the vectors in `A = tuple [first,last)`. 
 \pre The objects are of the same dimension. 

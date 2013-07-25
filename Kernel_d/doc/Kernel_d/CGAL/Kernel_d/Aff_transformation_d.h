@@ -30,12 +30,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the linear algebra layer. 
 */ 
 typedef unspecified_type LA; 
 
-/*! 
+/*!
 the matrix type. 
 */ 
 typedef unspecified_type Matrix; 
@@ -45,20 +45,20 @@ typedef unspecified_type Matrix;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces some 
 transformation. 
 */ 
 Aff_transformation_d<Kernel>(); 
 
-/*! 
+/*!
 introduces the identity transformation in 
 \f$ d\f$-dimensional space. 
 */ 
 Aff_transformation_d<Kernel>(int d, 
 Identity_transformation); 
 
-/*! 
+/*!
 introduces the 
 transformation of \f$ d\f$-space specified by matrix \f$ M\f$.
 
@@ -66,7 +66,7 @@ transformation of \f$ d\f$-space specified by matrix \f$ M\f$.
 */ 
 Aff_transformation_d<Kernel>(Matrix M); 
 
-/*! 
+/*!
 introduces the transformation of \f$ d\f$-space 
 specified by a diagonal matrix with entries `set [start,end)` on 
 the diagonal (a scaling of the space).
@@ -77,13 +77,13 @@ template <typename Forward_iterator>
 Aff_transformation_d<Kernel>(Scaling, Forward_iterator start, 
 Forward_iterator end); 
 
-/*! 
+/*!
 introduces the translation by vector \f$ v\f$. 
 */ 
 Aff_transformation_d<Kernel>(Translation, Vector_d<Kernel> 
 v); 
 
-/*! 
+/*!
 returns a scaling by a scale factor `num/den`.
 
 \pre `den != 0 `. 
@@ -91,7 +91,7 @@ returns a scaling by a scale factor `num/den`.
 Aff_transformation_d<Kernel>(int d, Scaling, RT num, RT 
 den); 
 
-/*! 
+/*!
 returns a planar rotation 
 with sine and cosine values `sin_num/den` and `cos_num/den` 
 in the plane spanned by the base vectors \f$ b_{e1}\f$ and \f$ b_{e2}\f$ in 
@@ -105,7 +105,7 @@ in the plane spanned by the base vectors \f$ b_{e1}\f$ and \f$ b_{e2}\f$ in
 Aff_transformation_d<Kernel>(int d, Rotation, RT sin_num, RT 
 cos_num, RT den, int e1 = 0, int e2 = 1); 
 
-/*! 
+/*!
 returns a planar 
 rotation within a two-dimensional linear subspace. The subspace is 
 spanned by the base vectors \f$ b_{e1}\f$ and \f$ b_{e2}\f$ in \f$ d\f$-space. The 
@@ -123,18 +123,18 @@ dir, RT num, RT den, int e1 = 0, int e2 = 1);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the dimension of the underlying space 
 */ 
 int dimension() ; 
 
-/*! 
+/*!
 returns the transformation matrix 
 
 */ 
 const Matrix& matrix() ; 
 
-/*! 
+/*!
 returns the inverse 
 transformation.
 
@@ -142,7 +142,7 @@ transformation.
 */ 
 Aff_transformation_d<Kernel> inverse() ; 
 
-/*! 
+/*!
 composition of transformations. Note 
 that transformations are not necessarily commutative. `t*s` is 
 the transformation which transforms first by `t` and then by 

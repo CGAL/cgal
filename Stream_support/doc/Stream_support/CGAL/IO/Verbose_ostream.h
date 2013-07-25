@@ -33,7 +33,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates an output stream with state set to 
 `active` that writes to the stream `out`. 
 */ 
@@ -45,7 +45,7 @@ std::ostream& out = std::cerr);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 template < class T > 

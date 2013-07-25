@@ -31,7 +31,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Functor that describes the criteria for 
 the mesh edges that discretize the input domain 1-dimensional features. 
 This type must be a model 
@@ -44,7 +44,7 @@ typedef unspecified_type Edge_criteria;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the edge criteria. 
 */ 
 Edge_criteria edge_criteria_object(); 

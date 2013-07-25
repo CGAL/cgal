@@ -1,6 +1,6 @@
 namespace CGAL {
 
-/*! 
+/*!
 converts the convex hull `C` to polyhedral surface stored in 
 `P`. 
 \pre `dim == 3` and `dcur == 3`. 
@@ -10,7 +10,7 @@ converts the convex hull `C` to polyhedral surface stored in
 template <class R, class T, class HDS> 
 void convex_hull_d_to_polyhedron_3( const Convex_hull_d<R>& C, Polyhedron_3<T,HDS>& P) ; 
 
-/*! 
+/*!
 constructs the representation of the surface of `C` as a 
 bidirected LEDA graph `G`. 
 \pre `dim == 3`. 

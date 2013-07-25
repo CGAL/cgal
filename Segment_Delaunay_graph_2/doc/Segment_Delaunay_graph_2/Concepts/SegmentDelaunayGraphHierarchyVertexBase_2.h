@@ -43,27 +43,27 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a handle to the corresponding 
 vertex of the next level segment Delaunay graph. If such a vertex 
 does not exist `Vertex_handle()` is returned. 
 */ 
 Vertex_handle up(); 
 
-/*! 
+/*!
 Returns a handle to the corresponding 
 vertex of the previous level segment Delaunay graph. If such a 
 vertex does not exist `Vertex_handle()` is returned. 
 */ 
 Vertex_handle down(); 
 
-/*! 
+/*!
 Sets the handle for the 
 vertex of the next level segment Delaunay graph. 
 */ 
 void set_up(Vertex_handle u); 
 
-/*! 
+/*!
 Sets the handle for the 
 vertex of the previous level segment Delaunay graph. 
 */ 

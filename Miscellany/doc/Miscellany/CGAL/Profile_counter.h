@@ -40,14 +40,14 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 The internal counter is 
 initialized to 0, and the string `s` is stored for further printing 
 by the destructor. 
 */ 
 Profile_counter(std::string s); 
 
-/*! 
+/*!
 The value of the counter is printed 
 to `std::cerr` together with the string. 
 */ 
@@ -58,7 +58,7 @@ to `std::cerr` together with the string.
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Increments the internal counter. 
 */ 
 void operator++(); 

@@ -17,7 +17,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Compares two `Root_for_spheres_2_3` lexicographically. 
 */ 
 CGAL::Comparison_result 

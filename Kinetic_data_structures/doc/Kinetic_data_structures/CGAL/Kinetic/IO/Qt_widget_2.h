@@ -76,7 +76,7 @@ typedef unspecified_type Listener;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Qt_widget_2(int argc, char *argv[], Simulator::Handle); 

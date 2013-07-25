@@ -14,14 +14,14 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 For two line arcs. 
 */ 
 bool operator() 
 (const CircularKernel::Line_arc_2 & l0, 
 const CircularKernel::Line_arc_2 & l1); 
 
-/*! 
+/*!
 For two circular arcs. 
 */ 
 bool operator() 

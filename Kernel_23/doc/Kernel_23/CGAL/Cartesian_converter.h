@@ -36,7 +36,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Cartesian_converter<>(); 
@@ -47,7 +47,7 @@ Cartesian_converter<>();
 /// Similar operators are defined for the other kernel traits types `Point_3`, `Vector_2`...
 /// @{
 
-/*! 
+/*!
 returns a `K2::Point_2` which coordinates are those of `p`, 
 converted by `NTConverter`. 
 */ 

@@ -21,12 +21,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `std::pair<double,double>`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `RealEmbeddableTraits::Type`. 
 */ 
 typedef unspecified_type argument_type; 
@@ -36,7 +36,7 @@ typedef unspecified_type argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes a double interval containing \f$ x\f$. 
 */ 
 result_type operator()(argument_type x); 

@@ -18,13 +18,13 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Constructs the plane containing the arc. 
 */ 
 SphericalKernel::Plane_3 operator() 
 (const SphericalKernel::Circular_arc_3 &a); 
 
-/*! 
+/*!
 Constructs a plane from an equation. 
 */ 
 SphericalKernel::Plane_3 operator() 

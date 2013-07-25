@@ -25,17 +25,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
 
-/*! 
+/*!
 Query item type. 
 */ 
 typedef Point_d Query_item; 
@@ -45,7 +45,7 @@ typedef Point_d Query_item;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Euclidean_distance(Traits t=Traits()); 
@@ -55,35 +55,35 @@ Euclidean_distance(Traits t=Traits());
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the squared Euclidean distance between `q` and `p`. 
 */ 
 FT transformed_distance(Query_item q, Point_d p) const; 
 
-/*! 
+/*!
 Returns the squared Euclidean distance between `q` and 
 the point on the boundary of `r` closest to `q`. 
 */ 
 FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r) const; 
 
-/*! 
+/*!
 Returns the squared Euclidean distance, where \f$ d\f$ denotes the distance between `q` and 
 the point on the boundary of `r` farthest to `q`. 
 */ 
 FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r;) const; 
 
-/*! 
+/*!
 Updates the squared `dist` incrementally 
 and returns the updated squared distance. 
 */ 
 FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension) const; 
 
-/*! 
+/*!
 Returns \f$ d^2\f$. 
 */ 
 FT transformed_distance(FT d) const; 
 
-/*! 
+/*!
 Returns \f$ d^{1/2}\f$. 
 */ 
 FT inverse_of_transformed_distance(FT d) const; 

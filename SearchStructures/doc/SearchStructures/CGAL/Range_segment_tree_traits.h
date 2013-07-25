@@ -16,12 +16,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point_2<R> Key; 
 
-/*! 
+/*!
 
 */ 
 std::pair<Key, Key> Interval; 
@@ -48,12 +48,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point_3<R> Key; 
 
-/*! 
+/*!
 
 */ 
 std::pair<Key, Key> Interval; 
@@ -82,12 +82,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 std::pair<R::Point_2,T> Key; 
 
-/*! 
+/*!
 
 */ 
 std::pair<R::Point_2, R::Point_2 > Interval; 
@@ -116,12 +116,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 std::pair<R::Point_3,T> Key; 
 
-/*! 
+/*!
 
 */ 
 std::pair<R::Point_3, R::Point_3> Interval; 
@@ -150,12 +150,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 R::Point_2 Key; 
 
-/*! 
+/*!
 
 */ 
 std::pair<std::pair<Key,Key>,T> Interval; 
@@ -184,12 +184,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 std::pair<R::Point_3 > Key; 
 
-/*! 
+/*!
 
 */ 
 std::pair<std::pair<Key, Key>,T> Interval; 

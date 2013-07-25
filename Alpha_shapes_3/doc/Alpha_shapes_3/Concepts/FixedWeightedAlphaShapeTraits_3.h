@@ -23,12 +23,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `CGAL::Comparison_result` or `Uncertain<CGAL::Comparison_result>` 
 */ 
 typedef unspecified_type Comparison_result; 
 
-/*! 
+/*!
 An object constructor able to compare the squared radius of the 
 smallest sphere orthogonal to either four, three, two or one weighted point(s) 
 to a given value of alpha. 
@@ -46,7 +46,7 @@ typedef unspecified_type Compare_weighted_squared_radius_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 FixedWeightedAlphaShapeTraits_3(); 
@@ -56,7 +56,7 @@ FixedWeightedAlphaShapeTraits_3();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object(); 

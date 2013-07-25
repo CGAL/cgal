@@ -22,12 +22,12 @@ public:
 /// The following two types are required:
 /// @{
 
-/*! 
+/*!
 The point type of the polygon vertices. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 
 Predicate object type that compares `Point_2`s lexicographically. 
 Must provide `bool operator()(Point_2 p, Point_2 q)` where `true` 
@@ -44,7 +44,7 @@ typedef unspecified_type Less_yx_2;
 /// Only a copy constructor is required.
 /// @{
 
-/*! 
+/*!
 
 */ 
 IsYMonotoneTraits_2(IsYMonotoneTraits_2 tr); 
@@ -55,7 +55,7 @@ IsYMonotoneTraits_2(IsYMonotoneTraits_2 tr);
 /// The following function that creates an instance of the above predicate object type must exist:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Less_yx_2 less_yx_2_object(); 

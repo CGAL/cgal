@@ -28,7 +28,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 \param p is a parent object. 
 \param s is the scene where the polyline is generated. 
 \param n is the number of points of the polyline to be generated. If `n = 0`, 
@@ -44,7 +44,7 @@ bool closed = true);
 /// \name Signals 
 /// @{
 
-/*! 
+/*!
 The object `o` contains a `std:list<K::Point_2>`. 
 */ 
 void generate(CGAL::Object o); 

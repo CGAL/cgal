@@ -25,7 +25,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Has_nearest_site_2; 

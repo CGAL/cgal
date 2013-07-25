@@ -65,7 +65,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 keeps internally a const reference to `hds`. 
 */ 
 HalfedgeDS_const_decorator( const HDS& hds); 
@@ -111,14 +111,14 @@ All tests of level 3 and `normalized_border_is_valid()`.
 */
 /// @{
 
-/*! 
+/*!
 returns `true` if the halfedge data structure `hds` is 
 valid with respect to the `level` value as defined above. 
 If `verbose` is `true`, statistics are written to `cerr`. 
 */ 
 bool is_valid( bool verbose = false, int level = 0) const; 
 
-/*! 
+/*!
 returns `true` if the border halfedges are in normalized 
 representation, which is when enumerating all halfedges with the 
 halfedge iterator the following holds: The non-border edges precede the 

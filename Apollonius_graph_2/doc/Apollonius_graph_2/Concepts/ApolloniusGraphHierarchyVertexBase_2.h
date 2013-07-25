@@ -36,19 +36,19 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default 
 constructor. 
 */ 
 ApolloniusGraphHierarchyVertexBase_2(); 
 
-/*! 
+/*!
 Constructs a vertex associated with the site `s` and 
 embedded at the center of `s`. 
 */ 
 ApolloniusGraphHierarchyVertexBase_2(Site_2 s).; 
 
-/*! 
+/*!
 Constructs a vertex associated with 
 the site `s`, embedded at the center of `s`, 
 and pointing to face `f`. 
@@ -60,26 +60,26 @@ ApolloniusGraphHierarchyVertexBase_2(Site_2 s, Face_handle f).;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a handle to the corresponding 
 vertex of the next level Apollonius graph. If such a vertex does not 
 exist `Vertex_handle(NULL)` is returned. 
 */ 
 Vertex_handle up(); 
 
-/*! 
+/*!
 Returns a handle to the corresponding 
 vertex of the previous level Apollonius graph. 
 */ 
 Vertex_handle down(); 
 
-/*! 
+/*!
 Sets the handle for the 
 vertex of the next level Apollonius graph. 
 */ 
 void set_up(Vertex_handle u); 
 
-/*! 
+/*!
 Sets the handle for the 
 vertex of the previous level Apollonius graph; 
 */ 

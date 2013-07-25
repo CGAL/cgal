@@ -28,7 +28,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bool result_type; 
@@ -38,7 +38,7 @@ typedef bool result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes \f$ g, q_1, q_2\f$ as described above. 
 
 Returns whether \f$ p_1\f$ and \f$ p_2\f$ where already coprime. 

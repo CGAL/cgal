@@ -25,28 +25,28 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type. It must be `DefaultConstructible`, 
 `CopyConstructible` and `Assignable`. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 The segment type. 
 */ 
 typedef unspecified_type Segment_3; 
 
-/*! 
+/*!
 The tetrahedron type. 
 */ 
 typedef unspecified_type Tetrahedron_3; 
 
-/*! 
+/*!
 The triangle type. 
 */ 
 typedef unspecified_type Triangle_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Segment_3 operator()(Point_3 p, Point_3 q)`, 
@@ -55,7 +55,7 @@ which constructs a segment from two points.
 */ 
 typedef unspecified_type Construct_segment_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r )`, 
@@ -64,7 +64,7 @@ which constructs a triangle from three points.
 */ 
 typedef unspecified_type Construct_triangle_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
@@ -73,7 +73,7 @@ which constructs a tetrahedron from four points.
 */ 
 typedef unspecified_type Construct_tetrahedron_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Comparison_result operator()(Point p, Point q)`, 
@@ -83,7 +83,7 @@ return a consistent order for any two points chosen in a same line.
 */ 
 typedef unspecified_type Compare_xyz_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Orientation operator()(Point p, Point q, Point r)`, 
@@ -94,7 +94,7 @@ return a consistent orientation for any three points chosen in a same plane.
 */ 
 typedef unspecified_type Coplanar_orientation_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Orientation operator()(Point p, Point q, Point r, Point s)`, 
@@ -111,12 +111,12 @@ typedef unspecified_type Orientation_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 Triangulation_traits_3(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Triangulation_traits_3(const Triangulation_traits_3 & tr); 
@@ -127,32 +127,32 @@ Triangulation_traits_3(const Triangulation_traits_3 & tr);
 /// The following functions give access to the predicate and construction objects:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_tetrahedron_3 construct_tetrahedron_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_triangle_3 construct_triangle_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_segment_3 construct_segment_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_xyz_3 compare_xyz_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Coplanar_orientation_3 coplanar_orientation_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_3 orientation_3_object(); 

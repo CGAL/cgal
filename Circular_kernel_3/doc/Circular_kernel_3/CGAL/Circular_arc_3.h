@@ -23,12 +23,12 @@ public:
 
 /// \name Creation 
 /// @{
-/*! 
+/*!
 Constructs an arc from a full circle. 
 */ 
 Circular_arc_3(const Circle_3<SphericalKernel> &c); 
 
-/*! 
+/*!
 Constructs an arc from a full circle, using pt as source and target. 
 */ 
 Circular_arc_3(const Circle_3<SphericalKernel> &c, const Circular_arc_point_3& pt); 
@@ -46,7 +46,7 @@ Circular_arc_3(const Circle_3<SphericalKernel> &c, const Circular_arc_point_3& p
 /// if \f$ (a,b,c)>(0,0,0)\f$ (i.e.\ \f$ (a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)\f$).
 /// @{
 
-/*! 
+/*!
 Constructs the circular arc supported by `c`, whose source and target 
 are `p` and `q`, respectively. 
 \pre `p` and `q` lie on `c` and are different. 
@@ -55,7 +55,7 @@ Circular_arc_3(const Circle_3<SphericalKernel> &c,
 const Circular_arc_point_3<SphericalKernel> &p, 
 const Circular_arc_point_3<SphericalKernel> &q); 
 
-/*! 
+/*!
 Constructs an arc that is supported by the circle of type 
 `Circle_3<SphericalKernel>` passing through the points `p`, 
 `q` and `r`. The source and target are respectively `p` 
@@ -76,29 +76,29 @@ const Point_3<SphericalKernel> &r);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Circle_3<SphericalKernel> supporting_circle(); 
 
-/*! 
+/*!
 
 returns the center of the supporting circle. 
 */ 
 Point_3<SphericalKernel> const& center( ) const; 
 
-/*! 
+/*!
 
 returns the squared radius of the supporting circle. 
 */ 
 SphericalKernel::FT const& squared_radius( ) const; 
 
-/*! 
+/*!
 
 */ 
 Plane_3<SphericalKernel> supporting_plane(); 
 
-/*! 
+/*!
 
 */ 
 Sphere_3<SphericalKernel> diametral_sphere(); 
@@ -114,17 +114,17 @@ Sphere_3<SphericalKernel> diametral_sphere();
 /// \f$ y\f$-extremal point otherwise.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Circular_arc_point_3<SphericalKernel> source(); 
 
-/*! 
+/*!
 
 */ 
 Circular_arc_point_3<SphericalKernel> target(); 
 
-/*! 
+/*!
 Test for equality. Two arcs are equal, iff their non-oriented 
 supporting planes are equal, and the centers and squared 
 radii of their respective supporting circles are equal, and their 
@@ -132,7 +132,7 @@ sources and targets are equal.
 */ 
 bool operator==(const Circular_arc_3<SphericalKernel> &a1, const Circular_arc_3<SphericalKernel> &a2); 
 
-/*! 
+/*!
 Test for nonequality. 
 */ 
 bool operator!=(const Circular_arc_3<SphericalKernel> &a1, 
@@ -142,13 +142,13 @@ const Circular_arc_3<SphericalKernel> &a2);
 
 }; /* end Circular_arc_3 */
 
-/*! 
+/*!
 
 \relates Circular_arc_3 
 */ 
 istream& operator>> (std::istream& is, Circular_arc_3 & ca); 
 
-/*! 
+/*!
 
 \relates Circular_arc_3 
 */ 

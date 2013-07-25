@@ -29,27 +29,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `K::FT`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 typedef to `K::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 typedef to `K::Less_xy_2`. 
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 typedef to `K::Orientation_2`. 
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class `op`: 
 `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$ `FT`. 
 For a fixed `Point_2` \f$ root\f$, `op`\f$ (p,\,q)\f$ returns 
@@ -62,25 +62,25 @@ typedef unspecified_type Operation;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns 3. 
 */ 
 int min_k() const; 
 
-/*! 
+/*!
 returns `FT(0)`. 
 */ 
 FT init(const Point_2& p, const Point_2& q) 
 const; 
 
-/*! 
+/*!
 returns `Operation` where `p` is the fixed 
 \f$ root\f$ point. 
 */ 
 Operation operation( const Point_2& p) 
 const; 
 
-/*! 
+/*!
 writes the vertices of 
 [`points_begin`, `points_end`) forming a maximum area 
 triangle rooted at `points_begin[0]` to o and returns the 
@@ -91,12 +91,12 @@ OutputIterator > OutputIterator compute_min_k_gon(
 RandomAccessIterator points_begin, RandomAccessIterator points_end, FT& 
 max_area, OutputIterator o) const; 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 
@@ -134,27 +134,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `K::FT`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 typedef to `K::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 typedef to `K::Less_xy_2`. 
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 typedef to `K::Orientation_2`. 
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class `op`: 
 `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$ `FT`. 
 For a fixed `Point_2` \f$ root\f$, `op`\f$ (p,\,q)\f$ returns 
@@ -168,26 +168,26 @@ typedef unspecified_type Operation;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns 2. 
 */ 
 int min_k() const; 
 
-/*! 
+/*!
 returns twice the Euclidean distance between `p` and 
 `q`. 
 */ 
 FT init(const Point_2& p, const Point_2& q) 
 const; 
 
-/*! 
+/*!
 returns `Operation` where `p` is the fixed 
 \f$ root\f$ point. 
 */ 
 Operation operation( const Point_2& p) 
 const; 
 
-/*! 
+/*!
 writes the pair 
 (`points_begin[0]`, `p`) where `p` is drawn from 
 [`points_begin`, `points_end`) such that the Euclidean 
@@ -200,12 +200,12 @@ OutputIterator > OutputIterator compute_min_k_gon(
 RandomAccessIterator points_begin, RandomAccessIterator points_end, FT& 
 max_area, OutputIterator o) const; 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 

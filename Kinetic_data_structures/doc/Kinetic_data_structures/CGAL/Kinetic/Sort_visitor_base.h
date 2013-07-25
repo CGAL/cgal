@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Sort_visitor_base(); 

@@ -65,32 +65,32 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 halfedge data structure `HDS`. 
 */ 
 typedef unspecified_type HalfedgeDS; 
 
-/*! 
+/*!
 point type of the vertex. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 size type. 
 */ 
 typedef unspecified_type size_type; 
 
-/*! 
+/*!
 
 */ 
 typedef typename HalfedgeDS::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef typename HalfedgeDS::Halfedge_handle Halfedge_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef typename HalfedgeDS::Face_handle Facet_handle; 
@@ -100,7 +100,7 @@ typedef typename HalfedgeDS::Face_handle Facet_handle;
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 two different indexing modes. 
 */ 
 enum { RELATIVE_INDEXING, ABSOLUTE_INDEXING}; 
@@ -110,7 +110,7 @@ enum { RELATIVE_INDEXING, ABSOLUTE_INDEXING};
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 stores a reference to the halfedge data structure `hds` of a 
 polyhedral surface in its internal state. An existing polyhedral 
 surface in `hds` remains unchanged. The incremental builder 
@@ -136,7 +136,7 @@ begin_surface ( add_vertex  | ( begin_facet  add_vertex_to_facet  end_facet ) ) 
 */
 /// @{
 
-/*! 
+/*!
 starts the construction. `v` is the number of new vertices 
 to expect, `f` the number of new facets, and `h` the number of 
 new halfedges. If `h` is unspecified (`== 0`) it is estimated using 
@@ -156,19 +156,19 @@ starting with new indices for the new construction.
 void begin_surface( size_type v, size_type f, size_type h = 0, 
 int mode = RELATIVE_INDEXING); 
 
-/*! 
+/*!
 
 adds a new vertex for `p` and returns its handle. 
 */ 
 Vertex_handle add_vertex( const Point_3& p); 
 
-/*! 
+/*!
 
 starts a new facet and returns its handle. 
 */ 
 Facet_handle begin_facet(); 
 
-/*! 
+/*!
 adds a vertex with 
 index  `i` to the current facet. The first point added with 
 `add_vertex()` has the index 0 if `mode` was set to 
@@ -177,7 +177,7 @@ referenced `hds` has the index 0.
 */ 
 void add_vertex_to_facet( size_type i); 
 
-/*! 
+/*!
 ends a newly constructed facet. 
 Returns the handle to the halfedge incident to the new facet that points 
 to the vertex added first. The halfedge can be safely used to traverse 
@@ -185,7 +185,7 @@ the halfedge cycle around the new facet.
 */ 
 Halfedge_handle end_facet(); 
 
-/*! 
+/*!
 ends the construction. 
 */ 
 void end_surface(); 
@@ -195,7 +195,7 @@ void end_surface();
 /// \name Additional Operations 
 /// @{
 
-/*! 
+/*!
 
 is a synonym for `begin_facet()`, a call to `add_vertex_to_facet()` for each 
 value in the range `[first,beyond)`, and a call to `end_facet()`. 
@@ -205,7 +205,7 @@ Returns the return value of `end_facet()`.
 template <class InputIterator> 
 Halfedge_handle add_facet( InputIterator first, InputIterator beyond); 
 
-/*! 
+/*!
 
 returns `true` if a facet described by the vertex indices in the range 
 `[first,beyond)` can be successfully inserted, e.g., with 
@@ -215,19 +215,19 @@ returns `true` if a facet described by the vertex indices in the range
 template <class InputIterator> 
 bool test_facet( InputIterator first, InputIterator beyond); 
 
-/*! 
+/*!
 
 returns handle for the vertex of index `i`, or `Vertex_handle` if 
 there is no `i`-th vertex. 
 */ 
 Vertex_handle vertex( std::size_t i); 
 
-/*! 
+/*!
 returns error status of the builder. 
 */ 
 bool error() const; 
 
-/*! 
+/*!
 undoes all changes made to the halfedge 
 data structure since the last `begin_surface()` in relative 
 indexing, and deletes the whole surface in absolute indexing. 
@@ -235,7 +235,7 @@ It needs a new call to `begin_surface()` to start inserting again.
 */ 
 void rollback(); 
 
-/*! 
+/*!
 returns 
 `true` if unconnected vertices are detected. If `verbose` was set to 
 `true` (see the constructor above) debug information about the 
@@ -243,7 +243,7 @@ unconnected vertices is printed.
 */ 
 bool check_unconnected_vertices(); 
 
-/*! 
+/*!
 returns 
 `true` if all unconnected vertices could be removed successfully. 
 This happens either if no unconnected vertices had appeared or if the 

@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 initializes `t` to use `m` for feasibility 
 testing. 
 */ 
@@ -33,23 +33,23 @@ m);
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `M`. 
 */ 
 typedef M Matrix; 
 
-/*! 
+/*!
 typedef to `Matrix::Value`. 
 */ 
 typedef Matrix::Value Value; 
 
-/*! 
+/*!
 typedef to 
 `std::less<Value>`. 
 */ 
 typedef std::less<Value> Compare_strictly; 
 
-/*! 
+/*!
 typedef to 
 `std::less_equal<Value>`. 
 */ 
@@ -60,21 +60,21 @@ typedef std::less_equal<Value> Compare_non_strictly;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the `Compare_strictly` object to be used for 
 the search. 
 */ 
 Compare_strictly compare_strictly() 
 const; 
 
-/*! 
+/*!
 returns the `Compare_non_strictly` object to be used 
 for the search. 
 */ 
 Compare_non_strictly compare_non_strictly() 
 const; 
 
-/*! 
+/*!
 uses the 
 feasibility test given during creation. 
 */ 

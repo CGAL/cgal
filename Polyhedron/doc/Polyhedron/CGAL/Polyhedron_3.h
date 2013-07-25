@@ -170,81 +170,81 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
       type of incident vertices. 
     */ 
     typedef unspecified_type Vertex; 
 
-    /*! 
+    /*!
       type of incident facets. 
     */ 
     typedef unspecified_type Facet; 
 
-    /*! 
+    /*!
       handle to vertex. 
     */ 
     typedef unspecified_type Vertex_handle; 
 
-    /*! 
+    /*!
       handle to halfedge. 
     */ 
     typedef unspecified_type Halfedge_handle; 
 
-    /*! 
+    /*!
       handle to facet. 
     */ 
     typedef unspecified_type Facet_handle; 
 
-    /*! 
+    /*!
       circulator of 
       halfedges around a vertex. 
     */ 
     typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-    /*! 
+    /*!
       circulator of 
       halfedges around a facet. 
     */ 
     typedef unspecified_type Halfedge_around_facet_circulator; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Vertex_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Facet_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_around_facet_const_circulator; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
     typedef unspecified_type Supports_halfedge_prev; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
     typedef unspecified_type Supports_halfedge_vertex; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
@@ -255,7 +255,7 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       default constructor. 
     */ 
     Halfedge(); 
@@ -265,121 +265,121 @@ public:
     /// \name Operations 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle opposite(); 
 
-    /*! 
+    /*!
       the opposite halfedge. 
     */ 
     Halfedge_const_handle opposite() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle next(); 
 
-    /*! 
+    /*!
       the next halfedge around the facet. 
     */ 
     Halfedge_const_handle next() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle prev(); 
 
-    /*! 
+    /*!
       the previous halfedge around the facet. 
     */ 
     Halfedge_const_handle prev() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle next_on_vertex(); 
 
-    /*! 
+    /*!
 
       the next halfedge around the vertex (clockwise). Is equal 
       to `h.next()->opposite()`. 
     */ 
     Halfedge_const_handle next_on_vertex() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle prev_on_vertex(); 
 
-    /*! 
+    /*!
 
       the previous halfedge around the vertex (counterclockwise). 
       Is equal to `h.%opposite()->%prev()`. 
     */ 
     Halfedge_const_handle prev_on_vertex() const; 
 
-    /*! 
+    /*!
       is true if `h` is a border halfedge. 
     */ 
     bool is_border() const; 
 
-    /*! 
+    /*!
       is true if this or the opposite halfedge is a border halfedge. 
     */ 
     bool is_border_edge() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_around_vertex_circulator vertex_begin(); 
 
-    /*! 
+    /*!
       circulator of halfedges around the vertex (clockwise). 
     */ 
     Halfedge_around_vertex_const_circulator vertex_begin() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_around_facet_circulator facet_begin(); 
 
-    /*! 
+    /*!
       circulator of halfedges around the facet (counterclockwise). 
     */ 
     Halfedge_around_facet_const_circulator facet_begin() const; 
 
-    /*! 
+    /*!
       the degree of the 
       incident vertex, i.e., number of edges emanating from this vertex. 
     */ 
     std::size_t vertex_degree() const; 
 
-    /*! 
+    /*!
       returns `true` if the 
       incident vertex has exactly two incident edges. 
     */ 
     bool is_bivalent() const; 
 
-    /*! 
+    /*!
       returns `true` if the 
       incident vertex has exactly three incident edges. 
     */ 
     bool is_trivalent() const; 
 
-    /*! 
+    /*!
       the degree of the 
       incident facet, i.e., number of edges on the boundary of this facet. 
     */ 
     std::size_t facet_degree() const; 
 
-    /*! 
+    /*!
       returns `true` if the 
       incident facet is a triangle. 
     */ 
     bool is_triangle() const; 
 
-    /*! 
+    /*!
       returns `true` if the 
       incident facet is a quadrilateral. 
     */ 
@@ -390,12 +390,12 @@ public:
     /// \name Operations available if Supports_halfedge_vertex is CGAL::Tag_true 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     Vertex_handle vertex(); 
 
-    /*! 
+    /*!
       the incident vertex of the halfedge. 
     */ 
     Vertex_const_handle vertex() const; 
@@ -405,12 +405,12 @@ public:
     /// \name Operations available if Supports_halfedge_facet is CGAL::Tag_true 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     Facet_handle facet(); 
 
-    /*! 
+    /*!
       the incident facet of  the halfedge. If the hafedge is a border halfedge 
       the result is default construction of the handle. 
     */ 
@@ -447,69 +447,69 @@ public:
     /// @{
 
 
-    /*! 
+    /*!
       type of incident vertices. 
     */ 
     typedef unspecified_type Vertex; 
 
-    /*! 
+    /*!
       type of incident halfedges. 
     */ 
     typedef unspecified_type Halfedge; 
 
-    /*! 
+    /*!
       plane equation type stored in facets. 
     */ 
     typedef unspecified_type Plane_3; 
 
-    /*! 
+    /*!
       handle to vertex. 
     */ 
     typedef unspecified_type Vertex_handle; 
 
-    /*! 
+    /*!
       handle to halfedge. 
     */ 
     typedef unspecified_type Halfedge_handle; 
 
-    /*! 
+    /*!
       handle to facet. 
     */ 
     typedef unspecified_type Facet_handle; 
 
-    /*! 
+    /*!
       circulator of 
       halfedges around a facet. 
     */ 
     typedef unspecified_type Halfedge_around_facet_circulator; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Vertex_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Facet_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_around_facet_const_circulator; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
     typedef unspecified_type Supports_facet_halfedge; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
@@ -520,7 +520,7 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       default constructor. 
     */ 
     Facet(); 
@@ -530,12 +530,12 @@ public:
     /// \name Operations available if Supports_facet_plane is CGAL::Tag_true 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     Plane_3& plane(); 
 
-    /*! 
+    /*!
       plane equation. 
     */ 
     const Plane_3& plane() const; 
@@ -546,46 +546,46 @@ public:
     /// @{
 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle halfedge(); 
 
-    /*! 
+    /*!
 
       an incident halfedge that points to the facet. 
     */ 
     Halfedge_const_handle halfedge() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_around_facet_circulator facet_begin(); 
 
-    /*! 
+    /*!
       circulator of halfedges around the facet (counterclockwise). 
     */ 
     Halfedge_around_facet_const_circulator facet_begin() const; 
 
-    /*! 
+    /*!
       sets incident halfedge to `h`. 
       \pre `h` is incident, i.e., `h->facet() ==` `*this`. 
     */ 
     void set_halfedge( Halfedge_handle h); 
 
-    /*! 
+    /*!
       the degree of the 
       facet, i.e., number of edges on the boundary of this facet. 
     */ 
     std::size_t facet_degree() const; 
 
-    /*! 
+    /*!
       returns `true` if the 
       facet is a triangle. 
     */ 
     bool is_triangle() const; 
 
-    /*! 
+    /*!
       returns `true` if the 
       facet is a quadrilateral. 
     */ 
@@ -620,69 +620,69 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
       type of incident halfedges. 
     */ 
     typedef unspecified_type Halfedge; 
 
-    /*! 
+    /*!
       type of incident facets. 
     */ 
     typedef unspecified_type Facet; 
 
-    /*! 
+    /*!
       point type stored in vertices. 
     */ 
     typedef unspecified_type Point_3; 
 
-    /*! 
+    /*!
       handle to vertex. 
     */ 
     typedef unspecified_type Vertex_handle; 
 
-    /*! 
+    /*!
       handle to halfedge. 
     */ 
     typedef unspecified_type Halfedge_handle; 
 
-    /*! 
+    /*!
       handle to facet. 
     */ 
     typedef unspecified_type Facet_handle; 
 
-    /*! 
+    /*!
       circulator of 
       halfedges around a vertex. 
     */ 
     typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Vertex_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Facet_const_handle; 
 
-    /*! 
+    /*!
 
      */ 
     typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
     typedef unspecified_type Supports_vertex_halfedge; 
 
-    /*! 
+    /*!
       \f$ \equiv\f$ `CGAL::Tag_true` or 
       `CGAL::Tag_false`. 
     */ 
@@ -693,12 +693,12 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       default constructor. 
     */ 
     Vertex(); 
 
-    /*! 
+    /*!
       vertex initialized with a point. 
     */ 
     Vertex( const Point& p); 
@@ -708,12 +708,12 @@ public:
     /// \name Operations available if Supports_vertex_point is CGAL::Tag_true 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     Point_3& point(); 
 
-    /*! 
+    /*!
       the point. 
     */ 
     const Point_3& point() const; 
@@ -723,46 +723,46 @@ public:
     /// \name Operations available if Supports_vertex_halfedge is  CGAL::Tag_true 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_handle halfedge(); 
 
-    /*! 
+    /*!
 
       an incident halfedge that points to `v`. 
     */ 
     Halfedge_const_handle halfedge() const; 
 
-    /*! 
+    /*!
 
      */ 
     Halfedge_around_vertex_circulator vertex_begin(); 
 
-    /*! 
+    /*!
       circulator of halfedges around the vertex (clockwise). 
     */ 
     Halfedge_around_vertex_const_circulator vertex_begin() const; 
 
-    /*! 
+    /*!
       sets incident halfedge to `h`. 
       \pre `h` is incident, i.e., `h->vertex() ==` `v`. 
     */ 
     void set_halfedge( Halfedge_handle h); 
 
-    /*! 
+    /*!
       the degree of the 
       vertex, i.e., number of edges emanating from this vertex. 
     */ 
     std::size_t vertex_degree() const; 
 
-    /*! 
+    /*!
       returns `true` if the vertex 
       has exactly two incident edges. 
     */ 
     bool is_bivalent() const; 
 
-    /*! 
+    /*!
       returns `true` if the vertex 
       has exactly three incident edges. 
     */ 
@@ -775,45 +775,45 @@ public:
   /// \name Types 
   /// @{
 
-  /*! 
+  /*!
     traits class selected for `PolyhedronTraits_3`. 
   */ 
   typedef unspecified_type Traits; 
 
-  /*! 
+  /*!
     items class selected for `PolyhedronItems_3`. 
   */ 
   typedef unspecified_type Items; 
 
-  /*! 
+  /*!
     instantiated halfedge data structure. 
   */ 
   typedef unspecified_type HalfedgeDS; 
 
-  /*! 
+  /*!
     size type of `HalfedgeDS`. 
   */ 
   typedef unspecified_type size_type; 
 
-  /*! 
+  /*!
     difference type of `HalfedgeDS`. 
   */ 
   typedef unspecified_type difference_type; 
 
-  /*! 
+  /*!
     iterator category of `HalfedgeDS` 
     for all iterators. 
   */ 
   typedef unspecified_type iterator_category; 
 
-  /*! 
+  /*!
     circulator category of all circulators; 
     bidirectional category if the `Items::Halfedge` provides a `Halfedge::prev()` 
     member function, otherwise forward category. 
   */ 
   typedef unspecified_type circulator_category; 
 
-  /*! 
+  /*!
     allocator type `Alloc`. 
   */ 
   typedef unspecified_type allocator_type; 
@@ -838,69 +838,69 @@ public:
   */
   /// @{
 
-  /*! 
+  /*!
     point stored in vertices. 
   */ 
   typedef unspecified_type Point_3; 
 
-  /*! 
+  /*!
     plane equation stored in facets (if supported). 
   */ 
   typedef unspecified_type Plane_3; 
 
-  /*! 
+  /*!
     handle to vertex. 
   */ 
   typedef unspecified_type Vertex_handle; 
 
-  /*! 
+  /*!
     handle to halfedge. 
   */ 
   typedef unspecified_type Halfedge_handle; 
 
-  /*! 
+  /*!
     handle to facet. 
   */ 
   typedef unspecified_type Facet_handle; 
 
-  /*! 
+  /*!
     iterator over all vertices. 
   */ 
   typedef unspecified_type Vertex_iterator; 
 
-  /*! 
+  /*!
     iterator over all halfedges. 
   */ 
   typedef unspecified_type Halfedge_iterator; 
 
-  /*! 
+  /*!
     iterator over all facets. 
   */ 
   typedef unspecified_type Facet_iterator; 
 
-  /*! 
+  /*!
     circulator of 
     halfedges around a vertex (cw). 
   */ 
   typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-  /*! 
+  /*!
     circulator of 
     halfedges around a facet (ccw). 
   */ 
   typedef unspecified_type Halfedge_around_facet_circulator; 
 
-  /*! 
+  /*!
     iterator over all edges (every other halfedge). 
   */ 
   typedef unspecified_type Edge_iterator; 
 
-  /*! 
+  /*!
     iterator over all points. 
   */ 
   typedef unspecified_type Point_iterator; 
 
-  /*! 
+  /*!
     iterator over all plane equations. 
   */ 
   typedef unspecified_type Plane_iterator; 
@@ -913,42 +913,42 @@ public:
   /// supported or not.
   /// @{
 
-  /*! 
+  /*!
     `Vertex::halfedge()`. 
   */ 
   typedef unspecified_type Supports_vertex_halfedge; 
 
-  /*! 
+  /*!
     `Vertex::point()`. 
   */ 
   typedef unspecified_type Supports_vertex_point; 
 
-  /*! 
+  /*!
     `Halfedge::prev()`. 
   */ 
   typedef unspecified_type Supports_halfedge_prev; 
 
-  /*! 
+  /*!
     `Halfedge::vertex()`. 
   */ 
   typedef unspecified_type Supports_halfedge_vertex; 
 
-  /*! 
+  /*!
     `Halfedge::facet()`. 
   */ 
   typedef unspecified_type Supports_halfedge_facet; 
 
-  /*! 
+  /*!
     `Facet::halfedge()`. 
   */ 
   typedef unspecified_type Supports_facet_halfedge; 
 
-  /*! 
+  /*!
     `Facet::plane()`. 
   */ 
   typedef unspecified_type Supports_facet_plane; 
 
-  /*! 
+  /*!
     supports removal of individual elements. 
   */ 
   typedef unspecified_type Supports_removal; 
@@ -958,12 +958,12 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     %Default constructor.
    */ 
   Polyhedron_3(const Traits& traits = Traits()); 
 
-  /*! 
+  /*!
     Cosntructor  of a polyhedron with storage reserved 
     for `v` vertices, `h` halfedges, and `f` facets. The 
     reservation sizes are a hint for optimizing storage 
@@ -972,7 +972,7 @@ public:
   Polyhedron_3( size_type v, size_type h, size_type f, 
                 const Traits& traits = Traits()); 
 
-  /*! 
+  /*!
     reserve storage 
     for `v` vertices, `h` halfedges, and `f` facets. The 
     reservation sizes are a hint for optimizing storage 
@@ -983,13 +983,13 @@ public:
   */ 
   void reserve( size_type v, size_type h, size_type f); 
 
-  /*! 
+  /*!
     a tetrahedron is added to the 
     polyhedral surface. Returns a halfedge of the tetrahedron. 
   */ 
   Halfedge_handle make_tetrahedron(); 
 
-  /*! 
+  /*!
 
     a tetrahedron is added to the polyhedral surface with its 
     vertices initialized to `p1`, `p2`, `p3`, and `p4`. Returns that 
@@ -1003,14 +1003,14 @@ public:
                                    const Point& p3, 
                                    const Point& p4); 
 
-  /*! 
+  /*!
     a triangle with border edges is 
     added to the polyhedral surface. Returns a non-border 
     halfedge of the triangle. 
   */ 
   Halfedge_handle make_triangle(); 
 
-  /*! 
+  /*!
 
     a triangle with border edges is added to the polyhedral surface with its 
     vertices initialized to `p1`, `p2`, and `p3`. Returns that 
@@ -1027,119 +1027,119 @@ public:
   /// \name Access Member Functions 
   /// @{
 
-  /*! 
+  /*!
     returns true if the polyhedron is empty. 
   */ 
   bool empty() const; 
 
-  /*! 
+  /*!
     number of vertices. 
   */ 
   size_type size_of_vertices() const; 
 
-  /*! 
+  /*!
     number of halfedges (incl.\ border halfedges). 
   */ 
   size_type size_of_halfedges() const; 
 
-  /*! 
+  /*!
     number of facets. 
   */ 
   size_type size_of_facets() const; 
 
-  /*! 
+  /*!
     space reserved for vertices. 
   */ 
   size_type capacity_of_vertices() const; 
 
-  /*! 
+  /*!
     space reserved for halfedges. 
   */ 
   size_type capacity_of_halfedges() const; 
 
-  /*! 
+  /*!
     space reserved for facets. 
   */ 
   size_type capacity_of_facets() const; 
 
-  /*! 
+  /*!
     bytes used for the polyhedron. 
   */ 
   size_t bytes() const; 
 
-  /*! 
+  /*!
     bytes reserved for the polyhedron. 
   */ 
   size_t bytes_reserved() const; 
 
-  /*! 
+  /*!
     allocator object. 
   */ 
   allocator_type get_allocator() const; 
 
-  /*! 
+  /*!
     iterator over all vertices. 
   */ 
   Vertex_iterator vertices_begin(); 
 
-  /*! 
+  /*!
     past-the-end iterator. 
   */ 
   Vertex_iterator vertices_end(); 
 
-  /*! 
+  /*!
     iterator over all 
     halfedges. 
   */ 
   Halfedge_iterator halfedges_begin(); 
 
-  /*! 
+  /*!
     past-the-end iterator. 
   */ 
   Halfedge_iterator halfedges_end(); 
 
-  /*! 
+  /*!
     iterator over all facets 
     (excluding holes). 
   */ 
   Facet_iterator facets_begin(); 
 
-  /*! 
+  /*!
     past-the-end iterator. 
   */ 
   Facet_iterator facets_end(); 
 
-  /*! 
+  /*!
     iterator over all edges. 
   */ 
   Edge_iterator edges_begin(); 
 
-  /*! 
+  /*!
     past-the-end iterator. 
   */ 
   Edge_iterator edges_end(); 
 
-  /*! 
+  /*!
     iterator over all points. 
   */ 
   Point_iterator points_begin(); 
 
-  /*! 
+  /*!
     past-the-end iterator. 
   */ 
   Point_iterator points_end(); 
 
-  /*! 
+  /*!
     iterator over all plane equations. 
   */ 
   Plane_iterator planes_begin(); 
 
-  /*! 
+  /*!
     past-the-end iterator. 
   */ 
   Plane_iterator planes_end(); 
 
-  /*! 
+  /*!
     returns the traits class. 
   */ 
   const Traits& traits() const; 
@@ -1149,43 +1149,43 @@ public:
   /// \name Combinatorial Predicates 
   /// @{
 
-  /*! 
+  /*!
     returns `true` if there are no 
     border edges. 
   */ 
   bool is_closed() const; 
 
-  /*! 
+  /*!
     returns `true` if all 
     vertices have exactly two incident edges. 
   */ 
   bool is_pure_bivalent() const; 
 
-  /*! 
+  /*!
     returns `true` if all 
     vertices have exactly three incident edges. 
   */ 
   bool is_pure_trivalent() const; 
 
-  /*! 
+  /*!
     returns `true` if all 
     facets are triangles. 
   */ 
   bool is_pure_triangle() const; 
 
-  /*! 
+  /*!
     returns `true` if all 
     facets are quadrilaterals. 
   */ 
   bool is_pure_quad() const; 
 
-  /*! 
+  /*!
     `true` 
     iff the connected component denoted by `h` is a triangle. 
   */ 
   bool is_triangle( Halfedge_const_handle h) const; 
 
-  /*! 
+  /*!
     `true` 
     iff the connected component denoted by `h` is a tetrahedron. 
   */ 
@@ -1203,7 +1203,7 @@ public:
   */
   /// @{
 
-  /*! 
+  /*!
     splits the facet incident to `h` and `g` into two facets 
     with a new diagonal between the two vertices denoted by `h` and 
     `g` respectively. The second (new) facet is a copy of the 
@@ -1219,7 +1219,7 @@ public:
   Halfedge_handle split_facet( Halfedge_handle h, 
                                Halfedge_handle g); 
 
-  /*! 
+  /*!
     joins the two facets incident to `h`. The facet incident to 
     `h->%opposite()` gets removed. Both facets might be 
     holes. Returns the predecessor of `h` around the facet. The invariant 
@@ -1235,7 +1235,7 @@ public:
 n  */ 
   Halfedge_handle join_facet( Halfedge_handle h); 
 
-  /*! 
+  /*!
     splits the vertex incident to `h` and `g` into two vertices, 
     the old vertex remains and a new copy is created, 
     and connects them with a new edge. Let `hnew` be 
@@ -1262,7 +1262,7 @@ n  */
   Halfedge_handle split_vertex( Halfedge_handle h, 
                                 Halfedge_handle g); 
 
-  /*! 
+  /*!
     joins the two vertices incident to `h`. The vertex denoted by 
     `h->opposite()` gets removed. Returns the predecessor of 
     `h` around the vertex, i.e., `h->%opposite()->%prev()`. 
@@ -1278,7 +1278,7 @@ n  */
   */ 
   Halfedge_handle join_vertex( Halfedge_handle h); 
 
-  /*! 
+  /*!
 
     splits the halfedge `h` into two halfedges inserting a new vertex 
     that is a copy of `h->%opposite()->%vertex()`. Is equivalent to 
@@ -1292,14 +1292,14 @@ n  */
   */ 
   Halfedge_handle split_edge( Halfedge_handle h); 
 
-  /*! 
+  /*!
     performs an edge flip. It returns `h` after rotating the edge `h` one 
     vertex in the direction of the face orientation. 
     \pre `h != Halfedge_handle()` and both facets incident to `h` are triangles. 
   */ 
   Halfedge_handle flip_edge( Halfedge_handle h); 
 
-  /*! 
+  /*!
     barycentric triangulation of `h->facet()`. Creates a new vertex, 
     a copy of `h->vertex()`, and connects it to each vertex incident 
     to `h->facet()` splitting `h->facet()` into triangles. 
@@ -1314,7 +1314,7 @@ n  */
   */ 
   Halfedge_handle create_center_vertex( Halfedge_handle h); 
 
-  /*! 
+  /*!
     reverses `create_center_vertex()`. Erases the 
     vertex pointed to by `g` and all incident halfedges thereby 
     merging all incident facets. Only `g->facet()` remains. 
@@ -1335,7 +1335,7 @@ n  */
   /// \name Euler Operators Modifying Genus 
   /// @{
 
-  /*! 
+  /*!
     cuts the polyhedron into two parts along the cycle `(h,i,j)` (edge `j` 
     runs on the backside of the three dimensional figure above). 
     Three new vertices (one copy for each vertex in the cycle) and three 
@@ -1351,7 +1351,7 @@ n  */
                               Halfedge_handle i, 
                               Halfedge_handle j); 
 
-  /*! 
+  /*!
     glues the boundary of the two facets denoted by `h` and `g` together 
     and returns `h`. Both facets and the vertices along the facet denoted 
     by `g` gets removed. Both facets may be holes. The invariant 
@@ -1372,7 +1372,7 @@ n  */
 
   /// @{
 
-  /*! 
+  /*!
     removes the incident facet of `h` and changes all halfedges incident 
     to the facet into border edges. Returns `h`. 
     See `erase_facet(h)` for a more generalized variant. 
@@ -1382,7 +1382,7 @@ n  */
   */ 
   Halfedge_handle make_hole( Halfedge_handle h); 
 
-  /*! 
+  /*!
 
     fills a hole with a newly created facet. Makes all border halfedges 
     of the hole denoted by `h` incident to the new facet. Returns `h`. 
@@ -1390,7 +1390,7 @@ n  */
   */ 
   Halfedge_handle fill_hole( Halfedge_handle h); 
 
-  /*! 
+  /*!
     creates a new facet within the hole incident to `h` 
     and `g` by connecting the tip of `g` with the tip of `h` 
     with two new halfedges and a new vertex and filling this separated 
@@ -1404,7 +1404,7 @@ n  */
   Halfedge_handle add_vertex_and_facet_to_border( 
     Halfedge_handle h, Halfedge_handle g); 
 
-  /*! 
+  /*!
     creates a new facet within the hole incident to `h` and `g` by 
     connecting the vertex denoted by `g` with the vertex denoted by `h` 
     with a new halfedge and filling this separated part of the hole with 
@@ -1423,7 +1423,7 @@ n  */
   /// \name Erasing 
   /// @{
 
-  /*! 
+  /*!
     removes the incident facet of `h` and changes all halfedges incident 
     to the facet into border edges or removes them from the 
     polyhedral surface if they were already border edges. 
@@ -1439,7 +1439,7 @@ n  */
   */ 
   void erase_facet( Halfedge_handle h); 
 
-  /*! 
+  /*!
     removes the vertices, halfedges, and facets that belong to the 
     connected component of `h`. 
 
@@ -1447,7 +1447,7 @@ n  */
   */ 
   void erase_connected_component( Halfedge_handle h); 
 
-  /*! 
+  /*!
     Erases the small connected components and the isolated vertices. 
     Keep `nb_components_to_keep` largest connected components. 
     Returns the number of connected components erased (ignoring isolated vertices). 
@@ -1456,7 +1456,7 @@ n  */
   */ 
   unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
-  /*! 
+  /*!
     removes all vertices, halfedges, and facets. 
   */ 
   void clear(); 
@@ -1489,7 +1489,7 @@ n  */
   */
   /// @{
 
-  /*! 
+  /*!
     sorts halfedges such that the non-border edges precede the 
     border edges. For each border edge the halfedge iterator will 
     reference the halfedge incident to the facet right before the 
@@ -1497,13 +1497,13 @@ n  */
   */ 
   void normalize_border(); 
 
-  /*! 
+  /*!
     number of border halfedges. 
     \pre last `normalize_border()` call still valid, see above. 
   */ 
   size_type size_of_border_halfedges() const; 
 
-  /*! 
+  /*!
     number of border edges. Since each border edge of a polyhedral 
     surface has exactly one border halfedge, 
     this number is equal to `size_of_border_halfedges()`. 
@@ -1511,7 +1511,7 @@ n  */
   */ 
   size_type size_of_border_edges() const; 
 
-  /*! 
+  /*!
     halfedge iterator starting with the border edges. The range 
     [`halfedges_begin(), border_halfedges_begin()`) denotes 
     all non-border halfedges. The range 
@@ -1521,7 +1521,7 @@ n  */
   */ 
   Halfedge_iterator border_halfedges_begin(); 
 
-  /*! 
+  /*!
     edge iterator starting with the border edges. The range 
     [`edges_begin(), border_edges_begin()`) denotes 
     all non-border edges. The range 
@@ -1536,12 +1536,12 @@ n  */
   /// \name Miscellaneous 
   /// @{
 
-  /*! 
+  /*!
     reverses facet orientations (incl.\ plane equations if supported). 
   */ 
   void inside_out(); 
 
-  /*! 
+  /*!
     returns `true` if the polyhedral surface is combinatorially 
     consistent. If `verbose` is `true`, statistics are 
     printed to `cerr`. For `level == 1` the normalization of the 
@@ -1553,7 +1553,7 @@ n  */
   */ 
   bool is_valid( bool verbose = false, int level = 0) const; 
 
-  /*! 
+  /*!
     returns `true` if the border halfedges are in normalized 
     representation, which is when enumerating all halfedges with the 
     iterator: The non-border edges precede the border edges and for 
@@ -1565,7 +1565,7 @@ n  */
   */ 
   bool normalized_border_is_valid( bool verbose = false) const; 
 
-  /*!  
+  /*!
     \cgalAdvancedFunction
     \cgalAdvancedBegin
     calls the `Modifier_base::operator()()` of the modifier `m`.

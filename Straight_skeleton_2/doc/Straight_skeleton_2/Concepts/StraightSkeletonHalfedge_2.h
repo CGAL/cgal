@@ -25,12 +25,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default Constructor. 
 */ 
 StraightSkeletonHalfedge_2(); 
 
-/*! 
+/*!
 Constructs a halfedge with ID `id`. 
 
 It is the links to other halfedges what determines if this is a contour edge, a contour-skeleton edge or an inner-skeleton edge. 
@@ -42,12 +42,12 @@ StraightSkeletonHalfedge_2( int id );
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Halfedge_handle defining_contour_edge(); 
 
-/*! 
+/*!
 If this is a bisector halfedge, returns a handle to the inward-facing (non-border) contour halfedge corresponding to the defining contour edge which is to its left; if this is a contour halfedge, returns a handle to itself if `is\_border()` is `false`, or to its opposite if it is `true`. 
 */ 
 Halfedge_const_handle defining_contour_edge() const; 
@@ -57,12 +57,12 @@ Halfedge_const_handle defining_contour_edge() const;
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 Returns `true` iff this is a bisector (or skeleton) halfedge (i.e.\ is not a contour halfedge). 
 */ 
 bool is_bisector() const; 
 
-/*! 
+/*!
 Returns `true` iff this is a bisector and is inner (i.e.\ is not incident upon a contour vertex). 
 */ 
 bool is_inner_bisector() const; 

@@ -51,39 +51,39 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool operator==(const RealEmbeddable &a, 
 const RealEmbeddable &b); 
 
 
-/*! 
+/*!
 
 */ 
 bool operator!=(const RealEmbeddable &a, 
 const RealEmbeddable &b); 
 
-/*! 
+/*!
 
 */ 
 bool operator< (const RealEmbeddable &a, 
 const RealEmbeddable &b); 
 
-/*! 
+/*!
 
 */ 
 bool operator<=(const RealEmbeddable &a, 
 const RealEmbeddable &b); 
 
-/*! 
+/*!
 
 
 */ 
 bool operator> (const RealEmbeddable &a, 
 const RealEmbeddable &b); 
 
-/*! 
+/*!
 
 \relates RealEmbeddable 
 */ 

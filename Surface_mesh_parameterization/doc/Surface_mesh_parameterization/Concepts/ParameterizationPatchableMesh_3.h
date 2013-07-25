@@ -36,70 +36,70 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 %Get vertex seaming flag. Default value is undefined. 
 
 */ 
 int get_vertex_seaming(Vertex_const_handle vertex) const; 
 
-/*! 
+/*!
 Set vertex seaming flag. Default value is undefined. 
 */ 
 void set_vertex_seaming(Vertex_handle vertex, int seaming); 
 
-/*! 
+/*!
 
 %Get oriented edge's seaming flag, i.e.\ position of the oriented edge w.r.t.\ to the UNIQUE main border. 
 
 */ 
 int get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const; 
 
-/*! 
+/*!
 Set oriented edge's seaming flag, i.e.\ position of the oriented edge w.r.t.\ to the UNIQUE main border. 
 */ 
 void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming); 
 
-/*! 
+/*!
 
 %Get the 2D position (= (u, v) pair) of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 
 */ 
 Point_2 get_corners_uv(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const; 
 
-/*! 
+/*!
 Set the 2D position (= (u, v) pair) of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 */ 
 void set_corners_uv(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2& uv); 
 
-/*! 
+/*!
 %Get <I>is parameterized</I> field of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 */ 
 bool are_corners_parameterized(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const; 
 
-/*! 
+/*!
 Set <I>is parameterized</I> field of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 */ 
 void set_corners_parameterized(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized); 
 
-/*! 
+/*!
 %Get index of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 */ 
 int get_corners_index(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const; 
 
-/*! 
+/*!
 Set index of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 */ 
 void set_corners_index(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index); 
 
-/*! 
+/*!
 
 %Get all purpose tag of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 
 */ 
 int get_corners_tag(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const; 
 
-/*! 
+/*!
 Set all purpose tag of corners at the <I>right</I> of the `prev_vertex -> vertex -> next_vertex` line. Default value is undefined. 
 */ 
 void set_corners_tag(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag); 

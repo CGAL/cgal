@@ -35,7 +35,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates a widget `W` for displaying the 3D Nef polyhedron N. 
 */ 
 Qt_widget_Nef_3(const Nef_polyhedron_3& N); 

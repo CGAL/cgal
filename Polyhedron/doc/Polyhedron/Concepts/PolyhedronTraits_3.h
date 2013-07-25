@@ -25,19 +25,19 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 point type. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 plane equation. Even if plane equations 
 are not supported with a particular polyhedral surface this 
 type has to be defined (some dummy type). 
 */ 
 typedef unspecified_type Plane_3; 
 
-/*! 
+/*!
 is an unary function object 
 that reverses the plane orientation. Must provide `Plane_3 operator()(Plane_3 plane)` that returns the reversed plane. Required 
 only if plane equations are supported and the `inside_out()` 
@@ -50,13 +50,13 @@ typedef unspecified_type Construct_opposite_plane_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 copy constructor. 
 */ 
 PolyhedronTraits_3( const PolyhedronTraits_3& traits2); 
 
-/*! 
+/*!
 
 assignment. 
 */ 
@@ -67,7 +67,7 @@ PolyhedronTraits_3& operator= ( const PolyhedronTraits_3& traits2);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns an instance of this function object. 
 */ 

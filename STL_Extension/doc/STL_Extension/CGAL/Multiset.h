@@ -126,23 +126,23 @@ In compliance with \stl, the types `value_type` and `key_type`
 are defined as well. 
 */
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type iterator; 
 
-/*! 
+/*!
 bi-directional iterators for the elements stored in the set. 
 */ 
 typedef unspecified_type const_iterator; 
 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type reverse_iterator; 
 
-/*! 
+/*!
 reverse bi-directional iterators for the elements stored in the set. 
 */ 
 typedef unspecified_type const_reverse_iterator; 
@@ -151,7 +151,7 @@ typedef unspecified_type const_reverse_iterator;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 
 creates an an empty set `s` that uses a default comparison 
 functor. 
@@ -165,7 +165,7 @@ Multiset<Type,Compare,Allocator>();
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 
 creates an an empty set `s` that uses the given comparison 
 functor `comp`. 
@@ -180,7 +180,7 @@ const Compare& comp);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 
 creates a set `s` containing all elements in the range 
 `[first, last)`, that uses the comparison 
@@ -198,7 +198,7 @@ const Compare& comp = Compare());
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 
 copy constructor. 
 */ 
@@ -212,7 +212,7 @@ const Multiset<Type,Compare,Allocator>& other);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 
 assignment operator. 
 */ 
@@ -226,7 +226,7 @@ const Multiset<Type,Compare,Allocator>& other);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 
 swaps the contents of `s` with those of the other set. 
 */ 
@@ -239,7 +239,7 @@ void swap (Multiset<Type,Compare,Allocator>& other);
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 the comparison functor used. 
 */ 
@@ -252,7 +252,7 @@ Compare key_comp() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 the comparison functor used (same as above). 
 Both functions have a non-const version that return a reference 
@@ -267,7 +267,7 @@ Compare value_comp() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns `true` if the set is empty, `false` otherwise. 
 */ 
@@ -280,7 +280,7 @@ bool empty ();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns the number of elements stored in the set. 
 */ 
@@ -293,7 +293,7 @@ size_t size ();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns the maximal number of elements the set can store 
 (same as `size()`). 
@@ -307,7 +307,7 @@ size_t max_size ();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns an iterator pointing to the first element stored in the set 
 (a `const` version is also available). 
@@ -321,7 +321,7 @@ iterator begin();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns an iterator pointing beyond the last element stored in the set 
 (a `const` version is also available). 
@@ -335,7 +335,7 @@ iterator end();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns a reverse iterator pointing beyond the last element stored in the 
 set (a `const` version is also available). 
@@ -349,7 +349,7 @@ reverse_iterator rbegin();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 returns a reverse iterator pointing to the first element stored in the set 
 (a `const` version is also available). 
@@ -363,7 +363,7 @@ reverse_iterator rend();
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 
 returns `true` if the sequences of elements in the two sets are 
 pairwise equal (using the comparison functor). 
@@ -378,7 +378,7 @@ const Multiset<Type,Compare,Allocator>& other) const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 
 returns `true` if the element sequence in `s` is 
 lexicographically smaller than the element sequence of `other`. 
@@ -393,7 +393,7 @@ const Multiset<Type,Compare,Allocator>& other) const;
 
 /// \name Insertion Methods 
 /// @{ 
-/*! 
+/*!
 
 inserts the element `x` into the set and returns an iterator pointing 
 to the newly inserted element. 
@@ -407,7 +407,7 @@ iterator insert (const Type& x);
 
 /// \name Insertion Methods 
 /// @{ 
-/*! 
+/*!
 
 inserts all elements in the range `[first, last)` into 
 the set. 
@@ -422,7 +422,7 @@ void insert (InputIterator first, InputIterator last);
 
 /// \name Insertion Methods 
 /// @{ 
-/*! 
+/*!
 
 inserts the element `x` with a given iterator used as a hint for the 
 position of the new element. It Returns an iterator pointing to the 
@@ -437,7 +437,7 @@ iterator insert (iterator position, const Type& x);
 
 /// \name Insertion Methods 
 /// @{ 
-/*! 
+/*!
 
 inserts the element `x` as the predecessor of the element at the given 
 position. 
@@ -454,7 +454,7 @@ iterator insert_before (iterator position, const Type& x);
 
 /// \name Insertion Methods 
 /// @{ 
-/*! 
+/*!
 
 inserts the element `x` as the successor of the element at the given 
 position. 
@@ -471,7 +471,7 @@ iterator insert_after (iterator position, const Type& x);
 
 /// \name Removal Methods 
 /// @{ 
-/*! 
+/*!
 
 erases all elements equivalent to `x` from the set and returns the 
 number of erased elements. 
@@ -485,7 +485,7 @@ size_t erase (const Type& x);
 
 /// \name Removal Methods 
 /// @{ 
-/*! 
+/*!
 
 erases the element pointed by `position`. 
 */ 
@@ -498,7 +498,7 @@ void erase (iterator position);
 
 /// \name Removal Methods 
 /// @{ 
-/*! 
+/*!
 
 clears the set (erases all stored elements). 
 */ 
@@ -517,7 +517,7 @@ functor, as the `Compare` functor will be used by default.
 */
 /// @{ 
 
-/*! 
+/*!
 
 searches for the an element equivalent to `key` in the set. If the 
 set contains objects equivalent to `key`, it returns an iterator 
@@ -527,14 +527,14 @@ pointing to the first one. Otherwise, `end()` is returned (a
 template <class Key, class CompareKey> 
 iterator find (const Key& key, const CompareKey& comp_key); 
 
-/*! 
+/*!
 
 returns the number of elements equivalent to `key` in the set. 
 */ 
 template <class Key, class CompareKey> 
 size_t count (const Key& key, const CompareKey& comp_key) const; 
 
-/*! 
+/*!
 
 returns an iterator pointing to the first element in the set that is not 
 less than `key`. If all set elements are less than `key`, 
@@ -543,7 +543,7 @@ less than `key`. If all set elements are less than `key`,
 template <class Key, class CompareKey> 
 iterator lower_bound (const Key& key, const CompareKey& comp_key); 
 
-/*! 
+/*!
 
 returns an iterator pointing to the first element in the set that is 
 greater than `key`. If no set element is greater than `key`, 
@@ -552,7 +552,7 @@ greater than `key`. If no set element is greater than `key`,
 template <class Key, class CompareKey> 
 iterator upper_bound (const Key& key, const CompareKey& comp_key); 
 
-/*! 
+/*!
 
 returns the range of set elements equivalent to the given key, namely 
 `(lower_bound(key), upper_bound(key))` (a `const` version is 
@@ -563,7 +563,7 @@ std::pair<iterator,iterator>
 equal_range (const Key& key, const CompareKey& comp_key); 
 
 
-/*! 
+/*!
 
 returns a pair comprised of `lower_bound(key)` and a Boolean flag 
 indicating whether this iterator points to an element equivalent to 
@@ -579,7 +579,7 @@ find_lower (const Key& key, const CompareKey& comp_key);
 
 /// \name Special Operations 
 /// @{ 
-/*! 
+/*!
 
 replaces the element stored at the given position with `x`. 
 \pre The operation does not violate the set order - that is, 
@@ -595,7 +595,7 @@ void replace (iterator position, const Type& x);
 
 /// \name Special Operations 
 /// @{ 
-/*! 
+/*!
 
 swaps places between the two elements given by `pos1` and `pos2`. 
 \pre The operation does not violate the set order - that is, 
@@ -610,7 +610,7 @@ void swap (iterator pos1, iterator pos2);
 
 /// \name Special Operations 
 /// @{ 
-/*! 
+/*!
 
 concatenates all elements in `s_prime` into `s` and clears 
 `s_prime`. 
@@ -627,7 +627,7 @@ void catenate (Self& s_prime);
 
 /// \name Special Operations 
 /// @{ 
-/*! 
+/*!
 
 splits `s` such that it contains all elements that are less than 
 the given `key` and such that `s_prime` contains all other elements. 
@@ -643,7 +643,7 @@ void split (Key key, CompareKey comp_key, Self& s_prime);
 
 /// \name Special Operations 
 /// @{ 
-/*! 
+/*!
 
 splits `s` such that it contains all set elements in the range 
 `[begin, position)` and such that `s_prime` contains all elements 

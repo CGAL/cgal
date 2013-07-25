@@ -88,18 +88,18 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an identity transformation. 
 */ 
 Aff_transformation_2(const Identity_transformation& ); 
 
-/*! 
+/*!
 introduces a translation by a vector `v`. 
 */ 
 Aff_transformation_2(const Translation, 
 const Vector_2<Kernel> &v); 
 
-/*! 
+/*!
 approximates the rotation over the angle indicated by direction 
 `d`, such that the differences between the sines and cosines 
 of the rotation given by d and the approximating rotation 
@@ -111,7 +111,7 @@ const Direction_2<Kernel> &d,
 const Kernel::RT &num, 
 const Kernel::RT &den = RT(1)); 
 
-/*! 
+/*!
 introduces a rotation by the angle `rho`. 
 \pre \f$ sine\_rho^2 + cosine\_rho^2 == hw^2\f$. 
 */ 
@@ -120,14 +120,14 @@ const Kernel::RT &sine_rho,
 const Kernel::RT &cosine_rho, 
 const Kernel::RT &hw = RT(1)); 
 
-/*! 
+/*!
 introduces a scaling by a scale factor \f$ s/hw\f$. 
 */ 
 Aff_transformation_2(const Scaling, 
 const Kernel::RT &s, 
 const Kernel::RT &hw = RT(1)); 
 
-/*! 
+/*!
 introduces a general affine transformation in the 
 \f$3 \times 3\f$ matrix form 
 \f$
@@ -160,7 +160,7 @@ const Kernel::RT &m00, const Kernel::RT &m01, const Kernel::RT &m02,
 const Kernel::RT &m10, const Kernel::RT &m11, const Kernel::RT &m12, 
 const Kernel::RT &hw = RT(1)); 
 
-/*! 
+/*!
 introduces a general linear transformation
 \f$\small \mbox{\(\left(\begin{array}{ccc}
                  m_{00} & m_{01} & 0\\
@@ -176,7 +176,7 @@ const Kernel::RT &hw = RT(1));
 
 /// @} 
 
-/*! 
+/*!
 \name Operations 
 
 The main thing to do with transformations is to apply them on
@@ -192,42 +192,42 @@ available through `operator()` overloads.
 */ 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point_2<Kernel> transform(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Vector_2<Kernel> transform(const Vector_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Direction_2<Kernel> transform(const Direction_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Line_2<Kernel> transform(const Line_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Point_2<Kernel> operator()(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Vector_2<Kernel> operator()(const Vector_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Direction_2<Kernel> operator()(const Direction_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Line_2<Kernel> operator()(const Line_2<Kernel> &p) const; 
@@ -237,24 +237,24 @@ Line_2<Kernel> operator()(const Line_2<Kernel> &p) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 composes two affine transformations. 
 */ 
 Aff_transformation_2<Kernel> operator*(const Aff_transformation_2<Kernel> &s) const; 
 
-/*! 
+/*!
 gives the inverse transformation. 
 */ 
 Aff_transformation_2<Kernel> inverse() const; 
 
-/*! 
+/*!
 returns `true`, if the transformation is not reflecting, 
 i.e.\ the determinant of the involved linear transformation is 
 non-negative. 
 */ 
 bool is_even() const; 
 
-/*! 
+/*!
 returns `true`, if the transformation is reflecting. 
 */ 
 bool is_odd() const; 
@@ -264,22 +264,22 @@ bool is_odd() const;
 /// \name Matrix Entry Access
 /// @{
 
-/*! 
+/*!
 
 */ 
 Kernel::FT cartesian(int i, int j) const; 
 
-/*! 
+/*!
 returns entry \f$ m_{ij}\f$ in a matrix representation in which \f$ m_{22}\f$ is 1. 
 */ 
 Kernel::FT m(int i, int j) const; 
 
-/*! 
+/*!
 
 */ 
 Kernel::RT homogeneous(int i, int j) const; 
 
-/*! 
+/*!
 returns entry \f$ m_{ij}\f$ in some fixed matrix representation. 
 */ 
 Kernel::RT hm(int i, int j) const; 

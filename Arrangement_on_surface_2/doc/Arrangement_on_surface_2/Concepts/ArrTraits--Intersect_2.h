@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes the intersections of `xc1` and `xc2` and 
 inserts them <I>in an ascending lexicographic \f$ xy\f$-order</I> into the 
 output iterator `oi`. The value-type of `Output_iterator` is 

@@ -25,7 +25,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the type of point being generated. 
 */ 
 typedef unspecified_type value_type; 
@@ -35,7 +35,7 @@ typedef unspecified_type value_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns an absolute bound for 
 the coordinates of all generated points. 
 */ 

@@ -26,7 +26,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an iso-oriented cuboid `c` with diagonal 
 opposite vertices `p` and `q`. Note that the object is 
 brought in the canonical form. 
@@ -34,7 +34,7 @@ brought in the canonical form.
 Iso_cuboid_3(const Point_3<Kernel> &p, 
 const Point_3<Kernel> &q); 
 
-/*! 
+/*!
 introduces an iso-oriented cuboid `c` with diagonal 
 opposite vertices `p` and `q`. The `int` argument value 
 is only used to distinguish the two overloaded functions. 
@@ -43,7 +43,7 @@ is only used to distinguish the two overloaded functions.
 Iso_cuboid_3(const Point_3<Kernel> &p, 
 const Point_3<Kernel> &q, int); 
 
-/*! 
+/*!
 introduces an iso-oriented cuboid `c` whose 
 minimal \f$ x\f$ coordinate is the one of `left`, the 
 maximal \f$ x\f$ coordinate is the one of `right`, the 
@@ -59,7 +59,7 @@ const Point_3<Kernel> &top,
 const Point_3<Kernel> &far, 
 const Point_3<Kernel> &close); 
 
-/*! 
+/*!
 introduces an iso-oriented cuboid `c` with diagonal 
 opposite vertices 
 (`min_hx/hw`, `min_hy/hw`, `min_hz/hw`) and 
@@ -82,83 +82,83 @@ Iso_cuboid_3(const Bbox_3& bbox);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Test for equality: two iso-oriented cuboid are equal, iff their 
 lower left and their upper right vertices are equal. 
 */ 
 bool operator==(const Iso_cuboid_3<Kernel> &c2) const; 
 
-/*! 
+/*!
 Test for inequality. 
 */ 
 bool operator!=(const Iso_cuboid_3<Kernel> &c2) const; 
 
-/*! 
+/*!
 returns the i'th vertex modulo 8 of `c`. 
 starting with the lower left vertex. 
 */ 
 Point_3<Kernel> vertex(int i) const; 
 
-/*! 
+/*!
 returns `vertex(i)`, as indicated in the figure below: 
 \image html IsoCuboid.gif
 */ 
 Point_3<Kernel> operator[](int i) const; 
 
-/*! 
+/*!
 returns the smallest vertex of `c` (= `vertex(0)`). 
 */ 
 Point_3<Kernel> min() const; 
 
-/*! 
+/*!
 returns the largest vertex of `c` (= `vertex(7)`). 
 */ 
 Point_3<Kernel> max() const; 
 
-/*! 
+/*!
 returns smallest %Cartesian 
 \f$ x\f$-coordinate in `c`. 
 */ 
 Kernel::FT xmin() const; 
 
-/*! 
+/*!
 returns smallest %Cartesian 
 \f$ y\f$-coordinate in `c`. 
 */ 
 Kernel::FT ymin() const; 
 
-/*! 
+/*!
 returns smallest %Cartesian 
 \f$ z\f$-coordinate in `c`. 
 */ 
 Kernel::FT zmin() const; 
 
-/*! 
+/*!
 returns largest %Cartesian 
 \f$ x\f$-coordinate in `c`. 
 */ 
 Kernel::FT xmax() const; 
 
-/*! 
+/*!
 returns largest %Cartesian 
 \f$ y\f$-coordinate in `c`. 
 */ 
 Kernel::FT ymax() const; 
 
-/*! 
+/*!
 returns largest %Cartesian 
 \f$ z\f$-coordinate in `c`. 
 */ 
 Kernel::FT zmax() const; 
 
-/*! 
+/*!
 returns `i`-th %Cartesian coordinate of 
 the smallest vertex of `c`. 
 \pre \f$ 0 \leq i \leq2\f$. 
 */ 
 Kernel::FT min_coord(int i) const; 
 
-/*! 
+/*!
 returns `i`-th %Cartesian coordinate of 
 the largest vertex of `c`. 
 \pre \f$ 0 \leq i \leq2\f$. 
@@ -170,13 +170,13 @@ Kernel::FT max_coord(int i) const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 `c` is degenerate, if all vertices 
 are coplanar. 
 */ 
 bool is_degenerate() const; 
 
-/*! 
+/*!
 returns either \ref ON_UNBOUNDED_SIDE,
 \ref ON_BOUNDED_SIDE, or the constant 
 \ref ON_BOUNDARY, 
@@ -184,17 +184,17 @@ depending on where point `p` is.
 */ 
 Bounded_side bounded_side(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_boundary(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_bounded_side(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_unbounded_side(const Point_3<Kernel> &p) const; 
@@ -204,17 +204,17 @@ bool has_on_unbounded_side(const Point_3<Kernel> &p) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 returns the volume of `c`. 
 */ 
 Kernel::FT volume() const; 
 
-/*! 
+/*!
 returns a bounding box containing `c`. 
 */ 
 Bbox_3 bbox() const; 
 
-/*! 
+/*!
 returns the iso-oriented cuboid obtained by applying `t` on 
 the smallest and the largest of `c`. 
 \pre The angle at a rotation must be a multiple of \f$ \pi/2\f$, otherwise the resulting cuboid does not have the same size. Note that rotating about an arbitrary angle can even result in a degenerate iso-oriented cuboid. 

@@ -65,7 +65,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A random access iterator type to go 
 columnwise over the constraint matrix \f$ A\f$. The value type 
 is a random access iterator type for an individual column that 
@@ -73,20 +73,20 @@ goes over the entries in that column.
 */ 
 typedef unspecified_type A_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over 
 the entries of the right-hand side \f$ \qpb\f$. 
 */ 
 typedef unspecified_type B_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over the 
 relations \f$ \qprel\f$. The value type of `R_iterator` is 
 `CGAL::Comparison_result`. 
 */ 
 typedef unspecified_type R_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go rowwise 
 over the matrix \f$ 2D\f$. The value type 
 is a random access iterator type for an individual row that 
@@ -95,7 +95,7 @@ entry on the main diagonal.
 */ 
 typedef unspecified_type D_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over the 
 entries of the linear objective function vector \f$ c\f$. 
 */ 
@@ -106,19 +106,19 @@ typedef unspecified_type C_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the number \f$ n\f$ of variables (number 
 of columns of \f$ A\f$) in `qp`. 
 */ 
 int get_n() const; 
 
-/*! 
+/*!
 returns the number \f$ m\f$ of constraints 
 (number of rows of \f$ A\f$) in `qp`. 
 */ 
 int get_m() const; 
 
-/*! 
+/*!
 returns an iterator over the columns 
 of \f$ A\f$. The corresponding past-the-end iterator is `get_a()+get_n()`. 
 For \f$ j=0,\ldots,n-1\f$, `*(get_a()+j)` is a random access 
@@ -126,14 +126,14 @@ iterator for column \f$ j\f$.
 */ 
 A_iterator get_a() const; 
 
-/*! 
+/*!
 returns an iterator over the entries 
 of \f$ \qpb\f$. The corresponding past-the-end iterator is 
 `get_b()+get_m()`. 
 */ 
 B_iterator get_b() const; 
 
-/*! 
+/*!
 returns an iterator over the entries 
 of \f$ \qprel\f$. The corresponding past-the-end iterator is 
 `get_r()+get_m()`. 
@@ -143,7 +143,7 @@ stands for \f$ \geq\f$.
 */ 
 R_iterator get_r() const; 
 
-/*! 
+/*!
 returns an iterator over the rows of 
 \f$ 2D\f$. The corresponding past-the-end iterator is `get_d()+get_n()`. 
 For \f$ i=0,\ldots,n-1\f$, `*(get_d()+i)` is a random access 
@@ -154,14 +154,14 @@ of the diagonal are deduced from the symmetry requirement on \f$ D\f$.
 */ 
 D_iterator get_d() const; 
 
-/*! 
+/*!
 returns an iterator over the entries 
 of \f$ \qpc\f$. The corresponding past-the-end iterator is 
 `get_c()+get_n()`. 
 */ 
 C_iterator get_c() const; 
 
-/*! 
+/*!
 returns the constant term \f$ c_0\f$ of the objective function. 
 */ 
 std::iterator_traits<C_iterator>::value_type get_c0() const; 

@@ -24,40 +24,40 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Iso box type, which is only needed for range search queries. 
 */ 
 typedef unspecified_type Iso_box_d; 
 
-/*! 
+/*!
 Sphere type, which is only needed for range search queries. 
 */ 
 typedef unspecified_type Sphere_d; 
 
-/*! 
+/*!
 Functor with operator to construct the iso box from two points. 
 */ 
 typedef unspecified_type Construct_iso_box_d; 
 
-/*! 
+/*!
 Functor with operator to construct 
 the center of an object of type `Sphere_d`. 
 */ 
 typedef unspecified_type Construct_center_d; 
 
-/*! 
+/*!
 Functor with operator to compute 
 the squared radius of a an object of type `Sphere_d`. 
 */ 
 typedef unspecified_type Construct_squared_radius_d; 
 
-/*! 
+/*!
 Functor with operator to construct 
 the vertex with lexicographically smallest coordinates of an object of type `Iso_box_d`. 
 */ 
 typedef unspecified_type Construct_min_vertex_d; 
 
-/*! 
+/*!
 Functor with operator to construct 
 the vertex with lexicographically largest coordinates of an object of type `Iso_box_d`. 
 */ 

@@ -19,17 +19,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type convertible to `CGAL::Sign` 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type; 
@@ -39,7 +39,7 @@ typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes the sign of \f$ p\f$ at \f$ x\f$. 
 */ 
 result_type 

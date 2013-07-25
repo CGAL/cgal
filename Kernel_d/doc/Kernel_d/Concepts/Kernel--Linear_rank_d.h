@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes 
 the linear rank of the vectors in `A = tuple [first,last)`. 
 \pre \f$ A\f$ contains vectors of the same dimension \f$ d\f$. 

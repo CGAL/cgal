@@ -37,52 +37,52 @@ public:
 /// visit all finite vertices, edges and facets of the triangulation.
 /// @{
 
-/*! 
+/*!
 The point type. It must be DefaultConstructible, CopyConstructible and 
 Assignable. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 Handle to a data representing a <I>vertex</I>. `Vertex_handle` must be 
 a model of `Handle` and its <I>value type</I> must be model of 
 `TriangulationDataStructure_3::Vertex`. 
 */ 
 typedef unspecified_type Vertex_handle; 
 
-/*! 
+/*!
 Handle to a data representing a <I>cell</I>. `Cell_handle` must be a 
 model of `Handle` and its <I>value type</I> must be model of 
 `TriangulationDataStructure_3::Cell`. 
 */ 
 typedef unspecified_type Cell_handle; 
 
-/*! 
+/*!
 The edge type. 
 */ 
 typedef CGAL::Triple<Cell_handle, int, int> Edge; 
 
-/*! 
+/*!
 The facet type. 
 */ 
 typedef std::pair<Cell_handle, int> Facet; 
 
-/*! 
+/*!
 Iterator over finite vertices 
 */ 
 typedef unspecified_type Finite_vertices_iterator; 
 
-/*! 
+/*!
 Iterator over finite edges 
 */ 
 typedef unspecified_type Finite_edges_iterator; 
 
-/*! 
+/*!
 Iterator over finite facets 
 */ 
 typedef unspecified_type Finite_facets_iterator; 
 
-/*! 
+/*!
 The geometric traits class. Must be a model of 
 `DelaunayTriangulationTraits_3`. 
 */ 
@@ -93,12 +93,12 @@ typedef unspecified_type Geom_traits;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 SurfaceMeshTriangulation_3(); 
 
-/*! 
+/*!
 Copy constructor. All vertices and faces are duplicated. 
 */ 
 SurfaceMeshTriangulation_3(SurfaceMeshTriangulation_3 tr); 
@@ -108,7 +108,7 @@ SurfaceMeshTriangulation_3(SurfaceMeshTriangulation_3 tr);
 /// \name Assignment 
 /// @{
 
-/*! 
+/*!
 The triangulation `tr` is duplicated, and modifying the copy after the 
 duplication does not modify the original. The previous triangulation held 
 by `t` is deleted. 
@@ -116,7 +116,7 @@ by `t` is deleted.
 SurfaceMeshTriangulation_3 & 
 operator=(const SurfaceMeshTriangulation_3 & tr); 
 
-/*! 
+/*!
 Deletes all finite vertices and all cells of `t`. 
 */ 
 void clear(); 
@@ -126,12 +126,12 @@ void clear();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the dimension of the affine hull. 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 Returns a const reference to a model of 
 `DelaunayTriangulationTraits_3`. 
 */ 
@@ -142,7 +142,7 @@ const DelaunayTriangulationTraits_3 & geom_traits() const;
 /// \name Voronoi diagram 
 /// @{
 
-/*! 
+/*!
 Returns the dual of facet `f`.
 
 In dimension 3: either a segment, if the two cells incident to `f` 
@@ -163,7 +163,7 @@ Object dual(Facet f) const;
 /// hole. 
 /// @{
 
-/*! 
+/*!
 Computes the conflict hole induced by `p`. The starting cell 
 (resp.\ facet) `c` must be in conflict. 
 
@@ -198,37 +198,37 @@ OutputIteratorInternalFacets ifit);
 /// edges and vertices of the triangulation.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary finite vertex. 
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_vertices_iterator finite_vertices_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite edge.
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_edges_iterator finite_edges_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite facet. 
 */ 
 Finite_facets_iterator finite_facets_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_facets_iterator finite_facets_end() const; 
 
-/*! 
+/*!
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
 iterator `cells`. If `t.dimension() < 3`, then do nothing. 
 Returns the resulting output iterator. 
@@ -238,7 +238,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-/*! 
+/*!
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
 iterator `cells`. If `t.dimension() < 3`, then do nothing. 
 Returns the resulting output iterator. 
@@ -247,14 +247,14 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-/*! 
+/*!
 Tests whether `p` is a vertex of `t` by locating `p` in 
 the triangulation. If `p` is found, the associated vertex `v` 
 is given. 
 */ 
 bool is_vertex(const Point & p, Vertex_handle & v) const; 
 
-/*! 
+/*!
 Tests whether `(u,v)` is an edge of `t`. If the edge is found, 
 it gives a cell `c` having this edge and the indices `i` 
 and `j` of the vertices `u` and `v` in `c`, in this order. 
@@ -263,23 +263,23 @@ and `j` of the vertices `u` and `v` in `c`, in this order.
 bool is_edge(Vertex_handle u, Vertex_handle v, 
 Cell_handle & c, int & i, int & j) const; 
 
-/*! 
+/*!
 Returns `true`, iff vertex `v` is the infinite vertex. 
 */ 
 bool is_infinite(const Vertex_handle v) const; 
 
-/*! 
+/*!
 Returns `true`, iff `c` is incident to the infinite vertex. 
 \pre `t.dimension() == 3`. 
 */ 
 bool is_infinite(const Cell_handle c) const; 
 
-/*! 
+/*!
 Returns the same facet seen from the other adjacent cell. 
 */ 
 Facet mirror_facet(Facet f) const; 
 
-/*! 
+/*!
 Return the indexes of the `j`th vertex of the facet of a cell 
 opposite to vertex `i`. 
 */ 
@@ -290,7 +290,7 @@ int vertex_triple_index(const int i, const int j);
 /// \name Point location 
 /// @{
 
-/*! 
+/*!
 
 If the point `query` lies inside the convex hull of the points, the cell 
 that contains the query in its interior is returned. If `query` lies on a 
@@ -313,7 +313,7 @@ The optional argument `start` is used as a starting place for the search.
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle()) const; 
 
-/*! 
+/*!
 If `query` lies inside the affine hull of the points, the `k`-face 
 (finite or infinite) that contains `query` in its interior is 
 returned, by means of the cell returned together with `lt`, which 
@@ -340,7 +340,7 @@ Cell_handle
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle() ) const; 
 
-/*! 
+/*!
 Creates a new vertex by starring a hole. It takes an iterator range 
 `[cell_begin, cell_end)` of `Cell_handle`s which specifies 
 a hole: a set of connected cells (resp. facets in dimension 2) which is 

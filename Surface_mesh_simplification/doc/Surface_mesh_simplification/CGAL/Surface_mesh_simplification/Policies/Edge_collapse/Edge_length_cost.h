@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor 
 */ 
 Edge_length_cost<ECM>(); 
@@ -31,7 +31,7 @@ Edge_length_cost<ECM>();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the <I>collapse cost</I> as the squared distance between the points 
 of the source and target vertices (that is, `profile.p0()` and `profile.p1()`. 
 

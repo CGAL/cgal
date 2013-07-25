@@ -23,12 +23,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type on which the partitioning algorithm operates. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 The polygon type to be created by the partitioning 
 algorithm. For testing the validity postcondition of the partition, this 
 type should provide a nested type `Vertex_const_iterator` that is the 
@@ -38,7 +38,7 @@ type of the iterator over the polygon vertices and member functions
 */ 
 typedef unspecified_type Polygon_2; 
 
-/*! 
+/*!
 
 Predicate object type that compares `Point_2`s lexicographically. 
 Must provide `bool operator()(Point_2 p, Point_2 q)` where `true` 
@@ -50,13 +50,13 @@ respectively.
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 
 Same as `Less_xy_2` with the roles of \f$ x\f$ and \f$ y\f$ interchanged. 
 */ 
 typedef unspecified_type Less_yx_2; 
 
-/*! 
+/*!
 
 Predicate object type that provides 
 `bool operator()(Point_2 p,Point_2 q,Point_2 r)`, which 
@@ -65,7 +65,7 @@ oriented line through `p` and `q`.
 */ 
 typedef unspecified_type Left_turn_2; 
 
-/*! 
+/*!
 Predicate object type that provides 
 `CGAL::Orientation operator()(Point_2 p, Point_2 q, Point_2 r)` that 
 returns `CGAL::LEFT_TURN`, if \f$ r\f$ lies to the left of the oriented 
@@ -75,7 +75,7 @@ on \f$ l\f$.
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 Predicate object type that provides 
 `CGAL::Comparision_result operator()(Point_2 p, Point_2 q)` to compare 
 the \f$ y\f$ values of two points. The operator must return 
@@ -84,7 +84,7 @@ the \f$ y\f$ values of two points. The operator must return
 */ 
 typedef unspecified_type Compare_y_2; 
 
-/*! 
+/*!
 The same as `Compare_y_2`, except that \f$ x\f$ 
 coordinates are compared instead of \f$ y\f$. 
 */ 
@@ -96,12 +96,12 @@ typedef unspecified_type Compare_x_2;
 /// A copy constructor and default constructor are required.
 /// @{
 
-/*! 
+/*!
 
 */ 
 PartitionTraits_2(); 
 
-/*! 
+/*!
 
 */ 
 PartitionTraits_2(PartitionTraits_2 tr); 
@@ -112,32 +112,32 @@ PartitionTraits_2(PartitionTraits_2 tr);
 /// The following functions that create instances of the above predicate object types must exist.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Less_yx_2 less_yx_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Left_turn_2 left_turn_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_y_2 compare_y_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_x_2 compare_x_2_object(); 

@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns `true` iff \f$ p\f$ is 
 lexicographically smaller than \f$ q\f$ with respect to %Cartesian 
 lexicographic order of points or equal to \f$ q\f$.

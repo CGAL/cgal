@@ -19,12 +19,12 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 The point defined by `Key` is about to move from the cell. 
 */ 
 void pre_move(Key, Cell); 
 
-/*! 
+/*!
 The point defined by `Key` just moved to the cell. 
 */ 
 void post_move(Key, Cell); 

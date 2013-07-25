@@ -17,7 +17,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool 

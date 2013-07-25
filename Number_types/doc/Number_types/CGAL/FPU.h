@@ -69,7 +69,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 The current rounding mode is saved in the object, and rounding mode is set to `r` 
 which can be any of `CGAL_FE_TONEAREST`, `CGAL_FE_TOWARDZERO`, 
 `CGAL_FE_UPWARD` (the default) and `CGAL_FE_DOWNWARD`. 
@@ -78,7 +78,7 @@ Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD);
 
 
 
-/*! 
+/*!
 The rounding mode is restored to the saved value. 
 */ 
 ~Protect_FPU_rounding(); 
@@ -158,13 +158,13 @@ public:
 
 /// @{
 
-/*! 
+/*!
 Sets the precision of operations on double to 53bits. 
 Note that the rounding mode is set to the nearest in the same process. 
 */ 
 Set_ieee_double_precision(); 
 
-/*! 
+/*!
 The precision and rounding modes are reset to the values they held before the 
 constructor was called. 
 */ 
@@ -173,7 +173,7 @@ constructor was called.
 }; /* end Set_ieee_double_precision */
 
 
-/*! 
+/*!
 
 Sets the precision of operations on double to 53bits. 
 Note that the rounding mode is set to the nearest in the same process. 

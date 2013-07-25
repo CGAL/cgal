@@ -24,17 +24,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef int second_argument_type; 
@@ -44,14 +44,14 @@ typedef int second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns \f$ p * x_{d-1}^e\f$. 
 \pre \f$ 0 \leq e\f$. 
 */ 
 result_type operator()(first_argument_type p, 
 second_argument_type e); 
 
-/*! 
+/*!
 Returns \f$ p * x_{i}^e\f$. 
 \pre \f$ 0 \leq e\f$. 
 \pre \f$ 0 \leq i < d\f$. 

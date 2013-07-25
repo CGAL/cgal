@@ -45,7 +45,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of facets. This type has to match 
 the `Facet` type in the triangulation type used by 
 the mesher function. (This triangulation type 
@@ -57,7 +57,7 @@ as first template parameter of
 */ 
 typedef unspecified_type Facet; 
 
-/*! 
+/*!
 Default constructible, copy constructible, 
 assignable, and less-than comparable type. 
 */ 
@@ -68,7 +68,7 @@ typedef unspecified_type Quality;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Assigns the quality 
 of the facet `f` to `q`, and returns `true` is `f` does 
 not meet the criteria. 

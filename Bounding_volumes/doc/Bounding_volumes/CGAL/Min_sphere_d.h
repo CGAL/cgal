@@ -78,29 +78,29 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Traits; 
 
-/*! 
+/*!
 typedef to `Traits::FT`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 typedef to `Traits::Point`. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 non-mutable model of the STL 
 concept `BidirectionalIterator` with value type `Point`. Used 
 to access the points used to build the smallest enclosing sphere. 
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 non-mutable model of the STL 
 concept `BidirectionalIterator` with value type `Point`. Used 
 to access the support points defining the smallest enclosing sphere. 
@@ -112,7 +112,7 @@ typedef unspecified_type Support_point_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 creates a variable of type `Min_sphere_d` and 
 initializes it to \f$ ms(\emptyset)\f$. 
@@ -121,7 +121,7 @@ must provide a default constructor.
 */ 
 Min_sphere_d (const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 creates a variable `min_sphere` of type `Min_sphere_d`. 
 It is initialized to \f$ ms(P)\f$ with \f$ P\f$ being the set of points 
@@ -133,56 +133,56 @@ Min_sphere_d( InputIterator first,
 InputIterator last, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 returns the number of points of `min_sphere`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `min_sphere`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first point of `min_sphere`. 
 */ 
 Point_iterator points_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Point_iterator points_end() const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first support point of `min_sphere`. 
 */ 
 Support_point_iterator support_points_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_iterator support_points_end() const; 
 
-/*! 
+/*!
 
 returns the dimension of the points in \f$ P\f$. If `min_sphere` is empty, the ambient dimension is \f$ -1\f$. 
 */ 
 int ambient_dimension() const; 
 
-/*! 
+/*!
 
 returns the center of `min_sphere`. 
 \pre `min_sphere` is not empty. 
 */ 
 const Point& center( ) const; 
 
-/*! 
+/*!
 
 returns the squared radius of `min_sphere`. 
 \pre `min_sphere` is not empty. 
@@ -197,7 +197,7 @@ FT squared_radius( ) const;
 /// \E^d\f$.
 /// @{
 
-/*! 
+/*!
 
 returns `CGAL::ON_BOUNDED_SIDE`, `CGAL::ON_BOUNDARY`, or 
 `CGAL::ON_UNBOUNDED_SIDE` iff `p` lies properly inside, 
@@ -207,14 +207,14 @@ on the boundary, or properly outside of `min_sphere`, resp.
 Bounded_side 
 bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly inside `min_sphere`. 
 \pre If `min_sphere` is not empty, the dimension of \f$ p\f$ equals `ambient_dimension()`. 
 */ 
 bool has_on_bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies on the boundary 
 of `min_sphere`. 
@@ -222,21 +222,21 @@ of `min_sphere`.
 */ 
 bool has_on_boundary( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly outside of `min_sphere`. 
 \pre If `min_sphere` is not empty, the dimension of \f$ p\f$ equals `ambient_dimension()`. 
 */ 
 bool has_on_unbounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_sphere` is empty (this implies 
 degeneracy). 
 */ 
 bool is_empty( ) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_sphere` is degenerate, i.e.\ if 
 `min_sphere` is empty or equal to a single point, equivalently if 
@@ -249,13 +249,13 @@ bool is_degenerate( ) const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 
 resets `min_sphere` to \f$ ms(\emptyset)\f$. 
 */ 
 void clear (); 
 
-/*! 
+/*!
 
 sets `min_sphere` to the \f$ ms(P)\f$, where \f$ P\f$ is the set of points 
 in the range [`first`,`last`). 
@@ -266,7 +266,7 @@ template < class InputIterator >
 void set( InputIterator first, 
 InputIterator last ); 
 
-/*! 
+/*!
 
 inserts `p` into `min_sphere`. If `p` lies inside the 
 current sphere, this is a constant-time operation, otherwise 
@@ -276,7 +276,7 @@ recomputing the smallest enclosing sphere from scratch.
 */ 
 void insert( const Point& p); 
 
-/*! 
+/*!
 
 inserts the points in the range [`first`,`last`) 
 into `min_sphere` and recomputes the smallest enclosing sphere, by 
@@ -301,7 +301,7 @@ InputIterator last );
 /// from numerical problems.
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff `min_sphere` is valid. If `verbose` 
 is `true`, some messages concerning the performed checks 
@@ -317,7 +317,7 @@ int level = 0 ) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 
@@ -328,7 +328,7 @@ const Traits& traits( ) const;
 }; /* end Min_sphere_d */
 
 
-/*! 
+/*!
 
 writes `min_sphere` to output stream `os`. 
 \cgalRequires The output operator is defined for `Point`. 
@@ -338,7 +338,7 @@ std::ostream& operator << ( std::ostream& os,
 const Min_sphere_d<Traits>& 
 min_sphere); 
 
-/*! 
+/*!
 
 reads `min_sphere` from input stream `is`. 
 \cgalRequires The input operator is defined for `Point`. 

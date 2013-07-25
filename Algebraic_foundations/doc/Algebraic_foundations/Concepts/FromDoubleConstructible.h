@@ -17,7 +17,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 conversion constructor from double. 
 

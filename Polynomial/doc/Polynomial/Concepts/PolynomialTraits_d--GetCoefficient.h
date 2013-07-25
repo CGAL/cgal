@@ -21,17 +21,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Coefficient_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type ; 
 
-/*! 
+/*!
 
 */ 
 typedef int second_argument_type; 
@@ -41,7 +41,7 @@ typedef int second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 For given polynomial \f$ p\f$ this operator returns the coefficient 
 of \f$ x_{d-1}^e\f$, where \f$ x_{d-1}\f$ is the outermost variable. 

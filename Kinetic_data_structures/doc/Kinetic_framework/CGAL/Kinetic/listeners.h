@@ -47,7 +47,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Simulator_listener(Simulator::Handle, KDS *kds); 

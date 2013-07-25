@@ -23,32 +23,32 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the 2D point being the geometric embedding of the vertex 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 A model of the `FieldWithSqrt` concept representing the time of a vertex (an Euclidean distance) 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
-/*! 
+/*!
 The circulator type used to visit all the incident halfedges around a vertex 
 */ 
 typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Defining_contour_halfedge_const_circulator; 
 
-/*! 
+/*!
 The circulator type used to visit all the defining contour halfedges of a vertex 
 */ 
 typedef unspecified_type Defining_contour_halfedge_circulator; 
@@ -58,17 +58,17 @@ typedef unspecified_type Defining_contour_halfedge_circulator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor 
 */ 
 StraightSkeletonVertex_2(); 
 
-/*! 
+/*!
 Constructs a contour vertex with ID number `id`, at the point `p` 
 */ 
 StraightSkeletonVertex_2(int id, Point_2 const& p); 
 
-/*! 
+/*!
 Constructs a skeleton vertex with ID number `id`, at point `p` and time `time`. 
 */ 
 StraightSkeletonVertex_2(int id, Point_2 const& p, FT time ); 
@@ -78,37 +78,37 @@ StraightSkeletonVertex_2(int id, Point_2 const& p, FT time );
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 The ID of the vertex. 
 */ 
 int id() const; 
 
-/*! 
+/*!
 The vertex point. 
 */ 
 Point_2 const& point() const; 
 
-/*! 
+/*!
 The time of the vertex: the distance from the vertex point to the lines supporting the defining contour edges 
 */ 
 FT time() const; 
 
-/*! 
+/*!
 
 */ 
 Halfedge_handle primary_bisector(); 
 
-/*! 
+/*!
 Returns the skeleton halfedge incident upon the vertex (called the <I>primary</I> bisector). 
 */ 
 Halfedge_const_handle primary_bisector() const; 
 
-/*! 
+/*!
 
 */ 
 Halfedge_around_vertex_circulator halfedge_around_vertex_begin(); 
 
-/*! 
+/*!
 Returns a bi-directional circulator pointing to one of the incident halfedges (which one is unspecified). 
 
 There will always be as many incident halfedges as the degree of the vertex. 
@@ -121,12 +121,12 @@ Each halfedge pointed to by this circulator is the one which is oriented towards
 */ 
 Halfedge_around_vertex_const_circulator halfedge_around_vertex_begin() const; 
 
-/*! 
+/*!
 
 */ 
 Defining_contour_halfedge_circulator defining_contour_halfedges_begin(); 
 
-/*! 
+/*!
 Returns a bi-directional circulator pointing to one of the defining contour halfedges of the vertex (which one is unspecified). 
 
 There will always be as many incident defining contour halfedges as the degree of the vertex. 
@@ -140,12 +140,12 @@ Defining_contour_halfedge_const_circulator defining_contour_halfedges_begin() co
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 Returns `true` iff this is a contour vertex. 
 */ 
 bool is_contour() const; 
 
-/*! 
+/*!
 Returns `true` iff this is a skeleton vertex. 
 */ 
 bool is_skeleton() const; 

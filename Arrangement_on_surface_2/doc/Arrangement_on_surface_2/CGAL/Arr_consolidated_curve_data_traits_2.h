@@ -35,27 +35,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the base traits-class. 
 */ 
 typedef Traits Base_traits_2; 
 
-/*! 
+/*!
 the base curve. 
 */ 
 typedef typename Base_traits_2::Curve_2 Base_curve_2; 
 
-/*! 
+/*!
 the base \f$ x\f$-monotone curve curve. 
 */ 
 typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2; 
 
-/*! 
+/*!
 a set of data objects that is associated with an \f$ x\f$-monotone curve. 
 */ 
 typedef unspecified_type typedef Data_container; 
 
-/*! 
+/*!
 a non-mutable iterator for the data objects in the data container. 
 */ 
 typedef unspecified_type typedef Data_iterator; 
@@ -80,12 +80,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Data_container (); 
 
-/*! 
+/*!
 constructs set containing a single `data` object. 
 */ 
 Data_container (const Data& data); 
@@ -95,28 +95,28 @@ Data_container (const Data& data);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the number of data objects in the set. 
 */ 
 std::size_t size () const; 
 
-/*! 
+/*!
 returns an iterator pointing to the first data object. 
 */ 
 Data_iterator begin () const; 
 
-/*! 
+/*!
 returns a past-the-end iterator for the data objects. 
 */ 
 Data_iterator end () const; 
 
-/*! 
+/*!
 returns the first data object inserted into the set. 
 \pre The number of data objects is not \f$ 0\f$. 
 */ 
 const Data& front () const; 
 
-/*! 
+/*!
 returns the last data object inserted into the set. 
 \pre The number of data objects is not \f$ 0\f$. 
 */ 
@@ -127,12 +127,12 @@ const Data& back () const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 check if the two sets contain the same data objects (regardless of order). 
 */ 
 bool operator== (const Data_container& other) const; 
 
-/*! 
+/*!
 find the given `data` object in the set and returns an iterator 
 for this object, or `end()` if it is not found. 
 */ 
@@ -143,19 +143,19 @@ Data_iterator find (const Data& data);
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 inserts the given `data` object into the set. Returns `true` on 
 success, or `false` if the set already contains the object. 
 */ 
 bool insert (const Data& data); 
 
-/*! 
+/*!
 erases the given `data` object from the set. Returns `true` on 
 success, or `false` if the set does not contain the object. 
 */ 
 bool erase (const Data& data); 
 
-/*! 
+/*!
 clears the set. 
 */ 
 void clear (); 

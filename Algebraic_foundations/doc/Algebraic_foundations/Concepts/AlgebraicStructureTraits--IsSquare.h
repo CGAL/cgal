@@ -25,17 +25,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Boolean`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type first_argument; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type&`. 
 */ 
 typedef unspecified_type second_argument; 
@@ -45,7 +45,7 @@ typedef unspecified_type second_argument;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns <TT>true</TT> in case \f$ x\f$ is a square, i.e.\ \f$ x = y*y\f$. 
 \post \f$ unit\_part(y) == 1\f$. 
 
@@ -53,7 +53,7 @@ returns <TT>true</TT> in case \f$ x\f$ is a square, i.e.\ \f$ x = y*y\f$.
 result_type operator()(first_argument_type x, 
 second_argument_type y); 
 
-/*! 
+/*!
 returns <TT>true</TT> in case \f$ x\f$ is a square. 
 
 */ 

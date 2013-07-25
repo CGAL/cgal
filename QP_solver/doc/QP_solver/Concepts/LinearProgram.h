@@ -65,7 +65,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A random access iterator type to go 
 columnwise over the constraint matrix \f$ A\f$. The value type 
 is a random access iterator type for an individual column that 
@@ -73,46 +73,46 @@ goes over the entries in that column.
 */ 
 typedef unspecified_type A_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over 
 the entries of the right-hand side \f$ \qpb\f$. 
 */ 
 typedef unspecified_type B_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over the 
 relations \f$ \qprel\f$. The value type of `R_iterator` is 
 `CGAL::Comparison_result`. 
 */ 
 typedef unspecified_type R_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over the 
 existence (finiteness) of the lower bounds \f$ l_j, j=0,\ldots,n-1\f$. 
 The value type of `FL_iterator` is `bool`. 
 */ 
 typedef unspecified_type FL_iterator; 
 
-/*! 
+/*!
 A random acess iterator type to go over 
 the entries of the lower bound vector \f$ \qpl\f$. 
 */ 
 typedef unspecified_type L_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over the 
 existence (finiteness) of the upper bounds \f$ u_j, j=0,\ldots,n-1\f$. 
 The value type of `UL_iterator` is `bool`. 
 */ 
 typedef unspecified_type UL_iterator; 
 
-/*! 
+/*!
 A random acess iterator type to go over 
 the entries of the upper bound vector \f$ \qpu\f$. 
 */ 
 typedef unspecified_type U_iterator; 
 
-/*! 
+/*!
 A random access iterator type to go over the 
 entries of the linear objective function vector \f$ c\f$. 
 */ 
@@ -123,19 +123,19 @@ typedef unspecified_type C_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the number \f$ n\f$ of variables (number 
 of columns of \f$ A\f$) in `lp`. 
 */ 
 int get_n() const; 
 
-/*! 
+/*!
 returns the number \f$ m\f$ of constraints 
 (number of rows of \f$ A\f$) in `lp`. 
 */ 
 int get_m() const; 
 
-/*! 
+/*!
 returns an iterator over the columns 
 of \f$ A\f$. The corresponding past-the-end iterator is `get_a()+get_n()`. 
 For \f$ j=0,\ldots,n-1\f$, `*(get_a()+j)` is a random access 
@@ -143,14 +143,14 @@ iterator for column \f$ j\f$.
 */ 
 A_iterator get_a() const; 
 
-/*! 
+/*!
 returns an iterator over the entries 
 of \f$ \qpb\f$. The corresponding past-the-end iterator is 
 `get_b()+get_m()`. 
 */ 
 B_iterator get_b() const; 
 
-/*! 
+/*!
 returns an iterator over the entries 
 of \f$ \qprel\f$. The corresponding past-the-end iterator is 
 `get_r()+get_m()`. 
@@ -160,7 +160,7 @@ stands for \f$ \geq\f$.
 */ 
 R_iterator get_r() const; 
 
-/*! 
+/*!
 returns an iterator over the 
 existence of the lower bounds \f$ l_j, j=0,\ldots,n-1\f$. 
 The corresponding past-the-end iterator is `get_fl()+get_n()`. If 
@@ -169,7 +169,7 @@ bound given by `*(get_l()+j)`, otherwise it has no lower bound.
 */ 
 FL_iterator get_fl() const; 
 
-/*! 
+/*!
 returns an iterator over the 
 entries of \f$ \qpl\f$. 
 The corresponding past-the-end iterator is `get_l()+get_n()`. 
@@ -178,7 +178,7 @@ If `*(get_fl()+j)` has value \f$ false\f$, the value
 */ 
 L_iterator get_l() const; 
 
-/*! 
+/*!
 returns an iterator over the 
 existence of the upper bounds \f$ u_j, j=0,\ldots,n-1\f$. 
 The corresponding past-the-end iterator is `get_fu()+get_n()`. If 
@@ -187,7 +187,7 @@ bound given by `*(get_u()+j)`, otherwise it has no upper bound.
 */ 
 FU_iterator get_fu() const; 
 
-/*! 
+/*!
 returns an iterator over the 
 entries of \f$ \qpu\f$. 
 The corresponding past-the-end iterator is `get_u()+get_n()`. 
@@ -196,14 +196,14 @@ If `*(get_fu()+j)` has value \f$ false\f$, the value
 */ 
 L_iterator get_u() const; 
 
-/*! 
+/*!
 returns an iterator over the entries 
 of \f$ \qpc\f$. The corresponding past-the-end iterator is 
 `get_c()+get_n()`. 
 */ 
 C_iterator get_c() const; 
 
-/*! 
+/*!
 returns the constant term \f$ c_0\f$ of the objective function. 
 */ 
 std::iterator_traits<C_iterator>::value_type get_c0() const; 

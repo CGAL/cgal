@@ -37,12 +37,12 @@ public:
 /// \name Dereference 
 /// @{
 
-/*! 
+/*!
 returns the object pointed to. 
 */ 
 value_type& operator*(); 
 
-/*! 
+/*!
 returns a pointer to the object pointed to. 
 */ 
 value_type* operator->(); 

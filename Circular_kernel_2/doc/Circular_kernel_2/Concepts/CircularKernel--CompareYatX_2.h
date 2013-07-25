@@ -14,7 +14,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 For a circular arc. 
 \pre The arc `a` must be monotone and `p` must be in the vertical range of `a`. 
 */ 
@@ -22,7 +22,7 @@ Comparison_result operator()
 (const CircularKernel::Circular_arc_point_2 &p, 
 const CircularKernel::Circular_arc_2 &a); 
 
-/*! 
+/*!
 Same for a segment. 
 */ 
 Comparison_result operator() 

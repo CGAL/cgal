@@ -98,12 +98,12 @@ public:
 /// \name Creation 
 /// Objects of type `Object` are normally created using the global function `make_object`. 
 /// @{ 
-/*! 
+/*!
 introduces an empty object. 
 */ 
 Object(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Object(const Object &o); 
@@ -126,7 +126,7 @@ Object(boost::optional< boost::variant<T...> >);
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 Assignment. 
 */ 
 Object &operator=(const Object &o); 
@@ -136,7 +136,7 @@ Object &operator=(const Object &o);
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns true, if `obj` does not 
 contain an object of type `T`. 
 */ 
@@ -146,7 +146,7 @@ bool empty();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns true, iff `obj` contains an object of type `T`. 
 */ 
 template<class T> bool is(); 
@@ -158,7 +158,7 @@ template<class T> bool is();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns the type information of the contained type, 
 or `typeid(void)` if empty. 
 */ 
@@ -170,14 +170,14 @@ const std::type_info & type() const;
 
 
 
-/*! 
+/*!
 Creates an object that contains `t`.
 
 \relates Object 
 */
 template <class T> Object make_object(const T &t); 
 
-/*! 
+/*!
 
 assigns `o` to `c` if `o` was constructed from an object of type `T`.
 Returns `true`, if the assignment was possible.  For efficiency
@@ -188,14 +188,14 @@ reasons, we recommend using `object_cast` instead.
 
 template <class T> bool assign(T& c, const Object& o); 
 
-/*! 
+/*!
 Returns a pointer to the object of type `T` stored by `o`, 
 if any, otherwise returns `NULL`. 
 \relates Object 
 */
 template <class T> const T * object_cast(const Object * o); 
 
-/*! 
+/*!
 Returns a copy of the object of type `T` stored by `o`, 
 if any, otherwise throws an exception of type `Bad_object_cast`. 
 \relates Object 

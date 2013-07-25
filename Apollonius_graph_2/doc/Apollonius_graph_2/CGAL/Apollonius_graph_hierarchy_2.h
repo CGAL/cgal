@@ -57,14 +57,14 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates an hierarchy of Apollonius graphs using `gt` as 
 geometric traits. 
 */ 
 Apollonius_graph_hierarchy_2(Gt 
 gt=Gt()); 
 
-/*! 
+/*!
 Creates an Apollonius graph hierarchy using 
 `gt` as geometric traits and inserts all sites in the 
 range [`first`, `beyond`). 
@@ -73,7 +73,7 @@ template< class Input_iterator >
 Apollonius_graph_hierarchy_2<Gt,Agds>(Input_iterator 
 first, Input_iterator beyond, Gt gt=Gt()); 
 
-/*! 
+/*!
 Copy constructor. All faces, vertices and inter-level pointers 
 are duplicated. After the construction, `agh` and `other` refer 
 to two different Apollonius graph hierarchies: if 
@@ -82,7 +82,7 @@ to two different Apollonius graph hierarchies: if
 Apollonius_graph_hierarchy_2<Gt,Agds> 
 (Apollonius_graph_hierarchy_2<Gt,Agds> other); 
 
-/*! 
+/*!
 Assignment. All faces, vertices and inter-level pointers 
 are duplicated. After the construction, `agh` and `other` refer 
 to two different Apollonius graph hierarchies: if 
@@ -97,7 +97,7 @@ other);
 /// \name Insertion 
 /// @{
 
-/*! 
+/*!
 Inserts the sites in the range 
 [`first`,`beyond`). The number of sites in the range 
 [`first`, `beyond`) is returned. 
@@ -106,7 +106,7 @@ Inserts the sites in the range
 template< class Input_iterator > 
 unsigned int insert(Input_iterator first, Input_iterator beyond); 
 
-/*! 
+/*!
 Inserts the 
 site `s` in the Apollonius graph hierarchy. If `s` 
 is visible then the vertex handle of `s` is returned, otherwise 
@@ -114,7 +114,7 @@ is visible then the vertex handle of `s` is returned, otherwise
 */ 
 Vertex_handle insert(Site_2 s); 
 
-/*! 
+/*!
 Inserts `s` in the Apollonius graph hierarchy using the 
 site associated with `vnear` as 
 an estimate for the nearest neighbor of the center of `s`. 
@@ -132,7 +132,7 @@ vnear);
 /// \name Removal 
 /// @{
 
-/*! 
+/*!
 Removes the site 
 associated to the vertex handle `v` from the Apollonius 
 graph hierarchy. 
@@ -145,7 +145,7 @@ void remove(Vertex_handle v);
 /// \name Nearest Neighbor Location 
 /// @{
 
-/*! 
+/*!
 Finds the nearest neighbor of the point `p`. In other words it 
 finds the site whose Apollonius cell contains `p`. Ties are broken 
 arbitrarily and one of the nearest neighbors of `p` is 
@@ -154,7 +154,7 @@ returned. If there are no visible sites in the Apollonius diagram
 */ 
 Vertex_handle nearest_neighbor(Point p); 
 
-/*! 
+/*!
 Finds the nearest neighbor of the point 
 `p`. If there are no visible sites in the Apollonius diagram 
 `Vertex_handle(NULL)` is returned. 
@@ -171,7 +171,7 @@ Vertex_handle vnear);
 /// \name I/O 
 /// @{
 
-/*! 
+/*!
 Writes the current 
 state of the Apollonius graph hierarchy to an output stream. In particular, 
 all visible and hidden sites are written as well as the 
@@ -179,19 +179,19 @@ underlying combinatorial hierarchical data structure.
 */ 
 void file_output(std::ostream& os); 
 
-/*! 
+/*!
 Reads the state of the 
 Apollonius graph hierarchy from an input stream. 
 */ 
 void file_input(std::istream& is); 
 
-/*! 
+/*!
 Writes the current state of the Apollonius graph hierarchy to an 
 output stream. 
 */ 
 std::ostream& operator<<(std::ostream& os, Apollonius_graph_hierarchy_2<Gt,Agds> agh); 
 
-/*! 
+/*!
 Reads the state of the Apollonius graph hierarchy from an input stream. 
 */ 
 std::istream& operator>>(std::istream& is, Apollonius_graph_hierarchy_2<Gt,Agds> agh); 
@@ -201,7 +201,7 @@ std::istream& operator>>(std::istream& is, Apollonius_graph_hierarchy_2<Gt,Agds>
 /// \name Validity Check 
 /// @{
 
-/*! 
+/*!
 Checks the validity of the Apollonius graph hierarchy. If 
 `verbose` is `true` a short message is sent to 
 `std::cerr`. If `level` is 0, the data structure at all levels 
@@ -219,13 +219,13 @@ bool is_valid(bool verbose = false, int level = 1) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 Clears all contents of the Apollonius graph 
 hierarchy. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 The Apollonius graph hierarchies `other` and `agh` are 
 swapped. `agh`.`swap(other)` should be preferred to `agh`` = 
 other` or to `agh``(other)` if `other` is deleted afterwards. 

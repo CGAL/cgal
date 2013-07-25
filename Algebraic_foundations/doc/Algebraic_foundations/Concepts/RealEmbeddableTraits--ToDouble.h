@@ -23,12 +23,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `double`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `RealEmbeddableTraits::Type`. 
 */ 
 typedef unspecified_type argument_type; 
@@ -38,7 +38,7 @@ typedef unspecified_type argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes a double approximation of a real embeddable number. 
 */ 
 result_type operator()(argument_type x); 

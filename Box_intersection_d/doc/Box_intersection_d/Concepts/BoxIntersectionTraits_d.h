@@ -24,7 +24,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 type used for passing box parameters in the 
 functions below. Since we support in our algorithms 
 passing the boxes by value as well as passing them as pointers, this 
@@ -35,36 +35,36 @@ would be `B` where this type is `const B&`.
 */ 
 typedef unspecified_type Box_parameter; 
 
-/*! 
+/*!
 number type to represent the box 
 boundaries. Allowed are the built-in types `int`, `unsigned 
 int`, `float`, and `double`. 
 */ 
 typedef unspecified_type NT; 
 
-/*! 
+/*!
 type for the `id`-number, 
 model of the `LessThanComparable` concept. 
 */ 
 typedef unspecified_type ID; 
 
-/*! 
+/*!
 returns the dimension of the box. 
 */ 
 static int dimension(); 
 
-/*! 
+/*!
 returns the unique `id`-number for the `box`. 
 */ 
 static ID id(Box_parameter box); 
 
-/*! 
+/*!
 returns the lower boundary of the `box` in dimension 
 `d`, \f$ 0 \leq\f$`d`\f$ < \f$`dimension()`. 
 */ 
 static NT min_coord( Box_parameter box, int d); 
 
-/*! 
+/*!
 returns the upper boundary of the `box` in dimension 
 `d`, \f$ 0 \leq\f$`d`\f$ < \f$`dimension()`. 
 */ 

@@ -147,13 +147,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of input 
 constraints 
 */ 
 typedef std::pair<Point,Point> Constraint; 
 
-/*! 
+/*!
 The intersection tag which decides how 
 intersections between input constraints are dealt with. 
 */ 
@@ -164,12 +164,12 @@ typedef Itag Intersection_tag;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Constrained_triangulation_2(); 
 
-/*! 
+/*!
 Copy constructor: All faces and vertices 
 are duplicated and the constrained status of edges 
 is copied. 
@@ -177,7 +177,7 @@ is copied.
 Constrained_triangulation_2(const 
 Constrained_triangulation_2& ct1); 
 
-/*! 
+/*!
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
 `[first,last)`.
@@ -193,18 +193,18 @@ const Traits& t=Traits());
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 Returns `true` if edge `e` is a constrained edge. 
 */ 
 bool is_constrained(Edge e) const; 
 
-/*! 
+/*!
 Returns `true` if at least one of the edges incident to vertex `v` 
 is constrained. 
 */ 
 bool are_there_incident_constraints(Vertex_handle v) const; 
 
-/*! 
+/*!
 Outputs the constrained edges incident to `v` 
 into the output iterator `out` and returns the resulting 
 output iterator. 
@@ -220,14 +220,14 @@ OutputItEdges out) const;
 /// \name Insertion and Removal 
 /// @{
 
-/*! 
+/*!
 Inserts point `p` and restores the status (constrained or not) of all 
 the touched edges. If present `f` is used as an hint 
 for the location of `p`. 
 */ 
 Vertex_handle insert(Point p, Face_handle f = Face_handle() ); 
 
-/*! 
+/*!
 Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
 \sa `Triangulation_2::locate()`
 */ 
@@ -236,12 +236,12 @@ insert(const Point& p,
 Locate_type& lt, 
 Face_handle loc, int li ); 
 
-/*! 
+/*!
 Equivalent to `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
-/*! 
+/*!
 Inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 \pre The `value_type` of `first` and `last` is `Point`. 
@@ -250,7 +250,7 @@ template < class InputIterator >
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
-/*! 
+/*!
 Inserts points `a` and `b`, and inserts segment `ab` as a 
 constraint. Removes the faces crossed by segment `ab` and creates new 
 faces instead. If a vertex `c` lies on segment `ab`, constraint `ab` is 
@@ -261,12 +261,12 @@ removed triangles.
 */ 
 void insert_constraint(Point a, Point b); 
 
-/*! 
+/*!
 Equivalent to `insert(c.first, c.second)`. 
 */ 
 void push_back(const Constraint& c); 
 
-/*! 
+/*!
 Inserts the line segment `s` whose endpoints are the vertices 
 `va` and 
 `vb` as a constrained edge. The triangles intersected by `s` 
@@ -274,23 +274,23 @@ are removed and new ones are created.
 */ 
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
 
-/*! 
+/*!
 Removes a vertex `v`. 
 \pre Vertex `v` is not incident to a constrained edge. 
 */ 
 void remove(Vertex_handle v); 
 
-/*! 
+/*!
 Make the edges incident to vertex `v` unconstrained edges. 
 */ 
 void remove_incident_constraints(Vertex_handle v); 
 
-/*! 
+/*!
 Make edge `(f,i)` unconstrained. 
 */ 
 void remove_constrained_edge(Face_handle f, int i); 
 
-/*! 
+/*!
 Checks the validity of the triangulation and the consistency
 of the constrained marks in edges.
 */ 
@@ -301,7 +301,7 @@ is_valid(bool verbose = false, int level = 0) const;
 
 }; /* end Constrained_triangulation_2 */
 
-/*! 
+/*!
 Writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face `f`, and integers `i=0,1,2`, 
 writes "C" or "N" depending whether edge 
 `(f,i)` is constrained or not. 
@@ -309,7 +309,7 @@ writes "C" or "N" depending whether edge
 */ 
 ostream & operator<<(ostream& os, const Constrained_triangulation_2<Traits,Tds> &Ct); 
 
-/*! 
+/*!
 Reads a triangulation from stream `is` and assigns it to `t`. Data in the stream must have the same format `operator<<` uses. 
 Note that `t` is first cleared. 
 \relates Constrained_triangulation_2 

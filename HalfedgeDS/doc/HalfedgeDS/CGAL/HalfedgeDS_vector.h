@@ -39,12 +39,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef random_access_iterator_tag iterator_category; 
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_false Supports_removal; 

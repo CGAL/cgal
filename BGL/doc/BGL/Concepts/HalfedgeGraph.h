@@ -63,7 +63,7 @@ class HalfedgeGraph {
 
 };
 
-/*! 
+/*!
 Returns the undirected edges of `g`. 
 
 \relates HalfedgeGraph 
@@ -73,7 +73,7 @@ std::pair<typename halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterato
           typename halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator> 
 undirected_edges(const Graph& g); 
 
-/*! 
+/*!
 Returns the opposite edge of `e`. 
 
 An edge `e=(v,w)` is said to be the <I>opposite edge</I> of edge
@@ -85,7 +85,7 @@ template<class Graph>
 typename boost::graph_traits<Graph const>::edge_descriptor 
 opposite_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g ); 
 
-/*! 
+/*!
 Returns the clockwise neighbor of `e`. 
 
 An edge `e2=(v,w)` is called the <I>clockwise neighbor</I> of
@@ -101,7 +101,7 @@ template<class Graph>
 typename boost::graph_traits<Graph const>::edge_descriptor 
 next_edge_cw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g ); 
 
-/*! 
+/*!
 Returns the counterclockwise neighbor of `e`. 
 \relates HalfedgeGraph 
 */ 
@@ -109,7 +109,7 @@ template<class Graph>
 typename boost::graph_traits<Graph const>::edge_descriptor 
 next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g ); 
 
-/*! 
+/*!
 Returns the successor of `e`. 
 
 An edge `e2=(v,w)` is called the <I>successor</I> of edge `
@@ -122,7 +122,7 @@ template<class Graph>
 typename boost::graph_traits<Graph const>::edge_descriptor 
 next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g ); 
 
-/*! 
+/*!
 Returns the predecessor of `e`. 
 
 An edge `e2=(v,w)` is called the <I>successor</I> of edge `

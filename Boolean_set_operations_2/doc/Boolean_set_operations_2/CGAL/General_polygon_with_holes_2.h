@@ -20,7 +20,7 @@ public:
 /// each hole.
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Polygon General_polygon_2; 

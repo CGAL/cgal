@@ -28,44 +28,44 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The numerical type. It must be model of 
 `FieldWithSqrt` and constructible from a `double`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The point type. This point type must have a 
 constructor `Point_3(FT, FT, FT)`. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 The line type. 
 */ 
 typedef unspecified_type Line_3; 
 
-/*! 
+/*!
 The ray type. 
 */ 
 typedef unspecified_type Ray_3; 
 
-/*! 
+/*!
 The segment type. 
 */ 
 typedef unspecified_type Segment_3; 
 
-/*! 
+/*!
 The vector type. 
 */ 
 typedef unspecified_type Vector_3; 
 
-/*! 
+/*!
 The sphere type. 
 */ 
 typedef unspecified_type Sphere_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `FT operator()(Vector_3 v, Vector_3 w)` which returns the scalar 
@@ -73,7 +73,7 @@ A function object providing the operator
 */ 
 typedef unspecified_type Compute_scalar_product_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `FT operator()(Point_3, Point_3)` which returns the squared distance 
@@ -81,7 +81,7 @@ between two points.
 */ 
 typedef unspecified_type Compute_squared_distance_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `FT operator()(const Sphere_3& s)` which returns the squared radius 
@@ -89,7 +89,7 @@ of `s`.
 */ 
 typedef unspecified_type Compute_squared_radius_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `Point_3 operator()(const Sphere_3& s)` which computes the center of 
@@ -97,7 +97,7 @@ the sphere `s`.
 */ 
 typedef unspecified_type Construct_center_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `Point_3 operator()(const Point_3& p, const Point_3& q)` which computes 
@@ -105,7 +105,7 @@ the midpoint of the segment `pq`.
 */ 
 typedef unspecified_type Construct_midpoint_3; 
 
-/*! 
+/*!
 A function object providing the following operators: 
 
 `Point_3 operator()(const Line_3& l,int i)` which returns an 
@@ -126,7 +126,7 @@ point.
 */ 
 typedef unspecified_type Construct_point_on_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `Segment_3 operator()(const Point_3 &p, const Point_3 &q)` which 
@@ -135,7 +135,7 @@ source towards the target.
 */ 
 typedef unspecified_type Construct_segment_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `Vector_3 operator()(const Vector_3 &v, const FT& scale)` which returns 
@@ -143,7 +143,7 @@ the vector `v` scaled by a factor `scale`.
 */ 
 typedef unspecified_type Construct_scaled_vector_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `Point_3 operator()(const Point_3& p, const Vector_3& v)` which returns 
@@ -151,7 +151,7 @@ the point obtained by translating `p` by the vector `v`.
 */ 
 typedef unspecified_type Construct_translated_point_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `Vector_3 operator()(const Point_3 &a, const Point_3 &b)` which returns 
@@ -159,7 +159,7 @@ the vector `b-a`.
 */ 
 typedef unspecified_type Construct_vector_3; 
 
-/*! 
+/*!
 A function object providing the operator 
 
 `bool operator()(const Sphere_3&s, const Point_3&p)` which 
@@ -174,57 +174,57 @@ typedef unspecified_type Has_on_bounded_side_3;
 /// construction objects:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compute_scalar_product_3 compute_scalar_product_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compute_squared_distance_3 compute_squared_distance_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compute_squared_radius_3 compute_squared_radius_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_center_3 construct_center_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_midpoint_3 construct_midpoint_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_point_on_3 construct_point_on_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_scaled_vector_3 construct_scaled_vector_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_segment_3 construct_segment_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_translated_point_3 construct_translated_point_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_vector_3 construct_vector_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Has_on_bounded_side_3 has_on_bounded_side_3_object(); 

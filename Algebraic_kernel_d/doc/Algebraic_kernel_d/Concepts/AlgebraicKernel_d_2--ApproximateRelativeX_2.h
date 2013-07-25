@@ -21,17 +21,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef std::pair<AlgebraicKernel_d_1::Bound, AlgebraicKernel_d_1::Bound> result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef int second_argument_type; 
@@ -41,7 +41,7 @@ typedef int second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 The function computes a pair \f$ p\f$ of `AlgebraicKernel_d_1::Bound`, 
 where \f$ p.first\f$ represents the lower approximation and \f$ p.second\f$ represents 

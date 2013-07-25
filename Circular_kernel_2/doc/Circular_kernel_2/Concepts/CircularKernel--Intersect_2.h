@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Copies in the output iterator the intersection elements between the 
 two objects. `intersections` iterates on 
 elements of type `CGAL::Object`, in lexicographic order.

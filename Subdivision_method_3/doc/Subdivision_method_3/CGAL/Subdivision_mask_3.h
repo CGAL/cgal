@@ -28,7 +28,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 CatmullClark_mask_3<Polyhedron_3>(); 
@@ -38,28 +38,28 @@ CatmullClark_mask_3<Polyhedron_3>();
 /// \name Stencil functions 
 /// @{
 
-/*! 
+/*!
 
 computes the Catmull-Clark facet-point `pt` of the facet `f`. 
 
 */ 
 void facet_node(Facet_handle f, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the Catmull-Clark edge-point `pt` of the edge `e`. 
 
 */ 
 void edge_node(Edge_handle e, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the Catmull-Clark vertex-point `pt` of the vertex `v`. 
 
 */ 
 void vertex_node(Vertex_handle v, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the Catmull-Clark edge-point `ept` and the 
 Catmull-Clark vertex-point `vpt` of the border edge `e`. 
@@ -101,7 +101,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 DooSabin_mask_3<Polyhedron_3>(); 
@@ -111,7 +111,7 @@ DooSabin_mask_3<Polyhedron_3>();
 /// \name Stencil functions 
 /// @{
 
-/*! 
+/*!
 
 computes the Doo-Sabin point `pt` of the vertex pointed 
 by the halfedge `he`. 
@@ -153,7 +153,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Loop_mask_3<Polyhedron_3>(); 
@@ -163,21 +163,21 @@ Loop_mask_3<Polyhedron_3>();
 /// \name Stencil functions 
 /// @{
 
-/*! 
+/*!
 
 computes the Loop edge-point `pt` of the edge `e`. 
 
 */ 
 void edge_node(Edge_handle e, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the Loop vertex-point `pt` of the vertex `v`. 
 
 */ 
 void vertex_node(Vertex_handle v, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the Loop edge-point `ept` and the 
 Loop vertex-point `vpt` of the border edge `e`. 
@@ -218,7 +218,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Sqrt3_mask_3<Polyhedron_3>(); 
@@ -228,14 +228,14 @@ Sqrt3_mask_3<Polyhedron_3>();
 /// \name Stencil functions 
 /// @{
 
-/*! 
+/*!
 
 computes the \f$ \sqrt{3}\f$ facet-point `pt` of the facet `f`. 
 
 */ 
 void facet_node(Facet_handle f, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the \f$ \sqrt{3}\f$ vertex-point `pt` of the vertex `v`. 
 

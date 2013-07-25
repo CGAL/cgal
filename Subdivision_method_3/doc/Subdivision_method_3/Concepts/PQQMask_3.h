@@ -21,28 +21,28 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 computes the facet-point `pt` based on the neighborhood 
 of the facet `f`. 
 */ 
 void facet_node(Facet_handle facet, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the edge-point `pt` based on the neighborhood 
 of the edge `e`. 
 */ 
 void edge_node(Edge_handle e, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the vertex-point `pt` based on the neighborhood 
 of the vertex `v`. 
 */ 
 void vertex_node(Vertex_handle v, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the edge-point `ept` and the vertex-point `vpt` 
 based on the neighborhood of the border edge `e`. 

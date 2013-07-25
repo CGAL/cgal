@@ -64,17 +64,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 model of `HalfedgeDSVertex`. 
 */ 
 typedef Vertex_wrapper<Refs,Traits>::Vertex Vertex;
 
-/*! 
+/*!
 model of `HalfedgeDSHalfedge`. 
 */ 
 typedef Halfedge_wrapper<Refs,Traits>::Halfedge Halfedge;
 
-/*! 
+/*!
 model of `HalfedgeDSFace`. 
 */ 
 typedef Face_wrapper<Refs,Traits>::Face Face;

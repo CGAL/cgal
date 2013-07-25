@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 boost::property_traits<PointPropertyMap>::key_type Point_3; 
@@ -33,12 +33,12 @@ boost::property_traits<PointPropertyMap>::key_type Point_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Spatial_sort_traits_adapter_3(Base_traits base=Base_traits()); 
 
-/*! 
+/*!
 
 */ 
 Spatial_sort_traits_adapter_3(const PointPropertyMap& ppmap,Base_traits base=Base_traits()); 
@@ -48,7 +48,7 @@ Spatial_sort_traits_adapter_3(const PointPropertyMap& ppmap,Base_traits base=Bas
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the point property map. 
 */ 
 const PointPropertyMap& point_property_map() const; 

@@ -20,12 +20,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Boolean`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type argument_type; 
@@ -35,7 +35,7 @@ typedef unspecified_type argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns true in case \f$ x\f$ is the one of the ring. 
 */ 

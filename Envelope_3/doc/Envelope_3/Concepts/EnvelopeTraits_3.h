@@ -29,12 +29,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 represents an arbitrary surface in \f$ \mathbb{R}^3\f$. 
 */ 
 typedef unspecified_type Surface_3; 
 
-/*! 
+/*!
 represents a weakly \f$ xy\f$-monotone surface in \f$ \mathbb{R}^3\f$. 
 */ 
 typedef unspecified_type Xy_monotone_surface_3; 
@@ -44,7 +44,7 @@ typedef unspecified_type Xy_monotone_surface_3;
 /// \name Functor Types 
 /// @{
 
-/*! 
+/*!
 provides the operator (templated by the `OutputIterator` type) : 
 <UL> 
 <LI>`OutputIterator operator() (Surface_3 S, bool is_lower, OutputIterator oi)` 
@@ -60,7 +60,7 @@ The operator returns a past-the-end iterator for the output sequence.
 */ 
 typedef unspecified_type Make_xy_monotone_3; 
 
-/*! 
+/*!
 provides the operator (templated by the `OutputIterator` type) : 
 <UL> 
 <LI>`OutputIterator operator() (Xy_monotone_surface_3 s, OutputIterator oi)` 
@@ -84,7 +84,7 @@ iterator for the output sequence.
 */ 
 typedef unspecified_type Construct_projected_boundary_2; 
 
-/*! 
+/*!
 provides the operator (templated by the `OutputIterator` type) : 
 <UL> 
 <LI>`OutputIterator operator() (Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2, OutputIterator oi)` 
@@ -104,7 +104,7 @@ The operator returns a past-the-end iterator for the output sequence.
 */ 
 typedef unspecified_type Construct_projected_intersections_2; 
 
-/*! 
+/*!
 provides the operators : 
 <UL> 
 <LI> `Comparison_result operator() (Point_2 p, Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2)` 
@@ -135,7 +135,7 @@ is defined as `Tag_true`.
 */ 
 typedef unspecified_type Compare_z_at_xy_3; 
 
-/*! 
+/*!
 provides the operator : 
 <UL> 
 <LI>`Comparison_result operator() (X_monotone_curve_2 c, Xy_monotone_surface_3 s1,  Xy_monotone_surface_3 s2)` 
@@ -152,7 +152,7 @@ some small enough neighborhood of points above \f$ c\f$.
 */ 
 typedef unspecified_type Compare_z_at_xy_above_3; 
 
-/*! 
+/*!
 provides the operator : 
 <UL> 
 <LI>`Comparison_result operator() (X_monotone_curve_2 c,  Xy_monotone_surface_3 s1, Xy_monotone_surface_3 s2)` 
@@ -174,17 +174,17 @@ typedef unspecified_type Compare_z_at_xy_below_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 EnvelopeTraits_3(); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 EnvelopeTraits_3(EnvelopeTraits_3 other); 
 
-/*! 
+/*!
 assignment operator. 
 */ 
 EnvelopeTraits_3 operator=(other); 
@@ -194,32 +194,32 @@ EnvelopeTraits_3 operator=(other);
 /// \name Accessing Functor Objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Make_xy_monotone_3 make_xy_monotone_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_projected_boundary_2 construct_projected_boundary_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_projected_intersections_2 construct_projected_intersections_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_z_at_xy_3 compare_z_at_xy_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_z_at_xy_above_3 compare_z_at_xy_above_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_z_at_xy_below_3 compare_z_at_xy_below_3_object(); 

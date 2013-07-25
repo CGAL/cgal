@@ -31,7 +31,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor with bound \f$ B=\sqrt{2}\f$. 
 */ 
 Delaunay_mesh_criteria_2(); 
@@ -40,7 +40,7 @@ Delaunay_mesh_criteria_2();
 
 
 
-/*! 
+/*!
 Construct 
 a traits class with bound \f$ B=\sqrt{\frac{1}{4 b}}\f$. 
 */ 

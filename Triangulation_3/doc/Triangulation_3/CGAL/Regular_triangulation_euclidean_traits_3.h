@@ -37,12 +37,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type for point \f$ p\f$ of a weighted point \f$ {p}^{(w)}=(p,w_p)\f$. 
 */ 
 typedef K::Point_3 Bare_point; 
 
-/*! 
+/*!
 The type for weighted points. 
 */ 
 typedef Weighted_point <Bare_point, Weight> 
@@ -53,19 +53,19 @@ Weighted_point_3;
 /// \name Types for Predicate Functors 
 /// @{
 
-/*! 
+/*!
 A predicate type for power test. Belongs to the 
 `RegularTriangulationTraits_3` concept. 
 */ 
 typedef unspecified_type Power_test_3; 
 
-/*! 
+/*!
 A predicate type to compare power distance. Belongs to the 
 `RegularTriangulationTraits_3` concept. 
 */ 
 typedef unspecified_type Compare_power_distance_3; 
 
-/*! 
+/*!
 A predicate type. The operator() takes weighted point(s) as arguments, 
 together with one weight. It compares the weight of the smallest sphere 
 orthogonal to the weighted points with the input weight. 
@@ -81,7 +81,7 @@ orthogonal to the weighted points with the input weight.
 */ 
 typedef unspecified_type Compare_weighted_squared_radius_3; 
 
-/*! 
+/*!
 A predicate type. The operator() takes weighted points as arguments 
 and returns the sign of the power distance of the last one 
 with respect to the smallest sphere orthogonal to the others. 
@@ -97,7 +97,7 @@ with respect to the smallest sphere orthogonal to the others.
 */ 
 typedef unspecified_type In_smallest_orthogonal_sphere_3; 
 
-/*! 
+/*!
 A predicate type. The operator() is similar to the operator() of 
 `In_smallest_orthogonal_sphere_3` 
 except that the returned type is not a `Sign` 
@@ -115,7 +115,7 @@ corresponding respectively to
 */ 
 typedef unspecified_type Side_of_bounded_orthogonal_sphere_3; 
 
-/*! 
+/*!
 A predicate type. The operator() 
 takes weighted points as arguments, 
 considers the subspace of points with equal power distance 
@@ -143,7 +143,7 @@ typedef unspecified_type Does_simplex_intersect_dual_support_3;
 /// \name Types for Constructor Functors 
 /// @{
 
-/*! 
+/*!
 A constructor type. The operator() constructs the bare point 
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
@@ -157,7 +157,7 @@ weighted points.
 */ 
 typedef unspecified_type Construct_weighted_circumcenter_3; 
 
-/*! 
+/*!
 A functor type. The operator() computes the power distance between its 
 arguments. 
 
@@ -166,7 +166,7 @@ arguments.
 */ 
 typedef unspecified_type Compute_power_product_3; 
 
-/*! 
+/*!
 A functor type. The operator() computes the squared radius of the 
 smallest sphere orthogonal to the argument(s). 
 
@@ -181,7 +181,7 @@ smallest sphere orthogonal to the argument(s).
 */ 
 typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3; 
 
-/*! 
+/*!
 A functor type. The operator() takes weighted points as arguments 
 and computes the squared radius 
 of the sphere centered in the last point and orthogonal 
@@ -201,60 +201,60 @@ typedef unspecified_type Compute_critical_squared_radius_3;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Power_test_3 power_test_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_power_distance_3 
 compare_power_distance_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_weighted_squared_radius_3 
 compare_weighted_squared_radius_3_object(); 
 
-/*! 
+/*!
 
 */ 
 In_smallest_orthogonal_sphere_3 
 in_smallest_orthogonal_sphere_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Side_of_bounded_orthogonal_sphere_3 
 side_of_bounded_orthogonal_sphere_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Does_simplex_intersect_dual_support_3 
 does_simplex_intersect_dual_support_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_weighted_circumcenter_3 
 construct_weighted_circumcenter_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compute_power_product_3 
 compute_power_product_3_object() ; 
 
-/*! 
+/*!
 
 */ 
 Compute_squared_radius_smallest_orthogonal_sphere_3 
 compute_squared_radius_smallest_orthogonal_sphere_3_object() ; 
 
-/*! 
+/*!
 
 */ 
 Compute_critical_squared_radius_3 

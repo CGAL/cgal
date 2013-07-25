@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Delaunay_triangulation_default_visitor_3(); 

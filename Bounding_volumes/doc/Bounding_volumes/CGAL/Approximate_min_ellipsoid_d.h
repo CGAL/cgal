@@ -145,28 +145,28 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `typedef Traits::FT FT` (which is always a 
 typedef to `double`). 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 `typedef Traits::ET ET` (which is an exact number type used for exact computation like for example in `achieved_epsilon()`). 
 */ 
 typedef unspecified_type ET; 
 
-/*! 
+/*!
 `typedef Traits::Point Point` 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 `typedef Traits::Cartesian_const_iterator Cartesian_const_iterator` 
 */ 
 typedef unspecified_type Cartesian_const_iterator; 
 
-/*! 
+/*!
 A model of STL concept 
 `RandomAccessIterator` with value type `double` that is used 
 to iterate over the Cartesian center coordinates of the computed 
@@ -174,7 +174,7 @@ ellipsoid, see `center_cartesian_begin()`.
 */ 
 typedef unspecified_type Center_coordinate_iterator; 
 
-/*! 
+/*!
 A model of STL concept 
 `RandomAccessIterator` with value type `double` that is used 
 to iterate over the lengths of the semiaxes of the computed ellipsoid, 
@@ -182,7 +182,7 @@ see `axes_lengths_begin()`.
 */ 
 typedef unspecified_type Axes_lengths_iterator; 
 
-/*! 
+/*!
 A model of STL concept 
 `RandomAccessIterator` with value type `double` that is used 
 to iterate over the %Cartesian coordinates of the direction of a fixed 
@@ -199,7 +199,7 @@ typedef unspecified_type Axis_direction_iterator;
 /// value `eps`.
 /// @{
 
-/*! 
+/*!
 
 initializes `ame` to an \f$ (1+\epsilon)\f$-approximation of 
 \f$ \mel(P)\f$ with \f$ P\f$ being the set of points in the range 
@@ -248,13 +248,13 @@ const Traits& traits = Traits() );
 /// returned quantities.
 /// @{
 
-/*! 
+/*!
 
 returns the number of points of `ame`, i.e., \f$ |P|\f$. 
 */ 
 unsigned int number_of_points( ) const; 
 
-/*! 
+/*!
 returns a number 
 \f$ \epsilon'\f$ such that the computed approximation is (under exact 
 arithmetic) guaranteed to be an \f$ (1+\epsilon')\f$-approximation to 
@@ -264,7 +264,7 @@ arithmetic) guaranteed to be an \f$ (1+\epsilon')\f$-approximation to
 */ 
 double achieved_epsilon() const; 
 
-/*! 
+/*!
 
 gives access to the \f$ (i,j)\f$th entry of the matrix \f$ E\f$ in the 
 representation \f$ \{ x\in\E^d \mid x^T E x + x^T e + \eta\leq0 
@@ -275,7 +275,7 @@ the number returned by `achieved_epsilon()`.
 */ 
 double defining_matrix(int i,int j) const; 
 
-/*! 
+/*!
 
 gives access to the \f$ i\f$th entry of the vector \f$ e\f$ in the 
 representation \f$ \{ x\in\E^d \mid x^T E x + x^T e + \eta\leq0 
@@ -286,7 +286,7 @@ the number returned by `achieved_epsilon()`.
 */ 
 double defining_vector(int i) const; 
 
-/*! 
+/*!
 
 gives access to the scalar \f$ \eta\f$ from the 
 representation \f$ \{ x\in\E^d \mid x^T E x + x^T e + \eta\leq0 
@@ -297,19 +297,19 @@ the number returned by `achieved_epsilon()`.
 */ 
 double defining_scalar() const; 
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 
 const Traits& traits( ) const; 
 
-/*! 
+/*!
 returns the dimension of 
 the ambient space, i.e., the dimension of the points \f$ P\f$. 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 
 returns an iterator pointing to the first of the \f$ d\f$ Cartesian 
 coordinates of the computed ellipsoid's center. 
@@ -320,7 +320,7 @@ relative error. \pre `ame.is_full_dimensional() == true`.
 */ 
 Center_coordinate_iterator center_cartesian_begin(); 
 
-/*! 
+/*!
 
 returns the past-the-end iterator corresponding to 
 `center_cartesian_begin()`. 
@@ -328,7 +328,7 @@ returns the past-the-end iterator corresponding to
 */ 
 Center_coordinate_iterator center_cartesian_end(); 
 
-/*! 
+/*!
 
 returns an iterator pointing to the first of the \f$ d\f$ descendantly 
 sorted lengths of the computed ellipsoid's axes. The \f$ d\f$ returned 
@@ -339,14 +339,14 @@ w.r.t.\ the involved relative error. (See also method
 */ 
 Axes_lengths_iterator axes_lengths_begin(); 
 
-/*! 
+/*!
 
 returns the past-the-end iterator corresponding to 
 `axes_lengths_begin()`. \pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$. 
 */ 
 Axes_lengths_iterator axes_lengths_end(); 
 
-/*! 
+/*!
 returns an iterator 
 pointing to the first of the \f$ d\f$ %Cartesian coordinates of the 
 computed ellipsoid's \f$ i\f$th axis direction (i.e., unit vector in 
@@ -361,7 +361,7 @@ length of axis \f$ i\f$ is given by the \f$ i\f$th entry of
 Axes_direction_coordinate_iterator 
 axis_direction_cartesian_begin(int i); 
 
-/*! 
+/*!
 returns the past-the-end 
 iterator corresponding to 
 `axis_direction_cartesian_begin()`.\pre `ame.is_full_dimensional() == true`, and \f$ d\in\{2,3\}\f$, and \f$ 0\leq i < d\f$. 
@@ -374,7 +374,7 @@ axis_direction_cartesian_end(int i);
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 returns whether 
 \f$ P\f$ is full-dimensional or not, i.e., returns `true` if 
 and only if \f$ P\f$ is full-dimensional. 
@@ -407,7 +407,7 @@ bool is_full_dimensional( ) const;
 /// ). </UL>
 /// @{
 
-/*! 
+/*!
 
 returns `true` iff `ame` is valid according to the above 
 definition. If `verbose` is `true`, some messages 
@@ -421,7 +421,7 @@ bool is_valid( bool verbose = false) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 Writes the points \f$ P\f$ and the computed approximation to 
 \f$ \mel(P)\f$ as an EPS-file under pathname `name`. \pre The dimension of points \f$ P\f$ must be \f$ 2\f$. 

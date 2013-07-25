@@ -51,7 +51,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 point type for three argument version. 
 */ 
 typedef unspecified_type Point; 
@@ -61,12 +61,12 @@ typedef unspecified_type Point;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 HalfedgeDS_vertex_base(); 
 
-/*! 
+/*!
 initialized with point `p`. 
 */ 
 HalfedgeDS_vertex_base( const Point& p); 
@@ -76,12 +76,12 @@ HalfedgeDS_vertex_base( const Point& p);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point& point(); 
 
-/*! 
+/*!
 
 */ 
 const Point& point() const; 

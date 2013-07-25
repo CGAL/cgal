@@ -23,12 +23,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor 
 */ 
 StraightSkeletonFace_2(); 
 
-/*! 
+/*!
 Constructs a face with ID number `id` 
 */ 
 StraightSkeletonFace_2(int id); 
@@ -38,7 +38,7 @@ StraightSkeletonFace_2(int id);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 The ID of the face. 
 */ 
 int id() const; 

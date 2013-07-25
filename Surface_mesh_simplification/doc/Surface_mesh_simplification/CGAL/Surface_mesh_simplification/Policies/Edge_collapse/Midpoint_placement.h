@@ -20,7 +20,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor 
 */ 
 Midpoint_placement<ECM>(); 
@@ -30,7 +30,7 @@ Midpoint_placement<ECM>();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the <I>placement</I> (vertex position) as the midpoint between 
 the points of the source and target vertices 
 (`profile.p0()` and `profile.p1()`) 

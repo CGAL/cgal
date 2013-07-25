@@ -29,12 +29,12 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the index. 
 */ 
 int id() const; 
 
-/*! 
+/*!
 Returns a reference to the index stored in the vertex. 
 */ 
 int& id(); 

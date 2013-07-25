@@ -25,56 +25,56 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type for a point. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 A type for an Apollonius site. Must be a model 
 of the concept `ApolloniusSite_2`. 
 */ 
 typedef unspecified_type Site_2; 
 
-/*! 
+/*!
 A type for a line. Only required if access to 
 the dual of the Apollonius graph is required or if the primal 
 or dual diagram are inserted in a stream. 
 */ 
 typedef unspecified_type Line_2; 
 
-/*! 
+/*!
 A type for a ray. Only required if access to 
 the dual of the Apollonius graph is required or if the primal 
 or dual diagram are inserted in a stream. 
 */ 
 typedef unspecified_type Ray_2; 
 
-/*! 
+/*!
 A type for a segment. Only required if access to 
 the dual of the Apollonius graph is required or if the primal 
 or dual diagram are inserted in a stream. 
 */ 
 typedef unspecified_type Segment_2; 
 
-/*! 
+/*!
 A type representing different types of objects 
 in two dimensions, namely: `Point_2`, `Site_2`, 
 `Line_2`, `Ray_2` and `Segment_2`. 
 */ 
 typedef unspecified_type Object_2; 
 
-/*! 
+/*!
 A type for the field number type of sites. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 A type for the ring number type of sites. 
 */ 
 typedef unspecified_type RT; 
 
-/*! 
+/*!
 Must provide `template <class T> bool operator() ( T& t, 
 Object_2 o)` which assigns `o` to `t` if `o` was 
 constructed from an object of type `T`. Returns 
@@ -82,14 +82,14 @@ constructed from an object of type `T`. Returns
 */ 
 typedef unspecified_type Assign_2; 
 
-/*! 
+/*!
 Must provide `template <class T> 
 Object_2 operator()( T t)` that constructs an object of type 
 `Object_2` that contains `t` and returns it. 
 */ 
 typedef unspecified_type Construct_object_2; 
 
-/*! 
+/*!
 
 A constructor for a point of the Apollonius diagram equidistant 
 from three sites. Must provide 
@@ -100,7 +100,7 @@ constructs a point equidistant from the sites `s1`, `s2` and
 */ 
 typedef unspecified_type Construct_Apollonius_vertex_2; 
 
-/*! 
+/*!
 A constructor for 
 a dual Apollonius site (a site whose center is a 
 vertex of the Apollonius diagram and its weight is the common 
@@ -120,7 +120,7 @@ and its weight is infinite.
 */ 
 typedef unspecified_type Construct_Apollonius_site_2; 
 
-/*! 
+/*!
 A predicate object type. Must 
 provide `Comparison_result operator()(Site_2 s1, 
 Site_2 s2)`, which compares the \f$ x\f$-coordinates of the centers of 
@@ -128,7 +128,7 @@ Site_2 s2)`, which compares the \f$ x\f$-coordinates of the centers of
 */ 
 typedef unspecified_type Compare_x_2; 
 
-/*! 
+/*!
 A predicate object type. Must 
 provide `Comparison_result operator()(Site_2 s1, 
 Site_2 s2)`, which compares the \f$ y\f$-coordinates of the centers of 
@@ -136,7 +136,7 @@ Site_2 s2)`, which compares the \f$ y\f$-coordinates of the centers of
 */ 
 typedef unspecified_type Compare_y_2; 
 
-/*! 
+/*!
 A predicate object type. Must 
 provide `Comparison_result operator()(Site_2 s1, 
 Site_2 s2)`, which compares the weights of `s1` 
@@ -144,7 +144,7 @@ and `s2`.
 */ 
 typedef unspecified_type Compare_weight_2; 
 
-/*! 
+/*!
 A predicate object type. Must 
 provide `Orientation operator()(Site_2 s1, 
 Site_2 s2, Site_2 s3)`, which performs the 
@@ -160,7 +160,7 @@ which performs the usual orientation test for the Apollonius vertex of
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 A predicate object type. Must 
 provide `bool operator()(Site_2 s1, 
 Site_2 s2)`, which returns `true` if the circle 
@@ -169,7 +169,7 @@ corresponding to `s1`, `false` otherwise.
 */ 
 typedef unspecified_type Is_hidden_2; 
 
-/*! 
+/*!
 A predicate object type. 
 Must provide `Oriented_side operator()(Site_2 s1, 
 Site_2 s2, Point_2 p)`, which returns 
@@ -182,7 +182,7 @@ lies on the bisector of `s1` and `s2`.
 */ 
 typedef unspecified_type Oriented_side_of_bisector_2; 
 
-/*! 
+/*!
 A predicate object type. 
 Must provide `Sign operator()(Site_2 s1, Site_2 
 s2, Site_2 s3, Site_2 q)`, which 
@@ -197,7 +197,7 @@ dual Apollonius site, with its center at infinity).
 */ 
 typedef unspecified_type Vertex_conflict_2; 
 
-/*! 
+/*!
 A predicate object type. 
 Must provide `bool operator()(Site_2 s1, Site_2 s2, Site_2 s3, Site_2 s4, Site_2 q, bool b)`. 
 The sites `s1`, `s2`, `s3` and `s4` define an Apollonius edge that lies on the 
@@ -248,7 +248,7 @@ Apollonius edge.
 */ 
 typedef unspecified_type Finite_edge_interior_conflict_2; 
 
-/*! 
+/*!
 A predicate 
 object type. Must provide `bool operator()(Site_2 s1, 
 Site_2 s2, Site_2 s3, Site_2 q, bool b)`. The 
@@ -267,7 +267,7 @@ Apollonius edge.
 */ 
 typedef unspecified_type Infinite_edge_interior_conflict_2; 
 
-/*! 
+/*!
 A predicate object type. 
 Must provide `bool operator()(Site_2 s1, Site_2 
 s2, Site_2 s3, Site_2 s4)`. It returns `true` if 
@@ -283,17 +283,17 @@ typedef unspecified_type Is_degenerate_edge_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 ApolloniusGraphTraits_2(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 ApolloniusGraphTraits_2(ApolloniusGraphTraits_2 other); 
 
-/*! 
+/*!
 Assignment operator. 
 */ 
 ApolloniusGraphTraits_2 operator=(ApolloniusGraphTraits_2 other); 
@@ -303,55 +303,55 @@ ApolloniusGraphTraits_2 operator=(ApolloniusGraphTraits_2 other);
 /// \name Access to predicate objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_x_2 compare_x_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_y_2 compare_y_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_weight_2 compare_weight_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Is_hidden_2 is_hidden_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Oriented_side_of_bisector_2 
 oriented_side_of_bisector_test_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Vertex_conflict_2 vertex_conflict_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Finite_edge_interior_conflict_2 
 finite_edge_interior_conflict_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Infinite_edge_interior_conflict_2 
 infinite_edge_interior_conflict_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Is_degenerate_edge_2 is_degenerate_edge_2_object(); 
@@ -361,19 +361,19 @@ Is_degenerate_edge_2 is_degenerate_edge_2_object();
 /// \name Access to constructor objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_object_2 
 construct_object_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_Apollonius_vertex_2 
 construct_Apollonius_vertex_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_Apollonius_site_2 
@@ -384,7 +384,7 @@ construct_Apollonius_site_2_object();
 /// \name Access to other objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Assign_2 assign_2_object(); 

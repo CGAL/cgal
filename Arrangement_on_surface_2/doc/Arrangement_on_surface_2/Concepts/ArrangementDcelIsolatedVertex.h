@@ -19,12 +19,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the corresponding <span class="textsc">Dcel</span> face type. 
 */ 
 typedef unspecified_type Face; 
 
-/*! 
+/*!
 
 */ 
 typedef Face::Isolated_vertex_iterator Isolated_vertex_iterator; 
@@ -34,7 +34,7 @@ typedef Face::Isolated_vertex_iterator Isolated_vertex_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Arr_dcel_isolated_vertex(); 
@@ -46,12 +46,12 @@ Arr_dcel_isolated_vertex();
 /// non-mutable pointers or iterators:
 /// @{
 
-/*! 
+/*!
 returns the incident face, which contains `iv` in its interior. 
 */ 
 Face* face (); 
 
-/*! 
+/*!
 returns an iterator for the isolated vertex. 
 */ 
 Isolated_vertex_iterator iterator(); 
@@ -61,12 +61,12 @@ Isolated_vertex_iterator iterator();
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 sets the incident face. 
 */ 
 void set_face (Face* f); 
 
-/*! 
+/*!
 sets the isolated vertex iterator. 
 */ 
 void set_iterator (Isolated_vertex_iterator it); 

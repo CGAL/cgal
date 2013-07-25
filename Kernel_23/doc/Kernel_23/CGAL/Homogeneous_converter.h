@@ -34,7 +34,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Homogeneous_converter<>(); 
@@ -46,7 +46,7 @@ Homogeneous_converter<>();
 /// kernel traits geometric types `Point_3`, `Vector_2`...
 /// @{
 
-/*! 
+/*!
 returns a `K2::Point_2` which coordinates are those of `p`, 
 converted by `RTConverter`. 
 */ 

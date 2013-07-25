@@ -19,14 +19,14 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 computes the subdivided point `pt` based on the neighborhood 
 of the facet `f`. 
 */ 
 void facet_node(Facet_handle f, Point_3& pt); 
 
-/*! 
+/*!
 
 computes the subdivided point `pt` based on the neighborhood 
 of the vertex `v`. 

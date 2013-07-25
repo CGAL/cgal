@@ -18,12 +18,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bool result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_2 argument_type; 
@@ -33,7 +33,7 @@ typedef AlgebraicKernel_d_2::Polynomial_2 argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Computes whether \f$ p\f$ is square free. 
 */ 

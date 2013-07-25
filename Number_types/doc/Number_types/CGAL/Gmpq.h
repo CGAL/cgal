@@ -23,59 +23,59 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates an uninitialized `Gmpq` `q`. 
 */ 
 Gmpq(); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `i`. 
 */ 
 Gmpq(int i); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `n`. 
 */ 
 Gmpq(Gmpz n); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `f`. 
 */ 
 Gmpq(Gmpfr f); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(int n, int d); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(signed long n, unsigned long d); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(unsigned long n, unsigned long d); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `n/d`. 
 */ 
 Gmpq(Gmpz n, Gmpz d); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `d`. 
 */ 
 Gmpq(double d); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `str`, which can 
 be an integer like "41" or a fraction like "41/152". White 
 space is allowed in the string, and ignored. 
 */ 
 Gmpq(const std::string& str); 
 
-/*! 
+/*!
 creates a `Gmpq` initialized with `str` in base 
 `base`, which is an integer between 2 and 62. White space 
 in the string is ignored. 
@@ -94,12 +94,12 @@ Gmpq(const std::string& str, int base);
 /// other operation between these calls.
 /// @{
 
-/*! 
+/*!
 returns the numerator of `q`. 
 */ 
 Gmpz numerator() const; 
 
-/*! 
+/*!
 returns the denominator of `q`. 
 */ 
 Gmpz denominator() const; 
@@ -108,13 +108,13 @@ Gmpz denominator() const;
 
 }; /* end Gmpq */
 
-/*! 
+/*!
 writes `q` to the ostream `out`, in the form `n/d`. 
 \relates Gmpq 
 */ 
 std::ostream& operator<<(std::ostream& out, const Gmpq& q); 
 
-/*! 
+/*!
 reads a number from `in`, then converts it to a 
 `Gmpq`. The number may be an integer, a rational number in 
 the form `n/d`, or a floating-point number. 

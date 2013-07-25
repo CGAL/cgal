@@ -23,7 +23,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a triangle `t` with vertices `p`, `q` and `r`. 
 */ 
 Triangle_2(const Point_2<Kernel> &p, 
@@ -35,24 +35,24 @@ const Point_2<Kernel> &r);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Test for equality: two triangles are equal, iff there exists a 
 cyclic permutation of the vertices of \f$ t2\f$, such that they are 
 equal to the vertices of `t`. 
 */ 
 bool operator==(const Triangle_2<Kernel> &t2) const; 
 
-/*! 
+/*!
 Test for inequality. 
 */ 
 bool operator!=(const Triangle_2<Kernel> &t2) const; 
 
-/*! 
+/*!
 returns the i'th vertex modulo 3 of `t`. 
 */ 
 Point_2<Kernel> vertex(int i) const; 
 
-/*! 
+/*!
 returns `vertex(i)`. 
 */ 
 Point_2<Kernel> operator[](int i) const; 
@@ -63,17 +63,17 @@ Point_2<Kernel> operator[](int i) const;
 /// For convenience we provide the following Boolean functions:
 /// @{
 
-/*! 
+/*!
 triangle `t` is degenerate, if the vertices are collinear. 
 */ 
 bool is_degenerate() const; 
 
-/*! 
+/*!
 returns the orientation of `t`. 
 */ 
 Orientation orientation() const; 
 
-/*! 
+/*!
 returns 
 `ON_ORIENTED_BOUNDARY`, or 
 `POSITIVE_SIDE`, 
@@ -84,7 +84,7 @@ determined by the position of point `p`.
 */ 
 Oriented_side oriented_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 returns the constant `ON_BOUNDARY`, 
 `ON_BOUNDED_SIDE`, or else 
 `ON_UNBOUNDED_SIDE`, 
@@ -93,27 +93,27 @@ depending on where point `p` is.
 */ 
 Bounded_side bounded_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_positive_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_negative_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_boundary(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_bounded_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 \pre `t` is not degenerate. 
 */ 
 bool has_on_unbounded_side(const Point_2<Kernel> &p) const; 
@@ -123,24 +123,24 @@ bool has_on_unbounded_side(const Point_2<Kernel> &p) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 returns a triangle where the boundary is oriented the other 
 way round (this flips the positive and the negative side, but 
 not the bounded and unbounded side). 
 */ 
 Triangle_2<Kernel> opposite(); 
 
-/*! 
+/*!
 returns the signed area of `t`. 
 */ 
 Kernel::FT area() const; 
 
-/*! 
+/*!
 returns a bounding box containing `t`. 
 */ 
 Bbox_2 bbox() const; 
 
-/*! 
+/*!
 returns the triangle obtained by applying \f$ at\f$ on the three 
 vertices of `t`. 
 */ 

@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes the value of \f$ h\f$ evaluated 
 at \f$ p\f$.
 

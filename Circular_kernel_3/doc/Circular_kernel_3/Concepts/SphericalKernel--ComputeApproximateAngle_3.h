@@ -11,7 +11,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Computes an approximation of the angle of the arc in radians `a`. 
 */ 
 double 

@@ -49,7 +49,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 `f` is the object of type `Function` that represents the implicit 
 surface. 
 

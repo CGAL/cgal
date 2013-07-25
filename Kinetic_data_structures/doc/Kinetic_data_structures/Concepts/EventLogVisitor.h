@@ -17,7 +17,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 An iterator through strings defining the events that occurred. Each event is represented by a `std::string`. 
 */ 
 typedef unspecified_type Event_iterator; 
@@ -27,12 +27,12 @@ typedef unspecified_type Event_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Begin iterating through the events. 
 */ 
 Event_iterator events_begin(); 
 
-/*! 
+/*!
 
 */ 
 Event_iterator events_end(); 

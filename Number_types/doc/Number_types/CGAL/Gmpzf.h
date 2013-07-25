@@ -27,32 +27,32 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates a `Gmpzf` initialized with `0`. 
 */ 
 Gmpzf(); 
 
-/*! 
+/*!
 creates a `Gmpzf` initialized with `i`. 
 */ 
 Gmpzf(int i); 
 
-/*! 
+/*!
 creates a `Gmpzf` initialized with `l`. 
 */ 
 Gmpzf(long int l); 
 
-/*! 
+/*!
 creates a `Gmpzf` initialized with `i`. 
 */ 
 Gmpzf(const Gmpz& i); 
 
-/*! 
+/*!
 creates a `Gmpzf` initialized with `f`. 
 */ 
 Gmpzf(const Gmpfr& f); 
 
-/*! 
+/*!
 creates a `Gmpzf` initialized with `d`. 
 */ 
 Gmpzf(double d); 
@@ -61,19 +61,19 @@ Gmpzf(double d);
 
 }; /* end Gmpzf */
 
-/*! 
+/*!
 writes a double approximation of `f` to the ostream `out`. 
 \relates Gmpzf 
 */ 
 std::ostream& operator<<(std::ostream& out, const Gmpzf& f); 
 
-/*! 
+/*!
 writes an exact representation of `f` to the ostream `out`. 
 \relates Gmpzf 
 */ 
 std::ostream& print (std::ostream& out, const Gmpzf& f); 
 
-/*! 
+/*!
 reads a `double` from `in`, then converts it to a `Gmpzf`. 
 \relates Gmpzf 
 */ 

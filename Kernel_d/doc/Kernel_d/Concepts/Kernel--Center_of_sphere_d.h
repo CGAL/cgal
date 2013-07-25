@@ -10,7 +10,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the 
 center of the sphere spanned by the points in `A = tuple [first,last)`.
 \pre \f$A\f$ contains \f$d+1\f$ affinely independent points of dimension \f$d\f$. 

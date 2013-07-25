@@ -23,12 +23,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The number type. 
 */ 
 typedef unspecified_type RT; 
 
-/*! 
+/*!
 A constructor object which 
 provides the following function operator: 
 
@@ -46,7 +46,7 @@ typedef unspecified_type Construct_anchor_point_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor that takes the shrink factor as argument. 
 For meshing the boundary of the union 
 of a set of balls, the shrink factor is discarded. 
@@ -59,12 +59,12 @@ SkinSurfaceTraits_3(RT s=.5);
 /// The following functions give access to the constructor objects:
 /// @{
 
-/*! 
+/*!
 Returns the shrink factor. 
 */ 
 Regular_RT shrink_factor() const; 
 
-/*! 
+/*!
 Returns a `Construct_anchor_point_3` object. 
 */ 
 Construct_anchor_point_3 construct_anchor_point_3_object() 

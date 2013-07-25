@@ -25,73 +25,73 @@ public:
 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PT Geometric_traits; 
 
-/*! 
+/*!
 
 */ 
 typedef TDS Triangulation_data_structure; 
 
-/*! 
+/*!
 
 */ 
 typedef Geometric_traits::Periodic_3_offset_3 
 Offset; 
 
-/*! 
+/*!
 A type representing an axis-aligned cuboid. It must be a model of `PT::Iso_cuboid_3`. Used to represent the original domain. 
 */ 
 typedef Geometric_traits::Iso_cuboid_3 Iso_cuboid; 
 
-/*! 
+/*!
 Integer triple to 
 store the number of sheets in each direction of space. 
 */ 
 typedef array<int,3> Covering_sheets; 
 
-/*! 
+/*!
 
 */ 
 typedef Geometric_traits::Point_3 Point; 
 
-/*! 
+/*!
 
 */ 
 typedef Geometric_traits::Segment_3 Segment; 
 
-/*! 
+/*!
 
 */ 
 typedef Geometric_traits::Triangle_3 Triangle; 
 
-/*! 
+/*!
 
 */ 
 typedef Geometric_traits::Tetrahedron_3 Tetrahedron; 
 
-/*! 
+/*!
 Represents a point-offset pair. The point in the 
 pair lies in the original domain. 
 */ 
 typedef std::pair< Point, Offset > 
 Periodic_point; 
 
-/*! 
+/*!
 
 */ 
 typedef array< Periodic_point, 2> 
 Periodic_segment; 
 
-/*! 
+/*!
 
 */ 
 typedef array< Periodic_point, 3> 
 Periodic_triangle; 
 
-/*! 
+/*!
 
 */ 
 typedef array< Periodic_point, 4> 
@@ -106,22 +106,22 @@ Only vertices (\f$ 0\f$-faces) and cells (\f$ 3\f$-faces) are stored. Edges (\f$
 /// @{
 
 
-/*! 
+/*!
 
 */ 
 typedef Triangulation_data_structure::Vertex Vertex; 
 
-/*! 
+/*!
 
 */ 
 typedef Triangulation_data_structure::Cell Cell; 
 
-/*! 
+/*!
 
 */ 
 typedef Triangulation_data_structure::Edge Edge; 
 
-/*! 
+/*!
 
 */ 
 typedef Triangulation_data_structure::Facet Facet; 
@@ -147,47 +147,47 @@ functions.
 */
 /// @{
 
-/*! 
+/*!
 handle to a vertex 
 */ 
 typedef Triangulation_data_structure::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 handle to a cell 
 */ 
 typedef Triangulation_data_structure::Cell_handle Cell_handle; 
 
-/*! 
+/*!
 Size type (an unsigned integral type) 
 */ 
 typedef Triangulation_data_structure::size_type size_type; 
 
-/*! 
+/*!
 Difference type (a signed integral type) 
 */ 
 typedef Triangulation_data_structure::difference_type difference_type; 
 
-/*! 
+/*!
 iterator over cells 
 */ 
 typedef Triangulation_data_structure::Cell_iterator Cell_iterator; 
 
-/*! 
+/*!
 iterator over facets 
 */ 
 typedef Triangulation_data_structure::Facet_iterator Facet_iterator; 
 
-/*! 
+/*!
 iterator over edges 
 */ 
 typedef Triangulation_data_structure::Edge_iterator Edge_iterator; 
 
-/*! 
+/*!
 iterator over vertices 
 */ 
 typedef Triangulation_data_structure::Vertex_iterator Vertex_iterator; 
 
-/*! 
+/*!
 iterator over the vertices whose 
 corresponding points lie in the original domain, i.e.\ for each set 
 of periodic copies the `Unique_vertex_iterator` iterates over 
@@ -195,12 +195,12 @@ exactly one representative.
 */ 
 typedef unspecified_type Unique_vertex_iterator; 
 
-/*! 
+/*!
 circulator over all cells incident to a given edge 
 */ 
 typedef Triangulation_data_structure::Cell_circulator Cell_circulator; 
 
-/*! 
+/*!
 circulator over all facets incident to a given edge 
 */ 
 typedef Triangulation_data_structure::Facet_circulator Facet_circulator; 
@@ -210,25 +210,25 @@ typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 /// \name Geometric Iterators: 
 /// @{
 
-/*! 
+/*!
 iterator over the tetrahedra 
 corresponding to cells of the triangulation. 
 */ 
 typedef unspecified_type Periodic_tetrahedron_iterator; 
 
-/*! 
+/*!
 iterator over the triangles 
 corresponding to facets of the triangulation. 
 */ 
 typedef unspecified_type Periodic_triangle_iterator; 
 
-/*! 
+/*!
 iterator over the segments 
 corresponding to edges of the triangulation. 
 */ 
 typedef unspecified_type Periodic_segment_iterator; 
 
-/*! 
+/*!
 iterator over the points 
 corresponding to vertices of the triangulation. 
 */ 
@@ -283,7 +283,7 @@ The elements of the enum have the following meaning:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty triangulation `t` with `domain` as 
 original domain. 
 \pre `domain` is a cube. 
@@ -292,7 +292,7 @@ Periodic_3_triangulation_3
 (const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1), 
 const Geometric_traits & traits = Geometric_traits()); 
 
-/*! 
+/*!
 Copy constructor. All vertices and faces are duplicated. 
 */ 
 Periodic_3_triangulation_3 (const Periodic_3_triangulation_3 & tr); 
@@ -302,14 +302,14 @@ Periodic_3_triangulation_3 (const Periodic_3_triangulation_3 & tr);
 /// \name Assignment 
 /// @{
 
-/*! 
+/*!
 The triangulation `tr` is duplicated, and modifying the copy after the 
 duplication does not modify the original. The previous triangulation held 
 by `t` is deleted. 
 */ 
 Periodic_3_triangulation_3 & operator=(const Periodic_3_triangulation_3 & tr); 
 
-/*! 
+/*!
 The triangulations `tr` and `t` are swapped. 
 `t`.`swap(tr)` should be preferred to `t` = `tr` or to 
 `t(tr)` if `tr` is deleted after that. Indeed, there is no 
@@ -317,12 +317,12 @@ copy of cells and vertices, thus this method runs in constant time.
 */ 
 void swap(Periodic_3_triangulation_3 & tr); 
 
-/*! 
+/*!
 Deletes all vertices and all cells of `t`. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 Equality operator. Returns true iff there exist a bijection between the 
 vertices of `t1` and those of `t2` and a bijection between the cells of 
 `t1` and those of `t2`, which preserve the geometry of the 
@@ -334,7 +334,7 @@ a permutation of their vertices).
 template < class PT, class TDS1, class TDS2 > 
 bool operator==(const Periodic_3_triangulation_3<PT, TDS1> & t1, const Periodic_3_triangulation_3<PT, TDS2> & t2); 
 
-/*! 
+/*!
 The opposite of `operator==`. 
 \relates Periodic_3_triangulation_3 
 */ 
@@ -346,22 +346,22 @@ bool operator!=(const Periodic_3_triangulation_3<PT, TDS1> & t1, const Periodic_
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the geometric traits object. 
 */ 
 const Geometric_traits & geom_traits() const; 
 
-/*! 
+/*!
 Returns a const reference to the triangulation data structure. 
 */ 
 const Triangulation_data_structure & tds() const; 
 
-/*! 
+/*!
 Returns the original domain. 
 */ 
 Iso_cuboid domain() const; 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Returns the number of sheets of the covering space the triangulation is 
@@ -375,7 +375,7 @@ Covering_sheets number_of_sheets() const;
 /// \name Non const access 
 /// @{
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Changes the domain. Note that this function calls `clear()`, 
@@ -384,7 +384,7 @@ i.e., it erases the existing triangulation.
 */ 
 void set_domain(const Iso_cuboid dom); 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Returns a reference to the triangulation data structure. 
@@ -402,7 +402,7 @@ Triangulation_data_structure & tds();
 /// \name Non-constant-time queries and conversions 
 /// @{
 
-/*! 
+/*!
 The current triangulation remains a triangulation in the 1-sheeted 
 covering space even after adding points if this method returns 
 `true`. This test relies on a heuristic, i.e.\ if it answers 
@@ -413,7 +413,7 @@ criterion \cite cgal:ct-c3pt-09.)
 */ 
 bool is_extensible_triangulation_in_1_sheet_h1() const; 
 
-/*! 
+/*!
 The same as `is_extensible_triangulation_in_1_sheet_h1()` but with 
 a more precise heuristic, i.e.\ it might answer `true` in cases in which 
 `is_extensible_triangulation_in_1_sheet_h1()` would not. However, it is 
@@ -423,13 +423,13 @@ input point set as a criterion \cite cgal:ct-c3pt-09.)
 */ 
 bool is_extensible_triangulation_in_1_sheet_h2() const; 
 
-/*! 
+/*!
 Returns `true` if the current triangulation would still be a 
 triangulation in the 1-sheeted covering space, returns `false` otherwise. 
 */ 
 bool is_triangulation_in_1_sheet() const; 
 
-/*! 
+/*!
 Converts the current triangulation into the same periodic 
 triangulation in the 1-sheeted covering space. 
 
@@ -440,7 +440,7 @@ triangulation later.
 */ 
 void convert_to_1_sheeted_covering() const; 
 
-/*! 
+/*!
 Converts the current triangulation into the same periodic 
 triangulation in the 27-sheeted covering space. 
 
@@ -451,26 +451,26 @@ triangulation later.
 */ 
 void convert_to_27_sheeted_covering() const; 
 
-/*! 
+/*!
 Returns the number of vertices. Counts all vertices that are 
 representatives of the same point in \f$ \mathbb T_c^3\f$ as one vertex. 
 */ 
 size_type number_of_vertices() const; 
 
-/*! 
+/*!
 Returns the number of cells. Counts all cells that are 
 representatives of the same tetrahedron in \f$ \mathbb T_c^3\f$ as one 
 cell. 
 */ 
 size_type number_of_cells() const; 
 
-/*! 
+/*!
 Returns the number of vertices in the data structure. This is the 
 same as the number of sheets times `number_of_vertices()`. 
 */ 
 size_type number_of_stored_vertices() const; 
 
-/*! 
+/*!
 Returns the number of cells in the data structure. This is the same 
 as the number of sheets times `number_of_cells()`. 
 */ 
@@ -481,26 +481,26 @@ size_type number_of_stored_cells() const;
 /// \name Non-constant-time access functions 
 /// @{
 
-/*! 
+/*!
 Returns the number of edges. Counts all edges that are 
 representatives of the same segment in \f$ \mathbb T_c^3\f$ as one edge. 
 */ 
 size_type number_of_edges() const; 
 
-/*! 
+/*!
 Returns the number of facets. Counts all facets that are 
 representatives of the same triangle in \f$ \mathbb T_c^3\f$ as one 
 facet. 
 */ 
 size_type number_of_facets() const; 
 
-/*! 
+/*!
 Returns the number of edges in the data structure. This is the same 
 as the number of sheets times `number_of_edges()`. 
 */ 
 size_type number_of_stored_edges() const; 
 
-/*! 
+/*!
 Returns the number of facets in the data structure. This is the same 
 as the number of sheets times `number_of_facets()`. 
 */ 
@@ -511,7 +511,7 @@ size_type number_of_stored_facets() const;
 /// \name Geometric Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the periodic point given by vertex `v`. If `t` is 
 represented in the 1-sheeted covering space, the offset is always 
 zero. Otherwise `v` can correspond to a periodic copy outside 
@@ -519,7 +519,7 @@ zero. Otherwise `v` can correspond to a periodic copy outside
 */ 
 Periodic_point periodic_point(const Vertex_handle v) const; 
 
-/*! 
+/*!
 If `t` is represented in the 1-sheeted covering space, this function 
 returns the periodic point given by the \f$ i\f$-th vertex of cell 
 `c`, that is the point in the original domain and the offset of 
@@ -531,7 +531,7 @@ this offset is possibly added to another offset determining the periodic copy.
 Periodic_point periodic_point(const Cell_handle c, int i) 
 const; 
 
-/*! 
+/*!
 Returns the periodic segment formed by the two point-offset pairs 
 corresponding to the two vertices of edge `(c,i,j)`. 
 \pre \f$ i,j \in\{0,1,2,3\}\f$, \f$ i\neq j\f$ 
@@ -539,12 +539,12 @@ corresponding to the two vertices of edge `(c,i,j)`.
 Periodic_segment periodic_segment(const Cell_handle c, int 
 i, int j) const; 
 
-/*! 
+/*!
 Same as the previous method for edge `e`. 
 */ 
 Periodic_segment periodic_segment(const Edge & e) const; 
 
-/*! 
+/*!
 Returns the periodic triangle formed by the three point-offset pairs 
 corresponding to the three vertices of facet 
 `(c,i)`. The triangle is oriented so that its normal points to the 
@@ -554,12 +554,12 @@ inside of cell `c`.
 Periodic_triangle periodic_triangle(const Cell_handle c, int 
 i) const; 
 
-/*! 
+/*!
 Same as the previous method for facet `f`. 
 */ 
 Periodic_triangle periodic_triangle(const Facet & f) const; 
 
-/*! 
+/*!
 Returns the periodic tetrahedron formed by the four point-offset pairs 
 corresponding to the four vertices of `c`. 
 */ 
@@ -573,23 +573,23 @@ Periodic_tetrahedron periodic_tetrahedron(const Cell_handle c) const;
 /// only exact predicates).
 /// @{
 
-/*! 
+/*!
 Converts the `Periodic_point` `s` (point-offset pair) to the 
 corresponding `Point` in \f$ \mathbb R^3\f$. 
 */ 
 Point point(const Periodic_point & p ) const; 
 
-/*! 
+/*!
 Converts the `Periodic_segment` `s` to a `Segment`. 
 */ 
 Segment segment(const Periodic_segment & s) const; 
 
-/*! 
+/*!
 Converts the `Periodic_triangle` `t` to a `Triangle`. 
 */ 
 Triangle triangle(const Periodic_triangle & t) const; 
 
-/*! 
+/*!
 Converts the `Periodic_tetrahedron` `t` to a `Tetrahedron`. 
 */ 
 Tetrahedron tetrahedron(const Periodic_tetrahedron & t) 
@@ -600,19 +600,19 @@ const;
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 Tests whether `p` is a vertex of `t` by locating `p` in 
 the triangulation. If `p` is found, the associated vertex `v` 
 is given. 
 */ 
 bool is_vertex(const Point & p, Vertex_handle & v) const; 
 
-/*! 
+/*!
 Tests whether `v` is a vertex of `t`. 
 */ 
 bool is_vertex(Vertex_handle v) const; 
 
-/*! 
+/*!
 Tests whether `(u,v)` is an edge of `t`. If the edge is found, 
 it gives a cell `c` having this edge and the indices `i` 
 and `j` of the vertices `u` and `v` in `c`, in this order. 
@@ -621,7 +621,7 @@ and `j` of the vertices `u` and `v` in `c`, in this order.
 bool is_edge(Vertex_handle u, Vertex_handle v, 
 Cell_handle & c, int & i, int & j) const; 
 
-/*! 
+/*!
 Tests whether `((u,offu),(v,offu))` is an edge of 
 `t`. If the edge is found, it gives a cell `c` having this 
 edge and the indices `i` and `j` of the vertices `u` and 
@@ -632,7 +632,7 @@ bool is_edge(Vertex_handle u, const Offset & offu,
 Vertex_handle v, const Offset & offv, 
 Cell_handle & c, int & i, int & j) const; 
 
-/*! 
+/*!
 Tests whether `(u,v,w)` is a facet of `t`. If the facet is found, 
 it computes a cell `c` having this facet and the indices `i`, 
 `j` and `k` of the vertices `u`, `v` and `w` in `c`, 
@@ -642,7 +642,7 @@ in this order.
 bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
 Cell_handle & c, int & i, int & j, int & k) const; 
 
-/*! 
+/*!
 Tests whether `((u,offu),(v,offv),(w,offw))` 
 is a facet of `t`. If the facet is found, 
 it computes a cell `c` having this facet and the indices `i`, 
@@ -655,12 +655,12 @@ Vertex_handle v, const Offset & offv,
 Vertex_handle w, const Offset & offw, 
 Cell_handle & c, int & i, int & j, int & k) const; 
 
-/*! 
+/*!
 Tests whether `c` is a cell of `t`. 
 */ 
 bool is_cell(Cell_handle c) const; 
 
-/*! 
+/*!
 Tests whether `(u,v,w,x)` is a cell of `t`. 
 If the cell `c` is found, the method 
 computes the indices `i`, `j`, `k` and `l` of the 
@@ -673,7 +673,7 @@ Vertex_handle w, Vertex_handle x,
 Cell_handle & c, 
 int & i, int & j, int & k, int & l) const; 
 
-/*! 
+/*!
 Tests whether `(u,v,w,x)` is a cell of `t` and computes 
 this cell `c`. 
 \pre `u`, `v`, `w` and `x` are vertices of `t`. 
@@ -682,7 +682,7 @@ bool is_cell(Vertex_handle u, Vertex_handle v,
 Vertex_handle w, Vertex_handle x, 
 Cell_handle & c) const; 
 
-/*! 
+/*!
 Tests whether 
 `((u,offu),(v,offv),(w,offv),(x,offx))` is a cell of `t`. 
 If the cell `c` is found, the method 
@@ -698,7 +698,7 @@ Vertex_handle x, const Offset & offx,
 Cell_handle & c, 
 int & i, int & j, int & k, int & l) const; 
 
-/*! 
+/*!
 Tests whether 
 `((u,offu),(v,offv),(w,offv),(x,offx))` is a 
 cell of `t` and computes this cell `c`. 
@@ -716,25 +716,25 @@ Cell_handle & c) const;
 /// There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
 /// @{
 
-/*! 
+/*!
 If `v` is a vertex of `f`, then `j` is the index of 
 `v` in the cell `f.first`, and the method returns `true`. 
 */ 
 bool has_vertex(const Facet & f, Vertex_handle v, int & j) const; 
 
-/*! 
+/*!
 Same for facet `(c,i)`. Computes the index `j` of `v` in 
 `c`. 
 */ 
 bool has_vertex(Cell_handle c, int i, 
 Vertex_handle v, int & j) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_vertex(const Facet & f, Vertex_handle v) const; 
 
-/*! 
+/*!
 Same as the first two methods, but these two methods do not return the 
 index of the vertex. 
 */ 
@@ -746,17 +746,17 @@ bool has_vertex(Cell_handle c, int i, Vertex_handle v) const;
 /// The following three methods test whether two facets have the same vertices.
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const; 
 
-/*! 
+/*!
 
 */ 
 bool are_equal(const Facet & f, const Facet & g) const; 
 
-/*! 
+/*!
 
 */ 
 bool are_equal(const Facet & f, Cell_handle n, int j) const; 
@@ -771,7 +771,7 @@ bool are_equal(const Facet & f, Cell_handle n, int j) const;
 /// also provides a `nearest_vertex()` function.
 /// @{
 
-/*! 
+/*!
 
 Returns the cell that contains the query in its interior. If 
 `query` lies on a facet, an edge or on a vertex, one of the cells 
@@ -785,7 +785,7 @@ search.
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle()) const; 
 
-/*! 
+/*!
 The \f$ k\f$-face that contains `query` in its interior is 
 returned, by means of the cell returned together with `lt`, which 
 is set to the locate type of the query (`VERTEX, EDGE, FACET, CELL`) and two indices `li` and `lj` that 
@@ -808,7 +808,7 @@ Cell_handle
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle() ) const; 
 
-/*! 
+/*!
 Returns a value indicating on which side of the oriented boundary 
 of `c` the point `p` lies. More precisely, it returns: 
 
@@ -828,7 +828,7 @@ Locate_type & lt, int & li, int & lj) const;
 
 /// @} 
 
-/*! 
+/*!
 \name Traversal of the Triangulation
 
 The periodic triangulation class provides several iterators and circulators 
@@ -847,51 +847,51 @@ their value types are respectively `Cell`, `Facet`, `Edge` and
 
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary vertex. Iterates over all vertices. Returns 
 `vertices_end()` if `t`.`number_of_vertices()` \f$ =0\f$. 
 */ 
 Vertex_iterator vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Vertex_iterator vertices_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary edge. Iterates over all edges. Returns 
 `edges_end()` if `t`.`number_of_vertices()` \f$ =0\f$. 
 */ 
 Edge_iterator edges_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Edge_iterator edges_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary facet. Iterates over all facets. Returns 
 `facets_end()` if `t`.`number_of_vertices()` \f$ =0\f$. 
 */ 
 Facet_iterator facets_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Facet_iterator facets_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary cell. Iterates over all cells. Returns 
 `cells_end()` if `t`.`number_of_vertices()` \f$ =0\f$. 
 */ 
 Cell_iterator cells_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Cell_iterator cells_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary vertex. Iterates over all vertices whose 
 corresponding points lie in the original domain, i.e.\ for each set 
 of periodic copies the `Unique_vertex_iterator` iterates over 
@@ -900,7 +900,7 @@ exactly one representative. Returns `unique_vertices_end()` if
 */ 
 Unique_vertex_iterator unique_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Unique_vertex_iterator unique_vertices_end() const; 
@@ -932,7 +932,7 @@ controlled using the enum `Iterator_type`.
 
 /// @{
 
-/*! 
+/*!
 Iterates over the points of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
 \ref CGAL::Periodic_3_triangulation_3::Iterator_type.
@@ -940,7 +940,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_point_iterator periodic_points_begin(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Past-the-end iterator. Note that to match another 
 `Periodic_point_iterator` both must have the same 
 `Iterator_type` `it`. 
@@ -948,7 +948,7 @@ Past-the-end iterator. Note that to match another
 Periodic_point_iterator periodic_points_end(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Iterates over the segments of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
 \ref CGAL::Periodic_3_triangulation_3::Iterator_type.
@@ -956,7 +956,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_segment_iterator periodic_segments_begin(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Past-the-end iterator. Note that to match another 
 `Periodic_segment_iterator` both must have the same 
 `Iterator_type` `it`. 
@@ -964,7 +964,7 @@ Past-the-end iterator. Note that to match another
 Periodic_segment_iterator periodic_segments_end(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Iterates over the triangles of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
 \ref CGAL::Periodic_3_triangulation_3::Iterator_type.
@@ -972,7 +972,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_triangle_iterator periodic_triangles_begin(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Past-the-end iterator. Note that to match another 
 `Periodic_triangle_iterator` both must have the same 
 `Iterator_type` `it`. 
@@ -980,7 +980,7 @@ Past-the-end iterator. Note that to match another
 Periodic_triangle_iterator periodic_triangles_end(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Iterates over the tetrahedra of the triangulation. Its behavior is 
 defined by the `Iterator_type` `it` as described on 
 \ref CGAL::Periodic_3_triangulation_3::Iterator_type.
@@ -988,7 +988,7 @@ defined by the `Iterator_type` `it` as described on
 Periodic_tetrahedron_iterator periodic_tetrahedra_begin(Iterator_type it = 
 STORED) const; 
 
-/*! 
+/*!
 Past-the-end iterator. Note that to match another 
 `Periodic_tetrahedron_iterator` both must have the same 
 `Iterator_type` `it`. 
@@ -1005,57 +1005,57 @@ STORED) const;
 /// the cells traversed.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary cell incident to `e`. 
 */ 
 Cell_circulator incident_cells(Edge e) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Cell_circulator incident_cells(Cell_handle c, int i, int j) const; 
 
-/*! 
+/*!
 Starts at cell `start`. 
 \pre `start` is incident to `e`. 
 */ 
 Cell_circulator incident_cells(Edge e, Cell_handle start) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Cell_circulator incident_cells(Cell_handle c, int i, int j, 
 Cell_handle start) const; 
 
-/*! 
+/*!
 Starts at an arbitrary facet incident to `e`. 
 */ 
 Facet_circulator incident_facets(Edge e) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Facet_circulator incident_facets(Cell_handle c, int i, int j) const; 
 
-/*! 
+/*!
 Starts at facet `start`. 
 \pre `start` is incident to `e`. 
 */ 
 Facet_circulator incident_facets(Edge e, Facet start) const; 
 
-/*! 
+/*!
 Starts at facet of index `f` in `start`. 
 */ 
 Facet_circulator incident_facets(Edge e, Cell_handle start, int f) 
 const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Facet_circulator incident_facets(Cell_handle c, int i, int j, 
 Facet start) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c` and facet `(start,f)`. 
 */ 
 Facet_circulator incident_facets(Cell_handle c, int i, int j, 
@@ -1066,7 +1066,7 @@ Cell_handle start, int f) const;
 /// \name Traversal of the Incident Cells and Facets, and the Adjacent Vertices of a Given Vertex
 /// @{
 
-/*! 
+/*!
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
 iterator `cells`. Returns the resulting output iterator. 
 \pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`. 
@@ -1075,7 +1075,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-/*! 
+/*!
 Copies the `Facet`s incident to `v` to the output iterator 
 `facets`. 
 Returns the resulting output iterator. 
@@ -1085,7 +1085,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_facets(Vertex_handle v, OutputIterator facets) const; 
 
-/*! 
+/*!
 Copies the `Edge`s incident to `v` to the output iterator 
 `edges`. 
 Returns the resulting output iterator. 
@@ -1095,7 +1095,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_edges(Vertex_handle v, OutputIterator edges) const; 
 
-/*! 
+/*!
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the 
 output iterator `vertices`. Returns the resulting output iterator. 
 \pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`. 
@@ -1104,7 +1104,7 @@ template <class OutputIterator>
 OutputIterator 
 adjacent_vertices(Vertex_handle v, OutputIterator vertices) const; 
 
-/*! 
+/*!
 Returns the degree of a vertex, that is, the number of adjacent vertices. 
 \pre `v` \f$ \neq\f$ `Vertex_handle()`, `t`.`is_vertex(v)`. 
 */ 
@@ -1115,20 +1115,20 @@ size_type degree(Vertex_handle v) const;
 /// \name Traversal Between Adjacent Cells 
 /// @{
 
-/*! 
+/*!
 Returns the index of `c` in its \f$ i^{th}\f$ neighbor. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 int mirror_index(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Returns the vertex of the \f$ i^{th}\f$ neighbor of `c` that is opposite to 
 `c`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 Vertex_handle mirror_vertex(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Returns the same facet viewed from the other adjacent cell. 
 */ 
 Facet mirror_facet(Facet f) const; 
@@ -1144,7 +1144,7 @@ Facet mirror_facet(Facet f) const;
 /// \cgalAdvancedEnd
 /// @{
 
-/*! 
+/*!
 Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref P3Triangulation3secintro). 
@@ -1155,7 +1155,7 @@ are printed.
 bool 
 is_valid(bool verbose = false) const; 
 
-/*! 
+/*!
 Checks the combinatorial validity of the cell by calling the 
 `is_valid` method of the `Triangulation_data_structure` cell 
 class. Also checks the geometric validity of `c`, if `c` is 
@@ -1172,7 +1172,7 @@ is_valid(Cell_handle c, bool verbose = false) const;
 }; /* end Periodic_3_triangulation_3 */
 
 
-/*! 
+/*!
 Reads a triangulation from `is` and stores it in `t`. 
 \pre `is` has the below described format. 
 
@@ -1196,7 +1196,7 @@ corresponds to the preceding list of cells
 */ 
 istream& operator>> (istream& is, Periodic_3_triangulation_3 &t); 
 
-/*! 
+/*!
 Writes the triangulation `t` into `os`. 
 
 The information in the `iostream` is: 

@@ -78,17 +78,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `Traits::Point `. 
 */ 
 typedef unspecified_type Point ; 
 
-/*! 
+/*!
 typedef to `Traits::Circle`. 
 */ 
 typedef unspecified_type Circle; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>BidirectionalIterator</I> 
 with value type `Point`. Used to access the points 
@@ -96,7 +96,7 @@ of the smallest enclosing circle.
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the support points 
@@ -114,7 +114,7 @@ typedef unspecified_type Support_point_iterator;
 /// \f$ S\f$ of \f$ P\f$.
 /// @{
 
-/*! 
+/*!
 
 initializes `min_circle` to \f$ mc(P)\f$ with \f$ P\f$ being the set of points 
 in the range [`first`,`last`). If `randomize` is 
@@ -133,7 +133,7 @@ bool randomize,
 Random& random = CGAL::default_random, 
 const Traits& traits = Traits() ); 
 
-/*! 
+/*!
 
 initializes `min_circle` to 
 \f$ mc(\emptyset)\f$, the empty set. 
@@ -141,7 +141,7 @@ initializes `min_circle` to
 */ 
 Min_circle_2( const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_circle` to \f$ mc(\{p\})\f$, the set \f$ \{p\}\f$. 
 \post `min_circle.is_degenerate()` = `true`. 
@@ -149,7 +149,7 @@ initializes `min_circle` to \f$ mc(\{p\})\f$, the set \f$ \{p\}\f$.
 Min_circle_2( const Point& p, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_circle` to \f$ mc(\{p1,p2\})\f$, the circle with diameter 
 equal to the segment connecting \f$ p1\f$ and \f$ p2\f$. 
@@ -158,7 +158,7 @@ Min_circle_2( const Point& p1,
 const Point& p2, 
 const Traits& traits = Traits()); 
 
-/*! 
+/*!
 
 initializes `min_circle` to \f$ mc(\{p1,p2,p3\})\f$. 
 */ 
@@ -172,43 +172,43 @@ const Traits& traits = Traits());
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the number of points of `min_circle`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `min_circle`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first point of `min_circle`. 
 */ 
 Point_iterator points_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Point_iterator points_end() const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first support point of `min_circle`. 
 */ 
 Support_point_iterator support_points_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_iterator support_points_end() const; 
 
-/*! 
+/*!
 
 returns the `i`-th support point of `min_circle`. Between two 
 modifying operations (see below) any call to 
@@ -218,7 +218,7 @@ the same point.
 */ 
 const Point& support_point( int i) const; 
 
-/*! 
+/*!
 
 returns the current circle of `min_circle`. 
 */ 
@@ -232,7 +232,7 @@ const Circle& circle( ) const;
 /// \E^2\f$.
 /// @{
 
-/*! 
+/*!
 
 returns `CGAL::ON_BOUNDED_SIDE`, 
 `CGAL::ON_BOUNDARY`, or 
@@ -242,33 +242,33 @@ inside, on the boundary of, or properly outside of `min_circle`, resp.
 CGAL::Bounded_side 
 bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly inside `min_circle`. 
 */ 
 bool has_on_bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies on the boundary 
 of `min_circle`. 
 */ 
 bool has_on_boundary( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly outside of `min_circle`. 
 */ 
 bool has_on_unbounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_circle` is empty (this implies 
 degeneracy). 
 */ 
 bool is_empty( ) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_circle` is degenerate, 
 i.e.\ if `min_circle` is empty or equal to a single point, equivalently 
@@ -286,14 +286,14 @@ bool is_degenerate( ) const;
 /// itself.
 /// @{
 
-/*! 
+/*!
 
 inserts `p` into `min_circle` and recomputes the smallest 
 enclosing circle. 
 */ 
 void insert( const Point& p); 
 
-/*! 
+/*!
 
 inserts the points in the range [`first`,`last`) 
 into `min_circle` and recomputes the smallest enclosing circle by 
@@ -305,7 +305,7 @@ template < class InputIterator >
 void insert( InputIterator first, 
 InputIterator last ); 
 
-/*! 
+/*!
 
 deletes all points in `min_circle` and sets `min_circle` to the empty set. 
 \post `min_circle.is_empty()` = `true`. 
@@ -321,7 +321,7 @@ void clear( );
 /// <LI>\f$ S\f$ is minimal, i.e.\ no support point is redundant. </UL>
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff `min_circle` is valid. If `verbose` 
 is `true`, some messages concerning the performed checks 
@@ -337,7 +337,7 @@ int level = 0 ) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 
@@ -347,7 +347,7 @@ const Traits& traits( ) const;
 
 }; /* end Min_circle_2 */
 
-/*! 
+/*!
 
 writes `min_circle` to output stream `os`. 
 \cgalRequires The output operator is defined for `Point` (and for `Circle`, if pretty printing is used). 
@@ -357,7 +357,7 @@ std::ostream&
 operator << ( std::ostream& os, 
 const Min_circle_2<Traits>& min_circle); 
 
-/*! 
+/*!
 
 reads `min_circle` from input stream `is`. 
 \cgalRequires The input operator is defined for `Point`. 

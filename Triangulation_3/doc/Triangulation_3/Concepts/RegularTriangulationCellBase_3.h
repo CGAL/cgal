@@ -46,13 +46,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Must be the same as the point type `TriangulationTraits_3::Point_3` 
 defined by the geometric traits class of the triangulation. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 Iterator of value type Point 
 */ 
 typedef unspecified_type Point_iterator; 
@@ -62,12 +62,12 @@ typedef unspecified_type Point_iterator;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns an iterator pointing to the first hidden point. 
 */ 
 Point_iterator hidden_points_begin(); 
 
-/*! 
+/*!
 Returns a past-the-end iterator. 
 */ 
 Point_iterator hidden_points_end(); 
@@ -77,7 +77,7 @@ Point_iterator hidden_points_end();
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 Adds `p` to the set of hidden points of the cell. 
 */ 
 void hide_point(const Point & p); 

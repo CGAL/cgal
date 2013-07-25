@@ -41,7 +41,7 @@ public:
 /// A model of the concept `TriangulationDSCellBase_3` has to provide the following types.
 /// @{
 
-/*! 
+/*!
 This template class has to define a type `Rebind_TDS<TDS2>::%Other` which is the 
 <I>rebound</I> cell, that is, the one whose `Triangulation_data_structure` 
 will be the actually used one. `Rebind_TDS<TDS2>::%Other` will be the real base 
@@ -51,22 +51,22 @@ class of `Triangulation_data_structure_3::Cell`.
 template <typename TDS2> 
 using Rebind_TDS = unspecified_type;
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3 Triangulation_data_structure; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Cell_data TDS_data; 
@@ -76,19 +76,19 @@ typedef TriangulationDataStructure_3::Cell_data TDS_data;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor 
 */ 
 Cell_base(); 
 
-/*! 
+/*!
 Initializes the vertices with `v0, v1, v2, v3`. Neighbors are 
 initialized to the default constructed handle. 
 */ 
 Cell_base( Vertex_handle v0, Vertex_handle v1, 
 Vertex_handle v2, Vertex_handle v3); 
 
-/*! 
+/*!
 Initializes the vertices with `v0, v1, v2, v3` and the neighbors with 
 `n0, n1, n2, n3`. 
 */ 
@@ -102,47 +102,47 @@ Cell_handle n2, Cell_handle n3);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the vertex `i` of `c`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 Vertex_handle vertex(int i) const; 
 
-/*! 
+/*!
 Returns the index of `v`. 
 \pre `v` is a vertex of `c` 
 */ 
 int index(Vertex_handle v) const; 
 
-/*! 
+/*!
 True iff `v` is a vertex of `c`. 
 */ 
 bool has_vertex(Vertex_handle v); 
 
-/*! 
+/*!
 Returns `true` if `v` is a vertex of `c`, and 
 computes its index `i` in `c`. 
 */ 
 bool has_vertex(Vertex_handle v, int & i) const; 
 
-/*! 
+/*!
 Returns the neighbor `i` of `c`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 Cell_handle neighbor(int i) const; 
 
-/*! 
+/*!
 Returns the index of cell `n` in `c`. 
 \pre `n` is a neighbor of `c`. 
 */ 
 int index(Cell_handle n) const; 
 
-/*! 
+/*!
 Returns `true` if `n` is a neighbor of `c`. 
 */ 
 bool has_neighbor(Cell_handle n); 
 
-/*! 
+/*!
 Returns `true` if `n` is a neighbor of `c`, and 
 computes its index `i` in `c`. 
 */ 
@@ -153,35 +153,35 @@ bool has_neighbor(Cell_handle n, int & i) const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 Sets vertex `i` to `v`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 void set_vertex(int i, Vertex_handle v); 
 
-/*! 
+/*!
 Sets the vertices to the default constructed handle. 
 */ 
 void set_vertices(); 
 
-/*! 
+/*!
 Sets the vertices. 
 */ 
 void set_vertices( Vertex_handle v0, Vertex_handle v1, 
 Vertex_handle v2, Vertex_handle v3); 
 
-/*! 
+/*!
 Sets neighbor `i` to `n`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 void set_neighbor(int i, Cell_handle n); 
 
-/*! 
+/*!
 Sets the neighbors to the default constructed handle. 
 */ 
 void set_neighbors(); 
 
-/*! 
+/*!
 Sets the neighbors. 
 */ 
 void set_neighbors(Cell_handle n0, Cell_handle n1, 
@@ -192,7 +192,7 @@ Cell_handle n2, Cell_handle n3);
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
 Performs any desired geometric test on a cell. 
 
 \cgalDebugFunction
@@ -215,12 +215,12 @@ bool is_valid(bool verbose = false, int level = 0) const;
 /// \cgalAdvancedEnd
 /// @{
 
-/*! 
+/*!
 
 */ 
 void * for_compact_container() const; 
 
-/*! 
+/*!
 
 */ 
 void * & for_compact_container(); 
@@ -235,12 +235,12 @@ void * & for_compact_container();
 /// \cgalAdvancedEnd
 /// @{
 
-/*! 
+/*!
 
 */ 
 TDS_data& tds_data(); 
 
-/*! 
+/*!
 
 */ 
 const TDS_data& tds_data() const; 
@@ -250,12 +250,12 @@ const TDS_data& tds_data() const;
 /// \name I/O
 /// @{
 
-/*! 
+/*!
 Inputs the possible non combinatorial information given by the cell. 
 */ 
 istream& operator>> (istream& is, TriangulationDSCellBase_3 & c); 
 
-/*! 
+/*!
 Outputs the possible non combinatorial information given by the cell. 
 */ 
 ostream& operator<< (ostream& os, const TriangulationDSCellBase_3 & c); 

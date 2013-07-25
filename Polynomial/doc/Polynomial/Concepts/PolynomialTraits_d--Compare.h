@@ -24,17 +24,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Comparison_result result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d second_argument_type; 
@@ -44,7 +44,7 @@ typedef PolynomialTraits_d::Polynomial_d second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Compares two polynomials. 
 */ 
 result_type operator()(first_argument_type f, 

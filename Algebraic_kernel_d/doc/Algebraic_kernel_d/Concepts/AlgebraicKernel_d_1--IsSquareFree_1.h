@@ -19,12 +19,12 @@ public:
 /// A model of this type must provide:
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bool result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 argument_type; 
@@ -34,7 +34,7 @@ typedef AlgebraicKernel_d_1::Polynomial_1 argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns true if \f$ p\f$ is square free. 
 */ 
 result_type operator()(argument_type p); 

@@ -143,7 +143,7 @@ public:
   */
   typedef Geom_traits::Iso_rectangle_2 Iso_rectangle;
 
-  /*! 
+  /*!
   integer tuple to store the number of sheets in each direction of space.
   */
   typedef array<int, 2> Covering_sheets;
@@ -435,7 +435,7 @@ public:
 /// \cgalAdvancedEnd
 /// @{
 
-  /*!  
+  /*!
   \cgalAdvancedBegin
   Returns a reference to the triangulation data structure.
   \cgalAdvancedEnd

@@ -33,14 +33,14 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Value to specify whether a point should be in the interior 
 of a segment, or its minimal point, 
 or its maximal point in lexicographic order. 
 */
 enum Site_of_point { POINT_IN_INTERIOR = 0, MIN_ENDPOINT = -1, MAX_ENDPOINT = 1 };
 
-/*! 
+/*!
 the type for bivariate polynomials, 
 with innermost coefficient type `Coefficient`. 
 Constitutes a model of the concept `Polynomial_d` 
@@ -50,19 +50,19 @@ with two variables.
 */ 
 typedef unspecified_type Polynomial_2; 
 
-/*! 
+/*!
 model for the concept 
 `AlgebraicKernel_1` 
 */ 
 typedef unspecified_type Algebraic_kernel_1; 
 
-/*! 
+/*!
 represents coordinates of points. 
 Typedef from `Algebraic_kernel_1::Algebraic_real_1` 
 */ 
 typedef unspecified_type Algebraic_real_1; 
 
-/*! 
+/*!
 Typedef from `Algebraic_kernel_1::Bound` 
 */ 
 typedef unspecified_type Bound; 
@@ -72,17 +72,17 @@ typedef unspecified_type Bound;
 /// \name Accessing functor objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_curve_2 construct_curve_2_object() const; 
 
-/*! 
+/*!
 
 */ 
 Construct_point_2 construct_point_2_object() const; 
 
-/*! 
+/*!
 
 */ 
 Construct_x_monotone_segment_2 construct_x_monotone_segment_2_object() const; 
@@ -99,13 +99,13 @@ public:
 /// \name Object Creation Functors 
 /// @{
 
-/*! 
+/*!
 Returns a `Curve_2` object that represents the curve defined by 
 the polynomial `p` 
 */ 
 Curve_2 operator() (Polynomial_2 p); 
 
-/*! 
+/*!
 Returns a `Curve_2` object specified by `s`. 
 The passed string represents the defining polynomial of the curve 
 and must be given in a MAPLE-readable format using "x" as first 
@@ -130,7 +130,7 @@ public:
 /// \name Object Creation Functors 
 /// @{
 
-/*! 
+/*!
 Returns a `Point_2` object that represents the `arcno`-th 
 point in the fiber of `cv` at \f$ x\f$-coordinate `x`, 
 counted from the bottom, starting with zero. 
@@ -140,29 +140,29 @@ in the fiber of `cv` at `x`.)
 */ 
 Point_2 operator() (Algebraic_real_1 x, Curve_2 cv, int arcno); 
 
-/*! 
+/*!
 Returns a `Point_2` object that represents the 
 point on `xcv` at \f$ x\f$-coordinate `x` 
 \pre (`x` is in the \f$ x\f$-range of `xcv`.) 
 */ 
 Point_2 operator() (Algebraic_real_1 x, X_monotone_curve_2 xcv); 
 
-/*! 
+/*!
 Returns a `Point_2` object that represents (x,y) 
 */ 
 Point_2 operator() (Algebraic_real_1 x, Algebraic_real_1 y); 
 
-/*! 
+/*!
 Returns a `Point_2` object that represents (x,y) 
 */ 
 Point_2 operator() (Coefficient x, Coefficient y); 
 
-/*! 
+/*!
 Returns a `Point_2` object that represents (x,y) 
 */ 
 Point_2 operator() (Bound x, Bound y); 
 
-/*! 
+/*!
 Returns a `Point_2` object that represents (x,y) 
 */ 
 Point_2 operator() (int x, int y); 
@@ -181,7 +181,7 @@ public:
 /// \name Object Creation Functors 
 /// @{
 
-/*! 
+/*!
 Writes a sequence of `X_monotone_curve_2` objects (terminal 
 segments) into `out`. These terminal segments compose an 
 \f$ x\f$-monotone (or vertical) segment of the curve `cv` that 
@@ -196,7 +196,7 @@ template<class OutputIterator> OutputIterator
 operator() (Curve_2 cv, Point_2 end_min, Point_2 end_max, 
 OutputIterator out); 
 
-/*! 
+/*!
 Writes a sequence of `X_monotone_curve_2` objects into `out`. 
 These segments form an \f$ x\f$-monotone (or vertical) 
 segment of the curve `cv`. 
@@ -220,7 +220,7 @@ operator() (Curve_2 cv, Point_2 p,
 Site_of_point site_of_p, 
 OutputIterator out); 
 
-/*! 
+/*!
 Writes a sequence of `X_monotone_curve_2` objects into `out`. 
 These segments form a straight-line segment connecting 
 the points `p` and `q`. If `p` and `q` share the 
@@ -256,7 +256,7 @@ public:
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 returns the defining polynomial of the curve. 
 */ 
 Polynomial_2 polynomial () const; 
@@ -295,12 +295,12 @@ public:
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 returns the \f$ x\f$-coordinate of `p`. 
 */ 
 Algebraic_real_1 x () const; 
 
-/*! 
+/*!
 returns the \f$ y\f$-coordinates of `p`. 
 
 <B>Attention:</B> As described above, points are not stored 
@@ -311,17 +311,17 @@ recommended to avoid to call this function as much as possible.
 */ 
 Algebraic_real_1 y () const; 
 
-/*! 
+/*!
 returns a `Curve_2` instance that `p`is part of. 
 */ 
 Curve_2 curve () const; 
 
-/*! 
+/*!
 returns the arc number of `p`. 
 */ 
 int arcno () const; 
 
-/*! 
+/*!
 returns double-approximations of the \f$ x\f$- and \f$ y\f$-coordinates. 
 */ 
 std::pair<double,double> to_double () const; 
@@ -359,33 +359,33 @@ public:
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 returns the supporting algebraic curve of `s`. 
 */ 
 Curve_2 curve () const; 
 
-/*! 
+/*!
 returns whether `s` is a vertical segment. 
 */ 
 bool is_vertical () const; 
 
-/*! 
+/*!
 returns whether `s` has a finite endpoint on the left 
 */ 
 bool is_finite (CGAL::Arr_curve_end ce) const; 
 
-/*! 
+/*!
 \pre (The corresponding curve end is finite) 
 */ 
 Point_2 curve_end (CGAL::Arr_curve_end ce) const; 
 
-/*! 
+/*!
 returns the arc number of the segment. 
 \pre (The segment is non-vertical) 
 */ 
 int arcno () const; 
 
-/*! 
+/*!
 returns the \f$ x\f$-coordinate of a vertical segment. 
 \pre (The segment is vertical) 
 */ 

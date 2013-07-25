@@ -25,7 +25,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 `Traits` is a model of the concept required by the function that checks 
 for validity of the polygon. 
@@ -38,7 +38,7 @@ PolygonIsValid(const Traits tr);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns `true` iff the points of type `Traits::Point_2` 
 in the range [`first`,`beyond`) define a valid polygon. 

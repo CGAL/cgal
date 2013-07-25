@@ -48,7 +48,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Construction from a bouding polyhedral surface which should be closed, and free of intersections.
 The inside of `bounding_polyhedron` will be meshed.
 */ 

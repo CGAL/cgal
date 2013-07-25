@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Construct a `Kinetic::Default_simulator` which will process events between times start and end (events outside this window will be discarded). 
 */ 
 Default_simulator(const Time start=Time(0), const Time end= Time::infinity()); 

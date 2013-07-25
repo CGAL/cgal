@@ -38,18 +38,18 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the alpha shape traits type. It has to derive from a triangulation
 traits class. For example `Dt::Point` is a Point class.
 */ 
 typedef unspecified_type Gt; 
 
-/*! 
+/*!
 the number type of alpha. 
 */ 
 typedef Gt::FT FT; 
 
-/*! 
+/*!
 Enum to classify the simplices of the underlying 
 triangulation with respect to a given alpha value. 
 
@@ -68,19 +68,19 @@ enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty fixed alpha shape and sets the alpha value to `alpha`. 
 */ 
 Fixed_alpha_shape_3(FT alpha = 0); 
 
-/*! 
+/*!
 Builds a fixed alpha shape from the triangulation `dt`, 
 and sets the alpha value to `alpha`. 
 \attention This operation destroys the triangulation. 
 */ 
 Fixed_alpha_shape_3(Dt& dt,FT alpha = 0); 
 
-/*! 
+/*!
 Builds a fixed alpha shape for the points in the range 
 `[first,last)` and sets the alpha value to `alpha`. 
 \tparam InputIterator must be an input iterator with value type `Point` (the type point of the underlying triangulation.) 
@@ -96,7 +96,7 @@ const FT& alpha = 0);
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 
 Inserts point p in the underlying triangulation and returns the corresponding vertex. 
 The optional argument `start` is used as a starting place for the search. 
@@ -106,7 +106,7 @@ to the new ones are updated.
 */ 
 Vertex_handle insert (Point p,Cell_handle start = Cell_handle()); 
 
-/*! 
+/*!
 
 Removes the vertex v from the underlying triangulation. 
 The classification types of new simplices and their incident faces are set or reset.
@@ -114,7 +114,7 @@ The classification types of new simplices and their incident faces are set or re
 */ 
 void remove (Vertex_handle v); 
 
-/*! 
+/*!
 Clears the structure. 
 */ 
 void 
@@ -125,40 +125,40 @@ clear();
 /// \name Query Functions 
 /// @{
 
-/*! 
+/*!
 Returns the \f$ \alpha\f$-value. 
 */ 
 const FT& 
 get_alpha(void) const; 
 
-/*! 
+/*!
 Classifies the cell `c` of the underlying triangulation in the alpha complex. 
 */ 
 Classification_type 
 classify(Cell_handle c) const; 
 
-/*! 
+/*!
 Classifies the facet `f` of the underlying triangulation in the alpha complex. 
 */ 
 Classification_type classify(Facet f) const; 
 
-/*! 
+/*!
 Classifies the facet of the cell `f` opposite to the vertex with index 
 `i` of the underlying triangulation in the alpha complex. 
 */ 
 Classification_type classify(Cell_handle f, int i) const; 
 
-/*! 
+/*!
 Classifies the edge `e` of the underlying triangulation in the alpha complex. 
 */ 
 Classification_type classify(const Edge& e) const; 
 
-/*! 
+/*!
 Classifies the vertex `v` of the underlying triangulation in the alpha complex. 
 */ 
 Classification_type classify(Vertex_handle v) const; 
 
-/*! 
+/*!
 Writes the cells which are of type `type` in the alpha complex 
 to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -167,7 +167,7 @@ of the output sequence.
 template<class OutputIterator> 
 OutputIterator get_alpha_shape_cells(OutputIterator it, Classification_type type); 
 
-/*! 
+/*!
 Writes the facets which are of type `type` in the alpha complex 
 to the sequence pointed to by the output iterator `it`. Returns past the end 
 of the output sequence. 
@@ -175,7 +175,7 @@ of the output sequence.
 template<class OutputIterator> 
 OutputIterator get_alpha_shape_facets(OutputIterator it, Classification_type type); 
 
-/*! 
+/*!
 Writes the edges which are of type `type` in the alpha complex 
 to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -184,7 +184,7 @@ of the output sequence.
 template<class OutputIterator> 
 OutputIterator get_alpha_shape_edges(OutputIterator it, Classification_type type); 
 
-/*! 
+/*!
 Writes the vertices which are of type `type` in the alpha complex 
 to the sequence pointed to by the output iterator `it`. Returns past the end 
 of the output sequence. 
@@ -196,7 +196,7 @@ OutputIterator get_alpha_shape_vertices(OutputIterator it, Classification_type t
 
 }; /* end Fixed_alpha_shape_3 */
 
-/*! 
+/*!
 Inserts the fixed alpha shape `A` into the stream `os`. 
 
 Defined in `CGAL/IO/io.h`

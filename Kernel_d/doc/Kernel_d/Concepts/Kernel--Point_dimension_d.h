@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the dimension of \f$ p\f$. 
 */ 
 int operator()(const Kernel_d::Point_d& 

@@ -52,27 +52,27 @@ public:
 /// The following predicates and constructor types are provided
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Point_3<K> Point_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Segment_3<K> Segment_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Triangle_3<K> Triangle_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Line_3<K> Line_2; 
 
-/*! 
+/*!
 A constructor object for 
 `Segment_2`. Provides : 
 
@@ -82,7 +82,7 @@ which constructs a segment from two points.
 */ 
 typedef unspecified_type Construct_segment_2; 
 
-/*! 
+/*!
 A constructor object for 
 `Triangle_2`. Provides : 
 
@@ -92,7 +92,7 @@ which constructs a triangle from three points.
 */ 
 typedef unspecified_type Construct_triangle_2; 
 
-/*! 
+/*!
 A constructor object for 
 `Line_2`. Provides : 
 
@@ -102,7 +102,7 @@ which constructs a line from two points.
 */ 
 typedef unspecified_type Construct_line_2; 
 
-/*! 
+/*!
 A construction object. 
 Provides the operator : 
 
@@ -112,7 +112,7 @@ and the projection of `l`.
 */ 
 typedef unspecified_type Compute_squared_distance_2; 
 
-/*! 
+/*!
 A construction object. 
 Provides the operator : 
 
@@ -128,7 +128,7 @@ middle of the segment `p1``p2`.
 */ 
 typedef unspecified_type Intersect_2; 
 
-/*! 
+/*!
 Predicate object. Provides 
 the operator : 
 
@@ -141,7 +141,7 @@ according to the
 */ 
 typedef unspecified_type Compare_x_2; 
 
-/*! 
+/*!
 Predicate object. Provides 
 the operator : 
 
@@ -154,7 +154,7 @@ according to the
 */ 
 typedef unspecified_type Compare_y_2; 
 
-/*! 
+/*!
 Predicate object. Provides 
 the operator : 
 
@@ -168,7 +168,7 @@ oriented line `pq`.
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 Predicate object. 
 Provides the operator : 
 `Oriented_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)` 
@@ -181,7 +181,7 @@ and \f$ r\f$.
 */ 
 typedef unspecified_type Side_of_oriented_circle_2; 
 
-/*! 
+/*!
 Predicate object. Provides 
 the operator : 
 
@@ -197,19 +197,19 @@ typedef unspecified_type Compare_distance_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 default constructor. 
 */ 
 Triangulation_euclidean_traits_xy_3(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Triangulation_euclidean_traits_xy_3( 
 Triangulation_euclidean_traits_xy_3 tr); 
 
-/*! 
+/*!
 Assignment operator. 
 */ 
 Triangulation_euclidean_traits_xy_3 operator= 
@@ -221,54 +221,54 @@ Triangulation_euclidean_traits_xy_3 operator=
 /// The following access functions are provided 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_segment_2 construct_segment_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_triangle_2 construct_triangle_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_line_2 construct_line_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Comparison_x_2 compare_x_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Comparison_y_2 compare_y_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Side_of_oriented_circle_2 
 side_of_oriented_circle_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_distance_2 
 compare_distance_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Intersect_2 intersect_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compute_squared_distance_2 compute_squared_distance_2_object(); 

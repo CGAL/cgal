@@ -38,7 +38,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Substitutes each variable of \f$ p\f$ by the values given in the iterator range, 
 where \f$ p\f$ is interpreted as a homogeneous polynomial in all variables. 

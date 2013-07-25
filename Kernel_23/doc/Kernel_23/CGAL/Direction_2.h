@@ -24,27 +24,27 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces the direction `d` of vector `v`. 
 */ 
 Direction_2(const Vector_2<Kernel> &v); 
 
-/*! 
+/*!
 introduces the direction `d` of line `l`. 
 */ 
 Direction_2(const Line_2<Kernel> &l); 
 
-/*! 
+/*!
 introduces the direction `d` of ray `r`. 
 */ 
 Direction_2(const Ray_2<Kernel> &r); 
 
-/*! 
+/*!
 introduces the direction `d` of segment `s`. 
 */ 
 Direction_2(const Segment_2<Kernel> &s); 
 
-/*! 
+/*!
 introduces a direction `d` passing through the origin 
 and the point with %Cartesian coordinates \f$ (x, y)\f$. 
 */ 
@@ -58,53 +58,53 @@ Direction_2(const Kernel::RT &x, const Kernel::RT &y);
 /// counterclockwise order.
 /// @{
 
-/*! 
+/*!
 returns values, such that `d``== Direction_2<Kernel>(delta(0),delta(1))`. 
 \pre \f$ 0 \leq i \leq1\f$. 
 */ 
 Kernel::RT delta(int i) const; 
 
-/*! 
+/*!
 returns `delta(0)`. 
 */ 
 Kernel::RT dx() const; 
 
-/*! 
+/*!
 returns `delta(1)`. 
 */ 
 Kernel::RT dy() const; 
 
-/*! 
+/*!
 
 */ 
 bool operator==(const Direction_2<Kernel> &e) const; 
 
-/*! 
+/*!
 
 */ 
 bool operator!=(const Direction_2<Kernel> &e) const; 
 
-/*! 
+/*!
 
 */ 
 bool operator<(const Direction_2<Kernel> &e) const; 
 
-/*! 
+/*!
 
 */ 
 bool operator>(const Direction_2<Kernel> &e) const; 
 
-/*! 
+/*!
 
 */ 
 bool operator<=(const Direction_2<Kernel> &e) const; 
 
-/*! 
+/*!
 
 */ 
 bool operator>=(const Direction_2<Kernel> &e) const; 
 
-/*! 
+/*!
 returns true, iff `d` is not equal to `d1`, and 
 while rotating counterclockwise starting at `d1`, 
 `d` is reached strictly before `d2` is reached. 
@@ -115,7 +115,7 @@ also `d` == `d1`.
 bool counterclockwise_in_between(const Direction_2<Kernel> &d1, 
 const Direction_2<Kernel> &d2) const; 
 
-/*! 
+/*!
 The direction opposite to `d`. 
 */ 
 Direction_2<Kernel> operator-() const; 
@@ -125,12 +125,12 @@ Direction_2<Kernel> operator-() const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 returns a vector that has the same direction as `d`. 
 */ 
 Vector_2<Kernel> vector() const; 
 
-/*! 
+/*!
 returns the direction obtained by applying `t` on `d`. 
 */ 
 Direction_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 

@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Given a point `p`, an \f$ x\f$-monotone curve `xcv`, and an 
 enumeration `ce` that specifies either the minimum or the 
 maximum end of the curve where the curve has a vertical asymptote, 
@@ -35,7 +35,7 @@ Comparison_result operator()(const ArrTraits::Point_2& p,
 const ArrTraits::X_monotone_curve_2& xcv, 
 Arr_curve_end ce); 
 
-/*! 
+/*!
 Given two \f$ x\f$-monotone curves `xcv1` and `xcv2` and two 
 indices `ce1` and `ce2` that specify either the minimum 
 or the maximum ends of `xcv1` and `xcv2`, respectively, 

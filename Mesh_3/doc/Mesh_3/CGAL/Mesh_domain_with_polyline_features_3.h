@@ -29,12 +29,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `Corner_index` type. 
 */ 
 typedef int Corner_index; 
 
-/*! 
+/*!
 `Curve_segment_index` type. 
 */ 
 typedef int Curve_segment_index; 
@@ -44,7 +44,7 @@ typedef int Curve_segment_index;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor. Forwards the arguments to the constructor 
 of the base class. 
 */ 
@@ -56,7 +56,7 @@ Mesh_domain_with_polyline_features_3(T ...t);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Add 1-dimensional features in the domain. `InputIterator` value type must 
 be a model of the concept `MeshPolyline_3`. 
@@ -64,7 +64,7 @@ be a model of the concept `MeshPolyline_3`.
 template <typename InputIterator> 
 void add_features(InputIterator begin, InputIterator beyond); 
 
-/*! 
+/*!
 
 Add 1-dimensional features in the domain with their incidences with 2-dimensional 
 features of the domain. The `InputIterator` value type must be 

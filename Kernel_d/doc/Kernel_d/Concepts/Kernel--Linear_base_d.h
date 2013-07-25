@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes a basis of the linear space 
 spanned by the vectors in `A = tuple [first,last)` and returns 
 it via an iterator range starting in `result`. The returned 

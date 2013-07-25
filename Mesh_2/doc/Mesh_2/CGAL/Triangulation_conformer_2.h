@@ -78,7 +78,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Create a new conforming maker, working on `t`. 
 */ 
 Triangulation_conformer_2(CDT& t); 
@@ -93,7 +93,7 @@ Triangulation_conformer_2(CDT& t);
 /// \name Conforming methods 
 /// @{
 
-/*! 
+/*!
 Refines the triangulation into a conforming Delaunay triangulation. 
 After a call to this method, all triangles fulfill the Delaunay property, 
 that is the empty circle 
@@ -105,7 +105,7 @@ void make_conforming_Delaunay();
 
 
 
-/*! 
+/*!
 Refines the triangulation into a conforming Gabriel triangulation. 
 After a call to this method, all constrained edges \f$ e\f$ have the 
 <I>Gabriel property</I>: the circle with diameter \f$ e\f$ 
@@ -129,7 +129,7 @@ of edges.
 */
 /// @{
 
-/*! 
+/*!
 Returns `true` iff all triangles fulfill the Delaunay property. 
 */ 
 bool is_conforming_Delaunay(); 
@@ -138,7 +138,7 @@ bool is_conforming_Delaunay();
 
 
 
-/*! 
+/*!
 Returns `true` iff all constrained edges have the Gabriel property: 
 their circumsphere is empty. 
 */ 
@@ -163,7 +163,7 @@ not be mixed between two calls of `init_XX`.
 */
 /// @{
 
-/*! 
+/*!
 The method must be called after all points and constrained segments 
 are inserted and before any call to the following methods. If some 
 points or segments are then inserted in the triangulation, this 
@@ -175,7 +175,7 @@ void init_Delaunay();
 
 
 
-/*! 
+/*!
 Applies one step of the algorithm, by inserting one point, if the 
 algorithm is not done. Returns `false` iff no point has been inserted 
 because the algorithm is done. 
@@ -186,7 +186,7 @@ bool step_by_step_conforming_Delaunay ();
 
 
 
-/*! 
+/*!
 Analog to 
 `init_Delaunay` for Gabriel conforming. 
 */ 
@@ -196,7 +196,7 @@ void init_Gabriel();
 
 
 
-/*! 
+/*!
 Analog to 
 `step_by_step_conforming_Delaunay()` for Gabriel conforming. 
 */ 
@@ -206,7 +206,7 @@ bool step_by_step_conforming_Gabriel ();
 
 
 
-/*! 
+/*!
 Tests if the step by step conforming algorithm is done. If it 
 returns `true`, the following calls to 
 `step_by_step_conforming_XX` will not insert any points, until some 

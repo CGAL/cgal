@@ -32,7 +32,7 @@ template< typename Surface >
 class Surface_mesh_traits_generator_3 {
 public:
 
-/*! 
+/*!
 A model of the concept `SurfaceMeshTraits_3`. 
 */ 
 typedef unspecified_type Type; 

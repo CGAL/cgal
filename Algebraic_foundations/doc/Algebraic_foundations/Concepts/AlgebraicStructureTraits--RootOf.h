@@ -21,7 +21,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type result_type; 
@@ -31,7 +31,7 @@ typedef unspecified_type result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the k-th real root of the univariate polynomial, 
 which is defined by the iterator range, 
 where begin refers to the constant term. 

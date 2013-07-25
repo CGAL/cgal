@@ -30,17 +30,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d second_argument_type; 
@@ -50,7 +50,7 @@ typedef PolynomialTraits_d::Polynomial_d second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns the quotient \f$ q\f$ of the pseudo division of \f$ f\f$ and \f$ g\f$ with 
 respect to the outermost variable \f$ x_{d-1}\f$. 

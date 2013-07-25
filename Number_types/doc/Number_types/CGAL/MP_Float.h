@@ -36,32 +36,32 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an uninitialized variable `m`. 
 */ 
 MP_Float(); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 MP_Float(const MP_Float &); 
 
-/*! 
+/*!
 introduces the integral value i. 
 */ 
 MP_Float(int i); 
 
-/*! 
+/*!
 introduces the floating point value d (exact conversion). 
 */ 
 MP_Float(float d); 
 
-/*! 
+/*!
 introduces the floating point value d (exact conversion). 
 */ 
 MP_Float(double d); 
 
-/*! 
+/*!
 introduces the floating point value d (exact conversion). 
 */ 
 MP_Float(long double d); 
@@ -70,19 +70,19 @@ MP_Float(long double d);
 
 }; /* end MP_Float */
 
-/*! 
+/*!
 writes a double approximation of `m` to the ostream `out`. 
 \relates MP_Float 
 */ 
 std::ostream& operator<<(std::ostream& out, const MP_Float& m); 
 
-/*! 
+/*!
 reads a `double` from `in`, then converts it to an `MP_Float`. 
 \relates MP_Float 
 */ 
 std::istream& operator>>(std::istream& in, MP_Float& m); 
 
-/*! 
+/*!
 computes an approximation of the division by converting the operands to 
 `double`, performing the division on `double`, and converting back to 
 `MP_Float`. 
@@ -90,7 +90,7 @@ computes an approximation of the division by converting the operands to
 */ 
 MP_Float approximate_division(const MP_Float &a, const MP_Float &b); 
 
-/*! 
+/*!
 computes an approximation of the square root by converting the operand to 
 `double`, performing the square root on `double`, and converting back 
 to `MP_Float`. 

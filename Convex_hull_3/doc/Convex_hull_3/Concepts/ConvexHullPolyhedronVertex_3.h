@@ -18,7 +18,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Vertex(); 
@@ -28,12 +28,12 @@ Vertex();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point& point(); 
 
-/*! 
+/*!
 the point. 
 */ 
 const Point& point() const; 

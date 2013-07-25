@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 determines whether \f$ p\f$ is contained in the 
 affine hull of the points in `A = tuple [first,last)`. 
 \pre The objects are of the same dimension. 

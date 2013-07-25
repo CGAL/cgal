@@ -59,22 +59,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Same type as the template argument `Coeff`. 
 */ 
 typedef unspecified_type Coefficient; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_2::Polynomial_2` 
 */ 
 typedef unspecified_type Polynomial_2; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_2::AlgebraicReal_2` 
 */ 
 typedef unspecified_type Algebraic_real_2; 
 
-/*! 
+/*!
 The choice of `Coeff` also determines the provided bound, type. 
 In case of `Coeff` is 
 - `Gmpz` or `Gmpq` this is `Gmpq` 
@@ -86,7 +86,7 @@ In case of `Coeff` is
 */ 
 typedef unspecified_type Bound; 
 
-/*! 
+/*!
 The multiplicity type is `int`. 
 */ 
 typedef unspecified_type Multiplicity_type; 

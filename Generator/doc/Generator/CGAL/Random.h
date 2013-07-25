@@ -32,7 +32,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The State type. 
 */ 
 typedef unspecified_type State; 
@@ -42,14 +42,14 @@ typedef unspecified_type State;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 %Default constructor. The 
 seed is chosen based on the system time. 
 */ 
 Random( ); 
 
-/*! 
+/*!
 
 Constructor initializing its internal state using `seed`. Equal 
 values for `seed` result in equal sequences of random 
@@ -62,13 +62,13 @@ Random( unsigned int seed);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns a random `bool`. 
 */ 
 bool get_bool( ); 
 
-/*! 
+/*!
 
 returns a random `int` value from the interval 
 \f$[0,2^b)\f$. This is supposed to 
@@ -76,14 +76,14 @@ be efficient.
 */ 
 template <int b> int get_bits(); 
 
-/*! 
+/*!
 
 returns a random `int` from the interval 
 `[lower,upper)`. 
 */ 
 int get_int( int lower, int upper); 
 
-/*! 
+/*!
 
 returns a random `double` from the interval 
 `[lower,upper)`. 
@@ -97,7 +97,7 @@ double upper = 1.0);
 /// The following member functions are a 1-to-1 correspondence to some distributions from the boost random library.
 /// @{
 
-/*! 
+/*!
 
 returns a random `IntType` from the interval 
 `[lower,upper)`. `IntType` can be an integral type 
@@ -106,7 +106,7 @@ as `int`, `std::ptrdiff_t`, `std::size_t`,etc.
 */ 
 template <typename IntType> IntType uniform_smallint( IntType lower=0, IntType upper=9); 
 
-/*! 
+/*!
 
 returns a random `IntType` from the interval 
 `[lower,upper)`. `IntType` can be an integral type 
@@ -115,7 +115,7 @@ as `int`, `std::ptrdiff_t`, `std::size_t`,etc.
 */ 
 template <typename IntType> IntType uniform_int( IntType lower=0, IntType upper=9); 
 
-/*! 
+/*!
 
 returns a random `RealType` from the interval 
 `[lower,upper)`. `RealType` can be `float`, `double`, etc. 
@@ -123,14 +123,14 @@ returns a random `RealType` from the interval
 template <typename RealType> Realtype uniform_real( RealType lower = 0.0, 
 RealType upper = 1.0); 
 
-/*! 
+/*!
 
 returns a random `RealType` from the interval 
 `[0,1)`. `RealType` can be `float`, `double`, etc. 
 */ 
 template <typename RealType> RealType uniform_01(); 
 
-/*! 
+/*!
 
 returns `random``uniform_int<IntType>( 0, upper-1)`. 
 */ 
@@ -141,19 +141,19 @@ template <typename IntType> IntType operator() ( IntType upper);
 /// \name Seed and State Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the seed used for initialization. 
 */ 
 unsigned int get_seed() const; 
 
-/*! 
+/*!
 
 saves the current internal state in `state`. 
 */ 
 void save_state( State& state) const; 
 
-/*! 
+/*!
 
 restores the internal state from `state`. 
 */ 
@@ -164,7 +164,7 @@ void restore_state( State const& state);
 /// \name Equality Test 
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff the random object and `random2` have equal 
 internal states. 

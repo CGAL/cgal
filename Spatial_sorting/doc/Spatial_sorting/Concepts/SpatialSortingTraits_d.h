@@ -20,13 +20,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type on which the sorting algorithms operate. 
 
 */ 
 typedef unspecified_type Point_d; 
 
-/*! 
+/*!
 Functor object type returning the dimension of a `Point_d`. 
 Must provide 
 `int operator()(Point_d p)` returning the dimension of \f$ p\f$. 
@@ -34,7 +34,7 @@ Must provide
 */ 
 typedef unspecified_type Point_dimension_d; 
 
-/*! 
+/*!
 Functor object type returning the coordinates of a `Point_d`. 
 Must provide 
 `FT operator()(Point_d p, int i)` returning the \f$ i\f$th 
@@ -44,7 +44,7 @@ argument of `CGAL::to_double`.
 */ 
 typedef unspecified_type Compute_coordinate_d; 
 
-/*! 
+/*!
 Binary predicate object type comparing `Point_d`s 
 along some coordinate. 
 Must provide 
@@ -62,7 +62,7 @@ typedef unspecified_type Less_coordinate_d;
 /// Only a copy constructor is required.
 /// @{
 
-/*! 
+/*!
 
 */ 
 SpatialSortingTraits_d(const SpatialSortingTraits_d& t); 
@@ -73,17 +73,17 @@ SpatialSortingTraits_d(const SpatialSortingTraits_d& t);
 /// The following member functions to create instances of the above predicate object types must exist.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point_dimension_d point_dimension_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Compute_coordinate_d compute_coordinate_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_coordinate_d less_coordinate_d_object(); 

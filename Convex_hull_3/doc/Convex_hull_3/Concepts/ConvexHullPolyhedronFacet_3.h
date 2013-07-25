@@ -19,17 +19,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 plane equation type stored in facets. 
 */ 
 typedef unspecified_type Plane; 
 
-/*! 
+/*!
 handle to halfedge. 
 */ 
 typedef unspecified_type Halfedge_handle; 
 
-/*! 
+/*!
 circulator of 
 halfedges around a facet. 
 */ 
@@ -40,7 +40,7 @@ typedef unspecified_type Halfedge_around_facet_circulator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Facet(); 
@@ -50,22 +50,22 @@ Facet();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Plane& plane(); 
 
-/*! 
+/*!
 plane equation. 
 */ 
 const Plane& plane() const; 
 
-/*! 
+/*!
 an incident halfedge that points to `f`. 
 */ 
 Halfedge_handle halfedge(); 
 
-/*! 
+/*!
 circulator of halfedges around the facet (counterclockwise). 
 */ 
 Halfedge_around_facet_circulator facet_begin(); 

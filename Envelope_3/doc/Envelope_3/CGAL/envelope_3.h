@@ -29,17 +29,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Envelope_diagram_2<EnvTraits> Self; 
 
-/*! 
+/*!
 
 */ 
 typedef Arrangement_2<EnvTraits> Base; 
 
-/*! 
+/*!
 an iterator for the \f$ xy\f$-monotone surfaces that induce a diagram feature. 
 Its value-type is `EnvTraits::Xy_monotone_surface_3`. 
 */ 
@@ -50,18 +50,18 @@ typedef unspecified_type Surface_const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs an empty diagram containing one unbounded face, 
 which corresponds to the entire plane and has no originators. 
 */ 
 Envelope_diagram_2(); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 Envelope_diagram_2 (const Self& other); 
 
-/*! 
+/*!
 constructs an empty diagram that uses the given `traits` 
 instance for performing the geometric predicates. 
 */ 
@@ -74,23 +74,23 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// \name Access Functions 
     /// @{
     
-    /*! 
+    /*!
       returns the number of \f$ xy\f$-monotone surfaces that induce `v`. 
     */ 
     size_t number_of_surfaces () const; 
 
-    /*! 
+    /*!
       returns an iterator for the first \f$ xy\f$-monotone surface that induces `v`. 
     */ 
     Surface_const_iterator surfaces_begin () const; 
 
-    /*! 
+    /*!
       returns a past-the-end iterator for the \f$ xy\f$-monotone surfaces that induce 
       `v`. 
     */ 
     Surface_const_iterator surfaces_end () const; 
 
-    /*! 
+    /*!
       returns the first \f$ xy\f$-monotone surface that induce `v`. 
       \pre The number of surfaces is not 0. 
     */ 
@@ -109,18 +109,18 @@ Envelope_diagram_2 (EnvTraits *traits);
     */ 
     size_t number_of_surfaces () const; 
     
-    /*! 
+    /*!
     returns an iterator for the first \f$ xy\f$-monotone surface that induces the halfedge. 
     */ 
     Surface_const_iterator surfaces_begin () const; 
     
-    /*! 
+    /*!
     returns a past-the-end iterator for the \f$ xy\f$-monotone surfaces that induce 
     the halfedge. 
     */ 
     Surface_const_iterator surfaces_end () const; 
     
-    /*! 
+    /*!
     returns the first \f$ xy\f$-monotone surface that induce `e`. 
     \pre The number of surfaces is not 0. 
     */ 
@@ -133,23 +133,23 @@ Envelope_diagram_2 (EnvTraits *traits);
     /// \name Access Functions 
     /// @{
     
-    /*! 
+    /*!
     returns the number of \f$ xy\f$-monotone surfaces that induce the face. 
     */ 
     size_t number_of_surfaces () const; 
     
-    /*! 
+    /*!
     returns an iterator for the first \f$ xy\f$-monotone surface that induces the face. 
     */ 
     Surface_const_iterator surfaces_begin () const; 
     
-    /*! 
+    /*!
     returns a past-the-end iterator for the \f$ xy\f$-monotone surfaces that induce 
     the face. 
     */ 
     Surface_const_iterator surfaces_end () const; 
     
-    /*! 
+    /*!
     returns the first \f$ xy\f$-monotone surface that induce the face. 
     \pre The number of surfaces is not 0. 
     */ 

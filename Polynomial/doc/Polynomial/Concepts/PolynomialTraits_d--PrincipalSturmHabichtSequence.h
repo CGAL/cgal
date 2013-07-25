@@ -38,7 +38,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes the principal coefficients of the 
 Sturm-Habicht sequence of \f$ f\f$, 
 with respect to the outermost variable. Each element is of type 
@@ -48,7 +48,7 @@ template<typename OutputIterator>
 OutputIterator operator()(Polynomial_d f, 
 OutputIterator out); 
 
-/*! 
+/*!
 computes the principal coefficients 
 of the Sturm-Habicht sequence of \f$ f\f$ 
 with respect to the variable \f$ x_i\f$. 

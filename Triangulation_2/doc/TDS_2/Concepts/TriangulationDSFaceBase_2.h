@@ -67,7 +67,7 @@ public:
 /// following types.
 /// @{
 
-/*! 
+/*!
 This template class has to define a type `Rebind_TDS<TDS_2>::%Other` which is the 
 <I>rebound</I> face base, where the 
 `CGAL::Triangulation_data_structure_2` is actually plugged in. 
@@ -78,17 +78,17 @@ of the class `CGAL::Triangulation_data_structure_2::Face`.
 template <typename TDS2> 
 using Rebind_TDS = unspecified_type;
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_2 Triangulation_data_structure; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_2::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_2::Face_handle Face_handle; 
@@ -98,12 +98,12 @@ typedef TriangulationDataStructure_2::Face_handle Face_handle;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 TriangulationDSFaceBase_2(); 
 
-/*! 
+/*!
 Initializes the vertices with `v0, v1, v2` and the neighbors 
 with `Face_handle()`. 
 */ 
@@ -111,7 +111,7 @@ TriangulationDSFaceBase_2(Vertex_handle v0,
 Vertex_handle v1, 
 Vertex_handle v2); 
 
-/*! 
+/*!
 initializes the vertices with `v0,v1, v2` and the neighbors with 
 `n0, n1, n2`. 
 */ 
@@ -127,49 +127,49 @@ Face_handle n2);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the dimension. 
 */ 
 int dimension(); 
 
-/*! 
+/*!
 returns the vertex `i` of the face. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Vertex_handle vertex(int i) const; 
 
-/*! 
+/*!
 returns `true` if `v` is a vertex of the face. 
 */ 
 bool has_vertex(Vertex_handle v); 
 
-/*! 
+/*!
 as above, and sets `i` to the index of `v` in the face. 
 */ 
 bool has_vertex(Vertex_handle v, int& i) const; 
 
-/*! 
+/*!
 returns the index of `v` in the face. 
 */ 
 int index(Vertex_handle v) const; 
 
-/*! 
+/*!
 returns the neighbor `i` of the face. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Face_handle neighbor(int i) const; 
 
-/*! 
+/*!
 returns `true` if `n` is a neighbor of the face. 
 */ 
 bool has_neighbor(Face_handle n); 
 
-/*! 
+/*!
 as above, and sets i to the index of `n` in the face. 
 */ 
 bool has_neigbor(Face_handle n, int& i) const; 
 
-/*! 
+/*!
 returns the index of neighbor `n` in the face. 
 */ 
 int index(const Face_handle n) const; 
@@ -179,36 +179,36 @@ int index(const Face_handle n) const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 sets vertex `i` to `v`. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 void set_vertex(int i, Vertex_handle v); 
 
-/*! 
+/*!
 sets the vertices to `Vertex_handle()`. 
 */ 
 void set_vertices(); 
 
-/*! 
+/*!
 sets the vertices. 
 */ 
 void set_vertices(Vertex_handle v0, 
 Vertex_handle v1, 
 Vertex_handle v2); 
 
-/*! 
+/*!
 sets neighbor `i` to `n`. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 void set_neighbor(int i, Face_handle n); 
 
-/*! 
+/*!
 sets the neighbors to `Face_handle()`. 
 */ 
 void set_neighbors(); 
 
-/*! 
+/*!
 sets the neighbors. 
 */ 
 void set_neighbors(Face_handle n0, 
@@ -220,19 +220,19 @@ Face_handle n2);
 /// \name Orientation 
 /// @{
 
-/*! 
+/*!
 Changes the orientation of the face by exchanging `vertex(0)` 
 with `vertex(1)` and `neighbor(0)` with `neighbor(1)`. 
 */ 
 void reorient(); 
 
-/*! 
+/*!
 performs a counterclockwise permutation of the 
 vertices and neighbors of the face. 
 */ 
 void ccw_permute(); 
 
-/*! 
+/*!
 performs a clockwise permutation of the 
 vertices and neighbors of the face. 
 */ 
@@ -243,7 +243,7 @@ void cw_permute();
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
 performs any required test on a face. 
 
 If `verbose` is set to `true`, messages are printed to give 
@@ -260,12 +260,12 @@ bool is_valid(bool verbose = false) const;
 /// `Compact_container` for the exact requirements.
 /// @{
 
-/*! 
+/*!
 
 */ 
 void * for_compact_container() const; 
 
-/*! 
+/*!
 
 */ 
 void * & for_compact_container(); 

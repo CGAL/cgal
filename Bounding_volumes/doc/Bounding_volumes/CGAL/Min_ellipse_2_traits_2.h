@@ -22,12 +22,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `K::Point_2`. 
 */ 
 typedef unspecified_type Point ; 
 
-/*! 
+/*!
 internal type. 
 */ 
 typedef unspecified_type Ellipse; 
@@ -39,12 +39,12 @@ typedef unspecified_type Ellipse;
 /// required by the concept `MinEllipse2Traits`.
 /// @{
 
-/*! 
+/*!
 tests whether the ellipse is a circle. 
 */ 
 bool is_circle(); 
 
-/*! 
+/*!
 gives a double approximation of the 
 ellipse's conic equation. If `K` is a Cartesian kernel, the ellipse 
 is the set of all points \f$ (x,y)\f$ satisfying \f$ rx^2+sy^2+txy+ux+vy+w=0\f$. In the 
@@ -58,12 +58,12 @@ void double_coefficients (double &r, double &s, double &t, double &u, double &v,
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Min_ellipse_2_traits_2( ); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 Min_ellipse_2_traits_2( 

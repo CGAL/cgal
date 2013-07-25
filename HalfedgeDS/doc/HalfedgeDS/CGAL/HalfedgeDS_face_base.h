@@ -53,7 +53,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 plane type for three argument version. 
 */ 
 typedef unspecified_type Plane; 
@@ -63,12 +63,12 @@ typedef unspecified_type Plane;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 HalfedgeDS_face_base(); 
 
-/*! 
+/*!
 initialized with plane `pln`. 
 */ 
 HalfedgeDS_face_base( const Plane& pln); 
@@ -78,12 +78,12 @@ HalfedgeDS_face_base( const Plane& pln);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Plane& plane(); 
 
-/*! 
+/*!
 
 */ 
 const Plane& plane() const; 

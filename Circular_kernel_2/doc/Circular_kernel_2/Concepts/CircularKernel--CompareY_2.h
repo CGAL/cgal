@@ -18,7 +18,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Compares the \f$ y\f$-coordinates of \f$ p\f$ and \f$ q\f$. 
 */ 
 Comparison_result operator() 

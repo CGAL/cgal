@@ -95,37 +95,37 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the oriented lines modeling halfplanes. 
 */ 
 typedef unspecified_type Line; 
 
-/*! 
+/*!
 the affine points of the plane. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 directions in our plane. 
 */ 
 typedef unspecified_type Direction; 
 
-/*! 
+/*!
 tag for calling polygon constructor. 
 */ 
 typedef unspecified_type Polygons_tag; 
 
-/*! 
+/*!
 tag for calling polyline constructor. 
 */ 
 typedef unspecified_type Polylines_tag; 
 
-/*! 
+/*!
 construction selection. 
 */ 
 enum Boundary { EXCLUDED, INCLUDED }; 
 
-/*! 
+/*!
 construction selection 
 */ 
 enum Content { EMPTY, COMPLETE }; 
@@ -135,7 +135,7 @@ enum Content { EMPTY, COMPLETE };
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 creates an instance `N` of type `Nef_polyhedron_2<T>` 
 and initializes it to the empty set if `plane == EMPTY` 
@@ -144,7 +144,7 @@ and to the whole plane if `plane == COMPLETE`.
 */ 
 Nef_polyhedron_2<T>(Content plane = EMPTY); 
 
-/*! 
+/*!
 
 creates a Nef polyhedron `N` containing the halfplane left of 
 `l` including `l` if `line==INCLUDED`, excluding `l` 
@@ -152,7 +152,7 @@ if `line==EXCLUDED`.
 */ 
 Nef_polyhedron_2<T>(Line l, Boundary line = INCLUDED); 
 
-/*! 
+/*!
 
 creates a Nef polyhedron `N` from the simple polygon `P` 
 spanned by the list of points in the iterator range `[it,end)` and 
@@ -170,7 +170,7 @@ template <class Forward_iterator>
 Nef_polyhedron_2<T>(Forward_iterator it, Forward_iterator end, 
 Boundary b = INCLUDED); 
 
-/*! 
+/*!
 The iterator range [it, end) defines a set point 
 ranges, each of which defines the boundary of simple polygon. 
 */ 
@@ -178,7 +178,7 @@ template <class Forward_iterator>
 Nef_polyhedron_2<T>(Forward_iterator it, Forward_iterator end, 
 Polygons_tag); 
 
-/*! 
+/*!
 The iterator range [it, end) defines a set point 
 ranges, each of which defines a polyline. 
 */ 
@@ -191,7 +191,7 @@ Polylines_tag);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 makes `N` the empty set if `plane == EMPTY` and the 
 full plane if `plane == COMPLETE`. 
@@ -199,13 +199,13 @@ full plane if `plane == COMPLETE`.
 */ 
 void clear(Content plane = EMPTY) ; 
 
-/*! 
+/*!
 
 returns true if `N` is empty, false otherwise. 
 */ 
 bool is_empty() ; 
 
-/*! 
+/*!
 
 returns true if `N` is the whole plane, false otherwise. 
 */ 
@@ -224,56 +224,56 @@ bool is_plane() ;
 /// respectively.
 /// @{
 
-/*! 
+/*!
 
 returns the complement of `N` in the plane. 
 */ 
 Nef_polyhedron_2<T> complement() ; 
 
-/*! 
+/*!
 
 returns the interior of `N`. 
 */ 
 Nef_polyhedron_2<T> interior() ; 
 
-/*! 
+/*!
 
 returns the closure of `N`. 
 */ 
 Nef_polyhedron_2<T> closure() ; 
 
-/*! 
+/*!
 
 returns the boundary of `N`. 
 */ 
 Nef_polyhedron_2<T> boundary() ; 
 
-/*! 
+/*!
 
 returns the regularized polyhedron (closure of interior). 
 */ 
 Nef_polyhedron_2<T> regularization() ; 
 
-/*! 
+/*!
 
 returns `N` \f$ \cap\f$ `N1`. 
 */ 
 Nef_polyhedron_2<T> intersection(const Nef_polyhedron_2<T>& N1) ; 
 
-/*! 
+/*!
 
 returns `N` \f$ \cup\f$ `N1`. Note that "union" is a keyword of C++ 
 and cannot be used for this operation. 
 */ 
 Nef_polyhedron_2<T> join(const Nef_polyhedron_2<T>& N1) ; 
 
-/*! 
+/*!
 
 returns `N` \f$ -\f$ `N1`. 
 */ 
 Nef_polyhedron_2<T> difference(const Nef_polyhedron_2<T>& N1) ; 
 
-/*! 
+/*!
 
 returns the symmectric difference `N - T` \f$ \cup\f$ `T - N`. 
 */ 
@@ -339,23 +339,23 @@ public:
 
 /// @{
 
-/*! 
+/*!
 The underlying plane map type 
 */ 
 typedef unspecified_type Plane_map; 
 
-/*! 
+/*!
 The point type of vertices. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 
 All objects (vertices, edges, faces) are attributed by a `Mark` object. 
 */ 
 typedef unspecified_type Mark; 
 
-/*! 
+/*!
 The size type. 
 */ 
 typedef unspecified_type Size_type; 
@@ -370,20 +370,20 @@ typedef unspecified_type Size_type;
 /// following circulators are defined.
 /// @{
 
-/*! 
+/*!
 
 circulating the outgoing halfedges in \f$ A(v)\f$. 
 */ 
 typedef unspecified_type Halfedge_around_vertex_const_circulator; 
 
-/*! 
+/*!
 
 circulating the halfedges in the face cycle of a face `f`. 
 
 */ 
 typedef unspecified_type Halfedge_around_face_const_circulator; 
 
-/*! 
+/*!
 
 iterating all holes of a face `f`. The type is 
 convertible to `Halfedge_const_handle`. 
@@ -391,7 +391,7 @@ convertible to `Halfedge_const_handle`.
 */ 
 typedef unspecified_type Hole_const_iterator; 
 
-/*! 
+/*!
 
 iterating all isolated vertices of a face `f`. 
 The type generalizes `Vertex_const_handle`. 
@@ -404,31 +404,31 @@ typedef unspecified_type Isolated_vertex_const_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns the source of `e`. 
 */ 
 Vertex_const_handle source(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the target of `e`. 
 */ 
 Vertex_const_handle target(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the twin of `e`. 
 */ 
 Halfedge_const_handle twin(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns `true` iff \f$ A(v) = \emptyset\f$. 
 */ 
 bool is_isolated(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns one halfedge with source `v`. It's the starting point for 
 the circular iteration over the halfedges with source `v`. 
@@ -437,7 +437,7 @@ the circular iteration over the halfedges with source `v`.
 */ 
 Halfedge_const_handle first_out_edge(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns the halfedge with source `v` that is the last 
 in the circular iteration before encountering `first_out_edge(v)` 
@@ -446,7 +446,7 @@ again. \pre `!is_isolated(v)`.
 */ 
 Halfedge_const_handle last_out_edge(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns the edge after `e` in the cyclic ordered adjacency list of 
 `source(e)`. 
@@ -454,7 +454,7 @@ returns the edge after `e` in the cyclic ordered adjacency list of
 */ 
 Halfedge_const_handle cyclic_adj_succ(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the edge before `e` in the cyclic ordered adjacency list of 
 `source(e)`. 
@@ -462,31 +462,31 @@ returns the edge before `e` in the cyclic ordered adjacency list of
 */ 
 Halfedge_const_handle cyclic_adj_pred(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the next edge in the face cycle containing `e`. 
 */ 
 Halfedge_const_handle next(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the previous edge in the face cycle containing `e`. 
 */ 
 Halfedge_const_handle previous(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the face incident to `e`. 
 */ 
 Face_const_handle face(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the face incident to `v`. \pre `is_isolated(v)`. 
 */ 
 Face_const_handle face(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns a halfedge in the bounding face cycle of `f` 
 (`Halfedge_const_handle()` if there is no bounding face cycle). 
@@ -499,51 +499,51 @@ Halfedge_const_handle halfedge(Face_const_handle f) ;
 /// \name Iteration 
 /// @{
 
-/*! 
+/*!
 iterator over vertices of the map. 
 */ 
 Vertex_const_iterator vertices_begin(); 
 
-/*! 
+/*!
 past-the-end iterator for vertices. 
 */ 
 Vertex_const_iterator vertices_end(); 
 
-/*! 
+/*!
 iterator over halfedges of the map. 
 */ 
 Halfedge_const_iterator halfedges_begin(); 
 
-/*! 
+/*!
 past-the-end iterator for halfedges. 
 */ 
 Halfedge_const_iterator halfedges_end(); 
 
-/*! 
+/*!
 iterator over faces of the map. 
 */ 
 Face_const_iterator faces_begin(); 
 
-/*! 
+/*!
 past-the-end iterator for faces 
 */ 
 Face_const_iterator faces_end(); 
 
-/*! 
+/*!
 
 returns a circulator for the cyclic adjacency list of `v`. 
 */ 
 Halfedge_around_vertex_const_circulator 
 out_edges(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns a circulator for the outer face cycle of `f`. 
 */ 
 Halfedge_around_face_const_circulator 
 face_cycle(Face_const_handle f) ; 
 
-/*! 
+/*!
 
 returns an iterator for all holes in the interior of `f`. 
 A `Hole_iterator` can be assigned to a 
@@ -551,13 +551,13 @@ A `Hole_iterator` can be assigned to a
 */ 
 Hole_const_iterator holes_begin(Face_const_handle f) ; 
 
-/*! 
+/*!
 
 returns the past-the-end iterator of `f`. 
 */ 
 Hole_const_iterator holes_end(Face_const_handle f) ; 
 
-/*! 
+/*!
 
 returns an iterator for all isolated vertices in the interior of `f`. 
 
@@ -565,7 +565,7 @@ returns an iterator for all isolated vertices in the interior of `f`.
 Isolated_vertex_const_iterator isolated_vertices_begin( 
 Face_const_handle f) ; 
 
-/*! 
+/*!
 
 returns the past the end iterator of `f`. 
 */ 
@@ -578,25 +578,25 @@ Face_const_handle f) ;
 /// The type `Mark` is the general attribute of an object.
 /// @{
 
-/*! 
+/*!
 
 returns the embedding of `v`. 
 */ 
 const Point& point(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns the mark of `v`. 
 */ 
 const Mark& mark(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 
 returns the mark of `e`. 
 */ 
 const Mark& mark(Halfedge_const_handle e) ; 
 
-/*! 
+/*!
 
 returns the mark of `f`. 
 */ 
@@ -607,50 +607,50 @@ const Mark& mark(Face_const_handle f) ;
 /// \name Statistics and Integrity 
 /// @{
 
-/*! 
+/*!
 
 returns the number of vertices. 
 */ 
 Size_type number_of_vertices() ; 
 
-/*! 
+/*!
 
 returns the number of halfedges. 
 */ 
 Size_type number_of_halfedges() ; 
 
-/*! 
+/*!
 
 returns the number of halfedge pairs. 
 */ 
 Size_type number_of_edges() ; 
 
-/*! 
+/*!
 
 returns the number of faces. 
 */ 
 Size_type number_of_faces() ; 
 
-/*! 
+/*!
 
 returns the number of face cycles. 
 */ 
 Size_type number_of_face_cycles() ; 
 
-/*! 
+/*!
 
 calculates the number of connected components of `P`. 
 */ 
 Size_type number_of_connected_components() ; 
 
-/*! 
+/*!
 
 print the statistics of `P`: the number of vertices, edges, 
 and faces. 
 */ 
 void print_statistics(std::ostream& os = std::cout) ; 
 
-/*! 
+/*!
 
 checks the link structure and the genus of `P`. 
 */ 
@@ -707,13 +707,13 @@ public:
 /// Iterators, handles, and circulators are inherited from `Topological_explorer`.
 /// @{
 
-/*! 
+/*!
 the point type of finite vertices. 
 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 the ray type of vertices on the frame. 
 
 */ 
@@ -724,25 +724,25 @@ typedef unspecified_type Ray;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns true iff 
 `v`'s position is a standard point. 
 */ 
 bool is_standard(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 returns the standard 
 point that is the embedding of `v`. \pre `E.is_standard(v)`. 
 */ 
 Point point(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 returns the ray defining 
 the non-standard point on the frame. \pre `!E.is_standard(v)`. 
 */ 
 Ray ray(Vertex_const_handle v) ; 
 
-/*! 
+/*!
 returns true 
 iff `e` is part of the infinimaximal frame. 
 */ 
@@ -752,7 +752,7 @@ bool is_frame_edge(Halfedge_const_handle e) ;
 
 }; /* end Explorer */
 
-/*! 
+/*!
 a generic handle to an object of the underlying 
 plane map. The kind of object `(vertex, halfedge, face)` can 
 be determined and the object can be assigned to a corresponding 
@@ -770,7 +770,7 @@ where each function returns `true` iff the assignment to
 */ 
 typedef unspecified_type Object_handle; 
 
-/*! 
+/*!
 selectionflag for the point location 
 mode. LMWT stands for Locally Minimum Weight Triangulation, a locally 
 optimized constrained triangulation where the weight corresponds to 
@@ -783,21 +783,21 @@ enum Location_mode { DEFAULT, NAIVE, LMWT};
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns true iff the object `h` is contained in the set 
 represented by `N`. 
 */ 
 bool contains(Object_handle h) ; 
 
-/*! 
+/*!
 
 returns true iff the object `h` is contained in the \f$ 1\f$-skeleton 
 of `N`. 
 */ 
 bool contained_in_boundary(Object_handle h) ; 
 
-/*! 
+/*!
 returns a generic handle `h` to an object (face, 
 halfedge, vertex) of the underlying plane map that contains the point 
 `p` in its relative interior. The point `p` is contained in 
@@ -808,7 +808,7 @@ point location strategies.
 Object_handle locate(const Point& p, Location_mode m = 
 DEFAULT) ; 
 
-/*! 
+/*!
 returns a handle `h` with 
 `N.contains(h)`, that can be converted to a 
 `Vertex_/Halfedge_/Face_const_handle` as described above. The 
@@ -822,7 +822,7 @@ point location strategies.
 Object_handle ray_shoot(const Point& p, const Direction& d, 
 Location_mode m = DEFAULT) ; 
 
-/*! 
+/*!
 returns a handle `h`, 
 that can be converted to a `Vertex_/Halfedge_const_handle` as 
 described above. The object returned is part of the \f$ 1\f$-skeleton of 
@@ -836,7 +836,7 @@ strategies.
 Object_handle ray_shoot_to_boundary(const Point& p, const 
 Direction& d, Location_mode m = DEFAULT) ; 
 
-/*! 
+/*!
 
 returns a decorator object that allows read-only access of 
 the underlying plane map. See the manual page `Explorer` for its 

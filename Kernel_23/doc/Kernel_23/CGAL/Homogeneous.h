@@ -32,12 +32,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Quotient<RingNumberType> FT; 
 
-/*! 
+/*!
 
 */ 
 typedef RingNumberType RT; 

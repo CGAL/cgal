@@ -20,7 +20,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 computes the subdivided point `pt` based on the neighborhood 
 of the vertex pointed by the halfedge `he`. 

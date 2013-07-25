@@ -61,14 +61,14 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type for indexes of curve segment. The type must match the type 
 `MeshDomainWithFeatures_3::Curve_segment_index` 
 when the concept is used for mesh generation. 
 */ 
 typedef unspecified_type Curve_segment_index; 
 
-/*! 
+/*!
 A type for indexes of corners. 
 The type must match the type 
 `MeshDomainWithFeatures_3::Corner_index` 
@@ -76,13 +76,13 @@ when the concept is used for mesh generation.
 */ 
 typedef unspecified_type Corner_index; 
 
-/*! 
+/*!
 An iterator type to visit the edges 
 of the triangulation belonging to curve segments. 
 */ 
 typedef unspecified_type Edges_in_complex_iterator; 
 
-/*! 
+/*!
 An iterator type to visit the vertices 
 of the triangulation that are corners of the embedded complex. 
 */ 
@@ -93,39 +93,39 @@ typedef unspecified_type Vertices_in_complex_iterator;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 
 Adds edge `e` as an element of the curve segment with index `index`. 
 */ 
 void add_to_complex(Edge e, const Curve_segment_index& index); 
 
-/*! 
+/*!
 
 Same as above with `e=(v1,v2)`. 
 */ 
 void add_to_complex(const Vertex_handle& v1, 
 const Vertex_handle& v2, const Curve_segment_index& index); 
 
-/*! 
+/*!
 
 Marks vertex `v` as a corner with index `index`. 
 */ 
 void add_to_complex(const Vertex_handle& v, const Corner_index& index); 
 
-/*! 
+/*!
 
 Removes edge `e` from the embedded complex. 
 */ 
 void remove_from_complex(const Edge& e); 
 
-/*! 
+/*!
 
 Same as above with `e=(v1,v2)`. 
 */ 
 void remove_from_complex(const Vertex_handle& v1, 
 const Vertex_handle& v2); 
 
-/*! 
+/*!
 
 Removes vertex `v` from the embedded complex. 
 */ 
@@ -137,63 +137,63 @@ void remove_from_complex(const Vertex_handle& v);
 /// Queries on the 1D complex and 0D complex.
 /// @{
 
-/*! 
+/*!
 
 Returns the number of edges which belong to curve segments. 
 */ 
 size_type number_of_edges() const; 
 
-/*! 
+/*!
 
 Returns the number of edges which belong to curve segment with index `index`. 
 */ 
 size_type number_of_edges(Curve_segment_index index) const; 
 
-/*! 
+/*!
 
 Returns the number of vertices which are corners of the complex. 
 */ 
 size_type number_of_corners() const; 
 
-/*! 
+/*!
 
 Returns the number of vertices which are corners of the complex with index `index`. 
 */ 
 size_type number_of_corners(Corner_index index) const; 
 
-/*! 
+/*!
 Returns `true` 
 iff edge `e` belongs to some curve segment. 
 */ 
 bool is_in_complex(const Edge& e) const; 
 
-/*! 
+/*!
 
 Same as above with `e=(v1,v2)`. 
 */ 
 bool is_in_complex(const Vertex_handle& v1, 
 const Vertex_handle& v2) const; 
 
-/*! 
+/*!
 
 Returns `true` if vertex `v` is a corner. 
 */ 
 bool is_in_complex(const Vertex_handle& v) const; 
 
-/*! 
+/*!
 
 Returns `Curve_segment_index` of edge `e`. The default `Curve_segment_index` 
 value is returned if edge `e` does not belong to any curve segment. 
 */ 
 Curve_segment_index curve_segment_index(const Edge& e); 
 
-/*! 
+/*!
 
 Same as above with `e=(v1,v2)`. 
 */ 
 Curve_segment_index curve_segment_index(const Vertex_handle& v1, const Vertex_handle& v2); 
 
-/*! 
+/*!
 
 Returns `Corner_index` of vertex `v`. The default `Corner_index` value 
 is returned if vertex `v` is not a corner of the complex. 
@@ -205,32 +205,32 @@ Corner_index corner_index(const Vertex_handle& v);
 /// \name Traversal of the complex 
 /// @{
 
-/*! 
+/*!
 
 Returns an `Edges_in_complex_iterator` to visit the edges of the triangulation belonging to curve segments. 
 */ 
 Edges_in_complex_iterator edges_in_complex_begin() const; 
 
-/*! 
+/*!
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
 Edge_in_complex_iterator edges_in_complex_end() const; 
 
-/*! 
+/*!
 
 Returns an `Edges_in_complex_iterator` to visit the edges of the triangulation belonging to curve segments 
 of index `index`. 
 */ 
 Edges_in_complex_iterator edges_in_complex_begin(Curve_segment_index index) const; 
 
-/*! 
+/*!
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
 Edge_in_complex_iterator edges_in_complex_end(Curve_segment_index index) const; 
 
-/*! 
+/*!
 
 Fills `out` with the vertices of the triangulation that are adjacent to vertex `v` 
 through an edge belonging to some curve segment. 
@@ -241,27 +241,27 @@ template <typename OutputIterator>
 OutputIterator 
 adjacent_vertices_in_complex (const Vertex_handle& v, OutputIterator out) const; 
 
-/*! 
+/*!
 
 Returns a `Vertices_in_complex_iterator` to visit the vertices of the triangulation 
 that are corners. 
 */ 
 Vertices_in_complex_iterator vertices_in_complex_begin() const; 
 
-/*! 
+/*!
 
 Returns the past-the-end iterator for the above iterator. 
 */ 
 Vertices_in_complex_iterator vertices_in_complex_end() const; 
 
-/*! 
+/*!
 
 Returns a `Vertices_in_complex_iterator` to visit the vertices of the triangulation 
 that are corners of index `index`. 
 */ 
 Vertices_in_complex_iterator vertices_in_complex_begin(Corner_index index) const; 
 
-/*! 
+/*!
 
 Returns the past-the-end iterator for the above iterator. 
 */ 

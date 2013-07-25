@@ -49,14 +49,14 @@ public:
 /// \name Modification 
 /// @{
 
-/*! 
+/*!
 Joins 
 the vertices that are endpoints of the edge `(f,i)`. It returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Face_handle f, int i); 
 
-/*! 
+/*!
 Splits the vertex `v` into two vertices `v1` and 
 `v2`. The common faces `f` and `g` of `v1` and 
 `v2` are created after (in the counter-clockwise sense) the 

@@ -32,18 +32,18 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Another name for the point type. 
 */ 
 typedef unspecified_type Bare_point; 
 
-/*! 
+/*!
 The weighted point type. It has to be 
 a model of the concept `WeightedPoint`. 
 */ 
 typedef unspecified_type Weighted_point_2; 
 
-/*! 
+/*!
 A function object which must provide operators for the power test applied to two, three, and four points. 
 
 Must provide the operators: 
@@ -71,7 +71,7 @@ typedef unspecified_type Power_test_2;
 /// The following type/predicate is required for a call to `nearest_power_vertex`:
 /// @{
 
-/*! 
+/*!
 A function object for computing two power distances. 
 Must provide the operator: 
 
@@ -81,7 +81,7 @@ power distance between `p` and `r`.
 */ 
 typedef unspecified_type Compare_power_distance_2; 
 
-/*! 
+/*!
 A function
 object which constructs the weighted circumcenter of three 
 weighted points. 
@@ -92,7 +92,7 @@ Must provide the operator:
 */ 
 typedef unspecified_type Construct_weighted_circumcenter_2; 
 
-/*! 
+/*!
 A function object constructs 
 the radical axis of two weighted points. 
 
@@ -107,18 +107,18 @@ typedef unspecified_type Construct_radical_axis_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 RegularTriangulationTraits_2(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 RegularTriangulationTraits_2 ( 
 const RegularTriangulatioTraits_2& ); 
 
-/*! 
+/*!
 Assignment operator.
 */ 
 RegularTriangulationTraits_2& operator= 
@@ -129,23 +129,23 @@ RegularTriangulationTraits_2& operator=
 /// \name Access to Predicate and Constructors Objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Power_test_2 power_test_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_power_distance_2 compare_power_distance_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_weighted_circumcenter_2 
 construct_weighted_circumcenter_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_radical_axis_2 

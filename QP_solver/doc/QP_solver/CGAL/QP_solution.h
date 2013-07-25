@@ -83,53 +83,53 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The exact number type that was used to solve the 
 program. 
 */ 
 typedef unspecified_type ET; 
 
-/*! 
+/*!
 An iterator type with value type 
 `Quotient<ET>` to go over the values of the variables in the solution. 
 */ 
 typedef unspecified_type Variable_value_iterator; 
 
-/*! 
+/*!
 An iterator type with value type 
 `ET` to go over the numerators of the variable values 
 with respect to a common denominator. 
 */ 
 typedef unspecified_type Variable_numerator_iterator; 
 
-/*! 
+/*!
 An iterator type with value type `int` 
 to go over the indices of the basic variables and the basic constraints. 
 */ 
 typedef unspecified_type Index_iterator; 
 
-/*! 
+/*!
 An iterator type with 
 value type `Quotient<ET>` to go over an \f$ m\f$-vector \f$ \qplambda\f$ that proves 
 optimality of the solution. 
 */ 
 typedef unspecified_type Optimality_certificate_iterator; 
 
-/*! 
+/*!
 An iterator type 
 with value type `ET` to go over the numerators of the vector \f$ \qplambda\f$ 
 with respect to a common denominator. 
 */ 
 typedef unspecified_type Optimality_certificate_numerator_iterator; 
 
-/*! 
+/*!
 An iterator type with 
 value type `ET` to go over an \f$ m\f$-vector \f$ \qplambda\f$ that proves 
 infeasibility of the solution. 
 */ 
 typedef unspecified_type Infeasibility_certificate_iterator; 
 
-/*! 
+/*!
 An iterator type with 
 value type `ET` to go over an \f$ n\f$-vector \f$ \qpw\f$ that proves unboundedness 
 of the solution. 
@@ -148,7 +148,7 @@ typedef unspecified_type Unboundedness_certificate_iterator;
 /// <b>Example:</b> \ref QP_solver/first_qp.cpp
 /// @{
 
-/*! 
+/*!
 constructs a void instance of `Quadratic_program_solution` that is associated to 
 no program. 
 */ 
@@ -159,7 +159,7 @@ Quadratic_program_solution();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns `true` iff `sol` is not 
 associated to a program. The condition 
 !`sol``.is_void()` is a precondition for all access methods below. 
@@ -172,24 +172,24 @@ bool is_void() const;
 /// Here are the access methods for the status of the solution.
 /// @{
 
-/*! 
+/*!
 returns `true` iff `sol` is an optimal solution of the associated program. 
 */ 
 bool is_optimal() const; 
 
-/*! 
+/*!
 returns `true` iff the 
 associated program is infeasible. 
 */ 
 bool is_infeasible() const; 
 
-/*! 
+/*!
 returns `true` iff the 
 associated program is unbounded. 
 */ 
 bool is_unbounded() const; 
 
-/*! 
+/*!
 returns the status of the solution; 
 this is one of the values `QP_OPTIMAL`, `QP_INFEASIBLE`, and 
 `QP_UNBOUNDED`, depending on whether the program asociated 
@@ -197,7 +197,7 @@ to `sol` has an optimal solution, is infeasible, or is unbounded.
 */ 
 Quadratic_program_status status() const; 
 
-/*! 
+/*!
 returns the number of iterations that it took to solve the 
 program asociated to `sol`. 
 */ 
@@ -209,25 +209,25 @@ int number_of_iterations() const;
 /// The actual solution (variable and objective function values) can be accessed as follows.
 /// @{
 
-/*! 
+/*!
 returns the objective 
 function value of `sol`. 
 */ 
 Quotient<ET> objective_value() const; 
 
-/*! 
+/*!
 returns the numerator 
 of the objective function value of `sol`. 
 */ 
 ET objective_value_numerator() const; 
 
-/*! 
+/*!
 returns the denominator 
 of the objective function value of `sol`. 
 */ 
 ET objective_value_denominator() const; 
 
-/*! 
+/*!
 returns 
 a random-access iterator over the values of the 
 variables in `sol`. The value type is `Quotient<ET>`, and the valid 
@@ -235,13 +235,13 @@ iterator range has length \f$ n\f$.
 */ 
 Variable_value_iterator variable_values_begin() const; 
 
-/*! 
+/*!
 returns 
 the corresponding past-the-end iterator. 
 */ 
 Variable_value_iterator variable_values_end() const; 
 
-/*! 
+/*!
 returns a random-access iterator `it` over the values 
 of the variables in `sol`, with respect to a common 
 denominator of all variables. The value type is `ET`, and the valid 
@@ -249,12 +249,12 @@ iterator range has length \f$ n\f$.
 */ 
 Variable_numerator_iterator variable_numerators_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 */ 
 Variable_numerator_iterator variable_numerators_end() const; 
 
-/*! 
+/*!
 returns the common denominator of the variable values as referred to 
 by the previous two methods. 
 */ 
@@ -270,7 +270,7 @@ const ET& variables_common_denominator() const;
 /// QP_solver/important_variables.cpp \ref QP_solver/first_qp_basic_constraints.cpp
 /// @{
 
-/*! 
+/*!
 returns a random access iterator over the indices of the basic 
 variables. The value type is `int`. It is guaranteed that any 
 variable that is not basic in `sol` attains one of its bounds. 
@@ -279,18 +279,18 @@ variables have value \f$ 0\f$.
 */ 
 Index_iterator basic_variable_indices_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 */ 
 Index_iterator basic_variable_indices_end() const; 
 
-/*! 
+/*!
 returns the number of basic variables, equivalently the length 
 of the range determined by the previous two iterators. 
 */ 
 int number_of_basic_variables() const; 
 
-/*! 
+/*!
 returns a random access iterator over the indices of the basic 
 constraints in the system \f$ A\qpx\qprel\qpb\f$. The value type is `int`. 
 It is guaranteed that any basic constraint is satisfied with equality. 
@@ -299,18 +299,18 @@ basic.
 */ 
 Index_iterator basic_constraint_indices_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 */ 
 Index_iterator basic_constraint_indices_end() const; 
 
-/*! 
+/*!
 returns the number of basic constraint, equivalently the length 
 of the range determined by the previous two iterators. 
 */ 
 int number_of_basic_constraints() const; 
 
-/*! 
+/*!
 writes the status of `sol` to the stream `out`. In case the 
 status is `QP_OPTIMAL`, the optimal objective value and the values 
 of the variables at the optimal solution are output as well. For more 
@@ -339,7 +339,7 @@ std::ostream& operator<<(std::ostream& out, const Quadratic_program_solution<ET>
 /// QP_solver/first_nonnegative_qp.cpp \ref QP_solver/first_nonnegative_lp.cpp
 /// @{
 
-/*! 
+/*!
 returns `true` iff `sol` solves the quadratic program `qp`. 
 If the result is `false`, you can get a message that describes the 
 problem, through the method `get_error()`. 
@@ -348,7 +348,7 @@ template <class QuadraticProgram>
 bool solves_quadratic_program 
 (const QuadraticProgram& qp); 
 
-/*! 
+/*!
 returns `true` iff `sol` solves the linear program `lp`. 
 If the result is `false`, you can get a message that describes the 
 problem, through the method `get_error()`. 
@@ -357,7 +357,7 @@ template <class LinearProgram>
 bool solves_linear_program 
 (const LinearProgram& lp); 
 
-/*! 
+/*!
 returns `true` iff `sol` solves the nonnegative 
 quadratic program `qp`. 
 If the result is `false`, you can get a message that describes the 
@@ -367,7 +367,7 @@ template <class NonnegativeQuadraticProgram>
 bool solves_nonnegative_quadratic_program 
 (const NonnegativeQuadraticProgram& qp); 
 
-/*! 
+/*!
 returns `true` iff `sol` solves the nonnegative 
 linear program `lp`. If the result is `false`, you can get a message that describes the 
 problem, through the method `get_error()`. 
@@ -376,13 +376,13 @@ template <class NonnegativeLinearProgram>
 bool solves_nonnegative_linear_program 
 (const NonnegativeLinearProgram& lp); 
 
-/*! 
+/*!
 returns `false` iff the validation through one of the 
 previous four functions has failed. 
 */ 
 bool is_valid() const; 
 
-/*! 
+/*!
 returns an error message in case any of the 
 previous four validation functions has returned `false`. 
 */ 
@@ -398,7 +398,7 @@ correctness of the solution. Any non-void object of
 */
 /// @{
 
-/*! 
+/*!
 returns a random access iterator over the optimality certificate 
 \f$ \qplambda\f$ as given in Lemma 1, with respect to the solution \f$ \qpx^*\f$ 
 obtained from `sol``.variable_values_begin()`. The value type 
@@ -451,7 +451,7 @@ and since \f$D\f$ is positive semidefinite, we have
 Optimality_certificate_iterator 
 optimality_certifcate_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 
 \sa `optimality_certifcate_begin()`
@@ -459,7 +459,7 @@ returns the corresponding past-the-end iterator.
 Optimality_certificate_iterator 
 optimality_certificate_end() const; 
 
-/*! 
+/*!
 returns a random access iterator over the numerator values 
 of the optimality certificate \f$ \qplambda\f$, with respect to the 
 common denominator returned by `sol`.`variables_common_denominator()`. 
@@ -470,7 +470,7 @@ The value type is `ET`, and the valid iterator range has length \f$ m\f$.
 Optimality_certificate_numerator_iterator 
 optimality_certifcate_numerators_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 
 \sa `optimality_certifcate_begin()`
@@ -478,7 +478,7 @@ returns the corresponding past-the-end iterator.
 Optimality_certificate_numerator_iterator 
 optimality_certificate_numerators_end() const; 
 
-/*! 
+/*!
 returns a random access iterator over the infeasibility certificate 
 \f$ \qplambda\f$ as given in Lemma 2. The value type 
 is `ET`, and the valid iterator range has length \f$ m\f$. 
@@ -524,7 +524,7 @@ and this is the desired contradiction \f$0>0\f$.
 Infeasibility_certificate_iterator 
 infeasibility_certificate_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 
 \sa `infeasibility_certificate_begin()`
@@ -532,7 +532,7 @@ returns the corresponding past-the-end iterator.
 Infeasibility_certificate_iterator 
 infeasibility_certificate_end() const; 
 
-/*! 
+/*!
 returns a random acess iterator over the unbounded direction \f$ \qpw\f$ 
 as given in Lemma 3,with respect to the solution \f$ \qpx^*\f$ 
 obtained from `sol``.variable_values_begin()`. The value type 
@@ -571,7 +571,7 @@ the problem is indeed unbounded.
 Unboundedness_certificate_iterator 
 unboundedness_certificate_begin() const; 
 
-/*! 
+/*!
 returns the corresponding past-the-end iterator. 
 
 \sa `unboundedness_certificate_begin()`

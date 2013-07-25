@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Qt_moving_points_2(QtGui::Handle,Traits::Active_points_2_table::Handle); 

@@ -28,7 +28,7 @@ public:
 /// `SegmentDelaunayGraphSite_2`.
 /// @{
 
-/*! 
+/*!
 A type for the template parameter `K`. 
 */ 
 typedef K Kernel; 

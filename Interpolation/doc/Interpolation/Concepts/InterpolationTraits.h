@@ -23,24 +23,24 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The number type must follow the model 
 `FieldNumberType`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The point type on 
 which the function is defined and interpolated. 
 */ 
 typedef unspecified_type Point_d; 
 
-/*! 
+/*!
 The corresponding vector type. 
 */ 
 typedef unspecified_type Vector_d; 
 
-/*! 
+/*!
 A constructor object for 
 `Vector_d`. 
 Provides : 
@@ -53,7 +53,7 @@ the null vector.
 */ 
 typedef unspecified_type Construct_vector_d; 
 
-/*! 
+/*!
 Constructor object for 
 `Vector_d`. 
 Provides : 
@@ -63,7 +63,7 @@ vector `v` scaled by a factor `scale`.
 */ 
 typedef unspecified_type Construct_scaled_vector_d; 
 
-/*! 
+/*!
 Constructor 
 object for `FT`. Provides the operator: 
 
@@ -72,7 +72,7 @@ distance between `a` and `b`.
 */ 
 typedef unspecified_type Compute_squared_distance_d; 
 
-/*! 
+/*!
 default constructor. 
 */ 
 InterpolationTraits(); 
@@ -84,17 +84,17 @@ InterpolationTraits();
 /// constructor object types must exist.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_vector_d construct_vector_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_scaled_vector_d construct_scaled_vector_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Compute_squared_distance_d compute_squared_distance_d_object(); 

@@ -22,17 +22,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef ModularTraits::Residue_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef ModularTraits::Type argument_type; 
 
-/*! 
+/*!
 
 computes \f$ \varphi(x)\f$. 
 

@@ -23,7 +23,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef T value_type; 
@@ -35,7 +35,7 @@ typedef T value_type;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 first element 
 */ 
 T e0; 
@@ -47,7 +47,7 @@ T e0;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 second element 
 */ 
 T e1; 
@@ -59,7 +59,7 @@ T e1;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 third element 
 */ 
 T e2; 
@@ -71,7 +71,7 @@ T e2;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 fourth element 
 */ 
 T e3; 
@@ -83,7 +83,7 @@ T e3;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces a `Fourtuple` using the default 
 constructor of the elements. 
 */ 
@@ -96,7 +96,7 @@ Fourtuple();
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 constructs a `Fourtuple` such 
 that `e0` is constructed from `x`, `e1` from `y`, 
 `e2` from `z` and `e3` from `t`. 

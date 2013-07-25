@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 The clipping rect is used for unbounded \cgal objects. 
 */ 
 Converter<K>(QRectF clippingRect); 
@@ -31,42 +31,42 @@ Converter<K>(QRectF clippingRect);
 /// \name From CGAL to Qt 
 /// @{
 
-/*! 
+/*!
 Converts a bounding box. 
 */ 
 QRectF operator()(Bbox_2); 
 
-/*! 
+/*!
 Converts a point. 
 */ 
 QPointF operator()(K::Point_2); 
 
-/*! 
+/*!
 Converts a segment. 
 */ 
 QLineF operator()(K::Segment_2); 
 
-/*! 
+/*!
 Clips the ray and converts the resulting segment. 
 */ 
 QLineF operator()(K::Ray_2); 
 
-/*! 
+/*!
 Clips the line and converts the resulting segment. 
 */ 
 QLineF operator()(K::Line_2); 
 
-/*! 
+/*!
 Converts a triangle. 
 */ 
 QPolygonF operator()(K::Triangle_2); 
 
-/*! 
+/*!
 Converts an iso rectangle. 
 */ 
 QRectF operator()(K::Iso_rectangle_2); 
 
-/*! 
+/*!
 Converts a list of points to a polygon. 
 */ 
 QPolygonF operator()(std::list<K::Point_2>); 
@@ -76,22 +76,22 @@ QPolygonF operator()(std::list<K::Point_2>);
 /// \name From Qt to CGAL 
 /// @{
 
-/*! 
+/*!
 Converts a point. 
 */ 
 K::Point_2 operator()(QPointF); 
 
-/*! 
+/*!
 Converts a segment. 
 */ 
 K::Segment_2 operator()(QLineF); 
 
-/*! 
+/*!
 Converts an iso rectangle. 
 */ 
 K::Iso_rectangle_2 operator()(QRectF); 
 
-/*! 
+/*!
 Converts a polygon to a list of points. 
 */ 
 std::list<K::Point_2> operator()(QPolygonF); 

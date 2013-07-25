@@ -24,7 +24,7 @@ public:
 ///  An object of this type must provide in addition:
 /// @{
 
-/*! 
+/*!
 Compares `p` and `q` according to the lexicographic ordering on \f$ x\f$- and \f$ y\f$-coordinates. 
 */ 
 Comparison_result operator() 

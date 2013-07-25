@@ -36,17 +36,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d second_argument_type; 
@@ -56,7 +56,7 @@ typedef PolynomialTraits_d::Polynomial_d second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes \f$ gcd(f,g)\f$ up to a constant factor. 
 */ 
 result_type operator()(first_argument_type f, 

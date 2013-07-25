@@ -11,7 +11,7 @@ considered as not exact.
 
 namespace CGAL {
 
-/*! 
+/*!
 Determines whether the argument represents a value in \f$ \mathbb{R}\f$. 
 */ 
 bool is_finite(long double x); 

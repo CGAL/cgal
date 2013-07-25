@@ -52,7 +52,7 @@ Catmull-Clark subdivision.
 */
 /// @{
 
-/*! 
+/*!
 
 applies the PQQ refinement on the control mesh `p` `step` times. 
 The geometry of the refined mesh is computed by the geometry policy `mask`. 
@@ -62,7 +62,7 @@ This function overwrites the control mesh `p` with the refined mesh.
 template <class Polyhedron_3, template <typename> class Mask> 
 void PQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
 
-/*! 
+/*!
 
 applies the PTQ refinement on the control mesh `p` `step` times, 
 where `p` contains only triangle facets. 
@@ -74,7 +74,7 @@ The result of a non-triangle mesh `p` is undefined.
 template <class Polyhedron_3, template <typename> class Mask> 
 void PTQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
 
-/*! 
+/*!
 
 applies the DQQ refinement on the control mesh `p` `step` times. 
 The geometry of the refined mesh is computed by the geometry policy `mask`. 
@@ -84,7 +84,7 @@ This function overwrites the control mesh `p` with the refined mesh.
 template <class Polyhedron_3, template <typename> class Mask> 
 void DQQ(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
 
-/*! 
+/*!
 
 applies the \f$ \sqrt{3}\f$ triangulation on the control mesh `p` 
 `step` times, where `p` contains only triangle facets. 
@@ -96,7 +96,7 @@ The result of a non-triangle mesh `p` is undefined.
 template <class Polyhedron_3, template <typename> class Mask> 
 void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1); 
 
-/*! 
+/*!
 
 applies Catmull-Clark subdivision `step` times on the control mesh `p`. 
 This function overwrites the control mesh `p` with the subdivided mesh. 
@@ -105,7 +105,7 @@ This function overwrites the control mesh `p` with the subdivided mesh.
 template <class Polyhedron_3> 
 void CatmullClark_subdivision(Polyhedron_3& p, int step = 1); 
 
-/*! 
+/*!
 
 applies Loop subdivision `step` times on the control mesh `p`. 
 This function overwrites the control mesh `p` with the subdivided mesh. 
@@ -114,7 +114,7 @@ This function overwrites the control mesh `p` with the subdivided mesh.
 template <class Polyhedron_3> 
 void Loop_subdivision(Polyhedron_3& p, int step = 1); 
 
-/*! 
+/*!
 
 applies Doo-Sabin subdivision `step` times on the control mesh `p`. 
 This function overwrites the control mesh `p` with the subdivided mesh. 
@@ -123,7 +123,7 @@ This function overwrites the control mesh `p` with the subdivided mesh.
 template <class Polyhedron_3> 
 void DooSabin_subdivision(Polyhedron_3& p, int step = 1); 
 
-/*! 
+/*!
 
 applies \f$ \sqrt{3}\f$ subdivision `step` times on the control mesh `p`. 
 This function overwrites the control mesh `p` with the subdivided mesh. 

@@ -31,30 +31,30 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 model for `FieldNumberType`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 model for 
 `Kernel::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 model for 
 `Kernel::Compute_squared_distance_2`. 
 */ 
 typedef unspecified_type Compute_squared_distance_2; 
 
-/*! 
+/*!
 model for 
 `Kernel::Less_xy_2`. 
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 model for 
 `Kernel::Orientation_2`. 
 */ 
@@ -66,18 +66,18 @@ typedef unspecified_type Orientation_2;
 /// The following member functions return function objects of the types listed above.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compute_squared_distance_2 
 compute_squared_distance_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 

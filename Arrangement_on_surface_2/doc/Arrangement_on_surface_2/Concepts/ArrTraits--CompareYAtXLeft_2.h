@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 accepts two \f$ x\f$-monotone curves `xc1` and `xc2` 
 that have a common right endpoint `p`, and returns `SMALLER, EQUAL` or `LARGER` according to the relative position of the two 
 curves immediately to the left of \f$ p\f$. Note that in case one of the 

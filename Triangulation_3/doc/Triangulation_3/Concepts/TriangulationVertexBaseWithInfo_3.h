@@ -18,7 +18,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type which is `DefaultConstructible` and `Assignable`. 
 */ 
 typedef unspecified_type Info; 
@@ -28,13 +28,13 @@ typedef unspecified_type Info;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the object of type `Info` stored in the 
 vertex. 
 */ 
 const Info& info() const; 
 
-/*! 
+/*!
 Returns a reference to the object of type `Info` stored in the vertex. 
 */ 
 Info& info(); 

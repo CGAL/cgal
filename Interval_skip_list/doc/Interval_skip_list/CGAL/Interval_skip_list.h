@@ -25,12 +25,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the type of inf and sup of the interval. 
 */ 
 typedef Interval::Value Value; 
 
-/*! 
+/*!
 An iterator over all intervals. 
 */ 
 typedef unspecified_type const_iterator; 
@@ -40,12 +40,12 @@ typedef unspecified_type const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Interval_skip_list(); 
 
-/*! 
+/*!
 Constructor that inserts the iterator range `[first, last)` in the interval skip list. 
 \tparam InputIterator must be an input iterator with value type `Interval`. 
 */ 
@@ -59,7 +59,7 @@ InputIterator last);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Inserts the iterator range `[first, last)` in the interval skip list, and returns 
 the number of inserted intervals. 
 \tparam InputIterator must be an input iterator with value type `Interval`. 
@@ -69,22 +69,22 @@ int insert(
 InputIterator first, 
 InputIterator last); 
 
-/*! 
+/*!
 Inserts interval `i` in the interval skip list. 
 */ 
 void insert(const Interval& i); 
 
-/*! 
+/*!
 Removes interval `i` from the interval skip list. Returns `true` iff removal was successful. 
 */ 
 bool remove(const Interval& i); 
 
-/*! 
+/*!
 Returns `true` iff there is an interval that contains `v`. 
 */ 
 bool is_contained(const Value& v); 
 
-/*! 
+/*!
 Writes the intervals `i` with `i.inf()` \f$ \leq\f$ `v` \f$ \leq\f$ `i.sup` to the 
 output iterator `out`. 
 \tparam OutputIterator must be an output iterator with value type `Interval`. 
@@ -94,18 +94,18 @@ OutputIterator find_intervals(
 const Value& v, 
 OutputIterator out); 
 
-/*! 
+/*!
 Removes all intervals from the interval skip list. 
 */ 
 void 
 clear(); 
 
-/*! 
+/*!
 Returns an iterator over all intervals. 
 */ 
 const_iterator begin() const; 
 
-/*! 
+/*!
 Returns the past the end iterator. 
 */ 
 const_iterator end() const; 
@@ -114,7 +114,7 @@ const_iterator end() const;
 
 }; /* end Interval_skip_list */
 
-/*! 
+/*!
 Inserts the interval skip list `isl` into the stream `os`. 
 \pre The output operator must be defined for `Interval`. 
 \relates Interval_skip_list 

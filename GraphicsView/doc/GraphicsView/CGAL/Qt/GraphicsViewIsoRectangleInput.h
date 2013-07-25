@@ -15,7 +15,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 \param p is a parent object. 
 \param s is the scene where the iso rectangle is generated. 
 */ 
@@ -26,7 +26,7 @@ GraphicsViewIsoRectangleInput<T>(QObject *p, QGraphicsScene* s);
 /// \name Signals 
 /// @{
 
-/*! 
+/*!
 The object `o` contains a `K::Iso_rectangle_2`. 
 */ 
 void generate(Object o); 

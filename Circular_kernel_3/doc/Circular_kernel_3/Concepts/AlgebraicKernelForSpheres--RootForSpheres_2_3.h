@@ -20,7 +20,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Test equality of two roots of systems. 
 */ 
 bool operator ==(const AlgebraicKernelForSpheres::RootForSpheres_2_3 & r1, 

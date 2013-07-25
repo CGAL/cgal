@@ -40,12 +40,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the associated arrangement type. 
 */ 
 typedef unspecified_type Arrangement_2; 
 
-/*! 
+/*!
 equivalent to `Arrangement_2::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
@@ -55,12 +55,12 @@ typedef unspecified_type Point_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 ArrangementPointLocation_2(); 
 
-/*! 
+/*!
 constructs a point-location object `pl` attached to the given 
 arrangement `arr`. 
 */ 
@@ -71,7 +71,7 @@ ArrangementPointLocation_2 (const Arrangement_2& arr);
 /// \name Query Functions 
 /// @{
 
-/*! 
+/*!
 locates the arrangement cell that contains the query point `q` 
 and returns a discriminated union container of the following bounded
 types:
@@ -93,12 +93,12 @@ Arr_point_location_result<Arrangement_2>::Type locate(const Point_2& q) const;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 attaches `pl` to the given arrangement `arr`. 
 */ 
 void attach (const Arrangement_2& arr); 
 
-/*! 
+/*!
 detaches `pl` from the arrangement it is currently attached to. 
 */ 
 void detach (); 

@@ -19,12 +19,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates a color with rgb-value `(0,0,0)`, i.e.\ black. 
 */ 
 Color(); 
 
-/*! 
+/*!
 creates a color with rgb-value `(red,green,blue)`. 
 */ 
 Color(unsigned char red, unsigned char green, unsigned char blue); 
@@ -34,28 +34,28 @@ Color(unsigned char red, unsigned char green, unsigned char blue);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Test for equality: Two colors are equal, iff their 
 rgb-values are equal. 
 */ 
 bool operator==(const Color &q) const; 
 
-/*! 
+/*!
 Test for inequality. 
 */ 
 bool operator!=(const Color &q) const; 
 
-/*! 
+/*!
 returns the red component of `c`. 
 */ 
 unsigned char red() const; 
 
-/*! 
+/*!
 returns the green component of `c`. 
 */ 
 unsigned char green() const; 
 
-/*! 
+/*!
 returns the blue component of `c`. 
 */ 
 unsigned char blue() const; 
@@ -66,37 +66,37 @@ unsigned char blue() const;
 /// The following constants are predefined:
 /// @{
 
-/*! 
+/*!
 Black. 
 */ 
 const Color BLACK = Color(0, 0, 0); 
 
-/*! 
+/*!
 White. 
 */ 
 const Color WHITE = Color(255, 255, 255); 
 
-/*! 
+/*!
 Red. 
 */ 
 const Color RED = Color(255, 0, 0); 
 
-/*! 
+/*!
 Green. 
 */ 
 const Color GREEN = Color(0, 255, 0); 
 
-/*! 
+/*!
 Blue. 
 */ 
 const Color BLUE = Color(0, 0, 255); 
 
-/*! 
+/*!
 Violet. 
 */ 
 const Color VIOLET = Color(255, 0, 255); 
 
-/*! 
+/*!
 Orange. 
 */ 
 const Color ORANGE = Color(255, 170, 0); 

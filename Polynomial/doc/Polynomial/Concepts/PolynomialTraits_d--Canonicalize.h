@@ -35,12 +35,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -50,7 +50,7 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns the canonical representative of \f$ p\f$. 
 */ 

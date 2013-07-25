@@ -30,17 +30,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Base_distance::FT FT; 
 
-/*! 
+/*!
 
 */ 
 typedef Key Point_d; 
 
-/*! 
+/*!
 
 */ 
 typedef Base_distance::Query_item Query_item; 
@@ -50,7 +50,7 @@ typedef Base_distance::Query_item Query_item;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor initializing the class to `base` and setting the point property map of the class to `ppmap`. 
 */ 
 Distance_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_distance& base=Base_distance()); 
@@ -60,7 +60,7 @@ Distance_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Base_dis
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the point property map. 
 */ 
 const PointPropertyMap& point_property_map() const; 
@@ -106,22 +106,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Key Point_d; 
 
-/*! 
+/*!
 
 */ 
 BaseTraits::FT FT; 
 
-/*! 
+/*!
 
 */ 
 BaseTraits::Cartesian_const_iterator_d Cartesian_const_iterator_d; 
 
-/*! 
+/*!
 
 */ 
 BaseTraits Base; 
@@ -131,7 +131,7 @@ BaseTraits Base;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor initializing the class to `base` and setting the point property map of the class to `ppmap`. 
 */ 
 Search_traits_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const BaseTraits& base=BaseTraits()); 
@@ -141,7 +141,7 @@ Search_traits_adapter(const PointPropertyMap& ppmap=PointPropertyMap(),const Bas
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the point property map. 
 */ 
 const PointPropertyMap& point_property_map() const; 

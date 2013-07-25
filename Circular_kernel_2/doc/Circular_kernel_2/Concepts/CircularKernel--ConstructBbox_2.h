@@ -17,19 +17,19 @@ public:
 /// @{
 
 
-/*! 
+/*!
 
 */ 
 CGAL::Bbox_2 operator() 
 (const CircularKernel::Circular_arc_point_2 & p); 
 
-/*! 
+/*!
 
 */ 
 CGAL::Bbox_2 operator() 
 (const CircularKernel::Line_arc_2 & l); 
 
-/*! 
+/*!
 
 */ 
 CGAL::Bbox_2 operator() 

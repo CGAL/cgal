@@ -83,7 +83,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     constructs `lp` from given random-access iterators and the constant `c0`. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the linear program is 
     described in `LinearProgram`. 
   */ 
@@ -351,7 +351,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     constructs `lp` from given random-access iterators and the constant 
     `c0`. The passed iterators are merely stored, no copying of the program 
     data takes place. How these iterators are supposed to encode the nonnegative 
@@ -448,7 +448,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     constructs `qp` from given random-access iterators and the constant `c0`. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the nonnegative 
     quadratic program is described in `NonnegativeQuadraticProgram`. 
   */ 
@@ -548,7 +548,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     constructs `qp` from given random-access iterators and the constant `c0`. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the quadratic program is 
     described in `QuadraticProgram`. 
   */ 
@@ -655,7 +655,7 @@ public:
   /// \name Types 
   /// @{
 
-  /*! 
+  /*!
     The number type of the program entries. 
   */ 
   typedef unspecified_type NT; 
@@ -665,7 +665,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     reads `qp` from the input stream `in`. 
   */ 
   Quadratic_program_from_mps(std::istream& in); 
@@ -675,54 +675,54 @@ public:
   /// \name Operations 
   /// @{
 
-  /*! 
+  /*!
     returns `true` if and only if an 
     MPS-encoded quadratic program could be extracted from the input stream. 
   */ 
   bool is_valid() const; 
 
-  /*! 
+  /*!
     if !`qp``.is_valid()`, 
     this method returns an error message explaining why the input does not 
     conform to the `MPSFormat`. 
   */ 
   const std::string& get_error() const; 
 
-  /*! 
+  /*!
     returns the name of the \f$ j\f$-th variable. \pre \f$ j\f$ must not refer to a variable that has been added later, using one of the set methods below. 
   */ 
   const std::string& variable_name_by_index (int j) const; 
 
-  /*! 
+  /*!
     returns the index of the variable with name `name`. If there is 
     no variable with this name, the result is \f$ -1\f$. 
   */ 
   int variable_index_by_name (const std::string& name) const; 
 
-  /*! 
+  /*!
     returns the name of the \f$ i\f$-th constraint. \pre \f$ i\f$ must not refer to a constraint that has been added later, using one of the set methods below. 
   */ 
   const std::string& constraint_name_by_index (int i) const; 
 
-  /*! 
+  /*!
     returns the index of the constraint with name `name`. If there is 
     no constraint with this name, the result is \f$ -1\f$. 
   */ 
   int constraint_index_by_name (const std::string& name) const; 
 
-  /*! 
+  /*!
     returns `true` if and only if 
     `qp` is a linear program. 
   */ 
   bool is_linear() const; 
 
-  /*! 
+  /*!
     returns `true` if and only if 
     `qp` is a nonnegative program. 
   */ 
   bool is_nonnegative() const; 
 
-  /*! 
+  /*!
     sets the entry \f$ A_{ij}\f$ 
     in column \f$ j\f$ and row \f$ i\f$ of the constraint matrix \f$ A\f$ of `qp` to 
     `val`. An existing entry is overwritten. `qp` is enlarged if 
@@ -730,14 +730,14 @@ public:
   */ 
   void set_a (int j, int i, const NT& val); 
 
-  /*! 
+  /*!
     sets the entry \f$ b_i\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_b (int i, const NT& val); 
 
-  /*! 
+  /*!
     sets the entry \f$ \qprel_i\f$ of `qp` to `rel`. `CGAL::SMALLER` 
     means that the \f$ i\f$-th constraint is of type "\f$ \leq\f$", `CGAL::EQUAL` 
     means "\f$ =\f$", and `CGAL::LARGER` encodes "\f$ \geq\f$". An existing entry 
@@ -745,34 +745,34 @@ public:
   */ 
   void set_r (int i, CGAL::Comparison_result rel); 
 
-  /*! 
+  /*!
     if `is_finite`, this sets the entry \f$ l_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ l_j\f$ to \f$ -\infty\f$. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_l (int j, bool is_finite, const NT& val = NT(0)); 
 
-  /*! 
+  /*!
     if `is_finite`, this sets the entry \f$ u_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ u_j\f$ to \f$ \infty\f$. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_u (int j, bool is_finite, const NT& val = NT(0)); 
 
-  /*! 
+  /*!
     sets the entry \f$ c_j\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_c (int j, const NT& val); 
 
-  /*! 
+  /*!
     sets the entry \f$ c_0\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
   */ 
   void set_c0 (const NT& val); 
 
-  /*! 
+  /*!
     sets the entries 
     \f$ 2D_{ij}\f$ and \f$ 2D_{ji}\f$ of `qp` to `val`. Existing entries are 
     overwritten. `qp` is enlarged if necessary to accomodate these entries. 
@@ -881,7 +881,7 @@ public:
   /// \name Types 
   /// @{
 
-  /*! 
+  /*!
     The number type of the program entries. 
   */ 
   typedef unspecified_type NT; 
@@ -891,7 +891,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     constructs a quadratic program with no variables and no constraints, ready 
     for data to be added. Unless relations are explicitly set, they will 
     be of type `default_r`. Unless bounds are explicitly set, they 
@@ -915,19 +915,19 @@ public:
   /// \name Operations 
   /// @{
 
-  /*! 
+  /*!
     returns `true` if and only if 
     `qp` is a linear program. 
   */ 
   bool is_linear() const; 
 
-  /*! 
+  /*!
     returns `true` if and only if 
     `qp` is a nonnegative program. 
   */ 
   bool is_nonnegative() const; 
 
-  /*! 
+  /*!
     sets the entry \f$ A_{ij}\f$ 
     in column \f$ j\f$ and row \f$ i\f$ of the constraint matrix \f$ A\f$ of `qp` to 
     `val`. An existing entry is overwritten. `qp` is enlarged if 
@@ -935,14 +935,14 @@ public:
   */ 
   void set_a (int j, int i, const NT& val); 
 
-  /*! 
+  /*!
     sets the entry \f$ b_i\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_b (int i, const NT& val); 
 
-  /*! 
+  /*!
     sets the entry \f$ \qprel_i\f$ of `qp` to `rel`. `CGAL::SMALLER` 
     means that the \f$ i\f$-th constraint is of type "\f$ \leq\f$", `CGAL::EQUAL` 
     means "\f$ =\f$", and `CGAL::LARGER` encodes "\f$ \geq\f$". An existing entry 
@@ -950,34 +950,34 @@ public:
   */ 
   void set_r (int i, CGAL::Comparison_result rel); 
 
-  /*! 
+  /*!
     if `is_finite`, this sets the entry \f$ l_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ l_j\f$ to \f$ -\infty\f$. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_l (int j, bool is_finite, const NT& val = NT(0)); 
 
-  /*! 
+  /*!
     if `is_finite`, this sets the entry \f$ u_j\f$ of `qp` to `val`, 
     otherwise it sets \f$ u_j\f$ to \f$ \infty\f$. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_u (int j, bool is_finite, const NT& val = NT(0)); 
 
-  /*! 
+  /*!
     sets the entry \f$ c_j\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
     `qp` is enlarged if necessary to accomodate this entry. 
   */ 
   void set_c (int j, const NT& val); 
 
-  /*! 
+  /*!
     sets the entry \f$ c_0\f$ 
     of `qp` to `val`. An existing entry is overwritten. 
   */ 
   void set_c0 (const NT& val); 
 
-  /*! 
+  /*!
     sets the entries 
     \f$ 2D_{ij}\f$ and \f$ 2D_{ji}\f$ of `qp` to `val`. Existing entries are 
     overwritten. `qp` is enlarged if necessary to accomodate these entries. 

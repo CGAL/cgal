@@ -20,17 +20,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The coordinate type of the points of the polygon.
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The point type of the polygon. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 Predicate object type that determines the orientation of three points. 
 It must provide `Orientation operator()(Point_2 p, Point_2 q, 
 Point_2 r)` that 
@@ -41,7 +41,7 @@ on \f$ l\f$.
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 Binary predicate object type comparing `Point_2`s lexicographically. 
 It must provide `bool operator()(Point_2 p, Point_2 q)` that 
 returns `true` iff \f$ p <_{xy} q\f$. 
@@ -57,12 +57,12 @@ typedef unspecified_type Less_xy_2;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orienation_2 orientation_2_object(); 

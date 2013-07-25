@@ -29,24 +29,24 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type on which the partitioning algorithm operates. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 The polygon type created by the partitioning 
 function. This type should provide a nested type `Vertex_const_iterator` 
 that is the type of the non-mutable iterator over the polygon vertices. 
 */ 
 typedef unspecified_type Polygon_2; 
 
-/*! 
+/*!
 A model of the concept `PolygonIsValid` 
 */ 
 typedef unspecified_type Is_valid; 
 
-/*! 
+/*!
 
 Predicate object type that compares `Point_2`s lexicographically. 
 Must provide `bool operator()(Point_2 p, Point_2 q)` where `true` 
@@ -58,7 +58,7 @@ respectively.
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 
 Predicate object type that provides 
 `bool operator()(Point_2 p,Point_2 q,Point_2 r)`, which 
@@ -67,7 +67,7 @@ oriented line through `p` and `q`.
 */ 
 typedef unspecified_type Left_turn_2; 
 
-/*! 
+/*!
 Predicate object type that provides 
 `CGAL::Orientation operator()(Point_2 p, Point_2 q, Point_2 r)` that 
 returns `CGAL::LEFT_TURN`, if \f$ r\f$ lies to the left of the oriented 
@@ -83,7 +83,7 @@ typedef unspecified_type Orientation_2;
 /// Only a copy constructor is required.
 /// @{
 
-/*! 
+/*!
 
 */ 
 PartitionIsValidTraits_2(PartitionIsValidTraits_2 tr); 
@@ -94,22 +94,22 @@ PartitionIsValidTraits_2(PartitionIsValidTraits_2 tr);
 /// The following functions that create instances of the above predicate object types must exist.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Orientation_2 is_valid_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Left_turn_2 left_turn_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 

@@ -33,12 +33,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef int result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -48,12 +48,12 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes the degree of \f$ p\f$ with respect to the outermost variable \f$ x_{d-1}\f$. 
 */ 
 result_type operator()(argument_type p); 
 
-/*! 
+/*!
 Computes the degree of \f$ p\f$ with respect to variable \f$ x_i\f$. 
 \pre \f$ 0 \leq i < d\f$. 
 

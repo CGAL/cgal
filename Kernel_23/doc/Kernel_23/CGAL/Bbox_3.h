@@ -17,7 +17,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a bounding box `b` with lexicographically 
 smallest corner point at `(xmin, ymin, zmin)` 
 lexicographically largest corner point at 
@@ -31,66 +31,66 @@ double x_max, double y_max, double z_max);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Test for equality. 
 */ 
 bool operator==(const Bbox_3 &c) const; 
 
-/*! 
+/*!
 Test for inequality. 
 */ 
 bool operator!=(const Bbox_3 &q) const; 
 
-/*! 
+/*!
 Returns 3. 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 
 */ 
 double xmin() const; 
 
-/*! 
+/*!
 
 */ 
 double ymin() const; 
 
-/*! 
+/*!
 
 */ 
 double zmin() const; 
 
-/*! 
+/*!
 
 */ 
 double xmax() const; 
 
-/*! 
+/*!
 
 */ 
 double ymax() const; 
 
-/*! 
+/*!
 
 */ 
 double zmax() const; 
 
-/*! 
+/*!
 Returns `xmin()` if `i==0` or `ymin()` if `i==1` 
 or `zmin()` if `i==2`. 
 \pre i<=0 and i<=2 
 */ 
 double min(int i) const; 
 
-/*! 
+/*!
 Returns `xmax()` if `i==0` or `ymax()` if `i==1` 
 or `zmax()` if `i==2`. 
 \pre i==0 and i<=2 
 */ 
 double max(int i) const; 
 
-/*! 
+/*!
 returns a bounding box of `b` and `c`. 
 */ 
 Bbox_3 operator+(const Bbox_3 &c) const;

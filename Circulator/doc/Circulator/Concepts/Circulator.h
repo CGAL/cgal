@@ -318,7 +318,7 @@ class BidirectionalCirculator {
 }; /* end ForwardCirculator */
 
 
-/*! 
+/*!
   \ingroup PkgHandlesAndCirculatorsConcepts
   See Subsection \ref sectionRandomAccessCirculatorRequ in the page on Circulators.
 \cgalConcept

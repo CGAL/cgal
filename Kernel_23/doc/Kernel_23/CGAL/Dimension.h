@@ -35,7 +35,7 @@ public:
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 The dimension value as a compile-time 
 integral constant. It is implemented as `K::Ambient_dimension<T>::%type::%value`.
 It exists only when the dimension is a compile-time constant. 
@@ -47,7 +47,7 @@ static const int value;
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Either `Dimension_tag<dim>` if the dimension is a 
 compile-time constant of value `dim`, or `Dynamic_dimension_tag` 
 otherwise. It is implemented as `K::Ambient_dimension<T>::%type`.
@@ -90,7 +90,7 @@ public:
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 The value of the `dim` parameter. 
 */ 
 static const int value; 
@@ -164,7 +164,7 @@ public:
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 The dimension value as a compile-time 
 integral constant. It is implemented as `K::Feature_dimension<T>::%type::%value`. 
 It exists only when the dimension is a compile-time constant. 
@@ -176,7 +176,7 @@ static const int value;
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Either `Dimension_tag<dim>` if the dimension is a 
 compile-time constant of value `dim`, or `Dynamic_dimension_tag` 
 otherwise. It is implemented as `K::Feature_dimension<T>::%type`. 

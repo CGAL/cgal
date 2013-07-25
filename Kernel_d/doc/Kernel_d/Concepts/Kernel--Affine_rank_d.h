@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes 
 the affine rank of the points in `A = tuple [first,last)`. 
 \pre The objects are of the same dimension. 

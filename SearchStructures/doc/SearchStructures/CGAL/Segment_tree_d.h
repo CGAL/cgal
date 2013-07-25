@@ -21,17 +21,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 container `Data`. 
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 container `Window`. 
 */ 
 typedef unspecified_type Window; 
 
-/*! 
+/*!
 class `Traits`. 
 */ 
 typedef unspecified_type Traits; 
@@ -41,7 +41,7 @@ typedef unspecified_type Traits;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 A segment tree is defined, such that the subtree of each 
 vertex is of the same type prototype 
 `sublayer_tree` is. 
@@ -79,7 +79,7 @@ Traits> s(Tree_base<Data, Window> sublayer_tree);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 The tree is constructed according to the data items in the 
 sequence between the element pointed by iterator `first` and 
 iterator `last`. 
@@ -87,7 +87,7 @@ iterator `last`.
 */ 
 bool make_tree(In_it first, In_it last); 
 
-/*! 
+/*!
 `win`\f$ =[a_1,b_1),\ldots, [a_d,b_d)\f$, \f$ a_i,b_i\in T_i\f$, \f$ 1\le i\le d\f$. All elements that 
 intersect the associated \f$ d\f$-dimensional interval of 
 `win` are placed in the 
@@ -101,7 +101,7 @@ In order to perform an inverse range query, a range query of
 */ 
 OutputIterator window_query(Window win, OutputIterator result); 
 
-/*! 
+/*!
 All elements that 
 enclose the associated \f$ d\f$-dimensional interval of 
 `win` are placed in the 
@@ -110,7 +110,7 @@ to the last location the function wrote to.
 */ 
 OutputIterator enclosing_query(Window win, OutputIterator result); 
 
-/*! 
+/*!
 The tree structure is checked. For each 
 vertex either the 
 sublayer tree is a tree anchor, or it stores a (possibly empty) 
@@ -125,14 +125,14 @@ bool is_valid();
 
 protected:
 
-/*! 
+/*!
 returns `true`, if the 
 interval of `object` is contained in the 
 interval of `win`, `false` otherwise. 
 */ 
 bool is_inside(Window win, Data object); 
 
-/*! 
+/*!
 returns false. 
 */ 
 bool is_anchor(); 

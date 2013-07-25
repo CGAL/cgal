@@ -26,25 +26,25 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the corresponding vertex 
 (if any) of the next level triangulation. 
 */ 
 Vertex_handle up(); 
 
-/*! 
+/*!
 returns the corresponding vertex 
 of the previous level triangulation. 
 */ 
 Vertex_handle down(); 
 
-/*! 
+/*!
 sets the handle pointing to to the corresponding vertex 
 of the next level triangulation. 
 */ 
 void set_up(Vertex_handle u); 
 
-/*! 
+/*!
 sets the handle pointing to the corresponding vertex 
 of the previous level triangulation. 
 */ 

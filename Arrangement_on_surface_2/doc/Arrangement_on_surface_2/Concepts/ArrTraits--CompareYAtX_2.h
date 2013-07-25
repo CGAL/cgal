@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 compares the \f$ y\f$-coordinates of `p` and the vertical 
 projection of `p` on `xc`, and returns `SMALLER`, `EQUAL`, 
 or `LARGER` according to the result. 

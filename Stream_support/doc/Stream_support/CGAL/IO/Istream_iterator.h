@@ -19,14 +19,14 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates an end-of-stream iterator. 
 This is a past-the-end iterator, and it is useful 
 when constructing a range. 
 */ 
 Istream_iterator(); 
 
-/*! 
+/*!
 creates an input iterator reading from `s`. 
 When `s` reaches end of stream, 
 this iterator will compare equal to an end-of-stream iterator 

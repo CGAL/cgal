@@ -32,12 +32,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -47,7 +47,7 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the square-free part of \f$ p\f$. 
 */ 
 result_type operator()(argument_type p); 

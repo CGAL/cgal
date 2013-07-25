@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns \f$ p\f$ projected along the \f$ d\f$-axis onto the hyperspace 
 spanned by the first \f$ d-1\f$ standard base vectors. 
 */ 

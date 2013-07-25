@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `CGAL::Polyhedron_3<IGT>` type with customized `PolyhedronItems_3` 
 designed to handle sharp feature detection. 
 */ 

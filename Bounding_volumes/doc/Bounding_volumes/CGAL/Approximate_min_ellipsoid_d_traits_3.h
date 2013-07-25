@@ -33,23 +33,23 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `typedef double FT`. The kernel's number type 
 `K::RT` must be convertible to `double`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 typedef to the second template argument, `ET`. 
 */ 
 typedef unspecified_type ET; 
 
-/*! 
+/*!
 `typedef K::Point_3 Point` 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 `typedef K::Cartesian_const_iterator_3 Cartesian_const_iterator` 
 */ 
 typedef unspecified_type Cartesian_const_iterator; 

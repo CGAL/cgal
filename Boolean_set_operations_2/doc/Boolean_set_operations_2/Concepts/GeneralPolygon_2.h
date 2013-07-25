@@ -26,19 +26,19 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 represents a planar (weakly) \f$ x\f$-monotone 
 curve. The type of the geometric mapping of the polygonal edges. It must model the concept ArrTraits::XMonotoneCurve_2. 
 */ 
 typedef unspecified_type X_monotone_curve_2; 
 
-/*! 
+/*!
 an iterator over the geometric mapping of the 
 polygon edges. Its value type is `X_monotone_curve_2`. 
 */ 
 typedef unspecified_type Curve_iterator; 
 
-/*! 
+/*!
 a const iterator over the geometric 
 mapping of the polygon edges. Its value type is `X_monotone_curve_2`. 
 */ 
@@ -49,22 +49,22 @@ typedef unspecified_type Curve_const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 GeneralPolygon_2(); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 GeneralPolygon_2(GeneralPolygon_2 other); 
 
-/*! 
+/*!
 assignment operator. 
 */ 
 GeneralPolygon_2 operator=(other); 
 
-/*! 
+/*!
 constructs a general polygon from a given range of curves. 
 */ 
 template <class InputIterator> 
@@ -75,22 +75,22 @@ GeneralPolygon_2(InputIterator begin, InputIterator end);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the begin iterator of the curves. 
 */ 
 Curve_iterator curves_begin(); 
 
-/*! 
+/*!
 returns the past-the-end iterator of the curves. 
 */ 
 Curve_iterator curves_end(); 
 
-/*! 
+/*!
 returns the begin const iterator of the curves. 
 */ 
 Curve_const_iterator curves_begin(); 
 
-/*! 
+/*!
 returns the past-the-end const iterator of the curves. 
 */ 
 Curve_const_iterator curves_end(); 
@@ -100,7 +100,7 @@ Curve_const_iterator curves_end();
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 initializes the polygon with the polygonal chain given by the range. 
 The value type of `Iterator` must be `X_monotone_curve_2`. 
 \pre The curves in the range must define a simple polygon. 

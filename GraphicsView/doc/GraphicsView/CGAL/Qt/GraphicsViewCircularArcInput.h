@@ -18,7 +18,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 \param p is a parent object. 
 \param s is the scene where the circular arc is generated. 
 */ 
@@ -29,7 +29,7 @@ GraphicsViewCircularArcInput<T>(QObject *p, QGraphicsScene* s);
 /// \name Signals 
 /// @{
 
-/*! 
+/*!
 The object `o` contains a `Circular_arc_2<K>`. 
 */ 
 void generate(Object o); 

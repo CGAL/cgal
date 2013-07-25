@@ -41,13 +41,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type for points 
 `p` of weighted points \f$ {p}^{(w)}=(p,w_p)\f$ 
 */ 
 typedef RegularTriangulationTraits_3::Bare_point Bare_point; 
 
-/*! 
+/*!
 
 */ 
 typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point; 
@@ -57,20 +57,20 @@ typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates an empty regular triangulation, possibly specifying a traits class 
 `traits`. 
 */ 
 Regular_triangulation_3 
 (const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3()); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Regular_triangulation_3 
 (const Regular_triangulation_3 & rt1); 
 
-/*! 
+/*!
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
 \tparam InputIterator must be an input iterator with value type `Weighted_point`. 
@@ -86,7 +86,7 @@ The following methods, which already exist in `Triangulation_3`, are overloaded 
 */
 /// @{
 
-/*! 
+/*!
 Inserts weighted point `p` in the triangulation. The optional 
 argument `start` is used as a starting place for the search. 
 
@@ -108,12 +108,12 @@ constructed handle.
 Vertex_handle insert(const Weighted_point & p, 
 Cell_handle start = Cell_handle() ); 
 
-/*! 
+/*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
 Vertex_handle insert(const Weighted_point & p, Vertex_handle hint); 
 
-/*! 
+/*!
 Inserts weighted point `p` in the triangulation and returns the corresponding 
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
@@ -122,7 +122,7 @@ parameter the return values of a previous location query. See description of
 Vertex_handle insert(const Weighted_point & p, Locate_type lt, 
 Cell_handle loc, int li, int lj); 
 
-/*! 
+/*!
 Inserts the weighted points in the range `[first,last)`. 
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
@@ -136,7 +136,7 @@ template < class InputIterator >
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
-/*! 
+/*!
 
 Inserts the weighted points in the iterator range  `[first,last)`.
 It returns the difference of the number of vertices between after and 
@@ -163,7 +163,7 @@ The following methods, which already exist in `Triangulation_3`, are overloaded 
 */
 /// @{
 
-/*! 
+/*!
 Creates a new vertex by starring a hole. It takes an iterator range 
 `[cell_begin,cell_end)` of `Cell_handle`s which specifies 
 a hole: a set of connected cells (resp. facets in dimension 2) which is 
@@ -184,7 +184,7 @@ template <class CellIt>
 Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end, 
 Cell_handle begin, int i); 
 
-/*! 
+/*!
 Same as above, except that `newv` will be used as the new vertex, which 
 must have been allocated previously with, e.g.\ `create_vertex`. 
 */ 
@@ -197,12 +197,12 @@ Cell_handle begin, int i, Vertex_handle newv);
 /// \name Removal 
 /// @{
 
-/*! 
+/*!
 Removes the vertex `v` from the triangulation. 
 */ 
 void remove(Vertex_handle v); 
 
-/*! 
+/*!
 Removes the vertices specified by the iterator range `[first, beyond)`. 
 The function `remove(Vertex_handle)` is called over each element of the range. 
 The number of vertices removed is returned. 
@@ -224,7 +224,7 @@ Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lie
 
 /// @{
 
-/*! 
+/*!
 Returns the position of the weighted point \f$ p\f$ with respect to the 
 power sphere of `c`. More precisely, it returns: 
 
@@ -251,7 +251,7 @@ two previous conditions.
 Bounded_side 
 side_of_power_sphere(Cell_handle c, const Weighted_point & p) const; 
 
-/*! 
+/*!
 Returns the position of the point `p` with respect to the 
 power circle of `f`. More precisely, it returns: 
 
@@ -304,14 +304,14 @@ Bounded_side
 side_of_power_circle(const Facet & f, 
 const Weighted_point & p) const; 
 
-/*! 
+/*!
 Same as the previous method for facet `i` of cell `c`. 
 */ 
 Bounded_side 
 side_of_power_circle(Cell_handle c, int i, 
 const Weighted_point & p) const; 
 
-/*! 
+/*!
 In dimension 1, returns 
 
 `ON_BOUNDED_SIDE` if \f$ \Pi({p}^{(w)}-{z(c)}^{(w)})<0\f$, where 
@@ -327,7 +327,7 @@ Bounded_side
 side_of_power_segment(Cell_handle c, const Weighted_point & p) 
 const; 
 
-/*! 
+/*!
 Returns the vertex of the triangulation which is nearest to \f$ p\f$ 
 with respect to the power distance. This means that the power 
 of the query point `p` with respect to the weighted point in 
@@ -344,7 +344,7 @@ specifying where to start the search.
 Vertex_handle nearest_power_vertex(Weighted_point p, 
 Cell_handle c = Cell_handle()); 
 
-/*! 
+/*!
 Returns the vertex of the cell `c` 
 that is nearest to \f$ p\f$ 
 with respect to the power distance. 
@@ -362,7 +362,7 @@ A weighted point `p` is said to be in conflict with a cell `c` in dimension 3 (r
 */
 /// @{
 
-/*! 
+/*!
 
 Compute the conflicts with `p`. 
 
@@ -390,7 +390,7 @@ OutputIteratorBoundaryFacets bfit,
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit); 
 
-/*! 
+/*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
@@ -398,7 +398,7 @@ OutputIterator
 vertices_in_conflict(Weighted_point p, Cell_handle c, 
 OutputIterator res); 
 
-/*! 
+/*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
 boundary of the conflict zone of `p`, in the output iterator `res`. 
 Returns the resulting output iterator. 
@@ -410,7 +410,7 @@ OutputIterator
 vertices_on_conflict_zone_boundary(Weighted_point p, Cell_handle c, 
 OutputIterator res); 
 
-/*! 
+/*!
 Similar to `find_conflicts()`, but reports the vertices which are in 
 the interior of the conflict zone of `p`, in the output iterator 
 `res`. The vertices that are on the boundary of the conflict zone are 
@@ -432,27 +432,27 @@ In the weighted setting, a face (cell, facet, edge or vertex) is said to be a Ga
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Cell_handle c, int i); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(const Facet& f); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(const Edge& e); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Vertex_handle v); 
@@ -464,13 +464,13 @@ bool is_Gabriel(Vertex_handle v);
 */
 /// @{
 
-/*! 
+/*!
 Returns the weighted circumcenter of the four vertices of c. 
 \pre `rt`.`dimension()`\f$ =3\f$ and `c` is not infinite. 
 */ 
 Bare_point dual(Cell_handle c) const; 
 
-/*! 
+/*!
 Returns the dual of facet `f`, which is 
 
 in dimension 3: either a segment, if the two cells incident to `f` 
@@ -481,12 +481,12 @@ in dimension 2: a point.
 */ 
 Object dual(Facet f) const; 
 
-/*! 
+/*!
 same as the previous method for facet `(c,i)`. 
 */ 
 Object dual(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Sends the set of duals to all the facets of `rt` into `os`. 
 */ 
 template <class Stream> Stream & draw_dual(Stream & os); 

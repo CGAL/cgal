@@ -23,7 +23,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Initializes the predicate establishing the `ratio`. 
 */ 
 Count_ratio_stop_predicate<ECM>( double ratio ); 
@@ -33,7 +33,7 @@ Count_ratio_stop_predicate<ECM>( double ratio );
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns ` ( ((double)current_count / (double)initial_count) < ratio)`. 
 All other parameters are ignored (but exist since this is a generic policy). 
 */ 

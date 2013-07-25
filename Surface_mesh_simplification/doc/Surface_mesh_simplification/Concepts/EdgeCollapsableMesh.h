@@ -81,7 +81,7 @@ class EdgeCollapsableMesh {
 public:
 }; /* end EdgeCollapsableMesh */
 
-/*! 
+/*!
 Collapses the undirected edge `(v0v1,v1v0)` replacing it with `v0` or `v1`, 
 as described in the following paragraph. 
 \pre This function requires `mesh` to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge `(v0v1,v1v0)` must satisfy the <I>link condition</I> \cite degn-tpec-98, which guarantees that the surface is also 2-manifold after the edge collapse. 

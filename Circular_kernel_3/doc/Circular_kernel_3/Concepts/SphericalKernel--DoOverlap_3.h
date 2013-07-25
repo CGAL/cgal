@@ -11,7 +11,7 @@ public:
 /// An object of this type must provide: 
 /// @{
 
-/*! 
+/*!
 For two line arcs. The computation may be faster when the boolean is set to true.
 */ 
 bool operator() 
@@ -19,7 +19,7 @@ bool operator()
 const SphericalKernel::Line_arc_3 & l1, 
 const bool known_equal_supporting_line = false); 
 
-/*! 
+/*!
 For two circular arcs. The computation may be faster when the boolean is set to true.
 */ 
 bool operator() 

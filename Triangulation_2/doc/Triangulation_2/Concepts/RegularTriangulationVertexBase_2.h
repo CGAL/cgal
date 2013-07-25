@@ -48,12 +48,12 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns `true`, iff the vertex is hidden. 
 */ 
 bool is_hidden(); 
 
-/*! 
+/*!
 Mark the vertex as hidden or as not hidden. 
 */ 
 void set_hidden(bool b); 

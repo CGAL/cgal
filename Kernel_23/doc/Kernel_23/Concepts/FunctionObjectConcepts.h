@@ -16,14 +16,14 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
   on the angle formed by the two vectors `u` and `v`. 
   */ 
   Angle operator()(const Kernel::Vector_2&u, 
                    const Kernel::Vector_2&v); 
 
-  /*! 
+  /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
     on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
     the angle). The returned value is the same as `operator()(p - q, r - q)`. 
@@ -32,7 +32,7 @@ public:
                    const Kernel::Point_2&q, 
                    const Kernel::Point_2&r); 
 
-  /*! 
+  /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
     on the angle formed by the two vectors `pq`, `rs`. The returned value is 
     the same as `operator()(q - p, s - r)`. 
@@ -63,7 +63,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns \ref CGAL::OBTUSE, \ref CGAL::RIGHT or \ref CGAL::ACUTE depending 
     on the angle formed by the three points `p`, `q`, `r` (`q` being the vertex of 
     the angle). 
@@ -92,7 +92,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff the three points are collinear and 
     `q` lies between `p` and `r`. 
     Note that `true` is returned, if `q==p` or 
@@ -122,7 +122,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff the three points are collinear and 
     `q` lies between `p` and `r`. 
     Note that `true` is returned, if `q==p` or 
@@ -152,21 +152,21 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, if `l1` and `l2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
   bool operator()(const Kernel::Line_2&l1, 
                   const Kernel::Line_2&l2); 
 
-  /*! 
+  /*!
     returns `true`, if `r1` and `r2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
   bool operator()(const Kernel::Ray_2&r1, 
                   const Kernel::Ray_2&r2); 
 
-  /*! 
+  /*!
     returns `true`, if `s1` and `s2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
@@ -193,28 +193,28 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, if `l1` and `l2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
   bool operator()(const Kernel::Line_3&l1, 
                   const Kernel::Line_3&l2); 
 
-  /*! 
+  /*!
     returns `true`, if `h1` and `h2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
   bool operator()(const Kernel::Plane_3&h1, 
                   const Kernel::Plane_3&h2); 
 
-  /*! 
+  /*!
     returns `true`, if `r1` and `r2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
   bool operator()(const Kernel::Ray_3&r1, 
                   const Kernel::Ray_3&r2); 
 
-  /*! 
+  /*!
     returns `true`, if `s1` and `s2` are parallel or if one 
     of those (or both) is degenerate. 
   */ 
@@ -243,7 +243,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns `true`, iff the three points are collinear and 
     `q` lies strictly between `p` and `r`. 
     Note that `false` is returned, if `q==p` or 
@@ -274,7 +274,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff the three points are collinear and 
     `q` lies strictly between `p` and `r`. 
     Note that `false` is returned, if `q==p` or 
@@ -308,7 +308,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     assigns `o` to `t` if `o` 
     was constructed from an object of type `T`. 
     Returns `true`, if the assignment was possible. 
@@ -340,7 +340,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     assigns `o` to `t` if `o` 
     was constructed from an object of type `T`. 
     Returns `true`, if the assignment was possible. 
@@ -370,7 +370,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
     \ref CGAL::ON_BOUNDED_SIDE, or the constant 
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to 
@@ -379,7 +379,7 @@ public:
   Bounded_side operator()(const Kernel::Circle_2&c, 
                           const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
     \ref CGAL::ON_BOUNDED_SIDE, or the constant 
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to 
@@ -388,7 +388,7 @@ public:
   Bounded_side operator()(const Kernel::Triangle_2& t, 
                           const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
     \ref CGAL::ON_BOUNDED_SIDE, or the constant 
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is relative to 
@@ -419,7 +419,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
     \ref CGAL::ON_BOUNDED_SIDE, or the constant 
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is with 
@@ -428,7 +428,7 @@ public:
   Bounded_side operator()(const Kernel::Sphere_3& s, 
                           const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
     \ref CGAL::ON_BOUNDED_SIDE, or the constant 
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is with 
@@ -437,7 +437,7 @@ public:
   Bounded_side operator()(const Kernel::Tetrahedron_3& t, 
                           const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns either \ref CGAL::ON_UNBOUNDED_SIDE, 
     \ref CGAL::ON_BOUNDED_SIDE, or the constant 
     \ref CGAL::ON_BOUNDARY, depending on where point `p` is with 
@@ -505,7 +505,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff `q` lies between `p` 
     and `r`. \pre `p, q` and `r` are collinear. 
   */ 
@@ -534,7 +534,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff `q` lies between `p` 
     and `r`. \pre `p, q` and `r` are collinear. 
   */ 
@@ -562,7 +562,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff `q` lies strictly between 
     `p` and `r`. \pre `p, q` and `r` are collinear. 
   */ 
@@ -591,7 +591,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff `q` lies strictly between 
     `p` and `r`. \pre `p, q` and `r` are collinear. 
   */ 
@@ -621,14 +621,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     checks if point `p` is on `r`. 
     \pre `p` is on the supporting line of `r`. 
   */ 
   bool operator()(const Kernel::Ray_2& r, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     checks if point `p` is on `s`. 
     \pre `p` is on the supporting line of `s`. 
   */ 
@@ -655,7 +655,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, if `p`, `q`, and `r` are collinear. 
   */ 
   bool operator()(const Kernel::Point_2&p, 
@@ -682,7 +682,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, if `p`, `q`, and `r` are collinear. 
   */ 
   bool operator()(const Kernel::Point_3&p, 
@@ -707,7 +707,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares 
   the angles between the positive \f$ x\f$-axis and the directions in 
   counterclockwise order. 
@@ -732,7 +732,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
   \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, of the tetrahedron 
   \f$ (a_1, b_1, c_1, d_1)\f$ at the edge `(a_1, b_1)`, and \f$ \theta_2\f$ is 
@@ -746,7 +746,7 @@ public:
                                const K::Point_3& d1, 
                                const K::FT& cosine); 
 
-  /*! 
+  /*!
     compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
     \f$ \theta_i\f$ is the dihedral angle in the tetrahedron `(a_i, b_i, 
     c_i, d_i)` at the edge `(a_i, b_i)`. These two angles are computed 
@@ -763,7 +763,7 @@ public:
                                const K::Point_3& c2, 
                                const K::Point_3& d2); 
 
-  /*! 
+  /*!
     compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
     \f$ \theta_1\f$ is the dihedral angle, in \f$ [0, \pi]\f$, between the 
     vectorial planes defined by `(u_1, v_1)` and `(u_1, w_1)`, and 
@@ -776,7 +776,7 @@ public:
                                const K::Vector_3& w1, 
                                const K::FT& cosine); 
 
-  /*! 
+  /*!
     compares the dihedral angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where 
     \f$ \theta_i\f$ is the dihedral angle between the vectorial planes 
     defined by `(u_i, v_i)` and `(u_i, w_i)`. These two angles are 
@@ -812,7 +812,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the squared distance between `obj1` and `obj2` to 
     the squared distance between `obj1` and `obj3`,
     for all triples of types `Type1`, `Type2` and`Type3` 
@@ -828,7 +828,7 @@ public:
                                const Type2& obj2, 
                                const Type3& obj3); 
 
-  /*! 
+  /*!
     compares the squared distance between `obj1` and `obj2` to 
     the squared distance between `obj3` and `obj4`, 
     for all tuples of types `Type1`, `Type2`, `Type3` 
@@ -867,7 +867,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the squared distance between `obj1` and `obj2` to 
     the squared distance between `obj1` and `obj3`, for all triples of types `Type1`, `Type2` and `Type3` 
     in the following set of types: 
@@ -881,7 +881,7 @@ public:
                                const Type2& obj2, 
                                const Type3& obj3); 
 
-  /*! 
+  /*!
     compares the squared distance between `obj1` and `obj2` to 
     the squared distance between `obj3` and `obj4`, for all tuples of types `Type1`, `Type2`, `Type3` 
     and `Type4` in the following set of types: 
@@ -917,13 +917,13 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     compares the slopes of the lines `l1` and `l2` 
   */ 
   Comparison_result operator()(const Kernel::Line_2& l1, 
                                const Kernel::Line_2& l2); 
 
-  /*! 
+  /*!
     compares the slopes of the segments `s1` and `s2` 
   */ 
   Comparison_result operator()(const Kernel::Segment_2& s1, 
@@ -950,7 +950,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the squared distance between the two geometrical objects 
     `obj1` and `obj2` to the value `d2`, where the types `Type1` and `Type2` can be any of the 
     following: 
@@ -987,7 +987,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the squared distance between the two geometrical objects 
     `obj1` and `obj2` to the value `d2`, for all pairs `Type1` and `Type2`, where 
     the types `Type1` and `Type2` can be any of the following: 
@@ -1021,7 +1021,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the squared radius of the sphere of radius 0 centered 
     at `p` to `sr`. 
     This returns the opposite sign of `sr`. 
@@ -1029,7 +1029,7 @@ public:
   Comparison_result operator()(const Kernel::Point_3& p, 
                                const Kernel::FT& sr); 
 
-  /*! 
+  /*!
     compares the squared radius of the sphere defined by the 
     points `p` and `q` to `sr`. 
   */ 
@@ -1037,7 +1037,7 @@ public:
                                const Kernel::Point_3&q, 
                                const Kernel::FT& sr); 
 
-  /*! 
+  /*!
     compares the squared radius of the sphere defined by the 
     points `p`, `q`, and `r` to `sr`. 
   */ 
@@ -1046,7 +1046,7 @@ public:
                                const Kernel::Point_3&r, 
                                const Kernel::FT& sr); 
 
-  /*! 
+  /*!
     compares the squared radius of the sphere defined by the 
     points `p`, `q`, `r`, and `s` to `sr`. 
   */ 
@@ -1080,7 +1080,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the \f$ x\f$-coordinates of `p` and the horizontal projection 
     of `p` on `h`. See Figure \ref fig-compare_x_at_y_2 (a).
 
@@ -1088,7 +1088,7 @@ public:
   Comparison_result operator()(const Kernel::Point_2 &p, 
                                const Kernel::Line_2 &h); 
 
-  /*! 
+  /*!
     compares the \f$ x\f$-coordinates of the horizontal projection 
     of `p` on `h1` and on `h2`.
     See Figure \ref fig-compare_x_at_y_2 (b).
@@ -1098,7 +1098,7 @@ public:
                                const Kernel::Line_2 &h1, 
                                const Kernel::Line_2 &h2); 
 
-  /*! 
+  /*!
     Let `p` be the intersection of lines `l1` and `l2`. 
     This function compares the \f$ x\f$-coordinates of `p` and 
     the horizontal projection of `p` on `h`.
@@ -1109,7 +1109,7 @@ public:
                                const Kernel::Line_2 &l2, 
                                const Kernel::Line_2 &h); 
 
-  /*! 
+  /*!
     Let `p` be the intersection of lines `l1` and `l2`. This 
     function compares the \f$ x\f$-coordinates of the horizontal projection of 
     `p` on `h1` and on `h2`.
@@ -1141,7 +1141,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian coordinates of points `p` and 
     `q` lexicographically in \f$ xyz\f$ order: first 
     \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates 
@@ -1171,7 +1171,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian coordinates of points `p` and 
     `q` lexicographically in \f$ xy\f$ order: first 
     \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates 
@@ -1201,7 +1201,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     Compares the Cartesian coordinates of points `p` and 
     `q` lexicographically in \f$ xy\f$ order: first 
     \f$ x\f$-coordinates are compared, if they are equal, \f$ y\f$-coordinates 
@@ -1233,13 +1233,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the Cartesian \f$ x\f$-coordinates of points `p` and `q` 
   */ 
   Comparison_result operator()(const Kernel::Point_2&p, 
                                const Kernel::Point_2&q); 
 
-  /*! 
+  /*!
     compares the \f$ x\f$-coordinates of `p` and the intersection 
     of lines `l1` and `l2`.
     See Figure \ref fig-compare12 (a).
@@ -1248,7 +1248,7 @@ public:
                                const Kernel::Line_2 &l1, 
                                const Kernel::Line_2 &l2); 
 
-  /*! 
+  /*!
     compares the `x`-coordinates of the intersection of line `l` 
     with line `h1` and with line `h2`.
 
@@ -1258,7 +1258,7 @@ public:
                                const Kernel::Line_2 &h1, 
                                const Kernel::Line_2 &h2); 
 
-  /*! 
+  /*!
     compares the \f$ x\f$-coordinates of the intersection of lines `l1` 
     and `l2` and the intersection of lines `h1` and `h2`.
 
@@ -1289,7 +1289,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian \f$ x\f$-coordinates of points `p` and 
     `q` 
   */ 
@@ -1320,7 +1320,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compares the \f$ y\f$-coordinates of `p` and the vertical projection 
     of `p` on `h`. See Figure \ref fig-compare2 (e).
     \pre `h` is not vertical. 
@@ -1328,7 +1328,7 @@ public:
   Comparison_result operator()(const Kernel::Point_2 &p, 
                                const Kernel::Line_2 &h); 
 
-  /*! 
+  /*!
     This function compares the `y`-coordinates of the vertical projection 
     of `p` on `h1` and on `h2`. See Figure \ref fig-compare2 (e).
     \pre `h1` and `h2` are not vertical. 
@@ -1337,7 +1337,7 @@ public:
                                const Kernel::Line_2 &h1, 
                                const Kernel::Line_2 &h2); 
 
-  /*! 
+  /*!
     Let `p` be the intersection of lines `l1` and `l2`. 
     This function compares the \f$ y\f$-coordinates of `p` and 
     the vertical projection of `p` on `h`.
@@ -1349,7 +1349,7 @@ public:
                                const Kernel::Line_2 &l2, 
                                const Kernel::Line_2 &h); 
 
-  /*! 
+  /*!
     Let `p` be the intersection of lines `l1` and `l2`. This function 
     compares the `y`-coordinates of the vertical projection of `p` on 
     `h1` and on `h2`.
@@ -1362,7 +1362,7 @@ public:
                                const Kernel::Line_2 &h1, 
                                const Kernel::Line_2 &h2); 
 
-  /*! 
+  /*!
   compares the `y`-coordinates of `p` and the vertical projection 
   of `p` on `s`. If `s` is vertical, then return 
   \ref CGAL::EQUAL when `p` lies on `s`, \ref CGAL::SMALLER when `p` lies 
@@ -1373,7 +1373,7 @@ public:
   Comparison_result operator()(const Kernel::Point_2 &p, 
                                const Kernel::Segment_2 &s); 
 
-  /*! 
+  /*!
     This function compares the \f$ y\f$-coordinates of the vertical projection 
     of `p` on `s1` and on `s2`. If `s1` or `s2` 
     is vertical, then return \ref CGAL::EQUAL if they intersect, otherwise return 
@@ -1407,7 +1407,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian coordinates of points `p` and 
     `q` lexicographically in \f$ yx\f$ order: first 
     \f$ y\f$-coordinates are compared, if they are equal, \f$ x\f$-coordinates 
@@ -1439,14 +1439,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian \f$ y\f$-coordinates of points `p` and 
     `q` 
   */ 
   Comparison_result operator()(const Kernel::Point_2&p, 
                                const Kernel::Point_2&q); 
 
-  /*! 
+  /*!
     compares the \f$ y\f$-coordinates of `p` and the 
     intersection of lines `l1` and `l2`.
 
@@ -1456,7 +1456,7 @@ public:
                                const Kernel::Line_2 &l1, 
                                const Kernel::Line_2 &l2); 
 
-  /*! 
+  /*!
     compares the \f$ y\f$-coordinates of the intersection of line `l` 
     with line `h1` and with line `h2`.
 
@@ -1466,7 +1466,7 @@ public:
                                const Kernel::Line_2 &h1, 
                                const Kernel::Line_2 &h2); 
 
-  /*! 
+  /*!
     compares the \f$ y\f$-coordinates of the intersection of lines `l1` 
     and `l2` and the intersection of lines `h1` and `h2`.
 
@@ -1498,7 +1498,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian \f$ y\f$-coordinates of points `p` and 
     `q` 
   */ 
@@ -1525,7 +1525,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     Compares the Cartesian \f$ z\f$-coordinates of points `p` and 
     `q` 
   */ 
@@ -1551,7 +1551,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the coefficient `a` of the line with equation `ax +by + c = 0`. 
   */ 
   Kernel::FT operator()(const Kernel::Line_2& l) const; 
@@ -1599,7 +1599,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an approximation of the area of `c`. 
   */ 
   double operator()(const Kernel::Circle_3& c); 
@@ -1624,7 +1624,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an approximation of the squared length (i.e.\ perimeter) of `c`. 
   */ 
   double operator()(const Kernel::Circle_3& c); 
@@ -1649,7 +1649,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the area of `c`, divided by \f$ \pi\f$. 
   */ 
   Kernel::FT operator()(const Kernel::Circle_3& c); 
@@ -1675,7 +1675,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the signed area of the triangle defined by the points `p`, 
     `q` and `r`. 
   */ 
@@ -1683,12 +1683,12 @@ public:
                         const Kernel::Point_2& q, 
                         const Kernel::Point_2& r); 
 
-  /*! 
+  /*!
     returns the area of `r`. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r); 
 
-  /*! 
+  /*!
     returns the signed area of `t`. 
   */ 
   Kernel::FT operator()(const Kernel::Triangle_2& t); 
@@ -1713,13 +1713,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the area of  `t`. This requires that `Kernel::FT` 
     supports the `sqrt` operation. 
   */ 
   Kernel::FT operator()(const Kernel::Triangle_3& t); 
 
-  /*! 
+  /*!
     returns the area of the triangle `p`, `q`, `r`. 
     This requires that `Kernel::FT` supports the `sqrt` operation. 
   */ 
@@ -1745,7 +1745,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the coefficient `b` of the line with equation `ax +by + c = 0`. 
   */ 
   Kernel::FT operator()(const Kernel::Line_2& l) const; 
@@ -1793,7 +1793,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the coefficient `c` of the line with equation `ax +by + c = 0`. 
   */ 
   Kernel::FT operator()(const Kernel::Line_2& l) const; 
@@ -1868,7 +1868,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the determinant of the two vectors `v` and `w`. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v, 
@@ -1895,7 +1895,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the determinant of the three vectors `u`, `v` and `w`. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_3& u, 
@@ -1922,7 +1922,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns an \f$ x\f$-coordinate of the direction. 
   */ 
   Kernel::FT operator()(const Kernel::Direction_2& d) const; 
@@ -1969,7 +1969,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an \f$ y\f$-coordinate of the direction. 
   */ 
   Kernel::FT operator()(const Kernel::Direction_2& d) const; 
@@ -1992,7 +1992,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an \f$ y\f$-coordinate of the direction. 
   */ 
   Kernel::FT operator()(const Kernel::Direction_3& d) const; 
@@ -2015,7 +2015,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an \f$ z\f$-coordinate of the direction. 
   */ 
   Kernel::FT operator()(const Kernel::Direction_3& d) const; 
@@ -2038,12 +2038,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the homogeneous \f$ x\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_2& p) const; 
 
-  /*! 
+  /*!
     returns the homogeneous \f$ x\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v) const; 
@@ -2094,12 +2094,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the homogeneous \f$ y\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_2& p) const; 
 
-  /*! 
+  /*!
     returns the homogeneous \f$ y\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v) const; 
@@ -2236,7 +2236,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the scalar (inner) product of the two vectors `v` and `w`. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v, 
@@ -2262,7 +2262,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the scalar (inner) product of the two vectors `v` and `w`. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_3& v, 
@@ -2289,12 +2289,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the square of the area of `t`. 
   */ 
   Kernel::FT operator()(const Kernel::Triangle_3& t); 
 
-  /*! 
+  /*!
     returns the square of the area of the triangle `p`, `q`, `r`. 
   */ 
   Kernel::FT operator()(const Kernel::Point_3& p, 
@@ -2321,7 +2321,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the squared distance between two geometrical objects of type 
     for all pairs `Type1` and `Type2`, where  the types `Type1` and `Type2` can be any of the 
     following: 
@@ -2355,7 +2355,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the squared distance between two geometrical objects of type 
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`, where 
     the types `Type1` and `Type2` can be any of the 
@@ -2389,7 +2389,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the squared length of `c`, divided by \f$ \pi^2\f$. 
   */ 
   Kernel::FT operator()(const Kernel::Circle_3& c); 
@@ -2416,12 +2416,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the squared length of `v`. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v); 
 
-  /*! 
+  /*!
     returns the squared length of `s`. 
   */ 
   Kernel::FT operator()(const Kernel::Segment_2& s); 
@@ -2447,12 +2447,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the squared length of `v`. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_3& v); 
 
-  /*! 
+  /*!
     returns the squared length of `s`. 
   */ 
   Kernel::FT operator()(const Kernel::Segment_3& s); 
@@ -2478,12 +2478,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the squared radius of `c`. 
   */ 
   Kernel::FT operator()(const Kernel::Circle_2& c); 
 
-  /*! 
+  /*!
     returns the squared radius of the circle passing through `p`, `q` 
     and `r`. \pre `p, q` and `r` are not collinear. 
   */ 
@@ -2491,14 +2491,14 @@ public:
                         const Kernel::Point_2& q, 
                         const Kernel::Point_2& r); 
 
-  /*! 
+  /*!
     returns the squared radius of the smallest circle passing through `p`, 
     and `q`, i.e.\ one fourth of the squared distance between `p` and `q`. 
   */ 
   Kernel::FT operator()(const Kernel::Point_2& p, 
                         const Kernel::Point_2& q); 
 
-  /*! 
+  /*!
     returns the squared radius of the smallest circle passing through `p`, i.e.\ \f$ 0\f$. 
   */ 
   Kernel::FT operator()(const Kernel::Point_2& p); 
@@ -2527,17 +2527,17 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the squared radius of `s`. 
   */ 
   Kernel::FT operator()(const Kernel::Sphere_3& s); 
 
-  /*! 
+  /*!
     returns the squared radius of `c`. 
   */ 
   Kernel::FT operator()(const Kernel::Circle_3& c); 
 
-  /*! 
+  /*!
     returns the squared radius of the sphere passing through `p`, `q`, `r` 
     and `s`. \pre `p, q, r` and `s` are not coplanar. 
   */ 
@@ -2546,7 +2546,7 @@ public:
                         const Kernel::Point_3& r, 
                         const Kernel::Point_3& s); 
 
-  /*! 
+  /*!
     returns the squared radius of the sphere passing through `p`, `q` and 
   `r`, and whose center is in the plane defined by these three points. 
   */ 
@@ -2554,14 +2554,14 @@ public:
                         const Kernel::Point_3& q, 
                         const Kernel::Point_3& r); 
 
-  /*! 
+  /*!
     returns the squared radius of the smallest circle passing through `p`, 
     and `q`, i.e.\ one fourth of the squared distance between `p` and `q`. 
   */ 
   Kernel::FT operator()(const Kernel::Point_3& p, 
                         const Kernel::Point_3& q); 
 
-  /*! 
+  /*!
     returns the squared radius of the smallest circle passing through `p`, i.e.\ \f$ 0\f$. 
   */ 
   Kernel::FT operator()(const Kernel::Point_3& p); 
@@ -2589,17 +2589,17 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the volume of `c`. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_cuboid_3& c); 
 
-  /*! 
+  /*!
     returns the signed volume of `t`. 
   */ 
   Kernel::FT operator()(const Kernel::Tetrahedron_3& t); 
 
-  /*! 
+  /*!
     returns the signed volume of the tetrahedron defined by the four 
     points `p0`, `p1`, `p2`, `p3`. 
   */ 
@@ -2627,12 +2627,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the \f$ x\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_2& p) const; 
 
-  /*! 
+  /*!
     returns the \f$ x\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v) const; 
@@ -2656,12 +2656,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the \f$ x\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_3& p) const; 
 
-  /*! 
+  /*!
     returns the \f$ x\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_3& v) const; 
@@ -2684,7 +2684,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the largest \f$ x\f$-coordinate of the iso-rectangle. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const; 
@@ -2730,7 +2730,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the smallest \f$ x\f$-coordinate of the iso-rectangle. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const; 
@@ -2753,7 +2753,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the smallest \f$ x\f$-coordinate of the iso-cuboid. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_cuboid_3& r) const; 
@@ -2778,7 +2778,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the \f$ y\f$-coordinate of the point at `l` with 
     given \f$ x\f$-coordinate. 
     \pre `l` is not vertical. 
@@ -2804,12 +2804,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the \f$ y\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_2& p) const; 
 
-  /*! 
+  /*!
     returns the \f$ y\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_2& v) const; 
@@ -2832,12 +2832,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the \f$ y\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_3& p) const; 
 
-  /*! 
+  /*!
     returns the \f$ y\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_3& v) const; 
@@ -2860,7 +2860,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the largest \f$ y\f$-coordinate of the iso-rectangle. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const; 
@@ -2906,7 +2906,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the smallest \f$ y\f$-coordinate of the iso-rectangle. 
   */ 
   Kernel::FT operator()(const Kernel::Iso_rectangle_2& r) const; 
@@ -2948,12 +2948,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the \f$ z\f$-coordinate of the point. 
   */ 
   Kernel::FT operator()(const Kernel::Point_3& p) const; 
 
-  /*! 
+  /*!
     returns the \f$ z\f$-coordinate of the vector. 
   */ 
   Kernel::FT operator()(const Kernel::Vector_3& v) const; 
@@ -3022,7 +3022,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1` and `p2` with corresponding 
     weights `w1` and `1-w1`. 
   */ 
@@ -3030,7 +3030,7 @@ public:
   operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
               const Kernel::Point_2& p2); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1` and `p2` with corresponding 
     weights `w1` and `w2`. \pre `w1+w2 != 0`. 
   */ 
@@ -3038,7 +3038,7 @@ public:
   operator()( const Kernel::Point_2& p1, const Kernel::FT&w1, 
               const Kernel::Point_2& p2, const Kernel::FT&w2); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
     weights `w1`, `w2` and `1-w1-w2`. 
   */ 
@@ -3047,7 +3047,7 @@ public:
               const Kernel::Point_2& p2, const Kernel::FT&w2, 
               const Kernel::Point_2& p3); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
     weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
   */ 
@@ -3056,7 +3056,7 @@ public:
               const Kernel::Point_2& p2, const Kernel::FT&w2, 
               const Kernel::Point_2& p3, const Kernel::FT&w3); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
     weights `w1`, `w2`, `w3` and `1-w1-w2-w3`. 
   */ 
@@ -3066,7 +3066,7 @@ public:
               const Kernel::Point_2& p3, const Kernel::FT&w3, 
               const Kernel::Point_2& p4); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
     weights `w1`, `w2`, `w3` and `w4`. \pre `1+w2+w3+w4 != 0.`
   */ 
@@ -3099,7 +3099,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1` and `p2` with corresponding 
     weights `w1` and `1-w1`. 
   */ 
@@ -3107,7 +3107,7 @@ public:
   operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
               const Kernel::Point_3& p2); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1` and `p2` with corresponding 
     weights `w1` and `w2`. \pre `w1+w2 != 0`.
   */ 
@@ -3115,7 +3115,7 @@ public:
   operator()( const Kernel::Point_3& p1, const Kernel::FT&w1, 
               const Kernel::Point_3& p2, const Kernel::FT&w2); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
     weights `w1`, `w2` and `1-w1-w2`. 
   */ 
@@ -3124,7 +3124,7 @@ public:
               const Kernel::Point_3& p2, const Kernel::FT&w2, 
               const Kernel::Point_3& p3); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2` and `p3` with corresponding 
     weights `w1`, `w2` and `w3`. \pre `w1+w2+w3 != 0`.
   */ 
@@ -3133,7 +3133,7 @@ public:
               const Kernel::Point_3& p2, const Kernel::FT&w2, 
               const Kernel::Point_3& p3, const Kernel::FT&w3); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
     weights `w1`, `w2`, `w3` and `1-w1-w2-w3`. 
   */ 
@@ -3143,7 +3143,7 @@ public:
               const Kernel::Point_3& p3, const Kernel::FT&w3, 
               const Kernel::Point_3& p4); 
 
-  /*! 
+  /*!
     compute the barycenter of the points `p1`, `p2`, `p3` and `p4` with corresponding 
     weights `w1`, `w2`, `w3` and `w4`. \pre `w1+w2+w3+w4 != 0`. 
   */ 
@@ -3174,7 +3174,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     when `index` == 1, returns a vector `b1` that is orthogonal to the 
     normal `n` to plane `h`; when `index` == 2, returns a vector 
     `b2` that is orthogonal to `n` and `b1` and such that 
@@ -3202,31 +3202,31 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns a bounding box of `p`. 
   */ 
   CGAL::Bbox_2 operator()(const Kernel::Point_2 
                           &p); 
 
-  /*! 
+  /*!
     returns a bounding box of `s`. 
   */ 
   CGAL::Bbox_2 operator()(const Kernel::Segment_2 
                           &s); 
 
-  /*! 
+  /*!
     returns a bounding box of `t`. 
   */ 
   CGAL::Bbox_2 operator()(const Kernel::Triangle_2 
                           &t); 
 
-  /*! 
+  /*!
     returns a bounding box of `i`. 
   */ 
   CGAL::Bbox_2 operator()(const Kernel::Iso_rectangle_2 
                           &i); 
 
-  /*! 
+  /*!
     returns a bounding box of `c`. 
   */ 
   CGAL::Bbox_2 operator()(const Kernel::Circle_2 
@@ -3250,43 +3250,43 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns a bounding box of `c`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Circle_3 
                           &c); 
 
-  /*! 
+  /*!
     returns a bounding box of `p`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Point_3 
                           &p); 
 
-  /*! 
+  /*!
     returns a bounding box of `s`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Segment_3 
                           &s); 
 
-  /*! 
+  /*!
     returns a bounding box of `t`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Triangle_3 
                           &t); 
 
-  /*! 
+  /*!
     returns a bounding box of `t`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Tetrahedron_3 
                           &t); 
 
-  /*! 
+  /*!
     returns a bounding box of `i`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Iso_Cuboid_3 
                           &i); 
 
-  /*! 
+  /*!
     returns a bounding box of `s`. 
   */ 
   CGAL::Bbox_3 operator()(const Kernel::Sphere_3 
@@ -3312,7 +3312,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     constructs the bisector of `p` and `q`. 
     The bisector is oriented in such a way that `p` lies on its 
     positive side. \pre `p` and `q` are not equal. 
@@ -3320,7 +3320,7 @@ public:
   Kernel::Line_2 operator()(const Kernel::Point_2&p, 
                             const Kernel::Point_2&q ); 
 
-  /*! 
+  /*!
     constructs the bisector of the two lines `l1` and `l2`. 
     In the general case, the bisector has the direction of the vector which 
     is the sum of the normalized directions of the two lines, and which passes 
@@ -3355,7 +3355,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     constructs the bisector plane of `p` and `q`. 
     The bisector is oriented in such a way that `p` lies on its 
     positive side. \pre `p` and `q` are not equal. 
@@ -3363,7 +3363,7 @@ public:
   Kernel::Plane_3 operator()(const Kernel::Point_3&p, 
                              const Kernel::Point_3&q ); 
 
-  /*! 
+  /*!
     constructs the bisector of the two planes `h1` and `h2`. 
     In the general case, the bisector has a normal vector which has the same 
     direction as the sum of the normalized normal vectors of the two planes, and 
@@ -3399,25 +3399,25 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns an iterator on the 0'th Cartesian coordinate of `p`. 
   */ 
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2 
                                                 &p); 
 
-  /*! 
+  /*!
     returns the past the end iterator of the Cartesian coordinates of `p`. 
   */ 
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2 
                                                 &p, int); 
 
-  /*! 
+  /*!
     returns an iterator on the 0'th Cartesian coordinate of `v`. 
   */ 
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2 
                                                 &v); 
 
-  /*! 
+  /*!
     returns the past the end iterator of the Cartesian coordinates of `v`. 
   */ 
   Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2 
@@ -3444,25 +3444,25 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an iterator on the 0'th Cartesian coordinate of `p`. 
   */ 
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3 
                                                 &p); 
 
-  /*! 
+  /*!
     returns the past the end iterator of the Cartesian coordinates of `p`. 
   */ 
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Point_3 
                                                 &p, int); 
 
-  /*! 
+  /*!
     returns an iterator on the 0'th Cartesian coordinate of `v`. 
   */ 
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3 
                                                 &v); 
 
-  /*! 
+  /*!
     returns the past the end iterator of the Cartesian coordinates of `v`. 
   */ 
   Kernel::Cartesian_const_iterator_3 operator()(const Kernel::Vector_3 
@@ -3488,7 +3488,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compute the center of the circle `c`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Circle_2 & c); 
@@ -3514,12 +3514,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compute the center of the sphere `s`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Sphere_3 & s); 
 
-  /*! 
+  /*!
     compute the center of the circle `c`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Circle_3 & c); 
@@ -3547,14 +3547,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compute the centroid of the points `p`, `q`, and `r`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Point_2&p, 
                              const Kernel::Point_2&q, 
                              const Kernel::Point_2&r); 
 
-  /*! 
+  /*!
     compute the centroid of the points `p`, `q`, `r` and `s`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Point_2&p, 
@@ -3562,7 +3562,7 @@ public:
                              const Kernel::Point_2&r, 
                              const Kernel::Point_2&s); 
 
-  /*! 
+  /*!
     compute the centroid of the triangle `t`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Triangle_2&t); 
@@ -3589,14 +3589,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compute the centroid of the points `p`, `q`, and `r`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Point_3&p, 
                              const Kernel::Point_3&q, 
                              const Kernel::Point_3&r); 
 
-  /*! 
+  /*!
     compute the centroid of the points `p`, `q`, `r` and `s`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Point_3&p, 
@@ -3604,12 +3604,12 @@ public:
                              const Kernel::Point_3&r, 
                              const Kernel::Point_3&s); 
 
-  /*! 
+  /*!
     compute the centroid of the triangle `t`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Triangle_3&t); 
 
-  /*! 
+  /*!
     compute the centroid of the tetrahedron `t`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Tetrahedron_3&t); 
@@ -3634,7 +3634,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
 
     introduces a variable of type `Kernel::Circle_2`. 
     It is initialized to the circle with center `center`, 
@@ -3647,7 +3647,7 @@ public:
                                Orientation const& orientation 
                                = COUNTERCLOCKWISE); 
 
-  /*! 
+  /*!
 
     introduces a variable of type `Kernel::Circle_2`. 
     It is initialized to the unique circle which passes through 
@@ -3660,7 +3660,7 @@ public:
                                Kernel::Point_2 const& q, 
                                Kernel::Point_2 const& r); 
 
-  /*! 
+  /*!
 
     introduces a variable of type `Kernel::Circle_2`. 
     It is initialized to the circle with diameter `pq` 
@@ -3672,7 +3672,7 @@ public:
                                Orientation const& orientation 
                                = COUNTERCLOCKWISE); 
 
-  /*! 
+  /*!
 
     introduces a variable of type `Kernel::Circle_2`. 
     It is initialized to the circle with center `center`, squared 
@@ -3705,7 +3705,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a variable of type `Kernel::Circle_3`. 
     It is initialized to the circle with center `center`, 
     and squared radius `sq_r` in the plane `plane`. 
@@ -3716,7 +3716,7 @@ public:
     Kernel::FT const& sq_r, 
     Kernel::Plane_3 const& plane); 
 
-  /*! 
+  /*!
     introduces a variable of type `Kernel::Circle_3`. 
     It is initialized to the circle with center `center`, 
     and squared radius `sq_r` in the plane 
@@ -3728,7 +3728,7 @@ public:
     Kernel::FT const& sq_r, 
     Kernel::Vector_3 const& n); 
 
-  /*! 
+  /*!
     introduces a variable of type `Kernel::Point_3`. 
     It is initialized to the circle passing through the three points. 
     \pre The three points are not collinear. 
@@ -3738,7 +3738,7 @@ public:
     Kernel::Point_3 const& q, 
     Kernel::Point_3 const& r); 
 
-  /*! 
+  /*!
     introduces a variable of type `Kernel::Circle_3`. 
     It is initialized to the circle along which the two spheres intersect. 
     \pre The two spheres intersect along a circle. 
@@ -3747,7 +3747,7 @@ public:
   ( Kernel::Sphere_3 const& sphere1, 
     Kernel::Sphere_3 const& sphere2); 
 
-  /*! 
+  /*!
     introduces a variable of type `Kernel::Circle_3`. 
     It is initialized to the circle along which the sphere and the 
     plane intersect. 
@@ -3757,7 +3757,7 @@ public:
   ( Kernel::Sphere_3 const& sphere, 
     Kernel::Plane_3 const& plane); 
 
-  /*! 
+  /*!
     introduces a variable of type `Kernel::Circle_3`. 
     It is initialized to the circle along which the sphere and the 
     plane intersect. 
@@ -3787,13 +3787,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compute the center of the smallest circle passing through the points `p` and `q`. Note : this is the same as `Kernel::ConstructMidpoint_2`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Point_2&p, 
                              const Kernel::Point_2&q); 
 
-  /*! 
+  /*!
     compute the center of the circle passing through the points `p`, `q`, and `r`. 
     \pre `p`, `q`, and `r` are not collinear. 
   */ 
@@ -3801,7 +3801,7 @@ public:
                              const Kernel::Point_2&q, 
                              const Kernel::Point_2&r); 
 
-  /*! 
+  /*!
     compute the center of the circle passing through the three vertices of `t`. 
     \pre `t` is not degenerate. 
   */ 
@@ -3827,14 +3827,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     compute the center of the smallest circle passing through the points `p` and 
     `q`. Note : this is the same as `Kernel::ConstructMidpoint_3`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Point_3&p, 
                              const Kernel::Point_3&q); 
 
-  /*! 
+  /*!
     compute the center of the sphere passing through the points `p`, `q`, `r`, 
     and `s`. \pre `p`, `q`, `r`, and `s` are not coplanar. 
   */ 
@@ -3843,13 +3843,13 @@ public:
                              const Kernel::Point_3&r, 
                              const Kernel::Point_3&s); 
 
-  /*! 
+  /*!
     compute the center of the sphere passing through the vertices of `t`. 
     \pre `t` is not degenerate. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Tetrahedron_3&t); 
 
-  /*! 
+  /*!
     compute the center of the circle passing through the points `p`, `q` and `r`. 
     \pre `p`, `q` and `r` are not collinear. 
   */ 
@@ -3857,7 +3857,7 @@ public:
                              const Kernel::Point_3&q, 
                              const Kernel::Point_3&r); 
 
-  /*! 
+  /*!
     compute the center of the circle passing through the vertices of `t`. 
     \pre `t` is not degenerate. 
   */ 
@@ -3884,7 +3884,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     computes the cross product of `v` and `w`.
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3 &v, 
@@ -3910,7 +3910,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the vector `v1 - v2`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Vector_2 &v1, 
@@ -3936,7 +3936,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the vector `v1 - v2`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3 &v1, 
@@ -3963,22 +3963,22 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the direction of vector `v`. 
   */ 
   Kernel::Direction_2 operator()(const Kernel::Vector_2 &v); 
 
-  /*! 
+  /*!
     introduces the direction of line `l`. 
   */ 
   Kernel::Direction_2 operator()(const Kernel::Line_2 &l); 
 
-  /*! 
+  /*!
     introduces the direction of ray `r`. 
   */ 
   Kernel::Direction_2 operator()(const Kernel::Ray_2 &r); 
 
-  /*! 
+  /*!
     introduces the direction of segment `s`. 
   */ 
   Kernel::Direction_2 operator()(const Kernel::Segment_2 &s); 
@@ -4004,23 +4004,23 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a direction initialized with the 
     direction of vector `v`. 
   */ 
   Kernel::Direction_3 operator()(const Kernel::Vector_3 &v); 
 
-  /*! 
+  /*!
     introduces the direction of line `l`. 
   */ 
   Kernel::Direction_3 operator()(const Kernel::Line_3 &l); 
 
-  /*! 
+  /*!
     introduces the direction of ray `r`. 
   */ 
   Kernel::Direction_3 operator()(const Kernel::Ray_3 &r); 
 
-  /*! 
+  /*!
     introduces the direction of segment `s`. 
   */ 
   Kernel::Direction_3 operator()(const Kernel::Segment_3 &s); 
@@ -4045,7 +4045,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the vector `v/s`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Vector_2 &v, 
@@ -4071,7 +4071,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the vector `v/s`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3 &v, 
@@ -4097,7 +4097,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     constructs the line which is at the same distance from the three points 
     `p`, `q` and `r`. 
     \pre `p`, `q` and `r` are not collinear. 
@@ -4126,7 +4126,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces an iso-oriented cuboid with diagonal 
     opposite vertices `p` and `q` such that `p` is the 
     lexicographically smallest point in the cuboid. 
@@ -4134,7 +4134,7 @@ public:
   Kernel::Iso_cuboid_3 operator()(const Kernel::Point_3 &p, 
                                   const Kernel::Point_3 &q); 
 
-  /*! 
+  /*!
     introduces an iso-oriented cuboid with diagonal 
     opposite vertices `p` and `q`. The `int` argument value is 
     only used to distinguish the two overloaded functions. 
@@ -4144,7 +4144,7 @@ public:
                                   const Kernel::Point_3 &q, 
                                   int); 
 
-  /*! 
+  /*!
     introduces an iso-oriented cuboid `fo` whose 
     minimal \f$ x\f$ coordinate is the one of `left`, the 
     maximal \f$ x\f$ coordinate is the one of `right`, the 
@@ -4182,7 +4182,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     introduces an iso-oriented rectangle with diagonal 
     opposite vertices `p` and `q` such that `p` is the 
     lexicographically smallest point in the rectangle. 
@@ -4190,7 +4190,7 @@ public:
   Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p, 
                                      const Kernel::Point_2 &q); 
 
-  /*! 
+  /*!
     introduces an iso-oriented rectangle with diagonal 
     opposite vertices `p` and `q`. The `int` argument value is 
   only used to distinguish the two overloaded functions. 
@@ -4200,7 +4200,7 @@ public:
                                      const Kernel::Point_2 &q, 
                                      int); 
 
-  /*! 
+  /*!
     introduces an iso-oriented rectangle `fo` whose 
     minimal \f$ x\f$ coordinate is the one of `left`, the 
     maximal \f$ x\f$ coordinate is the one of `right`, the 
@@ -4234,7 +4234,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns a point `q` on plane `h`, such that the projection of 
     this point onto the \f$ xy\f$-plane is `p`. 
   */ 
@@ -4261,34 +4261,34 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a line passing through the points `p` and `q`. 
     Line is directed from `p` to `q`. 
   */ 
   Kernel::Line_2 operator()(const Kernel::Point_2 &p, 
                             const Kernel::Point_2 &q); 
 
-  /*! 
+  /*!
     introduces a line passing through point `p` with 
     direction `d`. 
   */ 
   Kernel::Line_2 operator()(const Kernel::Point_2 &p, 
                             const Kernel::Direction_2&d); 
 
-  /*! 
+  /*!
     introduces a line passing through point `p` and 
     oriented by `v`. 
   */ 
   Kernel::Line_2 operator()(const Kernel::Point_2 &p, 
                             const Kernel::Vector_2&v); 
 
-  /*! 
+  /*!
     introduces a line supporting the segment `s`, 
     oriented from source to target. 
   */ 
   Kernel::Line_2 operator()(const Kernel::Segment_2 &s); 
 
-  /*! 
+  /*!
     introduces a line supporting the ray `r`, 
     with same orientation. 
   */ 
@@ -4314,34 +4314,34 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a line passing through the points `p` and `q`. 
     Line is directed from `p` to `q`. 
   */ 
   Kernel::Line_3 operator()(const Kernel::Point_3 &p, 
                             const Kernel::Point_3 &q); 
 
-  /*! 
+  /*!
     introduces a line passing through point `p` and 
     oriented by `v`. 
   */ 
   Kernel::Line_3 operator()(const Kernel::Point_3 &p, 
                             const Kernel::Vector_3&v); 
 
-  /*! 
+  /*!
     introduces a line passing through point `p` with 
     direction `d`. 
   */ 
   Kernel::Line_3 operator()(const Kernel::Point_3 &p, 
                             const Kernel::Direction_3&d); 
 
-  /*! 
+  /*!
     returns the line supporting the segment `s`, 
     oriented from source to target. 
   */ 
   Kernel::Line_3 operator()(const Kernel::Segment_3 &s); 
 
-  /*! 
+  /*!
     returns the line supporting the ray `r`, with the 
     same orientation. 
   */ 
@@ -4369,14 +4369,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the vertex of 
     `r` with lexicographically largest coordinates. 
   */ 
   Kernel::Point_2 operator()(const 
                              Kernel::Iso_rectangle_2 &r); 
 
-  /*! 
+  /*!
     returns the vertex of 
     `s` with lexicographically largest coordinates. 
   */ 
@@ -4404,14 +4404,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the vertex of 
     `c` with lexicographically largest coordinates. 
   */ 
   Kernel::Point_3 operator()(const 
                              Kernel::Iso_cuboid_3 &c); 
 
-  /*! 
+  /*!
     returns the vertex of 
     `s` with lexicographically largest coordinates. 
   */ 
@@ -4439,7 +4439,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     computes the midpoint of the segment `pq`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Point_2& p, 
@@ -4465,7 +4465,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     computes the midpoint of the segment `pq`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Point_3& p, 
@@ -4493,14 +4493,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the vertex of 
     `r` with lexicographically smallest coordinates. 
   */ 
   Kernel::Point_2 operator()(const 
                              Kernel::Iso_rectangle_2 &r); 
 
-  /*! 
+  /*!
     returns the vertex of 
     `s` with lexicographically smallest coordinates. 
   */ 
@@ -4528,14 +4528,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the vertex of 
     `c` with lexicographically smallest coordinates. 
   */ 
   Kernel::Point_3 operator()(const 
                              Kernel::Iso_cuboid_3 &c); 
 
-  /*! 
+  /*!
     returns the vertex of 
     `s` with lexicographically smallest coordinates. 
   */ 
@@ -4564,7 +4564,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     computes the normal of the vectors `q-p` and `r-p`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Point_3& p, 
@@ -4598,7 +4598,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     constructs an object that contains `t` and returns it. 
   */ 
   template <class T> 
@@ -4629,7 +4629,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     constructs an object that contains `t` and returns it. 
   */ 
   template <class T> 
@@ -4656,7 +4656,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the circle with the same center and squared radius as 
     `c`, but with opposite orientation. 
   */ 
@@ -4682,7 +4682,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the direction opposite to `d`. 
   */ 
   Kernel::Direction_2 operator()(const 
@@ -4709,7 +4709,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the direction opposite to `d`. 
   */ 
   Kernel::Direction_3 operator()(const 
@@ -4737,7 +4737,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the line representing the same set of points as `l`, 
     but with opposite direction. 
   */ 
@@ -4764,7 +4764,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the line representing the same set of points as `l`, 
     but with opposite direction. 
   */ 
@@ -4790,7 +4790,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the plane representing the same set of points as `p`, 
     but with opposite orientation. 
   */ 
@@ -4816,7 +4816,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the ray with the same source as `r`, but in opposite direction. 
   */ 
   Kernel::Ray_2 operator()(const Kernel::Ray_2& r); 
@@ -4841,7 +4841,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the ray with the same source as `r`, but in opposite direction. 
   */ 
   Kernel::Ray_3 operator()(const Kernel::Ray_3& r); 
@@ -4867,7 +4867,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the segment representing the same set of points as `s`, 
     but with opposite orientation. 
   */ 
@@ -4894,7 +4894,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the segment representing the same set of points as `s`, 
     but with opposite orientation. 
   */ 
@@ -4921,7 +4921,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the sphere with the same center and squared radius as 
     `s`, but with opposite orientation. 
   */ 
@@ -4947,7 +4947,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the triangle with opposite orientation to `t` 
     (this flips the positive and the negative side, but 
     not bounded and unbounded side). 
@@ -4975,7 +4975,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the vector `-v`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Vector_2& v); 
@@ -5001,7 +5001,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the vector `-v`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3& v); 
@@ -5027,13 +5027,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns a vector that is orthogonal to the plane `p` and directed 
     to the positive side of `p`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Plane_3& p); 
 
-  /*! 
+  /*!
     returns a vector that is orthogonal to the plane defined by 
     `Kernel::ConstructPlane_3()(p, q, r)` and directed 
     to the positive side of this plane. 
@@ -5062,7 +5062,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a direction orthogonal to `d`. If `o` is 
     \ref CGAL::CLOCKWISE, `d` is rotated clockwise; if `o` is 
     \ref CGAL::COUNTERCLOCKWISE, `d` is rotated counterclockwise. 
@@ -5092,7 +5092,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the line perpendicular to `l` and passing through `p`, 
     where the direction is the direction of `l` rotated 
     counterclockwise by 90 degrees. 
@@ -5121,7 +5121,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the line that is perpendicular to `pl` and that 
     passes through point `p`. The line is oriented from 
     the negative to the positive side of `pl` 
@@ -5150,7 +5150,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the plane perpendicular to `l` passing through `p`, 
     such that the normal direction of the plane coincides with the direction of 
   the line. 
@@ -5179,7 +5179,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns `v` rotated clockwise by 90 degrees, if `o` is 
     \ref CGAL::CLOCKWISE, and rotated counterclockwise otherwise. 
     \pre `o` is not \ref CGAL::COLLINEAR. 
@@ -5209,7 +5209,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     creates a plane defined by the equation 
     \f$ a\, x +b\, y +c\, z + d = 0\f$. 
     Notice that it is degenerate if \f$ a = b = c = 0\f$. 
@@ -5219,7 +5219,7 @@ public:
                              const Kernel::RT &c, 
                              const Kernel::RT &d); 
 
-  /*! 
+  /*!
     creates a plane passing through the points `p`, 
     `q` and `r`. The plane is oriented such that `p`, 
     `q` and `r` are oriented in a positive sense 
@@ -5230,42 +5230,42 @@ public:
                              const Kernel::Point_3 &q, 
                              const Kernel::Point_3 &r); 
 
-  /*! 
+  /*!
     introduces a plane that passes through point `p` and 
     that has as an orthogonal direction equal to `d`. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Point_3 &p, 
                              const Kernel::Direction_3&d); 
 
-  /*! 
+  /*!
     introduces a plane that passes through point `p` and 
     that is orthogonal to `v`. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Point_3 &p, 
                              const Kernel::Vector_3 &v); 
 
-  /*! 
+  /*!
     introduces a plane that is defined through the three points 
     `l.point(0)`, `l.point(1)` and `p`. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Line_3 &l, 
                              const Kernel::Point_3 &p); 
 
-  /*! 
+  /*!
     introduces a plane that is defined through the three points 
     `r.point(0)`, `r.point(1)` and `p`. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Ray_3 &r, 
                              const Kernel::Point_3 &p); 
 
-  /*! 
+  /*!
     introduces a plane that is defined through the three points 
     `s.source()`, `s.target()` and `p`. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Segment_3 &s, 
                              const Kernel::Point_3 &p); 
 
-  /*! 
+  /*!
     introduces a plane that is defined as the plane containing the circle. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Circle_3 &c); 
@@ -5292,7 +5292,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an arbitrary point on `l`. It holds 
     `point(i) == point(j)`, iff `i==j`. 
     Furthermore, is directed from `point(i)` 
@@ -5301,7 +5301,7 @@ public:
   Kernel::Point_2 operator()(const Kernel::Line_2& l, 
                              int i); 
 
-  /*! 
+  /*!
     returns a point on `r`. `point(0)` is the source, 
     `point(i)`, with `i>0`, is different from the 
     source. \pre `i>= 0`. 
@@ -5309,7 +5309,7 @@ public:
   Kernel::Point_2 operator()(const Kernel::Ray_2& r, 
                              int i); 
 
-  /*! 
+  /*!
     returns source or target of `s`: `point(0)` returns 
     the source of `s`, `point(1)` returns the target of `s`. 
     The parameter `i` is taken modulo 2, which gives 
@@ -5342,7 +5342,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns an arbitrary point on `l`. It holds 
     `point(i) == point(j)`, iff `i==j`. 
     Furthermore, is directed from `point(i)` 
@@ -5351,12 +5351,12 @@ public:
   Kernel::Point_3 operator()(const Kernel::Line_3& l, 
                              int i); 
 
-  /*! 
+  /*!
     returns an arbitrary point on `h`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Plane_3& h); 
 
-  /*! 
+  /*!
     returns a point on `r`. `point(0)` is the source, 
     `point(i)`, with `i>0`, is different from the 
     source. \pre `i >= 0`. 
@@ -5364,7 +5364,7 @@ public:
   Kernel::Point_3 operator()(const Kernel::Ray_3& r, 
                              int i); 
 
-  /*! 
+  /*!
     returns source or target of `s`: `point(0)` returns 
     the source of `s`, `point(1)` returns the target of `s`. 
   The parameter `i` is taken modulo 2, which gives 
@@ -5394,7 +5394,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     introduces a variable with Cartesian coordinates 
     \f$ (0,0)\f$. 
   */ 
@@ -5420,7 +5420,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a point with Cartesian coordinates\f$ (0,0,0)\f$. 
   */ 
   Kernel::Point_3 operator()(const Origin &ORIGIN); 
@@ -5445,7 +5445,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the orthogonal projection of `p` onto `l`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Line_2& l, 
@@ -5472,13 +5472,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the orthogonal projection of `p` onto `l`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Line_3& l, 
                              const Kernel::Point_3& p); 
 
-  /*! 
+  /*!
     returns the orthogonal projection of `p` onto `h`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Plane_3& h, 
@@ -5505,7 +5505,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the image point of the projection of `p` under an affine 
     transformation, which maps `h` onto the \f$ xy\f$-plane, with the 
     \f$ z\f$-coordinate removed. 
@@ -5533,7 +5533,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the radical line of the circles. 
     \pre The two circles don't have the same center. 
   */ 
@@ -5562,7 +5562,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the radical plane of the spheres. 
     \pre The two spheres don't have the same center. 
   */ 
@@ -5590,28 +5590,28 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a ray 
     with source `p` and passing through point `q`. 
   */ 
   Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
                            const Kernel::Point_2 &q); 
 
-  /*! 
+  /*!
     introduces a ray starting at source `p` with 
     the direction given by `v`. 
   */ 
   Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
                            const Kernel::Vector_2 &v); 
 
-  /*! 
+  /*!
     introduces a ray starting at source `p` with 
     direction `d`. 
   */ 
   Kernel::Ray_2 operator()(const Kernel::Point_2 &p, 
                            const Kernel::Direction_2 &d); 
 
-  /*! 
+  /*!
     introduces a ray starting at source `p` with 
     the same direction as `l`. 
   */ 
@@ -5638,28 +5638,28 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a ray 
     with source `p` and passing through point `q`. 
   */ 
   Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
                            const Kernel::Point_3 &q); 
 
-  /*! 
+  /*!
     introduces a ray with source `p` and with 
     the direction given by `v`. 
   */ 
   Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
                            const Kernel::Vector_3 &v); 
 
-  /*! 
+  /*!
     introduces a ray with source `p` and with 
     direction `d`. 
   */ 
   Kernel::Ray_3 operator()(const Kernel::Point_3 &p, 
                            const Kernel::Direction_3 &d); 
 
-  /*! 
+  /*!
     introduces a ray with source `p` and with 
     the same direction as `l`. 
   */ 
@@ -5685,12 +5685,12 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     produces the vector `v` scaled by a factor `scale`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Vector_2 &v, const Kernel::RT& scale); 
 
-  /*! 
+  /*!
     produces the vector `v` scaled by a factor `scale`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Vector_2 &v, const Kernel::FT& scale); 
@@ -5715,13 +5715,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     produces the vector `v` scaled by a factor `scale`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3 &v, 
                               const Kernel::RT& scale); 
 
-  /*! 
+  /*!
     produces the vector `v` scaled by a factor `scale`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3 &v, 
@@ -5748,7 +5748,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns a point different from the source on 
     the ray `r`. 
   */ 
@@ -5804,7 +5804,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a segment with source `p` 
     and target `q`. The segment is directed from the source towards 
   the target. 
@@ -5831,7 +5831,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a segment with source `p` 
     and target `q`. It is directed from the source towards 
     the target. 
@@ -5859,14 +5859,14 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the source of 
     the segment `s`. 
   */ 
   Kernel::Point_2 operator()(const 
                              Kernel::Segment_2 &s); 
 
-  /*! 
+  /*!
     returns the source of 
     the ray `r`. 
   */ 
@@ -5930,7 +5930,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a sphere initialized to the sphere with center `center`, 
     squared radius `squared_radius` and orientation 
     `orientation`. 
@@ -5940,7 +5940,7 @@ public:
                               const Kernel::FT & squared_radius, 
                               const Orientation & orientation = COUNTERCLOCKWISE); 
 
-  /*! 
+  /*!
     introduces a sphere initialized to the unique sphere which passes 
     through the points `p`, `q`, `r` and `s`. The 
     orientation of the sphere is the orientation of the point quadruple 
@@ -5952,7 +5952,7 @@ public:
                                const Kernel::Point_3 & r, 
                                const Kernel::Point_3 & s); 
 
-  /*! 
+  /*!
     introduces a sphere initialized to the smallest sphere which passes 
     through the points `p`, `q`, and `r`. The orientation of 
     the sphere is `o`. \pre `o` is not \ref CGAL::COPLANAR. 
@@ -5962,7 +5962,7 @@ public:
                               const Kernel::Point_3 & r, 
                               const Orientation& o = COUNTERCLOCKWISE); 
 
-  /*! 
+  /*!
     introduces a sphere initialized to the smallest sphere which passes 
     through the points `p` and `q`. The orientation of 
     the sphere is `o`. \pre `o` is not \ref CGAL::COPLANAR. 
@@ -5971,7 +5971,7 @@ public:
                               const Kernel::Point_3 & q, 
                               const Orientation & o = COUNTERCLOCKWISE); 
 
-  /*! 
+  /*!
     introduces a sphere `s` initialized to the sphere with center 
     `center`, squared radius zero and orientation `orientation`. 
     \pre `orientation` \f$ \neq\f$ \ref CGAL::COPLANAR. 
@@ -5980,7 +5980,7 @@ public:
   Kernel::Sphere_3 operator()( const Kernel::Point_3 & center, 
                                const Orientation & orientation = COUNTERCLOCKWISE); 
 
-  /*! 
+  /*!
     introduces a sphere initialized to the diametral sphere of 
     the circle. 
   */ 
@@ -6007,7 +6007,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     introduces the vector `v1 + v2`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Vector_2 &v1, 
@@ -6034,7 +6034,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the vector `v1 + v2`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Vector_3 &v1, 
@@ -6060,7 +6060,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the supporting plane of `t`, with same orientation. 
   */ 
   Kernel::Plane_3 operator()(const Kernel::Triangle_3& t); 
@@ -6085,7 +6085,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the target of 
     the segment `s`. 
   */ 
@@ -6139,7 +6139,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a tetrahedron with vertices `p_0`, `p_1`, `p_2` and `p_3`. 
   */ 
   Kernel::Tetrahedron_3 operator()(const Kernel::Point_3 &p0, 
@@ -6168,14 +6168,14 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the point obtained by translating `p` by the vector 
     `v`. 
   */ 
   Kernel::Point_2 operator()(const Kernel::Point_2& p, 
                              const Kernel::Vector_2& v); 
 
-  /*! 
+  /*!
     returns the point obtained by translating a point at the origin by the vector 
     `v`. 
   */ 
@@ -6204,14 +6204,14 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the point obtained by translating `p` by the vector 
     `v`. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Point_3& p, 
                              const Kernel::Vector_3& v); 
 
-  /*! 
+  /*!
     returns the point obtained by translating a point at the origin by the vector 
     `v`. 
   */ 
@@ -6239,7 +6239,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces a triangle with vertices `p`, `q` and `r`. 
   */ 
   Kernel::Triangle_2 operator()(const Kernel::Point_2 &p, 
@@ -6267,7 +6267,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     introduces a triangle with vertices `p`, `q` and `r`. 
   */ 
   Kernel::Triangle_3 operator()(const Kernel::Point_3 &p, 
@@ -6296,7 +6296,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     computes the unit normal of the vectors`q-p` and `r-p`. 
     This requires that `Kernel::FT` supports the `sqrt` operation. 
   */ 
@@ -6327,40 +6327,40 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     introduces the vector `b-a`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Point_2 &a, 
                               const Kernel::Point_2 &b); 
 
-  /*! 
+  /*!
     introduces the vector `b`. 
   */ 
   Kernel::Vector_2 operator()(const Origin &o, 
                               const Kernel::Point_2 &b); 
 
-  /*! 
+  /*!
     introduces the vector `-a`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Point_2 &a, 
                               const Origin &o); 
 
-  /*! 
+  /*!
     introduces the vector `s.target()-s.source()`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Segment_2 &s); 
 
-  /*! 
+  /*!
     introduces a vector having the same direction as `r`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Ray_2 &r); 
 
-  /*! 
+  /*!
     introduces a vector having the same direction as `l`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Line_2 &l); 
 
-  /*! 
+  /*!
     introduces a null vector . 
   */ 
   Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR); 
@@ -6386,40 +6386,40 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     introduces the vector `b-a`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Point_3 &a, 
                               const Kernel::Point_3 &b); 
 
-  /*! 
+  /*!
     introduces the vector `b`. 
   */ 
   Kernel::Vector_3 operator()(const Origin &o, 
                               const Kernel::Point_3 &b); 
 
-  /*! 
+  /*!
     introduces the vector `-a`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Point_3 &a, 
                               const Origin &o); 
 
-  /*! 
+  /*!
     introduces the vector `s.target()-s.source()`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Segment_3 &s); 
 
-  /*! 
+  /*!
     introduces a vector having the same direction as `r`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Ray_3 &r); 
 
-  /*! 
+  /*!
     introduces a vector having the same direction as `l`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Line_3 &l); 
 
-  /*! 
+  /*!
     introduces a null vector . 
   */ 
   Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR); 
@@ -6448,7 +6448,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns source or target of `s`: `fo``(s,0)` 
     returns the source of `s`, `fo``(s,1)` returns the target 
     of `s`. The parameter `i` is taken modulo 2. 
@@ -6456,7 +6456,7 @@ public:
   Kernel::Point_2 operator()(const Kernel::Segment_2 
                              &s, int i); 
 
-  /*! 
+  /*!
     returns the i'th vertex of 
     `r` in counterclockwise order, starting with the lower left 
     vertex. The parameter `i` is taken modulo 4. 
@@ -6464,7 +6464,7 @@ public:
   Kernel::Point_2 operator()(const 
                              Kernel::Iso_rectangle_2 &r, int i); 
 
-  /*! 
+  /*!
     returns the i'th vertex of `t`. The parameter 
     `i` is taken modulo 3. 
   */ 
@@ -6496,7 +6496,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns source or target of `s`: `fo``(s,0)` 
     returns the source of `s`, `fo``(s,1)` returns the target 
     of `s`. The parameter `i` is taken modulo 2. 
@@ -6504,7 +6504,7 @@ public:
   Kernel::Point_3 operator()(const Kernel::Segment_3 
                              &s, int i); 
 
-  /*! 
+  /*!
     returns the i'th vertex of 
     `c`, as indicated in the figure below. The parameter `i` is 
     taken modulo 8. 
@@ -6513,14 +6513,14 @@ public:
   Kernel::Point_3 operator()(const 
                              Kernel::Iso_cuboid_3 &c, int i); 
 
-  /*! 
+  /*!
     returns the i'th vertex of `t`. The parameter 
     `i` is taken modulo 3. 
   */ 
   Kernel::Point_3 operator()(const Kernel::Triangle_3 
                              &t, int i); 
 
-  /*! 
+  /*!
     returns the i'th vertex of 
     `t`. The parameter `i` is taken modulo 4. 
   */ 
@@ -6548,7 +6548,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     Let `p` be the plane defined by the points `p`, `q`, 
     and `r`. Note that the order defines the orientation of 
     `p`. The function computes the orientation of points `p`, 
@@ -6563,7 +6563,7 @@ public:
                          const Kernel::Point_3&r, 
                          const Kernel::Point_3&s); 
 
-  /*! 
+  /*!
     If `p,q,r` are collinear, then \ref CGAL::COLLINEAR is returned. 
     If not, then `p,q,r` define a plane `p`. The return value in this case is 
     either \ref CGAL::POSITIVE or \ref CGAL::NEGATIVE, but we don't specify it explicitly. 
@@ -6595,7 +6595,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the bounded side of the circle defined 
     by `p`, `q`, and `r` on which `s` lies. 
     \pre `p`, `q`, `r`, and `s` are coplanar and `p`, `q`, and `r` are not collinear. 
@@ -6625,7 +6625,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, if `p`, `q`, `r`, and `s` are coplanar. 
   */ 
   bool operator()(const Kernel::Point_3&p, 
@@ -6654,7 +6654,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns `true` iff `d` is not equal to `d1`, and 
     while rotating counterclockwise starting at `d1`, 
     `d` is reached strictly before `d2` is reached. 
@@ -6687,7 +6687,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     determines if two geometrical objects of type 
     `Type1` and `Type2` intersect or not, for all pairs `Type1` and `Type2`, where 
     the types `Type1` and `Type2` can be any of the 
@@ -6723,7 +6723,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     determines if two geometrical objects of type 
     `Type1` and `Type2` intersect or not, for all pairs `Type1` and `Type2`, where 
     the types `Type1` and 
@@ -6766,7 +6766,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate 
     and the same Cartesian \f$ y\f$-coordinate. 
   */ 
@@ -6793,7 +6793,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate. 
   */ 
   bool operator()(const Kernel::Point_2&p, 
@@ -6819,7 +6819,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` and `q` have the same Cartesian \f$ x\f$-coordinate. 
   */ 
   bool operator()(const Kernel::Point_3&p, 
@@ -6845,7 +6845,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` and `q` have the same Cartesian \f$ y\f$-coordinate. 
   */ 
   bool operator()(const Kernel::Point_2&p, 
@@ -6871,7 +6871,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` and `q` have the same Cartesian \f$ y\f$-coordinate. 
   */ 
   bool operator()(const Kernel::Point_3&p, 
@@ -6897,7 +6897,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` and `q` have the same Cartesian \f$ z\f$-coordinate. 
   */ 
   bool operator()(const Kernel::Point_3&p, 
@@ -6932,55 +6932,55 @@ public:
   /// them, it returns `true` iff `x` and `y` are equal. 
   /// @{
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Point_2& x, 
                   const Kernel::Point_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Vector_2& x, 
                   const Kernel::Vector_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Direction_2& x, 
                   const Kernel::Direction_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Line_2& x, 
                   const Kernel::Line_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Ray_2& x, 
                   const Kernel::Ray_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Segment_2& x, 
                   const Kernel::Segment_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Circle_2& x, 
                   const Kernel::Circle_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Triangle_2& x, 
                   const Kernel::Triangle_2& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Iso_rectangle_2& x, 
@@ -7018,73 +7018,73 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Point_3& x, 
                   const Kernel::Point_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Vector_3& x, 
                   const Kernel::Vector_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Direction_3& x, 
                   const Kernel::Direction_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Line_3& x, 
                   const Kernel::Line_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Plane_3& x, 
                   const Kernel::Plane_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Ray_3& x, 
                   const Kernel::Ray_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Segment_3& x, 
                   const Kernel::Segment_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Circle_3& x, 
                   const Kernel::Circle_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Sphere_3& x, 
                   const Kernel::Sphere_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Triangle_3& x, 
                   const Kernel::Triangle_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Tetrahedron_3& x, 
                   const Kernel::Tetrahedron_3& y); 
 
-  /*! 
+  /*!
 
    */ 
   bool operator()(const Kernel::Iso_cuboid_3& x, 
@@ -7112,19 +7112,19 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the boundary of `c`. 
   */ 
   bool operator()(const Kernel::Circle_2&c, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the boundary of `i`. 
   */ 
   bool operator()(const Kernel::Iso_rectangle_2&i, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the boundary of `t`. 
   */ 
   bool operator()(const Kernel::Triangle_2&t, 
@@ -7153,19 +7153,19 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the boundary of `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the boundary of `t`. 
   */ 
   bool operator()(const Kernel::Tetrahedron_3&t, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the boundary of `c`. 
   */ 
   bool operator()(const Kernel::Iso_cuboid_3&c, 
@@ -7193,19 +7193,19 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the bounded side of `c`. 
   */ 
   bool operator()(const Kernel::Circle_2&c, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the bounded side of `i`. 
   */ 
   bool operator()(const Kernel::Iso_rectangle_2&i, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the bounded side of `t`. 
   */ 
   bool operator()(const Kernel::Triangle_2&t, 
@@ -7233,19 +7233,19 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the bounded side of `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the bounded side of `t`. 
   */ 
   bool operator()(const Kernel::Tetrahedron_3&t, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the bounded side of `c`. 
   */ 
   bool operator()(const Kernel::Iso_cuboid_3&c, 
@@ -7275,20 +7275,20 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the negative side of `c`. 
   */ 
   bool operator()(const Kernel::Circle_2&c, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the negative side of `l` 
     (`l` is considered a half-space). 
   */ 
   bool operator()(const Kernel::Line_2&l, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the negative side of `t`. 
   */ 
   bool operator()(const Kernel::Triangle_2&t, 
@@ -7316,20 +7316,20 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the negative side of `h` 
     (`h` is considered a half-space). 
   */ 
   bool operator()(const Kernel::Plane_3&h, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the negative side of `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the negative side of `t`. 
   */ 
   bool operator()(const Kernel::Tetrahedron_3&t, 
@@ -7357,20 +7357,20 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the positive side of `c`. 
   */ 
   bool operator()(const Kernel::Circle_2&c, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the positive side of `l` 
     (`l` is considered a half-space). 
   */ 
   bool operator()(const Kernel::Line_2&l, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the positive side of `t`. 
   */ 
   bool operator()(const Kernel::Triangle_2&t, 
@@ -7398,20 +7398,20 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the positive side of `h` 
     (`h` is considered a half-space). 
   */ 
   bool operator()(const Kernel::Plane_3&h, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the positive side of `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the positive side of `t`. 
   */ 
   bool operator()(const Kernel::Tetrahedron_3&t, 
@@ -7440,19 +7440,19 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the unbounded side of `c`. 
   */ 
   bool operator()(const Kernel::Circle_2&c, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the unbounded side of `i`. 
   */ 
   bool operator()(const Kernel::Iso_rectangle_2&i, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the unbounded side of `t`. 
   */ 
   bool operator()(const Kernel::Triangle_2&t, 
@@ -7481,19 +7481,19 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on the unbounded side of `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the unbounded side of `t`. 
   */ 
   bool operator()(const Kernel::Tetrahedron_3&t, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on the unbounded side of `c`. 
   */ 
   bool operator()(const Kernel::Iso_cuboid_3&c, 
@@ -7523,19 +7523,19 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `l`. 
   */ 
   bool operator()(const Kernel::Line_2&l, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `r`. 
   */ 
   bool operator()(const Kernel::Ray_2&r, 
                   const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `s`. 
   */ 
   bool operator()(const Kernel::Segment_2&s, 
@@ -7568,61 +7568,61 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `p` lies on `c`. 
   */ 
   bool operator()(const Kernel::Circle_3&c, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `l`. 
   */ 
   bool operator()(const Kernel::Line_3&l, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `r`. 
   */ 
   bool operator()(const Kernel::Ray_3&r, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `s`. 
   */ 
   bool operator()(const Kernel::Segment_3&s, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `pl`. 
   */ 
   bool operator()(const Kernel::Plane_3&pl, 
                   const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns true iff `l` lies on `pl`. 
   */ 
   bool operator()(const Kernel::Plane_3&pl, 
                   const Kernel::Line_3&l); 
 
-  /*! 
+  /*!
     returns true iff `c` lies on `pl`. 
   */ 
   bool operator()(const Kernel::Plane_3&pl, 
                   const Kernel::Circle_3&c); 
 
-  /*! 
+  /*!
     returns true iff `c` lies on `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Point_3&c); 
 
-  /*! 
+  /*!
     returns true iff `c` lies on `s`. 
   */ 
   bool operator()(const Kernel::Sphere_3&s, 
                   const Kernel::Circle_3&c); 
 
-  /*! 
+  /*!
     returns true iff `p` lies on `t`. 
   */ 
   bool operator()(const Kernel::Triangle_3&t, 
@@ -7649,7 +7649,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     computes the intersection region of two geometrical objects of type 
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
     For details see the reference manual page for `intersection()`.
@@ -7678,7 +7678,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     computes the intersection region of two geometrical 
     objects of type `Type1` and `Type2`. 
     For details see the reference manual page for `intersection()`.
@@ -7713,32 +7713,32 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Circle_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Iso_rectangle_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Line_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Ray_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Segment_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Triangle_2&o); 
@@ -7772,47 +7772,47 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Circle_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Iso_cuboid_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Line_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Plane_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Ray_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Segment_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Sphere_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Tetrahedron_3&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is degenerate. 
   */ 
   bool operator()(const Kernel::Triangle_3&o); 
@@ -7839,17 +7839,17 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff `o` is horizontal. 
   */ 
   bool operator()(const Kernel::Line_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is horizontal. 
   */ 
   bool operator()(const Kernel::Ray_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is horizontal. 
   */ 
   bool operator()(const Kernel::Segment_2&o); 
@@ -7877,17 +7877,17 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff `o` is vertical. 
   */ 
   bool operator()(const Kernel::Line_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is vertical. 
   */ 
   bool operator()(const Kernel::Ray_2&o); 
 
-  /*! 
+  /*!
     returns true iff `o` is vertical. 
   */ 
   bool operator()(const Kernel::Segment_2&o); 
@@ -7913,7 +7913,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns `true`, iff the three points `p`, `q` 
     and `r` form a left turn. 
   */ 
@@ -7941,7 +7941,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the distance of `q` to `p` is 
     smaller than the distance of `r` to `p`. 
   */ 
@@ -7970,7 +7970,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the distance of `q` to `p` is 
     smaller than the distance of `r` to `p`. 
   */ 
@@ -7997,7 +7997,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff the three points `p`, `q` 
     and `r` form a left turn or if they are collinear and 
     the distance of `q` to `p` is 
@@ -8029,7 +8029,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
 
     returns `true` if the signed distance from `p` and the oriented line `l` 
     is smaller than the signed distance of `q` and `l`. 
@@ -8039,7 +8039,7 @@ public:
                   const Kernel::Point_2& p, 
                   const Kernel::Point_2& q); 
 
-  /*! 
+  /*!
 
     returns `true` if the signed distance from `r` and the oriented line `l` 
     defined by `p` and `q` is smaller than the signed distance of `s` and `l`. 
@@ -8071,7 +8071,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true, iff the signed distance from point `q` to plane 
     `p` is smaller than the signed distance from point `r` to `p`. 
   */ 
@@ -8079,7 +8079,7 @@ public:
                   const Kernel::Point_3& q, 
                   const Kernel::Point_3& r); 
 
-  /*! 
+  /*!
     returns true, iff the signed distance from point `q` to the plane 
     `p` defined by `p1, p2, p3` is smaller than the signed distance 
     from point `r` to `p`. 
@@ -8111,7 +8111,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
     \f$ x\f$-coordinate of `q` or if the are the same and 
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`, or, 
@@ -8141,7 +8141,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
     \f$ x\f$-coordinate of `q` or if the are the same and 
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`. 
@@ -8170,7 +8170,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
     \f$ x\f$-coordinate of `q` or if the are the same and 
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`. 
@@ -8199,7 +8199,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
     \f$ x\f$-coordinate of `q`. 
   */ 
@@ -8226,7 +8226,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the 
     \f$ x\f$-coordinate of `q`. 
   */ 
@@ -8253,7 +8253,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the 
     \f$ y\f$-coordinate of `q` or if the are the same and 
     the \f$ x\f$-coordinate of `p` is smaller than the \f$ x\f$-coordinate of `q`. 
@@ -8281,7 +8281,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the 
     \f$ y\f$-coordinate of `q`. 
   */ 
@@ -8308,7 +8308,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the 
     \f$ y\f$-coordinate of `q`. 
   */ 
@@ -8333,7 +8333,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns true iff the \f$ z\f$-coordinate of `p` is smaller than the 
     \f$ z\f$-coordinate of `q`. 
   */ 
@@ -8360,7 +8360,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns \ref CGAL::LEFT_TURN, if `r` lies to the left of the oriented 
     line `l` defined by `p` and `q`, returns \ref CGAL::RIGHT_TURN if `r` 
     lies to the right of `l`, and returns \ref CGAL::COLLINEAR if `r` lies 
@@ -8370,7 +8370,7 @@ public:
                          const Kernel::Point_2&q, 
                          const Kernel::Point_2&r); 
 
-  /*! 
+  /*!
     returns \ref CGAL::LEFT_TURN if `u` and `v` form a left turn, 
     returns \ref CGAL::RIGHT_TURN if `u` and `v` form a right turn, 
     and returns \ref CGAL::COLLINEAR if `u` and `v` are collinear. 
@@ -8399,7 +8399,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns \ref CGAL::POSITIVE, if `s` lies on the positive side of the oriented 
     plane `h` defined by `p`, `q`, and `r`, returns \ref CGAL::NEGATIVE if `s` 
     lies on the negative side of `h`, and returns \ref CGAL::COPLANAR if `s` lies 
@@ -8410,7 +8410,7 @@ public:
                          const Kernel::Point_3&r, 
                          const Kernel::Point_3&s); 
 
-  /*! 
+  /*!
     returns \ref CGAL::POSITIVE if `u`, `v` and `w` are positively oriented, 
     returns \ref CGAL::NEGATIVE if `u`, `v` and `w` are negatively oriented, 
     and returns \ref CGAL::COPLANAR if `u`, `v` and `w` are coplanar. 
@@ -8419,7 +8419,7 @@ public:
                          const Kernel::Vector_3&v, 
                          const Kernel::Vector_3&w); 
 
-  /*! 
+  /*!
     returns the orientation of the sphere `s`. 
   */ 
   Orientation operator()(const Kernel::Sphere_3&s); 
@@ -8448,7 +8448,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
     \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
     depending on the position of `p` relative to the oriented circle `c`. 
@@ -8456,7 +8456,7 @@ public:
   Oriented_side operator()(const Kernel::Circle_2&c, 
                            const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
     \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
     depending on the position of `p` relative to the oriented line `l`. 
@@ -8464,7 +8464,7 @@ public:
   Oriented_side operator()(const Kernel::Line_2&l, 
                            const Kernel::Point_2&p); 
 
-  /*! 
+  /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
     \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
     depending on the position of `p` relative to the oriented triangle `t`. 
@@ -8494,7 +8494,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
     \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
     depending on the position of `p` relative to the oriented plane `h`. 
@@ -8502,7 +8502,7 @@ public:
   Oriented_side operator()(const Kernel::Plane_3&h, 
                            const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
     \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE, 
     depending on the position of `p` relative to the oriented tetrahedron `t`. 
@@ -8510,7 +8510,7 @@ public:
   Oriented_side operator()(const Kernel::Tetrahedron_3&t, 
                            const Kernel::Point_3&p); 
 
-  /*! 
+  /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY, 
     \ref CGAL::ON_NEGATIVE_SIDE, or the \ref CGAL::ON_POSITIVE_SIDE, 
     depending on the position of `p` relative to the oriented sphere `s`. 
@@ -8540,7 +8540,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the relative position of point `t` 
     to the circle defined by `p`, `q` and `r`. The order 
     of the points `p`, `q` and `r` does not matter. 
@@ -8551,7 +8551,7 @@ public:
                           const Kernel::Point_2&r, 
                           const Kernel::Point_2&t); 
 
-  /*! 
+  /*!
     returns the position of the point `t` relative to the circle 
     that has `pq` as its diameter. 
   */ 
@@ -8580,7 +8580,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the relative position of point `t` 
     to the sphere defined by `p`, `q`, `r`, and `s`. The order 
     of the points `p`, `q`, `r`, and `s` does not matter. 
@@ -8592,7 +8592,7 @@ public:
                           const Kernel::Point_3&s, 
                           const Kernel::Point_3&t); 
 
-  /*! 
+  /*!
     returns the position of the point `t` relative to the sphere 
     passing through `p`, `q`, and `r` and whose center is in the plane defined 
     by these three points. 
@@ -8602,7 +8602,7 @@ public:
                           const Kernel::Point_3&r, 
                           const Kernel::Point_3&t); 
 
-  /*! 
+  /*!
     returns the position of the point `t` relative to the sphere 
     that has `pq` as its diameter. 
   */ 
@@ -8632,7 +8632,7 @@ public:
   /// @{
 
 
-  /*! 
+  /*!
     returns the relative position of point `t` 
     to the oriented circle defined by `p`, `q` and `r`. 
     The order of the points `p`, `q` and `r` is important, 
@@ -8671,7 +8671,7 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-  /*! 
+  /*!
     returns the relative position of point `t` 
     to the oriented sphere defined by `p`, `q`, `r` and `s`. 
     The order of the points `p`, `q`, `r`, and `s` is important, 

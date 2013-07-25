@@ -18,7 +18,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 determines if two geometric objects of type `Type1` and `Type2` intersect or not,
 for all pairs `Type1` and `Type2`, where the types `Type1` and `Type2` can be any of the
 following: 

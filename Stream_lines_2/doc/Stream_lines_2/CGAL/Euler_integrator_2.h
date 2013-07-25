@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates an Euler integrator with `integration_step` as integration step. 
 */ 
 Euler_integrator_2(const FT & integration_step); 

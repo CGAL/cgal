@@ -34,7 +34,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs an instance of `Quadratic_program_options` where all available options 
 are at their defaults. 
 */ 
@@ -45,7 +45,7 @@ Quadratic_program_options();
 /// \name Verbosity 
 /// @{
 
-/*! 
+/*!
 sets the verbosity of the solver to the value `verbosity` when 
 `options` is passed to any of the four solution functions. The provided 
 value must be a number between \f$ 0\f$ and \f$ 5\f$. Verbosity \f$ 0\f$ is the default and 
@@ -57,7 +57,7 @@ purposes and have no effect if you compile with
 */ 
 void set_verbosity (int verbosity); 
 
-/*! 
+/*!
 returns the verbosity level of `options`. 
 */ 
 int get_verbosity () const; 
@@ -67,7 +67,7 @@ int get_verbosity () const;
 /// \name Pricing strategy 
 /// @{
 
-/*! 
+/*!
 sets the pricing strategy of the solver to the value `pricing_strategy` 
 when `options` is passed to any of the four solution functions. The pricing 
 strategy controls how the solver proceeds from any intermediate solution. 
@@ -77,7 +77,7 @@ class `Quadratic_program_pricing_strategy`.
 void set_pricing_strategy 
 (Quadratic_program_pricing_strategy pricing_strategy); 
 
-/*! 
+/*!
 returns the pricing strategy of `options`. 
 */ 
 Quadratic_program_pricing_strategy get_pricing_strategy() const; 
@@ -87,7 +87,7 @@ Quadratic_program_pricing_strategy get_pricing_strategy() const;
 /// \name Validation mode 
 /// @{
 
-/*! 
+/*!
 sets the automatic validation mode of the solver to the value `validate`. 
 The default is `false`. By providing value `true` you can 
 tell the solver to automatically check whether the program has 
@@ -96,7 +96,7 @@ correctly been solved, see the Validity section of the class
 */ 
 void set_auto_validation(bool validate); 
 
-/*! 
+/*!
 returns the validation mode of `options`. 
 */ 
 bool get_auto_validation() const; 

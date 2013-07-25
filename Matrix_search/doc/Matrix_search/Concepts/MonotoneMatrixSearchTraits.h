@@ -33,7 +33,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of a matrix entry. 
 */ 
 typedef unspecified_type Value; 
@@ -43,31 +43,31 @@ typedef unspecified_type Value;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the 
 number of columns. 
 */ 
 int number_of_columns() const; 
 
-/*! 
+/*!
 returns the number 
 of rows. 
 */ 
 int number_of_rows() const; 
 
-/*! 
+/*!
 returns the entry at position (`row`, `column`). 
 \pre \f$ 0 \le\f$ `row` \f$ <\f$ `number_of_rows()`, and \f$ 0 \le\f$ `column` \f$ <\f$ `number_of_columns()`. 
 */ 
 Entry operator()( int row, int column) const; 
 
-/*! 
+/*!
 replace 
 column `old` with column number `new`. \pre \f$ 0 \le\f$ `old`, `new` \f$ <\f$ `number_of_columns()`. 
 */ 
 void replace_column( int old, int new); 
 
-/*! 
+/*!
 returns 
 a new Matrix consisting of all rows of `m` with even index, 
 (i.e.\ first row is row \f$ 0\f$ of `m`, second row is row \f$ 2\f$ of 
@@ -75,7 +75,7 @@ a new Matrix consisting of all rows of `m` with even index,
 */ 
 Matrix* extract_all_even_rows() const; 
 
-/*! 
+/*!
 deletes the 
 rightmost columns, such that `m` becomes quadratic. 
 \pre `number_of_columns()` \f$ \ge\f$ `number_of_rows()`. \post `number_of_rows()` \f$ ==\f$ `number_of_columns()`. 

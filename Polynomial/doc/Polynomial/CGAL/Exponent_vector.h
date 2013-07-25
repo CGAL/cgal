@@ -38,43 +38,43 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor.
 
 */ 
 Exponent_vector(); 
 
-/*! 
+/*!
 The copy constructor. 
 
 */ 
 Exponent_vector(const Exponent_vector & ev_); 
 
-/*! 
+/*!
 Creates a vector containing the given element. 
 
 */ 
 Exponent_vector(int e1); 
 
-/*! 
+/*!
 Creates a vector containing the given elements. 
 
 */ 
 Exponent_vector(int e1, int e2); 
 
-/*! 
+/*!
 Creates a vector containing the given elements. 
 
 */ 
 Exponent_vector(int e1, int e2, int e3); 
 
-/*! 
+/*!
 Creates a vector containing the given elements. 
 
 */ 
 Exponent_vector(int e1, int e2, int e3, int e4); 
 
-/*! 
+/*!
 
 Creates a vector with a copy of the given range. 
 \pre `InputIterator` must allow the value type `int`. 
@@ -88,24 +88,24 @@ Exponent_vector(InputIterator begin, InputIterator end);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Exponent_vector operator+(const Exponent_vector &ev1); 
 
-/*! 
+/*!
 
 */ 
 Exponent_vector operator-(const Exponent_vector &ev1); 
 
-/*! 
+/*!
 \pre ev1.size() == ev2.size(). 
 
 */ 
 Exponent_vector 
 operator+(const Exponent_vector &ev1, const Exponent_vector &ev2); 
 
-/*! 
+/*!
 
 \pre ev1.size() == ev2.size() 
 
@@ -113,7 +113,7 @@ operator+(const Exponent_vector &ev1, const Exponent_vector &ev2);
 Exponent_vector 
 operator-(const Exponent_vector &ev1, const Exponent_vector &ev2); 
 
-/*! 
+/*!
 
 \pre `fo`.size() == ev2.size() 
 
@@ -121,7 +121,7 @@ operator-(const Exponent_vector &ev1, const Exponent_vector &ev2);
 Exponent_vector 
 operator+=(const Exponent_vector &ev2); 
 
-/*! 
+/*!
 
 \pre `fo`.size() == ev2.size() 
 
@@ -129,19 +129,19 @@ operator+=(const Exponent_vector &ev2);
 Exponent_vector 
 operator-=(const Exponent_vector &ev2); 
 
-/*! 
+/*!
 
 */ 
 bool 
 operator==(const Exponent_vector &ev1, const Exponent_vector &ev2); 
 
-/*! 
+/*!
 
 */ 
 bool 
 operator!=(const Exponent_vector &ev1, const Exponent_vector &ev2); 
 
-/*! 
+/*!
 
 Lexicographic compare, starting with the <I>last</I> variable. 
 */ 
@@ -152,7 +152,7 @@ operator<(const Exponent_vector &ev1, const Exponent_vector &ev2);
 
 }; /* end Exponent_vector */
 
-/*! 
+/*!
 Returns true if all entries of exponent vector `ev` are not negative. 
 \relates Exponent_vector 
 */ 

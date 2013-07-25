@@ -22,39 +22,39 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 type for representing points. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 type for representing vectors. 
 */ 
 typedef unspecified_type Vector_2; 
 
-/*! 
+/*!
 type for representing directions. 
 */ 
 typedef unspecified_type Direction_2; 
 
-/*! 
+/*!
 type for representing lines. 
 */ 
 typedef unspecified_type Line_2; 
 
-/*! 
+/*!
 type for representing (not necessarily 
 axis-parallel) rectangles. 
 */ 
 typedef unspecified_type Rectangle_2; 
 
-/*! 
+/*!
 type for representing 
 parallelograms. 
 */ 
 typedef unspecified_type Parallelogram_2; 
 
-/*! 
+/*!
 type for representing strips, that is the 
 closed region bounded by two parallel lines. 
 */ 
@@ -65,36 +65,36 @@ typedef unspecified_type Strip_2;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 a model for `Kernel::Equal_2`. 
 */ 
 typedef unspecified_type Equal_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Less_xy_2`. 
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Less_yx_2`. 
 */ 
 typedef unspecified_type Less_yx_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Has_on_negative_side_2`. 
 */ 
 typedef unspecified_type Has_on_negative_side_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Compare_angle_with_x_axis_2`. 
 */ 
 typedef unspecified_type Compare_angle_with_x_axis_2; 
 
-/*! 
+/*!
 AdaptableFunctor 
 `op`: 
 `Rectangle_2` \f$ \times\f$ `Rectangle_2` \f$ \rightarrow\f$ 
@@ -104,7 +104,7 @@ strictly less than the area of \f$ r2\f$.
 */ 
 typedef unspecified_type Area_less_rectangle_2; 
 
-/*! 
+/*!
 AdaptableFunctor 
 `op`: 
 `Parallelogram_2` \f$ \times\f$ 
@@ -115,7 +115,7 @@ than the area of \f$ p2\f$.
 */ 
 typedef unspecified_type Area_less_parallelogram_2; 
 
-/*! 
+/*!
 AdaptableFunctor 
 `op`: 
 `Strip_2` \f$ \times\f$ `Strip_2` \f$ \rightarrow\f$ `bool`. 
@@ -125,7 +125,7 @@ than the width of \f$ s2\f$.
 */ 
 typedef unspecified_type Width_less_strip_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Orientation_2`. 
 
@@ -139,13 +139,13 @@ typedef unspecified_type Orientation_2;
 /// \name Constructions 
 /// @{
 
-/*! 
+/*!
 a model for 
 `Kernel::Construct_vector_2`. 
 */ 
 typedef unspecified_type Construct_vector_2; 
 
-/*! 
+/*!
 AdaptableFunctor 
 
 `op`: `Direction_2` \f$ \rightarrow\f$ `Vector_2`. 
@@ -154,31 +154,31 @@ AdaptableFunctor
 */ 
 typedef unspecified_type Construct_vector_from_direction_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Construct_perpendicular_vector_2`. 
 */ 
 typedef unspecified_type Construct_perpendicular_vector_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Construct_direction_2`. 
 */ 
 typedef unspecified_type Construct_direction_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Construct_opposite_direction_2`. 
 */ 
 typedef unspecified_type Construct_opposite_direction_2; 
 
-/*! 
+/*!
 a model for 
 `Kernel::Construct_line_2`. 
 */ 
 typedef unspecified_type Construct_line_2; 
 
-/*! 
+/*!
 Function class 
 `op`: 
 `Point_2` \f$ \times\f$ `Direction_2` \f$ \times\f$ `Point_2` 
@@ -192,7 +192,7 @@ points on each side and one sides parallel to `d`.
 */ 
 typedef unspecified_type Construct_rectangle_2; 
 
-/*! 
+/*!
 Function class 
 
 `op`: `Point_2` \f$ \times\f$ `Direction_2` \f$ \times\f$ 
@@ -207,7 +207,7 @@ of the points on each side and one side parallel to each of
 */ 
 typedef unspecified_type Construct_parallelogram_2; 
 
-/*! 
+/*!
 Function class 
 `op`: 
 `Point_2` \f$ \times\f$ `Direction_2` \f$ \times\f$ `Point_2` 
@@ -230,7 +230,7 @@ typedef unspecified_type Construct_strip_2;
 /// function must exist:
 /// @{
 
-/*! 
+/*!
 copies the four vertices of `r` in 
 counterclockwise order to `o`. 
 */ 
@@ -238,7 +238,7 @@ template < class OutputIterator > OutputIterator
 copy_rectangle_vertices_2(const Rectangle_2& r, OutputIterator 
 o) const; 
 
-/*! 
+/*!
 copies the four vertices of `p` in 
 counterclockwise order to `o`. 
 */ 
@@ -246,14 +246,14 @@ template < class OutputIterator > OutputIterator
 copy_parallelogram_vertices_2(const Parallelogram_2& p, 
 OutputIterator o) const; 
 
-/*! 
+/*!
 copies the two lines bounding `s` to `o`. 
 */ 
 template < class OutputIterator > OutputIterator 
 copy_strip_lines_2(const Strip_2& s, OutputIterator o) 
 const; 
 
-/*! 
+/*!
 
 */ 
 Construct_vector_2 construct_vector_2_object() 

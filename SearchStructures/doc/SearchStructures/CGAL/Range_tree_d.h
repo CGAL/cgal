@@ -23,17 +23,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 container `Data`. 
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 container `Window`. 
 */ 
 typedef unspecified_type Window; 
 
-/*! 
+/*!
 container `Traits`. 
 */ 
 typedef unspecified_type Traits; 
@@ -43,7 +43,7 @@ typedef unspecified_type Traits;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 A range tree is 
 constructed, such that the subtree of each vertex is of the 
@@ -83,7 +83,7 @@ r(Tree_base<Data, Window> sublayer_tree);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 The tree is constructed according to the data items in the 
 sequence between the element pointed by iterator `first` and 
 iterator `last`. The data items of the iterator must 
@@ -93,7 +93,7 @@ have type `Data`.
 template<class ForwardIterator> 
 bool make_tree(ForwardIterator first, ForwardIterator last); 
 
-/*! 
+/*!
 
 All elements that 
 lay inside the \f$ d\f$-dimensional interval defined through 
@@ -104,7 +104,7 @@ to the last location the function wrote to is returned.
 template<class OutputIterator> 
 OutputIterator window_query(Window win, OutputIterator result); 
 
-/*! 
+/*!
 The tree structure is checked. For each 
 vertex the subtree is checked on being valid and it is checked 
 whether the value of the `Key_type` of a vertex 
@@ -115,7 +115,7 @@ bool is_valid();
 
 protected:
 
-/*! 
+/*!
 returns `true`, if the 
 data of `object` lies between the start and endpoint of 
 interval `win`. Returns `false` otherwise. 
@@ -123,7 +123,7 @@ interval `win`. Returns `false` otherwise.
 bool is_inside(Window win, 
 Data object); 
 
-/*! 
+/*!
 returns false. 
 */ 
 bool is_anchor(); 

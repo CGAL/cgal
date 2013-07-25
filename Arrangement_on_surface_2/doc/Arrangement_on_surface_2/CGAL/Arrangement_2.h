@@ -60,32 +60,32 @@ public:
 
   /// @{
 
-  /*! 
+  /*!
     a private type used as an abbreviation of the `Arrangement_2` type hereafter. 
   */ 
   typedef Arrangement_2<Traits_2,Dcel> Self; 
 
-  /*! 
+  /*!
     the traits class in use. 
   */ 
   typedef unspecified_type Traits_2; 
 
-  /*! 
+  /*!
     the <span class="textsc">Dcel</span> representation of the arrangement. 
   */ 
   typedef unspecified_type Dcel; 
 
-  /*! 
+  /*!
     the point type, as defined by the traits class. 
   */ 
   typedef typename Traits_2::Point_2 Point_2; 
 
-  /*! 
+  /*!
     the \f$ x\f$-monotone curve type, as defined by the traits class. 
   */ 
   typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2; 
 
-  /*! 
+  /*!
     the size type (equivalent to `size_t`). 
   */ 
   typedef typename Dcel::Size Size; 
@@ -101,7 +101,7 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       default constructor. 
     */ 
     Vertex(); 
@@ -113,23 +113,23 @@ public:
     /// that return constant handles, iterators or circulators: 
     /// @{
 
-    /*! 
+    /*!
       checks whether the vertex lies at infinity and not associated with 
       a point with bounded coordinates. 
     */ 
     bool is_at_open_boundary() const; 
 
-    /*! 
+    /*!
       checks whether the vertex is isolated (i.e., has no incident edges). 
     */ 
     bool is_isolated() const; 
 
-    /*! 
+    /*!
       returns the number of edges incident to `v`. 
     */ 
     Size degree() const; 
 
-    /*! 
+    /*!
       returns a circulator circulator that allows going over the halfedges 
       incident to `v` (that have `v` as their target). 
       The edges are traversed in a clockwise direction around `v`. 
@@ -137,26 +137,26 @@ public:
     */ 
     Halfedge_around_vertex_circulator incident_halfedges(); 
 
-    /*! 
+    /*!
       returns a handle to the face that contains `v` in its interior. 
       \pre `v` is an isolated vertex. 
     */ 
     Face_handle face(); 
 
-    /*! 
+    /*!
       returns the point associated with the vertex. 
       \pre `v` is not a vertex at infinity. 
     */ 
     const typename Traits::Point_2& point() const; 
 
-    /*! 
+    /*!
       returns the placement of the \f$ x\f$-coordinate in the parameter space, 
       that is, either the left boundary-side, the interior, or the right 
       boundary-side. 
     */ 
     Arr_parameter_space parameter_space_in_x () const; 
 
-    /*! 
+    /*!
       returns the placement of the \f$ y\f$-coordinate in the parameter space, 
       that is, either the bottom boundary-side, the interior, or the top 
       boundary-side. 
@@ -187,7 +187,7 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       default constructor. 
     */ 
     Halfedge(); 
@@ -199,23 +199,23 @@ public:
     /// that return constant handles, iterators or circulators: 
     /// @{
 
-    /*! 
+    /*!
       returns whether the halfedge is fictitious (i.e., connects two vertices at 
       infinity and is not associated with a valid curve). 
     */ 
     bool is_fictitious () const; 
 
-    /*! 
+    /*!
       returns a handle for the source vertex of `e`. 
     */ 
     Vertex_handle source(); 
 
-    /*! 
+    /*!
       returns a handle for the target vertex of `e`. 
     */ 
     Vertex_handle target(); 
 
-    /*! 
+    /*!
       returns the direction of the halfedge: `ARR_LEFT_TO_RIGHT` if 
       `e`'s source vertex is lexicographically smaller than it 
       target (so the halfedge is directed from left to right), and 
@@ -224,35 +224,35 @@ public:
     */ 
     Arr_halfedge_direction direction() const; 
 
-    /*! 
+    /*!
       returns the face that `e` is incident to (The face lies to 
       the left of `e`). 
     */ 
     Face_handle face(); 
 
-    /*! 
+    /*!
       returns the twin halfedge. 
     */ 
     Halfedge_handle twin(); 
 
-    /*! 
+    /*!
       returns `e`'s predecessor in the connected component it belongs to. 
     */ 
     Halfedge_handle prev(); 
 
-    /*! 
+    /*!
       returns `e`'s successor in the connected component it belongs to. 
     */ 
     Halfedge_handle next(); 
 
-    /*! 
+    /*!
       returns a circulator that allows traversing the halfedges of the 
       connected component boundary (CCB) that contains `e`. 
       The circulator is initialized to point to `e`. 
     */ 
     Ccb_halfedge_circulator ccb(); 
 
-    /*! 
+    /*!
       returns the \f$ x\f$-monotone curve associated with `e`. 
       \pre `e` is not a fictitious halfedge. 
     */ 
@@ -287,7 +287,7 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       default constructor. 
     */ 
     Face(); 
@@ -299,7 +299,7 @@ public:
     /// that return constant handles, iterators or circulators: 
     /// @{
 
-    /*! 
+    /*!
       returns a Boolean indicating whether this is the fictitious face, 
       which contain the entire arrangement (and does not have an outer CCB). 
       An arrangement that supports only bounded curves does not have a 
@@ -307,19 +307,19 @@ public:
     */ 
     bool is_fictitious () const; 
 
-    /*! 
+    /*!
       returns a Boolean indicating whether the face is unbounded. 
     */ 
     bool is_unbounded() const; 
 
-    /*! 
+    /*!
       returns a Boolean indicating whether the face has an outer CCB. 
       (The fictitious face and the unbounded face of an arrangement that 
       does not have a fictitious face do not have outer CCBs.) 
     */ 
     bool has_outer_ccb() const; 
 
-    /*! 
+    /*!
       returns a circulator that enables traversing the outer boundary of 
       `f`. The edges along the CCB are traversed in a counterclockwise 
       direction. 
@@ -327,24 +327,24 @@ public:
     */ 
     Ccb_halfedge_circulator outer_ccb(); 
 
-    /*! 
+    /*!
       returns an iterator for traversing all the holes (inner CCBs) of 
       `f`. 
     */ 
     Hole_iterator holes_begin(); 
 
-    /*! 
+    /*!
       returns a past-the-end iterator for the holes of `f`. 
     */ 
     Hole_iterator holes_end(); 
 
-    /*! 
+    /*!
       returns an iterator for traversing all the isolated vertices 
       contained in the interior of `f`. 
     */ 
     Isolated_vertex_iterator isolated_vertices_begin(); 
 
-    /*! 
+    /*!
       returns a past-the-end iterator for the isolated vertices 
       contained inside `f`. 
     */ 
@@ -374,61 +374,61 @@ iterators can be passed as well.
 /// @{
 
 
-  /*! 
+  /*!
     a handle for an arrangement vertex. 
   */ 
   typedef unspecified_type Vertex_handle; 
 
-  /*! 
+  /*!
     a handle for a halfedge. 
     The halfedge and its twin form together an arrangement edge. 
   */ 
   typedef unspecified_type Halfedge_handle; 
 
-  /*! 
+  /*!
     a handle for an arrangement face. 
   */ 
   typedef unspecified_type Face_handle; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the 
     vertices of the arrangement. Its value-type is `Vertex`. 
   */ 
   typedef unspecified_type Vertex_iterator; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the 
     halfedges of the arrangement. Its value-type is `Halfedge`. 
   */ 
   typedef unspecified_type Halfedge_iterator; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the 
     edges of the arrangement. (That is, it skips every other halfedge.) 
     Its value-type is `Halfedge`. 
   */ 
   typedef unspecified_type Edge_iterator; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the 
     faces of arrangement. Its value-type is `Face`. 
   */ 
   typedef unspecified_type Face_iterator; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the 
     unbounded faces of arrangement. Its value-type is `Face`. 
   */ 
   typedef unspecified_type Unbounded_face_iterator; 
 
-  /*! 
+  /*!
     a bidirectional circulator 
     over the halfedges that have a given vertex as their target. 
     Its value-type is `Halfedge`. 
   */ 
   typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-  /*! 
+  /*!
     a bidirectional circulator over the 
     halfedges of a CCB (connected component of the boundary). 
     Its value-type is `Halfedge`. Each 
@@ -437,14 +437,14 @@ iterators can be passed as well.
   */ 
   typedef unspecified_type Ccb_halfedge_circulator; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the holes 
     (i.e., inner CCBs) contained inside a given face. 
     Its value type is `Ccb_halfedge_circulator`. 
   */ 
   typedef unspecified_type Hole_iterator; 
 
-  /*! 
+  /*!
     a bidirectional iterator over the 
     isolated vertices contained inside a given face. 
     Its value type is `Vertex`. 
@@ -456,18 +456,18 @@ iterators can be passed as well.
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     constructs an empty arrangement containing one unbounded face, 
     which corresponds to the entire plane. 
   */ 
   Arrangement_2<Traits, Dcel>(); 
 
-  /*! 
+  /*!
     copy constructor. 
   */ 
   Arrangement_2<Traits, Dcel>(const Self& other); 
 
-  /*! 
+  /*!
     constructs an empty arrangement that uses the given `traits` 
     instance for performing the geometric predicates. 
   */ 
@@ -478,17 +478,17 @@ iterators can be passed as well.
   /// \name Assignment Methods 
   /// @{
 
-  /*! 
+  /*!
     assignment operator. 
   */ 
   Self& operator= (other); 
 
-  /*! 
+  /*!
     assigns the contents of another arrangement. 
   */ 
   void assign (const Self& other); 
 
-  /*! 
+  /*!
     clears the arrangement. 
   */ 
   void clear (); 
@@ -499,13 +499,13 @@ iterators can be passed as well.
 
   /// @{
 
-  /*! 
+  /*!
     returns the traits object used by the arrangement instance. 
     A `const` version is also available. 
   */ 
   Traits_2* get_traits(); 
 
-  /*! 
+  /*!
     determines whether the arrangement is empty (contains only the unbounded 
     face, with no vertices or edges). 
   */ 
@@ -521,27 +521,27 @@ returning constant iterators instead of mutable ones.
 */
 /// @{
 
-  /*! 
+  /*!
     returns the number of vertices in the arrangement. 
   */ 
   Size number_of_vertices() const; 
 
-  /*! 
+  /*!
     returns the total number of isolated vertices in the arrangement. 
   */ 
   Size number_of_isolated_vertices() const; 
 
-  /*! 
+  /*!
     returns the begin-iterator of the vertices in the arrangement. 
   */ 
   Vertex_iterator vertices_begin(); 
 
-  /*! 
+  /*!
     returns the past-the-end iterator of the vertices in the arrangement. 
   */ 
   Vertex_iterator vertices_end(); 
 
-  /*! 
+  /*!
     returns the number of arrangement vertices that lie at infinity and 
     are not associated with valid points. Such vertices are not considered 
     to be regular arrangement vertices and `arr.number_of_vertices()`
@@ -559,33 +559,33 @@ returning constant iterators instead of mutable ones.
 */
 /// @{
 
-  /*! 
+  /*!
     returns the number of halfedges in the arrangement. 
   */ 
   Size number_of_halfedges() const; 
 
-  /*! 
+  /*!
     returns the begin-iterator of the halfedges in the arrangement. 
   */ 
   Halfedge_iterator halfedges_begin(); 
 
-  /*! 
+  /*!
     returns the past-the-end iterator of the halfedges in the arrangement. 
   */ 
   Halfedge_iterator halfedges_end(); 
 
-  /*! 
+  /*!
     returns the number of edges in the arrangement (equivalent to 
     `arr.number_of_halfedges() / 2`). 
   */ 
   Size number_of_edges() const; 
 
-  /*! 
+  /*!
     returns the begin-iterator of the edges in the arrangement. 
   */ 
   Edge_iterator edges_begin(); 
 
-  /*! 
+  /*!
     returns the past-the-end iterator of the edges in the arrangement. 
   */ 
   Edge_iterator edges_end(); 
@@ -600,7 +600,7 @@ returning constant iterators instead of mutable ones.
 */
 /// @{
 
-  /*! 
+  /*!
     returns a handle for an unbounded face of the arrangement. 
     In case the arrangement comprises only bounded curves, there is a single 
     unbounded face and the function returns a handle to it. Otherwise, a 
@@ -608,40 +608,40 @@ returning constant iterators instead of mutable ones.
   */ 
   Face_handle unbounded_face(); 
 
-  /*! 
+  /*!
     returns the number of faces in the arrangement. 
   */ 
   Size number_of_faces() const; 
 
-  /*! 
+  /*!
     returns the begin-iterator of the faces in the arrangement. 
   */ 
   Face_iterator faces_begin(); 
 
-  /*! 
+  /*!
     returns the past-the-end iterator of the faces in the arrangement. 
   */ 
   Face_iterator faces_end(); 
 
-  /*! 
+  /*!
     returns the number of unbounded faces in the arrangement. 
     Note `arr.number_of_faces()` also counts the unbounded faces
     of the arrangement.
   */ 
   Size number_of_unbounded_faces() const; 
 
-  /*! 
+  /*!
     returns the begin-iterator of the unbounded faces in the arrangement. 
   */ 
   Unbounded_face_iterator unbounded_faces_begin(); 
 
-  /*! 
+  /*!
     returns the past-the-end iterator of the unbounded faces in the 
     arrangement. 
   */ 
   Unbounded_face_iterator unbounded_faces_end(); 
 
-  /*! 
+  /*!
     returns a handle to the fictitious face of the arrangement. 
     If the arrangement is not unbounded, there is no fictitious 
     face. In this case the result is not deterministic. A const 
@@ -664,17 +664,17 @@ edge, we first need to cast away its "constness".
 
   /// @{
 
-  /*! 
+  /*!
     casts the given constant vertex handle to an equivalent mutable handle. 
   */ 
   Vertex_handle non_const_handle (Vertex_const_handle v); 
 
-  /*! 
+  /*!
     casts the given constant halfedge handle to an equivalent mutable handle. 
   */ 
   Halfedge_handle non_const_handle (Halfedge_const_handle e); 
 
-  /*! 
+  /*!
     casts the given constant face handle to an equivalent mutable handle. 
   */ 
   Face_handle non_const_handle (Face_const_handle f); 
@@ -685,7 +685,7 @@ edge, we first need to cast away its "constness".
 
   /// @{
 
-  /*! 
+  /*!
     inserts the point `p` into the arrangement as an isolated vertex in 
     the interior of the face `f` and returns a handle for the newly 
     created vertex. 
@@ -694,7 +694,7 @@ edge, we first need to cast away its "constness".
   Vertex_handle insert_in_face_interior (const Point_2& p, 
                                          Face_handle f); 
 
-  /*! 
+  /*!
     inserts the curve `c` that is entirely contained in the interior 
     of a given face `f`. If `c` is a bounded curve two new vertices 
     that correspond to `c`'s endpoints are created and connected with a 
@@ -712,7 +712,7 @@ edge, we first need to cast away its "constness".
   (const X_monotone_curve_2& c, 
    Face_handle f); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that its left 
     endpoint corresponds to a given arrangement vertex. As a result, a new 
     vertex that correspond to `c`'s right endpoint is created and 
@@ -730,7 +730,7 @@ edge, we first need to cast away its "constness".
   (const X_monotone_curve_2& c, 
    Vertex_handle v); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that its right 
     endpoint corresponds to a given arrangement vertex. As a result, a new 
     vertex that correspond to `c`'s left endpoint is created and 
@@ -748,7 +748,7 @@ edge, we first need to cast away its "constness".
   (const X_monotone_curve_2& c, 
    Vertex_handle v); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that both `c`'s 
     endpoints correspond to existing arrangement vertices, given by `v1` 
     and `v2`. The function creates a new halfedge pair that connects the 
@@ -763,7 +763,7 @@ edge, we first need to cast away its "constness".
                                       Vertex_handle v1, 
                                       Vertex_handle v2); 
 
-  /*! 
+  /*!
     inserts an unbounded curve `c` into the arrangement, such that `c` 
     is entirely contained within a single unbounded face of the arrangement. 
     `fict_pred1` specifies the fictitious halfedge that should contain the 
@@ -780,7 +780,7 @@ edge, we first need to cast away its "constness".
    Halfedge_handle fict_pred1, 
    Halfedge_handle fict_pred2 = Halfedge_handle()); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that its left 
     endpoint corresponds to a given arrangement vertex. This vertex is the 
     target vertex of the halfedge `pred`, such that `c` is inserted 
@@ -795,7 +795,7 @@ edge, we first need to cast away its "constness".
   (const X_monotone_curve_2& c, 
    Halfedge_handle pred); 
 
-  /*! 
+  /*!
     inserts an unbounded curve `c` into the arrangement, such that its left 
     endpoint is bounded and corresponds to a given arrangement vertex. This 
     vertex is the target vertex of the halfedge `pred`, such that `c` 
@@ -814,7 +814,7 @@ edge, we first need to cast away its "constness".
    Halfedge_handle pred, 
    Halfedge_handle fict_pred); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that its right 
     endpoint corresponds to a given arrangement vertex. This vertex is the 
     target vertex of the halfedge `pred`, such that `c` is inserted 
@@ -829,7 +829,7 @@ edge, we first need to cast away its "constness".
   (const X_monotone_curve_2& c, 
    Halfedge_handle pred); 
 
-  /*! 
+  /*!
     inserts an unbounded curve `c` into the arrangement, such that its right 
     endpoint is bounded and corresponds to a given arrangement vertex. This 
     vertex is the target vertex of the halfedge `pred`, such that `c` 
@@ -848,7 +848,7 @@ edge, we first need to cast away its "constness".
    Halfedge_handle pred, 
    Halfedge_handle fict_pred); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that both `c`'s 
     endpoints correspond to existing arrangement vertices, given by 
     `pred1->target()` and `v2`. The function creates a new halfedge 
@@ -864,7 +864,7 @@ edge, we first need to cast away its "constness".
                                       Halfedge_handle pred1, 
                                       Vertex_handle v2); 
 
-  /*! 
+  /*!
     inserts the curve `c` into the arrangement, such that both `c`'s 
     endpoints correspond to existing arrangement vertices, given by 
     `pred1->target()` and `pred2->target()`. The function creates a 
@@ -887,7 +887,7 @@ edge, we first need to cast away its "constness".
 
 /// @{
 
-  /*! 
+  /*!
     sets `p` to be the point associated with the vertex `v`. 
     The function returns a handle for the modified vertex (same as `v`). 
     \pre `v` is not a vertex at infinity and `p` is geometrically equivalent to the point currently associated with `v`. 
@@ -895,14 +895,14 @@ edge, we first need to cast away its "constness".
   Vertex_handle modify_vertex (Vertex_handle v, 
                                const Point_2& p); 
 
-  /*! 
+  /*!
     removes the isolated vertex `v` from the arrangement. The function 
     returns the face `f` that used to contain the isolated vertex. 
     \pre `v` is an isolated vertex (has no incident edges). 
   */ 
   Face_handle remove_isolated_vertex (Vertex_handle v); 
 
-  /*! 
+  /*!
     sets `c` to be the \f$ x\f$-monotone curve associated with the edge `e`. 
     The function returns a handle for the modified edge (same as `e`). 
     \pre `c` is geometrically equivalent to the curve currently associated with `e`. 
@@ -910,7 +910,7 @@ edge, we first need to cast away its "constness".
   Halfedge_handle modify_edge (Halfedge_handle e, 
                                const X_monotone_curve_2& c); 
 
-  /*! 
+  /*!
     splits the edge `e` into two edges (more precisely, into two halfedge 
     pairs), associated with the given subcurves `c1` and `c2`, and 
     creates a vertex that corresponds to the split point. 
@@ -922,7 +922,7 @@ edge, we first need to cast away its "constness".
                               const X_monotone_curve_2& c1, 
                               const X_monotone_curve_2& c2); 
 
-  /*! 
+  /*!
     merges the edges represented by `e1` and `e2` into 
     a single edge, associated with the given merged curve `c`. 
     Denote `e1`'s end-vertices as \f$ u_1\f$ and \f$ v\f$, while `e2`'s 
@@ -935,7 +935,7 @@ edge, we first need to cast away its "constness".
                               Halfedge_handle e2, 
                               const X_monotone_curve_2& c); 
 
-  /*! 
+  /*!
     removes the edge `e` from the arrangement. Since the `e` may 
     be the only edge incident to its source vertex (or its target vertex), 
     this vertex can be removed as well. The flags `remove_source` and 
@@ -954,7 +954,7 @@ edge, we first need to cast away its "constness".
   /// \name Miscellaneous 
   /// @{
 
-  /*! 
+  /*!
     returns `true` if `arr` represents a valid instance of 
     `Arrangement_2`. In particular, the functions checks the topological 
     structure of the arrangement and assures that it is valid. In addition, 

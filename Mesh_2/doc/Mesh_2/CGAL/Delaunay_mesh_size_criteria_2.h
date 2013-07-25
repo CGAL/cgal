@@ -34,7 +34,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor with \f$ B=\sqrt{2}\f$. No bound on size.
 */ 
 Delaunay_mesh_size_criteria_2(); 
@@ -43,7 +43,7 @@ Delaunay_mesh_size_criteria_2();
 
 
 
-/*! 
+/*!
 Construct a traits class with bound \f$ B=\sqrt{\frac{1}{4 
 b}}\f$. If \f$ S \neq0\f$, the size bound is \f$ S\f$. If \f$ S = 0\f$, there is 
 no bound on size. 

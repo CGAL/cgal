@@ -27,7 +27,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bool result_type; 
@@ -37,7 +37,7 @@ typedef bool result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Computes whether \f$ p\f$ is zero at the homogeneous point given by the iterator range, 
 where `begin` is referring to the innermost variable. 

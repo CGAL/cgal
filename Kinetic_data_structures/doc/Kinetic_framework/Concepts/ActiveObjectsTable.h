@@ -32,17 +32,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A key identifying an object in the table. 
 */ 
 typedef unspecified_type Key; 
 
-/*! 
+/*!
 The type being stored in the table. 
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 The base class to derive from for listening for runtime events. 
 */ 
 typedef unspecified_type Listener; 
@@ -55,22 +55,22 @@ typedef unspecified_type Listener;
 /// you to iterate through the objects in the set `Foo`.
 /// @{
 
-/*! 
+/*!
 An iterator through all the valid keys in the table. 
 */ 
 typedef unspecified_type Key_iterator; 
 
-/*! 
+/*!
 An iterator through all the objects which have been changed in the last editing session. The iterator iterates through the objects in lexicographical order. 
 */ 
 typedef unspecified_type Changed_iterator; 
 
-/*! 
+/*!
 An iterator through all the objects which were added in the last editing session. 
 */ 
 typedef unspecified_type Inserted_iterator; 
 
-/*! 
+/*!
 An iterator through all the objects which were deleted in the last editing session. 
 */ 
 typedef unspecified_type Erased_iterator; 
@@ -80,17 +80,17 @@ typedef unspecified_type Erased_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Access the object referenced by the key. 
 */ 
 Data operator[](Key key) const; 
 
-/*! 
+/*!
 Access the object referenced by the key. 
 */ 
 Data at(Key key) const; 
 
-/*! 
+/*!
 Set the editing state of 
 the object. A notification is sent when the editing state is set to 
 false after it has been true, i.e.\ the editing session is finished. 
@@ -98,12 +98,12 @@ This allows changes to be batched together.
 */ 
 void set_is_editing(bool is_editing); 
 
-/*! 
+/*!
 Access the editing state. 
 */ 
 bool is_editing() const; 
 
-/*! 
+/*!
 This method changes 
 the motion of one moving object. The position at the current time 
 should not be different from the previous current position. However, 
@@ -115,14 +115,14 @@ no notifications are created.
 */ 
 void set(Key key, Data object); 
 
-/*! 
+/*!
 Insert a new object into the 
 table and return a `Key` which can be used to refer to it. See 
 `set(Key, Data)` for a description of editing modes. 
 */ 
 Key insert_object(Data ob); 
 
-/*! 
+/*!
 Delete an object from the table. The 
 object with Key key must already be in the table. This does not 
 necessarily decrease the amount of storage used at all. In fact, it 
@@ -131,12 +131,12 @@ of how the editing modes are used.
 */ 
 void erase(Key key); 
 
-/*! 
+/*!
 Remove all objects from the table and free all storage. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 Returns true if the object has been 
 set in the currently notified editing session. Note that this method 
 can only be saftely called when processing an `IS_EDITING` 
@@ -144,13 +144,13 @@ notification.
 */ 
 void is_set(Key) const; 
 
-/*! 
+/*!
 Returns true if the object has been 
 set in the currently notified editing session. 
 */ 
 void is_new(Key) const; 
 
-/*! 
+/*!
 Returns true if the object has been 
 set in the currently notified editing session. 
 */ 

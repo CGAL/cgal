@@ -21,7 +21,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 type of the hash value. 
 */ 
 typedef std::size_t result_type; 
@@ -31,13 +31,13 @@ typedef std::size_t result_type;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 copy constructor. 
 */ 
 UniqueHashFunction( const UniqueHashFunction& hash2); 
 
-/*! 
+/*!
 assignment. 
 */ 
 UniqueHashFunction& operator=(const UniqueHashFunction& hash2); 
@@ -47,7 +47,7 @@ UniqueHashFunction& operator=(const UniqueHashFunction& hash2);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns a unique hash value for the `key` value. 
 */ 

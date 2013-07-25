@@ -55,32 +55,32 @@ public:
 
 /// @{
 
-/*! 
+/*!
 a private type used as an abbreviation of the `Arrangement_with_history_2` type hereafter. 
 */ 
 typedef Arrangement_with_history_2<Traits_2,Dcel> Self; 
 
-/*! 
+/*!
 the traits class in use. 
 */ 
 typedef unspecified_type Traits_2; 
 
-/*! 
+/*!
 the <span class="textsc">Dcel</span> representation of the arrangement. 
 */ 
 typedef unspecified_type Dcel; 
 
-/*! 
+/*!
 the point type, as defined by the traits class. 
 */ 
 typedef typename Traits_2::Point_2 Point_2; 
 
-/*! 
+/*!
 the \f$ x\f$-monotone curve type, as defined by the traits class. 
 */ 
 typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2; 
 
-/*! 
+/*!
 the curve type, as defined by the traits class. 
 */ 
 typedef typename Traits_2::Curve_2 Curve_2; 
@@ -96,25 +96,25 @@ In addition, the nested types `Vertex`, `Halfedge` and `Face` are defined, as we
 /// @{
 
 
-/*! 
+/*!
 a handle for an input curve. 
 */ 
 typedef unspecified_type Curve_handle; 
 
-/*! 
+/*!
 a bidirectional iterator over the 
 curves that induce the arrangement. Its value-type is 
 `Curve_2`. 
 */ 
 typedef unspecified_type Curve_iterator; 
 
-/*! 
+/*!
 an iterator over the edges induced by an input curve. 
 Its value type is `Halfedge_handle`. 
 */ 
 typedef unspecified_type Induced_edge_iterator; 
 
-/*! 
+/*!
 an iterator for the curves that originate a given arrangement edge. 
 Its value type is `Curve_handle`. 
 */ 
@@ -125,19 +125,19 @@ typedef unspecified_type Originating_curve_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs an empty arrangement containing one unbounded face, 
 which corresponds to the 
 whole plane. 
 */ 
 Arrangement_with_history_2<Traits, Dcel>(); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 Arrangement_with_history_2<Traits, Dcel>(const Self& other); 
 
-/*! 
+/*!
 constructs an empty arrangement that uses the given `traits` 
 instance for performing the geometric predicates. 
 */ 
@@ -148,17 +148,17 @@ Arrangement_with_history_2<Traits, Dcel>(Traits_2 *traits);
 /// \name Assignment Methods 
 /// @{
 
-/*! 
+/*!
 assignment operator. 
 */ 
 Self& operator= (other); 
 
-/*! 
+/*!
 assigns the contents of another arrangement. 
 */ 
 void assign (const Self& other); 
 
-/*! 
+/*!
 clears the arrangement. 
 */ 
 void clear (); 
@@ -172,50 +172,50 @@ See the `Arrangement_2` reference pages for the full list.
 
 /// @{
 
-/*! 
+/*!
 returns the number of input curves that induce the arrangement. 
 */ 
 Size number_of_curves() const; 
 
-/*! 
+/*!
 returns the begin-iterator of the curves inducing the arrangement. 
 */ 
 Curve_iterator curves_begin(); 
 
-/*! 
+/*!
 returns the past-the-end iterator of the curves inducing the arrangement. 
 */ 
 Curve_iterator curves_end(); 
 
-/*! 
+/*!
 returns the number of arrangement edges induced by the curve `ch`. 
 */ 
 Size number_of_induced_edges (Curve_handle ch) const; 
 
-/*! 
+/*!
 returns the begin-iterator of the edges induced by the curve `ch`. 
 */ 
 Induced_edge_iterator 
 induced_edges_begin (Curve_handle ch) const; 
 
-/*! 
+/*!
 returns the past-the-end iterator of the edges induced by the curve `ch`. 
 */ 
 Induced_edge_iterator 
 induced_edges_end (Curve_handle ch) const; 
 
-/*! 
+/*!
 returns the number of input curves that originate the edge `e`. 
 */ 
 Size number_of_originating_curves (Halfedge_handle e) const; 
 
-/*! 
+/*!
 returns the begin-iterator of the curves originating the edge `e`. 
 */ 
 Originating_curve_iterator 
 originating_curves_begin (Halfedge_handle e) const; 
 
-/*! 
+/*!
 returns the past-the-end iterator of the curves originating the edge 
 `e`. 
 */ 
@@ -236,7 +236,7 @@ for modifying arrangement vertices
 
 /// @{
 
-/*! 
+/*!
 splits the edge `e` into two edges (more precisely, into two halfedge 
 pairs), at a given split point `p`. 
 The function returns a handle for the halfedge whose source is the same 
@@ -246,7 +246,7 @@ as `e->source()` and whose target vertex is the split point.
 Halfedge_handle split_edge (Halfedge_handle e, 
 const Point_2& p); 
 
-/*! 
+/*!
 merges the edges represented by `e1` and `e2` into 
 a single edge. 
 The function returns a handle for one of the merged halfedges. 
@@ -255,7 +255,7 @@ The function returns a handle for one of the merged halfedges.
 Halfedge_handle merge_edge (Halfedge_handle e1, 
 Halfedge_handle e2); 
 
-/*! 
+/*!
 removes the edge `e` from the arrangement. Since the `e` may 
 be the only edge incident to its source vertex (or its target vertex), 
 this vertex can be removed as well. The flags `remove_source` and 

@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 accepts two \f$ x\f$-monotone curves `xc1` and `xc2` and determines 
 whether they can be merged to form a single \f$ x\f$-monotone curve. 
 `xc1` and `xc2` are mergeable if their underlying curves are 

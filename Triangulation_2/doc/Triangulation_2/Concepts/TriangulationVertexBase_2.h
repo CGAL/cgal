@@ -29,7 +29,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Must be the same as the point type `TriangulationTraits_2::Point_2` 
 defined by the geometric traits class of the triangulation. 
 */ 
@@ -40,12 +40,12 @@ typedef unspecified_type Point;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs a vertex embedded in point `p`. 
 */ 
 TriangulationVertexBase_2(Point p); 
 
-/*! 
+/*!
 constructs a vertex embedded in point `p` and pointing on face `f`. 
 */ 
 TriangulationVertexBase_2(Point p, Face_handle f); 
@@ -55,7 +55,7 @@ TriangulationVertexBase_2(Point p, Face_handle f);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the point. 
 */ 
 Point point() const; 
@@ -65,18 +65,18 @@ Point point() const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 sets the point. 
 */ 
 void set_point(Point p); 
 
-/*! 
+/*!
 Inputs the non-combinatorial information given by the vertex: 
 the point and other possible information. 
 */ 
 istream& operator>> (istream& is, TriangulationVertexBase_2 & v); 
 
-/*! 
+/*!
 Outputs the non combinatorial operation given by the vertex: the 
 point and other possible information. 
 */ 

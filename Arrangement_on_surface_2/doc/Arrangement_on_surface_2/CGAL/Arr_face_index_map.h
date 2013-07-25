@@ -35,7 +35,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the type of the attached arrangement.
 */ 
 typedef Arrangement Arrangement_2;

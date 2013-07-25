@@ -21,7 +21,7 @@ public:
 /// An object of this type must provide: 
 /// @{
 
-/*! 
+/*!
 Compares `p` and `q` according to the lexicographic ordering on \f$ \theta\f$- and \f$ z\f$-coordinates 
 in the cylindrical coordinate system relative to the context sphere used by the function `SphericalKernel::compare_theta_z_3_object`. 
 \pre `p` and `q` lie on the context sphere used by the function `SphericalKernel::compare_theta_z_3_object`, but do not coincide with its poles. 

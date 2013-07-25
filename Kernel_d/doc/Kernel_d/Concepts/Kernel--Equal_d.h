@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns true iff \f$ p\f$ and \f$ q\f$ are equal (as 
 \f$ d\f$-dimensional points).
 

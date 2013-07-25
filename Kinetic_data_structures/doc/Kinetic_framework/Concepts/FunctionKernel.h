@@ -148,12 +148,12 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
       The number type used in describing the function. 
     */ 
     typedef unspecified_type NT; 
 
-    /*! 
+    /*!
       Construct a constant function from a number. 
     */ 
     Function(NT); 
@@ -163,7 +163,7 @@ public:
     /// \name Operations 
     /// @{
 
-    /*! 
+    /*!
       Evaluate the function at an `NT`. 
     */ 
     NT operator()(NT); 
@@ -172,22 +172,22 @@ public:
 
   }; /* end Function */
 
-  /*! 
+  /*!
     The basic representational number type. 
   */ 
   typedef unspecified_type NT; 
 
-  /*! 
+  /*!
     A type representing the roots of a `Function`. 
   */ 
   typedef unspecified_type Root; 
 
-  /*! 
+  /*!
     A model of `RootStack`. These objects can be created by calling the `root_stack_object` method with a `Function` and two (optional) `Root` objects. The enumerator then enumerates all roots of the function in the open inverval defined by the two root arguments. They optional arguments default to positive and negative infinity. 
   */ 
   typedef unspecified_type Root_stack; 
 
-  /*! 
+  /*!
     The traits for the `Root_enumerator` class. 
   */ 
   typedef unspecified_type Root_enumerator_traits; 
@@ -200,13 +200,13 @@ public:
   /// argument.
   /// @{
 
-  /*! 
+  /*!
     A functor which returns the sign of a 
     `Function` at a `NT` or `Root`. 
   */ 
   typedef unspecified_type Sign_at; 
 
-  /*! 
+  /*!
     A functor which returns sign of a function 
     immediately after a root. 
   */ 
@@ -246,7 +246,7 @@ public:
     /// \name Operations 
     /// @{
 
-    /*! 
+    /*!
       This family of methods 
       takes a list of coefficients and returns a function. There can be 
       any number of coeffients passed as arguments (up to about 25 in the 
@@ -267,14 +267,14 @@ public:
   /// given below.
   /// @{  
 
-  /*! 
+  /*!
     This functor, creation of which 
     requires two `Root`s, returns the sign of a passed function 
     between the pair of roots. 
   */ 
   typedef unspecified_type Sign_between_roots; 
 
-  /*! 
+  /*!
     This functor computes the derivitive of a `Function`. Construction takes no arguments. 
   */ 
   typedef unspecified_type Differentiate; 
@@ -286,7 +286,7 @@ public:
   /// functor and take one `Function` as a functor argument.
   /// @{  
 
-  /*! 
+  /*!
     Map \f$ f(x)\f$ to \f$ f(-x)\f$. 
   */ 
   typedef unspecified_type Negate_variable; 

@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes the midpoint of the segment 
 \f$ pq\f$.\pre `p` and `q` have the same dimension. 
 */ 

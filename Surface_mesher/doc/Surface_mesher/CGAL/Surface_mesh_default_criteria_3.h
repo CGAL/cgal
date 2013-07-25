@@ -39,7 +39,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The numerical type. 
 */ 
 typedef Tr::FT FT; 
@@ -49,7 +49,7 @@ typedef Tr::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Returns a `Surface_mesh_default_criteria_3` with `angle_bound`, `radius_bound`, 
 `distance_bound` as bounds for the minimum facet angle in degrees, 
 the radius of the surface Delaunay balls 

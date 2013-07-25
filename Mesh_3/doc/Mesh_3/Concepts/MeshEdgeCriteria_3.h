@@ -22,19 +22,19 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type. Must match the `Point_3` type in 
 the triangulation type used by the mesh generation function. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 Type for edges of the triangulation. Must match the 
 `Edge` type in the triangulation type used by the mesh generation function. 
 */ 
 typedef unspecified_type Edge; 
 
-/*! 
+/*!
 Numerical type. 
 */ 
 typedef unspecified_type FT; 
@@ -44,13 +44,13 @@ typedef unspecified_type FT;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns `true` if edge `e` does not fulfill the criteria. 
 */ 
 bool operator()(const Edge& e); 
 
-/*! 
+/*!
 
 Returns the value of the sizing field (i.e.\ the maximum edge length) at point `p`. 
 */ 

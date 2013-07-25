@@ -19,7 +19,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type which is used to represent 
 coordinates of moving primitives. It is a model of the concept 
 `FunctionKernel::Function`. This is the analog of the CGAL 
@@ -27,13 +27,13 @@ kernel `RT`.
 */ 
 typedef unspecified_type Motion_function; 
 
-/*! 
+/*!
 The type representing the results of 
 predicates. See `Kinetic::Certificate`. 
 */ 
 typedef unspecified_type Certificate; 
 
-/*! 
+/*!
 The type of the function kernel used. 
 See `Kinetic::FunctionKernel`. 
 */ 
@@ -44,7 +44,7 @@ typedef unspecified_type Function_kernel;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Gets a copy 
 of the function kernel. 
 */ 

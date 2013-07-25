@@ -32,45 +32,45 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type for the geometric traits that defines 
 the site. \pre The type `Geom_traits` must define the type `Site_2`. 
 */ 
 typedef unspecified_type Geom_traits; 
 
-/*! 
+/*!
 A type for the site. This type must coincide 
 with the type `Geom_traits::Site_2`. 
 */ 
 typedef unspecified_type Site_2; 
 
-/*! 
+/*!
 A type that indicates what kind of 
 storage type to use. `Storage_site_tag` must either be 
 `CGAL::Tag_true` or `CGAL::Tag_false`. 
 */ 
 typedef unspecified_type Storage_site_tag; 
 
-/*! 
+/*!
 A type for the internal representation 
 of sites. This type must satisfy the requirements of the concept 
 `SegmentDelaunayGraphStorageSite_2`. 
 */ 
 typedef unspecified_type Storage_site_2; 
 
-/*! 
+/*!
 A type for the 
 underlying data structure, to which the vertex belongs to. 
 */ 
 typedef unspecified_type Data_structure; 
 
-/*! 
+/*!
 A type for the vertex handle of the 
 segment Delaunay graph data structure. 
 */ 
 typedef unspecified_type Vertex_handle; 
 
-/*! 
+/*!
 A type for the face handle of the 
 segment Delaunay graph data structure. 
 */ 
@@ -83,13 +83,13 @@ typedef unspecified_type Face_handle;
 /// constructors are required:
 /// @{
 
-/*! 
+/*!
 Constructs a vertex associated with the site represented by the 
 storage site `ss`. 
 */ 
 SegmentDelaunayGraphVertexBase_2(Storage_site_2 ss); 
 
-/*! 
+/*!
 Constructs a vertex associated with 
 the site represented by the storage site `ss`, 
 and pointing to the face associated with the face handle `f`. 
@@ -102,17 +102,17 @@ Face_handle f);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the storage site representing the site. 
 */ 
 Storage_site_2 storage_site(); 
 
-/*! 
+/*!
 Returns the site. 
 */ 
 Site_2 site(); 
 
-/*! 
+/*!
 Returns a handle to an incident face. 
 */ 
 Face_handle face(); 
@@ -122,12 +122,12 @@ Face_handle face();
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 Sets the storage site. 
 */ 
 void set_site(Storage_site_2 ss); 
 
-/*! 
+/*!
 Sets the incident face. 
 */ 
 void set_face(Face_handle f); 
@@ -137,7 +137,7 @@ void set_face(Face_handle f);
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
 Performs any required tests on a vertex. 
 */ 
 bool is_valid(bool verbose, int level) const; 

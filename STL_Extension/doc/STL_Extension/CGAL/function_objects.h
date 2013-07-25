@@ -23,21 +23,21 @@ public:
 
 
 
-/*! 
+/*!
 */ 
 typedef Arg argument_type; 
 
 
 
 
-/*! 
+/*!
 */ 
 typedef Result result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Cast_function_object(); 
@@ -49,7 +49,7 @@ Cast_function_object();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `(Result)x`. 
 */ 
@@ -62,7 +62,7 @@ result_type& operator()(argument_type& x) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `(Result)x`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -104,7 +104,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 type of the composed functor. 
 */ 
 typedef unspecified_type Type; 
@@ -160,7 +160,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of argument. 
 */ 
 typedef Arg argument_type; 
@@ -169,7 +169,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -177,7 +177,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns 
 `result_type(a)`. 
 */ 
@@ -213,7 +213,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of first argument. 
 */ 
 typedef Arg1 argument1_type; 
@@ -222,7 +222,7 @@ typedef Arg1 argument1_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of second argument. 
 */ 
 typedef Arg2 argument2_type; 
@@ -231,7 +231,7 @@ typedef Arg2 argument2_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -239,7 +239,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2)`. 
 */ 
 result_type operator()(argument_type1 a1, argument_type2 
@@ -277,7 +277,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of first argument. 
 */ 
 typedef Arg1 argument1_type; 
@@ -286,7 +286,7 @@ typedef Arg1 argument1_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of second argument. 
 */ 
 typedef Arg2 argument2_type; 
@@ -295,7 +295,7 @@ typedef Arg2 argument2_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of third argument. 
 */ 
 typedef Arg3 argument3_type; 
@@ -304,7 +304,7 @@ typedef Arg3 argument3_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -312,7 +312,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, 
 a3)`. 
 */ 
@@ -351,7 +351,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of first argument. 
 */ 
 typedef Arg1 argument1_type; 
@@ -360,7 +360,7 @@ typedef Arg1 argument1_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of second argument. 
 */ 
 typedef Arg2 argument2_type; 
@@ -369,7 +369,7 @@ typedef Arg2 argument2_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of third argument. 
 */ 
 typedef Arg3 argument3_type; 
@@ -378,7 +378,7 @@ typedef Arg3 argument3_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of 4th argument. 
 */ 
 typedef Arg4 argument4_type; 
@@ -387,7 +387,7 @@ typedef Arg4 argument4_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -395,7 +395,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns 
 `result_type(a1, a2, a3, a4)`. 
 */ 
@@ -434,7 +434,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of first argument. 
 */ 
 typedef Arg1 argument1_type; 
@@ -443,7 +443,7 @@ typedef Arg1 argument1_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of second argument. 
 */ 
 typedef Arg2 argument2_type; 
@@ -452,7 +452,7 @@ typedef Arg2 argument2_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of third argument. 
 */ 
 typedef Arg3 argument3_type; 
@@ -461,7 +461,7 @@ typedef Arg3 argument3_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of 4th argument. 
 */ 
 typedef Arg4 argument4_type; 
@@ -470,7 +470,7 @@ typedef Arg4 argument4_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of 5th argument. 
 */ 
 typedef Arg5 argument5_type; 
@@ -479,7 +479,7 @@ typedef Arg5 argument5_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -487,7 +487,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, a3, a4, a5)`. 
 */ 
 result_type operator()(argument_type1 a1, argument_type2 
@@ -526,7 +526,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments.
 */ 
 typedef Arge argument_type; 
@@ -535,7 +535,7 @@ typedef Arge argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -543,7 +543,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2)`. 
 */ 
 result_type operator()(argument_type a1, argument_type a2) 
@@ -581,7 +581,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -590,7 +590,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -598,7 +598,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, a3)`. 
 */ 
 result_type operator()(argument_type a1, argument_type a2, 
@@ -636,7 +636,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -645,7 +645,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -653,7 +653,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns 
 `result_type(a1, a2, a3, a4)`. 
 */ 
@@ -692,7 +692,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -701,7 +701,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -709,7 +709,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, a3, a4, a5)`. 
 */ 
 result_type operator()(argument_type a1, argument_type a2, 
@@ -748,7 +748,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -757,7 +757,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -765,7 +765,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, a3, a4, 
 a5, a6)`. 
 */ 
@@ -805,7 +805,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -814,7 +814,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -822,7 +822,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns 
 `result_type(a1, a2, a3, a4, a5, a6, a7)`. 
 */ 
@@ -862,7 +862,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -871,7 +871,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -879,7 +879,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, a3, a4, a5, a6, a7, 
 a8)`. 
 */ 
@@ -920,7 +920,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -929,7 +929,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -937,7 +937,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(a1, a2, a3, a4, 
 a5, a6, a7, a8, a9)`. 
 */ 
@@ -978,7 +978,7 @@ public:
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of arguments. 
 */ 
 typedef Arg argument_type; 
@@ -987,7 +987,7 @@ typedef Arg argument_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 type of object to create. 
 */ 
 typedef Result result_type; 
@@ -995,7 +995,7 @@ typedef Result result_type;
 
 /// \name Requirements 
 /// @{ 
-/*! 
+/*!
 returns `result_type(d, a1, a2)`. 
 */ 
 result_type operator()(argument_type a1, argument_type a2) 
@@ -1030,18 +1030,18 @@ class Dereference {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Value*  argument_type; 
 
 
-/*! 
+/*!
 */ 
 typedef Value result_type; 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Dereference(); 
@@ -1053,7 +1053,7 @@ Dereference();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `*x`. 
 */ 
@@ -1066,7 +1066,7 @@ result_type& operator()(argument_type& x) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `*x`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1102,17 +1102,17 @@ class Get_address {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Value argument_type; 
 
-/*! 
+/*!
 */ 
 typedef  Value* result_type; 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Get_address(); 
@@ -1124,7 +1124,7 @@ Get_address();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `&x`. 
 */ 
@@ -1137,7 +1137,7 @@ result_type& operator()(argument_type& x) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `&x`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1172,18 +1172,18 @@ class Identity {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Value argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Value result_type; 
 /// @} 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Identity(); 
@@ -1195,7 +1195,7 @@ Identity();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `x`. 
 */ 
@@ -1208,7 +1208,7 @@ result_type& operator()(argument_type& x) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `x`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1243,18 +1243,18 @@ class Project_facet {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node::Facet result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_facet(); 
@@ -1266,7 +1266,7 @@ Project_facet();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n.facet()`. 
 */ 
 result_type& operator()(argument_type& n) const; 
@@ -1278,7 +1278,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n.facet()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1314,17 +1314,17 @@ class Project_next {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node* argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node* result_type; 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_next(); 
@@ -1336,7 +1336,7 @@ Project_next();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns  `n->next()`. 
 */ 
 result_type& operator()(argument_type& n) const; 
@@ -1348,7 +1348,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n->next()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1383,18 +1383,18 @@ class Project_next_opposite {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node* argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node* result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_next_opposite(); 
@@ -1406,7 +1406,7 @@ Project_next_opposite();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `n->next()->opposite()`. 
 */ 
@@ -1419,7 +1419,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n->next()->opposite()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1455,18 +1455,18 @@ class Project_normal {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node argument_type; 
 
 
-/*! 
+/*!
 */ 
   typedef Node::Normal result_type; 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_normal(); 
@@ -1478,7 +1478,7 @@ Project_normal();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `n.normal()`. 
 */ 
@@ -1491,7 +1491,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n.normal()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1527,18 +1527,18 @@ class Project_opposite_prev {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node* argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node* result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_opposite_prev(); 
@@ -1550,7 +1550,7 @@ Project_opposite_prev();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `n->opposite()->prev()`. 
 */ 
@@ -1563,7 +1563,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n->opposite()->prev()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1599,18 +1599,18 @@ class Project_plane {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node::Plane result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_plane(); 
@@ -1622,7 +1622,7 @@ Project_plane();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `n.plane()`. 
 */ 
@@ -1635,7 +1635,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n.plane()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1670,18 +1670,18 @@ class Project_point {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node::Point result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_point(); 
@@ -1693,7 +1693,7 @@ Project_point();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `n.point()`. 
 */ 
@@ -1706,7 +1706,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n.point()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1741,11 +1741,11 @@ class Project_prev {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node* argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef Node* result_type; 
@@ -1753,7 +1753,7 @@ typedef Node* result_type;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_prev(); 
@@ -1765,7 +1765,7 @@ Project_prev();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns  `n->prev()`. 
 */ 
 result_type& operator()(argument_type& n) const; 
@@ -1777,7 +1777,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n->prev()`. 
 */ 
 const result_type& operator()(const argument_type& 
@@ -1812,18 +1812,18 @@ class Project_vertex {
 public:
 
 
-/*! 
+/*!
 */ 
 typedef Node argument_type; 
 
-/*! 
+/*!
 */ 
 typedef Node::Vertex result_type; 
 
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Project_vertex(); 
@@ -1835,7 +1835,7 @@ Project_vertex();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns 
 `n.vertex()`. 
 */ 
@@ -1848,7 +1848,7 @@ result_type& operator()(argument_type& n) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 returns `n.vertex()`. 
 */ 
 const result_type& operator()(const argument_type& 

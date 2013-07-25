@@ -27,7 +27,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a tetrahedron `t` with vertices `p_0`, `p_1`, `p_2` and `p_3`. 
 */ 
 Tetrahedron_3(const Point_3<Kernel> &p0, 
@@ -40,24 +40,24 @@ const Point_3<Kernel> &p3);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Test for equality: two tetrahedra `t` and `t2` are equal, 
 iff `t` and `t2` have the same orientation and 
 their sets (not sequences) of vertices are equal. 
 */ 
 bool operator==(const Tetrahedron_3<Kernel> &t2) const; 
 
-/*! 
+/*!
 Test for inequality. 
 */ 
 bool operator!=(const Tetrahedron_3<Kernel> &t2) const; 
 
-/*! 
+/*!
 returns the i'th vertex modulo 4 of `t`. 
 */ 
 Point_3<Kernel> vertex(int i) const; 
 
-/*! 
+/*!
 returns `vertex(int i)`. 
 */ 
 Point_3<Kernel> operator[](int i) const; 
@@ -67,22 +67,22 @@ Point_3<Kernel> operator[](int i) const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 Tetrahedron `t` is degenerate, if the vertices are coplanar. 
 */ 
 bool is_degenerate() const; 
 
-/*! 
+/*!
 
 */ 
 Orientation orientation() const; 
 
-/*! 
+/*!
 \pre `t` is not degenerate. 
 */ 
 Oriented_side oriented_side(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 \pre `t` is not degenerate. 
 */ 
 Bounded_side bounded_side(const Point_3<Kernel> &p) const; 
@@ -92,27 +92,27 @@ Bounded_side bounded_side(const Point_3<Kernel> &p) const;
 /// \name Convencience Boolean Functions
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool has_on_positive_side(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_negative_side(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_boundary(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_bounded_side(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_unbounded_side(const Point_3<Kernel> &p) const; 
@@ -122,17 +122,17 @@ bool has_on_unbounded_side(const Point_3<Kernel> &p) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 returns the signed volume of `t`. 
 */ 
 Kernel::FT volume() const; 
 
-/*! 
+/*!
 returns a bounding box containing `t`. 
 */ 
 Bbox_3 bbox() const; 
 
-/*! 
+/*!
 returns the tetrahedron obtained by applying `at` on the three 
 vertices of `t`. 
 */ 

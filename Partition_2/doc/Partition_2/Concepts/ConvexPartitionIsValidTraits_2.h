@@ -22,7 +22,7 @@ public:
 /// All types required by the concept `PartitionIsValidTraits_2` are
 /// required except the function object type `Is_valid`. The following
 /// type is required instead: @{
-/*! 
+/*!
 Model of the concept `PolygonIsValid` that tests if 
 a sequence of points is convex or not. 
 */ 
@@ -34,7 +34,7 @@ typedef unspecified_type Is_convex_2;
 /// Only a copy constructor is required.
 /// @{
 
-/*! 
+/*!
 
 */ 
 ConvexPartitionIsValidTraits_2(ConvexPartitionIsValidTraits_2 tr); 
@@ -47,7 +47,7 @@ ConvexPartitionIsValidTraits_2(ConvexPartitionIsValidTraits_2 tr);
 /// `is_valid_object` required by `PartitionIsValidTraits_2`.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Is_convex_2 is_convex_2_object(ConvexPartitionIsValidTraits_2 tr); 

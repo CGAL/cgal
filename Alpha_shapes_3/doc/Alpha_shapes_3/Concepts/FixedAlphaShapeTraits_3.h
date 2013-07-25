@@ -31,12 +31,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `CGAL::Comparison_result` or `Uncertain<CGAL::Comparison_result>` 
 */ 
 typedef unspecified_type Comparison_result; 
 
-/*! 
+/*!
 An object constructor able to compare the squared radius of the smallest circumscribing sphere of 
 either four, three, two or one point(s) 
 with a given value of alpha. 
@@ -54,7 +54,7 @@ typedef unspecified_type Compare_squared_radius_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 FixedAlphaShapeTraits_3(); 
@@ -64,7 +64,7 @@ FixedAlphaShapeTraits_3();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_squared_radius_3 compare_squared_radius_3_object(); 

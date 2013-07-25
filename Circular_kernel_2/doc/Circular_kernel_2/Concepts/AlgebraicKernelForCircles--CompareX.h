@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Compares the `x` (first) variables of two `Root_for_circles_2_2`. 
 */ 
 template < class OutputIterator > 

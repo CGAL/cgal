@@ -30,7 +30,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates an empty periodic Delaunay triangulation `dt`, with 
 `domain` as original domain and possibly specifying 
 a traits class `traits`. 
@@ -40,13 +40,13 @@ Periodic_3_Delaunay_triangulation_3(
 const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1), 
 const Geom_traits & traits = Geom_traits()); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Periodic_3_Delaunay_triangulation_3 (const 
 Periodic_3_Delaunay_triangulation_3 & dt1); 
 
-/*! 
+/*!
 Equivalent to constructing an empty triangulation with the optional 
 domain and traits class arguments and calling `insert(first,last)`. 
 \pre The `value_type` of `first` and `last` are `Point`s lying inside `domain` and `domain` is a cube. 
@@ -78,7 +78,7 @@ and `Cell_handle`s.
 
 /// @{
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. The optional argument `start` is used as a starting place 
 for the point location. 
@@ -87,7 +87,7 @@ for the point location.
 Vertex_handle insert(const Point & p, 
 Cell_handle start = Cell_handle() ); 
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
@@ -106,7 +106,7 @@ The following method allows one to insert several points. It returns the number 
 /// @{
 
 
-/*! 
+/*!
 Inserts the points in the iterator range \f$ \left[\right.\f$`first`, 
 `last`\f$ \left.\right)\f$. Returns the number of inserted points. 
 This function uses spatial sorting (cf. chapter \ref secspatial_sorting) 
@@ -126,7 +126,7 @@ bool is_large_point_set = false);
 /// \name Point moving 
 /// @{
 
-/*! 
+/*!
 Moves the point stored in `v` to `p`, while preserving the Delaunay 
 property. This performs an action semantically equivalent to `remove(v)` 
 followed by `insert(p)`, but is supposedly faster when the point has 
@@ -154,13 +154,13 @@ proposes a vertex removal.
 */
 /// @{
 
-/*! 
+/*!
 Removes the vertex `v` from the triangulation. When computing in 
 the 27-sheeted covering space it removes all 27 copies of `v`. 
 */ 
 void remove(Vertex_handle v); 
 
-/*! 
+/*!
 Removes the vertices specified by the iterator range (`first, beyond`) of value type `Vertex_handle`. 
 `remove()` is called for each element of the range. 
 The number of vertices removed is returned; this number does not 
@@ -177,7 +177,7 @@ std::ptrdiff_t remove(InputIterator first, InputIterator beyond);
 
 /// @{
 
-/*! 
+/*!
 Returns a value indicating on which side of the circumscribed sphere 
 of `c` the point-offset pair (`p`,`off`) lies. More 
 precisely, it returns: 
@@ -194,7 +194,7 @@ Bounded_side
 side_of_sphere(Cell_handle c, const Point & p, 
 const Offset & off = Offset(0,0,0)) const; 
 
-/*! 
+/*!
 Returns any nearest vertex to the point `p`, or the default constructed 
 handle if the triangulation is empty. The optional argument `c` is a hint 
 specifying where to start the search. It always returns a vertex 
@@ -206,7 +206,7 @@ multiply sheeted covering space.
 Vertex_handle nearest_vertex(Point p, 
 Cell_handle c = Cell_handle()); 
 
-/*! 
+/*!
 Returns the vertex of the cell `c` that is nearest to the 
 point-offset pair (`p`,`off`). 
 \pre `p` lies in the original domain `domain`. 
@@ -224,7 +224,7 @@ A point-offset pair (`p`,`off`) is said to be in conflict with a cell `c` iff `d
 
 
 
-/*! 
+/*!
 Computes the conflict hole induced by `p`. The starting cell 
 `c` must be in conflict. Then this function returns 
 respectively in the output iterators: 
@@ -252,7 +252,7 @@ OutputIteratorBoundaryFacets bfit,
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit); 
 
-/*! 
+/*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
 boundary of the conflict hole of `p`, in the output iterator `res`. 
 Returns the resulting output iterator. 
@@ -278,22 +278,22 @@ the Gabriel property of Delaunay faces.
 /// @{
 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Cell_handle c, int i); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(const Facet& f); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(const Edge& e); 
@@ -308,24 +308,24 @@ bool is_Gabriel(const Edge& e);
 /// only, which requires only exact predicates).
 /// @{
 
-/*! 
+/*!
 Returns the representative of the circumcenter of the four vertices 
 of c that lies in the original domain `domain`. 
 */ 
 Point dual(Cell_handle c) const; 
 
-/*! 
+/*!
 Returns the dual of facet `f`, which is a periodic segment. 
 */ 
 Periodic_segment dual(Facet f) const; 
 
-/*! 
+/*!
 same as the previous method for facet `(c,i)`. 
 \pre \f$ i\in\{0,1,2,3\}\f$ 
 */ 
 Periodic_segment dual(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Returns in the output iterator the points of the dual polygon of 
 edge `e` in the same order as the `Facet_circulator` returns 
 facets incident to the edge `e`. The points form the dual polygon 
@@ -336,7 +336,7 @@ template <class OutputIterator>
 OutputIterator 
 dual(Edge e, OutputIterator pts) const; 
 
-/*! 
+/*!
 same as the previous method for edge `(c,i,j)`. 
 \pre \f$ i,j\in\{0,1,2,3\}, i\neq j\f$ 
 */ 
@@ -344,7 +344,7 @@ template <class OutputIterator>
 OutputIterator 
 dual(Cell_handle c, int i, int j, OutputIterator pts) const; 
 
-/*! 
+/*!
 Returns in the output iterator the points of the dual polyhedron of 
 vertex `v` in no particular order. The points form the dual 
 polyhedron in \f$ \mathbb R^3\f$, so they do not necessarily lie all 
@@ -354,17 +354,17 @@ template <class OutputIterator>
 OutputIterator 
 dual(Vertex_handle v, OutputIterator pts) const; 
 
-/*! 
+/*!
 Sends the set of duals to all the facets of `dt` into `os`. 
 */ 
 template <class Stream> Stream & draw_dual(Stream & os); 
 
-/*! 
+/*!
 Returns the volume of the Voronoi cell dual to `v`. 
 */ 
 Geom_traits::FT dual_volume(Vertex_handle v) const; 
 
-/*! 
+/*!
 Returns the centroid of the Voronoi cell dual to `v`. 
 */ 
 Point dual_centroid(Vertex_handle v) const; 
@@ -375,7 +375,7 @@ Point dual_centroid(Vertex_handle v) const;
 /// These methods are mainly a debugging help for the users of advanced features.
 /// @{
 
-/*! 
+/*!
 Checks the combinatorial validity of the triangulation and the 
 validity of its geometric embedding (see 
 Section \ref P3Triangulation3secintro). Also checks that all the 
@@ -387,7 +387,7 @@ invalidity encountered are printed.
 bool 
 is_valid(bool verbose = false) const; 
 
-/*! 
+/*!
 Checks the combinatorial and geometric validity of the cell (see 
 Section \ref P3Triangulation3secintro). Also checks that the 
 circumscribing sphere of cells is empty. 

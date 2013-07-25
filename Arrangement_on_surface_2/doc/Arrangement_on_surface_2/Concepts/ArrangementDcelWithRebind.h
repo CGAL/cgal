@@ -22,7 +22,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 allows the instantiation of a model of the base concept 
 `ArrangementDcel` with a different possible geometry-traits 
 class without ad-hoc limitations on it. 
@@ -38,7 +38,7 @@ typedef unspecified_type template <class T> rebind;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs an empty <span class="textsc">Dcel</span> with one unbouned face. 
 */ 
 Arr_dcel(); 

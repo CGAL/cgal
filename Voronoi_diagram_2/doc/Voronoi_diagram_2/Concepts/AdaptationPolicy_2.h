@@ -35,51 +35,51 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type for the sites of the Voronoi diagram. 
 */ 
 typedef unspecified_type Site_2; 
 
-/*! 
+/*!
 A type for the triangulated Delaunay 
 graph. The type `Delaunay_graph` must be a model of the 
 `DelaunayGraph_2` concept. 
 */ 
 typedef unspecified_type Delaunay_graph; 
 
-/*! 
+/*!
 
 */ 
 typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef Delaunay_graph::Face_handle Delaunay_face_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef Delaunay_graph::Edge Delaunay_edge; 
 
-/*! 
+/*!
 
 */ 
 typedef Delaunay_graph::All_edges_iterator 
 All_Delaunay_edges_iterator; 
 
-/*! 
+/*!
 
 */ 
 typedef Delaunay_graph::Finite_edges_iterator 
 Finite_Delaunay_edges_iterator; 
 
-/*! 
+/*!
 
 */ 
 typedef Delaunay_graph::Edge_circulator Delaunay_edge_circulator; 
 
-/*! 
+/*!
 A type for the predicate functor that is 
 responsible for rejecting an edge of the Delaunay graph (or 
 equivalently rejecting its dual edge in the Voronoi diagram). It must be 
@@ -105,7 +105,7 @@ The functor returns `true` iff the edge is rejected.
 */ 
 typedef unspecified_type Edge_rejector; 
 
-/*! 
+/*!
 A type for the predicate functor that is 
 responsible for rejecting a vertex of the Delaunay graph (or 
 equivalently its dual face in the Voronoi diagram - hence the name 
@@ -119,7 +119,7 @@ The functor returns `true` iff the face is rejected.
 */ 
 typedef unspecified_type Face_rejector; 
 
-/*! 
+/*!
 A tag for determining if the adaptation 
 policy class provides a functor for inserting sites in the Delaunay 
 graph. This tag is equal to either `CGAL::Tag_true` (a site 
@@ -128,7 +128,7 @@ inserter functor is not available).
 */ 
 typedef unspecified_type Has_inserter; 
 
-/*! 
+/*!
 A type for a functor that inserts sites 
 in the Delaunay graph. It must be model of the concepts 
 `DefaultConstructible`, `CopyConstructible`, `Assignable`, 
@@ -152,17 +152,17 @@ typedef unspecified_type Site_inserter;
 /// \name Access to objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Edge_rejector edge_rejector_object(); 
 
-/*! 
+/*!
 
 */ 
 Face_rejector face_rejector_object(); 
 
-/*! 
+/*!
 This method is 
 required only if `Has_inserter` is equal to `CGAL::Tag_true`. 
 */ 
@@ -177,12 +177,12 @@ Site_inserter site_inserter_object();
 /// rejectors.
 /// @{
 
-/*! 
+/*!
 Clears the state of the adaptation policy. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 The adaptation policies 
 `ap` and `other` are swapped. This method should be 
 preferred to `ap=other` or `ap(other)` if 
@@ -190,12 +190,12 @@ preferred to `ap=other` or `ap(other)` if
 */ 
 void swap(AdaptationPolicy_2 other); 
 
-/*! 
+/*!
 Tests the validity of the adaptation policy. 
 */ 
 bool is_valid(); 
 
-/*! 
+/*!
 Tests the validity of the 
 adaptation policy using extra information from the Delaunay graph 
 `dg`. 

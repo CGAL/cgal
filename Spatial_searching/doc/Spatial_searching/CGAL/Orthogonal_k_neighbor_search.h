@@ -38,38 +38,38 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
 
-/*! 
+/*!
 Distance type. 
 */ 
 typedef OrthogonalDistance Distance; 
 
-/*! 
+/*!
 Query item. 
 */ 
 typedef GeneralDistance::Query_item Query_item; 
 
-/*! 
+/*!
 Pair of point and transformed distance. 
 */ 
 typedef std::pair<Point_d,FT> Point_with_transformed_distance; 
 
-/*! 
+/*!
 Bidirectional const iterator with value type `Point_with_transformed_distance` 
 for enumerating approximate neighbors. 
 */ 
 typedef unspecified_type iterator; 
 
-/*! 
+/*!
 The tree type. 
 */ 
 typedef SpatialTree Tree; 
@@ -79,7 +79,7 @@ typedef SpatialTree Tree;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Constructor for searching approximately `k` neighbors of the query item `query` 
 in the points stored in `tree` using 
 distance `d` and approximation factor `eps`. `sorted` indicates 
@@ -89,17 +89,17 @@ Orthogonal_k_neighbor_search(SpatialTree tree, Query_item query, unsigned int k=
 bool search_nearest=true, 
 OrthogonalDistance d=OrthogonalDistance(),bool sorted=true); 
 
-/*! 
+/*!
 Returns a const iterator to the approximate nearest or furthest neighbor. 
 */ 
 iterator begin() const; 
 
-/*! 
+/*!
 Returns the appropriate past-the-end const iterator. 
 */ 
 iterator end() const; 
 
-/*! 
+/*!
 Inserts statistics of the search process into the output stream `s`. 
 */ 
 std::ostream& statistics(std::ostream& s); 

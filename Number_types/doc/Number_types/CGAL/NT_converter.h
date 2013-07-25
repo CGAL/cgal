@@ -14,7 +14,7 @@ public:
 
 /// \name Operations
 ///@{
-/*! 
+/*!
 convert `a` from NT1 to NT2.
 */ 
 NT2 operator()(const NT1 &a) const;

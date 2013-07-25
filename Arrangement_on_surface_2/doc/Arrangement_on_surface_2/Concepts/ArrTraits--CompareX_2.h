@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns `SMALLER`, `EQUAL`, or `LARGER` 
 according to the \f$ x\f$-ordering of points `p1` and `p2`. 
 */ 

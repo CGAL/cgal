@@ -32,7 +32,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Extended_homogeneous(); 

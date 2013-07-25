@@ -29,38 +29,38 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Point_3 Point_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Less_xy_plane_xy_2<Point_3> Less_xy_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Less_yx_plane_xy_2<Point_3> Less_yx_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Less_dist_to_line_plane_xy_2<Point_3> 
 Less_signed_distance_to_line_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Less_rotate_ccw_plane_xy_2<Point_3> Less_rotate_ccw_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Left_turn_plane_xy_2<Point_3> Left_turn_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Equal_xy_plane_xy_2<Point_3> Equal_2; 
@@ -70,7 +70,7 @@ typedef Equal_xy_plane_xy_2<Point_3> Equal_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Convex_hull_projective_xy_traits_2(); 
@@ -80,34 +80,34 @@ Convex_hull_projective_xy_traits_2();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_yx_2 less_yx_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_signed_distance_to_line_2 
 less_signed_distance_to_line_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_rotate_ccw_2 
 less_rotate_ccw_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Left_turn_2 left_turn_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Equal_2 equal_2_object(); 

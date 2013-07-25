@@ -40,17 +40,17 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 HalfedgeDS_face_max_base_with_id(); 
 
-/*! 
+/*!
 Returns the index. 
 */ 
 int id() const; 
 
-/*! 
+/*!
 Returns a reference to the index stored in the face. 
 */ 
 int& id(); 

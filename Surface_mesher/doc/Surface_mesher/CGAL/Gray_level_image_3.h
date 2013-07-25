@@ -41,12 +41,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the numerical type `FT`.
 */ 
 typedef FT_ FT; 
 
-/*! 
+/*!
 the point type. 
 */ 
 typedef Point_ Point; 
@@ -57,7 +57,7 @@ typedef Point_ Point;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 `filename` is the path to a file of a type supported by <I>ImageIO</I>. 
 
 `iso_value` is an isovalue of the interpolation function \f$ f\f$. 

@@ -47,7 +47,7 @@ public:
 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef LocationPolicy Location_policy; 
@@ -59,22 +59,22 @@ In addition to those inherited, the following types are defined, for use by the 
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef DelaunayTriangulationTraits_3::Line_3 Line; 
 
-/*! 
+/*!
 
 */ 
 typedef DelaunayTriangulationTraits_3::Ray_3 Ray; 
 
-/*! 
+/*!
 
 */ 
 typedef DelaunayTriangulationTraits_3::Plane_3 Plane; 
 
-/*! 
+/*!
 
 */ 
 typedef DelaunayTriangulationTraits_3::Object_3 Object; 
@@ -84,19 +84,19 @@ typedef DelaunayTriangulationTraits_3::Object_3 Object;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates an empty Delaunay triangulation, possibly specifying a traits class 
 `traits`. 
 */ 
 Delaunay_triangulation_3 
 (const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3()); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1); 
 
-/*! 
+/*!
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
 */ 
@@ -110,7 +110,7 @@ const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3());
 
 /// @{
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. Similar to the insertion in a triangulation, but ensures in 
 addition the empty sphere property of all the created faces. 
@@ -119,12 +119,12 @@ The optional argument `start` is used as a starting place for the search.
 Vertex_handle insert(const Point & p, 
 Cell_handle start = Cell_handle() ); 
 
-/*! 
+/*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
 Vertex_handle insert(const Point & p, Vertex_handle hint); 
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
@@ -133,7 +133,7 @@ parameter the return values of a previous location query. See description of
 Vertex_handle insert(const Point & p, Locate_type lt, 
 Cell_handle loc, int li, int lj); 
 
-/*! 
+/*!
 Inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `PointInputIterator`, as `spatial_sort()` 
@@ -145,7 +145,7 @@ template < class PointInputIterator >
 std::ptrdiff_t 
 insert(PointInputIterator first, PointInputIterator last); 
 
-/*! 
+/*!
 
 Inserts the points in the iterator range  `[first,last)`. 
 Returns the number of inserted points. 
@@ -169,7 +169,7 @@ insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
 /// \name Displacement 
 /// @{
 
-/*! 
+/*!
 if there is not already another vertex placed on `p`, 
 the triangulation is modified such that the new position of vertex `v` 
 is `p`, and `v` is returned. Otherwise, the triangulation is not 
@@ -178,7 +178,7 @@ modified and the vertex at point `p` is returned.
 */ 
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
-/*! 
+/*!
 same as above if there is no collision. Otherwise, `v` 
 is deleted and the vertex placed on `p` is returned. 
 \pre Vertex `v` must be finite. 
@@ -206,13 +206,13 @@ decreases drastically, it might be interesting to defragment the
 */
 /// @{
 
-/*! 
+/*!
 Removes the vertex `v` from the triangulation. 
 \pre `v` is a finite vertex of the triangulation. 
 */ 
 void remove(Vertex_handle v); 
 
-/*! 
+/*!
 Removes the vertices specified by the iterator range `[first, beyond)`. 
 The function `remove(Vertex_handle)` is called over each element of the range. 
 The number of vertices removed is returned. 
@@ -223,7 +223,7 @@ The number of vertices removed is returned.
 template < typename InputIterator > 
 int remove(InputIterator first, InputIterator beyond); 
 
-/*! 
+/*!
 This function has exactly the same result and the same preconditions as `remove(first, beyond)`. 
 The difference is in the implementation and efficiency. This version does not re-triangulate the hole after each 
 point removal but only after removing all vertices. This is more efficient if (and only if) the removed points 
@@ -240,7 +240,7 @@ int remove_cluster(InputIterator first, InputIterator beyond);
 
 /// @{
 
-/*! 
+/*!
 Returns a value indicating on which side of the circumscribed sphere 
 of `c` the point `p` lies. More precisely, it returns: 
 
@@ -262,7 +262,7 @@ two previous conditions.
 Bounded_side 
 side_of_sphere(Cell_handle c, const Point & p) const; 
 
-/*! 
+/*!
 Returns a value indicating on which side of the circumscribed circle 
 of `f` the point `p` lies. More precisely, it returns: 
 
@@ -292,13 +292,13 @@ by `f` and not containing any other point of the triangulation,
 Bounded_side 
 side_of_circle(const Facet & f, const Point & p) const; 
 
-/*! 
+/*!
 Same as the previous method for facet `i` of cell `c`. 
 */ 
 Bounded_side 
 side_of_circle(Cell_handle c, int i, const Point & p); 
 
-/*! 
+/*!
 Returns any nearest vertex to the point `p`, or the default constructed 
 handle if the triangulation is empty. The optional argument `c` is a hint 
 specifying where to start the search. 
@@ -308,7 +308,7 @@ specifying where to start the search.
 Vertex_handle nearest_vertex(Point p, 
 Cell_handle c = Cell_handle()); 
 
-/*! 
+/*!
 Returns the vertex of the cell `c` that is 
 nearest to \f$ p\f$. 
 
@@ -326,7 +326,7 @@ A point `p` is said to be in conflict with a cell `c` in dimension 3 (resp.\ a f
 
 
 
-/*! 
+/*!
 Computes the conflict hole induced by `p`. The starting cell 
 (resp. facet) `c` must be in conflict. Then this function returns 
 respectively in the output iterators: 
@@ -351,7 +351,7 @@ find_conflicts(Point p, Cell_handle c,
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit); 
 
-/*! 
+/*!
 Same as the other `find_conflicts()` function, except that it also 
 computes the internal facets, i.e.\ the facets common to two cells which 
 are in conflict with `p`. 
@@ -381,7 +381,7 @@ OutputIteratorBoundaryFacets bfit,
 OutputIteratorCells cit, 
 OutputIteratorInternalFacets ifit); 
 
-/*! 
+/*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 
 */ 
 template <class OutputIterator> 
@@ -389,7 +389,7 @@ OutputIterator
 vertices_in_conflict(Point p, Cell_handle c, 
 OutputIterator res); 
 
-/*! 
+/*!
 Similar to `find_conflicts()`, but reports the vertices which are on the 
 boundary of the conflict hole of `p`, in the output iterator `res`. 
 Returns the resulting output iterator. 
@@ -409,22 +409,22 @@ A face (cell, facet or edge) is said to be a Gabriel face iff its smallest circu
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Cell_handle c, int i); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(const Facet& f); 
 
-/*! 
+/*!
 
 */ 
 bool is_Gabriel(const Edge& e); 
@@ -436,13 +436,13 @@ bool is_Gabriel(const Edge& e);
 */
 /// @{
 
-/*! 
+/*!
 Returns the circumcenter of the four vertices of c. 
 \pre `dt`.`dimension()`\f$ =3\f$ and `c` is not infinite. 
 */ 
 Point dual(Cell_handle c) const; 
 
-/*! 
+/*!
 Returns the dual of facet `f`, which is 
 
 in dimension 3: either a segment, if the two cells incident to `f` 
@@ -453,18 +453,18 @@ in dimension 2: a point.
 */ 
 Object dual(Facet f) const; 
 
-/*! 
+/*!
 same as the previous method for facet `(c,i)`. 
 */ 
 Object dual(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 returns the line supporting the dual of the facet. 
 \pre `dt`.`dimension()` \f$ \geq2\f$ and `f` is not infinite. 
 */ 
 Line dual_support(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Sends the set of duals to all the facets of `dt` into `os`. 
 */ 
 template <class Stream> Stream & draw_dual(Stream & os); 
@@ -475,7 +475,7 @@ template <class Stream> Stream & draw_dual(Stream & os);
 /// These methods are mainly a debugging help for the users of advanced features.
 /// @{
 
-/*! 
+/*!
 Checks the combinatorial validity of the triangulation and the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). Also checks that all the 
@@ -488,7 +488,7 @@ printed.
 bool 
 is_valid(bool verbose = false) const; 
 
-/*! 
+/*!
 \cgalDebugFunction
 \cgalDebugBegin
 Checks the combinatorial and geometric validity of the cell (see 

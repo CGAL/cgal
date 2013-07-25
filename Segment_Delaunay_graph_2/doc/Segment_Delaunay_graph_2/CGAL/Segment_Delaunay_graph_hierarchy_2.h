@@ -82,13 +82,13 @@ public:
 /// `Segment_Delaunay_graph_2<Gt,DS>`.
 /// @{
 
-/*! 
+/*!
 A type for the 
 `STag` template parameter. 
 */ 
 typedef STag Segments_in_hierarchy_tag; 
 
-/*! 
+/*!
 A type for the base class. 
 */ 
 typedef CGAL::Segment_Delaunay_graph_2<Gt,DS> Base; 
@@ -100,14 +100,14 @@ typedef CGAL::Segment_Delaunay_graph_2<Gt,DS> Base;
 /// constructors are defined:
 /// @{
 
-/*! 
+/*!
 Creates a hierarchy of segment Delaunay graphs using 
 `gt` as geometric traits. 
 */ 
 Segment_Delaunay_graph_hierarchy_2(Gt 
 gt=Gt()); 
 
-/*! 
+/*!
 Creates a segment Delaunay graph hierarchy using 
 `gt` as geometric traits and inserts all sites in the 
 range [`first`, `beyond`). `Input_iterator` must be a 
@@ -123,7 +123,7 @@ first, Input_iterator beyond, Gt gt=Gt());
 
 }; /* end Segment_Delaunay_graph_hierarchy_2 */
 
-/*! 
+/*!
 Writes the current state of the segment Delaunay graph hierarchy to 
 an output stream. In particular, all sites in the diagram are 
 written to the stream (represented through appropriate input sites), 
@@ -132,7 +132,7 @@ as well as the underlying combinatorial hierarchical data structure.
 */ 
 std::ostream& operator<<(std::ostream& os, Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> svdh); 
 
-/*! 
+/*!
 Reads the state of the segment Delaunay graph hierarchy from an 
 input stream. 
 \relates Segment_Delaunay_graph_hierarchy_2 

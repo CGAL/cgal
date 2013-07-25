@@ -18,12 +18,12 @@ public:
 /// A model of this type must provide:
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::size_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 argument_type; 
@@ -33,7 +33,7 @@ typedef AlgebraicKernel_d_1::Polynomial_1 argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the number of real solutions of \f$ p\f$. 
 \pre \f$ p\f$ is square free. 
 */ 

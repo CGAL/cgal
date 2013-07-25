@@ -11,7 +11,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Constructs the minimal vertex of `l` with lexicographically 
 smallest coordinates. 
 */ 

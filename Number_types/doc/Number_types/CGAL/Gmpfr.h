@@ -57,7 +57,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type representing the precision (number of bits 
 used to represent the mantissa) of a number. 
 */ 
@@ -85,65 +85,65 @@ typedef unspecified_type Precision_type;
 /// <TT>z</TT>.
 /// @{
 
-/*! 
+/*!
 Creates an uninitialized `Gmpfr` `f`. 
 */ 
 Gmpfr(); 
 
-/*! 
+/*!
 Copy constructor. The copied object inherits the precision of 
 `n`, and thus it is not rounded. 
 */ 
 Gmpfr(const Gmpfr& n); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `si`. 
 */ 
 Gmpfr(long si); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `ui`. 
 */ 
 Gmpfr(unsigned long ui); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `i`. 
 */ 
 Gmpfr(int i); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `d`. 
 */ 
 Gmpfr(double d); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `ld`. 
 */ 
 Gmpfr(long double ld); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `z`. 
 */ 
 Gmpfr(const Gmpz &z); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of `zf`. 
 */ 
 Gmpfr(const Gmpzf &zf); 
 
-/*! 
+/*!
 Creates a `Gmpfr`, initialized with the value of 
 `ie.first`\f$ \times2^{\mathrm{ie.second}} \f$ . 
 */ 
 Gmpfr(const std::pair<Gmpz,long> &ie); 
 
-/*! 
+/*!
 This returns the current precision used in `Gmpfr` 
 creation by default. 
 */ 
 static Precision_type get_default_precision(); 
 
-/*! 
+/*!
 This function sets the default <span class="textsc">Mpfr</span> precision to p, and returns 
 the old one. 
 */ 
@@ -163,23 +163,23 @@ also functions to get and set the precision of each Gmpfr object.
 
 /// @{
 
-/*! 
+/*!
 Returns the precision of `f`. 
 */ 
 Precision_type get_precision()const; 
 
-/*! 
+/*!
 Returns the value of `f`, rounded with precision `p` 
 in the direction `r`. 
 */ 
 Gmpfr round(Precision_type p, std::float_round_style r)const; 
 
-/*! 
+/*!
 This function returns the current rounding mode used by <span class="textsc">Mpfr</span>. 
 */ 
 static std::float_round_style get_default_rndmode(); 
 
-/*! 
+/*!
 This function sets the <span class="textsc">Mpfr</span> rounding mode to `r` and returns 
 the old one. 
 */ 
@@ -199,33 +199,33 @@ flags are:
 */
 
 /// @{
-/*! 
+/*!
 Clears all the flags set by <span class="textsc">Mpfr</span>(they are not cleared 
 automatically). 
 */ 
 static void clear_flags(); 
 
-/*! 
+/*!
 Shows whether an operation incurred in underflow. 
 */ 
 static bool underflow_flag(); 
 
-/*! 
+/*!
 Shows whether an operation incurred in overflow. 
 */ 
 static bool overflow_flag(); 
 
-/*! 
+/*!
 Shows whether the result of an operation was `NaN`. 
 */ 
 static bool nan_flag(); 
 
-/*! 
+/*!
 Shows whether an operation was inexact. 
 */ 
 static bool inex_flag(); 
 
-/*! 
+/*!
 Returns `true` iff a range error occurred. Such an exception 
 occurs when some function which does not return a `Gmpfr` 
 has an invalid result. For example, this flag will be set if 
@@ -258,22 +258,22 @@ static bool erange_flag();
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b); 
 
-/*! 
+/*!
 
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b, std::float_round_style r); 
 
-/*! 
+/*!
 
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p); 
 
-/*! 
+/*!
 
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p, std::float_round_style r); 
 
-/*! 
+/*!
 Returns the absolute value of `f`, rounded with precision 
 `p` in the direction `r`. If `p` is not specified, 
 the precision used is the maximum between `f`'s precision 
@@ -281,7 +281,7 @@ and the default.
 */ 
 Gmpfr abs(Precision_type p, std::float_round_style r=get_default_rndmode())const; 
 
-/*! 
+/*!
 Returns the square root of `f`, rounded with precision 
 `p` in the direction `r`. If `p` is not specified, 
 the precision used is the maximum between `f`'s precision 
@@ -289,7 +289,7 @@ and the default.
 */ 
 Gmpfr sqrt(Precision_type p, std::float_round_style r=get_default_rndmode())const; 
 
-/*! 
+/*!
 Returns the k-th root of `f`, rounded with precision 
 `p` in the direction `r`. If `p` is not specified, 
 the precision used is the maximum between `f`'s precision 
@@ -297,27 +297,27 @@ and the default.
 */ 
 Gmpfr kthroot(int k, Precision_type p, std::float_round_style r=get_default_rndmode())const; 
 
-/*! 
+/*!
 Returns the square of `f`, rounded with precision `p` in 
 the direction `r`. If `p` is not specified, the precision 
 used is the maximum between `f`'s precision and the default. 
 */ 
 Gmpfr square(Precision_type p, std::float_round_style r=get_default_rndmode())const; 
 
-/*! 
+/*!
 Returns a double precision approximation of `f` using the 
 rounding mode `r`. 
 */ 
 double to_double(std::float_round_style r=get_default_rndmode()); 
 
-/*! 
+/*!
 Returns an interval of doubles which contains `f`. If a 
 rounded endpoint does not fit in a double, the double is set to plus 
 or minus infinity and the `overflow` or `underflow` flag. 
 */ 
 std::pair<double,double> to_interval(); 
 
-/*! 
+/*!
 Returns the pair \f$ (d,e) \f$ such that \f$ 0.5 \le|d| < 1 \f$ and 
 \f$ d \times2^e \f$ equals `f` rounded to double precision, 
 using the rounding mode `r`. If `f` is `NaN` or 
@@ -327,14 +327,14 @@ the exponent undefined and setting the appropriate error flag.
 std::pair<double,long> to_double_exp 
 (std::float_round_style r=get_default_rndmode()); 
 
-/*! 
+/*!
 Returns \f$ ((m,M),e) \f$ such that \f$ m \times2^e \le f \le M \times2^e \f$. If `f` is `NaN` or infinity, then 
 the corresponding doubles are returned, leaving the exponent 
 undefined and setting the appropriate error flag. 
 */ 
 std::pair<std::pair<double,double>,long> to_interval_exp(); 
 
-/*! 
+/*!
 Returns a pair of integers \f$ (m,e) \f$, such that 
 \f$ f = m \times2^e \f$. Note that the returned value of \f$ m\f$ 
 is not necessarily the smallest possible value of \f$ m\f$ (that is, 
@@ -347,43 +347,43 @@ std::pair<Gmpz,long> to_integer_exp();
 /// \name Query Functions 
 /// @{
 
-/*! 
+/*!
 Returns the sign of `f`. 
 */ 
 Sign sign(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is zero. 
 */ 
 bool is_zero(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is one. 
 */ 
 bool is_one(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is NaN (not-a-number). 
 */ 
 bool is_nan(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is plus or minus infinity. 
 */ 
 bool is_inf(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is a valid number. 
 */ 
 bool is_number(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is the square of a number 
 representable by an object of this type. 
 */ 
 bool is_square(); 
 
-/*! 
+/*!
 Returns `true` iff `f` is the square of a number 
 representable by an object of this type, computing and storing it 
 in `y`. 
@@ -395,7 +395,7 @@ bool is_square(const Gmpfr &y);
 
 }; /* end Gmpfr */
 
-/*! 
+/*!
 Reads a floating-point number from `in`. The number 
 \f$ M \times2^E\f$ must be in the form \f$ MeE\f$, where the mantissa 
 \f$ M\f$ and the exponent \f$ E\f$ are integers in base 10. 
@@ -403,7 +403,7 @@ Reads a floating-point number from `in`. The number
 */ 
 std::istream& operator>>(std::istream& in, Gmpfr& f); 
 
-/*! 
+/*!
 If the ostream `out` is in pretty-print mode, writes a decimal 
 approximation of `f` to `out`. Otherwise, writes `f` to 
 `out` in the form \f$ MeE\f$, where \f$ M\f$ is its mantissa and 

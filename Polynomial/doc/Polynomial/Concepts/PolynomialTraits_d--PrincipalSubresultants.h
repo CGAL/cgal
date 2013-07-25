@@ -37,7 +37,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes the principal subresultants of \f$ p\f$ and \f$ q\f$, 
 with respect to the outermost variable. Each element is of type 
 `PolynomialTraits_d::Coefficient_type`. 
@@ -47,7 +47,7 @@ OutputIterator operator()(Polynomial_d p,
 Polynomial_d q, 
 OutputIterator out); 
 
-/*! 
+/*!
 computes the principal subresultants of \f$ p\f$ and \f$ q\f$, 
 with respect to the variable \f$ x_i\f$. 
 */ 

@@ -100,32 +100,32 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   sphere point type stored in Halfedge. 
 */ 
     typedef unspecified_type Sphere_point; 
 
-/*! 
+/*!
   const handle to vertex. 
 */ 
     typedef unspecified_type Vertex_const_handle; 
 
-/*! 
+/*!
   const handle to halfedge. 
 */ 
     typedef unspecified_type Halfedge_const_handle; 
 
-/*! 
+/*!
   const handle to SHalfedge. 
 */ 
     typedef unspecified_type SHalfedge_const_handle; 
 
-/*! 
+/*!
   const handle to SFace. 
 */ 
     typedef unspecified_type SFace_const_handle; 
@@ -135,47 +135,47 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `e` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   the sphere point of `e` . 
 */ 
     const Sphere_point& point() const; 
 
-/*! 
+/*!
   returns |true| if `e` has no adjacent sedges. 
 */ 
     bool is_isolated() const; 
 
-/*! 
+/*!
   the center vertex of the sphere map `e` belongs to. 
 */ 
     Vertex_const_handle center_vertex() const; 
 
-/*! 
+/*!
   the source vertex of `e` . 
 */ 
     Vertex_const_handle source() const; 
 
-/*! 
+/*!
   the target vertex `e`. 
 */ 
     Vertex_const_handle target() const; 
 
-/*! 
+/*!
   the twin of `e` . 
 */ 
     Halfedge_const_handle twin() const; 
 
-/*! 
+/*!
   the first out sedge of `e` . 
 */ 
     SHalfedge_const_handle out_sedge() const; 
 
-/*! 
+/*!
   the incident sface of `e` . 
 */ 
     SFace_const_handle incident_sface() const; 
@@ -204,12 +204,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
   const handle to SHalfedge. 
 */ 
     typedef unspecified_type SHalfedge_handle; 
 
-/*! 
+/*!
   const handle to SHalfloop. 
 */ 
     typedef unspecified_type SHalfloop_handle; 
@@ -219,7 +219,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
   default constructor. 
 */ 
     Halffacet_cycle_iterator(); 
@@ -229,22 +229,22 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   returns true if `hfc` represents a `SHalfedge_handle`. 
 */ 
     bool is_shalfedge() const; 
 
-/*! 
+/*!
   returns true if `hfc` represents a `SHalfloop_handle`. 
 */ 
     bool is_shalfloop() const; 
 
-/*! 
+/*!
   casts `hfc` to `SHalfedge_handle`. 
 */ 
     operator SHalfedge_handle() const; 
 
-/*! 
+/*!
   casts `hfc` to `SHalfloop_handle`. 
 */ 
     operator SHalfloop_handle() const; 
@@ -290,32 +290,32 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   plane type stored in Halffacet. 
 */ 
     typedef unspecified_type Plane_3; 
 
-/*! 
+/*!
   list of Object handles. 
 */ 
     typedef unspecified_type Object_list; 
 
-/*! 
+/*!
   const handle to Halffacet. 
 */ 
     typedef unspecified_type Halffacet_const_handle; 
 
-/*! 
+/*!
   const handle to volume. 
 */ 
     typedef unspecified_type Volume_const_handle; 
 
-/*! 
+/*!
   const iterator over the entries to all halffacet cycles of a halffacet. 
 */ 
     typedef unspecified_type Halffacet_cycle_const_iterator; 
@@ -325,32 +325,32 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `f` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   the supporting plane of `f` . 
 */ 
     const Plane_3& plane() const; 
 
-/*! 
+/*!
   the twin of `f` . 
 */ 
     Halffacet_const_handle twin() const; 
 
-/*! 
+/*!
   the incident volume of `f` . 
 */ 
     Volume_const_handle incident_volume() const; 
 
-/*! 
+/*!
   iterator over the entries to all halffacet cycles of `f` . 
 */ 
     Halffacet_cycle_const_iterator facet_cycles_begin() const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
     Halffacet_cycle_const_iterator facet_cycles_end() const; 
@@ -381,17 +381,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
   const handle to SVertex. 
 */ 
     typedef unspecified_type SVertex_handle; 
 
-/*! 
+/*!
   const handle to SHalfedge. 
 */ 
     typedef unspecified_type SHalfedge_handle; 
 
-/*! 
+/*!
   const handle to SHalfloop. 
 */ 
     typedef unspecified_type SHalfloop_handle; 
@@ -401,7 +401,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
   default constructor. 
 */ 
     SFace_cycle_iterator(); 
@@ -411,32 +411,32 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   returns true if `sfc` represents a `SVertex_handle`. 
 */ 
     bool is_svertex() const; 
 
-/*! 
+/*!
   returns true if `sfc` represents a `SHalfedge_handle`. 
 */ 
     bool is_shalfedge() const; 
 
-/*! 
+/*!
   returns true if `sfc` represents a `SHalfloop_handle`. 
 */ 
     bool is_shalfloop() const; 
 
-/*! 
+/*!
   casts `sfc` to `SVertex_handle`. 
 */ 
     operator SVertex_handle() const; 
 
-/*! 
+/*!
   casts `sfc` to `SHalfedge_handle`. 
 */ 
     operator SHalfedge_handle() const; 
 
-/*! 
+/*!
   casts `sfc` to `SHalfloop_handle`. 
 */ 
     operator SHalfloop_handle() const; 
@@ -476,32 +476,32 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   list of Object handles. 
 */ 
     typedef unspecified_type Object_list; 
 
-/*! 
+/*!
   const handle to Vertex. 
 */ 
     typedef unspecified_type Vertex_const_handle; 
 
-/*! 
+/*!
   const handle to Volume. 
 */ 
     typedef unspecified_type Volume_const_handle; 
 
-/*! 
+/*!
   const handle to SFace. 
 */ 
     typedef unspecified_type SFace_const_handle; 
 
-/*! 
+/*!
   const iterator over the entries to all sface cycles of a sface. 
 */ 
     typedef unspecified_type SFace_cycle_const_iterator; 
@@ -511,27 +511,27 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `sf` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   the center vertex of the sphere map `sf` belongs to. 
 */ 
     Vertex_const_handle center_vertex() const; 
 
-/*! 
+/*!
   the volume that corresponds to `sf` in the 3D incidence structure. 
 */ 
     Volume_const_handle volume() const; 
 
-/*! 
+/*!
   iterator over the entries to all sface cycles of `sf` . 
 */ 
     SFace_cycle_const_iterator sface_cycle_begin() const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
     SFace_cycle_const_iterator sface_cycle_end() const; 
@@ -596,32 +596,32 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   sphere circle type stored in SHalfedge. 
 */ 
     typedef unspecified_type Sphere_circle; 
 
-/*! 
+/*!
   const handle to Halffacet. 
 */ 
     typedef unspecified_type Halffacet_const_handle; 
 
-/*! 
+/*!
   const handle to SVertex. 
 */ 
     typedef unspecified_type SVertex_const_handle; 
 
-/*! 
+/*!
   const handle to SHalfedge. 
 */ 
     typedef unspecified_type SHalfedge_const_handle; 
 
-/*! 
+/*!
   const handle to SFace. 
 */ 
     typedef unspecified_type SFace_const_handle; 
@@ -631,91 +631,91 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `se` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   the sphere circle of `se` . 
 */ 
     const Sphere_circle& circle() const; 
 
-/*! 
+/*!
   the twin of `se` . 
 */ 
     SHalfedge_const_handle twin() const; 
 
-/*! 
+/*!
   the source svertex of `se` . 
 */ 
     SVertex_const_handle source() const; 
 
-/*! 
+/*!
   equals `twin()->source()`. 
 */ 
     SVertex_const_handle target() const; 
 
-/*! 
+/*!
   the SHalfedge previous to `se` in a facet cycle. 
 */ 
     SHalfedge_const_handle prev() const; 
 
-/*! 
+/*!
   the next SHalfedge of `se` in a facet cycle. 
 */ 
     SHalfedge_const_handle next() const; 
 
-/*! 
+/*!
   the SHalfedge previous to `se` in a sface cycle. 
 */ 
     SHalfedge_const_handle sprev() const; 
 
-/*! 
+/*!
   the next SHalfedge of `se` in a sface cycle. 
 */ 
     SHalfedge_const_handle snext() const; 
 
-/*! 
+/*!
   the edge before `se` in the cyclic ordered adjacency list of source(). 
 */ 
     SHalfedge_const_handle cyclic_adj_pred() const; 
 
-/*! 
+/*!
   the edge after `se` in the cyclic ordered adjacency list of source(). 
 */ 
     SHalfedge_const_handle cyclic_adj_succ() const; 
 
-/*! 
+/*!
   the facet that corresponds to `se` in the 3D incidence structure. 
 */ 
     Halffacet_const_handle facet() const; 
 
-/*! 
+/*!
   the incident 
   sface of `se` . 
 */ 
     SFace_const_handle incident_sface() const; 
 
-/*! 
+/*!
   determines whether `se` is 
   in an outer sface cycle. 
 */ 
     bool in_outer_sface_cycle() const; 
 
-/*! 
+/*!
   determines whether `se` is 
   in an inner sface cycle. 
 */ 
     bool in_inner_sface_cycle() const; 
 
-/*! 
+/*!
   determines whether `se` is 
   in an outer facet cycle. 
 */ 
     bool in_outer_facet_cycle() const; 
 
-/*! 
+/*!
   determines whether `se` is 
   in an inner facet cycle. 
 */ 
@@ -762,27 +762,27 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   sphere circle type stored in SHalfloop. 
 */ 
     typedef unspecified_type Sphere_circle; 
 
-/*! 
+/*!
   const handle to Halffacet. 
 */ 
     typedef unspecified_type Halffacet_const_handle; 
 
-/*! 
+/*!
   const handle to SHalfloop. 
 */ 
     typedef unspecified_type SHalfloop_const_handle; 
 
-/*! 
+/*!
   const handle to SFace. 
 */ 
     typedef unspecified_type SFace_const_handle; 
@@ -792,27 +792,27 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `se` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   the sphere circle of `se` . 
 */ 
     const Sphere_circle& circle() const; 
 
-/*! 
+/*!
   the twin of `se` . 
 */ 
     SHalfloop_const_handle twin() const; 
 
-/*! 
+/*!
   the facet that corresponds to `se` in the 3D incidence structure. 
 */ 
     Halffacet_const_handle facet() const; 
 
-/*! 
+/*!
   the incident sface of `se` . 
 */ 
     SFace_const_handle incident_sface() const; 
@@ -844,12 +844,12 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   point type stored in Vertex. 
 */ 
     typedef unspecified_type Point_3; 
@@ -859,12 +859,12 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `v` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   the point of `v` . 
 */ 
     const Point_3& point() const; 
@@ -898,22 +898,22 @@ public:
 /// The following types are the same as in `Nef_polyhedron_3<Traits>`.
 /// @{
 
-/*! 
+/*!
   type of mark. 
 */ 
     typedef unspecified_type Mark; 
 
-/*! 
+/*!
   list of Object handles. 
 */ 
     typedef unspecified_type Object_list; 
 
-/*! 
+/*!
   const handle to Volume. 
 */ 
     typedef unspecified_type Volume_const_handle; 
 
-/*! 
+/*!
   const iterator over the entries to all shells adjacent to a volume. 
 */ 
     typedef unspecified_type Shell_entry_const_iterator; 
@@ -923,17 +923,17 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   the mark of `c` . 
 */ 
     const Mark& mark() const; 
 
-/*! 
+/*!
   const iterator over the entries to all shells adjacent to `c` . 
 */ 
     Shell_entry_const_iterator shells_begin() const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
     Shell_entry_const_iterator shells_end() const; 
@@ -942,133 +942,133 @@ public:
 
   }; /* end Volume */
 
-/*! 
+/*!
   traits class selected for `Nef_polyhedronTraits_3`. 
 */ 
   typedef unspecified_type Traits; 
 
-/*! 
+/*!
   All object (vertices, edges, etc.) are attributed by a Mark. 
   Mark equals bool. 
 */ 
   typedef unspecified_type Mark; 
 
-/*! 
+/*!
   size type of `Nef_polyhedron_3`. 
 */ 
   typedef unspecified_type size_type; 
 
-/*! 
+/*!
   non-mutable handle to a vertex. 
 */ 
   typedef unspecified_type Vertex_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a halfedge. 
 */ 
   typedef unspecified_type Halfedge_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a halffacet. 
 */ 
   typedef unspecified_type Halffacet_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a volume. 
 */ 
   typedef unspecified_type Volume_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a svertex. 
 */ 
   typedef unspecified_type SVertex_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a shalfedge. 
 */ 
   typedef unspecified_type SHalfedge_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a shalfloop. 
 */ 
   typedef unspecified_type SHalfloop_const_handle; 
 
-/*! 
+/*!
   non-mutable handle to a sface. 
 */ 
   typedef unspecified_type SFace_const_handle; 
 
-/*! 
+/*!
   non-mutable iterator over all vertices. 
 */ 
   typedef unspecified_type Vertex_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all halfeges. 
 */ 
   typedef unspecified_type Halfedge_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all halffacets. 
 */ 
   typedef unspecified_type Halffacet_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all volumes. 
 */ 
   typedef unspecified_type Volume_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all svertices. 
 */ 
   typedef unspecified_type SVertex_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all shalfedges. 
 */ 
   typedef unspecified_type SHalfedge_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all shalfloops. 
 */ 
   typedef unspecified_type SHalfloop_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over all sfaces. 
 */ 
   typedef unspecified_type SFace_const_iterator; 
 
-/*! 
+/*!
   non-mutable circulator of shalfedges around a svertex (cw). 
 */ 
   typedef unspecified_type SHalfedge_around_svertex_const_circulator; 
 
-/*! 
+/*!
   non-mutable circulator of shalfedges around a sface (ccw). 
 */ 
   typedef unspecified_type SHalfedge_around_sface_const_circulator; 
 
-/*! 
+/*!
   non-mutable circulator of shalfedges around a halffacet (ccw). 
 */ 
   typedef unspecified_type SHalfedge_around_facet_const_circulator; 
 
-/*! 
+/*!
   non-mutable iterator over the cylces of a sface. 
 */ 
   typedef unspecified_type SFace_cycle_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator over the cylces of a halffacet. 
 */ 
   typedef unspecified_type Halffacet_cycle_const_iterator; 
 
-/*! 
+/*!
   non-mutable iterator providing an entry to each shell. 
 */ 
   typedef unspecified_type Shell_entry_const_iterator; 
 
-/*! 
+/*!
   a generic handle to an object. 
   The kind of object `(vertex, halfedge, halffacet, volume, svertex, shalfedge, shalfloop, sface)` can 
   be determined and the object can be assigned to a corresponding 
@@ -1095,58 +1095,58 @@ public:
 */ 
   typedef unspecified_type Object_handle; 
 
-/*! 
+/*!
   location of vertices. 
 */ 
   typedef unspecified_type Point_3; 
 
-/*! 
+/*!
   segment represented by a halfedge. 
 */ 
   typedef unspecified_type Segment_3; 
 
-/*! 
+/*!
   direction of a halfedge. 
 */ 
   typedef unspecified_type Vector_3; 
 
-/*! 
+/*!
   plane of a halffacet lies in. 
 */ 
   typedef unspecified_type Plane_3; 
 
-/*! 
+/*!
   affine transformation. 
 */ 
   typedef unspecified_type Aff_transformation_3; 
 
-/*! 
+/*!
   tag for calling polyline constructor. 
 */ 
   typedef unspecified_type Polylines_tag; 
 
-/*! 
+/*!
   construction selection. 
 */ 
   enum Boundary { EXCLUDED, INCLUDED }; 
 
-/*! 
+/*!
   construction selection. 
 */ 
   enum Content { EMPTY, COMPLETE }; 
 
-/*! 
+/*!
   intersection selection. 
 */ 
   enum Intersection_mode { CLOSED_HALFSPACE, OPEN_HALFSPACE, 
                            PLANE_ONLY }; 
 
-/*! 
+/*!
   a sphere map. 
 */ 
   typedef unspecified_type Nef_polyhedron_S2; 
 
-/*! 
+/*!
   a polyhedral surface. 
 */ 
   typedef unspecified_type Polyhedron; 
@@ -1156,14 +1156,14 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
   creates a Nef polyhedron and initializes it to the empty set if `plane
   == EMPTY` and to the whole space if `space == COMPLETE`.
 */ 
   Nef_polyhedron_3(Content space = EMPTY); 
 
-/*! 
+/*!
   creates a 
   Nef polyhedron containing the halfspace on the negative side of 
   `p` including `p` if `b==INCLUDED`, excluding `p` if 
@@ -1172,14 +1172,14 @@ public:
   Nef_polyhedron_3(const Plane_3& p, 
                    Boundary b = INCLUDED); 
 
-/*! 
+/*!
 
   creates a Nef polyhedron, which represents the same point set as 
   the polyhedral surface `P` does. 
 */ 
   Nef_polyhedron_3(Polyhedron& P); 
 
-/*! 
+/*!
   creates a Nef polyhedron consisting of a single polygon 
   spanned by the list of points in the iterator range 
   `[begin,end)`. If the points do not on a common 
@@ -1189,7 +1189,7 @@ public:
 */ 
   Nef_polyhedron_3(Input_iterator begin, Input_iterator end); 
 
-/*! 
+/*!
   The iterator range [it, end) defines a set point 
   ranges, each of which defines a polyline. 
 */ 
@@ -1206,92 +1206,92 @@ public:
 /// `CGAL_forall_volumes(c,N)` where `N` is a `Nef_polyhedron_3`.
 /// @{
 
-/*! 
+/*!
   returns true, if `N` is a 2-manifold. 
 */ 
   bool is_simple() const; 
 
-/*! 
+/*!
   checks the integrity of `N` . 
 */ 
   bool is_valid() const; 
 
-/*! 
+/*!
   returns the number of vertices. 
 */ 
   Size_type number_of_vertices() const; 
 
-/*! 
+/*!
   return the number of halfedges. 
 */ 
   Size_type number_of_halfedges() const; 
 
-/*! 
+/*!
   returns the number of halfedge pairs. 
 */ 
   Size_type number_of_edges() const; 
 
-/*! 
+/*!
   returns the number of halffacets. 
 */ 
   Size_type number_of_halffacets() const; 
 
-/*! 
+/*!
   returns the number of halffacet pairs. 
 */ 
   Size_type number_of_facets() const; 
 
-/*! 
+/*!
   returns the number of volumes. 
 */ 
   Size_type number_of_volumes() const; 
 
-/*! 
+/*!
   iterator over all vertices. 
 */ 
   Vertex_const_iterator vertices_begin() const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
   Vertex_const_iterator vertices_end() const; 
 
-/*! 
+/*!
   iterator over all halfedges. 
 */ 
   Halfedge_const_iterator halfedges_begin()const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
   Halfedge_const_iterator halfedges_end() const; 
 
-/*! 
+/*!
   iterator over all halffacets. 
 */ 
   Halffacet_const_iterator halffacets_begin() const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
   Halffacet_const_iterator halffacets_end() const; 
 
-/*! 
+/*!
   iterator over all volumes. 
 */ 
   Volume_const_iterator volumes_begin() const; 
 
-/*! 
+/*!
   past-the-end iterator. 
 */ 
   Volume_const_iterator volumes_end() const; 
 
-/*! 
+/*!
   returns a generic handle to the object (vertex, edge, facet or volume) which contains the point p in its relative interior. 
 */ 
   Object_handle locate(const Point_3& p) const; 
 
-/*! 
+/*!
   returns the neighborhood of a vertex modeled by a `Nef_polyhedron_S2`. 
 */ 
   Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const; 
@@ -1301,44 +1301,44 @@ public:
 /// \name Point Set Predicates 
 /// @{
 
-/*! 
+/*!
   returns true, if `N` is the 
   empty point set. 
 */ 
   bool is_empty() const; 
 
-/*! 
+/*!
   returns true, if `N` is the 
   complete 3D space. 
 */ 
   bool is_space() const; 
 
-/*! 
+/*!
   returns true, if `N` and N1 comprise the same point sets. 
 */ 
   bool operator==(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   returns true, if `N` and N1 comprise different point sets. 
 */ 
   bool operator!=(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   returns true, if `N` is a proper subset of N1. 
 */ 
   bool operator<(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   returns true, if `N` is a proper superset of N1. 
 */ 
   bool operator>(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   returns true, if `N` is a subset of N1. 
 */ 
   bool operator<=(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   returns true, if `N` is a superset of N1. 
 */ 
   bool operator>=(const Nef_polyhedron_3<Traits>& N1) const; 
@@ -1348,32 +1348,32 @@ public:
 /// \name Unary Set Operations 
 /// @{
 
-/*! 
+/*!
   returns the complement of `N` . 
 */ 
   Nef_polyhedron_3<Traits> complement() const; 
 
-/*! 
+/*!
   returns the interior of `N` . 
 */ 
   Nef_polyhedron_3<Traits> interior() const; 
 
-/*! 
+/*!
   returns the boundary of `N` . 
 */ 
   Nef_polyhedron_3<Traits> boundary() const; 
 
-/*! 
+/*!
   returns the closure of `N` . 
 */ 
   Nef_polyhedron_3<Traits> closure() const; 
 
-/*! 
+/*!
   returns the regularization, i.e.\ the closure of the interior, of `N` . 
 */ 
   Nef_polyhedron_3<Traits> regularization() const; 
 
-/*! 
+/*!
   returns the complement of `N` . 
 */ 
   Nef_polyhedron_3<Traits> operator!() const; 
@@ -1383,27 +1383,27 @@ public:
 /// \name Binary Set Operations 
 /// @{
 
-/*! 
+/*!
   return the intersection of `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   return the union of `N` and N1. (Note that ''union'' is a C++ keyword and cannot be used for this operation.) 
 */ 
   Nef_polyhedron_3<Traits> join(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   return the difference between `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> difference(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   return the symmetric difference of `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> symmetric_difference(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   returns intersection of `N` with 
   plane (`im=PLANE_ONLY`), open halfspace (`im=OPEN_HALFSPACE`), or closed 
   halfspace (`im=CLOSED_HALFSPACE`). In the latter two cases, the 
@@ -1414,42 +1414,42 @@ public:
 */ 
   Nef_polyhedron_3<Traits> intersection(const Plane_3& p, Intersection_mode im) const; 
 
-/*! 
+/*!
   return the intersection of `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> operator*(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   return the union of `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> operator+(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   return the difference between `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> operator-(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   return the symmetric difference of `N` and N1. 
 */ 
   Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const; 
 
-/*! 
+/*!
   intersects `N` and N1. 
 */ 
   void operator*=(const Nef_polyhedron_3<Traits>& N1); 
 
-/*! 
+/*!
   unites `N` with N1. 
 */ 
   void operator+=(const Nef_polyhedron_3<Traits>& N1); 
 
-/*! 
+/*!
   subtracts N1 from `N` . 
 */ 
   void operator-=(const Nef_polyhedron_3<Traits>& N1); 
 
-/*! 
+/*!
   performs a symmetric intersection of `N` and N1. 
 */ 
   void operator^=(const Nef_polyhedron_3<Traits>& N1); 
@@ -1459,23 +1459,23 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
   make `N` the empty set if `space == EMPTY` and 
   the complete 3D space if `space == COMPLETE`. 
 */ 
   void clear(Content space = EMPTY); 
 
-/*! 
+/*!
   applies an affine transformation to `N` . 
 */ 
   void transform(const Aff_transformation_3& aff); 
 
-/*! 
+/*!
   converts `N` into a Polyhedron. \pre `N` is simple. 
 */ 
   void convert_to_polyhedron(Polyhedron& P) const; 
 
-/*! 
+/*!
   calls the visit function of `V` for every item which belongs to the same shell as `sf`. 
 */ 
   void visit_shell_objects(SFace_const_handle f, Visitor& V) const; 

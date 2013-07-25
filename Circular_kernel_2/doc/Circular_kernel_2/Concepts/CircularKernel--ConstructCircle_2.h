@@ -16,13 +16,13 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Constructs the supporting circle of a circular arc. 
 */ 
 CircularKernel::Circle_2 operator() 
 (CircularKernel::CircularArc_2); 
 
-/*! 
+/*!
 Constructs a circle from an equation. 
 */ 
 CircularKernel::Circle_2 operator() 

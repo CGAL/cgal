@@ -22,7 +22,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Initializes the predicate establishing the `threshold` value. 
 */ 
 Count_stop_predicate<ECM>( size_type threshold ); 
@@ -32,7 +32,7 @@ Count_stop_predicate<ECM>( size_type threshold );
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns `(current_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy). 
 */ 
 bool operator()( FT const& current_cost 

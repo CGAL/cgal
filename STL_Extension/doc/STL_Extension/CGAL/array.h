@@ -27,7 +27,7 @@ template< typename T, int >
 class array {
 }; /* end cpp11::array */
 
-/*! 
+/*!
 \relates cpp11::array 
 
 \returns `array<T, N>` where `N` is the number of arguments given to

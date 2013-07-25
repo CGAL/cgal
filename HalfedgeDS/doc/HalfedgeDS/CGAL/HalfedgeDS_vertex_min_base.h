@@ -27,7 +27,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 HalfedgeDS_vertex_min_base(); 

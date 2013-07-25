@@ -24,22 +24,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The line type. 
 */ 
 typedef unspecified_type Line_3; 
 
-/*! 
+/*!
 The object type. 
 */ 
 typedef unspecified_type Object_3; 
 
-/*! 
+/*!
 The plane type. 
 */ 
 typedef unspecified_type Plane_3; 
 
-/*! 
+/*!
 The ray type. 
 */ 
 typedef unspecified_type Ray_3; 
@@ -55,17 +55,17 @@ or the weighted point \f$ {p}^{(w)}=(p,w_p)\f$.
 */
 /// @{
 
-/*! 
+/*!
 The weighted point type. 
 */ 
 typedef unspecified_type Weighted_point_3; 
 
-/*! 
+/*!
 The (un-weighted) point type. 
 */ 
 typedef unspecified_type Bare_point; 
 
-/*! 
+/*!
 A predicate object which must provide the following function operators: 
 
 `Oriented_side operator()( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t)`, 
@@ -118,7 +118,7 @@ have equal coordinates, then it returns the comparison of the weights
 typedef unspecified_type Power_test_3; 
 
 
-/*! 
+/*!
 A predicate object that must provide the function operator 
 
 `Comparison_result operator()(Point_3 p, Weighted_point_3 q, Weighted_point_3 r)`, 
@@ -133,7 +133,7 @@ issued.
 */ 
 typedef unspecified_type Compare_power_distance_3; 
 
-/*! 
+/*!
 A constructor type. The operator() constructs the bare point 
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
@@ -145,7 +145,7 @@ weighted points.
 */ 
 typedef unspecified_type Construct_weighted_circumcenter_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operators 
 
 `Object_3 operator()(Point_3 p)`, 
@@ -160,7 +160,7 @@ that construct an object respectively from a point, a segment and a ray.
 */ 
 typedef unspecified_type Construct_object_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Line_3 operator()(Plane_3 pl, Point_3 p)`, 
@@ -171,7 +171,7 @@ which constructs the line perpendicular to `pl` passing through `p`.
 */ 
 typedef unspecified_type Construct_perpendicular_line_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)`, 
@@ -183,7 +183,7 @@ which constructs the plane passing through `p`, `q` and `r`.
 */ 
 typedef unspecified_type Construct_plane_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Ray_3 operator()(Point_3 p, Line_3 l)`, 
@@ -199,12 +199,12 @@ typedef unspecified_type Construct_ray_3;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Power_test_3 power_test_3_object(); 
 
-/*! 
+/*!
 
 /// @}
 
@@ -217,22 +217,22 @@ The following functions must be provided only if the member functions of
 */ 
 Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_object_3 construct_object_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_perpendicular_line_3 construct_perpendicular_line_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_plane_3 construct_plane_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_ray_3 construct_ray_3_object(); 

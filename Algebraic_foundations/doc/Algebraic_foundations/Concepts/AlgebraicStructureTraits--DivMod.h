@@ -203,27 +203,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is void. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type first_argument_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type second_argument_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type&`. 
 */ 
 typedef unspecified_type third_argument_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type&`. 
 */ 
 typedef unspecified_type fourth_argument_type; 
@@ -233,7 +233,7 @@ typedef unspecified_type fourth_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 computes the quotient \f$ q\f$ and remainder \f$ r\f$, such that \f$ x = q*y + r\f$ 
 and \f$ r\f$ minimal with respect to the Euclidean Norm on 
@@ -244,7 +244,7 @@ second_argument_type y,
 third_argument_type q, 
 fourth_argument_type r); 
 
-/*! 
+/*!
 This operator is defined if `NT1` and `NT2` are `ExplicitInteroperable` 
 with coercion type `AlgebraicStructureTraits::Type`. 
 */ 

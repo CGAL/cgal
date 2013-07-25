@@ -24,7 +24,7 @@ in this case, and only when the dual functions are called.
 
 class TriangulationCellBase_3 {
 public:
-/*! 
+/*!
 Returns the circumcenter. 
 */ 
 const DelaunayTriangulationTraits_3::Point_3& circumcenter( 

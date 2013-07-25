@@ -35,7 +35,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes the subresultants of \f$ p\f$ and \f$ q\f$, and the cofactors, 
 with respect to the outermost variable. Each element is of type 
 `PolynomialTraits_d::Polynomial_d`. 
@@ -49,7 +49,7 @@ OutputIterator1 sres,
 OutputIterator2 co_p, 
 OutputIterator3 co_q); 
 
-/*! 
+/*!
 computes the subresultants of \f$ p\f$ and \f$ q\f$, and the cofactors, 
 with respect to \f$ x_i\f$. Each element is of type 
 `PolynomialTraits_d::Polynomial_d`. 

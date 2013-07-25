@@ -28,12 +28,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -43,7 +43,7 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns \f$ x^{degree(p)}p(1/x)\f$, 
 where x refers to the outermost variable \f$ x_{d-1}\f$. 
@@ -51,7 +51,7 @@ where x refers to the outermost variable \f$ x_{d-1}\f$.
 */ 
 result_type operator()(argument_type p); 
 
-/*! 
+/*!
 
 Return \f$ x^{degree(p,i)}p(1/x)\f$, 
 where x refers to the variable \f$ x_{i}\f$. 

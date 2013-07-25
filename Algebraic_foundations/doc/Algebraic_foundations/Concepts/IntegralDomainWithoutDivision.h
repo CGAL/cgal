@@ -53,33 +53,33 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 unary plus 
 */ 
 IntegralDomainWithoutDivision 
 operator+(const IntegralDomainWithoutDivision &a); 
 
-/*! 
+/*!
 unary minus 
 */ 
 IntegralDomainWithoutDivision 
 operator-(const IntegralDomainWithoutDivision &a); 
 
-/*! 
+/*!
 
 */ 
 IntegralDomainWithoutDivision 
 operator+(const IntegralDomainWithoutDivision &a, 
 const IntegralDomainWithoutDivision &b); 
 
-/*! 
+/*!
 
 */ 
 IntegralDomainWithoutDivision 
 operator-(const IntegralDomainWithoutDivision &a, 
 const IntegralDomainWithoutDivision &b); 
 
-/*! 
+/*!
 
 */ 
 IntegralDomainWithoutDivision 
@@ -87,31 +87,31 @@ operator*(const IntegralDomainWithoutDivision &a,
 const IntegralDomainWithoutDivision &b); 
 
 
-/*! 
+/*!
 
 */ 
 IntegralDomainWithoutDivision 
 operator+=(const IntegralDomainWithoutDivision &b); 
 
-/*! 
+/*!
 
 */ 
 IntegralDomainWithoutDivision 
 operator-=(const IntegralDomainWithoutDivision &b); 
 
-/*! 
+/*!
 
 */ 
 IntegralDomainWithoutDivision 
 operator*=(const IntegralDomainWithoutDivision &b); 
 
-/*! 
+/*!
 The `result_type` is convertible to `bool`. 
 */ 
 result_type 
 operator==(const IntegralDomainWithoutDivision &a, const IntegralDomainWithoutDivision &b); 
 
-/*! 
+/*!
 The `result_type` is convertible to `bool`. 
 */ 
 result_type 

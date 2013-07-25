@@ -14,7 +14,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Computes an approximation of the squared length of the arc `a`. 
 */ 
 double 

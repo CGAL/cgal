@@ -15,18 +15,18 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 point class. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 class used for doing computations on point and 
 vector coordinates (has to fulfill field type requirements). 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class: 
 `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$ 
 `Point_2`. It returns the point that results from adding 
@@ -34,7 +34,7 @@ the vectors corresponding to both arguments.
 */ 
 typedef unspecified_type Sum; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class: 
 `Point_2` \f$ \times\f$ `FT` \f$ \rightarrow\f$ 
 `Point_2`. `Scale(p,k)` returns the point that 
@@ -43,14 +43,14 @@ factor of `k`.
 */ 
 typedef unspecified_type Scale; 
 
-/*! 
+/*!
 AdaptableUnaryFunction class: 
 `Point_2` \f$ \rightarrow\f$ `FT`. `Max_coordinate(p)` 
 returns the coordinate of `p` with largest absolute value. 
 */ 
 typedef unspecified_type Max_coordinate; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class: 
 `Point_2` \f$ \times\f$ `Point_2` \f$ \rightarrow\f$ 
 `bool`. It returns `true`, iff the angle of the 
@@ -65,7 +65,7 @@ typedef unspecified_type Angle_less;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 return origin (neutral 
 element for the `Sum` operation). 
 */ 

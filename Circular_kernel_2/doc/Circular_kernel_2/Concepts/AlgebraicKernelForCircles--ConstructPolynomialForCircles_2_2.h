@@ -15,7 +15,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Constructs polynomial `(x-a)^2 + (y-b)^2 - rsq`. 
 */ 
 AlgebraicKernelForCircles::PolynomialForCircles_2_2 

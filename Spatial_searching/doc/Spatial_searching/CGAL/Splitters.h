@@ -36,7 +36,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
@@ -46,12 +46,12 @@ typedef Traits::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Fair(); 
 
-/*! 
+/*!
 Constructor. 
 */ 
 Fair(unsigned int bucket_size, 
@@ -94,12 +94,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Median_of_max_spread(); 
 
-/*! 
+/*!
 Constructor. 
 */ 
 Median_of_max_spread(unsigned int bucket_size); 
@@ -141,12 +141,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Median_of_rectangle(); 
 
-/*! 
+/*!
 Constructor. 
 */ 
 Median_of_rectangle(unsigned int bucket_size); 
@@ -187,12 +187,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Midpoint_of_max_spread(); 
 
-/*! 
+/*!
 Constructor. 
 */ 
 Midpoint_of_max_spread(unsigned int bucket_size); 
@@ -232,12 +232,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Midpoint_of_rectangle_spread(); 
 
-/*! 
+/*!
 Constructor. 
 */ 
 Midpoint_of_rectangle(unsigned int bucket_size); 
@@ -295,7 +295,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
@@ -305,7 +305,7 @@ typedef Traits::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor. 
 */ 
 Sliding_fair(unsigned int bucket_size, 
@@ -316,13 +316,13 @@ FT aspect_ratio=FT(3));
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the maximal ratio between the largest and smallest side 
 of a cell allowed for fair splitting. 
 */ 
 FT aspect_ratio(); 
 
-/*! 
+/*!
 Returns the bucket size of the leaf nodes. 
 */ 
 unsigned int bucket_size(); 
@@ -367,7 +367,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor. 
 */ 
 Sliding_fair(unsigned int bucket_size); 
@@ -377,7 +377,7 @@ Sliding_fair(unsigned int bucket_size);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the bucket size of the leaf nodes. 
 */ 
 unsigned int bucket_size(); 

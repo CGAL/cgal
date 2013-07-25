@@ -25,36 +25,36 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The number type used for representation. 
 */ 
 typedef unspecified_type NT; 
 
-/*! 
+/*!
 A model of 
 `Kinetic::InstantaneousKernel` which can be used to apply static CGAL 
 data structures to snapshots of moving data. 
 */ 
 typedef unspecified_type Instantaneous_kernel; 
 
-/*! 
+/*!
 A model of `Kinetic::Kernel`. 
 */ 
 typedef unspecified_type Kinetic_kernel; 
 
-/*! 
+/*!
 A model of `Kinetic::FunctionKernel`. 
 */ 
 typedef unspecified_type Function_kernel; 
 
-/*! 
+/*!
 A model of 
 `Kinetic::ActiveObjectsTable` which holds the relevant kinetic 
 primitives. 
 */ 
 typedef unspecified_type Active_points_@omtable; 
 
-/*! 
+/*!
 A model of `Kinetic::Simulator` which will be 
 used by all the kinetic data structures. 
 */ 
@@ -65,27 +65,27 @@ typedef unspecified_type Simulator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Get a new instantaneous kernel. 
 */ 
 Instantaneous_kernel instantaneous_kernel_object(); 
 
-/*! 
+/*!
 Get a new kinetic kernel. 
 */ 
 Kinetic_kernel kinetic_kernel_object(); 
 
-/*! 
+/*!
 Get a new function kernel. 
 */ 
 Function_kernel function_kernel_object(); 
 
-/*! 
+/*!
 Return a pointer to the `Kinetic::Simulator` which is to be used in the simulation. 
 */ 
 Simulator::Handle simulator_handle(); 
 
-/*! 
+/*!
 Return a pointer to the 
 `Kinetic::ActiveObjectsTable` which is to be used in the 
 simulation. 

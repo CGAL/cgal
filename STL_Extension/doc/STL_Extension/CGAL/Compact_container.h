@@ -24,12 +24,12 @@ public:
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 Returns the pointer necessary for `Compact_container_traits<T>`. 
 */ 
 void * for_compact_container() const; 
 
-/*! 
+/*!
 Returns a reference to the pointer necessary for 
 `Compact_container_traits<T>`. 
 */ 
@@ -120,7 +120,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type value_type; 
@@ -129,7 +129,7 @@ typedef unspecified_type value_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type reference; 
@@ -138,7 +138,7 @@ typedef unspecified_type reference;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_reference; 
@@ -147,7 +147,7 @@ typedef unspecified_type const_reference;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type pointer; 
@@ -156,7 +156,7 @@ typedef unspecified_type pointer;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_pointer; 
@@ -165,7 +165,7 @@ typedef unspecified_type const_pointer;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type size_type; 
@@ -174,7 +174,7 @@ typedef unspecified_type size_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type difference_type; 
@@ -183,7 +183,7 @@ typedef unspecified_type difference_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type iterator; 
@@ -192,7 +192,7 @@ typedef unspecified_type iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_iterator; 
@@ -201,7 +201,7 @@ typedef unspecified_type const_iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type reverse_iterator; 
@@ -210,7 +210,7 @@ typedef unspecified_type reverse_iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_reverse_iterator; 
@@ -219,7 +219,7 @@ typedef unspecified_type const_reverse_iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type allocator_type; 
@@ -227,7 +227,7 @@ typedef unspecified_type allocator_type;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces an empty container `cc`, eventually specifying a particular 
 allocator `a` as well. 
 */ 
@@ -240,7 +240,7 @@ explicit Compact_container(const Allocator &a = Allocator());
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 a container with copies from the range [`first,last`), eventually 
 specifying a particular allocator. 
 */ 
@@ -255,7 +255,7 @@ const Allocator &a = Allocator());
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 copy constructor. Each item in `cc2` is copied. The allocator 
 is copied. The iterator order is preserved. 
 */ 
@@ -268,7 +268,7 @@ Compact_container(const Compact_container<T, Allocator> &cc2);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 assignment. Each item in `cc2` is copied. The allocator is copied. 
 Each item in `c` is deleted. The iterator order is preserved. 
 */ 
@@ -282,7 +282,7 @@ Compact_container<T, Allocator> &cc2);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 swaps the contents of `cc` and `cc2` in constant time 
 complexity. No exception is thrown. 
 */ 
@@ -295,7 +295,7 @@ void swap(Compact_container<T, Allocator> &cc2);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 if `value` is less than or equal to `capacity()`, this call 
 has no effect. Otherwise, it is a request for allocation of 
 additional memory so that then `capacity()` is greater than or 
@@ -310,7 +310,7 @@ void reserve(size_type value);
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a mutable iterator referring to the first element in `cc`. 
 */ 
 iterator begin(); 
@@ -322,7 +322,7 @@ iterator begin();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a constant iterator referring to the first element in `cc`. 
 */ 
 const_iterator begin() const; 
@@ -334,7 +334,7 @@ const_iterator begin() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a mutable iterator which is the past-end-value of `cc`. 
 */ 
 iterator end(); 
@@ -346,7 +346,7 @@ iterator end();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a constant iterator which is the past-end-value of `cc`. 
 */ 
 const_iterator end() const; 
@@ -358,7 +358,7 @@ const_iterator end() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 */ 
 reverse_iterator rbegin(); 
@@ -370,7 +370,7 @@ reverse_iterator rbegin();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 */ 
 const_reverse_iterator rbegin() const; 
@@ -382,7 +382,7 @@ const_reverse_iterator rbegin() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 */ 
 reverse_iterator rend(); 
@@ -394,7 +394,7 @@ reverse_iterator rend();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 
 */ 
 const_reverse_iterator rend() const; 
@@ -406,7 +406,7 @@ const_reverse_iterator rend() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns an iterator which points to `value`. 
 */ 
 iterator iterator_to(reference value) const; 
@@ -418,7 +418,7 @@ iterator iterator_to(reference value) const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns an iterator which points to `value`. 
 */ 
 const_iterator iterator_to(const_reference value) const; 
@@ -430,7 +430,7 @@ const_iterator iterator_to(const_reference value) const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns an iterator which points to `value`; 
 */ 
 static iterator s_iterator_to(reference value); 
@@ -442,7 +442,7 @@ static iterator s_iterator_to(reference value);
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns an iterator which points to `value`; 
 */ 
 static const_iterator s_iterator_to(const_reference value); 
@@ -454,7 +454,7 @@ static const_iterator s_iterator_to(const_reference value);
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns `true` iff `cc` is empty. 
 */ 
 bool empty() const; 
@@ -466,7 +466,7 @@ bool empty() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the number of items in `cc`. 
 */ 
 size_type size() const; 
@@ -478,7 +478,7 @@ size_type size() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the maximum possible size of the container `cc`. 
 */ 
 size_type max_size() const; 
@@ -490,7 +490,7 @@ size_type max_size() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the total number of elements that `cc` can hold without requiring 
 reallocation. 
 */ 
@@ -503,7 +503,7 @@ size_type capacity() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the allocator. 
 */ 
 Allocator get_allocator() const; 
@@ -515,7 +515,7 @@ Allocator get_allocator() const;
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts a copy of `t` in `cc` and returns the iterator pointing 
 to it. 
 */ 
@@ -528,7 +528,7 @@ iterator insert(const T& t);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts the range [`first, last`) in `cc`. 
 */ 
 template <class InputIterator> 
@@ -541,7 +541,7 @@ void insert(InputIterator first, InputIterator last);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 erases all the elements of `cc`, then inserts the range 
 [`first, last`) in `cc`. 
 */ 
@@ -555,7 +555,7 @@ void assign(InputIterator first, InputIterator last);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 constructs an object of type `T` with the constructor that takes 
 `t1` as argument, inserts it in `cc`, and returns the iterator pointing 
 to it. Overloads of this member function are defined that take additional 
@@ -571,7 +571,7 @@ iterator emplace(const T1& t1);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the item pointed by `pos` from `cc`. 
 */ 
 void erase(iterator pos); 
@@ -583,7 +583,7 @@ void erase(iterator pos);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the items from the range [`first, last`) from `cc`. 
 */ 
 void erase(iterator first, iterator last); 
@@ -595,7 +595,7 @@ void erase(iterator first, iterator last);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 all items in `cc` are deleted, and the memory is deallocated. 
 After this call, `cc` is in the same state as if just default 
 constructed. 
@@ -627,7 +627,7 @@ bool owns_dereferencable(const_iterator pos);
 
 /// \name Merging 
 /// @{ 
-/*! 
+/*!
 adds the items of `cc2` to the end of `cc` and `cc2` becomes empty. 
 The time complexity is O(`cc`.`capacity()`-`cc`.`size()`). 
 \pre `cc2` must not be the same as `cc`, and the allocators of `cc` and `cc2` must be compatible: `cc.get_allocator() == cc2.get_allocator()`. 
@@ -641,7 +641,7 @@ void merge(Compact_container<T, Allocator> &cc);
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 test for equality: Two containers are equal, iff they have the 
 same size and if their corresponding elements are equal. 
 */ 
@@ -654,7 +654,7 @@ bool operator==(const Compact_container<T, Allocator> &cc) const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 test for inequality: returns `!(c == cc)`. 
 */ 
 bool operator!=(const Compact_container<T, Allocator> &cc) const; 
@@ -666,7 +666,7 @@ bool operator!=(const Compact_container<T, Allocator> &cc) const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 compares in lexicographical order. 
 */ 
 bool operator<(const Compact_container<T, Allocator> &cc2) const; 
@@ -678,7 +678,7 @@ bool operator<(const Compact_container<T, Allocator> &cc2) const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 returns `cc2 <cc`. 
 */ 
 bool operator>(const Compact_container<T, Allocator> &cc2) const; 
@@ -690,7 +690,7 @@ bool operator>(const Compact_container<T, Allocator> &cc2) const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
   returns `!(cc > cc2)`. 
 */ 
 bool operator<=(const Compact_container<T, Allocator> &cc2) const; 
@@ -702,7 +702,7 @@ bool operator<=(const Compact_container<T, Allocator> &cc2) const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 returns `!(cc < cc2)`. 
 */ 
 bool operator>=(const Compact_container<T, Allocator> &cc2) const; 
@@ -753,7 +753,7 @@ public:
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 Returns the pointer held by `t`. 
 The template version defines this function as: `return t.for_compact_container(); `
 
@@ -767,7 +767,7 @@ static void * pointer(const T &t);
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 Returns a reference to the pointer held by `t`. 
 The template version defines this function as: `return t.for_compact_container();` 
 

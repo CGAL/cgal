@@ -19,17 +19,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Bound result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type; 
@@ -39,7 +39,7 @@ typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Computes a number of type `AlgebraicKernel_d_1::Bound` 
 in-between the first coordinates of \f$ a\f$ and \f$ b\f$. 

@@ -18,7 +18,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Compares the `x`-coordinates of `p` and `q`. 
 */ 
 Comparison_result operator() 

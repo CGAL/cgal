@@ -37,57 +37,57 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 instantiated `HalfedgeDS` ( \f$ \equiv\f$ `Refs`). 
 */ 
 typedef unspecified_type HalfedgeDS; 
 
-/*! 
+/*!
 base class that allows modifications. 
 */ 
 typedef unspecified_type Base; 
 
-/*! 
+/*!
 model of `HalfedgeDSHalfedge`. 
 */ 
 typedef unspecified_type Halfedge; 
 
-/*! 
+/*!
 model of `HalfedgeDSFace`. 
 */ 
 typedef unspecified_type Face; 
 
-/*! 
+/*!
 handle to vertex. 
 */ 
 typedef unspecified_type Vertex_handle; 
 
-/*! 
+/*!
 handle to halfedge. 
 */ 
 typedef unspecified_type Halfedge_handle; 
 
-/*! 
+/*!
 handle to face. 
 */ 
 typedef unspecified_type Face_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Vertex_const_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Halfedge_const_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Face_const_handle; 
 
-/*! 
+/*!
 `CGAL::Tag_true` or 
 `CGAL::Tag_false`. 
 */ 
@@ -98,7 +98,7 @@ typedef unspecified_type Supports_vertex_halfedge;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Vertex(); 
@@ -108,16 +108,16 @@ Vertex();
 /// \name Operations available if Supports_vertex_halfedge == CGAL::Tag_true 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Halfedge_handle halfedge(); 
-/*! 
+/*!
 
 incident halfedge that points to the vertex. 
 */ 
 Halfedge_const_handle halfedge() const; 
-/*! 
+/*!
 
 sets incident halfedge to `h`. 
 */ 

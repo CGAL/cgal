@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the relative position of point 
 `p` to the oriented sphere defined by the points in `A = tuple [first,last)` The order of the points in \f$ A\f$ is important, 
 since it determines the orientation of the implicitly constructed 

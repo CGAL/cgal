@@ -34,18 +34,18 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the linear algebra layer. 
 */ 
 typedef unspecified_type LA; 
 
-/*! 
+/*!
 
 a read-only iterator for the deltas of `dir`. 
 */ 
 typedef unspecified_type Delta_const_iterator; 
 
-/*! 
+/*!
 construction tag. 
 */ 
 typedef unspecified_type Base_direction; 
@@ -55,20 +55,20 @@ typedef unspecified_type Base_direction;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a variable `dir` of 
 type `Direction_d<Kernel>`. 
 */ 
 Direction_d<Kernel>(); 
 
-/*! 
+/*!
 
 introduces a variable `dir` of type `Direction_d<Kernel>` 
 initialized to the direction of `v`. 
 */ 
 Direction_d<Kernel>(Vector_d<Kernel> v); 
 
-/*! 
+/*!
 
 introduces a variable `dir` of type `Direction_d<Kernel>` in 
 dimension `d` with representation tuple `set [first,last)`. 
@@ -78,7 +78,7 @@ dimension `d` with representation tuple `set [first,last)`.
 template <class InputIterator> 
 Direction_d<Kernel>(int d, InputIterator first, InputIterator last); 
 
-/*! 
+/*!
 returns 
 a variable `dir` of type `Direction_d<Kernel>` initialized to the 
 direction of the \f$ i\f$-th base vector of dimension \f$ d\f$.
@@ -87,14 +87,14 @@ direction of the \f$ i\f$-th base vector of dimension \f$ d\f$.
 */ 
 Direction_d<Kernel>(int d, Base_direction, int i); 
 
-/*! 
+/*!
 
 introduces a variable `dir` of type `Direction_d<Kernel>` in 
 \f$ 2\f$-dimensional space. 
 */ 
 Direction_d<Kernel>(RT x, RT y); 
 
-/*! 
+/*!
 
 introduces a variable `dir` of type `Direction_d<Kernel>` in 
 \f$ 3\f$-dimensional space. 
@@ -106,63 +106,63 @@ Direction_d<Kernel>(RT x, RT y, RT z);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns the dimension of `dir`. 
 */ 
 int dimension() ; 
 
-/*! 
+/*!
 
 returns the \f$ i\f$-th component of `dir`. 
 \pre \f$ 0 \leq i < d\f$. 
 */ 
 RT delta(int i) ; 
 
-/*! 
+/*!
 
 returns the \f$ i\f$-th delta of `dir`. 
 \pre \f$ 0 \leq i < d\f$. 
 */ 
 RT operator[](int i) ; 
 
-/*! 
+/*!
 
 returns an iterator pointing to the first delta of `dir`. 
 */ 
 Delta_const_iterator deltas_begin() ; 
 
-/*! 
+/*!
 
 returns an iterator pointing beyond the last delta of `dir`. 
 */ 
 Delta_const_iterator deltas_end() ; 
 
-/*! 
+/*!
 
 returns a vector pointing in direction `dir`. 
 */ 
 Vector_d<Kernel> vector() ; 
 
-/*! 
+/*!
 
 returns true iff `dir.delta(i)==0` for all \f$ 0\leq i < d\f$. 
 */ 
 bool is_degenerate() ; 
 
-/*! 
+/*!
 
 returns \f$ t(p)\f$. 
 */ 
 Direction_d<Kernel> transform(const Aff_transformation_d<Kernel>& t) ; 
 
-/*! 
+/*!
 
 returns the direction opposite to `dir`. 
 */ 
 Direction_d<Kernel> opposite() ; 
 
-/*! 
+/*!
 
 returns the direction opposite to `dir`. 
 */ 

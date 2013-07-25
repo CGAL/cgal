@@ -15,7 +15,7 @@ public:
 /// An object of this type must provide: 
 /// @{
 
-/*! 
+/*!
 Compares the \f$ z\f$-coordinates of the intersection points of both arcs 
 with a meridian anchored at the poles of the context sphere used by the function `SphericalKernel::compare_z_to_right_3_object`, at a \f$ \theta\f$-coordinate 
 infinitesimally greater that the \f$ \theta\f$-coordinate of point `p`. 

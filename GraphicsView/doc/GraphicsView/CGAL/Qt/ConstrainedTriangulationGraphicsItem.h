@@ -16,7 +16,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructs 
 a graphics item for triangulation `ct`. 
 */ 
@@ -27,12 +27,12 @@ ConstrainedTriangulationGraphicsItem<CT>(CT* ct);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the pen used to draw constraints. 
 */ 
 QPen constraintsPen()() const; 
 
-/*! 
+/*!
 Sets the pen used to draw constraints. 
 */ 
 void setConstraintsPen()(const QPen& p); 

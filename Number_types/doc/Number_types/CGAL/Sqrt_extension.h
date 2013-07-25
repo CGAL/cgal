@@ -113,32 +113,32 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces a variable `ext` initialized with 0. 
 */ 
 Sqrt_extension (); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Sqrt_extension (const Sqrt_extension& x); 
 
-/*! 
+/*!
 Introduces a variable `ext` initialized with \f$ i\f$. 
 */ 
 Sqrt_extension (const int &i); 
 
-/*! 
+/*!
 Introduces a variable `ext` initialized with \f$ x\f$. 
 */ 
 Sqrt_extension (const NT &x); 
 
-/*! 
+/*!
 Constructor from int: `ext`\f$ = a0 +a1 \cdot sqrt(r)\f$. \pre \f$ r \neq0\f$ 
 */ 
 Sqrt_extension (int a0, int a1, int r); 
 
-/*! 
+/*!
 General constructor: `ext`\f$ = a0 + a1 \cdot sqrt(r)\f$. \pre \f$ r \neq0\f$ 
 */ 
 Sqrt_extension (NT a0, NT a1, ROOT r); 
@@ -152,29 +152,29 @@ Sqrt_extension (NT a0, NT a1, ROOT r);
 /// form: \f$ a0 + a1 \sqrt(\mathrm{root}) \f$.
 /// @{
 
-/*! 
+/*!
 Const access operator for a0 
 */ 
 const NT & a0 () const ; 
 
-/*! 
+/*!
 Const access operator for a1 
 */ 
 const NT & a1 () const ; 
 
-/*! 
+/*!
 Const access operator for root 
 */ 
 const ROOT & 	root () const; 
 
-/*! 
+/*!
 Returns true in case root of `ext` is not zero. 
 
 Note that \f$ a1 == 0 \f$ does not imply \f$ \mathrm{root} == 0\f$. 
 */ 
 bool is_extended () const; 
 
-/*! 
+/*!
 Simplifies the representation, in particular \f$\mathrm{root}\f$ is set to 
 zero if \f$ a1\f$ is zero, that is, `ext` becomes not extended. 
 
@@ -184,24 +184,24 @@ of `ext`. see also: `AlgebraicStructureTraits::Simplify`.
 */ 
 void 	simplify (); 
 
-/*! 
+/*!
 returns true if `ext` represents the value zero. 
 */ 
 bool 	is_zero () const; 
 
-/*! 
+/*!
 Determines the sign of `ext` by (repeated) squaring. 
 \pre `Sqrt_extension` is `RealEmbeddable`. 
 */ 
 CGAL::Sign sign () const; 
 
-/*! 
+/*!
 returns the absolute value of `ext`. 
 \pre `Sqrt_extension` is `RealEmbeddable`. 
 */ 
 Sqrt_extension abs () const; 
 
-/*! 
+/*!
 
 Compares `ext` with y. 
 
@@ -212,23 +212,23 @@ and \f$ y\f$ are in the same extension of NT.
 CGAL::Comparison_result compare 
 (const Sqrt_extension& y, bool in_same_extension = !DifferentExtensionComparable::value) const; 
 
-/*! 
+/*!
 \pre `(this->root()==0 or a.root()==0 or this->root() == a.root())` 
 */ 
 Sqrt_extension & operator+=(const Sqrt_extension& a); 
 
-/*! 
+/*!
 \pre `(this->root()==0 or a.root()==0 or this->root() == a.root())` 
 */ 
 Sqrt_extension & operator-=(const Sqrt_extension& a); 
 
-/*! 
+/*!
 \pre `(this->root()==0 or a.root()==0 or this->root() == a.root())` 
 */ 
 Sqrt_extension & operator*=(const Sqrt_extension& a); 
 
 
-/*! 
+/*!
 \pre `(this->root()==0 or a.root()==0 or this->root() == a.root())` 
 
 In case `NT` is only an `IntegralDomain` operator/ implements integral
@@ -241,25 +241,25 @@ Sqrt_extension & operator/=(const Sqrt_extension& a);
 
 }; /* end Sqrt_extension */
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 */ 
 Sqrt_extension operator+(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 */ 
 Sqrt_extension operator-(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 */ 
 Sqrt_extension operator*(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 
@@ -269,7 +269,7 @@ division.
 */ 
 Sqrt_extension operator/(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 */ 
@@ -277,13 +277,13 @@ bool operator==(const Sqrt_extension&a,const Sqrt_extension& b);
 
 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 */ 
 bool operator!=(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 
@@ -291,28 +291,28 @@ bool operator!=(const Sqrt_extension&a,const Sqrt_extension& b);
 */ 
 bool operator< (const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 \attention Only exists when `Sqrt_extension` is `RealEmbeddable`.
 */ 
 bool operator<=(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 \attention Only exists when `Sqrt_extension` is `RealEmbeddable`.
 */ 
 bool operator> (const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 \pre `(a.root()==0 or b.root()==0 or a.root() == b.root())` 
 \relates Sqrt_extension 
 \attention Only exists when `Sqrt_extension` is `RealEmbeddable`.
 */ 
 bool operator>=(const Sqrt_extension&a,const Sqrt_extension& b); 
 
-/*! 
+/*!
 writes `ext` to ostream `os`. The format depends on the `CGAL::IO::MODE` of `os`. 
 
 In case the mode is `CGAL::IO::ASCII` the format is `EXT[a0,a1,root]`. 
@@ -325,7 +325,7 @@ In case the mode is `CGAL::IO::PRETTY` the format is human readable.
 */ 
 std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,ROOT> &ext); 
 
-/*! 
+/*!
 reads `ext` from istream `is` in format `EXT[a0,a1,root]`, the output format in mode `CGAL::IO::ASCII` 
 
 \attention `operator<<` must be defined exist for `ROOT` and `NT`.

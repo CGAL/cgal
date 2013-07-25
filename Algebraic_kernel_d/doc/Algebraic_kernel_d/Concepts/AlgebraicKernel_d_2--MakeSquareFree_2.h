@@ -18,12 +18,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_2 result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_2 argument_type; 
@@ -33,7 +33,7 @@ typedef AlgebraicKernel_d_2::Polynomial_2 argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns a square free part of \f$ p\f$. 
 */ 

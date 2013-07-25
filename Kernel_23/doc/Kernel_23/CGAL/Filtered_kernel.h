@@ -103,12 +103,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the exact kernel. 
 */ 
 typedef EK Exact_kernel; 
 
-/*! 
+/*!
 The type of the approximate "filtering" kernel. 
 */ 
 typedef FK Approximate_kernel; 
@@ -118,7 +118,7 @@ typedef FK Approximate_kernel;
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 A Boolean value corresponding to the 
 second template argument. Tells whether static filters are provided. 
 */ 

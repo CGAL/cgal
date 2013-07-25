@@ -27,7 +27,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 initialization only. 
 */ 
 Nef_nary_union_3<NefPolyhedron_3>(); 
@@ -37,12 +37,12 @@ Nef_nary_union_3<NefPolyhedron_3>();
 /// \name Member Functions 
 /// @{
 
-/*! 
+/*!
 returns the union of the polyhedra previously added to the class. 
 */ 
 NefPolyhedron_3 get_union() const; 
 
-/*! 
+/*!
 adds a polyhedron. 
 */ 
 void add_polyhedron(const NefPolyhedron_3& N); 

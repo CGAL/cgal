@@ -18,14 +18,14 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 The point type must provide default and copy constructor, 
 assignment and equality test. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 
 The circle type must fulfill the requirements listed below 
 in the next section. 
@@ -37,7 +37,7 @@ typedef unspecified_type Circle;
 /// \name Variables 
 /// @{
 
-/*! 
+/*!
 
 The current circle. This variable is maintained by the algorithm, 
 the user should neither access nor modify it directly. 
@@ -50,12 +50,12 @@ Circle circle;
 /// Only default and copy constructor are required.
 /// @{
 
-/*! 
+/*!
 
 */ 
 MinCircle2Traits( ); 
 
-/*! 
+/*!
 
 */ 
 MinCircle2Traits( const MinCircle2Traits&); 
@@ -67,7 +67,7 @@ MinCircle2Traits( const MinCircle2Traits&);
 /// `is_valid` of `Min_circle_2` is used.
 /// @{
 
-/*! 
+/*!
 
 returns constants `CGAL::LEFT_TURN`, 
 `CGAL::COLLINEAR`, or 

@@ -35,7 +35,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes the Sturm-Habicht sequence of \f$ f\f$, and the cofactors, 
 with respect to the outermost variable. Each element is of type 
 `PolynomialTraits_d::Polynomial_d`. 
@@ -48,7 +48,7 @@ OutputIterator1 stha,
 OutputIterator2 co_f, 
 OutputIterator3 co_fx); 
 
-/*! 
+/*!
 computes the Sturm-Habicht sequence of \f$ f\f$, and the cofactors, 
 with respect to \f$ x_i\f$. Each element is of type 
 `PolynomialTraits_d::Polynomial_d`. 

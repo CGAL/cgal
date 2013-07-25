@@ -79,17 +79,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the type of the segment tree traits class. 
 */ 
 typedef unspecified_type Traits; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Key Key; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Interval Interval; 
@@ -99,12 +99,12 @@ typedef Traits::Interval Interval;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty segment tree `S`. 
 */ 
 Segment_tree_k (); 
 
-/*! 
+/*!
 Introduces a segment tree `S` and initializes it with the data 
 in the range `[first, last)`. 
 \pre `value_type(first) == Traits::Interval`. 
@@ -118,7 +118,7 @@ ForwardIterator last);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Introduces a segment tree `S` and initializes it with the data 
 in the range `[first, last)`. This function can only be applied 
 once on an empty segment tree. 
@@ -129,7 +129,7 @@ void
 make_tree(ForwardIterator first, 
 ForwardIterator last); 
 
-/*! 
+/*!
 writes all intervals that have non empty intersection with interval `window` to the container 
 where `out` points to, and returns an output iterator that points 
 to the last location the function wrote to. 
@@ -140,7 +140,7 @@ OutputIterator
 window_query(Interval window, 
 OutputIterator out); 
 
-/*! 
+/*!
 writes all intervals that enclose in the interval `window` to the container 
 where `out` points to, and returns an output iterator that points 
 to the last location the function wrote to. 

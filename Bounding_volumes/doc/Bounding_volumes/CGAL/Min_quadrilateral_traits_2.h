@@ -24,37 +24,37 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `Kernel::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 `Kernel::Vector_2`. 
 */ 
 typedef unspecified_type Vector_2; 
 
-/*! 
+/*!
 `Kernel::Direction_2`. 
 */ 
 typedef unspecified_type Direction_2; 
 
-/*! 
+/*!
 `Kernel::Line_2`. 
 */ 
 typedef unspecified_type Line_2; 
 
-/*! 
+/*!
 internal type. 
 */ 
 typedef unspecified_type Rectangle_2; 
 
-/*! 
+/*!
 internal type. 
 */ 
 typedef unspecified_type Parallelogram_2; 
 
-/*! 
+/*!
 internal type. 
 */ 
 typedef unspecified_type Strip_2; 
@@ -64,37 +64,37 @@ typedef unspecified_type Strip_2;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 `Kernel::Equal_2`. 
 */ 
 typedef unspecified_type Equal_2; 
 
-/*! 
+/*!
 `Kernel::Less_xy_2`. 
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 `Kernel::Less_yx_2`. 
 */ 
 typedef unspecified_type Less_yx_2; 
 
-/*! 
+/*!
 `Kernel::Orientation_2`. 
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 `Kernel::Has_on_negative_side_2`. 
 */ 
 typedef unspecified_type Has_on_negative_side_2; 
 
-/*! 
+/*!
 `Kernel::Compare_angle_with_x_axis_2`. 
 */ 
 typedef unspecified_type Compare_angle_with_x_axis_2; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class 
 
 `op`: `Rectangle_2` \f$ \times\f$ `Rectangle_2` 
@@ -104,7 +104,7 @@ the area of \f$ r1\f$ is strictly less than the area of \f$ r2\f$.
 */ 
 typedef unspecified_type Area_less_rectangle_2; 
 
-/*! 
+/*!
 AdaptableBinaryFunction 
 class 
 `op`: `Parallelogram_2` \f$ \times\f$ 
@@ -115,7 +115,7 @@ less than the area of \f$ p2\f$.
 */ 
 typedef unspecified_type Area_less_parallelogram_2; 
 
-/*! 
+/*!
 AdaptableBinaryFunction class 
 
 `op`: `Strip_2` \f$ \times\f$ `Strip_2` \f$ \rightarrow\f$ 
@@ -130,12 +130,12 @@ typedef unspecified_type Width_less_strip_2;
 /// \name Constructions 
 /// @{
 
-/*! 
+/*!
 `Kernel::Construct_vector_2`. 
 */ 
 typedef unspecified_type Construct_vector_2; 
 
-/*! 
+/*!
 AdaptableFunctor 
 
 `op`: `Direction_2` \f$ \rightarrow\f$ `Vector_2`. 
@@ -144,27 +144,27 @@ AdaptableFunctor
 */ 
 typedef unspecified_type Construct_vector_from_direction_2; 
 
-/*! 
+/*!
 `Kernel::Construct_perpendicular_vector_2`. 
 */ 
 typedef unspecified_type Construct_perpendicular_vector_2; 
 
-/*! 
+/*!
 `Kernel::Construct_direction_2`. 
 */ 
 typedef unspecified_type Construct_direction_2; 
 
-/*! 
+/*!
 `Kernel::Construct_opposite_direction_2`. 
 */ 
 typedef unspecified_type Construct_opposite_direction_2; 
 
-/*! 
+/*!
 `Kernel::Construct_line_2`. 
 */ 
 typedef unspecified_type Construct_line_2; 
 
-/*! 
+/*!
 Function class 
 `op`: 
 `Point_2` \f$ \times\f$ `Direction_2` \f$ \times\f$ `Point_2` 
@@ -178,7 +178,7 @@ points on each side and one sides parallel to `d`.
 */ 
 typedef unspecified_type Construct_rectangle_2; 
 
-/*! 
+/*!
 Function class 
 
 `op`: `Point_2` \f$ \times\f$ `Direction_2` \f$ \times\f$ 
@@ -193,7 +193,7 @@ of the points on each side and one side parallel to each of
 */ 
 typedef unspecified_type Construct_parallelogram_2; 
 
-/*! 
+/*!
 Function class 
 `op`: 
 `Point_2` \f$ \times\f$ `Direction_2` \f$ \times\f$ `Point_2` 
@@ -216,7 +216,7 @@ typedef unspecified_type Construct_strip_2;
 /// exists:
 /// @{
 
-/*! 
+/*!
 copies the four vertices of `r` in 
 counterclockwise order to `o`. 
 */ 
@@ -224,7 +224,7 @@ template < class OutputIterator > OutputIterator
 copy_rectangle_vertices_2(const Rectangle_2& r, OutputIterator 
 o) const; 
 
-/*! 
+/*!
 copies the four vertices of `p` in 
 counterclockwise order to `o`. 
 */ 
@@ -232,14 +232,14 @@ template < class OutputIterator > OutputIterator
 copy_parallelogram_vertices_2(const Parallelogram_2& p, 
 OutputIterator o) const; 
 
-/*! 
+/*!
 copies the two lines bounding `s` to `o`. 
 */ 
 template < class OutputIterator > OutputIterator 
 copy_strip_lines_2(const Strip_2& s, OutputIterator o) 
 const; 
 
-/*! 
+/*!
 
 */ 
 Construct_vector_2 construct_vector_2_object() 

@@ -33,7 +33,7 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns true if the edge between the face and its neighbor 
 `neighbor(i)` is constrained. 
 \pre \f$ 0\leq i \leq2\f$. 
@@ -45,7 +45,7 @@ bool is_constrained(int i);
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 sets the edge between the face and its neighbor `neighbor(i)` 
@@ -54,7 +54,7 @@ as a constrained or unconstrained edge according to `b`.
 */ 
 void set_constraint(int i, bool b); 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 sets the status (constrained or unconstrained) of the three edges of the face. 
@@ -62,7 +62,7 @@ sets the status (constrained or unconstrained) of the three edges of the face.
 */ 
 void set_constraints(bool c0, bool c1, bool c2); 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 changes the orientation of the face by exchanging `vertex(0)` 
@@ -72,7 +72,7 @@ and the corresponding constrained status.
 */ 
 void reorient(); 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 performs a counterclockwise permutation of the 
@@ -81,7 +81,7 @@ vertices, neighbors and constrained status of the face.
 */ 
 void ccw_permute(); 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 performs a clockwise permutation of the 
@@ -95,7 +95,7 @@ void cw_permute();
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 \cgalAdvancedFunction
 \cgalAdvancedBegin

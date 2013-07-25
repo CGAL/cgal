@@ -45,7 +45,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 computes the Sturm-Habicht sequence of \f$ f\f$, 
 with respect to the outermost variable. Each element is of type 
 `PolynomialTraits_d::Polynomial_d`. 
@@ -54,7 +54,7 @@ template<typename OutputIterator>
 OutputIterator operator()(Polynomial_d f, 
 OutputIterator out); 
 
-/*! 
+/*!
 computes the Sturm-Habicht sequence of \f$ f\f$ 
 with respect to the variable \f$ x_i\f$. 
 */ 

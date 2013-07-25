@@ -24,7 +24,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the container `Data` - 
 the data type. It may consist of 
 several data slots. Two of these data slots have to be of 
@@ -32,7 +32,7 @@ type `Key`.
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 the container 
 `Window` - the query window type. It may consist of 
 several data slots. Two of these data slots have to be of 
@@ -40,14 +40,14 @@ type `Key`.
 */ 
 typedef unspecified_type Window; 
 
-/*! 
+/*!
 the type 
 `Key` of the data 
 slot this traits class provides access to. 
 */ 
 typedef unspecified_type Key; 
 
-/*! 
+/*!
 
 `Data_left_func` is a 
 function object providing an 
@@ -57,7 +57,7 @@ a (the left) component of type `Key`.
 */ 
 typedef unspecified_type Data_left_func; 
 
-/*! 
+/*!
 
 `Data_right_func` is a 
 function object providing an 
@@ -67,7 +67,7 @@ a (the right) component of type `Key`.
 */ 
 typedef unspecified_type Data_right_func; 
 
-/*! 
+/*!
 
 `Window_left_func` is a function objects that 
 allow to access the 
@@ -76,7 +76,7 @@ left data slot of container
 */ 
 typedef unspecified_type Window_left_func; 
 
-/*! 
+/*!
 
 `Window_right_func` is a function objects that 
 allow to access the 
@@ -85,7 +85,7 @@ right data slot of container
 */ 
 typedef unspecified_type Window_right_func; 
 
-/*! 
+/*!
 defines a comparison relation which must 
 define a strict ordering of the objects of type 
 `Key`. If defined, `less<Key>` 
@@ -98,7 +98,7 @@ typedef unspecified_type Compare;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 The data slot of 
 the data item of `d` of type `Key` is 
 accessed by function object 
@@ -106,7 +106,7 @@ accessed by function object
 */ 
 Key get_left(Data d); 
 
-/*! 
+/*!
 The data slot of 
 the data item of `d` of type `Key` is 
 accessed by function object 
@@ -114,7 +114,7 @@ accessed by function object
 */ 
 Key get_right(Data d); 
 
-/*! 
+/*!
 The data slot of 
 the data item of `w` of type `Key` is 
 accessed by function object 
@@ -122,14 +122,14 @@ accessed by function object
 */ 
 Key get_left_win(Window w); 
 
-/*! 
+/*!
 The data slot of 
 the data item of `w` of type `Key` is 
 accessed by function object `Window_right_func`. 
 */ 
 Key get_right_win(Window w); 
 
-/*! 
+/*!
 returns Compare(key1, key2). 
 */ 
 static bool comp(Key& key1, Key& key2); 
@@ -157,7 +157,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the container 
 `Data` - defines the Data type. It may consist of 
 several data slots. One of these data slots has to be of 
@@ -165,7 +165,7 @@ type `Key`.
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 the container 
 `Window` - defines the type of the query rectangle. It 
 may consist of 
@@ -174,14 +174,14 @@ type `Key`
 */ 
 typedef unspecified_type Window; 
 
-/*! 
+/*!
 the type 
 `Key` of the data 
 slot this traits class provides access to. 
 */ 
 typedef unspecified_type Key; 
 
-/*! 
+/*!
 
 `Data_func` is a 
 function object providing an 
@@ -190,7 +190,7 @@ a component of type `Key`.
 */ 
 typedef unspecified_type Data_func; 
 
-/*! 
+/*!
 
 `Window_left_func` is a function objects that 
 allow to access the 
@@ -199,7 +199,7 @@ left data slot of container
 */ 
 typedef unspecified_type Window_left_func; 
 
-/*! 
+/*!
 
 `Window_right_func` is a function objects that 
 allow to access the 
@@ -208,7 +208,7 @@ right data slot of container
 */ 
 typedef unspecified_type Window_right_func; 
 
-/*! 
+/*!
 defines a comparison relation which must 
 define a strict ordering of the objects of type 
 `Key`. If defined, `less<Key>` 
@@ -221,14 +221,14 @@ typedef unspecified_type Compare;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 The data slot of 
 the data item of `d` of type `Key` is 
 accessed by function object `Data_func`. 
 */ 
 Key get_key(Data d); 
 
-/*! 
+/*!
 The data slot of 
 the data item of `w` of type `Key` is 
 accessed by function object 
@@ -236,20 +236,20 @@ accessed by function object
 */ 
 Key get_left(Window w); 
 
-/*! 
+/*!
 The data slot of 
 the data item of `w` of type `Key` is 
 accessed by function object `Window_right_func`. 
 */ 
 Key get_right(Window w); 
 
-/*! 
+/*!
 returns `Compare(key1, key2)`. 
 */ 
 static bool comp(Key& key1, Key& 
 key2); 
 
-/*! 
+/*!
 returns `Compare(get_key(data1), get_key(data2))`. 
 */ 
 static bool key_comp(Data& data1, Data& 

@@ -15,7 +15,7 @@ public:
 /// \name Slots 
 /// @{
 
-/*! 
+/*!
 This slot must be provided by derived classes. 
 */ 
 virtual void modelChanged(); 

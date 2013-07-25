@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 converts \f$ p\f$ to its geometric vector. 
 */ 
 Kernel_d::Vector_d operator()(const Kernel_d::Point_d& p); 

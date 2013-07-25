@@ -33,7 +33,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 If `T` is a type 
 `K::Point_2` of some kernel model `K`, then `Kernel` is 
 equal to `K`. 

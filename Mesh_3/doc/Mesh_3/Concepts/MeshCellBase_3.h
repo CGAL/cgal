@@ -47,18 +47,18 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type, required to match the point type 
 of the 3D triangulation in which the mesh is embedded. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 Type of indices for cells of the input complex. Must match the type `MeshDomain_3::Subdomain_index`. 
 */ 
 typedef unspecified_type Subdomain_index;; 
 
-/*! 
+/*!
 Type of indices for surface patches of the input complex. Must match the type `MeshDomain_3::Surface_patch_index`. 
 */ 
 typedef unspecified_type Surface_patch_index;; 
@@ -68,51 +68,51 @@ typedef unspecified_type Surface_patch_index;;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the 
 index of the input subdomain that contains the cell `cell` 
 of the triangulation. 
 */ 
 Subdomain_index subdomain_index(); 
 
-/*! 
+/*!
 Sets 
 the subdomain index of the cell. 
 */ 
 void set_subdomain_index(Subdomain_index index); 
 
-/*! 
+/*!
 returns `true` iff `facet(i)` is a surface facet. 
 */ 
 bool is_facet_on_surface(int i); 
 
-/*! 
+/*!
 returns `Surface_patch_index` of facet `i`. 
 */ 
 Surface_patch_index surface_patch_index(int i); 
 
-/*! 
+/*!
 sets `Surface_patch_index` of facet `i` to `index`. 
 */ 
 void set_surface_patch_index(int i, Surface_patch_index index); 
 
-/*! 
+/*!
 Returns `true` iff `facet(i)` has been visited. 
 */ 
 bool is_facet_visited (int i); 
 
-/*! 
+/*!
 Marks `facet(i)` as visited if `b` is `true` 
 and non-visited otherwise. 
 */ 
 void set_facet_visited (int i, bool b); 
 
-/*! 
+/*!
 Returns a const reference to the surface center of `facet(i)`. 
 */ 
 const Point& facet_surface_center(int i); 
 
-/*! 
+/*!
 Sets point `p` as the surface center of `facet(i)`. 
 */ 
 void set_facet_surface_center (int i, Point p); 

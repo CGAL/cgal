@@ -53,13 +53,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A bidirectional iterator that allows 
 traversing the points that comprise a polyline curve. 
 */ 
 typedef unspecified_type const_iterator; 
 
-/*! 
+/*!
 A bidirectional iterator that 
 allows traversing the points that comprise a polyline curve. 
 */ 
@@ -70,12 +70,12 @@ typedef unspecified_type const_reverse_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor that constructs an empty polyline. 
 */ 
 Curve_2 (); 
 
-/*! 
+/*!
 constructs a polyline defined by the given range of points 
 `[first, last)` (the value-type of `InputIterator` must be 
 `SegmentTraits::Point_2`. 
@@ -94,47 +94,47 @@ Curve_2 (Iterator first, Iterator last);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the number of points that comprise the polyline. 
 Note that if there are \f$ n\f$ points in the polyline, it is comprised 
 of \f$ (n - 1)\f$ segments. 
 */ 
 size_t points() const; 
 
-/*! 
+/*!
 returns an iterator pointing at the source point of the polyline. 
 */ 
 const_iterator begin() const; 
 
-/*! 
+/*!
 returns an iterator pointing after the end of the polyline. 
 */ 
 const_iterator end() const; 
 
-/*! 
+/*!
 returns an iterator pointing at the target point of the polyline. 
 */ 
 const_iterator rbegin() const; 
 
-/*! 
+/*!
 returns an iterator pointing before the beginning of the polyline. 
 */ 
 const_iterator rend() const; 
 
-/*! 
+/*!
 returns the number of line segments comprising the polyline 
 (equivalent to `pi.points() - 1`). 
 */ 
 size_t size() const; 
 
-/*! 
+/*!
 returns the \f$ k\f$th segment of the polyline. 
 \pre `k` is not greater or equal to `pi.size() - 1`. 
 */ 
 typename SegmentTraits::X_monotone_curve_2 
 operator[] (size_t k) const; 
 
-/*! 
+/*!
 return a bounding box of the polyline `pi`. 
 */ 
 Bbox_2 bbox() const; 
@@ -144,13 +144,13 @@ Bbox_2 bbox() const;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 adds a new point to the polyline, which becomes the new target point 
 of `pi`. 
 */ 
 void push_back (const Point_2 & p); 
 
-/*! 
+/*!
 resets the polyline. 
 */ 
 void clear(); 

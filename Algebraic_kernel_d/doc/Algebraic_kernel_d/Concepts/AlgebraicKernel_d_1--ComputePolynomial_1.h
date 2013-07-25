@@ -18,12 +18,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Algebraic_real_1 argument_type; 
@@ -33,7 +33,7 @@ typedef AlgebraicKernel_d_1::Algebraic_real_1 argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes a square free polynomial \f$ p\f$, such that \f$ x\f$ is a real root of \f$ p\f$. 
 */ 
 result_type operator()(argument_type x); 

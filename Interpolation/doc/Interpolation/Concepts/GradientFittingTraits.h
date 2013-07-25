@@ -24,24 +24,24 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The number type must follow the model 
 `FieldNumberType`. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The point type on 
 which the function is defined and interpolated. 
 */ 
 typedef unspecified_type Point_d; 
 
-/*! 
+/*!
 The corresponding vector type. 
 */ 
 typedef unspecified_type Vector_d; 
 
-/*! 
+/*!
 defines a 
 matrix type. 
 Must provide the following member functions : 
@@ -55,7 +55,7 @@ multiplication of `tr` with `v`.
 */ 
 typedef unspecified_type Aff_transformation_d; 
 
-/*! 
+/*!
 A constructor object for 
 `Vector_d`. 
 Provides : 
@@ -68,7 +68,7 @@ the null vector.
 */ 
 typedef unspecified_type Construct_vector_d; 
 
-/*! 
+/*!
 Constructor object for 
 `Vector_d`. 
 Provides : 
@@ -78,7 +78,7 @@ vector `v` scaled by a factor `scale`.
 */ 
 typedef unspecified_type Construct_scaled_vector_d; 
 
-/*! 
+/*!
 Constructor object for 
 `Aff_transformation_d`. Provides : 
 
@@ -87,7 +87,7 @@ transformation whose matrix has only zero entries.
 */ 
 typedef unspecified_type Construct_null_matrix_d; 
 
-/*! 
+/*!
 Constructor object for 
 `Aff_transformation_d`. Provides : 
 
@@ -96,7 +96,7 @@ scaling by a scale factor `scale`.
 */ 
 typedef unspecified_type Construct_scaling_matrix_d; 
 
-/*! 
+/*!
 Constructor object for 
 `Aff_transformation_d`. Provides : 
 
@@ -105,7 +105,7 @@ representing `tr1` and `tr2`.
 */ 
 typedef unspecified_type Construct_sum_matrix_d; 
 
-/*! 
+/*!
 Constructor object for 
 `Aff_transformation_d`. Provides : 
 
@@ -119,7 +119,7 @@ typedef unspecified_type Construct_outer_product_d;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 GradientFittingTraits(); 
@@ -131,29 +131,29 @@ GradientFittingTraits();
 /// constructor object types must exist.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_vector_d construct_vector_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_scaled_vector_d 
 construct_scaled_vector_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_null_matrix_d construct_null_matrix_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_sum_matrix_d 
 construct_sum_matrix_d_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_outer_product_d 

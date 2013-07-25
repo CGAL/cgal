@@ -15,7 +15,7 @@ public:
 /// @{
 
 
-/*! 
+/*!
 For two circular arcs. 
 \pre `p` must be a common point to `a1` and `a2`, and `a1` and `a2` must be defined to the right of `p`. 
 */ 
@@ -24,7 +24,7 @@ Comparison_result operator()
 const Circular_kernel_2::Circular_arc_2 &a2, 
 const Circular_kernel_2::Circular_arc_point_2 &p); 
 
-/*! 
+/*!
 Same for two segments. 
 */ 
 Comparison_result operator() 
@@ -32,7 +32,7 @@ Comparison_result operator()
 const Circular_kernel_2::Line_arc_2 &a2, 
 const Circular_kernel_2::Circular_arc_point_2 &p); 
 
-/*! 
+/*!
 For a segment and an arc. 
 */ 
 Comparison_result operator() 
@@ -40,7 +40,7 @@ Comparison_result operator()
 const Circular_kernel_2::Circular_arc_2 &a2, 
 const Circular_kernel_2::Circular_arc_point_2 &p); 
 
-/*! 
+/*!
 Same as previous. 
 */ 
 Comparison_result operator() 

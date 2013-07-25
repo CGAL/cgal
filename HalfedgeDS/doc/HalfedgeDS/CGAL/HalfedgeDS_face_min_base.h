@@ -27,7 +27,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 HalfedgeDS_face_min_base(); 

@@ -22,7 +22,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A coordinate type.
 The type must provide a copy constructor, assignment, comparison 
 operators, negation, multiplication, division and allow the 
@@ -38,7 +38,7 @@ typedef unspecified_type FT;
 /// Only a default constructor is required. Note that further constructors can be provided.
 /// @{
 
-/*! 
+/*!
 A default constructor. 
 */ 
   AlphaShapeTraits_2(); 
@@ -48,7 +48,7 @@ A default constructor.
 /// \name Constructions by function objects 
 /// @{
 
-/*! 
+/*!
 Returns an object, which has to be able to compute the squared radius of the 
 circle of the points `p0, p1, p2` or the squared radius of smallest circle 
 of the points `p0, p1`, as `FT` associated with <I>the metric used 
@@ -61,7 +61,7 @@ Compute_squared_radius_2 compute_squared_radius_2_object();
 /// \name Predicate by function object 
 /// @{
 
-/*! 
+/*!
 Returns an object, which has to be able to compute the relative position of 
 point `test` to the smallest circle of the points `p0, p1`, using 
 <I>the same metric as `Dt`</I>. 

@@ -24,17 +24,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the scalar type. 
 */ 
 typedef StreamLinesTraits_2::FT FT; 
 
-/*! 
+/*!
 the point type. 
 */ 
 typedef StreamLinesTraits_2::Point_2 Point_2; 
 
-/*! 
+/*!
 the vector type. 
 */ 
 typedef StreamLinesTraits_2::Vector_2 Vector_2; 
@@ -44,7 +44,7 @@ typedef StreamLinesTraits_2::Vector_2 Vector_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Defines the points in the range `[first_point, last_point)` 
 as the sample points of the triangular field, with the corresponding number of vectors started at `first_vector`. 
 \tparam PointInputIterator must be an input iterator with the value type `Point_2`. 

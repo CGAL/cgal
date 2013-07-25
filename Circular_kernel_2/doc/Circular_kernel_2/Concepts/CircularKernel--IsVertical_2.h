@@ -13,13 +13,13 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 For a line arc. 
 */ 
 bool operator() 
 (const CircularKernel::Line_arc_2 & l); 
 
-/*! 
+/*!
 For a circular arc, always returns `false`. 
 */ 
 bool operator() 

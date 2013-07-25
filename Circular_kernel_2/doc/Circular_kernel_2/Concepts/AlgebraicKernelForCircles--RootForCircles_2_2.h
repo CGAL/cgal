@@ -20,7 +20,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool operator ==( const AlgebraicKernelForCircles::RootForCircles_2_2 & p, 

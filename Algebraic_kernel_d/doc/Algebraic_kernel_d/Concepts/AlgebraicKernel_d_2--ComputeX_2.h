@@ -18,12 +18,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_1 result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 argument_type; 
@@ -34,7 +34,7 @@ typedef AlgebraicKernel_d_2::Algebraic_real_2 argument_type;
 /// A model of this type must provide:
 /// @{
 
-/*! 
+/*!
 
 Computes the first coordinate of \f$ a\f$. 
 

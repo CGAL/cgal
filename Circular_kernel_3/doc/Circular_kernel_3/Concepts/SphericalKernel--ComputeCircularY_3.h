@@ -10,7 +10,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the \f$ y\f$-coordinate of the point `p`. 
 */ 
 

@@ -21,19 +21,19 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The class used for representing matrices. 
 It has to be a model for `BasicMatrix`. 
 */ 
 typedef unspecified_type Matrix; 
 
-/*! 
+/*!
 The class used for 
 representing the matrix elements. 
 */ 
 typedef Matrix::Value Value; 
 
-/*! 
+/*!
 An adaptable binary function 
 class: `Value` \f$ \times\f$ `Value` \f$ \rightarrow\f$ `bool` 
 defining a non-reflexive total order on `Value`. This 
@@ -41,7 +41,7 @@ determines the direction of the search.
 */ 
 typedef unspecified_type Compare_strictly; 
 
-/*! 
+/*!
 An adaptable binary function 
 class: `Value` \f$ \times\f$ `Value` \f$ \rightarrow\f$ `bool` 
 defining the reflexive total order on `Value` corresponding 
@@ -54,21 +54,21 @@ typedef unspecified_type Compare_non_strictly;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the `Compare_strictly` object to be used for 
 the search. 
 */ 
 Compare_strictly compare_strictly() 
 const; 
 
-/*! 
+/*!
 returns the `Compare_non_strictly` object to be used 
 for the search. 
 */ 
 Compare_non_strictly compare_non_strictly() 
 const; 
 
-/*! 
+/*!
 The 
 predicate to determine whether an element `a` is feasible. 
 It has to be monotone in the sense that `compare(a, b)` and 

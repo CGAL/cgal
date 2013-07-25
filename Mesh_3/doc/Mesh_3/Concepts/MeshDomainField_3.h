@@ -21,17 +21,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Numerical type. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 Index type for points. Must match the type `MeshDomain_3::Index`. 
 */ 
 typedef unspecified_type Index; 
@@ -45,7 +45,7 @@ on the input feature including the query point.
 */
 /// @{
 
-/*! 
+/*!
 
 returns the value of the sizing field at the point `p`, 
 assumed to be included in the input complex feature with dimension `dimension` 

@@ -34,38 +34,38 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
 
-/*! 
+/*!
 Distance type. 
 */ 
 typedef OrthogonalDistance Distance; 
 
-/*! 
+/*!
 Query item. 
 */ 
 typedef OrthogonalDistance::Query_item Query_item; 
 
-/*! 
+/*!
 Pair of point and transformed distance. 
 */ 
 typedef std::pair<Point_d,FT> Point_with_transformed_distance; 
 
-/*! 
+/*!
 const input iterator with value type `Point_with_transformed_distance` 
 for enumerating approximate neighbors. 
 */ 
 typedef unspecified_type iterator; 
 
-/*! 
+/*!
 The tree type. 
 */ 
 typedef SpatialTree Tree; 
@@ -75,7 +75,7 @@ typedef SpatialTree Tree;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor for incremental neighbor searching of the query item `query` 
 in the points stored `tree` using a distance `d` and approximation factor `eps`. 
 */ 
@@ -88,17 +88,17 @@ OrthogonalDistance d=OrthogonalDistance());
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a const iterator to the approximate nearest or furthest neighbor. 
 */ 
 iterator begin() const; 
 
-/*! 
+/*!
 Returns the appropriate past-the-end const iterator. 
 */ 
 iterator end() const; 
 
-/*! 
+/*!
 
 Inserts statistics of the search process into the output stream `s`. 
 

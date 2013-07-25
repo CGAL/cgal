@@ -53,7 +53,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type, required to match the point type 
 of the three dimensional 
 triangulation in which the surface mesh is embedded. 
@@ -65,35 +65,35 @@ typedef unspecified_type Point;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns `true`, if `facet(i)` is in the 2D complex. 
 */ 
 bool is_facet_on_surface(int i); 
 
-/*! 
+/*!
 Sets `facet(i)` as part of the 2D complex, if `b` is `true`, 
 and `NOT_IN_COMPLEX`, otherwise. 
 */ 
 void set_facet_on_surface(int i, bool b ); 
 
-/*! 
+/*!
 Returns `true`, if `facet(i)` has been visited, 
 `false` otherwise. 
 */ 
 bool is_facet_visited (int i); 
 
-/*! 
+/*!
 Marks `facet(i)` as visited, if `b` is `true`, 
 and non visited otherwise. 
 */ 
 void set_facet_visited (int i, bool b); 
 
-/*! 
+/*!
 Returns a const reference to the surface center of `facet(i)`. 
 */ 
 const Point& get_facet_surface_center(int i); 
 
-/*! 
+/*!
 Sets point `p` as the surface center of `facet(i)`. 
 */ 
 void set_facet_surface_center (int i, Point p); 

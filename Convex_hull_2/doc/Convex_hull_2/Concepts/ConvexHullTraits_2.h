@@ -25,12 +25,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type on which the convex hull functions operate. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 Binary predicate object type comparing `Point_2`s. Must provide 
 `bool operator()(Point_2 p, Point_2 q)` where `true` 
 is returned iff \f$ p ==_{xy} q\f$, false otherwise. 
@@ -38,7 +38,7 @@ is returned iff \f$ p ==_{xy} q\f$, false otherwise.
 */ 
 typedef unspecified_type Equal_2; 
 
-/*! 
+/*!
 Binary predicate object type comparing `Point_2`s 
 lexicographically. Must provide 
 `bool operator()(Point_2 p, Point_2 q)` where `true` 
@@ -50,12 +50,12 @@ respectively.
 */ 
 typedef unspecified_type Less_xy_2; 
 
-/*! 
+/*!
 Same as `Less_xy_2` with the roles of \f$ x\f$ and \f$ y\f$ interchanged. 
 */ 
 typedef unspecified_type Less_yx_2; 
 
-/*! 
+/*!
 Predicate object type that must provide 
 `bool operator()(Point_2 p,Point_2 q,Point_2 r)`, which 
 returns `true` iff `r` lies to the left of the 
@@ -63,7 +63,7 @@ oriented line through `p` and `q`.
 */ 
 typedef unspecified_type Left_turn_2; 
 
-/*! 
+/*!
 Predicate object type that must provide 
 `bool operator()(Point_2 p, Point_2 q, 
 Point_2 r,Point_2 s)`, which returns `true` iff 
@@ -78,7 +78,7 @@ the order given by `Less_signed_distance_to_line_2`.
 */ 
 typedef unspecified_type Less_signed_distance_to_line_2; 
 
-/*! 
+/*!
 Predicate object type that must provide 
 `bool operator()(Point_2 e, Point_2 p,Point_2 q)`, 
 where `true` is returned iff a tangent at \f$ e\f$ to the point set 
@@ -95,7 +95,7 @@ typedef unspecified_type Less_rotate_ccw_2;
 /// Only a copy constructor is required. 
 /// @{
 
-/*! 
+/*!
 
 */ 
 ConvexHullTraits_2(ConvexHullTraits_2& t); 
@@ -107,32 +107,32 @@ ConvexHullTraits_2(ConvexHullTraits_2& t);
 /// object types must exist. 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Equal_2 equal_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_yx_2 less_yx_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_rotate_ccw_2 less_rotate_ccw_2_object( ); 
 
-/*! 
+/*!
 
 */ 
 Left_turn_2 left_turn_2_object(); 

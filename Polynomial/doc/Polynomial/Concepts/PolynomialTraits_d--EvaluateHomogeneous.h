@@ -25,7 +25,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Coefficient_type result_type; 
@@ -35,7 +35,7 @@ typedef PolynomialTraits_d::Coefficient_type result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns \f$ p(u,v)\f$, with respect to the outermost variable. 
 

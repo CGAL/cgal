@@ -44,27 +44,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Index type. 
 */ 
 typedef Tr::Vertex::Index Index; 
 
-/*! 
+/*!
 Surface index type. 
 */ 
 typedef Tr::Cell::Surface_patch_index Surface_patch_index; 
 
-/*! 
+/*!
 Subdomain index type. 
 */ 
 typedef Tr::Cell::Subdomain_index Subdomain_index; 
 
-/*! 
+/*!
 `Corner_index` type. 
 */ 
 typedef CornerIndex Corner_index; 
 
-/*! 
+/*!
 `Curve_segment_index` type. 
 */ 
 typedef CurveSegmentIndex Curve_segment_index; 
@@ -74,7 +74,7 @@ typedef CurveSegmentIndex Curve_segment_index;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Outputs the mesh to `os` 
 in medit format. 
 */ 

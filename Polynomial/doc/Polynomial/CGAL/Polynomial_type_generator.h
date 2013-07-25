@@ -20,7 +20,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The generated type. 
 */ 
 typedef unspecified_type Type; 

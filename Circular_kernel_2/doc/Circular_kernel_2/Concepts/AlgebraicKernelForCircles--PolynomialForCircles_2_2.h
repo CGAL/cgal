@@ -26,7 +26,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool operator ==(AlgebraicKernelForCircles::const PolynomialForCircles_2_2 & p, 

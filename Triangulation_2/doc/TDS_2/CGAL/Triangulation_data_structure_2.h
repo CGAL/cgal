@@ -57,12 +57,12 @@ public:
 /// \cgalAdvancedEnd
 /// @{
 
-/*! 
+/*!
 Vertex container type. 
 */ 
 typedef Compact_container<Vertex> Vertex_range; 
 
-/*! 
+/*!
 Face container type. 
 */ 
 typedef Compact_container<Face> Face_range; 
@@ -76,22 +76,22 @@ typedef Compact_container<Face> Face_range;
 /// \cgalAdvancedEnd
 /// @{
 
-/*! 
+/*!
 Returns a reference to the container of faces. 
 */ 
 Face_range & faces() const; 
 
-/*! 
+/*!
 Returns a reference to the container of faces. 
 */ 
 Face_range & faces(); 
 
-/*! 
+/*!
 Returns a reference to the container of vertices. 
 */ 
 Vertex_range & vertices() const; 
 
-/*! 
+/*!
 Returns a reference to the container of vertices. 
 */ 
 Vertex_range & vertices(); 
@@ -101,7 +101,7 @@ Vertex_range & vertices();
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 Joins 
 the vertices that are endpoints of the edge `(f,i)`, and returns 
 a vertex handle to common vertex (see 
@@ -110,28 +110,28 @@ Fig.\ \ref figtdssplitjoin).
 */ 
 Vertex_handle join_vertices(Face_handle f, int i); 
 
-/*! 
+/*!
 Joins 
 the vertices that are endpoints of the edge `e`, and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Edge e); 
 
-/*! 
+/*!
 Joins 
 the vertices that are endpoints of the edge `*eit`, and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Edge_iterator eit); 
 
-/*! 
+/*!
 Joins 
 the vertices that are endpoints of the edge `*ec`, and returns 
 a vertex handle to common vertex. 
 */ 
 Vertex_handle join_vertices(Edges_circulator ec); 
 
-/*! 
+/*!
 Splits the vertex `v` into two vertices `v1` and 
 `v2`. The common faces `f` and `g` of `v1` and 
 `v2` are created after (in the counter-clockwise sense) the 
@@ -144,7 +144,7 @@ Face_handle>
 split_vertex(Vertex_handle v, Face_handle f1, Face_handle 
 f2); 
 
-/*! 
+/*!
 Inserts 
 a degree two vertex and two faces adjacent to it that have two common 
 edges. The edge defined by the face handle `f` and the integer 
@@ -153,7 +153,7 @@ edges. The edge defined by the face handle `f` and the integer
 */ 
 Vertex_handle insert_degree_2(Face_handle f, int i); 
 
-/*! 
+/*!
 Removes a degree 2 
 vertex and the two faces adjacent to it. The two edges of the star of 
 `v` that are not incident to it are collapsed 

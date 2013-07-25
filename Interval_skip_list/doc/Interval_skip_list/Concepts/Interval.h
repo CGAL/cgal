@@ -22,7 +22,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 Interval(); 
@@ -32,7 +32,7 @@ Interval();
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the lower and upper bound of the interval. 
 */ 
 typedef unspecified_type Value; 
@@ -42,32 +42,32 @@ typedef unspecified_type Value;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the lower bound. 
 */ 
 Value inf() const; 
 
-/*! 
+/*!
 Returns the upper bound. 
 */ 
 Value sup() const; 
 
-/*! 
+/*!
 Returns `true`, iff the interval contains `v`. 
 */ 
 bool contains(const Value& v) const; 
 
-/*! 
+/*!
 Returns `true`, iff the interval contains `(i,s)`. 
 */ 
 bool contains_interval(const Value& i, const Value& s) const; 
 
-/*! 
+/*!
 Equality test. 
 */ 
 bool operator==(const Interval& I) const; 
 
-/*! 
+/*!
 Unequality test. 
 */ 
 bool operator!=(const Interval& I) const; 

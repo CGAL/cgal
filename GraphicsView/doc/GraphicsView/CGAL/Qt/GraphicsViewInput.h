@@ -13,7 +13,7 @@ public:
 /// \name Signals 
 /// @{
 
-/*! 
+/*!
 A signal that emits a `CGAL::Object`. 
 */ 
 void generate(Object); 

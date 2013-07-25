@@ -37,32 +37,32 @@ public:
 /// The class `Triangulation_3` defines the following types:   
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3 Triangulation_data_structure; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationTraits_3 Geom_traits; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationTraits_3::Point_3 Point; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationTraits_3::Segment_3 Segment; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationTraits_3::Triangle_3 Triangle; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationTraits_3::Tetrahedron_3 Tetrahedron; 
@@ -75,22 +75,22 @@ Only vertices (0-faces) and cells (3-faces) are stored. Edges (1-faces) and face
 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Vertex Vertex; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Cell Cell; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Facet Facet; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_3::Edge Edge; 
@@ -113,83 +113,83 @@ arguments to the functions.
 */
 /// @{
 
-/*! 
+/*!
 handle to a vertex 
 */ 
 typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 handle to a cell 
 */ 
 typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
 
-/*! 
+/*!
 Reference to a simplex (vertex, edge, facet or cell) of the triangulation 
 */ 
 typedef Triangulation_simplex_3<Self> Simplex; 
 
-/*! 
+/*!
 Size type (an unsigned integral type) 
 */ 
 typedef TriangulationDataStructure_3::size_type size_type; 
 
-/*! 
+/*!
 Difference type (a signed integral type) 
 */ 
 typedef TriangulationDataStructure_3::difference_type difference_type; 
 
-/*! 
+/*!
 iterator over cells 
 */ 
 typedef TriangulationDataStructure_3::Cell_iterator All_cells_iterator; 
 
-/*! 
+/*!
 iterator over facets 
 */ 
 typedef TriangulationDataStructure_3::Facet_iterator All_facets_iterator; 
 
-/*! 
+/*!
 iterator over edges 
 */ 
 typedef TriangulationDataStructure_3::Edge_iterator All_edges_iterator; 
 
-/*! 
+/*!
 iterator over vertices 
 */ 
 typedef TriangulationDataStructure_3::Vertex_iterator All_vertices_iterator; 
 
-/*! 
+/*!
 iterator over finite cells 
 */ 
 typedef unspecified_type Finite_cells_iterator; 
 
-/*! 
+/*!
 iterator over finite facets 
 */ 
 typedef unspecified_type Finite_facets_iterator; 
 
-/*! 
+/*!
 iterator over finite edges 
 */ 
 typedef unspecified_type Finite_edges_iterator; 
 
-/*! 
+/*!
 iterator over finite vertices 
 */ 
 typedef unspecified_type Finite_vertices_iterator; 
 
-/*! 
+/*!
 iterator over the points corresponding to the 
 finite vertices of the triangulation. 
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 circulator over all cells incident to a given edge 
 */ 
 typedef TriangulationDataStructure_3::Cell_circulator Cell_circulator; 
 
-/*! 
+/*!
 circulator over all facets incident to a given edge 
 */ 
 typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator; 
@@ -199,19 +199,19 @@ typedef TriangulationDataStructure_3::Facet_circulator Facet_circulator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces a triangulation `t` having only one vertex which is the 
 infinite vertex. 
 */ 
 Triangulation_3 
 (const TriangulationTraits_3 & traits = TriangulationTraits_3()); 
 
-/*! 
+/*!
 Copy constructor. All vertices and faces are duplicated. 
 */ 
 Triangulation_3 (const Triangulation_3 & tr); 
 
-/*! 
+/*!
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
 */ 
@@ -224,14 +224,14 @@ const TriangulationTraits_3 & traits = TriangulationTraits_3() );
 /// \name Assignment 
 /// @{
 
-/*! 
+/*!
 The triangulation `tr` is duplicated, and modifying the copy after the 
 duplication does not modify the original. The previous triangulation held 
 by `t` is deleted. 
 */ 
 Triangulation_3 & operator=(const Triangulation_3 & tr); 
 
-/*! 
+/*!
 The triangulations `tr` and `t` are swapped. 
 `t.swap(tr)` should be preferred to `t = tr` or to 
 `t(tr)` if `tr` is deleted after that. Indeed, there is no 
@@ -239,12 +239,12 @@ copy of cells and vertices, thus this method runs in constant time.
 */ 
 void swap(Triangulation_3 & tr); 
 
-/*! 
+/*!
 Deletes all finite vertices and all cells of `t`. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 Equality operator. Returns true iff there exist a bijection between the 
 vertices of `t1` and those of `t2` and a bijection between the cells of 
 `t1` and those of `t2`, which preserve the geometry of the 
@@ -255,7 +255,7 @@ a permutation of their vertices).
 template < class GT, class Tds1, class Tds2 > 
 bool operator==(const Triangulation_3<GT, Tds1> & t1, const Triangulation_3<GT, Tds2> & t2); 
 
-/*! 
+/*!
 The opposite of `operator==`. 
 */ 
 template < class GT, class Tds1, class Tds2 > 
@@ -266,18 +266,18 @@ bool operator!=(const Triangulation_3<GT, Tds1> & t1, const Triangulation_3<GT, 
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the geometric traits object. 
 */ 
 const TriangulationTraits_3 & geom_traits() const; 
 
-/*! 
+/*!
 Returns a const reference to the triangulation data structure. 
 */ 
 const TriangulationDataStructure_3 & tds() const; 
 
 
-/*! 
+/*!
 Returns a reference to the triangulation data structure.
 \cgalAdvancedBegin
 This method is mainly a help for users implementing their own triangulation algorithms.
@@ -286,22 +286,22 @@ The responsibility of keeping a valid triangulation belongs to the user when usi
 */
 TriangulationDataStructure_3 & tds(); 
 
-/*! 
+/*!
 Returns the dimension of the affine hull. 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 Returns the number of finite vertices. 
 */ 
 size_type number_of_vertices() const; 
 
-/*! 
+/*!
 Returns the number of cells or 0 if `t.dimension() < 3`. 
 */ 
 size_type number_of_cells() const; 
 
-/*! 
+/*!
 Returns the infinite vertex. 
 */ 
 Vertex_handle infinite_vertex(); 
@@ -315,7 +315,7 @@ Sets the infinite vertex.
 */ 
 void set_infinite_vertex(Vertex_handle v);
 
-/*! 
+/*!
 Returns a cell incident to the infinite vertex. 
 */ 
 Cell_handle infinite_cell() const; 
@@ -326,27 +326,27 @@ Cell_handle infinite_cell() const;
 /// As previously said, the triangulation is a collection of cells that are either infinite or represent a finite tetrahedra, where an infinite cell is a cell incident to the infinite vertex. Similarly we call an edge (resp. facet) `infinite` if it is incident to the infinite vertex.
 /// @{
 
-/*! 
+/*!
 The number of facets. Returns 0 if `t.dimension() < 2`. 
 */ 
 size_type number_of_facets() const; 
 
-/*! 
+/*!
 The number of edges. Returns 0 if `t.dimension() < 1`. 
 */ 
 size_type number_of_edges() const; 
 
-/*! 
+/*!
 The number of finite cells. Returns 0 if `t.dimension() < 3`. 
 */ 
 size_type number_of_finite_cells() const; 
 
-/*! 
+/*!
 The number of finite facets. Returns 0 if `t.dimension() < 2`. 
 */ 
 size_type number_of_finite_facets() const; 
 
-/*! 
+/*!
 The number of finite edges. Returns 0 if `t.dimension() < 1`. 
 */ 
 size_type number_of_finite_edges() const; 
@@ -356,13 +356,13 @@ size_type number_of_finite_edges() const;
 /// \name Geometric Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the tetrahedron formed by the four vertices of `c`. 
 \pre `t.dimension() == 3` and the cell is finite. 
 */ 
 Tetrahedron tetrahedron(Cell_handle c) const; 
 
-/*! 
+/*!
 Returns the triangle formed by the three vertices of facet 
 `(c,i)`. The triangle is oriented so that its normal points to the 
 inside of cell `c`. 
@@ -370,31 +370,31 @@ inside of cell `c`.
 */ 
 Triangle triangle(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Same as the previous method for facet `f`. 
 \pre `t.dimension()` \f$ \geq2\f$ and the facet is finite. 
 */ 
 Triangle triangle(const Facet & f) const; 
 
-/*! 
+/*!
 Returns the line segment formed by the vertices of `e`. 
 \pre `t.dimension()` \f$ \geq1\f$ and `e` is finite. 
 */ 
 Segment segment(const Edge & e) const; 
 
-/*! 
+/*!
 Same as the previous method for edge `(c,i,j)`. 
 \pre As above and \f$ i\neq j\f$. Moreover \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1, and the edge is finite. 
 */ 
 Segment segment(Cell_handle c, int i, int j) const; 
 
-/*! 
+/*!
 Returns the point given by vertex `i` of cell `c`. 
 \pre `t.dimension()` \f$ \geq0\f$ and \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite. 
 */ 
 const Point & point(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Same as the previous method for vertex `v`. 
 \pre `t.dimension()` \f$ \geq0\f$ and the vertex is finite. 
 */ 
@@ -405,38 +405,38 @@ const Point & point(Vertex_handle v) const;
 /// \name Tests for Finite and Infinite Vertices and Faces 
 /// @{
 
-/*! 
+/*!
 `true`, iff vertex `v` is the infinite vertex. 
 */ 
 bool is_infinite(Vertex_handle v) const; 
 
-/*! 
+/*!
 `true`, iff `c` is incident to the infinite vertex. 
 \pre `t.dimension() == 3`. 
 */ 
 bool is_infinite(Cell_handle c) const; 
 
-/*! 
+/*!
 `true`, iff the facet `i` of cell `c` is incident to the 
 infinite vertex. 
 \pre `t.dimension()` \f$ \geq2\f$ and \f$ i\in\{0,1,2,3\}\f$ in dimension 3, \f$ i=3\f$ in dimension 2. 
 */ 
 bool is_infinite(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 `true` iff facet `f` is incident to the infinite vertex. 
 \pre `t.dimension()` \f$ \geq2\f$. 
 */ 
 bool is_infinite(const Facet & f) const; 
 
-/*! 
+/*!
 `true`, iff the edge `(i,j)` of cell `c` is incident to 
 the infinite vertex. 
 \pre `t.dimension()` \f$ \geq1\f$ and \f$ i\neq j\f$. Moreover \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1. 
 */ 
 bool is_infinite(Cell_handle c, int i, int j) const; 
 
-/*! 
+/*!
 `true` iff edge `e` is incident to the infinite vertex. 
 \pre `t.dimension()` \f$ \geq1\f$. 
 */ 
@@ -448,19 +448,19 @@ bool is_infinite(const Edge & e) const;
 
 /// @{
 
-/*! 
+/*!
 Tests whether `p` is a vertex of `t` by locating `p` in 
 the triangulation. If `p` is found, the associated vertex `v` 
 is given. 
 */ 
 bool is_vertex(const Point & p, Vertex_handle & v) const; 
 
-/*! 
+/*!
 Tests whether `v` is a vertex of `t`. 
 */ 
 bool is_vertex(Vertex_handle v) const; 
 
-/*! 
+/*!
 Tests whether `(u,v)` is an edge of `t`. If the edge is found, 
 it gives a cell `c` having this edge and the indices `i` 
 and `j` of the vertices `u` and `v` in `c`, in this order. 
@@ -469,7 +469,7 @@ and `j` of the vertices `u` and `v` in `c`, in this order.
 bool is_edge(Vertex_handle u, Vertex_handle v, 
 Cell_handle & c, int & i, int & j) const; 
 
-/*! 
+/*!
 Tests whether `(u,v,w)` is a facet of `t`. If the facet is found, 
 it computes a cell `c` having this facet and the indices `i`, 
 `j` and `k` of the vertices `u`, `v` and `w` in `c`, 
@@ -479,12 +479,12 @@ in this order.
 bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w, 
 Cell_handle & c, int & i, int & j, int & k) const; 
 
-/*! 
+/*!
 Tests whether `c` is a cell of `t`. 
 */ 
 bool is_cell(Cell_handle c) const; 
 
-/*! 
+/*!
 Tests whether `(u,v,w,x)` is a cell of `t`. 
 If the cell `c` is found, the method 
 computes the indices `i`, `j`, `k` and `l` of the 
@@ -497,7 +497,7 @@ Vertex_handle w, Vertex_handle x,
 Cell_handle & c, 
 int & i, int & j, int & k, int & l) const; 
 
-/*! 
+/*!
 Tests whether `(u,v,w,x)` is a cell of `t` and computes 
 this cell `c`. 
 \pre `u`, `v`, `w` and `x` are vertices of `t`. 
@@ -512,26 +512,26 @@ Cell_handle & c) const;
 There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
 */
 /// @{
-/*! 
+/*!
 If `v` is a vertex of `f`, then `j` is the index of 
 `v` in the cell `f.first`, and the method returns `true`. 
 \pre `t.dimension() == 3`
 */ 
 bool has_vertex(const Facet & f, Vertex_handle v, int & j) const; 
 
-/*! 
+/*!
 Same for facet `(c,i)`. Computes the index `j` of `v` in 
 `c`. 
 */ 
 bool has_vertex(Cell_handle c, int i, 
 Vertex_handle v, int & j) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_vertex(const Facet & f, Vertex_handle v) const; 
 
-/*! 
+/*!
 Same as the first two methods, but these two methods do not return the 
 index of the vertex. 
 */ 
@@ -544,17 +544,17 @@ The following three methods test whether two facets have the same vertices.
  */
 
 /// @{
-/*! 
+/*!
 
 */ 
 bool are_equal(Cell_handle c, int i, Cell_handle n, int j) const; 
 
-/*! 
+/*!
 
 */ 
 bool are_equal(const Facet & f, const Facet & g) const; 
 
-/*! 
+/*!
 For these three methods: \pre `t.dimension() == 3`. 
 */ 
 bool are_equal(const Facet & f, Cell_handle n, int j) const; 
@@ -565,7 +565,7 @@ bool are_equal(const Facet & f, Cell_handle n, int j) const;
 /// The class `Triangulation_3` provides two functions to locate a given point with respect to a triangulation. It provides also functions to test if a given point is inside a finite face or not. Note that the class `Delaunay_triangulation_3` also provides a `nearest_vertex()` function.
 /// @{
 
-/*! 
+/*!
 
 If the point `query` lies inside the convex hull of the points, the cell 
 that contains the query in its interior is returned. If `query` lies on a 
@@ -588,7 +588,7 @@ The optional argument `start` is used as a starting place for the search.
 Cell_handle 
 locate(const Point & query, Cell_handle start = Cell_handle()) const; 
 
-/*! 
+/*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
@@ -604,7 +604,7 @@ When the triangulation has dimension smaller than 3, `start` is returned.
 Cell_handle
 inexact_locate(const Point & query, Cell_handle start = Cell_handle()) const;
 
-/*! 
+/*!
 If `query` lies inside the affine hull of the points, the \f$ k\f$-face 
 (finite or infinite) that contains `query` in its interior is 
 returned, by means of the cell returned together with `lt`, which 
@@ -631,7 +631,7 @@ Cell_handle
 locate(const Point & query, Locate_type & lt, 
 int & li, int & lj, Cell_handle start = Cell_handle() ) const; 
 
-/*! 
+/*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Cell_handle 
@@ -639,7 +639,7 @@ locate(const Point & query, Locate_type & lt,
 int & li, int & lj, Vertex_handle hint) const; 
 
 
-/*! 
+/*!
 Returns a value indicating on which side of the oriented boundary 
 of `c` the point `p` lies. More precisely, it returns: 
 
@@ -662,7 +662,7 @@ side_of_cell(const Point & p,
 Cell_handle c, 
 Locate_type & lt, int & li, int & lj) const; 
 
-/*! 
+/*!
 Returns a value indicating on which side of the oriented boundary 
 of `f` the point `p` lies: 
 
@@ -688,7 +688,7 @@ side_of_facet(const Point & p,
 const Facet & f, 
 Locate_type & lt, int & li, int & lj) const; 
 
-/*! 
+/*!
 Same as the previous method for the facet `(c,3)`. 
 */ 
 Bounded_side 
@@ -696,7 +696,7 @@ side_of_facet(const Point & p,
 Cell_handle c, 
 Locate_type & lt, int & li, int & lj) const; 
 
-/*! 
+/*!
 Returns a value indicating on which side of the oriented boundary 
 of `e` the point `p` lies: 
 
@@ -717,7 +717,7 @@ side_of_edge(const Point & p,
 const Edge & e, 
 Locate_type & lt, int & li) const; 
 
-/*! 
+/*!
 Same as the previous method for edge \f$ (c,0,1)\f$. 
 */ 
 Bounded_side 
@@ -750,48 +750,48 @@ triangulation. Flips for a 2d triangulation are not implemented yet.
 
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool flip(Edge e); 
 
-/*! 
+/*!
 Before flipping, these methods check that edge `e=(c,i,j)` is 
 flippable (which is quite expensive). They return `false` or 
 `true` according to this test. 
 */ 
 bool flip(Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 
 */ 
 void flip_flippable(Edge e); 
 
-/*! 
+/*!
 Should be preferred to the previous methods when the edge is 
 known to be flippable. 
 \pre The edge is flippable. 
 */ 
 void flip_flippable(Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 
 */ 
 bool flip(Facet f); 
 
-/*! 
+/*!
 Before flipping, these methods check that facet `f=(c,i)` is 
 flippable (which is quite expensive). They return `false` or 
 `true` according to this test. 
 */ 
 bool flip(Cell_handle c, int i); 
 
-/*! 
+/*!
 
 */ 
 void flip_flippable(Facet f); 
 
-/*! 
+/*!
 Should be preferred to the previous methods when the facet is 
 known to be flippable. 
 \pre The facet is flippable. 
@@ -805,7 +805,7 @@ void flip_flippable(Cell_handle c, int i);
 
 /// @{
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. 
 
@@ -834,12 +834,12 @@ The optional argument `start` is used as a starting place for the search.
 Vertex_handle insert(const Point & p, 
 Cell_handle start = Cell_handle() ); 
 
-/*! 
+/*!
 Same as above but uses `hint` as the starting place for the search. 
 */ 
 Vertex_handle insert(const Point & p, Vertex_handle hint); 
 
-/*! 
+/*!
 Inserts point `p` in the triangulation and returns the corresponding 
 vertex. Similar to the above `insert()` function, but takes as additional 
 parameter the return values of a previous location query. See description of 
@@ -848,7 +848,7 @@ parameter the return values of a previous location query. See description of
 Vertex_handle insert(const Point & p, Locate_type lt, 
 Cell_handle loc, int li, int lj); 
 
-/*! 
+/*!
 Inserts the points in the range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
 following the order of `InputIterator`. 
@@ -869,14 +869,14 @@ valid triangulation when they are applied on a valid triangulation.
 */
 
 // @{
-/*! 
+/*!
 Inserts point `p` in cell `c`. Cell `c` is split into 4 
 tetrahedra. 
 \pre `t.dimension() == 3` and `p` lies strictly inside cell `c`. 
 */ 
 Vertex_handle insert_in_cell(const Point & p, Cell_handle c); 
 
-/*! 
+/*!
 Inserts point `p` in facet `f`. In dimension 3, the 2 
 neighboring cells are split into 3 tetrahedra; in dimension 2, the facet 
 is split into 3 triangles. 
@@ -884,14 +884,14 @@ is split into 3 triangles.
 */ 
 Vertex_handle insert_in_facet(const Point & p, const Facet & f); 
 
-/*! 
+/*!
 As above, insertion in facet `(c,i)`. 
 \pre As above and \f$ i \in\{0,1,2,3\}\f$ in dimension 3, \f$ i = 3\f$ in dimension 2. 
 */ 
 Vertex_handle insert_in_facet(const Point & p, 
 Cell_handle c, int i); 
 
-/*! 
+/*!
 Inserts `p` in edge `e`. In dimension 3, 
 all the cells having this edge are split into 2 tetrahedra; in 
 dimension 2, the 2 neighboring facets are split into 2 triangles; in 
@@ -900,13 +900,13 @@ dimension 1, the edge is split into 2 edges.
 */ 
 Vertex_handle insert_in_edge(const Point & p, const Edge & e); 
 
-/*! 
+/*!
 As above, inserts `p` in edge \f$ (i, j)\f$ of `c`. 
 \pre As above and \f$ i\neq j\f$. Moreover \f$ i,j \in\{0,1,2,3\}\f$ in dimension 3, \f$ i,j \in\{0,1,2\}\f$ in dimension 2, \f$ i,j \in\{0,1\}\f$ in dimension 1. 
 */ 
 Vertex_handle insert_in_edge(Point p, Cell_handle c, int i, int j); 
 
-/*! 
+/*!
 The cell `c` must be an infinite cell containing `p`. 
 
 Links `p` to all points in the triangulation that are visible from 
@@ -920,7 +920,7 @@ Figure \ref Triangulation3figinsert_outside_convex_hull.
 Vertex_handle insert_outside_convex_hull(const Point & p, 
 Cell_handle c); 
 
-/*! 
+/*!
 `p` is linked to all the points, and the infinite vertex is linked 
 to all the points (including `p`) to triangulate the new infinite 
 face, so that all the points now belong to the boundary of the convex 
@@ -935,7 +935,7 @@ triangulation.
 */ 
 Vertex_handle insert_outside_affine_hull(const Point & p); 
 
-/*! 
+/*!
 Creates a new vertex by starring a hole. It takes an iterator range 
 `[cell_begin,cell_end)` of `Cell_handle`s which specifies 
 a hole: a set of connected cells (resp. facets in dimension 2) which is 
@@ -956,7 +956,7 @@ template <class CellIt>
 Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end, 
 Cell_handle begin, int i); 
 
-/*! 
+/*!
 Same as above, except that `newv` will be used as the new vertex, which 
 must have been allocated previously with e.g.\ `create_vertex`. 
 */ 
@@ -971,107 +971,107 @@ The following iterators allow the user to visit cells, facets, edges and vertice
 */
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary finite vertex. Then `++` and `-` will 
 iterate over finite vertices. Returns `finite_vertices_end()` when 
 `t.number_of_vertices() == 0`. 
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_vertices_iterator finite_vertices_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite edge. Then `++` and `-` will 
 iterate over finite edges. Returns `finite_edges_end()` when 
 `t.dimension() < 1`. 
 */ 
 Finite_edges_iterator finite_edges_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_edges_iterator finite_edges_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite facet. Then `++` and `-` will 
 iterate over finite facets. Returns `finite_facets_end()` when 
 `t.dimension() < 2`. 
 */ 
 Finite_facets_iterator finite_facets_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_facets_iterator finite_facets_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary finite cell. Then `++` and `-` will 
 iterate over finite cells. Returns `finite_cells_end()` when 
 `t.dimension() < 3`. 
 */ 
 Finite_cells_iterator finite_cells_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_cells_iterator finite_cells_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary vertex. Iterates over all vertices (even the infinite 
 one). Returns `vertices_end()` when 
 `t.number_of_vertices() == 0`. 
 */ 
 All_vertices_iterator all_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_vertices_iterator all_vertices_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary edge. Iterates over all edges (even infinite 
 ones). Returns `edges_end()` when `t.dimension() < 1`. 
 */ 
 All_edges_iterator all_edges_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_edges_iterator all_edges_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary facet. Iterates over all facets (even infinite 
 ones). Returns `facets_end()` when 
 `t.dimension() < 2`. 
 */ 
 All_facets_iterator all_facets_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_facets_iterator all_facets_end() const; 
 
-/*! 
+/*!
 Starts at an arbitrary cell. Iterates over all cells (even infinite 
 ones). Returns `cells_end()` when 
 `t.dimension() < 3`. 
 */ 
 All_cells_iterator all_cells_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 All_cells_iterator all_cells_end() const; 
 
-/*! 
+/*!
 Iterates over the points of the triangulation. 
 */ 
 Point_iterator points_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Point_iterator points_end() const; 
@@ -1083,66 +1083,66 @@ The following circulators respectively visit all cells or all facets incident to
 */
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary cell incident to `e`. 
 \pre `t.dimension() == 3`. 
 */ 
 Cell_circulator incident_cells(Edge e) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Cell_circulator incident_cells(Cell_handle c, int i, int j) const; 
 
-/*! 
+/*!
 Starts at cell `start`. 
 \pre `t.dimension() == 3` and `start` is incident to `e`. 
 */ 
 Cell_circulator incident_cells(Edge e, Cell_handle start) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Cell_circulator incident_cells(Cell_handle c, int i, int j, 
 Cell_handle start) const; 
   /// @}
 
-/*! 
+/*!
 \name
 The following circulators on facets are defined only in dimension 3, though facets are defined also in dimension 2: there are only two facets sharing an edge in dimension 2.
 */
 
 /// @{
-/*! 
+/*!
 Starts at an arbitrary facet incident to `e`. 
 \pre `t.dimension() == 3` 
 */ 
 Facet_circulator incident_facets(Edge e) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Facet_circulator incident_facets(Cell_handle c, int i, int j) const; 
 
-/*! 
+/*!
 Starts at facet `start`. 
 \pre `start` is incident to `e`. 
 */ 
 Facet_circulator incident_facets(Edge e, Facet start) const; 
 
-/*! 
+/*!
 Starts at facet of index `f` in `start`. 
 */ 
 Facet_circulator incident_facets(Edge e, Cell_handle start, int f) 
 const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c`. 
 */ 
 Facet_circulator incident_facets(Cell_handle c, int i, int j, 
 Facet start) const; 
 
-/*! 
+/*!
 As above for edge `(i,j)` of `c` and facet `(start,f)`. 
 */ 
 Facet_circulator incident_facets(Cell_handle c, int i, int j, 
@@ -1154,7 +1154,7 @@ Cell_handle start, int f) const;
 /// @{
 
 
-/*! 
+/*!
 Copies the `Cell_handle`s of all cells incident to `v` to the output 
 iterator `cells`. 
 Returns the resulting output iterator. 
@@ -1164,7 +1164,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-/*! 
+/*!
 Copies the `Cell_handle`s of all finite cells incident to `v` to the output 
 iterator `cells`. 
 Returns the resulting output iterator. 
@@ -1174,7 +1174,7 @@ template <class OutputIterator>
 OutputIterator 
 finite_incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-/*! 
+/*!
 Copies all `Facet`s incident to `v` to the output iterator 
 `facets`. 
 Returns the resulting output iterator. 
@@ -1184,7 +1184,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_facets(Vertex_handle v, OutputIterator facets) const; 
 
-/*! 
+/*!
 Copies all finite `Facet`s incident to `v` to the output iterator 
 `facets`. 
 Returns the resulting output iterator. 
@@ -1194,7 +1194,7 @@ template <class OutputIterator>
 OutputIterator 
 finite_incident_facets(Vertex_handle v, OutputIterator facets) const; 
 
-/*! 
+/*!
 Copies all `Edge`s incident to `v` to the 
 output iterator `edges`. Returns the resulting output iterator. 
 \pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`. 
@@ -1203,7 +1203,7 @@ template <class OutputIterator>
 OutputIterator 
 incident_edges(Vertex_handle v, OutputIterator edges) const; 
 
-/*! 
+/*!
 Copies all finite `Edge`s incident to `v` to the 
 output iterator `edges`. Returns the resulting output iterator. 
 \pre `t.dimension() > 0`, `v != Vertex_handle()`, `t.is_vertex(v)`. 
@@ -1212,7 +1212,7 @@ template <class OutputIterator>
 OutputIterator 
 finite_incident_edges(Vertex_handle v, OutputIterator edges) const; 
 
-/*! 
+/*!
 Copies the `Vertex_handle`s of all vertices adjacent to `v` to the 
 output iterator `vertices`. If `t.dimension() < 0`, then do 
 nothing. Returns the resulting output iterator. 
@@ -1222,7 +1222,7 @@ template <class OutputIterator>
 OutputIterator 
 adjacent_vertices(Vertex_handle v, OutputIterator vertices) const; 
 
-/*! 
+/*!
 Copies the `Vertex_handle`s of all finite vertices adjacent to `v` to the 
 output iterator `vertices`. If `t.dimension() < 0`, then do 
 nothing. Returns the resulting output iterator. 
@@ -1232,7 +1232,7 @@ template <class OutputIterator>
 OutputIterator 
 finite_adjacent_vertices(Vertex_handle v, OutputIterator vertices) const; 
 
-/*! 
+/*!
 Returns the degree of a vertex, that is, the number of incident vertices. 
 The infinite vertex is counted. 
 \pre `v != Vertex_handle()`, `t.is_vertex(v)`. 
@@ -1244,20 +1244,20 @@ size_type degree(Vertex_handle v) const;
 /// \name Traversal Between Adjacent Cells 
 /// @{
 
-/*! 
+/*!
 Returns the index of `c` in its \f$ i^{th}\f$ neighbor. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 int mirror_index(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Returns the vertex of the \f$ i^{th}\f$ neighbor of `c` that is opposite to 
 `c`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
 Vertex_handle mirror_vertex(Cell_handle c, int i) const; 
 
-/*! 
+/*!
 Returns the same facet seen from the other adjacent cell. 
 */ 
 Facet mirror_facet(Facet f) const; 
@@ -1271,7 +1271,7 @@ Facet mirror_facet(Facet f) const;
 /// methods to help debugging.
 /// @{
 
-/*! 
+/*!
 \cgalDebugFunction
 \cgalDebugBegin
 Checks the combinatorial validity of the triangulation. Checks also the 
@@ -1284,7 +1284,7 @@ messages describing the first invalidity encountered are printed.
 bool 
 is_valid(bool verbose = false) const; 
 
-/*! 
+/*!
 \cgalDebugFunction
 \cgalDebugBegin
 Checks the combinatorial validity of the cell by calling the 
@@ -1322,7 +1322,7 @@ for faces of maximal dimension instead of cells.
 */
 /// @{
 
-/*! 
+/*!
 Reads the underlying combinatorial triangulation from `is` by 
 calling the corresponding input operator of the triangulation data 
 structure class (note that the infinite vertex is numbered 0), and the 
@@ -1334,7 +1334,7 @@ of the vertex and cell types. Assigns the resulting triangulation to
 */ 
 istream& operator>> (istream& is, Triangulation_3 &t); 
 
-/*! 
+/*!
 Writes the triangulation `t` into `os`. 
 */ 
 ostream& operator<< (ostream& os, const Triangulation_3 &t); 

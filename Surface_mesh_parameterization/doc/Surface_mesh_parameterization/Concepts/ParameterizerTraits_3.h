@@ -33,7 +33,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 Export the type of mesh to parameterize. 
 
@@ -63,7 +63,7 @@ typedef unspecified_type Adaptor;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Compute a one-to-one mapping from a triangular 3D surface `mesh` to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface. 
 

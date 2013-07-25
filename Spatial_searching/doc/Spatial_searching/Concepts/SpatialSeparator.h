@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef unspecified_type FT; 
@@ -33,7 +33,7 @@ typedef unspecified_type FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 Separator(); 
@@ -43,27 +43,27 @@ Separator();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Sets the cutting dimension to `d`. 
 */ 
 void set_cutting_dimension(int d); 
 
-/*! 
+/*!
 Sets the cutting value to `v`. 
 */ 
 void set_cutting_value(FT v); 
 
-/*! 
+/*!
 Returns the number of the cutting dimension. 
 */ 
 int cutting_dimension(); 
 
-/*! 
+/*!
 Returns the cutting value. 
 */ 
 FT cutting_value(); 
 
-/*! 
+/*!
 Returns true if and only if the point `p` is on the negative side of the separator. 
 */ 
 template <class Point_d> 

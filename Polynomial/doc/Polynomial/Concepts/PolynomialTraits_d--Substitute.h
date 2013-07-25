@@ -32,7 +32,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Substitutes each variable of \f$ p\f$ by the values given in the iterator range, 
 where begin refers to the innermost variable \f$ x_0\f$. 

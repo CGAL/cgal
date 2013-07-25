@@ -40,7 +40,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The return type of the function operators. 
 It must also be the same type as `EP::result_type`. 
 */ 
@@ -51,7 +51,7 @@ typedef FP::result_type result_type;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Filtered_predicate<EP, FP, C2E, C2F>(); 
@@ -62,12 +62,12 @@ Filtered_predicate<EP, FP, C2E, C2F>();
 /// Similar function operators are defined for up to 7 arguments.
 /// @{
 
-/*! 
+/*!
 The unary function operator for unary predicates. 
 */ 
 template <class A1> result_type operator()(A1 a1); 
 
-/*! 
+/*!
 The binary function operator for binary predicates. 
 */ 
 template <class A1, class A2> 

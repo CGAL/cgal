@@ -29,17 +29,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type first_argument; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type second_argument; 
@@ -49,13 +49,13 @@ typedef unspecified_type second_argument;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns \f$ gcd(x,y)\f$. 
 */ 
 result_type operator()(first_argument_type x, 
 second_argument_type y); 
 
-/*! 
+/*!
 This operator is defined if `NT1` and `NT2` are `ExplicitInteroperable` 
 with coercion type `AlgebraicStructureTraits::Type`. 
 */ 

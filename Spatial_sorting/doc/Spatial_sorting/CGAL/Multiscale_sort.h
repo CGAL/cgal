@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs an instance with `traits` as traits class instance. 
 */ 
 Multiscale_sort (const Sort &sort = Sort(), std::ptrdiff_t threshold = 1, double ratio = 0.5); 
@@ -29,7 +29,7 @@ Multiscale_sort (const Sort &sort = Sort(), std::ptrdiff_t threshold = 1, double
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 sorts the range `[begin, end)`. 
 \cgalRequires `Sort::operator()(RandomAccessIterator begin, RandomAccessIterator end)` is defined. 
 */ 

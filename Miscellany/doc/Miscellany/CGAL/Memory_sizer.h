@@ -24,7 +24,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef std::size_t size_type; 
@@ -34,7 +34,7 @@ typedef std::size_t size_type;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Memory_sizer(); 
@@ -44,12 +44,12 @@ Memory_sizer();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the virtual memory size in bytes. 
 */ 
 size_type virtual_size() const; 
 
-/*! 
+/*!
 Returns the resident memory size in bytes. 
 */ 
 size_type resident_size() const; 

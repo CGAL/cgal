@@ -32,7 +32,7 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Computes the circumcenter of the tetrahedron, or retrieve it if already 
 computed. 
 */ 

@@ -32,12 +32,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the linear algebra layer. 
 */ 
 typedef unspecified_type LA; 
 
-/*! 
+/*!
 a read-only iterator for points defining 
 the sphere. 
 */ 
@@ -48,13 +48,13 @@ typedef unspecified_type point_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a variable `S` 
 of type `Sphere_d<Kernel>`. 
 */ 
 Sphere_d<Kernel>(); 
 
-/*! 
+/*!
 introduces a variable 
 `S` of type `Sphere_d<Kernel>`. `S` is initialized to the 
 sphere through the points in `A = tuple [first,last)`. 
@@ -71,12 +71,12 @@ ForwardIterator first, ForwardIterator last);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the dimension of the ambient space. 
 */ 
 int dimension(); 
 
-/*! 
+/*!
 returns the \f$ i\f$th defining 
 point.
 
@@ -84,38 +84,38 @@ point.
 */ 
 Point_d<Kernel> point(int i) ; 
 
-/*! 
+/*!
 returns an iterator 
 pointing to the first defining point. 
 */ 
 point_iterator points_begin() ; 
 
-/*! 
+/*!
 returns an iterator pointing 
 beyond the last defining point. 
 */ 
 point_iterator points_end() ; 
 
-/*! 
+/*!
 returns true iff the defining points 
 are not full dimensional. 
 */ 
 bool is_degenerate(); 
 
-/*! 
+/*!
 returns true iff the set of defining 
 points is legal. A set of defining points is legal iff their 
 orientation is non-zero or if they are all equal. 
 */ 
 bool is_legal() ; 
 
-/*! 
+/*!
 returns the center of `S`. 
 \pre `S` is legal. 
 */ 
 Point_d<Kernel> center() ; 
 
-/*! 
+/*!
 returns the squared radius of the 
 sphere.
 
@@ -123,13 +123,13 @@ sphere.
 */ 
 FT squared_radius() ; 
 
-/*! 
+/*!
 returns the orientation of 
 `S`. 
 */ 
 Orientation orientation() ; 
 
-/*! 
+/*!
 returns 
 either the constant `ON_ORIENTED_BOUNDARY`, 
 `ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`, iff p lies on the 
@@ -141,7 +141,7 @@ side of sphere, resp.
 */ 
 Oriented_side oriented_side(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 `ON_BOUNDED_SIDE`, `ON_BOUNDARY`, or `ON_UNBOUNDED_SIDE` 
 iff p lies properly inside, on the boundary, or properly outside of 
@@ -151,7 +151,7 @@ sphere, resp.
 */ 
 Bounded_side bounded_side(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 `S.oriented_side(p)==ON_POSITIVE_SIDE`.
 
@@ -159,7 +159,7 @@ returns
 */ 
 bool has_on_positive_side (const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 `S.oriented_side(p)==ON_NEGATIVE_SIDE`.
 
@@ -167,7 +167,7 @@ returns
 */ 
 bool has_on_negative_side (const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 `S.oriented_side(p)==ON_ORIENTED_BOUNDARY`, which is the same as 
 `S.bounded_side(p)==ON_BOUNDARY`.
@@ -176,7 +176,7 @@ returns
 */ 
 bool has_on_boundary (const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 `S.bounded_side(p)==ON_BOUNDED_SIDE`.
 
@@ -184,7 +184,7 @@ returns
 */ 
 bool has_on_bounded_side (const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 `S.bounded_side(p)==ON_UNBOUNDED_SIDE`.
 
@@ -192,14 +192,14 @@ returns
 */ 
 bool has_on_unbounded_side (const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns the sphere with the same 
 center and squared radius as `S` but with opposite orientation. 
 
 */ 
 Sphere_d<Kernel> opposite() ; 
 
-/*! 
+/*!
 returns the 
 sphere translated by `v`.
 
@@ -211,7 +211,7 @@ Sphere_d<Kernel> operator+(const Vector_d<Kernel>& v) ;
 
 }; /* end Sphere_d */
 
-/*! 
+/*!
 Test for equality as unoriented spheres. 
 \pre `S1.dimension()==S2.dimension()`. 
 \relates Sphere_d 

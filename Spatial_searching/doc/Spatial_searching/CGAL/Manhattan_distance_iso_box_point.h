@@ -27,17 +27,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
 
-/*! 
+/*!
 Query item type. 
 */ 
 typedef Traits::Iso_box_d Query_item; 
@@ -47,7 +47,7 @@ typedef Traits::Iso_box_d Query_item;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Manhattan_distance_iso_box_point(Traits t=Traits()); 
@@ -57,30 +57,30 @@ Manhattan_distance_iso_box_point(Traits t=Traits());
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the transformed 
 distance between `b` and `p`. 
 */ 
 FT transformed_distance(Query_item b, Point_d p) const; 
 
-/*! 
+/*!
 Returns the transformed value of of `d`. 
 */ 
 FT transformed_distance(FT d) const; 
 
-/*! 
+/*!
 Returns the value of the inverse 
 of the transform function applied to `d`. 
 */ 
 FT inverse_of_transformed_distance(FT d) const; 
 
-/*! 
+/*!
 Returns the minimal distance between a point from `b` and a point from 
 `r`. 
 */ 
 FT min_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT> r) const; 
 
-/*! 
+/*!
 Returns the maximal distance between the iso-box `b` and 
 a point from `r` furthest to `b`. 
 */ 

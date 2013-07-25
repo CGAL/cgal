@@ -15,7 +15,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Constructs polynomial `(x-a)^2 + (y-b)^2 + (z-c)^2 - rsq`. 
 */ 
 AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 

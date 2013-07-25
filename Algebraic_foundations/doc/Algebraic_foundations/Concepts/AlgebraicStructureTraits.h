@@ -39,12 +39,12 @@ public:
 /// A model of `AlgebraicStructureTraits` is supposed to provide:
 /// @{
 
-/*! 
+/*!
 The associated type. 
 */ 
 typedef unspecified_type Type; 
 
-/*! 
+/*!
 Tag indicating the algebraic structure of the associated type. 
 
 <TABLE CELLSPACING=5 > 
@@ -106,7 +106,7 @@ no algebraic concept
 */ 
 typedef unspecified_type Algebraic_category; 
 
-/*! 
+/*!
 Tag indicating whether `Type` is exact. 
 
 This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
@@ -123,7 +123,7 @@ is not exact.
 */ 
 typedef unspecified_type Is_exact; 
 
-/*! 
+/*!
 Tag indicating whether `Type` is numerical sensitive. 
 
 This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
@@ -135,7 +135,7 @@ number of an algorithm.
 */ 
 typedef unspecified_type Is_numerical_sensitive; 
 
-/*! 
+/*!
 This type specifies the return type of the predicates provided 
 by this traits. The type must be convertible to `bool` and 
 typically the type indeed maps to `bool`. However, there are also 
@@ -151,7 +151,7 @@ typedef unspecified_type Boolean;
 /// In case a functor is not provided, it is set to `CGAL::Null_functor`.
 /// @{
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::IsZero`. 
 
@@ -162,7 +162,7 @@ model of `RealEmbeddableTraits_::IsZero`.
 */ 
 typedef unspecified_type Is_zero; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::IsOne`. 
 
@@ -171,7 +171,7 @@ Required by the concept `IntegralDomainWithoutDivision`.
 */ 
 typedef unspecified_type Is_one; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Square`. 
 
@@ -180,7 +180,7 @@ Required by the concept `IntegralDomainWithoutDivision`.
 */ 
 typedef unspecified_type Square; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Simplify`. 
 
@@ -189,7 +189,7 @@ Required by the concept `IntegralDomainWithoutDivision`.
 */ 
 typedef unspecified_type Simplify; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::UnitPart`. 
 
@@ -198,7 +198,7 @@ Required by the concept `IntegralDomainWithoutDivision`.
 */ 
 typedef unspecified_type Unit_part; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::IntegralDivision`. 
 
@@ -207,7 +207,7 @@ Required by the concept `IntegralDomain`.
 */ 
 typedef unspecified_type Integral_division; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Divides`. 
 
@@ -216,7 +216,7 @@ Required by the concept `IntegralDomain`.
 */ 
 typedef unspecified_type Divides; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::IsSquare`. 
 
@@ -225,7 +225,7 @@ Required by the concept `IntegralDomainWithoutDivision`.
 */ 
 typedef unspecified_type Is_square; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Gcd`. 
 
@@ -234,7 +234,7 @@ Required by the concept `UniqueFactorizationDomain`.
 */ 
 typedef unspecified_type Gcd; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Mod`. 
 
@@ -243,7 +243,7 @@ Required by the concept `EuclideanRing`.
 */ 
 typedef unspecified_type Mod; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Div`. 
 
@@ -252,7 +252,7 @@ Required by the concept `EuclideanRing`.
 */ 
 typedef unspecified_type Div; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::DivMod`. 
 
@@ -261,7 +261,7 @@ Required by the concept `EuclideanRing`.
 */ 
 typedef unspecified_type Div_mod; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Inverse`. 
 
@@ -270,7 +270,7 @@ Required by the concept `Field`.
 */ 
 typedef unspecified_type Inverse; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::Sqrt`. 
 
@@ -279,7 +279,7 @@ Required by the concept `FieldWithSqrt`.
 */ 
 typedef unspecified_type Sqrt; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::KthRoot`. 
 
@@ -288,7 +288,7 @@ Required by the concept `FieldWithKthRoot`.
 */ 
 typedef unspecified_type Kth_root; 
 
-/*! 
+/*!
 
 A model of `AlgebraicStructureTraits_::RootOf`. 
 

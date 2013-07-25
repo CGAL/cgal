@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 decides 
 whether the vectors in `A = tuple [first,last)` are linearly 
 independent.

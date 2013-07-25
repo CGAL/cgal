@@ -28,22 +28,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the corresponding <span class="textsc">Dcel</span> vertex type. 
 */ 
 typedef unspecified_type Vertex; 
 
-/*! 
+/*!
 the corresponding <span class="textsc">Dcel</span> face type. 
 */ 
 typedef unspecified_type Face; 
 
-/*! 
+/*!
 the corresponding <span class="textsc">Dcel</span> hole type. 
 */ 
 typedef unspecified_type Hole; 
 
-/*! 
+/*!
 the curve type associated with the edge. 
 */ 
 typedef unspecified_type X_monotone_curve; 
@@ -53,12 +53,12 @@ typedef unspecified_type X_monotone_curve;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Arr_dcel_halfedge(); 
 
-/*! 
+/*!
 assigns `e` with the contents of the `other` halfedge. 
 */ 
 void assign (const Self& other); 
@@ -68,7 +68,7 @@ void assign (const Self& other);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns `ARR_LEFT_TO_RIGHT` if `e`'s source vertex is 
 lexicographically smaller than it target, and 
 `ARR_RIGHT_TO_LEFT` if it is lexicographically larger than 
@@ -76,7 +76,7 @@ the target.
 */ 
 Arr_halfedge_direction direction() const; 
 
-/*! 
+/*!
 determines whether the `e` lies on an outer CCB of a bounded face, 
 or on an inner CCB (a hole inside a face). The function returns `true` 
 if `e` lies on a hole. 
@@ -89,44 +89,44 @@ bool is_on_hole() const;
 /// All functions below also have `const` counterparts, returning non-mutable pointers or references:
 /// @{
 
-/*! 
+/*!
 returns the twin halfedge. 
 */ 
 Halfedge* opposite(); 
 
-/*! 
+/*!
 returns the previous halfedge along the chain. 
 */ 
 Halfedge* prev(); 
 
-/*! 
+/*!
 returns the next halfedge along the chain. 
 */ 
 Halfedge* next(); 
 
-/*! 
+/*!
 returns the target vertex. 
 */ 
 Vertex* vertex(); 
 
-/*! 
+/*!
 returns the incident face. 
 \pre `e` lies on the outer boundary of this face. 
 */ 
 Face* face(); 
 
-/*! 
+/*!
 returns the hole (inner CCB) `e` belongs to. 
 \pre `e` lies on a hole inside its incident face. 
 */ 
 Hole* hole(); 
 
-/*! 
+/*!
 returns whether the vertex is not associated with a valid curve. 
 */ 
 bool has_null_curve() const; 
 
-/*! 
+/*!
 returns the associated curve. 
 \pre `e` is associated with a valid curve. 
 */ 
@@ -137,12 +137,12 @@ X_monotone_curve& curve();
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 sets the opposite halfedge. 
 */ 
 void set_opposite (Halfedge* opp); 
 
-/*! 
+/*!
 sets the lexicographical order between `e`'s source and target 
 vertices to be `dir`. 
 The direction of the opposite halfedge is also set to the 
@@ -150,35 +150,35 @@ opposite direction.
 */ 
 void set_direction (Arr_halfedge_direction dir); 
 
-/*! 
+/*!
 sets the previous halfedge of `e` along the chain, 
 and updates the cross-pointer `prev->next()`. 
 */ 
 void set_prev (Halfedge* prev); 
 
-/*! 
+/*!
 sets the next halfedge of `e` along the chain, 
 and updates the cross-pointer `next->prev()`. 
 */ 
 void set_next (Halfedge* next); 
 
-/*! 
+/*!
 sets the target vertex. 
 */ 
 void set_vertex (Vertex* v); 
 
-/*! 
+/*!
 sets the incident face, marking that `e` lies on the outer CCB 
 of the face `f`. 
 */ 
 void set_face (Face* f); 
 
-/*! 
+/*!
 sets the incident hole, marking that `e` lies on an inner CCB. 
 */ 
 void set_hole (Hole* ho); 
 
-/*! 
+/*!
 sets the associated curve of `e` and its opposite halfedge. 
 */ 
 void set_curve (X_monotone_curve* c); 

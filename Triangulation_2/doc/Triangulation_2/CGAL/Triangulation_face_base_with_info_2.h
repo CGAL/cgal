@@ -35,7 +35,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Info Info; 
@@ -45,12 +45,12 @@ typedef Info Info;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the object of type `Info` stored in the face. 
 */ 
 const Info& info() const; 
 
-/*! 
+/*!
 Returns a reference to the object of type `Info` stored in the face. 
 */ 
 Info & info(); 

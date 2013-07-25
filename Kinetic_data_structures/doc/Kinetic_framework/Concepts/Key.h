@@ -19,7 +19,7 @@ method `is_valid()` to differentiate.
 class Key {
 public:
 
-/*! 
+/*!
 The default constructor is guaranteed to construct an invalid key (i.e.\ one which is false when cast to a bool. 
 */ 
 Key(); 
@@ -27,14 +27,14 @@ Key();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 This method returns false if the key 
 was created using the default constructor or was otherwise created 
 to be invalid. 
 */ 
 bool is_valid() const; 
 
-/*! 
+/*!
 Write a text description of the key to a standard stream.
 */ 
 std::ostream& operator<<(std::ostream&, Key);

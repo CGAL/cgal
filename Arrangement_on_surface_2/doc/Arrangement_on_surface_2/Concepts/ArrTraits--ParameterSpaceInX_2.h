@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 
 Given an \f$ x\f$-monotone curve `xcv` and an enumeration `ce` 
 that specifies either the minimum or the maximum end of the curve, 

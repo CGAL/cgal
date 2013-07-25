@@ -47,22 +47,22 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructor which initializes with zero.
 */ 
 Residue(); 
 
-/*! 
+/*!
 copy constructor.
 */ 
 Residue(const Residue& m); 
 
-/*! 
+/*!
 constructor which initializes with \f$ i\mod p\f$.
 */ 
 Residue(int i); 
 
-/*! 
+/*!
 constructor which initializes with \f$ i\mod p\f$.
 */ 
 Residue(long i); 
@@ -72,78 +72,78 @@ Residue(long i);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 sets the current prime to the given value and returns the old prime. 
 */ 
 static int set_current_prime(int p); 
 
-/*! 
+/*!
 returns the value of the current prime. 
 */ 
 static int get_current_prime(); 
 
-/*! 
+/*!
 returns the unique representative  within the range 
 \f$ [-p/2,p/2]\f$, where \f$ p\f$ is the current prime. 
 */ 
 int get_value() const; 
 
-/*! 
+/*!
 
 */ 
 Residue operator+(Residue a); 
 
-/*! 
+/*!
 
 */ 
 Residue operator-(Residue a); 
 
-/*! 
+/*!
 
 */ 
 Residue operator+(Residue a,Residue b); 
 
-/*! 
+/*!
 
 */ 
 Residue operator-(Residue a,Residue b); 
 
-/*! 
+/*!
 
 */ 
 Residue operator*(Residue a,Residue b); 
 
-/*! 
+/*!
 
 */ 
 Residue operator/(Residue a,Residue b); 
 
-/*! 
+/*!
 
 */ 
 Residue & operator+=(Residue a); 
 
-/*! 
+/*!
 
 */ 
 Residue & operator-=(Residue a); 
 
-/*! 
+/*!
 
 */ 
 Residue & operator*=(Residue a); 
 
-/*! 
+/*!
 
 */ 
 Residue & operator/=(Residue a); 
 
-/*! 
+/*!
 
 */ 
 Residue operator==(Residue a,Residue b); 
 
-/*! 
+/*!
 
 */ 
 Residue operator!=(Residue a,Residue b); 

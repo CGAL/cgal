@@ -65,7 +65,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
@@ -75,7 +75,7 @@ typedef typename TriangulatedSurfaceMesh::Traits::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
@@ -89,7 +89,7 @@ const Vertex2VectorPropertyMap& vertex2d2_pm);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Performs the approximation, `size` determines the size of the 
 patches around vertices, taken as `size` times the size of the 
 1-ring. Umbilics are inserted into the `OutputIterator` `it` with value type `Umbilic*`. 
@@ -123,12 +123,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle; 
@@ -138,17 +138,17 @@ typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Vertex_handle vertex() const; 
 
-/*! 
+/*!
 
 */ 
 Umbilic_type umbilic_type() const; 
 
-/*! 
+/*!
 
 */ 
 const std::list<Halfedge_handle>& contour_list()const; 

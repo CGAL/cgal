@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The number type used to represent the walls of the box and perform calculations. Generally this is `Traits::NT`. 
 */ 
 typedef unspecified_type NT; 
@@ -33,7 +33,7 @@ typedef unspecified_type NT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 This constructs a bounding box with the dimensions specified by the last 4 arguments. They are optional and will take the values \f$ \pm\f$10 if omitted. 
 */ 
 Enclosing_box_2(Traits, NT xmin, NT xmax, NT ymin, NT ymax); 

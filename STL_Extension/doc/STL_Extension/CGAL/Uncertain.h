@@ -52,7 +52,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 The type `T`. 
 */ 
 typedef unspecified_type value_type; 
@@ -61,7 +61,7 @@ typedef unspecified_type value_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 The type of the exception 
 thrown for uncertain conversions. It is a typedef to the type 
 `CGAL::Uncertain_conversion_exception` which derives from `std::range_error`. 
@@ -71,7 +71,7 @@ typedef unspecified_type Uncertain_conversion_exception;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces a certain object with value `T()`. 
 */ 
 Uncertain(); 
@@ -83,7 +83,7 @@ Uncertain();
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces a certain object with value `t`. 
 */ 
 Uncertain(T t); 
@@ -95,7 +95,7 @@ Uncertain(T t);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 assigns the certain value `t` to `u`. 
 */ 
 Uncertain& operator=(T t); 
@@ -107,7 +107,7 @@ Uncertain& operator=(T t);
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces an object representing the range with lower bound `i` and 
 upper bound `s`. \pre \f$ i<= s\f$. 
 */ 
@@ -122,17 +122,17 @@ Uncertain(T i, T s);
 /// The following functions are meant to be used very rarely, they provide ways to inspect 
 /// the content of an `Uncertain<T>` object. 
 /// @{ 
-/*! 
+/*!
 returns the lower bound of the range represented by `u`. 
 */ 
 T inf() const; 
 
-/*! 
+/*!
 returns the upper bound of the range represented by `u`. 
 */ 
 T sup() const; 
 
-/*! 
+/*!
 returns true whether `u` and `u` are the same range (equality as sets). 
 */ 
 bool is_same(Uncertain u) const; 
@@ -176,13 +176,13 @@ bool is_same(Uncertain u) const;
 /// on the context. They are listed in the sequel. 
 /// @{ 
 
-/*! 
+/*!
 returns `true` iff the value is certain, that is, it is unique, the range 
 is a singleton. That is, `u.inf() == u.sup()`. 
 */ 
 bool is_certain() const; 
 
-/*! 
+/*!
 if `u`.`is_certain()`, then returns the certain value which is represented. 
 Otherwise, throws an exception of type `Uncertain_conversion_exception`. 
 A profile counter of the number of such exceptions thrown during the execution of 
@@ -190,7 +190,7 @@ the program is available with `CGAL_PROFILE`.
 */ 
 T make_certain() const; 
 
-/*! 
+/*!
 conversion operator to `T`. It does and returns the same thing as 
 `u`. `make_certain()`. Note that relying on the automatic conversion 
 can throw exceptions, which defeats the purpose of propagating uncertainty. 
@@ -201,7 +201,7 @@ operator T() const;
 
 ///@}
 
-/*! 
+/*!
 returns an indeterminate range. 
 */ 
 static Uncertain<T> indeterminate(); 
@@ -215,37 +215,37 @@ over the type `T`.
 */
 /// @{
 
-/*! 
+/*!
 returns the extension of the equality operator over `u` and `v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator==(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 returns `u == make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<bool> operator==(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 returns `v == u`. 
 */ 
 template <class T> 
 Uncertain<bool> operator==(T u, Uncertain<T> v); 
 
-/*! 
+/*!
 returns the extension of the inequality operator over `u` and `v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator!=(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 returns `u != make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<bool> operator!=(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 returns `v != u`. 
 */ 
 template <class T> 
@@ -332,43 +332,43 @@ Uncertain<bool> res = CGAL_OR( q.x() == 0 , q.y() == 0 );
 
 */
 /// @{
-/*! 
+/*!
 
 returns the range containing the negated values of `u`. 
 */ 
 Uncertain<bool> operator!(Uncertain<bool> u); 
 
-/*! 
+/*!
 
 returns the range containing the values computed as logical or from `u` and `v`. 
 */ 
 Uncertain<bool> operator|(Uncertain<bool> u, Uncertain<bool> v); 
 
-/*! 
+/*!
 
 returns `u | make_uncertain(v)`. 
 */ 
 Uncertain<bool> operator|(Uncertain<bool> u, bool v); 
 
-/*! 
+/*!
 
 returns `v | u`. 
 */ 
 Uncertain<bool> operator|(bool u, Uncertain<bool> v); 
 
-/*! 
+/*!
 
 returns the range containing the values computed as logical and from `u` and `v`. 
 */ 
 Uncertain<bool> operator&(Uncertain<bool> u, Uncertain<bool> v); 
 
-/*! 
+/*!
 
 returns `u & make_uncertain(v)`. 
 */ 
 Uncertain<bool> operator&(Uncertain<bool> u, bool v); 
 
-/*! 
+/*!
 
 returns `v & u`. 
 */ 
@@ -380,91 +380,91 @@ Uncertain<bool> operator&(bool u, Uncertain<bool> v);
 /// \name Overloaded Operators and Functions for Uncertain<enum T> Only 
 /// @{
 
-/*! 
+/*!
 
 returns the extension of the less-than operator over `u` and `v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator<(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns `u < make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<bool> operator<(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 
 returns `make_uncertain(u) < v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator<(T u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns the extension of the greater-than operator over `u` and `v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator>(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns `u > make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<bool> operator>(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 
 returns `make_uncertain(u) > v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator>(T u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns the extension of the less-than or equal operator over `u` and `v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator<=(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns `u <= make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<bool> operator<=(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 
 returns `make_uncertain(u) <= v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator<=(T u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns the extension of the greater-than or equal operator over `u` and `v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator>=(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns `u > make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<bool> operator>=(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 
 returns `make_uncertain(u) >= v`. 
 */ 
 template <class T> 
 Uncertain<bool> operator>=(T u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns the extension of the multiplication operator over `u` and `v`. 
 This requires `T` to have a multiplication operator as well. 
@@ -472,28 +472,28 @@ This requires `T` to have a multiplication operator as well.
 template <class T> 
 Uncertain<T> operator*(Uncertain<T> u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns `u * make_uncertain(v)`. 
 */ 
 template <class T> 
 Uncertain<T> operator*(Uncertain<T> u, T v); 
 
-/*! 
+/*!
 
 returns `make_uncertain(u) * v`. 
 */ 
 template <class T> 
 Uncertain<T> operator<(T u, Uncertain<T> v); 
 
-/*! 
+/*!
 
 returns the extension of the unary minus operator over `u`. 
 */ 
 template <class T> 
 Uncertain<T> operator-(Uncertain<T> u); 
 
-/*! 
+/*!
 
 returns the extension of the `enum_cast<T>` function over `u`. 
 */ 
@@ -504,31 +504,31 @@ Uncertain<T> enum_cast(Uncertain<U> u);
 
 }; /* end Uncertain */
 
-/*! 
+/*!
 returns `u.inf()`. 
 \relates Uncertain 
 */ 
 template <class T> T inf(Uncertain<T> u); 
 
-/*! 
+/*!
 returns `u.sup()`. 
 \relates Uncertain 
 */ 
 template <class T> T sup(Uncertain<T> u); 
 
-/*! 
+/*!
 returns `true`. 
 \relates Uncertain 
 */ 
 template <class T> bool is_certain(T t); 
 
-/*! 
+/*!
 returns `u`.`is_certain`(). 
 \relates Uncertain 
 */ 
 template <class T> bool is_certain(Uncertain<T> u); 
 
-/*! 
+/*!
 returns `U::indeterminate()` if `U` is `Uncertain<T>`, 
 and `U()` otherwise. 
 
@@ -536,49 +536,49 @@ and `U()` otherwise.
 */ 
 template <class U> U indeterminate(); 
 
-/*! 
+/*!
 returns `false`. 
 \relates Uncertain 
 */ 
 template <class T> bool is_indeterminate(T u); 
 
-/*! 
+/*!
 returns `!is_certain(u)`. 
 \relates Uncertain 
 */ 
 template <class T> bool is_indeterminate(Uncertain<T> u); 
 
-/*! 
+/*!
 returns `t`. 
 \relates Uncertain 
 */ 
 template <class T> T get_certain(T t); 
 
-/*! 
+/*!
 returns `u`.`make_certain`(). \pre `u`.`is_certain`(). 
 \relates Uncertain 
 */ 
 template <class T> T get_certain(Uncertain<T> u); 
 
-/*! 
+/*!
 returns `t`. 
 \relates Uncertain 
 */ 
 template <class T> T make_certain(T t); 
 
-/*! 
+/*!
 returns `u`.`make_certain`(). 
 \relates Uncertain 
 */ 
 template <class T> T make_certain(Uncertain<T> u); 
 
-/*! 
+/*!
 returns `Uncertain<T>(u)`. 
 \relates Uncertain 
 */ 
 template <class T> Uncertain<T> make_uncertain(T t); 
 
-/*! 
+/*!
 returns `u`. 
 \relates Uncertain 
 */ 
@@ -596,53 +596,53 @@ template <class T> Uncertain<T> make_uncertain(Uncertain<T> u);
  */
 #define CGAL_OR_3
 
-/*! 
+/*!
 returns `true` iff `u`.`is_certain()`, and the `u`.`make_certain`() 
 returns `true`. 
 \relates Uncertain 
 */ 
 bool certainly(Uncertain<bool> u); 
 
-/*! 
+/*!
 returns `u`. 
 \relates Uncertain 
 */ 
 bool certainly(bool u); 
 
-/*! 
+/*!
 returns `true` iff `u`.`is_certain()` returns `false`, or if 
 `u`.`make_certain`() returns `true`. 
 \relates Uncertain 
 */ 
 bool possibly(Uncertain<bool> u); 
 
-/*! 
+/*!
 returns `u`. 
 \relates Uncertain 
 */ 
 bool possibly(bool u); 
 
-/*! 
+/*!
 returns `true` iff `u`.`is_certain()`, and the `u`.`make_certain`() 
 returns `false`. 
 \relates Uncertain 
 */ 
 bool certainly_not(Uncertain<bool> u); 
 
-/*! 
+/*!
 returns `!u`. 
 \relates Uncertain 
 */ 
 bool certainly_not(bool u); 
 
-/*! 
+/*!
 returns `true` iff `u`.`is_certain()` returns `false`, or if 
 `u`.`make_certain`() returns `false`. 
 \relates Uncertain 
 */ 
 bool possibly_not(Uncertain<bool> u); 
 
-/*! 
+/*!
 returns `!u`. 
 \relates Uncertain 
 */ 

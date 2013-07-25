@@ -69,7 +69,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 assigns `f` with the contents of the `other` vertex. 
 */ 
 void assign (const Self & other); 
@@ -79,7 +79,7 @@ void assign (const Self & other);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 obtains the auxiliary data (a non-const version, returning a reference 
 to a mutable data object is also available). 
 */ 
@@ -90,7 +90,7 @@ const FData & data () const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 sets the auxiliary data. 
 */ 
 void set_data (const FData & data); 
@@ -121,7 +121,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 assigns `he` with the contents of the `other` vertex. 
 */ 
 void assign (const Self & other); 
@@ -131,7 +131,7 @@ void assign (const Self & other);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 obtains the auxiliary data (a non-const version, returning a reference 
 to a mutable data object is also available). 
 */ 
@@ -142,7 +142,7 @@ const HData & data () const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 sets the auxiliary data. 
 */ 
 void set_data (const HData & data); 
@@ -174,7 +174,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 assigns `v` with the contents of the `other` vertex. 
 */ 
 void assign (const Self & other); 
@@ -184,7 +184,7 @@ void assign (const Self & other);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 obtains the auxiliary data (a non-const version, returning a reference 
 to a mutable data object is also available). 
 */ 
@@ -195,7 +195,7 @@ const VData & data () const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 sets the auxiliary data. 
 */ 
 void set_data (const VData & data); 

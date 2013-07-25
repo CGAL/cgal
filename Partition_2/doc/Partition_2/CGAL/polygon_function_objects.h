@@ -23,7 +23,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 `Traits` satisfies the 
 requirements of the function `is_convex_2` 
 */ 
@@ -34,7 +34,7 @@ Is_convex_2(const Traits& t);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns `true` iff the points of type `Traits::Point_2` 
 in the range [`first`,`beyond`) define a convex polygon. 
@@ -72,7 +72,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Is_vacuously_valid(const Traits& t); 
@@ -82,7 +82,7 @@ Is_vacuously_valid(const Traits& t);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns `true`. 
 
@@ -120,7 +120,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 `Traits` is a model of 
 the concept `IsYMonotoneTraits_2` 
 */ 
@@ -131,7 +131,7 @@ Is_y_monotone_2(const Traits& t);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns `true` iff the points of type `Traits::Point_2` in the 
 range [`first`,`beyond`) define a \f$ y\f$-monotone polygon. 

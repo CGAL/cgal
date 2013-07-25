@@ -15,7 +15,7 @@ enum Mesh_facet_topology {
   FACET_VERTICES_ON_SAME_SURFACE_PATCH, //!< The three vertices of a facet belonging 
                                         //!< to a surface patch `s` have to be on 
                                         //!< the same surface patch `s`, on a curve segment or on a corner.
-  /*!  
+  /*!
     The three vertices of a facet belonging to a surface patch `s`
     have to be on the same surface patch `s`, or on a curve segment
     incident to the surface patch `s` or on a corner incident to the

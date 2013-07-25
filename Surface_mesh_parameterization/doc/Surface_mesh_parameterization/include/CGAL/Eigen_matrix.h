@@ -28,7 +28,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The internal matrix type from \ref thirdpartyEigen "Eigen". 
 */ 
 typedef unspecified_type EigenType; 
@@ -67,7 +67,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The internal matrix type from \ref thirdpartyEigen "Eigen". 
 */ 
 typedef unspecified_type EigenType; 

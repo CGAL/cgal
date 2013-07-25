@@ -36,22 +36,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the `Kernel` model. 
 */ 
 typedef unspecified_type Kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef Kernel::Point_3 Point_3; 
 
-/*! 
+/*!
 
 */ 
 typedef Kernel::Plane_3 Plane_3; 
 
-/*! 
+/*!
 
 */ 
 typedef Kernel::Construct_opposite_plane_3 
@@ -62,13 +62,13 @@ Construct_opposite_plane_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor, uses 
 `Kernel()` as local reference to the kernel. 
 */ 
 Polyhedron_traits_3(); 
 
-/*! 
+/*!
 stores `kernel` 
 as local reference. 
 */ 
@@ -79,7 +79,7 @@ Polyhedron_traits_3( const Kernel& kernel);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 forwarded to `kernel`. 
 */ 

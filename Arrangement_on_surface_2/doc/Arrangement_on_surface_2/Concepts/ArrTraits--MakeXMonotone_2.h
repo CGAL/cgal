@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 subdivides the input curve `c` into \f$ x\f$-monotone subcurves and 
 isolated points, and inserts the results into a container through the 
 given output iterator. The value type of `OutputIterator` is 

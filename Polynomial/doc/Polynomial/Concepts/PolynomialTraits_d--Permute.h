@@ -30,7 +30,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
@@ -40,7 +40,7 @@ typedef PolynomialTraits_d::Polynomial_d result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns \f$ p\f$ with interchanged variables as defined by the iterator range. 
 \pre (end-begin == `PolynomialTraits_d::d`) 

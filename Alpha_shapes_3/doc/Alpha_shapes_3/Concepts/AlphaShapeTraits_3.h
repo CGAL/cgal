@@ -31,13 +31,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A number type compatible with the type used for 
 the points coordinate. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 An object constructor able to compute: 
 
 - the squared radius of the 
@@ -56,7 +56,7 @@ typedef unspecified_type Compute_squared_radius_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 AlphaShapeTraits_3(); 
@@ -66,7 +66,7 @@ AlphaShapeTraits_3();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compute_squared_radius_3 compute_squared_radius_3_object(); 

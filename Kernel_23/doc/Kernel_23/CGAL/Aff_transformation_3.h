@@ -44,25 +44,25 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an identity transformation. 
 */ 
 Aff_transformation_3(const Identity_transformation& ); 
 
-/*! 
+/*!
 introduces a translation by a vector `v`. 
 */ 
 Aff_transformation_3(const Translation, 
 const Vector_3<Kernel> &v); 
 
-/*! 
+/*!
 introduces a scaling by a scale factor \f$ s/hw\f$. 
 */ 
 Aff_transformation_3(const Scaling, 
 const Kernel::RT &s, 
 const Kernel::RT &hw = RT(1)); 
 
-/*! 
+/*!
 introduces a general affine transformation of the matrix 
 form 
 \f$
@@ -92,7 +92,7 @@ const Kernel::RT &m10, const Kernel::RT &m11, const Kernel::RT &m12, const Kerne
 const Kernel::RT &m20, const Kernel::RT &m21, const Kernel::RT &m22, const Kernel::RT &m23, 
 const Kernel::RT &hw = RT(1)); 
 
-/*! 
+/*!
 introduces a general linear transformation of the 
 matrix form \f$
 \small \mbox{\(\left(\begin{array}{cccc}
@@ -128,65 +128,65 @@ available through `operator()` overloads.
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point_3<Kernel> transform(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Vector_3<Kernel> transform(const Vector_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Direction_3<Kernel> transform(const Direction_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Plane_3<Kernel> transform(const Plane_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Point_3<Kernel> operator()(const Point_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Vector_3<Kernel> operator()(const Vector_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Direction_3<Kernel> operator()(const Direction_3<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 Plane_3<Kernel> operator()(const Plane_3<Kernel> &p) const; 
 
-/*! 
+/*!
 composes two affine transformations. 
 */ 
 Aff_transformation_3<Kernel> 
 operator*(const Aff_transformation_3<Kernel> &s) const; 
 
-/*! 
+/*!
 gives the inverse transformation. 
 */ 
 Aff_transformation_3<Kernel> inverse() const; 
 
-/*! 
+/*!
 returns `true`, if the transformation is not reflecting, 
 i.e.\ the determinant of the involved linear transformation is 
 non-negative. 
 */ 
 bool is_even() const; 
 
-/*! 
+/*!
 returns `true`, if the transformation is reflecting. 
 */ 
 bool is_odd() const; 
@@ -197,22 +197,22 @@ bool is_odd() const;
 /// @{
 
 
-/*! 
+/*!
 
 */ 
 Kernel::FT cartesian(int i, int j) const; 
 
-/*! 
+/*!
 returns entry \f$ m_{ij}\f$ in a matrix representation in which \f$ m_{33}\f$ is 1. 
 */ 
 Kernel::FT m(int i, int j) const; 
 
-/*! 
+/*!
 
 */ 
 Kernel::RT homogeneous(int i, int j) const; 
 
-/*! 
+/*!
 returns entry \f$ m_{ij}\f$ in some fixed matrix representation. 
 */ 
 Kernel::RT hm(int i, int j) const; 

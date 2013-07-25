@@ -16,30 +16,30 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the dD point type on which the Delaunay 
 algorithm operates 
 */ 
 typedef unspecified_type Point_d; 
 
-/*! 
+/*!
 a dD sphere 
 */ 
 typedef unspecified_type Sphere_d; 
 
-/*! 
+/*!
 an arithmetic field type 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 Predicate object type that provides 
 `Point_d operator()(Sphere_d s, int i)`, which returns the \f$ i\f$th 
 point defining sphere `s`. 
 */ 
 typedef unspecified_type Point_of_sphere_d; 
 
-/*! 
+/*!
 Predicate object type that provides 
 `Sphere_d operator()(int d, ForwardIterator first, ForwardIterator 
 last)`, which returns a dD sphere through the points in 
@@ -47,7 +47,7 @@ last)`, which returns a dD sphere through the points in
 */ 
 typedef unspecified_type Construct_sphere_d; 
 
-/*! 
+/*!
 Predicate object type that 
 provides `bool operator()(ForwardIterator first, ForwardIterator 
 last, Point_d p)`, which determines if `p` is contained in 
@@ -55,14 +55,14 @@ the closed simplex defined by the points in `tuple[first,last)`.
 */ 
 typedef unspecified_type Contained_in_simplex_d; 
 
-/*! 
+/*!
 Predicate object type that provides 
 `FT operator()(Point_d p,Point_d q)`, which determines the 
 squared distance from `p` to `q`. 
 */ 
 typedef unspecified_type Squared_distance_d; 
 
-/*! 
+/*!
 Predicate object type that 
 provides `bool operator()(ForwardIterator first, ForwardIterator 
 last)`, which determines if the points in `tuple[first,last)` are 
@@ -83,7 +83,7 @@ predicate object type. For example:
 */
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_sphere_d construct_sphere_d_object(); 

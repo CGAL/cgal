@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 determines whether `xc` is a vertical segment. 
 */ 
 bool operator()(ArrTraits::X_monotone_curve_2 xc); 

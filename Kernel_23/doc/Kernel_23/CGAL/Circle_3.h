@@ -17,7 +17,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle of center `center` and 
 squared radius `sq_r` in plane `plane`. 
@@ -27,7 +27,7 @@ Circle_3(const Point_3<Kernel> &center,
          const Kernel::FT &sq_r, 
          const Plane_3<Kernel> & plane); 
 
-/*! 
+/*!
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle of center `center` and 
 squared radius `sq_r` in a plane normal to 
@@ -38,7 +38,7 @@ Circle_3(const Point_3<Kernel> & center,
          const Kernel::FT & sq_r, 
          const Vector_3<Kernel> & n); 
 
-/*! 
+/*!
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle passing through the three points. 
 \pre The three points are not collinear. 
@@ -46,7 +46,7 @@ It is initialized to the circle passing through the three points.
 Circle_3(const Point_3<Kernel> & p, 
          const Point_3<Kernel> & q, const Point_3<Kernel> & r); 
 
-/*! 
+/*!
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle along which the two spheres intersect. 
 \pre The two spheres intersect along a circle. 
@@ -54,7 +54,7 @@ It is initialized to the circle along which the two spheres intersect.
 Circle_3(const Sphere_3<Kernel> & sphere1, 
          const Sphere_3<Kernel> & sphere2); 
 
-/*! 
+/*!
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle along which the sphere and the 
 plane intersect. 
@@ -63,7 +63,7 @@ plane intersect.
   Circle_3(constSphere_3<Kernel> & sphere, 
            const Plane_3<Kernel> & plane); 
 
-/*! 
+/*!
 introduces a variable `c` of type `Circle_3`. 
 It is initialized to the circle along which the sphere and the 
 plane intersect. 
@@ -77,49 +77,49 @@ Circle_3(const Plane_3<Kernel> & plane,
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the center of `c`. 
 */ 
 const Point_3<Kernel> & center( ) const; 
 
-/*! 
+/*!
 
 returns the squared radius of `c`. 
 */ 
 const Kernel::FT & squared_radius( ) const; 
 
-/*! 
+/*!
 
 returns the supporting plane of `c`. 
 */ 
 const Plane_3<Kernel> & supporting_plane( ) const; 
 
-/*! 
+/*!
 
 returns the diametral sphere of `c`. 
 */ 
 const Sphere_3<Kernel> & diametral_sphere( ) const; 
 
-/*! 
+/*!
 
 returns the area of `c`, divided by \f$ \pi\f$. 
 */ 
 Kernel::FT const& area_divided_by_pi( ) const; 
 
-/*! 
+/*!
 
 returns an approximation of the area of `c`. 
 */ 
 double approximate_area( ) const; 
 
-/*! 
+/*!
 
 returns the squared length of `c`, divided by \f$ \pi^2\f$. 
 */ 
 Kernel::FT squared_length_divided_by_pi_square( ) const; 
 
-/*! 
+/*!
 
 returns an approximation of the squared length (i.e.\ perimeter) of `c`. 
 */ 
@@ -130,7 +130,7 @@ double approximate_squared_length( ) const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 
 */ 
 bool has_on(const Point_3<Kernel> & p) const; 
@@ -140,7 +140,7 @@ bool has_on(const Point_3<Kernel> & p) const;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns a bounding box containing `c`. 
 */ 
@@ -150,7 +150,7 @@ Bbox_3 bbox() const;
 
 }; /* end Circle_3 */
 
-/*! 
+/*!
 returns `true`, iff `c1` and `c2` are equal, 
 i.e.\ if they have the same center, the same squared radius 
 and the same supporting plane. 
@@ -159,7 +159,7 @@ and the same supporting plane.
 bool operator == (const Circle_3<Kernel>& c1, 
 Circle_3<Kernel> const& c2); 
 
-/*! 
+/*!
 
 \relates Circle_3 
 */ 

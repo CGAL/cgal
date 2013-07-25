@@ -26,7 +26,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Numerical type 
 */ 
 typedef Tr::FT FT; 
@@ -36,7 +36,7 @@ typedef Tr::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Returns an object to serve as default criteria for cells. The argument 
 `radius_edge_bound` is the upper bound for the radius-edge ratio 
 of the tetrahedra. The argument `radius_bound` is a uniform upper bound 
@@ -48,7 +48,7 @@ Mesh_cell_criteria_3(
 FT radius_edge_bound, 
 FT radius_bound); 
 
-/*! 
+/*!
 Returns an object to serve as default criteria for facets. The type `SizingField` must 
 be a model of the concept `MeshDomainField_3`. The behavior and semantic of the arguments are the same 
 as above, except that the radius bound parameter is a functional instead of a constant. 

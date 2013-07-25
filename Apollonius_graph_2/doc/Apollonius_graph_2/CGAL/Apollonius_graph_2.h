@@ -59,31 +59,31 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type for the underlying 
 data structure. 
 */ 
 typedef Agds Data_structure; 
 
-/*! 
+/*!
 Same as the `Data_structure` type. This type has been introduced 
 in order for the `Apollonius_graph_2` class to be a 
 model of the `DelaunayGraph_2` concept. 
 */ 
 typedef Data_structure Triangulation_data_structure; 
 
-/*! 
+/*!
 A type for the geometric traits. 
 */ 
 typedef Gt Geom_traits; 
 
-/*! 
+/*!
 A type for the 
 point defined in the geometric traits. 
 */ 
 typedef Gt::Point_2 Point_2; 
 
-/*! 
+/*!
 A type for the Apollonius site, defined in the geometric traits. 
 */ 
 typedef Gt::Site_2 Site_2; 
@@ -108,7 +108,7 @@ typedef Gt::Site_2 Site_2;
 /// infinite and finite features.
 /// @{
 
-/*! 
+/*!
 the edge type. 
 The `Edge(f,i)` is the edge common to faces `f` and 
 `f.neighbor(i)`. It is also the edge joining the vertices 
@@ -117,75 +117,75 @@ The `Edge(f,i)` is the edge common to faces `f` and
 */ 
 typedef Data_structure::Edge Edge; 
 
-/*! 
+/*!
 A type for a vertex. 
 */ 
 typedef Data_structure::Vertex Vertex; 
 
-/*! 
+/*!
 A type for a face. 
 */ 
 typedef Data_structure::Face Face; 
 
-/*! 
+/*!
 A type for a handle to a vertex. 
 */ 
 typedef Data_structure::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 A type for a handle to a face. 
 */ 
 typedef Data_structure::Face_handle Face_handle; 
 
-/*! 
+/*!
 A type for a circulator over vertices incident to a given vertex. 
 */ 
 typedef Data_structure::Vertex_circulator Vertex_circulator; 
 
-/*! 
+/*!
 A type for a circulator over faces incident to a given vertex. 
 */ 
 typedef Data_structure::Face_circulator Face_circulator; 
 
-/*! 
+/*!
 A type for a circulator over edges incident to a given vertex. 
 */ 
 typedef Data_structure::Edge_circulator Edge_circulator; 
 
-/*! 
+/*!
 A type for an iterator over all vertices. 
 */ 
 typedef Data_structure::Vertex_iterator 
 All_vertices_iterator; 
 
-/*! 
+/*!
 A type for an iterator over all faces. 
 */ 
 typedef Data_structure::Face_iterator 
 All_faces_iterator; 
 
-/*! 
+/*!
 A type for an iterator over all edges. 
 */ 
 typedef Data_structure::Edge_iterator 
 All_edges_iterator; 
 
-/*! 
+/*!
 An unsigned integral type. 
 */ 
 typedef Data_structure::size_type size_type; 
 
-/*! 
+/*!
 A type for an iterator over finite vertices. 
 */ 
 typedef unspecified_type Finite_vertices_iterator; 
 
-/*! 
+/*!
 A type for an iterator over finite faces. 
 */ 
 typedef unspecified_type Finite_faces_iterator; 
 
-/*! 
+/*!
 A type for an iterator over finite edges. 
 */ 
 typedef unspecified_type Finite_edges_iterator; 
@@ -199,17 +199,17 @@ typedef unspecified_type Finite_edges_iterator;
 /// visible sites of the Apollonius graph.
 /// @{
 
-/*! 
+/*!
 A type for an iterator over all sites. 
 */ 
 typedef unspecified_type Sites_iterator; 
 
-/*! 
+/*!
 A type for an iterator over all visible sites. 
 */ 
 typedef unspecified_type Visible_sites_iterator; 
 
-/*! 
+/*!
 A type for an iterator over all hidden sites. 
 */ 
 typedef unspecified_type Hidden_sites_iterator; 
@@ -219,13 +219,13 @@ typedef unspecified_type Hidden_sites_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates an 
 Apollonius graph `ag` using `gt` as geometric traits. 
 */ 
 Apollonius_graph_2(Gt gt=Gt()); 
 
-/*! 
+/*!
 Creates an Apollonius graph `ag` using `gt` as 
 geometric traits and inserts all sites in the range 
 [`first`, `beyond`). 
@@ -235,7 +235,7 @@ template< class Input_iterator >
 Apollonius_graph_2(Input_iterator first, Input_iterator beyond, 
 Gt gt=Gt()); 
 
-/*! 
+/*!
 Copy constructor. All faces and vertices are duplicated. After the 
 construction, 
 `ag` and `other` refer to two different Apollonius graphs : if 
@@ -243,7 +243,7 @@ construction,
 */ 
 Apollonius_graph_2(const Apollonius_graph_2<Gt,Agds>& other); 
 
-/*! 
+/*!
 Assignment. If `ag` and `other` are the same object 
 nothing is done. Otherwise, all the vertices and faces are 
 duplicated. After the assignment, `ag` and `other` refer to 
@@ -258,62 +258,62 @@ operator=(const Apollonius_graph_2<Gt,Agds>& other);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a reference to the Apollonius graph traits object. 
 */ 
 Geom_traits geom_traits(); 
 
-/*! 
+/*!
 Returns a reference to the 
 underlying data structure. 
 */ 
 Data_structure data_structure(); 
 
-/*! 
+/*!
 Same as `data_structure()`. This 
 method has been added in compliance with the `DelaunayGraph_2` 
 concept. 
 */ 
 Data_structure tds(); 
 
-/*! 
+/*!
 Returns the dimension of the Apollonius graph. 
 */ 
 int dimension(); 
 
-/*! 
+/*!
 Returns the number of finite vertices. 
 */ 
 size_type number_of_vertices(); 
 
-/*! 
+/*!
 Returns the number of visible sites. 
 */ 
 size_type number_of_visible_sites(); 
 
-/*! 
+/*!
 Returns the number of hidden sites. 
 */ 
 size_type number_of_hidden_sites(); 
 
-/*! 
+/*!
 Returns the number of faces (both finite and infinite) of the 
 Apollonius graph. 
 */ 
 size_type number_of_faces(); 
 
-/*! 
+/*!
 Returns a face incident to the `infinite_vertex`. 
 */ 
 Face_handle infinite_face(); 
 
-/*! 
+/*!
 Returns the `infinite_vertex`. 
 */ 
 Vertex_handle 
 infinite_vertex(); 
 
-/*! 
+/*!
 Returns a vertex distinct from the `infinite_vertex`. 
 \pre The number of (visible) vertices in the Apollonius graph must be at least one. 
 */ 
@@ -334,63 +334,63 @@ Vertex_handle finite_vertex();
 /// change in the Apollonius graph.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary finite vertex. 
 */ 
 Finite_vertices_iterator finite_vertices_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Finite_vertices_iterator finite_vertices_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary finite edge. 
 */ 
 Finite_edges_iterator finite_edges_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Finite_edges_iterator finite_edges_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary finite face. 
 */ 
 Finite_faces_iterator finite_faces_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Finite_faces_iterator finite_faces_end() 
 const; 
 
-/*! 
+/*!
 Starts at an arbitrary vertex. 
 */ 
 All_vertices_iterator all_vertices_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 All_vertices_iterator all_vertices_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary edge. 
 */ 
 All_edges_iterator all_edges_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 All_edges_iterator all_edges_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary face. 
 */ 
 All_faces_iterator all_faces_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 All_faces_iterator all_faces_end(); 
@@ -404,32 +404,32 @@ All_faces_iterator all_faces_end();
 /// are all invalidated by any change in the Apollonius graph.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary site. 
 */ 
 Sites_iterator sites_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Sites_iterator sites_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary visible site. 
 */ 
 Visible_sites_iterator visible_sites_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Visible_sites_iterator visible_sites_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary hidden site. 
 */ 
 Hidden_sites_iterator hidden_sites_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Hidden_sites_iterator hidden_sites_end(); 
@@ -450,38 +450,38 @@ Hidden_sites_iterator hidden_sites_end();
 /// to.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary face incident 
 to `v`. 
 */ 
 Face_circulator incident_faces(Vertex_handle v); 
 
-/*! 
+/*!
 Starts at face `f`. 
 \pre Face `f` is incident to vertex `v`. 
 */ 
 Face_circulator incident_faces(Vertex_handle v, Face_handle f); 
 
-/*! 
+/*!
 Starts at an arbitrary edge incident 
 to `v`. 
 */ 
 Edge_circulator incident_edges(Vertex_handle v); 
 
-/*! 
+/*!
 Starts at the first edge of `f` incident to 
 `v`, in counterclockwise order around `v`. 
 \pre Face `f` is incident to vertex `v`. 
 */ 
 Edge_circulator incident_edges(Vertex_handle v, Face_handle f); 
 
-/*! 
+/*!
 Starts at an arbitrary vertex incident 
 to `v`. 
 */ 
 Vertex_circulator incident_vertices(Vertex_handle v); 
 
-/*! 
+/*!
 Starts at the first vertex of `f` adjacent to `v` 
 in counterclockwise order around `v`. 
 \pre Face `f` is incident to vertex `v`. 
@@ -495,30 +495,30 @@ Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f);
 /// or infinite character of any feature.
 /// @{
 
-/*! 
+/*!
 `true`, iff `v` is the `infinite_vertex`. 
 */ 
 bool 
 is_infinite(Vertex_handle v) const; 
 
-/*! 
+/*!
 `true`, iff face `f` is infinite. 
 */ 
 bool 
 is_infinite(Face_handle f) const; 
 
-/*! 
+/*!
 `true`, iff edge `(f,i)` is infinite. 
 */ 
 bool is_infinite(Face_handle f, int i) const; 
 
-/*! 
+/*!
 `true`, iff edge `e` is infinite. 
 */ 
 bool 
 is_infinite(Edge e) const; 
 
-/*! 
+/*!
 `true`, iff edge `*ec` is infinite. 
 */ 
 bool 
@@ -529,7 +529,7 @@ is_infinite(Edge_circulator ec) const;
 /// \name Insertion 
 /// @{
 
-/*! 
+/*!
 Inserts the sites in the range 
 [`first`,`beyond`). The number of sites in the range 
 [`first`, `beyond`) is returned. 
@@ -538,7 +538,7 @@ Inserts the sites in the range
 template< class Input_iterator > 
 unsigned int insert(Input_iterator first, Input_iterator beyond); 
 
-/*! 
+/*!
 Inserts the 
 site `s` in the Apollonius graph. If `s` is visible then the 
 vertex handle of `s` is returned, otherwise 
@@ -546,7 +546,7 @@ vertex handle of `s` is returned, otherwise
 */ 
 Vertex_handle insert(Site_2 s); 
 
-/*! 
+/*!
 Inserts `s` in the Apollonius graph using the site 
 associated with `vnear` as an estimate for the nearest neighbor of 
 the center of `s`. If `s` is visible then the vertex handle of 
@@ -561,7 +561,7 @@ vnear);
 /// \name Removal 
 /// @{
 
-/*! 
+/*!
 Removes the site 
 associated to the vertex handle `v` from the Apollonius 
 graph. 
@@ -574,7 +574,7 @@ void remove(Vertex_handle v);
 /// \name Nearest Neighbor Location 
 /// @{
 
-/*! 
+/*!
 Finds the nearest neighbor of the point `p`. In other words it 
 finds the site whose Apollonius cell contains `p`. Ties are broken 
 arbitrarily and one of the nearest neighbors of `p` is 
@@ -583,7 +583,7 @@ returned. If there are no visible sites in the Apollonius diagram
 */ 
 Vertex_handle nearest_neighbor(Point_2 p); 
 
-/*! 
+/*!
 Finds the nearest neighbor of the point 
 `p` using the site associated with `vnear` as an 
 estimate for the nearest neighbor of `p`. Ties are broken 
@@ -609,21 +609,21 @@ Vertex_handle vnear);
 /// finite or infinite, respectively.
 /// @{
 
-/*! 
+/*!
 Returns the 
 dual corresponding to the face handle `f`. The returned object can 
 be assignable to one of the following: `Site_2`, `Gt::Line_2`. 
 */ 
 Gt::Object_2 dual(Face_handle f) const; 
 
-/*! 
+/*!
 Returns the 
 dual of the face to which `it` points to. The returned object can 
 be assignable to one of the following: `Site_2`, `Gt::Line_2`. 
 */ 
 Gt::Object_2 dual(All_faces_iterator it) const; 
 
-/*! 
+/*!
 Returns 
 the dual of the face to which `it` points to. The returned 
 object can be assignable to one of the following: `Site_2`, 
@@ -636,7 +636,7 @@ Gt::Object_2 dual(Finite_faces_iterator it) const;
 /// \name I/O 
 /// @{
 
-/*! 
+/*!
 Draws the Apollonius graph to 
 the stream `str`. 
 \pre The following operators must be defined: 
@@ -647,7 +647,7 @@ the stream `str`.
 template< class Stream > 
 Stream& draw_primal(Stream& str); 
 
-/*! 
+/*!
 Draws the dual of the 
 Apollonius graph, i.e., the Apollonius diagram, to the stream 
 `str`. 
@@ -660,7 +660,7 @@ Apollonius graph, i.e., the Apollonius diagram, to the stream
 template < class Stream > 
 Stream& draw_dual(Stream& str); 
 
-/*! 
+/*!
 Draws the edge 
 `e` of the Apollonius graph to the stream `str`. 
 \pre The following operators must be defined: 
@@ -671,7 +671,7 @@ Draws the edge
 template< class Stream > 
 Stream& draw_primal_edge(Edge e, Stream& str); 
 
-/*! 
+/*!
 Draws the dual of the 
 edge `e` to the stream `str`. The dual of `e` is an edge 
 of the Apollonius diagram. 
@@ -684,7 +684,7 @@ of the Apollonius diagram.
 template< class Stream > 
 Stream& draw_dual_edge(Edge e, Stream& str); 
 
-/*! 
+/*!
 Writes the current 
 state of the Apollonius graph to an output stream. In particular, 
 all visible and hidden sites are written as well as the 
@@ -692,19 +692,19 @@ underlying combinatorial data structure.
 */ 
 void file_output(std::ostream& os); 
 
-/*! 
+/*!
 Reads the state of the 
 Apollonius graph from an input stream. 
 */ 
 void file_input(std::istream& is); 
 
-/*! 
+/*!
 Writes the current state of the Apollonius graph to an output stream. 
 */ 
 std::ostream& operator<<(std::ostream& os, 
 Apollonius_graph_2<Gt,Agds> ag); 
 
-/*! 
+/*!
 Reads the state of the Apollonius graph from an input stream. 
 */ 
 std::istream& operator>>(std::istream& is, 
@@ -715,7 +715,7 @@ Apollonius_graph_2<Gt,Agds> ag);
 /// \name Validity Check 
 /// @{
 
-/*! 
+/*!
 Checks the validity of the Apollonius graph. If `verbose` is 
 `true` a short message is sent to `std::cerr`. If `level` 
 is 0, only the data structure is validated. If `level` is 1, then 
@@ -730,12 +730,12 @@ bool is_valid(bool verbose = false, int level = 1);
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 Clears all contents of the Apollonius graph. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 The Apollonius graphs 
 `other` and `ag` are swapped. `ag`.`swap(other)` should 
 be preferred to `ag`` = other` or to `ag``(other)` if 

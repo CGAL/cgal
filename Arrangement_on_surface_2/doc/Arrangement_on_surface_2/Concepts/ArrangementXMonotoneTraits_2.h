@@ -43,7 +43,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the multiplicity type. 
 */ 
 typedef unspecified_type Multiplicity; 
@@ -53,7 +53,7 @@ typedef unspecified_type Multiplicity;
 /// \name Tags 
 /// @{
 
-/*! 
+/*!
 indicates whether the nested functors `Are_mergeable_2` and 
 `Merge_2` are provided. 
 */ 
@@ -64,12 +64,12 @@ typedef unspecified_type Has_merge_category;
 /// \name Functor Types 
 /// @{
 
-/*! 
+/*!
 models the concept `ArrTraits::Intersect_2`. 
 */ 
 typedef unspecified_type Intersect_2; 
 
-/*! 
+/*!
 models the concept `ArrTraits::Split_2`. 
 */ 
 typedef unspecified_type Split_2; 
@@ -82,7 +82,7 @@ typedef unspecified_type Split_2;
 /// should be defined as `Tag_true` (and `Tag_false` otherwise.
 /// @{
 
-/*! 
+/*!
 models the concept `ArrTraits::AreMergeable_2`. 
 
 
@@ -90,7 +90,7 @@ models the concept `ArrTraits::AreMergeable_2`.
 */ 
 typedef unspecified_type Are_mergeable_2; 
 
-/*! 
+/*!
 models the concept `ArrTraits::Merge_2`. 
 */ 
 typedef unspecified_type Merge_2; 
@@ -100,12 +100,12 @@ typedef unspecified_type Merge_2;
 /// \name Accessing Functor Objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Intersect_2 intersect_2_object() const; 
 
-/*! 
+/*!
 
 */ 
 Split_2 split_2_object() const; 
@@ -118,12 +118,12 @@ Split_2 split_2_object() const;
 /// `Tag_false` otherwise.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Are_mergeable_2 are_mergeable_2_object() const; 
 
-/*! 
+/*!
 
 */ 
 Merge_2 merge_2_object() const; 

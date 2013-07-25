@@ -23,7 +23,7 @@ public:
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 forward pointer 
 */ 
 T* next_link; 
@@ -35,7 +35,7 @@ T* next_link;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 backward pointer 
 */ 
 T* prev_link; 
@@ -106,7 +106,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type iterator; 
@@ -115,7 +115,7 @@ typedef unspecified_type iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_iterator; 
@@ -124,7 +124,7 @@ typedef unspecified_type const_iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type value_type; 
@@ -133,7 +133,7 @@ typedef unspecified_type value_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type reference; 
@@ -142,7 +142,7 @@ typedef unspecified_type reference;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_reference; 
@@ -151,7 +151,7 @@ typedef unspecified_type const_reference;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type size_type; 
@@ -160,7 +160,7 @@ typedef unspecified_type size_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type difference_type; 
@@ -169,7 +169,7 @@ typedef unspecified_type difference_type;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type reverse_iterator; 
@@ -178,7 +178,7 @@ typedef unspecified_type reverse_iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type const_reverse_iterator; 
@@ -187,27 +187,27 @@ typedef unspecified_type const_reverse_iterator;
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type allocator_type; 
 /// @} 
 
 
-/*! 
+/*!
 introduces an empty list `ipl`. 
 */ 
 In_place_list(); 
 
 
-/*! 
+/*!
 copy constructor. 
 Each item in `l1` is copied. 
 */ 
 In_place_list(const list<T> &l1); 
 
 
-/*! 
+/*!
 introduces a list `ipl` with `n` items, all initialized with copies 
 of `t`. 
 */ 
@@ -216,7 +216,7 @@ In_place_list(size_type n, const T& t = T()
 
 
 
-/*! 
+/*!
 introduces a list `ipl` with copies from 
 the range [`first,last`). 
 */ 
@@ -225,7 +225,7 @@ InputIterator first, InputIterator last);
 
 
 
-/*! 
+/*!
 introduces a list `ipl` with copies from 
 the range  [`first,last`). 
 */ 
@@ -233,7 +233,7 @@ In_place_list( const T* first, const T* last);
 
 
 
-/*! 
+/*!
 assignment. Each item in `ipl2` 
 is copied. Each item in `ipl` is deleted if the `bool` 
 parameter is `true`. 
@@ -243,14 +243,14 @@ In_place_list<T,bool> &ipl2);
 
 
 
-/*! 
+/*!
 swaps the 
 contents of `ipl` with `ipl2`. 
 */ 
 void swap( const In_place_list<T,bool> &ipl2); 
 
 
-/*! 
+/*!
 all items in `ipl` are deleted 
 regardless of the `bool` parameter. 
 */ 
@@ -259,7 +259,7 @@ void destroy();
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 test for equality: Two lists are equal, iff they have the 
 same size and if their corresponding elements are equal. 
 */ 
@@ -273,7 +273,7 @@ const;
 
 /// \name Comparison Operations 
 /// @{ 
-/*! 
+/*!
 compares in lexicographical order. 
 */ 
 bool operator<(const In_place_list<T,bool> &ipl2) 
@@ -286,7 +286,7 @@ const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a mutable iterator referring to the first 
 element in `ipl`. 
 */ 
@@ -300,7 +300,7 @@ begin();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a constant 
 iterator referring to the first element in `ipl`. 
 */ 
@@ -313,7 +313,7 @@ const_iterator begin() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a mutable iterator which 
 is the past-end-value of `ipl`. 
 */ 
@@ -326,7 +326,7 @@ iterator end();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns a constant 
 iterator which is the past-end-value of `ipl`. 
 */ 
@@ -339,7 +339,7 @@ const_iterator end() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns `true` if `ipl` is 
 empty. 
 */ 
@@ -352,7 +352,7 @@ bool empty() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the number of 
 items in list `ipl`. 
 */ 
@@ -365,7 +365,7 @@ size_type size() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the maximum 
 possible size of the list `l`. 
 */ 
@@ -378,7 +378,7 @@ size_type max_size() const;
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the first item in list `ipl`. 
 */ 
 T& front(); 
@@ -390,7 +390,7 @@ T& front();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the last item in list `ipl`. 
 */ 
 T& back(); 
@@ -402,7 +402,7 @@ T& back();
 
 /// \name Access Member Functions 
 /// @{ 
-/*! 
+/*!
 returns the allocator. 
 */ 
 allocator_type get_allocator() const; 
@@ -414,7 +414,7 @@ allocator_type get_allocator() const;
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts an item in front of 
 list `ipl`. 
 */ 
@@ -427,7 +427,7 @@ void push_front( T&);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts an item at the back 
 of list `ipl`. 
 */ 
@@ -440,7 +440,7 @@ void push_back( T&);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts `t` 
 in front of `pos`. The return value points to the 
 inserted item. 
@@ -454,7 +454,7 @@ iterator insert(iterator pos, T& t);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts `t` 
 in front of `pos`. The return value points to the 
 inserted item. 
@@ -468,7 +468,7 @@ iterator insert(T* pos, T& t);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts \f$ n\f$ copies of `t` in front of 
 `pos`.
 */ 
@@ -481,7 +481,7 @@ void insert(iterator pos, size_type n, const T& t = T());
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts \f$ n\f$ copies of `t` in front of 
 `pos`. 
 */ 
@@ -495,7 +495,7 @@ T());
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts the range 
 [`first, last`) in front of iterator `pos`. 
 */ 
@@ -509,7 +509,7 @@ InputIterator first, InputIterator last);
 
 /// \name Insertion 
 /// @{ 
-/*! 
+/*!
 inserts the range 
 [`first, last`) in front of iterator `pos`. 
 */ 
@@ -523,7 +523,7 @@ InputIterator first, InputIterator last);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the first item from 
 list `ipl`. 
 */ 
@@ -536,7 +536,7 @@ void pop_front();
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the last item from 
 list `ipl`. 
 */ 
@@ -549,7 +549,7 @@ void pop_back();
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the item from 
 list `ipl`, where `pos` refers to. 
 */ 
@@ -562,7 +562,7 @@ void erase(iterator pos);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the item from 
 list `ipl`, where `pos` refers to. 
 */ 
@@ -575,7 +575,7 @@ void erase(T* pos);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 
 */ 
 void erase(iterator first, iterator last); 
@@ -587,7 +587,7 @@ void erase(iterator first, iterator last);
 
 /// \name Removal 
 /// @{ 
-/*! 
+/*!
 removes the items 
 in the range [`first, last`) from `ipl`. 
 */ 
@@ -600,7 +600,7 @@ void erase(T* first, T* last);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 
 */ 
 void splice(iterator pos, In_place_list<T,bool>& x); 
@@ -612,7 +612,7 @@ void splice(iterator pos, In_place_list<T,bool>& x);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 inserts the list `ipl2` before position `pos` and `ipl2` 
 becomes empty. It takes constant time. 
 
@@ -628,7 +628,7 @@ ipl2);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 inserts the list `ipl2` before position `pos` and `ipl2` 
 becomes empty. It takes constant time. 
 
@@ -644,7 +644,7 @@ iterator i);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 inserts an element pointed to by `i` from list `ipl2` before 
 position `pos` and removes the element from `ipl`. It takes 
 constant time. `i` is a valid dereferenceable iterator of `ipl2`. 
@@ -659,7 +659,7 @@ void splice(T* pos, In_place_list<T,bool>& ipl2, T* i);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 inserts an element pointed to by `i` from list `ipl2` before 
 position `pos` and removes the element from `ipl`. It takes 
 constant time. `i` is a valid dereferenceable iterator of `ipl2`. 
@@ -675,7 +675,7 @@ iterator first, iterator last);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 inserts elements in the range [`first, 
 last`) before position `pos` and removes the elements 
 from \f$ x\f$. It takes constant time if `&x == &``l`; 
@@ -692,7 +692,7 @@ first, T* last);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 erases all elements \f$ e\f$ in 
 the list `ipl` for which `e == value`. It is stable. 
 \pre a suitable `operator==` for the type `T`. 
@@ -706,7 +706,7 @@ void remove(const T& value);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 erases all but the first element from 
 every consecutive group of equal elements in the list `ipl`. 
 \pre a suitable `operator==` for the type `T`. 
@@ -720,7 +720,7 @@ void unique();
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 merges the list `ipl2` 
 into the list `ipl` and `ipl2` becomes empty. It is stable. 
 \pre Both lists are increasingly sorted. A suitable `operator<` for the type `T`. 
@@ -734,7 +734,7 @@ void merge(In_place_list<T,bool>& ipl2);
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 reverses the order of the elements in 
 `ipl` in linear time. 
 */ 
@@ -747,7 +747,7 @@ void reverse();
 
 /// \name Special List Operations 
 /// @{ 
-/*! 
+/*!
 sorts the list `ipl` according to the 
 `operator<` in time \f$ O(n \log n)\f$ where `n = size()`. 
 It is stable. 

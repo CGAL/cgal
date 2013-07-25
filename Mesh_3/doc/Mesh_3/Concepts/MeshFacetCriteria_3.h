@@ -25,21 +25,21 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type for the facets of the 
 triangulation. Must match the `Facet` type in the 
 triangulation type used by the mesh generation function. 
 */ 
 typedef unspecified_type Facet; 
 
-/*! 
+/*!
 Handle type for the cells of the 
 triangulation. Must match the `Cell_handle` type in the 
 triangulation type used by the mesh generation function. 
 */ 
 typedef unspecified_type Cell_handle; 
 
-/*! 
+/*!
 Type representing the quality of a 
 facet. Must be a model of CopyConstructible and 
 LessThanComparable. Between two facets, the one which has the lower 
@@ -47,7 +47,7 @@ quality must have the lower `Facet_quality`.
 */ 
 typedef unspecified_type Facet_quality; 
 
-/*! 
+/*!
 Type representing if a facet is bad or not. This type 
 must be convertible to `bool`. If it converts to `true` then the facet is bad, otherwise 
 the facet is good with regard to the criteria. 
@@ -65,12 +65,12 @@ typedef unspecified_type Is_facet_bad;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns `Is_facet_bad` value of facet `f`. 
 */ 
 Is_facet_bad operator()(Facet f); 
 
-/*! 
+/*!
 Same as above with `f=(c,i)`. 
 */ 
 Is_facet_bad operator()(Cell_handle c, int i); 

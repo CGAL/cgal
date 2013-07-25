@@ -50,49 +50,49 @@ public:
 /// \name Affine kernel types 
 /// @{
 
-/*! 
+/*!
 the standard affine kernel. 
 
 */ 
 typedef unspecified_type Standard_kernel; 
 
-/*! 
+/*!
 the standard ring type. 
 
 */ 
 typedef unspecified_type Standard_RT; 
 
-/*! 
+/*!
 standard points. 
 
 */ 
 typedef unspecified_type Standard_point_2; 
 
-/*! 
+/*!
 standard segments. 
 
 */ 
 typedef unspecified_type Standard_segment_2; 
 
-/*! 
+/*!
 standard oriented lines. 
 
 */ 
 typedef unspecified_type Standard_line_2; 
 
-/*! 
+/*!
 standard directions. 
 
 */ 
 typedef unspecified_type Standard_direction_2; 
 
-/*! 
+/*!
 standard rays. 
 
 */ 
 typedef unspecified_type Standard_ray_2; 
 
-/*! 
+/*!
 standard affine transformations. 
 
 */ 
@@ -103,31 +103,31 @@ typedef unspecified_type Standard_aff_transformation_2;
 /// \name Extended kernel types 
 /// @{
 
-/*! 
+/*!
 the ring type of our extended kernel. 
 
 */ 
 typedef unspecified_type RT; 
 
-/*! 
+/*!
 extended points. 
 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 extended segments. 
 
 */ 
 typedef unspecified_type Segment_2; 
 
-/*! 
+/*!
 extended directions. 
 
 */ 
 typedef unspecified_type Direction_2; 
 
-/*! 
+/*!
 a type descriptor for extended points. 
 
 */ 
@@ -138,21 +138,21 @@ enum Point_type { SWCORNER, LEFTFRAME, NWCORNER, BOTTOMFRAME, STANDARD, TOPFRAME
 /// \name Interfacing the affine kernel types 
 /// @{
 
-/*! 
+/*!
 
 creates an extended point and initializes it to the standard point 
 `p`. 
 */ 
 Point_2 construct_point(const Standard_point_2& p) ; 
 
-/*! 
+/*!
 
 creates an extended point and initializes it to the equivalence class 
 of all the rays underlying the oriented line `l`. 
 */ 
 Point_2 construct_point(const Standard_line_2& l) ; 
 
-/*! 
+/*!
 creates an extended point and initializes it 
 to the equivalence class of all the rays underlying the oriented line 
 `l(p1,p2)`. 
@@ -160,7 +160,7 @@ to the equivalence class of all the rays underlying the oriented line
 Point_2 construct_point(const Standard_point_2& p1, const 
 Standard_point_2& p2) ; 
 
-/*! 
+/*!
 creates an extended point and initializes 
 it to the equivalence class of all the rays underlying the ray 
 starting in `p` in direction `d`. 
@@ -168,7 +168,7 @@ starting in `p` in direction `d`.
 Point_2 construct_point(const Standard_point_2& p, const 
 Standard_direction_2& d) ; 
 
-/*! 
+/*!
 creates an extended point and initializes it to the equivalence 
 class of all the rays underlying the oriented line opposite to 
 `l`. 
@@ -176,56 +176,56 @@ class of all the rays underlying the oriented line opposite to
 Point_2 construct_opposite_point(const Standard_line_2& l) 
 ; 
 
-/*! 
+/*!
 determines the type of 
 `p` and returns it. 
 */ 
 Point_type type(const Point_2& p) ; 
 
-/*! 
+/*!
 returns `true` iff 
 `p` is a standard point. 
 */ 
 bool is_standard(const Point_2& p) ; 
 
-/*! 
+/*!
 returns 
 the standard point represented by `p`. \pre `K.is_standard(p)`. 
 */ 
 Standard_point_2 standard_point(const Point_2& p) ; 
 
-/*! 
+/*!
 returns 
 the oriented line representing the bundle of rays defining `p`. 
 \pre `!K.is_standard(p)`. 
 */ 
 Standard_line_2 standard_line(const Point_2& p) ; 
 
-/*! 
+/*!
 a ray 
 defining `p`. \pre `!K.is_standard(p)`. 
 */ 
 Standard_ray_2 standard_ray(const Point_2& p) ; 
 
-/*! 
+/*!
 returns the point on the northeast frame 
 corner. 
 */ 
 Point_2 NE() ; 
 
-/*! 
+/*!
 returns the point on the southeast frame 
 corner. 
 */ 
 Point_2 SE() ; 
 
-/*! 
+/*!
 returns the point on the northwest frame 
 corner. 
 */ 
 Point_2 NW() ; 
 
-/*! 
+/*!
 returns the point on the southwest frame 
 corner. 
 */ 
@@ -236,86 +236,86 @@ Point_2 SW() ;
 /// \name Geometric kernel calls 
 /// @{
 
-/*! 
+/*!
 returns the source 
 point of `s`. 
 */ 
 Point_2 source(const Segment_2& s) ; 
 
-/*! 
+/*!
 returns the target 
 point of `s`. 
 */ 
 Point_2 target(const Segment_2& s) ; 
 
-/*! 
+/*!
 constructs a segment `pq`. 
 */ 
 Segment_2 construct_segment(const Point_2& p, const Point_2& 
 q) ; 
 
-/*! 
+/*!
 returns the orientation of `p` with respect to the line through 
 `s`. 
 */ 
 int orientation(const Segment_2& s, const Point_2& p) 
 ; 
 
-/*! 
+/*!
 returns the orientation of `p3` with respect to 
 the line through `p1p2`. 
 */ 
 int orientation(const Point_2& p1, const Point_2& p2, const 
 Point_2& p3) ; 
 
-/*! 
+/*!
 return true iff the `p3` is left of the line 
 through `p1p2`. 
 */ 
 bool left_turn(const Point_2& p1, const Point_2& p2, const 
 Point_2& p3) ; 
 
-/*! 
+/*!
 return true iff 
 `s` is degenerate. 
 */ 
 bool is_degenerate(const Segment_2& s) ; 
 
-/*! 
+/*!
 returns the lexicographic order of `p1` and `p2`. 
 */ 
 int compare_xy(const Point_2& p1, const Point_2& p2) 
 ; 
 
-/*! 
+/*!
 returns the order on the \f$ x\f$-coordinates of `p1` and `p2`. 
 
 */ 
 int compare_x(const Point_2& p1, const Point_2& p2) 
 ; 
 
-/*! 
+/*!
 returns the order on the \f$ y\f$-coordinates of `p1` and `p2`. 
 
 */ 
 int compare_y(const Point_2& p1, const Point_2& p2) 
 ; 
 
-/*! 
+/*!
 returns the point of intersection of the lines supported by 
 `s1` and `s2`. \pre The intersection point exists. 
 */ 
 Point_2 intersection( const Segment_2& s1, const Segment_2& 
 s2) ; 
 
-/*! 
+/*!
 returns the direction of the vector `p2` - 
 `p1`. 
 */ 
 Direction_2 construct_direction( const Point_2& p1, const 
 Point_2& p2) ; 
 
-/*! 
+/*!
 returns `true` iff 
 `d2` is in the interior of the counterclockwise angular sector 
 between `d1` and `d3`. 
@@ -323,27 +323,27 @@ between `d1` and `d3`.
 bool strictly_ordered_ccw(const Direction_2& d1, const 
 Direction_2& d2, const Direction_2& d3) ; 
 
-/*! 
+/*!
 returns `true` iff `p2` is 
 in the relative interior of the segment `p1p3`. 
 */ 
 bool strictly_ordered_along_line( const Point_2& p1, const 
 Point_2& p2, const Point_2& p3) ; 
 
-/*! 
+/*!
 returns true iff `s` contains `p`. 
 */ 
 bool contains(const Segment_2& s, const Point_2& p) 
 ; 
 
-/*! 
+/*!
 returns true iff 
 \f$ \|p1-p2\| < \|p3-p4\|\f$. 
 */ 
 bool first_pair_closer_than_second( const Point_2& p1, const 
 Point_2& p2, const Point_2& p3, const Point_2& p4) ; 
 
-/*! 
+/*!
 returns a unique 
 identifier for kernel object Input/Output. Usually this should be the 
 name of the model. 

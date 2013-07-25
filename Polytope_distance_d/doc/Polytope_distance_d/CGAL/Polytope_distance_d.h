@@ -61,27 +61,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `Traits::Point_d`. 
 Point type used to represent the input points. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 typedef to `Traits::FT`. 
 Number type used to return the squared distance 
 between the two polytopes. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 typedef to `Traits::ET`. 
 Number type used to do the exact computations in the underlying 
 solver for quadratic programs (cf. <B>Implementation</B>). 
 */ 
 typedef unspecified_type ET; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the points 
@@ -89,14 +89,14 @@ of the two polytopes.
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the support points. 
 */ 
 typedef unspecified_type Support_point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `int`. Used to access the indices of the 
@@ -105,7 +105,7 @@ in both point sets).
 */ 
 typedef unspecified_type Support_point_index_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `ET`. Used to access the coordinates of 
@@ -118,7 +118,7 @@ typedef unspecified_type Coordinate_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 initializes `poly_dist` to \f$ pd(\emptyset, \emptyset)\f$. 
 */ 
@@ -126,7 +126,7 @@ Polytope_distance_d( const Traits& traits = Traits(),
 int verbose = 0, 
 std::ostream& stream = std::cout); 
 
-/*! 
+/*!
 
 initializes `poly_dist` to \f$ pd(P,Q)\f$ with \f$ P\f$ and \f$ Q\f$ being the 
 sets of points in the range [`p_first`,`p_last`) and 
@@ -152,122 +152,122 @@ std::ostream& stream = std::cout);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the dimension of the points in \f$ P\f$ and \f$ Q\f$. 
 If `poly_dist` is \f$ pd(\emptyset, \emptyset)\f$, the ambient dimension is \f$ -1\f$. 
 */ 
 int ambient_dimension( ) const; 
 
-/*! 
+/*!
 
 returns the number of all points of `poly_dist`, i.e.\ \f$ |P|+|Q|\f$. 
 */ 
 int number_of_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of points in \f$ P\f$. 
 */ 
 int number_of_points_p( ) const; 
 
-/*! 
+/*!
 
 returns the number of points in \f$ Q\f$. 
 */ 
 int number_of_points_q( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `poly_dist`, i.e.\ \f$ |S_P|+|S_Q|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points in \f$ S_P\f$. 
 */ 
 int number_of_support_points_p( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points in \f$ S_Q\f$. 
 */ 
 int number_of_support_points_q( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first point in \f$ P\f$. 
 */ 
 Point_iterator points_p_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Point_iterator points_p_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first point in \f$ Q\f$. 
 */ 
 Point_iterator points_q_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Point_iterator points_q_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first support point in \f$ S_P\f$. 
 */ 
 Support_point_iterator support_points_p_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_iterator support_points_p_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first support point in \f$ S_Q\f$. 
 */ 
 Support_point_iterator support_points_q_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_iterator support_points_q_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the index of the first support point in \f$ P\f$. 
 */ 
 Support_point_index_iterator support_points_p_indices_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_index_iterator support_points_p_indices_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the index of the first support point in \f$ Q\f$. 
 */ 
 Support_point_index_iterator support_points_q_indices_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Support_point_index_iterator support_points_q_indices_end( ) const; 
 
-/*! 
+/*!
 
 returns the realizing point of \f$ P\f$. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
@@ -275,7 +275,7 @@ returns the realizing point of \f$ P\f$.
 */ 
 Point realizing_point_p( ) const; 
 
-/*! 
+/*!
 
 returns the realizing point of \f$ Q\f$. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
@@ -283,7 +283,7 @@ returns the realizing point of \f$ Q\f$.
 */ 
 Point realizing_point_q( ) const; 
 
-/*! 
+/*!
 
 returns the squared distance of `poly_dist`, i.e.\ \f$ (pd(P,Q))^2\f$. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
@@ -291,7 +291,7 @@ returns the squared distance of `poly_dist`, i.e.\ \f$ (pd(P,Q))^2\f$.
 */ 
 FT squared_distance( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first coordinate of the 
 realizing point of \f$ P\f$. 
@@ -305,14 +305,14 @@ common denominator.
 Coordinate_iterator 
 realizing_point_p_coordinates_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Coordinate_iterator 
 realizing_point_p_coordinates_end() const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first coordinate of the 
 realizing point of \f$ Q\f$. 
@@ -326,20 +326,20 @@ common denominator.
 Coordinate_iterator 
 realizing_point_q_coordinates_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Coordinate_iterator 
 realizing_point_q_coordinates_end() const; 
 
-/*! 
+/*!
 
 returns the numerator of the squared distance of `poly_dist`. 
 */ 
 ET squared_distance_numerator( ) const; 
 
-/*! 
+/*!
 
 returns the denominator of the squared distance of `poly_dist`. 
 */ 
@@ -350,21 +350,21 @@ ET squared_distance_denominator( ) const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 
 returns `true`, if \f$ pd(P,Q)\f$ is finite, 
 i.e.\ none of the two polytopes is empty. 
 */ 
 bool is_finite( ) const; 
 
-/*! 
+/*!
 
 returns `true`, if \f$ pd(P,Q)\f$ is zero, 
 i.e.\ the two polytopes intersect (this implies degeneracy). 
 */ 
 bool is_zero( ) const; 
 
-/*! 
+/*!
 
 returns `true`, iff \f$ pd(P,Q)\f$ is degenerate, 
 i.e.\  \f$ pd(P,Q)\f$ is not finite. 
@@ -376,13 +376,13 @@ bool is_degenerate( ) const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 
 resets `poly_dist` to \f$ pd(\emptyset, \emptyset)\f$. 
 */ 
 void clear( ); 
 
-/*! 
+/*!
 
 sets `poly_dist` to \f$ pd(P,Q)\f$ with \f$ P\f$ and \f$ Q\f$ being the sets of 
 points in the ranges [`p_first`,`p_last`) and 
@@ -396,7 +396,7 @@ InputIterator1 p_last,
 InputIterator2 q_first, 
 InputIterator2 q_last ); 
 
-/*! 
+/*!
 
 sets `poly_dist` to \f$ pd(P,Q)\f$ with \f$ P\f$ being the set of points 
 in the range [`p_first`,`p_last`) (\f$ Q\f$ remains unchanged). 
@@ -407,7 +407,7 @@ template < class InputIterator >
 void set_p( InputIterator p_first, 
 InputIterator p_last ); 
 
-/*! 
+/*!
 
 sets `poly_dist` to \f$ pd(P,Q)\f$ with \f$ Q\f$ being the set of points 
 in the range [`q_first`,`q_last`) (\f$ P\f$ remains unchanged). 
@@ -418,21 +418,21 @@ template < class InputIterator >
 void set_q( InputIterator q_first, 
 InputIterator q_last ); 
 
-/*! 
+/*!
 
 inserts `p` into \f$ P\f$. 
 \pre The dimension of `p` equals `poly_dist``.ambient_dimension()` if `poly_dist` is not \f$ pd(\emptyset, \emptyset)\f$. 
 */ 
 void insert_p( const Point& p); 
 
-/*! 
+/*!
 
 inserts `q` into \f$ Q\f$. 
 \pre The dimension of `q` equals `poly_dist``.ambient_dimension()` if `poly_dist` is not \f$ pd(\emptyset, \emptyset)\f$. 
 */ 
 void insert_q( const Point& q); 
 
-/*! 
+/*!
 
 inserts the points in the range [`p_first`,`p_last`) 
 and [`q_first`,`q_last`) into \f$ P\f$ and \f$ Q\f$, respectively, 
@@ -446,7 +446,7 @@ InputIterator1 p_last,
 InputIterator2 q_first, 
 InputIterator2 q_last ); 
 
-/*! 
+/*!
 
 inserts the points in the range [`p_first`,`p_last`) into 
 \f$ P\f$ and recomputes the (squared) distance (\f$ Q\f$ remains unchanged). 
@@ -457,7 +457,7 @@ template < class InputIterator >
 void insert_p( InputIterator p_first, 
 InputIterator p_last ); 
 
-/*! 
+/*!
 
 inserts the points in the range [`q_first`,`q_last`) into 
 \f$ Q\f$ and recomputes the (squared) distance (\f$ P\f$ remains unchanged). 
@@ -473,7 +473,7 @@ InputIterator q_last );
 /// \name Validity Check 
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff `poly_dist` is valid. If `verbose` is 
 `true`, some messages concerning the performed checks are 
@@ -495,7 +495,7 @@ int level = 0 ) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 
@@ -506,7 +506,7 @@ const Traits& traits( ) const;
 
 }; /* end Polytope_distance_d */
 
-/*! 
+/*!
 
 writes `poly_dist` to output stream `os`. 
 \cgalRequires The output operator is defined for `Point_d`. 
@@ -515,7 +515,7 @@ writes `poly_dist` to output stream `os`.
 std::ostream& 
 operator << ( std::ostream& os, const Polytope_distance_d<Traits>& poly_dist); 
 
-/*! 
+/*!
 
 reads `poly_dist` from input stream `is`. 
 \cgalRequires The input operator is defined for `Point_d`. 

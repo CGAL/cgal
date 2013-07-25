@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Copies in the output iterator the common roots of `p1`, `p2`, 
 and `p3`, with their multiplicity, as objects of type 
 `std::pair< AlgebraicKernelForSpheres::Root_for_spheres_2_3, int>`. 

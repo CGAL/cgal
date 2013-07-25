@@ -22,7 +22,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates an output iterator writing to `s`. 
 */ 
 Ostream_iterator( Stream& s); 

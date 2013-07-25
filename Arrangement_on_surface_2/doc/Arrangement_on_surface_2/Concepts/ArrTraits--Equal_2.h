@@ -16,13 +16,13 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 determines whether `p1` and `p2` are geometrically 
 equivalent. 
 */ 
 bool operator()(ArrTraits::Point_2 p1, ArrTraits::Point_2 p2); 
 
-/*! 
+/*!
 determines whether `xc1` and `xc2` are 
 geometrically equivalent (have the same graph). 
 */ 

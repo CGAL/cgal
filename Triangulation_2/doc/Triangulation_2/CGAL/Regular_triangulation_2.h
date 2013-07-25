@@ -140,44 +140,44 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Distance Distance; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Line Line; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Ray Ray; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Bare_point Bare_point; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Weighted_point Weighted_point; 
 
-/*! 
+/*!
 An iterator that allows to enumerate the 
 vertices that are not hidden. 
 */ 
 typedef unspecified_type All_vertices_iterator; 
 
-/*! 
+/*!
 An iterator that allows to enumerate the 
 finite vertices that are not hidden. 
 */ 
 typedef unspecified_type Finite_vertices_iterator; 
 
-/*! 
+/*!
 An iterator that allows to enumerate the 
 hidden vertices. 
 */ 
@@ -188,12 +188,12 @@ typedef unspecified_type Hidden_vertices_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty regular triangulation. 
 */ 
 Regular_triangulation_2(const Traits& gt = Traits()); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Regular_triangulation_2(const Regular_triangulation_2 &rt); 
@@ -210,7 +210,7 @@ Regular_triangulation_2<Traits,Tds> rt ( InputIterator first, InputIterator last
 /// \name Insertion and Removal 
 /// @{
 
-/*! 
+/*!
 inserts weighted point `p` in the regular triangulation. 
 If the point `p` does not appear as a vertex of the triangulation, 
 the returned vertex is a hidden vertex. 
@@ -219,7 +219,7 @@ for the place to start the location process of point `p`.
 */ 
 Vertex_handle insert(const Weighted_point& p, Face_handle f=Face_handle()); 
 
-/*! 
+/*!
 insert a weighted point `p` whose bare-point is assumed to be 
 located in `lt,loc,li`. 
 See the description of member function 
@@ -230,12 +230,12 @@ Vertex_handle insert(const Weighted_point &p,
 Locate_type lt, 
 Face_handle loc, int li ); 
 
-/*! 
+/*!
 Equivalent to `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
-/*! 
+/*!
 inserts the weighted points in the range `[first,last)`.
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
@@ -248,7 +248,7 @@ template < class InputIterator >
 std::ptrdiff_t 
 insert(InputIterator first, InputIterator last); 
 
-/*! 
+/*!
 inserts the weighted points in the  range `[first,last)`.
 It returns the difference of the number of vertices between after and 
 before the insertions (it may be negative due to hidden points). 
@@ -267,7 +267,7 @@ template < class WeightedPointWithInfoInputIterator >
 std::ptrdiff_t 
 insert(WeightedPointWithInfoInputIterator first, WeightedPointWithInfoInputIterator last); 
 
-/*! 
+/*!
 removes the vertex from the triangulation. 
 */ 
 void remove(Vertex_handle v); 
@@ -277,7 +277,7 @@ void remove(Vertex_handle v);
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 outputs  the faces, boundary edges, and hidden vertices of the
 conflict zone of point `p` to output iterators.
 
@@ -308,7 +308,7 @@ get_conflicts_and_boundary_and_hidden_vertices(const Weighted_point
 &p, OutputItFaces fit, OutputItBoundaryEdges eit, 
 OutputItHiddenVertices vit, Face_handle start) const; 
 
-/*! 
+/*!
 outputs the faces and boundary edges  of the
 conflict zone of point `p` to output iterators.
 
@@ -322,7 +322,7 @@ std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Weighted_point 
 &p, OutputItFaces fit, OutputItBoundaryEdges eit, Face_handle start) const; 
 
-/*! 
+/*!
 outputs the faces and hidden vertices  of the
 conflict zone of point `p` to output iterators.
 
@@ -337,7 +337,7 @@ std::pair<OutputItFaces,OutputItHiddenVertices>
 get_conflicts_and_hidden_vertices(const Weighted_point 
 &p, OutputItFaces fit, OutputItHiddenVertices vit, Face_handle start) const; 
 
-/*! 
+/*!
 outputs the boundary edges and hidden vertices  of the
 conflict zone of point `p` to output iterators.
 
@@ -351,7 +351,7 @@ get_boundary_of_conflicts_and_hidden_vertices(const Weighted_point
 &p, OutputItBoundaryEdges eit, 
 OutputItHiddenVertices vit, Face_handle start) const; 
 
-/*! 
+/*!
 outputs the faces of the
 conflict zone of point `p` to output iterators.
  The function returns the resulting output iterator. 
@@ -363,7 +363,7 @@ get_conflicts (const Point &p,
 OutputItFaces fit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 outputs the boundary edges 
 of the conflict zone of `p` in counterclockwise order 
 where each edge is described through the incident face 
@@ -376,7 +376,7 @@ get_boundary_of_conflicts(const Point &p,
 OutputItBoundaryEdges eit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 outputs the hidden vertices of the conflict zone of `p`
 into an output iterator.
  The function returns the resulting output iterator. 
@@ -387,7 +387,7 @@ get_hidden_vertices(const Point &p,
 OutputItHiddenVertices vit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 Returns the vertex of the triangulation which is nearest to `p` 
 with respect to the power distance. This means that the power of the 
 query point `p` with respect to the weighted point in the nearest 
@@ -402,43 +402,43 @@ Vertex_handle nearest_power_vertex(Bare_point p) const;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the number of finite vertices that are not hidden. 
 */ 
 int number_of_vertices() const; 
 
-/*! 
+/*!
 returns the number of hidden vertices. 
 */ 
 int number_of_hidden_vertices() const; 
 
-/*! 
+/*!
 starts at an arbitrary hidden vertex. 
 */ 
 Hidden_vertices_iterator hidden_vertices_begin() const; 
 
-/*! 
+/*!
 past the end iterator for the sequence of hidden vertices. 
 */ 
 Hidden_vertices_iterator hidden_vertices_end() const; 
 
-/*! 
+/*!
 starts at an arbitrary unhidden finite vertex 
 */ 
 Finite_vertices_iterator finite_vertices_begin() const; 
 
-/*! 
+/*!
 Past-the-end iterator 
 */ 
 Finite_vertices_iterator finite_vertices_end() 
 const; 
 
-/*! 
+/*!
 starts at an arbitrary unhidden vertex. 
 */ 
 All_vertices_iterator all_vertices_end() const; 
 
-/*! 
+/*!
 past the end iterator. 
 */ 
 All_vertices_iterator all_vertices_begin() const; 
@@ -450,19 +450,19 @@ All_vertices_iterator all_vertices_begin() const;
 /// power diagram.
 /// @{
 
-/*! 
+/*!
 returns the center of the circle orthogonal to the three weighted 
 points corresponding to the vertices of face `f`. 
 \pre `f` is not infinite. 
 */ 
 Point weighted_circumcenter(const Face_handle &f) const; 
 
-/*! 
+/*!
 same as weighted_circumcenter.
 */ 
 Point dual(const Face_handle &f) const; 
 
-/*! 
+/*!
 If both incident faces are finite, returns a segment whose endpoints are the 
 duals of each incident face. If only one incident face is finite, returns a 
 ray whose endpoint is the dual of the finite incident face and supported by 
@@ -472,17 +472,17 @@ otherwise.
 */ 
 Object dual(const Edge &e) const; 
 
-/*! 
+/*!
 Idem 
 */ 
 Object dual(const Edge_circulator& ec) const; 
 
-/*! 
+/*!
 Idem 
 */ 
 Object dual(const Edge_iterator& ei) const; 
 
-/*! 
+/*!
 output the dual power diagram to stream `ps`. 
 */ 
 template < class Stream> 
@@ -493,7 +493,7 @@ Stream& draw_dual(Stream & ps);
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 Returns the power test of `p` with respect to the 
 power circle associated with `f`.
 */ 
@@ -506,7 +506,7 @@ const Weighted_point& p) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 Tests the validity of the triangulation as a
 `Triangulation_2` and additionally test the regularity of the
 triangulation. This method is useful to debug regular triangulation

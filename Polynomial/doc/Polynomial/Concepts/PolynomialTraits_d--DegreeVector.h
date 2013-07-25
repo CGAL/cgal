@@ -28,12 +28,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
   typedef CGAL::Exponent_vector result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -43,7 +43,7 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the degree vector. 
 */ 
 result_type operator()(argument_type p); 

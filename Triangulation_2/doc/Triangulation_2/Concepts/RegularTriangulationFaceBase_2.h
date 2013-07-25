@@ -47,7 +47,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A `std::list` of hidden vertices. 
 */ 
 typedef std::list<Vertex_handle> Vertex_list; 
@@ -57,7 +57,7 @@ typedef std::list<Vertex_handle> Vertex_list;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns a reference to the list of vertices hidden by the face. 
 */ 
 Vertex_list& vertex_list(); 

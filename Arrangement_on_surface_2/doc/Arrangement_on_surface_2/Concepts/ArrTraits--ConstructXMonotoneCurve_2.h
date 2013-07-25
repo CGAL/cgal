@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns an \f$ x\f$-monotone curve connecting `p1` and `p2` (i.e., the 
 two input points are its endpoints). 
 */ 

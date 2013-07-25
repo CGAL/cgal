@@ -26,22 +26,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 The segment type. 
 */ 
 typedef unspecified_type Segment_2; 
 
-/*! 
+/*!
 The triangle type. 
 */ 
 typedef unspecified_type Triangle_2; 
 
-/*! 
+/*!
 A function object to construct a `Segment_2`. 
 
 Provides: 
@@ -52,7 +52,7 @@ which constructs a segment from two points.
 */ 
 typedef unspecified_type Construct_segment_2; 
 
-/*! 
+/*!
 A function object to construct a `Triangle_2`. 
 
 Provides:
@@ -63,7 +63,7 @@ which constructs a triangle from three points.
 */ 
 typedef unspecified_type Construct_triangle_2; 
 
-/*! 
+/*!
 A function object to compare the x-coordinate of two points.
 
 Provides the operator: 
@@ -75,7 +75,7 @@ according to the \f$ x\f$-ordering of points.
 */ 
 typedef unspecified_type Less_x_2; 
 
-/*! 
+/*!
 A function object to compare the y-coordinate of two points.
 
 Provides the operator: 
@@ -87,7 +87,7 @@ according to the \f$ y\f$-ordering of points.
 */ 
 typedef unspecified_type Less_y_2; 
 
-/*! 
+/*!
 A function object to compare the x-coordinate of two points.
 
 Provides the operator: 
@@ -101,7 +101,7 @@ according to the
 */ 
 typedef unspecified_type Compare_x_2; 
 
-/*! 
+/*!
 A function object to compare the y-coordinate of two points.
 Provides the operator: 
 
@@ -114,7 +114,7 @@ according to the
 */ 
 typedef unspecified_type Compare_y_2; 
 
-/*! 
+/*!
 A function object to compute the orientation of three points.
 
 Provides the operator: 
@@ -128,7 +128,7 @@ on the left side , on the right side or on the line.
 */ 
 typedef unspecified_type Orientation_2; 
 
-/*! 
+/*!
 A function object to perform the incircle test for four points.
 
 Provides the operator:
@@ -145,7 +145,7 @@ called.
 */ 
 typedef unspecified_type Side_of_oriented_circle_2; 
 
-/*! 
+/*!
 A function object to compute the circumcentr of three points.
 Provides the operator: 
 
@@ -166,17 +166,17 @@ typedef unspecified_type Construct_circumcenter_2;
 /// provided.
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 TriangulationTraits_2(); 
 
-/*! 
+/*!
 Copy constructor 
 */ 
 TriangulationTraits_2(TriangulationTraits_2 gtr); 
 
-/*! 
+/*!
 Assignment operator. 
 */ 
 TriangulationTraits_2 operator=(TriangulationTraits_2 gtr); 
@@ -188,32 +188,32 @@ TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);
 /// constructor objects.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_segment_2 construct_segment_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_triangle_2 construct_triangle_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Comparison_x_2 compare_x_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Comparison_y_2 compare_y_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_2 orientation_2_object(); 
 
-/*! 
+/*!
 Required only 
 if `side_of_oriented_circle` is called 
 called. 
@@ -221,7 +221,7 @@ called.
 Side_of_oriented_circle_2 
 side_of_oriented_circle_2_object(); 
 
-/*! 
+/*!
 Required only if `circumcenter` is called. 
 */ 
 Construct_circumcenter_2 construct_circumcenter_2_object(); 

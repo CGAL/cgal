@@ -17,7 +17,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Compares the `y` (second) variables of two `Root_for_spheres_2_3`. 
 */ 
 CGAL::Comparison_result 

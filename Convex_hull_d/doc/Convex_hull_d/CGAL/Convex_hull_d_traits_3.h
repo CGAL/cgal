@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Convex_hull_d_traits_3(); 

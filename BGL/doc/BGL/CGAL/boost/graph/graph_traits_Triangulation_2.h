@@ -41,12 +41,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The vertex descriptor. 
 */ 
 typedef Triangulation::Vertex_handle vertex_descriptor; 
 
-/*! 
+/*!
 The edge descriptor. It is constructible from and convertible to `Triangulation::Edge`. 
 The edge descriptor is not a simple typedef, but a proper class, 
 because in an undirected graph 
@@ -55,40 +55,40 @@ for the Edge type of the triangulation.
 */ 
 typedef unspecified_type edge_descriptor; 
 
-/*! 
+/*!
 The vertex iterator type. Its value type is `vertex_descriptor`. 
 */ 
 typedef unspecified_type vertex_iterator; 
 
-/*! 
+/*!
 The edge iterator type, Its value type is `edge_descriptor`. 
 */ 
 typedef unspecified_type edge_iterator; 
 
-/*! 
+/*!
 An iterator for the outgoing edges incident to a vertex. 
 Its value type is `edge_descriptor`. 
 */ 
 typedef unspecified_type out_edge_iterator; 
 
-/*! 
+/*!
 An iterator for the incoming edges incident to a vertex. 
 Its value type is `edge_descriptor`. 
 */ 
 typedef unspecified_type in_edge_iterator; 
 
-/*! 
+/*!
 An iterator for the vertices adjacent to a vertex. 
 Its value type is `vertex_descriptor`. 
 */ 
 typedef unspecified_type adjacency_iterator; 
 
-/*! 
+/*!
 
 */ 
 typedef boost::undirected_tag directed_category; 
 
-/*! 
+/*!
 
 */ 
 typedef boost::disallow_parallel_edge_tag edge_parallel_category; 

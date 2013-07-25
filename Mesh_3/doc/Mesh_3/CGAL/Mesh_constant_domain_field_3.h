@@ -29,17 +29,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Numerical type. 
 */ 
 typedef Gt::FT FT; 
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Gt::Point_3 Point_3; 
 
-/*! 
+/*!
 Type of index of the vertices of the triangulation. 
 */ 
 typedef Index Index; 
@@ -49,7 +49,7 @@ typedef Index Index;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 Builds a constant domain field with size `size`. 
 */ 
@@ -60,7 +60,7 @@ Mesh_constant_domain_field_3(FT size);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Sets the size such as `operator()` will return size `size` 
 at any query point of dimension `dimension` and index `index`. 

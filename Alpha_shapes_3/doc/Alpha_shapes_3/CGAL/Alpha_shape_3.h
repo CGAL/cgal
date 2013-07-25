@@ -60,13 +60,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the alpha shape traits type. 
 It has to derive from a triangulation traits class. For example `Dt::Point` is a point class.
 */ 
 typedef unspecified_type Gt; 
 
-/*! 
+/*!
 the number type of alpha values. 
 
 In case `ExactAlphaComparisonTag` is `CGAL::Tag_false`, it is Gt::FT. 
@@ -85,19 +85,19 @@ For convenience, classical comparison operators are provided for the type `FT`.
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The size type. 
 */ 
 typedef unspecified_type size_type; 
 
-/*! 
+/*!
 A bidirectional and non-mutable iterator that allow to traverse 
 the increasing sequence of different alpha values. 
 \pre Its `value_type` is `FT`. 
 */ 
 typedef unspecified_type Alpha_iterator; 
 
-/*! 
+/*!
 In GENERAL mode,  
 In REGULARIZED mode,  
 */ 
@@ -110,7 +110,7 @@ enum Mode {GENERAL, /**< the alpha complex can have singular faces,
                           of the triangulation and the subfaces of those cells. */
 }; 
 
-/*! 
+/*!
 Enum to classify the faces of the underlying 
 triangulation with respect to the alpha shape. 
 
@@ -136,13 +136,13 @@ enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty alpha shape, sets the current alpha value to `alpha` and the mode to `m`. 
 */ 
 Alpha_shape_3(FT alpha = 0, 
 Mode m = REGULARIZED); 
 
-/*! 
+/*!
 Builds an alpha shape of mode `m` 
 from the triangulation `dt`. 
 \attention This operation destroys the triangulation `dt`. 
@@ -151,7 +151,7 @@ Alpha_shape_3(Dt& dt,
 FT alpha = 0, 
 Mode m = REGULARIZED); 
 
-/*! 
+/*!
 Builds an alpha shape of mode `m` for the points in the range 
 `[first,last)` and  set the current alpha value to `alpha`. 
 \tparam InputIterator must be an input iterator with value type `Point` (the point type of the underlying triangulation.) 
@@ -168,7 +168,7 @@ Mode m = REGULARIZED);
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 Initialize the alpha shape data structure
 for points in the range `[first,last)`. 
 Returns the number of data points inserted in the underlying 
@@ -183,13 +183,13 @@ std::ptrdiff_t make_alpha_shape(
 InputIterator first, 
 InputIterator last); 
 
-/*! 
+/*!
 Clears the structure. 
 */ 
 void 
 clear(); 
 
-/*! 
+/*!
 Sets the \f$ \alpha\f$-value to `alpha`. 
 Returns the previous \f$ \alpha\f$-value. 
 \pre `alpha` \f$ \geq0\f$. 
@@ -197,7 +197,7 @@ Returns the previous \f$ \alpha\f$-value.
 FT 
 set_alpha(const FT& alpha); 
 
-/*! 
+/*!
 Sets the mode of the alpha shape to `GENERAL` or `REGULARIZED`. 
 Returns the previous mode. 
 Changing the mode of an alpha shape 
@@ -211,30 +211,30 @@ set_mode(Mode m = REGULARIZED );
 /// \name Query Functions 
 /// @{
 
-/*! 
+/*!
 Returns whether the alpha shape is general or regularized. 
 */ 
 Mode 
 get_mode(void) const; 
 
-/*! 
+/*!
 Returns the current \f$ \alpha\f$-value. 
 */ 
 const FT& 
 get_alpha(void) const; 
 
-/*! 
+/*!
 Returns the `n`-th `alpha`-value, sorted in an increasing order. 
 \pre `n` < number of alphas. 
 */ 
 const FT& get_nth_alpha(int n) const; 
 
-/*! 
+/*!
 Returns the number of different alpha-values. 
 */ 
 size_type number_of_alphas() const; 
 
-/*! 
+/*!
 Locates a point `p` in the underlying triangulation and Classifies the 
 associated k-face with respect to `alpha`. 
 */ 
@@ -242,7 +242,7 @@ Classification_type
 classify(const Point& p, 
 const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Classifies the cell `f` of the underlying triangulation with 
 respect 
 to `alpha`. 
@@ -250,14 +250,14 @@ to `alpha`.
 Classification_type 
 classify(Cell_handle f, const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Classifies the facet `f` of the underlying triangulation with 
 respect to `alpha`. 
 */ 
 Classification_type 
 classify(Facet f, const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Classifies the facet of the cell `f` opposite to the vertex with index 
 `i` 
 of the underlying triangulation with respect to `alpha`. 
@@ -265,19 +265,19 @@ of the underlying triangulation with respect to `alpha`.
 Classification_type 
 classify(Cell_handle f, int i, const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Classifies the edge `e` with respect to `alpha` . 
 */ 
 Classification_type 
 classify(const Edge& e, const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Classifies the vertex `v` of the underlying triangulation with respect to `alpha`. 
 */ 
 Classification_type 
 classify(Vertex_handle v, const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Write the cells which are of type `type` for 
 the alpha value `alpha` to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -288,7 +288,7 @@ OutputIterator get_alpha_shape_cells(OutputIterator it,
 Classification_type type, 
 const FT& alpha = get_alpha()); 
 
-/*! 
+/*!
 Write the facets which are of type `type` for 
 the alpha value `alpha` to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -299,7 +299,7 @@ OutputIterator get_alpha_shape_facets(OutputIterator it,
 Classification_type type, 
 const FT& alpha= get_alpha()); 
 
-/*! 
+/*!
 Write the edges which are of type `type` for 
 the alpha value `alpha` to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -310,7 +310,7 @@ OutputIterator get_alpha_shape_edges(OutputIterator it,
 Classification_type type, 
 const FT& alpha = get_alpha()); 
 
-/*! 
+/*!
 Write the vertices which are of type `type` for 
 the alpha value `alpha` to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -321,7 +321,7 @@ OutputIterator get_alpha_shape_vertices(OutputIterator it,
 Classification_type type, 
 const FT& alpha); 
 
-/*! 
+/*!
 Output all the faces of the triangulation 
 in increasing order of the alpha value for which they appear 
 in the alpha complex. In case of equal alpha value 
@@ -337,31 +337,31 @@ OutputIterator filtration(OutputIterator it);
 /// \name Traversal of the alpha-Values 
 /// @{
 
-/*! 
+/*!
 Returns an iterator that allows to traverse the 
 sorted sequence of \f$ \alpha\f$-values of the family of alpha shapes. 
 */ 
 Alpha_iterator alpha_begin() const; 
 
-/*! 
+/*!
 Returns the corresponding past-the-end iterator. 
 */ 
 Alpha_iterator alpha_end() const; 
 
-/*! 
+/*!
 Returns an iterator pointing to an element with \f$ \alpha\f$-value 
 `alpha`, or the corresponding past-the-end iterator if such 
 an element is not found. 
 */ 
 Alpha_iterator alpha_find(const FT& alpha) const; 
 
-/*! 
+/*!
 Returns an iterator pointing to the first element with 
 \f$ \alpha\f$-value not less than `alpha`. 
 */ 
 Alpha_iterator alpha_lower_bound(const FT& alpha) const; 
 
-/*! 
+/*!
 Returns an iterator pointing to the first element with \f$ \alpha\f$-value 
 greater than `alpha`. 
 */ 
@@ -372,13 +372,13 @@ Alpha_iterator alpha_upper_bound(const FT& alpha) const;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the number of solid components of the alpha shape, that is, the number of 
 components of its regularized version. 
 */ 
 size_type number_of_solid_components(const FT& alpha = get_alpha()) const; 
 
-/*! 
+/*!
 Returns an iterator pointing to smallest \f$ \alpha\f$ value 
 such that the alpha shape satisfies the following two properties: 
 
@@ -395,7 +395,7 @@ Alpha_iterator find_optimal_alpha(size_type nb_components) const;
 
 }; /* end Alpha_shape_3 */
 
-/*! 
+/*!
 Inserts the alpha shape `A` for the current alpha value into the stream `os`. 
 
 Defined in `CGAL/IO/io.h`
@@ -406,7 +406,7 @@ Defined in `CGAL/IO/io.h`
   ostream& operator<<(std::ostream& os, 
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A); 
 
-/*! 
+/*!
 Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`. 
 \pre The insert operator must be defined for `GT::Point` and `GT::Triangle`. 
 

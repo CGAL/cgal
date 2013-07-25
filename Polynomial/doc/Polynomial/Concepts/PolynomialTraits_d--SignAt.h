@@ -25,7 +25,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Sign result_type; 
@@ -35,7 +35,7 @@ typedef CGAL::Sign result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns the sign of \f$ p\f$ at the given Cartesian point, where `begin` is referring 
 to the innermost variable. 

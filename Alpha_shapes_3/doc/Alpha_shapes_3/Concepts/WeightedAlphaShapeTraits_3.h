@@ -24,13 +24,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A number type compatible with the type used for 
 the points coordinates. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 An object constructor able to compute the squared radius of the 
 smallest sphere orthogonal to four weighted points `p0, p1, p2, p3`, 
 and the squared radius of the 
@@ -47,7 +47,7 @@ typedef unspecified_type Compute_squared_radius_smallest_orthogonal_sphere_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 WeightedAlphaShapeTraits_3(); 
@@ -57,7 +57,7 @@ WeightedAlphaShapeTraits_3();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object(); 

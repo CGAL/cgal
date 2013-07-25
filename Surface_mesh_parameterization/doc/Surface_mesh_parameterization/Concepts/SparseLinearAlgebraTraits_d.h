@@ -22,17 +22,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Matrix; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Vector; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type NT; 
@@ -42,7 +42,7 @@ typedef unspecified_type NT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 Default constructor. 
 
@@ -54,7 +54,7 @@ SparseLinearAlgebraTraits_d();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Solve the sparse linear system <I>A\f$ \times \f$ X = B</I>. Return true on success. The solution is then (1/D) \f$ \times \f$ X. 
 
@@ -88,7 +88,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type NT; 
@@ -98,14 +98,14 @@ typedef unspecified_type NT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 Create a vector initialized with zeros. 
 
 */ 
 Vector(int rows); 
 
-/*! 
+/*!
 
 Copy constructor. 
 
@@ -117,14 +117,14 @@ Vector(const Vector& toCopy);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Return the vector's number of coefficients. 
 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 
 Read/write access to a vector coefficient. 
 \pre `0 <= row < dimension()`. 
@@ -132,7 +132,7 @@ Read/write access to a vector coefficient.
 */ 
 NT operator[](int row) const; 
 
-/*! 
+/*!
 
 */ 
 NT& operator[](int row); 
@@ -164,7 +164,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type NT; 
@@ -174,14 +174,14 @@ typedef unspecified_type NT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 Create a square matrix initialized with zeros. 
 
 */ 
 Matrix(int dimension); 
 
-/*! 
+/*!
 
 Create a rectangular matrix initialized with zeros. 
 
@@ -193,21 +193,21 @@ Matrix(int rows, int columns);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Return the matrix number of rows. 
 
 */ 
 int row_dimension() const; 
 
-/*! 
+/*!
 
 Return the matrix number of columns. 
 
 */ 
 int column_dimension() const; 
 
-/*! 
+/*!
 
 Read access to a matrix coefficient. 
 
@@ -217,7 +217,7 @@ Read access to a matrix coefficient.
 */ 
 NT get_coef(int row, int column) const; 
 
-/*! 
+/*!
 
 Write access to a matrix coefficient: `a_ij = a_ij + val`. 
 
@@ -227,7 +227,7 @@ Write access to a matrix coefficient: `a_ij = a_ij + val`.
 */ 
 void add_coef(int row, int column, NT value); 
 
-/*! 
+/*!
 
 Write access to a matrix coefficient: `a_ij = val`. 
 

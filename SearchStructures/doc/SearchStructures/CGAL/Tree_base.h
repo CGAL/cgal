@@ -25,12 +25,12 @@ public:
 /// \name Types
 /// @{
 
-/*! 
+/*!
 container `Data`. 
 */ 
 typedef unspecified_type Data; 
 
-/*! 
+/*!
 container `Window`. 
 */ 
 typedef unspecified_type Window; 
@@ -40,7 +40,7 @@ typedef unspecified_type Window;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Tree_anchor<Data, Window> a(); 
@@ -50,32 +50,32 @@ Tree_anchor<Data, Window> a();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 template<class OutputIterator> 
 OutputIterator window_query(Window win, OutputIterator result); 
 
-/*! 
+/*!
 
 */ 
 template<class OutputIterator> 
 OutputIterator enclosing_query(Window win, OutputIterator result); 
 
-/*! 
+/*!
 returns true; 
 */ 
 bool is_valid(); 
 
 protected:
 
-/*! 
+/*!
 returns true. 
 */ 
 bool is_inside(Window win, 
 Data object); 
 
-/*! 
+/*!
 returns true. 
 */ 
 bool is_anchor(); 

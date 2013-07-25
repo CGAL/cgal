@@ -27,17 +27,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 represents a general polygon. Must be a model of the `GpsTraitsGeneralPolygon_2` concept. 
 */ 
 typedef unspecified_type Polygon_2; 
 
-/*! 
+/*!
 represents a general polygon with holes. Must be a model of the `GpsTraitsGeneralPolygonWithHoles_2` concept. 
 */ 
 typedef unspecified_type Polygon_with_holes_2; 
 
-/*! 
+/*!
 A const iterator of curves. Its value type is const 
 `X_monotone_curve_2`. 
 */ 
@@ -48,7 +48,7 @@ typedef unspecified_type Curve_const_iterator;
 /// \name Functor Types 
 /// @{
 
-/*! 
+/*!
 a functor that constructs a general polygon from a range of 
 \f$ x\f$-monotone curves. It uses the operator 
 
@@ -58,7 +58,7 @@ parameterized by the `InputIterator` type.
 */ 
 typedef unspecified_type Construct_polygon_2; 
 
-/*! 
+/*!
 a functor that constructs a general polygon with holes from a general polygon and, optionally, a range of holes. It uses the operator 
 
 `void operator() (const General_polygon_2& pgn_boundary)` or 
@@ -67,21 +67,21 @@ a functor that constructs a general polygon with holes from a general polygon an
 */ 
 typedef unspecified_type Construct_general_polygon_with_holes_2; 
 
-/*! 
+/*!
 A functor for constructing the outer boundary of a polygon with holes. It uses the operator 
 
 `General_polygon_2 operator()(const General_polygon_with_holes_2& pol_wh)`. 
 */ 
 typedef unspecified_type Construct_outer_boundary; 
 
-/*! 
+/*!
 A functor for constructing the container of holes of a polygon with holes. It returns the begin/end iterators for the holes It uses the operator 
 
 `std::pair<Hole_const_iterator, Hole_const_iterator> operator()(const General_polygon_with_holes_2& pol_wh)`. 
 */ 
 typedef unspecified_type Construct_holes; 
 
-/*! 
+/*!
 A functor for checking if polygon with holes has no outer boundary. It uses the operator 
 
 `bool operator()(const General_polygon_with_holes_2& pol_wh)`. 
@@ -93,17 +93,17 @@ typedef unspecified_type Is_unbounded;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 GeneralPolygonSetTraits_2(); 
 
-/*! 
+/*!
 copy constructor 
 */ 
 GeneralPolygonSetTraits_2(GeneralPolygonSetTraits_2 other); 
 
-/*! 
+/*!
 assignment operator. 
 */ 
 GeneralPolygonSetTraits_2 operator=(other); 
@@ -113,32 +113,32 @@ GeneralPolygonSetTraits_2 operator=(other);
 /// \name Accessing Functor Objects 
 /// @{
 
-/*! 
+/*!
 returns a functor that constructs a polygon. 
 */ 
 Construct_polygon_2 construct_polygon_2_object(); 
 
-/*! 
+/*!
 returns a functor that obtains the curves of a polygon. 
 */ 
 Construct_curves_2 construct_curves_2_object(); 
 
-/*! 
+/*!
 returns a functor that constructs a polygon with holes. 
 */ 
 Construct_general_polygon_with_holes_2 construct_polygon_with_holes_2_object() const; 
 
-/*! 
+/*!
 returns a functor that obtains the outer boundary of a polygon with holes. 
 */ 
 Construct_outer_boundary construct_outer_boundary_object() const; 
 
-/*! 
+/*!
 returns a functor that obtains begin/end iterators over a container of holes. 
 */ 
 Construct_holes construct_holes_object() const; 
 
-/*! 
+/*!
 returns a functor that determines if the polygon with holes is unbounded 
 */ 
 Is_unbounded construct_is_unbounded_object(); 

@@ -41,7 +41,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Intersections_tag; 
@@ -54,13 +54,13 @@ typedef CGAL::Tag_true Intersections_tag;
 /// `SegmentDelaunayGraphTraits_2` concept. These are:
 /// @{
 
-/*! 
+/*!
 A typedef for the template parameter 
 `K`. 
 */ 
 typedef K Kernel; 
 
-/*! 
+/*!
 A typedef for the template 
 parameter `MTag`. 
 */ 
@@ -113,7 +113,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_false Intersections_tag; 
@@ -124,13 +124,13 @@ typedef CGAL::Tag_false Intersections_tag;
 /// `SegmentDelaunayGraphTraits_2` concept. These are:
 /// @{
 
-/*! 
+/*!
 A typedef for the template parameter 
 `K`. 
 */ 
 typedef K Kernel; 
 
-/*! 
+/*!
 A typedef for the template 
 parameter `MTag`. 
 */ 

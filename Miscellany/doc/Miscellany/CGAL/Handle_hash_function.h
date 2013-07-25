@@ -29,7 +29,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Handle_hash_function(); 
@@ -39,7 +39,7 @@ Handle_hash_function();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns unique hash value for any `Handle` 
 type for which `&*key` gives a unique address. 

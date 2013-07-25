@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 introduces a variable `c` of type `Circle_2`. 
 It is initialized to the circle with center `center`, 
@@ -33,7 +33,7 @@ Circle_2(const Point_2<Kernel> &center,
 const Kernel::FT &squared_radius, 
 const Orientation &ori = COUNTERCLOCKWISE); 
 
-/*! 
+/*!
 
 introduces a variable `c` of type `Circle_2`. 
 It is initialized to the unique circle which passes through 
@@ -46,7 +46,7 @@ Circle_2(const Point_2<Kernel> &p,
 const Point_2<Kernel> &q, 
 const Point_2<Kernel> &r); 
 
-/*! 
+/*!
 
 introduces a variable `c` of type `Circle_2`. 
 It is initialized to the circle with diameter \f$ \overline{pq}\f$ 
@@ -57,7 +57,7 @@ Circle_2( const Point_2<Kernel> &p,
 const Point_2<Kernel> &q, 
 const Orientation &ori = COUNTERCLOCKWISE); 
 
-/*! 
+/*!
 
 introduces a variable `c` of type `Circle_2`. 
 It is initialized to the circle with center `center`, squared 
@@ -73,25 +73,25 @@ Circle_2( const Point_2<Kernel> &center,
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the center of `c`. 
 */ 
 const Point_2<Kernel> &center( ) const; 
 
-/*! 
+/*!
 
 returns the squared radius of `c`. 
 */ 
 const Kernel::FT& squared_radius( ) const; 
 
-/*! 
+/*!
 
 returns the orientation of `c`. 
 */ 
 Orientation orientation( ) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `c` and `circle2` are equal, 
 i.e.\ if they have the same center, same squared radius and 
@@ -99,7 +99,7 @@ same orientation.
 */ 
 bool operator == ( const Circle_2<Kernel>& circle2) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `c` and `circle2` are not equal. 
 */ 
@@ -110,13 +110,13 @@ bool operator != ( const Circle_2<Kernel> & circle2) const;
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff `c` is degenerate, i.e.\ if `c` has squared radius zero. 
 */ 
 bool is_degenerate( ) const; 
 
-/*! 
+/*!
 
 returns either the constant \ref ON_ORIENTED_BOUNDARY, 
 \ref ON_POSITIVE_SIDE, or \ref ON_NEGATIVE_SIDE,
@@ -127,7 +127,7 @@ of `c`, resp.
 Oriented_side 
 oriented_side( const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 returns \ref ON_BOUNDED_SIDE, 
 \ref ON_BOUNDARY, or \ref ON_UNBOUNDED_SIDE 
@@ -137,27 +137,27 @@ outside of `c`, resp.
 Bounded_side 
 bounded_side( const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_positive_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_negative_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_boundary(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_bounded_side(const Point_2<Kernel> &p) const; 
 
-/*! 
+/*!
 
 */ 
 bool has_on_unbounded_side(const Point_2<Kernel> &p) const; 
@@ -167,14 +167,14 @@ bool has_on_unbounded_side(const Point_2<Kernel> &p) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns the circle with the same center and squared radius as 
 `c` but with opposite orientation. 
 */ 
 Circle_2<Kernel> opposite() const; 
 
-/*! 
+/*!
 
 returns the circle obtained by applying \f$ at\f$ on `c`. 
 \pre `at` is an orthogonal transformation. 
@@ -182,7 +182,7 @@ returns the circle obtained by applying \f$ at\f$ on `c`.
 Circle_2<Kernel> orthogonal_transform( 
 Aff_transformation_2<Kernel> const& at) const; 
 
-/*! 
+/*!
 
 returns a bounding box containing `c`. 
 */ 

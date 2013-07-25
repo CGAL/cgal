@@ -17,7 +17,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 The event filter. 
 */ 
 bool eventFilter(QObject *obj, QEvent *event); 
@@ -27,7 +27,7 @@ bool eventFilter(QObject *obj, QEvent *event);
 /// \name Signals 
 /// @{
 
-/*! 
+/*!
 Emits the real world mouse coordinates. 
 */ 
 void mouseCoordinates(QPointF p); 

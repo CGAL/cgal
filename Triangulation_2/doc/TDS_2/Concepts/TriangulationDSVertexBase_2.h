@@ -65,7 +65,7 @@ public:
 /// The concept `TriangulationDSVertexBase_2` has to provide the following types.
 /// @{
 
-/*! 
+/*!
 This template class has to define a type `Rebind_TDS<TDS2>::%Other` which is the 
 <I>rebound</I> vertex base , where the actual 
 `CGAL::Triangulation_data_structure_2` is plugged in. 
@@ -76,17 +76,17 @@ of the class `CGAL::Triangulation_data_structure_2::Vertex`.
 template <typename TDS2> 
 using Rebind_TDS = unspecified_type;
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_2 Triangulation_data_structure; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_2::Vertex_handle Vertex_handle; 
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationDataStructure_2::Face_handle Face_handle; 
@@ -96,12 +96,12 @@ typedef TriangulationDataStructure_2::Face_handle Face_handle;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 TriangulationDSVertexBase_2(); 
 
-/*! 
+/*!
 Constructs a vertex pointing to face `f`. 
 */ 
 TriangulationDSVertexBase_2(Face_handle f); 
@@ -115,12 +115,12 @@ TriangulationDSVertexBase_2(Face_handle f);
 /// `CGAL::Compact_container` for the exact requirements.
 /// @{
 
-/*! 
+/*!
 
 */ 
 void * for_compact_container() const; 
 
-/*! 
+/*!
 
 */ 
 void * & for_compact_container(); 

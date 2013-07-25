@@ -15,7 +15,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 
 Copies in the output iterator the results of the split of arc `a` at the \f$ \theta\f$-extremal 
 point(s) of its supporting circle relatively to the context sphere used by the function `SphericalKernel::make_theta_monotone_3_object` 
@@ -30,7 +30,7 @@ template<class OutputIterator>
 OutputIterator operator() 
 (const SphericalKernel::Circular_arc_3 &a,OutputIterator res); 
 
-/*! 
+/*!
 Copies in the output iterator the results of the split of circle `c` at its \f$ \theta\f$-extremal 
 point(s) relatively to the context sphere used by the function `SphericalKernel::make_theta_monotone_3_object`. 
 (Refer to Section \ref sectionSKobjects for the definition of these points.) 

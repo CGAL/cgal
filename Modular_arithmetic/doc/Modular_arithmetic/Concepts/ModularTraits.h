@@ -22,12 +22,12 @@ public:
 /// A model of `ModularTraits` is supposed to provide:
 /// @{
 
-/*! 
+/*!
 The associated type. 
 */ 
 typedef unspecified_type Type ; 
 
-/*! 
+/*!
 
 Tag indicating whether the associated type is modularizable. 
 
@@ -35,7 +35,7 @@ This is either `CGAL::Tag_true` or `CGAL::Tag_false`.
 */ 
 typedef unspecified_type Is_modularizable; 
 
-/*! 
+/*!
 
 The type of the modular image. 
 
@@ -52,12 +52,12 @@ typedef unspecified_type Residue_type;
 /// `CGAL::Null_functor`.
 /// @{
 
-/*! 
+/*!
 A model of `ModularTraits::ModularImage` 
 */ 
 typedef unspecified_type Modular_image; 
 
-/*! 
+/*!
 A model of `ModularTraits::ModularImageRepresentative` 
 */ 
 typedef unspecified_type Modular_image_representative; 

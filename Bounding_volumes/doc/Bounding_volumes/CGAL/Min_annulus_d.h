@@ -58,27 +58,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `Traits::Point_d`. 
 Point type used to represent the input points. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 typedef to `Traits::FT`. 
 Number type used to return the squared radii of the smallest 
 enclosing annulus. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 typedef to `Traits::ET`. 
 Number type used to do the exact computations in the underlying 
 solver for quadratic programs (cf. <B>Implementation</B>). 
 */ 
 typedef unspecified_type ET; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the points 
@@ -86,7 +86,7 @@ of the smallest enclosing annulus.
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the support points 
@@ -94,7 +94,7 @@ of the smallest enclosing annulus.
 */ 
 typedef unspecified_type Support_point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the inner support points 
@@ -102,7 +102,7 @@ of the smallest enclosing annulus.
 */ 
 typedef unspecified_type Inner_support_point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `Point`. Used to access the outer support points 
@@ -110,7 +110,7 @@ of the smallest enclosing annulus.
 */ 
 typedef unspecified_type Outer_support_point_iterator; 
 
-/*! 
+/*!
 
 non-mutable model of the \stl concept <I>RandomAccessIterator</I> 
 with value type `ET`. Used to access the coordinates of 
@@ -123,7 +123,7 @@ typedef unspecified_type Coordinate_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 initializes `min_annulus` to \f$ ma(\emptyset)\f$. 
 */ 
@@ -131,7 +131,7 @@ Min_annulus_d( const Traits& traits = Traits(),
 int verbose = 0, 
 std::ostream& stream = std::cout); 
 
-/*! 
+/*!
 
 initializes `min_annulus` to \f$ ma(P)\f$ with \f$ P\f$ being the set of points 
 in the range [`first`,`last`). 
@@ -150,66 +150,66 @@ std::ostream& stream = std::cout);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 returns the dimension of the points in \f$ P\f$. 
 If `min_annulus` is empty, the ambient dimension is \f$ -1\f$. 
 */ 
 int ambient_dimension( ) const; 
 
-/*! 
+/*!
 
 returns the number of points of `min_annulus`, i.e.\ \f$ |P|\f$. 
 */ 
 int number_of_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `min_annulus`, i.e.\ \f$ |S|\f$. 
 */ 
 int number_of_support_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `min_annulus` 
 which lie on the inner sphere. 
 */ 
 int number_of_inner_support_points( ) const; 
 
-/*! 
+/*!
 
 returns the number of support points of `min_annulus` 
 which lie on the outer sphere. 
 */ 
 int number_of_outer_support_points( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first point of `min_annulus`. 
 */ 
 Point_iterator points_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Point_iterator points_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first support point of `min_annulus`. 
 \pre \f$ ma(P)\f$ is not degenerate, i.e., `number_of_support_points()` is at least one. 
 */ 
 Support_point_iterator support_points_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 \pre \f$ ma(P)\f$ is not degenerate, i.e., `number_of_support_points()` is at least one. 
 */ 
 Support_point_iterator support_points_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first inner support point 
 of `min_annulus`. 
@@ -217,14 +217,14 @@ of `min_annulus`.
 Inner_support_point_iterator 
 inner_support_points_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Inner_support_point_iterator 
 inner_support_points_end( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first outer support point 
 of `min_annulus`. 
@@ -232,14 +232,14 @@ of `min_annulus`.
 Outer_support_point_iterator 
 outer_support_points_begin( ) const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Outer_support_point_iterator 
 outer_support_points_end( ) const; 
 
-/*! 
+/*!
 
 returns the center of `min_annulus`. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
@@ -247,7 +247,7 @@ returns the center of `min_annulus`.
 */ 
 Point center( ) const; 
 
-/*! 
+/*!
 
 returns the squared inner radius of `min_annulus`. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
@@ -255,7 +255,7 @@ returns the squared inner radius of `min_annulus`.
 */ 
 FT squared_inner_radius( ) const; 
 
-/*! 
+/*!
 
 returns the squared outer radius of `min_annulus`. 
 \cgalRequires An implicit conversion from `ET` to `RT` is available. 
@@ -263,7 +263,7 @@ returns the squared outer radius of `min_annulus`.
 */ 
 FT squared_outer_radius( ) const; 
 
-/*! 
+/*!
 
 returns an iterator referring to the first coordinate 
 of the center of `min_annulus`. 
@@ -277,26 +277,26 @@ common denominator.
 Coordinate_iterator 
 center_coordinates_begin() const; 
 
-/*! 
+/*!
 
 returns the corresponding past-the-end iterator. 
 */ 
 Coordinate_iterator 
 center_coordinates_end() const; 
 
-/*! 
+/*!
 
 returns the numerator of the squared inner radius of `min_annulus`. 
 */ 
 ET squared_inner_radius_numerator( ) const; 
 
-/*! 
+/*!
 
 returns the numerator of the squared outer radius of `min_annulus`. 
 */ 
 ET squared_outer_radius_numerator( ) const; 
 
-/*! 
+/*!
 
 returns the denominator of the squared radii of `min_annulus`. 
 */ 
@@ -312,7 +312,7 @@ ET squared_radii_denominator( ) const;
 /// \E^d\f$.
 /// @{
 
-/*! 
+/*!
 
 returns `CGAL::ON_BOUNDED_SIDE`, 
 `CGAL::ON_BOUNDARY`, or 
@@ -324,34 +324,34 @@ properly inside, on the boundary, or properly outside of
 CGAL::Bounded_side 
 bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly inside `min_annulus`. 
 \pre The dimension of `p` equals `min_annulus.ambient_dimension()` if `min_annulus` is not empty. 
 */ 
 bool has_on_bounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies on the boundary of `min_annulus`. 
 \pre The dimension of `p` equals `min_annulus.ambient_dimension()` if `min_annulus` is not empty. 
 */ 
 bool has_on_boundary( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `p` lies properly outside of `min_annulus`. 
 \pre The dimension of `p` equals `min_annulus.ambient_dimension()` if `min_annulus` is not empty. 
 */ 
 bool has_on_unbounded_side( const Point& p) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_annulus` is empty (this implies degeneracy). 
 */ 
 bool is_empty( ) const; 
 
-/*! 
+/*!
 
 returns `true`, iff `min_annulus` is degenerate, i.e.\ if `min_annulus` is empty or equal to a single point. 
 */ 
@@ -362,13 +362,13 @@ bool is_degenerate( ) const;
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 
 resets `min_annulus` to \f$ ma(\emptyset)\f$. 
 */ 
 void clear( ); 
 
-/*! 
+/*!
 
 sets `min_annulus` to \f$ ma(P)\f$, where \f$ P\f$ is the set of points in 
 the range [`first`,`last`). 
@@ -379,14 +379,14 @@ template < class InputIterator >
 void set( InputIterator first, 
 InputIterator last ); 
 
-/*! 
+/*!
 
 inserts `p` into `min_annulus`. 
 \pre The dimension of `p` equals `min_annulus.ambient_dimension()` if `min_annulus` is not empty. 
 */ 
 void insert( const Point& p); 
 
-/*! 
+/*!
 
 inserts the points in the range [`first`,`last`) into 
 `min_annulus` and recomputes the smallest enclosing annulus. 
@@ -408,7 +408,7 @@ InputIterator last );
 /// item is considered by the validity check.
 /// @{
 
-/*! 
+/*!
 
 returns `true`, iff `min_annulus` is valid. If `verbose` is 
 `true`, some messages concerning the performed checks are 
@@ -424,7 +424,7 @@ int level = 0 ) const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 
 returns a const reference to the traits class object. 
 */ 
@@ -435,7 +435,7 @@ const Traits& traits( ) const;
 
 }; /* end Min_annulus_d */
 
-/*! 
+/*!
 
 writes `min_annulus` to output stream `os`. 
 \cgalRequires The output operator is defined for `Point`. 
@@ -445,7 +445,7 @@ std::ostream&
 operator << ( std::ostream& os, 
 const Min_annulus_d<Traits>& min_annulus); 
 
-/*! 
+/*!
 
 reads `min_annulus` from input stream `is`. 
 \cgalRequires The input operator is defined for `Point`. 

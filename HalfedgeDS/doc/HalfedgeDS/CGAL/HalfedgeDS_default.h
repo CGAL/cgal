@@ -37,12 +37,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bidirectional_iterator_tag iterator_category; 
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Supports_removal; 

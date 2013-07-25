@@ -83,13 +83,13 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Delaunay_triangulation_2(const Traits& gt = 
 Traits()); 
 
-/*! 
+/*!
 copy constructor. All the vertices and faces are duplicated. 
 */ 
 Delaunay_triangulation_2( 
@@ -122,7 +122,7 @@ Delaunay_triangulation_2<Traits,Tds> dt ( InputIterator first, InputIterator las
 /// triangulation which is no longer a Delaunay triangulation.  
 /// @{
 
-/*! 
+/*!
 inserts point `p`. 
 If point `p` coincides with an already existing vertex, this 
 vertex is returned and the triangulation is not updated. 
@@ -131,19 +131,19 @@ Optional parameter `f` is used to initialize the location of `p`.
 */ 
 Vertex_handle insert(const Point& p, Face_handle f=Face_handle()); 
 
-/*! 
+/*!
 inserts a point `p` at the location given by `(lt,loc,li)`. 
 \sa `Triangulation_2::locate()`
 */ 
 Vertex_handle insert(const Point& p, Locate_type& lt, 
 Face_handle loc, int li ); 
 
-/*! 
+/*!
 equivalent to `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
-/*! 
+/*!
 inserts the points in the range `[first,last)`.
 Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
@@ -155,7 +155,7 @@ template < class PointInputIterator >
 std::ptrdiff_t 
 insert(PointInputIterator first, PointInputIterator last); 
 
-/*! 
+/*!
 
 inserts the points in the iterator range `[first,last)`. Returns the number of inserted points. 
 Note that this function is not guaranteed to insert the points 
@@ -173,7 +173,7 @@ template < class PointWithInfoInputIterator >
 std::ptrdiff_t 
 insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last); 
 
-/*! 
+/*!
 removes the vertex from the triangulation. 
 */ 
 void remove(Vertex_handle v); 
@@ -183,7 +183,7 @@ void remove(Vertex_handle v);
 /// \name Displacement 
 /// @{
 
-/*! 
+/*!
 if there is not already another vertex placed on `p`, 
 the triangulation is modified such that the new position of vertex `v` 
 is `p`, and `v` is returned. Otherwise, the triangulation is not 
@@ -192,7 +192,7 @@ modified and the vertex at point `p` is returned.
 */ 
 Vertex_handle move_if_no_collision(Vertex_handle v, const Point & p); 
 
-/*! 
+/*!
 same as `move_if_no_collision()`, if there is no collision. Otherwise, `v` 
 is deleted and the vertex placed on `p` is returned. 
 \pre Vertex `v` must be finite. 
@@ -204,7 +204,7 @@ Vertex_handle move(Vertex_handle v, const Point & p);
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 returns any nearest vertex of `p`. The implemented function 
 begins with a location step and 
 `f` may be used to initialize the location. 
@@ -212,7 +212,7 @@ begins with a location step and
 Vertex_handle 
 nearest_vertex(const Point& p, Face_handle f=Face_handle()) const; 
 
-/*! 
+/*!
 outputs the faces and boundary edges of the conflict zone of point `p` into
 output iterators.
 
@@ -239,7 +239,7 @@ OutputItFaces fit,
 OutputItBoundaryEdges eit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 outputs the faces of the conflict zone of point `p` into an output iterator.
 same as `get_conflicts_and_boundary()` except that only the faces in conflict with `p` 
 are output. The function returns the resulting output iterator. 
@@ -251,7 +251,7 @@ get_conflicts (const Point &p,
 OutputItFaces fit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 outputs the boundary edges of the conflict zone of point `p` into an output iterator.
 
 This function outputs in the container pointed to by `eit`, 
@@ -276,13 +276,13 @@ Face_handle start) const;
 /// Voronoi diagram.
 /// @{
 
-/*! 
+/*!
 Returns the center of the circle circumscribed to face `f`. 
 \pre `f` is not infinite. 
 */ 
 Point dual(const Face_handle &f) const; 
 
-/*! 
+/*!
 returns a segment, a ray or a line supported by the bisector of the 
 endpoints of `e`. 
 If faces incident to `e` are both finite, a segment whose endpoints are the 
@@ -294,17 +294,17 @@ are infinite and the bisector line is returned.
 */ 
 Object dual(const Edge &e) const; 
 
-/*! 
+/*!
 Idem 
 */ 
 Object dual(const Edge_circulator& ec) const; 
 
-/*! 
+/*!
 Idem 
 */ 
 Object dual(const Edge_iterator& ei) const; 
 
-/*! 
+/*!
 output the dual Voronoi diagram to stream `ps`. 
 */ 
 template < class Stream> 
@@ -315,7 +315,7 @@ Stream& draw_dual(Stream & ps);
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 Returns the side of `p` with respect to the circle circumscribing 
 the triangle associated with `f`. 
 */ 
@@ -328,7 +328,7 @@ Oriented_side side_of_oriented_circle(Face_handle f, const Point& p) const;
 /// additionally test the empty circle property.
 /// @{
 
-/*! 
+/*!
 tests the validity of the triangulation as a
 `Triangulation_2` and additionally tests the Delaunay property. This
 method is mainly useful for debugging Delaunay triangulation

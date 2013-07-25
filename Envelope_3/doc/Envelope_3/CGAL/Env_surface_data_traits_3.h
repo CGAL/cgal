@@ -49,32 +49,32 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the base traits-class. 
 */ 
 typedef Traits Base_traits_3; 
 
-/*! 
+/*!
 the base surface. 
 */ 
 typedef typename Base_traits_3::Surface_3 Base_surface_3; 
 
-/*! 
+/*!
 the base \f$ xy\f$-monotone surface surface. 
 */ 
 typedef typename Base_traits_3::Xy_monotone_surface_3 Base_xy_monotone_surface_3; 
 
-/*! 
+/*!
 the conversion functor. 
 */ 
 typedef Cnv Convert; 
 
-/*! 
+/*!
 the type of data associated with surfaces. 
 */ 
 typedef SData Surface_data; 
 
-/*! 
+/*!
 the type of data associated with \f$ xy\f$-monotone surfaces. 
 */ 
 typedef XyData Xy_monotone_surface_data; 
@@ -87,18 +87,18 @@ typedef XyData Xy_monotone_surface_data;
     /// \name Creation 
     /// @{
     
-    /*! 
+    /*!
     default constructor. 
     */ 
     Surface_3 (); 
     
-    /*! 
+    /*!
     constructs surface from the given `base` surface with uninitialized 
     data field. 
     */ 
     Surface_3 (const Base_surface_3& base); 
     
-    /*! 
+    /*!
     constructs surface from the given `base` surface with an attached 
     `data` field. 
     */ 
@@ -109,13 +109,13 @@ typedef XyData Xy_monotone_surface_data;
     /// \name Access Functions 
     /// @{
     
-    /*! 
+    /*!
     returns the data field (a non-const version, which returns a reference 
     to the data object, is also available). 
     */ 
     const Surface_data& data () const; 
     
-    /*! 
+    /*!
     sets the data field. 
     */ 
     void set_data (const Surface_data& data); 
@@ -131,18 +131,18 @@ typedef XyData Xy_monotone_surface_data;
     /// \name Creation 
     /// @{
     
-    /*! 
+    /*!
     default constructor. 
     */ 
     Xy_monotone_surface_3 (); 
     
-    /*! 
+    /*!
     constructs an \f$ xy\f$-monotone surface from the given `base` surface with 
     uninitialized data field. 
     */ 
     Xy_monotone_surface_3 (const Base_xy_monotone_surface_3& base); 
     
-    /*! 
+    /*!
     constructs an \f$ x\f$-monotone surface from the given `base` \f$ x\f$-monotone 
     surface with an attached `data` field. 
     */ 
@@ -154,13 +154,13 @@ typedef XyData Xy_monotone_surface_data;
     /// \name Access Functions 
     /// @{
     
-    /*! 
+    /*!
     returns the field (a non-const version, which returns a reference 
     to the data object, is also available). 
     */ 
     const Xy_monotone_surface_data& data () const; 
     
-    /*! 
+    /*!
     sets the data field. 
     */ 
     void set_data (const Xy_monotone_surface_data& data); 

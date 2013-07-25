@@ -27,32 +27,32 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolygonIsValid Is_valid; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Point_2 Point_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Polygon_2 Polygon_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Less_xy_2 Less_xy_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Left_turn_2 Left_turn_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Orientation_2 Orientation_2; 
@@ -65,7 +65,7 @@ typedef Traits::Orientation_2 Orientation_2;
 /// following member function is defined:
 /// @{
 
-/*! 
+/*!
 function returning an instance of `Is_valid` 
 */ 
 Is_valid 

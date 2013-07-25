@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the relative position of point 
 `p` to the sphere defined by `A = tuple [first,last)`. The 
 order of the points of \f$ A\f$ does not matter.

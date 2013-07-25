@@ -35,7 +35,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 state is *stopped*. 
 */ 
 Timer(); 
@@ -45,45 +45,45 @@ Timer();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 \pre state is *stopped*. 
 */ 
 void start(); 
 
-/*! 
+/*!
 \pre state is *running*. 
 */ 
 void stop (); 
 
-/*! 
+/*!
 reset timer to zero. The state is unaffected. 
 */ 
 void reset(); 
 
-/*! 
+/*!
 `true` if the current state is running. 
 */ 
 bool is_running() const; 
 
-/*! 
+/*!
 user process time in seconds, or 0 if the 
 underlying system call failed. 
 */ 
 double time() const; 
 
-/*! 
+/*!
 number of start/stop-intervals since 
 the last reset. 
 */ 
 int intervals() const; 
 
-/*! 
+/*!
 smallest possible time step in seconds, 
 or -1 if the system call failed. 
 */ 
 double precision() const; 
 
-/*! 
+/*!
 maximal representable time in seconds. 
 */ 
 double max() const; 

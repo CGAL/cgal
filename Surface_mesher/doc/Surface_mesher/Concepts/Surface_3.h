@@ -26,7 +26,7 @@ public:
 ///   `CGAL::Surface_mesh_traits_generator_3<Surface_3>` exists. 
 /// @{
 
-/*! 
+/*!
 a model of `SurfaceMesherTraits_3` 
 */ 
 typedef unspecified_type Surface_mesher_traits_3; 

@@ -42,7 +42,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Erase the object `k` from the table `t` when processed. 
 */ 
 Insert_event(ActiveObjectsTable::Key k, 

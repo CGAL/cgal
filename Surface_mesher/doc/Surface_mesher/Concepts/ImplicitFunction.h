@@ -21,12 +21,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Number type 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 Point type 
 */ 
 typedef unspecified_type Point; 
@@ -36,7 +36,7 @@ typedef unspecified_type Point;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the value \f$ f(p)\f$, where \f$ p \in\mathbb{R}^3\f$. 
 */ 
 FT operator()(Point p); 

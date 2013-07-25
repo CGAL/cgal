@@ -48,17 +48,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef typename T::Scalar NT; 
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Eigen_vector<NT> Vector; 
 
-/*! 
+/*!
 If `T` is `Eigen::ConjugateGradient<M>` or `Eigen::SimplicialCholesky<M>`, `Matrix` is `CGAL::Eigen_sparse_symmetric_matrix<T>` 
 and `CGAL::Eigen_sparse_matrix<T>` otherwise. 
 
@@ -70,7 +70,7 @@ typedef unspecified_type Matrix;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Returns a reference to the internal \ref thirdpartyEigen "Eigen" solver. This function can be used for example to set specific parameters of the solver. 
 

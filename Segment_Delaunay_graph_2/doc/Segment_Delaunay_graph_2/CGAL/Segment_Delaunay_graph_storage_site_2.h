@@ -30,7 +30,7 @@ public:
 /// `SegmentDelaunayGraphStorageSite_2`.
 /// @{
 
-/*! 
+/*!
 A type for the template parameter `Gt`. 
 */ 
 typedef Gt Geom_traits; 

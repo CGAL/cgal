@@ -64,7 +64,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Alpha_status(); 
@@ -74,27 +74,27 @@ Alpha_status();
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 sets Gabriel marker. 
 */ 
 void set_is_Gabriel(bool yesorno); 
 
-/*! 
+/*!
 sets convex hull marker.
 */ 
 void set_is_on_chull(bool yesorno); 
 
-/*! 
+/*!
 sets `alpha_min`. 
 */ 
 void set_alpha_min(NT alpha); 
 
-/*! 
+/*!
 sets `alpha_mid`. 
 */ 
 void set_alpha_mid(NT alpha); 
 
-/*! 
+/*!
 sets `alpha_max`. 
 */ 
 void set_alpha_max(NT alpha); 
@@ -104,28 +104,28 @@ void set_alpha_max(NT alpha);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns true for Gabriel faces. 
 */ 
 bool is_Gabriel() const ; 
 
-/*! 
+/*!
 Returns true for convex hull faces. 
 */ 
 bool is_on_chull() const; 
 
-/*! 
+/*!
 Returns the `alpha_min`. 
 \pre `is_Gabriel()` returns false; 
 */ 
 NT alpha_min() const; 
 
-/*! 
+/*!
 Returns the `alpha_mid`.
 */ 
 NT alpha_mid() const; 
 
-/*! 
+/*!
 Returns `alpha_max`. 
 \pre `is_on_chull()` returns `false`. 
 */ 

@@ -31,7 +31,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Numerical type 
 */ 
 typedef Tr::Geom_traits::FT FT; 
@@ -41,7 +41,7 @@ typedef Tr::Geom_traits::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Returns an object to serve as criteria for facets. The argument 
 `angle_bound` is the lower bound for the angle in degrees of the 
 surface mesh facets. The argument `radius_bound` is a uniform upper bound 
@@ -58,7 +58,7 @@ FT radius_bound,
 FT distance_bound, 
 Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE); 
 
-/*! 
+/*!
 Returns an object to serve as criteria for facets. The types `SizingField` and 
 `DistanceField` must 
 be models of the concept `MeshDomainField_3`. The behavior and semantic of the arguments are the same 

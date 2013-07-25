@@ -12,13 +12,13 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Constructs an arc from a full circle. 
 */ 
 CircularKernel::Circular_arc_2 operator() 
 (const CircularKernel::Circle_2 &c); 
 
-/*! 
+/*!
 Construct the circular arc supported by `c`, whose source is 
 `p1` and whose target is `p2` when traversing the circle in 
 counterclockwise direction. 
@@ -29,7 +29,7 @@ CircularKernel::Circular_arc_2 operator()
 const CircularKernel::Circular_arc_point_2 &p1, 
 const CircularKernel::Circular_arc_point_2 &p2); 
 
-/*! 
+/*!
 Constructs the unique circular arc whose supporting circle is 
 `c`, and whose source is the intersection of `c` 
 and `c1` with index `b1`, and whose target is the intersection 
@@ -43,7 +43,7 @@ CircularKernel::Circular_arc_2 operator()
 const CircularKernel::Circle_2 &c1, bool b1, 
 const CircularKernel::Circle_2 &c2, bool b2); 
 
-/*! 
+/*!
 Same, for intersections defined by lines instead of circles. 
 */ 
 CircularKernel::Circular_arc_2 operator() 
@@ -51,7 +51,7 @@ CircularKernel::Circular_arc_2 operator()
 const CircularKernel::Line_2 &l1, bool b1, 
 const CircularKernel::Line_2 &l2, bool b2); 
 
-/*! 
+/*!
 Constructs an arc that is supported by the circle of type 
 `CircularKernel::Circle_2` passing through the points `p`, 
 `q` and `r`. The source and target are respectively `p` 

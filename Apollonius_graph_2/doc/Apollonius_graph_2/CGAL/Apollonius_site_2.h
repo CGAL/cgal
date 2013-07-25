@@ -36,12 +36,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Apollonius_site_2(Point_2 p=Point_2(), Weight w= Weight(0)); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Apollonius_site_2(Apollonius_site_2<K> other); 
@@ -50,7 +50,7 @@ Apollonius_site_2(Apollonius_site_2<K> other);
 
 }; /* end Apollonius_site_2 */
 
-/*! 
+/*!
 Inserts the 
 Apollonius site `s` into the stream `os`. 
 \note Included through `CGAL/IO/Qt_widget_Apollonius_site_2.h`.
@@ -60,7 +60,7 @@ Apollonius site `s` into the stream `os`.
 std::ostream& operator<<(std::ostream& os, 
 const Apollonius_site_2<K>& s); 
 
-/*! 
+/*!
 Reads an Apollonius site from the stream `is` and assigns it 
 to `s`. 
 \note Included through `CGAL/IO/Qt_widget_Apollonius_site_2.h`.
@@ -70,7 +70,7 @@ to `s`.
 std::istream& operator>>(std::istream& is, 
 const Apollonius_site_2<K>& s); 
 
-/*! 
+/*!
 Inserts the Apollonius site `s` into the `Qt_widget` stream `w`. 
 \note Included through `CGAL/IO/Qt_widget_Apollonius_site_2.h`.
 \pre The insert operator must be defined for `K::Circle_2`. 

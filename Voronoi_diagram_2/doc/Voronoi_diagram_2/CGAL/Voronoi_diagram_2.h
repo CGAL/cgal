@@ -59,33 +59,33 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
       A type for the vertices of the Voronoi diagram. 
     */ 
     typedef unspecified_type Vertex; 
 
-    /*! 
+    /*!
       A type for the halfedges of the Voronoi diagram. 
     */ 
     typedef unspecified_type Halfedge; 
 
-    /*! 
+    /*!
       Handle for the vertices of the Voronoi diagram. 
     */ 
     typedef unspecified_type Vertex_handle; 
 
-    /*! 
+    /*!
       Handle for the faces of the Voronoi diagram. 
     */ 
     typedef unspecified_type Face_handle; 
 
-    /*! 
+    /*!
       Handle for the halfedges of the Voronoi 
       diagram. 
     */ 
     typedef unspecified_type Halfedge_handle; 
 
-    /*! 
+    /*!
       A type for a bidirectional 
       circulator over the halfedges on the boundary of the face. The value 
       type of the circulator is 
@@ -94,13 +94,13 @@ public:
     */ 
     typedef unspecified_type Ccb_halfedge_circulator; 
 
-    /*! 
+    /*!
       A type for the Delaunay graph. It is a 
       model of the `DelaunayGraph_2` concept. 
     */ 
     typedef unspecified_type Delaunay_graph; 
 
-    /*! 
+    /*!
       A type for the handle of the dual vertex. 
     */ 
     typedef Delaunay_graph::Vertex_handle 
@@ -111,20 +111,20 @@ public:
     /// \name Access Methods 
     /// @{
 
-    /*! 
+    /*!
       Returns an incident halfedge on 
       the boundary of `f`. 
     */ 
     Halfedge_handle halfedge(); 
 
-    /*! 
+    /*!
       Returns a bidirectional 
       circulator for traversing the halfedges on the boundary of 
       `f`. The halfedges are traversed in counterclockwise order. 
     */ 
     Ccb_halfedge_circulator ccb(); 
 
-    /*! 
+    /*!
       Returns a handle to the corresponding dual vertex in the Delaunay graph. 
     */ 
     Delaunay_vertex_handle dual(); 
@@ -134,20 +134,20 @@ public:
     /// \name Predicate Methods 
     /// @{
 
-    /*! 
+    /*!
       Returns `true` iff the face is 
       an unbounded face in the Voronoi diagram. 
     */ 
     bool is_unbounded(); 
 
-    /*! 
+    /*!
       Returns 
       `true` iff `e` is a halfedge of the boundary of 
       `f`. 
     */ 
     bool is_halfedge_on_ccb(Halfedge e); 
 
-    /*! 
+    /*!
       Returns `true` iff the following 
       conditions are met: the face is not rejected by the chosen 
       adaptation policy; 
@@ -187,33 +187,33 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
       A type for the vertices of the Voronoi diagram. 
     */ 
     typedef unspecified_type Vertex; 
 
-    /*! 
+    /*!
       A type for the faces of the Voronoi diagram. 
     */ 
     typedef unspecified_type Face; 
 
-    /*! 
+    /*!
       Handle for the vertices of the Voronoi diagram. 
     */ 
     typedef unspecified_type Vertex_handle; 
 
-    /*! 
+    /*!
       Handle for the faces of the Voronoi diagram. 
     */ 
     typedef unspecified_type Face_handle; 
 
-    /*! 
+    /*!
       Handle for the halfedges of the Voronoi 
       diagram. 
     */ 
     typedef unspecified_type Halfedge_handle; 
 
-    /*! 
+    /*!
       A type for a bidirectional 
       circulator over the halfedges of the boundary of a 
       Voronoi face. The value type of the circulator is 
@@ -222,19 +222,19 @@ public:
     */ 
     typedef unspecified_type Ccb_halfedge_circulator; 
 
-    /*! 
+    /*!
       A type for the Delaunay graph. It is a 
       model of the `DelaunayGraph_2` concept. 
     */ 
     typedef unspecified_type Delaunay_graph; 
 
-    /*! 
+    /*!
       A type for 
       the dual edge in the Delaunay graph. 
     */ 
     typedef Delaunay_graph::Edge Delaunay_edge; 
 
-    /*! 
+    /*!
       A type for vertex handles in the Delaunay graph. 
     */ 
     typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle; 
@@ -244,50 +244,50 @@ public:
     /// \name Access Methods 
     /// @{
 
-    /*! 
+    /*!
       Returns the twin halfedge. 
     */ 
     Halfedge_handle twin(); 
 
-    /*! 
+    /*!
       Same as `e.twin()`. 
     */ 
     Halfedge_handle opposite(); 
 
-    /*! 
+    /*!
       Returns the next halfedge in the 
       counterclockwise sense around the boundary of the face that `e` 
       is incident to. 
     */ 
     Halfedge_handle next(); 
 
-    /*! 
+    /*!
       Returns the previous halfedge in the 
       counterclockwise sense around the boundary of the adjacent face. 
     */ 
     Halfedge_handle previous(); 
 
-    /*! 
+    /*!
       Returns the face that `e` is 
       incident to. 
     */ 
     Face_handle face(); 
 
-    /*! 
+    /*!
       Returns the source vertex of 
       `e`. 
       \pre The source vertex must exist, i.e., `has_source()` must return `true`. 
     */ 
     Vertex_handle source(); 
 
-    /*! 
+    /*!
       Returns the target vertex of 
       `e`. 
       \pre The target vertex must exist, i.e., `has_target()` must return `true`. 
     */ 
     Vertex_handle target(); 
 
-    /*! 
+    /*!
       Returns a bidirectional 
       circulator to traverse the halfedges on the boundary of the Voronoi 
       face containing `e`. The circulator is initialized to 
@@ -297,7 +297,7 @@ public:
     */ 
     Ccb_halfedge_circulator ccb(); 
 
-    /*! 
+    /*!
       Returns the 
       corresponding dual edge in the Delaunay graph. 
     */ 
@@ -310,21 +310,21 @@ public:
     /// "parallel" to the \f$ x\f$-axis, oriented from left to right.
     /// @{
 
-    /*! 
+    /*!
       Returns a handle to the vertex in 
       the Delaunay graph corresponding to the defining site above 
       the Voronoi edge. 
     */ 
     Delaunay_vertex_handle up(); 
 
-    /*! 
+    /*!
       Returns a handle to the vertex 
       in the Delaunay graph corresponding to the defining site below 
       the Voronoi edge. 
     */ 
     Delaunay_vertex_handle down(); 
 
-    /*! 
+    /*!
       Returns a handle to the vertex in 
       the Delaunay graph corresponding to the defining site to the left of 
       the Voronoi edge. 
@@ -332,7 +332,7 @@ public:
     */ 
     Delaunay_vertex_handle left(); 
 
-    /*! 
+    /*!
       Returns a handle to the vertex in 
       the Delaunay graph corresponding to the defining site to the right of 
       the Voronoi edge. 
@@ -345,47 +345,47 @@ public:
     /// \name Predicate Methods 
     /// @{
 
-    /*! 
+    /*!
       Returns `true` iff the halfedge 
       corresponds to a bisecting segment or a bisecting ray oriented 
       appropriately so that its apex is its source. 
     */ 
     bool has_source(); 
 
-    /*! 
+    /*!
       Returns `true` iff the halfedge 
       corresponds to a bisecting segment or a bisecting ray oriented 
       appropriately so that its apex is its target. 
     */ 
     bool has_target(); 
 
-    /*! 
+    /*!
       Returns `true` iff the source or 
       the target of the halfedge does not exist, i.e., if either of 
       `has_source()` or `has_target()` return `false`. 
     */ 
     bool is_unbounded(); 
 
-    /*! 
+    /*!
       Returns `true` iff the Voronoi 
       edge is an entire bisector. 
     */ 
     bool is_bisector(); 
 
-    /*! 
+    /*!
       Returns `true` iff the Voronoi 
       edge has both a source and a target Voronoi vertex. 
     */ 
     bool is_segment(); 
 
-    /*! 
+    /*!
       Returns `true` iff the Voronoi 
       edge has either a source or a target Voronoi vertex, but not both; 
       in other words it is a bisecting ray. 
     */ 
     bool is_ray(); 
 
-    /*! 
+    /*!
       Returns `true` if the following 
       conditions are met: the halfedge is not a rejected 
       edge with respect to the chosen adaptation policy; 
@@ -427,44 +427,44 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
       A type for the halfedges of the Voronoi diagram. 
     */ 
     typedef unspecified_type Halfedge; 
 
-    /*! 
+    /*!
       A type for the faces of the Voronoi diagram. 
     */ 
     typedef unspecified_type Face; 
 
-    /*! 
+    /*!
       Handle for the vertices of the Voronoi diagram. 
     */ 
     typedef unspecified_type Vertex_handle; 
 
-    /*! 
+    /*!
       Handle for the faces of the Voronoi diagram. 
     */ 
     typedef unspecified_type Face_handle; 
 
-    /*! 
+    /*!
       Handle for the halfedges of the Voronoi 
       diagram. 
     */ 
     typedef unspecified_type Halfedge_handle; 
 
-    /*! 
+    /*!
       A type for the point represented by the 
       vertex. 
     */ 
     typedef unspecified_type Point_2; 
 
-    /*! 
+    /*!
       A type for sizes. 
     */ 
     typedef unspecified_type size_type; 
 
-    /*! 
+    /*!
       A type for a bidirectional 
       circulator that allows to traverse all incident halfedges, i.e., all 
       halfedges that have the vertex as their target. The value 
@@ -474,18 +474,18 @@ public:
     */ 
     typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-    /*! 
+    /*!
       A type for the Delaunay graph. It is a 
       model of the `DelaunayGraph_2` concept. 
     */ 
     typedef unspecified_type Delaunay_graph; 
 
-    /*! 
+    /*!
       A type for the handle of the dual face. 
     */ 
     typedef Delaunay_graph::Face_handle Delaunay_face_handle; 
 
-    /*! 
+    /*!
       A type for the vertex handles in the Delaunay graph. 
     */ 
     typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle; 
@@ -495,37 +495,37 @@ public:
     /// \name Access Methods 
     /// @{
 
-    /*! 
+    /*!
       Returns an incident halfedge 
       that has `v` as its target. 
     */ 
     Halfedge_handle halfedge(); 
 
-    /*! 
+    /*!
       Returns the in-degree of the vertex, 
       i.e.\ the number of halfedges that have `v` as their target. 
     */ 
     size_type degree(); 
 
-    /*! 
+    /*!
       Returns the point represented by the vertex. 
     */ 
     Point_2 point(); 
 
-    /*! 
+    /*!
       Returns a handle to the corresponding dual face in the 
       Delaunay graph. 
     */ 
     Delaunay_face_handle dual(); 
 
-    /*! 
+    /*!
       Returns a handle to the vertex in the Delaunay graph corresponding to 
       the \f$ (i+1)\f$-th generating site of the Voronoi vertex. 
       \pre `i` must be smaller or equal to 2. 
     */ 
     Delaunay_vertex_handle site(unsigned int i); 
 
-    /*! 
+    /*!
       Returns a bidirectional circulator that allows the traversal of the 
       halfedges that have `v` as their target. Applying 
       `operator++` (resp. `operator-`) to this circulator returns 
@@ -538,19 +538,19 @@ public:
     /// \name Predicate Methods 
     /// @{
 
-    /*! 
+    /*!
       Returns `true` 
       if the halfedge `e` is incident to `v`. 
     */ 
     bool is_incident_edge(Halfedge_handle e); 
 
-    /*! 
+    /*!
       Returns `true` 
       if the face `f` is incident to `v`. 
     */ 
     bool is_incident_face(Face_handle e); 
 
-    /*! 
+    /*!
       Returns `true` if the following 
       conditions are met: the dual face is not an infinite face; all 
       incident halfedges have the vertex as their target. 
@@ -565,55 +565,55 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A type for the dual Delaunay graph. 
 */ 
 typedef DG Delaunay_graph; 
 
-/*! 
+/*!
 A type for the adaptation 
 traits needed by the Voronoi diagram adaptor. 
 */ 
 typedef AT Adaptation_traits; 
 
-/*! 
+/*!
 A type for the adaptation 
 policy used. 
 */ 
 typedef AP Adaptation_policy; 
 
-/*! 
+/*!
 A type a point. 
 */ 
 typedef Adaptation_traits::Point_2 Point_2; 
 
-/*! 
+/*!
 A type 
 for the sites of the Voronoi diagram. 
 */ 
 typedef Adaptation_traits::Site_2 Site_2; 
 
-/*! 
+/*!
 A type for sizes. 
 */ 
 typedef Delaunay_graph::size_type size_type; 
 
-/*! 
+/*!
 A type for the geometric traits of the Delaunay graph. 
 */ 
 typedef Delaunay_graph::Geom_traits Delaunay_geom_traits; 
 
-/*! 
+/*!
 A type for the vertex handles of the Delaunay graph. 
 */ 
 typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle; 
 
-/*! 
+/*!
 A type for the face handles of the Delaunay graph. 
 */ 
 typedef Delaunay_graph::Face_handle Delaunay_face_handle; 
 
-/*! 
+/*!
 A type for the edges of the Delaunay graph. 
 */ 
 typedef Delaunay_graph::Edge Delaunay_edge; 
@@ -629,96 +629,96 @@ typedef Delaunay_graph::Edge Delaunay_edge;
 /// handles.
 /// @{
 
-/*! 
+/*!
 Handle for halfedges. 
 */ 
 typedef unspecified_type Halfedge_handle; 
 
-/*! 
+/*!
 Handle for vertices. 
 */ 
 typedef unspecified_type Vertex_handle; 
 
-/*! 
+/*!
 Handle for faces. 
 */ 
 typedef unspecified_type Face_handle; 
 
-/*! 
+/*!
 A type for an iterator over Voronoi 
 edges. Edges are considered non-oriented. Its value type is 
 `Halfedge`. 
 */ 
 typedef unspecified_type Edge_iterator; 
 
-/*! 
+/*!
 A type for an iterator over Voronoi 
 halfedges. Halfedges are oriented and come in pairs. Its value type 
 is `Halfedge`. 
 */ 
 typedef unspecified_type Halfedge_iterator; 
 
-/*! 
+/*!
 A type for an iterator over Voronoi 
 faces. Its value type is `Face`. 
 */ 
 typedef unspecified_type Face_iterator; 
 
-/*! 
+/*!
 A type for an iterator over Voronoi 
 vertices. Its value type is `Vertex`. 
 */ 
 typedef unspecified_type Vertex_iterator; 
 
-/*! 
+/*!
 A type for a 
 circulator over the halfedges that have a common vertex as their 
 target. Its value type is `Halfedge`. 
 */ 
 typedef unspecified_type Halfedge_around_vertex_circulator; 
 
-/*! 
+/*!
 A type for a circulator over 
 the halfedges on the boundary of a Voronoi face. Its value type of 
 is `Halfedge`. 
 */ 
 typedef unspecified_type Ccb_halfedge_circulator; 
 
-/*! 
+/*!
 A type for an iterator over 
 the unbounded faces of the Voronoi diagram. Its value type is 
 `Face`. 
 */ 
 typedef unspecified_type Unbounded_faces_iterator; 
 
-/*! 
+/*!
 A type for an iterator over 
 the bounded faces of the Voronoi diagram. Its value type is 
 `Face`. 
 */ 
 typedef unspecified_type Bounded_faces_iterator; 
 
-/*! 
+/*!
 A type for an iterator over 
 the unbounded halfedges of the Voronoi diagram. Its value type is 
 `Halfedge`. 
 */ 
 typedef unspecified_type Unbounded_halfedges_iterator; 
 
-/*! 
+/*!
 A type for an iterator over 
 the bounded halfedges of the Voronoi diagram. Its value type is 
 `Halfedge`. 
 */ 
 typedef unspecified_type Bounded_halfedges_iterator; 
 
-/*! 
+/*!
 A type for an iterator over the 
 sites of the Voronoi diagram. Its value type is `Site_2`. 
 */ 
 typedef unspecified_type Site_iterator; 
 
-/*! 
+/*!
 The result type of the point location queries. 
 */ 
 typedef boost::variant<Face_handle,Halfedge_handle,Vertex_handle> 
@@ -729,7 +729,7 @@ Locate_result;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates a Voronoi diagram using `at` as adaptation traits and 
 `ap` as adaptation policy; the underlying Delaunay graph is 
 created using `gt` as geometric traits. 
@@ -738,7 +738,7 @@ Voronoi_diagram_2(Adaptation_traits
 at = Adaptation_traits(), Adaptation_policy ap = Adaptation_policy(), 
 Delaunay_geom_traits gt = Delaunay_geom_traits()); 
 
-/*! 
+/*!
 Creates a Voronoi diagram from the Delaunay graph `dg` and using 
 `at` as adaptation traits and `ap` as adaptation policy. The 
 Delaunay graph `dg` is fully copied if `swap_dg` is set to 
@@ -749,7 +749,7 @@ Voronoi_diagram_2(Delaunay_graph dg, bool swap_dg = false,
 Adaptation_traits at = Adaptation_traits(), Adaptation_policy ap = 
 Adaptation_policy()); 
 
-/*! 
+/*!
 Creates a Voronoi diagram using as sites the sites in the iterator 
 range `[first, beyond)`, `at` as adaptation traits and 
 `ap` as adaptation policy; the underlying Delaunay graph is 
@@ -767,62 +767,62 @@ Delaunay_geom_traits gt = Delaunay_geom_traits());
 /// \name Access Methods 
 /// @{
 
-/*! 
+/*!
 Returns a const reference to the dual graph, i.e., the Delaunay graph. 
 */ 
 Delaunay_graph dual(); 
 
-/*! 
+/*!
 Returns a handle to the halfedge in the Voronoi diagram that is dual 
 to the edge `e` in the Delaunay graph. 
 */ 
 Halfedge_handle dual(Delaunay_edge e); 
 
-/*! 
+/*!
 Returns a handle to the face in the Voronoi diagram that is dual to 
 the vertex corresponding to the vertex handle `v` in the 
 Delaunay graph. 
 */ 
 Face_handle dual(Delaunay_vertex_handle v); 
 
-/*! 
+/*!
 Returns a handle to the vertex in the Voronoi diagram that is dual to 
 the face corresponding to the face handle `f` in the Delaunay graph. 
 */ 
 Vertex_handle dual(Delaunay_face_handle f); 
 
-/*! 
+/*!
 Returns a reference to the Voronoi traits. 
 */ 
 Adaptation_traits adaptation_traits(); 
 
-/*! 
+/*!
 Returns a reference to the adaptation policy. 
 */ 
 Adaptation_policy adaptation_policy(); 
 
-/*! 
+/*!
 Returns the number of Voronoi vertices. 
 */ 
 size_type number_of_vertices(); 
 
-/*! 
+/*!
 Returns the number of Voronoi faces (bounded and unbounded). 
 */ 
 size_type number_of_faces(); 
 
-/*! 
+/*!
 Returns the number of halfedges (bounded and unbounded) in the 
 Voronoi diagram. This is always an even number. 
 */ 
 size_type number_of_halfedges(); 
 
-/*! 
+/*!
 Returns the number of connected components of the Voronoi skeleton. 
 */ 
 size_type number_of_connected_components(); 
 
-/*! 
+/*!
 Returns one of the unbounded 
 faces of the Voronoi diagram. If no unbounded faces exist (this can 
 happen if the number of sites is zero) the 
@@ -830,21 +830,21 @@ default constructed face handle is returned.
 */ 
 Face_handle unbounded_face(); 
 
-/*! 
+/*!
 Returns one of the bounded 
 faces of the Voronoi diagram. If no bounded faces exist the default 
 constructed face handle is returned. 
 */ 
 Face_handle bounded_face(); 
 
-/*! 
+/*!
 Returns one of the unbounded 
 halfedges of the Voronoi diagram. If no unbounded halfedges exist the 
 default constructed halfedge handle is returned. 
 */ 
 Halfedge_handle unbounded_halfedge(); 
 
-/*! 
+/*!
 Returns one of the bounded 
 halfedges of the Voronoi diagram. If no bounded halfedges exist the 
 default constructed halfedge handle is returned. 
@@ -872,92 +872,92 @@ Halfedge_handle bounded_halfedge();
 /// invalidated by any change in the Voronoi diagram.
 /// @{
 
-/*! 
+/*!
 Starts at an arbitrary Voronoi face. 
 */ 
 Face_iterator faces_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Face_iterator faces_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary unbounded Voronoi face. 
 */ 
 Unbounded_faces_iterator unbounded_faces_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Unbounded_faces_iterator unbounded_faces_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary bounded Voronoi face. 
 */ 
 Bounded_faces_iterator bounded_faces_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Bounded_faces_iterator bounded_faces_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary Voronoi edge. 
 */ 
 Edge_iterator edges_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Edge_iterator edges_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary Voronoi halfedge. 
 */ 
 Halfedge_iterator halfedges_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Halfedge_iterator halfedges_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary unbounded Voronoi edge. 
 */ 
 Unbounded_halfedges_iterator unbounded_halfedges_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Unbounded_halfedges_iterator unbounded_halfedges_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary bounded Voronoi edge. 
 */ 
 Bounded_halfedges_iterator bounded_halfedges_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Bounded_halfedges_iterator bounded_halfedges_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary Voronoi vertex. 
 */ 
 Vertex_iterator vertices_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Vertex_iterator vertices_end(); 
 
-/*! 
+/*!
 Starts at an arbitrary site. 
 */ 
 Site_iterator sites_begin(); 
 
-/*! 
+/*!
 Past-the-end iterator. 
 */ 
 Site_iterator sites_end(); 
@@ -989,14 +989,14 @@ Site_iterator sites_end();
 /// the face over which it is defined.
 /// @{
 
-/*! 
+/*!
 Returns a circulator over the halfedges on the boundary of `f`. 
 The circulator is initialized to an arbitrary halfedge on the 
 boundary of the Voronoi face `f`. 
 */ 
 Ccb_halfedge_circulator ccb_halfedges(Face_handle f); 
 
-/*! 
+/*!
 Returns a circulator over the halfedges on the boundary of 
 `f`. The circulator is initialized with the halfedge `h`. 
 \pre The halfedge `h` must lie on the boundary of `f`. 
@@ -1004,7 +1004,7 @@ Returns a circulator over the halfedges on the boundary of
 Ccb_halfedge_circulator ccb_halfedges(Face_handle f, 
 Halfedge_handle h); 
 
-/*! 
+/*!
 Returns a circulator over the halfedges whose target is the Voronoi 
 vertex `v`. The circulator is initialized to an arbitrary 
 halfedge incident to `v`. 
@@ -1012,7 +1012,7 @@ halfedge incident to `v`.
 Halfedge_around_vertex_circulator 
 incident_halfedges(Vertex_handle v); 
 
-/*! 
+/*!
 Returns a circulator over the halfedges whose target is the Voronoi 
 vertex `v`. The circulator is initialized with the halfedge 
 `h`. 
@@ -1026,7 +1026,7 @@ incident_halfedges(Vertex_handle v, Halfedge_handle h);
 /// \name Insertion 
 /// @{
 
-/*! 
+/*!
 Inserts the site 
 `t` in the Voronoi diagram. A handle to the face corresponding 
 to the Voronoi face of `t` in the Voronoi diagram is 
@@ -1037,7 +1037,7 @@ if `Voronoi_traits::Has_inserter` is set to
 */ 
 Face_handle insert(Site_2 t); 
 
-/*! 
+/*!
 Inserts, in the 
 Voronoi diagram, the sites in the iterator range `[first, beyond)`. The value type of `Iterator` must be 
 `Site_2`. The number of sites in the iterator range is 
@@ -1052,7 +1052,7 @@ size_type insert(Iterator first, Iterator beyond);
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 Performs point location for 
 the query point `p`. In other words, the face, halfedge or 
 vertex of the Voronoi diagram is found on which the point `p` 
@@ -1068,7 +1068,7 @@ Locate_result locate(Point_2 p);
 /// \name I/O 
 /// @{
 
-/*! 
+/*!
 Writes the current state of the Voronoi diagram to the output 
 stream `os`. 
 
@@ -1079,7 +1079,7 @@ The following operator must be defined:
 */ 
 void file_output(std::ostream& os); 
 
-/*! 
+/*!
 Reads the current state of the Voronoi diagram from the input 
 stream `is`. 
 
@@ -1090,7 +1090,7 @@ The following operator must be defined:
 */ 
 void file_input(std::istream& is); 
 
-/*! 
+/*!
 Writes the current state of the Voronoi diagram to the output 
 stream `os`. 
 
@@ -1100,7 +1100,7 @@ The following operator must be defined:
 */ 
 std::ostream& operator<<(std::ostream& os, Voronoi_diagram_2<DG,AT,AP> vd); 
 
-/*! 
+/*!
 Reads the current state of the Voronoi diagram from the input 
 stream `is`. 
 
@@ -1114,7 +1114,7 @@ std::istream& operator>>(std::istream& is, Voronoi_diagram_2<DG,AT,AP> vd);
 /// \name Validity Check 
 /// @{
 
-/*! 
+/*!
 Checks the validity of the dual Delaunay 
 graph and the Voronoi diagram adaptor. 
 */ 
@@ -1125,12 +1125,12 @@ bool is_valid();
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 Clears all contents of the Voronoi diagram. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 The Voronoi 
 diagrams `other` and `vd` are 
 swapped. `vd`.`swap(other)` should be preferred to 

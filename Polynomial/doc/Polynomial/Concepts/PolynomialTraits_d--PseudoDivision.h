@@ -34,7 +34,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef void result_type; 
@@ -44,7 +44,7 @@ typedef void result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Computes the pseudo division with respect to the outermost variable 
 \f$ x_{d-1}\f$. 

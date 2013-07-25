@@ -20,7 +20,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
@@ -30,7 +30,7 @@ typedef PolynomialTraits_d::Polynomial_d result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns polynomial \f$ p\f$ with interchanged variables \f$ x_i\f$,\f$ x_j\f$. 
 \pre \f$ 0 \leq i < d\f$. 
 \pre \f$ 0 \leq j < d\f$. 

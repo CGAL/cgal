@@ -18,7 +18,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Compares \f$ p\f$ and \f$ q\f$ according to the lexicographic ordering on \f$ x\f$- and \f$ y\f$-coordinates. 
 */ 
 Comparison_result operator() 

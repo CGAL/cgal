@@ -23,17 +23,17 @@ public:
 /// The parameters `aspect_ratio` and `bucket_size` define the way in which \f$k\f$ - \f$d\f$ tree is constructed.
 /// @{
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 Separator. 
 */ 
 typedef unspecified_type Separator; 
 
-/*! 
+/*!
 Typedef to an instantiation of `CGAL::Point_container<Traits>`. 
 */ 
 typedef unspecified_type Container; 
@@ -43,18 +43,18 @@ typedef unspecified_type Container;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the maximal ratio between the largest and smallest side 
 of a cell allowed for fair splitting. 
 */ 
 FT aspect_ratio() const; 
 
-/*! 
+/*!
 Returns the bucket size of the leaf nodes. 
 */ 
 unsigned int bucket_size() const; 
 
-/*! 
+/*!
 
 Sets up `sep` and splits points of `c0` into `c0` and `c1` using `sep`. 
 Container `c0` should contain at least two points and `c1` must be empty. 

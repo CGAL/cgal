@@ -21,7 +21,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef T value_type; 
@@ -33,7 +33,7 @@ typedef T value_type;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 first element 
 */ 
 T e0; 
@@ -45,7 +45,7 @@ T e0;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 second element 
 */ 
 T e1; 
@@ -57,7 +57,7 @@ T e1;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 third element 
 */ 
 T e2; 
@@ -69,7 +69,7 @@ T e2;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 fourth element 
 */ 
 T e3; 
@@ -81,7 +81,7 @@ T e3;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 fifth element 
 */ 
 T e4; 
@@ -93,7 +93,7 @@ T e4;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 sixth element 
 */ 
 T e5; 
@@ -105,7 +105,7 @@ T e5;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces a `Sixtuple` using the default 
 constructor of the elements. 
 */ 
@@ -118,7 +118,7 @@ Sixtuple();
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 constructs a 
 `Sixtuple` such that `e0` is constructed from `x`, `e1` from 
 `y`, `e2` from `z`, `e3` from `t`, `e4` from 

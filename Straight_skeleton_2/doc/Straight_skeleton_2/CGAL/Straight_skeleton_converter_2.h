@@ -51,17 +51,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The `SrcSs` template parameter corresponding to the source straight skeleton. 
 */ 
 SrcSs Source_skeleton; 
 
-/*! 
+/*!
 The `TgtSs` template parameter corresponding to the target straight skeleton. 
 */ 
 TgtSs Target_skeleton; 
 
-/*! 
+/*!
 The `ItemsCvt` template parameter corresponding to the items converter. 
 */ 
 ItemsCvt Items_converter; 
@@ -71,7 +71,7 @@ ItemsCvt Items_converter;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor .
 */ 
 Straight_skeleton_converter_2( Items_converter const& c ); 
@@ -81,7 +81,7 @@ Straight_skeleton_converter_2( Items_converter const& c );
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns a new straight skeleton data structure with the same combinatorial and geometric data as `s` using the items converter to convert the geometric embeeding to the types of the target traits. 
 */ 
 boost::shared_ptr<Target_skeleton> operator()( Source_skeleton const& s) const; 
@@ -121,7 +121,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Straight_skeleton_items_converter_2<>(); 

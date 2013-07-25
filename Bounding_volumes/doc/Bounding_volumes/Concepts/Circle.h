@@ -47,7 +47,7 @@ void set();
 void  set( const Point& p);
 
 
-/*!  
+/*!
 sets `circle` to the circle with diameter equal to the segment
 connecting `p` and `q`. The algorithm guarantees that `set` is never
 called with two equal points.

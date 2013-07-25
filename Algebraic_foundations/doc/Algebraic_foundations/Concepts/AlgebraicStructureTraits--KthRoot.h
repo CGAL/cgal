@@ -20,17 +20,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is int. 
 */ 
 typedef unspecified_type first_argument; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type second_argument; 
@@ -40,7 +40,7 @@ typedef unspecified_type second_argument;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the \f$ k\f$-th root of \f$ x\f$. 
 \pre \f$ k \geq1\f$ 
 

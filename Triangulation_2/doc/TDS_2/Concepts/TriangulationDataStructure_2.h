@@ -78,39 +78,39 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Size type (unsigned integral type) 
 */ 
 typedef unspecified_type size_type; 
 
-/*! 
+/*!
 Difference type (signed integral type) 
 */ 
 typedef unspecified_type difference_type; 
 
-/*! 
+/*!
 The vertex type, requirements for this type are described in concept `TriangulationDataStructure_2::Vertex`.
 */ 
 typedef unspecified_type Vertex;
 
-/*! 
+/*!
 The face type, requirements for this type are described in concept `TriangulationDataStructure_2::Face`.
 */ 
 typedef unspecified_type Face;
 
-/*! 
+/*!
 Handle to a vertex.
 \cgalModels `Handle`
 */ 
 typedef unspecified_type Vertex_handle; 
 
-/*! 
+/*!
 Handle to a face. 
 \cgalModels `Handle`
 */ 
 typedef unspecified_type Face_handle; 
 
-/*! 
+/*!
 This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
 `Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
@@ -120,7 +120,7 @@ one whose `TriangulationDSVertexBase_2` will be `Vb2`.
 template <typename Vb2> 
 using Rebind_vertex = unspecified_type;
 
-/*! 
+/*!
 This template class allows to get the type of a triangulation 
 data structure that only changes the face type. It has to define a type 
 `Rebind_face<Fb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
@@ -130,7 +130,7 @@ one whose `TriangulationDSFaceBase_2` will be `Fb2`.
 template <typename Fb2> 
 using Rebind_face = unspecified_type;
 
-/*! 
+/*!
 The edge type. 
 The `Edge(f,i)` is edge common to faces `f` and 
 `f.neighbor(i)`. It is also the edge joining the vertices 
@@ -163,32 +163,32 @@ typedef std::pair<Face_handle,int> Edge;
 /// @{
 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Face_iterator; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Edge_iterator; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Vertex_iterator; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Face_circulator; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Edge_circulator; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Vertex_circulator; 
@@ -198,18 +198,18 @@ typedef unspecified_type Vertex_circulator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 TriangulationDataStructure_2(); 
 
-/*! 
+/*!
 Copy constructor, performing a deep copy, that is all vertices and faces are duplicated. 
 */ 
 TriangulationDataStructure_2( const 
 TriangulationDataStructure_2& tds1); 
 
-/*! 
+/*!
 Assignment. All the vertices and faces of `tds1` are duplicated 
 in the triangulation data structure. Former faces and vertices of 
 the triangulation data structure , if any, are 
@@ -218,7 +218,7 @@ deleted.
 TriangulationDataStructure_2& operator=( const 
 TriangulationDataStructure_2& tds1); 
 
-/*! 
+/*!
 `tds1` is copied into the triangulation data structure. 
 If `v != Vertex_handle()`, the vertex of the triangulation data structure
 corresponding to `v` is returned, otherwise `Vertex_handle()` 
@@ -251,14 +251,14 @@ otherwise `Vertex_handle()` is returned.
 template <class TDS_src, class ConvertVertex, class ConvertFace>
 Vertex_handle tds.copy_tds(const TDS_src& tds_src, typename TDS_src::Vertex_handle v, const ConvertVertex& convert_vertex, const ConvertFace& convert_face);
 
-/*! 
+/*!
 Swaps the triangulation data structure and `tds1`. 
 Should be preferred to an assignment or copy constructor
 when `tds1` is deleted after that. 
 */ 
 void swap( TriangulationDataStructure_2 & tds1); 
 
-/*! 
+/*!
 Deletes all faces and all finite vertices. 
 */ 
 void clear(); 
@@ -268,7 +268,7 @@ void clear();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
   \cgalAdvancedFunction
   \cgalAdvancedBegin
   returns the dimension of the triangulation data structure. 
@@ -276,22 +276,22 @@ void clear();
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 returns the number of vertices in the triangulation data structure. 
 */ 
 size_type number_of_vertices() const; 
 
-/*! 
+/*!
 returns the number of two dimensional faces in the triangulation data structure. 
 */ 
 size_type number_of_faces() const ; 
 
-/*! 
+/*!
 returns the number of edges in the triangulation data structure. 
 */ 
 size_type number_of_edges() const; 
 
-/*! 
+/*!
 returns the number of full dimensional faces, 
 i.e.\ faces of dimension equal to the dimension 
 of the triangulation data structure. This is the actual 
@@ -304,7 +304,7 @@ size_type number_of_full_dim_faces() const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 sets the dimension. 
 */ 
 void set_dimension (int n); 
@@ -314,25 +314,25 @@ void set_dimension (int n);
 /// \name Queries 
 /// @{
 
-/*! 
+/*!
 returns `true` if 
 `v` is a vertex of the triangulation data structure. 
 */ 
 bool is_vertex(Vertex_handle v) const; 
 
-/*! 
+/*!
 returns `true` if `(fh,i)` is an edge of  the triangulation data structure. 
 Returns `false` when `dimension() < 1`. 
 */ 
 bool is_edge(Face_handle fh, int i) const; 
 
-/*! 
+/*!
 returns `true` if 
 `(va, vb)` is an edge of  the triangulation data structure. 
 */ 
 bool is_edge(Vertex_handle va, Vertex_handle vb) const; 
 
-/*! 
+/*!
 returns `true` if 
 `(va, vb)` is an edge of  the triangulation data structure. 
 In addition, if true is returned 
@@ -343,13 +343,13 @@ of the ordered edge `(va, vb)`.
 bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle &fr, 
 int &i) const; 
 
-/*! 
+/*!
 returns `true` if `fh` is a face of  the triangulation data structure. 
 Returns `false` when `dimension() < 2`. 
 */ 
 bool is_face(Face_handle fh) const; 
 
-/*! 
+/*!
 `true` if there is a face having `v1`, `v2`, and `v3` 
 as vertices. 
 */ 
@@ -357,7 +357,7 @@ bool is_face(Vertex_handle v1, Vertex_handle v2,
 Vertex_handle v3) 
 const; 
 
-/*! 
+/*!
 `true` if there is a face having `v1`, `v2`, and `v3` 
 as vertices. 
  In addition, if `true` is returned, `fr` is a handle 
@@ -373,66 +373,66 @@ Face_handle &fr) const;
 
 /// @{
 
-/*! 
+/*!
 visits all faces.
 */ 
 Face_iterator faces_begin() const; 
 
-/*! 
+/*!
 
 */ 
 Face_iterator faces_end() const; 
 
-/*! 
+/*!
 visits all vertices.
 */ 
 Vertex_iterator vertices_begin() const; 
 
-/*! 
+/*!
 
 */ 
 Vertex_iterator vertices_end() const; 
 
-/*! 
+/*!
 visits all edges.
 */ 
 Edge_iterator edges_begin() const; 
 
-/*! 
+/*!
 
 */ 
 Edge_iterator edges_end() const; 
 
-/*! 
+/*!
 \pre If the face `f` is given, it has to be incident to be a face incident to `v` and the circulator begins with the vertex `f->vertex(ccw(i))` if `i` is the index of `v` in `f`. 
 */ 
 Vertex_circulator 
 incident_vertices(Vertex_handle v, Face_handle f=Face_handle()) 
 const; 
 
-/*! 
+/*!
 \pre If the face `f` is given, it has to be a face of incident to `v` and the circulator begins with the edge `(f,cw(i))` of `f` if `i` is the index of `v` in `f`. 
 */ 
 Edge_circulator 
 incident_edges(Vertex_handle v, Face_handle f=Face_handle()) const; 
 
-/*! 
+/*!
 \pre If the face `f` is given, it has to be a face of incident to `v` and the circulator begins with the face `f`. 
 */ 
 Face_circulator 
 incident_faces(Vertex_handle v, Face_handle f=Face_handle()) const; 
 
-/*! 
+/*!
 returns vertex of `f->neighbor(i)`. 
 */ 
 Vertex_handle mirror_vertex(Face_handle f, int i) const; 
 
-/*! 
+/*!
 returns the index of `f` as a neighbor of `f->neighbor(i)`. 
 */ 
 int mirror_index(Face_handle f, int i) const; 
 
-/*! 
+/*!
 returns the same edge seen from the other adjacent face. 
 */ 
 Edge mirror_edge(Edge e) const; 
@@ -443,7 +443,7 @@ Edge mirror_edge(Edge e) const;
 
 /// @{
 
-/*! 
+/*!
 exchanges the edge incident to 
 `f` and `f->neighbor(i)` with the other 
 diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`. 
@@ -452,26 +452,26 @@ diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`.
 */ 
 void flip(Face_handle f, int i); 
 
-/*! 
+/*!
 creates the first 
 vertex and returns a handle to it. 
 */ 
 Vertex_handle insert_first(); 
 
-/*! 
+/*!
 creates the second 
 vertex and returns a handle to it. 
 */ 
 Vertex_handle insert_second(); 
 
-/*! 
+/*!
 adds a 
 vertex `v` splitting 
 edge `i` of face `f`. Return a handle to `v`. 
 */ 
 Vertex_handle insert_in_edge(Face_handle f, int i); 
 
-/*! 
+/*!
 adds a vertex 
 `v` splitting face 
 `f` in three. %Face `f` is modified, 
@@ -479,7 +479,7 @@ two new faces are created. Return a handle to `v`
 */ 
 Vertex_handle insert_in_face(Face_handle f); 
 
-/*! 
+/*!
 adds 
 a vertex `v`, increasing by one the dimension of the triangulation data structure. 
 %Vertex `v` and the existing vertex `w` are linked to all 
@@ -491,7 +491,7 @@ faces. A handle to vertex `v` is returned.
 Vertex_handle insert_dim_up(Vertex_handle w, bool 
 orient=true); 
 
-/*! 
+/*!
 removes a vertex of degree 3. Two of the incident faces are destroyed, 
 the third one is modified. 
 If parameter `f` is specified, it has to be a face incident to `v` 
@@ -502,25 +502,25 @@ and will be the modified face.
 */ 
 void remove_degree_3(Vertex_handle v,  Face_handle f = Face_handle()); 
 
-/*! 
+/*!
 removes the before last 
 vertex. 
 */ 
 void remove_second(Vertex_handle v); 
 
-/*! 
+/*!
 removes the last vertex. 
 */ 
 void remove_first(Vertex_handle v); 
 
-/*! 
+/*!
 removes vertex `v` incident to all other vertices 
 and decreases by one the dimension of the triangulation data structure. 
 \pre If the dimension is 2, the number of vertices is more than 3, if the dimension is 1, the number of vertices is 2. 
 */ 
 void remove_dim_down(Vertex_handle v); 
 
-/*! 
+/*!
 must be called when the displacement of a vertex decreases the dimension of the triangulation data structure.
 
 The link of a vertex `v` is formed by the edges disjoint from `v` 
@@ -547,14 +547,14 @@ void dim_down(Face_handle f, int i);
 /// @{
 
 
-/*! 
+/*!
 creates a new vertex `v` and use it to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. Returns a handle to the vertex. 
 */ 
 template< class EdgeIt> 
 Vertex_handle star_hole(EdgeIt edge_begin,EdgeIt edge_end); 
 
-/*! 
+/*!
 same as above, except that, to build the new faces, the algorithm 
 first recycles faces in the sequence `[face_begin, face_end)` and create new ones when the sequence is exhausted. 
 */ 
@@ -564,7 +564,7 @@ EdgeIt edge_end,
 FaceIt face_begin, 
 FaceIt face_end); 
 
-/*! 
+/*!
 uses vertex v to star the hole 
 whose boundary is described by the sequence of edges `[edge_begin, edge_end)`. 
 
@@ -572,7 +572,7 @@ whose boundary is described by the sequence of edges `[edge_begin, edge_end)`.
 template< class EdgeIt> 
 void star_hole(Vertex_handle v, EdgeIt edge_begin, EdgeIt edge_end); 
 
-/*! 
+/*!
 same as above, recycling faces in the sequence `[face_begin, face_end)`. 
 */ 
 template< class EdgeIt, class FaceIt> 
@@ -582,59 +582,59 @@ EdgeIt edge_end,
 FaceIt face_begin, 
 FaceIt face_end); 
 
-/*! 
+/*!
 removes the vertex v, and store in `hole` the list of edges 
 on the boundary of the hole. 
 */ 
 void make_hole(Vertex_handle v, List_edges& hole); 
 
-/*! 
+/*!
 adds a new vertex. 
 */ 
 Vertex_handle create_vertex(); 
 
-/*! 
+/*!
 adds a face which is the neighbor `i1` of `f1`, 
 `i2` of `f2` and `i3` of `f3`. 
 */ 
 Face_handle create_face(Face_handle f1, int i1, Face_handle f2, int i2, Face_handle 
 f3, int i3); 
 
-/*! 
+/*!
 adds a face which is the neighbor `i1` of `f1`, 
 and the neighbor `i2` of `f2`. 
 */ 
 Face_handle create_face(Face_handle f1, int i1, Face_handle f2, int i2); 
 
-/*! 
+/*!
 adds a face which is the neighbor `i1` of `f1`, 
 and has `v` as vertex. 
 */ 
 Face_handle create_face(Face_handle f1, int i1, Vertex_handle v); 
 
-/*! 
+/*!
 adds a face with vertices `v1`, `v2` and `v3`. 
 */ 
 Face_handle create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3); 
 
-/*! 
+/*!
 adds a face with vertices `v1`, `v2` and `v3`, 
 and neighbors `f1`, `f2`, `f3`. 
 */ 
 Face_handle create_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3, 
 Face_handle f1, Face_handle f2, Face_handle f3); 
 
-/*! 
+/*!
 adds a face whose vertices and neighbors are set to `Vertex_handle()` and `Face_handle()`. 
 */ 
 Face_handle create_face(); 
 
-/*! 
+/*!
 deletes a face. 
 */ 
 void delete_face(Face_handle ); 
 
-/*! 
+/*!
 deletes a vertex. 
 */ 
 void delete_vertex(Vertex_handle ); 
@@ -644,17 +644,17 @@ void delete_vertex(Vertex_handle );
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 returns \f$ i+1\f$ modulo 3, with\f$ 0\leq i \leq2\f$. 
 */ 
 int ccw(int i) const; 
 
-/*! 
+/*!
 returns \f$ i+2\f$ modulo 3, with \f$ 0\leq i \leq2\f$. 
 */ 
 int cw(int i) const; 
 
-/*! 
+/*!
 checks the combinatorial validity of the 
 triangulation data structure: call the `is_valid()` member function for each vertex and 
 each face, checks the number of vertices and the Euler relation 
@@ -662,31 +662,31 @@ between numbers of vertices, faces and edges.
 */ 
 bool is_valid(); 
 
-/*! 
+/*!
 Returns the degree of `v` in the triangulation data structure. 
 */ 
 size_type degree(Vertex_handle v) const; 
 
-/*! 
+/*!
 writes the triangulation data structure into the stream `os`. 
 If `v` is not `Vertex_handle()`, vertex `v` 
 is output first or skipped if `skip_first` is true. 
 */ 
 void file_output( ostream& os, Vertex_handle v = Vertex_handle(), bool skip_first=false); 
 
-/*! 
+/*!
 inputs the triangulation data structure from file and returns a handle to the first input vertex. 
 If `skip_first` is true, it is assumed that the first 
 vertex has been omitted when output. 
 */ 
 Vertex_handle file_input( istream& is, bool skip_first=false); 
 
-/*! 
+/*!
 reads a combinatorial triangulation data structure from `is` and assigns it to tthe triangulation data structure.
 */ 
 istream& operator>> (istream& is, TriangulationDataStructure_3 & tds); 
 
-/*! 
+/*!
 writes `tds` into the stream `os`.
 */ 
 ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds); 
@@ -730,7 +730,7 @@ public:
 /// types as the triangulation data structure except the iterators.
 /// @{
 
-/*! 
+/*!
 <I>Optional for the triangulation data 
 structure used alone</I>.
 */ 
@@ -741,12 +741,12 @@ typedef unspecified_type Point;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the geometric information of the vertex. 
 */ 
 Point point() const; 
 
-/*! 
+/*!
 returns a face of the triangulation having `*this` as a vertex. 
 */ 
 Face_handle face() const; 
@@ -756,7 +756,7 @@ Face_handle face() const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 sets the geometric information to `p`. 
@@ -764,7 +764,7 @@ sets the geometric information to `p`.
 */ 
 void set_point(const Point& p); 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 sets the incident face to `f`. 
@@ -777,7 +777,7 @@ void set_face(Face_handle f);
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
 Checks the validity of the vertex. Must check that its incident face 
 has this vertex. The validity of the base vertex is also checked. 
 
@@ -786,12 +786,12 @@ a precise indication on the kind of invalidity encountered.
 */ 
 bool is_valid(bool verbose = false) const; 
 
-/*! 
+/*!
 Inputs the non-combinatorial information possibly stored in the vertex. 
 */ 
   std::istream& operator>> (std::istream& is, TriangulationDataStructure_2::Vertex & v); 
 
-/*! 
+/*!
 Outputs the non combinatorial operation possibly stored in the 
 vertex. 
 */ 
@@ -849,23 +849,23 @@ public:
 /// \name Vertex Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the vertex `i` of the face. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Vertex_handle vertex(int i) const; 
 
-/*! 
+/*!
 returns the index of vertex `v` in the face. \pre `v` is a vertex of the face. 
 */ 
 int index(Vertex_handle v) const; 
 
-/*! 
+/*!
 returns `true` if `v` is a vertex of the face. 
 */ 
 bool has_vertex(Vertex_handle v) const; 
 
-/*! 
+/*!
 returns `true` if `v` is a vertex of the face, and 
 computes the index `i` of `v` in the face. 
 */ 
@@ -878,25 +878,25 @@ bool has_vertex(Vertex_handle v, int& i) const;
 /// the vertex with index `i`.
 /// @{
 
-/*! 
+/*!
 returns the neighbor `i` of the face. 
 \pre \f$ 0\leq i \leq2\f$. 
 
 */ 
 Face_handle neighbor(int i) const; 
 
-/*! 
+/*!
 returns the index of face `n`. 
 \pre `n` is a neighbor of the face. 
 */ 
 int index(Face_handle n) const; 
 
-/*! 
+/*!
 returns `true` if `n` is a neighbor of the face. 
 */ 
 bool has_neighbor(Face_handle n) const; 
 
-/*! 
+/*!
 returns `true` if `n` is a neighbor of the face, and 
 compute the index `i` of `n`. 
 */ 
@@ -907,36 +907,36 @@ bool has_neighbor(Face_handle n, int& i) const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 sets vertex `i` to be `v`. 
 \pre \f$ 0\leq i \leq2\f$. 
 
 */ 
 void set_vertex(int i, Vertex_handle v); 
 
-/*! 
+/*!
 sets neighbor `i` to be `n`. 
 \pre \f$ 0\leq i \leq2\f$. 
 
 */ 
 void set_neighbor(int i, Face_handle n); 
 
-/*! 
+/*!
 sets the vertex handles to `Vertex_handle()`. 
 */ 
 void set_vertices(); 
 
-/*! 
+/*!
 sets the vertex handles. 
 */ 
 void set_vertices(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2); 
 
-/*! 
+/*!
 sets the neighbors handles to `Face_handle()`. 
 */ 
 void set_neighbors();
 
-/*! 
+/*!
 sets the neighbors handles. 
 */ 
 void set_neighbors(Face_handle n0, 
@@ -948,7 +948,7 @@ Face_handle n2);
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
 returns `true` if the function 
 `is_valid()` of the base class 
 returns `true` and if, for each index \f$ i\f$, \f$ 0 \le i < 3\f$, 
@@ -963,22 +963,22 @@ bool is_valid() const;
 /// \name Miscellaneous 
 /// @{
 
-/*! 
+/*!
 Returns \f$ i+1\f$ modulo 3, with \f$ 0\leq i \leq2\f$. 
 */ 
 int ccw(int i) const; 
 
-/*! 
+/*!
 Returns \f$ i+2\f$ modulo 3, with  \f$ 0\leq i \leq2\f$. 
 */ 
 int cw(int i) const; 
 
-/*! 
+/*!
 Inputs any non combinatorial information possibly stored in the face. 
 */ 
 std::istream& operator>> (std::istream& is, TriangulationDataStructure_2::Face & f); 
 
-/*! 
+/*!
 Outputs any non combinatorial information possibly stored in the face. 
 */ 
 std::ostream& operator<< (std::ostream& os, const TriangulationDataStructure_2::Face & f); 

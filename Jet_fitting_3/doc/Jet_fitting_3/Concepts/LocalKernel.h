@@ -43,17 +43,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The scalar type. 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The point type. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 The vector type. 
 */ 
 typedef unspecified_type Vector_3; 

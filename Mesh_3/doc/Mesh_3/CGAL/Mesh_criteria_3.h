@@ -58,19 +58,19 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The criteria for edges. 
 */ 
 typedef Mesh_edge_criteria_3<Tr> 
 Edge_criteria; 
 
-/*! 
+/*!
 The criteria for facets. 
 */ 
 typedef Mesh_facet_criteria_3<Tr> 
 Facet_criteria; 
 
-/*! 
+/*!
 The 
 criteria for cells. 
 */ 
@@ -81,7 +81,7 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Construction from facet and cell criteria. The edge criteria are ignored 
 in this case. 
 */ 
@@ -89,7 +89,7 @@ Mesh_criteria_3(
 Facet_criteria facet_criteria, 
 Cell_criteria cell_criteria); 
 
-/*! 
+/*!
 Construction from edge, facet and cell criteria. 
 */ 
 Mesh_criteria_3( 
@@ -97,7 +97,7 @@ Edge_criteria edge_criteria,
 Facet_criteria facet_criteria, 
 Cell_criteria cell_criteria); 
 
-/*! 
+/*!
 \brief Construction from criteria parameters. This constructor uses named 
 parameters (from <I>Boost.Parameter</I>) for convenient criteria 
 construction.

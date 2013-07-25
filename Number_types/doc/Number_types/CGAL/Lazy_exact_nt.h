@@ -42,22 +42,22 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an uninitialized variable `m`. 
 */ 
 Lazy_exact_nt(); 
 
-/*! 
+/*!
 introduces the value \a x, of any built-in arithmetic type (`int`, `double`, etc) (works only if `NT` has a constructor from this type too).
 */ 
 Lazy_exact_nt(BuiltIn i); 
 
-/*! 
+/*!
 introduces the value `n`. 
 */ 
 Lazy_exact_nt(NT n); 
 
-/*! 
+/*!
 introduces the value `n`. `NT1` needs to be convertible to `NT` 
 (and this conversion will only be done if necessary). 
 */ 
@@ -68,30 +68,30 @@ template <class NT1> Lazy_exact_nt(Lazy_exact_nt<NT1> n);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the corresponding NT value. 
 */ 
 NT exact(); 
 
-/*! 
+/*!
 returns an interval containing the 
 exact value. 
 */ 
 Interval_nt<true> approx(); 
 
-/*! 
+/*!
 returns an interval containing the 
 exact value. 
 */ 
 Interval_nt<false> interval(); 
 
-/*! 
+/*!
 specifies the relative precision that `to_double()` has to fulfill. 
 The default value is \f$ 10^{-5}\f$. \pre d>0 and d<1. 
 */ 
 static void set_relative_precision_of_to_double(double d); 
 
-/*! 
+/*!
 returns the relative precision that `to_double()` currently fulfills. 
 */ 
 static double get_relative_precision_of_to_double(); 
@@ -100,13 +100,13 @@ static double get_relative_precision_of_to_double();
 
 }; /* end Lazy_exact_nt */
 
-/*! 
+/*!
 writes `m` to ostream `out` in an interval format. 
 \relates Lazy_exact_nt 
 */ 
 std::ostream& operator<<(std::ostream& out, const Lazy_exact_nt<NT>& m); 
 
-/*! 
+/*!
 reads a `NT` from `in`, then converts it to a `Lazy_exact_nt<NT>`. 
 \relates Lazy_exact_nt 
 */ 

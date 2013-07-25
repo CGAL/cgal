@@ -25,38 +25,38 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Denotes type of node. 
 */ 
 
 enum Node_type {LEAF, INTERNAL, EXTENDED_INTERNAL};
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
 
-/*! 
+/*!
 Separator type. 
 */ 
 typedef Splitter::Separator Separator; 
 
-/*! 
+/*!
 const iterator over points. 
 */ 
 typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator; 
 
-/*! 
+/*!
 Node handle. 
 */ 
 typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle; 
 
-/*! 
+/*!
 const node handle. 
 */ 
 typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_handle; 
@@ -66,70 +66,70 @@ typedef Kd_tree<Traits,Splitter,UseExtendedNode>::Node_const_handle Node_const_h
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Reports the points from the subtree of the node, that are approximately contained by q. 
 */ 
 template <class OutputIterator, class FuzzyQueryItem> 
 OutputIterator search(OutputIterator it, FuzzyQueryItem q) const; 
 
-/*! 
+/*!
 Reports all the points contained by the subtree of the node. 
 */ 
 template <class OutputIterator> 
 OutputIterator tree_items(OutputIterator it) const; 
 
-/*! 
+/*!
 Indicates whether a node is a leaf node. 
 */ 
 bool is_leaf() const; 
 
-/*! 
+/*!
 Returns the number of items stored in a leaf node. 
 */ 
 unsigned int size() const; 
 
-/*! 
+/*!
 Returns a const iterator to the first item in a leaf node. 
 */ 
 Point_d_iterator begin() const; 
 
-/*! 
+/*!
 Returns the appropriate past-the-end const iterator. 
 */ 
 Point_d_iterator end() const; 
 
-/*! 
+/*!
 Returns a handle to the lower child of an internal node. 
 */ 
 Node_handle lower(); 
 
-/*! 
+/*!
 Returns a handle to the upper child of an internal node. 
 */ 
 Node_handle upper(); 
 
-/*! 
+/*!
 Returns a const handle to the lower child of an internal node. 
 */ 
 Node_const_handle lower() const; 
 
-/*! 
+/*!
 Returns a const handle to the upper child of an internal node. 
 */ 
 Node_const_handle upper() const; 
 
-/*! 
+/*!
 Returns a reference to the separator. 
 */ 
 Separator& separator(); 
 
-/*! 
+/*!
 Returns the lower limit of an extended node's rectangle 
 along the node's cutting dimension. 
 */ 
 FT low_value() const; 
 
-/*! 
+/*!
 Returns the upper limit of an extended node's rectangle 
 along the node's cutting dimension. 
 */ 

@@ -21,7 +21,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d result_type; 
@@ -31,29 +31,29 @@ typedef PolynomialTraits_d::Polynomial_d result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Construct the zero polynomial. 
 */ 
 result_type operator()(); 
 
-/*! 
+/*!
 Construct the constant polynomial equal to \f$ i\f$. 
 */ 
 result_type operator()(int i); 
 
-/*! 
+/*!
 Construct the constant polynomial equal to \f$ a\f$. 
 */ 
 result_type operator() 
 (PolynomialTraits_d::Innermost_coefficient_type a); 
 
-/*! 
+/*!
 Construct the polynomial equal to \f$ a\f$. 
 */ 
 result_type operator() 
 (PolynomialTraits_d::Coefficient_type a); 
 
-/*! 
+/*!
 \pre The value type of `InputIterator` is `PolynomialTraits_d::Coefficient_type`. 
 
 The operator constructs the a polynomial from the iterator range, 
@@ -67,7 +67,7 @@ In case the range is empty, the zero polynomial is constructed.
 template < class InputIterator > 
 result_type operator()(InputIterator begin, InputIterator end); 
 
-/*! 
+/*!
 
 Constructs a `Polynomial_d` from a given iterator range of 
 `std::pair<CGAL::Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>`. 

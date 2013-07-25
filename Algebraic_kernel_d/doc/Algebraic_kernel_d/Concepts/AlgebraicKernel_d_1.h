@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 A model of `IntegralDomain` and `RealEmbeddable`. 
 
@@ -32,7 +32,7 @@ A model of `IntegralDomain` and `RealEmbeddable`.
 */ 
 typedef unspecified_type Coefficient; 
 
-/*! 
+/*!
 
 A univariate polynomial that is a model of `Polynomial_d`, 
 where \link PolynomialTraits_d::Innermost_coefficient_type `CGAL::Polynomial_traits_d<Polynomial_1>::Innermost_coefficient_type` \endlink
@@ -41,7 +41,7 @@ is `AlgebraicKernel_d_1::Coefficient`.
 */ 
 typedef unspecified_type Polynomial_1; 
 
-/*! 
+/*!
 
 A type that is used to represent real roots of univariate polynomials. 
 The type must be a model of `DefaultConstructible`, 
@@ -50,7 +50,7 @@ The type must be a model of `DefaultConstructible`,
 */ 
 typedef unspecified_type Algebraic_real_1; 
 
-/*! 
+/*!
 
 A type to represent upper and lower bounds of `AlgebraicKernel_d_1::Algebraic_real_1`. 
 
@@ -61,12 +61,12 @@ The type is `ExplicitInteroperable` with
 */ 
 typedef unspecified_type Bound; 
 
-/*! 
+/*!
 Size type (unsigned integral type). 
 */ 
 typedef unspecified_type size_type; 
 
-/*! 
+/*!
 Multiplicity type (unsigned integral type). 
 */ 
 typedef unspecified_type Multiplicity_type; 
@@ -76,77 +76,77 @@ typedef unspecified_type Multiplicity_type;
 /// \name Functors 
 /// @{
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::ConstructAlgebraicReal_1`. 
 */ 
 typedef unspecified_type Construct_algebraic_real_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::ComputePolynomial_1`. 
 */ 
 typedef unspecified_type Compute_polynomial_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::Isolate_1`. 
 */ 
 typedef unspecified_type Isolate_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::IsSquareFree_1`. 
 */ 
 typedef unspecified_type Is_square_free_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::MakeSquareFree_1`. 
 */ 
 typedef unspecified_type Make_square_free_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::SquareFreeFactorize_1`. 
 */ 
 typedef unspecified_type Square_free_factorize_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::IsCoprime_1`. 
 */ 
 typedef unspecified_type Is_coprime_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::MakeCoprime_1`. 
 */ 
 typedef unspecified_type Make_coprime_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::Solve_1`. 
 */ 
 typedef unspecified_type Solve_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::NumberOfSolutions_1`. 
 */ 
 typedef unspecified_type Number_of_solutions_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::SignAt_1`. 
 */ 
 typedef unspecified_type Sign_at_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::Compare_1`. 
 */ 
 typedef unspecified_type Compare_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::BoundBetween_1`. 
 */ 
 typedef unspecified_type Bound_between_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::ApproximateAbsolute_1`. 
 */ 
 typedef unspecified_type Approximate_absolute_1; 
 
-/*! 
+/*!
 A model of `AlgebraicKernel_d_1::ApproximateRelative_1`. 
 */ 
 typedef unspecified_type Approximate_relative_1; 
@@ -163,7 +163,7 @@ typedef unspecified_type Approximate_relative_1;
 /// function must exist:
 /// @{
 
-/*! 
+/*!
 
 */ 
 AlgebraicKernel_d_1::Bound_between_1 bound_between_1_object() const; 

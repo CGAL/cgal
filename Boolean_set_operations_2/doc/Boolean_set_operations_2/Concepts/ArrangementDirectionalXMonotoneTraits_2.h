@@ -34,32 +34,32 @@ public:
 /// \name Functor Types 
 /// @{
 
-/*! 
+/*!
 models the concept `ArrDirectionalTraits::CompareEndpointsXy_2`. 
 */ 
 typedef unspecified_type Compare_endpoints_xy_2; 
 
-/*! 
+/*!
 models the concept `ArrDirectionalTraits::ConstructOpposite_2`. 
 */ 
 typedef unspecified_type Construct_opposite_2; 
 
-/*! 
+/*!
 models the concept `ArrDirectionalTraits::Intersect_2`. 
 */ 
 typedef unspecified_type Intersect_2; 
 
-/*! 
+/*!
 models the concept `ArrDirectionalTraits::Split_2`. 
 */ 
 typedef unspecified_type Split_2; 
 
-/*! 
+/*!
 models the concept `ArrDirectionalTraits::AreMergeable_2`. 
 */ 
 typedef unspecified_type Are_mergeable_2; 
 
-/*! 
+/*!
 models the concept `ArrDirectionalTraits::Merge_2`. 
 */ 
 typedef unspecified_type Merge_2; 
@@ -69,17 +69,17 @@ typedef unspecified_type Merge_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 ArrangementDirectionalXMonotoneTraits_2(); 
 
-/*! 
+/*!
 copy constructor 
 */ 
 ArrangementDirectionalXMonotoneTraits_2(ArrangementDirectionalXMonotoneTraits_2 other); 
 
-/*! 
+/*!
 assignment operator. 
 */ 
 ArrangementDirectionalXMonotoneTraits_2 operator=(other); 
@@ -89,12 +89,12 @@ ArrangementDirectionalXMonotoneTraits_2 operator=(other);
 /// \name Accessing Functor Objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_endpoints_xy_2 compare_endpoints_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_opposite_2 construct_opposite_2_object(); 

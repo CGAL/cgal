@@ -17,17 +17,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef ModularTraits::Type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef ModularTraits::Residue_type argument_type; 
 
-/*! 
+/*!
 
 computes \f$ \varphi^{-1}(x)\f$. 
 

@@ -18,17 +18,17 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the next failure time. 
 */ 
 Time failure_time(); 
 
-/*! 
+/*!
 Returns true if the certificate will ever fail. 
 */ 
 bool will_fail(); 
 
-/*! 
+/*!
 Advances to the next failure time (the next root of the certificate functions). 
 */ 
 void pop_failure_time(); 

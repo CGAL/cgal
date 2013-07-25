@@ -118,18 +118,18 @@ public:
 /// The class `Interval_nt` defines the following types:
 /// @{
 
-/*! 
+/*!
 The type of the bounds of the interval. 
 */ 
 typedef double value_type; 
 
-/*! 
+/*!
 The type of the 
 exceptions raised when uncertain comparisons are performed. 
 */ 
 typedef Uncertain_conversion_exception unsafe_comparison; 
 
-/*! 
+/*!
 A type whose default constructor and destructor allow 
 to protect a block of code from FPU rounding modes necessary for the 
 computations with `Interval_nt<false>`. It does nothing for 
@@ -142,22 +142,22 @@ typedef unspecified_type Protector;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a small interval containing \a i (possibly a point).
 */ 
 Interval_nt(long long i); 
 
-/*! 
+/*!
 introduces the interval [`d`;`d`]. 
 */ 
 Interval_nt(double d); 
 
-/*! 
+/*!
 introduces the interval [`i`;`s`]. 
 */ 
 Interval_nt(double i, double s); 
 
-/*! 
+/*!
 introduces the interval [`p.first`;`p.second`]. 
 */ 
 Interval_nt(std::pair<double, double> p); 
@@ -168,34 +168,34 @@ Interval_nt(std::pair<double, double> p);
 /// All functions required by a class to be considered as a \cgal number type (see \ref Numbertype) are present, as well as the utility functions, sometimes with a particular semantic which is described below. There are also a few additional functions. 
 /// @{
 
-/*! 
+/*!
 returns [\f$ -\infty\f$;\f$ +\infty\f$] when the denominator contains 0. 
 */ 
 Interval_nt operator/(Interval_nt J); 
 
 
-/*! 
+/*!
 returns the lower bound of the interval. 
 */ 
 double inf(); 
 
-/*! 
+/*!
 returns the upper bound of the interval. 
 */ 
 double sup(); 
 
-/*! 
+/*!
 returns whether both bounds are equal. 
 */ 
 bool is_point(); 
 
-/*! 
+/*!
 returns whether both intervals have 
 the same bounds. 
 */ 
 bool is_same(Interval_nt J); 
 
-/*! 
+/*!
 returns whether both intervals 
 have a non empty intersection. 
 */ 
@@ -227,7 +227,7 @@ to the rounding modes.
 
 /// @{
 
-/*! 
+/*!
 The type used by the following functions to deal with rounding modes. 
 This is usually an `int`. 
 */ 
@@ -237,7 +237,7 @@ typedef int FPU_CW_t;
 
 }; /* end Interval_nt */
 
-/*! 
+/*!
 returns [0;\f$ \sqrt{upper\_bound(I)}\f$] when only the lower bound is negative (expectable 
 case with roundoff errors), and is unspecified when the upper bound also is 
 negative (unexpected case). 
@@ -245,7 +245,7 @@ negative (unexpected case).
 */ 
 Interval_nt sqrt(Interval_nt I); 
 
-/*! 
+/*!
 returns the 
 middle of the interval, as a double approximation of the interval. 
 \relates Interval_nt 
@@ -258,43 +258,43 @@ The comparison operators (\f$ <\f$, \f$ >\f$, \f$ <=\f$, \f$ >=\f$, \f$ ==\f$, \
 
  /// @{
 
-/*! 
+/*!
 
 \relates Interval_nt 
 */ 
 Uncertain<bool> operator<(Interval_nt i, Interval_nt j); 
 
-/*! 
+/*!
 
 \relates Interval_nt 
 */ 
 Uncertain<bool> operator>(Interval_nt i, Interval_nt j); 
 
-/*! 
+/*!
 
 \relates Interval_nt 
 */ 
 Uncertain<bool> operator<=(Interval_nt i, Interval_nt j); 
 
-/*! 
+/*!
 
 \relates Interval_nt 
 */ 
 Uncertain<bool> operator>=(Interval_nt i, Interval_nt j); 
 
-/*! 
+/*!
 \relates Interval_nt 
 */ 
 Uncertain<bool> operator==(Interval_nt i, Interval_nt j); 
 
 
-/*! 
+/*!
 \relates Interval_nt 
 */ 
 Uncertain<bool> operator!=(Interval_nt i, Interval_nt j); 
 
 
-/*! 
+/*!
 \relates Interval_nt 
 */ 
 Uncertain<Comparison_result> 
@@ -302,31 +302,31 @@ compare(Interval_nt i, Interval_nt j);
 
  /// @}
 
-/*! 
+/*!
 \relates Interval_nt 
 */ 
 Uncertain<Sign> sign(Interval_nt i); 
 
-/*! 
+/*!
 sets the rounding mode to `R`. 
 \relates Interval_nt 
 */ 
 void FPU_set_cw (FPU_CW_t R); 
 
-/*! 
+/*!
 returns the current rounding mode. 
 \relates Interval_nt 
 */ 
 FPU_CW_t FPU_get_cw (void); 
 
-/*! 
+/*!
 sets the rounding mode to `R` and returns the old one. 
 \relates Interval_nt 
 */ 
 FPU_CW_t FPU_get_and_set_cw (FPU_CW_t R); 
 
 
-/*! 
+/*!
 \ingroup nt_cgal
 This typedef (at namespace \cgal scope) exists for backward compatibility, 
 as well as removing the need to remember the Boolean value for the template 

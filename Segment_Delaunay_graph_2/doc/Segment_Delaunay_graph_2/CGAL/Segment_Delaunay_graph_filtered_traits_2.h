@@ -80,64 +80,64 @@ public:
 /// types:
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Intersections_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef CK Kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef CK Construction_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef FK Filtering_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef EK Exact_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef CM Method_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef CM Construction_traits_method_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef FM Filtering_traits_method_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef EM Exact_traits_method_tag; 
 
-/*! 
+/*!
 A type for the segment Delaunay 
 graph traits, where the kernel is `CK`. 
 */ 
 typedef unspecified_type Construction_traits; 
 
-/*! 
+/*!
 A type for the segment Delaunay 
 graph traits, where the kernel is `FK`. 
 */ 
 typedef unspecified_type Filtering_traits; 
 
-/*! 
+/*!
 A type for the segment Delaunay 
 graph traits, where the kernel is `EK`. 
 */ 
@@ -231,64 +231,64 @@ public:
 /// defines the following types:
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_false Intersections_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef CK Kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef CK Construction_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef FK Filtering_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef EK Exact_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef CM Method_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef CM Construction_traits_method_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef FM Filtering_traits_method_tag; 
 
-/*! 
+/*!
 
 */ 
 typedef EM Exact_traits_method_tag; 
 
-/*! 
+/*!
 A type for the segment Delaunay 
 graph traits, where the kernel is `CK`. 
 */ 
 typedef unspecified_type Construction_traits; 
 
-/*! 
+/*!
 A type for the segment Delaunay 
 graph traits, where the kernel is `FK`. 
 */ 
 typedef unspecified_type Filtering_traits; 
 
-/*! 
+/*!
 A type for the segment Delaunay 
 graph traits, where the kernel is `EK`. 
 */ 

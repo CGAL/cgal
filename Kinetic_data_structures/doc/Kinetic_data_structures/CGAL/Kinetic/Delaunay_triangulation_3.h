@@ -43,12 +43,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The template argument. 
 */ 
 typedef unspecified_type Triangulation; 
 
-/*! 
+/*!
 The template argument. 
 */ 
 typedef unspecified_type Visitor; 
@@ -58,7 +58,7 @@ typedef unspecified_type Visitor;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Maintain the Delaunay triangulation of the points in `tr.active_points_3_handle()`. 
 */ 
 Delaunay_triangulation_3(Traits tr); 
@@ -68,22 +68,22 @@ Delaunay_triangulation_3(Traits tr);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Access the triangulation that is maintained. 
 */ 
 const Triangulation* triangulation(); 
 
-/*! 
+/*!
 This method returns true if the `Kinetic::Delaunay_triangulation_3` is currently maintaining certificates for a Delaunay triangulation. 
 */ 
 bool has_certificates(); 
 
-/*! 
+/*!
 This method allows you to control whether the triangulation is maintaining certificates. 
 */ 
 void set_has_certificates(bool tf); 
 
-/*! 
+/*!
 Access the visitor. 
 */ 
 Visitor& visitor(); 

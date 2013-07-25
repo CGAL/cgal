@@ -18,12 +18,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_1 result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 argument_type; 
@@ -33,7 +33,7 @@ typedef AlgebraicKernel_d_2::Algebraic_real_2 argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes a univariate square free polynomial \f$ p\f$, such that the second coordinate of \f$ a\f$ 
 is a real root of \f$ p\f$. 
 */ 

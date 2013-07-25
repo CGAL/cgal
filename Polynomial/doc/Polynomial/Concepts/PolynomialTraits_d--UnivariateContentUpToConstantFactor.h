@@ -31,12 +31,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Coefficient_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef PolynomialTraits_d::Polynomial_d argument_type; 
@@ -46,7 +46,7 @@ typedef PolynomialTraits_d::Polynomial_d argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes the content <I>up to a constant factor</I> of \f$ p\f$ with 
 respect to the outermost variable \f$ x_{d-1}\f$. 
 */ 

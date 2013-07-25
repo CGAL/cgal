@@ -17,7 +17,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 constructs an instance with `traits` as traits class instance. 
 */ 
 Hilbert_sort_3(const Traits &traits = Traits()); 
@@ -27,7 +27,7 @@ Hilbert_sort_3(const Traits &traits = Traits());
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 sorts the range `[begin, end)`. 
 \tparam RandomAccessIterator must be an iterator with value type `Traits::Point_3`. 
 */ 

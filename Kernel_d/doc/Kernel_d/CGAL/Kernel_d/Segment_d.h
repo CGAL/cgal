@@ -28,7 +28,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the linear algebra layer. 
 */ 
 typedef unspecified_type LA; 
@@ -38,13 +38,13 @@ typedef unspecified_type LA;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a variable `s` 
 of type `Segment_d<Kernel>`. 
 */ 
 Segment_d<Kernel>(); 
 
-/*! 
+/*!
 introduces a 
 variable `s` of type `Segment_d<Kernel>` which is initialized to 
 the segment \f$ (p,q)\f$.
@@ -53,7 +53,7 @@ the segment \f$ (p,q)\f$.
 */ 
 Segment_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q); 
 
-/*! 
+/*!
 introduces a 
 variable `s` of type `Segment_d<Kernel>` which is initialized to 
 the segment `(p,p+v)`.
@@ -67,25 +67,25 @@ Segment_d<Kernel>(Point_d<Kernel> p, Vector_d<Kernel> v);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the dimension of the ambient 
 space. 
 */ 
 int dimension(); 
 
-/*! 
+/*!
 returns the source point of segment 
 `s`. 
 */ 
 Point_d<Kernel> source(); 
 
-/*! 
+/*!
 returns the target point of segment 
 `s`. 
 */ 
 Point_d<Kernel> target(); 
 
-/*! 
+/*!
 returns source or target of 
 `s`: `vertex(0)` returns the source, `vertex(1)` returns 
 the target. The parameter \f$ i\f$ is taken modulo \f$ 2\f$, which gives easy 
@@ -95,35 +95,35 @@ access to the other vertex.
 */ 
 Point_d<Kernel> vertex(int i) ; 
 
-/*! 
+/*!
 returns `vertex(i)`. 
 */ 
 Point_d<Kernel> point(int i) ; 
 
-/*! 
+/*!
 returns `vertex(i)`. 
 */ 
 Point_d<Kernel> operator[](int i) ; 
 
-/*! 
+/*!
 returns the lexicographically smaller 
 vertex. 
 */ 
 Point_d<Kernel> min() ; 
 
-/*! 
+/*!
 returns the lexicographically larger 
 vertex. 
 */ 
 Point_d<Kernel> max() ; 
 
-/*! 
+/*!
 returns the segment 
 `(target(),source())`. 
 */ 
 Segment_d<Kernel> opposite() ; 
 
-/*! 
+/*!
 returns the direction from 
 source to target.
 
@@ -131,19 +131,19 @@ source to target.
 */ 
 Direction_d<Kernel> direction() ; 
 
-/*! 
+/*!
 returns the vector from source to 
 target. 
 */ 
 Vector_d<Kernel> vector() ; 
 
-/*! 
+/*!
 returns the square of the length of 
 `s`. 
 */ 
 FT squared_length() ; 
 
-/*! 
+/*!
 returns true if \f$ p\f$ lies 
 on `s` and false otherwise.
 
@@ -151,7 +151,7 @@ on `s` and false otherwise.
 */ 
 bool has_on(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns the supporting line 
 of `s`.
 
@@ -159,7 +159,7 @@ of `s`.
 */ 
 Line_d<Kernel> supporting_line() ; 
 
-/*! 
+/*!
 returns \f$ t(s)\f$.
 
 \pre `s.dimension()==t.dimension()`. 
@@ -167,7 +167,7 @@ returns \f$ t(s)\f$.
 Segment_d<Kernel> transform(const Aff_transformation_d<Kernel>& t) 
 ; 
 
-/*! 
+/*!
 returns 
 \f$ s+v\f$, i.e., `s` translated by vector \f$ v\f$.
 
@@ -175,7 +175,7 @@ returns
 */ 
 Segment_d<Kernel> operator+(const Vector_d<Kernel>& v) ; 
 
-/*! 
+/*!
 returns true if `s` is 
 degenerate i.e.\ `s.source()=s.target()`. 
 */ 
@@ -185,7 +185,7 @@ bool is_degenerate() ;
 
 }; /* end Segment_d */
 
-/*! 
+/*!
 Test for equality as unoriented 
 segments.
 
@@ -194,7 +194,7 @@ segments.
 */ 
 bool weak_equality(const Segment_d<Kernel>& s1, const Segment_d<Kernel>& s2) ; 
 
-/*! 
+/*!
 return true if one of the segments is degenerate or if the 
 unoriented supporting lines are parallel.
 
@@ -204,7 +204,7 @@ unoriented supporting lines are parallel.
 bool parallel(const Segment_d<Kernel>& s1, const Segment_d<Kernel>& s2) ; 
 
 
-/*! 
+/*!
 if `s1` and `s2` 
 touch in a common end point, this point is assigned to `common` 
 and the result is `true`, otherwise the result is `false`. If 

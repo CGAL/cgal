@@ -91,12 +91,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 ring type. 
 */ 
 typedef unspecified_type RT; 
 
-/*! 
+/*!
 plane a `Sphere_circle` lies in. 
 */ 
 typedef unspecified_type Plane_3; 
@@ -106,12 +106,12 @@ typedef unspecified_type Plane_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates some great circle. 
 */ 
 Sphere_circle(); 
 
-/*! 
+/*!
 If \f$ p\f$ and \f$ q\f$ are 
 opposite of each other, then we create the unique great circle on \f$ S_2\f$ 
 which contains p and q. This circle is oriented such 
@@ -122,18 +122,18 @@ we create any great circle that contains \f$ p\f$ and \f$ q\f$.
 Sphere_circle(const Sphere_point& p, 
 const Sphere_point& q); 
 
-/*! 
+/*!
 creates the 
 circle corresponding to the plane `h`. \pre `h` contains the origin. 
 */ 
 Sphere_circle(const Plane_3& h); 
 
-/*! 
+/*!
 creates the circle orthogonal to the vector \f$ (x,y,z)\f$. 
 */ 
 Sphere_circle(const RT& x, const RT& y, const RT& z); 
 
-/*! 
+/*!
 creates a great circle orthogonal to \f$ c\f$ that contains \f$ p\f$. 
 \pre \f$ p\f$ is not part of \f$ c\f$. 
 */ 
@@ -145,24 +145,24 @@ p);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a sphere circle 
 in the opposite direction of `c`. 
 */ 
 Sphere_circle opposite() ; 
 
-/*! 
+/*!
 returns true iff 
 `c` contains `p`. 
 */ 
 bool has_on(const Sphere_point& p) ; 
 
-/*! 
+/*!
 returns the plane supporting `c`. 
 */ 
 Plane_3 plane() ; 
 
-/*! 
+/*!
 returns the point that 
 is the pole of the hemisphere left of `c`. 
 */ 
@@ -192,7 +192,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 ring number type. 
 */ 
 typedef unspecified_type RT; 
@@ -202,12 +202,12 @@ typedef unspecified_type RT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates some sphere point. 
 */ 
 Sphere_point(); 
 
-/*! 
+/*!
 creates a sphere 
 point corresponding to the point of intersection of the ray starting 
 at the origin in direction \f$ (x,y,z)\f$ and the surface of \f$ S_2\f$. 
@@ -219,32 +219,32 @@ Sphere_point(RT x, RT y, RT z);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the \f$ x\f$-coordinate. 
 */ 
 RT x() ; 
 
-/*! 
+/*!
 the \f$ y\f$-coordinate. 
 */ 
 RT y() ; 
 
-/*! 
+/*!
 the \f$ z\f$-coordinate. 
 */ 
 RT z() ; 
 
-/*! 
+/*!
 Equality. 
 */ 
 bool operator==(const Nef_polyhedron_S2<Traits>::Sphere_point& q) ; 
 
-/*! 
+/*!
 Inequality. 
 */ 
 bool operator!=(const Nef_polyhedron_S2<Traits>::Sphere_point& q) ; 
 
-/*! 
+/*!
 returns the antipode of `p`. 
 */ 
 Sphere_point antipode() ; 
@@ -273,19 +273,19 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates some sphere segment. 
 */ 
 Sphere_segment(); 
 
-/*! 
+/*!
 creates a spherical segment spanning 
 the shorter arc from `p1` to `p2` if `shorter_arc == true`. Otherwise the longer arc is created. \pre `p1 != p2` and `p1 != p2.opposite()`. 
 */ 
 Sphere_segment( 
 const Sphere_point& p1, const Sphere_point& p2, bool shorter_arc=true); 
 
-/*! 
+/*!
 creates a spherical segment spanning the 
 arc from `p1` to `p2` as part of the oriented circle `c` 
 (`p1 == p2` or `p1 == p2.opposite()` are possible.) 
@@ -294,7 +294,7 @@ arc from `p1` to `p2` as part of the oriented circle `c`
 Sphere_segment(const Sphere_point& p1, 
 const Sphere_point& p2, const Sphere_circle& c); 
 
-/*! 
+/*!
 creates the spherical segment as part of `c1` that is part 
 of the halfsphere left of the oriented circle `c2`. \pre `c1 != c2` as unoriented circles. 
 */ 
@@ -306,69 +306,69 @@ const Sphere_circle& c2);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the source point of 
 `s`. 
 */ 
 const Sphere_point& source() ; 
 
-/*! 
+/*!
 the target point of 
 `s`. 
 */ 
 const Sphere_point& target() ; 
 
-/*! 
+/*!
 the great circle 
 supporting `s`. 
 */ 
 const Sphere_circle& sphere_circle() ; 
 
-/*! 
+/*!
 returns the sperical 
 segment oriented from `target()` to `source()` with the same 
 point set as `s`. 
 */ 
 Sphere_segment opposite() ; 
 
-/*! 
+/*!
 returns the sperical 
 segment oriented from `target()` to `source()` with the 
 point set completing `s` to a full circle. 
 */ 
 Sphere_segment complement() ; 
 
-/*! 
+/*!
 a segment is short iff it is shorter 
 than a half-circle. 
 */ 
 bool is_short() ; 
 
-/*! 
+/*!
 a segment is long iff it is longer than a 
 half-circle. 
 */ 
 bool is_long() ; 
 
-/*! 
+/*!
 return true iff `s` is degenerate, 
 i.e.\ source and target are the same. 
 */ 
 bool is_degenerate() ; 
 
-/*! 
+/*!
 return true iff `s` is a perfect half-circle, 
 i.e.\ `source().antipode == target()`. 
 */ 
 bool is_halfcircle() ; 
 
-/*! 
+/*!
 return true iff 
 `s` contains `p`. 
 */ 
 bool has_on(const Sphere_point& p) ; 
 
-/*! 
+/*!
 
 return true iff `s` contains `p` in its relative interior. 
 
@@ -402,17 +402,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 const handle to SVertex. 
 */ 
 typedef unspecified_type SVertex_handle; 
 
-/*! 
+/*!
 const handle to SHalfedge. 
 */ 
 typedef unspecified_type SHalfedge_handle; 
 
-/*! 
+/*!
 const handle to SHalfloop. 
 */ 
 typedef unspecified_type SHalfloop_handle; 
@@ -422,7 +422,7 @@ typedef unspecified_type SHalfloop_handle;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 SFace_cycle_iterator(); 
@@ -432,32 +432,32 @@ SFace_cycle_iterator();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns true if the iterator represents a `SVertex_handle`. 
 */ 
 bool is_svertex() const; 
 
-/*! 
+/*!
 returns true if the iterator represents a `SHalfedge_handle`. 
 */ 
 bool is_shalfedge() const; 
 
-/*! 
+/*!
 returns true if the iterator represents a `SHalfloop_handle`. 
 */ 
 bool is_shalfloop() const; 
 
-/*! 
+/*!
 casts the iterator to `SVertex_handle`. 
 */ 
 operator SVertex_handle() const; 
 
-/*! 
+/*!
 casts the iterator to `SHalfedge_handle`. 
 */ 
 operator SHalfedge_handle() const; 
 
-/*! 
+/*!
 casts the iterator to `SHalfloop_handle`. 
 */ 
 operator SHalfloop_handle() const; 
@@ -496,32 +496,32 @@ public:
 /// The following types are the same as in `Nef_polyhedron_S2<Traits>`.
 /// @{
 
-/*! 
+/*!
 type of mark. 
 */ 
 typedef unspecified_type Mark; 
 
-/*! 
+/*!
 list of Object handles. 
 */ 
 typedef unspecified_type Object_list; 
 
-/*! 
+/*!
 const handle to Vertex. 
 */ 
 typedef unspecified_type Vertex_const_handle; 
 
-/*! 
+/*!
 const handle to Volume. 
 */ 
 typedef unspecified_type Volume_const_handle; 
 
-/*! 
+/*!
 const handle to SFace. 
 */ 
 typedef unspecified_type SFace_const_handle; 
 
-/*! 
+/*!
 const iterator over the entries to all `sface` cycles of a `sface`. 
 */ 
 typedef unspecified_type SFace_cycle_const_iterator; 
@@ -531,17 +531,17 @@ typedef unspecified_type SFace_cycle_const_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the mark of the `sface`. 
 */ 
 const Mark& mark() const; 
 
-/*! 
+/*!
 iterator over the entries to all sface cycles of the `sface` . 
 */ 
 SFace_cycle_const_iterator sface_cycle_begin() const; 
 
-/*! 
+/*!
 past-the-end iterator. 
 */ 
 SFace_cycle_const_iterator sface_cycle_end() const; 
@@ -598,27 +598,27 @@ public:
 /// The following types are the same as in `Nef_polyhedron_S2<Traits>`.
 /// @{
 
-/*! 
+/*!
 type of mark. 
 */ 
 typedef unspecified_type Mark; 
 
-/*! 
+/*!
 sphere circle type stored in SHalfedge. 
 */ 
 typedef unspecified_type Sphere_circle; 
 
-/*! 
+/*!
 const handle to SVertex. 
 */ 
 typedef unspecified_type SVertex_const_handle; 
 
-/*! 
+/*!
 const handle to SHalfedge. 
 */ 
 typedef unspecified_type SHalfedge_const_handle; 
 
-/*! 
+/*!
 const handle to SFace. 
 */ 
 typedef unspecified_type SFace_const_handle; 
@@ -628,63 +628,63 @@ typedef unspecified_type SFace_const_handle;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the mark of the `sedge`. 
 */ 
 const Mark& mark() const; 
 
-/*! 
+/*!
 the sphere circle of the `sedge`. 
 */ 
 const Sphere_circle& circle() const; 
 
-/*! 
+/*!
 the twin of the `sedge`. 
 */ 
 SHalfedge_const_handle twin() const; 
 
-/*! 
+/*!
 the source svertex of the `sedge`. 
 */ 
 SVertex_const_handle source() const; 
 
-/*! 
+/*!
 equals `twin()->source()`. 
 */ 
 SVertex_const_handle target() const; 
 
-/*! 
+/*!
 the SHalfedge previous to the `sedge` in a sface cycle. 
 */ 
 SHalfedge_const_handle sprev() const; 
 
-/*! 
+/*!
 the next SHalfedge of the `sedge` in a sface cycle. 
 */ 
 SHalfedge_const_handle snext() const; 
 
-/*! 
+/*!
 the edge before the `sedge` in the cyclic ordered adjacency list of `source()`. 
 */ 
 SHalfedge_const_handle cyclic_adj_pred() const; 
 
-/*! 
+/*!
 the edge after the `sedge` in the cyclic ordered adjacency list of `source()`. 
 */ 
 SHalfedge_const_handle cyclic_adj_succ() const; 
 
-/*! 
+/*!
 the incident `sface` of the `sedge`. 
 */ 
 SFace_const_handle incident_sface() const; 
 
-/*! 
+/*!
 determines whether the `sedge` is 
 in an outer sface cycle. 
 */ 
 bool in_outer_sface_cycle() const; 
 
-/*! 
+/*!
 determines whether the `sedge` is 
 in an inner sface cycle. 
 */ 
@@ -726,22 +726,22 @@ public:
 /// The following types are the same as in `Nef_polyhedron_S2<Traits>`.
 /// @{
 
-/*! 
+/*!
 type of mark. 
 */ 
 typedef unspecified_type Mark; 
 
-/*! 
+/*!
 sphere circle type stored in SHalfloop. 
 */ 
 typedef unspecified_type Sphere_circle; 
 
-/*! 
+/*!
 const handle to SHalfloop. 
 */ 
 typedef unspecified_type SHalfloop_const_handle; 
 
-/*! 
+/*!
 const handle to SFace. 
 */ 
 typedef unspecified_type SFace_const_handle; 
@@ -751,22 +751,22 @@ typedef unspecified_type SFace_const_handle;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the mark of the halfloop. 
 */ 
 const Mark& mark() const; 
 
-/*! 
+/*!
 the sphere circle of the halfloop. 
 */ 
 const Sphere_circle& circle() const; 
 
-/*! 
+/*!
 the twin of the halfloop. 
 */ 
 SHalfloop_const_handle twin() const; 
 
-/*! 
+/*!
 the incident sface of the halfloop. 
 */ 
 SFace_const_handle incident_sface() const; 
@@ -802,27 +802,27 @@ public:
 /// The following types are the same as in `Nef_polyhedron_S2<Traits>`.
 /// @{
 
-/*! 
+/*!
 type of mark. 
 */ 
 typedef unspecified_type Mark; 
 
-/*! 
+/*!
 sphere point type stored in SVertex. 
 */ 
 typedef unspecified_type Sphere_point; 
 
-/*! 
+/*!
 const handle to SVertex. 
 */ 
 typedef unspecified_type SVertex_const_handle; 
 
-/*! 
+/*!
 const handle to SHalfedge. 
 */ 
 typedef unspecified_type SHalfedge_const_handle; 
 
-/*! 
+/*!
 const handle to SFace. 
 */ 
 typedef unspecified_type SFace_const_handle; 
@@ -832,32 +832,32 @@ typedef unspecified_type SFace_const_handle;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 the mark of the `svertex`. 
 */ 
 const Mark& mark() const; 
 
-/*! 
+/*!
 the sphere point of the `svertex`. 
 */ 
 const Sphere_point& point() const; 
 
-/*! 
+/*!
 returns |true| if the `svertex` has no adjacent sedges. 
 */ 
 bool is_isolated() const; 
 
-/*! 
+/*!
 the twin of the `svertex`. 
 */ 
 SVertex_const_handle twin() const; 
 
-/*! 
+/*!
 the first out sedge of  the `svertex`. 
 */ 
 SHalfedge_const_handle out_sedge() const; 
 
-/*! 
+/*!
 the incident sface of  the `svertex`. 
 */ 
 SFace_const_handle incident_sface() const; 
@@ -866,59 +866,59 @@ SFace_const_handle incident_sface() const;
 
 }; /* end SVertex */
 
-/*! 
+/*!
 non-mutable handle to svertex. 
 */ 
 typedef unspecified_type SVertex_const_handle; 
 
-/*! 
+/*!
 non-mutable handle to shalfedge. 
 */ 
 typedef unspecified_type SHalfedge_const_handle; 
 
-/*! 
+/*!
 non-mutable handle to shalfloop. 
 */ 
 typedef unspecified_type SHalfloop_const_handle; 
 
-/*! 
+/*!
 non-mutable handle to sface. 
 */ 
 typedef unspecified_type SFace_const_handle; 
 
-/*! 
+/*!
 non-mutable iterator over all svertices. 
 */ 
 typedef unspecified_type SVertex_const_iterator; 
 
-/*! 
+/*!
 non-mutable iterator over all shalfedges. 
 */ 
 typedef unspecified_type SHalfedge_const_iterator; 
 
-/*! 
+/*!
 non-mutable iterator over all shalfloops. 
 */ 
 typedef unspecified_type SHalfloop_const_iterator; 
 
-/*! 
+/*!
 non-mutable iterator over all sfaces. 
 */ 
 typedef unspecified_type SFace_const_iterator; 
 
-/*! 
+/*!
 circulating the 
 adjacency list of an svertex `v`. 
 */ 
 typedef unspecified_type SHalfedge_around_svertex_const_circulator; 
 
-/*! 
+/*!
 circulating the 
 sface cycle of an sface `f`. 
 */ 
 typedef unspecified_type SHalfedge_around_sface_const_circulator; 
 
-/*! 
+/*!
 iterating all sface cycles of 
 an sface `f`. The iterator has method `bool is_svertex()`, 
 `bool is_shalfedge()`, `bool is_shalfloop()`, and can be 
@@ -927,22 +927,22 @@ converted to the corresponding handles `SVertex_const_handle`,
 */ 
 typedef unspecified_type SFace_cycle_const_iterator; 
 
-/*! 
+/*!
 attributes of objects (vertices, edges, faces). 
 */ 
 typedef unspecified_type Mark; 
 
-/*! 
+/*!
 size type 
 */ 
 typedef unspecified_type size_type; 
 
-/*! 
+/*!
 construction selection. 
 */ 
 enum Boundary { EXCLUDED, INCLUDED }; 
 
-/*! 
+/*!
 construction selection. 
 */ 
 enum Content { EMPTY, COMPLETE }; 
@@ -952,7 +952,7 @@ enum Content { EMPTY, COMPLETE };
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 creates 
 an instance `N` of type `Nef_polyhedron_S2<K>` and 
 initializes it to the empty set if `sphere == EMPTY` and to the 
@@ -960,7 +960,7 @@ whole sphere if `sphere == COMPLETE`.
 */ 
 Nef_polyhedron_S2<K>(Content sphere = EMPTY); 
 
-/*! 
+/*!
 creates a Nef polyhedron `N` containing the 
 half-sphere left of `c` including `c` if 
 `circle==INCLUDED`, excluding `c` if `circle==EXCLUDED`. 
@@ -969,7 +969,7 @@ half-sphere left of `c` including `c` if
 Nef_polyhedron_S2<K>(Sphere_circle c, Boundary circle = 
 INCLUDED); 
 
-/*! 
+/*!
 creates a Nef polyhedron `N` 
 from the set of sphere segments in the iterator range 
 `[first,beyond)`. If the set of sphere segments is a simple 
@@ -988,19 +988,19 @@ beyond, Boundary b = INCLUDED);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 makes `N` the 
 empty set if `plane == EMPTY` and the full plane if `plane == COMPLETE`. 
 */ 
 void clear(Content plane = EMPTY) ; 
 
-/*! 
+/*!
 returns true if `N` is empty, false 
 otherwise. 
 */ 
 bool is_empty() ; 
 
-/*! 
+/*!
 returns true if `N` is the whole 
 sphere, false otherwise. 
 */ 
@@ -1021,55 +1021,55 @@ bool is_sphere() ;
 
 /// @{
 
-/*! 
+/*!
 returns the complement 
 of `N` in the plane. 
 */ 
 Nef_polyhedron_S2<K> complement() ; 
 
-/*! 
+/*!
 returns the interior of 
 `N`. 
 */ 
 Nef_polyhedron_S2<K> interior() ; 
 
-/*! 
+/*!
 returns the closure of 
 `N`. 
 */ 
 Nef_polyhedron_S2<K> closure() ; 
 
-/*! 
+/*!
 returns the boundary of 
 `N`. 
 */ 
 Nef_polyhedron_S2<K> boundary() ; 
 
-/*! 
+/*!
 returns the 
 regularized polyhedron (closure of interior). 
 */ 
 Nef_polyhedron_S2<K> regularization() ; 
 
-/*! 
+/*!
 returns `N` \f$ \cap\f$ `N1`. 
 */ 
 Nef_polyhedron_S2<K> intersection(const 
 Nef_polyhedron_S2<K>& N1) ; 
 
-/*! 
+/*!
 returns `N` \f$ \cup\f$ `N1`. 
 */ 
 Nef_polyhedron_S2<K> join(const Nef_polyhedron_S2<K>& N1) 
 ; 
 
-/*! 
+/*!
 returns `N` \f$ -\f$ `N1`. 
 */ 
 Nef_polyhedron_S2<K> difference(const Nef_polyhedron_S2<K>& 
 N1) ; 
 
-/*! 
+/*!
 returns the symmectric difference 
 `N - T` \f$ \cup\f$ `T - N`. 
 */ 
@@ -1081,62 +1081,62 @@ Nef_polyhedron_S2<K>& N1) ;
 /// \name Statistics and Integrity 
 /// @{
 
-/*! 
+/*!
 returns the number of 
 svertices. 
 */ 
 Size_type number_of_svertices() ; 
 
-/*! 
+/*!
 returns the number of 
 shalfedges. 
 */ 
 Size_type number_of_shalfedges() ; 
 
-/*! 
+/*!
 returns the number of sedges. 
 
 */ 
 Size_type number_of_sedges() ; 
 
-/*! 
+/*!
 returns the number of 
 shalfloops. 
 */ 
 Size_type number_of_shalfloops() ; 
 
-/*! 
+/*!
 returns the number of sloops. 
 
 */ 
 Size_type number_of_sloops() ; 
 
-/*! 
+/*!
 returns the number of sfaces. 
 
 */ 
 Size_type number_of_sfaces() ; 
 
-/*! 
+/*!
 returns the number of 
 sface cycles. 
 */ 
 Size_type number_of_sface_cycles() ; 
 
-/*! 
+/*!
 calculates the 
 number of connected components of `P`. 
 */ 
 Size_type number_of_connected_components() ; 
 
-/*! 
+/*!
 print 
 the statistics of `P`: the number of vertices, edges, and faces. 
 
 */ 
 void print_statistics(std::ostream& os = std::cout) ; 
 
-/*! 
+/*!
 checks the link structure and the genus of `P`. 
 
 */ 
@@ -1148,7 +1148,7 @@ faces=true) ;
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 a generic handle to an object of the underlying plane map. The kind of
 object `(vertex, halfedge, face)` can be determined and the object can
@@ -1167,20 +1167,20 @@ typedef unspecified_type Object_handle;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns true iff the 
 object `h` is contained in the set represented by `N`. 
 */ 
 bool contains(Object_handle h) ; 
 
-/*! 
+/*!
 returns true 
 iff the object `h` is contained in the \f$ 1\f$-skeleton of `N`. 
 
 */ 
 bool contained_in_boundary(Object_handle h) ; 
 
-/*! 
+/*!
 returns a 
 generic handle `h` to an object (face, halfedge, vertex) of the 
 underlying plane map that contains the point `p` in its relative 
@@ -1191,7 +1191,7 @@ strategies.
 */ 
 Object_handle locate(const Sphere_point& p) ; 
 
-/*! 
+/*!
 returns a handle `h` with 
 `N.contains(h)` that can be converted to a 
 `Vertex_/Halfedge_/Face_const_handle` as described above. The 
@@ -1204,7 +1204,7 @@ operation returns an empty `Object_handle` if the ray shoot along
 Object_handle ray_shoot(const Sphere_point& p, const 
 Sphere_direction& d) ; 
 
-/*! 
+/*!
 returns a handle `h` that can be 
 converted to a `Vertex_/Halfedge_const_handle` as described 
 above. The object returned is part of the \f$ 1\f$-skeleton of `N`, 
@@ -1240,13 +1240,13 @@ const Sphere_direction& d) ;
 
 /// @{
 
-/*! 
+/*!
 returns true iff there is 
 a shalfloop. 
 */ 
 bool has_shalfloop() const; 
 
-/*! 
+/*!
 returns access to the 
 sloop. 
 */ 
@@ -1256,7 +1256,7 @@ SHalfloop_const_handle shalfloop() const;
 
 }; /* end Nef_polyhedron_S2 */
 
-/*! 
+/*!
 returns true iff `c1` and `c2` are equal as unoriented 
 circles. 
 \relates Nef_polyhedron_S2::Sphere_circle 

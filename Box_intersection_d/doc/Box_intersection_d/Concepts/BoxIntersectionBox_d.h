@@ -28,20 +28,20 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 number type to represent the box 
 boundaries. Allowed are the built-in types `int`, `unsigned 
 int`, `float`, and `double`. 
 */ 
 typedef unspecified_type NT; 
 
-/*! 
+/*!
 type for the box `id`-number, 
 must be a model of the `LessThanComparable` concept. 
 */ 
 typedef unspecified_type ID; 
 
-/*! 
+/*!
 returns the dimension of the box. 
 */ 
 static int dimension(); 
@@ -51,18 +51,18 @@ static int dimension();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the unique `id`-number for the `box`. 
 */ 
 ID id() const; 
 
-/*! 
+/*!
 returns the lower boundary in dimension 
 `d`, \f$ 0 \leq\f$`d`\f$ < \f$`dimension()`. 
 */ 
 NT min_coord( int d) const; 
 
-/*! 
+/*!
 returns the upper boundary in dimension 
 `d`, \f$ 0 \leq\f$`d`\f$ < \f$`dimension()`. 
 */ 

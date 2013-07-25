@@ -94,12 +94,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty constrained Delaunay triangulation `cdt`. 
 */ 
 Constrained_Delaunay_triangulation_2(const Traits &t = Traits()); 
 
-/*! 
+/*!
 Copy constructor: All faces and vertices 
 are duplicated and the constrained status of edges 
 is copied. 
@@ -107,7 +107,7 @@ is copied.
 Constrained_Delaunay_triangulation_2(const 
 Constrained_Delaunay_triangulation_2& cdt1); 
 
-/*! 
+/*!
 A templated constructor which introduces and builds 
 a constrained triangulation with constrained edges in the range 
 `[first,last)`. 
@@ -126,13 +126,13 @@ const Traits& t=Traits());
 /// constrained property after modification of the triangulation.
 /// @{
 
-/*! 
+/*!
 Inserts point `p` in the triangulation, with face
 `f` as a hint for the location of `p`. 
 */ 
 Vertex_handle insert(Point p, Face_handle f = Face_handle()); 
 
-/*! 
+/*!
 Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
 \sa `Triangulation_2::locate()`
 */ 
@@ -141,12 +141,12 @@ insert(const Point& p,
 Locate_type lt, 
 Face_handle loc, int li ); 
 
-/*! 
+/*!
 Equivalent to `insert(p)`. 
 */ 
 Vertex_handle push_back(const Point& p); 
 
-/*! 
+/*!
 Inserts the points in the range `[first,last)`. 
 Returns the number of inserted points. 
 \tparam InputIterator must be an input iterator with the value type `Point`. 
@@ -171,34 +171,34 @@ template < class PointWithInfoInputIterator >
 std::ptrdiff_t
 insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);
 
-/*! 
+/*!
 Inserts segment `ab` as a constrained edge in the triangulation. 
 */ 
 void insert_constraint(Point a, Point b); 
 
-/*! 
+/*!
 Inserts the line segment between the points `c.first` and `c.second` as  a constrained edge in the triangulation.
 */ 
 void push_back(const Constraint& c); 
 
-/*! 
+/*!
 Inserts the line segment whose endpoints are the vertices `va` and 
 `vb` as a constrained edge e in the triangulation. 
 */ 
 void insert_constraint(Vertex_handle va, Vertex_handle vb); 
 
-/*! 
+/*!
 Removes vertex v. 
 \pre Vertex `v` is not incident to a constrained edge. 
 */ 
 void remove(Vertex_handle & v); 
 
-/*! 
+/*!
 Make the edges incident to vertex `v` unconstrained edges. 
 */ 
 void remove_incident_constraints(Vertex_handle v); 
 
-/*! 
+/*!
 Make the edge `(f,i)` unconstrained. 
 */ 
 void remove_constraint(const Face_handle & f, int i); 
@@ -215,7 +215,7 @@ void remove_constraint(const Face_handle & f, int i);
 /// in the circumcircle of `f`.
 /// @{
 
-/*! 
+/*!
 outputs the faces and boundary edges of the conflict zone of point `p` into
 output iterators.
 
@@ -241,7 +241,7 @@ OutputItFaces fit,
 OutputItBoundaryEdges eit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 outputs the faces of the conflict zone of point `p` into an output iterator.
 
 Same as `get_conflicts_and_boundary` except that only the faces in conflict with `p` 
@@ -254,7 +254,7 @@ get_conflicts (const Point &p,
 OutputItFaces fit, 
 Face_handle start) const; 
 
-/*! 
+/*!
 outputs the boundary edges of the conflict zone of point `p` into an output iterator.
 
 This functions outputs in the container pointed to by `eit`, 
@@ -277,7 +277,7 @@ Face_handle start) const;
 /// \name Checking 
 /// @{
 
-/*! 
+/*!
 checks if the triangulation is valid and if each constrained edge is 
 consistently marked constrained in its two incident faces. 
 */ 
@@ -288,7 +288,7 @@ bool is_valid() const;
 /// \name Flips 
 /// @{
 
-/*! 
+/*!
 determines if edge `(f,i)` can be flipped.
 \cgalAdvancedBegin
 Returns true if 
@@ -299,7 +299,7 @@ opposite to edge `(f,i)`.
 */ 
 bool is_flipable(Face_handle f, int i) const; 
 
-/*! 
+/*!
 \cgalAdvancedFunction
 \cgalAdvancedBegin
 Flip `f` and `f->neighbor(i)`. 
@@ -307,7 +307,7 @@ Flip `f` and `f->neighbor(i)`.
 */ 
 void flip(Face_handle& f, int i); 
 
-/*! 
+/*!
 makes the triangulation constrained Delaunay by flipping
 edges.
 \cgalAdvancedBegin

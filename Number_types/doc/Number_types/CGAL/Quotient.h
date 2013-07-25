@@ -46,23 +46,23 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an uninitialized variable `q`. 
 */ 
 Quotient(); 
 
-/*! 
+/*!
 introduces the quotient `t/1`. NT needs to have a constructor from T. 
 */ 
 template <class T> Quotient<NT>(const T& t); 
 
-/*! 
+/*!
 introduces the quotient `NT(t.numerator())/NT(t.denominator())`. 
 NT needs to have a constructor from T. 
 */ 
 template <class T> Quotient<NT>(const Quotient<T>& t); 
 
-/*! 
+/*!
 introduces the quotient `n/d`. 
 
 \pre \f$ d \neq0\f$. 
@@ -74,12 +74,12 @@ Quotient(const NT& n, const NT& d);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns a numerator of `q`. 
 */ 
 NT numerator() const; 
 
-/*! 
+/*!
 returns a denominator of `q`. 
 */ 
 NT denominator() const; 
@@ -88,14 +88,14 @@ NT denominator() const;
 
 }; /* end Quotient */
 
-/*! 
+/*!
 writes `q` to ostream `out` in format `n/d`, where 
 `n`\f$ ==\f$`q.numerator()` and `d`\f$ ==\f$`q.denominator()`. 
 \relates Quotient 
 */ 
 std::ostream& operator<<(std::ostream& out, const Quotient<NT>& q); 
 
-/*! 
+/*!
 reads `q` from istream `in`. Expected format is 
 `n/d`, where `n` and `d` are of type `NT`. 
 A single `n` which is not followed by a `/` is also 
@@ -104,25 +104,25 @@ accepted and interpreted as `n/1`.
 */ 
 std::istream& operator>>(std::istream& in, Quotient<NT>& q); 
 
-/*! 
+/*!
 returns some double approximation to `q`. 
 \relates Quotient 
 */ 
 double to_double(const Quotient<NT>& q); 
 
-/*! 
+/*!
 returns true, if numerator and denominator are valid. 
 \relates Quotient 
 */ 
 bool is_valid(const Quotient<NT>& q); 
 
-/*! 
+/*!
 returns true, if numerator and denominator are finite. 
 \relates Quotient 
 */ 
 bool is_finite(const Quotient<NT>& q); 
 
-/*! 
+/*!
 returns the square root of `q`. This is supported if and only if 
 `NT` supports the square root as well. 
 \relates Quotient 

@@ -20,17 +20,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type convertible to `CGAL::Sign` 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Polynomial_2 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type; 
@@ -40,7 +40,7 @@ typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes the sign of a bivariate polynomial \f$ p\f$ evaluated at \f$ a\f$. 
 */ 
 result_type 

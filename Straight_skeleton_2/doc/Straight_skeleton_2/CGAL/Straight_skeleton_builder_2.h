@@ -87,17 +87,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The geometric traits (first template parameter) 
 */ 
 typedef StraightSkeletonBuilderTraits_2 Gt; 
 
-/*! 
+/*!
 The straight skeleton (second template parameter) 
 */ 
 typedef StraightSkeleton_2 Ss; 
 
-/*! 
+/*!
 The 2D point type as defined by the geometric traits 
 */ 
 typedef unspecified_type Point_2; 
@@ -107,7 +107,7 @@ typedef unspecified_type Point_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructs the builder class. 
 */ 
 StraightSkeletonBuilder_2(); 
@@ -117,7 +117,7 @@ StraightSkeletonBuilder_2();
 /// \name Methods 
 /// @{
 
-/*! 
+/*!
 Defines the <I>contours</I> that form the <I>non-degenerate strictly-simple polygon with holes</I> whose <I>straight skeleton</I> is to be built. 
 
 Each contour must be input in turn starting with the <I>outer contour</I> and following with the holes (if any). The order of the holes is unimportant but the outer contour must be entered first. The outer contour must be oriented counter-clockwise while holes must be oriented clockwise. 
@@ -130,7 +130,7 @@ InputPointIterator must be an <I>InputIterator</I> whose `value_type` is `Point_
 */ 
 template<class InputPointIterator> Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd ); 
 
-/*! 
+/*!
 Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered first by calling `enter_contour`. All the contours of the polygon with holes must be entered before calling `construct_skeleton`. 
 
 After `construct_skeleton` completes, you cannot enter more contours and/or call `construct_skeleton()` again. If you need another straight skeleton for another polygon you must instantiate and use another builder. 

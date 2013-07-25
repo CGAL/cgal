@@ -21,13 +21,13 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Constructs an arc from a full circle. 
 */ 
 SphericalKernel::Circular_arc_3 operator() 
 (const SphericalKernel::Circle_3 &c); 
 
-/*! 
+/*!
 Constructs the circular arc supported by `c`, whose source and target 
 are `p` and `q`, respectively. 
 \pre `p` and `q` lie on `c` and they are different. 
@@ -37,7 +37,7 @@ SphericalKernel::Circular_arc_3 operator()
 const SphericalKernel::Circular_arc_point_3 &p, 
 const SphericalKernel::Circular_arc_point_3 &q); 
 
-/*! 
+/*!
 Constructs an arc that is supported by the circle of type 
 `SphericalKernel::Circle_3` passing through the points `p`, 
 `q` and `r`. The source and target are respectively `p` 

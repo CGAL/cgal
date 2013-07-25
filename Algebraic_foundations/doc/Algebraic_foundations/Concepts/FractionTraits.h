@@ -21,12 +21,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The associated type 
 */ 
 typedef unspecified_type Type; 
 
-/*! 
+/*!
 
 Tag indicating whether the associated type is a fraction and can be 
 decomposed into a numerator and denominator. 
@@ -35,13 +35,13 @@ This is either `CGAL::Tag_true` or `CGAL::Tag_false`.
 */ 
 typedef unspecified_type Is_fraction; 
 
-/*! 
+/*!
 The type to represent the numerator. 
 This is undefined in case the associated type is not a fraction. 
 */ 
 typedef unspecified_type Numerator_type ; 
 
-/*! 
+/*!
 The (simpler) type to represent the denominator. 
 This is undefined in case the associated type is not a fraction. 
 */ 
@@ -96,7 +96,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 decompose \f$ f\f$ into numerator \f$ n\f$ and denominator \f$ d\f$. 
 */ 
 void operator()( FractionTraits::Type f, 
@@ -128,17 +128,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef FractionTraits::Type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef FractionTraits::Numerator_type first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef FractionTraits::Denominator_type second_argument_type; 
@@ -148,7 +148,7 @@ typedef FractionTraits::Denominator_type second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 return the fraction \f$ n/d\f$. 
 */ 
 result_type operator()(first_argument_type n, second_argument_type d); 
@@ -184,17 +184,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef FractionTraits::Denominator_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef FractionTraits::Denominator_type first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef FractionTraits::Denominator_type second_argument_type; 
@@ -204,7 +204,7 @@ typedef FractionTraits::Denominator_type second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 return a great common factor of \f$ d1\f$ and \f$ d2\f$. 
 
 Note: <TT>operator()(0,0) = 0</TT> 

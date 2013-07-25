@@ -120,12 +120,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A `RealEmbeddable` `Field` representing the quotient field of `RT`. 
 */ 
 typedef unspecified_type Root_of_1; 
 
-/*! 
+/*!
 Model of `RootOf_2`. 
 */ 
 typedef unspecified_type Root_of_2; 

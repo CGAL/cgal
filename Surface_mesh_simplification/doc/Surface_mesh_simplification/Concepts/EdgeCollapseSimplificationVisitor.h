@@ -15,27 +15,27 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
 */ 
 typedef unspecified_type ECM; 
 
-/*! 
+/*!
 A field type representing the collapse cost 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
 */ 
 typedef unspecified_type Profile; 
 
-/*! 
+/*!
 The point type for the surface vertex. Must be a model of `Point_3`. 
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
-/*! 
+/*!
 An integer type representing the number of edges 
 */ 
 typedef unspecified_type size_type; 
@@ -45,31 +45,31 @@ typedef unspecified_type size_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Called before the algorithm starts. 
 */ 
 void OnStarted( ECM& surface ); 
 
-/*! 
+/*!
 Called after the algorithm finishes. 
 */ 
 void OnFinished ( ECM& surface ) ; 
 
-/*! 
+/*!
 Called when the `StopPredicate` returned `true` 
 (but not if the algorithm terminates because the surface could not be simplified any further). 
 
 */ 
 void OnStopConditionReached( ECM& surface ) ; 
 
-/*! 
+/*!
 Called during the <I>collecting phase</I> (when a cost is assigned to the edges), 
 for each edge collected. 
 
 */ 
 void OnCollected( Profile const& profile, boost::optional<FT> cost ); 
 
-/*! 
+/*!
 Called during the <I>processing phase</I> (when edges are collapsed), 
 for each edge that is selected. 
 
@@ -90,7 +90,7 @@ void OnSelected( Profile const& profile
 , size_type current_count 
 ); 
 
-/*! 
+/*!
 Called when an edge is about to be collapsed and replaced by a vertex 
 whose position is `*placement`. 
 
@@ -102,7 +102,7 @@ void OnCollapsing( Profile const& profile
 , boost::optional<Point> placement 
 ); 
 
-/*! 
+/*!
 Called for each selected edge which cannot be 
 collapsed because doing so would change the topological 
 type of the surface (turn it into a non-manifold 

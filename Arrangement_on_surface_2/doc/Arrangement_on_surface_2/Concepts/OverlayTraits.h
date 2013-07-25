@@ -24,47 +24,47 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 a constant handle a vertex in `Dcel_A`. 
 */ 
 typedef unspecified_type Vertex_handle_A; 
 
-/*! 
+/*!
 a constant handle to a halfedge in `Dcel_A`. 
 */ 
 typedef unspecified_type Halfedge_handle_A; 
 
-/*! 
+/*!
 a constant handle to a face `Dcel_A`. 
 */ 
 typedef unspecified_type Face_handle_A; 
 
-/*! 
+/*!
 a constant handle to a vertex in `Dcel_B`. 
 */ 
 typedef unspecified_type Vertex_handle_B; 
 
-/*! 
+/*!
 a constant handle to a halfedge in `Dcel_B`. 
 */ 
 typedef unspecified_type Halfedge_handle_B; 
 
-/*! 
+/*!
 a constant handle to a face in `Dcel_B`. 
 */ 
 typedef unspecified_type Face_handle_B; 
 
-/*! 
+/*!
 a handle to a vertex in `Dcel_R`. 
 */ 
 typedef unspecified_type Vertex_handle_R; 
 
-/*! 
+/*!
 a handle to a halfedge in `Dcel_R`. 
 */ 
 typedef unspecified_type Halfedge_handle_R; 
 
-/*! 
+/*!
 a handle to a faces in `Dcel_R`. 
 */ 
 typedef unspecified_type Face_handle_R; 
@@ -77,7 +77,7 @@ typedef unspecified_type Face_handle_R;
 /// appropriate auxiliary data to this vertex:
 /// @{
 
-/*! 
+/*!
 constructs the vertex `v` induced by the coinciding vertices 
 `v1` and `v2`. 
 */ 
@@ -85,7 +85,7 @@ void create_vertex (Vertex_handle_A v1,
 Vertex_handle_B v2, 
 Vertex_handle_R v) const; 
 
-/*! 
+/*!
 constructs the vertex `v` induced by the vertex `v1` that lies on 
 the halfedge `e2`. 
 */ 
@@ -93,7 +93,7 @@ void create_vertex (Vertex_handle_A v1,
 Halfedge_handle_B e2, 
 Vertex_handle_R v) const; 
 
-/*! 
+/*!
 constructs the vertex `v` induced by the vertex `v1` that lies 
 inside the face `f2`. 
 */ 
@@ -101,7 +101,7 @@ void create_vertex (Vertex_handle_A v1,
 Face_handle_B f2, 
 Vertex_handle_R v) const; 
 
-/*! 
+/*!
 constructs the vertex `v` induced by the vertex `v2` that lies on 
 the halfedge `e1`. 
 */ 
@@ -109,7 +109,7 @@ void create_vertex (Halfedge_handle_A e1,
 Vertex_handle_B v2, 
 Vertex_handle_R v) const; 
 
-/*! 
+/*!
 constructs the vertex `v` induced by the vertex `v2` that lies 
 inside the face `f1`. 
 */ 
@@ -117,7 +117,7 @@ void create_vertex (Face_handle_A f1,
 Vertex_handle_B v2, 
 Vertex_handle_R v) const; 
 
-/*! 
+/*!
 constructs the vertex `v` induced by the intersection of the 
 halfedges `e1` and `e2`. 
 */ 
@@ -138,7 +138,7 @@ Vertex_handle_R v) const;
 /// halfedge (namely to `e->twin()`) as well:
 /// @{
 
-/*! 
+/*!
 constructs the halfedge `e` induced by an overlap between the 
 halfedges `e1` and `e2`. 
 */ 
@@ -146,7 +146,7 @@ void create_edge (Halfedge_handle_A e1,
 Halfedge_handle_B e2, 
 Halfedge_handle_R e) const; 
 
-/*! 
+/*!
 constructs the halfedge `e` induced by the halfedge `e1` that lies 
 inside the face `f2`. 
 */ 
@@ -154,7 +154,7 @@ void create_edge (Halfedge_handle_A e1,
 Face_handle_B f2, 
 Halfedge_handle_R e) const; 
 
-/*! 
+/*!
 constructs the halfedge `e` induced by the halfedge `e2` that lies 
 inside the face `f1`. 
 */ 
@@ -169,7 +169,7 @@ Halfedge_handle_R e) const;
 /// fields attached to them:
 /// @{
 
-/*! 
+/*!
 constructs the face `f` induced by the an overlap between the 
 faces `f1` and `f2`. 
 */ 

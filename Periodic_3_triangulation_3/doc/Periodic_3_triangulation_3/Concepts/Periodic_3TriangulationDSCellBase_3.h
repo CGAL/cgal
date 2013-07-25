@@ -32,7 +32,7 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the offset of vertex `i`. 
 \pre \f$ i \in\{0, 1, 2, 3\}\f$. 
 */ 
@@ -43,7 +43,7 @@ int offset(int i) const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 Sets the vertex offsets according to `off0` to `off3`. 
 */ 
 void set_offsets(int off0, int off1, int off2, int off3); 

@@ -73,17 +73,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the type of the range tree traits class. 
 */ 
 typedef unspecified_type Traits; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Key Key; 
 
-/*! 
+/*!
 
 */ 
 typedef Traits::Interval Interval; 
@@ -93,12 +93,12 @@ typedef Traits::Interval Interval;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an empty range tree `R`. 
 */ 
 Range_tree_k (); 
 
-/*! 
+/*!
 Introduces a range tree `R` and initializes it with the data 
 in the range `[first, last)`. 
 \pre `value_type(first) == Traits::Key`. 
@@ -112,7 +112,7 @@ ForwardIterator last);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Introduces a range tree `R` and initializes it with the data 
 in the range `[first, last)`. This function can only be applied 
 once on an empty range tree. 
@@ -123,7 +123,7 @@ void
 make_tree(ForwardIterator first, 
 ForwardIterator last); 
 
-/*! 
+/*!
 writes all data that are in the interval `window` to the container 
 where `out` points to, and returns an output iterator that points 
 to the last location the function wrote to. 

@@ -47,12 +47,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the associated arrangement type. 
 */ 
 typedef unspecified_type Arrangement_2; 
 
-/*! 
+/*!
 equivalent to `Arrangement_2::Point_2`. 
 */ 
 typedef unspecified_type Point_2; 
@@ -62,12 +62,12 @@ typedef unspecified_type Point_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 ArrangementVerticalRayShoot_2(); 
 
-/*! 
+/*!
 constructs a ray-shooting object `rs` attached to the given 
 arrangement `arr`. 
 */ 
@@ -78,7 +78,7 @@ ArrangementVerticalRayShoot_2 (const Arrangement_2& arr);
 /// \name Query Functions 
 /// @{
 
-/*! 
+/*!
 locates the arrangement feature that is first hit by an upward-directed 
 vertical ray emanating from the query point `q`, 
 and returns a handle for this feature. The function returns a
@@ -96,7 +96,7 @@ arrangement.
 */ 
 Arr_point_location_result<Arrangement_2>::Type ray_shoot_up(const Point_2& q) const;
 
-/*! 
+/*!
 locates the arrangement feature that is first hit by a downward-directed 
 vertical ray emanating from the query point `q`, 
 and returns a handle for this feature. The function returns a
@@ -119,12 +119,12 @@ Arr_point_location_result<Arrangement_2>::Type ray_shoot_down (const Point_2& q)
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 attaches `rs` to the given arrangement `arr`. 
 */ 
 void attach (const Arrangement_2& arr); 
 
-/*! 
+/*!
 detaches `rs` from the arrangement it is currently attached to. 
 */ 
 void detach (); 

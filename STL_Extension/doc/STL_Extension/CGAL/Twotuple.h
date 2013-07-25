@@ -22,7 +22,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 
 */ 
 typedef T value_type; 
@@ -34,7 +34,7 @@ typedef T value_type;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 first element 
 */ 
 T e0; 
@@ -46,7 +46,7 @@ T e0;
 
 /// \name Variables 
 /// @{ 
-/*! 
+/*!
 second element 
 */ 
 T e1; 
@@ -58,7 +58,7 @@ T e1;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 introduces a `Twotuple` using the default 
 constructor of the elements. 
 */ 
@@ -71,7 +71,7 @@ Twotuple();
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 constructs a `Twotuple` such 
 that `e0` is constructed from `x` and `e1` is 
 constructed from `y`. 

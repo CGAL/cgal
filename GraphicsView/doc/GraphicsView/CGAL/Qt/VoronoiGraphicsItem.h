@@ -17,7 +17,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructs a graphics item for the dual of the 
 Delaunay triangulation `dt`. 
 */ 
@@ -28,22 +28,22 @@ VoronoiGraphicsItem<DT>(DT* dt);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the pen used to draw edges. 
 */ 
 QPen edgesPen()() const; 
 
-/*! 
+/*!
 Set the pen used to draw edges. 
 */ 
 void setEdgesPen()(const QPen& p); 
 
-/*! 
+/*!
 Returns `true`, iff edges are drawn. 
 */ 
 bool visibleEdges(); 
 
-/*! 
+/*!
 Set the property. 
 */ 
 bool setVisibleEdges(bool b); 

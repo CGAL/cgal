@@ -22,12 +22,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 typedef to `K::Point_2`. 
 */ 
 typedef unspecified_type Point ; 
 
-/*! 
+/*!
 internal type. 
 */ 
 typedef unspecified_type Circle; 
@@ -37,12 +37,12 @@ typedef unspecified_type Circle;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Min_circle_2_traits_2( ); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 Min_circle_2_traits_2( 
@@ -53,7 +53,7 @@ const Min_circle_2_traits_2<K>&);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 returns `CGAL::orientation( p, q, r)`. 
 */ 

@@ -25,22 +25,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
 */ 
 typedef unspecified_type Profile; 
 
-/*! 
+/*!
 A field type representing the collapse cost 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 The point type for the surface vertex. Must be a model of `Point_3`. 
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
-/*! 
+/*!
 The type of the result (an optional cost value). 
 */ 
 boost::optional<FT> result_type; 
@@ -50,7 +50,7 @@ boost::optional<FT> result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes and returns the cost of collapsing the edge (represented by its profile), 
 using the calculated placement. 
 

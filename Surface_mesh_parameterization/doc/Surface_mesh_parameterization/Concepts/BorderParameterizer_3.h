@@ -34,14 +34,14 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 Export `ParameterizationMesh_3` template parameter. 
 
 */ 
 typedef unspecified_type Adaptor; 
 
-/*! 
+/*!
 
 The various errors detected by this package. 
 
@@ -53,14 +53,14 @@ typedef unspecified_type Error_code;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 Assign to mesh's border vertices a 2D position (i.e.\ a `(u, v)` pair) on border's shape. Mark them as <I>parameterized</I>. Return false on error. 
 
 */ 
 Error_code parameterize_border(Adaptor& mesh); 
 
-/*! 
+/*!
 
 Indicate if border's shape is convex. 
 

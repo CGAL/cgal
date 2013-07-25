@@ -30,7 +30,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A model of the concept 
 `Periodic_3Offset_3` 
 */ 
@@ -41,22 +41,22 @@ typedef unspecified_type Periodic_3_offset_3;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the offset stored in the vertex. 
 */ 
 Periodic_3_offset_3 offset() const; 
 
-/*! 
+/*!
 Returns `true` if the offset has been set, `false` otherwise. 
 */ 
 bool get_offset_flag() const; 
 
-/*! 
+/*!
 Sets the offset and sets the offset flag to `true`. 
 */ 
 void set_offset(Periodic_3_offset_3 o); 
 
-/*! 
+/*!
 Sets the offset flag to `false` and clears the offset. 
 */ 
 void clear_offset(); 

@@ -34,22 +34,22 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces an uninitialized variable `c`. 
 */ 
 Number_type_checker(); 
 
-/*! 
+/*!
 introduces the integral value i. 
 */ 
 Number_type_checker(int i); 
 
-/*! 
+/*!
 introduces the floating point value d. 
 */ 
 Number_type_checker(double d); 
 
-/*! 
+/*!
 introduces a variable storing the pair `n1, n2`. 
 */ 
 Number_type_checker(const NT1 &n1, const NT2 &n2); 
@@ -59,27 +59,27 @@ Number_type_checker(const NT1 &n1, const NT2 &n2);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns a const reference to the object of type `NT1`. 
 */ 
 const NT1 & n1() const; 
 
-/*! 
+/*!
 returns a const reference to the object of type `NT2`. 
 */ 
 const NT2 & n2() const; 
 
-/*! 
+/*!
 returns a reference to the object of type `NT1`. 
 */ 
 NT1 & n1(); 
 
-/*! 
+/*!
 returns a reference to the object of type `NT2`. 
 */ 
 NT2 & n2(); 
 
-/*! 
+/*!
 calls the `Comparator` binary predicate on the two stored objects 
 and returns its result. 
 */ 
@@ -89,13 +89,13 @@ bool is_valid() const;
 
 }; /* end Number_type_checker */
 
-/*! 
+/*!
 writes `c.n1()` to the ostream `out`. 
 \relates Number_type_checker 
 */ 
 std::ostream& operator<<(std::ostream& out, const Number_type_checker& c); 
 
-/*! 
+/*!
 reads an `NT1` from `in`, then converts it to an `NT2`, 
 so a conversion from `NT1` to `NT2` is required here. 
 \relates Number_type_checker 

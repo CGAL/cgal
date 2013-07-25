@@ -23,17 +23,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the scalar type. 
 */ 
 typedef StreamLinesTraits_2::FT FT; 
 
-/*! 
+/*!
 the point type. 
 */ 
 typedef StreamLinesTraits_2::Point_2 Point_2; 
 
-/*! 
+/*!
 the vector type. 
 */ 
 typedef StreamLinesTraits_2::Vector_2 Vector_2; 
@@ -43,7 +43,7 @@ typedef StreamLinesTraits_2::Vector_2 Vector_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Generate a regular grid  whose size is `x_size` by `y_size`, while `x_samples` and 
 `y_samples` specify the number of samples on `x` and `y`. 
 */ 
@@ -57,7 +57,7 @@ Regular_grid_2(int x_samples, int y_samples, FT x_size, FT y_size);
 /// function to fill the vector field with the user data.
 /// @{
 
-/*! 
+/*!
 Attribute the vector v 
 to the position (i,j) on the regular grid. 
 */ 
@@ -68,12 +68,12 @@ void set_xy(int i, int j, Vector_2 v);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the dimension of the grid. 
 */ 
 std::pair<int, int> get_dimension(); 
 
-/*! 
+/*!
 returns the size of the grid. 
 */ 
 std::pair<FT, FT> get_size(); 

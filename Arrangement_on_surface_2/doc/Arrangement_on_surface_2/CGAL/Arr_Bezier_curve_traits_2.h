@@ -64,13 +64,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the `NtTraits::Rational` type 
 (and also the `RatKernel::FT` type). 
 */ 
 typedef unspecified_type Rational; 
 
-/*! 
+/*!
 the `NtTraits::Algebraic` type 
 (and also the `AlgKernel::FT` type). 
 */ 
@@ -96,12 +96,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Curve_2 (); 
 
-/*! 
+/*!
 constructs a B&eacute;zier curve as defined by the given range of control 
 points. The value-type of `InputIterator` is `RatKernel::Point_2`. 
 \pre The input range must contain at least two control points. 
@@ -115,12 +115,12 @@ Curve_2 (InputIterator pts_begin, InputIterator pts_end);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the number of control points that define `B`. 
 */ 
 size_t number_of_control_points () const; 
 
-/*! 
+/*!
 returns the \f$ k\f$th control point. Note that the first control point equals 
 the curve source, while the last control point equals its target. The rest 
 of the control points do not lie on the curve. 
@@ -128,13 +128,13 @@ of the control points do not lie on the curve.
 */ 
 typename RatKernel::Point_2 control_point (size_t k) const; 
 
-/*! 
+/*!
 returns the point \f$ B(t)\f$ on the curve that corresponds to the given 
 rational parameter value. 
 */ 
 typename RatKernel::Point_2 operator() (const Rational& t) const; 
 
-/*! 
+/*!
 returns the point \f$ B(t)\f$ on the curve that corresponds to the given 
 algebraic parameter value. 
 */ 
@@ -167,18 +167,18 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Point_2 (); 
 
-/*! 
+/*!
 constructs the point \f$ B(t_0)\f$ on the given curve. As \f$ t_0\f$ is an 
 algebraic number, the point has algebraic coordinates. 
 */ 
 Point_2 (const Curve_2& B, const Algebraic& t_0); 
 
-/*! 
+/*!
 constructs the point \f$ B(t_0)\f$ on the given curve. As \f$ t_0\f$ is a 
 rational number, the point has rational coordinates. 
 */ 
@@ -189,34 +189,34 @@ Point_2 (const Curve_2& B, const Rational& t_0);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the approximated coordinates of `p`. 
 */ 
 std::pair<double, double> approximate () const; 
 
-/*! 
+/*!
 returns whether the coordinates of `p` are computed in an exact manner. 
 */ 
 bool is_exact () const; 
 
-/*! 
+/*!
 returns the \f$ x\f$-coordinate of `p`. 
 \pre `p` is exactly computed. 
 */ 
 Algebraic x () const; 
 
-/*! 
+/*!
 returns the \f$ y\f$-coordinate of `p`. 
 \pre `p` is exactly computed. 
 */ 
 Algebraic y () const; 
 
-/*! 
+/*!
 returns whether the coordinates of `p` are rational numbers. 
 */ 
 bool is_rational () const; 
 
-/*! 
+/*!
 casts `p` to a point with rational coordinates. 
 \pre `p` has rational coordinates. 
 */ 
@@ -248,32 +248,32 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the supporting B&eacute;zier curve of `b`. 
 */ 
 Curve_2 supporting_curve () const; 
 
-/*! 
+/*!
 returns the source point of `b`. 
 */ 
 Point_2 source () const; 
 
-/*! 
+/*!
 returns the target point of `b`. 
 */ 
 Point_2 target () const; 
 
-/*! 
+/*!
 returns the left (\f$ xy\f$-lexicographically smaller) endpoint of `b`. 
 */ 
 Point_2 left () const; 
 
-/*! 
+/*!
 returns the right (\f$ xy\f$-lexicographically smaller) endpoint of `b`. 
 */ 
 Point_2 right () const; 
 
-/*! 
+/*!
 return the approximate parameter range defining the subcurve `b`. 
 */ 
 std::pair<double, double> parameter_range () const; 

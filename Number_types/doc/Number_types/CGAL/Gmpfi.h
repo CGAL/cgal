@@ -39,7 +39,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type representing the precision (number of bits 
 used to represent the mantissa) of a number. 
 */ 
@@ -57,12 +57,12 @@ typedef unspecified_type Precision_type;
 /// included in the constructed interval.
 /// @{
 
-/*! 
+/*!
 creates an uninitialized `Gmpfi` interval `i`. 
 */ 
 Gmpfi(Precision_type p=get_default_precision()); 
 
-/*! 
+/*!
 creates a `Gmpfi` initialized with the value of `t`. 
 `T` is `Gmpfr`, `Gmpq`, or any type from which 
 `Gmpfr` can be constructed from. The rounding of the 
@@ -71,7 +71,7 @@ endpoints will guarantee that `t` is included in `i`.
 template <class T> 
 Gmpfi(const T& t,Precision_type p=get_default_precision()); 
 
-/*! 
+/*!
 creates a `Gmpfi` initialized with endpoints `left` 
 and `right`. The rounding of the endpoints will guarantee 
 that ([`left`,`right`]) is included in `i`. 
@@ -80,7 +80,7 @@ Gmpfi(const Gmpfr &left,
 const Gmpfr &right, 
 Precision_type p=get_default_precision()); 
 
-/*! 
+/*!
 creates a `Gmpfi` initialized with endpoints 
 `endpoints.first` and `endpoints.second`. `L` and 
 `R` are types from which `Gmpfr` can be constructed 
@@ -98,35 +98,35 @@ Precision_type p=get_default_precision());
 
 /// @{
 
-/*! 
+/*!
 Returns the smallest (or <I>inferior</I>) `Gmpfr` endpoint of 
 `i`. 
 */ 
 Gmpfr inf() const; 
 
-/*! 
+/*!
 Returns the largest (or <I>superior</I>) `Gmpfr` endpoint of 
 `i`. 
 */ 
 Gmpfr sup()const; 
 
-/*! 
+/*!
 Returns the default precision. 
 */ 
 static Precision_type get_default_precision(); 
 
-/*! 
+/*!
 Sets the default precision to `prec` and returns the 
 old value. 
 */ 
 static Precision_type set_default_precision(Precision_type prec); 
 
-/*! 
+/*!
 Returns the precision of `i`. 
 */ 
 Precision_type get_precision()const; 
 
-/*! 
+/*!
 Returns the value of the number, rounded with precision `p`. 
 */ 
 Gmpfi round(Precision_type p)const; 
@@ -157,42 +157,42 @@ family of functions, it is defined as in the overloaded operators.
 /// @{
 static Gmpfi add (const Gmpfi &a,const Gmpfi &b,Precision_type p=0); 
 
-/*! 
+/*!
 Returns the absolute value of `i`, with precision `p`. 
 If `p` is not specified, the precision used is the maximum 
 between `i`'s precision and the default. 
 */ 
 Gmpfi abs(Precision_type p)const; 
 
-/*! 
+/*!
 Returns the square root of `i`, with precision `p`. 
 If `p` is not specified, the precision used is the maximum 
 between `i`'s precision and the default. 
 */ 
 Gmpfi sqrt(Precision_type p)const; 
 
-/*! 
+/*!
 Returns the k-th root of `i`, with precision `p`. 
 If `p` is not specified, the precision used is the maximum 
 between `i`'s precision and the default. 
 */ 
 Gmpfi kthroot(int k,Precision_type p)const; 
 
-/*! 
+/*!
 Returns the square of `i`, with precision `p`. If 
 `p` is not specified, the precision used is the maximum 
 between `i`'s precision and the default. 
 */ 
 Gmpfi square(Precision_type p)const; 
 
-/*! 
+/*!
 Returns an interval of doubles which contains `i`. If a 
 rounded endpoint does not fit in a double, sets its value to plus 
 or minus infinity and the `overflow` or `underflow` flag. 
 */ 
 std::pair<double,double> to_interval()const; 
 
-/*! 
+/*!
 Returns \f$ (m,e)\f$ such that \f$ m \times2^e\f$ is the center of 
 `i`, rounded to nearest. If one of the endpoints of `i` is 
 `NaN` or infinity, then the corresponding double is returned, 
@@ -201,7 +201,7 @@ error flag.
 */ 
 std::pair<double,long> to_double_exp()const; 
 
-/*! 
+/*!
 Returns \f$ ((m_1,m_2),e)\f$, such that \f$ [m_1 \times2^e,m_2 
 \times2^e]\f$ contains `i`. If one of the endpoints of 
 `i` is `NaN` or infinity, then the corresponding doubles 
@@ -222,20 +222,20 @@ The class provides also functions to test efficiently some special kinds of comp
 
 /// @{
 
-/*! 
+/*!
 Returns `true` iff left endpoints of `i` and 
 `j` are equal and right endpoints of them are also equal. Note 
 that this does not mean equality between `i` and `j`. 
 */ 
 bool is_same(const Gmpfi &j)const; 
 
-/*! 
+/*!
 Returns `true` iff `i` and `j` overlap, 
 i.e., iff they have points in common. 
 */ 
 bool do_overlap(const Gmpfi &j)const; 
 
-/*! 
+/*!
 If `i` and `j` do not overlap, this function returns 
 the result of the comparison. Otherwise, it returns 
 `indeterminate`. 
@@ -247,57 +247,57 @@ Uncertain<Comparison_result> compare(const Gmpfi &j)const;
 /// \name Query Functions 
 /// @{
 
-/*! 
+/*!
 Returns `true` iff both endpoints are equal. 
 */ 
 bool is_point()const; 
 
-/*! 
+/*!
 Returns `true` iff at least one of the endpoints is 
 `NaN`. 
 */ 
 bool is_nan()const; 
 
-/*! 
+/*!
 Returns `true` iff at least one of the endpoints is plus or 
 minus infinity. 
 */ 
 bool is_inf()const; 
 
-/*! 
+/*!
 Returns `true` iff `i` is a bounded interval, i.e., its 
 endpoints are neither invalid nor infinite. 
 */ 
 bool is_number()const; 
 
-/*! 
+/*!
 Returns `true` if both endpoints are zero, `false` if 
 the interval does not contain zero and `indeterminate` 
 otherwise. 
 */ 
 Uncertain<bool> is_zero()const; 
 
-/*! 
+/*!
 Returns `true` if both endpoints are one, `false` 
 if the interval does not contain one and `indeterminate` 
 otherwise. 
 */ 
 Uncertain<bool> is_one()const; 
 
-/*! 
+/*!
 If all numbers contained in the interval have the same sign, this 
 function returns it. Otherwise it returns `indeterminate`. 
 */ 
 Uncertain<Sign> sign()const; 
 
-/*! 
+/*!
 Returns `true` if all numbers contained in the interval 
 are positive, false if all of them are negative or zero and 
 `indeterminate` otherwise. 
 */ 
 Uncertain<bool> is_positive()const; 
 
-/*! 
+/*!
 Returns `true` if all numbers contained in the interval 
 are negative, false if all of them are positive or zero and 
 `indeterminate` otherwise. 
@@ -309,7 +309,7 @@ Uncertain<bool> is_negative()const;
 
 }; /* end Gmpfi */
 
-/*! 
+/*!
 Reads `i` from `is`. `is` must have the form 
 `[inf,sup]`, where `inf` and `sup` have valid 
 `Gmpfr` input formats. 
@@ -317,7 +317,7 @@ Reads `i` from `is`. `is` must have the form
 */ 
 std::istream& operator>>(std::istream &is,Gmpfi i); 
 
-/*! 
+/*!
 Writes `i` to `os`, in the form `[i.inf(),i.sup()]`. 
 The endpoints are written according to the `Gmpfr` formatting. 
 \relates Gmpfi 

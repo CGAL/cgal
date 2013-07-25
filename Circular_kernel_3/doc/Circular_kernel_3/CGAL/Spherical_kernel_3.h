@@ -35,12 +35,12 @@ public:
 /// `Kernel::FT`.
 /// @{
 
-/*! 
+/*!
 Ring number type. 
 */ 
 typedef AlgebraicKernelForSpheres::RT RT; 
 
-/*! 
+/*!
 Field number type. 
 */ 
 typedef AlgebraicKernelForSpheres::FT FT; 
@@ -57,17 +57,17 @@ typedef AlgebraicKernelForSpheres::FT FT;
 /// model of `AlgebraicKernelForSpheres::PolynomialsForCircles_3`.
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Line_arc_3<Spherical_kernel_3> Line_arc_3; 
 
-/*! 
+/*!
 
 */ 
 typedef Circular_arc_3<Spherical_kernel_3> Circular_arc_3; 
 
-/*! 
+/*!
 
 */ 
 typedef Circular_arc_point_3<Spherical_kernel_3> Circular_arc_point_3; 

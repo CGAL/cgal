@@ -28,7 +28,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Copies in the output iterator the factors of a square free 
 factorization of \f$ p\f$, with their multiplicity, as objects of type 
 `std::pair<AlgebraicKernel_d_1::Polynomial_1, AlgebraicKernel_d_1::Multiplicity_type>`. 

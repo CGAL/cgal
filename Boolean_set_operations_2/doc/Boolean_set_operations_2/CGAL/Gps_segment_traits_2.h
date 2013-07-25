@@ -24,7 +24,7 @@ public:
 /// `CGAL::Arr_segment_traits_2<Kernel>`.
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Polygon_2<Kernel,Container> Polygon_2; 

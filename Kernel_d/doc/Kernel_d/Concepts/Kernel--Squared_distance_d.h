@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 computes the square of the Euclidean 
 distance between the two points \f$ p\f$ and \f$ q\f$.
 

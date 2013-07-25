@@ -29,17 +29,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Boolean`. 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type first_argument; 
 
-/*! 
+/*!
 Is `AlgebraicStructureTraits::Type`. 
 */ 
 typedef unspecified_type second_argument; 
@@ -49,13 +49,13 @@ typedef unspecified_type second_argument;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes whether \f$ d\f$ divides \f$ n\f$. 
 */ 
 result_type operator()(first_argument_type d, 
 second_argument_type n); 
 
-/*! 
+/*!
 
 Computes whether \f$ d\f$ divides \f$ n\f$. 
 Moreover it computes \f$ c\f$ if \f$ d\f$ divides \f$ n\f$, 

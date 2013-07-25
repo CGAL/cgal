@@ -21,22 +21,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 Segment type. 
 */ 
 typedef unspecified_type Segment_3; 
 
-/*! 
+/*!
 Triangle type. 
 */ 
 typedef unspecified_type Triangle_3; 
 
-/*! 
+/*!
 Function object that detects an intersection between a 3D segment and a 3D triangle. 
 Provides the operators: 
 
@@ -49,7 +49,7 @@ have a non empty intersection.
 */ 
 typedef unspecified_type Do_intersect_3; 
 
-/*! 
+/*!
 Function object that constructs the intersection 
 between a 3D segment and a 3D triangle. 
 Provides the operators: 
@@ -70,13 +70,13 @@ typedef unspecified_type Intersect_3;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the intersection detection functor. 
 */ 
 Do_intersect_3 
 do_intersect_3_object(); 
 
-/*! 
+/*!
 Returns the intersection constructor. 
 */ 
 Intersect_3 

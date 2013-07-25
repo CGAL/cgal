@@ -53,7 +53,7 @@ public:
   /// \name Creation 
   /// @{
 
-  /*! 
+  /*!
     %Default constructor. 
   */ 
   Polyhedron_items_with_id_3(); 

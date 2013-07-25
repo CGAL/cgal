@@ -25,14 +25,14 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Handle type for the cells of the 
 triangulation. Must match the `Cell_handle` type in the 
 triangulation type used by the mesh generation function. 
 */ 
 typedef unspecified_type Cell_handle; 
 
-/*! 
+/*!
 Type representing the quality of a 
 cell. Must be a model of CopyConstructible and 
 LessThanComparable. Between two cells, the one which has the lower 
@@ -40,7 +40,7 @@ quality must have the lower `Cell_quality`.
 */ 
 typedef unspecified_type Cell_quality; 
 
-/*! 
+/*!
 Type representing if a cell is bad or not. Must 
 be convertible to `bool`. If it converts to `true` then the cell is bad, otherwise 
 the cell is good with regard to the criteria. 
@@ -57,7 +57,7 @@ typedef unspecified_type Is_cell_bad;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns `Is_cell_bad` value of cell `c`. 
 */ 
 Is_cell_bad operator()(Cell_handle c); 

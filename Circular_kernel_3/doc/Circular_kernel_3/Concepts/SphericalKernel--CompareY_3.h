@@ -24,7 +24,7 @@ public:
 /// An object of this type must provide in addition:
 /// @{
 
-/*! 
+/*!
 Compares the \f$ y\f$-coordinates of `p` and `q`. 
 */ 
 Comparison_result operator() 

@@ -17,7 +17,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_2::Algebraic_real_2 result_type; 
@@ -27,27 +27,27 @@ typedef AlgebraicKernel_d_2::Algebraic_real_2 result_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 introduces an `AlgebraicKernel_d_2::Algebraic_real_2` initialized to \f$ (x,y)\f$. 
 */ 
 result_type operator()(int x, int y); 
 
-/*! 
+/*!
 introduces an `AlgebraicKernel_d_2::Algebraic_real_2` initialized to \f$ (x,y)\f$. 
 */ 
 result_type operator()(AlgebraicKernel_d_2::Bound x,AlgebraicKernel_d_2::Bound y); 
 
-/*! 
+/*!
 introduces an `AlgebraicKernel_d_2::Algebraic_real_2` initialized to \f$ (x,y)\f$. 
 */ 
 result_type operator()(AlgebraicKernel_d_2::Coefficient x,AlgebraicKernel_d_2::Coefficient y); 
 
-/*! 
+/*!
 introduces an `AlgebraicKernel_d_2::Algebraic_real_2` initialized to \f$ (x,y)\f$. 
 */ 
 result_type operator()(AlgebraicKernel_d_2::Algebraic_real_1 x,AlgebraicKernel_d_2::Algebraic_real_1 y); 
 
-/*! 
+/*!
 
 introduces an `AlgebraicKernel_d_2::Algebraic_real_2` 
 initialized to the \f$ i\f$-th real common solution of \f$ f\f$ and \f$ g\f$, 
@@ -63,7 +63,7 @@ AlgebraicKernel_d_2::Polynomial_2 f,
 AlgebraicKernel_d_2::Polynomial_2 g, 
 AlgebraicKernel_d_2::size_type i); 
 
-/*! 
+/*!
 introduces an `AlgebraicKernel_d_2::Algebraic_real_2` initialized to the only real intersection of 
 \f$ f\f$ and \f$ g\f$ in the open box \f$ B = (x_l,x_u)\times(y_l,y_u)\f$. 
 \pre \f$ x_l < x_u\f$ 

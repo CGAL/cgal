@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Given two \f$ x\f$-monotone curves `xcv1` and `xcv2` and an 
 enumeration `ce` that specifies either the minimum ends or the 
 maximum ends of the curves where the curves have a vertical 

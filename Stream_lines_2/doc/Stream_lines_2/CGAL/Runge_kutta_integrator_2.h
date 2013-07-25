@@ -19,7 +19,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates a Runge-Kutta second order integrator with `integration_step` as integration step. 
 */ 
 Runge_kutta_integrator_2(const FT & integration_step); 

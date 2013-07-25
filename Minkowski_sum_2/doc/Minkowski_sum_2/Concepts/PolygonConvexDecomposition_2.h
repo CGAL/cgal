@@ -19,17 +19,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the geometric kernel type. 
 */ 
 typedef unspecified_type Kernel; 
 
-/*! 
+/*!
 the point type, used to represent polygon vertices. 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 the polygon type. 
 */ 
 typedef unspecified_type Polygon_2; 
@@ -39,7 +39,7 @@ typedef unspecified_type Polygon_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 PolygonConvexDecomposition_2 (); 
@@ -49,7 +49,7 @@ PolygonConvexDecomposition_2 ();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 decomposes the input polygon `P` into convex sub-polygons, 
 and writes them to the output iterator `oi`. The value-type of the 
 output iterator must be `Polygon_2`. 

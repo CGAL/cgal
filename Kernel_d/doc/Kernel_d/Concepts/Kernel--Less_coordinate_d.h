@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns `true` iff the \f$ i\f$th %Cartesian coordinate 
 of `p` is 
 smaller than the \f$ i\f$th %Cartesian coordinate of `q`.

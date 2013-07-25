@@ -34,12 +34,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Index type. Must match the type `MeshDomain_3::Index`. 
 */ 
 typedef unspecified_type Index;
 
-/*! 
+/*!
 Numerical type. 
 */ 
 typedef unspecified_type FT; 
@@ -49,22 +49,22 @@ typedef unspecified_type FT;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the dimension of the lowest dimensional face of the input 3D complex that contains the vertex. 
 */ 
 int in_dimension() const; 
 
-/*! 
+/*!
 Sets the dimension of the lowest dimensional face of the input 3D complex that contains the vertex. 
 */ 
 void set_dimension(int); 
 
-/*! 
+/*!
 Returns the index of the lowest dimensional face of the input 3D complex that contains the vertex. 
 */ 
 Index index(); 
 
-/*! 
+/*!
 Sets the index of the lowest dimensional face of the input 3D complex that contains the vertex. 
 */ 
 void set_index(Index); 
@@ -87,12 +87,12 @@ Sets the special aspect of the vertex.
 */
 void set_special(bool); 
 
-/*! 
+/*!
 
 */ 
 FT meshing_info() const; 
 
-/*! 
+/*!
 
 */ 
 void set_meshing_info(FT); 

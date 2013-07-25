@@ -18,7 +18,7 @@ public:
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 specifies the dimension of the spheres you want to 
 compute the minsphere of. 
 */ 
@@ -29,28 +29,28 @@ typedef unspecified_type D;
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 is a typedef to to some class representing a sphere. 
 (The package will compute the minsphere of spheres of type 
 `Sphere`.) The type `Sphere` must provide a copy constructor. 
 */ 
 typedef unspecified_type Sphere; 
 
-/*! 
+/*!
 is a (exact or inexact) field number type. 
 
 \cgalRequires Currently, `FT` must either be `double` or `float`, or an exact field number type. (An <I>exact</I> number type is one which evaluates arithmetic expressions involving the four basic operations and comparisions with infinite precision, that is, like in \f$ \mathbb{R}\f$.) 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 non-mutable model of the STL 
 concept `ForwardIterator` with value type `FT`. Used 
 to access the center coordinates of a sphere. 
 */ 
 typedef unspecified_type Cartesian_const_iterator; 
 
-/*! 
+/*!
 must typedef to either 
 `CGAL::Tag_true` or `CGAL::Tag_false`. The algorithm 
 uses (depending on the type 
@@ -68,7 +68,7 @@ square-roots are disabled (due to lacking hardware support).
 */ 
 typedef unspecified_type Use_square_roots; 
 
-/*! 
+/*!
 selects the method to compute the minsphere 
 with. It must typedef to either `CGAL::Default_algorithm`, 
 `CGAL::LP_algorithm` or `CGAL::Farthest_first_heuristic`. 
@@ -95,14 +95,14 @@ typedef unspecified_type Algorithm;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the radius of sphere `s`. 
 \post The returned number is greater or equal to \f$ 0\f$. 
 */ 
 FT radius(const 
 Sphere& s); 
 
-/*! 
+/*!
 
 returns an iterator referring to the first of the `D` %Cartesian 
 coordinates of the center of `s`. 

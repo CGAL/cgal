@@ -46,7 +46,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the geometric traits class. 
 */ 
 typedef CDT::Geom_traits Geom_traits; 
@@ -56,7 +56,7 @@ typedef CDT::Geom_traits Geom_traits;
 
 
 
-/*! 
+/*!
 const iterator over defined seeds. Its 
 value type is `Geom_traits::Point_2`. 
 */ 
@@ -68,7 +68,7 @@ typedef unspecified_type Seeds_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Create a new mesher, working on `t`, with meshing criteria 
 `criteria`. 
 */ 
@@ -85,7 +85,7 @@ Delaunay_mesher_2(CDT& t, Criteria criteria = Criteria());
 /// The following functions are used to define seeds. 
 /// @{
 
-/*! 
+/*!
 Sets seeds to the empty set. All 
 finite connected components of the constrained triangulation will be 
 refined. 
@@ -96,7 +96,7 @@ void clear_seeds ();
 
 
 
-/*! 
+/*!
 Sets seeds to the sequence `[begin, end)`. If `mark==true`, the mesh domain 
 is the union of the bounded connected 
 components including at least one seed. If 
@@ -115,7 +115,7 @@ const bool mark=false);
 
 
 
-/*! 
+/*!
 Start of the seeds sequence. 
 */ 
 Seeds_const_iterator seeds_begin () const; 
@@ -124,7 +124,7 @@ Seeds_const_iterator seeds_begin () const;
 
 
 
-/*! 
+/*!
 Past the end of the seeds sequence. 
 */ 
 Seeds_const_iterator seeds_end () const; 
@@ -145,7 +145,7 @@ by a call to `set_bad_faces`.
 */
 /// @{
 
-/*! 
+/*!
 Refines the constrained Delaunay triangulation into a mesh 
 satisfying the criteria defined by the traits. 
 
@@ -156,7 +156,7 @@ void refine_mesh();
 
 
 
-/*! 
+/*!
 Returns a const reference to the criteria traits object. 
 */ 
 const Criteria& get_criteria(); 
@@ -165,7 +165,7 @@ const Criteria& get_criteria();
 
 
 
-/*! 
+/*!
 Assigns `criteria` to the criteria traits object. 
 */ 
 void set_criteria(Criteria criteria); 
@@ -174,7 +174,7 @@ void set_criteria(Criteria criteria);
 
 
 
-/*! 
+/*!
 Assigns `criteria` to the criteria traits object. If 
 `recalculate_bad_faces` is `false`, the list of bad faces is 
 let empty and the function `set_bad_faces` should be called before 
@@ -187,7 +187,7 @@ recalculate_bad_faces);
 
 
 
-/*! 
+/*!
 This method permits to set the list of bad triangles 
 directly, from the sequence `[begin, end)`, so that the 
 algorithm will not scan the whole set of triangles to 
@@ -212,7 +212,7 @@ InputIterator end);
 /// meshing algorithm step by step, using the following methods. 
 /// @{
 
-/*! 
+/*!
 This method must be called just before the first 
 call to the following step by step refinement method, 
 that is when all vertices and constrained edges have been 
@@ -227,7 +227,7 @@ void init();
 
 
 
-/*! 
+/*!
 Tests if the step by step refinement algorithm is done. If it returns 
 `true`, the following calls to `step_by_step_refine_mesh` will 
 not insert any points, until some new constrained segments or points are 
@@ -239,7 +239,7 @@ bool is_refinement_done();
 
 
 
-/*! 
+/*!
 Applies one step of the algorithm, by inserting one point, if the 
 algorithm is not done. Returns `false` iff no point has been inserted 
 because the algorithm is done. 

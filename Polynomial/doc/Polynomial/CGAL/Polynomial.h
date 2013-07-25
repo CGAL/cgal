@@ -71,27 +71,27 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces an variable initialized with 0. 
 */ 
 Polynomial (); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 Polynomial (const Polynomial& x); 
 
-/*! 
+/*!
 Constructor from int. 
 */ 
 Polynomial (const int &i); 
 
-/*! 
+/*!
 Constructor from type Coeff. 
 */ 
 Polynomial (const Coeff &x); 
 
-/*! 
+/*!
 Constructor from iterator range with value type Coeff. 
 */ 
 template <class Forward_iterator> 
@@ -102,27 +102,27 @@ Polynomial(Forward_iterator first, Forward_iterator last);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 A const random access iterator pointing to the constant coefficient. 
 */ 
 const_iterator begin() const; 
 
-/*! 
+/*!
 A const random access iterator pointing beyond the leading coefficient. 
 */ 
 const_iterator end() const; 
 
-/*! 
+/*!
 The degree of the polynomial in \f$ x\f$. The degree of the zero polynomial is 0. 
 */ 
 int degree() const; 
 
-/*! 
+/*!
 Const access to the coefficient of \f$ x^i\f$. 
 */ 
 const NT& operator[](unsigned int i) const; 
 
-/*! 
+/*!
 Const access to the leading coefficient. 
 */ 
 const NT& lcoeff() const; 
@@ -132,7 +132,7 @@ const NT& lcoeff() const;
 }; /* end Polynomial */
 
 
-/*! 
+/*!
 Writes `poly` to ostream `os`. 
 The format depends on the `CGAL::IO::MODE` of `os`. 
 In case the mode is `CGAL::IO::ASCII` the format is \f$ P[d(0,a_0)(1,a_1)\dots(d,a_d)]\f$, 
@@ -144,7 +144,7 @@ In case the mode is `CGAL::IO::PRETTY` the format is human readable.
 
 std::ostream& operator<<(std::ostream& os, const Polynomial<Coeff> &poly); 
 
-/*! 
+/*!
 Reads `poly` from istream `is` in format \f$ P[d(0,a_0)(1,a_1)\dots(d,a_d)]\f$, 
 the output format in mode `CGAL::IO::ASCII`. 
 \relates Polynomial 

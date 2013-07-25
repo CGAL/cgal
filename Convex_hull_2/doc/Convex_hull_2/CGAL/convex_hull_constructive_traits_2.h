@@ -26,38 +26,38 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef R::Point_2 Point_2; 
 
-/*! 
+/*!
 
 */ 
 typedef R::Less_xy_2 Less_xy_2; 
 
-/*! 
+/*!
 
 */ 
 typedef R::Less_yx_2 Less_yx_2; 
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::r_Less_dist_to_line<R> 
 Less_signed_distance_to_line_2; 
 
-/*! 
+/*!
 
 */ 
 typedef R::Less_rotate_ccw Less_rotate_ccw_2; 
 
-/*! 
+/*!
 
 */ 
 typedef R::Left_turn_2 Left_turn_2; 
 
-/*! 
+/*!
 
 */ 
 typedef R::Equal_2 Equal_2; 
@@ -67,7 +67,7 @@ typedef R::Equal_2 Equal_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Convex_hull_constructive_traits_2(); 
@@ -77,34 +77,34 @@ Convex_hull_constructive_traits_2();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Less_xy_2 less_xy_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_yx_2 less_yx_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_signed_distance_to_line_2 
 less_signed_distance_to_line_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Less_rotate_ccw_2 
 less_rotate_ccw_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Left_turn_2 left_turn_2_object(); 
 
-/*! 
+/*!
 
 */ 
 Equal_2 equal_2_object(); 

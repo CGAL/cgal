@@ -22,7 +22,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 An iterator for enumerating the 
 Cartesian coordinates of a vector. 
 */ 
@@ -33,48 +33,48 @@ typedef unspecified_type Cartesian_const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces the vector `b-a`. 
 */ 
 Vector_2(const Point_2<Kernel> &a, const Point_2<Kernel> &b); 
 
-/*! 
+/*!
 introduces the vector `s.target()-s.source()`. 
 */ 
 Vector_2(const Segment_2<Kernel> &s); 
 
-/*! 
+/*!
 introduces the vector having the same direction as `r`. 
 */ 
 Vector_2(const Ray_2<Kernel> &r); 
 
-/*! 
+/*!
 introduces the vector having the same direction as `l`. 
 */ 
 Vector_2(const Line_2<Kernel> &l); 
 
-/*! 
+/*!
 introduces a null vector `v`. 
 */ 
 Vector_2(const Null_vector &NULL_VECTOR); 
 
-/*! 
+/*!
 introduces a vector `v` initialized to `(x,y)`. 
 */ 
 Vector_2(int x, int y); 
 
-/*! 
+/*!
 introduces a vector `v` initialized to `(x,y)`. 
 */ 
 Vector_2(double x, double y); 
 
-/*! 
+/*!
 introduces a vector `v` initialized to `(hx/hw,hy/hw)`. 
 \pre \f$ hw\neq0\f$. 
 */ 
 Vector_2(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = RT(1)); 
 
-/*! 
+/*!
 introduces a vector `v` initialized to `(x,y)`. 
 */ 
 Vector_2(const Kernel::FT &x, const Kernel::FT &y); 
@@ -84,14 +84,14 @@ Vector_2(const Kernel::FT &x, const Kernel::FT &y);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Test for equality: two vectors are equal, iff their \f$ x\f$ and \f$ y\f$ 
 coordinates are equal. You can compare a vector with the 
 `NULL_VECTOR`. 
 */ 
 bool operator==(const Vector_2<Kernel> &w) const; 
 
-/*! 
+/*!
 Test for inequality. You can compare a vector with the 
 `NULL_VECTOR`. 
 */ 
@@ -107,27 +107,27 @@ bool operator!=(const Vector_2<Kernel> &w) const;
 /// `FieldNumberType` is a quotient.
 /// @{
 
-/*! 
+/*!
 returns the homogeneous \f$ x\f$ coordinate. 
 */ 
 Kernel::RT hx() const; 
 
-/*! 
+/*!
 returns the homogeneous \f$ y\f$ coordinate. 
 */ 
 Kernel::RT hy() const; 
 
-/*! 
+/*!
 returns the homogenizing coordinate. 
 */ 
 Kernel::RT hw() const; 
 
-/*! 
+/*!
 returns the `x`-coordinate of `v`, that is `hx()`/`hw()`. 
 */ 
 Kernel::FT x() const; 
 
-/*! 
+/*!
 returns the `y`-coordinate of `v`, that is `hy()`/`hw()`. 
 */ 
 Kernel::FT y() const; 
@@ -141,52 +141,52 @@ Kernel::FT y() const;
 /// @{
 
 
-/*! 
+/*!
 returns the i'th homogeneous coordinate of `v`, starting with 0. 
 \pre \f$ 0\leq i \leq2\f$. 
 */ 
 Kernel::RT homogeneous(int i) const; 
 
-/*! 
+/*!
 returns the i'th Cartesian coordinate of `v`, starting at 0. 
 \pre \f$ 0\leq i \leq1\f$. 
 */ 
 Kernel::FT cartesian(int i) const; 
 
-/*! 
+/*!
 returns `cartesian(i)`. 
 \pre \f$ 0\leq i \leq1\f$. 
 */ 
 Kernel::FT operator[](int i) const; 
 
-/*! 
+/*!
 returns an iterator to the Cartesian coordinates 
 of `v`, starting with the 0th coordinate. 
 */ 
 Cartesian_const_iterator cartesian_begin() const; 
 
-/*! 
+/*!
 returns an off the end iterator to the Cartesian 
 coordinates of `v`. 
 */ 
 Cartesian_const_iterator cartesian_end() const; 
 
-/*! 
+/*!
 returns the dimension (the constant 2). 
 */ 
 int dimension() const; 
 
-/*! 
+/*!
 returns the direction which passes through `v`. 
 */ 
 Direction_2<Kernel> direction() const; 
 
-/*! 
+/*!
 returns the vector obtained by applying `t` on `v`. 
 */ 
 Vector_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const; 
 
-/*! 
+/*!
 returns the vector perpendicular to `v` in clockwise or 
 counterclockwise orientation. 
 */ 
@@ -200,7 +200,7 @@ Vector_2<Kernel> perpendicular(const Orientation &o) const;
 /// \ingroup Kernel_operator_plus
 ///@{
 
-/*! 
+/*!
 Addition. 
 */ 
 Vector_2<Kernel> operator+(const Vector_2<Kernel> &w) const; 
@@ -211,29 +211,29 @@ Vector_2<Kernel> operator+(const Vector_2<Kernel> &w) const;
 /// \ingroup Kernel_operator_minus
 ///@{
 
-/*! 
+/*!
 Subtraction. 
 */ 
 Vector_2<Kernel> operator-(const Vector_2<Kernel> &w) const; 
 
 /// @}
 
-/*! 
+/*!
 returns the opposite vector. 
 */ 
 Vector_2<Kernel> operator-() const; 
 
-/*! 
+/*!
 returns the scalar product (= inner product) of the two vectors. 
 */ 
 Kernel::FT operator*(const Vector_2<Kernel> &w) const; 
 
-/*! 
+/*!
 Division by a scalar. 
 */ 
 Vector_2<Kernel> operator/(const Kernel::RT &s) const; 
 
-/*! 
+/*!
 returns the squared length of `v`. 
 */ 
 Kernel::FT squared_length() const; 
@@ -246,28 +246,28 @@ Kernel::FT squared_length() const;
 /// \ingroup Kernel_operator_prod
 ///@{
 
-/*! 
+/*!
 Multiplication with a scalar from the right. 
 \relates Vector_2 
 */ 
 Vector_2<Kernel> 
 operator*(const Vector_2<Kernel> &v, const Kernel::RT &s); 
 
-/*! 
+/*!
 Multiplication with a scalar from the right. 
 \relates Vector_2 
 */ 
 Vector_2<Kernel> 
 operator*(const Vector_2<Kernel> &v, const Kernel::FT &s); 
 
-/*! 
+/*!
 Multiplication with a scalar from the left. 
 \relates Vector_2 
 */ 
 Vector_2<Kernel> 
 operator*(const Kernel::RT &s, const Vector_2<Kernel> &v); 
 
-/*! 
+/*!
 Multiplication with a scalar from the left. 
 \relates Vector_2 
 */ 

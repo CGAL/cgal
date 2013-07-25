@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 accepts an input curve `xc` and a split point `p` in its 
 interior. It splits `xc` at the split point into two subcurves `xc1` 
 and `xc2`, such that `p` is `xc1`'s <I>right</I> endpoint and 

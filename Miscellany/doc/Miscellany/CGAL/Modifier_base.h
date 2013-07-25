@@ -49,7 +49,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the internal representation type. 
 */ 
 typedef R Representation; 
@@ -59,7 +59,7 @@ typedef R Representation;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 \post `rep` is a valid representation. 
 */ 
 virtual void operator()( R& rep); 

@@ -17,7 +17,7 @@ public:
 
 /// \name Constants 
 /// @{ 
-/*! 
+/*!
 
 */ 
 static const bool value; 

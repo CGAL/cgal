@@ -62,37 +62,37 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the base traits-class. 
 */ 
 typedef Tr Base_traits_2; 
 
-/*! 
+/*!
 the base curve. 
 */ 
 typedef typename Base_traits_2::Curve_2 Base_curve_2; 
 
-/*! 
+/*!
 the base \f$ x\f$-monotone curve curve. 
 */ 
 typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2; 
 
-/*! 
+/*!
 the merge functor. 
 */ 
 typedef Mrg Merge; 
 
-/*! 
+/*!
 the conversion functor. 
 */ 
 typedef Cnv Convert; 
 
-/*! 
+/*!
 the type of data associated with curves. 
 */ 
 typedef CData Curve_data; 
 
-/*! 
+/*!
 the type of data associated with \f$ x\f$-monotone curves. 
 */ 
 typedef XData X_monotone_curve_data; 
@@ -116,18 +116,18 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Curve_2 (); 
 
-/*! 
+/*!
 constructs curve from the given `base` curve with uninitialized 
 data field. 
 */ 
 Curve_2 (const Base_curve_2& base); 
 
-/*! 
+/*!
 constructs curve from the given `base` curve with an attached 
 `data` field. 
 */ 
@@ -138,13 +138,13 @@ Curve_2 (const Base_curve_2& base, const Data& data);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the data field (a non-const version, which returns a reference 
 to the data object, is also available). 
 */ 
 const Curve_data& data () const; 
 
-/*! 
+/*!
 sets the data field. 
 */ 
 void set_data (const Curve_data& data); 
@@ -166,18 +166,18 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 X_monotone_curve_2 (); 
 
-/*! 
+/*!
 constructs an \f$ x\f$-monotone curve from the given `base` curve with 
 uninitialized data field. 
 */ 
 X_monotone_curve_2 (const Base_x_monotone_curve_2& base); 
 
-/*! 
+/*!
 constructs an \f$ x\f$-monotone curve from the given `base` \f$ x\f$-monotone 
 curve with an attached `data` field. 
 */ 
@@ -189,13 +189,13 @@ const X_monotone_curve_data& data);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the field (a non-const version, which returns a reference 
 to the data object, is also available). 
 */ 
 const X_monotone_curve_data& data () const; 
 
-/*! 
+/*!
 sets the data field. 
 */ 
 void set_data (const X_monotone_curve_data& data); 

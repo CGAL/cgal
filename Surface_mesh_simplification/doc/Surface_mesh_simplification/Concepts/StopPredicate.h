@@ -16,22 +16,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
 */ 
 typedef unspecified_type ECM; 
 
-/*! 
+/*!
 A field type representing the collapse cost 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 An integer type representing the number of edges 
 */ 
 typedef unspecified_type size_type; 
 
-/*! 
+/*!
 The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
 */ 
 typedef unspecified_type Profile; 
@@ -41,7 +41,7 @@ typedef unspecified_type Profile;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 This predicate is called each time an edge is selected for processing, 
 before it is collapsed. 

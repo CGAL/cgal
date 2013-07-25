@@ -21,7 +21,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Construct the object and make all the connections with the appropriate other objects. 
 */ 
 Qt_widget_2(KineticTriangulation_2::Handle,QtWidget_2::Handle,QtMovingPoints_2::Handle); 

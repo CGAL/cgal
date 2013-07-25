@@ -39,22 +39,22 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Point_3<K> Point_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Segment_3<K> Segment_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Triangle_3<K> Triangle_2; 
 
-/*! 
+/*!
 
 */ 
 typedef Line_3<K> Line_2;
@@ -73,7 +73,7 @@ typedef Line_3<K> Line_2;
 /// new point is constructed.
 /// @{
 
-/*! 
+/*!
 A construction object. 
 Provides the operator : 
 
@@ -95,19 +95,19 @@ typedef unspecified_type Intersect_2;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 default constructor. 
 */ 
 Projection_traits_xy_3(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Projection_traits_xy_3( 
 Projection_traits_xy_3 tr); 
 
-/*! 
+/*!
 Assignment operator. 
 */ 
 Projection_traits_xy_3 operator=(Projection_traits_xy_3 tr); 

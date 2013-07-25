@@ -69,14 +69,14 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 number type to represent the box 
 boundaries. Allowed are the built-in types `int`, `unsigned 
 int`, `float`, and `double`. 
 */ 
 typedef unspecified_type NT; 
 
-/*! 
+/*!
 type for the box `id`-number. 
 */ 
 typedef std::size_t ID; 
@@ -86,20 +86,20 @@ typedef std::size_t ID;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. No 
 particular initialization. 
 */ 
 Box_with_handle_d(); 
 
-/*! 
+/*!
 initializes to the 
 complete or the empty space. If empty, all interval starting (end) 
 points will be set to positive (negative) infinity, sets handle to \f$ h\f$. 
 */ 
 Box_with_handle_d(bool complete, Handle h); 
 
-/*! 
+/*!
 initializes 
 the box intervals to [`lo[i]`,`hi[i]`], \f$ 0 \leq i < D\f$ and 
 sets the handle to \f$ h\f$. 
@@ -107,14 +107,14 @@ sets the handle to \f$ h\f$.
 */ 
 Box_with_handle_d(NT lo[D], NT hi[D], Handle h); 
 
-/*! 
+/*!
 constructs 
 from bbox and sets the handle to \f$ h\f$, exists iff \f$ D=2\f$ and `NT`\f$ 
 \equiv\f$`double`. 
 */ 
 Box_with_handle_d( const Bbox_2& bbox, Handle h); 
 
-/*! 
+/*!
 constructs 
 from bbox and sets the handle to \f$ h\f$, exists iff \f$ D=3\f$ and `NT`\f$ 
 \equiv\f$`double`. 
@@ -126,14 +126,14 @@ Box_with_handle_d( const Bbox_3& bbox, Handle h);
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 initializes to the complete or 
 the empty space. If empty, all interval starting(end) points will be 
 set to positive(negative) infinity. 
 */ 
 void init( bool complete = false); 
 
-/*! 
+/*!
 extend `box` to contain the 
 old `box` and `point`. 
 */ 
@@ -144,17 +144,17 @@ void extend(NT point[D]);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the handle stored in `box`. 
 */ 
 Handle handle() const; 
 
-/*! 
+/*!
 returns \f$ D\f$, the dimension of the box. 
 */ 
 static int dimension(); 
 
-/*! 
+/*!
 returns a unique box id, see the 
 `IdPolicy` template parameter above for the different 
 choices. Does not exist if `ID_NONE` has been chosen for the 
@@ -162,23 +162,23 @@ choices. Does not exist if `ID_NONE` has been chosen for the
 */ 
 std::size_t id(); 
 
-/*! 
+/*!
 returns the lower boundary in dimension `d`, \f$ 0 \leq\f$`d`\f$ < D\f$. 
 */ 
 NT min_coord( int d) const; 
 
-/*! 
+/*!
 returns the upper boundary in dimension `d`, \f$ 0 \leq\f$`d`\f$ < D\f$. 
 */ 
 NT max_coord( int d) const; 
 
-/*! 
+/*!
 returns the bounding box iff 
 \f$ D=2\f$ and `NT`\f$ \equiv\f$`double`. 
 */ 
 const Bbox_2& bbox() const; 
 
-/*! 
+/*!
 returns the bounding box iff 
 \f$ D=3\f$ and `NT`\f$ \equiv\f$`double`. 
 */ 

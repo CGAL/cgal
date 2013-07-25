@@ -32,38 +32,38 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type. 
 */ 
 typedef Traits::Point_d Point_d; 
 
-/*! 
+/*!
 Number type. 
 */ 
 typedef Traits::FT FT; 
 
-/*! 
+/*!
 Distance type. 
 */ 
 typedef GeneralDistance Distance; 
 
-/*! 
+/*!
 Pair of point and transformed distance. 
 */ 
 typedef std::pair<Point_d,FT> Point_with_transformed_distance; 
 
-/*! 
+/*!
 Bidirectional const iterator with value type `Point_with_distance` 
 for enumerating approximate neighbors. 
 */ 
 typedef unspecified_type iterator; 
 
-/*! 
+/*!
 Query item type. 
 */ 
 typedef GeneralDistance::Query_item Query_item; 
 
-/*! 
+/*!
 The tree type. 
 */ 
 typedef SpatialTree Tree; 
@@ -73,7 +73,7 @@ typedef SpatialTree Tree;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructor for searching approximately `k` neighbors of the query item `q` 
 in the points stored in `tree` using 
 distance class `d` and approximation factor `eps`. `sorted` indicates 
@@ -87,17 +87,17 @@ bool search_nearest=true, GeneralDistance d=GeneralDistance(),bool sorted=true);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a const iterator to the approximate nearest or furthest neighbor. 
 */ 
 iterator begin() const; 
 
-/*! 
+/*!
 Returns the appropriate past-the-end const iterator. 
 */ 
 iterator end() const; 
 
-/*! 
+/*!
 Inserts statistics of the search process into the output stream `s`.
 */ 
 std::ostream& statistics(std::ostream& s); 

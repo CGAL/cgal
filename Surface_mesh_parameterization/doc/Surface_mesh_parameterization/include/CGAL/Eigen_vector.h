@@ -27,7 +27,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The internal vector type from \ref thirdpartyEigen "Eigen". 
 */ 
 typedef unspecified_type EigenType; 

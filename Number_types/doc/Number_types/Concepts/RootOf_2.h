@@ -53,22 +53,22 @@ public:
 /// `RT` and `FT`.
 /// @{
 
-/*! 
+/*!
 \pre `*this` and `a` are defined in the same extension. 
 */ 
 RootOf_2 & operator+=(const RootOf_2& a); 
 
-/*! 
+/*!
 \pre `a` and `b` are defined in the same extension. 
 */ 
 RootOf_2 operator+(const RootOf_2&a,const RootOf_2& b); 
 
-/*! 
+/*!
 
 */ 
 bool operator==(const RootOf_2&a,const RootOf_2& b); 
 
-/*! 
+/*!
 
 */ 
 bool operator< (const RootOf_2&a,const RootOf_2& b); 

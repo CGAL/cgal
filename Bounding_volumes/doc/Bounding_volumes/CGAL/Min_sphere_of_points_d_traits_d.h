@@ -35,7 +35,7 @@ public:
 /// \name Constants 
 /// @{
 
-/*! 
+/*!
 is the constant `Dim`. 
 */ 
 typedef unspecified_type D; 
@@ -48,38 +48,38 @@ typedef unspecified_type D;
 /// `Radius` and `Point`. Here's the complete list of defined types:
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Use_square_roots; 
 
-/*! 
+/*!
 
 */ 
 typedef unspecified_type Algorithm; 
 
-/*! 
+/*!
 is a typedef to the template parameter `FT` 
 */ 
 typedef unspecified_type Radius; 
 
-/*! 
+/*!
 is a typedef to `K::Point_d`. 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 is a typedef to 
 `Point`. 
 */ 
 typedef unspecified_type Sphere; 
 
-/*! 
+/*!
 is a typedef to 
 `K::Cartesian_const_iterator_d`. 
 */ 
@@ -93,13 +93,13 @@ typedef unspecified_type Cartesian_const_iterator;
 /// routines of class `K::Point_d`: 
 /// @{
 
-/*! 
+/*!
 returns `0`. 
 */ 
 FT radius(const 
 Sphere& s); 
 
-/*! 
+/*!
 maps to `s.cartesian_begin()`. 
 */ 
 Cartesian_const_iterator center_cartesian_begin(const 

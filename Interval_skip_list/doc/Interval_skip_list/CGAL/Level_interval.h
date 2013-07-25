@@ -23,7 +23,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The type of the \f$ z\f$-coordinate of points stored in vertices of faces. 
 */ 
 typedef FT Value; 
@@ -33,12 +33,12 @@ typedef FT Value;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Level_interval(); 
 
-/*! 
+/*!
 Constructs the interval with smallest and largest `z` coordinate of the points 
 stored in the vertices of the face `fh` points to. 
 */ 
@@ -49,7 +49,7 @@ Level_interval(FaceHandle fh);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the face handle. 
 */ 
 FaceHandle face_handle(); 
@@ -58,7 +58,7 @@ FaceHandle face_handle();
 
 }; /* end Level_interval */
 
-/*! 
+/*!
 Inserts the interval `i` into the stream `os`. 
 \pre The output operator for `*Face_handle` is defined. 
 \relates Level_interval 

@@ -18,7 +18,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 In dimension 3, index of the neighbor `n` that is next to the current cell, 
 when turning positively around an oriented edge whose endpoints are 
 indexed `i` and `j`. According to the usual numbering of 
@@ -28,13 +28,13 @@ opposite to this neighbor `n`. (see Figure \ref Triangulation3figutils).
 */ 
 static unsigned int next_around_edge(unsigned int i, unsigned int j); 
 
-/*! 
+/*!
 In dimension 3, index of the `j`'th vertex in counterclockwise order on the face opposite to vertex with `i` of the cell.  
 \pre `( i < 4 ) && ( j < 3 )`.
 */ 
   static int vertex_triple_index(const int i, const int j);
 
-/*! 
+/*!
 Has a meaning only in dimension 2. 
 
 Computes the index of the vertex that is next to the vertex numbered 
@@ -44,7 +44,7 @@ Figure \ref Triangulation3figutils).
 */ 
 static unsigned int ccw(unsigned int i); 
 
-/*! 
+/*!
 Same for clockwise. 
 */ 
 static unsigned int cw(unsigned int i); 

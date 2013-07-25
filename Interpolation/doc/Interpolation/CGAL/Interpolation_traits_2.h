@@ -24,33 +24,33 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef K::FT FT; 
 
-/*! 
+/*!
 
 */ 
 typedef K::Point_2 Point_d; 
 
-/*! 
+/*!
 
 */ 
 typedef K::Vector_2 Vector_d; 
 
-/*! 
+/*!
 
 */ 
 typedef K::Construct_vector_2 Construct_vector_d; 
 
-/*! 
+/*!
 
 */ 
 typedef K::Construct_scaled_vector_2 
 Construct_scaled_vector_d; 
 
-/*! 
+/*!
 
 */ 
 typedef K::Compute_squared_distance_2 
@@ -61,19 +61,19 @@ Compute_squared_distance_d;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_scaled_vector_d 
 construct_scaled_vector_d_object() const; 
 
-/*! 
+/*!
 
 */ 
 Construct_vector_d 
 construct_vector_d_object()const; 
 
-/*! 
+/*!
 
 */ 
 Compute_squared_distance_d 

@@ -44,12 +44,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The template argument triangulation. 
 */ 
 typedef unspecified_type Triangulation; 
 
-/*! 
+/*!
 The template argument for the visitor. 
 */ 
 typedef unspecified_type Visitor; 
@@ -59,7 +59,7 @@ typedef unspecified_type Visitor;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Maintain the 
 Delaunay triangulation of the points in 
 `tr.active_points_2_handle()`. 
@@ -71,22 +71,22 @@ Delaunay_triangulation_2(Traits tr);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Access the triangulation that is maintained. 
 */ 
 const Triangulation& triangulation() const; 
 
-/*! 
+/*!
 Access the visitor. 
 */ 
 Visitor& visitor(); 
 
-/*! 
+/*!
 Insert the point. 
 */ 
 Vertex_handle insert(Point_key k); 
 
-/*! 
+/*!
 Erase the vertex. 
 */ 
 void erase(Vertex_handle h); 

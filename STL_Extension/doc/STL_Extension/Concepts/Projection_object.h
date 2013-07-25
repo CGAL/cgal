@@ -35,7 +35,7 @@ public:
 
 /// \name Definition 
 /// @{ 
-/*! 
+/*!
 argument type. 
 */ 
 typedef unspecified_type argument_type; 
@@ -44,7 +44,7 @@ typedef unspecified_type argument_type;
 
 /// \name Definition 
 /// @{ 
-/*! 
+/*!
 result type. 
 */ 
 typedef unspecified_type result_type; 
@@ -52,7 +52,7 @@ typedef unspecified_type result_type;
 
 /// \name Creation 
 /// @{ 
-/*! 
+/*!
 default constructor. 
 */ 
 Projection_object(); 
@@ -64,7 +64,7 @@ Projection_object();
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 
 */ 
 result_type& operator()(argument_type &) const; 
@@ -76,7 +76,7 @@ result_type& operator()(argument_type &) const;
 
 /// \name Operations 
 /// @{ 
-/*! 
+/*!
 
 */ 
 const result_type& operator()(const argument_type &) const; 

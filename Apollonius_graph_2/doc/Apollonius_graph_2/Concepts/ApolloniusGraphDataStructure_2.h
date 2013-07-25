@@ -40,7 +40,7 @@ public:
 /// \name Insertion 
 /// @{
 
-/*! 
+/*!
 Inserts 
 a degree two vertex and two faces adjacent to it that have two common 
 edges. The edge defined by the face handle `f` and the integer 
@@ -53,7 +53,7 @@ Vertex_handle insert_degree_2(Face_handle f, int i);
 /// \name Removal 
 /// @{
 
-/*! 
+/*!
 Removes a degree 2 
 vertex and the two faces adjacent to it. The two edges of the star of 
 `v` that are not incident to it are collapsed. 

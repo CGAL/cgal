@@ -43,7 +43,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Construction from an image. 
 The parameter `error_bound` is relative to the size of the image. 
 */ 

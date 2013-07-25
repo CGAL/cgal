@@ -24,7 +24,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Initializes the policy with the given <I>weighting unit factor</I>. 
 See \ref SurfaceMeshSimplificationLindstromTurkStrategy for details on the meaning of this factor. 
 */ 
@@ -35,7 +35,7 @@ LindstromTurk_placement<ECM>( FT const& factor = FT(0.5) );
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns the new position for the remaining vertex after collapsing the edge 
 (represented by its profile). 
 */ 

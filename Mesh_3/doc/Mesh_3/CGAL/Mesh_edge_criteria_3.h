@@ -20,7 +20,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Numerical type. 
 */ 
 typedef Tr::Geom_traits::FT FT; 
@@ -30,7 +30,7 @@ typedef Tr::Geom_traits::FT FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Returns an object to serve as criteria for edges. 
 The argument `length_bound` is an upper bound 
 for the length of the edges which are used to discretize the curve segments. 
@@ -39,7 +39,7 @@ Note that if one parameter is set to 0, then its corresponding criteria is ignor
 Mesh_edge_criteria_3( 
 FT length_bound); 
 
-/*! 
+/*!
 Returns an object to serve as criteria for edges. The type `SizingField` 
 must be a model of concept `MeshDomainField_3`. The behavior and semantic of the argument are the same 
 as above, except that the length 

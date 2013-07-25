@@ -21,7 +21,7 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns if the argument is valid. 
 */ 
 bool operator()(const T& x); 
@@ -53,12 +53,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Max(); 
 
-/*! 
+/*!
 The constructed object will use `c` to compare the arguments. 
 */ 
 Max(Less c); 
@@ -68,7 +68,7 @@ Max(Less c);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the larger of `x` and `y`, 
 with respect to the order induced by `Less`. 
 */ 
@@ -101,12 +101,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Min(); 
 
-/*! 
+/*!
 The constructed object will use `c` to compare the arguments. 
 */ 
 Min(Less c); 
@@ -116,7 +116,7 @@ Min(Less c);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the larger of `x` and `y`, 
 with respect to the order induced by `Less`. 
 */ 

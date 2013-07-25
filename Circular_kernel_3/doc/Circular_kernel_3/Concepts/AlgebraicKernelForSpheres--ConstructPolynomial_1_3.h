@@ -15,7 +15,7 @@ public:
 /// A model of this concept must provide: 
 /// @{
 
-/*! 
+/*!
 Constructs polynomial `ax+by+cz+d`. 
 */ 
 AlgebraicKernelForSpheres::Polynomial_1_3 

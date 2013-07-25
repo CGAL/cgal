@@ -24,7 +24,7 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns true if this face is in the domain to be refined. 
 */ 
 bool is_in_domain() const; 
@@ -33,7 +33,7 @@ bool is_in_domain() const;
 
 
 
-/*! 
+/*!
 sets if this face is in the domain. 
 */ 
 void set_in_domain(const bool b); 

@@ -16,7 +16,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 An edge iterator that iterates 
 over one of the two opposite edges forming an undirected edge. 
 
@@ -24,7 +24,7 @@ The value type is `CGAL::Polyhedron_3::Halfedge_const_handle`.
 */ 
 typedef unspecified_type undirected_edge_iterator; 
 
-/*! 
+/*!
 The point type of the vertex. 
 */ 
 typename CGAL::Polyhedron_3<Traits>::Point_3 Point ; 

@@ -17,12 +17,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 A 2D point type used to represent a vertex. Must be a model of the `Kernel::Point_2` concept 
 */ 
 typedef unspecified_type Point_2; 
 
-/*! 
+/*!
 A unsigned integral type that can represent the number of vertices in the container. 
 */ 
 typedef unspecified_type size_type; 
@@ -32,17 +32,17 @@ typedef unspecified_type size_type;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor 
 */ 
 VertexContainer_2(); 
 
-/*! 
+/*!
 Returns the number of vertices in the container. 
 */ 
 size_type size() const; 
 
-/*! 
+/*!
 Adds the vertex v to the container, resizing its capacity if required. 
 */ 
 void push_back( Point_2 const& v) const; 

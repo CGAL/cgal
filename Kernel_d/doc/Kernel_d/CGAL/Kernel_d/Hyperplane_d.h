@@ -38,12 +38,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the linear algebra layer. 
 */ 
 typedef unspecified_type LA; 
 
-/*! 
+/*!
 a read-only iterator for the 
 coefficients. 
 */ 
@@ -54,13 +54,13 @@ typedef unspecified_type Coefficient_const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 introduces a variable 
 `h` of type `Hyperplane_d<Kernel>`. 
 */ 
 Hyperplane_d<Kernel>(); 
 
-/*! 
+/*!
 introduces a 
 variable `h` of type `Hyperplane_d<Kernel>` initialized to the 
 hyperplane with coefficients `set [first,last)` and `D`. 
@@ -70,7 +70,7 @@ hyperplane with coefficients `set [first,last)` and `D`.
 template <class InputIterator> Hyperplane_d<Kernel>(int d, 
 InputIterator first, InputIterator last, RT D); 
 
-/*! 
+/*!
 introduces a variable 
 `h` of type `Hyperplane_d<Kernel>` initialized to the hyperplane 
 with coefficients `set [first,last)`.
@@ -81,7 +81,7 @@ with coefficients `set [first,last)`.
 template <class InputIterator> Hyperplane_d<Kernel>(int d, 
 InputIterator first, InputIterator last); 
 
-/*! 
+/*!
 constructs 
 some hyperplane that passes through the points in `set [first,last)`. If `side` is `ON_POSITIVE_SIDE` or 
 `ON_NEGATIVE_SIDE` then `o` is on that side of the 
@@ -94,7 +94,7 @@ template <class ForwardIterator>
 Hyperplane_d<Kernel>(ForwardIterator first, ForwardIterator last, 
 Point_d<Kernel> o, Oriented_side side = ON_ORIENTED_BOUNDARY); 
 
-/*! 
+/*!
 constructs the hyperplane with normal direction `dir` that 
 passes through \f$ p\f$. The direction `dir` points into the positive 
 side.
@@ -104,14 +104,14 @@ side.
 Hyperplane_d<Kernel>(Point_d<Kernel> p, Direction_d<Kernel> 
 dir); 
 
-/*! 
+/*!
 introduces a 
 variable `h` of type `Hyperplane_d<Kernel>` in \f$ 2\f$-dimensional 
 space with equation \f$ ax+by+c=0\f$. 
 */ 
 Hyperplane_d<Kernel>(RT a, RT b, RT c); 
 
-/*! 
+/*!
 introduces a 
 variable `h` of type `Hyperplane_d<Kernel>` in \f$ 3\f$-dimensional 
 space with equation \f$ ax+by+cz+d=0\f$. 
@@ -123,12 +123,12 @@ Hyperplane_d<Kernel>(RT a, RT b, RT c, RT d);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the dimension of `h`. 
 */ 
 int dimension() ; 
 
-/*! 
+/*!
 returns the \f$ i\f$-th coefficient of 
 `h`.
 
@@ -136,7 +136,7 @@ returns the \f$ i\f$-th coefficient of
 */ 
 RT operator[](int i) ; 
 
-/*! 
+/*!
 returns the \f$ i\f$-th coefficient of 
 `h`.
 
@@ -144,19 +144,19 @@ returns the \f$ i\f$-th coefficient of
 */ 
 RT coefficient(int i) ; 
 
-/*! 
+/*!
 returns 
 an iterator pointing to the first coefficient. 
 */ 
 Coefficient_const_iterator coefficients_begin() ; 
 
-/*! 
+/*!
 returns an 
 iterator pointing beyond the last coefficient. 
 */ 
 Coefficient_const_iterator coefficients_end() ; 
 
-/*! 
+/*!
 returns the orthogonal 
 vector of `h`. It points from the negative halfspace into the 
 positive halfspace and its homogeneous coordinates are \f$ (c_0, 
@@ -164,14 +164,14 @@ positive halfspace and its homogeneous coordinates are \f$ (c_0,
 */ 
 Vector_d<Kernel> orthogonal_vector() ; 
 
-/*! 
+/*!
 returns the 
 orthogonal direction of `h`. It points from the negative 
 halfspace into the positive halfspace. 
 */ 
 Direction_d<Kernel> orthogonal_direction() ; 
 
-/*! 
+/*!
 returns 
 the side of the hyperplane `h` containing \f$ p\f$.
 
@@ -179,7 +179,7 @@ the side of the hyperplane `h` containing \f$ p\f$.
 */ 
 Oriented_side oriented_side(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns true iff point 
 `p` lies on the hyperplane `h`.
 
@@ -187,14 +187,14 @@ returns true iff point
 */ 
 bool has_on(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns true 
 iff point `p` lies on the boundary of hyperplane `h`. 
 \pre `h.dimension() == p.dimension()`. 
 */ 
 bool has_on_boundary(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 true iff point `p` lies on the positive side of hyperplane 
 `h`.
@@ -203,7 +203,7 @@ true iff point `p` lies on the positive side of hyperplane
 */ 
 bool has_on_positive_side(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns 
 true iff point `p` lies on the negative side of hyperplane 
 `h`.
@@ -212,7 +212,7 @@ true iff point `p` lies on the negative side of hyperplane
 */ 
 bool has_on_negative_side(const Point_d<Kernel>& p) ; 
 
-/*! 
+/*!
 returns \f$ t(h)\f$.
 
 \pre `h.dimension() == t.dimension()`. 
@@ -225,7 +225,7 @@ Hyperplane_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
 
 }; /* end Hyperplane_d */
 
-/*! 
+/*!
 test for weak equality.
 
 \pre `h1.dimension() == h2.dimension()`. 

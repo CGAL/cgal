@@ -18,17 +18,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type convertible to `bool` 
 */ 
 typedef unspecified_type result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type; 
@@ -38,7 +38,7 @@ typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Computes whether \f$ p\f$ is zero at \f$ x\f$. 
 */ 
 result_type 

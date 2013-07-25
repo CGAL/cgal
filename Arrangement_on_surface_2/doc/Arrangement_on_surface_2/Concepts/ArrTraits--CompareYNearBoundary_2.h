@@ -16,7 +16,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Given two \f$ x\f$-monotone curves `xcv1` and `xcv2` and an 
 enumeration `ce` that specifies either the minimum or the maximum 
 ends of the curves, compares the \f$ y\f$-coordinate of the curves near 

@@ -26,7 +26,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Tests equality of two polynomials. 
 */ 
 bool operator ==(const AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 & p, 

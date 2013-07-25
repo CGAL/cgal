@@ -37,7 +37,7 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Creates a widget `W` for displaying the `Nef_polyhedron_S2` N. 
 */ 
 Qt_widget_Nef_3(const Nef_polyhedron_S2& N); 

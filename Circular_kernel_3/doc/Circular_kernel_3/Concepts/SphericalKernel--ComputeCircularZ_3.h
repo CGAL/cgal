@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns the \f$ z\f$-coordinate of the point `p`. 
 */ 
 SphericalKernel::Root_of_2 

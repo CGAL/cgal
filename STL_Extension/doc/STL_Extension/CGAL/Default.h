@@ -45,7 +45,7 @@ public:
 
 /// \name Types 
 /// @{ 
-/*! 
+/*!
 A nested template providing a typedef `type` which equals `Type` if 
 `Parameter` is `Default`, and `Parameter` otherwise. 
 */ 

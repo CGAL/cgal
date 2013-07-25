@@ -59,17 +59,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef typename DataKernel::FT FT; 
 
-/*! 
+/*!
 
 */ 
 typedef typename DataKernel::Point_3 Point_3; 
 
-/*! 
+/*!
 
 */ 
 typedef typename DataKernel::Vector_3 Vector_3; 
@@ -79,7 +79,7 @@ typedef typename DataKernel::Vector_3 Vector_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Monge_form(); 
@@ -89,7 +89,7 @@ Monge_form();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Point on the fitted surface where 
 differential quantities are computed. 
 */ 
@@ -100,17 +100,17 @@ Point_3 origin() const;
 /// \name Monge Basis
 /// @{
 
-/*! 
+/*!
 
 */ 
 Vector_3 maximal_principal_direction() const; 
 
-/*! 
+/*!
 
 */ 
 Vector_3 minimal_principal_direction() const; 
 
-/*! 
+/*!
 
 */ 
 Vector_3 normal_direction() const; 
@@ -120,17 +120,17 @@ Vector_3 normal_direction() const;
 /// \name Monge Coefficients
 /// @{
 
-/*! 
+/*!
 \f$ i=0\f$ for the maximum and \f$ i=1\f$ for the minimum. 
 */ 
 FT principal_curvatures(size_t i)const; 
 
-/*! 
+/*!
 \f$ 0 \leq i \leq3\f$ 
 */ 
 FT third_order_coefficients(size_t i) const; 
 
-/*! 
+/*!
 \f$ 0 \leq i \leq4\f$ 
 */ 
 FT fourth_order_coefficients(size_t i) const; 
@@ -140,7 +140,7 @@ FT fourth_order_coefficients(size_t i) const;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 change principal basis and Monge coefficients so that the 
 given_normal and the Monge normal make an acute angle. 
 If 
@@ -154,27 +154,27 @@ void comply_wrt_given_normal(const Vector_3& given_normal);
 
 }; /* end Monge_form */
 
-/*! 
+/*!
 
 */ 
 typedef DataKernel Data_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef LocalKernel Local_kernel; 
 
-/*! 
+/*!
 
 */ 
 typedef typename Local_kernel::FT FT; 
 
-/*! 
+/*!
 
 */ 
 typedef typename Local_kernel::Vector_3 Vector_3; 
 
-/*! 
+/*!
 see the page `Monge_via_jet_fitting::Monge_form`. 
 */ 
 typedef unspecified_type Monge_form; 
@@ -184,7 +184,7 @@ typedef unspecified_type Monge_form;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor 
 */ 
 Monge_via_jet_fitting(); 
@@ -194,7 +194,7 @@ Monge_via_jet_fitting();
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 This operator performs all the computations. The \f$ N\f$ input points are 
 given by the `InputIterator` parameters which value-type are 
 `Data_kernel::Point_3`, `d` is the degree of the fitted 
@@ -205,12 +205,12 @@ template <class InputIterator> Monge_form
 operator()(InputIterator begin, InputIterator end, size_t d, 
 size_t d'); 
 
-/*! 
+/*!
 condition number of the linear fitting system. 
 */ 
 FT condition_number(); 
 
-/*! 
+/*!
 pca eigenvalues and eigenvectors, the pca_basis has always 3 such pairs. 
 \pre \f$ i\f$ ranges from 0 to 2. 
 */ 

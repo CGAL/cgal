@@ -24,12 +24,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 `typedef double FT` 
 */ 
 typedef unspecified_type FT; 
 
-/*! 
+/*!
 Some model of concept `RingNumberType` that 
 provides exact arithmetic. In addition, `ET` must be
 able to exactly represent any finite `double` value. (An 
@@ -41,7 +41,7 @@ exact computations.
 */ 
 typedef unspecified_type ET; 
 
-/*! 
+/*!
 Type of the input points. `Point` must 
 provide the default and copy constructor, and must be a model 
 of `DefaultConstructible`, `CopyConstructible`, and 
@@ -49,7 +49,7 @@ of `DefaultConstructible`, `CopyConstructible`, and
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 Model for the STL concept 
 `RandomAccessIterator` whose value type must be convertible to 
 `double`. This type is used to iterate over the %Cartesian 
@@ -63,13 +63,13 @@ typedef unspecified_type Cartesian_const_iterator;
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the 
 dimension of a point `p`. 
 */ 
 int dimension(const Point& p); 
 
-/*! 
+/*!
 returns an input iterator over the Euclidean coordinates 
 of the point \f$ p\f$. The range of the iterator must have size 
 `dimension(p)`. 

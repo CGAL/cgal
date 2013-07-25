@@ -18,17 +18,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bool result_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type; 
 
-/*! 
+/*!
 
 */ 
 typedef AlgebraicKernel_d_1::Polynomial_1 second_argument_type; 
@@ -38,7 +38,7 @@ typedef AlgebraicKernel_d_1::Polynomial_1 second_argument_type;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns true if `p1` and `p2` are coprime. 
 */ 
 result_type 

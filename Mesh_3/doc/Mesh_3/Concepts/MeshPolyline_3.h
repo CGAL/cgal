@@ -17,12 +17,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Point type. Must match the type `MeshDomain_3::Point_3`. 
 */ 
 typedef unspecified_type value_type; 
 
-/*! 
+/*!
 A constant iterator on points. Must be a model of Bidirectional iterator and have `value_type` as value type. 
 */ 
 typedef unspecified_type const_iterator; 
@@ -32,12 +32,12 @@ typedef unspecified_type const_iterator;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns an iterator on the first point of the polyline. 
 */ 
 const_iterator begin(); 
 
-/*! 
+/*!
 Returns the past-the-end iterator for the above iterator. 
 */ 
 const_iterator end(); 

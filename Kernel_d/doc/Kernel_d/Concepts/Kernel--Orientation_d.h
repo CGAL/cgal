@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 determines the orientation of the points of the tuple 
 `A = tuple [first,last)` where \f$ A\f$ consists of \f$ d + 1\f$ points in 
 \f$ d\f$-space. This is the sign of the determinant 

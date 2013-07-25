@@ -11,7 +11,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 returns 
 true iff the points in `A = tuple [first,last)` are affinely 
 independent.

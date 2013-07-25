@@ -34,18 +34,18 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Apollonius_graph_bertex_base_2(); 
 
-/*! 
+/*!
 Constructs a vertex associated with the site `s` and 
 embedded at the center of `s`. 
 */ 
 Apollonius_graph_vertex_base_2(Site_2 s); 
 
-/*! 
+/*!
 Constructs a vertex associated with 
 the site `s`, embedded at the center of `s`, 
 and pointing to the face associated with the face 

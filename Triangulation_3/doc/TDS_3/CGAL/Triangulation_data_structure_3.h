@@ -43,12 +43,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Vertex container type. 
 */ 
 typedef Compact_container<Vertex> Vertex_range; 
 
-/*! 
+/*!
 Cell container type. 
 */ 
 typedef Compact_container<Cell> Cell_range; 
@@ -58,22 +58,22 @@ typedef Compact_container<Cell> Cell_range;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns a reference to the container of cells. 
 */ 
 Cell_range & cells() const; 
 
-/*! 
+/*!
 Returns a reference to the container of cells. 
 */ 
 Cell_range & cells(); 
 
-/*! 
+/*!
 Returns a reference to the container of vertices. 
 */ 
 Vertex_range & vertices() const; 
 
-/*! 
+/*!
 Returns a reference to the container of vertices. 
 */ 
 Vertex_range & vertices(); 

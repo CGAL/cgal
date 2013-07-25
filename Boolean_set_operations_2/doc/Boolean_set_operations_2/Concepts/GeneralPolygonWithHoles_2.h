@@ -23,13 +23,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 the general-polygon type used to 
 represent the outer boundary and each hole. Must model the `GeneralPolygon_2` concept. 
 */ 
 typedef unspecified_type General_polygon_2; 
 
-/*! 
+/*!
 a bidirectional iterator 
 over the polygonal holes. Its value type is 
 `General_polygon_2`. 
@@ -41,27 +41,27 @@ typedef unspecified_type Hole_const_iterator;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 GeneralPolygonWithHoles_2(); 
 
-/*! 
+/*!
 copy constructor. 
 */ 
 GeneralPolygonWithHoles_2(GeneralPolygonWithHoles_2 other); 
 
-/*! 
+/*!
 assignment operator. 
 */ 
 GeneralPolygonWithHoles_2 operator=(other); 
 
-/*! 
+/*!
 constructs a general polygon with holes that has no holes using a given general polygon `outer` as the outer boundary. 
 */ 
 GeneralPolygonWithHoles_2(General_polygon_2 & outer); 
 
-/*! 
+/*!
 constructs a general polygon with holes using a given general polygon 
 `outer` as the outer boundary and a given range of holes. If `outer` 
 is an empty general polygon, then an unbounded polygon with holes will be 
@@ -78,7 +78,7 @@ InputIterator begin, InputIterator end);
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 returns `true` if the outer boundary is empty, and `false` 
 otherwise. 
 */ 
@@ -89,17 +89,17 @@ bool is_unbounded();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the general polygon that represents the outer boundary. Note that this polygon is not necessarily a valid (simple) general polygon because it may be relatively simple. 
 */ 
 const General_polygon_2 & outer_boundary() const; 
 
-/*! 
+/*!
 returns the begin iterator of the holes. 
 */ 
 Hole_const_iterator holes_begin() const; 
 
-/*! 
+/*!
 returns the past-the-end iterator of the holes. 
 */ 
 Hole_const_iterator holes_end() const; 

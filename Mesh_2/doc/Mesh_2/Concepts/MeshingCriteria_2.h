@@ -50,20 +50,20 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Handle to a face of the triangulation. 
 */ 
 typedef unspecified_type Face_handle; 
 
 
-/*! 
+/*!
 Default constructible, copy constructible, 
 assignable, and less-than comparable type. 
 */ 
 typedef unspecified_type Quality; 
 
 
-/*! 
+/*!
 Predicate object. Must provide two operators.
 
 - The first operator `Mesh_2::Face_badness operator()(Face_handle fh,
@@ -91,7 +91,7 @@ typedef unspecified_type Is_bad;
 /// \name Access to predicate and constructor objects 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Is_bad is_bad_object(); 

@@ -27,12 +27,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef Map::mapped_type Data_type; 
 
-/*! 
+/*!
 
 */ 
 typedef Map::key_type Key_type; 
@@ -42,12 +42,12 @@ typedef Map::key_type Key_type;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Introduces a `Data_access` to the container `map`. 
 */ 
 Data_access(const Map& map); 
 
-/*! 
+/*!
 If 
 there is an entry for `p` in the container `map`, then the 
 pair of `map.find(p)` and `true` is returned. Otherwise, the 

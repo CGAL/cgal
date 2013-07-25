@@ -139,7 +139,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Order of differential 
 quantities used to distinguish elliptic and hyperbolic ridges. Third 
 (`Tag_3`) or fourth (`Tag_4`) order quantities may be used as 
@@ -152,7 +152,7 @@ enum Tag_order {Tag_3, Tag_4};
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 The two last property maps may 
 not be used if computations are performed with 
 the parameter `Tag_3`, in which case these 
@@ -169,21 +169,21 @@ Vertex2VectorPropertyMap& vertex2d2_pm, const
 Vertex2FTPropertyMap& vertex2P1_pm, const 
 Vertex2FTPropertyMap& vertex2P2_pm); 
 
-/*! 
+/*!
 Outputs ridges of types `MAX_ELLIPTIC_RIDGE` and `MAX_HYPERBOLIC_RIDGE`. 
 Parameter `it` is an output iterator whose 
 value type is `Ridge_line*`. 
 */ 
 template <class OutputIterator> OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3); 
 
-/*! 
+/*!
 Outputs ridges of types `MIN_ELLIPTIC_RIDGE` and `MIN_HYPERBOLIC_RIDGE`. 
 Parameter `it` is an output iterator whose 
 value type is `Ridge_line*`. 
 */ 
 template <class OutputIterator> OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3); 
 
-/*! 
+/*!
 Outputs ridges of types `MAX_CREST_RIDGE` and `MIN_CREST_RIDGE`. 
 Parameter `it` is an output iterator whose 
 value type is `Ridge_line*`. 
@@ -216,17 +216,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Halfedge_handle Halfedge_handle; 
 
-/*! 
+/*!
 A halfedge crossed by a ridge is paired with the barycentric 
 coordinate of the crossing point. 
 */ 
@@ -237,7 +237,7 @@ typedef std::pair< Halfedge_handle, FT> Ridge_halfhedge;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 default constructor. 
 */ 
 Ridge_line(); 
@@ -247,22 +247,22 @@ Ridge_line();
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Ridge_type line_type() const; 
 
-/*! 
+/*!
 
 */ 
 FT strength() const; 
 
-/*! 
+/*!
 
 */ 
 FT sharpness() const; 
 
-/*! 
+/*!
 
 */ 
 const std::list<Ridge_halfhedge>* line() const; 
@@ -303,17 +303,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Traits::FT FT; 
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3; 
 
-/*! 
+/*!
 
 */ 
 typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle; 
@@ -323,22 +323,22 @@ typedef typename TriangulatedSurfaceMesh::Vertex_handle Vertex_handle;
 */
 struct Vertex_cmp{bool operator();}; 
 
-/*! 
+/*!
 
 */ 
 typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map; 
 
-/*! 
+/*!
 
 */ 
 typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map; 
 
-/*! 
+/*!
 
 */ 
 typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map; 
 
-/*! 
+/*!
 
 */ 
 typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map; 

@@ -20,17 +20,17 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type 
 */ 
 typedef unspecified_type Point; 
 
-/*! 
+/*!
 The weight type 
 */ 
 typedef unspecified_type Weight; 
 
-/*! 
+/*!
 The ring type 
 */ 
 typedef Point::RT RT; 
@@ -40,7 +40,7 @@ typedef Point::RT RT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 */ 
 WeightedPoint(const Point &p=Point(), const Weight &w 
@@ -51,12 +51,12 @@ WeightedPoint(const Point &p=Point(), const Weight &w
 /// \name Access Functions
 /// @{
 
-/*! 
+/*!
 
 */ 
 Point point() const; 
 
-/*! 
+/*!
 
 */ 
 Weight weight() const; 

@@ -38,7 +38,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef TriangulationTraits_3::Point_3 Point; 

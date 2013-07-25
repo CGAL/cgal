@@ -36,13 +36,13 @@ public:
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 
 */ 
 Field operator/(const Field &a, const Field &b); 
 
 
-/*! 
+/*!
 
 */ 
 Field operator/=(const Field &b); 

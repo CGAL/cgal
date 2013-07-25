@@ -84,32 +84,32 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 traits class. 
 */ 
 typedef unspecified_type Traits; 
 
-/*! 
+/*!
 point type. 
 */ 
 typedef typename Traits::Point_3 Point_3; 
 
-/*! 
+/*!
 plane type. 
 */ 
 typedef typename Traits::Plane_3 Plane_3; 
 
-/*! 
+/*!
 vector type. 
 */ 
 typedef typename Traits::Vector_3 Vector_3; 
 
-/*! 
+/*!
 algebraic ring type. 
 */ 
 typedef typename Traits::RT RT; 
 
-/*! 
+/*!
 traits 
 class for the 3D convex hull algorithm. 
 */ 
@@ -120,7 +120,7 @@ typedef typename Traits::ChullTraits ChullTraits;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 
 creates a variable `width` initialized to the width of \f$ \mathcal{S}\f$ - 
 with \f$ \mathcal{S}\f$ being the set of points in the range 
@@ -131,7 +131,7 @@ with \f$ \mathcal{S}\f$ being the set of points in the range
 template < class InputIterator > 
 Width_3( InputIterator first, InputIterator beyond); 
 
-/*! 
+/*!
 creates a variable `width` initialized to 
 the width of the polyhedron \f$ P\f$. Note that the vertex point coordinates 
 are altered! 
@@ -150,7 +150,7 @@ Width_3( Polyhedron& P);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 returns the squared width. For the reason of exact 
 computation not the width itself is stored, but the <I>squared</I> 
 width as a fraction: The numerator in `width_num` and the 
@@ -161,14 +161,14 @@ denominator in `width_denom`. The width of the point set
 void get_squared_width ( RT& width_num, RT& 
 width_denom ); 
 
-/*! 
+/*!
 
 The planes `e1` and `e2` are the two parallel supporting 
 planes, which distance is minimal (among all such planes). 
 */ 
 void get_width_planes ( Plane_3& e1, Plane_3& e2 ); 
 
-/*! 
+/*!
 The returned coefficients `A,B,C,D,K` have the 
 property that width-plane `e1` is given by the equation 
 \f$ Ax+By+Cz+D=0\f$ and width-plane `e2` by \f$ Ax+By+Cz+K=0\f$. 
@@ -176,7 +176,7 @@ property that width-plane `e1` is given by the equation
 void get_width_coefficients ( RT& A,RT& B,RT& C, 
 RT& D, RT& K ); 
 
-/*! 
+/*!
 returns a 
 direction \f$ \mathbf{d}_{opt}\f$ such that the width-planes `e1` and 
 `e2` are perpendicular to \f$ \mathbf{d}_{opt}\f$. The width of the 
@@ -184,7 +184,7 @@ point set is minimal in this direction.
 */ 
 Vector_3 get_build_direction ( ); 
 
-/*! 
+/*!
 All the build directions are stored in the vector 
 `dir`. It might happen that a certain body has several 
 different build directions, but it is also possible to have only one 
@@ -193,7 +193,7 @@ build direction.
 void get_all_build_directions ( std::vector<Vector_3>& 
 dir ); 
 
-/*! 
+/*!
 returns 
 the number of optimal solutions, i.e., the number of optimal build 
 directions. 

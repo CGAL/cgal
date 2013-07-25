@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Returns `true` when `obj1` contains `obj2`, where Type1 and Type2 can be respectively:
 
 <TABLE CELLSPACING=5 > 

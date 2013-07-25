@@ -22,13 +22,13 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Type of voxel data. Must be an 
 integral type. 
 */ 
 typedef unspecified_type Type; 
 
-/*! 
+/*!
 Ring number type. 
 */ 
 typedef unspecified_type RT; 
@@ -38,38 +38,38 @@ typedef unspecified_type RT;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 First dimension of the 3D array, 
 i.e., the number of voxels along the x coordinate axis. 
 */ 
 int xdim(); 
 
-/*! 
+/*!
 Second dimension of the 3D array. 
 */ 
 int ydim(); 
 
-/*! 
+/*!
 Third dimension of the 3D array. 
 */ 
 int zdim(); 
 
-/*! 
+/*!
 Size of each voxel along x coordinate axis. 
 */ 
 RT vx(); 
 
-/*! 
+/*!
 Size of each voxel along y coordinate axis. 
 */ 
 RT vy(); 
 
-/*! 
+/*!
 Size of each voxel along z coordinate axis. 
 */ 
 RT vz(); 
 
-/*! 
+/*!
 Pointer to the first element of the 3D 
 image. The size of the array must be `xdim()`\f$ \times\f$`ydim()`\f$ \times\f$`zdim()`. 
 */ 

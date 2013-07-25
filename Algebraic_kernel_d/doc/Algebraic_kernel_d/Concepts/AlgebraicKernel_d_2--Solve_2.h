@@ -16,7 +16,7 @@ public:
 /// A model of this type must provide: 
 /// @{
 
-/*! 
+/*!
 Computes all common solutions of \f$ f\f$ and \f$ g\f$ with multiplicity, and copies them as objects of type 
 `std::pair<AlgebraicKernel_d_2::Algebraic_real_2, AlgebraicKernel_d_2::Multiplicity_type>` in `res`. 
 \pre \f$ f\f$ is square free. 
@@ -31,7 +31,7 @@ AlgebraicKernel_d_2::Polynomial_2 f,
 AlgebraicKernel_d_2::Polynomial_2 g, 
 OutputIterator res ); 
 
-/*! 
+/*!
 Computes all common solutions of \f$ f\f$ and \f$ g\f$ in the closed box \f$ [xl,xu]\times[yl,yu]\f$, and copies them as objects of 
 type `std::pair<AlgebraicKernel_d_2::Algebraic_real_2, AlgebraicKernel_d_2::Multiplicity_type>` in `res`. 
 \pre \f$ f\f$ is square free. 

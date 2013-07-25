@@ -21,12 +21,12 @@ public:
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Returns the `Vertex_handle` pointing to the level above. 
 */ 
 Vertex_handle up() const; 
 
-/*! 
+/*!
 Returns the `Vertex_handle` pointing to the level below. 
 */ 
 Vertex_handle down() const; 
@@ -36,12 +36,12 @@ Vertex_handle down() const;
 /// \name Setting 
 /// @{
 
-/*! 
+/*!
 Sets the `Vertex_handle` pointing to the level above to `v`. 
 */ 
 void set_up(Vertex_handle v); 
 
-/*! 
+/*!
 Sets the `Vertex_handle` pointing to the level below to `v`. 
 */ 
 void set_down(Vertex_handle v); 

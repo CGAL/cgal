@@ -34,7 +34,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Numerical type. 
 */ 
 typedef unspecified_type FT; 
@@ -44,7 +44,7 @@ typedef unspecified_type FT;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Constructs a `Polyhedral_mesh_domain_with_features_3` from a polyhedral surface of type `Polyhedron`. 
 The only requirement on type `Polyhedron` is that `CGAL::Mesh_polyhedron_3<IGT>::%type` should 
 be constructible from `Polyhedron`. 
@@ -54,7 +54,7 @@ The interior of `bounding_polyhedron` will be meshed.
 template <typename Polyhedron> 
 Polyhedral_mesh_domain_with_features_3(Polyhedron bounding_polyhedron); 
 
-/*! 
+/*!
 Constructs a `Polyhedral_mesh_domain_with_features_3` from an off file. No feature 
 detection is done at this level. 
 */ 
@@ -77,7 +77,7 @@ Polyhedral_mesh_domain_with_features_3(Polyhedron polyhedron,
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Detects sharp features of the internal bounding polyhedron (and the potential internal polyhedron) 
 and inserts them in as features of the domain. `angle_bound` gives the maximum dihedral angle 
 (in degrees) between two triangles of the input polyhedron/a which is used to consider that the edge between 

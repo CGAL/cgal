@@ -30,7 +30,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 number of edges size type. 
 */ 
 typedef unspecified_type Size; 
@@ -40,7 +40,7 @@ typedef unspecified_type Size;
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 returns the number of edges of the general polygon. 
 */ 
 Size size(); 
@@ -50,12 +50,12 @@ Size size();
 /// \name Modifiers 
 /// @{
 
-/*! 
+/*!
 clears the polygon. 
 */ 
 void clear(); 
 
-/*! 
+/*!
 reverses the orientation of the polygon. 
 \pre `is_simple()`. 
 */ 
@@ -66,12 +66,12 @@ void reverse_orientation();
 /// \name Predicates 
 /// @{
 
-/*! 
+/*!
 returns `true` if the polygon is empty, and `false` otherwise. 
 */ 
 bool is_empty(); 
 
-/*! 
+/*!
 returns the orientation of the polygon. 
 \pre `is_simple()`. 
 */ 

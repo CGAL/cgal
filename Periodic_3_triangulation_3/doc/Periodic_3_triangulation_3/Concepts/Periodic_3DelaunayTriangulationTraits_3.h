@@ -34,24 +34,24 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 The point type. It must be a model of `Kernel::Point_3`. 
 */ 
 typedef unspecified_type Point_3; 
 
-/*! 
+/*!
 The vector type. It must be a model of 
 `Kernel::Vector_3`. 
 */ 
 typedef unspecified_type Vector_3; 
 
-/*! 
+/*!
 The offset type. It must be a 
 model of the concept `Periodic_3Offset_3`. 
 */ 
 typedef unspecified_type Periodic_3_offset_3; 
 
-/*! 
+/*!
 A type representing an axis-aligned 
 cuboid. It must be a model of `Kernel::Iso_cuboid_3`. 
 */ 
@@ -66,24 +66,24 @@ typedef unspecified_type Iso_cuboid_3;
 /// i.e.\ constructing representatives in \f$ \mathbb R^3\f$.
 /// @{
 
-/*! 
+/*!
 A segment type. It must be a model of `Kernel::Segment_3`. 
 */ 
 typedef unspecified_type Segment_3; 
 
-/*! 
+/*!
 A triangle type. It must be a model of 
 `Kernel::Triangle_3`. 
 */ 
 typedef unspecified_type Triangle_3; 
 
-/*! 
+/*!
 A tetrahedron type. It must be a model 
 of `Kernel::Tetrahedron_3`. 
 */ 
 typedef unspecified_type Tetrahedron_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Comparison_result operator()(Point_3 p, Point_3 q)`, 
@@ -99,7 +99,7 @@ in a same line.
 */ 
 typedef unspecified_type Compare_xyz_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Orientation operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
@@ -120,7 +120,7 @@ returns `NEGATIVE` if `(s,o_s)` lies on the negative side of
 */ 
 typedef unspecified_type Orientation_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Oriented_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s, Point_3 t)`, 
@@ -137,7 +137,7 @@ which determines on which side of the oriented sphere circumscribing
 */ 
 typedef unspecified_type Side_of_oriented_sphere_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Comparison_result operator()(Point_3 p, Point_3 q, Point_3 r)`, 
@@ -159,7 +159,7 @@ typedef unspecified_type Compare_distance_3;
 /// In addition, only when vertex removal is used, the traits class must provide the following predicate objects
 /// @{
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Orientation operator()(Point_3 p, Point_3 q, Point_3 r)`, 
@@ -177,7 +177,7 @@ three point-offset pairs chosen in a same plane.
 */ 
 typedef unspecified_type Coplanar_orientation_3; 
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Bounded_side operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
@@ -201,7 +201,7 @@ typedef unspecified_type Coplanar_side_of_bounded_circle_3;
 /// provide the following predicate object:
 /// @{
 
-/*! 
+/*!
 A predicate object that must provide the function operators 
 
 `Bounded_side operator()(Point_3 p, Point_3 q, Point_3 t)`, 
@@ -248,7 +248,7 @@ typedef unspecified_type Side_of_bounded_sphere_3;
 /// guarantee exactness of the following construction functors.
 /// @{
 
-/*! 
+/*!
 A constructor object that must provide the function operator 
 
 `Point_3 operator()(Point_3 p, Periodic_3_offset_3 o_p)`, 
@@ -258,7 +258,7 @@ which constructs a point from a point-offset pair.
 */ 
 typedef unspecified_type Construct_point_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operators 
 
 `Segment_3 operator()(Point_3 p, Point_3 q)`, 
@@ -272,7 +272,7 @@ which constructs a segment from two point-offset pairs.
 */ 
 typedef unspecified_type Construct_segment_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operators 
 
 `Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r )`, 
@@ -286,7 +286,7 @@ which constructs a triangle from three point-offset pairs.
 */ 
 typedef unspecified_type Construct_triangle_3; 
 
-/*! 
+/*!
 A constructor object that must provide the function operators 
 
 `Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
@@ -307,7 +307,7 @@ typedef unspecified_type Construct_tetrahedron_3;
 /// class must provide the following constructor object:
 /// @{
 
-/*! 
+/*!
 A constructor object that must provide the function operators 
 
 `Point_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
@@ -326,12 +326,12 @@ typedef unspecified_type Construct_circumcenter_3;
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 Default constructor. 
 */ 
 Periodic_3_triangulation_traits_3(); 
 
-/*! 
+/*!
 Copy constructor. 
 */ 
 Periodic_3_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr); 
@@ -341,7 +341,7 @@ Periodic_3_triangulation_traits_3(const Periodic_triangulation_traits_3 & tr);
 /// \name Access Functions 
 /// @{
 
-/*! 
+/*!
 Set the size of the 
 fundamental domain. This is necessary to evaluate predicates 
 correctly. 
@@ -355,22 +355,22 @@ void set_domain(Iso_cuboid_3 domain);
 /// The following functions give access to the predicate and construction objects:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Compare_xyz_3 compare_xyz_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Orientation_3 orientation_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Compare_distance_3 compare_distance_3_object(); 
@@ -382,12 +382,12 @@ Compare_distance_3 compare_distance_3_object();
 /// used; otherwise dummy functions can be provided.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Coplanar_orientation_3 coplanar_3_orientation_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Coplanar_side_of_bounded_circle_3 
@@ -401,22 +401,22 @@ coplanar_side_of_bounded_circle_3_object();
 /// otherwise a dummy function can be provided.
 /// @{
 
-/*! 
+/*!
 
 */ 
 Side_of_bounded_sphere_3 side_of_bounded_sphere_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_segment_3 construct_segment_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_triangle_3 construct_triangle_3_object(); 
 
-/*! 
+/*!
 
 */ 
 Construct_tetrahedron_3 construct_tetrahedron_3_object(); 
@@ -430,7 +430,7 @@ Construct_tetrahedron_3 construct_tetrahedron_3_object();
 /// provided:
 /// @{
 
-/*! 
+/*!
 
 */ 
 Construct_circumcenter_3 construct_circumcenter_3_object(); 

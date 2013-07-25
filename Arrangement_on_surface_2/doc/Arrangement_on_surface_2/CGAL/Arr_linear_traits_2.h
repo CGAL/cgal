@@ -44,22 +44,22 @@ public:
     /// \name Types 
     /// @{
 
-    /*! 
+    /*!
 
      */ 
     typedef typename Kernel::Point_2 Point_2; 
 
-    /*! 
+    /*!
 
      */ 
     typedef typename Kernel::Segment_2 Segment_2; 
 
-    /*! 
+    /*!
 
      */ 
     typedef typename Kernel::Ray_2 Ray_2; 
 
-    /*! 
+    /*!
 
      */ 
     typedef typename Kernel::Line_2 Line_2; 
@@ -69,22 +69,22 @@ public:
     /// \name Creation 
     /// @{
 
-    /*! 
+    /*!
       constructs an degenerate curve equivalent to the point `p`. 
     */ 
     Curve_2 (const Point_2& p); 
 
-    /*! 
+    /*!
       constructs an line segment. 
     */ 
     Curve_2 (const Segment_2& seg); 
 
-    /*! 
+    /*!
       constructs a ray. 
     */ 
     Curve_2 (const Ray_2& ray); 
 
-    /*! 
+    /*!
       constructs a line. 
     */ 
     Curve_2 (const Line_2& ln); 
@@ -94,64 +94,64 @@ public:
     /// \name Access Functions 
     /// @{
 
-    /*! 
+    /*!
       returns whether `c` is a point (a degenerate curve). 
     */ 
     bool is_point() const; 
 
-    /*! 
+    /*!
       returns a point object equivalent to `c`. 
       \pre `c` is a point. 
     */ 
     Point_2 point() const; 
 
-    /*! 
+    /*!
       returns whether `c` is a segment (has two bounded endpoints). 
     */ 
     bool is_segment() const; 
 
-    /*! 
+    /*!
       returns a segment object equivalent to `c`. 
       \pre `c` is a segment. 
     */ 
     Segment_2 segment() const; 
 
-    /*! 
+    /*!
       returns whether `c` is a ray (has a bounded source point and its 
       other end is unbounded). 
     */ 
     bool is_ray() const; 
 
-    /*! 
+    /*!
       returns a ray object equivalent to `c`. 
       \pre `c` is a ray. 
     */ 
     Ray_2 ray() const; 
 
-    /*! 
+    /*!
       returns whether `c` is a line (has only unbounded ends). 
     */ 
     bool is_line() const; 
 
-    /*! 
+    /*!
       returns a line object equivalent to `c`. 
       \pre `c` is a line. 
     */ 
     Line_2 line() const; 
 
-    /*! 
+    /*!
       returns the supporting line of `c`. 
       \pre `c` is not a point (a degenerate curve). 
     */ 
     Line_2 supporting_line() const; 
 
-    /*! 
+    /*!
       returns `c`'s source point. 
       \pre `c` is a point, a segment or a ray. 
     */ 
     Point_2 source() const; 
 
-    /*! 
+    /*!
       returns `c`'s target point. 
       \pre `c` is a point or a segment. 
     */ 

@@ -32,12 +32,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef FieldNumberType FT; 
 
-/*! 
+/*!
 
 */ 
 typedef FieldNumberType RT; 

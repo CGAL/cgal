@@ -12,7 +12,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 Compares the %Cartesian coordinates of 
 points `p` and `q` lexicographically in ascending 
 order of its %Cartesian components `p[i]` and `q[i]` for \f$ i = 

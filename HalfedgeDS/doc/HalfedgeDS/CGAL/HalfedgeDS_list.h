@@ -34,12 +34,12 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef bidirectional_iterator_tag iterator_category; 
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Supports_removal; 
@@ -53,7 +53,7 @@ typedef CGAL::Tag_true Supports_removal;
 */
 /// @{
 
-/*! 
+/*!
 inserts elements in the range [`first, last`) before position 
 `target` and removes the elements from `source`. It takes 
 constant time if `&source == &``hds`; otherwise, it takes linear 
@@ -62,7 +62,7 @@ time in the size of the range. \pre [`first, last`) is a valid range in `source`
 void vertices_splice( Vertex_iterator target, Self &source, 
 Vertex_iterator first, Vertex_iterator last); 
 
-/*! 
+/*!
 inserts elements in the range [`first, last`) before position 
 `target` and removes the elements from `source`. It takes 
 constant time if `&source == &``hds`; otherwise, it takes linear 
@@ -71,7 +71,7 @@ time in the size of the range. \pre [`first, last`) is a valid range in `source`
 void halfedges_splice( Halfedge_iterator target, Self &source, 
 Halfedge_iterator first, Halfedge_iterator last); 
 
-/*! 
+/*!
 inserts elements in the range [`first, last`) before position 
 `target` and removes the elements from `source`. It takes 
 constant time if `&source == &``hds`; otherwise, it takes linear 

@@ -21,12 +21,12 @@ public:
 /// \name Creation 
 /// @{
 
-/*! 
+/*!
 %Default constructor. 
 */ 
 Interval_skip_list_interval(); 
 
-/*! 
+/*!
 Constructs the interval with infimum `i` and supremum `s`. 
 The arguments `ic` and `uc` have value `true`, iff 
 the interval is closed at the lower and upper bound, respectively. 
@@ -41,12 +41,12 @@ bool uc = true);
 /// \name Operations 
 /// @{
 
-/*! 
+/*!
 Returns `true`, iff the interval is closed at the lower bound. 
 */ 
 bool inf_closed() const; 
 
-/*! 
+/*!
 Returns `true`, iff the interval is closed at the upper bound. 
 */ 
 bool sup_closed() const; 
@@ -55,7 +55,7 @@ bool sup_closed() const;
 
 }; /* end Interval_skip_list_interval */
 
-/*! 
+/*!
 Inserts the interval `i` into the stream `os`. 
 
 \pre The output operator for `Value` is defined. 

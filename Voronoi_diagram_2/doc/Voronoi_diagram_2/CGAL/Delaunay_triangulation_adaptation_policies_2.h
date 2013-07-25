@@ -28,7 +28,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Has_inserter; 
@@ -66,7 +66,7 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 
 */ 
 typedef CGAL::Tag_true Has_inserter; 

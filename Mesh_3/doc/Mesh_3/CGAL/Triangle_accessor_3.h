@@ -26,19 +26,19 @@ public:
 /// \name Types 
 /// @{
 
-/*! 
+/*!
 Triangle iterator. 
 */ 
 typedef Polyhedron_3<K>::Facet_const_iterator 
 Triangle_iterator; 
 
-/*! 
+/*!
 Triangle 
 handle. 
 */ 
 typedef Polyhedron_3<K>::Facet_const_handle Triangle_handle; 
 
-/*! 
+/*!
 Triangle type. 
 */ 
 typedef K::Triangle_3 Triangle_3; 

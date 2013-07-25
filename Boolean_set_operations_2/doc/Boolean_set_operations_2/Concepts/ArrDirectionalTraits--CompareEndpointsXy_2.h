@@ -17,7 +17,7 @@ public:
 /// A model of this concept must provide:
 /// @{
 
-/*! 
+/*!
 accepts an input curve `xc` and compares its source and target 
 points. It returns `SMALLER` if the curve is directed from 
 lexicographically left to right, and `LARGER` if it is directed 
