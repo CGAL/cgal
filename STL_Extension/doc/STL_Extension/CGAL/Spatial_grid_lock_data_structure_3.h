@@ -29,10 +29,18 @@ public:
 /// \name Creation
 /// @{
 
-/// Construct the lock grid of size `bbox`, with `num_grid_cells_per_axis` 
-/// cells per axis.
-Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                   int num_grid_cells_per_axis);
+  /// Construct the lock grid of size `bbox`, with `num_grid_cells_per_axis` 
+  /// cells per axis.
+  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
+                                     int num_grid_cells_per_axis);
+
+/// @}
+
+/// \name Operations 
+/// @{ 
+
+  /// Set the bounding box of the domain
+  void set_bbox(const CGAL::Bbox_3 &bbox);
 
 /// @}
 
