@@ -41,7 +41,7 @@ typedef unspecified_type Object_2;
 /*!
 Function object type that provides 
 `Segment_2 operator()(Point_2 p, Point_2 q)`, which constructs and 
-returns the segment defined by the points \f$ p\f$ and \f$ q\f$. 
+returns the segment defined by the points \f$ p\f$ and \f$ q\f$.
 */ 
 typedef unspecified_type Construct_segment_2; 
 
@@ -54,7 +54,7 @@ typedef unspecified_type Construct_ray_2;
 
 /*!
 Predicate object type that 
-determines orderings of `Point_2`s on a line. Must provide 
+determines orderings of \link PartitionTraits_2::Point_2 `Point_2` \endlink 's on a line. Must provide 
 `bool operator()(Point_2 p, Point_2 q, Point_2 r)` that 
 returns `true`, iff `q` lies between `p` 
 and `r` and `p`, `q`, and `r` satisfy the precondition 
@@ -64,7 +64,7 @@ typedef unspecified_type Collinear_are_ordered_along_line_2;
 
 /*!
 Predicate object type that 
-determines orderings of `Point_2`s. Must provide 
+determines orderings of \link PartitionTraits_2::Point_2 `Point_2` \endlink 's. Must provide 
 `bool operator()(Point_2 p, Point_2 q, Point_2 r)` that 
 returns `true`, iff the three points are collinear and 
 `q` lies strictly between `p` 
