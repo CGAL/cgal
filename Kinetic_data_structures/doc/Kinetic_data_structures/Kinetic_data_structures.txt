@@ -412,17 +412,35 @@ visualization support is based on the Coin library http://www.coin3d.org.
 <CENTER>
 <TABLE border=0>
 <TR>
-<TD>\image html delaunay_0.png</TD>
-<TD>\image html delaunay_1.png</TD>
-<TD>\image html delaunay_2.png</TD>
-<TD>\image html delaunay_3.png</TD>
-<TD>\image html delaunay_4.png</TD>
+<TD>
+\image html delaunay_0.png
+</TD>
+<TD>
+\image html delaunay_1.png
+</TD>
+<TD>
+\image html delaunay_2.png
+</TD>
+<TD>
+\image html delaunay_3.png
+</TD>
+<TD>
+\image html delaunay_4.png
+</TD>
 </TR>
 <TR>
-<TD>\image html delaunay_5.png</TD>
-<TD>\image html delaunay_6.png</TD>
-<TD>\image html delaunay_7.png</TD>
-<TD>\image html delaunay_8.png</TD>
+<TD>
+\image html delaunay_5.png
+</TD>
+<TD>
+\image html delaunay_6.png
+</TD>
+<TD>
+\image html delaunay_7.png
+</TD>
+<TD>
+\image html delaunay_8.png
+</TD>
 </TR>
 </TABLE>
 </CENTER>

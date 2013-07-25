@@ -215,9 +215,15 @@ traits classes is demonstrated in the next section.
 <CENTER>
 <TABLE border="0">
 <TR>
-<TD>\image html ex_triangles.png</TD>
-<TD>\image html ex_tri_le.png</TD>
-<TD>\image html ex_tri_ue.png</TD>
+<TD>
+\image html ex_triangles.png
+</TD>
+<TD>
+\image html ex_tri_le.png
+</TD>
+<TD>
+\image html ex_tri_ue.png
+</TD>
 <TR ALIGN="center"><TD>(a)</TD><TD>(b)</TD><TD>(c)</TD></TR>
 </TABLE>
 </CENTER>

@@ -140,8 +140,12 @@ we define our polyhedron \f$ P := ( h_1 \cap h_2 \cap h_3) - ( h_4 \cap h_5)\f$.
 <center>
 <table border="0">
 <tr>
-<td>\image html nef_example.png</td>
-<td>\image html nef_pyramids.png</td>
+<td>
+\image html nef_example.png
+</td>
+<td>
+\image html nef_pyramids.png
+</td>
 </tr>
 </table>
 </center>

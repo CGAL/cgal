@@ -308,16 +308,28 @@ otherwise it is a finite edge.
 <CENTER>
 <TABLE BORDER>
 <TR>
-<TD>\image html ./apollonius-left_vertex.png</TD>
-<TD>\image html ./apollonius-right_vertex.png</TD>
+<TD>
+\image html ./apollonius-left_vertex.png
+</TD>
+<TD>
+\image html ./apollonius-right_vertex.png
+</TD>
 </TR>
 <TR>
-<TD>\image html ./apollonius-no_conflict.png</TD>
-<TD>\image html ./apollonius-entire_edge.png</TD>
+<TD>
+\image html ./apollonius-no_conflict.png
+</TD>
+<TD>
+\image html ./apollonius-entire_edge.png
+</TD>
 </TR>
 <TR>
-<TD>\image html ./apollonius-interior.png</TD>
-<TD>\image html ./apollonius-both_vertices.png</TD>
+<TD>
+\image html ./apollonius-interior.png
+</TD>
+<TD>
+\image html ./apollonius-both_vertices.png
+</TD>
 </TR>
 </TABLE>
 </CENTER>
