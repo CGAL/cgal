@@ -27,7 +27,6 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
-
 #include <iterator>
 #include <set>
 
@@ -52,7 +51,7 @@ namespace upsample_internal{
 
 
 /// For each query point, select a best "base point" in its neighborhoods.
-/// Then,a new point will be interpolated between query point and "base point".
+/// Then, a new point will be interpolated between query point and "base point".
 /// This is the key part of the upsample algorithm 
 /// 
 /// \pre `radius > 0`
@@ -76,20 +75,19 @@ base_point_selection(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-
   FT best_dist2 = -10.0;
   const Rich_point& v = query;
   for (unsigned int i = 0; i < neighbor_points.size(); ++i)
   {
     const Rich_point& t = neighbor_points[i];
-  
+
     const Vector& vm = v.normal;
     const Vector& tm = t.normal;
-    
+
     Vector diff_v_t = t.pt - v.pt;
     Point mid_point = v.pt + (diff_v_t * FT(0.5));
     
-    FT dot_produce = pow((FT(2.0) - vm * tm), edge_senstivity);
+    FT dot_produce = std::pow((FT(2.0) - vm * tm), edge_senstivity);
 
     Vector diff_t_mid = mid_point - t.pt;
     FT project_t = diff_t_mid * tm;
@@ -125,7 +123,6 @@ base_point_selection(
 /// 1, get neighbor information from the two "parent points"
 /// 2, update position and determine normal by bilateral projection 
 /// 3, update neighbor information again, and added to the neighbors' neighbor
-/// 
 ///
 /// \pre `radius > 0`
 ///
@@ -162,12 +159,11 @@ update_new_point(
   Rich_point& mother_v = rich_point_set[mother_index];
 
   std::set<int> neighbor_indexes;
-  unsigned int i;
-  for (i = 0; i < father_v.neighbors.size(); ++i)
+  for (unsigned int i = 0; i < father_v.neighbors.size(); ++i)
   {
     neighbor_indexes.insert(father_v.neighbors[i]);
   }
-  for (i = 0; i < mother_v.neighbors.size(); ++i)
+  for (unsigned int i = 0; i < mother_v.neighbors.size(); ++i)
   {
     neighbor_indexes.insert(mother_v.neighbors[i]);
   }
@@ -204,7 +200,7 @@ update_new_point(
    
   FT radius16 = FT(-4.0) / radius2;
 
-  for (i = 0; i < new_v.neighbors.size(); ++i)
+  for (unsigned int i = 0; i < new_v.neighbors.size(); ++i)
   {
     Rich_point& t = rich_point_set[new_v.neighbors[i]];
     FT dist2 = CGAL::squared_distance(new_v.pt, t.pt);
@@ -227,7 +223,7 @@ update_new_point(
   FT min_project_dist = (FT)(std::numeric_limits<double>::max)();
   unsigned int best = 0;
 
-  for (i = 0; i < candidate_num; ++i)
+  for (unsigned int i = 0; i < candidate_num; ++i)
   {
     FT absolute_dist = abs(project_dist_sum[i] / weight_sum[i]);
     if (absolute_dist < min_project_dist)
@@ -260,7 +256,6 @@ update_new_point(
     }
   }
 }
-
 
 } // namespace upsample_internal
 
@@ -331,11 +326,10 @@ edge_aware_upsample_point_set(
   Timer task_timer;
 
   // copy rich point set
-  ForwardIterator it;// point iterator
-  unsigned int i; 
   std::vector<Rich_point> rich_point_set(number_of_input);
   Rich_box box;
-  for(it = first, i = 0; it != beyond; ++it, ++i)
+  ForwardIterator it = first; // point iterator
+  for(unsigned int i = 0; it != beyond; ++it, ++i)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     rich_point_set[i].pt = get(point_pmap, it);
@@ -355,8 +349,8 @@ edge_aware_upsample_point_set(
                                                       neighbor_radius);
 
 
-  FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
-  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
+  FT cos_sigma = std::cos(sharpness_sigma / 180.0 * 3.1415926);
+  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
   FT sum_density = 0.0;
   unsigned int count_density = 0;
@@ -364,11 +358,10 @@ edge_aware_upsample_point_set(
   FT current_radius = neighbor_radius;
   FT density_pass_threshold = 0.0;
 
-  for (int iter_time = 0; iter_time < max_iter_time; iter_time++)
+  for (int iter_time = 0; iter_time < max_iter_time; ++iter_time)
   {
     std::cout << std::endl << "iter_time: " << iter_time + 1  << std::endl;
 
-    
     if (iter_time > 0)
     {
       current_radius *= 0.75;
@@ -388,7 +381,7 @@ edge_aware_upsample_point_set(
     if (iter_time == 0)
     {
       //estimate density threshold for the first time
-      for (i = 0; i < rich_point_set.size() * 0.05; ++i)
+      for (unsigned int i = 0; i < rich_point_set.size() * 0.05; ++i)
       {
         Rich_point& v = rich_point_set[i];
 
@@ -410,7 +403,6 @@ edge_aware_upsample_point_set(
       }
     }
 
-
     density_pass_threshold = sqrt(sum_density / count_density) * 0.65;
     sum_density = 0.;
     count_density = 0;
@@ -419,18 +411,17 @@ edge_aware_upsample_point_set(
     FT density_pass_threshold2 = density_pass_threshold * 
                                  density_pass_threshold;
 
-   
     std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
 
     // insert new points until all the points' density pass the threshold
     unsigned int max_loop_time = 3;
     unsigned int loop = 0;
-    while (1)
+    while (true)
     {
       std::cout << "loop_time: " << loop + 1 << std::endl;
       unsigned int count_not_pass = 0;
       loop++;
-      for (i = 0; i < rich_point_set.size(); ++i)
+      for (unsigned int i = 0; i < rich_point_set.size(); ++i)
       {
         if (is_pass_threshold[i])
         {
@@ -441,7 +432,7 @@ edge_aware_upsample_point_set(
 
         // extract neighbor rich points by index
         std::vector<Rich_point> neighbor_rich_points(v.neighbors.size());
-        for (unsigned int n = 0; n < v.neighbors.size(); n++)
+        for (unsigned int n = 0; n < v.neighbors.size(); ++n)
         {
           neighbor_rich_points[n] = rich_point_set[v.neighbors[n]];
         }
@@ -509,9 +500,7 @@ edge_aware_upsample_point_set(
     }
   }
 
-
-
-  for (i = number_of_input; i < rich_point_set.size(); ++i)
+  for (unsigned int i = number_of_input; i < rich_point_set.size(); ++i)
   {
     Rich_point& v = rich_point_set[i];
     Point point = v.pt;
