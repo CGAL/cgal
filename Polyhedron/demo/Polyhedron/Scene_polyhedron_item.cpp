@@ -154,7 +154,7 @@ Scene_polyhedron_item::save(std::ostream& out) const
 {
   out.precision(13);
   out << *poly;
-  return out;
+  return (bool) out;
 }
 
 QString 
