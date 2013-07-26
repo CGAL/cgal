@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -287,8 +287,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>545</width>
-            <height>178</height>
+            <width>534</width>
+            <height>174</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -637,6 +637,26 @@
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionConvert_to_Skeleton">
+   <property name="text">
+    <string>Convert to Skeleton</string>
+   </property>
+  </action>
+  <action name="actionShow_dock_widget">
+   <property name="text">
+    <string>Show dock widget</string>
+   </property>
+  </action>
+  <action name="actionMCFSkeleton">
+   <property name="text">
+    <string>Show dock widget</string>
+   </property>
+  </action>
+  <action name="actionConvert_to_skeleton">
+   <property name="text">
+    <string>Convert to skeleton</string>
    </property>
   </action>
  </widget>

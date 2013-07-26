@@ -208,6 +208,14 @@ QMenu* Scene_polyhedron_item::contextMenu()
     connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
             this, SLOT(set_erase_next_picked_facet(bool)));
 
+    QAction* actionTransparencySwitch =
+      menu->addAction(tr("Switch Transparency On/Off"));
+    actionTransparencySwitch->setObjectName("actionTransparencySwitch");
+    connect(actionTransparencySwitch, SIGNAL(triggered()),
+            this, SLOT(switch_transparency_on_off()));
+
+
+
     menu->setProperty(prop_name, true);
   }
   QAction* action = menu->findChild<QAction*>("actionPickFacets");
@@ -231,6 +239,16 @@ void Scene_polyhedron_item::enable_facets_picking(bool b)
 void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 {
   erase_next_picked_facet_m = b;
+}
+
+void Scene_polyhedron_item::switch_transparency_on_off()
+{
+  Polyhedron::Facet_iterator f = poly->facets_begin();
+  bool switch_on = f->patch_id()!= EMULATE_TRANSPARENCY;
+
+  for(; f != poly->facets_end(); ++f)
+    f->set_patch_id( switch_on ? EMULATE_TRANSPARENCY : 0 );
+  emit itemChanged();
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list

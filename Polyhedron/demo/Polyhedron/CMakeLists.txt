@@ -101,6 +101,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+  qt4_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
@@ -385,6 +386,21 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_demo_polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
   target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
   
+  #detect the sdf segmentation package for using the segmentation function
+  find_path(SDF_SEGMENTATION_INCLUDE_DIR CGAL/mesh_segmentation.h DOC "Path to Segmenation package.")
+  if (SDF_SEGMENTATION_INCLUDE_DIR)
+    MESSAGE(STATUS "Found SDF Segmentation package, enable smoother segmentation")
+    add_definitions(-DCGAL_HAS_SDF_SEGMENTATION)
+    include_directories(${SDF_SEGMENTATION_INCLUDE_DIR})
+  endif()
+
+  polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Polyhedron_demo_mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
+  target_link_libraries(mean_curvature_flow_skeleton_plugin 
+    scene_polyhedron_item 
+    scene_points_with_normal_item
+    scene_polylines_item
+    demo_framework)
+
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 
