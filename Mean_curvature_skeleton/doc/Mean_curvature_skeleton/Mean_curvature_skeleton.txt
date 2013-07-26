@@ -17,6 +17,7 @@ namespace CGAL {
 
 The code of this package is the result of GSoC 2013 ...
 
+\todo Hack the edge simplification package to skip the sorting of edges
 */ 
 } /* namespace CGAL */
 
