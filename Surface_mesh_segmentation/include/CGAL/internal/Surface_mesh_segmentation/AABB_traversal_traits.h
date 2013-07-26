@@ -25,8 +25,9 @@ class Listing_intersection_traits_ray_or_segment_triangle
   typedef typename ::CGAL::AABB_tree<AABBTraits>::size_type size_type;
 
 public:
-  Listing_intersection_traits_ray_or_segment_triangle(Output_iterator out_it)
-    : m_out_it(out_it) {}
+  Listing_intersection_traits_ray_or_segment_triangle(Output_iterator out_it,
+      const AABBTraits& traits)
+    : m_out_it(out_it), m_traits(traits) {}
 
   bool go_further() const {
     return true;
@@ -35,7 +36,8 @@ public:
   void intersection(const Query& query, const Primitive& primitive) {
     //SL: using Kernel_traits is not bad in this context cause we expect a Ray/Segment from a CGAL Kernel here
     typedef typename Kernel_traits<Query>::Kernel GeomTraits;
-    if ( GeomTraits().do_intersect_3_object()(query,primitive.datum()) ) {
+    if ( GeomTraits().do_intersect_3_object()(query,
+         primitive.datum(m_traits.shared_data())) ) {
       boost::optional<Object_and_primitive_id> intersection;
       intersection = AABBTraits().intersection_object()(query, primitive);
       if(intersection) {
@@ -45,12 +47,12 @@ public:
   }
 
   bool do_intersect(const Query& query, const Node& node) const {
-    return AABBTraits().do_intersect_object()(query, node.bbox());
+    return m_traits.do_intersect_object()(query, node.bbox());
   }
 
 private:
   Output_iterator m_out_it;
-
+  const AABBTraits& m_traits;
 };
 
 /// @endcond

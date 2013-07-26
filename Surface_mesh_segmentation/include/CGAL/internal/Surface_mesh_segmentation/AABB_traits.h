@@ -22,6 +22,9 @@ public:
     : public Base_traits::Do_intersect
   {
   public:
+    Do_intersect(const AABB_traits<GeomTraits,AABB_primitive>& traits)
+      :Base_traits::Do_intersect(traits) {}
+
     // not sure is it safe on templated funcs ? may be do not inherit and repeat functions...
     using Base_traits::Do_intersect::operator ();
 
@@ -68,8 +71,8 @@ public:
 
   };
 
-  Do_intersect do_intersect_object() {
-    return Do_intersect();
+  Do_intersect do_intersect_object() const {
+    return Do_intersect(*this);
   }
 };
 /// @endcond
