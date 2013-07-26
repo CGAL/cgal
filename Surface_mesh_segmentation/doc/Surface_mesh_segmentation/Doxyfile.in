@@ -1,0 +1,10 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Segmentation"
+INPUT =  ${CMAKE_SOURCE_DIR}/Surface_mesh_segmentation/doc/Surface_mesh_segmentation/ \
+         ${CMAKE_SOURCE_DIR}/Surface_mesh_segmentation/include
+
+# custom options for this package
+EXTRACT_ALL                =  false
+HIDE_UNDOC_CLASSES         =  true
+WARN_IF_UNDOCUMENTED       =  false
