@@ -1176,7 +1176,9 @@ void MainWindow::save(QString filename, Scene_item* item) {
   QFileInfo fileinfo(filename);
 
   Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    if(plugin->canSave(item)) {
+    if(  plugin->canSave(item) &&
+        file_matches_filter(plugin->nameFilters(),filename) )
+    {
       if(plugin->save(item, fileinfo))
         break;
     }
