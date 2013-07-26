@@ -411,21 +411,19 @@ bilateral_smooth_point_set(
     << (memory>>20) << " Mb allocated" << std::endl;
   task_timer.stop();  
 
-  const std::size_t NUM_ELEM = 1000;
-
   task_timer.start();
   std::cout << "Compute update points and normals: " << std::endl;
   // update points and normals
   Pwn_set update_pwn_set(nb_points);
 
-  if(is_use_parallel)
+  if(!is_use_parallel)
   {
-    tbb::blocked_range<size_t> block(0, NUM_ELEM);
+    tbb::blocked_range<size_t> block(0, nb_points);
     Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
                                     &pwn_set,
                                     &update_pwn_set,
                                     &pwn_neighbors_set);
-    tbb::parallel_for(block, pwn_updater, tbb::simple_partitioner());
+    tbb::parallel_for(block, pwn_updater);
   }
   else
   {
