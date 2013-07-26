@@ -41,7 +41,7 @@ where  \f$ n \f$ is the number of vertices of input polygon.
 
 Every templates has two parameters, `Arrangement_2` and `Regularization_tag`. User can attach an instance of `Arrangement_2` as the polygonal environment. `Regularization_tag` indicates whether the result should be regularized or not. 
 
-Each class has two overloads of `visibility_region` functions to compute the visibility region of \f$ p \f$ in a polygonal face \f$ F \f$. \f$ F \f$ should be bounded. One function is for case that \f$ p \f$ is in the interior of \f$ F \f$. The other is for case that \f$ p \f$ is on the boundary of \f$ F \f$. The answer is an instance of `Arrangement_2` that consists of edges on the boundary of visibility region.
+Each class has two overloads of `visibility_region` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ F \f$. One is for the case that \f$ p \f$ is in the interior of \f$ F \f$. The other is for the case that \f$ p \f$ is on the boundary of \f$ F \f$. The answer is returned as an instance of `Arrangement_2` that consists of edges on the boundary of visibility region.
 
 \section simple_visibility_example  Example of visibility in a simple polygon.
 The following example shows how to obtain the visibility region of Figure \cgalFigureRef{definition-fig} and the difference between regularized and non-regularized visibility.
