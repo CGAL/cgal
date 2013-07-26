@@ -27,7 +27,7 @@ typedef Arrangement_2::Halfedge_iterator                     Halfedge_iterator;
 bool test_one_file(std::ifstream& in_file, bool verbose)
 {
   unsigned int i;
-  
+
   // Read the points:
   unsigned int num_of_points;
   in_file >> num_of_points;
@@ -58,7 +58,10 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
 
   // Read the number of cells left.
   unsigned int num_vertices_left, num_edges_left, num_faces_left;
-  in_file >> num_vertices_left >> num_edges_left >> num_faces_left;  
+  in_file >> num_vertices_left >> num_edges_left >> num_faces_left;
+  std::cout << "#vl: " << num_vertices_left << std::endl;
+  std::cout << "#el: " << num_edges_left << std::endl;
+  std::cout << "#fl: " << num_faces_left << std::endl;
 
   Arrangement_2 arr;
   std::vector<Halfedge_handle> halfedges;
@@ -80,7 +83,7 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   for (cit = curves.begin(); cit != curves.end(); ++cit) {
     X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
     xcurves.push_back(xcv);
-  }  
+  }
   std::cout << "inserting " << " ... ";
   std::cout.flush();
   CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
@@ -91,7 +94,7 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
 #endif
 
   curves.clear();
-  
+
   // Insert the isolated points.
   if (isolated_points.size() != 0) {
     std::vector<unsigned int>::const_iterator pit;
@@ -105,7 +108,7 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
 
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   {
@@ -124,7 +127,7 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
       std::cout << std::endl;
     }
   }
-  
+
   // Remove the halfedges.
   if (num_edges_to_remove-- > 0) {
     // Remove the first halfedge inserted. Then, remove the rest.
@@ -147,12 +150,12 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
       std::cout << "removed" << std::endl;
     }
   }
-  
+
   // Verify the resulting arrangement.
   unsigned int num_vertices = arr.number_of_vertices();
   unsigned int num_edges = arr.number_of_edges();
   unsigned int num_faces = arr.number_of_faces();
-  
+
   if ((num_vertices != num_vertices_left) ||
       (num_edges != num_edges_left) ||
       (num_faces != num_faces_left))
@@ -160,13 +163,13 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     std::cerr << " Failed. The number of arrangement cells is incorrect:"
               << std::endl
               << "   V = " << arr.number_of_vertices()
-              << ", E = " << arr.number_of_edges() 
-              << ", F = " << arr.number_of_faces() 
+              << ", E = " << arr.number_of_edges()
+              << ", F = " << arr.number_of_faces()
               << std::endl;
     arr.clear();
     return false;
   }
-  
+
   arr.clear();
   return true;
 }
@@ -184,14 +187,14 @@ int main(int argc, char* argv[])
   for (int i = 1; i < argc; ++i) {
     std::string str(argv[i]);
     if (str.empty()) continue;
-    
+
     std::string::iterator itr = str.end();
     --itr;
     while (itr != str.begin()) {
       std::string::iterator tmp = itr;
       --tmp;
       if (*itr == 't')  break;
-      
+
       str.erase(itr);
       itr = tmp;
     }
@@ -209,6 +212,6 @@ int main(int argc, char* argv[])
     else std::cout <<str << ": succeeded" << std::endl;
     inp.close();
   }
-  
+
   return success;
 }
