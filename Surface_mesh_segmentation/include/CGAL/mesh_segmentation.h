@@ -92,7 +92,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @param sdf_values the sdf value of each facet between [0-1]
  * @param[out] segment_ids the segment id of each facet
  * @param number_of_levels number of clusters for soft clustering
- * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]
+ * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
  * @param traits traits object
  * @return number of segments
  */
@@ -139,7 +139,7 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays has a little effect on the quality of the result
  * @param number_of_levels number of clusters for soft clustering
- * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]
+ * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
  * @param traits traits object
  * @return number of segments
  */
