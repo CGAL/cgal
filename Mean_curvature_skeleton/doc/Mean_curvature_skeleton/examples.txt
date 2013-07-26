@@ -1,0 +1,3 @@
+/*!
+\example Mean_curvature_skeleton/simple_mcfskel_example.cpp
+*/

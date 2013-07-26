@@ -1,0 +1,22 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_3D_Mean_Curvature_Skeleton
+
+\cgalAutoToc
+\author Xiang Gao and Andrea Tagliasacchi
+
+\section MCFSkelSecMot Background
+
+\section MCFSkelSecAlgo Algorithm
+
+\section MCFSkelSecAPI API Description
+
+\section MCFSkelSecDesign Implementation History
+
+The code of this package is the result of GSoC 2013 ...
+
+*/ 
+} /* namespace CGAL */
+

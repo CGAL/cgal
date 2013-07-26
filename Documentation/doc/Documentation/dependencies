@@ -46,6 +46,7 @@ Algebraic_kernel_d
 Kernel_d
 Point_set_2
 SearchStructures
+Mean_curvature_skeleton
 Polytope_distance_d
 Polyhedron
 Polynomial
