@@ -490,6 +490,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   std::vector<bool> deleted;
   skeleton_segment.resize(boost::num_vertices(g));
   deleted.resize(boost::num_vertices(g), false);
+  boost::graph_traits<Graph>::vertex_iterator vi;
   for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
   {
     int deg = boost::out_degree(*vi, g);
