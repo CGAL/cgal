@@ -1,0 +1,29 @@
+/// \defgroup PkgSurfaceSegmentation 3D Surface Mesh Segmentation Reference
+
+/// \defgroup PkgSurfaceSegmentationConcepts Concepts
+/// \ingroup PkgSurfaceSegmentation
+
+
+/*!
+\addtogroup PkgSurfaceSegmentation
+
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceSegmentationSummary}
+\cgalPkgPicture{segmentation_ico.png}
+ 
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Ilker %O. Yaz and Sébastien Loriot}
+\cgalPkgDesc{This package provides methods to generate automatic segmentation of triangulated surface mesh.}
+\cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentation}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.3}
+\cgalPkgDependsOn{\ref PkgAABB_treeSummary}
+\cgalPkgBib{cgal:y-smsimpl}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+*/
