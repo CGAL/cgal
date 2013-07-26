@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     std::cout << "Missing input file" << std::endl;
     return 0;
   }
- 
+
   std::ifstream in_file(argv[1]);
   if (!in_file.is_open()) {
     std::cout << "Can't open file: " << argv[1] << std::endl;
@@ -66,11 +66,11 @@ int main(int argc, char* argv[])
   Arrangement_2 arr(&traits);
   Curve_container curves;
 
-  int num_of_curves;
+  unsigned int num_of_curves;
   in_file >> num_of_curves;
   out_file << num_of_curves << std::endl;
   curves.resize(num_of_curves);
-  for (unsigned int i = 0; i < num_of_curves; ++i) { 
+  for (unsigned int i = 0; i < num_of_curves; ++i) {
     Base_curve_2 base_cv;
     in_file >> base_cv;
     out_file << base_cv << std::endl;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   std::cout << "Inserting the curves to the map ... " << std::endl;
 
   CGAL::insert(arr, curves.begin(), curves.end());
-  
+
   std::cout<< "Finished insertion...\n";
   std::cout<<CGAL::is_valid(arr)<<"\n";
 
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
   i = 0;
   for (Edge_iterator eit = arr.edges_begin(); eit != arr.edges_end();
        ++eit, ++i)
-    curves_res[i] = eit->curve();    
+    curves_res[i] = eit->curve();
   std::sort(curves_res.begin(), curves_res.end(),
             Curve_compare<Traits_2>(traits));
 
@@ -120,4 +120,3 @@ int main(int argc, char* argv[])
             << std::endl;
   return 0;
 }
-
