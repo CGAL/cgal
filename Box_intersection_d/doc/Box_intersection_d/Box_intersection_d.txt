@@ -24,7 +24,8 @@ point-set enclosed by the box and not only intersection of the
 boundary, of course.}, only then the exact answer is computed on the
 complicated geometric primitives contained in the boxes.
 
-\image html box_inters.gif
+\image html box_inters.png
+\image latex box_inters.png
 
 We provide an efficient algorithm \cite cgal:ze-fsbi-02 for finding all
 intersecting pairs for large numbers of iso-oriented boxes, i.e.,
@@ -387,7 +388,7 @@ optimal cutoff, which would just delegate the box sets to the scanning
 algorithm. As there are more and more boxes, the overhead becomes less
 important.
 
-\cgalFigureBegin{fig_benchmark,benchmark.gif}
+\cgalFigureBegin{fig_benchmark,benchmark.png}
 Runtime comparison between the scanning and the streaming algorithm.
 \cgalFigureEnd
 

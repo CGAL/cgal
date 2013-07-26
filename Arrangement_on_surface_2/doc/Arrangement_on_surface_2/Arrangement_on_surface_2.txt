@@ -78,7 +78,7 @@ isolated vertices in its interior. See \cgalFigureRef{arr_figseg_dcel}
 for an illustration of the various \sc{Dcel} features. For more details
 on the \sc{Dcel} data structure see \cite bkos-cgaa-00 Chapter 2.
 
-\cgalFigureBegin{arr_figseg_dcel,arr_segs.gif}
+\cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
 An arrangement of interior-disjoint line segments with some of the \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has a single connected component that forms a hole inside it, and this hole is comprised if several faces. The half-edge \f$ e\f$ is directed from its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a line segment that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part of the chain that form the outer boundary of the face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and \f$ u_2\f$ in its interior.
 \cgalFigureEnd
 
@@ -163,7 +163,8 @@ further explanations and examples.
 
 \subsection Arrangement_on_surface_2ASimpleProgram A Simple Program
 
-\image html triangle.gif
+\image html triangle.png
+\image latex triangle.png
 
 The simple program listed below constructs a planar map of three line
 segments forming a triangle. The constructed arrangement is instantiated
@@ -481,7 +482,7 @@ for more details and examples.
 \cgalFootnote{You may skip to Section \ref arr_secgl_funcs, and return to this subsection at a later point in time.}
 
 
-\cgalFigureBegin{arr_figex_1,insert.gif}
+\cgalFigureBegin{arr_figex_1,insert.png}
  The various specialized insertion procedures. The inserted \f$ x\f$-monotone curve is drawn with a light dashed line, surrounded by two solid arrows that represent the pair of twin half-edges added to the \sc{Dcel}. Existing vertices are shown as black dots while new vertices are shown as light dots. Existing half-edges that are affected by the insertion operations are drawn as dashed arrows. (a) Inserting a curve as a new hole inside the face \f$ f\f$. (b) Inserting a curve from an existing vertex \f$ u\f$ that corresponds to one of its endpoints. (c) Inserting an \f$ x\f$-monotone curve whose endpoints are the already existing vertices \f$ u_1\f$ and \f$ u_2\f$. In our case, the new pair of half-edges close a new face \f$ f'\f$, where the hole \f$ h_1\f$, which used to belong to \f$ f\f$, now becomes an enclave in this new face.
 \cgalFigureEnd
 
@@ -524,7 +525,8 @@ figure to the left).</LI>
 </LI>
 </OL>
 
-\image html connect_comp.gif
+\image html connect_comp.png
+\image latex connect_comp.png
 
 The `Arrangement_2` class offers insertion functions named
 `insert_in_face_interior()`, `insert_from_left_vertex()`,
@@ -548,7 +550,7 @@ that has just been created.
 from \f$ v_1\f$ to \f$ v_2\f$.
 </UL>
 
-\cgalFigureBegin{arr_figex_2,ex_1.gif}
+\cgalFigureBegin{arr_figex_2,ex_1.png}
 The arrangement of the line segments \f$ s_1, \ldots, s_5\f$ constructed in `edge_insertion.cpp`. The arrows mark the direction of the halfedges returned from the various insertion functions.
 \cgalFigureEnd
 
@@ -591,7 +593,7 @@ containing an isolated vertex handle \f$ v\f$ by calling `v->face()`.
 The function `remove_isolated_vertex(v)` receives a handle to
 an isolated vertex and removes it from the arrangement.
 
-\cgalFigureBegin{arr_figex_3,ex_2.gif}
+\cgalFigureBegin{arr_figex_3,ex_2.png}
 An arrangement of line segments containing three isolated vertices, as constructed in `isolated_vertices.cpp`. The vertices \f$ u_2\f$ and \f$ u_3\f$ are eventually removed from the arrangement.
 \cgalFigureEnd
 
@@ -648,7 +650,7 @@ isolated vertices by supplying additional Boolean flags to
 `remove_edge()` indicating whether the source and the target vertices
 are to be removed should they become isolated.
 
-\cgalFigureBegin{arr_figex_4,ex_3.gif}
+\cgalFigureBegin{arr_figex_4,ex_3.png}
 An arrangement of line segments as constructed in `edge_manipulation.cpp`. Note that the edges \f$ e_7\f$ and \f$ e_8\f$ and the vertices \f$ w_1\f$ and \f$ w_2\f$, introduced in step (b) are eventually removed in step (c).
 \cgalFigureEnd
 
@@ -699,7 +701,8 @@ by \f$ (\frac{1}{2}, 3)\f$.
 
 \subsection arr_sssecadv_insert Advanced Insertion Functions 
 
-\image html pred_around_vertex.gif
+\image html pred_around_vertex.png
+\image latex pred_around_vertex.png
 
 \cgalAdvancedBegin
 Assume that the specialized insertion function
@@ -737,7 +740,7 @@ for one vertex and a predecessor halfedge around the other
 vertex.
 
 
-\cgalFigureBegin{arr_figex_5,ex_4.gif}
+\cgalFigureBegin{arr_figex_5,ex_4.png}
 An arrangement of line segments, as constructed in `special_edge_insertion.cpp`. Note that \f$ p_0\f$ is initially inserted as an isolated point and later on connected to the other four vertices.
 \cgalFigureEnd
 
@@ -963,7 +966,7 @@ class template should be the selected point-location strategy.
 
 \subsection arr_sssecpl_ex An Example 
 
-\cgalFigureBegin{arr_figex_8,ex_5.gif}
+\cgalFigureBegin{arr_figex_8,ex_5.png}
 The arrangement of line segments, as constructed in `point_location_example.cpp`, `vertical_ray_shooting.cpp`, and `batched_point_location.cpp`. The arrangement vertices are drawn as small discs, while the query points \f$ q_1, \ldots, q_6\f$ are marked with crosses.
 \cgalFigureEnd
 
@@ -1247,7 +1250,7 @@ insertion operation may involve splitting curves.
 
 \subsection arr_sssecinsert_ex An Example 
 
-\cgalFigureBegin{arr_figex_10,ex_8.gif}
+\cgalFigureBegin{arr_figex_10,ex_8.png}
 An arrangement of five intersecting line segments, as constructed in `incremental_insertion.cpp` and `aggregated_insertion.cpp`. The segment endpoints are marked by black disks and the arrangement vertices that correspond to intersection points are marked by circles. The query point \f$ q\f$ is marked with a cross and the face that contains it is shaded.
 \cgalFigureEnd
 
@@ -1371,7 +1374,7 @@ arrangement, where we denote the number of edges in the arrangement by \f$ N\f$.
 As a rule of thumb, if \f$ m = o(\sqrt{N})\f$, we insert the curves one by
 one. For larger input sets, we use the aggregated insertion procedures.
 
-\cgalFigureBegin{arr_figex_unb1,ex_10.gif}
+\cgalFigureBegin{arr_figex_unb1,ex_10.png}
 An arrangement of intersecting line segments, as constructed in `global_insertion.cpp`. The segments of \f$ {\mathcal S}_1\f$ are drawn in solid lines and the segments of \f$ {\mathcal S}_2\f$ are drawn in dark dashed lines. Note that the segment \f$ s\f$ (light dashed line) overlaps one of the segments in \f$ {\mathcal S}_1\f$.
 \cgalFigureEnd
 
@@ -1421,7 +1424,8 @@ from the arrangement by simply calling `arr.remove_edge(e)`
 end vertices of `e` becomes isolated or redundant after the removal
 of the edge, it is removed as well.
 
-\image html h_shape.gif
+\image html h_shape.png
+\image latex h_shape.png
 
 The following example demonstrates the usage of the free removal
 functions. In creates an arrangement of four line segment forming
@@ -1486,7 +1490,7 @@ endpoint of \f$ r\f$ is already associated with an arrangement vertex.
 Other edge-manipulation functions can also be applied on edges
 associated with unbounded curves.
 
-\cgalFigureBegin{arr_figunb_dcel,ex_unb1.gif}
+\cgalFigureBegin{arr_figunb_dcel,ex_unb1.png}
 An arrangement of unbounded linear objects, as constructed in unbounded_non_intersecting.cpp.
 \cgalFigureEnd
 
@@ -1551,7 +1555,7 @@ exists. This implied that collinearity indeed exists as explained above.
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements 
 \cgalAdvancedBegin
 
-\cgalFigureBegin{typenormal,unb_dcel.gif}
+\cgalFigureBegin{typenormal,unb_dcel.png}
 A \sc{Dcel} representing an arrangement of four lines. Halfedges are drawn as thin arrows. The vertices \f$ v_1, \ldots, v_8\f$ lie at infinity, and are not associated with valid points. The halfedges that connect them are fictitious, and are not associated with concrete curves. The face denoted \f$ f_0\f$ (lightly shaded) is the fictitious "unbounded face" which lies outside the bounding rectangle (dashed) that bounds the actual arrangement. The four fictitious vertices \f$ v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$ v_{\rm tr}\f$ represent the four corners of the bounding rectangle.
 \cgalFigureEnd
 
@@ -2050,7 +2054,7 @@ relatively small - then filtered computation incur only a minor
 overhead compared to the floating-point arithmetic, while ensuring
 the correctness of the computation results.
 
-\cgalFigureBegin{arr_figpredef_kernels,fan_grids.gif,Europe.gif}
+\cgalFigureBegin{arr_figpredef_kernels,fan_grids.png,Europe.png}
 (a) An arrangement of \f$ 104\f$ line segments from the input file `fan_grids.dat`. (b) An arrangement of more than \f$ 3000\f$ interior disjoint line segments, defined in the input file `Europe.dat`.
 \cgalFigureEnd
 
@@ -2149,7 +2153,7 @@ from `Curve_2`. The points in an \f$ x\f$-monotone curve are
 always stored in lexicographically increasing order of their
 coordinates.
 
-\cgalFigureBegin{arr_figex_12,ex_12.gif}
+\cgalFigureBegin{arr_figex_12,ex_12.png}
 An arrangement of three polylines, as constructed in `polylines.cpp`. Disks mark vertices associated with polyline endpoints, while circles mark vertices that correspond to intersection points. Note that \f$ \pi_2\f$ is split into three \f$ x\f$-monotone polylines, and that \f$ \pi_1\f$ and \f$ \pi_3\f$ have two overlapping sections.
 \cgalFigureEnd
 
@@ -2202,7 +2206,7 @@ is <I>not</I> the same as the `Kernel::Point_2` type, which is capable of
 representing a point with rational coordinates. The coordinates of a
 point are represented using the nested `CoordNT` number-type.
 
-\cgalFigureBegin{arr_figex_13,ex_13.gif}
+\cgalFigureBegin{arr_figex_13,ex_13.png}
 An arrangement of three circles constructed in `circles.cpp`. Each circle is split into two \f$ x\f$-monotone circular arcs, whose endpoints are drawn as disks. Circles mark vertices that correspond to intersection points. The vertex \f$ v_{\rm max}\f$ is a common intersection point of all three circles.
 \cgalFigureEnd
 
@@ -2357,7 +2361,7 @@ also support basic access functions such as `source()`,
 
 \subsection Arrangement_on_surface_2ExamplesforArrangements Examples for Arrangements of Conics
 
-\cgalFigureBegin{arr_figex_14,ex_14.gif}
+\cgalFigureBegin{arr_figex_14,ex_14.png}
 An arrangement of mixed conic arcs, as constructed in conics.cpp
 \cgalFigureEnd
 
@@ -2469,7 +2473,7 @@ providing the coefficients of \f$ P'\f$ and \f$ Q'\f$ to the constructor. In thi
 case the constructor normalizes the coefficients and stores the desired
 polynomials \f$ P\f$ and \f$ Q\f$.
 
-\cgalFigureBegin{arr_figex_16,ex_16.gif}
+\cgalFigureBegin{arr_figex_16,ex_16.png}
 An arrangement of four arcs of rational functions, as constructed in rational_functions.cpp.
 \cgalFigureEnd
 
@@ -2480,7 +2484,7 @@ constructors, for polynomial arcs and for rational arcs:
 
 \cgalExample{Arrangement_on_surface_2/rational_functions.cpp}
 
-\cgalFigureBegin{arr_figex_unb_rat,ex_unb_rat.gif}
+\cgalFigureBegin{arr_figex_unb_rat,ex_unb_rat.png}
 An arrangement of six arcs of rational functions, as constructed in unbounded_rational_functions.cpp
 \cgalFigureEnd
 
@@ -2543,7 +2547,7 @@ The `Arr_Bezier_curve_traits_2` is a model of the
 to use the landmark point-location strategy for arrangements of
 rational arcs).
 
-\cgalFigureBegin{arr_figex_bez,Bezier_arr.gif}
+\cgalFigureBegin{arr_figex_bez,Bezier_arr.png}
 An arrangement of ten B&eacute;zier curves of degree \f$ 5\f$, as constructed in `Bezier_curves.cpp`.
 \cgalFigureEnd
 
@@ -2593,7 +2597,7 @@ This polynomial type is also available by the traits class
 and constitutes a valid model
 of the concept `Polynomial_d` with two variables (see ??).
 
-\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.gif}
+\cgalFigureBegin{arr_figex_alg_curves,algebraic_curves.png}
 An arrangement of algebraic curves of degrees \f$ 1\f$, \f$ 2\f$, \f$ 3\f$, and \f$ 6\f$, as constructed in `algebraic_curves.cpp`.
 \cgalFigureEnd
 
@@ -2649,7 +2653,7 @@ a terminal segment is a weakly \f$ x\f$-monotone segment that is either vertical
 its \f$ x\f$-range contains no critical point in its interior.
 \cgalAdvancedEnd
 
-\cgalFigureBegin{arr_figcylindrical_decomposition,cylindrical_decomposition.gif}
+\cgalFigureBegin{arr_figcylindrical_decomposition,cylindrical_decomposition.png}
 The critical \f$ x\f$-coordinates of an algebraic curve (dashed lines), and its decomposition into terminal segments (in different colors). The segment from \f$ p\f$ to \f$ q\f$ consists of the union of three terminal segments.
 \cgalFigureEnd
 
@@ -2676,7 +2680,7 @@ we recommend to be careful with that option, since computing an explicit
 representation of the \f$ y\f$-coordinate as an `Algebraic_real_1` object
 can become rather expensive.
 
-\cgalFigureBegin{arr_figex_alg_segments,algebraic_segments.gif}
+\cgalFigureBegin{arr_figex_alg_segments,algebraic_segments.png}
 An arrangement of algebraic segments (solid lines), as constructed in `algebraic_segments.cpp`. The supporting curves are drawn in dashed lines.
 \cgalFigureEnd
 
@@ -2761,7 +2765,7 @@ the consolidated set \f$ S_1 \cup S_2\f$.
 
 \subsection Arrangement_on_surface_2Examples Examples
 
-\cgalFigureBegin{arr_figex_17,ex_17.gif}
+\cgalFigureBegin{arr_figex_17,ex_17.png}
 An arrangement of six red and blue segments, as constructed in `consolidated_curve_data.cpp`. Disks correspond to red-blue intersection points, while circles mark the endpoints of red-blue overlaps.
 \cgalFigureEnd
 
@@ -2777,7 +2781,7 @@ corresponds to overlaps between red and blue line segments:
 
 \cgalExample{Arrangement_on_surface_2/consolidated_curve_data.cpp}
 
-\cgalFigureBegin{arr_figex_18,ex_18.gif}
+\cgalFigureBegin{arr_figex_18,ex_18.png}
 An arrangement of four polylines, named A-D, as constructed in `generic_curve_data.cpp`.
 \cgalFigureEnd
 
@@ -2904,7 +2908,7 @@ classes, by inheriting from the base observer class and overriding
 the relevant notification functions, as required by their
 applications.
 
-\cgalFigureBegin{arr_figex_19,ex_19.gif}
+\cgalFigureBegin{arr_figex_19,ex_19.png}
 An arrangement of five line segments, as constructed in `observer.cpp`. The halfedge \f$ e_v\f$ (dashed) is eventually removed, so that the final arrangement consists of four faces (one unbounded and three bounded ones).
 \cgalFigureEnd
 
@@ -2967,7 +2971,7 @@ with another face). In such cases one can use an arrangement observer
 tailored for this task, which receives updates whenever a face is
 modified and sets its data field accordingly.
 
-\cgalFigureBegin{arr_figex_20,ex_20.gif}
+\cgalFigureBegin{arr_figex_20,ex_20.png}
 An arrangement of six line segments, as constructed in `face_extension.cpp` and `dcel_extension.cpp` (in `dcel_extension.cpp` we treat the segments as directed, so they are drawn as arrows directed from the source to the target). The indices associated with the halfedges in `face_extension.cpp` are shown in brackets.
 \cgalFigureEnd
 
@@ -3103,7 +3107,7 @@ concept. The details of this concept are given in the Reference Manual.
 
 \subsection arr_ssecsimp_ovl Example for a Simple Overlay 
 
-\cgalFigureBegin{arr_figex_22,ex_22.gif}
+\cgalFigureBegin{arr_figex_22,ex_22.png}
 Overlaying two simple arrangements of line segments, as done in `overlay.cpp` and `ex_face_extension_overlay.cpp`. In `face_extension_overlay.cpp` the two bounded faces are considered as <I>marked</I>, and the octagonal face which is the intersection of the two marked faces is denoted by \f$ f_0\f$.
 \cgalFigureEnd
 
@@ -3278,7 +3282,7 @@ the details).
 
 \subsection arr_ssecarr_hist_ex Examples 
 
-\cgalFigureBegin{arr_figex_24,ex_24.gif}
+\cgalFigureBegin{arr_figex_24,ex_24.png}
 An arrangement with history as constructed in `curve_history.cpp`. Note that \f$ s_1\f$ and \f$ s_3\f$ overlap over two edges. The point-location query points are drawn as lightly shaded dots.
 \cgalFigureEnd
 
@@ -3292,7 +3296,7 @@ on the resulting arrangement, using the auxiliary function
 
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
 
-\cgalFigureBegin{arr_figex_25,ex_25.gif}
+\cgalFigureBegin{arr_figex_25,ex_25.png}
 An arrangement with history of nine circle as constructed in `edge_manipulation_curve_history.cpp`. Note the vertical tangency points of \f$ C_0\f$, marked as dark dots, which subdivide this circle into an upper half and a lower half, each consists of 9 edges. The large circle \f$ C_0\f$ is eventually removed from the arrangement, with all 18 edges it induces.
 \cgalFigureEnd
 
@@ -3537,7 +3541,7 @@ kept synchronized with the number of vertices in the arrangement, so it
 should not be reused in calls to <span class="textsc">bgl</span> functions in case the arrangement
 is modified in between these calls.
 
-\cgalFigureBegin{arr_figex_bgl,ex_bgl.gif}
+\cgalFigureBegin{arr_figex_bgl,ex_bgl.png}
 An arrangement of 7 line segments, as constructed by `bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown is brackets.
 \cgalFigureEnd
 

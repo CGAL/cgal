@@ -12,6 +12,7 @@ namespace CGAL {
 \author Nico Kruithof
 
 \image html 3pts_unique.png
+\image latex 3pts_unique.png
 
 The periodic 2D-triangulation class of \cgal is designed to represent
 the triangulation of a set of points in the two-dimensional flat
@@ -59,7 +60,7 @@ The vector \f$ (0,0)\f$ corresponds to the representative in the original
 domain. To specify a \f$ k\f$-simplex we need \f$ k+1\f$ point-offset pairs
 (cf. Fig. \cgalFigureRef{P2Triangulation2figoffsets}).
 
-\cgalFigureBegin{P2Triangulation2figoffsets,offsets.gif}
+\cgalFigureBegin{P2Triangulation2figoffsets,offsets.png}
 Offsets in a face.
 \cgalFigureEnd
 
@@ -78,7 +79,7 @@ defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^2\f$ given by representatives determined by the respective offsets
 (see Figure \cgalFigureRef{P2Triangulation2figorient}).
 
-\cgalFigureBegin{P2Triangulation2figorient, orient.gif}
+\cgalFigureBegin{P2Triangulation2figorient, orient.png}
 Orientation of a face.
 \cgalFigureEnd
 
@@ -391,6 +392,7 @@ batch inserted points. The points are uniformly randomly distributed
 in the unit rectangle. The tests were done on an Intel i7 @ 2.67GHz.
 
 \image html p2dt2_performance.png
+\image latex p2dt2_performance.png
 
 \section P2T2_Design Design and Implementation History
 

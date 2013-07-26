@@ -966,9 +966,9 @@ public:
 // @}
 
 /// \anchor Triangulation_ref_Fig_insert1
-/// \image html insert1.gif "Insertion of a point on an edge."
+/// \image html insert1.png "Insertion of a point on an edge."
 /// \anchor Triangulation_ref_Fig_insert2
-/// \image html insert2.gif "Insertion in a face."
+/// \image html insert2.png "Insertion in a face."
 /// @{
 
 

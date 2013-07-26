@@ -448,7 +448,8 @@ exchanges the edge incident to
 `f` and `f->neighbor(i)` with the other 
 diagonal of the quadrilateral formed by `f` and `f->neighbor(i)`. 
 
-\image html Flip.gif "Flip"
+\image html Flip.png "Flip"
+\image latex Flip.png "Flip"
 */ 
 void flip(Face_handle f, int i); 
 
@@ -498,7 +499,8 @@ If parameter `f` is specified, it has to be a face incident to `v`
 and will be the modified face. 
 \pre %Vertex `v` is a finite vertex with degree 3 and, if specified, face `f` is incident to `v`. 
 
-\image html Three.gif "Insertion"
+\image html Three.png "Insertion"
+\image latex Three.png "Insertion"
 */ 
 void remove_degree_3(Vertex_handle v,  Face_handle f = Face_handle()); 
 
@@ -534,6 +536,7 @@ augmented with the vertex `v` itself; this one is placed on the edge `(f, i)`
 
 \anchor figtdsdim_down_2
 \image html tds-dim_down.png "From a two-dimensional data structure to a one-dimensional data structure."
+\image latex tds-dim_down.png "From a two-dimensional data structure to a one-dimensional data structure."
 
 */
 void dim_down(Face_handle f, int i); 

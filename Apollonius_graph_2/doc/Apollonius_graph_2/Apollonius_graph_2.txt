@@ -20,7 +20,7 @@ described.
 
 \section secapollonius2definitions Definitions 
 
-\cgalFigureBegin{figapollonius,apollonius_diagram.gif,apollonius_graph.gif}
+\cgalFigureBegin{figapollonius,apollonius_diagram.png,apollonius_graph.png}
 The Apollonius diagram (left) and its dual the Apollonius graph (right).
 \cgalFigureEnd
 
@@ -278,7 +278,7 @@ inserted in the diagram (the green circle). In the Apollonius graph
 it tells us if a triangular face of the diagram is to be destroyed or
 not.
 
-\cgalFigureBegin{figag2vc,apollonius-vertex_conflict-false.gif,apollonius-vertex_conflict-true.gif}
+\cgalFigureBegin{figag2vc,apollonius-vertex_conflict-false.png,apollonius-vertex_conflict-true.png}
 The `Vertex_conflict_2` predicate. The left-most, bottom-most and top-most circles define the tritangent circle in the middle. We want to determine the sign of the distance of the left-most circle from the one in the middle. The almost horizontal curve is the bisector of the top-most and bottom-most circles. Left: the predicate returns `NEGATIVE`. Right: the predicate returns `POSITIVE`.
 \cgalFigureEnd
 
@@ -308,16 +308,34 @@ otherwise it is a finite edge.
 <CENTER>
 <TABLE BORDER>
 <TR>
-<TD>\image html ./apollonius-left_vertex.gif</TD>
-<TD>\image html ./apollonius-right_vertex.gif</TD>
+<TD>
+\image html ./apollonius-left_vertex.png
+\image latex ./apollonius-left_vertex.png
+</TD>
+<TD>
+\image html ./apollonius-right_vertex.png
+\image latex ./apollonius-right_vertex.png
+</TD>
 </TR>
 <TR>
-<TD>\image html ./apollonius-no_conflict.gif</TD>
-<TD>\image html ./apollonius-entire_edge.gif</TD>
+<TD>
+\image html ./apollonius-no_conflict.png
+\image latex ./apollonius-no_conflict.png
+</TD>
+<TD>
+\image html ./apollonius-entire_edge.png
+\image latex ./apollonius-entire_edge.png
+</TD>
 </TR>
 <TR>
-<TD>\image html ./apollonius-interior.gif</TD>
-<TD>\image html ./apollonius-both_vertices.gif</TD>
+<TD>
+\image html ./apollonius-interior.png
+\image latex ./apollonius-interior.png
+</TD>
+<TD>
+\image html ./apollonius-both_vertices.png
+\image latex ./apollonius-both_vertices.png
+</TD>
 </TR>
 </TABLE>
 </CENTER>

@@ -140,8 +140,14 @@ we define our polyhedron \f$ P := ( h_1 \cap h_2 \cap h_3) - ( h_4 \cap h_5)\f$.
 <center>
 <table border="0">
 <tr>
-<td>\image html nef_example.gif</td>
-<td>\image html nef_pyramids.gif</td>
+<td>
+\image html nef_example.png
+\image latex nef_example.png
+</td>
+<td>
+\image html nef_pyramids.png
+\image latex nef_pyramids.png
+</td>
 </tr>
 </table>
 </center>
@@ -175,13 +181,15 @@ from the three-dimensional elements. See Chapter
 for further details.
 
 \image html sphere_map.png
+\image latex sphere_map.png
 
 Having sphere maps for all vertices of our polyhedron is a sufficient
 but not easily accessible representation of the polyhedron. We enrich
 the data structure with more explicit representations of all the faces
 and incidences between them.
 
-\image html snc.gif 
+\image html snc.png 
+\image latex snc.png 
 
 We depart slightly from the definition of faces in a Nef polyhedron;
 we represent the connected components of a face individually and do
@@ -470,7 +478,8 @@ shalfedge belongs to a single shell. The figure below illustrates the
 notion of a shell. It shows a Nef polyhedron with two volumes and
 three shells.
 
-\image html shells.gif
+\image html shells.png
+\image latex shells.png
 
 The first volume is the outer volume and the second volume is the
 interior of the cube. The first shell is the whole surface of the left
@@ -485,7 +494,8 @@ same eight vertices of the cube, plus the endpoint of the antenna
 that is in contact with the cube, all halffacets
 oriented inwards, and all halfedges (the same as for the second shell).
 
-\image html closeup.gif
+\image html closeup.png
+\image latex closeup.png
 
 We discuss how sfaces, shalfedges, and sloops belong to the shells
 with a closeup view of the situation at the antenna foot. As you can
@@ -572,6 +582,7 @@ an QApplication with a main widget of type `Qt_widget_Nef_3` and
 how to start the viewer.
 
 \image html visualization_SNC.png
+\image latex visualization_SNC.png
 
 \cgalExample{Nef_3/visualization_SNC.cpp}
 

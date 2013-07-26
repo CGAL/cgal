@@ -15,6 +15,7 @@ namespace CGAL {
 \author Nico Kruithof
 
 \image html molecule.png ""
+\image latex molecule.png ""
 
 \section sectionSkinSurfaceIntro Introduction 
 

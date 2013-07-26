@@ -31,7 +31,7 @@ angle they form with the \f$ x\f$-axis. The Minkowski sum can therefore be
 computed in \f$ O(m + n)\f$ time, by starting from two bottommost vertices
 in \f$ P\f$ and in \f$ Q\f$ and performing "merge sort" on the edges.
 
-\cgalFigureBegin{mink_figonecyc,onecyc_in.gif,onecyc_out.gif}
+\cgalFigureBegin{mink_figonecyc,onecyc_in.png,onecyc_out.png}
 Computing the convolution of a convex polygon and a non-convex polygon
 (left). The convolution consists of a single self-intersecting cycle,
 drawn as a sequence of arrows (right). The winding number associated
@@ -105,7 +105,7 @@ contains `S.number_of_holes()` holes in its interior).
 
 
 
-\cgalFigureBegin{mink_figsum_tri,sum_triangles.gif}
+\cgalFigureBegin{mink_figsum_tri,sum_triangles.png}
 Computing the Minkowski sum of two triangles, as done in the example program \ref Minkowski_sum_2/sum_triangles.cpp.
 \cgalFigureEnd
 
@@ -120,7 +120,7 @@ The file `print_util.h` includes auxiliary functions for printing polygons.
 \cgalExample{Minkowski_sum_2/sum_triangles.cpp}
 
 
-\cgalFigureBegin{mink_figsum_holes,tight.gif}
+\cgalFigureBegin{mink_figsum_holes,tight.png}
 Computing the Minkowski sum of two non-convex polygons \f$ P\f$ and \f$ Q\f$, as done in the example programs \ref Minkowski_sum_2/sum_with_holes.cpp and \ref Minkowski_sum_2/sum_by_decomposition.cpp.
 \cgalFigureEnd
 
@@ -201,9 +201,18 @@ is widely known as <I>offsetting</I> the polygon \f$ P\f$ by a radius \f$ r\f$.
 <center>
 <table border=0>
 <tr>
-<td>\image html convex_offset.gif</td>
-<td>\image html offset_decomp.gif</td>
-<td>\image html offset_conv.gif</td>
+<td>
+\image html convex_offset.png
+\image latex convex_offset.png
+</td>
+<td>
+\image html offset_decomp.png
+\image latex offset_decomp.png
+</td>
+<td>
+\image html offset_conv.png
+\image latex offset_conv.png
+</td>
 <tr align="center"><td>(a)</td><td>(b)</td><td>(c)</td></tr>
 </table>
 </center>
@@ -274,7 +283,7 @@ construct the offset polygon in an exact manner using the traits class for
 conic arcs.
 </UL>
 
-\cgalFigureBegin{mink_figapprox_offset,approx_offset.gif}
+\cgalFigureBegin{mink_figapprox_offset,approx_offset.png}
 Approximating the offset edge \f$ o_1 o_2\f$ induced by the
 polygon edge \f$ p_1 p_2\f$ by two line segments \f$ o'_1 q'\f$ and
 \f$ q' o'_2\f$.
@@ -322,7 +331,7 @@ the approximated offset polygon (recall that if \f$ P\f$ is not convex, its
 offset may not be simple and may contain holes, whose boundary is also comprised
 of line segments and circular arcs).
 
-\cgalFigureBegin{mink_figex_offset,ex_offset.gif}
+\cgalFigureBegin{mink_figex_offset,ex_offset.png}
 The offset computation performed by the example programs
 \ref Minkowski_sum_2/approx_offset.cpp and \ref Minkowski_sum_2/exact_offset.cpp.
 The input polygon is shaded and the boundary of its

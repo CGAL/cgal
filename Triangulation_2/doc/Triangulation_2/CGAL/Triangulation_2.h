@@ -27,7 +27,8 @@ and special cases at the
 boundary of the convex hull are simpler to deal with. 
 
 \anchor Triangulation_ref_Fig_infinite_vertex 
-\image html infinite_vertex.gif "The infinite vertex."
+\image html infinite_vertex.png "The infinite vertex."
+\image latex infinite_vertex.png "The infinite vertex."
 
 The class `Triangulation_2` implements this point of view 
 and therefore considers the triangulation of the set of points 
@@ -68,7 +69,8 @@ turning clockwise around vertex `i`
 of `f` (see Figure \ref Triangulation_ref_Fig_neighbors). 
 
 \anchor Triangulation_ref_Fig_neighbors 
-\image html neighbors.gif "Vertices and neighbors."
+\image html neighbors.png "Vertices and neighbors."
+\image latex neighbors.png "Vertices and neighbors."
 
 \tparam Traits is the geometric traits which must be
 a model of the concept `TriangulationTraits_2`. 
@@ -613,14 +615,18 @@ triangulation when they are applied on a valid
 triangulation. 
 
 \anchor Triangulation_ref_Fig_inser1t
-\image html insert1.gif "Insertion of a point on an edge."
+\image html insert1.png "Insertion of a point on an edge."
+\image latex insert1.png "Insertion of a point on an edge."
 
 \anchor Triangulation_ref_Fig_insert2
-\image html insert2.gif "Insertion in a face."
+\image html insert2.png "Insertion in a face."
+\image latex insert2.png "Insertion in a face."
 \anchor Triangulation_ref_Fig_insert3 
-\image html insert3.gif "Insertion outside the convex hull."
+\image html insert3.png "Insertion outside the convex hull."
+\image latex insert3.png "Insertion outside the convex hull."
 \anchor Triangulation_ref_Fig_remove
-\image html remove.gif "Removal."
+\image html remove.png "Removal."
+\image latex remove.png "Removal."
 */
 /// @{
 
@@ -916,7 +922,8 @@ that are only vertex incident to lines \f$ l_3\f$ and \f$ l_4\f$
 are not enumerated. 
 
 \anchor Triangulation_ref_Fig_Line_face_circulator
-\image html walk.gif "The line face circulator. A line face circulator is invalidated if the face the circulator refers to is changed."
+\image html walk.png "The line face circulator. A line face circulator is invalidated if the face the circulator refers to is changed."
+\image latex walk.png "The line face circulator. A line face circulator is invalidated if the face the circulator refers to is changed."
 */
 /// @{
 
@@ -1168,7 +1175,8 @@ is also the first face encountered after `f` when
 turning clockwise around vertex `i` 
 of `f`. 
 
-\image html neighbors.gif "Vertices and neighbors."
+\image html neighbors.png "Vertices and neighbors."
+\image latex neighbors.png "Vertices and neighbors."
 
 \sa `CGAL::Triangulation_2` 
 \sa `TriangulationDSFaceBase_2` 

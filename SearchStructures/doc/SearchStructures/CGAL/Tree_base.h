@@ -16,7 +16,8 @@ classes for the data items (`Data` and `Window`).
 The following figures show a number of rectangles and a 2-dimensional 
 segment tree built on them. 
 
-\image html segment_ex2.gif "Two dimensional interval data and the corresponding segment tree."
+\image html segment_ex2.png "Two dimensional interval data and the corresponding segment tree."
+\image latex segment_ex2.png "Two dimensional interval data and the corresponding segment tree."
 */
 template< typename Data, typename Window >
 class Tree_anchor : public Tree_base {

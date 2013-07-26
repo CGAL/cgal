@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section Minkowski_sum_3Introduction Introduction
 
-\cgalFigureBegin{figspoonStar,spoon_star.gif}
+\cgalFigureBegin{figspoonStar,spoon_star.png}
 The Minkowski sum of a spoon and a star.
 \cgalFigureEnd
 
@@ -30,7 +30,7 @@ describes all legal positions of the robot, i.e., all positions where
 it does not intersect an obstacle.
 
 
-\cgalFigureBegin{figmotionPlanning,motion_planning.gif}
+\cgalFigureBegin{figmotionPlanning,motion_planning.png}
 Can the robot enter the room? The Minkowski sum of the inverted robot and the obstacle describes the illegal positions of the robot with respect to the obstacle. Since the boundary of the Minkowski sum describes legal positions, there is a path for the robot between the outer area and the room.
 \cgalFigureEnd
 
@@ -61,7 +61,7 @@ polyhedra are rather easy to compute. It decomposes both polyhedra
 into convex pieces, computes all pairwise Minkowski sums of the convex
 pieces, and merges the pairwise sums \cite bkos-cgaa-97.
 
-\cgalFigureBegin{Mink3decomp,decomposition_method.gif}
+\cgalFigureBegin{Mink3decomp,decomposition_method.png}
 The decomposition method decomposes both input polyhedra into convex parts, computes all pairwise Minkowski sums of the convex parts, and merges the pairwise sums.
 \cgalFigureEnd
 
@@ -271,7 +271,7 @@ the function itself to keep the memory usage as small as possible.
 
 \section Minkowski_sum_3Glide Glide
 
-\cgalFigureBegin{Mink3glide,glide.gif}
+\cgalFigureBegin{Mink3glide,glide.png}
 The region swept by a star that moves along a polygonal path.
 \cgalFigureEnd
 

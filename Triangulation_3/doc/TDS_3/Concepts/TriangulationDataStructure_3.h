@@ -437,7 +437,8 @@ shaded. On the right, the facet shared by the two new tetrahedra is
 shaded.
 
 \anchor TDS3figflips
-\image html flips.gif "Flips."
+\image html flips.png "Flips."
+\image latex flips.png "Flips."
 
 The following methods guarantee the validity of the resulting 3D
 combinatorial triangulation. Moreover the flip operations do not
@@ -565,7 +566,8 @@ A handle to `v` is returned.
 
 
 \anchor TDS3figtopoinsert_outside_affine_hull 
-\image html topo-insert_outside_affine_hull.gif "insert_increase_dimension (1-dimensional case)."
+\image html topo-insert_outside_affine_hull.png "insert_increase_dimension (1-dimensional case)."
+\image latex topo-insert_outside_affine_hull.png "insert_increase_dimension (1-dimensional case)."
 
 */ 
 Vertex_handle 
@@ -638,6 +640,7 @@ augmented with the vertex `v` itself, for \f$ d\f$==2,3; this one is placed on t
 
 \anchor TDS3dim_down
 \image html tds-dim_down.png
+\image latex tds-dim_down.png
 
 <center><b>From an \f$ S^d\f$ data structure to an \f$ S^{d-1}\f$ data
 structure (top: \f$ d==2\f$, bottom: \f$ d==3\f$).

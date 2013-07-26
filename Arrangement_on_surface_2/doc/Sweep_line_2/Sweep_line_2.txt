@@ -43,7 +43,7 @@ intersection points induced by these curves.
 The simple program listed below computes intersection points induced by 
 a set of four input segments illustrated in \cgalFigureRef{SL_secsimple}.
 
-\cgalFigureBegin{SL_secsimple,sl_simple.gif}
+\cgalFigureBegin{SL_secsimple,sl_simple.png}
 Four input segments
 \cgalFigureEnd
 

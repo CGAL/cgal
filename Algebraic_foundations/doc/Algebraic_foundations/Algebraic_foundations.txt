@@ -31,7 +31,7 @@ it was not desirable to cover all known algebraic structures,
 e.g., we did not introduce concepts for such basic structures as <I>groups</I> or
 exceptional structures as <I>skew fields</I>.
 
-\cgalFigureBegin{figConceptHierarchyOfAlgebraicStructures,AlgebraicConceptHierarchy.gif}
+\cgalFigureBegin{figConceptHierarchyOfAlgebraicStructures,AlgebraicConceptHierarchy.png}
 Concept Hierarchy of Algebraic Structures
 \cgalFigureEnd
 

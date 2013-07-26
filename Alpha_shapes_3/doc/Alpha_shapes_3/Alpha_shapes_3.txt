@@ -7,7 +7,8 @@ namespace CGAL {
 \cgalAutoToc
 \authors Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec
 
-\image html alphashape.gif 
+\image html alphashape.png 
+\image latex alphashape.png 
 
 Assume we are given a set \f$ S\f$ of points in 2D or 3D and we'd like to
 have something like "the shape formed by these points." This is

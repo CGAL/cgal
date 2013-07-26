@@ -7,7 +7,8 @@
 \author Stefan Schirra
 
 <CENTER>
-\image html cgal_small.gif 
+\image html cgal_small.png 
+\image latex cgal_small.png 
 </CENTER>
 <CENTER><span class="textsc">Computational Geometry Algorithms Library</span></CENTER>
 
@@ -186,7 +187,7 @@ layer of algorithms and data structures, the kernel layer and the
 arithmetic and algebra layer.
 (\cgalFigureRef{figgenericCGAL} ).
 
-\cgalFigureBegin{figgenericCGAL,generic_cgal.gif}
+\cgalFigureBegin{figgenericCGAL,generic_cgal.png}
 The generic design of \cgal.
 \cgalFigureEnd
 

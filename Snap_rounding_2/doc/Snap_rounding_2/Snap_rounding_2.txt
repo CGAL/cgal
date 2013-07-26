@@ -22,7 +22,7 @@ half-the-width-of-a-pixel away from any non-incident edge
 \cite cgal:hp-isr-02. This package supports both methods. Algorithmic
 details and experimental results are given in \cite cgal:hp-isr-02.
 
-\cgalFigureBegin{figsr1,sr1.gif}
+\cgalFigureBegin{figsr1,sr1.png}
 An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 \cgalFigureEnd
 
@@ -86,7 +86,7 @@ description of the requirements is given by the concept
 `SnapRoundingTraits_2`. The class `Snap_rounding_traits_2` is a model of
 this concept.
 
-\cgalFigureBegin{figisr_vs_sr,isr_vs_sr.gif}
+\cgalFigureBegin{figisr_vs_sr,isr_vs_sr.png}
 An arrangement of segments before (a), after SR (b) and ISR (c) (hot pixels are shaded).
 \cgalFigureEnd
 
