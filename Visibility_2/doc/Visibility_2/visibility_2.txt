@@ -18,12 +18,14 @@ Let \f$ P \f$ be a polygon, which may have proper holes, where "proper" means po
 \cgalFigureBegin{definition-fig, example1.png}
 Non-regularized visibility and regularized visibility.
 \cgalFigureEnd
-Look at Figure \cgalFigureRef{definition-fig}. All labelled points are collinear. According to the definition above, \f$ c \f$ is visible to \f$ q \f$. \f$ V_q \f$ will contain segment \f$ bc \f$, which we call needle. In many cases the user is just interested in the regularized visibility area \f$ \overline{V_q} \f$ like Figure \cgalFigureRef{definition-fig}(2). Also for some algorithms it's actually easier to provide \f$ \overline{V}  \f$ only. Thus, some visibility computation strategies in this package offer to compute the regularized visibility
-area \f$ \overline{V} \f$ directly.
+Look at Figure \cgalFigureRef{definition-fig}. All labelled points are collinear. According to the definition above, \f$ c \f$ is visible to \f$ q \f$. \f$ V_q \f$ will contain segment \f$ bc \f$, which is called visible needle. In many cases the user is just interested in the regularized visibility area \f$ \overline{V_q} \f$ like Figure \cgalFigureRef{definition-fig} (2). The Chapter \ref PkgBooleanSetOperations2Summary supports the regularization for polygons.
 
-To sum up, this package provides two kinds of visibility region: 
-- Non-regularized visibility area \f$ V \f$.
-- Regularized visibility area \f$ \overline{V} \f$. 
+Also for some algorithms it's actually easier to provide \f$ \overline{V_q}  \f$ only. Thus, some visibility computation strategies in this package offer to compute the regularized visibility
+area \f$ \overline{V_q} \f$ directly.
+
+To sum up, this package provides two kinds of visibility region of point \f$ q \f$: 
+- Non-regularized visibility area \f$ V_q \f$.
+- Regularized visibility area \f$ \overline{V_q} \f$. 
 
 
 \section visibility_2_classes Classes and Algorithms
@@ -39,7 +41,7 @@ where  \f$ n \f$ is the number of vertices of input polygon.
 
 Every templates has two parameters, `Arrangement_2` and `Regularization_tag`. User can attach an instance of `Arrangement_2` as the polygonal environment. `Regularization_tag` indicates whether the result should be regularized or not. 
 
-Each class has two overloads of `visibility_region` functions to compute the visibility region of \f$ p \f$ in a face \f$ F \f$. \f$ F \f$ should be bounded. One function is for case that \f$ p \f$ is in the interior of \f$ F \f$. The other is for case that \f$ p \f$ is on the boundary of \f$ F \f$. The answer is an instance of `Arrangement_2` that consists of edges on the boundary of visibility region.
+Each class has two overloads of `visibility_region` functions to compute the visibility region of \f$ p \f$ in a polygonal face \f$ F \f$. \f$ F \f$ should be bounded. One function is for case that \f$ p \f$ is in the interior of \f$ F \f$. The other is for case that \f$ p \f$ is on the boundary of \f$ F \f$. The answer is an instance of `Arrangement_2` that consists of edges on the boundary of visibility region.
 
 \section simple_visibility_example  Example of visibility in a simple polygon.
 The following example shows how to obtain the visibility region of Figure \cgalFigureRef{definition-fig} and the difference between regularized and non-regularized visibility.
