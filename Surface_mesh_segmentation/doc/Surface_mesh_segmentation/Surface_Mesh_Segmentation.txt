@@ -9,7 +9,6 @@ namespace CGAL {
 \cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
 Elephant model with SDF values & Segmentation.
 \cgalFigureEnd
-\image latex elephant_sdf_partition.png "Elephant model with SDF values & Segmentation." width=12cm
 
 \section Surface_mesh_segmentationIntroduction Introduction
 Mesh segmentation is the process of partitioning a mesh into smaller and meaningful sub-meshes. The application domain is wide and includes,
@@ -48,7 +47,6 @@ the SDF value is calculated by first applying outlier removal and then taking av
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
 Comparison of biased toward the center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
-\image latex vogel_uniform_biased.png "Comparison of biased toward the center and uniform disk sampling for 64 rays." width=12cm
 
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
 The sampling method is biased toward the center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
@@ -68,7 +66,6 @@ Large range parameters make smoothing closer to Gaussian smoothing which might a
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Effect of pose changes on segmentation and SDF values.
 \cgalFigureEnd
-\image latex pose_changes_sdf_low_3.png "Effect of pose changes on segmentation and SDF values." width=12cm
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 Given a number of initial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++ \cite Arthur2007Kmeans,
@@ -86,7 +83,6 @@ These probability values are used as input in the graph-cut step that follows.
 \cgalFigureBegin{Segmentation_levels,effect_of_levels.png}
 Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively.
 \cgalFigureEnd
-\image latex effect_of_levels.png "Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively." width=16cm
 
 \subsection Surface_mesh_segmentationGraphCut Graph-Cut
 The final hard clustering, which gives the final partitioning of the mesh, is obtained by minimizing an energy function.
@@ -137,7 +133,6 @@ On the contrary, assigning smaller values to smoothness parameter results in a h
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
 Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
 \cgalFigureEnd
-\image latex dino_different_lambda_small.png "Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment." width=16cm
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
