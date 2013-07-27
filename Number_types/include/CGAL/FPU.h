@@ -123,25 +123,46 @@ const double infinity = HUGE_VAL;
 
 } // namespace internal
 
+// Inline function to stop compiler optimizations that shouldn't happen with
+// pragma fenv on.
+// - constant propagation
+// - migration of fesetround across floating point operations
+// - (-a)-b -> -(a+b)
+// - (-a)*b -> -(a*b)
+// etc
+template <class T> inline T IA_opacify(T x)
+{
+#ifdef __GNUG__
+  // Intel used not to emulate this perfectly, we'll see.
+  asm volatile ("" : "+g"(x) );
+  return x;
+#else
+  volatile T e = x;
+  return e;
+#endif
+}
 
-// Inline function to stop compiler optimization.
+// Inline function to drop excess precision before we forget the rounding mode,
+// and stop compiler optimizations at the same time.
 inline double IA_force_to_double(double x)
 {
-#if defined __GNUG__ && !defined __INTEL_COMPILER
-  // Intel does not emulate GCC perfectly...
-  // Is that still true? -- Marc Glisse, 2012-12-17
+#ifndef CGAL_FPU_HAS_EXCESS_PRECISION
+  return IA_opacify (x);
+#else
+#if defined __GNUG__
+  // We don't need "safe" here, just the existence of sse2.
 #  ifdef CGAL_SAFE_SSE2
   // For an explanation of volatile:
   // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56027
   asm volatile ("" : "+mx"(x) );
 #  else
-  asm volatile ("" : "=m"(x) : "m"(x));
-  // asm("" : "+m"(x) );
+  asm("" : "+m"(x) );
 #  endif
   return x;
 #else
   volatile double e = x;
   return e;
+#endif
 #endif
 }
 
@@ -153,21 +174,24 @@ inline double IA_force_to_double(double x)
 // set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
 // LLVM doesn't have -frounding-math so needs extra protection.
 // GCC also migrates fesetround calls through FP instructions, so protect
-// everyone (but Microsoft for now).
-// TODO: reorganize the various protections, separating excess precision from
-// abusive optimizations.
+// everyone.
 #if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) || defined __llvm__ \
-   || !defined _MSC_VER
+   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT)
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
+#elif 1
+#  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_opacify(x)
 #else
+// Unused, reserved to compilers without excess precision and pragma fenv on.
+// ??? Should we trust Visual Studio not to optimize too much and let it use
+// this when CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT? In this case, maybe make
+// IA_opacify trivial on that compiler instead?
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif
 
 // We sometimes need to stop constant propagation,
 // because operations are done with a wrong rounding mode at compile time.
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  define CGAL_IA_STOP_CPROP(x)    CGAL::IA_force_to_double(x)
+#  define CGAL_IA_STOP_CPROP(x)    CGAL::IA_opacify(x)
 #else
 #  define CGAL_IA_STOP_CPROP(x)    (x)
 #endif
