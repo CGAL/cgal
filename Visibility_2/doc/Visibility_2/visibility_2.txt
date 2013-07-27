@@ -33,9 +33,9 @@ To sum up, this package provides two kinds of visibility region of point \f$ q \
 CGAL provides three class templates that follow the `Visibility_2` concept:
 Class 	                	|	Function                                     |  Have Preprocessing                |  Query                            |Algorithm
 -------------------------------|-----------------------------------------------------|-------------------------------|-----------------------------------|-------------------------------
- `Simple_visibility_2`       | compute visibility in simple polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite cgal:bjrb-clvpa-87
- `Naive_visibility_2`        |  compute visibility in a polygon with proper holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  paper of T.Asano \cite cgal:ta-aeafvpprh-85 
- `Preprocessed_visibility_2` | visibility query in a polygon with proper holes       | Yes. \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite cgal:aaghi-vpsesp-85
+ `Simple_visibility_2`       | compute visibility in simple polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite bjrb-clvpa-87
+ `Naive_visibility_2`        |  compute visibility in a polygon with proper holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  paper of T.Asano \cite ta-aeafvpprh-85 
+ `Preprocessed_visibility_2` | visibility query in a polygon with proper holes       | Yes. \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
 
 where  \f$ n \f$ is the number of vertices of input polygon.
 
@@ -89,9 +89,9 @@ The following example shows how to obtain the visibility region of Figure \cgalF
 //CGAL provides three class templates that follow the `Visibility_2` concept:
 //Class 	                	|	Function                                     |  Have Preprocessing                |  Query                            |Algorithm
 //-------------------------------|-----------------------------------------------------|-------------------------------|-----------------------------------|-------------------------------
-// `Simple_visibility_2`       | compute visibility in simple polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite cgal:bjrb-clvpa-87
-// `Naive_visibility_2`        |  compute visibility in an arbitrary arrangement of segments. | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  paper of T.Asano \cite cgal:ta-aeafvpprh-85
-// `Preprocessed_visibility_2` | visibility query in arbitrary arrangement of segments.       | Yes. \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite cgal:aaghi-vpsesp-85
+// `Simple_visibility_2`       | compute visibility in simple polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite bjrb-clvpa-87
+// `Naive_visibility_2`        |  compute visibility in an arbitrary arrangement of segments. | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  paper of T.Asano \cite ta-aeafvpprh-85
+// `Preprocessed_visibility_2` | visibility query in arbitrary arrangement of segments.       | Yes. \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
 
 //where  \f$ n \f$ is the number of vertices of input polygon.
 

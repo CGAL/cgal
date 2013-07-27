@@ -95,16 +95,20 @@ Access to the attached arrangement
 Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
+\param q is the query point from which the visibility region is computed
+\param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`
 \pre `q` is in the interior or on the foundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face_handle& face, Output_Arrangement_2& out_arr);
+  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
 
 /*! 
 Computes for the given query point `q` the visibility region that is on the side of `halfedge`. 
 The visibility region of `q` will be stored in `out_arr`.
+\param q is the query point from which the visibility region is computed
+\param halfedge the halfedge on which 'q' is located
 \param out_arr is the output arrangement  
 \pre `half_edge` is a half edge of  `this->arr()`
 \pre `q` is on halfedge
