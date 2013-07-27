@@ -53,7 +53,8 @@ extern "C" {
 #    include <cfloat>
 #  endif
 #elif defined _MSC_VER || defined __sparc__ || \
-     (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC)
+     (defined __i386__ && !defined __PGI && !defined __SUNPRO_CC \
+      && !defined __SSE2__)
    // Nothing to include.
 #else
    // By default we use the ISO C99 version.
@@ -256,9 +257,7 @@ inline double IA_bug_sqrt(double d)
         CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(a)))
 
 
-#if defined __i386__ && !defined __PGI && !defined __SUNPRO_CC
-
-#  if defined CGAL_SAFE_SSE2
+#if defined CGAL_SAFE_SSE2
 
 #define CGAL_IA_SETFPCW(CW) _MM_SET_ROUNDING_MODE(CW)
 #define CGAL_IA_GETFPCW(CW) CW = _MM_GET_ROUNDING_MODE()
@@ -268,7 +267,11 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       _MM_ROUND_UP
 #define CGAL_FE_DOWNWARD     _MM_ROUND_DOWN
 
-#  else
+#elif defined __i386__ && !defined __PGI && !defined __SUNPRO_CC \
+      && !defined CGAL_HAS_SSE2
+// If we use both 387 and sse2, be safe and drop to fe[gs]etround.
+// Can we test CGAL_USE_SSE2 instead?
+
 // The GNU libc version (cf powerpc) is nicer, but doesn't work on libc 5 :(
 // This one also works with CygWin.
 // Note that the ISO C99 version may not be enough because of the extended
@@ -282,8 +285,6 @@ typedef unsigned short FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   (0xc00 | 0x127f)
 #define CGAL_FE_UPWARD       (0x800 | 0x127f)
 #define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
-
-#  endif
 
 #elif defined __powerpc__ && defined __linux__
 #define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
