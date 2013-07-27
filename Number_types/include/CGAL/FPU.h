@@ -89,12 +89,6 @@ extern "C" {
 #  include <xmmintrin.h>
 #endif
 
-// We do not handle -mfpmath=387,sse yet.
-#if defined __SSE2_MATH__ && \
-    ! (__FLT_EVAL_METHOD__ == 0 || __FLT_EVAL_METHOD__ == 1)
-#  warning Unsafe SSE2 mode : not supported yet.
-#endif
-
 // The CGAL_FPU_HAS_EXCESS_PRECISION macro is defined if some computations with
 // double can use more than the 53bits of precision of IEEE754, and/or if the
 // exponent has a wider range.  This can produce double rounding effects and
