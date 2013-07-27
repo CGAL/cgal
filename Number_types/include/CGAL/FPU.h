@@ -107,6 +107,20 @@ extern "C" {
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
 
+// Presence of SSE2 (for explicit use)
+#if  defined(__SSE2__) \
+  || (defined(_M_IX86_FP) && _M_IX86_FP >= 2) \
+  || defined(_M_X64)
+#  include <emmintrin.h>
+#  define CGAL_HAS_SSE2 1
+#endif
+
+// Only define CGAL_USE_SSE2 for 64 bits where malloc has a suitable
+// alignment, 32 bits is too dangerous.
+#if defined(CGAL_HAS_SSE2) && (defined(__x86_64__) || defined(_M_X64))
+#  define CGAL_USE_SSE2 1
+#endif
+
 namespace CGAL {
 
 namespace internal {
@@ -134,6 +148,7 @@ template <class T> inline T IA_opacify(T x)
 {
 #ifdef __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
+  // When T is a vector, gcc < 4.8 fails and we need "+mx" instead.
   asm volatile ("" : "+g"(x) );
   return x;
 #else
@@ -150,12 +165,13 @@ inline double IA_force_to_double(double x)
   return IA_opacify (x);
 #else
 #if defined __GNUG__
-  // We don't need "safe" here, just the existence of sse2.
-#  ifdef CGAL_SAFE_SSE2
+#  ifdef CGAL_HAS_SSE2
   // For an explanation of volatile:
   // http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56027
   asm volatile ("" : "+mx"(x) );
 #  else
+  // Similar to writing to a volatile and reading back, except that calling
+  // it k times in a row only goes through memory once.
   asm("" : "+m"(x) );
 #  endif
   return x;
