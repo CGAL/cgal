@@ -95,9 +95,11 @@ extern "C" {
 // other bad things that we need to protect against.
 // The typical offender is the traditional FPU of x86 (SSE2-only mode is not affected).
 // Are there others, besides itanium and m68k?
-#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined __ia64__ \
-  || defined _M_IX86 || defined _M_X64 || defined _M_IA64 \
-  || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1)
+#if !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT && \
+  (((defined __i386__ || defined __x86_64__) && !defined CGAL_SAFE_SSE2) \
+   || defined __ia64__ \
+   || defined _M_IX86 || defined _M_X64 || defined _M_IA64 \
+   || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1))
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
 
@@ -181,14 +183,14 @@ inline double IA_force_to_double(double x)
 // precision, because there is no way to fix the problem for the exponent
 // which has the same problem.  This affects underflow and overflow cases.
 // In case one does not care about such "extreme" situations, one can
-// set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT.
-// LLVM doesn't have -frounding-math so needs extra protection.
-// GCC also migrates fesetround calls through FP instructions, so protect
-// everyone.
-#if (defined CGAL_FPU_HAS_EXCESS_PRECISION && \
-   !defined CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT)
+// set CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT to pretend there is no excess
+// precision.
+#if defined CGAL_FPU_HAS_EXCESS_PRECISION
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
 #elif 1
+// LLVM doesn't have -frounding-math so needs extra protection.
+// GCC also migrates fesetround calls over FP instructions, so protect
+// everyone.
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_opacify(x)
 #else
 // Unused, reserved to compilers without excess precision and pragma fenv on.
