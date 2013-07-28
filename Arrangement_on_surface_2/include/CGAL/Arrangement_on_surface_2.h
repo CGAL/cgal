@@ -1831,7 +1831,16 @@ protected:
    *     POSITIVE if the ccb is perimetric and oriented in positive direction,
    *     NEGATIVE if the ccb is perimetric and oriented in negative direction).
    */
-  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he) const;
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
+                                       boost::mpl::bool_<true>) const;
+
+  /*! Compute the signs (in left/right and bottom/top) of a closed ccb (loop)
+   * represented by a given halfedge for the case where non of the boundaries
+   * is identified.
+   * \return the pair (ZERO, ZERO)
+   */
+  std::pair<Sign, Sign> _compute_signs(const DHalfedge* he,
+                                       boost::mpl::bool_<false>) const;
 
   /*!
    * Given two predecessor halfedges that will be used for inserting a
