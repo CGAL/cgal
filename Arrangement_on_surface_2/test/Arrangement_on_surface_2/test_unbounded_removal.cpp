@@ -23,14 +23,14 @@ int main()
 {
   // Construct an arrangement of five linear objects.
   std::vector<X_monotone_curve_2>  curves;
-  curves.push_back(Ray_2(Point_2 (0, 0), Point_2(0, 1)));
-  curves.push_back(Ray_2(Point_2 (0, 0), Point_2(1, 0)));
-  // curves.push_back(Ray_2(Point_2 (0, 0), Point_2(0, -1)));
-  // curves.push_back(Ray_2(Point_2 (0, 0), Point_2(-1, 0)));
-  // curves.push_back(Ray_2(Point_2 (0, 0), Point_2(1, 1)));
-  // curves.push_back(Ray_2(Point_2 (0, 0), Point_2(1, -1)));
-  // curves.push_back(Ray_2(Point_2 (0, 0), Point_2(-1, 1)));
-  // curves.push_back(Ray_2(Point_2 (0, 0), Point_2(-1, -1)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(0, 1)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(1, 0)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(0, -1)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(-1, 0)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(1, 1)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(1, -1)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(-1, 1)));
+  curves.push_back(Ray_2(Point_2(0, 0), Point_2(-1, -1)));
 
   Arrangement_2 arr;
   std::vector<Halfedge_handle> hhs(curves.size());
