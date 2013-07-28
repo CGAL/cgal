@@ -1386,7 +1386,6 @@ compile_and_run test_insertion
 compile_and_run test_unbounded_rational_insertion
 compile_and_run test_unbounded_rational_direct_insertion
 compile_and_run test_rational_function_traits_2
-compile_and_run test_removal
 compile_and_run test_iso_verts
 
 compile_and_run test_vert_ray_shoot_vert_segments
@@ -1415,6 +1414,8 @@ test_segment_traits_adaptor
 test_linear_traits_adaptor
 test_spherical_arcs_traits_adaptor
 
+compile_and_run test_removal
+compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
 
 # if any error occured then append the full error description file to error file
