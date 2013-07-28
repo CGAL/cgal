@@ -18,7 +18,7 @@ Let \f$ P \f$ be a polygon, which may have proper holes, where "proper" means po
 \cgalFigureBegin{definition-fig, example1.png}
 Non-regularized visibility and regularized visibility.
 \cgalFigureEnd
-Look at Figure \cgalFigureRef{definition-fig}. All labelled points are collinear. According to the definition above, \f$ c \f$ is visible to \f$ q \f$. \f$ V_q \f$ will contain segment \f$ bc \f$, which is called visible needle. In many cases the user is just interested in the regularized visibility area \f$ \overline{V_q} \f$ like Figure \cgalFigureRef{definition-fig} (2). The Chapter \ref PkgBooleanSetOperations2Summary supports the regularization for polygons.
+Look at \cgalFigureRef{definition-fig}. It's a polygon with a hole. \f$ q\f$ is a point in it. All labeled points are collinear. According to the definition above, \f$ c \f$ is visible to \f$ q \f$. \f$ V_q \f$ will contain segment \f$ bc \f$, which is called visible needle. In many cases the user is just interested in the regularized visibility area \f$ \overline{V_q} \f$ like \cgalFigureRef{definition-fig} (2). For more information about regularization, please refer to Chapter \ref PkgBooleanSetOperations2Summary.
 
 For some algorithms it's actually easier to provide \f$ \overline{V_q}  \f$ only. Thus, some visibility computation strategies in this package offer the option to compute the regularized visibility area \f$ \overline{V_q} \f$ directly.
 
@@ -43,7 +43,7 @@ Every template has two parameters, `Arrangement_2` and `Regularization_tag`. Use
 Each class has two overloads of `visibility_region` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ F \f$. One is for the case when \f$ p \f$ is in the interior of \f$ F \f$. The other is for the case when \f$ p \f$ is on the boundary of \f$ F \f$. The result is returned as an instance of `Arrangement_2` that consists of edges on the boundary of the visibility region.
 
 \section simple_visibility_example  Example of visibility in a simple polygon.
-The following example shows how to obtain the visibility region of \cgalFigureRef{definition-fig} and the difference between regularized and non-regularized visibility.
+The following example shows how to obtain the regularized and non-regularized visibility regions and their difference.
 \cgalExample{Visibility_2/simple_visibility_2.cpp}
 
 */
@@ -66,7 +66,7 @@ The following example shows how to obtain the visibility region of \cgalFigureRe
 
 //\cgalFigureBegin{definition-fig, definition.png}
 //\cgalFigureEnd
-//Look at Figure \cgalFigureRef{definition-fig}. Part(1) is a polygon \f$ P \f$ with hole \f$ H \f$. The blue polygon apparently is the visibility region of \f$ q \f$ in \f$ P \f$. In some degenerate situations, the definition of visibility is not that clear. For example, in Part(2), \f$ H \f$ shrinks to a segment which is collinear to \f$ q \f$ and vertex \f$ a \f$ moves to the segment joining \f$ q \f$ and \f$ b \f$. As a result, there are two "needles" in the visibility region of \f$ q \f$: \f$ ed \f$ is an inward "needle"; \f$ bc \f$ is an outward one.
+//Look at \cgalFigureRef{definition-fig}. Part(1) is a polygon \f$ P \f$ with hole \f$ H \f$. The blue polygon apparently is the visibility region of \f$ q \f$ in \f$ P \f$. In some degenerate situations, the definition of visibility is not that clear. For example, in Part(2), \f$ H \f$ shrinks to a segment which is collinear to \f$ q \f$ and vertex \f$ a \f$ moves to the segment joining \f$ q \f$ and \f$ b \f$. As a result, there are two "needles" in the visibility region of \f$ q \f$: \f$ ed \f$ is an inward "needle"; \f$ bc \f$ is an outward one.
 
 
 //We proceed to define "transparency" so that these "needles" are naturally contained.
