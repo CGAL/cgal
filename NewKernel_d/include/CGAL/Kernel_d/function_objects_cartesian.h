@@ -736,6 +736,36 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 
 CGAL_KD_DEFAULT_FUNCTOR(Equal_points_tag,(CartesianDKernelFunctors::Equal_points<K>),(),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
+namespace CartesianDKernelFunctors {
+template<class R_> struct Oriented_side : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Oriented_side)
+	typedef R_ R;
+	typedef typename Get_type<R, Oriented_side_tag>::type result_type;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	typedef typename Get_type<R, Hyperplane_tag>::type Hyperplane;
+	typedef typename Get_type<R, Sphere_tag>::type Sphere;
+	typedef typename Get_functor<R, Value_at_tag>::type VA;
+	typedef typename Get_functor<R, Hyperplane_translation_tag>::type HT;
+	typedef typename Get_functor<R, Squared_distance_tag>::type SD;
+	typedef typename Get_functor<R, Squared_radius_tag>::type SR;
+	typedef typename Get_functor<R, Center_of_sphere_tag>::type CS;
+
+	result_type operator()(Hyperplane const&h, Point const&p)const{
+		HT ht(this->kernel());
+		VA va(this->kernel());
+		return CGAL::compare(va(h,p),ht(h));
+	}
+	result_type operator()(Sphere const&s, Point const&p)const{
+		SD sd(this->kernel());
+		SR sr(this->kernel());
+		CS cs(this->kernel());
+		return CGAL::compare(sd(cs(s),p),sr(s));
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Oriented_side_tag,(CartesianDKernelFunctors::Oriented_side<K>),(Point_tag,Sphere_tag,Hyperplane_tag),(Value_at_tag,Hyperplane_translation_tag,Squared_distance_tag,Squared_radius_tag,Center_of_sphere_tag));
+
 }
 #include <CGAL/Kernel_d/Coaffine.h>
 #endif // CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H
