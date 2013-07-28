@@ -95,9 +95,8 @@ extern "C" {
 // other bad things that we need to protect against.
 // The typical offender is the traditional FPU of x86 (SSE2-only mode is not affected).
 // Are there others, besides itanium and m68k?
-// FIXME: windows also runs on ARM now.
-#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined _MSC_VER \
-  || defined __ia64__ \
+#if (defined __i386__ && !defined CGAL_SAFE_SSE2) || defined __ia64__ \
+  || defined _M_IX86 || defined _M_X64 || defined _M_IA64 \
   || (defined FLT_EVAL_METHOD && FLT_EVAL_METHOD != 0 && FLT_EVAL_METHOD != 1)
 #  define CGAL_FPU_HAS_EXCESS_PRECISION
 #endif
@@ -194,8 +193,7 @@ inline double IA_force_to_double(double x)
 #else
 // Unused, reserved to compilers without excess precision and pragma fenv on.
 // ??? Should we trust Visual Studio not to optimize too much and let it use
-// this when CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT? In this case, maybe make
-// IA_opacify trivial on that compiler instead?
+// this when CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT?
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif
 
