@@ -766,6 +766,23 @@ template<class R_> struct Oriented_side : private Store_kernel<R_> {
 
 CGAL_KD_DEFAULT_FUNCTOR(Oriented_side_tag,(CartesianDKernelFunctors::Oriented_side<K>),(Point_tag,Sphere_tag,Hyperplane_tag),(Value_at_tag,Hyperplane_translation_tag,Squared_distance_tag,Squared_radius_tag,Center_of_sphere_tag));
 
+namespace CartesianDKernelFunctors {
+template<class R_> struct Has_on_positive_side : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Has_on_positive_side)
+	typedef R_ R;
+	typedef typename Get_type<R, Bool_tag>::type result_type;
+	typedef typename Get_functor<R, Oriented_side_tag>::type OS;
+
+	template <class Obj, class Pt>
+	result_type operator()(Obj const&o, Pt const&p)const{
+		OS os(this->kernel());
+		return os(o,p) == ON_POSITIVE_SIDE;
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Has_on_positive_side_tag,(CartesianDKernelFunctors::Has_on_positive_side<K>),(),(Oriented_side_tag));
+
 }
 #include <CGAL/Kernel_d/Coaffine.h>
 #endif // CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H

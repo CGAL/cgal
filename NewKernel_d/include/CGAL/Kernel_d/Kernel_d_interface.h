@@ -111,7 +111,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	//typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;
 	//typedef typename Get_functor<Base, Contained_in_linear_hull_tag>::type Contained_in_linear_hull_d;
 	//typedef typename Get_functor<Base, Contained_in_simplex_tag>::type Contained_in_simplex_d;
-	//typedef typename Get_functor<Base, Has_on_positive_side_tag>::type Has_on_positive_side_d;
+	typedef typename Get_functor<Base, Has_on_positive_side_tag>::type Has_on_positive_side_d;
 	//typedef typename Get_functor<Base, Linear_rank_tag>::type Linear_rank_d;
 	//typedef typename Get_functor<Base, Linearly_independent_tag>::type Linearly_independent_d;
 	typedef typename Get_functor<Base, Oriented_side_tag>::type Oriented_side_d;

@@ -254,7 +254,9 @@ namespace CGAL {
 	DECL_PREDICATE(Less_lexicographically);
 	DECL_PREDICATE(Less_or_equal_lexicographically);
 	DECL_PREDICATE(Equal_points);
+	DECL_PREDICATE(Has_on_positive_side);
 	DECL_PREDICATE_(Orientation); // duplicate with the type
+	DECL_PREDICATE_(Oriented_side); // duplicate with the type
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
 	DECL_PREDICATE(Side_of_oriented_sphere);
