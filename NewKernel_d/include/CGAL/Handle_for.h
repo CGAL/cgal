@@ -47,10 +47,10 @@ class Handle_for
     };
 
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
-    typedef typename Allocator::pointer                         pointer;
+    typedef typename Allocator::pointer                         pointer_;
 
     static Allocator   allocator;
-    pointer            ptr_;
+    pointer_            ptr_;
 
 public:
 
@@ -255,7 +255,7 @@ protected:
     {
       if ( is_shared() )
       {
-        pointer tmp_ptr = allocator.allocate(1);
+        pointer_ tmp_ptr = allocator.allocate(1);
         new (&(tmp_ptr->t)) element_type(ptr_->t);
         tmp_ptr->count = 1;
         --(ptr_->count);

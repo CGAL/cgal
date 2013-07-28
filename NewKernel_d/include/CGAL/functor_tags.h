@@ -182,6 +182,7 @@ namespace CGAL {
 	DECL_COMPUTE(Squared_radius);
 	DECL_COMPUTE(Scalar_product);
 	DECL_COMPUTE(Hyperplane_translation);
+	DECL_COMPUTE(Value_at);
 #undef DECL_COMPUTE
 
 #define DECL_ITER_OBJ(X,Y,Z,C) struct X##_tag {}; \
