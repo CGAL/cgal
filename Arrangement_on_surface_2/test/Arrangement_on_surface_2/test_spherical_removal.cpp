@@ -55,7 +55,6 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   // Read the number of edges to remove.
   unsigned int num_edges_to_remove;
   in_file >> num_edges_to_remove;
-  std::cout << "num_edges_to_remove: " << num_edges_to_remove << std::endl;
 
   // Read the number of cells left.
   unsigned int num_vertices_left, num_edges_left, num_faces_left;
