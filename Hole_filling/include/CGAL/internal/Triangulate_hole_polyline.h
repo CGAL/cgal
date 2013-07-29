@@ -82,6 +82,16 @@ struct Weight {
     { return w.second < w2.w.second; }
     return w.first < w2.w.first;
   }
+
+  bool operator==(const Weight& w2) const
+  {
+    return w.first == w2.w.first && w.second == w2.w.second;
+  }
+
+  bool operator!=(const Weight& w2) const 
+  {
+    return !(*this == w2);
+  }
 };
 
 template<typename K>
@@ -349,7 +359,8 @@ public:
   OutputIterator 
   triangulate(const Polyline_3& P, 
              const Polyline_3& Q,
-             OutputIterator out)
+             OutputIterator out,
+             const std::set<std::pair<int, int> >& existing_edges)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -359,35 +370,83 @@ public:
     std::vector<Weight> W(n*n,Weight(0,0));
     std::vector<int> lambda(n*n,-1);
     
+    // calculate weights for boundary triangles
     for(int i=0; i < n-2; ++i){
-      W[i*n + (i+2)] = Weight(P, Q, i, i+1, i+2);
-      lambda[i*n + (i+2)] = i+1;
+      if(existing_edges.find(std::make_pair(i, i+2)) != existing_edges.end()) {
+        W[i*n + (i+2)] = Weight(-1,-1);
+        lambda[i*n + (i+2)] = -1;
+      }
+      else {
+        W[i*n + (i+2)] = Weight(P, Q, i, i+1, i+2);
+        lambda[i*n + (i+2)] = i+1;
+      }
     }
     
     for(int j = 3; j< n; ++j){ // 3 - 4 - 5 (range)
 
       for(int i=0; i<n-j; ++i){ // 0-3, 1-4, 2-5 find min
         int k = i+j;
-        int m_min = 0;
+        int m_min = -1;
         Weight w_min((std::numeric_limits<double>::max)(), 
                      (std::numeric_limits<double>::max)());
 
-        for(int m = i+1; m<k; ++m){
+        for(int m = i+1; m<k; ++m){ 
+
+          if( existing_edges.find(std::make_pair(i,m)) != existing_edges.end() ||
+              existing_edges.find(std::make_pair(i,k)) != existing_edges.end() ||
+              existing_edges.find(std::make_pair(m,k)) != existing_edges.end() ) {
+            // we can not construct i-m-k triangle
+            continue;
+          }
+          // now the regions i-m and m-k might be valid(constructed) patches,
+          // if not, we can not construct i-m-k triangle
+          if( W[i*n + m] == Weight(-1, -1) || W[m*n + k] == Weight(-1, -1) ) {
+            continue;
+          }
+
           Weight w = W[i*n + m] + W[m*n + k] + Weight(P,Q,i,m,k, lambda);
           if(w < w_min){
-          w_min = w;
-          m_min = m;
+            w_min = w;
+            m_min = m;
           }
         }
-        W[i*n+k] = w_min;
+        // if any found, update weight
+        if(m_min != -1) { W[i*n+k] = w_min; }
+        else            { W[i*n+k] = Weight(-1,-1); }
         lambda[i*n+k] = m_min;
       }
     }
-    return  trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
-    
-  }
 
+    if(lambda[0*n + (n-1)] == -1) {
+      CGAL_warning(!"Due to existing edges, no possible triangulation is found!");
+      return out;
+    }
+
+    return  trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+  }
 };
+
+template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
+OutputIterator
+triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
+                          InputIterator qbegin, InputIterator qend, 
+                          OutputIterator out,
+                          const std::set<std::pair<int, int> >& existing_edges) 
+{
+  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
+  typedef CGAL::internal::Triangulate_hole_polyline<Kernel> Fill;
+  typename Fill::Polyline_3 P(pbegin, pend);
+  typename Fill::Polyline_3 Q(qbegin, qend);
+  if(P.front() != P.back()){
+    P.push_back(P.front());
+    if( !Q.empty() && P.size() > Q.size()) {
+      Q.push_back(Q.front());
+    }
+  }
+  Fill fill;
+  return fill.template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
+}
+
 } // namespace internal
 
 /*!
@@ -408,29 +467,19 @@ using the indices of the input points in the range `(pbegin,pend)`.
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-          InputIterator qbegin, InputIterator qend, 
-          OutputIterator out)
+                          InputIterator qbegin, InputIterator qend, 
+                          OutputIterator out)
 {
-  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline<Kernel> Fill;
-  typename Fill::Polyline_3 P(pbegin, pend);
-  typename Fill::Polyline_3 Q(qbegin, qend);
-  if(P.front() != P.back()){
-    P.push_back(P.front());
-    if( !Q.empty() && P.size() > Q.size()) {
-      Q.push_back(Q.front());
-    }
-  }
-  Fill fill;
-  return fill.template triangulate<OutputIteratorValueType>(P,Q,out);
+  return internal::triangulate_hole_polyline<OutputIteratorValueType>
+    (pbegin, pend, qbegin, qend, out, std::set<std::pair<int, int> >());
 }
 
 // overload for OutputIteratorValueType
 template <typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-          InputIterator qbegin, InputIterator qend, 
-          OutputIterator out)
+                          InputIterator qbegin, InputIterator qend, 
+                          OutputIterator out)
 {
   return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
     (pbegin, pend, qbegin, qend, out);
@@ -451,24 +500,19 @@ Triangles are put into `out` using the indices of the input points in the range 
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-          OutputIterator out)
+                          OutputIterator out)
 {
-  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline<Kernel> Fill;
-  typename Fill::Polyline_3 P(pbegin, pend);
+
   typename Fill::Polyline_3 Q;
-  if(P.front() != P.back()){
-    P.push_back(P.front());
-  }
-  Fill fill;
-  return fill.template triangulate<OutputIteratorValueType>(P,Q,out);
+  return triangulate_hole_polyline<OutputIteratorValueType>
+    (pbegin, pend, Q.begin(), Q.end(), out);
 }
 
 // overload for OutputIteratorValueType
 template <typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-          OutputIterator out)
+                          OutputIterator out)
 {
   return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
     (pbegin, pend, out);
