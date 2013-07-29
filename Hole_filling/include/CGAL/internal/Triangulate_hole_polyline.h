@@ -403,24 +403,25 @@ public:
         Weight w_min((std::numeric_limits<double>::max)(), 
                      (std::numeric_limits<double>::max)());
 
-        for(int m = i+1; m<k; ++m){ 
+        if(existing_edges.find(std::make_pair(i,k)) == existing_edges.end()) 
+        {
+          for(int m = i+1; m<k; ++m){ 
+            if( existing_edges.find(std::make_pair(i,m)) != existing_edges.end() ||
+                existing_edges.find(std::make_pair(m,k)) != existing_edges.end() ) {
+              // we can not construct i-m-k triangle
+              continue;
+            }
+            // now the regions i-m and m-k might be valid(constructed) patches,
+            // if not, we can not construct i-m-k triangle
+            if( W[i*n + m] == Weight(-1, -1) || W[m*n + k] == Weight(-1, -1) ) {
+              continue;
+            }
 
-          if( existing_edges.find(std::make_pair(i,m)) != existing_edges.end() ||
-              existing_edges.find(std::make_pair(i,k)) != existing_edges.end() ||
-              existing_edges.find(std::make_pair(m,k)) != existing_edges.end() ) {
-            // we can not construct i-m-k triangle
-            continue;
-          }
-          // now the regions i-m and m-k might be valid(constructed) patches,
-          // if not, we can not construct i-m-k triangle
-          if( W[i*n + m] == Weight(-1, -1) || W[m*n + k] == Weight(-1, -1) ) {
-            continue;
-          }
-
-          Weight w = W[i*n + m] + W[m*n + k] + Weight(P,Q,i,m,k, lambda);
-          if(w < w_min){
-            w_min = w;
-            m_min = m;
+            Weight w = W[i*n + m] + W[m*n + k] + Weight(P,Q,i,m,k, lambda);
+            if(w < w_min){
+              w_min = w;
+              m_min = m;
+            }
           }
         }
         // if any found, update weight
