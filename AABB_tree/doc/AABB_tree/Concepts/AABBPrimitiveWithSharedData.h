@@ -55,6 +55,12 @@ typedef unspecified_type Datum_reference;
 Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable.
 */
 typedef unspecified_type Id;
+
+/*!
+Type of the data shared amongst primitives
+*/
+typedef unspecified_type Shared_data;
+
 /// @}
 
 /// \name Operations
