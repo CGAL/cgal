@@ -49,6 +49,23 @@
 
 #include <queue>
 
+// enable debugging output statement
+//#define CGAL_MCFSKEL_DEBUG
+
+#define CGAL_MCFSKEL_INFO
+
+#ifdef CGAL_MCFSKEL_DEBUG
+#define SKEL_DEBUG(x) x
+#else
+#define SKEL_DEBUG(x)
+#endif
+
+#ifdef CGAL_MCFSKEL_INFO
+#define SKEL_INFO(x) x
+#else
+#define SKEL_INFO(x)
+#endif
+
 namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
@@ -261,7 +278,6 @@ private:
     // Called AFTER each edge has been collapsed
     void OnCollapsed(Profile const& edge, Vertex_handle v)
     {
-//      std::cerr << "before onCollapse\n";
       Vertex_handle v0 = edge.v0();
       Vertex_handle v1 = edge.v1();
       int id0 = v0->id();
@@ -278,10 +294,7 @@ private:
         from = id0;
         to = id1;
       }
-      else
-      {
-        std::cerr << "very wrong\n";
-      }
+
       if ((*corr).find(to) == (*corr).end())
       {
         (*corr)[to] = std::vector<int>();
@@ -320,7 +333,6 @@ private:
         std::map<int, int>::iterator pole_iter = (*poles).find(id0);
         (*poles).erase(pole_iter);
       }
-//      std::cerr << "after onCollapse\n";
     }
 
     std::map<int, std::vector<int> >* corr;
@@ -393,7 +405,6 @@ public:
       weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH),
       is_medially_centered(is_medially_centered)
   {
-    std::cout << "medially centered constructor: omega_P = " << omega_P << "\n";
     TH_ALPHA *= (M_PI / 180.0);
     double area = get_surface_area();
     area_TH = 0.0001 * area;
@@ -551,7 +562,7 @@ public:
 
   void assemble_LHS(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
-//    std::cerr << "start LHS\n";
+    SKEL_DEBUG(std::cerr << "start LHS\n";)
     int nver = boost::num_vertices(*polyhedron);
 
     vertex_iterator vb, ve;
@@ -607,14 +618,14 @@ public:
       A.set_coef(i, i, diagonal, true);
     }
 
-//    std::cerr << "end LHS\n";
+    SKEL_DEBUG(std::cerr << "end LHS\n";)
   }
 
   void assemble_RHS(typename SparseLinearAlgebraTraits_d::Vector& Bx,
                     typename SparseLinearAlgebraTraits_d::Vector& By,
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
   {
-//    std::cerr << "start RHS\n";
+    SKEL_DEBUG(std::cerr << "start RHS\n";)
     // assemble right columns of linear system
     int nver = boost::num_vertices(*polyhedron);
     vertex_iterator vb, ve;
@@ -658,7 +669,7 @@ public:
         Bz[i + nver * 2] = z * op;
       }
     }
-//    std::cerr << "end RHS\n";
+    SKEL_DEBUG(std::cerr << "end RHS\n";)
   }
 
   void update_vertex_id()
@@ -675,7 +686,8 @@ public:
 
   void contract_geometry()
   {
-//    std::cerr << "before contract geometry";
+    SKEL_DEBUG(std::cerr << "before contract geometry";)
+
     update_vertex_id();
 
     compute_edge_weight();
@@ -699,14 +711,16 @@ public:
     typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nrows);
     assemble_RHS(Bx, By, Bz);
 
-//    std::cerr << "before solve\n";
+    SKEL_DEBUG(std::cerr << "before solve\n";)
+
     // solve "At * A * X = At * B".
     double D;
     m_solver.pre_factor_non_symmetric(A, D);
     m_solver.linear_solver_non_symmetric(A, Bx, X);
     m_solver.linear_solver_non_symmetric(A, By, Y);
     m_solver.linear_solver_non_symmetric(A, Bz, Z);
-//    std::cerr << "after solve\n";
+
+    SKEL_DEBUG(std::cerr << "after solve\n";)
 
     // copy to mesh
     vertex_iterator vb, ve;
@@ -718,7 +732,8 @@ public:
       Point p(X[i], Y[i], Z[i]);
       vi->point() = p;
     }
-//    std::cerr << "leave contract geometry\n";
+
+    SKEL_DEBUG(std::cerr << "leave contract geometry\n";)
   }
 
   int collapse_short_edges()
@@ -806,7 +821,6 @@ public:
       }
       else
       {
-//        std::cerr << "collapse " << cnt << "\n";
         num_collapses += cnt;
       }
     }
@@ -861,14 +875,6 @@ public:
         else
         {
           halfedge_angle[e_id] = acos((dis2_ik + dis2_jk - dis2_ij) / (2.0 * dis_ik * dis_jk));
-          if (halfedge_angle[e_id] > M_PI)
-          {
-            std::cerr << "angle too large\n";
-          }
-          if (halfedge_angle[e_id] < 0)
-          {
-            std::cerr << "angle too small\n";
-          }
         }
       }
     }
@@ -901,15 +907,12 @@ public:
       Point pole_n = pole_s + p_projector * t;
       poles[vertex_id_count] = cell_dual.size();
       cell_dual.push_back(pole_n);
-//      std::cout << "new pole " << vertex_id_count << ": " << pole_n << "\n";
     }
     return pn;
   }
 
   int split_flat_triangle()
   {
-//    std::cerr << "TH_ALPHA " << TH_ALPHA << "\n";
-//    std::cerr << "short " << zero_TH << "\n";
     int ne = boost::num_edges(*polyhedron);
     compute_incident_angle();
 
@@ -971,7 +974,8 @@ public:
 
   int iteratively_split_triangles()
   {
-//    std::cerr << "before split\n";
+    SKEL_DEBUG(std::cerr << "before split\n";)
+
     int num_splits = 0;
     while (true)
     {
@@ -982,99 +986,27 @@ public:
       }
       else
       {
-//        std::cerr << "split " << cnt << "\n";
         num_splits += cnt;
       }
     }
-//    std::cerr << "after split\n";
+
+    SKEL_DEBUG(std::cerr << "after split\n";)
+
     return num_splits;
   }
 
   int update_topology()
   {
-//    std::cerr << "before collapse edges\n";
+    SKEL_DEBUG(std::cerr << "before collapse edges\n";)
+
     int num_collapses = iteratively_collapse_edges();
-    std::cerr << "collapse " << num_collapses << " edges.\n";
+    SKEL_INFO(std::cerr << "collapse " << num_collapses << " edges.\n";)
 
     int num_splits = iteratively_split_triangles();
-    std::cerr << "split " << num_splits << " edges.\n";
+    SKEL_INFO(std::cerr << "split " << num_splits << " edges.\n";)
 
     return num_collapses + num_splits;
   }
-
-//  bool is_vertex_degenerate(vertex_descriptor root)
-//  {
-//    std::set<edge_descriptor> edge_visited;
-//    std::map<vertex_descriptor, int> vertex_visited;
-
-//    std::map<vertex_descriptor, int> D;
-//    std::queue<vertex_descriptor> Q;
-//    Q.push(root);
-//    D[root] = 0;
-//    vertex_visited[root] = 0;
-
-//    int dist_v;
-//    double max_distance = 0.0;
-//    // size of k-ring
-//    int k = 2;
-//    while (!Q.empty() && (dist_v = D[Q.front()]) < k)
-//    {
-//      vertex_descriptor v = Q.front();
-//      Q.pop();
-
-//      out_edge_iterator e, e_end;
-//      for(boost::tie(e, e_end) = boost::out_edges(v, *polyhedron); e != e_end; e++)
-//      {
-//        edge_descriptor ed = *e;
-//        if (edge_visited.find(ed) != edge_visited.end())
-//        {
-//          continue;
-//        }
-
-//        vertex_descriptor new_v = boost::target(ed, *polyhedron);
-//        if (vertex_visited.find(new_v) != vertex_visited.end())
-//        {
-//          if (vertex_visited[new_v] != dist_v)
-//          {
-////            std::cerr << vertex_visited[new_v] << " " << dist_v << "\n";
-//            return true;
-//          }
-//        }
-//        edge_visited.insert(ed);
-//        edge_visited.insert(ed->opposite());
-//        edge_visited.insert(ed->next());
-//        edge_visited.insert(ed->next()->opposite());
-//        vertex_visited[new_v] = dist_v;
-
-//        if (D.insert(std::make_pair(new_v, dist_v + 1)).second)
-//        {
-//          max_distance = (std::max)((new_v->point() - root->point()).squared_length(), max_distance);
-//          Q.push(new_v);
-//        }
-//      }
-//    }
-//    // now Q contains all nonprocessed
-////    while (!Q.empty())
-////    {
-////      vertex_descriptor v = Q.front();
-////      Q.pop();
-
-////      out_edge_iterator e, e_end;
-////      for (boost::tie(e, e_end) = boost::out_edges(v, *polyhedron); e != e_end; e++)
-////      {
-////        vertex_descriptor new_v = boost::target(*e, *polyhedron);
-////        double distance = (new_v->point() - root->point()).squared_length();
-////        if (distance < max_distance)
-////        {
-////          if (D.insert(std::make_pair(new_v, dist_v + 1)).second)
-////          {
-////            Q.push(new_v);
-////          }
-////        }
-////      }
-////    }
-//    return false;
-//  }
 
   bool is_vertex_degenerate(vertex_descriptor root)
   {
@@ -1126,8 +1058,6 @@ public:
     int euler = V + F - E;
     if (euler != 1)
     {
-//    std::cout << "V " << V << " E " << E << " F " << F << "\n";
-//      std::cout << "euler " << euler << "\n";
       return true;
     }
     return false;
@@ -1183,13 +1113,14 @@ public:
         bool willbefixed = is_vertex_degenerate(v);
         if (willbefixed)
         {
-//          std::cerr << "detect " << idx << "\n";
           is_vertex_fixed_map[idx] = willbefixed;
           num_fixed++;
         }
       }
     }
-    std::cerr << "fixed " << num_fixed << " vertices.\n";
+
+    SKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
+
     return num_fixed;
   }
 
@@ -1203,7 +1134,6 @@ public:
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
-//      std::cerr << v->point() << "\n";
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
       {
         bool willbefixed = false;
@@ -1216,7 +1146,6 @@ public:
           vertex_descriptor v0 = boost::source(edge, *polyhedron);
           vertex_descriptor v1 = boost::target(edge, *polyhedron);
           double length = sqrt(squared_distance(v0->point(), v1->point()));
-//          std::cerr << length << "\n";
           if (length < elength_fixed)
           {
             if (!is_collapse_ok(edge))
@@ -1225,17 +1154,17 @@ public:
             }
           }
         }
-//        std::cerr << "bad " << bad_counter << "\n";
         willbefixed = (bad_counter >= 2);
         if (willbefixed)
         {
-//          std::cerr << "detect " << idx << "\n";
           is_vertex_fixed_map[idx] = willbefixed;
           num_fixed++;
         }
       }
     }
-    std::cerr << "fixed " << num_fixed << " vertices.\n";
+
+    SKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
+
     return num_fixed;
   }
 
@@ -1348,9 +1277,10 @@ public:
 //    detect_degeneracies_in_disk();
 
     double area = get_surface_area();
-    std::cout << "area " << area << "\n";
+    SKEL_INFO(std::cout << "area " << area << "\n";)
     double volume = to_double(internal::volume(*polyhedron));
-    std::cout << "volume " << volume << ", volume / original_volume " << volume / original_volume <<  "\n";
+    SKEL_INFO(std::cout << "volume " << volume << ", volume / original_volume "
+              << volume / original_volume <<  "\n";)
   }
 
   void run_to_converge()
@@ -1359,7 +1289,7 @@ public:
     int num_iteration = 0;
     while (true)
     {
-      std::cout << "iteration " << num_iteration + 1 << "\n";
+      SKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
 
       contract_geometry();
       update_topology();
@@ -1368,8 +1298,8 @@ public:
 
       double area = get_surface_area();
       double area_ratio = fabs(last_area - area) / original_area;
-      std::cout << "area " << area << "\n";
-      std::cout << "|area - last_area| / original_area " << area_ratio << "\n";
+      SKEL_INFO(std::cout << "area " << area << "\n";)
+      SKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
       if (area_ratio < area_TH)
       {
         break;
@@ -1389,14 +1319,6 @@ public:
       {
         break;
       }
-//      if (num_events == 0)
-//      {
-//        break;
-//      }
-//      if (num_events == 0 && fabs(last_area - area) < area_TH)
-//      {
-//        break;
-//      }
     }
   }
 
@@ -1430,7 +1352,7 @@ public:
     {
       cnt += skeleton_to_surface[i].size();
     }
-    std::cout << "tracked " << cnt << " vertices\n";
+    SKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
 
     collapse_vertices_without_correspondence();
   }
@@ -1497,7 +1419,7 @@ public:
       }
     }
 
-    std::cout << "removed " << vertex_removed << " vertices\n";
+    SKEL_INFO(std::cout << "removed " << vertex_removed << " vertices\n";)
 
     int new_size = skeleton_to_surface.size() - vertex_removed;
     Graph new_g(new_size);
@@ -1523,7 +1445,7 @@ public:
       int nt = new_id[t];
       if (ns == -1 || nt == -1)
       {
-        std::cerr << "wrong id\n";
+        SKEL_DEBUG(std::cerr << "wrong id\n";)
       }
       boost::add_edge(ns, nt, new_g);
     }
@@ -1554,8 +1476,8 @@ public:
     points = new_points;
     skeleton_to_surface = new_skeleton_to_surface;
 
-    std::cout << "new vertices " << boost::num_vertices(g) << "\n";
-    std::cout << "new edges " << boost::num_edges(g) << "\n";
+    SKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
+    SKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
   }
 
   void get_skeleton(Graph& g, std::vector<Point>& points)
@@ -1571,7 +1493,7 @@ public:
 
   void compute_voronoi_pole()
   {
-    std::cout << "start compute_voronoi_pole\n";
+    SKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
 
     std::vector<std::pair<TriPoint, unsigned> > points;
