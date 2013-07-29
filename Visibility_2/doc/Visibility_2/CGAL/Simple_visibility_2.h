@@ -23,8 +23,8 @@ to CGAL::Tag_true will produce the output as a visibility polygon.
 \cgalModels `Visibility_2` 
 
 \sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
-
+\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
 */
 template <typename Arrangement_2, typename Regularization_tag>
 class Simple_visibility_2 {

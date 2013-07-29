@@ -15,7 +15,8 @@ specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
 
 \sa 'CGAL::Visibility_2'
 \sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
 
 */
 template <typename Arrangement_2, typename Regularization_tag>
