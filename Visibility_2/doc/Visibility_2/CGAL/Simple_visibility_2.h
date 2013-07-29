@@ -22,7 +22,7 @@ to CGAL::Tag_true will produce the output as a visibility polygon.
 
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
 \sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 
 */

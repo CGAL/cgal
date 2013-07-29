@@ -19,7 +19,7 @@ specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
 
 */
 template <typename Arrangement_2, typename Regularization_tag>
-class Naive_visibility_2 {
+class Rotational_sweep_visibility_2 {
 public:
 
 /// \name Types 
@@ -74,15 +74,15 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Naive_visibility_2' object, that is not
+Default constructor creates an empty 'Rotational_sweep_visibility_2' object, that is not
 attached to any arrangement yet.
 */
-Naive_visibility_2();
+Rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Naive_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr`.
+Constructs a `Rotational_sweep_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr`.
 */ 
-Naive_visibility_2(const Input_Arrangement_2& arr); 
+Rotational_sweep_visibility_2(const Input_Arrangement_2& arr); 
 
 /// @}
 
