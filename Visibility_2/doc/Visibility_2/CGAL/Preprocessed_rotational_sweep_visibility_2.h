@@ -3,16 +3,22 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offering visibility queries within 
-an Arrangement. The algorithm it applies to obtain visibility is using preprocessing.
+an Arrangement. The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing in the algorithm of `Rotational_sweep_visibility_2` to reduce the query time to \f$O(n)\f$. The preprocessing takes \f$ O(n^2)\f$ time and space.
+
+Arrangement_2 gives information about the input/output Arrangements and the extension between them.
+The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
+specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
 
 \cgalModels `Visibility_2` 
 
 \sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
+
 
 */
 template <typename Arrangement_2, typename Regularization_tag>
-class Preprocessed_visibility_2 {
+class Preprocessed_rotational_sweep_visibility_2 {
 public:
 
 /// \name Types 
@@ -73,12 +79,12 @@ public:
 Default constructor creates an empty 'Preprocessed_visibility_2' object, that is not
 attached to any arrangement yet.
 */
-Preprocessed_visibility_2();
+Preprocessed_rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Preprocessed_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr`.
+Constructs a `Preprocessed_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr` and does preprocessing.
 */ 
-Preprocessed_visibility_2(const Input_Arrangement_2& arr); 
+Preprocessed_rotational_sweep_visibility_2(const Input_Arrangement_2& arr);
 
 /// @}
 
@@ -91,7 +97,7 @@ Returns whether an arrangement is attached to the visibility object
   bool is_attached();
 
 /*!
-Attaches the given arrangement to the visibility object
+Attaches the given arrangement to the visibility object and does preprocessing.
 */
   void attach(const Input_Arrangement_2 &arr);
 
