@@ -2099,6 +2099,10 @@ private:
       }
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
+
+      CGAL_SDG_DEBUG(std::cout
+          << "debug in refinement return final zero" << std::endl;);
+
       return ZERO;
 
       //FT radius_fine = linf_fine_radius(vv, p, q, r, type);
