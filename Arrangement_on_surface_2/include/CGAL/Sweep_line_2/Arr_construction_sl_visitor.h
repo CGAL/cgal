@@ -836,6 +836,10 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
   std::cout << "HeDi: " << he->direction() << std::endl;
 #endif
 
+  // We use a constant index-map to prvent the introduction of new entries.
+  // When not using a const index-map, erroneous entries might be added!!!
+  const Halfedge_indices_map& const_he_indices_table = m_he_indices_table;
+
   // Go along the boundary of the new face.
   Face_handle new_face = he->face();
   Halfedge_handle curr_he = he;
@@ -854,13 +858,13 @@ void Arr_construction_sl_visitor<Hlpr>::relocate_in_new_face(Halfedge_handle he)
 
     // Get the indices list associated with the current halfedges, representing
     // the halfedges and isolated vertices that "see" it from above.
-    const Indices_list& indices_list = m_he_indices_table[curr_he];
+    const Indices_list& indices_list = const_he_indices_table[curr_he];
     typename Indices_list::const_iterator itr;
     for (itr = indices_list.begin(); itr != indices_list.end(); ++itr) {
+      CGAL_assertion(*itr != 0);
 #if CGAL_ARR_CONSTRUCTION_SL_VISITOR_VERBOSE
       std::cout << "itr: " << *itr << std::endl;
 #endif
-      CGAL_assertion(*itr != 0);
 
       // In case the current subcurve index does not match a valid entry in
       // m_sc_he_table, we know that this subcurve matches a halfedge that is
