@@ -12,7 +12,7 @@ typedef K::FT FT;
 typedef K::Point_3 Point;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron, CGAL::Default, CGAL::Tag_false> Primitive;
 typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
@@ -33,7 +33,7 @@ int main()
     Point s2(10.0, 0.0, 0.0);
     Polyhedron polyhedron2;
     polyhedron2.make_tetrahedron(p2, q2, r2, s2);
-    // constructs AABB tree and computes internal KD-tree 
+    // constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     Tree tree(polyhedron1.facets_begin(),polyhedron1.facets_end(), polyhedron1);
 

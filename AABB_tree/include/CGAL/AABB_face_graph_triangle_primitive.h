@@ -101,6 +101,11 @@ public:
   */
   typedef boost::graph_traits<FaceGraph>::face_descriptor Id;
   /// @}
+
+  /*!
+  If `OneFaceGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the polyhedon `graph`.
+  */
+  static unspecified_type construct_shared_data( FaceGraph& graph );
   #endif
 
   // constructors
@@ -114,10 +119,13 @@ public:
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
 
-  /// The shared data is constructible from a reference to the graph
-  static typename Base::Shared_data construct_shared_data( FaceGraph& graph )
+  /// \internal
+  typedef internal::Cstr_shared_data<FaceGraph, Base, Triangle_property_map, Point_property_map, OneFaceGraphPerTree> Cstr_shared_data;
+  /// \internal
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(FaceGraph& graph)
   {
-    return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
+    return Cstr_shared_data::construct_shared_data(graph);
   }
 
 };

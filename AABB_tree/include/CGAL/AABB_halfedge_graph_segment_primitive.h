@@ -104,6 +104,11 @@ public:
   */
   typedef boost::graph_traits<HalfedgeGraph>::edge_descriptor Id;
   /// @}
+
+  /*!
+  If `OneHalfedgeGraphPerTreeGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the halfedge graph.
+  */
+  static unspecified_type construct_shared_data( HalfedgeGraph& graph );
 #endif
 
   /*!
@@ -129,10 +134,13 @@ public:
             Point_property_map(&graph) ){}
   #endif
 
-  /// The shared data is constructible from a reference to the graph
-  static typename Base::Shared_data construct_shared_data( HalfedgeGraph& graph )
+  /// \internal
+  typedef internal::Cstr_shared_data<HalfedgeGraph, Base, Segment_property_map, Point_property_map, OneHalfedgeGraphPerTree> Cstr_shared_data;
+  /// \internal
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(HalfedgeGraph& graph)
   {
-    return Base::construct_shared_data(Segment_property_map(&graph), Point_property_map(&graph));
+    return Cstr_shared_data::construct_shared_data(graph);
   }
 };
 
