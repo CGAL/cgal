@@ -58,7 +58,7 @@ public:
                                Cell_handle   n0, Cell_handle   n1,
                                Cell_handle   n2, Cell_handle   n3)
 #ifndef CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-    : N((Cell_handle[4]) {n0, n1, n2, n3}), V((Vertex_handle[4]) {v0, v1, v2, v3} ) {}
+    : N{n0, n1, n2, n3}, V{v0, v1, v2, v3} {}
 #else
   {
     set_neighbors(n0, n1, n2, n3);
