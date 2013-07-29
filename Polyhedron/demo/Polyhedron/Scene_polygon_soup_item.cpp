@@ -296,7 +296,7 @@ Scene_polygon_soup_item::save(std::ostream& out) const
   }
   writer.write_footer();
 
-  return out;
+  return (bool) out;
 }
 
 bool 

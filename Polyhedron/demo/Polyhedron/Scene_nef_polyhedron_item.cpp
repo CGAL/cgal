@@ -62,7 +62,7 @@ Scene_nef_polyhedron_item::load_from_off(std::istream& in)
 //   Polyhedron poly;
 //   in >> poly;
 //   *nef_poly = Nef_polyhedron(poly);
-  return in;
+  return (bool) in;
 }
 
 QFont 
@@ -76,14 +76,14 @@ bool
 Scene_nef_polyhedron_item::load(std::istream& in)
 {
   in >> *nef_poly;
-  return in;
+  return (bool) in;
 }
 
 bool
 Scene_nef_polyhedron_item::save(std::ostream& in) const
 {
   in << *nef_poly;
-  return in;
+  return (bool) in;
 }
 
 QString 

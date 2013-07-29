@@ -116,7 +116,7 @@ bool Polyhedron_demo_polylines_io_plugin::save(const Scene_item* item, QFileInfo
     }
     out << std::endl;
   }
-  return out;
+  return (bool) out;
 }
 
 #include <QtPlugin>
