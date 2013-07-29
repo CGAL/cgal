@@ -60,6 +60,27 @@ public:
    
 /// @}
 
+
+
+/// \name Tags 
+/// @{
+  /*! 
+    Tag identifying whether the regularized visibility area is computed. 
+  */
+  typedef Regularization_tag Regularization_tag;
+  
+  /*! 
+    Tag identifying that the class does not support general polygons (i.e. with holes). 
+  */
+  typedef Tag_false Supports_general_polygon_tag; 
+
+  /*! 
+    Tag identifying that the class supports general simple polygons. 
+  */
+  typedef Tag_true Supports_simple_polygon_tag; 
+/// @}
+
+
 /// \name Constructors 
 /// @{
 
@@ -107,7 +128,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point from which the visibility region is computed
 \param f is the face of the arrangement in which the visibility region is computed
 \pre `f` is a face of  `this->arr()`
-\pre `q` is in the interior or on the foundary of the given face `f`
+\pre `q` is in the interior or on the boundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face& f, Output_Arrangement_2& out_arr); 

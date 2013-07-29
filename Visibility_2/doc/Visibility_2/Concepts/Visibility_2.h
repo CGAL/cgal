@@ -46,11 +46,24 @@ public:
    */
   typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
 
-  /*! 
-    Tag identifying whether `Visibility_2` computes regularized visibility area. 
-  */
-  typedef Hidden_type Regularization_tag; 
+/// @}
 
+/// \name Tags 
+/// @{
+  /*! 
+    Tag identifying whether the regularized visibility area is computed (either `Tag_true` or `Tag_false`). 
+  */
+  typedef Hidden_type Regularization_tag;
+  
+  /*! 
+    Tag identifying whether general polygons, that is, with holes are supported (either `Tag_true` or `Tag_false`). 
+  */
+  typedef Hidden_type Supports_general_polygon_tag; 
+
+  /*! 
+    Tag identifying whether general simple polygons are supported (either `Tag_true` or `Tag_false`). 
+  */
+  typedef Hidden_type Supports_simple_polygon_tag; 
 /// @}
 
 /// \name Constructors 
@@ -70,7 +83,7 @@ Visibility_2(const Input_Arrangement_2 &arr);
 /// @}
 
 
-/// \name functions 
+/// \name Functions 
 /// @{
 
 /*!
@@ -102,7 +115,7 @@ The visibility region of `q` will be saved to `out_arr`.
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`
-\pre `q` is in the interior or on the foundary of the given face `f`
+\pre `q` is in the interior or on the boundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
