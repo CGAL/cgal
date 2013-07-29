@@ -4749,11 +4749,19 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // Comment EFEF 2013-05-31: if we ever find the need to use signs1 and
     // signs2 out of this scope (for the non-planar case), the code must be
     // dispatched, so that the planar case is not affected.
-    // EBEB 2013-07-18: we compute the signs here "too", in contrast to refactoring
-    // with the above computation (in the f1 == f2 case).
-    // This way we save many computations of the sign.
 
-    // Compute signs of ccbs for he1 and he2, needed for _hole_creation_on_edge_removal
+    // Compute the signs of the ccbs for he1 and he2.
+    // The signs are computed here, a sub case of (f1 != f2), in addition to
+    // the case (f1 == f2) above. This way unnecessary computations of the
+    // signs are avoided.
+
+    // EFEF 2013-07-29. The call to _compute_signs() is dispatched.
+    // Currently, only 2 cases are supported, namely, the case where non of
+    // the boundaries are identified and the case where at least one pair of
+    // opposite boundaries are identified. However, the code for the latter
+    // assumes that non of the (other) boundaries is open. A 3rd version
+    // that supports the remaining case, (for example the cylinder), should
+    // be developed and used.
     signs1 = _compute_signs(he1, Has_identified_sides_category());
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
       std::cout << "signs1.x: " << signs1.first << std::endl;
