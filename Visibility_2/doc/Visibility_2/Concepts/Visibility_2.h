@@ -7,11 +7,11 @@ A model of the concept `Visibility_2` offers visibility queries within
 an Arrangement. 
 
 \cgalHasModel `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\cgalHasModel `CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>`
+\cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
 \cgalHasModel `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 
 \sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
 \sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 
 */
