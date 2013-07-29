@@ -6,11 +6,12 @@
 /*!
 \addtogroup PkgVisibility_2
 \cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2Summary}
-\cgalPkgPicture{visibility-teaser.png}
+\cgalPkgPicture{visibility-teaser-thumbnail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu}
-\cgalPkgDesc{The 2D Visibility component offers several variants for 
-visibility computation amidst liniar geometry in the plain.}
+\cgalPkgDesc{This package provides functionality to compute the visibility area 
+within polygonal regions in two dimensions. The 2D Visibility component offers 
+several variants for visibility computation amidst liniar geometry in the plain.}
 \cgalPkgManuals{Chapter_2D_Visibility_Computation,PkgVisibility_2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -27,6 +28,6 @@ visibility computation amidst liniar geometry in the plain.}
 
 ## Classes ##
 - `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-- `CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>` 
+- `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>` 
 - `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 */
