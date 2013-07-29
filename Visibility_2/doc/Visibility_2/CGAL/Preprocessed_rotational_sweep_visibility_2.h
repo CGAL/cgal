@@ -3,7 +3,7 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offering visibility queries within 
-an Arrangement. The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing in the algorithm of `Rotational_sweep_visibility_2` to reduce the query time to \f$O(n)\f$. The preprocessing takes \f$ O(n^2)\f$ time and space.
+an Arrangement. The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing in the algorithm of `Rotational_sweep_visibility_2` to reduce the query time to \f$O(n)\f$. The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space.
 
 Arrangement_2 gives information about the input/output Arrangements and the extension between them.
 The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
@@ -76,13 +76,13 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Preprocessed_visibility_2' object, that is not
+Default constructor creates an empty 'Preprocessed_rotational_sweep_visibility_2' object, that is not
 attached to any arrangement yet.
 */
 Preprocessed_rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Preprocessed_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr` and does preprocessing.
+Constructs a `Preprocessed_rotational_sweep_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr` and does preprocessing.
 */ 
 Preprocessed_rotational_sweep_visibility_2(const Input_Arrangement_2& arr);
 

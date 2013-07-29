@@ -13,7 +13,7 @@ specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
 
 \sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
 \sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
 
 
 */
@@ -76,13 +76,13 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Preprocessed_visibility_2' object, that is not
+Default constructor creates an empty 'Triangular_expansion_visibility_2' object, that is not
 attached to any arrangement yet.
 */
 Triangular_expansion_visibility_2();
 
 /*! 
-Constructs a `Preprocessed_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr` and does preprocessing.
+Constructs a `Triangular_expansion_visibility_2` object from a given `Input_Arrangement_2` and attaches it to `arr` and does preprocessing.
 */ 
 Triangular_expansion_visibility_2(const Input_Arrangement_2& arr);
 
