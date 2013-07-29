@@ -56,6 +56,7 @@ triangulate_hole(Polyhedron& polyhedron,
   // construct patch
   // TODO: performance might be improved,
   //       although test on RedCircleBox.off shows that cost of this part is really insignificant compared to hole filling
+  if(tris.empty()) { return output; }
   polyhedron.fill_hole(border_halfedge);
   *output++ = border_halfedge->facet();
   for(std::vector<boost::tuple<int, int, int> >::iterator tris_it = tris.begin(); tris_it != tris.end(); ++tris_it) {
