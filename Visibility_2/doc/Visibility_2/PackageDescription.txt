@@ -29,5 +29,6 @@ several variants for visibility computation amidst liniar geometry in the plain.
 ## Classes ##
 - `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
 - `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>` 
-- `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
+- `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+- `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
 */
