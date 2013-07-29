@@ -271,7 +271,7 @@ bool
 Scene_polygon_soup_item::save(std::ostream& out) const
 {
   typedef Polygon_soup::size_type size_type;
-  CGAL::File_writer_OFF writer(out);
+  CGAL::File_writer_OFF writer;
   writer.write_header(out,
                       soup->points.size(),
                       0,
