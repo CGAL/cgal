@@ -50,8 +50,11 @@
 #include <queue>
 
 // enable debugging output statement
+// this is for locating bugs
 //#define CGAL_MCFSKEL_DEBUG
 
+// enable info output statement
+// this is for tuning parameters
 #define CGAL_MCFSKEL_INFO
 
 #ifdef CGAL_MCFSKEL_DEBUG
