@@ -201,7 +201,7 @@ Scene_polygon_soup_item::load(std::istream& in)
   }
   soup->fill_edges();
   oriented = false;
-  return in;
+  return (bool) in;
 }
 
 
