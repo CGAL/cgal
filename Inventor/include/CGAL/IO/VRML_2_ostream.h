@@ -43,7 +43,8 @@ public:
             footer();
         m_os = 0;
     }
-    #if BOOST_VERSION < 105100 || defined BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+    #if defined BOOST_NO_EXPLICIT_CONVERSION_OPERATORS \
+        || defined BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
     typedef const void* Const_void_ptr;
     operator Const_void_ptr () const {
         if ( m_os)
