@@ -3,7 +3,7 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 This class is a model of the concept `Visibility_2` offering visibility queries within 
-an Arrangement. The algorithm converts the input into restricted Delaunay triangulation and computes visibility by expanding the triangle that contains the query point. Preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n) \f$ space. The worst query time is \f$O(n^2) \f$ but it works significantly fast for the case with a small number of holes.
+an Arrangement. The algorithm obtains a constrained Delaunay triangulation from input arrangement then computes visibility by expanding the triangle that contains the query point. Preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n) \f$ space. The worst query time is \f$O(n^2) \f$ but it works significantly fast for the case with a small number of holes.
 
 Arrangement_2 gives information about the input/output Arrangements and the extension between them.
 The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
