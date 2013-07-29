@@ -84,7 +84,7 @@ class AABB_halfedge_graph_segment_primitive
   typedef AABB_primitive< Id_,
                           Segment_property_map,
                           Point_property_map,
-                          Tag_true,
+                          OneHalfedgeGraphPerTree,
                           CacheDatum > Base;
 
 public:
