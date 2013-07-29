@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-This class is a model of the concept `Visibility_2` offers visibility queries within 
+This class is a model of the concept `Visibility_2` offering visibility queries within 
 a simple polygon with no holes. This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to 
 obtain the visibility region, based on a scan of the boundary of the polygon and the notion 
 of angular displacement as a control variable. The algorithm is a modification and extension 
@@ -12,10 +12,10 @@ viewpoint that is in the interior or on the boundary of the polygon.
 The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
 region. For each scanned edge, at most 2 points are pushed on the stack. Overall, it
 will have at most 2n points pushed and popped, thus the time and space complexities of the 
-algorithm are O(n) even in case of degeneracies such as needles, where n is the number of 
+algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n is the number of 
 the vertices of the polygon.
 
-The class offers to either compute the visibility region or the visibility polygon, which can be chosen 
+The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
 at compile time via the second template argument Regularization_tag. The default for the Regularization_tag
 is CGAL::Tag_false, which means the visibility region will be computed. Setting the template argument
 to CGAL::Tag_true will produce the output as a visibility polygon.

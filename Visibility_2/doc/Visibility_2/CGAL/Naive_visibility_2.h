@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-This class is a model of the concept `Visibility_2` offers visibility queries within 
+This class is a model of the concept `Visibility_2` offering visibility queries within 
 an Arrangement. The algorithm it applies to obtain visibility is without preprocessing. 
 It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, 
 with a time complexity of O (n log n) in the number of vertices.

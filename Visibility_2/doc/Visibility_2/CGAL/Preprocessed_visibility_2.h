@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-This class is a model of the concept `Visibility_2` offers visibility queries within 
+This class is a model of the concept `Visibility_2` offering visibility queries within 
 an Arrangement. The algorithm it applies to obtain visibility is using preprocessing.
 
 \cgalModels `Visibility_2` 
