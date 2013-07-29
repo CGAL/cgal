@@ -10,6 +10,9 @@
 
 #include <boost/graph/copy.hpp>
 
+// For debugging macro
+#include <CGAL/internal/Mean_curvature_skeleton/Debug.h>
+
 namespace CGAL {
 
 template <class Polyhedron, class Graph,
@@ -214,7 +217,6 @@ private:
       surface_vertex_id[idx] = boost::get(vertex_id_pmap, *vb);
       boost::put(vertex_id_pmap, *vb, idx++);
     }
-    std::cerr << "vertex num " << idx << "\n";
 
     // assign edge id
     // the two halfedges representing the same edge get the same id
@@ -244,7 +246,6 @@ private:
         idx++;
       }
     }
-    std::cerr << "edge num " << idx << "\n";
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
@@ -261,7 +262,6 @@ private:
       } while (++j != i->facet_begin());
       face_id++;
     }
-    std::cerr << "face num " << face_id << "\n";
 
     // compute vertex-edge connectivity
     for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
@@ -371,7 +371,6 @@ private:
 
             // finally remove ei from p2
             remove_edge(p2, ei, ind);
-//            std::cerr << "delete edge " << ei << "\n";
             break;
           }
         }
@@ -379,9 +378,8 @@ private:
     }
 
     // for debugging purpose
-    std::cerr << "finish collapse\n";
-    print_stat();
-    check_edge();
+    MCFSKEL_INFO(print_stat();)
+    MCFSKEL_INFO(check_edge();)
   }
 
   void add_edge(Edge_queue& queue, int p1, int p2)
@@ -430,7 +428,6 @@ private:
           }
         }
       }
-//      std::cerr << "delete face " << fid << "\n";
     }
   }
 
@@ -453,7 +450,6 @@ private:
       }
     }
     is_edge_deleted[eid] = true;
-//    std::cerr << "delete edge " << eid << "\n";
   }
 
   bool is_same_edge(int ei, int ej)
@@ -562,11 +558,6 @@ private:
     if (queue.find(eid) != queue.end())
     {
       int nerased = queue.erase(eid);
-
-      if (nerased != 1)
-      {
-        std::cerr << "I was supposed to erase one element, but I erased: " << nerased;
-      }
 
       edge_lengths[eid] = new_len;
       queue.insert(eid);

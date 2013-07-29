@@ -49,25 +49,8 @@
 
 #include <queue>
 
-// enable debugging output statement
-// this is for locating bugs
-//#define CGAL_MCFSKEL_DEBUG
-
-// enable info output statement
-// this is for tuning parameters
-#define CGAL_MCFSKEL_INFO
-
-#ifdef CGAL_MCFSKEL_DEBUG
-#define SKEL_DEBUG(x) x
-#else
-#define SKEL_DEBUG(x)
-#endif
-
-#ifdef CGAL_MCFSKEL_INFO
-#define SKEL_INFO(x) x
-#else
-#define SKEL_INFO(x)
-#endif
+// For debugging macro
+#include <CGAL/internal/Mean_curvature_skeleton/Debug.h>
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
@@ -565,7 +548,8 @@ public:
 
   void assemble_LHS(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
-    SKEL_DEBUG(std::cerr << "start LHS\n";)
+    MCFSKEL_DEBUG(std::cerr << "start LHS\n";)
+
     int nver = boost::num_vertices(*polyhedron);
 
     vertex_iterator vb, ve;
@@ -621,14 +605,14 @@ public:
       A.set_coef(i, i, diagonal, true);
     }
 
-    SKEL_DEBUG(std::cerr << "end LHS\n";)
+    MCFSKEL_DEBUG(std::cerr << "end LHS\n";)
   }
 
   void assemble_RHS(typename SparseLinearAlgebraTraits_d::Vector& Bx,
                     typename SparseLinearAlgebraTraits_d::Vector& By,
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
   {
-    SKEL_DEBUG(std::cerr << "start RHS\n";)
+    MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
     // assemble right columns of linear system
     int nver = boost::num_vertices(*polyhedron);
     vertex_iterator vb, ve;
@@ -672,7 +656,7 @@ public:
         Bz[i + nver * 2] = z * op;
       }
     }
-    SKEL_DEBUG(std::cerr << "end RHS\n";)
+    MCFSKEL_DEBUG(std::cerr << "end RHS\n";)
   }
 
   void update_vertex_id()
@@ -689,7 +673,7 @@ public:
 
   void contract_geometry()
   {
-    SKEL_DEBUG(std::cerr << "before contract geometry";)
+    MCFSKEL_DEBUG(std::cerr << "before contract geometry";)
 
     update_vertex_id();
 
@@ -714,7 +698,7 @@ public:
     typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nrows);
     assemble_RHS(Bx, By, Bz);
 
-    SKEL_DEBUG(std::cerr << "before solve\n";)
+    MCFSKEL_DEBUG(std::cerr << "before solve\n";)
 
     // solve "At * A * X = At * B".
     double D;
@@ -723,7 +707,7 @@ public:
     m_solver.linear_solver_non_symmetric(A, By, Y);
     m_solver.linear_solver_non_symmetric(A, Bz, Z);
 
-    SKEL_DEBUG(std::cerr << "after solve\n";)
+    MCFSKEL_DEBUG(std::cerr << "after solve\n";)
 
     // copy to mesh
     vertex_iterator vb, ve;
@@ -736,7 +720,7 @@ public:
       vi->point() = p;
     }
 
-    SKEL_DEBUG(std::cerr << "leave contract geometry\n";)
+    MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
   }
 
   int collapse_short_edges()
@@ -977,7 +961,7 @@ public:
 
   int iteratively_split_triangles()
   {
-    SKEL_DEBUG(std::cerr << "before split\n";)
+    MCFSKEL_DEBUG(std::cerr << "before split\n";)
 
     int num_splits = 0;
     while (true)
@@ -993,20 +977,20 @@ public:
       }
     }
 
-    SKEL_DEBUG(std::cerr << "after split\n";)
+    MCFSKEL_DEBUG(std::cerr << "after split\n";)
 
     return num_splits;
   }
 
   int update_topology()
   {
-    SKEL_DEBUG(std::cerr << "before collapse edges\n";)
+    MCFSKEL_DEBUG(std::cerr << "before collapse edges\n";)
 
     int num_collapses = iteratively_collapse_edges();
-    SKEL_INFO(std::cerr << "collapse " << num_collapses << " edges.\n";)
+    MCFSKEL_INFO(std::cerr << "collapse " << num_collapses << " edges.\n";)
 
     int num_splits = iteratively_split_triangles();
-    SKEL_INFO(std::cerr << "split " << num_splits << " edges.\n";)
+    MCFSKEL_INFO(std::cerr << "split " << num_splits << " edges.\n";)
 
     return num_collapses + num_splits;
   }
@@ -1122,7 +1106,7 @@ public:
       }
     }
 
-    SKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
+    MCFSKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
 
     return num_fixed;
   }
@@ -1166,7 +1150,7 @@ public:
       }
     }
 
-    SKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
+    MCFSKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
 
     return num_fixed;
   }
@@ -1280,9 +1264,9 @@ public:
 //    detect_degeneracies_in_disk();
 
     double area = get_surface_area();
-    SKEL_INFO(std::cout << "area " << area << "\n";)
+    MCFSKEL_INFO(std::cout << "area " << area << "\n";)
     double volume = to_double(internal::volume(*polyhedron));
-    SKEL_INFO(std::cout << "volume " << volume << ", volume / original_volume "
+    MCFSKEL_INFO(std::cout << "volume " << volume << ", volume / original_volume "
               << volume / original_volume <<  "\n";)
   }
 
@@ -1292,7 +1276,7 @@ public:
     int num_iteration = 0;
     while (true)
     {
-      SKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
+      MCFSKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
 
       contract_geometry();
       update_topology();
@@ -1301,8 +1285,8 @@ public:
 
       double area = get_surface_area();
       double area_ratio = fabs(last_area - area) / original_area;
-      SKEL_INFO(std::cout << "area " << area << "\n";)
-      SKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
+      MCFSKEL_INFO(std::cout << "area " << area << "\n";)
+      MCFSKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
       if (area_ratio < area_TH)
       {
         break;
@@ -1355,7 +1339,7 @@ public:
     {
       cnt += skeleton_to_surface[i].size();
     }
-    SKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
+    MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
 
     collapse_vertices_without_correspondence();
   }
@@ -1422,7 +1406,7 @@ public:
       }
     }
 
-    SKEL_INFO(std::cout << "removed " << vertex_removed << " vertices\n";)
+    MCFSKEL_INFO(std::cout << "removed " << vertex_removed << " vertices\n";)
 
     int new_size = skeleton_to_surface.size() - vertex_removed;
     Graph new_g(new_size);
@@ -1448,7 +1432,7 @@ public:
       int nt = new_id[t];
       if (ns == -1 || nt == -1)
       {
-        SKEL_DEBUG(std::cerr << "wrong id\n";)
+        MCFSKEL_DEBUG(std::cerr << "wrong id\n";)
       }
       boost::add_edge(ns, nt, new_g);
     }
@@ -1479,8 +1463,8 @@ public:
     points = new_points;
     skeleton_to_surface = new_skeleton_to_surface;
 
-    SKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
-    SKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
+    MCFSKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
+    MCFSKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
   }
 
   void get_skeleton(Graph& g, std::vector<Point>& points)
@@ -1496,7 +1480,7 @@ public:
 
   void compute_voronoi_pole()
   {
-    SKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
+    MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
 
     std::vector<std::pair<TriPoint, unsigned> > points;

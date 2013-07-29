@@ -26,8 +26,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
-namespace internal
-{
+namespace internal {
 
 //*******************************************************************************************************************
 //                                -= stopping condition predicate =-

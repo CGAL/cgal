@@ -1061,7 +1061,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     line.push_back(t);
     skeleton->polylines.push_back(line);
   }
-  skeleton->setColor(QColor(255, 0, 0));
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton, false);
 
@@ -1116,10 +1115,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   junctionPointsItem->setName(QString("junction points of %1").arg(item->name()));
 
   Point_set *end_ps = endPointsItem->point_set();
-  end_ps->set_selected_color(QColor(0, 0, 255));
+  end_ps->set_selected_color(QColor(254, 111, 94));
   end_ps->set_selected_diameter(6.0);
   Point_set *junction_ps = junctionPointsItem->point_set();
-  junction_ps->set_selected_color(QColor(0, 255, 0));
+  junction_ps->set_selected_color(QColor(51, 255, 204));
   junction_ps->set_selected_diameter(6.0);
 
   boost::graph_traits<Graph>::vertex_iterator vi;
