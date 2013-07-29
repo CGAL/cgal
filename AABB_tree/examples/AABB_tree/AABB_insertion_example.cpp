@@ -35,11 +35,11 @@ int main()
     polyhedron2.make_tetrahedron(p2, q2, r2, s2);
     // constructs AABB tree and computes internal KD-tree 
     // data structure to accelerate distance queries
-    Tree tree(polyhedron1.facets_begin(),polyhedron1.facets_end());
+    Tree tree(polyhedron1.facets_begin(),polyhedron1.facets_end(), polyhedron1);
 
     tree.accelerate_distance_queries();
 
-    tree.insert(polyhedron2.facets_begin(),polyhedron2.facets_end());
+    tree.insert(polyhedron2.facets_begin(),polyhedron2.facets_end(), polyhedron2);
 
     // query point
     Point query(0.0, 0.0, 3.0);

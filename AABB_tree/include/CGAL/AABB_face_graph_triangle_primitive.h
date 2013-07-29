@@ -114,22 +114,10 @@ public:
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
 
-  /// For backward-compatibility with AABB_polyhedron_triangle_primitive only.
-  /// `Id_` is `Facet_const_handle` if `FaceGraph` is const and `Facet_handle` otherwise.
-  AABB_face_graph_triangle_primitive(Id_ id)
-    : Base( id,
-            Triangle_property_map(NULL),
-            Point_property_map(NULL) ){}
-
+  /// The shared data is constructible from a reference to the graph
   static typename Base::Shared_data construct_shared_data( FaceGraph& graph )
   {
     return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
-  }
-
-  /// For backward-compatibility with AABB_polyhedron_triangle_primitive only
-  static typename Base::Shared_data construct_shared_data()
-  {
-    return Base::construct_shared_data(Triangle_property_map(NULL), Point_property_map(NULL));
   }
 
 };

@@ -31,7 +31,6 @@
 #include <CGAL/is_iterator.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 namespace CGAL {
 
@@ -130,21 +129,10 @@ public:
             Point_property_map(&graph) ){}
   #endif
 
-  /// For backward-compatibility with AABB_polyhedron_segment_primitive only
-  AABB_halfedge_graph_segment_primitive(Id_ id)
-    : Base( id,
-            Segment_property_map(NULL),
-            Point_property_map(NULL) ){}
-
+  /// The shared data is constructible from a reference to the graph
   static typename Base::Shared_data construct_shared_data( HalfedgeGraph& graph )
   {
     return Base::construct_shared_data(Segment_property_map(&graph), Point_property_map(&graph));
-  }
-
-  ///For backward-compatibility with AABB_polyhedron_segment_primitive only
-  static typename Base::Shared_data construct_shared_data()
-  {
-    return Base::construct_shared_data(Segment_property_map(NULL), Point_property_map(NULL));
   }
 };
 

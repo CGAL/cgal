@@ -401,7 +401,7 @@ void Scene::build_facet_tree()
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct Facet AABB tree...";
-    m_facet_tree.rebuild(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end());
+    m_facet_tree.rebuild(m_pPolyhedron->facets_begin(),m_pPolyhedron->facets_end(),*m_pPolyhedron);
     m_facet_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
@@ -421,7 +421,7 @@ void Scene::build_edge_tree()
     CGAL::Timer timer;
     timer.start();
     std::cout << "Construct Edge AABB tree...";
-    m_edge_tree.rebuild(m_pPolyhedron->edges_begin(),m_pPolyhedron->edges_end());
+    m_edge_tree.rebuild(boost::edges(*m_pPolyhedron).first,boost::edges(*m_pPolyhedron).second,*m_pPolyhedron);
     m_edge_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
