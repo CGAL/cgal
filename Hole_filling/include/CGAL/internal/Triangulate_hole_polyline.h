@@ -156,7 +156,8 @@ public:
   OutputIterator 
   triangulate(const Polyline_3& P, 
               const Polyline_3& Q,
-              OutputIterator out)
+              OutputIterator out,
+              const std::set<std::pair<int, int> >& existing_edges)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -215,7 +216,7 @@ public:
     
     std::vector<Weight> W(n*n,Weight(0,0));
     std::vector<int> lambda(n*n,-1);
-    bool success = triangulate_DT(P, Q, W, lambda, *v0_vn_edge, T, n);
+    bool success = triangulate_DT(P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
     CGAL_assertion(success);
 
     return trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
@@ -247,13 +248,14 @@ public:
   }
 
   bool 
-  triangulate_DT(const Polyline_3& P, 
-                     const Polyline_3& Q, 
-                     std::vector<Weight>& W, 
-                     std::vector<int>& lambda, 
-                     Edge e,
-                     Triangulation& T,
-                     int n)
+  triangulate_DT( const Polyline_3& P, 
+                  const Polyline_3& Q, 
+                  std::vector<Weight>& W, 
+                  std::vector<int>& lambda, 
+                  Edge e,
+                  Triangulation& T,
+                  int n,
+                  const std::set<std::pair<int, int> >& existing_edges)
   {
     int v0 = e.first->vertex(e.second)->info();
     int v1 = e.first->vertex(e.third)->info();
@@ -269,6 +271,11 @@ public:
     // should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
     if(v0 + 1 == v1)
     { return true; }
+
+    // check whether the edge is valid
+    if(existing_edges.find(std::make_pair(v0, v1)) != existing_edges.end()) {
+      return false;
+    }
 
     // one triangle remains
     if(v0 + 2 == v1){
@@ -296,11 +303,17 @@ public:
       
       if(v2 < v0 || v2 > v1) { continue; } // this will also skip infinite vertex
 
+      if( existing_edges.find(std::make_pair(v0,v2)) != existing_edges.end() ||
+          existing_edges.find(std::make_pair(v2,v1)) != existing_edges.end() ) {
+          // we can not construct i-m-k triangle
+          continue;
+      }
+
       Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index);
       Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index);
 
-      bool found = triangulate_DT(P, Q, W, lambda, e0, T, n) &&
-                   triangulate_DT(P, Q, W, lambda, e1, T, n);
+      bool found = triangulate_DT(P, Q, W, lambda, e0, T, n, existing_edges) &&
+                   triangulate_DT(P, Q, W, lambda, e1, T, n, existing_edges);
       if(!found) { continue; }
 
       CGAL_assertion(W[v0*n + v2].w.first != -1 && W[v0*n + v2].w.second != -1);
@@ -434,7 +447,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                           const std::set<std::pair<int, int> >& existing_edges) 
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline<Kernel> Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel> Fill;
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q(qbegin, qend);
   if(P.front() != P.back()){
