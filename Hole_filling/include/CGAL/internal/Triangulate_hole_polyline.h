@@ -205,8 +205,8 @@ public:
       // in case of dimension 2 return triangles directly
       for(Finite_cells_iterator cb = T.finite_cells_begin(); cb != T.finite_cells_begin(); ++cb) {
         int v0(cb->vertex(0)->info()), 
-          v1(cb->vertex(1)->info()), 
-          v2(cb->vertex(2)->info());
+            v1(cb->vertex(1)->info()), 
+            v2(cb->vertex(2)->info());
 
         // TODO not sure about orientation
         *out++ = OutputIteratorValueType(v0, v1, v2);
@@ -216,8 +216,11 @@ public:
     
     std::vector<Weight> W(n*n,Weight(0,0));
     std::vector<int> lambda(n*n,-1);
-    bool success = triangulate_DT(P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
-    CGAL_assertion(success);
+    triangulate_DT(P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
+    if(lambda[0*n + (n-1)] == -1) {
+      CGAL_warning(!"No possible triangulation is found!");
+      return out;
+    }
 
     return trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
@@ -247,7 +250,7 @@ public:
     return -1;
   }
 
-  bool 
+  void 
   triangulate_DT( const Polyline_3& P, 
                   const Polyline_3& Q, 
                   std::vector<Weight>& W, 
@@ -257,24 +260,29 @@ public:
                   int n,
                   const std::set<std::pair<int, int> >& existing_edges)
   {
+    /**********************************************************************
+     *  + Default W value is (0,0), default lambda value is -1.
+     *  + W value (0,0) is used to check whether the region (v0-v1) is processed.
+     *  + If a range v0-v1 does not contains any possible triangulation, then W[v0,v1] = (-1,-1) and lambda[v0,v1] = -1
+     */
     int v0 = e.first->vertex(e.second)->info();
     int v1 = e.first->vertex(e.third)->info();
     if(v0 > v1) { std::swap(v0, v1); }
+    
     // edge can not be incident to infinite vertex
     CGAL_assertion(v0 != -1);
 
     // the range is previously processed
-    if(W[v0*n + v1].w.first != 0 && W[v0*n + v1].w.second != 0) 
-    { return true; }
+    if( W[v0*n + v1] != Weight(0, 0) ) { return; }
 
-    // border edge - just return true
+    // border edge - just return
     // should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
-    if(v0 + 1 == v1)
-    { return true; }
+    if(v0 + 1 == v1) { return; }
 
     // check whether the edge is valid
     if(existing_edges.find(std::make_pair(v0, v1)) != existing_edges.end()) {
-      return false;
+      W[v0*n + v1] = Weight(-1,-1);
+      return;
     }
 
     // one triangle remains
@@ -286,10 +294,12 @@ public:
         if(f3 == v0 + 1) {
           W[v0*n + v1] = Weight(P, Q, v0, v0+1, v1);
           lambda[v0*n + v1] = v0+1;
-          return true;
+          return;
         }
       } while(++fb != end);
-      return false;
+      // if no found
+      W[v0*n + v1] = Weight(-1,-1);
+      return;
     }
 
     int m_min = -1;
@@ -298,9 +308,10 @@ public:
     bool found_any = false;
     Facet_circulator fb(T.incident_facets(e)), end(fb);
     do {
+
       int v2, v2_cell_index;
       boost::tie(v2, v2_cell_index) = get_facet_remaining_vertex(fb->first, *fb, v0, v1);
-      
+
       if(v2 < v0 || v2 > v1) { continue; } // this will also skip infinite vertex
 
       if( existing_edges.find(std::make_pair(v0,v2)) != existing_edges.end() ||
@@ -312,12 +323,10 @@ public:
       Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index);
       Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index);
 
-      bool found = triangulate_DT(P, Q, W, lambda, e0, T, n, existing_edges) &&
-                   triangulate_DT(P, Q, W, lambda, e1, T, n, existing_edges);
-      if(!found) { continue; }
-
-      CGAL_assertion(W[v0*n + v2].w.first != -1 && W[v0*n + v2].w.second != -1);
-      CGAL_assertion(W[v2*n + v1].w.first != -1 && W[v2*n + v1].w.second != -1);
+      triangulate_DT(P, Q, W, lambda, e0, T, n, existing_edges); // v0-v2
+      triangulate_DT(P, Q, W, lambda, e1, T, n, existing_edges); // v2-v1
+      if( W[v0*n + v2] == Weight(-1,-1) || W[v2*n + v1] == Weight(-1,-1) )
+      { continue; }
 
       Weight w = W[v0*n + v2] + W[v2*n + v1] + Weight(P,Q, v0,v2,v1, lambda);
       if(w < w_min){
@@ -326,12 +335,9 @@ public:
       }
     } while(++fb != end);
 
-    if(m_min == -1) // which means no triangulation exists between v0 - v1
-    { return false; }
-
-    W[v0*n+v1] = w_min;
+    if(m_min != -1) { W[v0*n+v1] = w_min; }
+    else            { W[v0*n+v1] = Weight(-1,-1); } // which means no triangulation exists between v0 - v1
     lambda[v0*n+v1] = m_min;
-    return true;
   }
   
 };
