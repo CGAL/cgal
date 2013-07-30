@@ -13,7 +13,7 @@ namespace CGAL {
 An example figure. 
 \cgalFigureEnd
 
-This package provides functionality to compute the visibility area within polygonal regions in 2D Euclidean space.  
+This package provides functionality to compute the visibility area within polygonal regions in two dimensions. 
 Let \f$ P \f$ be a regular polygon, i.e. with \f$ \partial P = \partial(P\setminus\partial P)\f$ and \f$\partial P \subset P\f$,
 where  \f$\partial P \f$ denotes the boundary of \f$ P \f$.
 \f$ P \f$ may have holes or can be simple. 
