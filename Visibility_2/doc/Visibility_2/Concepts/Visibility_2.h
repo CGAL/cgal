@@ -8,11 +8,9 @@ an Arrangement.
 
 \cgalHasModel `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
 \cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\cgalHasModel `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
+\cgalHasModel `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+\cgalHasModel `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
 
-\sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_visibility_2<Arrangement_2, Regularization_tag>`
 
 */
 class Visibility_2 {
