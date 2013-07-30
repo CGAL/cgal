@@ -35,11 +35,12 @@ triangulate_and_refine_hole(
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0)
+  double density_control_factor = std::sqrt(2.0),
+  bool use_delaunay_triangulation = false
   ) 
 {
   std::vector<typename Polyhedron::Facet_handle> patch;
-  triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch));
+  triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch), use_delaunay_triangulation);
 
   return refine(polyhedron, patch.begin(), patch.end(), facet_out, vertex_out, density_control_factor);
 }
@@ -74,12 +75,14 @@ triangulate_refine_and_fair_hole(
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
   WeightCalculator weight_calculator,
-  double density_control_factor = std::sqrt(2.0)
+  double density_control_factor = std::sqrt(2.0),
+  bool use_delaunay_triangulation = false
   )
 {
   std::vector<typename Polyhedron::Vertex_handle> patch;
 
-  facet_out = triangulate_and_refine_hole(polyhedron, border_halfedge, facet_out, std::back_inserter(patch), density_control_factor)
+  facet_out = triangulate_and_refine_hole
+    (polyhedron, border_halfedge, facet_out, std::back_inserter(patch), density_control_factor, use_delaunay_triangulation)
               .first;
 
   bool fair_success = fair<SparseLinearSolver>(polyhedron, patch.begin(), patch.end(), weight_calculator);
@@ -97,12 +100,13 @@ triangulate_refine_and_fair_hole(
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
   WeightCalculator weight_calculator,
-  double density_control_factor = std::sqrt(2.0)
+  double density_control_factor = std::sqrt(2.0),
+  bool use_delaunay_triangulation = false
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return triangulate_refine_and_fair_hole<Sparse_linear_solver, WeightCalculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
-    (polyhedron, border_halfedge, facet_out, vertex_out, weight_calculator, density_control_factor);
+    (polyhedron, border_halfedge, facet_out, vertex_out, weight_calculator, density_control_factor, use_delaunay_triangulation);
 }
 
 //use default WeightCalculator
@@ -113,12 +117,13 @@ triangulate_refine_and_fair_hole(
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0)
+  double density_control_factor = std::sqrt(2.0),
+  bool use_delaunay_triangulation = false
   )
 {
   typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
   return triangulate_refine_and_fair_hole<SparseLinearSolver, Weight_calculator, Polyhedron, FacetOutputIterator, VertexOutputIterator>
-    (polyhedron, border_halfedge, facet_out, vertex_out,  Weight_calculator(), density_control_factor);
+    (polyhedron, border_halfedge, facet_out, vertex_out,  Weight_calculator(), density_control_factor, use_delaunay_triangulation);
 }
 
 //use default SparseLinearSolver and WeightCalculator
@@ -129,12 +134,13 @@ triangulate_refine_and_fair_hole(
   typename Polyhedron::Halfedge_handle border_halfedge, 
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0)
+  double density_control_factor = std::sqrt(2.0),
+  bool use_delaunay_triangulation = false
   )
 {
   typedef CGAL::internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
   return triangulate_refine_and_fair_hole<Sparse_linear_solver, Polyhedron, FacetOutputIterator, VertexOutputIterator>
-    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor);
+    (polyhedron, border_halfedge, facet_out, vertex_out, density_control_factor, use_delaunay_triangulation);
 }
 
 } // namespace CGAL

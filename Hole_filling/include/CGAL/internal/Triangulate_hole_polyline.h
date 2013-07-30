@@ -445,10 +445,13 @@ OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
                           OutputIterator out,
-                          const std::set<std::pair<int, int> >& existing_edges) 
+                          const std::set<std::pair<int, int> >& existing_edges,
+                          bool use_delaunay_triangulation) 
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel> Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel> Fill_DT;
+  typedef CGAL::internal::Triangulate_hole_polyline<Kernel>    Fill;
+
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q(qbegin, qend);
   if(P.front() != P.back()){
@@ -457,8 +460,10 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
       Q.push_back(Q.front());
     }
   }
-  Fill fill;
-  return fill.template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
+
+  return use_delaunay_triangulation ?
+         Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges) :
+         Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
 }
 
 } // namespace internal
@@ -482,10 +487,10 @@ template <typename OutputIteratorValueType, typename InputIterator, typename Out
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
-                          OutputIterator out)
+                          OutputIterator out, bool use_delaunay_triangulation = false)
 {
   return internal::triangulate_hole_polyline<OutputIteratorValueType>
-    (pbegin, pend, qbegin, qend, out, std::set<std::pair<int, int> >());
+    (pbegin, pend, qbegin, qend, out, std::set<std::pair<int, int> >(), use_delaunay_triangulation);
 }
 
 // overload for OutputIteratorValueType
@@ -493,10 +498,10 @@ template <typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
-                          OutputIterator out)
+                          OutputIterator out, bool use_delaunay_triangulation = false)
 {
   return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-    (pbegin, pend, qbegin, qend, out);
+    (pbegin, pend, qbegin, qend, out, use_delaunay_triangulation);
 }
 
 
@@ -514,22 +519,23 @@ Triangles are put into `out` using the indices of the input points in the range 
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          OutputIterator out)
+                          OutputIterator out, bool use_delaunay_triangulation = false)
 {
-
-  typename Fill::Polyline_3 Q;
+  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
+  typedef std::vector<typename Kernel::Point_3> Polyline_3;
+  Polyline_3 Q;
   return triangulate_hole_polyline<OutputIteratorValueType>
-    (pbegin, pend, Q.begin(), Q.end(), out);
+    (pbegin, pend, Q.begin(), Q.end(), out, use_delaunay_triangulation);
 }
 
 // overload for OutputIteratorValueType
 template <typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          OutputIterator out)
+                          OutputIterator out, bool use_delaunay_triangulation = false)
 {
   return triangulate_hole_polyline<typename value_type_traits<OutputIterator>::type>
-    (pbegin, pend, out);
+    (pbegin, pend, out, use_delaunay_triangulation);
 }
 
 } // namespace CGAL

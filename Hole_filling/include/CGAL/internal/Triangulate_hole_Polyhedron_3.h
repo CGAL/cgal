@@ -24,7 +24,8 @@ template<class Polyhedron, class OutputIterator>
 OutputIterator 
 triangulate_hole(Polyhedron& polyhedron, 
   typename Polyhedron::Halfedge_handle border_halfedge, 
-  OutputIterator output
+  OutputIterator output,
+  bool use_delaunay_triangulation = false
   )
 {
   typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
@@ -80,7 +81,7 @@ triangulate_hole(Polyhedron& polyhedron,
   // fill hole using polyline function
   std::vector<boost::tuple<int, int, int> > tris;
   internal::triangulate_hole_polyline<boost::tuple<int, int, int> >
-    (P.begin(), P.end(), Q.begin(), Q.end(), back_inserter(tris), existing_edges);
+    (P.begin(), P.end(), Q.begin(), Q.end(), back_inserter(tris), existing_edges, use_delaunay_triangulation);
 
   CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
 
