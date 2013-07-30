@@ -18,8 +18,8 @@
 // Compute the vertex normal
 #include <CGAL/internal/Mean_curvature_skeleton/get_normal.h>
 
-// Compute the vertex normal
-#include <CGAL/internal/Mean_curvature_skeleton/edge_collapse.h>
+// Low level collapse function
+#include <CGAL/Surface_mesh_simplification/halfedge_collapse_Polyhedron_3.h>
 
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -823,8 +823,12 @@ public:
       if (is_collapse_ok(*eb))
       {
         // todo move to midpoint
-        collapse_edge(*polyhedron, constrains_map, *eb);
-        cnt++;
+        Point p = midpoint(
+          boost::get(vertex_point, *polyhedron, boost::source(*eb, *polyhedron)),
+          boost::get(vertex_point, *polyhedron, boost::target(*eb, *polyhedron)) );
+        vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(*eb, *polyhedron);
+        boost::put(vertex_point, *polyhedron, v, p);
+        ++cnt;
       }
     }
     return cnt;
