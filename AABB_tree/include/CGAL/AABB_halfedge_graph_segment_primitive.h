@@ -51,7 +51,7 @@ namespace CGAL {
  * \tparam HalfedgeGraph is a model of the halfedge graph concept.
  * \tparam VertexPointPMap is a property map with `boost::graph_traits<HalfedgeGraph>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Point_3` as value type.
- * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true or `CGAL::Tag_false`.
+ * \tparam OneHalfedgeGraphPerTree is either `CGAL::Tag_true` or `CGAL::Tag_false`.
  * In the former case, we guarantee that all the primitives will be from a
  * common `HalfedgeGraph` and some data will be factorized so that the size of
  * the primitive is reduced. In the latter case, the primitives can be from
