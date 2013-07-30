@@ -667,7 +667,7 @@ protected:
   template<class HandleType>
   void has_been_selected(HandleType clicked) {
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
-    std::map<HandleType, int> selection = extract_k_ring(*polyhedron(), clicked, k_ring);
+    std::map<HandleType, int> selection = extract_k_ring(clicked, k_ring);
 
     bool any_change = false;
     if(is_insert) {
@@ -721,7 +721,7 @@ protected:
   }
 
   template<class HandleType>
-  std::map<HandleType, int> extract_k_ring(const Polyhedron &P, HandleType v, int k)
+  std::map<HandleType, int> extract_k_ring(HandleType v, int k)
   {
     std::map<HandleType, int>  D;
     std::queue<HandleType>     Q;
