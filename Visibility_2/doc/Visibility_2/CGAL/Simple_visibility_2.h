@@ -17,8 +17,8 @@ the vertices of the polygon.
 
 The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
 at compile time via the second template argument Regularization_tag. The default for the Regularization_tag
-is CGAL::Tag_false, which means the visibility region will be computed. Setting the template argument
-to CGAL::Tag_true will produce the output as a visibility polygon.
+is ::Tag_false, which means the visibility region will be computed. Setting the template argument
+to ::Tag_true will produce the output as a visibility polygon.
 
 \cgalModels `Visibility_2` 
 
@@ -77,7 +77,7 @@ public:
   /*! 
     Tag identifying that the class supports general simple polygons. 
   */
-  typedef Tag_true Supports_simple_polygon_tag; 
+  typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}
 
 

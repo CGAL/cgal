@@ -9,7 +9,7 @@ with a time complexity of O (n log n) in the number of vertices.
 
 Arrangement_2 gives information about the input/output Arrangements and the extension between them. 
 The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
-specified by one of the following: CGAL::Tag_true or CGAL::Tag_false.
+specified by one of the following: ::Tag_true or ::Tag_false.
 
 \cgalModels `Visibility_2` 
 
@@ -63,12 +63,12 @@ public:
   /*! 
     Tag identifying that the class supports general polygons (i.e. with holes). 
   */
-  typedef Tag_true Supports_general_polygon_tag; 
+  typedef ::Tag_true Supports_general_polygon_tag; 
 
   /*! 
     Tag identifying that the class supports general simple polygons. 
   */
-  typedef Tag_true Supports_simple_polygon_tag; 
+  typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}
 
 /// \name Constructors 
