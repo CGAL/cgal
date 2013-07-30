@@ -18,6 +18,9 @@
 // Compute the vertex normal
 #include <CGAL/internal/Mean_curvature_skeleton/get_normal.h>
 
+// Compute the vertex normal
+#include <CGAL/internal/Mean_curvature_skeleton/edge_collapse.h>
+
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
@@ -47,10 +50,10 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include <queue>
-
 // For debugging macro
 #include <CGAL/internal/Mean_curvature_skeleton/Debug.h>
+
+#include <queue>
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
@@ -796,12 +799,44 @@ public:
     return r;
   }
 
+  int collapse_edges()
+  {
+    int cnt = 0;
+    edge_iterator eb, ee;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      vertex_descriptor vi = boost::source(*eb, *polyhedron);
+      vertex_descriptor vj = boost::target(*eb, *polyhedron);
+      size_t vi_idx = boost::get(vertex_id_pmap, vi);
+      size_t vj_idx = boost::get(vertex_id_pmap, vj);
+
+      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
+       && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
+      {
+        if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
+        {
+          continue;
+        }
+      }
+
+      Constrains_map constrains_map;
+      if (is_collapse_ok(*eb))
+      {
+        // todo move to midpoint
+        collapse_edge(*polyhedron, constrains_map, *eb);
+        cnt++;
+      }
+    }
+    return cnt;
+  }
+
   int iteratively_collapse_edges()
   {
     int num_collapses = 0;
     while (true)
     {
-      int cnt = collapse_short_edges();
+//      int cnt = collapse_short_edges();
+      int cnt = collapse_edges();
       if (cnt == 0)
       {
         break;
@@ -1529,6 +1564,7 @@ public:
       double max_neg_t = 1;
       int max_neg_i = 0;
 
+      std::cout << "poles " << point_to_pole[i].size() << "\n";
       for (size_t j = 0; j < point_to_pole[i].size(); j++)
       {
         int pole_id = point_to_pole[i][j];

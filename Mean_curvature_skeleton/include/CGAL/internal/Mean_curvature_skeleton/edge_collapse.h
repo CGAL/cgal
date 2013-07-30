@@ -32,6 +32,8 @@ Then, after the collapse of edge `v0v1` the following holds for `e` (and analogu
 \pre The edge `v0v1` must satisfy the *link condition* [\cite degn-tpec-98], which guarantees that the surface is also 2-manifold after the edge collapse. 
 
 */
+#include <CGAL/Polyhedron_3.h>
+
 template<typename Graph, typename BorderMap>
 typename boost::graph_traits<Graph>::vertex_descriptor
 collapse_edge(Graph& g,
@@ -41,7 +43,7 @@ collapse_edge(Graph& g,
   typedef boost::graph_traits< Graph > Traits;
   typedef typename Traits::vertex_descriptor          vertex_descriptor;
   typedef typename Traits::edge_descriptor            edge_descriptor;
-  typedef typename Traits::halfedge_descriptor            halfedge_descriptor;
+  typedef typename CGAL::halfedge_graph_traits<Graph>::undirected_edge_descriptor            halfedge_descriptor;
 
   halfedge_descriptor pq = halfedge(v0v1,g);
   halfedge_descriptor qp = opposite(pq, g);
