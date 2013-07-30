@@ -2,12 +2,16 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-This class is a model of the concept `Visibility_2` offering visibility queries within 
-an Arrangement. The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing in the algorithm of `Rotational_sweep_visibility_2` to reduce the query time to \f$O(n)\f$. The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space.
+\brief This class is a model of the concept `Visibility_2` offering visibility queries within
+a polygon that may have hole(s).
 
-Arrangement_2 gives information about the input/output Arrangements and the extension between them.
-The Regularization_tag indicates whether the output Arrangement result should be regularized. It can be
+\details The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing then do sweeping which is similar to the algorithm of `Rotational_sweep_visibility_2`. With the help of preprocessing, the query time is reduced to \f$O(n)\f$. The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space.
+
+\tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
+
+\tparam Regularization_tag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false.
+
 
 \cgalModels `Visibility_2` 
 

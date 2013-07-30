@@ -2,8 +2,10 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-This class is a model of the concept `Visibility_2` offering visibility queries within 
-a simple polygon with no holes. This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to 
+\brief This class is a model of the concept `Visibility_2` offering visibility queries within
+a simple polygon with no holes.
+
+\details This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to
 obtain the visibility region, based on a scan of the boundary of the polygon and the notion 
 of angular displacement as a control variable. The algorithm is a modification and extension 
 of the  linear time algorithm of Lee \cite dtl-voasp-83. It computes the visibility region from a 
@@ -19,6 +21,11 @@ The class offers the option to either compute the visibility region or the visib
 at compile time via the second template argument Regularization_tag. The default for the Regularization_tag
 is ::Tag_false, which means the visibility region will be computed. Setting the template argument
 to ::Tag_true will produce the output as a visibility polygon.
+
+\tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
+
+\tparam Regularization_tag indicates whether the output should be regularized. It can be
+specified by one of the following: ::Tag_true or ::Tag_false.
 
 \cgalModels `Visibility_2` 
 
