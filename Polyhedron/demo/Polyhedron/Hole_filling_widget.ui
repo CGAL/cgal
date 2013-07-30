@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>311</width>
-    <height>341</height>
+    <height>364</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,6 +60,16 @@
        <string>Parameters</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="Use_delaunay_triangulation_check_box">
+         <property name="text">
+          <string>Use Delaunay Triangulation</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>

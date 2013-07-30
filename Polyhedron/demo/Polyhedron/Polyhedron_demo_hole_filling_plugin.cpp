@@ -566,13 +566,14 @@ void Polyhedron_demo_hole_filling_plugin::fill
 
   int action_index = ui_widget.action_combo_box->currentIndex();
   double alpha = ui_widget.Density_control_factor_spin_box->value();
+  bool use_DT = ui_widget.Use_delaunay_triangulation_check_box->isChecked();
   CGAL::Timer timer; timer.start();
   std::vector<Polyhedron::Facet_handle> patch;
   if(action_index == 0) {
-    CGAL::triangulate_hole(poly, it, std::back_inserter(patch));
+    CGAL::triangulate_hole(poly, it, std::back_inserter(patch), use_DT);
   }
   else if(action_index == 1) {
-    CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha);
+    CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha, use_DT);
   }
   else {
     int weight_index = ui_widget.weight_combo_box->currentIndex();
@@ -580,11 +581,11 @@ void Polyhedron_demo_hole_filling_plugin::fill
     bool success;
     if(weight_index == 0) {
       success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
-       CGAL::internal::Uniform_weight_fairing<Polyhedron>(), alpha).get<0>();
+       CGAL::internal::Uniform_weight_fairing<Polyhedron>(), alpha, use_DT).get<0>();
     }
     else {
       success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
-        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(), alpha).get<0>();
+        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(), alpha, use_DT).get<0>();
     }
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }

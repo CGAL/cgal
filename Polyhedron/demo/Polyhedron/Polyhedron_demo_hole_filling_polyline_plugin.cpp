@@ -15,6 +15,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QInputDialog>
+#include <QMessageBox>
 
 #include <vector>
 #include <algorithm>
@@ -101,6 +102,10 @@ public slots:
       QInputDialog::getDouble(mw, tr("Density Control Factor"),
       tr("Density Control Factor (Cancel for not Refine): "), 1.41, 0.0, 100.0, 2, &also_refine);
 
+    bool use_DT = 
+      QMessageBox::Yes == QMessageBox::question(
+      NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation", QMessageBox::Yes|QMessageBox::No);
+   
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
       it != polylines_item->polylines.end(); ++it, ++counter) 
@@ -115,7 +120,7 @@ public slots:
       }
 
       std::vector<CGAL::Triple<int, int, int> > patch;
-      CGAL::triangulate_hole_polyline(it->begin(), --it->end(), std::back_inserter(patch));
+      CGAL::triangulate_hole_polyline(it->begin(), --it->end(), std::back_inserter(patch), use_DT);
 
       Polyhedron* poly = new Polyhedron;
       Polyhedron_builder<Polyhedron::HalfedgeDS> patch_builder(&patch, &(*it));
