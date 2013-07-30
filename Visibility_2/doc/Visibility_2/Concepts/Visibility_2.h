@@ -51,17 +51,17 @@ public:
 /// \name Tags 
 /// @{
   /*! 
-    Tag identifying whether the regularized visibility area is computed (either `CGAL::Tag_true` or `Tag_false`). 
+    Tag identifying whether the regularized visibility area is computed (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
   */
   typedef Hidden_type Regularization_tag;
   
   /*! 
-    Tag identifying whether general polygons (with holes) are supported (either `Tag_true` or `Tag_false`). 
+    Tag identifying whether general polygons (with holes) are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
   */
   typedef Hidden_type Supports_general_polygon_tag; 
 
   /*! 
-    Tag identifying whether general simple polygons are supported (either `Tag_true` or `Tag_false`). 
+    Tag identifying whether general simple polygons are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
   */
   typedef Hidden_type Supports_simple_polygon_tag; 
 /// @}
