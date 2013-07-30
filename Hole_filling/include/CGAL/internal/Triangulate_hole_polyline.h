@@ -120,7 +120,6 @@ private:
 
     Auto_count() : count(0)  { }
 
-    template<class Point>
     std::pair<Point, int> operator()(const Point& p) const {
       return std::make_pair(p, count++);
     }

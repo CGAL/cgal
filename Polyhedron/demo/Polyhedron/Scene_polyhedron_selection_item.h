@@ -404,7 +404,7 @@ public:
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
   bool save(const std::string& file_name) const {
-    std::ofstream out(file_name);
+    std::ofstream out(file_name.c_str());
     if(!out) { return false; }
 
     for(Selection_set_vertex::const_iterator it = selected_vertices.begin(); it != selected_vertices.end(); ++it) 
@@ -444,7 +444,7 @@ public:
     Polyhedron::Halfedge_iterator hb(polyhedron()->halfedges_begin()), he(polyhedron()->halfedges_end());
     for(;hb != he; ++hb) { all_halfedges.push_back(hb); }
 
-    std::ifstream in(file_name_holder);
+    std::ifstream in(file_name_holder.c_str());
     if(!in) { return false; }
 
     std::string line;
