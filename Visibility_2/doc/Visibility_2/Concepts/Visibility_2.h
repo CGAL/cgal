@@ -51,12 +51,12 @@ public:
 /// \name Tags 
 /// @{
   /*! 
-    Tag identifying whether the regularized visibility area is computed (either `Tag_true` or `Tag_false`). 
+    Tag identifying whether the regularized visibility area is computed (either `CGAL::Tag_true` or `Tag_false`). 
   */
   typedef Hidden_type Regularization_tag;
   
   /*! 
-    Tag identifying whether general polygons, that is, with holes are supported (either `Tag_true` or `Tag_false`). 
+    Tag identifying whether general polygons (with holes) are supported (either `Tag_true` or `Tag_false`). 
   */
   typedef Hidden_type Supports_general_polygon_tag; 
 
