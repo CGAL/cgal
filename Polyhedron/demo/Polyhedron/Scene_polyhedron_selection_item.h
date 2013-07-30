@@ -212,6 +212,56 @@ struct Minimum_address_halfedge_iterator {
 
   Halfedge_iterator hb, he, current;
 };
+
+template<class HandleType, class SelectionItem>
+struct Selection_traits {};
+
+template<class SelectionItem>
+struct Selection_traits<typename SelectionItem::Vertex_handle, SelectionItem> 
+{
+  typedef typename SelectionItem::Selection_set_vertex Container;
+  typedef typename SelectionItem::Vertex_iterator Iterator;
+  Selection_traits(SelectionItem* item) : item(item) { }
+
+  Container& container() { return item->selected_vertices; }
+  Iterator iterator_begin() { return item->polyhedron()->vertices_begin(); }
+  Iterator iterator_end() { return item->polyhedron()->vertices_end(); }
+  std::size_t size() { return item->polyhedron()->size_of_vertices(); }
+
+  SelectionItem* item;
+};
+
+template<class SelectionItem>
+struct Selection_traits<typename SelectionItem::Facet_handle, SelectionItem> 
+{
+  typedef typename SelectionItem::Selection_set_facet Container;
+  typedef typename SelectionItem::Facet_iterator Iterator;
+  Selection_traits(SelectionItem* item) : item(item) { }
+
+  Container& container() { return item->selected_facets; }
+  Iterator iterator_begin() { return item->polyhedron()->facets_begin(); }
+  Iterator iterator_end() { return item->polyhedron()->facets_end(); }
+  std::size_t size() { return item->polyhedron()->size_of_facets(); }
+
+  SelectionItem* item;
+};
+
+template<class SelectionItem>
+struct Selection_traits<typename SelectionItem::Halfedge_handle, SelectionItem> 
+{
+  typedef typename SelectionItem::Selection_set_edge Container;
+  typedef Minimum_address_halfedge_iterator Iterator;
+  Selection_traits(SelectionItem* item) : item(item) { }
+
+  Container& container() { return item->selected_edges; }
+  Iterator iterator_begin() 
+  { return Minimum_address_halfedge_iterator(item->polyhedron()->halfedges_begin(),
+  item->polyhedron()->halfedges_end()); }
+  Iterator iterator_end() { return iterator_begin(); }
+  std::size_t size() { return item->polyhedron()->size_of_halfedges(); }
+
+  SelectionItem* item;
+};
 //////////////////////////////////////////////////////////////////////////
 
 class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item 
@@ -262,7 +312,8 @@ protected:
     poly_item->update_facet_indices();
     poly_item->update_halfedge_indices();
   }
-  
+
+public:
   typedef Selection_set<Vertex_handle, Scene_polyhedron_selection_item> Selection_set_vertex;
   typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
   typedef Selection_set<Halfedge_handle, Scene_polyhedron_selection_item> Selection_set_edge;
@@ -271,59 +322,6 @@ protected:
   friend class Selection_set<Facet_handle, Scene_polyhedron_selection_item>;
   friend class Selection_set<Halfedge_handle, Scene_polyhedron_selection_item>;
 
-// get various informations to corresponding type
-// should admit that this part is a little bit overkill (at least there is no code duplication)
-  template<class HandleType>
-  struct Selection_traits {};
-
-  template<>
-  struct Selection_traits<Vertex_handle> 
-  {
-    typedef Selection_set_vertex Container;
-    typedef Vertex_iterator Iterator;
-    Selection_traits(Scene_polyhedron_selection_item* item) : item(item) { }
-
-    Container& container() { return item->selected_vertices; }
-    Vertex_iterator iterator_begin() { return item->polyhedron()->vertices_begin(); }
-    Vertex_iterator iterator_end() { return item->polyhedron()->vertices_end(); }
-    std::size_t size() { return item->polyhedron()->size_of_vertices(); }
-
-    Scene_polyhedron_selection_item* item;
-  };
-
-  template<>
-  struct Selection_traits<Facet_handle> 
-  {
-    typedef Selection_set_facet Container;
-    typedef Facet_iterator Iterator;
-    Selection_traits(Scene_polyhedron_selection_item* item) : item(item) { }
-
-    Container& container() { return item->selected_facets; }
-    Facet_iterator iterator_begin() { return item->polyhedron()->facets_begin(); }
-    Facet_iterator iterator_end() { return item->polyhedron()->facets_end(); }
-    std::size_t size() { return item->polyhedron()->size_of_facets(); }
-
-    Scene_polyhedron_selection_item* item;
-  };
-
-  template<>
-  struct Selection_traits<Halfedge_handle> 
-  {
-    typedef Selection_set_edge Container;
-    typedef Minimum_address_halfedge_iterator Iterator;
-    Selection_traits(Scene_polyhedron_selection_item* item) : item(item) { }
-
-    Container& container() { return item->selected_edges; }
-    Minimum_address_halfedge_iterator iterator_begin() 
-    { return Minimum_address_halfedge_iterator(item->polyhedron()->halfedges_begin(),
-              item->polyhedron()->halfedges_end()); }
-    Minimum_address_halfedge_iterator iterator_end() { return iterator_begin(); }
-    std::size_t size() { return item->polyhedron()->size_of_halfedges(); }
-
-    Scene_polyhedron_selection_item* item;
-  };
-
-public:
 // drawing
   void draw() const {
     draw_selected_vertices();
@@ -491,7 +489,7 @@ public:
   // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, Halfedge_handle as template argument)
   template<class HandleType>
   void select_all() {
-    typedef Selection_traits<HandleType> Tr;
+    typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
     for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
       tr.container().insert(it);
@@ -513,7 +511,7 @@ public:
   // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, Halfedge_handle as template argument)
   template<class HandleType>
   void clear() {
-    Selection_traits<HandleType> tr(this);
+    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.container().clear();
     emit itemChanged();
   }
@@ -592,7 +590,7 @@ public:
   }
   template<class HandleType> // use Vertex_handle, Facet_handle, Halfedge_handle
   boost::optional<std::size_t> get_minimum_isolated_component() {
-    Selection_traits<HandleType> tr(this);
+    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     Minimum_visitor visitor;
     travel_not_selected_connected_components<HandleType>
       (visitor, tr.iterator_begin(), tr.iterator_end(), tr.size());
@@ -611,7 +609,7 @@ public:
   }
   template<class HandleType> // use Vertex_handle, Facet_handle, Halfedge_handle
   boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
-    typedef Selection_traits<HandleType> Tr;
+    typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
     typedef std::back_insert_iterator<typename Tr::Container> Output_iterator;
     Output_iterator out(tr.container());
@@ -668,7 +666,7 @@ signals:
 protected:
   template<class HandleType>
   void has_been_selected(HandleType clicked) {
-    Selection_traits<HandleType> tr(this);
+    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     std::map<HandleType, int> selection = extract_k_ring(*polyhedron(), clicked, k_ring);
 
     bool any_change = false;
@@ -749,7 +747,7 @@ protected:
   void travel_not_selected_connected_components(
     Visitor& visitor, InputIterator begin, InputIterator end, std::size_t size) 
   {
-    Selection_traits<HandleType> tr(this);
+    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
 
     std::vector<bool> mark(size, false);
     for( ;begin != end; ++begin) 
