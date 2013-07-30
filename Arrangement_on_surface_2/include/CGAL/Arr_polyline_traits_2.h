@@ -121,40 +121,36 @@ namespace CGAL {
 
     /*! Compare the x-coordinates of two points. */
     class Compare_x_2 {
-    protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
-      /*! The polyline traits (in case it has state) */
-      const Polyline_traits_2& m_poly_traits;
-
+    private:
       // Oblivious implementation
-      Comparison_result operator()(const X_monotone_segment_2& s1,
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
                                    Arr_curve_end ce1,
-                                   const X_monotone_segment_2& s2,
+                                   const X_monotone_segment_2& xs2,
                                    Arr_curve_end ce2,
                                    Arr_all_sides_oblivious_tag) const
       {
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
         const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s1) :
-          seg_traits->construct_min_vertex_2_object()(s1);
+          seg_traits->construct_max_vertex_2_object()(xs1) :
+          seg_traits->construct_min_vertex_2_object()(xs1);
         const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s2) :
-          seg_traits->construct_min_vertex_2_object()(s2);
+          seg_traits->construct_max_vertex_2_object()(xs2) :
+          seg_traits->construct_min_vertex_2_object()(xs2);
         return seg_traits->compare_x_2_object()(p1, p2);
       }
 
       // Boundary implementation
-      Comparison_result operator()(const X_monotone_segment_2& s1,
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
                                    Arr_curve_end ce1,
-                                   const X_monotone_segment_2& s2,
+                                   const X_monotone_segment_2& xs2,
                                    Arr_curve_end ce2,
                                    Arr_not_all_sides_oblivious_tag) const
       {
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
         typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
           seg_traits->parameter_space_in_x_2_object();
-        const Arr_parameter_space ps_x1 = ps_x(s1, ce1);
-        const Arr_parameter_space ps_x2 = ps_x(s2, ce2);
+        const Arr_parameter_space ps_x1 = ps_x(xs1, ce1);
+        const Arr_parameter_space ps_x2 = ps_x(xs2, ce2);
 
         if (ps_x1 != ps_x2) {
           if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
@@ -168,32 +164,37 @@ namespace CGAL {
 
         typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
           seg_traits->parameter_space_in_y_2_object();
-        const Arr_parameter_space ps_y1 = ps_y(s1, ce1);
-        const Arr_parameter_space ps_y2 = ps_y(s2, ce2);
+        const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
+        const Arr_parameter_space ps_y2 = ps_y(xs2, ce2);
         if (ps_y1 == ARR_INTERIOR) {
           const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-            seg_traits->construct_max_vertex_2_object()(s1) :
-            seg_traits->construct_min_vertex_2_object()(s1);
+            seg_traits->construct_max_vertex_2_object()(xs1) :
+            seg_traits->construct_min_vertex_2_object()(xs1);
           if (ps_y2 == ARR_INTERIOR) {
             const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-              seg_traits->construct_max_vertex_2_object()(s2) :
-              seg_traits->construct_min_vertex_2_object()(s2);
+              seg_traits->construct_max_vertex_2_object()(xs2) :
+              seg_traits->construct_min_vertex_2_object()(xs2);
             return seg_traits->compare_x_2_object()(p1, p2);
           }
           typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
             seg_traits->compare_x_on_boundary_2_object();
-          return cmp_x_on_bnd(p1, s2, ce2);
+          return cmp_x_on_bnd(p1, xs2, ce2);
         }
         if (ps_y2 == ARR_INTERIOR) {
           const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-            seg_traits->construct_max_vertex_2_object()(s2) :
-            seg_traits->construct_min_vertex_2_object()(s2);
+            seg_traits->construct_max_vertex_2_object()(xs2) :
+            seg_traits->construct_min_vertex_2_object()(xs2);
           typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
             seg_traits->compare_x_on_boundary_2_object();
-          return opposite(cmp_x_on_bnd(p2, s1, ce1));
+          return opposite(cmp_x_on_bnd(p2, xs1, ce1));
         }
-        return seg_traits->compare_x_on_boundary_2_object()(s1, ce1, s2, ce2);
+        return seg_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
       }
+
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
@@ -211,11 +212,15 @@ namespace CGAL {
       Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
       { m_poly_traits.segment_traits_2()->compare_x_2_object()(p1, p2); }
 
-      /*! Compare two ends of x-monotone curves in x
-       * \param xs1 the first curve
-       * \param ce1 the end of the first x-monotone curve
-       * \param xs2 the second curve
-       * \param ce2 the end of the second x-monoton curve
+      /*! Compare two ends of x-monotone curves in x.
+       * \param xs1 the first curve.
+       * \param ce1 the curve-end indicator of the first x-monotone curve xs1:
+       *            ARR_MIN_END - the minimal end of xs1 or
+       *            ARR_MAX_END - the maximal end of xs1.
+       * \param xs2 the second curve.
+       * \param ce2 the curve-end indicator of the second x-monoton curve xs2:
+       *            ARR_MIN_END - the minimal end of xs2 or
+       *            ARR_MAX_END - the maximal end of xs2.
        */
       Comparison_result operator()(const X_monotone_segment_2& xs1,
                                    Arr_curve_end ce1,
@@ -230,32 +235,28 @@ namespace CGAL {
 
     /*! Compare two curve-ends or points lexigoraphically: by x, then by y. */
     class Compare_xy_2 {
-    protected:
-      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
-      /*! The polyline traits (in case it has state) */
-      const Polyline_traits_2& m_poly_traits;
-
+    private:
       // Oblivious implementation
-      Comparison_result operator()(const X_monotone_segment_2& s1,
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
                                    Arr_curve_end ce1,
-                                   const X_monotone_segment_2& s2,
+                                   const X_monotone_segment_2& xs2,
                                    Arr_curve_end ce2,
                                    Arr_all_sides_oblivious_tag) const
       {
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
         const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s1) :
-          seg_traits->construct_min_vertex_2_object()(s1);
+          seg_traits->construct_max_vertex_2_object()(xs1) :
+          seg_traits->construct_min_vertex_2_object()(xs1);
         const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s2) :
-          seg_traits->construct_min_vertex_2_object()(s2);
+          seg_traits->construct_max_vertex_2_object()(xs2) :
+          seg_traits->construct_min_vertex_2_object()(xs2);
         return seg_traits->compare_xy_2_object()(p1, p2);
       }
 
       // Boundary implementation
-      Comparison_result operator()(const X_monotone_segment_2& s1,
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
                                    Arr_curve_end ce1,
-                                   const X_monotone_segment_2& s2,
+                                   const X_monotone_segment_2& xs2,
                                    Arr_curve_end ce2,
                                    Arr_not_all_sides_oblivious_tag) const
       {
@@ -264,10 +265,10 @@ namespace CGAL {
           seg_traits->parameter_space_in_x_2_object();
         typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
           seg_traits->parameter_space_in_y_2_object();
-        const Arr_parameter_space ps_x1 = ps_x(s1, ce1);
-        const Arr_parameter_space ps_y1 = ps_y(s1, ce1);
-        const Arr_parameter_space ps_x2 = ps_x(s2, ce2);
-        const Arr_parameter_space ps_y2 = ps_y(s2, ce2);
+        const Arr_parameter_space ps_x1 = ps_x(xs1, ce1);
+        const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
+        const Arr_parameter_space ps_x2 = ps_x(xs2, ce2);
+        const Arr_parameter_space ps_y2 = ps_y(xs2, ce2);
 
         if (ps_x1 != ps_x2) {
           if (ps_x1 == ARR_LEFT_BOUNDARY) return LARGER;
@@ -278,14 +279,14 @@ namespace CGAL {
 
         if ((ps_x1 == ARR_INTERIOR) && (ps_y1 == ARR_INTERIOR)) {
           const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-            seg_traits->construct_max_vertex_2_object()(s1) :
-            seg_traits->construct_min_vertex_2_object()(s1);
+            seg_traits->construct_max_vertex_2_object()(xs1) :
+            seg_traits->construct_min_vertex_2_object()(xs1);
           // ps1 == ARR_INTERIOR
 
           if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
             const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-              seg_traits->construct_max_vertex_2_object()(s2) :
-              seg_traits->construct_min_vertex_2_object()(s2);
+              seg_traits->construct_max_vertex_2_object()(xs2) :
+              seg_traits->construct_min_vertex_2_object()(xs2);
 
             // ps1 == ARR_INTERIOR
             // ps2 == ARR_INTERIOR
@@ -301,7 +302,7 @@ namespace CGAL {
           // EFEF: missing implementation for open boundary.
           typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
             seg_traits->compare_x_on_boundary_2_object();
-          Comparison_result res = cmp_x_on_bnd(p1, s2, ce2);
+          Comparison_result res = cmp_x_on_bnd(p1, xs2, ce2);
           if (res != EQUAL) return res;
           if (ps_y2 == ARR_TOP_BOUNDARY) return SMALLER;
           CGAL_assertion(ps_y2 == ARR_BOTTOM_BOUNDARY);
@@ -311,8 +312,8 @@ namespace CGAL {
         // ps1 != ARR_INTERIOR
         if ((ps_x2 == ARR_INTERIOR) && (ps_y2 == ARR_INTERIOR)) {
           const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-            seg_traits->construct_max_vertex_2_object()(s2) :
-            seg_traits->construct_min_vertex_2_object()(s2);
+            seg_traits->construct_max_vertex_2_object()(xs2) :
+            seg_traits->construct_min_vertex_2_object()(xs2);
 
           // The cases ps_x1 == ARR_{LEFT,RIGHT}_BOUNDARY are handled above
 
@@ -322,7 +323,7 @@ namespace CGAL {
           CGAL_assertion(ps_x1 == ARR_INTERIOR);
           typename Segment_traits_2::Compare_x_on_boundary_2 cmp_x_on_bnd =
             seg_traits->compare_x_on_boundary_2_object();
-          Comparison_result res = cmp_x_on_bnd(p2, s1, ce1);
+          Comparison_result res = cmp_x_on_bnd(p2, xs1, ce1);
           if (res != EQUAL) return opposite(res);
           if (ps_y1 == ARR_TOP_BOUNDARY) return LARGER;
           CGAL_assertion(ps_y1 == ARR_BOTTOM_BOUNDARY);
@@ -336,7 +337,7 @@ namespace CGAL {
           // ps_y1 != ARR_INTERIOR
           // ps_y2 != ARR_INTERIOR
           Comparison_result res =
-            seg_traits->compare_x_on_boundary_2_object()(s1, ce1, s2, ce2);
+            seg_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
           if (res != EQUAL) return res;
           if (ps_y1 == ps_y2) return EQUAL;
           return (ps_y1 == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
@@ -344,13 +345,18 @@ namespace CGAL {
 
         CGAL_assertion(ce1 == ce2);
         const Point_2& p1 = (ce1 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s1) :
-          seg_traits->construct_min_vertex_2_object()(s1);
+          seg_traits->construct_max_vertex_2_object()(xs1) :
+          seg_traits->construct_min_vertex_2_object()(xs1);
         const Point_2& p2 = (ce2 == ARR_MAX_END) ?
-          seg_traits->construct_max_vertex_2_object()(s2) :
-          seg_traits->construct_min_vertex_2_object()(s2);
+          seg_traits->construct_max_vertex_2_object()(xs2) :
+          seg_traits->construct_min_vertex_2_object()(xs2);
         return seg_traits->compare_y_on_boundary_2_object()(p1, p2);
       }
+
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
 
     public:
       /*! Constructor. */
@@ -370,11 +376,15 @@ namespace CGAL {
       Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
       { return m_poly_traits.segment_traits_2()->compare_xy_2_object()(p1, p2); }
 
-      /*! Compare two ends of x-monotone curves lexicographically
-       * \param xs1 the first curve
-       * \param ce1 the end of the first x-monotone curve
-       * \param xs2 the second curve
-       * \param ce2 the end of the second x-monoton curve
+      /*! Compare two ends of x-monotone curves lexicographically.
+       * \param xs1 the first curve.
+       * \param ce1 the curve-end indicator of the first x-monotone curve xs1:
+       *            ARR_MIN_END - the minimal end of xs1 or
+       *            ARR_MAX_END - the maximal end of xs1.
+       * \param xs2 the second curve.
+       * \param ce2 the curve-end indicator of the second x-monoton curve xs2:
+       *            ARR_MIN_END - the minimal end of xs2 or
+       *            ARR_MAX_END - the maximal end of xs2.
        */
       Comparison_result operator()(const X_monotone_segment_2& xs1,
                                    Arr_curve_end ce1,
@@ -514,6 +524,74 @@ namespace CGAL {
     { return Is_vertical_2(*this); }
 
     class Compare_y_at_x_2 {
+    private:
+      // Oblivious implementation
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& xs2,
+                                   Arr_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        const Point_2& p = (ce1 == ARR_MAX_END) ?
+          seg_traits->construct_max_vertex_2_object()(xs1) :
+          seg_traits->construct_min_vertex_2_object()(xs1);
+        return seg_traits->compare_y_at_x_2_object()(p, xs2);
+      }
+
+      // Boundary implementation
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& xs2,
+                                   Arr_not_all_sides_oblivious_tag) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
+          seg_traits->parameter_space_in_x_2_object();
+        typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
+          seg_traits->parameter_space_in_y_2_object();
+        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
+          seg_traits->construct_min_vertex_2_object();
+        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
+          seg_traits->construct_max_vertex_2_object();
+
+        const Arr_parameter_space ps_x1 = ps_x(xs1, ce1);
+        const Arr_parameter_space ps_y1 = ps_y(xs1, ce1);
+
+        CGAL_assertion(((ce1 == ARR_MAX_END) && (ps_x1 != ARR_LEFT_BOUNDARY)) ||
+                       ((ce1 == ARR_MIN_END) && (ps_x1 != ARR_RIGHT_BOUNDARY)));
+
+        if (ps_x1 == ARR_INTERIOR) {
+          if (ps_y1 == ARR_TOP_BOUNDARY) {
+            typename Segment_traits_2::Equal_2 equal =
+              seg_traits->equal_2_object();
+            const Point_2& p = (ce1 == ARR_MAX_END) ?
+              max_vertex(xs1) : min_vertex(xs1);
+            if (equal(p, max_vertex(xs2))) return EQUAL;
+            if (equal(p, min_vertex(xs2))) return EQUAL;
+            return LARGER;
+          }
+          if (ps_y1 == ARR_BOTTOM_BOUNDARY) {
+            typename Segment_traits_2::Equal_2 equal =
+              seg_traits->equal_2_object();
+            const Point_2& p = (ce1 == ARR_MAX_END) ?
+              max_vertex(xs1) : min_vertex(xs1);
+            if (equal(p, max_vertex(xs2))) return EQUAL;
+            if (equal(p, min_vertex(xs2))) return EQUAL;
+            return SMALLER;
+          }
+          // ps_y1 == ARR_INTERIOR
+          const Point_2& p = (ce1 == ARR_MAX_END) ?
+            max_vertex(xs1) : min_vertex(xs1);
+          return seg_traits->compare_y_at_x_2_object()(p, xs2);
+        }
+        // ps_x1 == ARR_RIGHT_BOUNDARY || ARR_LEFT_BOUNDARY
+        const Point_2& p1 = (ce1 == ARR_MAX_END) ?
+          max_vertex(xs1) : min_vertex(xs1);
+        const Point_2& p2 = (ce1 == ARR_MAX_END) ?
+          max_vertex(xs2) : min_vertex(xs2);
+        return seg_traits->compare_y_on_boundary_2_object()(p1, p2);
+      }
+
     protected:
       typedef Arr_polyline_traits_2<Segment_traits_2>       Polyline_traits_2;
       /*! The polyline traits (in case it has state) */
@@ -526,24 +604,44 @@ namespace CGAL {
 
       /*!
        * Return the location of the given point with respect to the input curve.
-       * \param cv The polyline curve.
        * \param p The point.
+       * \param xcv The polyline curve.
        * \pre p is in the x-range of cv.
        * \return SMALLER if y(p) < cv(x(p)), i.e. the point is below the curve;
        *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
        *         EQUAL if p lies on the curve.
        */
       Comparison_result operator()(const Point_2& p,
-                                   const X_monotone_curve_2& cv) const
+                                   const X_monotone_curve_2& xcv) const
       {
-        // Get the index of the segment in cv containing p.
-        unsigned int i = m_poly_traits.locate(cv, p);
+        // Get the index of the segment in xcv containing p.
+        unsigned int i = m_poly_traits.locate(xcv, p);
         CGAL_precondition(i != INVALID_INDEX);
 
-        // Compare the segment cv[i] and p.
-        return m_poly_traits.segment_traits_2()->
-          compare_y_at_x_2_object()(p, cv[i]);
+        // Compare the segment xcv[i] and p.
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        return seg_traits->compare_y_at_x_2_object()(p, xcv[i]);
       }
+
+      /*!
+       * Return the location of the given curve_end with respect to the input
+       * curve.
+       * \param xcv The polyline curve.
+       * \param ce the curve-end indicator of the x-monotone segment xl:
+       *            ARR_MIN_END - the minimal end of xl or
+       *            ARR_MAX_END - the maximal end of xl.
+       * \param xcv The polyline curve.
+       * \pre the curve-end is in the x-range of xcv.
+       * \return SMALLER if if y(xs, ce) < cv(x(xs, ce)), i.e.  the curve-end
+       *           is below the curve xcv;
+       *         LARGER if y(xs, ce) > cv(x(xs, ce)), i.e. the curve-end is
+       *           above the curve xcv;
+       *         EQUAL if the curve-end lies on the curve xcv.
+       */
+      Comparison_result operator()(const X_monotone_segment_2& xs1,
+                                   Arr_curve_end ce1,
+                                   const X_monotone_segment_2& xs2) const
+      { return operator()(xs1, ce1, xs2, Are_all_sides_oblivious_tag()); }
     };
 
     /*! Get a Compare_y_at_x_2 functor object. */
@@ -632,7 +730,7 @@ namespace CGAL {
 
         // Compare cv1[i1] and cv2[i2] at p's right.
         return m_poly_traits.segment_traits_2()->
-          compare_y_at_x_right_2_object()(cv1[i1],cv2[i2], p);
+          compare_y_at_x_right_2_object()(cv1[i1], cv2[i2], p);
       }
     };
 
@@ -1429,61 +1527,6 @@ namespace CGAL {
       /*! The polyline traits (in case it has state) */
       const Polyline_traits_2& m_poly_traits;
 
-      Comparison_result compare_y_at_x_max_impl(const X_monotone_segment_2& s1,
-                                                const X_monotone_segment_2& s2,
-                                                Arr_all_sides_oblivious_tag)
-        const
-      {
-        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
-        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-          seg_traits->construct_max_vertex_2_object();
-        typename Segment_traits_2::Compare_y_at_x_2 compare =
-          seg_traits->compare_y_at_x_2_object();
-        return compare(max_vertex(s1), s2);
-      }
-
-      Comparison_result compare_y_at_x_max_impl(const X_monotone_segment_2& s1,
-                                                const X_monotone_segment_2& s2,
-                                                Arr_not_all_sides_oblivious_tag)
-        const
-      {
-        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
-        typename Segment_traits_2::Parameter_space_in_x_2 ps_x =
-          seg_traits->parameter_space_in_x_2_object();
-        typename Segment_traits_2::Parameter_space_in_y_2 ps_y =
-          seg_traits->parameter_space_in_y_2_object();
-        typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-          seg_traits->construct_max_vertex_2_object();
-        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-          seg_traits->construct_min_vertex_2_object();
-        const Arr_parameter_space ps_x1 = ps_x(s1, ARR_MAX_END);
-        const Arr_parameter_space ps_y1 = ps_y(s1, ARR_MAX_END);
-
-        CGAL_assertion(ps_x1 != ARR_LEFT_BOUNDARY);
-
-        if (ps_x1 == ARR_INTERIOR) {
-          if (ps_y1 == ARR_TOP_BOUNDARY) {
-            typename Segment_traits_2::Equal_2 equal =
-              seg_traits->equal_2_object();
-            if (equal(max_vertex(s1), max_vertex(s2))) return EQUAL;
-            if (equal(max_vertex(s1), min_vertex(s2))) return EQUAL;
-            return LARGER;
-          }
-          if (ps_y1 == ARR_BOTTOM_BOUNDARY) {
-            typename Segment_traits_2::Equal_2 equal =
-              seg_traits->equal_2_object();
-            if (equal(max_vertex(s1), max_vertex(s2))) return EQUAL;
-            if (equal(max_vertex(s1), min_vertex(s2))) return EQUAL;
-            return SMALLER;
-          }
-          // ps_y1 == ARR_INTERIOR
-          return seg_traits->compare_y_at_x_2_object()(max_vertex(s1), s2);
-        }
-        // ps_x1 == ARR_RIGHT_BOUNDARY
-        return seg_traits->compare_y_on_boundary_2_object()(max_vertex(s1),
-                                                            max_vertex(s2));
-      }
-
     public:
       /*! Constructor. */
       Intersect_2(const Polyline_traits_2& traits) : m_poly_traits(traits) {}
@@ -1505,16 +1548,14 @@ namespace CGAL {
                                 OutputIterator oi) const
       {
         const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        Compare_y_at_x_2 cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
+        typename Segment_traits_2::Equal_2 equal = seg_traits->equal_2_object();
         typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
           seg_traits->construct_min_vertex_2_object();
         typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
           seg_traits->construct_max_vertex_2_object();
-        typename Segment_traits_2::Equal_2                equal =
-          seg_traits->equal_2_object();
-        typename Segment_traits_2::Intersect_2            intersect =
+        typename Segment_traits_2::Intersect_2 intersect =
           seg_traits->intersect_2_object();
-        typename Segment_traits_2::Compare_y_at_x_2       compare_y_at_x =
-          seg_traits->compare_y_at_x_2_object();
         typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
           seg_traits->compare_endpoints_xy_2_object();
 
@@ -1582,11 +1623,9 @@ namespace CGAL {
         bool left_overlap = false;
 
         if (left_res == SMALLER)
-          left_coincides =
-            (compare_y_at_x(min_vertex(cv2[i2]), cv1[i1]) == EQUAL);
+          left_coincides = (cmp_y_at_x(cv2[i2], ARR_MIN_END, cv1[i1]) == EQUAL);
         else if (left_res == LARGER)
-          left_coincides =
-            (compare_y_at_x(min_vertex(cv1[i1]), cv2[i2]) == EQUAL);
+          left_coincides = (cmp_y_at_x(cv1[i1], ARR_MIN_END, cv2[i2]) == EQUAL);
 
         // The main loop: Go simultaneously over both polylines.
         Comparison_result right_res = left_res;
@@ -1606,14 +1645,10 @@ namespace CGAL {
             right_coincides = (right_res == EQUAL);
             if (right_res == SMALLER)
               right_coincides =
-                (compare_y_at_x_max_impl(cv1[i1], cv2[i2],
-                                         Are_all_sides_oblivious_tag()) ==
-                 EQUAL);
+                (cmp_y_at_x(cv1[i1], ARR_MAX_END, cv2[i2]) == EQUAL);
             else if (right_res == LARGER)
               right_coincides =
-                (compare_y_at_x_max_impl(cv2[i2], cv1[i1],
-                                         Are_all_sides_oblivious_tag()) ==
-                 EQUAL);
+                (cmp_y_at_x(cv2[i2], ARR_MAX_END, cv1[i1]) == EQUAL);
 
             right_overlap = false;
 
@@ -1671,11 +1706,11 @@ namespace CGAL {
                 // polylines is not defined at this point, so we give
                 // it multiplicity 0.
                 if (left_res == SMALLER) {
-                  std::pair<Point_2, Multiplicity>  p(min_vertex(cv2[i2]), 0);
+                  std::pair<Point_2, Multiplicity> p(min_vertex(cv2[i2]), 0);
                   *oi++ = make_object(p);
                 }
                 else {
-                  std::pair<Point_2, Multiplicity>  p(min_vertex(cv1[i1]), 0);
+                  std::pair<Point_2, Multiplicity> p(min_vertex(cv1[i1]), 0);
                   *oi++ = make_object(p);
                 }
               }
@@ -1683,17 +1718,12 @@ namespace CGAL {
 
             // Proceed forward.
             if (right_res != SMALLER)
-              if (dir2 == SMALLER)
-                ++i2;
-              else if (i2 == 0)
-                i2 = INVALID_INDEX;
-              else
-                --i2;
+              if (dir2 == SMALLER) ++i2;
+              else if (i2 == 0) i2 = INVALID_INDEX;
+              else --i2;
             if (right_res != LARGER)
-              if (dir1 == SMALLER)
-                ++i1;
-              else if (i1 == 0)
-                i1 = INVALID_INDEX;
+              if (dir1 == SMALLER) ++i1;
+              else if (i1 == 0) i1 = INVALID_INDEX;
               else --i1;
             left_res = (right_res == SMALLER) ? LARGER :
               (right_res == LARGER) ? SMALLER : EQUAL;
@@ -1828,7 +1858,7 @@ namespace CGAL {
     { return Are_mergeable_2(*this); }
 
     /*! \class Merge_2
-     * A functor that merges two x-monotone arcs into one.
+     * A functor that merges two x-monotone curves into one.
      */
     /* Roadmap: Allow merging of overlapping polylines. This means also
      *          changing the segment traits class.
@@ -2350,23 +2380,24 @@ namespace CGAL {
         m_poly_traits(traits)
       {}
 
-      /*! Obtains the parameter space at the end of an arc along the x-axis .
-       * Note that if the arc end coincides with a pole, then unless the arc
-       * coincides with the identification arc, the arc end is considered to
+      /*! Obtains the parameter space at the end of a curve along the x-axis .
+       * Note that if the curve-end coincides with a pole, then unless the curve
+       * coincides with the identification curve, the curve-end is considered to
        * be approaching the boundary, but not on the boundary.
-       * If the arc coincides with the identification arc, it is assumed to
+       * If the curve coincides with the identification curve, it is assumed to
        * be smaller than any other object.
-       * \param xcv the arc
-       * \param ce the arc end indicator:
+       * \param xcv the curve
+       * \param ce the curve-end indicator:
        *     ARR_MIN_END - the minimal end of xc or
        *     ARR_MAX_END - the maximal end of xc
-       * \return the parameter space at the ce end of the arc xcv.
-       *   ARR_LEFT_BOUNDARY  - the arc approaches the identification arc from
-       *                        the right at the arc left end.
-       *   ARR_INTERIOR       - the arc does not approache the identification arc.
-       *   ARR_RIGHT_BOUNDARY - the arc approaches the identification arc from
-       *                        the left at the arc right end.
-       * \pre xcv does not coincide with the vertical identification arc.
+       * \return the parameter space at the ce end of the curve xcv.
+       *   ARR_LEFT_BOUNDARY  - the curve approaches the identification curve
+       *                        from the right at the curve left end.
+       *   ARR_INTERIOR       - the curve does not approache the identification
+       *                        curve.
+       *   ARR_RIGHT_BOUNDARY - the curve approaches the identification curve
+       *                        from the left at the curve right end.
+       * \pre xcv does not coincide with the vertical identification curve.
        */
       Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                      Arr_curve_end ce) const
@@ -2412,23 +2443,24 @@ namespace CGAL {
         m_poly_traits(traits)
       {}
 
-      /*! Obtains the parameter space at the end of an arc along the y-axis .
-       * Note that if the arc end coincides with a pole, then unless the arc
-       * coincides with the identification arc, the arc end is considered to
+      /*! Obtains the parameter space at the end of an curve along the y-axis .
+       * Note that if the curve-end coincides with a pole, then unless the curve
+       * coincides with the identification curve, the curve-end is considered to
        * be approaching the boundary, but not on the boundary.
-       * If the arc coincides with the identification arc, it is assumed to
+       * If the curve coincides with the identification curve, it is assumed to
        * be smaller than any other object.
-       * \param xcv the arc
-       * \param ce the arc end indicator:
-       *     ARR_MIN_END - the minimal end of xc or
-       *     ARR_MAX_END - the maximal end of xc
-       * \return the parameter space at the ce end of the arc xcv.
-       *   ARR_BOTTOM_BOUNDARY  - the arc approaches the south pole at the arc
-       *                          left end.
-       *   ARR_INTERIOR         - the arc does not approache a contraction point.
-       *   ARR_TOP_BOUNDARY     - the arc approaches the north pole at the arc
-       *                          right end.
-       * There are no horizontal identification arcs!
+       * \param xcv the curve
+       * \param ce the curve-end indicator:
+       *     ARR_MIN_END - the minimal end of xcv or
+       *     ARR_MAX_END - the maximal end of xcv
+       * \return the parameter space at the ce end of the curve xcv.
+       *   ARR_BOTTOM_BOUNDARY  - the curve approaches the south pole at the
+       *                          curve left end.
+       *   ARR_INTERIOR         - the curve does not approache a contraction
+       *                          point.
+       *   ARR_TOP_BOUNDARY     - the curve approaches the north pole at the
+       *                          curve right end.
+       * There are no horizontal identification curves!
        */
       Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                      Arr_curve_end ce) const
@@ -2447,7 +2479,7 @@ namespace CGAL {
        * \param p the point.
        * \return the parameter space at p.
        * \pre p does not lie on the horizontal identification curve.
-       * There are no horizontal identification arcs!
+       * There are no horizontal identification curves!
        */
       Arr_parameter_space operator()(const Point_2 p) const
       {
@@ -2460,7 +2492,7 @@ namespace CGAL {
     Parameter_space_in_y_2 parameter_space_in_y_2_object() const
     { return Parameter_space_in_y_2(*this); }
 
-    /*! A functor that compares the x-coordinate of arc ends and points on the
+    /*! A functor that compares the x-coordinate of curve-ends and points on the
      * boundary of the parameter space.
      */
     class Compare_x_on_boundary_2 {
@@ -2476,16 +2508,16 @@ namespace CGAL {
       {}
 
       /*! Compare the x-limit of a point with the x-coordinate of an
-       * x-curve end on the boundary.
+       * x-curve-end on the boundary.
        * \param point the point.
        * \param xcv the x-curve, the endpoint of which is compared.
-       * \param ce the x-curve-end indicator -
-       *            ARR_MIN_END - the minimal end of xc or
-       *            ARR_MAX_END - the maximal end of xc.
+       * \param ce the x-curve-end indicator:
+       *            ARR_MIN_END - the minimal end of xcv or
+       *            ARR_MAX_END - the maximal end of xcv.
        * \return the comparison result:
-       *         SMALLER - x(p) < x(xc, ce);
-       *         EQUAL   - x(p) = x(xc, ce);
-       *         LARGER  - x(p) > x(xc, ce).
+       *         SMALLER - x(p) < x(xcv, ce);
+       *         EQUAL   - x(p) = x(xcv, ce);
+       *         LARGER  - x(p) > x(xcv, ce).
        * \pre p lies in the interior of the parameter space.
        * \pre the ce end of the x-curve xcv lies on the top boundary.
        * \pre xcv does not coincide with the vertical identification curve.
@@ -2505,23 +2537,23 @@ namespace CGAL {
         return seg_traits->compare_x_on_boundary_2_object()(point, xs, ce);
       }
 
-      /*! Compare the x-coordinates of 2 arc ends near the boundary of the
+      /*! Compare the x-coordinates of 2 curve-ends near the boundary of the
        * parameter space.
-       * \param xcv1 the first arc.
-       * \param ce1 the first arc end indicator -
+       * \param xcv1 the first curve.
+       * \param ce1 the first curve-end indicator:
        *            ARR_MIN_END - the minimal end of xcv1 or
        *            ARR_MAX_END - the maximal end of xcv1.
-       * \param xcv2 the second arc.
-       * \param ce2 the second arc end indicator -
+       * \param xcv2 the second curve.
+       * \param ce2 the second  curve-end indicator:
        *            ARR_MIN_END - the minimal end of xcv2 or
        *            ARR_MAX_END - the maximal end of xcv2.
        * \return the second comparison result:
        *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
        *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
        *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-       * \pre the ce1 end of the arc xcv1 lies on a pole (implying ce1 is
+       * \pre the ce1 end of the curve xcv1 lies on a pole (implying ce1 is
        *      vertical).
-       * \pre the ce2 end of the arc xcv2 lies on a pole (implying ce2 is
+       * \pre the ce2 end of the curve xcv2 lies on a pole (implying ce2 is
        *      vertical).
        * \pre xcv1 does not coincide with the vertical identification curve.
        * \pre xcv2 does not coincide with the vertical identification curve.
@@ -2553,7 +2585,7 @@ namespace CGAL {
     { return Compare_x_on_boundary_2(*this); }
 
     /*! A functor that compares the y-coordinate of two given points
-     * that lie on the vertical identification arc.
+     * that lie on the vertical identification curve.
      */
     class Compare_y_on_boundary_2 {
     protected:
@@ -2574,8 +2606,8 @@ namespace CGAL {
        * \return SMALLER - p1 is lexicographically smaller than p2;
        *         EQUAL   - p1 and p2 coincides;
        *         LARGER  - p1 is lexicographically larger than p2;
-       * \pre p1 lies on the vertical identification arc.
-       * \pre p2 lies on the vertical identification arc.
+       * \pre p1 lies on the vertical identification curve.
+       * \pre p2 lies on the vertical identification curve.
        */
       Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
       {
@@ -2588,7 +2620,7 @@ namespace CGAL {
     Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
     { return Compare_y_on_boundary_2(*this); }
 
-    /*! A functor that compares the y-coordinates of arc ends near the
+    /*! A functor that compares the y-coordinates of curve-ends near the
      * boundary of the parameter space.
      */
     class Compare_y_near_boundary_2 {
@@ -2605,11 +2637,13 @@ namespace CGAL {
 
       /*! Compare the y-coordinates of 2 curves at their ends near the boundary
        * of the parameter space.
-       * \param xcv1 the first arc.
-       * \param xcv2 the second arc.
-       * \param ce the arc end indicator.
+       * \param xcv1 the first curve.
+       * \param xcv2 the second curve.
+       * \param ce the curve-end indicator:
+       *     ARR_MIN_END - the minimal end or
+       *     ARR_MAX_END - the maximal end
        * \return the second comparison result.
-       * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
+       * \pre the ce ends of the curves xcv1 and xcv2 lie either on the left
        *      boundary or on the right boundary of the parameter space (implying
        *      that they cannot be vertical).
        * There is no horizontal identification curve!
@@ -2721,7 +2755,7 @@ namespace CGAL {
       return from;
     }
 
-    // A utility class that compare a curve end with a point.
+    // A utility class that compare a curve-end with a point.
     template <typename Comparer>
     class Compare_points {
     private:
@@ -2742,7 +2776,7 @@ namespace CGAL {
         m_compare(compare)
       {}
 
-      // Compare the given curve end with the stored point.
+      // Compare the given curve-end with the stored point.
       Comparison_result operator()(const X_monotone_segment_2& xs,
                                    Arr_curve_end ce)
       {
@@ -2754,7 +2788,7 @@ namespace CGAL {
       }
     };
 
-    // A utility class that compare two curve ends.
+    // A utility class that compare two curve-ends.
     template <typename Comparer>
     class Compare_curve_ends {
     private:
@@ -2773,7 +2807,7 @@ namespace CGAL {
         m_compare(compare)
       {}
 
-      // Compare the given curve end with the stored point.
+      // Compare the given curve-end with the stored point.
       Comparison_result operator()(const X_monotone_segment_2& xs,
                                    Arr_curve_end ce)
       { return m_compare(xs, ce, m_x_monotone_segment, m_curve_end); }
