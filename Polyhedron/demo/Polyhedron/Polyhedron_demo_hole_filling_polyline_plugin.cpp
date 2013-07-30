@@ -10,6 +10,7 @@
 
 #include <CGAL/Hole_filling.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Timer.h>
 
 #include <QAction>
 #include <QMainWindow>
@@ -104,7 +105,7 @@ public slots:
 
     bool use_DT = 
       QMessageBox::Yes == QMessageBox::question(
-      NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation", QMessageBox::Yes|QMessageBox::No);
+      NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
    
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
@@ -119,18 +120,26 @@ public slots:
         continue; 
       }
 
+      CGAL::Timer timer; timer.start();
       std::vector<CGAL::Triple<int, int, int> > patch;
       CGAL::triangulate_hole_polyline(it->begin(), --it->end(), std::back_inserter(patch), use_DT);
+      print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
 
+      if(patch.empty()) {
+        print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
+        return;
+      }
       Polyhedron* poly = new Polyhedron;
       Polyhedron_builder<Polyhedron::HalfedgeDS> patch_builder(&patch, &(*it));
       poly->delegate(patch_builder);
 
       if(also_refine) {
+        timer.reset();
         CGAL::refine(*poly, 
           boost::make_transform_iterator(poly->facets_begin(), Get_handle()),
           boost::make_transform_iterator(poly->facets_end(), Get_handle()),
           Nop_out(), Nop_out(), density_control_factor);
+        print_message(QString("Refined in %1 sec.").arg(timer.time()));
       }
 
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);

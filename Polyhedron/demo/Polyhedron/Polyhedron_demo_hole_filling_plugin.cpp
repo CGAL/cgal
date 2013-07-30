@@ -332,7 +332,7 @@ private:
   std::vector<Polyhedron::Facet_handle> new_facets; 
   Scene_polyhedron_item* last_active_item; // always keep it NULL while not active-reject state
  
-  void fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
+  bool fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
   bool self_intersecting(Polyhedron& polyhedron);
 
   void accept_reject_toggle(bool activate_accept_reject) {
@@ -461,14 +461,17 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   }
 
   // fill selected holes
+  bool any_filled = false;
   for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
     it != polyline_item->selected_holes.end(); ++it) {
-      fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
+      any_filled |= fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
   }
 
-  scene->itemChanged(polyline_item->poly_item);
-  last_active_item = polyline_item->poly_item;
-  accept_reject_toggle(true);
+  if(any_filled) {
+    scene->itemChanged(polyline_item->poly_item);
+    last_active_item = polyline_item->poly_item;
+    accept_reject_toggle(true);
+  }
 };
 // fills all holes and removes associated Scene_polylines_collection if any
 void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
@@ -503,13 +506,16 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     return;
   }
 
+  bool any_filled = false;
   for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
-     fill(poly, *it);
+     any_filled |= fill(poly, *it);
   }
 
-  scene->itemChanged(poly_item);
-  last_active_item = poly_item;
-  accept_reject_toggle(true);
+  if(any_filled) {
+    scene->itemChanged(poly_item);
+    last_active_item = poly_item;
+    accept_reject_toggle(true);
+  }
 }
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
 void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
@@ -561,7 +567,7 @@ void Polyhedron_demo_hole_filling_plugin::item_changed_polylines_collection() {
   }
 }
 // helper function for filling holes
-void Polyhedron_demo_hole_filling_plugin::fill
+bool Polyhedron_demo_hole_filling_plugin::fill
   (Polyhedron& poly, Polyhedron::Halfedge_handle it) {
 
   int action_index = ui_widget.action_combo_box->currentIndex();
@@ -592,6 +598,11 @@ void Polyhedron_demo_hole_filling_plugin::fill
   }
   print_message(QString("Filled in %1 sec.").arg(timer.time()));
 
+  if(patch.empty()) {
+    print_message("Warning: generating patch is not successful!");
+    return false;
+  }
+
   // Self intersection test
   if(ui_widget.Skip_self_intersection_check_box->checkState() == Qt::Checked) {
     timer.reset();
@@ -618,11 +629,12 @@ void Polyhedron_demo_hole_filling_plugin::fill
         poly.erase_facet((*it)->halfedge());
       }
       print_message("Self intersecting patch is generated, and it is removed.");
-      return;
+      return false;
     }
   }
   // save facets for accept-reject 
   new_facets.insert(new_facets.end(), patch.begin(), patch.end());
+  return true;
 }
 
 Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
