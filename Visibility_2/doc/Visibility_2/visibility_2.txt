@@ -51,9 +51,9 @@ Class 	                	|	Function                                     |  Prepro
  `Simple_visibility_2`       | compute visibility in simple polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite bjrb-clvpa-87
  `Rotational_sweep_visibility_2`        |  compute visibility in a polygon with proper holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  paper of T.Asano \cite ta-aeafvpprh-85 
  `Preprocessed_rotational_sweep_visibility_2` | visibility query in a polygon with proper holes       | Yes. \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
-`Triangular_expansion_visibility_2`     | visibility query in a polygon with proper holes |  Yes. \f$ O(n^2) \f$ time and \f$ O(n) \f$ space | The worst time is \f$ O(n^2) \f$. Average performance is much better. It works well especially for a polygon that has a lot vertices but is simple locally. It needs \f$ O(n) \f$ space.   | reference is unknown. 
+`Triangular_expansion_visibility_2`     | visibility query in a polygon with proper holes |  Yes. \f$ O(n^2) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | reference is unknown. 
 
-where  \f$ n \f$ is the number of vertices of input polygon.
+where  \f$ n \f$ and \f$ h \f$ the number of vertices and holes of input polygon respectively.
 
 As the package is based on the \ref PkgArrangement2, a polygonal region is defined as a face within a 'Arrangement_2' of segments, 
 which we also refer to as the environment. At this point every visibility class template has two parameters, the `Arrangement_2` class 
