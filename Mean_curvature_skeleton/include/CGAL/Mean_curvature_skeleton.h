@@ -801,7 +801,6 @@ public:
 
   int collapse_edges()
   {
-    int cnt = 0;
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
@@ -819,8 +818,8 @@ public:
         }
       }
 
-      Constrains_map constrains_map;
-      if (is_collapse_ok(*eb))
+      double edge_length = sqrt(squared_distance(vi->point(), vj->point()));
+      if (is_collapse_ok(*eb) && edge_length < edgelength_TH)
       {
         // todo move to midpoint
         Point p = midpoint(
@@ -828,10 +827,10 @@ public:
           boost::get(vertex_point, *polyhedron, boost::target(*eb, *polyhedron)) );
         vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(*eb, *polyhedron);
         boost::put(vertex_point, *polyhedron, v, p);
-        ++cnt;
+        return 1;
       }
     }
-    return cnt;
+    return 0;
   }
 
   int iteratively_collapse_edges()
