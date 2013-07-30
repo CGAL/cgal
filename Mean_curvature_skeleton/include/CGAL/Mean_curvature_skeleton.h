@@ -799,7 +799,55 @@ public:
     return r;
   }
 
-  int collapse_edges()
+  int collapse_edges(Constrains_map& constrains_map)
+  {
+    std::vector<edge_descriptor> edges;
+    edges.resize(boost::num_edges(*polyhedron));
+    edge_iterator eb, ee;
+    int i = 0;
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      edges[i] = *eb;
+      i++;
+    }
+
+    int cnt = 0;
+    for (i = 0; i < edges.size(); i++)
+    {
+      edge_descriptor ed = edges[i];
+      if (constrains_map.is_constrained(ed))
+      {
+        continue;
+      }
+
+      vertex_descriptor vi = boost::source(ed, *polyhedron);
+      vertex_descriptor vj = boost::target(ed, *polyhedron);
+      double edge_length = sqrt(squared_distance(vi->point(), vj->point()));
+      if (is_collapse_ok(ed) && edge_length < edgelength_TH)
+      {
+        Point p = midpoint(
+          boost::get(vertex_point, *polyhedron, boost::source(ed, *polyhedron)),
+          boost::get(vertex_point, *polyhedron, boost::target(ed, *polyhedron)) );
+
+        // invalidate the edges that will be collapsed
+        // since the mesh is closed, 6 halfedges will be collapsed
+        constrains_map.set_is_constrained(ed, true);
+        constrains_map.set_is_constrained(ed->opposite(), true);
+        constrains_map.set_is_constrained(ed->prev(), true);
+        constrains_map.set_is_constrained(ed->prev()->opposite(), true);
+        constrains_map.set_is_constrained(ed->opposite()->prev(), true);
+        constrains_map.set_is_constrained(ed->opposite()->prev()->opposite(), true);
+
+        vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(ed, *polyhedron);
+        boost::put(vertex_point, *polyhedron, v, p);
+        cnt++;
+      }
+    }
+
+    return cnt;
+  }
+
+  void init_constraint_map(Constrains_map& constrains_map)
   {
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
@@ -814,32 +862,22 @@ public:
       {
         if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
         {
-          continue;
+          constrains_map.set_is_constrained(*eb, true);
         }
       }
-
-      double edge_length = sqrt(squared_distance(vi->point(), vj->point()));
-      if (is_collapse_ok(*eb) && edge_length < edgelength_TH)
-      {
-        // todo move to midpoint
-        Point p = midpoint(
-          boost::get(vertex_point, *polyhedron, boost::source(*eb, *polyhedron)),
-          boost::get(vertex_point, *polyhedron, boost::target(*eb, *polyhedron)) );
-        vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(*eb, *polyhedron);
-        boost::put(vertex_point, *polyhedron, v, p);
-        return 1;
-      }
     }
-    return 0;
   }
 
   int iteratively_collapse_edges()
   {
+    Constrains_map constrains_map;
+    init_constraint_map(constrains_map);
+
     int num_collapses = 0;
     while (true)
     {
 //      int cnt = collapse_short_edges();
-      int cnt = collapse_edges();
+      int cnt = collapse_edges(constrains_map);
       if (cnt == 0)
       {
         break;
@@ -1299,6 +1337,7 @@ public:
     contract_geometry();
     update_topology();
     detect_degeneracies();
+
 //    detect_degeneracies_in_disk();
 
     double area = get_surface_area();
