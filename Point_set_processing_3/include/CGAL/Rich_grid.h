@@ -68,6 +68,12 @@ public:
              int i = 0,
              const Vector& n = CGAL::NULL_VECTOR
              ):pt(p), index(i), normal(n){} 
+  
+  ~Rich_point()
+  {
+    neighbors.clear();
+    original_neighbors.clear();
+  }
 
 public:
   Point pt;

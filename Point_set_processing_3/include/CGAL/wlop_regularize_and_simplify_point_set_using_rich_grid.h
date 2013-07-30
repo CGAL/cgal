@@ -384,6 +384,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
 
       original_density_weight_set.push_back(density);
       original_rich_point_set[i].neighbors.clear();
+      //original_rich_point_set[i].neighbors.swap(std::vector<unsigned int>());
     }
 
     long memory = CGAL::Memory_sizer().virtual_size();
@@ -511,6 +512,8 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   }
 
   //Copy back modified sample points to original points for output
+  std::cout << "Copy back..." << std::endl;
+  task_timer.start();
   for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
   {
     Point& sample_p = sample_points[i];
@@ -522,13 +525,21 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     Point& original_p = get(point_pmap, *it);
     original_p = sample_p;
   #endif
-
-  //#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-  //    put(point_pmap, sample_p, it);
-  //#else
-  //    put(point_pmap, sample_p, *it);
-  //#endif
   }
+  std::cout << "Copy back done: " << task_timer.time() << " seconds "  << std::endl;
+  task_timer.stop();
+ 
+  task_timer.start();
+  original_rich_point_set.erase(original_rich_point_set.begin(), 
+                                original_rich_point_set.end());
+
+  original_rich_point_set.clear();
+  original_rich_point_set.swap(std::vector<Rich_point>());
+  std::cout << "CLear up: " << task_timer.time() << " seconds "  << std::endl;
+  task_timer.stop();
+
+  sample_rich_point_set.clear();
+  sample_points.clear();
 
   return first_sample_point;
 }

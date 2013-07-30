@@ -43,7 +43,7 @@
 
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
-const bool is_use_parallel = true;
+const bool is_use_parallel = false;
 
 /// \cond SKIP_IN_MANUAL
 
@@ -416,9 +416,11 @@ bilateral_smooth_point_set(
   // update points and normals
   Pwn_set update_pwn_set(nb_points);
 
-  if(!is_use_parallel)
+  if(is_use_parallel)
   {
+    //tbb::blocked_range<size_t> block(0, 10000);
     tbb::blocked_range<size_t> block(0, nb_points);
+    
     Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
                                     &pwn_set,
                                     &update_pwn_set,

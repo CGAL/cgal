@@ -24,8 +24,13 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
-    const std::string INPUT_FILENAME_WITHOUT_EXT = "data/fin90_with_PCA_normals";
+    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/fin90_with_PCA_normals";
     //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k_normal";
+
+    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K_with_normal";
+    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
+    const std::string INPUT_FILENAME_WITHOUT_EXT = "data/marseille";
+
 
     // Reads a .xyz point set file in points[].
     std::list<PointVectorPair> points;
@@ -42,10 +47,10 @@ int main(void)
     }
 
     // 
-    int k = 10;  //neighborhood size
+    int k = 120;  //neighborhood size
     double sharpness_sigma = 15; // control sharpness(0-90), 
                                  // the bigger, the result will be smoother.
-    int iter_number = 5; //times of projection
+    int iter_number = 3; //times of projection
 
     CGAL::Timer task_timer;
     task_timer.start();
