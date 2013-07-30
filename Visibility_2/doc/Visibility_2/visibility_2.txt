@@ -13,13 +13,13 @@ namespace CGAL {
 An example figure. 
 \cgalFigureEnd
 
-This package provides functionality to compute the visibility area within polygonal regions in two dimensions. 
+This package provides functionality to compute the visibility area within polygonal regions in 2D Euclidean space.  
 Let \f$ P \f$ be a regular polygon, i.e. with \f$ \partial P = \partial(P\setminus\partial P)\f$ and \f$\partial P \subset P\f$,
 where  \f$\partial P \f$ denotes the boundary of \f$ P \f$.
 \f$ P \f$ may have holes or can be simple. 
 Given two points \f$ p \f$ and \f$ q \f$ in \f$ P \f$, they are said to be visible to each other iff the segment 
 \f$ pq \subset  P \f$. 
-The set of points that are visible from \f$ q \f$ is defined as the visibility region of \f$ q \f$, denote by \f$ V_q \f$.  
+The set of points that are visible from \f$ q \f$ is defined as the visibility region of \f$ q \f$, denoted by \f$ V_q \f$.  
 
 \section visibility_2_degeneracies Degeneracies and Regularization 
 
@@ -55,7 +55,7 @@ Class 	                	|	Function                                     |  Prepro
 
 Where  \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of input polygon respectively.
 
-As the package is based on the \ref PkgArrangement2, a polygonal region is defined as a face within a Arrangement_2 of segments, 
+As the package is based on the \ref PkgArrangement2, a polygonal region is defined as a face within an Arrangement_2 of segments, 
 which we also refer to as the environment. At this point every visibility class template has two parameters, the Arrangement_2 class 
 and Regularization_tag, that is, the user decides at compile time whether the result is computed regularized or not. 
 

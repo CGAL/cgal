@@ -4,7 +4,7 @@
 \cgalConcept
 
 A model of the concept `Visibility_2` offers visibility queries within 
-an Arrangement. 
+a polygon.
 
 \cgalHasModel `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
 \cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
@@ -119,10 +119,10 @@ The visibility region of `q` will be saved to `out_arr`.
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
 
 /*! 
-Computes for the given query point `q` the visibility region that is on the side of `halfedge`. 
+Computes the visibility region for the given query point `q` that is on the side of `halfedge`.
 The visibility region of `q` will be saved to `out_arr`.
 \param q is the query point from which the visibility region is computed
-\param halfedge the halfedge on which 'q' is located
+\param halfedge the halfedge on which `q` is located
 \param out_arr is the output arrangement  
 \pre `half_edge` is a half edge of  `this->arr()`
 \pre `q` is on halfedge
