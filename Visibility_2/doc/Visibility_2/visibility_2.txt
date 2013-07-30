@@ -53,7 +53,7 @@ Class 	                	|	Function                                     |  Prepro
  `Preprocessed_rotational_sweep_visibility_2` | visibility query in a polygon with proper holes       | Yes. \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
 `Triangular_expansion_visibility_2`     | visibility query in a polygon with proper holes |  Yes. \f$ O(n^2) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | reference is unknown. 
 
-where  \f$ n \f$ and \f$ h \f$ the number of vertices and holes of input polygon respectively.
+where  \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of input polygon respectively.
 
 As the package is based on the \ref PkgArrangement2, a polygonal region is defined as a face within a 'Arrangement_2' of segments, 
 which we also refer to as the environment. At this point every visibility class template has two parameters, the `Arrangement_2` class 
