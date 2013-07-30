@@ -36,21 +36,21 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Shared_data,Shared_data,false)
 
 // Utility class used by AABB_face_graph_triangle_primitive and AABB_halfedge_graph_segment_primitive
 // to implement the Consruct_shared_data static function.
-template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMapPolyhedron, class HasSharedDataTag>
+template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap, class HasSharedDataTag>
 struct Cstr_shared_data;
 
-template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMapPolyhedron>
-struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMapPolyhedron, ::CGAL::Tag_true>
+template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap>
+struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL::Tag_true>
 {
   typedef typename Base::Shared_data Shared_data;
   static Shared_data construct_shared_data(Graph& graph)
   {
-    return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
+    return Base::construct_shared_data(ObjectPropertyMap(&graph), PointPropertyMap(&graph));
   }
 };
 
-template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMapPolyhedron>
-struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMapPolyhedron, ::CGAL::Tag_false>
+template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap>
+struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL::Tag_false>
 {
   typedef void* Shared_data;
   static Shared_data construct_shared_data(Graph&)
