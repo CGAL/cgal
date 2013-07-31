@@ -915,12 +915,12 @@ bool IO_base_test<Base_geom_traits>::read_point(stream& is, Point_2& p) {
      Base_geom_traits::Algebraic_real_1 x;
      is >> x;
      Base_geom_traits::X_monotone_curve_2 xcv;
-     CGAL::swallow(is,'(');
-     bool check=
+     CGAL::swallow(is, '(');
+     CGAL_assertion_code(bool check = )
        read_xcurve(is, xcv);
-     assert(check);
+     CGAL_assertion(check);
 
-     CGAL::swallow(is,')');
+     CGAL::swallow(is, ')');
      p = construct_point_2(x, xcv);
      break;
     }
@@ -929,9 +929,9 @@ bool IO_base_test<Base_geom_traits>::read_point(stream& is, Point_2& p) {
      is >> x;
      Base_geom_traits::Curve_2 c;
      CGAL_assertion_code(bool check = )
-       read_curve(is,c);
-     assert(check);
-     int arcno=0;
+       read_curve(is, c);
+     CGAL_assertion(check);
+     int arcno = 0;
      is >> arcno;
      p = construct_point_2(x, c, arcno);
      break;
@@ -959,50 +959,52 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
    case '1': {
      Curve_2 cv;
      Point_2 end_left,end_right;
-     bool check=
-     read_curve(is,cv);
-     assert(check);
-     CGAL::swallow(is,'(');
-     check=
-     read_point(is,end_left);
-     assert(check);
-     CGAL::swallow(is,')');
-     CGAL::swallow(is,'(');
-     check=
-     read_point(is,end_right);
-     assert(check);
-     CGAL::swallow(is,')');
+     CGAL_assertion_code(bool check = )
+       read_curve(is,cv);
+     CGAL_assertion(check);
+     CGAL::swallow(is, '(');
+     CGAL_assertion_code(check = )
+       read_point(is,end_left);
+     CGAL_assertion(check);
+     CGAL::swallow(is, ')');
+     CGAL::swallow(is, '(');
+     CGAL_assertion_code(check = )
+       read_point(is,end_right);
+     CGAL_assertion(check);
+     CGAL::swallow(is, ')');
      std::vector<Base_geom_traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, end_left, end_right, std::back_inserter(xcvs));
-     assert(xcvs.size() == 1);
+     CGAL_assertion(xcvs.size() == 1);
      xcv = xcvs[0];
      break;
     }
    case '2': {
      Curve_2 cv;
      Point_2 p;
-     bool check=
-     read_curve(is,cv);
-     assert(check);
-     CGAL::swallow(is,'(');
-     check=
-     read_point(is,p);
-     assert(check);
-     CGAL::swallow(is,')');
+     CGAL_assertion_code(bool check = )
+       read_curve(is, cv);
+     CGAL_assertion(check);
+     CGAL::swallow(is, '(');
+     CGAL_assertion_code(check = )
+       read_point(is, p);
+     CGAL_assertion(check);
+     CGAL::swallow(is, ')');
      std::string site_of_p_string;
      Base_geom_traits::Site_of_point site_of_p;
      is >> site_of_p_string;
      if (site_of_p_string == "MIN_ENDPOINT") {
        site_of_p = Base_geom_traits::MIN_ENDPOINT;
-     } else if (site_of_p_string=="MAX_ENDPOINT") {
+     }
+     else if (site_of_p_string == "MAX_ENDPOINT") {
        site_of_p = Base_geom_traits::MAX_ENDPOINT;
-     } else {
-       CGAL_assertion(site_of_p_string=="POINT_IN_INTERIOR");
+     }
+     else {
+       CGAL_assertion(site_of_p_string == "POINT_IN_INTERIOR");
        site_of_p = Base_geom_traits::POINT_IN_INTERIOR;
      }
      std::vector<Base_geom_traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, p, site_of_p, std::back_inserter(xcvs));
-     assert(xcvs.size() == 1);
+     CGAL_assertion(xcvs.size() == 1);
      xcv = xcvs[0];
      break;
     }
@@ -1214,7 +1216,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
   char type;
   is >> type;
   if (is_deg_1(type)) {
-    xcv = read_line(type,is);
+    xcv = read_line(type, is);
     return true;
   }
   return false;
@@ -1229,7 +1231,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   char type;
   is >> type;
   if (is_deg_1(type)) {
-    cv = read_line(type,is);
+    cv = read_line(type, is);
     return true;
   }
   return false;
