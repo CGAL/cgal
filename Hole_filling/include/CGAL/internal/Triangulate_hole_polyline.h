@@ -119,19 +119,76 @@ struct Tracer {
   }
 };
 
+// to support incident_facets(Edge e) function for both dimension 2 and 3
+template<unsigned int Dimension, class Triangulator>
+struct Incident_facet_circulator;
+
+template<class Triangulator>
+struct Incident_facet_circulator<2, Triangulator>
+{
+  typedef typename Triangulator::Facet         Facet;
+  typedef typename Triangulator::Edge          Edge;
+  typedef typename Triangulator::Triangulation Triangulation;
+  
+  Incident_facet_circulator(Edge e, Triangulation* t) 
+  {
+    f1 = Facet(e.first, 3);
+    int remaining_index = 0;
+    for( ; remaining_index < 3; ++remaining_index) {
+      if(remaining_index != e.second && remaining_index != e.third) {
+        break;
+      }
+    }
+    f2 = Facet(e.first->neighbor(remaining_index), 3);
+    it = f1;
+  }
+  Incident_facet_circulator& operator++() {
+    it = it == f1 ? f2 : f1;
+    return *this;
+  }
+  operator bool() const { return it != f1; }
+  const Facet* operator->() const { return &it; }
+  Facet operator*() const { return it; }
+
+  Facet f1, f2, it;
+};
+
+template<class Triangulator>
+struct Incident_facet_circulator<3, Triangulator>
+{
+  typedef typename Triangulator::Facet         Facet;
+  typedef typename Triangulator::Edge          Edge;
+  typedef typename Triangulator::Triangulation Triangulation;
+  typedef typename Triangulator::Facet_circulator Facet_circulator;
+
+  Incident_facet_circulator(Edge e, Triangulation* t)
+    : it(t->incident_facets(e)), end(it)
+  { }
+  Incident_facet_circulator& operator++() {
+    ++it;
+    return *this;
+  }
+  operator bool() const { return it != end; }
+  Facet_circulator operator->() const { return it; }
+  Facet operator*() const { return *it; }
+
+  Facet_circulator it;
+  Facet_circulator end;
+};
+
 template<typename K>
 class Triangulate_hole_polyline_DT 
 {
 public:
+  typedef Triangulate_hole_polyline_DT<K> Self;
   typedef typename K::Point_3 Point_3;
   typedef std::vector<Point_3> Polyline_3;
-private:
+
   typedef Triangulation_vertex_base_with_info_3<int, K>  VB_with_id;
   typedef Triangulation_data_structure_3<VB_with_id>     TDS;
   typedef Delaunay_triangulation_3<K, TDS>               Triangulation;
 
   typedef typename Triangulation::Finite_edges_iterator  Finite_edges_iterator;
-  typedef typename Triangulation::Finite_cells_iterator  Finite_cells_iterator;
   typedef typename Triangulation::Facet_circulator       Facet_circulator;
 
   typedef typename Triangulation::Cell_handle            Cell_handle;
@@ -152,8 +209,6 @@ private:
     mutable int count;
   };
 
-public:
-
   template <typename OutputIteratorValueType, typename OutputIterator>
   OutputIterator 
   triangulate(const Polyline_3& P, 
@@ -171,6 +226,8 @@ public:
                     boost::make_transform_iterator(--P.end(), Auto_count<Point_3>()));
     T.infinite_vertex()->info() = -1;
 
+    // Check whether all edges are included in DT, and get v0-vn-1 edge
+    int nb_exists = 0;
     Finite_edges_iterator v0_vn_edge; // v0 vn-1 edge
     std::vector<bool> edge_exist(n, false);
     for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) {
@@ -181,18 +238,19 @@ public:
       // to start from v0 vn-1 edge
       if(v0_id == 0 && v1_id == n-1) { v0_vn_edge = eb; }
       // check whether the edge is border edge
-      if(v0_id + 1 == v1_id) { edge_exist[v0_id] = true; }
-      else if(v0_id == 0 && v1_id == n-1) { edge_exist[v1_id] = true; }
+      int border_id = -1;
+      if(v0_id + 1 == v1_id)              { border_id = v0_id; }
+      else if(v0_id == 0 && v1_id == n-1) { border_id = v1_id; }
+      if(border_id != -1 && !edge_exist[border_id]) {
+        ++nb_exists;
+        edge_exist[border_id] = true;
+      }
     }
+    CGAL_assertion(n >= nb_exists);
 
-    int not_exists = 0;
-    for(std::vector<bool>::iterator it = edge_exist.begin(); it != edge_exist.end(); ++it) {
-      if(!(*it)) { not_exists++; }
-    }
-
-    if(not_exists > 0) {
+    if(nb_exists != n) {
       CGAL_TRACE_STREAM << "Not all border edges are included in 3D Triangulation!" << std::endl;
-      CGAL_TRACE_STREAM << "  Not inside " << not_exists << " of " << (P.size() - 1) << std::endl;
+      CGAL_TRACE_STREAM << "  Not inside " << (n - nb_exists) << " of " << n << std::endl;
       CGAL_warning(!"Returning no output!");
       return out;
     }
@@ -202,23 +260,19 @@ public:
       CGAL_warning(!"Returning no output!");
       return out;
     }
-
-    if(T.dimension() == 2) {
-      // in case of dimension 2 return triangles directly
-      for(Finite_cells_iterator cb = T.finite_cells_begin(); cb != T.finite_cells_begin(); ++cb) {
-        int v0(cb->vertex(0)->info()), 
-            v1(cb->vertex(1)->info()), 
-            v2(cb->vertex(2)->info());
-
-        // TODO not sure about orientation
-        *out++ = OutputIteratorValueType(v0, v1, v2);
-      }
-      return out;
-    }
     
     std::vector<Weight> W(n*n,Weight(0,0));
     std::vector<int> lambda(n*n,-1);
-    triangulate_DT(P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
+    if(T.dimension() == 3) {
+      triangulate_DT<Incident_facet_circulator<3, Self> >
+        (P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
+    }
+    else {
+      CGAL_assertion(T.dimension() == 2);
+      triangulate_DT<Incident_facet_circulator<2, Self> >
+        (P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
+    }
+    
     if(lambda[0*n + (n-1)] == -1) {
       CGAL_warning(!"No possible triangulation is found!");
       return out;
@@ -228,15 +282,15 @@ public:
   }
 
 private:
+  // finds vertex in Facet f, which is different then v0 and v1
   // this also may return infinite vertex
   std::pair<int, int> // <vertex id, index in cell>
-  get_facet_remaining_vertex(Cell_handle ch, Facet f, int v0, int v1) 
+  get_facet_remaining_vertex(Facet f, int v0, int v1) 
   {
-    int f0(ch->vertex(f.second)->info());
-
     for(int i = 0; i < 4; ++i) {
-      int f3 = ch->vertex(i)->info();
-      if(f3 != f0 && f3 != v0 && f3 != v1) {
+      if(i == f.second) { continue; }
+      int f3 = f.first->vertex(i)->info();
+      if(f3 != v0 && f3 != v1) {
         return std::make_pair(f3, i); 
       }
     }
@@ -253,6 +307,7 @@ private:
     return -1;
   }
 
+  template<class IncidentFacetCirculator>
   void 
   triangulate_DT( const Polyline_3& P, 
                   const Polyline_3& Q, 
@@ -291,15 +346,15 @@ private:
     // one triangle remains
     if(v0 + 2 == v1){
       // check whether it is included in DT
-      Facet_circulator fb(T.incident_facets(e)), end(fb);
+      IncidentFacetCirculator fb(e, &T);
       do {
-        int f3 = get_facet_remaining_vertex(fb->first, *fb, v0, v1).first;
+        int f3 = get_facet_remaining_vertex(*fb, v0, v1).first;
         if(f3 == v0 + 1) {
           W[v0*n + v1] = Weight(P, Q, v0, v0+1, v1);
           lambda[v0*n + v1] = v0+1;
           return;
         }
-      } while(++fb != end);
+      } while(++fb);
       // if no found
       W[v0*n + v1] = Weight(-1,-1);
       return;
@@ -309,11 +364,11 @@ private:
     Weight w_min((std::numeric_limits<double>::max)(), 
                  (std::numeric_limits<double>::max)());
     bool found_any = false;
-    Facet_circulator fb(T.incident_facets(e)), end(fb);
+    IncidentFacetCirculator fb(e, &T);
     do {
 
       int v2, v2_cell_index;
-      boost::tie(v2, v2_cell_index) = get_facet_remaining_vertex(fb->first, *fb, v0, v1);
+      boost::tie(v2, v2_cell_index) = get_facet_remaining_vertex(*fb, v0, v1);
 
       if(v2 < v0 || v2 > v1) { continue; } // this will also skip infinite vertex
 
@@ -326,8 +381,8 @@ private:
       Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index);
       Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index);
 
-      triangulate_DT(P, Q, W, lambda, e0, T, n, existing_edges); // v0-v2
-      triangulate_DT(P, Q, W, lambda, e1, T, n, existing_edges); // v2-v1
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, n, existing_edges); // v0-v2
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, n, existing_edges); // v2-v1
       if( W[v0*n + v2] == Weight(-1,-1) || W[v2*n + v1] == Weight(-1,-1) )
       { continue; }
 
@@ -336,7 +391,7 @@ private:
         w_min = w;
         m_min = v2;
       }
-    } while(++fb != end);
+    } while(++fb);
 
     if(m_min != -1) { W[v0*n+v1] = w_min; }
     else            { W[v0*n+v1] = Weight(-1,-1); } // which means no triangulation exists between v0 - v1
