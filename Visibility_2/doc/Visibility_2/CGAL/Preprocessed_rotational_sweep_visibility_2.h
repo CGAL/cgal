@@ -6,7 +6,7 @@ namespace CGAL {
 a polygon that may have hole(s).
 
 \details The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing and then it 
-does sweeping which is similar to the algorithm of `Rotational_sweep_visibility_2`. 
+does a sweep, which is similar to the algorithm of `Rotational_sweep_visibility_2`. 
 The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space. With the help of preprocessing, the query time is reduced to \f$O(n)\f$.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
