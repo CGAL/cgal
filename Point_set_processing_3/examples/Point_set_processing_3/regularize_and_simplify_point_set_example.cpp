@@ -16,15 +16,14 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
   //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
+  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
   //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/pw_flat_noise-outliers";
 
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
-  //std::ifstream stream("data/saint_jean_370KCopy.xyz");
 
   if (!stream || !CGAL::read_xyz_points(stream, std::back_inserter(points)))
   {
@@ -34,9 +33,9 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double retain_percentage = 2;   // percentage of points to retain.
+  const double retain_percentage = 10;   // percentage of points to retain.
   const unsigned int k = 500;              // number of neighbors.
-  const double neighbor_radius = 0.03;      // neighbors size.
+  const double neighbor_radius = 0.3;      // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density to 
                                            // generate more rugularized result, 

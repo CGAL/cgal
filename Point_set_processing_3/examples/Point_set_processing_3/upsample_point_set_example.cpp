@@ -21,10 +21,12 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_WLOPED";
+
   // Reads a .xyz point set file in points[].
   std::vector<PointVectorPair> points;
   //std::ifstream stream("data/before_upsample.xyz");
-  std::ifstream stream("data/sphere_1k.xyz");
+  std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
 
   if (!stream ||
       !CGAL::read_xyz_points_and_normals(stream,
@@ -32,14 +34,15 @@ int main(void)
                         CGAL::First_of_pair_property_map<PointVectorPair>(),
                         CGAL::Second_of_pair_property_map<PointVectorPair>()))
   {
-    std::cerr << "Error: cannot read file before_upsample.xyz" << std::endl;
+    std::cerr << "Error: cannot read file " 
+      << INPUT_FILENAME_WITHOUT_EXT << ".xyz" << std::endl;
     return EXIT_FAILURE;
   }
 
   //Algorithm parameters
-  const double sharpness_sigma = 90;   //control sharpness of the result.
+  const double sharpness_sigma = 35;   //control sharpness of the result.
   const double edge_senstivity = 0;    // more points will up-sample on edge.          
-  const double neighbor_radius = 0.2;      // initial neighbors size.
+  const double neighbor_radius = 0.05;      // initial neighbors size.
   const unsigned int number_of_output_points = points.size() * 100;   
 
 
@@ -70,7 +73,7 @@ int main(void)
   // point position and normal.
 
   //std::ofstream out("data/after_upsample.xyz");  
-  std::ofstream out("data/sphere_after_upsample.xyz");  
+  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_UPSAMPLED.xyz");  
 
   if (!out ||
      !CGAL::write_xyz_points_and_normals(

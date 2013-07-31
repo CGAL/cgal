@@ -28,8 +28,8 @@ int main(void)
     //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k_normal";
 
     //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K_with_normal";
-    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
-    const std::string INPUT_FILENAME_WITHOUT_EXT = "data/marseille";
+    const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
+    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/marseille";
 
 
     // Reads a .xyz point set file in points[].

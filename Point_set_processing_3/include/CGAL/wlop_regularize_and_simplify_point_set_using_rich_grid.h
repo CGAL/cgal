@@ -77,6 +77,7 @@ compute_average_term(
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
+  typedef rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   FT radius2 = radius * radius;
 
@@ -84,10 +85,13 @@ compute_average_term(
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
   FT iradius16 = -(FT)4.0/radius2;
   Vector average = CGAL::NULL_VECTOR; 
-  for (unsigned int i = 0; i < neighbor_original_points.size(); ++i)
+
+  std::vector<Rich_point>::const_iterator iter;
+  iter = neighbor_original_points.begin();
+  for (; iter != neighbor_original_points.end(); ++iter)
   {
-    const Point& np = neighbor_original_points[i].pt;
-    unsigned int idx_of_original = neighbor_original_points[i].index;
+    const Point& np = iter->pt;
+    unsigned int idx_of_original = iter->index;
 
     FT dist2 = CGAL::squared_distance(query, np);
     weight = exp(dist2 * iradius16);
@@ -102,7 +106,7 @@ compute_average_term(
   }
 
   // output
-  return average/average_weight_sum;
+  return average / average_weight_sum; // warning
 }
 
 /// Compute repulsion term for each sample points
@@ -132,6 +136,7 @@ compute_repulsion_term(
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
+  typedef rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   FT radius2 = radius * radius;
 
@@ -140,10 +145,12 @@ compute_repulsion_term(
   FT iradius16 = -(FT)4.0/radius2;
 
   Vector repulsion = CGAL::NULL_VECTOR; 
-  for (unsigned int i = 0; i < neighbor_sample_points.size(); ++i)
+  std::vector<Rich_point>::const_iterator iter;
+  iter = neighbor_sample_points.begin();
+  for (; iter != neighbor_sample_points.end(); ++iter)
   {
-    const Point& np = neighbor_sample_points[i].pt;
-    unsigned int idx_of_sample = neighbor_sample_points[i].index;
+    const Point& np = iter->pt;
+    unsigned int idx_of_sample = iter->index;
 
     Vector diff = query - np;
 
@@ -161,7 +168,7 @@ compute_repulsion_term(
   }
 
   // output
-  return repulsion/repulsion_weight_sum;
+  return repulsion / repulsion_weight_sum; // warning
 }
 
 
@@ -195,9 +202,11 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  for (unsigned int i = 0; i < neighbor_original_points.size(); ++i)
+  std::vector<Point>::const_iterator iter;
+  iter = neighbor_original_points.begin();
+  for (; iter != neighbor_original_points.end(); ++iter)
   {
-    const Point& np = neighbor_original_points[i];
+    const Point& np = *iter;
     FT dist2 = CGAL::squared_distance(query, np);
     density_weight += std::exp(dist2 * iradius16);
   }
@@ -233,16 +242,45 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  for (unsigned int i = 0; i < neighbor_sample_points.size(); ++i)
+  std::vector<Point>::const_iterator iter;
+  iter = neighbor_sample_points.begin();
+  for (; iter != neighbor_sample_points.end(); ++iter)
   {
-    const Point& np = neighbor_sample_points[i];
+    const Point& np = *iter;
     FT dist2 = CGAL::squared_distance(query, np);
     density_weight += std::exp(dist2 * iradius16);
   }
 
   // output
-  //return std::sqrt(density_weight); 
   return density_weight;
+}
+
+/// Extract Points information from indexes, a helper function
+///
+/// @tparam Kernel Geometric traits class.
+///
+/// @return Points
+template <typename Kernel>
+std::vector<typename Kernel::Point_3>
+  get_points_from_indexes(
+  const std::vector<unsigned int> indexes, ///< indexes
+  const std::vector<typename Kernel::Point_3>& all_points ///< all points
+  )
+{
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
+  std::vector<Point> output_points(indexes.size());
+
+  // extract points
+  std::vector<Point>::iterator points_iter = output_points.begin();
+  unsigned int i = 0;
+  for (; points_iter != output_points.end(); ++points_iter)
+  {
+    *points_iter = all_points[indexes[i++]];
+  }
+
+  // output
+  return output_points;
 }
 
 } // namespace regularize_and_simplify_internal
@@ -281,7 +319,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   const typename Kernel::FT retain_percentage, ///< percentage to retain.
   const typename Kernel::FT neighbor_radius, ///< size of neighbors.
-  const unsigned int iter_number,///< number of iterations.
+  const unsigned int max_iter_number,///< number of iterations.
   const bool need_compute_density, ///< if needed to compute density to 
                                    ///generate more rugularized result.                                
   const Kernel& /*kernel*/ ///< geometric traits.
@@ -320,40 +358,47 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
 
   //Copy sample points
   std::vector<Point> sample_points(nb_points_sample);
-  unsigned int i; // sample point index
-  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
+  std::vector<Point>::iterator sample_iter = sample_points.begin();
+  for(it = first_sample_point; it != beyond; ++it, ++sample_iter)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      sample_points[i] = get(point_pmap, it);
+      *sample_iter = get(point_pmap, it);
   #else
-      sample_points[i] = get(point_pmap, *it);
+      *sample_iter = get(point_pmap, *it);
   #endif
   }
     
   //Copy original points(Maybe not the best choice)
   std::vector<Point> original_points(nb_points_original);
-  for(it = first_original_point, i = 0; it != beyond; ++it, ++i)
+  std::vector<Point>::iterator original_iter = original_points.begin();
+  for(it = first_original_point; it != beyond; ++it, ++original_iter)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-     original_points[i] = get(point_pmap, it);
+     *original_iter = get(point_pmap, it);
   #else
-     original_points[i] = get(point_pmap, *it);
+     *original_iter = get(point_pmap, *it);
   #endif
   }
 
   // Initialization
-  std::vector<Rich_point> original_rich_point_set(nb_points_original);
-  std::vector<Rich_point> sample_rich_point_set(nb_points_sample);
+  std::vector<Rich_point> original_rich_points(nb_points_original);
+  std::vector<Rich_point> sample_rich_points(nb_points_sample);
 
   rich_grid_internal::Rich_box<Kernel> box;
-  for (i = 0; i < nb_points_original; ++i)
+  original_iter = original_points.begin();
+  int index = 0;
+  std::vector<Rich_point>::iterator origianl_rich_iter;
+  origianl_rich_iter = original_rich_points.begin();
+  for (; original_iter != original_points.end(); ++original_iter)
   {  
-    Point& p0 = original_points[i];
-    Rich_point rp(p0, i);
-    original_rich_point_set[i] = rp;
+    Point& p0 = *original_iter;
+    Rich_point rp(p0, index++);
+    *origianl_rich_iter = rp;
+    ++origianl_rich_iter;
     box.add_point(rp.pt);
   }
 
+  unsigned int i;
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weight_set;
   if (need_compute_density)
@@ -361,30 +406,30 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     task_timer.start();
     std::cout << "Initialization / Compute Density For Original" << std::endl;
   
-    rich_grid_internal::compute_ball_neighbors_one_self(original_rich_point_set
+    rich_grid_internal::compute_ball_neighbors_one_self(original_rich_points
                                                        , box, neighbor_radius);
-                        
-    for (i = 0; i < nb_points_original; ++i)
+                
+    origianl_rich_iter = original_rich_points.begin();
+    original_iter = original_points.begin();
+    for (; original_iter != original_points.end(); 
+         ++original_iter, ++origianl_rich_iter)
     {
-      // get original point positions from indexes
-      std::vector<Point> original_neighbors;
-      std::vector<unsigned int>& neighors_indexes = 
-                                 original_rich_point_set[i].neighbors;
-
-      for (unsigned int j = 0; j < neighors_indexes.size(); j++)
-      {
-        original_neighbors.push_back(original_points[neighors_indexes[j]]);
-      }
+      //get original point positions from indexes
+      std::vector<Point> original_neighbors = 
+           regularize_and_simplify_internal::get_points_from_indexes<Kernel>
+                                        (origianl_rich_iter->neighbors,
+                                         original_points);
 
       // compute density
       FT density = regularize_and_simplify_internal::
                    compute_density_weight_for_original_point<Kernel>(
-                   original_points[i],
-                   original_neighbors, neighbor_radius);
+                   *original_iter,
+                   original_neighbors,
+                   neighbor_radius);
 
       original_density_weight_set.push_back(density);
-      original_rich_point_set[i].neighbors.clear();
-      //original_rich_point_set[i].neighbors.swap(std::vector<unsigned int>());
+      origianl_rich_iter->neighbors.clear();
+      //original_rich_points[i].neighbors.swap(std::vector<unsigned int>());
     }
 
     long memory = CGAL::Memory_sizer().virtual_size();
@@ -394,35 +439,46 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   }
 
 
-  for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
+  // Build rich-grid for sample neighbor
+  std::vector<Rich_point>::iterator sample_rich_iter;
+  sample_rich_iter = sample_rich_points.begin();
+  sample_iter = sample_points.begin();
+  index = 0;
+  for (; sample_iter != sample_points.end(); ++sample_iter, ++sample_rich_iter)
+  {
+    *sample_rich_iter = Rich_point(*sample_iter, index++);
+  }
+
+  for (unsigned int iteration = 0; iteration < max_iter_number; iteration++)
   {
     task_timer.start();
     std::cout << "Compute average term and repulsion term " << std::endl;
 
-    // Build rich-grid For Sample Neighbor
-    for (i=0 ; i < sample_points.size(); ++i)
+    if (iteration > 0)
     {
-      Point& p0 = sample_points[i];
-      Rich_point rp(p0, i);
-      sample_rich_point_set[i] = rp;
+      sample_rich_iter = sample_rich_points.begin();
+      sample_iter = sample_points.begin();
+      for (; sample_rich_iter  != sample_rich_points.end(); 
+           ++sample_iter, ++sample_rich_iter)
+      {
+        sample_rich_iter->pt = *sample_iter;
+        //*sample_rich_iter = Rich_point(*sample_iter, index++);
+      }
     }
-    rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_point_set,
-                                                        box, neighbor_radius);
+    rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_points,
+                                                        box, 
+                                                        neighbor_radius);
 
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_density_weight_set;
     if (need_compute_density)
     {
-      for (i=0 ; i < sample_points.size(); ++i)
+      for (i = 0 ; i < sample_points.size(); ++i)
       {
-        std::vector<Point> sample_neighbors;
-        std::vector<unsigned int>& neighors_indexes = 
-                                   sample_rich_point_set[i].neighbors;
-
-        for (unsigned int j = 0; j < neighors_indexes.size(); j++)
-        {
-          sample_neighbors.push_back(sample_points[neighors_indexes[j]]);
-        }
+        std::vector<Point> sample_neighbors = 
+        regularize_and_simplify_internal::get_points_from_indexes<Kernel>(
+                                     sample_rich_points[i].neighbors,
+                                     sample_points);
 
         FT density = regularize_and_simplify_internal::
                      compute_density_weight_for_sample_point<Kernel>
@@ -434,8 +490,8 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
 
     // Build Ball Tree For Sample-Original Neighbor
     rich_grid_internal::compute_ball_neighbors_one_to_another
-                       (sample_rich_point_set,
-                        original_rich_point_set, box, neighbor_radius);
+                       (sample_rich_points,
+                        original_rich_points, box, neighbor_radius);
 
     // Compute average term and repulsion term for each sample points,
     // then update each sample points
@@ -448,7 +504,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
       Point& p = sample_points[i];
       std::vector<Rich_point> rich_original_neighbors;
       std::vector<unsigned int>& neighors_indexes = 
-                                 sample_rich_point_set[i].original_neighbors;
+                                 sample_rich_points[i].original_neighbors;
 
       if (neighors_indexes.empty())
       {
@@ -474,7 +530,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     {
       std::vector<Rich_point> rich_sample_neighbors;
       std::vector<unsigned int>& neighors_indexes = 
-                                 sample_rich_point_set[i].neighbors;
+                                 sample_rich_points[i].neighbors;
         
       if (neighors_indexes.empty())
       {
@@ -508,7 +564,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
       << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.stop();
 
-    std::cout << "iterate:	" << iter_n + 1 <<  "	"<< std::endl << std::endl;
+    std::cout << "iterate:	" << iteration + 1 <<  "	"<< std::endl << std::endl;
   }
 
   //Copy back modified sample points to original points for output
@@ -530,15 +586,15 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   task_timer.stop();
  
   task_timer.start();
-  original_rich_point_set.erase(original_rich_point_set.begin(), 
-                                original_rich_point_set.end());
+  original_rich_points.erase(original_rich_points.begin(), 
+                                original_rich_points.end());
 
-  original_rich_point_set.clear();
-  original_rich_point_set.swap(std::vector<Rich_point>());
+  original_rich_points.clear();
+  original_rich_points.swap(std::vector<Rich_point>());
   std::cout << "CLear up: " << task_timer.time() << " seconds "  << std::endl;
   task_timer.stop();
 
-  sample_rich_point_set.clear();
+  sample_rich_points.clear();
   sample_points.clear();
 
   return first_sample_point;
@@ -554,7 +610,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   double retain_percentage, ///< percentage of points to retain
   double neighbor_radius, ///< size of neighbors.
-  const unsigned int iter_number, ///< number of iterations.
+  const unsigned int max_iter_number, ///< number of iterations.
   const bool need_compute_density  ///< if needed to compute density 
                                    ///  to generate more rugularized result.                                 
 ) 
@@ -566,7 +622,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     point_pmap,
     retain_percentage,
     neighbor_radius,
-    iter_number,
+    max_iter_number,
     need_compute_density,
     Kernel());
 }
@@ -581,7 +637,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
   ForwardIterator beyond, ///< past-the-end iterator
   double retain_percentage, ///< percentage of points to retain
   double neighbor_radius, ///< size of neighbors.
-  const unsigned int iter_number, ///< number of iterations.
+  const unsigned int max_iter_number, ///< number of iterations.
   const bool need_compute_density ///< if needed to compute density to generate
                                   ///  more rugularized result. 
 )
@@ -594,7 +650,7 @@ wlop_regularize_and_simplify_point_set_using_rich_grid(
     make_identity_property_map(typename std::iterator_traits<ForwardIterator>::
                                value_type()),
 #endif
-    retain_percentage, neighbor_radius, iter_number, need_compute_density);
+    retain_percentage, neighbor_radius, max_iter_number, need_compute_density);
 }
 /// @endcond
 
