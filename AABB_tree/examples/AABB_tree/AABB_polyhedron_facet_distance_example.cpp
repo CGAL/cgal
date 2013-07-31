@@ -30,7 +30,7 @@ int main()
 
     // constructs AABB tree and computes internal KD-tree 
     // data structure to accelerate distance queries
-    Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+    Tree tree(polyhedron.facets_begin(),polyhedron.facets_end(),polyhedron);
     tree.accelerate_distance_queries();
 
     // query point

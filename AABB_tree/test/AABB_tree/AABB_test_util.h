@@ -29,6 +29,7 @@
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 #include <boost/mem_fn.hpp>
@@ -216,9 +217,10 @@ struct Primitive_generator<SEGMENT, K, Polyhedron>
 {
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron> Primitive;
 
-    typedef typename Polyhedron::Edge_iterator iterator;
-    iterator begin(Polyhedron& p) { return p.edges_begin(); }
-    iterator end(Polyhedron& p) { return p.edges_end(); }
+    typedef typename CGAL::halfedge_graph_traits<Polyhedron>
+      ::undirected_edge_iterator iterator;
+    iterator begin(Polyhedron& p) { return CGAL::undirected_edges(p).first; }
+    iterator end(Polyhedron& p) { return CGAL::undirected_edges(p).second; }
 };
 
 template<class K, class Polyhedron>
@@ -259,7 +261,7 @@ void test(const char *filename,
 
     // constructs AABB tree and internal search KD-tree with
     // the points of the polyhedron
-    Tree tree(Pr_generator().begin(polyhedron),Pr_generator().end(polyhedron));
+    Tree tree(Pr_generator().begin(polyhedron),Pr_generator().end(polyhedron), polyhedron);
     //tree.accelerate_distance_queries(polyhedron.points_begin(),polyhedron.points_end());
 
     // call all tests
@@ -341,7 +343,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it,p) ) )
         return true;
     }
 
@@ -357,7 +359,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
+      if ( m_traits.do_intersect_object()(query, Pr(it,p) ) )
         ++result;
     }
 
@@ -372,8 +374,8 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      if ( m_traits.do_intersect_object()(query, Pr(it) ) )
-        *out++ = Pr(it).id();
+      if ( m_traits.do_intersect_object()(query, Pr(it,p) ) )
+        *out++ = Pr(it,p).id();
     }
 
     return out;
@@ -389,10 +391,10 @@ public:
     {
       #if CGAL_INTERSECTION_VERSION < 2
       Intersection_result 
-        intersection  = Traits().intersection_object()(query, Pr(it));
+        intersection  = Traits().intersection_object()(query, Pr(it,p));
       #else
       boost::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
-        intersection  = m_traits.intersection_object()(query, Pr(it));
+        intersection  = m_traits.intersection_object()(query, Pr(it,p));
       #endif
       if ( intersection )
         *out++ = *intersection;
@@ -409,11 +411,11 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(Pr(it),m_traits);
+    Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(Pr(it,p),m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      closest_point = m_traits.closest_point_object()(query, Pr(it), closest_point);
+      closest_point = m_traits.closest_point_object()(query, Pr(it,p), closest_point);
     }
 
     return closest_point;
@@ -427,12 +429,12 @@ public:
     assert ( it != Pr_generator().end(p) );
 
     // Get a point on the primitive
-    Pr closest_primitive = Pr(it);
+    Pr closest_primitive = Pr(it,p);
     Point closest_point = CGAL::internal::Primitive_helper<Traits>::get_reference_point(closest_primitive,m_traits);
 
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      Pr tmp_pr(it);
+      Pr tmp_pr(it,p);
       Point tmp_pt = m_traits.closest_point_object()(query, tmp_pr, closest_point);
       if ( tmp_pt != closest_point )
       {

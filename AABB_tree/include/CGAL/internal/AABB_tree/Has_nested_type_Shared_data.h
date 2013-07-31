@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://sloriot@scm.gforge.inria.fr/svn/cgal/branches/features/AABB_tree-one_primitive_per_object-sloriot/AABB_tree/include/CGAL/AABB_triangle_primitive.h $
-// $Id: AABB_triangle_primitive.h 69127 2012-05-14 16:10:00Z sloriot $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -33,7 +33,32 @@ namespace CGAL{
 namespace internal{
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Shared_data,Shared_data,false)
-  
+
+// Utility class used by AABB_face_graph_triangle_primitive and AABB_halfedge_graph_segment_primitive
+// to implement the Consruct_shared_data static function.
+template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap, class HasSharedDataTag>
+struct Cstr_shared_data;
+
+template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap>
+struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL::Tag_true>
+{
+  typedef typename Base::Shared_data Shared_data;
+  static Shared_data construct_shared_data(Graph& graph)
+  {
+    return Base::construct_shared_data(ObjectPropertyMap(&graph), PointPropertyMap(&graph));
+  }
+};
+
+template<class Graph, class Base, class ObjectPropertyMap, class PointPropertyMap>
+struct Cstr_shared_data<Graph, Base, ObjectPropertyMap, PointPropertyMap, ::CGAL::Tag_false>
+{
+  typedef void* Shared_data;
+  static Shared_data construct_shared_data(Graph&)
+  {
+    return NULL;
+  }
+};
+
 } } //namespace CGAL
 
 #endif //CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H

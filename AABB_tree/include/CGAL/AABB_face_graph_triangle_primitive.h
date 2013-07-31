@@ -41,7 +41,11 @@ namespace CGAL {
  *\tparam FaceGraph is a \cgal polyhedron.
  *\tparam VertexPointPMap must be set to `CGAL::Default`
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
- *\tparam OneFaceGraphPerTree must be set to `CGAL::Default`
+ *\tparam OneFaceGraphPerTree is either `CGAL::Tag_true or `CGAL::Tag_false`.
+ * In the former case, we guarantee that all the primitives will be from a
+ * common polyhedron and some data will be factorized so that the size of
+ * the primitive is reduced. In the latter case, the primitives can be from
+ * different polyhedra and extra storage is required in the primitives. The default is `CGAL::Tag_true`.
  *        This parameter is useless for the moment and will be useful in an upcoming release of \cgal.
  *\tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case, the datum is stored
  *        in the primitive, while in the latter it is constructed on the fly to reduce the memory footprint.
@@ -52,7 +56,7 @@ namespace CGAL {
  */
 template < class FaceGraph,
            class VertexPointPMap = Default,
-           class OneFaceGraphPerTree = Default,
+           class OneFaceGraphPerTree = Tag_true,
            class CacheDatum=Tag_false >
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
@@ -63,7 +67,7 @@ class AABB_face_graph_triangle_primitive
                            >::type,
                          Triangle_from_facet_handle_property_map<FaceGraph>,
                          One_point_from_facet_handle_property_map<FaceGraph>,
-                         Tag_true,
+                         OneFaceGraphPerTree,
                          CacheDatum >
 #endif
 {
@@ -77,7 +81,7 @@ class AABB_face_graph_triangle_primitive
   typedef AABB_primitive< Id_,
                           Triangle_property_map,
                           Point_property_map,
-                          Tag_true,
+                          OneFaceGraphPerTree,
                           CacheDatum > Base;
 
 public:
@@ -97,6 +101,11 @@ public:
   */
   typedef boost::graph_traits<FaceGraph>::face_descriptor Id;
   /// @}
+
+  /*!
+  If `OneFaceGraphPerTree` is CGAL::Tag_true, constructs a `Shared_data` object from a reference to the polyhedon `graph`.
+  */
+  static unspecified_type construct_shared_data( FaceGraph& graph );
   #endif
 
   // constructors
@@ -110,22 +119,14 @@ public:
             Triangle_property_map(&graph),
             Point_property_map(&graph) ){}
 
-  /// For backward-compatibility with AABB_polyhedron_triangle_primitive only.
-  /// `Id_` is `Facet_const_handle` if `FaceGraph` is const and `Facet_handle` otherwise.
-  AABB_face_graph_triangle_primitive(Id_ id)
-    : Base( id,
-            Triangle_property_map(NULL),
-            Point_property_map(NULL) ){}
-
-  static typename Base::Shared_data construct_shared_data( FaceGraph& graph )
+  /// \internal
+  typedef internal::Cstr_shared_data<FaceGraph, Base, Triangle_property_map, Point_property_map, OneFaceGraphPerTree> Cstr_shared_data;
+  /// \internal
+  static
+  typename Cstr_shared_data::Shared_data
+  construct_shared_data(FaceGraph& graph)
   {
-    return Base::construct_shared_data(Triangle_property_map(&graph), Point_property_map(&graph));
-  }
-
-  /// For backward-compatibility with AABB_polyhedron_triangle_primitive only
-  static typename Base::Shared_data construct_shared_data()
-  {
-    return Base::construct_shared_data(Triangle_property_map(NULL), Point_property_map(NULL));
+    return Cstr_shared_data::construct_shared_data(graph);
   }
 
 };
