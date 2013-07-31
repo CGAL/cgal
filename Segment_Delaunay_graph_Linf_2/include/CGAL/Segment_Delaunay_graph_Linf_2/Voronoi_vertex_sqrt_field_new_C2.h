@@ -1653,6 +1653,7 @@ private:
     bool is_t_endp_of_r (false);
     bool is_p_endp_of_q (false);
     bool is_p_endp_of_r (false);
+    bool is_q_endp_of_r (false);
     bool is_t_endp_of_p (false);
 
     if (p.is_segment()) {
@@ -1675,6 +1676,9 @@ private:
       is_t_endp_of_r = is_endpoint_of(t,r);
       if (p.is_point()) {
         is_p_endp_of_r = is_endpoint_of(p,r);
+      }
+      if (q.is_point()) {
+        is_q_endp_of_r = is_endpoint_of(q,r);
       }
     }
 
@@ -2096,6 +2100,8 @@ private:
             }
           } // end of pqsamey case
         } // end of case: pqsamex or pqsamey
+        // check for case where p or q are endpoints of r
+
       }
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
