@@ -94,6 +94,31 @@ struct Weight {
   }
 };
 
+struct Tracer {
+
+  template <typename OutputIteratorValueType, typename OutputIterator>
+  OutputIterator
+  trace(int n,
+        const std::vector<int>& lambda, 
+        int i, 
+        int k, 
+        OutputIterator out)
+  {
+    CGAL_assertion(i >= 0 && i < n);
+    CGAL_assertion(k >= 0 && k < n);
+
+    if(i + 1 == k) { return out; }
+
+    int la = lambda[i*n + k];
+    CGAL_assertion(la >= 0 && la < n);
+
+    out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
+    *out++ = OutputIteratorValueType(i, la, k);
+    out = trace<OutputIteratorValueType>(n, lambda, la, k, out);
+    return out;
+  }
+};
+
 template<typename K>
 class Triangulate_hole_polyline_DT 
 {
@@ -130,28 +155,6 @@ private:
 public:
 
   template <typename OutputIteratorValueType, typename OutputIterator>
-  OutputIterator
-  trace(int n,
-        const std::vector<int>& lambda, 
-        int i, 
-        int k, 
-        OutputIterator out)
-  {
-    if(i + 1 == k) { return out; }
-
-    if(i+2 == k){
-      *out++ = OutputIteratorValueType(i%n, (i+1)%n, k%n);
-    } 
-    else {
-      int la = lambda[i*n + k];
-      out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
-      *out++ = OutputIteratorValueType(i%n, la%n, k%n);
-      out = trace<OutputIteratorValueType>(n, lambda, la, k, out);
-    }
-    return out;
-  }
-
-  template <typename OutputIteratorValueType, typename OutputIterator>
   OutputIterator 
   triangulate(const Polyline_3& P, 
               const Polyline_3& Q,
@@ -179,7 +182,7 @@ public:
       if(v0_id == 0 && v1_id == n-1) { v0_vn_edge = eb; }
       // check whether the edge is border edge
       if(v0_id + 1 == v1_id) { edge_exist[v0_id] = true; }
-      else if(v0_id == 0 && v1_id == P.size() -2) { edge_exist[v1_id] = true; }
+      else if(v0_id == 0 && v1_id == n-1) { edge_exist[v1_id] = true; }
     }
 
     int not_exists = 0;
@@ -221,9 +224,10 @@ public:
       return out;
     }
 
-    return trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+    return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
 
+private:
   // this also may return infinite vertex
   std::pair<int, int> // <vertex id, index in cell>
   get_facet_remaining_vertex(Cell_handle ch, Facet f, int v0, int v1) 
@@ -346,30 +350,6 @@ class Triangulate_hole_polyline {
 public:
   typedef typename K::Point_3 Point_3;
   typedef std::vector<Point_3> Polyline_3;
-
-private:
-
-  template <typename OutputIteratorValueType, typename OutputIterator>
-  OutputIterator
-  trace(int n,
-        const std::vector<int>& lambda, 
-        int i, 
-        int k, 
-        OutputIterator out)
-  {
-    if(i + 1 == k) { return out; }
-
-    if(i+2 == k){
-      *out++ = OutputIteratorValueType(i%n, (i+1)%n, k%n);
-    } 
-    else {
-      int la = lambda[i*n + k];
-      out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
-      *out++ = OutputIteratorValueType(i%n, la%n, k%n);
-      out = trace<OutputIteratorValueType>(n, lambda, la, k, out);
-    }
-    return out;
-  }
   
 public:
 
@@ -441,7 +421,7 @@ public:
       return out;
     }
 
-    return  trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+    return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
 };
 
