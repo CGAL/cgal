@@ -131,7 +131,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point from which the visibility region is computed
 \param halfedge the halfedge on which `q` is located
 \param out_arr is the output arrangement  
-\pre `half_edge` is a half edge of  `this->arr()`
+\pre `halfedge` is a half edge of  `this->arr()`
 \pre `q` is on halfedge
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
