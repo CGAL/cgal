@@ -4279,13 +4279,13 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
           (he1->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
         Arr_parameter_space ps_x_he1_tgt =
           parameter_space_in_x(he1->curve(), he1_tgt_end);
-        if (ps_x_he1_tgt == ARR_RIGHT_BOUNDARY) index_min2 =- 1;
+        if (ps_x_he1_tgt == ARR_RIGHT_BOUNDARY) index_min2 -= 1;
 
         Arr_curve_end he2_tgt_end =
           (he2->direction() == ARR_LEFT_TO_RIGHT ? ARR_MAX_END : ARR_MIN_END);
         Arr_parameter_space ps_x_he2_tgt =
           parameter_space_in_x(he2->curve(), he2_tgt_end);
-        if (ps_x_he2_tgt == ARR_RIGHT_BOUNDARY) index_min1 =- 1;
+        if (ps_x_he2_tgt == ARR_RIGHT_BOUNDARY) index_min1 -= 1;
 
         swap_he1_he2 =
           (index_min1 > index_min2) ? false :
