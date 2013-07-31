@@ -127,7 +127,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` is in the interior or on the boundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face& f, Output_Arrangement_2& out_arr); 
+  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
 
 /*! 
 Computes the visibility region for the given query point `q` that is on the side of `halfedge`.
@@ -139,7 +139,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` is on halfedge
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Halfedge& halfedge, Output_Arrangement_2& out_arr); 
+  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr);
 
 /// @}
 

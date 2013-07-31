@@ -71,143 +71,104 @@ public:
 
     //functions
     Naive_visibility_2(const Arrangement_2 &arr):arr(arr), attach_tag(true) {}
-
     Naive_visibility_2(): attach_tag(false) {}
 
 
-    void visibility_region(const Point_2 &q, const Halfedge &edge, Arrangement_2 &out_arr) {
+    void visibility_region(const Point_2 &q, const Halfedge_const_handle &edge, Arrangement_2 &out_arr) {
+        Arrangement_2 arr_c = arr ; //copy of arr;
+        Halfedge_const_handle eh_c; //copy of edge;
+        for (Halfedge_const_handle eh = arr_c.edges_begin(); eh != arr_c.edges_begin(); eh++) {
+            if (eh->source()->point() == edge-> source()->point() && eh->target()->point() == edge->target()->point()) {
+                eh_c = eh;
+                break;
+            }
+        }
+        Halfedge a;
+        if (eh_c->source()->point() == q) {
+            Vertex_const_handle vh = eh_c->target();
+            arr_c.remove_edge(eh_c->prev());
+            arr_c.remove_edge(eh_c);
 
-    }
-
-    void visibility_region(const Point_2 &query, Face_const_handle fh, Arrangement_2 &out_arr) {
-        visibility_region_impl(query, fh, out_arr, Regularization_tag());
-
-    }
-
-    void visibility_region_impl(const Point_2 &query, Face_const_handle fh, Arrangement_2 &out_arr, CGAL::Tag_true) {
-        std::vector<Vertex_const_handle> vertices;                    //all vertices of the face.
-        std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
-        //preprocess the face
-        input_face(fh, vertices, edges, query);
-        //initiation of vision ray
-        Vector_2 dir;
-        if (Direction_2(-1, 0) < Direction_2(Vector_2(query, (*vertices.rbegin())->point())))
-        {
-            dir = Vector_2(1, 0) + Vector_2(query, (*vertices.rbegin())->point());
         }
         else {
-            dir = Vector_2(0, -1);
-        }
-        Ray_2 init_vision_ray(query, dir);
-
-        //initiation of active_edges
-        typename std::vector<Halfedge_const_handle>::iterator iter1;
-        for (iter1 = edges.begin(); iter1 != edges.end(); iter1++)
-        {
-            insert_halfedge(active_edges, init_vision_ray, *iter1);
-        }
-
-        //angular sweep
-        std::vector<Point_2> polygon;
-        Ray_2 curr_vision_ray = init_vision_ray;
-        typename std::vector<Vertex_const_handle>::iterator vit = vertices.begin(), begin_it, end_it;
-        Halfedge_const_handle closest_edge;
-        bool is_init_empty = active_edges.empty();
-        while (vit != vertices.end())
-        {
-            if (active_edges.empty())
-            {
-                begin_it = vit;
-                end_it = vit;
-                curr_vision_ray= Ray_2(query, (*begin_it)->point());
-                Direction_2 d1(curr_vision_ray), d2;
-                do {
-                    d2 = Direction_2(Ray_2(query, (*end_it)->point()));
-                    if (d1 != d2) break;
-                } while (++end_it != vertices.end());
-                add_edges(begin_it, end_it, active_edges, curr_vision_ray);
-
-                //since active_edges is empty, that means adding new edges will bring in an unbounded edge to arrangement.
-                closest_edge = active_edges[0];
-                remove_edges(active_edges, curr_vision_ray);
-
-                if (active_edges.empty()) {
-                    //this means in input, there is no edge that intersects curr_vision_ray
-                    //except those collinear ones.
-                    //because one unbounded ray has been inserted before,
-                    //we don't need to do anything here.
-                }
-                else {
-                    //add new edge;
-                    Point_2 p1 = intersection_point(curr_vision_ray, closest_edge);
-                    Point_2 p2 = intersection_point(curr_vision_ray, active_edges[0]);
-                    update_visibility(p1, polygon, out_arr);
-                    update_visibility(p2, polygon, out_arr);
-
-                }
+            if (eh_c->target()->point() == q) {
+                arr_c.remove_edge(eh_c->next());
+                arr_c.remove_edge(eh_c);
             }
             else {
-                closest_edge = active_edges[0];
-                begin_it = vit;  //all vertices between begin_it and end_it(not included) are collinear with query point.
-                end_it = vit;
-                curr_vision_ray = Ray_2(query, (*begin_it)->point());
-                Direction_2 d1(curr_vision_ray), d2;
-                do {
-                    d2 = Direction_2(Ray_2(query, (*end_it)->point()));
-                    if (d1 != d2) break;
-                } while (++end_it != vertices.end());
-                add_edges(begin_it, end_it, active_edges, curr_vision_ray);
+                bool is_outbound = eh_c->twin()->face()->is_unbounded();
+                Point_2 source = eh_c->source()->point();
+                Point_2 target = eh_c->target()->point();
+                Halfedge_const_handle eh1 = eh_c->next();
+                arr_c.remove_edge(eh_c);
+                Face_const_handle fh = eh1->face();
 
-                if (closest_edge != active_edges[0])
-                {
-                    //add new edge;
-                    Point_2 p1 = intersection_point(curr_vision_ray, closest_edge);
-                    Point_2 p2 = intersection_point(curr_vision_ray, active_edges[0]);
-                    update_visibility(p1, polygon, out_arr);
-                    update_visibility(p2, polygon, out_arr);
+                std::vector<Point_2> polygon;
+                visibility_region_impl(q, fh, polygon);
 
-                }
-
-                closest_edge = active_edges[0];
-                remove_edges(active_edges, curr_vision_ray);
-
-                if (active_edges.empty()) {
-                    //add an unbounded edge
-//todo                    CGAL::insert_curve(out_arr, Ray_2((*begin_it)->point(), Direction_2(curr_vision_ray)));
+                if (is_outbound) {
+                    build_arr(polygon, out_arr);
                 }
                 else {
-                    if (closest_edge != active_edges[0]) {
-                        //add new edge;
-                        Point_2 p1 = intersection_point(curr_vision_ray, closest_edge);
-                        Point_2 p2 = intersection_point(curr_vision_ray, active_edges[0]);
-                        update_visibility(p1, polygon, out_arr);
-                        update_visibility(p2, polygon, out_arr);
+                    int source_i = -1, target_i = -1;
+                    for (int i = 0; i != polygon.size(); i++) {
+                        if ( polygon[i]== source ) {
+                            source_i = i;
+                        }
+                        else if ( polygon[i] == target ) {
+                            target_i = i;
+                        }
+
                     }
+                    int small_i, big_i;
+                    if ( source_i < target_i )
+                    {
+                        int next_i = source_i + 1;
+                        while (CGAL::collinear(source, polygon[next_i], target))
+                            next_i++;
+                        if (CGAL::left_turn(source, target, polygon[next_i])) {
+
+                        }
+                    }
+                    else {
+                        small_i = target_i;
+                        big_i   = source_i;
+                    }
+                    if (CGAL::right_turn())
+
                 }
+
             }
-            vit = end_it;
         }
-        if (!is_init_empty) {
-            CGAL::insert(out_arr, Segment_2(polygon[0], polygon.back()));
-        }
+
+
     }
 
-    void visibility_region_impl(const Point_2 &query, Face_const_handle fh, Arrangement_2 &out_arr, CGAL::Tag_false) {
+    void visibility_region(const Point_2 &q, Face_const_handle fh, Arrangement_2 &out_arr) {
+        std::vector<Point_2> polygon;
+        visibility_region_impl(q, fh, polygon);
+        build_arr(polygon, out_arr);
+    }
+
+
+    /*!
+      obtain the vertices of visibility into polygon. these vertices can be used to build output arrangement by build_arr().
+      */
+    void visibility_region_impl(const Point_2& q, Face_const_handle fh, std::vector<Point_2>& polygon) {
         std::vector<Vertex_const_handle> vertices;                    //all vertices of the face.
         std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
         //preprocess the face
-        input_face(fh, vertices, edges, query);
+        input_face(fh, vertices, edges, q);
         //initiation of vision ray
         Vector_2 dir;
-        if (Direction_2(-1, 0) < Direction_2(Vector_2(query, (*vertices.rbegin())->point())))
+        if (Direction_2(-1, 0) < Direction_2(Vector_2(q, (*vertices.rbegin())->point())))
         {
-            dir = Vector_2(1, 0) + Vector_2(query, (*vertices.rbegin())->point());
+            dir = Vector_2(1, 0) + Vector_2(q, (*vertices.rbegin())->point());
         }
         else {
             dir = Vector_2(0, -1);
         }
-        Ray_2 init_vision_ray(query, dir);
-
+        Ray_2 init_vision_ray(q, dir);
         //initiation of active_edges
         typename std::vector<Halfedge_const_handle>::iterator iter1;
         for (iter1 = edges.begin(); iter1 != edges.end(); iter1++)
@@ -215,8 +176,7 @@ public:
             insert_halfedge(active_edges, init_vision_ray, *iter1);
         }
 
-        //angular sweep
-        std::vector<Point_2> polygon;
+        //angular sweep begins
         Ray_2 curr_vision_ray = init_vision_ray;
         typename std::vector<Vertex_const_handle>::iterator vit = vertices.begin(), begin_it, end_it;
         Halfedge_const_handle closest_edge;
@@ -227,10 +187,10 @@ public:
             {
                 begin_it = vit;
                 end_it = vit;
-                curr_vision_ray= Ray_2(query, (*begin_it)->point());
+                curr_vision_ray= Ray_2(q, (*begin_it)->point());
                 Direction_2 d1(curr_vision_ray), d2;
                 do {
-                    d2 = Direction_2(Ray_2(query, (*end_it)->point()));
+                    d2 = Direction_2(Ray_2(q, (*end_it)->point()));
                     if (d1 != d2) break;
                 } while (++end_it != vertices.end());
                 add_edges(begin_it, end_it, active_edges, curr_vision_ray);
@@ -250,27 +210,23 @@ public:
                     //we don't need to do anything here.
                 }
                 else {
-                    //add new edge;
-                    //Point_2 p1 = intersection_point(curr_vision_ray, closest_edge);
                     Point_2 p2 = intersection_point(curr_vision_ray, active_edges[0]);
-                    //update_visibility(p1, polygon, out_arr);
-                    update_visibility(p2, polygon, out_arr);
-
+                    update_visibility(p2, polygon);
                 }
             }
             else {
                 Point_2 right_p, left_p, mid_p;
                 begin_it = vit;
-                end_it = vit;  //all vertices between begin_it and end_it(not included) are collinear with query point.
-                curr_vision_ray= Ray_2(query, (*begin_it)->point());
+                end_it = vit;
+                curr_vision_ray= Ray_2(q, (*begin_it)->point());
                 right_p = intersection_point(curr_vision_ray, active_edges[0]);
                 Direction_2 d1(curr_vision_ray), d2;
+                //find end_it such that all vertices between begin_it and end_it(not included) are collinear with query point.
                 do {
-                    d2 = Direction_2(Ray_2(query, (*end_it)->point()));
+                    d2 = Direction_2(Ray_2(q, (*end_it)->point()));
                     if (d1 != d2) break;
                 } while (++end_it != vertices.end());
                 add_edges(begin_it, end_it, active_edges, curr_vision_ray);
-
                 mid_p = intersection_point(curr_vision_ray, active_edges[0]);
                 std::vector<Point_2> collinear_vertices;
                 Intersection_type i_type = needle(active_edges, curr_vision_ray, collinear_vertices);
@@ -279,22 +235,20 @@ public:
                     //todo:this part is not finished.
                     //remove right and collinear;
                     remove_edges(active_edges, curr_vision_ray);
-                    update_visibility(right_p, polygon, out_arr);
-                    update_visibility(mid_p, polygon, out_arr);
+                    update_visibility(right_p, polygon);
+                    update_visibility(mid_p, polygon);
                     //todo CGAL::insert_curve();
                     if (!active_edges.empty()) {
                         left_p = intersection_point(curr_vision_ray, active_edges[0]);
-                        update_visibility(left_p, polygon, out_arr);
+                        update_visibility(left_p, polygon);
                     }
                     break;
                 case CORNER :
                     //remove right and collinear;
                     remove_edges(active_edges, curr_vision_ray);
+                    update_visibility(right_p, polygon);
+                    insert_needle(collinear_vertices, polygon);
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
-                    update_visibility(right_p, polygon, out_arr);
-                    insert_needle(collinear_vertices, polygon, out_arr);
-//                    update_visibility(mid_p, polygon, out_arr);
-//                    update_visibility(left_p, polygon, out_arr);
                     polygon.push_back(left_p);
                     break;
                 case INNER :
@@ -305,9 +259,8 @@ public:
                     }
                     else {
                         left_p = intersection_point(curr_vision_ray, active_edges[0]);
-                        update_visibility(right_p, polygon, out_arr);
-                        insert_needle(collinear_vertices, polygon, out_arr);
-//                        update_visibility(left_p, polygon, out_arr);
+                        update_visibility(right_p, polygon);
+                        insert_needle(collinear_vertices, polygon);
                         polygon.push_back(left_p);
                     }
                     break;
@@ -315,10 +268,12 @@ public:
             }
             vit = end_it;
         }
-        if (!is_init_empty) {
-            CGAL::insert(out_arr, Segment_2(polygon.back(),polygon.front()));
-        }
+//        if (!is_init_empty) {
+//            CGAL::insert(out_arr, Segment_2(polygon.back(),polygon.front()));
+//        }
     }
+
+
 
 
     bool is_attached() {
@@ -329,7 +284,6 @@ public:
         this->arr = arr;
         this->attach_tag = true;
     }
-
     void detach() {
         attach_tag = false;
     }
@@ -452,34 +406,6 @@ private:
     }
 
 
-    //sort vertex vh by the angle between vector<p, v> and positive x-ray.
-    //if the angles are the same, place them in a 'circular' way.
-    //we do this because the output is not regularized, i.e. 1-d needle is reserved in output.
-//    void sort_vertex(vector<Vertex_const_handle>& vertices, Vertex_const_handle vh, const Point_2& p, CGAL::Tag_false)
-//    {
-//        Ray_2 ray(p, vh->point());
-//        typename vector<Vertex_const_handle>::iterator first = vertices.begin();
-//        while (first != vertices.end())
-//        {
-//            Ray_2 r(p, (*first)->point());
-//            Direction_2 d1(r);
-//            if (ray.direction() < d1)
-//                break;
-//            //if angles are the same, then using Isblock() to decide the order of vertices on the view ray.
-//            if (ray.direction() == d1)
-//            {
-//                if (Is_block(vh, ray) && (!Is_block(*first, ray)))
-//                    break;
-//                if (Is_block(vh, ray) && Is_block(*first, ray) && CGAL::compare_distance_to_point(p, vh->point(), (*first)->point()) == CGAL::SMALLER)
-//                    break;
-//                if (!Is_block(vh, ray) && !Is_block(*first, ray) && CGAL::compare_distance_to_point(p, vh->point(), (*first)->point()) == CGAL::LARGER)
-//                    break;
-//            }
-//            ++first;
-//        }
-//        vertices.insert(first, vh);
-//    }
-
     //traverse the face to get all edges and sort vertices in counter-clockwise order.
     void input_face (Face_const_handle fh,
                      std::vector<Vertex_const_handle>& vertices,
@@ -506,23 +432,20 @@ private:
 
 
     //insert new vertice to polygon. before insertion, check if this vertice has been added before.
-    void update_visibility(const Point_2 p, std::vector<Point_2>& polygon, Arrangement_2& arr){
+    void update_visibility(const Point_2 p, std::vector<Point_2>& polygon){
         if (polygon.empty())
             polygon.push_back(p);
         else
         {
-            if (polygon.back() != p){
-                CGAL::insert(arr, Segment_2(polygon.back(), p));
+            if (polygon.back() != p) {
                 polygon.push_back(p);
             }
         }
     }
 
-    void insert_needle(const std::vector<Point_2>& points, std::vector<Point_2>& polygon, Arrangement_2 &arr){
-        if (points.size() > 1) {
-            for (int i = 0; i != points.size()-1; i++) {
-                CGAL::insert(arr, Segment_2(points[i], points[i+1]));
-            }
+    void insert_needle(const std::vector<Point_2>& points, std::vector<Point_2>& polygon){
+        for (int i = 0; i != points.size(); i++) {
+            update_visibility(points[i], polygon);
         }
     }
 
@@ -579,8 +502,6 @@ private:
                 eit++;
             }
         }
-
-
     }
 
     bool is_on_ray(const Ray_2& r, const Point_2& p) {
@@ -650,6 +571,11 @@ private:
         } while (++curr != edges.end());
         return UNBOUNDED;
     }
+
+    void build_arr(const std::vector<Point_2>& polygon, Arrangement& arr ) {
+
+    }
+
 //debug
     void print_edges(std::vector<Halfedge_const_handle>& edges){
         for (int i = 0; i != edges.size(); i++) {
