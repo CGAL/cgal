@@ -1,9 +1,24 @@
-/*
- * Author: Francisc Bungiu, Kan Huang 
- * E-mail: fbungiu@gmail.com, huangkandiy@gmail.com
- * Description: This file contains useful functions for testing the 
- * 				Visibility_2 package, such as comparing two Arrangements
- */
+// Copyright (c) 2013 Technical University Braunschweig (Germany).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s):  Kan Huang <huangkandiy@gmail.com>
+//             Francisc Bungiu <fbungiu@gmail.com>
+//             Michael Hemmer <michael.hemmer@cgal.org>
 
 #ifndef CGAL_TEST_UTILS_H
 #define CGAL_TEST_UTILS_H
@@ -14,7 +29,8 @@
 #include <iostream>
 #include <string>
 #include <CGAL/Gmpq.h>
-#include <set>
+#include <CGAL/Timer.h>
+#include <CGAL/Arr_naive_point_location.h>
 
 namespace CGAL {
 
@@ -73,7 +89,6 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
   typedef typename Geometry_traits_2::Point_2	          Point_2;
 
-
   // First make sure they have the same size
   if (arr1.number_of_vertices() != arr2.number_of_vertices()) {
     return false;
@@ -91,7 +106,6 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
   // currently checking for closed for visibility region 
   assert(arr1.number_of_faces() == 2);
   assert(arr2.number_of_faces() == 2);
-
 
   // get unique halfedge 
   Halfedge_handle he_start_1 = get_initial_halfedge(arr1);
@@ -116,7 +130,6 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
   }
   assert(he_run_2 == he_start_2); 
 
-
   // run on second loop and compare sources. 
   he_start_1 =  he_start_1->twin(); 
   he_start_2 =  he_start_2->twin(); 
@@ -132,55 +145,8 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
     he_run_2 = he_run_2->next(); 
   }
   assert(he_run_2 == he_start_2); 
-
-  
   return true; 
-  
-//   Edge_const_iterator eit_fst, eit_snd;
-//   std::vector<Halfedge> halfedges_fst, halfedges_snd;
-
-//   for (eit_fst = arr1.edges_begin(), eit_snd = arr2.edges_begin() ; 
-//        eit_fst != arr1.edges_end(), eit_snd != arr2.edges_end() ; 
-//        ++eit_fst, ++eit_snd) {
-
-//     halfedges_fst.push_back(*eit_fst);
-//     halfedges_snd.push_back(*eit_snd);
-//   }
-
-//   // Compare the two vectors
-//   for (unsigned int i = 0 ; i < halfedges_fst.size() ; i++) {
-//     Halfedge he_curr = halfedges_fst[i];
-//     bool found = false;
-//     for (unsigned int j = 0 ; j < halfedges_snd.size() ; j++) {
-//       if (he_curr.source()->point() == halfedges_snd[j].source()->point() &&
-//           he_curr.target()->point() == halfedges_snd[j].target()->point()) {
-//         found = true;
-//         break;
-//       }
-//     }
-//     if (found == false) {
-//       return false;
-//     }
-//   }
-
-//   for (unsigned int i = 0 ; i < halfedges_snd.size() ; i++) {
-//     Halfedge he_curr = halfedges_snd[i];
-//     bool found = false;
-//     for (unsigned int j = 0 ; j < halfedges_fst.size() ; j++) {
-//       if (he_curr.source()->point() == halfedges_fst[j].source()->point() &&
-//           he_curr.target()->point() == halfedges_fst[j].target()->point()) {
-//         found = true;
-//         break;
-//       }
-//     }
-//     if (found == false) {
-//       return false;
-//     }
-//   }
-//   return true;
 }
-
-
 
 template<class Number_type>
 Number_type string2num(const std::string& s) {
@@ -235,7 +201,8 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
       std::string n1, n2;
       std::istringstream iss(line);
       iss>> n1 >> n2;
-      points.push_back(Point_2(string2num<Number_type>(n1), string2num<Number_type>(n2)));
+      points.push_back(Point_2(string2num<Number_type>(n1), 
+                               string2num<Number_type>(n2)));
     }
     int number_of_edges;
     input >> number_of_edges;
@@ -277,7 +244,8 @@ void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
         std::string n1, n2;
         std::istringstream iss(line);
         iss >> n1 >> n2;
-        points.push_back(Point_2(string2num<Number_type>(n1), string2num<Number_type>(n2)));
+        points.push_back(Point_2(string2num<Number_type>(n1),   
+                                 string2num<Number_type>(n2)));
       }
       for (int j = 0; j != number_of_vertex-1; j++) {
 
@@ -295,14 +263,16 @@ void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
 }
 
 template<typename Arrangement_2>
-bool compare_arr_by_edges(const Arrangement_2& arr1, const Arrangement_2& arr2) {
+bool compare_arr_by_edges(const Arrangement_2& arr1, const Arrangement_2& arr2){
   std::set<std::string> s1;
   typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
-  for (Edge_const_iterator eit = arr1.edges_begin(); eit != arr1.edges_end(); ++eit) {
+  for (Edge_const_iterator eit = arr1.edges_begin(); 
+                           eit != arr1.edges_end(); ++eit) {
     s1.insert(edge2string(eit->target()->point(), eit->source()->point()));
   }
   std::set<std::string> s2;
-  for (Edge_const_iterator eit = arr2.edges_begin(); eit != arr2.edges_end(); ++eit) {
+  for (Edge_const_iterator eit = arr2.edges_begin();  
+                           eit != arr2.edges_end(); ++eit) {
     s2.insert(edge2string(eit->target()->point(), eit->source()->point()));
   }
   return s1==s2;
@@ -331,10 +301,162 @@ std::string edge2string(const Point_2& p1, const Point_2& p2) {
     q1 = p2;
     q2 = p1;
   }
-  return num2string(q1.x()) + num2string(q1.y()) + num2string(q2.x()) + num2string(q2.y());
+  return num2string(q1.x()) + num2string(q1.y()) 
+  + num2string(q2.x()) + num2string(q2.y());
 }
 
+enum QueryChoice {VERTEX, EDGE, FACE};
 
+template<class Point_2, class Number_type> 
+Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
+
+  Number_type min_x, max_x;
+  Number_type y0, y1, x0, x1;
+
+  if (p.x() < q.x()) {
+    min_x = p.x();
+    max_x = q.x();
+    x0 = p.x();
+    x1 = q.x();
+    y0 = p.y();
+    y1 = q.y();
+  }
+  else {
+    min_x = q.x();
+    max_x = p.x();
+    x0 = q.x();
+    x1 = p.x();
+    y0 = q.y();
+    y1 = p.y();
+  }
+
+  Number_type x_normalized = rand()/static_cast<Number_type>(RAND_MAX); 
+  Number_type x = min_x + static_cast<Number_type>(x_normalized*(max_x - min_x));
+
+  Number_type y = y0 + (y1 - y0)*(x - x0)/(x1 - x0);
+  return Point_2(x, y);
+}
+
+template<class Arrangement_2> 
+bool is_inside_face(const Arrangement_2 &arr, 
+                    const typename Arrangement_2::Face_const_handle face,
+                    const typename Arrangement_2::Geometry_traits_2::Point_2 &q) {
+
+  typedef CGAL::Arr_naive_point_location<Arrangement_2> Naive_pl;
+  Naive_pl naive_pl(arr);
+
+  // Perform the point-location query.
+  CGAL::Object obj = naive_pl.locate(q);
+
+  // Print the result.
+  typename Arrangement_2::Face_const_handle f;
+
+  if (CGAL::assign (f, obj)) {
+    // q is located inside a face:
+    if (!f->is_unbounded()) {
+      if (f == face) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+template<class Visibility_2_fst, class Visibility_2_snd, class Arrangement_2>
+void benchmark(Visibility_2_fst &visibility_fst, 
+                             Visibility_2_snd &visibility_snd,
+                             const Arrangement_2 &arr, 
+                             typename Arrangement_2::Face_const_handle face,
+                             QueryChoice choice) {
+
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
+                                                  Ccb_halfedge_const_circulator;
+  typedef typename Geometry_traits_2::Point_2           Point_2;
+  typedef typename Geometry_traits_2::FT                Number_type;
+  typedef Timer Benchmark_timer;
+
+  std::cout << "here" << std::endl;
+  Benchmark_timer timer;
+  timer.start();
+  visibility_fst.attach(arr);
+  timer.stop();
+  std::cout << "Time to attach to first object: " << timer.time() << std::endl;
+
+  timer.reset();
+  timer.start();
+  visibility_snd.attach(arr);
+  timer.stop();
+  std::cout << "Time to attach to second object: " << timer.time() << std::endl;
+
+  Ccb_halfedge_const_circulator circ = face->outer_ccb();
+  Ccb_halfedge_const_circulator curr = circ;
+
+  do {
+    Halfedge_const_handle he = curr;
+    Point_2 curr_query_pt;
+    bool selected_query_pt = true;
+    switch (choice) {
+      case VERTEX:
+        curr_query_pt = he->target()->point();        
+        break;
+      case EDGE:
+        curr_query_pt = random_linear_interpolation<Point_2, Number_type>
+                      (he->source()->point(), he->target()->point());
+        break;
+      case FACE:
+        Ccb_halfedge_const_circulator curr_next = circ;
+        Halfedge_const_handle he_next = curr_next;
+        Point_2 p1 = he->source()->point();
+        Point_2 p2 = he->target()->point();
+        Point_2 p3 = he_next->target()->point();
+        Point_2 avg((p1.x() + p2.x() + p3.x())/3, (p1.y() + p2.y() + p3.y())/3);
+        if (is_inside_face<Arrangement_2>(arr, face, avg)) {
+          std::cout << "Inside face" << std::endl;
+          curr_query_pt = avg;
+        }
+        else {
+          selected_query_pt = false;
+        }
+        break;
+    }
+    if (!selected_query_pt) {
+      curr++;
+      continue;
+    }
+    std::cout << "Running with qpoint: " << curr_query_pt << std::endl;
+    Arrangement_2 out_arr_fst, out_arr_snd;
+    timer.reset();
+    timer.start();
+
+    if (choice == FACE) {
+      visibility_fst.visibility_region(curr_query_pt, face, out_arr_fst);
+    }
+    else {
+      visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
+    }
+    timer.stop();
+
+    std::cout << "Time to compute visibility region using first object for " 
+              << curr_query_pt << " : " << timer.time() << std::endl;
+    timer.reset();
+
+    timer.start();
+    if (choice == FACE) {
+      visibility_snd.visibility_region(curr_query_pt, face, out_arr_snd);
+    }
+    else {
+      visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
+    }
+    timer.stop();
+    
+    std::cout << "Time to compute visibility region using second object for " 
+              << curr_query_pt << " : " << timer.time() << std::endl;
+    assert(true == (CGAL::test_are_equal<Arrangement_2>
+                          (out_arr_fst, out_arr_snd)));  
+  } while (++curr != circ);
+}
 
 } // end namespace CGAL
 
