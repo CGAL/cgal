@@ -101,6 +101,9 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   typedef typename Ovl_traits_2::Cell_handle_blue     Cell_handle_blue;
   typedef typename Ovl_traits_2::Optional_cell_blue   Optional_cell_blue;
 
+  CGAL_USE_TYPE(Optional_cell_red);
+  CGAL_USE_TYPE(Optional_cell_blue);
+
   // The result arrangement cannot be on of the input arrangements.
   CGAL_precondition(((void *)(&arr_res) != (void *)(&arr1)) &&
                     ((void *)(&arr_res) != (void *)(&arr2)));
