@@ -127,7 +127,7 @@ public slots:
 
       if(patch.empty()) {
         print_message("Warning: generating patch is not successful, please try it without 'Delaunay Triangulation'!");
-        return;
+        continue;
       }
       Polyhedron* poly = new Polyhedron;
       Polyhedron_builder<Polyhedron::HalfedgeDS> patch_builder(&patch, &(*it));
