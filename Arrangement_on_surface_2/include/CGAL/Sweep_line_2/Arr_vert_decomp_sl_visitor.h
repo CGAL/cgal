@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
@@ -90,7 +90,7 @@ public:
     invalid_vh(),
     m_out (oi)
   {}
-  
+
   /* A notification issued before the sweep process starts. */
   void before_sweep ();
 
@@ -178,9 +178,9 @@ bool Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_handle_event
   // event point. If the number of right subcurves associated with the
   // event is n_right, we decrement the iterator n_right times, then
   // check if it is possible to further decrement it.
-  Status_line_iterator  below = above;
-  const int             n_right = event->number_of_right_curves();
-  int                   k;
+  Status_line_iterator below = above;
+  const size_t n_right = event->number_of_right_curves();
+  size_t k;
 
   for (k = 0; k < n_right; k++)
     --below;
@@ -194,7 +194,7 @@ bool Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_handle_event
       // We first check if the two vertices are connected (by a vertical
       // segment) - if so, they "see" empty features.
       bool          vert_connected = false;
-        
+
       if (! vh->is_isolated())
       {
         Halfedge_around_vertex_const_circulator   circ, first;
@@ -254,7 +254,7 @@ bool Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_handle_event
         // We first check if the two vertices are connected (by a vertical
         // segment) - if so, they "see" empty features.
         bool          vert_connected = false;
-        
+
         if (! vh->is_isolated())
         {
           Halfedge_around_vertex_const_circulator   circ, first;
@@ -313,7 +313,7 @@ bool Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_handle_event
 template <class Hlpr, class OutIt>
 void Arr_vert_decomp_sl_visitor<Hlpr, OutIt>::after_sweep ()
 {
-  // Create an entry for the last vertex (the xy-largest one). 
+  // Create an entry for the last vertex (the xy-largest one).
   if (m_prev_vh != invalid_vh)
   {
     *(*m_out) = Vert_entry (m_prev_vh, Vert_pair (m_prev_obj_below,
