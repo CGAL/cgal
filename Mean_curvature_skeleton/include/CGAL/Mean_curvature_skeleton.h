@@ -802,17 +802,14 @@ public:
   int collapse_edges(Constrains_map& constrains_map)
   {
     std::vector<edge_descriptor> edges;
-    edges.resize(boost::num_edges(*polyhedron));
+    edges.reserve(boost::num_edges(*polyhedron));
     edge_iterator eb, ee;
-    int i = 0;
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
-    {
-      edges[i] = *eb;
-      i++;
-    }
+
+    boost::tie(eb, ee) = boost::edges(*polyhedron);
+    std::copy(eb, ee, std::back_inserter( edges ) );
 
     int cnt = 0;
-    for (i = 0; i < edges.size(); i++)
+    for (int i = 0; i < edges.size(); i++)
     {
       edge_descriptor ed = edges[i];
       if (constrains_map.is_constrained(ed))
