@@ -31,7 +31,7 @@ namespace CGAL {
 
 namespace Visibility_2 {
 
-template<class Arrangement_2, class Regularization_tag> 
+template<class Arrangement_2, class RegularizationTag> 
 class Simple_visibility_2 {
 
 public:
@@ -39,6 +39,7 @@ public:
   // Currently only consider with same type for both
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
+  typedef RegularizationTag                             Regularization_tag;
 
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
