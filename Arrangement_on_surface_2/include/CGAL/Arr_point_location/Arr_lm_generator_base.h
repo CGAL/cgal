@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 
@@ -41,8 +41,8 @@ namespace CGAL {
 * manner(i.e., it rebuilds the search structure for whenever a small change takes
 * place in the arrangement). It serves as a base class for some of the generator
 * classes.
-* The classes that inherite from it must implement at least one virtual 
-* function called "void _create_point_list(Point_list &)" which 
+* The classes that inherite from it must implement at least one virtual
+* function called "void _create_point_list(Point_list &)" which
 * actually creates the list of landmarks.
 */
 template <typename Arrangement_,
@@ -61,7 +61,7 @@ public:
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator 
+  typedef typename Arrangement_2::Ccb_halfedge_circulator
                                                     Ccb_halfedge_circulator;
 
   typedef typename Arrangement_2::Point_2               Point_2;
@@ -96,8 +96,8 @@ protected:
   template<typename T>
   PL_result_type pl_make_result(T t) { return PL_result::make_result(t); }
   inline PL_result_type pl_default_result() { return PL_result::default_result(); }
-  
-public: 
+
+public:
   bool is_empty() const { return nn.is_empty(); }
 
 private:
@@ -127,7 +127,7 @@ public:
   virtual void build_landmark_set ()
   {
     // Create the landmark points.
-    NN_Points_set     nn_points; 
+    NN_Points_set     nn_points;
 
     _create_nn_points_set(nn_points);
 
@@ -156,7 +156,7 @@ public:
    *                    arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
-  virtual Point_2 closest_landmark(Point_2 p, PL_result_type& obj)
+  virtual Point_2 closest_landmark(const Point_2& p, PL_result_type& obj)
   {
     CGAL_assertion(updated);
     return (nn.find_nearest_neighbor(p, obj));
@@ -165,7 +165,7 @@ public:
   /// \name Overloaded observer functions on global changes.
   //@{
 
-  /*! 
+  /*!
    * Notification before the arrangement is assigned with another
    * arrangement.
    * \param arr The arrangement to be copied.
@@ -182,12 +182,12 @@ public:
    * arrangement.
    */
   virtual void after_assign ()
-  { 
+  {
     this->build_landmark_set();
     ignore_notifications = false;
   }
 
-  /*! 
+  /*!
    * Notification before the observer is attached to an arrangement.
    * \param arr The arrangement we are about to attach the observer to.
    */
@@ -207,7 +207,7 @@ public:
     ignore_notifications = false;
   }
 
-  /*! 
+  /*!
    * Notification before the observer is detached from the arrangement.
    */
   virtual void before_detach ()
@@ -220,7 +220,7 @@ public:
    * \param u A handle to the unbounded face.
    */
   virtual void after_clear ()
-  { 
+  {
     this->clear_landmark_set();
     this->build_landmark_set();
   }
@@ -344,12 +344,12 @@ protected:
 
   /*!
    * This function creates the list of landmarks with their location.
-   * This is a pure virtual function, and the class that inherites from 
+   * This is a pure virtual function, and the class that inherites from
    * this generator must implement it.
    */
   virtual void _create_points_set (Points_set &) = 0;
 
-  virtual void _create_nn_points_set (NN_Points_set &nn_points) 
+  virtual void _create_nn_points_set (NN_Points_set &nn_points)
   {
     Points_set           points;
     Pairs_set            pairs;
@@ -371,7 +371,7 @@ protected:
     Pairs_iterator   itr;
 
     for (itr = pairs.begin(); itr != pairs.end(); ++itr) {
-      NN_Point_2  np(itr->first, itr->second); 
+      NN_Point_2  np(itr->first, itr->second);
       nn_points.push_back(np);
     }
   }

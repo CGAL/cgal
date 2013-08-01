@@ -50,7 +50,7 @@ public:
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator 
+  typedef typename Arrangement_2::Ccb_halfedge_circulator
                                                         Ccb_halfedge_circulator;
 
   typedef typename Geometry_traits_2::Approximate_number_type
@@ -63,7 +63,7 @@ private:
                                                         Base;
   typedef Arr_grid_landmarks_generator<Arrangement_2, Nearest_neighbor>
                                                         Self;
-  
+
 protected:
   typedef typename Base::Points_set                     Points_set;
   typedef typename Base::PL_result_type                 PL_result_type;
@@ -92,7 +92,7 @@ private:
   /*! Assignment operator - not supported. */
   Self& operator=(const Self&);
 
-public: 
+public:
   /*! Constructor. */
   Arr_grid_landmarks_generator(const Arrangement_2& arr) :
     Base(arr),
@@ -112,7 +112,7 @@ public:
     m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
     build_landmark_set();//this->
   }
-  
+
   /*!
    * Create the landmarks set (choosing the landmarks),
    * and store them in the nearest neighbor search structure.
@@ -120,7 +120,7 @@ public:
   virtual void build_landmark_set()
   {
     // Create a set of points on a grid.
-    Points_set    points; 
+    Points_set    points;
     _create_points_set(points);
     // Locate the landmarks in the arrangement using batched point-location
     // global function. Note that the resulting pairs are returned sorted by
@@ -161,14 +161,14 @@ public:
       i = 0;
     else if (CGAL::compare(qx, x_max) == LARGER)
       i = sqrt_n - 1;
-    else 
+    else
       i = static_cast<int>(((qx - x_min) / step_x) + 0.5);
 
     if (CGAL::compare(qy, y_min) == SMALLER)
       j = 0;
     else if (CGAL::compare(qy, y_max) == LARGER)
       j = sqrt_n - 1;
-    else 
+    else
       j = static_cast<int>(((qy - y_min) / step_y) + 0.5);
 
     index = sqrt_n * i + j;
@@ -205,7 +205,7 @@ protected:
 
     ANT                      x, y;
     Vertex_const_iterator    left, right, top, bottom;
-    
+
     left = right = top = bottom = vit;
 
     for (++vit; vit != arr->vertices_end(); ++vit)
