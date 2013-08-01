@@ -11,19 +11,19 @@ The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space. With the hel
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
-\tparam Regularization_tag indicates whether the output should be regularized. It can be
+\tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false.
 
 
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Simple_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 
 
 */
-template <typename Arrangement_2, typename Regularization_tag>
+template <typename Arrangement_2, typename RegularizationTag>
 class Preprocessed_rotational_sweep_visibility_2 {
 public:
 
@@ -63,7 +63,7 @@ public:
   /*! 
     Tag identifying whether the regularized visibility area is computed. 
   */
-  typedef Regularization_tag Regularization_tag;
+  typedef RegularizationTag Regularization_tag;
   
   /*! 
     Tag identifying that the class supports general polygons (i.e.\ with holes). 

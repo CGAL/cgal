@@ -18,22 +18,22 @@ algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n
 the vertices of the polygon.
 
 The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
-at compile time via the second template argument Regularization_tag. The default for the Regularization_tag
+at compile time via the second template argument RegularizationTag. The default for the RegularizationTag
 is ::Tag_false, which means the visibility region will be computed. Setting the template argument
 to ::Tag_true will produce the output as a visibility polygon.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
-\tparam Regularization_tag indicates whether the output should be regularized. It can be
+\tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false.
 
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 */
-template <typename Arrangement_2, typename Regularization_tag>
+template <typename Arrangement_2, typename RegularizationTag>
 class Simple_visibility_2 {
 public:
 
@@ -74,7 +74,7 @@ public:
   /*! 
     Tag identifying whether the regularized visibility area is computed. 
   */
-  typedef Regularization_tag Regularization_tag;
+  typedef RegularizationTag Regularization_tag;
   
   /*! 
     Tag identifying that the class does not support general polygons (i.e.\ with holes). 
