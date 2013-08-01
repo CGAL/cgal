@@ -15,8 +15,73 @@
 namespace CGAL {
 namespace internal {
 /************************************************************************/
-/* Common functionality: Weight + Tracer
+/* Common functionality: Lookup Tables + Weight + Tracer
 /************************************************************************/
+// Wrapper around vector
+template<class T>
+class Lookup_table {
+public:
+  Lookup_table(int n, const T& t) : n(n), table(n*n, t) { }
+  void put(int i, int j, const T& t) {
+    CGAL_assertion(bound_check(i,j));
+    table[i*n + j] = t;
+  }
+  const T& get(int i, int j) const {
+    CGAL_assertion(bound_check(i,j));
+    return table[i*n + j];
+  }
+
+  int n;
+private:
+  bool bound_check(int i, int j) const {
+    CGAL_assertion(i >= 0 && i < n);
+    CGAL_assertion(j >= 0 && j < n);
+    CGAL_assertion(i < j); 
+    // previous implementation was based on directly vector and i supposed to be always smaller than j.
+    // this check actually can be removed and i =min(i,j) j = max(i,j) can be used for reflexive access 
+    return true;
+  }
+  std::vector<T> table;
+};
+
+// Wrapper around map, where if i,j is not found a default value is returned,
+// and if default value inserted i,j erased.
+template<class T>
+class Lookup_table_map {
+public:
+  Lookup_table_map(int n, const T& default) : n(n), default(default) { }
+
+  void put(int i, int j, const T& t) {
+    CGAL_assertion(bound_check(i,j));
+    
+    if(t == default) {
+      table.erase(std::make_pair(i,j));
+      return;
+    }
+    table[std::make_pair(i,j)] = t;
+  }
+  const T& get(int i, int j) const {
+    CGAL_assertion(bound_check(i,j));
+    typename std::map<std::pair<int,int>, T>::const_iterator ij 
+      = table.find(std::make_pair(i,j));
+    if(ij != table.end()) {
+      return ij->second;
+    }
+    return default;
+  }
+
+  int n;
+private:
+  bool bound_check(int i, int j) const {
+    CGAL_assertion(i >= 0 && i < n);
+    CGAL_assertion(j >= 0 && j < n);
+    CGAL_assertion(i < j);
+    return true;
+  }
+  std::map<std::pair<int,int>, T> table;
+  T default;
+};
+
 struct Weight {
 
   std::pair<double,double> w;
@@ -25,11 +90,11 @@ struct Weight {
 
   Weight(double angle, double area) : w(angle, area) { }
 
-  template<class Point_3>
+  template<class Point_3, class LookupTable>
   Weight(const std::vector<Point_3>& P, 
          const std::vector<Point_3>& Q, 
          int i, int j, int k, 
-         const std::vector<int>& lambda)
+         const LookupTable& lambda)
   {
     CGAL_assertion(i < j);
     CGAL_assertion(j < k);
@@ -55,8 +120,8 @@ struct Weight {
         }
         else {
           if(e == 2) { continue; }
-          if(lambda[v0*n+v1] != -1){
-            const Point_3& p01 = P[lambda[v0*n+v1]];
+          if(lambda.get(v0, v1) != -1){
+            const Point_3& p01 = P[lambda.get(v0, v1)];
             angle = 180 - CGAL::abs( 
               CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01) );
           }
@@ -92,10 +157,10 @@ struct Weight {
 
 struct Tracer {
 
-  template <typename OutputIteratorValueType, typename OutputIterator>
+  template <typename OutputIteratorValueType, typename OutputIterator, class LookupTable>
   OutputIterator
   trace(int n,
-        const std::vector<int>& lambda, 
+        const LookupTable& lambda, 
         int i, 
         int k, 
         OutputIterator out)
@@ -105,7 +170,7 @@ struct Tracer {
 
     if(i + 1 == k) { return out; }
 
-    int la = lambda[i*n + k];
+    int la = lambda.get(i, k);
     CGAL_assertion(la >= 0 && la < n);
 
     out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
@@ -179,8 +244,9 @@ struct Incident_facet_circulator<3, Triangulator>
   Facet_circulator it;
   Facet_circulator end;
 };
-
-template<typename K>
+// By default Lookup_table_map is used, since Lookup_table requires n*n mem.
+// Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
+template<typename K, template <class> class LookupTable = Lookup_table_map>
 class Triangulate_hole_polyline_DT 
 {
 public:
@@ -262,8 +328,9 @@ public:
       return out;
     }
     
-    std::vector<Weight> W(n*n,Weight(0,0));
-    std::vector<int> lambda(n*n,-1);
+    LookupTable<Weight> W(n,Weight(0,0)); // do not forget that these default values are not changed for [i, i+1]
+    LookupTable<int>    lambda(n,-1);
+
     if(T.dimension() == 3) {
       triangulate_DT<Incident_facet_circulator<3, Self> >
         (P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
@@ -274,12 +341,12 @@ public:
         (P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
     }
     
-    if(lambda[0*n + (n-1)] == -1) {
+    if(lambda.get(0, n-1) == -1) {
       CGAL_warning(!"No possible triangulation is found!");
       return out;
     }
     CGAL_TRACE_STREAM << "Triangulation Weight = [max-angle: "
-                      << W[n-1].w.first << ", area: " << W[n-1].w.second <<"]" << std::endl;
+                      << W.get(0,n-1).w.first << ", area: " << W.get(0,n-1).w.second <<"]" << std::endl;
     return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
 
@@ -314,8 +381,8 @@ private:
   void 
   triangulate_DT( const Polyline_3& P, 
                   const Polyline_3& Q, 
-                  std::vector<Weight>& W, 
-                  std::vector<int>& lambda, 
+                  LookupTable<Weight>& W, 
+                  LookupTable<int>& lambda, 
                   Edge e,
                   Triangulation& T,
                   int n,
@@ -334,7 +401,7 @@ private:
     CGAL_assertion(v0 != -1);
 
     // the range is previously processed
-    if( W[v0*n + v1] != Weight(0, 0) ) { return; }
+    if( W.get(v0, v1) != Weight(0, 0) ) { return; }
 
     // border edge - just return
     // should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
@@ -342,7 +409,7 @@ private:
 
     // check whether the edge is valid
     if(existing_edges.find(std::make_pair(v0, v1)) != existing_edges.end()) {
-      W[v0*n + v1] = Weight(-1,-1);
+      W.put(v0, v1, Weight(-1,-1));
       return;
     }
 
@@ -368,19 +435,19 @@ private:
 
       triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, n, existing_edges); // v0-v2
       triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, n, existing_edges); // v2-v1
-      if( W[v0*n + v2] == Weight(-1,-1) || W[v2*n + v1] == Weight(-1,-1) )
+      if( W.get(v0, v2) == Weight(-1,-1) || W.get(v2, v1) == Weight(-1,-1) )
       { continue; }
 
-      Weight w = W[v0*n + v2] + W[v2*n + v1] + Weight(P,Q, v0,v2,v1, lambda);
+      Weight w = W.get(v0, v2) + W.get(v2, v1) + Weight(P,Q, v0,v2,v1, lambda);
       if(w < w_min){
         w_min = w;
         m_min = v2;
       }
     } while(++fb);
 
-    if(m_min != -1) { W[v0*n+v1] = w_min; }
-    else            { W[v0*n+v1] = Weight(-1,-1); } // which means no triangulation exists between v0 - v1
-    lambda[v0*n+v1] = m_min;
+    if(m_min != -1) { W.put(v0, v1, w_min); }
+    else            { W.put(v0, v1, Weight(-1,-1)); } // which means no triangulation exists between v0 - v1
+    lambda.put(v0,v1, m_min);
   }
   
 };
@@ -388,7 +455,7 @@ private:
 /************************************************************************/
 /* Triangulate hole by using all search space
 /************************************************************************/
-template <typename K>
+template <typename K, template <class> class LookupTable = Lookup_table>
 class Triangulate_hole_polyline {
 public:
   typedef typename K::Point_3 Point_3;
@@ -408,8 +475,8 @@ public:
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
     
     int n = P.size() - 1; // because the first and last point are equal
-    std::vector<Weight> W(n*n,Weight(0,0));
-    std::vector<int> lambda(n*n,-1);
+    LookupTable<Weight> W(n,Weight(0,0));// do not forget that these default values are not changed for [i, i+1]
+    LookupTable<int>    lambda(n,-1);
     
     for(int j = 2; j< n; ++j){ // determines range (2 - 3 - 4 )
       for(int i=0; i<n-j; ++i){ // iterates over ranges and find min triangulation in those ranges 
@@ -428,11 +495,11 @@ public:
             }
             // now the regions i-m and m-k might be valid(constructed) patches,
             // if not, we can not construct i-m-k triangle
-            if( W[i*n + m] == Weight(-1, -1) || W[m*n + k] == Weight(-1, -1) ) {
+            if( W.get(i,m) == Weight(-1,-1) || W.get(m,k) == Weight(-1,-1) ) {
               continue;
             }
 
-            Weight w = W[i*n + m] + W[m*n + k] + Weight(P,Q,i,m,k, lambda);
+            Weight w = W.get(i,m) + W.get(m,k) + Weight(P,Q,i,m,k, lambda);
             if(w < w_min){
               w_min = w;
               m_min = m;
@@ -440,18 +507,18 @@ public:
           }
         }
         
-        if(m_min != -1) { W[i*n+k] = w_min; }
-        else            { W[i*n+k] = Weight(-1,-1); }
-        lambda[i*n+k] = m_min; // if not found lambda should be -1
+        if(m_min != -1) { W.put(i,k, w_min); }
+        else            { W.put(i,k, Weight(-1,-1)); }
+        lambda.put(i,k, m_min); // if not found lambda should be -1
       }
     }
 
-    if(lambda[0*n + (n-1)] == -1) {
+    if(lambda.get(0,n-1) == -1) {
       CGAL_warning(!"Due to existing edges, no possible triangulation is found!");
       return out;
     }
     CGAL_TRACE_STREAM << "Triangulation Weight = [max-angle: "
-                      << W[n-1].w.first << ", area: " << W[n-1].w.second <<"]" << std::endl;
+                      << W.get(0,n-1).w.first << ", area: " << W.get(0,n-1).w.second <<"]" << std::endl;
     return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
 };
