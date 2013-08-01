@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -37,7 +37,7 @@ namespace CGAL {
  * for bounded curves in the plane.
  */
 template <typename Traits_, typename Arrangement_, typename Event_,
-          typename Subcurve_> 
+          typename Subcurve_>
 class Arr_spherical_insertion_helper :
   public Arr_spherical_construction_helper<Traits_, Arrangement_,
                                            Event_, Subcurve_>
@@ -128,7 +128,7 @@ before_handle_event(Event* event)
     const X_monotone_curve_2& xc =
         (*(event->right_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) return;
-    
+
     // If a vertex on the south pole does not exists, create one.
     DVertex* dv = this->m_top_traits->south_pole();
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
@@ -136,14 +136,14 @@ before_handle_event(Event* event)
     event->set_vertex_handle(v);
     return;
   }
-  
+
   if (ps_y == ARR_TOP_BOUNDARY) {
     // Process top contraction boundary:
     // The event has only one left curve, as there is exactly one curve
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 1) &&
                    (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc = 
+    const X_monotone_curve_2& xc =
       (*(event->left_curves_begin()))->last_curve();
 
     if (xc.halfedge_handle() != Halfedge_handle()) {
@@ -159,7 +159,7 @@ before_handle_event(Event* event)
     event->set_vertex_handle(v);
     return;
   }
-  
+
   if (ps_x == ARR_LEFT_BOUNDARY) {
     // Process left discontinuity boundary:
     // The event has only right curves, as there is exactly one curve
@@ -174,7 +174,7 @@ before_handle_event(Event* event)
       this->m_spherical_face = xc.halfedge_handle()->twin()->face();
       return;
     }
-    
+
     // If a vertex on the line of discontinuity does not exists. create one.
     DVertex* dv = this->m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
     Vertex_handle v = (dv) ? Vertex_handle(dv) :

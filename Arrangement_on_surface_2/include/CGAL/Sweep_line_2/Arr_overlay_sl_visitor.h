@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
@@ -34,7 +34,7 @@
 
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Unique_hash_map.h> 
+#include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
 
@@ -44,14 +44,14 @@ namespace CGAL {
  * embedded on the same type of surface and use the same geometry traits.
  */
 template <typename OverlayHelper_, typename OverlayTraits_>
-class Arr_overlay_sl_visitor : public 
+class Arr_overlay_sl_visitor : public
   Arr_construction_sl_visitor<typename OverlayHelper_::Construction_helper>
 {
 public:
   typedef OverlayHelper_                                   Overlay_helper;
   typedef OverlayTraits_                                   Overlay_traits;
 
-  typedef typename Overlay_helper::Traits_2                Traits_2; 
+  typedef typename Overlay_helper::Traits_2                Traits_2;
   typedef typename Overlay_helper::Event                   Event;
   typedef typename Overlay_helper::Subcurve                Subcurve;
 
@@ -79,7 +79,7 @@ public:
   typedef typename Arrangement_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
   typedef typename Arrangement_2::Outer_ccb_iterator       Outer_ccb_iterator;
-  
+
   // The base construction visitor:
   typedef typename Overlay_helper::Construction_helper     Construction_helper;
   typedef Arr_construction_sl_visitor<Construction_helper> Base;
@@ -113,7 +113,7 @@ protected:
   typedef typename Arr_has_identified_sides<Left_side_category,
                                             Bottom_side_category>::result
     Has_identified_sides_category;
-  
+
   // Data members:
   Overlay_traits* m_overlay_traits;     // The overlay traits object.
 
@@ -156,7 +156,7 @@ public:
   /*!
    * A notification invoked before the sweep-line starts handling the given
    * event.
-   */  
+   */
   void before_handle_event(Event* event);
 
   /*!
@@ -195,8 +195,8 @@ public:
 
   /* A notification issued when the sweep process has ended. */
   void after_sweep();
-  //@} 
-  
+  //@}
+
   /// \name Insertion functions.
   //@{
 
@@ -268,7 +268,7 @@ protected:
    * \param blue_he The originating blue halfedge.
    * \pre he is directed right to left.
    */
-  void _map_halfedge_and_twin(Halfedge_handle he, 
+  void _map_halfedge_and_twin(Halfedge_handle he,
                               Halfedge_handle_red red_he,
                               Halfedge_handle_blue blue_he);
 
@@ -282,7 +282,7 @@ protected:
    * \param tag The tag used for dispatching.
    */
   void _map_boundary_vertices(Event* event, Vertex_handle v,
-                              boost::mpl::bool_<true> /* tag */);  
+                              boost::mpl::bool_<true> /* tag */);
 
   /*!
    * Update the boundary vertices map.
@@ -292,8 +292,8 @@ protected:
    * \param v The vertex.
    * \param tag The tag used for dispatching.
    */
-  void _map_boundary_vertices(Event* event, Vertex_handle v, 
-                              boost::mpl::bool_<false> /* tag */);  
+  void _map_boundary_vertices(Event* event, Vertex_handle v,
+                              boost::mpl::bool_<false> /* tag */);
 
   /*!
    * Update a newly created vertex using the overlay traits.
@@ -332,7 +332,7 @@ protected:
   private:
     Overlay_traits* m_overlay_traits;
     Vertex_handle m_vertex_handle;
-    
+
   public:
     /*! Constructor */
     Create_vertex_visitor(Overlay_traits* overlay_traits,
@@ -340,7 +340,7 @@ protected:
       m_overlay_traits(overlay_traits),
       m_vertex_handle(vertex_handle)
     {}
-    
+
     /*! */
     void operator()(const Vertex_handle_red& red_v,
                     const Vertex_handle_blue& blue_v) const
@@ -381,7 +381,7 @@ protected:
     void operator()(const Face_handle_red& /* red_f */,
                     const Face_handle_blue& /* blue_f */) const
     { CGAL_error(); }
-    
+
   };
 };
 
@@ -429,7 +429,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 {
   // Let the base construction visitor handle the event.
   bool res = Base::after_handle_event(event, iter, flag);
-  
+
   // In case there are no subcurves in the status line above the given event
   // point, we update the top fictitious halfedges for all subcurves incident
   // to this event.
@@ -438,26 +438,26 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
 
   if (iter != this->status_line_end())
     sc_above = (*iter);
-  
-  if (sc_above == NULL) { 
+
+  if (sc_above == NULL) {
     if (rev_iter != event->right_curves_rend()) {
       if ((*rev_iter)->color() == Traits_2::BLUE)
         (*rev_iter)->set_red_top_face(m_overlay_helper.red_top_face());
       else if ((*rev_iter)->color() == Traits_2::RED)
         (*rev_iter)->set_blue_top_face(m_overlay_helper.blue_top_face());
-      
+
       (*rev_iter)->set_subcurve_above(NULL);
       sc_above = *rev_iter;
-      ++rev_iter;     
+      ++rev_iter;
     }
-    else return res;            // Nothing else to do. 
+    else return res;            // Nothing else to do.
   }
 
   // For each subcurve, try to locate a subcurve lying above it in the status
   // line that has a different color.
   for (; rev_iter != event->right_curves_rend(); ++rev_iter) {
     Subcurve* curr_sc = *rev_iter;
-    
+
     if (! curr_sc->has_same_color(sc_above))
       curr_sc->set_subcurve_above(sc_above);
     else {
@@ -466,7 +466,7 @@ after_handle_event(Event* event, Status_line_iterator iter, bool flag)
       else
         curr_sc->set_top_face(sc_above);
     }
-    
+
     sc_above = curr_sc;
   }
   return (res);
@@ -499,9 +499,9 @@ template <typename OvlHlpr, typename OvlTr>
 void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
                                                           Subcurve* sc)
 {
-  // Update the red and blue halfedges associated with the point as necessary. 
+  // Update the red and blue halfedges associated with the point as necessary.
   Point_2& pt = e->point();
-  
+
   if (pt.is_red_cell_empty()) {
     CGAL_assertion(! pt.is_blue_cell_empty());
     CGAL_assertion(sc->color() == Traits_2::RED);
@@ -523,7 +523,7 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::update_event(Event* e,
                                                           const Point_2& p,
                                                           bool /* is_new */)
 {
-  // Update the red and blue objects associated with the point as necessary. 
+  // Update the red and blue objects associated with the point as necessary.
   Point_2& pt = e->point();
   if (pt.is_red_cell_empty()) pt.set_red_cell(p.red_cell());
   else if (pt.is_blue_cell_empty()) pt.set_blue_cell(p.blue_cell());
@@ -545,7 +545,7 @@ void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::after_sweep()
     Create_vertex_visitor visitor(m_overlay_traits, v);
     boost::apply_visitor(visitor, red_handle, blue_handle);
   }
-  
+
   // When the sweep-line process is over, the remaining arrangement face
   // (the current top face of the result arrangement) should be updated such
   // that it is the overlay of the two remaining red and blue unbounded face
@@ -584,7 +584,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Subcurve* sc)
 
   // Update the newly created edge using the overlay traits.
   _create_edge(sc, new_he);
-  
+
   return new_he;
 }
 
@@ -600,7 +600,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 {
   _map_boundary_vertices(this->last_event_on_subcurve(sc), prev->target(),
                          Has_identified_sides_category());
-  
+
   // Insert the halfedge using the base construction visitor. Note that the
   // resulting halfedge is directed from left to right.
   Halfedge_handle new_he = Base::insert_from_left_vertex(cv, prev, sc);
@@ -619,7 +619,7 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
 
   return new_he;
 }
-  
+
 //-----------------------------------------------------------------------------
 // Insert the given subcurve given its right end-vertex.
 //
@@ -635,7 +635,7 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
 
   // Insert the halfedge using the base construction visitor.
   Halfedge_handle new_he = Base::insert_from_right_vertex(cv, prev, sc);
-  _map_halfedge_and_twin(new_he, 
+  _map_halfedge_and_twin(new_he,
                          cv.red_halfedge_handle(), cv.blue_halfedge_handle());
 
   // Update the newly created vertex, which is on the left, using the overlay
@@ -667,22 +667,22 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // resulting halfedge is always incident to the new face (if one created).
   Halfedge_handle new_he =
     Base::insert_at_vertices(cv, prev1, prev2, sc, new_face_created);
-  _map_halfedge_and_twin(new_he, 
+  _map_halfedge_and_twin(new_he,
                          cv.red_halfedge_handle(), cv.blue_halfedge_handle());
 
   _map_boundary_vertices(this->last_event_on_subcurve(sc),
                          (new_he->direction() == ARR_LEFT_TO_RIGHT) ?
                          new_he->source() : new_he->target(),
                          Has_identified_sides_category());
-  
+
   _map_boundary_vertices(this->current_event(),
                          (new_he->direction() == ARR_LEFT_TO_RIGHT) ?
                          new_he->target() : new_he->source(),
                          Has_identified_sides_category());
-  
+
   // Update the newly created edge using the overlay traits.
   _create_edge(sc, new_he);
-    
+
   // If a new face was created, we have to updated the newly created face
   // using the overlay traits.
   if (new_face_created) {
@@ -708,7 +708,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
       // Get the current halfedge on the face boundary and obtain its
       // originating halfedges.
       Halfedge_handle he = ccb_circ;
-      
+
       if (! m_halfedges_map.is_defined(he)) {
         // The mapping is not available for fictitious halfedges ...
         ++ccb_circ;
@@ -723,7 +723,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
         red_he = he_info.first;
         if (blue_he != invalid_blue_he) break;
       }
-      
+
       if (he_info.second != invalid_blue_he) {
         blue_he = he_info.second;
         if (red_he != invalid_red_he) break;
@@ -765,7 +765,7 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // face.
     m_overlay_traits->create_face(red_face, blue_face, new_face);
   }
-  
+
   return new_he;
 }
 
@@ -833,7 +833,7 @@ insert_isolated_vertex(const Point_2& pt,
   else {
     // We have an isolated red vertex inside a blue face.
     Face_handle_blue blue_face;
-    
+
     // Obtain the blue face containing the isolated vertex.
     if (iter == this->status_line_end()) {
       // There is nothing above the vertex - use the current blue top face.
@@ -876,7 +876,7 @@ insert_isolated_vertex(const Point_2& pt,
 //
 template <typename OvlHlpr, typename OvlTr>
 void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
-_map_halfedge_and_twin(Halfedge_handle he, 
+_map_halfedge_and_twin(Halfedge_handle he,
                        Halfedge_handle_red red_he,
                        Halfedge_handle_blue blue_he)
 {
@@ -885,15 +885,15 @@ _map_halfedge_and_twin(Halfedge_handle he,
   // Obtain the twin red and blue halfedges (if they are valid). Note that
   // the original halfedges are always directed from right to left.
   Halfedge_handle_red     red_he_twin;
-  Halfedge_handle_blue    blue_he_twin; 
-  
+  Halfedge_handle_blue    blue_he_twin;
+
   if (red_he != Halfedge_handle_red()) red_he_twin = red_he->twin();
   if (blue_he != Halfedge_handle_blue()) blue_he_twin = blue_he->twin();
-  
+
   // Create the halfedge-information pairs and store them in the map.
   Halfedge_info he_info = std::make_pair(red_he, blue_he);
   Halfedge_info he_twin_info = std::make_pair(red_he_twin, blue_he_twin);
-  
+
   m_halfedges_map[he] = he_info;
   m_halfedges_map[he->twin()] = he_twin_info;
 }
@@ -1056,7 +1056,7 @@ Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::_create_edge(Subcurve* sc,
     // halfedge.
     Halfedge_handle_red   red_he = sc->red_halfedge_handle();
     Halfedge_handle_blue  blue_he = sc->blue_halfedge_handle();
-    
+
     m_overlay_traits->create_edge(red_he, blue_he, new_he);
   }
   else if (sc->color() == Traits_2::RED) {
