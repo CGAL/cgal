@@ -24,7 +24,7 @@ typedef CGAL::Arrangement_on_surface_2<Geom_traits_2, Topol_traits_2>
 typedef Arrangement_2::Halfedge_handle                       Halfedge_handle;
 typedef Arrangement_2::Halfedge_iterator                     Halfedge_iterator;
 
-bool test_one_file(std::ifstream& in_file, bool verbose)
+bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 {
   unsigned int i;
 
