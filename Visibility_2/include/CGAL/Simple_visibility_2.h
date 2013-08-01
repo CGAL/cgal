@@ -148,6 +148,11 @@ public:
       vertices.push_back(vertices[0]);
     }
 
+    std::cout << "VERTICES: " << vertices.size() << std::endl;
+    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
+
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
@@ -184,6 +189,7 @@ public:
                                          segments.end());
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     conditional_regularize(out_arr, Regularization_tag());
+    vertices.clear();
   }
 
   void visibility_region(const Point_2 &q, const Halfedge_const_handle he,
@@ -227,6 +233,11 @@ public:
       curr++;
     }
     vertices.push_back(q);
+
+    std::cout << "VERTICES: " << vertices.size() << std::endl;
+    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
 
     visibility_region_impl(q);
     
