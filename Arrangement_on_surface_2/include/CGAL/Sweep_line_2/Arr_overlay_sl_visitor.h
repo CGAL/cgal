@@ -481,12 +481,12 @@ update_event(Event* e,
              const Point_2& end_point,
              const X_monotone_curve_2& /* cv */,
              Arr_curve_end /* cv_end */,
-             bool is_new)
+             bool /* is_new */)
 {
   // Nothing to do in case of an event at infinity.
   CGAL_assertion(e->is_closed());
 
-  // Update the red and blue objects associated with the point as necessary. 
+  // Update the red and blue objects associated with the point as necessary.
   Point_2& pt = e->point();
   if (pt.is_red_cell_empty()) pt.set_red_cell(end_point.red_cell());
   else if (pt.is_blue_cell_empty()) pt.set_blue_cell(end_point.blue_cell());
@@ -940,7 +940,7 @@ _map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<true>)
 //
 template <typename OvlHlpr, typename OvlTr>
 void Arr_overlay_sl_visitor<OvlHlpr, OvlTr>::
-_map_boundary_vertices(Event* event, Vertex_handle v, boost::mpl::bool_<false>)
+_map_boundary_vertices(Event* /* event */, Vertex_handle /* v */, boost::mpl::bool_<false>)
 {}
 
 /* Notify the overlay traits about a newly created vertex.
@@ -1013,8 +1013,8 @@ _create_vertex(Event* event,
       sc_above->red_halfedge_handle()->face() : sc->red_top_face();
 
     CGAL_assertion(blue_handle);
-    const Vertex_handle_blue& blue_v = 
-      boost::get<Vertex_handle_blue>(*blue_handle);    
+    const Vertex_handle_blue& blue_v =
+      boost::get<Vertex_handle_blue>(*blue_handle);
     m_overlay_traits->create_vertex(red_f, blue_v, new_v);
     return;
   }

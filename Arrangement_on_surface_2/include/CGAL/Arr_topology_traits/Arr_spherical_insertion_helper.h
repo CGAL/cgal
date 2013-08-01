@@ -205,7 +205,7 @@ before_handle_event(Event* event)
 /*! A notification invoked when a new subcurve is created. */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
-add_subcurve(Halfedge_handle he, Subcurve* sc)
+add_subcurve(Halfedge_handle he, Subcurve* /* sc */)
 {
   if (he->source()->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
     m_spherical_halfedge = he;

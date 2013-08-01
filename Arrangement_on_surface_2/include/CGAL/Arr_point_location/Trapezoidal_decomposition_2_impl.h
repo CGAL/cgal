@@ -539,22 +539,22 @@ void Trapezoidal_decomposition_2<Td_traits>
 //  end==0 or end is on the path of the iterator
 // postcondition:
 //  end is pointer to the last trapezoid encountered,if any
-template <class Td_traits> 
+template <class Td_traits>
 void Trapezoidal_decomposition_2<Td_traits>
 ::update_map_items_after_merge (In_face_iterator& it,
                                 Halfedge_const_handle old_he,
                                 Halfedge_const_handle new_he,
-                                Vertex_const_handle min_v,
-                                Vertex_const_handle max_v,
+                                Vertex_const_handle /* min_v */,
+                                Vertex_const_handle /* max_v */,
                                 Td_map_item& end)
 {
   Td_map_item last_item = Td_map_item(0);
- 
+
   while (!!it && !(*it == end))
   {
     Td_map_item curr_item = *it;
     CGAL_assertion(traits->is_active(curr_item));
-    
+
     if (traits->is_td_edge(curr_item))
     {
       Td_active_edge& e(boost::get<Td_active_edge>(curr_item));
@@ -666,12 +666,12 @@ Trapezoidal_decomposition_2<Td_traits>
         CGAL_assertion(is_end_point_left_low(p,curr_node) ||
                        is_end_point_right_top(p,curr_node) ||
                        are_equal_end_points(p,curr_node));
-          
-                    //(is_fict_vtx && 
+
+                    //(is_fict_vtx &&
                     //  (is_end_point_left_low(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
                     //   is_end_point_right_top(p,*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item))) ||
                     //   traits->equal_curve_end_2_object()(*(boost::apply_visitor(curve_end_for_fict_vertex_visitor(),curr_item)),p))) ||
-                    // (!is_fict_vtx && 
+                    // (!is_fict_vtx &&
                     //  (is_end_point_left_low(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
                     //   is_end_point_right_top(p,boost::apply_visitor(point_for_vertex_visitor(), curr_item)) ||
                     //   traits->equal_2_object()(boost::apply_visitor(point_for_vertex_visitor(), curr_item),p))));
@@ -3030,11 +3030,11 @@ Trapezoidal_decomposition_2<Td_traits>
                   longest_query_path_length_rec(minus_inf, min_node,
                                                 plus_inf, max_node,
                                                 node.right_child()) ));
-  
+
   //if node represents a vertex
   Td_map_item curr_item(node.get_data());
-  bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);  
-  
+  //bool is_fict_vtx = traits->is_fictitious_vertex(curr_item);
+
   //if node is smaller than min, use min in the next recursion min bound, otherwise use node
   Dag_node new_min_node = node;
   if (!minus_inf)

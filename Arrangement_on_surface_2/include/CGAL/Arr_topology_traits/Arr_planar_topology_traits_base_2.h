@@ -170,8 +170,8 @@ public:
    * \param swap_predecessors Output swap predeccesors or not;
    *        set correctly only if true is returned
    */
-  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
-                                   std::pair< CGAL::Sign, CGAL::Sign> signs2,
+  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> /* signs1 */,
+                                   std::pair< CGAL::Sign, CGAL::Sign> /* signs2 */,
                                    bool& swap_predecessors) const {
     swap_predecessors = false;
     return false;
@@ -188,8 +188,8 @@ public:
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs1),
-                                  std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs2)) const {
+  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > /* signs1 */,
+                                  std::pair< CGAL::Sign, CGAL::Sign > /* signs2 */) const {
     // In case of a planar topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
     return (std::make_pair (true, true));

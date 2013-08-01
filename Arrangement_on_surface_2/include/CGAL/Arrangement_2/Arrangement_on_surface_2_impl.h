@@ -3565,7 +3565,7 @@ _compute_signs_and_local_minima(const DHalfedge* he_to,
 template <typename GeomTraits, typename TopTraits>
 std::pair<Sign, Sign>
 Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_signs(const DHalfedge* he_anchor, boost::mpl::bool_<false>) const
+_compute_signs(const DHalfedge* /* he_anchor */, boost::mpl::bool_<false>) const
 { return (std::make_pair(ZERO, ZERO)); }
 
   // Computes the signs of a closed ccb (loop) when deleting he_anchor and its
@@ -3766,9 +3766,9 @@ _compute_signs_and_min(const DHalfedge* he_anchor,
 template <typename GeomTraits, typename TopTraits>
 bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _is_smaller(const DHalfedge* he1,
-            Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
+            Arr_parameter_space /* ps_x1 */, Arr_parameter_space /* ps_y1 */,
             const DHalfedge* he2,
-            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+            Arr_parameter_space /* ps_x2 */, Arr_parameter_space /* ps_y2 */,
             Arr_all_sides_oblivious_tag) const
 {
   CGAL_precondition(he1->direction() == ARR_RIGHT_TO_LEFT);
@@ -3802,10 +3802,10 @@ _is_smaller(const DHalfedge* he1,
  */
 template <typename GeomTraits, typename TopTraits>
 bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_is_smaller(const X_monotone_curve_2& cv1, const Point_2& p1,
-            Arr_parameter_space ps_x1, Arr_parameter_space ps_y1,
-            const X_monotone_curve_2& cv2, const Point_2& p2,
-            Arr_parameter_space ps_x2, Arr_parameter_space ps_y2,
+_is_smaller(const X_monotone_curve_2& /* cv1 */, const Point_2& p1,
+            Arr_parameter_space /* ps_x1 */, Arr_parameter_space /* ps_y1 */,
+            const X_monotone_curve_2& /* cv2 */, const Point_2& p2,
+            Arr_parameter_space /* ps_x2 */, Arr_parameter_space /* ps_y2 */,
             Arr_all_sides_oblivious_tag) const
 {
   CGAL_precondition(! m_geom_traits->equal_2_object()(p1, p2));
@@ -3878,7 +3878,7 @@ bool Arrangement_on_surface_2<GeomTraits, TopTraits>::
 _is_smaller_near_right(const X_monotone_curve_2& cv1,
                        const X_monotone_curve_2& cv2,
                        const Point_2& p,
-                       Arr_parameter_space ps_x, Arr_parameter_space ps_y,
+                       Arr_parameter_space /* ps_x */, Arr_parameter_space /* ps_y */,
                        Arr_all_sides_oblivious_tag) const
 {
   return

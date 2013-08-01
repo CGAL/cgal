@@ -494,8 +494,8 @@ public:
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs1),
-                                  std::pair< CGAL::Sign, CGAL::Sign > CGAL_precondition_code(signs2)) const {
+  face_split_after_edge_insertion(std::pair< CGAL::Sign, CGAL::Sign > /* signs1 */,
+                                  std::pair< CGAL::Sign, CGAL::Sign > /* signs2 */) const {
     // In case of a spherical topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
     return (std::make_pair(true, true));
