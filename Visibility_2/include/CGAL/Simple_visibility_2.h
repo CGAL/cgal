@@ -75,6 +75,7 @@ public:
   void detach() {
     p_arr = NULL;
     geom_traits = NULL;
+    vertices.clear();
   }
 
   Input_arrangement_2 arr() {
@@ -188,6 +189,7 @@ public:
                                          segments.begin(), 
                                          segments.end());
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
+    CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
   }
@@ -266,7 +268,9 @@ public:
                                          segments.begin(), 
                                          segments.end());
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
+    CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
+    vertices.clear();
   }
 
   void print_arrangement(const Arrangement_2 &arr) {

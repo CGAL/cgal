@@ -98,7 +98,9 @@ Returns whether an arrangement is attached to the visibility object
   bool is_attached();
 
 /*!
-Attaches the given arrangement to the visibility object
+Attaches the given arrangement to the visibility object.
+In case the object is already attached to another arrangement, 
+the visibility object gets detached before being attached to 'arr'.
 */
   void attach(const Input_arrangement_2 &arr);
   
@@ -119,7 +121,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point from which the visibility region is computed
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
-\pre `f` is a face of  `this->arr()`
+\pre `f` is a face of  `this->arr()`, defined as a regular polygon 
 \pre `q` is in the interior or on the boundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
