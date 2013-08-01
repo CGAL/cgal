@@ -3358,9 +3358,12 @@ _split_edge(DHalfedge* e, DVertex* v,
 
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::
-_compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
-                 Arr_parameter_space ps_x_next, Arr_parameter_space ps_y_next,
-                 int& x_index, int& y_index,  boost::mpl::bool_<false>) const
+_compute_indices(Arr_parameter_space /* ps_x_curr */,
+                 Arr_parameter_space /* ps_y_curr */,
+                 Arr_parameter_space /* ps_x_next */,
+                 Arr_parameter_space /* ps_y_next */,
+                 int& /* x_index */, int& /* y_index */,
+                 boost::mpl::bool_<false>) const
 { /* nothing if no identification */ }
 
 template <typename GeomTraits, typename TopTraits>
