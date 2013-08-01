@@ -23,6 +23,7 @@
 #define CGAL_TEST_MODEL_METHODS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/test_utils.h>
 #include <cassert>
 
 namespace CGAL {
@@ -30,6 +31,31 @@ namespace CGAL {
 template <class _Visibility_2>
 bool test_is_attached(_Visibility_2 visibility) {
     return visibility.is_attached();
+}
+
+template <class _Visibility_2>
+void test_model_methods(_Visibility_2 &visibility, 
+                      const typename _Visibility_2::Input_arrangement_2 &arr) {
+
+  // Check concept obediance
+	typedef _Visibility_2 Visibility_2;
+	typedef typename Visibility_2::Input_arrangement_2     Input_arrangement_2;
+	typedef typename Visibility_2::Output_arrangement_2    Output_arrangement_2;
+  typedef typename Visibility_2::Regularization_tag      Regularization_tag;
+  typedef typename Visibility_2::Supports_general_polygon_tag
+                                                  Supports_general_polygon_tag;
+  typedef typename Visibility_2::Supports_simple_polygon_tag 
+                                                  Supports_simple_polygon_tag;
+
+  assert(false == visibility.is_attached());
+  visibility.attach(arr);
+  assert(true == visibility.is_attached());
+  visibility.detach();
+  assert(false == visibility.is_attached());
+  visibility.attach(arr);
+  assert(true == visibility.is_attached());
+  assert(true == (CGAL::test_are_equal<Input_arrangement_2>(arr, 
+                                                            visibility.arr())));
 }
 
 } // end CGAL namespace

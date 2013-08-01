@@ -177,6 +177,68 @@ std::string num2string(Number_type& n) {
   ss<<n;
   return ss.str();
 }
+
+template <class _Arrangement_2> 
+void create_lazy_arrangement_from_file(std::ifstream &input,
+                                       _Arrangement_2 &arr) {
+
+  typedef _Arrangement_2                                      Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
+  typedef typename Arrangement_2::Face_const_handle           Face_const_handle;
+  typedef typename Geometry_traits_2::Segment_2               Segment_2;
+  typedef typename Geometry_traits_2::Point_2                 Point_2;
+  typedef typename Geometry_traits_2::FT                      Number_type;
+  if (input) {
+    std::string curr_line;
+    std::vector<Point_2> isolated_vertices;
+    std::stringstream convert(curr_line);
+    int number_of_isolated_vertices;
+    convert >> number_of_isolated_vertices;
+    Face_const_handle uface = arr.unbounded_face();
+
+    for (int i = 0 ; i < number_of_isolated_vertices ; i++) {
+      std::getline(input, curr_line);
+      std::istringstream iss(curr_line);
+      std::string x, y;
+      iss >> x >> y;
+      arr.insert_in_face_interior(Point_2(x, y));
+    }
+
+    std::vector<Segment_2> edges;
+    int number_of_edges;
+    input >> number_of_edges;
+    for (int i = 0 ; i < number_of_edges ; i++) {
+      std::getline(input, curr_line);
+      std::string x1, y1, x2, y2;
+      std::istringstream iss(curr_line);
+      iss >> x1 >> y1 >> x2 >> y2;
+      edges.push_back(Segment_2(Point_2(x1, y1), Point_2(x2, y2)));
+    }
+    CGAL::insert(arr, edges.begin(), edges.end());
+  }
+}
+
+template <class _Visibility_2> 
+void run_tests(_Visibility_2 visibility, int case_number) {
+  typedef _Visibility_2                                 Visibility_2;
+  typedef Visibility_2::Input_arrangement_2             Input_arrangement_2;
+  typedef Visibility_2::Output_arrangement_2            Output_arrangement_2;
+
+  for (int i=1 ; i <= case_number ; i++) {
+
+    std::cout<<"Test "<<i<<" begins"<<std::endl;
+    std::string input_arr_file("data/test");
+    input_arr_file += number2string(i);
+    std::ifstream input(input_arr_file.c_str());
+    Input_arrangement_2 in_arr;
+    Output_arrangement_2 out_arr;
+    
+    while (std::getline(input, curr_line)) {
+      if (curr_line[0] != '#' && curr_line[0] != '/')
+        break;
+    }
+}
+
 template <class _Arrangement_2>
 void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
   typedef _Arrangement_2 								  Arrangement_2;

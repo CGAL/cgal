@@ -56,6 +56,10 @@ public:
   typedef typename Geometry_traits_2::FT                Number_type;
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
+  typedef RegularizationTag                       Regularization_tag;
+  typedef CGAL::Tag_false                         Supports_general_polygon_tag;
+  typedef CGAL::Tag_true                          Supports_simple_polygon_tag;                                        
+
   Simple_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
