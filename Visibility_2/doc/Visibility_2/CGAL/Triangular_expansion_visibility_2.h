@@ -65,7 +65,7 @@ public:
   typedef Regularization_tag Regularization_tag;
   
   /*! 
-    Tag identifying that the class supports general polygons (i.e. with holes). 
+    Tag identifying that the class supports general polygons (i.e.\ with holes). 
   */
   typedef ::Tag_true Supports_general_polygon_tag; 
 
