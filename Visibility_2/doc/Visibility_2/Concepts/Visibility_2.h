@@ -22,27 +22,27 @@ public:
  /*! 
    The supported arrangement type of input. 
  */ 
-  typedef Hidden_type Input_Arrangement_2; 
+  typedef Hidden_type Input_arrangement_2; 
 
   /*!
     The supported arrangement type of output.
    */
-  typedef Hidden_type Output_Arrangement_2;
+  typedef Hidden_type Output_arrangement_2;
 
  /*! 
    The supported Point_2 type of the input type, used for queries. 
  */ 
-  typedef Input_Arrangement_2::Point_2 Point_2;
+  typedef Input_arrangement_2::Point_2 Point_2;
 
   /*!
    * The supported Face handle type of the input Arrangement.
    */
-  typedef Input_Arrangement_2::Face_handle Face_handle;
+  typedef Input_arrangement_2::Face_handle Face_handle;
 
   /*!
    * The supported Halfedge handle type of the input Arrangement.
    */
-  typedef Input_Arrangement_2::Halfedge_handle Halfedge_handle;
+  typedef Input_arrangement_2::Halfedge_handle Halfedge_handle;
 
 /// @}
 
@@ -76,7 +76,7 @@ Visibility_2();
 /*! 
 Constructs a `Visibility_2` object from a given `Arrangement_2` and attaches it to `arr`.
 */ 
-Visibility_2(const Input_Arrangement_2 &arr);
+Visibility_2(const Input_arrangement_2 &arr);
 
 /// @}
 
@@ -91,8 +91,10 @@ Returns whether an arrangement is attached to the visibility object
 
 /*!
 Attaches the given arrangement `arr` to the visibility object.
+In case the object is already attached to another arrangement, 
+the visibility object gets detached before being attached to 'arr'.
 */
-  void attach (const Input_Arrangement_2 &arr);
+  void attach (const Input_arrangement_2 &arr);
 
   
 /*!
@@ -103,7 +105,7 @@ Detaches the arrangement from the visibility object it is currently attached to
 /*!
 Access to the attached arrangement
 */
-  const Input_Arrangement_2& arr();
+  const Input_arrangement_2& arr();
 
 /*! 
 Computes the visibility region for the given query point `q` in the
@@ -116,7 +118,7 @@ The visibility region of `q` will be saved to `out_arr`.
 \pre `q` is in the interior or on the boundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
+  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
 
 /*! 
 Computes the visibility region for the given query point `q` that is on the side of `halfedge`.
@@ -128,7 +130,7 @@ The visibility region of `q` will be saved to `out_arr`.
 \pre `q` is on halfedge
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr);
+  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_arrangement_2& out_arr);
 
 /// @}
 

@@ -434,7 +434,7 @@ void benchmark(Visibility_2_fst &visibility_fst,
       visibility_fst.visibility_region(curr_query_pt, face, out_arr_fst);
     }
     else {
-      visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
+ //     visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
     }
     timer.stop();
 
@@ -447,12 +447,14 @@ void benchmark(Visibility_2_fst &visibility_fst,
       visibility_snd.visibility_region(curr_query_pt, face, out_arr_snd);
     }
     else {
-      visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
+//      visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
     }
     timer.stop();
     
     std::cout << "Time to compute visibility region using second object for " 
               << curr_query_pt << " : " << timer.time() << std::endl;
+    visibility_fst.print_arrangement(out_arr_fst);
+    visibility_fst.print_arrangement(out_arr_snd);
     assert(true == (CGAL::test_are_equal<Arrangement_2>
                           (out_arr_fst, out_arr_snd)));  
   } while (++curr != circ);

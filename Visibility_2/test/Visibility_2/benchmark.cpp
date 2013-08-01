@@ -52,14 +52,14 @@ int main() {
   std::ifstream input("./data/simple_polygon_test_case_1.in");
   CGAL::create_arrangement_from_file<Arrangement_2>(arr, input);
   Simple_visibility_2 simple_visibility;
-  Simple_visibility_2 naive_visibility;
+  Naive_visibility_2 naive_visibility;
   CGAL::QueryChoice qchoice;
   qchoice = CGAL::FACE;
   typename Arrangement_2::Face_const_iterator fit;
 
   for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
 	  if (!fit->is_unbounded()) {
-      CGAL::benchmark<Simple_visibility_2, Simple_visibility_2, Arrangement_2>
+      CGAL::benchmark<Simple_visibility_2, Naive_visibility_2, Arrangement_2>
                 (simple_visibility, naive_visibility, arr, fit, qchoice);
     }
   }

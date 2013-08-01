@@ -7,8 +7,8 @@
 #include <istream>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel               Kernel;
-typedef CGAL::Point_2<Kernel>                                           Point_2;
-typedef CGAL::Segment_2<Kernel>                                         Segment_2;
+typedef Kernel::Point_2                                                 Point_2;
+typedef Kernel::Segment_2                                               Segment_2;
 typedef CGAL::Arr_segment_traits_2<Kernel>                              Traits_2;
 typedef CGAL::Arrangement_2<Traits_2>                                   Arrangement_2;
 

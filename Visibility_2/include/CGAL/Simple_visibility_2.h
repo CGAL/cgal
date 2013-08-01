@@ -37,8 +37,8 @@ class Simple_visibility_2 {
 public:
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   // Currently only consider with same type for both
-  typedef Arrangement_2                                 Input_Arrangement_2;
-  typedef Arrangement_2                                 Output_Arrangement_2;
+  typedef Arrangement_2                                 Input_arrangement_2;
+  typedef Arrangement_2                                 Output_arrangement_2;
 
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
@@ -58,7 +58,7 @@ public:
   Simple_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_visibility_2(const Input_Arrangement_2 &arr): 
+  Simple_visibility_2(const Input_arrangement_2 &arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   };
@@ -67,7 +67,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_Arrangement_2 &arr) {
+  void attach(const Input_arrangement_2 &arr) {
     p_arr = &arr;
     geom_traits = p_arr->geometry_traits();
   }
@@ -75,19 +75,20 @@ public:
   void detach() {
     p_arr = NULL;
     geom_traits = NULL;
+    vertices.clear();
   }
 
-  Input_Arrangement_2 arr() {
+  Input_arrangement_2 arr() {
     return *p_arr;
   }
 
   void visibility_region(Point_2 &q, const Face_const_handle face,
-                         Output_Arrangement_2 &out_arr) {
+                         Output_arrangement_2 &out_arr) {
 
-    typename Input_Arrangement_2::Ccb_halfedge_const_circulator circ = 
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                             face->outer_ccb();
-    typename Input_Arrangement_2::Ccb_halfedge_const_circulator curr = circ;
-    typename Input_Arrangement_2::Halfedge_const_handle he = curr;
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
+    typename Input_arrangement_2::Halfedge_const_handle he = curr;
 
     std::vector<Point_2> temp_vertices;
     Point_2 min_intersect_pt;
@@ -148,6 +149,11 @@ public:
       vertices.push_back(vertices[0]);
     }
 
+    std::cout << "VERTICES: " << vertices.size() << std::endl;
+    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
+
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
@@ -183,11 +189,13 @@ public:
                                          segments.begin(), 
                                          segments.end());
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
+    CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
+    vertices.clear();
   }
 
   void visibility_region(const Point_2 &q, const Halfedge_const_handle he,
-                           Output_Arrangement_2 &out_arr ) {
+                           Output_arrangement_2 &out_arr ) {
 
     if (q != he->source()->point()) {
       if (q != he->target()->point()) {
@@ -203,11 +211,11 @@ public:
       vertices.push_back(he->target()->point());
     }
 
-    typename Input_Arrangement_2::Face_const_handle face = he->face();
-    typename Input_Arrangement_2::Ccb_halfedge_const_circulator circ = 
+    typename Input_arrangement_2::Face_const_handle face = he->face();
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                               face->outer_ccb();
-    typename Input_Arrangement_2::Ccb_halfedge_const_circulator curr;
-    typename Input_Arrangement_2::Halfedge_const_handle he_handle = circ;
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr;
+    typename Input_arrangement_2::Halfedge_const_handle he_handle = circ;
 
     while (he_handle != he) {
       he_handle = circ;
@@ -227,6 +235,11 @@ public:
       curr++;
     }
     vertices.push_back(q);
+
+    std::cout << "VERTICES: " << vertices.size() << std::endl;
+    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
 
     visibility_region_impl(q);
     
@@ -255,7 +268,9 @@ public:
                                          segments.begin(), 
                                          segments.end());
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
+    CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
+    vertices.clear();
   }
 
   void print_arrangement(const Arrangement_2 &arr) {
@@ -267,7 +282,7 @@ public:
   }   
 
 private:
-  const Input_Arrangement_2 *p_arr;
+  const Input_arrangement_2 *p_arr;
   const Geometry_traits_2  *geom_traits;
   std::stack<Point_2> s;
   std::vector<Point_2> vertices;
@@ -329,16 +344,16 @@ private:
     return false;
   }
 
-  void conditional_regularize(Output_Arrangement_2 &out_arr, CGAL::Tag_true) {
+  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
 
-  void conditional_regularize(Output_Arrangement_2 &out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
-  void regularize_output(Output_Arrangement_2 &out_arr) {
-    typename Output_Arrangement_2::Edge_iterator e_itr;
+  void regularize_output(Output_arrangement_2 &out_arr) {
+    typename Output_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ; 
          e_itr != out_arr.edges_end() ; e_itr++) {
 
