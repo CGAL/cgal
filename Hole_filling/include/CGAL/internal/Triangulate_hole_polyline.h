@@ -26,49 +26,43 @@ struct Weight {
   template<class Point_3>
   Weight(const std::vector<Point_3>& P, 
          const std::vector<Point_3>& Q, 
-         int i, int j, int k)
-  {
-    CGAL_assertion(i+1 ==j);
-    CGAL_assertion(j+1 ==k);
-    const Point_3& p = P[i];
-    const Point_3& q = P[j];
-    const Point_3& r = P[k];
-    // The CGAL::dihedral angle is measured between the oriented triangles, that is it goes from [-pi, pi]
-    // What we need is the angle between the normals of the triangles between [0, pi]
-    double ang1 = 0, ang2 = 0;
-
-    if(!Q.empty()){
-      ang1 = 180 - CGAL::abs( CGAL::Mesh_3::dihedral_angle(p,q,r,Q[i]));
-      ang2 = 180 - CGAL::abs( CGAL::Mesh_3::dihedral_angle(q,r,p, Q[j]));
-    }
-    w = std::make_pair((std::max)(ang1, ang2), std::sqrt(CGAL::squared_area(p,q,r)));
-  }
-
-  template<class Point_3>
-  Weight(const std::vector<Point_3>& P, 
-         const std::vector<Point_3>& Q, 
-         int i, int m, int k, 
+         int i, int j, int k, 
          const std::vector<int>& lambda)
   {
-    CGAL_assertion(i < m);
-    CGAL_assertion(m < k);
+    CGAL_assertion(i < j);
+    CGAL_assertion(j < k);
     int n = P.size() -1; // because the first and last point are equal
-    const Point_3& pi = P[i];
-    const Point_3& pm = P[m];
-    const Point_3& pk = P[k];
-    double ang1=0, ang2=0;
+    
+    // The CGAL::dihedral angle is measured between the oriented triangles, that is it goes from [-pi, pi]
+    // What we need is the angle between the normals of the triangles between [0, pi]
+    double ang_max = 0;
 
     if(!Q.empty()){
-      if(lambda[i*n+m] != -1){
-        const Point_3& pim = P[lambda[i*n+m]];
-        ang1 = 180 - CGAL::abs(CGAL::Mesh_3::dihedral_angle(pi,pm,pk, pim));
+      // Test each edge
+      int vertices[] = {i, j, k};
+      for(int e = 0; e < 3; ++e) 
+      {
+        int v0      = vertices[e];
+        int v1      = vertices[(e+1)%3];
+        int v_other = vertices[(e+2)%3];
+        double angle = 0;
+        // check whether the edge is border
+        if(v0 + 1 == v1 || v0 == n-1 && v1 == 0) {
+          angle = 180 - CGAL::abs( 
+            CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0]) );
+        }
+        else {
+          if(e == 2) { continue; }
+          if(lambda[v0*n+v1] != -1){
+            const Point_3& p01 = P[lambda[v0*n+v1]];
+            angle = 180 - CGAL::abs( 
+              CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01) );
+          }
+        }
+        ang_max = (std::max)(ang_max, angle);
       }
-      if(lambda[m*n+k] != -1){
-        const Point_3& pmk = P[lambda[m*n+k]];
-        ang2 = 180 - CGAL::abs( CGAL::Mesh_3::dihedral_angle(pm,pk,pi, pmk));
-      }
-    }
-    w = std::make_pair((std::max)(ang1, ang2), std::sqrt(CGAL::squared_area(pi,pm,pk)));
+    } // if !Q.empty() 
+    w = std::make_pair(ang_max, std::sqrt(CGAL::squared_area(P[i],P[j],P[k])));
   }
 
   Weight operator+(const Weight& w2) const
@@ -277,7 +271,8 @@ public:
       CGAL_warning(!"No possible triangulation is found!");
       return out;
     }
-
+    CGAL_TRACE_STREAM << "Triangulation Weight = [max-angle: "
+                      << W[n-1].w.first << ", area: " << W[n-1].w.second <<"]" << std::endl;
     return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
 
@@ -339,23 +334,6 @@ private:
 
     // check whether the edge is valid
     if(existing_edges.find(std::make_pair(v0, v1)) != existing_edges.end()) {
-      W[v0*n + v1] = Weight(-1,-1);
-      return;
-    }
-
-    // one triangle remains
-    if(v0 + 2 == v1){
-      // check whether it is included in DT
-      IncidentFacetCirculator fb(e, &T);
-      do {
-        int f3 = get_facet_remaining_vertex(*fb, v0, v1).first;
-        if(f3 == v0 + 1) {
-          W[v0*n + v1] = Weight(P, Q, v0, v0+1, v1);
-          lambda[v0*n + v1] = v0+1;
-          return;
-        }
-      } while(++fb);
-      // if no found
       W[v0*n + v1] = Weight(-1,-1);
       return;
     }
@@ -423,22 +401,9 @@ public:
     std::vector<Weight> W(n*n,Weight(0,0));
     std::vector<int> lambda(n*n,-1);
     
-    // calculate weights for boundary triangles
-    for(int i=0; i < n-2; ++i){
-      if(existing_edges.find(std::make_pair(i, i+2)) != existing_edges.end()) {
-        W[i*n + (i+2)] = Weight(-1,-1);
-        lambda[i*n + (i+2)] = -1;
-      }
-      else {
-        W[i*n + (i+2)] = Weight(P, Q, i, i+1, i+2);
-        lambda[i*n + (i+2)] = i+1;
-      }
-    }
-    
-    for(int j = 3; j< n; ++j){ // 3 - 4 - 5 (range)
-
-      for(int i=0; i<n-j; ++i){ // 0-3, 1-4, 2-5 find min
-        int k = i+j;
+    for(int j = 2; j< n; ++j){ // determines range (2 - 3 - 4 )
+      for(int i=0; i<n-j; ++i){ // iterates over ranges and find min triangulation in that ranges 
+        int k = i+j;            // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
         int m_min = -1;
         Weight w_min((std::numeric_limits<double>::max)(), 
                      (std::numeric_limits<double>::max)());
@@ -464,10 +429,10 @@ public:
             }
           }
         }
-        // if any found, update weight
+        
         if(m_min != -1) { W[i*n+k] = w_min; }
         else            { W[i*n+k] = Weight(-1,-1); }
-        lambda[i*n+k] = m_min;
+        lambda[i*n+k] = m_min; // if not found lambda should be -1
       }
     }
 
@@ -475,7 +440,8 @@ public:
       CGAL_warning(!"Due to existing edges, no possible triangulation is found!");
       return out;
     }
-
+    CGAL_TRACE_STREAM << "Triangulation Weight = [max-angle: "
+                      << W[n-1].w.first << ", area: " << W[n-1].w.second <<"]" << std::endl;
     return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
   }
 };
