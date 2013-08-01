@@ -18,22 +18,22 @@ algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n
 the vertices of the polygon.
 
 The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
-at compile time via the second template argument Regularization_tag. The default for the Regularization_tag
+at compile time via the second template argument RegularizationTag. The default for the RegularizationTag
 is ::Tag_false, which means the visibility region will be computed. Setting the template argument
 to ::Tag_true will produce the output as a visibility polygon.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
-\tparam Regularization_tag indicates whether the output should be regularized. It can be
+\tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false.
 
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 */
-template <typename Arrangement_2, typename Regularization_tag>
+template <typename Arrangement_2, typename RegularizationTag>
 class Simple_visibility_2 {
 public:
 
@@ -74,7 +74,7 @@ public:
   /*! 
     Tag identifying whether the regularized visibility area is computed. 
   */
-  typedef Regularization_tag Regularization_tag;
+  typedef RegularizationTag Regularization_tag;
   
   /*! 
     Tag identifying that the class does not support general polygons (i.e.\ with holes). 
@@ -140,27 +140,22 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` is in the interior or on the boundary of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-<<<<<<< HEAD
-  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_Arrangement_2& out_arr);
-=======
-  Face_handle visibility_region(const Point_2& q, const Face& f, Output_arrangement_2& out_arr); 
->>>>>>> ea69c768e0ac884a093c755b35df4a7eab911b2c
+  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
 
-/*! 
-Computes the visibility region for the given query point `q` that is on the side of `halfedge`.
+
+/*!
+Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
 The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point from which the visibility region is computed
-\param halfedge the halfedge on which `q` is located
-\param out_arr is the output arrangement  
-\pre `halfedge` is a halfedge of  `this->arr()`
-\pre `q` is on `halfedge`
+\param e the halfedge on which `q` is located
+\param out_arr is the output arrangement
+\pre `e` is a halfedge of  `this->arr()`
+\pre `q` is on `e`
+\pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return the face handle to the face in `out_arr` that represents the visibility region
-*/ 
-<<<<<<< HEAD
-  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_Arrangement_2& out_arr);
-=======
-  Face_handle visibility_region(const Point_2& q, const Halfedge& halfedge, Output_arrangement_2& out_arr); 
->>>>>>> ea69c768e0ac884a093c755b35df4a7eab911b2c
+*/
+  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& e, Output_arrangement_2& out_arr);
+
 
 /// @}
 

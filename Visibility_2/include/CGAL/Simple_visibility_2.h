@@ -39,6 +39,7 @@ public:
   // Currently only consider with same type for both
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
+  typedef RegularizationTag                             Regularization_tag;
 
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;

@@ -58,7 +58,7 @@ Where  \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of input p
 As the package is based on the \ref PkgArrangement2, a regular polygonal region is defined as a face within an Arrangement_2 of segments
 with Arr_segment_traits_2, which we also refer to as the environment. At this point every visibility class template has two parameters, the Arrangement_2 class and Regularization_tag, that is, the user decides at compile time whether the result is computed regularized or not. 
 
-As required by the `Visibility_2` concept, every  class has two overloads of `visibility_region()` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ F \f$. One is for the case when \f$ p \f$ is in the interior of \f$ F \f$. The other is for the case when \f$ p \f$ is on the boundary of \f$ F \f$. 
+As required by the `Visibility_2` concept, every  class has two overloads of `visibility_region()` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ f \f$. One is for the case when \f$ p \f$ is in the interior of \f$ f \f$. The other is for the case when \f$ p \f$ is on the boundary of \f$ f \f$. 
 
 \section simple_visibility_example  Example of visibility in a simple polygon.
 The following example shows how to obtain the regularized and non-regularized visibility regions.
