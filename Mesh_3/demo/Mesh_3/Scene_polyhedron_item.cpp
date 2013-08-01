@@ -52,7 +52,7 @@ bool
 Scene_polyhedron_item::save(std::ostream& out) const
 {
   out << *poly;
-  return out;
+  return (bool) out;
 }
 
 QString 

@@ -59,14 +59,14 @@ int main(int, char *[])
     Time t= pq.front_priority();
     if (t < last_time) {
       std::cerr << "ERROR: priority of next event (" << pq.front_priority()
-		<< ") is before the last one (" << last_time << ")." << std::cerr;
+		<< ") is before the last one (" << last_time << ").\n";
     }
     assert(t >= last_time);
     last_time=t;
     pq.process_front();
     if (t < last_time) {
       std::cerr << "ERROR: wrong event processed (" << pq.front_priority()
-		<< ") instead of (" << proc_time_ << ")." << std::cerr;
+		<< ") instead of (" << proc_time_ << ").\n";
     }
     if (proc_time_!= t) {
       std::cerr << "ERROR: wrong event time. Expected: " << t << " got " << proc_time_ <<std::endl;

@@ -156,7 +156,7 @@ private:
   Nef_polyhedron load_off(const char* name) {
     Polyhedron poly;
     std::ifstream off_file(name);
-    assert(off_file != NULL);
+    assert((bool) off_file);
     off_file >> poly;
     Nef_polyhedron N(poly);
     return N;
