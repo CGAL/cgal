@@ -286,7 +286,7 @@ struct Incident_facet_circulator<2, Triangulator>
   typedef typename Triangulator::Edge          Edge;
   typedef typename Triangulator::Triangulation Triangulation;
   
-  Incident_facet_circulator(Edge e, const Triangulation*)
+  Incident_facet_circulator(Edge e, const Triangulation&)
     : f1( Facet(e.first, 3) ),
       f2( Facet(e.first->neighbor(3 - e.second - e.third), 3) ),
       it(f1)
@@ -314,8 +314,8 @@ struct Incident_facet_circulator<3, Triangulator>
   typedef typename Triangulator::Triangulation    Triangulation;
   typedef typename Triangulator::Facet_circulator Facet_circulator;
 
-  Incident_facet_circulator(Edge e, const Triangulation* t)
-    : it(t->incident_facets(e)), end(it)
+  Incident_facet_circulator(Edge e, const Triangulation& T)
+    : it(T.incident_facets(e)), end(it)
   { }
   Incident_facet_circulator& operator++() {
     ++it;
@@ -504,7 +504,7 @@ private:
     int m_min = -1;
     Weight w_min = Weight::NOT_VALID();
 
-    IncidentFacetCirculator fb(e, &T);
+    IncidentFacetCirculator fb(e, T);
     do {
       int v2, v2_cell_index;
       boost::tie(v2, v2_cell_index) = get_facet_remaining_vertex(*fb, v0, v1);
