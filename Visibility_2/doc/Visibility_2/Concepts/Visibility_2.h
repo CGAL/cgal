@@ -34,12 +34,12 @@ public:
   typedef Input_arrangement_2::Point_2 Point_2;
 
   /*!
-   * The supported Face handle type of the input Arrangement.
+   * The supported Face handle type of the input arrangement.
    */
   typedef Input_arrangement_2::Face_handle Face_handle;
 
   /*!
-   * The supported Halfedge handle type of the input Arrangement.
+   * The supported Halfedge handle type of the input arrangement.
    */
   typedef Input_arrangement_2::Halfedge_handle Halfedge_handle;
 
