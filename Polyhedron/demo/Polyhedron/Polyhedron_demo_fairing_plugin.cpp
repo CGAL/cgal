@@ -76,7 +76,7 @@ public slots:
     if(selection_item->selected_vertices.empty()) {
       print_message("Error: please select a region of vertices!");
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     int weight_index = ui_widget.weight_combo_box->currentIndex();
 
     if(weight_index == 1)
@@ -88,6 +88,7 @@ public slots:
         selection_item->selected_vertices.end(),
         CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>());
     selection_item->changed_with_poly_item();
+    QApplication::restoreOverrideCursor();
   }
 
   void on_Refine_button_clicked() {
@@ -97,7 +98,7 @@ public slots:
     if(selection_item->selected_facets.empty()) {
       print_message("Error: please select a region of facets!");
     }
-
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     double alpha = ui_widget.Density_control_factor_spin_box->value();
     std::vector<Polyhedron::Facet_handle> new_facets;
 
@@ -108,6 +109,7 @@ public slots:
       selection_item->selected_facets.insert(*it);
     }
     selection_item->changed_with_poly_item();
+    QApplication::restoreOverrideCursor();
   }
 
 private:

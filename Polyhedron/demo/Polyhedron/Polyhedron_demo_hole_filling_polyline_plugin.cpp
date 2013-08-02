@@ -106,7 +106,8 @@ public slots:
     bool use_DT = 
       QMessageBox::Yes == QMessageBox::question(
       NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
-   
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
       it != polylines_item->polylines.end(); ++it, ++counter) 
@@ -147,6 +148,7 @@ public slots:
       poly_item->setRenderingMode(FlatPlusEdges);
       scene->setSelectedItem(scene->addItem(poly_item));
     }
+    QApplication::restoreOverrideCursor();
   }
 
 private:

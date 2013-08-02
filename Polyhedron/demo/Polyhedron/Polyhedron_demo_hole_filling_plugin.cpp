@@ -460,6 +460,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
     return;
   }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   // fill selected holes
   bool any_filled = false;
   for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
@@ -472,6 +473,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
     last_active_item = polyline_item->poly_item;
     accept_reject_toggle(true);
   }
+  QApplication::restoreOverrideCursor();
 };
 // fills all holes and removes associated Scene_polylines_collection if any
 void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
@@ -506,6 +508,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     return;
   }
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   bool any_filled = false;
   for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
      any_filled |= fill(poly, *it);
@@ -516,6 +519,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
     last_active_item = poly_item;
     accept_reject_toggle(true);
   }
+  QApplication::restoreOverrideCursor();
 }
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
 void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
