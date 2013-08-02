@@ -79,7 +79,7 @@ public:
   /*! 
     Tag identifying that the class does not support general polygons (i.e.\ with holes). 
   */
-  typedef Tag_false Supports_general_polygon_tag; 
+  typedef ::Tag_false Supports_general_polygon_tag; 
 
   /*! 
     Tag identifying that the class supports general simple polygons. 
