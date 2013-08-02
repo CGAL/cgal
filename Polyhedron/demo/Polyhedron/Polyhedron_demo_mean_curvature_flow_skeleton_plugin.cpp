@@ -200,7 +200,6 @@ public:
     double edgelength_TH = ui->edgelength_TH->value();
     double volume_TH = ui->volume_TH->value();
     double area_TH = ui->area_TH->value();
-    double diag = scene->len_diagonal();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
     Polyhedron *pMesh = item->polyhedron();
@@ -377,7 +376,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -764,7 +762,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -795,7 +792,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -829,7 +825,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -862,7 +857,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -921,7 +915,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -1027,7 +1020,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {
@@ -1156,7 +1148,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-  Polyhedron* pMesh = item->polyhedron();
 
   if (!check_mesh(item))
   {

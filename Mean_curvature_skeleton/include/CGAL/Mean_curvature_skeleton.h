@@ -261,7 +261,7 @@ private:
                          std::map<int, int>* poles,
                          std::vector<Point>* cell_dual,
                          int max_id) :
-      corr(corr), poles(poles), cell_dual(cell_dual), max_id(max_id),
+      corr(corr), poles(poles), max_id(max_id), cell_dual(cell_dual),
       is_medially_centered(true){}
 
     // Called AFTER each edge has been collapsed
@@ -344,8 +344,8 @@ public:
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
-      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
+      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), weight_calculator(weight_calculator),
+      TH_ALPHA(110), zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
       is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
@@ -390,8 +390,8 @@ public:
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), omega_P(omega_P),
-      edgelength_TH(edgelength_TH), TH_ALPHA(110), volume_TH(volume_TH),
-      weight_calculator(weight_calculator), zero_TH(zero_TH), area_TH(area_TH),
+      edgelength_TH(edgelength_TH), TH_ALPHA(110), weight_calculator(weight_calculator),
+      zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
       is_medially_centered(is_medially_centered)
   {
     TH_ALPHA *= (M_PI / 180.0);
@@ -809,7 +809,7 @@ public:
     std::copy(eb, ee, std::back_inserter( edges ) );
 
     int cnt = 0;
-    for (int i = 0; i < edges.size(); ++i)
+    for (size_t i = 0; i < edges.size(); ++i)
     {
       edge_descriptor ed = edges[i];
       if (constrains_map.is_constrained(ed))
@@ -992,10 +992,10 @@ public:
 
       vertex_descriptor vs = boost::source(ei, *polyhedron);
       vertex_descriptor vt = boost::target(ei, *polyhedron);
-      size_t vs_id = boost::get(vertex_id_pmap, vs);
-      size_t vt_id = boost::get(vertex_id_pmap, vt);
-      Point ps = vs->point();
-      Point pt = vt->point();
+//      size_t vs_id = boost::get(vertex_id_pmap, vs);
+//      size_t vt_id = boost::get(vertex_id_pmap, vt);
+//      Point ps = vs->point();
+//      Point pt = vt->point();
 
 //      if (is_vertex_fixed_map.find(vs_id) != is_vertex_fixed_map.end()
 //       || is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
@@ -1603,7 +1603,6 @@ public:
       double max_neg_t = 1;
       int max_neg_i = 0;
 
-      std::cout << "poles " << point_to_pole[i].size() << "\n";
       for (size_t j = 0; j < point_to_pole[i].size(); ++j)
       {
         int pole_id = point_to_pole[i][j];

@@ -67,7 +67,7 @@ public :
   bool operator()( FT const&      aCurrentCost
                  , Profile const& //aEdgeProfile
                  , size_type      //aInitialCount
-                 , size_type      aCurrentCount
+                 , size_type      //aCurrentCount
                  ) const 
   {
     return aCurrentCost > mThres ;
