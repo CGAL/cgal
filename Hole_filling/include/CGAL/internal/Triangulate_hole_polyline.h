@@ -286,17 +286,13 @@ struct Incident_facet_circulator<2, Triangulator>
   typedef typename Triangulator::Edge          Edge;
   typedef typename Triangulator::Triangulation Triangulation;
   
-  Incident_facet_circulator(Edge e, const Triangulation*) 
+  Incident_facet_circulator(Edge e, const Triangulation*)
+    : f1( Facet(e.first, 3) ),
+      f2( Facet(e.first->neighbor(3 - e.second - e.third), 3) ),
+      it(f1)
   {
-    f1 = Facet(e.first, 3);
-    int remaining_index = 0;
-    for( ; remaining_index < 3; ++remaining_index) {
-      if(remaining_index != e.second && remaining_index != e.third) {
-        break;
-      }
-    }
-    f2 = Facet(e.first->neighbor(remaining_index), 3);
-    it = f1;
+     CGAL_assertion(f1 != f2);
+     CGAL_assertion(e.second < 3 && e.third < 3);
   }
   Incident_facet_circulator& operator++() {
     it = it == f1 ? f2 : f1;
