@@ -401,7 +401,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(*mCopy));
   int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; vb++)
+  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
     id_to_vd[id++] = v;
@@ -423,10 +423,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   std::vector<double> distances;
   distances.resize(boost::num_vertices(*segment_mesh));
-  for (size_t i = 0; i < corr.size(); i++)
+  for (size_t i = 0; i < corr.size(); ++i)
   {
     Point skel = points[i];
-    for (size_t j = 0; j < corr[i].size(); j++)
+    for (size_t j = 0; j < corr[i].size(); ++j)
     {
       Point surf = id_to_vd[corr[i][j]]->point();
       distances[corr[i][j]] = sqrt(squared_distance(skel, surf));
@@ -500,7 +500,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
       out_edge_iter e, e_end;
       deleted[*vi] = true;
       bool move_corr = false;
-      for (boost::tie(e, e_end) = boost::out_edges(*vi, g); e != e_end; e++)
+      for (boost::tie(e, e_end) = boost::out_edges(*vi, g); e != e_end; ++e)
       {
         edge_desc ed = *e;
         int target = boost::target(ed, g);
@@ -545,7 +545,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
         visited[cur] = true;
         skeleton_segment[cur] = num_segment;
         out_edge_iter e, e_end;
-        for (boost::tie(e, e_end) = boost::out_edges(cur, g); e != e_end; e++)
+        for (boost::tie(e, e_end) = boost::out_edges(cur, g); e != e_end; ++e)
         {
           edge_desc ed = *e;
           int target = boost::target(ed, g);
@@ -567,7 +567,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   {
     int vid = *vi;
     int seg = skeleton_segment[vid];
-    for (size_t i = 0; i < corr[vid].size(); i++)
+    for (size_t i = 0; i < corr[vid].size(); ++i)
     {
       segment_id[corr[vid][i]] = seg;
     }
@@ -886,7 +886,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   mcs->get_fixed_points(fixedPoints);
 
   Point_set *ps = fixedPointsItem->point_set();
-  for (size_t i = 0; i < fixedPoints.size(); i++)
+  for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
     UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
     ps->select(&point);
@@ -944,7 +944,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   mcs->get_fixed_points(fixedPoints);
 
   Point_set *ps = fixedPointsItem->point_set();
-  for (size_t i = 0; i < fixedPoints.size(); i++)
+  for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
     UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
     ps->select(&point);
@@ -967,7 +967,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 //  std::vector<Point> nonFixedPoints;
 //  mcs->get_non_fixed_points(nonFixedPoints);
 //  ps = nonFixedPointsItem->point_set();
-//  for (size_t i = 0; i < nonFixedPoints.size(); i++)
+//  for (size_t i = 0; i < nonFixedPoints.size(); ++i)
 //  {
 //    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
 //    ps->push_back(point);
@@ -988,7 +988,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 //  mcs->get_poles(pole_points);
 //  vertex_iterator vb, ve;
 //  int id = 0;
-//  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; vb++)
+//  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; ++vb)
 //  {
 //    std::vector<Point> line;
 //    line.clear();
@@ -1069,7 +1069,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(*mCopy));
   int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; vb++)
+  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
     id_to_vd[id++] = v;
@@ -1077,10 +1077,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   Scene_polylines_item* lines = new Scene_polylines_item();
 
-  for (size_t i = 0; i < corr.size(); i++)
+  for (size_t i = 0; i < corr.size(); ++i)
   {
     Point s = points[i];
-    for (size_t j = 0; j < corr[i].size(); j++)
+    for (size_t j = 0; j < corr[i].size(); ++j)
     {
       std::vector<Point> line;
       line.clear();
@@ -1179,7 +1179,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   mcs->get_fixed_points(fixedPoints);
 
   Point_set *ps = fixedPointsItem->point_set();
-  for (size_t i = 0; i < fixedPoints.size(); i++)
+  for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
     UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
     ps->select(&point);
@@ -1201,7 +1201,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
 //  std::vector<Point> nonFixedPoints;
 //  mcs->get_non_fixed_points(nonFixedPoints);
 //  ps = nonFixedPointsItem->point_set();
-//  for (size_t i = 0; i < nonFixedPoints.size(); i++)
+//  for (size_t i = 0; i < nonFixedPoints.size(); ++i)
 //  {
 //    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
 //    ps->push_back(point);

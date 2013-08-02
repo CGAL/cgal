@@ -97,7 +97,7 @@ typename Polyhedron::Traits::FT volume(const Polyhedron& p)
   typename Kernel_traits<Point>::Kernel::Compute_volume_3 volume;
   typename Polyhedron::Traits::FT res=0;
   Point origin(0,0,0);
-  for (Facet_iterator f = p.facets_begin(); f != p.facets_end(); f++)
+  for (Facet_iterator f = p.facets_begin(); f != p.facets_end(); ++f)
   {
     typename Polyhedron::Halfedge_const_handle he = f->facet_begin();
     const Point& v1 = he->vertex()->point();
@@ -296,7 +296,7 @@ private:
       std::map<int, std::vector<int> >::iterator iter = (*corr).find(from);
       if (iter != (*corr).end())
       {
-        for (size_t i = 0; i < (iter->second).size(); i++)
+        for (size_t i = 0; i < (iter->second).size(); ++i)
         {
           (*corr)[to].push_back((iter->second)[i]);
         }
@@ -558,7 +558,7 @@ public:
     vertex_iterator vb, ve;
     // initialize the Laplacian matrix
     int cnt_fix = 0;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
 
@@ -583,7 +583,7 @@ public:
       }
     }
 
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
       int i = new_id[id];
@@ -596,7 +596,7 @@ public:
       }
       double diagonal = 0;
       in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; e++)
+      for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; ++e)
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         double wij = edge_weight[boost::get(edge_id_pmap, *e)] * 2.0;
@@ -619,14 +619,14 @@ public:
     // assemble right columns of linear system
     int nver = boost::num_vertices(*polyhedron);
     vertex_iterator vb, ve;
-    for (int i = 0; i < nver; i++)
+    for (int i = 0; i < nver; ++i)
     {
       Bx[i] = 0;
       By[i] = 0;
       Bz[i] = 0;
     }
 
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor vi = *vb;
       int id = boost::get(vertex_id_pmap, vi);
@@ -714,7 +714,7 @@ public:
 
     // copy to mesh
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor vi = *vb;
       int id = boost::get(vertex_id_pmap, vi);
@@ -812,7 +812,7 @@ public:
     }
 
     int cnt = 0;
-    for (i = 0; i < edges.size(); i++)
+    for (i = 0; i < edges.size(); ++i)
     {
       edge_descriptor ed = edges[i];
       if (constrains_map.is_constrained(ed))
@@ -1081,11 +1081,11 @@ public:
     search_vertices_in_disk(root, vertices_in_disk);
 
     typename std::set<vertex_descriptor>::iterator v_iter;
-    for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); v_iter++)
+    for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); ++v_iter)
     {
       vertex_descriptor vd = *v_iter;
       out_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = boost::out_edges(vd, *polyhedron); e != e_end; e++)
+      for (boost::tie(e, e_end) = boost::out_edges(vd, *polyhedron); e != e_end; ++e)
       {
         edge_descriptor ed = *e;
         edge_descriptor ed_op = ed->opposite();
@@ -1143,7 +1143,7 @@ public:
       Q.pop();
 
       out_edge_iterator e, e_end;
-      for(boost::tie(e, e_end) = boost::out_edges(v, *polyhedron); e != e_end; e++)
+      for(boost::tie(e, e_end) = boost::out_edges(v, *polyhedron); e != e_end; ++e)
       {
         edge_descriptor ed = *e;
 
@@ -1166,7 +1166,7 @@ public:
   {
     int num_fixed = 0;
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
@@ -1193,7 +1193,7 @@ public:
     int num_fixed = 0;
     double elength_fixed = edgelength_TH;
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
@@ -1203,7 +1203,7 @@ public:
         int bad_counter = 0;
 
         in_edge_iterator eb, ee;
-        for (boost::tie(eb, ee) = boost::in_edges(v, *polyhedron); eb != ee; eb++)
+        for (boost::tie(eb, ee) = boost::in_edges(v, *polyhedron); eb != ee; ++eb)
         {
           edge_descriptor edge = *eb;
           vertex_descriptor v0 = boost::source(edge, *polyhedron);
@@ -1279,7 +1279,7 @@ public:
 
     // test intersection of the one-rings of v0 and v1
     in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(v0, *polyhedron); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::in_edges(v0, *polyhedron); eb != ee; ++eb)
     {
       vv = boost::source(*eb, *polyhedron);
       if (vv != v1 && vv != vl && vv != vr)
@@ -1298,7 +1298,7 @@ public:
   bool find_halfedge(vertex_descriptor vi, vertex_descriptor vj)
   {
     in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(vj, *polyhedron); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::in_edges(vj, *polyhedron); eb != ee; ++eb)
     {
       vertex_descriptor vv = boost::source(*eb, *polyhedron);
       if (vv == vi)
@@ -1314,7 +1314,7 @@ public:
     bool rR = false;
 
     in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(aV, *polyhedron); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::in_edges(aV, *polyhedron); eb != ee; ++eb)
     {
       edge_descriptor lEdge = *eb;
       if (is_undirected_edge_a_border(lEdge))
@@ -1393,9 +1393,9 @@ public:
     skeleton.extract_skeleton(g, points, record);
 
     skeleton_to_surface.resize(record.size());
-    for (size_t i = 0; i < record.size(); i++)
+    for (size_t i = 0; i < record.size(); ++i)
     {
-      for (size_t j = 0; j < record[i].size(); j++)
+      for (size_t j = 0; j < record[i].size(); ++j)
       {
         int id = record[i][j];
         if (correspondence.find(id) != correspondence.end())
@@ -1412,13 +1412,13 @@ public:
       }
     }
     int cnt = 0;
-    for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
     {
       cnt += skeleton_to_surface[i].size();
     }
     MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
 
-    collapse_vertices_without_correspondence();
+//    collapse_vertices_without_correspondence();
   }
 
   void collapse_vertices_without_correspondence()
@@ -1427,7 +1427,7 @@ public:
     while (true)
     {
       int cnt = 0;
-      for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+      for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
       {
         if (skeleton_to_surface[i].size() == 0)
         {
@@ -1436,7 +1436,7 @@ public:
           bool found = false;
           in_edge_iter eb, ee;
           // look for a neighbor having non-zero correspondent vertices
-          for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; eb++)
+          for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
           {
             ed = *eb;
             u = boost::source(ed, g);
@@ -1449,7 +1449,7 @@ public:
           if (found)
           {
             // add new edges
-            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; eb++)
+            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
             {
               edge_desc edge = *eb;
               int v = boost::source(edge, g);
@@ -1467,7 +1467,7 @@ public:
               }
             }
             // remove incident edges
-            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; eb++)
+            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
             {
               edge_desc edge = *eb;
               boost::remove_edge(edge, g);
@@ -1492,7 +1492,7 @@ public:
     new_id.resize(skeleton_to_surface.size(), -1);
 
     int id = 0;
-    for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
     {
       if (skeleton_to_surface[i].size() != 0)
       {
@@ -1500,7 +1500,7 @@ public:
       }
     }
     edge_iter eb, ee;
-    for (boost::tie(eb, ee) = boost::edges(g); eb != ee; eb++)
+    for (boost::tie(eb, ee) = boost::edges(g); eb != ee; ++eb)
     {
       edge_desc ed = *eb;
       int s = boost::source(ed, g);
@@ -1516,7 +1516,7 @@ public:
 
     std::vector<Point> new_points;
     new_points.resize(new_size);
-    for (size_t i = 0; i < points.size(); i++)
+    for (size_t i = 0; i < points.size(); ++i)
     {
       int index = new_id[i];
       if (index != -1)
@@ -1527,7 +1527,7 @@ public:
 
     std::vector<std::vector<int> > new_skeleton_to_surface;
     new_skeleton_to_surface.resize(new_size);
-    for (size_t i = 0; i < skeleton_to_surface.size(); i++)
+    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
     {
       int index = new_id[i];
       if (index != -1)
@@ -1569,7 +1569,7 @@ public:
     point_to_pole.resize(boost::num_vertices(*polyhedron));
 
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
@@ -1587,7 +1587,7 @@ public:
       TriPoint point = T.dual(cell);
       Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
       cell_dual.push_back(pt);
-      for (int i = 0; i < 4; i++)
+      for (int i = 0; i < 4; ++i)
       {
         TriVertex_handle vt = cell->vertex(i);
         int id = vt->info();
@@ -1597,7 +1597,7 @@ public:
     }
 
     poles.clear();
-    for (size_t i = 0; i < point_to_pole.size(); i++)
+    for (size_t i = 0; i < point_to_pole.size(); ++i)
     {
       Point surface_point = Point(to_double(points[i].first.x()),
                                   to_double(points[i].first.y()),
@@ -1607,7 +1607,7 @@ public:
       int max_neg_i = 0;
 
       std::cout << "poles " << point_to_pole[i].size() << "\n";
-      for (size_t j = 0; j < point_to_pole[i].size(); j++)
+      for (size_t j = 0; j < point_to_pole[i].size(); ++j)
       {
         int pole_id = point_to_pole[i][j];
         Point cell_point = cell_dual[pole_id];
@@ -1631,7 +1631,7 @@ public:
     normals.resize(boost::num_vertices(*polyhedron));
 
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
@@ -1644,7 +1644,7 @@ public:
     max_poles.resize(boost::num_vertices(*polyhedron));
     vertex_iterator vb, ve;
     int cnt = 0;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; vb++)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
