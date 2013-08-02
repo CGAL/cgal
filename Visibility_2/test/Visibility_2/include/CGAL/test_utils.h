@@ -179,7 +179,7 @@ std::string num2string(Number_type& n) {
 }
 
 template <class _Arrangement_2> 
-void create_lazy_arrangement_from_file(std::ifstream &input,
+void lazy_create_arrangement_from_file(std::ifstream &input,
                                        _Arrangement_2 &arr) {
 
   typedef _Arrangement_2                                      Arrangement_2;
@@ -188,6 +188,7 @@ void create_lazy_arrangement_from_file(std::ifstream &input,
   typedef typename Geometry_traits_2::Segment_2               Segment_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2;
   typedef typename Geometry_traits_2::FT                      Number_type;
+
   if (input) {
     std::string curr_line;
     std::vector<Point_2> isolated_vertices;
@@ -201,7 +202,8 @@ void create_lazy_arrangement_from_file(std::ifstream &input,
       std::istringstream iss(curr_line);
       std::string x, y;
       iss >> x >> y;
-      arr.insert_in_face_interior(Point_2(x, y));
+      arr.insert_in_face_interior(Point_2(string2num<Number_type>(x), 
+                                          string2num<Number_type>(y)));
     }
 
     std::vector<Segment_2> edges;
@@ -212,7 +214,10 @@ void create_lazy_arrangement_from_file(std::ifstream &input,
       std::string x1, y1, x2, y2;
       std::istringstream iss(curr_line);
       iss >> x1 >> y1 >> x2 >> y2;
-      edges.push_back(Segment_2(Point_2(x1, y1), Point_2(x2, y2)));
+      edges.push_back(Segment_2(Point_2(string2num<Number_type>(x1), 
+                                        string2num<Number_type>(y1)), 
+                                Point_2(string2num<Number_type>(x2), 
+                                        string2num<Number_type>(y2))));
     }
     CGAL::insert(arr, edges.begin(), edges.end());
   }
@@ -220,23 +225,45 @@ void create_lazy_arrangement_from_file(std::ifstream &input,
 
 template <class _Visibility_2> 
 void run_tests(_Visibility_2 visibility, int case_number) {
-  typedef _Visibility_2                                 Visibility_2;
-  typedef Visibility_2::Input_arrangement_2             Input_arrangement_2;
-  typedef Visibility_2::Output_arrangement_2            Output_arrangement_2;
+  typedef _Visibility_2                                       Visibility_2;
+  typedef typename Visibility_2::Input_arrangement_2          Input_arrangement_2;
+  typedef typename Visibility_2::Output_arrangement_2         Output_arrangement_2;
+  typedef typename Input_arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Geometry_traits_2::Point_2                 Point_2; 
+  typedef typename Geometry_traits_2::FT                      Number_type;
 
   for (int i=1 ; i <= case_number ; i++) {
 
     std::cout<<"Test "<<i<<" begins"<<std::endl;
     std::string input_arr_file("data/test");
-    input_arr_file += number2string(i);
+    input_arr_file += num2string<int>(i);
     std::ifstream input(input_arr_file.c_str());
-    Input_arrangement_2 in_arr;
-    Output_arrangement_2 out_arr;
+    Input_arrangement_2 arr_in;
+    Output_arrangement_2 arr_correct_out;
+    Output_arrangement_2 arr_out;
     
+    std::string curr_line;
     while (std::getline(input, curr_line)) {
       if (curr_line[0] != '#' && curr_line[0] != '/')
         break;
     }
+    std::stringstream convert(curr_line);
+    std::string x, y;
+    convert >> x >> y;
+    Point_2 query_pt(string2num<Number_type>(x),
+                     string2num<Number_type>(y));
+
+    lazy_create_arrangement_from_file<Input_arrangement_2>(input, arr_in);
+    lazy_create_arrangement_from_file<Output_arrangement_2>(input, arr_correct_out);
+    typename Input_arrangement_2::Face_const_iterator fit;
+
+    for (fit = arr_in.faces_begin(); fit != arr_in.faces_end(); ++fit) {
+        if (!fit->is_unbounded()) {
+            visibility.visibility_region(query_pt, fit, arr_out);
+        }
+    }
+    assert(true == test_are_equal<Output_arrangement_2>(arr_out, arr_correct_out));
+  }
 }
 
 template <class _Arrangement_2>

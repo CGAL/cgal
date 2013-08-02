@@ -9,7 +9,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Rotational_sweep_visibility_2.h>
+//#include <CGAL/Rotational_sweep_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 
@@ -20,14 +20,8 @@
 #include <fstream>
 #include <string>
 
-template <typename T>
-std::string number2string(T n) {
-    std::stringstream ss;
-    ss << n;
-    return ss.str();
-}
-
 int main() {
+    /*
     int case_number = 1;
     //test kernel Cartesian<Gmpq>
     {
@@ -96,6 +90,6 @@ int main() {
 //            vb.visibility_region(Point_2(0, 0), fit, arr_vb);
 //            std::cout<<(true == (CGAL::test_are_equal<Arrangement_2>(arr_ans, arr_vb)))<<std::endl;
 //        }
-//    }
+//    }*/
     return 0;
 }
