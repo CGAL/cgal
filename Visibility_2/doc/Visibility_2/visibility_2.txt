@@ -66,7 +66,7 @@ Class 	                	|	Function                                     |  Prepro
 
 Where  \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of the input polygon respectively.
 
-As required by the `Visibility_2` concept, every  class has two overloads of `Visibility_2::visibility_region()` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ f \f$: one is for the case when \f$ p \f$ is in the interior of \f$ f \f$; the other is for the case when \f$ p \f$ is on the boundary of \f$ f \f$. 
+As required by the `Visibility_2` concept, every  class has two overloads of `Visibility_2::visibility_region()` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ f \f$: one is for the case when \f$ p \f$ is in the interior of \f$ f \f$; the other one is for the case when \f$ p \f$ is on the boundary of \f$ f \f$. 
 
 \section simple_visibility_example  Example of visibility in a simple polygon.
 The following example shows how to obtain the regularized and non-regularized visibility regions.
