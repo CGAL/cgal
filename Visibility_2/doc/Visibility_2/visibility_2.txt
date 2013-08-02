@@ -16,8 +16,8 @@ An example figure.
 This package provides functionality to compute the visibility area within polygonal regions in two dimensions. 
 Using the terminology according to \ref PkgBooleanSetOperations2Summary we expect the input polygon  \f$ P \f$ 
 to be a valid polygon or a valid polygon with holes, 
-that is, we expect \f$ P \f$ to be closed (\f$\partial P \subset P\f$) and that each boundary loop 
-(only one outer boundary loop in case of no holes) is relatively simple. 
+that is, we expect \f$ P \f$ to be closed (\f$\partial P \subset P\f$) and each boundary loop 
+(only one outer boundary loop in case of no holes) to be relatively simple. 
 Given two points \f$ p \f$ and \f$ q \f$ in \f$ P \f$ (defined by a face \f$ f \f$), they are said to be 
 visible to each other iff the segment \f$ pq \subset  P \f$, note that \f$\partial P \subset P\f$. 
 For a query point \f$ q \in P \f$, the set of points that are visible from \f$ q \f$ is defined as the visibility 
@@ -52,7 +52,7 @@ the \ref PkgArrangement2Summary package the input is defined by a querry point \
 in an arrangement of segments, where \f$ f \f$ represents a valid polygon, that is, \f$ f \f$ has no isolated vertices 
 and each boundary edge of \f$ f \f$ separates \f$ f \f$ from another face. 
 As some algorithms are based on a preprocessing step the design is similar 
-to the one of point location strategies, that is, before a visibility object can answer a querey it must be 
+to the one of point location strategies, that is, before a visibility object can answer a query, it must be 
 attached to an arrangement object (subsequently also referred to as the enviroment). 
 In particular, not every query must contain the same face of the 
 attached arrangement. All provided class templates follow the `Visibility_2` concept:
