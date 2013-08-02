@@ -29,12 +29,12 @@ public:
 /// @{
    
  /*!
-  The type of input arrangement.
+  The type of the input arrangement.
   */
   typedef Arrangement_2  Input_arrangement_2;
 
    /*!
-    The type of output arrangement.
+    The type of the output arrangement.
     */
   typedef Arrangement_2 Output_arrangement_2;
 
@@ -44,12 +44,12 @@ public:
   typedef Input_arrangement_2::Point_2 Point_2; 
 
   /*!
-   Face_handle type of input arrangement.
+   Face_handle type of the input arrangement.
    */
   typedef Input_arrangement_2::Face_handle Face_handle;
 
   /*!
-   Halfedge_handle type of input arrangement.
+   Halfedge_handle type of the input arrangement.
    */
   typedef Input_arrangement_2::Halfedge_handle Halfedge_handle;
 
