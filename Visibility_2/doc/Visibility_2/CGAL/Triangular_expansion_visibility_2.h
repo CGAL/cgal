@@ -12,7 +12,7 @@ time is \f$O(n^2) \f$, but it is expected to work significantly faster for cases
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
-specified by one of the following: ::Tag_true or ::Tag_false.
+specified by one of the following: ::Tag_true or ::Tag_false, which is the default value.
 
 \cgalModels `Visibility_2` 
 
@@ -40,7 +40,7 @@ public:
    typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type which is used for queries. 
+   The Point_2 type , which is used for queries.
  */ 
   typedef Input_arrangement_2::Point_2 Point_2; 
 
