@@ -58,7 +58,8 @@ public:
       table.erase(std::make_pair(i,j));
       return;
     }
-    table[std::make_pair(i,j)] = t;
+    // table[std::make_pair(i,j)] = t (to not require def constructor)
+    table.insert(std::make_pair(std::make_pair(i,j), default)).first->second = t;
   }
   const T& get(int i, int j) const {
     CGAL_assertion(bound_check(i,j));
@@ -82,19 +83,20 @@ private:
   T default;
 };
 
-struct Weight {
-
+// 
+class Weight_min_max_dihedral_and_area 
+{
+private:
   std::pair<double,double> w;
 
-  Weight() : w(std::make_pair<double>(0, 0)) { }
+  Weight_min_max_dihedral_and_area(double angle, double area) : w(angle, area) { }
 
-  Weight(double angle, double area) : w(angle, area) { }
-
+public:
   template<class Point_3, class LookupTable>
-  Weight(const std::vector<Point_3>& P, 
-         const std::vector<Point_3>& Q, 
-         int i, int j, int k, 
-         const LookupTable& lambda)
+  Weight_min_max_dihedral_and_area(const std::vector<Point_3>& P, 
+                                   const std::vector<Point_3>& Q, 
+                                   int i, int j, int k, 
+                                   const LookupTable& lambda)
   {
     CGAL_assertion(i < j);
     CGAL_assertion(j < k);
@@ -132,27 +134,92 @@ struct Weight {
     w = std::make_pair(ang_max, std::sqrt(CGAL::squared_area(P[i],P[j],P[k])));
   }
 
-  Weight operator+(const Weight& w2) const
+  Weight_min_max_dihedral_and_area operator+(const Weight_min_max_dihedral_and_area& w2) const 
   {
-    return Weight((std::max)(w.first, w2.w.first), w.second + w2.w.second);
+    CGAL_assertion((*this) != NOT_VALID());
+    CGAL_assertion(w2 != NOT_VALID());
+
+    return Weight_min_max_dihedral_and_area((std::max)(w.first, w2.w.first), w.second + w2.w.second);
   }
 
-  bool operator<(const Weight& w2) const
+  bool operator<(const Weight_min_max_dihedral_and_area& w2) const
   {
+    CGAL_assertion((*this) != NOT_VALID());
+    CGAL_assertion(w2 != NOT_VALID());
+
     if(w.first == w2.w.first)
     { return w.second < w2.w.second; }
     return w.first < w2.w.first;
   }
 
-  bool operator==(const Weight& w2) const
+  bool operator==(const Weight_min_max_dihedral_and_area& w2) const 
+  { return w.first == w2.w.first && w.second == w2.w.second; }
+
+  bool operator!=(const Weight_min_max_dihedral_and_area& w2) const 
+  { return !(*this == w2); }
+
+  static const Weight_min_max_dihedral_and_area DEFAULT() // rule: x + DEFAULT() == x
+  { return Weight_min_max_dihedral_and_area(0,0); }
+  static const Weight_min_max_dihedral_and_area NOT_VALID() 
+  { return Weight_min_max_dihedral_and_area(-1,-1); }
+};
+
+// For proof of concept. Tested weakly.
+class Weight_total_edge {
+private:
+  double total_length;
+
+  Weight_total_edge(double total_length = 0) : total_length(total_length) { }
+
+public:
+  template<class Point_3, class LookupTable>
+  Weight_total_edge(const std::vector<Point_3>& P, 
+                    const std::vector<Point_3>&, 
+                    int i, int j, int k, 
+                    const LookupTable&)
+    : total_length(0)
   {
-    return w.first == w2.w.first && w.second == w2.w.second;
+    CGAL_assertion(i < j);
+    CGAL_assertion(j < k);
+    int n = P.size() -1; // because the first and last point are equal
+
+    // Test each edge
+    int vertices[] = {i, j, k};
+    for(int e = 0; e < 3; ++e) 
+    {
+      int v0      = vertices[e];
+      int v1      = vertices[(e+1)%3];
+      int v_other = vertices[(e+2)%3];
+        
+      // check whether the edge is border
+      bool border = (v0 + 1 == v1) || (v0 == n-1 && v1 == 0);
+      if(!border) {
+        total_length += std::sqrt(CGAL::squared_distance(P[v0],P[v1]));
+      }
+    }
   }
 
-  bool operator!=(const Weight& w2) const 
+  Weight_total_edge operator+(const Weight_total_edge& w2) const 
   {
-    return !(*this == w2);
+    CGAL_assertion((*this) != NOT_VALID());
+    CGAL_assertion(w2 != NOT_VALID());
+    return Weight_total_edge(total_length + w2.total_length);
   }
+
+  bool operator<(const Weight_total_edge& w2) const
+  { 
+    CGAL_assertion((*this) != NOT_VALID());
+    CGAL_assertion(w2 != NOT_VALID());
+    return total_length < w2.total_length; 
+  }
+
+  bool operator==(const Weight_total_edge& w2) const 
+  { return total_length == w2.total_length; }
+  bool operator!=(const Weight_total_edge& w2) const 
+  { return !(*this == w2); }
+
+  static const Weight_total_edge DEFAULT() { return Weight_total_edge(0); } // rule: x + DEFAULT() == x
+  static const Weight_total_edge NOT_VALID() { return Weight_total_edge(-1); }
 };
 
 struct Tracer {
@@ -261,7 +328,11 @@ struct Incident_facet_circulator<3, Triangulator>
 };
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
-template<typename K, template <class> class LookupTable = Lookup_table_map>
+template<
+  class K, 
+  class Weight = Weight_min_max_dihedral_and_area, 
+  template <class> class LookupTable = Lookup_table_map
+>
 class Triangulate_hole_polyline_DT 
 {
 public:
@@ -292,7 +363,7 @@ public:
   };
 
   template <typename OutputIteratorValueType, typename OutputIterator>
-  OutputIterator 
+  std::pair<OutputIterator, Weight>
   triangulate(const Polyline_3& P, 
               const Polyline_3& Q,
               OutputIterator out,
@@ -334,16 +405,16 @@ public:
       CGAL_TRACE_STREAM << "Not all border edges are included in 3D Triangulation!" << std::endl;
       CGAL_TRACE_STREAM << "  Not inside " << (n - nb_exists) << " of " << n << std::endl;
       CGAL_warning(!"Returning no output!");
-      return out;
+      return std::make_pair(out, Weight::DEFAULT());;
     }
 
     if(T.dimension() < 2) {
       CGAL_TRACE_STREAM << "Dimension of 3D Triangulation is above 2!" << std::endl;
       CGAL_warning(!"Returning no output!");
-      return out;
+      return std::make_pair(out, Weight::DEFAULT());;
     }
     
-    LookupTable<Weight> W(n,Weight(0,0)); // do not forget that these default values are not changed for [i, i+1]
+    LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
 
     if(T.dimension() == 3) {
@@ -358,11 +429,11 @@ public:
     
     if(lambda.get(0, n-1) == -1) {
       CGAL_warning(!"No possible triangulation is found!");
-      return out;
+      return std::make_pair(out, Weight::DEFAULT());
     }
-    CGAL_TRACE_STREAM << "Triangulation Weight = [max-angle: "
-                      << W.get(0,n-1).w.first << ", area: " << W.get(0,n-1).w.second <<"]" << std::endl;
-    return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+
+    out = Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+    return std::make_pair(out, W.get(0,n-1));
   }
 
 private:
@@ -416,7 +487,7 @@ private:
     CGAL_assertion(v0 != -1);
 
     // the range is previously processed
-    if( W.get(v0, v1) != Weight(0, 0) ) { return; }
+    if( W.get(v0, v1) != Weight::DEFAULT() ) { return; }
 
     // border edge - just return
     // should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
@@ -424,14 +495,13 @@ private:
 
     // check whether the edge is valid
     if(existing_edges.find(std::make_pair(v0, v1)) != existing_edges.end()) {
-      W.put(v0, v1, Weight(-1,-1));
+      W.put(v0, v1, Weight::NOT_VALID());
       return;
     }
 
     int m_min = -1;
-    Weight w_min((std::numeric_limits<double>::max)(), 
-                 (std::numeric_limits<double>::max)());
-    bool found_any = false;
+    Weight w_min = Weight::NOT_VALID();
+
     IncidentFacetCirculator fb(e, &T);
     do {
       int v2, v2_cell_index;
@@ -450,18 +520,18 @@ private:
 
       triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, n, existing_edges); // v0-v2
       triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, n, existing_edges); // v2-v1
-      if( W.get(v0, v2) == Weight(-1,-1) || W.get(v2, v1) == Weight(-1,-1) )
+      if( W.get(v0, v2) == Weight::NOT_VALID() || W.get(v2, v1) == Weight::NOT_VALID() )
       { continue; }
 
       Weight w = W.get(v0, v2) + W.get(v2, v1) + Weight(P,Q, v0,v2,v1, lambda);
-      if(w < w_min){
+      if(m_min == -1 || w < w_min){
         w_min = w;
         m_min = v2;
       }
     } while(++fb);
 
-    if(m_min != -1) { W.put(v0, v1, w_min); }
-    else            { W.put(v0, v1, Weight(-1,-1)); } // which means no triangulation exists between v0 - v1
+    // can be m_min = -1 and w_min = NOT_VALID which means no possible triangulation between v0-v1
+    W.put(v0, v1, w_min);
     lambda.put(v0,v1, m_min);
   }
   
@@ -470,7 +540,11 @@ private:
 /************************************************************************/
 /* Triangulate hole by using all search space
 /************************************************************************/
-template <typename K, template <class> class LookupTable = Lookup_table>
+template<
+  class K, 
+  class Weight = Weight_min_max_dihedral_and_area, 
+  template <class> class LookupTable = Lookup_table
+>
 class Triangulate_hole_polyline {
 public:
   typedef typename K::Point_3 Point_3;
@@ -479,7 +553,7 @@ public:
 public:
 
   template <typename OutputIteratorValueType, typename OutputIterator, typename EdgeSet>
-  OutputIterator 
+  std::pair<OutputIterator, Weight>
   triangulate(const Polyline_3& P, 
              const Polyline_3& Q,
              OutputIterator out,
@@ -490,15 +564,15 @@ public:
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
     
     int n = P.size() - 1; // because the first and last point are equal
-    LookupTable<Weight> W(n,Weight(0,0));// do not forget that these default values are not changed for [i, i+1]
+    LookupTable<Weight> W(n,Weight::DEFAULT());// do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
     
     for(int j = 2; j< n; ++j){ // determines range (2 - 3 - 4 )
       for(int i=0; i<n-j; ++i){ // iterates over ranges and find min triangulation in those ranges 
         int k = i+j;            // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
+
         int m_min = -1;
-        Weight w_min((std::numeric_limits<double>::max)(), 
-                     (std::numeric_limits<double>::max)());
+        Weight w_min = Weight::NOT_VALID();
 
         if(existing_edges.find(std::make_pair(i,k)) == existing_edges.end()) 
         {
@@ -510,31 +584,31 @@ public:
             }
             // now the regions i-m and m-k might be valid(constructed) patches,
             // if not, we can not construct i-m-k triangle
-            if( W.get(i,m) == Weight(-1,-1) || W.get(m,k) == Weight(-1,-1) ) {
+            if( W.get(i,m) == Weight::NOT_VALID() || W.get(m,k) == Weight::NOT_VALID() ) {
               continue;
             }
 
             Weight w = W.get(i,m) + W.get(m,k) + Weight(P,Q,i,m,k, lambda);
-            if(w < w_min){
+            if(m_min == -1 || w < w_min) {
               w_min = w;
               m_min = m;
             }
           }
         }
-        
-        if(m_min != -1) { W.put(i,k, w_min); }
-        else            { W.put(i,k, Weight(-1,-1)); }
-        lambda.put(i,k, m_min); // if not found lambda should be -1
+
+        // can be m_min = -1 and w_min = NOT_VALID which means no possible triangulation between i-k
+        W.put(i,k,w_min);
+        lambda.put(i,k, m_min);
       }
     }
 
     if(lambda.get(0,n-1) == -1) {
       CGAL_warning(!"Due to existing edges, no possible triangulation is found!");
-      return out;
+      return std::make_pair(out, Weight::DEFAULT());
     }
-    CGAL_TRACE_STREAM << "Triangulation Weight = [max-angle: "
-                      << W.get(0,n-1).w.first << ", area: " << W.get(0,n-1).w.second <<"]" << std::endl;
-    return Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+
+    out = Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+    return std::make_pair(out, W.get(0,n-1));
   }
 };
 
@@ -560,8 +634,8 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
   }
 
   return use_delaunay_triangulation ?
-         Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges) :
-         Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
+         Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges).first :
+         Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges).first;
 }
 
 } // namespace internal
