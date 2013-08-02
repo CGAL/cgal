@@ -3,16 +3,15 @@ namespace CGAL {
 \ingroup PkgVisibility_2Classes
 
 \brief This class is a model of the concept `Visibility_2` offering visibility queries within
-a polygon that may have hole(s).
+a polygon that may have holes.
 
-\details The algorithm is from T. Asano's paper \cite aaghi-vpsesp-85. It uses preprocessing and then it 
-does a sweep, which is similar to the algorithm of `Rotational_sweep_visibility_2`. 
+\details The class template comprises the implementation of the algorithm that does preprocessing for visibility query \cite aaghi-vpsesp-85.
 The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space. With the help of preprocessing, the query time is reduced to \f$O(n)\f$.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
-specified by one of the following: ::Tag_true or ::Tag_false.
+specified by one of the following: ::Tag_true or ::Tag_false, which is the default value.
 
 
 \cgalModels `Visibility_2` 
@@ -41,7 +40,7 @@ public:
    typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type which is used for queries. 
+   The Point_2 type , which is used for queries.
  */ 
   typedef Input_arrangement_2::Point_2 Point_2; 
 
@@ -88,7 +87,7 @@ attached to any arrangement yet.
 Preprocessed_rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Preprocessed_rotational_sweep_visibility_2` object from a given `Input_arrangement_2` and attaches it to `arr` and does preprocessing.
+Constructs a `Preprocessed_rotational_sweep_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr` and does preprocessing.
 */ 
 Preprocessed_rotational_sweep_visibility_2(const Input_arrangement_2& arr);
 
@@ -128,7 +127,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`, defined as a regular polygon 
 \pre `q` is in the interior or on the boundary of the given face `f`
-\return the face handle to the face in `out_arr` that represents the visibility region
+\return a handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
 
@@ -141,7 +140,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `e` is a halfedge of  `this->arr()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
-\return the face handle to the face in `out_arr` that represents the visibility region
+\return a handle to the face in `out_arr` that represents the visibility region
 */
   Face_handle visibility_region(const Point_2& q, const Halfedge_handle& e, Output_arrangement_2& out_arr);
 

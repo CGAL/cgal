@@ -6,10 +6,10 @@
 A model of the concept `Visibility_2` offers visibility queries within 
 a polygon.
 
-\cgalHasModel `CGAL::Simple_visibility_2<Arrangement_2, Regularization_tag>`
-\cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\cgalHasModel `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
-\cgalHasModel `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
+\cgalHasModel `CGAL::Simple_visibility_2<Arrangement_2, RegularizationTag>`
+\cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\cgalHasModel `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
+\cgalHasModel `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 
 
 */
@@ -74,7 +74,7 @@ attached to any arrangement yet.
 Visibility_2(); 
 
 /*! 
-Constructs a `Visibility_2` object from a given `Arrangement_2` and attaches it to `arr`.
+Constructs a `Visibility_2` object from a given `Arrangement_2` instance and attaches it to `arr`.
 */ 
 Visibility_2(const Input_arrangement_2 &arr);
 
@@ -120,17 +120,18 @@ The visibility region of `q` will be saved to `out_arr`.
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
 
-/*! 
-Computes the visibility region for the given query point `q` that is on the side of `halfedge`.
-The visibility region of `q` will be saved to `out_arr`.
+/*!
+Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
+The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point from which the visibility region is computed
-\param halfedge the halfedge on which `q` is located
-\param out_arr is the output arrangement  
-\pre `half_edge` is a half edge of  `this->arr()`
-\pre `q` is on halfedge
-\return the face handle to the face in `out_arr` that represents the visibility region
-*/ 
-  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& halfedge, Output_arrangement_2& out_arr);
+\param e the halfedge on which `q` is located
+\param out_arr is the output arrangement
+\pre `e` is a halfedge of  `this->arr()`
+\pre `q` is on `e`
+\pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
+\return a handle to the face in `out_arr` that represents the visibility region
+*/
+  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& e, Output_arrangement_2& out_arr);
 
 /// @}
 

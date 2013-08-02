@@ -30,11 +30,11 @@ Non-regularized visibility and regularized visibility.
 \cgalFigureEnd
 
 
-As demonstrated in \cgalFigureRef{definition-fig} (1) the visibility region \f$ V_q \f$ of a query point \f$ q \f$ may not be 
-a valid polygon.  All labeled points are collinear which implies that the point \f$ c \f$ is visible to \f$ q \f$, that is, 
+As demonstrated in \cgalFigureRef{definition-fig} (1) the visibility region \f$ V_q \f$ of a query point \f$ q \f$ may not be
+a valid polygon.  All labeled points are collinear, which implies that the point \f$ c \f$ is visible to \f$ q \f$, that is, 
 the segment \f$ bc \f$ is  part of the visibility area \f$ V_q \f$. However, in many cases the user is not interested in 
 such low dimensional features that are caused by degeneracies. Also for some algorithms it is actually easier (and more efficient)
-to not report this kind of low dimensional features, subsequently called needles. Therefore, this package offers also algorithms 
+to ignore this kind of low dimensional features, subsequently called needles. Therefore, this package offers also implementations algorithms 
 that compute the regularized visibility area  
 \f$ \overline{V_q} = closure(interior(V_q)) = (V_q\setminus\partial V_q) \cup  \partial (V_q\setminus\partial V_q)\f$,
 as it is shown in \cgalFigureRef{definition-fig} (2).  For more information about regularization, we also refer to Chapter 
@@ -57,7 +57,6 @@ attached to an arrangement object (subsequently also referred to as the envirome
 In particular, not every query must contain the same face of the 
 attached arrangement. All provided class templates follow the `Visibility_2` concept:
 
-
 Class 	                	|	Function                                     |  Preprocessing                |  Query                            |Algorithm
 -------------------------------|-----------------------------------------------------|-------------------------------|-----------------------------------|-------------------------------
  `Simple_visibility_2`       | compute visibility in a valid polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite bjrb-clvpa-87
@@ -65,7 +64,7 @@ Class 	                	|	Function                                     |  Prepro
  `Preprocessed_rotational_sweep_visibility_2` | visibility query in a valid polygon with  holes       | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
 `Triangular_expansion_visibility_2`     | visibility query in a valid polygon with  holes |  \f$ O(n^2) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | reference is unknown. 
 
-Where  \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of input polygon respectively.
+Where  \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of the input polygon respectively.
 
 As required by the `Visibility_2` concept, every  class has two overloads of `Visibility_2::visibility_region()` functions to compute the visibility region of \f$ p \f$ in a bounded polygonal face \f$ f \f$: one is for the case when \f$ p \f$ is in the interior of \f$ f \f$; the other is for the case when \f$ p \f$ is on the boundary of \f$ f \f$. 
 

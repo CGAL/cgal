@@ -12,7 +12,7 @@ time is \f$O(n^2) \f$, but it is expected to work significantly faster for cases
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
-specified by one of the following: ::Tag_true or ::Tag_false.
+specified by one of the following: ::Tag_true or ::Tag_false, which is the default value.
 
 \cgalModels `Visibility_2` 
 
@@ -40,7 +40,7 @@ public:
    typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type which is used for queries. 
+   The Point_2 type , which is used for queries.
  */ 
   typedef Input_arrangement_2::Point_2 Point_2; 
 
@@ -87,7 +87,7 @@ attached to any arrangement yet.
 Triangular_expansion_visibility_2();
 
 /*! 
-Constructs a `Triangular_expansion_visibility_2` object from a given `Input_arrangement_2` and attaches it to `arr` and does preprocessing.
+Constructs a `Triangular_expansion_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr` and does preprocessing.
 */ 
 Triangular_expansion_visibility_2(const Input_arrangement_2& arr);
 
@@ -127,7 +127,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`, defined as a regular polygon 
 \pre `q` is in the interior or on the boundary of the given face `f`
-\return the face handle to the face in `out_arr` that represents the visibility region
+\return a handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
 
@@ -141,7 +141,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `e` is a halfedge of  `this->arr()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
-\return the face handle to the face in `out_arr` that represents the visibility region
+\return a handle to the face in `out_arr` that represents the visibility region
 */
   Face_handle visibility_region(const Point_2& q, const Halfedge_handle& e, Output_arrangement_2& out_arr);
 
