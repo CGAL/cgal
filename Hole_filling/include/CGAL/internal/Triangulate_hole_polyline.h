@@ -180,6 +180,21 @@ struct Tracer {
   }
 };
 
+// to be used in existing_edges set
+struct Edge_comp {
+  bool operator()(const std::pair<int, int>& p0, const std::pair<int, int>& p1) const {
+    int p0_min = (std::min)(p0.first, p0.second);
+    int p0_max = (std::max)(p0.first, p0.second);
+    int p1_min = (std::min)(p1.first, p1.second);
+    int p1_max = (std::max)(p1.first, p1.second);
+    if(p0_min == p1_min) {
+      return p0_max < p1_max;
+    }
+    return p0_min < p1_min;
+  }
+};
+typedef std::set<std::pair<int, int>, Edge_comp> Edge_set;
+
 /************************************************************************/
 /* Triangulate hole with support of 3D Triangulation
 /************************************************************************/
@@ -281,7 +296,7 @@ public:
   triangulate(const Polyline_3& P, 
               const Polyline_3& Q,
               OutputIterator out,
-              const std::set<std::pair<int, int> >& existing_edges)
+              const Edge_set& existing_edges)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -386,7 +401,7 @@ private:
                   Edge e,
                   Triangulation& T,
                   int n,
-                  const std::set<std::pair<int, int> >& existing_edges)
+                  const Edge_set& existing_edges)
   {
     /**********************************************************************
      *  + Default W value is (0,0), default lambda value is -1.
@@ -463,12 +478,12 @@ public:
   
 public:
 
-  template <typename OutputIteratorValueType, typename OutputIterator>
+  template <typename OutputIteratorValueType, typename OutputIterator, typename EdgeSet>
   OutputIterator 
   triangulate(const Polyline_3& P, 
              const Polyline_3& Q,
              OutputIterator out,
-             const std::set<std::pair<int, int> >& existing_edges)
+             const EdgeSet& existing_edges)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -523,12 +538,12 @@ public:
   }
 };
 
-template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
+template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator, typename EdgeSet>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
                           OutputIterator out,
-                          const std::set<std::pair<int, int> >& existing_edges,
+                          const EdgeSet& existing_edges,
                           bool use_delaunay_triangulation) 
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
@@ -573,7 +588,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                           OutputIterator out, bool use_delaunay_triangulation = false)
 {
   return internal::triangulate_hole_polyline<OutputIteratorValueType>
-    (pbegin, pend, qbegin, qend, out, std::set<std::pair<int, int> >(), use_delaunay_triangulation);
+    (pbegin, pend, qbegin, qend, out, internal::Edge_set(), use_delaunay_triangulation);
 }
 
 // overload for OutputIteratorValueType

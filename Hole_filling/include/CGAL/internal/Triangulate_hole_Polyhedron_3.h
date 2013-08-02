@@ -50,7 +50,7 @@ triangulate_hole(Polyhedron& polyhedron,
   // existing_edges contains neighborhood information between boundary vertices
   // more precisely if v_i is neighbor to any other vertex than v_(i-1) and v_(i+1),
   // this edge is put into existing_edges
-  std::set<std::pair<int, int> > existing_edges;
+  internal::Edge_set existing_edges;
   for(typename std::map<Vertex_handle, int>::iterator v_it = vertex_set.begin(); v_it != vertex_set.end(); ++v_it) {
     int v_it_id = v_it->second;
     int v_it_prev = v_it_id == 0   ? n-1 : v_it_id-1;
@@ -64,13 +64,9 @@ triangulate_hole(Polyhedron& polyhedron,
       if(v_it_neigh_it != vertex_set.end())
       {
         int v_it_neigh_id = v_it_neigh_it->second;
-        if( v_it_neigh_id > v_it_id && 
-            v_it_neigh_id != v_it_prev &&
-            v_it_neigh_id != v_it_next )
+        if( v_it_neigh_id != v_it_prev && v_it_neigh_id != v_it_next )
         {
-          bool inserted = existing_edges.insert(std::make_pair(v_it_id, v_it_neigh_id)).second;
-          CGAL_assertion(inserted);
-          CGAL_assertion(existing_edges.find(std::make_pair(v_it_neigh_id, v_it_id)) == existing_edges.end());
+          existing_edges.insert(std::make_pair(v_it_id, v_it_neigh_id));
         }
       }
     } while(++circ_vertex != done_vertex);
