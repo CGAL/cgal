@@ -234,7 +234,7 @@ void run_tests(_Visibility_2 visibility, int case_number) {
 
   for (int i=1 ; i <= case_number ; i++) {
 
-    std::cout<<"Test "<<i<<" begins"<<std::endl;
+    std::cout << "Test " << i << " begins" << std::endl;
     std::string input_arr_file("data/test");
     input_arr_file += num2string<int>(i);
     std::ifstream input(input_arr_file.c_str());
@@ -257,6 +257,11 @@ void run_tests(_Visibility_2 visibility, int case_number) {
     lazy_create_arrangement_from_file<Output_arrangement_2>(input, arr_correct_out);
     typename Input_arrangement_2::Face_const_iterator fit;
 
+    // Locate in which face - point location
+    // Have 2 query points - usually the same. if it's not, then it will
+    // select the face check it second has the same face. second query point
+    // has to be inside the face we want
+    // Second qpoint is the source of the halfedge from the face we want - CLEANER
     for (fit = arr_in.faces_begin(); fit != arr_in.faces_end(); ++fit) {
         if (!fit->is_unbounded()) {
             visibility.visibility_region(query_pt, fit, arr_out);

@@ -16,7 +16,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, which is the defau
 
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Simple_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 

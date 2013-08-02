@@ -2,46 +2,58 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-\brief This class is a model of the concept `Visibility_2` offering visibility queries within a polygon that may have holes.
+\brief This class is a model of the concept `Visibility_2` offering visibility queries within
+a simple polygon with no holes.
 
+\details This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to
+obtain the visibility region, based on a scan of the boundary of the polygon and the notion 
+of angular displacement as a control variable. The algorithm is a modification and extension 
+of the  linear time algorithm of Lee \cite dtl-voasp-83. It computes the visibility region from a 
+viewpoint that is in the interior or on the boundary of the polygon. 
 
-\details The algorithm it applies to obtain visibility is without preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
+The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
+region. For each scanned edge, at most 2 points are pushed on the stack. Overall, it
+will have at most 2n points pushed and popped, thus the time and space complexities of the 
+algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n is the number of 
+the vertices of the polygon.
+
+The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
+at compile time via the second template argument RegularizationTag. The default for the RegularizationTag
+is ::Tag_false, which means the visibility region will be computed. Setting the template argument
+to ::Tag_true will produce the output as a visibility polygon.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, which is the default value.
 
-
 \cgalModels `Visibility_2` 
 
-\sa `::Visibility_2`
-\sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
-
 */
 template <typename Arrangement_2, typename RegularizationTag>
-class Rotational_sweep_visibility_2 {
+class Simple_polygon_visibility_2 {
 public:
 
 /// \name Types 
 /// @{
-   
- /*!
-  The type of input arrangement.
-  */
-  typedef Arrangement_2  Input_arrangement_2;
 
-   /*!
-    The type of output arrangement.
-    */
+ /*!
+   The arrangement type is used for input.
+ */
+  typedef Arrangement_2 Input_arrangement_2;
+
+ /*!
+  *The arrangement type is used for output.
+  */
   typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
    The Point_2 type , which is used for queries.
  */ 
-  typedef Input_arrangement_2::Point_2 Point_2; 
+  typedef Input_arrangement_2::Point_2 Point_2;
 
   /*!
    Face_handle type of input arrangement.
@@ -52,8 +64,10 @@ public:
    Halfedge_handle type of input arrangement.
    */
   typedef Input_arrangement_2::Halfedge_handle Halfedge_handle;
-
+   
 /// @}
+
+
 
 /// \name Tags 
 /// @{
@@ -63,9 +77,9 @@ public:
   typedef RegularizationTag Regularization_tag;
   
   /*! 
-    Tag identifying that the class supports general polygons (i.e.\ with holes). 
+    Tag identifying that the class does not support general polygons (i.e.\ with holes). 
   */
-  typedef ::Tag_true Supports_general_polygon_tag; 
+  typedef Tag_false Supports_general_polygon_tag; 
 
   /*! 
     Tag identifying that the class supports general simple polygons. 
@@ -73,19 +87,20 @@ public:
   typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}
 
+
 /// \name Constructors 
 /// @{
 
 /*!
-Default constructor creates an empty 'Rotational_sweep_visibility_2' object, that is not
+Default constructor creates an empty 'Simple_polygon_visibility_2' object, that is not
 attached to any arrangement yet.
 */
-Rotational_sweep_visibility_2();
+Simple_polygon_visibility_2();
 
 /*! 
-Constructs a `Rotational_sweep_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
+Constructs a `Simple_polygon_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
 */ 
-Rotational_sweep_visibility_2(const Input_arrangement_2& arr); 
+Simple_polygon_visibility_2(const Input_arrangement_2& arr); 
 
 /// @}
 
@@ -95,15 +110,15 @@ Rotational_sweep_visibility_2(const Input_arrangement_2& arr);
 /*!
 Returns whether an arrangement is attached to the visibility object
 */
-  bool is_attached();
+  bool is_attached ();
 
 /*!
 Attaches the given arrangement to the visibility object.
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to 'arr'.
 */
-  void attach(const Input_arrangement_2 &arr);
-  
+  void attach (const Input_arrangement_2 &arr);
+
 /*!
 Detaches the arrangement from the visibility object it is currently attached to
 */
@@ -118,14 +133,15 @@ Access to the attached arrangement
 Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
+\param out_arr is the output arrangement 
 \param q is the query point from which the visibility region is computed
 \param f is the face of the arrangement in which the visibility region is computed
-\param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`, defined as a regular polygon 
 \pre `q` is in the interior or on the boundary of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
+
 
 /*!
 Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.

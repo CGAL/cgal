@@ -24,12 +24,11 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Simple_visibility_2.h>
+#include <CGAL/Simple_polygon_visibility_2.h>
 //#include <CGAL/Naive_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 #include <CGAL/test_simple_polygons.h>
-#include <CGAL/Simple_visibility_2.h>
 
 #include <iostream>
 #include <fstream>
@@ -42,8 +41,8 @@ int main() {
   typedef Traits_2::Point_2										      Point_2;
   typedef Traits_2::X_monotone_curve_2							Segment_2;
   typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-  typedef CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                    Simple_visibility_2;
+  typedef CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                    Simple_polygon_visibility_2;
 //  typedef CGAL::Visibility_2::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
   //                                                  Naive_visibility_2;
 
@@ -51,7 +50,7 @@ int main() {
   Arrangement_2 arr;
   std::ifstream input("./data/simple_polygon_test_case_1.in");
   CGAL::create_arrangement_from_file<Arrangement_2>(arr, input);
-  Simple_visibility_2 simple_visibility1, simple_visibility2;
+  Simple_polygon_visibility_2 simple_visibility1, simple_visibility2;
 //  Naive_visibility_2 naive_visibility;
   CGAL::QueryChoice qchoice;
   qchoice = CGAL::FACE;
@@ -59,7 +58,7 @@ int main() {
 
   for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
 	  if (!fit->is_unbounded()) {
-      CGAL::benchmark<Simple_visibility_2, Simple_visibility_2, Arrangement_2>
+      CGAL::benchmark<Simple_polygon_visibility_2, Simple_polygon_visibility_2, Arrangement_2>
                 (simple_visibility1, simple_visibility2, arr, fit, qchoice);
     }
   }

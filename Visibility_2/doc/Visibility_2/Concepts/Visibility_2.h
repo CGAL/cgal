@@ -6,11 +6,10 @@
 A model of the concept `Visibility_2` offers visibility queries within 
 a polygon.
 
-\cgalHasModel `CGAL::Simple_visibility_2<Arrangement_2, RegularizationTag>`
+\cgalHasModel `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
 \cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \cgalHasModel `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \cgalHasModel `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
-
 
 */
 class Visibility_2 {
