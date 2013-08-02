@@ -34,7 +34,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, which is the defau
 \sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 */
 template <typename Arrangement_2, typename RegularizationTag>
-class Simple_visibility_2 {
+class Simple_polygon_visibility_2 {
 public:
 
 /// \name Types 
@@ -51,17 +51,17 @@ public:
   typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type, which is used for queries.
+   The 2D point type used for the queries. 
  */ 
   typedef Input_arrangement_2::Point_2 Point_2;
 
   /*!
-   Face_handle type of the input arrangement.
+   Face_handle type of input arrangement.
    */
   typedef Input_arrangement_2::Face_handle Face_handle;
 
   /*!
-   Halfedge_handle type of the input arrangement.
+   Halfedge_handle type of input arrangement.
    */
   typedef Input_arrangement_2::Halfedge_handle Halfedge_handle;
    
@@ -79,7 +79,7 @@ public:
   /*! 
     Tag identifying that the class does not support general polygons (i.e.\ with holes). 
   */
-  typedef Tag_false Supports_general_polygon_tag; 
+  typedef ::Tag_false Supports_general_polygon_tag; 
 
   /*! 
     Tag identifying that the class supports general simple polygons. 
@@ -92,15 +92,15 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Simple_visibility_2' object, that is not
+Default constructor creates an empty 'Simple_polygon_visibility_2' object, that is not
 attached to any arrangement yet.
 */
-Simple_visibility_2();
+Simple_polygon_visibility_2();
 
 /*! 
-Constructs a `Simple_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
+Constructs a `Simple_polygon_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
 */ 
-Simple_visibility_2(const Input_arrangement_2& arr); 
+Simple_polygon_visibility_2(const Input_arrangement_2& arr); 
 
 /// @}
 

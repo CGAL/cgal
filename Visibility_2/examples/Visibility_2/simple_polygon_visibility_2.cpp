@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Simple_visibility_2.h>
+#include <CGAL/Simple_polygon_visibility_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Segment_2.h>
 #include <istream>
@@ -29,12 +29,12 @@ int main() {
     Arrangement_2::Face_const_handle face = ++env.faces_begin();
 
     Arrangement_2 non_regular_output;
-    CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false> non_regular_visibility(env);
+    CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false> non_regular_visibility(env);
     non_regular_visibility.visibility_region(query_point, face, non_regular_output);
     std::cout<<"Non-regularized visibility region of p has "<<non_regular_output.number_of_vertices()<<" vertices."<<std::endl;
 
     Arrangement_2 regular_output;
-    CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_true> regular_visibility(env);
+    CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true> regular_visibility(env);
     regular_visibility.visibility_region(query_point, face, regular_output);
     std::cout<<"Regularized visibility region of p has "<<regular_output.number_of_vertices()<<" vertices."<<std::endl;
 

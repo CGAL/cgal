@@ -16,7 +16,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, which is the defau
 \cgalModels `Visibility_2` 
 
 \sa `::Visibility_2`
-\sa `CGAL::Simple_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 
@@ -39,7 +39,7 @@ public:
   typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type, which is used for queries.
+   The 2D point type used for the queries.  
  */ 
   typedef Input_arrangement_2::Point_2 Point_2; 
 

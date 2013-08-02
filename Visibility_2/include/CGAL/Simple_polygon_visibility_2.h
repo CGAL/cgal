@@ -19,8 +19,8 @@
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
 //             Michael Hemmer <michael.hemmer@cgal.org>
 
-#ifndef CGAL_SIMPLE_VISIBILITY_2_H
-#define CGAL_SIMPLE_VISIBILITY_2_H
+#ifndef CGAL_SIMPLE_POLYGON_VISIBILITY_2_H
+#define CGAL_SIMPLE_POLYGON_VISIBILITY_2_H
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/tags.h>
@@ -32,14 +32,13 @@ namespace CGAL {
 namespace Visibility_2 {
 
 template<class Arrangement_2, class RegularizationTag> 
-class Simple_visibility_2 {
+class Simple_polygon_visibility_2 {
 
 public:
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   // Currently only consider with same type for both
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
-  typedef RegularizationTag                             Regularization_tag;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
 
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
@@ -60,10 +59,10 @@ public:
   typedef CGAL::Tag_false                         Supports_general_polygon_tag;
   typedef CGAL::Tag_true                          Supports_simple_polygon_tag;                                        
 
-  Simple_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
+  Simple_polygon_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_visibility_2(const Input_arrangement_2 &arr): 
+  Simple_polygon_visibility_2(const Input_arrangement_2 &arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   };
