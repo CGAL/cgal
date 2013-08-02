@@ -557,8 +557,6 @@ private:
 
     if (queue.find(eid) != queue.end())
     {
-      int nerased = queue.erase(eid);
-
       edge_lengths[eid] = new_len;
       queue.insert(eid);
     }
