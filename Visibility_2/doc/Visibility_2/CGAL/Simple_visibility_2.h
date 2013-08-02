@@ -138,7 +138,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \param f is the face of the arrangement in which the visibility region is computed
 \pre `f` is a face of  `this->arr()`, defined as a regular polygon 
 \pre `q` is in the interior or on the boundary of the given face `f`
-\return the face handle to the face in `out_arr` that represents the visibility region
+\return a handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
 
@@ -152,7 +152,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `e` is a halfedge of  `this->arr()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
-\return the face handle to the face in `out_arr` that represents the visibility region
+\return a handle to the face in `out_arr` that represents the visibility region
 */
   Face_handle visibility_region(const Point_2& q, const Halfedge_handle& e, Output_arrangement_2& out_arr);
 
