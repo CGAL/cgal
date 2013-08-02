@@ -39,7 +39,7 @@ public:
   typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type , which is used for queries.
+   The Point_2 type, which is used for queries.
  */ 
   typedef Input_arrangement_2::Point_2 Point_2; 
 
