@@ -144,7 +144,7 @@ public slots:
 
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
       poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
-      poly_item->setRenderingMode(Wireframe);
+      poly_item->setRenderingMode(FlatPlusEdges);
       scene->setSelectedItem(scene->addItem(poly_item));
     }
   }
