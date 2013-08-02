@@ -83,7 +83,7 @@ attached to any arrangement yet.
 Rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Rotational_sweep_visibility_2` object from a given `Input_arrangement_2` and attaches it to `arr`.
+Constructs a `Rotational_sweep_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
 */ 
 Rotational_sweep_visibility_2(const Input_arrangement_2& arr); 
 

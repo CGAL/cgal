@@ -98,7 +98,7 @@ attached to any arrangement yet.
 Simple_visibility_2();
 
 /*! 
-Constructs a `Simple_visibility_2` object from a given `Input_arrangement_2` and attaches it to `arr`.
+Constructs a `Simple_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
 */ 
 Simple_visibility_2(const Input_arrangement_2& arr); 
 

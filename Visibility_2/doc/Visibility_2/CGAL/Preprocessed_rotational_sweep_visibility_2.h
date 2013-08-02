@@ -87,7 +87,7 @@ attached to any arrangement yet.
 Preprocessed_rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Preprocessed_rotational_sweep_visibility_2` object from a given `Input_arrangement_2` and attaches it to `arr` and does preprocessing.
+Constructs a `Preprocessed_rotational_sweep_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr` and does preprocessing.
 */ 
 Preprocessed_rotational_sweep_visibility_2(const Input_arrangement_2& arr);
 
