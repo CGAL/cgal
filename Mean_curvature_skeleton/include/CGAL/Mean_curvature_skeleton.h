@@ -178,10 +178,6 @@ private:
   PolyhedronVertexIndexMap vertex_id_pmap;
   PolyhedronEdgeIndexMap edge_id_pmap;
 
-  Weight_calculator weight_calculator;
-  std::vector<double> edge_weight;
-  SparseLinearAlgebraTraits_d m_solver;
-
   double omega_L;
   double omega_H;
   double omega_P;
@@ -193,6 +189,10 @@ private:
   double volume_TH;
   double original_volume;
   int iteration_TH;
+
+  Weight_calculator weight_calculator;
+  std::vector<double> edge_weight;
+  SparseLinearAlgebraTraits_d m_solver;
 
   int vertex_id_count;
   int max_id;
@@ -261,8 +261,9 @@ private:
                          std::map<int, int>* poles,
                          std::vector<Point>* cell_dual,
                          int max_id) :
-      corr(corr), poles(poles), max_id(max_id), cell_dual(cell_dual),
-      is_medially_centered(true){}
+      corr(corr), max_id(max_id), is_medially_centered(true),
+      poles(poles), cell_dual(cell_dual)
+      {}
 
     // Called AFTER each edge has been collapsed
     void OnCollapsed(Profile const& edge, Vertex_handle v)
@@ -344,8 +345,9 @@ public:
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
-      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH), weight_calculator(weight_calculator),
+      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH),
       TH_ALPHA(110), zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
+      weight_calculator(weight_calculator),
       is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
@@ -390,8 +392,9 @@ public:
                           )
     :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
       omega_L(omega_L), omega_H(omega_H), omega_P(omega_P),
-      edgelength_TH(edgelength_TH), TH_ALPHA(110), weight_calculator(weight_calculator),
+      edgelength_TH(edgelength_TH), TH_ALPHA(110),
       zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
+      weight_calculator(weight_calculator),
       is_medially_centered(is_medially_centered)
   {
     TH_ALPHA *= (M_PI / 180.0);
