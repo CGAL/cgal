@@ -25,6 +25,7 @@
 #ifndef CGAL_HALFEDGEDS_ITERATOR_H
 #define CGAL_HALFEDGEDS_ITERATOR_H 1
 #include <CGAL/circulator.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -196,6 +197,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return It::operator==( It(NULL));
     }
@@ -259,6 +261,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return It::operator==( It(NULL));
     }
@@ -317,6 +320,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return It::operator==( It(NULL));
     }
@@ -380,6 +384,7 @@ public:
     pointer  ptr() const { return & It::operator*();}
 
     bool operator==( Nullptr_t p) const {
+        CGAL_USE(p);
         CGAL_assertion( p == NULL);
         return It::operator==( It(NULL));
     }
