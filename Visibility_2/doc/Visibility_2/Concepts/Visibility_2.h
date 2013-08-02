@@ -29,7 +29,7 @@ public:
   typedef Hidden_type Output_arrangement_2;
 
  /*! 
-   The supported Point_2 type of the input type, used for queries. 
+   The 2D point type used for the queries. 
  */ 
   typedef Input_arrangement_2::Point_2 Point_2;
 

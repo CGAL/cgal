@@ -51,7 +51,7 @@ public:
   typedef Arrangement_2 Output_arrangement_2;
 
  /*! 
-   The Point_2 type , which is used for queries.
+   The 2D point type used for the queries. 
  */ 
   typedef Input_arrangement_2::Point_2 Point_2;
 
