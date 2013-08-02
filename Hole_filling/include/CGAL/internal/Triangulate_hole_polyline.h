@@ -14,8 +14,9 @@
 
 namespace CGAL {
 namespace internal {
+
 /************************************************************************/
-/* Common functionality: Lookup Tables + Weight + Tracer
+/* Lookup tables
 /************************************************************************/
 // Wrapper around vector
 template<class T>
@@ -83,7 +84,9 @@ private:
   T default;
 };
 
-// 
+/************************************************************************/
+/* Weights
+/************************************************************************/
 class Weight_min_max_dihedral_and_area 
 {
 private:
@@ -222,16 +225,19 @@ public:
   static const Weight_total_edge NOT_VALID() { return Weight_total_edge(-1); }
 };
 
+/************************************************************************/
+/* Tracer
+/************************************************************************/
 struct Tracer {
 
   template <typename OutputIteratorValueType, typename OutputIterator, class LookupTable>
   OutputIterator
-  trace(int n,
-        const LookupTable& lambda, 
+  trace(const LookupTable& lambda, 
         int i, 
         int k, 
         OutputIterator out)
   {
+    const int n = lambda.n;
     CGAL_assertion(i >= 0 && i < n);
     CGAL_assertion(k >= 0 && k < n);
 
@@ -240,9 +246,9 @@ struct Tracer {
     int la = lambda.get(i, k);
     CGAL_assertion(la >= 0 && la < n);
 
-    out = trace<OutputIteratorValueType>(n, lambda, i, la, out);
+    out = trace<OutputIteratorValueType>(lambda, i, la, out);
     *out++ = OutputIteratorValueType(i, la, k);
-    out = trace<OutputIteratorValueType>(n, lambda, la, k, out);
+    out = trace<OutputIteratorValueType>(lambda, la, k, out);
     return out;
   }
 };
@@ -280,7 +286,7 @@ struct Incident_facet_circulator<2, Triangulator>
   typedef typename Triangulator::Edge          Edge;
   typedef typename Triangulator::Triangulation Triangulation;
   
-  Incident_facet_circulator(Edge e, Triangulation* t) 
+  Incident_facet_circulator(Edge e, const Triangulation*) 
   {
     f1 = Facet(e.first, 3);
     int remaining_index = 0;
@@ -312,7 +318,7 @@ struct Incident_facet_circulator<3, Triangulator>
   typedef typename Triangulator::Triangulation    Triangulation;
   typedef typename Triangulator::Facet_circulator Facet_circulator;
 
-  Incident_facet_circulator(Edge e, Triangulation* t)
+  Incident_facet_circulator(Edge e, const Triangulation* t)
     : it(t->incident_facets(e)), end(it)
   { }
   Incident_facet_circulator& operator++() {
@@ -326,6 +332,7 @@ struct Incident_facet_circulator<3, Triangulator>
   Facet_circulator it;
   Facet_circulator end;
 };
+
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
 template<
@@ -419,12 +426,12 @@ public:
 
     if(T.dimension() == 3) {
       triangulate_DT<Incident_facet_circulator<3, Self> >
-        (P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
+        (P, Q, W, lambda, *v0_vn_edge, T, existing_edges);
     }
     else {
       CGAL_assertion(T.dimension() == 2);
       triangulate_DT<Incident_facet_circulator<2, Self> >
-        (P, Q, W, lambda, *v0_vn_edge, T, n, existing_edges);
+        (P, Q, W, lambda, *v0_vn_edge, T, existing_edges);
     }
     
     if(lambda.get(0, n-1) == -1) {
@@ -432,7 +439,7 @@ public:
       return std::make_pair(out, Weight::DEFAULT());
     }
 
-    out = Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+    out = Tracer().trace<OutputIteratorValueType>(lambda, 0, n-1, out);
     return std::make_pair(out, W.get(0,n-1));
   }
 
@@ -470,8 +477,7 @@ private:
                   LookupTable<Weight>& W, 
                   LookupTable<int>& lambda, 
                   Edge e,
-                  Triangulation& T,
-                  int n,
+                  const Triangulation& T,
                   const Edge_set& existing_edges)
   {
     /**********************************************************************
@@ -515,11 +521,11 @@ private:
           continue;
       }
 
-      Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index);
-      Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index);
+      Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index); // edge v0-v2
+      Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index); // edge v1-v2
 
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, n, existing_edges); // v0-v2
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, n, existing_edges); // v2-v1
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, existing_edges); // region v0-v2
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, existing_edges); // region v2-v1
       if( W.get(v0, v2) == Weight::NOT_VALID() || W.get(v2, v1) == Weight::NOT_VALID() )
       { continue; }
 
@@ -607,7 +613,7 @@ public:
       return std::make_pair(out, Weight::DEFAULT());
     }
 
-    out = Tracer().trace<OutputIteratorValueType>(n, lambda, 0, n-1, out);
+    out = Tracer().trace<OutputIteratorValueType>(lambda, 0, n-1, out);
     return std::make_pair(out, W.get(0,n-1));
   }
 };
