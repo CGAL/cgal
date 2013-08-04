@@ -153,11 +153,6 @@ public:
       vertices.push_back(vertices[0]);
     }
 
-    std::cout << "VERTICES: " << vertices.size() << std::endl;
-    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
-      std::cout << vertices[i] << std::endl;
-    }
-
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
@@ -203,7 +198,7 @@ public:
 
     if (q != he->source()->point()) {
       if (q != he->target()->point()) {
-        s.push(q);
+        vertices.push_back(q);
         vertices.push_back(he->target()->point());
       }
       else {
@@ -211,7 +206,6 @@ public:
       }
     }
     else {
-      vertices.push_back(q);
       vertices.push_back(he->target()->point());
     }
 
@@ -228,25 +222,23 @@ public:
 
     curr = circ;
     curr++;
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr_next = curr;
+    curr_next++;
 
     he_handle = curr;
     vertices.push_back(Point_2(he_handle->source()->point()));
 
-    while (curr != circ) {
+    while (curr_next != circ) {
       he_handle = curr;
       Point_2 curr_vertex = he_handle->target()->point();
       vertices.push_back(curr_vertex);
       curr++;
+      curr_next++;
     }
-    vertices.push_back(q);
-
-    std::cout << "VERTICES: " << vertices.size() << std::endl;
-    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
-      std::cout << vertices[i] << std::endl;
-    }
+    vertices.push_back(vertices[0]);
 
     visibility_region_impl(q);
-    
+
     typename std::vector<Point_2> points;
     if (!s.empty()) {
       Point_2 prev_pt = s.top();
@@ -455,7 +447,8 @@ private:
     int i = 0;
     Point_2 w;
 
-    if (Orientation_2(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN) {
+    if (Orientation_2(q, vertices[0], vertices[1]) == CGAL::LEFT_TURN
+        || Orientation_2(q, vertices[0], vertices[1]) == CGAL::COLLINEAR) {
       upcase = LEFT;
       i = 1;
       w = vertices[1];
@@ -468,7 +461,6 @@ private:
       w = vertices[1];
       s.push(vertices[0]);
     }
-
     do {
       switch(upcase) {
         case LEFT: 
@@ -490,6 +482,7 @@ private:
           scand(i, w, q);
           break;
       }
+
       if (upcase == LEFT) {
         // Check if (s_t-1, s_t) intersects (q, vn) 
         Point_2 s_t = s.top();
@@ -523,12 +516,16 @@ private:
   }
 
   void left(int &i, Point_2 &w, const Point_2 &query_pt) {
+   
     if (i == vertices.size() - 1) {
-            upcase = FINISH;
+      upcase = FINISH;
     }
     else if (Orientation_2(query_pt, 
                            vertices[i], 
-                           vertices[i+1]) == CGAL::LEFT_TURN) {
+                           vertices[i+1]) == CGAL::LEFT_TURN
+            || Orientation_2(query_pt, 
+                           vertices[i], 
+                           vertices[i+1]) == CGAL::COLLINEAR) {
       upcase = LEFT;
       s.push(vertices[i+1]);
       w = vertices[i+1];
@@ -555,12 +552,12 @@ private:
       }
         s.push(s_t_prev);
         s.push(s_t);
-      }
-      else {
-        upcase = RIGHT;
-        i++;
-        w = vertices[i];
-      }
+    }
+    else {
+      upcase = RIGHT;
+      i++;
+      w = vertices[i];
+    }
   }
 
   void right(int &i, Point_2 &w, const Point_2 &query_pt) {

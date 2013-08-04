@@ -45,32 +45,17 @@ int main() {
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
-}/*
+}
 {
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
     typedef Traits_2::Point_2                                       Point_2;
     typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
+    typedef CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                                    Simple_polygon_visibility_2;
 
-    // First read arrangement 
-    Arrangement_2 arr;
-    std::ifstream input("./data/simple_polygon_test_case_1.in");
-    CGAL::create_arrangement_from_file<Arrangement_2>(arr, input);
-    CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false> visibility;
-    assert(false == (CGAL::test_is_attached<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false> >(visibility)));
-    visibility.attach(arr);
-    assert(true == (CGAL::test_is_attached<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false> >(visibility)));
-    visibility.detach();
-    assert(false == (CGAL::test_is_attached<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false> >(visibility)));
-    visibility.attach(arr);
-    assert(true == (CGAL::test_are_equal<Arrangement_2>(arr, visibility.arr())));  
-
-    // Run test cases from https://cgal.geometryfactory.com/CGAL/Members/wiki/Visibility/TestCases
-    assert(true == (CGAL::simple_polygon_test_case_1<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false>, Arrangement_2> ()));
-    assert(true == (CGAL::simple_polygon_test_case_2<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false>, Arrangement_2> ()));
-    assert(true == (CGAL::simple_polygon_test_case_3<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false>, Arrangement_2> ()));
-    assert(true == (CGAL::simple_polygon_test_case_4<CGAL::Visibility_2::Simple_visibility_2<Arrangement_2, CGAL::Tag_false>, Arrangement_2> ()));
-}*/
+    CGAL::test_model_methods<Simple_polygon_visibility_2>();
+}
     return 0;
 }

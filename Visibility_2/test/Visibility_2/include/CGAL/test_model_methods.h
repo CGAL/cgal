@@ -30,6 +30,73 @@
 namespace CGAL {
 
 template <class Visibility_2>
+void test_model_methods_for_arr(
+              const typename Visibility_2::Input_arrangement_2 &arr) {
+
+  typedef typename Visibility_2::Input_arrangement_2       Input_arrangement_2;
+  typedef typename Visibility_2::Output_arrangement_2      Output_arrangement_2;
+  typedef typename Input_arrangement_2::Point_2            Point_2;
+  typedef typename Input_arrangement_2::Geometry_traits_2::Segment_2 
+                                                           Segment_2;
+
+  Visibility_2 visibility;
+  assert(false == visibility.is_attached());
+  visibility.attach(arr);
+  assert(true == visibility.is_attached());
+  assert(true == (CGAL::test_are_equal<Input_arrangement_2>(arr, 
+                                                            visibility.arr())));
+
+  Output_arrangement_2 arr_out;
+  Output_arrangement_2 arr_out_check;
+
+  typename Input_arrangement_2::Face_const_iterator fit;
+
+  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+    if (!fit->is_unbounded()) {
+      break;
+    }
+  }
+  Point_2 query_pt(1, 1);
+  visibility.visibility_region(query_pt, fit, arr_out);
+  assert(true == test_are_equal<Output_arrangement_2>
+                                        (arr, arr_out));
+  visibility.detach();
+  assert(false == visibility.is_attached());
+  visibility.attach(arr);
+
+  visibility.visibility_region(query_pt, fit, arr_out_check);
+  assert(true == test_are_equal<Output_arrangement_2>
+                                        (arr_out_check, arr));
+  assert(true == test_are_equal<Output_arrangement_2>
+                                        (arr_out, arr_out_check));
+  arr_out.clear();
+  visibility.visibility_region(query_pt, fit, arr_out);
+  assert(true == test_are_equal<Output_arrangement_2>
+                                        (arr_out, arr_out_check));
+
+  // Now consider the query point on a halfedge
+  query_pt = Point_2(0, 4);
+  arr_out.clear();
+  typename Input_arrangement_2::Halfedge_const_iterator hit;
+
+  for (hit = arr.halfedges_begin(); 
+       hit != arr.halfedges_end(); ++hit) {
+
+    Segment_2 curr_seg(hit->source()->point(), hit->target()->point());
+    if (curr_seg.has_on(query_pt)) {
+      visibility.visibility_region(query_pt, hit, arr_out);
+      break;
+    }
+  }
+  assert(true == test_are_equal<Output_arrangement_2>
+                                        (arr_out, arr));
+  arr_out_check.clear();
+  visibility.visibility_region(query_pt, hit, arr_out_check);
+  assert(true == test_are_equal<Output_arrangement_2>
+                                        (arr_out, arr_out_check));
+}
+
+template <class Visibility_2>
 void test_model_methods() {
 
   // Check concept obediance
@@ -48,7 +115,6 @@ void test_model_methods() {
               
   // Test with simple square and query point at its center                                    
   Point_2 p1(0, 0), p2(8, 0), p3(8, 8), p4(0, 8);
-  Point_2 query_pt(4, 4);
   std::vector<Segment_2> seg_sq;
   seg_sq.push_back(Segment_2(p1, p2));
   seg_sq.push_back(Segment_2(p2, p3));
@@ -57,38 +123,7 @@ void test_model_methods() {
   Input_arrangement_2 arr_square;
   CGAL::insert(arr_square, seg_sq.begin(), seg_sq.end());
 
-  Visibility_2 visibility;
-  assert(false == visibility.is_attached());
-  visibility.attach(arr_square);
-  assert(true == visibility.is_attached());
-  assert(true == (CGAL::test_are_equal<Input_arrangement_2>(arr_square, 
-                                                            visibility.arr())));
-
-  Output_arrangement_2 arr_square_out;
-  typename Input_arrangement_2::Face_const_iterator fit;
-
-  for (fit = arr_square.faces_begin(); fit != arr_square.faces_end(); ++fit) {
-    if (!fit->is_unbounded()) {
-      break;
-    }
-  }
-  visibility.visibility_region(query_pt, fit, arr_square_out);
-  assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_square, arr_square_out));
-  visibility.detach();
-  assert(false == visibility.is_attached());
-  visibility.attach(arr_square);
-  Output_arrangement_2 arr_square_out_check;
-
-  visibility.visibility_region(query_pt, fit, arr_square_out_check);
-  assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_square_out_check, arr_square));
-  assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_square_out, arr_square_out_check));
-  arr_square_out.clear();
-  visibility.visibility_region(query_pt, fit, arr_square_out);
-  assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_square_out, arr_square_out_check));
+  test_model_methods_for_arr<Visibility_2>(arr_square);
 
   std::vector<Segment_2> seg_tri;
   seg_tri.push_back(Segment_2(p1, p2));
@@ -96,6 +131,8 @@ void test_model_methods() {
   seg_tri.push_back(Segment_2(p4, p1));
   Input_arrangement_2 arr_triangle;
   CGAL::insert(arr_triangle, seg_tri.begin(), seg_tri.end());
+
+  test_model_methods_for_arr<Visibility_2>(arr_triangle);
 }
 
 } // end CGAL namespace
