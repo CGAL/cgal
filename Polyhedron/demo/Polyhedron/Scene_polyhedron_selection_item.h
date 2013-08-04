@@ -593,10 +593,8 @@ public:
   }
   template<class HandleType> // use Vertex_handle, Facet_handle, Halfedge_handle
   boost::optional<std::size_t> get_minimum_isolated_component() {
-    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     Minimum_visitor visitor;
-    travel_not_selected_connected_components<HandleType>
-      (visitor, tr.iterator_begin(), tr.iterator_end(), tr.size());
+    travel_not_selected_connected_components<HandleType>(visitor);
     return visitor.minimum;
   }
 
@@ -618,8 +616,7 @@ public:
     Output_iterator out(tr.container());
 
     Selection_visitor<Output_iterator> visitor(threshold , out);
-    travel_not_selected_connected_components<HandleType>
-      (visitor, tr.iterator_begin(), tr.iterator_end(), tr.size());
+    travel_not_selected_connected_components<HandleType>(visitor);
 
     if(visitor.any_inserted) { emit itemChanged(); }
     return visitor.minimum_visitor.minimum;
@@ -747,15 +744,16 @@ protected:
     return D;
   }
 
-  template<class HandleType, class Visitor, class InputIterator>
-  void travel_not_selected_connected_components(
-    Visitor& visitor, InputIterator begin, InputIterator end, std::size_t size) 
+  template<class HandleType, class Visitor>
+  void travel_not_selected_connected_components(Visitor& visitor) 
   {
-    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
+    typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
+    Tr tr(this);
     // update id fields before using
     tr.update_indices();
-    std::vector<bool> mark(size, false);
-    for( ;begin != end; ++begin) 
+    std::vector<bool> mark(tr.size(), false);
+    
+    for(typename Tr::Iterator begin = tr.iterator_begin(); begin != tr.iterator_end(); ++begin) 
     {
       if(mark[begin->id()] || tr.container().is_selected(begin)) { continue; }
 
