@@ -162,6 +162,7 @@ public:
 // functions from base
   using Base::begin;
   using Base::end;
+  using Base::size;
 
   void clear() {
     for(iterator it = begin(); it != end(); ++it) {
@@ -227,6 +228,7 @@ struct Selection_traits<typename SelectionItem::Vertex_handle, SelectionItem>
   Iterator iterator_begin() { return item->polyhedron()->vertices_begin(); }
   Iterator iterator_end() { return item->polyhedron()->vertices_end(); }
   std::size_t size() { return item->polyhedron()->size_of_vertices(); }
+  void update_indices() { item->polyhedron_item()->update_vertex_indices(); }
 
   SelectionItem* item;
 };
@@ -242,6 +244,7 @@ struct Selection_traits<typename SelectionItem::Facet_handle, SelectionItem>
   Iterator iterator_begin() { return item->polyhedron()->facets_begin(); }
   Iterator iterator_end() { return item->polyhedron()->facets_end(); }
   std::size_t size() { return item->polyhedron()->size_of_facets(); }
+  void update_indices() { item->polyhedron_item()->update_facet_indices(); }
 
   SelectionItem* item;
 };
@@ -259,7 +262,7 @@ struct Selection_traits<typename SelectionItem::Halfedge_handle, SelectionItem>
   item->polyhedron()->halfedges_end()); }
   Iterator iterator_end() { return iterator_begin(); }
   std::size_t size() { return item->polyhedron()->size_of_halfedges(); }
-
+  void update_indices() { item->polyhedron_item()->update_halfedge_indices(); }
   SelectionItem* item;
 };
 //////////////////////////////////////////////////////////////////////////
@@ -285,7 +288,7 @@ public:
     Scene_polyhedron_item* poly_item, 
     ACTIVE_HANDLE_TYPE aht,
     bool is_insert,
-    bool k_ring) 
+    int k_ring) 
     : Scene_polyhedron_item_decorator(poly_item, false),
       active_handle_type(aht),
       is_insert(is_insert),
@@ -306,11 +309,6 @@ protected:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
-
-    // id field is used in operations
-    poly_item->update_vertex_indices();
-    poly_item->update_facet_indices();
-    poly_item->update_halfedge_indices();
   }
 
 public:
@@ -404,6 +402,11 @@ public:
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
   bool save(const std::string& file_name) const {
+    // update id fields before using
+    if(selected_vertices.size() > 0) { poly_item->update_vertex_indices();   }
+    if(selected_facets.size() > 0)   { poly_item->update_facet_indices();    }
+    if(selected_edges.size() > 0)    { poly_item->update_halfedge_indices(); }
+
     std::ofstream out(file_name.c_str());
     if(!out) { return false; }
 
@@ -623,6 +626,7 @@ public:
   }
 
   void changed_with_poly_item() {
+    // no need to update indices
     poly_item->changed();
     emit itemChanged();
   }
@@ -748,7 +752,8 @@ protected:
     Visitor& visitor, InputIterator begin, InputIterator end, std::size_t size) 
   {
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
-
+    // update id fields before using
+    tr.update_indices();
     std::vector<bool> mark(size, false);
     for( ;begin != end; ++begin) 
     {
