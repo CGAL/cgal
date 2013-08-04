@@ -405,16 +405,14 @@ public:
     CGAL_assertion(n >= nb_exists);
 
     if(nb_exists != n) {
-      CGAL_TRACE_STREAM << "Not all border edges are included in 3D Triangulation!" << std::endl;
       CGAL_TRACE_STREAM << "  Not inside " << (n - nb_exists) << " of " << n << std::endl;
-      CGAL_warning(!"Returning no output!");
-      return std::make_pair(out, Weight::DEFAULT());;
+      CGAL_warning(!"Returning no output. Not all border edges are included in 3D Triangulation!");
+      return std::make_pair(out, Weight::DEFAULT());
     }
 
     if(T.dimension() < 2) {
-      CGAL_TRACE_STREAM << "Dimension of 3D Triangulation is above 2!" << std::endl;
-      CGAL_warning(!"Returning no output!");
-      return std::make_pair(out, Weight::DEFAULT());;
+      CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is above 2!");
+      return std::make_pair(out, Weight::DEFAULT());
     }
     
     LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
