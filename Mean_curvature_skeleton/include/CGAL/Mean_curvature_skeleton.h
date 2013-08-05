@@ -17,8 +17,8 @@
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
 
-#ifndef MEAN_CURVATURE_SKELETON_H
-#define MEAN_CURVATURE_SKELETON_H
+#ifndef CGAL_MEAN_CURVATURE_SKELETON_H
+#define CGAL_MEAN_CURVATURE_SKELETON_H
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
@@ -77,6 +77,9 @@
 
 // For is_collapse_ok
 #include <CGAL/internal/Mean_curvature_skeleton/Collapse.h>
+
+// For detect_degenarcy
+#include <CGAL/internal/Mean_curvature_skeleton/Detect_degeneracy.h>
 
 #include <queue>
 
@@ -365,6 +368,19 @@ public:
   void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
   {
     corr = skeleton_to_surface;
+  }
+
+  void get_poles(std::vector<Point>& max_poles)
+  {
+    max_poles.resize(boost::num_vertices(polyhedron));
+    vertex_iterator vb, ve;
+    int cnt = 0;
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    {
+      vertex_descriptor v = *vb;
+      int vid = boost::get(vertex_id_pmap, v);
+      max_poles[cnt++] = cell_dual[poles[vid]];
+    }
   }
 
   // compute cotangent weights of all edges
@@ -688,7 +704,7 @@ public:
       vertex_descriptor vi = boost::source(ed, polyhedron);
       vertex_descriptor vj = boost::target(ed, polyhedron);
       double edge_length = sqrt(squared_distance(vi->point(), vj->point()));
-      if (is_collapse_ok(polyhedron, ed) && edge_length < edgelength_TH)
+      if (internal::is_collapse_ok(polyhedron, ed) && edge_length < edgelength_TH)
       {
         Point p = midpoint(
           boost::get(vertex_point, polyhedron, boost::source(ed, polyhedron)),
@@ -703,7 +719,7 @@ public:
         fixed_edge_map.set_is_fixed(ed->opposite()->prev(), true);
         fixed_edge_map.set_is_fixed(ed->opposite()->prev()->opposite(), true);
 
-        vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(ed, polyhedron);
+        vertex_descriptor v = SMS::halfedge_collapse(ed, polyhedron);
         boost::put(vertex_point, polyhedron, v, p);
 
         track_correspondence(vi, vj, v);
@@ -922,97 +938,6 @@ public:
     return num_collapses + num_splits;
   }
 
-  bool is_vertex_degenerate(vertex_descriptor root)
-  {
-    std::set<vertex_descriptor> vertices_in_disk;
-    std::set<edge_descriptor> edges_in_disk;
-    std::set<Face_handle> faces_in_disk;
-
-    vertices_in_disk.clear();
-    search_vertices_in_disk(root, vertices_in_disk);
-
-    typename std::set<vertex_descriptor>::iterator v_iter;
-    for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); ++v_iter)
-    {
-      vertex_descriptor vd = *v_iter;
-      out_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = boost::out_edges(vd, polyhedron); e != e_end; ++e)
-      {
-        edge_descriptor ed = *e;
-        edge_descriptor ed_op = ed->opposite();
-        vertex_descriptor target = boost::target(ed, polyhedron);
-        if (vertices_in_disk.find(target) != vertices_in_disk.end())
-        {
-          edges_in_disk.insert(ed);
-          edges_in_disk.insert(ed_op);
-        }
-        Face_handle f = ed->face();
-        Halfedge_facet_circulator j = f->facet_begin();
-        bool in = true;
-        do
-        {
-          vertex_descriptor v = j->vertex();
-          if (vertices_in_disk.find(v) == vertices_in_disk.end())
-          {
-            in = false;
-            break;
-          }
-        } while (++j != f->facet_begin());
-
-        if (in)
-        {
-          faces_in_disk.insert(f);
-        }
-      }
-    }
-
-    int V = vertices_in_disk.size();
-    int E = edges_in_disk.size() / 2;
-    int F = faces_in_disk.size();
-    int euler = V + F - E;
-    if (euler != 1)
-    {
-      return true;
-    }
-    return false;
-  }
-
-  void search_vertices_in_disk(vertex_descriptor root,
-                               std::set<vertex_descriptor>& vertices_in_disk)
-  {
-    std::map<vertex_descriptor, bool> vertex_visited;
-
-    std::queue<vertex_descriptor> Q;
-    Q.push(root);
-    vertices_in_disk.insert(root);
-    vertex_visited[root] = true;
-
-    double dist_TH = edgelength_TH;
-    while (!Q.empty())
-    {
-      vertex_descriptor v = Q.front();
-      Q.pop();
-
-      out_edge_iterator e, e_end;
-      for(boost::tie(e, e_end) = boost::out_edges(v, polyhedron); e != e_end; ++e)
-      {
-        edge_descriptor ed = *e;
-
-        vertex_descriptor new_v = boost::target(ed, polyhedron);
-        if (vertex_visited.find(new_v) == vertex_visited.end())
-        {
-          double distance = sqrt(squared_distance(new_v->point(), root->point()));
-          if (distance < dist_TH)
-          {
-            vertex_visited[new_v] = true;
-            Q.push(new_v);
-            vertices_in_disk.insert(new_v);
-          }
-        }
-      }
-    }
-  }
-
   int detect_degeneracies_in_disk()
   {
     int num_fixed = 0;
@@ -1024,7 +949,7 @@ public:
 
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
-        bool willbefixed = is_vertex_degenerate(v);
+        bool willbefixed = internal::is_vertex_degenerate(polyhedron, v, edgelength_TH);
         if (willbefixed)
         {
           is_vertex_fixed_map[idx] = willbefixed;
@@ -1032,6 +957,8 @@ public:
         }
       }
     }
+
+
 
     MCFSKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
 
@@ -1085,9 +1012,9 @@ public:
   {
     contract_geometry();
     update_topology();
-    detect_degeneracies_heuristic();
+//    detect_degeneracies_heuristic();
 
-//    detect_degeneracies_in_disk();
+    detect_degeneracies_in_disk();
 
     double area = internal::get_surface_area(polyhedron);
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -1156,6 +1083,7 @@ public:
     {
       cnt += skeleton_to_surface[i].size();
     }
+
     MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
 
 //    collapse_vertices_without_correspondence();
@@ -1367,20 +1295,8 @@ public:
     }
   }
 
-  void get_poles(std::vector<Point>& max_poles)
-  {
-    max_poles.resize(boost::num_vertices(polyhedron));
-    vertex_iterator vb, ve;
-    int cnt = 0;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
-    {
-      vertex_descriptor v = *vb;
-      int vid = boost::get(vertex_id_pmap, v);
-      max_poles[cnt++] = cell_dual[poles[vid]];
-    }
-  }
 };
 
 } //namespace CGAL
 
-#endif // MEAN_CURVATURE_SKELETON_H
+#endif // CGAL_MEAN_CURVATURE_SKELETON_H
