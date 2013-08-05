@@ -39,30 +39,28 @@ int main(int argc, char **argv)
     // create and read Polyhedron
     Polyhedron mesh;
     std::ifstream input("data/cactus.off");
-    if ( !input || !(input >> mesh) || mesh.empty() ){
+    if ( !input || !(input >> mesh) || mesh.empty() ) {
       std::cerr << "Not a valid off file." << std::endl;
       return 1;
     }
 
-    // assign id field for each facet	
+    // assign id field for each facet
     int facet_id = 0;
-    for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin(); 
-      facet_it != mesh.facets_end(); ++facet_it, ++facet_id)
-    {
+    for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin();
+      facet_it != mesh.facets_end(); ++facet_it, ++facet_id) {
         facet_it->id() = facet_id;
     }
 
-    // create a property-map for sdf values
+    // create a property-map for SDF values
     std::vector<double> sdf_values(mesh.size_of_facets()); 
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_property_map(&sdf_values);
 
     CGAL::compute_sdf_values(mesh, sdf_property_map);
 
-    // access sdf values (with constant-complexity) either via sdf_values or sdf_property_map
+    // access SDF values (with constant-complexity) either via sdf_values or sdf_property_map
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-      facet_it != mesh.facets_end(); ++facet_it)
-    {
-        std::cout << sdf_property_map[facet_it] << std::endl; // or segment_ids[facet_it->id()]
+      facet_it != mesh.facets_end(); ++facet_it) {
+        std::cout << sdf_property_map[facet_it] << std::endl;
     }
 
     // create a property-map for segment-ids 
@@ -73,8 +71,7 @@ int main(int argc, char **argv)
 
     // access segment-ids (with constant-complexity) either via segment_ids or segment_property_map
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-      facet_it != mesh.facets_end(); ++facet_it)   
-    {
-        std::cout << segment_property_map[facet_it] << std::endl; // or segment_ids[facet_it->id()]                               
+      facet_it != mesh.facets_end(); ++facet_it) {
+        std::cout << segment_property_map[facet_it] << std::endl;
     }
 }

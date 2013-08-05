@@ -16,12 +16,12 @@ int main(int argc, char **argv)
     // create and read Polyhedron
     Polyhedron mesh;
     std::ifstream input("data/cactus.off");
-    if ( !input || !(input >> mesh) || mesh.empty() ){
+    if ( !input || !(input >> mesh) || mesh.empty() ) {
         std::cerr << "Not a valid off file." << std::endl;
         return 1;
     }
 
-    // create a property-map for segment-ids (it is an adaptor for this case)
+    // create a property-map for segment-ids
     typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
@@ -33,8 +33,7 @@ int main(int argc, char **argv)
 
     // print segment-ids
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
-        facet_it != mesh.facets_end(); ++facet_it)   
-    {
-        std::cout << segment_property_map[facet_it] << std::endl;                                 
+        facet_it != mesh.facets_end(); ++facet_it) {
+        std::cout << segment_property_map[facet_it] << std::endl;
     }
 }
