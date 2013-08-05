@@ -27,7 +27,6 @@ More information can be found in Section \ref TDS3secdesign.
 \cgalHasModel CGAL::Triangulation_ds_vertex_base_3 
 \cgalHasModel CGAL::Triangulation_vertex_base_3 
 \cgalHasModel CGAL::Triangulation_vertex_base_with_info_3 
-\cgalHasModel CGAL::Triangulation_hierarchy_vertex_base_3 
 
 \sa `TriangulationVertexBase_3` 
 \sa `TriangulationHierarchyVertexBase_3` 
