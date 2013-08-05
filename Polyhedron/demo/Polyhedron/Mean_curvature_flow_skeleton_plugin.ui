@@ -14,19 +14,6 @@
    <string>DockWidget</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <widget class="QLabel" name="label_omega_L">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>11</y>
-      <width>57</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>omega_L</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="pushButton_contract">
     <property name="geometry">
      <rect>
@@ -81,16 +68,6 @@
     </property>
     <property name="text">
      <string>omega_H</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="omega_L">
-    <property name="geometry">
-     <rect>
-      <x>124</x>
-      <y>11</y>
-      <width>101</width>
-      <height>25</height>
-     </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_edgelength_TH">
@@ -288,8 +265,6 @@
    <zorder>label_omega_H</zorder>
    <zorder>label_edgelength_TH</zorder>
    <zorder>label_volume_TH</zorder>
-   <zorder>label_omega_L</zorder>
-   <zorder>omega_L</zorder>
    <zorder>pushButton_contract</zorder>
    <zorder>pushButton_collapse</zorder>
    <zorder>pushButton_split</zorder>

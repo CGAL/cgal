@@ -117,8 +117,6 @@ public:
   }
 
   void init_ui(double diag) {
-    ui->omega_L->setValue(1);
-    ui->omega_L->setSingleStep(0.1);
     ui->omega_H->setValue(0.1);
     ui->omega_H->setSingleStep(0.1);
     ui->omega_P->setValue(0.2);
@@ -135,9 +133,8 @@ public:
     ui->is_medially_centered->setChecked(false);
     ui->use_sdf->setChecked(false);
 
-    ui->label_omega_L->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
-    ui->label_omega_H->setToolTip(QString("omega_L / omega_H controls the velocity of movement and approximation quality"));
-    ui->label_omega_P->setToolTip(QString("omega_L / omega_P controls the smoothness of the medial approximation"));
+    ui->label_omega_H->setToolTip(QString("omega_H controls the velocity of movement and approximation quality"));
+    ui->label_omega_P->setToolTip(QString("omega_P controls the smoothness of the medial approximation"));
     ui->label_volume_TH->setToolTip(QString("Run to converge will stop when (current volume / original volume) < volume_TH"));
     ui->pushButton_contract->setToolTip(QString("contract mesh based on mean curvature flow"));
     ui->pushButton_collapse->setToolTip(QString("collapse short edges"));
@@ -194,7 +191,6 @@ public:
   // or has the same polyheron item
   // check if the mesh is a watertigh triangle mesh
   bool check_mesh(Scene_polyhedron_item* item) {
-    double omega_L = ui->omega_L->value();
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
     double edgelength_TH = ui->edgelength_TH->value();
@@ -216,13 +212,13 @@ public:
       if (is_medially_centered)
       {
         mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                          omega_L, omega_H, omega_P, edgelength_TH, true, volume_TH,
+                                          omega_H, omega_P, edgelength_TH, true, volume_TH,
                                           area_TH);
       }
       else
       {
         mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                          omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
+                                         omega_H, edgelength_TH, volume_TH, area_TH);
       }
       fixedPointsItemIndex = -1;
       nonFixedPointsItemIndex = -1;
@@ -250,13 +246,13 @@ public:
         if (is_medially_centered)
         {
           mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                            omega_L, omega_H, omega_P, edgelength_TH, true, volume_TH,
+                                            omega_H, omega_P, edgelength_TH, true, volume_TH,
                                             area_TH);
         }
         else
         {
           mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                            omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
+                                            omega_H, edgelength_TH, volume_TH, area_TH);
         }
         fixedPointsItemIndex = -1;
         nonFixedPointsItemIndex = -1;
@@ -269,7 +265,6 @@ public:
       }
       else
       {
-        mcs->set_omega_L(omega_L);
         mcs->set_omega_H(omega_H);
         mcs->set_omega_P(omega_P);
         mcs->set_edgelength_TH(edgelength_TH);
@@ -627,7 +622,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_skeleton_triggered()
 {
   double diag = scene->len_diagonal();
-  double omega_L = 1;
   double omega_H = 0.1;
   double edgelength_TH = 0.002 * diag;
   double volume_TH = 1e-04;
@@ -647,7 +641,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     Polyhedron tempMesh = *pMesh;
 
     Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(), Edge_index_map(),
-                                      omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
+                                        omega_H, edgelength_TH, volume_TH, area_TH);
 
     QTime time;
     time.start();
@@ -690,7 +684,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_medial_skeleton_triggered()
 {
   double diag = scene->len_diagonal();
-  double omega_L = 1;
   double omega_H = 0.1;
   double omega_P = 0.2;
   double edgelength_TH = 0.002 * diag;
@@ -711,7 +704,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     Polyhedron tempMesh = *pMesh;
 
     Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(), Edge_index_map(),
-                                                                    omega_L, omega_H, omega_P, edgelength_TH, true, volume_TH,
+                                                                    omega_H, omega_P, edgelength_TH, true, volume_TH,
                                                                     area_TH);
 
     QTime time;

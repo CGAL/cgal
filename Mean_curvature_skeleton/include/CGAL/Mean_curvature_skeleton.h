@@ -131,7 +131,6 @@ private:
   PolyhedronVertexIndexMap vertex_id_pmap;
   PolyhedronEdgeIndexMap edge_id_pmap;
 
-  double omega_L;
   double omega_H;
   double omega_P;
   double edgelength_TH;
@@ -293,7 +292,6 @@ public:
   Mean_curvature_skeleton(Polyhedron& P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
-                          double omega_L,
                           double omega_H,
                           double edgelength_TH,
                           double volume_TH = 1e-4,
@@ -304,7 +302,6 @@ public:
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
-     omega_L(omega_L),
      omega_H(omega_H),
      edgelength_TH(edgelength_TH),
      TH_ALPHA(110),
@@ -349,7 +346,6 @@ public:
   Mean_curvature_skeleton(Polyhedron& P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
-                          double omega_L,
                           double omega_H,
                           double omega_P,
                           double edgelength_TH,
@@ -362,7 +358,6 @@ public:
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
-     omega_L(omega_L),
      omega_H(omega_H),
      omega_P(omega_P),
      edgelength_TH(edgelength_TH),
@@ -408,11 +403,6 @@ public:
   // Release resources
   ~Mean_curvature_skeleton(void)
   {
-  }
-
-  void set_omega_L(double value)
-  {
-    omega_L = value;
   }
 
   void set_omega_H(double value)
@@ -566,7 +556,7 @@ public:
     {
       int id = boost::get(vertex_id_pmap, *vb);
       int i = new_id[id];
-      double L = omega_L;
+      double L = 1.0;
       // if the vertex is fixed
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
           && is_vertex_fixed_map[id])
