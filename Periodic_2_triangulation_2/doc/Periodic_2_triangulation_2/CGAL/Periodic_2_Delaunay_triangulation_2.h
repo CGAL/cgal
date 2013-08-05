@@ -94,7 +94,7 @@ public:
 /// case when there are co-circular points, the Delaunay triangulation
 /// is known not to be uniquely defined. In this case, \cgal chooses a
 /// particular Delaunay triangulation using a symbolic perturbation
-/// scheme \cite cgal:dt-pvr3d-03. Note that insertion of a new point
+/// scheme \cgalCite{cgal:dt-pvr3d-03}. Note that insertion of a new point
 /// can cause a switch from computing in the 9-sheeted covering space
 /// to computing in the 1-sheeted covering space, which invalidates
 /// some `Vertex_handle`s and `Face_handle`s.

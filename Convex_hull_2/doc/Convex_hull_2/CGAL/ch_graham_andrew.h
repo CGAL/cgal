@@ -44,8 +44,8 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function implements Andrew's variant of the Graham 
-scan algorithm \cite a-aeach-79 and follows the presentation of Mehlhorn 
-\cite m-mdscg-84. This algorithm requires \f$ O(n \log n)\f$ time 
+scan algorithm \cgalCite{a-aeach-79} and follows the presentation of Mehlhorn 
+\cgalCite{m-mdscg-84}. This algorithm requires \f$ O(n \log n)\f$ time 
 in the worst case for \f$ n\f$ input points. 
 
 
@@ -93,14 +93,14 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 The function uses Andrew's 
-variant of the Graham scan algorithm \cite a-aeach-79. This algorithm 
+variant of the Graham scan algorithm \cgalCite{a-aeach-79}. This algorithm 
 requires \f$ O(n \log n)\f$ time in the worst case for \f$ n\f$ input points. 
 
 \cgalHeading{Example}
 
 In the following example `ch_graham_andrew_scan()` is used to 
-realize Anderson's variant \cite a-readc-78 of the Graham Scan 
-\cite g-eadch-72. The points are sorted counterclockwise around the leftmost 
+realize Anderson's variant \cgalCite{a-readc-78} of the Graham Scan 
+\cgalCite{g-eadch-72}. The points are sorted counterclockwise around the leftmost 
 point using the `Less_rotate_ccw_2` predicate, as defined in 
 the concept `ConvexHullTraits_2`. According to the definition 
 of `Less_rotate_ccw_2`, the leftmost point is the last point in the sorted 
@@ -140,7 +140,7 @@ not left of \f$ pq\f$, where \f$ p\f$ is the value of `first` and \f$ q\f$ is
 the value of `beyond` \f$ -1\f$. The resulting sequence is placed
 starting at `result` with \f$ p\f$; point \f$ q\f$ is omitted. The
 past-the-end iterator for the sequence is returned.
-\pre The range [`first`,`beyond`) contains at least two different points. The points in [`first`,`beyond`) are sorted with respect to \f$ pq\f$, <I>i.e.</I>, the sequence of points in [`first`,`beyond`) define a counterclockwise polygon, for which the Graham-Sklansky-procedure \cite s-mcrm-72 works.
+\pre The range [`first`,`beyond`) contains at least two different points. The points in [`first`,`beyond`) are sorted with respect to \f$ pq\f$, <I>i.e.</I>, the sequence of points in [`first`,`beyond`) define a counterclockwise polygon, for which the Graham-Sklansky-procedure \cgalCite{s-mcrm-72} works.
 */
 template <class BidirectionalIterator, class OutputIterator, 
 class Traits>

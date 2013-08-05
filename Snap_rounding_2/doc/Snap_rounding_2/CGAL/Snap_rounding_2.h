@@ -37,17 +37,17 @@ pixel to the right of the pixel containing the origin, for example,
 will be `(w,0)`. 
 
 \param number_of_kd_trees The seventh parameter is briefly described later on this page; for a 
-detailed description see \cite cgal:hp-isr-02. 
+detailed description see \cgalCite{cgal:hp-isr-02}. 
 
 Snap Rounding (SR, for short) is a well known method for converting 
 arbitrary-precision arrangements of segments into a fixed-precision 
-representation \cite gght-srlse-97, \cite gm-rad-98, \cite h-psifp-99. In 
+representation \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}. In 
 the study of robust geometric computing, it can be classified as a 
 finite precision approximation technique. Iterated Snap Rounding (ISR, 
 for short) is a modification of SR in which each vertex is at least 
 half-the-width-of-a-pixel away from any non-incident edge 
-\cite cgal:hp-isr-02. This package supports both methods. Algorithmic 
-details and experimental results are given in \cite cgal:hp-isr-02. 
+\cgalCite{cgal:hp-isr-02}. This package supports both methods. Algorithmic 
+details and experimental results are given in \cgalCite{cgal:hp-isr-02}. 
 
 Given a finite collection \f$ \S\f$ of segments in the plane, the 
 arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane 
@@ -68,7 +68,7 @@ pixel in the grid used for rounding. ISR is a modification of SR which
 makes a vertex and a non-incident edge well separated (the distance 
 between each is at least half-the-width-of-a-pixel). However, the 
 guaranteed quality of the approximation in ISR degrades. For more 
-details on ISR see \cite cgal:hp-isr-02. 
+details on ISR see \cgalCite{cgal:hp-isr-02}. 
 
 The traits used here must support (arbitrary-precision) rational number type as 
 this is a basic requirement of SR. 

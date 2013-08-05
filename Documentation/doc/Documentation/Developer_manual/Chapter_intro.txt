@@ -27,7 +27,7 @@ projects 21957 (CGAL) and 28155 (GALIA).
 
 \section secdesign_goals Primary design goals 
 
-The primary design goals of \cgal are described in \cite fgkss-dccga-00:
+The primary design goals of \cgal are described in \cgalCite{fgkss-dccga-00:}
 
 \subsection Developer_manualCorrectness Correctness
 
@@ -84,7 +84,7 @@ integrate new classes and algorithms into \cgal.
 
 \cgal should be open to coexist with other libraries, or better, to
 work together with other libraries and programs. The \cpp 
-Standard \cite cgal:ansi-is14882-98
+Standard \cgalCite{cgal:ansi-is14882-98}
 
 defines with the \cpp Standard Library a common
 foundation for all \cpp platforms. 
@@ -132,7 +132,7 @@ maps library.
 
 A goal with similar implications as uniformity is a design
 with complete and minimal interfaces, see for example Item 18 
-in Ref. \cite cgal:m-ec-97.
+in Ref. \cgalCite{cgal:m-ec-97}.
 An object or module should be complete in its 
 functionality, but should
 not provide additional decorating functionality. Even if a certain
@@ -167,7 +167,7 @@ clearly documented which degeneracies are handled and which are not.
 For most geometric algorithms theoretical results for the time and space
 complexity are known. Also, the theoretic interest in efficiency for
 realistic inputs, as opposed to worst-case situations, is
-growing \cite v-ffrim-97.
+growing \cgalCite{v-ffrim-97}.
 For practical purposes, insight into the constant factors hidden in the
 \f$ O\f$-notation is necessary, especially if there are several competing
 algorithms.

@@ -35,7 +35,7 @@ triangulation to get a fully dynamic computation.
 
 The function 
 `convex_hull_3()` provides an 
-implementation of the quickhull algorithm \cite bdh-qach-96 for three 
+implementation of the quickhull algorithm \cgalCite{bdh-qach-96} for three 
 dimensionsquickhull, 3D. There are two versions of this
 function available, one that can be used when it is known that the output
 will be a polyhedron (<I>i.e.</I>, there are more than three points and
@@ -59,7 +59,7 @@ account.
 \subsection Convex_hull_3ConvexityChecking Convexity Checking
 
 The function `is_strongly_convex_3()`
-implements the algorithm of Mehlhorn <I>et al.</I> \cite mnssssu-cgpvg-96 
+implements the algorithm of Mehlhorn <I>et al.</I> \cgalCite{mnssssu-cgpvg-96} 
 to determine if the vertices of a given polytope constitute a strongly convex 
 point set or not. This function is used in postcondition testing for
 `convex_hull_3()`.
@@ -79,7 +79,7 @@ of the convex hull.
 
 The function `convex_hull_incremental_3()` provides an
 interface similar to `convex_hull_3()` for the `d`-dimensional 
-incremental construction algorithm \cite cms-frric-93 
+incremental construction algorithm \cgalCite{cms-frric-93} 
 implemented by the class `Convex_hull_d<R>` that is specialized 
 to three dimensions. This function accepts an iterator range over a set of
 input points and returns a polyhedron, but it does not have a traits class

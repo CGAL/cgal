@@ -10,7 +10,7 @@ the surface. The coordinates are computed from the intersection of the
 Voronoi cell of the query point `p` with the tangent plane to the 
 surface at `p`. If the sampling is sufficiently dense, the 
 coordinate system meets the properties described in the manual pages 
-and in \cite bf-lcss-02,\cite cgal:f-csapc-03. The query 
+and in \cgalCite{bf-lcss-02},\cgalCite{cgal:f-csapc-03}. The query 
 point `p` needs to lie inside the convex hull of the projection of 
 the sample points onto the tangent plane at `p`. 
 

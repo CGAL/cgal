@@ -39,16 +39,16 @@
 This \cgal package implements several parameterization methods:
 
 - Fixed border:
-  - Tutte Barycentric Mapping \cite t-hdg-63.
+  - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
      One-to-one mapping is guaranteed for convex border.
-  - Floater Mean Value Coordinates \cite cgal:f-mvc-03.
+  - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}.
      One-to-one mapping is guaranteed for convex border.
-  - Discrete Conformal Map \cite cgal:eddhls-maam-95.
+  - Discrete Conformal Map \cgalCite{cgal:eddhls-maam-95}.
     Conditionally guaranteed if all weights are positive and border is convex.
-  - Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
+  - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02}.
     Conditionally guaranteed if all weights are positive and border is convex.
 - Free border:
-  - Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
+  - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
 
 - `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
 - `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
@@ -175,16 +175,16 @@ use `SURFACE_MESH_PARAMETERIZATION` in their names (e.g. `CGAL_SURFACE_MESH_PARA
 This \cgal package implements several parameterization methods:
 
  - Fixed border:
-  - Tutte Barycentric Mapping \cite t-hdg-63.
+  - Tutte Barycentric Mapping \cgalCite{t-hdg-63}.
      One-to-one mapping is guaranteed for convex border.
-  - Floater Mean Value Coordinates \cite cgal:f-mvc-03.
+  - Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}.
      One-to-one mapping is guaranteed for convex border.
-  - Discrete Conformal Map \cite cgal:eddhls-maam-95.
+  - Discrete Conformal Map \cgalCite{cgal:eddhls-maam-95}.
     Conditionally guaranteed if all weights are positive and border is convex.
-  - Discrete Authalic parameterization \cite cgal:dma-ipsm-02.
+  - Discrete Authalic parameterization \cgalCite{cgal:dma-ipsm-02}.
     Conditionally guaranteed if all weights are positive and border is convex.
  - Free border:
-  - Least Squares Conformal Maps \cite cgal:lprm-lscm-02.
+  - Least Squares Conformal Maps \cgalCite{cgal:lprm-lscm-02}.
 */
 
 /*!

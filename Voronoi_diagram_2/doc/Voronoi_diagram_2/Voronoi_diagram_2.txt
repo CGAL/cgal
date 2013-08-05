@@ -73,7 +73,7 @@ points, the Euclidean Voronoi diagram of a set of disks on the plane
 (i.e., the Apollonius diagram), the Euclidean Voronoi diagram of a set
 of disjoint convex objects on the plane, or the power or (Laguerre)
 diagram for a set of circles on the plane. In fact every instance of
-an <I>abstract Voronoi diagram</I> in the sense of Klein \cite k-cavd-89 
+an <I>abstract Voronoi diagram</I> in the sense of Klein \cgalCite{k-cavd-89} 
 is a simple Voronoi diagram in our setting. In the sequel when we
 refer to Voronoi diagrams we will refer to simple Voronoi diagrams.
 

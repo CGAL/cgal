@@ -16,7 +16,7 @@ The surface must be an oriented 2-manifold with border vertices, i.e.\ the neigh
 Design Pattern 
 -------------- 
 
-`ParameterizationMesh_3` is an Adaptor \cite cgal:ghjv-dpero-95 : it changes the interface of a 3D mesh to match the interface expected by the parameterization methods. 
+`ParameterizationMesh_3` is an Adaptor \cgalCite{cgal:ghjv-dpero-95} : it changes the interface of a 3D mesh to match the interface expected by the parameterization methods. 
 
 Creation 
 -------------- 

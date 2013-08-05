@@ -5,16 +5,16 @@ namespace CGAL {
 \ingroup PkgAlgebraicKerneldModels
 
 This class is based on an algorithm computing a 
-geometric-topological analysis of a single curve \cite ekw-fast-07 and of a 
-pair of curves \cite ek-exact-08. 
+geometric-topological analysis of a single curve \cgalCite{ekw-fast-07} and of a 
+pair of curves \cgalCite{ek-exact-08}. 
 The main idea behind both analyses is to compute the critical 
 x-coordinates of curves and curve pairs by projection (resultants), and compute 
 additional information about the critical fibers using subresultants 
-and Sturm-Habicht sequences \cite grlr-sturm-habicht-98. 
+and Sturm-Habicht sequences \cgalCite{grlr-sturm-habicht-98}. 
 With that information, the fiber at 
 critical x-coordinates is computed by a variant of the Bitstream 
 Descartes method. 
-See also \cite kerber-phd-09 for a comprehensive description of 
+See also \cgalCite{kerber-phd-09} for a comprehensive description of 
 these techniques. 
 
 A point \f$ p\f$ of type `Algebraic_real_2` is represented 

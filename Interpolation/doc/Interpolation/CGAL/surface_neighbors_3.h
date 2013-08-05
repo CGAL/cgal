@@ -9,7 +9,7 @@ Given a set of sample points issued from a surface and a query point
 the surface within the sample points. If the sampling is sufficiently 
 dense, the neighbors are provably close to the point `p` on the 
 surface (cf. the manual pages and 
-\cite bf-lcss-02,\cite cgal:f-csapc-03). They are defined to 
+\cgalCite{bf-lcss-02},\cgalCite{cgal:f-csapc-03}). They are defined to 
 be the neighbors of `p` in the regular triangulation dual 
 to the power diagram which is equivalent to the intersection of the 
 Voronoi cell of the query point `p` with the tangent plane to the 

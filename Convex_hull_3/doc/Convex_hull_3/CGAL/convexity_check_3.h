@@ -36,7 +36,7 @@ the facet type must be `ConvexHullPolyhedronFacet_3`.
 
 \cgalHeading{Implementation}
 
-This function implements the tests described in \cite mnssssu-cgpvg-96 to 
+This function implements the tests described in \cgalCite{mnssssu-cgpvg-96} to 
 determine convexity and requires \f$ O(e + f)\f$ time for a polyhedron with 
 \f$ e\f$ edges and \f$ f\f$ faces. 
 

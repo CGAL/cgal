@@ -185,7 +185,7 @@ Linux
 
 For (good) reasons that will not be discussed here, it was decided to
 use \cpp for the development of \cgal. An international standard for
-\cpp has been sanctioned in 1998 \cite cgal:ansi-is14882-98 and the
+\cpp has been sanctioned in 1998 \cgalCite{cgal:ansi-is14882-98} and the
 level of compliance varies widely between different
 compilers, let alone bugs.
 

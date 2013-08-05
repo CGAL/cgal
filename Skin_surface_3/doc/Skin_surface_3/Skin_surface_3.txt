@@ -19,7 +19,7 @@ namespace CGAL {
 
 \section sectionSkinSurfaceIntro Introduction 
 
-Skin surfaces, introduced by Edelsbrunner in \cite cgal:e-dssd-99,
+Skin surfaces, introduced by Edelsbrunner in \cgalCite{cgal:e-dssd-99},
 have a rich and simple combinatorial and geometric structure that
 makes them suitable for modeling large molecules in biological
 computing. Meshing such surfaces is often required for further
@@ -35,7 +35,7 @@ hyperboloids connecting the balls.
 
 This package constructs a mesh isotopic to the skin surface defined by
 a set of balls and a shrink factor using the algorithm described in
-\cite cgal:kv-mssct-05. 
+\cgalCite{cgal:kv-mssct-05}. 
 
 An optimized algorithm is implemented for meshing the union of a set
 of balls.
@@ -47,7 +47,7 @@ Left: Convex combinations of two weighted points (the two dashed circles).  Righ
 \cgalFigureEnd
 
 This section first briefly reviews skin surfaces. For a more thorough
-introduction to skin surfaces, we refer to \cite cgal:e-dssd-99 where
+introduction to skin surfaces, we refer to \cgalCite{cgal:e-dssd-99} where
 they were originally introduced.
 
 A skin surface is defined in terms of a finite set of weighted points
@@ -72,7 +72,7 @@ combinations of their distance functions.
 \cgalFigureRef{figtwoPoints} (left) shows weighted points that
 are obtained as convex combinations of the dashed circles. For further
 reading on the space of circles and spheres we refer to
-\cite p-gcc-70.
+\cgalCite{p-gcc-70}.
 
 Starting from a weighted point \f$ \ssWpoint{p}=({p},\ssWeight{P})\f$, the
 shrunk weighted point \f$ \ssWpoint{p}^s\f$ is obtained by taking a convex

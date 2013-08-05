@@ -18,7 +18,7 @@ either `Fast_location` or `Compact_location`.
 location, which can be beneficial when performing point locations or random 
 point insertions (with no good location hint) in large data sets. 
 It is currently implemented using an additional triangulation 
-hierarchy data structure \cite cgal:d-dh-02. 
+hierarchy data structure \cgalCite{cgal:d-dh-02}. 
 The default is `Compact_location`, which saves memory (3-5%) by avoiding the need for this 
 separate data structure, and point location is then performed roughly in 
 \f$ O(n^{1/3})\f$ time. 
@@ -196,7 +196,7 @@ re-triangulated. So, the problem reduces to triangulating a polyhedral
 region, while preserving its boundary, or to compute a
 *constrained* triangulation. This is known to be sometimes
 impossible: the Sch&ouml;nhardt polyhedron cannot be triangulated
-\cite cgal:s-cgehd-98. However, when dealing with Delaunay
+\cgalCite{cgal:s-cgehd-98}. However, when dealing with Delaunay
 triangulations, the case of such polyhedra that cannot be
 re-triangulated cannot happen, so \cgal proposes a vertex removal. 
 

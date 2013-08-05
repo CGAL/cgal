@@ -63,7 +63,7 @@ Each offset polygon has the same orientation as the source polygon.
 
 \subsection Straight_skeleton_2StraightSkeletonofa2D Straight Skeleton of a 2D Non-degenerate Strictly-Simple Polygon with Holes
 
-The <I>2D straight skeleton</I> of a non-degenerate strictly-simple polygon with holes \cite aaag-ntsp-95 is a special partitioning of the polygon interior into <I>straight skeleton regions</I> corresponding to the monotone areas traced by a continuous <I>inward offsetting</I> of the contour edges. Each region corresponds to exactly 1 contour edge.
+The <I>2D straight skeleton</I> of a non-degenerate strictly-simple polygon with holes \cgalCite{aaag-ntsp-95} is a special partitioning of the polygon interior into <I>straight skeleton regions</I> corresponding to the monotone areas traced by a continuous <I>inward offsetting</I> of the contour edges. Each region corresponds to exactly 1 contour edge.
 
 These regions are bounded by angular bisectors of the supporting lines of the contour edges and each such region is itself a non-convex non-degenerate strictly-simple polygon.
 
@@ -450,7 +450,7 @@ pretty much alike a proper medial axis.
 
 The most natural usage of straight skeletons is offsetting: growing and shrinking polygons (provided by this \cgal package).
 
-Another usage, perhaps its very first, is roof design: The straight skeleton of a polygonal roof directly gives the layout of each tent. If each skeleton edge is lifted from the plane a height equal to its offset distance, the resulting roof is "correct" in that water will always fall down to the contour edges (roof border) regardless of were in the roof it falls. \cite cgal:ld-agrm-03 gives an algorithm for roof design based on the straight skeleton.
+Another usage, perhaps its very first, is roof design: The straight skeleton of a polygonal roof directly gives the layout of each tent. If each skeleton edge is lifted from the plane a height equal to its offset distance, the resulting roof is "correct" in that water will always fall down to the contour edges (roof border) regardless of were in the roof it falls. \cgalCite{cgal:ld-agrm-03} gives an algorithm for roof design based on the straight skeleton.
 
 Just like medial axes, 2D straight skeletons can also be used for 2D shape description and matching. Essentially, all the applications of image-based skeletonization (for which there is a vast literature) are also direct applications of the straight skeleton, specially since skeleton edges are simply straight line segments.
 
@@ -466,7 +466,7 @@ Each skeleton edge in a skeleton branch is associated with 2 contour edges which
 \section Straight_skeleton_2Straight_1 Straight Skeleton of a General Figure in the Plane
 
 A straight skeleton can also be defined for a general
-multiply-connected planar directed straight-line graph \cite aa-skfgpf-95 by considering
+multiply-connected planar directed straight-line graph \cgalCite{aa-skfgpf-95} by considering
 all the edges as embedded in an unbounded region. The only difference
 is that in this case some faces will be only partially bounded.
 

@@ -24,9 +24,9 @@ See also the documentation of `Sqrt_extension<NT,ROOT>`.
 \cgalAdvancedEnd
 
 The current method to isolate roots is the bitstream Descartes method
-presented in \cite eigenwillig-phd-08.  The used method to refine the
+presented in \cgalCite{eigenwillig-phd-08}.  The used method to refine the
 approximation of an algebraic real root is a slightly modified
-(filtered) version of the one presented in \cite abbott-qir-06. The
+(filtered) version of the one presented in \cgalCite{abbott-qir-06}. The
 method has quadratic convergence.
 
 \cgalModels `AlgebraicKernel_d_1`

@@ -40,7 +40,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function uses the algorithm of Akl and 
-Toussaint \cite at-fcha-78 that requires \f$ O(n \log n)\f$ time for \f$ n\f$ input 
+Toussaint \cgalCite{at-fcha-78} that requires \f$ O(n \log n)\f$ time for \f$ n\f$ input 
 points. 
 
 

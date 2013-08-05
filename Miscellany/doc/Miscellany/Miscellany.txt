@@ -82,7 +82,7 @@ Class diagram for the modifier. It illustrates the safe access to an internal re
 \cgalFigureEnd
 
 The solution provided here is inspired by the strategy
-pattern \cite cgal:ghjv-dpero-95, though it serves a different intent. 
+pattern \cgalCite{cgal:ghjv-dpero-95}, though it serves a different intent. 
 The abstract base class
 `Modifier_base<R>` declares a pure virtual member function
 `operator()` that accepts a single reference parameter of the

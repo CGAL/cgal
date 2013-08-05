@@ -5,7 +5,7 @@
 
 The concept of a traits class is central to %CGAL. The name <i>traits
 class</i> comes from a standard \cpp design pattern
-\cite cgal:m-tnutt-95; you may have heard about iterator traits which
+\cgalCite{cgal:m-tnutt-95}; you may have heard about iterator traits which
 follow this design pattern. 
 The traits class is used in template code to reflect properties (traits)
 of the actual template argument.
@@ -126,7 +126,7 @@ the actual functors. Reasons for this are the following.
   carry data. For example, repeated calls to a function with only
   slightly different parameters might be handled efficiently by
   storing intermediate results. Functors are the natural framework
-  here. See \cite hhkps-aegk-01 for more exposition.
+  here. See \cgalCite{hhkps-aegk-01} for more exposition.
 </UL>
 
 If you really look up the documentation of the 

@@ -45,7 +45,7 @@ For example, the Delaunay diagram turns out to be a very powerful
 data structure for storing dynamic sets of points under range and nearest
 neighbor queries. A first implementation and computational
 study of using Delaunay diagrams for geometric queries is described by
-Mehlhorn and N&auml;her in \cite mn-lpcgc-00.
+Mehlhorn and N&auml;her in \cgalCite{mn-lpcgc-00}.
 
 In this section we present a generic variant of a two dimensional point set
 data type supporting various geometric queries.
@@ -66,7 +66,7 @@ The `Point_set_2` class supports the following kinds of queries:
 <LI>isorectangular range search
 <LI>(k) nearest neighbor(s)
 </UL>
-For details about the running times see \cite mn-lpcgc-00.
+For details about the running times see \cgalCite{mn-lpcgc-00}.
 
 \section Point_set_2Example Example: Range Search
 

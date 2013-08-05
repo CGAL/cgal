@@ -97,7 +97,7 @@ of the boundary.
 <LI>A <B>regularized Boolean set-operation</B> \f$ \mbox{op}^*\f$ can be obtained by
 first taking the interior of the resultant point set of an <I>ordinary</I>
 Boolean set-operation \f$ (P\ \mbox{op}\ Q)\f$ and then by taking the
-closure \cite cgal:h-sm-04. That is,
+closure \cgalCite{cgal:h-sm-04}. That is,
 \f$ P\ \mbox{op}^*\ Q = \mbox{closure}(\mbox{interior} (P\ \mbox{op}\ Q))\f$.
 Regularized Boolean set-operations appear in Constructive Solid
 Geometry (CSG), because regular sets are closed under regularized

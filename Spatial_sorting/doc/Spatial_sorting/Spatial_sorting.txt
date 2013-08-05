@@ -29,7 +29,7 @@ Some algorithms have a good complexity under randomized hypotheses which
 contradicts the idea of sorting the input using any sorting criterion.
 In such a case, it is possible to introduce just a bit of randomness 
 to be able to combine the good randomized complexity and the
-good effects of locality \cite acr-icb-03.
+good effects of locality \cgalCite{acr-icb-03}.
 
 The predicates used by this package are comparisons between coordinates,
 thus there is no robustness issue involved here, for example to choose the
@@ -99,7 +99,7 @@ Since the median policy cannot be much worse than the middle
 policy, while the converse can happen, the median policy is the
 default behavior.
 Most theoretical results are using the middle policy
-\cite acr-icb-03, \cite b-aahsf-71, \cite bg-sfche-89,pb-scpts-89.
+\cgalCite{acr-icb-03}, \cgalCite{b-aahsf-71}, \cgalCite{bg-sfche-89},pb-scpts-89.
 
 This other example illustrates the use of the two different policies
 
@@ -113,7 +113,7 @@ sizes, Hilbert sort being used only inside a bucket.
 
 It has been proved, in the context of Delaunay triangulation, that
 such an order provides enough randomness to combine the advantages of a random
-order and a space filling curve order \cite acr-icb-03.
+order and a space filling curve order \cgalCite{acr-icb-03}.
 
 \cgal provides spatial sorting for points in 2D, 3D and higher dimensions,
 with the middle and the median policies for Hilbert sort in the buckets.

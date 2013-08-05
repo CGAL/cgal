@@ -44,7 +44,7 @@ namespace CGAL {
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
 /// The class LSCM_parameterizer_3 implements the
-/// *Least Squares Conformal Maps (LSCM)* parameterization  \cite cgal:lprm-lscm-02.
+/// *Least Squares Conformal Maps (LSCM)* parameterization  \cgalCite{cgal:lprm-lscm-02}.
 ///
 /// This is a conformal parameterization, i.e. it attempts to preserve angles.
 ///

@@ -36,8 +36,8 @@ Section  \ref sechandle_vs_it_vs_circ  below discusses when handles
 should be used in your code.
 
 The concepts of iterators is relatively well described in textbooks such as 
-Stroustrup's book (<I>The C++ Programming Language</I> \cite cgal:s-cpl-97)
-and Austern's book (<I>Generic Programming and the \stl</I> \cite cgal:a-gps-98)
+Stroustrup's book (<I>The C++ Programming Language</I> \cgalCite{cgal:s-cpl-97})
+and Austern's book (<I>Generic Programming and the \stl</I> \cgalCite{cgal:a-gps-98})
 and in chapter <A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html">Handles and Circulators</A> of the 
 <I>Support Library</I> part of the \cgal manual.
 which also presents the concepts of handles and circulators.
@@ -343,7 +343,7 @@ for more information and examples.
 Every container class in \cgal should strive to be a model for the
 \stl concept of a container.  As for all concepts, this means that 
 certain types and functions are provided, as detailed, for example 
-in \cite cgal:a-gps-98.  For the purposes of this discussion, the relevant
+in \cgalCite{cgal:a-gps-98}.  For the purposes of this discussion, the relevant
 types are:
 
 <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>

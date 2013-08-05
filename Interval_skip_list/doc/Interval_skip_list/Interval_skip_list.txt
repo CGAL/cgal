@@ -19,9 +19,9 @@ mix calls to the methods `insert(..)`, `remove(..)`,
 
 The interval skip list class is parameterized with an interval class.
 
-The data structure was introduced by Hanson \cite h-islds-91, and it is called
+The data structure was introduced by Hanson \cgalCite{h-islds-91}, and it is called
 interval skip list, because it is an extension of the randomized list
-structure known as skip list \cite p-slpab-90.
+structure known as skip list \cgalCite{p-slpab-90}.
 
 \section Interval_skip_listExample Example Programs
 

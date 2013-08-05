@@ -43,7 +43,7 @@ can be formulated as an optimization problem with linear constraints and a
 linear objective 
 function. 
 The solution is obtained using our exact 
-solver for linear and quadratic programs \cite gs-eegqp-00. 
+solver for linear and quadratic programs \cgalCite{gs-eegqp-00}. 
 
 The creation time is almost always linear in the number of points. Access 
 functions and predicates take constant time, inserting a point takes almost 

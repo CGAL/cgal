@@ -409,7 +409,7 @@ covering space even after adding points if this method returns
 `false` nothing is known. This test runs in constant-time when 
 not computing in the 1-sheeted covering space. (This test uses the length 
 of the longest edge in the triangulation as a 
-criterion \cite cgal:ct-c3pt-09.) 
+criterion \cgalCite{cgal:ct-c3pt-09}.) 
 */ 
 bool is_extensible_triangulation_in_1_sheet_h1() const; 
 
@@ -419,7 +419,7 @@ a more precise heuristic, i.e.\ it might answer `true` in cases in which
 `is_extensible_triangulation_in_1_sheet_h1()` would not. However, it is 
 much less time efficient when not computing in the 1-sheeted covering 
 space. (This test uses the diameter of the largest empty ball in the 
-input point set as a criterion \cite cgal:ct-c3pt-09.) 
+input point set as a criterion \cgalCite{cgal:ct-c3pt-09}.) 
 */ 
 bool is_extensible_triangulation_in_1_sheet_h2() const; 
 

@@ -17,9 +17,9 @@ quite a vague notion and there are probably many possible
 interpretations, the \f$ \alpha\f$-shape being one of them. Alpha shapes
 can be used for shape reconstruction from a dense unorganized set of
 data points. Indeed, an \f$ \alpha\f$-shape is demarcated by a frontier,
-which is a linear approximation of the original shape \cite bb-srmua-97t.
+which is a linear approximation of the original shape \cgalCite{bb-srmua-97t}.
 
-As mentioned in Edelsbrunner's and M&uuml;cke's paper \cite em-tdas-94,
+As mentioned in Edelsbrunner's and M&uuml;cke's paper \cgalCite{em-tdas-94},
 one can intuitively think of an \f$ \alpha\f$-shape as the
 following. Imagine a huge mass of ice-cream making up the space \f$ \mathbb{R}^3\f$
 and containing the points as "hard" chocolate pieces. Using one of
@@ -58,7 +58,7 @@ open disk (resp. ball) of radius \f$ \sqrt{\alpha}\f$ through the vertices of th
 simplex that does not contain any other point of \f$ S\f$, for the metric used in
 the computation of the underlying triangulation. The corresponding
 \f$ \alpha\f$-shape is defined as the underlying interior space of the
-\f$ \alpha\f$-complex (see \cite em-tdas-94).
+\f$ \alpha\f$-complex (see \cgalCite{em-tdas-94}).
 
 In general, an \f$ \alpha\f$-complex is a non-connected and non-pure polytope, it
 means, that one \f$ k\f$-simplex, \f$ 0 \leq k \leq d-1\f$ is not necessary adjacent to

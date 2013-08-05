@@ -36,7 +36,7 @@ of functions and traits, making it easy to adapt any concrete surface type,
 even if it is not a halfedge data structure at all.
 In particular, the concept definition follows the design of the 
 <A HREF="http://www.boost.org/libs/graph/doc/index.html"> Boost Graph Library (Bgl)</A>
-\cite cgal:sll-bgl-02.
+\cgalCite{cgal:sll-bgl-02}.
 
 The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
 (<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
@@ -84,8 +84,8 @@ Global error tracking methods produce highly accurate simplifications but take u
 of additional space. Cost-driven methods, like the one in this package, produce slightly 
 less accurate simplifications but take up much less additional space, even none in some cases.
 
-The cost-driven method implemented in this package is mainly based on \cite cgal:lt-fmeps-98, \cite cgal:lt-ems-99, with contributions from \cite hddms-mo-93, \cite gh-ssqem-97
-and \cite degn-tpec-98.
+The cost-driven method implemented in this package is mainly based on \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99}, with contributions from \cgalCite{hddms-mo-93}, \cgalCite{gh-ssqem-97}
+and \cgalCite{degn-tpec-98}.
 
 The algorithm proceeds in two stages. In the first stage, called <I>collection stage</I>, 
 an initial <I>collapse cost</I> is assigned to each and every edge in the surface.
@@ -99,9 +99,9 @@ Not all edges selected for processing are collapsed. A processed edge can be dis
 right away, without being collapsed, if it does not satisfy certain topological
 and geometric conditions.
 
-The algorithm presented in \cite gh-ssqem-97 contracts (collapses) arbitrary vertex pairs and not 
+The algorithm presented in \cgalCite{gh-ssqem-97} contracts (collapses) arbitrary vertex pairs and not 
 only edges by considering certain vertex pairs as forming a pseudo-edge and proceeding to collapse
-both edges and pseudo-edges in the same way as in \cite cgal:lt-fmeps-98, \cite cgal:lt-ems-99 ( 
+both edges and pseudo-edges in the same way as in \cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} ( 
 which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface, but the current state of this package can only deal with manifold surfaces, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
 
 \section Surface_mesh_simplificationCost Cost Strategy
@@ -119,7 +119,7 @@ midpoint placement (much faster but less accurate).
 \subsection SurfaceMeshSimplificationLindstromTurkStrategy Lindstrom-Turk Cost and Placement Strategy 
 
 The main characteristic of the strategy presented in
-\cite cgal:lt-fmeps-98, \cite cgal:lt-ems-99 is that the simplified surface
+\cgalCite{cgal:lt-fmeps-98}, \cgalCite{cgal:lt-ems-99} is that the simplified surface
 is not compared at each step with the original surface (or the surface
 at a previous step) so there is no need to keep extra information,
 such as the original surface or a history of the local changes. Hence
@@ -216,7 +216,7 @@ There are two main parameters to the algorithm: the surface to be simplified (in
 The surface to simplify must be a model of the `EdgeCollapsableMesh` concept. 
 Many concrete surface types, such as `Polyhedron_3` with only triangular faces,
 become models of that concept via a technique known as 
-<I>external adaptation</I>, which is described in \cite cgal:sll-bgl-02
+<I>external adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02}
 and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>
 
 External adaptation is a way to add an interface to an 
@@ -231,7 +231,7 @@ returns `true` the algorithm terminates.
 
 \subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cite cgal:sll-bgl-02 or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 

@@ -193,7 +193,7 @@ The first version of the package was co-authored by Pedro Machado
 Manh&atilde;es de Castro and Monique Teillaud, and integrated in CGAL
 3.4. Fr&eacute;d&eacute;ric Cazals and S&eacute;bastien Loriot extended the
 package by providing functionalities restricted on a given sphere
-\cite cclt-dc3sk-08.
+\cgalCite{cclt-dc3sk-08}.
 
 Sylvain Pion is acknowledged for helpful discussions.
 

@@ -111,7 +111,7 @@ Delaunay_triangulation_2<Traits,Tds> dt ( InputIterator first, InputIterator las
 /// there are co-circular points, the Delaunay triangulation is known
 /// not to be uniquely defined. In this case, \cgal chooses a
 /// particular Delaunay triangulation using a symbolic perturbation
-/// scheme \cite cgal:dt-pvr3d-03. Note that the other modifier
+/// scheme \cgalCite{cgal:dt-pvr3d-03}. Note that the other modifier
 /// functions of `Triangulation_2<Traits,Tds>` are not
 /// overwritten. Thus a call to \link Triangulation_2::insert_in_face()\endlink  
 /// \link Triangulation_2::insert_in_face() `insert_in_face()`\endlink 

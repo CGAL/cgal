@@ -28,8 +28,8 @@ done as follows: at the top most level we find the nearest neighbor of
 \f$ p\f$ as in the `Segment_Delaunay_graph_2<Gt,DS>` class. At 
 every subsequent level \f$ i\f$ we use the nearest neighbor found at level 
 \f$ i+1\f$ to find the nearest neighbor at level \f$ i\f$. This is a variant of 
-the corresponding hierarchy for points found in \cite cgal:d-dh-02. The 
-details are described in \cite cgal:k-reisv-04. 
+the corresponding hierarchy for points found in \cgalCite{cgal:d-dh-02}. The 
+details are described in \cgalCite{cgal:k-reisv-04}. 
 
 The class has three template parameters. The first and third 
 have essentially the same semantics as in the 

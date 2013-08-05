@@ -56,9 +56,9 @@ for two-, three-, and \f$ d\f$-dimensional points respectively.
 \cgalHeading{Implementation}
 
 We implement the algorithm of Welzl with move-to-front 
-heuristic \cite w-sedbe-91a for small point sets, combined with a new 
+heuristic \cgalCite{w-sedbe-91a} for small point sets, combined with a new 
 efficient method for large sets, which is particularly tuned for 
-moderately large dimension (\f$ d \leq 20\f$) \cite cgal:g-frseb-99. 
+moderately large dimension (\f$ d \leq 20\f$) \cgalCite{cgal:g-frseb-99}. 
 The creation time is almost 
 always linear in the number of points. Access functions and predicates 
 take constant time, inserting a point might take up to linear time, 

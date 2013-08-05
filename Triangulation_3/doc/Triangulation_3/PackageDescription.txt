@@ -34,7 +34,7 @@
 
 
 A three-dimensional triangulation is a three-dimensional simplicial
-complex, pure connected and without singularities \cite by-ag-98. Its
+complex, pure connected and without singularities \cgalCite{by-ag-98}. Its
 cells (`3`-faces) are such that two cells either do not intersect or
 share a common facet (`2`-face), edge (`1`-face) or vertex (`0`-face).
 

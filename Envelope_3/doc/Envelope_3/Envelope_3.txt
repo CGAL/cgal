@@ -79,7 +79,7 @@ compute their envelope diagrams recursively.  Finally, we merge the
 diagrams, and we do this by overlaying them and then applying some
 post-processing on the resulting diagram. The post-processing stage is
 non-trivial and involves the projection of intersection curves onto
-the \f$ xy\f$-plane - see \cite cgal:m-rgece-06 for more details.
+the \f$ xy\f$-plane - see \cgalCite{cgal:m-rgece-06} for more details.
 
 \section Envelope_3The The Envelope-Traits Concept
 

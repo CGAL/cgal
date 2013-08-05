@@ -6,7 +6,7 @@ namespace CGAL {
 computes the convex hull polyhedron 
 of the three-dimensional points in the range [`first`,`beyond`)
 and assigns it to `P`. If `test_correctness` is set to
-`true`, the tests described in \cite mnssssu-cgpvg-96 are
+`true`, the tests described in \cgalCite{mnssssu-cgpvg-96} are
 used to determine the correctness of the resulting polyhedron.
 
 
@@ -32,7 +32,7 @@ the representation class `R` required by
 \cgalHeading{Implementation}
 
 This function uses the `d`-dimensional convex hull incremental construction 
-algorithm \cite cms-frric-93 
+algorithm \cgalCite{cms-frric-93} 
 with `d` fixed to 3. The algorithm requires \f$ O(n^2)\f$ time in the 
 worst case and \f$ O(n \log n)\f$ expected time. 
 

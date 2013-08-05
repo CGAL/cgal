@@ -35,7 +35,7 @@ an empty  circumscribing sphere with squared radius equal or smaller than \f$ \a
 Here "empty" means  that the open sphere 
 do not include  any points of \f$ S\f$.
 The alpha shape is then simply the domain covered by the simplices
-of the alpha complex (see \cite em-tdas-94).
+of the alpha complex (see \cgalCite{em-tdas-94}).
 
 In general, an alpha complex is a non-connected and non-pure complex.
 This means in particular that the alpha complex may have

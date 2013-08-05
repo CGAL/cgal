@@ -44,14 +44,14 @@ for instance in terms of sizing field
 or with respect to some user customized quality criteria.
 
 The meshing engine used in this mesh generator
-is based on Delaunay refinement \cite c-gqmgc-93, \cite r-draq2d-95, \cite s-tmgdr-98.
+is based on Delaunay refinement \cgalCite{c-gqmgc-93}, \cgalCite{r-draq2d-95}, \cgalCite{s-tmgdr-98}.
 It uses the notion of restricted Delaunay triangulation
-to approximate 1-dimensional curve segments and surface patches \cite cgal:bo-pgsms-05.
+to approximate 1-dimensional curve segments and surface patches \cgalCite{cgal:bo-pgsms-05}.
 Before the refinement, a mechanism of protecting balls is set up on 1-dimensional features, if any,
 to ensure a fair representation
 of those features in the mesh, and also to guarantee the termination of the refinement process,
 whatever may be the input geometry, in particular whatever small angles
-the boundary and subdivision surface patches may form \cite cgal:cdl-pdma-07, \cite cgal:cdr-drpsc-07.
+the boundary and subdivision surface patches may form \cgalCite{cgal:cdl-pdma-07}, \cgalCite{cgal:cdr-drpsc-07}.
 The Delaunay refinement is followed by a mesh optimization phase
 to remove slivers and provide a good quality mesh.
 
@@ -184,7 +184,7 @@ the corresponding points are inserted into the Delaunay triangulation
 from the start.
 
 If the domain has 1-dimensional exposed features,
-the method of protecting balls \cite cgal:cdr-drpsc-07, \cite cgal:cdl-pdma-07
+the method of protecting balls \cgalCite{cgal:cdr-drpsc-07}, \cgalCite{cgal:cdl-pdma-07}
 is used to achieve an accurate representation of those features in the mesh
 and to guarantee that the refinement process terminates
 whatever may be the dihedral angles formed by input surface patches incident to a
@@ -238,7 +238,7 @@ a perturber and an exuder.
 The Lloyd and odt-smoother are global optimizers
 moving the mesh vertices to minimize 
 a mesh energy. Those optimizers are described respectively in 
-\cite cgal:dfg-cvtaa-99t, \cite cgal:dw-tmgob-02 and in \cite cgal::c-mssbo-04, \cite cgal:acyd-vtm-05.
+\cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02} and in \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}.
 In both cases the mesh energy
 is the `L1` error resulting from the interpolation 
 of the function \f$ f(x) =x^2\f$ by a piecewise linear function.
@@ -263,9 +263,9 @@ to be very efficient as a preliminary step of optimization, as they tend to enha
 efficiency of the perturber and/or exuder applied next, see \cgalFigureRef{figureoptimization} 
 
 The perturber and the exuder focus on improving the worst mesh elements.
-The perturber \cite cgal:tsa-ps3dd-09 improves the meshes by local changes
+The perturber \cgalCite{cgal:tsa-ps3dd-09} improves the meshes by local changes
 in the vertices positions
-aiming to make sliver disappear. The exuder \cite cgal:cdeft-slive-00
+aiming to make sliver disappear. The exuder \cgalCite{cgal:cdeft-slive-00}
 chases the remaining slivers by
 re-weighting mesh vertices with optimal weights.
 
@@ -980,33 +980,33 @@ vertices/second
 \subsection Mesh_3TheoreticalFoundations Theoretical Foundations
 
 The \cgal mesh generation package implements a meshing engine based 
-on the method of Delaunay refinement introduced by Chew \cite c-gqmgc-93 and Ruppert \cite r-draq2d-95
-and pioneered in 3D by Shewchuk \cite s-tmgdr-98. 
+on the method of Delaunay refinement introduced by Chew \cgalCite{c-gqmgc-93} and Ruppert \cgalCite{r-draq2d-95}
+and pioneered in 3D by Shewchuk \cgalCite{s-tmgdr-98}. 
 It uses the notion of restricted Delaunay triangulation
 to approximate 1-dimensional curved features and curved surface patches
-and rely on the work of Boissonnat and Oudot \cite cgal:bo-pgsms-05
-and Oudot et al. \cite cgal:ory-mvbss-05
+and rely on the work of Boissonnat and Oudot \cgalCite{cgal:bo-pgsms-05}
+and Oudot et al. \cgalCite{cgal:ory-mvbss-05}
 to achieve accurate representation of boundary and subdividing surfaces in the mesh.
 The mechanism of protecting balls, used to ensure a fair representation
 of 1-dimensional features, if any, and the termination of the refinement process
 whatever may be the input geometry, in particular whatever small dihedral angles may form
 the boundary and subdivision surface patches,
-was pioneered by Cheng et al. \cite cgal:cdr-drpsc-07 and further experimented by Dey, Levine et al.
-\cite cgal:cdl-pdma-07.
+was pioneered by Cheng et al. \cgalCite{cgal:cdr-drpsc-07} and further experimented by Dey, Levine et al.
+\cgalCite{cgal:cdl-pdma-07}.
 The optimization phase involves global optimization processes, a perturbation process
-and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cite cgal:dfg-cvtaa-99t, \cite cgal:dw-tmgob-02
-and odt smoothing \cite cgal::c-mssbo-04, \cite cgal:acyd-vtm-05, where odt means
+and a sliver exudation process. The global optimizers are based on Lloyd smoothing \cgalCite{cgal:dfg-cvtaa-99t}, \cgalCite{cgal:dw-tmgob-02}
+and odt smoothing \cgalCite{cgal::c-mssbo-04}, \cgalCite{cgal:acyd-vtm-05}, where odt means
 <I>optimal Delaunay triangulation</I>. The perturbation process 
-is mainly based on the work of Tournois \cite cgal:t-om-09
-and Tournois et al. \cite cgal:twad-iropitmg-09,
+is mainly based on the work of Tournois \cgalCite{cgal:t-om-09}
+and Tournois et al. \cgalCite{cgal:twad-iropitmg-09},
 while the exudation process is, the now famous, optimization by weighting described
-in Edelsbrunner et al. \cite cgal:cdeft-slive-00.
+in Edelsbrunner et al. \cgalCite{cgal:cdeft-slive-00}.
 
 \subsection Mesh_3ImplementationHistory Implementation History
 
 Work on the package `Mesh_3` started during the PhD thesis of Laurent Rineau
 advised by Mariette Yvinec. A code prototype, together
-with a first version of design and specifications \cite cgal:ry-gsddrm-06
+with a first version of design and specifications \cgalCite{cgal:ry-gsddrm-06}
 came out of their collaboration.
 
 From the beginning of 2009, most of the work has been performed by Stéphane
@@ -1022,7 +1022,7 @@ and appeared first in release 3.6 of \cgal.
 
 In collaboration with Laurent Rineau, Stéphane also added demos and examples.
 After some experiments on medical imaging data performed by
-Dobrina Boltcheva et al. \cite cgal:byb-mgmmi-09, \cite cgal:-byb-fpdmgmmi-09, the handling
+Dobrina Boltcheva et al. \cgalCite{cgal:byb-mgmmi-09}, \cgalCite{cgal:-byb-fpdmgmmi-09}, the handling
 of 1-dimensional features was worked out by Laurent Rineau, Stéphane Tayeb
 and Mariette Yvinec. It appeared first in the release 3.8 of \cgal.
 

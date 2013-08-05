@@ -18,8 +18,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This chapter presents the interval skip list introduced by Hanson \cite h-islds-91,
-and derived from the skip list data structure \cite p-slpab-90.
+This chapter presents the interval skip list introduced by Hanson \cgalCite{h-islds-91},
+and derived from the skip list data structure \cgalCite{p-slpab-90}.
 
 The data structure stores intervals and allows to perform stabbing queries,
 that is to test whether a point is covered by any of the intervals.

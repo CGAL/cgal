@@ -16,8 +16,8 @@ The Minkowski sum of a spoon and a star.
 The Minkowski sum of two point sets \f$ P\f$ and \f$ Q\f$ in \f$ \mathbb{R}^d\f$, denoted by
 \f$ P \oplus Q\f$, is defined as the set \f$ \{p+q:p \in P, q \in Q
 \}\f$. Minkowski sums are used in a wide range of applications such as
-robot motion planning \cite l-rmp-91 and computer-aided
-design \cite cgal:ek-sicad-99. \cgalFigureRef{figmotionPlanning} shows
+robot motion planning \cgalCite{l-rmp-91} and computer-aided
+design \cgalCite{cgal:ek-sicad-99}. \cgalFigureRef{figmotionPlanning} shows
 an example how Minkowski sums can be used to plan the motion of a
 translational robot. We want to know which are legal positions of the
 robot, and where can the robot go to from a specified starting
@@ -59,7 +59,7 @@ The decomposition method for computing the Minkowski sum of non-convex
 polyhedra makes use of the fact that Minkowski sums of convex
 polyhedra are rather easy to compute. It decomposes both polyhedra
 into convex pieces, computes all pairwise Minkowski sums of the convex
-pieces, and merges the pairwise sums \cite bkos-cgaa-97.
+pieces, and merges the pairwise sums \cgalCite{bkos-cgaa-97}.
 
 \cgalFigureBegin{Mink3decomp,decomposition_method.png}
 The decomposition method decomposes both input polyhedra into convex parts, computes all pairwise Minkowski sums of the convex parts, and merges the pairwise sums.

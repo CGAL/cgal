@@ -23,7 +23,7 @@ in Section \ref seckds_examples. The framework makes heavy use of
 our `Polynomial_kernel` package to provide models of the
 `Kinetic::FunctionKernel` concept.
 
-The framework was first presented at ALENEX \cite cgal:gkr-cfhm-04.
+The framework was first presented at ALENEX \cgalCite{cgal:gkr-cfhm-04}.
 
 \section seckds_architecture Architecture
 

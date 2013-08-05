@@ -15,7 +15,7 @@ Given a set \f$ \cal C\f$ of planar curves, the <I>arrangement</I>
 one-dimensional and two-dimensional cells, called <I>vertices</I>, <I>edges</I> and <I>faces</I>, respectively induced by the curves in \f$ \cal C\f$.
 Arrangements are ubiquitous in the computational-geometry
 literature and have many applications;
-see, e.g., \cite as-aa-00, \cite cgal:h-a-04.
+see, e.g., \cgalCite{as-aa-00}, \cgalCite{cgal:h-a-04}.
 
 The curves in \f$ \cal C\f$ can intersect each other (a single curve may also
 be self-intersecting or may be comprised of several disconnected branches)
@@ -76,7 +76,7 @@ connected faces. Every face can have several holes contained in its
 interior (or no holes at all). In addition, every face may contain
 isolated vertices in its interior. See \cgalFigureRef{arr_figseg_dcel}
 for an illustration of the various \sc{Dcel} features. For more details
-on the \sc{Dcel} data structure see \cite bkos-cgaa-00 Chapter 2.
+on the \sc{Dcel} data structure see \cgalCite{bkos-cgaa-00} Chapter 2.
 
 \cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
 An arrangement of interior-disjoint line segments with some of the \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has a single connected component that forms a hole inside it, and this hole is comprised if several faces. The half-edge \f$ e\f$ is directed from its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a line segment that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part of the chain that form the outer boundary of the face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and \f$ u_2\f$ in its interior.
@@ -871,7 +871,7 @@ print_point_location
 
 Each of the various point-location class templates employs a different
 algorithm or <I>strategy</I>\cgalFootnote{We use the term <I>strategy</I>
-is borrowed from the design-pattern taxonomy \cite cgal:ghjv-dpero-95, Chapter 5.}
+is borrowed from the design-pattern taxonomy \cgalCite{cgal:ghjv-dpero-95}, Chapter 5.}
 for answering queries:
 <UL>
 <LI> `Arr_naive_point_location<Arrangement>` employes the
@@ -911,8 +911,8 @@ for answering queries:
   classes included in the <I>2D Arrangement</I> package are models of
   this refined concept.
 <LI>`Arr_trapezoid_ric_point_location<Arrangement>` implements
-  Mulmuley's point-location algorithm \cite m-fppa-90; see
-  also \cite bkos-cgaa-00, Chapter 6. The arrangement faces are
+  Mulmuley's point-location algorithm \cgalCite{m-fppa-90}; see
+  also \cgalCite{bkos-cgaa-00}, Chapter 6. The arrangement faces are
   decomposed into simpler cells each of constant complexity, known as
   <I>pseudo-trapezoids</I>, and a search structure (a directed acyclic
   graph) is constructed on top of these cells, facilitating the search
@@ -950,7 +950,7 @@ The trapezoidal map RIC algorithm has expected logarithmic query time,
 while the query time for the landmark strategy may be as large as
 linear. In practice however, the query times of both strategies are
 competitive. For a detailed experimental comparison
-see \cite hh-eplca-05
+see \cgalCite{hh-eplca-05}
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
@@ -2406,7 +2406,7 @@ maintenance of arrangements of such arcs. Rational functions, and
 polynomial functions in particular, are not only interesting in their
 own right, they are also very useful for approximating or
 interpolating more complicated curves; see,
-e.g., [\cite cgal:ptvf-nrcpp-02 Chapter 3.
+e.g., [\cgalCite{cgal:ptvf-nrcpp-02} Chapter 3.
 
 `Arr_rational_function_traits_2<AlgebraicKernel_d_1>` is a model
 of the concepts `ArrangementTraits_2`,
@@ -2822,7 +2822,7 @@ require auxiliary data-structures (see Section \ref arr_ssecpl),
 which must be notified on various local changes in the arrangement,
 in order to keep their data structures up-to-date. The arrangement
 package offers a mechanism that uses <I>observers</I> 
-(see \cite cgal:ghjv-dpero-95) that can be
+(see \cgalCite{cgal:ghjv-dpero-95}) that can be
 attached to an arrangement instance and receive notifications
 about the changes this arrangement goes through.
 
@@ -3038,7 +3038,7 @@ the annual precipitation is between 1000mm and 1500mm.
 
 Computing the overlay of two planar arrangement is also useful for
 supporting Boolean set operations on polygons (or generalized polygons,
-see, e.g., \cite cgal:behhms-cbcab-02).
+see, e.g., \cgalCite{cgal:behhms-cbcab-02}).
 
 The function `overlay (arr_a, arr_b, ovl_arr, ovl_traits)` accepts
 two input arrangement instances `arr_a` and `arr_b`, and constructs
