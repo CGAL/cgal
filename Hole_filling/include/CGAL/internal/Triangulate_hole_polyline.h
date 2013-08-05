@@ -438,7 +438,7 @@ public:
   }
 
 private:
-  // Finds other vertex then v0 and v1 in facet f
+  // Finds other vertex than v0 and v1 in facet f
   // Note that this may return infinite vertex
   std::pair<int, int> // <vertex id(info), index in cell>
   get_facet_remaining_vertex(Facet f, int v0_info, int v1_info) 
@@ -475,16 +475,15 @@ private:
                   const Edge_set& existing_edges)
   {
     /**********************************************************************
-     *  + Default W value is (0,0), default lambda value is -1.
-     *  + W value (0,0) is used to check whether the region (v0-v1) is processed.
-     *  + If a range v0-v1 does not contains any possible triangulation, then W[v0,v1] = (-1,-1) and lambda[v0,v1] = -1
+     *  + Default W value is Weight::DEFAULT(), default lambda value is -1.
+     *  + DEFAULT() is used to check whether the region (v0-v1) is processed.
+     *  + If a range v0-v1 does not contains any possible triangulation, then W[v0,v1] = INVALID() and lambda[v0,v1] = -1
+     *  + Note that w + DEFAULT() == w must hold
      */
     int v0 = e.first->vertex(e.second)->info();
     int v1 = e.first->vertex(e.third)->info();
     if(v0 > v1) { std::swap(v0, v1); }
-    
-    // edge can not be incident to infinite vertex
-    CGAL_assertion(v0 != -1);
+    CGAL_assertion(v0 != -1); // edge can not be incident to infinite vertex
 
     // the range is previously processed
     if( W.get(v0, v1) != Weight::DEFAULT() ) { return; }
@@ -555,28 +554,28 @@ public:
   template <typename OutputIteratorValueType, typename OutputIterator, typename EdgeSet>
   std::pair<OutputIterator, Weight>
   triangulate(const Polyline_3& P, 
-             const Polyline_3& Q,
-             OutputIterator out,
-             const EdgeSet& existing_edges)
+              const Polyline_3& Q,
+              OutputIterator out,
+              const EdgeSet& existing_edges)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
     
-    int n = P.size() - 1; // because the first and last point are equal
-    LookupTable<Weight> W(n,Weight::DEFAULT());// do not forget that these default values are not changed for [i, i+1]
+    int n = P.size() - 1;                       // because the first and last point are equal
+    LookupTable<Weight> W(n,Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
     
-    for(int j = 2; j< n; ++j){ // determines range (2 - 3 - 4 )
-      for(int i=0; i<n-j; ++i){ // iterates over ranges and find min triangulation in those ranges 
-        int k = i+j;            // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
+    for(int j = 2; j< n; ++j) {   // determines range (2 - 3 - 4 )
+      for(int i=0; i<n-j; ++i) {  // iterates over ranges and find min triangulation in those ranges 
+        int k = i+j;              // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
 
         int m_min = -1;
         Weight w_min = Weight::NOT_VALID();
 
         if(existing_edges.find(std::make_pair(i,k)) == existing_edges.end()) 
         {
-          for(int m = i+1; m<k; ++m){ 
+          for(int m = i+1; m<k; ++m) { 
             if( existing_edges.find(std::make_pair(i,m)) != existing_edges.end() ||
                 existing_edges.find(std::make_pair(m,k)) != existing_edges.end() ) {
               // we can not construct i-m-k triangle
