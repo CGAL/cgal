@@ -74,29 +74,29 @@ Effect of pose changes on segmentation and SDF values.
 \cgalFigureEnd
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
-Given a number of initial clusters, the soft clustering applied on the SDF values computed first groups facets using k-means clustering algorithm. It is initialized with k-means++ \cite Arthur2007Kmeans,
-(an algorithm for choosing random seeds for clusters) and run multiple times. Among these runs, we choose clustering result that has minimum with-in
-cluster error and use it to initialize expectation maximization algorithm for fitting Gaussian mixture models.
+Given a number of clusters, the soft clustering applied on computed SDF values.  
+It is initialized with k-means++ \cite Arthur2007Kmeans, and run multiple times with random seeds.
+Among these runs, the best result is used for initializing expectation maximization algorithm for fitting Gaussian mixture models.
 
-Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (i.e. disconnected components / mesh patches).
+Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (i.e. disconnected components).
 Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets which have close SDF values
 without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh
 with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
 
 The output of this step is a matrix that contains probability values for each facet to belong to each cluster.
-These probability values are used as input in the graph-cut step that follows.
+These probability values are used as input to the graph-cut step described next. 
 
 \cgalFigureBegin{Segmentation_levels,effect_of_levels.png}
-Effect of different number of clusters on the segmentation. Number of clusters were set to 4, 3, and 2 respectively.
+Influence of the number of clusters over the segmentation. The number of clusters are set to 4, 3, and 2 respectively.
 \cgalFigureEnd
 
 \subsection Surface_mesh_segmentationGraphCut Graph-Cut
-The final hard clustering, which gives the final segmentation of the mesh, is obtained by minimizing an energy function.
-This energy function combines the aforementioned probability matrix and geometric surface features.
+The final hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
+This energy function combines the aforementioned probability matrix and geometric surface features. 
 The algorithm assigns a cluster to each facet,
-however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments / mesh patches).
+however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments).
 
-The expression of the energy function that is minimized using alpha-expansion graph cut algorithm \cite Boykov2001FastApproximate is the following:
+The energy function minimized using alpha-expansion graph cut algorithm \cite Boykov2001FastApproximate is defined as follows:
 
   <table border="0">
   <tr>
@@ -134,10 +134,10 @@ The smoothness parameter makes this geometric criteria more or less prevalent.
 Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets which are placed under different clusters is less expensive than separating them and creating boundaries.
 On the contrary, assigning smaller values to smoothness parameter results in a high number of segments, by getting closer to the result of soft clustering
-(notice that setting the smoothness parameter to zero directly returns the result of the soft clustering). The effect of different smoothness parameters is illustrated on \cgalFigureRef{Segmentation_lambdas}.
+(notice that setting the smoothness parameter to zero returns the result of the soft clustering). The effect of different smoothness parameters is depicted on \cgalFigureRef{Segmentation_lambdas}.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
-Effect of different smoothness parameters on the segmentation (using 10 clusters). Smoothness parameters were set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
+Influence of the smoothness parameter lambda over the segmentation(using 10 clusters). Smoothness parameters are set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
 \cgalFigureEnd
 
 \section Surface_mesh_segmentationAPI API
@@ -153,7 +153,7 @@ meaningless SDF values, and therefore unreliable segmentation.
 The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 
-\subsection Surface_mesh_segmentationTheSDFComputation The SDF Computation
+\subsection Surface_mesh_segmentationSDFComputation SDF Computation
 The function `compute_sdf_values()` provides an implementation of the SDF computation for a given \cgal Polyhedron.
 
 After the raw computation, the following post-processing steps are applied:
