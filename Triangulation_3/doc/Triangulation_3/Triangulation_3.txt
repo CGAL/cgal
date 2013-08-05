@@ -568,7 +568,7 @@ Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Fast location</B> 
+<B>%Fast location</B> 
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
@@ -776,7 +776,7 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Fast location</B> 
+<B>%Fast location</B> 
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
