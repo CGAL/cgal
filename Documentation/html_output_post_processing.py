@@ -265,6 +265,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     re_replace_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
     clean_doc()
     
+    #remove links to CGAL in the bibliography
+    citelist_files=package_glob('./*/citelist.html')
+    for fn in citelist_files:
+        re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
+    
     
 if __name__ == "__main__":
     main()
