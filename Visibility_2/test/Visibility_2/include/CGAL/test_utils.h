@@ -34,6 +34,8 @@
 
 namespace CGAL {
 
+enum QueryChoice {VERTEX, EDGE, FACE};  
+
 template <class Arrangement_2> 
 typename Arrangement_2::Halfedge_handle get_initial_halfedge(const Arrangement_2 &arr) {
   
@@ -178,13 +180,45 @@ std::string num2string(Number_type& n) {
   return ss.str();
 }
 
+template<class Arrangement_2>
+CGAL::Object get_location(
+                  const Arrangement_2 &arr, 
+                  const typename Arrangement_2::Geometry_traits_2::Point_2 &q) {
+
+  typedef CGAL::Arr_naive_point_location<Arrangement_2> Naive_pl;
+  Naive_pl naive_pl(arr);
+
+  // Perform the point-location query.
+  CGAL::Object obj = naive_pl.locate(q);
+  return obj;
+}   
+
+template<class Arrangement_2> 
+bool is_inside_face(
+                  const Arrangement_2 &arr, 
+                  const typename Arrangement_2::Face_const_handle face,
+                  const typename Arrangement_2::Geometry_traits_2::Point_2 &q) {
+
+  CGAL::Object obj = get_location<Arrangement_2>(arr, q);
+  typename Arrangement_2::Face_const_handle f;
+  if (CGAL::assign (f, obj)) {
+    // q is located inside a face:
+    if (!f->is_unbounded()) {
+      if (f == face) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 template <class _Arrangement_2> 
-void lazy_create_arrangement_from_file(std::ifstream &input,
+void create_arrangement_from_dat_file(std::ifstream &input,
                                        _Arrangement_2 &arr) {
 
   typedef _Arrangement_2                                      Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
-  typedef typename Arrangement_2::Face_const_handle           Face_const_handle;
+  typedef typename Arrangement_2::Face_handle                 Face_handle;
   typedef typename Geometry_traits_2::Segment_2               Segment_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2;
   typedef typename Geometry_traits_2::FT                      Number_type;
@@ -192,23 +226,25 @@ void lazy_create_arrangement_from_file(std::ifstream &input,
   if (input) {
     std::string curr_line;
     std::vector<Point_2> isolated_vertices;
+    std::getline(input, curr_line);
     std::stringstream convert(curr_line);
     int number_of_isolated_vertices;
     convert >> number_of_isolated_vertices;
-    Face_const_handle uface = arr.unbounded_face();
-
+    Face_handle uface = arr.unbounded_face();
     for (int i = 0 ; i < number_of_isolated_vertices ; i++) {
       std::getline(input, curr_line);
       std::istringstream iss(curr_line);
       std::string x, y;
       iss >> x >> y;
       arr.insert_in_face_interior(Point_2(string2num<Number_type>(x), 
-                                          string2num<Number_type>(y)));
+                                          string2num<Number_type>(y)),
+                                  uface);
     }
-
     std::vector<Segment_2> edges;
     int number_of_edges;
-    input >> number_of_edges;
+    std::getline(input, curr_line);
+    std::stringstream convert2(curr_line);
+    convert2 >> number_of_edges;
     for (int i = 0 ; i < number_of_edges ; i++) {
       std::getline(input, curr_line);
       std::string x1, y1, x2, y2;
@@ -223,20 +259,26 @@ void lazy_create_arrangement_from_file(std::ifstream &input,
   }
 }
 
-template <class _Visibility_2> 
-void run_tests(_Visibility_2 visibility, int case_number) {
-  typedef _Visibility_2                                       Visibility_2;
+template <class Visibility_2> 
+void run_tests(int case_number) {
   typedef typename Visibility_2::Input_arrangement_2          Input_arrangement_2;
   typedef typename Visibility_2::Output_arrangement_2         Output_arrangement_2;
   typedef typename Input_arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2                 Point_2; 
   typedef typename Geometry_traits_2::FT                      Number_type;
+  typedef typename Input_arrangement_2::Halfedge_around_vertex_const_circulator
+                                        Halfedge_around_vertex_const_circulator;
+  typedef typename Input_arrangement_2::Face_const_handle     Face_const_handle;
+  typedef typename Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Vertex_const_handle   Vertex_const_handle;
 
-  for (int i=1 ; i <= case_number ; i++) {
+  Visibility_2 visibility;
+  for (int i = 1 ; i <= case_number ; i++) {
 
-    std::cout << "Test " << i << " begins" << std::endl;
+    std::cout << "Test " << i << " begins...";
     std::string input_arr_file("data/test");
     input_arr_file += num2string<int>(i);
+    input_arr_file += ".dat";
     std::ifstream input(input_arr_file.c_str());
     Input_arrangement_2 arr_in;
     Output_arrangement_2 arr_correct_out;
@@ -252,22 +294,51 @@ void run_tests(_Visibility_2 visibility, int case_number) {
     convert >> x >> y;
     Point_2 query_pt(string2num<Number_type>(x),
                      string2num<Number_type>(y));
+    std::getline(input, curr_line);
+    std::string x1, y1;
+    std::istringstream iss(curr_line);
+    iss >> x1 >> y1;
+    Point_2 reference_pt(string2num<Number_type>(x1),
+                         string2num<Number_type>(y1));
 
-    lazy_create_arrangement_from_file<Input_arrangement_2>(input, arr_in);
-    lazy_create_arrangement_from_file<Output_arrangement_2>(input, arr_correct_out);
-    typename Input_arrangement_2::Face_const_iterator fit;
+    std::getline(input, curr_line);
+    create_arrangement_from_dat_file<Input_arrangement_2>(input, arr_in);
+    std::getline(input, curr_line);
+    create_arrangement_from_dat_file<Output_arrangement_2>
+                                                      (input, arr_correct_out);
 
-    // Locate in which face - point location
-    // Have 2 query points - usually the same. if it's not, then it will
-    // select the face check it second has the same face. second query point
-    // has to be inside the face we want
-    // Second qpoint is the source of the halfedge from the face we want - CLEANER
-    for (fit = arr_in.faces_begin(); fit != arr_in.faces_end(); ++fit) {
-        if (!fit->is_unbounded()) {
-            visibility.visibility_region(query_pt, fit, arr_out);
-        }
+    CGAL::Object obj = CGAL::get_location<Input_arrangement_2>(arr_in, query_pt);
+    Face_const_handle f;
+    Halfedge_const_handle e;
+    Vertex_const_handle v;
+
+    if (CGAL::assign (f, obj)) {
+      if (!f->is_unbounded()) {
+        visibility.visibility_region(query_pt, f, arr_out);
+      }
     }
-    assert(true == test_are_equal<Output_arrangement_2>(arr_out, arr_correct_out));
+    else if (CGAL::assign(e, obj)) {
+      if (e->source()->point() == reference_pt) {
+        visibility.visibility_region(query_pt, e, arr_out);
+      }
+      else {
+        visibility.visibility_region(query_pt, e->twin(), arr_out);
+      }
+    }
+    else if (CGAL::assign(v, obj)) {
+      // Check which halfedge we want in the query
+      Halfedge_around_vertex_const_circulator he_circ = v->incident_halfedges();
+      Halfedge_around_vertex_const_circulator he_curr = he_circ;
+      do {
+        if (he_curr->source()->point() == reference_pt) {
+          visibility.visibility_region(query_pt, he_curr, arr_out);
+        }
+      } while (++he_curr != he_circ);
+    }
+
+    assert(true == test_are_equal<Output_arrangement_2>
+                                                    (arr_out, arr_correct_out));
+    std::cout << "Done!\n";
   }
 }
 
@@ -399,8 +470,6 @@ std::string edge2string(const Point_2& p1, const Point_2& p2) {
   + num2string(q2.x()) + num2string(q2.y());
 }
 
-enum QueryChoice {VERTEX, EDGE, FACE};
-
 template<class Point_2, class Number_type> 
 Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
 
@@ -429,31 +498,6 @@ Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
 
   Number_type y = y0 + (y1 - y0)*(x - x0)/(x1 - x0);
   return Point_2(x, y);
-}
-
-template<class Arrangement_2> 
-bool is_inside_face(const Arrangement_2 &arr, 
-                    const typename Arrangement_2::Face_const_handle face,
-                    const typename Arrangement_2::Geometry_traits_2::Point_2 &q) {
-
-  typedef CGAL::Arr_naive_point_location<Arrangement_2> Naive_pl;
-  Naive_pl naive_pl(arr);
-
-  // Perform the point-location query.
-  CGAL::Object obj = naive_pl.locate(q);
-
-  // Print the result.
-  typename Arrangement_2::Face_const_handle f;
-
-  if (CGAL::assign (f, obj)) {
-    // q is located inside a face:
-    if (!f->is_unbounded()) {
-      if (f == face) {
-        return true;
-      }
-    }
-  }
-  return false;
 }
 
 template<class Visibility_2_fst, class Visibility_2_snd, class Arrangement_2>

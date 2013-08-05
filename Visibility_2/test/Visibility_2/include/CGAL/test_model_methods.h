@@ -56,6 +56,7 @@ void test_model_methods_for_arr(
       break;
     }
   }
+  // First consider query point in the unbounded face
   Point_2 query_pt(1, 1);
   visibility.visibility_region(query_pt, fit, arr_out);
   assert(true == test_are_equal<Output_arrangement_2>
@@ -112,8 +113,7 @@ void test_model_methods() {
                                                   Supports_simple_polygon_tag;
   typedef typename Input_arrangement_2::Geometry_traits_2::Segment_2 
                                                            Segment_2;
-              
-  // Test with simple square and query point at its center                                    
+                                         
   Point_2 p1(0, 0), p2(8, 0), p3(8, 8), p4(0, 8);
   std::vector<Segment_2> seg_sq;
   seg_sq.push_back(Segment_2(p1, p2));
