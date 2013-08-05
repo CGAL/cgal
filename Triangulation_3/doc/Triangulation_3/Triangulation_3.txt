@@ -1036,7 +1036,7 @@ A new demo of this package was introduced in \cgal 3.8, coded by Fei
 Teillaud in the framework of the Google Summer of Code, 2010.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
-the design of CGAL. Jean-Daniel Boissonnat is also acknowledged
+the design of \cgal. Jean-Daniel Boissonnat is also acknowledged
 \cite bdty-tcgal-00.
 
 */ 
