@@ -1,3 +1,21 @@
+// Copyright (c) 2013  GeometryFactory (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Xiang Gao <gaox@ethz.ch>
+//
 #ifndef CGAL_MCFSKELETON_UTILITY_H
 #define CGAL_MCFSKELETON_UTILITY_H
 
@@ -31,25 +49,6 @@ edge_descriptor mesh_split(Polyhedron& polyhedron, edge_descriptor ei, Point pn)
   }
 
   return en;
-}
-
-template<class Polyhedron>
-typename Polyhedron::Traits::FT volume(const Polyhedron& p)
-{
-  typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
-  typedef typename Polyhedron::Traits::Point_3 Point;
-  typename Kernel_traits<Point>::Kernel::Compute_volume_3 volume;
-  typename Polyhedron::Traits::FT res=0;
-  Point origin(0,0,0);
-  for (Facet_iterator f = p.facets_begin(); f != p.facets_end(); ++f)
-  {
-    typename Polyhedron::Halfedge_const_handle he = f->facet_begin();
-    const Point& v1 = he->vertex()->point();
-    const Point& v2 = he->next()->vertex()->point();
-    const Point& v3 = he->next()->next()->vertex()->point();
-    res+=volume(origin,v1,v2,v3);
-  }
-  return res;
 }
 
 } //namespace internal
