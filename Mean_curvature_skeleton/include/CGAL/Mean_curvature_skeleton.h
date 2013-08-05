@@ -190,35 +190,7 @@ public:
      weight_calculator(weight_calculator),
      is_medially_centered(false)
   {
-    TH_ALPHA *= (M_PI / 180.0);
-    double area = internal::get_surface_area(polyhedron);
-    area_TH = 0.0001 * area;
-    original_area = area;
-    iteration_TH = 500;
-
-    // initialize index maps
-    vertex_iterator vb, ve;
-    vertex_id_count = 0;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
-    {
-      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
-    }
-    max_id = vertex_id_count;
-
-    edge_iterator eb, ee;
-    int idx = 0;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
-    {
-      boost::put(edge_id_pmap, *eb, idx++);
-    }
-
-    is_vertex_fixed_map.clear();
-    correspondence.clear();
-
-    if (is_medially_centered)
-    {
-      compute_voronoi_pole();
-    }
+    init();
   }
 
   Mean_curvature_skeleton(Polyhedron& P,
@@ -244,6 +216,16 @@ public:
      weight_calculator(weight_calculator),
      is_medially_centered(is_medially_centered)
   {
+    init();
+  }
+
+  // Release resources
+  ~Mean_curvature_skeleton(void)
+  {
+  }
+
+  void init()
+  {
     TH_ALPHA *= (M_PI / 180.0);
     double area = internal::get_surface_area(polyhedron);
     area_TH = 0.0001 * area;
@@ -273,11 +255,6 @@ public:
     {
       compute_voronoi_pole();
     }
-  }
-
-  // Release resources
-  ~Mean_curvature_skeleton(void)
-  {
   }
 
   void set_omega_H(double value)
