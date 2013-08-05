@@ -7,7 +7,7 @@ namespace CGAL {
 \author Ilker %O. Yaz and Sébastien Loriot
 
 \cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
-Elephant model with SDF values & Segmentation.
+Shape diameter function and segmentation.
 \cgalFigureEnd
 
 \section Surface_mesh_segmentationIntroduction Introduction
