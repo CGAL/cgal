@@ -138,8 +138,6 @@ private:
   double zero_TH;
   double area_TH;
   double original_area;
-  double volume_TH;
-  double original_volume;
   int iteration_TH;
 
   Weight_calculator weight_calculator;
@@ -294,7 +292,6 @@ public:
                           PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_H,
                           double edgelength_TH,
-                          double volume_TH = 1e-4,
                           double area_TH = 1e-5,
                           double zero_TH = 1e-7,
                           Weight_calculator weight_calculator = Weight_calculator()
@@ -307,14 +304,12 @@ public:
      TH_ALPHA(110),
      zero_TH(zero_TH),
      area_TH(area_TH),
-     volume_TH(volume_TH),
      weight_calculator(weight_calculator),
      is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
     double area = get_surface_area();
     area_TH = 0.0001 * area;
-    original_volume = to_double(internal::volume(polyhedron));
     original_area = get_surface_area();
     iteration_TH = 500;
 
@@ -350,7 +345,6 @@ public:
                           double omega_P,
                           double edgelength_TH,
                           bool is_medially_centered,
-                          double volume_TH = 1e-4,
                           double area_TH = 1e-5,
                           double zero_TH = 1e-7,
                           Weight_calculator weight_calculator = Weight_calculator()
@@ -364,14 +358,12 @@ public:
      TH_ALPHA(110),
      zero_TH(zero_TH),
      area_TH(area_TH),
-     volume_TH(volume_TH),
      weight_calculator(weight_calculator),
      is_medially_centered(is_medially_centered)
   {
     TH_ALPHA *= (M_PI / 180.0);
     double area = get_surface_area();
     area_TH = 0.0001 * area;
-    original_volume = to_double(internal::volume(polyhedron));
     original_area = get_surface_area();
     iteration_TH = 500;
 
@@ -428,11 +420,6 @@ public:
   void set_zero_TH(double value)
   {
     zero_TH = value;
-  }
-
-  void set_volume_TH(double value)
-  {
-    volume_TH = value;
   }
 
   void set_medially_centered(bool value)
@@ -1369,9 +1356,6 @@ public:
 
     double area = get_surface_area();
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
-    double volume = to_double(internal::volume(polyhedron));
-    MCFSKEL_INFO(std::cout << "volume " << volume << ", volume / original_volume "
-              << volume / original_volume <<  "\n";)
   }
 
   void run_to_converge()
@@ -1396,14 +1380,6 @@ public:
         break;
       }
       last_area = area;
-
-//      double volume = to_double(internal::volume(*polyhedron));
-//      std::cout << "volume_TH " << volume_TH << "\n";
-//      std::cout << "volume " << volume << ", volume / original_volume " << volume / original_volume <<  "\n";
-//      if (volume / original_volume < volume_TH)
-//      {
-//        break;
-//      }
 
       num_iteration++;
       if (num_iteration >= iteration_TH)

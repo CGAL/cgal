@@ -27,16 +27,6 @@
      <string>Contract</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="volume_TH">
-    <property name="geometry">
-     <rect>
-      <x>124</x>
-      <y>156</y>
-      <width>101</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QDoubleSpinBox" name="omega_H">
     <property name="geometry">
      <rect>
@@ -81,19 +71,6 @@
     </property>
     <property name="text">
      <string>edgelength_TH</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_volume_TH">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>155</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>volume_TH</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_collapse">
@@ -259,12 +236,10 @@
      <string>Use SDF for segmentation</string>
     </property>
    </widget>
-   <zorder>volume_TH</zorder>
    <zorder>omega_H</zorder>
    <zorder>edgelength_TH</zorder>
    <zorder>label_omega_H</zorder>
    <zorder>label_edgelength_TH</zorder>
-   <zorder>label_volume_TH</zorder>
    <zorder>pushButton_contract</zorder>
    <zorder>pushButton_collapse</zorder>
    <zorder>pushButton_split</zorder>
