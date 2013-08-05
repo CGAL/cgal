@@ -62,8 +62,10 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
-template <class Polyhedron, class SparseLinearAlgebraTraits_d,
-          class PolyhedronVertexIndexMap, class PolyhedronEdgeIndexMap,
+template <class Polyhedron,
+          class SparseLinearAlgebraTraits_d,
+          class PolyhedronVertexIndexMap,
+          class PolyhedronEdgeIndexMap,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
 class Mean_curvature_skeleton
 {
@@ -79,10 +81,12 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
   typedef typename Polyhedron::Vertex_handle                                   Vertex_handle;
+
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
+
   typedef typename Polyhedron::Face_handle                                     Face_handle;
   typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
@@ -111,7 +115,7 @@ public:
   typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>             Vb;
   typedef CGAL::Triangulation_data_structure_3<Vb>                             Tds;
   typedef CGAL::Delaunay_triangulation_3<K, Tds>                               Delaunay;
-  typedef Delaunay::Point                                                      TriPoint;
+  typedef Delaunay::Point                                                      Exact_point;
   typedef Delaunay::Cell_handle                                                Cell_handle;
   typedef Delaunay::Vertex_handle                                              TriVertex_handle;
   typedef Delaunay::Locate_type                                                Locate_type;
@@ -1593,7 +1597,7 @@ public:
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
 
-    std::vector<std::pair<TriPoint, unsigned> > points;
+    std::vector<std::pair<Exact_point, unsigned> > points;
     std::vector<std::vector<int> > point_to_pole;
 
     points.clear();
@@ -1606,7 +1610,7 @@ public:
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
-      TriPoint tp((v->point()).x(), (v->point()).y(), (v->point()).z());
+      Exact_point tp((v->point()).x(), (v->point()).y(), (v->point()).z());
       points.push_back(std::make_pair(tp, vid));
     }
 
@@ -1617,7 +1621,7 @@ public:
     for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
     {
       Cell_handle cell = cit;
-      TriPoint point = T.dual(cell);
+      Exact_point point = T.dual(cell);
       Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
       cell_dual.push_back(pt);
       for (int i = 0; i < 4; ++i)
