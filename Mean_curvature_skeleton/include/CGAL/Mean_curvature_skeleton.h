@@ -340,15 +340,26 @@ public:
   Mean_curvature_skeleton(Polyhedron* P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
-                          double omega_L, double omega_H, double edgelength_TH,
-                          double volume_TH = 1e-4, double area_TH = 1e-5, double zero_TH = 1e-7,
+                          double omega_L,
+                          double omega_H,
+                          double edgelength_TH,
+                          double volume_TH = 1e-4,
+                          double area_TH = 1e-5,
+                          double zero_TH = 1e-7,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
-    :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
-      omega_L(omega_L), omega_H(omega_H), edgelength_TH(edgelength_TH),
-      TH_ALPHA(110), zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
-      weight_calculator(weight_calculator),
-      is_medially_centered(false)
+    :polyhedron(P),
+     vertex_id_pmap(Vertex_index_map),
+     edge_id_pmap(Edge_index_map),
+     omega_L(omega_L),
+     omega_H(omega_H),
+     edgelength_TH(edgelength_TH),
+     TH_ALPHA(110),
+     zero_TH(zero_TH),
+     area_TH(area_TH),
+     volume_TH(volume_TH),
+     weight_calculator(weight_calculator),
+     is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
     double area = get_surface_area();
@@ -385,17 +396,29 @@ public:
   Mean_curvature_skeleton(Polyhedron* P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
-                          double omega_L, double omega_H, double omega_P,
-                          double edgelength_TH, bool is_medially_centered,
-                          double volume_TH = 1e-4, double area_TH = 1e-5, double zero_TH = 1e-7,
+                          double omega_L,
+                          double omega_H,
+                          double omega_P,
+                          double edgelength_TH,
+                          bool is_medially_centered,
+                          double volume_TH = 1e-4,
+                          double area_TH = 1e-5,
+                          double zero_TH = 1e-7,
                           Weight_calculator weight_calculator = Weight_calculator()
                           )
-    :polyhedron(P), vertex_id_pmap(Vertex_index_map), edge_id_pmap(Edge_index_map),
-      omega_L(omega_L), omega_H(omega_H), omega_P(omega_P),
-      edgelength_TH(edgelength_TH), TH_ALPHA(110),
-      zero_TH(zero_TH), area_TH(area_TH), volume_TH(volume_TH),
-      weight_calculator(weight_calculator),
-      is_medially_centered(is_medially_centered)
+    :polyhedron(P),
+     vertex_id_pmap(Vertex_index_map),
+     edge_id_pmap(Edge_index_map),
+     omega_L(omega_L),
+     omega_H(omega_H),
+     omega_P(omega_P),
+     edgelength_TH(edgelength_TH),
+     TH_ALPHA(110),
+     zero_TH(zero_TH),
+     area_TH(area_TH),
+     volume_TH(volume_TH),
+     weight_calculator(weight_calculator),
+     is_medially_centered(is_medially_centered)
   {
     TH_ALPHA *= (M_PI / 180.0);
     double area = get_surface_area();
