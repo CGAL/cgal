@@ -13,18 +13,12 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 int main(int argc, char **argv)
 {
-    if (argc !=2){
-        std::cerr << "Usage: " << argv[0] << " input.OFF" << std::endl;
-        return 1;
-    }
-  
     // create and read Polyhedron
     Polyhedron mesh;
-    std::ifstream input(argv[1]);
-    
+    std::ifstream input("data/cactus.off");
     if ( !input || !(input >> mesh) || mesh.empty() ){
-        std::cerr << argv[1] << " is not a valid off file." << std::endl;
-        return 1;
+      std::cerr << "Not a valid off file." << std::endl;
+      return 1;
     }
 
     // create a property-map for sdf values (it is an adaptor for this case) 
