@@ -404,6 +404,7 @@ public:
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
+
     // assemble right columns of linear system
     int nver = boost::num_vertices(polyhedron);
     vertex_iterator vb, ve;
@@ -446,6 +447,7 @@ public:
         Bz[i + nver * 2] = z * op;
       }
     }
+
     MCFSKEL_DEBUG(std::cerr << "end RHS\n";)
   }
 
@@ -997,7 +999,7 @@ public:
     return num_fixed;
   }
 
-  int detect_degeneracies()
+  int detect_degeneracies_heuristic()
   {
     int num_fixed = 0;
     double elength_fixed = edgelength_TH;
@@ -1145,7 +1147,7 @@ public:
   {
     contract_geometry();
     update_topology();
-    detect_degeneracies();
+    detect_degeneracies_heuristic();
 
 //    detect_degeneracies_in_disk();
 
@@ -1163,7 +1165,7 @@ public:
 
       contract_geometry();
       update_topology();
-      detect_degeneracies();
+      detect_degeneracies_heuristic();
 //      detect_degeneracies_in_disk();
 
       double area = internal::get_surface_area(polyhedron);
