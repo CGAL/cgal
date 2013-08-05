@@ -16,8 +16,9 @@
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
-#ifndef CGAL_MCFSKELETON_FIXED_EDGE_MAP_H
-#define CGAL_MCFSKELETON_FIXED_EDGE_MAP_H
+
+#ifndef CGAL_MCFSKEL_FIXED_EDGE_MAP_H
+#define CGAL_MCFSKEL_FIXED_EDGE_MAP_H
 
 namespace CGAL {
 namespace internal {
@@ -68,4 +69,4 @@ private:
 } //namespace internal
 } //namespace CGAL
 
-#endif //CGAL_MCFSKELETON_FIXED_EDGE_MAP_H
+#endif //CGAL_MCFSKEL_FIXED_EDGE_MAP_H

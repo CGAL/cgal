@@ -16,8 +16,9 @@
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
-#ifndef CGAL_MCFSKELETON_TRACK_CORRESPONDENCE_H
-#define CGAL_MCFSKELETON_TRACK_CORRESPONDENCE_H
+
+#ifndef CGAL_MCFSKEL_TRACK_CORRESPONDENCE_H
+#define CGAL_MCFSKEL_TRACK_CORRESPONDENCE_H
 
 // Visitor base
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
@@ -129,4 +130,4 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<Polyhedron
 } //namespace internal
 } //namespace CGAL
 
-#endif //CGAL_MCFSKELETON_TRACK_CORRESPONDENCE_H
+#endif //CGAL_MCFSKEL_TRACK_CORRESPONDENCE_H

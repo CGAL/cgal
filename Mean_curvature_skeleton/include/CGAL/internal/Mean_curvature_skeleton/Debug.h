@@ -16,8 +16,9 @@
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
-#ifndef _MCFSKEL_DEBUG_H_
-#define _MCFSKEL_DEBUG_H_
+
+#ifndef CGAL_MCFSKEL_DEBUG_H
+#define CGAL_MCFSKEL_DEBUG_H
 
 // enable debugging output statement
 // this is for locating bugs
@@ -39,4 +40,4 @@
 #define MCFSKEL_INFO(x)
 #endif
 
-#endif // _MCFSKEL_DEBUG_H_
+#endif // CGAL_MCFSKEL_DEBUG_H

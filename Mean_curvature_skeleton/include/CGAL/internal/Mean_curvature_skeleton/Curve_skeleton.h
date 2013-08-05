@@ -16,8 +16,9 @@
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
-#ifndef CURVE_SKELETON_H
-#define CURVE_SKELETON_H
+
+#ifndef CGAL_MCFSKEL_CURVE_SKELETON_H
+#define CGAL_MCFSKEL_CURVE_SKELETON_H
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -635,4 +636,4 @@ private:
 } // namespace internal
 } // namespace CGAL
 
-#endif // CURVE_SKELETON_H
+#endif // CGAL_MCFSKEL_CURVE_SKELETON_H

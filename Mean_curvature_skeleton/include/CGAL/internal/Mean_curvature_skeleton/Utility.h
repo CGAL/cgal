@@ -16,8 +16,9 @@
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
-#ifndef CGAL_MCFSKELETON_UTILITY_H
-#define CGAL_MCFSKELETON_UTILITY_H
+
+#ifndef CGAL_MCFSKEL_UTILITY_H
+#define CGAL_MCFSKEL_UTILITY_H
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -96,4 +97,4 @@ double get_surface_area(Polyhedron& polyhedron)
 } //namespace internal
 } //namespace CGAL
 
-#endif //CGAL_MCFSKELETON_UTILITY_H
+#endif //CGAL_MCFSKEL_UTILITY_H

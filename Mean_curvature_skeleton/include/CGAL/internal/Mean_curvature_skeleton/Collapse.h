@@ -16,8 +16,9 @@
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
-#ifndef CGAL_MCFSKELETON_COLLAPSE_H
-#define CGAL_MCFSKELETON_COLLAPSE_H
+
+#ifndef CGAL_MCFSKEL_COLLAPSE_H
+#define CGAL_MCFSKEL_COLLAPSE_H
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
@@ -148,4 +149,4 @@ bool is_undirected_edge_a_border(edge_descriptor aEdge)
 } //namespace internal
 } //namespace CGAL
 
-#endif //CGAL_MCFSKELETON_COLLAPSE_H
+#endif //CGAL_MCFSKEL_COLLAPSE_H
