@@ -57,6 +57,7 @@ int main() {
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
+    CGAL::run_tests<Simple_polygon_visibility_2>(1);
 }
     return 0;
 }
