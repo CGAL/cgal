@@ -34,11 +34,11 @@ public:
   typedef typename Geom_traits::Point_2                 Point_2;
   typedef typename Geom_traits::Curve_2                 Curve_2;
   typedef typename Geom_traits::X_monotone_curve_2      Xcurve_2;
-  
+
   typedef typename std::vector<Curve_2>                 Curve_container;
   typedef typename std::vector<Point_2>                 Point_container;
   typedef typename std::vector<Xcurve_2>                Xcurve_container;
-      
+
   typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>
                                                         Arrangement;
 
@@ -54,7 +54,7 @@ public:
   typedef typename Arrangement::Vertex_const_handle     Vertex_const_handle;
   typedef typename Arrangement::Halfedge_const_handle   Halfedge_const_handle;
   typedef typename Arrangement::Face_const_handle       Face_const_handle;
-  
+
   // Iterators
   typedef typename Arrangement::Vertex_iterator         Vertex_iterator;
   typedef typename Arrangement::Halfedge_iterator       Halfedge_iterator;
@@ -84,7 +84,7 @@ public:
 
 private:
   /*! The geometry traits */
-  const Geom_traits& m_geom_traits;  
+  const Geom_traits& m_geom_traits;
 
   /*! Verbosity */
   unsigned int m_verbose_level;
@@ -92,23 +92,23 @@ private:
   unsigned int m_num_vertices;
   unsigned int m_num_edges;
   unsigned int m_num_faces;
-  
+
   /*! The input data file of points*/
   std::string m_filename;
 
   // Arrangement 1
-  Arrangement m_arr1;  
+  Arrangement m_arr1;
   Xcurve_container m_xcurves1;
   Point_container m_isolated_points1;
 
   // Arrangement 2
-  Arrangement m_arr2;  
+  Arrangement m_arr2;
   Xcurve_container m_xcurves2;
   Point_container m_isolated_points2;
 
   // Arrangement expected
-  Arrangement m_arr;  
-  
+  Arrangement m_arr;
+
 public:
   /*! Constructor */
   Overlay_test(const Geom_traits& geom_traits);
@@ -118,7 +118,7 @@ public:
 
   void set_verbose_level(unsigned int verbose_level)
   { m_verbose_level = verbose_level; }
-  
+
   void set_filename(const char* filename) { m_filename.assign(filename); }
 
   /*! Initialize the test */
@@ -129,14 +129,14 @@ public:
 
   /*! Clear the data structures */
   virtual void clear();
-  
+
 protected:
   //! Overlay traits
   class Overlay_traits {
   private:
     /*! Verbosity */
     unsigned int m_verbose_level;
-    
+
     std::size_t count_outer(Face_const_handle f) const
     {
       std::size_t cnt = 0;
@@ -148,7 +148,7 @@ protected:
       }
       return cnt;
     }
-    
+
     std::size_t count_outer(Face_handle f) const
     {
       std::size_t cnt = 0;
@@ -172,7 +172,7 @@ protected:
       }
       return cnt;
     }
-    
+
     std::size_t count_inner(Face_handle f) const
     {
       std::size_t cnt = 0;
@@ -184,7 +184,7 @@ protected:
       }
       return cnt;
     }
-    
+
   public:
     /*! Destructor. */
     virtual ~Overlay_traits() {}
@@ -192,7 +192,7 @@ protected:
     /*! Constructor */
     Overlay_traits(unsigned int verbose_level)
     { m_verbose_level = verbose_level; }
-    
+
     /*! Create a vertex v that corresponds to the coinciding vertices v1 and v2.
      */
     virtual void create_vertex(Vertex_const_handle v1, Vertex_const_handle v2,
@@ -226,7 +226,7 @@ protected:
         std::cout << std::endl;
       }
     }
-    
+
     /*! Create a vertex v that mathces v1, contained in the face f2. */
     virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                                Vertex_handle v) const
@@ -289,7 +289,7 @@ protected:
                   << e1->target()->point()
                   << ", " << e1->data() << std::endl;
         std::cout << "  e2: " << e2->source()->point()  << "=>"
-                  << e2->target()->point() 
+                  << e2->target()->point()
                   << ", " << e2->data() << std::endl;
       }
       v->set_data(e1->data() + e2->data());
@@ -404,7 +404,7 @@ protected:
     template <typename Type>
     bool operator()(Type s1, Type s2) const { return (&(*s1) < &(*s2)); }
   };
-  
+
   typedef std::map<Vertex_const_handle, Vertex_const_handle,
                             Less_than_handle>           Vertex_map;
   typedef std::map<Halfedge_const_handle, Halfedge_const_handle,
@@ -437,7 +437,7 @@ protected:
 
   // Initialize an arrangement
   bool init_arr(Arrangement& arr);
-  
+
   // A predicate that verifies the results
   bool is_interior(Vertex_const_handle vh);
   // bool are_same_results();
@@ -502,7 +502,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::are_same_results()
               << m_num_edges << ","
               << m_num_faces << ")" << std::endl;
   }
-  
+
   if (m_arr->number_of_vertices() != m_num_vertices) return false;
   if (m_arr->number_of_edges() != m_num_edges) return false;
   if (m_arr->number_of_faces() != m_num_faces) return false;
@@ -519,9 +519,9 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 
   if (m_verbose_level > 2) {
     std::copy(points_res.begin(), pit,
-              std::ostream_iterator<Point_2>(std::cout, "\n"));  
+              std::ostream_iterator<Point_2>(std::cout, "\n"));
   }
-  
+
   Point_equal point_eq(m_geom_traits);
   if (! std::equal(points_res.begin(), pit, m_points.begin(), point_eq))
     return false;
@@ -539,13 +539,13 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 
   if (m_verbose_level > 2) {
     std::copy(curves_res.begin(), xcit,
-              std::ostream_iterator<Xcurve_2>(std::cout, "\n"));  
+              std::ostream_iterator<Xcurve_2>(std::cout, "\n"));
   }
-  
+
   Curve_equal curve_eq(m_geom_traits);
   if (! std::equal(curves_res.begin(), xcit, m_xcurves.begin(), curve_eq))
     return false;
-  
+
   return true;
 }
 #endif
@@ -554,11 +554,11 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 template <typename T_Geom_traits, typename T_Topol_traits>
 template <typename XcurveOutputIterator, typename PointOutputIterator>
 bool Overlay_test<T_Geom_traits, T_Topol_traits>::
-read_arr(std::istream& in, Arrangement& arr,
+read_arr(std::istream& in, Arrangement& /* arr */a,
          XcurveOutputIterator xcurves, PointOutputIterator isolated_points)
 {
   unsigned int i;
-  
+
   unsigned int num_of_curves;
   in >> num_of_curves;
   for (i = 0; i < num_of_curves; ++i) {
@@ -587,7 +587,7 @@ construct_arr(Arrangement& arr,
               Point_iterator points_begin, Point_iterator points_end)
 {
   typedef T_Geom_traits                 Geom_traits;
-  
+
 #if 1
   // Insert the curves incrementally.<
   Curve_iterator cit;
@@ -605,7 +605,7 @@ construct_arr(Arrangement& arr,
   CGAL::insert(arr, xcurves_begin, xcurves_end);
   if (m_verbose_level > 2) std::cout << "inserted" << std::endl;
 #endif
-  
+
   // Insert the isolated points.
   if (m_verbose_level > 2) std::cout << "inserting isolated vertices"
                                      << " ... ";
@@ -659,7 +659,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
       do count += curr->data() * 2;
       while (++curr != *ocit);
     }
-    
+
     // Inner ccbs
     Inner_ccb_iterator icit;
     for (icit = fit->inner_ccbs_begin(); icit != fit->inner_ccbs_end(); ++icit)
@@ -686,7 +686,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
   }
 
   if (m_verbose_level > 0) std::cout << "Arrangement Input: " << std::endl;
-  
+
   if (m_verbose_level > 2) {
     std::cout << "Vertex Data: " << std::endl;
     Vertex_iterator vit;
@@ -702,7 +702,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init_arr(Arrangement& arr)
                 << heit->target()->point() << " " << heit->data()
                 << std::endl;
   }
-  
+
   if (m_verbose_level > 0) {
     std::cout << "Face Data: " << std::endl;
     Face_iterator fit;
@@ -730,7 +730,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init()
   construct_arr(m_arr1, m_xcurves1.begin(), m_xcurves1.end(),
                 m_isolated_points1.begin(), m_isolated_points1.end());
   init_arr(m_arr1);
-  
+
   // 2nd arrangement.
   read_arr(p_stream, m_arr2,
            std::back_inserter(m_xcurves2),
@@ -742,13 +742,13 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init()
   // Consume eol
   int c;
   while ((c = p_stream.get()) != '\n');
-  
+
   // Expected arrangement.
   Formatter formatter;
   CGAL::read(m_arr, p_stream, formatter);
-  
+
   p_stream.close();
-  
+
   return true;
 }
 
@@ -767,7 +767,7 @@ equivalent_ccb(Ccb_halfedge_const_circulator ccb1,
   while (++curr2 != ccb2);
   if ((*it).second != curr2) return false;
   ccb2 = curr2;
-  
+
   // Match the rest
   Ccb_halfedge_const_circulator curr1 = ccb1;
   do {
@@ -775,7 +775,7 @@ equivalent_ccb(Ccb_halfedge_const_circulator ccb1,
     if ((it == halfedge_map.end()) || ((*it).second != curr2++)) return false;
   } while (++curr1 != ccb1);
   if (curr2 != ccb2) return false;
-  
+
   return true;
 }
 
@@ -795,13 +795,13 @@ equivalent_face(Face_const_handle fit1, Face_const_handle fit2,
               << fit2->number_of_inner_ccbs() << ","
               << fit2->data() << std::endl;
   }
-    
+
   if (fit1->number_of_outer_ccbs() != fit2->number_of_outer_ccbs())
     return false;
 
   if (fit1->number_of_inner_ccbs() != fit2->number_of_inner_ccbs())
     return false;
-  
+
   // Outer ccb
   Outer_ccb_const_iterator ocit1;
   Outer_ccb_const_iterator ocit2;
@@ -821,7 +821,7 @@ equivalent_face(Face_const_handle fit1, Face_const_handle fit2,
     }
     if (!found) return false;
   }
-  
+
   // Inner ccb
   Outer_ccb_const_iterator icit1;
   Outer_ccb_const_iterator icit2;
@@ -841,7 +841,7 @@ equivalent_face(Face_const_handle fit1, Face_const_handle fit2,
     }
     if (!found) return false;
   }
-  
+
   return true;
 }
 
@@ -944,7 +944,7 @@ equivalent_arr(const Arrangement& arr1, const Arrangement& arr2)
   for (fit1 = arr1.faces_begin(); fit1 != arr1.faces_end(); ++fit1) {
     Face_const_iterator fit2;
     bool found = false;
-    for (fit2 = arr2.faces_begin(); fit2 != arr2.faces_end(); ++fit2) { 
+    for (fit2 = arr2.faces_begin(); fit2 != arr2.faces_end(); ++fit2) {
       if (equivalent_face(fit1, fit2, halfedge_map)) {
         if (face_map[fit1] != invalid_fit) {
           std::cerr << "The face (" << fit1->data()
@@ -969,7 +969,7 @@ equivalent_arr(const Arrangement& arr1, const Arrangement& arr2)
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -988,7 +988,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::perform()
   // Generate the output for debugging purposes
   // Formatter formatter;
   // CGAL::write(arr, std::cout, formatter);
-  
+
   // Verify the resulting arrangement:
   if (!equivalent_arr(arr, m_arr)) {
     arr.clear();
