@@ -35,18 +35,20 @@ and provide detailed results at the end of the manual.
       The clusters may be later merged or split in order to give the final segmentation.
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
-The segmentation algorithm consists of three major parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for final segmentation.
+The segmentation algorithm consists of three main parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for final segmentation.
 
 \subsection Surface_mesh_segmentationShapeDiameterFunction Shape Diameter Function
-The Shape Diameter Function provides a connection between the surface and its volume.
-More precisely, the SDF is a scalar-valued function defined on facets of the mesh which measures the corresponding local object diameter.
-The main handiness of the SDF is being able to distinguish thick and thin parts of the mesh by bringing in a volume-based feature to the facets.
-Another key feature of the SDF is its pose-invariant nature, which means that SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes} for an example).
+The Shape Diameter Function provides a connection between the mesh and its volume.
+More specifically, the SDF is a scalar-valued function defined on facets of the mesh which measures the corresponding local object diameter.
+The SDF is used to distinguish between thin and thick parts by adding a local notion of thickness to the facets.
+In addition, the SDF is pose-invariant, which means that SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes}).
 
-The SDF over a mesh is computed by processing each facet one by one. For a given facet, the SDF value computation begins with casting
-several rays sampled from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
-Using these casted rays (which intuitively correspond to a local volume sampling),
-the SDF value is calculated by first applying outlier removal and then taking average of ray lengths.
+The SDF over a mesh is computed by processing each facet one by one. For a given facet, the SDF value computation begins with sampling
+several rays from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
+These rays are casted based on inward-normal direction to the other side of the mesh. 
+Rays which form obtuse angle with inward-normal of intersected facets are rejected.
+Using lenghts of accepted rays (which intuitively correspond to a local volume sampling),
+the SDF value is calculated by first applying outlier removal and then taking average of lengths.
 
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
 Comparison of biased toward the center and uniform disk sampling for 64 rays.
@@ -58,14 +60,14 @@ As a result, we do not use the weighting scheme from the original algorithm in o
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.
 
 After having calculated the SDF value for each facet, bilateral smoothing \cite Tomasi1998Bilateral (an edge-preserving filtering technique) is applied.
-The purpose of edge-preserving smoothing is removing noise while keeping fast changes on SDF values in-place without smoothing,
+The purpose of edge-preserving smoothing is to remove the noise while keeping fast changes on SDF values in-place without smoothing,
 since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
--\f$ w = \lfloor\sqrt{  \mathrm{number\:of\:facet} / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection)
+-\f$ w = \lfloor\sqrt{  F / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ is the number of facets
 -\f$ \sigma_s = w /2.0 \f$, the spatial parameter
--\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$
+-\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$, where \f$ w_i \f$ is the set of neighbor facets of \f$ f_i \f$ gathered using global \f$ w \f$ parameter
 
-Large window sizes are more effective on eliminating noise but also might smooth SDF values along boundaries too much.
-Large range parameters make smoothing closer to Gaussian smoothing which might also lead to extra smoothed SDF values along boundaries.
+Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
+Large range parameters make smoothing closer to Gaussian smoothing which may also lead to over-smoothed SDF values.
 
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Effect of pose changes on segmentation and SDF values.
