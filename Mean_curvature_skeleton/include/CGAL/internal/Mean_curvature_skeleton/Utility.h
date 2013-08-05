@@ -1,3 +1,6 @@
+#ifndef CGAL_MCFSKELETON_UTILITY_H
+#define CGAL_MCFSKELETON_UTILITY_H
+
 namespace CGAL {
 namespace internal {
 
@@ -51,3 +54,5 @@ typename Polyhedron::Traits::FT volume(const Polyhedron& p)
 
 } //namespace internal
 } //namespace CGAL
+
+#endif //CGAL_MCFSKELETON_UTILITY_H

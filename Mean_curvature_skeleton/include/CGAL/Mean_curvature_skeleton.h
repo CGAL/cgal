@@ -441,11 +441,8 @@ public:
       int id = boost::get(vertex_id_pmap, *vb);
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
-        if (is_vertex_fixed_map[id])
-        {
-          vertex_descriptor vd = *vb;
-          fixed_points.push_back(vd->point());
-        }
+        vertex_descriptor vd = *vb;
+        fixed_points.push_back(vd->point());
       }
     }
   }
@@ -520,8 +517,7 @@ public:
 
       int i = new_id[id];
       // if the vertex is fixed
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
-          && is_vertex_fixed_map[id])
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
         cnt_fix++;
         A.set_coef(i + nver, i, 1.0 / zero_TH, true);
@@ -545,8 +541,7 @@ public:
       int i = new_id[id];
       double L = 1.0;
       // if the vertex is fixed
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
-          && is_vertex_fixed_map[id])
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
         L = 0;
       }
@@ -589,8 +584,7 @@ public:
       int i = new_id[id];
 
       double oh, op = 0.0;
-      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end()
-          && is_vertex_fixed_map[id])
+      if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
         oh = 1.0 / zero_TH;
       }
@@ -694,30 +688,11 @@ public:
       size_t vi_idx = boost::get(vertex_id_pmap, vi);
       size_t vj_idx = boost::get(vertex_id_pmap, vj);
 
-//      if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end())
-//      {
-//        if (is_vertex_fixed_map[vi_idx])
-//        {
-//          constrains_map.set_is_constrained(*eb, true);
-//        }
-//      }
-//      if (is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
-//      {
-//        if (is_vertex_fixed_map[vj_idx])
-//        {
-//          constrains_map.set_is_constrained(*eb, true);
-//        }
-//      }
-
       if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
        && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
       {
-        if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
-        {
-          constrains_map.set_is_constrained(*eb, true);
-        }
+        constrains_map.set_is_constrained(*eb, true);
       }
-
     }
 
     int edge_id = 0;
@@ -838,7 +813,7 @@ public:
       {
         Point p = midpoint(
           boost::get(vertex_point, polyhedron, boost::source(ed, polyhedron)),
-          boost::get(vertex_point, polyhedron, boost::target(ed, polyhedron)) );
+          boost::get(vertex_point, polyhedron, boost::target(ed, polyhedron)));
 
         // invalidate the edges that will be collapsed
         // since the mesh is closed, 6 halfedges will be collapsed
@@ -874,10 +849,7 @@ public:
       if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
        && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
       {
-        if (is_vertex_fixed_map[vi_idx] && is_vertex_fixed_map[vj_idx])
-        {
-          constrains_map.set_is_constrained(*eb, true);
-        }
+        constrains_map.set_is_constrained(*eb, true);
       }
     }
   }
@@ -1009,19 +981,6 @@ public:
 
       vertex_descriptor vs = boost::source(ei, polyhedron);
       vertex_descriptor vt = boost::target(ei, polyhedron);
-//      size_t vs_id = boost::get(vertex_id_pmap, vs);
-//      size_t vt_id = boost::get(vertex_id_pmap, vt);
-//      Point ps = vs->point();
-//      Point pt = vt->point();
-
-//      if (is_vertex_fixed_map.find(vs_id) != is_vertex_fixed_map.end()
-//       || is_vertex_fixed_map.find(vt_id) != is_vertex_fixed_map.end())
-//      {
-//        if (is_vertex_fixed_map[vs_id] || is_vertex_fixed_map[vt_id])
-//        {
-//          continue;
-//        }
-//      }
 
       double angle_i = halfedge_angle[ei_id];
       double angle_j = halfedge_angle[ej_id];
@@ -1185,7 +1144,7 @@ public:
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
 
-      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
+      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
         bool willbefixed = is_vertex_degenerate(v);
         if (willbefixed)
@@ -1201,7 +1160,6 @@ public:
     return num_fixed;
   }
 
-  // TODO: check if the local neighborhood is a disk
   int detect_degeneracies()
   {
     int num_fixed = 0;
@@ -1211,7 +1169,7 @@ public:
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
-      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end() || !is_vertex_fixed_map[idx])
+      if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
         bool willbefixed = false;
         int bad_counter = 0;
