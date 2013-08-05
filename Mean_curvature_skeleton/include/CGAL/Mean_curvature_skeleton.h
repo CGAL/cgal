@@ -37,7 +37,7 @@
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
 // Curve skeleton data structure
-#include <CGAL/Curve_skeleton.h>
+#include <CGAL/internal/Mean_curvature_skeleton/Curve_skeleton.h>
 
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -106,7 +106,7 @@ public:
   typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 
   // Skeleton types
-  typedef Curve_skeleton<Polyhedron, Graph,
+  typedef internal::Curve_skeleton<Polyhedron, Graph,
   PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
 
   // Mesh simplification types
@@ -328,6 +328,17 @@ public:
           non_fixed_points.push_back(vd->point());
       }
     }
+  }
+
+  void get_skeleton(Graph& g, std::vector<Point>& points)
+  {
+    g = this->g;
+    points = this->points;
+  }
+
+  void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
+  {
+    corr = skeleton_to_surface;
   }
 
   // compute cotangent weights of all edges
@@ -736,7 +747,6 @@ public:
       int e_id = boost::get(edge_id_pmap, *eb);
       edge_descriptor ed = *eb;
 
-      // for border edge, the angle is -1
       if (ed->is_border())
       {
         halfedge_angle[e_id] = -1;
@@ -758,7 +768,7 @@ public:
         double dis_ik = sqrt(dis2_ik);
         double dis_jk = sqrt(dis2_jk);
 
-        /// A degenerate triangle will never undergo a split (but rather a collapse...)
+        // A degenerate triangle will never undergo a split (but rather a collapse...)
         if (dis_ij < zero_TH || dis_ik < zero_TH || dis_jk < zero_TH)
         {
           halfedge_angle[e_id] = -1;
@@ -842,7 +852,7 @@ public:
       }
       vertex_descriptor vk = boost::target(ek, polyhedron);
       Point pn = project_vertex(vs, vt, vk);
-      edge_descriptor en = CGAL::internal::mesh_split(polyhedron, ei, pn);
+      edge_descriptor en = internal::mesh_split(polyhedron, ei, pn);
       // set id for new vertex
       boost::put(vertex_id_pmap, en->vertex(), vertex_id_count++);
       cnt++;
@@ -1072,8 +1082,10 @@ public:
 
       double area = internal::get_surface_area(polyhedron);
       double area_ratio = fabs(last_area - area) / original_area;
+
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
       MCFSKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
+
       if (area_ratio < area_TH)
       {
         break;
@@ -1244,17 +1256,6 @@ public:
 
     MCFSKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
     MCFSKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
-  }
-
-  void get_skeleton(Graph& g, std::vector<Point>& points)
-  {
-    g = this->g;
-    points = this->points;
-  }
-
-  void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
-  {
-    corr = skeleton_to_surface;
   }
 
   void compute_voronoi_pole()
