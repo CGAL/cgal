@@ -287,6 +287,11 @@ public:
     is_medially_centered = value;
   }
 
+  void set_iteration_TH(int value)
+  {
+    iteration_TH = value;
+  }
+
   Polyhedron& get_polyhedron()
   {
     return polyhedron;
