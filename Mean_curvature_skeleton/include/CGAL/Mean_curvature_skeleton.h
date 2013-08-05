@@ -56,6 +56,9 @@
 // For Fixed_edge_map
 #include <CGAL/internal/Mean_curvature_skeleton/Fixed_edge_map.h>
 
+// For is_collapse_ok
+#include <CGAL/internal/Mean_curvature_skeleton/Collapse.h>
+
 #include <queue>
 
 namespace SMS = CGAL::Surface_mesh_simplification;
@@ -648,7 +651,7 @@ public:
       vertex_descriptor vi = boost::source(ed, polyhedron);
       vertex_descriptor vj = boost::target(ed, polyhedron);
       double edge_length = sqrt(squared_distance(vi->point(), vj->point()));
-      if (is_collapse_ok(ed) && edge_length < edgelength_TH)
+      if (is_collapse_ok(polyhedron, ed) && edge_length < edgelength_TH)
       {
         Point p = midpoint(
           boost::get(vertex_point, polyhedron, boost::source(ed, polyhedron)),
@@ -1022,7 +1025,7 @@ public:
           double length = sqrt(squared_distance(v0->point(), v1->point()));
           if (length < elength_fixed)
           {
-            if (!is_collapse_ok(edge))
+            if (!internal::is_collapse_ok(polyhedron, edge))
             {
               bad_counter++;
             }
@@ -1040,107 +1043,6 @@ public:
     MCFSKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
 
     return num_fixed;
-  }
-
-  bool is_collapse_ok(edge_descriptor v0v1)
-  {
-    edge_descriptor v1v0 = v0v1->opposite();
-    vertex_descriptor v0 = boost::target(v1v0, polyhedron);
-    vertex_descriptor v1 = boost::source(v1v0, polyhedron);
-
-    vertex_descriptor vv, vl, vr;
-    edge_descriptor  h1, h2;
-
-    // the edges v1-vl and vl-v0 must not be both boundary edges
-    if (!(v0v1->is_border()))
-    {
-      vl = boost::target(v0v1->next(), polyhedron);
-      h1 = v0v1->next();
-      h2 = h1->next();
-      if (h1->opposite()->is_border() && h2->opposite()->is_border())
-      {
-        return false;
-      }
-    }
-
-    // the edges v0-vr and vr-v1 must not be both boundary edges
-    if (!(v1v0->is_border()))
-    {
-      vr = boost::target(v1v0->next(), polyhedron);
-      h1 = v1v0->next();
-      h2 = h1->next();
-      if (h1->opposite()->is_border() && h2->opposite()->is_border())
-      {
-        return false;
-      }
-    }
-
-    // if vl and vr are equal or both invalid -> fail
-    if (vl == vr)
-    {
-      return false;
-    }
-
-    // edge between two boundary vertices should be a boundary edge
-    if (is_border(v0) && is_border(v1) &&
-        !(v0v1->is_border()) && !(v1v0->is_border()))
-    {
-      return false;
-    }
-
-    // test intersection of the one-rings of v0 and v1
-    in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(v0, polyhedron); eb != ee; ++eb)
-    {
-      vv = boost::source(*eb, polyhedron);
-      if (vv != v1 && vv != vl && vv != vr)
-      {
-        if (find_halfedge(vv, v1))
-        {
-          return false;
-        }
-      }
-    }
-
-    // passed all tests
-    return true;
-  }
-
-  bool find_halfedge(vertex_descriptor vi, vertex_descriptor vj)
-  {
-    in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(vj, polyhedron); eb != ee; ++eb)
-    {
-      vertex_descriptor vv = boost::source(*eb, polyhedron);
-      if (vv == vi)
-      {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  bool is_border(vertex_descriptor aV)
-  {
-    bool rR = false;
-
-    in_edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::in_edges(aV, polyhedron); eb != ee; ++eb)
-    {
-      edge_descriptor lEdge = *eb;
-      if (is_undirected_edge_a_border(lEdge))
-      {
-        rR = true;
-        break;
-      }
-    }
-
-    return rR;
-  }
-
-  bool is_undirected_edge_a_border(edge_descriptor aEdge)
-  {
-    return aEdge->is_border() || aEdge->opposite()->is_border();
   }
 
   void contract()
