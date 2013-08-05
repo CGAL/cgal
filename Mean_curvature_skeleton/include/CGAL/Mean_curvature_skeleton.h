@@ -47,7 +47,7 @@
 // For debugging macro
 #include <CGAL/internal/Mean_curvature_skeleton/Debug.h>
 
-// For mesh_split
+// Some helper functions
 #include <CGAL/internal/Mean_curvature_skeleton/Utility.h>
 
 // For correspondence tracking
@@ -165,40 +165,6 @@ private:
   std::vector<Vector> normals;
   // the dual of a cell in Triangulation(a Voronoi point)
   std::vector<Point> cell_dual;
-
-  //
-  // BGL property map which indicates whether an edge is border OR is marked as non-removable
-  //
-//  class Constrains_map : public boost::put_get_helper<bool, Constrains_map>
-//  {
-//  public:
-
-//    typedef boost::readable_property_map_tag                                category;
-//    typedef bool                                                            value_type;
-//    typedef bool                                                            reference;
-//    typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
-
-//    Constrains_map() : mConstrains(false) {}
-
-//    reference operator[](key_type const& e) const
-//    {
-//      return e->is_border() || is_constrained(e);
-//    }
-
-//    void set_is_constrained (key_type const& e, bool is)
-//    {
-//      mConstrains[e] = is;
-//    }
-
-//    bool is_constrained(key_type const& e) const
-//    {
-//      return mConstrains.is_defined(e) ? mConstrains[e] : false;
-//    }
-
-//  private:
-
-//    CGAL::Unique_hash_map<key_type, bool> mConstrains;
-//  };
 
 // Public methods
 public:
