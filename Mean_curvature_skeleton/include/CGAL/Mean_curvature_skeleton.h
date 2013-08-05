@@ -36,9 +36,6 @@
 // Adaptor for Polyhedron_3
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
-// Map used to mark edges as fixed
-#include <CGAL/Unique_hash_map.h>
-
 // Curve skeleton data structure
 #include <CGAL/Curve_skeleton.h>
 
@@ -53,8 +50,11 @@
 // For mesh_split
 #include <CGAL/internal/Mean_curvature_skeleton/Utility.h>
 
-// For mesh_split
+// For correspondence tracking
 #include <CGAL/internal/Mean_curvature_skeleton/Track_correspondence_visitor.h>
+
+// For Fixed_edge_map
+#include <CGAL/internal/Mean_curvature_skeleton/Fixed_edge_map.h>
 
 #include <queue>
 
@@ -169,36 +169,36 @@ private:
   //
   // BGL property map which indicates whether an edge is border OR is marked as non-removable
   //
-  class Constrains_map : public boost::put_get_helper<bool, Constrains_map>
-  {
-  public:
+//  class Constrains_map : public boost::put_get_helper<bool, Constrains_map>
+//  {
+//  public:
 
-    typedef boost::readable_property_map_tag                                category;
-    typedef bool                                                            value_type;
-    typedef bool                                                            reference;
-    typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+//    typedef boost::readable_property_map_tag                                category;
+//    typedef bool                                                            value_type;
+//    typedef bool                                                            reference;
+//    typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
 
-    Constrains_map() : mConstrains(false) {}
+//    Constrains_map() : mConstrains(false) {}
 
-    reference operator[](key_type const& e) const
-    {
-      return e->is_border() || is_constrained(e);
-    }
+//    reference operator[](key_type const& e) const
+//    {
+//      return e->is_border() || is_constrained(e);
+//    }
 
-    void set_is_constrained (key_type const& e, bool is)
-    {
-      mConstrains[e] = is;
-    }
+//    void set_is_constrained (key_type const& e, bool is)
+//    {
+//      mConstrains[e] = is;
+//    }
 
-    bool is_constrained(key_type const& e) const
-    {
-      return mConstrains.is_defined(e) ? mConstrains[e] : false;
-    }
+//    bool is_constrained(key_type const& e) const
+//    {
+//      return mConstrains.is_defined(e) ? mConstrains[e] : false;
+//    }
 
-  private:
+//  private:
 
-    CGAL::Unique_hash_map<key_type, bool> mConstrains;
-  };
+//    CGAL::Unique_hash_map<key_type, bool> mConstrains;
+//  };
 
 // Public methods
 public:
@@ -595,7 +595,7 @@ public:
 
   int collapse_short_edges()
   {
-    Constrains_map constrains_map;
+    internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
 
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
@@ -608,7 +608,7 @@ public:
       if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
        && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
       {
-        constrains_map.set_is_constrained(*eb, true);
+        fixed_edge_map.set_is_fixed(*eb, true);
       }
     }
 
@@ -641,7 +641,7 @@ public:
                 ,CGAL::get_cost(SMS::Edge_length_cost<Polyhedron>())
                       .get_placement(placement)
                       .visitor(vis)
-                      .edge_is_border_map(constrains_map)
+                      .edge_is_border_map(fixed_edge_map)
                 );
 
     return r;
@@ -705,7 +705,7 @@ public:
     }
   }
 
-  int collapse_edges(Constrains_map& constrains_map)
+  int collapse_edges(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
   {
     std::vector<edge_descriptor> edges;
     edges.reserve(boost::num_edges(polyhedron));
@@ -718,7 +718,7 @@ public:
     for (size_t i = 0; i < edges.size(); ++i)
     {
       edge_descriptor ed = edges[i];
-      if (constrains_map.is_constrained(ed))
+      if (fixed_edge_map.is_fixed(ed))
       {
         continue;
       }
@@ -734,12 +734,12 @@ public:
 
         // invalidate the edges that will be collapsed
         // since the mesh is closed, 6 halfedges will be collapsed
-        constrains_map.set_is_constrained(ed, true);
-        constrains_map.set_is_constrained(ed->opposite(), true);
-        constrains_map.set_is_constrained(ed->prev(), true);
-        constrains_map.set_is_constrained(ed->prev()->opposite(), true);
-        constrains_map.set_is_constrained(ed->opposite()->prev(), true);
-        constrains_map.set_is_constrained(ed->opposite()->prev()->opposite(), true);
+        fixed_edge_map.set_is_fixed(ed, true);
+        fixed_edge_map.set_is_fixed(ed->opposite(), true);
+        fixed_edge_map.set_is_fixed(ed->prev(), true);
+        fixed_edge_map.set_is_fixed(ed->prev()->opposite(), true);
+        fixed_edge_map.set_is_fixed(ed->opposite()->prev(), true);
+        fixed_edge_map.set_is_fixed(ed->opposite()->prev()->opposite(), true);
 
         vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(ed, polyhedron);
         boost::put(vertex_point, polyhedron, v, p);
@@ -753,7 +753,7 @@ public:
     return cnt;
   }
 
-  void init_constraint_map(Constrains_map& constrains_map)
+  void init_fixed_edge_map(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
   {
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
@@ -766,21 +766,21 @@ public:
       if (is_vertex_fixed_map.find(vi_idx) != is_vertex_fixed_map.end()
        && is_vertex_fixed_map.find(vj_idx) != is_vertex_fixed_map.end())
       {
-        constrains_map.set_is_constrained(*eb, true);
+        fixed_edge_map.set_is_fixed(*eb, true);
       }
     }
   }
 
   int iteratively_collapse_edges()
   {
-    Constrains_map constrains_map;
-    init_constraint_map(constrains_map);
+    internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
+    init_fixed_edge_map(fixed_edge_map);
 
     int num_collapses = 0;
     while (true)
     {
 //      int cnt = collapse_short_edges();
-      int cnt = collapse_edges(constrains_map);
+      int cnt = collapse_edges(fixed_edge_map);
       if (cnt == 0)
       {
         break;
