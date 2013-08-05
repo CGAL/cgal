@@ -505,7 +505,7 @@ of points. For Delaunay triangulations, this bound is reached in cases such as
 points equally distributed on two non-coplanar lines. However, the good news
 is that, in many cases, the complexity of a Delaunay triangulation is linear or
 close to linear in the number of points. Several
-articles \cite d-hdvdl-89, \cite e-dpssdt-02, \cite geometrica-5986i, \cite prisme-4453a,prisme-abl-03
+articles \cite d-hdvdl-89, \cite e-dpssdt-02, \cite geometrica-5986i, \cite prisme-4453a, \cite prisme-abl-03
 have proved such good complexity bounds for specific point distributions, such
 as points distributed on surfaces under some conditions.
 
