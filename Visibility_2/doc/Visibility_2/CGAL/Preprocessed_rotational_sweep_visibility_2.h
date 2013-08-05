@@ -11,7 +11,7 @@ The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space. With the hel
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
-specified by one of the following: ::Tag_true or ::Tag_false, which is the default value.
+specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
 
 
 \cgalModels `Visibility_2` 
@@ -22,7 +22,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, which is the defau
 
 
 */
-template <typename Arrangement_2, typename RegularizationTag>
+template <typename Arrangement_2, typename RegularizationTag = Tag_false>
 class Preprocessed_rotational_sweep_visibility_2 {
 public:
 
@@ -81,13 +81,13 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Preprocessed_rotational_sweep_visibility_2' object, that is not
+Default constructor creates an empty 'Preprocessed_rotational_sweep_visibility_2' object that is not
 attached to any arrangement yet.
 */
 Preprocessed_rotational_sweep_visibility_2();
 
 /*! 
-Constructs a `Preprocessed_rotational_sweep_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr` and does preprocessing.
+Constructs a `Preprocessed_rotational_sweep_visibility_2` object that is attached to `arr`.
 */ 
 Preprocessed_rotational_sweep_visibility_2(const Input_arrangement_2& arr);
 
@@ -125,8 +125,8 @@ The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point from which the visibility region is computed
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
-\pre `f` is a face of  `this->arr()`, defined as a regular polygon 
-\pre `q` is in the interior or on the boundary of the given face `f`
+\pre `f` is a face of  `this->arr()` and represents a valid polygon. 
+\pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);

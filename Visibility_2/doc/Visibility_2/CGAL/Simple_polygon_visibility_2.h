@@ -25,7 +25,7 @@ to ::Tag_true will produce the output as a visibility polygon.
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
-specified by one of the following: ::Tag_true or ::Tag_false, which is the default value.
+specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
 
 \cgalModels `Visibility_2` 
 
@@ -33,7 +33,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, which is the defau
 \sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 */
-template <typename Arrangement_2, typename RegularizationTag>
+template <typename Arrangement_2, typename RegularizationTag = Tag_false>
 class Simple_polygon_visibility_2 {
 public:
 
@@ -92,13 +92,13 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Simple_polygon_visibility_2' object, that is not
+Default constructor creates an empty 'Simple_polygon_visibility_2' object that is not
 attached to any arrangement yet.
 */
 Simple_polygon_visibility_2();
 
 /*! 
-Constructs a `Simple_polygon_visibility_2` object from a given `Input_arrangement_2` instance and attaches it to `arr`.
+Constructs a `Simple_polygon_visibility_2` object that is attached to `arr`.
 */ 
 Simple_polygon_visibility_2(const Input_arrangement_2& arr); 
 
@@ -136,8 +136,8 @@ The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement 
 \param q is the query point from which the visibility region is computed
 \param f is the face of the arrangement in which the visibility region is computed
-\pre `f` is a face of  `this->arr()`, defined as a regular polygon 
-\pre `q` is in the interior or on the boundary of the given face `f`
+\pre `f` is a face of  `this->arr()` and represents a valid polygon. 
+\pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);

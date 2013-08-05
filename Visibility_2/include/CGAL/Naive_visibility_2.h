@@ -634,9 +634,11 @@ private:
         return UNBOUNDED;
     }
 
-    void build_arr(const std::vector<Point_2>& polygon, Arrangement& arr ) {
-
-
+    void build_arr(const std::vector<Point_2>& polygon, Arrangement_2& arr ) {
+        for (int i = 0; i != polygon.size()-1; i++ ) {
+            CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
+        }
+        CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
     }
 
 //debug

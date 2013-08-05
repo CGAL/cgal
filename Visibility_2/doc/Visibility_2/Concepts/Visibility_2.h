@@ -67,13 +67,13 @@ public:
 /// @{
 
 /*! 
-Default constructor creates an empty `Visibility_2` object, that is not
+Default constructor creates an empty `Visibility_2` object that is not
 attached to any arrangement yet.
 */ 
 Visibility_2(); 
 
 /*! 
-Constructs a `Visibility_2` object from a given `Arrangement_2` instance and attaches it to `arr`.
+Constructs a `Visibility_2` object that is attached to `arr`.
 */ 
 Visibility_2(const Input_arrangement_2 &arr);
 
@@ -108,13 +108,13 @@ Access to the attached arrangement
 
 /*! 
 Computes the visibility region for the given query point `q` in the
-face `f` of the arrangement that is attached to the visibility object. 
+face \$f f \$f of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be saved to `out_arr`.
 \param q is the query point from which the visibility region is computed
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`
-\pre `q` is in the interior or on the boundary of the given face `f`
+\pre `q` is in the interior of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
   Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
