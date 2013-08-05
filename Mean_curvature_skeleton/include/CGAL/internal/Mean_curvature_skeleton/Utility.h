@@ -19,6 +19,11 @@
 #ifndef CGAL_MCFSKELETON_UTILITY_H
 #define CGAL_MCFSKELETON_UTILITY_H
 
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <boost/graph/graph_traits.hpp>
+
 namespace CGAL {
 namespace internal {
 
@@ -49,6 +54,43 @@ edge_descriptor mesh_split(Polyhedron& polyhedron, edge_descriptor ei, Point pn)
   }
 
   return en;
+}
+
+template<class Vertex, class Kernel>
+double get_triangle_area(Vertex v1,
+                         Vertex v2,
+                         Vertex v3)
+{
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  Point p1 = v1->point();
+  Point p2 = v2->point();
+  Point p3 = v3->point();
+  Vector v12(p1, p2);
+  Vector v13(p1, p3);
+  return sqrtf(cross_product(v12, v13).squared_length()) * 0.5;
+}
+
+template<class Polyhedron>
+double get_surface_area(Polyhedron& polyhedron)
+{
+  typedef typename Polyhedron::Traits                                 Kernel;
+  typedef typename Polyhedron::Facet_iterator                         Facet_iterator;
+  typedef typename Polyhedron::Halfedge_around_facet_circulator       Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor;
+
+  double total_area = 0;
+  for (Facet_iterator i = polyhedron.facets_begin(); i != polyhedron.facets_end(); ++i)
+  {
+    Halfedge_facet_circulator j = i->facet_begin();
+    vertex_descriptor v1 = j->vertex();
+    ++j;
+    vertex_descriptor v2 = j->vertex();
+    ++j;
+    vertex_descriptor v3 = j->vertex();
+    total_area += internal::get_triangle_area<vertex_descriptor, Kernel>(v1, v2, v3);
+  }
+  return total_area;
 }
 
 } //namespace internal

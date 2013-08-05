@@ -191,9 +191,9 @@ public:
      is_medially_centered(false)
   {
     TH_ALPHA *= (M_PI / 180.0);
-    double area = get_surface_area();
+    double area = internal::get_surface_area(polyhedron);
     area_TH = 0.0001 * area;
-    original_area = get_surface_area();
+    original_area = area;
     iteration_TH = 500;
 
     // initialize index maps
@@ -245,9 +245,9 @@ public:
      is_medially_centered(is_medially_centered)
   {
     TH_ALPHA *= (M_PI / 180.0);
-    double area = get_surface_area();
+    double area = internal::get_surface_area(polyhedron);
     area_TH = 0.0001 * area;
-    original_area = get_surface_area();
+    original_area = area;
     iteration_TH = 500;
 
     // initialize index maps
@@ -343,34 +343,6 @@ public:
           non_fixed_points.push_back(vd->point());
       }
     }
-  }
-
-  double get_triangle_area(vertex_descriptor v1,
-                           vertex_descriptor v2,
-                           vertex_descriptor v3)
-  {
-    Point p1 = v1->point();
-    Point p2 = v2->point();
-    Point p3 = v3->point();
-    Vector v12(p1, p2);
-    Vector v13(p1, p3);
-    return sqrt(cross_product(v12, v13).squared_length()) * 0.5;
-  }
-
-  double get_surface_area()
-  {
-    double total_area = 0;
-    for (Facet_iterator i = polyhedron.facets_begin(); i != polyhedron.facets_end(); ++i)
-    {
-      Halfedge_facet_circulator j = i->facet_begin();
-      vertex_descriptor v1 = j->vertex();
-      ++j;
-      vertex_descriptor v2 = j->vertex();
-      ++j;
-      vertex_descriptor v3 = j->vertex();
-      total_area += get_triangle_area(v1, v2, v3);
-    }
-    return total_area;
   }
 
   // compute cotangent weights of all edges
@@ -1195,7 +1167,7 @@ public:
 
 //    detect_degeneracies_in_disk();
 
-    double area = get_surface_area();
+    double area = internal::get_surface_area(polyhedron);
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
@@ -1212,7 +1184,7 @@ public:
       detect_degeneracies();
 //      detect_degeneracies_in_disk();
 
-      double area = get_surface_area();
+      double area = internal::get_surface_area(polyhedron);
       double area_ratio = fabs(last_area - area) / original_area;
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
       MCFSKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
