@@ -825,6 +825,64 @@ public:
     return r;
   }
 
+  void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
+                            vertex_descriptor v)
+  {
+    int id0 = v0->id();
+    int id1 = v1->id();
+    int vid = v->id();
+    int from, to;
+    if (id0 == vid)
+    {
+      from = id1;
+      to = id0;
+    }
+    else if (id1 == vid)
+    {
+      from = id0;
+      to = id1;
+    }
+
+    if (correspondence.find(to) == correspondence.end())
+    {
+      correspondence[to] = std::vector<int>();
+    }
+    // only track vertex in original mesh
+    if (from < max_id)
+    {
+      correspondence[to].push_back(from);
+    }
+    std::map<int, std::vector<int> >::iterator iter = correspondence.find(from);
+    if (iter != correspondence.end())
+    {
+      for (size_t i = 0; i < (iter->second).size(); ++i)
+      {
+        correspondence[to].push_back((iter->second)[i]);
+      }
+      (iter->second).clear();
+      correspondence.erase(iter);
+    }
+
+    if (is_medially_centered)
+    {
+      Point pole0 = Point(to_double(cell_dual[poles[id0]].x()),
+                          to_double(cell_dual[poles[id0]].y()),
+                          to_double(cell_dual[poles[id0]].z()));
+      Point pole1 = Point(to_double(cell_dual[poles[id1]].x()),
+                          to_double(cell_dual[poles[id1]].y()),
+                          to_double(cell_dual[poles[id1]].z()));
+      Point p1 = v1->point();
+      double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
+      double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
+      if (dis_to_pole0 < dis_to_pole1)
+      {
+        poles[id1] = poles[id0];
+      }
+      std::map<int, int>::iterator pole_iter = poles.find(id0);
+      poles.erase(pole_iter);
+    }
+  }
+
   int collapse_edges(Constrains_map& constrains_map)
   {
     std::vector<edge_descriptor> edges;
@@ -832,7 +890,7 @@ public:
     edge_iterator eb, ee;
 
     boost::tie(eb, ee) = boost::edges(polyhedron);
-    std::copy(eb, ee, std::back_inserter( edges ) );
+    std::copy(eb, ee, std::back_inserter(edges));
 
     int cnt = 0;
     for (size_t i = 0; i < edges.size(); ++i)
@@ -863,6 +921,9 @@ public:
 
         vertex_descriptor v = Surface_mesh_simplification::halfedge_collapse(ed, polyhedron);
         boost::put(vertex_point, polyhedron, v, p);
+
+        track_correspondence(vi, vj, v);
+
         cnt++;
       }
     }
