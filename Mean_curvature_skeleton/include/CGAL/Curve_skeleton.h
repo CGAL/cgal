@@ -58,7 +58,7 @@ private:
   PolyhedronVertexIndexMap vertex_id_pmap;
   PolyhedronEdgeIndexMap edge_id_pmap;
 
-  Polyhedron *polyhedron;
+  Polyhedron& polyhedron;
 
   std::vector<double> edge_lengths;
 
@@ -85,7 +85,7 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton(Polyhedron* polyhedron) : polyhedron(polyhedron)
+  Curve_skeleton(Polyhedron& polyhedron) : polyhedron(polyhedron)
   {
   }
 
@@ -148,7 +148,7 @@ public:
 
     vertex_iterator vb, ve;
     points.resize(id);
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
       int new_id = new_vertex_id[id];
@@ -176,9 +176,9 @@ public:
 private:
   void init()
   {
-    int num_edges = boost::num_edges(*polyhedron) / 2;
-    int num_faces = polyhedron->size_of_facets();
-    int num_vertices = boost::num_vertices(*polyhedron);
+    int num_edges = boost::num_edges(polyhedron) / 2;
+    int num_faces = polyhedron.size_of_facets();
+    int num_vertices = boost::num_vertices(polyhedron);
     edge_to_face.clear();
     edge_to_face.resize(num_edges);
     edge_to_vertex.clear();
@@ -212,7 +212,7 @@ private:
     surface_vertex_id.resize(num_vertices);
     vertex_iterator vb, ve;
     int idx = 0;
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       surface_vertex_id[idx] = boost::get(vertex_id_pmap, *vb);
       boost::put(vertex_id_pmap, *vb, idx++);
@@ -222,11 +222,11 @@ private:
     // the two halfedges representing the same edge get the same id
     edge_iterator eb, ee;
     idx = 0;
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
       boost::put(edge_id_pmap, *eb, -1);
     }
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
       edge_descriptor ed = *eb;
       int id = boost::get(edge_id_pmap, ed);
@@ -249,7 +249,7 @@ private:
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
-    for (Facet_iterator i = polyhedron->facets_begin(); i != polyhedron->facets_end(); ++i)
+    for (Facet_iterator i = polyhedron.facets_begin(); i != polyhedron.facets_end(); ++i)
     {
       Halfedge_facet_circulator j = i->facet_begin();
       // Facets in polyhedral surfaces are at least triangles.
@@ -264,12 +264,12 @@ private:
     }
 
     // compute vertex-edge connectivity
-    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor vd = *vb;
       int vid = boost::get(vertex_id_pmap, vd);
       in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; ++e)
+      for (boost::tie(e, e_end) = boost::in_edges(*vb, polyhedron); e != e_end; ++e)
       {
         edge_descriptor ed = *e;
         int eid = boost::get(edge_id_pmap, ed);
@@ -290,7 +290,7 @@ private:
     std::vector<bool> is_edge_inserted;
     is_edge_inserted.clear();
     is_edge_inserted.resize(edge_to_face.size(), false);
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
       edge_descriptor ed = *eb;
       int id = boost::get(edge_id_pmap, ed);
@@ -565,7 +565,7 @@ private:
   void check_edge()
   {
     edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
     {
       edge_descriptor ed = *eb;
       int id = boost::get(edge_id_pmap, ed);

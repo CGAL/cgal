@@ -215,13 +215,13 @@ public:
       mCopy = new Polyhedron(*pMesh);
       if (is_medially_centered)
       {
-        mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+        mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                           omega_L, omega_H, omega_P, edgelength_TH, true, volume_TH,
                                           area_TH);
       }
       else
       {
-        mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+        mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                           omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
       }
       fixedPointsItemIndex = -1;
@@ -235,7 +235,7 @@ public:
     }
     else
     {
-      Polyhedron* mesh = mcs->get_polyhedron();
+      Polyhedron* mesh = &(mcs->get_polyhedron());
       if (mesh != pMesh)
       {
         if (!is_mesh_valid(pMesh))
@@ -249,13 +249,13 @@ public:
         mCopy = new Polyhedron(*pMesh);
         if (is_medially_centered)
         {
-          mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+          mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                             omega_L, omega_H, omega_P, edgelength_TH, true, volume_TH,
                                             area_TH);
         }
         else
         {
-          mcs = new Mean_curvature_skeleton(pMesh, Vertex_index_map(), Edge_index_map(),
+          mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                             omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
         }
         fixedPointsItemIndex = -1;
@@ -646,7 +646,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
 
     Polyhedron tempMesh = *pMesh;
 
-    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(&tempMesh, Vertex_index_map(), Edge_index_map(),
+    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(), Edge_index_map(),
                                       omega_L, omega_H, edgelength_TH, volume_TH, area_TH);
 
     QTime time;
@@ -710,7 +710,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     Polyhedron tempMesh = *pMesh;
 
-    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(&tempMesh, Vertex_index_map(), Edge_index_map(),
+    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(), Edge_index_map(),
                                                                     omega_L, omega_H, omega_P, edgelength_TH, true, volume_TH,
                                                                     area_TH);
 
