@@ -23,6 +23,10 @@
 #ifndef CGAL_TEST_UTILS_H
 #define CGAL_TEST_UTILS_H
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+
 #include <cassert>
 #include <fstream>
 #include <vector>
@@ -348,36 +352,77 @@ template <class Visibility_2>
 void run_tests(int case_number) {
   
   Visibility_2 visibility;
-
+  bool one_failed = false; 
   if (Visibility_2::Supports_simple_polygon_tag::value) {
+    int cnt = 0;
+    int cnt_passed = 0;
+    std::cout << "    Running simple polygon test cases...\n";
     for (int i = 1 ; i <= case_number ; i++) {
-      std::cout << "Running test " << i << " for simple polygons...";
       std::string input_arr_file("data/test_simple_polygon_");
       input_arr_file += num2string<int>(i);
       input_arr_file += ".dat";
+      std::cout << "        Running test " 
+                << GREEN << input_arr_file << RESET 
+                << " ...";
       std::ifstream input(input_arr_file.c_str());
       if (run_test_case_from_file<Visibility_2>(visibility, input)) {
-        std::cout << "done!\n";
+        cnt_passed++;
+        std::cout << GREEN << "done!" << RESET << std::endl;
       }
       else {
-        std::cout << "failed!\n";
+        one_failed = true;
+        std::cout << RED << "failed!" << RESET << std::endl; 
       }
+      cnt++;
     }
+    std::cout << "    Visibility_2 object passed " << cnt_passed 
+              << "/" << cnt << " tests"      
+              << " (";
+    double result = (double)cnt_passed/cnt*100;
+    if (result > 99.9) {
+      std::cout << GREEN << result << "%" << RESET;
+    }
+    else {
+      std::cout << RED << result << "%" << RESET;
+    }
+    std::cout << ")" << std::endl;
   }
   if (Visibility_2::Supports_general_polygon_tag::value) {
+    int cnt = 0;
+    int cnt_passed = 0;
+    std::cout << "      Running non-simple polygon test cases...\n";
     for (int i = 1 ; i <= case_number ; i++) {
-      std::cout << "Running test " << i << " for non-simple polygons...";
       std::string input_arr_file("data/test_non_simple_polygon_");
       input_arr_file += num2string<int>(i);
       input_arr_file += ".dat";
+      std::cout << "        Running test "
+                << GREEN << input_arr_file << RESET 
+                << " ...";      
       std::ifstream input(input_arr_file.c_str());
       if (run_test_case_from_file<Visibility_2>(visibility, input)) {
-        std::cout << "done!\n";
+        cnt_passed++;
+        std::cout << GREEN << "done!" << RESET << std::endl;
       }
       else {
-        std::cout << "failed!\n";
+        one_failed = true;
+        std::cout << RED << "failed!" << RESET << std::endl;
       }
+      cnt++;
     }
+    std::cout << "    Visibility_2 object passed " << cnt_passed
+              << "/" << cnt  << " tests"     
+              << " (";
+    double result = (double)cnt_passed/cnt*100;
+    if (result > 99.9) {
+      std::cout << GREEN << result << "%" << RESET;
+    }
+    else {
+      std::cout << RED << result << "%" << RESET;
+    }
+    std::cout << ")" << std::endl;
+  }
+  if (one_failed) {
+    assert(false);
   }
 }
 
