@@ -13,8 +13,8 @@
   <class>
     <briefdescription visible="no"/>
     <includes visible="$SHOW_INCLUDE_FILES"/>
-    <detaileddescription title=""/>
     <inheritancegraph visible="$CLASS_GRAPH"/>
+    <detaileddescription title=""/>
     <collaborationgraph visible="$COLLABORATION_GRAPH"/>
     <allmemberslink visible="yes"/>
     <memberdecl>
