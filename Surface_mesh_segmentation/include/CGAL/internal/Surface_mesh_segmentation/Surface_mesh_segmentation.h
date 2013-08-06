@@ -113,7 +113,8 @@ public:
 
   template <class FacetSegmentMap, class SDFPropertyMap>
   int partition(int number_of_centers, double smoothing_lambda,
-                SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap) {
+                SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap,
+                bool clusters_to_segments) {
     smoothing_lambda = (std::max)(0.0, smoothing_lambda); // min zero
     smoothing_lambda *=
       CGAL_SMOOTHING_LAMBDA_MULTIPLIER; // scale it into meaningful range for graph-cut
@@ -147,10 +148,13 @@ public:
         ++facet_it, ++label_it) {
       segment_pmap[facet_it] = *label_it; // fill with cluster-ids
     }
-    // assign a segment id for each facet
-    int number_of_segments = assign_segments(number_of_centers, sdf_pmap,
-                             segment_pmap);
-    return number_of_segments;
+    if(clusters_to_segments) {
+      // assign a segment id for each facet
+      int number_of_segments = assign_segments(number_of_centers, sdf_pmap,
+                               segment_pmap);
+      return number_of_segments;
+    }
+    return number_of_centers;
   }
 
   /**
