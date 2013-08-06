@@ -93,7 +93,8 @@ public:
                 break;
             }
         }
-        print_arrangement(arrc);
+        //print_arrangement(arrc);
+        //Insert a bounding box;
         Number_type xmin, xmax, ymin, ymax;
         Point_2 q1 = arrc.vertices_begin()->point();
         xmax = xmin = q1.x();
@@ -117,120 +118,115 @@ public:
         CGAL::insert(arrc, Segment_2(p2, p3));
         CGAL::insert(arrc, Segment_2(p3, p4));
         CGAL::insert(arrc, Segment_2(p4, p1));
+
         if (ec->target()->point() == q) {
-            Point_2 source = ec->source()->point();
-            Point_2 target = ec->next()->target()->point();
-            Halfedge_handle prev = ec->prev();
-            arrc.remove_edge(ec->next());
-            arrc.remove_edge(ec);
-            std::vector<Point_2> polygon;
-            visibility_region_impl(q, prev->face(), polygon);
-            if (ec->twin()->face()->is_unbounded())
-                build_arr(polygon, out_arr);
-            else {
-                std::vector<int> source_i, target_i ;
-                for (int i = 0; i != polygon.size(); i++) {
-                    if ( polygon[i]== source ) {
-                        source_i.push_back(i);
-                    }
-                    else if ( polygon[i] == target ) {
-                        target_i.push_back(i);
-                    }
-                }
-                int small, big;
-                if ( source_i.back() < target_i.front() ) {
-                    small = source_i.back();
-                    big = target_i.front();
-                }
-                else {
-                    small = target_i.back();
-                    big = source_i.front();
-                }
-                int next_i = small + 1;
-                bool is_between;
-                if (CGAL::right_turn(source, q, target)) {
-                    is_between = false;
-                    while (next_i != big) {
-                        if (CGAL::left_turn(source, q, polygon[next_i]) || CGAL::left_turn(q, target, polygon[next_i])) {
-                            is_between = true;
-                            break;
-                        }
-                        next_i ++;
-                    }
-                }
-                else {
-                    is_between = true;
-                    while (next_i != big) {
-                        if (CGAL::right_turn(source, q, polygon[next_i]) || CGAL::right_turn(q, target, polygon[next_i])) {
-                            is_between = false;
-                            break;
-                        }
-                        next_i ++;
-                    }
-                }
-                typename std::vector<Point_2>::iterator first = polygon.begin() + source_i.back();
-                typename std::vector<Point_2>::iterator last = polygon.begin() + target_i.front() + 1;
-                if (is_between) {
-                    std::vector<Point_2> polygon1(first, last);
-                    build_arr(polygon1, out_arr);
-                }
-                else {
-                    std::vector<Point_2> polygon1(polygon.begin(), first);
-                    for (int i = big; i != polygon.size(); i++) {
-                        polygon1.push_back(polygon[i]);
-                    }
-                    build_arr(polygon1, out_arr);
-                }
-            }
+          Point_2 source = ec->source()->point();
+          Point_2 target = ec->next()->target()->point();
+          Halfedge_handle prev = ec->prev();
+          arrc.remove_edge(ec->next());
+          arrc.remove_edge(ec);
+          std::vector<Point_2> polygon;
+          visibility_region_impl(q, prev->face(), polygon);
+          //Decide which inside of the visibility butterfly is needed.
+          int source_i, target_i ;
+          for (int i = 0; i != polygon.size(); i++) {
+              if ( polygon[i]== source ) {
+                  source_i = i;
+              }
+              else if ( polygon[i] == target ) {
+                  target_i = i;
+              }
+          }
+          int small, big;
+          if ( source_i < target_i ) {
+              small = source_i;
+              big = target_i;
+          }
+          else {
+              small = target_i;
+              big = source_i;
+          }
+          int next_i = small + 1;
+          bool is_between;
+          if (CGAL::right_turn(source, q, target)) {
+              is_between = false;
+              while (next_i != big) {
+                  if (CGAL::left_turn(source, q, polygon[next_i]) || CGAL::left_turn(q, target, polygon[next_i])) {
+                      is_between = true;
+                      break;
+                  }
+                  next_i ++;
+              }
+          }
+          else {
+              is_between = true;
+              while (next_i != big) {
+                  if (CGAL::right_turn(source, q, polygon[next_i]) || CGAL::right_turn(q, target, polygon[next_i])) {
+                      is_between = false;
+                      break;
+                  }
+                  next_i ++;
+              }
+          }
+          typename std::vector<Point_2>::iterator first = polygon.begin() + small;
+          typename std::vector<Point_2>::iterator last = polygon.begin() + big;
+          if (is_between) {
+              std::vector<Point_2> polygon1(first, last+1);
+              build_arr(polygon1, out_arr);
+          }
+          else {
+              std::vector<Point_2> polygon1(polygon.begin(), first+1);
+              for (int i = big; i != polygon.size(); i++) {
+                  polygon1.push_back(polygon[i]);
+              }
+              build_arr(polygon1, out_arr);
+          }
+
         }
         else {
-            bool is_outbound = ec->twin()->face()->is_unbounded();
             Point_2 source = ec->source()->point();
             Point_2 target = ec->target()->point();
             Halfedge_handle eh1 = ec->next();
             arrc.remove_edge(ec);
             Face_handle fh = eh1->face();
             std::vector<Point_2> polygon;
-            visibility_region_impl(q, fh, polygon);
-            if (is_outbound)
-                build_arr(polygon, out_arr);
-            else {
-                std::vector<int> source_i, target_i ;
-                for (int i = 0; i != polygon.size(); i++) {
-                    if ( polygon[i]== source ) {
-                        source_i.push_back(i);
-                    }
-                    else if ( polygon[i] == target ) {
-                        target_i.push_back(i);
-                    }
+            visibility_region_impl(q, fh, polygon);            
+            int source_i, target_i;
+            for (int i = 0; i != polygon.size(); i++) {
+                if ( polygon[i]== source ) {
+                    source_i = i;
                 }
-                int small, big;
-                if ( source_i.back() < target_i.front() ) {
-                    small = source_i.back();
-                    big = target_i.front();
-                }
-                else {
-                    small = target_i.back();
-                    big = source_i.front();
-                }
-
-                int next_i = small + 1;
-                while (CGAL::collinear(source, polygon[next_i], target))
-                    next_i++;
-                typename std::vector<Point_2>::iterator first = polygon.begin() + source_i.back();
-                typename std::vector<Point_2>::iterator last = polygon.begin() + target_i.front() + 1;
-                if (CGAL::left_turn(source, target, polygon[next_i])) {
-                    std::vector<Point_2> polygon1(first, last);
-                    build_arr(polygon1, out_arr);
-                }
-                else {
-                    std::vector<Point_2> polygon1(polygon.begin(), first);
-                    for (int i = big; i != polygon.size(); i++) {
-                        polygon1.push_back(polygon[i]);
-                    }
-                    build_arr(polygon1, out_arr);
+                else if ( polygon[i] == target ) {
+                    target_i = i;
                 }
             }
+            int small, big;
+            if ( source_i < target_i ) {
+                small = source_i;
+                big = target_i;
+            }
+            else {
+                small = target_i;
+                big = source_i;
+            }
+
+            int next_i = small + 1;
+            while (CGAL::collinear(source, polygon[next_i], target))
+                next_i++;
+            typename std::vector<Point_2>::iterator first = polygon.begin() + small;
+            typename std::vector<Point_2>::iterator last = polygon.begin() + big;
+            if (CGAL::left_turn(source, target, polygon[next_i])) {
+                std::vector<Point_2> polygon1(first, last+1);
+                build_arr(polygon1, out_arr);
+            }
+            else {
+                std::vector<Point_2> polygon1(polygon.begin(), first+1);
+                for (int i = big; i != polygon.size(); i++) {
+                    polygon1.push_back(polygon[i]);
+                }
+                build_arr(polygon1, out_arr);
+            }
+
         }
         conditional_regularize(out_arr, Regularization_tag());
 
@@ -298,7 +294,6 @@ private:
         Ray_2 curr_vision_ray = init_vision_ray;
         typename std::vector<Vertex_handle>::iterator vit = vertices.begin(), begin_it, end_it;
         Halfedge_handle closest_edge;
-        bool is_init_empty = active_edges.empty();
         while (vit != vertices.end())
         {
             if (active_edges.empty())
@@ -363,9 +358,14 @@ private:
                 case CORNER :
                     //remove right and collinear;
                     remove_edges(active_edges, curr_vision_ray);
-                    update_visibility(right_p, polygon);
-                    insert_needle(collinear_vertices, polygon);
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
+                    update_visibility(right_p, polygon);
+                    if (right_p == collinear_vertices.front()) {
+                      insert_needle(collinear_vertices, polygon, true);
+                    }
+                    else if (left_p == collinear_vertices.front()) {
+                      insert_needle(collinear_vertices, polygon, false);
+                    }
                     update_visibility(left_p, polygon);
                     break;
                 case INNER :
@@ -375,19 +375,22 @@ private:
                         //this means mid_p = left_p = right_p = furthest_p. no new vertex is found.
                     }
                     else {
-                        left_p = intersection_point(curr_vision_ray, active_edges[0]);
-                        update_visibility(right_p, polygon);
-                        insert_needle(collinear_vertices, polygon);
-                        update_visibility(left_p, polygon);
+                      left_p = intersection_point(curr_vision_ray, active_edges[0]);
+                      update_visibility(right_p, polygon);
+                      if (right_p == collinear_vertices.front()) {
+                        insert_needle(collinear_vertices, polygon, true);
+                      }
+                      else if (left_p == collinear_vertices.front()) {
+                        insert_needle(collinear_vertices, polygon, false);
+                      }
+                      update_visibility(left_p, polygon);
                     }
                     break;
                 }
             }
             vit = end_it;
         }
-//        if (!is_init_empty) {
-//            CGAL::insert(out_arr, Segment_2(polygon.back(),polygon.front()));
-//        }
+
     }
     Point_2 intersection_point(Ray_2 ray, Segment_2 seg )
     {
@@ -537,10 +540,17 @@ private:
         }
     }
 
-    void insert_needle(const std::vector<Point_2>& points, std::vector<Point_2>& polygon){
+    void insert_needle(const std::vector<Point_2>& points, std::vector<Point_2>& polygon, bool is_right_close){
+      if (is_right_close) {
         for (int i = 0; i != points.size(); i++) {
-            update_visibility(points[i], polygon);
+          update_visibility(points[i], polygon);
         }
+      }
+      else {
+        for (int i = points.size()-1; i != -1; i--) {
+          update_visibility(points[i], polygon);
+        }
+      }
     }
 
 
@@ -685,7 +695,7 @@ private:
         for (int i = 0; i != polygon.size()-1; i++ ) {
             CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
         }
-        print_vectex(polygon);
+        //print_vectex(polygon);
         CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
     }
 
