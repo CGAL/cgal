@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+cd /home/cgal-testsuite
+
+exec > doxygen_testsuite.log 2>&1
+
+rsync -a --delete --exclude=.git* /home/sloriot/git/cgal/ integration
+mkdir /home/cgal-testsuite/integration/build_doc
+cd /home/cgal-testsuite/integration/build_doc
+
+/home/cgal-testsuite/install/cmake-2.8.11/bin/cmake \
+    -DBUILD_DOC:BOOL=ON \
+    -DCGAL_DOC_CREATE_LOGS:bool=ON \
+    -DCGAL_DOC_PUBLISH_DIR=/var/CGAL/www/Members/Manual_doxygen_test \
+    -DDOXYGEN_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/doxygen \
+    -DPYTHON_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/python2 \
+    ..
+
+make Documentation_doc
+make Documentation_testsuite_publish
