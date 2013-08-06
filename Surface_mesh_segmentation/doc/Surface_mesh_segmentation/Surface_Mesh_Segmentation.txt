@@ -43,6 +43,10 @@ More specifically, the SDF is a scalar-valued function defined on facets of the 
 The SDF is used to distinguish between thin and thick parts by adding a local notion of thickness to the facets.
 In addition, the SDF is pose-invariant, which means that SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes}).
 
+\cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
+Influence of pose changes over SDF values and the segmentation.
+\cgalFigureEnd
+
 The SDF over a mesh is computed by processing each facet one by one. For a given facet, the SDF value computation begins with sampling
 several rays from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
 These rays are casted based on inward-normal direction to the other side of the mesh. 
@@ -60,10 +64,6 @@ since they are natural candidates for segment boundaries. The bilateral smoothin
 Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
 Large range parameters make smoothing closer to Gaussian smoothing which may also lead to over-smoothed SDF values.
 
-\cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
-Influence of pose changes over SDF values and the segmentation.
-\cgalFigureEnd
-
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 Given a number of clusters, the soft clustering applied on computed SDF values.  
 It is initialized with k-means++ \cite Arthur2007Kmeans, and run multiple times with random seeds.
@@ -74,18 +74,23 @@ Intuitively, the number of clusters represents the number of levels of a segment
 without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh
 with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
 
-The output of this step is a matrix that contains probability values for each facet to belong to each cluster.
-These probability values are used as input to the graph-cut step described next. 
-
 \cgalFigureBegin{Segmentation_levels,effect_of_levels.png}
 Influence of the number of clusters over the segmentation. The number of clusters are set to 4, 3, and 2 respectively.
 \cgalFigureEnd
 
+The output of this step is a matrix that contains probability values for each facet to belong to each cluster.
+These probability values are used as input to the graph-cut step described next. 
+
 \subsection Surface_mesh_segmentationGraphCut Graph-Cut
-The final hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
+The hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
 This energy function combines the aforementioned probability matrix and geometric surface features. 
-The algorithm assigns a cluster to each facet,
-however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments).
+The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a), 
+however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments) by default \cgalFigureRef{Cluster_vs_segment} (b).
+
+\cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
+Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the result of the graph-cut. <b>(b)</b> is the postprocessed result where each segment is extracted from clusters. 
+Note that both versions are available in the API.
+\cgalFigureEnd
 
 The energy function minimized using alpha-expansion graph cut algorithm \cite Boykov2001FastApproximate is defined as follows:
 
