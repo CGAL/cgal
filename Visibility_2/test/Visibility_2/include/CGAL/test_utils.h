@@ -363,15 +363,15 @@ void run_tests(int case_number) {
       input_arr_file += ".dat";
       std::cout << "        Running test " 
                 << GREEN << input_arr_file << RESET 
-                << " ...";
+                << " - ";
       std::ifstream input(input_arr_file.c_str());
       if (run_test_case_from_file<Visibility_2>(visibility, input)) {
         cnt_passed++;
-        std::cout << GREEN << "done!" << RESET << std::endl;
+        std::cout << GREEN << "Done!" << RESET << std::endl;
       }
       else {
         one_failed = true;
-        std::cout << RED << "failed!" << RESET << std::endl; 
+        std::cout << RED << "Failed!" << RESET << std::endl; 
       }
       cnt++;
     }
@@ -397,15 +397,15 @@ void run_tests(int case_number) {
       input_arr_file += ".dat";
       std::cout << "        Running test "
                 << GREEN << input_arr_file << RESET 
-                << " ...";      
+                << " - ";      
       std::ifstream input(input_arr_file.c_str());
       if (run_test_case_from_file<Visibility_2>(visibility, input)) {
         cnt_passed++;
-        std::cout << GREEN << "done!" << RESET << std::endl;
+        std::cout << GREEN << "Done!" << RESET << std::endl;
       }
       else {
         one_failed = true;
-        std::cout << RED << "failed!" << RESET << std::endl;
+        std::cout << RED << "Failed!" << RESET << std::endl;
       }
       cnt++;
     }
