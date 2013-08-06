@@ -91,6 +91,20 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   if(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
     message(STATUS "NOTICE: Eigen 3.1 (or greater) and TAUCS is not found. parametrization will not be available.")
   endif(NOT EIGEN3_FOUND AND NOT TAUCS_FOUND)
+  
+  option (USE_SUPERLU "Use SuperLU solver for Surface deformation plugin." OFF)
+  
+  if(EIGEN3_FOUND)
+    if(USE_SUPERLU)
+      find_package(SuperLU)
+      if ( SUPERLU_FOUND)
+        include( ${SUPERLU_USE_FILE} )
+        message(STATUS "Found SuperLU, Surface deformation plugin will use it.")
+      else()
+        message(STATUS "NOTICE: SuperLU has not been found, Surface deformation plugin will NOT use it.")
+      endif()
+    endif()
+  endif()
 
   # Curvature estimation needs Eigen3 or LAPACK
   if(NOT EIGEN3_FOUND AND NOT LAPACK_FOUND)
@@ -130,7 +144,6 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_polyhedron_item.cpp
               Scene_polyhedron_transform_item.cpp
               Scene_polylines_item.cpp
-              Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
@@ -140,6 +153,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_points_with_normal_item.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
+  qt4_automoc( Custom_manipulated_frame.cpp )
 
 
   # AUXILIARY LIBRARIES
@@ -193,11 +207,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp Scene_polylines_item.moc)
-
-  add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  # special
-  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
-
+	
+  add_item(custom_manipulated_frame Custom_manipulated_frame.cpp Custom_manipulated_frame.moc)
+ 
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
@@ -399,9 +411,20 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
-  polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
-  target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  # Edit polyhedron scene item and plugin
+  if ( TAUCS_FOUND OR ( EIGEN3_FOUND AND ( SUPERLU_FOUND OR ( "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" ) ) ) )
+    qt4_wrap_ui( editionUI_FILES Deform_mesh.ui )
+    qt4_automoc( Scene_edit_polyhedron_item.cpp )
+    add_item(scene_edit_polyhedron_item Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc ${editionUI_FILES})
 
+    target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item custom_manipulated_frame)
+
+    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
+    target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  else()
+    message(STATUS "NOTICE: Nor Eigen 3.1.91, nor Eigen 3.1 and SuperLU, nor TAUCS were found. Polyhedron edit plugin will not be available.")
+  endif()
+  
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
   

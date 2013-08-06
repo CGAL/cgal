@@ -1,0 +1,43 @@
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+
+project( Surface_modeling_ )
+
+cmake_minimum_required(VERSION 2.6.2)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
+endif()
+
+find_package(CGAL QUIET COMPONENTS Core )
+
+if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+
+  find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
+  if (EIGEN3_FOUND)
+    include( ${EIGEN3_USE_FILE} )
+    include( CGAL_CreateSingleSourceCGALProgram )
+
+    include_directories (BEFORE "../../include")
+
+    create_single_source_cgal_program( "all_roi_assign_example.cpp" )
+    create_single_source_cgal_program( "all_roi_assign_example_custom_polyhedron.cpp" )
+    create_single_source_cgal_program( "custom_weight_for_edges_example.cpp" )
+    create_single_source_cgal_program( "enriched_polyhedron_with_custom_pmap_example.cpp" )
+    create_single_source_cgal_program( "k_ring_roi_translate_rotate_example.cpp" )
+
+  else()
+    message(STATUS "This program requires the Eigen library, version 3.2 or later and will not be compiled.")
+  endif()
+else()
+  
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  
+endif()
+
