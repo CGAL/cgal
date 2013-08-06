@@ -75,7 +75,7 @@ the power circle of
 is given by the following 
 determinant 
 \f[ 
-[\left| \begin{array}{cccc} 
+\left| \begin{array}{cccc}
 1 & x_i & y_i & x_i ^2 + y_i ^2 - w_i \\ 
 1 & x_j & y_j & x_j ^2 + y_j ^2 - w_j \\ 
 1 & x_k & y_k & x_k ^2 + y_k ^2 - w_k \\ 
