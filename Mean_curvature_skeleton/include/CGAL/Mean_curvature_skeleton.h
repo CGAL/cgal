@@ -87,10 +87,24 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
+enum Collapse_algorithm_tag
+{
+  SIMPLIFICATION,
+  LINEAR
+};
+
+enum Degeneracy_algorithm_tag
+{
+  HEURISTIC,
+  EULER
+};
+
 template <class Polyhedron,
           class SparseLinearAlgebraTraits_d,
           class PolyhedronVertexIndexMap,
           class PolyhedronEdgeIndexMap,
+          Collapse_algorithm_tag Collapse_tag = LINEAR,
+          Degeneracy_algorithm_tag Degeneracy_tag = HEURISTIC,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
 class Mean_curvature_skeleton
 {
@@ -757,8 +771,16 @@ public:
     int num_collapses = 0;
     while (true)
     {
-//      int cnt = collapse_short_edges();
-      int cnt = collapse_edges(fixed_edge_map);
+      int cnt;
+      if (Collapse_tag == SIMPLIFICATION)
+      {
+        cnt = collapse_short_edges();
+      }
+      else if (Collapse_tag == LINEAR)
+      {
+        cnt = collapse_edges(fixed_edge_map);
+      }
+
       if (cnt == 0)
       {
         break;
@@ -958,8 +980,6 @@ public:
       }
     }
 
-
-
     MCFSKEL_INFO(std::cerr << "fixed " << num_fixed << " vertices.\n";)
 
     return num_fixed;
@@ -1012,9 +1032,15 @@ public:
   {
     contract_geometry();
     update_topology();
-//    detect_degeneracies_heuristic();
 
-    detect_degeneracies_in_disk();
+    if (Degeneracy_tag == HEURISTIC)
+    {
+      detect_degeneracies_heuristic();
+    }
+    else if (Degeneracy_tag == EULER)
+    {
+      detect_degeneracies_in_disk();
+    }
 
     double area = internal::get_surface_area(polyhedron);
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -1030,8 +1056,14 @@ public:
 
       contract_geometry();
       update_topology();
-      detect_degeneracies_heuristic();
-//      detect_degeneracies_in_disk();
+      if (Degeneracy_tag == HEURISTIC)
+      {
+        detect_degeneracies_heuristic();
+      }
+      else if (Degeneracy_tag == EULER)
+      {
+        detect_degeneracies_in_disk();
+      }
 
       double area = internal::get_surface_area(polyhedron);
       double area_ratio = fabs(last_area - area) / original_area;
