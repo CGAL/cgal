@@ -270,6 +270,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     for fn in citelist_files:
         re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
     
-    
+    #add a section for creating the inheritence section
+    citelist_files=package_glob('./*/class*.html')
+    for fn in citelist_files:
+        re_replace_in_file(r'<p>Inherits\s*(.*)</p>', r'<dl class="section inherits"><dt>Inherits from</dt><dd>\1</dd>', fn)
+
 if __name__ == "__main__":
     main()
