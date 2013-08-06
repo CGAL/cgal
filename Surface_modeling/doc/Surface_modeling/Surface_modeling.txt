@@ -10,7 +10,7 @@ namespace CGAL {
 \section Surface_Modeling_Intro Introduction
 Surface mesh deformation is the process of transforming the shape of a surface mesh under positional constraints without requiring any additional structure other than the surface mesh itself.
 
-In this package, we implement the algorithm described in \cite Sorkine2007AsRigidAs,
+In this package, we implement the algorithm described in \cgalCite{Sorkine2007AsRigidAs},
 where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible.
 In the following, we will use <em>surface mesh</em> to refer to a closed and triangulated surface mesh.
 
@@ -23,9 +23,9 @@ The algorithm implemented is a so-called <em>Laplacian-based deformation</em> te
 methods work.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
-The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em>) of a vertex in a surface mesh is one way to
+The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em>) of a vertex in a surface mesh are one way to
 <em>encode</em> the local neighborhood of a vertex in the mesh. Once defined for each vertex of a surface mesh, it defines a discrete vector field over the surface mesh.
-The Laplacian coordinate of a vertex \f$ \mathbf{v}_i \f$ is a 3D vector defined as:
+The Laplacian coordinates of a vertex \f$ \mathbf{v}_i \f$ is a 3D vector defined as:
 
 \f[
 \begin{equation}
@@ -42,7 +42,7 @@ The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(
 \f$\mathbf{v}_j\f$. In this case, the Laplacian coordinates of a vertex is the vector between this vertex
 and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 
-The cotangent weight \cgal Pinkall1993Cotangent scheme provides more independant from the discretization of the original
+The cotangent weight \cgalCite{Pinkall1993Cotangent} scheme is more independant from the discretization of the original
 surface: Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
 cotangents of the angles opposite to the edge.
 
@@ -61,55 +61,58 @@ Considering the whole surface mesh, it is possible to write a linear system desc
 
 where:
 - \f$n\f$ is the number of vertices in the surface mesh,
-- \f$\mathbf{L}\f$ is a \f$n \times n\f$ symmetric sparse matrix, called the <em>Laplacian matrix</em>. The elements \f$ m_{ij} \f$, \f$i,j \in \{1..n\} \f$ of \f$ \mathbf{L} \f$ are defined as follow: \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$; \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,  and \f$ 0 \f$ otherwise,
+- \f$\mathbf{L}\f$ is a \f$n \times n\f$ symmetric sparse matrix, called the <em>Laplacian matrix</em>. The elements \f$ m_{ij} \f$, \f$i,j \in \{1 \dots n\} \f$ of \f$ \mathbf{L} \f$ are defined as follow: \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$; \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,  and \f$ 0 \f$ otherwise,
 - \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the cartesian coordinates of the vertices;
 - \f$\Delta\f$ is a \f$n \times 3\f$ matrix called the Laplacian coordinates of the surface mesh.
 
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
-A simple mesh deformation system consists of a mesh, a few selected control vertices (i.e. <i>handles</i>)
-and target positions of the handles as deformation constraints.
+A simple mesh deformation system consists of a surface mesh, a set of vertices (called the <em>handle vertices</em>)
+and a target positions (defining the <em>deformation constraints</em>) for each the handle vertices.
 
-The main idea behind Laplacian deformation is to preserve the Laplacian coordinates under deformation constraints. 
-In other words, Laplacian coordinates are treated as a representative form for the shape, and the deformation
-process must follow the deformation constraints while preserving the Laplacian coordinates as much as possible.
+The main idea behind Laplacian-based deformation techniques is to preserve the Laplacian coordinates
+under deformation constraints. Laplacian coordinates of the surface mesh are treated as a representative form of the discretized surface, and the deformation process must follow the deformation constraints while preserving the Laplacian coordinates as much as possible.
 
-There are different ways to incorporate deformation constraints into the system \cite Botsch2008OnLinearVariational.
-We provide support for hard constraints, which means constrained positions of handles are preserved as is after deformation.
+There are different ways to incorporate deformation constraints into the deformation system \cgalCite{Botsch2008OnLinearVariational}.
+In this package, we support hard constraints, that is target positions of control vertices are preserved after the deformation.
+
+Given a mesh deformation system of a surface mesh of \f$ n \f$ vertices that consists of \f$ k \f$ control vertices, we consider the following linear system:
 
 \f[
 \begin{equation}
 \left[
 \begin{array}{ccc}
-\mathbf{L}_f \\
-\mathbf{I}_c
+\mathbf{L}_f\\
+0 \; \mathbf{I}_c
 \end{array}
 \right]
 \mathbf{V} =
 \left[
 \begin{array}{ccc}
-{\delta}_f \\
+{\Delta}_f \\
 \mathbf{V}_c
 \end{array}
 \right],
-	\label{eq:lap_energy_system}
+\label{eq:lap_energy_system}
 \end{equation}
 \f]
 
-where \f$\mathbf{L}_f\f$ is Laplacian matrix of free (i.e. not constrained) vertices, \f$\mathbf{I}_c\f$ contains a row for each constrained vertex 
-with one in corresponding position of the vertex and zeros elsewhere, \f${\delta}_f\f$ is Laplacian coordinates of free vertices, 
-and \f$\mathbf{V}_c\f$ holds the target positions of constrained vertices. Solving the system under deformation constraints 
-preserves Laplacians of free vertices (upper side of the system) while satisfying the constraints (lower side of the system). 
+where:
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix. It is the unknow of the system that represents the coordinates of the vertices after deformation. The system is build such that the \f$ k \f$ last rows corresponds to the control vertices.
+- \f$\mathbf{L}_f\f$ is the Laplacian matrix of the <em>free vertices</em> (those that are not control vertices). It is a \f$n-k \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
+- \f$\mathbf{I}_c\f$ is a \f$k \times k\f$ identity matrix.
+- \f${\Delta}_f\f$ is Laplacian coordinates of free vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
+- \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the cartesian coordinates of the target positions of the control vertices.
 
-The constructed matrix in Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square nonsymmetric sparse matrix and an appropriate solver (e.g. LU solver) should be used.
+The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square nonsymmetric sparse matrix. To solve the aforementionned system, a appropriate solver (e.g. LU solver) need to be used. Note that solving this system
+the Laplacian coordinates of the surface mesh restricted to the free vertices while satisfying the deformation constraints.
 
-\note This section is introduced to provide a background for the next sections. 
-A system relying on solely the mentioned approach above can cause non-smooth translations on the handle boundaries which may or may not be desirable.
-For different Laplacian-based editing techniques please refer to \cite Botsch2008OnLinearVariational.
+\note This section is an introduction to provide a background for the two next sections dexcribing the algorithms implementated in this package.
+A system relying only the approach described above can result in non-smooth transitions in the neighborhood of the control vertices. For a survey on different Laplacian-based editing techniques please refer to \cgalCite{Botsch2008OnLinearVariational}.
 
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
 
-The energy function proposed to be minimized in \cite Sorkine2007AsRigidAs under modeling constraints for a mesh structure \f$M\f$ is:
+The energy function proposed to be minimized in \cgalCite{Sorkine2007AsRigidAs} under modeling constraints for a mesh structure \f$M\f$ is:
 
 \f[
 \begin{equation}
@@ -146,7 +149,7 @@ Given the covariance matrix \f$\mathbf{S}_i\f$:
 
 \f$\mathbf{R}_i\f$ matrices minimizing Eq.\f$\eqref{eq:arap_energy}\f$ can be found using a singular value decomposition (SVD) of \f$\mathbf{S}_i\f$ 
 and by also guaranteeing \f$\det(\mathbf{R}_i)\f$ to be positive by changing the sign of the eigenvector in \f$\mathbf{U}_i\f$ 
-which corresponds to smallest eigenvalue \cite Sorkine2009LeastSquaresRigid.
+which corresponds to smallest eigenvalue \cgalCite{Sorkine2009LeastSquaresRigid}.
 
 \f[
 \begin{equation}
@@ -176,7 +179,7 @@ An important observation is the linear system in Eq. \f$\eqref{eq:lap_energy_sys
 So that, once handle vertices are determined, we can use a direct solver to factorize the sparse matrix in Eq. \f$\eqref{eq:lap_energy_system}\f$, and use this factorization
 in each iteration of the optimization procedure with the added cost being only the back-substitution.
 
-\note The original algorithm in \cite Sorkine2007AsRigidAs assumes that weights are symmetric (i.e. \f$w_{ij} = w_{ji}\f$) while deriving the Eq. \f$\eqref{eq:lap_ber}\f$.
+\note The original algorithm in \cgalCite{Sorkine2007AsRigidAs} assumes that weights are symmetric (i.e. \f$w_{ij} = w_{ji}\f$) while deriving the Eq. \f$\eqref{eq:lap_ber}\f$.
 In our implementation, in order to support asymmetric weights, we slightly changed Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f[
 \begin{equation}
@@ -189,7 +192,7 @@ In our implementation, in order to support asymmetric weights, we slightly chang
 A small problem with this approach is that when meshing is bad (such that there are many negative edge weights), the energy function might become negative and thus optimization fails.
 As a workaround, we eliminate negative values by setting them to zero in our default weights.
 
-\note A cotangent weight \cite Sorkine2007AsRigidAs for an edge is negative when summation of opposite angles of the edge is greater than \f$ \pi \f$.
+\note A cotangent weight \cgalCite{Sorkine2007AsRigidAs} for an edge is negative when summation of opposite angles of the edge is greater than \f$ \pi \f$.
 
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
 
@@ -197,7 +200,7 @@ As a workaround, we eliminate negative values by setting them to zero in our def
 Considered edges \f$E(\mathbf{v}_i)\f$ in energy function for a vertex \f$\mathbf{v}_i\f$.
 \cgalFigureEnd
 
-The modified energy function proposed by \cite Chao2010SimpleGeomModel takes into account all edges around the facets incident to a vertex. The energy function becomes:
+The modified energy function proposed by \cgalCite{Chao2010SimpleGeomModel} takes into account all edges around the facets incident to a vertex. The energy function becomes:
 
 \f[
 \begin{equation}
@@ -225,7 +228,7 @@ where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are rotation matrices of \f$\mat
 \f$\mathbf{v}_n\f$ which are opposite vertices of edge \f$\mathbf{v}_i, \mathbf{v}_j\f$.
 
 The main difference compared to \ref Surface_Modeling_Overview_ARAP is that the energy function is guaranteed to stay nonnegative. 
-We are using cotangent weights as proposed in \cite Chao2010SimpleGeomModel.
+We are using cotangent weights as proposed in \cgalCite{Chao2010SimpleGeomModel}.
 However, the results can be asymmetric as demonstrated in \cgalFigureRef{Arap_spokes_comparison}.
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
