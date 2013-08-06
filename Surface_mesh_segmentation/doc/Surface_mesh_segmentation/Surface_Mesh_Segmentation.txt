@@ -61,7 +61,7 @@ Large window sizes are more effective on eliminating noise but may over-smooth S
 Large range parameters make smoothing closer to Gaussian smoothing which may also lead to over-smoothed SDF values.
 
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
-Effect of pose changes on segmentation and SDF values.
+Influence of pose changes over SDF values and the segmentation.
 \cgalFigureEnd
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
