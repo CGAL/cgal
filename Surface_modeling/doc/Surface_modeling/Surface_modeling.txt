@@ -1,29 +1,31 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_SurfaceModeling
 
 \cgalAutoToc
 \authors Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz
 
 \section Surface_Modeling_Intro Introduction
-Surface mesh deformation is the process of transforming the shape of the surface mesh under positional constraints without requiring any additional structure other than the surface itself. 
+Surface mesh deformation is the process of transforming the shape of a surface mesh under positional constraints without requiring any additional structure other than the surface mesh itself.
 
-In this package, we implement the algorithm described in \cite Sorkine2007AsRigidAs, 
-where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible. 
+In this package, we implement the algorithm described in \cite Sorkine2007AsRigidAs,
+where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible.
+In the following, we will use <em>surface mesh</em> to refer to a closed and triangulated surface mesh.
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion_4_resized.png}
-Deformation results for dinosaur model.
+Deformation example.
 \cgalFigureEnd
 
-\section Surface_Modeling_Overview Overview 
-Since there is a close relationship between differential representations and as-rigid-as possible deformation, we first 
-give a brief overview of related topics.
+\section Surface_Modeling_Overview Overview
+The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We first give an overview of how these
+methods work.
 
-\subsection Surface_Modeling_Overview_Laplacian Laplacian Representation 
-Laplacian coordinates are a way of representing the mesh differentially, using the local coordinate of a vertex 
-with respect to its one-ring neighbors (i.e. cell) rather than its global position. The Laplacian coordinate of a vertex \f$ \mathbf{v}_i \f$ is:
+\subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
+The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em>) of a vertex in a surface mesh is one way to
+<em>encode</em> the local neighborhood of a vertex in the mesh. Once defined for each vertex of a surface mesh, it defines a discrete vector field over the surface mesh.
+The Laplacian coordinate of a vertex \f$ \mathbf{v}_i \f$ is a 3D vector defined as:
 
 \f[
 \begin{equation}
@@ -33,35 +35,35 @@ L(\mathbf{v}_i) = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}_i - 
 \f]
 
 where:
-- \f$N(\mathbf{v}_i)\f$ is the one-ring neighbor vertices of \f$\mathbf{v}_i\f$;
--\f$w_{ij}\f$ is the weight between \f$\mathbf{v}_i\f$ and the neighbor \f$\mathbf{v}_j\f$. 
-  
-The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each vertex 
-\f$\mathbf{v}_j\f$ in the one-ring neighborhood. For the computation of the Laplacian, 
-this actually corresponds to subtracting the average of neighbor vertices from the current vertex (\cgalFigureRef{Simple_laplacian}).
+- \f$N(\mathbf{v}_i)\f$ is the set of vertices incident to \f$\mathbf{v}_i\f$;
+-\f$w_{ij}\f$ is a weight between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$.
 
-We use cotangent weights \cite Pinkall1993Cotangent to eliminate the effect of non-uniform discretization of the mesh model.
+The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each adjacent vertex
+\f$\mathbf{v}_j\f$. In this case, the Laplacian coordinates of a vertex is the vector between this vertex
+and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
+
+The cotangent weight \cgal Pinkall1993Cotangent scheme provides more independant from the discretization of the original
+surface: Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
+cotangents of the angles opposite to the edge.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
-Laplacian with uniform weights: the red square vertex is the average position of the neighbor vertices of the yellow circle vertex. Blue vector represents the Laplacian coordinate of the yellow vertex with uniform weights.
+Laplacian cordinates of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the adjacent vertices of \f$ v_i \f$. The Laplacian coordinates \f$ \delta \f$ are represented as a blue vector.
 \cgalFigureEnd
 
-Considering the mesh as a whole, it is possible to generate a linear system which results in Laplacian coordinates of all vertices:
+Considering the whole surface mesh, it is possible to write a linear system describing the Laplacian coordinates of all its vertices:
 
 \f[
 \begin{equation}
-\mathbf{L}\mathbf{V} = \delta,
+\mathbf{L}\mathbf{V} = \Delta,
   \label{eq:lap_system}
 \end{equation}
 \f]
 
-where 
-- \f$n\f$ is the number of vertices in the mesh,
-- \f$\mathbf{L}\f$ is an \f$n \times n\f$ matrix, called the <i>Laplacian matrix</i>,
-in which each row is filled according to Eq.\f$\eqref{eq:lap_open}\f$, that is the element \f$ m_{ij} \f$ of \f$ \mathbf{L} \f$ is equal to \f$ -w_{ij} \f$ 
-if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$, \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$ and \f$ 0 \f$ elsewhere,
-- \f$\mathbf{V}\f$ is an \f$n \times 3\f$ vector consisting of 
-global positions of vertices; and \f$\delta\f$ represents Laplacian coordinates of the mesh. 
+where:
+- \f$n\f$ is the number of vertices in the surface mesh,
+- \f$\mathbf{L}\f$ is a \f$n \times n\f$ symmetric sparse matrix, called the <em>Laplacian matrix</em>. The elements \f$ m_{ij} \f$, \f$i,j \in \{1..n\} \f$ of \f$ \mathbf{L} \f$ are defined as follow: \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$; \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,  and \f$ 0 \f$ otherwise,
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the cartesian coordinates of the vertices;
+- \f$\Delta\f$ is a \f$n \times 3\f$ matrix called the Laplacian coordinates of the surface mesh.
 
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
