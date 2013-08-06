@@ -397,6 +397,224 @@ public:
     }
   }
 
+  // --------------------------------------------------------------------------
+  // Public Algorithm API
+  // --------------------------------------------------------------------------
+
+  void contract_geometry()
+  {
+    MCFSKEL_DEBUG(std::cerr << "before contract geometry";)
+
+    update_vertex_id();
+
+    compute_edge_weight();
+
+    int nver = boost::num_vertices(polyhedron);
+    int nrows;
+    if (is_medially_centered)
+    {
+      nrows = nver * 3;
+    }
+    else
+    {
+      nrows = nver * 2;
+    }
+    // Assemble linear system At * A * X = At * B
+    typename SparseLinearAlgebraTraits_d::Matrix A(nrows, nver);
+    assemble_LHS(A);
+
+    typename SparseLinearAlgebraTraits_d::Vector X(nver), Bx(nrows);
+    typename SparseLinearAlgebraTraits_d::Vector Y(nver), By(nrows);
+    typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nrows);
+    assemble_RHS(Bx, By, Bz);
+
+    MCFSKEL_DEBUG(std::cerr << "before solve\n";)
+
+    // solve "At * A * X = At * B".
+    double D;
+    m_solver.pre_factor_non_symmetric(A, D);
+    m_solver.linear_solver_non_symmetric(A, Bx, X);
+    m_solver.linear_solver_non_symmetric(A, By, Y);
+    m_solver.linear_solver_non_symmetric(A, Bz, Z);
+
+    MCFSKEL_DEBUG(std::cerr << "after solve\n";)
+
+    // copy to mesh
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    {
+      vertex_descriptor vi = *vb;
+      int id = boost::get(vertex_id_pmap, vi);
+      int i = new_id[id];
+      Point p(X[i], Y[i], Z[i]);
+      vi->point() = p;
+    }
+
+    MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
+  }
+
+  int collapse_edges()
+  {
+    internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
+    init_fixed_edge_map(fixed_edge_map);
+
+    int num_collapses = 0;
+    while (true)
+    {
+      int cnt;
+      if (Collapse_tag == SIMPLIFICATION)
+      {
+        cnt = collapse_edges_simplification();
+      }
+      else if (Collapse_tag == LINEAR)
+      {
+        cnt = collapse_edges_linear(fixed_edge_map);
+      }
+
+      if (cnt == 0)
+      {
+        break;
+      }
+      else
+      {
+        num_collapses += cnt;
+      }
+    }
+    return num_collapses;
+  }
+
+  int split_triangles()
+  {
+    MCFSKEL_DEBUG(std::cerr << "before split\n";)
+
+    int num_splits = 0;
+    while (true)
+    {
+      int cnt = split_flat_triangle();
+      if (cnt == 0)
+      {
+        break;
+      }
+      else
+      {
+        num_splits += cnt;
+      }
+    }
+
+    MCFSKEL_DEBUG(std::cerr << "after split\n";)
+
+    return num_splits;
+  }
+
+  int update_topology()
+  {
+    MCFSKEL_DEBUG(std::cerr << "before collapse edges\n";)
+
+    int num_collapses = collapse_edges();
+    MCFSKEL_INFO(std::cerr << "collapse " << num_collapses << " edges.\n";)
+
+    int num_splits = split_triangles();
+    MCFSKEL_INFO(std::cerr << "split " << num_splits << " edges.\n";)
+
+    return num_collapses + num_splits;
+  }
+
+  int detect_degeneracies()
+  {
+    if (Degeneracy_tag == HEURISTIC)
+    {
+      return detect_degeneracies_heuristic();
+    }
+    else if (Degeneracy_tag == EULER)
+    {
+      return detect_degeneracies_in_disk();
+    }
+  }
+
+  void contract()
+  {
+    contract_geometry();
+    update_topology();
+    detect_degeneracies();
+
+    double area = internal::get_surface_area(polyhedron);
+    MCFSKEL_INFO(std::cout << "area " << area << "\n";)
+  }
+
+  void run_to_converge()
+  {
+    double last_area = 0;
+    int num_iteration = 0;
+    while (true)
+    {
+      MCFSKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
+
+      contract_geometry();
+      update_topology();
+      detect_degeneracies();
+
+      double area = internal::get_surface_area(polyhedron);
+      double area_ratio = fabs(last_area - area) / original_area;
+
+      MCFSKEL_INFO(std::cout << "area " << area << "\n";)
+      MCFSKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
+
+      if (area_ratio < area_TH)
+      {
+        break;
+      }
+      last_area = area;
+
+      num_iteration++;
+      if (num_iteration >= iteration_TH)
+      {
+        break;
+      }
+    }
+  }
+
+  void convert_to_skeleton()
+  {
+    Skeleton skeleton(polyhedron);
+    std::vector<std::vector<int> > record;
+    skeleton.extract_skeleton(g, points, record);
+
+    skeleton_to_surface.resize(record.size());
+    for (size_t i = 0; i < record.size(); ++i)
+    {
+      for (size_t j = 0; j < record[i].size(); ++j)
+      {
+        int id = record[i][j];
+        if (correspondence.find(id) != correspondence.end())
+        {
+          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
+                                        correspondence[id].begin(),
+                                        correspondence[id].end());
+        }
+
+        if (id < max_id)
+        {
+          skeleton_to_surface[i].push_back(id);
+        }
+      }
+    }
+    int cnt = 0;
+    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
+    {
+      cnt += skeleton_to_surface[i].size();
+    }
+
+    MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
+
+//    collapse_vertices_without_correspondence();
+  }
+
+private:
+
+  // --------------------------------------------------------------------------
+  // Contraction
+  // --------------------------------------------------------------------------
+
   // compute cotangent weights of all edges
   void compute_edge_weight()
   {
@@ -533,59 +751,11 @@ public:
     }
   }
 
-  void contract_geometry()
-  {
-    MCFSKEL_DEBUG(std::cerr << "before contract geometry";)
+  // --------------------------------------------------------------------------
+  // Edge collapse
+  // --------------------------------------------------------------------------
 
-    update_vertex_id();
-
-    compute_edge_weight();
-
-    int nver = boost::num_vertices(polyhedron);
-    int nrows;
-    if (is_medially_centered)
-    {
-      nrows = nver * 3;
-    }
-    else
-    {
-      nrows = nver * 2;
-    }
-    // Assemble linear system At * A * X = At * B
-    typename SparseLinearAlgebraTraits_d::Matrix A(nrows, nver);
-    assemble_LHS(A);
-
-    typename SparseLinearAlgebraTraits_d::Vector X(nver), Bx(nrows);
-    typename SparseLinearAlgebraTraits_d::Vector Y(nver), By(nrows);
-    typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nrows);
-    assemble_RHS(Bx, By, Bz);
-
-    MCFSKEL_DEBUG(std::cerr << "before solve\n";)
-
-    // solve "At * A * X = At * B".
-    double D;
-    m_solver.pre_factor_non_symmetric(A, D);
-    m_solver.linear_solver_non_symmetric(A, Bx, X);
-    m_solver.linear_solver_non_symmetric(A, By, Y);
-    m_solver.linear_solver_non_symmetric(A, Bz, Z);
-
-    MCFSKEL_DEBUG(std::cerr << "after solve\n";)
-
-    // copy to mesh
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
-    {
-      vertex_descriptor vi = *vb;
-      int id = boost::get(vertex_id_pmap, vi);
-      int i = new_id[id];
-      Point p(X[i], Y[i], Z[i]);
-      vi->point() = p;
-    }
-
-    MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
-  }
-
-  int collapse_short_edges()
+  int collapse_edges_simplification()
   {
     internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
 
@@ -697,7 +867,7 @@ public:
     }
   }
 
-  int collapse_edges(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
+  int collapse_edges_linear(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
   {
     std::vector<edge_descriptor> edges;
     edges.reserve(boost::num_edges(polyhedron));
@@ -763,35 +933,9 @@ public:
     }
   }
 
-  int iteratively_collapse_edges()
-  {
-    internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
-    init_fixed_edge_map(fixed_edge_map);
-
-    int num_collapses = 0;
-    while (true)
-    {
-      int cnt;
-      if (Collapse_tag == SIMPLIFICATION)
-      {
-        cnt = collapse_short_edges();
-      }
-      else if (Collapse_tag == LINEAR)
-      {
-        cnt = collapse_edges(fixed_edge_map);
-      }
-
-      if (cnt == 0)
-      {
-        break;
-      }
-      else
-      {
-        num_collapses += cnt;
-      }
-    }
-    return num_collapses;
-  }
+  // --------------------------------------------------------------------------
+  // Triangle split
+  // --------------------------------------------------------------------------
 
   void compute_incident_angle()
   {
@@ -924,41 +1068,9 @@ public:
     return cnt;
   }
 
-  int iteratively_split_triangles()
-  {
-    MCFSKEL_DEBUG(std::cerr << "before split\n";)
-
-    int num_splits = 0;
-    while (true)
-    {
-      int cnt = split_flat_triangle();
-      if (cnt == 0)
-      {
-        break;
-      }
-      else
-      {
-        num_splits += cnt;
-      }
-    }
-
-    MCFSKEL_DEBUG(std::cerr << "after split\n";)
-
-    return num_splits;
-  }
-
-  int update_topology()
-  {
-    MCFSKEL_DEBUG(std::cerr << "before collapse edges\n";)
-
-    int num_collapses = iteratively_collapse_edges();
-    MCFSKEL_INFO(std::cerr << "collapse " << num_collapses << " edges.\n";)
-
-    int num_splits = iteratively_split_triangles();
-    MCFSKEL_INFO(std::cerr << "split " << num_splits << " edges.\n";)
-
-    return num_collapses + num_splits;
-  }
+  // --------------------------------------------------------------------------
+  // Degeneracy detection
+  // --------------------------------------------------------------------------
 
   int detect_degeneracies_in_disk()
   {
@@ -1028,98 +1140,96 @@ public:
     return num_fixed;
   }
 
-  void contract()
+  // --------------------------------------------------------------------------
+  // Voronoi pole
+  // --------------------------------------------------------------------------
+
+  void compute_voronoi_pole()
   {
-    contract_geometry();
-    update_topology();
+    MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
+    compute_vertex_normal();
 
-    if (Degeneracy_tag == HEURISTIC)
+    std::vector<std::pair<Exact_point, unsigned> > points;
+    std::vector<std::vector<int> > point_to_pole;
+
+    points.clear();
+    cell_dual.clear();
+    point_to_pole.clear();
+    point_to_pole.resize(boost::num_vertices(polyhedron));
+
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
-      detect_degeneracies_heuristic();
+      vertex_descriptor v = *vb;
+      int vid = boost::get(vertex_id_pmap, v);
+      Exact_point tp((v->point()).x(), (v->point()).y(), (v->point()).z());
+      points.push_back(std::make_pair(tp, vid));
     }
-    else if (Degeneracy_tag == EULER)
+
+    Delaunay T(points.begin(), points.end());
+
+    Finite_cells_iterator cit;
+    int cell_id = 0;
+    for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
     {
-      detect_degeneracies_in_disk();
+      Cell_handle cell = cit;
+      Exact_point point = T.dual(cell);
+      Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
+      cell_dual.push_back(pt);
+      for (int i = 0; i < 4; ++i)
+      {
+        TriVertex_handle vt = cell->vertex(i);
+        int id = vt->info();
+        point_to_pole[id].push_back(cell_id);
+      }
+      cell_id++;
     }
 
-    double area = internal::get_surface_area(polyhedron);
-    MCFSKEL_INFO(std::cout << "area " << area << "\n";)
-  }
-
-  void run_to_converge()
-  {
-    double last_area = 0;
-    int num_iteration = 0;
-    while (true)
+    poles.clear();
+    for (size_t i = 0; i < point_to_pole.size(); ++i)
     {
-      MCFSKEL_INFO(std::cout << "iteration " << num_iteration + 1 << "\n";)
+      Point surface_point = Point(to_double(points[i].first.x()),
+                                  to_double(points[i].first.y()),
+                                  to_double(points[i].first.z()));
 
-      contract_geometry();
-      update_topology();
-      if (Degeneracy_tag == HEURISTIC)
+      double max_neg_t = 1;
+      int max_neg_i = 0;
+
+      for (size_t j = 0; j < point_to_pole[i].size(); ++j)
       {
-        detect_degeneracies_heuristic();
-      }
-      else if (Degeneracy_tag == EULER)
-      {
-        detect_degeneracies_in_disk();
-      }
+        int pole_id = point_to_pole[i][j];
+        Point cell_point = cell_dual[pole_id];
+        Vector vt = cell_point - surface_point;
+        Vector n = normals[i];
 
-      double area = internal::get_surface_area(polyhedron);
-      double area_ratio = fabs(last_area - area) / original_area;
-
-      MCFSKEL_INFO(std::cout << "area " << area << "\n";)
-      MCFSKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
-
-      if (area_ratio < area_TH)
-      {
-        break;
-      }
-      last_area = area;
-
-      num_iteration++;
-      if (num_iteration >= iteration_TH)
-      {
-        break;
-      }
-    }
-  }
-
-  void convert_to_skeleton()
-  {
-    Skeleton skeleton(polyhedron);
-    std::vector<std::vector<int> > record;
-    skeleton.extract_skeleton(g, points, record);
-
-    skeleton_to_surface.resize(record.size());
-    for (size_t i = 0; i < record.size(); ++i)
-    {
-      for (size_t j = 0; j < record[i].size(); ++j)
-      {
-        int id = record[i][j];
-        if (correspondence.find(id) != correspondence.end())
+        double t = vt * n;
+        if (t < 0 && t < max_neg_t)
         {
-          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
-                                        correspondence[id].begin(),
-                                        correspondence[id].end());
-        }
-
-        if (id < max_id)
-        {
-          skeleton_to_surface[i].push_back(id);
+          max_neg_i = pole_id;
+          max_neg_t = t;
         }
       }
-    }
-    int cnt = 0;
-    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
-    {
-      cnt += skeleton_to_surface[i].size();
-    }
 
-    MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
-
-//    collapse_vertices_without_correspondence();
+      poles[i] = max_neg_i;
+    }
   }
+
+  void compute_vertex_normal()
+  {
+    normals.resize(boost::num_vertices(polyhedron));
+
+    vertex_iterator vb, ve;
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    {
+      vertex_descriptor v = *vb;
+      int vid = boost::get(vertex_id_pmap, v);
+      normals[vid] = internal::get_vertex_normal<typename Polyhedron::Vertex,Kernel>(*v);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Skeletonization
+  // --------------------------------------------------------------------------
 
   void collapse_vertices_without_correspondence()
   {
@@ -1242,89 +1352,6 @@ public:
 
     MCFSKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
     MCFSKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
-  }
-
-  void compute_voronoi_pole()
-  {
-    MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
-    compute_vertex_normal();
-
-    std::vector<std::pair<Exact_point, unsigned> > points;
-    std::vector<std::vector<int> > point_to_pole;
-
-    points.clear();
-    cell_dual.clear();
-    point_to_pole.clear();
-    point_to_pole.resize(boost::num_vertices(polyhedron));
-
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
-    {
-      vertex_descriptor v = *vb;
-      int vid = boost::get(vertex_id_pmap, v);
-      Exact_point tp((v->point()).x(), (v->point()).y(), (v->point()).z());
-      points.push_back(std::make_pair(tp, vid));
-    }
-
-    Delaunay T(points.begin(), points.end());
-
-    Finite_cells_iterator cit;
-    int cell_id = 0;
-    for (cit = T.finite_cells_begin(); cit != T.finite_cells_end(); ++cit)
-    {
-      Cell_handle cell = cit;
-      Exact_point point = T.dual(cell);
-      Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
-      cell_dual.push_back(pt);
-      for (int i = 0; i < 4; ++i)
-      {
-        TriVertex_handle vt = cell->vertex(i);
-        int id = vt->info();
-        point_to_pole[id].push_back(cell_id);
-      }
-      cell_id++;
-    }
-
-    poles.clear();
-    for (size_t i = 0; i < point_to_pole.size(); ++i)
-    {
-      Point surface_point = Point(to_double(points[i].first.x()),
-                                  to_double(points[i].first.y()),
-                                  to_double(points[i].first.z()));
-
-      double max_neg_t = 1;
-      int max_neg_i = 0;
-
-      for (size_t j = 0; j < point_to_pole[i].size(); ++j)
-      {
-        int pole_id = point_to_pole[i][j];
-        Point cell_point = cell_dual[pole_id];
-        Vector vt = cell_point - surface_point;
-        Vector n = normals[i];
-
-        double t = vt * n;
-        if (t < 0 && t < max_neg_t)
-        {
-          max_neg_i = pole_id;
-          max_neg_t = t;
-        }
-      }
-
-      poles[i] = max_neg_i;
-    }
-  }
-
-  void compute_vertex_normal()
-  {
-    normals.resize(boost::num_vertices(polyhedron));
-
-    vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
-    {
-      vertex_descriptor v = *vb;
-      int vid = boost::get(vertex_id_pmap, v);
-      normals[vid] = internal::get_vertex_normal<typename Polyhedron::Vertex,Kernel>(*v);
-    }
   }
 
 };

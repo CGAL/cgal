@@ -789,7 +789,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   std::cout << "before collapse edges\n";
-  int num_collapses = mcs->collapse_short_edges();
+  int num_collapses = mcs->collapse_edges();
   std::cout << "collapse " << num_collapses << " edges.\n";
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -822,7 +822,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   std::cout << "before split triangles\n";
-  int num_split = mcs->iteratively_split_triangles();
+  int num_split = mcs->split_triangles();
   std::cout << "split " << num_split << " triangles.\n";
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -853,8 +853,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   std::cout << "Degeneracy\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-//  mcs->detect_degeneracies_in_disk();
-  mcs->detect_degeneracies_heuristic();
+  mcs->detect_degeneracies();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
