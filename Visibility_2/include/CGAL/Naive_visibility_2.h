@@ -17,7 +17,7 @@
 //
 //
 // Author(s):  Kan Huang <huangkandiy@gmail.com>
-//             
+//             Michael Hemmer <michael.hemmer@cgal.org>
 #ifndef CGAL_NAIVE_VISIBILITY_2_H
 #define CGAL_NAIVE_VISIBILITY_2_H
 
@@ -30,6 +30,7 @@
 #include <CGAL/Ray_2.h>
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
+#include <CGAL/bounding_box.h>
 
 namespace CGAL {
 
@@ -51,18 +52,29 @@ void print(std::vector<Point_handle> ps){
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Naive_visibility_2 {
-    typedef typename Arrangement_2::Geometry_traits_2         Geometry_traits_2;
-    typedef typename Geometry_traits_2::Point_2						Point_2;
-    typedef typename Geometry_traits_2::Ray_2						Ray_2;
-    typedef typename Geometry_traits_2::Segment_2					Segment_2;
-    typedef typename Geometry_traits_2::Vector_2                    Vector_2;
-    typedef typename Geometry_traits_2::Direction_2                 Direction_2;
+    typedef Arrangement_2                                 Input_arrangement_2;
+    typedef Arrangement_2                                 Output_arrangement_2;
+    typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+    typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
+    typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+    typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+    typedef typename Arrangement_2::Ccb_halfedge_const_circulator
+                                                          Ccb_halfedge_const_circulator;
+    typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+    typedef typename Arrangement_2::Face_handle           Face_handle;
 
-    typedef typename Arrangement_2::Halfedge             Halfedge;
-    typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
-    typedef typename Arrangement_2::Vertex_handle  Vertex_handle;
-    typedef typename Arrangement_2::Face_const_handle    Face_handle;
-    typedef typename RegularizationTag                              Regularization_tag;
+    typedef typename Geometry_traits_2::Point_2           Point_2;
+    typedef typename Geometry_traits_2::Ray_2             Ray_2;
+    typedef typename Geometry_traits_2::Segment_2         Segment_2;
+    typedef typename Geometry_traits_2::Line_2            Line_2;
+    typedef typename Geometry_traits_2::Vector_2          Vector_2;
+    typedef typename Geometry_traits_2::Direction_2       Direction_2;
+    typedef typename Geometry_traits_2::FT                Number_type;
+    typedef typename Geometry_traits_2::Object_2          Object_2;
+
+    typedef RegularizationTag                             Regularization_tag;
+    typedef CGAL::Tag_true                                Supports_general_polygon_tag;
+    typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
 
     enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
@@ -74,25 +86,48 @@ public:
     Naive_visibility_2(const Arrangement_2 &arr):arr(arr), attach_tag(true) {}
     Naive_visibility_2(): attach_tag(false) {}
 
-
     Face_handle visibility_region(const Point_2 &q, const Halfedge_handle &e, Arrangement_2 &out_arr) {
         Arrangement_2 arrc = arr ; //copy of arr;
         Halfedge_handle ec; //copy of edge;
-        for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_begin(); eh++) {
+        for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
             if (eh->source()->point() == e-> source()->point() && eh->target()->point() == e->target()->point()) {
                 ec = eh;
                 break;
             }
         }
+        print_arrangement(arrc);
+        Number_type xmin, xmax, ymin, ymax;
+        Point_2 q1 = arrc.vertices_begin()->point();
+        xmax = xmin = q1.x();
+        ymin = ymax = q1.y();
+        for (Vertex_handle vh = arrc.vertices_begin(); vh != arrc.vertices_end(); vh++) {
+          if (vh->point().x() < xmin)
+            xmin = vh->point().x();
+          if (vh->point().x() > xmax)
+            xmax = vh->point().x();
+          if (vh->point().y() < ymin)
+            ymin = vh->point().x();
+          if (vh->point().y() > ymax)
+            ymax = vh->point().y();
+        }
+        xmin -= 10;
+        xmax += 10;
+        ymin -= 10;
+        ymax += 10;
+        Point_2 p1(xmin, ymin), p2(xmax, ymin), p3(xmax, ymax), p4(xmin, ymax);
+        CGAL::insert(arrc, Segment_2(p1, p2));
+        CGAL::insert(arrc, Segment_2(p2, p3));
+        CGAL::insert(arrc, Segment_2(p3, p4));
+        CGAL::insert(arrc, Segment_2(p4, p1));
         if (ec->target()->point() == q) {
             Point_2 source = ec->source()->point();
             Point_2 target = ec->next()->target()->point();
-            Halfedge prev = ec->prev();
+            Halfedge_handle prev = ec->prev();
             arrc.remove_edge(ec->next());
             arrc.remove_edge(ec);
             std::vector<Point_2> polygon;
             visibility_region_impl(q, prev->face(), polygon);
-            if (is_outbound)
+            if (ec->twin()->face()->is_unbounded())
                 build_arr(polygon, out_arr);
             else {
                 std::vector<int> source_i, target_i ;
@@ -128,15 +163,15 @@ public:
                 else {
                     is_between = true;
                     while (next_i != big) {
-                        if (CGAL::right_turn(source, q, polygon[next_i] || CGAL::right_turn(q, target, polygon[next_i]))) {
+                        if (CGAL::right_turn(source, q, polygon[next_i]) || CGAL::right_turn(q, target, polygon[next_i])) {
                             is_between = false;
                             break;
                         }
                         next_i ++;
                     }
                 }
-                std::vector<Point_2>::iterator first = polygon.begin() + source_i.back();
-                std::vector<Point_2>::iterator last = polygon.begin() + target_i.front() + 1;
+                typename std::vector<Point_2>::iterator first = polygon.begin() + source_i.back();
+                typename std::vector<Point_2>::iterator last = polygon.begin() + target_i.front() + 1;
                 if (is_between) {
                     std::vector<Point_2> polygon1(first, last);
                     build_arr(polygon1, out_arr);
@@ -184,8 +219,8 @@ public:
                 int next_i = small + 1;
                 while (CGAL::collinear(source, polygon[next_i], target))
                     next_i++;
-                std::vector<Point_2>::iterator first = polygon.begin() + source_i.back();
-                std::vector<Point_2>::iterator last = polygon.begin() + target_i.front() + 1;
+                typename std::vector<Point_2>::iterator first = polygon.begin() + source_i.back();
+                typename std::vector<Point_2>::iterator last = polygon.begin() + target_i.front() + 1;
                 if (CGAL::left_turn(source, target, polygon[next_i])) {
                     std::vector<Point_2> polygon1(first, last);
                     build_arr(polygon1, out_arr);
@@ -284,7 +319,6 @@ private:
                 Point_2 p1 = intersection_point(curr_vision_ray, active_edges[0]);
                 polygon.push_back(p1);
 //todo                CGAL::insert_curve(out_arr, Ray_2(p1, d1));
-
                 closest_edge = active_edges[0];
                 remove_edges(active_edges, curr_vision_ray);
 
@@ -334,7 +368,7 @@ private:
                     update_visibility(right_p, polygon);
                     insert_needle(collinear_vertices, polygon);
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
-                    polygon.push_back(left_p);
+                    update_visibility(left_p, polygon);
                     break;
                 case INNER :
                     //remove right and collinear;
@@ -346,7 +380,7 @@ private:
                         left_p = intersection_point(curr_vision_ray, active_edges[0]);
                         update_visibility(right_p, polygon);
                         insert_needle(collinear_vertices, polygon);
-                        polygon.push_back(left_p);
+                        update_visibility(left_p, polygon);
                     }
                     break;
                 }
@@ -474,15 +508,15 @@ private:
                      std::vector<Halfedge_handle>& edges,
                      const Point_2& p)
     {
-        typename Arrangement_2::Ccb_halfedge_const_circulator curr = fh->outer_ccb();
-        typename Arrangement_2::Ccb_halfedge_const_circulator circ = curr;
+        typename Arrangement_2::Ccb_halfedge_circulator curr = fh->outer_ccb();
+        typename Arrangement_2::Ccb_halfedge_circulator circ = curr;
         do {
             sort_vertex(vertices, curr->source(), p);
             edges.push_back(curr);
         } while (++curr != circ);
-        typename Arrangement_2::Hole_const_iterator hi;
+        typename Arrangement_2::Hole_iterator hi;
         for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
-            typename Arrangement_2::Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
+            typename Arrangement_2::Ccb_halfedge_circulator c1 = *hi, c2 = *hi;
             do {
                 sort_vertex(vertices, c1->source(), p);
                 edges.push_back(c1);
@@ -516,7 +550,7 @@ private:
     void add_edge(Vertex_handle vh,
                    std::vector<Halfedge_handle>& edges,
                    const Ray_2& r) {
-        typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+        typename Arrangement_2::Halfedge_around_vertex_circulator first, curr;
         first = curr = vh->incident_halfedges();
         do {
             if (!CGAL::right_turn(r.source(), vh->point(), curr->source()->point()))
@@ -633,15 +667,7 @@ private:
         } while (++curr != edges.end());
         return UNBOUNDED;
     }
-
-    void build_arr(const std::vector<Point_2>& polygon, Arrangement_2& arr ) {
-        for (int i = 0; i != polygon.size()-1; i++ ) {
-            CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
-        }
-        CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
-    }
-
-//debug
+    //debug
     void print_edges(std::vector<Halfedge_handle>& edges){
         for (int i = 0; i != edges.size(); i++) {
             Point_2 p1, p2;
@@ -650,6 +676,22 @@ private:
             std::cout<<p1<<"->"<<p2<<std::endl;
         }
     }
+
+    void print_vectex(const std::vector<Point_2>& polygon) {
+      for (int i = 0; i != polygon.size(); i++) {
+        std::cout<<polygon[i]<<std::endl;
+      }
+    }
+
+    void build_arr(const std::vector<Point_2>& polygon, Arrangement_2& arr ) {
+        for (int i = 0; i != polygon.size()-1; i++ ) {
+            CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
+        }
+        print_vectex(polygon);
+        CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
+    }
+
+
 
 
     //angular sweep a vertice of face.

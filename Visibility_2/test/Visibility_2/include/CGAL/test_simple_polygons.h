@@ -46,7 +46,7 @@ bool simple_polygon_face_test_case(std::ifstream &input, std::ifstream &correct_
 
     CGAL::create_arrangement_from_file<Arrangement_2>(correct_out_arr, correct_output);
 
-    typename Arrangement_2::Face_const_iterator fit;
+    typename Arrangement_2::Face_handle fit;
 
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
         if (!fit->is_unbounded()) {
@@ -66,12 +66,12 @@ bool simple_polygon_halfedge_test_case(std::ifstream &input, std::ifstream &corr
     typedef typename Geometry_traits_2::Point_2             Point_2;
     typedef typename Geometry_traits_2::Segment_2           Segment_2;
 
-    Visibility_2 visibility;
 
     // First read arrangement 
     Arrangement_2 arr, out_arr, correct_out_arr;
 
     CGAL::create_arrangement_from_file<Arrangement_2>(arr, input);
+    Visibility_2 visibility(arr);
 
     // Read query point from file
     double x, y;
@@ -80,7 +80,7 @@ bool simple_polygon_halfedge_test_case(std::ifstream &input, std::ifstream &corr
 
     CGAL::create_arrangement_from_file<Arrangement_2>(correct_out_arr, correct_output);
 
-    typename Arrangement_2::Halfedge_const_iterator hit;
+    typename Arrangement_2::Halfedge_iterator hit;
 
     for (hit = arr.halfedges_begin(); hit != arr.halfedges_end(); ++hit) {
         Segment_2 curr_seg(hit->source()->point(), hit->target()->point());
