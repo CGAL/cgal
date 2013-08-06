@@ -157,9 +157,9 @@ This operation is reliable when the `AABBTraits` model provided has exact predic
 The function `compute_sdf_values()` provides an implementation of the SDF computation for a given \cgal Polyhedron.
 
 After the raw computation, the following post-processing steps are applied:
-  - Facets with no SDF values (i.e. zero) are assigned the average SDF value of their neighbors. 
+  - Facets with no SDF values (i.e. zero) are assigned the average SDF value of their one-ring edge-adjacent neighbors. 
   If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper. 
-  The main reason for avoiding zero SDF values is that it can obstruct log-normalization process.
+  The main reason for avoiding zero SDF values is that it can obstruct log-normalization process which takes place at the beginning of segment_from_sdf_values()`.
   - SDF values are smoothed with bilateral filtering.
   - SDF values are linearly normalized between [0,1].
 
@@ -196,7 +196,7 @@ The main advantage is to decrease from log to constant the complexity for access
 
 \section Performances Performances
 We provide performance results of `compute_sdf_values()` and `segment_from_sdf_values()` for various models with different kernels.
-These results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 \todo Update release number as well as first introduced in.
 
 Performance of `compute_sdf_values()` with 25 rays (in seconds):
