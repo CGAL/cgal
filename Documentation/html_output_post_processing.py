@@ -252,12 +252,11 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         dts.each(lambda i: pq(this).html(re.sub("((Class )|(Struct ))", "Concept ", pq(this).html())))
         write_out_html(d, fn)
 
-    # throw out nav-sync and the detailed description title
+    # throw out nav-sync
     all_pages=glob.glob('./*/*.html')
     for fn in all_pages:
         d = pq(filename=fn, parser='html')
         d('#nav-sync').hide()
-        d('h2.groupheader').filter(lambda i: pq(this).text() == 'Detailed Description').remove()
         # TODO count figures
         write_out_html(d, fn)
 
@@ -270,10 +269,17 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     for fn in citelist_files:
         re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
     
-    #add a section for creating the inheritence section
+    #add a section for Inherits from
     citelist_files=package_glob('./*/class*.html')
     for fn in citelist_files:
-        re_replace_in_file(r'<p>Inherits\s*(.*)</p>', r'<dl class="section inherits"><dt>Inherits from</dt><dd>\1</dd>', fn)
+        re_replace_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
+
+    #remove class name in Definition section
+    all_pages=glob.glob('./*/class*.html')
+    for fn in all_pages:
+        d = pq(filename=fn, parser='html')
+        d('h3').remove()
+        write_out_html(d, fn)
 
 if __name__ == "__main__":
     main()

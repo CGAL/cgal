@@ -14,7 +14,7 @@
     <briefdescription visible="no"/>
     <includes visible="$SHOW_INCLUDE_FILES"/>
     <inheritancegraph visible="$CLASS_GRAPH"/>
-    <detaileddescription title=""/>
+    <detaileddescription title="Definition"/>
     <collaborationgraph visible="$COLLABORATION_GRAPH"/>
     <allmemberslink visible="yes"/>
     <memberdecl>
@@ -78,7 +78,7 @@
       <variables title=""/>
       <membergroups visible="yes"/>
     </memberdecl>
-    <detaileddescription title=""/>
+    <detaileddescription title="Definition"/>
     <memberdef>
       <inlineclasses title=""/>
       <typedefs title=""/>
