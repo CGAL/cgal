@@ -48,16 +48,7 @@ several rays from a cone which is constructed using the centroid of the facet as
 These rays are casted based on inward-normal direction to the other side of the mesh. 
 Rays which form obtuse angle with inward-normal of intersected facets are rejected.
 Using lenghts of accepted rays (which intuitively correspond to a local volume sampling),
-the SDF value is calculated by first applying outlier removal and then taking average of lengths.
-
-\cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
-Comparison of biased toward the center and uniform disk sampling for 64 rays.
-\cgalFigureEnd
-
-We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
-The sampling method is biased toward the center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
-As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
-A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.
+the SDF value is calculated by first applying outlier removal and then taking average of lengths (see \ref RaySampling for details). 
 
 After having calculated the SDF value for each facet, bilateral smoothing \cite Tomasi1998Bilateral (an edge-preserving filtering technique) is applied.
 The purpose of edge-preserving smoothing is to remove the noise while keeping fast changes on SDF values in-place without smoothing,
@@ -193,7 +184,7 @@ a polyhedron type with a facet type having an extra ID field together with a vec
 The main advantage is to decrease from log to constant the complexity for accessing the data associated to facets.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
-
+<BR>
 \section Performances Performances
 We provide performance results of `compute_sdf_values()` and `segment_from_sdf_values()` for various models with different kernels.
 These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
@@ -299,8 +290,17 @@ Performance of `segment_from_sdf_values()` with this implementation :
 </tr>
 </table>
 </center>
+<BR>
+\section ImplementationDetails Implementation Details
+\subsection RaySampling Ray Sampling
+\cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
+Comparison of biased toward the center and uniform disk sampling for 64 rays.
+\cgalFigureEnd
 
-
+We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
+The sampling method is biased toward the center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
+As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
+A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.
 
 \section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker during the 2012 season
