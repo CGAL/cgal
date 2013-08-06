@@ -183,14 +183,14 @@ The output is the number of segments and a property map which associates to each
 \subsubsection Example_3 Computation of SDF Values and Segmentation
 The function `compute_sdf_values_and_segment()` combines the two aforementioned functions.
 Note that computing several segmentation of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
-it is advised to first compute the SDF values using `compute_sdf_values()` and use them each time you want to call `segment_from_sdf_values()`.
+it is advised to first compute the SDF values using `compute_sdf_values()` and use them for each call to `segment_from_sdf_values()`.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp}
 
 \subsubsection Surface_mesh_segmentationUsingapolyhedron Using a Polyhedron with an ID per Facet
 The previous examples use a `std::map` as property maps for storing the SDF values and the segmentation results. This example uses
 a polyhedron type with a facet type having an extra ID field together with a vector as underlying data structure in the property maps.
-The main advantage is to decrease the complexity of accessing associated data with facets from logarithmic to constant.
+The main advantage is to decrease from log to constant the complexity for accessing the data associated to facets.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 
