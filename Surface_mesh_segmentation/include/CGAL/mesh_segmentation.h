@@ -18,21 +18,22 @@ namespace CGAL
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cite shapira2008consistent.
  * After the computation of SDF values for each facet, the following post-processing steps are applied:
- *  - Facets with no SDF values (i.e. zero) are assigned to average SDF value of its neighbors.
- * If still there is any facet which has no SDF value, minimum SDF value greater than zero is assigned to it.
- *  - SDF values are smoothed with bilateral filtering.
- *  - SDF values are linearly between [0,1].
+ *   - Facets with no SDF values (i.e. zero) are assigned the average SDF value of their one-ring edge-adjacent neighbors.
+ *     If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper.
+ *     The main reason for avoiding zero SDF values is that it can obstruct log-normalization process which takes place at the beginning of segment_from_sdf_values()`.
+ *   - SDF values are smoothed with bilateral filtering.
+ *   - SDF values are linearly normalized between [0,1].
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
- *          It is default to true, and can be omitted.
+ *          It is set by default to true, and can be omitted.
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
- * @param[out] sdf_values the sdf value of each facet
+ * @param[out] sdf_values the SDF value of each facet
  * @param cone_angle opening angle for cone, expressed in radians
- * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays has a little effect on the quality of the result.
+ * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays beyond the default value has little influence upon the resulting segmentation.
  * @param traits traits object
  * @return minimum and maximum SDF values before linear normalization
  */
@@ -77,11 +78,11 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @brief Function computing the segmentation of a surface mesh given an SDF value per facet.
  *
  * This function fills a property map which associates a segment-id (between [0, number of segments -1]) to each facet.
- * Formally, a segment is a set of connected facets which are placed under same cluster.
+ * A segment is a set of connected facets which are placed under the same cluster.
  *
  * \note Log-normalization is applied on @a sdf_values before segmentation.
  * \note There is no direct relation between the parameter @a number_of_levels
- * and number of segments. However, large number of clusters likely to result in detailed segmentation of the mesh with large number of segments.
+ * and the final number of segments after segmentation. However, large number of clusters likely to result in detailed segmentation of the mesh with a large number of segments.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Polyhedron a %CGAL polyhedron
@@ -89,7 +90,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  * @param polyhedron surface mesh on which SDF values are computed
- * @param sdf_values the sdf value of each facet between [0-1]
+ * @param sdf_values the SDF value of each facet between [0-1]
  * @param[out] segment_ids the segment id of each facet
  * @param number_of_levels number of clusters for soft clustering
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
@@ -121,16 +122,16 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
  * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the segmentation of a surface mesh.
  *
- * Basically this function combines `CGAL::sdf_values_computation` and
+ * This function combines `CGAL::sdf_values_computation` and
  * `CGAL::surface_mesh_segmentation_from_sdf_values` functions by computing SDF values and segmenting the mesh in one go.
  *
- * \note For computing several segmentation of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
- * it is advised to first compute the SDF values using `CGAL::compute_sdf_values` and use them each time you want to
- * call `CGAL::segment_from_sdf_values`.
+ * \note For computing segmentations of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
+ * it is more efficient to first compute the SDF values using `CGAL::compute_sdf_values` and use them for each call to
+ * `CGAL::segment_from_sdf_values`.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
- *          It is default to true, and can be omitted.
+ *          It is set by default to true, and can be omitted.
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
