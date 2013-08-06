@@ -41,7 +41,7 @@ int main() {
     typedef Traits_2::Point_2										Point_2;
     typedef Traits_2::X_monotone_curve_2							Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-    typedef CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+    typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
@@ -53,7 +53,7 @@ int main() {
     typedef Traits_2::Point_2                                       Point_2;
     typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
-    typedef CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+    typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();

@@ -25,7 +25,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
-#include <CGAL/Naive_visibility_2.h>
+//#include <CGAL/Naive_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 #include <CGAL/test_simple_polygons.h>
@@ -41,9 +41,9 @@ int main() {
   typedef Traits_2::Point_2										      Point_2;
   typedef Traits_2::X_monotone_curve_2							Segment_2;
   typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-  typedef CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Simple_polygon_visibility_2;
-  typedef CGAL::Visibility_2::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Naive_visibility_2;
 
   // First read arrangement 

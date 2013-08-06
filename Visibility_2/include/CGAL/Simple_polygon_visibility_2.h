@@ -29,8 +29,6 @@
 
 namespace CGAL {
 
-namespace Visibility_2 {
-
 template<class Arrangement_2, class RegularizationTag> 
 class Simple_polygon_visibility_2 {
 
@@ -786,7 +784,6 @@ private:
   }
 };
 
-} // namespace Visibility_2
 } // namespace CGAL
 
 #endif

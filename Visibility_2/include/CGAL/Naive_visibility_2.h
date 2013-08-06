@@ -34,8 +34,6 @@
 
 namespace CGAL {
 
-namespace Visibility_2 {
-
 //debug
 template<typename Point_handle>
 void print(std::vector<Point_handle> ps){
@@ -788,10 +786,7 @@ void print_arrangement(const Arrangement_2 &arr) {
       std::cout << "[" << eit->curve() << "]" << std::endl;
 }
 
-
-
-} // namespace Visibility_2
-} // namespace CGAL
+} // end namespace CGAL
 
 
 
