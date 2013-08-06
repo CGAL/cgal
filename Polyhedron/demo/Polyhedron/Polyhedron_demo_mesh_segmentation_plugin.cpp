@@ -82,16 +82,15 @@ public:
 
         dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
         dock_widget->setVisible(false); // do not show at the beginning
-        ui_widget = new Ui::Mesh_segmentation_widget();
 
         QWidget* qw =new QWidget();
-        ui_widget->setupUi(qw); //calling this on dock_widget is not working, since dock_widget has already layout
+        ui_widget.setupUi(qw); //calling this on dock_widget is not working, since dock_widget has already layout
         // deleting dock_widget layout is also not working. So for a work-around I created a intermadiate widget (qw).
         dock_widget->setWidget(qw); // transfer widgets in ui_widget by qw.
         mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
     
-        connect(ui_widget->Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));   
-        connect(ui_widget->SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));   
+        connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));   
+        connect(ui_widget.SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));   
     }
     
     template<class SDFPropertyMap>
@@ -111,7 +110,7 @@ private:
     QAction* actionSegmentation;
 
     QDockWidget* dock_widget;
-    Ui::Mesh_segmentation_widget* ui_widget;
+    Ui::Mesh_segmentation_widget ui_widget;
     
     std::vector<QColor> color_map_sdf;
     std::vector<QColor> color_map_segmentation;
@@ -192,9 +191,9 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     if(!item) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
-    int number_of_rays = ui_widget->Number_of_rays_spin_box->value();
-    double cone_angle = (ui_widget->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;  
-    bool create_new_item = ui_widget->New_item_check_box->isChecked();
+    int number_of_rays = ui_widget.Number_of_rays_spin_box->value();
+    double cone_angle = (ui_widget.Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;  
+    bool create_new_item = ui_widget.New_item_check_box->isChecked();
     
     Item_sdf_map::iterator pair;
     if(create_new_item)
@@ -230,7 +229,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     pair->first->set_color_vector_read_only(true);
     colorize_sdf(pair->first, sdf_pmap, pair->first->color_vector()); 
        
-    pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget->Cone_angle_spin_box->value())); 
+    pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget.Cone_angle_spin_box->value())); 
        
     if(create_new_item)
     {         
@@ -257,11 +256,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
-    int number_of_clusters = ui_widget->Number_of_clusters_spin_box->value();   
-    double smoothness = ui_widget->Smoothness_spin_box->value();
-    int number_of_rays = ui_widget->Number_of_rays_spin_box->value();
-    double cone_angle = (ui_widget->Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;  
-    bool create_new_item = ui_widget->New_item_check_box->isChecked();   
+    int number_of_clusters = ui_widget.Number_of_clusters_spin_box->value();   
+    double smoothness = ui_widget.Smoothness_spin_box->value();
+    int number_of_rays = ui_widget.Number_of_rays_spin_box->value();
+    double cone_angle = (ui_widget.Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;  
+    bool create_new_item = ui_widget.New_item_check_box->isChecked();   
 
     Item_sdf_map::iterator pair;
     if(create_new_item)
