@@ -60,11 +60,11 @@ Section  \ref TDS3secintro.)
 
 \cgal provides base vertex classes and base cell classes:
 
-- `CGAL::Triangulation_ds_cell_base_3<>`
-- `CGAL::Triangulation_ds_vertex_base_3<>`
+- `CGAL::Triangulation_ds_cell_base_3<TDS>`
+- `CGAL::Triangulation_ds_vertex_base_3<TDS>`
 - `CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>`
 - `CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>`
-- `CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>`
+- `CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, TriangulationCellBase_3>`
 
 ## Helper Classes ##
 

@@ -101,12 +101,12 @@ p_{k+1} & = & p_k & + & hv(p'_k) \\
 \end{array}
 \f]
 
-See \cite cgal:ptvf-nrcpp-02 for further details about numerical
+See \cgalCite{cgal:ptvf-nrcpp-02} for further details about numerical
 integration.
 
 \section Section_2D_Streamlines_Strategy Farthest Point Seeding Strategy 
 
-The algorithm implemented in this package \cite cgal:mad-fpsep-05
+The algorithm implemented in this package \cgalCite{cgal:mad-fpsep-05}
 consists of placing one streamline at a time by numerical integration
 starting farthest away from all previously placed
 streamlines.
@@ -158,7 +158,7 @@ processed via a list of Delaunay triangulation vertices.
 
 To implement the triangular grid, the class `Delaunay_triangulation_2` is used. The priority queue used
 to store candidate seed points is taken from the Standard Template
-Library \cite cgal:sgcsi-stlpg-97.
+Library \cgalCite{cgal:sgcsi-stlpg-97}.
 
 \section Section_2D_Streamlines_Example Examples 
 

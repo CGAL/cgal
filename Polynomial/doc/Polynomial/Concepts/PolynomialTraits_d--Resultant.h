@@ -42,7 +42,7 @@ the Sylvester Matrix or the Bezout
 Matrix as well as the so called subresultant algorithm, 
 which is a variant of the Euclidean Algorithm. 
 More sophisticated methods may use modular arithmetic and interpolation. 
-For more information we refer to, e.g., \cite gg-mca-99. 
+For more information we refer to, e.g., \cgalCite{gg-mca-99}. 
 
 \cgalRefines `AdaptableBinaryFunction` 
 \cgalRefines `CopyConstructible` 

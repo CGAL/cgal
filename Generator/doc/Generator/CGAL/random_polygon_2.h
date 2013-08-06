@@ -34,7 +34,7 @@ The implementation is based on the method of eliminating self-intersections in
 a polygon by using so-called "2-opt" moves. Such a move eliminates an 
 intersection between two edges by reversing the order of the vertices between 
 the edges. No more than \f$ O(n^3)\f$ such moves are required to simplify a polygon 
-defined on \f$ n\f$ points \cite ls-utstp-82. 
+defined on \f$ n\f$ points \cgalCite{ls-utstp-82}. 
 Intersecting edges are detected using a simple sweep through the vertices 
 and then one intersection is chosen at random to eliminate after each sweep. 
 The worse-case running time is therefore \f$ O(n^4 \log n)\f$. 

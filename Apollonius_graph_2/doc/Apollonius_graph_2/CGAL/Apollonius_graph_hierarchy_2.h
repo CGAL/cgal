@@ -18,7 +18,7 @@ find the nearest neighbor of \f$ p\f$ as in the
 `Apollonius_graph_2<Gt,Agds>` class. At every subsequent level \f$ i\f$ 
 we use the nearest neighbor found at level \f$ i+1\f$ to find the nearest 
 neighbor at level \f$ i\f$. This is a variant of the corresponding 
-hierarchy for points found in \cite d-iirdt-98. 
+hierarchy for points found in \cgalCite{d-iirdt-98}. 
 The class has two template parameters which have essentially the same 
 meaning as in the `Apollonius_graph_2<Gt,Agds>` class. The first 
 template parameter must be a model of the 

@@ -7,15 +7,15 @@ namespace CGAL {
 \anchor arr_reftrap_pl 
 
 The `Arr_trapezoid_ric_point_location` class implements the incremental randomized algorithm 
-introduced by Mulmuley \cite m-fppa-90 as presented by 
-Seidel \cite s-sfira-91 (see also [\cite bkos-cgaa-00 Chapter 6). 
+introduced by Mulmuley \cgalCite{m-fppa-90} as presented by 
+Seidel \cgalCite{s-sfira-91} (see also [\cgalCite{bkos-cgaa-00} Chapter 6). 
 It subdivides each arrangement face to pseudo-trapezoidal cells, each 
 of constant complexity, and constructs and maintains a linear-size search 
 structure on top of these cells, such that each query can be answered 
 in \f$ O(\log n)\f$ time, where \f$ n\f$ is the complexity of the arrangement. 
 
 Constructing the search structures takes \f$ O(n \log n)\f$ expected time 
-and may require a small number of rebuilds \cite hkh-iiplgtds-12. Therefore 
+and may require a small number of rebuilds \cgalCite{hkh-iiplgtds-12}. Therefore 
 attaching a trapezoidal point-location object to an existing arrangement 
 may incur some overhead in running times. In addition, the point-location 
 object needs to keep its auxiliary data structures up-to-date as the 

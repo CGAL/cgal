@@ -13,7 +13,7 @@ stand-alone class, which is parameterized by a kernel class, and as a
 type in the kernel class. Each operation in the kernel is provided via
 a functor class\cgalFootnote{A class which defines a member `operator()`.} in the  kernel
 class and also as either a member function or a global function.
-See \cite hhkps-aegk-01 for more details about this design.
+See \cgalCite{hhkps-aegk-01} for more details about this design.
 Ideally, if the kernel provides all the primitives required, you can
 use any kernel as a traits class directly with your algorithm or data
 structure; see also Chapter  \ref chaptraits_classes . If you need
@@ -58,14 +58,14 @@ Each kernel object is provided as both a stand-alone class, which is
 parameterized by a kernel class (`Geo_object_D<K>`), and as a type 
 in the kernel class (`K::Geo_object_D`).  While the former use may
 be more natural for users not interested in the flexibility of the kernel
-(and is compatible with the original kernel design \cite fgkss-dccga-00), the
+(and is compatible with the original kernel design \cgalCite{fgkss-dccga-00}), the
 latter syntax should be used in all code distributed with the library
 as it allows types in the kernel to be easily exchanged and modified.
 Similarly, each operation and construction in the kernel is provided via 
 a function object class in the 
 kernel class and also as either a member function or a global function; 
 developers should use the function object classes to gain access to the
-functionality.  See \cite hhkps-aegk-01 for more details about this 
+functionality.  See \cgalCite{hhkps-aegk-01} for more details about this 
 design and how it is accomplished.
 
 The classes for the geometric objects in the kernel have a 

@@ -120,7 +120,7 @@ When all the points are collinear, this condition becomes:
 
 The method  `Triangulation_3::is_valid()` checks
 the local validity of a given triangulation. This does not always
-ensure global validity \cite mnssssu-cgpvg-96, \cite dlpt-ccpps-98 but it is 
+ensure global validity \cgalCite{mnssssu-cgpvg-96}, \cgalCite{dlpt-ccpps-98} but it is 
 sufficient for practical cases.
 
 \section Triangulation_3Delaunay Delaunay Triangulation
@@ -182,7 +182,7 @@ of the four-dimensional points \f$ (p,\|p-O\|^2-w_p),\f$ for
 Note that all points of \f$ {S}^{(w)}\f$ do not
 necessarily appear as vertices of the regular
 triangulation. To know more about regular triangulations, see for
-example \cite es-itfwr-96.
+example \cgalCite{es-itfwr-96}.
 
 When all weights are 0, power spheres are nothing more than
 circumscribing spheres, and the regular triangulation is exactly the
@@ -204,8 +204,8 @@ Derivation diagram of the 3D triangulation classes.
 
 The three main classes (`Triangulation_3`, `Delaunay_triangulation_3`
 and `Regular_triangulation_3`) provide high-level geometric functionality
-such as location of a point in the triangulation \cite cgal:dpt-wt-02, insertion
-and possibly removal of a point \cite cgal:dt-pvr3d-03, and are responsible for the
+such as location of a point in the triangulation \cgalCite{cgal:dpt-wt-02}, insertion
+and possibly removal of a point \cgalCite{cgal:dt-pvr3d-03}, and are responsible for the
 geometric validity. They are built as layers on top of a triangulation data
 structure, which stores their combinatorial structure. This separation between
 the geometry and the combinatorics is reflected in the software design by the
@@ -326,7 +326,7 @@ geometric traits.\cgalFootnote{The mechanism used behind the scenes to allow thi
 The `Fast_location` policy is implemented using a hierarchy of
 triangulations; it changes the behavior of functions `locate`,
 `insert`, `move`, and `remove`.
-As proved in \cite cgal:d-dh-02, this structure has an
+As proved in \cgalCite{cgal:d-dh-02}, this structure has an
 optimal behavior when it is built for Delaunay triangulations.
 
 In this setting, if you build a triangulation by iteratively inserting points,
@@ -505,7 +505,7 @@ of points. For Delaunay triangulations, this bound is reached in cases such as
 points equally distributed on two non-coplanar lines. However, the good news
 is that, in many cases, the complexity of a Delaunay triangulation is linear or
 close to linear in the number of points. Several
-articles \cite d-hdvdl-89, \cite e-dpssdt-02, \cite geometrica-5986i, \cite prisme-4453a,prisme-abl-03
+articles \cgalCite{d-hdvdl-89}, \cgalCite{e-dpssdt-02}, \cgalCite{geometrica-5986i}, \cgalCite{prisme-4453a}, \cgalCite{prisme-abl-03}
 have proved such good complexity bounds for specific point distributions, such
 as points distributed on surfaces under some conditions.
 
@@ -568,7 +568,7 @@ Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Fast location</B> 
+<B>%Fast location</B> 
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
@@ -727,7 +727,7 @@ Running times in seconds for algorithms on 3D triangulations.
 \cgalFigureCaptionEnd
 
 More benchmarks comparing \cgal to other software can be found
-in \cite msri52:liu-snoeyink-05.
+in \cgalCite{msri52:liu-snoeyink-05}.
 
 \subsection Triangulation_3MemoryUsage Memory Usage
 
@@ -776,7 +776,7 @@ points, as measured empirically using `Memory_sizer` for large triangulations
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
-<B>Fast location</B> 
+<B>%Fast location</B> 
 <TD ALIGN=RIGHT NOWRAP>
 
 <TD ALIGN=RIGHT NOWRAP>
@@ -856,8 +856,8 @@ and data with many degenerate cases. This last data set exhibits an infinite
 loop with an inexact kernel, and of course we are not sure whether what is
 computed for the other data sets with this inexact kernel is a Delaunay
 triangulation. General introductory information about these robustness issues
-can be found in \cite cgta-kmpsy-08. More benchmarks around this issue can
-also be found in \cite cgal:dp-eegpd-03.
+can be found in \cgalCite{cgta-kmpsy-08}. More benchmarks around this issue can
+also be found in \cgalCite{cgal:dp-eegpd-03}.
 
 \cgalFigureAnchor{Triangulation3figkernelsanddatasets}
 <CENTER>
@@ -975,7 +975,7 @@ Data sets used in the benchmark of \cgalFigureRef{Triangulation3figkernelsanddat
 Monique Teillaud started to work on the 3D triangulation packages in
 1997, following the design of the 2D triangulation packages. The
 notions of degenerate dimensions and infinite vertex were formalized
-\cite t-tdtc-99 and induced changes in the 2D triangulation
+\cgalCite{t-tdtc-99} and induced changes in the 2D triangulation
 packages. The packages were first released in \cgal 2.1. They contained
 basic functionalities on triangulations, Delaunay triangulations,
 regular triangulations.
@@ -983,7 +983,7 @@ regular triangulations.
 A first version of removal of a vertex from a Delaunay triangulation
 was released in \cgal 2.2. However, this removal became really robust
 only in \cgal 2.3, after some research that allowed to deal with
-degenerate cases quite easily \cite cgal:dt-pvr3d-03. Andreas Fabri
+degenerate cases quite easily \cgalCite{cgal:dt-pvr3d-03}. Andreas Fabri
 implemented this revised version of the removal, and a faster removal
 algorithm for \cgal 3.0.
 
@@ -994,10 +994,10 @@ she also wrote the traits classes for regular triangulations.
 
 In 2000, Sylvain Pion started working on these packages. He improved
 the efficiency of triangulations in \cgal 2.3 and 2.4 in several ways
-\cite cgal:bdpty-tc-02: he implemented the Delaunay hierarchy
-\cite cgal:d-dh-02 in 2.3, he improved the memory footprint in 2.4
+\cgalCite{cgal:bdpty-tc-02:} he implemented the Delaunay hierarchy
+\cgalCite{cgal:d-dh-02} in 2.3, he improved the memory footprint in 2.4
 and 3.0, he also performed work on arithmetic filters
-\cite cgal:dp-eegpd-03 (see `Filtered_kernel`) to improve
+\cgalCite{cgal:dp-eegpd-03} (see `Filtered_kernel`) to improve
 the speed of triangulations. He changed the design in \cgal 3.0,
 allowing users to add handles in their own vertices and cells.
 
@@ -1008,7 +1008,7 @@ Delaunay hierarchy.
 
 In 2005, Christophe Delage implemented the vertex removal function for
 regular triangulations, using the symbolic perturbation proposed
-in \cite cgal:dt-pvrdr-06, which allowed to release this
+in \cgalCite{cgal:dt-pvrdr-06}, which allowed to release this
 functionality in \cgal 3.2.
 
 In 2006, Nico Kruithof wrote the `Triangulation_simplex_3` class
@@ -1036,8 +1036,8 @@ A new demo of this package was introduced in \cgal 3.8, coded by Fei
 Teillaud in the framework of the Google Summer of Code, 2010.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
-the design of CGAL. Jean-Daniel Boissonnat is also acknowledged
-\cite bdty-tcgal-00.
+the design of \cgal. Jean-Daniel Boissonnat is also acknowledged
+\cgalCite{bdty-tcgal-00}.
 
 */ 
 } /* namespace CGAL */

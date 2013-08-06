@@ -236,7 +236,7 @@ Surface mesh of an iso-contour extracted from a gray level 3D image
 \anchor SurfaceMesher_section_variations
 
 The guarantees on the output mesh depend on the mesh criteria.
-Theoretical guarantees are given in \cite cgal:bo-pgsms-05.
+Theoretical guarantees are given in \cgalCite{cgal:bo-pgsms-05}.
 First, the meshing algorithm is proved to terminate
 if the lower bound on facets angles is
 not bigger than `30` degrees.
@@ -291,7 +291,7 @@ guarantees nothing else.
 
 \section Surface_mesherOutput Output
 
-This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cite cgal:p-gmgv16-96 and to convert it to a polyhedron (when it is manifold): 
+This \cgal component also provides functions to write the reconstructed surface mesh to the %Object File Format (OFF) \cgalCite{cgal:p-gmgv16-96} and to convert it to a polyhedron (when it is manifold): 
 
 - `output_surface_facets_to_off()` 
 - `output_surface_facets_to_polyhedron()` 
@@ -312,11 +312,11 @@ medical images.
 \section Surface_mesherDesign Design and Implementation History
 
 The algorithm implemented in this package is mainly based on the work of
-Jean-Daniel Boissonnat and Steve Oudot \cite cgal:bo-pgsms-05. Steve Oudot
+Jean-Daniel Boissonnat and Steve Oudot \cgalCite{cgal:bo-pgsms-05}. Steve Oudot
 implemented a first working prototype of the algorithm during his PhD thesis.
 
 The meshing algorithm is implemented using the design of mesher levels
-described in \cite cgal:ry-gsddrm-06.
+described in \cgalCite{cgal:ry-gsddrm-06}.
 
 David Rey, Steve Oudot and Andreas Fabri have participated
 in the development of this package.

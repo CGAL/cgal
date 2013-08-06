@@ -15,7 +15,7 @@ The class `Triangulation_ds_cell_base_3` is a model for the concept
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 
 */
-template< >
+template< typename TDS = void >
 class Triangulation_ds_cell_base_3 {
 public:
 

@@ -361,7 +361,7 @@ public:
 
 The following handles, iterators, and circulators all have respective
 constant counterparts (for example, in addition to `Vertex_iterator`
-the type `Vertex_const_iterator` is also defined). See \cite cgal:ms-strg-96 
+the type `Vertex_const_iterator` is also defined). See \cgalCite{cgal:ms-strg-96} 
 for a discussion of constant versus mutable iterator
 types. The mutable types are assignable to their constant
 counterparts. `Vertex_iterator`, `Halfedge_iterator`, and

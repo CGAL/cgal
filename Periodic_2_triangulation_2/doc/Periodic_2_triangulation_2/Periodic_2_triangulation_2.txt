@@ -96,7 +96,7 @@ Some point sets do not admit a triangulation in \f$ \mathbb T_c^2\f$. In
 this case we use 9 periodic copies of the point set arranged in a
 square of edge length \f$ 3c\f$. Any point set constructed in this way has a
 triangulation in \f$ \mathbb R^2/G'\f$ with \f$ G'=(3c\cdot\mathbb Z)^2\f$
-\cite cgal:ct-c3pt-09. So we compute the triangulation in this
+\cgalCite{cgal:ct-c3pt-09}. So we compute the triangulation in this
 space, which is a <I>9-sheeted covering space</I> of \f$ \mathbb T_c^2\f$
 (see Figure \cgalFigureRef{P2Triangulation2figcovering}).
 
@@ -147,7 +147,7 @@ that is, the circumscribing circle of each face does not contain any
 other vertex of the triangulation in its interior. These
 triangulations are uniquely defined except in degenerate cases where
 four points are co-circular. Note however that the \cgal implementation computes a unique triangulation even in these cases
-\cite cgal:dt-pvr3d-03.
+\cgalCite{cgal:dt-pvr3d-03}.
 
 This implementation is fully dynamic: it supports both insertions of
 points and vertex removal.
@@ -183,7 +183,7 @@ point insertion and vertex removal, the side-of-circle test, finding
 the conflicting region of a given point, dual functions etc.
 `Periodic_2_triangulation_2` contains all the functionality
 that is common to triangulations in general, such as location of a
-point in the triangulation \cite cgal:dpt-wt-02, access functions,
+point in the triangulation \cgalCite{cgal:dpt-wt-02}, access functions,
 geometric queries like the orientation test etc.
 
 They are built as layers on top of a triangulation data structure,
@@ -400,7 +400,7 @@ The periodic 2D-triangulation is based on the 2D triangulation package
 developed by Mariette Yvinec and inspired by the periodic 3D-triangulation package
 developed by Manuel Caroli and Monique Teillaud. The periodic
 3D-triangulation package is described in Manuel's PhD thesis 
-\cite cgal:c-tpsos-10 Triangulating Point Sets in Orbit Spaces and \cite cgal:ct-c3pt-09.
+\cgalCite{cgal:c-tpsos-10} Triangulating Point Sets in Orbit Spaces and \cgalCite{cgal:ct-c3pt-09}.
 
 In 2009, Nico Kruithof started implementation of the
 `Periodic_2_triangulation_2` package.

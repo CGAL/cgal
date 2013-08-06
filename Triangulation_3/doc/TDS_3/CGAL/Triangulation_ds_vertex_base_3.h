@@ -25,7 +25,7 @@ example) tuned for a specific application.
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 
 */
-template< >
+template< typename TDS = void >
 class Triangulation_ds_vertex_base_3 {
 
 }; /* end Triangulation_ds_vertex_base_3 */

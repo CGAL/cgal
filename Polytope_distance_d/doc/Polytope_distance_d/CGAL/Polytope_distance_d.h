@@ -46,7 +46,7 @@ The problem of finding the distance between two convex polytopes given as
 the convex hulls of two finite point sets can be formulated as an 
 optimization problem with linear constraints and a convex quadratic 
 objective function. The solution is obtained using our exact solver 
-for quadratic programs \cite gs-eegqp-00. 
+for quadratic programs \cgalCite{gs-eegqp-00}. 
 
 The creation time is almost always linear in the number of points. Access 
 functions and predicates take constant time, inserting a point might take 

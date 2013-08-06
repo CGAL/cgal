@@ -10,17 +10,17 @@ combinatorial data structure, geometric interpretation is added by
 classes built on top of the halfedge data structure. 
 
 The data structure defined here is known as the 
-FE-structure \cite w-ebdss-85, as 
-halfedges \cite m-ism-88, \cite cgal:bfh-mgedm-95 or as the doubly connected edge 
-list (DCEL) \cite bkos-cgaa-97, although the original reference for 
-the DCEL \cite mp-fitcp-78 describes a different data structure. The 
+FE-structure \cgalCite{w-ebdss-85}, as 
+halfedges \cgalCite{m-ism-88}, \cgalCite{cgal:bfh-mgedm-95} or as the doubly connected edge 
+list (DCEL) \cgalCite{bkos-cgaa-97}, although the original reference for 
+the DCEL \cgalCite{mp-fitcp-78} describes a different data structure. The 
 halfedge data structure can also be seen as one of the variants of the 
-quad-edge data structure \cite gs-pmgsc-85. In general, the quad-edge 
+quad-edge data structure \cgalCite{gs-pmgsc-85}. In general, the quad-edge 
 data can represent non-orientable 2-manifolds, but the variant here is 
 restricted to orientable 2-manifolds only. An overview and comparison 
 of these different data structures together with a thorough 
 description of the design implemented here can be found 
-in \cite k-ugpdd-99. 
+in \cgalCite{k-ugpdd-99}. 
 
 Each edge is represented by two halfedges with opposite orientations. 
 Each halfedge can store a reference to an incident face and an 

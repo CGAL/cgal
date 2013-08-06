@@ -35,7 +35,7 @@ The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D 
 
 \cgalHeading{Algorithm}
 
-The implemented algorithm is closely based on \cite cgal:fo-ss-98 with the addition of <I>vertex events</I> as described in \cite cgal:ee-rrccpp-98. 
+The implemented algorithm is closely based on \cgalCite{cgal:fo-ss-98} with the addition of <I>vertex events</I> as described in \cgalCite{cgal:ee-rrccpp-98}. 
 
 It simulates a grassfire propagation of moving polygon edges as they move inward at constant 
 and equal speed. That is, the continuous inward offsetting of the polygon. 

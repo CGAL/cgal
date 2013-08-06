@@ -39,7 +39,7 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-It uses an implementation of Melkman's algorithm \cite m-olcch-87. 
+It uses an implementation of Melkman's algorithm \cgalCite{m-olcch-87}. 
 Running time of this is linear.
 
 

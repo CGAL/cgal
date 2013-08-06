@@ -34,7 +34,7 @@ implemented is incremental. The corresponding \cgal class is called
 `Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphStructure_2>`
 and will be discussed in more detail in the sequel. The interested
 reader may want to refer to the paper by Karavelas
-\cite cgal:k-reisv-04 for the general idea as well as the details of
+\cgalCite{cgal:k-reisv-04} for the general idea as well as the details of
 the algorithm implemented.
 
 \subsection Segment_Delaunay_graph_2Definitions Definitions
@@ -67,7 +67,7 @@ segments whose bisector is two-dimensional. If we allow pairs of
 segments that intersect properly at their interior, the interiors of
 their Voronoi cells are no longer simply connected. In both cases
 above the resulting Voronoi diagrams are no longer instances of
-abstract Voronoi diagrams (cf. \cite k-cavd-89), which has a direct
+abstract Voronoi diagrams (cf. \cgalCite{k-cavd-89}), which has a direct
 consequence on the efficient computation of the corresponding Voronoi
 diagram. The remedy to these problems is to consider linear segments
 not as one object, but rather as three, namely the two endpoints and
@@ -343,7 +343,7 @@ that have meaning only in the case of strongly intersecting sites.
 The predicates required for the computation of the segment Voronoi
 diagram are rather complicated. It is not the purpose of this document to
 discuss them in detail. The interested reader may refer to Burnikel's
-thesis \cite b-ecvdl-96, where it is shown that in the case of weakly
+thesis \cgalCite{b-ecvdl-96}, where it is shown that in the case of weakly
 intersecting sites represented in homogeneous coordinates of bit size
 \f$ b\f$, the maximum bit size of the algebraic expressions involved in the
 predicates is \f$ 40 b+O(1)\f$. Given our site representation given above we
@@ -477,14 +477,14 @@ of the `Triangulation_hierarchy_2` or the
 `Apollonius_graph_hierarchy_2` classes, applied to the segment
 Delaunay graph. It consists of a hierarchy of
 segment Delaunay graphs constructed in a manner analogous to the
-Delaunay hierarchy by Devillers \cite cgal:d-dh-02. Unlike the
+Delaunay hierarchy by Devillers \cgalCite{cgal:d-dh-02}. Unlike the
 triangulation hierarchy or the Apollonius graph hierarchy, the
 situation here is more complicated because of two factors: firstly,
 segments are treated as three objects instead of one (the two
 endpoints and the interior of the segments), and secondly, the
 presence of strongly intersecting sites complicates significantly the
 way the hierarchy is constructed. The interested reader may refer to
-the paper by Karavelas \cite cgal:k-reisv-04 for the details of the
+the paper by Karavelas \cgalCite{cgal:k-reisv-04} for the details of the
 construction of the hierarchy.
 Another alternative is to have a hybrid hierarchy that consists of the
 segment Delaunay graph at the bottom-most level and point Voronoi
@@ -494,7 +494,7 @@ Delaunay graph for segments at the upper levels of the
 hierarchy. However, it seems much less likely to be possible to give
 any theoretical guarantees for its performance, in contrast to the
 hierarchy with segment Delaunay graphs at all levels
-(cf. \cite cgal:k-reisv-04). The user can choose between the two
+(cf. \cgalCite{cgal:k-reisv-04}). The user can choose between the two
 types of hierarchies by means of the template parameter
 `SSTag`. If `SSTag` is set to `false` (which is also the
 default value), the upper levels of the hierarchy consist of point

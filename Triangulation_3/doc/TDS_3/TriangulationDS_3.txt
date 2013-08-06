@@ -175,7 +175,7 @@ the local validity of a given triangulation data structure.
 
 The 3D-triangulation data structure class of \cgal,
 `Triangulation_data_structure_3`, is designed to be used as a combinatorial
-layer upon which a geometric layer can be built \cite k-ddsps-98. This
+layer upon which a geometric layer can be built \cgalCite{k-ddsps-98}. This
 geometric layer is typically one of the 3D-triangulation classes of \cgal:
 `Triangulation_3`, `Delaunay_triangulation_3` and
 `Regular_triangulation_3`. This relation is described in more details in
@@ -321,7 +321,7 @@ structures whose vertices respectively store vertex handles of the other one.
 
 Monique Teillaud introduced the triangulation of the topological
 sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$ to manage the underlying graph of geometric
-triangulations and handle degenerate dimensions \cite t-tdtc-99.
+triangulations and handle degenerate dimensions \cgalCite{t-tdtc-99}.
 
 Sylvain Pion improved the software in several ways, in particular
 regarding the memory management.

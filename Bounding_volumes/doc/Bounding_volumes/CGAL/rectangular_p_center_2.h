@@ -248,9 +248,9 @@ The runtime is linear for \f$ p \in \{2,\,3\}\f$ and
 \f$ \mathcal{O}(n \cdot \log n)\f$ for \f$ p = 4\f$ where \f$ n\f$ is the number of 
 input points. These runtimes are worst case optimal. The \f$ 3\f$-center 
 algorithm uses a prune-and-search technique described in 
-\cite cgal:h-slacr-99. The \f$ 4\f$-center implementation uses sorted matrix 
-search \cite fj-fkppc-83, \cite fj-gsrsm-84 and fast algorithms for 
-piercing rectangles \cite sw-rpppp-96. 
+\cgalCite{cgal:h-slacr-99}. The \f$ 4\f$-center implementation uses sorted matrix 
+search \cgalCite{fj-fkppc-83}, \cgalCite{fj-gsrsm-84} and fast algorithms for 
+piercing rectangles \cgalCite{sw-rpppp-96}. 
 
 \cgalHeading{Example}
 

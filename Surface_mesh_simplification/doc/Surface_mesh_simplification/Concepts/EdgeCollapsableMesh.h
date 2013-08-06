@@ -74,7 +74,7 @@ remains.
 </b></center>
 
 \cgalHasModel `CGAL::Polyhedron_3<Traits>` (If it has only triangular faces, and via 
-<I>External Adaptation</I>, which is described in \cite cgal:sll-bgl-02 
+<I>External Adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02} 
 and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>). 
 
 \sa `boost::graph_traits< CGAL::Polyhedron_3<Traits> >`
@@ -89,7 +89,7 @@ public:
 /*!
 Collapses the undirected edge `(v0v1,v1v0)` replacing it with `v0` or `v1`, 
 as described in the following paragraph. 
-\pre This function requires `mesh` to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge `(v0v1,v1v0)` must satisfy the <I>link condition</I> \cite degn-tpec-98, which guarantees that the surface is also 2-manifold after the edge collapse. 
+\pre This function requires `mesh` to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge `(v0v1,v1v0)` must satisfy the <I>link condition</I> \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse. 
 \relates EdgeCollapsableMesh 
 */ 
 template<class EdgeCollapsableMesh> 

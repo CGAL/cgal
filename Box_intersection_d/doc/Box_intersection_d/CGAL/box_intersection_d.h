@@ -156,11 +156,11 @@ namespace CGAL {
 
 \cgalHeading{Implementation}
 
-  The implemented algorithm is described in \cite cgal:ze-fsbi-02 as 
+  The implemented algorithm is described in \cgalCite{cgal:ze-fsbi-02} as 
   version two. Its performance depends on a `cutoff` parameter. 
   When the size of both iterator ranges drops below the `cutoff` 
   parameter the function switches from the streamed segment-tree 
-  algorithm to the two-way-scan algorithm, see \cite cgal:ze-fsbi-02 
+  algorithm to the two-way-scan algorithm, see \cgalCite{cgal:ze-fsbi-02} 
   for the details. 
 
   The streamed segment-tree algorithm needs \f$ O(n \log^d (n) + k)\f$ 
@@ -181,7 +181,7 @@ namespace CGAL {
   cases where the callback runtime is dominant, it may be best to make 
   the threshold parameter small. Otherwise a `cutoff`\f$ =\sqrt{n}\f$ can 
   lead to acceptable results. For well distributed boxes the original 
-  paper \cite cgal:ze-fsbi-02 gives optimal cutoffs in the thousands. 
+  paper \cgalCite{cgal:ze-fsbi-02} gives optimal cutoffs in the thousands. 
   Anyway, for optimal runtime some experiments to compare different 
   cutoff parameters are recommended. See also 
   Section \ref secboxintersperformance . 

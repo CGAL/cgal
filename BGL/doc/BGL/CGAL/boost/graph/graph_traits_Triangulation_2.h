@@ -9,7 +9,7 @@ for the 2D triangulation classes.
 
 The triangulations of \cgal are all models of the concepts
 `BidirectionalGraph` and `VertexAndEdgeListGraph` of the Boost Graph
-Library \cite cgal:sll-bgl-02.
+Library \cgalCite{cgal:sll-bgl-02}.
 
 
 The mapping between vertices and edges of the triangulation and the 

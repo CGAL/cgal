@@ -10,7 +10,7 @@ namespace CGAL {
 
 An instance `s` of the parametrized data type `Multiset` is a 
 multi-set of elements of type `Type`, represented as a red-black tree 
-(see [\cite clrs-ia-01 Chapter 13 for an excellent introduction to red-black 
+(see [\cgalCite{clrs-ia-01} Chapter 13 for an excellent introduction to red-black 
 trees). 
 The main difference between `Multiset` and the \stl `std::multiset` is that 
 the latter uses a less-than functor with a Boolean return type, while our 
@@ -89,7 +89,7 @@ perform \f$ O(\log{n})\f$ comparison operations.
 On the other hand, the set operations that accept a position iterator (namely 
 `insert_before(pos, x)`, `insert_after(pos, x)` and `erase(pos)`) 
 are much more efficient as they can be performed at a <I>constant</I> amortized 
-cost (see \cite gs-dfbt-78 and \cite t-dsna-83 for more details). 
+cost (see \cgalCite{gs-dfbt-78} and \cgalCite{t-dsna-83} for more details). 
 More important, these set operations require <I>no</I> comparison operations. 
 Therefore, it is highly recommended to maintain the set via iterators 
 to the stored elements, whenever possible. The function `insert(pos, x)` 
@@ -100,14 +100,14 @@ In addition, it always performs at least two comparison operations.
 The `catenate()` and `split()` functions are also very efficient, and 
 can be performed in \f$ O(\log{n})\f$ time, where \f$ n\f$ is the total number of 
 elements in the sets, and without performing any comparison operations 
-(see \cite t-dsna-83 for the details). 
+(see \cgalCite{t-dsna-83} for the details). 
 Note however that the size of two sets resulting from a split operation is 
 initially unknown, as it is impossible to compute it in less than linear time. 
 Thus, the first invocation of `size()` on such a set takes linear time, 
 and <I>not</I> constant time. 
 
 The design is derived from the \stl `multiset` class-template (see, 
-e.g, \cite cgal:ms-strg-96), where the main differences between the two 
+e.g, \cgalCite{cgal:ms-strg-96}), where the main differences between the two 
 classes are highlighted in the class definition above. 
 
 */

@@ -60,7 +60,7 @@ Let us denote the vertices of the input polygons by
 \f$ Q = \left( q_0, \ldots, q_{n-1} \right)\f$. We assume that both \f$ P\f$ and \f$ Q\f$
 have positive orientations (i.e.\ their boundaries wind in a counterclockwise
 order around their interiors) and compute the convolution of the two polygon
-boundaries. The <I>convolution</I> of these two polygons \cite grs-kfcg-83,
+boundaries. The <I>convolution</I> of these two polygons \cgalCite{grs-kfcg-83},
 denoted \f$ P * Q\f$, is a collection of line segments of the form
 \f$ [p_i + q_j, p_{i+1} + q_j]\f$, \cgalFootnote{Throughout this chapter, we increment 
 or decrement an index of a vertex modulo the size of the polygon.}
@@ -146,31 +146,31 @@ The Minkowski-sum package includes four models of the concept
 `PolygonConvexDecomposition_2`. The first three are classes that wrap
 the decomposition functions included in the Planar Polygon Partitioning
 package, while the fourth is an implementation of a decomposition algorithm
-introduced in \cite cgal:afh-pdecm-02. The convex decompositions that it
+introduced in \cgalCite{cgal:afh-pdecm-02}. The convex decompositions that it
 creates usually yield efficient running times for Minkowski sum computations:
 <UL>
 <LI>The class `Optimal_convex_decomposition_2<Kernel>` uses the
-dynamic-programming algorithm of Greene \cite g-dpcp-83 for computing an
+dynamic-programming algorithm of Greene \cgalCite{g-dpcp-83} for computing an
 optimal decomposition of a polygon into a minimal number of convex
 sub-polygons. The main drawback of this strategy is that it runs in \f$ O(n^4)\f$
 time and \f$ O(n^3)\f$ in the worst case,where \f$ n\f$ is the number of vertices in
 the input polygon.
 <LI>The class `Hertel_Mehlhorn_convex_decomposition_2<Kernel>` implements the
-approximation algorithm suggested by Hertel and Mehlhorn \cite hm-ftsp-83,
+approximation algorithm suggested by Hertel and Mehlhorn \cgalCite{hm-ftsp-83},
 which triangulates the input polygon and proceeds by throwing away
 unnecessary triangulation edges.
 This algorithm requires \f$ O(n)\f$ time and space and guarantees that
 the number of sub-polygons it generates is not more than four
 times the optimum.
 <LI>The class `Greene_convex_decomposition_2<Kernel>` is an implementation of
-Greene's approximation algorithm \cite g-dpcp-83, which computes a
+Greene's approximation algorithm \cgalCite{g-dpcp-83}, which computes a
 convex decomposition of the polygon based on its partitioning into
 \f$ y\f$-monotone polygons. This algorithm runs in \f$ O(n \log n)\f$ time
 and \f$ O(n)\f$ space, and has the same approximation guarantee as
 Hertel and Mehlhorn's algorithm.
 <LI>The class `Small_side_angle_bisector_decomposition_2<Kernel>` uses
 a heuristic improvement to the angle-bisector decomposition method
-suggested by Chazelle and Dobkin \cite cd-ocd-85, which runs in
+suggested by Chazelle and Dobkin \cgalCite{cd-ocd-85}, which runs in
 \f$ O(n^2)\f$ time. It starts by examining each pair of reflex vertices
 in the input polygon such that the entire interior of the diagonal
 connecting these vertices is contained in the polygon. Out of all

@@ -981,7 +981,7 @@ public:
 
 
   /*{\Mimplementation The implementation of type |\Mtype| is based on
-  \cite{cms:fourresults} and \cite{BMS:degeneracy}.  The details of the
+  \cgalCite{cms:fourresults} and \cgalCite{BMS:degeneracy}.  The details of the
   implementation can be found in the implementation document available
   at the download site of this package.
 

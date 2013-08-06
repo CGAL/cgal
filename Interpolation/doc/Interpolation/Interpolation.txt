@@ -37,7 +37,7 @@ at \f$ \mathbf{p_i}\f$. It is denoted \f$ \mathbf{g_i}= \nabla
 \subsection InterpolationIntroduction Introduction
 
 Natural neighbor interpolation has been introduced by Sibson
-\cite s-bdnni-81 to interpolate multivariate scattered data. Given
+\cgalCite{s-bdnni-81} to interpolate multivariate scattered data. Given
 a set of data points \f$ \mathcal{P}\f$, the natural neighbor coordinates
 associated to \f$ \mathcal{P}\f$ are defined from the Voronoi diagram of
 \f$ \mathcal{P}\f$. When simulating the insertion of a query point
@@ -60,8 +60,8 @@ with respect to the data point \f$ \mathbf{p_i}\in \mathcal{P}\f$ is defined by
 A two-dimensional example
 is depicted in \cgalFigureRef{fignn_coords}.
 
-Various papers (\cite s-vidt-80, \cite f-sodt-90,
-\cite cgal:p-plcbd-93, \cite b-scaps-97, \cite hs-vbihc-00) show that
+Various papers (\cgalCite{s-vidt-80}, \cgalCite{f-sodt-90},
+\cgalCite{cgal:p-plcbd-93}, \cgalCite{b-scaps-97}, \cgalCite{hs-vbihc-00}) show that
 the natural neighbor coordinates have the following properties:
 <OL>
 <LI>\f$ \mathbf{x} = \sum_{i=1}^n \lambda_i(\mathbf{x}) \mathbf{p_i}\f$
@@ -84,7 +84,7 @@ The natural neighbor coordinate of \f$ \mathbf{x}\f$ with respect to these endpo
 
 \f$ \lambda_q(\mathbf{x}) = \frac{\|\mathbf{x} - \mathbf{p}\| }{ \|\mathbf{q} - \mathbf{p}\|} \f$
 
-Furthermore, Piper \cite cgal:p-plcbd-93 shows that the coordinate
+Furthermore, Piper \cgalCite{cgal:p-plcbd-93} shows that the coordinate
 functions are continuous in the convex hull of \f$ \mathcal{P}\f$ and
 continuously differentiable except on the data points \f$ \mathcal{P}\f$.<BR>
 
@@ -137,9 +137,9 @@ issued from a surface \f$ \mathcal{S}\f$ and given a query point
 \f$ \mathbf{x}\f$ on \f$ \mathcal{S}\f$. We suppose that \f$ \mathcal{S}\f$ is a
 closed and compact surface of \f$ \mathbb{R}^3\f$, and let \f$ \mathcal{P}=
 \{\mathbf{p_1}, \ldots,\mathbf{p_n}\}\f$ be an \f$ \epsilon\f$-sample of
-\f$ \mathcal{S}\f$ (refer to Amenta and Bern \cite ab-srvf-99). The
+\f$ \mathcal{S}\f$ (refer to Amenta and Bern \cgalCite{ab-srvf-99}). The
 concepts are based on the definition of Boissonnat and Fl&ouml;totto
-\cite bf-lcss-02, \cite cgal:f-csapc-03. Both references
+\cgalCite{bf-lcss-02}, \cgalCite{cgal:f-csapc-03}. Both references
 contain a thorough description of the requirements and the
 mathematical properties.
 
@@ -149,7 +149,7 @@ Two observations lead to the definition of surface neighbors and
 surface neighbor coordinates: First, it is clear that the tangent
 plane \f$ \mathcal{T}_x\f$ of the surface \f$ \mathcal{S}\f$ at the point
 \f$ \mathbf{x} \in \mathcal{S}\f$ approximates \f$ \mathcal{S}\f$ in the
-neighborhood of \f$ \mathbf{x}\f$. It has been shown in \cite bf-lcss-02
+neighborhood of \f$ \mathbf{x}\f$. It has been shown in \cgalCite{bf-lcss-02}
 that, if the surface \f$ \mathcal{S}\f$ is well sampled with respect to the
 curvature and the local thickness of \f$ \mathcal{S}\f$, i.e.\ it is an \f$ \epsilon\f$-sample, the intersection
 of the tangent plane \f$ \mathcal{T}_x\f$ with the Voronoi cell of
@@ -237,7 +237,7 @@ provided.
 
 \subsubsection InterpolationLinearPrecisionInterpolation Linear Precision Interpolation
 
-Sibson \cite s-bdnni-81 defines a very simple interpolant that
+Sibson \cgalCite{s-bdnni-81} defines a very simple interpolant that
 re-produces linear functions exactly. The interpolation of
 \f$ \Phi(\mathbf{x})\f$ is given as the linear combination of the neighbors' function
 values weighted by the coordinates:
@@ -253,7 +253,7 @@ called.
 
 \subsubsection InterpolationSibson Sibson's C^1 Continuous Interpolant
 
-In \cite s-bdnni-81, Sibson describes a second interpolation method
+In \cgalCite{s-bdnni-81}, Sibson describes a second interpolation method
 that relies also on the function gradient \f$ \mathbf{g_i}\f$ for all \f$ \mathbf{p_i} \in \mathcal{P}\f$. It is \f$ C^1\f$ continuous with gradient \f$ \mathbf{g_i}\f$ at
 \f$ \mathbf{p_i}\f$. Spherical quadrics of the form \f$ \Phi(\mathbf{x}) =a +
 \mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}\f$ are reproduced 
@@ -261,7 +261,7 @@ exactly. The
 proof relies on the barycentric coordinate property of the natural
 neighbor coordinates and assumes that the gradient of \f$ \Phi\f$ at the
 data points is known or approximated from the function values as
-described in \cite s-bdnni-81 (see Section \ref sgradient_fitting).
+described in \cgalCite{s-bdnni-81} (see Section \ref sgradient_fitting).
 
 Sibson's \f$ Z^1\f$ interpolant is a combination of the linear interpolant
 \f$ Z^0\f$ and an interpolant \f$ \xi\f$ which is the weighted sum of the first
@@ -289,19 +289,19 @@ where in Sibson's original work,
 demanding on the number type because it avoids the square-root
 computation needed to compute the distance \f$ \|\mathbf{x} -
 \mathbf{p_i}\|\f$. The theoretical guarantees are the same (see
-\cite cgal:f-csapc-03). Simply, the smaller the slope of \f$ f\f$
+\cgalCite{cgal:f-csapc-03}). Simply, the smaller the slope of \f$ f\f$
 around \f$ f(0)\f$, the faster the interpolant approaches \f$ \xi_i\f$ as
 \f$ \mathbf{x} \rightarrow \mathbf{p_i}\f$.
 
 \subsubsection InterpolationFarin Farin's C^1 Continuous Interpolant
 
-Farin \cite f-sodt-90 extended Sibson's work and realizes a \f$ C^1\f$
+Farin \cgalCite{f-sodt-90} extended Sibson's work and realizes a \f$ C^1\f$
 continuous interpolant by embedding natural neighbor coordinates in
 the Bernstein-B&eacute;zier representation of a cubic simplex. If the
 gradient of \f$ \Phi\f$ at the data points is known, this interpolant
 reproduces quadratic functions exactly. The function gradient can be
 approximated from the function values by Sibson's method
-\cite s-bdnni-81 (see Section \ref sgradient_fitting) which is exact only
+\cgalCite{s-bdnni-81} (see Section \ref sgradient_fitting) which is exact only
 for spherical quadrics.
 
 \subsubsection InterpolationQuadraticPrecisionInterpolants Quadratic Precision Interpolants

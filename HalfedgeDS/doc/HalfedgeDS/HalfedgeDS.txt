@@ -33,17 +33,17 @@ structure is meant as an implementation layer. See for example the
 `Polyhedron_3` class in Chapter \ref chapterPolyhedron "Polyhedral Surface".
 
 The data structure provided here is also known as the
-FE-structure \cite w-ebdss-85, as
-halfedges \cite m-ism-88, \cite cgal:bfh-mgedm-95 or as the doubly connected edge
-list (DCEL) \cite bkos-cgaa-97, although the original reference for
-the DCEL \cite mp-fitcp-78 describes a different data structure. The
+FE-structure \cgalCite{w-ebdss-85}, as
+halfedges \cgalCite{m-ism-88}, \cgalCite{cgal:bfh-mgedm-95} or as the doubly connected edge
+list (DCEL) \cgalCite{bkos-cgaa-97}, although the original reference for
+the DCEL \cgalCite{mp-fitcp-78} describes a different data structure. The
 halfedge data structure can also be seen as one of the variants of the
-quad-edge data structure \cite gs-pmgsc-85. In general, the quad-edge
+quad-edge data structure \cgalCite{gs-pmgsc-85}. In general, the quad-edge
 data can represent non-orientable 2-manifolds, but the variant here is
 restricted to orientable 2-manifolds only. An overview and comparison
 of these different data structures together with a thorough
 description of the design implemented here can be found
-in \cite k-ugpdd-99.
+in \cgalCite{k-ugpdd-99}.
 
 
 
@@ -110,7 +110,7 @@ class searches in the positive direction along the face for the
 previous halfedge. But if the `HalfedgeDSHalfedge::prev()` member function is provided,
 the `HalfedgeDS_items_decorator::find_prev()` member function simply calls it. This distinction is
 resolved at compile time with a technique called <I>compile-time
-tags</I>, similar to iterator tags in \cite cgal:sl-stl-95.
+tags</I>, similar to iterator tags in \cgalCite{cgal:sl-stl-95}.
 
 The `Polyhedron_3` as an example for the third layer adds the
 geometric interpretation, provides an easy-to-use interface of
@@ -181,10 +181,10 @@ member variable `color`.
 
 The halfedge data structure as presented here is slightly less space
 efficient as, for example, the winged-edge data
-structure \cite b-prcv-75, the DCEL \cite mp-fitcp-78 or variants of
-the quad-edge data structure \cite gs-pmgsc-85. On the other hand,
+structure \cgalCite{b-prcv-75}, the DCEL \cgalCite{mp-fitcp-78} or variants of
+the quad-edge data structure \cgalCite{gs-pmgsc-85}. On the other hand,
 it does not require any search operations during traversals. A
-comparison can be found in \cite k-ugpdd-99.
+comparison can be found in \cgalCite{k-ugpdd-99}.
 
 The following example trades traversal time for a compact storage
 representation using traditional C techniques (i.e., type casting and

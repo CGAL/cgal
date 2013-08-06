@@ -182,7 +182,7 @@ as a layer on top of a planar map.
 representation of triangulations based on faces and vertices
 rather than on edges. Such a representation
 saves storage space and results in faster
-algorithms \cite bdty-tcgal-00.
+algorithms \cgalCite{bdty-tcgal-00}.
 
 The basic elements of the representation are vertices and faces.
 Each triangular face gives access to its three incident vertices 
@@ -566,7 +566,7 @@ The degree \f$ d\f$ is \f$ O(1)\f$ for a random
 vertex in the triangulation.
 When the degree of the removed vertex is small (\f$ \leq7\f$) a special
 procedure is used that allows to increase global removal time by a factor of 2
-for random points \cite d-vrtdd-09.
+for random points \cgalCite{d-vrtdd-09}.
 
 The displacement of a vertex \f$ v\f$ at a point \f$ p\f$ to a new location \f$ p'\f$, first checks whether the triangulation embedding remains
 planar or not after moving \f$ v\f$ to \f$ p'\f$. If yes, it moves \f$ v\f$ to \f$ p'\f$ and simply performs a sequence of flips
@@ -1065,7 +1065,7 @@ Because the number of vertices in each triangulation is only a small
 fraction of the number of vertices of the preceding triangulation,
 the data structure remains small and achieves fast point location 
 queries on real
-data. As proved in \cite d-iirdt-98, this structure has an optimal behavior
+data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
 However it can be used as well for other triangulations
 and the class `Triangulation_hierarchy_2<Tr>` is templated by a parameter

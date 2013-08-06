@@ -13,7 +13,7 @@ that do not contain any point of the point set.
 
 \cgalHeading{Implementation}
 
-The algorithm is an implementation of \cite o-naler-90. The runtime of an 
+The algorithm is an implementation of \cgalCite{o-naler-90}. The runtime of an 
 insertion or a removal is \f$ O(\log n)\f$. A query takes \f$ O(n^2)\f$ worst 
 case time and \f$ O(n \log n)\f$ expected time. The working storage is \f$ 
 O(n)\f$. 

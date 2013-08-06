@@ -27,7 +27,7 @@ Because the number of vertices in each triangulation is only a small
 fraction of the number of vertices of the preceding triangulation 
 the data structure remains small and achieves fast point location 
 queries on real 
-data. As proved in \cite d-iirdt-98, this structure has an optimal behavior 
+data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior 
 when it is built for Delaunay triangulations. 
 However it can be used as well for other triangulations. 
 

@@ -631,7 +631,7 @@ but why is there no better one?
 
 Certificates are proofs that the solver can give you in order
 to convince you that what it claims is indeed true. The archetype 
-of such a proof is <I>Farkas Lemma</I> \cite cgal:mg-uulp-06.
+of such a proof is <I>Farkas Lemma</I> \cgalCite{cgal:mg-uulp-06}.
 
 <B>Farkas Lemma:</B> <I>Either</I> the inequality system
 \f[ 

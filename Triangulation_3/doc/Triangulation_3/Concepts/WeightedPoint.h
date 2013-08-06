@@ -3,14 +3,14 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
-The concept `WeightedPoint` is needed by 
-`CGAL::Regular_triangulation_euclidean_traits_3`. 
-It must fulfill the following requirements: 
-
 \cgalHasModel `CGAL::Weighted_point`
 
 \sa `CGAL::Regular_triangulation_euclidean_traits_3` 
 \sa `CGAL::Regular_triangulation_3`
+
+The concept `WeightedPoint` is needed by
+`CGAL::Regular_triangulation_euclidean_traits_3`.
+It must fulfill the following requirements:
 
 */
 

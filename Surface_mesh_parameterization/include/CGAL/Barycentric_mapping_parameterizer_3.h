@@ -31,7 +31,7 @@ namespace CGAL {
 
 /// \ingroup  PkgSurfaceParameterizationMethods
 ///
-/// The class Barycentric_mapping_parameterizer_3 implements <i>Tutte Barycentric Mapping algorithm</i> \cite t-hdg-63.
+/// The class Barycentric_mapping_parameterizer_3 implements <i>Tutte Barycentric Mapping algorithm</i> \cgalCite{t-hdg-63}.
 /// This algorithm is also called <i>Tutte Uniform Weights</i> by other authors.
 ///
 /// One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.

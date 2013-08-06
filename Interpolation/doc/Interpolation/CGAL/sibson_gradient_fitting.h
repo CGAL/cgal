@@ -7,7 +7,7 @@ namespace CGAL {
 These functions approximate the gradient of a
 function at a point `p` given natural neighbor coordinates for `p` and
 its neighbors' function values. The approximation method is described
-in \cite s-bdnni-81. Further functions are provided to fit the
+in \cgalCite{s-bdnni-81}. Further functions are provided to fit the
 gradient for all data points that lie inside the convex hull of the
 data points. One function exists for each type of natural neighbor
 coordinates.
@@ -42,7 +42,7 @@ provide a multiplication and addition operation with the type
 
 This function implements Sibson's gradient 
 estimation method based on natural neighbor coordinates 
-\cite s-bdnni-81. 
+\cgalCite{s-bdnni-81}. 
 
 */
 /// @{

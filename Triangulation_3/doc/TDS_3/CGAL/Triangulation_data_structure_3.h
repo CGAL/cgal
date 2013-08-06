@@ -20,8 +20,8 @@ It is parameterized by base classes for vertices and cells which have to match
 the requirements for the concepts `TriangulationDSCellBase_3` and 
 `TriangulationDSVertexBase_3` respectively. 
 
-They have the default values `Triangulation_ds_vertex_base_3<>` and 
-`Triangulation_ds_cell_base_3<>` respectively. 
+They have the default values `Triangulation_ds_vertex_base_3<TDS>` and 
+`Triangulation_ds_cell_base_3<TDS>` respectively. 
 
 \cgalModels `TriangulationDataStructure_3`
 

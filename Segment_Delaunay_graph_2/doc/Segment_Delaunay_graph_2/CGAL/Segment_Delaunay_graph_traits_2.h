@@ -18,7 +18,7 @@ field-type expressions, i.e., expressions involving additions,
 subtractions, multiplications and divisions. The default value for 
 `MTag` is `Field_tag`. 
 The way the predicates are evaluated is discussed in 
-\cite b-ecvdl-96 and \cite cgal:k-reisv-04 (the geometric filtering 
+\cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
 part). 
 
 \cgalModels `SegmentDelaunayGraphTraits_2`
@@ -90,7 +90,7 @@ evaluation of signs of ring-type expressions, i.e., expressions
 involving only additions, subtractions and multiplications. The 
 default value for `MTag` is `Euclidean_ring_tag`. 
 The way the predicates are evaluated is discussed in 
-\cite b-ecvdl-96 and \cite cgal:k-reisv-04 (the geometric filtering 
+\cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
 part). 
 
 \cgalModels `SegmentDelaunayGraphTraits_2`

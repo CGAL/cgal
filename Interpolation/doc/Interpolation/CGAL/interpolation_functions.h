@@ -67,7 +67,7 @@ generates the interpolated function value computed by Farin's interpolant.
 \pre `norm` \f$ \neq0\f$. `function_value(p).second == true` for all points `p` of the point/coordinate pairs in the range `[first, beyond)`.
 \pre The range `[first, beyond)` contains either one or more than three elements.
 The function `farin_c1_interpolation()` interpolates the function values and the 
-gradients that are provided by functors using the method described in \cite f-sodt-90. 
+gradients that are provided by functors using the method described in \cgalCite{f-sodt-90}. 
 
 \cgalHeading{Parameters}
 

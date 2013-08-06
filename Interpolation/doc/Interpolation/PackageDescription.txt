@@ -69,7 +69,7 @@ two-dimensional power diagram for weighted points (i. e., from their
 regular triangulation).  Natural neighbor coordinates on closed and
 well-sampled surfaces can also be computed if the normal to the
 surface at the query point is known. The latter coordinates are only
-approximately barycentric, see \cite bf-lcss-02.
+approximately barycentric, see \cgalCite{bf-lcss-02}.
 
 For a more thorough introduction see the user manual.
 

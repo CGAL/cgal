@@ -35,9 +35,9 @@ two-dimensional \cgal kernel.
 \cgalHeading{Implementation}
 
 We implement the incremental algorithm of Welzl, with move-to-front 
-heuristic \cite w-sedbe-91a, using the primitives as described 
-in \cite gs-epsee-97, \cite cgal:gs-seefe-97a. The whole implementation is described 
-in \cite cgal:gs-seeeg-98. 
+heuristic \cgalCite{w-sedbe-91a}, using the primitives as described 
+in \cgalCite{gs-epsee-97}, \cgalCite{cgal:gs-seefe-97a}. The whole implementation is described 
+in \cgalCite{cgal:gs-seeeg-98}. 
 
 If randomization is 
 chosen, the creation time is almost always linear in the number of points. 

@@ -41,7 +41,7 @@ functions that return instances of these types:
 \cgalHeading{Implementation}
 
 This function implements the non-recursive variation of 
-Eddy's algorithm \cite e-nchap-77 described in \cite b-chfsp-78. 
+Eddy's algorithm \cgalCite{e-nchap-77} described in \cgalCite{b-chfsp-78}. 
 This algorithm requires \f$ O(n h)\f$ time 
 in the worst case for \f$ n\f$ input points with \f$ h\f$ extreme points. 
 

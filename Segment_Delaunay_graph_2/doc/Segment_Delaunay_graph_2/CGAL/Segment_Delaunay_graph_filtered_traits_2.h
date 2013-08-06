@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Segment_Delaunay_graph_filtered_traits_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
 
-The class `Segment_Delaunay_graph_filtered_traits_2` uses the filtering technique \cite cgal:bbp-iayed-01 
+The class `Segment_Delaunay_graph_filtered_traits_2` uses the filtering technique \cgalCite{cgal:bbp-iayed-01} 
 to achieve traits for the `Segment_Delaunay_graph_2<Gt,DS>` 
 class with efficient and exact predicates given an exact 
 kernel `EK` and a filtering kernel `FK`. The geometric 
@@ -38,7 +38,7 @@ must be set to `Field_with_sqrt_tag` and the number type in
 `CK` must support operations involing divisions and square roots 
 (as well as the other three basic operations of course). 
 The way the predicates are evaluated is discussed in 
-\cite b-ecvdl-96 and \cite cgal:k-reisv-04 (the geometric filtering 
+\cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
 part). 
 
 The default values for the template parameters are as follows: 
@@ -156,7 +156,7 @@ namespace CGAL {
 The class `Segment_Delaunay_graph_filtered_traits_without_intersections_2` provides a model for the 
 `SegmentDelaunayGraphTraits_2` concept. 
 
-The class `Segment_Delaunay_graph_filtered_traits_without_intersections_2` uses the filtering technique \cite cgal:bbp-iayed-01 
+The class `Segment_Delaunay_graph_filtered_traits_without_intersections_2` uses the filtering technique \cgalCite{cgal:bbp-iayed-01} 
 to achieve traits for the `Segment_Delaunay_graph_2<Gt,DS>` 
 class with efficient and exact predicates given an exact 
 kernel `EK` and a filtering kernel `FK`. The geometric 
@@ -189,7 +189,7 @@ and multiplications. Finally, in order to get exact constructions
 in `CK` must support operations involing divisions and square 
 roots (as well as the other three basic operations of course). 
 The way the predicates are evaluated is discussed in 
-\cite b-ecvdl-96 and \cite cgal:k-reisv-04 (the geometric filtering 
+\cgalCite{b-ecvdl-96} and \cgalCite{cgal:k-reisv-04} (the geometric filtering 
 part). 
 
 The default values for the template parameters are as follows: 

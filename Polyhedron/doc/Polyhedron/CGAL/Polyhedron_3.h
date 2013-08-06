@@ -27,7 +27,7 @@ namespace CGAL {
   define a closed object. If normal vectors are considered for the 
   facets, normals point outwards (following the right hand rule). 
 
-  The strict definition can be found in \cite k-ugpdd-99. One 
+  The strict definition can be found in \cgalCite{k-ugpdd-99}. One 
   implication of this definition is that the polyhedral surface is 
   always an orientable and oriented 2-manifold with border edges, i.e., 
   the neighborhood of each point on the polyhedral surface is either 

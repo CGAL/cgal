@@ -32,7 +32,7 @@ deletions on line. The corresponding \cgal class is called
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
 and will be discussed in more detail in the sequel. The interested
 reader may want to refer to the paper by Karavelas and Yvinec
-\cite cgal:ky-dawvd-02 for the general idea as well as the details of the
+\cgalCite{cgal:ky-dawvd-02} for the general idea as well as the details of the
 algorithm implemented.
 
 Before describing the details of the implementation we make a brief
@@ -240,7 +240,7 @@ The predicates required for the computation of the Apollonius graph
 are rather complicated. It is not the purpose of this document to
 discuss them in detail. The interested reader may refer to the papers
 by Karavelas and Emiris for the details
-\cite cgal:ke-ppawv-02, \cite cgal:ke-rctac-03. However, we would like to give a brief
+\cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}. However, we would like to give a brief
 overview of what they 
 compute. There are several predicates needed by this algorithm. We
 will discuss the most important/complicated ones. It turns out that
@@ -414,7 +414,7 @@ manual.
 The `Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>` class is nothing but the equivalent of the `Triangulation_hierarchy_2`
 class, applied to the Apollonius graph. It consists of a series of
 Apollonius graphs constructed in a manner analogous to the Delaunay
-hierarchy by Devillers \cite d-iirdt-98. The class
+hierarchy by Devillers \cgalCite{d-iirdt-98}. The class
 `Apollonius_graph_hierarchy_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`
 has exactly the same interface and functionality as the
 `Apollonius_graph_2<ApolloniusGraphTraits_2,ApolloniusGraphDataStructure_2>`

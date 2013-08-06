@@ -31,7 +31,7 @@ R >` for some representation class `R`,
 \cgalHeading{Implementation}
 
 The implementation uses the centroid method 
-described in \cite cgal:s-zkm-96 and has a worst case running time of \f$ O(r 
+described in \cgalCite{cgal:s-zkm-96} and has a worst case running time of \f$ O(r 
 \cdot n + n \cdot \log n)\f$, where \f$ r\f$ is the time needed by `pg` 
 to generate a random point. 
 
