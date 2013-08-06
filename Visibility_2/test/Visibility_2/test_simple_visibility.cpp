@@ -45,6 +45,7 @@ int main() {
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
+    std::cout << "Running test suite with Cartesian Kernel...\n";
     CGAL::run_tests<Simple_polygon_visibility_2>(1);
 }
 {
@@ -57,6 +58,7 @@ int main() {
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
+    std::cout << "Running test suite with EPECK Kernel...\n";
     CGAL::run_tests<Simple_polygon_visibility_2>(1);
 }
     return 0;

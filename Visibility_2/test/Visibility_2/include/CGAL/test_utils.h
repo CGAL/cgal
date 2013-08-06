@@ -213,7 +213,7 @@ bool is_inside_face(
 }
 
 template <class _Arrangement_2> 
-void create_arrangement_from_dat_file(std::ifstream &input,
+bool create_arrangement_from_dat_file(std::ifstream &input,
                                        _Arrangement_2 &arr) {
 
   typedef _Arrangement_2                                      Arrangement_2;
@@ -256,11 +256,15 @@ void create_arrangement_from_dat_file(std::ifstream &input,
                                         string2num<Number_type>(y2))));
     }
     CGAL::insert(arr, edges.begin(), edges.end());
+    return true;
+  }
+  else {
+    return false;
   }
 }
 
-template <class Visibility_2> 
-void run_tests(int case_number) {
+template <class Visibility_2>
+bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
   typedef typename Visibility_2::Input_arrangement_2          Input_arrangement_2;
   typedef typename Visibility_2::Output_arrangement_2         Output_arrangement_2;
   typedef typename Input_arrangement_2::Geometry_traits_2     Geometry_traits_2;
@@ -272,73 +276,108 @@ void run_tests(int case_number) {
   typedef typename Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Input_arrangement_2::Vertex_const_handle   Vertex_const_handle;
 
-  Visibility_2 visibility;
-  for (int i = 1 ; i <= case_number ; i++) {
-
-    std::cout << "Test " << i << " begins...";
-    std::string input_arr_file("data/test");
-    input_arr_file += num2string<int>(i);
-    input_arr_file += ".dat";
-    std::ifstream input(input_arr_file.c_str());
-    Input_arrangement_2 arr_in;
-    Output_arrangement_2 arr_correct_out;
-    Output_arrangement_2 arr_out;
+  Input_arrangement_2 arr_in;
+  Output_arrangement_2 arr_correct_out;
+  Output_arrangement_2 arr_out;
     
-    std::string curr_line;
-    while (std::getline(input, curr_line)) {
-      if (curr_line[0] != '#' && curr_line[0] != '/')
-        break;
+  std::string curr_line;
+  while (std::getline(input, curr_line)) {
+    if (curr_line[0] != '#' && curr_line[0] != '/')
+      break;
+  }
+  std::stringstream convert(curr_line);
+  std::string x, y;
+  convert >> x >> y;
+  Point_2 query_pt(string2num<Number_type>(x),
+                   string2num<Number_type>(y));
+  std::getline(input, curr_line);
+  std::string x1, y1;
+  std::istringstream iss(curr_line);
+  iss >> x1 >> y1;
+  Point_2 reference_pt(string2num<Number_type>(x1),
+                       string2num<Number_type>(y1));
+
+  std::getline(input, curr_line);
+  if (!create_arrangement_from_dat_file<Input_arrangement_2>(input, arr_in)) {
+    return false;
+  }
+  visibility.attach(arr_in);
+  std::getline(input, curr_line);
+  if (!create_arrangement_from_dat_file<Output_arrangement_2>
+                                                       (input, arr_correct_out)) {
+    return false;
+  }
+
+  CGAL::Object obj = CGAL::get_location<Input_arrangement_2>(arr_in, query_pt);
+  Face_const_handle f;
+  Halfedge_const_handle e;
+  Vertex_const_handle v;
+
+  if (CGAL::assign (f, obj)) {
+    if (!f->is_unbounded()) {
+      visibility.visibility_region(query_pt, f, arr_out);
     }
-    std::stringstream convert(curr_line);
-    std::string x, y;
-    convert >> x >> y;
-    Point_2 query_pt(string2num<Number_type>(x),
-                     string2num<Number_type>(y));
-    std::getline(input, curr_line);
-    std::string x1, y1;
-    std::istringstream iss(curr_line);
-    iss >> x1 >> y1;
-    Point_2 reference_pt(string2num<Number_type>(x1),
-                         string2num<Number_type>(y1));
-
-    std::getline(input, curr_line);
-    create_arrangement_from_dat_file<Input_arrangement_2>(input, arr_in);
-    std::getline(input, curr_line);
-    create_arrangement_from_dat_file<Output_arrangement_2>
-                                                      (input, arr_correct_out);
-
-    CGAL::Object obj = CGAL::get_location<Input_arrangement_2>(arr_in, query_pt);
-    Face_const_handle f;
-    Halfedge_const_handle e;
-    Vertex_const_handle v;
-
-    if (CGAL::assign (f, obj)) {
-      if (!f->is_unbounded()) {
-        visibility.visibility_region(query_pt, f, arr_out);
+  }
+  else if (CGAL::assign(e, obj)) {
+    if (e->source()->point() == reference_pt) {
+      visibility.visibility_region(query_pt, e, arr_out);
+    }
+    else {
+      visibility.visibility_region(query_pt, e->twin(), arr_out);
+    }
+  }
+  else if (CGAL::assign(v, obj)) {
+    // Check which halfedge we want in the query
+    Halfedge_around_vertex_const_circulator he_circ = v->incident_halfedges();
+    Halfedge_around_vertex_const_circulator he_curr = he_circ;
+    do {
+      if (he_curr->source()->point() == reference_pt) {
+        visibility.visibility_region(query_pt, he_curr, arr_out);
       }
-    }
-    else if (CGAL::assign(e, obj)) {
-      if (e->source()->point() == reference_pt) {
-        visibility.visibility_region(query_pt, e, arr_out);
+    } while (++he_curr != he_circ);
+  }
+
+  if (!test_are_equal<Output_arrangement_2>(arr_out, arr_correct_out)) {
+    return false;
+  }
+  visibility.detach();
+  return true;
+}
+
+template <class Visibility_2> 
+void run_tests(int case_number) {
+  
+  Visibility_2 visibility;
+
+  if (Visibility_2::Supports_simple_polygon_tag::value) {
+    for (int i = 1 ; i <= case_number ; i++) {
+      std::cout << "Running test " << i << " for simple polygons...";
+      std::string input_arr_file("data/test_simple_polygon_");
+      input_arr_file += num2string<int>(i);
+      input_arr_file += ".dat";
+      std::ifstream input(input_arr_file.c_str());
+      if (run_test_case_from_file<Visibility_2>(visibility, input)) {
+        std::cout << "done!\n";
       }
       else {
-        visibility.visibility_region(query_pt, e->twin(), arr_out);
+        std::cout << "failed!\n";
       }
     }
-    else if (CGAL::assign(v, obj)) {
-      // Check which halfedge we want in the query
-      Halfedge_around_vertex_const_circulator he_circ = v->incident_halfedges();
-      Halfedge_around_vertex_const_circulator he_curr = he_circ;
-      do {
-        if (he_curr->source()->point() == reference_pt) {
-          visibility.visibility_region(query_pt, he_curr, arr_out);
-        }
-      } while (++he_curr != he_circ);
+  }
+  if (Visibility_2::Supports_general_polygon_tag::value) {
+    for (int i = 1 ; i <= case_number ; i++) {
+      std::cout << "Running test " << i << " for non-simple polygons...";
+      std::string input_arr_file("data/test_non_simple_polygon_");
+      input_arr_file += num2string<int>(i);
+      input_arr_file += ".dat";
+      std::ifstream input(input_arr_file.c_str());
+      if (run_test_case_from_file<Visibility_2>(visibility, input)) {
+        std::cout << "done!\n";
+      }
+      else {
+        std::cout << "failed!\n";
+      }
     }
-
-    assert(true == test_are_equal<Output_arrangement_2>
-                                                    (arr_out, arr_correct_out));
-    std::cout << "Done!\n";
   }
 }
 
