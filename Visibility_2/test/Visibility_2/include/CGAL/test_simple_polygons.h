@@ -80,7 +80,7 @@ bool simple_polygon_halfedge_test_case(std::ifstream &input, std::ifstream &corr
 
     CGAL::create_arrangement_from_file<Arrangement_2>(correct_out_arr, correct_output);
 
-    typename Arrangement_2::Halfedge_iterator hit;
+    typename Arrangement_2::Halfedge_const_iterator hit;
 
     for (hit = arr.halfedges_begin(); hit != arr.halfedges_end(); ++hit) {
         Segment_2 curr_seg(hit->source()->point(), hit->target()->point());
