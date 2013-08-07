@@ -311,8 +311,12 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
     {
         double sdf_value = sdf_values[facet_it]; 
         int gray_color = static_cast<int>(255 * sdf_value);
-        
-        color_vector.push_back(color_map_sdf[gray_color]);
+        if(gray_color < 0 || gray_color >= 256) {
+          color_vector.push_back(QColor::fromRgb(0,0,0));
+        }
+        else {
+          color_vector.push_back(color_map_sdf[gray_color]);
+        }
         facet_it->set_patch_id(patch_id);
     }
 }
