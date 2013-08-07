@@ -76,7 +76,7 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstreamBase() {}
-  
+
   // methods
   template < typename T >
   ArrangementPainterOstreamBase& operator<<( const T& t )
@@ -177,7 +177,7 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
-  
+
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
@@ -255,7 +255,7 @@ public:
 
     /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
-  
+
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
@@ -352,7 +352,7 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
-  
+
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
@@ -510,13 +510,13 @@ protected: // methods
     Point_2 bottomRight = this->convert( this->clippingRect.bottomRight( ) );
     Point_2 topLeft = this->convert( this->clippingRect.topLeft( ) );
     Point_2 topRight = this->convert( this->clippingRect.topRight( ) );
-    X_monotone_curve_2 bottom = 
+    X_monotone_curve_2 bottom =
       this->construct_x_monotone_curve_2( bottomLeft, bottomRight );
-    X_monotone_curve_2 left = 
+    X_monotone_curve_2 left =
       this->construct_x_monotone_curve_2( bottomLeft, topLeft );
-    X_monotone_curve_2 top = 
+    X_monotone_curve_2 top =
       this->construct_x_monotone_curve_2( topLeft, topRight );
-    X_monotone_curve_2 right = 
+    X_monotone_curve_2 right =
       this->construct_x_monotone_curve_2( topRight, bottomRight );
 
     std::vector< CGAL::Object > bottomIntersections;
@@ -658,7 +658,7 @@ protected: // methods
       if ( CGAL::assign( pair, obj ) )
       {
         Point_2 pt = pair.first;
-        QPointF qpt = this->convert( pt );
+        /* QPointF qpt = */ this->convert( pt );
         // std::cout << "(" << pt.x( ) << " " << pt.y( ) < ")" << std::endl;
       }
     }
@@ -696,7 +696,7 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
-  
+
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
@@ -796,12 +796,12 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
-  
+
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
     this->painterOstream << curve;
-    return *this; 
+    return *this;
   }
 
   ArrangementPainterOstream& operator<<( const Point_2& p )
@@ -858,7 +858,7 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~ArrangementPainterOstream() {}
-  
+
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
@@ -872,9 +872,9 @@ public: // methods
     std::list<Coord_vec_2> points;
 
     Facade::instance().draw( curve, points, &p1, &p2 );
-    if(points.empty()) 
+    if(points.empty())
       return *this;
-            
+
     // QPainter *ppnt = this->qp;
     QGraphicsView* view = this->scene->views( ).first( );
     // int height = view->height();
@@ -891,9 +891,9 @@ public: // methods
       //             vit++;
       //         }
 #if 0
-      if(vit != vec.end()) 
+      if(vit != vec.end())
         ppnt->moveTo(vit->first, height - vit->second);
-            
+
       while(vit != vec.end()) {
         ppnt->lineTo(vit->first, height - vit->second);
         vit++;
@@ -921,7 +921,7 @@ public: // methods
       lit++;
     }
     //ppnt->lineTo((*p2).first, height - (*p2).second);
-            
+
 #if 0
     QPen old_pen = ppnt->pen();
     ppnt->setPen(QPen(Qt::NoPen)); // avoid drawing outlines
@@ -969,13 +969,13 @@ public: // methods
 
     }
 #if 0
-           
+
     QPainter *ppnt = &ws.get_painter();
     QPen old_pen = ppnt->pen();
     ppnt->setPen(QPen(Qt::NoPen));
-        
+
     unsigned sz = CGAL_REND_PT_RADIUS;
-    ppnt->drawEllipse(coord.first - sz, ws.height() - coord.second - sz, 
+    ppnt->drawEllipse(coord.first - sz, ws.height() - coord.second - sz,
                       sz*2, sz*2);
     ppnt->setPen(old_pen);
 #endif
