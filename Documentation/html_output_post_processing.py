@@ -61,8 +61,10 @@ def write_out_html(d, fn):
     f = codecs.open(fn, 'w', encoding='utf-8')
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
+    f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
     f.write(d.html())
     f.write('\n')
+    f.write('</html>\n')
     f.close()
 
 def package_glob(target):
@@ -101,6 +103,26 @@ def re_replace_in_file(pat, s_after, fname):
         out = codecs.open(out_fname, "w", encoding='utf-8')
         for line in f:
             out.write(re.sub(pat, s_after, line))
+        out.close()
+        os.rename(out_fname, fname)
+
+def re_replace_first_in_file(pat, s_after, fname):
+    # first, see if the pattern is even in the file.
+    with codecs.open(fname, encoding='utf-8') as f:
+        if not any(re.search(pat, line) for line in f):
+            return # pattern does not occur in file so we are done.
+
+    found=False
+    # pattern is in the file, so perform replace operation.
+    with codecs.open(fname, encoding='utf-8') as f:
+        out_fname = fname + ".tmp"
+        out = codecs.open(out_fname, "w", encoding='utf-8')
+        for line in f:
+            if not found and re.search(pat, line):
+              out.write(re.sub(pat, s_after, line))
+              found=True
+            else:
+              out.write(line)
         out.close()
         os.rename(out_fname, fname)
 
@@ -261,7 +283,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         write_out_html(d, fn)
 
     # remove %CGAL in navtree: this should be a fix in doxygen but for now it does not worth it
-    re_replace_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
+    re_replace_first_in_file('%CGAL','CGAL',glob.glob('./Manual/navtree.js')[0])
     clean_doc()
     
     #remove links to CGAL in the bibliography
@@ -272,7 +294,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     #add a section for Inherits from
     class_and_struct_files=package_glob('./*/class*.html')+package_glob('./*/struct*.html')
     for fn in class_and_struct_files:
-        re_replace_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
+        re_replace_first_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
 
     # remove class name in Definition section if there is no default template
     # parameter documented
@@ -283,6 +305,15 @@ removes some unneeded files, and performs minor repair on some glitches.''')
           if text[0:9]=="template<" and text.find('=')==-1:
             pq(el).remove()
         write_out_html(d, fn)
+
+    #add a canonical link to all pages
+    all_pages=glob.glob('*/*.html')
+    for f in all_pages:
+      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+f+"\">\n"
+      re_replace_first_in_file(r'<head>', r'<head>\n'+canonical_link, f)
+    ## special case for how_to_cite.html
+    canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/Manual/how_to_cite.html\">\n"
+    re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", "Manual/how_to_cite.html")
 
 
 if __name__ == "__main__":
