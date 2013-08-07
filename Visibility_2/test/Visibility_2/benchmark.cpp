@@ -25,7 +25,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
-//#include <CGAL/Naive_visibility_2.h>
+#include <CGAL/Naive_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 #include <CGAL/test_simple_polygons.h>
@@ -43,7 +43,7 @@ int main() {
   typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
   typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Simple_polygon_visibility_2;
-  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+  typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Naive_visibility_2;
 
   // First read arrangement 
@@ -52,9 +52,9 @@ int main() {
   CGAL::create_arrangement_from_file<Arrangement_2>(arr, input);
   Simple_polygon_visibility_2 simple_visibility;
   Naive_visibility_2 naive_visibility;
-  CGAL::QueryChoice qchoice;
+  CGAL::Query_choice qchoice;
   qchoice = CGAL::FACE;
-  typename Arrangement_2::Face_const_iterator fit;
+  typename Arrangement_2::Face_iterator fit;
 
   for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
 	  if (!fit->is_unbounded()) {

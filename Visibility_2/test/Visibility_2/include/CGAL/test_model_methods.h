@@ -59,6 +59,7 @@ void test_model_methods_for_arr(
   // First consider query point in the unbounded face
   Point_2 query_pt(1, 1);
   visibility.visibility_region(query_pt, fit, arr_out);
+
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr, arr_out));
   visibility.detach();
@@ -133,7 +134,6 @@ void test_model_methods() {
   CGAL::insert(arr_triangle, seg_tri.begin(), seg_tri.end());
 
   test_model_methods_for_arr<Visibility_2>(arr_triangle);
-
 }
 
 } // end CGAL namespace
