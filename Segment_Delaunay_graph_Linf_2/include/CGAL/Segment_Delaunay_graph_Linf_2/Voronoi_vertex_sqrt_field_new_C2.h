@@ -1669,17 +1669,16 @@ private:
         is_p_endp_of_q = is_endpoint_of(p,q);
       }
     }
-    if (r.is_segment()) {
-      // r is segment anyway
-      is_r_hor = is_site_horizontal(r);
-      is_r_ver = is_site_vertical(r);
-      is_t_endp_of_r = is_endpoint_of(t,r);
-      if (p.is_point()) {
-        is_p_endp_of_r = is_endpoint_of(p,r);
-      }
-      if (q.is_point()) {
-        is_q_endp_of_r = is_endpoint_of(q,r);
-      }
+
+    // r is segment anyway
+    is_r_hor = is_site_horizontal(r);
+    is_r_ver = is_site_vertical(r);
+    is_t_endp_of_r = is_endpoint_of(t,r);
+    if (p.is_point()) {
+      is_p_endp_of_r = is_endpoint_of(p,r);
+    }
+    if (q.is_point()) {
+      is_q_endp_of_r = is_endpoint_of(q,r);
     }
 
     Point_2 tt = t.point();
@@ -1805,7 +1804,7 @@ private:
         }
       }
 
-      if (q.is_segment() and r.is_segment()) {
+      if (q.is_segment()) {
         is_qsrc_r = is_endpoint_of(q.source_site(), r);
         is_qtrg_r = is_endpoint_of(q.target_site(), r);
         if (is_qsrc_r or is_qtrg_r) {
@@ -1847,7 +1846,7 @@ private:
         }
       }
 
-      if (r.is_segment() and p.is_segment()) {
+      if (p.is_segment()) {
         is_rsrc_p = is_endpoint_of(r.source_site(), p);
         is_rtrg_p = is_endpoint_of(r.target_site(), p);
         if (is_rsrc_p or is_rtrg_p) {
@@ -1940,7 +1939,7 @@ private:
       } else {
         // tocheck and tofix
         CGAL_assertion(
-            p.is_segment() and q.is_segment() and r.is_segment());
+            p.is_segment() and q.is_segment());
         return ZERO;
       }
 
@@ -2065,7 +2064,7 @@ private:
         return POSITIVE;
       }
 
-      if (r.is_segment() and (not (is_r_hor or is_r_ver))) {
+      if (not (is_r_hor or is_r_ver)) {
         CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
             << std::endl;);
         CGAL_SDG_DEBUG(std::cout << "debug d=" << d <<
