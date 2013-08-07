@@ -42,11 +42,6 @@ void print(std::vector<Point_handle> ps){
         std::cout<<ps[i]->point().x()<<","<<ps[i]->point().y()<<std::endl;
     }
 }
-//template <typename Point_2>
-//void print_point(const Point_2& p) {
-//    std::cout<<"["<<p.x()<<","<<p.y()<<"]"<<std::endl;
-//}
-
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Naive_visibility_2 {
@@ -84,10 +79,10 @@ public:
     Naive_visibility_2(const Arrangement_2 &arr):arr(arr), attach_tag(true) {}
     Naive_visibility_2(): attach_tag(false) {}
 
-    Face_handle visibility_region(const Point_2 &q, Halfedge_handle &e, Arrangement_2 &out_arr) {
+    Face_const_handle visibility_region(const Point_2 &q, Halfedge_const_handle &e, Arrangement_2 &out_arr) {
         Arrangement_2 arrc = arr ; //copy of arr;
-        Halfedge_handle ec; //copy of edge;
-        for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
+        Halfedge_const_handle ec; //copy of edge;
+        for (Halfedge_const_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
             if (eh->source()->point() == e-> source()->point() && eh->target()->point() == e->target()->point()) {
                 ec = eh;
                 break;
@@ -122,7 +117,7 @@ public:
         if (ec->target()->point() == q) {
           Point_2 source = ec->source()->point();
           Point_2 target = ec->next()->target()->point();
-          Halfedge_handle prev = ec->prev();
+          Halfedge_const_handle prev = ec->prev();
           arrc.remove_edge(ec->next());
           arrc.remove_edge(ec);
           std::vector<Point_2> polygon;
@@ -186,7 +181,7 @@ public:
         else {
             Point_2 source = ec->source()->point();
             Point_2 target = ec->target()->point();
-            Halfedge_handle eh1 = ec->next();
+            Halfedge_const_handle eh1 = ec->next();
             arrc.remove_edge(ec);
             Face_handle fh = eh1->face();
             std::vector<Point_2> polygon;
@@ -237,7 +232,7 @@ public:
 
     }
 
-    Face_handle visibility_region(const Point_2 &q, Face_handle fh, Arrangement_2 &out_arr) {
+    Face_const_handle visibility_region(const Point_2 &q, Face_const_handle fh, Arrangement_2 &out_arr) {
         std::vector<Point_2> polygon;
         visibility_region_impl(q, fh, polygon);
         build_arr(polygon, out_arr);
@@ -268,9 +263,9 @@ private:
     /*!
       obtain the vertices of visibility into polygon. these vertices can be used to build output arrangement by build_arr().
       */
-    void visibility_region_impl(const Point_2& q, Face_handle fh, std::vector<Point_2>& polygon) {
+    void visibility_region_impl(const Point_2& q, Face_const_handle fh, std::vector<Point_2>& polygon) {
         std::vector<Vertex_handle> vertices;                    //all vertices of the face.
-        std::vector<Halfedge_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
+        std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
         //preprocess the face
         input_face(fh, vertices, edges, q);
         //initiation of vision ray
@@ -284,7 +279,7 @@ private:
         }
         Ray_2 init_vision_ray(q, dir);
         //initiation of active_edges
-        typename std::vector<Halfedge_handle>::iterator iter1;
+        typename std::vector<Halfedge_const_handle>::iterator iter1;
         for (iter1 = edges.begin(); iter1 != edges.end(); iter1++)
         {
             insert_halfedge(active_edges, init_vision_ray, *iter1);
@@ -293,7 +288,7 @@ private:
         //angular sweep begins
         Ray_2 curr_vision_ray = init_vision_ray;
         typename std::vector<Vertex_handle>::iterator vit = vertices.begin(), begin_it, end_it;
-        Halfedge_handle closest_edge;
+        Halfedge_const_handle closest_edge;
         while (vit != vertices.end())
         {
             if (active_edges.empty())
@@ -416,22 +411,17 @@ private:
             }
     }
 
-    Point_2 intersection_point(Ray_2 ray, Halfedge_handle seg) {
+    Point_2 intersection_point(Ray_2 ray, Halfedge_const_handle seg) {
         return intersection_point(ray, halfedge2seg(seg));
     }
 
     //convertor for halfedge to segment
-    Segment_2 halfedge2seg(Halfedge_handle e){
+    Segment_2 halfedge2seg(Halfedge_const_handle e){
         return Segment_2(e->source()->point(), e->target()->point());
     }
 
-    //check whether two halfedges are the same segment.
-    bool is_same_edge(Halfedge_handle e1, Halfedge_handle e2) {
-
-    }
-
     //given two edges incident to a vision ray at the same point, find which one is first seen in sweeping.
-    bool is_closer(const Ray_2 &ray, Halfedge_handle seg1, Halfedge_handle seg2) {
+    bool is_closer(const Ray_2 &ray, Halfedge_const_handle seg1, Halfedge_const_handle seg2) {
         Point_2 shared = intersection_point(ray, seg1);
         Point_2 end1, end2;
         if (shared == seg1->source()->point())
@@ -458,12 +448,12 @@ private:
     }
 
     //insert newly-discovered edges into active_edges according to its intersection with the view ray.
-    void insert_halfedge(std::vector<Halfedge_handle> &active_edges, const Ray_2 &ray, Halfedge_handle edge)
+    void insert_halfedge(std::vector<Halfedge_const_handle> &active_edges, const Ray_2 &ray, Halfedge_const_handle edge)
     {
         Point_2 cross_of_e = intersection_point(ray, edge);
         if (cross_of_e != ray.source())
         {
-            typename std::vector<Halfedge_handle>::iterator curr = active_edges.begin();
+            typename std::vector<Halfedge_const_handle>::iterator curr = active_edges.begin();
             while (curr != active_edges.end())
             {
 
@@ -504,9 +494,9 @@ private:
 
 
     //traverse the face to get all edges and sort vertices in counter-clockwise order.
-    void input_face (Face_handle fh,
+    void input_face (Face_const_handle fh,
                      std::vector<Vertex_handle>& vertices,
-                     std::vector<Halfedge_handle>& edges,
+                     std::vector<Halfedge_const_handle>& edges,
                      const Point_2& p)
     {
         typename Arrangement_2::Ccb_halfedge_circulator curr = fh->outer_ccb();
@@ -556,7 +546,7 @@ private:
 
     //add a new edge when vision ray passes a vertex
     void add_edge(Vertex_handle vh,
-                   std::vector<Halfedge_handle>& edges,
+                   std::vector<Halfedge_const_handle>& edges,
                    const Ray_2& r) {
         typename Arrangement_2::Halfedge_around_vertex_circulator first, curr;
         first = curr = vh->incident_halfedges();
@@ -571,7 +561,7 @@ private:
     //add new edges
     void add_edges(typename std::vector<Vertex_handle>::iterator begin_it,
                    typename std::vector<Vertex_handle>::iterator end_it,
-                   std::vector<Halfedge_handle>& edges,
+                   std::vector<Halfedge_const_handle>& edges,
                    const Ray_2& r)
     {
         do {
@@ -581,8 +571,8 @@ private:
     }
 
     //remove edges that are not active any longer
-    void remove_edges(std::vector<Halfedge_handle>& edges, const Ray_2& r) {
-        typename std::vector<Halfedge_handle>::iterator eit = edges.begin();
+    void remove_edges(std::vector<Halfedge_const_handle>& edges, const Ray_2& r) {
+        typename std::vector<Halfedge_const_handle>::iterator eit = edges.begin();
         while (eit != edges.end()) {
             Point_2 p1 = (*eit)->target()->point();
             Point_2 p2 = (*eit)->source()->point();
@@ -613,8 +603,8 @@ private:
     }
     //return the type of the needle.
     //the vertices on the needle will be saved in collinear_vertices.
-    Intersection_type needle(std::vector<Halfedge_handle>& edges, Ray_2& r, std::vector<Point_2>& collinear_vertices) {
-        typename std::vector<Halfedge_handle>::iterator curr = edges.begin();
+    Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, std::vector<Point_2>& collinear_vertices) {
+        typename std::vector<Halfedge_const_handle>::iterator curr = edges.begin();
 //        Point_2 p = r.source(), end1, end2;
         Vertex_handle vertex1;
         //flag shows whether the left side or right side of needle is blocked.
@@ -676,7 +666,7 @@ private:
         return UNBOUNDED;
     }
     //debug
-    void print_edges(std::vector<Halfedge_handle>& edges){
+    void print_edges(std::vector<Halfedge_const_handle>& edges){
         for (int i = 0; i != edges.size(); i++) {
             Point_2 p1, p2;
             p1 = edges[i]->source()->point();
@@ -703,16 +693,16 @@ private:
 
 
     //angular sweep a vertice of face.
-    void sweep_vertex(std::vector<Halfedge_handle> &active_edges, const Point_2 &query, Vertex_handle vh, std::vector<Point_2> &polygon )
+    void sweep_vertex(std::vector<Halfedge_const_handle> &active_edges, const Point_2 &query, Vertex_handle vh, std::vector<Point_2> &polygon )
     {
         //closest_edge_copy is a copy of the closest edge to query point in active_edges before sweeping.
-        Halfedge_handle closest_edge_copy = active_edges[0];
+        Halfedge_const_handle closest_edge_copy = active_edges[0];
         Ray_2 ray(query, vh->point());
         int add_count(0);
         int del_count(0);
 
         //delete all edges in active_edges which is incident to v, because they has been sweeped over
-        typename std::vector<Halfedge_handle>::iterator edge_iter = active_edges.begin();
+        typename std::vector<Halfedge_const_handle>::iterator edge_iter = active_edges.begin();
         while (edge_iter != active_edges.end()) {
             if (((*edge_iter)->source()->point() == vh->point()) || ((*edge_iter)->target()->point() == vh->point()))
             {
@@ -775,8 +765,8 @@ private:
       typename Output_arrangement_2::Edge_iterator e_itr;
       for (e_itr = out_arr.edges_begin() ;
            e_itr != out_arr.edges_end() ; e_itr++) {
-        Halfedge_handle he = e_itr;
-        Halfedge_handle he_twin = he->twin();
+        Halfedge_const_handle he = e_itr;
+        Halfedge_const_handle he_twin = he->twin();
         if (he->face() == he_twin->face()) {
           out_arr.remove_edge(he);
         }
