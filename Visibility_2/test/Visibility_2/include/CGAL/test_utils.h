@@ -38,7 +38,7 @@
 
 namespace CGAL {
 
-enum QueryChoice {VERTEX, EDGE, FACE};  
+enum Query_choice {VERTEX, EDGE, FACE};  
 
 template <class Arrangement_2> 
 typename Arrangement_2::Halfedge_handle get_initial_halfedge(const Arrangement_2 &arr) {
@@ -311,7 +311,6 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
                                                        (input, arr_correct_out)) {
     return false;
   }
-
   CGAL::Object obj = CGAL::get_location<Input_arrangement_2>(arr_in, query_pt);
   Face_const_handle f;
   Halfedge_const_handle e;
@@ -340,7 +339,6 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
       }
     } while (++he_curr != he_circ);
   }
-
   if (!test_are_equal<Output_arrangement_2>(arr_out, arr_correct_out)) {
     return false;
   }
@@ -588,13 +586,13 @@ template<class Visibility_2_fst, class Visibility_2_snd, class Arrangement_2>
 void benchmark(Visibility_2_fst &visibility_fst, 
                              Visibility_2_snd &visibility_snd,
                              const Arrangement_2 &arr, 
-                             typename Arrangement_2::Face_const_handle face,
-                             QueryChoice choice) {
+                             typename Arrangement_2::Face_handle face,
+                             Query_choice choice) {
 
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                                  Ccb_halfedge_const_circulator;
+  typedef typename Arrangement_2::Ccb_halfedge_circulator
+                                                  Ccb_halfedge_circulator;
   typedef typename Geometry_traits_2::Point_2           Point_2;
   typedef typename Geometry_traits_2::FT                Number_type;
   typedef Timer Benchmark_timer;
@@ -612,11 +610,11 @@ void benchmark(Visibility_2_fst &visibility_fst,
   timer.stop();
   std::cout << "Time to attach to second object: " << timer.time() << std::endl;
 
-  Ccb_halfedge_const_circulator circ = face->outer_ccb();
-  Ccb_halfedge_const_circulator curr = circ;
+  Ccb_halfedge_circulator circ = face->outer_ccb();
+  Ccb_halfedge_circulator curr = circ;
 
   do {
-    Halfedge_const_handle he = curr;
+    Halfedge_handle he = curr;
     Point_2 curr_query_pt;
     bool selected_query_pt = true;
     switch (choice) {
@@ -628,8 +626,8 @@ void benchmark(Visibility_2_fst &visibility_fst,
                       (he->source()->point(), he->target()->point());
         break;
       case FACE:
-        Ccb_halfedge_const_circulator curr_next = circ;
-        Halfedge_const_handle he_next = curr_next;
+        Ccb_halfedge_circulator curr_next = circ;
+        Halfedge_handle he_next = curr_next;
         Point_2 p1 = he->source()->point();
         Point_2 p2 = he->target()->point();
         Point_2 p3 = he_next->target()->point();
@@ -656,7 +654,7 @@ void benchmark(Visibility_2_fst &visibility_fst,
       visibility_fst.visibility_region(curr_query_pt, face, out_arr_fst);
     }
     else {
- //     visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
+      visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
     }
     timer.stop();
 
@@ -669,14 +667,14 @@ void benchmark(Visibility_2_fst &visibility_fst,
       visibility_snd.visibility_region(curr_query_pt, face, out_arr_snd);
     }
     else {
-//      visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
+      visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
     }
     timer.stop();
     
     std::cout << "Time to compute visibility region using second object for " 
               << curr_query_pt << " : " << timer.time() << std::endl;
-    visibility_fst.print_arrangement(out_arr_fst);
-    visibility_fst.print_arrangement(out_arr_snd);
+//    visibility_fst.print_arrangement(out_arr_fst);
+ //   visibility_fst.print_arrangement(out_arr_snd);
     assert(true == (CGAL::test_are_equal<Arrangement_2>
                           (out_arr_fst, out_arr_snd)));  
   } while (++curr != circ);
