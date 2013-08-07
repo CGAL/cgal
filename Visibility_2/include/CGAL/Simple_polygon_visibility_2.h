@@ -187,8 +187,8 @@ public:
     std::reverse(points.begin(), points.end());
     CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
-                                                            points, 
                                                             q, 
+                                                            points,                                 
                                                             out_arr);                                     
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     CGAL_precondition(s.size() == 0);
@@ -268,8 +268,8 @@ public:
     std::reverse(points.begin(), points.end());
     CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
-                                                            points, 
                                                             q, 
+                                                            points,                                
                                                             out_arr);
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     CGAL_precondition(s.size() == 0);
