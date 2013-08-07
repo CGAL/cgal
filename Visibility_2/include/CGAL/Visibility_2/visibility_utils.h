@@ -107,8 +107,8 @@ typename Geometry_traits_2::FT Compute_squared_distance_2(
 template <class Visibility_2>
 void report_while_handling_needles(
   const typename Visibility_2::Input_arrangement_2::Geometry_traits_2 *geom_traits,
-  std::vector<typename Visibility_2::Input_arrangement_2::Point_2> &points,
   const typename Visibility_2::Input_arrangement_2::Point_2 &q,
+  std::vector<typename Visibility_2::Input_arrangement_2::Point_2> &points,
   typename Visibility_2::Output_arrangement_2 &arr_out) {
 
   typedef typename Visibility_2::Input_arrangement_2      Input_arrangement_2;
