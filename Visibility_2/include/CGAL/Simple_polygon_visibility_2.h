@@ -38,11 +38,10 @@ public:
   typedef Arrangement_2                                 Output_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
 
-  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
-  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  typedef typename Arrangement_2::Face_handle     Face_handle;
 
   typedef typename Geometry_traits_2::Point_2           Point_2;
   typedef typename Geometry_traits_2::Ray_2             Ray_2;
@@ -84,7 +83,7 @@ public:
     return *p_arr;
   }
 
-  void visibility_region(Point_2 &q, const Face_const_handle face,
+  Face_handle visibility_region(Point_2 &q, const Face_handle face,
                          Output_arrangement_2 &out_arr) {
 
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
@@ -189,9 +188,14 @@ public:
     CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
+
+    if (out_arr.faces_begin()->is_unbounded())
+      return ++out_arr.faces_begin();
+    else
+      return out_arr.faces_begin();
   }
 
-  void visibility_region(const Point_2 &q, const Halfedge_const_handle he,
+  Face_handle visibility_region(const Point_2 &q, const Halfedge_handle he,
                            Output_arrangement_2 &out_arr ) {
 
     if (q != he->source()->point()) {
@@ -265,6 +269,11 @@ public:
     CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
+
+    if (out_arr.faces_begin()->is_unbounded())
+      return ++out_arr.faces_begin();
+    else
+      return out_arr.faces_begin();
   }
 
   void print_arrangement(const Arrangement_2 &arr) {
