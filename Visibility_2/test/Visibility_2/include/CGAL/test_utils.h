@@ -590,6 +590,7 @@ void benchmark(Visibility_2_fst &visibility_fst,
                              Query_choice choice) {
 
   typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Ccb_halfedge_circulator
                                                   Ccb_halfedge_circulator;
@@ -614,7 +615,7 @@ void benchmark(Visibility_2_fst &visibility_fst,
   Ccb_halfedge_circulator curr = circ;
 
   do {
-    Halfedge_handle he = curr;
+    Halfedge_const_handle he = curr;
     Point_2 curr_query_pt;
     bool selected_query_pt = true;
     switch (choice) {
