@@ -36,12 +36,12 @@ public:
   /*!
    * The supported Face handle type of the input arrangement.
    */
-  typedef Input_arrangement_2::Face_handle Face_handle;
+  typedef Input_arrangement_2::Face_const_handle Face_const_handle;
 
   /*!
    * The supported Halfedge handle type of the input arrangement.
    */
-  typedef Input_arrangement_2::Halfedge_handle Halfedge_handle;
+  typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
 /// @}
 
@@ -117,7 +117,7 @@ The visibility region of `q` will be saved to `out_arr`.
 \pre `q` is in the interior of the given face `f`
 \return the face handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face_handle& f, Output_arrangement_2& out_arr);
+  Face_const_handle visibility_region(const Point_2& q, const Face_const_handle& f, Output_arrangement_2& out_arr);
 
 /*!
 Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
@@ -130,7 +130,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region
 */
-  Face_handle visibility_region(const Point_2& q, const Halfedge_handle& e, Output_arrangement_2& out_arr);
+  Face_const_handle visibility_region(const Point_2& q, const Halfedge_const_handle& e, Output_arrangement_2& out_arr);
 
 /// @}
 
