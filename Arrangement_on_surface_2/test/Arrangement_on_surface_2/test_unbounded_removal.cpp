@@ -34,7 +34,7 @@ int main()
 
   Arrangement_2 arr;
   std::vector<Halfedge_handle> hhs(curves.size());
-  for (unsigned int i = 0; i < curves.size(); i++)
+  for (size_t i = 0; i < curves.size(); i++)
     hhs[i] = insert_non_intersecting_curve(arr, curves[i]);
   bool valid = arr.is_valid();
   std::cout << "Arrangement size:"
@@ -46,7 +46,7 @@ int main()
   if (! valid) return (1);
 
   // Remove the edges.
-  for (unsigned int i = 0; i < hhs.size(); i++) {
+  for (size_t i = 0; i < hhs.size(); i++) {
     arr.remove_edge(hhs[i]);
     bool valid = arr.is_valid();
     std::cout << "  Removed " << i+1 << " curve(s), arrangement is "

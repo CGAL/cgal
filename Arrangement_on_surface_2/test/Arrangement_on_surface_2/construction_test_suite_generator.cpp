@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
   in_file >> num_of_curves;
   out_file << num_of_curves << std::endl;
   curves.resize(num_of_curves);
-  for (unsigned int i = 0; i < num_of_curves; ++i) {
+  for (size_t i = 0; i < num_of_curves; ++i) {
     Base_curve_2 base_cv;
     in_file >> base_cv;
     out_file << base_cv << std::endl;
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
   out_file << std::endl;
 
   std::vector<Point_2> pts(arr.number_of_vertices());
-  unsigned int i = 0;
+  size_t i = 0;
   for (Vertex_iterator vit = arr.vertices_begin(); vit != arr.vertices_end();
        ++vit, ++i)
     pts[i] = vit->point();

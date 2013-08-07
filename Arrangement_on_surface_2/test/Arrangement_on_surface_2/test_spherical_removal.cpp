@@ -57,7 +57,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   in_file >> num_edges_to_remove;
 
   // Read the number of cells left.
-  unsigned int num_vertices_left, num_edges_left, num_faces_left;
+  Arrangement_2::Size num_vertices_left, num_edges_left, num_faces_left;
   in_file >> num_vertices_left >> num_edges_left >> num_faces_left;
 
   Arrangement_2 arr;
@@ -149,9 +149,9 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   }
 
   // Verify the resulting arrangement.
-  unsigned int num_vertices = arr.number_of_vertices();
-  unsigned int num_edges = arr.number_of_edges();
-  unsigned int num_faces = arr.number_of_faces();
+  Arrangement_2::Size num_vertices = arr.number_of_vertices();
+  Arrangement_2::Size num_edges = arr.number_of_edges();
+  Arrangement_2::Size num_faces = arr.number_of_faces();
 
   if ((num_vertices != num_vertices_left) ||
       (num_edges != num_edges_left) ||

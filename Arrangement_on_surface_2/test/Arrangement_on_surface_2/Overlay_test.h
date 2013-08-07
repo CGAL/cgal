@@ -89,9 +89,9 @@ private:
   /*! Verbosity */
   unsigned int m_verbose_level;
 
-  unsigned int m_num_vertices;
-  unsigned int m_num_edges;
-  unsigned int m_num_faces;
+  typename Arrangement::Size m_num_vertices;
+  typename Arrangement::Size m_num_edges;
+  typename Arrangement::Size m_num_faces;
 
   /*! The input data file of points*/
   std::string m_filename;

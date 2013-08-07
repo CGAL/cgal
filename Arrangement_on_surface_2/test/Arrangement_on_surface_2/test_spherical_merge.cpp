@@ -30,7 +30,7 @@ typedef Arrangement_2::Halfedge_around_vertex_circulator
 bool test_one_file(std::ifstream& in_file, bool verbose)
 {
   unsigned int i;
-  
+
   // Read the points:
   unsigned int num_of_points;
   in_file >> num_of_points;
@@ -61,13 +61,13 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
 
   // Read the number of cells left.
   unsigned int num_vertices_left, num_edges_left, num_faces_left;
-  in_file >> num_vertices_left >> num_edges_left >> num_faces_left;  
+  in_file >> num_vertices_left >> num_edges_left >> num_faces_left;
   // std::cout << "Expected number of cells left:"
   //             << "V = " << num_vertices_left
   //             << ", E = " << num_edges_left
   //             << ", F = " << num_faces_left
   //             << std::endl;
-  
+
   // Insert the curves incrementally.
   Arrangement_2 arr;
   std::vector<std::pair<unsigned int, unsigned int> >::const_iterator cit;
@@ -79,7 +79,7 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     std::cout << "inserted" << std::endl;
   }
   curves.clear();
-  
+
   // Insert the isolated points.
   if (isolated_points.size() != 0) {
     std::vector<unsigned int>::const_iterator pit;
@@ -90,14 +90,14 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
   }
   isolated_points.clear();
   points.clear();
-  
+
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
-  
+
   // Remove the vertices.
-  
+
   const Geom_traits_2* traits = arr.geometry_traits();
   Vertex_iterator vit;
   for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
@@ -110,12 +110,12 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     traits->merge_2_object()(hit->curve(), hit->next()->curve(), c);
     arr.merge_edge(hit, hit->next(), c);
   }
-  
+
   // Verify the resulting arrangement.
-  unsigned int num_vertices = arr.number_of_vertices();
-  unsigned int num_edges = arr.number_of_edges();
-  unsigned int num_faces = arr.number_of_faces();
-  
+  Arrangement_2::Size num_vertices = arr.number_of_vertices();
+  Arrangement_2::Size num_edges = arr.number_of_edges();
+  Arrangement_2::Size num_faces = arr.number_of_faces();
+
   if ((num_vertices != num_vertices_left) ||
       (num_edges != num_edges_left) ||
       (num_faces != num_faces_left))
@@ -123,13 +123,13 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     std::cerr << " Failed. The number of arrangement cells is incorrect:"
               << std::endl
               << "   V = " << arr.number_of_vertices()
-              << ", E = " << arr.number_of_edges() 
-              << ", F = " << arr.number_of_faces() 
+              << ", E = " << arr.number_of_edges()
+              << ", F = " << arr.number_of_faces()
               << std::endl;
     arr.clear();
     return false;
   }
-  
+
   arr.clear();
   return true;
 }
@@ -147,14 +147,14 @@ int main(int argc, char* argv[])
   for (int i = 1; i < argc; ++i) {
     std::string str(argv[i]);
     if (str.empty()) continue;
-    
+
     std::string::iterator itr = str.end();
     --itr;
     while (itr != str.begin()) {
       std::string::iterator tmp = itr;
       --tmp;
       if (*itr == 't')  break;
-      
+
       str.erase(itr);
       itr = tmp;
     }
@@ -172,6 +172,6 @@ int main(int argc, char* argv[])
     else std::cout <<str << ": succeeded" << std::endl;
     inp.close();
   }
-  
+
   return success;
 }

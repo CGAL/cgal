@@ -25,7 +25,7 @@ typedef Base_geom_traits::X_monotone_curve_2
   Base_x_monotone_curve_2;
 typedef CGAL::Arr_curve_data_traits_2<Base_geom_traits,
                                       unsigned int,
-                                      std::plus<unsigned int> >  
+                                      std::plus<unsigned int> >
                                                           Geom_traits;
 typedef Geom_traits::Point_2                              Point_2;
 typedef Geom_traits::Curve_2                              Curve_2;
@@ -80,7 +80,7 @@ class Overlay_traits {
 public:
   /*! Destructor. */
   virtual ~Overlay_traits() {}
-  
+
   /*! Create a vertex v that corresponds to the coinciding vertices v1 and v2. */
   virtual void create_vertex(Vertex_const_handle v1, Vertex_const_handle v2,
                              Vertex_handle v) const
@@ -162,7 +162,7 @@ void init_arr(Arrangement& arr, int verbose_level)
       do count += curr->data() * 2;
       while (++curr != *ocit);
     }
-    
+
     // Inner ccbs
     Inner_ccb_iterator icit;
     for (icit = fit->inner_ccbs_begin(); icit != fit->inner_ccbs_end(); ++icit) {
@@ -188,7 +188,7 @@ void init_arr(Arrangement& arr, int verbose_level)
   }
 
   if (verbose_level > 0) std::cout << "Arrangement Input: " << std::endl;
-  
+
   if (verbose_level > 1) {
     std::cout << "Halfedge Data: " << std::endl;
     Halfedge_iterator heit;
@@ -197,7 +197,7 @@ void init_arr(Arrangement& arr, int verbose_level)
                 << heit->target()->point() << " " << heit->data()
                 << std::endl;
   }
-  
+
   if (verbose_level > 0) {
     std::cout << "Face Data: " << std::endl;
     Face_iterator fit;
@@ -264,7 +264,7 @@ void construct_arr(Arrangement& arr,
   CGAL::insert_non_intersecting_curves(arr, xcurves_begin, xcurves_end);
   if (verbose_level > 2) std::cout << "inserted" << std::endl;
 #endif
-  
+
   // Insert the isolated points.
   if (verbose_level > 2) std::cout << "inserting isolated vertices" << " ... ";
   Point_iterator pit;
@@ -279,15 +279,17 @@ bool test_one_file(std::ifstream& in, int verbose_level)
 {
   std::list<X_monotone_curve_2> xcurves;
   std::list<Point_2> isolated_points;
-  read_arr(in, std::back_inserter(xcurves), std::back_inserter(isolated_points));
+  read_arr(in, std::back_inserter(xcurves),
+           std::back_inserter(isolated_points));
   Arrangement arr1;
   construct_arr(arr1, xcurves.begin(), xcurves.end(),
                 isolated_points.begin(), isolated_points.end(), verbose_level);
   isolated_points.clear();
   xcurves.clear();
   init_arr(arr1, verbose_level);
-  
-  read_arr(in, std::back_inserter(xcurves), std::back_inserter(isolated_points));
+
+  read_arr(in, std::back_inserter(xcurves),
+           std::back_inserter(isolated_points));
   Arrangement arr2;
   construct_arr(arr2, xcurves.begin(), xcurves.end(),
                 isolated_points.begin(), isolated_points.end(), verbose_level);
@@ -296,7 +298,7 @@ bool test_one_file(std::ifstream& in, int verbose_level)
   init_arr(arr2, verbose_level);
 
   // Read the number of cells left.
-  unsigned int num_vertices, num_edges, num_faces;
+  Arrangement::Size num_vertices, num_edges, num_faces;
   in >> num_vertices >> num_edges >> num_faces;
 
   // Read the expected face data:
@@ -309,11 +311,11 @@ bool test_one_file(std::ifstream& in, int verbose_level)
   if (verbose_level > 2) std::cout << "overlaying" << " ... "; std::cout.flush();
   CGAL::overlay(arr1, arr2, arr, overlay_traits);
   if (verbose_level > 2) std::cout << "overlaid" << std::endl;
-  
+
   // Verify the resulting arrangement.
-  unsigned int num_vertices_res = arr.number_of_vertices();
-  unsigned int num_edges_res = arr.number_of_edges();
-  unsigned int num_faces_res = arr.number_of_faces();
+  Arrangement::Size num_vertices_res = arr.number_of_vertices();
+  Arrangement::Size num_edges_res = arr.number_of_edges();
+  Arrangement::Size num_faces_res = arr.number_of_faces();
 
   if (verbose_level > 0) std::cout << "Arrangement Output: " << std::endl;
 
@@ -325,14 +327,14 @@ bool test_one_file(std::ifstream& in, int verbose_level)
                 << heit->target()->point() << " " << heit->data()
                 << std::endl;
   }
-  
+
   if (verbose_level > 0) {
     std::cout << "Face Data: " << std::endl;
     Face_iterator fit;
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
       std::cout << fit->data() << std::endl;
   }
-  
+
   if ((num_vertices_res != num_vertices) ||
       (num_edges_res != num_edges) ||
       (num_faces_res != num_faces))
@@ -340,8 +342,8 @@ bool test_one_file(std::ifstream& in, int verbose_level)
     std::cerr << "ERROR: The number of arrangement cells is incorrect:"
               << std::endl
               << "   V = " << arr.number_of_vertices()
-              << ", E = " << arr.number_of_edges() 
-              << ", F = " << arr.number_of_faces() 
+              << ", E = " << arr.number_of_edges()
+              << ", F = " << arr.number_of_faces()
               << std::endl;
     arr.clear();
     return false;
@@ -356,7 +358,7 @@ bool test_one_file(std::ifstream& in, int verbose_level)
   if (! std::equal(fdata_res.begin(), fdata_res.end(), fdata.begin())) {
     std::cerr << "ERROR: Incorrect face data:" << std::endl;
     std::copy(fdata_res.begin(), fdata_res.end(),
-              std::ostream_iterator<int>(std::cout, "\n"));  
+              std::ostream_iterator<int>(std::cout, "\n"));
     arr.clear();
     return false;
   }
@@ -386,14 +388,14 @@ int main(int argc, char* argv[])
   for (; i < argc; ++i) {
     std::string str(argv[i]);
     if (str.empty()) continue;
-    
+
     std::string::iterator itr = str.end();
     --itr;
     while (itr != str.begin()) {
       std::string::iterator tmp = itr;
       --tmp;
       if (*itr == 't')  break;
-      
+
       str.erase(itr);
       itr = tmp;
     }
@@ -411,6 +413,6 @@ int main(int argc, char* argv[])
     else std::cout <<str << ": succeeded" << std::endl;
     inp.close();
   }
-  
+
   return success;
 }

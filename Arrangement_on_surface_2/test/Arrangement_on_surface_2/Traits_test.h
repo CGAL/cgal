@@ -31,7 +31,7 @@ private:
   typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Curve_2                      Curve_2;
-  
+
   /*! A map between (strings) commands and (member functions) operations */
   typedef bool(Traits_test::* Wrapper)(std::istringstream&);
   typedef std::map<std::string, Wrapper>                Wrapper_map;
@@ -123,7 +123,7 @@ private:
   bool make_x_monotone_wrapper(std::istringstream& line);
 
   /*! Tests Intersect_2.
-   * Find the intersections of the two given curves and insert them into the 
+   * Find the intersections of the two given curves and insert them into the
    * given output iterator.
    * Degenerate cases for polylines: The most right (resp. left) endpoints of
    * the two curves coincide. Both endpoints coincide. The most right (resp.
@@ -165,10 +165,10 @@ private:
 
   // /////////////////////////////////////////////////////////////////////////
   // boundary-specific functors:
-  
+
   // -------------------------------------------------------------------------
   // left-right
-  
+
   /*! Test Parameter_space_in_x_2
    */
   bool parameter_space_in_x_wrapper(std::istringstream&);
@@ -186,11 +186,11 @@ private:
                                            CGAL::Arr_use_traits_tag);
 
   // TODO Is_on_y_identification_2
-  
-  
+
+
   // -------------------------------------------------------------------------
   // bottom-right
-  
+
   /*! Test Parameter_space_in_y_2
    */
   bool parameter_space_in_y_wrapper(std::istringstream&);
@@ -230,9 +230,9 @@ private:
                                          CGAL::Arr_use_dummy_tag);
   bool compare_x_on_boundary_wrapper_imp(std::istringstream&,
                                          CGAL::Arr_use_traits_tag);
-  
+
   // TODO Is_on_x_identification_2
-  
+
   //@}
 
 public:
@@ -244,14 +244,14 @@ public:
 };
 
 /*!
- * Constructor. 
+ * Constructor.
  * Accepts test data file name.
  */
 template <typename T_Traits>
 Traits_test<T_Traits>::Traits_test(const T_Traits& traits) : Base(traits)
 {
   typedef T_Traits Traits;
-  
+
   m_wrappers[std::string("compare_x")] =
     &Traits_test<Traits>::compare_x_wrapper;
   m_wrappers[std::string("compare_xy")] =
@@ -288,16 +288,16 @@ Traits_test<T_Traits>::Traits_test(const T_Traits& traits) : Base(traits)
     &Traits_test<Traits>::construct_x_monotone_curve_wrapper;
 
   // left-right
-  
+
   m_wrappers[std::string("parameter_space_x")] =
     &Traits_test<Traits>::parameter_space_in_x_wrapper;
   m_wrappers[std::string("compare_y_near_boundary")] =
     &Traits_test<Traits>::compare_y_near_boundary_wrapper;
 
   // TODO Is_on_y_identification_2
-  
+
   // bottom-top
-  
+
   m_wrappers[std::string("parameter_space_y")] =
     &Traits_test<Traits>::parameter_space_in_y_wrapper;
   m_wrappers[std::string("compare_x_near_limit")] =
@@ -309,12 +309,12 @@ Traits_test<T_Traits>::Traits_test(const T_Traits& traits) : Base(traits)
     &Traits_test<Traits>::compare_x_near_boundary_wrapper;
   m_wrappers[std::string("compare_x_on_boundary")] =
     &Traits_test<Traits>::compare_x_on_boundary_wrapper;
-  
+
   // TODO Is_on_x_identification_2
 }
 
 /*!
- * Destructor. 
+ * Destructor.
  */
 template <typename T_Traits>
 Traits_test<T_Traits>::~Traits_test() {}
@@ -397,7 +397,7 @@ Traits_test<T_Traits>::is_vertical_wrapper(std::istringstream& str_stream)
   bool exp_answer = this->get_expected_boolean(str_stream);
   std::cout << "Test: is_vertical( " << this->m_xcurves[id] << " ) ? "
             << exp_answer << " ";
-  
+
   bool real_answer =
     this->m_geom_traits.is_vertical_2_object()(this->m_xcurves[id]);
   return this->compare(exp_answer, real_answer);
@@ -542,7 +542,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
   CGAL_USE_TYPE(typename Traits::Curve_2);
-  
+
   unsigned int id;
   str_stream >> id;
   std::cout << "Test: make_x_monotone( " << this->m_curves[id]
@@ -550,12 +550,12 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
   std::vector<CGAL::Object> object_vec;
   this->m_geom_traits.make_x_monotone_2_object()(this->m_curves[id],
                                                  std::back_inserter(object_vec));
-  unsigned int num;
+  size_t num;
   str_stream >> num;
-  if (!this->compare(num, (unsigned int)object_vec.size(), "size"))
+  if (!this->compare(num, object_vec.size(), "size"))
     return false;
 
-  for (unsigned int i = 0; i < num; ++i) {
+  for (size_t i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
 
@@ -585,7 +585,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
 }
 
 /*! Tests Intersect_2.
- * Find the intersections of the two given curves and insert them into the 
+ * Find the intersections of the two given curves and insert them into the
  * given output iterator.
  * Degenerate cases for polylines: The most right (resp. left) endpoints of
  * the two curves coincide. Both endpoints coincide. The most right (resp.
@@ -598,7 +598,7 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
   typedef T_Traits                              Traits;
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
-  typedef typename Traits::Multiplicity         Multiplicity; 
+  typedef typename Traits::Multiplicity         Multiplicity;
 
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
@@ -608,11 +608,11 @@ bool Traits_test<T_Traits>::intersect_wrapper(std::istringstream& str_stream)
                                            std::back_inserter(object_vec));
   std::cout << "Test: intersect( " << this->m_xcurves[id1] << ","
             << this->m_xcurves[id2] << " ) ? ";
-  unsigned int num;
+  size_t num;
   str_stream >> num;
-  if (!this->compare(num, static_cast<unsigned int>(object_vec.size()), "size")) return false;
+  if (!this->compare(num, object_vec.size(), "size")) return false;
 
-  for (unsigned int i = 0; i < num; ++i) {
+  for (size_t i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
     unsigned int id;                    // The id of the point or x-monotone
@@ -871,12 +871,12 @@ compare_y_near_boundary_wrapper_imp(std::istringstream& str_stream,
             << (cv_end == CGAL::ARR_MIN_END ? "MIN_END" : "MAX_END") << " ) ? ";
   next_input = this->get_next_input(str_stream);
   assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
+  CGAL::Comparison_result exp_answer =
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
                (exp_answer == CGAL::LARGER ? "LARGER" : "EQUAL")) << " ";
 
-  CGAL::Comparison_result real_answer = 
+  CGAL::Comparison_result real_answer =
     this->m_geom_traits.compare_y_near_boundary_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
   return this->compare(exp_answer, real_answer);
@@ -990,19 +990,19 @@ compare_x_near_limit_wrapper_imp(std::istringstream& str_stream,
   assert(next_input.first == Base::CURVE_END);
   CGAL::Arr_curve_end cv_end =
     static_cast<CGAL::Arr_curve_end>(next_input.second);
-  
+
   std::cout << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " , "
             << this->curve_end_str(cv_end) << " ) ? ";
 
   next_input = this->get_next_input(str_stream);
   assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
+  CGAL::Comparison_result exp_answer =
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
-  
-  CGAL::Comparison_result real_answer = 
+
+  CGAL::Comparison_result real_answer =
     this->m_geom_traits.compare_x_near_limit_2_object()
     (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
   return this->compare(exp_answer, real_answer);
@@ -1041,7 +1041,7 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
                                CGAL::Arr_use_traits_tag)
 {
   std::cout << "Test: compare_x_at_limit( ";
-  
+
   CGAL::Comparison_result real_answer;
   unsigned int id1, id2;
   // first argument must be a number (either a point or a xcurve)
@@ -1057,7 +1057,7 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
     next_input = this->get_next_input(str_stream);
     assert(next_input.first == Base::CURVE_END);
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-      
+
     std::cout << this->m_points[id1] << " , "
               << this->m_xcurves[id2]<< " , "
               << this->curve_end_str(cv_end1) << " ) ? ";
@@ -1080,7 +1080,7 @@ compare_x_at_limit_wrapper_imp(std::istringstream& str_stream,
 
   next_input = this->get_next_input(str_stream);
   assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
+  CGAL::Comparison_result exp_answer =
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
@@ -1133,21 +1133,21 @@ compare_x_near_boundary_wrapper_imp(std::istringstream& str_stream,
   assert(next_input.first == Base::CURVE_END);
   CGAL::Arr_curve_end cv_end =
     static_cast<CGAL::Arr_curve_end>(next_input.second);
-  
+
   std::cout << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " , "
             << this->curve_end_str(cv_end) << " ) ? ";
 
   next_input = this->get_next_input(str_stream);
   assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
+  CGAL::Comparison_result exp_answer =
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
-  
-  CGAL::Comparison_result real_answer = 
+
+  CGAL::Comparison_result real_answer =
     this->m_geom_traits.compare_x_near_boundary_2_object()
-    (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);    
+    (this->m_xcurves[id1], this->m_xcurves[id2], cv_end);
   return this->compare(exp_answer, real_answer);
 }
 
@@ -1187,7 +1187,7 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
 {
   // TBD: points
   std::cout << "Test: compare_x_on_boundary( ";
-  
+
   CGAL::Comparison_result real_answer;
   unsigned int id1, id2;
   // first argument must be a number (either a point or a xcurve)
@@ -1203,7 +1203,7 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
     next_input = this->get_next_input(str_stream);
     assert(next_input.first == Base::CURVE_END);
     cv_end1 = static_cast<CGAL::Arr_curve_end>(next_input.second);
-      
+
     std::cout << this->m_points[id1] << " , "
               << this->m_xcurves[id2]<< " , "
               << this->curve_end_str(cv_end1) << " ) ? ";
@@ -1226,7 +1226,7 @@ compare_x_on_boundary_wrapper_imp(std::istringstream& str_stream,
 
   next_input = this->get_next_input(str_stream);
   assert(next_input.first == Base::SIGN);
-  CGAL::Comparison_result exp_answer = 
+  CGAL::Comparison_result exp_answer =
     static_cast<CGAL::Comparison_result>(next_input.second);
   std::cout << (exp_answer == CGAL::SMALLER ? "SMALLER":
                (exp_answer == CGAL::LARGER ? "LARGER":"EQUAL")) << " ";
