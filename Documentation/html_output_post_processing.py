@@ -270,16 +270,20 @@ removes some unneeded files, and performs minor repair on some glitches.''')
         re_replace_in_file('<a class=\"el\" href=\"namespaceCGAL.html\">CGAL</a>', 'CGAL', fn)
     
     #add a section for Inherits from
-    citelist_files=package_glob('./*/class*.html')
-    for fn in citelist_files:
+    class_and_struct_files=package_glob('./*/class*.html')+package_glob('./*/struct*.html')
+    for fn in class_and_struct_files:
         re_replace_in_file(r'<p>Inherits\s*(.*)</p>', r'<a name="details" id="details"></a><h2 class="groupheader">Inherits from</h2><p>\1</p>', fn)
 
-    #remove class name in Definition section
-    all_pages=glob.glob('./*/class*.html')
-    for fn in all_pages:
+    # remove class name in Definition section if there is no default template
+    # parameter documented
+    for fn in class_and_struct_files:
         d = pq(filename=fn, parser='html')
-        d('h3').remove()
+        for el in d('h3'):
+          text = pq(el).text()
+          if text[0:9]=="template<" and text.find('=')==-1:
+            pq(el).remove()
         write_out_html(d, fn)
+
 
 if __name__ == "__main__":
     main()
