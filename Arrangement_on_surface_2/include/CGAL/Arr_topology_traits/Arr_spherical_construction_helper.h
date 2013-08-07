@@ -145,7 +145,7 @@ public:
    */
   void splice_indices_list(Halfedge_handle he)
   {
-    CGAL_assertion(m_he_ind_map_p);
+    CGAL_assertion(m_he_ind_map_p != NULL);
     Indices_list& list_ref = (*m_he_ind_map_p)[he];
     list_ref.splice(list_ref.end(), m_subcurves_at_nf);
   }

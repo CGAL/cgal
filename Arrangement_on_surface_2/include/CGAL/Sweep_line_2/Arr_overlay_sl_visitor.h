@@ -966,7 +966,7 @@ _create_vertex(Event* event,
       (event->parameter_space_in_y() != ARR_INTERIOR))
   {
     if (!red_handle) {
-      CGAL_assertion(blue_handle);
+      CGAL_assertion(blue_handle != NULL);
       // Obtain the red face by looking for a subcurve above.
       const Subcurve* sc_above = sc->subcurve_above();
       Face_handle_red red_f = (sc_above != NULL) ?
@@ -976,7 +976,7 @@ _create_vertex(Event* event,
       return;
     }
     if (!blue_handle) {
-      CGAL_assertion(red_handle);
+      CGAL_assertion(red_handle != NULL);
       // Obtain the blue face by looking for a subcurve above.
       const Subcurve* sc_above = sc->subcurve_above();
       Face_handle_blue blue_f = (sc_above != NULL) ?
@@ -1012,7 +1012,7 @@ _create_vertex(Event* event,
     Face_handle_red red_f = (sc_above != NULL) ?
       sc_above->red_halfedge_handle()->face() : sc->red_top_face();
 
-    CGAL_assertion(blue_handle);
+    CGAL_assertion(blue_handle != NULL);
     const Vertex_handle_blue& blue_v =
       boost::get<Vertex_handle_blue>(*blue_handle);
     m_overlay_traits->create_vertex(red_f, blue_v, new_v);
@@ -1026,7 +1026,7 @@ _create_vertex(Event* event,
     Face_handle_blue blue_f = (sc_above != NULL) ?
       sc_above->blue_halfedge_handle()->face() : sc->blue_top_face();
 
-    CGAL_assertion(red_handle);
+    CGAL_assertion(red_handle != NULL);
     const Vertex_handle_red& red_v =
       boost::get<Vertex_handle_red>(*red_handle);
     m_overlay_traits->create_vertex(red_v, blue_f, new_v);
