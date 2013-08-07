@@ -17,12 +17,8 @@ namespace CGAL
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cite shapira2008consistent.
- * After the computation of SDF values for each facet, the following post-processing steps are applied:
- *   - Facets with no SDF values (i.e. zero) are assigned the average SDF value of their one-ring edge-adjacent neighbors.
- *     If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper.
- *     The main reason for avoiding zero SDF values is that it can obstruct log-normalization process which takes place at the beginning of segment_from_sdf_values()`.
- *   - SDF values are smoothed with bilateral filtering.
- *   - SDF values are linearly normalized between [0,1].
+ * It is possible to compute raw SDF values (see \ref Surface_mesh_segmentationRawSDF) and apply post-processing steps (see \ref Surface_mesh_segmentationPostprocessing).
+ * For raw SDF values, -1.0 is used as an indicator for no SDF value.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
@@ -34,8 +30,9 @@ namespace CGAL
  * @param[out] sdf_values the SDF value of each facet
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays beyond the default value has little influence upon the resulting segmentation.
+ * @param postprocess if true apply post-processing steps in `CGAL::postprocess_sdf_values`, otherwise return raw SDF values.
  * @param traits traits object
- * @return minimum and maximum SDF values before linear normalization
+ * @return minimum and maximum SDF values if @a postprocess is true, otherwise minimum and maximum SDF values before linear normalization
  */
 template <bool Fast_sdf_calculation_mode, class Polyhedron,
          class SDFPropertyMap, class GeomTraits
@@ -48,11 +45,13 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    SDFPropertyMap sdf_values,
                    double cone_angle = 2.0 / 3.0 * CGAL_PI,
                    int number_of_rays = 25,
+                   bool postprocess = true,
                    GeomTraits traits = GeomTraits())
 {
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, Fast_sdf_calculation_mode>
   algorithm(polyhedron, traits);
-  return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values);
+  return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values,
+                                        postprocess);
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -66,12 +65,46 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    SDFPropertyMap sdf_values,
                    double cone_angle = 2.0 / 3.0 * CGAL_PI,
                    int number_of_rays = 25,
+                   bool postprocess = true,
                    GeomTraits traits = GeomTraits())
 {
   return compute_sdf_values<true, Polyhedron, SDFPropertyMap, GeomTraits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays, traits);
+         (polyhedron, sdf_values, cone_angle, number_of_rays, postprocess, traits);
 }
 /// @endcond
+
+/*!
+ * \ingroup PkgSurfaceSegmentation
+ * @brief Function post-processing raw SDF values computed per facet.
+ *
+ * Post-processing steps applied are:
+ *   - Facets with -1.0 SDF values are assigned the average SDF value of their one-ring edge-adjacent neighbors.
+ *     If there is still a facet having -1.0 SDF value, the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper.
+ *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1.0) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segment_from_sdf_values`.
+ *   - SDF values are smoothed with bilateral filtering.
+ *   - SDF values are linearly normalized between [0,1].
+ *
+ * See the section \ref Surface_mesh_segmentationPostprocessing for more details.
+ *
+ * @pre @a polyhedron.is_pure_triangle()
+ * @pre Raw values should be either equal to -1.0 or, greater or equal than 0.0
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+ *
+ * @param polyhedron surface mesh on which SDF values are computed
+ * @param[in, out] sdf_values the SDF value of each facet
+ *
+ * @return minimum and maximum SDF values before linear normalization
+ */
+template<class Polyhedron, class SDFPropertyMap>
+std::pair<double, double>
+postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
+{
+  CGAL_precondition(polyhedron.is_pure_triangle());
+  return internal::Postprocess_sdf_values<Polyhedron>().postprocess(polyhedron,
+         sdf_values);
+}
+
 
 /*!
  * \ingroup PkgSurfaceSegmentation
@@ -206,10 +239,11 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    SDFPropertyMap sdf_values,
                    double cone_angle = 2.0 / 3.0 * CGAL_PI,
                    int number_of_rays = 25,
+                   bool postprocess = true,
                    typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return compute_sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays, traits);
+         (polyhedron, sdf_values, cone_angle, number_of_rays, postprocess, traits);
 }
 
 template < class Polyhedron, class SDFPropertyMap>
@@ -218,10 +252,11 @@ compute_sdf_values(const Polyhedron& polyhedron,
                    SDFPropertyMap sdf_values,
                    double cone_angle = 2.0 / 3.0 * CGAL_PI,
                    int number_of_rays = 25,
+                   bool postprocess = true,
                    typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return compute_sdf_values<true, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays, traits);
+         (polyhedron, sdf_values, cone_angle, number_of_rays, postprocess, traits);
 }
 
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>

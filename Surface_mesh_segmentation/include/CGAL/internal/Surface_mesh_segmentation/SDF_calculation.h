@@ -197,8 +197,7 @@ public:
       if(sdf_value) {
         sdf_values[facet_begin] = *sdf_value;
       } else          {
-        sdf_values[facet_begin] =
-          0.0;  // no intersection is found, for now we are returning 0 not a special indicator
+        sdf_values[facet_begin] = -1.0;
       }
     }
   }

@@ -25,6 +25,139 @@ namespace CGAL
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal
 {
+
+// Postprocess functions for sdf values
+template<class Polyhedron>
+class Postprocess_sdf_values
+{
+
+  typedef typename Polyhedron::Facet                Facet;
+  typedef typename Polyhedron::Facet_const_handle   Facet_const_handle;
+  typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
+
+  typedef Bilateral_filtering<Polyhedron>           Default_filter;
+
+public:
+
+  template <class Filter, class SDFPropertyMap>
+  std::pair<double, double>
+  postprocess(const Polyhedron& mesh, SDFPropertyMap sdf_pmap) {
+    check_missing_sdf_values(mesh, sdf_pmap);
+    Filter()(mesh, get_window_size(mesh), sdf_pmap);
+    return linear_normalize_sdf_values(mesh, sdf_pmap);
+  }
+
+  template <class SDFPropertyMap>
+  std::pair<double, double>
+  postprocess(const Polyhedron& mesh, SDFPropertyMap sdf_pmap) {
+    return postprocess<Default_filter>(mesh, sdf_pmap);
+  }
+
+  /**
+   * Finds facets which have missing (indicated by -1) sdf values.
+   * Sdf values on these facets are assigned to average sdf value of its neighbors.
+   * If still there is any facet which has no sdf value, assigns minimum sdf value to it.
+   * This is meaningful since (being an outlier) zero sdf values might effect normalization & log extremely.
+   * @param[in, out] sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   */
+  template<class SDFPropertyMap>
+  void check_missing_sdf_values(const Polyhedron& mesh,
+                                SDFPropertyMap sdf_values) {
+    std::vector<Facet_const_handle> still_missing_facets;
+    double min_sdf = (std::numeric_limits<double>::max)();
+    // If there is any facet which has no sdf value, assign average sdf value of its neighbors
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
+        facet_it != mesh.facets_end(); ++facet_it) {
+      double sdf_value = sdf_values[facet_it];
+      CGAL_assertion(sdf_value == -1 || sdf_value >= 0); // validity check
+      if(sdf_value != -1.0) {
+        min_sdf = (std::min)(sdf_value, min_sdf);
+        continue;
+      }
+
+      typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
+        facet_it->facet_begin();
+      double total_neighbor_sdf = 0.0;
+      int nb_valid_neighbors = 0;
+      do {
+        if(!facet_circulator->opposite()->is_border()) {
+          double neighbor_sdf = sdf_values[facet_circulator->opposite()->facet()];
+          if(neighbor_sdf != -1) {
+            total_neighbor_sdf += neighbor_sdf;
+            ++nb_valid_neighbors;
+          }
+        }
+      } while( ++facet_circulator !=  facet_it->facet_begin());
+
+      if(nb_valid_neighbors == 0) {
+        still_missing_facets.push_back(facet_it);
+      } else {
+        sdf_value = total_neighbor_sdf / nb_valid_neighbors;
+        sdf_values[facet_it] = sdf_value;
+        // trying to update min_sdf is pointless, since it is interpolated one of the neighbors sdf will be smaller than it
+      }
+    }
+    // If still there is any facet which has no sdf value, assign minimum sdf value.
+    // This is meaningful since (being an outlier) 0 sdf values might effect normalization & log extremely.
+    for(typename std::vector<Facet_const_handle>::iterator it =
+          still_missing_facets.begin();
+        it != still_missing_facets.end(); ++it) {
+      sdf_values[*it] = min_sdf;
+    }
+  }
+
+  template<class SDFPropertyMap>
+  std::pair<double, double> min_max_value(const Polyhedron& mesh,
+                                          SDFPropertyMap sdf_values) {
+    double max_sdf = -(std::numeric_limits<double>::max)();
+    double min_sdf = (std::numeric_limits<double>::max)();
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
+        facet_it != mesh.facets_end(); ++facet_it) {
+      double sdf_value = sdf_values[facet_it];
+      max_sdf = (std::max)(sdf_value, max_sdf);
+      min_sdf = (std::min)(sdf_value, min_sdf);
+    }
+    return std::make_pair(min_sdf, max_sdf);
+  }
+  /**
+   * Normalize sdf values between [0-1].
+   * @param sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
+   * @return minimum and maximum SDF values before normalization
+   */
+  template<class SDFPropertyMap>
+  std::pair<double, double> linear_normalize_sdf_values(const Polyhedron& mesh,
+      SDFPropertyMap sdf_values) {
+    double min_sdf, max_sdf;
+    boost::tie(min_sdf, max_sdf) = min_max_value(mesh, sdf_values);
+
+    if(min_sdf == max_sdf) {
+      CGAL_warning(min_sdf == max_sdf && !"Linear normalization is not applicable!");
+      return std::make_pair(min_sdf, max_sdf);
+    }
+
+    const double max_min_dif = max_sdf - min_sdf;
+    for(Facet_const_iterator facet_it = mesh.facets_begin();
+        facet_it != mesh.facets_end(); ++facet_it) {
+      sdf_values[facet_it] = (sdf_values[facet_it] - min_sdf) / max_min_dif;
+    }
+    return std::make_pair(min_sdf, max_sdf);
+  }
+
+  /**
+   * Simple window-size determination function for smoothing.
+   * It is proportional to square root of size of facets in polyhedron.
+   * @return size of the window
+   *  - 0-2000     -> 1
+   *  - 2000-8000  -> 2
+   *  - 8000-18000 -> 3
+   *  - ...
+   */
+  int get_window_size(const Polyhedron& mesh) {
+    double facet_sqrt = std::sqrt(mesh.size_of_facets() / 2000.0);
+    return static_cast<int>(facet_sqrt) + 1;
+  }
+};
+
 /**
  * @brief Main entry point for mesh segmentation algorithm.
  *
@@ -80,7 +213,6 @@ private:
 private:
   const Polyhedron& mesh;
   GeomTraits traits;
-  int m_window_size;
 // member functions
 public:
   /**
@@ -88,7 +220,7 @@ public:
    * @param mesh `CGAL Polyhedron` on which other functions operate.
    */
   Surface_mesh_segmentation(const Polyhedron& mesh, GeomTraits traits)
-    : mesh(mesh), traits(traits), m_window_size( get_default_window_size() ) {
+    : mesh(mesh), traits(traits) {
     CGAL_precondition(mesh.is_pure_triangle());
   }
 
@@ -96,19 +228,16 @@ public:
   template <class SDFPropertyMap>
   std::pair<double, double>
   calculate_sdf_values(double cone_angle, int number_of_rays,
-                       SDFPropertyMap sdf_pmap) {
+                       SDFPropertyMap sdf_pmap, bool postprocess_req) {
     // calculate sdf values
     SDF_calculation_class sdf_calculator(mesh, false, true, traits);
     sdf_calculator.calculate_sdf_values(mesh.facets_begin(), mesh.facets_end(),
                                         cone_angle, number_of_rays, sdf_pmap);
-    // apply post-processing steps
-    check_zero_sdf_values(sdf_pmap);
-    Filter()(mesh, get_window_size(), sdf_pmap);
-    std::pair<double, double> min_max_sdf_values = linear_normalize_sdf_values(
-          sdf_pmap);
 
-    // return minimum and maximum sdf values before normalization
-    return min_max_sdf_values;
+    Postprocess_sdf_values<Polyhedron> p;
+    return postprocess_req ? p.template postprocess<Filter>(mesh,
+           sdf_pmap) : // return minimum and maximum sdf values before normalization
+           p.min_max_value(mesh, sdf_pmap);
   }
 
   template <class FacetSegmentMap, class SDFPropertyMap>
@@ -157,21 +286,6 @@ public:
     return number_of_centers;
   }
 
-  /**
-    * Return the current window size. It is used when calling Filter::operator().
-    * By default it is the value returned by `get_default_window_size()`.
-    */
-  int get_window_size() const {
-    return m_window_size;
-  }
-
-  /**
-    * Set the window size used to call `Filter::operator()` to `s`
-    */
-  void set_window_size(int s) {
-    m_window_size=s;
-  }
-
 private:
 
   /**
@@ -217,93 +331,6 @@ private:
       double log_normalized = log(sdf_values[facet_it] * CGAL_NORMALIZATION_ALPHA +
                                   1) / log(CGAL_NORMALIZATION_ALPHA + 1);
       normalized_sdf_values.push_back(log_normalized);
-    }
-  }
-
-  /**
-   * Normalize sdf values between [0-1].
-   * @param sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @return minimum and maximum SDF values before normalization
-   */
-  template<class SDFPropertyMap>
-  std::pair<double, double> linear_normalize_sdf_values(SDFPropertyMap
-      sdf_values) {
-    double max_sdf = -(std::numeric_limits<double>::max)();
-    double min_sdf = (std::numeric_limits<double>::max)();
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      double sdf_value = sdf_values[facet_it];
-      max_sdf = (std::max)(sdf_value, max_sdf);
-      min_sdf = (std::min)(sdf_value, min_sdf);
-    }
-    const double max_min_dif = max_sdf - min_sdf;
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      sdf_values[facet_it] = (sdf_values[facet_it] - min_sdf) / max_min_dif;
-    }
-    return std::make_pair(min_sdf, max_sdf);
-  }
-
-
-  /**
-   * Simple window-size determination function for smoothing.
-   * It is proportional to square root of size of facets in polyhedron.
-   * @return size of the window
-   *  - 0-2000     -> 1
-   *  - 2000-8000  -> 2
-   *  - 8000-18000 -> 3
-   *  - ...
-   */
-  int get_default_window_size() {
-    double facet_sqrt = std::sqrt(mesh.size_of_facets() / 2000.0);
-    return static_cast<int>(facet_sqrt) + 1;
-  }
-
-  /**
-   * Finds facets which have zero sdf values.
-   * Sdf values on these facets are assigned to average sdf value of its neighbors.
-   * If still there is any facet which has no sdf value, assigns minimum sdf value to it.
-   * This is meaningful since (being an outlier) zero sdf values might effect normalization & log extremely.
-   * @param[in, out] sdf_values `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   */
-  template<class SDFPropertyMap>
-  void check_zero_sdf_values(SDFPropertyMap sdf_values) {
-    std::vector<Facet_const_handle> still_zero_facets;
-    double min_sdf = (std::numeric_limits<double>::max)();
-    // If there is any facet which has no sdf value, assign average sdf value of its neighbors
-    for(Facet_const_iterator facet_it = mesh.facets_begin();
-        facet_it != mesh.facets_end(); ++facet_it) {
-      double sdf_value = sdf_values[facet_it];
-      if(sdf_value == 0.0) {
-        typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
-          facet_it->facet_begin();
-        double total_neighbor_sdf = 0.0;
-        do {
-          if(!facet_circulator->opposite()->is_border()) {
-            total_neighbor_sdf += sdf_values[facet_circulator->opposite()->facet()];
-          }
-        } while( ++facet_circulator !=  facet_it->facet_begin());
-
-        sdf_value = total_neighbor_sdf / 3.0;
-        sdf_values[facet_it] = sdf_value;
-
-        if(sdf_value == 0.0) {
-          still_zero_facets.push_back(
-            facet_it);     // if sdf_value is still zero, put facet to zero-list
-        } else                 {
-          min_sdf = (std::min)(sdf_value,
-                               min_sdf);  // find min_sdf other than zero
-        }
-      } else {
-        min_sdf = (std::min)(sdf_value, min_sdf);  // find min_sdf other than zero
-      }
-    }
-    // If still there is any facet which has no sdf value, assign minimum sdf value.
-    // This is meaningful since (being an outlier) 0 sdf values might effect normalization & log extremely.
-    for(typename std::vector<Facet_const_handle>::iterator it =
-          still_zero_facets.begin();
-        it != still_zero_facets.end(); ++it) {
-      sdf_values[*it] = min_sdf;
     }
   }
 
