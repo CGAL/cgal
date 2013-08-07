@@ -20,6 +20,8 @@
 #ifndef CGAL_MCFSKEL_FIXED_EDGE_MAP_H
 #define CGAL_MCFSKEL_FIXED_EDGE_MAP_H
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 namespace CGAL {
 namespace internal {
 
@@ -68,5 +70,7 @@ private:
 
 } //namespace internal
 } //namespace CGAL
+
+/// @endcond
 
 #endif //CGAL_MCFSKEL_FIXED_EDGE_MAP_H

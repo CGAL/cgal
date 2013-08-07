@@ -20,6 +20,8 @@
 #ifndef CGAL_MCFSKEL_DEBUG_H
 #define CGAL_MCFSKEL_DEBUG_H
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 // enable debugging output statement
 // this is for locating bugs
 //#define CGAL_MCFSKEL_DEBUG
@@ -39,5 +41,7 @@
 #else
 #define MCFSKEL_INFO(x)
 #endif
+
+/// @endcond
 
 #endif // CGAL_MCFSKEL_DEBUG_H

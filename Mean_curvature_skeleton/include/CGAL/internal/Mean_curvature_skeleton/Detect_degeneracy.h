@@ -20,6 +20,8 @@
 #ifndef CGAL_MCFSKEL_DETECT_DEGENERACY_H
 #define CGAL_MCFSKEL_DETECT_DEGENERACY_H
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
@@ -140,5 +142,7 @@ void search_vertices_in_disk(Polyhedron& polyhedron,
 
 } //namespace internal
 } //namespace CGAL
+
+/// @endcond
 
 #endif //CGAL_MCFSKEL_DETECT_DEGENERACY_H

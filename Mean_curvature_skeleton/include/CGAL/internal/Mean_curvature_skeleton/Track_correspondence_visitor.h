@@ -20,6 +20,8 @@
 #ifndef CGAL_MCFSKEL_TRACK_CORRESPONDENCE_H
 #define CGAL_MCFSKEL_TRACK_CORRESPONDENCE_H
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 // Visitor base
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 
@@ -129,5 +131,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<Polyhedron
 
 } //namespace internal
 } //namespace CGAL
+
+/// @endcond
 
 #endif //CGAL_MCFSKEL_TRACK_CORRESPONDENCE_H

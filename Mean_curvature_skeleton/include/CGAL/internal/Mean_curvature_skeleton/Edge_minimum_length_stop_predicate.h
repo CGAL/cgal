@@ -20,6 +20,8 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MINIMUM_LENGTH_PREDICATE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MINIMUM_LENGTH_PREDICATE_H 1
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
@@ -82,6 +84,8 @@ private:
 } //namespace internal
 
 } //namespace CGAL
+
+/// @endcond
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MINIMUM_LENGTH_PREDICATE_H //
 // EOF //

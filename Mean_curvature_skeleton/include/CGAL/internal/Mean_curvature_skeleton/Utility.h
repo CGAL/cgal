@@ -20,6 +20,8 @@
 #ifndef CGAL_MCFSKEL_UTILITY_H
 #define CGAL_MCFSKEL_UTILITY_H
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
@@ -27,7 +29,7 @@
 
 namespace CGAL {
 namespace internal {
-
+  
 template<class Polyhedron>
 typename boost::graph_traits<Polyhedron>::edge_descriptor
 mesh_split(Polyhedron& polyhedron, 
@@ -101,5 +103,7 @@ double get_surface_area(Polyhedron& polyhedron)
 
 } //namespace internal
 } //namespace CGAL
+
+/// @endcond
 
 #endif //CGAL_MCFSKEL_UTILITY_H
