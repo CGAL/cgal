@@ -1895,6 +1895,9 @@ private:
         (is_t_endp_of_q and is_p_endp_of_r) or
         (is_t_endp_of_r and is_p_endp_of_q)   ;
 
+      CGAL_SDG_DEBUG( std::cout << "debug pt_endps_of_diff_qr = "
+                 pt_endps_of_diff_qr << std::endl;);
+
       if (p.is_point()) {
         pref = p.point();
         diffdvpx = vv.x() - pref.x();
@@ -1941,6 +1944,7 @@ private:
         return ZERO;
       }
 
+      CGAL_assertion(p.is_point());
 
       CGAL_SDG_DEBUG(std::cout << "debug diffdvpx=" << diffdvpx
         << " diffdvpy=" << diffdvpy << std::endl;);
@@ -2099,10 +2103,13 @@ private:
               }
             }
           } // end of pqsamey case
+          // check for case where p or q are endpoints of r
+          if (is_p_endp_of_r or is_q_endp_of_r) {
+            CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
+                << " qer=" << is_q_endp_of_r << std::endl;);
+          }
         } // end of case: pqsamex or pqsamey
-        // check for case where p or q are endpoints of r
-
-      }
+      } // end of non-hv segment r case
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
 
@@ -2115,7 +2122,7 @@ private:
 
       //return CGAL::compare(d_fine, radius_fine);
 
-    }
+    } // end of case of crude == ZERO
   }
 
   //--------------------------------------------------------------------------
