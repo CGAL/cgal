@@ -87,36 +87,63 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
+/// \ingroup PkgMeanCurvatureSkeleton3
+///@brief Edge collapse algorithm tag
 enum Collapse_algorithm_tag
 {
-  SIMPLIFICATION,
-  LINEAR
+  SIMPLIFICATION, /**< algorithm from simplification package */
+  LINEAR          /**< iterative linear search */
 };
 
+/// \ingroup PkgMeanCurvatureSkeleton3
+///@brief Degeneracy detection algorithm tag
 enum Degeneracy_algorithm_tag
 {
-  HEURISTIC,
-  EULER
+  HEURISTIC, /**< a simple heuristic */
+  EULER      /**< counting the euler characteristic */
 };
 
+/// \ingroup PkgMeanCurvatureSkeleton3
+/// @brief Class providing the functionalities for extracting
+///        the skeleton of a triangulated surface mesh
+///
+/// @tparam Polyhedron
+///         a model of HalfedgeGraph
+/// @tparam SparseLinearAlgebraTraits_d
+///         a model of SparseLinearAlgebraTraitsWithPreFactor_d.
+///         If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
+/// @tparam PolyhedronVertexIndexMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with Mean_curvature_skeleton::vertex_descriptor as key and
+///         `unsigned int` as value type
+/// @tparam PolyhedronEdgeIndexMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with Mean_curvature_skeleton::edge_descriptor as key and
+///         `unsigned int` as value type
+/// @tparam Collapse_algorithm_tag
+///         tag for selecting the edge collapse algorithm
+/// @tparam Degeneracy_algorithm_tag
+///         tag for selecting the degeneracy detection algorithm
 template <class Polyhedron,
           class SparseLinearAlgebraTraits_d,
           class PolyhedronVertexIndexMap,
           class PolyhedronEdgeIndexMap,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
-          Degeneracy_algorithm_tag Degeneracy_tag = HEURISTIC,
-          class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
+          Degeneracy_algorithm_tag Degeneracy_tag = HEURISTIC>
 class Mean_curvature_skeleton
 {
 // Public types
 public:
 
-  // Geometric types
+  /// \name Geometric types
+  /// @{
   typedef typename Polyhedron::Traits         Kernel;
   typedef typename Kernel::Vector_3           Vector;
   typedef typename Kernel::Point_3            Point;
+  /// @}
 
-  // Repeat Polyhedron types
+  /// \name Repeat Polyhedron types
+  /// @{
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
   typedef typename Polyhedron::Vertex_handle                                   Vertex_handle;
@@ -129,26 +156,37 @@ public:
   typedef typename Polyhedron::Face_handle                                     Face_handle;
   typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+  /// @}
 
-  // Cotangent weight calculator
+  /// \name Cotangent weight calculator
+  /// @{
   typedef typename internal::Cotangent_weight<Polyhedron,
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
+  /// @}
 
-  // Repeat Graph types
+  /// \name Skeleton types
+  /// @{
+  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>  Graph;
+  typedef internal::Curve_skeleton<Polyhedron, Graph,
+  PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
+  /// @}
+
+  /// \name Repeat Graph types
+  /// @{
   typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
+  /// @}
 
-  // Skeleton types
-  typedef internal::Curve_skeleton<Polyhedron, Graph,
-  PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
-
-  // Mesh simplification types
+  /// \name Mesh simplification types
+  /// @{
   typedef SMS::Edge_profile<Polyhedron>                                        Profile;
+  /// @}
 
-  // Repeat Triangulation types
+  /// \name Repeat Triangulation types
+  /// @{
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
   typedef K::Vector_3                                                          Exact_vector;
   typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>             Vb;
@@ -162,64 +200,91 @@ public:
   typedef Delaunay::Finite_edges_iterator                                      Finite_edges_iterator;
   typedef Delaunay::Finite_facets_iterator                                     Finite_facets_iterator;
   typedef Delaunay::Finite_cells_iterator                                      Finite_cells_iterator;
+  /// @}
 
 // Data members
 private:
 
+  /** source triangulated surface mesh for skeletonization */
   Polyhedron& polyhedron;
+  /** storing indices of all vertices */
   PolyhedronVertexIndexMap vertex_id_pmap;
+  /** storing indices of all edges */
   PolyhedronEdgeIndexMap edge_id_pmap;
 
+  /** controls the velocity of movement and approximation quality */
   double omega_H;
+  /** controls the smoothness of the medial approximation */
   double omega_P;
+  /** edges with length less than edgelength_TH will be collapsed */
   double edgelength_TH;
+  /** triangles with angle greater than TH_ALPHA will be split */
   double TH_ALPHA;
+  /** value very close to zero */
   double zero_TH;
+  /** run_to_converge will stop if the change of area in one iteration
+   *  is less than area_TH */
   double area_TH;
+  /** surface area of original mesh */
   double original_area;
+  /** maximum number of iterations */
   int iteration_TH;
 
+  /** cotangent weight calculator */
   Weight_calculator weight_calculator;
+  /** storing the weights for edges */
   std::vector<double> edge_weight;
+  /** the sparse solver */
   SparseLinearAlgebraTraits_d m_solver;
 
+  /** assign a unique id to a new vertex */
   int vertex_id_count;
+  /** the maximum id for original surface. vertices with ids
+   *  greater than max_id are created during split,
+   *  thus will not be considered in correspondence tracking */
   int max_id;
-
-  std::map<size_t, bool> is_vertex_fixed_map;
+  /** used when assembling the matrix */
   std::map<int, int> new_id;
+
+  /** store the id of fixed vertices */
+  std::map<size_t, bool> is_vertex_fixed_map;
+
+  /** the incident angle for a halfedge */
   std::vector<double> halfedge_angle;
 
+  /** record the skeleton curve */
   Graph g;
+  /** record the position of skeletal points */
   std::vector<Point> points;
-  // record the correspondence between final surface and original surface points
+  /** record the correspondence between final surface
+   *  and original surface points */
   std::map<int, std::vector<int> > correspondence;
-  // record the correspondence between skeletal points and original surface points
+  /** record the correspondence between skeletal points
+   *  and original surface points */
   std::vector<std::vector<int> > skeleton_to_surface;
 
+  /** should the skeleton be medially centered? */
   bool is_medially_centered;
-  // record the corresponding pole of a point
+  /** record the corresponding pole of a point */
   std::map<int, int> poles;
-  // the normal of surface points
+  /** the normal of surface points */
   std::vector<Vector> normals;
-  // the dual of a cell in Triangulation(a Voronoi point)
+  /** the dual of a cell in Triangulation(a Voronoi point) */
   std::vector<Point> cell_dual;
 
 // Public methods
 public:
 
-  // --------------------------------------------------------------------------
-  // Constructor and Destructor
-  // --------------------------------------------------------------------------
+  /// \name Constructor and Destructor
+  /// @{
 
+  /// \cond SKIP_FROM_MANUAL
   Mean_curvature_skeleton(Polyhedron& P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
                           double omega_H,
                           double edgelength_TH,
-                          double area_TH = 1e-5,
-                          double zero_TH = 1e-7,
-                          Weight_calculator weight_calculator = Weight_calculator()
+                          double area_TH = 1e-5
                           )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -227,14 +292,37 @@ public:
      omega_H(omega_H),
      edgelength_TH(edgelength_TH),
      TH_ALPHA(110),
-     zero_TH(zero_TH),
+     zero_TH(1e-7),
      area_TH(area_TH),
-     weight_calculator(weight_calculator),
+     weight_calculator(Weight_calculator()),
      is_medially_centered(false)
   {
     init();
   }
+  /// \endcond
 
+  /**
+   * The constructor of a Mean_curvature_skeleton object
+   *
+   * @pre the polyhedron is a watertight triangular mesh
+   * @param P
+   *        triangulated surface mesh used to deform
+   * @param Vertex_index_map
+   *        property map for associating an id to each vertex
+   * @param Edge_index_map
+   *        property map for associating an id to each edge
+   * @param omega_H
+   *        controls the velocity of movement and approximation quality
+   * @param omega_P
+   *        controls the smoothness of the medial approximation
+   * @param edgelength_TH
+   *        edges with length less than edgelength_TH will be collapsed
+   * @param is_medially_centered
+   *        should the skeleton be medially centered?
+   * @param area_TH
+   *        run_to_converge will stop if the change of area in one iteration
+   *        is less than area_TH
+   */
   Mean_curvature_skeleton(Polyhedron& P,
                           PolyhedronVertexIndexMap Vertex_index_map,
                           PolyhedronEdgeIndexMap Edge_index_map,
@@ -242,9 +330,7 @@ public:
                           double omega_P,
                           double edgelength_TH,
                           bool is_medially_centered,
-                          double area_TH = 1e-5,
-                          double zero_TH = 1e-7,
-                          Weight_calculator weight_calculator = Weight_calculator()
+                          double area_TH = 1e-5
                           )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -253,55 +339,24 @@ public:
      omega_P(omega_P),
      edgelength_TH(edgelength_TH),
      TH_ALPHA(110),
-     zero_TH(zero_TH),
+     zero_TH(1e-7),
      area_TH(area_TH),
-     weight_calculator(weight_calculator),
+     weight_calculator(Weight_calculator()),
      is_medially_centered(is_medially_centered)
   {
     init();
   }
 
-  // Release resources
-  ~Mean_curvature_skeleton(void)
+  /// Release resources
+  ~Mean_curvature_skeleton()
   {
   }
 
-  void init()
-  {
-    TH_ALPHA *= (M_PI / 180.0);
-    double area = internal::get_surface_area(polyhedron);
-    area_TH = 0.0001 * area;
-    original_area = area;
-    iteration_TH = 500;
+  /// @} Constructor and Destructor
 
-    // initialize index maps
-    vertex_iterator vb, ve;
-    vertex_id_count = 0;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
-    {
-      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
-    }
-    max_id = vertex_id_count;
 
-    edge_iterator eb, ee;
-    int idx = 0;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
-    {
-      boost::put(edge_id_pmap, *eb, idx++);
-    }
-
-    is_vertex_fixed_map.clear();
-    correspondence.clear();
-
-    if (is_medially_centered)
-    {
-      compute_voronoi_pole();
-    }
-  }
-
-  // --------------------------------------------------------------------------
-  // Setter and Getter
-  // --------------------------------------------------------------------------
+  /// \name Setter and Getter
+  /// @{
 
   void set_omega_H(double value)
   {
@@ -343,6 +398,12 @@ public:
     return polyhedron;
   }
 
+  /**
+   * Get the positions of fixed(degenerate) points
+   *
+   * @param fixed_points
+   *        return the positions of fixed points
+   */
   void get_fixed_points(std::vector<Point>& fixed_points)
   {
     fixed_points.clear();
@@ -358,6 +419,12 @@ public:
     }
   }
 
+  /**
+   * Get the positions of non-fixed(non-degenerate) points
+   *
+   * @param non_fixed_points
+   *        return the positions of non-fixed points
+   */
   void get_non_fixed_points(std::vector<Point>& non_fixed_points)
   {
     non_fixed_points.clear();
@@ -373,17 +440,38 @@ public:
     }
   }
 
+  /**
+   * Get the skeleton curve
+   *
+   * @param g
+   *        a boost::graph data structure
+   *        storing the connections of the skeleton curve
+   * @param points
+   *        return the positions of skeletal points
+   */
   void get_skeleton(Graph& g, std::vector<Point>& points)
   {
     g = this->g;
     points = this->points;
   }
 
+  /**
+   * Get the correspondent surface points for the skeleton
+   *
+   * @param corr
+   *        for each skeletal point, record its correspondent surface points
+   */
   void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
   {
     corr = skeleton_to_surface;
   }
 
+  /**
+   * Get the Voronoi pole for the surface mesh
+   *
+   * @param max_poles
+   *        for each mesh vertex, record its correspondent Voronoi pole position
+   */
   void get_poles(std::vector<Point>& max_poles)
   {
     max_poles.resize(boost::num_vertices(polyhedron));
@@ -397,10 +485,15 @@ public:
     }
   }
 
-  // --------------------------------------------------------------------------
-  // Public Algorithm API
-  // --------------------------------------------------------------------------
+  /// @} Setter and Getter
 
+
+  /// \name Public Algorithm API
+  /// @{
+
+  /**
+   * Contract the mesh by mean curvature flow
+   */
   void contract_geometry()
   {
     MCFSKEL_DEBUG(std::cerr << "before contract geometry";)
@@ -453,6 +546,9 @@ public:
     MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
   }
 
+  /**
+   * Collapse short edges
+   */
   int collapse_edges()
   {
     internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
@@ -483,6 +579,9 @@ public:
     return num_collapses;
   }
 
+  /**
+   * Split too obtuse triangles
+   */
   int split_triangles()
   {
     MCFSKEL_DEBUG(std::cerr << "before split\n";)
@@ -506,6 +605,9 @@ public:
     return num_splits;
   }
 
+  /**
+   * Run a combination of `collapse_edges` and `split_triangles`
+   */
   int update_topology()
   {
     MCFSKEL_DEBUG(std::cerr << "before collapse edges\n";)
@@ -519,6 +621,9 @@ public:
     return num_collapses + num_splits;
   }
 
+  /**
+   * Fix degenerate vertices
+   */
   int detect_degeneracies()
   {
     if (Degeneracy_tag == HEURISTIC)
@@ -531,6 +636,10 @@ public:
     }
   }
 
+  /**
+   * Run an iteration of `contract_geometry`, `update_topology` and
+   * `detect_degeneracies`
+   */
   void contract()
   {
     contract_geometry();
@@ -541,6 +650,11 @@ public:
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
+  /**
+   * Run iterations of `contract_geometry()`, `update_topology()` and
+   * `detect_degeneracies()` until the change of surface area during one
+   * iteration is less than `area_TH` * original surface area
+   */
   void run_to_converge()
   {
     double last_area = 0;
@@ -573,6 +687,9 @@ public:
     }
   }
 
+  /**
+   * Convert the contracted mesh to a skeleton curve
+   */
   void convert_to_skeleton()
   {
     Skeleton skeleton(polyhedron);
@@ -609,13 +726,53 @@ public:
 //    collapse_vertices_without_correspondence();
   }
 
+  /// @} Public Algorithm API
+
+
 private:
+
+  // --------------------------------------------------------------------------
+  // Initialization
+  // --------------------------------------------------------------------------
+
+  void init()
+  {
+    TH_ALPHA *= (M_PI / 180.0);
+    double area = internal::get_surface_area(polyhedron);
+    area_TH = 0.0001 * area;
+    original_area = area;
+    iteration_TH = 500;
+
+    // initialize index maps
+    vertex_iterator vb, ve;
+    vertex_id_count = 0;
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    {
+      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+    }
+    max_id = vertex_id_count;
+
+    edge_iterator eb, ee;
+    int idx = 0;
+    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    {
+      boost::put(edge_id_pmap, *eb, idx++);
+    }
+
+    is_vertex_fixed_map.clear();
+    correspondence.clear();
+
+    if (is_medially_centered)
+    {
+      compute_voronoi_pole();
+    }
+  }
 
   // --------------------------------------------------------------------------
   // Contraction
   // --------------------------------------------------------------------------
 
-  // compute cotangent weights of all edges
+  /// compute cotangent weights of all edges
   void compute_edge_weight()
   {
     edge_weight.clear();
@@ -627,6 +784,7 @@ private:
     }
   }
 
+  /// assemble the left hand side
   void assemble_LHS(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
     MCFSKEL_DEBUG(std::cerr << "start LHS\n";)
@@ -687,6 +845,7 @@ private:
     MCFSKEL_DEBUG(std::cerr << "end LHS\n";)
   }
 
+  /// assemble the right hand side
   void assemble_RHS(typename SparseLinearAlgebraTraits_d::Vector& Bx,
                     typename SparseLinearAlgebraTraits_d::Vector& By,
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
@@ -755,6 +914,7 @@ private:
   // Edge collapse
   // --------------------------------------------------------------------------
 
+  /// collapse short edges using simplification package
   int collapse_edges_simplification()
   {
     internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
@@ -809,6 +969,7 @@ private:
     return r;
   }
 
+  /// track correspondent original surface points during collapse
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor v)
   {
@@ -867,6 +1028,7 @@ private:
     }
   }
 
+  /// collapse short edges by iteratively linear search
   int collapse_edges_linear(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
   {
     std::vector<edge_descriptor> edges;
@@ -983,12 +1145,14 @@ private:
         }
         else
         {
-          halfedge_angle[e_id] = acos((dis2_ik + dis2_jk - dis2_ij) / (2.0 * dis_ik * dis_jk));
+          halfedge_angle[e_id] =
+              acos((dis2_ik + dis2_jk - dis2_ij) / (2.0 * dis_ik * dis_jk));
         }
       }
     }
   }
 
+  /// project the vertex `vk` to the line of `vs` and `vt`
   Point project_vertex(const vertex_descriptor vs,
                        const vertex_descriptor vt,
                        const vertex_descriptor vk)
@@ -1072,6 +1236,8 @@ private:
   // Degeneracy detection
   // --------------------------------------------------------------------------
 
+  /// test degeneracy of a vertex by counting the euler characteristic of
+  /// its local neighborhood disk
   int detect_degeneracies_in_disk()
   {
     int num_fixed = 0;
@@ -1097,6 +1263,8 @@ private:
     return num_fixed;
   }
 
+  /// test degeneracy of a vertex by a simple heuristic looking for a
+  /// triangular cross section
   int detect_degeneracies_heuristic()
   {
     int num_fixed = 0;
@@ -1231,6 +1399,7 @@ private:
   // Skeletonization
   // --------------------------------------------------------------------------
 
+  //TODO: Debug it!
   void collapse_vertices_without_correspondence()
   {
     int vertex_removed = 0;
