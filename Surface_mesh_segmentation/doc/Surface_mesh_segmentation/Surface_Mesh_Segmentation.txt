@@ -22,7 +22,7 @@ Final segmentation is then obtained via a graph-cut algorithm that considers sur
 We refer to a comprehensive survey on mesh segmentation \cite Shamir2008SegmentationSurvey for different segmentation techniques.
 
 The API gives access to both the computation of the SDF values and the segmentation for a given mesh.
-That way an alternative implementation of the SDF can be directly plugged into the segmentation algorithm.
+Owing to this detachment, an alternative implementation of the SDF can be directly plugged into the segmentation algorithm.
 In addition, the SDF values can be used multiple times with different parameters for the segmentation algorithm.
 
 Since the mesh segmentation problem is ill-posed, we evaluate our implementation by using data set and evaluation software \cite Chen2009SegmentationBenchmark,
