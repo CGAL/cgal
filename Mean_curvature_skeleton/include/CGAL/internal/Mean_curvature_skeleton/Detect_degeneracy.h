@@ -30,10 +30,12 @@
 namespace CGAL {
 namespace internal {
 
-template<class Polyhedron, class vertex_descriptor>
-bool is_vertex_degenerate(Polyhedron& polyhedron, vertex_descriptor root,
+template<class Polyhedron>
+bool is_vertex_degenerate(Polyhedron& polyhedron,
+                          typename boost::graph_traits<Polyhedron>::vertex_descriptor root,
                           double edgelength_TH)
 {
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
   typedef typename Polyhedron::Face_handle                                     Face_handle;
@@ -92,12 +94,13 @@ bool is_vertex_degenerate(Polyhedron& polyhedron, vertex_descriptor root,
   return false;
 }
 
-template<class Polyhedron, class vertex_descriptor>
+template<class Polyhedron>
 void search_vertices_in_disk(Polyhedron& polyhedron,
-                             vertex_descriptor root,
-                             std::set<vertex_descriptor>& vertices_in_disk,
+                             typename boost::graph_traits<Polyhedron>::vertex_descriptor root,
+                             std::set<typename boost::graph_traits<Polyhedron>::vertex_descriptor>& vertices_in_disk,
                              double edgelength_TH)
 {
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;

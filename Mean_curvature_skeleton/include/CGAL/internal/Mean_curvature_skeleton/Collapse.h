@@ -28,10 +28,12 @@
 namespace CGAL {
 namespace internal {
 
-template<class Polyhedron, class edge_descriptor>
-bool is_collapse_ok(Polyhedron& polyhedron, edge_descriptor v0v1)
+template<class Polyhedron>
+bool is_collapse_ok(Polyhedron& polyhedron, 
+                    typename boost::graph_traits<Polyhedron>::edge_descriptor v0v1)
 {
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor	           edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
 
   edge_descriptor v1v0 = v0v1->opposite();
@@ -98,11 +100,12 @@ bool is_collapse_ok(Polyhedron& polyhedron, edge_descriptor v0v1)
   return true;
 }
 
-template<class Polyhedron, class vertex_descriptor>
+template<class Polyhedron>
 bool find_halfedge(Polyhedron& polyhedron, 
-                   vertex_descriptor vi,
-                   vertex_descriptor vj)
+                   typename boost::graph_traits<Polyhedron>::vertex_descriptor vi,
+                   typename boost::graph_traits<Polyhedron>::vertex_descriptor vj)
 {
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
 
@@ -118,9 +121,11 @@ bool find_halfedge(Polyhedron& polyhedron,
   return false;
 }
 
-template<class Polyhedron, class vertex_descriptor>
-bool is_border(Polyhedron& polyhedron, vertex_descriptor aV)
+template<class Polyhedron>
+bool is_border(Polyhedron& polyhedron,
+               typename boost::graph_traits<Polyhedron>::vertex_descriptor aV)
 {
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
 
@@ -140,8 +145,8 @@ bool is_border(Polyhedron& polyhedron, vertex_descriptor aV)
   return rR;
 }
 
-template<class edge_descriptor>
-bool is_undirected_edge_a_border(edge_descriptor aEdge)
+template<class Edge_descriptor>
+bool is_undirected_edge_a_border(Edge_descriptor aEdge)
 {
   return aEdge->is_border() || aEdge->opposite()->is_border();
 }

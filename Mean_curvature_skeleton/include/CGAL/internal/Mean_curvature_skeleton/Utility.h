@@ -28,9 +28,14 @@
 namespace CGAL {
 namespace internal {
 
-template<class Polyhedron, class edge_descriptor, class Point>
-edge_descriptor mesh_split(Polyhedron& polyhedron, edge_descriptor ei, Point pn)
+template<class Polyhedron>
+typename boost::graph_traits<Polyhedron>::edge_descriptor
+mesh_split(Polyhedron& polyhedron, 
+           typename boost::graph_traits<Polyhedron>::edge_descriptor ei,
+           typename Polyhedron::Traits::Point_3 pn)
 {
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
+
   edge_descriptor en = polyhedron.split_edge(ei);
   en->vertex()->point() = pn;
   polyhedron.split_facet(en, ei->next());
