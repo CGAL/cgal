@@ -1,5 +1,7 @@
 namespace CGAL {
 
+
+namespace IO{
 /*!
   \ingroup PkgIOstreams
 
@@ -33,6 +35,7 @@ is in <span class="textsc">Ascii</span> mode.
 \sa `CGAL::is_pretty()`
 */
 enum Mode { ASCII = 0, BINARY, PRETTY };
+}
 
 /*!
 \ingroup PkgIOstreams
