@@ -84,7 +84,7 @@ public:
     Naive_visibility_2(const Arrangement_2 &arr):arr(arr), attach_tag(true) {}
     Naive_visibility_2(): attach_tag(false) {}
 
-    Face_handle visibility_region(const Point_2 &q, const Halfedge_handle &e, Arrangement_2 &out_arr) {
+    Face_handle visibility_region(const Point_2 &q, Halfedge_handle &e, Arrangement_2 &out_arr) {
         Arrangement_2 arrc = arr ; //copy of arr;
         Halfedge_handle ec; //copy of edge;
         for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
