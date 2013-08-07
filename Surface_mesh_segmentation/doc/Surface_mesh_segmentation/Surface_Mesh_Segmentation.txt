@@ -46,15 +46,24 @@ In addition, the SDF is pose-invariant, which means that SDF values remain large
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Influence of pose changes over SDF values and the segmentation.
 \cgalFigureEnd
-
+\subsubsection Surface_mesh_segmentationRawSDF Computation of Raw SDF Values
 The SDF over a mesh is computed by processing each facet one by one. For a given facet, the SDF value computation begins with sampling
 several rays from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
 These rays are casted based on inward-normal direction to the other side of the mesh. 
 Rays which form obtuse angle with inward-normal of intersected facets are rejected.
-Using lenghts of accepted rays (which intuitively correspond to a local volume sampling),
-the SDF value is calculated by first applying outlier removal and then taking average of lengths (see \ref RaySampling for details). 
+Using lenghts of accepted rays, which intuitively correspond to a local volume sampling,
+the SDF value is calculated by first applying outlier removal and then taking average of lengths (see \ref RaySamplingInShapeDiameterFunction for details).
+Note that only facets which have no accepted rays, get no SDF values.
+SDF values at this point can be considered as raw results, and are accessible through `compute_sdf_values()` in the API.  
 
-After having calculated the SDF value for each facet, bilateral smoothing \cite Tomasi1998Bilateral (an edge-preserving filtering technique) is applied.
+\subsubsection Surface_mesh_segmentationPostprocessing Postprocessing on Raw SDF Values
+After having calculated the raw SDF value for each facet, several post-processing steps are applied.
+
+First, facets with no SDF values are assigned the average SDF value of their one-ring edge-adjacent neighbors. If there is still a facet having no SDF value, 
+the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper. 
+The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process which takes place at the beginning of `segment_from_sdf_values()`.
+ 
+Second, bilateral smoothing \cite Tomasi1998Bilateral, which is an edge-preserving filtering technique, is applied.
 The purpose of edge-preserving smoothing is to remove the noise while keeping fast changes on SDF values in-place without smoothing,
 since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
 -\f$ w = \lfloor\sqrt{  F / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ is the number of facets
@@ -63,6 +72,8 @@ since they are natural candidates for segment boundaries. The bilateral smoothin
 
 Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
 Large range parameters make smoothing closer to Gaussian smoothing which may also lead to over-smoothed SDF values.
+
+Third, SDF values are linearly normalized between [0,1]. These steps can be applied on raw SDF values (or any scalar values associated with facets) using `postprocess_sdf_values()`.
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 Given a number of clusters, the soft clustering applied on computed SDF values.  
@@ -85,10 +96,10 @@ These probability values are used as input to the graph-cut step described next.
 The hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
 This energy function combines the aforementioned probability matrix and geometric surface features. 
 The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a), 
-however we postprocess the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments) by default \cgalFigureRef{Cluster_vs_segment} (b).
+however we post-process the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments) by default \cgalFigureRef{Cluster_vs_segment} (b).
 
 \cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
-Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the result of the graph-cut. <b>(b)</b> is the postprocessed result where each segment is extracted from clusters. 
+Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the result of the graph-cut. <b>(b)</b> is the post-processed result where each segment is extracted from clusters. 
 Note that both versions are available in the API.
 \cgalFigureEnd
 
@@ -138,7 +149,8 @@ Influence of the smoothness parameter lambda over the segmentation(using 10 clus
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
-	- `compute_sdf_values()` : given a mesh, computes the SDF value of each facet as described above.
+	- `compute_sdf_values()` : given a mesh, computes the SDF value of each facet either in raw or post-processed form.
+	- `postprocess_sdf_values()` : post-process raw SDF values.
 	- `segment_from_sdf_values()` : given a set of SDF values of facets of a mesh, computes the mesh segmentation.
 	- `compute_sdf_values_and_segment()` : given a mesh, combines the functions above in one line.
 
@@ -150,17 +162,15 @@ The current implementation of the computation of the SDF values relies on the \r
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 
 \subsection Surface_mesh_segmentationSDFComputation SDF Computation
-The function `compute_sdf_values()` provides an implementation of the SDF computation for a given \cgal Polyhedron.
+The function `compute_sdf_values()` provides an implementation of the SDF computation for a given mesh.
+Accessing either raw SDF values (see \ref Surface_mesh_segmentationRawSDF) or post-processed SDF values (see \ref Surface_mesh_segmentationPostprocessing) is possible through the same function.
 
-After the raw computation, the following post-processing steps are applied:
-  - Facets with no SDF values (i.e. zero) are assigned the average SDF value of their one-ring edge-adjacent neighbors. 
-  If there is still a facet having a zero SDF value, the minimum SDF value greater than zero is assigned to it. Note that this step is not inherited from the paper. 
-  The main reason for avoiding zero SDF values is that it can obstruct log-normalization process which takes place at the beginning of segment_from_sdf_values()`.
-  - SDF values are smoothed with bilateral filtering.
-  - SDF values are linearly normalized between [0,1].
-
-The output is the minimum and the maximum SDF values before applying the linear normalization, and a property map (see the chapter \ref Chapter_CGAL_and_Boost_Property_Maps
+The output is the minimum and the maximum SDF values for raw SDF values or the minimum and the maximum SDF values before applying the linear normalization for post-procced SDF values, and a property map (see the chapter \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps") which associates to each facet its SDF value.
+
+The function `postprocess_sdf_values()` post-process SDF values for a given mesh and associated values per facet (see \ref Surface_mesh_segmentationPostprocessing). 
+It is useful when using an alternative implementation of the SDF, or adding a custom post-processing step by computing raw SDF values with `compute_sdf_values()`.
+The output is the minimum and the maximum SDF values before applying the linear normalization.
 
 \subsubsection Example_1 Example: Computation of SDF Values
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_example.cpp}
@@ -297,7 +307,7 @@ Performance of `segment_from_sdf_values()` with this implementation :
 </center>
 <BR>
 \section ImplementationDetails Implementation Details
-\subsection RaySampling Ray Sampling
+\subsection RaySamplingInShapeDiameterFunction Ray Sampling in Spahe Diameter Function
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
 Comparison of biased toward the center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
