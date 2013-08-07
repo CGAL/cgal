@@ -29,7 +29,7 @@ types are described on the manual pages of the concepts `HalfedgeDSVertex`,
 \sa `CGAL::HalfedgeDS_halfedge_base<Refs>` 
 \sa `CGAL::HalfedgeDS_face_base<Refs>` 
 
-### Example ###
+\cgalHeading{Example}
 
 The following example shows the canonical implementation of the 
 `CGAL::HalfedgeDS_min_items` class. It uses the base classes for the 

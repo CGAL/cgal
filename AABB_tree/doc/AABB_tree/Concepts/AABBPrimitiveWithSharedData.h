@@ -13,7 +13,7 @@ of the primitives are required to access the datum and the reference point.
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
-### Example ###
+\cgalHeading{Example}
 
 The `Primitive` type can be a wrapper around an integer that refers to the position
 of an object in a vector. Assume for instance that the input objects are some triangles.

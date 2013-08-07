@@ -14,7 +14,7 @@ It can have any number of connected components, boundaries
 
 \cgalRefines `HalfedgeGraph` 
 
-### Valid Expressions ###
+\cgalHeading{Valid Expressions}
 
 The mesh simplification algorithm requires the free function `collapse_triangulation_edge()`.
 

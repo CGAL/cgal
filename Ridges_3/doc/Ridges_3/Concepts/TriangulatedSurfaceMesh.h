@@ -10,7 +10,7 @@
 
   \cgalHasModel `CGAL::Polyhedron_3` with the restriction that faces are triangular.
 
-  ### Creation ###
+  \cgalHeading{Creation}
 
   Construction and destruction are undefined. 
 */

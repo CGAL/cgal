@@ -16,7 +16,7 @@ time (if only a time value rather than an interval is passed).
 
 \sa `Kinetic::KineticKernel` 
 
-### Example ###
+\cgalHeading{Example}
 
 Here you see how to use both functions on an orientation predicate. 
 

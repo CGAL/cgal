@@ -53,7 +53,7 @@ namespace CGAL {
 /// can be any class that fulfills the requirements for an STL
 /// container. It defaults to the std::vector class.
 ///
-/// ### Implementation ###
+/// \cgalHeading{Implementation}
 ///
 /// The methods `is_simple()`, `is_convex()`, `orientation()`,
 /// `oriented_side()`, `bounded_side()`, `bbox()`, `area()`, `left_vertex()`,

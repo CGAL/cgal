@@ -9,7 +9,7 @@ The concept `MonotoneMatrixSearchTraits` is a refinement of
 compute the maxima for all rows of a totally monotone matrix using 
 the function `CGAL::monotone_matrix_search`. 
 
-### Notes ###
+\cgalHeading{Notes}
 
 <UL> 
 <LI>For the sake of efficiency (and in order to achieve the time 

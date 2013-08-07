@@ -23,7 +23,7 @@ polyhedral surface renames faces to facets.
 \sa `CGAL::HalfedgeDS_halfedge_base<Refs>` 
 \sa `CGAL::HalfedgeDS_face_base<Refs>` 
 
-### Example ###
+\cgalHeading{Example}
 
 We define our own items class based on the available 
 `CGAL::HalfedgeDS_face_base` base class for faces. We derive the 
