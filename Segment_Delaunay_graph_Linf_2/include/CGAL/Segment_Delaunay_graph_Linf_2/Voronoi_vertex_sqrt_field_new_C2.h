@@ -1896,7 +1896,7 @@ private:
         (is_t_endp_of_r and is_p_endp_of_q)   ;
 
       CGAL_SDG_DEBUG( std::cout << "debug pt_endps_of_diff_qr = "
-                 pt_endps_of_diff_qr << std::endl;);
+          << pt_endps_of_diff_qr << std::endl;);
 
       if (p.is_point()) {
         pref = p.point();
