@@ -1641,6 +1641,9 @@ private:
 
     CGAL_assertion(r.is_segment()); // the PPP case is handled elsewhere
 
+    // p segment implies q segment
+    CGAL_assertion(p.is_point() or q.is_segment());
+
     Sign retval (ZERO);
 
     bool is_p_hor (false);
