@@ -30,6 +30,12 @@
 namespace CGAL {
 namespace internal {
 
+/**
+* Test if it is topologicaly feasible to collapse the given edge
+* @pre the polyhedron is a triangular mesh
+* @param polyhedron the mesh containing the given edge
+* @param v0v1 the edge to be collapsed
+*/
 template<class Polyhedron>
 bool is_collapse_ok(Polyhedron& polyhedron, 
                     typename boost::graph_traits<Polyhedron>::edge_descriptor v0v1)

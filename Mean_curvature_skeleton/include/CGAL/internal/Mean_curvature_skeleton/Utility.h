@@ -30,6 +30,12 @@
 namespace CGAL {
 namespace internal {
   
+/**
+* Split the edge
+* @param polyhedron the mesh containing the given edge
+* @param ei the edge to be split
+* @param pn the position of the new vertex created by the split
+*/
 template<class Polyhedron>
 typename boost::graph_traits<Polyhedron>::edge_descriptor
 mesh_split(Polyhedron& polyhedron, 

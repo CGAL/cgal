@@ -327,6 +327,7 @@ private:
     }
   }
 
+  // iteratively collapse short edges until no edges have incident faces
   void collapse()
   {
     EdgeCompareFunctor edge_comparator(edge_lengths);

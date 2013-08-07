@@ -306,7 +306,7 @@ public:
    *
    * @pre the polyhedron is a watertight triangular mesh
    * @param P
-   *        triangulated surface mesh used to deform
+   *        triangulated surface mesh used to extract skeleton
    * @param Vertex_index_map
    *        property map for associating an id to each vertex
    * @param Edge_index_map
