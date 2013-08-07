@@ -10,7 +10,7 @@ namespace CGAL
 The class `Periodic_2_triangulation_2` represents a 2-dimensional
 triangulation of a point set in \f$ \mathbb T_c^2\f$.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The class `Periodic_2_triangulation_2` has two template
 parameters. The first one \tparam Traits is the geometric traits, it
@@ -24,11 +24,11 @@ functionality in faces.
 By default, the triangulation data structure is instantiated by
 `CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
 
-### Traversal of the Triangulation ###
+\cgalHeading{Traversal of the Triangulation}
 
 The periodic triangulation class provides several iterators and circulators that allow one to traverse it.
 
-### I/O ###
+\cgalHeading{I/O}
 
 The I/O operators are defined for `iostream`. The format for the
 iostream is an internal format.
@@ -46,7 +46,9 @@ The information in the `iostream` is:
 - the offsets corresponding to the vertices of the faces
 - the non-combinatorial information of each face
 
-### Implementation ###
+<p></p><!-- work around for a doxygen bug -->
+
+\cgalHeading{Implementation}
 
 Locate is implemented by a randomized walk from a vertex of the
 face given as optional parameter (or from an arbitrary vertex of if no

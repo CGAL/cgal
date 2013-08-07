@@ -49,7 +49,7 @@ for efficient for locations and insertions.
 
 \cgalHeading{Types}
 
-Inherits all the types defined in `Triangulation_2<Traits,Tds>`. 
+All the types defined in `Triangulation_2<Traits,Tds>` are inherited. 
 
 \cgalHeading{Implementation}
 

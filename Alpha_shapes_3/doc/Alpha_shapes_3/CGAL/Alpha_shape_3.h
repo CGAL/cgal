@@ -19,14 +19,9 @@ the tag `ExactAlphaComparisonTag` is not taken into account if `Dt::Geom_traits:
 Note that this class is at the same time used for <I>basic</I> and 
 for <I>weighted</I> Alpha Shapes. 
 
-\cgalHeading{Inherits From}
-
-Inherits from `Dt`.
-
-This class is the underlying triangulation class. 
-
-The modifying functions `insert` and `remove` will overwrite 
-the inherited functions. At the moment, only the static version is implemented. 
+The modifying functions `insert` and `remove` will overwrite
+the one inherited from the underlying triangulation class `Dt`.
+At the moment, only the static version is implemented.
 
 \cgalHeading{I/O}
 

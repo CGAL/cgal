@@ -15,14 +15,9 @@ a classification that specifies its status in the alpha complex, alpha being fix
 Note that this class can be used at the same time to build a <I>basic</I> or 
 a <I>weighted</I> Alpha Shape. 
 
-\cgalHeading{Inherits From}
-
-Inherits from `Dt`.
-
-This class is the underlying triangulation class. 
-
-The modifying functions `insert` and `remove` will overwrite 
-the inherited functions. 
+The modifying functions `insert` and `remove` will overwrite
+the one inherited from the underlying triangulation class `Dt`.
+At the moment, only the static version is implemented.
 
 \cgalHeading{I/O}
 

@@ -10,7 +10,7 @@ namespace CGAL
 The class `Periodic_2_Delaunay_triangulation_2` represents a
 Delaunay triangulation in two-dimensional periodic space.
 
-### Parameters ###
+\cgalHeading{Parameters}
 
 The class `Periodic_2_Delaunay_triangulation_2` has two template parameters. The first one
 \tparam Traits is the geometric traits, it is to be instantiated by a
@@ -23,7 +23,7 @@ in faces. By default, the triangulation data structure is instantiated
 by
 `CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
 
-### Implementation ###
+\cgalHeading{Implementation}
 
 Insertion is implemented by inserting in the triangulation, then
 performing a sequence of Delaunay flips. The number of flips is \f$ O(d)\f$
