@@ -1,4 +1,5 @@
 /*!
+\ingroup PkgCGALIpelets
 The registration of a new ipelet can be done using the macro command `CGAL_IPELET`.
 Taking as a parameter the name of the class defining the new ipelet, that macro must be placed in the source
 file after the class definition. 
