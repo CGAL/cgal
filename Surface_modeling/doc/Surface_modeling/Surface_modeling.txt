@@ -23,7 +23,7 @@ The algorithm implemented is a so-called <em>Laplacian-based deformation</em> te
 methods work.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
-The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em>) of a vertex in a surface mesh are one way to
+The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em> \cgalCite{botsch2010polygon}) of a vertex in a surface mesh are one way to
 <em>encode</em> the local neighborhood of a vertex in the mesh. Once defined for each vertex of a surface mesh, it defines a discrete vector field over the surface mesh.
 The Laplacian coordinates of a vertex \f$ \mathbf{v}_i \f$ is a 3D vector defined as:
 
