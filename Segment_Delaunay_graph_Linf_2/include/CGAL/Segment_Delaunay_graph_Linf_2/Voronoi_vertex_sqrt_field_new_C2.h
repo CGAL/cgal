@@ -2120,6 +2120,7 @@ private:
         CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
             << " qer=" << is_q_endp_of_r << std::endl;);
 
+        CGAL_assertion(v_type == PPS);
 
       } // case r is non-hv and has endpoint p or q
 
