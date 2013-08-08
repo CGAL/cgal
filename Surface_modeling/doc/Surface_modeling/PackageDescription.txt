@@ -1,10 +1,10 @@
-/// \defgroup PkgSurfaceModeling Surface Modeling Reference
+/// \defgroup PkgSurfaceModeling Triangulated Surface Mesh Deformation Reference
 /// \defgroup PkgSurfaceModelingConcepts Concepts
 /// \ingroup PkgSurfaceModeling
 
 /*!
 \addtogroup PkgSurfaceModeling
-\cgalPkgDescriptionBegin{Surface Modeling,PkgSurfaceModelingSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Deformation,PkgSurfaceModelingSummary}
 \cgalPkgPicture{deform-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Olga Sorkine, Yin Xu and Ilker %O. Yaz}
@@ -20,12 +20,13 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\todo investigate if it is worth adding a flags in the weight calculator class to turn on/off some features
-\todo document why is it closest rotation
-\todo Add the fact that positive weights are expected for ARAP (and SaR?)
+
+\todo replace handle vertex by control vertex
 \todo remove groups of handle and rotation/translate should have overload accepting ranges of vertex_descriptor
 \todo update demos and examples
-\todo replace handle vertex by control vertex
+\todo Add the fact that positive weights are expected for ARAP (and SaR?)
 \todo replace representative by handle
+\todo document why is it closest rotation
+\todo investigate if it is worth adding a flags in the weight calculator class to turn on/off some features
 */
 
