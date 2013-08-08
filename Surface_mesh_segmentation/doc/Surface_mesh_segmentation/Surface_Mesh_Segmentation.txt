@@ -59,7 +59,7 @@ SDF values at this point can be considered as raw results, and are accessible th
 \subsubsection Surface_mesh_segmentationPostprocessing Postprocessing on Raw SDF Values
 After having calculated the raw SDF value for each facet, several post-processing steps are applied.
 
-First, facets with no SDF values are assigned the average SDF value of their one-ring edge-adjacent neighbors. If there is still a facet having no SDF value, 
+First, facets with no SDF values are assigned the average SDF value of their edge-adjacent neighbors. If there is still a facet having no SDF value, 
 the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper. 
 The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process which takes place at the beginning of `segment_from_sdf_values()`.
  

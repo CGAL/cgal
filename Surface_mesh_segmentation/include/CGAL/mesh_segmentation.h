@@ -78,7 +78,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @brief Function post-processing raw SDF values computed per facet.
  *
  * Post-processing steps applied are:
- *   - Facets with -1.0 SDF values are assigned the average SDF value of their one-ring edge-adjacent neighbors.
+ *   - Facets with -1.0 SDF values are assigned the average SDF value of their edge-adjacent neighbors.
  *     If there is still a facet having -1.0 SDF value, the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper.
  *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1.0) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segment_from_sdf_values`.
  *   - SDF values are smoothed with bilateral filtering.
