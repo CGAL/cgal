@@ -27,13 +27,14 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
 #include <CGAL/Naive_visibility_2.h>
+#include <CGAL/Triangular_expansion_visibility_2_.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 
 #include <iostream>
 #include <fstream>
 
-int main() {
+int main(int argc, char* argv[]) {
 {
 	typedef CGAL::Gmpq                                Number_type;
   typedef CGAL::Cartesian<Number_type> 							Kernel;
@@ -45,12 +46,25 @@ int main() {
                                                     Simple_polygon_visibility_2;
   typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Naive_visibility_2;
+  typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                    Triangular_expansion_visibility_2;
 
-  Simple_polygon_visibility_2 simple_visibility;
-  Naive_visibility_2 naive_visibility;
-  const CGAL::Query_choice qchoice = CGAL::FACE;
-  CGAL::benchmark<Simple_polygon_visibility_2, Naive_visibility_2>
-                (simple_visibility, naive_visibility, qchoice, 1, 0);
+  if (argc == 2) {
+    Simple_polygon_visibility_2 simple_visibility;
+    Naive_visibility_2 naive_visibility;
+    Triangular_expansion_visibility_2 triangular_visibility;
+    const CGAL::Query_choice qchoice = CGAL::FACE;
+    std::string input_arr_file(argv[1]);
+    std::ifstream input(input_arr_file.c_str());
+    CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
+                  (naive_visibility, triangular_visibility, qchoice, input);
+  //  CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
+    //              (simple_visibility, triangular_visibility, qchoice, input);
+  }
+  else {
+    std::cout << "Usage: ./benchmark [filename]\n";
+    exit(0);
+  }
 }
 	return 0;
 }
