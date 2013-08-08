@@ -2072,7 +2072,7 @@ private:
           (not (is_p_endp_of_r or is_q_endp_of_r))
          ) {
         CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
-            << std::endl;);
+            << " and neither p nor q endpoints" << std::endl;);
         CGAL_SDG_DEBUG(std::cout << "debug d=" << d <<
             " d_fine=" << d_fine << std::endl;);
         bool pqsamex = CGAL::compare(diffdvpx, diffdvqx) == EQUAL;
@@ -2108,13 +2108,20 @@ private:
               }
             }
           } // end of pqsamey case
-          // check for case where p or q are endpoints of r
-          if (is_p_endp_of_r or is_q_endp_of_r) {
-            CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
-                << " qer=" << is_q_endp_of_r << std::endl;);
-          }
         } // end of case: pqsamex or pqsamey
       } // end of non-hv segment r case with p, q non-endpoints of r
+
+      // check for p or q endpoint of non-hv r
+      if ((not (is_r_hor or is_r_ver)) and
+          ((is_p_endp_of_r or is_q_endp_of_r))
+         ) {
+        CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
+            << " and either p or q is r's endpoint" << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
+            << " qer=" << is_q_endp_of_r << std::endl;);
+
+
+      } // case r is non-hv and has endpoint p or q
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
 
