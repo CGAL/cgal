@@ -388,12 +388,10 @@ private:
 
       double angle = calculate_dihedral_angle_of_edge(edge_it);
 
-      if(angle < epsilon) {
-        angle = epsilon;
-      }
+      angle = (std::max)(angle, epsilon);
       angle = -log(angle);
-      angle = (std::max)(angle, std::numeric_limits<double>::epsilon());
       angle *= smoothing_lambda;
+
       edge_weights.push_back(angle);
     }
   }
