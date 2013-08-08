@@ -26,5 +26,6 @@
 \todo remove groups of handle and rotation/translate should have overload accepting ranges of vertex_descriptor
 \todo update demos and examples
 \todo replace handle vertex by control vertex
+\todo replace representative by handle
 */
 
