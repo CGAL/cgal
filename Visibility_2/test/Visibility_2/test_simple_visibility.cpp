@@ -46,7 +46,7 @@ int main() {
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
     std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-    CGAL::run_tests<Simple_polygon_visibility_2>(1);
+    CGAL::run_tests<Simple_polygon_visibility_2>(1, 0);
 }
 {
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
@@ -59,7 +59,7 @@ int main() {
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
     std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-    CGAL::run_tests<Simple_polygon_visibility_2>(1);
+    CGAL::run_tests<Simple_polygon_visibility_2>(1, 0);
 }
     return 0;
 }

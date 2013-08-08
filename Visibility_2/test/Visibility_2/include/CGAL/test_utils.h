@@ -308,7 +308,7 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
   visibility.attach(arr_in);
   std::getline(input, curr_line);
   if (!create_arrangement_from_dat_file<Output_arrangement_2>
-                                                       (input, arr_correct_out)) {
+                                                   (input, arr_correct_out)) {
     return false;
   }
   CGAL::Object obj = CGAL::get_location<Input_arrangement_2>(arr_in, query_pt);
@@ -347,7 +347,7 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
 }
 
 template <class Visibility_2> 
-void run_tests(int case_number) {
+void run_tests(int case_number_simple, int case_number_non_simple) {
   
   Visibility_2 visibility;
   bool one_failed = false; 
@@ -355,7 +355,7 @@ void run_tests(int case_number) {
     int cnt = 0;
     int cnt_passed = 0;
     std::cout << "    Running simple polygon test cases...\n";
-    for (int i = 1 ; i <= case_number ; i++) {
+    for (int i = 1 ; i <= case_number_simple ; i++) {
       std::string input_arr_file("data/test_simple_polygon_");
       input_arr_file += num2string<int>(i);
       input_arr_file += ".dat";
@@ -389,7 +389,7 @@ void run_tests(int case_number) {
     int cnt = 0;
     int cnt_passed = 0;
     std::cout << "      Running non-simple polygon test cases...\n";
-    for (int i = 1 ; i <= case_number ; i++) {
+    for (int i = 1 ; i <= case_number_non_simple ; i++) {
       std::string input_arr_file("data/test_non_simple_polygon_");
       input_arr_file += num2string<int>(i);
       input_arr_file += ".dat";
@@ -582,39 +582,51 @@ Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
   return Point_2(x, y);
 }
 
-template<class Visibility_2_fst, class Visibility_2_snd, class Arrangement_2>
-void benchmark(Visibility_2_fst &visibility_fst, 
-                             Visibility_2_snd &visibility_snd,
-                             const Arrangement_2 &arr, 
-                             typename Arrangement_2::Face_handle face,
-                             Query_choice choice) {
+template <class Visibility_2_fst, class Visibility_2_snd>
+void benchmark_one_unit(Visibility_2_fst visibility_fst, 
+                        Visibility_2_snd visibility_snd,
+                        const typename Visibility_2_fst::Input_arrangement_2 &arr,
+                        const Query_choice &choice) {
 
-  typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Arrangement_2::Ccb_halfedge_circulator
-                                                  Ccb_halfedge_circulator;
-  typedef typename Geometry_traits_2::Point_2           Point_2;
-  typedef typename Geometry_traits_2::FT                Number_type;
+  typedef typename Visibility_2_fst::Input_arrangement_2    Input_arrangement_2;
+  typedef typename Visibility_2_fst::Output_arrangement_2   Output_arrangement_2;
+  typedef typename Input_arrangement_2::Halfedge_const_handle     
+                                                            Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+                                                  Ccb_halfedge_const_circulator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::FT                    Number_type;
   typedef Timer Benchmark_timer;
 
-  std::cout << "here" << std::endl;
   Benchmark_timer timer;
+
   timer.start();
-  visibility_fst.attach(arr);
+  visibility_fst.attach(arr); 
   timer.stop();
-  std::cout << "Time to attach to first object: " << timer.time() << std::endl;
+  std::cout << "        Time to attach to first object: " 
+            << GREEN << timer.time() << " sec" << RESET << std::endl;
 
   timer.reset();
   timer.start();
   visibility_snd.attach(arr);
   timer.stop();
-  std::cout << "Time to attach to second object: " << timer.time() << std::endl;
+  std::cout << "        Time to attach to second object: " 
+            << GREEN << timer.time() << " sec" << RESET << std::endl;
 
-  Ccb_halfedge_circulator circ = face->outer_ccb();
-  Ccb_halfedge_circulator curr = circ;
+  typename Input_arrangement_2::Face_const_iterator fit;
+
+  for (fit = arr.faces_begin() ; fit != arr.faces_end() ; ++fit) {
+    if (!fit->is_unbounded()) {
+      break;
+    }
+  }
+
+  Ccb_halfedge_const_circulator circ = fit->outer_ccb();
+  Ccb_halfedge_const_circulator curr = circ;
 
   do {
-    Halfedge_handle he = curr;
+    Halfedge_const_handle he = curr;
     Point_2 curr_query_pt;
     bool selected_query_pt = true;
     switch (choice) {
@@ -626,14 +638,13 @@ void benchmark(Visibility_2_fst &visibility_fst,
                       (he->source()->point(), he->target()->point());
         break;
       case FACE:
-        Ccb_halfedge_circulator curr_next = circ;
-        Halfedge_handle he_next = curr_next;
+        Ccb_halfedge_const_circulator curr_next = circ;
+        Halfedge_const_handle he_next = curr_next;
         Point_2 p1 = he->source()->point();
         Point_2 p2 = he->target()->point();
         Point_2 p3 = he_next->target()->point();
         Point_2 avg((p1.x() + p2.x() + p3.x())/3, (p1.y() + p2.y() + p3.y())/3);
-        if (is_inside_face<Arrangement_2>(arr, face, avg)) {
-          std::cout << "Inside face" << std::endl;
+        if (is_inside_face<Input_arrangement_2>(arr, fit, avg)) {
           curr_query_pt = avg;
         }
         else {
@@ -645,39 +656,132 @@ void benchmark(Visibility_2_fst &visibility_fst,
       curr++;
       continue;
     }
-    std::cout << "Running with qpoint: " << curr_query_pt << std::endl;
-    Arrangement_2 out_arr_fst, out_arr_snd;
+    std::cout << "        Running with qpoint: " 
+              << RED << curr_query_pt << RESET <<  std::endl;
+    Input_arrangement_2 out_arr_fst, out_arr_snd;
     timer.reset();
     timer.start();
 
     if (choice == FACE) {
-      visibility_fst.visibility_region(curr_query_pt, face, out_arr_fst);
+      visibility_fst.visibility_region(curr_query_pt, fit, out_arr_fst);
     }
     else {
       visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
     }
     timer.stop();
 
-    std::cout << "Time to compute visibility region using first object for " 
-              << curr_query_pt << " : " << timer.time() << std::endl;
+    std::cout << "            Time to compute visibility region using first object: " 
+              << GREEN << timer.time() << " sec" << RESET << std::endl;
     timer.reset();
 
     timer.start();
     if (choice == FACE) {
-      visibility_snd.visibility_region(curr_query_pt, face, out_arr_snd);
+      visibility_snd.visibility_region(curr_query_pt, fit, out_arr_snd);
     }
     else {
       visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
     }
     timer.stop();
     
-    std::cout << "Time to compute visibility region using second object for " 
-              << curr_query_pt << " : " << timer.time() << std::endl;
+    std::cout << "            Time to compute visibility region using second object: " 
+              << GREEN << timer.time() << " sec" << RESET << std::endl;
 //    visibility_fst.print_arrangement(out_arr_fst);
  //   visibility_fst.print_arrangement(out_arr_snd);
-    assert(true == (CGAL::test_are_equal<Arrangement_2>
+    assert(true == (CGAL::test_are_equal<Output_arrangement_2>
                           (out_arr_fst, out_arr_snd)));  
   } while (++curr != circ);
+}
+
+template<class Visibility_2_fst, class Visibility_2_snd>
+void benchmark(Visibility_2_fst &visibility_fst, 
+                             Visibility_2_snd &visibility_snd,
+                             const Query_choice &choice,
+                             int case_number_simple,
+                             int case_number_non_simple) {
+
+  typedef typename Visibility_2_fst::Input_arrangement_2
+                                                            Input_arrangement_2;
+  typedef typename Input_arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Input_arrangement_2::Ccb_halfedge_circulator
+                                                        Ccb_halfedge_circulator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::FT                    Number_type;  
+
+  bool one_failed = false; 
+  if (Visibility_2_fst::Supports_simple_polygon_tag::value 
+    && Visibility_2_snd::Supports_simple_polygon_tag::value) {
+
+    std::cout << "Benchmarking simple polygon test cases...\n";
+    for (int i = 1 ; i <= case_number_simple ; i++) {
+      std::string input_arr_file("data/test_simple_polygon_");
+      input_arr_file += num2string<int>(i);
+      input_arr_file += ".dat";
+      std::cout << "    Benchmarking test " 
+                << GREEN << input_arr_file << RESET << std::endl;
+      std::ifstream input(input_arr_file.c_str());
+      std::string curr_line;
+      while (std::getline(input, curr_line)) {
+        if (curr_line[0] != '#' && curr_line[0] != '/')
+        break;  
+      }
+      std::stringstream convert(curr_line);
+      std::string x, y;
+      convert >> x >> y;
+      Point_2 query_pt(string2num<Number_type>(x),
+                       string2num<Number_type>(y));
+      std::getline(input, curr_line);
+      std::string x1, y1;
+      std::istringstream iss(curr_line);
+      iss >> x1 >> y1;
+      Point_2 reference_pt(string2num<Number_type>(x1),
+                           string2num<Number_type>(y1));
+      std::getline(input, curr_line);
+      Input_arrangement_2 arr;
+      create_arrangement_from_dat_file<Input_arrangement_2>(input, arr);
+  //    CGAL::Visibility_2::print_arrangement<Input_arrangement_2>(arr);
+      benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
+                                                             visibility_snd,
+                                                             arr,
+                                                             choice);
+    }
+  }
+   if (Visibility_2_fst::Supports_general_polygon_tag::value
+      && Visibility_2_snd::Supports_general_polygon_tag::value) {
+
+    std::cout << "Benchmarking non-simple polygon test cases...\n";
+    for (int i = 1 ; i <= case_number_non_simple ; i++) {
+      std::string input_arr_file("data/test_non_simple_polygon_");
+      input_arr_file += num2string<int>(i);
+      input_arr_file += ".dat";
+      std::cout << "    Running test "
+                << GREEN << input_arr_file << RESET << std::endl;      
+      std::ifstream input(input_arr_file.c_str());
+      std::string curr_line;
+      while (std::getline(input, curr_line)) {
+        if (curr_line[0] != '#' && curr_line[0] != '/')
+        break;
+      }
+      std::stringstream convert(curr_line);
+      std::string x, y;
+      convert >> x >> y;
+      Point_2 query_pt(string2num<Number_type>(x),
+                       string2num<Number_type>(y));
+      std::getline(input, curr_line);
+      std::string x1, y1;
+      std::istringstream iss(curr_line);
+      iss >> x1 >> y1;
+      Point_2 reference_pt(string2num<Number_type>(x1),
+                           string2num<Number_type>(y1));
+      std::getline(input, curr_line);
+      Input_arrangement_2 arr;
+      create_arrangement_from_dat_file<Input_arrangement_2>(input, arr);
+      benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
+                                                             visibility_snd,
+                                                             arr,
+                                                             choice);
+    }
+  }
 }
 
 } // end namespace CGAL

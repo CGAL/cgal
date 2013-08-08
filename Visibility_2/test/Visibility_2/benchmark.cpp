@@ -17,6 +17,7 @@
 //
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
+//             Michael Hemmer <michael.hemmer@cgal.org>
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -46,22 +47,11 @@ int main() {
   typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Naive_visibility_2;
 
-  // First read arrangement 
-  Arrangement_2 arr;
-  std::ifstream input("./data/simple_polygon_test_case_1.in");
-  CGAL::create_arrangement_from_file<Arrangement_2>(arr, input);
   Simple_polygon_visibility_2 simple_visibility;
   Naive_visibility_2 naive_visibility;
-  CGAL::Query_choice qchoice;
-  qchoice = CGAL::FACE;
-  typename Arrangement_2::Face_iterator fit;
-
-  for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
-	  if (!fit->is_unbounded()) {
-      CGAL::benchmark<Simple_polygon_visibility_2, Naive_visibility_2, Arrangement_2>
-                (simple_visibility, naive_visibility, arr, fit, qchoice);
-    }
-  }
+  const CGAL::Query_choice qchoice = CGAL::FACE;
+  CGAL::benchmark<Simple_polygon_visibility_2, Simple_polygon_visibility_2>
+                (simple_visibility, simple_visibility, qchoice, 1, 0);
 }
 	return 0;
 }
