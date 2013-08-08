@@ -144,35 +144,70 @@ def rearrange_img(i, dir_name):
     srcpath=img.attr("src")
     img.attr("src", "../Manual/" + srcpath.split('/')[-1])
 
+###############################################################################
+############################## Figure Numbering ###############################
+###############################################################################
+
+## A helper for collecting the figure anchors in a package
 class figure_anchor_info:
-  def __init__(self):
+  def __init__(self,pkg_id,global_anchor_map):
     self.next_index=1
-    self.anchor_map={}
+    self.global_anchor_map=global_anchor_map
+    self.pkg_id=str(pkg_id)
 
-
+## Collects the figure anchors in a package
 def collect_figure_anchors(i,infos):
   anchor_name=pq(this).attr('id')
   if re.match("fig__.+",anchor_name) != None:
-    infos.anchor_map[anchor_name]=infos.next_index
+    infos.global_anchor_map[anchor_name]=infos.pkg_id+"."+str(infos.next_index)
     infos.next_index+=1
 
-def update_figure_ref(i,infos):
+## Changes and anchor name using the name in global_anchor_map
+def update_figure_ref(i,global_anchor_map):
   link = pq(this)
   link_name=link.text()
   if re.match("fig__.+",link_name) != None:
-    link.text( "Figure "+str(infos.anchor_map[link_name]) )
+    link.text( "Figure "+str(global_anchor_map[link_name]) )
 
-def automagically_number_figure(filename):
-  infos=figure_anchor_info()
-  d = pq(filename=filename, parser='html')
-  d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
-  write_out_html(d, filename)
-  #reference manual pages might also contain references to figures
-  all_pages=glob.glob(path.join(path.dirname( path.abspath(filename) ),'*.html'))
-  for fname in all_pages:
+## number figures and reference to figures
+def automagically_number_figures():
+  #collect the list of packages in the package overview page,
+  #respecting the order of that page
+  all_packages=[]
+  d = pq(filename="./Manual/packages.html", parser='html')
+  for el in d('a.elRef'):
+    text = pq(el).attr('href')
+    if text.find("index.html")!=-1:
+      re_pkg_index=re.compile("\.\./([A-Z_a-z0-9]+/index\.html)")
+      res=re_pkg_index.match(text)
+      if res:
+        all_packages.append(res.group(1))
+      else:
+        stderr.write("Error: Figure numbering; skipping"+text+"\n")
+  
+  #collect all the figure anchors in user manual and associate them a unique id
+  pkg_id=1 # the id of a package
+  global_anchor_map={} #map a figure anchor to it unique name: pkg_id+.+fig_nb
+  for fname in all_packages:
+    infos=figure_anchor_info(pkg_id, global_anchor_map)
     d = pq(filename=fname, parser='html')
-    d('a.el').each( lambda i: update_figure_ref(i,infos) )    
+    d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
+    pkg_id+=1
+
+  #replace each link to a figure by its unique id
+  all_files=package_glob("*/*.html")
+  for fname in all_files:
+    #consider only a html files containing a figure ref.
+    with codecs.open(fname, encoding='utf-8') as f:
+        if not any(re.search("fig__", line) for line in f):
+            continue # pattern does not occur in file so we are done.
+    d = pq(filename=fname, parser='html')
+    d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
     write_out_html(d, fname)
+
+###############################################################################
+###############################################################################
+###############################################################################
 
 def main():
     parser = argparse.ArgumentParser(
@@ -187,9 +222,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     os.chdir(args.output)
 
     # number figure
-    main_pages=package_glob('./*/index.html')
-    for fn in main_pages:
-      automagically_number_figure(fn)
+    automagically_number_figures()
 
     #replace icons with CGAL colored ones
     shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("Manual/", "ftv2cl.png"))
