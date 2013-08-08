@@ -38,6 +38,7 @@ void test_model_methods_for_arr(
   typedef typename Input_arrangement_2::Point_2            Point_2;
   typedef typename Input_arrangement_2::Geometry_traits_2::Segment_2 
                                                            Segment_2;
+  typedef typename Input_arrangement_2::Face_handle        Face_handle;
 
   Visibility_2 visibility;
   assert(false == visibility.is_attached());
@@ -58,7 +59,16 @@ void test_model_methods_for_arr(
   }
   // First consider query point in the unbounded face
   Point_2 query_pt(1, 1);
-  visibility.visibility_region(query_pt, fit, arr_out);
+  // Check returned face_handle
+  Face_handle face_check = visibility.visibility_region(query_pt, fit, arr_out);
+  Face_handle face;
+  if (arr_out.faces_begin()->is_unbounded()) {
+    face = ++arr_out.faces_begin();
+  }
+  else {
+    face = arr_out.faces_begin();
+  }
+  assert(face_check == face);
 
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr, arr_out));
@@ -80,16 +90,23 @@ void test_model_methods_for_arr(
   query_pt = Point_2(0, 4);
   arr_out.clear();
   typename Input_arrangement_2::Halfedge_const_iterator hit;
-
+  Face_handle face_check_he;
   for (hit = arr.halfedges_begin(); 
        hit != arr.halfedges_end(); ++hit) {
 
     Segment_2 curr_seg(hit->source()->point(), hit->target()->point());
     if (curr_seg.has_on(query_pt)) {
-      visibility.visibility_region(query_pt, hit, arr_out);
+      face_check_he = visibility.visibility_region(query_pt, hit, arr_out);
       break;
     }
   }
+  if (arr_out.faces_begin()->is_unbounded()) {
+    face = ++arr_out.faces_begin();
+  }
+  else {
+    face = arr_out.faces_begin();
+  }
+  assert(face_check_he == face);
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr));
   arr_out_check.clear();

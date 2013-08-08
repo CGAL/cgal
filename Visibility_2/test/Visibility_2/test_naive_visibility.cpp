@@ -44,6 +44,7 @@ int main() {
                                                                     Naive_visibility_2;
 
     CGAL::test_model_methods<Naive_visibility_2>();
+    std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
     CGAL::run_tests<Naive_visibility_2>(1, 0);
 }
 {
@@ -56,6 +57,7 @@ int main() {
                                                                     Naive_visibility_2;
 
     CGAL::test_model_methods<Naive_visibility_2>();
+    std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
     CGAL::run_tests<Naive_visibility_2>(1, 0);
 }
     return 0;
