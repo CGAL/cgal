@@ -8,8 +8,8 @@
  /// class Uniform_weight
  /// {
  /// public:
- ///   template<class Polyhedron, class VertexPointMap>
- ///   double operator()(typename boost::graph_traits<Polyhedron>::edge_descriptor  /*e*/, const Polyhedron& /*p*/, VertexPointMap /*v*/)
+ ///   template<class HalfedgeGraph, class VertexPointMap>
+ ///   double operator()(typename boost::graph_traits<HalfedgeGraph>::edge_descriptor  /*e*/, const HalfedgeGraph& /*p*/, VertexPointMap /*v*/)
  ///   { return 1.0; }
  /// };
  /// \endcode
@@ -19,11 +19,11 @@ public:
 /// \name Types 
 /// @{
   /// a model of HalfedgeGraph
-  typedef Hidden_type Polyhedron;
+  typedef Hidden_type Halfedge_graph;
 /// @} 
 
 /// @{
-  /// a model of `ReadWritePropertyMap`</a>  with boost::graph_traits<Polyhedron>::vertex_descriptor as key and `Polyhedron::Point_3` as value type
+  /// a model of `ReadWritePropertyMap`</a>  with boost::graph_traits<HalfedgeGraph>::vertex_descriptor as key and `HalfedgeGraph::Point_3` as value type
   typedef Hidden_type VertexPointMap;
 /// @} 
 
@@ -36,7 +36,7 @@ public:
 /// \name Operations 
 /// @{
   /// Function computing the edge weight of edge `e`
-  double operator()(boost::graph_traits<Polyhedron>::edge_descriptor  e, const Polyhedron& polyhedron, VertexPointMap vpm);
+  double operator()(boost::graph_traits<HalfedgeGraph>::edge_descriptor  e, const HalfedgeGraph& halfedge_graph, VertexPointMap vpm);
 /// @}
 };
 
