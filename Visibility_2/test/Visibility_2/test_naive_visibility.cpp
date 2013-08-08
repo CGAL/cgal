@@ -27,7 +27,6 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
-#include <CGAL/test_simple_polygons.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
 
 #include <iostream>
@@ -45,7 +44,7 @@ int main() {
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
-    CGAL::run_tests<Simple_polygon_visibility_2>(1);
+    CGAL::run_tests<Simple_polygon_visibility_2>(1, 0);
 }
 {
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
@@ -57,6 +56,7 @@ int main() {
                                                                     Simple_polygon_visibility_2;
 
     CGAL::test_model_methods<Simple_polygon_visibility_2>();
+    CGAL::run_tests<Simple_polygon_visibility_2>(1, 0);
 }
     return 0;
 }

@@ -27,7 +27,6 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
-#include <CGAL/test_simple_polygons.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
 
 #include <iostream>
