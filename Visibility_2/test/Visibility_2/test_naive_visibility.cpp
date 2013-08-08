@@ -27,7 +27,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
-#include <CGAL/Simple_polygon_visibility_2.h>
+#include <CGAL/Naive_visibility_2.h>
 
 #include <iostream>
 #include <fstream>
@@ -40,11 +40,11 @@ int main() {
     typedef Traits_2::Point_2										Point_2;
     typedef Traits_2::X_monotone_curve_2							Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-    typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                                    Simple_polygon_visibility_2;
+    typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                                    Naive_visibility_2;
 
-    CGAL::test_model_methods<Simple_polygon_visibility_2>();
-    CGAL::run_tests<Simple_polygon_visibility_2>(1, 0);
+    CGAL::test_model_methods<Naive_visibility_2>();
+    CGAL::run_tests<Naive_visibility_2>(1, 0);
 }
 {
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
@@ -52,11 +52,11 @@ int main() {
     typedef Traits_2::Point_2                                       Point_2;
     typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
-    typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                                    Simple_polygon_visibility_2;
+    typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                                    Naive_visibility_2;
 
-    CGAL::test_model_methods<Simple_polygon_visibility_2>();
-    CGAL::run_tests<Simple_polygon_visibility_2>(1, 0);
+    CGAL::test_model_methods<Naive_visibility_2>();
+    CGAL::run_tests<Naive_visibility_2>(1, 0);
 }
     return 0;
 }
