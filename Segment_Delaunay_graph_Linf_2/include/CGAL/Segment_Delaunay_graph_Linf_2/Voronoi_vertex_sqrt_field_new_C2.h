@@ -2067,7 +2067,10 @@ private:
         return POSITIVE;
       }
 
-      if (not (is_r_hor or is_r_ver)) {
+      // check for p, q with same coordinate and r non-hv segment
+      if ((not (is_r_hor or is_r_ver)) and
+          (not (is_p_endp_of_r or is_q_endp_of_r))
+         ) {
         CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
             << std::endl;);
         CGAL_SDG_DEBUG(std::cout << "debug d=" << d <<
@@ -2111,7 +2114,7 @@ private:
                 << " qer=" << is_q_endp_of_r << std::endl;);
           }
         } // end of case: pqsamex or pqsamey
-      } // end of non-hv segment r case
+      } // end of non-hv segment r case with p, q non-endpoints of r
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
 
