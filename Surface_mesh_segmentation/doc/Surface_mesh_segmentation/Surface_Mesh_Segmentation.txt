@@ -90,9 +90,9 @@ These probability values are used as input to the graph-cut step described next.
 
 \subsection Surface_mesh_segmentationGraphCut Graph-Cut
 The hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
-This energy function combines the aforementioned probability matrix and geometric surface features. 
+This energy function combines the aforementioned probability matrix and geometric surface features.
 The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a). 
-Also, each segment, a set of facets which are connected and in the same cluster \cgalFigureRef{Cluster_vs_segment} (b), can be extracted by assigning a unique-id.
+Also, each segment, a set of facets which are connected and in the same cluster \cgalFigureRef{Cluster_vs_segment} (b), can be extracted.
 
 \cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
 Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the result of the graph-cut. <b>(b)</b> is the post-processed result where each segment is extracted from clusters. 
@@ -132,7 +132,7 @@ where:
 
 The first term of the energy function provides the contribution of the soft clustering probabilities.
 The second term of the energy function is a geometric criteria that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
-The smoothness parameter makes this geometric criteria more or less prevalent.
+The smoothness parameter makes this geometric criteria more or less prevalent. 
 
 Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets which are placed under different clusters is less expensive than separating them and creating boundaries.
