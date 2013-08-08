@@ -49,8 +49,8 @@ int main() {
   Simple_polygon_visibility_2 simple_visibility;
   Naive_visibility_2 naive_visibility;
   const CGAL::Query_choice qchoice = CGAL::FACE;
-  CGAL::benchmark<Simple_polygon_visibility_2, Simple_polygon_visibility_2>
-                (simple_visibility, simple_visibility, qchoice, 1, 0);
+  CGAL::benchmark<Simple_polygon_visibility_2, Naive_visibility_2>
+                (simple_visibility, naive_visibility, qchoice, 1, 0);
 }
 	return 0;
 }
