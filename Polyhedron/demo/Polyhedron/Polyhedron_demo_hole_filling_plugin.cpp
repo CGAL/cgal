@@ -1,5 +1,6 @@
 //#define CGAL_SUPERLU_ENABLED
 #undef NDEBUG
+#define DEBUG_TRACE
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
@@ -257,7 +258,7 @@ public slots:
     emit itemChanged();
   }
 
-}; // end class Scene_edges_item
+}; // end class Scene_polylines_collection
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Polyhedron_demo_hole_filling_plugin :
@@ -463,8 +464,10 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   // fill selected holes
   bool any_filled = false;
+  int counter = 0;
   for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
-    it != polyline_item->selected_holes.end(); ++it) {
+    it != polyline_item->selected_holes.end(); ++it, ++counter) {
+      print_message(tr("Hole %1:").arg(counter));
       any_filled |= fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
   }
 
@@ -510,7 +513,9 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
   bool any_filled = false;
-  for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
+  int counter = 0;
+  for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++counter) {
+     print_message(tr("Hole %1:").arg(counter));
      any_filled |= fill(poly, *it);
   }
 
@@ -603,7 +608,8 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   print_message(QString("Filled in %1 sec.").arg(timer.time()));
 
   if(patch.empty()) {
-    print_message("Warning: generating patch is not successful!");
+    print_message(tr("Warning: generating patch is not successful! %1")
+      .arg(use_DT ? "Please try without 'Use 3D Delaunay Triangulation'!" : ""));
     return false;
   }
 
@@ -635,6 +641,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
       print_message("Self intersecting patch is generated, and it is removed.");
       return false;
     }
+    else { print_message("No Self intersection found, patch is valid."); }
   }
   // save facets for accept-reject 
   new_facets.insert(new_facets.end(), patch.begin(), patch.end());

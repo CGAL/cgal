@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>311</width>
-    <height>364</height>
+    <width>340</width>
+    <height>362</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,68 +59,67 @@
       <property name="title">
        <string>Parameters</string>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
+         <property name="maximum">
+          <double>96.989999999999995</double>
+         </property>
+         <property name="singleStep">
+          <double>0.200000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.410000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="weight_combo_box">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Uniform Weight</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Cotangent Weight</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Density Control Factor for Refining:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Weight Type for Fairing:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Use 3D Delaunay Triangulation Space:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
         <widget class="QCheckBox" name="Use_delaunay_triangulation_check_box">
          <property name="text">
-          <string>Use Delaunay Triangulation</string>
+          <string/>
          </property>
          <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Density Control Factor for Refining:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDoubleSpinBox" name="Density_control_factor_spin_box">
-           <property name="maximum">
-            <double>96.989999999999995</double>
-           </property>
-           <property name="singleStep">
-            <double>0.200000000000000</double>
-           </property>
-           <property name="value">
-            <double>1.410000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="text">
-            <string>Weight Type for Fairing:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="weight_combo_box">
-           <property name="currentIndex">
-            <number>1</number>
-           </property>
-           <item>
-            <property name="text">
-             <string>Uniform Weight</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Cotangent Weight</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>
