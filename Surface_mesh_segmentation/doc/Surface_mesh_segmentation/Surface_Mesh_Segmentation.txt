@@ -180,7 +180,11 @@ The function `segment_from_sdf_values()` computes a segmentation of the mesh usi
 Note that these SDF values can be any set of scalar values associated with each facet as long as they have been normalized between 0 and 1. 
 These values are also log-normalized at the beginning as the paper suggests.
 This function allows to use the same SDF values several times but with different parameters for the segmentation stage.
-The output is the number of segments and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1).
+
+Accessing either segmented or clustered result is possible through the same function (see \cgalFigureRef{Cluster_vs_segment}). 
+Clustered result is useful for applications such as detecting analogical parts in a given mesh, and segmented result is just post-processed form of clustered result.
+
+The output is the number of segments (or number of clusters) and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1) or cluster-id (between 0 and number-of-clusters-1).
 \note A segment is a set of connected facets which are placed under same the cluster after the graph-cut step. Note that the number of clusters given as input of the function and the number of segments in the final segmentation (computed by the function) are not equal in general.
 
 \subsubsection Example_2 Example: Segmentation from SDF Values
