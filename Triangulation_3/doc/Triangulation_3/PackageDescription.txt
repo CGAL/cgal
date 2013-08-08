@@ -63,7 +63,7 @@ orientation, the positive orientation being defined by the orientation
 of the underlying Euclidean space \f$ \mathbb{R}^3 \f$. The neighbors of a cell are also
 indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index. See
-Figure \cgalFigureRef{Triangulation3figorient}.
+\cgalFigureRef{Triangulation3figorient}.
 
 \cgalClassifedRefPages
 

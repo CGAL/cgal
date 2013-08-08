@@ -972,7 +972,7 @@ The arrangement of line segments, as constructed in `point_location_example.cpp`
 
 The program listed below constructs a simple arrangement of five line
 segments that form a pentagonal face, with a single isolated
-vertex in its interior, as depicted in Figure \cgalFigureRef{arr_figex_5}.
+vertex in its interior, as depicted in \cgalFigureRef{arr_figex_5}.
 Notice that we use the same arrangement structure in the next
 three example programs. The arrangement construction is performed by
 the function `construct_segment_arr()` defined in the heade file

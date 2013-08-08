@@ -77,7 +77,7 @@ The three vertices of a face are indexed with 0, 1 and 2 in positive
 orientation. The orientation of a simplex in \f$ \mathbb T_c^2\f$ is
 defined as the orientation of the corresponding simplex in \f$ \mathbb
 R^2\f$ given by representatives determined by the respective offsets
-(see Figure \cgalFigureRef{P2Triangulation2figorient}).
+(see \cgalFigureRef{P2Triangulation2figorient}).
 
 \cgalFigureBegin{P2Triangulation2figorient, orient.png}
 Orientation of a face.
@@ -90,7 +90,7 @@ indexed by \f$ i\f$ is opposite to the vertex with the same index. Edges
 (\f$ 1\f$-faces) are not explicitly represented: an edge is given by a face
 and an index (the edge `i` of a face `f` is the edge of
 `f` that is opposite to the vertex with index `i`). See
-Figure \cgalFigureRef{P2Triangulation2figorient}.
+\cgalFigureRef{P2Triangulation2figorient}.
 
 Some point sets do not admit a triangulation in \f$ \mathbb T_c^2\f$. In
 this case we use 9 periodic copies of the point set arranged in a
@@ -98,7 +98,7 @@ square of edge length \f$ 3c\f$. Any point set constructed in this way has a
 triangulation in \f$ \mathbb R^2/G'\f$ with \f$ G'=(3c\cdot\mathbb Z)^2\f$
 \cgalCite{cgal:ct-c3pt-09}. So we compute the triangulation in this
 space, which is a <I>9-sheeted covering space</I> of \f$ \mathbb T_c^2\f$
-(see Figure \cgalFigureRef{P2Triangulation2figcovering}).
+(see \cgalFigureRef{P2Triangulation2figcovering}).
 
 \cgalFigureBegin{P2Triangulation2figcovering, one_cover.png, one_and_nine_cover.png}
 The same periodic triangulation in 1-sheeted covering space and 9-sheeted covering space. 
@@ -135,7 +135,7 @@ data structure, is `locally valid`
 (see Chapter \ref Chapter_2D_Triangulation_Data_Structure)
 
 <B>(c)</B> Any cell has its vertices ordered according to positive
-orientation. See Figure \cgalFigureRef{P2Triangulation2figorient}.
+orientation. See \cgalFigureRef{P2Triangulation2figorient}.
 
 \section P2T2_Delaunay Delaunay Triangulation
 
