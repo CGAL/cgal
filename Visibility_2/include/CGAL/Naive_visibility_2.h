@@ -30,7 +30,6 @@
 #include <CGAL/Ray_2.h>
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
-#include <CGAL/bounding_box.h>
 
 namespace CGAL {
 
@@ -45,6 +44,7 @@ void print(std::vector<Point_handle> ps){
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Naive_visibility_2 {
+public:
     typedef Arrangement_2                                 Input_arrangement_2;
     typedef Arrangement_2                                 Output_arrangement_2;
     typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
@@ -71,16 +71,14 @@ class Naive_visibility_2 {
 
     enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
-public:
-    //members
-    Arrangement_2   arr;
+
 
     //functions
-    Naive_visibility_2(const Arrangement_2 &arr):arr(arr), attach_tag(true) {}
+    Naive_visibility_2(const Input_arrangement_2 &arr):arr_env(arr), attach_tag(true) {}
     Naive_visibility_2(): attach_tag(false) {}
 
-    Face_const_handle visibility_region(const Point_2 &q, Halfedge_const_handle &e, Arrangement_2 &out_arr) {
-        Arrangement_2 arrc = arr ; //copy of arr;
+    Face_const_handle visibility_region(const Point_2 &q, Halfedge_const_handle e, Output_arrangement_2 &out_arr) {
+        Arrangement_2 arrc = arr_env ; //copy of arr;
         Halfedge_handle ec; //copy of edge;
         for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
             if (eh->source()->point() == e-> source()->point() && eh->target()->point() == e->target()->point()) {
@@ -232,7 +230,7 @@ public:
 
     }
 
-    Face_const_handle visibility_region(const Point_2 &q, Face_const_handle fh, Arrangement_2 &out_arr) {
+    Face_const_handle visibility_region(const Point_2 &q, Face_const_handle fh, Output_arrangement_2 &out_arr) {
         std::vector<Point_2> polygon;
         visibility_region_impl(q, fh, polygon);
         build_arr(polygon, out_arr);
@@ -247,18 +245,25 @@ public:
         return attach_tag;
     }
 
-    void attach(Arrangement_2 arr) {
-        this->arr = arr;
-        this->attach_tag = true;
+    void attach(const Input_arrangement_2 &arr) {
+        arr_env = arr;
+        attach_tag = true;
     }
     void detach() {
         attach_tag = false;
     }
 
+    const Input_arrangement_2& arr() {
+        return arr_env;
+    }
+
 
 private:
+    //members
+    Input_arrangement_2   arr_env;
     bool            attach_tag;
-    // return the intersection of a ray and a segment. if the intersection is a segment, return the end closer to the source of ray.
+    //-----------------------------
+    //functions
     // if there is no intersection, return the source of ray.
     /*!
       obtain the vertices of visibility into polygon. these vertices can be used to build output arrangement by build_arr().
