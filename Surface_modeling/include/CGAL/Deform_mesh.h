@@ -105,7 +105,7 @@ class Deform_mesh
 //Typedefs
 public:
 
-  /// \name Template parameter types
+  /// \name Template parameters
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
   typedef HG Halfedge_graph; /**< model of HalfedgeGraph */  
@@ -152,9 +152,9 @@ public:
   #else
     CR // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
-  >::type CR_helper;
+  >::type Closest_rotation_helper;
 #else
-  typedef CR CR_helper; /**< model of DeformationClosestRotationTraits_3 */
+  typedef CR Closest_rotation_helper; /**< model of DeformationClosestRotationTraits_3 */
 #endif
 
 // vertex point pmap
@@ -184,8 +184,8 @@ private:
   typedef std::list<vertex_descriptor>  Handle_container;
   typedef std::list<Handle_container>   Handle_group_container;
 
-  typedef typename CR_helper::Matrix CR_matrix;
-  typedef typename CR_helper::Vector CR_vector;
+  typedef typename Closest_rotation_helper::Matrix CR_matrix;
+  typedef typename Closest_rotation_helper::Vector CR_vector;
 
 public:
   /** The type used as the representative of a group of handles*/
@@ -250,7 +250,7 @@ private:
 
 // Public methods
 public:
-/// \name Preprocess Section
+/// \name Preprocessing
 /// @{
 
   /// \cond SKIP_FROM_MANUAL
@@ -325,7 +325,7 @@ private:
 
 public:
   /**
-   * Puts the object in the same state as after the creation (except iterations and tolerance).
+   * Puts `*this` in the same state as after the creation (except iterations and tolerance).
    */
   void reset()
   {
@@ -567,9 +567,9 @@ public:
     assemble_laplacian_and_factorize();
     return last_preprocess_successful; // which is set by assemble_laplacian_and_factorize()
   }
-/// @} Preprocess Section
+/// @} Preprocessing
 
-/// \name Deform Section
+/// \name Deformation
 /// @{  
   /**
    * Sets the transformation to apply to all the vertices in a group of handles to be a translation by vector `t`.
@@ -695,7 +695,7 @@ public:
     // copy solution to target mesh
     assign_solution();
   }
-/// @} Deform Section
+/// @} Deformation
 
 /// \name Utilities
 /// @{
@@ -788,7 +788,7 @@ public:
     }    
 
     // also set rotation matrix to identity
-    std::fill(rot_mtr.begin(), rot_mtr.end(), CR_helper().identity_matrix());
+    std::fill(rot_mtr.begin(), rot_mtr.end(), Closest_rotation_helper().identity_matrix());
 
     need_preprocess_both(); // now we need reprocess
   }
@@ -886,7 +886,7 @@ private:
         rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
-        rot_mtr[v_ros_id] = CR_helper().identity_matrix();
+        rot_mtr[v_ros_id] = Closest_rotation_helper().identity_matrix();
       }
     }
     
@@ -1053,7 +1053,7 @@ private:
   }
   void optimal_rotations_arap()
   {     
-    CR_helper cr_helper;
+    Closest_rotation_helper cr_helper;
     CR_matrix cov = cr_helper.zero_matrix();
 
     // only accumulate ros vertices
@@ -1082,7 +1082,7 @@ private:
   }
   void optimal_rotations_spokes_and_rims()
   {    
-    CR_helper cr_helper;
+    Closest_rotation_helper cr_helper;
     CR_matrix cov =cr_helper.zero_matrix();   
 
     // only accumulate ros vertices
@@ -1170,7 +1170,7 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
-    CR_helper cr_helper;
+    Closest_rotation_helper cr_helper;
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1232,7 +1232,7 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
-    CR_helper cr_helper;
+    Closest_rotation_helper cr_helper;
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1322,7 +1322,7 @@ private:
   }
   double energy_arap() const
   {
-    CR_helper cr_helper;
+    Closest_rotation_helper cr_helper;
 
     double sum_of_energy = 0;    
     // only accumulate ros vertices
@@ -1350,7 +1350,7 @@ private:
   }
   double energy_spokes_and_rims() const
   {
-    CR_helper cr_helper;
+    Closest_rotation_helper cr_helper;
 
     double sum_of_energy = 0;
     // only accumulate ros vertices
@@ -1393,7 +1393,7 @@ private:
   /// p1 - p2, return CR_vector
   CR_vector sub_to_CR_vector(const Point& p1, const Point& p2) const
   {
-    return CR_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+    return Closest_rotation_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
 
   template<class Vect>

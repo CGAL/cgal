@@ -14,9 +14,9 @@ class DeformationClosestRotationTraits_3{
 public:
 /// \name Types 
 /// @{
-  /// <I>3x3</I> matrix type with copy constructor and assignment operator
+  /// <I>3x3</I> matrix type having a copy constructor and an assignment operator
   typedef Hidden_type Matrix;
-  /// <I>3x1</I> vector type with copy constructor
+  /// <I>3D</I> vector type having a copy constructor
   typedef Hidden_type Vector;
 /// @} 
 
@@ -44,18 +44,16 @@ public:
   /// Returns an identity matrix
   Matrix identity_matrix();
   
-  /// Returns a zero initialized matrix
+  /// Returns a matrix initialized with zero
   Matrix zero_matrix();
 
-  /// Returns a vector initialized with parameters
+  /// Returns the vector (x,y,z)
   Vector vector(double x, double y, double z);
   
   /// Returns `i`th coefficient of a vector
   double vector_coeff(const Vector& v, int i);
     
   /// Computes a rotation matrix close to `m` and places it into `R`
-  /// \note It is expecting to provide the closest rotation in Frobenius norm, however not returning the closest rotation does not lead to a crash or non-convergence.
-  ///  For example in the context of the deformation, always returning the identity matrix independently of `m` will result in a naive Laplacian deformation.
   void compute_close_rotation(const Matrix& m, Matrix& R);
   
 /// @}
