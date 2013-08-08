@@ -109,31 +109,31 @@ public:
     // What we need is the angle between the normals of the triangles between [0, pi]
     double ang_max = 0;
 
-    if(!Q.empty()){
-      // Test each edge
-      int vertices[] = {i, j, k};
-      for(int e = 0; e < 3; ++e) 
-      {
-        int v0      = vertices[e];
-        int v1      = vertices[(e+1)%3];
-        int v_other = vertices[(e+2)%3];
-        double angle = 0;
-        // check whether the edge is border
-        if(v0 + 1 == v1 || v0 == n-1 && v1 == 0) {
-          angle = 180 - CGAL::abs( 
-            CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0]) );
-        }
-        else {
-          if(e == 2) { continue; }
-          if(lambda.get(v0, v1) != -1){
-            const Point_3& p01 = P[lambda.get(v0, v1)];
-            angle = 180 - CGAL::abs( 
-              CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01) );
-          }
-        }
-        ang_max = (std::max)(ang_max, angle);
+    // Test each edge
+    int vertices[] = {i, j, k};
+    for(int e = 0; e < 3; ++e) 
+    {
+      int v0      = vertices[e];
+      int v1      = vertices[(e+1)%3];
+      int v_other = vertices[(e+2)%3];
+      double angle = 0;
+      // check whether the edge is border
+      if( (v0 + 1 == v1 || v0 == n-1 && v1 == 0) && 
+          !Q.empty() ) {
+        angle = 180 - CGAL::abs( 
+          CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0]) );
       }
-    } // if !Q.empty() 
+      else {
+        if(e == 2) { continue; }
+        if(lambda.get(v0, v1) != -1){
+          const Point_3& p01 = P[lambda.get(v0, v1)];
+          angle = 180 - CGAL::abs( 
+            CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],p01) );
+        }
+      }
+      ang_max = (std::max)(ang_max, angle);
+    }
+   
     w = std::make_pair(ang_max, std::sqrt(CGAL::squared_area(P[i],P[j],P[k])));
   }
 
