@@ -20,7 +20,11 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This is the reference manual of the Surface Modeling package
-
+\todo investigate if it is worth adding a flags in the weight calculator class to turn on/off some features
+\todo document why is it closest rotation
+\todo Add the fact that positive weights are expected for ARAP (and SaR?)
+\todo remove groups of handle and rotation/translate should have overload accepting ranges of vertex_descriptor
+\todo update demos and examples
+\todo replace handle vertex by control vertex
 */
 
