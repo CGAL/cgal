@@ -30,10 +30,6 @@ and provide detailed results at the end of the manual.
 
 \todo add pdf link at the end of the manual (may be together with a pdf which contains screenshots of segmented models etc.)
 
-\note The goal of this package is to associate each facet of a mesh to a <i>segment</i>. In this chapter, a <i>segment</i> refers to a connected component of facets.
-      The algorithm first gathers the facets into <i>clusters</i>. A <i>cluster</i> is a set of facets (not necessarily connected) verifying the same criterium.
-      The clusters may be later merged or split in order to give the final segmentation.
-
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 The segmentation algorithm consists of three main parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for final segmentation.
 
@@ -185,7 +181,6 @@ Accessing either segmented or clustered result is possible through the same func
 Clustered result is useful for applications such as detecting analogical parts in a given mesh, and segmented result is just post-processed form of clustered result.
 
 The output is the number of segments (or number of clusters) and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1) or cluster-id (between 0 and number-of-clusters-1).
-\note A segment is a set of connected facets which are placed under same the cluster after the graph-cut step. Note that the number of clusters given as input of the function and the number of segments in the final segmentation (computed by the function) are not equal in general.
 
 \subsubsection Example_2 Example: Segmentation from SDF Values
 \cgalExample{Surface_mesh_segmentation/segment_from_sdf_values_example.cpp}
