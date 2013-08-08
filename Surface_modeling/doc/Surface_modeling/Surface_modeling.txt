@@ -282,13 +282,14 @@ latter version does not produced a symmetric result.
 Our implementation operates on a surface mesh represented as a halfedge data structure that must
 be a model of the `HalfedgeGraph` concept.
 
-
+<!--
 We present the API by considering the user point of view during a deformation session
 (see \cgalFigureRef{Flow_of_API} for an illustration).
 
 \cgalFigureBegin{Flow_of_API, usage_flow_of_API.png}
 The deformation work flow.
 \cgalFigureEnd
+-->
 
 \subsection Preprocess_section Preprocessing
 
