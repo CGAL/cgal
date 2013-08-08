@@ -165,6 +165,11 @@ public:
   { return Weight_min_max_dihedral_and_area(0,0); }
   static const Weight_min_max_dihedral_and_area NOT_VALID() 
   { return Weight_min_max_dihedral_and_area(-1,-1); }
+
+  friend std::ostream& operator<<(std::ostream& out, const Weight_min_max_dihedral_and_area& w) {
+    out << "Max dihedral: " << w.w.first << ", Total area: " << w.w.second;
+    return out;
+  }
 };
 
 // For proof of concept. Tested weakly.
@@ -223,6 +228,10 @@ public:
 
   static const Weight_total_edge DEFAULT() { return Weight_total_edge(0); } // rule: x + DEFAULT() == x
   static const Weight_total_edge NOT_VALID() { return Weight_total_edge(-1); }
+  friend std::ostream& operator<<(std::ostream& out, const Weight_total_edge& w) {
+    out << "Total edge length : " << w.total_length;
+    return out;
+  }
 };
 
 /************************************************************************/
@@ -333,15 +342,17 @@ struct Incident_facet_circulator<3, Triangulator>
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
 template<
   class K, 
-  class Weight = Weight_min_max_dihedral_and_area, 
+  class Weight_ = Weight_min_max_dihedral_and_area, 
   template <class> class LookupTable = Lookup_table_map
 >
 class Triangulate_hole_polyline_DT 
 {
 public:
   typedef Triangulate_hole_polyline_DT<K> Self;
-  typedef typename K::Point_3 Point_3;
-  typedef std::vector<Point_3> Polyline_3;
+  typedef Weight_                         Weight;
+  typedef typename K::Point_3             Point_3;
+  typedef std::vector<Point_3>            Polyline_3;
+
 
   typedef Triangulation_vertex_base_with_info_3<int, K>  VB_with_id;
   typedef Triangulation_data_structure_3<VB_with_id>     TDS;
@@ -541,15 +552,14 @@ private:
 /************************************************************************/
 template<
   class K, 
-  class Weight = Weight_min_max_dihedral_and_area, 
+  class Weight_ = Weight_min_max_dihedral_and_area, 
   template <class> class LookupTable = Lookup_table
 >
 class Triangulate_hole_polyline {
 public:
-  typedef typename K::Point_3 Point_3;
-  typedef std::vector<Point_3> Polyline_3;
-  
-public:
+  typedef Weight_               Weight;
+  typedef typename K::Point_3   Point_3;
+  typedef std::vector<Point_3>  Polyline_3;
 
   template <typename OutputIteratorValueType, typename OutputIterator, typename EdgeSet>
   std::pair<OutputIterator, Weight>
@@ -632,9 +642,18 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     }
   }
 
-  return use_delaunay_triangulation ?
-         Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges).first :
-         Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges).first;
+  if(use_delaunay_triangulation) {
+    std::pair<OutputIterator, typename Fill_DT::Weight> pair = 
+      Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
+    CGAL_TRACE_STREAM << pair.second;
+    return pair.first;
+  }
+  else {
+    std::pair<OutputIterator, typename Fill::Weight> pair = 
+      Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
+    CGAL_TRACE_STREAM << pair.second;
+    return pair.first;
+  }
 }
 
 } // namespace internal
