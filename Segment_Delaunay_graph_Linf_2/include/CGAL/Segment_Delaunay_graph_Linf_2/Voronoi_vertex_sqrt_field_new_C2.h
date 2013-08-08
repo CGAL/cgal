@@ -1644,74 +1644,9 @@ private:
     // p segment implies q segment
     CGAL_assertion(p.is_point() or q.is_segment());
 
-    Sign retval (ZERO);
-
-    bool is_p_hor (false);
-    bool is_p_ver (false);
-    bool is_q_hor (false);
-    bool is_q_ver (false);
-    bool is_r_hor (false);
-    bool is_r_ver (false);
-    bool is_t_endp_of_q (false);
-    bool is_t_endp_of_r (false);
-    bool is_p_endp_of_q (false);
-    bool is_p_endp_of_r (false);
-    bool is_q_endp_of_r (false);
-    bool is_t_endp_of_p (false);
-
-    if (p.is_segment()) {
-      is_p_hor = is_site_horizontal(p);
-      is_p_ver = is_site_vertical(p);
-      is_t_endp_of_p = is_endpoint_of(t,p);
-    }
-    if (q.is_segment()) {
-      is_q_hor = is_site_horizontal(q);
-      is_q_ver = is_site_vertical(q);
-      is_t_endp_of_q = is_endpoint_of(t,q);
-      if (p.is_point()) {
-        is_p_endp_of_q = is_endpoint_of(p,q);
-      }
-    }
-
-    // r is segment anyway
-    is_r_hor = is_site_horizontal(r);
-    is_r_ver = is_site_vertical(r);
-    is_t_endp_of_r = is_endpoint_of(t,r);
-    if (p.is_point()) {
-      is_p_endp_of_r = is_endpoint_of(p,r);
-    }
-    if (q.is_point()) {
-      is_q_endp_of_r = is_endpoint_of(q,r);
-    }
-
     Point_2 tt = t.point();
-
     FT diffdvtx = vv.x() - tt.x();
     FT diffdvty = vv.y() - tt.y();
-
-    if (is_t_endp_of_p and (is_p_hor or is_p_ver)) {
-      retval = (CGAL::sign(is_p_hor ? diffdvtx : diffdvty) != ZERO ) ?
-        POSITIVE : ZERO;
-      CGAL_SDG_DEBUG(std::cout << "debug vsqr t on p hor/ver retval="
-          << retval << std::endl;);
-      return retval;
-    }
-    if (is_t_endp_of_q and (is_q_hor or is_q_ver)) {
-      retval = (CGAL::sign(is_q_hor ? diffdvtx : diffdvty) != ZERO ) ?
-        POSITIVE : ZERO;
-      CGAL_SDG_DEBUG(std::cout << "debug vsqr t on q hor/ver retval="
-          << retval << std::endl;);
-      return retval;
-    }
-    if (is_t_endp_of_r and (is_r_hor or is_r_ver)) {
-      retval = (CGAL::sign(is_r_hor ? diffdvtx : diffdvty) != ZERO ) ?
-        POSITIVE : ZERO;
-      CGAL_SDG_DEBUG(std::cout << "debug vsqr t on r hor/ver retval="
-          << retval << std::endl;);
-      return retval;
-    }
-
-    FT radius = linf_radius(vv, p, q, r, type);
 
     CGAL_SDG_DEBUG(std::cout << "debug diffdvtx=" << diffdvtx
       << " diffdvty=" << diffdvty << std::endl;);
@@ -1720,6 +1655,7 @@ private:
     FT absdvty = CGAL::abs(diffdvty);
 
     FT d = CGAL::max(absdvtx, absdvty);
+    FT radius = linf_radius(vv, p, q, r, type);
 
     Comparison_result crude = CGAL::compare(d, radius);
 
@@ -1736,6 +1672,70 @@ private:
         << std::endl;);
       // here crude == ZERO, so
       // we might have to refine
+
+      Sign retval (ZERO);
+
+      bool is_p_hor (false);
+      bool is_p_ver (false);
+      bool is_q_hor (false);
+      bool is_q_ver (false);
+      bool is_r_hor (false);
+      bool is_r_ver (false);
+      bool is_t_endp_of_q (false);
+      bool is_t_endp_of_r (false);
+      bool is_p_endp_of_q (false);
+      bool is_p_endp_of_r (false);
+      bool is_q_endp_of_r (false);
+      bool is_t_endp_of_p (false);
+
+      if (p.is_segment()) {
+        is_p_hor = is_site_horizontal(p);
+        is_p_ver = is_site_vertical(p);
+        is_t_endp_of_p = is_endpoint_of(t,p);
+      }
+      if (q.is_segment()) {
+        is_q_hor = is_site_horizontal(q);
+        is_q_ver = is_site_vertical(q);
+        is_t_endp_of_q = is_endpoint_of(t,q);
+        if (p.is_point()) {
+          is_p_endp_of_q = is_endpoint_of(p,q);
+        }
+      }
+
+      // r is segment anyway
+      is_r_hor = is_site_horizontal(r);
+      is_r_ver = is_site_vertical(r);
+      is_t_endp_of_r = is_endpoint_of(t,r);
+      if (p.is_point()) {
+        is_p_endp_of_r = is_endpoint_of(p,r);
+      }
+      if (q.is_point()) {
+        is_q_endp_of_r = is_endpoint_of(q,r);
+      }
+
+      // check if t is endpoint of a hor/ver segment;
+      // this code is only reached in validity tests
+      if (is_t_endp_of_p and (is_p_hor or is_p_ver)) {
+        retval = (CGAL::sign(is_p_hor ? diffdvtx : diffdvty) != ZERO ) ?
+          POSITIVE : ZERO;
+        CGAL_SDG_DEBUG(std::cout << "debug vsqr t on p hor/ver retval="
+            << retval << std::endl;);
+        return retval;
+      }
+      if (is_t_endp_of_q and (is_q_hor or is_q_ver)) {
+        retval = (CGAL::sign(is_q_hor ? diffdvtx : diffdvty) != ZERO ) ?
+          POSITIVE : ZERO;
+        CGAL_SDG_DEBUG(std::cout << "debug vsqr t on q hor/ver retval="
+            << retval << std::endl;);
+        return retval;
+      }
+      if (is_t_endp_of_r and (is_r_hor or is_r_ver)) {
+        retval = (CGAL::sign(is_r_hor ? diffdvtx : diffdvty) != ZERO ) ?
+          POSITIVE : ZERO;
+        CGAL_SDG_DEBUG(std::cout << "debug vsqr t on r hor/ver retval="
+            << retval << std::endl;);
+        return retval;
+      }
 
       FT d_fine = CGAL::min(absdvtx, absdvty);
 
