@@ -95,8 +95,8 @@ These probability values are used as input to the graph-cut step described next.
 \subsection Surface_mesh_segmentationGraphCut Graph-Cut
 The hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
 This energy function combines the aforementioned probability matrix and geometric surface features. 
-The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a), 
-however we post-process the result and produce a unique ID for each set of facets which are connected and placed under the same cluster (i.e. for each segments) by default \cgalFigureRef{Cluster_vs_segment} (b).
+The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a). 
+Also, each segment, a set of facets which are connected and in the same cluster \cgalFigureRef{Cluster_vs_segment} (b), can be extracted by assigning a unique-id.
 
 \cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
 Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the result of the graph-cut. <b>(b)</b> is the post-processed result where each segment is extracted from clusters. 
