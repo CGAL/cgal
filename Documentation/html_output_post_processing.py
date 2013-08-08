@@ -309,10 +309,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     #add a canonical link to all pages
     all_pages=glob.glob('*/*.html')
     for f in all_pages:
-      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+f+"\">\n"
+      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+f+"\"/>\n"
       re_replace_first_in_file(r'<head>', r'<head>\n'+canonical_link, f)
     ## special case for how_to_cite.html
-    canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/Manual/how_to_cite.html\">\n"
+    canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
     re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", "Manual/how_to_cite.html")
 
 
