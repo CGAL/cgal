@@ -232,6 +232,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     int number_of_rays = ui_widget.Number_of_rays_spin_box->value();
     double cone_angle = (ui_widget.Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;
     bool create_new_item = ui_widget.New_item_check_box->isChecked();
+    bool extract_segments = ui_widget.Extract_segments_check_box->isChecked();
 
     Item_sdf_map::iterator pair;
     if(create_new_item)
@@ -265,7 +266,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
 
     int nb_segments = segment_from_sdf_values(*(pair->first->polyhedron())
-        ,sdf_pmap, segment_pmap, number_of_clusters, smoothness); 
+        ,sdf_pmap, segment_pmap, number_of_clusters, smoothness, extract_segments); 
     std::cout << "Segmentation is completed. Number of segments : " << nb_segments << std::endl;  
     pair->first->set_color_vector_read_only(true);  
      
