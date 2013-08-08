@@ -83,7 +83,7 @@ public:
     vertices.clear();
   }
 
-  Input_arrangement_2 arr() {
+  const Input_arrangement_2& arr() {
     return *p_arr;
   }
 
