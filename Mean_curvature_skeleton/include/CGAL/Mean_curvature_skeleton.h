@@ -151,15 +151,13 @@ class Mean_curvature_skeleton
 // Public types
 public:
 
-  /// \name Geometric types
-  /// @{
+  // Geometric types
   typedef typename Polyhedron::Traits         Kernel;
   typedef typename Kernel::Vector_3           Vector;
   typedef typename Kernel::Point_3            Point;
   /// @}
 
-  /// \name Repeat Polyhedron types
-  /// @{
+  // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
   typedef typename Polyhedron::Vertex_handle                                   Vertex_handle;
@@ -172,37 +170,27 @@ public:
   typedef typename Polyhedron::Face_handle                                     Face_handle;
   typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
-  /// @}
 
-  /// \name Cotangent weight calculator
-  /// @{
+  // Cotangent weight calculator
   typedef typename internal::Cotangent_weight<Polyhedron,
   internal::Cotangent_value_minimum_zero<Polyhedron,
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
-  /// @}
 
-  /// \name Skeleton types
-  /// @{
+  // Skeleton types
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>  Graph;
   typedef internal::Curve_skeleton<Polyhedron, Graph,
   PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
-  /// @}
 
-  /// \name Repeat Graph types
-  /// @{
+  // Repeat Graph types
   typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
-  /// @}
 
-  /// \name Mesh simplification types
-  /// @{
+  // Mesh simplification types
   typedef SMS::Edge_profile<Polyhedron>                                        Profile;
-  /// @}
 
-  /// \name Repeat Triangulation types
-  /// @{
+  // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
   typedef K::Vector_3                                                          Exact_vector;
   typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>             Vb;
@@ -216,7 +204,6 @@ public:
   typedef Delaunay::Finite_edges_iterator                                      Finite_edges_iterator;
   typedef Delaunay::Finite_facets_iterator                                     Finite_facets_iterator;
   typedef Delaunay::Finite_cells_iterator                                      Finite_cells_iterator;
-  /// @}
 
 // Data members
 private:
