@@ -1952,6 +1952,8 @@ private:
         << " diffdvpy=" << diffdvpy << std::endl;);
 
       if (CGAL::compare(diffdvpx, diffdvtx) == EQUAL) {
+        CGAL_SDG_DEBUG(std::cout << "debug diffdvpx="
+            << "diffdvtx=" << diffdvpx << std::endl;);
         if (CGAL::compare(CGAL::abs(diffdvpx), d) == EQUAL) {
           if (pt_endps_of_diff_qr) {
             retval = ZERO;
