@@ -45,7 +45,7 @@ class Curve_skeleton
 public:
 
   // Geometric types
-  typedef typename HalfedgeGraph::Traits         Kernel;
+  typedef typename HalfedgeGraph::Traits      Kernel;
   typedef typename Kernel::Vector_3           Vector;
   typedef typename Kernel::Point_3            Point;
 

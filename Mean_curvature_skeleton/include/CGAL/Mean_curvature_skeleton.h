@@ -115,9 +115,9 @@ enum Degeneracy_algorithm_tag
 ///        the skeleton of a triangulated surface mesh
 ///
 /// @tparam HalfedgeGraph
-///         a model of HalfedgeGraph
+///         a model of `HalfedgeGraph`
 /// @tparam SparseLinearAlgebraTraits_d
-///         a model of SparseLinearAlgebraTraitsWithPreFactor_d.
+///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
 ///         If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
@@ -222,14 +222,14 @@ private:
   double omega_H;
   /** controls the smoothness of the medial approximation */
   double omega_P;
-  /** edges with length less than edgelength_TH will be collapsed */
+  /** edges with length less than `edgelength_TH` will be collapsed */
   double edgelength_TH;
-  /** triangles with angle greater than TH_ALPHA will be split */
+  /** triangles with angle greater than `TH_ALPHA` will be split */
   double TH_ALPHA;
   /** value very close to zero */
   double zero_TH;
   /** run_to_converge will stop if the change of area in one iteration
-   *  is less than area_TH */
+   *  is less than `area_TH` */
   double area_TH;
   /** surface area of original mesh */
   double original_area;
@@ -246,7 +246,7 @@ private:
   /** assign a unique id to a new vertex */
   int vertex_id_count;
   /** the maximum id for original surface. vertices with ids
-   *  greater than max_id are created during split,
+   *  greater than `max_id` are created during split,
    *  thus will not be considered in correspondence tracking */
   int max_id;
   /** used when assembling the matrix */
@@ -322,12 +322,12 @@ public:
    * @param omega_P
    *        controls the smoothness of the medial approximation
    * @param edgelength_TH
-   *        edges with length less than edgelength_TH will be collapsed
+   *        edges with length less than `edgelength_TH` will be collapsed
    * @param is_medially_centered
    *        should the skeleton be medially centered?
    * @param area_TH
    *        run_to_converge will stop if the change of area in one iteration
-   *        is less than area_TH
+   *        is less than `area_TH`
    */
   Mean_curvature_skeleton(HalfedgeGraph& P,
                           VertexIndexMap Vertex_index_map,
@@ -450,7 +450,7 @@ public:
    * Get the skeleton curve
    *
    * @param g
-   *        a boost::graph data structure
+   *        a `boost::graph` data structure
    *        storing the connections of the skeleton curve
    * @param points
    *        return the positions of skeletal points
