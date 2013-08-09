@@ -155,7 +155,6 @@ public:
   typedef typename Polyhedron::Traits         Kernel;
   typedef typename Kernel::Vector_3           Vector;
   typedef typename Kernel::Point_3            Point;
-  /// @}
 
   // Repeat Polyhedron types
   typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
@@ -177,7 +176,11 @@ public:
   internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
 
   // Skeleton types
+  /// \name Data structure for skeleton curve
+  /// @{
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>  Graph;
+  /// @}
+
   typedef internal::Curve_skeleton<Polyhedron, Graph,
   PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
 
