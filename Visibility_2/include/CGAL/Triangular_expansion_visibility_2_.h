@@ -111,8 +111,10 @@ public:
   {
     Ray_2 ray(q,b);
     Segment_2 seg(s,t);
+    assert(typename K::Do_intersect_2()(ray,seg));
     CGAL::Object obj = typename K::Intersect_2()(ray,seg); 
-    return object_cast<Point_2>(obj);
+    Point_2 result =  object_cast<Point_2>(obj);
+    return result; 
   }
 
   
@@ -126,31 +128,44 @@ public:
       OIT oit){
     
     // go into the new face  
-    typename CDT::Face_handle nfh = fh->neighbor(index); 
-    
+    const typename CDT::Face_handle nfh(fh->neighbor(index)); 
+
     // get indices of neighbors 
     int nindex = nfh->index(fh); // index of new vertex and old face 
     int rindex = p_cdt->ccw(nindex); // index of face behind right edge 
     int lindex = p_cdt-> cw(nindex); // index of face behind left edge 
     
     // get vertices seen from entering edge 
-    typename CDT::Vertex_handle nvh = nfh->vertex(nindex);
-    typename CDT::Vertex_handle rvh = nfh->vertex(p_cdt->cw (nindex));
-    typename CDT::Vertex_handle lvh = nfh->vertex(p_cdt->ccw(nindex));
+    const typename CDT::Vertex_handle nvh(nfh->vertex(nindex));
+    const typename CDT::Vertex_handle rvh(nfh->vertex(p_cdt->cw (nindex)));
+    const typename CDT::Vertex_handle lvh(nfh->vertex(p_cdt->ccw(nindex)));
+    assert(!p_cdt->is_infinite(nvh));
+    assert(!p_cdt->is_infinite(lvh));
+    assert(!p_cdt->is_infinite(rvh));
     
     // get edges seen from entering edge 
     typename CDT::Edge re = get_edge(nfh,p_cdt->ccw(nindex));
     typename CDT::Edge le = get_edge(nfh,p_cdt-> cw(nindex));
-    
+     
     // do orientation computation once for new vertex 
     typename K::Orientation_2 orientation = 
       p_cdt->geom_traits().orientation_2_object();
     CGAL::Orientation ro = orientation(q,right,nvh->point());
     CGAL::Orientation lo = orientation(q,left ,nvh->point());
     
-    //std::cout << q << std::endl << right << std::endl << left << std::endl  << nvh->point() << std::endl  ;
+//     std::cout << "q             "<< q << std::endl ;
+//     std::cout << "lvh->point()  "<< lvh->point() << std::endl;  
+//     std::cout << "left          "<< left << std::endl  ;
+//     std::cout << "nvh->point()  "<< nvh->point() << std::endl ;
+//     std::cout << "right         "<< right << std::endl ;
+//     std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
+    
+    assert(typename K::Orientation_2()(q,left ,lvh->point()) != CGAL::CLOCKWISE);
+    assert(typename K::Orientation_2()(q,right,rvh->point()) != CGAL::COUNTERCLOCKWISE);
 
     //std::cout << (ro == CGAL::COUNTERCLOCKWISE) << " " << (lo == CGAL::CLOCKWISE) << std::endl; 
+    
+  
     
     //right edge is seen if new vertex is counter clockwise of right boarder 
     if(ro == CGAL::COUNTERCLOCKWISE){
@@ -159,23 +174,26 @@ public:
         // report intersection with right boarder ray 
         // if it is not already the right vertex (already reported)
         if(right != rvh->point()){
-          *oit++ =
-            ray_seg_intersection(q,right,nvh->point(),rvh->point());
+          *oit++ = ray_seg_intersection(q,right,nvh->point(),rvh->point());
         }
         
         // then report intersection with left boarder if it exists
         if(lo == CGAL::COUNTERCLOCKWISE){
-          *oit++ = 
-            ray_seg_intersection(q,left,nvh->point(),rvh->point());
+          *oit++ = ray_seg_intersection(q,left,nvh->point(),rvh->point());
         }
       }else{
         // the edge is not a constrained 
         if(lo == CGAL::COUNTERCLOCKWISE){
           // no split needed and return 
-          return expand_edge(q,left,right,nfh,rindex,oit);
+          //std::cout<< "h1"<< std::endl;
+          oit = expand_edge(q,left,right,nfh,rindex,oit);
+          //std::cout<< "h1 done"<< std::endl;
+          return oit;          
         }else{
           // spliting at new vertex 
-          oit = expand_edge(q,nvh->point(),right,nfh,rindex,oit);
+          //std::cout<< "h2"<< std::endl;
+          *oit++ = expand_edge(q,nvh->point(),right,nfh,rindex,oit);
+          //std::cout<< "h2 done"<< std::endl;
         }        
       }
     }
@@ -184,7 +202,7 @@ public:
     if(ro != CGAL::CLOCKWISE && lo != CGAL::COUNTERCLOCKWISE){
       *oit++ = nvh->point(); 
     }
-    
+
     //left edge is seen if new vertex is clockwise of left boarder 
     if(lo == CGAL::CLOCKWISE){
       if(p_cdt->is_constrained(le)){
@@ -195,24 +213,30 @@ public:
         }
         // then report intersection with left boarder ray 
         // if it is not already the left vertex (already reported)
-        if(left != lvh->point())
-          *oit++ =
-            ray_seg_intersection(q,left,nvh->point(),lvh->point());
+        if(left != lvh->point()){
+          *oit++ = ray_seg_intersection(q,left,nvh->point(),lvh->point());          
+        }
         return oit; 
       }else{
         // the edge is not a constrained 
         if(ro == CGAL::CLOCKWISE){
           // no split needed and return
-          return expand_edge(q,left,right,nfh,lindex,oit);
+          //std::cout<< "h3"<< std::endl;
+          oit = expand_edge(q,left,right,nfh,lindex,oit);
+          //std::cout<< "h3 done"<< std::endl;
+          return oit; 
         }else{
           // spliting at new vertex 
-          return expand_edge(q,left,nvh->point(),nfh,rindex,oit);
+          //std::cout<< "h4"<< std::endl;
+          oit = expand_edge(q,left,nvh->point(),nfh,lindex,oit);
+          //std::cout<< "h4 done"<< std::endl;
+          return oit;          
         }        
       }
     }
     
     // never reached ;)    
-    assert(false);
+    // assert(false);
     
   }
 
@@ -225,7 +249,7 @@ public:
      
     raw_output.push_back(fh->vertex(1)->point());
     if(!p_cdt->is_constrained(get_edge(fh,0))){
-      ////std::cout << "edge 0 is not constrained" << std::endl;
+      //std::cout<< "edge 0 is not constrained" << std::endl;
       expand_edge(
           q,
           fh->vertex(2)->point(),
@@ -235,7 +259,7 @@ public:
 
     raw_output.push_back(fh->vertex(2)->point());
     if(!p_cdt->is_constrained(get_edge(fh,1))){
-      ////std::cout << "edge 1 is not constrained" << std::endl;
+      //std::cout << "edge 1 is not constrained" << std::endl;
       expand_edge(
           q,
           fh->vertex(0)->point(),
@@ -245,7 +269,7 @@ public:
     
     raw_output.push_back(fh->vertex(0)->point());
     if(!p_cdt->is_constrained(get_edge(fh,2))){
-      ////std::cout << "edge 2 is not constrained" << std::endl;
+      //std::cout << "edge 2 is not constrained" << std::endl;
       expand_edge(
           q,
           fh->vertex(1)->point(),
@@ -256,7 +280,7 @@ public:
 
     return output(raw_output,out_arr);
 
-    //std::cout << "==============" <<std::endl;
+    
   }
 
   Face_handle visibility_region(const Point_2 &q, 
@@ -316,6 +340,8 @@ public:
     
     if(ltype == CDT::VERTEX){
       //std::cout << "query on vertex" << std::endl;
+      
+      assert(q  ==  he->target()->point());
       assert(fh->vertex(lindex)->point() ==  he->target()->point());
       while(fh->vertex(p_cdt->ccw(lindex))->point() != he->source()->point()){
         typename CDT::Face_handle nfh = fh->neighbor(p_cdt->ccw(lindex));
@@ -323,7 +349,8 @@ public:
         lindex = p_cdt->ccw(nindex);
         fh = nfh; 
       }
-      assert(false); //todo 
+      bool query_point_on_vertex_is_not_yet_implemented = false; 
+      assert(query_point_on_vertex_is_not_yet_implemented); //todo 
     }
    
     
@@ -346,19 +373,20 @@ public:
  
     assert(out_arr.number_of_faces()== 2);
 
+    //std::cout<< "==============" <<std::endl;
     if(out_arr.faces_begin()->is_unbounded())
       return ++out_arr.faces_begin();
     else
       return out_arr.faces_begin();
     
     
-    //std::cout << "==============" <<std::endl;
+    //std::cout<< "==============" <<std::endl;
     
   }
 
   void init_cdt(){ 
-    //std::cout << "==============" <<std::endl;
-    //std::cout << "Input Polygon:" <<std::endl;
+    //std::cout<< "==============" <<std::endl;
+    //std::cout<< "Input Polygon:" <<std::endl;
     //todo, avoid copy by using modified iterator 
     std::vector<std::pair<Point_2,Point_2> > constraints; 
     for(typename Input_arrangement_2::Edge_const_iterator eit = p_arr->edges_begin();
