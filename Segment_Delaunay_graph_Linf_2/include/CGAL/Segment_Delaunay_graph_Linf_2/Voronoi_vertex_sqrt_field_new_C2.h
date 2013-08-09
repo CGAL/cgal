@@ -1980,6 +1980,9 @@ private:
       if (retval == SMALLER) {
         return NEGATIVE;
       }
+      if (retval == LARGER) {
+        return POSITIVE;
+      }
 
       if (q.is_point()) {
         qref = q.point();
