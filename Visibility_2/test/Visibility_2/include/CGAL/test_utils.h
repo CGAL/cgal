@@ -713,6 +713,8 @@ void benchmark(Visibility_2_fst &visibility_fst,
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
+  assert(Visibility_2_fst::Regularization_tag::value == Visibility_2_snd::Regularization_tag::value);
+
   Input_arrangement_2 arr;
   create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
   std::cout << "Input arrangement has: " 
@@ -993,8 +995,7 @@ void test_star_shape(Visibility_2 &visibility,
           test_star_shape_one_face<Visibility_2>(arr,
                                                  choice,
                                                  fit,
-                                                 visibility,
-                                                 );
+                                                 visibility);
         }
         cnt++;
       }
