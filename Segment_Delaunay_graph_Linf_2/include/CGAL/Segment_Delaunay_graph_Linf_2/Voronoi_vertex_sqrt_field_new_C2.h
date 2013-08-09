@@ -2122,6 +2122,30 @@ private:
 
         CGAL_assertion(v_type == PPS);
 
+        // if new point t is on the same side of line pq
+        // as the other endpoint of r, then CONFLICT
+
+        Line_2 l = compute_line_from_to(p.point(), q.point());
+        Oriented_side ost = oriented_side_of_line(l, t.point());
+        CGAL_assertion(ost != ON_ORIENTED_BOUNDARY);
+        Point_2 other_of_r;
+        if (is_p_endp_of_r) {
+          other_of_r = (same_points(p, r.source_site()))?
+            (r.target_site().point()) : (r.source_site().point());
+        } else { // is_q_endp_of_r
+          other_of_r = (same_points(q, r.source_site()))?
+            (r.target_site().point()) : (r.source_site().point());
+        }
+        Oriented_side osother = oriented_side_of_line(l, other_of_r);
+
+        CGAL_assertion(osother != ON_ORIENTED_BOUNDARY);
+
+        if (osother == ost) {
+          return NEGATIVE;
+        } else {
+          return POSITIVE;
+        }
+
       } // case r is non-hv and has endpoint p or q
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
