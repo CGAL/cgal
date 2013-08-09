@@ -9,6 +9,9 @@
 /// \defgroup PkgPeriodic2Triangulation2TraitsClasses Traits Classes
 /// \ingroup PkgPeriodic2Triangulation2
 
+/// \defgroup PkgPeriodic2Triangulation2VertexFaceClasses Vertex and Face Classes
+/// \ingroup PkgPeriodic2Triangulation2
+
 /// \defgroup PkgPeriodic2Triangulation2Enums Enums
 /// \ingroup PkgPeriodic2Triangulation2
 

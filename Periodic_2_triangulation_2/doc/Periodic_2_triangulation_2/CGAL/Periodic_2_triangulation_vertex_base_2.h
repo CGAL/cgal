@@ -5,7 +5,7 @@ namespace CGAL
 {
 
 /*!
-\ingroup PkgPeriodic2Triangulation2MainClasses
+\ingroup PkgPeriodic2Triangulation2VertexFaceClasses
 
 The class `Periodic_2_triangulation_vertex_base_2` is a model
 of the concept `Periodic_2TriangulationVertexBase_2` to be used by
