@@ -114,16 +114,16 @@ enum Degeneracy_algorithm_tag
 /// @brief Class providing the functionalities for extracting
 ///        the skeleton of a triangulated surface mesh
 ///
-/// @tparam Polyhedron
+/// @tparam HalfedgeGraph
 ///         a model of HalfedgeGraph
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of SparseLinearAlgebraTraitsWithPreFactor_d.
 ///         If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
-/// @tparam PolyhedronVertexIndexMap
+/// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::vertex_descriptor as key and
 ///         `unsigned int` as value type
-/// @tparam PolyhedronEdgeIndexMap
+/// @tparam EdgeIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::edge_descriptor as key and
 ///         `unsigned int` as value type
@@ -134,17 +134,17 @@ enum Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
 #ifdef DOXYGEN_RUNNING
-template <class Polyhedron,
+template <class HalfedgeGraph,
           class SparseLinearAlgebraTraits_d,
-          class PolyhedronVertexIndexMap,
-          class PolyhedronEdgeIndexMap>
+          class VertexIndexMap,
+          class EdgeIndexMap>
 #else
-template <class Polyhedron,
+template <class HalfedgeGraph,
           class SparseLinearAlgebraTraits_d,
-          class PolyhedronVertexIndexMap,
-          class PolyhedronEdgeIndexMap,
+          class VertexIndexMap,
+          class EdgeIndexMap,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
-          Degeneracy_algorithm_tag Degeneracy_tag = HEURISTIC>
+          Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
 class Mean_curvature_skeleton
 {
@@ -152,28 +152,28 @@ class Mean_curvature_skeleton
 public:
 
   // Geometric types
-  typedef typename Polyhedron::Traits         Kernel;
-  typedef typename Kernel::Vector_3           Vector;
-  typedef typename Kernel::Point_3            Point;
+  typedef typename HalfedgeGraph::Traits         Kernel;
+  typedef typename Kernel::Vector_3              Vector;
+  typedef typename Kernel::Point_3               Point;
 
-  // Repeat Polyhedron types
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
-  typedef typename Polyhedron::Vertex_handle                                   Vertex_handle;
+  // Repeat HalfedgeGraph types
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor       vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator         vertex_iterator;
+  typedef typename HalfedgeGraph::Vertex_handle                                Vertex_handle;
 
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor         edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator           edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator        in_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator	     out_edge_iterator;
 
-  typedef typename Polyhedron::Face_handle                                     Face_handle;
-  typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+  typedef typename HalfedgeGraph::Face_handle                                  Face_handle;
+  typedef typename HalfedgeGraph::Facet_iterator                               Facet_iterator;
+  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator             Halfedge_facet_circulator;
 
   // Cotangent weight calculator
-  typedef typename internal::Cotangent_weight<Polyhedron,
-  internal::Cotangent_value_minimum_zero<Polyhedron,
-  internal::Cotangent_value_Meyer_secure<Polyhedron> > >                       Weight_calculator;
+  typedef typename internal::Cotangent_weight<HalfedgeGraph,
+  internal::Cotangent_value_minimum_zero<HalfedgeGraph,
+  internal::Cotangent_value_Meyer_secure<HalfedgeGraph> > >                    Weight_calculator;
 
   // Skeleton types
   /// \name Data structure for skeleton curve
@@ -181,8 +181,8 @@ public:
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>  Graph;
   /// @}
 
-  typedef internal::Curve_skeleton<Polyhedron, Graph,
-  PolyhedronVertexIndexMap, PolyhedronEdgeIndexMap>                            Skeleton;
+  typedef internal::Curve_skeleton<HalfedgeGraph, Graph,
+  VertexIndexMap, EdgeIndexMap>                                                Skeleton;
 
   // Repeat Graph types
   typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
@@ -191,7 +191,7 @@ public:
   typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 
   // Mesh simplification types
-  typedef SMS::Edge_profile<Polyhedron>                                        Profile;
+  typedef SMS::Edge_profile<HalfedgeGraph>                                     Profile;
 
   // Repeat Triangulation types
   typedef CGAL::Exact_predicates_exact_constructions_kernel                    K;
@@ -212,11 +212,11 @@ public:
 private:
 
   /** source triangulated surface mesh for skeletonization */
-  Polyhedron& polyhedron;
+  HalfedgeGraph& polyhedron;
   /** storing indices of all vertices */
-  PolyhedronVertexIndexMap vertex_id_pmap;
+  VertexIndexMap vertex_id_pmap;
   /** storing indices of all edges */
-  PolyhedronEdgeIndexMap edge_id_pmap;
+  EdgeIndexMap edge_id_pmap;
 
   /** controls the velocity of movement and approximation quality */
   double omega_H;
@@ -285,9 +285,9 @@ public:
   /// @{
 
   /// \cond SKIP_FROM_MANUAL
-  Mean_curvature_skeleton(Polyhedron& P,
-                          PolyhedronVertexIndexMap Vertex_index_map,
-                          PolyhedronEdgeIndexMap Edge_index_map,
+  Mean_curvature_skeleton(HalfedgeGraph& P,
+                          VertexIndexMap Vertex_index_map,
+                          EdgeIndexMap Edge_index_map,
                           double omega_H,
                           double edgelength_TH,
                           double area_TH = 1e-5
@@ -329,9 +329,9 @@ public:
    *        run_to_converge will stop if the change of area in one iteration
    *        is less than area_TH
    */
-  Mean_curvature_skeleton(Polyhedron& P,
-                          PolyhedronVertexIndexMap Vertex_index_map,
-                          PolyhedronEdgeIndexMap Edge_index_map,
+  Mean_curvature_skeleton(HalfedgeGraph& P,
+                          VertexIndexMap Vertex_index_map,
+                          EdgeIndexMap Edge_index_map,
                           double omega_H,
                           double omega_P,
                           double edgelength_TH,
@@ -399,7 +399,7 @@ public:
     iteration_TH = value;
   }
 
-  Polyhedron& get_polyhedron()
+  HalfedgeGraph& get_polyhedron()
   {
     return polyhedron;
   }
@@ -729,7 +729,7 @@ public:
 
     MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
 
-//    collapse_vertices_without_correspondence();
+    collapse_vertices_without_correspondence();
   }
 
   /// @} Public Algorithm API
@@ -1370,7 +1370,7 @@ private:
                                   to_double(points[i].first.z()));
 
       double max_neg_t = 1;
-      int max_neg_i = 0;
+      int max_neg_i = -1;
 
       for (size_t j = 0; j < point_to_pole[i].size(); ++j)
       {
@@ -1392,6 +1392,28 @@ private:
         {
           max_neg_i = pole_id;
           max_neg_t = t;
+        }
+      }
+
+      // cannot find a pole inside mesh
+      // just choose a pole along the normal
+      if (max_neg_i == -1)
+      {
+        for (size_t j = 0; j < point_to_pole[i].size(); ++j)
+        {
+          int pole_id = point_to_pole[i][j];
+          Point cell_point = cell_dual[pole_id];
+          Vector vt = cell_point - surface_point;
+          Vector n = normals[i];
+
+          double t = vt * n;
+
+          // choose the one with maximum distance along the normal
+          if (t < 0 && t < max_neg_t)
+          {
+            max_neg_i = pole_id;
+            max_neg_t = t;
+          }
         }
       }
 

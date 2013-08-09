@@ -36,13 +36,13 @@ namespace internal {
 * @param ei the edge to be split
 * @param pn the position of the new vertex created by the split
 */
-template<class Polyhedron>
-typename boost::graph_traits<Polyhedron>::edge_descriptor
-mesh_split(Polyhedron& polyhedron, 
-           typename boost::graph_traits<Polyhedron>::edge_descriptor ei,
-           typename Polyhedron::Traits::Point_3 pn)
+template<class HalfedgeGraph>
+typename boost::graph_traits<HalfedgeGraph>::edge_descriptor
+mesh_split(HalfedgeGraph& polyhedron, 
+           typename boost::graph_traits<HalfedgeGraph>::edge_descriptor ei,
+           typename HalfedgeGraph::Traits::Point_3 pn)
 {
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
 
   edge_descriptor en = polyhedron.split_edge(ei);
   en->vertex()->point() = pn;
@@ -85,13 +85,13 @@ double get_triangle_area(Vertex v1,
   return sqrtf(cross_product(v12, v13).squared_length()) * 0.5;
 }
 
-template<class Polyhedron>
-double get_surface_area(Polyhedron& polyhedron)
+template<class HalfedgeGraph>
+double get_surface_area(HalfedgeGraph& polyhedron)
 {
-  typedef typename Polyhedron::Traits                                 Kernel;
-  typedef typename Polyhedron::Facet_iterator                         Facet_iterator;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator       Halfedge_facet_circulator;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	vertex_descriptor;
+  typedef typename HalfedgeGraph::Traits                                  Kernel;
+  typedef typename HalfedgeGraph::Facet_iterator                          Facet_iterator;
+  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator        Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	vertex_descriptor;
 
   double total_area = 0;
   for (Facet_iterator i = polyhedron.facets_begin(); i != polyhedron.facets_end(); ++i)

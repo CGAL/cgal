@@ -30,16 +30,16 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 namespace CGAL {
 namespace internal {
 
-template<class Polyhedron>
-struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<Polyhedron>
+template<class HalfedgeGraph>
+struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGraph>
 {
-  // Polyhedron types
-  typedef typename Polyhedron::Traits         Kernel;
-  typedef typename Kernel::Point_3            Point;
-  typedef typename Polyhedron::Vertex_handle  Vertex_handle;
+  // HalfedgeGraph types
+  typedef typename HalfedgeGraph::Traits         Kernel;
+  typedef typename Kernel::Point_3               Point;
+  typedef typename HalfedgeGraph::Vertex_handle  Vertex_handle;
 
   // Mesh simplification types
-  typedef SMS::Edge_profile<Polyhedron>       Profile;
+  typedef SMS::Edge_profile<HalfedgeGraph>       Profile;
 
   Track_correspondence_visitor(){}
 

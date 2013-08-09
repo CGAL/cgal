@@ -37,29 +37,29 @@
 namespace CGAL {
 namespace internal {
 
-template <class Polyhedron, class Graph,
-          class PolyhedronVertexIndexMap, class PolyhedronEdgeIndexMap>
+template <class HalfedgeGraph, class Graph,
+          class VertexIndexMap, class EdgeIndexMap>
 class Curve_skeleton
 {
 // Public types
 public:
 
   // Geometric types
-  typedef typename Polyhedron::Traits         Kernel;
+  typedef typename HalfedgeGraph::Traits         Kernel;
   typedef typename Kernel::Vector_3           Vector;
   typedef typename Kernel::Point_3            Point;
 
-  // Repeat Polyhedron types
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor	         vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_iterator              edge_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator           in_edge_iterator;
-  typedef typename Polyhedron::Facet_iterator                                  Facet_iterator;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+  // Repeat HalfedgeGraph types
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor	        vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator            vertex_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_iterator              edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::in_edge_iterator           in_edge_iterator;
+  typedef typename HalfedgeGraph::Facet_iterator                                  Facet_iterator;
+  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
   // Repeat Graph types
-  typedef typename boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
 
 // Data members
 private:
@@ -77,10 +77,10 @@ private:
   // vertex id mapped to vertex descriptor
   std::vector<vertex_descriptor> id_to_descriptor;
 
-  PolyhedronVertexIndexMap vertex_id_pmap;
-  PolyhedronEdgeIndexMap edge_id_pmap;
+  VertexIndexMap vertex_id_pmap;
+  EdgeIndexMap edge_id_pmap;
 
-  Polyhedron& polyhedron;
+  HalfedgeGraph& polyhedron;
 
   std::vector<double> edge_lengths;
 
@@ -107,7 +107,7 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton(Polyhedron& polyhedron) : polyhedron(polyhedron)
+  Curve_skeleton(HalfedgeGraph& polyhedron) : polyhedron(polyhedron)
   {
   }
 

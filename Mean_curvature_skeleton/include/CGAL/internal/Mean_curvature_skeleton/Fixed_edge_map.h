@@ -36,15 +36,15 @@ namespace internal {
 //
 // BGL property map which indicates whether an edge is border OR is marked as non-removable
 //
-template <class Polyhedron>
-class Fixed_edge_map : public boost::put_get_helper<bool, Fixed_edge_map<Polyhedron> >
+template <class HalfedgeGraph>
+class Fixed_edge_map : public boost::put_get_helper<bool, Fixed_edge_map<HalfedgeGraph> >
 {
 public:
 
-  typedef boost::readable_property_map_tag                                category;
-  typedef bool                                                            value_type;
-  typedef bool                                                            reference;
-  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag                                   category;
+  typedef bool                                                               value_type;
+  typedef bool                                                               reference;
+  typedef typename boost::graph_traits<HalfedgeGraph const>::edge_descriptor key_type;
 
   Fixed_edge_map() : mFixed(false) {}
 

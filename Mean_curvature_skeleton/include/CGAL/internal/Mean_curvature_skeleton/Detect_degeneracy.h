@@ -32,16 +32,16 @@
 namespace CGAL {
 namespace internal {
 
-template<class Polyhedron>
-bool is_vertex_degenerate(Polyhedron& polyhedron,
-                          typename boost::graph_traits<Polyhedron>::vertex_descriptor root,
+template<class HalfedgeGraph>
+bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
+                          typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
                           double edgelength_TH)
 {
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
-  typedef typename Polyhedron::Face_handle                                     Face_handle;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator		      out_edge_iterator;
+  typedef typename HalfedgeGraph::Face_handle                                     Face_handle;
+  typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
   std::set<vertex_descriptor> vertices_in_disk;
   std::set<edge_descriptor> edges_in_disk;
@@ -96,16 +96,16 @@ bool is_vertex_degenerate(Polyhedron& polyhedron,
   return false;
 }
 
-template<class Polyhedron>
-void search_vertices_in_disk(Polyhedron& polyhedron,
-                             typename boost::graph_traits<Polyhedron>::vertex_descriptor root,
-                             std::set<typename boost::graph_traits<Polyhedron>::vertex_descriptor>& vertices_in_disk,
+template<class HalfedgeGraph>
+void search_vertices_in_disk(HalfedgeGraph& polyhedron,
+                             typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
+                             std::set<typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor>& vertices_in_disk,
                              double edgelength_TH)
 {
-  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor          vertex_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::vertex_iterator            vertex_iterator;
-  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor            edge_descriptor;
-  typedef typename boost::graph_traits<Polyhedron>::out_edge_iterator		       out_edge_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor          vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator            vertex_iterator;
+  typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor            edge_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::out_edge_iterator		      out_edge_iterator;
 
   std::map<vertex_descriptor, bool> vertex_visited;
 
