@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-template<class Arrangement_2,class RegularizationTag> 
+template<class Arrangement_2> // TODO ,class RegularizationTag
 class Triangular_expansion_visibility_2 {
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
@@ -39,9 +39,11 @@ public:
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
-                                                  Ccb_halfedge_const_circulator;
+  Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Face_handle     Face_handle;
+  typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
+  typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
 
   typedef typename K::Point_2           Point_2;
   typedef typename Geometry_traits_2::Ray_2             Ray_2;
@@ -52,7 +54,10 @@ public:
   typedef typename Geometry_traits_2::FT                Number_type;
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
-  typedef RegularizationTag                       Regularization_tag;
+  // TODO 
+  //   typedef RegularizationTag                       Regularization_tag;
+  
+  typedef CGAL::Tag_true                         Regularization_tag;
   typedef CGAL::Tag_true                          Supports_general_polygon_tag;
   typedef CGAL::Tag_true                          Supports_simple_polygon_tag;    
 
@@ -82,6 +87,7 @@ public:
   }
 
   void attach(const Input_arrangement_2 &arr) {
+    // todo observe changes in arr; 
     p_arr = &arr;
     init_cdt(); 
   }
@@ -142,12 +148,9 @@ public:
     CGAL::Orientation ro = orientation(q,right,nvh->point());
     CGAL::Orientation lo = orientation(q,left ,nvh->point());
     
-    std::cout << q << std::endl 
-              << right << std::endl 
-              << left << std::endl  
-              << nvh->point() << std::endl  ;
+    //std::cout << q << std::endl << right << std::endl << left << std::endl  << nvh->point() << std::endl  ;
 
-    std::cout << (ro == CGAL::COUNTERCLOCKWISE) << " " << (lo == CGAL::CLOCKWISE) << std::endl; 
+    //std::cout << (ro == CGAL::COUNTERCLOCKWISE) << " " << (lo == CGAL::CLOCKWISE) << std::endl; 
     
     //right edge is seen if new vertex is counter clockwise of right boarder 
     if(ro == CGAL::COUNTERCLOCKWISE){
@@ -218,42 +221,42 @@ public:
       Output_arrangement_2 &out_arr
   ) {
     std::vector<Point_2> raw_output; 
-    typename CDT::Face_handle cdt_face = p_cdt->locate(q);
+    typename CDT::Face_handle fh = p_cdt->locate(q);
      
-    raw_output.push_back(cdt_face->vertex(1)->point());
-    if(!p_cdt->is_constrained(get_edge(cdt_face,0))){
-      //std::cout << "edge 0 is not constrained" << std::endl;
+    raw_output.push_back(fh->vertex(1)->point());
+    if(!p_cdt->is_constrained(get_edge(fh,0))){
+      ////std::cout << "edge 0 is not constrained" << std::endl;
       expand_edge(
           q,
-          cdt_face->vertex(2)->point(),
-          cdt_face->vertex(1)->point(),
-          cdt_face,0,std::back_inserter(raw_output));
+          fh->vertex(2)->point(),
+          fh->vertex(1)->point(),
+          fh,0,std::back_inserter(raw_output));
     }
 
-    raw_output.push_back(cdt_face->vertex(2)->point());
-    if(!p_cdt->is_constrained(get_edge(cdt_face,1))){
-      //std::cout << "edge 1 is not constrained" << std::endl;
+    raw_output.push_back(fh->vertex(2)->point());
+    if(!p_cdt->is_constrained(get_edge(fh,1))){
+      ////std::cout << "edge 1 is not constrained" << std::endl;
       expand_edge(
           q,
-          cdt_face->vertex(0)->point(),
-          cdt_face->vertex(2)->point(),
-          cdt_face,1,std::back_inserter(raw_output));
+          fh->vertex(0)->point(),
+          fh->vertex(2)->point(),
+          fh,1,std::back_inserter(raw_output));
     }
     
-    raw_output.push_back(cdt_face->vertex(0)->point());
-    if(!p_cdt->is_constrained(get_edge(cdt_face,2))){
-      //std::cout << "edge 2 is not constrained" << std::endl;
+    raw_output.push_back(fh->vertex(0)->point());
+    if(!p_cdt->is_constrained(get_edge(fh,2))){
+      ////std::cout << "edge 2 is not constrained" << std::endl;
       expand_edge(
           q,
-          cdt_face->vertex(1)->point(),
-          cdt_face->vertex(0)->point(),
-          cdt_face,2,std::back_inserter(raw_output));
+          fh->vertex(1)->point(),
+          fh->vertex(0)->point(),
+          fh,2,std::back_inserter(raw_output));
     }
 
 
-    output(raw_output,out_arr);
+    return output(raw_output,out_arr);
 
-    std::cout << "==============" <<std::endl;
+    //std::cout << "==============" <<std::endl;
   }
 
   Face_handle visibility_region(const Point_2 &q, 
@@ -263,53 +266,111 @@ public:
     std::vector<Point_2> raw_output; 
     typename CDT::Locate_type ltype;
     int lindex; 
-    typename CDT::Face_handle cdt_face = p_cdt->locate(q,ltype,lindex);
-    assert(ltype != CDT::FACE);
-    
+    typename CDT::Face_handle fh = p_cdt->locate(q,ltype,lindex);
+    assert(ltype == CDT::EDGE || ltype == CDT::VERTEX);
     // the following code tries to figure out which triangle one should start in. 
+    
 
+    if(ltype == CDT::EDGE){
+      //std::cout << "query on edge" << std::endl;
+      // this is the easy part, there are only two possible faces 
+      // lindex indicates the edge = vertex on the other side of the edge 
+      // the next vertex in cw order should be the target of given edge
+      if(fh->vertex(p_cdt->cw(lindex))->point() != he->target()->point()){
+        //std::cout << "need to swap face" << std::endl;
+        assert(p_cdt->is_infinite(fh->vertex(lindex)));
+        // take face on the other side if this is not the case 
+        typename CDT::Face_handle nfh = fh->neighbor(lindex);
+        lindex = nfh->index(fh);
+        fh = nfh; 
+      }
+      assert(fh->vertex(p_cdt->cw(lindex))->point() == he->target()->point());
+      assert(!p_cdt->is_infinite(fh->vertex(lindex)));
+      
+
+      // output the edge the query lies on 
+      raw_output.push_back(he->source()->point());
+      raw_output.push_back(he->target()->point());
+      
+      if(!p_cdt->is_constrained(get_edge(fh,p_cdt->ccw(lindex)))){
+        expand_edge(
+            q,
+            fh->vertex(lindex)->point(), //left
+            he->target()->point()        , //right
+            fh,
+            p_cdt->ccw(lindex),
+            std::back_inserter(raw_output));
+      }
+      raw_output.push_back(fh->vertex(lindex)->point());
+      
+      if(!p_cdt->is_constrained(get_edge(fh,p_cdt->cw(lindex)))){
+        expand_edge(
+            q,
+            he->source()->point()        , //left
+            fh->vertex(lindex)->point(), //right
+            fh,
+            p_cdt->cw(lindex),
+            std::back_inserter(raw_output));
+      }     
+    }
     
+    if(ltype == CDT::VERTEX){
+      //std::cout << "query on vertex" << std::endl;
+      assert(fh->vertex(lindex)->point() ==  he->target()->point());
+      while(fh->vertex(p_cdt->ccw(lindex))->point() != he->source()->point()){
+        typename CDT::Face_handle nfh = fh->neighbor(p_cdt->ccw(lindex));
+        int nindex = nfh->index(fh);
+        lindex = p_cdt->ccw(nindex);
+        fh = nfh; 
+      }
+      assert(false); //todo 
+    }
+   
     
+    return output(raw_output,out_arr);
     
-    
-    assert(false); // todo 
   }
 
-  void output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
-        std::cout << "Output Polygon" << std::endl; 
-    std::cout << raw_output.size() << std::endl; 
+  Face_handle output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
+    //std::cout << "Output Polygon" << std::endl; 
+    //std::cout << raw_output.size() << std::endl; 
     
     // TODO: handle needles and report arr at same time 
     std::vector<Segment_2> segments; 
     for(int i = 0; i <raw_output.size();i++){
       segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
-      std::cout << raw_output[i] << " -- " 
-                << raw_output[(i+1)%raw_output.size()] << std::endl; 
+      //std::cout << raw_output[i] << " -- " << raw_output[(i+1)%raw_output.size()] << std::endl; 
     }
     // use something more clever 
     CGAL::insert(out_arr,segments.begin(),segments.end());
 
-    std::cout << out_arr.number_of_faces() << std::endl; 
+    //std::cout << out_arr.number_of_faces() << std::endl; 
     assert(out_arr.number_of_faces()== 2);
+
+    if(out_arr.faces_begin()->is_unbounded())
+      return ++out_arr.faces_begin();
+    else
+      return out_arr.faces_begin();
     
-    std::cout << "==============" <<std::endl;
+    
+    //std::cout << "==============" <<std::endl;
     
   }
 
   void init_cdt(){ 
-    std::cout << "==============" <<std::endl;
-    std::cout << "Input Polygon:" <<std::endl;
+    //std::cout << "==============" <<std::endl;
+    //std::cout << "Input Polygon:" <<std::endl;
     //todo, avoid copy by using modified iterator 
     std::vector<std::pair<Point_2,Point_2> > constraints; 
     for(typename Input_arrangement_2::Edge_const_iterator eit = p_arr->edges_begin();
         eit != p_arr->edges_end(); eit++){
       Point_2 source = eit->source()->point(); 
       Point_2 target = eit->target()->point(); 
-      std::cout << source << " -- " << target << std::endl; 
+      //std::cout << source << " -- " << target << std::endl; 
       constraints.push_back(std::make_pair(source,target));
     }      
     p_cdt = boost::shared_ptr<CDT>(new CDT(constraints.begin(),constraints.end()));
-    std::cout << std::endl;
+    //std::cout << std::endl;
   }
 };
 
