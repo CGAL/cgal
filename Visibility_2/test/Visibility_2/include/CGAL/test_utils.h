@@ -830,6 +830,7 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
         Point_2 target = curr1->target()->point();
         int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
         if (i == 1 && intersect_p != source && intersect_p != target)
+
           return false;
       } while (++curr1 != circ1);
     } while (++curr != circ);
@@ -838,34 +839,167 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
 }
 
 template<class Visibility_2>
+void test_star_shape_one_face(  const typename Visibility_2::Input_arrangement_2 &arr,
+                                const Query_choice &choice,
+                                typename Visibility_2::Input_arrangement_2::Face_const_handle &fit,
+                                Visibility_2 visibility)
+{
+
+  typedef typename Visibility_2::Input_arrangement_2        Input_arrangement_2;
+  typedef typename Visibility_2::Output_arrangement_2       Output_arrangement_2;
+  typedef typename Input_arrangement_2::Halfedge_const_handle
+                                                            Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
+
+  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+                                                            Ccb_halfedge_const_circulator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::FT                    Number_type;
+  typedef Timer Benchmark_timer;
+
+  visibility.attach(arr);
+
+  Ccb_halfedge_const_circulator circ = fit->outer_ccb();
+  Ccb_halfedge_const_circulator curr = circ;
+  do {
+    Halfedge_const_handle he = curr;
+    Point_2 curr_query_pt;
+    bool selected_query_pt = true;
+    switch (choice) {
+      case VERTEX:
+        curr_query_pt = he->target()->point();
+        break;
+      case EDGE:
+        curr_query_pt = random_linear_interpolation<Point_2, Number_type>
+                      (he->source()->point(), he->target()->point());
+        break;
+      case FACE:
+        Ccb_halfedge_const_circulator curr_next = curr;
+        curr_next++;
+        Halfedge_const_handle he_next = curr_next;
+        Point_2 p1 = he->source()->point();
+        Point_2 p2 = he->target()->point();
+        Point_2 p3 = he_next->target()->point();
+        Point_2 avg((p1.x() + p2.x() + p3.x())/3, (p1.y() + p2.y() + p3.y())/3);
+        if (is_inside_face<Input_arrangement_2>(arr, fit, avg)) {
+          curr_query_pt = avg;
+        }
+        else {
+          selected_query_pt = false;
+        }
+        break;
+    }
+    if (!selected_query_pt) {
+      curr++;
+      continue;
+    }
+    std::cout << "    Running with qpoint: "
+              << RED << curr_query_pt << RESET <<  std::endl;
+    Output_arrangement_2 out_arr;
+    Face_const_handle fh;
+    if (choice == FACE) {
+      fh = visibility.visibility_region(curr_query_pt, fit, out_arr);
+    }
+    else {
+      fh = visibility.visibility_region(curr_query_pt, he, out_arr);
+    }
+    if ( !is_star_shape(curr_query_pt, fh)) {
+      std::cout << RED << "     The face is not a star shape to qpoint." << RESET <<  std::endl;
+    }
+  } while (++curr != circ);
+}
+
+template<class Visibility_2>
 void test_star_shape(Visibility_2 &visibility,
                const Query_choice &choice,
                std::ifstream &input) {
 
-//  typedef typename Visibility_2::Input_arrangement_2
-//                                                            Input_arrangement_2;
-//  typedef typename Input_arrangement_2::Halfedge_handle     Halfedge_handle;
-//  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
-//  typedef typename Input_arrangement_2::Edge_iterator       Edge_iterator;
-//  typedef typename Geometry_traits_2::Point_2               Point_2;
-//  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+  typedef typename Visibility_2::Output_arrangement_2
+                                                            Output_arrangement_2;
+  typedef typename Visibility_2::Input_arrangement_2
+                                                            Input_arrangement_2;
+  typedef typename Output_arrangement_2::Halfedge_const_handle
+                                                          Halfedge_const_handle;
+  typedef typename Output_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Output_arrangement_2::Face_const_iterator Face_const_iterator;
+  typedef typename Output_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Output_arrangement_2::Hole_const_iterator Hole_const_iterator;
+  typedef typename Output_arrangement_2::Halfedge_const_handle
+                                                          Halfedge_const_handle;
+  typedef typename Output_arrangement_2::Ccb_halfedge_const_circulator
+                                                  Ccb_halfedge_const_circulator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
-//  Input_arrangement_2 arr;
-//  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
-//  if (Visibility_2_fst::Supports_general_polygon_tag::value) {
-
-//    benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
-//                                                           visibility_snd,
-//                                                           arr,
-//                                                           choice);
-//  }
-//  else {  // Only run the benchmark on the outter loop of the arrangement
-//    Edge_iterator eit;
-//    Input_arrangement_2 arr_trimmed;
-//    for (eit = arr.edges_end() ; eit != arr.edges_end() ; eit++) {
-////      Segment_2 seg =
-//    }
-//  }
+  Input_arrangement_2 arr;
+  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+  std::cout << "Input arrangement has: "
+            << GREEN << arr.number_of_faces()-1 << RESET
+            << " faces." << std::endl;
+  if (Visibility_2::Supports_general_polygon_tag::value) {
+    int cnt(1);
+    Face_const_iterator fit;
+    for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+      if (!fit->is_unbounded()) {
+        std::cout << "Test star-shape with face "
+                  << GREEN << cnt << RESET << " ..." << std::endl;
+        test_star_shape_one_face<Visibility_2>(  arr,
+                                                 choice,
+                                                 fit,
+                                                 visibility);
+      }
+    }
+  }
+  else {  // Only run the test_star_shape_one_face() on the outer loop of the arrangement
+    Face_const_iterator fit;
+    // See which face has holes
+    int cnt(1);
+    for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+      if (!fit->is_unbounded()) {
+        std::cout << "Benchmarking with face "
+                  << GREEN << cnt << RESET << " ..." << std::endl;
+        Hole_const_iterator hit;
+        bool has_holes = false;
+        for (hit = fit->holes_begin() ; hit != fit->holes_end() ; hit++) {
+          has_holes = true;
+          break;
+        }
+        if (has_holes && fit->has_outer_ccb()) {
+          Output_arrangement_2 arr_trimmed;
+          std::vector<Segment_2> segments;
+          Ccb_halfedge_const_circulator circ = fit->outer_ccb();
+          Ccb_halfedge_const_circulator curr = circ;
+          do {
+            Halfedge_const_handle he = curr;
+            segments.push_back(Segment_2(he->source()->point(), he->target()->point()));
+          } while (++curr != circ);
+          CGAL::insert(arr_trimmed, segments.begin(), segments.end());
+          Face_const_handle fch;
+          if (arr_trimmed.faces_begin()->is_unbounded()) {
+            fch = ++arr_trimmed.faces_begin();
+          }
+          else {
+            fch = arr_trimmed.faces_begin();
+          }
+          test_star_shape_one_face<Visibility_2>(arr_trimmed,
+                                                 choice,
+                                                 fch,
+                                                 visibility
+                                                 );
+          //CGAL::Visibility_2::print_arrangement(arr_trimmed);
+        }
+        else if (!has_holes) {
+          test_star_shape_one_face<Visibility_2>(arr,
+                                                 choice,
+                                                 fit,
+                                                 visibility,
+                                                 );
+        }
+        cnt++;
+      }
+    }
+  }
 }
 
 } // end namespace CGAL
