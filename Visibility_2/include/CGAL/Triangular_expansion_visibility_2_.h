@@ -342,9 +342,8 @@ public:
       //std::cout << raw_output[i] << " -- " << raw_output[(i+1)%raw_output.size()] << std::endl; 
     }
     // use something more clever 
-    CGAL::insert(out_arr,segments.begin(),segments.end());
-
-    //std::cout << out_arr.number_of_faces() << std::endl; 
+    CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
+ 
     assert(out_arr.number_of_faces()== 2);
 
     if(out_arr.faces_begin()->is_unbounded())
