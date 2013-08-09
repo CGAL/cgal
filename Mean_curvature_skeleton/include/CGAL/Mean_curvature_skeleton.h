@@ -90,6 +90,8 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
 
+/// @cond CGAL_DOCUMENT_INTERNAL
+
 /// \ingroup PkgMeanCurvatureSkeleton3
 ///@brief Edge collapse algorithm tag
 enum Collapse_algorithm_tag
@@ -105,6 +107,8 @@ enum Degeneracy_algorithm_tag
   HEURISTIC, /**< a simple heuristic */
   EULER      /**< counting the euler characteristic */
 };
+
+/// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
 /// @brief Class providing the functionalities for extracting
@@ -123,10 +127,12 @@ enum Degeneracy_algorithm_tag
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::edge_descriptor as key and
 ///         `unsigned int` as value type
+/// @cond CGAL_DOCUMENT_INTERNAL
 /// @tparam Collapse_algorithm_tag
 ///         tag for selecting the edge collapse algorithm
 /// @tparam Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
+/// @endcond
 template <class Polyhedron,
           class SparseLinearAlgebraTraits_d,
           class PolyhedronVertexIndexMap,
