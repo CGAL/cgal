@@ -1347,6 +1347,7 @@ private:
       Exact_point point = T.dual(cell);
       Point pt(to_double(point.x()), to_double(point.y()), to_double(point.z()));
       cell_dual.push_back(pt);
+      // each cell has 4 incident vertices
       for (int i = 0; i < 4; ++i)
       {
         TriVertex_handle vt = cell->vertex(i);
@@ -1377,11 +1378,13 @@ private:
 
         double t = vt * n;
 
+        // only choose the one inside the mesh
         if (test_inside(cell_point) != CGAL::ON_BOUNDED_SIDE)
         {
           continue;
         }
 
+        // choose the one with maximum distance along the normal
         if (t < 0 && t < max_neg_t)
         {
           max_neg_i = pole_id;
