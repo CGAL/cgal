@@ -118,7 +118,6 @@ enum Degeneracy_algorithm_tag
 ///         a model of `HalfedgeGraph`
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
-///         If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::vertex_descriptor as key and
@@ -351,11 +350,6 @@ public:
      is_medially_centered(is_medially_centered)
   {
     init();
-  }
-
-  /// Release resources
-  ~Mean_curvature_skeleton()
-  {
   }
 
   /// @} Constructor and Destructor
