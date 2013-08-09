@@ -1090,8 +1090,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   // display the end points and junction points
   Scene_points_with_normal_item* endPointsItem = new Scene_points_with_normal_item;
   endPointsItem->setName(QString("end points of %1").arg(item->name()));
+  endPointsItem->setVisible(false);
   Scene_points_with_normal_item* junctionPointsItem = new Scene_points_with_normal_item;
   junctionPointsItem->setName(QString("junction points of %1").arg(item->name()));
+  junctionPointsItem->setVisible(false);
 
   Point_set *end_ps = endPointsItem->point_set();
   end_ps->set_selected_color(QColor(254, 111, 94));
