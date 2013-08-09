@@ -36,19 +36,19 @@
 
 int main(int argc, char* argv[]) {
 {
-	typedef CGAL::Gmpq                                Number_type;
-  typedef CGAL::Cartesian<Number_type> 							Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel> 				Traits_2;
-  typedef Traits_2::Point_2										      Point_2;
-  typedef Traits_2::X_monotone_curve_2							Segment_2;
-  typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                    Simple_polygon_visibility_2;
-  typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                    Naive_visibility_2;
+  typedef CGAL::Gmpq                                Number_type;
+  typedef CGAL::Cartesian<Number_type> 		    Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel> 	    Traits_2;
+  typedef Traits_2::Point_2		            Point_2;
+  typedef Traits_2::X_monotone_curve_2		    Segment_2;
+  typedef CGAL::Arrangement_2<Traits_2>		    Arrangement_2;
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true> 
+    Simple_polygon_visibility_2;
+  typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>
+    Naive_visibility_2;
   typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2>
-                                                    Triangular_expansion_visibility_2;
-
+    Triangular_expansion_visibility_2;
+  
   if (argc == 2) {
     Simple_polygon_visibility_2 simple_visibility;
     Naive_visibility_2 naive_visibility;
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     const CGAL::Query_choice qchoice = CGAL::FACE;
     std::string input_arr_file(argv[1]);
     std::ifstream input(input_arr_file.c_str());
-  //  CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
+    //  CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
     //              (naive_visibility, triangular_visibility, qchoice, input);
     CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
                   (simple_visibility, triangular_visibility, qchoice, input);
