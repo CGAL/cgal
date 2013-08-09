@@ -778,9 +778,38 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
     } while (++curr != circ);
   }
   return true;
-
-
 }
+
+//template<class Visibility_2>
+//void test_star_shape(Visibility_2 &visibility,
+//               const Query_choice &choice,
+//               std::ifstream &input) {
+
+//  typedef typename Visibility_2::Input_arrangement_2
+//                                                            Input_arrangement_2;
+//  typedef typename Input_arrangement_2::Halfedge_handle     Halfedge_handle;
+//  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+//  typedef typename Input_arrangement_2::Edge_iterator       Edge_iterator;
+//  typedef typename Geometry_traits_2::Point_2               Point_2;
+//  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+
+//  Input_arrangement_2 arr;
+//  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+//  if (Visibility_2_fst::Supports_general_polygon_tag::value) {
+
+//    benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
+//                                                           visibility_snd,
+//                                                           arr,
+//                                                           choice);
+//  }
+//  else {  // Only run the benchmark on the outter loop of the arrangement
+//    Edge_iterator eit;
+//    Input_arrangement_2 arr_trimmed;
+//    for (eit = arr.edges_end() ; eit != arr.edges_end() ; eit++) {
+////      Segment_2 seg =
+//    }
+//  }
+//}
 
 } // end namespace CGAL
 
