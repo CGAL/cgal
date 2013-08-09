@@ -42,25 +42,29 @@ BOOST_PARAMETER_FUNCTION(
   (optional
     (time_limit_, *, 0 )
     (sliver_bound_, *, parameters::default_values::perturb_sliver_bound )
+    (sliver_criterion_, *, 
+       parameters::default_values::default_sliver_criterion(c3t3))
   )
 )
 {
-  return perturb_mesh_3_impl(c3t3, domain, time_limit_, sliver_bound_);
+  return perturb_mesh_3_impl(c3t3, domain, time_limit_, sliver_criterion_, sliver_bound_);
 }
 
 
 
-template <typename C3T3, typename MeshDomain> 
+template <typename C3T3, 
+          typename MeshDomain, 
+          typename SliverCriterion> 
 Mesh_optimization_return_code
 perturb_mesh_3_impl(C3T3& c3t3,
                     const MeshDomain& domain,
                     const double time_limit,
+                    const SliverCriterion& sliver_criterion,
                     const double sliver_bound)
 {
   typedef MeshDomain Md;
   typedef typename C3T3::Triangulation::Geom_traits Gt;
-  typedef Mesh_3::Min_dihedral_angle_criterion<Gt> Sc;
-  //typedef Mesh_3::Radius_radio_criterion<Gt> Sc;
+  typedef SliverCriterion Sc;
   
   typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc>            Perturber;
   typedef Mesh_3::Sq_radius_perturbation<C3T3,Md,Sc>      Sq_radius;
@@ -78,12 +82,12 @@ perturb_mesh_3_impl(C3T3& c3t3,
 
   // Set max time
   perturber.set_time_limit(time_limit);
+
+  // Set sliver bound
+  perturber.set_sliver_bound(sliver_bound);
   
   // Launch perturber
-  if ( sliver_bound != 0 )
-    return perturber(sliver_bound);
-  else
-    return perturber();
+  return perturber();
 }
   
   

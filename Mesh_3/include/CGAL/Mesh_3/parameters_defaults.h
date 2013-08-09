@@ -26,6 +26,8 @@
 #ifndef CGAL_MESH_3_PARAMETERS_DEFAULTS_H
 #define CGAL_MESH_3_PARAMETERS_DEFAULTS_H
 
+#include <CGAL/Mesh_3/sliver_criteria.h>
+
 namespace CGAL {
 namespace parameters { namespace default_values {
 
@@ -34,6 +36,14 @@ const double exude_sliver_bound = 0.;
 
 // perturb_mesh_3
 const double perturb_sliver_bound = 0.;
+template<typename C3T3>
+CGAL::Mesh_3::Min_dihedral_angle_criterion
+  <typename C3T3::Triangulation::Geom_traits> 
+  default_sliver_criterion(const C3T3&)
+{
+  typedef typename C3T3::Triangulation::Geom_traits Gt;
+  return CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>();
+}
 
 // global optimizers
 const bool do_freeze = true;

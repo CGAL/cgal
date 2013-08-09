@@ -1,3 +1,6 @@
+#define CGAL_MESH_3_VERBOSE
+#define CGAL_MESH_3_PERTURBER_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -45,7 +48,7 @@ int main()
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
   // Mesh perturbation
-  CGAL::perturb_mesh_3(c3t3, domain, time_limit=15);
+  CGAL::perturb_mesh_3(c3t3, domain, time_limit=15, sliver_bound=10);
 
   // Output
   std::ofstream medit_file("out.mesh");

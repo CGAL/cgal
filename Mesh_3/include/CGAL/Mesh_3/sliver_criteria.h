@@ -32,9 +32,17 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
+template<typename K>
+class Sliver_criterion
+{
+  typedef typename K::Tetrahedron_3 Tetrahedron_3;
+  
+public:
+  virtual double operator()(const Tetrahedron_3& t) const = 0;
+};
   
 template <typename K>
-class Min_dihedral_angle_criterion
+class Min_dihedral_angle_criterion : public Sliver_criterion<K>
 {
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
   
@@ -55,7 +63,7 @@ template<typename K> double Min_dihedral_angle_criterion<K>::max_value = 90.;
 template<typename K> double Min_dihedral_angle_criterion<K>::min_value = 0.; 
   
 template <typename K>
-class Radius_radio_criterion
+class Radius_radio_criterion : public Sliver_criterion<K>
 {
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
   
