@@ -81,6 +81,9 @@
 // For detect_degenarcy
 #include <CGAL/internal/Mean_curvature_skeleton/Detect_degeneracy.h>
 
+// Inside mesh test
+#include <CGAL/Point_inside_polyhedron_3.h>
+
 #include <queue>
 
 namespace SMS = CGAL::Surface_mesh_simplification;
@@ -1353,6 +1356,8 @@ private:
       cell_id++;
     }
 
+    Point_inside_polyhedron_3<Polyhedron, Kernel> test_inside(polyhedron);
+
     poles.clear();
     for (size_t i = 0; i < point_to_pole.size(); ++i)
     {
@@ -1371,6 +1376,12 @@ private:
         Vector n = normals[i];
 
         double t = vt * n;
+
+        if (test_inside(cell_point) != CGAL::ON_BOUNDED_SIDE)
+        {
+          continue;
+        }
+
         if (t < 0 && t < max_neg_t)
         {
           max_neg_i = pole_id;

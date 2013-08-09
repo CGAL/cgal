@@ -961,6 +961,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   // draw lines connecting surface points and their correspondent poles
 //  Scene_polylines_item* poleLinesItem = new Scene_polylines_item();
 
+//  Polyhedron* pMesh = item->polyhedron();
 //  std::vector<Point> pole_points;
 //  mcs->get_poles(pole_points);
 //  vertex_iterator vb, ve;
@@ -978,6 +979,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 //    line.push_back(t);
 //    poleLinesItem->polylines.push_back(line);
 //  }
+
 //  if (poleLinesItemIndex == -1)
 //  {
 //    poleLinesItemIndex = scene->addItem(poleLinesItem, false);
@@ -1025,6 +1027,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
   Scene_polylines_item* skeleton = new Scene_polylines_item();
+  skeleton->setColor(QColor(175, 0, 255));
 
   boost::graph_traits<Graph>::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
