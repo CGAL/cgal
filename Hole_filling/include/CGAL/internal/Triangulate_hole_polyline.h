@@ -89,12 +89,12 @@ private:
 /************************************************************************/
 class Weight_min_max_dihedral_and_area 
 {
-private:
+public:
   std::pair<double,double> w;
 
   Weight_min_max_dihedral_and_area(double angle, double area) : w(angle, area) { }
 
-public:
+// below required by Weight concept
   template<class Point_3, class LookupTable>
   Weight_min_max_dihedral_and_area(const std::vector<Point_3>& P, 
                                    const std::vector<Point_3>& Q, 
@@ -621,8 +621,17 @@ public:
   }
 };
 
-template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator, typename EdgeSet>
-OutputIterator
+/***********************************************************************************/
+/* Internal entry point for both polyline and Polyhedron_3 triangulation functions
+/***********************************************************************************/
+template <
+  typename OutputIteratorValueType, 
+  typename Weight, 
+  typename InputIterator, 
+  typename OutputIterator, 
+  typename EdgeSet
+>
+std::pair<OutputIterator, Weight>
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
                           OutputIterator out,
@@ -630,8 +639,8 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                           bool use_delaunay_triangulation) 
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel> Fill_DT;
-  typedef CGAL::internal::Triangulate_hole_polyline<Kernel>    Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel, Weight> Fill_DT;
+  typedef CGAL::internal::Triangulate_hole_polyline<Kernel, Weight>    Fill;
 
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q(qbegin, qend);
@@ -642,18 +651,11 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     }
   }
 
-  if(use_delaunay_triangulation) {
-    std::pair<OutputIterator, typename Fill_DT::Weight> pair = 
-      Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
-    CGAL_TRACE_STREAM << pair.second;
-    return pair.first;
-  }
-  else {
-    std::pair<OutputIterator, typename Fill::Weight> pair = 
-      Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
-    CGAL_TRACE_STREAM << pair.second;
-    return pair.first;
-  }
+  std::pair<OutputIterator, Weight> pair = use_delaunay_triangulation ?
+    Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges) :
+    Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
+  CGAL_TRACE_STREAM << pair.second;
+  return pair;
 }
 
 } // namespace internal
@@ -679,8 +681,8 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                           InputIterator qbegin, InputIterator qend, 
                           OutputIterator out, bool use_delaunay_triangulation = false)
 {
-  return internal::triangulate_hole_polyline<OutputIteratorValueType>
-    (pbegin, pend, qbegin, qend, out, internal::Edge_set(), use_delaunay_triangulation);
+  return internal::triangulate_hole_polyline<OutputIteratorValueType, internal::Weight_min_max_dihedral_and_area>
+    (pbegin, pend, qbegin, qend, out, internal::Edge_set(), use_delaunay_triangulation).first;
 }
 
 // overload for OutputIteratorValueType

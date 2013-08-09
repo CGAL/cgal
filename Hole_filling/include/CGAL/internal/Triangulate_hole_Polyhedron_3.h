@@ -7,26 +7,14 @@
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/Timer.h>
 namespace CGAL {
+namespace internal {
 
-/**
- * @brief Function triangulating a hole in surface mesh.
- * 
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
- *
- * @param[in, out] polyhedron surface mesh which has the hole
- * @param border_halfedge a border halfedge incident to the hole
- * @param[out] output iterator over patch facets.
- * 
- * @return `output`
- */
 template<class Polyhedron, class OutputIterator>
-OutputIterator 
-triangulate_hole(Polyhedron& polyhedron, 
-  typename Polyhedron::Halfedge_handle border_halfedge, 
-  OutputIterator output,
-  bool use_delaunay_triangulation = false
-  )
+std::pair<OutputIterator, Weight_min_max_dihedral_and_area> 
+triangulate_hole_Polyhedron(Polyhedron& polyhedron, 
+                            typename Polyhedron::Halfedge_handle border_halfedge, 
+                            OutputIterator output,
+                            bool use_delaunay_triangulation = false)
 {
   typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator   Halfedge_around_facet_circulator;
@@ -50,7 +38,7 @@ triangulate_hole(Polyhedron& polyhedron,
   // existing_edges contains neighborhood information between boundary vertices
   // more precisely if v_i is neighbor to any other vertex than v_(i-1) and v_(i+1),
   // this edge is put into existing_edges
-  internal::Edge_set existing_edges;
+  Edge_set existing_edges;
   for(typename std::map<Vertex_handle, int>::iterator v_it = vertex_set.begin(); v_it != vertex_set.end(); ++v_it) {
     int v_it_id = v_it->second;
     int v_it_prev = v_it_id == 0   ? n-1 : v_it_id-1;
@@ -76,15 +64,17 @@ triangulate_hole(Polyhedron& polyhedron,
 
   // fill hole using polyline function
   std::vector<boost::tuple<int, int, int> > tris;
-  internal::triangulate_hole_polyline<boost::tuple<int, int, int> >
-    (P.begin(), P.end(), Q.begin(), Q.end(), back_inserter(tris), existing_edges, use_delaunay_triangulation);
+  Weight_min_max_dihedral_and_area weight = 
+  internal::triangulate_hole_polyline<boost::tuple<int, int, int>, Weight_min_max_dihedral_and_area >
+    (P.begin(), P.end(), Q.begin(), Q.end(), back_inserter(tris), existing_edges, use_delaunay_triangulation).second;
 
   CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
 
   // construct patch
-  // TODO: performance might be improved,
-  //       although test on RedCircleBox.off shows that cost of this part is really insignificant compared to hole filling
-  if(tris.empty()) { return output; }
+  // NOTE: If there is anything going wrong here (like assertion failure) first thing to check is whether "tris"
+  //       contains any existing edges (which breaks manifoldness)
+  if(tris.empty()) { return std::make_pair(output, weight); }
+
   polyhedron.fill_hole(border_halfedge);
   *output++ = border_halfedge->facet();
   for(std::vector<boost::tuple<int, int, int> >::iterator tris_it = tris.begin(); tris_it != tris.end(); ++tris_it) {
@@ -127,7 +117,32 @@ triangulate_hole(Polyhedron& polyhedron,
     }
   }
   CGAL_TRACE_STREAM << "Patch construction: " << timer.time() << " sc." << std::endl;
-  return output;
+  return std::make_pair(output, weight);
+}
+
+}// namespace internal
+
+/**
+ * @brief Function triangulating a hole in surface mesh.
+ * 
+ * @tparam Polyhedron a %CGAL polyhedron
+ * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
+ *
+ * @param[in, out] polyhedron surface mesh which has the hole
+ * @param border_halfedge a border halfedge incident to the hole
+ * @param[out] output iterator over patch facets.
+ * 
+ * @return `output`
+ */
+template<class Polyhedron, class OutputIterator>
+OutputIterator 
+triangulate_hole(Polyhedron& polyhedron, 
+                 typename Polyhedron::Halfedge_handle border_halfedge, 
+                 OutputIterator output,
+                 bool use_delaunay_triangulation = false)
+{
+  return internal::triangulate_hole_Polyhedron
+    (polyhedron, border_halfedge, output, use_delaunay_triangulation).first;
 }
 
 }//namespace CGAL
