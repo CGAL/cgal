@@ -730,6 +730,58 @@ void benchmark(Visibility_2_fst &visibility_fst,
   }
 }
 
+template<class Segment_2, class Point_2>
+int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_out, Point_2& p_out)
+{
+    CGAL::Object result = CGAL::intersection(seg1, seg2);
+    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+        p_out = *ipoint;
+        return 1;
+    } else
+        if (const Segment_2 *iseg = CGAL::object_cast<Segment_2>(&result)) {
+            seg_out = *iseg;
+            return 2;
+        } else {
+            return 0;
+        }
+}
+
+template<class Visibility_2>
+bool is_star_shape(const typename Visibility_2::Point_2& q,
+                   const typename Visibility_2::Face_const_handle fh) {
+  typedef typename Visibility_2::Output_arrangement_2
+                                                            Output_arrangement_2;
+  typedef typename Output_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Output_arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Output_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Output_arrangement_2::Edge_iterator       Edge_iterator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+  if (fh->is_unbounded())
+    return false;
+  if (fh->has_outer_ccb()) {
+    typename Output_arrangement_2::Ccb_halfedge_const_circulator curr, circ;
+    curr = circ = fh->outer_ccb();
+    do {
+      Point_2 p = curr->target()->point();
+      typename Output_arrangement_2::Ccb_halfedge_const_circulator curr1, circ1;
+      curr1 = circ1 = fh->outer_ccb();
+      do {
+        Segment_2 intersect_s;
+        Point_2 intersect_p;
+        Point_2 source = curr1->source()->point();
+        Point_2 target = curr1->target()->point();
+        int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
+        if (i == 1 && intersect_p != source && intersect_p != target)
+          return false;
+      } while (++curr1 != circ1);
+    } while (++curr != circ);
+  }
+  return true;
+
+
+}
+
 } // end namespace CGAL
 
 #endif 

@@ -212,7 +212,7 @@ public:
     
   }
 
-  void visibility_region(Point_2 &q, 
+  Face_const_handle visibility_region(Point_2 &q,
       const Face_const_handle face,
       Output_arrangement_2 &out_arr
   ) {
@@ -266,7 +266,7 @@ public:
     
   }
 
-  void visibility_region(const Point_2 &q, 
+  Face_const_handle visibility_region(const Point_2 &q,
       const Halfedge_const_handle he,
       Output_arrangement_2 &out_arr
   ) {
