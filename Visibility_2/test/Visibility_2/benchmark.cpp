@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
                                                     Simple_polygon_visibility_2;
   typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Naive_visibility_2;
-  typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2, CGAL::Tag_false>
+  typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2>
                                                     Triangular_expansion_visibility_2;
 
   if (argc == 2) {
@@ -56,10 +56,10 @@ int main(int argc, char* argv[]) {
     const CGAL::Query_choice qchoice = CGAL::FACE;
     std::string input_arr_file(argv[1]);
     std::ifstream input(input_arr_file.c_str());
-    CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
-                  (naive_visibility, triangular_visibility, qchoice, input);
-  //  CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
-    //              (simple_visibility, triangular_visibility, qchoice, input);
+  //  CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
+    //              (naive_visibility, triangular_visibility, qchoice, input);
+    CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
+                  (simple_visibility, triangular_visibility, qchoice, input);
   }
   else {
     std::cout << "Usage: ./benchmark [filename]\n";

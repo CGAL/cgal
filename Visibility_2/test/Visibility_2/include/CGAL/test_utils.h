@@ -35,6 +35,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Arr_naive_point_location.h>
+#include <CGAL/Visibility_2/visibility_utils.h>
 
 namespace CGAL {
 
@@ -587,10 +588,12 @@ Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
 }
 
 template <class Visibility_2_fst, class Visibility_2_snd>
-void benchmark_one_unit(Visibility_2_fst visibility_fst, 
-                        Visibility_2_snd visibility_snd,
-                        const typename Visibility_2_fst::Input_arrangement_2 &arr,
-                        const Query_choice &choice) {
+void benchmark_one_unit(
+          const typename Visibility_2_fst::Input_arrangement_2 &arr,
+          const Query_choice &choice,
+          typename Visibility_2_fst::Input_arrangement_2::Face_const_handle &fit,
+          Visibility_2_fst visibility_fst, 
+          Visibility_2_snd visibility_snd) {
 
   typedef typename Visibility_2_fst::Input_arrangement_2    Input_arrangement_2;
   typedef typename Visibility_2_fst::Output_arrangement_2   Output_arrangement_2;
@@ -608,23 +611,15 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
   timer.start();
   visibility_fst.attach(arr); 
   timer.stop();
-  std::cout << "Time to attach to first object: " 
+  std::cout << "    Time to attach to first object: " 
             << GREEN << timer.time() << " sec" << RESET << std::endl;
 
   timer.reset();
   timer.start();
   visibility_snd.attach(arr);
   timer.stop();
-  std::cout << "Time to attach to second object: " 
+  std::cout << "    Time to attach to second object: " 
             << GREEN << timer.time() << " sec" << RESET << std::endl;
-
-  typename Input_arrangement_2::Face_const_iterator fit;
-
-  for (fit = arr.faces_begin() ; fit != arr.faces_end() ; ++fit) {
-    if (!fit->is_unbounded()) {
-      break;
-    }
-  }
 
   Ccb_halfedge_const_circulator circ = fit->outer_ccb();
   Ccb_halfedge_const_circulator curr = circ;
@@ -661,7 +656,7 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
       curr++;
       continue;
     }
-    std::cout << "Running with qpoint: " 
+    std::cout << "    Running with qpoint: " 
               << RED << curr_query_pt << RESET <<  std::endl;
     Input_arrangement_2 out_arr_fst, out_arr_snd;
     timer.reset();
@@ -675,7 +670,7 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
     }
     timer.stop();
 
-    std::cout << "    Time to compute visibility region using first object: " 
+    std::cout << "        Time to compute visibility region using first object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
     timer.reset();
 
@@ -688,7 +683,7 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
     }
     timer.stop();
     
-    std::cout << "    Time to compute visibility region using second object: " 
+    std::cout << "        Time to compute visibility region using second object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
 
     assert(true == (CGAL::test_are_equal<Output_arrangement_2>
@@ -705,27 +700,89 @@ void benchmark(Visibility_2_fst &visibility_fst,
 
   typedef typename Visibility_2_fst::Input_arrangement_2
                                                             Input_arrangement_2;
-  typedef typename Input_arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Input_arrangement_2::Halfedge_const_handle       
+                                                          Halfedge_const_handle;
   typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef typename Input_arrangement_2::Edge_iterator       Edge_iterator;
+  typedef typename Input_arrangement_2::Face_const_iterator Face_const_iterator;
+  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Input_arrangement_2::Hole_const_iterator Hole_const_iterator;
+  typedef typename Input_arrangement_2::Halfedge_const_handle     
+                                                          Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+                                                  Ccb_halfedge_const_circulator;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
   Input_arrangement_2 arr;
   create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+  std::cout << "Input arrangement has: " 
+            << GREEN << arr.number_of_faces()-1 << RESET
+            << " faces." << std::endl;
   if (Visibility_2_fst::Supports_general_polygon_tag::value 
     && Visibility_2_snd::Supports_general_polygon_tag::value) {
-
-    benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,  
-                                                           visibility_snd,
-                                                           arr,
-                                                           choice);
+    int cnt(1);
+    Face_const_iterator fit;
+    for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+      if (!fit->is_unbounded()) {
+        std::cout << "Benchmarking with face " 
+                  << GREEN << cnt << RESET << " ..." << std::endl;
+        benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(arr,
+                                                               choice,
+                                                               fit,
+                                                               visibility_fst,    
+                                                               visibility_snd);
+      }
+    }
   }
-  else {  // Only run the benchmark on the outter loop of the arrangement
-    Edge_iterator eit;
-    Input_arrangement_2 arr_trimmed;
-    for (eit = arr.edges_end() ; eit != arr.edges_end() ; eit++) {
-//      Segment_2 seg = 
+  else {  // Only run the benchmark on the outer loop of the arrangement
+    Face_const_iterator fit;
+    // See which face has holes
+    int cnt(1);
+    for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+      if (!fit->is_unbounded()) {
+        std::cout << "Benchmarking with face " 
+                  << GREEN << cnt << RESET << " ..." << std::endl;
+        Hole_const_iterator hit;
+        bool has_holes = false;
+        for (hit = fit->holes_begin() ; hit != fit->holes_end() ; hit++) {
+          has_holes = true;
+          break;
+        }
+        if (has_holes && fit->has_outer_ccb()) {
+          Input_arrangement_2 arr_trimmed;
+          std::vector<Segment_2> segments;
+          Ccb_halfedge_const_circulator circ = fit->outer_ccb();
+          Ccb_halfedge_const_circulator curr = circ;
+          do {
+            Halfedge_const_handle he = curr;
+            segments.push_back(Segment_2(he->source()->point(), he->target()->point()));
+          } while (++curr != circ);
+          CGAL::insert(arr_trimmed, segments.begin(), segments.end());
+          Face_const_handle fch;
+          if (arr_trimmed.faces_begin()->is_unbounded()) {
+            fch = ++arr_trimmed.faces_begin();
+          } 
+          else {
+            fch = arr_trimmed.faces_begin();
+          }
+          benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(arr_trimmed,
+                                                                 choice,
+                                                                 fch,
+                                                                 visibility_fst,  
+                                                                 visibility_snd
+                                                                 );
+          //CGAL::Visibility_2::print_arrangement(arr_trimmed);
+        }
+        else if (!has_holes) {
+          benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(arr,
+                                                                 choice,
+                                                                 fit,
+                                                                 visibility_fst,  
+                                                                 visibility_snd
+                                                                 );
+        }
+        cnt++;
+      }
     }
   }
 }
@@ -780,10 +837,10 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
   return true;
 }
 
-//template<class Visibility_2>
-//void test_star_shape(Visibility_2 &visibility,
-//               const Query_choice &choice,
-//               std::ifstream &input) {
+template<class Visibility_2>
+void test_star_shape(Visibility_2 &visibility,
+               const Query_choice &choice,
+               std::ifstream &input) {
 
 //  typedef typename Visibility_2::Input_arrangement_2
 //                                                            Input_arrangement_2;
@@ -809,7 +866,7 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
 ////      Segment_2 seg =
 //    }
 //  }
-//}
+}
 
 } // end namespace CGAL
 
