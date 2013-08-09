@@ -1,5 +1,5 @@
 #include <CGAL/Hole_filling.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/assertions.h>
@@ -8,7 +8,7 @@
 #include <vector>
 #include <set>
 
-typedef CGAL::Simple_cartesian<double>   Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
 typedef CGAL::Polyhedron_3<Kernel>       Polyhedron;
 typedef Polyhedron::Facet_handle         Facet_handle;
 typedef Polyhedron::Vertex_handle        Vertex_handle;
@@ -38,6 +38,70 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
     }
   }
 }
+
+/******************************************************************/
+// This part test internal functions with Weight_min_max_dihedral_and_area
+template<class Iterator>
+CGAL::internal::Weight_min_max_dihedral_and_area
+calculate_weight_for_patch(Iterator begin, Iterator end) 
+{
+  typedef Polyhedron::Traits::Point_3 Point_3;
+  typedef Polyhedron::Halfedge_handle Halfedge_handle;
+  typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
+
+  Weight res(0,0);
+  for(; begin!=end; ++begin) {
+    Halfedge_handle edge_it = (*begin)->halfedge();
+    double ang_max = 0;
+    for(int i = 0; i < 3; ++i) {
+      double angle = 180 - CGAL::abs( 
+        CGAL::Mesh_3::dihedral_angle(edge_it->vertex()->point(),
+        edge_it->opposite()->vertex()->point(),
+        edge_it->next()->vertex()->point(),
+        edge_it->opposite()->next()->vertex()->point()) );
+      edge_it = edge_it->next();
+      ang_max = (std::max)(angle, ang_max);
+    }
+
+    double area = std::sqrt(CGAL::squared_area(
+      edge_it->vertex()->point(),
+      edge_it->next()->vertex()->point(),
+      edge_it->prev()->vertex()->point()));
+    res = res + Weight(ang_max,area);
+  }
+  return res;
+}
+
+void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
+  typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
+
+  std::cerr << "test_triangulate_hole_weight + useDT: " << useDT << std::endl;
+  std::cerr << "  File: "<< file_name  << std::endl;
+  Polyhedron poly;
+  std::vector<Halfedge_iterator> border_reps;
+  read_poly_with_borders(file_name, poly, border_reps);
+
+  for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
+    std::vector<Facet_handle> patch;
+    Weight w_algo = CGAL::internal::triangulate_hole_Polyhedron(poly, *it, back_inserter(patch), use_DT).second;
+    if(patch.empty()) { continue; }
+    Weight w_test = calculate_weight_for_patch(patch.begin(), patch.end());
+
+    std::cerr << "  Weight returned by algo   : " << w_algo << std::endl;
+    std::cerr << "  Weight calculated by test : " << w_test << std::endl;
+
+    const double epsilon = 1e-10;
+    if(std::abs(w_algo.w.first - w_test.w.first) > epsilon) {
+      assert(false);
+    }
+    if(std::abs(w_algo.w.second - w_test.w.second) > epsilon) {
+      assert(false);
+    }
+  }
+
+  std::cerr << "  Done!" << std::endl;
+}
+/******************************************************************/
 
 void test_triangulate_hole(const char* file_name) {
   std::cerr << "test_triangulate_hole:" << std::endl;
@@ -89,7 +153,6 @@ void test_triangulate_and_refine_hole(const char* file_name) {
 
   std::cerr << "  Done!" << std::endl;
 }
-
 
 void test_triangulate_refine_and_fair_hole(const char* file_name) {
   std::cerr << "test_triangulate_refine_and_fair_hole:" << std::endl;
@@ -220,16 +283,19 @@ int main() {
   input_files.push_back("data/elephant_triangle_hole.off");
   input_files.push_back("data/elephant_quad_hole.off");
   input_files.push_back("data/mech-holes-shark.off");
-
+  // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole(it->c_str());
     test_triangulate_and_refine_hole(it->c_str());
     test_triangulate_refine_and_fair_hole(it->c_str());
     test_ouput_iterators_triangulate_and_refine_hole(it->c_str());
     test_ouput_iterators_triangulate_hole(it->c_str());
+    test_triangulate_hole_weight(it->c_str(), true);
+    test_triangulate_hole_weight(it->c_str(), false);
     std::cerr << "------------------------------------------------" << std::endl;
   }
-
+  test_triangulate_hole_weight("data/RedCircleBox.off", true);
+  test_triangulate_hole_weight("data/RedCircleBox.off", false);
   test_triangulate_refine_and_fair_hole_compile();
   std::cerr << "All Done!" << std::endl;
 }
