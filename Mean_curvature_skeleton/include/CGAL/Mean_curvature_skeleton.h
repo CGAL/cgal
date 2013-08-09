@@ -133,7 +133,7 @@ enum Degeneracy_algorithm_tag
 /// @tparam Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
-#ifdef DOXYXGEN_RUNNING
+#ifdef DOXYGEN_RUNNING
 template <class Polyhedron,
           class SparseLinearAlgebraTraits_d,
           class PolyhedronVertexIndexMap,
