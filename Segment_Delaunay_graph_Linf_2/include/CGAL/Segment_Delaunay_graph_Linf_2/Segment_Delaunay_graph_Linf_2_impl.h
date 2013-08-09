@@ -588,6 +588,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   bool os0_fc_start = false;
   bool first_found_f1 = false;
   Face_handle f1_0, f2_0;
+
+  bool is_nop(false);
+  bool is_pon(false);
+
+  bool is_set_f1_0(false);
+  bool is_set_f2_0(false);
+
   Site_2 sitev = v->site();
   Site_2 sitev_supp = v->site().supporting_site();
 
@@ -712,6 +719,8 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       CGAL_SDG_DEBUG(std::cout << "debug impl found_f1 set to true "
           << "with os1=" << os1 << std::endl;);
       if (os1 == ON_ORIENTED_BOUNDARY) {
+        CGAL_assertion(not is_nop);
+        is_nop = true;
         CGAL_SDG_DEBUG(std::cout << "debug impl flipf=true "
             << std::endl;);
         flipf = false;
@@ -733,6 +742,8 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       CGAL_SDG_DEBUG(std::cout << "debug impl found_f2 set to true "
           << "with os1=" << os1 << std::endl;);
       if (os1 == ON_ORIENTED_BOUNDARY) {
+        CGAL_assertion(not is_pon);
+        is_pon = true;
         CGAL_SDG_DEBUG(std::cout << "debug impl flipg=true "
             << std::endl;);
         flipg = false;
@@ -743,10 +754,14 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
 
     if (os2 == ON_ORIENTED_BOUNDARY) {
       if (os1 == ON_NEGATIVE_SIDE) {
+        CGAL_assertion(not is_set_f1_0);
+        is_set_f1_0 = true;
         f1_0 = ff2;
         CGAL_SDG_DEBUG(std::cout << "debug impl found f1_0 "
           << std::endl;);
       } else if (os1 == ON_POSITIVE_SIDE) {
+        CGAL_assertion(not is_set_f2_0);
+        is_set_f2_0 = true;
         f2_0 = ff2;
         CGAL_SDG_DEBUG(std::cout << "debug impl found f2_0 "
           << std::endl;);
@@ -770,6 +785,22 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   CGAL_assertion( found_f1 && found_f2 );
   CGAL_assertion( f1 != f2 );
 
+  CGAL_assertion( is_nop == is_set_f1_0 );
+  CGAL_assertion( is_pon == is_set_f2_0 );
+
+#ifndef CGAL_NO_ASSERTIONS
+  if (is_set_f1_0) {
+    CGAL_assertion( f1 != f1_0 );
+    CGAL_assertion( f2 != f1_0 );
+  }
+  if (is_set_f2_0) {
+    CGAL_assertion( f2 != f2_0 );
+    CGAL_assertion( f1 != f2_0 );
+  }
+  if (is_set_f1_0 and is_set_f2_0) {
+    CGAL_assertion( f1_0 != f2_0 );
+  }
+#endif
 
   // debug
 #ifdef CGAL_SDG_VERBOSE
