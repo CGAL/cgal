@@ -216,13 +216,12 @@ public:
       const Face_const_handle face,
       Output_arrangement_2 &out_arr
   ) {
-    std::cout <<" ======================== "<< std::endl ;
     std::vector<Point_2> raw_output; 
     typename CDT::Face_handle cdt_face = p_cdt->locate(q);
      
     raw_output.push_back(cdt_face->vertex(1)->point());
     if(!p_cdt->is_constrained(get_edge(cdt_face,0))){
-      std::cout << "edge 0 is not constrained" << std::endl;
+      //std::cout << "edge 0 is not constrained" << std::endl;
       expand_edge(
           q,
           cdt_face->vertex(2)->point(),
@@ -232,7 +231,7 @@ public:
 
     raw_output.push_back(cdt_face->vertex(2)->point());
     if(!p_cdt->is_constrained(get_edge(cdt_face,1))){
-      std::cout << "edge 1 is not constrained" << std::endl;
+      //std::cout << "edge 1 is not constrained" << std::endl;
       expand_edge(
           q,
           cdt_face->vertex(0)->point(),
@@ -242,7 +241,7 @@ public:
     
     raw_output.push_back(cdt_face->vertex(0)->point());
     if(!p_cdt->is_constrained(get_edge(cdt_face,2))){
-      std::cout << "edge 2 is not constrained" << std::endl;
+      //std::cout << "edge 2 is not constrained" << std::endl;
       expand_edge(
           q,
           cdt_face->vertex(1)->point(),
@@ -250,13 +249,41 @@ public:
           cdt_face,2,std::back_inserter(raw_output));
     }
 
+
+    output(raw_output,out_arr);
+
+    std::cout << "==============" <<std::endl;
+  }
+
+  void visibility_region(const Point_2 &q, 
+      const Halfedge_const_handle he,
+      Output_arrangement_2 &out_arr
+  ) {
+    std::vector<Point_2> raw_output; 
+    typename CDT::Locate_type ltype;
+    int lindex; 
+    typename CDT::Face_handle cdt_face = p_cdt->locate(q,ltype,lindex);
+    assert(ltype != CDT::FACE);
+    
+    // the following code tries to figure out which triangle one should start in. 
+
+    
+    
+    
+    
+    assert(false); // todo 
+  }
+
+  void output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
+        std::cout << "Output Polygon" << std::endl; 
     std::cout << raw_output.size() << std::endl; 
     
     // TODO: handle needles and report arr at same time 
     std::vector<Segment_2> segments; 
     for(int i = 0; i <raw_output.size();i++){
-      std::cout << raw_output[i] << std::endl; 
       segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
+      std::cout << raw_output[i] << " -- " 
+                << raw_output[(i+1)%raw_output.size()] << std::endl; 
     }
     // use something more clever 
     CGAL::insert(out_arr,segments.begin(),segments.end());
@@ -264,18 +291,12 @@ public:
     std::cout << out_arr.number_of_faces() << std::endl; 
     assert(out_arr.number_of_faces()== 2);
     
+    std::cout << "==============" <<std::endl;
+    
   }
-
-  void visibility_region(const Point_2 &q, 
-      const Halfedge_const_handle he,
-      Output_arrangement_2 &out_arr
-  ) {
-
-  }
-
-  
-  void init_cdt(){
-    std::cout << "init_cdt" <<std::endl;
+  void init_cdt(){ 
+    std::cout << "==============" <<std::endl;
+    std::cout << "Input Polygon:" <<std::endl;
     //todo, avoid copy by using modified iterator 
     std::vector<std::pair<Point_2,Point_2> > constraints; 
     for(typename Input_arrangement_2::Edge_const_iterator eit = p_arr->edges_begin();
@@ -286,6 +307,7 @@ public:
       constraints.push_back(std::make_pair(source,target));
     }      
     p_cdt = boost::shared_ptr<CDT>(new CDT(constraints.begin(),constraints.end()));
+    std::cout << std::endl;
   }
 };
 
