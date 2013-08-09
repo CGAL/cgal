@@ -16,7 +16,8 @@
 // $Id$
 //
 //
-// Author(s):  Francisc Bungiu <fbungiu@gmail.com>
+// Author(s):  Kan Huang <huangkandiy@gmail.com>
+//             Francisc Bungiu <fbungiu@gmail.com>
 //             Michael Hemmer <michael.hemmer@cgal.org>
 
 #include <CGAL/basic.h>
@@ -56,8 +57,8 @@ int main(int argc, char* argv[]) {
     const CGAL::Query_choice qchoice = CGAL::FACE;
     std::string input_arr_file(argv[1]);
     std::ifstream input(input_arr_file.c_str());
-    CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
-                  (naive_visibility, triangular_visibility, qchoice, input);
+    CGAL::test_star_shape<Naive_visibility_2>
+                  (naive_visibility, qchoice, input);
   //  CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
     //              (simple_visibility, triangular_visibility, qchoice, input);
   }

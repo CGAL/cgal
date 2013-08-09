@@ -351,7 +351,8 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
   
   Visibility_2 visibility;
   bool one_failed = false; 
-  if (Visibility_2::Supports_simple_polygon_tag::value) {
+  if (Visibility_2::Supports_simple_polygon_tag::value 
+      && case_number_simple >= 1) {
     int cnt = 0;
     int cnt_passed = 0;
     std::cout << "    Running simple polygon test cases...\n";
@@ -385,10 +386,12 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
     }
     std::cout << ")" << std::endl;
   }
-  if (Visibility_2::Supports_general_polygon_tag::value) {
+  if (Visibility_2::Supports_general_polygon_tag::value
+      && case_number_non_simple >= 1) {
+
     int cnt = 0;
     int cnt_passed = 0;
-    std::cout << "      Running non-simple polygon test cases...\n";
+    std::cout << "    Running non-simple polygon test cases...\n";
     for (int i = 1 ; i <= case_number_non_simple ; i++) {
       std::string input_arr_file("data/test_non_simple_polygon_");
       input_arr_file += num2string<int>(i);
@@ -466,9 +469,9 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
 }
 
 template <class _Arrangement_2>
-void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
-  typedef _Arrangement_2 								  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
+void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input) {
+  typedef _Arrangement_2 								                Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2	    Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
   typedef typename Geometry_traits_2::Point_2	          Point_2;
   typedef typename Geometry_traits_2::FT                Number_type;
@@ -481,12 +484,15 @@ void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     std::stringstream convert(line);
     int number_of_polygons;
     convert >> number_of_polygons;
-    for (int i = 0; i != number_of_polygons; i++) {
+    for (int i = 0 ; i < number_of_polygons ; i++) {
       std::vector<Point_2> points;
       std::vector<Segment_2> segments;
-      int number_of_vertex;
-      input >> number_of_vertex;
-      for (int j = 0; j != number_of_vertex-1; j++) {
+
+      std::getline(input, line);
+      std::stringstream convert(line);
+      int number_of_vertices;
+      convert >> number_of_vertices;
+      for (int j = 0; j < number_of_vertices; j++) {
         std::getline(input, line);
         std::string n1, n2;
         std::istringstream iss(line);
@@ -494,14 +500,12 @@ void create_polygons_from_file(_Arrangement_2 &arr, std::ifstream& input) {
         points.push_back(Point_2(string2num<Number_type>(n1),   
                                  string2num<Number_type>(n2)));
       }
-      for (int j = 0; j != number_of_vertex-1; j++) {
-
+      for (int j = 0; j < number_of_vertices-1 ; j++) {
         segments.push_back(Segment_2(points[j], points[j+1]));
       }
       segments.push_back(Segment_2(points.front(), points.back()));
       CGAL::insert(arr, segments.begin(), segments.end());
     }
-
   }
   else {
     std::cout<<"Can't open the file. Check the file name.";
@@ -604,14 +608,14 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
   timer.start();
   visibility_fst.attach(arr); 
   timer.stop();
-  std::cout << "        Time to attach to first object: " 
+  std::cout << "Time to attach to first object: " 
             << GREEN << timer.time() << " sec" << RESET << std::endl;
 
   timer.reset();
   timer.start();
   visibility_snd.attach(arr);
   timer.stop();
-  std::cout << "        Time to attach to second object: " 
+  std::cout << "Time to attach to second object: " 
             << GREEN << timer.time() << " sec" << RESET << std::endl;
 
   typename Input_arrangement_2::Face_const_iterator fit;
@@ -638,7 +642,8 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
                       (he->source()->point(), he->target()->point());
         break;
       case FACE:
-        Ccb_halfedge_const_circulator curr_next = circ;
+        Ccb_halfedge_const_circulator curr_next = curr;
+        curr_next++;
         Halfedge_const_handle he_next = curr_next;
         Point_2 p1 = he->source()->point();
         Point_2 p2 = he->target()->point();
@@ -656,7 +661,7 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
       curr++;
       continue;
     }
-    std::cout << "        Running with qpoint: " 
+    std::cout << "Running with qpoint: " 
               << RED << curr_query_pt << RESET <<  std::endl;
     Input_arrangement_2 out_arr_fst, out_arr_snd;
     timer.reset();
@@ -670,7 +675,7 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
     }
     timer.stop();
 
-    std::cout << "            Time to compute visibility region using first object: " 
+    std::cout << "    Time to compute visibility region using first object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
     timer.reset();
 
@@ -683,106 +688,128 @@ void benchmark_one_unit(Visibility_2_fst visibility_fst,
     }
     timer.stop();
     
-    std::cout << "            Time to compute visibility region using second object: " 
+    std::cout << "    Time to compute visibility region using second object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
-//    visibility_fst.print_arrangement(out_arr_fst);
- //   visibility_fst.print_arrangement(out_arr_snd);
+
     assert(true == (CGAL::test_are_equal<Output_arrangement_2>
                           (out_arr_fst, out_arr_snd)));  
   } while (++curr != circ);
 }
 
+
 template<class Visibility_2_fst, class Visibility_2_snd>
 void benchmark(Visibility_2_fst &visibility_fst, 
-                             Visibility_2_snd &visibility_snd,
-                             const Query_choice &choice,
-                             int case_number_simple,
-                             int case_number_non_simple) {
+               Visibility_2_snd &visibility_snd,
+               const Query_choice &choice,
+               std::ifstream &input) {
 
   typedef typename Visibility_2_fst::Input_arrangement_2
                                                             Input_arrangement_2;
   typedef typename Input_arrangement_2::Halfedge_handle     Halfedge_handle;
   typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef typename Input_arrangement_2::Ccb_halfedge_circulator
-                                                        Ccb_halfedge_circulator;
+  typedef typename Input_arrangement_2::Edge_iterator       Edge_iterator;
   typedef typename Geometry_traits_2::Point_2               Point_2;
-  typedef typename Geometry_traits_2::FT                    Number_type;  
+  typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
-  bool one_failed = false; 
-  if (Visibility_2_fst::Supports_simple_polygon_tag::value 
-    && Visibility_2_snd::Supports_simple_polygon_tag::value) {
+  Input_arrangement_2 arr;
+  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+  if (Visibility_2_fst::Supports_general_polygon_tag::value 
+    && Visibility_2_snd::Supports_general_polygon_tag::value) {
 
-    std::cout << "Benchmarking simple polygon test cases...\n";
-    for (int i = 1 ; i <= case_number_simple ; i++) {
-      std::string input_arr_file("data/test_simple_polygon_");
-      input_arr_file += num2string<int>(i);
-      input_arr_file += ".dat";
-      std::cout << "    Benchmarking test " 
-                << GREEN << input_arr_file << RESET << std::endl;
-      std::ifstream input(input_arr_file.c_str());
-      std::string curr_line;
-      while (std::getline(input, curr_line)) {
-        if (curr_line[0] != '#' && curr_line[0] != '/')
-        break;  
-      }
-      std::stringstream convert(curr_line);
-      std::string x, y;
-      convert >> x >> y;
-      Point_2 query_pt(string2num<Number_type>(x),
-                       string2num<Number_type>(y));
-      std::getline(input, curr_line);
-      std::string x1, y1;
-      std::istringstream iss(curr_line);
-      iss >> x1 >> y1;
-      Point_2 reference_pt(string2num<Number_type>(x1),
-                           string2num<Number_type>(y1));
-      std::getline(input, curr_line);
-      Input_arrangement_2 arr;
-      create_arrangement_from_dat_file<Input_arrangement_2>(input, arr);
-  //    CGAL::Visibility_2::print_arrangement<Input_arrangement_2>(arr);
-      benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
-                                                             visibility_snd,
-                                                             arr,
-                                                             choice);
-    }
+    benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,  
+                                                           visibility_snd,
+                                                           arr,
+                                                           choice);
   }
-   if (Visibility_2_fst::Supports_general_polygon_tag::value
-      && Visibility_2_snd::Supports_general_polygon_tag::value) {
-
-    std::cout << "Benchmarking non-simple polygon test cases...\n";
-    for (int i = 1 ; i <= case_number_non_simple ; i++) {
-      std::string input_arr_file("data/test_non_simple_polygon_");
-      input_arr_file += num2string<int>(i);
-      input_arr_file += ".dat";
-      std::cout << "    Running test "
-                << GREEN << input_arr_file << RESET << std::endl;      
-      std::ifstream input(input_arr_file.c_str());
-      std::string curr_line;
-      while (std::getline(input, curr_line)) {
-        if (curr_line[0] != '#' && curr_line[0] != '/')
-        break;
-      }
-      std::stringstream convert(curr_line);
-      std::string x, y;
-      convert >> x >> y;
-      Point_2 query_pt(string2num<Number_type>(x),
-                       string2num<Number_type>(y));
-      std::getline(input, curr_line);
-      std::string x1, y1;
-      std::istringstream iss(curr_line);
-      iss >> x1 >> y1;
-      Point_2 reference_pt(string2num<Number_type>(x1),
-                           string2num<Number_type>(y1));
-      std::getline(input, curr_line);
-      Input_arrangement_2 arr;
-      create_arrangement_from_dat_file<Input_arrangement_2>(input, arr);
-      benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
-                                                             visibility_snd,
-                                                             arr,
-                                                             choice);
+  else {  // Only run the benchmark on the outter loop of the arrangement
+    Edge_iterator eit;
+    Input_arrangement_2 arr_trimmed;
+    for (eit = arr.edges_end() ; eit != arr.edges_end() ; eit++) {
+//      Segment_2 seg = 
     }
   }
 }
+
+template<class Segment_2, class Point_2>
+int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_out, Point_2& p_out)
+{
+    CGAL::Object result = CGAL::intersection(seg1, seg2);
+    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+        p_out = *ipoint;
+        return 1;
+    } else
+        if (const Segment_2 *iseg = CGAL::object_cast<Segment_2>(&result)) {
+            seg_out = *iseg;
+            return 2;
+        } else {
+            return 0;
+        }
+}
+
+template<class Visibility_2>
+bool is_star_shape(const typename Visibility_2::Point_2& q,
+                   const typename Visibility_2::Face_const_handle fh) {
+  typedef typename Visibility_2::Output_arrangement_2
+                                                            Output_arrangement_2;
+  typedef typename Output_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Output_arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Output_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Output_arrangement_2::Edge_iterator       Edge_iterator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+  if (fh->is_unbounded())
+    return false;
+  if (fh->has_outer_ccb()) {
+    typename Output_arrangement_2::Ccb_halfedge_const_circulator curr, circ;
+    curr = circ = fh->outer_ccb();
+    do {
+      Point_2 p = curr->target()->point();
+      typename Output_arrangement_2::Ccb_halfedge_const_circulator curr1, circ1;
+      curr1 = circ1 = fh->outer_ccb();
+      do {
+        Segment_2 intersect_s;
+        Point_2 intersect_p;
+        Point_2 source = curr1->source()->point();
+        Point_2 target = curr1->target()->point();
+        int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
+        if (i == 1 && intersect_p != source && intersect_p != target)
+          return false;
+      } while (++curr1 != circ1);
+    } while (++curr != circ);
+  }
+  return true;
+}
+
+//template<class Visibility_2>
+//void test_star_shape(Visibility_2 &visibility,
+//               const Query_choice &choice,
+//               std::ifstream &input) {
+
+//  typedef typename Visibility_2::Input_arrangement_2
+//                                                            Input_arrangement_2;
+//  typedef typename Input_arrangement_2::Halfedge_handle     Halfedge_handle;
+//  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+//  typedef typename Input_arrangement_2::Edge_iterator       Edge_iterator;
+//  typedef typename Geometry_traits_2::Point_2               Point_2;
+//  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+
+//  Input_arrangement_2 arr;
+//  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+//  if (Visibility_2_fst::Supports_general_polygon_tag::value) {
+
+//    benchmark_one_unit<Visibility_2_fst, Visibility_2_snd>(visibility_fst,
+//                                                           visibility_snd,
+//                                                           arr,
+//                                                           choice);
+//  }
+//  else {  // Only run the benchmark on the outter loop of the arrangement
+//    Edge_iterator eit;
+//    Input_arrangement_2 arr_trimmed;
+//    for (eit = arr.edges_end() ; eit != arr.edges_end() ; eit++) {
+////      Segment_2 seg =
+//    }
+//  }
+//}
 
 } // end namespace CGAL
 

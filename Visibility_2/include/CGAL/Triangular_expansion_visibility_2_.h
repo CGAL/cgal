@@ -41,6 +41,7 @@ public:
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
+  typedef typename Arrangement_2::Face_handle     Face_handle;
 
   typedef typename K::Point_2           Point_2;
   typedef typename Geometry_traits_2::Ray_2             Ray_2;
@@ -212,7 +213,7 @@ public:
     
   }
 
-  void visibility_region(Point_2 &q, 
+  Face_handle visibility_region(Point_2 &q,
       const Face_const_handle face,
       Output_arrangement_2 &out_arr
   ) {
@@ -255,7 +256,7 @@ public:
     std::cout << "==============" <<std::endl;
   }
 
-  void visibility_region(const Point_2 &q, 
+  Face_handle visibility_region(const Point_2 &q, 
       const Halfedge_const_handle he,
       Output_arrangement_2 &out_arr
   ) {
@@ -294,6 +295,7 @@ public:
     std::cout << "==============" <<std::endl;
     
   }
+
   void init_cdt(){ 
     std::cout << "==============" <<std::endl;
     std::cout << "Input Polygon:" <<std::endl;
