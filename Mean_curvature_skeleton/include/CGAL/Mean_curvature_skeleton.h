@@ -133,12 +133,19 @@ enum Degeneracy_algorithm_tag
 /// @tparam Degeneracy_algorithm_tag
 ///         tag for selecting the degeneracy detection algorithm
 /// @endcond
+#ifdef DOXYXGEN_RUNNING
+template <class Polyhedron,
+          class SparseLinearAlgebraTraits_d,
+          class PolyhedronVertexIndexMap,
+          class PolyhedronEdgeIndexMap>
+#else
 template <class Polyhedron,
           class SparseLinearAlgebraTraits_d,
           class PolyhedronVertexIndexMap,
           class PolyhedronEdgeIndexMap,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = HEURISTIC>
+#endif
 class Mean_curvature_skeleton
 {
 // Public types
