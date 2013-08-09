@@ -226,7 +226,7 @@ public:
     }
     else
     {
-      Polyhedron* mesh = &(mcs->get_polyhedron());
+      Polyhedron* mesh = &(mcs->get_halfedge_graph());
       if (mesh != pMesh)
       {
         if (!is_mesh_valid(pMesh))

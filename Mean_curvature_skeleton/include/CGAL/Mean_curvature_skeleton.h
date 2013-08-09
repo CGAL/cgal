@@ -399,7 +399,7 @@ public:
     iteration_TH = value;
   }
 
-  HalfedgeGraph& get_polyhedron()
+  HalfedgeGraph& get_halfedge_graph()
   {
     return polyhedron;
   }
