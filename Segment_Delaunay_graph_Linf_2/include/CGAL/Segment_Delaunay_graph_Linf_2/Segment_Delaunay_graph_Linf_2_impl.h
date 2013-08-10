@@ -766,8 +766,15 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
 #endif
 
 #ifdef CGAL_SDG_VERBOSE
+  std::cout << "debug find_faces_to_split results" << std::endl;
   face_output("debug f1=[", f1, "]\n");
   face_output("debug f2=[", f2, "]\n");
+  if (is_set_f1_0) {
+    face_output("debug f1_0=[", f1_0, "]\n");
+  }
+  if (is_set_f2_0) {
+    face_output("debug f2_0=[", f2_0, "]\n");
+  }
 #endif
 
   return Face_pair(f1, f2);
