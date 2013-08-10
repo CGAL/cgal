@@ -301,6 +301,10 @@ public:
 protected: 
   void init() 
   {
+    facet_color = QColor(87,87,87);
+    edge_color = QColor(173,35,35);
+    vertex_color = QColor(255,205,243);
+
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
@@ -330,9 +334,9 @@ public:
     GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
     glDisable(GL_LIGHTING);
 
-    CGAL::GL::Color color;
+    
     CGAL::GL::Point_size point_size; point_size.set_point_size(5);
-    color.set_rgb_color(0, 1.f, 0);
+    CGALglcolor(vertex_color);
 
     ::glBegin(GL_POINTS);
     for(Selection_set_vertex::iterator 
@@ -348,8 +352,7 @@ public:
     if(enable_back_lighting) { glEnable(GL_LIGHTING); }
   }
   void draw_selected_facets() const {
-    CGAL::GL::Color color;
-    color.set_rgb_color(0.f,1.f,0.f);
+    CGALglcolor(facet_color);
 
     GLfloat offset_factor;
     GLfloat offset_units;
@@ -384,8 +387,7 @@ public:
     GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
     glDisable(GL_LIGHTING);
 
-    CGAL::GL::Color color;
-    color.set_rgb_color(0.f,1.f,0.f);
+    CGALglcolor(edge_color);
     ::glLineWidth(3.f);
     ::glBegin(GL_LINES);
     for(Selection_set_edge::iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) {
@@ -791,6 +793,8 @@ public:
   Selection_set_vertex selected_vertices;
   Selection_set_facet  selected_facets;
   Selection_set_edge   selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
+// 
+  QColor vertex_color, facet_color, edge_color;
 };
 
 #endif 
