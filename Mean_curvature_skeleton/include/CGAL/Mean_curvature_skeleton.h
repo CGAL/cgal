@@ -127,6 +127,7 @@ enum Degeneracy_algorithm_tag
 ///         with Mean_curvature_skeleton::edge_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam Graph
+///         a model of boost::adjacency_list
 ///         data structure for skeleton curve
 /// @cond CGAL_DOCUMENT_INTERNAL
 /// @tparam Collapse_algorithm_tag
@@ -222,8 +223,8 @@ private:
   double omega_P;
   /** edges with length less than `edgelength_TH` will be collapsed */
   double edgelength_TH;
-  /** triangles with angle greater than `TH_ALPHA` will be split */
-  double TH_ALPHA;
+  /** triangles with angle greater than `alpha_TH` will be split */
+  double alpha_TH;
   /** value very close to zero */
   double zero_TH;
   /** run_to_converge will stop if the change of area in one iteration
@@ -291,7 +292,7 @@ public:
      edge_id_pmap(Edge_index_map),
      omega_H(omega_H),
      edgelength_TH(edgelength_TH),
-     TH_ALPHA(110),
+     alpha_TH(110),
      zero_TH(1e-7),
      area_TH(area_TH),
      weight_calculator(Weight_calculator()),
@@ -338,7 +339,7 @@ public:
      omega_H(omega_H),
      omega_P(omega_P),
      edgelength_TH(edgelength_TH),
-     TH_ALPHA(110),
+     alpha_TH(110),
      zero_TH(1e-7),
      area_TH(area_TH),
      weight_calculator(Weight_calculator()),
@@ -368,9 +369,9 @@ public:
     edgelength_TH = value;
   }
 
-  void set_TH_ALPHA(double value)
+  void set_alpha_TH(double value)
   {
-    TH_ALPHA = value;
+    alpha_TH = value;
   }
 
   void set_zero_TH(double value)
@@ -719,7 +720,7 @@ private:
 
   void init()
   {
-    TH_ALPHA *= (M_PI / 180.0);
+    alpha_TH *= (M_PI / 180.0);
     double area = internal::get_surface_area(polyhedron);
     area_TH = 0.0001 * area;
     original_area = area;
@@ -1190,7 +1191,7 @@ private:
 
       double angle_i = halfedge_angle[ei_id];
       double angle_j = halfedge_angle[ej_id];
-      if (angle_i < TH_ALPHA || angle_j < TH_ALPHA)
+      if (angle_i < alpha_TH || angle_j < alpha_TH)
       {
         continue;
       }
