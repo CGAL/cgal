@@ -572,6 +572,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   bool found_f1 = false, found_f2 = false;
   bool os0_fc_start = false;
   bool first_found_f1 = false;
+  bool first_found_f2 = false;
   Face_handle f1_0, f2_0;
 
   bool is_nop(false);
@@ -706,6 +707,9 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       } else {
         flipg = false;
       }
+      if ( !found_f1 ) {
+        first_found_f2 = true;
+      }
     }
 
     if (os2 == ON_ORIENTED_BOUNDARY) {
@@ -743,6 +747,9 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
 
   CGAL_assertion( is_nop == is_set_f1_0 );
   CGAL_assertion( is_pon == is_set_f2_0 );
+
+  CGAL_assertion( first_found_f1 or first_found_f2);
+  CGAL_assertion( not (first_found_f1 and first_found_f2) );
 
 #ifndef CGAL_NO_ASSERTIONS
   if (is_set_f1_0) {
