@@ -67,11 +67,10 @@ public:
     QPointF p1 = viewport->mapToScene( 0, 0 );
     QPointF p2 = viewport->mapToScene(viewport->width(), viewport->height());
 
-    double xmin = std::min( p1.x( ), p2.x( ) );
-    double xmax = std::max( p1.x( ), p2.x( ) );
-    double ymin = std::min( p1.y( ), p2.y( ) );
-    double ymax = std::max( p1.y( ), p2.y( ) );
-
+    double xmin = (std::min)(p1.x(), p2.x());
+    double xmax = (std::max)(p1.x(), p2.x());
+    double ymin = (std::min)(p1.y(), p2.y());
+    double ymax = (std::max)(p1.y(), p2.y());
 
     res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
 
