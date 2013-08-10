@@ -30,9 +30,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 
-#ifdef CGAL_HAS_SDF_SEGMENTATION
 #include <CGAL/mesh_segmentation.h>
-#endif
 
 #include <queue>
 
@@ -63,8 +61,10 @@ typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matri
 
 typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+typedef boost::adjacency_list<boost::listS, boost::listS, boost::undirectedS> Graph;
 
+typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
+typedef boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
 typedef boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
 typedef boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                   edge_iter;
@@ -376,8 +376,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   Graph g;
-  std::vector<Point> points;
-  std::vector<std::vector<int> > corr;
+  std::map<vertex_desc, Point> points;
+  std::map<vertex_desc, std::vector<int> > corr;
 
   mcs->get_skeleton(g, points);
   mcs->get_correspondent_vertices(corr);
@@ -394,7 +394,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     id_to_vd[id++] = v;
   }
 
-#ifdef CGAL_HAS_SDF_SEGMENTATION
   // init segment mesh id
   Polyhedron *segment_mesh = new Polyhedron(*mCopy);
   int vertex_id_count = 0;
@@ -410,8 +409,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   std::vector<double> distances;
   distances.resize(boost::num_vertices(*segment_mesh));
-  for (size_t i = 0; i < corr.size(); ++i)
+
+  std::map<vertex_desc, std::vector<int> >::iterator iter;
+  for (iter = corr.begin(); iter != corr.end(); ++iter)
   {
+    vertex_desc i = iter->first;
     Point skel = points[i];
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
@@ -472,141 +474,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation of %1").arg(item->name()));
   item_segmentation->setVisible(false);
-#else
-  std::vector<int> skeleton_segment;
-  std::vector<bool> deleted;
-  skeleton_segment.resize(boost::num_vertices(g));
-  deleted.resize(boost::num_vertices(g), false);
-  boost::graph_traits<Graph>::vertex_iterator vi;
-  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
-  {
-    int deg = boost::out_degree(*vi, g);
-    if (deg > 2)
-    {
-      // for branching point, cut some incident edges to make it an end point
-      out_edge_iter e, e_end;
-      deleted[*vi] = true;
-      bool move_corr = false;
-      for (boost::tie(e, e_end) = boost::out_edges(*vi, g); e != e_end; ++e)
-      {
-        edge_desc ed = *e;
-        int target = boost::target(ed, g);
-        // delete the branching point and move correspondent vertices to another vertex
-        if (!move_corr && !deleted[target])
-        {
-          corr[target].insert(corr[target].end(),
-                              corr[*vi].begin(),
-                              corr[*vi].end());
-          move_corr = true;
-          break;
-        }
-      }
-    }
-  }
-
-  int num_segment = 0;
-  std::vector<bool> visited;
-  visited.resize(boost::num_vertices(g), false);
-  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
-  {
-    int vid = *vi;
-    std::queue<int> qu;
-    while(!qu.empty())
-    {
-      qu.pop();
-    }
-
-    // branching points have been deleted
-    if (deleted[vid])
-    {
-      continue;
-    }
-
-    if (!visited[vid])
-    {
-      qu.push(vid);
-      while (!qu.empty())
-      {
-        int cur = qu.front();
-        qu.pop();
-        visited[cur] = true;
-        skeleton_segment[cur] = num_segment;
-        out_edge_iter e, e_end;
-        for (boost::tie(e, e_end) = boost::out_edges(cur, g); e != e_end; ++e)
-        {
-          edge_desc ed = *e;
-          int target = boost::target(ed, g);
-          if (!visited[target] && !deleted[target])
-          {
-            qu.push(target);
-          }
-        }
-      }
-      num_segment++;
-    }
-  }
-
-  std::cout << "num segment " << num_segment << "\n";
-
-  std::vector<int> segment_id;
-  segment_id.resize(boost::num_vertices(*mCopy), -1);
-  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
-  {
-    int vid = *vi;
-    int seg = skeleton_segment[vid];
-    for (size_t i = 0; i < corr[vid].size(); ++i)
-    {
-      segment_id[corr[vid][i]] = seg;
-    }
-  }
-
-  Polyhedron *segment_mesh = new Polyhedron(*mCopy);
-  int vertex_id_count = 0;
-  for (boost::tie(vb, ve) = boost::vertices(*segment_mesh); vb != ve; ++vb)
-  {
-    vb->id() = vertex_id_count++;
-  }
-
-  for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
-  {
-    Polyhedron::Halfedge_const_handle he = f->facet_begin();
-    int vid1 = he->vertex()->id();
-    int vid2 = he->next()->vertex()->id();
-    int vid3 = he->next()->next()->vertex()->id();
-    int sid1 = segment_id[vid1];
-    int sid2 = segment_id[vid2];
-    int sid3 = segment_id[vid3];
-
-    int id;
-    if (sid1 == sid2 && sid2 == sid3)
-    {
-      id = sid1;
-    }
-    else if (sid1 == sid2)
-    {
-      id = sid1;
-    }
-    else if (sid1 == sid3)
-    {
-      id = sid1;
-    }
-    else if (sid2 == sid3)
-    {
-      id = sid3;
-    }
-    else
-    {
-      id = sid1;
-    }
-
-    f->set_patch_id(id);
-  }
-
-  Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segment_mesh);
-  scene->addItem(item_segmentation);
-  item_segmentation->setName(QString("segmentation of %1").arg(item->name()));
-  item_segmentation->setVisible(false);
-#endif // CGAL_HAS_SDF_SEGMENTATION
 
   scene->itemChanged(index);
   scene->setSelectedItem(index);
@@ -643,10 +510,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     temp_mcs->run_to_converge();
 
     Graph g;
-    std::vector<Point> points;
+    std::map<vertex_desc, Point> points;
 
-    temp_mcs->convert_to_skeleton();
-    temp_mcs->get_skeleton(g, points);
+    temp_mcs->convert_to_skeleton(g, points);
+//    temp_mcs->get_skeleton(g, points);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -706,10 +573,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     temp_mcs->run_to_converge();
 
     Graph g;
-    std::vector<Point> points;
+    std::map<vertex_desc, Point> points;
 
-    temp_mcs->convert_to_skeleton();
-    temp_mcs->get_skeleton(g, points);
+    temp_mcs->convert_to_skeleton(g, points);
+//    temp_mcs->get_skeleton(g, points);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -1017,11 +884,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   Graph g;
-  std::vector<Point> points;
-  std::vector<std::vector<int> > corr;
+  std::map<vertex_desc, Point> points;
+  std::map<vertex_desc, std::vector<int> > corr;
 
-  mcs->convert_to_skeleton();
-  mcs->get_skeleton(g, points);
+  mcs->convert_to_skeleton(g, points);
+//  mcs->get_skeleton(g, points);
   mcs->get_correspondent_vertices(corr);
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -1030,10 +897,38 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   skeleton->setColor(QColor(175, 0, 255));
 
   boost::graph_traits<Graph>::edge_iterator ei, ei_end;
+
+  vertex_iter vit, vi_end;
+  for (boost::tie(vit, vi_end) = boost::vertices(g); vit != vi_end; ++vit)
+  {
+    if (points.find(*vit) == points.end())
+    {
+      std::cout << "ff " << *vit << "\n";
+    }
+    else
+    {
+      std::cout << "f " << points[*vit] << "\n";
+    }
+  }
+  std::cout << "point size " << points.size() << "\n";
+  std::map<vertex_desc, Point>::iterator it;
+  for (it = points.begin(); it != points.end(); ++it)
+  {
+    std::cout << it->first << " " << it->second << "\n";
+  }
   for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
   {
     std::vector<Point> line;
     line.clear();
+    if (points.find(boost::source(*ei, g)) == points.end())
+    {
+      std::cout << "cannot find " << boost::source(*ei, g) << "\n";
+    }
+    else
+    {
+      std::cout << "found " << points[boost::source(*ei, g)] << " "
+                << points[boost::target(*ei, g)] << "\n";
+    }
     Point s = points[boost::source(*ei, g)];
     Point t = points[boost::target(*ei, g)];
     line.push_back(s);
@@ -1056,8 +951,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   Scene_polylines_item* lines = new Scene_polylines_item();
 
-  for (size_t i = 0; i < corr.size(); ++i)
+  std::map<vertex_desc, std::vector<int> >::iterator iter;
+  for (iter = corr.begin(); iter != corr.end(); ++iter)
   {
+    vertex_desc i = iter->first;
     Point s = points[i];
     for (size_t j = 0; j < corr[i].size(); ++j)
     {

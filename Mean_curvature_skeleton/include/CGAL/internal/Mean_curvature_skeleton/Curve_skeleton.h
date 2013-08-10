@@ -59,6 +59,7 @@ public:
   typedef typename HalfedgeGraph::Halfedge_around_facet_circulator                Halfedge_facet_circulator;
 
   // Repeat Graph types
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
   typedef typename boost::graph_traits<Graph>::edge_descriptor                    edge_desc;
 
 // Data members
@@ -112,8 +113,8 @@ public:
   }
 
   // extract the skeleton to a boost::graph data structure
-  void extract_skeleton(Graph& graph, std::vector<Point>& points,
-                        std::vector<std::vector<int> >& corr)
+  void extract_skeleton(Graph& curve, std::map<vertex_desc, Point>& points,
+                        std::map<vertex_desc, std::vector<int> >& corr)
   {
     init();
     collapse();
@@ -135,17 +136,27 @@ public:
       }
     }
 
-    Graph curve(id);
+//    Graph curve;
+
+    // map a vertex id to its descriptor
+    std::vector<vertex_desc> id_to_vd;
+    id_to_vd.clear();
+    id_to_vd.resize(id);
     corr.clear();
-    corr.resize(id);
+
+    for (int i = 0; i < id; ++i)
+    {
+      id_to_vd[i] = boost::add_vertex(curve);
+    }
 
     for (int i = 0; i < id; ++i)
     {
       int orig_id = orig_vertex_id[i];
-      corr[i] = record[orig_id];
-      for (size_t j = 0; j < corr[i].size(); ++j)
+      vertex_desc vd = id_to_vd[i];
+      corr[vd] = record[orig_id];
+      for (size_t j = 0; j < corr[vd].size(); ++j)
       {
-        corr[i][j] = surface_vertex_id[corr[i][j]];
+        corr[vd][j] = surface_vertex_id[corr[vd][j]];
       }
     }
 
@@ -157,19 +168,21 @@ public:
         int p2 = edge_to_vertex[i][1];
         int p1_id = new_vertex_id[p1];
         int p2_id = new_vertex_id[p2];
+        vertex_desc p1_vd = id_to_vd[p1_id];
+        vertex_desc p2_vd = id_to_vd[p2_id];
 
         bool exist;
         edge_desc edge;
-        boost::tie(edge, exist) = boost::edge(p1_id, p2_id, curve);
+        boost::tie(edge, exist) = boost::edge(p1_vd, p2_vd, curve);
         if (!exist)
         {
-          boost::add_edge(p1_id, p2_id, curve);
+          boost::add_edge(p1_vd, p2_vd, curve);
         }
       }
     }
 
     vertex_iterator vb, ve;
-    points.resize(id);
+    points.clear();
     for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
@@ -189,9 +202,9 @@ public:
       }
       double num = record[id].size();
       pos = Point(pos.x() / num, pos.y() / num, pos.z() / num);
-      points[new_id] = pos;
+      points[id_to_vd[new_id]] = pos;
     }
-    boost::copy_graph(curve, graph);
+//    boost::copy_graph(curve, graph);
   }
 
 // Private methods

@@ -177,13 +177,14 @@ public:
   // Skeleton types
   /// \name Data structure for skeleton curve
   /// @{
-  typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>  Graph;
+  typedef boost::adjacency_list<boost::listS, boost::listS, boost::undirectedS>  Graph;
   /// @}
 
   typedef internal::Curve_skeleton<HalfedgeGraph, Graph,
   VertexIndexMap, EdgeIndexMap>                                                Skeleton;
 
   // Repeat Graph types
+  typedef typename boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
   typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
@@ -260,13 +261,13 @@ private:
   /** record the skeleton curve */
   Graph g;
   /** record the position of skeletal points */
-  std::vector<Point> points;
+  std::map<vertex_desc, Point> points;
   /** record the correspondence between final surface
    *  and original surface points */
   std::map<int, std::vector<int> > correspondence;
   /** record the correspondence between skeletal points
    *  and original surface points */
-  std::vector<std::vector<int> > skeleton_to_surface;
+  std::map<vertex_desc, std::vector<int> > skeleton_to_surface;
 
   /** should the skeleton be medially centered? */
   bool is_medially_centered;
@@ -449,10 +450,10 @@ public:
    * @param points
    *        return the positions of skeletal points
    */
-  void get_skeleton(Graph& g, std::vector<Point>& points)
+  void get_skeleton(Graph& graph, std::map<vertex_desc, Point>& pts)
   {
-    g = this->g;
-    points = this->points;
+    graph = g;
+    pts = points;
   }
 
   /**
@@ -461,7 +462,7 @@ public:
    * @param corr
    *        for each skeletal point, record its correspondent surface points
    */
-  void get_correspondent_vertices(std::vector<std::vector<int> >& corr)
+  void get_correspondent_vertices(std::map<vertex_desc, std::vector<int> >& corr)
   {
     corr = skeleton_to_surface;
   }
@@ -690,15 +691,17 @@ public:
   /**
    * Convert the contracted mesh to a skeleton curve
    */
-  void convert_to_skeleton()
+  void convert_to_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
   {
     Skeleton skeleton(polyhedron);
-    std::vector<std::vector<int> > record;
+    std::map<vertex_desc, std::vector<int> > record;
     skeleton.extract_skeleton(g, points, record);
 
-    skeleton_to_surface.resize(record.size());
-    for (size_t i = 0; i < record.size(); ++i)
+    skeleton_to_surface.clear();
+    std::map<vertex_desc, std::vector<int> >::iterator iter;
+    for (iter = record.begin(); iter != record.end(); ++iter)
     {
+      vertex_desc i = iter->first;
       for (size_t j = 0; j < record[i].size(); ++j)
       {
         int id = record[i][j];
@@ -716,14 +719,16 @@ public:
       }
     }
     int cnt = 0;
-    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
+    for (iter = skeleton_to_surface.begin(); iter != skeleton_to_surface.end();
+         ++iter)
     {
+      vertex_desc i = iter->first;
       cnt += skeleton_to_surface[i].size();
     }
 
     MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
 
-    collapse_vertices_without_correspondence();
+//    collapse_vertices_without_correspondence();
   }
 
   /// @} Public Algorithm API
@@ -1433,128 +1438,128 @@ private:
   // --------------------------------------------------------------------------
 
   //TODO: Debug it!
-  void collapse_vertices_without_correspondence()
-  {
-    int vertex_removed = 0;
-    while (true)
-    {
-      int cnt = 0;
-      for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
-      {
-        if (skeleton_to_surface[i].size() == 0)
-        {
-          edge_desc ed;
-          int u;
-          bool found = false;
-          in_edge_iter eb, ee;
-          // look for a neighbor having non-zero correspondent vertices
-          for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
-          {
-            ed = *eb;
-            u = boost::source(ed, g);
-            if (skeleton_to_surface[u].size() != 0)
-            {
-              found = true;
-              break;
-            }
-          }
-          if (found)
-          {
-            // add new edges
-            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
-            {
-              edge_desc edge = *eb;
-              int v = boost::source(edge, g);
-              if (v == u)
-              {
-                continue;
-              }
+//  void collapse_vertices_without_correspondence()
+//  {
+//    int vertex_removed = 0;
+//    while (true)
+//    {
+//      int cnt = 0;
+//      for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
+//      {
+//        if (skeleton_to_surface[i].size() == 0)
+//        {
+//          edge_desc ed;
+//          int u;
+//          bool found = false;
+//          in_edge_iter eb, ee;
+//          // look for a neighbor having non-zero correspondent vertices
+//          for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
+//          {
+//            ed = *eb;
+//            u = boost::source(ed, g);
+//            if (skeleton_to_surface[u].size() != 0)
+//            {
+//              found = true;
+//              break;
+//            }
+//          }
+//          if (found)
+//          {
+//            // add new edges
+//            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
+//            {
+//              edge_desc edge = *eb;
+//              int v = boost::source(edge, g);
+//              if (v == u)
+//              {
+//                continue;
+//              }
 
-              bool exist;
-              boost::tie(edge, exist) = boost::edge(u, v, g);
-              // avoid adding parallel edges
-              if (!exist)
-              {
-                boost::add_edge(u, v, g);
-              }
-            }
-            // remove incident edges
-            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
-            {
-              edge_desc edge = *eb;
-              boost::remove_edge(edge, g);
-            }
-            cnt++;
-          }
-        }
-      }
-      vertex_removed += cnt;
-      if (cnt == 0)
-      {
-        break;
-      }
-    }
+//              bool exist;
+//              boost::tie(edge, exist) = boost::edge(u, v, g);
+//              // avoid adding parallel edges
+//              if (!exist)
+//              {
+//                boost::add_edge(u, v, g);
+//              }
+//            }
+//            // remove incident edges
+//            for (boost::tie(eb, ee) = boost::in_edges(i, g); eb != ee; ++eb)
+//            {
+//              edge_desc edge = *eb;
+//              boost::remove_edge(edge, g);
+//            }
+//            cnt++;
+//          }
+//        }
+//      }
+//      vertex_removed += cnt;
+//      if (cnt == 0)
+//      {
+//        break;
+//      }
+//    }
 
-    MCFSKEL_INFO(std::cout << "removed " << vertex_removed << " vertices\n";)
+//    MCFSKEL_INFO(std::cout << "removed " << vertex_removed << " vertices\n";)
 
-    int new_size = skeleton_to_surface.size() - vertex_removed;
-    Graph new_g(new_size);
+//    int new_size = skeleton_to_surface.size() - vertex_removed;
+//    Graph new_g(new_size);
 
-    std::vector<int> new_id;
-    new_id.resize(skeleton_to_surface.size(), -1);
+//    std::vector<int> new_id;
+//    new_id.resize(skeleton_to_surface.size(), -1);
 
-    int id = 0;
-    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
-    {
-      if (skeleton_to_surface[i].size() != 0)
-      {
-        new_id[i] = id++;
-      }
-    }
-    edge_iter eb, ee;
-    for (boost::tie(eb, ee) = boost::edges(g); eb != ee; ++eb)
-    {
-      edge_desc ed = *eb;
-      int s = boost::source(ed, g);
-      int t = boost::target(ed, g);
-      int ns = new_id[s];
-      int nt = new_id[t];
-      if (ns == -1 || nt == -1)
-      {
-        MCFSKEL_DEBUG(std::cerr << "wrong id\n";)
-      }
-      boost::add_edge(ns, nt, new_g);
-    }
+//    int id = 0;
+//    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
+//    {
+//      if (skeleton_to_surface[i].size() != 0)
+//      {
+//        new_id[i] = id++;
+//      }
+//    }
+//    edge_iter eb, ee;
+//    for (boost::tie(eb, ee) = boost::edges(g); eb != ee; ++eb)
+//    {
+//      edge_desc ed = *eb;
+//      int s = boost::source(ed, g);
+//      int t = boost::target(ed, g);
+//      int ns = new_id[s];
+//      int nt = new_id[t];
+//      if (ns == -1 || nt == -1)
+//      {
+//        MCFSKEL_DEBUG(std::cerr << "wrong id\n";)
+//      }
+//      boost::add_edge(ns, nt, new_g);
+//    }
 
-    std::vector<Point> new_points;
-    new_points.resize(new_size);
-    for (size_t i = 0; i < points.size(); ++i)
-    {
-      int index = new_id[i];
-      if (index != -1)
-      {
-        new_points[index] = points[i];
-      }
-    }
+//    std::vector<Point> new_points;
+//    new_points.resize(new_size);
+//    for (size_t i = 0; i < points.size(); ++i)
+//    {
+//      int index = new_id[i];
+//      if (index != -1)
+//      {
+//        new_points[index] = points[i];
+//      }
+//    }
 
-    std::vector<std::vector<int> > new_skeleton_to_surface;
-    new_skeleton_to_surface.resize(new_size);
-    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
-    {
-      int index = new_id[i];
-      if (index != -1)
-      {
-        new_skeleton_to_surface[index] = skeleton_to_surface[i];
-      }
-    }
+//    std::vector<std::vector<int> > new_skeleton_to_surface;
+//    new_skeleton_to_surface.resize(new_size);
+//    for (size_t i = 0; i < skeleton_to_surface.size(); ++i)
+//    {
+//      int index = new_id[i];
+//      if (index != -1)
+//      {
+//        new_skeleton_to_surface[index] = skeleton_to_surface[i];
+//      }
+//    }
 
-    g = new_g;
-    points = new_points;
-    skeleton_to_surface = new_skeleton_to_surface;
+//    g = new_g;
+//    points = new_points;
+//    skeleton_to_surface = new_skeleton_to_surface;
 
-    MCFSKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
-    MCFSKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
-  }
+//    MCFSKEL_INFO(std::cout << "new vertices " << boost::num_vertices(g) << "\n";)
+//    MCFSKEL_INFO(std::cout << "new edges " << boost::num_edges(g) << "\n";)
+//  }
 
 };
 
