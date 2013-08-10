@@ -1442,6 +1442,11 @@ protected:
 				     Face_map& fm);
 #endif
 
+protected:
+  // print face in standard output
+  void face_output(const char *before, Face_handle f,
+                   const char *after) const ;
+
 // choosing the correct bisector constructors
 private:
   template<typename T>

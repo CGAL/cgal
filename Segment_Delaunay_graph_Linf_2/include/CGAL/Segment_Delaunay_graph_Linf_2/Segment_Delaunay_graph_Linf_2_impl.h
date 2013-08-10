@@ -414,26 +414,11 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
       // debug
 #ifdef CGAL_SDG_VERBOSE
-      std::cout << "debug impl found conflict of t=" 
-         << t << " with " 
-         << (is_infinite(f)? "infinite" : "finite") 
+      std::cout << "debug impl found conflict of t="
+         << t << " with "
+         << (is_infinite(f)? "infinite" : "finite")
          << " face [" ;
-      if (is_infinite(f->vertex(0))) {
-        std::cout << " infv";
-      } else {
-        std::cout << ' ' << f->vertex(0)->site();
-      }
-      if (is_infinite(f->vertex(1))) {
-        std::cout << " infv";
-      } else {
-        std::cout << ' ' << f->vertex(1)->site();
-      }
-      if (is_infinite(f->vertex(2))) {
-        std::cout << " infv";
-      } else {
-        std::cout << ' ' << f->vertex(2)->site();
-      }
-      std::cout << ']' << std::endl; 
+      face_output("", f, "]\n");
 #endif
       start_f = f;
       break;
@@ -609,48 +594,12 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
                    << found_f1 << " " << found_f2 << std::endl;);
 
     Face_handle ff1(fc1), ff2(fc2);
+    Oriented_side os1, os2;
 
 #ifdef CGAL_SDG_VERBOSE
-    // debug
-    std::cout << "debug ff1=[" ;
-    if (is_infinite(ff1->vertex(0))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << ff1->vertex(0)->site();
-    }
-    if (is_infinite(ff1->vertex(1))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << ff1->vertex(1)->site();
-    }
-    if (is_infinite(ff1->vertex(2))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << ff1->vertex(2)->site();
-    }
-    std::cout << ']' << std::endl; 
-
-    // debug
-    std::cout << "debug ff2=[" ;
-    if (is_infinite(ff2->vertex(0))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << ff2->vertex(0)->site();
-    }
-    if (is_infinite(ff2->vertex(1))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << ff2->vertex(1)->site();
-    }
-    if (is_infinite(ff2->vertex(2))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << ff2->vertex(2)->site();
-    }
-    std::cout << ']' << std::endl; 
+    face_output("debug ff1=[", ff1, "]\n");
+    face_output("debug ff2=[", ff2, "]\n");
 #endif
-
-    Oriented_side os1, os2;
 
     if ( is_infinite(ff1) ) {
       int id_v = ff1->index(v);
@@ -711,6 +660,13 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
 
     CGAL_SDG_DEBUG( std::cout <<
         "debug os2 = " << os2 << std::endl; );
+
+#ifdef CGAL_SDG_VERBOSE
+    face_output("debug ff1=[", ff1, "] has os1=");
+    std::cout << os1 << std::endl;
+    face_output("debug ff2=[", ff2, "] has os2=");
+    std::cout << os2 << std::endl;
+#endif
 
     if ( !found_f1 &&
          os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
@@ -802,44 +758,9 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   }
 #endif
 
-  // debug
 #ifdef CGAL_SDG_VERBOSE
-  std::cout << "debug f1=[" ;
-  if (is_infinite(f1->vertex(0))) {
-    std::cout << " infv";
-  } else {
-    std::cout << ' ' << f1->vertex(0)->site();
-  }
-  if (is_infinite(f1->vertex(1))) {
-    std::cout << " infv";
-  } else {
-    std::cout << ' ' << f1->vertex(1)->site();
-  }
-  if (is_infinite(f1->vertex(2))) {
-    std::cout << " infv";
-  } else {
-    std::cout << ' ' << f1->vertex(2)->site();
-  }
-  std::cout << ']' << std::endl; 
-
-  // debug
-  std::cout << "debug f2=[" ;
-  if (is_infinite(f2->vertex(0))) {
-    std::cout << " infv";
-  } else {
-    std::cout << ' ' << f2->vertex(0)->site();
-  }
-  if (is_infinite(f2->vertex(1))) {
-    std::cout << " infv";
-  } else {
-    std::cout << ' ' << f2->vertex(1)->site();
-  }
-  if (is_infinite(f2->vertex(2))) {
-    std::cout << " infv";
-  } else {
-    std::cout << ' ' << f2->vertex(2)->site();
-  }
-  std::cout << ']' << std::endl; 
+  face_output("debug f1=[", f1, "]\n");
+  face_output("debug f2=[", f2, "]\n");
 #endif
 
   return Face_pair(f1, f2);
@@ -1409,26 +1330,12 @@ expand_conflict_region(const Face_handle& f, const Site_2& t,
 
     // debug
 #ifdef CGAL_SDG_VERBOSE
-    std::cout << "debug expand incircle of t=" 
-      << t << " with " 
-      << (is_infinite(n)? "infinite" : "finite") 
+    std::cout << "debug expand incircle of t="
+      << t << " with "
+      << (is_infinite(n)? "infinite" : "finite")
       << " face [" ;
-    if (is_infinite(n->vertex(0))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << n->vertex(0)->site();
-    }
-    if (is_infinite(n->vertex(1))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << n->vertex(1)->site();
-    }
-    if (is_infinite(n->vertex(2))) {
-      std::cout << " infv";
-    } else {
-      std::cout << ' ' << n->vertex(2)->site();
-    }
-    std::cout << "] has sign s=" << s << std::endl; 
+    face_output("", n, "]");
+    std::cout << " has sign s=" << s << std::endl;
 #endif
 
 
@@ -3696,6 +3603,31 @@ file_input(std::istream& is, bool read_handle_vector,
   }
 }
 
+
+template<class Gt, class ST, class D_S, class LTag>
+void
+Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
+face_output(const char *before, Face_handle f,
+	    const char *after) const
+{
+  std::cout << before;
+  if (is_infinite(f->vertex(0))) {
+    std::cout << " infv";
+  } else {
+    std::cout << ' ' << f->vertex(0)->site();
+  }
+  if (is_infinite(f->vertex(1))) {
+    std::cout << " infv";
+  } else {
+    std::cout << ' ' << f->vertex(1)->site();
+  }
+  if (is_infinite(f->vertex(2))) {
+    std::cout << " infv";
+  } else {
+    std::cout << ' ' << f->vertex(2)->site();
+  }
+  std::cout << after;
+}
 
 } //namespace CGAL
 
