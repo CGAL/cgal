@@ -126,9 +126,13 @@ public:
       typename CDT::Face_handle fh, 
       int index, 
       OIT oit){
+    // the expanded edge should not be constrained 
+    assert(!p_cdt->is_constrained(get_edge(fh,index)));
+    assert(!p_cdt->is_infinite(fh));
     
     // go into the new face  
     const typename CDT::Face_handle nfh(fh->neighbor(index)); 
+    assert(!p_cdt->is_infinite(nfh));
 
     // get indices of neighbors 
     int nindex = nfh->index(fh); // index of new vertex and old face 
@@ -244,6 +248,11 @@ public:
       const Face_const_handle face,
       Output_arrangement_2 &out_arr
   ) {
+    out_arr.clear();
+    assert(!face->is_unbounded());
+    
+    std::cout << "query in face interior" << std::endl;
+    
     std::vector<Point_2> raw_output; 
     typename CDT::Face_handle fh = p_cdt->locate(q);
      
@@ -285,72 +294,111 @@ public:
 
   Face_handle visibility_region(const Point_2 &q, 
       const Halfedge_const_handle he,
-      Output_arrangement_2 &out_arr
-  ) {
+      Output_arrangement_2 &out_arr) {
+    
+    assert(!he->face()->is_unbounded());    
+    out_arr.clear();
+
     std::vector<Point_2> raw_output; 
-    typename CDT::Locate_type ltype;
-    int lindex; 
-    typename CDT::Face_handle fh = p_cdt->locate(q,ltype,lindex);
-    assert(ltype == CDT::EDGE || ltype == CDT::VERTEX);
+    typename CDT::Locate_type location;
+    int index; 
+    typename CDT::Face_handle fh = p_cdt->locate(q,location,index);
+    assert(location == CDT::EDGE || location == CDT::VERTEX);
     // the following code tries to figure out which triangle one should start in. 
     
 
-    if(ltype == CDT::EDGE){
-      //std::cout << "query on edge" << std::endl;
+    if(location == CDT::EDGE){
+      std::cout << "query on edge" << std::endl;
       // this is the easy part, there are only two possible faces 
-      // lindex indicates the edge = vertex on the other side of the edge 
+      // index indicates the edge = vertex on the other side of the edge 
       // the next vertex in cw order should be the target of given edge
-      if(fh->vertex(p_cdt->cw(lindex))->point() != he->target()->point()){
+      if(fh->vertex(p_cdt->cw(index))->point() != he->target()->point()){
         //std::cout << "need to swap face" << std::endl;
-        assert(p_cdt->is_infinite(fh->vertex(lindex)));
+        assert(p_cdt->is_infinite(fh->vertex(index)));
         // take face on the other side if this is not the case 
-        typename CDT::Face_handle nfh = fh->neighbor(lindex);
-        lindex = nfh->index(fh);
+        typename CDT::Face_handle nfh = fh->neighbor(index);
+        index = nfh->index(fh);
         fh = nfh; 
       }
-      assert(fh->vertex(p_cdt->cw(lindex))->point() == he->target()->point());
-      assert(!p_cdt->is_infinite(fh->vertex(lindex)));
+      assert(fh->vertex(p_cdt->cw(index))->point() == he->target()->point());
+      assert(!p_cdt->is_infinite(fh->vertex(index)));
       
 
       // output the edge the query lies on 
       raw_output.push_back(he->source()->point());
       raw_output.push_back(he->target()->point());
       
-      if(!p_cdt->is_constrained(get_edge(fh,p_cdt->ccw(lindex)))){
+      if(!p_cdt->is_constrained(get_edge(fh,p_cdt->ccw(index)))){
         expand_edge(
             q,
-            fh->vertex(lindex)->point(), //left
+            fh->vertex(index)->point(), //left
             he->target()->point()        , //right
             fh,
-            p_cdt->ccw(lindex),
+            p_cdt->ccw(index),
             std::back_inserter(raw_output));
       }
-      raw_output.push_back(fh->vertex(lindex)->point());
+      raw_output.push_back(fh->vertex(index)->point());
       
-      if(!p_cdt->is_constrained(get_edge(fh,p_cdt->cw(lindex)))){
+      if(!p_cdt->is_constrained(get_edge(fh,p_cdt->cw(index)))){
         expand_edge(
             q,
             he->source()->point()        , //left
-            fh->vertex(lindex)->point(), //right
+            fh->vertex(index)->point(), //right
             fh,
-            p_cdt->cw(lindex),
+            p_cdt->cw(index),
             std::back_inserter(raw_output));
       }     
     }
     
-    if(ltype == CDT::VERTEX){
-      //std::cout << "query on vertex" << std::endl;
+    if(location == CDT::VERTEX){
+      std::cout << "query on vertex" << std::endl;
+      
+      bool query_point_on_vertex_is_not_yet_implemented = false;
+      assert(query_point_on_vertex_is_not_working_yet); 
       
       assert(q  ==  he->target()->point());
-      assert(fh->vertex(lindex)->point() ==  he->target()->point());
-      while(fh->vertex(p_cdt->ccw(lindex))->point() != he->source()->point()){
-        typename CDT::Face_handle nfh = fh->neighbor(p_cdt->ccw(lindex));
+      assert(fh->vertex(index)->point() ==  he->target()->point());
+      
+      // push points that are seen anyway
+      // raw_output.push_back(he->source()->point()); inserted last 
+      raw_output.push_back(he->target()->point());
+      raw_output.push_back(he->next()->target()->point());
+      
+      // now start in the triangle that contains he->next()       
+      while(he->next()->target()->point() != fh->vertex(p_cdt->ccw(index))->point()){
+        typename CDT::Face_handle nfh = fh->neighbor(p_cdt->ccw(index));
         int nindex = nfh->index(fh);
-        lindex = p_cdt->ccw(nindex);
+        index = p_cdt->ccw(nindex);
         fh = nfh; 
+        assert(he->target()->point() == fh->vertex(index)->point());
       }
-      bool query_point_on_vertex_is_not_yet_implemented = false; 
-      assert(query_point_on_vertex_is_not_yet_implemented); //todo 
+      
+      assert(he->next()->source()->point() == fh->vertex(index)->point());
+      assert(he->next()->target()->point() == fh->vertex(p_cdt->ccw(index))->point());
+      assert(!p_cdt->is_infinite(fh));
+      assert(p_cdt->is_constrained(get_edge(fh,p_cdt->cw(index))));
+
+      while(he->source()->point() != fh->vertex(p_cdt->ccw(index))->point()){
+        
+        if(!p_cdt->is_constrained(get_edge(fh,index))){
+          expand_edge(
+              q,
+              fh->vertex(p_cdt-> cw(index))->point(), //left
+              fh->vertex(p_cdt->ccw(index))->point(), //right
+              fh,
+              index,
+              std::back_inserter(raw_output));
+        }
+        // push left end point of edge into output 
+        raw_output.push_back(fh->vertex(p_cdt-> cw(index))->point());
+        
+        // take the next triangle around q in ccw order 
+        typename CDT::Face_handle nfh = fh->neighbor(p_cdt->ccw(index));
+        int nindex = nfh->index(fh);
+        index = p_cdt->ccw(nindex);
+        fh = nfh; 
+        assert(fh->vertex(index)->point() ==  he->target()->point());
+      }
     }
    
     
