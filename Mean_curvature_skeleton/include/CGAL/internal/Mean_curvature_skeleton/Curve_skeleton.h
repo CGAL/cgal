@@ -136,8 +136,6 @@ public:
       }
     }
 
-//    Graph curve;
-
     // map a vertex id to its descriptor
     std::vector<vertex_desc> id_to_vd;
     id_to_vd.clear();
@@ -204,7 +202,6 @@ public:
       pos = Point(pos.x() / num, pos.y() / num, pos.z() / num);
       points[id_to_vd[new_id]] = pos;
     }
-//    boost::copy_graph(curve, graph);
   }
 
 // Private methods

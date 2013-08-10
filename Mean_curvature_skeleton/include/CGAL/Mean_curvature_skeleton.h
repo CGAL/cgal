@@ -652,7 +652,8 @@ public:
       double area_ratio = fabs(last_area - area) / original_area;
 
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
-      MCFSKEL_INFO(std::cout << "|area - last_area| / original_area " << area_ratio << "\n";)
+      MCFSKEL_INFO(std::cout << "|area - last_area| / original_area "
+                             << area_ratio << "\n";)
 
       if (area_ratio < area_TH)
       {
@@ -924,7 +925,8 @@ private:
     }
 
     // This is a stop predicate (defines when the algorithm terminates).
-    // The simplification stops when the length of all edges is greater than the minimum threshold.
+    // The simplification stops when the length of all edges is greater
+    // than the minimum threshold.
     CGAL::internal::Minimum_length_predicate<Polyhedron> stop(edgelength_TH);
 
     // midpoint placement without geometric test
@@ -933,7 +935,8 @@ private:
     internal::Track_correspondence_visitor<Polyhedron> vis;
     if (is_medially_centered)
     {
-      vis = internal::Track_correspondence_visitor<Polyhedron>(&correspondence, &poles, &cell_dual, max_id);
+      vis = internal::Track_correspondence_visitor<Polyhedron>(&correspondence,
+                                                   &poles, &cell_dual, max_id);
     }
     else
     {
