@@ -61,7 +61,7 @@ typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matri
 
 typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
 
-typedef boost::adjacency_list<boost::listS, boost::listS, boost::undirectedS> Graph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
@@ -293,6 +293,10 @@ private:
   int copyItemIndex;
 
   Polyhedron *mCopy;
+
+  Graph skeleton_curve;
+  std::map<vertex_desc, Point> skeleton_points;
+
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -375,11 +379,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Graph g;
-  std::map<vertex_desc, Point> points;
+
   std::map<vertex_desc, std::vector<int> > corr;
 
-  mcs->get_skeleton(g, points);
   mcs->get_correspondent_vertices(corr);
 
   // add segmentation
@@ -414,7 +416,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   for (iter = corr.begin(); iter != corr.end(); ++iter)
   {
     vertex_desc i = iter->first;
-    Point skel = points[i];
+    Point skel = skeleton_points[i];
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
       Point surf = id_to_vd[corr[i][j]]->point();
@@ -473,7 +475,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segment_mesh);
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation of %1").arg(item->name()));
-  item_segmentation->setVisible(false);
+//  item_segmentation->setVisible(false);
 
   scene->itemChanged(index);
   scene->setSelectedItem(index);
@@ -513,7 +515,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     std::map<vertex_desc, Point> points;
 
     temp_mcs->convert_to_skeleton(g, points);
-//    temp_mcs->get_skeleton(g, points);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -576,7 +577,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     std::map<vertex_desc, Point> points;
 
     temp_mcs->convert_to_skeleton(g, points);
-//    temp_mcs->get_skeleton(g, points);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -688,7 +688,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   std::cout << "Split...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  std::cout << "before split triangles\n";
   int num_split = mcs->split_triangles();
   std::cout << "split " << num_split << " triangles.\n";
 
@@ -883,12 +882,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Graph g;
-  std::map<vertex_desc, Point> points;
   std::map<vertex_desc, std::vector<int> > corr;
 
-  mcs->convert_to_skeleton(g, points);
-//  mcs->get_skeleton(g, points);
+  skeleton_curve.clear();
+  skeleton_points.clear();
+  mcs->convert_to_skeleton(skeleton_curve, skeleton_points);
   mcs->get_correspondent_vertices(corr);
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -897,40 +895,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   skeleton->setColor(QColor(175, 0, 255));
 
   boost::graph_traits<Graph>::edge_iterator ei, ei_end;
-
-  vertex_iter vit, vi_end;
-  for (boost::tie(vit, vi_end) = boost::vertices(g); vit != vi_end; ++vit)
-  {
-    if (points.find(*vit) == points.end())
-    {
-      std::cout << "ff " << *vit << "\n";
-    }
-    else
-    {
-      std::cout << "f " << points[*vit] << "\n";
-    }
-  }
-  std::cout << "point size " << points.size() << "\n";
-  std::map<vertex_desc, Point>::iterator it;
-  for (it = points.begin(); it != points.end(); ++it)
-  {
-    std::cout << it->first << " " << it->second << "\n";
-  }
-  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+  for (boost::tie(ei, ei_end) = boost::edges(skeleton_curve); ei != ei_end; ++ei)
   {
     std::vector<Point> line;
     line.clear();
-    if (points.find(boost::source(*ei, g)) == points.end())
-    {
-      std::cout << "cannot find " << boost::source(*ei, g) << "\n";
-    }
-    else
-    {
-      std::cout << "found " << points[boost::source(*ei, g)] << " "
-                << points[boost::target(*ei, g)] << "\n";
-    }
-    Point s = points[boost::source(*ei, g)];
-    Point t = points[boost::target(*ei, g)];
+    Point s = skeleton_points[boost::source(*ei, skeleton_curve)];
+    Point t = skeleton_points[boost::target(*ei, skeleton_curve)];
     line.push_back(s);
     line.push_back(t);
     skeleton->polylines.push_back(line);
@@ -955,7 +925,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   for (iter = corr.begin(); iter != corr.end(); ++iter)
   {
     vertex_desc i = iter->first;
-    Point s = points[i];
+    Point s = skeleton_points[i];
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
       std::vector<Point> line;
@@ -1000,18 +970,22 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   junction_ps->set_selected_diameter(6.0);
 
   boost::graph_traits<Graph>::vertex_iterator vi;
-  for (vi = vertices(g).first; vi != vertices(g).second; ++vi)
+  for (vi = vertices(skeleton_curve).first; vi != vertices(skeleton_curve).second; ++vi)
   {
-    int deg = boost::out_degree(*vi, g);
+    int deg = boost::out_degree(*vi, skeleton_curve);
     if (deg == 1)
     {
-      UI_point_3<Kernel> point(points[*vi].x(), points[*vi].y(), points[*vi].z());
+      UI_point_3<Kernel> point(skeleton_points[*vi].x(),
+                               skeleton_points[*vi].y(),
+                               skeleton_points[*vi].z());
       end_ps->select(&point);
       end_ps->push_back(point);
     }
     else if (deg > 2)
     {
-      UI_point_3<Kernel> point(points[*vi].x(), points[*vi].y(), points[*vi].z());
+      UI_point_3<Kernel> point(skeleton_points[*vi].x(),
+                               skeleton_points[*vi].y(),
+                               skeleton_points[*vi].z());
       junction_ps->select(&point);
       junction_ps->push_back(point);
     }

@@ -126,6 +126,8 @@ enum Degeneracy_algorithm_tag
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::edge_descriptor as key and
 ///         `unsigned int` as value type
+/// @tparam Graph
+///         data structure for skeleton curve
 /// @cond CGAL_DOCUMENT_INTERNAL
 /// @tparam Collapse_algorithm_tag
 ///         tag for selecting the edge collapse algorithm
@@ -136,12 +138,14 @@ enum Degeneracy_algorithm_tag
 template <class HalfedgeGraph,
           class SparseLinearAlgebraTraits_d,
           class VertexIndexMap,
-          class EdgeIndexMap>
+          class EdgeIndexMap,
+          class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
 #else
 template <class HalfedgeGraph,
           class SparseLinearAlgebraTraits_d,
           class VertexIndexMap,
           class EdgeIndexMap,
+          class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
@@ -173,12 +177,6 @@ public:
   typedef typename internal::Cotangent_weight<HalfedgeGraph,
   internal::Cotangent_value_minimum_zero<HalfedgeGraph,
   internal::Cotangent_value_Meyer_secure<HalfedgeGraph> > >                    Weight_calculator;
-
-  // Skeleton types
-  /// \name Data structure for skeleton curve
-  /// @{
-  typedef boost::adjacency_list<boost::listS, boost::listS, boost::undirectedS>  Graph;
-  /// @}
 
   typedef internal::Curve_skeleton<HalfedgeGraph, Graph,
   VertexIndexMap, EdgeIndexMap>                                                Skeleton;
@@ -258,10 +256,6 @@ private:
   /** the incident angle for a halfedge */
   std::vector<double> halfedge_angle;
 
-  /** record the skeleton curve */
-  Graph g;
-  /** record the position of skeletal points */
-  std::map<vertex_desc, Point> points;
   /** record the correspondence between final surface
    *  and original surface points */
   std::map<int, std::vector<int> > correspondence;
@@ -439,21 +433,6 @@ public:
           non_fixed_points.push_back(vd->point());
       }
     }
-  }
-
-  /**
-   * Get the skeleton curve
-   *
-   * @param g
-   *        a `boost::graph` data structure
-   *        storing the connections of the skeleton curve
-   * @param points
-   *        return the positions of skeletal points
-   */
-  void get_skeleton(Graph& graph, std::map<vertex_desc, Point>& pts)
-  {
-    graph = g;
-    pts = points;
   }
 
   /**
@@ -698,7 +677,7 @@ public:
     skeleton.extract_skeleton(g, points, record);
 
     skeleton_to_surface.clear();
-    std::map<vertex_desc, std::vector<int> >::iterator iter;
+    typename std::map<vertex_desc, std::vector<int> >::iterator iter;
     for (iter = record.begin(); iter != record.end(); ++iter)
     {
       vertex_desc i = iter->first;
