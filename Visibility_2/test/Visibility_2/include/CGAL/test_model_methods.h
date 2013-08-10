@@ -119,11 +119,20 @@ void test_model_methods_for_arr(
     arr_out.clear();
     typename Input_arrangement_2::Halfedge_const_iterator hit_snd;
       for (hit_snd = arr.halfedges_begin(); hit_snd != arr.halfedges_end(); ++hit_snd) {
-        if(hit_snd->face()->is_unbounded()){
+        if(!hit_snd->face()->is_unbounded()){
           Face_handle face_check_he_snd = visibility.visibility_region(hit_snd->target()->point(), hit_snd, arr_out);
-          assert(face_check_he_snd->is_unbounded());
+          assert(!face_check_he_snd->is_unbounded());
+          if (arr_out.faces_begin()->is_unbounded()) {
+            face = ++arr_out.faces_begin();
+          }
+          else {
+            face = arr_out.faces_begin();
+          }
+          assert(face_check_he_snd == face);
+          assert(true == test_are_equal<Output_arrangement_2>
+              (arr_out, arr));          
         }
-      }
+      }   
   }
 // OLD CODE, PLEASE REMOVE IF NOT NEEDED, Michael   
 //  query_pt = Point_2(8, 0);
