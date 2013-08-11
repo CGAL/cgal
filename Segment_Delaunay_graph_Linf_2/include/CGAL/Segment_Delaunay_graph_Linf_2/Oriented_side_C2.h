@@ -89,9 +89,10 @@ public:
     bool has_lseg_neg_slope;
 
     // Voronoi_vertex_2 v(s1, s2, inf);
-    // compute linf projection of v(s1, s2, inf) on segment s;
+    // compute linf projection of v(s1, s2, inf) on segment s,
+    // which will be the test point for the orientation test
 
-    Point_2 proj_of_infv;
+    Point_2 testpnt;
 
     bool is_s1_segment = s1.is_segment();
     bool is_s2_segment = s2.is_segment();
@@ -124,12 +125,12 @@ public:
 
       if (same_points(s1.source_site(), s2.source_site()) or
           same_points(s1.source_site(), s2.target_site())   ) {
-        proj_of_infv = s1.source_site().point();
+        testpnt = s1.source_site().point();
       } else {
         CGAL_assertion(
           same_points(s1.target_site(), s2.source_site()) or
           same_points(s1.target_site(), s2.target_site())   );
-        proj_of_infv = s1.target_site().point();
+        testpnt = s1.target_site().point();
       }
 
     } else {
@@ -139,10 +140,10 @@ public:
       { // here the point in {s1,s2}
         // is endpoint of the segment in {s1,s2}
         if (is_s1_segment) {
-          proj_of_infv = s2.point();
+          testpnt = s2.point();
         } else {
           CGAL_assertion(is_s2_segment);
-          proj_of_infv = s1.point();
+          testpnt = s1.point();
         }
       } // end of case: point is endpoint of segment
       else {
@@ -161,19 +162,19 @@ public:
 
         if (has_lseg_neg_slope) {
           if (is_s1_segment) {
-            proj_of_infv =
+            testpnt =
               compute_horizontal_projection(lseg, s2.point());
           } else {
-            proj_of_infv =
+            testpnt =
               compute_vertical_projection(lseg, s1.point());
           }
         } else {
           // here, segment has positive slope
           if (is_s1_segment) {
-            proj_of_infv =
+            testpnt =
               compute_vertical_projection(lseg, s2.point());
           } else {
-            proj_of_infv =
+            testpnt =
               compute_horizontal_projection(lseg, s1.point());
           }
         } // end of case: seg has positive slope
@@ -183,7 +184,7 @@ public:
 
 
     Oriented_side retval =
-      oriented_side_of_line(lp, proj_of_infv);
+      oriented_side_of_line(lp, testpnt);
 
     if (retval == ON_ORIENTED_BOUNDARY) {
       // philaris: tocheck this later
@@ -197,21 +198,23 @@ public:
               << "trying to fix ZERO"
               << std::endl;);
 
+      // in order to do tie breaking, use the input point itself
+      // as the test point (i.e., not the linf projection)
       if (has_lseg_neg_slope) {
         if (is_s1_segment) {
-          proj_of_infv = s2.point();
+          testpnt = s2.point();
         } else {
-          proj_of_infv = s1.point();
+          testpnt = s1.point();
         }
       } else {
         // here, segment has positive slope
         if (is_s1_segment) {
-          proj_of_infv = s2.point();
+          testpnt = s2.point();
         } else {
-          proj_of_infv = s1.point();
+          testpnt = s1.point();
         }
       } // end of case: seg has positive slope
-      retval = - oriented_side_of_line(lp, proj_of_infv);
+      retval = - oriented_side_of_line(lp, testpnt);
     }
 
 
