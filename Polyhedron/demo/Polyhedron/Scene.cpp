@@ -105,12 +105,17 @@ Scene::erase(QList<int> indices)
     max_index = (std::max)(max_index, index);
     Scene_item* item = m_entries[index];
     to_be_removed.push_back(item);
-    emit itemAboutToBeDestroyed(item);
-    delete item;
   }
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
-    m_entries.removeAll(item);
+    // in slots of itemAboutToBeDestroyed, another erase function can be called 
+    // (which might remove items inside to_be_removed)
+    // so to prevent deleting items multiple times this check is added
+    if(m_entries.contains(item)) {
+      emit itemAboutToBeDestroyed(item);
+      delete item;
+      m_entries.removeAll(item);
+    }
   }
 
   selected_item = -1;
@@ -141,6 +146,12 @@ Scene_item*
 Scene::item(Item_id index) const
 {
   return m_entries.value(index); // QList::value checks bounds
+}
+
+Scene::Item_id 
+Scene::item_id(Scene_item* scene_item) const
+{
+  return m_entries.indexOf(scene_item);
 }
 
 int
