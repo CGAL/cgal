@@ -180,28 +180,10 @@ private:
   typedef typename boost::graph_traits<Halfedge_graph>::in_edge_iterator    in_edge_iterator;
   typedef typename boost::graph_traits<Halfedge_graph>::out_edge_iterator   out_edge_iterator;
 
-  // Handle container types
-  typedef std::list<vertex_descriptor>  Handle_container;
-  typedef std::list<Handle_container>   Handle_group_container;
-
   typedef typename Closest_rotation_helper::Matrix CR_matrix;
   typedef typename Closest_rotation_helper::Vector CR_vector;
 
 public:
-  /** The type used as the representative of a group of handles*/
-  typedef typename Handle_group_container::iterator                Handle_group;
-  /** Const version of Handle_group*/
-  typedef typename Handle_group_container::const_iterator          Const_handle_group;
-  /** Iterator over the groups of handles. The type can be implicitly 
-      converted to Deform_mesh::Handle_group or Deform_mesh::Const_handle_group */
-  typedef typename Handle_group_container::iterator                Handle_group_iterator;
-   /** Const version of Handle_group_iterator */
-  typedef typename Handle_group_container::const_iterator          Handle_group_const_iterator;
-
-  /** Iterator over vertex descriptors in a group of handles. Its value type is `vertex_descriptor` */
-  typedef typename Handle_container::iterator                      Handle_iterator;
-   /** Const version of Handle_iterator*/
-  typedef typename Handle_container::const_iterator                Handle_const_iterator;
 
   /** Iterator over vertex descriptors in the region-of-interest. Its value type is `vertex_descriptor` */
   typedef typename std::vector<vertex_descriptor>::iterator        Roi_iterator;
@@ -236,7 +218,6 @@ private:
   bool need_preprocess_region_of_solution;            ///< is there any need to compute region of solution 
 
   bool last_preprocess_successful;                    ///< stores the result of last call to preprocess()
-  Handle_group_container handle_group_list;           ///< user specified handles
 
   Weight_calculator weight_calculator;
 
@@ -332,149 +313,53 @@ public:
     need_preprocess_both();
     // clear vertices
     roi.clear();
-    handle_group_list.clear();
     is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
     is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
   }
-
-  /**
-   * Creates a new empty group of handles.
-   * `insert_handle(Handle_group handle_group, vertex_descriptor vd)` or `insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)`
-   * must be used to insert handles in a group.
-   * After inserting vertices, use `translate()` or `rotate()` for applying a transformation on all the vertices inside a group.
-   * @return a representative of the group of handles created (it is valid until `erase_handle(Handle_group handle_group)` is called)
-   */
-  Handle_group create_handle_group()
-  {
-    // no need to need_preprocess = true;
-    handle_group_list.push_back(Handle_container());
-    return --handle_group_list.end();
-  }
   
   /**
-   * Inserts a vertex into a group of handles. The vertex is also inserted in the region-of-interest if it is not already in it.
-   * @param handle_group the group where the vertex is inserted in
+   * Inserts a vertex into handles. The vertex is also inserted in the region-of-interest if it is not already in it.
    * @param vd the vertex to be inserted
    * @return `true` if the insertion is successful
    */
-  bool insert_handle(Handle_group handle_group, vertex_descriptor vd)
+  bool insert_handle(vertex_descriptor vd)
   {
     if(is_handle(vd)) { return false; }
     need_preprocess_both();
 
     insert_roi(vd); // also insert it as roi
 
-    is_hdl_map[id(vd)] = true;    
-    handle_group->push_back(vd);
+    is_hdl_map[id(vd)] = true;
     return true;
   }
 
   /**
-   * Inserts a range of vertices in a group of handles. The vertices are also inserted in the region-of-interest if they are not already in it.
+   * Inserts a range of vertices into handles. The vertices are also inserted in the region-of-interest if they are not already in it.
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
-   * @param handle_group the group where the vertex is inserted in
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
    */
   template<class InputIterator>
-  void insert_handle(Handle_group handle_group, InputIterator begin, InputIterator end)
+  void insert_handle(InputIterator begin, InputIterator end)
   {
     for( ;begin != end; ++begin)
     {
-      insert_handle(handle_group, *begin);
+      insert_handle(*begin);
     }
   }
 
   /**
-   * Erases a group of handles. Its representative becomes invalid.
-   * @param handle_group the group to be erased
-   */
-  void erase_handle(Handle_group handle_group)
-  {
-    need_preprocess_both();
-    for(typename Handle_container::iterator it = handle_group->begin(); it != handle_group->end(); ++it) 
-    {
-      is_hdl_map[id(*it)] = false;
-    }
-    handle_group_list.erase(handle_group);
-  }
-
-  /**
-   * Erases a vertex from a group of handles.
-   * \note The group of handles is not erased even if it becomes empty.
-   * @param handle_group the group where the vertex is erased from
-   * @param vd the vertex to be erased
-   * @return `true` if the removal is successful
-   */
-  bool erase_handle(Handle_group handle_group, vertex_descriptor vd)
-  {
-    if(!is_handle(vd)) { return false; }
-    
-    typename Handle_container::iterator it = std::find(handle_group->begin(), handle_group->end(), vd);
-    if(it != handle_group->end())
-    {
-      is_hdl_map[id(*it)] = false;
-      handle_group->erase(it);   
-      need_preprocess_both();
-      return true;
-      // Although the handle group might get empty, we do not delete it from handle_group
-    }
-    return false; // OK (vd is handle but placed in other handle group than handle_group argument)
-  }
-
-  /**
-   * Erases a vertex by searching it through all groups of handles.
-   * \note The group of handles is not erased even if it becomes empty.
+   * Erases a vertex from handles.
    * @param vd the vertex to be erased
    * @return `true` if the removal is successful
    */
   bool erase_handle(vertex_descriptor vd)
   {
     if(!is_handle(vd)) { return false; }
-
-    for(Handle_group it = handle_group_list.begin(); it != handle_group_list.end(); ++it)
-    {
-      if(erase_handle(it, vd)) { return true; }
-    }
-
-    CGAL_assertion(false);// inconsistency between is_handle_map, and handle_group_list
-    return false;
-  }
-
-  /** 
-   * Provides access to all the groups of handles.
-   * @return the range of iterators over all groups of handles
-   */
-  std::pair<Handle_group_iterator, Handle_group_iterator> handle_groups()
-  {
-    return std::make_pair(handle_group_list.begin(), handle_group_list.end());
-  }
-
-  /** 
-   * Const version
-   */
-  std::pair<Handle_group_const_iterator, Handle_group_const_iterator> handle_groups() const
-  {
-    return std::make_pair(handle_group_list.begin(), handle_group_list.end());
-  }
-
-  /** 
-   * Provides access to all the handles inside a group.
-   * @param handle_group the group containing handles
-   * @return the range of iterators over all handles inside a group
-   * 
-   */
-  std::pair<Handle_iterator, Handle_iterator> handles(Handle_group handle_group)
-  {
-    return std::make_pair(handle_group->begin(), handle_group->end());
-  }
-
-  /** 
-   * Const version
-   */
-  std::pair<Handle_const_iterator, Handle_const_iterator> handles(Const_handle_group handle_group) const
-  {
-    return std::make_pair(handle_group->begin(), handle_group->end());
+    
+    need_preprocess_both();
+    is_hdl_map[id(vd)] = false;
+    return true;
   }
 
   /**
@@ -576,19 +461,21 @@ public:
    * \note This transformation is applied on the original positions of the vertices 
    * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
    * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
+   *
+   * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
-   * @param handle_group the representative of the group of handles to be translated
+   *
+   * @param begin first iterator of the range of vertices
+   * @param end past-the-end iterator of the range of vertices
    * @param t translation vector 
    */
-  template<class Vect>
-  void translate(Const_handle_group handle_group, const Vect& t)
+  template<class InputIterator, class Vect>
+  void translate(InputIterator begin, InputIterator end, const Vect& t)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
-    for(typename Handle_container::const_iterator it = handle_group->begin();
-      it != handle_group->end(); ++it)
-    {
-      std::size_t v_id = ros_id(*it);
+    for(; begin != end; ++begin) {
+      std::size_t v_id = ros_id(*begin);
       solution[v_id] = add_to_point(original[v_id], t);
     }
   }
@@ -599,22 +486,24 @@ public:
    * \note This transformation is applied on the original positions of the vertices 
    * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`).  
    * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
+   *
+   * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
    * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
-   * @param handle_group the representative of the group of handles to be rotated and translated
+   *
+   * @param begin first iterator of the range of vertices
+   * @param end past-the-end iterator of the range of vertices
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
    * @param t post translation vector
    */
-  template <typename Quaternion, typename Vect>
-  void rotate(Const_handle_group handle_group, const Point& rotation_center, const Quaternion& quat, const Vect& t)
+  template <typename InputIterator, typename Quaternion, typename Vect>
+  void rotate(InputIterator begin, InputIterator end, const Point& rotation_center, const Quaternion& quat, const Vect& t)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
-    for(typename Handle_container::const_iterator it = handle_group->begin();
-      it != handle_group->end(); ++it)
-    {
-      std::size_t v_id = ros_id(*it);
+    for(; begin != end; ++begin) {
+      std::size_t v_id = ros_id(*begin);
       Vect v = quat * sub_to_vector<Vect>(original[v_id], rotation_center);
       const Point& rotated = add_to_point(rotation_center, v);
       solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);

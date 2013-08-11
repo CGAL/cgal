@@ -257,16 +257,13 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
   // draw handle related things
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
 
-  Deform_mesh::Const_handle_group hgb, hge;
-  for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb)
+  for(Handle_group_data_list::const_iterator hgb_data = handle_frame_map.begin(); hgb_data != handle_frame_map.end(); ++hgb_data)
   {
-    // draw axis using manipulated frame assoc with handle_group
-    const Handle_group_data& hgb_data = get_data(hgb);
-    if(hgb_data.frame == viewer->manipulatedFrame())
+    if(hgb_data->frame == viewer->manipulatedFrame())
     {      
       // draw axis
       ::glPushMatrix();
-      ::glMultMatrixd(hgb_data.frame->matrix());
+      ::glMultMatrixd(hgb_data->frame->matrix());
       QGLViewer::drawAxis(length_of_axis);
       ::glPopMatrix();
       // draw bbox
@@ -274,20 +271,18 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
       {
         color.set_rgb_color(1.0f, 0, 0);
         ::glPushMatrix();
-        ::glTranslated(hgb_data.frame->position().x, hgb_data.frame->position().y, hgb_data.frame->position().z);
-        ::glMultMatrixd(hgb_data.frame->orientation().matrix());
-        ::glTranslated(-hgb_data.frame_initial_center.x, -hgb_data.frame_initial_center.y, -hgb_data.frame_initial_center.z);        
-        draw_bbox(hgb_data.bbox);
+        ::glTranslated(hgb_data->frame->position().x, hgb_data->frame->position().y, hgb_data->frame->position().z);
+        ::glMultMatrixd(hgb_data->frame->orientation().matrix());
+        ::glTranslated(-hgb_data->frame_initial_center.x, -hgb_data->frame_initial_center.y, -hgb_data->frame_initial_center.z);        
+        draw_bbox(hgb_data->bbox);
         ::glPopMatrix();
       }
     }
     // draw handle points
-    if(hgb == active_group) { color.set_rgb_color(1.0f, 0, 0); }
+    if(hgb_data == active_group) { color.set_rgb_color(1.0f, 0, 0); }
     else                    { color.set_rgb_color(0, 0, 1.0f); }
-    Deform_mesh::Handle_const_iterator hb, he;
-    for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb)
-    {           
-      gl_draw_point( (*hb)->point() );
+    for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->handle_group.begin(); hb != hgb_data->handle_group.end(); ++hb)
+    {  gl_draw_point( (*hb)->point() );
     }
   }
 

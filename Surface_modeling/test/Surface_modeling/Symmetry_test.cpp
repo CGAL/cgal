@@ -25,7 +25,7 @@ typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::SP
 int main()
 {
   Polyhedron mesh_1;
-  if(!read_to_polyhedron("data/square.off", mesh_1)) { return EXIT_FAILURE; }
+  read_to_polyhedron("data/square.off", mesh_1);
   Polyhedron mesh_2 = mesh_1;
 
   init_indices(mesh_1);
@@ -38,20 +38,18 @@ int main()
   const double x = -0.45; const double y = -0.65; const double z = -0.0;
 
   std::cerr << "ORIGINAL_ARAP performance: " << std::endl;
-  bool successed = preprocess_and_deform(deform_mesh_arap,
+  preprocess_and_deform(deform_mesh_arap,
     "data/Symmetry_test_roi.txt",
     "data/Symmetry_test_handle.txt",
     CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
-  if(!successed) { return EXIT_FAILURE; }
 
   std::cerr << "SPOKES_AND_RIMS performance: " << std::endl;
-  successed = preprocess_and_deform(deform_mesh_spoke,
+  preprocess_and_deform(deform_mesh_spoke,
     "data/Symmetry_test_roi.txt",
     "data/Symmetry_test_handle.txt",
     CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
-  if(!successed) { return EXIT_FAILURE; }
 
   std::cerr << "Save deformed models" << std::endl;
   std::ofstream("data/Symmetry_test_deformed_arap.off") << mesh_1;

@@ -31,27 +31,27 @@ typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map> Deform_mesh;
 
 // extract vertices which are at most k (inclusive) far from vertex v
-std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
+std::vector<vertex_descriptor> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
 {
   std::map<vertex_descriptor, int>  D;
-  std::queue<vertex_descriptor>     Q;
-  Q.push(v); D[v] = 0;
+  std::vector<vertex_descriptor>    Q;
+  Q.push_back(v); D[v] = 0;
+  std::size_t current_index = 0;
 
   int dist_v;
-  while( !Q.empty() && (dist_v = D[Q.front()]) < k ) {
-    v = Q.front();
-    Q.pop();
+  while( current_index < Q.size() && (dist_v = D[ Q[current_index] ]) < k ) {
+    v = Q[current_index++];
 
     out_edge_iterator e, e_end;
     for(boost::tie(e, e_end) = boost::out_edges(v, P); e != e_end; e++)
     {
       vertex_descriptor new_v = boost::target(*e, P);
       if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-        Q.push(new_v);
+        Q.push_back(new_v);
       }
     }
   }
-  return D;
+  return Q;
 }
 
 int main()
@@ -86,35 +86,25 @@ int main()
   // insert region of interest
   boost::tie(vb,ve) = boost::vertices(mesh);
 
-  std::map<vertex_descriptor, int> roi_map = extract_k_ring(mesh, *boost::next(vb, 47), 9);
-  std::map<vertex_descriptor, int> handles_1_map = extract_k_ring(mesh, *boost::next(vb, 39), 1);
-  std::map<vertex_descriptor, int> handles_2_map = extract_k_ring(mesh, *boost::next(vb, 97), 1);
+  std::vector<vertex_descriptor> roi_map = extract_k_ring(mesh, *boost::next(vb, 47), 9);
+  std::vector<vertex_descriptor> handles_1_map = extract_k_ring(mesh, *boost::next(vb, 39), 1);
+  std::vector<vertex_descriptor> handles_2_map = extract_k_ring(mesh, *boost::next(vb, 97), 1);
 
-  for(std::map<vertex_descriptor, int>::iterator it = roi_map.begin(); it != roi_map.end(); ++it) {
-    deform_mesh.insert_roi(it->first);
-  }
-
-  Deform_mesh::Handle_group handles_1 = deform_mesh.create_handle_group();
-  for(std::map<vertex_descriptor, int>::iterator it = handles_1_map.begin(); it != handles_1_map.end(); ++it) {
-    deform_mesh.insert_handle(handles_1, it->first);
-  }
-
-  Deform_mesh::Handle_group handles_2 = deform_mesh.create_handle_group();
-  for(std::map<vertex_descriptor, int>::iterator it = handles_2_map.begin(); it != handles_2_map.end(); ++it) {
-    deform_mesh.insert_handle(handles_2, it->first);
-  }
+  deform_mesh.insert_roi(roi_map.begin(), roi_map.end());
+  deform_mesh.insert_handle(handles_1_map.begin(), handles_1_map.end());
+  deform_mesh.insert_handle(handles_2_map.begin(), handles_2_map.end());
 
   deform_mesh.preprocess();
 //// DEFORM SECTION ////
 
-  deform_mesh.translate(handles_1, Eigen::Vector3d(0,0,1));
+  deform_mesh.translate(handles_1_map.begin(), handles_1_map.end(), Eigen::Vector3d(0,0,1));
    // overrides any previous call
 
   Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
   Eigen::Vector3d vect(0, 0, 0);
 
-  deform_mesh.rotate(handles_1, Deform_mesh::Point(0,0,0), quad, vect);
-  deform_mesh.rotate(handles_2, Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate(handles_1_map.begin(), handles_1_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate(handles_2_map.begin(), handles_2_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
 
   deform_mesh.deform();
 
@@ -124,8 +114,8 @@ int main()
 
   // Note that translate and rotate are not cumulative,
   // they just use original positions (positions at the time of construction) of the handles while calculating target positions
-  deform_mesh.translate(handles_1, Eigen::Vector3d(0,0.30,0));
-  deform_mesh.translate(handles_2, Eigen::Vector3d(0,0.30,0));
+  deform_mesh.translate(handles_1_map.begin(), handles_1_map.end(), Eigen::Vector3d(0,0.30,0));
+  deform_mesh.translate(handles_2_map.begin(), handles_2_map.end(), Eigen::Vector3d(0,0.30,0));
 
   deform_mesh.set_iterations(10);
   deform_mesh.set_tolerance(0.0);

@@ -63,13 +63,11 @@ int main()
   deform_mesh.insert_roi(vb, ve); // insert whole mesh as roi
 
   // insert handles
-  Deform_mesh::Handle_group handles_ref = deform_mesh.create_handle_group();
-
   vertex_descriptor handle_1 = *boost::next(vb, 213);
   vertex_descriptor handle_2 = *boost::next(vb, 157);
 
-  deform_mesh.insert_handle(handles_ref, handle_1); // insert handles
-  deform_mesh.insert_handle(handles_ref, handle_2);
+  deform_mesh.insert_handle(handle_1); // insert handles
+  deform_mesh.insert_handle(handle_2);
 
   // insertion of roi and handles completed, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
@@ -102,7 +100,7 @@ int main()
   // want to add another handle
 //// PREPROCESS SECTION AGAIN////
   vertex_descriptor handle_3 = *boost::next(vb, 92);
-  deform_mesh.insert_handle(handles_ref, handle_3); // now I need to prepocess again
+  deform_mesh.insert_handle(handle_3); // now I need to prepocess again
 
   if(!deform_mesh.preprocess()){ 
     std::cerr << "Check documentation of preprocess()" << std::endl;

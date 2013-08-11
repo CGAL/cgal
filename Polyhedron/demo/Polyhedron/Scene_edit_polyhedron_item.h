@@ -96,7 +96,7 @@ typedef Deform_mesh::Point  Point;
 class Handle_group_data
 {
 public:
-  Deform_mesh::Handle_group handle_group;
+  std::vector<vertex_descriptor> handle_group;
   qglviewer::ManipulatedFrame* frame;  // manframe assoc with handle group
   qglviewer::Vec frame_initial_center; // initial center of frame
   Scene_interface::Bbox bbox;          // bbox of handles inside group  
@@ -106,11 +106,18 @@ private:
   Deform_mesh* deform_mesh;
 
 public:
-  Handle_group_data(Deform_mesh::Handle_group handle_group, Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
-    : handle_group(handle_group), frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
+  Handle_group_data(Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
+    : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
   void refresh()
   {
+    for(std::vector<vertex_descriptor>::iterator it = handle_group.begin(); it != handle_group.end(); ) {
+      if(!deform_mesh->is_handle(*it)) {
+        it = handle_group.erase(it);
+      }
+      else { ++it; }
+    }
+
     reset_initial_positions();
     frame_initial_center = calculate_initial_center();
     bbox = calculate_initial_bbox();
@@ -123,8 +130,7 @@ public:
   }
   void assign()
   {
-    Deform_mesh::Handle_iterator hb, he;
-    boost::tie(hb, he) = deform_mesh->handles(handle_group);
+    std::vector<vertex_descriptor>::iterator hb = handle_group.begin();
     for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
     {
       qglviewer::Vec dif_from_initial_center = (*it) - frame_initial_center;
@@ -139,8 +145,8 @@ private:
   void reset_initial_positions()
   {
     initial_positions.clear();
-    Deform_mesh::Handle_iterator hb, he;
-    for(boost::tie(hb, he) = deform_mesh->handles(handle_group); hb != he; ++hb)
+    
+    for(std::vector<vertex_descriptor>::iterator hb = handle_group.begin(); hb != handle_group.end(); ++hb)
     {
       qglviewer::Vec point((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z() );
       initial_positions.push_back(point);
@@ -266,8 +272,8 @@ private:
   std::vector<double> normals;
 
   Deform_mesh deform_mesh;
-  Deform_mesh::Handle_group active_group;
 typedef std::list<Handle_group_data> Handle_group_data_list;
+  Handle_group_data_list::iterator active_group;
   Handle_group_data_list handle_frame_map; // keep list of handle_groups with assoc data
 
   double length_of_axis; // for drawing axis at a handle group
@@ -289,8 +295,11 @@ public:
       return false; 
     } // no handle group to insert
 
-    bool inserted = deform_mesh.insert_handle(active_group, v);
-    get_data(active_group).refresh();
+    bool inserted = deform_mesh.insert_handle(v);
+    if(inserted) {
+      active_group->handle_group.push_back(v);
+      active_group->refresh();
+    }
     return inserted;
   }
 
@@ -340,14 +349,14 @@ public:
 
   void create_handle_group()
   {
-    active_group = deform_mesh.create_handle_group();
-
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
 
-    Handle_group_data hgd(active_group, &deform_mesh, new_frame);
+    Handle_group_data hgd(&deform_mesh, new_frame);
     handle_frame_map.push_back(hgd);
     hgd.refresh();
+
+    active_group = --handle_frame_map.end();
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
     // but it makes demo more responsive if we also add this signal
@@ -366,17 +375,19 @@ public:
     // delete group representative    
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     {
-      if(it->handle_group == active_group)
+      if(it == active_group)
       {
-        delete it->frame;
-        handle_frame_map.erase(it); 
+        delete it->frame;        
+        for(std::vector<vertex_descriptor>::iterator v_it = it->handle_group.begin(); v_it != it->handle_group.end(); ++v_it) {
+          deform_mesh.erase_handle(*v_it);
+        }
+        handle_frame_map.erase(it);
         break;
       }
     }
-    deform_mesh.erase_handle(active_group);
 
     // assign another handle_group to active_group
-    Deform_mesh::Handle_group hgb, hge;
+    Handle_group_data_list::iterator hgb, hge;
     if( is_there_any_handle_group(hgb, hge) )
     { 
       active_group = hgb; 
@@ -389,7 +400,7 @@ public:
 
   void prev_handle_group()
   {
-    Deform_mesh::Handle_group hgb, hge;
+    Handle_group_data_list::iterator hgb, hge;
     if( !is_there_any_handle_group(hgb, hge) ) {
       print_message("There is no handle group to iterate on!");
       return; 
@@ -401,7 +412,7 @@ public:
 
   void next_handle_group()
   {
-    Deform_mesh::Handle_group hgb, hge;
+    Handle_group_data_list::iterator hgb, hge;
     if( !is_there_any_handle_group(hgb, hge) ) {
       print_message("There is no handle group to iterate on!");
       return; 
@@ -455,17 +466,12 @@ public:
     }
     out << std::endl;
     // save handles
-    hc = 0;
-    Deform_mesh::Const_handle_group hgb, hge;
-    for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb) 
-    { ++hc; }
-    out << hc << std::endl; // handle count
-    for(boost::tie(hgb, hge) = deform_mesh.handle_groups(); hgb != hge; ++hgb) {
-      hc = 0;
-      Deform_mesh::Handle_const_iterator hb, he;
-      for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb) { ++hc; }
-      out << hc << std::endl;
-      for(boost::tie(hb, he) = deform_mesh.handles(hgb); hb != he; ++hb) 
+    
+    out << handle_frame_map.size() << std::endl; // handle count
+    for(Handle_group_data_list::const_iterator hgb = handle_frame_map.begin(); hgb != handle_frame_map.end(); ++hgb) {
+
+      out << hgb->handle_group.size() << std::endl;
+      for(std::vector<vertex_descriptor>::const_iterator hb = hgb->handle_group.begin(); hb != hgb->handle_group.end(); ++hb) 
       {
         out << (*hb)->id() << " ";
       }
@@ -613,28 +619,26 @@ protected:
     // std::cout << message.toStdString() << std::endl;
   }
 
-  bool is_there_any_handle_group(Deform_mesh::Handle_group& hgb, Deform_mesh::Handle_group& hge)
+  bool is_there_any_handle_group(Handle_group_data_list::iterator& hgb, Handle_group_data_list::iterator& hge)
   {
-    boost::tie(hgb, hge) = deform_mesh.handle_groups();
+    hgb = handle_frame_map.begin(); hge = handle_frame_map.end();
     return hgb != hge;
   }
 
   bool is_there_any_handle_group()
   {
-    Deform_mesh::Handle_group hgb, hge;
+    Handle_group_data_list::iterator hgb, hge;
     return is_there_any_handle_group(hgb, hge);
   }
 
   bool is_there_any_handle()
   {
-    Deform_mesh::Handle_group hgb, hge;
+    Handle_group_data_list::iterator hgb, hge;
     if(!is_there_any_handle_group(hgb, hge)) { return false; } // there isn't any handle group
 
     for(; hgb != hge; ++hgb) // check inside handle groups
     {
-      Deform_mesh::Handle_iterator hb, he;
-      boost::tie(hb, he) = deform_mesh.handles(hgb);
-      if(hb != he) { return true; }      
+      if(!hgb->handle_group.empty()) { return true; }
     }
     return false;
   }
@@ -668,24 +672,6 @@ protected:
   {
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     { it->refresh(); }
-  }
-
-  Handle_group_data& get_data(Deform_mesh::Handle_group hg)
-  {
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it) {
-      if(it->handle_group == hg) { return *it; }
-    }
-    return *handle_frame_map.end(); // crash
-    // this can't happen since every created handle group is inserted in handle_frame_map
-  }
-
-  Handle_group_data get_data(Deform_mesh::Const_handle_group hg) const
-  {
-    for(Handle_group_data_list::const_iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it) {
-      if(it->handle_group == hg) { return *it; }
-    }
-    return *handle_frame_map.end(); // crash
-    // this can't happen since every created handle group is inserted in handle_frame_map
   }
 
   std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)

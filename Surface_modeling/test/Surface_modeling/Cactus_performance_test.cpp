@@ -32,36 +32,10 @@ typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map,
 typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, 
   CGAL::SPOKES_AND_RIMS> Deform_mesh_spoke;
 
-
-template<class DeformMesh>
-bool preprocess_and_deform(DeformMesh& deform_mesh, int deformation_iteration) 
-{
-  boost::optional<typename DeformMesh::Handle_group> active_handle_group = 
-    read_rois(deform_mesh, "data/cactus_roi.txt", "data/cactus_handle.txt");
-  if(!active_handle_group) { return false; }
-
-  CGAL::Timer timer; timer.start();
-
-  if(!deform_mesh.preprocess()) {
-    std::cerr << "Error: preprocess() failed!" << std::endl;
-    return false;
-  }
-  std::cerr << "Preprocess time: " << timer.time() << std::endl;
-  timer.reset();
-
-  deform_mesh.translate(*active_handle_group, CGAL::Simple_cartesian<double>::Vector_3(-0.55, -0.30, 0.0) );
-  deform_mesh.deform(deformation_iteration, 0);
-  timer.stop();
-
-  std::cerr << "Deformation time (one handle translated and deform method iterated " <<
-    deformation_iteration << " times): " << timer.time() << std::endl;
-  return true;
-}
-
 int main()
 {
   Polyhedron mesh_1;
-  if(!read_to_polyhedron("data/cactus.off", mesh_1)) { return EXIT_FAILURE; }
+  read_to_polyhedron("data/cactus.off", mesh_1);
   Polyhedron mesh_2 = mesh_1;
   
   init_indices(mesh_1);
@@ -74,20 +48,18 @@ int main()
   const double x = -0.55; const double y = -0.50; const double z = -0.0;
 
   std::cerr << "ORIGINAL_ARAP performance: " << std::endl;
-  bool successed = preprocess_and_deform(deform_mesh_arap,
+  preprocess_and_deform(deform_mesh_arap,
     "data/cactus_roi.txt",
     "data/cactus_handle.txt",
     CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
-  if(!successed) { return EXIT_FAILURE; }
 
   std::cerr << "SPOKES_AND_RIMS performance: " << std::endl;
-  successed = preprocess_and_deform(deform_mesh_spoke,
+  preprocess_and_deform(deform_mesh_spoke,
     "data/cactus_roi.txt",
     "data/cactus_handle.txt",
     CGAL::Simple_cartesian<double>::Vector_3(x, y, z),
     deformation_iteration);
-  if(!successed) { return EXIT_FAILURE; }
 
   std::cerr << "Save deformed models" << std::endl;
   std::ofstream("data/cactus_deformed_arap.off") << mesh_1;

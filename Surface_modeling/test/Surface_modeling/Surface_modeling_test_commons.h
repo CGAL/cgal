@@ -27,15 +27,14 @@ public:
 };
 
 template<class Polyhedron>
-bool read_to_polyhedron(const char* file_name, Polyhedron& mesh)
+void read_to_polyhedron(const char* file_name, Polyhedron& mesh)
 {
   std::ifstream input(file_name);
 
   if ( !input || !(input >> mesh) || mesh.empty() ){
     std::cerr << "Error: can not read " << file_name << std::endl;
-    return false;
+    assert(false);
   }
-  return true;
 }
 
 template<class Polyhedron>
@@ -57,7 +56,7 @@ void init_indices(Polyhedron& poly) {
 }
 
 template<class DeformMesh>
-boost::optional<typename DeformMesh::Handle_group>
+std::vector<typename DeformMesh::vertex_descriptor>
 read_rois(DeformMesh& deform_mesh, 
   const std::string& roi_file,
   const std::string& handle_file)
@@ -66,13 +65,13 @@ read_rois(DeformMesh& deform_mesh,
   std::ifstream handle_stream(handle_file);
   if(!roi_stream || !handle_stream) {
     std::cerr << "Error: can not read roi or handle files" << std::endl;
-    return boost::optional<typename DeformMesh::Handle_group>();
+    assert(false);
   }
 
-  typedef typename boost::graph_traits<typename DeformMesh::Polyhedron>::vertex_iterator vertex_iterator;
+  typedef typename boost::graph_traits<typename DeformMesh::Halfedge_graph>::vertex_iterator vertex_iterator;
   typedef typename DeformMesh::vertex_descriptor vertex_descriptor;
   // put all vertices to a vector
-  typename DeformMesh::Polyhedron const& polyhedron = deform_mesh.halfedge_graph();
+  typename DeformMesh::Halfedge_graph const& polyhedron = deform_mesh.halfedge_graph();
 
   std::vector<vertex_descriptor> vertices;
   vertices.reserve(boost::num_edges(polyhedron));
@@ -84,42 +83,41 @@ read_rois(DeformMesh& deform_mesh,
 
   // put all handles into one handle group
   std::size_t id;
-  typename DeformMesh::Handle_group active_handle_group = deform_mesh.create_handle_group();
+  std::vector<typename DeformMesh::vertex_descriptor> hg;
 
   while(handle_stream >> id) {
-    deform_mesh.insert_handle(active_handle_group, vertices[id]); 
+    deform_mesh.insert_handle(vertices[id]); 
+    hg.push_back(vertices[id]);
   }
   while(roi_stream >> id) {
     deform_mesh.insert_roi(vertices[id]);
   }
 
-  return boost::make_optional(active_handle_group);
+  return hg;
 }
 
 template<class DeformMesh>
-bool preprocess_and_deform(DeformMesh& deform_mesh, 
+void preprocess_and_deform(DeformMesh& deform_mesh, 
   const std::string& roi_file,
   const std::string& handle_file,
   CGAL::Simple_cartesian<double>::Vector_3 translate, 
   int deformation_iteration) 
 {
-  boost::optional<typename DeformMesh::Handle_group> active_handle_group = 
+  std::vector<typename DeformMesh::vertex_descriptor> hg = 
     read_rois(deform_mesh, roi_file, handle_file);
-  if(!active_handle_group) { return false; }
 
   CGAL::Timer timer; timer.start();
 
   if(!deform_mesh.preprocess()) {
     std::cerr << "Error: preprocess() failed!" << std::endl;
-    return false;
+    assert(false);
   }
   std::cerr << "Preprocess time: " << timer.time() << std::endl;
   timer.reset();
 
-  deform_mesh.translate(*active_handle_group, translate);
+  deform_mesh.translate(hg.begin(), hg.end(), translate);
   deform_mesh.deform(deformation_iteration, 0);
 
   std::cerr << "Deformation time (one handle translated and deform method iterated " <<
     deformation_iteration << " times): " << timer.time() << std::endl;
-  return true;
 }

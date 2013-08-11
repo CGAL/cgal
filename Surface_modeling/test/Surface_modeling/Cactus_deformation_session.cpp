@@ -23,7 +23,7 @@ typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::SP
 
 const double squared_threshold = 0.001; // alert if average difs between precomputed and deformed mesh models is above threshold
 
-bool compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
+void compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
 {
   Polyhedron::Vertex_const_iterator it_1 = mesh_1.vertices_begin();
   Polyhedron::Vertex_const_iterator it_2 = mesh_2.vertices_begin();
@@ -36,19 +36,18 @@ bool compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
 
   std::cerr << "Average mesh difference: " << average_mesh_dif << std::endl;
 
-  bool close_enough = average_mesh_dif < squared_threshold;
-  return close_enough;
+  assert( average_mesh_dif > squared_threshold);
 }
 
 // read deformation session saved as a handle differences
-template<class DeformMesh>
-bool read_handle_difs_and_deform(DeformMesh& deform_mesh, typename DeformMesh::Handle_group& active_handle_group)
+template<class DeformMesh, class InputIterator>
+void read_handle_difs_and_deform(DeformMesh& deform_mesh, InputIterator begin, InputIterator end)
 {
   typedef CGAL::Simple_cartesian<double>::Vector_3 Vector;
 
   if(!deform_mesh.preprocess()) {
     std::cerr << "Error: preprocess() failed!" << std::endl;
-    return false;
+    assert(false);
   }
 
   std::ifstream dif_stream("data/cactus_handle_differences.txt");
@@ -62,7 +61,7 @@ bool read_handle_difs_and_deform(DeformMesh& deform_mesh, typename DeformMesh::H
   for(std::size_t i = 0; i < dif_vector.size(); ++i)
   {
     timer.start();
-    deform_mesh.translate(active_handle_group, dif_vector[i]);
+    deform_mesh.translate(begin, end, dif_vector[i]);
     deform_mesh.deform();
     timer.stop();
 
@@ -71,10 +70,8 @@ bool read_handle_difs_and_deform(DeformMesh& deform_mesh, typename DeformMesh::H
     predeformed_cactus_file << "data/cactus_deformed/cactus_deformed_" << i << ".off";
     Polyhedron predeformed_cactus;
 	
-    if(!read_to_polyhedron(predeformed_cactus_file.str().c_str(), predeformed_cactus)) 
-    { return false; }
-	  if(!compare_mesh(predeformed_cactus, deform_mesh.halfedge_graph()) ) 
-    { return false; }
+    read_to_polyhedron(predeformed_cactus_file.str().c_str(), predeformed_cactus); 
+	  compare_mesh(predeformed_cactus, deform_mesh.halfedge_graph());
 
 	  // for saving deformation
     //std::ofstream(predeformed_cactus_file) << deform_mesh.halfedge_graph();
@@ -82,13 +79,12 @@ bool read_handle_difs_and_deform(DeformMesh& deform_mesh, typename DeformMesh::H
   }
   std::cerr << "Deformation performance (with default number_of_iteration and tolerance) " << std::endl 
     << dif_vector.size() << " translation: " << timer.time() << std::endl;
-  return true;
 }
 
 int main()
 {
   Polyhedron mesh_1;
-  if(!read_to_polyhedron("data/cactus.off", mesh_1)) { return EXIT_FAILURE; }
+  read_to_polyhedron("data/cactus.off", mesh_1);
   Polyhedron mesh_2 = mesh_1;
 
   init_indices(mesh_1);
@@ -97,20 +93,16 @@ int main()
   Deform_mesh_arap deform_mesh_arap(mesh_1, Vertex_index_map(), Edge_index_map()); 
   Deform_mesh_spoke deform_mesh_spoke(mesh_2, Vertex_index_map(), Edge_index_map()); 
   // For original arap
-  boost::optional<Deform_mesh_arap::Handle_group> active_handle_group_1 = 
+  std::vector<Deform_mesh_arap::vertex_descriptor> hg_1 = 
     read_rois(deform_mesh_arap, "data/cactus_roi.txt", "data/cactus_handle.txt");
-  if(!active_handle_group_1) { return EXIT_FAILURE; }
 
-  bool close_enough = read_handle_difs_and_deform(deform_mesh_arap, *active_handle_group_1);
-  if(!close_enough) { return EXIT_FAILURE; }
+  read_handle_difs_and_deform(deform_mesh_arap, hg_1.begin(), hg_1.end());
   std::cerr << "ORIGINAL ARAP Success!" << std::endl;
   // For spokes rims
-  boost::optional<Deform_mesh_spoke::Handle_group> active_handle_group_2 = 
+  std::vector<Deform_mesh_arap::vertex_descriptor> hg_2 = 
     read_rois(deform_mesh_spoke, "data/cactus_roi.txt", "data/cactus_handle.txt");
-  if(!active_handle_group_2) { return EXIT_FAILURE; }
 
-  close_enough = read_handle_difs_and_deform(deform_mesh_spoke, *active_handle_group_2);
-  if(!close_enough) { return EXIT_FAILURE; }
+  read_handle_difs_and_deform(deform_mesh_spoke, hg_2.begin(), hg_2.end());
   std::cerr << "SPOKES AND RIMS ARAP Success!" << std::endl;
   std::cerr << "All done!" << std::endl;
 }
