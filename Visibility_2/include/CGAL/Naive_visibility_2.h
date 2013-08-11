@@ -770,8 +770,8 @@ private:
       typename Output_arrangement_2::Edge_iterator e_itr;
       for (e_itr = out_arr.edges_begin() ;
            e_itr != out_arr.edges_end() ; e_itr++) {
-        Halfedge_const_handle he = e_itr;
-        Halfedge_const_handle he_twin = he->twin();
+        Halfedge_handle he = e_itr;
+        Halfedge_handle he_twin = he->twin();
         if (he->face() == he_twin->face()) {
           out_arr.remove_edge(he);
         }

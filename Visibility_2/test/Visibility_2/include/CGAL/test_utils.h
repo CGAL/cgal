@@ -687,7 +687,7 @@ void benchmark_one_unit(
               << GREEN << timer.time() << " sec" << RESET << std::endl;
 
     assert(true == (CGAL::test_are_equal<Output_arrangement_2>
-                          (out_arr_fst, out_arr_snd)));  
+                          (out_arr_fst, out_arr_snd)));
   } while (++curr != circ);
 }
 
@@ -804,10 +804,10 @@ int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_o
             return 0;
         }
 }
-
+//make sure q is in fh or on the bound.
 template<class Visibility_2>
 bool is_star_shape(const typename Visibility_2::Point_2& q,
-                   const typename Visibility_2::Face_const_handle fh) {
+                   const typename Visibility_2::Face_handle fh) {
   typedef typename Visibility_2::Output_arrangement_2
                                                             Output_arrangement_2;
   typedef typename Output_arrangement_2::Face_const_handle   Face_const_handle;
@@ -831,8 +831,7 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
         Point_2 source = curr1->source()->point();
         Point_2 target = curr1->target()->point();
         int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
-        if (i == 1 && intersect_p != source && intersect_p != target)
-
+        if (i == 1 && intersect_p != source && intersect_p != target && intersect_p != q)
           return false;
       } while (++curr1 != circ1);
     } while (++curr != circ);
@@ -854,8 +853,11 @@ void test_star_shape_one_face(  const typename Visibility_2::Input_arrangement_2
   typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
   typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
 
+
   typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
                                                             Ccb_halfedge_const_circulator;
+
+  typedef typename Output_arrangement_2::Face_handle        Face_handle;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::FT                    Number_type;
   typedef Timer Benchmark_timer;
@@ -899,14 +901,14 @@ void test_star_shape_one_face(  const typename Visibility_2::Input_arrangement_2
     std::cout << "    Running with qpoint: "
               << RED << curr_query_pt << RESET <<  std::endl;
     Output_arrangement_2 out_arr;
-    Face_const_handle fh;
+    Face_handle fh;
     if (choice == FACE) {
       fh = visibility.visibility_region(curr_query_pt, fit, out_arr);
     }
     else {
       fh = visibility.visibility_region(curr_query_pt, he, out_arr);
     }
-    if ( !is_star_shape(curr_query_pt, fh)) {
+    if ( !is_star_shape<Visibility_2>(curr_query_pt, fh)) {
       std::cout << RED << "     The face is not a star shape to qpoint." << RESET <<  std::endl;
     }
   } while (++curr != circ);
@@ -959,7 +961,7 @@ void test_star_shape(Visibility_2 &visibility,
     int cnt(1);
     for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
       if (!fit->is_unbounded()) {
-        std::cout << "Benchmarking with face "
+        std::cout << "Test star-shape with face "
                   << GREEN << cnt << RESET << " ..." << std::endl;
         Hole_const_iterator hit;
         bool has_holes = false;

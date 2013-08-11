@@ -353,7 +353,7 @@ public:
     if(location == CDT::VERTEX){
       std::cout << "query on vertex" << std::endl;
       
-      bool query_point_on_vertex_is_not_yet_implemented = false;
+      bool query_point_on_vertex_is_not_working_yet = false;
       assert(query_point_on_vertex_is_not_working_yet); 
       
       assert(q  ==  he->target()->point());
