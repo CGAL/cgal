@@ -561,12 +561,12 @@ public:
   typedef typename K::Point_3   Point_3;
   typedef std::vector<Point_3>  Polyline_3;
 
-  template <typename OutputIteratorValueType, typename OutputIterator, typename EdgeSet>
+  template <typename OutputIteratorValueType, typename OutputIterator>
   std::pair<OutputIterator, Weight>
   triangulate(const Polyline_3& P, 
               const Polyline_3& Q,
               OutputIterator out,
-              const EdgeSet& existing_edges)
+              const Edge_set& existing_edges)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -628,14 +628,13 @@ template <
   typename OutputIteratorValueType, 
   typename Weight, 
   typename InputIterator, 
-  typename OutputIterator, 
-  typename EdgeSet
+  typename OutputIterator
 >
 std::pair<OutputIterator, Weight>
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
                           OutputIterator out,
-                          const EdgeSet& existing_edges,
+                          const Edge_set& existing_edges,
                           bool use_delaunay_triangulation) 
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
@@ -654,7 +653,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
   std::pair<OutputIterator, Weight> pair = use_delaunay_triangulation ?
     Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges) :
     Fill().template triangulate<OutputIteratorValueType>(P,Q,out,existing_edges);
-  CGAL_TRACE_STREAM << pair.second;
+  CGAL_TRACE_STREAM << pair.second << std::endl;
   return pair;
 }
 
