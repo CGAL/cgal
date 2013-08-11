@@ -87,24 +87,24 @@ int main()
   boost::tie(vb,ve) = boost::vertices(mesh);
 
   std::vector<vertex_descriptor> roi_map = extract_k_ring(mesh, *boost::next(vb, 47), 9);
-  std::vector<vertex_descriptor> handles_1_map = extract_k_ring(mesh, *boost::next(vb, 39), 1);
-  std::vector<vertex_descriptor> handles_2_map = extract_k_ring(mesh, *boost::next(vb, 97), 1);
+  std::vector<vertex_descriptor> controls_1_map = extract_k_ring(mesh, *boost::next(vb, 39), 1);
+  std::vector<vertex_descriptor> controls_2_map = extract_k_ring(mesh, *boost::next(vb, 97), 1);
 
   deform_mesh.insert_roi(roi_map.begin(), roi_map.end());
-  deform_mesh.insert_handle(handles_1_map.begin(), handles_1_map.end());
-  deform_mesh.insert_handle(handles_2_map.begin(), handles_2_map.end());
+  deform_mesh.insert_control(controls_1_map.begin(), controls_1_map.end());
+  deform_mesh.insert_control(controls_2_map.begin(), controls_2_map.end());
 
   deform_mesh.preprocess();
 //// DEFORM SECTION ////
 
-  deform_mesh.translate(handles_1_map.begin(), handles_1_map.end(), Eigen::Vector3d(0,0,1));
+  deform_mesh.translate(controls_1_map.begin(), controls_1_map.end(), Eigen::Vector3d(0,0,1));
    // overrides any previous call
 
   Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
   Eigen::Vector3d vect(0, 0, 0);
 
-  deform_mesh.rotate(handles_1_map.begin(), handles_1_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
-  deform_mesh.rotate(handles_2_map.begin(), handles_2_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate(controls_1_map.begin(), controls_1_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate(controls_2_map.begin(), controls_2_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
 
   deform_mesh.deform();
 
@@ -113,9 +113,9 @@ int main()
   output.close();
 
   // Note that translate and rotate are not cumulative,
-  // they just use original positions (positions at the time of construction) of the handles while calculating target positions
-  deform_mesh.translate(handles_1_map.begin(), handles_1_map.end(), Eigen::Vector3d(0,0.30,0));
-  deform_mesh.translate(handles_2_map.begin(), handles_2_map.end(), Eigen::Vector3d(0,0.30,0));
+  // they just use original positions (positions at the time of construction) of the controls while calculating target positions
+  deform_mesh.translate(controls_1_map.begin(), controls_1_map.end(), Eigen::Vector3d(0,0.30,0));
+  deform_mesh.translate(controls_2_map.begin(), controls_2_map.end(), Eigen::Vector3d(0,0.30,0));
 
   deform_mesh.set_iterations(10);
   deform_mesh.set_tolerance(0.0);

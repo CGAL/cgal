@@ -248,7 +248,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
     Deform_mesh::Roi_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
-      if(!deform_mesh.is_handle(*rb))
+      if(!deform_mesh.is_control(*rb))
       {
         gl_draw_point( (*rb)->point() );
       }

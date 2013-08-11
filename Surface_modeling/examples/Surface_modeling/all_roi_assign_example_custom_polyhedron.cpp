@@ -107,13 +107,13 @@ int main()
 
   deform_mesh.insert_roi(vb, ve); // insert whole mesh as roi
 
-  vertex_descriptor handle_1 = *boost::next(vb, 213);
-  vertex_descriptor handle_2 = *boost::next(vb, 157);
+  vertex_descriptor control_1 = *boost::next(vb, 213);
+  vertex_descriptor control_2 = *boost::next(vb, 157);
 
-  deform_mesh.insert_handle(handle_1); // insert handles
-  deform_mesh.insert_handle(handle_2);
+  deform_mesh.insert_control(control_1); // insert controls
+  deform_mesh.insert_control(control_2);
 
-  // insertion of roi and handles completed, call preprocess
+  // insertion of roi and controls completed, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
   if(!is_matrix_factorization_OK){ 
     std::cerr << "Check documentation of preprocess()" << std::endl; 
@@ -121,18 +121,18 @@ int main()
   }
 
 //// DEFORM SECTION ////
-  // now use assign() to provide constained positions of handles
-  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60); // target position of handle_1
-  deform_mesh.assign(handle_1, constrained_pos_1);
-  // note that we only assign a constraint for handle_1, other handles will be constrained to last assigned positions
+  // now use assign() to provide constained positions of controls
+  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60); // target position of control_1
+  deform_mesh.assign(control_1, constrained_pos_1);
+  // note that we only assign a constraint for control_1, other controls will be constrained to last assigned positions
 
   // deform the mesh, now positions of vertices of 'mesh' will be changed
   deform_mesh.deform();
   deform_mesh.deform(); // you can call deform multiple times if you like
 
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
-  deform_mesh.assign(handle_2, constrained_pos_2);
-  // note that handle_1 will be still constrained to constrained_pos_1,
+  deform_mesh.assign(control_2, constrained_pos_2);
+  // note that control_1 will be still constrained to constrained_pos_1,
 
   deform_mesh.deform(10, 0.0); // deform(unsigned int iterations, double tolerance) can be called with instant parameters
   // this time iterate 10 times, and do not use energy based termination
@@ -141,10 +141,10 @@ int main()
   output << mesh; // save deformed mesh
   output.close();
 
-  // want to add another handle
+  // want to add another control
 //// PREPROCESS SECTION AGAIN////
-  vertex_descriptor handle_3 = *boost::next(vb, 92);
-  deform_mesh.insert_handle(handle_3); // now I need to prepocess again
+  vertex_descriptor control_3 = *boost::next(vb, 92);
+  deform_mesh.insert_control(control_3); // now I need to prepocess again
 
   if(!deform_mesh.preprocess()) {
     std::cerr << "Check documentation of preprocess()" << std::endl; 
@@ -153,7 +153,7 @@ int main()
 
 //// DEFORM SECTION AGAIN////
   Deform_mesh::Point constrained_pos_3(0.55, 0.30, -0.70);
-  deform_mesh.assign(handle_3, constrained_pos_3);
+  deform_mesh.assign(control_3, constrained_pos_3);
 
   deform_mesh.deform(15, 0.0);
 

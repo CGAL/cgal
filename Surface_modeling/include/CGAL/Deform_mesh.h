@@ -318,13 +318,13 @@ public:
   }
   
   /**
-   * Inserts a vertex into handles. The vertex is also inserted in the region-of-interest if it is not already in it.
+   * Inserts a vertex into control vertices. The vertex is also inserted in the region-of-interest if it is not already in it.
    * @param vd the vertex to be inserted
    * @return `true` if the insertion is successful
    */
-  bool insert_handle(vertex_descriptor vd)
+  bool insert_control(vertex_descriptor vd)
   {
-    if(is_handle(vd)) { return false; }
+    if(is_control(vd)) { return false; }
     need_preprocess_both();
 
     insert_roi(vd); // also insert it as roi
@@ -334,28 +334,28 @@ public:
   }
 
   /**
-   * Inserts a range of vertices into handles. The vertices are also inserted in the region-of-interest if they are not already in it.
+   * Inserts a range of vertices into control vertices. The vertices are also inserted in the region-of-interest if they are not already in it.
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
    */
   template<class InputIterator>
-  void insert_handle(InputIterator begin, InputIterator end)
+  void insert_control(InputIterator begin, InputIterator end)
   {
     for( ;begin != end; ++begin)
     {
-      insert_handle(*begin);
+      insert_control(*begin);
     }
   }
 
   /**
-   * Erases a vertex from handles.
+   * Erases a vertex from control vertices.
    * @param vd the vertex to be erased
    * @return `true` if the removal is successful
    */
-  bool erase_handle(vertex_descriptor vd)
+  bool erase_control(vertex_descriptor vd)
   {
-    if(!is_handle(vd)) { return false; }
+    if(!is_control(vd)) { return false; }
     
     need_preprocess_both();
     is_hdl_map[id(vd)] = false;
@@ -393,7 +393,7 @@ public:
   }
 
   /**
-   * Erases a vertex from the region-of-interest. The vertex is also removed from any group of handles.
+   * Erases a vertex from the region-of-interest. The vertex is also removed from control vertices if possible.
    * \note The next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position 
    * (that is position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
    * @param vd the vertex to be erased
@@ -403,7 +403,7 @@ public:
   {
     if(!is_roi(vd)) { return false; }  
     
-    erase_handle(vd); // also erase from being handle
+    erase_control(vd); // also erase from being control
 
     typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
     if(it != roi.end())
@@ -440,11 +440,11 @@ public:
   /**
    * Triggers the necessary precomputation work before beginning deformation.
    * \note Calling this function is optional.
-   * \note The insertion / removal of a vertex in a group of handles or in the region-of-interest invalidates the
+   * \note The insertion / removal of a vertex in control vertices or in the region-of-interest invalidates the
    * preprocessing data.
    * @return `true` if Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, 
-   * which happens if there is no path between a free vertex and a handle vertex (i.e. both fixed and user-inserted).
+   * which happens if there is no path between a free vertex and a control vertex (i.e. both fixed and user-inserted).
    */
   bool preprocess()
   {
@@ -457,7 +457,7 @@ public:
 /// \name Deformation
 /// @{  
   /**
-   * Sets the transformation to apply to all the vertices in a group of handles to be a translation by vector `t`.
+   * Sets the transformation to apply to all the vertices in a range of control vertices to be a translation by vector `t`.
    * \note This transformation is applied on the original positions of the vertices 
    * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
    * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
@@ -481,7 +481,7 @@ public:
   }
 
   /**
-   * Sets the transformation to apply to all the vertices in a group of handles to be a rotation around `rotation_center`
+   * Sets the transformation to apply to all the vertices in a range of control vertices to be a rotation around `rotation_center`
    * defined by the quaternion `quat`, followed by a translation by vector `t`.
    * \note This transformation is applied on the original positions of the vertices 
    * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`).  
@@ -511,21 +511,20 @@ public:
   }
 
   /**
-   * Assigns the target position of a handle vertex 
-   * @param vd the handle vertex to be assigned target position
+   * Assigns the target position of a control vertex 
+   * @param vd the control vertex to be assigned target position
    * @param target_position the new target position
    */
   void assign(vertex_descriptor vd, const Point& target_position)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
-    if(!is_handle(vd)) { return; }
+    if(!is_control(vd)) { return; }
     solution[ros_id(vd)] = target_position;
   }
 
   /**
-   * Deforms the region-of-interest according to the deformation algorithm, applying for each group of handles the transformation provided by `rotate()` or `translate()`
-   * to their original positions, or using target positions provided by `assign()`. 
+   * Deforms the region-of-interest according to the deformation algorithm, using target positions for each control vertex set by using `rotate()`, `translate()`, or `assign()`.
    * The coordinates of the vertices of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
    * deformation problem is using the coordinates of the input graph before calling the function.
    * \note Nothing happens if `preprocess()` returns `false`.
@@ -623,11 +622,11 @@ public:
   { return is_roi_map[id(vd)]; }
 
   /**
-   * Queries whether a vertex is a handle.
+   * Queries whether a vertex is a control vertex.
    * @param vd the query vertex
-   * @return `true` if the vertex is inside any group of handles
+   * @return `true` if the vertex is a control vertex
    */
-  bool is_handle(vertex_descriptor vd) const
+  bool is_control(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
 
   /**
@@ -639,8 +638,8 @@ public:
   
   /**
    * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function has the same effect as creating
-   * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and the groups of handles.
-   * \note if the region-of-interest or any group of handles have been modified since the last call to `preprocess()`,
+   * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and control vertices.
+   * \note if the region-of-interest or control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
    */
   void overwrite_original_positions()
@@ -844,7 +843,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi(vi) && !is_handle(vi) )          // vertices of ( roi - hdl )
+      if ( is_roi(vi) && !is_control(vi) )          // vertices of ( roi - hdl )
       {
         double diagonal = 0;
         in_edge_iterator e, e_end;
@@ -886,7 +885,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi(vi) && !is_handle(vi) ) // vertices of ( roi - hdl ): free vertices
+      if ( is_roi(vi) && !is_control(vi) ) // vertices of ( roi - hdl ): free vertices
       {
         double diagonal = 0;
         out_edge_iterator e, e_end;
@@ -1067,7 +1066,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi(vi) && !is_handle(vi) ) 
+      if ( is_roi(vi) && !is_control(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber in user manual
         CR_vector xyz = cr_helper.vector(0, 0, 0);
@@ -1129,7 +1128,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi(vi) && !is_handle(vi) ) 
+      if ( is_roi(vi) && !is_control(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber_rims in user manual
         CR_vector xyz = cr_helper.vector(0, 0, 0);

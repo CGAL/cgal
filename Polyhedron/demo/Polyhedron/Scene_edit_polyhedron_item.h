@@ -112,7 +112,7 @@ public:
   void refresh()
   {
     for(std::vector<vertex_descriptor>::iterator it = handle_group.begin(); it != handle_group.end(); ) {
-      if(!deform_mesh->is_handle(*it)) {
+      if(!deform_mesh->is_control(*it)) {
         it = handle_group.erase(it);
       }
       else { ++it; }
@@ -295,7 +295,7 @@ public:
       return false; 
     } // no handle group to insert
 
-    bool inserted = deform_mesh.insert_handle(v);
+    bool inserted = deform_mesh.insert_control(v);
     if(inserted) {
       active_group->handle_group.push_back(v);
       active_group->refresh();
@@ -310,7 +310,7 @@ public:
   
   bool erase_handle(vertex_descriptor v)
   {
-    if(deform_mesh.erase_handle(v)) // API should be safe enough to do that (without checking empty handle group etc.)
+    if(deform_mesh.erase_control(v)) // API should be safe enough to do that (without checking empty handle group etc.)
     {
       refresh_all_handle_centers(); // since we don't know which handle group that v erased of, refresh all
       return true;
@@ -379,7 +379,7 @@ public:
       {
         delete it->frame;        
         for(std::vector<vertex_descriptor>::iterator v_it = it->handle_group.begin(); v_it != it->handle_group.end(); ++v_it) {
-          deform_mesh.erase_handle(*v_it);
+          deform_mesh.erase_control(*v_it);
         }
         handle_frame_map.erase(it);
         break;
