@@ -191,6 +191,12 @@ public:
       // philaris: tocheck this later
       CGAL_assertion(not are_endp_s1s2);
 
+      CGAL_SDG_DEBUG(std::cout << "debug: Oriented_side_C2 (s1,s2,s,p)= ("
+              << s1 << ") (" << s2 << ") ("
+              << s << ") (" << p << ") "
+              << "trying to fix ZERO"
+              << std::endl;);
+
       if (has_lseg_neg_slope) {
         if (is_s1_segment) {
           proj_of_infv = s2.point();
