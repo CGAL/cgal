@@ -82,9 +82,6 @@ class Sliver_perturber
   
   typedef typename Gt::FT                       FT;
   
-  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
-  typedef boost::ptr_vector<Perturbation>                 Perturbation_vector;
-
   // Helper
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
   
@@ -93,6 +90,11 @@ class Sliver_perturber
   //  - bound_reached(FT bound)
   //  - end_of_perturbation_iteration(std::size_t vertices_left)
   typedef Visitor_ Visitor;
+
+  // perturbations
+  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
+public:
+  typedef boost::ptr_vector<Perturbation>                 Perturbation_vector;
   
 private:
   // Relaxed heap
