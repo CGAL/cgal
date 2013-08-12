@@ -580,11 +580,26 @@ Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
     y1 = p.y();
   }
 
-  Number_type x_normalized = rand()/static_cast<Number_type>(RAND_MAX); 
+  Number_type x_normalized = rand()/static_cast<Number_type>(RAND_MAX);
   Number_type x = min_x + static_cast<Number_type>(x_normalized*(max_x - min_x));
-
-  Number_type y = y0 + (y1 - y0)*(x - x0)/(x1 - x0);
-  return Point_2(x, y);
+  if (x == max_x && x == min_x) {
+    Number_type min_y, max_y;
+    if (p.y() < q.y()) {
+      min_y = p.y();
+      max_y = q.y();
+    }
+    else {
+      min_y = q.y();
+      max_y = p.y();
+    }
+    Number_type y_normalized = rand()/static_cast<Number_type>(RAND_MAX);
+    Number_type y = min_y + static_cast<Number_type>(y_normalized*(max_y - min_y));
+    return Point_2(x, y);
+  }
+  else {
+    Number_type y = y0 + (y1 - y0)*(x - x0)/(x1 - x0);
+    return Point_2(x, y);
+  }
 }
 
 template <class Visibility_2_fst, class Visibility_2_snd>
@@ -607,6 +622,9 @@ void benchmark_one_unit(
   typedef Timer Benchmark_timer;
 
   Benchmark_timer timer;
+//  std::cout << "INPUT:\n";
+//  CGAL::Visibility_2::print_arrangement<Input_arrangement_2>(arr);
+//  std::cout << "END INPUT\n";
 
   timer.start();
   visibility_fst.attach(arr); 
@@ -633,6 +651,7 @@ void benchmark_one_unit(
         curr_query_pt = he->target()->point();        
         break;
       case EDGE:
+        std::cout << "Generating qpoint on: " << he->curve() << std::endl;
         curr_query_pt = random_linear_interpolation<Point_2, Number_type>
                       (he->source()->point(), he->target()->point());
         break;
@@ -686,6 +705,7 @@ void benchmark_one_unit(
     std::cout << "        Time to compute visibility region using second object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
 
+ //   CGAL::Visibility_2::print_arrangement<Output_arrangement_2>(out_arr_snd);
     assert(true == (CGAL::test_are_equal<Output_arrangement_2>
                           (out_arr_fst, out_arr_snd)));
   } while (++curr != circ);
