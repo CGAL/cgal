@@ -251,7 +251,7 @@ public:
     out_arr.clear();
     assert(!face->is_unbounded());
     
-    std::cout << "query in face interior" << std::endl;
+    //std::cout << "query in face interior" << std::endl;
     
     std::vector<Point_2> raw_output; 
     typename CDT::Face_handle fh = p_cdt->locate(q);
@@ -308,7 +308,7 @@ public:
     
 
     if(location == CDT::EDGE){
-      std::cout << "query on edge" << std::endl;
+      //std::cout << "query on edge" << std::endl;
       // this is the easy part, there are only two possible faces 
       // index indicates the edge = vertex on the other side of the edge 
       // the next vertex in cw order should be the target of given edge
@@ -351,10 +351,10 @@ public:
     }
     
     if(location == CDT::VERTEX){
-      std::cout << "query on vertex" << std::endl;
+      //std::cout << "query on vertex" << std::endl;
       
-      bool query_point_on_vertex_is_not_working_yet = false;
-      assert(query_point_on_vertex_is_not_working_yet); 
+      //bool query_point_on_vertex_is_not_working_yet = false;
+      //assert(query_point_on_vertex_is_not_working_yet); 
       
       assert(q  ==  he->target()->point());
       assert(fh->vertex(index)->point() ==  he->target()->point());
@@ -365,7 +365,9 @@ public:
       raw_output.push_back(he->next()->target()->point());
       
       // now start in the triangle that contains he->next()       
-      while(he->next()->target()->point() != fh->vertex(p_cdt->ccw(index))->point()){
+      while( 
+          p_cdt->is_infinite(fh->vertex(p_cdt->ccw(index))) || 
+          he->next()->target()->point() != fh->vertex(p_cdt->ccw(index))->point()){
         typename CDT::Face_handle nfh = fh->neighbor(p_cdt->ccw(index));
         int nindex = nfh->index(fh);
         index = p_cdt->ccw(nindex);
@@ -373,6 +375,9 @@ public:
         assert(he->target()->point() == fh->vertex(index)->point());
       }
       
+      
+
+
       assert(he->next()->source()->point() == fh->vertex(index)->point());
       assert(he->next()->target()->point() == fh->vertex(p_cdt->ccw(index))->point());
       assert(!p_cdt->is_infinite(fh));
