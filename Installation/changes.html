@@ -94,8 +94,9 @@
 <table>
 <caption align=BOTTOM>
 Number of lines of code of CGAL<br>
-(using <a href="http://www.dwheeler.com/sloccount/">
-David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code> and <code>src/</code> directories).
+(using <a href="http://www.dwheeler.com/sloccount/"> David A. Wheeler's
+'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
+and <code>src/</code> directories).
 </caption>
 <tr><td><img src="images/release_history_sloccount.png" alt="Releases size graph">
 </table>
@@ -119,15 +120,127 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
     </li>
   </ul>
 
-  <h3>Concurrency in CGAL</h3>
-  <ul>
-    <li>Add a <code>FindTBB</code> CMake module so that one can easily link with TBB to write shared-memory parallel code.</li>
-    <li>Introduce two new tags: Sequential_tag and Parallel_tag</li>
+  <h3>API changes</h3>
+      <h4>2D and 3D Geometry Kernel </h4>
+      <ul>
+        <li> The intersection functions and functors used to returned
+          a <code>CGAL::Object</code> in order to deal with the different
+          possible return types. However, depending on the arguments it is
+          possible to reduce the possible return types to a small set. For
+          this reason and to take advantage of the type safety, we decided
+          to use <code>boost::variant</code> instead
+          of <code>CGAL::Object</code>.  The <code>result_of</code>
+          protocol is now even more useful to determine the return type of
+          the intersection functions and functors. The change should be
+          relatively transparent to the user thanks to the implicit
+          constructor added to <code>CGAL::Object</code>. However, it is
+          recommended to upgrade your code.  The previous behavior can be
+          restored by defining the
+          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
+        </li>
+      </ul>
+
+      <h4>2D Arrangements</h4>
+      <ul>
+        <li> The point location functionalities now uses
+          a <code>boost::variant</code> instead of
+          a <code>CGAL::Object</code>.  For convenience, The previous
+          behavior can be restored by defining the
+          macro <code>CGAL_ARR_POINT_LOCATION_VERSION</code> to 1.
+        </li>
+      </ul>
+      <h4>CGAL and Boost Property Maps</h4>
+      <ul>
+        <li>The <code>key_type</code> of the property maps provided by CGAL
+          used to be an iterator. In order to be more easily re-used,
+          the <code>key_type</code> has been changed to be
+          the <code>value_type</code> of the iterator.  The packages that
+          have been updated to match these changes are <b>Point Set
+          Processing</b> and <b>Surface Reconstruction from Point Sets</b>.
+          However, for most users this change should be transparent if the
+          default property maps were used.  For convenience, the former
+          behavior can be enabled by defining the
+          macro <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>.
+    </li>
   </ul>
 
   <h3>Algebraic Foundations</h3>
   <ul>
-    <li> For convenience, add an overload of <code>make_rational()</code> taking a pair of numbers.</li>
+    <li>For convenience, add an overload of <code>make_rational()</code>
+    taking a pair of numbers.</li>
+  </ul>
+
+  <h3>2D and 3D Geometry Kernel </h3>
+  <ul>
+    <li>A <code>Iso_rectangle_2</code> can now be constructed from
+      a <code>Bbox_2</code> and an <code>Iso_cuboid_3</code> from
+      a <code>Bbox_3</code>. </li>
+    <li> The implementation of <code>CGAL::Object</code> has been updated
+      and now uses <code>boost::shared_ptr</code>
+      and <code>boost::any</code>. This implementation is faster.
+    </li>
+    <li>Add to <code>Bbox_2</code> and <code>Bbox_3</code>
+      a <code>+=</code> operator as well as free functions to get the
+      bounding box of a range of geometric objects.
+    </li>
+  </ul>
+
+  <h3>Combinatorial Maps</h3>
+  <ul>
+    <li>Two bug fixes: do not use the 2 least significant bits for cell
+      attribute without dart support; add share a mark in
+      CMap_cell_iterator.</li>
+    <li>Add a constructor taking a given combinatorial map as argument,
+      possibly with different dimension and/or different attributes. This
+      allows to transform a combinatorial map.</li>
+    <li>Add operator= and swap method.</li>
+    <li>Add dynamic onmerge/onsplit functions that can be associated
+      dynamically to i-attributes and which are automatically called when
+      i-cells are split/merged.</li>
+    <li>Add a function allowing to reverse the orientation of a
+      combinatorial map, and another one to reverse one connected component
+      of a combinatorial map.</li>
+  </ul>
+
+  <h3>3D Boolean Operations on Nef Polyhedra</h3>
+  <ul>
+    <li>Bug-fix in IO when using <code>Lazy_exact_nt</code> as number type
+      or <code>Exact_predicates_exact_constructions_kernel</code> as
+      kernel.</li>
+  </ul>
+
+  <h3>2D Triangulations</h3>
+  <ul>
+    <li>Extend the concept <code>TriangulationDataStructure_2</code> to
+      require a more general <code>copy_tds</code> function that allows a
+      copy between TDS of different types. The CGAL model has been
+      updated.</li>
+    <li>Add a way to efficiently insert a range of points with information
+      into the 2D constrained Delaunay triangulations.
+  </ul>
+
+  <h3>3D Triangulations</h3>
+  <ul>
+    <li>Extend the concept <code>TriangulationDataStructure_3</code> to
+      require a more general <code>copy_tds</code> function that allows a
+      copy between TDS of different types. The CGAL model has been
+      updated.</li>
+    <li>Add an advanced function to set the infinite vertex of the
+      triangulation for low level operations</li>
+    <li>Fix a bug in the function inserting a range of points with info
+      when the <code>Fast_location</code> tag is used</li>
+  </ul>
+
+  <h3>2D Segment Delaunay Graph</h3>
+  <ul>
+    <li>Add functions <code>insert_points</code>
+      and <code>insert_segments</code> to insert a range of points and
+      segments. These functions uses the spatial sorting in order to speed
+      up the time needed for the insertion. The
+      function <code>insert(Input_iterator first, Input_iterator beyond,
+      Tag_true)</code> has been updated to dispatch the input when possible
+      to these functions.
+    </li>
   </ul>
 
   <h3>2D Apollonius graphs</h3>
@@ -138,126 +251,79 @@ David A. Wheeler's 'SLOCCount'</a>, restricted to the <code>include/CGAL/</code>
       faster version.</li>
   </ul>
 
-  <h3>2D Arrangements</h3>
+  <h3>3D Mesh Generation</h3>
   <ul>
-    <li> The point location functionalities now uses a <code>boost::variant</code> instead of a <code>CGAL::Object</code>.
-         For convenience, The previous behavior can be restored by defining the macro <code>CGAL_ARR_POINT_LOCATION_VERSION</code> to 1.
+    <li>Speed-up <code>Mesh_3</code> and in particular the global
+      optimizers (Lloyd and ODT) by introducing a
+      parameter <code>do_freeze</code> to prevent from moving vertices
+      which would move of very small displacements.</li>
+    <li> Introduce new data structures and options for speed-up and
+      compacity. Note that <code>Compact_mesh_cell_base_3</code> and
+      <code>Mesh_vertex_base_3</code> are now our favoured implementations
+      of the concepts MeshCellBase_3 and MeshVertexBase_3.
+      <code>Mesh_cell_base_3</code> is now deprecated.
     </li>
-  </ul>
-
-  <h3>3D Boolean Operations on Nef Polyhedra</h3>
-  <ul>
-    <li>Bug-fix in IO when using <code>Lazy_exact_nt</code> as number type or <code>Exact_predicates_exact_constructions_kernel</code> as kernel.</li>
-  </ul>
-
-  <h3>CGAL and Boost Property Maps</h3>
-  <ul>
-    <li> The <code>key_type</code> of the property maps provided by CGAL used to be an iterator. In order to be more easily re-used,
-         the <code>key_type</code> has been changed to be the <code>value_type</code> of the iterator.
-         The packages that have been updated to match these changes are <b>Point Set Processing</b> and <b>Surface Reconstruction from Point Sets</b>.
-         However, for most users this change should be transparent if the default property maps were used.
-         For convenience, the former behavior can be enabled by defining the macro <code>CGAL_USE_PROPERTY_MAPS_API_V1</code>.
+    <li>Introduce a new constructor
+      for <code>Polyhedral_mesh_domain_3</code> that takes a bounding
+      polyhedron to be meshed along with a polyhedral surface entirely
+      included in it.  This allows the user to mesh a polyhedral domain
+      with internal surface(s) which can be non-watertight and even
+      non-manifold.
     </li>
-  </ul>
-
-  <h3>Combinatorial Maps</h3>
-  <ul>
-    <li>Two bug fixes: do not use the 2 least significant bits for cell attribute without dart support; add share a mark in CMap_cell_iterator.</li>
-    <li>Add a constructor taking a given combinatorial map as argument, possibly with different dimension and/or different attributes. This allows to transform a combinatorial map.</li>
-    <li>Add operator= and swap method.</li>
-    <li>Add dynamic onmerge/onsplit functions that can be associated dynamically to i-attributes and which are automatically called when i-cells are split/merged.</li>
-      <li>Add a function allowing to reverse the orientation of a combinatorial map, and another one to reverse one connected component of a combinatorial map.</li>
+    <li> Several documentation bug fixes.</li>
+    <li> Provide the ability to plug in custom cell_base/vertex_base
+      classes into the Mesh_triangulation_3 class. </li>
   </ul>
 
   <h3>3D Fast Intersection and Distance Computation</h3>
   <ul>
-    <li>Following the intersection API change, <code>Object_and_primitive_id</code> has been replaced by a template class
-        <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine the type depending on the
-        query object type.
+    <li>Following the intersection API
+      change, <code>Object_and_primitive_id</code> has been replaced by a
+      template class
+      <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine
+      the type depending on the query object type.
     </li>
-    <li> Introduce the class <code>AABB_halfedge_graph_segment_primitive</code> which replaces the class <code>AABB_polyhedron_segment_primitive</code>  (which is now deprecated).
-         The new class is more general and can be used with any model of <code>HalfedgeGraph</code>.</li>
-    <li>Introduce the class <code>AABB_face_graph_triangle_primitive</code> which replaces the class <code>AABB_polyhedron_triangle_primitive</code>  (which is now deprecated).</li>
-    <li>Document the classes <code>AABB_segment_primitive</code> and <code>AABB_triangle_primitive</code> that were already used in some examples.</li>
-    <li>Add a generic primitive class <code>AABB_primitive</code> that allows to define a primitive type by defining only two property maps.</li>
-    <li>Introduce a new concept of primitive <code>AABBPrimitiveWithSharedData</code>. It allows to have some data shared between the primitives stored in a <code>AABB_tree</code>.
-        With this you can, for example have a primitive wrapping an integer which refers to the position of a geometric object in a <code>std::vector</code>.
-        Only one reference to this vector will be stored in the traits of the tree.
-        The concept <code>AABBTraits</code>, its model <code>AABB_traits</code> and the class <code>AABB_tree</code> have been updated accordingly.
-        However, everything is  backward compatible.</li>
+    <li>Introduce the
+      class <code>AABB_halfedge_graph_segment_primitive</code> which
+      replaces the class <code>AABB_polyhedron_segment_primitive</code>
+      (which is now deprecated).  The new class is more general and can be
+      used with any model of <code>HalfedgeGraph</code>.</li>
+    <li>Introduce the class <code>AABB_face_graph_triangle_primitive</code>
+      which replaces the
+      class <code>AABB_polyhedron_triangle_primitive</code> (which is now
+      deprecated).</li>
+    <li>Document the classes <code>AABB_segment_primitive</code>
+      and <code>AABB_triangle_primitive</code> that were already used in
+      some examples.</li>
+    <li>Add a generic primitive class <code>AABB_primitive</code> that
+      allows to define a primitive type by defining only two property
+      maps.</li>
+    <li>Introduce a new concept of
+      primitive <code>AABBPrimitiveWithSharedData</code>. It allows to have
+      some data shared between the primitives stored in
+      a <code>AABB_tree</code>.  With this you can, for example have a
+      primitive wrapping an integer which refers to the position of a
+      geometric object in a <code>std::vector</code>.  Only one reference
+      to this vector will be stored in the traits of the tree.  The
+      concept <code>AABBTraits</code>, its model <code>AABB_traits</code>
+      and the class <code>AABB_tree</code> have been updated accordingly.
+      However, everything is backward compatible.</li>
     <li> Fix a memory leak in the destructor of the class <code>AABB-tree</code></li>
-  </ul>
-
-  <h3>2D and 3D Geometry Kernel </h3>
-  <ul>
-    <li>A <code>Iso_rectangle_2</code> can now be constructed from a <code>Bbox_2</code> and an <code>Iso_cuboid_3</code> from a <code>Bbox_3</code>. </li>
-
-    <li> The intersection functions and functors used to returned a <code>CGAL::Object</code> in order to
-         deal with the different possible return types. However, depending on the arguments it is possible
-         to reduce the possible return types to a small set. For this reason and to take advantage of the type
-         safety, we decided to use <code>boost::variant</code> instead of <code>CGAL::Object</code>.
-        <code>The result_of</code> protocol is now even more useful to determine the return type of the intersection
-        functions and functors. The change should be relatively transparent to the user thanks to the implicit constructor
-        added to <code>CGAL::Object</code>. However, it is recommended to upgrade your code.
-        The previous behavior can be restored by defining the macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
-    </li>
-
-    <li>
-      The implementation of <code>CGAL::Object</code> has been updated and now uses <code>boost::shared_ptr</code>
-      and <code>boost::any</code>. This implementation is faster.
-    </li>
-    <li> Add to <code>Bbox_2</code> and <code>Bbox_3</code> a <code>+=</code> operator as well as free functions to get
-         the bounding box of a range of geometric objects.
-    </li>
-  </ul>
-
-  <h3>3D Mesh Generation</h3>
-  <ul>
-    <li>Speed-up <code>Mesh_3</code> and in particular the global optimizers  (Lloyd and ODT) by
-          introducing a parameter <code>do_freeze</code> to prevent from moving vertices which would move of very small displacements.</li>
-    <li> Introduce new data structures and options for speed-up and compacity. Note that <code>Compact_mesh_cell_base_3</code> and
-          <code>Mesh_vertex_base_3</code> are now our favoured implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
-          <code>Mesh_cell_base_3</code> is now deprecated.
-	</li>
-    <li> Introduce a new constructor for <code> Polyhedral_mesh_domain_3</code> that takes a bounding polyhedron
-           to be meshed along with a polyhedral surface entirely included in it.
-          This allows the user to mesh a polyhedral domain with internal surface(s) which can be non-watertight and even non-manifold.
-	</li>
-    <li> Several documentation bug fixes.
-    </li>
-	<li> Provide the ability to plug in custom cell_base/vertex_base classes into the Mesh_triangulation_3 class. </li>
-  </ul>
-
-  <h3>2D Segment Delaunay Graph</h3>
-  <ul>
-    <li>Add functions <code>insert_points</code> and <code>insert_segments</code> to insert a range
-        of points and segments. These functions uses the spatial sorting in order to speed up the
-        time needed for the insertion. The function <code>insert(Input_iterator first, Input_iterator beyond, Tag_true)</code>
-        has been updated to dispatch the input when possible to these functions.
-    </li>
   </ul>
 
   <h3>STL Extensions for CGAL</h3>
   <ul>
-    <li>Add to <code>Dispatch_output_iterator</code> and <code>Dispatch_or_drop_output_iterator</code>
-        an operator to accept and dispatch a tuple of values.
+    <li>Add to <code>Dispatch_output_iterator</code>
+      and <code>Dispatch_or_drop_output_iterator</code> an operator to
+      accept and dispatch a tuple of values.
     </li>
   </ul>
 
-  <h3>2D Triangulations</h3>
+  <h3>Concurrency in CGAL</h3>
   <ul>
-    <li>Extend the concept <code>TriangulationDataStructure_2</code> to require a more general <code>copy_tds</code>
-       function that allows a copy between TDS of different types. The CGAL model has been updated.</li>
-    <li>Add a way to efficiently insert a range of points with information
-        into the 2D constrained Delaunay triangulations.
-  </ul>
-
-  <h3>3D Triangulations</h3>
-  <ul>
-    <li>Extend the concept <code>TriangulationDataStructure_3</code> to require a more general <code>copy_tds</code>
-       function that allows a copy between TDS of different types. The CGAL model has been updated.</li>
-    <li>Add an advanced function to set the infinite vertex of the triangulation for low level operations</li>
-    <li>Fix a bug in the function inserting a range of points with info when the <code>Fast_location</code> tag is used</li>
+    <li>Add a <code>FindTBB</code> CMake module so that one can easily link
+      with TBB to write shared-memory parallel code.</li>
+    <li>Introduce two new tags: Sequential_tag and Parallel_tag</li>
   </ul>
 </div>
 

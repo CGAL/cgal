@@ -13,23 +13,9 @@ Release date: September 2013
     neighbor queries and primitives to build the dual Voronoi diagrams.
 
 
-* 2D Arrangements
+* API changes
 
-  - The point location functionalities now uses a boost::variant instead of a
-    CGAL::Object. For convenience, The previous behavior can be restored by
-    defining the macro CGAL_ARR_POINT_LOCATION_VERSION to 1.
-
-
-* Algebraic Foundations
-
-  - For convenience, add an overload of make_rational() taking a pair of
-    numbers.
-
-
-* 2D and 3D Geometry Kernel
-
-  - A Iso_rectangle_2 can now be constructed from a Bbox_2 and an Iso_cuboid_3
-    from a Bbox_3.
+ ** 2D and 3D Geometry Kernel
 
   - The intersection functions and functors used to returned a CGAL::Object in
     order to deal with the different possible return types. However, depending
@@ -43,37 +29,41 @@ Release date: September 2013
     behavior can be restored by defining the macro CGAL_INTERSECTION_VERSION to
     1.
 
+
+ ** 2D Arrangements
+
+  - The point location functionalities now uses a boost::variant instead of a
+    CGAL::Object. For convenience, The previous behavior can be restored by
+    defining the macro CGAL_ARR_POINT_LOCATION_VERSION to 1.
+
+
+ ** CGAL and Boost Property Maps
+
+  - The key_type of the property maps provided by CGAL used to be an iterator.
+    In order to be more easily re-used, the key_type has been changed to be the
+    value_type of the iterator. The packages that have been updated to match
+    these changes are Point Set Processing and Surface Reconstruction from
+    Point Sets. However, for most users this change should be transparent if
+    the default property maps were used. For convenience, the former behavior
+    can be enabled by defining the macro CGAL_USE_PROPERTY_MAPS_API_V1.
+
+
+* Algebraic Foundations
+
+  - For convenience, add an overload of make_rational() taking a pair of
+    numbers.
+
+
+* 2D and 3D Geometry Kernel
+
+  - A Iso_rectangle_2 can now be constructed from a Bbox_2 and an Iso_cuboid_3
+    from a Bbox_3.
+
   - The implementation of CGAL::Object has been updated and now uses boost::
     shared_ptr and boost::any. This implementation is faster.
 
   - Add to Bbox_2 and Bbox_3 a += operator as well as free functions to get the
     bounding box of a range of geometric objects.
-
-
-* 2D Segment Delaunay Graph
-
-  - Add functions insert_points and insert_segments to insert a range of points
-    and segments. These functions uses the spatial sorting in order to speed up
-    the time needed for the insertion. The function insert(Input_iterator
-    first, Input_iterator beyond, Tag_true) has been updated to dispatch the
-    input when possible to these functions.
-
-
-* 2D Triangulations
-
-  - Extend the concept TriangulationDataStructure_2 to require a more general
-    copy_tds function that allows a copy between TDS of different types. The
-    CGAL model has been updated.
-
-
-* 3D Triangulations
-
-  - Extend the concept TriangulationDataStructure_3 to require a more general
-    copy_tds function that allows a copy between TDS of different types. The
-    CGAL model has been updated.
-
-  - Add an advanced function to set the infinite vertex of the triangulation
-    for low level operations
 
 
 * Combinatorial Maps
@@ -95,6 +85,44 @@ Release date: September 2013
     and another one to reverse one connected component of a combinatorial map.
 
 
+* 3D Boolean Operations on Nef Polyhedra
+
+  - Bug-fix in IO when using Lazy_exact_nt as number type or
+    Exact_predicates_exact_constructions_kernel as kernel.
+
+
+* 2D Triangulations
+
+  - Extend the concept TriangulationDataStructure_2 to require a more general
+    copy_tds function that allows a copy between TDS of different types. The
+    CGAL model has been updated.
+
+  - Add a way to efficiently insert a range of points with information into the
+    2D constrained Delaunay triangulations.
+
+
+* 3D Triangulations
+
+  - Extend the concept TriangulationDataStructure_3 to require a more general
+    copy_tds function that allows a copy between TDS of different types. The
+    CGAL model has been updated.
+
+  - Add an advanced function to set the infinite vertex of the triangulation
+    for low level operations
+
+  - Fix a bug in the function inserting a range of points with info when the
+    Fast_location tag is used
+
+
+* 2D Segment Delaunay Graph
+
+  - Add functions insert_points and insert_segments to insert a range of points
+    and segments. These functions uses the spatial sorting in order to speed up
+    the time needed for the insertion. The function insert(Input_iterator
+    first, Input_iterator beyond, Tag_true) has been updated to dispatch the
+    input when possible to these functions.
+
+
 * 2D Apollonius graphs
 
   - Modified insertion algorithm so that the code can handle pseudo-circles as
@@ -104,10 +132,26 @@ Release date: September 2013
     version.
 
 
-* 3D Boolean Operations on Nef Polyhedra
+* 3D Mesh Generation
 
-  - Bug-fix in IO when using Lazy_exact_nt as number type or
-    Exact_predicates_exact_constructions_kernel as kernel.
+  - Speed-up Mesh_3 and in particular the global optimizers (Lloyd and ODT) by
+    introducing a parameter do_freeze to prevent from moving vertices which
+    would move of very small displacements.
+
+  - Introduce new data structures and options for speed-up and compacity. Note
+    that Compact_mesh_cell_base_3 and Mesh_vertex_base_3 are now our favoured
+    implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
+    Mesh_cell_base_3 is now deprecated.
+
+  - Introduce a new constructor for Polyhedral_mesh_domain_3 that takes a
+    bounding polyhedron to be meshed along with a polyhedral surface entirely
+    included in it. This allows the user to mesh a polyhedral domain with
+    internal surface(s) which can be non-watertight and even non-manifold.
+
+  - Several documentation bug fixes.
+
+  - Provide the ability to plug in custom cell_base/vertex_base classes into
+    the Mesh_triangulation_3 class.
 
 
 * 3D Fast Intersection and Distance Computation
@@ -116,9 +160,9 @@ Release date: September 2013
     replaced by a template class Intersection_and_primitive_id<Query> to
     determine the type depending on the query object type.
 
-  - Introduce the class AABB_halfedge_graph_segment_primitive which replaces the
-    class AABB_polyhedron_segment_primitive (which is now deprecated). The new
-    class is more general and can be used with any model of HalfedgeGraph.
+  - Introduce the class AABB_halfedge_graph_segment_primitive which replaces
+    the class AABB_polyhedron_segment_primitive (which is now deprecated). The
+    new class is more general and can be used with any model of HalfedgeGraph.
 
   - Introduce the class AABB_face_graph_triangle_primitive which replaces the
     class AABB_polyhedron_triangle_primitive (which is now deprecated).
@@ -144,39 +188,6 @@ Release date: September 2013
 
   - Add to Dispatch_output_iterator and Dispatch_or_drop_output_iterator an
     operator to accept and dispatch a tuple of values.
-
-
-* CGAL and Boost Property Maps
-
-  - The key_type of the property maps provided by CGAL used to be an iterator.
-    In order to be more easily re-used, the key_type has been changed to be the
-    value_type of the iterator. The packages that have been updated to match
-    these changes are Point Set Processing and Surface Reconstruction from
-    Point Sets. However, for most users this change should be transparent if
-    the default property maps were used. For convenience, the former behavior
-    can be enabled by defining the macro CGAL_USE_PROPERTY_MAPS_API_V1.
-
-
-* 3D Mesh Generation
-
-  - Speed-up Mesh_3 and in particular the global optimizers (Lloyd and ODT) by
-    introducing a parameter do_freeze to prevent from moving vertices which
-    would move of very small displacements.
-
-  - Introduce new data structures and options for speed-up and compacity. Note
-    that Compact_mesh_cell_base_3 and Mesh_vertex_base_3 are now our favoured
-    implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
-    Mesh_cell_base_3 is now deprecated.
-
-  - Introduce a new constructor for Polyhedral_mesh_domain_3 that takes a
-    bounding polyhedron to be meshed along with a polyhedral surface entirely
-    included in it. This allows the user to mesh a polyhedral domain with
-    internal surface(s) which can be non-watertight and even non-manifold.
-
-  - Several documentation bug fixes.
-
-  - Provide the ability to plug in custom cell_base/vertex_base classes into
-    the Mesh_triangulation_3 class.
 
 
 * Concurrency in CGAL
