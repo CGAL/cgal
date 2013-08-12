@@ -204,6 +204,7 @@ public:
   Face_handle visibility_region(const Point_2 &q, const Halfedge_const_handle he,
                            Output_arrangement_2 &out_arr ) {
 
+   // std::cout << "passed handle: " << he->curve() << std::endl;
     if (q != he->source()->point()) {
       if (q != he->target()->point()) {
         vertices.push_back(q);
@@ -215,8 +216,13 @@ public:
     }
     else {
       vertices.push_back(he->target()->point());
+    }/*
+    std::cout << "***********INITIAL**********\n";
+    for (unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
     }
-
+    std::cout << "*********************\n";
+*/
     typename Input_arrangement_2::Face_const_handle face = he->face();
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                               face->outer_ccb();
@@ -224,27 +230,27 @@ public:
     typename Input_arrangement_2::Halfedge_const_handle he_handle = circ;
 
     while (he_handle != he) {
-      he_handle = circ;
       circ++;
+      he_handle = circ;
     }
-
+    circ++;
     curr = circ;
-    curr++;
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr_next = curr;
-    curr_next++;
-
-    he_handle = curr;
-    vertices.push_back(Point_2(he_handle->source()->point()));
-
-    while (curr_next != circ) {
+    do {
       he_handle = curr;
+//      std::cout << "current curve: " << he_handle->curve() << std::endl;
       Point_2 curr_vertex = he_handle->target()->point();
+  //    std::cout << "pushing " << curr_vertex << std::endl;
       vertices.push_back(curr_vertex);
-      curr++;
-      curr_next++;
-    }
-    vertices.push_back(vertices[0]);
+    } while (++curr != circ);
 
+    vertices.pop_back();
+    vertices.push_back(vertices[0]);
+/*    std::cout << "*********************\n";
+    for (unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
+    std::cout << "*********************\n";
+*/
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
@@ -265,7 +271,12 @@ public:
       }
     }
 
+  /*  std::cout << "POINTS\n";
     std::reverse(points.begin(), points.end());
+    for (unsigned int i = 0 ; i < points.size() ; i++) {
+      std::cout << points[i] << std::endl;
+    }
+    std::cout << "*****************\n";*/
     CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
                                                             q, 
@@ -275,11 +286,13 @@ public:
     CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
-
-    if (out_arr.faces_begin()->is_unbounded())
+//    CGAL::Visibility_2::print_arrangement<Output_arrangement_2>(out_arr);
+    if (out_arr.faces_begin()->is_unbounded()) {
       return ++out_arr.faces_begin();
-    else
+    }
+    else {
       return out_arr.faces_begin();
+    }
   }
 
 private:
