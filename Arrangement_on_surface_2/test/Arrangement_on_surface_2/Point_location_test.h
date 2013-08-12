@@ -402,8 +402,6 @@ template <typename T_Geom_traits, typename T_Topol_traits>
 bool Point_location_test<T_Geom_traits, T_Topol_traits>::
 construct_pl_strategies()
 {
-  typedef T_Geom_traits Geom_traits;
-
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
@@ -482,8 +480,6 @@ construct_pl_strategies()
 template <typename T_Geom_traits, typename T_Topol_traits>
 bool Point_location_test<T_Geom_traits, T_Topol_traits>::attach_pl_strategies()
 {
-  typedef T_Geom_traits Geom_traits;
-
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
