@@ -78,10 +78,11 @@ private:
   Xcurve_container m_xcurves;
 
   /*! The number of inner and outer ccbs of faces. */
-  typedef std::pair<unsigned int, unsigned int>         Face_ccbs;
+  typedef std::pair<typename Arrangement::Size, typename Arrangement::Size>
+                                                        Face_ccbs;
   typedef std::vector<Face_ccbs>                        Face_ccbs_vector;
-  typedef Face_ccbs_vector::const_iterator              Face_ccbs_const_iter;
-  typedef Face_ccbs_vector::iterator                    Face_ccbs_iter;
+  typedef typename Face_ccbs_vector::const_iterator     Face_ccbs_const_iter;
+  typedef typename Face_ccbs_vector::iterator           Face_ccbs_iter;
   Face_ccbs_vector m_faces;
 
 public:
