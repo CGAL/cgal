@@ -42,13 +42,13 @@ int main() {
       typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2, CGAL::Tag_true>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(6,0);
+      CGAL::run_tests<Visibility_2>(7,0);
     }
     {
       typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_false>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(6,0);
+      CGAL::run_tests<Visibility_2>(7,0);
     }
   }
   {
@@ -59,12 +59,12 @@ int main() {
       typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_true>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(6,0);
+      CGAL::run_tests<Visibility_2>(7,0);
     }{
       typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_false>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(6,0);
+      CGAL::run_tests<Visibility_2>(7,0);
     }
   }
   return 0;
