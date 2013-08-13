@@ -34,15 +34,21 @@
 
 int main() {
   {
-    typedef CGAL::Gmpq                                                Number_type;
-    typedef CGAL::Cartesian<Number_type> 		                   Kernel;
+    typedef CGAL::Gmpq                                             Number_type;
+    typedef CGAL::Cartesian<Number_type> 		           Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel> 	                   Traits_2;
-    typedef CGAL::Arrangement_2<Traits_2>		                   Arrangement_2;
+    typedef CGAL::Arrangement_2<Traits_2>		           Arrangement_2;
     {
-      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2> //, CGAL::Tag_true>
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2, CGAL::Tag_true>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(5,0);
+      CGAL::run_tests<Visibility_2>(6,0);
+    }
+    {
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_false>
+        Visibility_2;
+      CGAL::test_model_methods<Visibility_2>();
+      CGAL::run_tests<Visibility_2>(6,0);
     }
   }
   {
@@ -50,10 +56,15 @@ int main() {
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
     {
-      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2>//, CGAL::Tag_true>
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_true>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(5,0);
+      CGAL::run_tests<Visibility_2>(6,0);
+    }{
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_false>
+        Visibility_2;
+      CGAL::test_model_methods<Visibility_2>();
+      CGAL::run_tests<Visibility_2>(6,0);
     }
   }
   return 0;

@@ -268,6 +268,26 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
   }
 }
 
+template <class Arrangement_2>
+void regularize(Arrangement_2& arr){
+  std::cout << " regularize arr " << std::endl; 
+  // remove all edges with the same face on both sides 
+  typedef typename Arrangement_2::Halfedge_iterator HEIT; 
+  for(HEIT heit = arr.halfedges_begin(); heit != arr.halfedges_end(); heit++){
+    if(heit->face() == heit->twin()->face()){
+      arr.remove_edge(heit);
+    }
+  }
+  
+  // remove all isolated vertices (also those left from prvious step)
+  typedef typename Arrangement_2::Vertex_iterator VIT; 
+  for(VIT vit = arr.vertices_begin(); vit != arr.vertices_end(); vit++){
+    if(vit->degree()== 0){
+      arr.remove_isolated_vertex(vit);
+    }
+  }
+}
+
 template <class Visibility_2>
 bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
   typedef typename Visibility_2::Input_arrangement_2          Input_arrangement_2;
@@ -312,6 +332,12 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
                                                    (input, arr_correct_out)) {
     return false;
   }
+
+  if(Visibility_2::Regularization_tag::value){
+    regularize(arr_correct_out);   
+  }
+
+
   CGAL::Object obj = CGAL::get_location<Input_arrangement_2>(arr_in, query_pt);
   Face_const_handle f;
   Halfedge_const_handle e;
