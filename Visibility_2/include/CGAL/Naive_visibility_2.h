@@ -166,10 +166,12 @@ public:
           typename std::vector<Point_2>::iterator last = polygon.begin() + big;
           if (is_between) {
               std::vector<Point_2> polygon1(first, last+1);
+              polygon1.push_back(q);
               build_arr(polygon1, out_arr);
           }
           else {
               std::vector<Point_2> polygon1(polygon.begin(), first+1);
+              polygon1.push_back(q);
               for (int i = big; i != polygon.size(); i++) {
                   polygon1.push_back(polygon[i]);
               }

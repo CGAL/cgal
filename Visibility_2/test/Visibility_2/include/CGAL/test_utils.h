@@ -340,7 +340,13 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
       }
     } while (++he_curr != he_circ);
   }
+
+
   if (!test_are_equal<Output_arrangement_2>(arr_out, arr_correct_out)) {
+    std::cout<<"the result is:\n";
+    CGAL::Visibility_2::print_arrangement(arr_out);
+    std::cout<<"however, the expected answer is:\n";
+    CGAL::Visibility_2::print_arrangement(arr_correct_out);
     return false;
   }
   visibility.detach();
@@ -842,18 +848,21 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
     typename Output_arrangement_2::Ccb_halfedge_const_circulator curr, circ;
     curr = circ = fh->outer_ccb();
     do {
-      Point_2 p = curr->target()->point();
-      typename Output_arrangement_2::Ccb_halfedge_const_circulator curr1, circ1;
-      curr1 = circ1 = fh->outer_ccb();
-      do {
-        Segment_2 intersect_s;
-        Point_2 intersect_p;
-        Point_2 source = curr1->source()->point();
-        Point_2 target = curr1->target()->point();
-        int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
-        if (i == 1 && intersect_p != source && intersect_p != target && intersect_p != q)
-          return false;
-      } while (++curr1 != circ1);
+      if (CGAL::right_turn(q, curr->source()->point(), curr->target()->point())) {
+        return false;
+      }
+//      Point_2 p = curr->target()->point();
+//      typename Output_arrangement_2::Ccb_halfedge_const_circulator curr1, circ1;
+//      curr1 = circ1 = fh->outer_ccb();
+//      do {
+//        Segment_2 intersect_s;
+//        Point_2 intersect_p;
+//        Point_2 source = curr1->source()->point();
+//        Point_2 target = curr1->target()->point();
+//        int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
+//        if (i == 1 && intersect_p != source && intersect_p != target && intersect_p != q)
+//          return false;
+//      } while (++curr1 != circ1);
     } while (++curr != circ);
   }
   return true;

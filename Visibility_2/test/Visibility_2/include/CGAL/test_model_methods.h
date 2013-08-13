@@ -92,10 +92,9 @@ void test_model_methods_for_arr(
   typename Input_arrangement_2::Halfedge_const_iterator hit;
   Face_handle face_check_he;
   for (hit = arr.halfedges_begin(); 
-       hit != arr.halfedges_end(); ++hit) {
+    hit != arr.halfedges_end(); ++hit) {
 
-    Segment_2 curr_seg(hit->source()->point(), hit->target()->point());
-    if (curr_seg.has_on(query_pt)) {
+    if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
       face_check_he = visibility.visibility_region(query_pt, hit, arr_out);
       break;
     }
@@ -112,9 +111,7 @@ void test_model_methods_for_arr(
   arr_out_check.clear();
   visibility.visibility_region(query_pt, hit, arr_out_check);
   assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_out, arr_out_check));
-
-  
+                                        (arr_out, arr_out_check));  
   { // Now consider the query point as the target of a halfedge
     arr_out.clear();
     typename Input_arrangement_2::Halfedge_const_iterator hit_snd;
@@ -129,8 +126,10 @@ void test_model_methods_for_arr(
             face = arr_out.faces_begin();
           }
           assert(face_check_he_snd == face);
-          assert(true == test_are_equal<Output_arrangement_2>
-              (arr_out, arr));          
+          if (! test_are_equal<Output_arrangement_2>(arr_out, arr)) {
+            std::cout<<"failed in case where the query point is a vertex.\n";
+            assert(false);
+          }
         }
       }   
   }
