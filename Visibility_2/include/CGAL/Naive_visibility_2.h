@@ -35,11 +35,11 @@
 namespace CGAL {
 
 //debug
-template<typename Point_handle>
-void print(std::vector<Point_handle> ps){
+template<typename Point_2>
+void print(std::vector<Point_2> ps){
     for (int i=0; i<ps.size(); i++)
     {
-        std::cout<<ps[i]->point().x()<<","<<ps[i]->point().y()<<std::endl;
+        std::cout<<ps[i].x()<<","<<ps[i].y()<<std::endl;
     }
 }
 
@@ -361,10 +361,10 @@ private:
                     remove_edges(active_edges, curr_vision_ray);
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
                     update_visibility(right_p, polygon);
-                    if (right_p == collinear_vertices.front()) {
+                    if (right_p == collinear_vertices[0]) {
                       insert_needle(collinear_vertices, polygon, true);
                     }
-                    else if (left_p == collinear_vertices.front()) {
+                    else if (left_p == collinear_vertices[0]) {
                       insert_needle(collinear_vertices, polygon, false);
                     }
                     update_visibility(left_p, polygon);
@@ -376,12 +376,18 @@ private:
                         //this means mid_p = left_p = right_p = furthest_p. no new vertex is found.
                     }
                     else {
+                      //debug
+//                      std::cout<<"print a needle:\n";
+//                      print(collinear_vertices);
+//                      std::cout<<"the left_p is "<<left_p.x()<<' '<<left_p.y()<<std::endl;
+//                      std::cout<<"the right_p is "<<right_p.x()<<' '<<right_p.y()<<std::endl;
+//                      std::cout<<"the front_p is "<<collinear_vertices[0].x()<<' '<<collinear_vertices[0].y()<<std::endl;
                       left_p = intersection_point(curr_vision_ray, active_edges[0]);
                       update_visibility(right_p, polygon);
-                      if (right_p == collinear_vertices.front()) {
+                      if (right_p == collinear_vertices[0]) {
                         insert_needle(collinear_vertices, polygon, true);
                       }
-                      else if (left_p == collinear_vertices.front()) {
+                      else if (left_p == collinear_vertices[0]) {
                         insert_needle(collinear_vertices, polygon, false);
                       }
                       update_visibility(left_p, polygon);
@@ -623,6 +629,9 @@ private:
                 return INNER;
             }
             if (CGAL::orientation(r.source(), (*curr)->source()->point(), (*curr)->target()->point()) == CGAL::COLLINEAR) {
+              if (CGAL::compare_distance_to_point(r.source(), (*curr)->source()->point(), (*curr)->target()->point()) == CGAL::SMALLER)
+                vertex1 = (*curr)->source();
+              else
                 vertex1 = (*curr)->target();
             }
             else {
