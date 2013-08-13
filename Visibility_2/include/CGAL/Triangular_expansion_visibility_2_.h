@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-template<class Arrangement_2> // TODO ,class RegularizationTag
+template<class Arrangement_2 ,class RegularizationTag>
 class Triangular_expansion_visibility_2 {
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
@@ -55,9 +55,8 @@ public:
   typedef typename Geometry_traits_2::Object_2          Object_2;
 
   // TODO 
-  //   typedef RegularizationTag                       Regularization_tag;
+  typedef RegularizationTag                       Regularization_tag;
   
-  typedef CGAL::Tag_true                         Regularization_tag;
   typedef CGAL::Tag_true                          Supports_general_polygon_tag;
   typedef CGAL::Tag_true                          Supports_simple_polygon_tag;    
 
@@ -72,6 +71,7 @@ private:
 private:
   const Input_arrangement_2* p_arr;
   boost::shared_ptr<CDT> p_cdt; 
+  std::vector<Segment_2> needles; 
 
 public: 
   Triangular_expansion_visibility_2() : p_arr(NULL){}
@@ -117,7 +117,85 @@ public:
     return result; 
   }
 
-  
+  void collect_needle(
+      const Point_2& q, 
+      const typename CDT::Vertex_handle vh, 
+      const typename CDT::Face_handle fh, 
+      int index){
+
+    
+    // the expanded edge should not be constrained 
+    assert(!p_cdt->is_constrained(get_edge(fh,index)));
+    assert(!p_cdt->is_infinite(fh));
+    // go into the new face  
+    const typename CDT::Face_handle nfh(fh->neighbor(index)); 
+    assert(!p_cdt->is_infinite(nfh));
+
+    // get indices of neighbors 
+    int nindex = nfh->index(fh); // index of new vertex and old face 
+    int rindex = p_cdt->ccw(nindex); // index of face behind right edge 
+    int lindex = p_cdt-> cw(nindex); // index of face behind left edge 
+    
+    // get vertices seen from entering edge 
+    const typename CDT::Vertex_handle nvh(nfh->vertex(nindex));
+    const typename CDT::Vertex_handle rvh(nfh->vertex(p_cdt->cw (nindex)));
+    const typename CDT::Vertex_handle lvh(nfh->vertex(p_cdt->ccw(nindex)));
+    assert(!p_cdt->is_infinite(nvh));
+    assert(!p_cdt->is_infinite(lvh));
+    assert(!p_cdt->is_infinite(rvh));
+    
+    // get edges seen from entering edge 
+    typename CDT::Edge re = get_edge(nfh,p_cdt->ccw(nindex));
+    typename CDT::Edge le = get_edge(nfh,p_cdt-> cw(nindex));
+     
+    // do orientation computation once for new vertex 
+    typename K::Orientation_2 orientation = 
+      p_cdt->geom_traits().orientation_2_object();
+    CGAL::Orientation orient = orientation(q,vh->point(),nvh->point());
+    
+    
+    std::cout << "\n collect_needle" <<std::endl;
+    std::cout << "q             "<< q << std::endl ;
+    std::cout << "vh->point()  "<< lvh->point() << std::endl;  
+    std::cout << "lvh->point()  "<< lvh->point() << std::endl ;
+    std::cout << "nvh->point()  "<< nvh->point() << std::endl ;
+    std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
+
+
+
+    switch ( orient ) {
+    case CGAL::CLOCKWISE:
+      // looking on right edge 
+      if(p_cdt->is_constrained(re)){
+        Point_2 p = ray_seg_intersection(q,vh->point(),nvh->point(),rvh->point());
+        needles.push_back(Segment_2(vh->point(),p));
+      }else{
+        collect_needle(q,vh,nfh,rindex);
+      }
+      break;
+    case CGAL::COUNTERCLOCKWISE:
+      // looking in left edge 
+      if(p_cdt->is_constrained(le)){
+        Point_2 p = ray_seg_intersection(q,vh->point(),nvh->point(),lvh->point());
+        needles.push_back(Segment_2(vh->point(),p));
+      }else{
+        collect_needle(q,vh,nfh,lindex);
+      }      
+      break;
+    default:
+      assert(orient == CGAL::COLLINEAR);
+      // looking on nvh, so it must be reported 
+      needles.push_back(Segment_2(vh->point(),nvh->point())); 
+      // but we may also contiue looking along the vertex 
+      if(!p_cdt->is_constrained(re)){
+        collect_needle(q,nvh,nfh,rindex);
+      }
+      if(!p_cdt->is_constrained(le)){
+        collect_needle(q,nvh,nfh,lindex);
+      }
+      break;
+    }
+  }
   template<class OIT> 
   OIT expand_edge(
       const Point_2& q, 
@@ -206,6 +284,14 @@ public:
     if(ro != CGAL::CLOCKWISE && lo != CGAL::COUNTERCLOCKWISE){
       *oit++ = nvh->point(); 
     }
+    if(!Regularization_tag::value){
+      assert(!(ro == CGAL::COLLINEAR && lo == CGAL::COLLINEAR));
+      // we have to check whether a needle starts here. 
+      if(!p_cdt->is_constrained(re) && ro == CGAL::COLLINEAR)
+        collect_needle(q,nvh,nfh,rindex);      
+      if(!p_cdt->is_constrained(le) && lo == CGAL::COLLINEAR)
+        collect_needle(q,nvh,nfh,lindex);    
+    }
 
     //left edge is seen if new vertex is clockwise of left boarder 
     if(lo == CGAL::CLOCKWISE){
@@ -249,6 +335,7 @@ public:
       Output_arrangement_2 &out_arr
   ) {
     out_arr.clear();
+    needles.clear(); 
     assert(!face->is_unbounded());
     
     //std::cout << "query in face interior" << std::endl;
@@ -288,8 +375,6 @@ public:
 
 
     return output(raw_output,out_arr);
-
-    
   }
 
   Face_handle visibility_region(const Point_2 &q, 
@@ -298,6 +383,7 @@ public:
     
     assert(!he->face()->is_unbounded());    
     out_arr.clear();
+    needles.clear(); 
 
     std::vector<Point_2> raw_output; 
     typename CDT::Locate_type location;
@@ -405,24 +491,30 @@ public:
         assert(fh->vertex(index)->point() ==  he->target()->point());
       }
     }
-   
-    
     return output(raw_output,out_arr);
-    
   }
 
   Face_handle output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
-    //std::cout << "Output Polygon" << std::endl; 
-    //std::cout << raw_output.size() << std::endl; 
-    
-    // TODO: handle needles and report arr at same time 
-    std::vector<Segment_2> segments; 
+    std::cout << "\n Output Polygon" << std::endl; 
+    std::cout << needles.size() << std::endl; 
+    for (int i = 0; i<needles.size();i++){
+      std::cout << needles[i].source() << " -- " 
+                << needles[i].target() << std::endl; 
+    }
+    std::cout << raw_output.size() << std::endl; 
+    std::vector<Segment_2> segments(needles.begin(),needles.end()); 
     for(int i = 0; i <raw_output.size();i++){
       segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
-      //std::cout << raw_output[i] << " -- " << raw_output[(i+1)%raw_output.size()] << std::endl; 
     }
+    
+    for (int i = needles.size(); i<segments.size();i++){
+      std::cout << segments[i].source() << " -- " 
+                << segments[i].target() << std::endl; 
+    }
+    
     // use something more clever 
-    CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
+//    CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
+    CGAL::insert(out_arr,segments.begin(),segments.end());
  
     assert(out_arr.number_of_faces()== 2);
 
@@ -431,8 +523,7 @@ public:
       return ++out_arr.faces_begin();
     else
       return out_arr.faces_begin();
-    
-    
+     
     //std::cout<< "==============" <<std::endl;
     
   }

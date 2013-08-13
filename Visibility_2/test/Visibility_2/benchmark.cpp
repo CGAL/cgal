@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     Simple_polygon_visibility_2;
   typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>
     Naive_visibility_2;
-  typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2>
+  typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2,CGAL::Tag_true>
     Triangular_expansion_visibility_2;
 
   Simple_polygon_visibility_2 simple_visibility;
