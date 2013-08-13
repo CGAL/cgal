@@ -2039,6 +2039,8 @@ private:
             }
           } // end of samey case
         }
+        CGAL_SDG_DEBUG(std::cout << "debug return ZERO in case"
+            << " of q: segment (last resort)" << std::endl;);
         return ZERO;
       }
 
