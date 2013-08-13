@@ -31,7 +31,7 @@ typedef CGAL::Cartesian<Rational>                     Rat_kernel;
 typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
 typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
                                                       Traits_2;
-  
+
 typedef Rat_kernel::Point_2                           Bezier_rat_point;
 typedef Traits_2::Curve_2                             Bezier_curve;
 typedef Traits_2::X_monotone_curve_2                  Bezier_X_monotone_curve;
@@ -47,7 +47,7 @@ Bezier_curve read_bezier_curve(std::istream& is, bool aDoubleFormat)
   unsigned int  n;
 
   is >> n;
-  
+
   // Read the control points.
   std::vector<Bezier_rat_point> ctrl_pts;
   for (unsigned int k = 0; k < n; ++k) {
@@ -59,7 +59,7 @@ Bezier_curve read_bezier_curve(std::istream& is, bool aDoubleFormat)
     }
     else
       is >> p;
-    
+
     if ((k == 0) || (ctrl_pts[k-1] != p))
       ctrl_pts.push_back(p);
   }
@@ -69,114 +69,114 @@ Bezier_curve read_bezier_curve(std::istream& is, bool aDoubleFormat)
 
 bool read_bezier(char const* aFileName, Bezier_polygon_set& rSet)
 {
-  
+
   bool rOK = false;
-  
+
   std::ifstream in_file(aFileName);
-  
+
   if (in_file) {
     try {
       std::cout << "Reading " << aFileName << std::endl;
-          
+
       std::string format;
       std::getline(in_file, format);
-      
+
       bool lDoubleFormat =
         ((format.length() >= 6) && (format.substr(0,6) == "DOUBLE"));
-                              
+
       // Red the number of bezier polygon with holes
       unsigned int n_regions;
       in_file >> n_regions;
-      
+
       for (unsigned int r = 0; r < n_regions; ++r) {
         Bezier_polygon_vector  polygons;
-        
+
         // Read the number of bezier curves.
         unsigned int n_boundaries;
         in_file >> n_boundaries;
-      
+
         for (unsigned int b = 0; b < n_boundaries; ++b) {
           // Read the number of bezier curves.
           unsigned int n_curves;
           in_file >> n_curves;
-          
+
           // Read the curves one by one, and construct the general polygon these
           // curve form (the outer boundary and the holes inside it).
-          
+
           std::list<Bezier_X_monotone_curve> xcvs;
-        
+
           for (unsigned int k = 0; k < n_curves; ++k) {
             // Read the current curve and subdivide it into x-monotone subcurves.
-            
+
             std::list<CGAL::Object>                 x_objs;
             std::list<CGAL::Object>::const_iterator xoit;
             Bezier_X_monotone_curve                 xcv;
             Bezier_traits                           traits;
             Bezier_traits::Make_x_monotone_2        make_x_monotone =
               traits.make_x_monotone_2_object();
-        
+
             Bezier_curve B = read_bezier_curve(in_file, lDoubleFormat);
             if (B.number_of_control_points() >= 2) {
-                
+
               make_x_monotone(B, std::back_inserter(x_objs));
-              
+
               for (xoit = x_objs.begin(); xoit != x_objs.end(); ++xoit) {
                 if (CGAL::assign(xcv, *xoit))
                   xcvs.push_back(xcv);
               }
             }
-          }  
-            
+          }
+
           Bezier_polygon  pgn(xcvs.begin(), xcvs.end());
-          
+
           CGAL::Orientation  orient = pgn.orientation();
           std::cout << "  Orientation: " << orient << std::endl;
-            
+
           if (((b == 0) && (orient == CGAL::CLOCKWISE)) ||
               ((b > 0) && (orient == CGAL::COUNTERCLOCKWISE)))
           {
             std::cout << "    Reversing orientation: " << std::endl;
             pgn.reverse_orientation();
           }
-            
+
           polygons.push_back(pgn);
         }
-      
+
         if (polygons.size() > 0) {
           Bezier_polygon_with_holes pwh(polygons.front());
-          
+
           if (polygons.size() > 1) {
             Bezier_polygon_vector::const_iterator it;
             for (it = CGAL::cpp11::next(polygons.begin());
                  it != polygons.end(); ++it)
-              pwh.add_hole(*it);    
+              pwh.add_hole(*it);
           }
-          
+
           if (is_valid_polygon_with_holes(pwh, rSet.traits())) {
             std::cout << "  Inserting Bezier polygon with holes comprising "
                       << polygons.size() << " boundaries in total into set."
                       << std::endl;
-            rSet.join(pwh);      
+            rSet.join(pwh);
             std::cout << "    Done." << std::endl;
           }
           else
             std::cout << "  **** Bezier polygon with holes is NOT VALID ****"
                       << std::endl;
         }
-        
+
         rOK = true;
       }
     }
     catch(std::exception const& x) {
       std::cout << "An exception ocurred during reading of Bezier polygon set:"
                 << x.what() << std::endl;
-    } 
+    }
     catch(...) {
       std::cout << "An exception ocurred during reading of Bezier polygon set."
                 << std::endl;
-    } 
+    }
   }
-  
+
   return rOK;
 }
 
@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
   Bezier_polygon_set S1, S2;
 
   timer.start();
-  
+
 
   if (! read_bezier(filename1, S1)) {
     std::cerr << "Failed to read " << filename1 << " ..." << std::endl;
@@ -205,9 +205,9 @@ int main(int argc, char* argv[])
   }
 
   timer.stop();
-  std::cout << "Constructed the input polygons in " << timer.time() 
+  std::cout << "Constructed the input polygons in " << timer.time()
             << " seconds." << std::endl << std::endl;
-  
+
   std::cout << "Starting boolean operation..." << std::endl;
   timer.reset();
   timer.start();
@@ -220,13 +220,13 @@ int main(int argc, char* argv[])
   catch(std::exception const& x) {
     std::cout << "An exception occurred during the Boolean operation:"
               << x.what() << std::endl;
-  } 
-  catch(...) { 
+  }
+  catch(...) {
     std::cout << "An exception occurred during the Boolean operation."
               << std::endl;
-  } 
+  }
   timer.stop();
-  
+
   std::cout << "The " << ( bop[0] == 'i' ? "intersection" : "union" )
             << " computation took "
             << timer.time() << " seconds." << std::endl;

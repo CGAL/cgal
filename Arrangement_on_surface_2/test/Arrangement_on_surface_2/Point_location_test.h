@@ -3,7 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Timer.h>
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_simple_point_location.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
@@ -19,13 +19,13 @@
 #include "IO_test.h"
 
 /*! Point location test */
-template <typename T_Traits>
-class Point_location_test : public IO_test<T_Traits> {
-private:
-  typedef T_Traits                                      Traits;
-  typedef IO_test<Traits>                               Base;
-
+template <typename T_Geom_traits, typename T_Topol_traits>
+class Point_location_test : public IO_test<T_Geom_traits> {
 public:
+  typedef T_Geom_traits                                 Geom_traits;
+  typedef T_Topol_traits                                Topol_traits;
+  typedef IO_test<Geom_traits>                          Base;
+
   typedef typename Base::Point_2                        Point_2;
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Base::Curve_2                        Curve_2;
@@ -33,58 +33,72 @@ public:
   typedef typename Base::Points_vector                  Points_vector;
   typedef typename Base::Xcurves_vector                 Xcurves_vector;
   typedef typename Base::Curves_vector                  Curves_vector;
-  
-  typedef CGAL::Arrangement_2<Traits>                   Arrangement_2;
 
-  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
-  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
+  typedef CGAL::Arrangement_on_surface_2<Geom_traits, Topol_traits>
+                                                        Arrangement;
+
+  typedef typename Arrangement::Halfedge_handle         Halfedge_handle;
+  typedef typename Arrangement::Edge_const_iterator     Edge_const_iterator;
+  typedef typename Arrangement::Vertex_const_iterator   Vertex_const_iterator;
 
   typedef typename Points_vector::iterator              Point_iterator;
   typedef std::vector<CGAL::Object>                     Objects_vector;
   typedef Objects_vector::iterator                      Object_iterator;
-  
+
 protected:
-  typedef typename CGAL::Arr_naive_point_location<Arrangement_2>     
+  typedef typename CGAL::Arr_naive_point_location<Arrangement>
                                                     Naive_point_location;
-  typedef typename CGAL::Arr_simple_point_location<Arrangement_2>     
+  typedef typename CGAL::Arr_simple_point_location<Arrangement>
                                                     Simple_point_location;
-  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement_2> 
+  typedef typename CGAL::Arr_walk_along_line_point_location<Arrangement>
                                                     Walk_point_location;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement>
                                                     Lm_point_location;
-  typedef typename CGAL::Arr_random_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_random_landmarks_generator<Arrangement>
                                                     Random_lm_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
-                                                      Random_lm_generator> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
+                                                      Random_lm_generator>
                                                     Lm_random_point_location;
-  typedef typename CGAL::Arr_grid_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_grid_landmarks_generator<Arrangement>
                                                     Grid_lm_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
-                                                      Grid_lm_generator> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
+                                                      Grid_lm_generator>
                                                     Lm_grid_point_location;
-  typedef typename CGAL::Arr_halton_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_halton_landmarks_generator<Arrangement>
                                                     Halton_lm_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
-                                                      Halton_lm_generator> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
+                                                      Halton_lm_generator>
                                                     Lm_halton_point_location;
-  typedef typename CGAL::Arr_middle_edges_landmarks_generator<Arrangement_2>
+  typedef typename CGAL::Arr_middle_edges_landmarks_generator<Arrangement>
                                                     Middle_edges_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
-                                                      Middle_edges_generator> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
+                                                      Middle_edges_generator>
     Lm_middle_edges_point_location;
-  typedef typename CGAL::Arr_landmarks_specified_points_generator<Arrangement_2>
+  typedef typename CGAL::Arr_landmarks_specified_points_generator<Arrangement>
     Specified_points_generator;
-  typedef typename CGAL::Arr_landmarks_point_location<Arrangement_2,
-                                                      Specified_points_generator> 
+  typedef typename CGAL::Arr_landmarks_point_location<Arrangement,
+                                                      Specified_points_generator>
     Lm_specified_points_point_location;
-  typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement_2> 
+  typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement>
     Trapezoid_ric_point_location;
 
-  //   typedef CGAL::Arr_triangulation_point_location<Arrangement_2> 
+  //   typedef CGAL::Arr_triangulation_point_location<Arrangement>
   //     Triangulation_point_location;
 
   // ===> Add new point location type here <===
+
+protected:
+  /*! The geometry traits */
+  const Geom_traits& m_geom_traits;
+
+  /*! The arrangement */
+  Arrangement* m_arr;
+
+  /*! The input data file of the query points*/
+  std::string m_filename_queries;
+
+  /*! The query points */
+  Points_vector m_query_points;
 
   Naive_point_location* m_naive_pl;                              // 0
   Simple_point_location* m_simple_pl;                            // 1
@@ -104,14 +118,14 @@ protected:
   Halton_lm_generator* m_halton_g;
   Middle_edges_generator* m_middle_edges_g;
   Specified_points_generator* m_specified_points_g;
-  
+
   // // ===> Change the number of point-location startegies
   // //      when a new point location is added. <===
   #define MAX_NUM_POINT_LOCATION_STRATEGIES 11
-  
+
 public:
   /*! Constructor */
-  Point_location_test();
+  Point_location_test(const Geom_traits& geom_traits);
 
   /*! Destructor */
   virtual ~Point_location_test()
@@ -123,10 +137,10 @@ public:
 
   void set_filenames(const char* points_filename, const char* xcurves_filename,
                      const char* curves_filename, const char* queries_filename);
-  
+
   /*! Initialize the data structures */
   virtual bool init();
-  
+
   /*! Perform the test */
   virtual bool perform();
 
@@ -136,11 +150,11 @@ public:
   bool allocate_arrangement();
 
   void deallocate_arrangement();
-  
+
   bool construct_arrangement();
 
   void clear_arrangement();
-  
+
   bool allocate_pl_strategies();
 
   bool construct_pl_strategies();
@@ -148,14 +162,14 @@ public:
   bool attach_pl_strategies();
 
   void deallocate_pl_strategies();
-  
+
   template <typename Point_location,
             typename InputIterator, typename OutputIterator>
   void query(Point_location& pl, const char* type,
              InputIterator begin, InputIterator end, OutputIterator oi)
   {
     typedef InputIterator                       Input_iterator;
-    
+
     CGAL::Timer timer;
     timer.reset(); timer.start();
     Input_iterator piter;
@@ -167,58 +181,51 @@ public:
     timer.stop();
     std::cout << type << " location took " << timer.time() << std::endl;
   }
-
-  /*! The arrangement */
-  Arrangement_2* m_arr;  
-
-private:
-  /*! The input data file of the query points*/
-  std::string m_filename_queries;
-
-  /*! The query points */
-  Points_vector m_query_points;
 };
 
 /*!
- * Constructor. 
- * Accepts test data file name.
+ * Constructor.
  */
-template <typename T_Traits>
-Point_location_test<T_Traits>::Point_location_test() :
-  m_naive_pl(NULL), 
-  m_simple_pl(NULL), 
-  m_walk_pl(NULL), 
-  m_lm_pl(NULL), 
-  m_random_lm_pl(NULL), 
-  m_grid_lm_pl(NULL), 
-  m_halton_lm_pl(NULL), 
-  m_middle_edges_lm_pl(NULL), 
-  m_specified_points_lm_pl(NULL), 
-  // m_triangulation_pl(NULL), 
-  m_trapezoid_ric_pl(NULL), 
-  m_trapezoid_ric_no_grnt_pl(NULL), 
-  m_random_g(NULL), 
-  m_grid_g(NULL), 
-  m_halton_g(NULL), 
-  m_middle_edges_g(NULL), 
-  m_specified_points_g(NULL),
-  m_arr(NULL)
+template <typename T_Geom_traits, typename T_Topol_traits>
+Point_location_test<T_Geom_traits, T_Topol_traits>::
+Point_location_test(const Geom_traits& geom_traits) :
+  Base(geom_traits),
+  m_geom_traits(geom_traits),
+  m_arr(NULL),
+  m_naive_pl(NULL),
+  m_simple_pl(NULL),
+  m_walk_pl(NULL),
+  m_lm_pl(NULL),
+  m_random_lm_pl(NULL),
+  m_grid_lm_pl(NULL),
+  m_halton_lm_pl(NULL),
+  m_middle_edges_lm_pl(NULL),
+  m_specified_points_lm_pl(NULL),
+  // m_triangulation_pl(NULL),
+  m_trapezoid_ric_pl(NULL),
+  m_trapezoid_ric_no_grnt_pl(NULL),
+  m_random_g(NULL),
+  m_grid_g(NULL),
+  m_halton_g(NULL),
+  m_middle_edges_g(NULL),
+  m_specified_points_g(NULL)
 {}
 
 /*! Set the file names */
-template <typename T_Traits>
-void Point_location_test<T_Traits>::set_filenames(const char* points_filename,
-                                                  const char* xcurves_filename,
-                                                  const char* curves_filename,
-                                                  const char* queries_filename)
+template <typename T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::
+set_filenames(const char* points_filename,
+              const char* xcurves_filename,
+              const char* curves_filename,
+              const char* queries_filename)
 {
   Base::set_filenames(points_filename, xcurves_filename, curves_filename);
   m_filename_queries.assign(queries_filename);
 }
 
 /*! Initialize the data structures */
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::init()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::init()
 {
   if (!Base::init()) return false;
 
@@ -230,8 +237,8 @@ bool Point_location_test<T_Traits>::init()
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
-void Point_location_test<T_Traits>::clear()
+template<class T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::clear()
 {
   Base::clear();
   m_query_points.clear();
@@ -239,8 +246,9 @@ void Point_location_test<T_Traits>::clear()
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
-void Point_location_test<T_Traits>::deallocate_pl_strategies()
+template<class T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::
+deallocate_pl_strategies()
 {
   if (m_naive_pl) {
     delete m_naive_pl;
@@ -255,7 +263,8 @@ void Point_location_test<T_Traits>::deallocate_pl_strategies()
     m_walk_pl = NULL;
   }
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
   if (m_lm_pl) {
     delete m_lm_pl;
     m_lm_pl = NULL;
@@ -318,15 +327,15 @@ void Point_location_test<T_Traits>::deallocate_pl_strategies()
   }
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::allocate_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_arrangement()
 {
-  if (!(m_arr = new Arrangement_2())) return false;
+  if (!(m_arr = new Arrangement(&m_geom_traits))) return false;
   return true;
 }
 
-template <typename T_Traits>
-void Point_location_test<T_Traits>::deallocate_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
@@ -334,37 +343,38 @@ void Point_location_test<T_Traits>::deallocate_arrangement()
   }
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::construct_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::construct_arrangement()
 {
   // Insert all into the arrangement
   CGAL::insert(*m_arr, this->m_xcurves.begin(), this->m_xcurves.end());
   // insert(*m_arr, m_points.begin(), m_points.end());
   CGAL::insert(*m_arr, this->m_curves.begin(), this->m_curves.end());
-  
+
   // Print the size of the arrangement.
   std::cout << "V = " << m_arr->number_of_vertices()
-            << ",  E = " << m_arr->number_of_edges() 
+            << ",  E = " << m_arr->number_of_edges()
             << ",  F = " << m_arr->number_of_faces() << std::endl;
 
   return true;
 }
 
-template <typename T_Traits>
-void Point_location_test<T_Traits>::clear_arrangement()
+template <typename T_Geom_traits, typename T_Topol_traits>
+void Point_location_test<T_Geom_traits, T_Topol_traits>::clear_arrangement()
 {
   if (m_arr) m_arr->clear();
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::allocate_pl_strategies()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_pl_strategies()
 {
   // Allocate all point location strategies.
   if (!(m_naive_pl = new Naive_point_location())) return false;
   if (!(m_simple_pl = new Simple_point_location())) return false;
   if (!(m_walk_pl = new Walk_point_location())) return false;
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   if (!(m_lm_pl = new Lm_point_location())) return false;
   if (!(m_random_lm_pl = new Lm_random_point_location())) return false;
@@ -379,7 +389,7 @@ bool Point_location_test<T_Traits>::allocate_pl_strategies()
   //   return false;
 
 #endif
-  
+
   if (!(m_trapezoid_ric_pl = new Trapezoid_ric_point_location())) return false;
   if (!(m_trapezoid_ric_no_grnt_pl = new Trapezoid_ric_point_location()))
     return false;
@@ -388,11 +398,10 @@ bool Point_location_test<T_Traits>::allocate_pl_strategies()
   return true;
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::construct_pl_strategies()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::
+construct_pl_strategies()
 {
-  typedef T_Traits Traits;
-
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
@@ -400,36 +409,37 @@ bool Point_location_test<T_Traits>::construct_pl_strategies()
   m_simple_pl = new Simple_point_location(*m_arr);                      // 1
   m_walk_pl = new Walk_point_location(*m_arr);                          // 2
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   timer.reset(); timer.start();
   m_lm_pl = new Lm_point_location(*m_arr);                              // 3
-  timer.stop(); 
+  timer.stop();
   std::cout << "Lm (vert) construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_random_g = new Random_lm_generator(*m_arr);
   m_random_lm_pl = new Lm_random_point_location(*m_arr, m_random_g);    // 4
-  timer.stop(); 
+  timer.stop();
   std::cout << "Random lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
-  m_grid_g = new Grid_lm_generator(*m_arr);      
+  m_grid_g = new Grid_lm_generator(*m_arr);
   m_grid_lm_pl = new Lm_grid_point_location(*m_arr, m_grid_g);          // 5
-  timer.stop(); 
+  timer.stop();
   std::cout << "Grid lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_halton_g = new Halton_lm_generator(*m_arr);
   m_halton_lm_pl = new Lm_halton_point_location(*m_arr, m_halton_g);    // 6
-  timer.stop(); 
+  timer.stop();
   std::cout << "Halton lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_middle_edges_g = new Middle_edges_generator(*m_arr);
   m_middle_edges_lm_pl =
     new Lm_middle_edges_point_location(*m_arr, m_middle_edges_g);       // 7
-  timer.stop(); 
+  timer.stop();
   std::cout << "Middle edges lm construction took " << timer.time()
             << std::endl;
 
@@ -437,41 +447,39 @@ bool Point_location_test<T_Traits>::construct_pl_strategies()
   m_specified_points_g = new Specified_points_generator(*m_arr);
   m_specified_points_lm_pl =
     new Lm_specified_points_point_location(*m_arr, m_specified_points_g); // 8
-  timer.stop(); 
+  timer.stop();
   std::cout << "Specified_points lm construction took "
             << timer.time() << std::endl;
 
   // timer.reset(); timer.start();
   // m_triangulation_pl = new Triangulation_point_location(*m_arr);     // 9
-  // timer.stop(); 
+  // timer.stop();
   // std::cout << "Triangulation lm construction took "
   //           << timer.time() << std::endl;
 
 #endif
-  
+
   timer.reset(); timer.start();
   m_trapezoid_ric_pl = new Trapezoid_ric_point_location(*m_arr);        // 10
-  timer.stop(); 
+  timer.stop();
   std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
-  
+
   timer.reset(); timer.start();
   m_trapezoid_ric_no_grnt_pl =
     new Trapezoid_ric_point_location(*m_arr, false);                    // 11
   timer.stop();
-  std::cout << "Trapezoid RIC without-guarantees construction took " 
+  std::cout << "Trapezoid RIC without-guarantees construction took "
             << timer.time() << std::endl;
-  
+
   std::cout << std::endl;
 
   // ===> Add new point location instance here. <===
   return true;
 }
 
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::attach_pl_strategies()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::attach_pl_strategies()
 {
-  typedef T_Traits Traits;
-
   // Initialize all point location strategies.
   CGAL::Timer timer;
 
@@ -479,35 +487,36 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
   m_simple_pl->attach(*m_arr);
   m_walk_pl->attach(*m_arr);
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   timer.reset(); timer.start();
   m_lm_pl->attach(*m_arr);
-  timer.stop(); 
+  timer.stop();
   std::cout << "Lm (vert) construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_random_g = new Random_lm_generator(*m_arr);
   m_random_lm_pl->attach(*m_arr, m_random_g);
-  timer.stop(); 
+  timer.stop();
   std::cout << "Random lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
-  m_grid_g = new Grid_lm_generator(*m_arr);      
+  m_grid_g = new Grid_lm_generator(*m_arr);
   m_grid_lm_pl->attach(*m_arr, m_grid_g);
-  timer.stop(); 
+  timer.stop();
   std::cout << "Grid lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_halton_g = new Halton_lm_generator(*m_arr);
   m_halton_lm_pl->attach(*m_arr, m_halton_g);
-  timer.stop(); 
+  timer.stop();
   std::cout << "Halton lm construction took " << timer.time() << std::endl;
 
   timer.reset(); timer.start();
   m_middle_edges_g = new Middle_edges_generator(*m_arr);
   m_middle_edges_lm_pl->attach(*m_arr, m_middle_edges_g);
-  timer.stop(); 
+  timer.stop();
   std::cout << "Middle edges lm construction took " << timer.time()
             << std::endl;
 
@@ -520,25 +529,25 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
 
   // timer.reset(); timer.start();
   // m_location triangulation_lm_pl->attach(*m_arr);
-  // timer.stop(); 
+  // timer.stop();
   // std::cout << "Triangulation lm construction took "
   //           << timer.time() << std::endl;
 
 #endif
-  
+
   timer.reset(); timer.start();
   m_trapezoid_ric_pl->attach(*m_arr);
-  timer.stop(); 
+  timer.stop();
   std::cout << "Trapezoid RIC construction took " << timer.time() << std::endl;
-  
+
   timer.reset(); timer.start();
   m_trapezoid_ric_no_grnt_pl->with_guarantees(false);
   m_trapezoid_ric_no_grnt_pl->attach(*m_arr);
 
   timer.stop();
-  std::cout << "Trapezoid RIC without-guarantees construction took " 
+  std::cout << "Trapezoid RIC without-guarantees construction took "
             << timer.time() << std::endl;
-  
+
   std::cout << std::endl;
 
   // ===> Add new point location instance here. <===
@@ -546,14 +555,14 @@ bool Point_location_test<T_Traits>::attach_pl_strategies()
 }
 
 // Perform the test
-template <typename T_Traits>
-bool Point_location_test<T_Traits>::perform()
+template <typename T_Geom_traits, typename T_Topol_traits>
+bool Point_location_test<T_Geom_traits, T_Topol_traits>::perform()
 {
   Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES];
-  typename Arrangement_2::Vertex_const_handle    vh_ref, vh_curr;
-  typename Arrangement_2::Halfedge_const_handle  hh_ref, hh_curr;
-  typename Arrangement_2::Face_const_handle      fh_ref, fh_curr;
-  
+  typename Arrangement::Vertex_const_handle    vh_ref, vh_curr;
+  typename Arrangement::Halfedge_const_handle  hh_ref, hh_curr;
+  typename Arrangement::Face_const_handle      fh_ref, fh_curr;
+
   // Locate the points in the list using all point location strategies.
 
   // std::cout << "Time in seconds" << std::endl;
@@ -566,11 +575,12 @@ bool Point_location_test<T_Traits>::perform()
 
   query(*m_simple_pl, "Simple", m_query_points.begin(), m_query_points.end(),
         std::back_inserter(objs[pl_index++]));  // Simple
-  
+
   query(*m_walk_pl, "Walk", m_query_points.begin(), m_query_points.end(),
         std::back_inserter(objs[pl_index++]));  // Walk
 
-#if (TEST_TRAITS == SEGMENT_TRAITS) || (TEST_TRAITS == LINEAR_TRAITS)
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS) || \
+  (TEST_GEOM_TRAITS == LINEAR_GEOM_TRAITS)
 
   query(*m_lm_pl, "Landmarks (vertices)",
         m_query_points.begin(), m_query_points.end(),
@@ -595,7 +605,7 @@ bool Point_location_test<T_Traits>::perform()
   query(*m_specified_points_lm_pl, "Landmarks specified points",
         m_query_points.begin(), m_query_points.end(),
         std::back_inserter(objs[pl_index++]));  // Landmarks specified points
-  
+
   // Triangulation
   // query(*m_triangulation_pl, "Triangulation",
   //       m_query_points.begin(), m_query_points.end(),
@@ -618,7 +628,7 @@ bool Point_location_test<T_Traits>::perform()
 
   // Number of point location strategies used.
   unsigned int pls_num = pl_index;
-  std::cout << "Number of strategies is " << pls_num << std::endl;  
+  std::cout << "Number of strategies is " << pls_num << std::endl;
 
   // End Location
 
@@ -630,7 +640,7 @@ bool Point_location_test<T_Traits>::perform()
     ob_iter[pl_index] = objs[pl_index].begin();
 
   // get size of objects
-  unsigned int size = static_cast<unsigned int>(objs[0].size());
+  size_t size = objs[0].size();
   std::cout << "size is " << size << std::endl;
 
   for (pl_index = 0; pl_index < pls_num; ++pl_index) {
@@ -664,11 +674,11 @@ bool Point_location_test<T_Traits>::perform()
           result = -1;
         }
         else if (fh_curr != fh_ref) {
-          std::cout << "Error: point location number " 
+          std::cout << "Error: point location number "
                     << pl_index << " return a different face" << std::endl;
           result = -1;
         }
-      }  
+      }
       //if (fh_ref->is_unbounded())
       //  std::cout << "Unbounded face." << std::endl;
       //else
@@ -696,7 +706,7 @@ bool Point_location_test<T_Traits>::perform()
           result = -1;
         }
         else if ((hh_curr != hh_ref) && (hh_curr->twin() != hh_ref)) {
-          std::cout << "Error: point location number " 
+          std::cout << "Error: point location number "
                     << pl_index << " return a different halfedge" << std::endl;
           std::cout << "Halfedge (curr): " << hh_curr->curve() << std::endl;
           result = -1;
@@ -723,7 +733,7 @@ bool Point_location_test<T_Traits>::perform()
           result = -1;
         }
         else if (vh_curr != vh_ref) {
-          std::cout << "Error: point location number " 
+          std::cout << "Error: point location number "
                     << pl_index << " return a different vertex"<< std::endl;
           result = -1;
         }
@@ -732,7 +742,7 @@ bool Point_location_test<T_Traits>::perform()
     }
 
     else {
-      std::cout << "Illegal point-location result." << std::endl;    
+      std::cout << "Illegal point-location result." << std::endl;
       result = -1;
     }
   }

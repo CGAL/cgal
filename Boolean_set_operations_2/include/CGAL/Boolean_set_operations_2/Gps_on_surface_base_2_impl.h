@@ -383,12 +383,16 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   {
     /*Halfedge_handle he = 
       arr.insert_at_vertices(*temp, curr_he, first_he);*/
-    bool new_face_created;
-    Halfedge_handle he = accessor.insert_at_vertices_ex (*temp,
-                                                         curr_he,
-                                                         first_he,
-                                                         cmp_ends(*temp),
-                                                         new_face_created);
+    bool new_face_created = false;
+    bool dummy_swapped_predecessors = false;
+    Halfedge_handle he = accessor.insert_at_vertices_ex (curr_he,
+                                                         *temp, (cmp_ends(*temp) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                                         first_he->next(),
+                                                         new_face_created,
+                                                         dummy_swapped_predecessors);
+    // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+    // or do we have to disallow swapping?
+    
     CGAL_assertion(new_face_created); 
     CGAL_assertion((he->face() != he->twin()->face()));
     
@@ -414,13 +418,17 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   const X_monotone_curve_2& last_cv = *last;
   /*Halfedge_handle last_he =
     arr.insert_at_vertices(last_cv, curr_he, first_he); */
-  bool new_face_created;
+  bool new_face_created = false;
+  bool dummy_swapped_predecessors = false;
   Halfedge_handle last_he = 
-    accessor.insert_at_vertices_ex (last_cv,
-                                    curr_he,
-                                    first_he,
-                                    cmp_ends(last_cv),
-                                    new_face_created);
+    accessor.insert_at_vertices_ex (curr_he,
+                                    last_cv, ( cmp_ends(last_cv) == CGAL::SMALLER ? ARR_LEFT_TO_RIGHT : ARR_RIGHT_TO_LEFT),
+                                    first_he->next(),
+                                    new_face_created,
+                                    dummy_swapped_predecessors);
+  // TODO EBEB 2012-08-06 do we have to care if order has been swapped,
+  // or do we have to disallow swapping?
+
   CGAL_assertion(new_face_created); 
   CGAL_assertion((last_he->face() != last_he->twin()->face()));
   

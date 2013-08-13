@@ -96,7 +96,7 @@ class ArrangementGraphicsItem : public ArrangementGraphicsItemBase
   typedef typename Arrangement::Face_iterator           Face_iterator;
   typedef typename Arrangement::Hole_iterator           Holes_iterator;
   typedef typename Arrangement::Ccb_halfedge_circulator Ccb_halfedge_circulator;
- 
+
   typedef typename ArrTraitsAdaptor< Traits >::Kernel   Kernel;
   typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Kernel::Point_2                      Kernel_point_2;
@@ -112,7 +112,7 @@ public:
 
   /*! Destructor (virtual) */
   ~ArrangementGraphicsItem() {}
-  
+
 public:
   void modelChanged( );
   QRectF boundingRect( ) const;
@@ -387,7 +387,7 @@ protected:
        * polygon
        */
       Ccb_halfedge_circulator cc=f->outer_ccb();
-      do 
+      do
       {
         if (this->antenna(cc))
           continue;
@@ -424,9 +424,9 @@ protected:
           pts.push_back(coord_source );
 
           const int DRAW_FACTOR = 5;
-          if (is_source_left) 
+          if (is_source_left)
           {
-            for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR) 
+            for (x = x_min + DRAW_FACTOR; x < x_max; x+=DRAW_FACTOR)
             {
               //= COORD_SCALE)
               curr_x = this->toScene( x );
@@ -443,9 +443,9 @@ protected:
               pts.push_back( curr );
             }// for
           }
-          else 
+          else
           {
-            for (x = x_max; x > x_min; x-=DRAW_FACTOR) 
+            for (x = x_max; x > x_min; x-=DRAW_FACTOR)
             {
               curr_x = this->toScene( x );
               Alg_kernel   ker;
@@ -512,7 +512,7 @@ protected:
     {
       if ( this->antenna( cc ) )
         continue;
-            
+
       if ( isFirstArc )
       {
         isFirstArc = false;
@@ -567,7 +567,7 @@ protected:
         path.lineTo( target );
       }
     } while (++cc != f->outer_ccb());
-        
+
     if ( f->color().isValid() )
     {
       QPen savePen = painter->pen();
@@ -641,7 +641,7 @@ protected:
   {
     QPointF a = path.currentPosition( );
     QPointF b( to_double(c.source().x()), to_double(c.source().y()) );
-    QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
+    // QPointF d( to_double(c.target().x()), to_double(c.target().y()) );
     bool res = (QLineF( a, b ).length() < 1e-2);
 
     return res;
@@ -672,7 +672,7 @@ protected:
 
       bool isFirstArc = true;
       Ccb_halfedge_circulator cc=f->outer_ccb();
-      do 
+      do
       {
         if (this->antenna(cc))
           continue;
@@ -736,7 +736,7 @@ protected:
         source = QPointF( to_double(c.source().x()), to_double(c.source().y()));
         target = QPointF( to_double(c.target().x()), to_double(c.target().y()));
         double asource = std::atan2( -to_double(source.y() - center.y()),
-                                     to_double(source.x() - center.x())); 
+                                     to_double(source.x() - center.x()));
         double atarget = std::atan2( -to_double(target.y() - center.y()),
                                      to_double(target.x() - center.x()));
 #endif
@@ -775,8 +775,8 @@ protected:
         path.arcTo( convert(circ.bbox()), asource * 180/CGAL_PI,
                     aspan *180/CGAL_PI );
 #if 0
-        qp->drawArc(convert(circ.bbox()), 
-                    (int)(asource * coeff), 
+        qp->drawArc(convert(circ.bbox()),
+                    (int)(asource * coeff),
                     (int)(aspan * coeff));
 #endif
       } while (++cc != f->outer_ccb());
@@ -843,7 +843,7 @@ protected:
   }
 
   template < typename Arr_, typename ArrTraits >
-  QRectF 
+  QRectF
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   boundingRect( ) const
   {
@@ -852,7 +852,7 @@ protected:
   }
 
   template < typename Arr_, typename ArrTraits >
-  void 
+  void
   ArrangementGraphicsItem< Arr_, ArrTraits >::
   paint(QPainter* painter,
         const QStyleOptionGraphicsItem* /* option */,
@@ -958,9 +958,9 @@ protected:
   {
     painter->setPen( this->verticesPen );
     QRectF clipRect = this->boundingRect( );
-    if ( std::isinf(clipRect.left( )) || 
-         std::isinf(clipRect.right( )) || 
-         std::isinf(clipRect.top( )) || 
+    if ( std::isinf(clipRect.left( )) ||
+         std::isinf(clipRect.right( )) ||
+         std::isinf(clipRect.top( )) ||
          std::isinf(clipRect.bottom( )) )
     {
       clipRect = this->viewportRect( );
@@ -1089,7 +1089,7 @@ protected:
     {
       //std::pair< double, double > approx =
       //  this->arr->vertices_begin( )->point( ).to_double( );
-      //this->bb = CGAL::Bbox_2( approx.first, approx.second, 
+      //this->bb = CGAL::Bbox_2( approx.first, approx.second,
       //                         approx.first, approx.second );
       this->bb = CGAL::Bbox_2( 0, 0, 0, 0 );
       this->bb_initialized = true;

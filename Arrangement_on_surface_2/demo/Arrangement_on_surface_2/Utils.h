@@ -67,11 +67,10 @@ public:
     QPointF p1 = viewport->mapToScene( 0, 0 );
     QPointF p2 = viewport->mapToScene(viewport->width(), viewport->height());
 
-    double xmin = std::min( p1.x( ), p2.x( ) );
-    double xmax = std::max( p1.x( ), p2.x( ) );
-    double ymin = std::min( p1.y( ), p2.y( ) );
-    double ymax = std::max( p1.y( ), p2.y( ) );
-
+    double xmin = (std::min)(p1.x(), p2.x());
+    double xmax = (std::max)(p1.x(), p2.x());
+    double ymin = (std::min)(p1.y(), p2.y());
+    double ymax = (std::max)(p1.y(), p2.y());
 
     res = QRectF( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
 
@@ -162,8 +161,8 @@ struct Supports_landmarks< Arr_, true >
    Support for new ArrTraits should specify types:
 
    * Kernel - a not-necessarily-exact kernel to represent the arrangement
-   graphically. We'll use the Point_2 type provided by this kernel for 
-   computing distances 
+   graphically. We'll use the Point_2 type provided by this kernel for
+   computing distances
    * Point_2 - the point type used in the particular arrangement
    * CoordinateType - the coordinate type used by the point type
    */
@@ -537,7 +536,7 @@ public:
 
   /*! Destructor (virtual) */
   virtual ~Arr_compute_y_at_x_2() {}
-  
+
   CoordinateType operator() ( const X_monotone_curve_2& curve,
                               const CoordinateType& x )
   {
@@ -564,7 +563,7 @@ protected:
     CGAL::Bbox_2 clipRect = curve.bbox( );
     Point_2 p1c1( x, CoordinateType( clipRect.ymin( ) - 1 ) ); // clicked point
     // upper bounding box
-    Point_2 p2c1( x, CoordinateType( clipRect.ymax( ) + 1 ) ); 
+    Point_2 p2c1( x, CoordinateType( clipRect.ymax( ) + 1 ) );
 
     const X_monotone_curve_2 verticalLine =
       construct_x_monotone_curve_2( p1c1, p2c1 );
@@ -632,7 +631,7 @@ public:
   typedef typename Kernel::Segment_2                    Segment_2;
   typedef typename Kernel::Line_arc_2                   Line_arc_2;
   // Circular_arc_2
-  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2; 
+  typedef typename Traits::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits::Intersect_2                  Intersect_2;
   typedef typename Traits::Multiplicity                 Multiplicity;
   typedef std::pair< typename Traits::Point_2, Multiplicity >
@@ -752,7 +751,7 @@ protected:
   {
     typename Traits::Construct_point_2 constructPoint =
       traits.construct_point_2_object( );
-    typename Traits::Construct_x_monotone_segment_2 constructSegment = 
+    typename Traits::Construct_x_monotone_segment_2 constructSegment =
       traits.construct_x_monotone_segment_2_object( );
 
     std::vector< X_monotone_curve_2 > curves;
@@ -1012,8 +1011,9 @@ public: // typedefs
 public: // methods
   // curve can be unbounded. if curve is unbounded to the left, pLeft is a
   // point on the left edge of viewport.
-  X_monotone_curve_2 operator() ( const X_monotone_curve_2& curve,
-                                  const Point_2& pLeft, const Point_2& pRight )
+  X_monotone_curve_2 operator()(const X_monotone_curve_2& curve,
+                                const Point_2& /* pLeft */,
+                                const Point_2& /* pRight */)
   {
     // TODO: trim the algebraic curve
     return curve;
@@ -1038,7 +1038,7 @@ protected:
 
 template < class ArrTraits >
 SnapStrategy< ArrTraits >::SnapStrategy( QGraphicsScene* scene_ )
-{ 
+{
   this->scene = scene_;
 }
 
@@ -1064,7 +1064,7 @@ public:
 
   /*! Destructors (virtual) */
   ~SnapToGridStrategy() {}
-  
+
   Point_2 snapPoint( QGraphicsSceneMouseEvent* event )
   {
     return this->snapPoint( event, ArrTraits( ) );
@@ -1216,7 +1216,7 @@ public:
     }
 
     FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
-    for ( Vertex_iterator vit = this->arrangement->vertices_begin( ); 
+    for ( Vertex_iterator vit = this->arrangement->vertices_begin( );
           vit != this->arrangement->vertices_end( ); ++vit )
     {
       Point_2 point = vit->point( );
@@ -1259,7 +1259,7 @@ public:
     }
 
     FT maxDist( ( viewportRect.right( ) - viewportRect.left( ) ) / 4.0 );
-    for ( Vertex_iterator vit = this->arrangement->vertices_begin( ); 
+    for ( Vertex_iterator vit = this->arrangement->vertices_begin( );
           vit != this->arrangement->vertices_end( ); ++vit )
     {
       Arc_point_2 point = vit->point( );
@@ -1434,7 +1434,7 @@ public: // member methods
       while ( ++cc != face->outer_ccb( ) );
     }
 #endif
-    Hole_const_iterator hit; 
+    Hole_const_iterator hit;
     Hole_const_iterator eit = face->holes_end( );
     // int counter = 0;
     for ( hit = face->holes_begin( ); hit != eit; ++hit )
@@ -1580,7 +1580,7 @@ public: // member methods
       }
       while ( ++cc != face->outer_ccb( ) );
     }
-    Hole_const_iterator hit; 
+    Hole_const_iterator hit;
     Hole_const_iterator eit = face->holes_end( );
     for ( hit = face->holes_begin( ); hit != eit; ++hit )
     { // check any holes inside this face

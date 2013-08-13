@@ -97,7 +97,7 @@ protected:
   typedef typename Arr_are_all_sides_oblivious_tag< 
                      Left_side_category, Bottom_side_category, 
                      Top_side_category, Right_side_category >::result
-  Are_all_sides_oblivious_tag;
+    Are_all_sides_oblivious_category;
   
   typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
@@ -346,7 +346,7 @@ private:
    */
   bool _is_to_left(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_left_impl(p, he, Are_all_sides_oblivious_tag()));
+    return (_is_to_left_impl(p, he, Are_all_sides_oblivious_category()));
   }
 
   bool _is_to_left_impl(const Point_2& p, Halfedge_handle he,
@@ -372,7 +372,7 @@ private:
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
   {
-    return (_is_to_right_impl(p, he, Are_all_sides_oblivious_tag()));
+    return (_is_to_right_impl(p, he, Are_all_sides_oblivious_category()));
   }
 
   bool _is_to_right_impl(const Point_2& p, Halfedge_handle he,

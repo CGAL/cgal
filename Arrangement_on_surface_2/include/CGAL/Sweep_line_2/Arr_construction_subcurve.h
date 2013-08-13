@@ -43,11 +43,10 @@ namespace CGAL {
  * \sa `Sweep_line_subcurve`
  */
 
-template<class Traits_>
+template <typename Traits_>
 class Arr_construction_subcurve : public Sweep_line_subcurve<Traits_>
 {
 public:
-
   typedef Traits_                                    Traits_2;
   typedef typename Traits_2::Point_2                 Point_2;
   typedef typename Traits_2::X_monotone_curve_2      X_monotone_curve_2;
@@ -62,7 +61,7 @@ public:
 protected:
 
   // Data members:
-  Event_ptr    m_lastEvent;  // The last event that was handled on the curve.
+  Event_ptr m_lastEvent;     // The last event that was handled on the curve.
 
   /*! index for a subcurve that may represent a hole (emarge from the left
    * most vertex of a hole, and its the upper most curve). other subcurves
@@ -73,12 +72,11 @@ protected:
                              // and it is the topmost curve). Other subcurves
                              // have a 0 (invalid) index.
 
-  Halfedge_indices_list  m_halfedge_indices;
+  Halfedge_indices_list m_halfedge_indices;
                              // Indices of all halfedge below the curve that
                              // may represent a hole.
 
 public:
-
   /*! Deafult constructor. */
   Arr_construction_subcurve() :
     Base(),
@@ -87,79 +85,49 @@ public:
   {}
 
   /*! Constructor from an x-monotone curve. */
-  Arr_construction_subcurve (X_monotone_curve_2& curve) :
+  Arr_construction_subcurve(X_monotone_curve_2& curve) :
     Base( curve),
     m_lastEvent(0),
     m_index(0)
   {}
 
   /*! Initialize the curve. */
-  void init (const X_monotone_curve_2& curve)
-  {
-    Base::init(curve);
-  }
+  void init(const X_monotone_curve_2& curve) { Base::init(curve); }
 
   /*! Set the event associated with the left end of the subcurve. */
   template<class SweepEvent>
-  void set_left_event (SweepEvent* left)
+  void set_left_event(SweepEvent* left)
   {
     Base::set_left_event(left);
     m_lastEvent = left;
   }
 
   /*! Set the last event on the subcurve. */
-  void set_last_event (Event_ptr e)
-  {
-    m_lastEvent = e;
-  }
+  void set_last_event(Event_ptr e) { m_lastEvent = e; }
 
   /*! Get the last event. */
-  Event_ptr last_event() const 
-  {
-    return m_lastEvent;
-  }
+  Event_ptr last_event() const { return m_lastEvent; }
 
   /*! Get the subcurve index. */
-  unsigned int index() const
-  {
-    return (m_index);
-  }
+  unsigned int index() const { return m_index; }
 
   /*! Set the subcurve index. */
-  void set_index(unsigned int i)
-  {
-    m_index = i;
-  }
+  void set_index(unsigned int i) { m_index = i; }
 
   /*! Check if the index is valid. */
-  bool has_valid_index() const
-  {
-    return (m_index != 0);
-  }
+  bool has_valid_index() const { return (m_index != 0); }
 
   /*! Add an index of a halfedge below the subcurve. */
-  void add_halfedge_index (unsigned int i)
-  {
-    m_halfedge_indices.push_back(i);
-  }
+  void add_halfedge_index(unsigned int i) { m_halfedge_indices.push_back(i); }
 
   /*! Clear the indices of the halfedges below the subcurve. */
-  void clear_halfedge_indices()
-  {
-    m_halfedge_indices.clear();
-  }
+  void clear_halfedge_indices() { m_halfedge_indices.clear(); }
 
   /*! Check if there are any halfedges below the subcurve. */
-  bool has_halfedge_indices() const
-  {
-    return (!m_halfedge_indices.empty());
-  }
+  bool has_halfedge_indices() const { return (!m_halfedge_indices.empty()); }
 
   /*! Get the indices of the halfedges below the subcurve. */
-  Halfedge_indices_list& halfedge_indices_list()
-  {
-    return (m_halfedge_indices);
-  }
+  Halfedge_indices_list& halfedge_indices_list() { return m_halfedge_indices; }
 };
 
 

@@ -58,7 +58,8 @@ Arr_trapezoid_ric_point_location<Arrangement_2>::locate(const Point_2& p) const
   if (td_lt==TD::UNBOUNDED_TRAPEZOID) {
     CGAL_TRAP_PRINT_DEBUG("UNBOUNDED_TRAPEZOID");
 
-    Face_const_handle ubf = _get_unbounded_face(tr, p, Are_all_sides_oblivious_tag());
+    Face_const_handle ubf =
+      _get_unbounded_face(tr, p, Are_all_sides_oblivious_category());
     
     //check isolated vertices
       Isolated_vertex_const_iterator   iso_verts_it;
@@ -345,7 +346,7 @@ _check_isolated_for_vertical_ray_shoot (Halfedge_const_handle halfedge_found,
   // If the closest feature is a valid halfedge, take its incident face.
   // Otherwise, take the unbounded face.
   if (halfedge_found == invalid_he)
-    face = _get_unbounded_face(tr, p, Are_all_sides_oblivious_tag());
+    face = _get_unbounded_face(tr, p, Are_all_sides_oblivious_category());
   else
     face = halfedge_found->face();
 

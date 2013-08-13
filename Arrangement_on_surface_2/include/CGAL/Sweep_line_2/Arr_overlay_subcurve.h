@@ -66,105 +66,75 @@ public:
 protected:
 
   // Data members:
-  Self        *m_above;     // A subcurve of an opposite color that lies above.
+  Self* m_above;        // A subcurve of an opposite color that lies above.
 
-  union
-  {
-    const Face_red     *red;
-    const Face_blue    *blue;
-  }            m_top_face;  // If m_above is NULL, points the top face in
-                            // the arrangement of the opposite color that
-                            // contains the subcurve.
+  union {
+    const Face_red* red;
+    const Face_blue* blue;
+  } m_top_face;         // If m_above is NULL, points the top face in
+                        // the arrangement of the opposite color that
+                        // contains the subcurve.
   
 public:
-
   /*! Constructor. */
-  Arr_overlay_subcurve () :
+  Arr_overlay_subcurve() :
     Base(),
-    m_above (NULL)
+    m_above(NULL)
   {
     m_top_face.red = NULL;
   }
 
   /*! constructor given a curve. */
-  Arr_overlay_subcurve (const X_monotone_curve_2 &curve) :
+  Arr_overlay_subcurve(const X_monotone_curve_2& curve) :
     Base(curve),
-    m_above (NULL)
+    m_above(NULL)
   {
     m_top_face.red = NULL;
   }
 
   /*! Get the subcurve lying above above this subcurve in the status line. */
-  Self* subcurve_above () const
-  {
-    return (m_above);
-  }
+  Self* subcurve_above() const { return (m_above); }
 
   /*! Set the subcurve above. */
-  void set_subcurve_above (Self *sc)
-  {
-    m_above = sc;
-    return;
-  }
+  void set_subcurve_above(Self* sc) { m_above = sc; }
 
   /*! Get the color of the associated curve. */
-  Color color() const
-  {
-    return (this->m_lastCurve.color());
-  }
+  Color color() const { return (this->m_lastCurve.color()); }
 
   /*! Check if two subcurves have the same color. */
-  bool has_same_color (const Self *sc) const
-  {
-    return (this->m_lastCurve.color() == sc->color());
-  }
+  bool has_same_color(const Self* sc) const
+  { return (this->m_lastCurve.color() == sc->color()); }
 
   /*! Get the red halfedge that represents the subcurve. */
   Halfedge_handle_red red_halfedge_handle() const
-  {
-    return (this->m_lastCurve.red_halfedge_handle());
-  }
+  { return (this->m_lastCurve.red_halfedge_handle()); }
 
   /*! Get the blue halfedge that represents the subcurve. */
   Halfedge_handle_blue blue_halfedge_handle() const
-  {
-    return (this->m_lastCurve.blue_halfedge_handle());
-  }
+  { return (this->m_lastCurve.blue_halfedge_handle()); }
 
   /*! Get the red top face that contains the subcurve. */
-  const Face_handle_red red_top_face () const
-  {
-    return (Face_handle_red (m_top_face.red));
-  }
+  const Face_handle_red red_top_face() const
+  { return (Face_handle_red(m_top_face.red)); }
 
   /*! Get the blue top face that contains the subcurve. */
-  const Face_handle_blue blue_top_face () const
-  {
-    return (Face_handle_blue (m_top_face.blue));
-  }
+  const Face_handle_blue blue_top_face() const
+  { return (Face_handle_blue(m_top_face.blue)); }
 
   /*! Set the red top face. */
-  void set_red_top_face (Face_handle_red fh)
-  {
-    m_top_face.red = &(*fh);
-    return;
-  }
+  void set_red_top_face(Face_handle_red fh) { m_top_face.red = &(*fh); }
 
   /*! Set the blue top face. */
-  void set_blue_top_face (Face_handle_blue fh)
-  {
-    m_top_face.blue = &(*fh);
-  }
+  void set_blue_top_face(Face_handle_blue fh) { m_top_face.blue = &(*fh); }
 
   /*! Copy the top face from the given subcurve. */
-  void set_top_face (const Self* sc)
+  void set_top_face(const Self* sc)
   {
-    CGAL_precondition (sc->m_above == NULL);
+    CGAL_precondition(sc->m_above == NULL);
    
     // Mark there is no curve above and copy the face pointer.
     m_above = NULL;
     m_top_face.red = sc->m_top_face.red;
-    return;
   }
 };
   
