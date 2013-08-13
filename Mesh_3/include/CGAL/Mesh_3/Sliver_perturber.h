@@ -92,8 +92,8 @@ class Sliver_perturber
   typedef Visitor_ Visitor;
 
   // perturbations
-  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
 public:
+  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
   typedef boost::ptr_vector<Perturbation>                 Perturbation_vector;
   
 private:

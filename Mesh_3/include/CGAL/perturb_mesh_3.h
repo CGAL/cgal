@@ -31,6 +31,7 @@
 #include <CGAL/Mesh_3/Sliver_perturber.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
+#include <vector>
 
 namespace CGAL {
 
@@ -44,7 +45,8 @@ BOOST_PARAMETER_FUNCTION(
     (sliver_bound_, *, parameters::default_values::perturb_sliver_bound )
     (sliver_criterion_, *, 
        parameters::default_values::default_sliver_criterion(c3t3))
-    (perturbation_vector_, *, default_perturbation_vector(c3t3,domain,sliver_criterion_))
+    (perturbation_vector_, *, 
+       default_perturbation_vector(c3t3,domain,sliver_criterion_))
   )
 )
 {
@@ -56,22 +58,22 @@ BOOST_PARAMETER_FUNCTION(
 template <typename C3T3, 
           typename MeshDomain, 
           typename SliverCriterion>
-typename Mesh_3::Sliver_perturber<C3T3,MeshDomain,SliverCriterion>::Perturbation_vector
+std::vector<typename Mesh_3::Sliver_perturber<C3T3,MeshDomain,SliverCriterion>::Perturbation*>
 default_perturbation_vector(const C3T3&,
-                              const MeshDomain&,
-                              const SliverCriterion&)
+                            const MeshDomain&,
+                            const SliverCriterion&)
 {
   typedef MeshDomain Md;
   typedef SliverCriterion Sc;
   typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc>            Perturber;
-  typedef Perturber::Perturbation_vector                  Perturbation_vector;
+  typedef Perturber::Perturbation                         Perturbation;
 
   typedef Mesh_3::Sq_radius_perturbation<C3T3,Md,Sc>      Sq_radius;
   typedef Mesh_3::Volume_perturbation<C3T3,Md,Sc>         Volume;
   typedef Mesh_3::Dihedral_angle_perturbation<C3T3,Md,Sc> Dihedral_angle;
   typedef Mesh_3::Li_random_perturbation<C3T3,Md,Sc>      Li_random;
   
-  Perturbation_vector perturbation_vect;
+  std::vector<Perturbation*> perturbation_vect;
   perturbation_vect.push_back(new Sq_radius(40,0.05));
   perturbation_vect.push_back(new Volume(40,0.05));
   perturbation_vect.push_back(new Dihedral_angle(40,0.05));
@@ -84,28 +86,28 @@ default_perturbation_vector(const C3T3&,
 template <typename C3T3, 
           typename MeshDomain, 
           typename SliverCriterion,
-          typename PerturbationVector> 
+          typename PPerturbationVector> 
 Mesh_optimization_return_code
 perturb_mesh_3_impl(C3T3& c3t3,
                     const MeshDomain& domain,
                     const double time_limit,
                     const SliverCriterion& sliver_criterion,
                     const double sliver_bound,
-                    PerturbationVector& perturbation_vector)
+                    const PPerturbationVector& perturbation_vector)
 {
   typedef MeshDomain Md;
   typedef typename C3T3::Triangulation::Geom_traits Gt;
   typedef SliverCriterion Sc;
   
-  typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc>            Perturber;
+  typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc> Perturber;
   
   // Build perturber
   Perturber perturber(c3t3,domain);
 
   // Add perturbations
   for(std::size_t i = 0; i < perturbation_vector.size(); ++i)
-    perturber.add_perturbation(&(perturbation_vector[i]));
-
+    perturber.add_perturbation( perturbation_vector[i] );
+  
   // Set max time
   perturber.set_time_limit(time_limit);
 
