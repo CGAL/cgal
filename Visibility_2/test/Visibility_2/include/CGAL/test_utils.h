@@ -705,6 +705,9 @@ void benchmark_one_unit(
     }
     if (!selected_query_pt) {
       curr++;
+      if (curr == circ) {
+        break;
+      }
       continue;
     }
     std::cout << "    Running with qpoint: " 
