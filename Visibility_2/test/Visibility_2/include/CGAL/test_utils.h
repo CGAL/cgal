@@ -270,7 +270,6 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
 
 template <class Arrangement_2>
 void regularize(Arrangement_2& arr){
-  std::cout << " regularize arr " << std::endl; 
   // remove all edges with the same face on both sides 
   typedef typename Arrangement_2::Halfedge_iterator HEIT; 
   for(HEIT heit = arr.halfedges_begin(); heit != arr.halfedges_end(); heit++){
