@@ -154,29 +154,31 @@ public:
     CGAL::Orientation orient = orientation(q,vh->point(),nvh->point());
     
     
-    std::cout << "\n collect_needle" <<std::endl;
-    std::cout << "q             "<< q << std::endl ;
-    std::cout << "vh->point()  "<< lvh->point() << std::endl;  
-    std::cout << "lvh->point()  "<< lvh->point() << std::endl ;
-    std::cout << "nvh->point()  "<< nvh->point() << std::endl ;
-    std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
+//     std::cout << "\n collect_needle" <<std::endl;
+//     std::cout << "q             "<< q << std::endl ;
+//     std::cout << "vh->point()  "<<  vh->point() << std::endl;  
+//     std::cout << "lvh->point()  "<< lvh->point() << std::endl ;
+//     std::cout << "nvh->point()  "<< nvh->point() << std::endl ;
+//     std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
 
 
 
     switch ( orient ) {
-    case CGAL::CLOCKWISE:
-      // looking on right edge 
+    case CGAL::COUNTERCLOCKWISE:
+      // looking on to the right edge 
       if(p_cdt->is_constrained(re)){
         Point_2 p = ray_seg_intersection(q,vh->point(),nvh->point(),rvh->point());
+        //std::cout << vh->point() <<" --- "<< p <<std::endl; 
         needles.push_back(Segment_2(vh->point(),p));
       }else{
         collect_needle(q,vh,nfh,rindex);
       }
       break;
-    case CGAL::COUNTERCLOCKWISE:
-      // looking in left edge 
+    case CGAL::CLOCKWISE:
+      // looking on to the left edge 
       if(p_cdt->is_constrained(le)){
         Point_2 p = ray_seg_intersection(q,vh->point(),nvh->point(),lvh->point());
+        //std::cout << vh->point() <<" --- "<< p <<std::endl; 
         needles.push_back(Segment_2(vh->point(),p));
       }else{
         collect_needle(q,vh,nfh,lindex);
@@ -185,6 +187,7 @@ public:
     default:
       assert(orient == CGAL::COLLINEAR);
       // looking on nvh, so it must be reported 
+      //std::cout << vh->point() <<" --- "<< nvh->point() <<std::endl; 
       needles.push_back(Segment_2(vh->point(),nvh->point())); 
       // but we may also contiue looking along the vertex 
       if(!p_cdt->is_constrained(re)){
@@ -235,13 +238,6 @@ public:
     CGAL::Orientation ro = orientation(q,right,nvh->point());
     CGAL::Orientation lo = orientation(q,left ,nvh->point());
     
-//     std::cout << "q             "<< q << std::endl ;
-//     std::cout << "lvh->point()  "<< lvh->point() << std::endl;  
-//     std::cout << "left          "<< left << std::endl  ;
-//     std::cout << "nvh->point()  "<< nvh->point() << std::endl ;
-//     std::cout << "right         "<< right << std::endl ;
-//     std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
-    
     assert(typename K::Orientation_2()(q,left ,lvh->point()) != CGAL::CLOCKWISE);
     assert(typename K::Orientation_2()(q,right,rvh->point()) != CGAL::COUNTERCLOCKWISE);
 
@@ -280,6 +276,15 @@ public:
       }
     }
     
+
+    
+//     std::cout << "q             "<< q << std::endl ;
+//     std::cout << "lvh->point()  "<< lvh->point() << std::endl;  
+//     std::cout << "left          "<< left << std::endl  ;
+//     std::cout << "nvh->point()  "<< nvh->point() << std::endl ;
+//     std::cout << "right         "<< right << std::endl ;
+//     std::cout << "rvh->point()  "<< rvh->point() << std::endl<< std::endl;
+    
     // determin whether new vertex needs to be reported 
     if(ro != CGAL::CLOCKWISE && lo != CGAL::COUNTERCLOCKWISE){
       *oit++ = nvh->point(); 
@@ -287,9 +292,9 @@ public:
     if(!Regularization_tag::value){
       assert(!(ro == CGAL::COLLINEAR && lo == CGAL::COLLINEAR));
       // we have to check whether a needle starts here. 
-      if(!p_cdt->is_constrained(re) && ro == CGAL::COLLINEAR)
+      if(p_cdt->is_constrained(le) && !p_cdt->is_constrained(re) && ro == CGAL::COLLINEAR)
         collect_needle(q,nvh,nfh,rindex);      
-      if(!p_cdt->is_constrained(le) && lo == CGAL::COLLINEAR)
+      if(p_cdt->is_constrained(re) && !p_cdt->is_constrained(le) && lo == CGAL::COLLINEAR)
         collect_needle(q,nvh,nfh,lindex);    
     }
 
@@ -495,30 +500,29 @@ public:
   }
 
   Face_handle output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
-    std::cout << "\n Output Polygon" << std::endl; 
-    std::cout << needles.size() << std::endl; 
-    for (int i = 0; i<needles.size();i++){
-      std::cout << needles[i].source() << " -- " 
-                << needles[i].target() << std::endl; 
-    }
-    std::cout << raw_output.size() << std::endl; 
+//    std::cout << "\n Output Polygon" << std::endl; 
+//    std::cout << needles.size() << std::endl; 
+//     for (int i = 0; i<needles.size();i++){
+//       std::cout << needles[i].source() << " -- " 
+//                 << needles[i].target() << std::endl; 
+//     }
+//     std::cout << raw_output.size() << std::endl; 
     std::vector<Segment_2> segments(needles.begin(),needles.end()); 
     for(int i = 0; i <raw_output.size();i++){
+//      std::cout <<  raw_output[i] << " -- " 
+//                <<  raw_output[(i+1)%raw_output.size()] << std::endl; 
       segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
     }
-    
-    for (int i = needles.size(); i<segments.size();i++){
-      std::cout << segments[i].source() << " -- " 
-                << segments[i].target() << std::endl; 
-    }
-    
+   
+//    std::cout << " done 1 " << std::endl ; 
     // use something more clever 
-//    CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
-    CGAL::insert(out_arr,segments.begin(),segments.end());
+    CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
+    //CGAL::insert(out_arr,segments.begin(),segments.end());
  
+//    std::cout << " done 2 " << std::endl ; 
     assert(out_arr.number_of_faces()== 2);
 
-    //std::cout<< "==============" <<std::endl;
+//    std::cout<< "==============" <<std::endl;
     if(out_arr.faces_begin()->is_unbounded())
       return ++out_arr.faces_begin();
     else
