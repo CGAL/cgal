@@ -140,7 +140,6 @@ and <code>src/</code> directories).
           macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
         </li>
       </ul>
-
       <h4>2D Arrangements</h4>
       <ul>
         <li> The point location functionalities now uses
@@ -148,6 +147,15 @@ and <code>src/</code> directories).
           a <code>CGAL::Object</code>.  For convenience, the previous
           behavior can be restored by defining the
           macro <code>CGAL_ARR_POINT_LOCATION_VERSION</code> to 1.
+        </li>
+      </ul>
+      <h4>3D Fast Intersection and Distance Computation</h4>
+      <ul>
+        <li>Following the intersection API
+          change, <code>Object_and_primitive_id</code> has been replaced by
+          a template class
+          <code>Intersection_and_primitive_id&lt;Query&gt;</code> to determine
+          the type depending on the query object type.
         </li>
       </ul>
       <h4>CGAL and Boost Property Maps</h4>
