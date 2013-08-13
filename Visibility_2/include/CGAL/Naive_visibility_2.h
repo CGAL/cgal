@@ -36,14 +36,26 @@ namespace CGAL {
 
 //debug
 template<typename Point_2>
+void print(Point_2 p){
+  std::cout<<p.x()<<","<< p.y()<<std::endl;
+}
+
+template<typename Point_2>
 void print(std::vector<Point_2> ps){
     for (int i=0; i<ps.size(); i++)
     {
-        std::cout<<ps[i].x()<<","<<ps[i].y()<<std::endl;
+      print<Point_2>(ps[i]);
     }
 }
 
 
+template<typename Halfedge_handle>
+void print_edges(std::vector<Halfedge_handle> es){
+    for (int i=0; i<es.size(); i++)
+    {
+      std::cout << es->curve() << std::endl;
+    }
+}
 template <typename Arrangement_2, typename RegularizationTag>
 class Naive_visibility_2 {
 public:
@@ -274,6 +286,12 @@ private:
         std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
         //preprocess the face
         input_face(fh, vertices, edges, q);
+
+        //debug
+//        for (int i = 0; i<vertices.size(); i++) {
+//          print(vertices[i]->point());
+//        }
+
         //initiation of vision ray
         Vector_2 dir;
         if (Direction_2(-1, 0) < Direction_2(Vector_2(q, (*vertices.rbegin())->point())))
@@ -340,6 +358,8 @@ private:
                     if (d1 != d2) break;
                 } while (++end_it != vertices.end());
                 add_edges(begin_it, end_it, active_edges, curr_vision_ray);
+//                std::cout<<"after adding\n";
+//                print_edges(active_edges);
                 mid_p = intersection_point(curr_vision_ray, active_edges[0]);
                 std::vector<Point_2> collinear_vertices;
                 Intersection_type i_type = needle(active_edges, curr_vision_ray, collinear_vertices);
@@ -359,6 +379,10 @@ private:
                 case CORNER :
                     //remove right and collinear;
                     remove_edges(active_edges, curr_vision_ray);
+
+//                    std::cout<<"after removing\n";
+//                    print_edges(active_edges);
+
                     left_p = intersection_point(curr_vision_ray, active_edges[0]);
                     update_visibility(right_p, polygon);
                     if (right_p == collinear_vertices[0]) {
@@ -596,15 +620,15 @@ private:
             else if (is_on_ray(r, p2)) {
                 Point_2 tmp = p1;
                 p1 = p2;
-                p2 = p1;
+                p2 = tmp;
                 is_incident = true;
             }
-
-
-            if ( is_incident && !CGAL::left_turn(r.source(), p1, p2))
+            if ( (is_incident && !CGAL::left_turn(r.source(), p1, p2)) || intersection_point(r, *eit) == r.source() )
             {
                 eit = edges.erase(eit);
+                continue;
             }
+
             else {
                 eit++;
             }
@@ -691,7 +715,7 @@ private:
         }
     }
 
-    void print_vectex(const std::vector<Point_2>& polygon) {
+    void print_vertex(const std::vector<Point_2>& polygon) {
       for (int i = 0; i != polygon.size(); i++) {
         std::cout<<polygon[i]<<std::endl;
       }

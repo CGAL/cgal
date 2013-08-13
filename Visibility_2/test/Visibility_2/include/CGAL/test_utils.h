@@ -642,6 +642,7 @@ void benchmark_one_unit(
           Visibility_2_snd visibility_snd) {
 
   typedef typename Visibility_2_fst::Input_arrangement_2    Input_arrangement_2;
+  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
   typedef typename Visibility_2_fst::Output_arrangement_2   Output_arrangement_2;
   typedef typename Input_arrangement_2::Halfedge_const_handle     
                                                             Halfedge_const_handle;
@@ -740,8 +741,18 @@ void benchmark_one_unit(
               << GREEN << timer.time() << " sec" << RESET << std::endl;
 
  //   CGAL::Visibility_2::print_arrangement<Output_arrangement_2>(out_arr_snd);
-    assert(true == (CGAL::test_are_equal<Output_arrangement_2>
-                          (out_arr_fst, out_arr_snd)));
+    if (! CGAL::test_are_equal<Output_arrangement_2> (out_arr_fst, out_arr_snd)) {
+      if (choice == FACE) {
+        std::cout << "query in Face:\n";
+        CGAL::Visibility_2::print_simple_face<Face_const_handle, Ccb_halfedge_const_circulator>(fit);
+      }
+      std::cout << RED << "two outputs are different:\n"
+                << "first output is:\n" << RESET;
+      CGAL::Visibility_2::print_arrangement(out_arr_fst);
+      std::cout << RED << "second output is:\n"<< RESET;
+      CGAL::Visibility_2::print_arrangement(out_arr_snd);
+      assert(false);
+    }
   } while (++curr != circ);
 }
 

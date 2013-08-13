@@ -29,13 +29,26 @@
 namespace CGAL {
 namespace Visibility_2 {
 
+template <class Edge_const_iterator>
+void print_edge(Edge_const_iterator eit) {
+  std::cout << "[" << eit->curve() << "]" << std::endl;
+}
+template <class Face_const_handle, class Ccb_halfedge_const_circulator>
+void print_simple_face(Face_const_handle fh) {
+  Ccb_halfedge_const_circulator  cir = fh->outer_ccb();
+  Ccb_halfedge_const_circulator  curr = cir;
+  do {
+    std::cout << "[" << curr->curve() << "]" << std::endl;
+  } while (++ curr != cir);
+}
+
 template <class Arrangement_2> 
 void print_arrangement(const Arrangement_2 &arr) {
   typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
   Edge_const_iterator eit;
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
-    std::cout << "[" << eit->curve() << "]" << std::endl;
+    print_edge(eit);
 }   
 
 template <class Geometry_traits_2> 
