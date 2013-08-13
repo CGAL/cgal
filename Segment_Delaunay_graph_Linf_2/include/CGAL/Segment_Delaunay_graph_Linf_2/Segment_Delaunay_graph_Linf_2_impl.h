@@ -756,15 +756,6 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   CGAL_SDG_DEBUG(std::cout << "debug after loop count_zeros="
       << count_zeros << std::endl;);
 
-  CGAL_assertion( found_f1 && found_f2 );
-  CGAL_assertion( f1 != f2 );
-
-  CGAL_assertion( is_nop == is_set_f1_0 );
-  CGAL_assertion( is_pon == is_set_f2_0 );
-
-  CGAL_assertion( first_found_f1 or first_found_f2);
-  CGAL_assertion( not (first_found_f1 and first_found_f2) );
-
   // add missing counted zeros
   if (count_zeros > 0) {
     if (first_found_f1) {
@@ -773,20 +764,6 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
       count_pon_zeros = count_pon_zeros + count_zeros;
     }
   }
-
-#ifndef CGAL_NO_ASSERTIONS
-  if (is_set_f1_0) {
-    CGAL_assertion( f1 != f1_0 );
-    CGAL_assertion( f2 != f1_0 );
-  }
-  if (is_set_f2_0) {
-    CGAL_assertion( f2 != f2_0 );
-    CGAL_assertion( f1 != f2_0 );
-  }
-  if (is_set_f1_0 and is_set_f2_0) {
-    CGAL_assertion( f1_0 != f2_0 );
-  }
-#endif
 
 #ifdef CGAL_SDG_VERBOSE
   std::cout << "debug find_faces_to_split results" << std::endl;
@@ -804,6 +781,30 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   }
   std::cout << "debug count_nop_zeros=" << count_nop_zeros << std::endl;
   std::cout << "debug count_pon_zeros=" << count_pon_zeros << std::endl;
+#endif
+
+  CGAL_assertion( found_f1 && found_f2 );
+  CGAL_assertion( f1 != f2 );
+
+  CGAL_assertion( is_nop == is_set_f1_0 );
+  CGAL_assertion( is_pon == is_set_f2_0 );
+
+  CGAL_assertion( first_found_f1 or first_found_f2);
+  CGAL_assertion( not (first_found_f1 and first_found_f2) );
+
+
+#ifndef CGAL_NO_ASSERTIONS
+  if (is_set_f1_0) {
+    CGAL_assertion( f1 != f1_0 );
+    CGAL_assertion( f2 != f1_0 );
+  }
+  if (is_set_f2_0) {
+    CGAL_assertion( f2 != f2_0 );
+    CGAL_assertion( f1 != f2_0 );
+  }
+  if (is_set_f1_0 and is_set_f2_0) {
+    CGAL_assertion( f1_0 != f2_0 );
+  }
 #endif
 
   return Face_pair(f1, f2);
