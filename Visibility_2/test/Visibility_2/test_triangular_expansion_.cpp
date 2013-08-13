@@ -42,7 +42,7 @@ int main() {
       typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2> //, CGAL::Tag_true>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(1,0);
+      CGAL::run_tests<Visibility_2>(5,0);
     }
   }
   {
@@ -53,7 +53,7 @@ int main() {
       typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2>//, CGAL::Tag_true>
         Visibility_2;
       CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(1,0);
+      CGAL::run_tests<Visibility_2>(5,0);
     }
   }
   return 0;
