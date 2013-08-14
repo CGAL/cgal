@@ -18,6 +18,7 @@
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
 //             Michael Hemmer <michael.hemmer@cgal.org>
+//             Kan Huang      <huangkandiy@gmail.com
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -63,41 +64,23 @@ int main(int argc, char* argv[]) {
       return 0;
     }
 
-    if (argc == 3) {
-      qchoice = CGAL::FACE;
-      std::string class_name(argv[2]);
-      if ( class_name == "SN") {
-        CGAL::benchmark<Simple_polygon_visibility_2, Naive_visibility_2>
-            (simple_visibility, naive_visibility, qchoice, input);
-        return 0;
-      }
-      if (class_name == "ST") {
-        CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
-                      (simple_visibility, triangular_visibility, qchoice, input);
-        return 0;
-      }
-      if (class_name == "NT") {
-        CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
-                    (naive_visibility, triangular_visibility, qchoice, input);
-        return 0;
-      }
-      std::cout<<"no type is matched.\n";
-      return 0;
-    }
 
-    if (argc == 4) {
-      std::string query_type(argv[3]);
-      if (query_type == "vertex")
-        qchoice = CGAL::VERTEX;
-      else {
-        if (query_type == "edge")
-          qchoice = CGAL::EDGE;
+    if (argc == 3 || argc == 4) {
+      qchoice = CGAL::FACE;
+      if (argc == 4) {
+        std::string query_type(argv[3]);
+        if (query_type == "vertex")
+          qchoice = CGAL::VERTEX;
         else {
-          if (query_type == "face")
-            qchoice = CGAL::FACE;
+          if (query_type == "edge")
+            qchoice = CGAL::EDGE;
           else {
-            std::cout<<"query type is not matched.\n";
-            return 0;
+            if (query_type == "face")
+              qchoice = CGAL::FACE;
+            else {
+              std::cout<<"query type is not matched.\n";
+              return 0;
+            }
           }
         }
       }
@@ -117,13 +100,25 @@ int main(int argc, char* argv[]) {
                     (naive_visibility, triangular_visibility, qchoice, input);
         return 0;
       }
+      if (class_name == "SS") {
+        CGAL::benchmark<Simple_polygon_visibility_2, Simple_polygon_visibility_2>
+                    (simple_visibility, simple_visibility, qchoice, input);
+      }
+      if (class_name == "NN") {
+        CGAL::benchmark<Naive_visibility_2, Naive_visibility_2>
+                    (naive_visibility, naive_visibility, qchoice, input);
+      }
+      if (class_name == "TT") {
+        CGAL::benchmark<Triangular_expansion_visibility_2, Triangular_expansion_visibility_2>
+                    (triangular_visibility, triangular_visibility, qchoice, input);
+      }
       std::cout<<"no type is matched.\n";
       return 0;
     }
   }
   else {
     std::cout << "Usage: ./benchmark [filename] [Class types] [Query type]\n";
-    std::cout << "where [Class type] could be SN(simple and naive), ST(simple and triangular) and NT(naive and triangular), indicating which classes you want to test.\n";
+    std::cout << "where [Class type] could be SN(simple and naive), ST(simple and triangular), NT(naive and triangular), SS, NN and TT, indicating which classes you want to test.\n";
     std::cout << "[Query type] could be vertex, edge, face.\n";
     std::cout << "The default value of [Class type] is ST. The default value of [Query type] is face.\n";
     exit(0);
