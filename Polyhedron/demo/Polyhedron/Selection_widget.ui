@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>334</width>
-    <height>337</height>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -211,6 +211,13 @@
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_point_set_item_button">
+      <property name="text">
+       <string>Create Point Set Item from Selected Vertices</string>
+      </property>
      </widget>
     </item>
     <item>

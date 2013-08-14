@@ -449,7 +449,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
   
   polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
-  target_link_libraries(selection_plugin scene_polyhedron_selection_item)
+  target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item)
 #
 # Exporting
 #

@@ -3,6 +3,8 @@
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
+#include "Scene_points_with_normal_item.h"
+
 #include "Scene_interface.h"
 #include "Polyhedron_demo_plugin_interface.h"
 #include "ui_Selection_widget.h"
@@ -51,6 +53,7 @@ public:
             this, SLOT(on_Selection_type_combo_box_changed(int)));
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
+    connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
 
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
@@ -173,6 +176,23 @@ public slots:
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_k_ring(value);
     }
+  }
+
+  void on_Create_point_set_item_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return; 
+    }
+
+    Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
+    point_item->setName(QString("%1-points").arg(selection_item->name()));
+    for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator begin = selection_item->selected_vertices.begin(); 
+       begin != selection_item->selected_vertices.end(); ++begin) {
+       point_item->point_set()->push_back((*begin)->point());
+    }
+    
+    scene->addItem(point_item);
   }
   // To handle empty selection items coming from loader
   void new_item_created(int item_id) {
