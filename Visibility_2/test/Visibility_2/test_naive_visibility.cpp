@@ -40,12 +40,20 @@ int main() {
     typedef Traits_2::Point_2										Point_2;
     typedef Traits_2::X_monotone_curve_2							Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-    typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                                    Naive_visibility_2;
+    
+    {
+      typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>                                                                    Naive_visibility_2;
 
-    CGAL::test_model_methods<Naive_visibility_2>();
-    std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-    CGAL::run_tests<Naive_visibility_2>(7,0);
+      CGAL::test_model_methods<Naive_visibility_2>();
+      std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
+      CGAL::run_tests<Naive_visibility_2>(7,0);
+    }{
+      typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>                                                                    Naive_visibility_2;
+
+      CGAL::test_model_methods<Naive_visibility_2>();
+      std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
+      CGAL::run_tests<Naive_visibility_2>(7,0);
+    }
 }
 {
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
@@ -53,12 +61,19 @@ int main() {
     typedef Traits_2::Point_2                                       Point_2;
     typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
-    typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                                    Naive_visibility_2;
-
-    CGAL::test_model_methods<Naive_visibility_2>();
-    std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-    CGAL::run_tests<Naive_visibility_2>(7,0);
+    {
+      typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
+        Naive_visibility_2;
+      CGAL::test_model_methods<Naive_visibility_2>();
+      std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
+      CGAL::run_tests<Naive_visibility_2>(7,0);
+    }{
+      typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>
+        Naive_visibility_2;
+      CGAL::test_model_methods<Naive_visibility_2>();
+      std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
+      CGAL::run_tests<Naive_visibility_2>(7,0);
+    }
 }
     return 0;
 }
