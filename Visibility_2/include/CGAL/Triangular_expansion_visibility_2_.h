@@ -414,13 +414,12 @@ public:
     
 
     if(location == CDT::EDGE){
-      //std::cout << "query on edge" << std::endl;
+      std::cout << "query on edge" << std::endl;
       // this is the easy part, there are only two possible faces 
       // index indicates the edge = vertex on the other side of the edge 
       // the next vertex in cw order should be the target of given edge
       if(fh->vertex(p_cdt->cw(index))->point() != he->target()->point()){
         //std::cout << "need to swap face" << std::endl;
-        assert(p_cdt->is_infinite(fh->vertex(index)));
         // take face on the other side if this is not the case 
         typename CDT::Face_handle nfh = fh->neighbor(index);
         index = nfh->index(fh);
