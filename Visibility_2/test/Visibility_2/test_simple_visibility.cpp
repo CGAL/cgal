@@ -34,31 +34,35 @@
 
 int main() {
 {
-    typedef CGAL::Gmpq                                              Number_type;
-    typedef CGAL::Cartesian<Number_type> 							Kernel;
-    typedef CGAL::Arr_segment_traits_2<Kernel> 						Traits_2;
-    typedef Traits_2::Point_2										Point_2;
-    typedef Traits_2::X_monotone_curve_2							Segment_2;
-    typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-    typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                                    Simple_polygon_visibility_2;
-
-    CGAL::test_model_methods<Simple_polygon_visibility_2>();
-    std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-    CGAL::run_tests<Simple_polygon_visibility_2>(7,0);
-}
+  typedef CGAL::Gmpq                                        Number_type;
+  typedef CGAL::Cartesian<Number_type> 							        Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel> 						    Traits_2;
+  typedef Traits_2::Point_2										              Point_2;
+  typedef Traits_2::X_monotone_curve_2							        Segment_2;
+  typedef CGAL::Arrangement_2<Traits_2>							        Arrangement_2;
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                    Simple_polygon_visibility_2;
+  std::cout << "Running model tests - ";
+  CGAL::test_model_methods<Simple_polygon_visibility_2>();
+  std::cout << GREEN << "Done!" << RESET << std::endl;
+  std::cout << "Running test suite with " << GREEN 
+            << "Cartesian" << RESET << " Kernel..." << std::endl;
+  CGAL::run_tests<Simple_polygon_visibility_2>(4,0);
+}/*
 {
-    typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
-    typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
-    typedef Traits_2::Point_2                                       Point_2;
-    typedef Traits_2::X_monotone_curve_2                            Segment_2;
-    typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
-    typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                                    Simple_polygon_visibility_2;
-
-    CGAL::test_model_methods<Simple_polygon_visibility_2>();
-    std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-    CGAL::run_tests<Simple_polygon_visibility_2>(7,0);
-}
-    return 0;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>                 Traits_2;
+  typedef Traits_2::Point_2                                  Point_2;
+  typedef Traits_2::X_monotone_curve_2                       Segment_2;
+  typedef CGAL::Arrangement_2<Traits_2>                      Arrangement_2;
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+                                                    Simple_polygon_visibility_2;
+  std::cout << "Running model tests - ";
+  CGAL::test_model_methods<Simple_polygon_visibility_2>();
+  std::cout << GREEN << "Done!" << RESET << std::endl;
+  std::cout << "Running test suite with " << GREEN 
+            << "EPECK" << RESET << " Kernel..." << std::endl;
+  CGAL::run_tests<Simple_polygon_visibility_2>(1,0);
+}*/
+  return 0;
 }

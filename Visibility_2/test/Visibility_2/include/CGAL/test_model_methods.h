@@ -95,6 +95,7 @@ void test_model_methods_for_arr(
     hit != arr.halfedges_end(); ++hit) {
 
     if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
+      std::cout << "Running halfedge case...\n";
       face_check_he = visibility.visibility_region(query_pt, hit, arr_out);
       break;
     }
@@ -112,52 +113,27 @@ void test_model_methods_for_arr(
   visibility.visibility_region(query_pt, hit, arr_out_check);
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr_out_check));  
-  { // Now consider the query point as the target of a halfedge
-    arr_out.clear();
-    typename Input_arrangement_2::Halfedge_const_iterator hit_snd;
-      for (hit_snd = arr.halfedges_begin(); hit_snd != arr.halfedges_end(); ++hit_snd) {
-        if(!hit_snd->face()->is_unbounded()){
-          Face_handle face_check_he_snd = visibility.visibility_region(hit_snd->target()->point(), hit_snd, arr_out);
-          assert(!face_check_he_snd->is_unbounded());
-          if (arr_out.faces_begin()->is_unbounded()) {
-            face = ++arr_out.faces_begin();
-          }
-          else {
-            face = arr_out.faces_begin();
-          }
-          assert(face_check_he_snd == face);
-          if (! test_are_equal<Output_arrangement_2>(arr_out, arr)) {
-            std::cout<<"failed in case where the query point is a vertex.\n";
-            assert(false);
-          }
-        }
-      }   
-  }
-// OLD CODE, PLEASE REMOVE IF NOT NEEDED, Michael   
-//  query_pt = Point_2(8, 0);
-//   typename Input_arrangement_2::Halfedge_const_iterator hit_snd;
-//   Face_handle face_check_he_snd;
-//   for (hit_snd = arr.halfedges_begin(); hit_snd != arr.halfedges_end(); ++hit_snd) {
-//     Segment_2 curr_seg(hit_snd->source()->point(), hit_snd->target()->point());
-//     if (curr_seg.has_on(query_pt)) {
-//       std::cout << curr_seg << std::endl;
-//       face_check_he_snd = visibility.visibility_region(query_pt, hit_snd, arr_out);
-//       break;
-//     }
-//   }
-/*  if (arr_out.faces_begin()->is_unbounded()) {
-    face = ++arr_out.faces_begin();
-  }
-  else {
-    face = arr_out.faces_begin();
-  }
-  assert(face_check_he_snd == face);
-  assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_out, arr));
-  arr_out_check.clear();
-  visibility.visibility_region(query_pt, hit_snd, arr_out_check);
-  assert(true == test_are_equal<Output_arrangement_2>
-                                        (arr_out, arr_out_check));*/
+
+  // Now consider the query point as the target of a halfedge
+  typename Input_arrangement_2::Halfedge_const_iterator hit_snd;
+  for (hit_snd = arr.halfedges_begin(); hit_snd != arr.halfedges_end(); ++hit_snd) {
+    if(!hit_snd->face()->is_unbounded()){
+      arr_out.clear();
+      Face_handle face_check_he_snd = visibility.visibility_region(hit_snd->target()->point(), hit_snd, arr_out);
+      assert(!face_check_he_snd->is_unbounded());
+      if (arr_out.faces_begin()->is_unbounded()) {
+        face = ++arr_out.faces_begin();
+      }
+      else {
+        face = arr_out.faces_begin();
+      }
+      assert(face_check_he_snd == face);
+      if (! test_are_equal<Output_arrangement_2>(arr_out, arr)) {
+        std::cout<<"failed in case where the query point is a vertex.\n";
+        assert(false);
+      }
+    }
+  }   
 }
 
 template <class Visibility_2>
@@ -195,7 +171,7 @@ void test_model_methods() {
   Input_arrangement_2 arr_triangle;
   CGAL::insert(arr_triangle, seg_tri.begin(), seg_tri.end());
 
-//  test_model_methods_for_arr<Visibility_2>(arr_triangle);
+  test_model_methods_for_arr<Visibility_2>(arr_triangle);
 }
 
 } // end CGAL namespace

@@ -132,6 +132,10 @@ void report_while_handling_needles(
 
   typename std::vector<Segment_2>::size_type i = 0;
 
+  if (points[0] == points[points.size()-1]) {
+    points.pop_back();
+  }
+
   while (Collinear(geom_traits, 
                    points[i], 
                    points[points.size()-1],
@@ -216,6 +220,7 @@ void report_while_handling_needles(
     }
     i++;
   }
+ 
   CGAL::insert_non_intersecting_curves(arr_out, 
                                        segments.begin(), 
                                        segments.end());
