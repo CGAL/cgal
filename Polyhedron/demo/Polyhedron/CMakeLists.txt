@@ -151,6 +151,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Mesher_base.cpp
               Camera_positions_list.cpp
               Scene_points_with_normal_item.cpp
+			  Scene_polyhedron_item_k_ring_selection.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
   qt4_automoc( Custom_manipulated_frame.cpp )
@@ -210,6 +211,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 	
   add_item(custom_manipulated_frame Custom_manipulated_frame.cpp Custom_manipulated_frame.moc)
  
+
+  add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp Scene_polyhedron_item_k_ring_selection.moc)
+  target_link_libraries(scene_polyhedron_item_k_ring_selection scene_polyhedron_item)
+  
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
   endif(EIGEN3_FOUND OR TAUCS_FOUND)
