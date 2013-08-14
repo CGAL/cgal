@@ -27,7 +27,7 @@ class Polyhedron_demo_edit_polyhedron_plugin :
 
 public:
   Polyhedron_demo_edit_polyhedron_plugin() 
-    : Polyhedron_demo_plugin_helper(), ui_widget(NULL), dock_widget(NULL)
+    : Polyhedron_demo_plugin_helper(), dock_widget(NULL)
   { }
   ~Polyhedron_demo_edit_polyhedron_plugin()
   { }
@@ -57,6 +57,7 @@ public slots:
   void on_Select_isolated_components_button_clicked();
   void on_Get_minimum_button_clicked();
 
+  void on_BrushSpinBox_changed(int);
   void new_item_created(int item_id);
 
 private:
@@ -65,7 +66,7 @@ private:
   Scene_edit_polyhedron_item* convert_to_edit_polyhedron(Item_id, Scene_polyhedron_item*);
   Scene_polyhedron_item* convert_to_plain_polyhedron(Item_id, Scene_edit_polyhedron_item*);
 
-  Ui::DeformMesh* ui_widget;
+  Ui::DeformMesh ui_widget;
   QDockWidget* dock_widget;
 
   QAction* actionDeformation;
@@ -108,28 +109,29 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   // First time, construct docking window
   dock_widget = new QDockWidget("Mesh Deformation", mw);
   dock_widget->setVisible(false); // do not show at the beginning
-  ui_widget = new Ui::DeformMesh();
 
-  ui_widget->setupUi(dock_widget); 
+  ui_widget.setupUi(dock_widget); 
   mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
-  connect(ui_widget->AddHandlePushButton, SIGNAL(clicked()), this, SLOT(on_AddHandlePushButton_clicked()));
-  connect(ui_widget->PrevHandlePushButton, SIGNAL(clicked()), this, SLOT(on_PrevHandlePushButton_clicked()));
-  connect(ui_widget->NextHandlePushButton, SIGNAL(clicked()), this, SLOT(on_NextHandlePushButton_clicked()));
-  connect(ui_widget->SelectAllVerticesPushButton, SIGNAL(clicked()), this, SLOT(on_SelectAllVerticesPushButton_clicked()));
-  connect(ui_widget->DeleteHandlePushButton, SIGNAL(clicked()), this, SLOT(on_DeleteHandlePushButton_clicked()));
-  connect(ui_widget->ApplyAndClosePushButton, SIGNAL(clicked()), this, SLOT(on_ApplyAndClosePushButton_clicked()));
-  connect(ui_widget->ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
-  connect(ui_widget->ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
-  connect(ui_widget->ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
-  connect(ui_widget->ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
-  connect(ui_widget->OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
-  connect(ui_widget->Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
-  connect(ui_widget->Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
+  connect(ui_widget.AddHandlePushButton, SIGNAL(clicked()), this, SLOT(on_AddHandlePushButton_clicked()));
+  connect(ui_widget.PrevHandlePushButton, SIGNAL(clicked()), this, SLOT(on_PrevHandlePushButton_clicked()));
+  connect(ui_widget.NextHandlePushButton, SIGNAL(clicked()), this, SLOT(on_NextHandlePushButton_clicked()));
+  connect(ui_widget.SelectAllVerticesPushButton, SIGNAL(clicked()), this, SLOT(on_SelectAllVerticesPushButton_clicked()));
+  connect(ui_widget.DeleteHandlePushButton, SIGNAL(clicked()), this, SLOT(on_DeleteHandlePushButton_clicked()));
+  connect(ui_widget.ApplyAndClosePushButton, SIGNAL(clicked()), this, SLOT(on_ApplyAndClosePushButton_clicked()));
+  connect(ui_widget.ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
+  connect(ui_widget.ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
+  connect(ui_widget.ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
+  connect(ui_widget.ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
+  connect(ui_widget.OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
+  connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
+  connect(ui_widget.Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
 
-  connect(ui_widget->SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
-  connect(ui_widget->ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
+  connect(ui_widget.SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
+  connect(ui_widget.ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
+
+  connect(ui_widget.BrushSpinBox, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBox_changed(int)));
   ///////////////////////////////////////////////////////////////////
 }
 
@@ -248,7 +250,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->select_isolated_components();
+  boost::optional<std::size_t> minimum = 
+    edit_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
+  if(minimum) {
+    ui_widget.Threshold_size_spin_box->setValue(*minimum);
+  }
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
@@ -256,7 +262,10 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->get_minimum_isolated_component();
+  boost::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
+  if(minimum) {
+    ui_widget.Threshold_size_spin_box->setValue(*minimum);
+  }
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()
@@ -311,6 +320,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
   //}
 }
 
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBox_changed(int value) {
+  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
+  {
+    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(!edit_item) { continue; }
+
+    edit_item->set_k_ring(value);
+  }
+}
+
 void Polyhedron_demo_edit_polyhedron_plugin::new_item_created(int item_id)
 {
   if(dock_widget->isVisible()) {
@@ -327,14 +347,13 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
                            Scene_polyhedron_item* poly_item)
 {
   QString poly_item_name = poly_item->name();
-  Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(poly_item, ui_widget);
+  Scene_edit_polyhedron_item* edit_poly = new Scene_edit_polyhedron_item(poly_item, &ui_widget, mw);
   edit_poly->setColor(poly_item->color());
   edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
   edit_poly->setRenderingMode(Gouraud);
   poly_item->setName(poly_item_name); // Because it is changed when the
                                       // name of edit_poly is changed.
-  
-  mw->installEventFilter(edit_poly); // filter mainwindows events for key(pressed/released)
+  edit_poly->set_k_ring(ui_widget.BrushSpinBox->value());
   scene->replaceItem(i, edit_poly);
   return edit_poly;
 }

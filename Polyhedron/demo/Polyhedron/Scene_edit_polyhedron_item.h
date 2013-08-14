@@ -3,33 +3,26 @@
 //#define CGAL_PROFILE 
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
-#include "Polyhedron_type.h"
+#include "Scene_polyhedron_item_k_ring_selection.h"
+#include "Travel_isolated_components.h"
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-
 #include <CGAL/compute_normal.h>
 
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <set>
-#include <map>
-#include <queue>
-
-#include <QColor>
-#include <QList>
 
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/camera.h>
 
-#include <CGAL/glu.h>
-
 #include "ui_Deform_mesh.h"
 #include <CGAL/Deform_mesh.h> 
+#include <boost/function_output_iterator.hpp>
 
+typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor		  edge_descriptor;
@@ -181,14 +174,14 @@ private:
 };
 
 // To hold pressing states together
-struct Mouse_keyboard_state
+struct Mouse_keyboard_state_deformation
 {
   bool ctrl_pressing;
   bool shift_pressing;
   bool left_button_pressing;
   bool right_button_pressing;
 
-  Mouse_keyboard_state() 
+  Mouse_keyboard_state_deformation() 
     : ctrl_pressing(false), shift_pressing(false), left_button_pressing(false), right_button_pressing(false)
   { }
 };
@@ -201,7 +194,7 @@ public:
   /// Create an Scene_edit_polyhedron_item from a Scene_polyhedron_item.
   /// The ownership of the polyhedron is moved to the new edit_polyhedron
   /// item.
-  Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget);
+  Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget, QMainWindow* mw);
   ~Scene_edit_polyhedron_item();
 
   /// Returns 0, so that one cannot clone an "edit polyhedron" item.
@@ -241,6 +234,9 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
 
+  int get_k_ring()       { return k_ring_selector.k_ring; }
+  void set_k_ring(int v) { k_ring_selector.k_ring = v; }
+
   // take mouse events from viewer, main-window does not work
   // take keyboard events from main-window, which is more stable
   bool eventFilter(QObject *target, QEvent *event);
@@ -251,16 +247,34 @@ protected:
 
 public slots:
   void changed();
+  void selected(const std::map<Polyhedron::Vertex_handle, int>& m)
+  {
+    bool any_changes = false;
+    for(std::map<vertex_descriptor, int>::const_iterator it = m.begin(); it != m.end(); ++it)
+    {
+      vertex_descriptor vh = it->first;
+      bool changed = false;
+      if(ui_widget->ROIRadioButton->isChecked()) {
+        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi(vh); }
+        else          { changed = erase_roi(vh);  }
+      }
+      else {
+        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_handle(vh); }
+        else          { changed = erase_handle(vh);  }
+      }
+      any_changes |= changed;
+    }
+    if(any_changes) { emit itemChanged(); }
+  }
+
   void select(double orig_x,
               double orig_y,
               double orig_z,
               double dir_x,
               double dir_y,
               double dir_z);
-  
-  void vertex_has_been_selected(void* void_ptr); // a vertex is selected by shift + left_click
-  void deform();                                 // deform the mesh
 
+  void deform(); // deform the mesh
 // members
 private:
   Ui::DeformMesh* ui_widget;
@@ -279,13 +293,15 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
   double length_of_axis; // for drawing axis at a handle group
 
   // by interleaving 'viewer's events (check constructor), keep followings:
-  Mouse_keyboard_state state;
+  Mouse_keyboard_state_deformation state;
 
   //For constraint rotation
   qglviewer::LocalConstraint rot_constraint;
   bool is_rot_free;
 
   bool own_poly_item; //indicates if the poly_item should be deleted by the destructor
+  Scene_polyhedron_item_k_ring_selection k_ring_selector;
+
 public:
   // Deformation related functions //
   bool insert_handle(vertex_descriptor v)
@@ -525,92 +541,41 @@ public:
     refresh_all_handle_centers();
   }
 
-  template<class Visitor>
-  void travel_non_roi_connected_components(Visitor& v) 
-  {
-    std::vector<bool> mark(polyhedron()->size_of_vertices(), false);
-    Polyhedron::Vertex_iterator vb(polyhedron()->vertices_begin()), ve(polyhedron()->vertices_end());
-    for( ;vb != ve; ++vb) 
-    {
-      if(mark[vb->id()] || deform_mesh.is_roi(vb)) { continue; }
-
-      std::vector<Polyhedron::Vertex_handle> C;
-      C.push_back(vb);
-      mark[vb->id()] = true;
-      std::size_t current_index = 0;
-
-      while(current_index < C.size()) {
-        Polyhedron::Vertex_handle current = C[current_index++];
-
-        Polyhedron::Halfedge_around_vertex_circulator circ = current->vertex_begin();
-        do {
-          Polyhedron::Vertex_handle nv = circ->opposite()->vertex();
-          if(!mark[nv->id()] && !deform_mesh.is_roi(nv)) {
-            mark[nv->id()] = true; 
-            C.push_back(nv);
-          }
-        } while(++circ != current->vertex_begin());
-      } // while(!Q.empty())
-
-      v(C);
+  struct Is_selected {
+    Deform_mesh& dm;
+    Is_selected(Deform_mesh& dm) : dm(dm) {}
+    bool is_selected(Vertex_handle vh) const {
+      return dm.is_roi(vh);
     }
-  }
-
-  // to be used in get_minimum_isolated_component function
-  struct Minimum_visitor
-  {
-    void operator()(const std::vector<Polyhedron::Vertex_handle>& C) {
-      if(!minimum) { minimum = C.size(); }
-      else         { minimum = (std::min)(*minimum, C.size()); }
-    }
-
-    boost::optional<std::size_t> minimum;
   };
 
-  void get_minimum_isolated_component() {
-    Minimum_visitor visitor;
-    travel_non_roi_connected_components(visitor);
-    if(visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum);
-    }
+  boost::optional<std::size_t> get_minimum_isolated_component() {
+    Travel_isolated_components::Minimum_visitor visitor;
+    Travel_isolated_components().travel<Vertex_handle>
+      (polyhedron()->vertices_begin(), polyhedron()->vertices_end(), 
+       polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
+    return visitor.minimum;
   }
 
-  // to be used in select_isolated_components function
-  struct Selection_visitor
-  {
-    Selection_visitor(std::size_t threshold_size, Deform_mesh* deform_mesh) 
-      : threshold_size(threshold_size), deform_mesh(deform_mesh), any_inserted(false) { }
-
-    void operator()(const std::vector<Polyhedron::Vertex_handle>& C) {
-      if(C.size() <= threshold_size) {
-        any_inserted = true;
-        deform_mesh->insert_roi(C.begin(), C.end());
-      }
-      else { 
-        // to hold minimum of not inserted components
-        minimum_visitor(C);
-      }
+  struct Select_roi_output {
+    Select_roi_output(Deform_mesh* dm) : dm(dm) { }
+    void operator()(Vertex_handle vh) {
+      dm->insert_roi(vh);
     }
-
-    std::size_t threshold_size;
-    Deform_mesh* deform_mesh;
-    bool any_inserted;
-    Minimum_visitor minimum_visitor; // hold minimum of NOT inserted components
+    Deform_mesh* dm;
   };
 
-  void select_isolated_components() {
-    std::size_t threshold_size = ui_widget->Threshold_size_spin_box->value() < 0 ? 0 :
-      ui_widget->Threshold_size_spin_box->value();
+  boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+    typedef boost::function_output_iterator<Select_roi_output> Output_iterator;
+    Output_iterator out(&deform_mesh);
 
-    Selection_visitor visitor(threshold_size, &deform_mesh);
-    travel_non_roi_connected_components(visitor);
-    if(visitor.any_inserted) {
-      emit itemChanged();
-    }
-    // also set next minimum connected component
-    if(visitor.minimum_visitor.minimum) {
-      ui_widget->Threshold_size_spin_box->setValue(*visitor.minimum_visitor.minimum);
-    }
+    Travel_isolated_components::Selection_visitor<Output_iterator> visitor(threshold, out);
+    Travel_isolated_components().travel<Vertex_handle>
+      (polyhedron()->vertices_begin(), polyhedron()->vertices_end(), 
+      polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
+
+    if(visitor.any_inserted) { emit itemChanged(); }
+    return visitor.minimum_visitor.minimum;
   }
 protected:
   // Deformation related functions //
@@ -643,103 +608,10 @@ protected:
     return false;
   }
 
-  bool process_selection(vertex_descriptor v, int k_ring, bool is_roi, bool is_insert, bool use_euclidean)
-  {
-    // std::cout << "Process k-ring: " << k_ring << " roi: " << is_roi << " insert: " << is_insert << std::endl;
-
-    std::map<vertex_descriptor, int> neighs = use_euclidean ?
-      extract_k_ring_with_distance(*polyhedron(), v, k_ring) :
-      extract_k_ring(*polyhedron(), v, k_ring);
-    bool any_changes = false;
-    for(std::map<vertex_descriptor, int>::iterator it = neighs.begin(); it != neighs.end(); ++it)
-    {
-      vertex_descriptor vh = it->first;
-      bool changed = false;
-      if(is_roi) {
-        if(is_insert) { changed = insert_roi(vh); }
-        else          { changed = erase_roi(vh);  }
-      }
-      else {
-        if(is_insert) { changed = insert_handle(vh); }
-        else          { changed = erase_handle(vh);  }
-      }
-      any_changes |= changed;
-    }
-    return any_changes;
-  }
-
   void refresh_all_handle_centers()
   {
     for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
     { it->refresh(); }
-  }
-
-  std::map<vertex_descriptor, int> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
-  {
-    std::map<vertex_descriptor, int>  D;
-    std::queue<vertex_descriptor>     Q;
-    Q.push(v); D[v] = 0;
-
-    int dist_v;
-    while( !Q.empty() && (dist_v = D[Q.front()]) < k ) {
-      v = Q.front();
-      Q.pop();
-
-      out_edge_iterator e, e_end;
-      for(boost::tie(e, e_end) = boost::out_edges(v, P); e != e_end; e++)
-      {
-        vertex_descriptor new_v = boost::target(*e, P);
-        if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-          Q.push(new_v);
-        }
-      }   
-    }
-    return D;
-  }
-
-  std::map<vertex_descriptor, int> extract_k_ring_with_distance(const Polyhedron &P, vertex_descriptor root, int k)
-  {
-    // tuple: <vertex, geodistance, euclidian distane>
-    std::map<vertex_descriptor, int>  D;
-    std::queue<vertex_descriptor>     Q;
-    Q.push(root); D[root] = 0;
-
-    int dist_v;
-    double max_distance = 0.0;
-    while( !Q.empty() && (dist_v = D[Q.front()]) < k ) {
-      vertex_descriptor v = Q.front();
-      Q.pop();
-
-      out_edge_iterator e, e_end;
-      for(boost::tie(e, e_end) = boost::out_edges(v, P); e != e_end; e++)
-      {
-        vertex_descriptor new_v = boost::target(*e, P);
-        if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-          max_distance = (std::max)( (new_v->point() - root->point()).squared_length(), max_distance);
-          Q.push(new_v);
-        }
-      }   
-    }
-    // now Q contains all nonprocessed 
-    while( !Q.empty() ) {
-      vertex_descriptor v = Q.front();
-      Q.pop();
-
-      out_edge_iterator e, e_end;
-      for(boost::tie(e, e_end) = boost::out_edges(v, P); e != e_end; e++)
-      {
-        vertex_descriptor new_v = boost::target(*e, P);
-        double distance = (new_v->point() - root->point()).squared_length();
-        if(distance < max_distance)
-        {
-          if(D.insert(std::make_pair(new_v, dist_v + 1)).second) {
-            Q.push(new_v);
-          }
-        }
-      }   
-    }
-
-    return D;
   }
 
   bool activate_closest_manipulated_frame(int x, int y)

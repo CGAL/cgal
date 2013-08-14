@@ -24,13 +24,6 @@
        <item row="2" column="1" rowspan="2" colspan="3">
         <layout class="QVBoxLayout" name="RingLayout">
          <item>
-          <widget class="QCheckBox" name="UseEuclideanCheckBox">
-           <property name="text">
-            <string>Use Euclidean</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
             <widget class="QLabel" name="BrushLabel">

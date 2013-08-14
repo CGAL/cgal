@@ -1,38 +1,28 @@
 #include "Scene_edit_polyhedron_item.h"
-#include "Kernel_type.h"
-#include "Polyhedron_type.h"
-
 #include <boost/foreach.hpp>
 #include <algorithm>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
-#include <QVariant>
-
-#include <QObject>
-#include <QMenu>
-#include <QAction>
-
-#include <QEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
 
 #include <CGAL/gl_render.h>
 
-#include "ui_Deform_mesh.h"
-
-Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item, Ui::DeformMesh* ui_widget)
+Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
+  (Scene_polyhedron_item* poly_item, 
+  Ui::DeformMesh* ui_widget,
+  QMainWindow* mw)
   : ui_widget(ui_widget), 
     poly_item(poly_item),
     deform_mesh(*(poly_item->polyhedron()), Vertex_index_map(), Edge_index_map(), Array_based_vertex_point_map(&positions)),
     is_rot_free(true),
     own_poly_item(true),
+    k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true),
     quadric(gluNewQuadric())
 {
+  mw->installEventFilter(this);
   gluQuadricNormals(quadric, GLU_SMOOTH);
   // bind vertex picking 
-  connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
-  poly_item->enable_facets_picking(true);
+  connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Vertex_handle, int>&)), this, 
+    SLOT(selected(const std::map<Polyhedron::Vertex_handle, int>&)));
+
   poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
   poly_item->update_vertex_indices();
 
@@ -93,14 +83,6 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
   if (own_poly_item) delete poly_item;
 }
 
-struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
-{
-  Polyhedron::Vertex* vertex_ptr;
-  vertex_descriptor vh;
-  void operator()(Polyhedron::HDS& hds) {
-    vh = hds.vertex_handle(vertex_ptr);
-  }
-};
 /////////////////////////////////////////////////////////
 /////////// Most relevant functions lie here ///////////
 void Scene_edit_polyhedron_item::deform()
@@ -115,22 +97,6 @@ void Scene_edit_polyhedron_item::deform()
   emit itemChanged();
 }
 
-void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) 
-{
-  Polyhedron* poly = poly_item->polyhedron();
-  // get vertex descriptor
-  Get_vertex_handle get_vertex_handle;  
-  get_vertex_handle.vertex_ptr = static_cast<Polyhedron::Vertex*>(void_ptr);
-  poly->delegate(get_vertex_handle);
-  vertex_descriptor clicked_vertex = get_vertex_handle.vh;
-  // use clicked_vertex, do what you want 
-  bool is_roi = ui_widget->ROIRadioButton->isChecked();
-  bool is_insert = ui_widget->InsertRadioButton->isChecked();
-  int k_ring = ui_widget->BrushSpinBox->value();
-  bool use_euclidean = ui_widget->UseEuclideanCheckBox->isChecked();
-  bool need_repaint = process_selection(clicked_vertex, k_ring, is_roi, is_insert, use_euclidean);
-  if(need_repaint) { emit itemChanged(); }
-}
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
@@ -146,7 +112,7 @@ void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
   // This filter is both filtering events from 'viewer' and 'main window'
-  Mouse_keyboard_state old_state = state;
+  Mouse_keyboard_state_deformation old_state = state;
   ////////////////// TAKE EVENTS /////////////////////
   // key events
   if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) 
@@ -184,25 +150,6 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     if(need_repaint) { emit itemChanged(); }
   }
 
-  // use mouse move event for paint-like selection
-  // specifically placed in here (not in timer function) for preventing unnecessary ray-casting 
-  // (while mouse not moving, ray casting is pointless since the same vertex will be returned and processed)
-  if(event->type() == QEvent::MouseMove &&
-    (state.shift_pressing && state.left_button_pressing) )    
-  { // paint with mouse move event 
-    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    qglviewer::Camera* camera = viewer->camera();
-
-    bool found = false;
-    const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
-    if(found)
-    {
-      const qglviewer::Vec& orig = camera->position();
-      const qglviewer::Vec& dir = point - orig;
-      select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z); // it will cause 'selected_vertex' signal where our slot will handle selection 
-    }
-  }//end MouseMove
   return false;
 }
 
