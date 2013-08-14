@@ -13,12 +13,11 @@
 #include <boost/foreach.hpp>
 
 // Wrapper for holding selected entities
-template <class Entity, class Listener>
+template <class Entity>
 class Selection_set : std::set<Entity>
 {
 private:
   typedef std::set<Entity>                Base;
-  typedef Selection_set<Entity, Listener> Self;
 
 public:
 // types from base
@@ -168,9 +167,9 @@ protected:
   }
 
 public:
-  typedef Selection_set<Vertex_handle, Scene_polyhedron_selection_item> Selection_set_vertex;
-  typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
-  typedef Selection_set<Halfedge_handle, Scene_polyhedron_selection_item> Selection_set_edge;
+  typedef Selection_set<Vertex_handle> Selection_set_vertex;
+  typedef Selection_set<Facet_handle> Selection_set_facet;
+  typedef Selection_set<Halfedge_handle> Selection_set_edge;
 
   Active_handle::Type get_active_handle_type() 
   { return k_ring_selector.active_handle_type; }
