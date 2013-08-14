@@ -220,6 +220,7 @@ bool is_inside_face(
 template <class _Arrangement_2> 
 bool create_arrangement_from_dat_file(std::ifstream &input,
                                        _Arrangement_2 &arr) {
+  arr.clear();
 
   typedef _Arrangement_2                                      Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2           Geometry_traits_2;
@@ -270,21 +271,31 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
 
 template <class Arrangement_2>
 void regularize(Arrangement_2& arr){
+  //std::cout << "\n regularize" << std::endl; 
   // remove all edges with the same face on both sides 
-  typedef typename Arrangement_2::Halfedge_iterator HEIT; 
-  for(HEIT heit = arr.halfedges_begin(); heit != arr.halfedges_end(); heit++){
-    if(heit->face() == heit->twin()->face()){
-      arr.remove_edge(heit);
+  typedef typename Arrangement_2::Edge_iterator EIT; 
+  for(EIT eit = arr.edges_begin(); eit != arr.edges_end();){
+    if(eit->face() == eit->twin()->face()){
+      // arr.remove_edge(eit++,false,false); did not compile 
+      EIT eh = eit; 
+      ++eit;
+      arr.remove_edge(eh,false,false);
+    }else{
+      ++eit; 
     }
   }
-  
   // remove all isolated vertices (also those left from prvious step)
   typedef typename Arrangement_2::Vertex_iterator VIT; 
-  for(VIT vit = arr.vertices_begin(); vit != arr.vertices_end(); vit++){
+  for(VIT vit = arr.vertices_begin(); vit != arr.vertices_end();){
     if(vit->degree()== 0){
-      arr.remove_isolated_vertex(vit);
+      VIT vh = vit;
+      vit++; 
+      arr.remove_isolated_vertex(vh);
+    }else{
+      vit++; 
     }
   }
+  //std::cout << "regularize done" << std::endl; 
 }
 
 template <class Visibility_2>
