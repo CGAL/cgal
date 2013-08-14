@@ -172,10 +172,6 @@ public:
   typedef Selection_set<Facet_handle, Scene_polyhedron_selection_item> Selection_set_facet;
   typedef Selection_set<Halfedge_handle, Scene_polyhedron_selection_item> Selection_set_edge;
 
-  friend class Selection_set<Vertex_handle, Scene_polyhedron_selection_item>;
-  friend class Selection_set<Facet_handle, Scene_polyhedron_selection_item>;
-  friend class Selection_set<Halfedge_handle, Scene_polyhedron_selection_item>;
-
   Active_handle::Type get_active_handle_type() 
   { return k_ring_selector.active_handle_type; }
   void set_active_handle_type(Active_handle::Type aht) 
