@@ -128,6 +128,7 @@ public slots:
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
+    typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
     if(!poly_item) {
       print_message("Error: there is no selected polyhedron item!");
@@ -136,17 +137,16 @@ public slots:
 
     QString poly_item_name = poly_item->name();
     
-    ACTIVE_HANDLE_TYPE type = static_cast<ACTIVE_HANDLE_TYPE>(ui_widget.Selection_type_combo_box->currentIndex());
+    Active_handle::Type type = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
     bool is_insert = ui_widget.Insertion_radio_button->isChecked();
     int k_ring = ui_widget.Brush_size_spin_box->value();
 
     Scene_polyhedron_selection_item* selection_poly =
-      new Scene_polyhedron_selection_item(poly_item, type, is_insert, k_ring);
+      new Scene_polyhedron_selection_item(poly_item, type, is_insert, k_ring, mw);
     selection_item_map.insert(std::make_pair(poly_item, selection_poly));
     selection_poly->setName(QString("%1 (selection)").arg(poly_item->name()));
     selection_poly->setRenderingMode(Flat);
 
-    mw->installEventFilter(selection_poly); // filter mainwindows events for key(pressed/released)
     scene->addItem(selection_poly);
   }
   void on_select_marked_edges_button_clicked()
@@ -159,22 +159,24 @@ public slots:
     selection_item->select_marked_edges(ui_widget.neighb_size->value());
   }
   void on_Selection_type_combo_box_changed(int index) {
+    typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
-      it->second->active_handle_type = static_cast<ACTIVE_HANDLE_TYPE>(index);
+      it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
     }
   }
   void on_Insertion_radio_button_toggled(bool toggle){
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
-      it->second->is_insert = toggle;
+      it->second->set_is_insert(toggle);
     }
   }
   void on_Brush_size_spin_box_changed(int value) {
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
-      it->second->k_ring = value;
+      it->second->set_k_ring(value);
     }
   }
   // To handle empty selection items coming from loader
   void new_item_created(int item_id) {
+    typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     Scene_polyhedron_selection_item* selection_item = 
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
     if(selection_item && selection_item->polyhedron_item() == NULL) {
@@ -185,19 +187,17 @@ public slots:
         return;
       }
 
-      selection_item->set_polyhedron_item(poly_item);
-      if(!selection_item->actual_load()) {
+      Active_handle::Type aht = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
+      bool is_insert = ui_widget.Insertion_radio_button->isChecked();
+      int k_ring = ui_widget.Brush_size_spin_box->value();
+
+      if(!selection_item->actual_load(poly_item, aht, is_insert, k_ring, mw)) {
         print_message("Error: loading selection item is not successful!");
         scene->erase(item_id);
         return;
       }
 
-      selection_item->active_handle_type = static_cast<ACTIVE_HANDLE_TYPE>(ui_widget.Selection_type_combo_box->currentIndex());
-      selection_item->is_insert = ui_widget.Insertion_radio_button->isChecked();
-      selection_item->k_ring = ui_widget.Brush_size_spin_box->value();
-
       selection_item_map.insert(std::make_pair(poly_item, selection_item));
-      mw->installEventFilter(selection_item); // filter mainwindows events for key(pressed/released)
     }
   }
   void item_about_to_be_destroyed(Scene_item* scene_item) {
@@ -237,7 +237,6 @@ private:
   Ui::Selection ui_widget;
 typedef std::multimap<Scene_polyhedron_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
-typedef Scene_polyhedron_selection_item::ACTIVE_HANDLE_TYPE ACTIVE_HANDLE_TYPE;
 }; // end Polyhedron_demo_selection_plugin
 
 Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)

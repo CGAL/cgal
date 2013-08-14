@@ -144,6 +144,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_points_with_normal_item.cpp
 			  Scene_polyhedron_item_decorator.cpp
 			  Scene_polyhedron_selection_item.cpp
+			  Scene_polyhedron_item_k_ring_selection.cpp
               )
   qt4_automoc( Scene_implicit_function_item.cpp )
 
@@ -207,8 +208,11 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp Scene_polyhedron_item_decorator.moc)
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
+  add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp Scene_polyhedron_item_k_ring_selection.moc)
+  target_link_libraries(scene_polyhedron_item_k_ring_selection scene_polyhedron_item)
+  
   add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp Scene_polyhedron_selection_item.moc)
-  target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator)
+  target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
   
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
