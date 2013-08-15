@@ -57,7 +57,9 @@ public slots:
   void on_Select_isolated_components_button_clicked();
   void on_Get_minimum_button_clicked();
 
-  void on_BrushSpinBox_changed(int);
+  void on_BrushSpinBoxHandle_changed(int);
+  void on_BrushSpinBoxRoi_changed(int);
+  void on_ROIRadioButton_toggled(bool);
   void new_item_created(int item_id);
 
 private:
@@ -131,7 +133,9 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget.ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
 
-  connect(ui_widget.BrushSpinBox, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBox_changed(int)));
+  connect(ui_widget.BrushSpinBoxRoi, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxRoi_changed(int)));
+  connect(ui_widget.BrushSpinBoxHandle, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxHandle_changed(int)));
+  connect(ui_widget.ROIRadioButton, SIGNAL(toggled(bool)), this, SLOT(on_ROIRadioButton_toggled(bool)));
   ///////////////////////////////////////////////////////////////////
 }
 
@@ -321,7 +325,31 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
 }
 
 
-void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBox_changed(int value) {
+void Polyhedron_demo_edit_polyhedron_plugin::on_ROIRadioButton_toggled(bool value) {
+  int k_ring = value ? ui_widget.BrushSpinBoxRoi->value() : 
+                       ui_widget.BrushSpinBoxHandle->value();
+  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
+  {
+    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(!edit_item) { continue; }
+
+    edit_item->set_k_ring(k_ring);
+  }
+}
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxHandle_changed(int value) {
+  if(ui_widget.ROIRadioButton->isChecked()) { return; }
+  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
+  {
+    Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(!edit_item) { continue; }
+
+    edit_item->set_k_ring(value);
+  }
+}
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxRoi_changed(int value) {
+  if(!ui_widget.ROIRadioButton->isChecked()) { return; }
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
@@ -353,7 +381,9 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   edit_poly->setRenderingMode(Gouraud);
   poly_item->setName(poly_item_name); // Because it is changed when the
                                       // name of edit_poly is changed.
-  edit_poly->set_k_ring(ui_widget.BrushSpinBox->value());
+  int k_ring = ui_widget.ROIRadioButton->isChecked() ? ui_widget.BrushSpinBoxRoi->value() : 
+                                                       ui_widget.BrushSpinBoxHandle->value();
+  edit_poly->set_k_ring(k_ring);
   scene->replaceItem(i, edit_poly);
   return edit_poly;
 }

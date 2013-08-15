@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>327</width>
+    <width>357</width>
     <height>491</height>
    </rect>
   </property>
@@ -26,14 +26,32 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="QLabel" name="BrushLabel">
-             <property name="text">
-              <string>Brush Size:</string>
-             </property>
-            </widget>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Brush Size ROI:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Brush Size Handle:</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="QSpinBox" name="BrushSpinBox"/>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QSpinBox" name="BrushSpinBoxRoi"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="BrushSpinBoxHandle"/>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
