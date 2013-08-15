@@ -111,7 +111,7 @@ public:
           if (vh->point().x() > xmax)
             xmax = vh->point().x();
           if (vh->point().y() < ymin)
-            ymin = vh->point().x();
+            ymin = vh->point().y();
           if (vh->point().y() > ymax)
             ymax = vh->point().y();
         }
@@ -129,8 +129,21 @@ public:
           Point_2 source = ec->source()->point();
           Point_2 target = ec->next()->target()->point();
           Halfedge_handle prev = ec->prev();
-          arrc.remove_edge(ec->next());
-          arrc.remove_edge(ec);
+//          arrc.remove_edge(ec->next());
+//          arrc.remove_edge(ec);
+
+          bool check_remove;
+          do {
+            check_remove = false;
+            for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
+              if (eh->target()->point() == q || eh->source()->point() == q) {
+                    arrc.remove_edge(eh);
+                    check_remove = true;
+                    break;
+                }
+            }
+          } while (check_remove);
+
           std::vector<Point_2> polygon;
           visibility_region_impl(q, prev->face(), polygon);
           //Decide which inside of the visibility butterfly is needed.
