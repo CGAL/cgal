@@ -48,6 +48,7 @@ public:
 
   using Base::compute_supporting_line;
   using Base::compute_linf_projection_hom;
+  using Base::compute_linf_projection_nonhom;
   using Base::oriented_side_of_line;
   using Base::opposite_line;
   using Base::compute_line_from_to;
@@ -59,6 +60,9 @@ public:
   using Base::is_site_h_or_v;
   using Base::is_line_h_or_v;
   using Base::test_star;
+  using Base::compute_neg_45_line_at;
+  using Base::compute_pos_45_line_at;
+  using Base::has_positive_slope;
 
 private:
   typedef SegmentDelaunayGraph_2::Are_same_points_C2<K>
@@ -1143,6 +1147,9 @@ private:
             return POSITIVE;
           }
 
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring PSS P return ZERO just with p_"
+              << std::endl;);
           return ZERO;
         }
       }
@@ -1178,6 +1185,18 @@ private:
           }
 
           return ZERO;
+        }
+      } else {
+        // here q is segment
+        if (not is_site_h_or_v(q_)) {
+          // here q is non-axis parallel
+          // therefore, it touches the square at a corner
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring non-hv q"
+              << std::endl;);
+          if (point_inside_touching_sides(st, q_)) {
+            return NEGATIVE;
+          }
         }
       }
 
@@ -1215,8 +1234,24 @@ private:
         }
 
       }
+      else {
+        // here r is segment
+        if (not is_site_h_or_v(r_)) {
+          // here q is non-axis parallel
+          // therefore, it touches the square at a corner
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring non-hv r"
+              << std::endl;);
+          if (point_inside_touching_sides(st, r_)) {
+            return NEGATIVE;
+          }
+        }
+      }
 
       CGAL_assertion(num_same_quadrant_as_t == 0);
+      CGAL_SDG_DEBUG(std::cout
+          << "debug vring PSS P return final ZERO"
+          << std::endl;);
       return ZERO;
     }
 
@@ -2887,6 +2922,33 @@ public:
   }
 
 
+private:
+  inline
+  bool point_inside_touching_sides(const Site_2 & t, const Site_2 & s)
+  const
+  {
+    CGAL_assertion(not is_site_h_or_v(s));
+    CGAL_assertion(t.is_point());
+    CGAL_assertion(s.is_segment());
+    Line_2 ls = compute_supporting_line(s.supporting_site());
+    Point_2 v(ux_,uy_,uz_);
+    Point_2 corner =
+      compute_linf_projection_nonhom(ls, v);
+    Line_2 ltest;
+    if (has_positive_slope(s)) {
+      ltest = compute_pos_45_line_at(v);
+    } else {
+      ltest = compute_neg_45_line_at(v);
+    }
+    Oriented_side ost = oriented_side_of_line(ltest, t.point());
+    Oriented_side osx = oriented_side_of_line(ltest, corner);
+    if (ost == osx) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 
   //--------------------------------------------------------------------------
 
