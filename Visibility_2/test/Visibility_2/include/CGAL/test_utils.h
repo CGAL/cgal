@@ -857,6 +857,7 @@ void benchmark(Visibility_2_fst &visibility_fst,
                                                                visibility_fst,    
                                                                visibility_snd);
       }
+      cnt++;
     }
   }
   else {  // Only run the benchmark on the outer loop of the arrangement
