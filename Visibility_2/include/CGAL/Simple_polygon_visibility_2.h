@@ -104,11 +104,12 @@ public:
     Segment_2 curr_min_edge(he->source()->point(), he->target()->point());
     Point_2 curr_vertex = he->target()->point();
     min_intersect_pt = CGAL::Visibility_2::Construct_projected_point_2
-           <Geometry_traits_2>(geom_traits, curr_min_edge.supporting_line(), q);
+           <Geometry_traits_2>(geom_traits, curr_min_edge, q);
 
     temp_vertices.push_back(curr_vertex);
     Number_type min_dist = CGAL::Visibility_2::Compute_squared_distance_2
-                                <Geometry_traits_2>(geom_traits, q, curr_edge);
+                                        <Geometry_traits_2, Point_2, Segment_2>
+                                        (geom_traits, q, curr_edge);
 
     int min_dist_index = 0;
     int index = 1;
@@ -121,7 +122,8 @@ public:
       curr_edge = Segment_2(he->source()->point(), he->target()->point());
       std::cout << "curr_edge " << curr_edge << std::endl;
       Number_type curr_dist = CGAL::Visibility_2::Compute_squared_distance_2
-                                <Geometry_traits_2>(geom_traits, q, curr_edge);
+                                        <Geometry_traits_2, Point_2, Segment_2>
+                                        (geom_traits, q, curr_edge);
         
       if (curr_dist < min_dist) {
         min_dist = curr_dist;
@@ -134,11 +136,15 @@ public:
 
     // Only now compute the intersection point
     min_intersect_pt = CGAL::Visibility_2::Construct_projected_point_2
-           <Geometry_traits_2>(geom_traits, curr_min_edge.supporting_line(), q);
+           <Geometry_traits_2>(geom_traits, curr_min_edge, q);
 
+    bool intersect_pt_on_seg_endpoint = false;
     if (min_intersect_pt != curr_min_edge.source() && 
         min_intersect_pt != curr_min_edge.target()) {
       vertices.push_back(min_intersect_pt);
+    }
+    else {
+      intersect_pt_on_seg_endpoint = true;
     }
     std::cout << "min inters pt: " << min_intersect_pt 
               << "dist: " << min_dist << std::endl;
@@ -164,6 +170,9 @@ public:
     if (!s.empty()) {
       Point_2 prev_pt = s.top();
       if (prev_pt == min_intersect_pt) {
+        if (intersect_pt_on_seg_endpoint) {
+          points.push_back(prev_pt);
+        }
         s.pop();
         if (!s.empty()) {
           prev_pt = s.top();
@@ -176,6 +185,9 @@ public:
       while(!s.empty()) {
         Point_2 curr_pt = s.top();
         if (curr_pt == min_intersect_pt) {
+          if (intersect_pt_on_seg_endpoint) {
+            points.push_back(curr_pt);
+          }
           s.pop();
         }
         else {
@@ -187,16 +199,23 @@ public:
     }
 
     std::reverse(points.begin(), points.end());
+    std::cout << "POINTS\n";
+    for (unsigned int k = 0 ; k < points.size() ; k++) {
+      std::cout << points[k] << std::endl;
+    }
+    std::cout << "END POINTS\n";
     CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
                                                             q, 
                                                             points,                                 
-                                                            out_arr);                                     
+                                                            out_arr);  
+    std::cout << "OUTPUT\n";
+    CGAL::Visibility_2::print_arrangement<Output_arrangement_2>(out_arr);                              
+    std::cout << "END OUTPUT\n";
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
-    CGAL::Visibility_2::print_arrangement<Output_arrangement_2>(out_arr);
     if (out_arr.faces_begin()->is_unbounded()) {
       return ++out_arr.faces_begin();
     }
