@@ -345,6 +345,21 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     return Line_2(a, RT(0), c);
   }
 
+
+  // neg slope 45 degree line passing through p
+  static
+  Line_2 compute_neg_45_line_at(const Point_2 & p)
+  {
+    return Line_2(RT(1),RT(1),-p.x()-p.y());
+  }
+
+  // pos slope 45 degree line passing through p
+  static
+  Line_2 compute_pos_45_line_at(const Point_2 & p)
+  {
+    return Line_2(RT(1),RT(-1),p.x()-p.y());
+  }
+
   static
   RT compute_linf_distance(const Point_2& p, const Point_2& q)
   {
