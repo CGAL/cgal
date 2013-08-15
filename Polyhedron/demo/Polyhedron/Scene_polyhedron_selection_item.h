@@ -30,7 +30,8 @@ public:
   using Base::end;
   using Base::size;
   using Base::clear;
-  
+  using Base::empty;
+
   bool insert(const Entity& entity) {
     return Base::insert(entity).second;
   }
