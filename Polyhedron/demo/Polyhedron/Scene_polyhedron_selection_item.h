@@ -491,6 +491,47 @@ public:
     return visitor.minimum_visitor.minimum;
   }
 
+  void erase_selected_facets() {
+    if(selected_facets.empty()) {return;}
+    // erase will-be-erased vertices and edges from selection
+    for(Selection_set_vertex::iterator vb = selected_vertices.begin(); vb != selected_vertices.end(); ) {
+      Polyhedron::Halfedge_around_vertex_circulator hvb((*vb)->vertex_begin()), hvbend(hvb);
+      bool erase = true;
+      do {
+        if(!hvb->is_border() && !selected_facets.is_selected(hvb->facet()) ) {
+          erase = false;
+          break; 
+        }
+      } while(++hvb != hvbend);
+
+      if(erase) {
+        Vertex_handle v_erase = *vb;
+        ++vb;
+        selected_vertices.erase(v_erase);
+      }
+      else { ++vb; }
+    }
+
+    for(Selection_set_edge::iterator eb = selected_edges.begin(); eb != selected_edges.end(); ) {
+      bool first_selected = (*eb)->is_border() || selected_facets.is_selected((*eb)->facet());
+      bool second_selected = (*eb)->opposite()->is_border() || selected_facets.is_selected((*eb)->opposite()->facet());
+
+      if(first_selected && second_selected) {
+        Halfedge_handle h_erase = *eb;
+        ++eb;
+        selected_edges.erase(h_erase);
+      }
+      else { ++eb; }
+    }
+
+    // erase facets from poly
+    for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
+      polyhedron()->erase_facet((*fb)->halfedge());
+    }
+    selected_facets.clear();
+    changed_with_poly_item();
+  }
+
   void changed_with_poly_item() {
     // no need to update indices
     poly_item->changed();

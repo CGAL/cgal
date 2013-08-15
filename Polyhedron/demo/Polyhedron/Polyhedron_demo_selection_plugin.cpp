@@ -54,7 +54,8 @@ public:
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
-
+    connect(ui_widget.Erase_selected_facets_button, SIGNAL(clicked()), this, SLOT(on_Erase_selected_facets_button_clicked()));
+    
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
       connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*)));
@@ -193,6 +194,15 @@ public slots:
     }
     
     scene->addItem(point_item);
+  }
+  void on_Erase_selected_facets_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return; 
+    }
+
+    selection_item->erase_selected_facets();
   }
   // To handle empty selection items coming from loader
   void new_item_created(int item_id) {
