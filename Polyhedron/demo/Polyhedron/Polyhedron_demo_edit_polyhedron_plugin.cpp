@@ -1,22 +1,14 @@
-
 #include "Polyhedron_demo_plugin_helper.h"
-
 #include "Scene_polyhedron_item.h"
 #include "Scene_edit_polyhedron_item.h"
+
 #include <QAction>
-#include <QKeySequence>
 #include <QMainWindow>
-#include <QMessageBox>
-#include <QInputDialog>
-#include <QSettings>
 #include <QFileDialog>
 
 #include <QGLViewer/qglviewer.h>
 
-#include <QDockWidget>
 #include "ui_Deform_mesh.h"
-
-// #include "MainWindow.h"
 
 class Polyhedron_demo_edit_polyhedron_plugin : 
   public QObject,
