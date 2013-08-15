@@ -644,6 +644,44 @@ Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
   }
 }
 
+//make sure q is in fh or on the bound.
+template<class Visibility_2>
+bool is_star_shape(const typename Visibility_2::Point_2& q,
+                   const typename Visibility_2::Face_handle fh) {
+  typedef typename Visibility_2::Output_arrangement_2
+                                                            Output_arrangement_2;
+  typedef typename Output_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Output_arrangement_2::Halfedge_handle     Halfedge_handle;
+  typedef typename Output_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Output_arrangement_2::Edge_iterator       Edge_iterator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+  if (fh->is_unbounded())
+    return false;
+  if (fh->has_outer_ccb()) {
+    typename Output_arrangement_2::Ccb_halfedge_const_circulator curr, circ;
+    curr = circ = fh->outer_ccb();
+    do {
+      if (CGAL::right_turn(q, curr->source()->point(), curr->target()->point())) {
+        return false;
+      }
+//      Point_2 p = curr->target()->point();
+//      typename Output_arrangement_2::Ccb_halfedge_const_circulator curr1, circ1;
+//      curr1 = circ1 = fh->outer_ccb();
+//      do {
+//        Segment_2 intersect_s;
+//        Point_2 intersect_p;
+//        Point_2 source = curr1->source()->point();
+//        Point_2 target = curr1->target()->point();
+//        int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
+//        if (i == 1 && intersect_p != source && intersect_p != target && intersect_p != q)
+//          return false;
+//      } while (++curr1 != circ1);
+    } while (++curr != circ);
+  }
+  return true;
+}
+
 template <class Visibility_2_fst, class Visibility_2_snd>
 void benchmark_one_unit(
           const typename Visibility_2_fst::Input_arrangement_2 &arr,
@@ -660,6 +698,8 @@ void benchmark_one_unit(
   typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
   typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
+
+  typedef typename Output_arrangement_2::Face_handle        Face_handle;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::FT                    Number_type;
   typedef Timer Benchmark_timer;
@@ -726,28 +766,34 @@ void benchmark_one_unit(
     Input_arrangement_2 out_arr_fst, out_arr_snd;
     timer.reset();
     timer.start();
-
+    Face_handle f_fst;
     if (choice == FACE) {
-      visibility_fst.visibility_region(curr_query_pt, fit, out_arr_fst);
+      f_fst = visibility_fst.visibility_region(curr_query_pt, fit, out_arr_fst);
     }
     else {
-      visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
+      f_fst = visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
     }
     timer.stop();
 
     std::cout << "        Time to compute visibility region using first object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
     timer.reset();
-
+    if ( !is_star_shape<Visibility_2_fst>(curr_query_pt, f_fst) ) {
+      std::cout << RED << "         Warning: the first output is not star-shape." << RESET << std::endl;
+    }
     timer.start();
+    Face_handle f_snd;
     if (choice == FACE) {
-      visibility_snd.visibility_region(curr_query_pt, fit, out_arr_snd);
+      f_snd = visibility_snd.visibility_region(curr_query_pt, fit, out_arr_snd);
     }
     else {
-      visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd); 
+      f_snd = visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd);
     }
     timer.stop();
-    
+    if ( !is_star_shape<Visibility_2_snd>(curr_query_pt, f_snd) ) {
+      std::cout << RED << "         Warning: the second output is not star-shape." << RESET << std::endl;
+    }
+
     std::cout << "        Time to compute visibility region using second object: " 
               << GREEN << timer.time() << " sec" << RESET << std::endl;
 
@@ -766,6 +812,7 @@ void benchmark_one_unit(
     }
   } while (++curr != circ);
 }
+
 
 
 template<class Visibility_2_fst, class Visibility_2_snd>
@@ -880,43 +927,7 @@ int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_o
             return 0;
         }
 }
-//make sure q is in fh or on the bound.
-template<class Visibility_2>
-bool is_star_shape(const typename Visibility_2::Point_2& q,
-                   const typename Visibility_2::Face_handle fh) {
-  typedef typename Visibility_2::Output_arrangement_2
-                                                            Output_arrangement_2;
-  typedef typename Output_arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Output_arrangement_2::Halfedge_handle     Halfedge_handle;
-  typedef typename Output_arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef typename Output_arrangement_2::Edge_iterator       Edge_iterator;
-  typedef typename Geometry_traits_2::Point_2               Point_2;
-  typedef typename Geometry_traits_2::Segment_2             Segment_2;
-  if (fh->is_unbounded())
-    return false;
-  if (fh->has_outer_ccb()) {
-    typename Output_arrangement_2::Ccb_halfedge_const_circulator curr, circ;
-    curr = circ = fh->outer_ccb();
-    do {
-      if (CGAL::right_turn(q, curr->source()->point(), curr->target()->point())) {
-        return false;
-      }
-//      Point_2 p = curr->target()->point();
-//      typename Output_arrangement_2::Ccb_halfedge_const_circulator curr1, circ1;
-//      curr1 = circ1 = fh->outer_ccb();
-//      do {
-//        Segment_2 intersect_s;
-//        Point_2 intersect_p;
-//        Point_2 source = curr1->source()->point();
-//        Point_2 target = curr1->target()->point();
-//        int i = intersect_seg<Segment_2, Point_2>(Segment_2(p, q), Segment_2(source, target), intersect_s, intersect_p);
-//        if (i == 1 && intersect_p != source && intersect_p != target && intersect_p != q)
-//          return false;
-//      } while (++curr1 != circ1);
-    } while (++curr != circ);
-  }
-  return true;
-}
+
 
 template<class Visibility_2>
 void test_star_shape_one_face(  const typename Visibility_2::Input_arrangement_2 &arr,
