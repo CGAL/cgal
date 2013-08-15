@@ -8,6 +8,7 @@
 #include "Polyhedron_type.h"
 #include "opengl_tools.h"
 #include <CGAL/gl_render.h>
+#include <CGAL/orient_polygon_soup.h>
 
 #include <fstream>
 #include <boost/foreach.hpp>
@@ -530,6 +531,37 @@ public:
     }
     selected_facets.clear();
     changed_with_poly_item();
+  }
+
+  bool export_selected_facets_as_polyhedron(Polyhedron* out) {
+    // Note: might be a more performance wise solution
+    // assign sequential id to vertices neighbor to selected facets
+    std::map<Vertex_handle, std::size_t> index_map;
+    for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
+      Polyhedron::Halfedge_around_facet_circulator hb((*fb)->facet_begin()), hend(hb);
+      do {
+        index_map.insert(std::make_pair(hb->vertex(), index_map.size()));
+      } while(++hb != hend);
+    }
+    // construct point vector
+    std::vector<Polyhedron::Point_3> points(index_map.size());
+    for(std::map<Vertex_handle, std::size_t>::iterator it = index_map.begin(); it != index_map.end(); ++it) {
+      points[it->second] = it->first->point();
+    }
+    // construct polygon vector
+    std::vector<std::vector<std::size_t> > polygons(selected_facets.size());
+    std::size_t counter = 0;
+    for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb, ++counter) {
+      Polyhedron::Halfedge_around_facet_circulator hb((*fb)->facet_begin()), hend(hb);
+      do {
+        polygons[counter].push_back(index_map[hb->vertex()]);
+      } while(++hb != hend);
+    }
+
+    CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Polyhedron::Point_3> builder(points, polygons);
+    out->delegate(builder);
+
+    return out->size_of_vertices() > 0;
   }
 
   void changed_with_poly_item() {
