@@ -1147,10 +1147,6 @@ private:
             return POSITIVE;
           }
 
-          CGAL_SDG_DEBUG(std::cout
-              << "debug vring PSS P return ZERO just with p_"
-              << std::endl;);
-          return ZERO;
         }
       }
 
