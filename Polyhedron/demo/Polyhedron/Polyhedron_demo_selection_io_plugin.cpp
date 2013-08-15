@@ -23,8 +23,6 @@ public:
       delete item;
       return NULL;
     }
-    item->setRenderingMode(Flat);
-    item->setName(fileinfo.baseName());
     return item;
   }
   

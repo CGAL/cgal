@@ -128,6 +128,8 @@ class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item
 {
   Q_OBJECT
 
+friend class Polyhedron_demo_selection_plugin;
+
 public:
   typedef Polyhedron::Vertex_handle   Vertex_handle;
   typedef Polyhedron::Facet_handle    Facet_handle;
@@ -140,17 +142,12 @@ public:
     : Scene_polyhedron_item_decorator(NULL, false)
   { }
 
-  Scene_polyhedron_selection_item(
-    Scene_polyhedron_item* poly_item, 
-    Active_handle::Type aht,
-    bool is_insert,
-    int k_ring,
-    QMainWindow* mw) 
+  Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
-  { init(poly_item, aht, is_insert, k_ring, mw); }
+  { init(poly_item, mw); }
 
 protected: 
-  void init(Scene_polyhedron_item* poly_item, Active_handle::Type aht, bool is_insert, int k_ring, QMainWindow* mw)
+  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
   {
     this->poly_item = poly_item;
     connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Vertex_handle, int>&)), this, 
@@ -160,18 +157,12 @@ protected:
     connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Halfedge_handle, int>&)), this, 
       SLOT(selected(const std::map<Polyhedron::Halfedge_handle, int>&)));
 
-    k_ring_selector.init(poly_item, mw, aht, k_ring);
-    set_is_insert(is_insert);
+    k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
 
     facet_color = QColor(87,87,87);
     edge_color = QColor(173,35,35);
     vertex_color = QColor(255,205,243);
   }
-
-public:
-  typedef Selection_set<Vertex_handle> Selection_set_vertex;
-  typedef Selection_set<Facet_handle> Selection_set_facet;
-  typedef Selection_set<Halfedge_handle> Selection_set_edge;
 
   Active_handle::Type get_active_handle_type() 
   { return k_ring_selector.active_handle_type; }
@@ -184,12 +175,19 @@ public:
   bool get_is_insert() { return is_insert; }
   void set_is_insert(bool i) { is_insert = i; }
 
+public:
+  typedef Selection_set<Vertex_handle>    Selection_set_vertex;
+  typedef Selection_set<Facet_handle>     Selection_set_facet;
+  typedef Selection_set<Halfedge_handle>  Selection_set_edge;
+
 // drawing
   void draw() const {
     draw_selected_vertices();
     draw_selected_facets();
     draw_selected_edges();
   }
+  void draw_edges() const { }
+
   void draw_selected_vertices() const {
     GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
     glDisable(GL_LIGHTING);
@@ -291,9 +289,9 @@ public:
   }
   // this function is called by selection_plugin, since at the time of the call of load(...) 
   // we do not have access to selected polyhedron item
-  bool actual_load(Scene_polyhedron_item* poly_item, Active_handle::Type aht, bool is_insert, int k_ring, QMainWindow* mw)
+  bool actual_load(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
   {
-    init(poly_item, aht, is_insert, k_ring, mw);
+    init(poly_item, mw);
 
     std::vector<Vertex_handle> all_vertices;
     all_vertices.reserve(polyhedron()->size_of_vertices());
@@ -570,7 +568,7 @@ public:
     emit itemChanged();
   }
 
-  virtual bool isEmpty() const { 
+  bool isEmpty() const {
     if(poly_item == NULL) { return true; }
     return Scene_polyhedron_item_decorator::isEmpty();
   }

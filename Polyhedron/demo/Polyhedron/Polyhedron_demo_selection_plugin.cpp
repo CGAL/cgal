@@ -138,20 +138,9 @@ public slots:
       print_message("Error: there is no selected polyhedron item!");
       return; 
     }
-
-    QString poly_item_name = poly_item->name();
-    
-    Active_handle::Type type = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
-    bool is_insert = ui_widget.Insertion_radio_button->isChecked();
-    int k_ring = ui_widget.Brush_size_spin_box->value();
-
-    Scene_polyhedron_selection_item* selection_poly =
-      new Scene_polyhedron_selection_item(poly_item, type, is_insert, k_ring, mw);
-    selection_item_map.insert(std::make_pair(poly_item, selection_poly));
-    selection_poly->setName(QString("%1 (selection)").arg(poly_item->name()));
-    selection_poly->setRenderingMode(Flat);
-
-    scene->addItem(selection_poly);
+    // all other arrangements (putting inside selection_item_map), setting names etc,
+    // other params (e.g. k_ring) will be set inside new_item_created
+    scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
   }
   void on_select_marked_edges_button_clicked()
   {
@@ -227,26 +216,37 @@ public slots:
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     Scene_polyhedron_selection_item* selection_item = 
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
-    if(selection_item && selection_item->polyhedron_item() == NULL) {
-      Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
-      if(!poly_item) {
-        print_message("Error: please select corresponding polyhedron item from Geometric Objects list.");
-        scene->erase(item_id);
-        return;
-      }
+    if(!selection_item) { return; }
 
-      Active_handle::Type aht = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
-      bool is_insert = ui_widget.Insertion_radio_button->isChecked();
-      int k_ring = ui_widget.Brush_size_spin_box->value();
+    Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+    if(!poly_item) {
+      CGAL_assertion(selection_item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
+      print_message("Error: please select corresponding polyhedron item from Geometric Objects list.");
+      scene->erase(item_id);
+      return;
+    }
 
-      if(!selection_item->actual_load(poly_item, aht, is_insert, k_ring, mw)) {
+    if(selection_item->polyhedron_item() == NULL) { //coming from selection_io loader
+      if(!selection_item->actual_load(poly_item, mw)) {
         print_message("Error: loading selection item is not successful!");
         scene->erase(item_id);
         return;
       }
-
-      selection_item_map.insert(std::make_pair(poly_item, selection_item));
     }
+    // now set default params both for selection items coming from selection_io, or on_Create_selection_item_button_clicked
+    Active_handle::Type aht = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
+    bool is_insert = ui_widget.Insertion_radio_button->isChecked();
+    int k_ring = ui_widget.Brush_size_spin_box->value();
+
+    selection_item->set_active_handle_type(aht);
+    selection_item->set_is_insert(is_insert);
+    selection_item->set_k_ring(k_ring);
+    selection_item->setRenderingMode(Flat);
+    if(selection_item->name() == "unamed") {
+      selection_item->setName(tr("%1 (selection)").arg(poly_item->name()));
+    }
+
+    selection_item_map.insert(std::make_pair(poly_item, selection_item));
   }
   void item_about_to_be_destroyed(Scene_item* scene_item) {
     // if polyhedron item
