@@ -227,7 +227,7 @@ public:
   Face_handle visibility_region(const Point_2 &q, const Halfedge_const_handle he,
                            Output_arrangement_2 &out_arr ) {
 
-    bool q_on_vertex = false; 
+    query_pt_is_vertex = false;
     std::cout << "passed handle: " << he->curve() << std::endl;
     if (q != he->source()->point()) {
       if (q != he->target()->point()) {
@@ -236,7 +236,7 @@ public:
       }
       else {
         vertices.push_back(q);
-        q_on_vertex = true;
+        query_pt_is_vertex = true;
       }
     }
 
@@ -262,7 +262,7 @@ public:
 
     vertices.pop_back();
     vertices.push_back(vertices[0]);
-    std::cout << "*********************\n";
+    std::cout << "******VERTICES***************\n";
     for (unsigned int i = 0 ; i < vertices.size() ; i++) {
       std::cout << vertices[i] << std::endl;
     }
@@ -283,7 +283,7 @@ public:
       if (prev_pt != q) {
         points.push_back(prev_pt);
       }
-      else if (q_on_vertex) {
+      else if (query_pt_is_vertex) {
         points.push_back(prev_pt); 
       }
       if (!s.empty()) {
@@ -294,7 +294,7 @@ public:
         if (curr_pt != q) {
           points.push_back(curr_pt);
         }
-        else if (q_on_vertex) {
+        else if (query_pt_is_vertex) {
           points.push_back(curr_pt); 
         }
         s.pop();
@@ -317,7 +317,7 @@ public:
     CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
-    CGAL::Visibility_2::print_arrangement<Output_arrangement_2>(out_arr);
+    CGAL::Visibility_2::print_arrangement_by_face<Output_arrangement_2>(out_arr);
     if (out_arr.faces_begin()->is_unbounded()) {
       return ++out_arr.faces_begin();
     }
@@ -332,6 +332,7 @@ private:
   std::stack<Point_2> s;
   std::vector<Point_2> vertices;
   enum {LEFT, RIGHT, SCANA, SCANB, SCANC, SCAND, FINISH} upcase;
+  bool query_pt_is_vertex;
 
   bool do_overlap(const Point_2 &a, const Point_2 &b, const Point_2 &c) {
     if (CGAL::Visibility_2::Collinear(geom_traits, a, b, c)) {
@@ -376,14 +377,20 @@ private:
     if (CGAL::Visibility_2::Orientation_2(geom_traits, 
                                           q, 
                                           vertices[0], 
-                                          vertices[1]) == CGAL::LEFT_TURN) {
+                                          vertices[1]) == CGAL::LEFT_TURN
+      || CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                          q, 
+                                          vertices[0], 
+                                          vertices[1]) == CGAL::COLLINEAR) {
       upcase = LEFT;
       i = 1;
       w = vertices[1];
+      std::cout << "pushed1 " << vertices[0] << std::endl;
+      std::cout << "pushed1" << vertices[1] << std::endl;
       s.push(vertices[0]);
       s.push(vertices[1]);
     }
-    else if (q == vertices[0]) {
+    else if (query_pt_is_vertex) {
       upcase = LEFT;
       i = 1;
       w = vertices[1];
@@ -409,21 +416,27 @@ private:
     do {
       switch(upcase) {
         case LEFT: 
+          std::cout << "***left upcase***\n";
           left(i, w, q);
           break;
         case RIGHT:
+          std::cout << "***right upcase***\n";
           right(i, w, q);
           break;
         case SCANA:
+          std::cout << "***scana upcase***\n";
           scana(i, w, q);
           break;
         case SCANB:
+          std::cout << "***scanb upcase***\n";
           scanb(i, w, q);
           break;
         case SCANC:
+          std::cout << "***scanc upcase***\n";
           scanc(i, w, q);
           break;
         case SCAND:
+         std::cout << "***scand upcase***\n";
           scand(i, w, q);
           break;
       }
@@ -459,6 +472,9 @@ private:
         else {
           s.push(s_t);
         }
+      }
+      if (i == 9) {
+        exit(0);
       }
     } while(upcase != FINISH);
  /*    typename std::vector<Point_2> points;
@@ -580,6 +596,9 @@ private:
             i++;
           }
           else {
+            std::cout << "v[i-1]=" << vertices[i-1] << std::endl;
+            std::cout << "v[i]=" << vertices[i] << std::endl;
+            std::cout << "v[i+1]=" << vertices[i+1] << std::endl;
             upcase = SCANC;
             s.push(s_j);
             w = vertices[i];
@@ -700,7 +719,6 @@ private:
           (intersection_pt == vertices[vertices.size()-1])) {
 
         upcase = FINISH;
-        w = vertices[vertices.size()-1];
         s.push(vertices[vertices.size()-1]);
       }
       else {
@@ -717,26 +735,40 @@ private:
 
   void scanc(int &i,Point_2 &w, const Point_2 &query_pt) {
     // Scan v_i, v_i+1, ..., v_n-1, v_n for the first edge to intersect (s_t, w)
-    Point_2 s_t = s.top();
-    int k = i;
-    bool found = false;
-    Point_2 intersection_pt;
-    while (k+1 < vertices.size()) {
-      Segment_2 s1(vertices[k], vertices[k+1]);
-      Segment_2 s2(s_t, w);
-      Object_2 result = CGAL::Visibility_2::Intersect_2
-                 <Geometry_traits_2, Segment_2, Segment_2>(geom_traits, s1, s2);
-      if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-        found = true;
-        intersection_pt = *ipoint;
-        break;
-      }
-      k++;
+    if (i == vertices.size() - 1) {
+      upcase = FINISH;
+      s.push(w);
     }
-    if (found) {
-      upcase = RIGHT;
-      i = k+1;
-      w = intersection_pt;
+    else {
+      std::cout << "entered scanc with i = " << i << std::endl;
+      Point_2 s_t = s.top();
+      std::cout << "scanc::s_t = " << s_t << std::endl;
+      std::cout << "w = " << w << std::endl;
+      int k = i;
+      bool found = false;
+      Point_2 intersection_pt;
+      while (k+1 < vertices.size()) {
+        std::cout << "entered loop\n";
+        Segment_2 s1(vertices[k], vertices[k+1]);
+        Segment_2 s2(s_t, w);
+        Object_2 result = CGAL::Visibility_2::Intersect_2
+                   <Geometry_traits_2, Segment_2, Segment_2>(geom_traits, s1, s2);
+        if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+          found = true;
+          intersection_pt = *ipoint;
+          break;
+        }
+        k++;
+      }
+      if (found) {
+        upcase = RIGHT;
+        i = k+1;
+        w = intersection_pt;
+      }
+      if (i == 7) {
+        std::cout << "STUCK IN here\n";
+        exit(0);
+      }
     }
   }
 

@@ -49,7 +49,20 @@ void print_arrangement(const Arrangement_2 &arr) {
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
     print_edge(eit);
-}   
+}
+
+template <class Arrangement_2>
+void print_arrangement_by_face(const Arrangement_2 &arr) {
+  typedef typename Arrangement_2::Face_const_iterator     Face_const_iterator;
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+                                                 Ccb_halfedge_const_circulator;
+  Face_const_iterator fit;
+  for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+    if (!fit->is_unbounded()) {
+      print_simple_face<Face_const_iterator, Ccb_halfedge_const_circulator>(fit);
+    }
+  }
+}
 
 template <class Geometry_traits_2> 
 Orientation Orientation_2(const Geometry_traits_2 *geom_traits,
