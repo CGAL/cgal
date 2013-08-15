@@ -365,6 +365,14 @@ public:
 
   void create_handle_group()
   {
+    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it) {
+      if(it->handle_group.empty()) { 
+        active_group = it;
+        return;
+      }
+    }
+
+    // No empty handle group
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
 
