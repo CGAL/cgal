@@ -47,8 +47,8 @@ int main() {
   std::cout << GREEN << "Done!" << RESET << std::endl;
   std::cout << "Running test suite with " << GREEN 
             << "Cartesian" << RESET << " Kernel..." << std::endl;
-  CGAL::run_tests<Simple_polygon_visibility_2>(4,0);
-}/*
+  CGAL::run_tests<Simple_polygon_visibility_2>(7,0);
+}
 {
   typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
   typedef CGAL::Arr_segment_traits_2<Kernel>                 Traits_2;
@@ -62,7 +62,7 @@ int main() {
   std::cout << GREEN << "Done!" << RESET << std::endl;
   std::cout << "Running test suite with " << GREEN 
             << "EPECK" << RESET << " Kernel..." << std::endl;
-  CGAL::run_tests<Simple_polygon_visibility_2>(1,0);
-}*/
+  CGAL::run_tests<Simple_polygon_visibility_2>(7,0);
+}
   return 0;
 }
