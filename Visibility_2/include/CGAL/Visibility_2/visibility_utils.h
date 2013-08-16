@@ -49,7 +49,20 @@ void print_arrangement(const Arrangement_2 &arr) {
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
   for (eit = arr.edges_begin(); eit != arr.edges_end(); ++eit)
     print_edge(eit);
-}   
+}
+
+template <class Arrangement_2>
+void print_arrangement_by_face(const Arrangement_2 &arr) {
+  typedef typename Arrangement_2::Face_const_iterator     Face_const_iterator;
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+                                                 Ccb_halfedge_const_circulator;
+  Face_const_iterator fit;
+  for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+    if (!fit->is_unbounded()) {
+      print_simple_face<Face_const_iterator, Ccb_halfedge_const_circulator>(fit);
+    }
+  }
+}
 
 template <class Geometry_traits_2> 
 Orientation Orientation_2(const Geometry_traits_2 *geom_traits,
@@ -106,11 +119,11 @@ typename Geometry_traits_2::FT Compute_squared_distance_2(
   return compute_dist(p, seg);
 }
 
-template <class Geometry_traits_2>
+template <class Geometry_traits_2, class Type1, class Type2>
 typename Geometry_traits_2::Point_2 Construct_projected_point_2(
                                 const Geometry_traits_2 *geom_traits,
-                                const typename Geometry_traits_2::Segment_2 &s, 
-                                const typename Geometry_traits_2::Point_2 &p) {
+                                const Type1 &s, 
+                                const Type2 &p) {
 
   typedef typename Geometry_traits_2::Point_2         Point_2;
   typedef typename Geometry_traits_2::FT              Number_type;
@@ -121,12 +134,10 @@ typename Geometry_traits_2::Point_2 Construct_projected_point_2(
     return proj_pt;
   }
   else {
-    Number_type d_to_src = 
-              Compute_squared_distance_2<Geometry_traits_2, Point_2, Point_2>
-                                            (geom_traits, proj_pt, s.source());
-    Number_type d_to_trg = 
-              Compute_squared_distance_2<Geometry_traits_2, Point_2, Point_2>
-                                            (geom_traits, proj_pt, s.target());              
+    Number_type d_to_src = Compute_squared_distance_2
+        <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.source());
+    Number_type d_to_trg = Compute_squared_distance_2
+        <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.target());              
     if (d_to_src < d_to_trg) {
       return s.source();
     }
@@ -230,11 +241,6 @@ void report_while_handling_needles(
         merged_needle.push_back(backward_needle[itr_snd]);
         itr_snd++;
       }
-      std::cout << "MERGED NEEDLE\n";
-      for (unsigned j = 0 ; j < merged_needle.size() ; j++) {
-        std::cout << merged_needle[j] << std::endl;
-      }
-      std::cout << "END MERGED N\n";
       for (unsigned int p = 0 ; p+1 < merged_needle.size() ; p++) {
         segments.push_back(Segment_2(merged_needle[p], merged_needle[p+1]));
       }
@@ -244,11 +250,11 @@ void report_while_handling_needles(
     }
     i++;
   }
-  std::cout << "SEGMENTS\n";
+/*  std::cout << "SEGMENTS\n";
   for (unsigned int i = 0 ; i < segments.size() ; i++) {
     std::cout << segments[i] << std::endl;
   }
-  std::cout << "SEGMENTS END\n";
+  std::cout << "SEGMENTS END\n";*/
   CGAL::insert_non_intersecting_curves(arr_out, 
                                        segments.begin(), 
                                        segments.end());

@@ -602,6 +602,7 @@ std::string edge2string(const Point_2& p1, const Point_2& p2) {
 template<class Point_2, class Number_type> 
 Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
 
+//  srand(time(NULL));
   Number_type min_x, max_x;
   Number_type y0, y1, x0, x1;
 
