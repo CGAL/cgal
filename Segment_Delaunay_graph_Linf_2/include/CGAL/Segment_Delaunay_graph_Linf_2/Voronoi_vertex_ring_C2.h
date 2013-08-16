@@ -1182,18 +1182,6 @@ private:
 
           return ZERO;
         }
-      } else {
-        // here q is segment
-        if (not is_site_h_or_v(q_)) {
-          // here q is non-axis parallel
-          // therefore, it touches the square at a corner
-          CGAL_SDG_DEBUG(std::cout
-              << "debug vring non-hv q"
-              << std::endl;);
-          if (point_inside_touching_sides(st, q_)) {
-            return NEGATIVE;
-          }
-        }
       }
 
       Point_2 rref;
@@ -1234,6 +1222,45 @@ private:
         // here r is segment
         if (not is_site_h_or_v(r_)) {
           // here q is non-axis parallel
+          // therefore, it touches the square at a corner
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring non-hv r"
+              << std::endl;);
+          if (point_inside_touching_sides(st, r_)) {
+            return NEGATIVE;
+          }
+        }
+      }
+
+      if (p_.is_segment()) {
+        if (not is_site_h_or_v(p_)) {
+          // here p is non-axis parallel
+          // therefore, it touches the square at a corner
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring non-hv p"
+              << std::endl;);
+          if (point_inside_touching_sides(st, p_)) {
+            return NEGATIVE;
+          }
+        }
+      }
+
+      if (q_.is_segment()) {
+        if (not is_site_h_or_v(q_)) {
+          // here q is non-axis parallel
+          // therefore, it touches the square at a corner
+          CGAL_SDG_DEBUG(std::cout
+              << "debug vring non-hv q"
+              << std::endl;);
+          if (point_inside_touching_sides(st, q_)) {
+            return NEGATIVE;
+          }
+        }
+      }
+
+      if (r_.is_segment()) {
+        if (not is_site_h_or_v(r_)) {
+          // here r is non-axis parallel
           // therefore, it touches the square at a corner
           CGAL_SDG_DEBUG(std::cout
               << "debug vring non-hv r"
@@ -1708,10 +1735,12 @@ private:
     } else {
       d1 = incircle_p(t.source_site());
     }
-    if ( d1 == NEGATIVE ) { return NEGATIVE; }
 
     CGAL_SDG_DEBUG(std::cout << "debug incircle_s_no_easy d1="
-        << d1 << std::endl;);
+        << d1 << " with tsrc=" << t.source_site() << std::endl;);
+
+    if ( d1 == NEGATIVE ) { return NEGATIVE; }
+
 
     bool is_p_ttrg(false);
     bool has_p_endp_ttrg(false);
