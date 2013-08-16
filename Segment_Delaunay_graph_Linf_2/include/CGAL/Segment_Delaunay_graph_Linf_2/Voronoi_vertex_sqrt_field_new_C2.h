@@ -28,6 +28,7 @@ public:
   using Base::oriented_side_of_line;
   using Base::opposite_line;
   using Base::compute_linf_projection_hom;
+  using Base::compute_linf_projection_nonhom;
   using Base::compute_linf_perpendicular;
   using Base::compute_line_from_to;
   using Base::compute_horizontal_projection;
@@ -1984,6 +1985,7 @@ private:
         return POSITIVE;
       }
 
+      Homogeneous_point_2 hqref;
       if (q.is_point()) {
         qref = q.point();
       } else {
@@ -2039,18 +2041,26 @@ private:
             }
           } // end of samey case
         }
-        CGAL_SDG_DEBUG(std::cout << "debug return ZERO in case"
-            << " of q: segment (last resort)" << std::endl;);
-        return ZERO;
+        Line_2 lq = compute_supporting_line(q.supporting_site());
+        //qref = compute_linf_projection_nonhom(lq, vv);
+        hqref = compute_linf_projection_hom(lq, vv);
       }
 
-      diffdvqx = vv.x() - qref.x();
-      diffdvqy = vv.y() - qref.y();
+      if (q.is_point()) {
+        diffdvqx = vv.x() - qref.x();
+        diffdvqy = vv.y() - qref.y();
+      } else {
+        diffdvqx = vv.x() - hqref.x();
+        diffdvqy = vv.y() - hqref.y();
+      }
 
       CGAL_SDG_DEBUG(std::cout << "debug diffdvqx=" << diffdvqx
         << " diffdvqy=" << diffdvqy << std::endl;);
 
       if (CGAL::compare(diffdvqx, diffdvtx) == EQUAL) {
+        CGAL_SDG_DEBUG(std::cout << "debug diffdvqx="
+            << " diffdvtx=" << diffdvtx
+            << std::endl;);
         if (CGAL::compare(CGAL::abs(diffdvqx), d) == EQUAL) {
           retval = CGAL::compare(d_fine, CGAL::abs(diffdvqy));
           CGAL_SDG_DEBUG(std::cout << "debug d_fine=" << d_fine
@@ -2072,6 +2082,12 @@ private:
 
       if (retval == LARGER) {
         return POSITIVE;
+      }
+
+      if (q.is_segment() and (not is_q_hv)) {
+        if (CGAL::compare(d_fine, d) == SMALLER) {
+          return NEGATIVE;
+        }
       }
 
       // check for p, q with same coordinate and r non-hv segment
