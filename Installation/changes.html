@@ -124,7 +124,7 @@ and <code>src/</code> directories).
   <h3>API Changes</h3>
       <h4>2D and 3D Geometry Kernel </h4>
       <ul>
-        <li> The intersection functions and functors used to returned
+        <li> The intersection functions and functors used to return
           a <code>CGAL::Object</code> in order to deal with the different
           possible return types. However, depending on the arguments it is
           possible to reduce the possible return types to a small set. For
@@ -197,7 +197,7 @@ and <code>src/</code> directories).
   <h3>Combinatorial Maps</h3>
   <ul>
     <li>Two bug fixes: do not use the 2 least significant bits for cell
-      attribute without dart support; share the mark when copying a 
+      attribute without dart support; share the mark when copying a
       CMap_cell_iterator.</li>
     <li>Add a constructor taking a given combinatorial map as argument,
       possibly with different dimension and/or different attributes. This
@@ -293,7 +293,7 @@ and <code>src/</code> directories).
       the type depending on the query object type.
     </li>
     <li>Introduce the
-      class <code>AABB_halfedge_graph_segment_primitive</code> which
+      class <code>AABB_halfedge_graph_segment_primitive</code>, that
       replaces the class <code>AABB_polyhedron_segment_primitive</code>
       (which is now deprecated).  The new class is more general and can be
       used with any model of <code>HalfedgeGraph</code>.</li>

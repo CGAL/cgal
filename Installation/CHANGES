@@ -13,11 +13,11 @@ Release date: September 2013
     neighbor queries and primitives to build the dual Voronoi diagrams.
 
 
-* API changes
+* API Changes
 
  ** 2D and 3D Geometry Kernel
 
-  - The intersection functions and functors used to returned a CGAL::Object in
+  - The intersection functions and functors used to return a CGAL::Object in
     order to deal with the different possible return types. However, depending
     on the arguments it is possible to reduce the possible return types to a
     small set. For this reason and to take advantage of the type safety, we
@@ -33,8 +33,15 @@ Release date: September 2013
  ** 2D Arrangements
 
   - The point location functionalities now uses a boost::variant instead of a
-    CGAL::Object. For convenience, The previous behavior can be restored by
+    CGAL::Object. For convenience, the previous behavior can be restored by
     defining the macro CGAL_ARR_POINT_LOCATION_VERSION to 1.
+
+
+ ** 3D Fast Intersection and Distance Computation
+
+  - Following the intersection API change, Object_and_primitive_id has been
+    replaced by a template class Intersection_and_primitive_id<Query> to
+    determine the type depending on the query object type.
 
 
  ** CGAL and Boost Property Maps
@@ -69,7 +76,7 @@ Release date: September 2013
 * Combinatorial Maps
 
   - Two bug fixes: do not use the 2 least significant bits for cell attribute
-    without dart support; add share a mark in CMap_cell_iterator.
+    without dart support; share the mark when copying a CMap_cell_iterator.
 
   - Add a constructor taking a given combinatorial map as argument, possibly
     with different dimension and/or different attributes. This allows to
@@ -123,7 +130,7 @@ Release date: September 2013
     input when possible to these functions.
 
 
-* 2D Apollonius graphs
+* 2D Apollonius Graphs
 
   - Modified insertion algorithm so that the code can handle pseudo-circles as
     well.
@@ -160,7 +167,7 @@ Release date: September 2013
     replaced by a template class Intersection_and_primitive_id<Query> to
     determine the type depending on the query object type.
 
-  - Introduce the class AABB_halfedge_graph_segment_primitive which replaces
+  - Introduce the class AABB_halfedge_graph_segment_primitive, that replaces
     the class AABB_polyhedron_segment_primitive (which is now deprecated). The
     new class is more general and can be used with any model of HalfedgeGraph.
 
