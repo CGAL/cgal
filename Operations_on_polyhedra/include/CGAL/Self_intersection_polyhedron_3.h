@@ -33,10 +33,11 @@
 #include <exception>
 
 #include <boost/function_output_iterator.hpp>
+#include <boost/type_traits/is_const.hpp>
 
 namespace CGAL {
 namespace internal {
-template <class Polyhedron, class Kernel, class OutputIterator>
+template <class Polyhedron, class Kernel, class Box, class OutputIterator>
 struct Intersect_facets
 {
   // wrapper to check whether anything is inserted to output iterator
@@ -57,9 +58,7 @@ struct Intersect_facets
 // typedefs
   typedef typename Kernel::Segment_3    Segment;
   typedef typename Kernel::Triangle_3   Triangle;
-  typedef typename Polyhedron::Facet_const_handle       Facet_const_handle;
-  typedef typename Polyhedron::Halfedge_const_handle    Halfedge_const_handle;
-  typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_const_handle> Box;
+  typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
 // members
   mutable OutputIterator  m_iterator;
   mutable bool            m_intersected;
@@ -164,6 +163,30 @@ struct Throw_at_output {
   }
 };
 
+template<class Polyhedron>
+class Facet_handle_types
+{
+  template<class Polyhedron, bool const_tag>
+  struct _Get;
+
+  template<class Polyhedron>
+  struct _Get<Polyhedron, true> {
+    typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
+    typedef typename Polyhedron::Facet_const_handle   Facet_handle;
+  };
+
+  template<class Polyhedron>
+  struct _Get<Polyhedron, false> {
+    typedef typename Polyhedron::Facet_iterator Facet_iterator;
+    typedef typename Polyhedron::Facet_handle   Facet_handle;
+  };
+
+  typedef _Get<Polyhedron, boost::is_const<Polyhedron>::value> Get;
+public:
+  typedef typename Get::Facet_iterator Facet_iterator;
+  typedef typename Get::Facet_handle   Facet_handle;
+};
+
 }// namespace internal
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -207,29 +230,30 @@ concept SelfIntersectionTraits{
  * @tparam GeomTraits a model of `SelfIntersectionTraits`
  * @tparam Polyhedron a \cgal polyhedron
  * @tparam OutputIterator Output iterator accepting objects of type `std::pair<Polyhedron::Facet_const_handle, Polyhedron::Facet_const_handle>`
+ *         if @a polyhedron is passed by const reference, `std::pair<Polyhedron::Facet_handle, Polyhedron::Facet_handle>` otherwise.
  *
- * @param polyhedron polyhedron to be checked
+ * @param polyhedron polyhedron to be checked, might be passed by const reference or reference
  * @param out all pairs of non-adjacent facets intersecting are put in it
  *
- * @return out
+ * @return pair of bool and out, where the bool indicates whether there is an intersection or not
  *
  * \TODO Doc: move SelfIntersectionTraits concept to appropriate location.
  */
 template <class GeomTraits, class Polyhedron, class OutputIterator>
 std::pair<bool, OutputIterator>
-self_intersect(const Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
+self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geom_traits = GeomTraits())
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
 
-  typedef typename Polyhedron::Facet_const_iterator     Facet_const_iterator;
-  typedef typename Polyhedron::Facet_const_handle       Facet_const_handle;
-  typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_const_handle> Box;
+  typedef typename internal::Facet_handle_types<Polyhedron>::Facet_iterator  Facet_it;
+  typedef typename internal::Facet_handle_types<Polyhedron>::Facet_handle    Facet_hdl;
+  typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_hdl> Box;
 
   // make one box per facet
   std::vector<Box> boxes;
   boxes.reserve(polyhedron.size_of_facets());
 
-  Facet_const_iterator f;
+  Facet_it f;
   for(f = polyhedron.facets_begin();
     f != polyhedron.facets_end();
     f++)
@@ -248,7 +272,7 @@ self_intersect(const Polyhedron& polyhedron, OutputIterator out, const GeomTrait
     box_ptr.push_back(&*b);
 
   // compute self-intersections filtered out by boxes
-  internal::Intersect_facets<Polyhedron,GeomTraits,OutputIterator> intersect_facets(out, geom_traits);
+  internal::Intersect_facets<Polyhedron,GeomTraits,Box,OutputIterator> intersect_facets(out, geom_traits);
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
   return std::make_pair(intersect_facets.m_intersected, intersect_facets.m_iterator);
