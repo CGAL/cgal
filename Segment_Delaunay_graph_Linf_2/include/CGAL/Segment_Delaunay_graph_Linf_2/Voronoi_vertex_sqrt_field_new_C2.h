@@ -39,6 +39,8 @@ public:
   using Base::is_site_h_or_v;
   using Base::is_line_h_or_v;
   using Base::test_star;
+  using Base::compute_neg_45_line_at;
+  using Base::compute_pos_45_line_at;
 
   typedef enum {PPP = 0, PPS, PSS, SSS} vertex_t;
   struct PPP_Type {};
@@ -115,6 +117,33 @@ private:
       return seg.target_site();
     }
     return seg.source_site();
+  }
+
+  inline
+  bool point_inside_touching_sides_v(
+      const Site_2 & t, const Site_2 & s, const Point_2 & v)
+  const
+  {
+    CGAL_assertion(not is_site_h_or_v(s));
+    CGAL_assertion(t.is_point());
+    CGAL_assertion(s.is_segment());
+    Line_2 ls = compute_supporting_line(s.supporting_site());
+    Point_2 corner =
+      compute_linf_projection_nonhom(ls, v);
+    Line_2 ltest;
+    if (has_positive_slope(s)) {
+      ltest = compute_pos_45_line_at(v);
+    } else {
+      ltest = compute_neg_45_line_at(v);
+    }
+    Oriented_side ost = oriented_side_of_line(ltest, t.point());
+    Oriented_side osx = oriented_side_of_line(ltest, corner);
+    if (ost == osx) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
 
@@ -2086,7 +2115,9 @@ private:
 
       if (q.is_segment() and (not is_q_hv)) {
         if (CGAL::compare(d_fine, d) == SMALLER) {
-          return NEGATIVE;
+          if (point_inside_touching_sides_v(t, q, vv)) {
+            return NEGATIVE;
+          }
         }
       }
 
@@ -2143,7 +2174,13 @@ private:
         CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
             << " qer=" << is_q_endp_of_r << std::endl;);
 
-        CGAL_assertion(v_type == PPS);
+        CGAL_assertion((v_type == PPS) or pt_endps_of_diff_qr);
+
+        if (pt_endps_of_diff_qr) {
+          CGAL_assertion(not is_q_hv);
+          CGAL_assertion(not is_r_hv);
+          return ZERO;
+        }
 
         // if new point t is on the same side of line pq
         // as the other endpoint of r, then CONFLICT
@@ -2184,6 +2221,9 @@ private:
 
     } // end of case of crude == ZERO
   }
+
+
+
 
   //--------------------------------------------------------------------------
   // the first three objects are points and the query object is also a point
