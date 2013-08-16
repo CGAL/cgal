@@ -573,13 +573,18 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   bool os0_fc_start = false;
   bool first_found_f1 = false;
   bool first_found_f2 = false;
-  Face_handle f1_0, f2_0;
+  Face_handle f0_no, f0_op, f0_po, f0_on;
 
   bool is_nop(false);
   bool is_pon(false);
 
-  bool is_set_f1_0(false);
-  bool is_set_f2_0(false);
+  bool is_set_f0_on(false);
+  bool is_set_f0_op(false);
+  bool is_set_f0_no(false);
+  bool is_set_f0_po(false);
+
+  bool connect_all_nop(false);
+  bool connect_all_pon(false);
 
   unsigned int count_nop_zeros(0);
   unsigned int count_pon_zeros(0);
@@ -680,6 +685,19 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
             << std::endl;);
         os0_fc_start = true;
       }
+      if (os2 == ON_NEGATIVE_SIDE) {
+        CGAL_assertion(not is_set_f0_on);
+        is_set_f0_on = true;
+        f0_on = ff1;
+        CGAL_SDG_DEBUG(std::cout << "debug impl found f0_on "
+          << std::endl;);
+      } else if (os2 == ON_POSITIVE_SIDE) {
+        CGAL_assertion(not is_set_f0_op);
+        is_set_f0_op = true;
+        f0_op = ff1;
+        CGAL_SDG_DEBUG(std::cout << "debug impl found f0_op "
+          << std::endl;);
+      }
     }
 
     if ( !found_f1 &&
@@ -731,16 +749,16 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
 
     if (os2 == ON_ORIENTED_BOUNDARY) {
       if (os1 == ON_NEGATIVE_SIDE) {
-        CGAL_assertion(not is_set_f1_0);
-        is_set_f1_0 = true;
-        f1_0 = ff2;
-        CGAL_SDG_DEBUG(std::cout << "debug impl found f1_0 "
+        CGAL_assertion(not is_set_f0_no);
+        is_set_f0_no = true;
+        f0_no = ff2;
+        CGAL_SDG_DEBUG(std::cout << "debug impl found f0_no "
           << std::endl;);
       } else if (os1 == ON_POSITIVE_SIDE) {
-        CGAL_assertion(not is_set_f2_0);
-        is_set_f2_0 = true;
-        f2_0 = ff2;
-        CGAL_SDG_DEBUG(std::cout << "debug impl found f2_0 "
+        CGAL_assertion(not is_set_f0_po);
+        is_set_f0_po = true;
+        f0_po = ff2;
+        CGAL_SDG_DEBUG(std::cout << "debug impl found f0_po "
           << std::endl;);
       }
     }
@@ -769,15 +787,25 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   std::cout << "debug find_faces_to_split results" << std::endl;
   face_output("debug f1=[", f1, "]\n");
   face_output("debug f2=[", f2, "]\n");
-  if (is_set_f1_0) {
-    face_output("debug f1_0=[", f1_0, "]\n");
+  if (is_nop) {
+    face_output("debug f0_no=[", f0_no, "]\n");
+    face_output("debug f0_op=[", f0_op, "]\n");
+    std::cout << "debug f0_no, f0_op "
+      << ((f0_no == f0_op)? "equal" : "not equal") << std::endl;
   } else {
-    std::cout << "debug f1_0=UNSET" << std::endl;
+    std::cout << "debug f0_no=UNSET" << std::endl;
+    std::cout << "debug f0_op=UNSET" << std::endl;
+    std::cout << "debug f0_no, f0_op UNSET" << std::endl;
   }
-  if (is_set_f2_0) {
-    face_output("debug f2_0=[", f2_0, "]\n");
+  if (is_pon) {
+    face_output("debug f0_po=[", f0_po, "]\n");
+    face_output("debug f0_on=[", f0_on, "]\n");
+    std::cout << "debug f0_po, f0_on "
+      << ((f0_po == f0_on)? "equal" : "not equal") << std::endl;
   } else {
-    std::cout << "debug f2_0=UNSET" << std::endl;
+    std::cout << "debug f0_po=UNSET" << std::endl;
+    std::cout << "debug f0_on=UNSET" << std::endl;
+    std::cout << "debug f0_po, f0_on UNSET" << std::endl;
   }
   std::cout << "debug count_nop_zeros=" << count_nop_zeros << std::endl;
   std::cout << "debug count_pon_zeros=" << count_pon_zeros << std::endl;
@@ -786,24 +814,31 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
   CGAL_assertion( found_f1 && found_f2 );
   CGAL_assertion( f1 != f2 );
 
-  CGAL_assertion( is_nop == is_set_f1_0 );
-  CGAL_assertion( is_pon == is_set_f2_0 );
+  CGAL_assertion( is_nop == is_set_f0_no );
+  CGAL_assertion( is_nop == is_set_f0_op );
+  CGAL_assertion( is_pon == is_set_f0_po );
+  CGAL_assertion( is_pon == is_set_f0_on );
 
   CGAL_assertion( first_found_f1 or first_found_f2);
   CGAL_assertion( not (first_found_f1 and first_found_f2) );
 
 
 #ifndef CGAL_NO_ASSERTIONS
-  if (is_set_f1_0) {
-    CGAL_assertion( f1 != f1_0 );
-    CGAL_assertion( f2 != f1_0 );
+  if (is_nop) {
+    CGAL_assertion( f1 != f0_op );
+    CGAL_assertion( f1 != f0_no );
+    CGAL_assertion( f2 != f0_no );
+    CGAL_assertion( f2 != f0_op );
   }
-  if (is_set_f2_0) {
-    CGAL_assertion( f2 != f2_0 );
-    CGAL_assertion( f1 != f2_0 );
+  if (is_pon) {
+    CGAL_assertion( f2 != f0_on );
+    CGAL_assertion( f2 != f0_po );
+    CGAL_assertion( f1 != f0_po );
+    CGAL_assertion( f1 != f0_on );
   }
-  if (is_set_f1_0 and is_set_f2_0) {
-    CGAL_assertion( f1_0 != f2_0 );
+  if (is_nop and is_pon) {
+    CGAL_assertion( f0_op != f0_on );
+    CGAL_assertion( f0_no != f0_po );
   }
 #endif
 
