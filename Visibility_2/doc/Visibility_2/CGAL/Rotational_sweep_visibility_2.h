@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-\brief This class is a model of the concept `Visibility_2` offering visibility queries within a polygon that may have holes.
+\brief This class is a model of the concept `Visibility_2` can answer visibility queries within a polygon that may have holes.
 
 
 \details The algorithm it applies to obtain visibility is without preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
@@ -117,7 +117,7 @@ Access to the attached arrangement
 Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point from which the visibility region is computed
+\param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()` and represents a valid polygon. 
@@ -129,7 +129,7 @@ The visibility region of `q` will be stored in `out_arr`.
 /*!
 Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
 The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point from which the visibility region is computed
+\param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
 \pre `e` is a halfedge of  `this->arr()`
