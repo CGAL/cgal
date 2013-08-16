@@ -128,7 +128,6 @@ public:
     ui->area_TH->setValue(1e-4);
     ui->area_TH->setSingleStep(1e-5);
     ui->is_medially_centered->setChecked(false);
-    ui->use_sdf->setChecked(false);
 
     ui->label_omega_H->setToolTip(QString("omega_H controls the velocity of movement and approximation quality"));
     ui->label_omega_P->setToolTip(QString("omega_P controls the smoothness of the medial approximation"));
@@ -425,34 +424,26 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   }
 
   // compute sdf values with skeleton
-  if (!ui->use_sdf->isChecked())
+  double min_dis = 1e10;
+  double max_dis = -1000;
+  for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
   {
-    double min_dis = 1e10;
-    double max_dis = -1000;
-    for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
-    {
-      Polyhedron::Halfedge_const_handle he = f->facet_begin();
-      int vid1 = he->vertex()->id();
-      int vid2 = he->next()->vertex()->id();
-      int vid3 = he->next()->next()->vertex()->id();
-      double dis1 = distances[vid1];
-      double dis2 = distances[vid2];
-      double dis3 = distances[vid3];
-      double avg_dis = (dis1 + dis2 + dis3) / 3.0;
-      sdf_property_map[f] = avg_dis;
-      min_dis = std::min(min_dis, avg_dis);
-      max_dis = std::min(max_dis, avg_dis);
-    }
-
-    for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
-    {
-      sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
-    }
+    Polyhedron::Halfedge_const_handle he = f->facet_begin();
+    int vid1 = he->vertex()->id();
+    int vid2 = he->next()->vertex()->id();
+    int vid3 = he->next()->next()->vertex()->id();
+    double dis1 = distances[vid1];
+    double dis2 = distances[vid2];
+    double dis3 = distances[vid3];
+    double avg_dis = (dis1 + dis2 + dis3) / 3.0;
+    sdf_property_map[f] = avg_dis;
+    min_dis = std::min(min_dis, avg_dis);
+    max_dis = std::min(max_dis, avg_dis);
   }
-  else
+
+  for (Facet_iterator f = segment_mesh->facets_begin(); f != segment_mesh->facets_end(); ++f)
   {
-    // compute sdf values using default parameters for number of rays, and cone angle
-    CGAL::compute_sdf_values(*segment_mesh, sdf_property_map);
+    sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
   }
 
   // create a property-map for segment-ids (it is an adaptor for this case)
