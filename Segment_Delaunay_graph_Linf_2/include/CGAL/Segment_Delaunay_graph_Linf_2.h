@@ -1418,7 +1418,8 @@ protected:
 
   std::pair<Face_handle,Face_handle>
   find_faces_to_split(const Vertex_handle& v, const Site_2& t,
-                      bool& flipf, bool& flipg) const;
+                      unsigned int & flips_nop,
+                      unsigned int & flips_pon) const;
 
   void expand_conflict_region(const Face_handle& f, const Site_2& t,
 			      const Storage_site_2& ss,
@@ -1446,6 +1447,12 @@ protected:
   // print face in standard output
   void face_output(const char *before, Face_handle f,
                    const char *after) const ;
+
+  Oriented_side
+  oriented_side_face_tiebreak(
+    Face_handle f, const Vertex_handle& v, const Site_2 & sitev,
+    const Site_2 & sitev_supp, const Site_2 & t) const ;
+
 
 // choosing the correct bisector constructors
 private:
@@ -1977,12 +1984,30 @@ protected:
     return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p);
   }
 
+  // tiebreaker for finite vertex
+  inline Oriented_side
+  oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
+		const Site_2& supp, const Site_2& p,
+                const Point_2& pt ) const {
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p, pt);
+  }
+
   // philaris: added for Linf
   inline Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2,
 		const Site_2& supp, const Site_2& p) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return geom_traits().oriented_side_2_object()(s1, s2, supp, p);
+  }
+
+  // tiebreaker for infinite vertex
+  inline Oriented_side
+  oriented_side(const Site_2& s1, const Site_2& s2,
+		const Site_2& supp, const Site_2& p,
+                const Point_2& pt ) const {
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return geom_traits().oriented_side_2_object()(s1, s2, supp, p, pt);
   }
 
   bool is_degenerate_edge(const Site_2& p1,
