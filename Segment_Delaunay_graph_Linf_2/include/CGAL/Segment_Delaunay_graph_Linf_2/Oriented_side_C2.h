@@ -161,8 +161,6 @@ public:
             test_site_ptr = (is_a_cand) ? a : b;
             retval = - oriented_side_of_line(lp, test_site_ptr->point());
           } else if (num_candidates == 2) {
-            CGAL_assertion( scmpx(*a, *b) != EQUAL );
-            CGAL_assertion( scmpy(*a, *b) != EQUAL );
             Comparison_result testab = CGAL::compare(distpa, distpb);
             if (testab != EQUAL) {
               test_site_ptr = (testab == SMALLER) ? a : b;
