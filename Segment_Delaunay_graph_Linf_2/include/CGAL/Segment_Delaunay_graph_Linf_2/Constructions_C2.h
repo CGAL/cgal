@@ -375,16 +375,16 @@ public:
         points[0]=pcfirst;
         points[2]=pclast;
 
-        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[0] <<
-        " point2 = " << points[1] << " point3 = "
-        << points[2] << std::endl; );
+        CGAL_SDG_DEBUG( std::cout << "debug: point1 = " << points[0]
+            << " point2 = " << points[1] << " point3 = "
+            << points[2] << std::endl; );
 
         if (p.is_segment()) {
           std::swap(points[0], points[2]);
         }
-        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[0] <<
-        " point2 = " << points[1] << " point3 = "
-        << points[2] << std::endl; );
+        CGAL_SDG_DEBUG( std::cout << "debug: point1 = " << points[0]
+            << " point2 = " << points[1] << " point3 = "
+            << points[2] << std::endl; );
 
         Line_2 ld(pnt,pcfirst);
 
@@ -670,14 +670,14 @@ public:
         points[1]=pcfirst;
         points[3]=pclast;
 
-        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] <<
+        CGAL_SDG_DEBUG( std::cout << "debug: point1 = " << points[1] <<
         " point2 = " << points[2] << " point3 = "
         << points[3] << std::endl; );
 
         if (p.is_segment()) {
           std::swap(points[1], points[3]);
         }
-        CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] <<
+        CGAL_SDG_DEBUG( std::cout << "debug: point1 = " << points[1] <<
         " point2 = " << points[2] << " point3 = "
         << points[3] << std::endl; );
 
@@ -1138,7 +1138,7 @@ public:
           points[1]=pcfirst;
           points[3]=pclast;
 
-          CGAL_SDG_DEBUG( std::cout << "SANDEEP: point1 = " << points[1] <<
+          CGAL_SDG_DEBUG( std::cout << "debug: point1 = " << points[1] <<
           " point2 = " << points[2] << " point3 = "
           << points[3] << std::endl; );
 
@@ -1146,7 +1146,7 @@ public:
             std::swap(points[1], points[3]);
           }
 
-          CGAL_SDG_DEBUG( std::cout << "SANDEEP after possible swap: "
+          CGAL_SDG_DEBUG( std::cout << "debug: after possible swap: "
                     << "point1 = " << points[1] <<
                     " point2 = " << points[2] << " point3 = "
                     << points[3] << std::endl; );
@@ -1223,9 +1223,8 @@ public:
       points[npts-1] = vqps;
       Polychainsegment pcs(points, points+npts);
 
-      CGAL_SDG_DEBUG( std::cout <<
-        " Sandeep: debug construct bisector segment is " <<
-        pcs << " Sandeep npts = " << npts << std::endl; );
+      CGAL_SDG_DEBUG( std::cout << "debug: construct bisector segment is "
+          << pcs << " with npts = " << npts << std::endl; );
 
       return pcs;
     }//end of point segment case
