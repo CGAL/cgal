@@ -1968,6 +1968,15 @@ private:
             return POSITIVE;
           }
 
+          if ((v_type == PSS) and (not is_q_hv) and (not is_r_hv)) {
+            if (test == EQUAL) {
+              CGAL_SDG_DEBUG(std::cout
+                  << "debug equivalent points and two non-hv segments,"
+                  << " thus return zero" << std::endl;);
+              return ZERO;
+            }
+          }
+
         }
       } else {
         // tocheck and tofix
