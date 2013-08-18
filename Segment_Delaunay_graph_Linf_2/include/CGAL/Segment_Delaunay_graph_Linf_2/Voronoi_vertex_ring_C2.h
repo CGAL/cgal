@@ -1257,7 +1257,7 @@ private:
           // here p is non-axis parallel
           // therefore, it touches the square at a corner
           CGAL_SDG_DEBUG(std::cout
-              << "debug vring non-hv p"
+              << "debug vring non-hv p=" << p_
               << std::endl;);
           if (point_inside_touching_sides(st, p_)) {
             return NEGATIVE;
@@ -1270,7 +1270,7 @@ private:
           // here q is non-axis parallel
           // therefore, it touches the square at a corner
           CGAL_SDG_DEBUG(std::cout
-              << "debug vring non-hv q"
+              << "debug vring non-hv q=" << q_
               << std::endl;);
           if (point_inside_touching_sides(st, q_)) {
             return NEGATIVE;
@@ -1283,7 +1283,7 @@ private:
           // here r is non-axis parallel
           // therefore, it touches the square at a corner
           CGAL_SDG_DEBUG(std::cout
-              << "debug vring non-hv r"
+              << "debug vring non-hv r=" << r_
               << std::endl;);
           if (point_inside_touching_sides(st, r_)) {
             return NEGATIVE;
