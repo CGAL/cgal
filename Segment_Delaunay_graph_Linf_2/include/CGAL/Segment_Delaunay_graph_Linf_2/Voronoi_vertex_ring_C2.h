@@ -853,11 +853,10 @@ private:
       return ZERO;
     }
 
-    // philaris: I do the test only for axis-parallel segments
     if (
-      ( p_.is_segment() && is_site_h_or_v(p_) && is_endpoint_of(t, p_) ) ||
-      ( q_.is_segment() && is_site_h_or_v(q_) && is_endpoint_of(t, q_) ) ||
-      ( r_.is_segment() && is_site_h_or_v(r_) && is_endpoint_of(t, r_) )  )
+      ( p_.is_segment() && is_endpoint_of(t, p_) ) ||
+      ( q_.is_segment() && is_endpoint_of(t, q_) ) ||
+      ( r_.is_segment() && is_endpoint_of(t, r_) )  )
     {
       use_result = true;
       return POSITIVE;
@@ -871,25 +870,6 @@ private:
 			       bool& use_result) const
   {
     CGAL_precondition( t.is_point() );
-
-    use_result = false;
-    unsigned int count_t_endp(0);
-    if (  ( p_.is_segment() && is_endpoint_of(t, p_) ) ) {
-      ++count_t_endp;
-    }
-    if (  ( q_.is_segment() && is_endpoint_of(t, q_) ) ) {
-      ++count_t_endp;
-    }
-    if (  ( r_.is_segment() && is_endpoint_of(t, r_) ) ) {
-      ++count_t_endp;
-    }
-#ifdef CGAL_SDG_VERBOSE
-    std::cout << "debug vring count_t_endp=" << count_t_endp << std::endl;
-#endif
-    if (count_t_endp == 2) {
-      use_result = true;
-      return POSITIVE;
-    }
 
     return check_easy_degeneracies(t, PPS_Type(), use_result);
   }
