@@ -853,16 +853,15 @@ private:
       return ZERO;
     }
 
-    // philaris: following might have to be changed
-    // philaris: I remove the following line to be on the safe side
-    /*
-    if (  ( p_.is_segment() && is_endpoint_of(t, p_) ) ||
-	  ( q_.is_segment() && is_endpoint_of(t, q_) ) ||
-	  ( r_.is_segment() && is_endpoint_of(t, r_) )  ) {
+    // philaris: I do the test only for axis-parallel segments
+    if (
+      ( p_.is_segment() && is_site_h_or_v(p_) && is_endpoint_of(t, p_) ) ||
+      ( q_.is_segment() && is_site_h_or_v(q_) && is_endpoint_of(t, q_) ) ||
+      ( r_.is_segment() && is_site_h_or_v(r_) && is_endpoint_of(t, r_) )  )
+    {
       use_result = true;
       return POSITIVE;
     }
-    */
 
     return ZERO;
   }
