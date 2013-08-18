@@ -142,11 +142,12 @@ and <code>src/</code> directories).
       </ul>
       <h4>2D Arrangements</h4>
       <ul>
-        <li> The point location functionalities now uses
-          a <code>boost::variant</code> instead of
-          a <code>CGAL::Object</code>.  For convenience, the previous
-          behavior can be restored by defining the
-          macro <code>CGAL_ARR_POINT_LOCATION_VERSION</code> to 1.
+        <li> The type of the result of point location queries changed to
+	  <code>boost::variant</code> (from <code>CGAL::Object</code>).
+	  For convenience, the previous behavior can be restored by defining
+	  the macro <code>CGAL_ARR_POINT_LOCATION_VERSION</code> to 1.
+	<li> Introduced an optimization for operations on large and dense
+	  arrangements.
         </li>
       </ul>
       <h4>3D Fast Intersection and Distance Computation</h4>
