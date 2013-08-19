@@ -37,6 +37,6 @@ int main() {
     CGAL::Visibility_2::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true> regular_visibility(env);
     regular_visibility.visibility_region(query_point, face, regular_output);
     std::cout<<"Regularized visibility region of p has "<<regular_output.number_of_vertices()<<" vertices."<<std::endl;
-
+    return 0;
 }
 

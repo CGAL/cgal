@@ -12,14 +12,14 @@ of the  linear time algorithm of Lee \cite dtl-voasp-83. It computes the visibil
 viewpoint that is in the interior or on the boundary of the polygon. 
 
 The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
-region. For each scanned edge, at most 2 points are pushed on the stack. Overall, it
-will have at most 2n points pushed and popped, thus the time and space complexities of the 
+region. For each scanned edge, at most 2 points are pushed onto the stack. Overall, it
+will have at most 2\f$ n \f$ points pushed and popped, thus the time and space complexities of the
 algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n is the number of 
 the vertices of the polygon.
 
 The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
 at compile time via the second template argument RegularizationTag. The default for the RegularizationTag
-is ::Tag_false, which means the visibility region will be computed. Setting the template argument
+is ::Tag_false, which implies that the visibility region will be computed. Setting the template argument
 to ::Tag_true will produce the output as a visibility polygon.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.

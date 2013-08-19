@@ -3,7 +3,7 @@
 \ingroup PkgVisibility_2Concepts
 \cgalConcept
 
-Concept `Visibility_2` is designed to answer visibility queries within a polygon.
+A model of the `Visibility_2` concept can be attached to an `Arrangement_2` instance to answer visibility queries within the faces of this arrangement.
 
 \cgalHasModel `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
 \cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
@@ -107,7 +107,7 @@ Access to the attached arrangement
 
 /*! 
 Computes the visibility region for the given query point `q` in the
-face \$f f \$f of the arrangement that is attached to the visibility object. 
+face \f$ f \f$ of the arrangement that is attached to the visibility object.
 The visibility region of `q` will be saved to `out_arr`.
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
