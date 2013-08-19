@@ -12,6 +12,11 @@ rsync -a --delete '--exclude=.git*' "$DIR/" integration
 mkdir /home/cgal-testsuite/integration/build_doc
 cd /home/cgal-testsuite/integration/build_doc
 
+PYTHONPATH=/home/cgal-testsuite/.local/lib/python2.6/site-packages
+export PYTHONPATH
+PATH=/home/cgal-testsuite/local/bin:$PATH
+export PATH
+
 /home/cgal-testsuite/install/cmake-2.8.11/bin/cmake \
     -DBUILD_DOC:BOOL=ON \
     -DCGAL_DOC_CREATE_LOGS:bool=ON \
