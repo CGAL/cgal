@@ -6,7 +6,9 @@ cd /home/cgal-testsuite
 
 exec > doxygen_testsuite.log 2>&1
 
-rsync -a --delete --exclude=.git* /home/sloriot/git/cgal/ integration
+DIR=`readlink /home/lrineau/latest-internal-release-branch`
+
+rsync -a --delete '--exclude=.git*' "$DIR/" integration
 mkdir /home/cgal-testsuite/integration/build_doc
 cd /home/cgal-testsuite/integration/build_doc
 
