@@ -32,9 +32,11 @@ Release date: September 2013
 
  ** 2D Arrangements
 
-  - The point location functionalities now uses a boost::variant instead of a
-    CGAL::Object. For convenience, the previous behavior can be restored by
-    defining the macro CGAL_ARR_POINT_LOCATION_VERSION to 1.
+  - The type of the result of point location queries changed to boost::variant
+    (from CGAL::Object). For convenience, the previous behavior can be restored
+    by defining the macro CGAL_ARR_POINT_LOCATION_VERSION to 1.
+
+  - Introduced an optimization for operations on large and dense arrangements.
 
 
  ** 3D Fast Intersection and Distance Computation
