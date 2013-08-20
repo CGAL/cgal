@@ -194,6 +194,31 @@ private:
       } while(++circ != done);
     }
   }
+
+  bool contain_internal_facets(
+    const std::vector<Facet_handle>& facets,
+    const std::set<Facet_handle>& interior_map) const
+  {
+    for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
+      Halfedge_around_facet_circulator circ((*f_it)->facet_begin()), done(circ);
+      do {
+        Vertex_handle v = circ->vertex();
+        Halfedge_around_vertex_circulator circ_v(v->vertex_begin()), done_v(circ_v);
+        bool internal_v = true;
+        do {
+          Facet_handle f(circ_v->facet()), f_op(circ_v->opposite()->facet());
+
+          if(interior_map.find(f) == interior_map.end() || interior_map.find(f_op) == interior_map.end()) {
+            internal_v = false;
+            break;
+          } 
+        } while(++circ_v != done_v);
+
+        if(internal_v) { return true; }
+      } while(++circ != done);
+    }
+    return false;
+  }
 public:
   template<class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
   void refine(Polyhedron& poly, 
@@ -201,13 +226,13 @@ public:
     InputIterator facet_end, 
     FacetOutputIterator& facet_out,
     VertexOutputIterator& vertex_out,
-    double alpha,
-    bool accept_internal_facets)
+    double alpha)
   {
     std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<Facet_handle> interior_map(facet_begin, facet_end);
 
     std::map<Vertex_handle, double> scale_attribute;
+    bool accept_internal_facets = contain_internal_facets(facets, interior_map);
     calculate_scale_attribute(facets, interior_map, scale_attribute, accept_internal_facets);
 
     int i = 0;
@@ -262,12 +287,11 @@ refine(Polyhedron& poly,
   InputIterator facet_end,
   FacetOutputIterator facet_out,
   VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0),
-  bool accept_internal_facets = false)
+  double density_control_factor = std::sqrt(2.0))
 {
   internal::Refine_Polyhedron_3<Polyhedron> refine_functor;
   refine_functor.refine
-    (poly, facet_begin, facet_end, facet_out, vertex_out, density_control_factor, accept_internal_facets);
+    (poly, facet_begin, facet_end, facet_out, vertex_out, density_control_factor);
   return std::make_pair(facet_out, vertex_out);
 }
 
