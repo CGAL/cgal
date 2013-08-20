@@ -287,7 +287,7 @@ if [ -n "$DO_PUBLIC" ]; then
     mv ${release_name} $public_release_name
 
     cd ${public_release_name}
-    rm -rf bench* Bench* test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
+    rm -rf bench* Bench* test package_info developer_scripts doc doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
     rm -f examples/*/cgal_test* demo/*/cgal_test*
     find . -name .scm-urls -exec rm '{}' '+'
     rm -f .scm-branch
@@ -301,12 +301,14 @@ if [ -n "$DO_PUBLIC" ]; then
     echo -n $public_release_version > VERSION 2>&1
     cd ..
 
-    cp -a ${SOURCES_DIR}/Installation/doc_tex .
-    cp -a ${SOURCES_DIR}/Manual/doc_tex/Manual doc_tex
-    pushd doc_tex
-    "${CGAL_MANUAL}" -v -html installation_manual
-    popd
-    cp -a doc_html/* ${public_release_name}/doc_html
+    ## That was for the LaTeX installation documentation:
+    # cp -a ${SOURCES_DIR}/Installation/doc_tex .
+    # cp -a ${SOURCES_DIR}/Manual/doc_tex/Manual doc_tex
+    # pushd doc_tex
+    # "${CGAL_MANUAL}" -v -html installation_manual
+    # popd
+    # cp -a doc_html/* ${public_release_name}/doc_html
+
     tar -cf "${public_release_name}.tar" "${public_release_name}"
     mkdir "${HTML_DIR}/${release_name}-public"
     xz --best "${public_release_name}.tar" -c > "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
