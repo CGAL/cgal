@@ -490,6 +490,114 @@ public:
     return visitor.minimum_visitor.minimum;
   }
 
+  void expand_or_shrink(int steps) {
+    switch(get_active_handle_type()) {
+    case Active_handle::VERTEX:
+      expand_or_shrink<Vertex_handle>(steps);
+    case Active_handle::FACET:
+      expand_or_shrink<Facet_handle>(steps);
+    default:
+      expand_or_shrink<Halfedge_handle>(steps);
+    }
+  }
+
+  template<class HandleType>
+  void expand_or_shrink(int steps) {
+   // It is good for large values of `steps`
+    bool expand_req = steps > 0;
+    steps = std::abs(steps);
+    expand_req ? expand<HandleType>(steps) : shrink<HandleType>(steps);
+  }
+
+  template<class HandleType>
+  void shrink(unsigned int steps) {
+    typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
+    Tr tr(this);
+
+    tr.update_indices();
+    std::vector<bool> mark(tr.size());
+
+    std::vector<HandleType> to_be_shrink;
+    std::vector<HandleType> next;
+    to_be_shrink.reserve(tr.container().size());
+    for(typename Tr::Container::iterator it = tr.container().begin(); it != tr.container().end(); ++it) {
+      for(One_ring_iterator<HandleType> circ(*it); circ; ++circ) {
+        if(!tr.container().is_selected(circ) && !mark[HandleType(circ)->id()]) {
+          to_be_shrink.push_back(circ);
+          mark[HandleType(circ)->id()] = true;
+        }
+      }
+    }
+
+    while(steps-- > 0) {
+      for(typename std::vector<HandleType>::iterator it = to_be_shrink.begin(); 
+        it != to_be_shrink.end(); ++it)
+      {
+        for(One_ring_iterator<HandleType> circ(*it); circ; ++circ) {
+          HandleType ht = circ;
+          if(tr.container().is_selected(ht) && !mark[ht->id()]) {
+            next.push_back(ht);
+            mark[ht->id()] = true;
+          }
+        }
+      }
+
+      to_be_shrink.swap(next);
+      next.clear();
+    }
+
+    bool any_change = false;
+    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
+      if(mark[it->id()]) {
+        any_change |= tr.container().erase(it);
+      }
+    }
+    if(any_change) { emit itemChanged(); }
+  }
+
+  template<class HandleType>
+  void expand(unsigned int steps) {
+
+    typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
+    Tr tr(this);
+
+    tr.update_indices();
+    std::vector<bool> mark(tr.size());
+
+    std::vector<HandleType> to_be_expand;
+    std::vector<HandleType> next;
+    to_be_expand.reserve(tr.container().size());
+    for(typename Tr::Container::iterator it = tr.container().begin(); it != tr.container().end(); ++it) {
+      to_be_expand.push_back(*it);
+    }
+
+    while(steps-- > 0) {
+      for(typename std::vector<HandleType>::iterator it = to_be_expand.begin(); 
+        it != to_be_expand.end(); ++it)
+      {
+        for(One_ring_iterator<HandleType> circ(*it); circ; ++circ) {
+          HandleType ht = circ;
+
+          if(!tr.container().is_selected(ht) && !mark[ht->id()]) {
+            next.push_back(ht);
+            mark[ht->id()] = true;
+          }
+        }
+      }
+
+      to_be_expand.swap(next);
+      next.clear();
+    }
+
+    bool any_change = false;
+    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
+      if(mark[it->id()]) {
+        any_change |= tr.container().insert(it);
+      }
+    }
+    if(any_change) { emit itemChanged(); }
+  }
+
   void erase_selected_facets() {
     if(selected_facets.empty()) {return;}
     // erase will-be-erased vertices and edges from selection
