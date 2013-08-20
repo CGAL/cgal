@@ -93,7 +93,13 @@ endif (CGAL_BRANCH_BUILD )
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
 list(SORT CGAL_CONFIGURED_PACKAGES_NAMES)
-set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES_NAMES} PARENT_SCOPE)
+if(IS_DIRECTORY "${CMAKE_SOURCE_DIR}/Documentation")
+  # Rescope CGAL_CONFIGURED_PACKAGES_NAMES
+  # We need this variable in the Doxygen configuration process. Reset it
+  # and change the scope to the parent scope.
+  # Philipp Moeller, 2013-05-302013-05-302013-05-30
+  set(CGAL_CONFIGURED_PACKAGES_NAMES ${CGAL_CONFIGURED_PACKAGES_NAMES} PARENT_SCOPE)
+endif()
 
 message(STATUS "Packagenames: ${CGAL_CONFIGURED_PACKAGES_NAMES}")
 message( "== Setting paths (DONE) ==\n" )
