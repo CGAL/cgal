@@ -348,7 +348,7 @@ template<
 class Triangulate_hole_polyline_DT 
 {
 public:
-  typedef Triangulate_hole_polyline_DT<K> Self;
+  typedef Triangulate_hole_polyline_DT    Self;
   typedef Weight_                         Weight;
   typedef typename K::Point_3             Point_3;
   typedef std::vector<Point_3>            Polyline_3;
@@ -422,7 +422,7 @@ public:
     }
 
     if(T.dimension() < 2) {
-      CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is above 2!");
+      CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
       return std::make_pair(out, Weight::DEFAULT());
     }
     
