@@ -964,6 +964,12 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 
   Face_pair fpair = find_faces_to_split(v, t, flips_nop, flips_pon);
 
+#ifdef CGAL_SDG_VERBOSE
+  std::cout << "debug ins exact flips_nop=" << flips_nop
+    << " flips_pon=" << flips_pon
+    << std::endl;
+#endif
+
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
 
@@ -1034,6 +1040,12 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
     << ssx.site() << " v=" << sitev << std::endl ;
   #endif
   Face_pair fpair = find_faces_to_split(v, ssx.site(), flips_nop, flips_pon);
+
+#ifdef CGAL_SDG_VERBOSE
+  std::cout << "debug ins flips_nop=" << flips_nop
+    << " flips_pon=" << flips_pon
+    << std::endl;
+#endif
 
   boost::tuples::tuple<Vertex_handle,Vertex_handle,Face_handle,Face_handle>
     qq = this->_tds.split_vertex(v, fpair.first, fpair.second);
