@@ -220,3 +220,8 @@ div.groupText {
 #MSearchResultsWindow {
     z-index: 2;
 }
+
+/* Adjust the top and bottom margins of div.fragment */
+div.fragment {
+    margin: 1em 4px 1em 4px;
+}
