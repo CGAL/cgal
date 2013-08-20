@@ -8,7 +8,6 @@ namespace CGAL {
 \authors Michael Hemmer, Kan Huang, Francisc Bungiu
 
 \cgalFigureBegin{example_figure,visibility-teaser.png}
-An example figure. 
 \cgalFigureEnd
 
 \section visibility_2_introduction Introduction
@@ -69,6 +68,9 @@ Every model of the Visibility_2 concept must provide two overloaded member funct
 \section simple_polygon_visibility_example  Example of visibility in a simple polygon.
 The following example shows how to obtain the regularized and non-regularized visibility regions.
 \cgalExample{Visibility_2/simple_polygon_visibility_2.cpp}
+\cgalFigureBegin{simple_example, simple_example.png}
+Two different visibility regions in the example above.
+\cgalFigureEnd
 
 */
 
