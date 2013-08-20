@@ -90,7 +90,7 @@ public:
     Naive_visibility_2(const Arrangement_2 &arr):arr_in(arr), attach_tag(true) {}
     Naive_visibility_2(): attach_tag(false) {}
 
-    Face_handle visibility_region(const Point_2 &q, const Halfedge_const_handle e, Arrangement_2 &out_arr) {
+    Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle e, Arrangement_2 &out_arr) {
         Arrangement_2 arrc = arr_in ; //copy of arr;
         Halfedge_handle ec; //copy of edge;
         for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
@@ -258,7 +258,7 @@ public:
 
     }
 
-    Face_handle visibility_region(const Point_2 &q, const Face_const_handle fh, Arrangement_2 &out_arr) {
+    Face_handle compute_visibility(const Point_2 &q, const Face_const_handle fh, Arrangement_2 &out_arr) {
         std::vector<Point_2> polygon;
         visibility_region_impl(q, fh, polygon);
         build_arr(polygon, out_arr);

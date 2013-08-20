@@ -72,6 +72,13 @@ The following example shows how to obtain the regularized and non-regularized vi
 Two different visibility regions in the example above.
 \cgalFigureEnd
 
+\section general_polygon_example Example of Visibility in a Polygon with Holes
+The following example shows how to obtain the regularized visibility region by model `Triangular_expansion_visibility_2`. The query point \f$ q \f$ is on a vertex.
+\cgalExample{Visibility_2/general_polygon_example.cpp}
+\cgalFigureBegin{general_polygon, general_polygon_example.png}
+The visibility region of \f$ q \f$ in a polygon with hole.
+\cgalFigureEnd
+
 */
 
 }

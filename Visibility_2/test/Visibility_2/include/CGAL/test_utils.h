@@ -355,15 +355,15 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
 
   if (CGAL::assign (f, obj)) {
     if (!f->is_unbounded()) {
-      visibility.visibility_region(query_pt, f, arr_out);
+      visibility.compute_visibility(query_pt, f, arr_out);
     }
   }
   else if (CGAL::assign(e, obj)) {
     if (e->source()->point() == reference_pt) {
-      visibility.visibility_region(query_pt, e, arr_out);
+      visibility.compute_visibility(query_pt, e, arr_out);
     }
     else {
-      visibility.visibility_region(query_pt, e->twin(), arr_out);
+      visibility.compute_visibility(query_pt, e->twin(), arr_out);
     }
   }
   else if (CGAL::assign(v, obj)) {
@@ -372,7 +372,7 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
     Halfedge_around_vertex_const_circulator he_curr = he_circ;
     do {
       if (he_curr->source()->point() == reference_pt) {
-        visibility.visibility_region(query_pt, he_curr, arr_out);
+        visibility.compute_visibility(query_pt, he_curr, arr_out);
       }
     } while (++he_curr != he_circ);
   }
@@ -769,10 +769,10 @@ void benchmark_one_unit(
     timer.start();
     Face_handle f_fst;
     if (choice == FACE) {
-      f_fst = visibility_fst.visibility_region(curr_query_pt, fit, out_arr_fst);
+      f_fst = visibility_fst.compute_visibility(curr_query_pt, fit, out_arr_fst);
     }
     else {
-      f_fst = visibility_fst.visibility_region(curr_query_pt, he, out_arr_fst);
+      f_fst = visibility_fst.compute_visibility(curr_query_pt, he, out_arr_fst);
     }
     timer.stop();
 
@@ -785,10 +785,10 @@ void benchmark_one_unit(
     timer.start();
     Face_handle f_snd;
     if (choice == FACE) {
-      f_snd = visibility_snd.visibility_region(curr_query_pt, fit, out_arr_snd);
+      f_snd = visibility_snd.compute_visibility(curr_query_pt, fit, out_arr_snd);
     }
     else {
-      f_snd = visibility_snd.visibility_region(curr_query_pt, he, out_arr_snd);
+      f_snd = visibility_snd.compute_visibility(curr_query_pt, he, out_arr_snd);
     }
     timer.stop();
     if ( !is_star_shape<Visibility_2_snd>(curr_query_pt, f_snd) ) {
@@ -995,10 +995,10 @@ void test_star_shape_one_face(  const typename Visibility_2::Input_arrangement_2
     Output_arrangement_2 out_arr;
     Face_handle fh;
     if (choice == FACE) {
-      fh = visibility.visibility_region(curr_query_pt, fit, out_arr);
+      fh = visibility.compute_visibility(curr_query_pt, fit, out_arr);
     }
     else {
-      fh = visibility.visibility_region(curr_query_pt, he, out_arr);
+      fh = visibility.compute_visibility(curr_query_pt, he, out_arr);
     }
     if ( !is_star_shape<Visibility_2>(curr_query_pt, fh)) {
       std::cout << RED << "     The face is not a star shape to qpoint." << RESET <<  std::endl;
