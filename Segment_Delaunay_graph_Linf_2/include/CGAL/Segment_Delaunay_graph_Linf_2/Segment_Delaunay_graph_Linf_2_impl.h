@@ -1167,6 +1167,25 @@ insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 
   vsx->set_site(ssx);
 
+#ifndef CGAL_NO_ASSERTIONS
+  // check if vsx has exactly: 4 + flips_nop + flips_pon neighbors
+  {
+    // count number of adjacent faces of vsx
+    Face_circulator fc = incident_faces(vsx);
+    Face_circulator fc_start = fc;
+    int n_faces = 0;
+    do {
+      fc++;
+      n_faces++;
+    } while ( fc != fc_start );
+
+    CGAL_SDG_DEBUG( std::cout
+        << "debug: impl insert_point_on_segment: n_faces="
+        << n_faces << std::endl; );
+    CGAL_assertion( n_faces == 4 + flips_nop + flips_pon );
+  }
+#endif
+
   return Vertex_triple(vsx, v1, v2);
 }
 
