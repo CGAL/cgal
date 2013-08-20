@@ -243,7 +243,7 @@ all this information is called <I>configuration</I>.
 The end of the process is marked by the generation of a makefile or a
 Visual \cpp solution and project file that you can use to build \cgal.
 
-\subsection installation_configuring_gui Configuring CGAL with the CMake Gui
+\subsection installation_configuring_gui Configuring CGAL with the CMake GUI
 
 The simplest way to start the configuration is to run the graphical
 user interface of CMake. We recommend to use `cmake-gui`. It
@@ -268,7 +268,7 @@ Providing information and pressing 'Configure' goes on until
 all entries are grayed. You are now ready to press 'Generate'. Once this is
 done, you can quit `cmake-gui`.
 
-\subsection installation_configuring_cmd Configuring CGAL with the cmake command-line tool
+\subsection installation_configuring_cmd Configuring CGAL with the cmake Command-Line Tool
 
 Alternatively, you can run the command-line tool called
 `cmake`. You pass as argument the root directory of
@@ -484,8 +484,8 @@ not depend on the DLL's of those two libraries.
 In \cgal some demos and examples depend on `Boost.Program_options`.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
-can obtain them from <A HREF="http://www.boost.org/">`http://www.boost.org/`</A>. For Windows you can download an
-installer from <A HREF="http://www.boostpro.com/download/">`http://www.boostpro.com/download/`</A>.
+can obtain them from <A HREF="http://www.boost.org/">`http://www.boost.org/`</A>. For Windows you can download precompiled libraries
+from <A HREF="http://boost.teeks99.com/">`http://boost.teeks99.com/`</A>.
 Since `Boost.Thread` is required, make sure to either install the precompiled 
 libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
@@ -494,7 +494,7 @@ As on Windows there is no canonical directory for where to find
 `BOOST_ROOT` and set it to where you have installed \sc{Boost}, e.g.,
 <A HREF="C:\boost\boost_1_41_0">`C:\boost\boost_1_41_0`</A>.
 
-\subsection thirdpartyMPFR Gmp and Mpfr
+\subsection thirdpartyMPFR GMP and MPFR
 
 The components libCGAL, libCGAL_Core, libCGAL_Qt3 and libCGAL_Qt4 require 
 \sc{Gmp} and \sc{Mpfr} which are libraries for multi precision integers and rational numbers,
@@ -572,7 +572,7 @@ essential libraries are configured. Whenever building an example or a
 demo (or your own executable), these <I>preconfigured</I> libraries
 are available when using \cgal.
 
-\subsection thirdpartyLeda Leda
+\subsection thirdpartyLeda LEDA
 
 \leda is a library of efficient data structures and
 algorithms. Like \sc{Core}, \leda offers a real number data type.
@@ -582,7 +582,7 @@ be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
 Free and commercial editions of \leda are available from <A HREF="http://www.algorithmic-solutions.com/leda/index.html">`http://www.algorithmic-solutions.com/leda/index.html`</A>.
 
-\subsection thirdpartyMPFI Mpfi 
+\subsection thirdpartyMPFI MPFI
 
 \sc{Mpfi} provides arbitrary precision interval arithmetic with intervals
 represented using \sc{Mpfr} reliable floating-point numbers. 
@@ -593,7 +593,7 @@ optional: it is used by some models of the
 
 \sc{Mpfi} can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>. Version 1.4 or higher is recommended.
 
-\subsection thirdpartyRS3 Rs and Rs3
+\subsection thirdpartyRS3 RS and RS3
 
 
 \sc{Rs} (Real Solutions) is devoted to the study of the real roots of
@@ -619,7 +619,7 @@ The successor of Rs is called Rs3. It less restrictive when it comes
 to licencing and also contains improved and more efficient interfaces.
 Mainly parts in \cgal's algebraic kernel require Rs3.
 
-\subsection thirdpartyNTL Ntl 
+\subsection thirdpartyNTL NTL
 
 \sc{Ntl} provides data structures and algorithms for signed, arbitrary
 length integers, and for vectors, matrices, and polynomials over the 
@@ -658,12 +658,12 @@ of the \ref PkgKds package.
 
 You can download it from <A HREF="http://www.coin3d.org/">`http://www.coin3d.org/`</A>.
 
-\subsection thirdpartyESBTL Estbl 
+\subsection thirdpartyESBTL ESBTL
 
-The \sc{Estbl} (Easy Structural Biology Template Library) is a library that allows 
+The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allows 
 the handling of \sc{Pdb} data.
 
-In \cgal the \sc{Estbl} is used in an example of the 
+In \cgal the \sc{Esbtl} is used in an example of the
 \ref PkgSkinSurface3 package.
 
 It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
@@ -1060,7 +1060,7 @@ If you have installed \cgal, `CGAL_DIR` must afterwards be set to
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL`. Note that \cgal is
 recommended to be installed in release mode when using it to build programs.
 
-\subsection installation_creating Creating a cmake script for a program using CGAL
+\subsection installation_creating Creating a cmake Script for a Program Using CGAL
 
 For compiling a non-shipped program, it is
 recommended, to also rely on a CMake-supported configuration using a
@@ -1129,7 +1129,7 @@ libCGAL_ImageIO (<i>ImageIO</i>) , libCGAL_Qt3 (<i>Qt3</i>) and libCGAL_Qt4
 A user is free to create the `CMakeLists.txt`
 without calling the script (manual creation).
 
-\subsection installation_custom Custom flags in the programs using CGAL
+\subsection installation_custom Custom Flags in the Programs Using CGAL
 
 Normally, programs linked with \cgal must be compiled with the same flags
 used by the compilation of \cgal libraries. For this reason, the <I>very first</I> time
@@ -1381,7 +1381,7 @@ Idem
 
 </SMALL>
 
-\subsection installation_variables_building Variables used only when building programs (such as demos or examples)
+\subsection installation_variables_building Variables Used Only When Building Programs (Such as Demos or Examples)
 
 <SMALL>
 <TABLE CELLSPACING=5 BORDER=2>
@@ -1407,7 +1407,7 @@ Either CMake or Environment
 
 </SMALL>
 
-\subsection installation_variables_third_party Variables providing information about 3rd-party libraries
+\subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
 \anchor sec3partysoftwareconfig
 
 The following variables provide information about the availability and
@@ -1420,7 +1420,7 @@ Since 3rd-party libraries are system wide, many of the CMake variables listed be
 be given as similarly-named environment variables instead. Keep in mind that you must provide one or the
 other but never both.
 
-\subsection installation_boost Boost libraries
+\subsection installation_boost Boost Libraries
 
 In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT` 
 variable is enough. If it is not, you can specify the header and library
@@ -1499,7 +1499,7 @@ CMake
 
 </SMALL>
 
-\subsection installation_gmp Gmp and Mpfr Libraries
+\subsection installation_gmp GMP and MPFR Libraries
 
 Under Windows, auto-linking is used, so only the <I>directory</I> 
 containing the libraries is needed and you would specify `GMP|MPFR_LIBRARY_DIR` rather than
@@ -1774,7 +1774,7 @@ CMake
 
 </SMALL>
 
-\subsection installation_leda Leda Library
+\subsection installation_leda LEDA Library
 
 When the \leda libraries are not automatically found, yet they are installed on the system
 with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might 
@@ -1874,7 +1874,7 @@ Either CMake
 
 </SMALL>
 
-\subsection installation_mpfi Mpfi Library
+\subsection installation_mpfi MPFI Library
 
 \cgal provides a number type based on this library, but the \cgal library
 itself does not depend on \sc{Mpfi}. This means that this library must be
@@ -1938,7 +1938,7 @@ CMake
 
 </SMALL>
 
-\subsection installation_rs Rs and Rs3 Library
+\subsection installation_rs RS and RS3 Library
 
 As said before, only the \cgal univariate algebraic kernel depends on the
 library Rs. As the algebraic kernel is not compiled as a part of the \cgal
@@ -2063,7 +2063,7 @@ CMake
 
 </SMALL>
 
-\subsection installation_ntl Ntl Library
+\subsection installation_ntl NTL Library
 
 Some polynomial computations in \cgal's algebraic kernel 
 are speed up when \sc{Ntl} is available. 
@@ -2219,9 +2219,9 @@ CMake
 
 \subsection installation_esbtl ESBTL Library
 
-One skin surface example requires the ESBTL library in order to read \sc{Pdb} files.
+One skin surface example requires the \sc{Esbtl} library in order to read \sc{Pdb} files.
 
-If ESBTL is not automatically found, setting the `ESBTL_INC_DIR` 
+If \sc{Esbtl} is not automatically found, setting the `ESBTL_INC_DIR`
 environment variable is sufficient.
 
 <SMALL>
