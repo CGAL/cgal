@@ -660,7 +660,7 @@ You can download it from <A HREF="http://www.coin3d.org/">`http://www.coin3d.org
 
 \subsection thirdpartyESBTL ESBTL
 
-The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allows 
+The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allows
 the handling of \sc{Pdb} data.
 
 In \cgal the \sc{Esbtl} is used in an example of the
@@ -1060,7 +1060,7 @@ If you have installed \cgal, `CGAL_DIR` must afterwards be set to
 `$CMAKE_INSTALLED_PREFIX/lib/CGAL`. Note that \cgal is
 recommended to be installed in release mode when using it to build programs.
 
-\subsection installation_creating Creating a cmake Script for a Program Using CGAL
+\subsection installation_creating Creating a CMake Script for a Program Using CGAL
 
 For compiling a non-shipped program, it is
 recommended, to also rely on a CMake-supported configuration using a
