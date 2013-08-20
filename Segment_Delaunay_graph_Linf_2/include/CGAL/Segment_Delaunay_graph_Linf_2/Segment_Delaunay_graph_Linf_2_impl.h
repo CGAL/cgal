@@ -987,8 +987,8 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   Face_handle otherf;
   int f_i;
   if (flips_nop > 0) {
-    //otherf = qqf->neighbor(qqf->index(v1));
-    //f_i = this->_tds.mirror_index(qqf, qqf->index(v1));
+    otherf = qqf->neighbor(qqf->index(v1));
+    f_i = this->_tds.mirror_index(qqf, qqf->index(v1));
   }
 
   Face_handle otherg;
