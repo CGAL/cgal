@@ -1003,10 +1003,20 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     this->_tds.insert_in_edge(qqf, cw(qqf->index(v1)));
 
   if (flips_nop > 0) {
+#ifdef CGAL_SDG_VERBOSE
+    std::cout << "debug flip otherf=";
+    face_output("[", otherf, "]");
+    std::cout << " at f_i=" << f_i << std::endl;
+#endif
     this->_tds.flip(otherf, f_i);
   }
 
   if (flips_pon > 0) {
+#ifdef CGAL_SDG_VERBOSE
+    std::cout << "debug flip otherg=";
+    face_output("[", otherg, "]");
+    std::cout << " at g_i=" << f_i << std::endl;
+#endif
     this->_tds.flip(otherg, g_i);
   }
 
