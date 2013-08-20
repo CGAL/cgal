@@ -1004,11 +1004,30 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 
   if (flips_nop > 0) {
 #ifdef CGAL_SDG_VERBOSE
-    std::cout << "debug flip otherf=";
+    std::cout << "debug flip_nop>0 otherf=";
     face_output("[", otherf, "]");
     std::cout << " at f_i=" << f_i << std::endl;
 #endif
-    this->_tds.flip(otherf, f_i);
+    unsigned int remaining_nop = flips_nop;
+    Face_handle current_face, next_face;
+    int current_i, next_i;
+    next_face = otherf;
+    next_i = f_i;
+    while (remaining_nop > 0) {
+      current_face = next_face;
+      current_i = next_i;
+      if (remaining_nop > 1) {
+        next_face = current_face->neighbor(ccw(current_i));
+        next_i = this->_tds.mirror_index(current_face, ccw(current_i));
+      }
+#ifdef CGAL_SDG_VERBOSE
+      std::cout << "debug remaining_nop=" << remaining_nop;
+      face_output(" flip curf=[", current_face, "]");
+      std::cout << " at f_i=" << current_i << std::endl;
+#endif
+      this->_tds.flip(current_face, current_i);
+      --remaining_nop;
+    }
   }
 
   if (flips_pon > 0) {
@@ -1017,7 +1036,26 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
     face_output("[", otherg, "]");
     std::cout << " at g_i=" << f_i << std::endl;
 #endif
-    this->_tds.flip(otherg, g_i);
+    unsigned int remaining_pon = flips_pon;
+    Face_handle current_face, next_face;
+    int current_i, next_i;
+    next_face = otherg;
+    next_i = g_i;
+    while (remaining_pon > 0) {
+      current_face = next_face;
+      current_i = next_i;
+      if (remaining_pon > 1) {
+        next_face = current_face->neighbor(ccw(current_i));
+        next_i = this->_tds.mirror_index(current_face, ccw(current_i));
+      }
+#ifdef CGAL_SDG_VERBOSE
+      std::cout << "debug remaining_pon=" << remaining_pon;
+      face_output(" flip curg=[", current_face, "]");
+      std::cout << " at g_i=" << current_i << std::endl;
+#endif
+      this->_tds.flip(current_face, current_i);
+      --remaining_pon;
+    }
   }
 
   vsx->set_site(ss);
