@@ -11,7 +11,7 @@ enum Umbilic_type { NON_GENERIC_UMBILIC, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC };
 /*!
 \ingroup PkgRidges_3
 
-The function `compute_umbilics` is a shortcut to the method `compute` of 
+The function `compute_umbilics()` is a shortcut to the method `compute()` of
 the class `Umbilic_approximation`. 
 
 
