@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>334</width>
-    <height>479</height>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -176,39 +176,6 @@
           </widget>
          </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>&amp;Neighborhood Size:</string>
-           </property>
-           <property name="buddy">
-            <cstring>neighb_size</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="neighb_size"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="select_marked_edges_button">
-         <property name="text">
-          <string>Select Neighbors of &amp;Marked Edges</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>

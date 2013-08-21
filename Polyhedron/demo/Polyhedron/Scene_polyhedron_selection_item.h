@@ -381,69 +381,6 @@ public:
     emit itemChanged();
   }
 
-  void select_marked_edges(int neighb_size) {
-    clear();
-
-    for(Polyhedron::Edge_iterator
-          eit = polyhedron()->edges_begin(),
-          end = polyhedron()->edges_end(); eit != end; ++eit)
-    {
-      if(!eit->is_feature_edge()) continue;
-      if(get_active_handle_type() == Active_handle::VERTEX) {
-        selected_vertices.insert(eit->vertex());
-        selected_vertices.insert(eit->opposite()->vertex());
-      } else if(get_active_handle_type() == Active_handle::FACET) {
-        selected_facets.insert(eit->face());
-        selected_facets.insert(eit->opposite()->face());
-      }
-      else {
-        selected_edges.insert(&*eit < &*eit->opposite() ? eit : eit->opposite());
-      }
-    }
-    for(int i = 0; i < neighb_size; ++i) {
-      if(get_active_handle_type() == Active_handle::VERTEX) {
-        std::set<Vertex_handle> new_set;
-        BOOST_FOREACH(Vertex_handle v, selected_vertices)
-        {
-          Polyhedron::Halfedge_around_vertex_circulator
-            he_circ = v->vertex_begin(), end = he_circ;
-          if(he_circ != NULL) do {
-              new_set.insert(he_circ->opposite()->vertex());
-            } while (++he_circ != end);
-        }
-        BOOST_FOREACH(Vertex_handle v, new_set) {
-          selected_vertices.insert(v);
-        }
-      } else if(get_active_handle_type() == Active_handle::FACET){
-        std::set<Facet_handle> new_set;
-        BOOST_FOREACH(Facet_handle f, selected_facets)
-        {
-          Polyhedron::Halfedge_around_facet_circulator
-            he_circ = f->facet_begin(), end = he_circ;
-          if(he_circ != NULL) do {
-              new_set.insert(he_circ->opposite()->facet());
-            } while (++he_circ != end);
-        }
-        BOOST_FOREACH(Facet_handle f, new_set) {
-          selected_facets.insert(f);
-        }
-      }
-      else {
-        std::set<Halfedge_handle> new_set;
-        BOOST_FOREACH(Halfedge_handle h, selected_edges)
-        {
-          for(One_ring_iterator<Halfedge_handle> circ(h); circ; ++circ) {
-            new_set.insert(circ);
-          }
-        }
-        BOOST_FOREACH(Halfedge_handle h, new_set) {
-          selected_edges.insert(h);
-        }
-      }
-    }
-    emit itemChanged();
-  }
-
   boost::optional<std::size_t> get_minimum_isolated_component() {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:

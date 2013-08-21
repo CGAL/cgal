@@ -47,8 +47,6 @@ public:
     connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
     connect(ui_widget.Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
     connect(ui_widget.Create_selection_item_button,  SIGNAL(clicked()), this, SLOT(on_Create_selection_item_button_clicked()));    
-    connect(ui_widget.select_marked_edges_button,  SIGNAL(clicked()),
-            this, SLOT(on_select_marked_edges_button_clicked()));
     connect(ui_widget.Selection_type_combo_box, SIGNAL(currentIndexChanged(int)), 
             this, SLOT(on_Selection_type_combo_box_changed(int)));
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
@@ -142,15 +140,6 @@ public slots:
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
-  }
-  void on_select_marked_edges_button_clicked()
-  {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
-    if(!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return; 
-    }
-    selection_item->select_marked_edges(ui_widget.neighb_size->value());
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
