@@ -103,7 +103,7 @@ public slots:
     std::vector<Polyhedron::Facet_handle> new_facets;
 
     CGAL::refine(*selection_item->polyhedron(), selection_item->selected_facets.begin(),
-      selection_item->selected_facets.end(), std::back_inserter(new_facets), Nop_out(), alpha, true);
+      selection_item->selected_facets.end(), std::back_inserter(new_facets), Nop_out(), alpha);
     // add new facets to selection
     for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);
