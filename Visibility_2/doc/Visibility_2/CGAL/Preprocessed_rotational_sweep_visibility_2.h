@@ -54,6 +54,11 @@ public:
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
+  /*!
+    Face_handle type of the output arrangement.
+    */
+  typedef Output_arrangement_2::Face_handle  Face_handle;
+
 /// @}
 
 
