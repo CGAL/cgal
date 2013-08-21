@@ -103,7 +103,10 @@ Returns whether an arrangement is attached to the visibility object
   bool is_attached();
 
 /*!
-Attaches the given arrangement to the visibility object and does preprocessing.
+Attaches the given arrangement to the visibility object and computes the restricted triangulation. 
+This takes \f$ O(n) \f$ time, where \f$ n \f$ of vertices. Modifying the attached arrangement 
+also changes the stored restricted triangulation which in the worst may again take \f$ O(n) \f$ time.
+
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to 'arr'.
 */
