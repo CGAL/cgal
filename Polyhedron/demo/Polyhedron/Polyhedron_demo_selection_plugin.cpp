@@ -175,7 +175,10 @@ public slots:
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
     }
-
+    if(selection_item->selected_vertices.empty()) {
+      print_message("Error: there is no selected vertex in polyhedron selection item!");
+      return;
+    }
     Scene_points_with_normal_item* point_item = new Scene_points_with_normal_item();
     point_item->setName(QString("%1-points").arg(selection_item->name()));
     for(Scene_polyhedron_selection_item::Selection_set_vertex::iterator begin = selection_item->selected_vertices.begin(); 
