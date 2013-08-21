@@ -4,6 +4,11 @@
 Release date: September 2013
 
 
+* The CGAL Manual
+
+  - The documentation of CGAL is now generated with Doxygen.
+
+
 * 2D Periodic Triangulations (new package)
 
   - This package allows to build and handle triangulations of point sets in the
