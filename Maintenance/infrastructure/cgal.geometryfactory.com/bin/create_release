@@ -3,20 +3,23 @@
 LC_ALL=POSIX;
 export LC_ALL
 
+# Returns an error once a command returns an error
+set -e
+
 if [ -d "$1/.git" ]; then
-    pushd "$1"
+    pushd "$1" > /dev/null
     branch=`git rev-parse --abbrev-ref HEAD`
-    echo "Git repository, in branch '$branch'"
-    git fetch
-    git reset --hard origin/$branch
-    git clean -f
+#    echo "Git repository, in branch '$branch'"
+    git fetch --quiet
+    git reset --quiet --hard origin/$branch
+    git clean --quiet -f
 
     ln -s -n -f "$1" $HOME/latest-internal-release-branch
     # Hard-reset integration "every day" even if today's "$branch" is not integration
     # and create testsuite-Monday, testsuite-Tuesday, and so on...
-    git push -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
+    git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
 
-    popd
+    popd > /dev/null
 else
     svn up "$1"
 fi
