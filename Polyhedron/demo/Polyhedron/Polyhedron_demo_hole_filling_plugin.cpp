@@ -35,6 +35,23 @@
 #include "Kernel_type.h"
 
 #include <boost/function_output_iterator.hpp>
+
+// To get close event from dock widget (close event in this case means pressing x button)
+class Dock_widget_event_filter : public QObject
+{
+  Q_OBJECT
+public:
+signals:
+  void dock_widget_closed();
+protected:
+  bool eventFilter(QObject *, QEvent *event) {
+    if(event->type() == QEvent::Close) {
+      emit dock_widget_closed();
+    }
+    return false;
+  }
+};
+
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
 class Q_DECL_EXPORT Scene_polylines_collection : public Scene_item
@@ -311,9 +328,9 @@ public slots:
   void on_Accept_button();
   void on_Reject_button();
   void item_about_to_be_destroyed(Scene_item*);
-  void dock_widget_visibility_changed(bool visible);
   void item_changed_polylines_collection();
-  
+  void dock_widget_closed();
+
 private:
   struct Nop_functor {
     template<class T>
@@ -328,6 +345,7 @@ private:
 
   QDockWidget* dock_widget;
   Ui::HoleFilling ui_widget;
+  Dock_widget_event_filter filter;
 
   // hold created facet for accept reject functionality
   std::vector<Polyhedron::Facet_handle> new_facets; 
@@ -372,6 +390,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   dock_widget = new QDockWidget("Hole Filling", mw);
   dock_widget->setVisible(false);
+  dock_widget->installEventFilter(&filter);
 
   ui_widget.setupUi(dock_widget);
   ui_widget.Accept_button->setVisible(false);
@@ -379,7 +398,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
 
   mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
-  connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
+  connect(&filter, SIGNAL(dock_widget_closed()), this, SLOT(dock_widget_closed()));
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
   connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
   connect(ui_widget.Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));
@@ -402,10 +421,8 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item*
     }
   }
 }
-// removes Scene_polylines_collection items on visibility = false
-void Polyhedron_demo_hole_filling_plugin::dock_widget_visibility_changed(bool visible)
-{
-  if(visible) { return; }
+// removes Scene_polylines_collection items
+void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
   // remove all Scene_polylines_collection items
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
     i < end; ++i)
