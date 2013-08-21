@@ -4,10 +4,11 @@ namespace CGAL {
 
 \brief This class is a model of the concept `Visibility_2` can answer visibility queries within a polygon that may have holes.
 
-\details The algorithm obtains a constrained Delaunay triangulation from input arrangement, then computes visibility by 
-expanding the triangle that contains the query point. Preprocessing takes \f$ O(nh)\f$ time and \f$ O(n) \f$ space, 
-where \f$ n \f$ and \f$ h \f$ are the numbers  of vertices and holes of input polygon respectively. The worst query 
-time is \f$O(n^2) \f$, but it is expected to work significantly faster for cases with a small number of holes.
+\details The algorithm obtains a constrained triangulation from input arrangement, then computes visibility by 
+expanding the triangle that contains the query point. 
+Preprocessing takes \f$ O(n)\f$ time and \f$ O(n) \f$ space, where \f$ n \f$ is the number of vertices of input polygon. 
+The query time is \f$ O(nh)\f$, where \f$ h \f$ is the number of holes+1 of input polygon. Thus, for simple polygons 
+the alogrithm is even linear but it can also be  \f$ O(n^2)\f$ in the worst case as the number of holes can be linear in \f$ n \f$. 
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
