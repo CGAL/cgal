@@ -120,14 +120,6 @@ latter, however, is likely to give raise to name conflicts and is
 therefore not recommended.
 
 
-\section Preliminaries_inclusion Inclusion Order of Header Files
-
-Not all compilers fully support standard header names. \cgal provides
-workarounds for these problems in `CGAL/basic.h`. Consequently, as a
-golden rule, you should always include `CGAL/basic.h` first in your
-programs (or `CGAL/Cartesian.h`, or `CGAL/Homogeneous.h`, since they
-include `CGAL/basic.h` first).
-
 \section Preliminaries_thread_safety Thread Safety
 
 \cgal is progressively being made thread-safe.  The guidelines which are followed
