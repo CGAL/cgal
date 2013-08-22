@@ -300,6 +300,7 @@ void
 Scene_polyhedron_item::
 changed()
 {
+  emit item_is_about_to_be_changed();
   delete_aabb_tree(this);
   init();
   Base::changed();
