@@ -94,7 +94,9 @@ public:
                          Output_arrangement_2 &out_arr) {
 
     assert(query_pt_is_vertex == false);
-//    CGAL::Visibility_2::print_arrangement_by_face<Input_arrangement_2>(*p_arr);
+    std::cout << "INPUT\n";
+    CGAL::Visibility_2::print_arrangement_by_face<Input_arrangement_2>(*p_arr);
+    std::cout << "END INPUT\n";
    
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                             face->outer_ccb();
@@ -158,7 +160,11 @@ public:
     else {
       vertices.push_back(vertices[0]);
     }
-
+    std::cout << "******VERTICES***************\n";
+    for (unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
+    std::cout << "*********************\n";
     visibility_region_impl(q);
 
   /*  std::cout << "STACK\n";
@@ -456,13 +462,16 @@ private:
                                           s_t_prev, 
                                           vertices[i], 
                                           vertices[i+1]) == CGAL::RIGHT_TURN) {
+        std::cout << "scana\n";
         upcase = SCANA;
         w = vertices[i];
-        i++;
       }
       else {
+        std::cout << "right\n";
         upcase = RIGHT;
-        w = vertices[i];
+        w = vertices[i+1];
+        std::cout << "w set to " << w << std::endl;
+        i++;
       }
       s.push(s_t);
     }
@@ -470,54 +479,81 @@ private:
 
   void right(int &i, Point_2 &w, const Point_2 &query_pt) {
     // Scan s_t, s_t-1, ..., s_1, s_0 for the first edge (s_j, s_j-1) such that
-    // (a) (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
-    // (b) (z, s_j-1, s_j) is a forward move and (v_i-1, v_i) intersects (s_j-1, s_j)
+    // (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
+    std::cout << "Entered RIGHT\n";
     bool found = false;
 
-    while(!found && !s.empty()) {
-
+    while(!found) {
+      assert(!s.empty());
       Point_2 s_j = s.top();
       s.pop();
       assert(!s.empty());
     
       Point_2 s_j_prev = s.top();
+      std::cout << "s top = " << s_j << std::endl;
+      std::cout << "s top-1 = " << s_j_prev << std::endl;
+      std::cout << "w = " << w << std::endl;
+      std::cout << "v[i+1] = " << vertices[i+1] << std::endl;
         // Check condition (a)
-      if ((CGAL::Visibility_2::Orientation_2(geom_traits, 
-                                            query_pt, 
-                                            w, 
-                                            s_j) == CGAL::LEFT_TURN) && // Keep this first one as an ASSERT
-          (CGAL::Visibility_2::Orientation_2(geom_traits, 
+      assert(CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                               query_pt, 
+                                               w, 
+                                               s_j) == CGAL::LEFT_TURN 
+          || CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                               query_pt, 
+                                               w, 
+                                               s_j) == CGAL::COLLINEAR);
+
+      if (CGAL::Visibility_2::Orientation_2(geom_traits, 
                                             query_pt,
                                             w, 
-                                            s_j_prev) == CGAL::RIGHT_TURN)) {
+                                            s_j_prev) == CGAL::RIGHT_TURN
+        || CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                            query_pt,
+                                            w, 
+                                            s_j_prev) == CGAL::COLLINEAR) {
+        std::cout << "found\n";
         found = true;
-
-        assert(vertices[i] == w);
+        std::cout << "orientation1: " << CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                                    query_pt,
+                                                    w, 
+                                                    vertices[i+1]) << std::endl;
+        std::cout << "orientation2: " << CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                                     vertices[i-1],
+                                                     vertices[i], 
+                                                     vertices[i+1]) << std::endl;
 
         if (CGAL::Visibility_2::Orientation_2(geom_traits, 
                                               query_pt,
                                               w, 
                                               vertices[i+1]) == CGAL::RIGHT_TURN) {
+          std::cout << "continue R\n";
           upcase = RIGHT;
           w = vertices[i+1];
+          std::cout << "R w = " << w << std::endl;
           i++;
         }
         else if ((CGAL::Visibility_2::Orientation_2(geom_traits, 
                                                     query_pt,
                                                     w, 
-                                                   vertices[i+1]) == CGAL::LEFT_TURN) &&
+                                                    vertices[i+1]) == CGAL::LEFT_TURN
+                || CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                                    query_pt,
+                                                    w, 
+                                                    vertices[i+1]) == CGAL::COLLINEAR) &&
                   (CGAL::Visibility_2::Orientation_2(geom_traits, 
                                                      vertices[i-1],
                                                      vertices[i], 
                                                      vertices[i+1]) == CGAL::RIGHT_TURN)) {
+          std::cout << "we're here\n";
           Segment_2 s1(s_j_prev, s_j);
           Ray_2 s2(query_pt, w);
           Object_2 result = CGAL::Visibility_2::Intersect_2
                       <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
           if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-            s_j = *ipoint;
             upcase = LEFT;
-            s.push(s_j);
+            s.push(*ipoint);
+            std::cout << "pushed" << *ipoint << std::endl;
             s.push(w);
             s.push(vertices[i+1]);  
             w = vertices[i+1];
@@ -532,8 +568,11 @@ private:
   /*          std::cout << "v[i-1]=" << vertices[i-1] << std::endl;
             std::cout << "v[i]=" << vertices[i] << std::endl;
             std::cout << "v[i+1]=" << vertices[i+1] << std::endl;*/
+          std::cout << "scanc \n";
           upcase = SCANC;
           w = vertices[i];
+          std::cout << "w = " << w << std::endl;
+          s.pop();
           i++;        
         }
         else {
@@ -557,20 +596,23 @@ private:
   void scana(int &i, Point_2 &w, const Point_2 &query_pt) {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     int k = i;
-    Point_2 intersection_pt;
-
+    std::cout << "entered scana with i = " << i << std::endl;
+    std::cout << "s top = "  << s.top() << std::endl;
+    std::cout << "w = "  << w << std::endl;
     while (k+1 < vertices.size()-1) {
+      std::cout << "v[k+1] = " << vertices[k+1] << std::endl;
       if (CGAL::Visibility_2::Orientation_2(geom_traits,
                                             query_pt,
                                             w,
                                             vertices[k+1]) == CGAL::LEFT_TURN) {
         Segment_2 s1(vertices[k], vertices[k+1]);
         Ray_2 s2(query_pt, s.top());
+
         Object_2 result = CGAL::Visibility_2::Intersect_2
                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
-          intersection_pt = *ipoint;
-          s.push(intersection_pt);
+          std::cout << "scana ipt = " << *ipoint << std::endl;
+          s.push(*ipoint);
           s.push(vertices[k+1]);
           w = vertices[k+1];
           i = k+1;
@@ -582,9 +624,12 @@ private:
                                             query_pt,
                                             w,
                                             vertices[k+1]) == CGAL::COLLINEAR) {
+        std::cout << "scana collinear\n";
         s.push(vertices[k+1]);
+        std::cout << "scana pushed " << vertices[k+1] << std::endl;
         w = vertices[k+1];
         i = k+1;
+        std::cout << "scana i set to " << i << std::endl;
         upcase = LEFT;
         break;
       }
@@ -600,15 +645,19 @@ private:
  //     std::cout << "scanc::s_t = " << s_t << std::endl;
  //     std::cout << "w = " << w << std::endl;
     int k = i;
-    bool found = false;
     Point_2 intersection_pt;
-    while (k < vertices.size()-1 && !found) {
-      if (CGAL::Visibility_2::Orientation_2(geom_traits, query_pt, w, vertices[k]) == CGAL::RIGHT_TURN) {
-        found = true;
+    while (k < vertices.size()-1) {
+      std::cout << "scanc v[k] = " <<  vertices[k] << std::endl;
+      if (CGAL::Visibility_2::Orientation_2(geom_traits, query_pt, w, vertices[k]) == CGAL::RIGHT_TURN
+        ||CGAL::Visibility_2::Orientation_2(geom_traits, query_pt, w, vertices[k]) == CGAL::COLLINEAR) {
+        break;
       }
+      k++;
     }
     w = vertices[k];
-    upcase = RIGHT;
+    std::cout << "scanc w = " << w << std::endl;
+    i = k;
+    upcase = LEFT;
   }
 };
 
