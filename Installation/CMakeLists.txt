@@ -84,9 +84,9 @@ else ( CGAL_BRANCH_BUILD )
   # list packages
   set(CGAL_CONFIGURED_PACKAGES "${CMAKE_SOURCE_DIR}")
 
-  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Installation package")
-  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Core package")
+  set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Installation package")
+  set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Core package")
 
 endif (CGAL_BRANCH_BUILD )
 
