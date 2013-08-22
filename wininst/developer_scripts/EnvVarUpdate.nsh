@@ -137,6 +137,10 @@ Function ${UN}EnvVarUpdate
     DetailPrint 'ERROR: Action is [$3] but must be "HKLM" or HKCU"'
     Goto EnvVarUpdate_Restore_Vars
   ${EndIf}
+  IfErrors 0 +4
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Could not read variable $1 to modify it; set it manually"
+    DetailPrint "Could not read variable $1"
+    Goto EnvVarUpdate_Restore_Vars
  
   ; Check for empty PathString
   ${If} $4 == ""
@@ -145,6 +149,29 @@ Function ${UN}EnvVarUpdate
     Goto EnvVarUpdate_Restore_Vars
   ${EndIf}
  
+  ;;khc - here check if length is going to be greater then max string length
+  ;;      and abort if so - also abort if original path empty - may mean
+  ;;      it was too long as well- write message to say set it by hand
+  Push $6
+  Push $7
+  Push $8
+  StrLen $7 $4
+  StrLen $6 $5
+  IntOp $8 $6 + $7
+  ${If} $5 == ""
+  ${OrIf} $8 >= ${NSIS_MAX_STRLEN}
+    SetErrors
+    DetailPrint "Current $1 length ($6) too long to modify in NSIS; set manually if needed"
+    Pop $8
+    Pop $7
+    Pop $6
+    Goto EnvVarUpdate_Restore_Vars
+  ${EndIf}
+  Pop $8
+  Pop $7
+  Pop $6
+  ;;khc
+
   ; Make sure we've got some work to do
   ${If} $5 == ""
   ${AndIf} $2 == "R"
