@@ -171,7 +171,7 @@ struct Weight_calculator
 class Weight_min_max_dihedral_and_area 
 {
   template<class Weight_, class IsValid>
-  friend class Weight_calculator;
+  friend struct Weight_calculator;
 
 public:
   // these two should not be used (used in test code)
