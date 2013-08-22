@@ -14,6 +14,7 @@ namespace CGAL {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * \ingroup PkgHoleFilling
  * @brief Function triangulating and refining a hole in surface mesh.
  * 
  * @tparam Polyhedron a %CGAL polyhedron
@@ -46,7 +47,8 @@ triangulate_and_refine_hole(
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/** 
+/**
+ * \ingroup PkgHoleFilling
  * @brief Function triangulating, refining and fairing a hole in surface mesh.
  *
  * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)

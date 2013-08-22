@@ -259,7 +259,8 @@ public:
 
 }//namespace internal
 
-/** 
+/**
+ * \ingroup PkgHoleFilling
  * @brief Function refining a region on surface mesh
  * @warning There should be no interior facets inside the given region with default `accept_internal_facets` parameter
  *

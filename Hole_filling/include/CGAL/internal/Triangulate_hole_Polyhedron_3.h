@@ -123,6 +123,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 }// namespace internal
 
 /**
+ * \ingroup PkgHoleFilling
  * @brief Function triangulating a hole in surface mesh.
  * 
  * @tparam Polyhedron a %CGAL polyhedron

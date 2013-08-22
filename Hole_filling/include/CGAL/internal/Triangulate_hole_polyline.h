@@ -660,6 +660,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
 } // namespace internal
 
 /*!
+\ingroup PkgHoleFilling
 Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
 The range `(qbegin,qend)` indicate for each pair of consecutive points in the aforementioned range,
 the third point of the facet this segment is incident to. Triangles are put into `out`
@@ -697,6 +698,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
 
 
 /*!
+\ingroup PkgHoleFilling
 Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
 Triangles are put into `out` using the indices of the input points in the range `(pbegin,pend)`.
 @tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
