@@ -66,7 +66,7 @@ public:
   Simple_polygon_visibility_2(const Input_arrangement_2 &arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
-  };
+  }
 
   bool is_attached() {
     return (p_arr != NULL);

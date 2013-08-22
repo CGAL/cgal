@@ -52,6 +52,11 @@ public:
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
+  /*!
+    Face_handle type of the output arrangement.
+    */
+  typedef Output_arrangement_2::Face_handle  Face_handle;
+
 /// @}
 
 /// \name Tags 
@@ -76,7 +81,7 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Rotational_sweep_visibility_2' object that is not
+Default constructor creates an empty `Rotational_sweep_visibility_2` object that is not
 attached to any arrangement yet.
 */
 Rotational_sweep_visibility_2();
@@ -99,7 +104,7 @@ Returns whether an arrangement is attached to the visibility object
 /*!
 Attaches the given arrangement to the visibility object.
 In case the object is already attached to another arrangement, 
-the visibility object gets detached before being attached to 'arr'.
+the visibility object gets detached before being attached to `arr`.
 */
   void attach(const Input_arrangement_2& arr);
   

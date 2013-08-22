@@ -17,12 +17,8 @@ will have at most 2\f$ n \f$ points pushed and popped, thus the time and space c
 algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n is the number of 
 the vertices of the polygon.
 
-The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
-at compile time via the second template argument RegularizationTag. The default for the RegularizationTag
-is ::Tag_false, which implies that the visibility region will be computed. Setting the template argument
-to ::Tag_true will produce the output as a visibility polygon.
 
-\tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
+\tparam Arrangement_2 is the type of input polygonal environment and output visibility region.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
@@ -64,6 +60,11 @@ public:
    Halfedge_const_handle type of input arrangement.
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+
+  /*!
+    Face_handle type of the output arrangement.
+    */
+  typedef Output_arrangement_2::Face_handle  Face_handle;
    
 /// @}
 
@@ -92,7 +93,7 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Simple_polygon_visibility_2' object that is not
+Default constructor creates an empty `Simple_polygon_visibility_2` object that is not
 attached to any arrangement yet.
 */
 Simple_polygon_visibility_2();
@@ -115,7 +116,7 @@ Returns whether an arrangement is attached to the visibility object
 /*!
 Attaches the given arrangement to the visibility object.
 In case the object is already attached to another arrangement, 
-the visibility object gets detached before being attached to 'arr'.
+the visibility object gets detached before being attached to `arr`.
 */
   void attach (const Input_arrangement_2& arr);
 
