@@ -293,19 +293,16 @@ const Input_arrangement_2& arr() {
 
 
 private:
-    //members
+  //members
   typedef std::vector<Point_2> Vend;
   const Input_arrangement_2 *p_arr;
   bool            attach_tag;
-  std::vector<Point_2> polygon;
-  std::map<Point_2, Vend> vshape;
+  std::vector<Point_2> polygon;   //visibility polygon
+  std::map<Point_2, Vend> vmap;   //vertex and two edges incident to it that might block vision
 
 
   //methods
-  // if there is no intersection, return the source of ray.
-  /*!
-    obtain the vertices of visibility into polygon. these vertices can be used to build output arrangement by build_arr().
-    */
+  //compute visibility region between qa and qb
   void visibility_region_impl(const Point_2& q, const Point_2& a, const Point_2& b) {
       std::vector<Vertex_const_handle> vertices;                    //all vertices of the face.
       std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
