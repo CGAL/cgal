@@ -150,6 +150,7 @@ protected:
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
   {
     this->poly_item = poly_item;
+    connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed())); 
     connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Vertex_handle, int>&)), this, 
       SLOT(selected(const std::map<Polyhedron::Vertex_handle, int>&)));
     connect(&k_ring_selector, SIGNAL(selected(const std::map<Polyhedron::Facet_handle, int>&)), this, 
@@ -537,36 +538,7 @@ public:
 
   void erase_selected_facets() {
     if(selected_facets.empty()) {return;}
-    // erase will-be-erased vertices and edges from selection
-    for(Selection_set_vertex::iterator vb = selected_vertices.begin(); vb != selected_vertices.end(); ) {
-      Polyhedron::Halfedge_around_vertex_circulator hvb((*vb)->vertex_begin()), hvbend(hvb);
-      bool erase = true;
-      do {
-        if(!hvb->is_border() && !selected_facets.is_selected(hvb->facet()) ) {
-          erase = false;
-          break; 
-        }
-      } while(++hvb != hvbend);
-
-      if(erase) {
-        Vertex_handle v_erase = *vb;
-        ++vb;
-        selected_vertices.erase(v_erase);
-      }
-      else { ++vb; }
-    }
-
-    for(Selection_set_edge::iterator eb = selected_edges.begin(); eb != selected_edges.end(); ) {
-      bool first_selected = (*eb)->is_border() || selected_facets.is_selected((*eb)->facet());
-      bool second_selected = (*eb)->opposite()->is_border() || selected_facets.is_selected((*eb)->opposite()->facet());
-
-      if(first_selected && second_selected) {
-        Halfedge_handle h_erase = *eb;
-        ++eb;
-        selected_edges.erase(h_erase);
-      }
-      else { ++eb; }
-    }
+    // no-longer-valid vertices and edges will be handled when item_about_to_be_changed() 
 
     // erase facets from poly
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
@@ -629,8 +601,32 @@ public slots:
   { has_been_selected(m); }
   void selected(const std::map<Polyhedron::Halfedge_handle, int>& m)
   { has_been_selected(m); }
+  void poly_item_changed() {
+    remove_erased_handles<Vertex_handle>();
+    remove_erased_handles<Halfedge_handle>();
+    remove_erased_handles<Facet_handle>();
+  }
 
 protected:
+  template<class HandleType>
+  void remove_erased_handles() {
+    typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
+    Tr tr(this);
+    if(tr.container().empty()) { return;}
+
+    tr.update_indices();
+    std::vector<HandleType> exists;
+    for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
+      if(tr.container().is_selected(it)) {
+        exists.push_back(it);
+      }
+    }
+    tr.container().clear();
+    for(typename std::vector<HandleType>::iterator it = exists.begin(); it != exists.end(); ++it) {
+      tr.container().insert(*it);
+    }
+  }
+
   template<class HandleType>
   void has_been_selected(const std::map<HandleType, int>& selection) 
   {
