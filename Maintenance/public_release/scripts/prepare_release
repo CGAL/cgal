@@ -10,7 +10,7 @@ fi
 
 
 RELEASE_CANDIDATES_DIR=/var/CGAL/www/Members/release-candidates
-MANUAL_TESTS_DIR=/var/CGAL/www/Members/Manual_test
+MANUAL_TESTS_DIR=/var/CGAL/www/Members/Manual_doxygen_test
 
 PUBLIC_RELEASE_DIR="$1"
 
@@ -34,9 +34,7 @@ printf "Copy documentation...\n"
 [ -d "$DEST_DIR/doc_html" ] || mkdir "$DEST_DIR/doc_html"
 
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
-cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/{cgal_manual,Developers_manual,installation_manual} "$DEST_DIR/doc_html"
-cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/cgal_manual.pdf "$DEST_DIR"
-rm "$DEST_DIR"/doc_html/*/comments.xml
+cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output/* "$DEST_DIR/doc_html"
 
 printf "Create doc_html tarball...\n"
 tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
@@ -61,13 +59,10 @@ printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
 
 printf "Create cgal_manual.zip for the Windows installer..."
 pushd "$DEST_DIR/doc_html"
-zip -r ../cgal_manual.zip cgal_manual
+zip -r ../cgal_manual.zip *
 popd
 
 pushd "$DEST_DIR"
-printf "Untar examples/ and include/ for rsync to the server\n"
-tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" --strip-components 1 "${PUBLIC_RELEASE_NAME}"/examples "${PUBLIC_RELEASE_NAME}"/include -C "$DEST_DIR"
-
 printf "Compute md5sum.txt..."
 md5sum *.^txt > md5sum.txt
 sha256sum *.^txt > sha256sum.txt
@@ -76,7 +71,7 @@ popd
 printf "Now use:\n"
 printf "  cd ${DEST_DIR}\n"
 printf "  mv cgal_manual.zip /var/CGAL/www/%s/Manual/\n" "${PUBLIC_RELEASE_NAME#CGAL-}"
-printf "  rsync --compress -av doc_html examples include %s:/www/inf-websites/doc.cgal.org/Manual/%s\n" \
+printf "  rsync --compress -av doc_html %s:/www/inf-websites/doc.cgal.org/Manual/%s\n" \
     cgal@contact.mpi-inf.mpg.de \
     "${PUBLIC_RELEASE_NAME#CGAL-}"
 
