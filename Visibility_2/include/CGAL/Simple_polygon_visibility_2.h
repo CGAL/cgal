@@ -157,6 +157,11 @@ public:
     else {
       vertices.push_back(vertices[0]);
     }
+    std::cout << "VERTICES\n";
+    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
+    std::cout << "END VERTICES\n";
 
     visibility_region_impl(q);
 
@@ -191,6 +196,12 @@ public:
         }
       }
     }
+
+    std::cout << "POINTS\n";
+    for (unsigned int i = 0 ; i < points.size() ; i++) {
+      std::cout << points[i]<<std::endl;
+    }
+    std::cout << "END POINTS\n";
 
     std::reverse(points.begin(), points.end());
 
@@ -419,7 +430,11 @@ private:
     // Scan s_t, s_t-1, ..., s_1, s_0 for the first edge (s_j, s_j-1) such that
     // (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
     bool found = false;
-
+    std::cout << "right w = " << w << std::endl;
+    std::cout << "R: v[i+1] = " << vertices[i+1] << std::endl;
+    std::cout << "R: v[i-1] = " << vertices[i-1] << std::endl;
+    std::cout << "R: v[i] = " << vertices[i] << std::endl;
+    std::cout << "R: s top = " << s.top() << std::endl;
     while(!found && upcase == RIGHT) {
       assert(!s.empty());
       Point_2 s_j = s.top();
@@ -434,8 +449,9 @@ private:
       else {
         s.pop();
         assert(!s.empty());
-      
         Point_2 s_j_prev = s.top();
+        
+        std::cout << "R: s t-1 = " << s_j_prev << std::endl;
         assert(CGAL::Visibility_2::Orientation_2(geom_traits, 
                                                  query_pt, 
                                                  w, 
@@ -454,14 +470,18 @@ private:
                                               w, 
                                               s_j_prev) == CGAL::COLLINEAR) {
           found = true;
+          std::cout << "R found\n";
 
           if (CGAL::Visibility_2::Orientation_2(geom_traits, 
                                                 query_pt,
                                                 w, 
                                                 vertices[i+1]) == CGAL::RIGHT_TURN) {
+          // SEE TEST CASE 
+          //s.push(s_j);
             upcase = RIGHT;
             w = vertices[i+1];
             i++;
+            std::cout << "R continues with w = " << w << std::endl;
           }
           else if ((CGAL::Visibility_2::Orientation_2(geom_traits, 
                                                       query_pt,
@@ -475,12 +495,15 @@ private:
                                                        vertices[i-1],
                                                        vertices[i], 
                                                        vertices[i+1]) == CGAL::RIGHT_TURN)) {
+            std::cout << "in jere\n";
             Segment_2 s1(s_j_prev, s_j);
             Ray_2 s2(query_pt, w);
             Object_2 result = CGAL::Visibility_2::Intersect_2
                         <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
             if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+              std::cout << "ipt = " << *ipoint << std::endl;
               if (i < vertices.size()-1) {
+                
                 upcase = LEFT;
                 if (*ipoint != s_j_prev) {
                   s.push(*ipoint);
@@ -491,6 +514,10 @@ private:
                 i++;                
               }
               else {
+                if (query_pt_is_vertex && *ipoint != s_j_prev) {
+                  s.push(*ipoint);
+                }
+                std::cout << "bla\n";
                 upcase = FINISH;
               }
             }
@@ -526,7 +553,7 @@ private:
   void scana(int &i, Point_2 &w, const Point_2 &query_pt) {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     int k = i;
-
+    std::cout << "scana w = " << w << std::endl;
     while (k+1 < vertices.size()-1) {
 
       if (CGAL::Visibility_2::Orientation_2(geom_traits,
@@ -540,6 +567,7 @@ private:
                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
           s.push(*ipoint);
+          std::cout << "scana ipt = " << *ipoint << std::endl;
           s.push(vertices[k+1]);
           w = vertices[k+1];
           i = k+1;
