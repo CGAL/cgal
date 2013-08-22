@@ -1,12 +1,9 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/test_model_methods.h>
-#include <CGAL/test_utils.h>
 #include <CGAL/Triangular_expansion_visibility_2_.h>
-#include <CGAL/test_utils.h>
+
 
 #include <iostream>
 
