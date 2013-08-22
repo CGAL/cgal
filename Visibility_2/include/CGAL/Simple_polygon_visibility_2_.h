@@ -89,7 +89,7 @@ public:
     return *p_arr;
   }
 
-  Face_handle visibility_region(Point_2 &q, const Face_const_handle face,
+  Face_handle compute_visibility(Point_2 &q, const Face_const_handle face,
                          Output_arrangement_2 &out_arr) {
 
     CGAL::Visibility_2::print_arrangement_by_face<Input_arrangement_2>(*p_arr);
@@ -224,7 +224,7 @@ public:
     }
   }
 
-  Face_handle visibility_region(const Point_2 &q, const Halfedge_const_handle he,
+  Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle he,
                            Output_arrangement_2 &out_arr ) {
 /*
     query_pt_is_vertex = false;
@@ -456,7 +456,6 @@ private:
       ccw = true;
       w = Point_2(vertices[0]);
       polar_mode = RAY;
-      std::cout << "in here\n";
     }
     while (upcase != FINISH) {
       switch(upcase) {
