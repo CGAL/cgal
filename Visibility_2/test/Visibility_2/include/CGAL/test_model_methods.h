@@ -60,7 +60,7 @@ void test_model_methods_for_arr(
   // First consider query point in the unbounded face
   Point_2 query_pt(1, 1);
   // Check returned face_handle
-  Face_handle face_check = visibility.visibility_region(query_pt, fit, arr_out);
+  Face_handle face_check = visibility.compute_visibility(query_pt, fit, arr_out);
   Face_handle face;
   if (arr_out.faces_begin()->is_unbounded()) {
     face = ++arr_out.faces_begin();
@@ -76,13 +76,13 @@ void test_model_methods_for_arr(
   assert(false == visibility.is_attached());
   visibility.attach(arr);
 
-  visibility.visibility_region(query_pt, fit, arr_out_check);
+  visibility.compute_visibility(query_pt, fit, arr_out_check);
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out_check, arr));
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr_out_check));
   arr_out.clear();
-  visibility.visibility_region(query_pt, fit, arr_out);
+  visibility.compute_visibility(query_pt, fit, arr_out);
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr_out_check));
 
@@ -96,7 +96,7 @@ void test_model_methods_for_arr(
 
     if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
       std::cout << "Running halfedge case...\n";
-      face_check_he = visibility.visibility_region(query_pt, hit, arr_out);
+      face_check_he = visibility.compute_visibility(query_pt, hit, arr_out);
       break;
     }
   }
@@ -110,7 +110,7 @@ void test_model_methods_for_arr(
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr));
   arr_out_check.clear();
-  visibility.visibility_region(query_pt, hit, arr_out_check);
+  visibility.compute_visibility(query_pt, hit, arr_out_check);
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr_out_check));  
 
@@ -119,7 +119,7 @@ void test_model_methods_for_arr(
   for (hit_snd = arr.halfedges_begin(); hit_snd != arr.halfedges_end(); ++hit_snd) {
     if(!hit_snd->face()->is_unbounded()){
       arr_out.clear();
-      Face_handle face_check_he_snd = visibility.visibility_region(hit_snd->target()->point(), hit_snd, arr_out);
+      Face_handle face_check_he_snd = visibility.compute_visibility(hit_snd->target()->point(), hit_snd, arr_out);
       assert(!face_check_he_snd->is_unbounded());
       if (arr_out.faces_begin()->is_unbounded()) {
         face = ++arr_out.faces_begin();

@@ -75,14 +75,14 @@ public:
 		return *p_arr;
 	}
 
-	void visibility_region(Point_2 &q, 
+	void compute_visibility(Point_2 &q, 
 						   const Face_const_handle face,
 						   Output_Arrangement_2 &out_arr
                            ) {
 
     }
 
-	void visibility_region(const Point_2 &q, 
+	void compute_visibility(const Point_2 &q, 
 						   const Halfedge_const_handle he,
 						   Output_Arrangement_2 &out_arr
 						   ) {

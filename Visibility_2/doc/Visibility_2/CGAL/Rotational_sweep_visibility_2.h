@@ -2,10 +2,10 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-\brief This class is a model of the concept `Visibility_2` offering visibility queries within a polygon that may have holes.
+\brief This class is a model of the concept `Visibility_2` can answer visibility queries within a polygon that may have holes.
 
 
-\details The algorithm it applies to obtain visibility is without preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
+\details The algorithm does not require preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
@@ -52,6 +52,11 @@ public:
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
+  /*!
+    Face_handle type of the output arrangement.
+    */
+  typedef Output_arrangement_2::Face_handle  Face_handle;
+
 /// @}
 
 /// \name Tags 
@@ -76,7 +81,7 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Rotational_sweep_visibility_2' object that is not
+Default constructor creates an empty `Rotational_sweep_visibility_2` object that is not
 attached to any arrangement yet.
 */
 Rotational_sweep_visibility_2();
@@ -99,9 +104,9 @@ Returns whether an arrangement is attached to the visibility object
 /*!
 Attaches the given arrangement to the visibility object.
 In case the object is already attached to another arrangement, 
-the visibility object gets detached before being attached to 'arr'.
+the visibility object gets detached before being attached to `arr`.
 */
-  void attach(const Input_arrangement_2 &arr);
+  void attach(const Input_arrangement_2& arr);
   
 /*!
 Detaches the arrangement from the visibility object it is currently attached to
@@ -117,19 +122,19 @@ Access to the attached arrangement
 Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point from which the visibility region is computed
+\param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()` and represents a valid polygon. 
 \pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
 
 /*!
 Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
 The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point from which the visibility region is computed
+\param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
 \pre `e` is a halfedge of  `this->arr()`
@@ -137,7 +142,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region
 */
-  Face_handle visibility_region(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
 
 
 /// @}

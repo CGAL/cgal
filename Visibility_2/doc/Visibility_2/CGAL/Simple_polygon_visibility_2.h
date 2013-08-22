@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 \ingroup PkgVisibility_2Classes
 
-\brief This class is a model of the concept `Visibility_2` offering visibility queries within
+\brief This class is a model of the concept `Visibility_2` can answer visibility queries within
 a simple polygon with no holes.
 
 \details This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to
@@ -12,17 +12,13 @@ of the  linear time algorithm of Lee \cite dtl-voasp-83. It computes the visibil
 viewpoint that is in the interior or on the boundary of the polygon. 
 
 The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
-region. For each scanned edge, at most 2 points are pushed on the stack. Overall, it
-will have at most 2n points pushed and popped, thus the time and space complexities of the 
+region. For each scanned edge, at most 2 points are pushed onto the stack. Overall, it
+will have at most 2\f$ n \f$ points pushed and popped, thus the time and space complexities of the
 algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n is the number of 
 the vertices of the polygon.
 
-The class offers the option to either compute the visibility region or the visibility polygon, which can be chosen 
-at compile time via the second template argument RegularizationTag. The default for the RegularizationTag
-is ::Tag_false, which means the visibility region will be computed. Setting the template argument
-to ::Tag_true will produce the output as a visibility polygon.
 
-\tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
+\tparam Arrangement_2 is the type of input polygonal environment and output visibility region.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
@@ -64,6 +60,11 @@ public:
    Halfedge_const_handle type of input arrangement.
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+
+  /*!
+    Face_handle type of the output arrangement.
+    */
+  typedef Output_arrangement_2::Face_handle  Face_handle;
    
 /// @}
 
@@ -92,7 +93,7 @@ public:
 /// @{
 
 /*!
-Default constructor creates an empty 'Simple_polygon_visibility_2' object that is not
+Default constructor creates an empty `Simple_polygon_visibility_2` object that is not
 attached to any arrangement yet.
 */
 Simple_polygon_visibility_2();
@@ -115,9 +116,9 @@ Returns whether an arrangement is attached to the visibility object
 /*!
 Attaches the given arrangement to the visibility object.
 In case the object is already attached to another arrangement, 
-the visibility object gets detached before being attached to 'arr'.
+the visibility object gets detached before being attached to `arr`.
 */
-  void attach (const Input_arrangement_2 &arr);
+  void attach (const Input_arrangement_2& arr);
 
 /*!
 Detaches the arrangement from the visibility object it is currently attached to
@@ -134,19 +135,19 @@ Computes the visibility region for the given query point `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement 
-\param q is the query point from which the visibility region is computed
+\param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \pre `f` is a face of  `this->arr()` and represents a valid polygon. 
 \pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle visibility_region(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
 
 
 /*!
 Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
 The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point from which the visibility region is computed
+\param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
 \pre `e` is a halfedge of  `this->arr()`
@@ -154,7 +155,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region
 */
-  Face_handle visibility_region(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
 
 
 /// @}

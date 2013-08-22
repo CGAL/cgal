@@ -348,7 +348,7 @@ public:
     
   }
 
-  Face_handle visibility_region(Point_2 &q,
+  Face_handle compute_visibility(Point_2 &q,
       const Face_const_handle face,
       Output_arrangement_2 &out_arr
   ){
@@ -396,7 +396,7 @@ public:
     return output(raw_output,out_arr);
   }
 
-  Face_handle visibility_region(const Point_2 &q, 
+  Face_handle compute_visibility(const Point_2 &q, 
       const Halfedge_const_handle he,
       Output_arrangement_2 &out_arr) {
     //std::cout << "visibility_region he" << std::endl;
