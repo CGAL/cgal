@@ -114,61 +114,19 @@ tar xzf `CGAL-x.y`.tar.gz
 In both cases the directory `CGAL-x.y` will be created. This directory
 contains the following subdirectories:
 
-<CENTER>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>directory</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>contents</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`auxiliary` 
-<TD ALIGN=LEFT NOWRAP>
-precompiled \sc{Gmp} and \sc{Mpfr} for Windows
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`cmake/modules` 
-<TD ALIGN=LEFT NOWRAP>
-modules for finding and using libraries
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`config` 
-<TD ALIGN=LEFT NOWRAP>
-configuration files for install script
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`demo` 
-<TD ALIGN=LEFT NOWRAP>
-demo programs (most of them need \sc{Qt}, geomview or other third-party products)
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`doc_html` 
-<TD ALIGN=LEFT NOWRAP>
-documentation (HTML)
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`examples` 
-<TD ALIGN=LEFT NOWRAP>
-example programs
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`include` 
-<TD ALIGN=LEFT NOWRAP>
-header files
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`scripts` 
-<TD ALIGN=LEFT NOWRAP>
-some useful scripts (e.g. for creating CMakeLists.txt files)
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`src` 
-<TD ALIGN=LEFT NOWRAP>
-source files
-</TABLE>
 
-</CENTER>
+| Directory   | Contents   | 
+| :-----------| :----------|
+| `auxiliary`  | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
+| `cmake/modules` | modules for finding and using libraries |
+| `config` |configuration files for install script |
+| `demo` | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
+| `doc_html` |documentation (HTML) | 
+| `examples` | example programs |
+| `include`  | header files |
+| `scripts`  | some useful scripts (e.g. for creating CMakeLists.txt files) |
+| `src`      | source files |
+
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
 distribution of the \sc{Core} library\cgalFootnote{<A HREF="http://www.cs.nyu.edu/exact/">`http://www.cs.nyu.edu/exact/`</A>} version 1.7 for
@@ -189,39 +147,14 @@ installation manual. The \cgal manual must be downloaded separately from
 In order to build the \cgal libraries, you need a \cpp compiler. 
 \cgal x.y is supported for the following compilers/operating systems:
 
-<CENTER>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>compiler</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>operating system</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-\sc{Gnu} `g++` 3.4 or later<A HREF="#Footnote_1"><SUP>1</SUP></A>
 
-<TD ALIGN=LEFT NOWRAP>
-Linux / MacOS X
+| Compiler | Operating System |
+| :------- | :--------------- |
+|\sc{Gnu} `g++` 3.4 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
+|          | \sc{MS} Windows 95/98/2000/XP/NT4 | 
+| \sc{Intel} `C++` 11.0 or later\cgalFootnote{<A HREF="http://software.intel.com/en-us/intel-compilers/">`http://software.intel.com/en-us/intel-compilers/`</A>} | Linux  |
+|\sc{MS} Visual `C++` 9.0, 10.0, 11.0 (\sc{Visual Studio} 2008, 2010 and 2012)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows 95/98/2000/XP/NT4/Vista/7/8 |
 
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-
-<TD ALIGN=LEFT NOWRAP>
-\sc{MS} Windows 95/98/2000/XP/NT4
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-\sc{Intel} `C++` 11.0 or later<A HREF="#Footnote_2"><SUP>2</SUP></A> 
-<TD ALIGN=LEFT NOWRAP>
-Linux 
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-\sc{MS} Visual `C++` 9.0, 10.0 (\sc{Visual Studio 2008 and 2010})<A HREF="#Footnote_3"><SUP>3</SUP></A>
-
-<TD ALIGN=LEFT NOWRAP>
-\sc{MS} Windows 95/98/2000/XP/NT4/Vista/7
-</TABLE>
-
-</CENTER>
 
 \section secconfigwithcmake Configuring CGAL with CMake 
 
@@ -353,74 +286,14 @@ configuration; see \ref secbuilding
 We next list the libraries and essential 3rd party software
 (see \ref secessential3rdpartysoftware) for each library:
 
-<CENTER>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>library</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>CMake variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>functionality</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>dependencies</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`%CGAL` 
-<TD ALIGN=LEFT NOWRAP>
-<I>none</I> 
-<TD ALIGN=LEFT NOWRAP>
-Main library 
-<TD ALIGN=LEFT NOWRAP>
-\sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers)
-<TR>
-<TD ALIGN=LEFT NOWRAP>
+| Library   | CMake Variable | Functionality | Dependencies |
+| :-------- | :------------- | :------------ | :----------- |
+| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) |
+| `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
+| `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
+| `CGAL_Qt3`  | `WITH_CGAL_Qt3` | `CGAL::Qt_widget` used by \sc{Qt}3-based demos  | \sc{Qt}3 and \sc{OpenGL}  |
+| `CGAL_Qt4`  | `WITH_CGAL_Qt4` | `QGraphicsView` support for \sc{Qt}4-based demos | \sc{Qt}4 and \sc{OpenGL} |
 
-<TD ALIGN=LEFT NOWRAP>
-
-<TD ALIGN=LEFT NOWRAP>
-
-<TD ALIGN=LEFT NOWRAP>
-and Boost.Thread (library)
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_Core` 
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_Core` 
-<TD ALIGN=LEFT NOWRAP>
-The CORE library for algebraic numbers.<A HREF="#Footnote_15"><SUP>15</SUP></A> 
-<TD ALIGN=LEFT NOWRAP>
-\sc{Gmp} and \sc{Mpfr}
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_ImageIO` 
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_ImageIO` 
-<TD ALIGN=LEFT NOWRAP>
-Utilities to read and write image files 
-<TD ALIGN=LEFT NOWRAP>
-\sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional)
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_Qt3` 
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_Qt3` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL::Qt_widget` used by \sc{Qt}3-based demos 
-<TD ALIGN=LEFT NOWRAP>
-\sc{Qt}3 and \sc{OpenGL}
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_Qt4` 
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_Qt4` 
-<TD ALIGN=LEFT NOWRAP>
-`QGraphicsView` support for \sc{Qt}4-based demos 
-<TD ALIGN=LEFT NOWRAP>
-\sc{Qt}4 and \sc{OpenGL}
-</TABLE>
-
-</CENTER>
 
 \subsection installation_debug Debug vs. Release
 
@@ -564,7 +437,7 @@ your own demos you might need these \cgal-libraries.
 
 Optional 3rd party software can be used by \cgal for various reasons:
 Usually certain optional libraries are required to build examples and
-demos shipped with \cgal\ or to build your own project using \cgal. 
+demos shipped with \cgal or to build your own project using \cgal. 
 Another reason is to speed up basic tasks. 
 In order to support these goals, all optional libraries can be <i>prepared to be
 used with \cgal</I> while configuring \cgal, just in the same way as
@@ -1176,46 +1049,15 @@ summarized below are CMake variables.
 The following boolean variables indicate which \cgal components to
 configure and build. Their values can be ON or OFF.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Default value</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_examples` 
-<TD ALIGN=LEFT NOWRAP>
-OFF
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_demos` 
-<TD ALIGN=LEFT NOWRAP>
-OFF
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_Core` 
-<TD ALIGN=LEFT NOWRAP>
-ON
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_Qt3` 
-<TD ALIGN=LEFT NOWRAP>
-ON
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_Qt4` 
-<TD ALIGN=LEFT NOWRAP>
-ON
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_CGAL_ImageIO` 
-<TD ALIGN=LEFT NOWRAP>
-ON
-</TABLE>
 
-</SMALL>
+| Variable | %Default Value   |
+| :------- | :--------------- |
+| `WITH_examples`     | OFF   |
+| `WITH_demos`        | OFF   |
+| `WITH_CGAL_Core`    | ON    |
+| `WITH_CGAL_Qt3`     | ON    |
+| `WITH_CGAL_Qt4`     | ON    |
+| `WITH_CGAL_ImageIO` | ON    |
 
 \subsection installation_flags Compiler and Linker Flags
 
@@ -1230,182 +1072,45 @@ the list of flags chosen by CMake for that particular variable.
 The variables that correspond to both debug and release builds are always
 used in conjunction with those for the specific build type.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Program</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Both Debug and Release</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Release only</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Debug Only</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-C++ Compiler 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_CXX_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_CXX_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_CXX_FLAGS_DEBUG`
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-Linker (shared libs) 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_SHARED_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_SHARED_LINKER_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_SHARED_LINKER_FLAGS_DEBUG`
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-Linker (static libs) 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_MODULE_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_MODULE_LINKER_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_MODULE_LINKER_FLAGS_DEBUG`
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-Linker (programs) 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_EXE_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_EXE_LINKER_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_EXE_LINKER_FLAGS_DEBUG`
-</TABLE>
 
-</SMALL>
+| Program               | Both Debug and Release      |  Release Only                        |  Debug Only  |
+| :------               | :----------------------     | :-------------                       | :----------- |
+| C++ Compiler          | `CMAKE_CXX_FLAGS`           | `CMAKE_CXX_FLAGS_RELEASE`            | `CMAKE_CXX_FLAGS_DEBUG` |
+| Linker (shared libs)  | `CMAKE_SHARED_LINKER_FLAGS` | `CMAKE_SHARED_LINKER_FLAGS_RELEASE`  | `CMAKE_SHARED_LINKER_FLAGS_DEBUG` |
+| Linker (static libs)  | `CMAKE_MODULE_LINKER_FLAGS` | `CMAKE_MODULE_LINKER_FLAGS_RELEASE`  | `CMAKE_MODULE_LINKER_FLAGS_DEBUG` |
+| Linker (programs)     | `CMAKE_EXE_LINKER_FLAGS`    | `CMAKE_EXE_LINKER_FLAGS_RELEASE`     | `CMAKE_EXE_LINKER_FLAGS_DEBUG`|
+
 
 \subsection installation_additional_flags Additional Compiler and Linker Flags
 
 The following variables can be used to <I>add</I> flags without overriding the ones
 defined by cmake.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Program</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Both Debug and Release</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Release only</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Debug Only</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-C++ Compiler 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_CXX_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_CXX_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_CXX_FLAGS_DEBUG`
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-Linker (shared libs) 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_SHARED_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_SHARED_LINKER_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_SHARED_LINKER_FLAGS_DEBUG`
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-Linker (static libs) 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_MODULE_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_MODULE_LINKER_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_MODULE_LINKER_FLAGS_DEBUG`
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-Linker (programs) 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_EXE_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_EXE_LINKER_FLAGS_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_EXE_LINKER_FLAGS_DEBUG`
-</TABLE>
 
-</SMALL>
+| Program               | Both Debug and Release      |  Release Only                        |  Debug Only  |
+| :------               | :----------------------     | :-------------                       | :----------- |
+| C++ Compiler          | `CGAL_CXX_FLAGS`            | `CGAL_CXX_FLAGS_RELEASE`             | `CGAL_CXX_FLAGS_DEBUG` |
+| Linker (shared libs)  | `CGAL_SHARED_LINKER_FLAGS`  | `CGAL_SHARED_LINKER_FLAGS_RELEASE`   | `CGAL_SHARED_LINKER_FLAGS_DEBUG` |
+| Linker (static libs)  | `CGAL_MODULE_LINKER_FLAGS`  | `CGAL_MODULE_LINKER_FLAGS_RELEASE`   | `CGAL_MODULE_LINKER_FLAGS_DEBUG` |
+| Linker (programs)     | `CGAL_EXE_LINKER_FLAGS`     | `CGAL_EXE_LINKER_FLAGS_RELEASE`      | `CGAL_EXE_LINKER_FLAGS_DEBUG` |
 
 \subsection installation_misc Miscellaneous Variables
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Default value</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_BUILD_TYPE` 
-<TD ALIGN=LEFT NOWRAP>
-Indicates type of build. Possible values are 'Debug' or 'Release' 
-<TD ALIGN=LEFT NOWRAP>
-CMake 
-<TD ALIGN=LEFT NOWRAP>
-Release
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CMAKE_CXX_COMPILER` 
-<TD ALIGN=LEFT NOWRAP>
-Full-path to the executable corresponding to the C++ compiler to use. 
-<TD ALIGN=LEFT NOWRAP>
-CMake 
-<TD ALIGN=LEFT NOWRAP>
-platform-dependent
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CXX` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment 
-<TD ALIGN=LEFT NOWRAP>
-Idem
-</TABLE>
 
-</SMALL>
+| Variable              | Description                                                           | Type        | %Default Value | 
+| :-                    | :-                    | :-   |  :-            |
+| `CMAKE_BUILD_TYPE`    | Indicates type of build. Possible values are 'Debug' or 'Release'     | CMake       | Release |
+| `CMAKE_CXX_COMPILER`  | Full-path to the executable corresponding to the C++ compiler to use. | CMake       | platform-dependent |
+| `CXX`                 | Idem                                                                  | Environment | Idem |
+
 
 \subsection installation_variables_building Variables Used Only When Building Programs (Such as Demos or Examples)
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Default value</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`CGAL_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Full-path to the binary directory where \cgal was configured 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake or Environment 
-<TD ALIGN=LEFT NOWRAP>
-<I>none</I>
-</TABLE>
 
-</SMALL>
+| Variable              | Description                                                           | Type        | %Default Value | 
+| :-                    | :-                    | :-   |  :-            |
+| `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
+
 
 \subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
 \anchor sec3partysoftwareconfig
@@ -1437,67 +1142,16 @@ the `.dll` files are found by the dynamic linker, at run time.
 For example, you can add the path to the \sc{Boost} `.dll` to the
 `PATH` environment variable.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`BOOST_ROOT`<A HREF="#Footnote_16"><SUP>16</SUP></A> 
-<TD ALIGN=LEFT NOWRAP>
-Root directory of your \sc{Boost} installation 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake or Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`Boost_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `boost/version.hpp` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`BOOST_INCLUDEDIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`Boost_LIBRARY_DIRS` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \sc{Boost} libraries 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`BOOST_LIBRARYDIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`Boost_(xyz)_LIBRARY_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to a release build of the compiled 'xyz' \sc{Boost} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`Boost_(xyz)_LIBRARY_DEBUG` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to a debug build of the compiled 'xyz' \sc{Boost} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
+| Variable              | Description                                                           | Type        |
+| :-                    | :-                    | :-             |
+| `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either `BOOST_ROOT` or `BOOSTROOT`} | Root directory of your \sc{Boost} installation | Either CMake or Environment |
+| `Boost_INCLUDE_DIR`   | Directory containing the `boost/version.hpp` file  | CMake |
+| `BOOST_INCLUDEDIR`    | Idem | Environment |
+| `Boost_LIBRARY_DIRS`  | Directory containing the compiled \sc{Boost} libraries  | CMake | 
+| `BOOST_LIBRARYDIR`    | Idem | Environment |
+| `Boost_(xyz)_LIBRARY_RELEASE`  | Full pathname to a release build of the compiled 'xyz' \sc{Boost} library | CMake | 
+| `Boost_(xyz)_LIBRARY_DEBUG` | Full pathname to a debug build of the compiled 'xyz' \sc{Boost} library | CMake |
 
-</SMALL>
 
 \subsection installation_gmp GMP and MPFR Libraries
 
@@ -1509,138 +1163,33 @@ Thus you would specify `GMP|MPFR_LIBRARIES`. In no case you need to specify both
 \cgal uses both \sc{Gmp} and \sc{Mpfr} so both need to be supported. If either of them is unavailable the 
 usage of \sc{Gmp} and of \sc{Mpfr} will be disabled.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_GMP` 
-<TD ALIGN=LEFT NOWRAP>
-Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMP_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{Gmp} default installation 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMP_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `gmp.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMP_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMP_LIBRARIES_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \sc{Gmp} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMP_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMP_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled \sc{Gmp} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFR_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `mpfr.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFR_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFR_LIBRARIES_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \sc{Mpfr} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFR_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFR_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled \sc{Mpfr} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable              | Description                                                           | Type        |
+| :-                    | :-                    | :-             |
+| `WITH_GMP`            | Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not  | CMake | 
+| `GMP_DIR`  | Directory of \sc{Gmp} default installation  | Environment |
+| `GMP_INCLUDE_DIR`  | Directory containing the `gmp.h` file  | CMake | 
+| `GMP_INC_DIR` | Idem | Environment |
+| `GMP_LIBRARIES_DIR`  | Directory containing the compiled \sc{Gmp} library | CMake |
+| `GMP_LIB_DIR` | Idem | Environment |
+| `GMP_LIBRARIES` | Full pathname of the compiled \sc{Gmp} library  | CMake |
+| `MPFR_INCLUDE_DIR` | Directory containing the `mpfr.h` file | CMake |
+| `MPFR_INC_DIR`  | Idem | Environment | 
+| `MPFR_LIBRARIES_DIR` | Directory containing the compiled \sc{Mpfr} library | CMake |
+| `MPFR_LIB_DIR` | Idem | Environment |
+| `MPFR_LIBRARIES`  | Full pathname of the compiled \sc{Mpfr} library | CMake |
+
+
 
 Under Linux, the \sc{Gmpxx} is also searched for, and you may specify the following variables:
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMPXX_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{gmpxx} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMPXX_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `gmpxx.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`GMPXX_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled \sc{Gmpxx} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable              | Description                                                           | Type        |
+| :-                    | :-                    | :-             |
+| `GMPXX_DIR` | Directory of \sc{gmpxx} default installation | Environment |
+| `GMPXX_INCLUDE_DIR`  | Directory containing the `gmpxx.h` file  | CMake |
+| `GMPXX_LIBRARIES`  | Full pathname of the compiled \sc{Gmpxx} library  | CMake |
+
 
 \subsection installation_qt3 Qt3 Library
 
@@ -1648,67 +1197,18 @@ In most cases, if \sc{Qt}3 is not automatically found, setting the `QTDIR`
 environment variable is sufficient. If it is not, you can specify the directory containing 
 the header files and the full pathnames of the \sc{Qt}3 libraries.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QTDIR` 
-<TD ALIGN=LEFT NOWRAP>
-Root directory of the \sc{Qt}3 library 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT3_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `qt.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT3_QT_LIBRARY` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the qt library of \sc{Qt}3 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT3_QTMAIN_LIBRARY` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the qtmain library of \sc{Qt}3 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT3_QASSISTANTCLIENT_LIBRARY` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the qassistantclient library of \sc{Qt}3 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT3_MOC_EXECUTABLE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the moc executable of \sc{Qt}3 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT3_UIC_EXECUTABLE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the uic executable of \sc{Qt}3 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable              | Description           | Type        |
+| :-                    | :-                    | :-             |
+| `QTDIR`  |Root directory of the \sc{Qt}3 library  | Environment |
+| `QT3_INCLUDE_DIR`  | Directory containing the `qt.h` file  | CMake |
+| `QT3_QT_LIBRARY`  | Full pathname to the qt library of \sc{Qt}3  | CMake |
+| `QT3_QTMAIN_LIBRARY`  | Full pathname to the qtmain library of \sc{Qt}3  | CMake |
+| `QT3_QASSISTANTCLIENT_LIBRARY` | Full pathname to the qassistantclient library of \sc{Qt}3  | CMake | 
+| `QT3_MOC_EXECUTABLE`  | Full pathname to the moc executable of \sc{Qt}3 | CMake |
+| `QT3_UIC_EXECUTABLE`  | Full pathname to the uic executable of \sc{Qt}3 | CMake |
+
+
 
 \subsection installation_qt4 Qt4 Library
 
@@ -1719,60 +1219,16 @@ environment variable, so that \sc{Qt}4 `qmake` tool is in the path, and
 before \sc{Qt}3 `qmake` if that one exists. One can alternatively set the
 CMake variable `QT_QMAKE_EXECUTABLE`. The following variables
 should be then assigned automatically by CMake.
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `QtCore/qglobal.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT_LIBRARY_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \sc{Qt}4 libraries 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT_(xyz)_LIBRARY` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the compiled 'xyz' \sc{Qt}4 library<A HREF="#Footnote_17"><SUP>17</SUP></A> 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT_QMAKE_EXECUTABLE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the qmake executable of \sc{Qt}4 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT_MOC_EXECUTABLE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the moc executable of \sc{Qt}4 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QT_UIC_EXECUTABLE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to the uic executable of \sc{Qt}4 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable              | Description           | Type        |
+| :-                    | :-                    | :-             |
+| `QT_INCLUDE_DIR`      | Directory containing the `QtCore/qglobal.h` file  | CMake |
+|`QT_LIBRARY_DIR`       | Directory containing the compiled \sc{Qt}4 libraries | CMake |
+| `QT_(xyz)_LIBRARY`    | Full pathname to the compiled 'xyz' \sc{Qt}4 library\cgalFootnote{If both release and debug versions are available, this variable contains a list of the following form: 'optimized;<fullpath-to-release-lib>;debug;<fullpath-to-debug-lib>', where the 'optimized' and 'debug' tags should appear verbatim.} | CMake |
+| `QT_QMAKE_EXECUTABLE` | Full pathname to the qmake executable of \sc{Qt}4 | CMake |
+| `QT_MOC_EXECUTABLE`   | Full pathname to the moc executable of \sc{Qt}4 | CMake |
+| `QT_UIC_EXECUTABLE`   | Full pathname to the uic executable of \sc{Qt}4 | CMake |
+
 
 \subsection installation_leda LEDA Library
 
@@ -1784,95 +1240,21 @@ via `LEDA_LIBRARY_RELEASE` and `LEDA_LIBRARY_DEBUG`.
 
 The variables specifying definitions and flags can be left undefined if they are not needed by LEDA.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`WITH_LEDA` 
-<TD ALIGN=LEFT NOWRAP>
-Indicates whether to search and use \leda or not 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{LEDA} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the file `LEDA/system/basic.h` 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \leda libraries 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the file `LEDA/system/basic.h` 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \leda libraries 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_LIBRARY_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to a release build of the \leda library 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_LIBRARY_DEBUG` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to a debug build of the \leda library 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_DEFINITIONS` 
-<TD ALIGN=LEFT NOWRAP>
-Preprocessor definitions 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_CXX_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-Compiler flags 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`LEDA_LINKER_FLAGS` 
-<TD ALIGN=LEFT NOWRAP>
-Linker flags 
-<TD ALIGN=LEFT NOWRAP>
-Either CMake
-</TABLE>
 
-</SMALL>
+| Variable               | Description           | Type        |
+| :-                     | :-                    | :-             |
+| `WITH_LEDA`            | Indicates whether to search and use \leda or not | CMake |
+| `LEDA_DIR`             | Directory of \sc{LEDA} default installation | Environment |
+| `LEDA_INCLUDE_DIR`     | Directory containing the file `LEDA/system/basic.h` | CMake |
+| `LEDA_LIBRARIES`       | Directory containing the compiled \leda libraries | CMake |
+| `LEDA_INC_DIR`         | Directory containing the file `LEDA/system/basic.h` | Environment |
+| `LEDA_LIB_DIR`         | Directory containing the compiled \leda libraries  | Environment |
+| `LEDA_LIBRARY_RELEASE` | Full pathname to a release build of the \leda library | CMake |
+| `LEDA_LIBRARY_DEBUG`   | Full pathname to a debug build of the \leda library | CMake |
+| `LEDA_DEFINITIONS`     | Preprocessor definitions | CMake |
+| `LEDA_CXX_FLAGS`       | Compiler flags | CMake |
+| `LEDA_LINKER_FLAGS`    | Linker flags | CMake |
+
 
 \subsection installation_mpfi MPFI Library
 
@@ -1883,60 +1265,17 @@ configured when compiling an application that uses the above number type.
 When \sc{Mpfi} files are not on the standard path, the locations of the headers
 and library files must be specified by using environment variables.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFI_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{MPFI} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFI_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `mpfi.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFI_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFI_LIBRARIES_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \sc{Mpfi} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFI_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`MPFI_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled \sc{Mpfi} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `MPFI_DIR`           |Directory of \sc{MPFI} default installation | Environment |
+| `MPFI_INCLUDE_DIR`   | Directory containing the `mpfi.h` file | CMake | 
+| `MPFI_INC_DIR`       | Idem | Environment |
+| `MPFI_LIBRARIES_DIR` | Directory containing the compiled \sc{Mpfi} library | CMake |
+| `MPFI_LIB_DIR`       | Idem | Environment |
+| `MPFI_LIBRARIES`     | Full pathname of the compiled \sc{Mpfi} library | CMake |
+
+
 
 \subsection installation_rs RS and RS3 Library
 
@@ -1951,117 +1290,27 @@ headers and library files must be specified using environment variables.
 Rs needs \sc{Gmp} 4.2 or later and \sc{Mpfi} 1.3.4 or later. The variables
 related to the latter library may also need to be defined.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{RS} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `rs_exports.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS_LIBRARIES_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled Rs library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled Rs library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `RS_DIR` | Directory of \sc{Rs} default installation | Environment |
+| `RS_INCLUDE_DIR` | Directory containing the `rs_exports.h` file | CMake |
+| `RS_INC_DIR` | Idem | Environment |
+| `RS_LIBRARIES_DIR`  | Directory containing the compiled \sc{Rs} library | CMake |
+| `RS_LIB_DIR` | Idem | Environment |
+| `RS_LIBRARIES` | Full pathname of the compiled \sc{Rs} library | CMake |
 
-Similar variables exist for Rs3.
+Similar variables exist for \sc{Rs3}.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS3_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{RS3} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS3_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the file `rs3_fncts.h` file
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS3_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS3_LIBRARIES_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled Rs3 library
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS3_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`RS3_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled Rs3 library
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-       
+| `RS3_DIR` | Directory of \sc{Rs3} default installation | Environment |
+| `RS3_INCLUDE_DIR` | Directory containing the file `rs3_fncts.h` file | CMake |
+| `RS3_INC_DIR` | Idem | Environment |
+| `RS3_LIBRARIES_DIR` | Directory containing the compiled \sc{Rs3} library | CMake |
+| `RS3_LIB_DIR` | Idem | Environment |
+| `RS3_LIBRARIES` | Full pathname of the compiled \sc{Rs3} library | CMake |
 
-</SMALL>
 
 \subsection installation_ntl NTL Library
 
@@ -2074,99 +1323,26 @@ CMake will try to find \sc{Ntl} in the standard header and library
 directories. When it is not automatically detected, the locations of the
 headers and library files must be specified using environment variables.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`NTL_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{NTL} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`NTL_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `NTL/ZZX.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`NTL_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`NTL_LIBRARIES_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the compiled \sc{Ntl} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`NTL_LIB_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`NTL_LIBRARIES` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname of the compiled \sc{Ntl} library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
-
-</SMALL>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `NTL_DIR` | Directory of \sc{NTL} default installation | Environment |
+| `NTL_INCLUDE_DIR` | Directory containing the `NTL/ZZX.h` file | CMake |
+| `NTL_INC_DIR` | Idem | Environment |
+| `NTL_LIBRARIES_DIR` | Directory containing the compiled \sc{Ntl} library | CMake |
+| `NTL_LIB_DIR` | Idem | Environment |
+| `NTL_LIBRARIES` | Full pathname of the compiled \sc{Ntl} library | CMake |
 
 \subsection installation_eigen Eigen Library
 
 \sc{Eigen} is a header-only template library.
 Only the <I>directory</I> containing the header files of \sc{Eigen} 3.1 (or greater) is needed.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`EIGEN3_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{EIGEN} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`EIGEN3_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the file `signature_of_eigen3_matrix_library` 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`EIGEN3_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Idem 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-</TABLE>
 
-</SMALL>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `EIGEN3_DIR` | Directory of \sc{EIGEN} default installation | Environment |
+| `EIGEN3_INCLUDE_DIR` | Directory containing the file `signature_of_eigen3_matrix_library` | CMake |
+| `EIGEN3_INC_DIR` | Idem | Environment |
 
 \subsection installation_qgl QGLViewer Library
 
@@ -2176,46 +1352,13 @@ In most cases, if QGLViewer is not automatically found, setting the `QGLVIEWERRO
 environment variable is sufficient. If it is not, you can specify the directory containing 
 the header files and the full pathnames of the release and debug libraries
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QGLVIEWERROOT` 
-<TD ALIGN=LEFT NOWRAP>
-Root directory of the QGLViewer library 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QGLVIEWER_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `QGLViewer/qglviewer.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QGLVIEWER_LIBRARY_RELEASE` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to a release build of the QGLViewer library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`QGLVIEWER_LIBRARY_DEBUG` 
-<TD ALIGN=LEFT NOWRAP>
-Full pathname to a debug build of the QGLViewer library 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `QGLVIEWERROOT` | Root directory of the QGLViewer library | Environment |
+| `QGLVIEWER_INCLUDE_DIR` | Directory containing the `QGLViewer/qglviewer.h` file | CMake |
+| `QGLVIEWER_LIBRARY_RELEASE` | Full pathname to a release build of the QGLViewer library | CMake |
+| `QGLVIEWER_LIBRARY_DEBUG` | Full pathname to a debug build of the QGLViewer library | CMake |
 
-</SMALL>
 
 \subsection installation_esbtl ESBTL Library
 
@@ -2224,39 +1367,12 @@ One skin surface example requires the \sc{Esbtl} library in order to read \sc{Pd
 If \sc{Esbtl} is not automatically found, setting the `ESBTL_INC_DIR`
 environment variable is sufficient.
 
-<SMALL>
-<TABLE CELLSPACING=5 BORDER=2>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-<B>Variable</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Description</B> 
-<TD ALIGN=LEFT NOWRAP>
-<B>Type</B>
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`ESBTL_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory of \sc{ESBTL} default installation
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`ESBTL_INC_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `ESBTL/default.h` file 
-<TD ALIGN=LEFT NOWRAP>
-Environment
-<TR>
-<TD ALIGN=LEFT NOWRAP>
-`ESBTL_INCLUDE_DIR` 
-<TD ALIGN=LEFT NOWRAP>
-Directory containing the `ESBTL/default.h` file 
-<TD ALIGN=LEFT NOWRAP>
-CMake
-</TABLE>
 
-</SMALL>
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `ESBTL_DIR` | Directory of \sc{ESBTL} default installation | Environment |
+| `ESBTL_INC_DIR` | Directory containing the `ESBTL/default.h` file | Environment |
+| `ESBTL_INCLUDE_DIR` | Directory containing the `ESBTL/default.h` file | CMake |
 
 \section installation_compiler_workarounds Compiler Workarounds
 
