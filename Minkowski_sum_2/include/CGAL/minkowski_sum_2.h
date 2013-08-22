@@ -80,12 +80,34 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
   Minkowski_sum_by_decomposition_2<DecompositionStrategy,Container>        mink_sum;
 
   typedef Polygon_with_holes_2<Kernel,Container>                 Polygon_with_holes_2;
-  
+
   Polygon_with_holes_2 sum;
 
   sum = mink_sum (pgn1, pgn2);
-  
+
   return (sum);
+}
+
+/*!
+ * Compute the Minkowski sum of two polygon-with-holes by decomposing each
+ * polygon to convex sub-polygons and computing the union of the pairwise
+ * Minkowski sums of the sub-polygons.
+ * The result is also represented as a polygon with holes.
+ * \param pgn1 The first polygon.
+ * \param pgn2 The second polygon.
+ * \param decomp A functor for decomposing polygons.
+ * \param sum Output: The resulting polygon with holes, representing the sum.
+ */
+template <class Kernel, class Container, class DecompositionStrategy>
+Polygon_with_holes_2<Kernel, Container>
+minkowski_sum_2(const Polygon_with_holes_2<Kernel, Container>& pgn1,
+                const Polygon_with_holes_2<Kernel, Container>& pgn2,
+                const DecompositionStrategy&)
+{
+  Minkowski_sum_by_decomposition_2<DecompositionStrategy, Container> mink_sum;
+  typedef Polygon_with_holes_2<Kernel, Container> Polygon_with_holes_2;
+  Polygon_with_holes_2 sum = mink_sum(pgn1, pgn2);
+  return sum;
 }
 
 } //namespace CGAL

@@ -40,7 +40,7 @@ template <class DecompStrategy_, class Container_>
 class Minkowski_sum_by_decomposition_2
 {
 public:
-  
+
   typedef DecompStrategy_                             Decomposition_strategy;
   typedef Container_                                  Container;
   typedef typename Decomposition_strategy::Polygon_2  Polygon_2;
@@ -52,7 +52,7 @@ private:
   typedef typename Kernel::Point_2                       Point_2;
   typedef typename Kernel::Vector_2                      Vector_2;
   typedef typename Kernel::Direction_2                   Direction_2;
- 
+
   // Kernel functors:
   typedef typename Kernel::Equal_2                       Equal_2;
   typedef typename Kernel::Compare_angle_with_x_axis_2   Compare_angle_2;
@@ -96,7 +96,7 @@ public:
 
     f_equal = ker.equal_2_object();
     f_compare_angle = ker.compare_angle_with_x_axis_2_object();
-    f_add = ker.construct_translated_point_2_object(); 
+    f_add = ker.construct_translated_point_2_object();
     f_vector = ker.construct_vector_2_object();
     f_direction = ker.construct_direction_2_object();
     f_orientation = ker.orientation_2_object();
@@ -142,18 +142,60 @@ public:
         _compute_sum_of_convex (*curr1, *curr2, sub_sum);
 
         sub_sum_polygons.push_back(sub_sum);
-            
+
       }
     }
-    
+
     General_polygon_set_2 gps;
-  
+
     gps.join(sub_sum_polygons.begin(),sub_sum_polygons.end());
-  
+
     Polygon_with_holes_list sum;
 
     gps.polygons_with_holes(std::back_inserter(sum));
- 
+
+    return (*(sum.begin()));
+  }
+
+  /*!
+   * Compute the Minkowski sum of two polygon-with-holes.
+   * \param pgn1 The first polygon.
+   * \param pgn2 The second polygon.
+   * \pre Both input polygons are simple.
+   * \return The resulting polygon with holes, representing the sum.
+   */
+  Polygon_with_holes_2
+  operator()(const Polygon_with_holes_2& pgn1,
+             const Polygon_with_holes_2& pgn2) const
+  {
+    // Decompose both input polygons to convex sub-polygons.
+    Decomposition_strategy  decomp_strat;
+    Polygons_list sub_pgns1;
+    Polygons_list sub_pgns2;
+    Polygons_list sub_sum_polygons;
+
+    decomp_strat(pgn1, std::back_inserter(sub_pgns1));
+    decomp_strat(pgn2, std::back_inserter(sub_pgns2));
+
+    // Compute the sub-sums of all pairs of sub-polygons.
+    Polygons_iterator end1 = sub_pgns1.end();
+    Polygons_iterator end2 = sub_pgns2.end();
+    Polygons_iterator curr1, curr2;
+
+    for (curr1 = sub_pgns1.begin(); curr1 != end1; ++curr1) {
+      for (curr2 = sub_pgns2.begin(); curr2 != end2; ++curr2) {
+        // Compute the sum of the current pair of convex sub-polygons.
+        Polygon_2 sub_sum;
+        _compute_sum_of_convex(*curr1, *curr2, sub_sum);
+        sub_sum_polygons.push_back(sub_sum);
+      }
+    }
+
+    General_polygon_set_2 gps;
+    gps.join(sub_sum_polygons.begin(), sub_sum_polygons.end());
+    Polygon_with_holes_list sum;
+    gps.polygons_with_holes(std::back_inserter(sum));
+    CGAL_assertion(sum.size() == 1);
     return (*(sum.begin()));
   }
 
@@ -189,7 +231,7 @@ private:
     // Find the bottom-left vertex in both polygons.
     Vertex_circulator         first2, curr2, next2;
     Vertex_circulator         bottom_left2;
-    
+
     bottom_left2 = curr2 = first2 = pgn2.vertices_circulator();
     ++curr2;
     while (curr2 != first2)
@@ -208,7 +250,7 @@ private:
     ++next1;
     next2 = curr2 = bottom_left2;
     ++next2;
- 
+
     // Compute the Minkowski sum.
     Point_2                   first_pt;
     Point_2                   curr_pt;
@@ -241,7 +283,7 @@ private:
       }
 
       // Compare the angles the current edges form with the x-axis.
-      res = f_compare_angle (f_direction (f_vector (*curr1, *next1)), 
+      res = f_compare_angle (f_direction (f_vector (*curr1, *next1)),
                              f_direction (f_vector (*curr2, *next2)));
 
       // Proceed to the next vertex according to the result.
@@ -265,8 +307,8 @@ private:
         curr1 = next1;
         ++next1;
         moved_on1 = true;
-      }      
-      
+      }
+
       if (inc2)
       {
         curr2 = next2;
