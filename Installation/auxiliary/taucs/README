@@ -1,2 +1,0 @@
-If the Windows installer is used, this directory will contain headers and
-precompiled libraries of the BLAS, LAPACK, and TAUCS libraries.
