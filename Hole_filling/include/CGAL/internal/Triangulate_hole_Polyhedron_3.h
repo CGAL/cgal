@@ -23,6 +23,12 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
   typedef typename Polyhedron::Traits::Point_3                    Point_3;
 
   typedef typename std::map<Vertex_handle, int>::iterator         Vertex_set_it;
+
+  if(!border_halfedge->is_border()) {
+    CGAL_warning(!"Argument halfedge is not a border edge!");
+    return std::make_pair(output, Weight_min_max_dihedral_and_area::DEFAULT()); 
+  }
+
   std::vector<Point_3>         P, Q;
   std::vector<Halfedge_handle> P_edges;
   std::map<Vertex_handle, int> vertex_set;
