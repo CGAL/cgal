@@ -387,7 +387,7 @@ private:
   }
 
   void left(int &i, Point_2 &w, const Point_2 &query_pt) {
-
+    std::cout << "in left\n";
     if (i == vertices.size() - 1) {
       upcase = FINISH;
     }
@@ -438,19 +438,19 @@ private:
     while(!found && upcase == RIGHT) {
       assert(!s.empty());
       Point_2 s_j = s.top();
-      if (CGAL::Visibility_2::Orientation_2(geom_traits,
-                                            vertices[i-1],
-                                            vertices[i],
-                                            s_j) == RIGHT_TURN) {
+      std::cout << "R s.top = " << s.top();
+      s.pop();
+      assert(!s.empty());
+      Point_2 s_j_prev = s.top();
+
+      if (CGAL::do_intersect(Segment_2(s_j, s_j_prev), Segment_2(vertices[i-1], vertices[i]))) {
+        std::cout << "R switch to scana\n";
         upcase = SCANA;
         found = true;
-        w = s_j;
+        w = s.top();
       }
       else {
-        s.pop();
-        assert(!s.empty());
-        Point_2 s_j_prev = s.top();
-        
+
         std::cout << "R: s t-1 = " << s_j_prev << std::endl;
         assert(CGAL::Visibility_2::Orientation_2(geom_traits, 
                                                  query_pt, 
@@ -477,9 +477,9 @@ private:
                                                 w, 
                                                 vertices[i+1]) == CGAL::RIGHT_TURN) {
           // SEE TEST CASE 
-          //s.push(s_j);
             upcase = RIGHT;
             w = vertices[i+1];
+            s.push(s_j);
             i++;
             std::cout << "R continues with w = " << w << std::endl;
           }
@@ -527,11 +527,14 @@ private:
                                                      vertices[i],
                                                      vertices[i+1]) == CGAL::LEFT_TURN) {
 
+            std::cout << "R: scanc\n";
             upcase = SCANC;
             w = vertices[i];
+      //      s.push(s_j);
             i++;        
           }
           else {
+            std::cout << "R : left\n";
             Segment_2 s1(s_j_prev, s_j);
             Ray_2 s2(query_pt, w);
             Object_2 result = CGAL::Visibility_2::Intersect_2
@@ -604,6 +607,7 @@ private:
       k++;
     }
     w = vertices[k];
+    std::cout << "scanc w = " << w << std::endl;
     i = k;
     upcase = RIGHT;
   }
