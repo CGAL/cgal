@@ -61,10 +61,7 @@ public:
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
-  /*!
-    Face_handle type of the output arrangement.
-    */
-  typedef Output_arrangement_2::Face_handle  Face_handle;
+
    
 /// @}
 
@@ -141,7 +138,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
+  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
 
 
 /*!
@@ -155,7 +152,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region
 */
-  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
+  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
 
 
 /// @}
