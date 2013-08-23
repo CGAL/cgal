@@ -6,7 +6,7 @@
 #include "Scene_points_with_normal_item.h"
 
 #include "Scene_interface.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
 #include "ui_Selection_widget.h"
 
 #include <QAction>
@@ -17,7 +17,7 @@
 
 class Polyhedron_demo_selection_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
@@ -29,10 +29,11 @@ public:
   }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m){
+  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
+
     actionSelection = new QAction(tr("Selection"), mw);
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
@@ -40,7 +41,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    add_dock_widget(dock_widget);
 
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
@@ -62,27 +63,10 @@ public:
     } 
   }
 
-  template<class SceneType>
-  SceneType* get_selected_item() {
-    int item_id = scene->mainSelectionIndex();
-    SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
-    if(!scene_item) {
-      // no selected SceneType, if there is only one in list use it, otherwise error
-      int counter = 0;
-      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
-        if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
-          scene_item = tmp;
-          counter++; 
-        }
-      }
-      if(counter != 1) { return NULL; }
-    }
-    return scene_item;
-  }
-
 public slots:
   void selection_action() { 
     dock_widget->show();
+    dock_widget->raise();
   }
   // Select all
   void on_Select_all_button_clicked() {
@@ -279,8 +263,6 @@ public slots:
   }
 
 private:
-  QMainWindow* mw;
-  Scene_interface* scene;
   Messages_interface* messages;
   QAction* actionSelection;
 

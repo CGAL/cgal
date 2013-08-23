@@ -1,8 +1,10 @@
+#undef NDEBUG
+//#define CGAL_SUPERLU_ENABLED
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
 #include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
 #include "ui_Fairing_widget.h"
 #include "Polyhedron_type.h"
 
@@ -26,7 +28,7 @@
 
 class Polyhedron_demo_fairing_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
@@ -49,28 +51,20 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    add_dock_widget(dock_widget);
 
     connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
-  }
-  Scene_polyhedron_selection_item* get_selected_item() {
-    int item_id = scene->mainSelectionIndex();
-    Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
-    if(!selection_item) {
-      print_message("Error: there is no selected polyhedron selection item!");
-      return NULL;
-    } 
-    return selection_item;
   }
 
 public slots:
   void fairing_action() {
     dock_widget->show();
+    dock_widget->raise();
   }
 
   void on_Fair_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item();
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if(!selection_item) { return; }
 
     if(selection_item->selected_vertices.empty()) {
@@ -92,7 +86,7 @@ public slots:
   }
 
   void on_Refine_button_clicked() {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item();
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if(!selection_item) { return; }
 
     if(selection_item->selected_facets.empty()) {
@@ -119,8 +113,6 @@ private:
   };
   typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
-  QMainWindow* mw;
-  Scene_interface* scene;
   Messages_interface* messages;
   QAction* actionFairing;
 

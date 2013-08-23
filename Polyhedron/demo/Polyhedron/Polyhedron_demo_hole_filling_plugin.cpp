@@ -8,7 +8,7 @@
 #include "Scene_polylines_item.h"
 #include "Scene.h"
 
-#include "Polyhedron_demo_plugin_interface.h"
+#include "Polyhedron_demo_plugin_helper.h"
 #include "ui_Hole_filling_widget.h"
 #include "Polyhedron_type.h"
 
@@ -264,7 +264,7 @@ public slots:
 
 class Polyhedron_demo_hole_filling_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_interface
+  public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
@@ -274,24 +274,6 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
-
-  template<class SceneType>
-  SceneType* get_selected_item() {
-    int item_id = scene->mainSelectionIndex();
-    SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
-    if(!scene_item) {
-      // no selected SceneType, if there is only one in list use it, otherwise error
-      int counter = 0;
-      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
-        if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
-          scene_item = tmp;
-          counter++; 
-        }
-      }
-      if(counter != 1) { return NULL; }
-    }
-    return scene_item;
-  }
 
   Scene_polylines_collection* get_polylines_collection(Scene_polyhedron_item* poly_item) {
     // did not use a map to assoc Scene_polyhedron_item with Scene_polylines_collection to prevent crowded code
@@ -304,7 +286,10 @@ public:
   }
 
 public slots:
-  void hole_filling_action() { dock_widget->show(); }
+  void hole_filling_action() { 
+    dock_widget->show();
+    dock_widget->raise();
+  }
   void on_Fill_all_holes_button();
   void on_Visualize_holes_button();
   void on_Fill_selected_holes_button();
@@ -328,8 +313,6 @@ private:
   };
   typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
-  QMainWindow* mw;
-  Scene_interface* scene;
   Messages_interface* messages;
   QAction* actionHoleFilling;
 
@@ -385,8 +368,8 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   ui_widget.Accept_button->setVisible(false);
   ui_widget.Reject_button->setVisible(false);
 
-  mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
-
+  add_dock_widget(dock_widget);
+  
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
   connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
   connect(ui_widget.Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));

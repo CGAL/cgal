@@ -11,6 +11,7 @@ class QAction;
 struct QMetaObject;
 class QMainWindow;
 class Scene_interface;
+class QDockWidget;
 
 #include "Polyhedron_demo_plugin_interface.h"
 
@@ -27,6 +28,27 @@ public:
   // Get list of actions supported by this plugin
   virtual QStringList actionsNames() const;
   virtual QList<QAction*> actions() const;
+
+  // To get a selected item with the type of SceneType
+  template<class SceneType>
+  SceneType* get_selected_item() const {
+    int item_id = scene->mainSelectionIndex();
+    SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
+    if(!scene_item) {
+      // no selected SceneType - if there is only one in list return it, otherwise NULL
+      int counter = 0;
+      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
+        if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
+          scene_item = tmp;
+          counter++; 
+        }
+      }
+      if(counter != 1) { return NULL; }
+    }
+    return scene_item;
+  }
+
+  void add_dock_widget(QDockWidget* dock);
 
   // Auto-connect actions to slots. Called by init().
   void autoConnectActions();
