@@ -443,7 +443,7 @@ private:
       assert(!s.empty());
       Point_2 s_j_prev = s.top();
 
-      if (CGAL::do_intersect(Segment_2(s_j, s_j_prev), Segment_2(vertices[i-1], vertices[i]))) {
+      if (vertices[i-1] != s_j && CGAL::do_intersect(Segment_2(s_j, s_j_prev), Segment_2(vertices[i-1], vertices[i]))) {
         std::cout << "R switch to scana\n";
         upcase = SCANA;
         found = true;
@@ -574,6 +574,7 @@ private:
           s.push(vertices[k+1]);
           w = vertices[k+1];
           i = k+1;
+          std::cout << "scana i = " << i << std::endl;
           upcase = LEFT;
           break;
         }
@@ -586,6 +587,7 @@ private:
         s.push(vertices[k+1]);
         w = vertices[k+1];
         i = k+1;
+        std::cout << "scana i = " << i << std::endl;
         upcase = LEFT;
         break;
       }
