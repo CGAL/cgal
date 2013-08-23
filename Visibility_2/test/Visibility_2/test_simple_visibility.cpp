@@ -27,8 +27,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
-//#include <CGAL/Simple_polygon_visibility_2.h>
-#include <CGAL/Simple_polygon_visibility_2_.h>
+#include <CGAL/Simple_polygon_visibility_2.h>
 
 #include <iostream>
 #include <fstream>
@@ -41,15 +40,15 @@ int main() {
   typedef Traits_2::Point_2										              Point_2;
   typedef Traits_2::X_monotone_curve_2							        Segment_2;
   typedef CGAL::Arrangement_2<Traits_2>							        Arrangement_2;
-  typedef CGAL::Simple_polygon_visibility_2_<Arrangement_2, CGAL::Tag_false>
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Simple_polygon_visibility_2;
   std::cout << "Running model tests - ";
-//  CGAL::test_model_methods<Simple_polygon_visibility_2>();
+  CGAL::test_model_methods<Simple_polygon_visibility_2>();
   std::cout << GREEN << "Done!" << RESET << std::endl;
   std::cout << "Running test suite with " << GREEN 
             << "Cartesian" << RESET << " Kernel..." << std::endl;
   CGAL::run_tests<Simple_polygon_visibility_2>(17, 0);
-}/*
+}
 {
   typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
   typedef CGAL::Arr_segment_traits_2<Kernel>                 Traits_2;
@@ -63,7 +62,7 @@ int main() {
   std::cout << GREEN << "Done!" << RESET << std::endl;
   std::cout << "Running test suite with " << GREEN 
             << "EPECK" << RESET << " Kernel..." << std::endl;
-  CGAL::run_tests<Simple_polygon_visibility_2>(10, 2);
-}*/
+  CGAL::run_tests<Simple_polygon_visibility_2>(17, 0);
+}
   return 0;
 }

@@ -95,7 +95,6 @@ void test_model_methods_for_arr(
     hit != arr.halfedges_end(); ++hit) {
 
     if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
-      std::cout << "Running halfedge case...\n";
       face_check_he = visibility.compute_visibility(query_pt, hit, arr_out);
       break;
     }
@@ -129,7 +128,6 @@ void test_model_methods_for_arr(
       }
       assert(face_check_he_snd == face);
       if (! test_are_equal<Output_arrangement_2>(arr_out, arr)) {
-        std::cout<<"failed in case where the query point is a vertex.\n";
         assert(false);
       }
     }
