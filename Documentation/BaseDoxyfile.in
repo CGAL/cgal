@@ -273,7 +273,7 @@ ALIASES += "cgalPkgDescriptionEnd="
 
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
-ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../../CGAL.CGAL/html/how_to_cite_cgal.html#\1-13b\">\1-13b</a><BR>"
+ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-13b\">\1-13b</a><BR>"
 
 
 ALIASES += "cgalFootnote{1}=<span class=\"footnote\">\1</span>"
