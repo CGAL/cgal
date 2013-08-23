@@ -556,7 +556,7 @@ private:
   void scana(int &i, Point_2 &w, const Point_2 &query_pt) {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     int k = i;
-    std::cout << "scana w = " << w << std::endl;
+    std::cout << "scana w =  " << w << std::endl;
     while (k+1 < vertices.size()-1) {
 
       if (CGAL::Visibility_2::Orientation_2(geom_traits,
