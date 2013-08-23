@@ -17,18 +17,16 @@
 //
 //
 // Author(s):  Kan Huang <huangkandiy@gmail.com>
+//
 
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <map>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Direction_2.h>
-#include <CGAL/Vector_2.h>
-#include <CGAL/intersections.h>
-#include <CGAL/Ray_2.h>
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 
@@ -297,39 +295,37 @@ private:
   typedef std::vector<Point_2> Vend;
   const Input_arrangement_2 *p_arr;
   bool            attach_tag;
+  Point_2         q;
   std::vector<Point_2> polygon;   //visibility polygon
   std::map<Point_2, Vend> vmap;   //vertex and two edges incident to it that might block vision
-
+  std::list<Point_2> vs;          //angular sorted vertices
 
   //methods
   //compute visibility region between qa and qb
-  void visibility_region_impl(const Point_2& q, const Point_2& a, const Point_2& b) {
-      std::vector<Vertex_const_handle> vertices;                    //all vertices of the face.
-      std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
-      //preprocess the face
-      input_face(fh, vertices, edges, q);
-
-      //debug
+  void visibility_region_impl(Face_const_handle f, const Point_2& q, const Point_2& a, const Point_2& b) {
+    std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
+    //preprocess the face
+    input_face(f, q, a, b);
+    vs.sort(compare_angle);
+//debug
 //        for (int i = 0; i<vertices.size(); i++) {
 //          print(vertices[i]->point());
 //        }
 
       //initiation of vision ray
-      Vector_2 dir;
-      if (Direction_2(-1, 0) < Direction_2(Vector_2(q, (*vertices.rbegin())->point())))
-      {
-          dir = Vector_2(1, 0) + Vector_2(q, (*vertices.rbegin())->point());
-      }
-      else {
-          dir = Vector_2(0, -1);
-      }
-      Ray_2 init_vision_ray(q, dir);
-      //initiation of active_edges
-      typename std::vector<Halfedge_const_handle>::iterator iter1;
-      for (iter1 = edges.begin(); iter1 != edges.end(); iter1++)
-      {
-          insert_halfedge(active_edges, init_vision_ray, *iter1);
-      }
+//      Vector_2 dir;
+//      if (Direction_2(-1, 0) < Direction_2(Vector_2(q, (*vertices.rbegin())->point())))
+//      {
+//          dir = Vector_2(1, 0) + Vector_2(q, (*vertices.rbegin())->point());
+//      }
+//      else {
+//          dir = Vector_2(0, -1);
+//      }
+//      Ray_2 init_vision_ray(q, dir);
+
+    //initiation of active_edges
+
+
 
       //angular sweep begins
       Ray_2 curr_vision_ray = init_vision_ray;
@@ -469,42 +465,32 @@ private:
           }
   }
 
-  Point_2 intersection_point(Ray_2 ray, Halfedge_const_handle seg) {
-      return intersection_point(ray, halfedge2seg(seg));
-  }
-
-  //convertor for halfedge to segment
-  Segment_2 halfedge2seg(Halfedge_const_handle e){
-      return Segment_2(e->source()->point(), e->target()->point());
-  }
-
-
   //given two edges incident to a vision ray at the same point, find which one is first seen in sweeping.
-  bool is_closer(const Ray_2 &ray, Halfedge_const_handle seg1, Halfedge_const_handle seg2) {
-      Point_2 shared = intersection_point(ray, seg1);
-      Point_2 end1, end2;
-      if (shared == seg1->source()->point())
-          end1 = seg1->target()->point();
-      else
-          end1 = seg1->source()->point();
+//  bool is_closer(const Ray_2 &ray, Halfedge_const_handle seg1, Halfedge_const_handle seg2) {
+//      Point_2 shared = intersection_point(ray, seg1);
+//      Point_2 end1, end2;
+//      if (shared == seg1->source()->point())
+//          end1 = seg1->target()->point();
+//      else
+//          end1 = seg1->source()->point();
 
-      if (shared == seg2->source()->point())
-          end2 = seg2->target()->point();
-      else
-          end2 = seg2->source()->point();
-      if (CGAL::right_turn(ray.source(), shared, end1) && !CGAL::right_turn(ray.source(), shared, end2))
-          return true;
-      if (CGAL::right_turn(ray.source(), shared, end2) && !CGAL::right_turn(ray.source(), shared, end1))
-          return false;
-      switch (CGAL::orientation(ray.source(), shared, end1)) {
-      case CGAL::COLLINEAR:
-          return (CGAL::left_turn(ray.source(), shared, end2));
-      case CGAL::RIGHT_TURN:
-          return (CGAL::right_turn(end1, shared, end2));
-      case CGAL::LEFT_TURN:
-          return (CGAL::left_turn(end1, shared, end2));
-      }
-  }
+//      if (shared == seg2->source()->point())
+//          end2 = seg2->target()->point();
+//      else
+//          end2 = seg2->source()->point();
+//      if (CGAL::right_turn(ray.source(), shared, end1) && !CGAL::right_turn(ray.source(), shared, end2))
+//          return true;
+//      if (CGAL::right_turn(ray.source(), shared, end2) && !CGAL::right_turn(ray.source(), shared, end1))
+//          return false;
+//      switch (CGAL::orientation(ray.source(), shared, end1)) {
+//      case CGAL::COLLINEAR:
+//          return (CGAL::left_turn(ray.source(), shared, end2));
+//      case CGAL::RIGHT_TURN:
+//          return (CGAL::right_turn(end1, shared, end2));
+//      case CGAL::LEFT_TURN:
+//          return (CGAL::left_turn(end1, shared, end2));
+//      }
+//  }
 
   //insert newly-discovered edges into active_edges according to its intersection with the view ray.
   void insert_halfedge(std::vector<Halfedge_const_handle> &active_edges, const Ray_2 &ray, Halfedge_const_handle edge)
@@ -527,51 +513,84 @@ private:
       }
   }
 
-  //insert vh into vertices by the angle between ray<p, vh> and positive x-ray.
-  //if the angles are the same, compare their distances to p.
-  void sort_vertex(std::vector<Vertex_const_handle>& vertices, Vertex_const_handle vh, const Point_2& p)
+
+  bool compare_angle(const Point_2& p1, const Point_2& p2)
   {
-      typename std::vector<Vertex_const_handle>::iterator first = vertices.begin();
-      Vector_2 vector_of_v(p, vh->point());
-      Direction_2 dir_of_v(vector_of_v);
-      while (first != vertices.end())
-      {
-          if (vh->point() == (*first)->point()) {
-              return;
-          }
-          Vector_2 vector1(p, (*first)->point());
-          Direction_2 d1(vector1);
-          if (dir_of_v < d1)
-              break;
-          //if same angles are the same, put the vertex which is closer to query point before.
-          if (dir_of_v == d1 && CGAL::compare_distance_to_point(p, vh->point(), (*first)->point()) == CGAL::SMALLER)
-              break;
-          ++first;
-      }
-      vertices.insert(first, vh);
+    Direction_2 d1(Ray_2(q, p1));
+    Direction_2 d2(Ray_2(q, p2));
+    if (d1 < d2)
+      return true;
+    if (d1 == d2) {
+      bool isblock1 = Isblock(p1);
+      bool isblock2 = Isblock(p2);
+      if (!isblock1 && isblock2)
+        return true;
+      if (!isblock1 && !isblock2 && CGAL::compare_distance_to_point(q, p1, p2) )
+        return true;
+      if (isblock1 && isblock2 && CGAL::compare_distance_to_point(q, p2, p1))
+        return true;
+    }
+    return false;
   }
 
+  bool Isblock(const Point_2& p) {
+    for (int i=0; i<vmap[p].size(); i++) {
+      if (CGAL::right_turn(q, p, vmap[p][i]))
+        return true;
+    }
+    return false;
+  }
 
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
-                   std::vector<Vertex_const_handle>& vertices,
-                   std::vector<Halfedge_const_handle>& edges,
-                   const Point_2& p)
+                   const Point_2& q,
+                   const Point_2& a,
+                   const Point_2& b)
   {
-      typename Arrangement_2::Ccb_halfedge_const_circulator curr = fh->outer_ccb();
-      typename Arrangement_2::Ccb_halfedge_const_circulator circ = curr;
+    bool is_big = ( a==b || CGAL::left_turn(a, q, b));     //true means the angle of vision between qa,qb is at least 180 degree.
+    typename Arrangement_2::Ccb_halfedge_const_circulator curr = fh->outer_ccb();
+    typename Arrangement_2::Ccb_halfedge_const_circulator circ = curr;
+    do {
+      Point_2 v = curr->target()->point();
+      if (v==a || v==b)
+        continue;
+      bool in_vision;
+      if (is_big)
+        in_vision = !(CGAL::right_turn(q, a, v) && CGAL::left_turn(q, b, v));
+      else
+        in_vision = (!CGAL::right_turn(q, a, v)) && (!CGAL::left_turn(q, b, v));
+      if (!in_vision)
+        continue;
+
+      vs.push_back(v);
+      std::vector<Point_2> neighbor;
+      neighbor.push_back(curr->source()->point());
+      neighbor.push_back(curr->next()->target()->point());
+      vmap[v] = neighbor;
+    } while (++curr != circ);
+
+    typename Arrangement_2::Hole_const_iterator hi;
+    for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
+      typename Arrangement_2::Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
       do {
-          sort_vertex(vertices, curr->source(), p);
-          edges.push_back(curr);
-      } while (++curr != circ);
-      typename Arrangement_2::Hole_const_iterator hi;
-      for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
-          typename Arrangement_2::Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
-          do {
-              sort_vertex(vertices, c1->source(), p);
-              edges.push_back(c1);
-          } while (++c1 != c2);
-      }
+        Point_2 v = curr->target()->point();
+        if (v==a || v==b)
+          continue;
+        bool in_vision;
+        if (is_big)
+          in_vision = !(CGAL::right_turn(q, a, v) && CGAL::left_turn(q, b, v));
+        else
+          in_vision = (!CGAL::right_turn(q, a, v)) && (!CGAL::left_turn(q, b, v));
+        if (!in_vision)
+          continue;
+
+        vs.push_back(v);
+        std::vector<Point_2> neighbor;
+        neighbor.push_back(c1->source()->point());
+        neighbor.push_back(c1->next()->target()->point());
+        vmap[v] = neighbor;
+      } while (++c1 != c2);
+    }
   }
 
 
