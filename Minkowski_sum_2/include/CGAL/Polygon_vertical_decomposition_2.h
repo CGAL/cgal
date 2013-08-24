@@ -34,8 +34,8 @@ namespace CGAL {
  * \class
  * Vertical decomposition strategy.
  */
-template <class Kernel_,
-          class Container_ = std::vector<typename Kernel_::Point_2> >
+template <typename Kernel_,
+          typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Polygon_vertical_decomposition_2 {
 public:
   typedef Kernel_                                        Kernel;
@@ -72,7 +72,6 @@ public:
     Outer_ccb_const_iterator;
 
 private:
-
   typedef typename Arrangement_2::X_monotone_curve_2     Segment_2;
   typedef typename Kernel::Line_2                        Line_2;
 
@@ -82,9 +81,7 @@ private:
   // face mergers.
   class My_observer : public CGAL::Arr_observer<Arrangement_2> {
   public:
-    My_observer (Arrangement_2& arr) :
-      CGAL::Arr_observer<Arrangement_2>(arr)
-    {}
+    My_observer(Arrangement_2& arr) : Arr_observer<Arrangement_2>(arr) {}
 
     virtual void after_split_face(Face_handle f, Face_handle new_f,
                                   bool /* is_hole */)
@@ -97,35 +94,59 @@ private:
   typedef typename Kernel::Equal_2                       Equal_2;
 
   // Data members:
-  Kernel* m_kernel;
-  bool m_own_kernel;    // inidicates whether the kernel should be freed up.
+  const Traits_2* m_traits;
+  bool m_own_traits;    // inidicates whether the kernel should be freed up.
 
-  Compare_x_2             f_cmp_x;
-  Intersect_2             f_intersect;
-  Equal_2                 f_equal;
+  Compare_x_2 f_cmp_x;
+  Intersect_2 f_intersect;
+  Equal_2     f_equal;
 
 public:
-
   /*! Default constructor. */
   Polygon_vertical_decomposition_2() :
-    m_kernel(new Kernel),
-    m_own_kernel(true)
+    m_traits(NULL),
+    m_own_traits(false)
+  { init(); }
+
+  /*! Constructor */
+  Polygon_vertical_decomposition_2(const Traits_2& traits) :
+    m_traits(&traits),
+    m_own_traits(false)
+  { init(); }
+
+  /*! Initialize */
+  void init()
   {
+    // Allocate the traits if not provided.
+    if (m_traits == NULL) {
+      m_traits = new Traits_2;
+      m_own_traits = true;
+    }
+
     // Obtain kernel functors.
-    f_cmp_x = m_kernel->compare_x_2_object();
-    f_intersect = m_kernel->intersect_2_object();
-    f_equal = m_kernel->equal_2_object();
+    const Kernel* kernel = m_traits;
+    f_cmp_x = kernel->compare_x_2_object();
+    f_intersect = kernel->intersect_2_object();
+    f_equal = kernel->equal_2_object();
   }
 
   // Destructor
   ~Polygon_vertical_decomposition_2()
   {
-    if (m_own_kernel && m_kernel) {
-      delete m_kernel;
-      m_kernel = NULL;
-      m_own_kernel = false;
+    if (m_own_traits) {
+      if (m_traits) {
+        delete m_traits;
+        m_traits = NULL;
+      }
+      m_own_traits = false;
     }
   }
+
+  /*!
+   * Obtain the traits
+   * \return the traits
+   */
+  const Traits_2& traits() const { return *m_traits; }
 
   /*!
    * Decompose a polygon-with-holes into convex sub-polygons.
@@ -133,11 +154,12 @@ public:
    * \param oi An output iterator of convex polygons.
    * \return A past-the-end iterator for the sub-polygons.
    */
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator operator()(const Polygon_with_holes_2& pgn,
                             OutputIterator oi) const
   {
-    General_polygon_set_2 gps;
+    typename General_polygon_set_2::Traits_2 traits;
+    General_polygon_set_2 gps(traits);
     gps.insert(pgn);
     Arrangement_2& arr = gps.arrangement();
     My_observer obs(arr);
