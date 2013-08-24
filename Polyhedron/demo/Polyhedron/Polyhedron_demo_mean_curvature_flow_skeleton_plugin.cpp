@@ -167,6 +167,8 @@ public:
       return false;
     }
 
+    // the algorithm is only applicable on a mesh
+    // that has only one connected component
     std::size_t num_component;
     CGAL::Counting_output_iterator output_it(&num_component);
     CGAL::internal::extract_connected_components(*pMesh, output_it);
@@ -646,9 +648,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
   std::cout << "Collapse...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  std::cout << "before collapse edges\n";
   int num_collapses = mcs->collapse_edges();
-  std::cout << "collapse " << num_collapses << " edges.\n";
+  std::cout << "collapsed " << num_collapses << " edges.\n";
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -707,7 +708,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 
   QTime time;
   time.start();
-  std::cout << "Degeneracy\n";
+  std::cout << "Detect degenerac...y\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   mcs->detect_degeneracies();
@@ -1037,29 +1038,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     delete temp;
   }
 
-//  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
-//  nonFixedPointsItem->setName("non-fixed points");
-//  nonFixedPointsItem->setColor(QColor(0, 255, 0));
-//  std::vector<Point> nonFixedPoints;
-//  mcs->get_non_fixed_points(nonFixedPoints);
-//  ps = nonFixedPointsItem->point_set();
-//  for (size_t i = 0; i < nonFixedPoints.size(); ++i)
-//  {
-//    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
-//    ps->push_back(point);
-//  }
-//  if (nonFixedPointsItemIndex == -1)
-//  {
-//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
-//  }
-//  else
-//  {
-//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
-//  }
-
   scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
-//  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
