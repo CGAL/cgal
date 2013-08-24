@@ -272,6 +272,8 @@ private:
   std::vector<Vector> normals;
   /** the dual of a cell in Triangulation(a Voronoi point) */
   std::vector<Point> cell_dual;
+  /** if the pole is computed correctly */
+  bool is_pole_correct;
 
 // Public methods
 public:
@@ -491,11 +493,19 @@ public:
    *        a boost::graph containing the connectivity of the skeleotn
    * @param points
    *        the locations of the skeletal points
+   * @return if the the skeleton is extracted correctly. It may happen
+   *         that the mesh is not sampled dense enough that the Voronoi
+   *         poles cannot be computed correctly.
    */
-  void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
+  bool extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
   {
+    if (is_medially_centered && !is_pole_correct)
+    {
+      return false;
+    }
     run_to_converge();
     convert_to_skeleton(g, points);
+    return true;
   }
 
   /// @cond CGAL_DOCUMENT_INTERNAL
@@ -1327,7 +1337,7 @@ private:
   // Voronoi pole
   // --------------------------------------------------------------------------
 
-  bool compute_voronoi_pole()
+  void compute_voronoi_pole()
   {
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
@@ -1402,8 +1412,8 @@ private:
       if (max_neg_i == -1 ||
           test_inside(cell_dual[max_neg_i]) != CGAL::ON_BOUNDED_SIDE)
       {
-        std::cout << "sample is bad\n";
-        return false;
+        is_pole_correct = false;
+        return;
       }
 
       // cannot find a pole inside mesh
@@ -1430,6 +1440,7 @@ private:
 
       poles[i] = max_neg_i;
     }
+    is_pole_correct = true;
   }
 
   void compute_vertex_normal()

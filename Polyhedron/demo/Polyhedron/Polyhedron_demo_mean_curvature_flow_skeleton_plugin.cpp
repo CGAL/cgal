@@ -502,12 +502,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    temp_mcs->run_to_converge();
-
     Graph g;
     std::map<vertex_desc, Point> points;
 
-    temp_mcs->convert_to_skeleton(g, points);
+    temp_mcs->extract_skeleton(g, points);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -567,7 +565,15 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     Graph g;
     std::map<vertex_desc, Point> points;
 
-    temp_mcs->extract_skeleton(g, points);
+    bool ret = temp_mcs->extract_skeleton(g, points);
+    if (!ret)
+    {
+      QApplication::restoreOverrideCursor();
+      QMessageBox msgBox;
+      msgBox.setText("The sampling is not good enough.");
+      msgBox.exec();
+      return;
+    }
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 

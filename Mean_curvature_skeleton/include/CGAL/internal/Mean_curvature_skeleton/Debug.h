@@ -28,7 +28,7 @@
 
 // enable info output statement
 // this is for tuning parameters
-#define CGAL_MCFSKEL_INFO
+//#define CGAL_MCFSKEL_INFO
 
 #ifdef CGAL_MCFSKEL_DEBUG
 #define MCFSKEL_DEBUG(x) x
