@@ -10,11 +10,11 @@
 
 #include "print_utils.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
-typedef Kernel::Point_2                                 Point_2;
-typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
-typedef CGAL::Polygon_with_holes_2<Kernel>              Polygon_with_holes_2;
+typedef Kernel::Point_2                                   Point_2;
+typedef CGAL::Polygon_2<Kernel>                           Polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>                Polygon_with_holes_2;
 
 int main()
 {

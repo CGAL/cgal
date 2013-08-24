@@ -15,8 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 (based on an old version by Eyal Flato)
+// Author(s) : Efi Fogel   <efifogel@gmail.com>
 
 #ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 #define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H

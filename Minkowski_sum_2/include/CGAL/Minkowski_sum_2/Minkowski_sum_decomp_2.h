@@ -152,7 +152,7 @@ public:
     }
     // Allocate the strategy if not provided.
     if (m_decomposition_strategy == NULL) {
-      m_decomposition_strategy = new Decomposition_strategy(*m_traits);
+      m_decomposition_strategy = new Decomposition_strategy;
       m_own_strategy = true;
     }
     // Obtain kernel functors.

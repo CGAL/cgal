@@ -15,7 +15,8 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s) : Ron Wein   <wein@post.tau.ac.il>
+//             Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_CONV_H
 #define CGAL_MINKOWSKI_SUM_CONV_H
@@ -123,8 +124,8 @@ private:
 public:
   /*! Default constructor. */
   Minkowski_sum_by_convolution_2() :
-    m_kernel(new Kernel),
-    m_own_kernel(true)
+    m_kernel(NULL),
+    m_own_kernel(false)
   { init(); }
 
   /*! Constructor. */
@@ -181,11 +182,10 @@ public:
    * \pre Both input polygons are simple.
    * \return A past-the-end iterator for the holes in the sum.
    */
-  template <class OutputIterator>
-  OutputIterator operator()(const Polygon_2& pgn1,
-                            const Polygon_2& pgn2,
-                            Polygon_2& sum_bound,
-                            OutputIterator sum_holes) const
+  template <typename OutputIterator>
+  OutputIterator operator()(const Polygon_2& pgn1, const Polygon_2& pgn2,
+                            Polygon_2& sum_bound, OutputIterator sum_holes)
+    const
   {
     CGAL_precondition(pgn1.is_simple());
     CGAL_precondition(pgn2.is_simple());

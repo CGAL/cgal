@@ -15,8 +15,9 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
-//                 (based on an old version by Eyal Flato)
+// Author(s) : Ron Wein   <wein@post.tau.ac.il>
+//             (based on an old version by Eyal Flato)
+//             Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 #define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
@@ -31,8 +32,8 @@ namespace CGAL {
  * \class
  * Small-side angle-bisector decomposition strategy.
  */
-template <class Kernel_,
-          class Container_ = std::vector<typename Kernel_::Point_2> >
+template <typename Kernel_,
+          typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Small_side_angle_bisector_decomposition_2 {
 public:
   typedef Kernel_                                        Kernel;
@@ -152,7 +153,7 @@ public:
    * \param oi An output iterator of convex polygons.
    * \return A past-the-end iterator for the sub-polygons.
    */
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator operator()(const Polygon_2& pgn, OutputIterator oi) const
   {
     // Construct a point-info vector that represents the input polygon.
@@ -493,12 +494,12 @@ private:
   bool _compute_min_diagonal(Point_vector_2& vec,
                              unsigned int& u_ind, unsigned int& v_ind) const
   {
-    unsigned int          ind1, ind2;
-    Reflex_zone_position  zone_pos;
-    unsigned int          curr_count;
-    unsigned int          min_count = 0;
-    bool                  found = false;
-    unsigned int          dist;
+    unsigned int ind1, ind2;
+    Reflex_zone_position zone_pos;
+    unsigned int curr_count;
+    unsigned int min_count = 0;
+    bool found = false;
+    unsigned int dist;
 
     // Let the distance between pairs of vertices we try vary between 2 and
     // half the size of the polygon.
@@ -564,9 +565,9 @@ private:
                           Point_vector_2& vec1,
                           Point_vector_2& vec2) const
   {
-    unsigned int      i1, i2;
-    Indices_iterator  iter;
-    unsigned int      reflex_count;
+    unsigned int i1, i2;
+    Indices_iterator iter;
+    unsigned int reflex_count;
 
     // Make sure that the index ind2 is greater than ind1.
     if (ind1 > ind2) {
@@ -763,26 +764,25 @@ private:
     const double    succ_y = CGAL::to_double(succ_pt.y());
 
     // Compute the edge length and the diagonal length.
-    const double    len_uv = ::sqrt((ux - vx) * (ux - vx) +
-                                    (uy - vy) * (uy - vy));
-    const double    len_pred = ::sqrt((pred_x - vx) * (pred_x - vx) +
-                                      (pred_y - vy) * (pred_y - vy));
-    const double    len_succ = ::sqrt((succ_x - vx) * (succ_x - vx) +
-                                      (succ_y - vy) * (succ_y - vy));
+    const double len_uv =
+      ::sqrt((ux - vx) * (ux - vx) + (uy - vy) * (uy - vy));
+    const double len_pred =
+      ::sqrt((pred_x - vx) * (pred_x - vx) + (pred_y - vy) * (pred_y - vy));
+    const double len_succ =
+      ::sqrt((succ_x - vx) * (succ_x - vx) + (succ_y - vy) * (succ_y - vy));
 
     // Compute the angle a1 = <) (pred_pt, v_pt, u_pt):
-    const double    cos_a1 = ((ux - vx) * (pred_x - vx) +
-                              (uy - vy) * (pred_y - vy)) / (len_uv * len_pred);
-    double          a1 = ::acos(cos_a1);
+    const double cos_a1 = ((ux - vx) * (pred_x - vx) +
+                           (uy - vy) * (pred_y - vy)) / (len_uv * len_pred);
+    double a1 = ::acos(cos_a1);
 
-    if (f_orientation(pred_pt, v_pt, u_pt) == RIGHT_TURN)
-      // The angle a1 is larger than 180 degree:
-      a1 = _2_PI - a1;
+    // The angle a1 is larger than 180 degree:
+    if (f_orientation(pred_pt, v_pt, u_pt) == RIGHT_TURN) a1 = _2_PI - a1;
 
     // Compute the angle a2 = <) (u_pt, v_pt, succ_pt):
-    const double    cos_a2 = ((ux - vx) * (succ_x - vx) +
-                              (uy - vy) * (succ_y - vy)) / (len_uv * len_succ);
-    double          a2 = ::acos(cos_a2);
+    const double cos_a2 = ((ux - vx) * (succ_x - vx) +
+                           (uy - vy) * (succ_y - vy)) / (len_uv * len_succ);
+    double a2 = ::acos(cos_a2);
 
     if (f_orientation(u_pt, v_pt, succ_pt) == RIGHT_TURN)
       // The angle a1 is larger than 180 degree:
@@ -809,11 +809,11 @@ private:
                                    unsigned int& reflex_ind,
                                    unsigned int& other_ind) const
   {
-    unsigned int          ind1, ind2;
-    double                curr_ratio;
-    double                min_ratio = 0;
-    bool                  found = false;
-    unsigned int          dist;
+    unsigned int ind1, ind2;
+    double curr_ratio;
+    double min_ratio = 0;
+    bool found = false;
+    unsigned int dist;
 
     // Let the distance between pairs of vertices we try vary between 2 and
     // the size of the polygon - 2.
@@ -855,17 +855,14 @@ private:
    * \param oi The output iterator.
    * \return A past-the-end iterator for the sub-polygons.
    */
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator _output_polygon(const Point_vector_2& vec,
                                  OutputIterator oi) const
   {
-    const unsigned int    n = static_cast<int>(vec.size());
-    Polygon_2             pgn;
-    unsigned int          k;
-
-    for (k = 0; k < n; ++k) pgn.push_back(vec[k].point);
-    *oi = pgn;
-    ++oi;
+    const unsigned int n = static_cast<int>(vec.size());
+    Polygon_2 pgn;
+    for (unsigned int k = 0; k < n; ++k) pgn.push_back(vec[k].point);
+    *oi++ = pgn;
     return (oi);
   }
 };

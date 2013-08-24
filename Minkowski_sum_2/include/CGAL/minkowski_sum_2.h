@@ -15,7 +15,8 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s) : Ron Wein   <wein@post.tau.ac.il>
+//             Efi Fogel  <efifogel@gmail.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_2_H
 #define CGAL_MINKOWSKI_SUM_2_H

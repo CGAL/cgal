@@ -30,18 +30,16 @@ namespace CGAL {
  * The O(n^4) optimal strategy for decomposing a polygon into convex
  * sub-polygons.
  */
-template <class Kernel_, 
-          class Container_ = std::vector<typename Kernel_::Point_2> >
+template <typename Kernel_,
+          typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Optimal_convex_decomposition_2 :
   public Polygon_decomposition_strategy_adapter<Kernel_, Container_,
 						Tag_optimal_convex_parition>
 {
 public:
-
   typedef Kernel_                                  Kernel;
   typedef CGAL::Polygon_2<Kernel, Container_>      Polygon_2;
   typedef typename Kernel::Point_2                 Point_2;
-
 };
 
 /*!
@@ -49,18 +47,16 @@ public:
  * Hertel and Mehlhorn's O(n) approximation strategy for decomposing a
  * polygon into convex sub-polygons.
  */
-template <class Kernel_, 
-          class Container_ = std::vector<typename Kernel_::Point_2> >
+template <typename Kernel_,
+          typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Hertel_Mehlhorn_convex_decomposition_2 :
   public Polygon_decomposition_strategy_adapter<Kernel_, Container_,
 						Tag_approx_convex_parition>
 {
 public:
-
   typedef Kernel_                                  Kernel;
   typedef CGAL::Polygon_2<Kernel, Container_>      Polygon_2;
   typedef typename Kernel::Point_2                 Point_2;
-
 };
 
 /*!
@@ -68,18 +64,16 @@ public:
  * Greene's O(n log(n)) approximation strategy for decomposing a polygon into
  * convex sub-polygons.
  */
-template <class Kernel_, 
-          class Container_ = std::vector<typename Kernel_::Point_2> >
+template <typename Kernel_,
+          typename Container_ = std::vector<typename Kernel_::Point_2> >
 class Greene_convex_decomposition_2 :
   public Polygon_decomposition_strategy_adapter<Kernel_, Container_,
 						Tag_Greene_convex_parition>
 {
 public:
-
   typedef Kernel_                                  Kernel;
   typedef CGAL::Polygon_2<Kernel, Container_>      Polygon_2;
   typedef typename Kernel::Point_2                 Point_2;
-
 };
 
 } //namespace CGAL
