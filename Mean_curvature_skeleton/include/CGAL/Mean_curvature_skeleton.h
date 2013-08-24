@@ -285,7 +285,8 @@ public:
                           EdgeIndexMap Edge_index_map,
                           double omega_H,
                           double edgelength_TH,
-                          double area_TH = 1e-5
+                          double area_TH = 1e-5,
+                          int iteration_TH = 500
                           )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -295,6 +296,7 @@ public:
      alpha_TH(110),
      zero_TH(1e-7),
      area_TH(area_TH),
+     iteration_TH(iteration_TH),
      weight_calculator(Weight_calculator()),
      is_medially_centered(false)
   {
@@ -323,6 +325,8 @@ public:
    * @param area_TH
    *        run_to_converge will stop if the change of area in one iteration
    *        is less than `area_TH`
+   * @param iteration_TH
+   *        the maximum number of iterations to run
    */
   Mean_curvature_skeleton(HalfedgeGraph& P,
                           VertexIndexMap Vertex_index_map,
@@ -331,7 +335,8 @@ public:
                           double omega_P,
                           double edgelength_TH,
                           bool is_medially_centered,
-                          double area_TH = 1e-5
+                          double area_TH = 1e-5,
+                          int iteration_TH = 500
                           )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -342,6 +347,7 @@ public:
      alpha_TH(110),
      zero_TH(1e-7),
      area_TH(area_TH),
+     iteration_TH(iteration_TH),
      weight_calculator(Weight_calculator()),
      is_medially_centered(is_medially_centered)
   {
@@ -350,6 +356,8 @@ public:
 
   /// @} Constructor and Destructor
 
+
+  /// @cond CGAL_DOCUMENT_INTERNAL
 
   /// \name Setter and Getter
   /// @{
@@ -468,9 +476,29 @@ public:
 
   /// @} Setter and Getter
 
+  /// @\endcond
+
 
   /// \name Public Algorithm API
   /// @{
+
+  /*
+   * Extract the skeleton curve for the mesh. The algorithm repeatedly
+   * contract the mesh until convergence, then turn the contracted mesh
+   * to a curve skeleton.
+   *
+   * @param g
+   *        a boost::graph containing the connectivity of the skeleotn
+   * @param points
+   *        the locations of the skeletal points
+   */
+  void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
+  {
+    run_to_converge();
+    convert_to_skeleton(g, points);
+  }
+
+  /// @cond CGAL_DOCUMENT_INTERNAL
 
   /**
    * Contract the mesh by mean curvature flow
@@ -710,6 +738,8 @@ public:
     MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
   }
 
+  /// \endcond
+
   /// @} Public Algorithm API
 
 
@@ -725,7 +755,6 @@ private:
     double area = internal::get_surface_area(polyhedron);
     area_TH = 0.0001 * area;
     original_area = area;
-    iteration_TH = 500;
 
     // initialize index maps
     vertex_iterator vb, ve;
@@ -1298,7 +1327,7 @@ private:
   // Voronoi pole
   // --------------------------------------------------------------------------
 
-  void compute_voronoi_pole()
+  bool compute_voronoi_pole()
   {
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
     compute_vertex_normal();
@@ -1361,12 +1390,6 @@ private:
 
         double t = vt * n;
 
-        // only choose the one inside the mesh
-        if (test_inside(cell_point) != CGAL::ON_BOUNDED_SIDE)
-        {
-          continue;
-        }
-
         // choose the one with maximum distance along the normal
         if (t < 0 && t < max_neg_t)
         {
@@ -1375,27 +1398,35 @@ private:
         }
       }
 
+      // only choose the one inside the mesh
+      if (max_neg_i == -1 ||
+          test_inside(cell_dual[max_neg_i]) != CGAL::ON_BOUNDED_SIDE)
+      {
+        std::cout << "sample is bad\n";
+        return false;
+      }
+
       // cannot find a pole inside mesh
       // just choose a pole along the normal
-      if (max_neg_i == -1)
-      {
-        for (size_t j = 0; j < point_to_pole[i].size(); ++j)
-        {
-          int pole_id = point_to_pole[i][j];
-          Point cell_point = cell_dual[pole_id];
-          Vector vt = cell_point - surface_point;
-          Vector n = normals[i];
+//      if (max_neg_i == -1)
+//      {
+//        for (size_t j = 0; j < point_to_pole[i].size(); ++j)
+//        {
+//          int pole_id = point_to_pole[i][j];
+//          Point cell_point = cell_dual[pole_id];
+//          Vector vt = cell_point - surface_point;
+//          Vector n = normals[i];
 
-          double t = vt * n;
+//          double t = vt * n;
 
-          // choose the one with maximum distance along the normal
-          if (t < 0 && t < max_neg_t)
-          {
-            max_neg_i = pole_id;
-            max_neg_t = t;
-          }
-        }
-      }
+//          // choose the one with maximum distance along the normal
+//          if (t < 0 && t < max_neg_t)
+//          {
+//            max_neg_i = pole_id;
+//            max_neg_t = t;
+//          }
+//        }
+//      }
 
       poles[i] = max_neg_i;
     }
