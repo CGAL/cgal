@@ -24,11 +24,6 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 
   typedef typename std::map<Vertex_handle, int>::iterator         Vertex_set_it;
 
-  if(!border_halfedge->is_border()) {
-    CGAL_warning(!"Argument halfedge is not a border edge!");
-    return std::make_pair(output, Weight_min_max_dihedral_and_area::DEFAULT()); 
-  }
-
   std::vector<Point_3>         P, Q;
   std::vector<Halfedge_handle> P_edges;
   std::map<Vertex_handle, int> vertex_set;
@@ -136,6 +131,8 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
  * \ingroup PkgHoleFilling
  * @brief Function triangulating a hole in surface mesh.
  * 
+ * @pre @a border_halfedge->is_border()
+ *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
  *
@@ -152,6 +149,7 @@ triangulate_hole(Polyhedron& polyhedron,
                  OutputIterator output,
                  bool use_delaunay_triangulation = false)
 {
+  CGAL_precondition(border_halfedge->is_border());
   return internal::triangulate_hole_Polyhedron
     (polyhedron, border_halfedge, output, use_delaunay_triangulation).first;
 }
