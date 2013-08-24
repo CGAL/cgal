@@ -450,20 +450,21 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  // fill selected holes
-  bool any_filled = false;
+  // fill selected holes  
   int counter = 0;
+  int filled_counter = 0;
   for(Scene_polylines_collection::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
     it != polyline_item->selected_holes.end(); ++it, ++counter) {
       print_message(tr("Hole %1:").arg(counter));
-      any_filled |= fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge);
+      if( fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge) ) { ++filled_counter;}
   }
 
-  if(any_filled) {
+  if(filled_counter > 0) {
     scene->itemChanged(polyline_item->poly_item);
     last_active_item = polyline_item->poly_item;
     accept_reject_toggle(true);
   }
+  print_message(tr("%1 of %2 holes are filled!").arg(filled_counter).arg(counter));
   QApplication::restoreOverrideCursor();
 };
 // fills all holes and removes associated Scene_polylines_collection if any
@@ -500,18 +501,19 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  bool any_filled = false;
   int counter = 0;
+  int filled_counter = 0;
   for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++counter) {
      print_message(tr("Hole %1:").arg(counter));
-     any_filled |= fill(poly, *it);
+     if( fill(poly, *it) ) { ++filled_counter; }
   }
 
-  if(any_filled) {
+  if(filled_counter > 0) {
     scene->itemChanged(poly_item);
     last_active_item = poly_item;
     accept_reject_toggle(true);
   }
+  print_message(tr("%1 of %2 holes are filled!").arg(filled_counter).arg(counter));
   QApplication::restoreOverrideCursor();
 }
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
@@ -593,7 +595,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
 
     if(!success) { print_message("Error: fairing is not successful, only triangulation and refinement are applied!"); }
   }
-  print_message(QString("Filled in %1 sec.").arg(timer.time()));
+  print_message(QString("Took %1 sec.").arg(timer.time()));
 
   if(patch.empty()) {
     print_message(tr("Warning: generating patch is not successful! %1")
