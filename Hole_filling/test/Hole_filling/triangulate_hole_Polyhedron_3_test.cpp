@@ -75,7 +75,7 @@ calculate_weight_for_patch(Iterator begin, Iterator end)
 void test_triangulate_hole_weight(const char* file_name, bool use_DT) {
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
-  std::cerr << "test_triangulate_hole_weight + useDT: " << useDT << std::endl;
+  std::cerr << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
   std::cerr << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_iterator> border_reps;
@@ -124,6 +124,31 @@ void test_triangulate_hole(const char* file_name) {
     assert(false);
   }
   
+  std::cerr << "  Done!" << std::endl;
+}
+
+void test_triangulate_hole_should_be_no_output(const char* file_name) {
+  std::cerr << "test_triangulate_hole_should_be_no_output:" << std::endl;
+  std::cerr << "  File: "<< file_name  << std::endl;
+  Polyhedron poly;
+  std::vector<Halfedge_iterator> border_reps;
+  read_poly_with_borders(file_name, poly, border_reps);
+
+  for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
+    std::vector<Facet_handle> patch;
+    CGAL::triangulate_hole(poly, *it, back_inserter(patch), false);
+    if(!patch.empty()) {
+      std::cerr << "  Error: patch should be empty" << std::endl;
+      assert(false);
+    }
+
+    CGAL::triangulate_hole(poly, *it, back_inserter(patch), true);
+    if(!patch.empty()) {
+      std::cerr << "  Error: patch should be empty" << std::endl;
+      assert(false);
+    }
+  }
+
   std::cerr << "  Done!" << std::endl;
 }
 
@@ -296,6 +321,10 @@ int main() {
   }
   test_triangulate_hole_weight("data/RedCircleBox.off", true);
   test_triangulate_hole_weight("data/RedCircleBox.off", false);
+
+  test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
+  test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
+
   test_triangulate_refine_and_fair_hole_compile();
   std::cerr << "All Done!" << std::endl;
 }

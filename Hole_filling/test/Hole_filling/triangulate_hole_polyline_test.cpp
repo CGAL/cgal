@@ -63,7 +63,7 @@ void read_polyline_one_line(const char* file_name, std::vector<Point_3>& points)
   }
 }
 
-// last point should be be repeated
+// last point should be repeated
 void read_polyline_with_extra_points(
   const char* file_name, 
   std::vector<Point_3>& points,
@@ -159,6 +159,22 @@ void test_2(const char* file_name) {
   std::cerr << "  Done!" << std::endl;
 }
 
+void test_should_be_no_output(const char* file_name) {
+  std::cerr << "test_should_be_no_output:" << std::endl;
+  std::cerr << "  File: "<< file_name  << std::endl;
+  std::vector<Point_3> points; // this will contain n and +1 repeated point
+  read_polyline_one_line(file_name, points);
+
+  std::vector<boost::tuple<int, int, int> > tris;
+  CGAL::triangulate_hole_polyline(points.begin(), points.end(), std::back_inserter(tris));
+
+  if(!tris.empty()) {
+    std::cerr << "  Error: patch should be empty" << std::endl;
+    assert(false);
+  }
+  std::cerr << "  Done!" << std::endl;
+}
+
 int main() {
   std::vector<std::string> input_files_1;
   input_files_1.push_back("data/triangle.polylines.txt");
@@ -178,5 +194,7 @@ int main() {
   for(std::vector<std::string>::iterator it = input_files_2.begin(); it != input_files_2.end(); ++it) {
     test_2(it->c_str());
   }
+
+  test_should_be_no_output("data/collinear.polylines.txt");
   std::cerr << "All Done!" << std::endl;
 }
