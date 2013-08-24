@@ -508,6 +508,35 @@ public:
     return true;
   }
 
+  /*
+   * Extract the skeleton curve for the mesh. The algorithm repeatedly
+   * contract the mesh until convergence, then turn the contracted mesh
+   * to a curve skeleton.
+   *
+   * @param g
+   *        a boost::graph containing the connectivity of the skeleotn
+   * @param points
+   *        the locations of the skeletal points
+   * @param corr
+   *        for each skeletal point, record its correspondent surface points
+   * @return if the the skeleton is extracted correctly. It may happen
+   *         that the mesh is not sampled dense enough that the Voronoi
+   *         poles cannot be computed correctly.
+   */
+  bool extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points,
+                        std::map<vertex_desc, std::vector<int> >& corr)
+  {
+    if (is_medially_centered && !is_pole_correct)
+    {
+      return false;
+    }
+    run_to_converge();
+    convert_to_skeleton(g, points);
+
+    corr = skeleton_to_surface;
+    return true;
+  }
+
   /// @cond CGAL_DOCUMENT_INTERNAL
 
   /**
@@ -570,7 +599,7 @@ public:
    */
   int collapse_edges()
   {
-    internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
+    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map;
     init_fixed_edge_map(fixed_edge_map);
 
     int num_collapses = 0;
@@ -940,7 +969,7 @@ private:
   /// collapse short edges using simplification package
   int collapse_edges_simplification()
   {
-    internal::Fixed_edge_map<Polyhedron> fixed_edge_map;
+    internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map;
 
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
@@ -966,26 +995,26 @@ private:
     // This is a stop predicate (defines when the algorithm terminates).
     // The simplification stops when the length of all edges is greater
     // than the minimum threshold.
-    CGAL::internal::Minimum_length_predicate<Polyhedron> stop(edgelength_TH);
+    CGAL::internal::Minimum_length_predicate<HalfedgeGraph> stop(edgelength_TH);
 
     // midpoint placement without geometric test
-    SMS::Geometric_test_skipper< SMS::Midpoint_placement<Polyhedron> > placement;
+    SMS::Geometric_test_skipper< SMS::Midpoint_placement<HalfedgeGraph> > placement;
 
-    internal::Track_correspondence_visitor<Polyhedron> vis;
+    internal::Track_correspondence_visitor<HalfedgeGraph> vis;
     if (is_medially_centered)
     {
-      vis = internal::Track_correspondence_visitor<Polyhedron>(&correspondence,
+      vis = internal::Track_correspondence_visitor<HalfedgeGraph>(&correspondence,
                                                    &poles, &cell_dual, max_id);
     }
     else
     {
-      vis = internal::Track_correspondence_visitor<Polyhedron>(&correspondence, max_id);
+      vis = internal::Track_correspondence_visitor<HalfedgeGraph>(&correspondence, max_id);
     }
 
     int r = SMS::edge_collapse
                 (polyhedron
                 ,stop
-                ,CGAL::get_cost(SMS::Edge_length_cost<Polyhedron>())
+                ,CGAL::get_cost(SMS::Edge_length_cost<HalfedgeGraph>())
                       .get_placement(placement)
                       .visitor(vis)
                       .edge_is_border_map(fixed_edge_map)
@@ -1054,7 +1083,7 @@ private:
   }
 
   /// collapse short edges by iteratively linear search
-  int collapse_edges_linear(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
+  int collapse_edges_linear(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
   {
     std::vector<edge_descriptor> edges;
     edges.reserve(boost::num_edges(polyhedron));
@@ -1102,7 +1131,7 @@ private:
     return cnt;
   }
 
-  void init_fixed_edge_map(internal::Fixed_edge_map<Polyhedron>& fixed_edge_map)
+  void init_fixed_edge_map(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
   {
     edge_iterator eb, ee;
     for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
@@ -1379,7 +1408,7 @@ private:
       cell_id++;
     }
 
-    Point_inside_polyhedron_3<Polyhedron, Kernel> test_inside(polyhedron);
+    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(polyhedron);
 
     poles.clear();
     for (size_t i = 0; i < point_to_pole.size(); ++i)
@@ -1412,8 +1441,9 @@ private:
       if (max_neg_i == -1 ||
           test_inside(cell_dual[max_neg_i]) != CGAL::ON_BOUNDED_SIDE)
       {
+        std::cout << "incorrect pole\n";
         is_pole_correct = false;
-        return;
+//        return;
       }
 
       // cannot find a pole inside mesh
@@ -1452,7 +1482,7 @@ private:
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
-      normals[vid] = internal::get_vertex_normal<typename Polyhedron::Vertex,Kernel>(*v);
+      normals[vid] = internal::get_vertex_normal<typename HalfedgeGraph::Vertex,Kernel>(*v);
     }
   }
 
