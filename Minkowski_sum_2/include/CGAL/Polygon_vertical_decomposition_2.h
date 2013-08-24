@@ -17,8 +17,8 @@
 //
 // Author(s) : Efi Fogel   <efifogel@gmail.com>
 
-#ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
-#define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
+#ifndef CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H
+#define CGAL_POLYGON_VERTICAL_DECOMPOSITION_2_H
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_set_2.h>
@@ -153,12 +153,10 @@ public:
    * \param oi An output iterator of convex polygons.
    * \return A past-the-end iterator for the sub-polygons.
    */
-  template <typename OutputIterator>
-  OutputIterator operator()(const Polygon_with_holes_2& pgn,
-                            OutputIterator oi) const
+  template <typename Polygon_, typename OutputIterator_>
+  OutputIterator_ operator()(const Polygon_& pgn, OutputIterator_ oi) const
   {
-    typename General_polygon_set_2::Traits_2 traits;
-    General_polygon_set_2 gps(traits);
+    General_polygon_set_2 gps(*m_traits);
     gps.insert(pgn);
     Arrangement_2& arr = gps.arrangement();
     My_observer obs(arr);
