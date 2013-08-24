@@ -60,25 +60,46 @@ int main()
     return 1;
   }
 
+  // save a copy for correspondence
+  Polyhedron mCopy(mesh);
+
   //TODO use 0.002 * diag as edgelength_TH
   Mean_curvature_skeleton *mcs = new Mean_curvature_skeleton(mesh, Vertex_index_map(), Edge_index_map(),
                                           0.1, 0.2, 0.0024804, true, 0.0001);
 
   Graph g;
   std::map<vertex_desc, Point> points;
+  std::map<vertex_desc, std::vector<int> > corr;
 
-  mcs->extract_skeleton(g, points);
+  mcs->extract_skeleton(g, points, corr);
 
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
   std::cout << "edges: " << boost::num_edges(g) << "\n";
 
-  // output all the edges
-  edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
+  // output the skeletal point and correspondent surface points
+  vertex_iterator vb, ve;
+  std::vector<vertex_descriptor> id_to_vd;
+  id_to_vd.clear();
+  id_to_vd.resize(boost::num_vertices(mCopy));
+  int id = 0;
+  for (boost::tie(vb, ve) = boost::vertices(mCopy); vb != ve; ++vb)
   {
-    Point s = points[boost::source(*ei, g)];
-    Point t = points[boost::target(*ei, g)];
-    std::cout << s << " " << t << "\n";
+    vertex_descriptor v = *vb;
+    id_to_vd[id++] = v;
+  }
+
+  std::map<vertex_desc, std::vector<int> >::iterator iter;
+  for (iter = corr.begin(); iter != corr.end(); ++iter)
+  {
+    vertex_desc i = iter->first;
+    Point skel = points[i];
+    std::cout << skel << ": ";
+    for (size_t j = 0; j < corr[i].size(); ++j)
+    {
+      Point surf = id_to_vd[corr[i][j]]->point();
+      std::cout << surf << " ";
+    }
+    std::cout << "\n";
   }
   return 0;
 }
