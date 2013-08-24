@@ -41,14 +41,16 @@ class Minkowski_sum_by_decomposition_2 {
 public:
   typedef DecompStrategy_                              Decomposition_strategy;
   typedef Container_                                   Container;
-  typedef typename Decomposition_strategy::Polygon_2   Polygon_2;
 
-  typedef typename Decomposition_strategy::Kernel      Kernel;
-  typedef CGAL::Arr_segment_traits_2<Kernel>           Arr_segment_traits;
+  typedef typename Decomposition_strategy::Polygon_2     Polygon_2;
+
+  typedef typename Decomposition_strategy::Kernel        Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>             Arr_segment_traits;
   typedef CGAL::Gps_segment_traits_2<Kernel, Container, Arr_segment_traits>
-                                                       Traits_2;
-  typedef CGAL::General_polygon_set_2<Traits_2>        General_polygon_set_2;
-  typedef CGAL::Polygon_with_holes_2<Kernel,Container> Polygon_with_holes_2;
+                                                         Traits_2;
+  typedef CGAL::General_polygon_set_2<Traits_2>          General_polygon_set_2;
+  typedef CGAL::Polygon_with_holes_2<Kernel,Container>   Polygon_with_holes_2;
+  typedef typename General_polygon_set_2::Arrangement_2  Arrangement_2;
 
 private:
   // Kernel types:
@@ -274,6 +276,10 @@ public:
 
     General_polygon_set_2 gps(*m_traits);
     gps.join(sub_sum_polygons.begin(), sub_sum_polygons.end());
+
+    Arrangement_2& arr = gps.arrangement();
+    simplify(arr);
+
     Polygon_with_holes_list sum;
     gps.polygons_with_holes(std::back_inserter(sum));
     CGAL_assertion(sum.size() == 1);
@@ -281,6 +287,27 @@ public:
   }
 
 private:
+  /*! Merge mergable edges
+   * \param arr (in) The underlying arrangement.
+   */
+  void simplify(Arrangement_2& arr) const
+  {
+    typename Arrangement_2::Vertex_iterator vit;
+    for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+      if (vit->degree() != 2) continue;
+      typename Arrangement_2::Halfedge_around_vertex_circulator eit =
+        vit->incident_halfedges();
+      const typename Arrangement_2::Geometry_traits_2* traits =
+        arr.geometry_traits();
+      if (traits->are_mergeable_2_object()(eit->curve(), eit->next()->curve()))
+      {
+        typename Arrangement_2::Geometry_traits_2::X_monotone_curve_2 c;
+        traits->merge_2_object()(eit->curve(), eit->next()->curve(), c);
+        arr.merge_edge(eit, eit->next(), c);
+      }
+    }
+  }
+
   /*!
    * Compute the Minkowski sum of two convex polygons.
    * \param pgn1 The first convex polygon.
