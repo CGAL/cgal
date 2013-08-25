@@ -628,7 +628,7 @@ public:
   }
 
   /**
-   * Split too obtuse triangles
+   * Split triangles with one angle greater than alpha_TH
    */
   int split_triangles()
   {
