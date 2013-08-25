@@ -22,6 +22,15 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+/** 
+ * @file Detect_degeneracy.h
+ * @brief This file contains functions to detect degeneracy at a given vertex.
+ *
+ * The approach is to count the Euler characteristics within a small geodesic 
+ * distance at the given vertex. If it is not equal to one, which is the case
+ * for disk topology, the vertex is considered to be degenerate.
+ */
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>

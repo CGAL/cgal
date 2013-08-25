@@ -22,6 +22,13 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+/** 
+ * @file Collapse.h
+ * @brief This file contains the helper functions for collapsing short edges.
+ * 
+ * The approach is based on the functions from surface_mesh.
+ */
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
@@ -31,7 +38,8 @@ namespace CGAL {
 namespace internal {
 
 /**
-* Test if it is topologicaly feasible to collapse the given edge
+* Test if it is topologicaly feasible to collapse the given edge.
+*
 * @pre the polyhedron is a triangular mesh
 * @param polyhedron the mesh containing the given edge
 * @param v0v1 the edge to be collapsed

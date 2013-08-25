@@ -22,6 +22,12 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+/** 
+ * @file Utility.h
+ * @brief This file contains some helper functions like splitting an edge at a 
+ * given point.
+ */
+
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>

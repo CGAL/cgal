@@ -22,6 +22,16 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+/** 
+ * @file Track_correspondence_visitor.h
+ * @brief This file contains the visitor class to track the correspondent vertices
+ * during edge collapse.
+ *
+ * The visitor class track vertices that are collapsed onto the given vertex.
+ * It is needed when using simplification package to do the edge collapse.
+ * 
+ */
+
 // Visitor base
 #include <CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h>
 

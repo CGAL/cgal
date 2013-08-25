@@ -22,6 +22,13 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+/** 
+ * @file Debug.h
+ * @brief This file contains some macro used to hide/show the log for debugging
+ * purpose.
+ * 
+ */
+
 // enable debugging output statement
 // this is for locating bugs
 //#define CGAL_MCFSKEL_DEBUG

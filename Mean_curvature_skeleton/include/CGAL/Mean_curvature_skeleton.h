@@ -20,6 +20,12 @@
 #ifndef CGAL_MEAN_CURVATURE_SKELETON_H
 #define CGAL_MEAN_CURVATURE_SKELETON_H
 
+/**
+ * @file Mean_curvature_skeleton.h
+ * @brief The class containing the API to extract curve skeleton for a closed
+ * triangular mesh.
+ */
+
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>

@@ -22,6 +22,13 @@
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 
+/** 
+ * @file Fixed_edge_map.h
+ * @brief This file contains the class to record if an edge is fixed.
+ *
+ * It is needed when using simplification package to do the edge collapse.
+ */
+
 namespace CGAL {
 namespace internal {
 
