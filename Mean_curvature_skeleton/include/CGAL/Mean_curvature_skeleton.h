@@ -118,7 +118,7 @@ enum Degeneracy_algorithm_tag
 
 /// \ingroup PkgMeanCurvatureSkeleton3
 /// @brief Class providing the functionalities for extracting
-///        the skeleton of a triangulated surface mesh
+///        the skeleton of a triangulated surface mesh.
 ///
 /// @tparam HalfedgeGraph
 ///         a model of `HalfedgeGraph`
@@ -313,7 +313,7 @@ public:
   /// \endcond
 
   /**
-   * The constructor of a Mean_curvature_skeleton object
+   * The constructor of a Mean_curvature_skeleton object.
    *
    * @pre the polyhedron is a watertight triangular mesh
    * @param P
@@ -411,7 +411,7 @@ public:
   }
 
   /**
-   * Get the positions of fixed(degenerate) points
+   * Get the positions of fixed(degenerate) points.
    *
    * @param fixed_points
    *        return the positions of fixed points
@@ -432,7 +432,7 @@ public:
   }
 
   /**
-   * Get the positions of non-fixed(non-degenerate) points
+   * Get the positions of non-fixed(non-degenerate) points.
    *
    * @param non_fixed_points
    *        return the positions of non-fixed points
@@ -453,7 +453,7 @@ public:
   }
 
   /**
-   * Get the correspondent surface points for the skeleton
+   * Get the correspondent surface points for the skeleton.
    *
    * @param corr
    *        for each skeletal point, record its correspondent surface points
@@ -464,7 +464,7 @@ public:
   }
 
   /**
-   * Get the Voronoi pole for the surface mesh
+   * Get the Voronoi pole for the surface mesh.
    *
    * @param max_poles
    *        for each mesh vertex, record its correspondent Voronoi pole position
@@ -546,7 +546,7 @@ public:
   /// @cond CGAL_DOCUMENT_INTERNAL
 
   /**
-   * Contract the mesh by mean curvature flow
+   * Contract the mesh by mean curvature flow.
    */
   void contract_geometry()
   {
@@ -601,7 +601,7 @@ public:
   }
 
   /**
-   * Collapse short edges
+   * Collapse short edges with length less than `edgelength_TH`.
    */
   int collapse_edges()
   {
@@ -634,7 +634,7 @@ public:
   }
 
   /**
-   * Split triangles with one angle greater than alpha_TH
+   * Split triangles with one angle greater than `alpha_TH`.
    */
   int split_triangles()
   {
@@ -660,7 +660,7 @@ public:
   }
 
   /**
-   * Run a combination of `collapse_edges` and `split_triangles`
+   * Run a combination of `collapse_edges` and `split_triangles`.
    */
   int update_topology()
   {
@@ -676,7 +676,7 @@ public:
   }
 
   /**
-   * Fix degenerate vertices
+   * Fix degenerate vertices.
    */
   int detect_degeneracies()
   {
@@ -692,7 +692,7 @@ public:
 
   /**
    * Run an iteration of `contract_geometry`, `update_topology` and
-   * `detect_degeneracies`
+   * `detect_degeneracies`.
    */
   void contract()
   {
@@ -707,7 +707,7 @@ public:
   /**
    * Run iterations of `contract_geometry()`, `update_topology()` and
    * `detect_degeneracies()` until the change of surface area during one
-   * iteration is less than `area_TH` * original surface area
+   * iteration is less than `area_TH` * original surface area.
    */
   void run_to_converge()
   {
@@ -743,7 +743,7 @@ public:
   }
 
   /**
-   * Convert the contracted mesh to a skeleton curve
+   * Convert the contracted mesh to a skeleton curve.
    */
   void convert_to_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
   {
@@ -794,6 +794,7 @@ private:
   // Initialization
   // --------------------------------------------------------------------------
 
+  /// Initialize some global data structures such as vertex id.
   void init()
   {
     alpha_TH *= (M_PI / 180.0);
@@ -830,7 +831,7 @@ private:
   // Contraction
   // --------------------------------------------------------------------------
 
-  /// compute cotangent weights of all edges
+  /// Compute cotangent weights of all edges.
   void compute_edge_weight()
   {
     edge_weight.clear();
@@ -842,7 +843,7 @@ private:
     }
   }
 
-  /// assemble the left hand side
+  /// Assemble the left hand side.
   void assemble_LHS(typename SparseLinearAlgebraTraits_d::Matrix& A)
   {
     MCFSKEL_DEBUG(std::cerr << "start LHS\n";)
@@ -903,7 +904,7 @@ private:
     MCFSKEL_DEBUG(std::cerr << "end LHS\n";)
   }
 
-  /// assemble the right hand side
+  /// Assemble the right hand side.
   void assemble_RHS(typename SparseLinearAlgebraTraits_d::Vector& Bx,
                     typename SparseLinearAlgebraTraits_d::Vector& By,
                     typename SparseLinearAlgebraTraits_d::Vector& Bz)
@@ -956,6 +957,7 @@ private:
     MCFSKEL_DEBUG(std::cerr << "end RHS\n";)
   }
 
+  /// The order of vertex id is the same as the traverse order.
   void update_vertex_id()
   {
     new_id.clear();
@@ -972,7 +974,7 @@ private:
   // Edge collapse
   // --------------------------------------------------------------------------
 
-  /// collapse short edges using simplification package
+  /// Collapse short edges using simplification package.
   int collapse_edges_simplification()
   {
     internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map;
@@ -1029,7 +1031,7 @@ private:
     return r;
   }
 
-  /// track correspondent original surface points during collapse
+  /// Track correspondent original surface points during collapse.
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor v)
   {
@@ -1088,7 +1090,7 @@ private:
     }
   }
 
-  /// collapse short edges by iteratively linear search
+  /// Collapse short edges by iteratively linear search.
   int collapse_edges_linear(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
   {
     std::vector<edge_descriptor> edges;
@@ -1137,6 +1139,7 @@ private:
     return cnt;
   }
 
+  /// Fix an edge if both incident vertices are degenerate.
   void init_fixed_edge_map(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
   {
     edge_iterator eb, ee;
@@ -1159,6 +1162,7 @@ private:
   // Triangle split
   // --------------------------------------------------------------------------
 
+  /// Compute the incident angles for all the halfedges.
   void compute_incident_angle()
   {
     halfedge_angle.clear();
@@ -1212,7 +1216,7 @@ private:
     }
   }
 
-  /// project the vertex `vk` to the line of `vs` and `vt`
+  /// Project the vertex `vk` to the line of `vs` and `vt`.
   Point project_vertex(const vertex_descriptor vs,
                        const vertex_descriptor vt,
                        const vertex_descriptor vk)
@@ -1244,6 +1248,7 @@ private:
     return pn;
   }
 
+  /// Split triangles with an angle greater than `alpha_TH`.
   int split_flat_triangle()
   {
     int ne = boost::num_edges(polyhedron);
@@ -1296,8 +1301,8 @@ private:
   // Degeneracy detection
   // --------------------------------------------------------------------------
 
-  /// test degeneracy of a vertex by counting the euler characteristic of
-  /// its local neighborhood disk
+  /// Test degeneracy of a vertex by counting the euler characteristic of
+  /// its local neighborhood disk.
   int detect_degeneracies_in_disk()
   {
     int num_fixed = 0;
@@ -1323,8 +1328,8 @@ private:
     return num_fixed;
   }
 
-  /// test degeneracy of a vertex by a simple heuristic looking for a
-  /// triangular cross section
+  /// Test degeneracy of a vertex by a simple heuristic looking for a
+  /// triangular cross section.
   int detect_degeneracies_heuristic()
   {
     int num_fixed = 0;
@@ -1372,6 +1377,8 @@ private:
   // Voronoi pole
   // --------------------------------------------------------------------------
 
+  /// Compute the Voronoi pole for surface vertices. The pole is the furthest
+  /// vertex in the Voronoi cell containing the given vertex.
   void compute_voronoi_pole()
   {
     MCFSKEL_DEBUG(std::cout << "start compute_voronoi_pole\n";)
@@ -1479,6 +1486,7 @@ private:
     is_pole_correct = true;
   }
 
+  /// Compute an approximate vertex normal for all vertices.
   void compute_vertex_normal()
   {
     normals.resize(boost::num_vertices(polyhedron));
