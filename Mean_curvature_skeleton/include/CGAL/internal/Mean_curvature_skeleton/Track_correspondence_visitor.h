@@ -95,7 +95,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
     {
       (*corr)[to] = std::vector<int>();
     }
-    // only track vertex in original mesh
+    // only track vertex in the original mesh
     if (from < max_id)
     {
       (*corr)[to].push_back(from);
@@ -111,6 +111,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
       (*corr).erase(iter);
     }
 
+    // also track the poles
     if (is_medially_centered)
     {
       Point pole0 = Point(to_double((*cell_dual)[(*poles)[id0]].x()),

@@ -116,6 +116,13 @@ bool is_collapse_ok(HalfedgeGraph& polyhedron,
   return true;
 }
 
+/**
+* Find the edge which containg given vertices.
+*
+* @param polyhedron the mesh containing the edge.
+* @param vi one vertex incident to the edge.
+* @param vj the other vertex incident to the edge.
+*/
 template<class HalfedgeGraph>
 bool find_halfedge(HalfedgeGraph& polyhedron, 
                    typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vi,
@@ -137,6 +144,12 @@ bool find_halfedge(HalfedgeGraph& polyhedron,
   return false;
 }
 
+/**
+* Test if a given vertex is on the border.
+*
+* @param polyhedron the mesh containing the given vertex
+* @param aV the given vertex
+*/
 template<class HalfedgeGraph>
 bool is_border(HalfedgeGraph& polyhedron,
                typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor aV)
@@ -161,6 +174,11 @@ bool is_border(HalfedgeGraph& polyhedron,
   return rR;
 }
 
+/**
+* Test if a given edge is a border edge.
+*
+* @param aEdge the given edge
+*/
 template<class Edge_descriptor>
 bool is_undirected_edge_a_border(Edge_descriptor aEdge)
 {

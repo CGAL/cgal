@@ -26,9 +26,6 @@
  * @file Detect_degeneracy.h
  * @brief This file contains functions to detect degeneracy at a given vertex.
  *
- * The approach is to count the Euler characteristics within a small geodesic 
- * distance at the given vertex. If it is not equal to one, which is the case
- * for disk topology, the vertex is considered to be degenerate.
  */
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -41,6 +38,17 @@
 namespace CGAL {
 namespace internal {
 
+/**
+* Test if a given vertex is degenerate.
+*
+* The approach is to count the Euler characteristics within a small geodesic 
+* distance at the given vertex. If it is not equal to one, which is the case
+* for disk topology, the vertex is considered to be degenerate.
+
+* @param polyhedron the mesh containing the given vertex
+* @param root the given vertex
+* @param edgelength_TH the diameter of the geodesic disk
+*/
 template<class HalfedgeGraph>
 bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
                           typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
@@ -105,6 +113,14 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
   return false;
 }
 
+/**
+* Find all the vertices within a geodesic disk.
+*
+* @param polyhedron the mesh containing the vertices
+* @param root the center of the geodesic disk
+* @param vertices_in_disk containing the found vertices within the disk
+* @param edgelength_TH the diameter of the geodesic disk
+*/
 template<class HalfedgeGraph>
 void search_vertices_in_disk(HalfedgeGraph& polyhedron,
                              typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
