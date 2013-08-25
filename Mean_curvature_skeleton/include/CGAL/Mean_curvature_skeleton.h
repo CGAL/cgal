@@ -484,13 +484,13 @@ public:
 
   /// @} Setter and Getter
 
-  /// @\endcond
+  /// \endcond
 
 
   /// \name Public Algorithm API
   /// @{
 
-  /*
+  /**
    * Extract the skeleton curve for the mesh. The algorithm repeatedly
    * contract the mesh until convergence, then turn the contracted mesh
    * to a curve skeleton.
@@ -514,7 +514,7 @@ public:
     return true;
   }
 
-  /*
+  /**
    * Extract the skeleton curve for the mesh. The algorithm repeatedly
    * contract the mesh until convergence, then turn the contracted mesh
    * to a curve skeleton.

@@ -50,6 +50,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Grap
 typedef boost::graph_traits<Graph>::vertex_descriptor                vertex_desc;
 typedef boost::graph_traits<Graph>::edge_iterator                    edge_iter;
 
+// This example extracts a medially centered skeleton from a given mesh.
 int main()
 {
   Polyhedron mesh;
