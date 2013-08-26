@@ -1,7 +1,7 @@
 #ifndef POLYHEDRON_EX_H_INCLUDED
 #define POLYHEDRON_EX_H_INCLUDED
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -13,7 +13,7 @@
 
 
 // CGAL kernel
-typedef CGAL::Cartesian<double> My_kernel;
+typedef CGAL::Simple_cartesian<double> My_kernel;
 
 
 // compute facet center
