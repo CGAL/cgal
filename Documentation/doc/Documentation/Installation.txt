@@ -468,7 +468,6 @@ optional: it is used by some models of the
 
 \subsection thirdpartyRS3 RS and RS3
 
-
 \sc{Rs} (Real Solutions) is devoted to the study of the real roots of
 polynomial systems with a finite number of complex roots (including
 univariate polynomials). In \cgal, \sc{Rs} is used by one model of the
@@ -480,17 +479,6 @@ successor of \sc{Rs}, which is used in conjunction with it.
 
 The libraries \sc{Rs} and \sc{Rs3} need \sc{Mpfi}, which can be downloaded from
 <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>.
-
-
-
-Rs is freely distributable for non-commercial use. You can download it
-from <A HREF="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</A>.
-The library Rs needs \sc{Mpfi}, which can be downloaded from <A HREF="http://mpfi.gforge.inria.fr/">`http://mpfi.gforge.inria.fr/`</A>.
-Version 1.4 or higher is recommended.
-
-The successor of Rs is called Rs3. It less restrictive when it comes
-to licencing and also contains improved and more efficient interfaces.
-Mainly parts in \cgal's algebraic kernel require Rs3.
 
 \subsection thirdpartyNTL NTL
 
