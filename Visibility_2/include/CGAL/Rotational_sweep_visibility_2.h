@@ -99,25 +99,7 @@ public:
       }
       //print_arrangement(arrc);
       //Insert a bounding box;
-      Number_type xmin, xmax, ymin, ymax;
-      Point_2 q1 = arrc.vertices_begin()->point();
-      xmax = xmin = q1.x();
-      ymin = ymax = q1.y();
-      for (Vertex_const_handle vh = arrc.vertices_begin(); vh != arrc.vertices_end(); vh++) {
-        if (vh->point().x() < xmin)
-          xmin = vh->point().x();
-        if (vh->point().x() > xmax)
-          xmax = vh->point().x();
-        if (vh->point().y() < ymin)
-          ymin = vh->point().y();
-        if (vh->point().y() > ymax)
-          ymax = vh->point().y();
-      }
-      xmin -= 10;
-      xmax += 10;
-      ymin -= 10;
-      ymax += 10;
-      Point_2 p1(xmin, ymin), p2(xmax, ymin), p3(xmax, ymax), p4(xmin, ymax);
+
       CGAL::insert(arrc, Segment_2(p1, p2));
       CGAL::insert(arrc, Segment_2(p2, p3));
       CGAL::insert(arrc, Segment_2(p3, p4));
@@ -302,10 +284,10 @@ private:
 
   //methods
   //compute visibility region between qa and qb
-  void visibility_region_impl(Face_const_handle f, const Point_2& q, const Point_2& a, const Point_2& b) {
+  void visibility_region_impl(Face_const_handle f) {
     std::vector<Halfedge_const_handle> edges, active_edges;       //edges stores all halfedges of the face; and active_edges stores all halfedges that is currently intersected by the view ray.
     //preprocess the face
-    input_face(f, q, a, b);
+    input_face(f);
     vs.sort(compare_angle);
 //debug
 //        for (int i = 0; i<vertices.size(); i++) {
@@ -547,25 +529,27 @@ private:
                    const Point_2& a,
                    const Point_2& b)
   {
-    bool is_big = ( a==b || CGAL::left_turn(a, q, b));     //true means the angle of vision between qa,qb is at least 180 degree.
     typename Arrangement_2::Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     typename Arrangement_2::Ccb_halfedge_const_circulator circ = curr;
     do {
       Point_2 v = curr->target()->point();
-      if (v==a || v==b)
+      if (v == q)
         continue;
-      bool in_vision;
-      if (is_big)
-        in_vision = !(CGAL::right_turn(q, a, v) && CGAL::left_turn(q, b, v));
-      else
-        in_vision = (!CGAL::right_turn(q, a, v)) && (!CGAL::left_turn(q, b, v));
-      if (!in_vision)
-        continue;
-
+//      if (v==a || v==b)
+//        continue;
+//      bool in_vision;
+//      if (is_big)
+//        in_vision = !(CGAL::right_turn(q, a, v) && CGAL::left_turn(q, b, v));
+//      else
+//        in_vision = (!CGAL::right_turn(q, a, v)) && (!CGAL::left_turn(q, b, v));
+//      if (!in_vision)
+//        continue;
       vs.push_back(v);
       std::vector<Point_2> neighbor;
-      neighbor.push_back(curr->source()->point());
-      neighbor.push_back(curr->next()->target()->point());
+      if (curr->source()->point() != q)
+        neighbor.push_back(curr->source()->point());
+      if (curr->next()->target()->point() != q)
+        neighbor.push_back(curr->next()->target()->point());
       vmap[v] = neighbor;
     } while (++curr != circ);
 
@@ -574,23 +558,41 @@ private:
       typename Arrangement_2::Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
       do {
         Point_2 v = curr->target()->point();
-        if (v==a || v==b)
+        if (v == q)
           continue;
-        bool in_vision;
-        if (is_big)
-          in_vision = !(CGAL::right_turn(q, a, v) && CGAL::left_turn(q, b, v));
-        else
-          in_vision = (!CGAL::right_turn(q, a, v)) && (!CGAL::left_turn(q, b, v));
-        if (!in_vision)
-          continue;
-
         vs.push_back(v);
         std::vector<Point_2> neighbor;
-        neighbor.push_back(c1->source()->point());
-        neighbor.push_back(c1->next()->target()->point());
+        if (c1->source()->point() != q)
+          neighbor.push_back(c1->source()->point());
+        if (c1->next()->target()->point() != q)
+          neighbor.push_back(c1->next()->target()->point());
         vmap[v] = neighbor;
       } while (++c1 != c2);
     }
+    if (q != a) {
+      Number_type xmin, xmax, ymin, ymax;
+      Point_2 q1 = vs[0];
+      xmax = xmin = q1.x();
+      ymin = ymax = q1.y();
+      for (i=0; i<vs.size(); i++) {
+        Point_2 q1 = vs[i];
+        if (q1.x() < xmin)
+          xmin = q1.x();
+        if (q1.x() > xmax)
+          xmax = q1.x();
+        if (q1.y() < ymin)
+          ymin = q1.y();
+        if (q1.y() > ymax)
+          ymax = q1.y();
+      }
+      xmin -= 10;
+      xmax += 10;
+      ymin -= 10;
+      ymax += 10;
+      Point_2 p1(xmin, ymin), p2(xmax, ymin), p3(xmax, ymax), p4(xmin, ymax);
+
+    }
+
   }
 
 

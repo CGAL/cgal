@@ -414,7 +414,7 @@ public:
     
 
     if(location == CDT::EDGE){
-      std::cout << "query on edge" << std::endl;
+      //std::cout << "query on edge" << std::endl;
       // this is the easy part, there are only two possible faces 
       // index indicates the edge = vertex on the other side of the edge 
       // the next vertex in cw order should be the target of given edge
