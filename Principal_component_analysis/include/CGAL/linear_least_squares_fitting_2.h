@@ -21,9 +21,8 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/IO/io.h>
+//#include <CGAL/Algebraic_structure_traits.h>
+//#include <CGAL/IO/io.h>
 #include <CGAL/linear_least_squares_fitting_points_2.h>
 #include <CGAL/linear_least_squares_fitting_segments_2.h>
 #include <CGAL/linear_least_squares_fitting_triangles_2.h>

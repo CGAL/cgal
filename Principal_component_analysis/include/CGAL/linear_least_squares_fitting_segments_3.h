@@ -21,11 +21,11 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_SEGMENTS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/linear_least_squares_fitting_points_3.h>
+#include <CGAL/multipass_distance.h>
 
 #include <iterator>
 
@@ -81,7 +81,8 @@ linear_least_squares_fitting_3(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
-  std::list<Point> points;
+  std::vector<Point> points;
+  points.reserve(2 * multipass_distance(first,beyond));
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -144,7 +145,8 @@ linear_least_squares_fitting_3(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
-  std::list<Point> points;
+  std::vector<Point> points;
+  points.reserve(2 * multipass_distance(first,beyond));
   for(InputIterator it = first;
       it != beyond;
       it++)

@@ -21,17 +21,16 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_TRIANGLES_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/multipass_distance.h>
 
 #include <iterator>
 #include <vector>
 #include <cmath>
-#include <list>
 
 namespace CGAL {
 
@@ -203,7 +202,8 @@ linear_least_squares_fitting_2(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
   
-  std::list<Point> points;  
+  std::vector<Point> points;  
+  points.reserve(3 * multipass_distance(first,beyond));
   for(InputIterator it = first;
       it != beyond;
       it++)

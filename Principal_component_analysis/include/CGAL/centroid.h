@@ -27,12 +27,13 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/global_functions.h>
+#include <CGAL/multipass_distance.h>
 
 #include <CGAL/is_iterator.h>
 #include <boost/utility.hpp>
 
 #include <iterator>
-#include <list>
+#include <vector>
 
 // Functions to compute the centroid of N points.
 // Works in 2D and 3D.
@@ -92,7 +93,8 @@ centroid(InputIterator begin,
   
   CGAL_precondition(begin != end);
   
-  std::list<Point> points;  
+  std::vector<Point> points;  
+  points.reserve(2 * multipass_distance(begin, end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -155,7 +157,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Point> points;
+  std::vector<Point> points;
+  points.reserve(3* multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -184,7 +187,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Segment> segments;
+  std::vector<Segment> segments;
+  segments.reserve(3 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -318,7 +322,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Point> points;
+  std::vector<Point> points;
+  points.reserve(4 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -348,7 +353,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Segment> segments;
+  std::vector<Segment> segments;
+  segments.reserve(4 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -477,7 +483,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Point> points;
+  std::vector<Point> points;
+  points.reserve(3 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -506,7 +513,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Segment> segments;
+  std::vector<Segment> segments;
+  segments.reserve(3 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -640,7 +648,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Point> points;
+  std::vector<Point> points;
+  points.reserve(8 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)
@@ -674,7 +683,8 @@ centroid(InputIterator begin,
 
   CGAL_precondition(begin != end);
   
-  std::list<Segment> segments;
+  std::vector<Segment> segments;
+  segments.reserve(12 * multipass_distance(begin,end));
   for(InputIterator it = begin;
       it != end;
       it++)

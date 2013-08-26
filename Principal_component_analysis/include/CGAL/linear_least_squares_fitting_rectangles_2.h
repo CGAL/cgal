@@ -21,12 +21,12 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_RECTANGLES_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/multipass_distance.h>
 
 #include <iterator>
 #include <vector>
@@ -168,8 +168,8 @@ linear_least_squares_fitting_2(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment_2> segments;
-  
+  std::vector<Segment_2> segments;
+  segments.reserve(4 * multipass_distance(first,beyond));
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -204,8 +204,8 @@ linear_least_squares_fitting_2(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point_2> points;
-  
+  std::vector<Point_2> points;
+  points..reserve(4 * multipass_distance(first,beyond));
   for(InputIterator it = first;
       it != beyond;
       it++)
