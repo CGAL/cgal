@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
@@ -8,7 +8,7 @@
 #include <cctype>
 #include <cmath>
 
-typedef CGAL::Cartesian<double>                              Kernel;
+typedef CGAL::Simple_cartesian<double>                              Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
@@ -188,6 +188,7 @@ int main( int argc, char* argv[]) {
     }
     Polyhedron P;
     cin >> P;
+
     for ( int i = 0; i != n; ++i) {
         cerr << "Subdivision " << i+1 << " ..." << endl;
         subdiv( P);
