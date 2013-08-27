@@ -9,7 +9,148 @@ namespace CGAL {
 
 \section MCFSkelSecMot Background
 
+\cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
+Skeletonization results for the horse model. 
+
+(Model credit: the No. 395 model from mesh segmentation benchmark 
+\cite Chen:2009:ABF)
+\cgalFigureEnd
+
+Skeletons are effective shape abstractions commonly used in reconstruction, 
+segmentation, shape matching and virtual navigation. The term "skeleton" is 
+ambiguous as it refers to both medial axis skeletons, which are composed of 2D 
+structures, and curve skeletons, which are composed of 1D structures. 
+
+In this package, we implement the algorithm described in 
+\cite tagliasacchi2012mean, which extracts a curve skeleton from a watertight 
+surface. The curve skeleton captures the essential topology of the shape at the
+cost of loss of invertibility: With a curve skeleton and a radius function, 
+only an approximate shape approximation can be generated.
+
 \section MCFSkelSecAlgo Algorithm
+
+Mean curvature flow (MCF) is a motion that iteratively moves each surface point
+along its anti-normal with a speed proportional to the local average curvature:
+
+\f[
+\begin{equation}
+\dot{S} = -H\mathbf{n} ~~~ H = (k1 + k2) / 2
+  \label{eq:MCF}
+\end{equation}
+\f]
+
+It is shown that MCF minimizes the membrane energy of a surface, which measures
+the surface area \cite botsch2010polygon. If we interpret the curve skeletons 
+as zero-area degenerate manifolds with infinitesimal cross-section, the 
+area-reducing properties of the MCF make it a good candidate for the core of a 
+skeletonization algorithm.
+
+\subsection MCFSkelSecContra Iterative Mesh Contraction via Mean Curvature Flow
+
+We obtain an implicit scheme for MCF by using the discretized Laplacian 
+operator \f$ L \f$. Directly solving the Laplacian equation \f$ LV = 0 \f$ is
+problematic, as \f$ L \f$ is singular and the system admits a trivial solution
+\f$ V = 0 \f$. To address this problem, we solve the regularized version:
+
+\f[
+\begin{equation}
+  \left[\begin{array}{c}
+  L\\
+  W_{H}
+  \end{array}\right] 
+  V^{t+1} = 
+  \left[\begin{array}{c}
+  0\\
+  W_{H}V^{t}
+  \end{array}\right] 
+  \label{eq:regularized_equation}
+\end{equation}
+\f]
+
+Where by \f$ W_{H} \f$ is a diagonal matrix such that \f$ W_{H,i} = w_{H}\f$.
+The solution of this linear system minimizes the following quadratic energy:
+
+\f[
+\begin{equation}
+E = \| LV^{t + 1} \|^{2} + w_{H}^{2}\sum_{i}\| v_{i}^{t + 1} - v_{i} \|^{2}
+  \label{eq:energy_equation}
+\end{equation}
+\f]
+
+Examining the right hand side of Eq.\f$\eqref{eq:energy_equation}\f$ shows that 
+this regularizer works to bound the velocity of vertices undergoing curvature
+motion. Slowing down the motion is essential, not only from a numerical point
+of view, but also from a geometrical one. As the surface evolves, the local
+curvature of the surface changes, and thus the Laplacian operator must be
+updated to construct an approximation of Eq.\f$\eqref{eq:MCF}\f$.
+
+\subsection MCFSkelSecRemesh Local Dynamic Remeshing
+
+As shown in \cite tagliasacchi2012mean, for a highly anisotropic shape, where
+\f$ k_{1} >> k_{2} = 0 \f$, the MCF will cause edges aligned with the principal 
+curvature direction \f$ k_{1} \f$ to vanish rapidly, while edges aligned with
+\f$ k_{2} \f$ retain their length. This results in the formation of very high
+aspect ratio triangles which hinder the performance of the finite element
+solver by stiffening the system. To solve this issue, we perform a simple local
+remeshing at each iteration which collapses edges deemed too short, provided
+that the collapse retains the manifoldness of the shape, and splits badly shaped
+triangles. In particular we split an edge \f$ e \f$ whenever one of its incident
+triangles has an angle greater than \f$ 110^{\circ} \f$ at the opposite vertex.
+We heuristically position the new vertex by perpendicularly projecting the thrid
+vertex of the split face onto \f$ e \f$.
+
+\subsection MCFSkelSecDegeneracy Degeneracy Detection
+
+As we maintain the manifold properties of the surface during evolution, it is 
+important to note that solving Eq.\f$\eqref{eq:energy_equation}\f$ would result
+in a straightening of already collapsed branches of the shape, pulling them 
+away from the medial axis. Furthermore, the tips of skeletal branches exhibit a
+very large curvature and consequently they would be very strongly contracted 
+back into the shape. We stop the movement of a point on a branch of the skeleton
+as soon as the creation of such a branch is detected. As we identify a branch as
+an infinitesimal cross-section manifold, the problem reduces to measuring 
+whether the local shape cross-section is below a certain threshold (i.e. close 
+to zero).
+
+In the continuous setting, determining whether a surface has a locally vanishing
+cross-section can be achieved by looking at an infinitesimal geodesic disk 
+centred at a point. If the local surface has disk topology then the local 
+geometry is non-degenerate. Our dynamic topology regularization allows us to 
+adapt this process directly to the discrete setting. We test for degeneracy
+by monitoring the Euler characteristic of an infinitesimal (w.r.t. the edge 
+collapse threshold) neighborhood of a vertex. Whenever this neighborhood does 
+not exhibit disk topology we set the corresponding diagonal element in \f$ W_{H} 
+\f$ to a sufficiently large number, effectively fixing its position in space 
+throughout evolution.
+
+\subsection MCFSkelSecMedial Medial Skeletonization Flow
+
+To compute a well-centered curve skeleton (i.e. one that lies on the medial 
+axis) we modify the energy of Eq.\f$\eqref{eq:energy_equation}\f$ as follows:
+
+\f[
+\begin{equation}
+E = E_{smooth} + E_{velocity} + E_{medial}
+  \label{eq:medial_equation}
+\end{equation}
+\f]
+
+where the individual energies are define as:
+
+\f[
+\begin{equation}
+E_{smooth} = \| W_{L}LV^{t + 1} \|^{2} \\
+E_{velocity} = \sum_{i}w_{H}\| v_{i}^{t + 1} - v_{i} \|^{2}\\
+E_{medial} = \sum_{i}w_{P}\| v_{i}^{t + 1} - \mu(v_{i}) \|^{2}
+\end{equation}
+\f]
+
+The energy term \f$ E_{medial} \f$  pulls the evolving surface toward the medial
+axis. This is done by defining \f$ \mu(v_{i}) \f$ as a map which corresponds a 
+vertex \f$ v_{i} \f$ to a chosen medial axis Voronoi pole. At \f$ t = 0 \f$ we 
+simply correspond each surface vertex to its associated medial pole. As the 
+motion progresses we apply a simple update: whenever an edge is collapsed, we 
+retain the Voronoi pole which is closest to the resulting vertex.
 
 \section MCFSkelSecAPI API Description
 
