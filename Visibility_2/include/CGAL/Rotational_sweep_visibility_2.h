@@ -352,6 +352,48 @@ private:
 //        vit = end_it;
   }
 
+//todo add edge location record
+  void heap_insert(std::vector<Pair>& heap, const Pair& e, const Point_2& dp) {
+    heap.push_back(e);
+    int i = heap.size()-1;
+    int parent = (i-1)/2;
+    while (i!=0 && is_closer(heap[i], heap[parent], dp)){
+      heap_swap(heap, i, parent);
+      i = parent;
+      parent = (i-1)/2;
+    }
+  }
+
+  void heap_remove(std::vector<Pair>& heap, int i, const Point_2& dp) {
+    heap[i] = heap.back();
+    heap.pop_back();
+    bool swapped;
+    do {
+      int left_son = i*2+1;
+      int right_son = i*2+2;
+      int closest = i;
+      if (left_son < heap.size() && is_closer(heap[left_son], heap[i], dp)) {
+        closest = left_son;
+      }
+      if (right_son < heap.size() && is_closer(heap[right_son], heap[closest], dp)) {
+        closest = right_son;
+      }
+      swapped = false;
+      if (closest != i) {
+        heap_swap(heap, i, closest);
+        i = closest;
+        swapped = true;
+      }
+    } while(swapped);
+  }
+
+  void heap_swap(std::vector<Pair>& heap, int i, int j) {
+
+  }
+
+  bool is_closer(Pair e1, Pair e2, Point_2 dp) {
+
+  }
 
   Point_2 intersection_point(Ray_2 ray, Segment_2 seg )
   {
