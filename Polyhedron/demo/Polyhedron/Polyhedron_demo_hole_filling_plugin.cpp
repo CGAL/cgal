@@ -63,7 +63,7 @@ public:
   typedef std::set<Polyline_data_list::const_iterator, List_iterator_comparator> Selected_holes_set;
 
   Scene_polylines_collection(Scene_polyhedron_item* poly_item, QMainWindow* mainWindow)
-    : poly_item(poly_item) 
+    : poly_item(poly_item), block_poly_item_changed(false)
   {
     get_holes();
     active_hole = polyline_data_list.end();
@@ -72,7 +72,7 @@ public:
     viewer->installEventFilter(this);
     mainWindow->installEventFilter(this);
 
-    connect(poly_item, SIGNAL(itemChanged()), this, SLOT(poly_item_changed())); 
+    connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed())); 
   }
   ~Scene_polylines_collection() {
     clear();
@@ -252,9 +252,11 @@ public:
   Selected_holes_set selected_holes;
   Scene_polyhedron_item* poly_item;
   Polyline_data_list polyline_data_list;
+  bool block_poly_item_changed;
 
 public slots:
   void poly_item_changed() {
+    if(block_poly_item_changed) { return; }
     get_holes();
     emit itemChanged();
   }
@@ -305,6 +307,12 @@ protected:
       dock_widget_closed();
     }
     return false;
+  }
+
+  void change_poly_item_by_blocking(Scene_polyhedron_item* poly_item, Scene_polylines_collection* collection) {
+    if(collection) collection->block_poly_item_changed = true;
+    scene->itemChanged(poly_item);
+    if(collection) collection->block_poly_item_changed = false;
   }
 private:
   struct Nop_functor {
@@ -460,7 +468,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   }
 
   if(filled_counter > 0) {
-    scene->itemChanged(polyline_item->poly_item);
+    change_poly_item_by_blocking(polyline_item->poly_item, polyline_item);
     last_active_item = polyline_item->poly_item;
     accept_reject_toggle(true);
   }
@@ -509,13 +517,14 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
   }
 
   if(filled_counter > 0) {
-    scene->itemChanged(poly_item);
+    change_poly_item_by_blocking(poly_item, get_polylines_collection(poly_item));
     last_active_item = poly_item;
     accept_reject_toggle(true);
   }
   print_message(tr("%1 of %2 holes are filled!").arg(filled_counter).arg(counter));
   QApplication::restoreOverrideCursor();
 }
+
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
 void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
   Scene_polylines_collection* polyline_item = get_selected_item<Scene_polylines_collection>();
@@ -553,7 +562,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
   for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
    last_active_item->polyhedron()->erase_facet((*it)->halfedge());
   }
-  scene->itemChanged(last_active_item);
+  change_poly_item_by_blocking(last_active_item, get_polylines_collection(last_active_item));
 
   new_facets.clear();
   last_active_item = NULL;
