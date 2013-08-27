@@ -112,7 +112,7 @@ also changes the stored restricted triangulation which in the worst may again ta
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(const Input_arrangement_2& arr);
+  void attach(Input_arrangement_2& arr);
 
 /*!
 Detaches the arrangement from the visibility object it is currently attached to
