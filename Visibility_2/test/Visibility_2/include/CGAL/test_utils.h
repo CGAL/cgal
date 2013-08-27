@@ -689,7 +689,7 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
 
 template <class Visibility_2_fst, class Visibility_2_snd>
 void simple_benchmark_one_unit(
-          const typename Visibility_2_fst::Input_arrangement_2 &arr,
+          typename Visibility_2_fst::Input_arrangement_2 &arr,
           const Query_choice &choice,
           typename Visibility_2_fst::Input_arrangement_2::Face_const_handle &fit,
           Visibility_2_fst visibility_fst,
@@ -963,7 +963,7 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
 }
 template <class Visibility_2_fst, class Visibility_2_snd>
 void benchmark_one_unit(
-          const typename Visibility_2_fst::Input_arrangement_2 &arr,
+          typename Visibility_2_fst::Input_arrangement_2 &arr,
           const Query_choice &choice,
           typename Visibility_2_fst::Input_arrangement_2::Face_const_handle &fit,
           Visibility_2_fst visibility_fst, 
@@ -1210,7 +1210,7 @@ int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_o
 
 
 template<class Visibility_2>
-void test_star_shape_one_face(  const typename Visibility_2::Input_arrangement_2 &arr,
+void test_star_shape_one_face(  typename Visibility_2::Input_arrangement_2 &arr,
                                 const Query_choice &choice,
                                 typename Visibility_2::Input_arrangement_2::Face_const_handle &fit,
                                 Visibility_2 visibility)

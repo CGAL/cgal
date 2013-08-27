@@ -75,7 +75,7 @@ public:
       is_vertex_query = true;
       is_edge_query = false;
       source = e->source()->point();
-      target = ec->next()->target()->point();
+      target = e->next()->target()->point();
     }
     else {
       is_vertex_query = false;
@@ -179,7 +179,7 @@ void attach(Input_arrangement_2& arr) {
 void detach() {
   p_arr = NULL;
 //  geom_traits = NULL;
-  vertices.clear();
+  vs.clear();
 }
 
 const Input_arrangement_2& arr() {
@@ -238,9 +238,9 @@ private:
 
     //initiation of vision ray
     Vector_2 dir;
-    if (Direction_2(-1, 0) < Direction_2(Vector_2(q, (*vertices.rbegin())->point())))
+    if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back())))
     {
-        dir = Vector_2(1, 0) + Vector_2(q, (*vertices.rbegin())->point());
+        dir = Vector_2(1, 0) + Vector_2(q, vs.back());
     }
     else {
         dir = Vector_2(0, -1);
@@ -249,7 +249,7 @@ private:
     Point_2 direct_p(q.x()+dir.x(), q.y()+dir.y());
     //initiation of active_edges
     std::vector<Pair> active_edges;
-    Ccb_halfedge_const_circulator curr = fh->outer_ccb();
+    Ccb_halfedge_const_circulator curr = f->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
       Point_2 p1 = curr->target()->point();
@@ -259,8 +259,8 @@ private:
     } while (++curr != circ);
 
     typename Arrangement_2::Hole_const_iterator hi;
-    for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
-      typename Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
+    for (hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
+      Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
       do {
         Point_2 p1 = c1->target()->point();
         Point_2 p2 = c1->source()->point();
@@ -271,86 +271,86 @@ private:
 
     //angular sweep begins
 
-    typename Pvec::iterator vit = vs.begin(), begin_it, end_it;
+//    typename Pvec::iterator vit = vs.begin(), begin_it, end_it;
 
-    while (vit != vs.end())
-    {
-      Point_2 right_p, left_p, mid_p;
-      begin_it = vit;
-      end_it = vit + 1;
-      right_p = intersection_point(direct_p, active_edges[0]);
+//    while (vit != vs.end())
+//    {
+//      Point_2 right_p, left_p, mid_p;
+//      begin_it = vit;
+//      end_it = vit + 1;
+//      right_p = intersection_point(direct_p, active_edges[0]);
 
-      //find end_it such that all vertices between begin_it and end_it(not included) are collinear with query point.
-      while (end_it != vs.end()) {
-        if (!CGAL::collinear(q, *begin_it, *end_it))
-          break;
-        insert_edge(*end_it, active_edges, direct_p);
-        end_it++;
-      }
+//      //find end_it such that all vertices between begin_it and end_it(not included) are collinear with query point.
+//      while (end_it != vs.end()) {
+//        if (!CGAL::collinear(q, *begin_it, *end_it))
+//          break;
+//        insert_edge(*end_it, active_edges, direct_p);
+//        end_it++;
+//      }
 
-//                std::cout<<"after adding\n";
-//                print_edges(active_edges);
-      mid_p = intersection_point(direct_p, active_edges[0]);
-      Pvec collinear_vertices;
-      Intersection_type i_type = needle(active_edges, direct_p, collinear_vertices);
-      switch (i_type) {
-      case UNBOUNDED :
-              //todo:this part is not finished.
-              //remove right and collinear;
-              remove_edges(active_edges, direct_p);
-              update_visibility(right_p, polygon);
-              update_visibility(mid_p, polygon);
-              //todo CGAL::insert_curve();
-              if (!active_edges.empty()) {
-                  left_p = intersection_point(direct_p, active_edges[0]);
-                  update_visibility(left_p, polygon);
-              }
-              break;
-            case CORNER :
-                //remove right and collinear;
-                remove_edges(active_edges, direct_p);
+////                std::cout<<"after adding\n";
+////                print_edges(active_edges);
+//      mid_p = intersection_point(direct_p, active_edges[0]);
+//      Pvec collinear_vertices;
+//      Intersection_type i_type = needle(active_edges, direct_p, collinear_vertices);
+//      switch (i_type) {
+//      case UNBOUNDED :
+//              //todo:this part is not finished.
+//              //remove right and collinear;
+//              remove_edges(active_edges, direct_p);
+//              update_visibility(right_p, polygon);
+//              update_visibility(mid_p, polygon);
+//              //todo CGAL::insert_curve();
+//              if (!active_edges.empty()) {
+//                  left_p = intersection_point(direct_p, active_edges[0]);
+//                  update_visibility(left_p, polygon);
+//              }
+//              break;
+//            case CORNER :
+//                //remove right and collinear;
+//                remove_edges(active_edges, direct_p);
 
-//                    std::cout<<"after removing\n";
-//                    print_edges(active_edges);
+////                    std::cout<<"after removing\n";
+////                    print_edges(active_edges);
 
-                left_p = intersection_point(direct_p, active_edges[0]);
-                update_visibility(right_p, polygon);
-                if (right_p == collinear_vertices[0]) {
-                  insert_needle(collinear_vertices, polygon, true);
-                }
-                else if (left_p == collinear_vertices[0]) {
-                  insert_needle(collinear_vertices, polygon, false);
-                }
-                update_visibility(left_p, polygon);
-                break;
-            case INNER :
-                //remove right and collinear;
-                remove_edges(active_edges, direct_p);
-                if (collinear_vertices.size() < 2) {
-                    //this means mid_p = left_p = right_p = furthest_p. no new vertex is found.
-                }
-                else {
-                  //debug
-//                      std::cout<<"print a needle:\n";
-//                      print(collinear_vertices);
-//                      std::cout<<"the left_p is "<<left_p.x()<<' '<<left_p.y()<<std::endl;
-//                      std::cout<<"the right_p is "<<right_p.x()<<' '<<right_p.y()<<std::endl;
-//                      std::cout<<"the front_p is "<<collinear_vertices[0].x()<<' '<<collinear_vertices[0].y()<<std::endl;
-                  left_p = intersection_point(direct_p, active_edges[0]);
-                  update_visibility(right_p, polygon);
-                  if (right_p == collinear_vertices[0]) {
-                    insert_needle(collinear_vertices, polygon, true);
-                  }
-                  else if (left_p == collinear_vertices[0]) {
-                    insert_needle(collinear_vertices, polygon, false);
-                  }
-                  update_visibility(left_p, polygon);
-                }
-                break;
-            }
-        }
-        vit = end_it;
-    }
+//                left_p = intersection_point(direct_p, active_edges[0]);
+//                update_visibility(right_p, polygon);
+//                if (right_p == collinear_vertices[0]) {
+//                  insert_needle(collinear_vertices, polygon, true);
+//                }
+//                else if (left_p == collinear_vertices[0]) {
+//                  insert_needle(collinear_vertices, polygon, false);
+//                }
+//                update_visibility(left_p, polygon);
+//                break;
+//            case INNER :
+//                //remove right and collinear;
+//                remove_edges(active_edges, direct_p);
+//                if (collinear_vertices.size() < 2) {
+//                    //this means mid_p = left_p = right_p = furthest_p. no new vertex is found.
+//                }
+//                else {
+//                  //debug
+////                      std::cout<<"print a needle:\n";
+////                      print(collinear_vertices);
+////                      std::cout<<"the left_p is "<<left_p.x()<<' '<<left_p.y()<<std::endl;
+////                      std::cout<<"the right_p is "<<right_p.x()<<' '<<right_p.y()<<std::endl;
+////                      std::cout<<"the front_p is "<<collinear_vertices[0].x()<<' '<<collinear_vertices[0].y()<<std::endl;
+//                  left_p = intersection_point(direct_p, active_edges[0]);
+//                  update_visibility(right_p, polygon);
+//                  if (right_p == collinear_vertices[0]) {
+//                    insert_needle(collinear_vertices, polygon, true);
+//                  }
+//                  else if (left_p == collinear_vertices[0]) {
+//                    insert_needle(collinear_vertices, polygon, false);
+//                  }
+//                  update_visibility(left_p, polygon);
+//                }
+//                break;
+//            }
+//        }
+//        vit = end_it;
+  }
 
 
   Point_2 intersection_point(Ray_2 ray, Segment_2 seg )
@@ -399,21 +399,17 @@ private:
       }
   }
 
-
   bool compare_angle(const Point_2& p1, const Point_2& p2)
   {
     Direction_2 d1(Ray_2(q, p1));
     Direction_2 d2(Ray_2(q, p2));
-    return (d1 < d2);
+    if (d1 < d2)
+      return true;
+    if (d1 > d2)
+      return false;
+    return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
   }
 
-//  bool Isblock(const Point_2& p) {
-//    for (int i=0; i<vmap[p].size(); i++) {
-//      if (CGAL::right_turn(q, p, vmap[p][i]))
-//        return true;
-//    }
-//    return false;
-//  }
 
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
@@ -457,7 +453,7 @@ private:
       Point_2 q1 = vs[0];
       xmax = xmin = q1.x();
       ymin = ymax = q1.y();
-      for (i=0; i<vs.size(); i++) {
+      for (int i=0; i<vs.size(); i++) {
         Point_2 q1 = vs[i];
         if (q1.x() < xmin)
           xmin = q1.x();
@@ -515,13 +511,8 @@ private:
   //add a new edge when vision ray passes a vertex
   void insert_edge(const Point_2& p,
                  std::vector<Pair>& edges,
-                 const Point_2& d_p) {
-    do {
-      if (!CGAL::right_turn(r.source(), vh->point(), curr->source()->point()))
-      {
-          insert_halfedge(edges, r, curr);
-      }
-    } while (++curr != first);
+                 const Point_2& dp) {
+
   }
 
 

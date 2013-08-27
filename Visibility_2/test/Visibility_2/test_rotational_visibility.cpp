@@ -27,7 +27,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
-#include <CGAL/Rotational_sweep_visibility_2_.h>
+#include <CGAL/Rotational_sweep_visibility_2.h>
 
 #include <iostream>
 #include <fstream>
