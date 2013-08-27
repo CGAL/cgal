@@ -1,7 +1,7 @@
 #ifndef CGAL_POLYHEDRALSURF_H_
 #define CGAL_POLYHEDRALSURF_H_
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -180,7 +180,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
 
 
 typedef double                DFT;
-typedef CGAL::Cartesian<DFT>  Data_Kernel;
+typedef CGAL::Simple_cartesian<DFT>  Data_Kernel;
 typedef CGAL::Polyhedron_3 < Data_Kernel, Wrappers_VFH > Polyhedron;
 typedef Data_Kernel::Vector_3 Vector_3;
 

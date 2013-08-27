@@ -1,12 +1,11 @@
-#include <CGAL/Cartesian.h>
-
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Monge_via_jet_fitting.h>
 
 #include <fstream>
 #include <vector>
 
-#include <CGAL/Monge_via_jet_fitting.h>
 typedef double                   DFT;
-typedef CGAL::Cartesian<DFT>     Data_Kernel;
+typedef CGAL::Simple_cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
 typedef My_Monge_via_jet_fitting::Monge_form     My_Monge_form;
