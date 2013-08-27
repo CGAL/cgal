@@ -60,15 +60,15 @@ if ( CGAL_FOUND )
 
   # Executables that do *not* require EIGEN or LAPACK
   create_single_source_cgal_program( "average_spacing_example.cpp" )
-  create_single_source_cgal_program( "denoise_point_set_example.cpp" )
+  create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
   create_single_source_cgal_program( "normals_example.cpp" )
   create_single_source_cgal_program( "property_map.cpp" )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
   create_single_source_cgal_program( "remove_outliers_example.cpp" )
-  create_single_source_cgal_program( "regularize_and_simplify_point_set_example.cpp" )
-  create_single_source_cgal_program( "upsample_point_set_example.cpp" )
+  create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
+  create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   
   # Use Eigen or BLAS and LAPACK (optional)
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
