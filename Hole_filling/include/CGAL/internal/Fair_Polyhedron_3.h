@@ -137,7 +137,10 @@ public:
     std::map<Vertex_handle, std::size_t> vertex_id_map;
     std::size_t id = 0;
     for(typename std::set<Vertex_handle>::iterator it = interior_vertices.begin(); it != interior_vertices.end(); ++it, ++id) {
-      vertex_id_map[*it] = id;      
+      if( !vertex_id_map.insert(std::make_pair(*it, id)).second ) {
+        CGAL_warning(!"Duplicate vertex is found!");
+        return false;
+      }
     }
 
     typename Sparse_linear_solver::Matrix A(nb_vertices);
