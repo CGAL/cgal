@@ -112,6 +112,8 @@ Function ${UN}EnvVarUpdate
  
   ; Step 1:  Read contents of EnvVarName from RegLoc
   ;
+  ; R0 = "user" or "system"
+
   ; Check for empty EnvVarName
   ${If} $1 == ""
     SetErrors
@@ -130,13 +132,20 @@ Function ${UN}EnvVarUpdate
  
   ${If} $3 == HKLM
     ReadRegStr $5 ${hklm_all_users} $1     ; Get EnvVarName from all users into $5
+    StrCpy $R0 "user"
   ${ElseIf} $3 == HKCU
     ReadRegStr $5 ${hkcu_current_user} $1  ; Read EnvVarName from current user into $5
+    StrCpy $R0 "system"
   ${Else}
     SetErrors
     DetailPrint 'ERROR: Action is [$3] but must be "HKLM" or HKCU"'
     Goto EnvVarUpdate_Restore_Vars
   ${EndIf}
+
+  IfErrors 0 +4
+    MessageBox MB_OK|MB_ICONEXCLAMATION "The $R0 environment variable $1 seems empty, and cannot be modified; set it manually to $4"
+    DetailPrint "Could not read the $R0 environment variable $1; set it manually to $4"
+    Goto EnvVarUpdate_Restore_Vars
  
   ; Check for empty PathString
   ${If} $4 == ""
@@ -157,8 +166,8 @@ Function ${UN}EnvVarUpdate
   ${If} $5 == ""
   ${OrIf} $8 >= ${NSIS_MAX_STRLEN}
     SetErrors
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Current $1 length ($6) too long to modify in NSIS; set manually if needed"
-    DetailPrint "Current $1 length ($6) too long to modify in NSIS; set manually if needed"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Current $R0 $1 length ($6) too long to modify in NSIS; set manually if needed"
+    DetailPrint "Current $R0 $1 length ($6) too long to modify in NSIS; set manually if needed"
     Pop $8
     Pop $7
     Pop $6
