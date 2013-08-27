@@ -1,0 +1,27 @@
+/// \defgroup PkgHoleFilling Hole Filling Reference
+/// \defgroup PkgHoleFillingConcepts Concepts
+/// \ingroup PkgHoleFilling
+ 
+/*!
+\addtogroup PkgHoleFilling
+ 
+\cgalPkgDescriptionBegin{Hole Filling, PkgHoleFillingSummary}
+\cgalPkgPicture{}
+ 
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{}
+\cgalPkgDesc{This package provides functionality to fill holes, refine and fair triangulated regions on surface mesh.}
+\cgalPkgManuals{Chapter_HoleFilling,PkgHoleFilling}
+\cgalPkgSummaryEnd
+ 
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.3}
+\cgalPkgDependsOn{\ref PkgTriangulation3Summary, Sparse square solver such as those from  \ref thirdpartyEigen}
+\cgalPkgBib{}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+ 
+\cgalPkgDescriptionEnd
+ 
+*/
