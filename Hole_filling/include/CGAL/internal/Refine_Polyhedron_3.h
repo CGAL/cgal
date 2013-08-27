@@ -259,27 +259,26 @@ public:
 
 }//namespace internal
 
-/**
- * \ingroup PkgHoleFilling
- * @brief Function refining a region on surface mesh
- * @warning There should be no interior facets inside the given region with default `accept_internal_facets` parameter
- *
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam InputIterator iterator over input facets
- * @tparam FacetOutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets
- * @tparam VertexOutputIterator iterator holding 'Polyhedron::Vertex_handle' for patch vertices
- *
- * @param polyhedron surface mesh to be refined
- * @param facet_begin first iterator of the range of facets
- * @param facet_end past-the-end iterator of the range of facets
- * @param[out] facet_out iterator over patch facets including newly created and previously existing facets 
- *             (e.g. if no facet is created, range of `facet_begin` `facet_end` are put into output)
- * @param[out] vertex_out iterator over patch vertices without including boundary
- * @param density_control_factor factor for density where larger values cause denser refinements
- *
- * @return pair of `facet_out` and `vertex_out`
- *
- * @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
+/*!
+\ingroup PkgHoleFilling
+@brief Function refining a region on surface mesh
+
+@tparam Polyhedron a %CGAL polyhedron
+@tparam InputIterator iterator over input facets
+@tparam FacetOutputIterator iterator holding `Polyhedron::Facet_handle` for patch facets
+@tparam VertexOutputIterator iterator holding `Polyhedron::Vertex_handle` for patch vertices
+
+@param polyhedron surface mesh to be refined
+@param facet_begin first iterator of the range of facets
+@param facet_end past-the-end iterator of the range of facets
+@param facet_out iterator over patch facets including newly created and previously existing facets 
+            (e.g. if no facet is created, range of @a facet_begin, @a facet_end are put into output)
+@param vertex_out iterator over patch vertices without including boundary
+@param density_control_factor factor for density where larger values cause denser refinements
+
+@return pair of @a facet_out and @a vertex_out
+
+@todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
  */
 template<class Polyhedron, class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
 std::pair<FacetOutputIterator, VertexOutputIterator>

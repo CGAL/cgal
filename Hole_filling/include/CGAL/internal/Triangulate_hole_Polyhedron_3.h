@@ -127,31 +127,32 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 
 }// namespace internal
 
-/**
- * \ingroup PkgHoleFilling
- * @brief Function triangulating a hole in surface mesh.
- * 
- * @pre @a border_halfedge->is_border()
- *
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam OutputIterator iterator holding 'Polyhedron::Facet_handle' for patch facets.
- *
- * @param[in, out] polyhedron surface mesh which has the hole
- * @param border_halfedge a border halfedge incident to the hole
- * @param[out] output iterator over patch facets.
- * 
- * @return `output`
- */
+/*!
+ \ingroup PkgHoleFilling
+ Function triangulating a hole in surface mesh.
+ The hole should contain no non-manifold vertex. Generated patch is guaranteed to not to break edge manifoldness and contain no degenerate triangle.
+ If no possible patch is found, @a polyhedron is not altered in any way, and no facet handle is put into @a out.
+
+ @tparam Polyhedron a %CGAL polyhedron
+ @tparam OutputIterator iterator holding `Polyhedron::Facet_handle` for patch facets.
+
+ @param polyhedron surface mesh containing the hole
+ @param border_halfedge a border halfedge incident to the hole
+ @param output iterator over patch facets.
+ @param use_delaunay_triangulation
+
+ @return @a out
+*/
 template<class Polyhedron, class OutputIterator>
 OutputIterator 
 triangulate_hole(Polyhedron& polyhedron, 
                  typename Polyhedron::Halfedge_handle border_halfedge, 
-                 OutputIterator output,
+                 OutputIterator out,
                  bool use_delaunay_triangulation = false)
 {
   CGAL_precondition(border_halfedge->is_border());
   return internal::triangulate_hole_Polyhedron
-    (polyhedron, border_halfedge, output, use_delaunay_triangulation).first;
+    (polyhedron, border_halfedge, out, use_delaunay_triangulation).first;
 }
 
 }//namespace CGAL

@@ -713,12 +713,12 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
 
 /*!
 \ingroup PkgHoleFilling
-Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
-The range `(qbegin,qend)` indicate for each pair of consecutive points in the aforementioned range,
-the third point of the facet this segment is incident to. Triangles are put into `out`
-using the indices of the input points in the range `(pbegin,pend)`.
+Creates triangles to fill the hole defined by points in the range (@a pbegin, @a pend). Triangles are put into @a out
+using the indices of the input points in the range (@a pbegin, @a pend).
+Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into @a out.
 
-Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into `out`.
+Optional: The range (@a qbegin, @a qend) indicate for each pair of consecutive points in the range (@a pbegin, @a pend),
+the third point of the facet this segment is incident to. 
 
 @tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
         It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
@@ -726,8 +726,8 @@ Note that no degenerate triangle is allowed during filling. If no possible patch
 @tparam OutputIterator iterator over patch triangles
 @param pbegin first iterator of the range of points
 @param pend past-the-end iterator of the range of points
-@param qbegin first iterator of the range of third points
-@param qend past-the-end iterator of the range of third points
+@param qbegin first iterator of the range of third points, can be omitted
+@param qend past-the-end iterator of the range of third points, can be omitted
 @param out iterator over output patch triangles
 */
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
@@ -755,21 +755,7 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     (pbegin, pend, qbegin, qend, out, use_delaunay_triangulation);
 }
 
-/*!
-\ingroup PkgHoleFilling
-Creates triangles to fill the hole defined by points in the range `(pbegin,pend)`.
-Triangles are put into `out` using the indices of the input points in the range `(pbegin,pend)`.
-
-Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into `out`.
-
-@tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
-        It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
-@tparam InputIterator iterator over input points
-@tparam OutputIterator iterator over output patch triangles
-@param pbegin first iterator of the range of points
-@param pend past-the-end iterator of the range of points
-@param out iterator over output patch triangles
-*/
+// overload no (qbegin, qend)
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
