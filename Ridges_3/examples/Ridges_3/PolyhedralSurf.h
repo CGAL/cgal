@@ -1,7 +1,7 @@
 #ifndef CGAL_POLYHEDRALSURF_H_
 #define CGAL_POLYHEDRALSURF_H_
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
@@ -59,7 +59,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
 //PolyhedralSurf with facet normal operations
 //------------------------------------------------
 typedef double                FT;
-typedef CGAL::Cartesian<FT>  Kernel;
+typedef CGAL::Simple_cartesian<FT>  Kernel;
 typedef CGAL::Polyhedron_3 < Kernel, Wrappers_VFH > Polyhedron;
 typedef Kernel::Vector_3 Vector_3;
 
