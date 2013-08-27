@@ -95,7 +95,7 @@ Rotational_sweep_visibility_2(const Input_arrangement_2& arr);
 /*!
 Returns whether an arrangement is attached to the visibility object
 */
-  bool is_attached();
+  bool is_attached() const;
 
 /*!
 Attaches the given arrangement to the visibility object.
@@ -112,7 +112,7 @@ Detaches the arrangement from the visibility object it is currently attached to
 /*!
 Access to the attached arrangement
 */
-  const Input_arrangement_2& arr();
+  const Input_arrangement_2& arr() const;
 
 /*! 
 Computes the visibility region for the given query point `q` in the
