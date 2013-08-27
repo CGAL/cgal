@@ -71,16 +71,19 @@ public slots:
       print_message("Error: please select a region of vertices!");
     }
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    int weight_index = ui_widget.weight_combo_box->currentIndex();
+    int weight_index = ui_widget.Weight_combo_box->currentIndex();
+    CGAL::Fairing_continuity continuity = static_cast<CGAL::Fairing_continuity>(ui_widget.Continuity_spin_box->value());
 
     if(weight_index == 1)
       CGAL::fair(*selection_item->polyhedron(), selection_item->selected_vertices.begin(),
         selection_item->selected_vertices.end(),
-        CGAL::internal::Uniform_weight_fairing<Polyhedron>());
+        CGAL::internal::Uniform_weight_fairing<Polyhedron>(),
+        continuity);
     if(weight_index == 0)
       CGAL::fair(*selection_item->polyhedron(), selection_item->selected_vertices.begin(),
         selection_item->selected_vertices.end(),
-        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>());
+        CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(),
+        continuity);
     selection_item->changed_with_poly_item();
     QApplication::restoreOverrideCursor();
   }
