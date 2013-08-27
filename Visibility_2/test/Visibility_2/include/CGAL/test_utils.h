@@ -694,8 +694,10 @@ void simple_benchmark_one_unit(
           typename Visibility_2_fst::Input_arrangement_2::Face_const_handle &fit,
           Visibility_2_fst visibility_fst,
           Visibility_2_snd visibility_snd,
-          double& time1,
-          double& time2,
+          double& qtime1,
+          double& qtime2,
+          double& ptime1,
+          double& ptime2,
           int& case_cnt) {
 
   typedef typename Visibility_2_fst::Input_arrangement_2    Input_arrangement_2;
@@ -719,14 +721,16 @@ void simple_benchmark_one_unit(
 
   timer.start();
   visibility_fst.attach(arr);
-//  timer.stop();
+  timer.stop();
+  ptime1 += timer.time();
 //  std::cout << "    Time to attach to first object: "
 //            << GREEN << timer.time() << " sec" << RESET << std::endl;
 
   timer.reset();
   timer.start();
   visibility_snd.attach(arr);
-//  timer.stop();
+  timer.stop();
+  ptime2 += timer.time();
 //  std::cout << "    Time to attach to second object: "
 //            << GREEN << timer.time() << " sec" << RESET << std::endl;
 
@@ -782,7 +786,7 @@ void simple_benchmark_one_unit(
       f_fst = visibility_fst.compute_visibility(curr_query_pt, he, out_arr_fst);
     }
     timer.stop();
-    time1 += timer.time();
+    qtime1 += timer.time();
 //    std::cout << "        Time to compute visibility region using first object: "
 //              << GREEN << timer.time() << " sec" << RESET << std::endl;
     timer.reset();
@@ -801,7 +805,7 @@ void simple_benchmark_one_unit(
     if ( !is_star_shape<Visibility_2_snd>(curr_query_pt, f_snd) ) {
       std::cout << RED << "         Warning: the second output is not star-shape." << RESET << std::endl;
     }
-    time2 += timer.time();
+    qtime2 += timer.time();
 //    std::cout << "        Time to compute visibility region using second object: "
 //              << GREEN << timer.time() << " sec" << RESET << std::endl;
 
@@ -851,7 +855,7 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
 //            << GREEN << arr.number_of_faces()-1 << RESET
 //            << " faces." << std::endl;
   int query_cnt(0);
-  double time1(0), time2(0);
+  double qtime1(0), qtime2(0), ptime1(0), ptime2(0);
   if (Visibility_2_fst::Supports_general_polygon_tag::value
     && Visibility_2_snd::Supports_general_polygon_tag::value) {
     int cnt(1);
@@ -866,15 +870,23 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
                                                                fit,
                                                                visibility_fst,
                                                                visibility_snd,
-                                                                      time1,
-                                                                      time2,
+                                                                      qtime1,
+                                                                      qtime2,
+                                                                      ptime1,
+                                                                      ptime2,
                                                                       query_cnt);
       }
       cnt++;
     }
+    std::cout << "attach " << cnt << " times." << std::endl
+              << "Model 1 uses " << ptime1 << "  sec" << std::endl
+              << "Model 2 uses " << ptime2 << "  sec" << std::endl;
     std::cout << query_cnt << " queries are done.\n"
-              << "Model 1 uses " << time1 << "  sec" << std::endl
-              << "Model 2 uses " << time2 << "  sec" << std::endl;
+              << "Model 1 uses " << qtime1 << "  sec" << std::endl
+              << "Model 2 uses " << qtime2 << "  sec" << std::endl;
+    std::cout << "total times are:" << std::endl
+              << "Model 1 uses " << ptime1 + qtime1 << "  sec" << std::endl
+              << "Model 2 uses " << qtime1 + qtime2 << "  sec" << std::endl;
   }
   else {  // Only run the benchmark on the outer loop of the arrangement
     Face_const_iterator fit;
@@ -912,8 +924,10 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
                                                                  fch,
                                                                  visibility_fst,
                                                                  visibility_snd,
-                                                                        time1,
-                                                                        time2,
+                                                                        qtime1,
+                                                                        qtime2,
+                                                                        ptime1,
+                                                                        ptime2,
                                                                         query_cnt
                                                                  );
 
@@ -925,8 +939,10 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
                                                                  fit,
                                                                  visibility_fst,
                                                                  visibility_snd,
-                                                                        time1,
-                                                                        time2,
+                                                                        qtime1,
+                                                                        qtime2,
+                                                                        ptime1,
+                                                                        ptime2,
                                                                         query_cnt
                                                                  );
 
@@ -934,9 +950,15 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
         cnt++;
       }
     }
-    std::cout << query_cnt << " queries are done." << std::endl
-              << "Model 1 uses " << time1 << "  sec" << std::endl
-              << "Model 2 uses " << time2 << "  sec" << std::endl;
+    std::cout << "attach " << cnt << " times." << std::endl
+              << "Model 1 uses " << ptime1 << "  sec" << std::endl
+              << "Model 2 uses " << ptime2 << "  sec" << std::endl;
+    std::cout << query_cnt << " queries are done.\n"
+              << "Model 1 uses " << qtime1 << "  sec" << std::endl
+              << "Model 2 uses " << qtime2 << "  sec" << std::endl;
+    std::cout << "total times are:" << std::endl
+              << "Model 1 uses " << ptime1 + qtime1 << "  sec" << std::endl
+              << "Model 2 uses " << qtime1 + qtime2 << "  sec" << std::endl;
   }
 }
 template <class Visibility_2_fst, class Visibility_2_snd>
