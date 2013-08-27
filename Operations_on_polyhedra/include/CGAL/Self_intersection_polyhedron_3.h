@@ -17,7 +17,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Pierre Alliez, Laurent Rineau
+// Author(s)     : Pierre Alliez, Laurent Rineau, Ilker O. Yaz
 
 // compute self-intersection of a CGAL triangle polyhedron mesh
 // original code from Lutz Kettner
@@ -167,21 +167,21 @@ template<class Polyhedron>
 class Facet_handle_types
 {
   template<class Polyhedron, bool const_tag>
-  struct _Get;
+  struct Get_;
 
   template<class Polyhedron>
-  struct _Get<Polyhedron, true> {
+  struct Get_<Polyhedron, true> {
     typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
     typedef typename Polyhedron::Facet_const_handle   Facet_handle;
   };
 
   template<class Polyhedron>
-  struct _Get<Polyhedron, false> {
+  struct Get_<Polyhedron, false> {
     typedef typename Polyhedron::Facet_iterator Facet_iterator;
     typedef typename Polyhedron::Facet_handle   Facet_handle;
   };
 
-  typedef _Get<Polyhedron, boost::is_const<Polyhedron>::value> Get;
+  typedef Get_<Polyhedron, boost::is_const<Polyhedron>::value> Get;
 public:
   typedef typename Get::Facet_iterator Facet_iterator;
   typedef typename Get::Facet_handle   Facet_handle;
