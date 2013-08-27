@@ -87,10 +87,10 @@ public:
     enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
 
-    Naive_visibility_2(const Arrangement_2 &arr):arr_in(arr), attach_tag(true) {}
+    Naive_visibility_2(const Arrangement_2& arr):arr_in(arr), attach_tag(true) {}
     Naive_visibility_2(): attach_tag(false) {}
 
-    Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle e, Arrangement_2 &out_arr) {
+    Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& out_arr) {
         Arrangement_2 arrc = arr_in ; //copy of arr;
         Halfedge_handle ec; //copy of edge;
         for (Halfedge_handle eh = arrc.edges_begin(); eh != arrc.edges_end(); eh++) {
@@ -258,7 +258,7 @@ public:
 
     }
 
-    Face_handle compute_visibility(const Point_2 &q, const Face_const_handle fh, Arrangement_2 &out_arr) {
+    Face_handle compute_visibility(const Point_2& q, const Face_const_handle fh, Arrangement_2& out_arr) {
         std::vector<Point_2> polygon;
         visibility_region_impl(q, fh, polygon);
         build_arr(polygon, out_arr);
@@ -471,7 +471,7 @@ private:
 
 
     //given two edges incident to a vision ray at the same point, find which one is first seen in sweeping.
-    bool is_closer(const Ray_2 &ray, Halfedge_const_handle seg1, Halfedge_const_handle seg2) {
+    bool is_closer(const Ray_2& ray, Halfedge_const_handle seg1, Halfedge_const_handle seg2) {
         Point_2 shared = intersection_point(ray, seg1);
         Point_2 end1, end2;
         if (shared == seg1->source()->point())
@@ -498,7 +498,7 @@ private:
     }
 
     //insert newly-discovered edges into active_edges according to its intersection with the view ray.
-    void insert_halfedge(std::vector<Halfedge_const_handle> &active_edges, const Ray_2 &ray, Halfedge_const_handle edge)
+    void insert_halfedge(std::vector<Halfedge_const_handle>& active_edges, const Ray_2& ray, Halfedge_const_handle edge)
     {
         Point_2 cross_of_e = intersection_point(ray, edge);
         if (cross_of_e != ray.source())
@@ -746,7 +746,7 @@ private:
 
 
     //angular sweep a vertice of face.
-    void sweep_vertex(std::vector<Halfedge_const_handle> &active_edges, const Point_2 &query, Vertex_const_handle vh, std::vector<Point_2> &polygon )
+    void sweep_vertex(std::vector<Halfedge_const_handle>& active_edges, const Point_2& query, Vertex_const_handle vh, std::vector<Point_2>& polygon )
     {
         //closest_edge_copy is a copy of the closest edge to query point in active_edges before sweeping.
         Halfedge_const_handle closest_edge_copy = active_edges[0];
@@ -806,15 +806,15 @@ private:
 
     }
 
-    void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_true) {
+    void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
       regularize_output(out_arr);
     }
 
-    void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_false) {
+    void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
       //do nothing
     }
 
-    void regularize_output(Arrangement_2 &out_arr) {
+    void regularize_output(Arrangement_2& out_arr) {
       typename Output_arrangement_2::Edge_iterator e_itr;
       for (e_itr = out_arr.edges_begin() ;
            e_itr != out_arr.edges_end() ; e_itr++) {
@@ -831,7 +831,7 @@ private:
 
 //For debug. Print all edges of arrangements into console.
 template <typename Arrangement_2>
-void print_arrangement(const Arrangement_2 &arr) {
+void print_arrangement(const Arrangement_2& arr) {
     typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
     Edge_const_iterator eit;
     std::cout << arr.number_of_edges() << " edges:" << std::endl;

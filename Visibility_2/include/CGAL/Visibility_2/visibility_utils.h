@@ -43,7 +43,7 @@ void print_simple_face(Face_const_handle fh) {
 }
 
 template <class Arrangement_2> 
-void print_arrangement(const Arrangement_2 &arr) {
+void print_arrangement(const Arrangement_2& arr) {
   typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
   Edge_const_iterator eit;
   std::cout << arr.number_of_edges() << " edges:" << std::endl;
@@ -52,7 +52,7 @@ void print_arrangement(const Arrangement_2 &arr) {
 }
 
 template <class Arrangement_2>
-void print_arrangement_by_face(const Arrangement_2 &arr) {
+void print_arrangement_by_face(const Arrangement_2& arr) {
   typedef typename Arrangement_2::Face_const_iterator     Face_const_iterator;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
                                                  Ccb_halfedge_const_circulator;
@@ -66,9 +66,9 @@ void print_arrangement_by_face(const Arrangement_2 &arr) {
 
 template <class Geometry_traits_2> 
 Orientation Orientation_2(const Geometry_traits_2 *geom_traits,
-                          const typename Geometry_traits_2::Point_2 &p, 
-                          const typename Geometry_traits_2::Point_2 &q, 
-                          const typename Geometry_traits_2::Point_2 &r) {
+                          const typename Geometry_traits_2::Point_2& p, 
+                          const typename Geometry_traits_2::Point_2& q, 
+                          const typename Geometry_traits_2::Point_2& r) {
 
   typename Geometry_traits_2::Orientation_2 orient = 
                                           geom_traits->orientation_2_object();
@@ -77,9 +77,9 @@ Orientation Orientation_2(const Geometry_traits_2 *geom_traits,
 
 template <class Geometry_traits_2>
 bool LessDistanceToPoint_2(const Geometry_traits_2 *geom_traits,
-                           const typename Geometry_traits_2::Point_2 &p, 
-                           const typename Geometry_traits_2::Point_2 &q, 
-                           const typename Geometry_traits_2::Point_2 &r) {
+                           const typename Geometry_traits_2::Point_2& p, 
+                           const typename Geometry_traits_2::Point_2& q, 
+                           const typename Geometry_traits_2::Point_2& r) {
 
   typename Geometry_traits_2::Less_distance_to_point_2 less_dist = 
                                 geom_traits->less_distance_to_point_2_object();
@@ -88,9 +88,9 @@ bool LessDistanceToPoint_2(const Geometry_traits_2 *geom_traits,
 
 template <class Geometry_traits_2>
 bool Collinear(const Geometry_traits_2 *geom_traits,
-               const typename Geometry_traits_2::Point_2 &p,
-               const typename Geometry_traits_2::Point_2 &q,
-               const typename Geometry_traits_2::Point_2 &r) {
+               const typename Geometry_traits_2::Point_2& p,
+               const typename Geometry_traits_2::Point_2& q,
+               const typename Geometry_traits_2::Point_2& r) {
 
     typename Geometry_traits_2::Collinear_2 collinear_fnct = 
                                 geom_traits->collinear_2_object();
@@ -99,8 +99,8 @@ bool Collinear(const Geometry_traits_2 *geom_traits,
 
 template <class Geometry_traits_2, class _Curve_first, class _Curve_second >
 typename Geometry_traits_2::Object_2 Intersect_2(const Geometry_traits_2 *geom_traits,
-                     const _Curve_first &s1, 
-                     const _Curve_second &s2) {
+                     const _Curve_first& s1, 
+                     const _Curve_second& s2) {
 
   typedef typename Geometry_traits_2::Kernel Kernel;
   const Kernel *kernel = static_cast<const Kernel*> (geom_traits);
@@ -111,8 +111,8 @@ typename Geometry_traits_2::Object_2 Intersect_2(const Geometry_traits_2 *geom_t
 template <class Geometry_traits_2, class Type1, class Type2>
 typename Geometry_traits_2::FT Compute_squared_distance_2(  
                             const Geometry_traits_2 *geom_traits,
-                            const Type1 &p, 
-                            const Type2 &seg) {
+                            const Type1& p, 
+                            const Type2& seg) {
 
   typename Geometry_traits_2::Compute_squared_distance_2 compute_dist = 
                               geom_traits->compute_squared_distance_2_object();
@@ -122,8 +122,8 @@ typename Geometry_traits_2::FT Compute_squared_distance_2(
 template <class Geometry_traits_2, class Type1, class Type2>
 typename Geometry_traits_2::Point_2 Construct_projected_point_2(
                                 const Geometry_traits_2 *geom_traits,
-                                const Type1 &s, 
-                                const Type2 &p) {
+                                const Type1& s, 
+                                const Type2& p) {
 
   typedef typename Geometry_traits_2::Point_2         Point_2;
   typedef typename Geometry_traits_2::FT              Number_type;
@@ -150,9 +150,9 @@ typename Geometry_traits_2::Point_2 Construct_projected_point_2(
 template <class Visibility_2>
 void report_while_handling_needles(
   const typename Visibility_2::Input_arrangement_2::Geometry_traits_2 *geom_traits,
-  const typename Visibility_2::Input_arrangement_2::Point_2 &q,
-  std::vector<typename Visibility_2::Input_arrangement_2::Point_2> &points,
-  typename Visibility_2::Output_arrangement_2 &arr_out) {
+  const typename Visibility_2::Input_arrangement_2::Point_2& q,
+  std::vector<typename Visibility_2::Input_arrangement_2::Point_2>& points,
+  typename Visibility_2::Output_arrangement_2& arr_out) {
 
   typedef typename Visibility_2::Input_arrangement_2      Input_arrangement_2;
   typedef typename Input_arrangement_2::Point_2           Point_2;

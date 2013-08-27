@@ -55,7 +55,7 @@ public:
     Triangular_expansion_visibility_2() : p_arr(NULL) {}
 
 	/*! Constructor given an arrangement and the Regularization tag. */
-    Triangular_expansion_visibility_2(const Input_Arrangement_2 &arr/*, Regularization_tag r_t*/): p_arr(&arr) {
+    Triangular_expansion_visibility_2(const Input_Arrangement_2& arr/*, Regularization_tag r_t*/): p_arr(&arr) {
 
     }
 
@@ -63,7 +63,7 @@ public:
 		return (p_arr != NULL);
 	}
 
-    void attach(const Input_Arrangement_2 &arr) {
+    void attach(const Input_Arrangement_2& arr) {
 		p_arr = &arr;
 	}
 
@@ -75,16 +75,16 @@ public:
 		return *p_arr;
 	}
 
-	void compute_visibility(Point_2 &q, 
+	void compute_visibility(const Point_2& q, 
 						   const Face_const_handle face,
-						   Output_Arrangement_2 &out_arr
+						   Output_Arrangement_2& out_arr
                            ) {
 
     }
 
-	void compute_visibility(const Point_2 &q, 
+	void compute_visibility(const Point_2& q, 
 						   const Halfedge_const_handle he,
-						   Output_Arrangement_2 &out_arr
+						   Output_Arrangement_2& out_arr
 						   ) {
 
 }

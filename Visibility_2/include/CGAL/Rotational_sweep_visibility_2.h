@@ -64,10 +64,10 @@ public:
   enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
   Rotational_sweep_visibility_2(): p_arr(NULL) {}
-  Rotational_sweep_visibility_2(const Input_arrangement_2 &arr): p_arr(&arr) {}
+  Rotational_sweep_visibility_2(const Input_arrangement_2& arr): p_arr(&arr) {}
 
 
-  Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle e, Arrangement_2 &out_arr) {
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& out_arr) {
     out_arr.clear();
     this->q = q;
     Point_2 source, target;
@@ -151,7 +151,7 @@ public:
 
   }
 
-  Face_handle compute_visibility(const Point_2 &q, const Face_const_handle f, Output_arrangement_2 &out_arr) {
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) {
     out_arr->clear();
     this->q = q;
     is_vertex_query = false;
@@ -171,7 +171,7 @@ bool is_attached() {
   return (p_arr != NULL);
 }
 
-void attach(const Input_arrangement_2 &arr) {
+void attach(const Input_arrangement_2& arr) {
   p_arr = &arr;
 //  geom_traits = p_arr->geometry_traits();
 }
@@ -379,7 +379,7 @@ private:
 
 
   //insert newly-discovered edges into active_edges according to its intersection with the view ray.
-  void insert_halfedge(std::vector<Halfedge_const_handle> &active_edges, const Ray_2 &ray, Halfedge_const_handle edge)
+  void insert_halfedge(std::vector<Halfedge_const_handle>& active_edges, const Ray_2& ray, Halfedge_const_handle edge)
   {
       Point_2 cross_of_e = intersection_point(ray, edge);
       if (cross_of_e != ray.source())
@@ -648,15 +648,15 @@ private:
   }
 
 
-  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_true) {
+  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
 
-  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
-  void regularize_output(Arrangement_2 &out_arr) {
+  void regularize_output(Arrangement_2& out_arr) {
     typename Output_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ;
          e_itr != out_arr.edges_end() ; e_itr++) {

@@ -63,7 +63,7 @@ public:
   Simple_polygon_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_polygon_visibility_2(const Input_arrangement_2 &arr): 
+  Simple_polygon_visibility_2(const Input_arrangement_2& arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
     query_pt_is_vertex = false;
@@ -73,7 +73,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_arrangement_2 &arr) {
+  void attach(const Input_arrangement_2& arr) {
     p_arr = &arr;
     geom_traits = p_arr->geometry_traits();
     query_pt_is_vertex = false;
@@ -90,8 +90,8 @@ public:
     return *p_arr;
   }
 
-  Face_handle compute_visibility(Point_2 &q, const Face_const_handle face,
-                         Output_arrangement_2 &out_arr) {
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle face,
+                         Output_arrangement_2& out_arr) {
 
     assert(query_pt_is_vertex == false);
    
@@ -223,8 +223,8 @@ public:
     }
   }
 
-  Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle he,
-                           Output_arrangement_2 &out_arr ) {
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle he,
+                           Output_arrangement_2& out_arr ) {
 
     query_pt_is_vertex = false;
 
@@ -313,15 +313,15 @@ private:
   enum {LEFT, RIGHT, SCANA, SCANC, FINISH} upcase;
   bool query_pt_is_vertex;
 
-  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_true) {
+  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
 
-  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
-  void regularize_output(Output_arrangement_2 &out_arr) {
+  void regularize_output(Output_arrangement_2& out_arr) {
     typename Output_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ; 
          e_itr != out_arr.edges_end() ; e_itr++) {
@@ -334,7 +334,7 @@ private:
     }
   }
 
-  void visibility_region_impl(const Point_2 &q) {
+  void visibility_region_impl(const Point_2& q) {
 
     int i = 0;
     Point_2 w;
@@ -386,7 +386,7 @@ private:
     } while(upcase != FINISH);
   }
 
-  void left(int &i, Point_2 &w, const Point_2 &query_pt) {
+  void left(int& i, Point_2& w, const Point_2& query_pt) {
     std::cout << "in left\n";
     if (i == vertices.size() - 1) {
       upcase = FINISH;
@@ -426,7 +426,7 @@ private:
     }
   }
 
-  void right(int &i, Point_2 &w, const Point_2 &query_pt) {
+  void right(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan s_t, s_t-1, ..., s_1, s_0 for the first edge (s_j, s_j-1) such that
     // (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
     bool found = false;
@@ -553,7 +553,7 @@ private:
     }
   }
 
-  void scana(int &i, Point_2 &w, const Point_2 &query_pt) {
+  void scana(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     int k = i;
     std::cout << "scana w = " << w << std::endl;
@@ -595,7 +595,7 @@ private:
     }
   }
 
-  void scanc(int &i, Point_2 &w, const Point_2 &query_pt) {
+  void scanc(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan v_i, v_i+1, ..., v_n-1, v_n for the first edge to intersect (s_t, w)
     assert(i != vertices.size()-1);
     Point_2 s_t = s.top();
