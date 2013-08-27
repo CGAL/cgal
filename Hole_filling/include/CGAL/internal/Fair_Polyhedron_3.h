@@ -19,6 +19,17 @@
 #endif
 
 namespace CGAL {
+/*!
+\ingroup PkgHoleFilling
+@brief Fairing continuity type
+*/
+enum Fairing_continuity 
+{ 
+  FAIRING_C_0 = 0, /**< C0 continuity */
+  FAIRING_C_1 = 1,  /**< C1 continuity */
+  FAIRING_C_2 = 2   /**< C2 continuity */
+};
+
 namespace internal {
 
 struct Fair_default_sparse_linear_solver {
@@ -105,9 +116,13 @@ private:
 
 public:
   template<class InputIterator>
-  bool fair(Polyhedron& polyhedron, InputIterator vb, InputIterator ve)
+  bool fair(Polyhedron& polyhedron, InputIterator vb, InputIterator ve, Fairing_continuity fc)
   {
-    const unsigned int depth = 2 /*L^2*/; /* TODO: actually it can become a parameter - L, L^2, L^3 or more */
+    int depth = static_cast<int>(fc) + 1;
+    if(depth < 1 || depth > 3) {
+      CGAL_warning(!"Continuity should be between 0 and 2 inclusively!");
+      return false; 
+    }
 
     std::set<Vertex_handle> interior_vertices(vb, ve);
     if(interior_vertices.empty()) { return true; }
@@ -173,33 +188,41 @@ public:
 
 }//namespace internal
 
-/** 
- * @brief Function fairing a region on surface mesh. 
- * @note Structure is not altered in any way, only positions of the vertices get updated.
- *
- * @tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
- * @tparam WeightCalculator a model of "weight model" and can be omitted to use default Cotangent weights
- * @tparam Polyhedron a %CGAL polyhedron
- * @tparam InputIterator iterator over input vertices
- *
- * @param polyhedron surface mesh to be faired
- * @param vertex_begin first iterator of the range of vertices
- * @param vertex_end past-the-end iterator of the range of vertices
- * @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
- *
- * @return true if fairing is successful, otherwise no vertex position is changed
- *
- * @todo currently Cotangent weights does not work good for near-degenerate inputs
- */
+/*!
+\ingroup PkgHoleFilling
+@brief Function fairing a region on surface mesh. 
+The region denoted by @a vertex_begin and @a vertex_end might contain multiple disconnected components.
+Note that the structure is not altered in any way, only positions of the vertices get updated.
+
+Fairing might fail if fixed vertices, which are used as boundary conditions, do not suffice to solve constructed linear system.
+The larger @a continuity gets, the more fixed vertices are required.
+
+@tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
+        and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.
+@tparam WeightCalculator a model of FairWeightCalculator and can be omitted to use default Cotangent weights
+@tparam Polyhedron a %CGAL polyhedron
+@tparam InputIterator iterator over input vertices
+
+@param polyhedron surface mesh to be faired
+@param vertex_begin first iterator of the range of vertices
+@param vertex_end past-the-end iterator of the range of vertices
+@param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
+@param continuity tangential continuity, default to FAIRING_C_1 and can be omitted
+
+@return true if fairing is successful, otherwise no vertex position is changed
+
+@todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
+*/
 template<class SparseLinearSolver, class WeightCalculator, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& polyhedron, 
   InputIterator vertex_begin,
   InputIterator vertex_end,
-  WeightCalculator weight_calculator
+  WeightCalculator weight_calculator,
+  Fairing_continuity continuity = FAIRING_C_1
   )
 {
   internal::Fair_Polyhedron_3<Polyhedron, SparseLinearSolver, WeightCalculator> fair_functor(weight_calculator);
-  return fair_functor.fair(polyhedron, vertex_begin, vertex_end);
+  return fair_functor.fair(polyhedron, vertex_begin, vertex_end, continuity);
 }
 
 //use default SparseLinearSolver
@@ -207,33 +230,38 @@ template<class WeightCalculator, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& poly, 
   InputIterator vb,
   InputIterator ve,
-  WeightCalculator weight_calculator
+  WeightCalculator weight_calculator,
+  Fairing_continuity continuity = FAIRING_C_1
   )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  return fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>(poly, vb, ve, weight_calculator);
+  return fair<Sparse_linear_solver, WeightCalculator, Polyhedron, InputIterator>
+    (poly, vb, ve, weight_calculator, continuity);
 }
 
 //use default WeightCalculator
 template<class SparseLinearSolver, class Polyhedron, class InputIterator>
 bool fair(Polyhedron& poly, 
   InputIterator vb,
-  InputIterator ve
+  InputIterator ve,
+  Fairing_continuity continuity = FAIRING_C_1
   )
 {
   typedef internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron> Weight_calculator;
-  return fair<SparseLinearSolver, Weight_calculator, Polyhedron, InputIterator>(poly, vb, ve, Weight_calculator());
+  return fair<SparseLinearSolver, Weight_calculator, Polyhedron, InputIterator>
+    (poly, vb, ve, Weight_calculator(), continuity);
 }
 
 //use default SparseLinearSolver and WeightCalculator
 template<class Polyhedron, class InputIterator>
 bool fair(Polyhedron& poly, 
   InputIterator vb,
-  InputIterator ve
+  InputIterator ve,
+  Fairing_continuity continuity = FAIRING_C_1
   )
 {
   typedef internal::Fair_default_sparse_linear_solver::Solver Sparse_linear_solver;
-  return fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve);
+  return fair<Sparse_linear_solver, Polyhedron, InputIterator>(poly, vb, ve, continuity);
 }
 
 }//namespace CGAL
