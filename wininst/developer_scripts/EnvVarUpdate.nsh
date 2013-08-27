@@ -137,10 +137,6 @@ Function ${UN}EnvVarUpdate
     DetailPrint 'ERROR: Action is [$3] but must be "HKLM" or HKCU"'
     Goto EnvVarUpdate_Restore_Vars
   ${EndIf}
-  IfErrors 0 +4
-    MessageBox MB_OK|MB_ICONEXCLAMATION "Could not read variable $1 to modify it; set it manually"
-    DetailPrint "Could not read variable $1"
-    Goto EnvVarUpdate_Restore_Vars
  
   ; Check for empty PathString
   ${If} $4 == ""
@@ -161,6 +157,7 @@ Function ${UN}EnvVarUpdate
   ${If} $5 == ""
   ${OrIf} $8 >= ${NSIS_MAX_STRLEN}
     SetErrors
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Current $1 length ($6) too long to modify in NSIS; set manually if needed"
     DetailPrint "Current $1 length ($6) too long to modify in NSIS; set manually if needed"
     Pop $8
     Pop $7
