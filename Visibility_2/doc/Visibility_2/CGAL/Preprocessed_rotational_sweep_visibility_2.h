@@ -91,7 +91,7 @@ Preprocessed_rotational_sweep_visibility_2();
 /*! 
 Constructs a `Preprocessed_rotational_sweep_visibility_2` object that is attached to `arr`.
 */ 
-Preprocessed_rotational_sweep_visibility_2(const Input_arrangement_2& arr);
+Preprocessed_rotational_sweep_visibility_2(Input_arrangement_2& arr);
 
 /// @}
 

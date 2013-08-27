@@ -74,7 +74,7 @@ Visibility_2();
 /*! 
 Constructs a `Visibility_2` object that is attached to `arr`.
 */ 
-Visibility_2(const Input_arrangement_2& arr);
+Visibility_2(Input_arrangement_2& arr);
 
 /// @}
 

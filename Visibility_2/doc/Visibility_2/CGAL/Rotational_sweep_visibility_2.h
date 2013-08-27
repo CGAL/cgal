@@ -85,7 +85,7 @@ Rotational_sweep_visibility_2();
 /*! 
 Constructs a `Rotational_sweep_visibility_2` object that is attached to `arr`.
 */ 
-Rotational_sweep_visibility_2(const Input_arrangement_2& arr); 
+Rotational_sweep_visibility_2(Input_arrangement_2& arr); 
 
 /// @}
 

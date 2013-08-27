@@ -92,7 +92,7 @@ Triangular_expansion_visibility_2();
 /*! 
 Constructs a `Triangular_expansion_visibility_2` object that is attached to `arr`.
 */ 
-Triangular_expansion_visibility_2(const Input_arrangement_2& arr);
+Triangular_expansion_visibility_2(Input_arrangement_2& arr);
 
 /// @}
 

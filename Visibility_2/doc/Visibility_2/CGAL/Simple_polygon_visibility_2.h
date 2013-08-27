@@ -98,7 +98,7 @@ Simple_polygon_visibility_2();
 /*! 
 Constructs a `Simple_polygon_visibility_2` object that is attached to `arr`.
 */ 
-Simple_polygon_visibility_2(const Input_arrangement_2& arr); 
+Simple_polygon_visibility_2(Input_arrangement_2& arr); 
 
 /// @}
 
