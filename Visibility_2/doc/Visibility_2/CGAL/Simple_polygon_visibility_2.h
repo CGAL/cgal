@@ -98,7 +98,7 @@ Simple_polygon_visibility_2();
 /*! 
 Constructs a `Simple_polygon_visibility_2` object that is attached to `arr`.
 */ 
-Simple_polygon_visibility_2(const Input_arrangement_2& arr); 
+Simple_polygon_visibility_2(Input_arrangement_2& arr); 
 
 /// @}
 
@@ -115,7 +115,7 @@ Attaches the given arrangement to the visibility object.
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(const Input_arrangement_2& arr);
+  void attach(Input_arrangement_2& arr);
 
 /*!
 Detaches the arrangement from the visibility object it is currently attached to

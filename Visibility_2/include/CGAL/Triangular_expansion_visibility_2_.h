@@ -77,7 +77,7 @@ public:
   Triangular_expansion_visibility_2() : p_arr(NULL){}
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Triangular_expansion_visibility_2 (const Input_arrangement_2& arr)
+  Triangular_expansion_visibility_2 (Input_arrangement_2& arr)
     : p_arr(&arr){
     //std::cout << "Triangular_expansion_visibility_2" << std::endl;
     init_cdt(); 
@@ -88,7 +88,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_arrangement_2& arr) {
+  void attach(Input_arrangement_2& arr) {
     //std::cout << "attach" << std::endl;
     // todo observe changes in arr; 
     p_arr = &arr;

@@ -64,7 +64,7 @@ public:
   enum Intersection_type { UNBOUNDED, CORNER, INNER };
 
   Rotational_sweep_visibility_2(): p_arr(NULL) {}
-  Rotational_sweep_visibility_2(const Input_arrangement_2& arr): p_arr(&arr) {}
+  Rotational_sweep_visibility_2(Input_arrangement_2& arr): p_arr(&arr) {}
 
 
   Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& out_arr) {
@@ -171,7 +171,7 @@ bool is_attached() {
   return (p_arr != NULL);
 }
 
-void attach(const Input_arrangement_2& arr) {
+void attach(Input_arrangement_2& arr) {
   p_arr = &arr;
 //  geom_traits = p_arr->geometry_traits();
 }

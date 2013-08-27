@@ -65,7 +65,7 @@ public:
   Simple_polygon_visibility_2_() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_polygon_visibility_2_(const Input_arrangement_2& arr): 
+  Simple_polygon_visibility_2_(Input_arrangement_2& arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   };
@@ -74,7 +74,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_arrangement_2& arr) {
+  void attach(Input_arrangement_2& arr) {
     p_arr = &arr;
     geom_traits = p_arr->geometry_traits();
   }
