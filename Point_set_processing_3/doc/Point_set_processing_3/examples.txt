@@ -5,4 +5,7 @@
 \example Point_set_processing_3/grid_simplification_example.cpp
 \example Point_set_processing_3/jet_smoothing_example.cpp
 \example Point_set_processing_3/normals_example.cpp
+\example Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp
+\example Point_set_processing_3/bilateral_smooth_point_set_example.cpp
+\example Point_set_processing_3/edge_aware_upsample_point_set_example.cpp
 */

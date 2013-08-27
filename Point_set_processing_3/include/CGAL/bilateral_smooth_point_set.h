@@ -45,12 +45,14 @@
 #include "tbb/blocked_range.h"
 const bool is_use_parallel = false;
 
-/// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
+
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
+
 namespace bilateral_smooth_point_set_internal{
  // Item in the Kd-tree: position (Point_3) + index
 template <typename Kernel>
@@ -127,18 +129,20 @@ compute_denoise_projection(
   Vector normal_sum = CGAL::NULL_VECTOR; 
 
   FT cos_sigma = cos(sharpness_sigma / 180.0 * 3.1415926);
-  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8,1-cos_sigma), 2);
+  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
-  for (unsigned int i = 0; i < neighbor_pwns.size(); ++i)
+  std::vector<Pwn>::const_iterator pwn_iter = neighbor_pwns.begin();
+  for (; pwn_iter != neighbor_pwns.end(); ++pwn_iter)
   {
-    const Point& np = neighbor_pwns[i].position();
-    const Vector& nn = neighbor_pwns[i].normal();
+    const Point& np = pwn_iter->position();
+    const Vector& nn = pwn_iter->normal();
 
     FT dist2 = CGAL::squared_distance(query.position(), np);
     if (dist2 < radius2)
     {
       FT theta = std::exp(dist2 * iradius16);
-      FT psi = std::exp(-std::pow(1-query.normal()*nn, 2)/sharpness_bandwidth);
+      FT psi = std::exp(-std::pow(1 - query.normal() * nn, 2)
+                        / sharpness_bandwidth);
 
       weight = theta * psi;
 
@@ -152,7 +156,7 @@ compute_denoise_projection(
   update_normal = update_normal / sqrt(update_normal.squared_length());
 
   Point update_point = query.position() - update_normal * 
-    (project_dist_sum / project_weight_sum); 
+                       (project_dist_sum / project_weight_sum); 
 
   return Pwn(update_point, update_normal);
 }
@@ -186,7 +190,7 @@ compute_kdtree_neighbors(
   // performs k + 1 queries (if unique the query point is
   // output first). search may be aborted when k is greater
   // than number of input points
-  Neighbor_search search(tree,query,k+1);
+  Neighbor_search search(tree, query, k+1);
   Search_iterator search_iterator = search.begin();
   ++search_iterator;
   FT max_distance = (FT)0.0;
@@ -202,7 +206,7 @@ compute_kdtree_neighbors(
     ++search_iterator;
   }
 
-  // output average max spacing
+  // output 
   return neighbor_pwns;
 }
 
@@ -240,7 +244,7 @@ compute_max_spacing(
   ++search_iterator;
   FT max_distance = (FT)0.0;
   unsigned int i;
-  for(i=0 ; i<(k+1) ; ++i)
+  for(i = 0; i < (k+1) ; ++i)
   {
     if(search_iterator == search.end())
       break; // premature ending
@@ -255,29 +259,32 @@ compute_max_spacing(
   return std::sqrt(max_distance);
 }
 
-}
+} /* namespace internal */
 
+/// \endcond
+
+/// try for parallelization
 template <typename Kernel>
 class Pwn_updater {
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn> Pwn_set;
+  typedef typename std::vector<Pwn> Pwns;
   typedef typename Kernel::FT FT;
 
   FT sharpness_sigma;
-  Pwn_set* pwn_set;
-  Pwn_set* update_pwn_set;
-  std::vector<Pwn_set>* pwn_neighbors_set;
+  Pwns* pwns;
+  Pwns* update_pwn_set;
+  std::vector<Pwns>* pwns_neighbors;
 
 public:
   Pwn_updater(
     FT s, 
-    Pwn_set *in,
-    Pwn_set *out, 
-    std::vector<Pwn_set>* neighbors) 
+    Pwns *in,
+    Pwns *out, 
+    std::vector<Pwns>* neighbors) 
   : sharpness_sigma(s), 
-    pwn_set(in),
+    pwns(in),
     update_pwn_set(out),
-    pwn_neighbors_set(neighbors)
+    pwns_neighbors(neighbors)
   {}
 
   void operator() ( const tbb::blocked_range<size_t>& r ) const 
@@ -286,8 +293,8 @@ public:
     {
       (*update_pwn_set)[i] = bilateral_smooth_point_set_internal::
         compute_denoise_projection<Kernel>
-        ((*pwn_set)[i], 
-        (*pwn_neighbors_set)[i], 
+        ((*pwns)[i], 
+        (*pwns_neighbors)[i], 
         0.15,
         sharpness_sigma);   
     }
@@ -334,7 +341,7 @@ bilateral_smooth_point_set(
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
-  typedef typename std::vector<Pwn> Pwn_set;
+  typedef typename std::vector<Pwn> Pwns;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
@@ -343,14 +350,14 @@ bilateral_smooth_point_set(
 
   // types for K nearest neighbors search structure
   typedef bilateral_smooth_point_set_internal::
-    Kd_tree_element<Kernel> Kd_tree_element;
+          Kd_tree_element<Kernel> Kd_tree_element;
   typedef bilateral_smooth_point_set_internal::Kd_tree_traits<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // copy points and normals
-  Pwn_set pwn_set;
+  Pwns pwns;
   for(ForwardIterator it = first; it != beyond; ++it)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
@@ -360,10 +367,10 @@ bilateral_smooth_point_set(
     const Point& p = get(point_pmap, *it);
     const Vector& n = get(normal_pmap, *it);
 #endif
-    pwn_set.push_back(Pwn(p, n));
+    pwns.push_back(Pwn(p, n));
   }
 
-  unsigned int nb_points = pwn_set.size();
+  unsigned int nb_points = pwns.size();
 
   CGAL::Timer task_timer;
   task_timer.start();
@@ -371,20 +378,20 @@ bilateral_smooth_point_set(
 
   // initiate a KD-tree search for points
   std::vector<Kd_tree_element> treeElements;
-  treeElements.reserve(pwn_set.size());
-  for (unsigned int i = 0 ; i < pwn_set.size(); ++i)
+  treeElements.reserve(pwns.size());
+  std::vector<Pwn>::iterator pwn_iter = pwns.begin();
+  for (unsigned int i = 0; pwn_iter != pwns.end(); ++pwn_iter)
   {
-    const Pwn& pwn = pwn_set[i];
-    treeElements.push_back(Kd_tree_element(pwn, i));
+    treeElements.push_back(Kd_tree_element(*pwn_iter, i));
   }
   Tree tree(treeElements.begin(), treeElements.end());
 
   // Guess spacing
   FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); 
-  for(unsigned int i = 0; i < nb_points; ++i)
+  for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
   {
     FT max_spacing = bilateral_smooth_point_set_internal::
-                     compute_max_spacing<Kernel,Tree>(pwn_set[i], tree, k);
+                     compute_max_spacing<Kernel,Tree>(*pwn_iter, tree, k);
     guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
   }
   guess_neighbor_radius *= 0.95;
@@ -397,13 +404,13 @@ bilateral_smooth_point_set(
   std::cout << "Compute all neighbors: " << std::endl;
 
   // compute all neighbors
-  std::vector<Pwn_set> pwn_neighbors_set;
-  pwn_neighbors_set.reserve(nb_points);
-  for (unsigned int i = 0 ; i < nb_points; ++i)
+  std::vector<Pwns> pwns_neighbors;
+  pwns_neighbors.reserve(nb_points);
+
+  for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
   {
-    Pwn pwn = pwn_set[i];
-    pwn_neighbors_set.push_back(bilateral_smooth_point_set_internal::
-      compute_kdtree_neighbors<Kernel, Tree>(pwn, tree, k));
+    pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
+          compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
   }
 
   memory = CGAL::Memory_sizer().virtual_size();
@@ -413,8 +420,9 @@ bilateral_smooth_point_set(
 
   task_timer.start();
   std::cout << "Compute update points and normals: " << std::endl;
+
   // update points and normals
-  Pwn_set update_pwn_set(nb_points);
+  Pwns update_pwn_set(nb_points);
 
   if(is_use_parallel)
   {
@@ -422,23 +430,24 @@ bilateral_smooth_point_set(
     tbb::blocked_range<size_t> block(0, nb_points);
     
     Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
-                                    &pwn_set,
+                                    &pwns,
                                     &update_pwn_set,
-                                    &pwn_neighbors_set);
+                                    &pwns_neighbors);
     tbb::parallel_for(block, pwn_updater);
   }
   else
   {
-    for (unsigned int i = 0 ; i < nb_points; ++i)
+    std::vector<Pwn>::iterator update_iter = update_pwn_set.begin();
+    std::vector<Pwns>::iterator neighbor_iter = pwns_neighbors.begin();
+    for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); 
+        ++pwn_iter, ++update_iter, ++neighbor_iter)
     {
-      Pwn pwn = pwn_set[i];
-
-      update_pwn_set[i] = bilateral_smooth_point_set_internal::
-                          compute_denoise_projection<Kernel>
-                          (pwn, 
-                           pwn_neighbors_set[i], 
-                           guess_neighbor_radius, 
-                           sharpness_sigma);
+      *update_iter = bilateral_smooth_point_set_internal::
+                     compute_denoise_projection<Kernel>
+                     (*pwn_iter, 
+                      *neighbor_iter, 
+                      guess_neighbor_radius, 
+                      sharpness_sigma);
     }
   }
 

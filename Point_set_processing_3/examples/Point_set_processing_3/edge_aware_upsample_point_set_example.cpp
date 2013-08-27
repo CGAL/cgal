@@ -21,11 +21,10 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_WLOPED";
-
-  // Reads a .xyz point set file in points[].
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/before_upsample";
+ 
+  // Reads a .xyz point set file in points[], *with normals*.
   std::vector<PointVectorPair> points;
-  //std::ifstream stream("data/before_upsample.xyz");
   std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
 
   if (!stream ||
@@ -40,17 +39,17 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double sharpness_sigma = 35;   //control sharpness of the result.
+  const double sharpness_sigma = 25;   //control sharpness of the result.
   const double edge_senstivity = 0;    // more points will up-sample on edge.          
-  const double neighbor_radius = 0.05;      // initial neighbors size.
-  const unsigned int number_of_output_points = points.size() * 100;   
+  const double neighbor_radius = 0.2;      // initial neighbors size.
+  const unsigned int number_of_output_points = points.size() * 50;   
 
 
   CGAL::Timer task_timer;
   task_timer.start();
   std::cout << "Run upsample algorithm example: " << std::endl;
 
-   //Run algorithm using ball-tree
+   //Run algorithm 
    CGAL::edge_aware_upsample_point_set(
             points.begin(), 
             points.end(), 
@@ -64,15 +63,10 @@ int main(void)
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "done: " << task_timer.time() << " seconds, " 
-    << (memory>>20) << " Mb allocated" << std::endl;
+            << (memory>>20) << " Mb allocated" << std::endl;
   task_timer.stop();  
 
   // Saves point set.
-  // Note: write_xyz_points_and_normals() requires an output iterator
-  // over points as well as property maps to access each
-  // point position and normal.
-
-  //std::ofstream out("data/after_upsample.xyz");  
   std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_UPSAMPLED.xyz");  
 
   if (!out ||

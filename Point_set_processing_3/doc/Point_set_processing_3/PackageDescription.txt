@@ -35,6 +35,9 @@
 - `CGAL::mst_orient_normals()`
 - `CGAL::write_off_points()`
 - `CGAL::write_xyz_points()`
+- `CGAL::wlop_simplify_and_regularize_point_set()`
+- `CGAL::bilateral_smooth_point_set()`
+- `CGAL::edge_aware_upsample_point_set()`
 
 */
 

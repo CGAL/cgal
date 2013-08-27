@@ -84,40 +84,6 @@ public:
 };
 
 template <typename Kernel>
-class Rich_box
-{
-public:
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::FT FT;
-
-  Rich_box(){ init(); }
-
-  void init()
-  {
-    FT max_double = (FT)(std::numeric_limits<double>::max)();
-    min_x = min_y = min_z = max_double;
-    max_x = max_y = max_z = -max_double;
-  }
-
-  void add_point(const Point& p)
-  {
-    if (p.x() < min_x) min_x = p.x();
-    if (p.y() < min_y) min_y = p.y();
-    if (p.z() < min_z) min_z = p.z();
-    if (p.x() > max_x) max_x = p.x();
-    if (p.y() > max_y) max_y = p.y();
-    if (p.z() > max_z) max_z = p.z();
-  }
-
-  Point get_min() { return Point(min_x, min_y, min_z); }
-  Point get_max() { return Point(max_x, max_y, max_z); }
-
-private:
-  FT min_x, min_y, min_z, max_x, max_y, max_z;
-};
-
-
-template <typename Kernel>
 class Rich_grid 
 {
   typedef typename Kernel::Point_3 Point;
@@ -130,7 +96,7 @@ public:
   Rich_grid() {}
 
   void init(std::vector<Rich_point<Kernel> > &vert,
-            Rich_box<Kernel>& box,
+            CGAL::Bbox_3 bbox,
             const FT _radius); 
 
   // Travel for the point set itself 
@@ -171,7 +137,7 @@ private:
   int x_side, y_side, z_side;
   FT radius;
 
-  int cell(int x, int y, int z) { return x + x_side*(y + y_side*z); }
+  int cell(int x, int y, int z) { return x + x_side * (y + y_side * z); }
   bool is_empty(int cell) { return indices[cell+1] == indices[cell]; }
 
   iterator get_start_iter(int origin) 
@@ -215,27 +181,24 @@ public:
 // and each grid has their points index in the index vector of sample.
 template <typename Kernel>
 void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert, 
-                             Rich_box<Kernel>& box, 
+                             CGAL::Bbox_3 bbox,
                              const typename Kernel::FT _radius) 
 {
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::FT FT;
 
-  radius = _radius;
-
-  Point min = box.get_min();
-  Point max = box.get_max();
-
   rich_points.resize(vert.size());
   for(int i = 0; i < rich_points.size(); ++i)
   {
-    Point& pt = vert[i].pt;  
     rich_points[i] = &vert[i];
   }
 
-  x_side = (int)ceil((max.x() - min.x())/radius);
-  y_side = (int)ceil((max.y() - min.y())/radius);
-  z_side = (int)ceil((max.z() - min.z())/radius);
+  radius = _radius;
+
+  x_side = (int)ceil((bbox.xmax() - bbox.xmin()) / radius);
+  y_side = (int)ceil((bbox.ymax() - bbox.ymin()) / radius);
+  z_side = (int)ceil((bbox.zmax() - bbox.zmin()) / radius);
+
 
   x_side = (x_side > 0) ? x_side : 1;
   y_side = (y_side > 0) ? y_side : 1;
@@ -249,7 +212,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   for(unsigned int z = 0; z < z_side; z++) 
   {
     int end_z = start_z;
-    FT max_z = min.z() + (z+1)*radius;
+    FT max_z = bbox.zmin() + (z+1)*radius;
     while(end_z < rich_points.size() && rich_points[end_z]->pt.z() < max_z)
       ++end_z; 
 
@@ -260,7 +223,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
     for(int y = 0; y < y_side; y++) 
     {
       int end_y = start_y;        
-      FT max_y = min.y() + (y+1) * radius;
+      FT max_y = bbox.ymin() + (y+1) * radius;
       while(end_y < end_z && rich_points[end_y]->pt.y() < max_y)
         ++end_y;
 
@@ -272,7 +235,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
       {
         int end_x = start_x;
         indices[x + x_side * y + x_side * y_side * z] = end_x;          
-        FT max_x = min.x() + (x+1) * radius;
+        FT max_x = bbox.xmin() + (x+1) * radius;
         while(end_x < end_y && rich_points[end_x]->pt.x() < max_x)
           ++end_x;
 
@@ -496,8 +459,8 @@ void Rich_grid<Kernel>::find_other_neighbors(
 /// @return 
 template <typename Kernel>
 void compute_ball_neighbors_one_self(
-  std::vector<Rich_point<Kernel> >& points,
-  Rich_box<Kernel>& box,
+  std::vector<Rich_point<Kernel> >& points, ///< sample point set
+  CGAL::Bbox_3 bbox, ///< bounding box
   const typename Kernel::FT radius)
 {
   typedef typename Kernel::FT FT;
@@ -509,7 +472,7 @@ void compute_ball_neighbors_one_self(
   }
 
   Rich_grid<Kernel> points_grid;
-  points_grid.init(points, box, radius);
+  points_grid.init(points, bbox, radius);
   points_grid.travel_itself(Rich_grid<Kernel>::find_self_neighbors, 
                             Rich_grid<Kernel>::find_other_neighbors);
 }
@@ -525,7 +488,7 @@ template <typename Kernel>
 void compute_ball_neighbors_one_to_another(
   std::vector<Rich_point<Kernel> >& samples, ///< sample point set
   std::vector<Rich_point<Kernel> >& original,///< original point set
-  Rich_box<Kernel>& box, ///< bounding box
+  CGAL::Bbox_3 bbox, ///< bounding box
   const typename Kernel::FT radius ///< neighbor radius
 )
 {
@@ -541,11 +504,11 @@ void compute_ball_neighbors_one_to_another(
   }
 
   Rich_grid<Kernel> samples_grid;
-  samples_grid.init(samples, box, radius);
+  samples_grid.init(samples, bbox, radius);
 
-  // here can be optimized by initial the original grid just one time.
+  // here can be initial the original grid just one time ?
   Rich_grid<Kernel> original_grid;
-  original_grid.init(original, box, radius);
+  original_grid.init(original, bbox, radius);
 
   samples_grid.travel_others(original_grid, 
                              Rich_grid<Kernel>::find_original_neighbors);

@@ -24,16 +24,10 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
-    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/fin90_with_PCA_normals";
-    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k_normal";
-
-    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K_with_normal";
     const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
-    //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/marseille";
-
 
     // Reads a .xyz point set file in points[].
-    std::list<PointVectorPair> points;
+    std::vector<PointVectorPair> points;
     std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(stream,
@@ -41,14 +35,14 @@ int main(void)
                        CGAL::First_of_pair_property_map<PointVectorPair>(),
                        CGAL::Second_of_pair_property_map<PointVectorPair>()))
     {
-        std::cerr << "Error: cannot read file " 
-                  << INPUT_FILENAME_WITHOUT_EXT << ".xyz" << std::endl;
-        return EXIT_FAILURE;
+       std::cerr << "Error: cannot read file " 
+                 << INPUT_FILENAME_WITHOUT_EXT << ".xyz" << std::endl;
+       return EXIT_FAILURE;
     }
 
-    // 
+    //Algorithm parameters
     int k = 120;  //neighborhood size
-    double sharpness_sigma = 15; // control sharpness(0-90), 
+    double sharpness_sigma = 25; // control sharpness(0-90), 
                                  // the bigger, the result will be smoother.
     int iter_number = 3; //times of projection
 
@@ -61,7 +55,7 @@ int main(void)
       std::cout << std::endl << "Iteration: " << i+1 << std::endl;
      
       double error = 
-      CGAL::bilateral_smooth_point_set<CGAL::Parallel_tag>(
+      CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
             points.begin(), 
             points.end(),
             CGAL::First_of_pair_property_map<PointVectorPair>(),
@@ -78,13 +72,9 @@ int main(void)
     task_timer.stop();  
 
 
-
-    //// Saves point set.
-    //// Note: write_xyz_points_and_normals() requires an output iterator
-    //// over points as well as property maps to access each
-    //// point position and normal.
-    std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_DENOISED.xyz");  
-    //std::ofstream out("data/sphere_20k_denoised.xyz");  
+    //// Save point set.
+    std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_jet DENOISED.xyz");  
+    std::ofstream out("data/sphere_20k_denoised.xyz");  
     if (!out ||
       !CGAL::write_xyz_points_and_normals(
       out, points.begin(), points.end(), 

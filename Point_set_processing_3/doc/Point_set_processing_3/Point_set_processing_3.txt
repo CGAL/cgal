@@ -136,8 +136,7 @@ functions in this component.)
 \section Point_set_processing_3Simplification Simplification
 
 
-Two simplification functions are devised to reduce an input point set,
-either randomly or using a grid-based clustering approach.
+Three simplification functions are devised to reduce an input point set.
 
 Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
@@ -149,7 +148,13 @@ points sharing the same cell of the grid by picking as representant
 one arbitrarily chosen point. This algorithm is slower than
 `random_simplify_point_set()`.
 
-\subsection Point_set_processing_3Example_3 Example
+Function `wlop_simplify_and_regularize_point_set()` not only simplify, 
+but also regularize down sampled points. This is an implementation of
+WLOP (Weighted Locally Optimal Projection) algorithm from paper 
+<a href="http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html">[Huang et al. 2009]</a>.
+This algorithm is much slower.
+ 
+\subsection Point_set_processing_3Example_3 Example for grid simplification
 
 The following example reads a point set and simplifies it by clustering.
 \cgalExample{Point_set_processing_3/grid_simplification_example.cpp}
@@ -158,19 +163,49 @@ The following example reads a point set and simplifies it by clustering.
 Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
 \cgalFigureEnd
 
+\subsection Point_set_processing_3Example_4 Example for WLOP simplification
+The following example reads a point set, simplifies and regularizes it by WLOP.
+\cgalExample{Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp}
+
+\cgalFigureBegin{Point_set_processing_3figsimplification_comparison, simplification_comparison.jpg}
+Comparison for three simplification methods: Left: Random simplification result. Middle: Grid simplification result. Right: WLOP simplification result.
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3WLOP_Parameters Parameter: need_compute_density
+Computing densities weights for each point is an optional preprocessing. It can deal with the nonuniform distribution input, in the expense of more computational time.
+
+\cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
+Comparison between with and without density: Left: "need_compute_density = false", took 14 seconds. Right: "need_compute_density = true", took 18 seconds.
+\cgalFigureEnd
+
 \section Point_set_processing_3Smoothing Smoothing
 
+Two smoothing functions are devised to smooth an input point set.
 
 Function `jet_smooth_point_set()` smooths the input point set by
 projecting each point onto a smooth parametric surface patch
 (so-called jet surface) fitted over its `k` nearest neighbors.
 
+Function `bilateral_smooth_point_set()` smooths the input point set by
+iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
+Bilateral projection can preserve sharp feature according to the normal(gradient) information.
+So, points' normals are required as input. 
 
-\subsection Point_set_processing_3Example_4 Example
+\subsection Point_set_processing_3Example_5 Example for jet smoothing
 
 The following example generates a set of 9 points close to the `xy` 
 plane and smooths them using 8 nearest neighbors:
 \cgalExample{Point_set_processing_3/jet_smoothing_example.cpp}
+
+\subsection Point_set_processing_3Example_6 Example for bilateral smoothing
+
+The following example reads a set of points with normals and smooths them via bilateral smoothing:
+\cgalExample{Point_set_processing_3/bilateral_smooth_point_set_example.cpp}
+
+\cgalFigureBegin{Point_set_processing_3figsmoothing_comparison, smoothing_comparison.jpg}
+Comparison for two smoothing methods: Left: Input, contains 250K points, normal-color mapping. Middle: Jet smoothing result, took 197 seconds. Right: Bilateral smoothing result, took 110 seconds.
+\cgalFigureEnd
+
 
 \section Point_set_processing_3NormalEstimation Normal Estimation
 
@@ -204,12 +239,42 @@ the normals which could not be successfully oriented.
 Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_5 Example
+\subsection Point_set_processing_3Example_7 Example
 
 The following example reads a point set from a file, estimates the
 normals through PCA over the 6 nearest neighbors and orients the
 normals:
 \cgalExample{Point_set_processing_3/normals_example.cpp}
+
+
+\section Point_set_processing_3Upsampling Upsampling
+
+Function `edge_aware_upsample_point_set()` generate a much denser point set, 
+for point-based rendering, hole filling, and sparse surface reconstruction.
+The algorithm can progressively upsample the point set while approaching the edge singularities, 
+see paper <a href="http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html">[Huang et al. 2013]</a>.
+
+\subsection Point_set_processing_3Example_8 Example
+
+The following example reads a point set from a file, upsamples it to get a much denser result.
+
+\cgalExample{Point_set_processing_3/edge_aware_upsample_point_set_example.cpp}
+
+\subsubsection Point_set_processing_3Upsample_Parameters Parameter1: edge_sensitivity
+The parameter controls where the new points will be inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp edge.
+
+\cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
+Upsample results for different edge-sensitivity parameter values. The input contains 850 points was upsampled to 1,500 points in all the cases shown in this figure.
+
+\subsubsection Point_set_processing_3Upsample_Parameters Parameter2: sharpness_sigma
+The parameter controls how sharp the upsample result will be.
+
+\cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_sigma, upsample_sharpness_sigma.jpg}
+Upsample results for different sharpness_sigma parameter values. The input contains 850 points was upsampled to 425K points in all the cases shown in this figure, spending around 5 minutes.
+
+\cgalFigureEnd
+
+
 
 */ 
 } /* namespace CGAL */

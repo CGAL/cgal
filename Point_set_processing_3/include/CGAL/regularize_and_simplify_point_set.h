@@ -36,12 +36,15 @@
 //#include <tbb/parallel_for.h>
 //#include <tbb/blocked_range.h>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
 
 
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+  
 namespace regularize_and_simplify_internal{
 
 // Item in the Kd-tree: position (Point_3) + index
@@ -592,7 +595,7 @@ regularize_and_simplify_point_set(
 
   // Initiate a KD-tree search for original points
   task_timer.start();
-  std::cout << "Initialization / Compute Density For Original" << endl;
+  std::cout << "Initialization / Compute Density For Original" << std::endl;
 
   std::vector<Kd_tree_element> original_treeElements;
   for (it = first_original_point, i=0 ; it != beyond ; ++it, ++i)
@@ -604,7 +607,7 @@ regularize_and_simplify_point_set(
                      original_treeElements.end());
 
   // Guess spacing
-  FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)();
+  FT guess_neighbor_radius = 1e-100;
   for(it = first_original_point; it != beyond ; ++it)
   {
     FT max_spacing = regularize_and_simplify_internal::
@@ -618,7 +621,7 @@ regularize_and_simplify_point_set(
             << guess_neighbor_radius << std::endl;
 
   // Compute original density weight for original points if user needed
-  task_timer.start("Compute Density For Original");
+  task_timer.start();
   std::vector<FT> original_density_weight_set;
   if (need_compute_density)
   {
@@ -654,9 +657,10 @@ regularize_and_simplify_point_set(
   for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
   {
     task_timer.start();
-    std::cout << "Compute average term and repulsion term " << endl;
+    std::cout << "Compute average term and repulsion term " << std::endl;
 
     // Initiate a KD-tree search for sample points
+    std::vector<Kd_tree_element> sample_treeElements;
     for (i=0 ; i < sample_points.size(); i++)
     {
       Point& p0 = sample_points[i];

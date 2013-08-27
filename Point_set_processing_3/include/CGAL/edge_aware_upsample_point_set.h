@@ -42,13 +42,12 @@
 
 namespace CGAL {
 
-/// \cond SKIP_IN_MANUAL
-
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
-namespace upsample_internal{
+/// \cond SKIP_IN_MANUAL
 
+namespace upsample_internal{
 
 /// For each query point, select a best "base point" in its neighborhoods.
 /// Then, a new point will be interpolated between query point and "base point".
@@ -77,27 +76,28 @@ base_point_selection(
 
   FT best_dist2 = -10.0;
   const Rich_point& v = query;
-  for (unsigned int i = 0; i < neighbor_points.size(); ++i)
+  std::vector<Rich_point>::const_iterator iter = neighbor_points.begin();
+  for (; iter != neighbor_points.end(); ++iter)
   {
-    const Rich_point& t = neighbor_points[i];
+    const Point& t = iter->pt;
 
     const Vector& vm = v.normal;
-    const Vector& tm = t.normal;
+    const Vector& tm = iter->normal;
 
-    Vector diff_v_t = t.pt - v.pt;
+    Vector diff_v_t = t - v.pt;
     Point mid_point = v.pt + (diff_v_t * FT(0.5));
     
     FT dot_produce = std::pow((FT(2.0) - vm * tm), edge_senstivity);
 
-    Vector diff_t_mid = mid_point - t.pt;
+    Vector diff_t_mid = mid_point - t;
     FT project_t = diff_t_mid * tm;
     FT min_dist2 = diff_t_mid.squared_length() - project_t * project_t;
 
-    for (unsigned int j = 0; j < neighbor_points.size(); j++)
+    std::vector<Rich_point>::const_iterator iter_in = neighbor_points.begin();
+    for (; iter_in != neighbor_points.end(); ++iter_in)
     {
-      const Rich_point& s = neighbor_points[j];
-      Vector diff_s_mid = mid_point - s.pt;
-      FT project_s = diff_s_mid * s.normal;
+      Vector diff_s_mid = mid_point - iter_in->pt;
+      FT project_s = diff_s_mid * iter_in->normal;
 
       FT proj_min2 = diff_s_mid.squared_length() - project_s * project_s;
 
@@ -111,18 +111,17 @@ base_point_selection(
     if (min_dist2 > best_dist2)
     {
       best_dist2 = min_dist2;
-      output_base_index = neighbor_points[i].index;
+      output_base_index = iter->index;
     }
   }
 
-  return best_dist2; // sqrt is very slow!
-
+  return best_dist2; 
 }
 
 /// For each new inserted point, we need to do the following job
 /// 1, get neighbor information from the two "parent points"
 /// 2, update position and determine normal by bilateral projection 
-/// 3, update neighbor information again, and added to the neighbors' neighbor
+/// 3, update neighbor information again
 ///
 /// \pre `radius > 0`
 ///
@@ -159,14 +158,21 @@ update_new_point(
   Rich_point& mother_v = rich_point_set[mother_index];
 
   std::set<int> neighbor_indexes;
-  for (unsigned int i = 0; i < father_v.neighbors.size(); ++i)
+  std::vector<unsigned int>::iterator iter;
+  for (iter = father_v.neighbors.begin();
+       iter != father_v.neighbors.end();
+       ++iter)
   {
-    neighbor_indexes.insert(father_v.neighbors[i]);
+    neighbor_indexes.insert(*iter);
   }
-  for (unsigned int i = 0; i < mother_v.neighbors.size(); ++i)
+
+  for (iter = mother_v.neighbors.begin();
+       iter != mother_v.neighbors.end();
+       ++iter)
   {
-    neighbor_indexes.insert(mother_v.neighbors[i]);
+    neighbor_indexes.insert(*iter);
   }
+
   neighbor_indexes.insert(father_v.index);
   neighbor_indexes.insert(mother_v.index);
 
@@ -257,9 +263,9 @@ update_new_point(
   }
 }
 
-} // namespace upsample_internal
+} /* namespace upsample_internal */
 
-
+/// \endcond
 
 // ----------------------------------------------------------------------------
 // Public section
@@ -301,8 +307,6 @@ edge_aware_upsample_point_set(
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
   typedef OutputIteratorValueType Point_with_normal;
 
   // basic geometric types
@@ -310,7 +314,6 @@ edge_aware_upsample_point_set(
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
-  typedef typename rich_grid_internal::Rich_box<Kernel> Rich_box;
 
   // preconditions
   CGAL_point_set_processing_precondition(first != beyond);
@@ -327,7 +330,7 @@ edge_aware_upsample_point_set(
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
-  Rich_box box;
+  CGAL::Bbox_3 bbox;
   ForwardIterator it = first; // point iterator
   for(unsigned int i = 0; it != beyond; ++it, ++i)
   {
@@ -340,12 +343,12 @@ edge_aware_upsample_point_set(
 #endif
 
     rich_point_set[i].index = i;
-    box.add_point(rich_point_set[i].pt);
+    bbox += rich_point_set[i].pt.bbox();
   }
 
   // compute neighborhood
   rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
-                                                      box,
+                                                      bbox,
                                                       neighbor_radius);
 
 
@@ -370,7 +373,7 @@ edge_aware_upsample_point_set(
         current_radius = density_pass_threshold * 3;
       }
       rich_grid_internal::compute_ball_neighbors_one_self(rich_point_set,
-                                                          box,
+                                                          bbox,
                                                           current_radius);
     }
     std::cout << "current radius: " << current_radius << std::endl; 
@@ -555,14 +558,12 @@ edge_aware_upsample_point_set(
     number_of_output_points,
     kernel);
 }
-//-----------------------------------------------------------------------------
 /// @endcond
 
 
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-//-----------------------------------------------------------------------------
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ForwardIterator,
@@ -596,7 +597,10 @@ edge_aware_upsample_point_set(
     number_of_output_points,
     Kernel());
 }
+/// @endcond
 
+
+/// @cond SKIP_IN_MANUAL
 template <typename OutputIterator,
           typename ForwardIterator,
           typename PointPMap,
@@ -627,17 +631,11 @@ edge_aware_upsample_point_set(
     neighbor_radius, 
     number_of_output_points);
 }
-
-
-
-
-
-//-----------------------------------------------------------------------------
 /// @endcond
+
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-//-----------------------------------------------------------------------------
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ForwardIterator,
@@ -670,7 +668,10 @@ edge_aware_upsample_point_set(
     neighbor_radius, 
     number_of_output_points);
 }
+/// @endcond
 
+
+/// @cond SKIP_IN_MANUAL
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ForwardIterator,
@@ -699,7 +700,7 @@ edge_aware_upsample_point_set(
     neighbor_radius, 
     number_of_output_points);
 }
-
+/// @endcond
 
 } //namespace CGAL
 
