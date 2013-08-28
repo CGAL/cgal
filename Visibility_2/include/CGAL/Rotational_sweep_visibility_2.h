@@ -87,7 +87,7 @@ public:
     }
     visibility_region_impl(e->face(), q, source, target);
     //debug
-    print_vertex(polygon);
+//    print_vertex(polygon);
 
     //Decide which inside of the visibility butterfly is needed.
     int source_i, target_i ;
@@ -281,11 +281,13 @@ private:
     polygon.clear();
     heap.clear();
     vmap.clear();
+    edx.clear();
 
     std::vector<Pair> bbox;
     input_face(f, q, a, b, bbox);
 
     //debug
+    std::cout<<"new query point: " <<q<<std::endl;
     print_vertex(vs);
 
     //initiation of vision ray
@@ -325,6 +327,7 @@ private:
       if (do_intersect(q, dp, bbox[i].first, bbox[i].second))
         heap_insert(bbox[i]);
     }
+    std::cout<<"blew is initial active edges.\n";
     print_edges(heap);
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
@@ -362,7 +365,7 @@ private:
         }
       }
       //debug
-      print_edges(heap);
+      //print_edges(heap);
     }
     //print_vertex(polygon);
   }
@@ -522,7 +525,10 @@ private:
                     const Point_2& b,
                     const Point_2& v,
                     const Point_2& n) {
-    return !((v==q || v==a || v==b) && (n==q || n==a || n==b));
+    if (is_vertex_query)
+      return !(n==q);
+    if (is_edge_query)
+      return !((v==a && n==b)||(v==b && n==a));
   }
 
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
@@ -540,6 +546,9 @@ private:
       if (v == q)
         continue;
       vs.push_back(v);
+      //debug
+//      std::cout<<"after one push back"<<std::endl;
+//      print_vertex(vs);
       Point_2 nei[2] = {curr->source()->point(), curr->next()->target()->point()};
       Pvec neighbor;
       for (int i=0; i<2; i++){
@@ -595,6 +604,8 @@ private:
         bbox.push_back(create_pair(box[i], box[(i+1)%4]));
       }
     }
+    //debug
+    std::cout<<"before quick sort, vs size: "<<vs.size()<<std::endl;
 
     quick_sort(vs, 0, vs.size()-1);
 

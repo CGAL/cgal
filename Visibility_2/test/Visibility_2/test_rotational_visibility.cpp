@@ -66,14 +66,14 @@ int main() {
         RSV;
       CGAL::test_model_methods<RSV>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV>(5, 0);
+      CGAL::run_tests<RSV>(10, 2);
     }
     {
       typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_true>
         RSV;
       CGAL::test_model_methods<RSV>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV>(5, 0);
+      CGAL::run_tests<RSV>(10, 2);
     }
 }
     return 0;
