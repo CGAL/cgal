@@ -82,7 +82,13 @@ this regularizer works to bound the velocity of vertices undergoing curvature
 motion. Slowing down the motion is essential, not only from a numerical point
 of view, but also from a geometrical one. As the surface evolves, the local
 curvature of the surface changes, and thus the Laplacian operator must be
-updated to construct an approximation of Eq.\f$\eqref{eq:MCF}\f$.
+updated to construct an approximation of Eq.\f$\eqref{eq:MCF}\f$. The effect of
+\f$ w_{H} \f$ can be illustrated in \cgalFigureRef{WHeffect}.
+
+\cgalFigureBegin{WHeffect, WHeffect.png}
+From left to right, the \f$ w_{H} \f$ is 0.1, 0.05, 0.01, 0.005 respectively.
+Note setting \f$ w_{H} \f$ too small results in a low quality of skeleton.
+\cgalFigureEnd
 
 \subsection MCFSkelSecRemesh Local Dynamic Remeshing
 
@@ -217,7 +223,12 @@ It is also possible to get the correspondent points by calling
 
 The correspondent points for a skeletal vertex are original surface points that
 are collapsed onto the skeletal vertex. They are useful for tasks such as mesh
-segmentation.
+segmentation. In \cgalFigureRef{Correspondence}, we visualize such relationship
+by connecting each skeletal point to its correspondent points.
+
+\cgalFigureBegin{Correspondence, correspondence.png}
+Every skeletal point is connected to its correspondent surface points.
+\cgalFigureEnd
 
 \subsection Skeletonization Examples
 

@@ -119,8 +119,10 @@ public:
   void init_ui(double diag) {
     ui->omega_H->setValue(0.1);
     ui->omega_H->setSingleStep(0.1);
+    ui->omega_H->setDecimals(3);
     ui->omega_P->setValue(0.2);
     ui->omega_P->setSingleStep(0.1);
+    ui->omega_P->setDecimals(3);
     ui->edgelength_TH->setDecimals(7);
     ui->edgelength_TH->setValue(0.002 * diag);
     ui->edgelength_TH->setSingleStep(0.0000001);
