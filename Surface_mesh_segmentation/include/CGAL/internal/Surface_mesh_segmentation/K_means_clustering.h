@@ -47,7 +47,7 @@ public:
       std::size_t random_range = points.size() - number_of_centers +
                                  i; // activate one more element in each iteration for as selectable
       std::size_t random_index = random.get_int(0,
-                                 random_range + 1); // [0, random_range];
+                                 static_cast<int>(random_range) + 1); // [0, random_range];
 
       std::pair<std::set<std::size_t>::iterator, bool> random_index_unique =
         selected.insert(random_index);
@@ -107,7 +107,7 @@ public:
     // say, "distance_square" ->            [ 0.1, 0.2, 0.3, 0.0, 0.2 ... ]
     // then distance_square_cumulative ->   [ 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
     std::size_t initial_index = random.get_int(0,
-                                points.size()); // [0, points size)
+                                static_cast<int>(points.size())); // [0, points size)
     centers.push_back(points[initial_index]);
 
     for(int i = 1; i < number_of_centers; ++i) {
@@ -240,7 +240,7 @@ inline bool K_means_point::calculate_new_center(std::vector<K_means_center>&
   for(std::size_t i = 1; i < centers.size(); ++i) {
     double new_distance = std::abs(centers[i].mean - data);
     if(new_distance < min_distance) {
-      new_center_id = i;
+      new_center_id = static_cast<int>(i);
       min_distance = new_distance;
     }
   }

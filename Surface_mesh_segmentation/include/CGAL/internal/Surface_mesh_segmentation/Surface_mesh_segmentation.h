@@ -451,7 +451,7 @@ private:
         ++index) {
       int segment_id = segments_with_average_sdf_values[index].first -
                        number_of_clusters;
-      segment_id_to_sorted_id_map[segment_id] = index;
+      segment_id_to_sorted_id_map[segment_id] = static_cast<int>(index);
     }
     // make one-pass on facets. First make segment-id zero based by subtracting number_of_clusters
     //                        . Then place its sorted index to pmap

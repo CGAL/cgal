@@ -314,7 +314,7 @@ Comparison of biased toward the center and uniform disk sampling for 64 rays.
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
 The sampling method is biased toward the center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
-A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into one Median Absolute Deviation (MAD) from the median of all lengths.
+A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
 
 \section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker during the 2012 season

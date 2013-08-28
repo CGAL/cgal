@@ -366,16 +366,16 @@ public:
                                (std::numeric_limits<double>::max)()
                                : probability_matrix[labels[vertex_i]][vertex_i];
 
-          add_edge_and_reverse(cluster_source, vertex_i + 2, source_weight, 0.0, edge_map,
-                               edge_map_weights);
-          add_edge_and_reverse(vertex_i + 2, cluster_sink, sink_weight, 0.0, edge_map,
-                               edge_map_weights);
+          add_edge_and_reverse(cluster_source, static_cast<int>(vertex_i) + 2,
+                               source_weight, 0.0, edge_map, edge_map_weights);
+          add_edge_and_reverse(static_cast<int>(vertex_i) + 2, cluster_sink, sink_weight,
+                               0.0, edge_map, edge_map_weights);
         }
         vertex_creation_time += timer.time();
         timer.reset();
         // For E-Smooth
         // add edge between every vertex,
-        int num_vert = labels.size() + 2;
+        int num_vert = static_cast<int>(labels.size()) + 2;
         std::vector<double>::const_iterator weight_it = edge_weights.begin();
         for(std::vector<std::pair<int, int> >::const_iterator edge_it = edges.begin();
             edge_it != edges.end();

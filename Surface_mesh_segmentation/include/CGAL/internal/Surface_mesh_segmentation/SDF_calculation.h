@@ -12,7 +12,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/optional.hpp>
 
-#define CGAL_ST_DEV_MULTIPLIER 1 //0.75
+#define CGAL_NUMBER_OF_MAD 1.5
 
 namespace CGAL
 {
@@ -456,7 +456,7 @@ private:
   }
 
   /**
-   * Uses Median Absolute Deviation and removes rays which don't fall into `CGAL_ST_DEV_MULTIPLIER` * MAD.
+   * Uses Median Absolute Deviation and removes rays which don't fall into `CGAL_NUMBER_OF_MAD` * MAD.
    * Also takes weighted average of accepted rays and calculate final sdf value.
    * @param ray_distances contains distance & weight pairs for each ray
    * @return outlier removed and averaged sdf value
@@ -465,7 +465,7 @@ private:
     std::vector<std::pair<double, double> >& ray_distances) const {
     // pair first -> distance, second -> weight
 
-    const int accepted_ray_count = ray_distances.size();
+    const int accepted_ray_count = static_cast<int>(ray_distances.size());
     if(accepted_ray_count == 0)      {
       return 0.0;
     } else if(accepted_ray_count == 1) {
@@ -504,8 +504,7 @@ private:
     double total_weights = 0.0, total_distance = 0.0;
     for(std::vector<std::pair<double, double> >::iterator it =
           ray_distances.begin(); it != ray_distances.end(); ++it) {
-      if(std::abs(it->first - median_sdf) > (median_deviation *
-                                             CGAL_ST_DEV_MULTIPLIER)) {
+      if(std::abs(it->first - median_sdf) > (median_deviation * CGAL_NUMBER_OF_MAD)) {
         continue;
       }
       total_distance += it->first * it->second;
@@ -522,7 +521,6 @@ private:
 }//namespace internal
 /// @endcond
 }//namespace CGAL
-#undef CGAL_ST_DEV_MULTIPLIER
-#undef CGAL_ACCEPTANCE_RATE_THRESHOLD
+#undef CGAL_NUMBER_OF_MAD
 
 #endif //CGAL_SURFACE_MESH_SEGMENTATION_SDF_CALCULATION_H
