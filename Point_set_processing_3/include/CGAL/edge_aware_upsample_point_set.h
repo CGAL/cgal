@@ -353,7 +353,7 @@ edge_aware_upsample_point_set(
 
 
   FT cos_sigma = std::cos(sharpness_sigma / 180.0 * 3.1415926);
-  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
+  FT sharpness_bandwidth = std::pow((CGAL::max)((FT)1e-8, (FT)1.0 - cos_sigma), 2);
 
   FT sum_density = 0.0;
   unsigned int count_density = 0;

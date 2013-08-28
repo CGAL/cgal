@@ -32,6 +32,7 @@ typedef CGAL::Simple_cartesian<float> Kernel;
 // Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
+typedef Kernel::Vector_3 Vector;
 
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point, Vector> PointVectorPair;
@@ -41,17 +42,17 @@ typedef std::pair<Point, Vector> PointVectorPair;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-void test_edge_aware_upsample(std::deque<Point>& points, // input point set                            
+void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set                            
                               double sharpness_sigma, //control sharpness
                               double edge_senstivity, // more points will up-sample on edge
                               double neighbor_radius,  // initial neighbors size.
-                              unsigned int number_of_output_points)
+                              unsigned int times_of_output_points)
 
 {
   CGAL::Timer task_timer; task_timer.start();
   std::cerr << "Run edge aware up-sample, (sharpness_sigma: "
             << sharpness_sigma << "%, number_of_output_points="
-            << number_of_output_points << ")...\n";
+            << points.size() * times_of_output_points << ")...\n";
 
    //Run algorithm 
    CGAL::edge_aware_upsample_point_set(
@@ -63,7 +64,7 @@ void test_edge_aware_upsample(std::deque<Point>& points, // input point set
             sharpness_sigma, 
             edge_senstivity,
             neighbor_radius,
-            number_of_output_points);
+            points.size() * times_of_output_points);
 
 
   long memory = CGAL::Memory_sizer().virtual_size();
@@ -100,7 +101,7 @@ int main(int argc, char * argv[])
   const double sharpness_sigma = 25;   //control sharpness of the result.
   const double edge_senstivity = 0;    // more points will up-sample on edge.          
   const double neighbor_radius = 0.2;      // initial neighbors size.
-  const unsigned int number_of_output_points = points.size() * 500; 
+  const unsigned int times_of_output_points = 500; 
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -147,7 +148,7 @@ int main(int argc, char * argv[])
                              sharpness_sigma,
                              edge_senstivity,
                              neighbor_radius,
-                             number_of_output_points);
+                             times_of_output_points);
 
   } // for each input file
 

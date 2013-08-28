@@ -39,7 +39,7 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-void test_wlop_simplify_and_regularize(std::deque<Point>& points, // input point set                            
+void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input point set                            
                               double retain_percentage, // percentage of points to remove
                               double neighbor_radius, // neighborhood size
                               unsigned int iter_number, // iteration number
@@ -48,7 +48,7 @@ void test_wlop_simplify_and_regularize(std::deque<Point>& points, // input point
 {
   CGAL::Timer task_timer; task_timer.start();
   std::cerr << "Run WLOP simplify and regularize, (retain_percentage: "
-            << removed_percentage << "%, neighbor_radius="
+            << retain_percentage << "%, neighbor_radius="
             << neighbor_radius << ")...\n";
 
   // Make room for sample points
@@ -122,7 +122,7 @@ int main(int argc, char * argv[])
     std::string input_filename  = argv[i];
 
     // Reads the point set file in points[].
-    std::deque<Point> points;
+    std::vector<Point> points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
     // If XYZ file format:
