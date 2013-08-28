@@ -1,3 +1,4 @@
 /*!
 \example Mean_curvature_skeleton/simple_mcfskel_example.cpp
+\example Mean_curvature_skeleton/extract_correspondence_example.cpp
 */

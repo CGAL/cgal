@@ -6,7 +6,7 @@
 \cgalPkgPicture{mcfskel-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Xiang Gao and Andrea Tagliasacchi}
-\cgalPkgDesc{This package  blabla ... }
+\cgalPkgDesc{This package provides a curve skeleton extraction algorithm for a watertight manifold triangle mesh }
 \cgalPkgManuals{Chapter_3D_Mean_Curvature_Skeleton,PkgMeanCurvatureSkeleton3}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

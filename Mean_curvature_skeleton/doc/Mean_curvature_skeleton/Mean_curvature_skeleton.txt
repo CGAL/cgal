@@ -152,13 +152,95 @@ simply correspond each surface vertex to its associated medial pole. As the
 motion progresses we apply a simple update: whenever an edge is collapsed, we 
 retain the Voronoi pole which is closest to the resulting vertex.
 
+\subsection MCFSkelSecSummary Summary
+
+To summarize, the work flow of our algorithm is illustrated in 
+\cgalFigureRef{Flowchart}.
+
+The input of our skeletonization algorithm is a watertight manifold triangle mesh.
+If the user wants to get a medially centered skeleton, the Voronoi poles are 
+computed. These poles are known to lie on the medial axis when the surface is
+sufficiently well-sampled. 
+
+After a preprocessing step, the algorithm iteratively invokes an implicit
+constrained Laplacian solver and optimizes the triangulation by local remeshing,
+until the area of the shape vanishes. To detect convergence, our algorithm 
+compares the change of surface area after one iteration with the original area, 
+if it is less than \f$ area\_TH \times original\_area\f$, the main iteration
+stops. The change from a contracted surface mesh to a curve skeleton is done
+by iteratively collapsing short edges until all the faces have been collapsed.
+
+\cgalFigureBegin{Flowchart, flowchart.png}
+A flow chart of the main algorithm.
+\cgalFigureEnd
+
 \section MCFSkelSecAPI API Description
+
+This package provides the skeletonization function through a class object.
+
+  - `Mean_curvature_skeleton(polyhedron, vertex_index_map, edge_index_map, omega_H, omega_P, edgelength_TH, is_medially_centered, area_TH = 1e-5, iteration_TH = 500)`
+
+  - `vertex_index_map` and `edge_index_map` are property maps used for assigning
+  indices to vertices and edges. 
+
+  - `omega_H` controls the velocity of movement and approximation quality.
+
+  - `omgea_P` controls the smoothness of the medial approximation.
+
+  - `edgelength_TH` controls the length of edges that will be collapsed in local
+  remeshing.
+
+  - `is_medially_centered` set to true means the skeleton extracted is medially
+  centered.
+
+  - `area_TH` controls the convergence criteria.
+
+  - `iteration_TH` sets a maximum number of iterations. It is useful when the 
+  `area_TH` is set so small that the algorithm cannot terminate in a reasonable
+  time.
+
+The extraction of skeleton can be done by calling the member function:
+
+  - `extract_skeleton(graph, points)`
+
+  - `graph` is a `boost::graph` data structure containing the connectivity 
+  information of the curve skeleton.
+
+  - `points` contains the embedding of the skeletal points.
+
+It is also possible to get the correspondent points by calling
+
+  - `extract_skeleton(graph, points, correspondent_points)`
+
+  - `correspondent_points` contains the correspondent points for each skeletal
+  points.
+
+The correspondent points for a skeletal vertex are original surface points that
+are collapsed onto the skeletal vertex. They are useful for tasks such as mesh
+segmentation.
+
+\subsection Skeletonization Examples
+
+\subsubsection Example_1 Extract Skeleton Without Correspondence Tracking
+
+In this example, we only extract the curve skeleton and outputs the embedding 
+of the skeletal points.
+
+\cgalExample{Mean_curvature_skeleton/simple_mcfskel_example.cpp}
+
+\subsubsection Example_2 Extract Skeleton With Correspondence Tracking
+
+In this example, we extract the skeleton with correspondent points. Then we 
+show how to access the correspondent points for each skeletal point.
+
+\cgalExample{Mean_curvature_skeleton/extract_correspondence_example.cpp}
 
 \section MCFSkelSecDesign Implementation History
 
-The code of this package is the result of GSoC 2013 ...
+The initial implementation of this package is the result of the work of Xiang
+during the 2013 season of the Google Summer of Code mentored by Andrea
+Tagliasacchi and Sébastien Loriot.
 
-\todo Hack the edge simplification package to skip the sorting of edges
 */ 
 } /* namespace CGAL */
 
