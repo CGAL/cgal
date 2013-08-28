@@ -94,6 +94,7 @@ public:
                          Output_arrangement_2 &out_arr) {
 
     assert(query_pt_is_vertex == false);
+    assert(query_pt_is_on_halfedge == false);
    
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                             face->outer_ccb();
@@ -157,12 +158,13 @@ public:
     else {
       vertices.push_back(vertices[0]);
     }
+    /*
     std::cout << "VERTICES\n";
     for(unsigned int i = 0 ; i < vertices.size() ; i++) {
       std::cout << vertices[i] << std::endl;
     }
     std::cout << "END VERTICES\n";
-
+*/
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
@@ -196,13 +198,13 @@ public:
         }
       }
     }
-
+/*
     std::cout << "POINTS\n";
     for (unsigned int i = 0 ; i < points.size() ; i++) {
       std::cout << points[i]<<std::endl;
     }
     std::cout << "END POINTS\n";
-
+*/
     std::reverse(points.begin(), points.end());
 
     CGAL::Visibility_2::report_while_handling_needles
@@ -226,12 +228,15 @@ public:
   Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle he,
                            Output_arrangement_2 &out_arr ) {
 
+    std::cout << "query on he = " << he->source()->point() << " " << he->target()->point() << std::endl;
     query_pt_is_vertex = false;
+    query_pt_is_on_halfedge = false;
 
     if (q != he->source()->point()) {
       if (q != he->target()->point()) {
         vertices.push_back(q);
         vertices.push_back(he->target()->point());
+        query_pt_is_on_halfedge = true;
       }
       else {
         vertices.push_back(q);
@@ -259,6 +264,12 @@ public:
 
     vertices.pop_back();
     vertices.push_back(vertices[0]);
+
+    std::cout << "VERTICES\n";
+    for(unsigned int i = 0 ; i < vertices.size() ; i++) {
+      std::cout << vertices[i] << std::endl;
+    }
+    std::cout << "END VERTICES\n";
    
     visibility_region_impl(q);
 
@@ -287,6 +298,11 @@ public:
     }
 
     std::reverse(points.begin(), points.end());
+    std::cout << "POINTS\n";
+    for (unsigned int i = 0 ; i < points.size() ; i++) {
+      std::cout << points[i]<<std::endl;
+    }
+    std::cout << "END POINTS\n";
 
     CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
@@ -312,6 +328,7 @@ private:
   std::vector<Point_2> vertices;
   enum {LEFT, RIGHT, SCANA, SCANC, FINISH} upcase;
   bool query_pt_is_vertex;
+  bool query_pt_is_on_halfedge;
 
   void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
@@ -339,13 +356,29 @@ private:
     int i = 0;
     Point_2 w;
     if (query_pt_is_vertex) {
-      upcase = LEFT;
-      i = 1;
-      w = vertices[1];
-      vertices.pop_back();
-      s.push(vertices[vertices.size()-1]);
-      s.push(vertices[0]);
-      s.push(vertices[1]);
+      if (CGAL::Visibility_2::Orientation_2(geom_traits, 
+                                            q,
+                                            vertices[1],
+                                            vertices[2]) == CGAL::LEFT_TURN) {
+        std::cout << "vrtx left\n";
+        upcase = LEFT;
+        i = 1;
+        w = vertices[1];
+        vertices.pop_back();
+        s.push(vertices[vertices.size()-1]);
+        s.push(vertices[0]);
+        s.push(vertices[1]);
+      }
+      else {
+        std::cout << "vrtx right\n";
+        upcase = SCANA;
+        i = 1;
+        w = vertices[1];
+        vertices.pop_back();
+        s.push(vertices[vertices.size()-1]);
+        s.push(vertices[0]);
+        s.push(vertices[1]);
+      }
     }
     else if (CGAL::Visibility_2::Orientation_2(geom_traits, 
                                           q, 
@@ -430,11 +463,13 @@ private:
     // Scan s_t, s_t-1, ..., s_1, s_0 for the first edge (s_j, s_j-1) such that
     // (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
     bool found = false;
+    std::cout << "R: i = " << i << std::endl;
     std::cout << "right w = " << w << std::endl;
     std::cout << "R: v[i+1] = " << vertices[i+1] << std::endl;
     std::cout << "R: v[i-1] = " << vertices[i-1] << std::endl;
     std::cout << "R: v[i] = " << vertices[i] << std::endl;
     std::cout << "R: s top = " << s.top() << std::endl;
+
     while(!found && upcase == RIGHT) {
       assert(!s.empty());
       Point_2 s_j = s.top();
@@ -476,7 +511,7 @@ private:
                                                 query_pt,
                                                 w, 
                                                 vertices[i+1]) == CGAL::RIGHT_TURN) {
-          // SEE TEST CASE 
+
             upcase = RIGHT;
             w = vertices[i+1];
             s.push(s_j);
@@ -495,7 +530,7 @@ private:
                                                        vertices[i-1],
                                                        vertices[i], 
                                                        vertices[i+1]) == CGAL::RIGHT_TURN)) {
-            std::cout << "in jere\n";
+            std::cout << "in here\n";
             Segment_2 s1(s_j_prev, s_j);
             Ray_2 s2(query_pt, w);
             Object_2 result = CGAL::Visibility_2::Intersect_2
@@ -528,9 +563,10 @@ private:
                                                      vertices[i+1]) == CGAL::LEFT_TURN) {
 
             std::cout << "R: scanc\n";
+            std::cout << "R: " << "v[i-1] = " << vertices[i-1] << " v[i] = " << vertices[i] << " v[i+1] = " << vertices[i+1] << std::endl;
             upcase = SCANC;
             w = vertices[i];
-      //      s.push(s_j);
+            s.push(s_j);
             i++;        
           }
           else {
@@ -557,42 +593,59 @@ private:
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     int k = i;
     std::cout << "scana w = " << w << std::endl;
+    std::cout << "scana s.top = " << s.top() << std::endl;
+    std::cout << "scana i = " << k << std::endl;
+    std::cout << "scana v[k+1] = " << vertices[k+1] << std::endl;
+
     while (k+1 < vertices.size()-1) {
 
       if (CGAL::Visibility_2::Orientation_2(geom_traits,
                                             query_pt,
                                             w,
                                             vertices[k+1]) == CGAL::LEFT_TURN) {
-        Segment_2 s1(vertices[k], vertices[k+1]);
         Ray_2 s2(query_pt, s.top());
+        Segment_2 s1(vertices[k], vertices[k+1]);
+        std::cout << "scana s1 = " << s1 << std::endl;
 
         Object_2 result = CGAL::Visibility_2::Intersect_2
                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
-        if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) { 
+        if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
           s.push(*ipoint);
           std::cout << "scana ipt = " << *ipoint << std::endl;
           s.push(vertices[k+1]);
           w = vertices[k+1];
           i = k+1;
-          std::cout << "scana i = " << i << std::endl;
           upcase = LEFT;
           break;
         }
       }
       else if (CGAL::Visibility_2::Orientation_2(geom_traits,
-                                            query_pt,
-                                            w,
-                                            vertices[k+1]) == CGAL::COLLINEAR) {
+                                                 query_pt,
+                                                 w,
+                                                 vertices[k+1]) == CGAL::COLLINEAR) {
+        if (!query_pt_is_vertex && !query_pt_is_on_halfedge) {
+          std::cout << "scana collinear\n";
+          s.push(vertices[k+1]);
+          w = vertices[k+1];
+          i = k+1;
+          upcase = LEFT;
+          break;
+        }
+        if ((query_pt_is_vertex || query_pt_is_on_halfedge)
+                && CGAL::collinear_are_ordered_along_line(query_pt, w, vertices[k+1])) {
 
-        s.push(vertices[k+1]);
-        w = vertices[k+1];
-        i = k+1;
-        std::cout << "scana i = " << i << std::endl;
-        upcase = LEFT;
-        break;
+          std::cout << "scana SPECIAL collinear\n";
+          s.push(vertices[k+1]);
+          w = vertices[k+1];
+          i = k+1;
+          upcase = LEFT;
+          break;
+        }
       }
       k++;
     }
+    std::cout << "scana w = " << w << std::endl;
+    std::cout << "scana i = " << i << std::endl;
   }
 
   void scanc(int &i, Point_2 &w, const Point_2 &query_pt) {
@@ -610,6 +663,7 @@ private:
     }
     w = vertices[k];
     std::cout << "scanc w = " << w << std::endl;
+    std::cout << "scanc i = " << i << std::endl;
     i = k;
     upcase = RIGHT;
   }
