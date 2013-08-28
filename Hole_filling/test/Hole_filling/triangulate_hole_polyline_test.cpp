@@ -127,14 +127,14 @@ void check_constructed_polyhedron(const char* file_name,
   out << poly; out.close();
 }
 
-void test_1(const char* file_name) {
-  std::cerr << "test_1:" << std::endl;
+void test_1(const char* file_name, bool use_DT) {
+  std::cerr << "test_1 + useDT: " << use_DT << std::endl;
   std::cerr << "  File: "<< file_name  << std::endl;
   std::vector<Point_3> points; // this will contain n and +1 repeated point
   read_polyline_one_line(file_name, points);
 
   std::vector<boost::tuple<int, int, int> > tris;
-  CGAL::triangulate_hole_polyline(points.begin(), --points.end(), std::back_inserter(tris));
+  CGAL::triangulate_hole_polyline(points.begin(), --points.end(), std::back_inserter(tris), use_DT);
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points);
@@ -142,8 +142,8 @@ void test_1(const char* file_name) {
   std::cerr << "  Done!" << std::endl;
 }
 
-void test_2(const char* file_name) {
-  std::cerr << "test_2:" << std::endl;
+void test_2(const char* file_name, bool use_DT) {
+  std::cerr << "test_2 + useDT: " << use_DT << std::endl;
   std::cerr << "  File: "<< file_name  << std::endl;
   std::vector<Point_3> points; // this will contain n and +1 repeated point
   std::vector<Point_3> extras;
@@ -151,7 +151,7 @@ void test_2(const char* file_name) {
 
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::triangulate_hole_polyline(points.begin(), points.end(),
-    extras.begin(), extras.end(), std::back_inserter(tris));
+    extras.begin(), extras.end(), std::back_inserter(tris), use_DT);
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points);
@@ -159,14 +159,14 @@ void test_2(const char* file_name) {
   std::cerr << "  Done!" << std::endl;
 }
 
-void test_should_be_no_output(const char* file_name) {
-  std::cerr << "test_should_be_no_output:" << std::endl;
+void test_should_be_no_output(const char* file_name, bool use_DT) {
+  std::cerr << "test_should_be_no_output + useDT: " <<use_DT<< std::endl;
   std::cerr << "  File: "<< file_name  << std::endl;
   std::vector<Point_3> points; // this will contain n and +1 repeated point
   read_polyline_one_line(file_name, points);
 
   std::vector<boost::tuple<int, int, int> > tris;
-  CGAL::triangulate_hole_polyline(points.begin(), points.end(), std::back_inserter(tris));
+  CGAL::triangulate_hole_polyline(points.begin(), points.end(), std::back_inserter(tris), use_DT);
 
   if(!tris.empty()) {
     std::cerr << "  Error: patch should be empty" << std::endl;
@@ -180,9 +180,11 @@ int main() {
   input_files_1.push_back("data/triangle.polylines.txt");
   input_files_1.push_back("data/quad.polylines.txt");
   input_files_1.push_back("data/U.polylines.txt");
+  input_files_1.push_back("data/planar.polylines.txt");
 
   for(std::vector<std::string>::iterator it = input_files_1.begin(); it != input_files_1.end(); ++it) {
-    test_1(it->c_str());
+    test_1(it->c_str(), true);
+    test_1(it->c_str(), false);
   }
 
   std::vector<std::string> input_files_2;
@@ -192,9 +194,12 @@ int main() {
   input_files_2.push_back("data/hole4.txt");
 
   for(std::vector<std::string>::iterator it = input_files_2.begin(); it != input_files_2.end(); ++it) {
-    test_2(it->c_str());
+    if(it != input_files_2.begin())
+    { test_2(it->c_str(), true); } // to skip hole1.txt (DT does not include all border edges)
+    test_2(it->c_str(), false);
   }
 
-  test_should_be_no_output("data/collinear.polylines.txt");
+  test_should_be_no_output("data/collinear.polylines.txt", true);
+  test_should_be_no_output("data/collinear.polylines.txt", false);
   std::cerr << "All Done!" << std::endl;
 }
