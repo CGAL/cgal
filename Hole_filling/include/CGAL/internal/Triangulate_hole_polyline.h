@@ -510,7 +510,7 @@ public:
     }
     
     if(lambda.get(0, n-1) == -1) {
-      CGAL_warning(!"No possible triangulation is found!");
+      CGAL_warning(!"Returning no output. No possible triangulation is found!");
       return std::make_pair(out, Weight::DEFAULT());
     }
 
@@ -664,7 +664,7 @@ public:
     }
 
     if(lambda.get(0,n-1) == -1) {
-      CGAL_warning(!"Due to existing edges, no possible triangulation is found!");
+      CGAL_warning(!"Returning no output. No possible triangulation is found!");
       return std::make_pair(out, Weight::DEFAULT());
     }
 
