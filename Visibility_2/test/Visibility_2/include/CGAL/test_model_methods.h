@@ -58,7 +58,7 @@ void test_model_methods_for_arr(
     }
   }
   // First consider query point in the unbounded face
-  Point_2 query_pt(1, 1);
+  const Point_2 query_pt(1, 1);
   // Check returned face_handle
   Face_handle face_check = visibility.compute_visibility(query_pt, fit, arr_out);
   Face_handle face;
@@ -87,7 +87,7 @@ void test_model_methods_for_arr(
                                         (arr_out, arr_out_check));
 
   // Now consider the query point on a halfedge
-  query_pt = Point_2(0, 4);
+  const Point_2 query_pt2 = Point_2(0, 4);
   arr_out.clear();
   typename Input_arrangement_2::Halfedge_const_iterator hit;
   Face_handle face_check_he;
@@ -95,7 +95,7 @@ void test_model_methods_for_arr(
     hit != arr.halfedges_end(); ++hit) {
 
     if (hit->source()->point() == Point_2(0, 8) && hit->target()->point() == Point_2(0, 0)) {
-      face_check_he = visibility.compute_visibility(query_pt, hit, arr_out);
+      face_check_he = visibility.compute_visibility(query_pt2, hit, arr_out);
       break;
     }
   }
@@ -109,7 +109,7 @@ void test_model_methods_for_arr(
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr));
   arr_out_check.clear();
-  visibility.compute_visibility(query_pt, hit, arr_out_check);
+  visibility.compute_visibility(query_pt2, hit, arr_out_check);
   assert(true == test_are_equal<Output_arrangement_2>
                                         (arr_out, arr_out_check));  
 
