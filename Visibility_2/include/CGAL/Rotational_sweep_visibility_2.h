@@ -86,6 +86,8 @@ public:
       target = e->target()->point();
     }
     visibility_region_impl(e->face(), q, source, target);
+    //debug
+    print_vertex(polygon);
 
     //Decide which inside of the visibility butterfly is needed.
     int source_i, target_i ;
@@ -218,7 +220,7 @@ private:
     return 0;
   }
 
-  bool if_intersect(const Point_2& q,
+  bool do_intersect(const Point_2& q,
                     const Point_2& dp,
                     const Point_2& p1,
                     const Point_2& p2) {
@@ -280,12 +282,11 @@ private:
     heap.clear();
     vmap.clear();
 
-    input_face(f, q, a, b);
+    std::vector<Pair> bbox;
+    input_face(f, q, a, b, bbox);
 
     //debug
-    for (int i = 0; i<vs.size(); i++) {
-      std::cout<<vs[i]<<std::endl;
-    }
+    print_vertex(vs);
 
     //initiation of vision ray
     Vector_2 dir;
@@ -306,7 +307,7 @@ private:
     do {
       Point_2 p1 = curr->target()->point();
       Point_2 p2 = curr->source()->point();
-      if (q != p1 && q != p2 && if_intersect(q, dp, p1, p2))
+      if (q != p1 && q != p2 && do_intersect(q, dp, p1, p2))
         heap_insert(create_pair(p1, p2));
     } while (++curr != circ);
 
@@ -316,11 +317,15 @@ private:
       do {
         Point_2 p1 = c1->target()->point();
         Point_2 p2 = c1->source()->point();
-        if (q != p1 && q != p2 && if_intersect(q, dp, p1, p2))
+        if (q != p1 && q != p2 && do_intersect(q, dp, p1, p2))
           heap_insert(create_pair(p1, p2));
       } while (++c1 != c2);
     }
-
+    for (int i=0; i!=bbox.size(); i++) {
+      if (do_intersect(q, dp, bbox[i].first, bbox[i].second))
+        heap_insert(bbox[i]);
+    }
+    print_edges(heap);
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
@@ -348,18 +353,18 @@ private:
             //only add some edges, means the view ray is blocked by new edges.
             //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
           update_visibility(ray_seg_intersection(q, dp, ce.first, ce.second));
-            update_visibility(v);
+          update_visibility(v);
         }
         if (remove_cnt > 0 && insert_cnt == 0) {
-            //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
-            update_visibility(v);
-            update_visibility(ray_seg_intersection(q, dp, ce.first, ce.second));
+          //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
+          update_visibility(v);
+          update_visibility(ray_seg_intersection(q, dp, heap.front().first, heap.front().second));
         }
       }
       //debug
-      print_edx();
+      print_edges(heap);
     }
-    print_vertex(polygon);
+    //print_vertex(polygon);
   }
 
   Pair create_pair(const Point_2& p1, const Point_2& p2){
@@ -385,28 +390,33 @@ private:
 
   void heap_remove(int i) {
     edx.erase(heap[i]);
-
-    heap[i] = heap.back();
-    edx[heap[i]] = i;
-    heap.pop_back();
-    bool swapped;
-    do {
-      int left_son = i*2+1;
-      int right_son = i*2+2;
-      int closest = i;
-      if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
-        closest = left_son;
-      }
-      if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest])) {
-        closest = right_son;
-      }
-      swapped = false;
-      if (closest != i) {
-        heap_swap(i, closest);
-        i = closest;
-        swapped = true;
-      }
-    } while(swapped);
+    if (i== heap.size()-1)
+    {
+      heap.pop_back();
+    }
+    else {
+      heap[i] = heap.back();
+      edx[heap[i]] = i;
+      heap.pop_back();
+      bool swapped;
+      do {
+        int left_son = i*2+1;
+        int right_son = i*2+2;
+        int closest = i;
+        if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
+          closest = left_son;
+        }
+        if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest])) {
+          closest = right_son;
+        }
+        swapped = false;
+        if (closest != i) {
+          heap_swap(i, closest);
+          i = closest;
+          swapped = true;
+        }
+      } while(swapped);
+    }
   }
 
   void heap_swap(int i, int j) {
@@ -447,11 +457,42 @@ private:
   {
     Ray_2 ray(q,dp);
     Segment_2 seg(s,t);
-    assert(typename K::Do_intersect_2()(ray,seg));
-    CGAL::Object obj = typename K::Intersect_2()(ray,seg);
-    Point_2 result =  object_cast<Point_2>(obj);
-    return result;
+    CGAL::Object result = CGAL::intersection(ray, seg);
+    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+        return *ipoint;
+    }
+    else {
+      if (const Segment_2 *iseg = CGAL::object_cast<Segment_2 >(&result)) {
+          switch (CGAL::compare_distance_to_point(ray.source(), iseg->source(), iseg->target())) {
+          case (CGAL::SMALLER):
+              return iseg->source();
+              break;
+          case (CGAL::LARGER) :
+              return iseg->target();
+              break;
+          }
+
+      } else {
+        std::cout<<"doesn't intersect\n";
+        std::cout<<q<<','<<dp<<"   "<<s<<','<<t<<std::endl;
+        assert(false);
+      }
+    }
   }
+
+
+//  {
+//    Ray_2 ray(q,dp);
+//    Segment_2 seg(s,t);
+//    if (typename K::Do_intersect_2()(ray,seg)) {
+//      std::cout<<"doesn't intersect\n";
+//      std::cout<<q<<','<<dp<<"   "<<s<<','<<t<<std::endl;
+//      assert(false);
+//    }
+//    CGAL::Object obj = typename K::Intersect_2()(ray,seg);
+//    Point_2 result =  object_cast<Point_2>(obj);
+//    return result;
+//  }
 
   void update_visibility(const Point_2& p){
     if (polygon.empty())
@@ -476,12 +517,20 @@ private:
     return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
   }
 
+  bool is_good_edge(const Point_2& q,
+                    const Point_2& a,
+                    const Point_2& b,
+                    const Point_2& v,
+                    const Point_2& n) {
+    return !((v==q || v==a || v==b) && (n==q || n==a || n==b));
+  }
 
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
                    const Point_2& q,
                    const Point_2& a,
-                   const Point_2& b)
+                   const Point_2& b,
+                   std::vector<Pair>& bbox)
   {
 
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
@@ -491,11 +540,12 @@ private:
       if (v == q)
         continue;
       vs.push_back(v);
+      Point_2 nei[2] = {curr->source()->point(), curr->next()->target()->point()};
       Pvec neighbor;
-      if (curr->source()->point() != q)
-        neighbor.push_back(curr->source()->point());
-      if (curr->next()->target()->point() != q)
-        neighbor.push_back(curr->next()->target()->point());
+      for (int i=0; i<2; i++){
+        if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
+          neighbor.push_back(nei[i]);
+      }
       vmap[v] = neighbor;
     } while (++curr != circ);
 
@@ -503,18 +553,20 @@ private:
     for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
       Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
       do {
-        Point_2 v = curr->target()->point();
+        Point_2 v = c1->target()->point();
         if (v == q)
           continue;
         vs.push_back(v);
+        Point_2 nei[2] = {c1->source()->point(), c1->next()->target()->point()};
         Pvec neighbor;
-        if (c1->source()->point() != q)
-          neighbor.push_back(c1->source()->point());
-        if (c1->next()->target()->point() != q)
-          neighbor.push_back(c1->next()->target()->point());
+        for (int i=0; i<2; i++){
+          if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
+            neighbor.push_back(nei[i]);
+        }
         vmap[v] = neighbor;
       } while (++c1 != c2);
     }
+
     if (q != a) {
       Number_type xmin, xmax, ymin, ymax;
       Point_2 q1 = vs.front();
@@ -536,20 +588,28 @@ private:
       for (int i=0; i<4; i++) {
         vs.push_back(box[i]);
         Pvec pvec;
-        pvec.push_back(box[(i-1)%4]);
+        pvec.push_back(box[(i+3)%4]);
         pvec.push_back(box[(i+1)%4]);
         vmap[box[i]] = pvec;
+
+        bbox.push_back(create_pair(box[i], box[(i+1)%4]));
       }
     }
+
     quick_sort(vs, 0, vs.size()-1);
+
+   //debug print_vertex(vs);
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
-      while (j != vs.size() && CGAL::collinear(q, vs[i], vs[j]))
+      while (j != vs.size()) {
+        if (!CGAL::collinear(q, vs[i], vs[j]))
+          break;
         j++;
+      }
       if (j-i>1)
         funnel(i, j);
-      i = j;
+      i = j-1;
     }
   }
 
@@ -589,12 +649,14 @@ private:
 
   //debug
   void print_edges(std::vector<Pair>& edges){
-      for (int i = 0; i != edges.size(); i++) {
+    std::cout<<edges.size()<<" edges in the heap now.\n";
+    for (int i = 0; i != edges.size(); i++) {
           std::cout<<edges[i].first<<"->"<<edges[i].second<<std::endl;
       }
   }
 
   void print_vertex(const Pvec& polygon) {
+    std::cout<<"print points in vector\n";
     for (int i = 0; i != polygon.size(); i++) {
       std::cout<<polygon[i]<<std::endl;
     }
