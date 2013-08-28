@@ -1012,7 +1012,7 @@ HTML_FOOTER            = ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
 # HTML_EXTRA_STYLESHEET instead of this one, as it is more robust and this
 # tag will in the future become obsolete.
 
-HTML_STYLESHEET        = ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
+#HTML_STYLESHEET        = ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify an additional
 # user-defined cascading style sheet that is included after the standard
