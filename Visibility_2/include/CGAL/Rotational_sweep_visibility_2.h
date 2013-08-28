@@ -266,14 +266,19 @@ private:
       }
       former = vs[l];
     }
-    for (int l=0; l=right.size(); l++)
+    for (int l=0; l!=right.size(); l++)
       vs[i+l] = right[l];
-    for (int l=0; l=left.size(); l++)
+    for (int l=0; l!=left.size(); l++)
       vs[i+l+right.size()] = left[left.size()-1-l];
   }
 
 
   void visibility_region_impl(Face_const_handle f, const Point_2& a, const Point_2& b) {
+    vs.clear();
+    polygon.clear();
+    heap.clear();
+    vmap.clear();
+
     input_face(f, q, a, b);
     vs.sort(compare_angle);
 
@@ -281,7 +286,8 @@ private:
       j = i+1;
       while (j != vs.size() && CGAL::collinear(q, vs[i], v[j]))
         j++;
-      funnel(i, j);
+      if (j-i>1)
+        funnel(i, j);
       i = j;
     }
 
@@ -303,7 +309,7 @@ private:
     dp = Point_2(q.x()+dir.x(), q.y()+dir.y());
 
     //initiation of active_edges
-    std::vector<Pair> active_edges;
+
     Ccb_halfedge_const_circulator curr = f->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
@@ -325,8 +331,6 @@ private:
     }
 
     //angular sweep begins
-
-    //todo should edx be cleaned.
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
       Point_2 v = dp;
@@ -352,13 +356,13 @@ private:
         if (remove_cnt == 0 && insert_cnt > 0) {
             //only add some edges, means the view ray is blocked by new edges.
             //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
-            update_visibility(intersection_point(ray, halfedge2seg(old_closet_edge)));
+          update_visibility(ray_seg_intersection(q, dp, ce.first, ce.second));
             update_visibility(v);
         }
         if (remove_cnt > 0 && insert_cnt == 0) {
             //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
             update_visibility(v);
-            update_visibility(intersection_point(ray, halfedge2seg(active_edges[0])));
+            update_visibility(ray_seg_intersection(q, dp, ce.first, ce.second));
         }
 
       }
@@ -370,7 +374,7 @@ private:
     if (p1 < p2)
       return Pair(p1, p2);
     else
-      return Pair(p1, p2);
+      return Pair(p2, p1);
   }
 
 //todo add edge location record
@@ -379,7 +383,7 @@ private:
     int i = heap.size()-1;
     edx[e] = i;
     int parent = (i-1)/2;
-    while (i!=0 && is_closer(heap[i], heap[parent])){
+    while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
       heap_swap(i, parent);
       i = parent;
       parent = (i-1)/2;
@@ -391,24 +395,24 @@ private:
     heap[i] = heap.back();
     edx[heap[i]] = i;
     heap.pop_back();
-    bool need_swap;
+    bool swapped;
     do {
       int left_son = i*2+1;
       int right_son = i*2+2;
       int closest = i;
-      if (left_son < heap.size() && is_closer(heap[left_son], heap[i])) {
+      if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
         closest = left_son;
       }
-      if (right_son < heap.size() && is_closer(heap[right_son], heap[closest])) {
+      if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest])) {
         closest = right_son;
       }
-      need_swap = false;
+      swapped = false;
       if (closest != i) {
         heap_swap(i, closest);
         i = closest;
-        need_swap = true;
+        swapped = true;
       }
-    } while(need_swap);
+    } while(swapped);
   }
 
   void heap_swap(int i, int j) {
@@ -419,8 +423,28 @@ private:
     heap[j] = temp;
   }
 
-  bool is_closer(Pair e1, Pair e2) {
-
+  //todo logically it's wrong.
+  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
+    Point_2 p1 = ray_seg_intersection(q, dp, e1.first, e1.second);
+    Point_2 p2 = ray_seg_intersection(q, dp, e2.first, e2.second);
+    if (p1 == p2) {
+      Point_2 end1, end2;
+      if (p1 == e1.first)
+        end1 = e1.second;
+      else
+        end1 = e1.first;
+      if (p2 == e2.first)
+        end2 = e2.second;
+      else
+        end2 = e2.first;
+      if (CGAL::left_turn(q, p1, end1))
+        return CGAL::left_turn(end1, p1, end2);
+      else
+        return false;
+    }
+    else {
+      return CGAL::compare_distance_to_point(q, p1, p2)==CGAL::SMALLER;
+    }
   }
 
   Point_2 ray_seg_intersection(
@@ -535,71 +559,7 @@ private:
   }
   //return the type of the needle.
   //the vertices on the needle will be saved in collinear_vertices.
-  Intersection_type needle(std::vector<Halfedge_const_handle>& edges, Ray_2& r, std::vector<Point_2>& collinear_vertices) {
-      typename std::vector<Halfedge_const_handle>::iterator curr = edges.begin();
-//        Point_2 p = r.source(), end1, end2;
-      Vertex_const_handle vertex1;
-      //flag shows whether the left side or right side of needle is blocked.
-      bool block_left, block_right;
-      do {
-          Point_2 cross = intersection_point(r, *curr);
-          if (cross != (*curr)->source()->point() && cross != (*curr)->target()->point()) {
-              collinear_vertices.push_back(cross);
-              return INNER;
-          }
-          if (CGAL::orientation(r.source(), (*curr)->source()->point(), (*curr)->target()->point()) == CGAL::COLLINEAR) {
-            if (CGAL::compare_distance_to_point(r.source(), (*curr)->source()->point(), (*curr)->target()->point()) == CGAL::SMALLER)
-              vertex1 = (*curr)->source();
-            else
-              vertex1 = (*curr)->target();
-          }
-          else {
-              if (cross == (*curr)->source()->point()) {
-                  vertex1 = (*curr)->source();
-              }
-              else {
-                  vertex1 = (*curr)->target();
-              }
-          }
-          if (collinear_vertices.empty() || vertex1->point() != collinear_vertices.back()) {
-              collinear_vertices.push_back(vertex1->point());
-              //flag shows whether the left side or right side of current vertex is blocked.
-              //has_predecessor indicates whether this vertex is incident to an edge whose another end is between the source of ray and it,
-              //because that will effect the value of block_left, block_right.
-              bool left_v(false), right_v(false), has_predecessor(false);
 
-              typename Arrangement_2::Halfedge_around_vertex_const_circulator first_edge, curr_edge;
-              first_edge = curr_edge = vertex1->incident_halfedges();
-              do {
-                  switch (CGAL::orientation(r.source(), curr_edge->target()->point(), curr_edge->source()->point())) {
-                  case CGAL::RIGHT_TURN :
-                      right_v = true;
-                      break;
-                  case CGAL::LEFT_TURN :
-                      left_v = true;
-                      break;
-                  case CGAL::COLLINEAR :
-                      if (CGAL::compare_distance_to_point(r.source(), curr_edge->target()->point(), curr_edge->source()->point()) == CGAL::LARGER) {
-                          has_predecessor = true;
-                      }
-                  }
-
-              } while (++curr_edge != first_edge);
-              if (has_predecessor) {
-                  block_left = block_left || left_v;
-                  block_right = block_right || right_v;
-              }
-              else {
-                  block_left = left_v;
-                  block_right = right_v;
-              }
-              if (block_left && block_right) {
-                  return CORNER;
-              }
-          }
-      } while (++curr != edges.end());
-      return UNBOUNDED;
-  }
   //debug
   void print_edges(std::vector<Halfedge_const_handle>& edges){
       for (int i = 0; i != edges.size(); i++) {
