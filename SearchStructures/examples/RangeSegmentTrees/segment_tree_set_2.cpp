@@ -11,12 +11,12 @@
 #include <vector>
 #include <iterator>
 #include <list>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_tree_k.h>
 #include <CGAL/Range_segment_tree_traits.h>
 
-typedef CGAL::Cartesian<double> Representation;
-typedef CGAL::Range_segment_tree_set_traits_2<Representation> Traits;
+typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Range_segment_tree_set_traits_2<K> Traits;
 typedef CGAL::Segment_tree_2<Traits > Segment_tree_2_type;
 
 int main()

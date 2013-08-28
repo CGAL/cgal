@@ -7,14 +7,14 @@
 #include <vector>
 #include <iterator>
 #include <list>
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_tree_k.h>
 #include <CGAL/Range_segment_tree_traits.h>
 
 
 
-typedef CGAL::Cartesian<double> Representation;
-typedef CGAL::Segment_tree_map_traits_2<Representation, char> Traits;
+typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Segment_tree_map_traits_2<K, char> Traits;
 typedef CGAL::Segment_tree_2<Traits > Segment_tree_2_type;
 
 int main()

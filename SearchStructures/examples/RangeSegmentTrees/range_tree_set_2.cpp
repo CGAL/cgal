@@ -3,7 +3,7 @@
 // Ti is the type of each dimension of the tree.
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Range_segment_tree_traits.h>
 #include <CGAL/Range_tree_k.h>
 #include <iostream>
@@ -11,8 +11,8 @@
 #include <vector>
 #include <iterator>
 
-typedef CGAL::Cartesian<double> Representation;
-typedef CGAL::Range_segment_tree_set_traits_2<Representation> Traits;
+typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Range_segment_tree_set_traits_2<K> Traits;
 typedef CGAL::Range_tree_2<Traits> Range_tree_2_type;
 
 int main()
