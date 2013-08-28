@@ -79,11 +79,7 @@ public:
 
         dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
         dock_widget->setVisible(false); // do not show at the beginning
-
-        QWidget* qw =new QWidget();
-        ui_widget.setupUi(qw); //calling this on dock_widget is not working, since dock_widget has already layout
-        // deleting dock_widget layout is also not working. So for a work-around I created a intermediate widget (qw).
-        dock_widget->setWidget(qw); // transfer widgets in ui_widget by qw.
+        ui_widget.setupUi(dock_widget);
         mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
     
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));   
@@ -106,7 +102,7 @@ public:
 private:
     QAction*                      actionSegmentation;
     QDockWidget*                  dock_widget;
-    Ui::Mesh_segmentation_widget  ui_widget;
+    Ui::Mesh_segmentation         ui_widget;
     
     std::vector<QColor>  color_map_sdf;
     std::vector<QColor>  color_map_segmentation;
