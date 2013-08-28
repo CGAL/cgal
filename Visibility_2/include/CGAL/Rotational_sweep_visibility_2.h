@@ -154,7 +154,7 @@ public:
   }
 
   Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) {
-    out_arr->clear();
+    out_arr.clear();
     this->q = q;
     is_vertex_query = false;
     is_edge_query = false;
@@ -201,11 +201,12 @@ private:
   std::map<Point_2, Pvec> vmap;   //vertex and two edges incident to it that might block vision
   std::map<Pair, int> edx;   //index of edge in the heap
   std::vector<Pair>  heap;
-  std::list<Point_2> vs;          //angular sorted vertices
+  std::vector<Point_2> vs;          //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
 
-  int quadrant(Number_type x, Number_type y) {
+  template <class NT>
+  int quadrant(NT x, NT y) {
     if (x>0 && y>=0)
       return 1;
     if (x<=0 && y>0)
@@ -222,10 +223,10 @@ private:
                     const Point_2& p1,
                     const Point_2& p2) {
     if (CGAL::collinear(q, dp, p1))
-      return (quadrant(p1.x()-q.x(), p1.y()-q.y()) == quadrant((dp.x()-q.x(), dp.y()-q.y())));
+      return (quadrant(p1.x()-q.x(), p1.y()-q.y()) == quadrant(dp.x()-q.x(), dp.y()-q.y()));
 
     if (CGAL::collinear(q, dp, p2))
-      return (quadrant(p2.x()-q.x(), p2.y()-q.y()) == quadrant((dp.x()-q.x(), dp.y()-q.y())));
+      return (quadrant(p2.x()-q.x(), p2.y()-q.y()) == quadrant(dp.x()-q.x(), dp.y()-q.y()));
 
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
 
@@ -273,28 +274,18 @@ private:
   }
 
 
-  void visibility_region_impl(Face_const_handle f, const Point_2& a, const Point_2& b) {
+  void visibility_region_impl(const Face_const_handle f, const Point_2& q, const Point_2& a, const Point_2& b) {
     vs.clear();
     polygon.clear();
     heap.clear();
     vmap.clear();
 
     input_face(f, q, a, b);
-    vs.sort(compare_angle);
 
-    for (int i=0; i!=vs.size(); i++) {
-      j = i+1;
-      while (j != vs.size() && CGAL::collinear(q, vs[i], v[j]))
-        j++;
-      if (j-i>1)
-        funnel(i, j);
-      i = j;
+    //debug
+    for (int i = 0; i<vs.size(); i++) {
+      std::cout<<vs[i]<<std::endl;
     }
-
-//        debug
-//        for (int i = 0; i<vertices.size(); i++) {
-//          print(vertices[i]->point());
-//        }
 
     //initiation of vision ray
     Vector_2 dir;
@@ -364,9 +355,11 @@ private:
             update_visibility(v);
             update_visibility(ray_seg_intersection(q, dp, ce.first, ce.second));
         }
-
       }
+      //debug
+      print_edx();
     }
+    print_vertex(polygon);
   }
 
   Pair create_pair(const Point_2& p1, const Point_2& p2){
@@ -392,6 +385,7 @@ private:
 
   void heap_remove(int i) {
     edx.erase(heap[i]);
+
     heap[i] = heap.back();
     edx[heap[i]] = i;
     heap.pop_back();
@@ -489,6 +483,7 @@ private:
                    const Point_2& a,
                    const Point_2& b)
   {
+
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
@@ -522,11 +517,11 @@ private:
     }
     if (q != a) {
       Number_type xmin, xmax, ymin, ymax;
-      Point_2 q1 = vs[0];
+      Point_2 q1 = vs.front();
       xmax = xmin = q1.x();
       ymin = ymax = q1.y();
-      for (int i=0; i<vs.size(); i++) {
-        Point_2 q1 = vs[i];
+      for (typename Pvec::iterator it= vs.begin(); it!=vs.end(); it++) {
+        Point_2 q1 = *it;
         if (q1.x() < xmin)    xmin = q1.x();
         if (q1.x() > xmax)    xmax = q1.x();
         if (q1.y() < ymin)    ymin = q1.y();
@@ -546,33 +541,70 @@ private:
         vmap[box[i]] = pvec;
       }
     }
+    quick_sort(vs, 0, vs.size()-1);
+
+    for (int i=0; i!=vs.size(); i++) {
+      int j = i+1;
+      while (j != vs.size() && CGAL::collinear(q, vs[i], vs[j]))
+        j++;
+      if (j-i>1)
+        funnel(i, j);
+      i = j;
+    }
   }
 
+  void qs_swap(Pvec& vs, int i, int j) {
+    Point_2 temp = vs[i];
+    vs[i] = vs[j];
+    vs[j] = temp;
+  }
 
+  int partition(Pvec& vs, int left, int right, int pivotIndex) {
+    Point_2 pivot_p = vs[pivotIndex];
+    qs_swap(vs, pivotIndex, right);
+    int storeIndex = left;
+    for (int i=left; i<right; i++) {
+      if (compare_angle(vs[i], pivot_p)) {
+        qs_swap(vs, i, storeIndex);
+        storeIndex += 1;
+      }
+    }
+    qs_swap(vs, storeIndex, right);
+    return storeIndex;
+  }
 
-
-
-
+  void quick_sort(Pvec& vs, int left, int right) {
+    if (left < right) {
+      int pivotIndex = left;
+      int pivotNewIndex = partition(vs, left, right, pivotIndex);
+      quick_sort(vs, left, pivotNewIndex-1);
+      quick_sort(vs, pivotNewIndex+1, right);
+    }
+  }
 
   bool is_on_ray(const Ray_2& r, const Point_2& p) {
       return Direction_2(Vector_2(r.source(), p)) == Direction_2(r);
   }
-  //return the type of the needle.
-  //the vertices on the needle will be saved in collinear_vertices.
+
 
   //debug
-  void print_edges(std::vector<Halfedge_const_handle>& edges){
+  void print_edges(std::vector<Pair>& edges){
       for (int i = 0; i != edges.size(); i++) {
-          Point_2 p1, p2;
-          p1 = edges[i]->source()->point();
-          p2 = edges[i]->target()->point();
-          std::cout<<p1<<"->"<<p2<<std::endl;
+          std::cout<<edges[i].first<<"->"<<edges[i].second<<std::endl;
       }
   }
 
-  void print_vertex(const std::vector<Point_2>& polygon) {
+  void print_vertex(const Pvec& polygon) {
     for (int i = 0; i != polygon.size(); i++) {
       std::cout<<polygon[i]<<std::endl;
+    }
+  }
+  void print_edx() {
+    typename std::map<Pair, int>::iterator map_it = edx.begin();
+    std::cout<<"print edx\n";
+    while (map_it != edx.end()) {
+      std::cout<<map_it->first.first<<"->"<<map_it->first.second<<":"<<map_it->second<<std::endl;
+      map_it++;
     }
   }
 
