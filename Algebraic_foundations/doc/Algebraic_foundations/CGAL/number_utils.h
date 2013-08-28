@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `abs` returns the absolute value of a number. 
+The template function `abs()` returns the absolute value of a number. 
 
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` concept. 
@@ -21,7 +21,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `compare` compares the first argument with respect to 
+The template function `compare()` compares the first argument with respect to 
 the second, i.e.\ it returns `CGAL::LARGER` if \f$ x\f$ is larger then \f$ y\f$. 
 
 In case the argument types `NT1` and `NT2` differ, 
@@ -45,7 +45,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `div` computes the integral quotient of division 
+The function `div()` computes the integral quotient of division 
 with remainder. 
 
 In case the argument types `NT1` and `NT2` differ, 
@@ -80,7 +80,7 @@ computes the quotient \f$ q\f$ and remainder \f$ r\f$, such that \f$ x = q*y + r
 and \f$ r\f$ minimal with respect to the Euclidean Norm of the 
 `result_type`.
 
-The function `div_mod` computes the integral quotient and remainder of 
+The function `div_mod()` computes the integral quotient and remainder of 
 division with remainder. 
 
 In case the argument types `NT1` and `NT2` differ, 
@@ -111,7 +111,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `gcd` computes the greatest common divisor of two values. 
+The function `gcd()` computes the greatest common divisor of two values. 
 
 In case the argument types `NT1` and `NT2` differ, 
 the `result_type` is determined via `Coercion_traits`. 
@@ -138,7 +138,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `integral_division` (a.k.a.\ exact division or division without remainder) 
+The function `integral_division()` (a.k.a.\ exact division or division without remainder) 
 maps ring elements \f$ (x,y)\f$ to ring element \f$ z\f$ such that \f$ x = yz\f$ if such a \f$ z\f$ 
 exists (i.e.\ if \f$ x\f$ is divisible by \f$ y\f$). Otherwise the effect of invoking 
 this operation is undefined. Since the ring represented is an integral domain, 
@@ -169,7 +169,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `inverse` returns the inverse element with respect to multiplication. 
+The function `inverse()` returns the inverse element with respect to multiplication. 
 
 The function is defined if the argument type 
 is a model of the `Field` concept. 
@@ -189,7 +189,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `is_negative` determines if a value is negative or not. 
+The template function `is_negative()` determines if a value is negative or not. 
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` concept. 
 
@@ -208,7 +208,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `is_one` determines if a value is equal to 1 or not. 
+The function `is_one()` determines if a value is equal to 1 or not. 
 
 The function is defined if the argument type 
 is a model of the `IntegralDomainWithoutDivision` concept. 
@@ -228,7 +228,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `is_positive` determines if a value is positive or not. 
+The template function `is_positive()` determines if a value is positive or not. 
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` concept. 
 
@@ -252,7 +252,7 @@ An ring element \f$ x\f$ is said to be a square iff there exists a ring element
 that \f$ x= y*y\f$. In case the ring is a `UniqueFactorizationDomain`, 
 \f$ y\f$ is uniquely defined up to multiplication by units. 
 
-The function `is_square` is available if 
+The function `is_square()` is available if 
 `Algebraic_structure_traits::Is_square` is not the `CGAL::Null_functor`. 
 
 The `result_type` is convertible to `bool`. 
@@ -271,7 +271,7 @@ An ring element \f$ x\f$ is said to be a square iff there exists a ring element
 that \f$ x= y*y\f$. In case the ring is a `UniqueFactorizationDomain`, 
 \f$ y\f$ is uniquely defined up to multiplication by units. 
 
-The function `is_square` is available if 
+The function `is_square()` is available if 
 `Algebraic_structure_traits::Is_square` is not the `CGAL::Null_functor`. 
 
 The `result_type` is convertible to `bool`.
@@ -289,7 +289,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `is_zero` determines if a value is equal to 0 or not. 
+The function `is_zero()` determines if a value is equal to 0 or not. 
 
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` or of 
@@ -311,7 +311,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `kth_root` returns the k-th root of a value. 
+The function `kth_root()` returns the k-th root of a value. 
 
 The function is defined if the second argument type 
 is a model of the `FieldWithKthRoot` concept. 
@@ -329,7 +329,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `mod` computes the remainder of division with remainder. 
+The function `mod()` computes the remainder of division with remainder. 
 
 In case the argument types `NT1` and `NT2` differ, 
 the `result_type` is determined via `Coercion_traits`. 
@@ -363,7 +363,7 @@ returns the k-th real root of the univariate polynomial, which is
 defined by the iterator range, where begin refers to the constant
 term.
 
-The function `root_of` computes a real root of a square-free univariate 
+The function `root_of()` computes a real root of a square-free univariate 
 polynomial. 
 
 The function is defined if the value type, `NT`, 
@@ -385,7 +385,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `sign` returns the sign of its argument. 
+The template function `sign()` returns the sign of its argument. 
 
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` concept. 
@@ -405,7 +405,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `simplify` may simplify a given object. 
+The function `simplify()` may simplify a given object. 
 
 The function is defined if the argument type 
 is a model of the `IntegralDomainWithoutDivision` concept. 
@@ -423,7 +423,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `sqrt` returns the square root of a value. 
+The function `sqrt()` returns the square root of a value. 
 
 The function is defined if the argument type 
 is a model of the `FieldWithSqrt` concept. 
@@ -441,7 +441,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `square` returns the square of a number. 
+The function `square()` returns the square of a number. 
 
 The function is defined if the argument type 
 is a model of the `IntegralDomainWithoutDivision` concept. 
@@ -459,7 +459,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `to_double` returns an double approximation of a number. 
+The template function `to_double()` returns an double approximation of a number. 
 The function is defined if the argument type 
 is a model of the `RealEmbeddable` concept. 
 
@@ -478,7 +478,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The template function `to_interval` computes for a given real embeddable 
+The template function `to_interval()` computes for a given real embeddable 
 number \f$ x\f$ a double interval containing \f$ x\f$. 
 This interval is represented by a `std::pair<double,double>`. 
 The function is defined if the argument type 
@@ -498,7 +498,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundations
 
-The function `unit_part` computes the unit part of a given ring 
+The function `unit_part()` computes the unit part of a given ring 
 element. 
 
 The function is defined if the argument type 
