@@ -57,7 +57,7 @@ ArrExtensionTraits_2 ();
 /*!
 copy creator
 */
-ArrExtensionTraits_2 (const ArrExtensionTraits_2 & Traits);
+ArrExtensionTraits_2 (const ArrExtensionTraits_2&  Traits);
 
 /// @}
 

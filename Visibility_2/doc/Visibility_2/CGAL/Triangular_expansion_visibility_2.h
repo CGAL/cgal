@@ -55,10 +55,7 @@ public:
    */
   typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
-  /*!
-    Face_handle type of the output arrangement.
-    */
-  typedef Output_arrangement_2::Face_handle  Face_handle;
+
 
 /// @}
 
@@ -95,7 +92,7 @@ Triangular_expansion_visibility_2();
 /*! 
 Constructs a `Triangular_expansion_visibility_2` object that is attached to `arr`.
 */ 
-Triangular_expansion_visibility_2(const Input_arrangement_2& arr);
+Triangular_expansion_visibility_2(Input_arrangement_2& arr);
 
 /// @}
 
@@ -105,24 +102,27 @@ Triangular_expansion_visibility_2(const Input_arrangement_2& arr);
 /*!
 Returns whether an arrangement is attached to the visibility object
 */
-  bool is_attached();
+  bool is_attached() const;
 
 /*!
-Attaches the given arrangement to the visibility object and does preprocessing.
+Attaches the given arrangement to the visibility object and computes the restricted triangulation. 
+This takes \f$ O(n) \f$ time, where \f$ n \f$ of vertices. Modifying the attached arrangement 
+also changes the stored restricted triangulation which in the worst may again take \f$ O(n) \f$ time.
+
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(const Input_arrangement_2& arr);
+  void attach(Input_arrangement_2& arr);
 
 /*!
 Detaches the arrangement from the visibility object it is currently attached to
 */
-  void detach ();
+  void detach();
 
 /*!
 Access to the attached arrangement
 */
-  const Input_arrangement_2& arr();
+  const Input_arrangement_2& arr() const;
 
 /*! 
 Computes the visibility region for the given query point `q` in the
@@ -135,7 +135,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
-  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr);
+  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) const;
 
 
 /*!
@@ -149,7 +149,7 @@ The visibility region of `q` will be stored in `out_arr`.
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region
 */
-  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr);
+  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr) const;
 
 /// @}
 

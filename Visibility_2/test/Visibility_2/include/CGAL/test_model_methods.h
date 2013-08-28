@@ -31,7 +31,7 @@ namespace CGAL {
 
 template <class Visibility_2>
 void test_model_methods_for_arr(
-              const typename Visibility_2::Input_arrangement_2 &arr) {
+              typename Visibility_2::Input_arrangement_2 &arr) {
 
   typedef typename Visibility_2::Input_arrangement_2       Input_arrangement_2;
   typedef typename Visibility_2::Output_arrangement_2      Output_arrangement_2;

@@ -65,7 +65,7 @@ public:
   Simple_polygon_visibility_2_() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_polygon_visibility_2_(const Input_arrangement_2 &arr): 
+  Simple_polygon_visibility_2_(Input_arrangement_2& arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   };
@@ -74,7 +74,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_arrangement_2 &arr) {
+  void attach(Input_arrangement_2& arr) {
     p_arr = &arr;
     geom_traits = p_arr->geometry_traits();
   }
@@ -89,8 +89,8 @@ public:
     return *p_arr;
   }
 
-  Face_handle compute_visibility(Point_2 &q, const Face_const_handle face,
-                         Output_arrangement_2 &out_arr) {
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle face,
+                         Output_arrangement_2& out_arr) {
 
     CGAL::Visibility_2::print_arrangement_by_face<Input_arrangement_2>(*p_arr);
    
@@ -224,8 +224,8 @@ public:
     }
   }
 
-  Face_handle compute_visibility(const Point_2 &q, const Halfedge_const_handle he,
-                           Output_arrangement_2 &out_arr ) {
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle he,
+                           Output_arrangement_2& out_arr ) {
 /*
     query_pt_is_vertex = false;
     if (q != he->source()->point()) {
@@ -333,7 +333,7 @@ private:
   enum {ADVANCE, SCAN, RETARD, FINISH} upcase;
   enum {RAY, SEGMENT} polar_mode;
 
-  bool do_overlap(const Point_2 &a, const Point_2 &b, const Point_2 &c) {
+  bool do_overlap(const Point_2& a, const Point_2& b, const Point_2& c) {
     if (CGAL::Visibility_2::Collinear(geom_traits, a, b, c)) {
       Segment_2 s1(a, b);
       Segment_2 s2(a, c);
@@ -347,19 +347,19 @@ private:
     return false;
   }
 
-  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_true) {
+  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
 
-  void conditional_regularize(Output_arrangement_2 &out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
-  double angle(const Point_2 &r, const Point_2 &p, const Point_2 &q) {
+  double angle(const Point_2& r, const Point_2& p, const Point_2& q) {
 
   }
 
-  void compute_angular_displacement(const Point_2 &q) {
+  void compute_angular_displacement(const Point_2& q) {
 
     Point_2 v0 = vertices[0];
     angular_displacement.insert(std::pair<Point_2, double>(v0, 0));
@@ -410,7 +410,7 @@ private:
     }
   }
 
-  double get_angular_displacement(const Point_2 &pt, const int i) {
+  double get_angular_displacement(const Point_2& pt, const int i) {
     if (i == vertices.size() - 1) {
       return angular_displacement_vn.second;
     }
@@ -428,7 +428,7 @@ private:
               << angular_displacement_vn.second << std::endl;
   }
 
-  void regularize_output(Output_arrangement_2 &out_arr) {
+  void regularize_output(Output_arrangement_2& out_arr) {
     typename Output_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ; 
          e_itr != out_arr.edges_end() ; e_itr++) {
@@ -441,7 +441,7 @@ private:
     }
   }
 
-  void visibility_region_impl(const Point_2 &q) {
+  void visibility_region_impl(const Point_2& q) {
 
     int i = 0;
     Point_2 w;
@@ -472,7 +472,7 @@ private:
     }
   }
 
-  void advance(const Point_2 &q, int &i, bool &ccw, Point_2 &w) {
+  void advance(const Point_2& q, int& i, bool& ccw, Point_2& w) {
 
     while (upcase == ADVANCE) {
 
@@ -521,7 +521,7 @@ private:
     }
   }
 
-  void retard(const Point_2 &q, int &i, bool &ccw, Point_2 &w) {
+  void retard(const Point_2& q, int& i, bool& ccw, Point_2& w) {
 
     while (upcase == RETARD && !s.empty()) {
 
@@ -604,7 +604,7 @@ private:
     }
   }
 
-  void scan(const Point_2 &q, int &i, bool &ccw, Point_2 &w) {
+  void scan(const Point_2& q, int& i, bool& ccw, Point_2& w) {
 
     while (upcase == SCAN && i < vertices.size()-2) {
       i++;
