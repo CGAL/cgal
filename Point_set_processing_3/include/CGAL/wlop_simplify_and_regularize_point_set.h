@@ -307,14 +307,13 @@ wlop_simplify_and_regularize_point_set(
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   const typename Kernel::FT retain_percentage, ///< percentage to retain.
-  const typename Kernel::FT neighbor_radius, ///< size of neighbors.
+  typename Kernel::FT neighbor_radius, ///< size of neighbors.
   const unsigned int max_iter_number,///< number of iterations.
   const bool need_compute_density, ///< if needed to compute density to 
                                    ///generate more rugularized result.                                
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
-  CGAL_point_set_processing_precondition(neighbor_radius > 0);
   Timer task_timer;
 
   // basic geometric types
@@ -373,7 +372,8 @@ wlop_simplify_and_regularize_point_set(
   std::vector<Rich_point> original_rich_points(nb_points_original);
   std::vector<Rich_point> sample_rich_points(nb_points_sample);
 
-  CGAL::Bbox_3 bbox;
+  CGAL::Bbox_3 bbox(0, 0, 0, 0, 0, 0);
+  
   original_iter = original_points.begin();
   int index = 0;
   std::vector<Rich_point>::iterator origianl_rich_iter;
@@ -384,6 +384,21 @@ wlop_simplify_and_regularize_point_set(
     *origianl_rich_iter = Rich_point(*original_iter, index++);
     bbox += original_iter->bbox();
   }
+
+  //compute default neighbor_radius
+  if (neighbor_radius < 0)
+  {
+    Point max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
+    Point min_p(bbox.xmin(), bbox.ymin(), bbox.zmin());
+    FT bbox_diameter = CGAL::squared_distance(max_p, min_p);
+    neighbor_radius = std::sqrt(bbox_diameter) * 0.05;
+  
+  #ifdef CGAL_DEBUG_MODE
+    std::cout << "default estimate radius:  " << neighbor_radius 
+              << std::endl << std::endl;
+  #endif
+  }
+  CGAL_point_set_processing_precondition(neighbor_radius > 0);
 
   // Compute original density weight for original points if user needed
   std::vector<FT> original_densities;
@@ -617,11 +632,11 @@ ForwardIterator
 wlop_simplify_and_regularize_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  double retain_percentage, ///< percentage of points to retain
-  double neighbor_radius, ///< size of neighbors.
-  const unsigned int max_iter_number, ///< number of iterations.
-  const bool need_compute_density ///< if needed to compute density to generate
-                                  ///  more rugularized result. 
+  double retain_percentage = 5, ///< percentage of points to retain
+  double neighbor_radius = -1, ///< size of neighbors.
+  const unsigned int max_iter_number = 35, ///< number of iterations.
+  const bool need_compute_density = true ///< if needed to compute density to   
+                                          /// generate more uniform result. 
 )
 {
   return wlop_simplify_and_regularize_point_set(
@@ -632,9 +647,14 @@ wlop_simplify_and_regularize_point_set(
     make_identity_property_map(typename std::iterator_traits<ForwardIterator>::
                                value_type()),
 #endif
-    retain_percentage, neighbor_radius, max_iter_number, need_compute_density);
+    retain_percentage, 
+    neighbor_radius, 
+    max_iter_number, 
+    need_compute_density);
 }
 /// @endcond
+
+
 
 } //namespace CGAL
 

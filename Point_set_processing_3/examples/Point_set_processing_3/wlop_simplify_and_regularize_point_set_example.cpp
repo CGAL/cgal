@@ -15,8 +15,8 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
+  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<Point> points;
@@ -30,9 +30,9 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double retain_percentage = 1;   // percentage of points to retain.
-  const double neighbor_radius = 0.03;   // neighbors size.
-  const unsigned int iter_number = 2;     // number of iterations.
+  const double retain_percentage = 5;   // percentage of points to retain.
+  const double neighbor_radius = 0.25;   // neighbors size.
+  const unsigned int iter_number = 35;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density.
 
   // Make room for sample points
@@ -44,14 +44,19 @@ int main(void)
   std::cout << "Run algorithm example: " << std::endl;
 
   // Run algorithm 
+  //std::vector<Point>::const_iterator sample_points_begin =
+  //  CGAL::wlop_simplify_and_regularize_point_set(
+  //          points.begin(), 
+  //          points.end(), 
+  //          retain_percentage, 
+  //          neighbor_radius,
+  //          iter_number,
+  //          need_compute_density);
+
   std::vector<Point>::const_iterator sample_points_begin =
-    CGAL::wlop_simplify_and_regularize_point_set(
+  CGAL::wlop_simplify_and_regularize_point_set(
             points.begin(), 
-            points.end(), 
-            retain_percentage, 
-            neighbor_radius,
-            iter_number,
-            need_compute_density);
+            points.end());
 
   // Copy results to sample points
   std::copy(sample_points_begin,
