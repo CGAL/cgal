@@ -12,14 +12,11 @@
 
 #include <fstream>
 #include <boost/foreach.hpp>
-
+#include <boost/unordered_set.hpp>
 // Wrapper for holding selected entities
-template <class Entity>
-class Selection_set : std::set<Entity>
+template <class Entity, class Base>
+class Selection_set : Base
 {
-private:
-  typedef std::set<Entity>                Base;
-
 public:
 // types from base
   typedef typename Base::iterator         iterator;
@@ -160,6 +157,10 @@ protected:
 
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
 
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    viewer->installEventFilter(this);
+    mw->installEventFilter(this);
+
     facet_color = QColor(87,87,87);
     edge_color = QColor(173,35,35);
     vertex_color = QColor(255,205,243);
@@ -175,11 +176,17 @@ protected:
 
   bool get_is_insert() { return is_insert; }
   void set_is_insert(bool i) { is_insert = i; }
-
+  
 public:
-  typedef Selection_set<Vertex_handle>    Selection_set_vertex;
-  typedef Selection_set<Facet_handle>     Selection_set_facet;
-  typedef Selection_set<Halfedge_handle>  Selection_set_edge;
+  //typedef Selection_set<Vertex_handle, std::set<Vertex_handle> >      Selection_set_vertex;
+  //typedef Selection_set<Facet_handle, std::set<Facet_handle> >        Selection_set_facet;
+  //typedef Selection_set<Halfedge_handle, std::set<Halfedge_handle> >  Selection_set_edge;
+  typedef Selection_set<Vertex_handle, 
+    boost::unordered_set<Vertex_handle, CGAL::Handle_hash_function> >    Selection_set_vertex;
+  typedef Selection_set<Facet_handle,
+    boost::unordered_set<Facet_handle, CGAL::Handle_hash_function> >     Selection_set_facet;
+  typedef Selection_set<Halfedge_handle, 
+    boost::unordered_set<Halfedge_handle, CGAL::Handle_hash_function> >  Selection_set_edge;
 
 // drawing
   void draw() const {
@@ -431,9 +438,9 @@ public:
   void expand_or_shrink(int steps) {
     switch(get_active_handle_type()) {
     case Active_handle::VERTEX:
-      expand_or_shrink<Vertex_handle>(steps);
+      expand_or_shrink<Vertex_handle>(steps); break;
     case Active_handle::FACET:
-      expand_or_shrink<Facet_handle>(steps);
+      expand_or_shrink<Facet_handle>(steps); break;
     default:
       expand_or_shrink<Halfedge_handle>(steps);
     }
@@ -442,6 +449,7 @@ public:
   template<class HandleType>
   void expand_or_shrink(int steps) {
    // It is good for large values of `steps`
+    if(steps == 0) { return; }
     bool expand_req = steps > 0;
     steps = std::abs(steps);
     expand_req ? expand<HandleType>(steps) : shrink<HandleType>(steps);
@@ -454,7 +462,6 @@ public:
 
     tr.update_indices();
     std::vector<bool> mark(tr.size());
-
     std::vector<HandleType> to_be_shrink;
     std::vector<HandleType> next;
     to_be_shrink.reserve(tr.container().size());
@@ -551,31 +558,36 @@ public:
   bool export_selected_facets_as_polyhedron(Polyhedron* out) {
     // Note: might be a more performance wise solution
     // assign sequential id to vertices neighbor to selected facets
-    std::map<Vertex_handle, std::size_t> index_map;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
       Polyhedron::Halfedge_around_facet_circulator hb((*fb)->facet_begin()), hend(hb);
       do {
-        index_map.insert(std::make_pair(hb->vertex(), index_map.size()));
+        hb->vertex()->id() = 0;
       } while(++hb != hend);
     }
     // construct point vector
-    std::vector<Polyhedron::Point_3> points(index_map.size());
-    for(std::map<Vertex_handle, std::size_t>::iterator it = index_map.begin(); it != index_map.end(); ++it) {
-      points[it->second] = it->first->point();
+    std::vector<Polyhedron::Point_3> points;
+    points.reserve(selected_facets.size());
+    std::size_t counter = 1;
+    for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
+      Polyhedron::Halfedge_around_facet_circulator hb((*fb)->facet_begin()), hend(hb);
+      do {
+        if(hb->vertex()->id() == 0) {
+          hb->vertex()->id() = counter++; 
+          points.push_back(hb->vertex()->point());
+        }
+      } while(++hb != hend);
     }
     // construct polygon vector
     std::vector<std::vector<std::size_t> > polygons(selected_facets.size());
-    std::size_t counter = 0;
+    counter = 0;
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb, ++counter) {
       Polyhedron::Halfedge_around_facet_circulator hb((*fb)->facet_begin()), hend(hb);
       do {
-        polygons[counter].push_back(index_map[hb->vertex()]);
+        polygons[counter].push_back(hb->vertex()->id() -1);
       } while(++hb != hend);
     }
-
     CGAL::Polygon_soup_to_polyhedron_3<Polyhedron::HalfedgeDS, Polyhedron::Point_3> builder(points, polygons);
     out->delegate(builder);
-
     return out->size_of_vertices() > 0;
   }
 
@@ -608,6 +620,19 @@ public slots:
   }
 
 protected:
+  bool eventFilter(QObject* /*target*/, QEvent * gen_event)
+  {
+    if(!visible() || !k_ring_selector.state.shift_pressing) { return false; }
+    if(gen_event->type() == QEvent::Wheel)
+    {
+      QWheelEvent *event = static_cast<QWheelEvent*>(gen_event);
+      int steps = event->delta() / 120;
+      expand_or_shrink(steps);
+      return true;
+    }
+    return false;
+  }
+
   template<class HandleType>
   void remove_erased_handles() {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
