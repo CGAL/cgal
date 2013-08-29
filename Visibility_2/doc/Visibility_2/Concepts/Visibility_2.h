@@ -74,7 +74,7 @@ Visibility_2();
 /*! 
 Constructs a `Visibility_2` object that is attached to `arr`.
 */ 
-Visibility_2(Input_arrangement_2& arr);
+Visibility_2(const Input_arrangement_2& arr);
 
 /// @}
 
@@ -92,7 +92,7 @@ Attaches the given arrangement `arr` to the visibility object.
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(Input_arrangement_2& arr);
+  void attach(const Input_arrangement_2& arr);
 
   
 /*!

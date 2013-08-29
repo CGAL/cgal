@@ -92,7 +92,7 @@ Triangular_expansion_visibility_2();
 /*! 
 Constructs a `Triangular_expansion_visibility_2` object that is attached to `arr`.
 */ 
-Triangular_expansion_visibility_2(Input_arrangement_2& arr);
+Triangular_expansion_visibility_2(const Input_arrangement_2& arr);
 
 /// @}
 
@@ -112,7 +112,7 @@ also changes the stored restricted triangulation which in the worst may again ta
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(Input_arrangement_2& arr);
+  void attach(const Input_arrangement_2& arr);
 
 /*!
 Detaches the arrangement from the visibility object it is currently attached to

@@ -91,7 +91,7 @@ Preprocessed_rotational_sweep_visibility_2();
 /*! 
 Constructs a `Preprocessed_rotational_sweep_visibility_2` object that is attached to `arr`.
 */ 
-Preprocessed_rotational_sweep_visibility_2(Input_arrangement_2& arr);
+Preprocessed_rotational_sweep_visibility_2(const Input_arrangement_2& arr);
 
 /// @}
 
@@ -108,7 +108,7 @@ Attaches the given arrangement to the visibility object and applies preprocessin
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(Input_arrangement_2& arr);
+  void attach(const Input_arrangement_2& arr);
 
 /*!
 Detaches the arrangement from the visibility object it is currently attached to
