@@ -205,7 +205,7 @@ linear_least_squares_fitting_2(InputIterator first,
   CGAL_precondition(first != beyond);
 
   std::vector<Point_2> points;
-  points..reserve(4 * multipass_distance(first,beyond));
+  points.reserve(4 * multipass_distance(first,beyond));
   for(InputIterator it = first;
       it != beyond;
       it++)
