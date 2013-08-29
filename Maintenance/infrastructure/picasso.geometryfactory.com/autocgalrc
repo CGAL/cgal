@@ -18,4 +18,4 @@ COMPILERS_localhost="$COMPILERS_localhost x64_Cygwin-Windows8_MSVC2012-Debug-64b
 
 MYSHELL="bash --login"
 FTP_OPTS="-v -n"
-PROCESSORS_localhost="4"
+PROCESSORS_localhost="7"
