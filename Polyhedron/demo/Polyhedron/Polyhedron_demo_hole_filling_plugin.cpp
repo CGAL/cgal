@@ -201,10 +201,9 @@ private:
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
 
-    Polyline_data_list::const_iterator min_it = polyline_data_list.begin();    
-    const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->position);
-    float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
-
+    Polyline_data_list::const_iterator min_it;
+    double min_dist = (std::numeric_limits<double>::max)();
+    Kernel::Point_2 xy(x,y);
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it)
     {
 #if 0
@@ -219,9 +218,14 @@ private:
       /* use polyline points to measure distance - might hurt performance for large holes */
       Halfedge_around_facet_circulator hf_around_facet = it->halfedge->facet_begin();
       do {
-        const Polyhedron::Traits::Point_3& p = hf_around_facet->vertex()->point();
-        const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(qglviewer::Vec(p.x(), p.y(), p.z()));
-        float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
+        
+        const Polyhedron::Traits::Point_3& p_1 = hf_around_facet->vertex()->point();
+        const qglviewer::Vec& pos_it_1 = camera->projectedCoordinatesOf(qglviewer::Vec(p_1.x(), p_1.y(), p_1.z()));
+        const Polyhedron::Traits::Point_3& p_2 = hf_around_facet->opposite()->vertex()->point();
+        const qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
+        Kernel::Segment_2 s(Kernel::Point_2(pos_it_1.x, pos_it_1.y), Kernel::Point_2(pos_it_2.x, pos_it_2.y));
+
+        double dist = CGAL::squared_distance(s, xy);
         if(dist < min_dist) {
           min_dist = dist;
           min_it = it;
