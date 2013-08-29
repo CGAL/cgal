@@ -67,6 +67,11 @@ public slots:
   void selection_action() { 
     dock_widget->show();
     dock_widget->raise();
+    if(scene->numberOfEntries() < 2) {
+      Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
+      if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
+      scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+    }
   }
   // Select all
   void on_Select_all_button_clicked() {
@@ -115,7 +120,6 @@ public slots:
   }
   // Create selection item for selected polyhedron item
   void on_Create_selection_item_button_clicked() {
-    typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
     if(!poly_item) {
       print_message("Error: there is no selected polyhedron item!");
