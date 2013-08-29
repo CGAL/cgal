@@ -327,7 +327,7 @@ private:
       if (do_intersect(q, dp, bbox[i].first, bbox[i].second))
         heap_insert(bbox[i]);
     }
-    std::cout<<"blew is initial active edges.\n";
+    std::cout<<"below is initial active edges.\n";
     print_edges(heap);
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
@@ -542,6 +542,7 @@ private:
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
+      assert(curr->face() == fh);
       Point_2 v = curr->target()->point();
       if (v == q)
         continue;
@@ -562,6 +563,7 @@ private:
     for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
       Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
       do {
+        assert(c1->face() == fh);
         Point_2 v = c1->target()->point();
         if (v == q)
           continue;
@@ -605,7 +607,7 @@ private:
       }
     }
     //debug
-    std::cout<<"before quick sort, vs size: "<<vs.size()<<std::endl;
+//    std::cout<<"before quick sort, vs size: "<<vs.size()<<std::endl;
 
     quick_sort(vs, 0, vs.size()-1);
 

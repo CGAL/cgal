@@ -29,6 +29,7 @@
 #include <CGAL/Simple_polygon_visibility_2.h>
 #include <CGAL/Naive_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2_.h>
+#include <CGAL/Rotational_sweep_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 
@@ -48,6 +49,8 @@ typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>
   Naive_visibility_2;
 typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2,CGAL::Tag_true>
   Triangular_expansion_visibility_2;
+typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2,CGAL::Tag_true>
+  Rotational_visibility_2;
 
 template <class Visibility_fst, class Visibility_snd>
 void deploy_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
@@ -68,6 +71,9 @@ void define_snd_class(std::string name2, CGAL::Query_choice& qchoice, std::ifstr
   if (name2 == "T")
     deploy_benchmark<Visibility_fst, Triangular_expansion_visibility_2>
         (qchoice, input);
+  if (name2 == "R")
+    deploy_benchmark<Visibility_fst, Rotational_visibility_2>
+        (qchoice, input);
 }
 
 void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input) {
@@ -77,6 +83,8 @@ void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_cho
     define_snd_class<Naive_visibility_2> (name2, qchoice, input);
   if (name1 == "T")
     define_snd_class<Triangular_expansion_visibility_2> (name2, qchoice, input);
+  if (name1 == "R")
+    define_snd_class<Rotational_visibility_2> (name2, qchoice, input);
 }
 
 
@@ -154,7 +162,7 @@ int main(int argc, char* argv[]) {
   }
   else {
     std::cout << "Usage: ./benchmark [filename] [Class type 1] [Class type 2] [Query type]\n";
-    std::cout << "where [Class type] could be S(simple), N(naive) and T(triangular), indicating which classes you want to test.\n";
+    std::cout << "where [Class type] could be S(simple), N(naive), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
     std::cout << "[Query type] could be vertex, edge, face.\n";
     std::cout << "The default value of [Query type] is face.\n";
     exit(0);
