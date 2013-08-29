@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>383</width>
-    <height>400</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,39 +161,56 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QPushButton" name="Visualize_holes_button">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Visualize Holes</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Fill_selected_holes_button">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Fill Selected Holes</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="Create_polyline_items_button">
          <property name="text">
           <string>Create Polyline Items for Selected Holes</string>
          </property>
         </widget>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="Select_all_holes_button">
+           <property name="text">
+            <string>Select All Holes</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="Deselect_all_holes_button">
+           <property name="text">
+            <string>Deselect All Holes</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="Fill_all_holes_button">
+     <widget class="QPushButton" name="Fill_selected_holes_button">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="text">
-       <string>Fill All Holes</string>
+       <string>Fill Selected Holes</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Visualize_holes_button">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Visualize Holes</string>
       </property>
      </widget>
     </item>

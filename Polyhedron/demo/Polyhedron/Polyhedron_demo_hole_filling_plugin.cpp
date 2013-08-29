@@ -113,6 +113,16 @@ public:
     }
   }
 
+  void select_deselect_all(bool select) {
+    if(select) {
+      for(Polyline_data_list::iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it)
+      { selected_holes.insert(it); }
+    }
+    else {
+      selected_holes.clear();
+    }
+    emit itemChanged();
+  }
   // filter events for selecting / activating holes with mouse input
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {
@@ -295,8 +305,10 @@ public slots:
   void hole_filling_action() { 
     dock_widget->show();
     dock_widget->raise();
+    if(scene->numberOfEntries() < 2) { on_Visualize_holes_button(); }
   }
-  void on_Fill_all_holes_button();
+  void on_Select_all_holes_button();
+  void on_Deselect_all_holes_button();
   void on_Visualize_holes_button();
   void on_Fill_selected_holes_button();
   void on_Create_polyline_items_button();
@@ -384,7 +396,8 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));  
   connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button())); 
-  connect(ui_widget.Fill_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_all_holes_button()));
+  connect(ui_widget.Select_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_holes_button()));
+  connect(ui_widget.Deselect_all_holes_button,  SIGNAL(clicked()), this, SLOT(on_Deselect_all_holes_button()));
   connect(ui_widget.Create_polyline_items_button,  SIGNAL(clicked()), this, SLOT(on_Create_polyline_items_button()));
   connect(ui_widget.Accept_button,  SIGNAL(clicked()), this, SLOT(on_Accept_button()));
   connect(ui_widget.Reject_button,  SIGNAL(clicked()), this, SLOT(on_Reject_button()));
@@ -480,53 +493,22 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   QApplication::restoreOverrideCursor();
 };
 // fills all holes and removes associated Scene_hole_visualizer if any
-void Polyhedron_demo_hole_filling_plugin::on_Fill_all_holes_button() {
-  typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
-  typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
-
-  Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
-  if(!poly_item) {
-    print_message("Error: please select a polyhedron item from Geometric Objects list!");
+void Polyhedron_demo_hole_filling_plugin::on_Select_all_holes_button() {
+  Scene_hole_visualizer* polyline_item = get_selected_item<Scene_hole_visualizer>();
+  if(!polyline_item) {
+    print_message("Error: please select a hole visualizer from Geometric Objects list!");
     return;
   }
+  polyline_item->select_deselect_all(true);
+}
 
-  Polyhedron& poly = *poly_item->polyhedron();
-  std::vector<Halfedge_iterator> border_reps;
-  for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it)
-  { it->id() = 0; }
-
-  // take one representative halfedge for each hole into border_reps
-  for(Halfedge_iterator it = poly.halfedges_begin(); it != poly.halfedges_end(); ++it){
-    if(it->is_border() && it->id() == 0){
-      border_reps.push_back(it);
-      Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
-      do {
-        CGAL_assertion(hf_around_facet->id() == 0);
-        hf_around_facet->id() = 1;
-      } while(++hf_around_facet != it->facet_begin());
-    }
-  }
-
-  if(border_reps.empty()) {
-    print_message("There is no holes in selected polyhedron!");
+void Polyhedron_demo_hole_filling_plugin::on_Deselect_all_holes_button() {
+  Scene_hole_visualizer* polyline_item = get_selected_item<Scene_hole_visualizer>();
+  if(!polyline_item) {
+    print_message("Error: please select a hole visualizer from Geometric Objects list!");
     return;
   }
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  int counter = 0;
-  int filled_counter = 0;
-  for(std::vector<Halfedge_iterator>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++counter) {
-     print_message(tr("Hole %1:").arg(counter));
-     if( fill(poly, *it) ) { ++filled_counter; }
-  }
-
-  if(filled_counter > 0) {
-    change_poly_item_by_blocking(poly_item, get_hole_visualizer(poly_item));
-    last_active_item = poly_item;
-    accept_reject_toggle(true);
-  }
-  print_message(tr("%1 of %2 holes are filled!").arg(filled_counter).arg(counter));
-  QApplication::restoreOverrideCursor();
+  polyline_item->select_deselect_all(false);
 }
 
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
