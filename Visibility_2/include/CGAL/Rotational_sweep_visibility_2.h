@@ -196,7 +196,7 @@ private:
   typedef std::vector<Point_2>          Pvec;
   typedef std::pair<Point_2, Point_2>   Pair;
 
-  Input_arrangement_2 *p_arr;
+  const Input_arrangement_2 *p_arr;
   Point_2         q;
   Point_2         dp;
   Pvec polygon;   //visibility polygon
@@ -327,8 +327,8 @@ private:
       if (do_intersect(q, dp, bbox[i].first, bbox[i].second))
         heap_insert(bbox[i]);
     }
-    std::cout<<"below is initial active edges.\n";
-    print_edges(heap);
+//    std::cout<<"below is initial active edges.\n";
+//    print_edges(heap);
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
@@ -430,7 +430,7 @@ private:
     heap[j] = temp;
   }
 
-  //todo logically it's wrong.
+  //
   bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
     Point_2 p1 = ray_seg_intersection(q, dp, e1.first, e1.second);
     Point_2 p2 = ray_seg_intersection(q, dp, e2.first, e2.second);
@@ -530,6 +530,36 @@ private:
     if (is_edge_query)
       return !((v==a && n==b)||(v==b && n==a));
   }
+  void input_neighbor( const Point_2& q,
+                       const Point_2& a,
+                       const Point_2& b,
+                       const Point_2& v,
+                       const Point_2* nei) {
+    if (v == q)
+      return;
+    if (!vmap.count(v))
+      vs.push_back(v);
+    for (int i=0; i<2; i++) {
+      if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
+        vmap[v].push_back(nei[i]);
+    }
+  }
+
+//    if (vmap.count(v)) {
+//      for (int i=0; i<2; i++) {
+//        if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
+//          vmap[v].push_back(nei[i]);
+//      }
+//    }
+//    else {
+//      vs.push_back(v);
+//      Pvec neighbor;
+//      for (int i=0; i<2; i++){
+//        if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
+//          neighbor.push_back(nei[i]);
+//      }
+//      vmap[v]
+//    }
 
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
@@ -538,44 +568,24 @@ private:
                    const Point_2& b,
                    std::vector<Pair>& bbox)
   {
-
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
       assert(curr->face() == fh);
       Point_2 v = curr->target()->point();
-      if (v == q)
-        continue;
-      vs.push_back(v);
-      //debug
-//      std::cout<<"after one push back"<<std::endl;
-//      print_vertex(vs);
-      Point_2 nei[2] = {curr->source()->point(), curr->next()->target()->point()};
-      Pvec neighbor;
-      for (int i=0; i<2; i++){
-        if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
-          neighbor.push_back(nei[i]);
-      }
-      vmap[v] = neighbor;
+      Point_2 nei[] = {curr->source()->point(), curr->next()->target()->point()};
+      input_neighbor(q, a, b, v, nei);
     } while (++curr != circ);
 
     typename Arrangement_2::Hole_const_iterator hi;
     for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
-      Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
+      Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
       do {
-        assert(c1->face() == fh);
-        Point_2 v = c1->target()->point();
-        if (v == q)
-          continue;
-        vs.push_back(v);
-        Point_2 nei[2] = {c1->source()->point(), c1->next()->target()->point()};
-        Pvec neighbor;
-        for (int i=0; i<2; i++){
-          if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
-            neighbor.push_back(nei[i]);
-        }
-        vmap[v] = neighbor;
-      } while (++c1 != c2);
+        assert(curr->face() == fh);
+        Point_2 v = curr->target()->point();
+        Point_2 nei[] = {curr->source()->point(), curr->next()->target()->point()};
+        input_neighbor(q, a, b, v, nei);
+      } while (++curr != circ);
     }
 
     if (q != a) {
@@ -604,7 +614,6 @@ private:
         pvec.push_back(box[(i+3)%4]);
         pvec.push_back(box[(i+1)%4]);
         vmap[box[i]] = pvec;
-
         bbox.push_back(create_pair(box[i], box[(i+1)%4]));
       }
     }
