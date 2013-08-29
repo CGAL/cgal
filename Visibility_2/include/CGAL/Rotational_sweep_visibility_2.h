@@ -287,8 +287,8 @@ private:
     input_face(f, q, a, b, bbox);
 
     //debug
-    std::cout<<"new query point: " <<q<<std::endl;
-    print_vertex(vs);
+//    std::cout<<"new query point: " <<q<<std::endl;
+//    print_vertex(vs);
 
     //initiation of vision ray
     Vector_2 dir;
@@ -583,6 +583,7 @@ private:
       Point_2 q1 = vs.front();
       xmax = xmin = q1.x();
       ymin = ymax = q1.y();
+      vs.push_back(q);
       for (typename Pvec::iterator it= vs.begin(); it!=vs.end(); it++) {
         Point_2 q1 = *it;
         if (q1.x() < xmin)    xmin = q1.x();
@@ -590,6 +591,7 @@ private:
         if (q1.y() < ymin)    ymin = q1.y();
         if (q1.y() > ymax)    ymax = q1.y();
       }
+      vs.pop_back();
       xmin -= 10;
       xmax += 10;
       ymin -= 10;
