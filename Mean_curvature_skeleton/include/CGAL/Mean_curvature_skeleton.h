@@ -700,7 +700,7 @@ public:
     update_topology();
     detect_degeneracies();
 
-    double area = internal::get_surface_area(polyhedron);
+    MCFSKEL_INFO(double area = internal::get_surface_area(polyhedron);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
@@ -850,9 +850,9 @@ private:
 
     int nver = boost::num_vertices(polyhedron);
 
+    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(polyhedron);
+
     vertex_iterator vb, ve;
-    // initialize the Laplacian matrix
-    int cnt_fix = 0;
     for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
@@ -861,7 +861,6 @@ private:
       // if the vertex is fixed
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
-        cnt_fix++;
         A.set_coef(i + nver, i, 1.0 / zero_TH, true);
       }
       else
@@ -871,7 +870,10 @@ private:
         {
           if (id < max_id)
           {
-            A.set_coef(i + nver * 2, i, omega_P, true);
+            if (test_inside(cell_dual[poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            {
+              A.set_coef(i + nver * 2, i, omega_P, true);
+            }
           }
         }
       }
@@ -911,6 +913,8 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
+    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(polyhedron);
+
     // assemble right columns of linear system
     int nver = boost::num_vertices(polyhedron);
     vertex_iterator vb, ve;
@@ -935,9 +939,15 @@ private:
       else
       {
         oh = omega_H;
-        if (id < max_id)
+        if (is_medially_centered)
         {
-          op = omega_P;
+          if (id < max_id)
+          {
+            if (test_inside(cell_dual[poles[id]]) == CGAL::ON_BOUNDED_SIDE)
+            {
+              op = omega_P;
+            }
+          }
         }
       }
       Bx[i + nver] = vi->point().x() * oh;
