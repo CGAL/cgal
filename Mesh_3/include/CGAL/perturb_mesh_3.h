@@ -102,7 +102,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
   typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc> Perturber;
   
   // Build perturber
-  Perturber perturber(c3t3,domain);
+  Perturber perturber(c3t3, domain, sliver_criterion);
 
   // Add perturbations
   for(std::size_t i = 0; i < perturbation_vector.size(); ++i)

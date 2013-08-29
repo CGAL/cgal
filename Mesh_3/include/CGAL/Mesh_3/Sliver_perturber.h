@@ -225,7 +225,7 @@ public:
    */
   Sliver_perturber(C3T3& c3t3,
                    const MeshDomain& domain,
-                   const SliverCriterion& criterion = SliverCriterion());
+                   const SliverCriterion& criterion);// = SliverCriterion());
   
   /**
    * @brief Launch perturbation
