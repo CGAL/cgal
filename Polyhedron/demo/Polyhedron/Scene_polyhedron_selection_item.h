@@ -31,16 +31,27 @@ public:
   using Base::empty;
 
   bool insert(const Entity& entity) {
-    return Base::insert(entity).second;
+    Entity e = edge_filter(entity);
+    return Base::insert(e).second;
   }
   bool erase(const Entity& entity) {
-    return Base::erase(entity) != 0;
+    Entity e = edge_filter(entity);
+    return Base::erase(e) != 0;
   }
   bool is_selected(const Entity& entity) const {
-    return Base::find(entity) != end();
+    Entity e = edge_filter(entity);
+    return Base::find(e) != end();
   }
   // for back_insert_iterator
-  void push_back(const Entity& entity) { insert(entity); }
+  void push_back(const Entity& entity) {
+    Entity e = edge_filter(entity);
+    insert(e); 
+  }
+
+  Polyhedron::Halfedge_handle edge_filter(Polyhedron::Halfedge_handle h) const {
+    return &*h < &*h->opposite() ? h : h->opposite();
+  }
+  template<class E> E edge_filter(E e) const { return e; }
 };
 
 // To iterate on each minimum address halfedge as edge
@@ -341,7 +352,6 @@ public:
     while(edge_line >> id) {
       if(id >= all_halfedges.size()) { return false; }
       Halfedge_handle h = all_halfedges[id];
-      h = &*h < &*h->opposite() ? h : h->opposite();
       selected_edges.insert(h);
     }
     return true;
