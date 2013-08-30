@@ -47,12 +47,13 @@
 
 namespace CGAL {
 
-  // ----------------------------------------------------------------------------
-  // Private section
-  // ----------------------------------------------------------------------------
-  /// \cond SKIP_IN_MANUAL
+// ----------------------------------------------------------------------------
+// Private section
+// ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 
 namespace bilateral_smooth_point_set_internal{
+
 // Item in the Kd-tree: position (Point_3) + index
 template <typename Kernel>
 class Kd_tree_element : public Point_with_normal_3<Kernel>
@@ -92,7 +93,7 @@ public:
 };
 
 
-/// compute bilateral projection for each point
+/// Compute bilateral projection for each point
 /// according to their KNN neighborhood points
 /// 
 /// \pre `k >= 2`, radius > 0 , sharpness_sigma > 0 && sharpness_sigma < 90
@@ -104,16 +105,16 @@ public:
 
 template <typename Kernel>
 CGAL::Point_with_normal_3<Kernel>
-  compute_denoise_projection(
+compute_denoise_projection(
   const CGAL::Point_with_normal_3<Kernel>& query,      ///< 3D point to project
   const std::vector<CGAL::Point_with_normal_3<Kernel> >& neighbor_pwns,  ///< 
   typename Kernel::FT radius,          ///< accept neighborhood radius
   typename Kernel::FT sharpness_sigma  ///< control sharpness(0-90)
-  )
+)
 {
   CGAL_point_set_processing_precondition(radius > 0);
   CGAL_point_set_processing_precondition(sharpness_sigma > 0
-    && sharpness_sigma < 90);
+                                         && sharpness_sigma < 90);
 
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -155,7 +156,7 @@ CGAL::Point_with_normal_3<Kernel>
   update_normal = update_normal / sqrt(update_normal.squared_length());
 
   Point update_point = query.position() - update_normal * 
-    (project_dist_sum / project_weight_sum); 
+                      (project_dist_sum / project_weight_sum); 
 
   return Pwn(update_point, update_normal);
 }
@@ -169,13 +170,13 @@ CGAL::Point_with_normal_3<Kernel>
 ///
 /// @return neighbors pwn of query point.
 template < typename Kernel,
-  typename Tree>
-  std::vector<CGAL::Point_with_normal_3<Kernel> >
-  compute_kdtree_neighbors(
+           typename Tree>
+std::vector<CGAL::Point_with_normal_3<Kernel> >
+compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                            ///< KD-tree
   unsigned int k                         ///< number of neighbors         
-  )                       
+)                       
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -220,9 +221,9 @@ template < typename Kernel,
 ///
 /// @return max spacing.
 template < typename Kernel,
-  typename Tree >
-  typename Kernel::FT
-  compute_max_spacing(
+           typename Tree >
+typename Kernel::FT
+compute_max_spacing(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                            ///< KD-tree
   unsigned int k)                        ///< number of neighbors
@@ -263,9 +264,12 @@ template < typename Kernel,
 
 /// \endcond
 
-/// try for parallelization
+
+/// \cond SKIP_IN_MANUAL
+/// This is for parallelization of function: compute_denoise_projection()
 template <typename Kernel>
-class Pwn_updater {
+class Pwn_updater 
+{
   typedef typename CGAL::Point_with_normal_3<Kernel> Pwn;
   typedef typename std::vector<Pwn> Pwns;
   typedef typename Kernel::FT FT;
@@ -276,30 +280,29 @@ class Pwn_updater {
   std::vector<Pwns>* pwns_neighbors;
 
 public:
-  Pwn_updater(
-    FT s, 
-    Pwns *in,
-    Pwns *out, 
-    std::vector<Pwns>* neighbors) 
-    : sharpness_sigma(s), 
-    pwns(in),
-    update_pwn_set(out),
-    pwns_neighbors(neighbors)
-  {}
+  Pwn_updater(FT s, 
+              Pwns *in,
+              Pwns *out, 
+              std::vector<Pwns>* neighbors): sharpness_sigma(s), 
+                                             pwns(in),
+                                             update_pwn_set(out),
+                                             pwns_neighbors(neighbors){} 
+ 
 
   void operator() ( const tbb::blocked_range<size_t>& r ) const 
   { 
-    for ( size_t i = r.begin(); i != r.end(); ++i ) 
+    for (size_t i = r.begin(); i != r.end(); ++i) 
     {
       (*update_pwn_set)[i] = bilateral_smooth_point_set_internal::
-        compute_denoise_projection<Kernel>
-        ((*pwns)[i], 
-        (*pwns_neighbors)[i], 
-        0.15,
-        sharpness_sigma);   
+        compute_denoise_projection<Kernel>((*pwns)[i], 
+                                           (*pwns_neighbors)[i], 
+                                           0.15,
+                                           sharpness_sigma);  
+ 
     }
   }
 };
+/// \endcond
 
 // ----------------------------------------------------------------------------
 // Public section
@@ -324,12 +327,12 @@ public:
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
-  typename ForwardIterator,
-  typename PointPMap,
-  typename NormalPMap,
-  typename Kernel>
-  double
-  bilateral_smooth_point_set(
+          typename ForwardIterator,
+          typename PointPMap,
+          typename NormalPMap,
+          typename Kernel>
+double
+bilateral_smooth_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
@@ -387,22 +390,28 @@ template <typename Concurrency_tag,
    CGAL::Timer task_timer;
    task_timer.start();
    FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); 
+
 #ifdef CGAL_LINKED_WITH_TBB
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::cout<<"parallel compute_max_spacing !"<<std::endl;
-     //change the num of thread
+
+     //change the number of thread
      tbb::task_scheduler_init init(11);
-     tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_points),[&](const tbb::
-       blocked_range<size_t>& r)
-     {
-       for (size_t i = r.begin(); i != r.end(); i++)
+
+     tbb::parallel_for(
+       tbb::blocked_range<size_t>(0,nb_points),
+       [&](const tbb::blocked_range<size_t>& r)
        {
-         FT max_spacing = bilateral_smooth_point_set_internal::
-           compute_max_spacing<Kernel,Tree>(pwns[i], tree, k);
-         guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
+         for (size_t i = r.begin(); i != r.end(); i++)
+         {
+           FT max_spacing = bilateral_smooth_point_set_internal::
+             compute_max_spacing<Kernel,Tree>(pwns[i], tree, k);
+       
+           guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
+         }
        }
-     });
+     );
    }
    else
 #endif
@@ -421,7 +430,7 @@ template <typename Concurrency_tag,
 
    CGAL::Memory_sizer::size_type memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
-     << (memory>>20) << " Mb allocated" << std::endl;
+             << (memory>>20) << " Mb allocated" << std::endl;
 
    std::cout << "Compute all neighbors: " << std::endl;
    // compute all neighbors
@@ -429,6 +438,7 @@ template <typename Concurrency_tag,
    pwns_neighbors.reserve(nb_points);
    task_timer.reset();
    task_timer.start();
+
    //second parallelization. temporarily comment the section of code
    //=========================================================================
 //#ifdef CGAL_LINKED_WITH_TBB
@@ -456,16 +466,17 @@ template <typename Concurrency_tag,
 //     }
 //   }
    //=========================================================================
+
    for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
    {
-   pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
-   compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
+     pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
+                  compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
    }
 
    task_timer.stop();
    memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
-     << (memory>>20) << " Mb allocated" << std::endl;
+             << (memory>>20) << " Mb allocated" << std::endl;
 
    std::cout << "Compute update points and normals: " << std::endl;
    task_timer.reset();
@@ -480,9 +491,9 @@ template <typename Concurrency_tag,
      tbb::task_scheduler_init init(11);
      tbb::blocked_range<size_t> block(0, nb_points);
      Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
-       &pwns,
-       &update_pwn_set,
-       &pwns_neighbors);
+                                     &pwns,
+                                     &update_pwn_set,
+                                     &pwns_neighbors);
      tbb::parallel_for(block, pwn_updater);
    }
    else
@@ -491,21 +502,21 @@ template <typename Concurrency_tag,
      std::vector<Pwn>::iterator update_iter = update_pwn_set.begin();
      std::vector<Pwns>::iterator neighbor_iter = pwns_neighbors.begin();
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); 
-       ++pwn_iter, ++update_iter, ++neighbor_iter)
+         ++pwn_iter, ++update_iter, ++neighbor_iter)
      {
        *update_iter = bilateral_smooth_point_set_internal::
          compute_denoise_projection<Kernel>
          (*pwn_iter, 
-         *neighbor_iter, 
-         guess_neighbor_radius, 
-         sharpness_sigma);
+          *neighbor_iter, 
+          guess_neighbor_radius, 
+          sharpness_sigma);
      }
    }
 
    task_timer.stop(); 
    memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
-     << (memory>>20) << " Mb allocated" << std::endl;
+             << (memory>>20) << " Mb allocated" << std::endl;
 
    // save results
    FT sum_move_error = 0;
@@ -523,25 +534,26 @@ template <typename Concurrency_tag,
      p = update_pwn_set[i].position();
      n = update_pwn_set[i].normal();
    }
-     return sum_move_error / nb_points;
+     
+   return sum_move_error / nb_points;
 }
 
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
 template <typename Concurrency_tag,
-  typename ForwardIterator,
-  typename PointPMap,
-  typename NormalPMap>
-  double
-  bilateral_smooth_point_set(
+          typename ForwardIterator,
+          typename PointPMap,
+          typename NormalPMap>
+double
+bilateral_smooth_point_set(
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
   PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
   const unsigned int k, ///< number of neighbors.
   double sharpness_sigma  ///< control sharpness(0-90)
-  ) ///< property map OutputIterator -> Vector_3.
+) ///< property map OutputIterator -> Vector_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -558,10 +570,10 @@ template <typename Concurrency_tag,
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map.
 template <typename Concurrency_tag,
-  typename ForwardIterator,
-  typename NormalPMap>
-  double
-  bilateral_smooth_point_set(
+          typename ForwardIterator,
+          typename NormalPMap>
+double
+bilateral_smooth_point_set(
   ForwardIterator first, ///< first input point.
   ForwardIterator beyond, ///< past-the-end input point.
   const unsigned int k, ///< number of neighbors.
