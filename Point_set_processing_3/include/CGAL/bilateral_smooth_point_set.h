@@ -43,7 +43,7 @@
 
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
-
+#include "tbb/task_scheduler_init.h"
 
 namespace CGAL {
 
@@ -387,11 +387,12 @@ template <typename Concurrency_tag,
    CGAL::Timer task_timer;
    task_timer.start();
    FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); 
-
 #ifdef CGAL_LINKED_WITH_TBB
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::cout<<"parallel compute_max_spacing !"<<std::endl;
+     //change the num of thread
+     tbb::task_scheduler_init init(11);
      tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_points),[&](const tbb::
        blocked_range<size_t>& r)
      {
@@ -428,36 +429,38 @@ template <typename Concurrency_tag,
    pwns_neighbors.reserve(nb_points);
    task_timer.reset();
    task_timer.start();
-   //second parallelization
+   //second parallelization. temporarily comment the section of code
    //=========================================================================
-#ifdef CGAL_LINKED_WITH_TBB
-   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
-   {
-     tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_points),[&](const 
-       tbb::blocked_range<size_t>& r)
-     {
-       for (size_t i = r.begin(); i!=r.end(); i++)
-       {
-         pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
-           compute_kdtree_neighbors<Kernel, Tree>(pwns[i], tree, k));
-       }
-     });
-   }
-   else
-#endif
-   {
-     for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
-     {
-       pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
-         compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
-     }
-   }
+//#ifdef CGAL_LINKED_WITH_TBB
+//   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+//   {
+//     //change the num of thread
+//     tbb::task_scheduler_init init(2);
+//     tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_points),[&](const 
+//       tbb::blocked_range<size_t>& r)
+//     {
+//       for (size_t i = r.begin(); i!=r.end(); i++)
+//       {
+//         pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
+//           compute_kdtree_neighbors<Kernel, Tree>(pwns[i], tree, k));
+//       }
+//     });
+//   }
+//   else
+//#endif
+//   {
+//     for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
+//     {
+//       pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
+//         compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
+//     }
+//   }
    //=========================================================================
-   /* for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
+   for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
    {
    pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
    compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
-   }*/
+   }
 
    task_timer.stop();
    memory = CGAL::Memory_sizer().virtual_size();
@@ -473,6 +476,8 @@ template <typename Concurrency_tag,
 #ifdef CGAL_LINKED_WITH_TBB
    if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
    {
+     //change the num of thread
+     tbb::task_scheduler_init init(11);
      tbb::blocked_range<size_t> block(0, nb_points);
      Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
        &pwns,
