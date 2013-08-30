@@ -289,10 +289,10 @@ std::vector<typename Kernel::Point_3>
 /// with a density uniformization term. 
 /// More deatail see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
-/// @tparam ForwardIterator iterator over input points.
+/// @tparam RandomAccessIterator  iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
-///         It can be omitted if ForwardIterator value_type is convertible to 
+///         It can be omitted if RandomAccessIterator  value_type is convertible to 
 ///         Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
@@ -300,15 +300,19 @@ std::vector<typename Kernel::Point_3>
 /// @return iterator of the first point to downsampled points.
 
 // This variant requires all parameters.
-template <typename ForwardIterator, typename PointPMap, typename Kernel>
-ForwardIterator
+template <typename RandomAccessIterator , typename PointPMap, typename Kernel>
+RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  const typename Kernel::FT retain_percentage, ///< percentage to retain.
-  typename Kernel::FT neighbor_radius, ///< size of neighbors.
-  const unsigned int max_iter_number,///< number of iterations.
+  RandomAccessIterator  first,  ///< iterator over the first input point.
+  RandomAccessIterator  beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map RandomAccessIterator  -> Point_3
+  const typename Kernel::FT retain_percentage, ///< percentage to retain,
+                                               ///default is 5%
+  typename Kernel::FT neighbor_radius, ///< size of neighbors,
+                                       /// if the value is negative or non-specific,                                      
+                                       /// the estimate value is diameter of bounding box * 0.05.
+  const unsigned int max_iter_number,///< number of iterations, rang from 30 to 100 is good,
+                                     /// default is 35.
   const bool need_compute_density, ///< if needed to compute density to 
                                    ///generate more rugularized result.                                
   const Kernel& /*kernel*/ ///< geometric traits.
@@ -339,9 +343,9 @@ wlop_simplify_and_regularize_point_set(
   std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
   // The first point iter of original and sample points
-  ForwardIterator it;
-  ForwardIterator first_original_point = first;
-  ForwardIterator first_sample_point = first;
+  RandomAccessIterator  it;
+  RandomAccessIterator  first_original_point = first;
+  RandomAccessIterator  first_sample_point = first;
   std::advance(first_sample_point, first_index_to_sample);
 
   //Copy sample points
@@ -599,12 +603,12 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename ForwardIterator, typename PointPMap>
-ForwardIterator
+template <typename RandomAccessIterator , typename PointPMap>
+RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  RandomAccessIterator  first, ///< iterator over the first input point
+  RandomAccessIterator  beyond, ///< past-the-end iterator
+  PointPMap point_pmap, ///< property map RandomAccessIterator  -> Point_3
   double retain_percentage, ///< percentage of points to retain
   double neighbor_radius, ///< size of neighbors.
   const unsigned int max_iter_number, ///< number of iterations.
@@ -627,11 +631,11 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 /// This variant creates a default point property map=Dereference_property_map.
-template <typename ForwardIterator>
-ForwardIterator
+template <typename RandomAccessIterator >
+RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
+  RandomAccessIterator  first, ///< iterator over the first input point
+  RandomAccessIterator  beyond, ///< past-the-end iterator
   double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
@@ -644,7 +648,7 @@ wlop_simplify_and_regularize_point_set(
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
 #else
-    make_identity_property_map(typename std::iterator_traits<ForwardIterator>::
+    make_identity_property_map(typename std::iterator_traits<RandomAccessIterator >::
                                value_type()),
 #endif
     retain_percentage, 
