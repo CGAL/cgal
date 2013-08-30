@@ -53,7 +53,7 @@ namespace simplify_and_regularize_internal{
 // ----------------------------------------------------------------------------
 
 /// Compute anverage and repulsion term and then 
-///	compute update sample points positions
+///  compute update sample points positions
 /// 
 /// \pre `radius > 0`
 ///
@@ -113,11 +113,11 @@ compute_update_sample_point(
   // Finishing compute average term
   if (average_weight_sum > FT(1e-100))
   {
-	  average = average / average_weight_sum; 
+    average = average / average_weight_sum; 
   }
   else
   {
-	  average = query - CGAL::ORIGIN;
+    average = query - CGAL::ORIGIN;
   }
   
   //Compute repulsion term
@@ -128,32 +128,32 @@ compute_update_sample_point(
   iter = neighbor_sample_points.begin();
   for (; iter != neighbor_sample_points.end(); ++iter)
   {
-	  const Point& np = iter->pt;
-	  unsigned int idx_of_sample = iter->index;
+    const Point& np = iter->pt;
+    unsigned int idx_of_sample = iter->index;
 
-	  Vector diff = query - np;
+    Vector diff = query - np;
 
-	  FT dist2 = CGAL::squared_distance(query, np);
-	  FT dist = std::sqrt(dist2);
+    FT dist2 = CGAL::squared_distance(query, np);
+    FT dist = std::sqrt(dist2);
 
-	  weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
-	  if(!is_sample_densities_empty)
-	  {
-		  weight *= sample_densities[idx_of_sample];
-	  }
+    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
+    if(!is_sample_densities_empty)
+    {
+      weight *= sample_densities[idx_of_sample];
+    }
 
-	  repulsion_weight_sum += weight;
-	  repulsion = repulsion + diff * weight;
+    repulsion_weight_sum += weight;
+    repulsion = repulsion + diff * weight;
   }
 
   // Finishing compute repulsion term
   if (repulsion_weight_sum > FT(1e-100))
   {
-	  repulsion = repulsion / repulsion_weight_sum; 
+    repulsion = repulsion / repulsion_weight_sum; 
   }
   else
   {
-	  repulsion = CGAL::NULL_VECTOR;
+    repulsion = CGAL::NULL_VECTOR;
   }
 
   // Compute update sample point
@@ -282,10 +282,10 @@ std::vector<typename Kernel::Point_3>
 
 /// \ingroup PkgPointSetProcessing
 /// WLOP Algorithm: The simplification algorithm can produces a set of 
-///	denoised, outlier-free and evenly distributed particles over the original 
+/// denoised, outlier-free and evenly distributed particles over the original 
 /// dense point cloud, so as to improve the reliability of other algorithms. 
 ///
-///	The core of the algorithm is a Weighted Locally Optimal projection operator
+/// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
 /// More deatail see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
@@ -473,10 +473,10 @@ wlop_simplify_and_regularize_point_set(
     std::vector<FT> sample_densities;
     if (need_compute_density)
     {
-	    sample_iter = sample_points.begin();
-	    sample_rich_iter = sample_rich_points.begin();
-	    for (; sample_rich_iter != sample_rich_points.end(); 
-		         ++sample_iter, ++sample_rich_iter)
+      sample_iter = sample_points.begin();
+      sample_rich_iter = sample_rich_points.begin();
+      for (; sample_rich_iter != sample_rich_points.end(); 
+           ++sample_iter, ++sample_rich_iter)
       {
         std::vector<Point> sample_neighbors = 
         simplify_and_regularize_internal::get_points_from_indexes<Kernel>(
@@ -496,48 +496,48 @@ wlop_simplify_and_regularize_point_set(
                        (sample_rich_points,
                         original_rich_points, bbox, neighbor_radius);
  
-	  sample_iter = sample_points.begin();
-	  sample_rich_iter = sample_rich_points.begin();
-	  for (update_sample_iter = update_sample_points.begin();
-	  	   update_sample_iter != update_sample_points.end();
-	  	   ++update_sample_iter, ++sample_iter, ++sample_rich_iter)
-	  {
-	  	Point& p = *sample_iter;
+    sample_iter = sample_points.begin();
+    sample_rich_iter = sample_rich_points.begin();
+    for (update_sample_iter = update_sample_points.begin();
+         update_sample_iter != update_sample_points.end();
+         ++update_sample_iter, ++sample_iter, ++sample_rich_iter)
+    {
+      Point& p = *sample_iter;
     
-	  	std::vector<Rich_point> rich_original_neighbors;
-	  	std::vector<unsigned int>& original_neighors_indexes = 
-	  		                       sample_rich_iter->original_neighbors;
+      std::vector<Rich_point> rich_original_neighbors;
+      std::vector<unsigned int>& original_neighors_indexes = 
+                               sample_rich_iter->original_neighbors;
     
       std::vector<unsigned int>::iterator iter;
-	  	for (iter = original_neighors_indexes.begin();
+      for (iter = original_neighors_indexes.begin();
            iter != original_neighors_indexes.end(); ++iter)
-	  	{
-	  		unsigned int idx_of_original = *iter;
-	  		Rich_point rp(original_points[idx_of_original], idx_of_original);
-	  		rich_original_neighbors.push_back(rp);
-	  	}
+      {
+        unsigned int idx_of_original = *iter;
+        Rich_point rp(original_points[idx_of_original], idx_of_original);
+        rich_original_neighbors.push_back(rp);
+      }
     
-	  	std::vector<Rich_point> rich_sample_neighbors;
-	  	std::vector<unsigned int>& sample_neighors_indexes = 
-	  		                         sample_rich_iter->neighbors;
+      std::vector<Rich_point> rich_sample_neighbors;
+      std::vector<unsigned int>& sample_neighors_indexes = 
+                                 sample_rich_iter->neighbors;
     
       for (iter = sample_neighors_indexes.begin();
            iter != sample_neighors_indexes.end(); ++iter)
-	  	{
-	  	  unsigned int idx_of_sample = *iter;
-	  	  Rich_point rp(sample_points[idx_of_sample], idx_of_sample);
-	  	  rich_sample_neighbors.push_back(rp);
-	  	}
+      {
+        unsigned int idx_of_sample = *iter;
+        Rich_point rp(sample_points[idx_of_sample], idx_of_sample);
+        rich_sample_neighbors.push_back(rp);
+      }
     
-	  	*update_sample_iter = simplify_and_regularize_internal::
+      *update_sample_iter = simplify_and_regularize_internal::
                             compute_update_sample_point<Kernel>
                             (*sample_iter,
-	  						         	   rich_original_neighbors,
-	  							           rich_sample_neighbors,
-                             neighbor_radius,
-                             original_densities,
-                             sample_densities);
-	  }
+                            rich_original_neighbors,
+                            rich_sample_neighbors,
+                            neighbor_radius,
+                            original_densities,
+                            sample_densities);
+    }
 
 
     // update sample points positions
@@ -558,7 +558,7 @@ wlop_simplify_and_regularize_point_set(
       << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.stop();
     task_timer.start();
-    std::cout << "iterate:  " << iteration + 1 << "	"<< std::endl << std::endl;
+    std::cout << "iterate:  " << iteration + 1 << std::endl << std::endl;
   #endif
   }
 
