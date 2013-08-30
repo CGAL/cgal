@@ -287,9 +287,9 @@ std::vector<typename Kernel::Point_3>
 ///
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// More deatail see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
+/// For more details, please see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
-/// @tparam RandomAccessIterator  iterator over input points.
+/// @tparam RandomAccessIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
 ///         It can be omitted if RandomAccessIterator  value_type is convertible to 

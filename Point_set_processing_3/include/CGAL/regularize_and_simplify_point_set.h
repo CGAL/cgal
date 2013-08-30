@@ -517,12 +517,12 @@ guess_KNN_number_for_original_set(
 
 /// \ingroup PkgPointSetProcessing
 /// WLOP Algorithm: The simplification algorithm can produces a set of 
-///	denoised, outlier-free and evenly distributed particles over the original 
+/// denoised, outlier-free and evenly distributed particles over the original 
 /// dense point cloud, so as to improve the reliability of other algorithms. 
 ///
-///	The core of the algorithm is a Weighted Locally Optimal projection operator
+/// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// More deatail please see:http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
+/// For more details, please see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
@@ -719,7 +719,7 @@ regularize_and_simplify_point_set(
       << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.stop();
 
-    std::cout << "iterate:	" << iter_n + 1 <<  "	"<< std::endl << std::endl;
+    std::cout << "iterate: " << iter_n + 1 << std::endl << std::endl;
   }
 
   //Copy back modified sample points to original points for output
