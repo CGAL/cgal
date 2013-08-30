@@ -281,6 +281,11 @@ private:
   /** if the pole is computed correctly */
   bool is_pole_correct;
 
+  /** the mean coordinate of all surface points */
+  Vector center;
+  /**  */
+  double scale;
+
 // Public methods
 public:
 
@@ -751,6 +756,14 @@ public:
     std::map<vertex_desc, std::vector<int> > record;
     skeleton.extract_skeleton(g, points, record);
 
+    typename std::map<vertex_desc, Point>::iterator it;
+    for (it = points.begin(); it != points.end(); ++it)
+    {
+      it->second = Point((it->second).x() * scale + center.x(),
+                         (it->second).y() * scale + center.y(),
+                         (it->second).z() * scale + center.z());
+    }
+
     skeleton_to_surface.clear();
     typename std::map<vertex_desc, std::vector<int> >::iterator iter;
     for (iter = record.begin(); iter != record.end(); ++iter)
@@ -797,13 +810,48 @@ private:
   /// Initialize some global data structures such as vertex id.
   void init()
   {
+    vertex_iterator vb, ve;
+
+    double min_x, min_y, min_z;
+    double max_x, max_y, max_z;
+    min_x = 1e10;
+    min_y = 1e10;
+    min_z = 1e10;
+    max_x = -1e10;
+    max_y = -1e10;
+    max_z = -1e10;
+
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    {
+      min_x = std::min(min_x, vb->point().x());
+      min_y = std::min(min_y, vb->point().y());
+      min_z = std::min(min_z, vb->point().z());
+      max_x = std::max(max_x, vb->point().x());
+      max_y = std::max(max_y, vb->point().y());
+      max_z = std::max(max_z, vb->point().z());
+    }
+    center = Vector((min_x + max_x) * 0.5,
+                    (min_y + max_y) * 0.5,
+                    (min_z + max_z) * 0.5);
+
+    scale = (max_x - min_x) * (max_x - min_x) +
+            (max_y - min_y) * (max_y - min_y) +
+            (max_z - min_z) * (max_z - min_z);
+    scale = sqrt(scale);
+
+    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    {
+      vb->point() = vb->point() - center;
+      vb->point() = Point(vb->point().x() / scale,
+                          vb->point().y() / scale,
+                          vb->point().z() / scale);
+    }
+
     alpha_TH *= (M_PI / 180.0);
     double area = internal::get_surface_area(polyhedron);
-    area_TH = 0.0001 * area;
     original_area = area;
 
     // initialize index maps
-    vertex_iterator vb, ve;
     vertex_id_count = 0;
     for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
