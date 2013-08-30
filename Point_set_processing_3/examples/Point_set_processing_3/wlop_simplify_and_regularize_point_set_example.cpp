@@ -71,8 +71,8 @@ int main(void)
   // Save point set.
   std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
   if (!out ||
-    !CGAL::write_xyz_points(
-    out, points_sampled.begin(), points_sampled.end()))
+     !CGAL::write_xyz_points(
+      out, points_sampled.begin(), points_sampled.end()))
   {
     return EXIT_FAILURE;
   }

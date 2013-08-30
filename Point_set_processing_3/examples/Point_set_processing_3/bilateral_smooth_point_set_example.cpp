@@ -24,68 +24,67 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
-    const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
 
-    // Reads a .xyz point set file in points[].
-    std::vector<PointVectorPair> points;
-    std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
-    if (!stream ||
-        !CGAL::read_xyz_points_and_normals(stream,
-                       std::back_inserter(points),
-                       CGAL::First_of_pair_property_map<PointVectorPair>(),
-                       CGAL::Second_of_pair_property_map<PointVectorPair>()))
-    {
-       std::cerr << "Error: cannot read file " 
-                 << INPUT_FILENAME_WITHOUT_EXT << ".xyz" << std::endl;
-       return EXIT_FAILURE;
-    }
+  // Reads a .xyz point set file in points[].
+  std::vector<PointVectorPair> points;
+  std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
+  if (!stream ||
+      !CGAL::read_xyz_points_and_normals(stream,
+                     std::back_inserter(points),
+                     CGAL::First_of_pair_property_map<PointVectorPair>(),
+                     CGAL::Second_of_pair_property_map<PointVectorPair>()))
+  {
+     std::cerr << "Error: cannot read file " 
+               << INPUT_FILENAME_WITHOUT_EXT << ".xyz" << std::endl;
+     return EXIT_FAILURE;
+  }
 
-    //Algorithm parameters
-    int k = 120;  //neighborhood size
-    double sharpness_sigma = 25; // control sharpness(0-90), 
-                                 // the bigger, the result will be smoother.
-    int iter_number = 3; //times of projection
+  //Algorithm parameters
+  int k = 120;  //neighborhood size
+  double sharpness_sigma = 25; // control sharpness(0-90), 
+                               // the bigger, the result will be smoother.
+  int iter_number = 3; //times of projection
 
-    CGAL::Timer task_timer;
-    task_timer.start();
-    std::cout << "Run algorithm example: " << std::endl;
+  CGAL::Timer task_timer;
+  task_timer.start();
+  std::cout << "Run algorithm example: " << std::endl;
 
-    for (int i = 0; i < iter_number; i++)
-    {
-      std::cout << std::endl << "Iteration: " << i+1 << std::endl;
-     
-      double error = 
-      CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
-            points.begin(), 
-            points.end(),
-            CGAL::First_of_pair_property_map<PointVectorPair>(),
-            CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            k,
-            sharpness_sigma);
+  for (int i = 0; i < iter_number; i++)
+  {
+    std::cout << std::endl << "Iteration: " << i+1 << std::endl;
+   
+    double error = 
+    CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
+          points.begin(), 
+          points.end(),
+          CGAL::First_of_pair_property_map<PointVectorPair>(),
+          CGAL::Second_of_pair_property_map<PointVectorPair>(),
+          k,
+          sharpness_sigma);
 
-      std::cout << std::endl << "move error: " << error << std::endl;
-    }
+    std::cout << std::endl << "move error: " << error << std::endl;
+  }
 
-    long memory = CGAL::Memory_sizer().virtual_size();
-    std::cout << "done: " << task_timer.time() << " seconds, "
-              << (memory>>20) << " Mb allocated" << std::endl;
-    task_timer.stop();  
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "done: " << task_timer.time() << " seconds, "
+            << (memory>>20) << " Mb allocated" << std::endl;
+  task_timer.stop();  
 
 
-    //// Save point set.
-    std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_jet DENOISED.xyz");  
-    std::ofstream out("data/sphere_20k_denoised.xyz");  
-    if (!out ||
+  //// Save point set.
+  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_jet DENOISED.xyz");   
+  if (!out ||
       !CGAL::write_xyz_points_and_normals(
       out, points.begin(), points.end(), 
       CGAL::First_of_pair_property_map<PointVectorPair>(),
       CGAL::Second_of_pair_property_map<PointVectorPair>()))
-    {
-      return EXIT_FAILURE;
-    }
+  {
+    return EXIT_FAILURE;
+  }
 
-    system("Pause");
+  system("Pause");
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
