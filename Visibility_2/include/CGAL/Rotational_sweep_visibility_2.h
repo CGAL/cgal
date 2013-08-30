@@ -291,6 +291,8 @@ private:
 //    print_vertex(vs);
 
     //initiation of vision ray
+
+
     Vector_2 dir;
     if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back())))
     {
@@ -330,9 +332,13 @@ private:
 //    std::cout<<"below is initial active edges.\n";
 //    print_edges(heap);
     //angular sweep begins
+    //print_pair(heap.front());
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
       Point_2 v = dp;
+      //debug
+//      if (v == Point_2(125687, 595879))
+//        int useless = 5;
       Pair ce = heap.front(); //save closest edge;
       int insert_cnt(0), remove_cnt(0);
       for (int j=0; j!=vmap[v].size(); j++) {
@@ -346,7 +352,12 @@ private:
           insert_cnt++;
         }
       }
+
       if (ce != heap.front()) {
+        //debug
+//        std::cout<<"top edge changed\n";
+//        print_pair(heap.front());
+//        std::cout<<v<<std::endl;
         //when the closest edge changed
         if (remove_cnt > 0 && insert_cnt > 0) {
             //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
@@ -401,6 +412,14 @@ private:
       heap[i] = heap.back();
       edx[heap[i]] = i;
       heap.pop_back();
+
+      int parent = (i-1)/2;
+      while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
+        heap_swap(i, parent);
+        i = parent;
+        parent = (i-1)/2;
+      }
+
       bool swapped;
       do {
         int left_son = i*2+1;
@@ -444,10 +463,22 @@ private:
         end2 = e2.second;
       else
         end2 = e2.first;
-      if (CGAL::left_turn(q, p1, end1))
-        return CGAL::left_turn(end1, p1, end2);
-      else
-        return false;
+//      if (CGAL::left_turn(q, p1, end1))
+//        return CGAL::left_turn(end1, p1, end2);
+//      else
+//        return false;
+      if (CGAL::right_turn(q, p1, end1) && !CGAL::right_turn(q, p1, end2))
+          return true;
+      if (CGAL::right_turn(q, p1, end2) && !CGAL::right_turn(q, p1, end1))
+          return false;
+      switch (CGAL::orientation(q, p1, end1)) {
+      case CGAL::COLLINEAR:
+          return (CGAL::left_turn(q, p1, end2));
+      case CGAL::RIGHT_TURN:
+          return (CGAL::right_turn(end1, p1, end2));
+      case CGAL::LEFT_TURN:
+          return (CGAL::left_turn(end1, p1, end2));
+      }
     }
     else {
       return CGAL::compare_distance_to_point(q, p1, p2)==CGAL::SMALLER;
@@ -677,6 +708,9 @@ private:
     for (int i = 0; i != edges.size(); i++) {
           std::cout<<edges[i].first<<"->"<<edges[i].second<<std::endl;
       }
+  }
+  void print_pair(Pair pr){
+    std::cout<<pr.first<<"->"<<pr.second<<std::endl;
   }
 
   void print_vertex(const Pvec& polygon) {
