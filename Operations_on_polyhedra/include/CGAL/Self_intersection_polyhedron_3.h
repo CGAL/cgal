@@ -34,6 +34,7 @@
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/conditional.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -163,30 +164,6 @@ struct Throw_at_output {
   }
 };
 
-template<class Polyhedron>
-class Facet_handle_types
-{
-  template<class Polyhedron, bool const_tag>
-  struct Get_;
-
-  template<class Polyhedron>
-  struct Get_<Polyhedron, true> {
-    typedef typename Polyhedron::Facet_const_iterator Facet_iterator;
-    typedef typename Polyhedron::Facet_const_handle   Facet_handle;
-  };
-
-  template<class Polyhedron>
-  struct Get_<Polyhedron, false> {
-    typedef typename Polyhedron::Facet_iterator Facet_iterator;
-    typedef typename Polyhedron::Facet_handle   Facet_handle;
-  };
-
-  typedef Get_<Polyhedron, boost::is_const<Polyhedron>::value> Get;
-public:
-  typedef typename Get::Facet_iterator Facet_iterator;
-  typedef typename Get::Facet_handle   Facet_handle;
-};
-
 }// namespace internal
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -245,8 +222,16 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
 
-  typedef typename internal::Facet_handle_types<Polyhedron>::Facet_iterator  Facet_it;
-  typedef typename internal::Facet_handle_types<Polyhedron>::Facet_handle    Facet_hdl;
+  typedef typename boost::conditional< boost::is_const<Polyhedron>::value,
+                                       typename Polyhedron::Facet_const_iterator, 
+                                       typename Polyhedron::Facet_iterator
+                                     >::type Facet_it;
+
+  typedef typename boost::conditional< boost::is_const<Polyhedron>::value,
+                                       typename Polyhedron::Facet_const_handle, 
+                                       typename Polyhedron::Facet_handle
+                                     >::type Facet_hdl;
+
   typedef typename CGAL::Box_intersection_d::Box_with_handle_d<double, 3, Facet_hdl> Box;
 
   // make one box per facet
