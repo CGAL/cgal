@@ -4,6 +4,7 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
+#include <CGAL/tags.h>
 
 #include <vector>
 #include <fstream>
@@ -54,7 +55,7 @@ int main(void)
   //          need_compute_density);
 
   std::vector<Point>::const_iterator sample_points_begin =
-  CGAL::wlop_simplify_and_regularize_point_set(
+  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
             points.begin(), 
             points.end());
 
