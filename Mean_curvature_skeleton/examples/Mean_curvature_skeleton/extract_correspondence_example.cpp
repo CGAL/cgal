@@ -32,6 +32,7 @@ public:
 
 typedef CGAL::Simple_cartesian<double>                               Kernel;
 typedef Kernel::Point_3                                              Point;
+typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
@@ -63,9 +64,48 @@ int main()
   // save a copy for correspondence
   Polyhedron mCopy(mesh);
 
-  //TODO use 0.002 * diag as edgelength_TH
+  // scale the mesh so diagonal of its bounding box equals to 1
+  Vector center;
+  double scale;
+
+  double min_x, min_y, min_z;
+  double max_x, max_y, max_z;
+  min_x = 1e10;
+  min_y = 1e10;
+  min_z = 1e10;
+  max_x = -1e10;
+  max_y = -1e10;
+  max_z = -1e10;
+
+  vertex_iterator vb, ve;
+  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
+  {
+    min_x = std::min(min_x, vb->point().x());
+    min_y = std::min(min_y, vb->point().y());
+    min_z = std::min(min_z, vb->point().z());
+    max_x = std::max(max_x, vb->point().x());
+    max_y = std::max(max_y, vb->point().y());
+    max_z = std::max(max_z, vb->point().z());
+  }
+  center = Vector((min_x + max_x) * 0.5,
+      (min_y + max_y) * 0.5,
+      (min_z + max_z) * 0.5);
+
+  scale = (max_x - min_x) * (max_x - min_x) +
+    (max_y - min_y) * (max_y - min_y) +
+    (max_z - min_z) * (max_z - min_z);
+  scale = sqrt(scale);
+
+  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
+  {
+    vb->point() = vb->point() - center;
+    vb->point() = Point(vb->point().x() / scale,
+        vb->point().y() / scale,
+        vb->point().z() / scale);
+  }
+
   Mean_curvature_skeleton *mcs = new Mean_curvature_skeleton(mesh, Vertex_index_map(), Edge_index_map(),
-                                          0.1, 0.2, 0.0024804, true, 0.0001);
+                                          0.1, 0.2, 0.002, true, 0.0001);
 
   Graph g;
   std::map<vertex_desc, Point> points;
@@ -73,11 +113,19 @@ int main()
 
   mcs->extract_skeleton(g, points, corr);
 
+  // undo the scaling
+  typename std::map<vertex_desc, Point>::iterator it;
+  for (it = points.begin(); it != points.end(); ++it)
+  {
+    it->second = Point((it->second).x() * scale + center.x(),
+        (it->second).y() * scale + center.y(),
+        (it->second).z() * scale + center.z());
+  }
+
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
   std::cout << "edges: " << boost::num_edges(g) << "\n";
 
   // output the skeletal point and correspondent surface points
-  vertex_iterator vb, ve;
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(mCopy));
