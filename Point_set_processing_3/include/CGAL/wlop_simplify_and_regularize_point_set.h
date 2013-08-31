@@ -88,7 +88,7 @@ compute_update_sample_point(
 
   //Compute average term
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
-  FT iradius16 = -(FT)4.0/radius2;
+  FT iradius16 = -(FT)4.0 / radius2;
   Vector average = CGAL::NULL_VECTOR; 
 
   std::vector<Rich_point>::const_iterator iter;
@@ -111,7 +111,7 @@ compute_update_sample_point(
   }
 
   // Finishing compute average term
-  if (average_weight_sum > FT(1e-100))
+  if(average_weight_sum > FT(1e-100))
   {
     average = average / average_weight_sum; 
   }
@@ -157,7 +157,7 @@ compute_update_sample_point(
   }
 
   // Compute update sample point
-  Point update_sample = CGAL::ORIGIN + average + FT(0.5) * repulsion;
+  Point update_sample = CGAL::ORIGIN + average + FT(0.45) * repulsion;
   return update_sample;
 }
 
@@ -251,7 +251,7 @@ compute_density_weight_for_sample_point(
 /// @return Points
 template <typename Kernel>
 std::vector<typename Kernel::Point_3>
-  get_points_from_indexes(
+get_points_from_indexes(
   const std::vector<unsigned int> indexes, ///< indexes
   const std::vector<typename Kernel::Point_3>& all_points ///< all points
   )
@@ -300,7 +300,10 @@ std::vector<typename Kernel::Point_3>
 /// @return iterator of the first point to downsampled points.
 
 // This variant requires all parameters.
-template <typename RandomAccessIterator , typename PointPMap, typename Kernel>
+template <typename Concurrency_tag,
+          typename RandomAccessIterator,
+          typename PointPMap,
+          typename Kernel>
 RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point.
@@ -339,7 +342,7 @@ wlop_simplify_and_regularize_point_set(
   // Computes original(input) and sample points size 
   std::size_t nb_points_original = std::distance(first, beyond);
   std::size_t nb_points_sample = (std::size_t)(FT(nb_points_original) * 
-                                 (retain_percentage/100.0));
+                                 (retain_percentage / 100.0));
   std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
   // The first point iter of original and sample points
@@ -603,7 +606,9 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename RandomAccessIterator , typename PointPMap>
+template <typename Concurrency_tag,
+          typename RandomAccessIterator,
+          typename PointPMap>
 RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first, ///< iterator over the first input point
@@ -618,7 +623,7 @@ wlop_simplify_and_regularize_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return wlop_simplify_and_regularize_point_set(
+  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
     first, beyond,
     point_pmap,
     retain_percentage,
@@ -631,7 +636,7 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 /// This variant creates a default point property map=Dereference_property_map.
-template <typename RandomAccessIterator >
+template <typename Concurrency_tag, typename RandomAccessIterator >
 RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first, ///< iterator over the first input point
@@ -643,7 +648,7 @@ wlop_simplify_and_regularize_point_set(
                                           /// generate more uniform result. 
 )
 {
-  return wlop_simplify_and_regularize_point_set(
+  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
     first, beyond,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
