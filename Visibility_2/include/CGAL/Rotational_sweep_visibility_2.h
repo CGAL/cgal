@@ -86,8 +86,6 @@ public:
       target = e->target()->point();
     }
     visibility_region_impl(e->face(), q, source, target);
-    //debug
-//    print_vertex(polygon);
 
     //Decide which inside of the visibility butterfly is needed.
     int source_i, target_i ;
@@ -286,13 +284,7 @@ private:
     std::vector<Pair> bbox;
     input_face(f, q, a, b, bbox);
 
-    //debug
-//    for (int i=0; i!=vs.size();i++)
-//      if (close_point(vs[i], Point_2(250733, 636442)))
-//        print_vertex(vmap[vs[i]]);
-
     //initiation of vision ray
-
 
     Vector_2 dir;
     if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back())))
@@ -330,37 +322,60 @@ private:
       if (do_intersect(q, dp, bbox[i].first, bbox[i].second))
         heap_insert(bbox[i]);
     }
-//    std::cout<<"below is initial active edges.\n";
-//    print_edges(heap);
+
     //angular sweep begins
-    //print_pair(heap.front());
+
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
       Point_2 v = dp;
-      //debug
-//      if (v == Point_2(125687, 595879))
-//        int useless = 5;
       Pair ce = heap.front(); //save closest edge;
       int insert_cnt(0), remove_cnt(0);
+//      for (int j=0; j!=vmap[v].size(); j++) {
+//        Pair e = create_pair(v, vmap[v][j]);
+//        if (edx.count(e)) {
+//          heap_remove(edx[e]);
+//          remove_cnt++;
+//        }
+//        else {
+//          heap_insert(e);
+//          insert_cnt++;
+//        }
+//      }
+      Point_2 p_remove, p_insert;
       for (int j=0; j!=vmap[v].size(); j++) {
         Pair e = create_pair(v, vmap[v][j]);
         if (edx.count(e)) {
-          heap_remove(edx[e]);
+//          heap_remove(edx[e]);
+          p_remove = vmap[v][j];
           remove_cnt++;
         }
         else {
-          heap_insert(e);
+//          heap_insert(e);
+          p_insert = vmap[v][j];
           insert_cnt++;
         }
       }
-
+      if (remove_cnt == 1 && insert_cnt == 1) {
+        Pair e_out = create_pair(v, p_remove);
+        Pair e_in = create_pair(v, p_insert);
+        heap[edx[e_out]] = e_in;
+        edx[e_in] = edx[e_out];
+        edx.erase(e_out);
+      }
+      else {
+        for (int j=0; j!=vmap[v].size(); j++) {
+          Pair e = create_pair(v, vmap[v][j]);
+          if (edx.count(e)) {
+            heap_remove(edx[e]);
+            remove_cnt++;
+          }
+          else {
+            heap_insert(e);
+            insert_cnt++;
+          }
+        }
+      }
       if (ce != heap.front()) {
-        //debug
-//        if (close_point(q, Point_2(255164, 637498))) {
-//          std::cout<<"top edge changed: ";
-//          print_pair(heap.front());
-//          std::cout<<"sweeped is vertex"<< i<< ": "<< v<<std::endl;
-//        }
         //when the closest edge changed
         if (remove_cnt > 0 && insert_cnt > 0) {
             //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
@@ -378,10 +393,8 @@ private:
           update_visibility(ray_seg_intersection(q, dp, heap.front().first, heap.front().second));
         }
       }
-      //debug
-      //print_edges(heap);
+
     }
-    //print_vertex(polygon);
   }
 
   Pair create_pair(const Point_2& p1, const Point_2& p2){
@@ -568,10 +581,6 @@ private:
           CGAL::compare_distance_to_point(v2, q, v1) == CGAL::SMALLER)
         return false;
     return true;
-//    if (is_vertex_query)
-//      return !(n==q);
-//    if (is_edge_query)
-//      return !((v==a && n==b)||(v==b && n==a));
   }
   void input_neighbor( const Point_2& q,
                        const Point_2& a,
@@ -662,12 +671,8 @@ private:
         bbox.push_back(create_pair(box[i], box[(i+1)%4]));
       }
     }
-    //debug
-//    std::cout<<"before quick sort, vs size: "<<vs.size()<<std::endl;
 
     quick_sort(vs, 0, vs.size()-1);
-
-   //debug print_vertex(vs);
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
