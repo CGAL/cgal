@@ -2,14 +2,13 @@
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYLINE_H
 
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
-#include <CGAL/utility.h>
-#include <vector>
-#include <limits>
 #include <CGAL/value_type_traits.h>
-
-#include <CGAL/Triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+
+#include <vector>
+#include <stack>
+#include <map>
 #include <boost/iterator/transform_iterator.hpp>
 
 namespace CGAL {
@@ -145,9 +144,7 @@ struct Is_valid_existing_edges_and_degenerate_triangle
 /* Weights
 /************************************************************************/
 
-/*
- * Weight calculator class is both responsible from calculating weights, and checking validity of triangle
- */
+// Weight calculator class is both responsible from calculating weights, and checking validity of triangle
 template<class Weight_, class IsValid>
 struct Weight_calculator 
 {
@@ -327,22 +324,29 @@ struct Tracer {
   template <typename OutputIteratorValueType, typename OutputIterator, class LookupTable>
   OutputIterator
   trace(const LookupTable& lambda, 
-        int i, 
-        int k, 
+        int v0, 
+        int v1, 
         OutputIterator out)
   {
     const int n = lambda.n;
-    CGAL_assertion(i >= 0 && i < n);
-    CGAL_assertion(k >= 0 && k < n);
+    std::stack<std::pair<int, int> > ranges;
+    ranges.push(std::make_pair(v0, v1));
 
-    if(i + 1 == k) { return out; }
+    while(!ranges.empty()) {
+      std::pair<int, int> r = ranges.top(); 
+      ranges.pop();
+      CGAL_assertion(r.first >= 0 && r.first < n);
+      CGAL_assertion(r.second >= 0 && r.second < n);
 
-    int la = lambda.get(i, k);
-    CGAL_assertion(la >= 0 && la < n);
+      if(r.first + 1 == r.second) { continue; }
 
-    out = trace<OutputIteratorValueType>(lambda, i, la, out);
-    *out++ = OutputIteratorValueType(i, la, k);
-    out = trace<OutputIteratorValueType>(lambda, la, k, out);
+      int la = lambda.get(r.first, r.second);
+      CGAL_assertion(la >= 0 && la < n);
+      *out++ = OutputIteratorValueType(r.first, la, r.second);
+
+      ranges.push(std::make_pair(r.first, la));
+      ranges.push(std::make_pair(la, r.second));
+    }
     return out;
   }
 };
@@ -717,8 +721,10 @@ Creates triangles to fill the hole defined by points in the range (@a pbegin, @a
 using the indices of the input points in the range (@a pbegin, @a pend).
 Note that no degenerate triangle is allowed during filling. If no possible patch is found, then no triangle is put into @a out.
 
-Optional: The range (@a qbegin, @a qend) indicate for each pair of consecutive points in the range (@a pbegin, @a pend),
+The optional range (@a qbegin, @a qend) indicate for each pair of consecutive points in the range (@a pbegin, @a pend),
 the third point of the facet this segment is incident to. 
+
+Note that the range (@a pbegin, @a pend) and (@a qbegin, @a qend) may or may not contain duplicated first point at the end of sequence.
 
 @tparam OutputIteratorValueType value type of OutputIterator having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available. 
         It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine
