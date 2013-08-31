@@ -287,8 +287,9 @@ private:
     input_face(f, q, a, b, bbox);
 
     //debug
-//    std::cout<<"new query point: " <<q<<std::endl;
-//    print_vertex(vs);
+//    for (int i=0; i!=vs.size();i++)
+//      if (close_point(vs[i], Point_2(250733, 636442)))
+//        print_vertex(vmap[vs[i]]);
 
     //initiation of vision ray
 
@@ -355,9 +356,11 @@ private:
 
       if (ce != heap.front()) {
         //debug
-//        std::cout<<"top edge changed\n";
-//        print_pair(heap.front());
-//        std::cout<<v<<std::endl;
+//        if (close_point(q, Point_2(255164, 637498))) {
+//          std::cout<<"top edge changed: ";
+//          print_pair(heap.front());
+//          std::cout<<"sweeped is vertex"<< i<< ": "<< v<<std::endl;
+//        }
         //when the closest edge changed
         if (remove_cnt > 0 && insert_cnt > 0) {
             //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
@@ -473,7 +476,7 @@ private:
           return false;
       switch (CGAL::orientation(q, p1, end1)) {
       case CGAL::COLLINEAR:
-          return (CGAL::left_turn(q, p1, end2));
+          return (CGAL::right_turn(q, p1, end2));
       case CGAL::RIGHT_TURN:
           return (CGAL::right_turn(end1, p1, end2));
       case CGAL::LEFT_TURN:
@@ -554,12 +557,19 @@ private:
   bool is_good_edge(const Point_2& q,
                     const Point_2& a,
                     const Point_2& b,
-                    const Point_2& v,
-                    const Point_2& n) {
-    if (is_vertex_query)
-      return !(n==q);
-    if (is_edge_query)
-      return !((v==a && n==b)||(v==b && n==a));
+                    const Point_2& v1,
+                    const Point_2& v2) {
+    if (v1==q || v2==q)
+      return false;
+    if (CGAL::collinear(q, v1, v2))
+      if (CGAL::compare_distance_to_point(v1, q, v2) == CGAL::SMALLER &&
+          CGAL::compare_distance_to_point(v2, q, v1) == CGAL::SMALLER)
+        return false;
+    return true;
+//    if (is_vertex_query)
+//      return !(n==q);
+//    if (is_edge_query)
+//      return !((v==a && n==b)||(v==b && n==a));
   }
   void input_neighbor( const Point_2& q,
                        const Point_2& a,
@@ -599,6 +609,8 @@ private:
                    const Point_2& b,
                    std::vector<Pair>& bbox)
   {
+    //debug
+
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
@@ -726,6 +738,10 @@ private:
       std::cout<<map_it->first.first<<"->"<<map_it->first.second<<":"<<map_it->second<<std::endl;
       map_it++;
     }
+  }
+
+  bool close_point(const Point_2& p1, const Point_2& p2){
+    return (p1.x()-p2.x()<1 && p1.x()-p2.x()>-1 && p1.y()-p2.y()<1 && p1.y()-p2.y()>-1);
   }
 
   void build_arr(const std::vector<Point_2>& polygon, Arrangement_2& arr ) {

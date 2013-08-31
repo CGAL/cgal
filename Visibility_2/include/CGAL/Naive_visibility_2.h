@@ -489,7 +489,7 @@ private:
             return false;
         switch (CGAL::orientation(ray.source(), shared, end1)) {
         case CGAL::COLLINEAR:
-            return (CGAL::left_turn(ray.source(), shared, end2));
+            return (CGAL::right_turn(ray.source(), shared, end2));
         case CGAL::RIGHT_TURN:
             return (CGAL::right_turn(end1, shared, end2));
         case CGAL::LEFT_TURN:
