@@ -4,10 +4,33 @@ namespace CGAL {
 \anchor Chapter_HoleFilling
 
 \cgalAutoToc
-\author Ilker %O. Yaz who else
+\author ... Ilker %O. Yaz ...
+
+\image html neptun_head.png
+\image latex neptun_head.png
+<BR>
 
 \section HoleFillingIntroduction Introduction
 
+This package provides set of algorithms for filling a hole that is either in a triangulated surface mesh or defined by sequence of points. 
+The main steps of the algorithm are described in \cgalCite{Lepia2003FillingHoles} and can be summarized as follows.
+First, a triangular patch for the hole is generated without introducing any new vertex. 
+Second, generated patch is refined by creating new vertices and flipping edges to approximate density of near boundary triangles.
+Third, refined region is faired to provide tangential continuous and smooth patch. 
 
+\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
+Results of the main steps of the algorithm. Respectively: the hole, after triangulation, after triangulation and refine, after triangulation, refine and fair.
+\cgalFigureEnd
+
+
+
+\section HoleFillingTriangulation Triangulation
+
+
+*/
+ \cgalFigureBegin{Triangulated_fork, fork.gif}
+ Holes in fork model are filled with only triangulating.
+ \cgalFigureEnd
+/*!
 */
 } /* namespace CGAL */

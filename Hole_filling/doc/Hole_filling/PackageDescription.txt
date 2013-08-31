@@ -6,7 +6,7 @@
 \addtogroup PkgHoleFilling
  
 \cgalPkgDescriptionBegin{Hole Filling, PkgHoleFillingSummary}
-\cgalPkgPicture{}
+\cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{}
