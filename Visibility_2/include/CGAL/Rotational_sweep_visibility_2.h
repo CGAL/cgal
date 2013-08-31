@@ -415,6 +415,7 @@ private:
       heap[i] = heap.back();
       edx[heap[i]] = i;
       heap.pop_back();
+      int i_before_swap = i;
 
       int parent = (i-1)/2;
       while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
@@ -422,25 +423,26 @@ private:
         i = parent;
         parent = (i-1)/2;
       }
-
-      bool swapped;
-      do {
-        int left_son = i*2+1;
-        int right_son = i*2+2;
-        int closest = i;
-        if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
-          closest = left_son;
-        }
-        if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest])) {
-          closest = right_son;
-        }
-        swapped = false;
-        if (closest != i) {
-          heap_swap(i, closest);
-          i = closest;
-          swapped = true;
-        }
-      } while(swapped);
+      if (i==i_before_swap) {
+        bool swapped;
+        do {
+          int left_son = i*2+1;
+          int right_son = i*2+2;
+          int closest = i;
+          if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
+            closest = left_son;
+          }
+          if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest])) {
+            closest = right_son;
+          }
+          swapped = false;
+          if (closest != i) {
+            heap_swap(i, closest);
+            i = closest;
+            swapped = true;
+          }
+        } while(swapped);
+      }
     }
   }
 
