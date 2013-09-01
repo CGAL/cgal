@@ -75,6 +75,7 @@ compute_update_sample_point(
   const std::vector<typename Kernel::FT>& sample_densities ///< 
 )
 {
+  if (neighbor_original_points.size() < 1)   { return query; }
 
   CGAL_point_set_processing_precondition(radius > 0);
   CGAL_point_set_processing_precondition(neighbor_original_points.size() >= 1);
