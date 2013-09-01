@@ -51,6 +51,34 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Grap
 typedef boost::graph_traits<Graph>::vertex_descriptor                vertex_desc;
 typedef boost::graph_traits<Graph>::edge_iterator                    edge_iter;
 
+bool is_mesh_valid(Polyhedron *pMesh) 
+{
+  if (!pMesh->is_closed())
+  {
+    std::cerr << "The mesh is not closed.";
+    return false;
+  }
+  if (!pMesh->is_pure_triangle())
+  {
+    std::cerr << "The mesh is not a pure triangle mesh.";
+    return false;
+  }
+
+  // the algorithm is only applicable on a mesh
+  // that has only one connected component
+  std::size_t num_component;
+  CGAL::Counting_output_iterator output_it(&num_component);
+  CGAL::internal::extract_connected_components(*pMesh, output_it);
+  ++output_it;
+  if (num_component != 1)
+  {
+    std::cerr << "The mesh is not a single closed mesh. It has " 
+              << num_component << " components.";
+    return false;
+  }
+  return true;
+}
+
 int main()
 {
   Polyhedron mesh;
@@ -58,6 +86,9 @@ int main()
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr << "Cannot open data/sindorelax.off" << std::endl;
+    return 1;
+  }
+  if (!is_mesh_valid) {
     return 1;
   }
 
