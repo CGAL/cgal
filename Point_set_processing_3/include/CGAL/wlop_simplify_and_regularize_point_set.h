@@ -577,12 +577,11 @@ wlop_simplify_and_regularize_point_set(
   #ifdef CGAL_LINKED_WITH_TBB
     if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
-      std::cout<<"parallel section1 !"<<std::endl;
+      std::cout<<"parallel section "<<std::endl;
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0,nb_points_sample),
         [&](const tbb::blocked_range<size_t>&r)
       {
-        //parallel section "for" begin
         for (size_t i = r.begin(); i != r.end(); i++)
         {
           Point& p = sample_points[i];
@@ -620,11 +619,11 @@ wlop_simplify_and_regularize_point_set(
              neighbor_radius,
              original_densities,
              sample_densities);
-          }//parallel section "for" end
+          }
         }
       );
     }
-    else//parallel judge "else" begin
+    else
   #endif //CGAL_LINKED_WITH_TBB
     {
       for (update_sample_iter = update_sample_points.begin();
@@ -667,19 +666,38 @@ wlop_simplify_and_regularize_point_set(
            original_densities,
            sample_densities);
       }
-    }//parallel judge "else" end
-
-    sample_iter = sample_points.begin();
-    sample_rich_iter = sample_rich_points.begin();
-    update_sample_iter = update_sample_points.begin();
-    
-    for (; sample_iter != sample_points.end(); 
-         ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
-    {
-      *sample_iter = *update_sample_iter;
-      sample_rich_iter->pt = *sample_iter;
     }
 
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    {
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0,nb_points_sample),
+        [&](const tbb::blocked_range<size_t>&r)
+        {
+          for (size_t i = r.begin(); i != r.end(); i++)
+          {
+            sample_points[i] = update_sample_points[i];
+            sample_rich_points[i].pt = sample_points[i];
+          }
+        }
+      );
+    }
+    else
+#endif
+    {
+      sample_iter = sample_points.begin();
+      sample_rich_iter = sample_rich_points.begin();
+      update_sample_iter = update_sample_points.begin();
+
+      for (; sample_iter != sample_points.end(); 
+        ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
+      {
+        *sample_iter = *update_sample_iter;
+        sample_rich_iter->pt = *sample_iter;
+      }
+    }
+    
   #ifdef CGAL_DEBUG_MODE
     std::cout << "Compute average & repulsion term and updated" << std::endl;
     long memory = CGAL::Memory_sizer().virtual_size();
