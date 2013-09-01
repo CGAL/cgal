@@ -34,10 +34,11 @@
   #include <boost/property_map.hpp>
 #endif
 
-#define CGAL_DEBUG_MODE
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+#include "tbb/task_scheduler_init.h"
 
-//#include <tbb/parallel_for.h>
-//#include <tbb/blocked_range.h>
+#define CGAL_DEBUG_MODE
 
 namespace CGAL {
 
@@ -254,7 +255,7 @@ std::vector<typename Kernel::Point_3>
 get_points_from_indexes(
   const std::vector<unsigned int> indexes, ///< indexes
   const std::vector<typename Kernel::Point_3>& all_points ///< all points
-  )
+)
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
@@ -317,7 +318,7 @@ wlop_simplify_and_regularize_point_set(
   const unsigned int max_iter_number,///< number of iterations, rang from 30 to 100 is good,
                                      /// default is 35.
   const bool need_compute_density, ///< if needed to compute density to 
-                                   ///generate more rugularized result.                                
+                                   ///generate more regularized result.                                
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
@@ -446,7 +447,6 @@ wlop_simplify_and_regularize_point_set(
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "done: " << task_timer.time() << " seconds, " 
       << (memory>>20) << " Mb allocated" << std::endl << std::endl;
-    task_timer.stop();
   #endif
   }
 
@@ -461,11 +461,13 @@ wlop_simplify_and_regularize_point_set(
     *sample_rich_iter = Rich_point(*sample_iter, index++);
   }
 
-
   std::vector<Point> update_sample_points(nb_points_sample);
   std::vector<Point>::iterator update_sample_iter;
   for (unsigned int iteration = 0; iteration < max_iter_number; iteration++)
   {
+  #ifdef CGAL_DEBUG_MODE
+    task_timer.reset();
+  #endif
     // Build rich-grid for sample-sample neighborhood
     rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_points,
                                                         bbox, 
@@ -501,71 +503,127 @@ wlop_simplify_and_regularize_point_set(
  
     sample_iter = sample_points.begin();
     sample_rich_iter = sample_rich_points.begin();
-    for (update_sample_iter = update_sample_points.begin();
-         update_sample_iter != update_sample_points.end();
-         ++update_sample_iter, ++sample_iter, ++sample_rich_iter)
+
+  #ifdef CGAL_LINKED_WITH_TBB
+    if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
-      Point& p = *sample_iter;
-    
-      std::vector<Rich_point> rich_original_neighbors;
-      std::vector<unsigned int>& original_neighors_indexes = 
-                               sample_rich_iter->original_neighbors;
-    
-      std::vector<unsigned int>::iterator iter;
-      for (iter = original_neighors_indexes.begin();
-           iter != original_neighors_indexes.end(); ++iter)
+      std::cout<<"parallel section1 !"<<std::endl;
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0,nb_points_sample),
+        [&](const tbb::blocked_range<size_t>&r)
       {
-        unsigned int idx_of_original = *iter;
-        Rich_point rp(original_points[idx_of_original], idx_of_original);
-        rich_original_neighbors.push_back(rp);
-      }
-    
-      std::vector<Rich_point> rich_sample_neighbors;
-      std::vector<unsigned int>& sample_neighors_indexes = 
-                                 sample_rich_iter->neighbors;
-    
-      for (iter = sample_neighors_indexes.begin();
-           iter != sample_neighors_indexes.end(); ++iter)
-      {
-        unsigned int idx_of_sample = *iter;
-        Rich_point rp(sample_points[idx_of_sample], idx_of_sample);
-        rich_sample_neighbors.push_back(rp);
-      }
-    
-      *update_sample_iter = simplify_and_regularize_internal::
-                            compute_update_sample_point<Kernel>
-                            (*sample_iter,
-                            rich_original_neighbors,
-                            rich_sample_neighbors,
-                            neighbor_radius,
-                            original_densities,
-                            sample_densities);
+        //parallel function "for" begin
+        for (size_t i = r.begin(); i != r.end(); i++)
+        {
+          Point& p = sample_points[i];
+
+          std::vector<Rich_point> rich_original_neighbors;
+          std::vector<unsigned int>& original_neighors_indexes = 
+            sample_rich_points[i].original_neighbors;
+
+          std::vector<unsigned int>::iterator iter;
+          for (iter = original_neighors_indexes.begin();
+               iter != original_neighors_indexes.end(); ++iter)
+          {
+            unsigned int idx_of_original = *iter;
+            Rich_point rp(original_points[idx_of_original], idx_of_original);
+            rich_original_neighbors.push_back(rp);
+          }
+
+          std::vector<Rich_point> rich_sample_neighbors;
+          std::vector<unsigned int>& sample_neighors_indexes = 
+            sample_rich_points[i].neighbors;
+
+          for (iter = sample_neighors_indexes.begin();
+               iter != sample_neighors_indexes.end(); ++iter)
+          {
+            unsigned int idx_of_sample = *iter;
+            Rich_point rp(sample_points[idx_of_sample], idx_of_sample);
+            rich_sample_neighbors.push_back(rp);
+          }
+
+          update_sample_points[i] = simplify_and_regularize_internal::
+            compute_update_sample_point<Kernel>
+            (sample_points[i],
+             rich_original_neighbors,
+             rich_sample_neighbors,
+             neighbor_radius,
+             original_densities,
+             sample_densities);
+        }//parallel function "for" end
+        }
+      );
     }
+    else//parallel judge "else" begin
+  #endif //CGAL_LINKED_WITH_TBB
+    {
+      for (update_sample_iter = update_sample_points.begin();
+           update_sample_iter != update_sample_points.end();
+           ++update_sample_iter, ++sample_iter, ++sample_rich_iter)
+      {
+        Point& p = *sample_iter;
 
+        std::vector<Rich_point> rich_original_neighbors;
+        std::vector<unsigned int>& original_neighors_indexes = 
+          sample_rich_iter->original_neighbors;
 
-    // update sample points positions
+        std::vector<unsigned int>::iterator iter;
+        for (iter = original_neighors_indexes.begin();
+             iter != original_neighors_indexes.end(); ++iter)
+        {
+          unsigned int idx_of_original = *iter;
+          Rich_point rp(original_points[idx_of_original], idx_of_original);
+          rich_original_neighbors.push_back(rp);
+        }
+
+        std::vector<Rich_point> rich_sample_neighbors;
+        std::vector<unsigned int>& sample_neighors_indexes = 
+          sample_rich_iter->neighbors;
+
+        for (iter = sample_neighors_indexes.begin();
+             iter != sample_neighors_indexes.end(); ++iter)
+        {
+          unsigned int idx_of_sample = *iter;
+          Rich_point rp(sample_points[idx_of_sample], idx_of_sample);
+          rich_sample_neighbors.push_back(rp);
+        }
+
+        *update_sample_iter = simplify_and_regularize_internal::
+          compute_update_sample_point<Kernel>
+          (*sample_iter,
+            rich_original_neighbors,
+            rich_sample_neighbors,
+            neighbor_radius,
+            original_densities,
+            sample_densities);
+      }
+
+    }//parallel judge "else" end
+
     sample_iter = sample_points.begin();
     sample_rich_iter = sample_rich_points.begin();
     update_sample_iter = update_sample_points.begin();
+    
     for (; sample_iter != sample_points.end(); 
-           ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
+         ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
     {
       *sample_iter = *update_sample_iter;
       sample_rich_iter->pt = *sample_iter;
     }
-  
+
   #ifdef CGAL_DEBUG_MODE
     std::cout << "Compute average & repulsion term and updated" << std::endl;
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "done: " << task_timer.time() << " seconds, " 
       << (memory>>20) << " Mb allocated" << std::endl;
-    task_timer.stop();
-    task_timer.start();
     std::cout << "iterate:  " << iteration + 1 << std::endl << std::endl;
   #endif
   }
 
   //Copy back modified sample points to original points for output
+  #ifdef CGAL_DEBUG_MODE
+  task_timer.reset();
+  #endif
   sample_iter = sample_points.begin();
   for(it = first_sample_point; it != beyond; ++it, ++sample_iter)
   {
@@ -582,15 +640,14 @@ wlop_simplify_and_regularize_point_set(
 
   #ifdef CGAL_DEBUG_MODE
     original_rich_points.erase(original_rich_points.begin(), 
-                                  original_rich_points.end());
+                                 original_rich_points.end());
     
     original_rich_points.clear();
 
     std::cout << "Copy back done: " << task_timer.time() 
       << " seconds "  << std::endl;
 
-    task_timer.stop();
-    task_timer.start();
+    task_timer.reset();
     original_rich_points.swap(std::vector<Rich_point>());
     
     std::cout << "STL release memory: " << task_timer.time() 
