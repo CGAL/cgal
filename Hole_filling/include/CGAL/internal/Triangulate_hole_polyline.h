@@ -107,7 +107,7 @@ struct Is_valid_existing_edges
   template<class Point_3, class LookupTable>
   bool operator()(const std::vector<Point_3>&, const std::vector<Point_3>&, 
                   int v0, int v1, int v2, const LookupTable&) const 
-{
+  {
     return existing_edges.find(std::make_pair(v0,v1)) == existing_edges.end() &&
            existing_edges.find(std::make_pair(v1,v2)) == existing_edges.end() &&
            existing_edges.find(std::make_pair(v0,v2)) == existing_edges.end();
@@ -319,14 +319,16 @@ public:
 /************************************************************************/
 /* Tracer
 /************************************************************************/
-struct Tracer {
+template<class OutputIteratorValueType, class OutputIterator>
+struct Tracer_polyline {
+  Tracer_polyline(OutputIterator& out) : out(out) 
+  { }
 
-  template <typename OutputIteratorValueType, typename OutputIterator, class LookupTable>
-  OutputIterator
-  trace(const LookupTable& lambda, 
-        int v0, 
-        int v1, 
-        OutputIterator out)
+  template <class LookupTable>
+  void
+  operator()(const LookupTable& lambda, 
+             int v0, 
+             int v1)
   {
     const int n = lambda.n;
     std::stack<std::pair<int, int> > ranges;
@@ -342,13 +344,15 @@ struct Tracer {
 
       int la = lambda.get(r.first, r.second);
       CGAL_assertion(la >= 0 && la < n);
+      CGAL_assertion(r.first < la && r.second > la);
       *out++ = OutputIteratorValueType(r.first, la, r.second);
 
       ranges.push(std::make_pair(r.first, la));
       ranges.push(std::make_pair(la, r.second));
     }
-    return out;
   }
+
+  OutputIterator& out;
 };
 
 /************************************************************************/
@@ -415,73 +419,72 @@ struct Incident_facet_circulator<3, Triangulator>
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
 template<
-  class K, 
-  class WeightCalculator, 
+  class Kernel,
+  class Tracer,
+  class WeightCalculator,
   template <class> class LookupTable = Lookup_table_map
 >
 class Triangulate_hole_polyline_DT 
 {
 public:
-  typedef Triangulate_hole_polyline_DT       Self;
-  typedef typename WeightCalculator::Weight  Weight;
-  typedef typename K::Point_3                Point_3;
-  typedef std::vector<Point_3>               Polyline_3;
+  typedef Triangulate_hole_polyline_DT                        Self;
+  typedef typename WeightCalculator::Weight                   Weight;
+  typedef typename Kernel::Point_3                            Point_3;
+  typedef std::vector<Point_3>                                Polyline_3;
 
+  typedef Triangulation_vertex_base_with_info_3<int, Kernel>  VB_with_id;
+  typedef Triangulation_data_structure_3<VB_with_id>          TDS;
+  typedef Delaunay_triangulation_3<Kernel, TDS>               Triangulation;
 
-  typedef Triangulation_vertex_base_with_info_3<int, K>  VB_with_id;
-  typedef Triangulation_data_structure_3<VB_with_id>     TDS;
-  typedef Delaunay_triangulation_3<K, TDS>               Triangulation;
+  typedef typename Triangulation::Finite_edges_iterator       Finite_edges_iterator;
+  typedef typename Triangulation::Facet_circulator            Facet_circulator;
+  typedef typename Triangulation::Cell_handle                 Cell_handle;
+  typedef typename Triangulation::Vertex_handle               Vertex_handle;
+  typedef typename Triangulation::Edge                        Edge;
+  typedef typename Triangulation::Facet                       Facet;
 
-  typedef typename Triangulation::Finite_edges_iterator  Finite_edges_iterator;
-  typedef typename Triangulation::Facet_circulator       Facet_circulator;
-
-  typedef typename Triangulation::Cell_handle            Cell_handle;
-  typedef typename Triangulation::Vertex_handle          Vertex_handle;
-  typedef typename Triangulation::Edge                   Edge;
-  typedef typename Triangulation::Facet                  Facet;
-  
-  template<class Point>
-  struct Auto_count {
-    typedef std::pair<Point, int> result_type;
-
-    Auto_count() : count(0)  { }
-    std::pair<Point, int> operator()(const Point& p) const 
-    { return std::make_pair(p, count++); }
-    mutable int count;
-  };
-
-  template <typename OutputIteratorValueType, typename OutputIterator>
-  std::pair<OutputIterator, Weight>
-  triangulate(const Polyline_3& P, 
-              const Polyline_3& Q,
-              OutputIterator out,
-              const WeightCalculator& WC)
+  Weight operator()(const Polyline_3& P, 
+                    const Polyline_3& Q,
+                    Tracer& tracer,
+                    const WeightCalculator& WC)
   {
+    struct Auto_count {
+      typedef std::pair<Point_3, int> result_type;
+
+      Auto_count() : count(0)  { }
+      std::pair<Point_3, int> operator()(const Point_3& p) const 
+      { return std::make_pair(p, count++); }
+      mutable int count;
+    };
+
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
 
     int n = P.size() - 1; // because the first and last point are equal
 
-    Triangulation T(boost::make_transform_iterator(P.begin(), Auto_count<Point_3>()),
-                    boost::make_transform_iterator(--P.end(), Auto_count<Point_3>()));
+    Triangulation T(boost::make_transform_iterator(P.begin(), Auto_count()),
+                    boost::make_transform_iterator(--P.end(), Auto_count()));
     T.infinite_vertex()->info() = -1;
 
     // Check whether all edges are included in DT, and get v0-vn-1 edge
     int nb_exists = 0;
     Finite_edges_iterator v0_vn_edge; // v0 vn-1 edge
     std::vector<bool> edge_exist(n, false);
-    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) {
-      Cell_handle  ch = eb->first;
-      int v0_id = ch->vertex(eb->second)->info();
-      int v1_id = ch->vertex(eb->third)->info();
+    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
+    {
+      int v0_id = eb->first->vertex(eb->second)->info();
+      int v1_id = eb->first->vertex(eb->third )->info();
       if(v0_id > v1_id) { std::swap(v0_id, v1_id); }
+
       // to start from v0 vn-1 edge
       if(v0_id == 0 && v1_id == n-1) { v0_vn_edge = eb; }
+
       // check whether the edge is border edge
       int border_id = -1;
       if(v0_id + 1 == v1_id)              { border_id = v0_id; }
       else if(v0_id == 0 && v1_id == n-1) { border_id = v1_id; }
+
       if(border_id != -1 && !edge_exist[border_id]) {
         ++nb_exists;
         edge_exist[border_id] = true;
@@ -490,14 +493,14 @@ public:
     CGAL_assertion(n >= nb_exists);
 
     if(nb_exists != n) {
-      CGAL_TRACE_STREAM << "  Not inside " << (n - nb_exists) << " of " << n << std::endl;
+      CGAL_TRACE_STREAM << "Not inside " << (n - nb_exists) << " of " << n << std::endl;
       CGAL_warning(!"Returning no output. Not all border edges are included in 3D Triangulation!");
-      return std::make_pair(out, Weight::DEFAULT());
+      return Weight::NOT_VALID();
     }
 
     if(T.dimension() < 2) {
       CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
-      return std::make_pair(out, Weight::DEFAULT());
+      return Weight::NOT_VALID();
     }
     
     LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
@@ -515,11 +518,11 @@ public:
     
     if(lambda.get(0, n-1) == -1) {
       CGAL_warning(!"Returning no output. No possible triangulation is found!");
-      return std::make_pair(out, Weight::DEFAULT());
+      return Weight::NOT_VALID();
     }
 
-    out = Tracer().trace<OutputIteratorValueType>(lambda, 0, n-1, out);
-    return std::make_pair(out, W.get(0,n-1));
+    tracer(lambda, 0, n-1);
+    return W.get(0,n-1);
   }
 
 private:
@@ -562,7 +565,7 @@ private:
     /**********************************************************************
      *  + Default W value is Weight::DEFAULT(), default lambda value is -1.
      *  + DEFAULT() is used to check whether the region (v0-v1) is processed.
-     *  + If a range v0-v1 does not contains any possible triangulation, then W[v0,v1] = INVALID() and lambda[v0,v1] = -1
+     *  + If a range v0-v1 does not contains any possible triangulation, then W[v0,v1] = NOT_VALID() and lambda[v0,v1] = -1
      *  + Note that w + DEFAULT() == w must hold
      */
     int v0 = e.first->vertex(e.second)->info();
@@ -612,22 +615,21 @@ private:
 /* Triangulate hole by using all search space
 /************************************************************************/
 template<
-  class K, 
-  class WeightCalculator, 
+  class Kernel,
+  class Tracer,
+  class WeightCalculator,
   template <class> class LookupTable = Lookup_table
 >
 class Triangulate_hole_polyline {
 public:
   typedef typename WeightCalculator::Weight  Weight;
-  typedef typename K::Point_3                Point_3;
+  typedef typename Kernel::Point_3           Point_3;
   typedef std::vector<Point_3>               Polyline_3;
 
-  template <typename OutputIteratorValueType, typename OutputIterator>
-  std::pair<OutputIterator, Weight>
-  triangulate(const Polyline_3& P, 
-              const Polyline_3& Q,
-              OutputIterator out,
-              const WeightCalculator& WC)
+  Weight operator()(const Polyline_3& P, 
+                    const Polyline_3& Q,
+                    Tracer& tracer,
+                    const WeightCalculator& WC)
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -669,11 +671,11 @@ public:
 
     if(lambda.get(0,n-1) == -1) {
       CGAL_warning(!"Returning no output. No possible triangulation is found!");
-      return std::make_pair(out, Weight::DEFAULT());
+      return Weight::NOT_VALID();
     }
 
-    out = Tracer().trace<OutputIteratorValueType>(lambda, 0, n-1, out);
-    return std::make_pair(out, W.get(0,n-1));
+    tracer(lambda, 0, n-1);
+    return W.get(0,n-1);
   }
 };
 
@@ -681,21 +683,20 @@ public:
 /* Internal entry point for both polyline and Polyhedron_3 triangulation functions
 /***********************************************************************************/
 template <
-  typename OutputIteratorValueType, 
-  typename WeightCalculator, 
-  typename InputIterator, 
-  typename OutputIterator
+  typename InputIterator,
+  typename Tracer,
+  typename WeightCalculator
 >
-std::pair<OutputIterator, typename WeightCalculator::Weight>
+typename WeightCalculator::Weight
 triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
                           InputIterator qbegin, InputIterator qend, 
-                          OutputIterator out,
+                          Tracer& tracer,
                           const WeightCalculator& WC,
                           bool use_delaunay_triangulation) 
 {
   typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
-  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel, WeightCalculator> Fill_DT;
-  typedef CGAL::internal::Triangulate_hole_polyline<Kernel, WeightCalculator>    Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel, Tracer, WeightCalculator> Fill_DT;
+  typedef CGAL::internal::Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator>    Fill;
 
   typename Fill::Polyline_3 P(pbegin, pend);
   typename Fill::Polyline_3 Q(qbegin, qend);
@@ -706,11 +707,11 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     }
   }
 
-  std::pair<OutputIterator, typename WeightCalculator::Weight> pair = use_delaunay_triangulation ?
-    Fill_DT().template triangulate<OutputIteratorValueType>(P,Q,out,WC) :
-    Fill().template triangulate<OutputIteratorValueType>(P,Q,out,WC);
-  CGAL_TRACE_STREAM << pair.second << std::endl;
-  return pair;
+  typename WeightCalculator::Weight w = use_delaunay_triangulation ?
+    Fill_DT().operator()(P,Q,tracer,WC) :
+    Fill().operator()(P,Q,tracer,WC);
+  CGAL_TRACE_STREAM << w << std::endl;
+  return w;
 }
 
 } // namespace internal
@@ -746,8 +747,10 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
     internal::Weight_min_max_dihedral_and_area, 
     internal::Is_valid_degenerate_triangle
   > WC;
-  return internal::triangulate_hole_polyline<OutputIteratorValueType>
-    (pbegin, pend, qbegin, qend, out, WC(), use_delaunay_triangulation).first;
+
+  internal::Tracer_polyline<OutputIteratorValueType, OutputIterator> tracer(out);
+  internal::triangulate_hole_polyline(pbegin, pend, qbegin, qend, tracer, WC(), use_delaunay_triangulation);
+  return tracer.out;
 }
 
 // overload for OutputIteratorValueType
