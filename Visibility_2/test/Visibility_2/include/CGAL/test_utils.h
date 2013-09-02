@@ -879,15 +879,15 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
       }
       cnt++;
     }
-    std::cout << "attach " << cnt << " times." << std::endl
-              << "Model 1 uses " << ptime1 << "  sec" << std::endl
-              << "Model 2 uses " << ptime2 << "  sec" << std::endl;
+    std::cout << "Preprocessing: "  << std::endl
+              << "Model 1 uses " << ptime1/cnt << "  sec" << std::endl
+              << "Model 2 uses " << ptime2/cnt << "  sec" << std::endl;
     std::cout << query_cnt << " queries are done.\n"
               << "Model 1 uses " << qtime1 << "  sec" << std::endl
               << "Model 2 uses " << qtime2 << "  sec" << std::endl;
     std::cout << "total times are:" << std::endl
-              << "Model 1 uses " << ptime1 + qtime1 << "  sec" << std::endl
-              << "Model 2 uses " << qtime1 + qtime2 << "  sec" << std::endl;
+              << "Model 1 uses " << ptime1/cnt + qtime1 << "  sec" << std::endl
+              << "Model 2 uses " << qtime1/cnt + qtime2 << "  sec" << std::endl;
   }
   else {  // Only run the benchmark on the outer loop of the arrangement
     Face_const_iterator fit;
