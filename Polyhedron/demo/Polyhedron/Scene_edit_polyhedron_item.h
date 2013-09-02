@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <CGAL/glu.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/camera.h>
@@ -21,6 +22,7 @@
 #include "ui_Deform_mesh.h"
 #include <CGAL/Deform_mesh.h> 
 #include <boost/function_output_iterator.hpp>
+
 
 typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;

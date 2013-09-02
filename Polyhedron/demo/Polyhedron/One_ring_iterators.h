@@ -29,7 +29,8 @@ struct One_ring_iterator<Polyhedron::Vertex_handle> {
   bool first;
   // to be used in One_ring_iterator<Halfedge_handle>
   operator Polyhedron::Halfedge_handle() const { 
-    return &*circ < &*circ->opposite() ? circ : circ->opposite(); 
+    if ( &*circ < &*circ->opposite() ) return circ;
+    return circ->opposite();
   }
 };
 
