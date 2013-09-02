@@ -230,6 +230,10 @@ by connecting each skeletal point to its correspondent points.
 Every skeletal point is connected to its correspondent surface points.
 \cgalFigureEnd
 
+\note It could happen that a given skeletal point does not have correspondent
+surface points. That means no surface points have been collapsed onto the 
+skeletal point.
+
 \subsection Skeletonization Examples
 
 \subsubsection Example_1 Extract Skeleton Without Correspondence Tracking
