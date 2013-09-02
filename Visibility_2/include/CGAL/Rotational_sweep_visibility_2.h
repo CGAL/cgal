@@ -468,45 +468,163 @@ private:
   }
 
   //
-  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
-    Point_2 p1 = ray_seg_intersection(q, dp, e1.first, e1.second);
-    Point_2 p2 = ray_seg_intersection(q, dp, e2.first, e2.second);
-    if (p1 == p2) {
-      Point_2 end1, end2;
-      if (p1 == e1.first)
-        end1 = e1.second;
-      else
-        end1 = e1.first;
-      if (p2 == e2.first)
-        end2 = e2.second;
-      else
-        end2 = e2.first;
-//      if (CGAL::left_turn(q, p1, end1))
-//        return CGAL::left_turn(end1, p1, end2);
+//  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
+//    Point_2 p1 = ray_seg_intersection(q, dp, e1.first, e1.second);
+//    Point_2 p2 = ray_seg_intersection(q, dp, e2.first, e2.second);
+//    if (p1 == p2) {
+//      Point_2 end1, end2;
+//      if (p1 == e1.first)
+//        end1 = e1.second;
 //      else
-//        return false;
-      if (CGAL::right_turn(q, p1, end1) && !CGAL::right_turn(q, p1, end2))
-          return true;
-      if (CGAL::right_turn(q, p1, end2) && !CGAL::right_turn(q, p1, end1))
-          return false;
-      switch (CGAL::orientation(q, p1, end1)) {
-      case CGAL::COLLINEAR:
-          return (CGAL::right_turn(q, p1, end2));
-      case CGAL::RIGHT_TURN:
-          return (CGAL::right_turn(end1, p1, end2));
-      case CGAL::LEFT_TURN:
-          return (CGAL::left_turn(end1, p1, end2));
+//        end1 = e1.first;
+//      if (p2 == e2.first)
+//        end2 = e2.second;
+//      else
+//        end2 = e2.first;
+
+//      if (CGAL::right_turn(q, p1, end1) && !CGAL::right_turn(q, p1, end2))
+//          return true;
+//      if (CGAL::right_turn(q, p1, end2) && !CGAL::right_turn(q, p1, end1))
+//          return false;
+//      switch (CGAL::orientation(q, p1, end1)) {
+//      case CGAL::COLLINEAR:
+//          return (CGAL::right_turn(q, p1, end2));
+//      case CGAL::RIGHT_TURN:
+//          return (CGAL::right_turn(end1, p1, end2));
+//      case CGAL::LEFT_TURN:
+//          return (CGAL::left_turn(end1, p1, end2));
+//      }
+//    }
+//    else {
+//      return CGAL::compare_distance_to_point(q, p1, p2)==CGAL::SMALLER;
+//    }
+//  }
+
+  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
+    Point_2 touch1, touch2, end1, end2;
+    int touch_ends_1(0), touch_ends_2(0);
+    if (CGAL::collinear(q, dp, e1.first)) {
+      touch_ends_1++;
+      touch1 = e1.first;
+      end1 = e1.second;
+      if (CGAL::collinear(q, dp, e1.second)) {
+        touch_ends_1++;
+        if (CGAL::compare_distance_to_point(q, end1, touch1)==CGAL::SMALLER) {
+          touch1 = e1.second;
+          end1 = e1.first;
+        }
       }
     }
     else {
-      return CGAL::compare_distance_to_point(q, p1, p2)==CGAL::SMALLER;
+      if (CGAL::collinear(q, dp, e1.second)) {
+        touch_ends_1++;
+        touch1 = e1.second;
+        end1 = e1.first;
+      }
+    }
+
+    if (CGAL::collinear(q, dp, e2.first)) {
+      touch_ends_2++;
+      touch2 = e2.first;
+      end2 = e2.second;
+      if (CGAL::collinear(q, dp, e2.second)) {
+        touch_ends_2++;
+        if (CGAL::compare_distance_to_point(q, end2, touch2)==CGAL::SMALLER) {
+          touch2 = e2.second;
+          end2 = e2.first;
+        }
+      }
+    }
+    else {
+      if (CGAL::collinear(q, dp, e2.second)) {
+        touch_ends_2++;
+        touch2 = e2.second;
+        end2 = e2.first;
+      }
+    }
+
+    if (touch_ends_1>0 && touch_ends_2>0) {
+      if (touch1 == touch2) {
+        if (CGAL::right_turn(q, touch1, end1) && !CGAL::right_turn(q, touch1, end2))
+            return true;
+        if (CGAL::right_turn(q, touch1, end2) && !CGAL::right_turn(q, touch1, end1))
+            return false;
+        switch (CGAL::orientation(q, touch1, end1)) {
+        case CGAL::COLLINEAR:
+            return (CGAL::right_turn(q, touch1, end2));
+        case CGAL::RIGHT_TURN:
+            return (CGAL::right_turn(end1, touch1, end2));
+        case CGAL::LEFT_TURN:
+            return (CGAL::left_turn(end1, touch1, end2));
+        }
+      }
+      else
+        return CGAL::compare_distance_to_point(q, touch1, touch2)==CGAL::SMALLER;
+    }
+
+
+    if (touch_ends_1 == 2) {
+      return CGAL::orientation(e2.first, e2.second, q)==CGAL::orientation(e2.first, e2.second, e1.first);
+    }
+    else {
+      CGAL::Orientation oq = orientation(e1.first, e1.second, q);
+      CGAL::Orientation o_fst = orientation(e1.first, e1.second, e2.first);
+      CGAL::Orientation o_snd = orientation(e1.first, e1.second, e2.second);
+      if (o_fst == CGAL::COLLINEAR)
+        return oq!=o_snd;
+      if (o_snd == CGAL::COLLINEAR)
+        return oq!=o_fst;
+      if (o_fst == o_snd)
+        return oq!=o_fst;
+      else
+        return CGAL::orientation(e2.first, e2.second, e1.first)==CGAL::orientation(e2.first, e2.second, q);
     }
   }
 
+//  Point_2 ray_seg_intersection(
+//      const Point_2& q, const Point_2& dp, // the ray
+//      const Point_2& s, const Point_2& t) // the segment
+//  {
+//    Ray_2 ray(q,dp);
+//    Segment_2 seg(s,t);
+//    CGAL::Object result = CGAL::intersection(ray, seg);
+//    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+//        return *ipoint;
+//    }
+//    else {
+//      if (const Segment_2 *iseg = CGAL::object_cast<Segment_2 >(&result)) {
+//          switch (CGAL::compare_distance_to_point(ray.source(), iseg->source(), iseg->target())) {
+//          case (CGAL::SMALLER):
+//              return iseg->source();
+//              break;
+//          case (CGAL::LARGER) :
+//              return iseg->target();
+//              break;
+//          }
+
+//      } else {
+//        std::cout<<"doesn't intersect\n";
+//        std::cout<<q<<','<<dp<<"   "<<s<<','<<t<<std::endl;
+//        assert(false);
+//      }
+//    }
+//  }
+
+  //Todo
   Point_2 ray_seg_intersection(
       const Point_2& q, const Point_2& dp, // the ray
       const Point_2& s, const Point_2& t) // the segment
   {
+    if (CGAL::collinear(q, dp, s)) {
+      if (CGAL::collinear(q, dp, t)) {
+        if (CGAL::compare_distance_to_point(q, s, t)==CGAL::SMALLER)
+          return s;
+        else
+          return t;
+      }
+      else
+        return s;
+    }
     Ray_2 ray(q,dp);
     Segment_2 seg(s,t);
     CGAL::Object result = CGAL::intersection(ray, seg);
@@ -532,20 +650,6 @@ private:
     }
   }
 
-
-//  {
-//    Ray_2 ray(q,dp);
-//    Segment_2 seg(s,t);
-//    if (typename K::Do_intersect_2()(ray,seg)) {
-//      std::cout<<"doesn't intersect\n";
-//      std::cout<<q<<','<<dp<<"   "<<s<<','<<t<<std::endl;
-//      assert(false);
-//    }
-//    CGAL::Object obj = typename K::Intersect_2()(ray,seg);
-//    Point_2 result =  object_cast<Point_2>(obj);
-//    return result;
-//  }
-
   void update_visibility(const Point_2& p){
     if (polygon.empty())
       polygon.push_back(p);
@@ -558,15 +662,15 @@ private:
   }
 
 
-  bool compare_angle(const Point_2& p1, const Point_2& p2)
+  bool compare_angle(const Point_2& shared, const Point_2& p2)
   {
-    Direction_2 d1(Ray_2(q, p1));
+    Direction_2 d1(Ray_2(q, shared));
     Direction_2 d2(Ray_2(q, p2));
     if (d1 < d2)
       return true;
     if (d1 > d2)
       return false;
-    return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+    return (CGAL::compare_distance_to_point(q, shared, p2) == CGAL::SMALLER);
   }
 
   bool is_good_edge(const Point_2& q,
@@ -747,8 +851,8 @@ private:
     }
   }
 
-  bool close_point(const Point_2& p1, const Point_2& p2){
-    return (p1.x()-p2.x()<1 && p1.x()-p2.x()>-1 && p1.y()-p2.y()<1 && p1.y()-p2.y()>-1);
+  bool close_point(const Point_2& shared, const Point_2& p2){
+    return (shared.x()-p2.x()<1 && shared.x()-p2.x()>-1 && shared.y()-p2.y()<1 && shared.y()-p2.y()>-1);
   }
 
   void build_arr(const std::vector<Point_2>& polygon, Arrangement_2& arr ) {
