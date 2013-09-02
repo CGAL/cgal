@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgProfilingTools
 
-An instance `map` of the class template `Unique_hash_map` is an 
+An instance of the class template `Unique_hash_map` is an 
 injective mapping from the set of keys of type `Key` to the set of 
 variables of type `Data`. New keys can be inserted at any time, 
 however keys cannot be individually deleted. 
@@ -64,7 +64,7 @@ typedef unspecified_type Hash_function;
 
 /*!
 
-creates an injective function `map` from `Key` to the set of unused 
+creates an injective function from `Key` to the set of unused 
 variables of type `Data`, sets `default_data` to `default`, 
 passes the `table_size` as argument to the internal implementation, 
 and initializes the hash function with `fct`. 
@@ -76,7 +76,7 @@ const Hash_function& fct = Hash_function());
 
 /*!
 
-creates an injective function `map` from `Key` to the set of unused 
+creates an injective function from `Key` to the set of unused 
 variables of type `Data`, sets `default_data` to `default`, 
 passes the `table_size` as argument to the internal implementation, 
 initializes the hash function with `fct`, and inserts all keys 
@@ -110,7 +110,7 @@ Hash_function hash_function() const;
 
 /*!
 returns true if \f$ key\f$ is 
-defined in `map`. Note that there can be keys defined that have not 
+defined in `*this`. Note that there can be keys defined that have not 
 been inserted explicitly. Their variables are initialized to 
 `default_value`. 
 */ 
@@ -118,7 +118,7 @@ bool is_defined( const Key& key) const;
 
 /*!
 
-resets `map` to the injective function `map` from `Key` to the 
+resets `*this` to the injective function from `Key` to the 
 set of unused variables of type `Data`. The `default_data` 
 remains unchanged. 
 */ 
@@ -126,7 +126,7 @@ void clear();
 
 /*!
 
-resets `map` to the injective function `map` from `Key` to the 
+resets `*this` to the injective function from `Key` to the 
 set of unused variables of type `Data` and sets `default_data` 
 to `default`. 
 */ 
@@ -142,10 +142,10 @@ Data& operator[](const Key& key);
 
 /*!
 
-returns a const reference to the variable `map``(key)`. If `key` 
-has not been inserted into `map` before, a const reference to the 
+returns a const reference to the variable `*this``(key)`. If `key` 
+has not been inserted into `*this` before, a const reference to the 
 `default_value` is returned. However, `key` is not inserted 
-into `map`. 
+into `*this`. 
 */ 
 const Data& operator[](const Key& key) const; 
 
