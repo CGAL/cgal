@@ -573,7 +573,7 @@ public:
 
   /*! 
     `ImplicitFunction` interface: evaluates the implicit function at a 
-    given 3D query point. The function `compute_implicit_function` must be 
+    given 3D query point. The function `compute_implicit_function()` must be 
     called before the first call to `operator()`. 
   */ 
   FT operator()(const Point& p) const
