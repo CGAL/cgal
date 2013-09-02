@@ -40,6 +40,8 @@
 //#include <tbb/parallel_for.h>
 //#include <tbb/blocked_range.h>
 
+//#define  CGAL_DEBUG_MODE
+
 namespace CGAL {
 
 // ----------------------------------------------------------------------------
@@ -363,8 +365,9 @@ edge_aware_upsample_point_set(
 
   for (int iter_time = 0; iter_time < max_iter_time; ++iter_time)
   {
-    std::cout << std::endl << "iter_time: " << iter_time + 1  << std::endl;
-
+  #ifdef CGAL_DEBUG_MODE
+     std::cout << std::endl << "iter_time: " << iter_time + 1  << std::endl;
+  #endif
     if (iter_time > 0)
     {
       current_radius *= 0.75;
@@ -376,7 +379,9 @@ edge_aware_upsample_point_set(
                                                           bbox,
                                                           current_radius);
     }
+ #ifdef CGAL_DEBUG_MODE
     std::cout << "current radius: " << current_radius << std::endl; 
+ #endif
 
     unsigned int current_size = rich_point_set.size();
     std::vector<bool> is_pass_threshold(current_size, false);
@@ -413,15 +418,17 @@ edge_aware_upsample_point_set(
     //FT density_pass_threshold = 0.02;
     FT density_pass_threshold2 = density_pass_threshold * 
                                  density_pass_threshold;
-
+ #ifdef CGAL_DEBUG_MODE
     std::cout << "pass_threshold:  " << density_pass_threshold << std::endl;
-
+ #endif
     // insert new points until all the points' density pass the threshold
     unsigned int max_loop_time = 3;
     unsigned int loop = 0;
     while (true)
     {
+   #ifdef CGAL_DEBUG_MODE
       std::cout << "loop_time: " << loop + 1 << std::endl;
+   #endif
       unsigned int count_not_pass = 0;
       loop++;
       for (unsigned int i = 0; i < rich_point_set.size(); ++i)
@@ -486,8 +493,9 @@ edge_aware_upsample_point_set(
           break;
         }
       }
-
+   #ifdef CGAL_DEBUG_MODE
       std::cout << "current size: " << rich_point_set.size() << std::endl;
+   #endif
       if (count_not_pass == 0 || 
           loop >= max_loop_time || 
           rich_point_set.size() >= number_of_output)

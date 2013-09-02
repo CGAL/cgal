@@ -44,6 +44,8 @@
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
 
+#define CGAL_DEBUG_MODE
+
 namespace CGAL {
 
 // ----------------------------------------------------------------------------
@@ -374,8 +376,9 @@ bilateral_smooth_point_set(
 
    unsigned int nb_points = pwns.size();
 
+#ifdef CGAL_DEBUG_MODE
    std::cout << "Initialization and compute max spacing: " << std::endl;
-
+#endif
    // initiate a KD-tree search for points
    std::vector<Kd_tree_element> treeElements;
    treeElements.reserve(pwns.size());
@@ -386,15 +389,18 @@ bilateral_smooth_point_set(
    }
    Tree tree(treeElements.begin(), treeElements.end());
    // Guess spacing
+#ifdef CGAL_DEBUG_MODE
    CGAL::Timer task_timer;
    task_timer.start();
+#endif
    FT guess_neighbor_radius = (FT)(std::numeric_limits<double>::max)(); 
 
 #ifdef CGAL_LINKED_WITH_TBB
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
-     std::cout<<"parallel compute_max_spacing !"<<std::endl;
-     
+  #ifdef CGAL_DEBUG_MODE
+     std::cout<<"parallel mode !"<<std::endl;
+  #endif    
      tbb::parallel_for(
        tbb::blocked_range<size_t>(0,nb_points),
        [&](const tbb::blocked_range<size_t>& r)
@@ -412,7 +418,9 @@ bilateral_smooth_point_set(
    else
 #endif
    {
-     std::cout<<"sequential algorithm!"<<std::endl;
+  #ifdef CGAL_DEBUG_MODE
+     std::cout<<"sequential mode!"<<std::endl;
+  #endif
      for(pwn_iter = pwns.begin(); pwn_iter != pwns.end(); ++pwn_iter)
      {
        FT max_spacing = bilateral_smooth_point_set_internal::
@@ -420,20 +428,24 @@ bilateral_smooth_point_set(
        guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius);
      }
    }
-
+#ifdef CGAL_DEBUG_MODE
    task_timer.stop();
+#endif
    guess_neighbor_radius *= 0.95;
 
+#ifdef CGAL_DEBUG_MODE
    CGAL::Memory_sizer::size_type memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
              << (memory>>20) << " Mb allocated" << std::endl;
 
    std::cout << "Compute all neighbors: " << std::endl;
+   task_timer.reset();
+   task_timer.start();
+#endif
    // compute all neighbors
    std::vector<Pwns> pwns_neighbors;
    pwns_neighbors.reserve(nb_points);
-   task_timer.reset();
-   task_timer.start();
+ 
 
    //second parallelization. temporarily comment the section of code
    //=========================================================================
@@ -468,7 +480,7 @@ bilateral_smooth_point_set(
      pwns_neighbors.push_back(bilateral_smooth_point_set_internal::
                   compute_kdtree_neighbors<Kernel, Tree>(*pwn_iter, tree, k));
    }
-
+#ifdef CGAL_DEBUG_MODE
    task_timer.stop();
    memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
@@ -477,6 +489,7 @@ bilateral_smooth_point_set(
    std::cout << "Compute update points and normals: " << std::endl;
    task_timer.reset();
    task_timer.start();
+#endif
    // update points and normals
    Pwns update_pwn_set(nb_points);
 
@@ -506,12 +519,12 @@ bilateral_smooth_point_set(
           sharpness_sigma);
      }
    }
-
+#ifdef CGAL_DEBUG_MODE
    task_timer.stop(); 
    memory = CGAL::Memory_sizer().virtual_size();
    std::cout << "done: " << task_timer.time() << " seconds, "
              << (memory>>20) << " Mb allocated" << std::endl;
-
+#endif
    // save results
    FT sum_move_error = 0;
    ForwardIterator it = first;
