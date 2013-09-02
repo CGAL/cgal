@@ -58,8 +58,9 @@ public:
       table.erase(std::make_pair(i,j));
       return;
     }
-    // table[std::make_pair(i,j)] = t (to not require def constructor)
-    table.insert(std::make_pair(std::make_pair(i,j), default_)).first->second = t;
+    
+    std::pair<typename Map::iterator, bool> inserted = table.insert(std::make_pair(std::make_pair(i,j), t));
+    if(!inserted.second) { inserted.first->second = t;}
   }
   const T& get(int i, int j) const {
     CGAL_assertion(bound_check(i,j));
@@ -73,13 +74,14 @@ public:
 
   int n;
 private:
+  typedef std::map<std::pair<int,int>, T> Map;
   bool bound_check(int i, int j) const {
     CGAL_assertion(i >= 0 && i < n);
     CGAL_assertion(j >= 0 && j < n);
     CGAL_assertion(i < j);
     return true;
   }
-  std::map<std::pair<int,int>, T> table;
+  Map table;
   T default_;
 };
 /************************************************************************
@@ -200,7 +202,7 @@ private:
       int v_other = vertices[(e+2)%3];
       double angle = 0;
       // check whether the edge is border
-      if( (v0 + 1 == v1 || v0 == n-1 && v1 == 0) && !Q.empty() ) {
+      if( (v0 + 1 == v1 || (v0 == n-1 && v1 == 0) ) && !Q.empty() ) {
         angle = 180 - CGAL::abs( 
           CGAL::Mesh_3::dihedral_angle(P[v0],P[v1],P[v_other],Q[v0]) );
       }
