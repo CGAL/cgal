@@ -162,7 +162,7 @@ def collect_figure_anchors(i,infos):
     infos.global_anchor_map[anchor_name]=infos.pkg_id+"."+str(infos.next_index)
     infos.next_index+=1
 
-## Changes and anchor name using the name in global_anchor_map
+## Changes an anchor name using the name in global_anchor_map
 def update_figure_ref(i,global_anchor_map):
   link = pq(this)
   link_name=link.text()
@@ -203,6 +203,7 @@ def automagically_number_figures():
             continue # pattern does not occur in file so we are done.
     d = pq(filename=fname, parser='html')
     d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
+    d('a.elRef').each( lambda i: update_figure_ref(i,global_anchor_map) )
     write_out_html(d, fname)
 
 ###############################################################################
