@@ -43,7 +43,6 @@
 
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
-#include "tbb/task_scheduler_init.h"
 
 namespace CGAL {
 
@@ -395,10 +394,7 @@ bilateral_smooth_point_set(
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::cout<<"parallel compute_max_spacing !"<<std::endl;
-
-     //change the number of thread
-     tbb::task_scheduler_init init(11);
-
+     
      tbb::parallel_for(
        tbb::blocked_range<size_t>(0,nb_points),
        [&](const tbb::blocked_range<size_t>& r)
@@ -487,8 +483,6 @@ bilateral_smooth_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
    if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
    {
-     //change the num of thread
-     tbb::task_scheduler_init init(11);
      tbb::blocked_range<size_t> block(0, nb_points);
      Pwn_updater<Kernel> pwn_updater(sharpness_sigma,
                                      &pwns,
