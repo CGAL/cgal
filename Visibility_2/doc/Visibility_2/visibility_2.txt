@@ -12,17 +12,17 @@ namespace CGAL {
 
 \section visibility_2_introduction Introduction
 
-This package provides functionality to compute the visibility area within polygonal regions in two dimensions. 
-Using the terminology according to \ref PkgBooleanSetOperations2Summary we expect the input polygon  \f$ P \f$ 
-to be a valid polygon or a valid polygon with holes, 
+This package provides functionality to compute the visibility region within polygonal regions in two dimensions. 
+Using the terminology of the package \ref PkgBooleanSetOperations2Summary, we expect the input polygon  
+\f$ P \f$ to be a valid polygon or a valid polygon with holes, 
 that is, we expect \f$ P \f$ to be closed (\f$\partial P \subset P\f$) and each boundary loop 
 (only one outer boundary loop in case of no holes) to be relatively simple. 
-Given two points \f$ p \f$ and \f$ q \f$ in \f$ P \f$ , they are said to be 
+Given two points \f$ p \f$ and \f$ q \f$ in \f$ P \f$, they are said to be 
 visible to each other iff the segment \f$ pq \subset  P \f$, note that \f$\partial P \subset P\f$. 
 For a query point \f$ q \in P \f$, the set of points that are visible from \f$ q \f$ is defined as the visibility 
 region of \f$ q \f$, denoted by \f$ V_q \f$
 
-\section visibility_2_degeneracies Degeneracies and Regularization 
+\subsection visibility_2_degeneracies Degeneracies and Regularization 
 
 \cgalFigureBegin{definition-fig, example1.png}
 Non-regularized visibility and regularized visibility.
