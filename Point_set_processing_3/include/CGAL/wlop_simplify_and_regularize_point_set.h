@@ -176,11 +176,11 @@ compute_update_sample_point(
         unsigned int idx_of_sample = neighbor_sample_points[i].index;
 
         Vector diff = query - np;
-
+        
         FT dist2 = CGAL::squared_distance(query, np);
         FT dist = std::sqrt(dist2);
-
-        weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
+        dist = std::max(dist, 1e-6);//make sure that dist != 0
+        weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2);
         if(!is_sample_densities_empty)
         {
           weight *= sample_densities[idx_of_sample];
@@ -205,8 +205,8 @@ compute_update_sample_point(
 
       FT dist2 = CGAL::squared_distance(query, np);
       FT dist = std::sqrt(dist2);
-
-      weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
+      dist = std::max(dist, 1e-6);//make sure that dist != 0
+      weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2);
       if(!is_sample_densities_empty)
       {
         weight *= sample_densities[idx_of_sample];
@@ -259,7 +259,7 @@ compute_density_weight_for_original_point(
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
-  FT iradius16 = -(FT)4.0/radius2;
+  FT iradius16 = -(FT)4.0 / radius2;
 
   std::vector<Point>::const_iterator iter;
   iter = neighbor_original_points.begin();
@@ -300,7 +300,7 @@ compute_density_weight_for_sample_point(
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
-  FT iradius16 = -(FT)4.0/radius2;
+  FT iradius16 = -(FT)4.0 / radius2;
 
   std::vector<Point>::const_iterator iter;
   iter = neighbor_sample_points.begin();
