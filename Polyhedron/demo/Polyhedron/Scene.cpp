@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QPointer>
 #include <QList>
+#include <boost/optional/optional.hpp>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -37,11 +38,30 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+  // If bbox of new item is inside the scene bbox, then do not emit updated_bbox
+  const Bbox& item_bbox = item->bbox();
+  bool need_updated_bbox = item->isFinite() && !item->isEmpty();
+  boost::optional<Bbox> scene_bbox;
+
+  for(QList<Scene_item*>::const_iterator m_it = m_entries.begin();
+      m_it != m_entries.end() && need_updated_bbox; ++m_it) 
+  {
+    if(!(*m_it)->isFinite() || (*m_it)->isEmpty()) { continue; }
+
+    if(scene_bbox) { *scene_bbox = *scene_bbox + (*m_it)->bbox(); }
+    else           { *scene_bbox = (*m_it)->bbox(); }
+
+    if(*scene_bbox + item_bbox == *scene_bbox) { // inside scene bbox
+      need_updated_bbox = false;                 // early exit
+    }
+  }
+
   m_entries.push_back(item);
 
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  emit updated_bbox();
+
+  if(need_updated_bbox) { emit updated_bbox(); }
   emit updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
