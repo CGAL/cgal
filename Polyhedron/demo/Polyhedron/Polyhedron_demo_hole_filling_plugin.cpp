@@ -349,7 +349,6 @@ private:
  
   bool fill(Polyhedron& polyhedron, Polyhedron::Halfedge_handle halfedge);
   bool self_intersecting(Polyhedron& polyhedron);
-
   void accept_reject_toggle(bool activate_accept_reject) {
     if(activate_accept_reject) {
       ui_widget.Accept_button->setVisible(true);
@@ -369,6 +368,12 @@ private:
       { w->setEnabled(true); }
     }
   }
+
+  static QString no_selected_hole_visualizer_error_message() {
+    return "Error: please select a hole visualizer from Geometric Objects list."
+      "Use 'Visualize Holes' button to create one by selecting the polyhedron item!";
+  }
+
 }; // end Polyhedron_demo_hole_filling_plugin
 
 void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
@@ -442,7 +447,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   }
 
   if(get_hole_visualizer(poly_item)) {
-    print_message("Error: selected polyhedron item already has an associated hole item!");
+    print_message("Error: selected polyhedron item already has an associated hole visualizer!");
     return;
   }
 
@@ -450,7 +455,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   connect(hole_visualizer, SIGNAL(itemChanged()), this, SLOT(hole_visualizer_changed()));
 
   if(hole_visualizer->polyline_data_list.empty()) {
-    print_message("There is no holes in selected polyhedron!");
+    print_message("There is no hole in selected polyhedron item!");
     delete hole_visualizer;
     return;
   }
@@ -464,12 +469,12 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
 // fills selected holes on active Scene_hole_visualizer
 void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   // get active polylines item
-  Scene_hole_visualizer* polyline_item = get_selected_item<Scene_hole_visualizer>();
-  if(!polyline_item) {
-    print_message("Error: please select a hole visualizer from Geometric Objects list!");
+  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  if(!hole_visualizer) {
+    print_message(no_selected_hole_visualizer_error_message());
     return;
   }
-  if(polyline_item->selected_holes.empty()) {
+  if(hole_visualizer->selected_holes.empty()) {
     print_message("Error: there is no selected holes in hole visualizer!");
     return;
   }
@@ -478,15 +483,15 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   // fill selected holes  
   int counter = 0;
   int filled_counter = 0;
-  for(Scene_hole_visualizer::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
-    it != polyline_item->selected_holes.end(); ++it, ++counter) {
+  for(Scene_hole_visualizer::Selected_holes_set::iterator it = hole_visualizer->selected_holes.begin();
+    it != hole_visualizer->selected_holes.end(); ++it, ++counter) {
       print_message(tr("Hole %1:").arg(counter));
-      if( fill(*(polyline_item->poly_item->polyhedron()), (*it)->halfedge) ) { ++filled_counter;}
+      if( fill(*(hole_visualizer->poly_item->polyhedron()), (*it)->halfedge) ) { ++filled_counter;}
   }
 
   if(filled_counter > 0) {
-    change_poly_item_by_blocking(polyline_item->poly_item, polyline_item);
-    last_active_item = polyline_item->poly_item;
+    change_poly_item_by_blocking(hole_visualizer->poly_item, hole_visualizer);
+    last_active_item = hole_visualizer->poly_item;
     accept_reject_toggle(true);
   }
   print_message(tr("%1 of %2 holes are filled!").arg(filled_counter).arg(counter));
@@ -494,37 +499,37 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
 };
 // fills all holes and removes associated Scene_hole_visualizer if any
 void Polyhedron_demo_hole_filling_plugin::on_Select_all_holes_button() {
-  Scene_hole_visualizer* polyline_item = get_selected_item<Scene_hole_visualizer>();
-  if(!polyline_item) {
-    print_message("Error: please select a hole visualizer from Geometric Objects list!");
+  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  if(!hole_visualizer) {
+    print_message(no_selected_hole_visualizer_error_message());
     return;
   }
-  polyline_item->select_deselect_all(true);
+  hole_visualizer->select_deselect_all(true);
 }
 
 void Polyhedron_demo_hole_filling_plugin::on_Deselect_all_holes_button() {
-  Scene_hole_visualizer* polyline_item = get_selected_item<Scene_hole_visualizer>();
-  if(!polyline_item) {
-    print_message("Error: please select a hole visualizer from Geometric Objects list!");
+  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  if(!hole_visualizer) {
+    print_message(no_selected_hole_visualizer_error_message());
     return;
   }
-  polyline_item->select_deselect_all(false);
+  hole_visualizer->select_deselect_all(false);
 }
 
 // Simply create polyline items and put them into scene - nothing related with other parts of the plugin
 void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
-  Scene_hole_visualizer* polyline_item = get_selected_item<Scene_hole_visualizer>();
-  if(!polyline_item) {
-    print_message("Error: please select a hole visualizer from Geometric Objects list!");
+  Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();
+  if(!hole_visualizer) {
+    print_message(no_selected_hole_visualizer_error_message());
     return;
   }
-  if(polyline_item->selected_holes.empty()) {
+  if(hole_visualizer->selected_holes.empty()) {
     print_message("Error: there is no selected holes in hole visualizer!");
     return;
   }
   int counter = 0;
-  for(Scene_hole_visualizer::Selected_holes_set::iterator it = polyline_item->selected_holes.begin();
-    it != polyline_item->selected_holes.end(); ++it) {
+  for(Scene_hole_visualizer::Selected_holes_set::iterator it = hole_visualizer->selected_holes.begin();
+    it != hole_visualizer->selected_holes.end(); ++it) {
       Scene_polylines_item* polyline_item = new Scene_polylines_item();
       polyline_item->polylines = (*it)->polyline->polylines;
       polyline_item->setName(QString("selected hole %1").arg(counter++));
