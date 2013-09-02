@@ -278,13 +278,6 @@ private:
   std::vector<Vector> normals;
   /** the dual of a cell in Triangulation(a Voronoi point) */
   std::vector<Point> cell_dual;
-  /** if the pole is computed correctly */
-  bool is_pole_correct;
-
-  /** the mean coordinate of all surface points */
-  Vector center;
-  /**  */
-  double scale;
 
 // Public methods
 public:
@@ -504,19 +497,11 @@ public:
    *        a boost::graph containing the connectivity of the skeleotn
    * @param points
    *        the locations of the skeletal points
-   * @return if the the skeleton is extracted correctly. It may happen
-   *         that the mesh is not sampled dense enough that the Voronoi
-   *         poles cannot be computed correctly.
    */
-  bool extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
+  void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
   {
-    if (is_medially_centered && !is_pole_correct)
-    {
-      return false;
-    }
     run_to_converge();
     convert_to_skeleton(g, points);
-    return true;
   }
 
   /**
@@ -530,22 +515,14 @@ public:
    *        the locations of the skeletal points
    * @param corr
    *        for each skeletal point, record its correspondent surface points
-   * @return if the the skeleton is extracted correctly. It may happen
-   *         that the mesh is not sampled dense enough that the Voronoi
-   *         poles cannot be computed correctly.
    */
-  bool extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points,
+  void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points,
                         std::map<vertex_desc, std::vector<int> >& corr)
   {
-    if (is_medially_centered && !is_pole_correct)
-    {
-      return false;
-    }
     run_to_converge();
     convert_to_skeleton(g, points);
 
     corr = skeleton_to_surface;
-    return true;
   }
 
   /// @cond CGAL_DOCUMENT_INTERNAL
@@ -1436,8 +1413,6 @@ private:
       cell_id++;
     }
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(polyhedron);
-
     poles.clear();
     for (size_t i = 0; i < point_to_pole.size(); ++i)
     {
@@ -1465,40 +1440,8 @@ private:
         }
       }
 
-      // only choose the one inside the mesh
-      if (max_neg_i == -1 ||
-          test_inside(cell_dual[max_neg_i]) != CGAL::ON_BOUNDED_SIDE)
-      {
-        std::cout << "incorrect pole\n";
-        is_pole_correct = false;
-//        return;
-      }
-
-      // cannot find a pole inside mesh
-      // just choose a pole along the normal
-//      if (max_neg_i == -1)
-//      {
-//        for (size_t j = 0; j < point_to_pole[i].size(); ++j)
-//        {
-//          int pole_id = point_to_pole[i][j];
-//          Point cell_point = cell_dual[pole_id];
-//          Vector vt = cell_point - surface_point;
-//          Vector n = normals[i];
-
-//          double t = vt * n;
-
-//          // choose the one with maximum distance along the normal
-//          if (t < 0 && t < max_neg_t)
-//          {
-//            max_neg_i = pole_id;
-//            max_neg_t = t;
-//          }
-//        }
-//      }
-
       poles[i] = max_neg_i;
     }
-    is_pole_correct = true;
   }
 
   /// Compute an approximate vertex normal for all vertices.
