@@ -514,12 +514,12 @@ insert_from_left_vertex(const X_monotone_curve_2& cv,
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
   DHalfedge* prev1 = _locate_around_vertex(_vertex(v), cv, ARR_MIN_END);
-  DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
-    prev1->outer_ccb()->face();
-
   CGAL_assertion_msg
     (prev1 != NULL,
      "The inserted curve cannot be located in the arrangement.");
+
+  DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
+    prev1->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's right end has boundary conditions,
   // create it now.
@@ -748,11 +748,11 @@ insert_from_right_vertex(const X_monotone_curve_2& cv,
   // Go over the incident halfedges around v and find the halfedge after
   // which the new curve should be inserted.
   DHalfedge* prev2 = _locate_around_vertex(_vertex(v), cv, ARR_MAX_END);
-  DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
-    prev2->outer_ccb()->face();
-
   CGAL_assertion_msg
     (prev2 != NULL, "The inserted curve cannot be located in the arrangement.");
+
+  DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
+    prev2->outer_ccb()->face();
 
   // If the vertex that corresponds to cv's left end has boundary conditions,
   // create it now.
@@ -1069,13 +1069,13 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // Go over the incident halfedges around v2 and find the halfedge after
     // which the new curve should be inserted.
     DHalfedge* prev2 = _locate_around_vertex(_vertex(v2), cv, ind2);
-    CGAL_assertion_code
-      (DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
-       prev2->outer_ccb()->face());
-
     CGAL_assertion_msg
       (prev2 != NULL,
        "The inserted curve cannot be located in the arrangement.");
+
+    CGAL_assertion_code
+      (DFace* f2 = prev2->is_on_inner_ccb() ? prev2->inner_ccb()->face() :
+       prev2->outer_ccb()->face());
 
     CGAL_assertion_msg
       ((f1 == NULL) || (f1 == f2),
@@ -1108,13 +1108,13 @@ insert_at_vertices(const X_monotone_curve_2& cv,
     // Go over the incident halfedges around v1 and find the halfedge after
     // which the new curve should be inserted.
     DHalfedge* prev1 = _locate_around_vertex(_vertex(v1), cv, ind1);
-    CGAL_assertion_code
-      (DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
-       prev1->outer_ccb()->face());
-
     CGAL_assertion_msg
       (prev1 != NULL,
        "The inserted curve cannot be located in the arrangement.");
+
+    CGAL_assertion_code
+      (DFace* f1 = prev1->is_on_inner_ccb() ? prev1->inner_ccb()->face() :
+       prev1->outer_ccb()->face());
 
     CGAL_assertion_msg
       ((f2 == NULL) || (f2 == f1),
@@ -1283,7 +1283,6 @@ insert_at_vertices(const X_monotone_curve_2& cv,
   // Go over the incident halfedges around v2 and find the halfedge after
   // which the new curve should be inserted.
   DHalfedge* prev2 = _locate_around_vertex(_vertex(v2), cv, ind2);
-
   CGAL_assertion_msg
     (prev2 != NULL, "The inserted curve cannot be located in the arrangement.");
 
