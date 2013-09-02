@@ -10,10 +10,10 @@
 class QAction;
 struct QMetaObject;
 class QMainWindow;
-class Scene_interface;
 class QDockWidget;
 
 #include "Polyhedron_demo_plugin_interface.h"
+#include "Scene_interface.h"
 
 class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface

@@ -14,9 +14,9 @@
 namespace CGAL {
 namespace internal {
 
-/************************************************************************/
-/* Lookup tables
-/************************************************************************/
+/************************************************************************
+ * Lookup tables
+ ************************************************************************/
 // Wrapper around vector
 template<class T>
 class Lookup_table {
@@ -49,17 +49,17 @@ private:
 template<class T>
 class Lookup_table_map {
 public:
-  Lookup_table_map(int n, const T& default) : n(n), default(default) { }
+  Lookup_table_map(int n, const T& default_) : n(n), default_(default_) { }
 
   void put(int i, int j, const T& t) {
     CGAL_assertion(bound_check(i,j));
     
-    if(t == default) {
+    if(t == default_) {
       table.erase(std::make_pair(i,j));
       return;
     }
     // table[std::make_pair(i,j)] = t (to not require def constructor)
-    table.insert(std::make_pair(std::make_pair(i,j), default)).first->second = t;
+    table.insert(std::make_pair(std::make_pair(i,j), default_)).first->second = t;
   }
   const T& get(int i, int j) const {
     CGAL_assertion(bound_check(i,j));
@@ -68,7 +68,7 @@ public:
     if(ij != table.end()) {
       return ij->second;
     }
-    return default;
+    return default_;
   }
 
   int n;
@@ -80,11 +80,11 @@ private:
     return true;
   }
   std::map<std::pair<int,int>, T> table;
-  T default;
+  T default_;
 };
-/************************************************************************/
-/* Is_valid classes (to be used in Weight_calculator)
-/************************************************************************/
+/************************************************************************
+ * Is_valid classes (to be used in Weight_calculator)
+ ************************************************************************/
 // to be used in existing_edges set
 struct Edge_comp {
   bool operator()(const std::pair<int, int>& p0, const std::pair<int, int>& p1) const {
@@ -140,9 +140,9 @@ struct Is_valid_existing_edges_and_degenerate_triangle
   Is_valid_existing_edges is_valid_edges;
 };
 
-/************************************************************************/
-/* Weights
-/************************************************************************/
+/************************************************************************
+ * Weights
+ ************************************************************************/
 
 // Weight calculator class is both responsible from calculating weights, and checking validity of triangle
 template<class Weight_, class IsValid>
@@ -316,9 +316,9 @@ public:
   }
 };
 
-/************************************************************************/
-/* Tracer
-/************************************************************************/
+/************************************************************************
+ * Tracer
+ ************************************************************************/
 template<class OutputIteratorValueType, class OutputIterator>
 struct Tracer_polyline {
   Tracer_polyline(OutputIterator& out) : out(out) 
@@ -355,9 +355,9 @@ struct Tracer_polyline {
   OutputIterator& out;
 };
 
-/************************************************************************/
-/* Triangulate hole with support of 3D Triangulation
-/************************************************************************/
+/************************************************************************
+ * Triangulate hole with support of 3D Triangulation
+ ************************************************************************/
 
 // to support incident_facets(Edge e) function for both dimension 2 and 3
 template<unsigned int Dimension, class Triangulator>
@@ -426,6 +426,15 @@ template<
 >
 class Triangulate_hole_polyline_DT 
 {
+  struct Auto_count {
+    typedef std::pair<typename Kernel::Point_3, int> result_type;
+
+    Auto_count() : count(0)  { }
+    result_type operator()(const typename Kernel::Point_3& p) const
+    { return std::make_pair(p, count++); }
+    mutable int count;
+  };
+
 public:
   typedef Triangulate_hole_polyline_DT                        Self;
   typedef typename WeightCalculator::Weight                   Weight;
@@ -448,14 +457,7 @@ public:
                     Tracer& tracer,
                     const WeightCalculator& WC)
   {
-    struct Auto_count {
-      typedef std::pair<Point_3, int> result_type;
 
-      Auto_count() : count(0)  { }
-      std::pair<Point_3, int> operator()(const Point_3& p) const 
-      { return std::make_pair(p, count++); }
-      mutable int count;
-    };
 
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -464,7 +466,7 @@ public:
     int n = P.size() - 1; // because the first and last point are equal
 
     Triangulation T(boost::make_transform_iterator(P.begin(), Auto_count()),
-                    boost::make_transform_iterator(--P.end(), Auto_count()));
+                    boost::make_transform_iterator(cpp11::prev(P.end()), Auto_count()));
     T.infinite_vertex()->info() = -1;
 
     // Check whether all edges are included in DT, and get v0-vn-1 edge
@@ -611,9 +613,9 @@ private:
   
 };
 
-/************************************************************************/
-/* Triangulate hole by using all search space
-/************************************************************************/
+/************************************************************************
+ * Triangulate hole by using all search space
+ ************************************************************************/
 template<
   class Kernel,
   class Tracer,
@@ -679,9 +681,9 @@ public:
   }
 };
 
-/***********************************************************************************/
-/* Internal entry point for both polyline and Polyhedron_3 triangulation functions
-/***********************************************************************************/
+/***********************************************************************************
+ * Internal entry point for both polyline and Polyhedron_3 triangulation functions
+ ***********************************************************************************/
 template <
   typename InputIterator,
   typename Tracer,
