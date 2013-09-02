@@ -280,6 +280,39 @@ public:
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
+  bool isEmpty() const {
+    return selected_vertices.empty() && selected_edges.empty() && selected_facets.empty();
+  }
+  Bbox bbox() const 
+  {
+    boost::optional<CGAL::Bbox_3> item_bbox;
+
+    for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin(); 
+        v_it != selected_vertices.end(); ++v_it) {
+      *item_bbox = item_bbox ? *item_bbox + (*v_it)->point().bbox() : (*v_it)->point().bbox();
+    }
+
+    for(Selection_set_edge::const_iterator e_it = selected_edges.begin(); 
+        e_it != selected_edges.end(); ++e_it) {
+        CGAL::Bbox_3 e_bbox = (*e_it)->vertex()->point().bbox();
+        e_bbox = e_bbox + (*e_it)->opposite()->vertex()->point().bbox();
+        *item_bbox = item_bbox ? *item_bbox + e_bbox : e_bbox;
+    }
+
+    for(Selection_set_facet::const_iterator f_it = selected_facets.begin(); 
+        f_it != selected_facets.end(); ++f_it) {
+
+        Polyhedron::Halfedge_around_facet_circulator he = (*f_it)->facet_begin(), cend = he;
+        CGAL_For_all(he,cend) {
+          *item_bbox = item_bbox ? *item_bbox + he->vertex()->point().bbox() : he->vertex()->point().bbox();
+        }
+    }
+
+    if(!item_bbox) { return Bbox(); }
+    return Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
+                item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax());
+  }
+
   bool save(const std::string& file_name) const {
     // update id fields before using
     if(selected_vertices.size() > 0) { poly_item->update_vertex_indices();   }
@@ -605,11 +638,6 @@ public:
     // no need to update indices
     poly_item->changed();
     emit itemChanged();
-  }
-
-  bool isEmpty() const {
-    if(poly_item == NULL) { return true; }
-    return Scene_polyhedron_item_decorator::isEmpty();
   }
 
 public slots:
