@@ -887,7 +887,7 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
               << "Model 2 uses " << qtime2 << "  sec" << std::endl;
     std::cout << "total times are:" << std::endl
               << "Model 1 uses " << ptime1/cnt + qtime1 << "  sec" << std::endl
-              << "Model 2 uses " << qtime1/cnt + qtime2 << "  sec" << std::endl;
+              << "Model 2 uses " << ptime2/cnt + qtime2 << "  sec" << std::endl;
   }
   else {  // Only run the benchmark on the outer loop of the arrangement
     Face_const_iterator fit;
