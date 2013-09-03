@@ -226,8 +226,11 @@ Every skeletal point is connected to its correspondent surface points.
 \cgalFigureEnd
 
 \note It could happen that a given skeletal point does not have correspondent
-surface points. That means no surface points have been collapsed onto the 
-skeletal point.
+surface points. Recall the correspondent points for a give point are original
+surface points collapsed onto it during local remeshing. If there are no points
+collapsed onto the given point, or points collapsed onto it do not belong to
+the original surface (they are actually new points generated in the split process in local remeshing), in the end the given point will have no correspondent 
+points.
 
 \subsection Skeletonization Examples
 
