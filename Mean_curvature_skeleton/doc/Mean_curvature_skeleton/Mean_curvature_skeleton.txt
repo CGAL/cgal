@@ -11,9 +11,6 @@ namespace CGAL {
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
 Skeletonization results for the horse model. 
-
-(Model credit: the No. 395 model from mesh segmentation benchmark 
-\cite Chen:2009:ABF)
 \cgalFigureEnd
 
 Skeletons are effective shape abstractions commonly used in reconstruction, 
