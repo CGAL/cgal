@@ -36,12 +36,12 @@ int main() {
   }
   Polyhedron poly_2 = poly_1;
 
-  std::vector<Polyhedron::Facet_handle>  new_and_existing_facets;
+  std::vector<Polyhedron::Facet_handle>  new_facets;
   std::vector<Polyhedron::Vertex_handle> new_vertices;
   CGAL::refine(poly_1, 
     boost::make_transform_iterator(poly_1.facets_begin(), Facet_to_facet_handle()),
     boost::make_transform_iterator(poly_1.facets_end()  , Facet_to_facet_handle()),
-    back_inserter(new_and_existing_facets), back_inserter(new_vertices), 2.0);
+    back_inserter(new_facets), back_inserter(new_vertices), 2.0);
   
   std::ofstream poly_1_off("data/poly_1.off");
   poly_1_off << poly_1;
