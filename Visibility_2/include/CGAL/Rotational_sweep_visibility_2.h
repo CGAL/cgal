@@ -865,97 +865,97 @@ private:
     return (shared.x()-p2.x()<1 && shared.x()-p2.x()>-1 && shared.y()-p2.y()<1 && shared.y()-p2.y()>-1);
   }
 
-//  void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
-//      for (int i = 0; i != polygon.size()-1; i++ ) {
-//          CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
-//      }
-//      //print_vectex(polygon);
-//      CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
-//  }
-
-  void build_arr(std::vector<Point_2>& points, Output_arrangement_2& arr_out) {
-    const Geometry_traits_2* geom_traits = p_arr->geometry_traits();
-    typedef Output_arrangement_2::Vertex_handle Vertex_handle;
-    typedef Output_arrangement_2::Halfedge_handle   Halfedge_handle;
-    typename std::vector<Segment_2>::size_type i = 0;
-
-    Vertex_handle insert_location, new_needle_vertex;
-    //todo insert_location initiation
-    while (i+1 < points.size()) {
-      if ((i+2 < points.size()) &&
-        (Orientation_2(geom_traits,
-                       points[i],
-                       points[i+1],
-                       points[i+2]) == CGAL::COLLINEAR)) {
-
-        std::vector<Point_2> forward_needle;
-        std::vector<Point_2> backward_needle;
-        Point_2 needle_start = points[i];
-        Direction_2 forward_dir(Segment_2(points[i], points[i+1]));
-        forward_needle.push_back(points[i]);
-        forward_needle.push_back(points[i+1]);
-
-        while ((i+2 < points.size()) &&
-              (Orientation_2(geom_traits,
-                             points[i],
-                             points[i+1],
-                             points[i+2]) == CGAL::COLLINEAR)) {
-
-          Direction_2 check_dir(Segment_2(points[i+1], points[i+2]));
-          if (forward_dir == check_dir) {
-            forward_needle.push_back(points[i+2]);
-          }
-          else if (check_dir == -forward_dir) {
-            backward_needle.push_back(points[i+2]);
-          }
-          i++;
-        }
-        std::reverse(backward_needle.begin(), backward_needle.end());
-        std::vector<Point_2> merged_needle;
-
-        // Now merge the two vectors
-        unsigned int itr_fst = 0, itr_snd = 0;
-        while (itr_fst < forward_needle.size() &&
-               itr_snd < backward_needle.size()) {
-
-          if (LessDistanceToPoint_2(geom_traits,
-                                    q,
-                                    forward_needle[itr_fst],
-                                    backward_needle[itr_snd])) {
-
-            merged_needle.push_back(forward_needle[itr_fst]);
-            itr_fst++;
-          }
-          else {
-            merged_needle.push_back(backward_needle[itr_snd]);
-            itr_snd++;
-          }
-        }
-        while (itr_fst < forward_needle.size()) {
-          merged_needle.push_back(forward_needle[itr_fst]);
-          itr_fst++;
-        }
-        while (itr_snd < backward_needle.size()) {
-          merged_needle.push_back(backward_needle[itr_snd]);
-          itr_snd++;
-        }
-        //Todo insert in two directions from insert_location
-        for (unsigned int p = 0 ; p+1 < merged_needle.size() ; p++) {
-          Insert_edge(insert_location, new_needle_vertex, );
-        }
+  void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
+      for (int i = 0; i != polygon.size()-1; i++ ) {
+          CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
       }
-      else {
-        segments.push_back(Segment_2(points[i], points[i+1]));
-      }
-      i++;
-    }
-  /*  std::cout << "SEGMENTS\n";
-    for (unsigned int i = 0 ; i < segments.size() ; i++) {
-      std::cout << segments[i] << std::endl;
-    }
-    std::cout << "SEGMENTS END\n";*/
-
+      //print_vectex(polygon);
+      CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
   }
+
+//  void build_arr(std::vector<Point_2>& points, Output_arrangement_2& arr_out) {
+//    const Geometry_traits_2* geom_traits = p_arr->geometry_traits();
+//    typedef Output_arrangement_2::Vertex_handle Vertex_handle;
+//    typedef Output_arrangement_2::Halfedge_handle   Halfedge_handle;
+//    typename std::vector<Segment_2>::size_type i = 0;
+
+//    Vertex_handle insert_location, new_needle_vertex;
+//    //todo insert_location initiation
+//    while (i+1 < points.size()) {
+//      if ((i+2 < points.size()) &&
+//        (Orientation_2(geom_traits,
+//                       points[i],
+//                       points[i+1],
+//                       points[i+2]) == CGAL::COLLINEAR)) {
+
+//        std::vector<Point_2> forward_needle;
+//        std::vector<Point_2> backward_needle;
+//        Point_2 needle_start = points[i];
+//        Direction_2 forward_dir(Segment_2(points[i], points[i+1]));
+//        forward_needle.push_back(points[i]);
+//        forward_needle.push_back(points[i+1]);
+
+//        while ((i+2 < points.size()) &&
+//              (Orientation_2(geom_traits,
+//                             points[i],
+//                             points[i+1],
+//                             points[i+2]) == CGAL::COLLINEAR)) {
+
+//          Direction_2 check_dir(Segment_2(points[i+1], points[i+2]));
+//          if (forward_dir == check_dir) {
+//            forward_needle.push_back(points[i+2]);
+//          }
+//          else if (check_dir == -forward_dir) {
+//            backward_needle.push_back(points[i+2]);
+//          }
+//          i++;
+//        }
+//        std::reverse(backward_needle.begin(), backward_needle.end());
+//        std::vector<Point_2> merged_needle;
+
+//        // Now merge the two vectors
+//        unsigned int itr_fst = 0, itr_snd = 0;
+//        while (itr_fst < forward_needle.size() &&
+//               itr_snd < backward_needle.size()) {
+
+//          if (LessDistanceToPoint_2(geom_traits,
+//                                    q,
+//                                    forward_needle[itr_fst],
+//                                    backward_needle[itr_snd])) {
+
+//            merged_needle.push_back(forward_needle[itr_fst]);
+//            itr_fst++;
+//          }
+//          else {
+//            merged_needle.push_back(backward_needle[itr_snd]);
+//            itr_snd++;
+//          }
+//        }
+//        while (itr_fst < forward_needle.size()) {
+//          merged_needle.push_back(forward_needle[itr_fst]);
+//          itr_fst++;
+//        }
+//        while (itr_snd < backward_needle.size()) {
+//          merged_needle.push_back(backward_needle[itr_snd]);
+//          itr_snd++;
+//        }
+//        //Todo insert in two directions from insert_location
+//        for (unsigned int p = 0 ; p+1 < merged_needle.size() ; p++) {
+//          Insert_edge(insert_location, new_needle_vertex, );
+//        }
+//      }
+//      else {
+//        segments.push_back(Segment_2(points[i], points[i+1]));
+//      }
+//      i++;
+//    }
+//  /*  std::cout << "SEGMENTS\n";
+//    for (unsigned int i = 0 ; i < segments.size() ; i++) {
+//      std::cout << segments[i] << std::endl;
+//    }
+//    std::cout << "SEGMENTS END\n";*/
+
+//  }
 
   void Insert_edge(Vertex_handle insert_loc,
                    Vertex_handle new_begin,
