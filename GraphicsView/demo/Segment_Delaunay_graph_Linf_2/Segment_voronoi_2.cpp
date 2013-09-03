@@ -305,6 +305,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   int n;
   while(ifs >> n){
+    CGAL_assertion( n > 0 );
     ifs >> first;
     p = first;
     vfirst = vp = svd.insert(p);
@@ -316,7 +317,9 @@ MainWindow::loadPolygonConstraints(QString fileName)
       p = q;
       vp = vq;
     }
-    svd.insert(vp, vfirst);
+    if (vfirst != vp) {
+      svd.insert(vp, vfirst);
+    }
   }
   
   
