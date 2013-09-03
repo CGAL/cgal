@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Xiang Gao and Andrea Tagliasacchi
 
-\section MCFSkelSecMot Background
+\section MCFSkelSecMot Introduction
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
 Skeletonization results for the horse model. 
@@ -24,7 +24,7 @@ surface. The curve skeleton captures the essential topology of the shape at the
 cost of loss of invertibility: With a curve skeleton and a radius function, 
 only an approximate shape approximation can be generated.
 
-\section MCFSkelSecAlgo Algorithm
+\section MCFSkelSecAlgo Algorithm Description
 
 Mean curvature flow (MCF) is a motion that iteratively moves each surface point
 along its anti-normal with a speed proportional to the local average curvature:
@@ -188,7 +188,7 @@ This package provides the skeletonization function through a class object.
 
   - `omega_H` controls the velocity of movement and approximation quality.
 
-  - `omgea_P` controls the smoothness of the medial approximation.
+  - `omega_P` controls the smoothness of the medial approximation.
 
   - `edgelength_TH` controls the length of edges that will be collapsed in local
   remeshing.
