@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
     std::string input_arr_file(argv[1]);
     std::ifstream input(input_arr_file.c_str());
     if (argc == 2) {
-      CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
+      CGAL::simple_benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
                     (simple_visibility, triangular_visibility, qchoice, input);
       return 0;
     }

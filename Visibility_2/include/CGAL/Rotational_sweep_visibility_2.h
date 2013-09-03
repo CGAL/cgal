@@ -27,9 +27,9 @@
 #include <list>
 #include <map>
 #include <utility>
+#include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/tags.h>
-#include <CGAL/enum.h>
 
 namespace CGAL {
 
@@ -39,7 +39,7 @@ class Rotational_sweep_visibility_2 {
 public:
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Input_arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -205,8 +205,9 @@ private:
   bool is_vertex_query;
   bool is_edge_query;
 
-  template <class NT>
-  int quadrant(NT x, NT y) {
+  int quadrant(const Point_2& o, const Point_2& p) {
+    Number_type x = p.x() - o.x();
+    Number_type y = p.y() - o.y();
     if (x>0 && y>=0)
       return 1;
     if (x<=0 && y>0)
@@ -218,15 +219,15 @@ private:
     return 0;
   }
 
-  bool do_intersect(const Point_2& q,
+  bool do_intersect_ray(const Point_2& q,
                     const Point_2& dp,
                     const Point_2& p1,
                     const Point_2& p2) {
     if (CGAL::collinear(q, dp, p1))
-      return (quadrant(p1.x()-q.x(), p1.y()-q.y()) == quadrant(dp.x()-q.x(), dp.y()-q.y()));
+      return quadrant(q, p1) == quadrant(q, dp);
 
     if (CGAL::collinear(q, dp, p2))
-      return (quadrant(p2.x()-q.x(), p2.y()-q.y()) == quadrant(dp.x()-q.x(), dp.y()-q.y()));
+      return quadrant(q, p2) == quadrant(q, dp);
 
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
 
@@ -304,7 +305,7 @@ private:
     do {
       Point_2 p1 = curr->target()->point();
       Point_2 p2 = curr->source()->point();
-      if (q != p1 && q != p2 && do_intersect(q, dp, p1, p2))
+      if (q != p1 && q != p2 && do_intersect_ray(q, dp, p1, p2))
         heap_insert(create_pair(p1, p2));
     } while (++curr != circ);
 
@@ -314,12 +315,12 @@ private:
       do {
         Point_2 p1 = c1->target()->point();
         Point_2 p2 = c1->source()->point();
-        if (q != p1 && q != p2 && do_intersect(q, dp, p1, p2))
+        if (q != p1 && q != p2 && do_intersect_ray(q, dp, p1, p2))
           heap_insert(create_pair(p1, p2));
       } while (++c1 != c2);
     }
     for (int i=0; i!=bbox.size(); i++) {
-      if (do_intersect(q, dp, bbox[i].first, bbox[i].second))
+      if (do_intersect_ray(q, dp, bbox[i].first, bbox[i].second))
         heap_insert(bbox[i]);
     }
 
@@ -662,15 +663,24 @@ private:
   }
 
 
-  bool compare_angle(const Point_2& shared, const Point_2& p2)
+  bool compare_angle(const Point_2& p1, const Point_2& p2)
   {
-    Direction_2 d1(Ray_2(q, shared));
+    Direction_2 d1(Ray_2(q, p1));
     Direction_2 d2(Ray_2(q, p2));
-    if (d1 < d2)
-      return true;
-    if (d1 > d2)
-      return false;
-    return (CGAL::compare_distance_to_point(q, shared, p2) == CGAL::SMALLER);
+    if (d1==d2)
+      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+    else
+      return d1<d2;
+//    int qua1 = quadrant(q, p1);
+//    int qua2 = quadrant(q, p2);
+//    if (qua1 < qua2)
+//      return true;
+//    if (qua1 > qua2)
+//      return false;
+//    if (collinear(q, p1, p2))
+//      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+//    else
+//      return CGAL::right_turn(p1, q, p2);
   }
 
   bool is_good_edge(const Point_2& q,
@@ -855,13 +865,20 @@ private:
     return (shared.x()-p2.x()<1 && shared.x()-p2.x()>-1 && shared.y()-p2.y()<1 && shared.y()-p2.y()>-1);
   }
 
-  void build_arr(const std::vector<Point_2>& polygon, Arrangement_2& arr ) {
+  void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
       for (int i = 0; i != polygon.size()-1; i++ ) {
           CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
       }
       //print_vectex(polygon);
       CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
   }
+
+//  void build_arr(std::vector<Point_2>& polygon, Output_arrangement_2& arr_out) {
+//    const Geometry_traits_2* traits = p_arr->geometry_traits();
+//    CGAL::Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(traits, q, polygon, arr_out);
+//  }
+
+
 
 
   void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
