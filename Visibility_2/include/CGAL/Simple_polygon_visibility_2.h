@@ -442,7 +442,10 @@ private:
       assert(!s.empty());
       Point_2 s_j_prev = s.top();
 
-      if (vertices[i-1] != s_j && CGAL::do_intersect(Segment_2(s_j, s_j_prev), Segment_2(vertices[i-1], vertices[i]))) {
+      if (vertices[i-1] != s_j && CGAL::Visibility_2::Do_intersect_2
+          <Geometry_traits_2, Segment_2, Segment_2>(geom_traits,
+                                                    Segment_2(s_j, s_j_prev), 
+                                                    Segment_2(vertices[i-1], vertices[i]))) {
         upcase = SCANA;
         found = true;
         w = s.top();
@@ -559,7 +562,8 @@ private:
           break;
         }
         if ((query_pt_is_vertex || query_pt_is_on_halfedge)
-                && CGAL::collinear_are_ordered_along_line(query_pt, w, vertices[k+1])) {
+                && CGAL::Visibility_2::Collinear_are_ordered_along_line_2<Geometry_traits_2>
+                                                  (geom_traits, query_pt, w, vertices[k+1])) {
 
           s.push(vertices[k+1]);
           w = vertices[k+1];
