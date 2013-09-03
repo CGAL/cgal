@@ -238,5 +238,5 @@ if [ -f ${OUTPUTFILE} ] ; then
   echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
   mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
 fi
-create_cmake_script 3>&2 > $OUTPUTFILE
+create_cmake_script 3>&1 > $OUTPUTFILE
 echo "created $OUTPUTFILE in $PWD ..."
