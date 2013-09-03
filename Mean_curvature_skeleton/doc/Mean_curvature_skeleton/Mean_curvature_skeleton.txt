@@ -14,15 +14,13 @@ Skeletonization results for the horse model.
 \cgalFigureEnd
 
 Skeletons are effective shape abstractions commonly used in reconstruction, 
-segmentation, shape matching and virtual navigation. The term <i>skeleton</i> is 
-ambiguous as it refers to both medial axis skeletons, which are composed of 2D 
-structures, and curve skeletons, which are composed of 1D structures. 
-
-In this package, we implement the algorithm described in 
-\cite tagliasacchi2012mean, which extracts a curve skeleton from a watertight 
-surface. The curve skeleton captures the essential topology of the shape at the
-cost of loss of invertibility: With a curve skeleton and a radius function, 
-only an approximate shape approximation can be generated.
+segmentation, shape matching and virtual navigation. In this package, we 
+implement the algorithm described in \cite tagliasacchi2012mean, which extracts
+a curve skeleton from a watertight surface mesh. The curve skeleton is a pure 1D
+structure, compared with the medial axis skeleton which consists of 2D surfaces
+and 1D curves. With a lower dimensionality, the curve skeleton still captures 
+the essential topology of the shape: With a curve skeleton and a radius 
+function, a shape approximation can be generated.
 
 \section MCFSkelSecAlgo Algorithm Description
 
