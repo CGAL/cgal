@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 #include <CGAL/assertions.h>
-#include <CGAL/internal/Weights.h>
+#include <CGAL/internal/Hole_filling/Weights.h>
 #include <CGAL/Timer.h>
 #include <CGAL/trace.h>
 

@@ -3,9 +3,9 @@
 
 // Helper functions which combine triangulate, fair, and refine 
 
-#include <CGAL/internal/Fair_Polyhedron_3.h>
-#include <CGAL/internal/Refine_Polyhedron_3.h>
-#include <CGAL/internal/Triangulate_hole_Polyhedron_3.h>
+#include <CGAL/internal/Hole_filling/Fair_Polyhedron_3.h>
+#include <CGAL/internal/Hole_filling/Refine_Polyhedron_3.h>
+#include <CGAL/internal/Hole_filling/Triangulate_hole_Polyhedron_3.h>
 #include <vector>
 #include <boost/tuple/tuple.hpp>
 

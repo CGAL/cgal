@@ -459,8 +459,6 @@ public:
                     Tracer& tracer,
                     const WeightCalculator& WC)
   {
-
-
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
@@ -558,13 +556,13 @@ private:
 
   template<class IncidentFacetCirculator>
   void 
-  triangulate_DT( const Polyline_3& P, 
-                  const Polyline_3& Q, 
-                  LookupTable<Weight>& W, 
-                  LookupTable<int>& lambda, 
-                  Edge e,
-                  const Triangulation& T,
-                  const WeightCalculator& WC)
+  triangulate_DT(const Polyline_3& P, 
+                 const Polyline_3& Q, 
+                 LookupTable<Weight>& W, 
+                 LookupTable<int>& lambda, 
+                 Edge e,
+                 const Triangulation& T,
+                 const WeightCalculator& WC)
   {
     /**********************************************************************
      *  + Default W value is Weight::DEFAULT(), default lambda value is -1.
