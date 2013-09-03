@@ -15,13 +15,12 @@ namespace internal {
 template<class Polyhedron>
 class Refine_Polyhedron_3 {
 // typedefs
-  typedef typename Polyhedron::Traits::Point_3 Point_3;
-  typedef typename Polyhedron::Vertex_handle Vertex_handle;
-  typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
-  typedef typename Polyhedron::Facet_handle Facet_handle;
-  typedef typename Polyhedron::Vertex_iterator Vertex_iterator;
-  typedef typename Polyhedron::Halfedge_iterator Halfedge_iterator;
-  typedef typename Polyhedron::Halfedge_around_facet_circulator  Halfedge_around_facet_circulator;
+  typedef typename Polyhedron::Traits::Point_3   Point_3;
+  typedef typename Polyhedron::Vertex_handle     Vertex_handle;
+  typedef typename Polyhedron::Halfedge_handle   Halfedge_handle;
+  typedef typename Polyhedron::Facet_handle      Facet_handle;
+
+  typedef typename Polyhedron::Halfedge_around_facet_circulator   Halfedge_around_facet_circulator;
   typedef typename Polyhedron::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
 
 private:
@@ -64,11 +63,11 @@ private:
 
   template<class VertexOutputIterator>
   bool subdivide(Polyhedron& poly, 
-    std::vector<Facet_handle>& facets, 
-    std::set<Facet_handle>& interior_map,
-    std::map<Vertex_handle, double>& scale_attribute, 
-    VertexOutputIterator& vertex_out,
-    double alpha)
+                 std::vector<Facet_handle>& facets, 
+                 std::set<Facet_handle>& interior_map,
+                 std::map<Vertex_handle, double>& scale_attribute, 
+                 VertexOutputIterator& vertex_out,
+                 double alpha)
   {
     std::list<Facet_handle> new_facets;
     for(typename std::vector<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
@@ -123,31 +122,30 @@ private:
   {
     int flips = 0;
     std::list<Halfedge_handle> interior_edges;
-    std::set<Halfedge_handle> included_map; // do not use just std::set, the order effects the output (for the same input we want to get same output)
+    std::set<Halfedge_handle> included_map; 
 
-    for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it){
+    for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it) {
       Halfedge_around_facet_circulator  circ = (*it)->facet_begin(), done(circ);
       do {
         Halfedge_handle h = circ;
         Halfedge_handle oh = h->opposite();
         if(interior_map.find(oh->face()) != interior_map.end()){
-          // it's an interior edge
+          // do not remove included_map and use if(h < oh) { interior_edges.push_back(h) } 
+          // which will change the order of edges from run to run
           Halfedge_handle h_rep = (h < oh) ? h : oh;
           if(included_map.insert(h_rep).second) {
             interior_edges.push_back(h_rep);
           }
         }
-        ++circ;
-      } while(circ != done);
+      } while(++circ != done);
     }
 
     CGAL_TRACE_STREAM << "Test " << interior_edges.size() << " edges " << std::endl;
-    for(typename std::list<Halfedge_handle>::iterator it = interior_edges.begin();
-      it != interior_edges.end();
-      ++it){
-        if(relax(poly,*it)){
-          ++flips;
-        }
+    //do not just use std::set (included_map) for iteration, the order effects the output (we like to make it deterministic)
+    for(typename std::list<Halfedge_handle>::iterator it = interior_edges.begin(); it != interior_edges.end();++it) {
+      if(relax(poly,*it)) {
+        ++flips;
+      }
     }
 
     CGAL_TRACE_STREAM << "|flips| = " << flips << std::endl;
@@ -177,11 +175,10 @@ private:
     return sum/deg;
   }
 
-  void calculate_scale_attribute(
-    const std::vector<Facet_handle>& facets, 
-    const std::set<Facet_handle>& interior_map,
-    std::map<Vertex_handle, double>& scale_attribute,
-    bool accept_internal_facets) 
+  void calculate_scale_attribute(const std::vector<Facet_handle>& facets, 
+                                 const std::set<Facet_handle>& interior_map,
+                                 std::map<Vertex_handle, double>& scale_attribute,
+                                 bool accept_internal_facets) 
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
       Halfedge_around_facet_circulator circ((*f_it)->facet_begin()), done(circ);
@@ -195,9 +192,8 @@ private:
     }
   }
 
-  bool contain_internal_facets(
-    const std::vector<Facet_handle>& facets,
-    const std::set<Facet_handle>& interior_map) const
+  bool contain_internal_facets(const std::vector<Facet_handle>& facets,
+                               const std::set<Facet_handle>& interior_map) const
   {
     for(typename std::vector<Facet_handle>::const_iterator f_it = facets.begin(); f_it != facets.end(); ++f_it) {
       Halfedge_around_facet_circulator circ((*f_it)->facet_begin()), done(circ);
@@ -219,14 +215,15 @@ private:
     }
     return false;
   }
+
 public:
   template<class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
   void refine(Polyhedron& poly, 
-    InputIterator facet_begin, 
-    InputIterator facet_end, 
-    FacetOutputIterator& facet_out,
-    VertexOutputIterator& vertex_out,
-    double alpha)
+              InputIterator facet_begin, 
+              InputIterator facet_end, 
+              FacetOutputIterator& facet_out,
+              VertexOutputIterator& vertex_out,
+              double alpha)
   {
     std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<Facet_handle> interior_map(facet_begin, facet_end);
@@ -235,13 +232,8 @@ public:
     bool accept_internal_facets = contain_internal_facets(facets, interior_map);
     calculate_scale_attribute(facets, interior_map, scale_attribute, accept_internal_facets);
 
-    int i = 0;
-    do {
-      if(i == 10){
-        break;
-      }
-      i++;
-
+    CGAL::Timer total_timer; total_timer.start();
+    for(int i = 0; i < 10; ++i) {
       CGAL::Timer timer; timer.start();
       bool is_subdivided = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha);
       CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
@@ -250,10 +242,10 @@ public:
       bool is_relaxed = relax(poly,facets, interior_map);
       CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
       if(!is_relaxed) { break; }
-
-    } while(true);
+    }
 
     facet_out = std::copy(facets.begin(), facets.end(), facet_out);
+    CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;
   }
 };
 
