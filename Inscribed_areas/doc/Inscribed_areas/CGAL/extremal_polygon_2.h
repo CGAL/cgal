@@ -58,7 +58,7 @@ vertices to `o` and returns the past-the-end iterator of this
 sequence. 
 
 
-The function `maximum_area_inscribed_k_gon_2` computes a maximum area 
+Computes a maximum area 
 `k`-gon \f$ P_k\f$ that can be inscribed into a given convex polygon \f$ P\f$. 
 Note that 
 <UL> 

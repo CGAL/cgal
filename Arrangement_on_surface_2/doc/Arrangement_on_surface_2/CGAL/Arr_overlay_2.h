@@ -6,7 +6,7 @@ namespace CGAL {
 the output arrangement `res` to represent the overlaid arrangement.
 
 \details
-The function `overlay` computes the overlay of two input arrangement
+Computes the overlay of two input arrangement
 objects, and returns the overlaid arrangement. All three arrangements
 can be instantiated with different geometric traits classes and different
 <span class="textsc">Dcel</span> classes (encapsulated in the various topology-traits classes).
@@ -42,7 +42,7 @@ represent the overlaid arrangement. The function also constructs a
 consolidated set of curves that induce `res`.
 
 \details
-The function `overlay` computes the overlay of two input arrangement
+Computes the overlay of two input arrangement
 objects, and returns the overlaid arrangement. All three arrangements
 can be instantiated with different geometric traits classes and different
 <span class="textsc">Dcel</span> classes (encapsulated in the various topology-traits classes).

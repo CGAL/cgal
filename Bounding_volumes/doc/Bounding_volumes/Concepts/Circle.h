@@ -22,10 +22,10 @@ Point type.
 typedef unspecified_type Point;
 
 /*!
-Distance type. The function `squared_radius` (see below)
+Distance type. The function `squared_radius()` (see below)
 returns an object of this type.
 
-\note Only needed, if the member function `is_valid`
+\note Only needed, if the member function `is_valid()`
 of `Min_circle_2` is used.
 
 */
@@ -128,7 +128,7 @@ bool  is_degenerate( ) const;
 
 returns `true`, iff `circle` and `circle2` are equal.
 
-\note Only needed, if the member function `is_valid` of `Min_circle_2` is used.
+\note Only needed, if the member function `is_valid()` of `Min_circle_2` is used.
 */
 bool  operator == ( const Circle& circle2) const;
 
@@ -136,7 +136,7 @@ bool  operator == ( const Circle& circle2) const;
 /*!
 returns the center of `circle`.
 
-\note Only needed, if the member function `is_valid` of `Min_circle_2` is used.
+\note Only needed, if the member function `is_valid()` of `Min_circle_2` is used.
 */
 Point  center( ) const;
 
@@ -145,7 +145,7 @@ Point  center( ) const;
 
 returns the squared radius of `circle`.
 
-\note Only needed, if the member function `is_valid` of `Min_circle_2` is used.
+\note Only needed, if the member function `is_valid()` of `Min_circle_2` is used.
 */
 Distance  squared_radius( ) const;
 

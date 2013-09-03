@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Functions
 
-The function `convert_straight_skeleton_2` converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits. 
+Converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits. 
 
 \sa `StraightSkeletonItemsConverter_2` 
 \sa `Straight_skeleton_items_converter_2<SrcSs,TgtSs,NTConverter>` 

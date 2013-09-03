@@ -706,7 +706,7 @@ The functions `insert` and
 `remove` are overwritten to handle weighted points
 and maintain the regular
 property.
-The function `move` is not 
+The function `move()` is not 
 overwritten and thus does not preserve the regular property.
 The vertices of the regular triangulation
 of a set of weighted points \f$ {PW}\f$ correspond only to a subset
@@ -864,7 +864,7 @@ overrides the insertion and removal of a point to take care of the
 information about constrained edges. The class also allows inline
 insertion of a new constraint, given by its two endpoints
 or the removal of a constraint.
-In current version, function `move` is not 
+In current version, function `move()` is not 
 overwritten and thus does not take care of the constraints.
 
 \subsection Triangulation_2TheGeometricTraits_1 The Geometric Traits

@@ -310,9 +310,9 @@ void insert(Arrangement_with_history_2<Traits,Dcel>& arr,
 /*!
 \ingroup PkgArrangement2Funcs
 
-The function `remove_curve` removes a given curve from a given arrangement. 
+Removes a given curve from a given arrangement. 
 
-`remove_curve` removes a curve, specified by its handle `ch`, from 
+The curve is specified by its handle `ch`, from 
 the arrangement `arr`, by deleting all the edges it induces. The 
 function returns the number of deleted edges. 
 

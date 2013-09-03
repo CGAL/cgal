@@ -259,7 +259,7 @@ CGAL::box_self_intersection_d( ptr.begin(), ptr.end(), report_inters);
 
 \endcode
 
-In addition, the callback function `report_inters` needs to be
+In addition, the callback function `report_inters()` needs to be
 changed to work with pointers to boxes. The full example program looks
 as follows:
 
@@ -314,7 +314,7 @@ box at the center and the box from the upper-right corner of the grid.
 We write a more involved callback function object `Report` that
 stores an output iterator and writes the `id`-number of the 
 box in the first argument to the output iterator. We also provide a
-small helper function `report` that simplifies the use of the function
+small helper function `report()` that simplifies the use of the function
 object.
 
 We call the box intersection algorithm twice; once for the default

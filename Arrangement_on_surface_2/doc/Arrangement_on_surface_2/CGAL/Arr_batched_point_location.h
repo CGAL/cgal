@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangement2PointLocation
 
-The function `locate` performs a batched point-location operation on a 
+Performs a batched point-location operation on a 
 given arrangement. It accepts a range of query points, and locates each 
 point in the arrangement. The query results are returned through the output 
 iterator. Each query result is given as a pair of the query point and an

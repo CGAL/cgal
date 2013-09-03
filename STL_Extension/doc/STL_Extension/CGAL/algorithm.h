@@ -10,7 +10,7 @@ namespace CGAL {
 \deprecated This function is deprecated, CGAL::cpp11::copy_n should be
 used instead.
 
-The function `copy_n` copies the first `n` items from `first` to `result`.
+Copies the first `n` items from `first` to `result`.
 
 \returns the value of `result` after inserting the `n` items.
 
@@ -34,7 +34,7 @@ namespace CGAL {
 \ingroup STLAlgos
 
 
-The function `min_max_element` computes the minimal and the
+Computes the minimal and the
 maximal element of a range. It is modeled after the STL functions
 `std::min_element` and `std::max_element`. The advantage of
 `min_max_element` compared to calling both STL functions is that
@@ -63,7 +63,7 @@ first, ForwardIterator last);
 /*!
 \ingroup STLAlgos
 
-The function `min_max_element` computes the minimal and the
+Computes the minimal and the
 maximal element of a range. It is modeled after the STL functions
 `std::min_element` and `std::max_element`. The advantage of
 `min_max_element` compared to calling both STL functions is that
@@ -94,7 +94,7 @@ namespace CGAL {
 \deprecated This function is deprecated. `CGAL::cpp11::prev` should be used
 instead.
 
-The function `predecessor` returns the previous iterator,
+Returns the previous iterator,
 i.e.\ the result of `operator--` on a bidirectional iterator.
 
 \sa `CGAL::successor()`
@@ -115,7 +115,7 @@ namespace CGAL {
 instead.
 
 
-The function `successor` returns the next iterator, i.e.
+Returns the next iterator, i.e.
 the result of `operator++` on a forward iterator.
 
 
@@ -171,7 +171,7 @@ Iterator prev(BidirectionalIterator it);
 /*!
 \ingroup STLAlgos
 
-The function `copy_n` copies `n` items from an
+Copies `n` items from an
 input iterator to an output iterator. Its exact behaviour is defined
 in Paragraph 25.3.1 of the C++ standard draft
 <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3242.pdf">N3242</a>.

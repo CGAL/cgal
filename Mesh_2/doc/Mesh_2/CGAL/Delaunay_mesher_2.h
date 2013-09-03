@@ -137,7 +137,7 @@ Seeds_const_iterator seeds_end () const;
 
 /*!
 \name Meshing methods 
-The function `set_criteria` scans all faces to recalculate the list of 
+The function `set_criteria()` scans all faces to recalculate the list of 
 <I>bad faces</I>, that are faces not conforming to the meshing criteria. 
 This function actually has an optional argument that permits to prevent 
 this recalculation. The filling of the list of bad faces can then be done 
@@ -177,7 +177,7 @@ void set_criteria(Criteria criteria);
 /*!
 Assigns `criteria` to the criteria traits object. If 
 `recalculate_bad_faces` is `false`, the list of bad faces is 
-let empty and the function `set_bad_faces` should be called before 
+let empty and the function `set_bad_faces()` should be called before 
 `refine_mesh`. 
 */ 
 void set_criteria(Criteria criteria, bool 

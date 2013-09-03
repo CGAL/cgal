@@ -396,7 +396,7 @@ The main class is
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures \f$ k_1\f$ and \f$ k_2\f$, and
 the principal directions of curvature \f$ d_1\f$ and \f$ d_2\f$. The member
-function `compute` (or the global function `compute_umbilics`)
+function `compute()` (or the global function `compute_umbilics()`)
 has a parameter to define the size of the neighborhood of the umbilic.
 
 Umbilics are stored in `Umbilic` objects, they come with their

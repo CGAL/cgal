@@ -60,7 +60,7 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `ch_jarvis_march` generates the counterclockwise sequence of extreme 
+Generates the counterclockwise sequence of extreme 
 points from a given set of input points that line between two input points. 
 
 The default traits class `Default_traits` is the kernel in which the 

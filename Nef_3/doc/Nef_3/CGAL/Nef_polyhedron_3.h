@@ -266,7 +266,7 @@ public:
   \image html snc.png
   \image latex snc.png
 
-  The member function `twin` returns the opposite halffacet, `incident_volume` 
+  The member function `twin()` returns the opposite halffacet, `incident_volume` 
   returns the incident volume. A Halffacet cycle either consists of consecutive 
   shalfedges along the border (or a hole) of the halffacet, or of a single 
   shalfloop on the sphere map of a vertex isolated on the halffacet. The 

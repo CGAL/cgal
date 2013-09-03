@@ -3,7 +3,7 @@ namespace CGAL {
   \defgroup PkgArrangement2Read CGAL::read()
   \ingroup PkgArrangement2IO
 
-The function `read` reads a given arrangement from a given input stream
+Reads a given arrangement from a given input stream
 using a specific input format.
 
 \cgalHeading{Requirements}
@@ -40,7 +40,7 @@ std::istream& read (Arrangement_2<Traits,Dcel>& arr,
   \defgroup PkgArrangement2Write CGAL::write()
   \ingroup PkgArrangement2IO
 
-The function `write` writes a given arrangement into a given output stream
+Writes a given arrangement into a given output stream
 using a specific output format.
 
 \cgalHeading{Requirements}

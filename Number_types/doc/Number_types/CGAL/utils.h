@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup nt_util
 
 Not all values of a type need to be valid. 
-The function `is_valid` returns whether the argument is valid. 
+Returns whether the argument is valid. 
 
 \sa `CGAL::Is_valid` 
 
@@ -19,7 +19,7 @@ namespace CGAL {
 /*!
 \ingroup nt_util
 
-The function `max` returns the larger of two values. 
+Returns the larger of two values. 
 
 \sa `CGAL::Max`
 
@@ -34,7 +34,7 @@ namespace CGAL {
 /*!
 \ingroup nt_util
 
-The function `min` returns the smaller of two values. 
+Returns the smaller of two values. 
 
 \sa `CGAL::Min` 
 

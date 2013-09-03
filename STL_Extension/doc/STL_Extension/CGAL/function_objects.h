@@ -119,7 +119,7 @@ namespace CGAL {
 \ingroup projectionobjects
 
 
-The function `compare_to_less` is used to change a functor 
+Changes a functor 
 returning a `Comparison_result` to one which returns a bool. 
 The returned functor will return `true` iff the original one 
 returns `SMALLER`. 

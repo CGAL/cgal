@@ -142,7 +142,7 @@ Requirements of `Pred`:
 </UL> 
 The `operator()` is used for testing the current point in the search operation. 
 If this operator returns `true` and `return_if_succeded` is `true`, the range search will stop. 
-Otherwise the range search operation will continue. Member function `set_result` can be used to 
+Otherwise the range search operation will continue. Member function `set_result()` can be used to 
 store the result of the range search in the function object. The result will be `true` if the last 
 call to the `operator()` of the predicate returned `true`, `false` otherwise. 
 

@@ -5,7 +5,7 @@
 
 The concept `AllFurthestNeighborsTraits_2` defines types and operations 
 needed to compute all furthest neighbors for the vertices of a 
-convex polygon using the function `all_furthest_neighbors_2`. 
+convex polygon using the function `all_furthest_neighbors_2()`. 
 
 \cgalHasModel `CGAL::Cartesian<FieldNumberType>`
 \cgalHasModel `CGAL::Homogeneous<RingNumberType>`

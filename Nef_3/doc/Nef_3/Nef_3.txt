@@ -460,7 +460,7 @@ standard kernel.
 
 \subsection Nef_3ExploringaSphereMap Exploring a Sphere Map
 
-A sphere map is explored by using the function `get_sphere_map`, which 
+A sphere map is explored by using the function `get_sphere_map()`, which 
 returns the sphere map of the specified vertex as a `Nef_polyhedron_S2`.
 `Nef_polyhedron_S2` provides the functionality necessary for the
 exploration.
