@@ -61,12 +61,13 @@ private:
     return false;
   }
 
-  template<class VertexOutputIterator>
+  template<class VertexOutputIterator, class FacetOutputIterator>
   bool subdivide(Polyhedron& poly, 
                  std::vector<Facet_handle>& facets, 
                  std::set<Facet_handle>& interior_map,
                  std::map<Vertex_handle, double>& scale_attribute, 
                  VertexOutputIterator& vertex_out,
+                 FacetOutputIterator& facet_out,
                  double alpha)
   {
     std::list<Facet_handle> new_facets;
@@ -98,6 +99,7 @@ private:
           Facet_handle h2 = h->opposite()->face();
           new_facets.push_back(h1); interior_map.insert(h1);
           new_facets.push_back(h2); interior_map.insert(h2);
+          *facet_out++ = h1; *facet_out++ = h2;
           // relax edges of the  patching mesh 
           Halfedge_handle e_ij = h->prev();
           Halfedge_handle e_ik = h->opposite()->next();
@@ -235,7 +237,7 @@ public:
     CGAL::Timer total_timer; total_timer.start();
     for(int i = 0; i < 10; ++i) {
       CGAL::Timer timer; timer.start();
-      bool is_subdivided = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, alpha);
+      bool is_subdivided = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, facet_out, alpha);
       CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
       if(!is_subdivided) { break; }
 
@@ -244,7 +246,6 @@ public:
       if(!is_relaxed) { break; }
     }
 
-    facet_out = std::copy(facets.begin(), facets.end(), facet_out);
     CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;
   }
 };
@@ -263,23 +264,27 @@ public:
 @param polyhedron surface mesh to be refined
 @param facet_begin first iterator of the range of facets
 @param facet_end past-the-end iterator of the range of facets
-@param facet_out iterator over patch facets including newly created and previously existing facets 
-            (e.g. if no facet is created, range of @a facet_begin, @a facet_end are put into output)
-@param vertex_out iterator over patch vertices without including boundary
+@param facet_out iterator over newly created facets
+@param vertex_out iterator over newly created vertices
 @param density_control_factor factor for density where larger values cause denser refinements
 
 @return pair of @a facet_out and @a vertex_out
 
 @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
  */
-template<class Polyhedron, class InputIterator, class FacetOutputIterator, class VertexOutputIterator>
+template<
+  class Polyhedron,
+  class InputIterator,
+  class FacetOutputIterator,
+  class VertexOutputIterator
+>
 std::pair<FacetOutputIterator, VertexOutputIterator>
 refine(Polyhedron& poly, 
-  InputIterator facet_begin, 
-  InputIterator facet_end,
-  FacetOutputIterator facet_out,
-  VertexOutputIterator vertex_out,
-  double density_control_factor = std::sqrt(2.0))
+       InputIterator facet_begin, 
+       InputIterator facet_end,
+       FacetOutputIterator facet_out,
+       VertexOutputIterator vertex_out,
+       double density_control_factor = std::sqrt(2.0))
 {
   internal::Refine_Polyhedron_3<Polyhedron> refine_functor;
   refine_functor.refine

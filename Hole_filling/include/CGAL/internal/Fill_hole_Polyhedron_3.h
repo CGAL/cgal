@@ -42,7 +42,7 @@ triangulate_and_refine_hole(
 {
   std::vector<typename Polyhedron::Facet_handle> patch;
   triangulate_hole(polyhedron, border_halfedge, std::back_inserter(patch), use_delaunay_triangulation);
-
+  facet_out = std::copy(patch.begin(), patch.end(), facet_out);
   return refine(polyhedron, patch.begin(), patch.end(), facet_out, vertex_out, density_control_factor);
 }
 
