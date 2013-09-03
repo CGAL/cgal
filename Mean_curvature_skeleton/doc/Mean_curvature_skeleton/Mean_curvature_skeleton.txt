@@ -14,7 +14,7 @@ Skeletonization results for the horse model.
 \cgalFigureEnd
 
 Skeletons are effective shape abstractions commonly used in reconstruction, 
-segmentation, shape matching and virtual navigation. The term "skeleton" is 
+segmentation, shape matching and virtual navigation. The term <i>skeleton</i> is 
 ambiguous as it refers to both medial axis skeletons, which are composed of 2D 
 structures, and curve skeletons, which are composed of 1D structures. 
 
