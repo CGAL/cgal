@@ -51,8 +51,8 @@ private:
     const Point_3& r = h->next()->vertex()->point();
     const Point_3& s = h->opposite()->next()->vertex()->point();
     if( (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,r,s)) ||
-      (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) ){
-      
+        (CGAL::ON_UNBOUNDED_SIDE  != CGAL::side_of_bounded_sphere(p,q,s,r)) )
+    {
       if(flippable(h)) {
         poly.flip_edge(h);
         return true;
@@ -64,32 +64,32 @@ private:
   template<class VertexOutputIterator, class FacetOutputIterator>
   bool subdivide(Polyhedron& poly, 
                  std::vector<Facet_handle>& facets, 
-                 std::set<Facet_handle>& interior_map,
+                 const std::set<Halfedge_handle>& border_edges,
                  std::map<Vertex_handle, double>& scale_attribute, 
                  VertexOutputIterator& vertex_out,
                  FacetOutputIterator& facet_out,
                  double alpha)
   {
-    std::list<Facet_handle> new_facets;
-    for(typename std::vector<Facet_handle>::iterator it = facets.begin(); it!= facets.end(); ++it){
-      CGAL_assertion(*it  != Facet_handle());
+    std::size_t facet_size = facets.size();
+    for(std::size_t i = 0; i < facet_size; ++i){
+      CGAL_assertion(facets[i]  != Facet_handle());
 
-      Halfedge_handle hh =  (*it)->halfedge();
-      Vertex_handle vi = (*it)->halfedge()->vertex();
-      Vertex_handle vj = (*it)->halfedge()->next()->vertex();
-      Vertex_handle vk = (*it)->halfedge()->prev()->vertex();
+      Halfedge_handle hh =  facets[i]->halfedge();
+      Vertex_handle vi = facets[i]->halfedge()->vertex();
+      Vertex_handle vj = facets[i]->halfedge()->next()->vertex();
+      Vertex_handle vk = facets[i]->halfedge()->prev()->vertex();
       Point_3 c = CGAL::centroid(vi->point(), vj->point(), vk->point());
       double sac  = (scale_attribute[vi] + scale_attribute[vj] + scale_attribute[vk])/3.0;
       double dist_c_vi = std::sqrt(CGAL::squared_distance(c,vi->point()));
       double dist_c_vj = std::sqrt(CGAL::squared_distance(c,vj->point()));
       double dist_c_vk = std::sqrt(CGAL::squared_distance(c,vk->point()));
       if((alpha * dist_c_vi > sac) &&
-        (alpha * dist_c_vj > sac) &&
-        (alpha * dist_c_vk > sac) &&
-        (alpha * dist_c_vi > scale_attribute[vi]) &&
-        (alpha * dist_c_vj > scale_attribute[vj]) &&
-        (alpha * dist_c_vk > scale_attribute[vk])){
-          Halfedge_handle h = poly.create_center_vertex((*it)->halfedge());
+         (alpha * dist_c_vj > sac) &&
+         (alpha * dist_c_vk > sac) &&
+         (alpha * dist_c_vi > scale_attribute[vi]) &&
+         (alpha * dist_c_vj > scale_attribute[vj]) &&
+         (alpha * dist_c_vk > scale_attribute[vk])){
+          Halfedge_handle h = poly.create_center_vertex(facets[i]->halfedge());
           h->vertex()->point() = c;
           scale_attribute[h->vertex()] = sac;
           *vertex_out++ = h->vertex();
@@ -97,30 +97,30 @@ private:
           // collect 2 new facets for next round 
           Facet_handle h1 = h->next()->opposite()->face();
           Facet_handle h2 = h->opposite()->face();
-          new_facets.push_back(h1); interior_map.insert(h1);
-          new_facets.push_back(h2); interior_map.insert(h2);
-          *facet_out++ = h1; *facet_out++ = h2;
+          facets.push_back(h1); facets.push_back(h2);
+          *facet_out++ = h1;    *facet_out++ = h2;
           // relax edges of the  patching mesh 
           Halfedge_handle e_ij = h->prev();
           Halfedge_handle e_ik = h->opposite()->next();
           Halfedge_handle e_jk = h->next()->opposite()->prev();
 
-          if(interior_map.find(e_ij->opposite()->face()) != interior_map.end()){
+          if(border_edges.find(e_ij) == border_edges.end()){
             relax(poly, e_ij);
           }
-          if(interior_map.find(e_ik->opposite()->face()) != interior_map.end()){
+          if(border_edges.find(e_ik) == border_edges.end()){
             relax(poly, e_ik);
           }
-          if(interior_map.find(e_jk->opposite()->face()) != interior_map.end()){
+          if(border_edges.find(e_jk) == border_edges.end()){
             relax(poly, e_jk);
           }
       }
     }
-    facets.insert(facets.end(), new_facets.begin(), new_facets.end());
-    return ! new_facets.empty();
+    return facets.size() != facet_size;
   }
 
-  bool relax(Polyhedron& poly, const std::vector<Facet_handle>& facets, const std::set<Facet_handle>& interior_map)
+  bool relax(Polyhedron& poly, 
+             const std::vector<Facet_handle>& facets, 
+             const std::set<Halfedge_handle>& border_edges)
   {
     int flips = 0;
     std::list<Halfedge_handle> interior_edges;
@@ -129,12 +129,12 @@ private:
     for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it) {
       Halfedge_around_facet_circulator  circ = (*it)->facet_begin(), done(circ);
       do {
-        Halfedge_handle h = circ;
-        Halfedge_handle oh = h->opposite();
-        if(interior_map.find(oh->face()) != interior_map.end()){
-          // do not remove included_map and use if(h < oh) { interior_edges.push_back(h) } 
+        Halfedge_handle h = circ;        
+        if(border_edges.find(h) == border_edges.end()){
+          // do not remove included_map and use if(&*h < &*oh) { interior_edges.push_back(h) } 
           // which will change the order of edges from run to run
-          Halfedge_handle h_rep = (h < oh) ? h : oh;
+          Halfedge_handle oh = h->opposite();
+          Halfedge_handle h_rep = (&*h < &*oh) ? h : oh;
           if(included_map.insert(h_rep).second) {
             interior_edges.push_back(h_rep);
           }
@@ -154,7 +154,9 @@ private:
     return flips > 0;
   }
 
-  double average_length(Vertex_handle vh, const std::set<Facet_handle>& interior_map, bool accept_internal_facets)
+  double average_length(Vertex_handle vh,
+                        const std::set<Facet_handle>& interior_map, 
+                        bool accept_internal_facets)
   {
     const Point_3& vp = vh->point(); 
     Halfedge_around_vertex_circulator circ(vh->vertex_begin()), done(circ);
@@ -230,18 +232,30 @@ public:
     std::vector<Facet_handle> facets(facet_begin, facet_end); // do not use just std::set, the order effects the output (for the same input we want to get same output)
     std::set<Facet_handle> interior_map(facet_begin, facet_end);
 
-    std::map<Vertex_handle, double> scale_attribute;
+    // store boundary edges - to be used in relax 
+    std::set<Halfedge_handle> border_edges;
+    for(typename std::vector<Facet_handle>::const_iterator it = facets.begin(); it!= facets.end(); ++it){
+      Halfedge_around_facet_circulator  circ = (*it)->facet_begin(), done(circ);
+      do {
+        if(interior_map.find(circ->opposite()->face()) == interior_map.end()) {
+          border_edges.insert(circ);
+        }
+      } while(++circ != done);
+    }
+
+    // check whether there is any need to accept internal facets
     bool accept_internal_facets = contain_internal_facets(facets, interior_map);
+    std::map<Vertex_handle, double> scale_attribute;
     calculate_scale_attribute(facets, interior_map, scale_attribute, accept_internal_facets);
 
     CGAL::Timer total_timer; total_timer.start();
     for(int i = 0; i < 10; ++i) {
       CGAL::Timer timer; timer.start();
-      bool is_subdivided = subdivide(poly, facets, interior_map, scale_attribute, vertex_out, facet_out, alpha);
+      bool is_subdivided = subdivide(poly, facets, border_edges, scale_attribute, vertex_out, facet_out, alpha);
       CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
       if(!is_subdivided) { break; }
 
-      bool is_relaxed = relax(poly,facets, interior_map);
+      bool is_relaxed = relax(poly, facets, border_edges);
       CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
       if(!is_relaxed) { break; }
     }
