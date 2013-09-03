@@ -61,6 +61,9 @@ void print_arrangement_by_face(const Arrangement_2& arr) {
     if (!fit->is_unbounded()) {
       print_simple_face<Face_const_iterator, Ccb_halfedge_const_circulator>(fit);
     }
+    else {
+      std::cout << "unbounded\n";
+    }
   }
 }
 
@@ -120,6 +123,27 @@ typename Geometry_traits_2::FT Compute_squared_distance_2(
 }
 
 template <class Geometry_traits_2, class Type1, class Type2>
+bool Do_intersect_2(const Geometry_traits_2 *geom_traits,
+                    const Type1& c1, 
+                    const Type2& c2) {
+
+  typename Geometry_traits_2::Do_intersect_2 intersect = 
+                              geom_traits->do_intersect_2_object();
+  return intersect(c1, c2);
+}
+
+template <class Geometry_traits_2> 
+bool Collinear_are_ordered_along_line_2(const Geometry_traits_2 *geom_traits,
+                                        const typename Geometry_traits_2::Point_2 &p,
+                                        const typename Geometry_traits_2::Point_2 &q,
+                                        const typename Geometry_traits_2::Point_2 &r) {
+
+  typename Geometry_traits_2::Collinear_are_ordered_along_line_2 coll = 
+                      geom_traits->collinear_are_ordered_along_line_2_object();
+  return coll(p, q, r);
+}
+
+template <class Geometry_traits_2, class Type1, class Type2>
 typename Geometry_traits_2::Point_2 Construct_projected_point_2(
                                 const Geometry_traits_2 *geom_traits,
                                 const Type1& s, 
@@ -157,6 +181,8 @@ void report_while_handling_needles(
   typedef typename Visibility_2::Input_arrangement_2      Input_arrangement_2;
   typedef typename Input_arrangement_2::Point_2           Point_2;
   typedef typename Input_arrangement_2::Geometry_traits_2 Geometry_traits_2;
+  typedef typename Input_arrangement_2::Halfedge_handle   Halfedge_handle;
+  typedef typename Input_arrangement_2::Vertex_handle     Vertex_handle;
   typedef typename Geometry_traits_2::Segment_2           Segment_2;
   typedef typename Geometry_traits_2::Direction_2         Direction_2;
 
@@ -250,14 +276,22 @@ void report_while_handling_needles(
     }
     i++;
   }
-/*  std::cout << "SEGMENTS\n";
-  for (unsigned int i = 0 ; i < segments.size() ; i++) {
-    std::cout << segments[i] << std::endl;
+
+  Halfedge_handle he_handle;
+  Vertex_handle v_trg;
+  Vertex_handle v_fst;
+
+  if (segments.size() >= 1) {
+    he_handle = arr_out.insert_in_face_interior(segments[0], arr_out.unbounded_face());
+    v_fst = he_handle->source();
+    for (unsigned int k = 1 ; k < segments.size()-1 ; k++) {
+      v_trg = he_handle->target();
+      he_handle = arr_out.insert_from_left_vertex(segments[k], v_trg);
+    }
   }
-  std::cout << "SEGMENTS END\n";*/
-  CGAL::insert_non_intersecting_curves(arr_out, 
-                                       segments.begin(), 
-                                       segments.end());
+  
+  v_trg = he_handle->target();
+  arr_out.insert_at_vertices(segments[segments.size()-1], v_trg, v_fst);
 }
 
 } // end namespace Visibility_2
