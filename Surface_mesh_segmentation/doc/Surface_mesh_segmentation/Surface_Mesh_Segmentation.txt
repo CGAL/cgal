@@ -11,24 +11,26 @@ Shape diameter function and segmentation.
 \cgalFigureEnd
 
 \section Surface_mesh_segmentationIntroduction Introduction
-Mesh segmentation is the process of segmenting a mesh into smaller and meaningful sub-meshes. 
-This process might be utilized in applications such as modeling, rigging, texturing, shape-retrieval, and deformation.
+Mesh segmentation is the process of decomposing a mesh into smaller and meaningful sub-meshes.
+This process is used in applications such as modeling, rigging, texturing, shape-retrieval, deformation ...
 
-This package provides an implementation of the algorithm relying on the Shape Diameter Function \cgalCite{Shapira2008Consistent} (SDF).
-Given a triangulated surface mesh (<B>mesh</B> in the following) bounding a 3D closed object,
-the SDF provides an estimate of the local object diameter for each facet of the mesh (the SDF values). 
-The segmentation algorithm first applies soft clustering on facets using associated SDF values. 
-Final segmentation is then obtained via a graph-cut algorithm that considers surface-based features such as dihedral-angle and concavity, together with soft clustering.
+This package provides an implementation of the algorithm relying on the <em>Shape Diameter Function</em> \cgalCite{Shapira2008Consistent} (SDF).
+Given a triangulated surface mesh (simply <em>mesh</em> in the following) bounding a 3D solid object,
+the SDF provides an estimate of the local object diameter for each facet of the mesh (the SDF values).
+The segmentation algorithm first applies a soft clustering on the facets using the associated SDF values.
+The final segmentation is then obtained via a graph-cut algorithm that considers surface-based features such as dihedral-angle and concavity,
+together with the result of the soft clustering.
 We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
-The API gives access to both the computation of the SDF values and the segmentation for a given mesh.
-Owing to this detachment, an alternative implementation of the SDF can be directly plugged into the segmentation algorithm.
-In addition, the SDF values can be used multiple times with different parameters for the segmentation algorithm.
+This package offers the computation of the SDF values and the mesh segmentation result as independant functions.
+This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
+and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
 Since the mesh segmentation problem is ill-posed, we evaluate our implementation by using data set and evaluation software \cgalCite{Chen2009SegmentationBenchmark},
 and provide detailed results at the end of the manual.
 
-\todo add pdf link at the end of the manual (may be together with a pdf which contains screenshots of segmented models etc.)
+\todo either add pdf link at the end of the manual (may be together with a pdf which contains screenshots of segmented models etc.)
+\todo add the source code used for the benchmark
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 The segmentation algorithm consists of three main parts: Shape Diameter Function (SDF), soft clustering, and graph-cut for final segmentation.
