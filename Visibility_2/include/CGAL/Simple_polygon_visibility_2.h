@@ -396,8 +396,7 @@ private:
   }
 
   void left(int& i, Point_2& w, const Point_2& query_pt) {
-    std::cout << "L w = " << w << std::endl;
-    if (i == vertices.size() - 1) {
+    if (i >= vertices.size() - 1) {
       upcase = FINISH;
     }
     else {
@@ -407,31 +406,23 @@ private:
                                                                      vertices[i+1]);
       if (orient == CGAL::LEFT_TURN || orient == CGAL::COLLINEAR) {
         upcase = LEFT;
-        std::cout << "L push " << vertices[i+1] << std::endl;
-        std::cout << "L w updated to " << vertices[i+1] << std::endl;
         s.push(vertices[i+1]);
         w = vertices[i+1];
         i++;
       }
       else {
         Point_2 s_t = s.top();
-        std::cout << "L s_Top = " << s_t << std::endl;
         s.pop();
         Point_2 s_t_prev = s.top();                                                                                            
-        std::cout << "L s_t_prev = " << s_t_prev << std::endl;
-        std::cout << "L v[i] = " << vertices[i] << std::endl;
-        std::cout << "L v[i+1] = " << vertices[i+1] << std::endl;
 
         if (CGAL::Visibility_2::orientation_2(geom_traits,                                                                                                            
                                             s_t_prev, 
                                             vertices[i], 
                                             vertices[i+1]) == CGAL::RIGHT_TURN) {
-          std::cout << "L scana\n";
           upcase = SCANA;
           w = vertices[i];
         }
         else {
-          std::cout << "L right\n";
           upcase = RIGHT;
           w = vertices[i+1];
           i++;
@@ -444,8 +435,8 @@ private:
   void right(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan s_t, s_t-1, ..., s_1, s_0 for the first edge (s_j, s_j-1) such that
     // (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
+
     bool found = false;
-    std::cout << "R w = " << w << std::endl;
     while(!found && upcase == RIGHT) {
       assert(!s.empty());
       Point_2 s_j = s.top();
@@ -541,14 +532,12 @@ private:
   void scana(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
     int k = i;
-    std::cout << "scana w = " << w << std::endl;
     while (k+1 < vertices.size()) {
       CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits,
                                                                        query_pt,
                                                                        w,
                                                                        vertices[k+1]);
       if (qwv_orient == CGAL::LEFT_TURN) {
-        std::cout << "scana left turn\n";
         Ray_2 s2(query_pt, s.top());
         Segment_2 s1(vertices[k], vertices[k+1]);
 
@@ -564,33 +553,24 @@ private:
         }
       }
       else if (qwv_orient == CGAL::COLLINEAR) {
-        std::cout << "scana coll\n";
         if ((!query_pt_is_vertex && !query_pt_is_on_halfedge) 
             || ((query_pt_is_vertex || query_pt_is_on_halfedge)
                 && CGAL::Visibility_2::collinear_are_ordered_along_line_2<Geometry_traits_2>
                                                   (geom_traits, query_pt, w, vertices[k+1]))) {
-
-          if (k+2 >= vertices.size()) {
-            s.push(vertices[k+1]);
-            upcase = FINISH;
-            break;
-          }
-          
+    
           if (CGAL::Visibility_2::orientation_2(geom_traits, query_pt, w, vertices[k+2]) == RIGHT_TURN) {
             if (CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]) == LEFT_TURN) {
               upcase = SCANA;
-              w = vertices[k+2];
               i = k+2;
             }
             else if (CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]) == RIGHT_TURN) {
               upcase = SCANA;
               s.push(vertices[k+1]);
-              w = vertices[k+2];
+              w = vertices[k+1];
               i = k+1;
             }
             else {
               upcase = LEFT;
-              std::cout << "scana push: " << vertices[k+1] << std::endl;
               s.push(vertices[k+1]);
               w = vertices[k+1];
               i = k+1;
@@ -608,7 +588,6 @@ private:
       }
       k++;
     }
-    std::cout << "scana found w = " << w << " i = " << i << std::endl;
   }
 
   void scanc(int& i, Point_2& w, const Point_2& query_pt) {
