@@ -168,9 +168,9 @@ typename Geometry_traits_2::Point_2 construct_projected_point_2(
     return proj_pt;
   }
   else {
-    Number_type d_to_src = Compute_squared_distance_2
+    Number_type d_to_src = compute_squared_distance_2
         <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.source());
-    Number_type d_to_trg = Compute_squared_distance_2
+    Number_type d_to_trg = compute_squared_distance_2
         <Geometry_traits_2, Point_2, Point_2>(geom_traits, proj_pt, s.target());              
     if (d_to_src < d_to_trg) {
       return s.source();
@@ -203,11 +203,11 @@ void report_while_handling_needles(
     points.pop_back();
   }
 
-  while (Collinear(geom_traits, 
+  while (collinear(geom_traits, 
                    points[i], 
                    points[points.size()-1],
                    points[points.size()-2]) 
-      || Collinear(geom_traits, 
+      || collinear(geom_traits, 
                    points[i], 
                    points[i+1], 
                    points[points.size()-1])) {
@@ -237,7 +237,7 @@ void report_while_handling_needles(
     }
 
     if ((i+2 < points.size()) &&
-        (Orientation_2(geom_traits, 
+        (orientation_2(geom_traits, 
                        points[i], 
                        points[i+1], 
                        points[i+2]) == CGAL::COLLINEAR)) {
@@ -250,7 +250,7 @@ void report_while_handling_needles(
       forward_needle.push_back(points[i+1]);
 
       while ((i+2 < points.size()) && 
-            (Orientation_2(geom_traits, 
+            (orientation_2(geom_traits, 
                            points[i], 
                            points[i+1], 
                            points[i+2]) == CGAL::COLLINEAR)) {
@@ -272,7 +272,7 @@ void report_while_handling_needles(
       while (itr_fst < forward_needle.size() && 
              itr_snd < backward_needle.size()) {
 
-        if (LessDistanceToPoint_2(geom_traits, 
+        if (less_distance_to_point_2(geom_traits, 
                                   q, 
                                   forward_needle[itr_fst], 
                                   backward_needle[itr_snd])) {
@@ -298,7 +298,7 @@ void report_while_handling_needles(
         if (v_trg->point() != merged_needle[p]) {
           v_trg = he_handle->source();
         }
-        if (CGAL::Visibility_2::CompareXY_2<Geometry_traits_2>(geom_traits, v_trg->point(), merged_needle[p+1]) == CGAL::SMALLER) {
+        if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, v_trg->point(), merged_needle[p+1]) == CGAL::SMALLER) {
           he_handle = arr_out.insert_from_left_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);  
         }
         else {
@@ -311,7 +311,7 @@ void report_while_handling_needles(
       if (v_trg->point() != points[i]) {
         v_trg = he_handle->source();
       }
-      if (CGAL::Visibility_2::CompareXY_2<Geometry_traits_2>(geom_traits, v_trg->point(), points[i+1]) == CGAL::SMALLER) {
+      if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, v_trg->point(), points[i+1]) == CGAL::SMALLER) {
         he_handle = arr_out.insert_from_left_vertex(Segment_2(points[i], points[i+1]), v_trg);  
       }
       else {

@@ -111,7 +111,7 @@ public:
     Segment_2 curr_min_edge(he->source()->point(), he->target()->point());
     Point_2 curr_vertex = he->target()->point();
     temp_vertices.push_back(curr_vertex);
-    Number_type min_dist = CGAL::Visibility_2::Compute_squared_distance_2
+    Number_type min_dist = CGAL::Visibility_2::compute_squared_distance_2
              <Geometry_traits_2, Point_2, Segment_2>(geom_traits, q, curr_edge);
     int min_dist_index = 0;
     int index = 1;
@@ -121,7 +121,7 @@ public:
     do {
       he = curr;          
       curr_edge = Segment_2(he->source()->point(), he->target()->point());
-      Number_type curr_dist = CGAL::Visibility_2::Compute_squared_distance_2
+      Number_type curr_dist = CGAL::Visibility_2::compute_squared_distance_2
              <Geometry_traits_2, Point_2, Segment_2>(geom_traits, q, curr_edge);
         
       if (curr_dist < min_dist) {
@@ -134,7 +134,7 @@ public:
     } while (++curr != circ);
 
     // Only now compute the intersection point
-    min_intersect_pt = CGAL::Visibility_2::Construct_projected_point_2
+    min_intersect_pt = CGAL::Visibility_2::construct_projected_point_2
          <Geometry_traits_2, Segment_2, Point_2>(geom_traits, curr_min_edge, q);
 
     bool intersect_pt_on_seg_endpoint = false;
@@ -335,7 +335,7 @@ private:
     int i = 0;
     Point_2 w;
     if (query_pt_is_vertex) {
-      if (CGAL::Visibility_2::Orientation_2(geom_traits, 
+      if (CGAL::Visibility_2::orientation_2(geom_traits, 
                                             q,
                                             vertices[1],
                                             vertices[2]) == CGAL::LEFT_TURN) {
@@ -358,7 +358,7 @@ private:
       }
     }
     else {
-      CGAL::Orientation orient = CGAL::Visibility_2::Orientation_2(geom_traits, 
+      CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits, 
                                                                    q, 
                                                                    vertices[0], 
                                                                    vertices[1]);
@@ -401,7 +401,7 @@ private:
       upcase = FINISH;
     }
     else {
-      CGAL::Orientation orient = CGAL::Visibility_2::Orientation_2(geom_traits,
+      CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits,
                                                                      query_pt, 
                                                                      w, 
                                                                      vertices[i+1]);
@@ -422,7 +422,7 @@ private:
         std::cout << "L v[i] = " << vertices[i] << std::endl;
         std::cout << "L v[i+1] = " << vertices[i+1] << std::endl;
 
-        if (CGAL::Visibility_2::Orientation_2(geom_traits,                                                                                                            
+        if (CGAL::Visibility_2::orientation_2(geom_traits,                                                                                                            
                                             s_t_prev, 
                                             vertices[i], 
                                             vertices[i+1]) == CGAL::RIGHT_TURN) {
@@ -453,7 +453,7 @@ private:
       assert(!s.empty());
       Point_2 s_j_prev = s.top();
 
-      if (vertices[i-1] != s_j && CGAL::Visibility_2::Do_intersect_2
+      if (vertices[i-1] != s_j && CGAL::Visibility_2::do_intersect_2
           <Geometry_traits_2, Segment_2, Segment_2>(geom_traits,
                                                     Segment_2(s_j, s_j_prev), 
                                                     Segment_2(vertices[i-1], vertices[i]))) {
@@ -462,14 +462,14 @@ private:
         w = s.top();
       }
       else {
-        CGAL::Orientation orient = CGAL::Visibility_2::Orientation_2(geom_traits, 
+        CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits, 
                                                                      query_pt,
                                                                      w, 
                                                                      s_j_prev);
         if (orient == CGAL::RIGHT_TURN || orient == CGAL::COLLINEAR) {
 
           found = true;
-          CGAL::Orientation qwv_orient = CGAL::Visibility_2::Orientation_2(geom_traits, 
+          CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits, 
                                                                            query_pt,
                                                                            w, 
                                                                            vertices[i+1]);
@@ -481,13 +481,13 @@ private:
             i++;
           }
           else if ((qwv_orient == CGAL::LEFT_TURN || qwv_orient == CGAL::COLLINEAR) &&
-                    (CGAL::Visibility_2::Orientation_2(geom_traits, 
+                    (CGAL::Visibility_2::orientation_2(geom_traits, 
                                                        vertices[i-1],
                                                        vertices[i], 
                                                        vertices[i+1]) == CGAL::RIGHT_TURN)) {
             Segment_2 s1(s_j_prev, s_j);
             Ray_2 s2(query_pt, w);
-            Object_2 result = CGAL::Visibility_2::Intersect_2
+            Object_2 result = CGAL::Visibility_2::intersect_2
                         <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
             if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
               if (i < vertices.size()-1) {
@@ -509,7 +509,7 @@ private:
               }
             }
           }
-          else if (CGAL::Visibility_2::Orientation_2(geom_traits,
+          else if (CGAL::Visibility_2::orientation_2(geom_traits,
                                                      vertices[i-1],
                                                      vertices[i],
                                                      vertices[i+1]) == CGAL::LEFT_TURN) {
@@ -522,7 +522,7 @@ private:
           else {
             Segment_2 s1(s_j_prev, s_j);
             Ray_2 s2(query_pt, w);
-            Object_2 result = CGAL::Visibility_2::Intersect_2
+            Object_2 result = CGAL::Visibility_2::intersect_2
                          <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
             if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
               upcase = LEFT;
@@ -543,7 +543,7 @@ private:
     int k = i;
     std::cout << "scana w = " << w << std::endl;
     while (k+1 < vertices.size()) {
-      CGAL::Orientation qwv_orient = CGAL::Visibility_2::Orientation_2(geom_traits,
+      CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits,
                                                                        query_pt,
                                                                        w,
                                                                        vertices[k+1]);
@@ -552,7 +552,7 @@ private:
         Ray_2 s2(query_pt, s.top());
         Segment_2 s1(vertices[k], vertices[k+1]);
 
-        Object_2 result = CGAL::Visibility_2::Intersect_2
+        Object_2 result = CGAL::Visibility_2::intersect_2
                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
           s.push(*ipoint);
@@ -565,22 +565,44 @@ private:
       }
       else if (qwv_orient == CGAL::COLLINEAR) {
         std::cout << "scana coll\n";
-        if (!query_pt_is_vertex && !query_pt_is_on_halfedge) {
-          std::cout << "scana pushing " << vertices[k+1] << std::endl;
-          s.push(vertices[k+1]);
-          w = vertices[k+1];
-          i = k+1;
-          upcase = LEFT;
-          break;
-        }
-        if ((query_pt_is_vertex || query_pt_is_on_halfedge)
-                && CGAL::Visibility_2::Collinear_are_ordered_along_line_2<Geometry_traits_2>
-                                                  (geom_traits, query_pt, w, vertices[k+1])) {
-          std::cout << "scana here\n";
-          s.push(vertices[k+1]);
-          w = vertices[k+1];
-          i = k+1;
-          upcase = LEFT;
+        if ((!query_pt_is_vertex && !query_pt_is_on_halfedge) 
+            || ((query_pt_is_vertex || query_pt_is_on_halfedge)
+                && CGAL::Visibility_2::collinear_are_ordered_along_line_2<Geometry_traits_2>
+                                                  (geom_traits, query_pt, w, vertices[k+1]))) {
+
+          if (k+2 >= vertices.size()) {
+            s.push(vertices[k+1]);
+            upcase = FINISH;
+            break;
+          }
+          
+          if (CGAL::Visibility_2::orientation_2(geom_traits, query_pt, w, vertices[k+2]) == RIGHT_TURN) {
+            if (CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]) == LEFT_TURN) {
+              upcase = SCANA;
+              w = vertices[k+2];
+              i = k+2;
+            }
+            else if (CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]) == RIGHT_TURN) {
+              upcase = SCANA;
+              s.push(vertices[k+1]);
+              w = vertices[k+2];
+              i = k+1;
+            }
+            else {
+              upcase = LEFT;
+              std::cout << "scana push: " << vertices[k+1] << std::endl;
+              s.push(vertices[k+1]);
+              w = vertices[k+1];
+              i = k+1;
+            }
+          }
+          else {
+            s.push(vertices[k+1]);
+            upcase = LEFT;
+            w = vertices[k+1];
+            i = k+1;
+            break;
+          }
           break;
         }
       }
@@ -596,7 +618,7 @@ private:
     int k = i;
     Point_2 intersection_pt;
     while (k < vertices.size()) {
-      CGAL::Orientation qwv_orient = CGAL::Visibility_2::Orientation_2(geom_traits, query_pt, w, vertices[k]);
+      CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits, query_pt, w, vertices[k]);
       if (qwv_orient == CGAL::RIGHT_TURN || qwv_orient == CGAL::COLLINEAR) {
         break;
       }
