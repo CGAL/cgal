@@ -39,7 +39,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{shapira2008consistent}.
- * It is possible to compute raw SDF values (see \ref Surface_mesh_segmentationRawSDF) and apply post-processing steps (see \ref Surface_mesh_segmentationPostprocessing).
+ * It is possible to compute raw SDF values (without post-processing).
  * For raw SDF values, -1.0 is used to indicate that no SDF value could be computed for a facet.
  *
  * @pre @a polyhedron.is_pure_triangle()
@@ -50,9 +50,9 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * @param[out] sdf_values the SDF value of each facet
  * @param cone_angle opening angle for cone, expressed in radians
  * @param number_of_rays number of rays picked from cone for each facet. In general, increasing the number of rays beyond the default value has little influence upon the resulting segmentation.
- * @param postprocess if true apply post-processing steps in `CGAL::postprocess_sdf_values`, otherwise return raw SDF values.
+ * @param postprocess if `true`, `CGAL::postprocess_sdf_values` is called on raw SDF value computed.
  * @param traits traits object
- * @return minimum and maximum SDF values if @a postprocess is true, otherwise minimum and maximum SDF values before linear normalization
+ * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
  */
 template <class Polyhedron, class SDFPropertyMap, class GeomTraits
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
@@ -76,7 +76,7 @@ compute_sdf_values(const Polyhedron& polyhedron,
  * \ingroup PkgSurfaceSegmentation
  * @brief Function post-processing raw SDF values computed per facet.
  *
- * Post-processing steps applied are:
+ * Post-processing steps applied :
  *   - Facets with -1.0 SDF values are assigned the average SDF value of their edge-adjacent neighbors.
  *     If there is still a facet having -1.0 SDF value, the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper.
  *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1.0) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segment_from_sdf_values`.
