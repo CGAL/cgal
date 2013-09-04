@@ -21,7 +21,7 @@ int main() {
   polyline.push_back(Point_3( 1.,1.,0.));
   // repeating first point (i.e. polyline.push_back(Point_3(1.,0.,0.)) ) is optional
 
-  // Types having (int, int, int) constructor can be used to hold output triangles
+  // any type, having Type(int, int, int) constructor available, can be used to hold output triangles
   std::vector<boost::tuple<int, int, int> > patch_1;
   std::vector<CGAL::Triple<int, int, int> > patch_2;
   std::vector<My_triangle>                  patch_3;
@@ -39,4 +39,16 @@ int main() {
     assert(patch_1[i].get<1>() == patch_2[i].second && patch_2[i].second == patch_3[i].v1);
     assert(patch_1[i].get<2>() == patch_2[i].third  && patch_2[i].third  == patch_3[i].v2);
   }
+
+  // note that no degenerate triangle is constructed in patch
+  std::vector<Point_3> polyline_collinear;
+  polyline_collinear.push_back(Point_3(1.,0.,0.));
+  polyline_collinear.push_back(Point_3(2.,0.,0.));
+  polyline_collinear.push_back(Point_3(3.,0.,0.));
+  polyline_collinear.push_back(Point_3(4.,0.,0.));
+  std::vector<My_triangle> patch_will_be_empty;
+  CGAL::triangulate_hole_polyline(polyline_collinear.begin(), 
+                                  polyline_collinear.end(), 
+                                  back_inserter(patch_will_be_empty));
+  assert(patch_will_be_empty.empty());
 }
