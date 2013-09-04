@@ -64,31 +64,24 @@ the result of several post-processing steps:
 the minimum SDF value is assigned to it (this step is not done in the implementation from the paper).
 The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process done at the beginning of `segment_from_sdf_values()`.
 
-- A bilateral smoothing \cgalCite{Tomasi1998Bilateral}, which is an edge-preserving filtering technique, is applied.
-  The purpose of edge-preserving smoothing is to remove the noise while keeping fast changes on SDF values in-place without smoothing,
-  since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
+- A bilateral smoothing \cgalCite{Tomasi1998Bilateral} is applied.
+  This smoothing technique removes the noise while trying to keep fast changes on SDF values unchanged since they are natural candidates for segment boundaries.
+  The bilateral smoothing has three parameters that are set by default as follows:
   -\f$ w = \lfloor\sqrt{  |F| / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ is the set of facets
   -\f$ \sigma_s = w / 2 \f$, the spatial parameter
-  -\f$ \sigma_{r_i} = \sqrt{1/|w_i| \sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$; \f$ w_i \f$ is the set of neighbor facets of \f$ f_i \f$ gathered using global \f$ w \f$ parameter
+  -\f$ \sigma_{r_i} = \sqrt{1/|w_i| \sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$; \f$ w_i \f$ is the set of neighbor facets of \f$ f_i \f$ collected using \f$ w \f$ in the facet neighbor breadth-first search
 
   Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
   Large range parameters make smoothing closer to Gaussian smoothing and may also lead to over-smoothed SDF values.
 - SDF values are linearly normalized between [0,1].
 
-
-\todo I do not understand what is \f$ w_i \f$
-\todo edge preserving might be confusing
-
-These post-procesing steps can be applied on raw SDF values (or any scalar values associated with facets) using the function `postprocess_sdf_values()`.
+These post-processing steps can be applied on raw SDF values (or any scalar values associated with facets) using the function `postprocess_sdf_values()`.
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
-\todo ref for soft clustering?
 
 Given a number \f$ k \f$  of clusters, the soft clustering is a Gaussian mixture model that consists in fitting \f$ k \f$
-Gaussians to the histogram of the SDF values of the facets. It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
-Among these runs, the best result is used for initializing expectation maximization algorithm for fitting Gaussian mixture models.
-
-\todo what is the best?
+Gaussian distributions to the histogram of the SDF values of the facets. It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
+Among these runs, the best result is used for initializing the expectation-maximization algorithm for fitting the Gaussian distributions.
 
 Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the  final number of segments.
 Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets that have close SDF values
@@ -158,10 +151,10 @@ It assigns to each facet the id of its cluster when set `extract_segments` is se
 
 
 \cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
-Clusters and segments. The number of clusters are set to 5. <b>(a)</b> graph-cut result. <b>(b)</b> post-processed result, each segment is extracted from clusters.
+Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Result of the hard-clustering. <b>(b)</b> Segments are extracted from the computed clusters.
 \cgalFigureEnd
 
-\todo number of clusters are set to 5???
+
 
 \section Surface_mesh_segmentationAPI User Interface
 This package provides four functions:
