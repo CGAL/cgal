@@ -7110,6 +7110,7 @@ public:
   \sa `CGAL::Triangle_2<Kernel>` 
   \sa `::Kernel::HasOnBoundedSide_2`
   \sa `::Kernel::HasOnUnboundedSide_2`
+  \sa `::Kernel::BoundedSide_2`
 
 */
 class HasOnBoundary_2 {
@@ -7153,6 +7154,7 @@ public:
   \sa `CGAL::Tetrahedron_3<Kernel>` 
   \sa `::Kernel::HasOnBoundedSide_3`
   \sa `::Kernel::HasOnUnboundedSide_3`
+  \sa `::Kernel::BoundedSide_3`
 
 */
 class HasOnBoundary_3 {
@@ -7195,6 +7197,7 @@ public:
   \sa `CGAL::Triangle_2<Kernel>` 
   \sa `::Kernel::HasOnUnboundedSide_2`
   \sa `::Kernel::HasOnBoundary_2`
+  \sa `::Kernel::BoundedSide_2`
 
 */
 class HasOnBoundedSide_2 {
@@ -7237,6 +7240,7 @@ public:
   \sa `CGAL::Tetrahedron_3<Kernel>` 
   \sa `::Kernel::HasOnUnboundedSide_3`
   \sa `::Kernel::HasOnBoundary_3`
+  \sa `::Kernel::BoundedSide_3`
 
 */
 class HasOnBoundedSide_3 {
@@ -7445,6 +7449,7 @@ public:
   \sa `CGAL::Triangle_2<Kernel>` 
   \sa `::Kernel::HasOnBoundedSide_2`
   \sa `::Kernel::HasOnBoundary_2`
+  \sa `::Kernel::BoundedSide_2`
 
 */
 class HasOnUnboundedSide_2 {
@@ -7489,6 +7494,7 @@ public:
   \sa `CGAL::Tetrahedron_3<Kernel>` 
   \sa `::Kernel::HasOnBoundedSide_3`
   \sa `::Kernel::HasOnBoundary_3`
+  \sa `::Kernel::BoundedSide_3`
 
 */
 class HasOnUnboundedSide_3 {
