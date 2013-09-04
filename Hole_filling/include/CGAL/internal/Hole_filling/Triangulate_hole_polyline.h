@@ -258,12 +258,14 @@ public:
 
 // For proof of concept. Tested weakly.
 class Weight_total_edge {
+  template<class Weight_, class IsValid>
+  friend struct Weight_calculator;
+
 private:
   double total_length;
 
   Weight_total_edge(double total_length = 0) : total_length(total_length) { }
 
-public:
   template<class Point_3, class LookupTable>
   Weight_total_edge(const std::vector<Point_3>& P, 
                     const std::vector<Point_3>&, 
@@ -291,6 +293,7 @@ public:
     }
   }
 
+public:
   Weight_total_edge operator+(const Weight_total_edge& w2) const 
   {
     CGAL_assertion((*this) != NOT_VALID());
