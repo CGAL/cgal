@@ -141,7 +141,7 @@ On the contrary, assigning smaller values to smoothness parameter results in a h
 (notice that setting \f$ \lambda=0 \f$ provides the result of the soft clustering). See \cgalFigureRef{Segmentation_lambdas} for the effect of different smoothness parameters.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
-Influence of the smoothness parameter lambda over the segmentation(using 10 clusters). Smoothness parameters are set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
+Influence of the smoothness parameter lambda over the segmentation (using 10 clusters). Smoothness parameters are set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
 \cgalFigureEnd
 
 The hard clustering assigns a cluster id to each facet (see \cgalFigureRef{Cluster_vs_segment} (a)).
@@ -203,8 +203,17 @@ We provide performance results of `compute_sdf_values()` and `segment_from_sdf_v
 These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 \todo Update release number as well as first introduced in.
 
-Performance of `compute_sdf_values()` with 25 rays (in seconds):
+Runtime of `compute_sdf_values()` with 25 rays (in seconds) showing the cost of the robustness:
 
+<center>
+Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`)
+---------------------| -------------------------:  | --------------------------------------------------------:
+  5,558              |  1.6                        |  3.9
+ 34,986              | 13.6                        | 26.2
+100,332              | 48.7                        | 88.1
+</center>
+
+<!-- This is only to keep the results, the flag is not documentated
 <center>
 Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) | `EPICK` with `Fast_sdf_calculation_mode = false`
 ---------------------| -------------------------:  | --------------------------------------------------------:  | -----------------------------------------------:
@@ -212,9 +221,9 @@ Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_
  34,986              | 13.6                        | 26.2                                                       |  63.9
 100,332              | 48.7                        | 88.1                                                       | 169.2
 </center>
+-->
 
-
-Performance of `segment_from_sdf_values()` (in milliseconds):
+Runtime of `segment_from_sdf_values()` (in milliseconds):
 
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
@@ -236,7 +245,7 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 100,332              |   437                 | 1,042                 |  2,373                 |   3,947
 </center>
 
-<!--
+<!-- Keep this internal for developers
 \section ImplementationDetails Implementation Details
 \subsection RaySamplingInShapeDiameterFunction Ray Sampling in Shape Diameter Function
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
