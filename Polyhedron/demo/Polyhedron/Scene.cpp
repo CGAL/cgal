@@ -14,7 +14,6 @@
 #include <QApplication>
 #include <QPointer>
 #include <QList>
-#include <boost/optional/optional.hpp>
 
 namespace {
   void CGALglcolor(QColor c)
@@ -41,18 +40,24 @@ Scene::addItem(Scene_item* item)
   // If bbox of new item is inside the scene bbox, then do not emit updated_bbox
   const Bbox& item_bbox = item->bbox();
   bool need_updated_bbox = item->isFinite() && !item->isEmpty();
-  boost::optional<Bbox> scene_bbox;
+  Bbox scene_bbox;
+  bool scene_bbox_initialized = false;
 
   for(QList<Scene_item*>::const_iterator m_it = m_entries.begin();
       m_it != m_entries.end() && need_updated_bbox; ++m_it) 
   {
     if(!(*m_it)->isFinite() || (*m_it)->isEmpty()) { continue; }
 
-    if(scene_bbox) { *scene_bbox = *scene_bbox + (*m_it)->bbox(); }
-    else           { *scene_bbox = (*m_it)->bbox(); }
+    if(scene_bbox_initialized) { 
+      scene_bbox = scene_bbox + (*m_it)->bbox(); 
+    }
+    else {
+      scene_bbox_initialized = true;
+      scene_bbox = (*m_it)->bbox(); 
+    }
 
-    if(*scene_bbox + item_bbox == *scene_bbox) { // inside scene bbox
-      need_updated_bbox = false;                 // early exit
+    if(scene_bbox + item_bbox == scene_bbox) { // inside scene bbox
+      need_updated_bbox = false;               // early exit
     }
   }
 
