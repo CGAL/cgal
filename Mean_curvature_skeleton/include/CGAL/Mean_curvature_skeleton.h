@@ -362,9 +362,6 @@ public:
 
   /// @} Constructor and Destructor
 
-
-  /// @cond CGAL_DOCUMENT_INTERNAL
-
   /// \name Setter and Getter
   /// @{
 
@@ -373,9 +370,19 @@ public:
     omega_H = value;
   }
 
+  double get_omega_H()
+  {
+    return omega_H;
+  }
+
   void set_omega_P(double value)
   {
     omega_P = value;
+  }
+
+  double get_omega_P()
+  {
+    return omega_P;
   }
 
   void set_edgelength_TH(double value)
@@ -383,15 +390,34 @@ public:
     edgelength_TH = value;
   }
 
+  double get_edgelength_TH()
+  {
+    return edgelength_TH;
+  }
+
+  /// \cond SKIP_FROM_MANUAL
+
   void set_alpha_TH(double value)
   {
     alpha_TH = value;
+  }
+
+  double get_alpha_TH()
+  {
+    return alpha_TH;
   }
 
   void set_zero_TH(double value)
   {
     zero_TH = value;
   }
+
+  void get_zero_TH()
+  {
+    return zero_TH;
+  }
+
+  /// \endcond
 
   void set_medially_centered(bool value)
   {
@@ -401,6 +427,11 @@ public:
   void set_iteration_TH(int value)
   {
     iteration_TH = value;
+  }
+
+  int get_iteration_TH()
+  {
+    return iteration_TH;
   }
 
   HalfedgeGraph& get_halfedge_graph()
@@ -481,8 +512,6 @@ public:
   }
 
   /// @} Setter and Getter
-
-  /// \endcond
 
 
   /// \name Public Algorithm API
