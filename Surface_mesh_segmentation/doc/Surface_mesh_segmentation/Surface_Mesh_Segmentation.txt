@@ -199,11 +199,11 @@ The main advantage is to decrease from log to constant the complexity for access
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 <BR>
 \section Performances Performances
-We provide performance results of `compute_sdf_values()` and `segment_from_sdf_values()` for various models with different kernels.
+We provide runtime results for the functions `compute_sdf_values()` and `segment_from_sdf_values()`.
 These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 \todo Update release number as well as first introduced in.
 
-Runtime of `compute_sdf_values()` with 25 rays (in seconds) showing the cost of the robustness:
+Runtime in seconds of `compute_sdf_values()` with 25 rays showing the cost of the robustness:
 
 <center>
 Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`)
@@ -223,19 +223,7 @@ Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_
 </center>
 -->
 
-Runtime of `segment_from_sdf_values()` (in milliseconds):
-
-<center>
-Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
----------------------| -------------------:  | -------------------:  | --------------------:  | -------------------:
-5,558                |    55                 |   215                 |    538                 |     847
-34,986               |   351                 | 1,279                 |  3,551                 |   5,875
-100,332              | 1,112                 | 4,227                 | 11,850                 |  23,408
-</center>
-
-We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow</a> instead of `boost::boykov_kolmogorov_max_flow`.
-It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`.
-Performance of `segment_from_sdf_values()` with this implementation :
+Runtime in milliseconds of `segment_from_sdf_values()`, the graph-cut part is using the library <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow</a> v2.21:
 
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
@@ -244,6 +232,18 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 34,986               |   127                 |   280                 |    659                 |     960
 100,332              |   437                 | 1,042                 |  2,373                 |   3,947
 </center>
+
+<!-- Internal for developers:
+This are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
+case boost::boykov_kolmogorov_max_flow is used instead of MaxFlow
+<center>
+Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
+---------------------| -------------------:  | -------------------:  | --------------------:  | -------------------:
+5,558                |    55                 |   215                 |    538                 |     847
+34,986               |   351                 | 1,279                 |  3,551                 |   5,875
+100,332              | 1,112                 | 4,227                 | 11,850                 |  23,408
+</center>
+-->
 
 <!-- Keep this internal for developers
 \section ImplementationDetails Implementation Details
