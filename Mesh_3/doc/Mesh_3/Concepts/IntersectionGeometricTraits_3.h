@@ -57,10 +57,7 @@ Partial model of `::Kernel::Intersect_3`. Provides the operators:
 
 - `boost::optional< boost::variant< Point_3, Segment_3 > > operator()(Triangle_3 tr, Segment_3 seg)`
 
-which computes as a `CGAL::Object` 
-the intersection between the triangle and the segment. 
-`CGAL::Object` is either a point, a segment or 
-an empty object. 
+which computes the intersection between the triangle and the segment.
 */ 
 typedef unspecified_type Intersect_3; 
 
