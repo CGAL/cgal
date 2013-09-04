@@ -497,9 +497,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
 
     Polyhedron tempMesh = *pMesh;
 
-    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(), Edge_index_map(),
-                                        omega_H, edgelength_TH, area_TH);
-
     QTime time;
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -507,7 +504,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     Graph g;
     std::map<vertex_desc, Point> points;
 
-    temp_mcs->extract_skeleton(g, points);
+    CGAL::extract_skeleton<Sparse_linear_solver>(g, points,
+                     tempMesh, Vertex_index_map(), Edge_index_map(),
+                     omega_H, edgelength_TH, area_TH);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -530,8 +529,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     item->switch_transparency_on_off();
 
     QApplication::restoreOverrideCursor();
-
-    delete temp_mcs;
   }
 }
 
