@@ -7108,6 +7108,8 @@ public:
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `CGAL::Triangle_2<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_2`
+  \sa `::Kernel::HasOnUnboundedSide_2`
 
 */
 class HasOnBoundary_2 {
@@ -7149,6 +7151,8 @@ public:
   \sa `CGAL::Iso_cuboid_3<Kernel>` 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_3`
+  \sa `::Kernel::HasOnUnboundedSide_3`
 
 */
 class HasOnBoundary_3 {
@@ -7189,6 +7193,8 @@ public:
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `CGAL::Triangle_2<Kernel>` 
+  \sa `::Kernel::HasOnUnboundedSide_2`
+  \sa `::Kernel::HasOnBoundary_2`
 
 */
 class HasOnBoundedSide_2 {
@@ -7229,6 +7235,8 @@ public:
   \sa `CGAL::Iso_cuboid_3<Kernel>` 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \sa `::Kernel::HasOnUnboundedSide_3`
+  \sa `::Kernel::HasOnBoundary_3`
 
 */
 class HasOnBoundedSide_3 {
@@ -7435,6 +7443,8 @@ public:
   \sa `CGAL::Circle_2<Kernel>` 
   \sa `CGAL::Iso_rectangle_2<Kernel>` 
   \sa `CGAL::Triangle_2<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_2`
+  \sa `::Kernel::HasOnBoundary_2`
 
 */
 class HasOnUnboundedSide_2 {
@@ -7477,6 +7487,8 @@ public:
   \sa `CGAL::Iso_cuboid_3<Kernel>` 
   \sa `CGAL::Sphere_3<Kernel>` 
   \sa `CGAL::Tetrahedron_3<Kernel>` 
+  \sa `::Kernel::HasOnBoundedSide_3`
+  \sa `::Kernel::HasOnBoundary_3`
 
 */
 class HasOnUnboundedSide_3 {
