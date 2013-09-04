@@ -14,18 +14,18 @@ Shape diameter function and segmentation.
 Mesh segmentation is the process of segmenting a mesh into smaller and meaningful sub-meshes. 
 This process might be utilized in applications such as modeling, rigging, texturing, shape-retrieval, and deformation.
 
-This package provides an implementation of the algorithm relying on the Shape Diameter Function \cite Shapira2008Consistent (SDF).
+This package provides an implementation of the algorithm relying on the Shape Diameter Function \cgalCite{Shapira2008Consistent} (SDF).
 Given a triangulated surface mesh (<B>mesh</B> in the following) bounding a 3D closed object,
 the SDF provides an estimate of the local object diameter for each facet of the mesh (the SDF values). 
 The segmentation algorithm first applies soft clustering on facets using associated SDF values. 
 Final segmentation is then obtained via a graph-cut algorithm that considers surface-based features such as dihedral-angle and concavity, together with soft clustering.
-We refer to a comprehensive survey on mesh segmentation \cite Shamir2008SegmentationSurvey for different segmentation techniques.
+We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
 The API gives access to both the computation of the SDF values and the segmentation for a given mesh.
 Owing to this detachment, an alternative implementation of the SDF can be directly plugged into the segmentation algorithm.
 In addition, the SDF values can be used multiple times with different parameters for the segmentation algorithm.
 
-Since the mesh segmentation problem is ill-posed, we evaluate our implementation by using data set and evaluation software \cite Chen2009SegmentationBenchmark,
+Since the mesh segmentation problem is ill-posed, we evaluate our implementation by using data set and evaluation software \cgalCite{Chen2009SegmentationBenchmark},
 and provide detailed results at the end of the manual.
 
 \todo add pdf link at the end of the manual (may be together with a pdf which contains screenshots of segmented models etc.)
@@ -59,7 +59,7 @@ First, facets with no SDF values are assigned the average SDF value of their edg
 the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper. 
 The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process which takes place at the beginning of `segment_from_sdf_values()`.
  
-Second, bilateral smoothing \cite Tomasi1998Bilateral, which is an edge-preserving filtering technique, is applied.
+Second, bilateral smoothing \cgalCite{Tomasi1998Bilateral}, which is an edge-preserving filtering technique, is applied.
 The purpose of edge-preserving smoothing is to remove the noise while keeping fast changes on SDF values in-place without smoothing,
 since they are natural candidates for segment boundaries. The bilateral smoothing has three parameters that are set by default as follows:
 -\f$ w = \lfloor\sqrt{  F / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ is the number of facets
@@ -73,7 +73,7 @@ Third, SDF values are linearly normalized between [0,1]. These steps can be appl
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 Given a number of clusters, the soft clustering applied on computed SDF values.  
-It is initialized with k-means++ \cite Arthur2007Kmeans, and run multiple times with random seeds.
+It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
 Among these runs, the best result is used for initializing expectation maximization algorithm for fitting Gaussian mixture models.
 
 Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (i.e. disconnected components).
@@ -99,7 +99,7 @@ Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the re
 Note that both versions are available in the API.
 \cgalFigureEnd
 
-The energy function minimized using alpha-expansion graph cut algorithm \cite Boykov2001FastApproximate is defined as follows:
+The energy function minimized using alpha-expansion graph cut algorithm \cgalCite{Boykov2001FastApproximate} is defined as follows:
 
   <table border="0">
   <tr>
@@ -312,7 +312,7 @@ Comparison of biased toward the center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
 
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
-The sampling method is biased toward the center\cite Vogel1979Sampling in order to make the sampling uniform to the angle.
+The sampling method is biased toward the center \cgalCite{Vogel1979Sampling} in order to make the sampling uniform to the angle.
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
 

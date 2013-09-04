@@ -16,7 +16,7 @@ namespace CGAL
  * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the Shape Diameter Function over a surface mesh.
  *
- * This function implements the Shape Diameter Function (SDF) as described in \cite shapira2008consistent.
+ * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{shapira2008consistent}.
  * It is possible to compute raw SDF values (see \ref Surface_mesh_segmentationRawSDF) and apply post-processing steps (see \ref Surface_mesh_segmentationPostprocessing).
  * For raw SDF values, -1.0 is used as an indicator for no SDF value.
  *
