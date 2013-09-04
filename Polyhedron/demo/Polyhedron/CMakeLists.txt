@@ -106,6 +106,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
   qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
+  qt4_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -384,6 +385,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_demo_polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
   target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
+
+  polyhedron_demo_plugin(mesh_segmentation_plugin Polyhedron_demo_mesh_segmentation_plugin ${segmentationUI_FILES})
+  target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item)
   
   polyhedron_demo_plugin(nef_plugin Polyhedron_demo_nef_plugin)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)

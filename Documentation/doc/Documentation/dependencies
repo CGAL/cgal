@@ -76,5 +76,6 @@ Surface_mesh_simplification
 Subdivision_method_3
 Surface_mesh_parameterization
 Surface_reconstruction_points_3
+Surface_mesh_segmentation
 Stream_lines_2
 Stream_support
