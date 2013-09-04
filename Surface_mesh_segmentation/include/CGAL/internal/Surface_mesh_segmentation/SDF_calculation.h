@@ -121,7 +121,7 @@ public:
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
     use_diagonal(use_diagonal) {
-    tree.insert(mesh.facets_begin(), mesh.facets_end());
+    tree.insert(mesh.facets_begin(), mesh.facets_end(), mesh);
     tree.build();
 
     if(build_kd_tree) {
