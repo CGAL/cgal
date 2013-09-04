@@ -720,13 +720,13 @@ private:
         good_edge = false;
         break;
       }
-    if (good_edge)
-      if (!is_good_edge(e->source()->point(), e->target()->point())) {
-        std::cout<<"query point: "<<q<<std::endl;
-        std::cout<<e->curve()<<std::endl;
-      }
-      else
-        vmap[v].push_back(e->source()->point());
+    if (good_edge && e->source()->point()!=q)
+//      if (!is_good_edge(e->source()->point(), e->target()->point())) {
+//        std::cout<<"query point: "<<q<<std::endl;
+//        std::cout<<e->curve()<<std::endl;
+//      }
+//      else
+      vmap[v].push_back(e->source()->point());
 
     good_edge = true;
     for (int i=0; i<bad_edges.size(); i++)
@@ -734,12 +734,12 @@ private:
         good_edge = false;
         break;
       }
-    if (good_edge)
-      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
-        std::cout<<"query point: "<<q<<std::endl;
-        std::cout<<e->next()->curve()<<std::endl;
-      }
-      else
+    if (good_edge && e->next()->target()->point()!=q)
+//      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
+//        std::cout<<"query point: "<<q<<std::endl;
+//        std::cout<<e->next()->curve()<<std::endl;
+//      }
+//      else
         vmap[v].push_back(e->next()->target()->point());
   }
 
