@@ -204,67 +204,24 @@ These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz
 \todo Update release number as well as first introduced in.
 
 Performance of `compute_sdf_values()` with 25 rays (in seconds):
+
 <center>
-<table border="1">
-<tr>
-	<td> Number of triangles </td>
-	<td> `Simple_cartesian<double>` </td>
-	<td> `Exact_predicates_inexact_constructions_kernel` (`EPICK`) </td>
-	<td> `EPICK` with `Fast_sdf_calculation_mode = false` </td>
-</tr>
-<tr>
-	<td> 5,558 </td>
-	<td align='right'> 1.6 </td>
-	<td align='right'> 3.9 </td>
-	<td align='right'> 8.4 </td>
-</tr>
-<tr>
-	<td> 34,986 </td>
-	<td align='right'> 13.6 </td>
-	<td align='right'> 26.2 </td>
-	<td align='right'> 63.9 </td>
-</tr>
-<tr>
-	<td> 100,332 </td>
-	<td align='right'> 48.7 </td>
-	<td align='right'> 88.1 </td>
-	<td align='right'> 169.2 </td>
-</tr>
-</table>
+Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) | `EPICK` with `Fast_sdf_calculation_mode = false`
+---------------------| -------------------------:  | --------------------------------------------------------:  | -----------------------------------------------:
+  5,558              |  1.6                        |  3.9                                                       |   8.4
+ 34,986              | 13.6                        | 26.2                                                       |  63.9
+100,332              | 48.7                        | 88.1                                                       | 169.2
 </center>
+
+
 Performance of `segment_from_sdf_values()` (in milliseconds):
 
 <center>
-<table border="1">
-<tr>
-	<td> Number of triangles </td>
-	<td> Number of levels = 2 </td>
-	<td> Number of levels = 5 </td>
-	<td> Number of levels = 10 </td>
-	<td> Number of levels = 15 </td>
-</tr>
-<tr>
-	<td> 5,558 </td>
-	<td align='right'> 55 </td>
-	<td align='right'> 215 </td>
-	<td align='right'> 538 </td>
-	<td align='right'> 847 </td>
-</tr>
-<tr>
-	<td> 34,986 </td>
-	<td align='right'> 351 </td>
-	<td align='right'> 1,279 </td>
-	<td align='right'> 3,551 </td>
-	<td align='right'> 5,875 </td>
-</tr>
-<tr>
-	<td> 100,332 </td>
-	<td align='right'> 1,112 </td>
-	<td align='right'> 4,227 </td>
-	<td align='right'> 11,850 </td>
-	<td align='right'> 23,408 </td>
-</tr>
-</table>
+Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
+---------------------| -------------------:  | -------------------:  | --------------------:  | -------------------:
+5,558                |    55                 |   215                 |    538                 |     847
+34,986               |   351                 | 1,279                 |  3,551                 |   5,875
+100,332              | 1,112                 | 4,227                 | 11,850                 |  23,408
 </center>
 
 We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">the MaxFlow</a> instead of `boost::boykov_kolmogorov_max_flow`.
@@ -272,37 +229,13 @@ It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`.
 Performance of `segment_from_sdf_values()` with this implementation :
 
 <center>
-<table border="1">
-<tr>
-	<td> Number of triangles </td>
-	<td> Number of levels = 2 </td>
-	<td> Number of levels = 5 </td>
-	<td> Number of levels = 10 </td>
-	<td> Number of levels = 15 </td>
-</tr>
-<tr>
-	<td> 5,558 </td>
-	<td align='right'> 21 </td>
-	<td align='right'> 58 </td>
-	<td align='right'> 116 </td>
-	<td align='right'> 168 </td>
-</tr>
-<tr>
-	<td> 34,986 </td>
-	<td align='right'> 127 </td>
-	<td align='right'> 280 </td>
-	<td align='right'> 659 </td>
-	<td align='right'> 960 </td>
-</tr>
-<tr>
-	<td> 100,332 </td>
-	<td align='right'> 437 </td>
-	<td align='right'> 1,042 </td>
-	<td align='right'> 2,373 </td>
-	<td align='right'> 3,947 </td>
-</tr>
-</table>
+Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
+---------------------| -------------------:  | -------------------:  | --------------------:  | -------------------:
+5,558                |    21                 |    58                 |    116                 |     168
+34,986               |   127                 |   280                 |    659                 |     960
+100,332              |   437                 | 1,042                 |  2,373                 |   3,947
 </center>
+
 <BR>
 \section ImplementationDetails Implementation Details
 \subsection RaySamplingInShapeDiameterFunction Ray Sampling in Shape Diameter Function
