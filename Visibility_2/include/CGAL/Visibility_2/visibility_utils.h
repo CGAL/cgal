@@ -68,7 +68,7 @@ void print_arrangement_by_face(const Arrangement_2& arr) {
 }
 
 template <class Geometry_traits_2> 
-Orientation Orientation_2(const Geometry_traits_2 *geom_traits,
+Orientation orientation_2(const Geometry_traits_2 *geom_traits,
                           const typename Geometry_traits_2::Point_2& p, 
                           const typename Geometry_traits_2::Point_2& q, 
                           const typename Geometry_traits_2::Point_2& r) {
@@ -79,7 +79,7 @@ Orientation Orientation_2(const Geometry_traits_2 *geom_traits,
 }
 
 template <class Geometry_traits_2>
-bool LessDistanceToPoint_2(const Geometry_traits_2 *geom_traits,
+bool less_distance_to_point_2(const Geometry_traits_2 *geom_traits,
                            const typename Geometry_traits_2::Point_2& p, 
                            const typename Geometry_traits_2::Point_2& q, 
                            const typename Geometry_traits_2::Point_2& r) {
@@ -90,7 +90,7 @@ bool LessDistanceToPoint_2(const Geometry_traits_2 *geom_traits,
 }
 
 template <class Geometry_traits_2>
-bool Collinear(const Geometry_traits_2 *geom_traits,
+bool collinear(const Geometry_traits_2 *geom_traits,
                const typename Geometry_traits_2::Point_2& p,
                const typename Geometry_traits_2::Point_2& q,
                const typename Geometry_traits_2::Point_2& r) {
@@ -101,7 +101,7 @@ bool Collinear(const Geometry_traits_2 *geom_traits,
 }
 
 template <class Geometry_traits_2, class _Curve_first, class _Curve_second >
-typename Geometry_traits_2::Object_2 Intersect_2(const Geometry_traits_2 *geom_traits,
+typename Geometry_traits_2::Object_2 intersect_2(const Geometry_traits_2 *geom_traits,
                      const _Curve_first& s1, 
                      const _Curve_second& s2) {
 
@@ -111,8 +111,18 @@ typename Geometry_traits_2::Object_2 Intersect_2(const Geometry_traits_2 *geom_t
   return intersect_fnct(s1, s2);
 }
 
+template <class Geometry_traits_2>
+CGAL::Comparison_result compare_xy_2(const Geometry_traits_2 *geom_traits,
+                                    const typename Geometry_traits_2::Point_2 &p,
+                                    const typename Geometry_traits_2::Point_2 &q) {
+
+  typename Geometry_traits_2::Compare_xy_2 cmp = 
+                            geom_traits->compare_xy_2_object();
+  return cmp(p, q);
+}
+
 template <class Geometry_traits_2, class Type1, class Type2>
-typename Geometry_traits_2::FT Compute_squared_distance_2(  
+typename Geometry_traits_2::FT compute_squared_distance_2(  
                             const Geometry_traits_2 *geom_traits,
                             const Type1& p, 
                             const Type2& seg) {
@@ -123,7 +133,7 @@ typename Geometry_traits_2::FT Compute_squared_distance_2(
 }
 
 template <class Geometry_traits_2, class Type1, class Type2>
-bool Do_intersect_2(const Geometry_traits_2 *geom_traits,
+bool do_intersect_2(const Geometry_traits_2 *geom_traits,
                     const Type1& c1, 
                     const Type2& c2) {
 
@@ -133,7 +143,7 @@ bool Do_intersect_2(const Geometry_traits_2 *geom_traits,
 }
 
 template <class Geometry_traits_2> 
-bool Collinear_are_ordered_along_line_2(const Geometry_traits_2 *geom_traits,
+bool collinear_are_ordered_along_line_2(const Geometry_traits_2 *geom_traits,
                                         const typename Geometry_traits_2::Point_2 &p,
                                         const typename Geometry_traits_2::Point_2 &q,
                                         const typename Geometry_traits_2::Point_2 &r) {
@@ -144,7 +154,7 @@ bool Collinear_are_ordered_along_line_2(const Geometry_traits_2 *geom_traits,
 }
 
 template <class Geometry_traits_2, class Type1, class Type2>
-typename Geometry_traits_2::Point_2 Construct_projected_point_2(
+typename Geometry_traits_2::Point_2 construct_projected_point_2(
                                 const Geometry_traits_2 *geom_traits,
                                 const Type1& s, 
                                 const Type2& p) {
@@ -187,6 +197,7 @@ void report_while_handling_needles(
   typedef typename Geometry_traits_2::Direction_2         Direction_2;
 
   typename std::vector<Segment_2>::size_type i = 0;
+  typename std::vector<Segment_2>::size_type start_idx;
 
   if (points[0] == points[points.size()-1]) {
     points.pop_back();
@@ -206,16 +217,31 @@ void report_while_handling_needles(
   }
 
   points.push_back(points[i]);
+  start_idx = i;
 
-  std::vector<Segment_2> segments;
+  Halfedge_handle he_handle;
+  Vertex_handle v_trg;
+  Vertex_handle v_fst;
 
   while (i+1 < points.size()) {
+    if (i == start_idx) {
+      he_handle = arr_out.insert_in_face_interior(Segment_2(points[i], points[i+1]), arr_out.unbounded_face());
+      v_trg = he_handle->target();
+      if (v_trg->point() != points[i+1]) {
+        v_fst = he_handle->target();
+      }
+      else {
+        v_fst = he_handle->source();
+      }
+      i++;
+    }
+
     if ((i+2 < points.size()) &&
         (Orientation_2(geom_traits, 
                        points[i], 
                        points[i+1], 
                        points[i+2]) == CGAL::COLLINEAR)) {
-      
+
       std::vector<Point_2> forward_needle;
       std::vector<Point_2> backward_needle;          
       Point_2 needle_start = points[i];
@@ -267,31 +293,40 @@ void report_while_handling_needles(
         merged_needle.push_back(backward_needle[itr_snd]);
         itr_snd++;
       }
+
       for (unsigned int p = 0 ; p+1 < merged_needle.size() ; p++) {
-        segments.push_back(Segment_2(merged_needle[p], merged_needle[p+1]));
+        if (v_trg->point() != merged_needle[p]) {
+          v_trg = he_handle->source();
+        }
+        if (CGAL::Visibility_2::CompareXY_2<Geometry_traits_2>(geom_traits, v_trg->point(), merged_needle[p+1]) == CGAL::SMALLER) {
+          he_handle = arr_out.insert_from_left_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);  
+        }
+        else {
+          he_handle = arr_out.insert_from_right_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);   
+        }
+        v_trg = he_handle->target();
       }
     }
     else {
-      segments.push_back(Segment_2(points[i], points[i+1]));
+      if (v_trg->point() != points[i]) {
+        v_trg = he_handle->source();
+      }
+      if (CGAL::Visibility_2::CompareXY_2<Geometry_traits_2>(geom_traits, v_trg->point(), points[i+1]) == CGAL::SMALLER) {
+        he_handle = arr_out.insert_from_left_vertex(Segment_2(points[i], points[i+1]), v_trg);  
+      }
+      else {
+        he_handle = arr_out.insert_from_right_vertex(Segment_2(points[i], points[i+1]), v_trg);   
+      }
+      v_trg = he_handle->target();
     }
     i++;
-  }
 
-  Halfedge_handle he_handle;
-  Vertex_handle v_trg;
-  Vertex_handle v_fst;
-
-  if (segments.size() >= 1) {
-    he_handle = arr_out.insert_in_face_interior(segments[0], arr_out.unbounded_face());
-    v_fst = he_handle->source();
-    for (unsigned int k = 1 ; k < segments.size()-1 ; k++) {
+    if (i+2 == points.size()) {
       v_trg = he_handle->target();
-      he_handle = arr_out.insert_from_left_vertex(segments[k], v_trg);
+      arr_out.insert_at_vertices(Segment_2(points[points.size()-2], points[points.size()-1]), v_trg, v_fst);
+      break;
     }
   }
-  
-  v_trg = he_handle->target();
-  arr_out.insert_at_vertices(segments[segments.size()-1], v_trg, v_fst);
 }
 
 } // end namespace Visibility_2
