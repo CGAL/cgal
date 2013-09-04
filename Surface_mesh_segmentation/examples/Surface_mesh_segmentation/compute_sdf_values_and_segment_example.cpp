@@ -11,14 +11,14 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-int main(int argc, char **argv)
+int main()
 {
     // create and read Polyhedron
     Polyhedron mesh;
     std::ifstream input("data/cactus.off");
     if ( !input || !(input >> mesh) || mesh.empty() ) {
         std::cerr << "Not a valid off file." << std::endl;
-        return 1;
+        return EXIT_FAILURE;
     }
 
     // create a property-map for segment-ids

@@ -11,7 +11,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
-int main(int argc, char **argv)
+int main()
 {
     // create and read Polyhedron
     Polyhedron mesh;
