@@ -18,7 +18,7 @@ int main()
     std::ifstream input("data/cactus.off");
     if ( !input || !(input >> mesh) || mesh.empty() ) {
       std::cerr << "Not a valid off file." << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
     // create a property-map for SDF values
@@ -40,7 +40,7 @@ int main()
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
-    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
+    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
         // ids are between [0, number_of_segments -1]
         std::cout << segment_property_map[facet_it] << std::endl;
