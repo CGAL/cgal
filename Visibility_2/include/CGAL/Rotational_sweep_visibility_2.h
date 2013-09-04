@@ -25,11 +25,14 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <set>
 #include <map>
 #include <utility>
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/tags.h>
+#include <CGAL/bounding_box.h>
+#include <CGAL/enum.h>
 
 namespace CGAL {
 
@@ -85,7 +88,7 @@ public:
       source = e->source()->point();
       target = e->target()->point();
     }
-    visibility_region_impl(e->face(), q, source, target);
+    visibility_region_impl(e->face(), q, e);
 
     //Decide which inside of the visibility butterfly is needed.
     int source_i, target_i ;
@@ -159,7 +162,7 @@ public:
     is_vertex_query = false;
     is_edge_query = false;
 
-    visibility_region_impl(f, q, q, q);
+    visibility_region_impl(f, q, f->outer_ccb());
     build_arr(polygon, out_arr);
 
     conditional_regularize(out_arr, Regularization_tag());
@@ -206,16 +209,28 @@ private:
   bool is_edge_query;
 
   int quadrant(const Point_2& o, const Point_2& p) {
-    Number_type x = p.x() - o.x();
-    Number_type y = p.y() - o.y();
-    if (x>0 && y>=0)
+    typename K::Compare_x_2 compare_x;
+    typename K::Compare_y_2 compare_y;
+    Comparison_result x = compare_x(p, o);
+    Comparison_result y = compare_y(p, o);
+
+    if (x==LARGER && y!=SMALLER)
       return 1;
-    if (x<=0 && y>0)
+    if (x!=LARGER && y==LARGER)
       return 2;
-    if (x<0 && y<=0)
+    if (x==SMALLER && y!=LARGER)
       return 3;
-    if (x>=0 && y<0)
+    if (x!=SMALLER && y==SMALLER)
       return 4;
+
+//    if (x>0 && y>=0)
+//      return 1;
+//    if (x<=0 && y>0)
+//      return 2;
+//    if (x<0 && y<=0)
+//      return 3;
+//    if (x>=0 && y<0)
+//      return 4;
     return 0;
   }
 
@@ -275,7 +290,7 @@ private:
   }
 
 
-  void visibility_region_impl(const Face_const_handle f, const Point_2& q, const Point_2& a, const Point_2& b) {
+  void visibility_region_impl(const Face_const_handle f, const Point_2& q, const Halfedge_const_handle e) {
     vs.clear();
     polygon.clear();
     heap.clear();
@@ -283,7 +298,7 @@ private:
     edx.clear();
 
     std::vector<Pair> bbox;
-    input_face(f, q, a, b, bbox);
+    input_face(f, q, e, bbox);
 
     //initiation of vision ray
 
@@ -665,28 +680,25 @@ private:
 
   bool compare_angle(const Point_2& p1, const Point_2& p2)
   {
-    Direction_2 d1(Ray_2(q, p1));
-    Direction_2 d2(Ray_2(q, p2));
-    if (d1==d2)
-      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
-    else
-      return d1<d2;
-//    int qua1 = quadrant(q, p1);
-//    int qua2 = quadrant(q, p2);
-//    if (qua1 < qua2)
-//      return true;
-//    if (qua1 > qua2)
-//      return false;
-//    if (collinear(q, p1, p2))
+//    Direction_2 d1(Ray_2(q, p1));
+//    Direction_2 d2(Ray_2(q, p2));
+//    if (d1==d2)
 //      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
 //    else
-//      return CGAL::right_turn(p1, q, p2);
+//      return d1<d2;
+    int qua1 = quadrant(q, p1);
+    int qua2 = quadrant(q, p2);
+    if (qua1 < qua2)
+      return true;
+    if (qua1 > qua2)
+      return false;
+    if (collinear(q, p1, p2))
+      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+    else
+      return CGAL::right_turn(p1, q, p2);
   }
 
-  bool is_good_edge(const Point_2& q,
-                    const Point_2& a,
-                    const Point_2& b,
-                    const Point_2& v1,
+  bool is_good_edge(const Point_2& v1,
                     const Point_2& v2) {
     if (v1==q || v2==q)
       return false;
@@ -696,19 +708,39 @@ private:
         return false;
     return true;
   }
-  void input_neighbor( const Point_2& q,
-                       const Point_2& a,
-                       const Point_2& b,
-                       const Point_2& v,
-                       const Point_2* nei) {
-    if (v == q)
-      return;
+  void input_neighbor( const std::vector<Halfedge_const_handle>& bad_edges,
+                       const Halfedge_const_handle e) {
+    Point_2 v = e->target()->point();
+    if (v==q) return;
     if (!vmap.count(v))
       vs.push_back(v);
-    for (int i=0; i<2; i++) {
-      if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
-        vmap[v].push_back(nei[i]);
-    }
+    bool good_edge(true);
+    for (int i=0; i<bad_edges.size(); i++)
+      if (e==bad_edges[i]) {
+        good_edge = false;
+        break;
+      }
+    if (good_edge && e->source()->point()!=q)
+//      if (!is_good_edge(e->source()->point(), e->target()->point())) {
+//        std::cout<<"query point: "<<q<<std::endl;
+//        std::cout<<e->curve()<<std::endl;
+//      }
+//      else
+      vmap[v].push_back(e->source()->point());
+
+    good_edge = true;
+    for (int i=0; i<bad_edges.size(); i++)
+      if (e->next()==bad_edges[i]) {
+        good_edge = false;
+        break;
+      }
+    if (good_edge && e->next()->target()->point()!=q)
+//      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
+//        std::cout<<"query point: "<<q<<std::endl;
+//        std::cout<<e->next()->curve()<<std::endl;
+//      }
+//      else
+        vmap[v].push_back(e->next()->target()->point());
   }
 
 //    if (vmap.count(v)) {
@@ -730,19 +762,26 @@ private:
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
                    const Point_2& q,
-                   const Point_2& a,
-                   const Point_2& b,
+                   const Halfedge_const_handle e,
                    std::vector<Pair>& bbox)
   {
-    //debug
+    std::vector<Halfedge_const_handle> bad_edges;
+    if (is_vertex_query) {
+      bad_edges.push_back(e);
+      bad_edges.push_back(e->next());
+    }
+    else {
+      if (is_edge_query)
+        bad_edges.push_back(e);
+    }
 
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
       assert(curr->face() == fh);
-      Point_2 v = curr->target()->point();
-      Point_2 nei[] = {curr->source()->point(), curr->next()->target()->point()};
-      input_neighbor(q, a, b, v, nei);
+//      Point_2 v = curr->target()->point();
+      input_neighbor(bad_edges, curr);
+//      input_neighbor(v, curr->next()->target()->point(), bad_edges, curr->next());
     } while (++curr != circ);
 
     typename Arrangement_2::Hole_const_iterator hi;
@@ -750,30 +789,42 @@ private:
       Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
       do {
         assert(curr->face() == fh);
-        Point_2 v = curr->target()->point();
-        Point_2 nei[] = {curr->source()->point(), curr->next()->target()->point()};
-        input_neighbor(q, a, b, v, nei);
+//        Point_2 v = curr->target()->point();
+        input_neighbor(bad_edges, curr);
+//        input_neighbor(v, curr->next()->target()->point(), bad_edges, curr->next());
       } while (++curr != circ);
     }
 
-    if (q != a) {
-      Number_type xmin, xmax, ymin, ymax;
-      Point_2 q1 = vs.front();
-      xmax = xmin = q1.x();
-      ymin = ymax = q1.y();
+
+    if (is_vertex_query || is_edge_query) {
+//      Number_type xmin, xmax, ymin, ymax;
+//      Point_2 q1 = vs.front();
+//      xmax = xmin = q1.x();
+//      ymin = ymax = q1.y();
+//      vs.push_back(q);
+//      for (typename Pvec::iterator it= vs.begin(); it!=vs.end(); it++) {
+//        Point_2 q1 = *it;
+//        if (q1.x() < xmin)    xmin = q1.x();
+//        if (q1.x() > xmax)    xmax = q1.x();
+//        if (q1.y() < ymin)    ymin = q1.y();
+//        if (q1.y() > ymax)    ymax = q1.y();
+//      }
+//      vs.pop_back();
+//      xmin -= 10;
+//      xmax += 10;
+//      ymin -= 10;
+//      ymax += 10;
+
       vs.push_back(q);
-      for (typename Pvec::iterator it= vs.begin(); it!=vs.end(); it++) {
-        Point_2 q1 = *it;
-        if (q1.x() < xmin)    xmin = q1.x();
-        if (q1.x() > xmax)    xmax = q1.x();
-        if (q1.y() < ymin)    ymin = q1.y();
-        if (q1.y() > ymax)    ymax = q1.y();
-      }
+      typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(vs.begin(), vs.end());
       vs.pop_back();
-      xmin -= 10;
-      xmax += 10;
-      ymin -= 10;
-      ymax += 10;
+      Number_type xmin, xmax, ymin, ymax;
+      typename K::Compute_x_2 computex;
+      typename K::Compute_y_2 computey;
+      xmin = computex(bb.min())-1;
+      ymin = computey(bb.min())-1;
+      xmax = computex(bb.max())+1;
+      ymax = computey(bb.max())+1;
       Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
                         Point_2(xmax, ymax), Point_2(xmin, ymax)};
       for (int i=0; i<4; i++) {
@@ -873,99 +924,15 @@ private:
       CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
   }
 
-//  void build_arr(std::vector<Point_2>& points, Output_arrangement_2& arr_out) {
-//    const Geometry_traits_2* geom_traits = p_arr->geometry_traits();
-//    typedef Output_arrangement_2::Vertex_handle Vertex_handle;
-//    typedef Output_arrangement_2::Halfedge_handle   Halfedge_handle;
-//    typename std::vector<Segment_2>::size_type i = 0;
+//  void Insert_edge(Vertex_handle insert_loc,
+//                   Vertex_handle new_begin,
+//                   const Point_2& end1,
+//                   const Point_2& end2,
+//                   const Point_2& needle_end,
+//                   Output_arrangement_2& arr_out) {
 
-//    Vertex_handle insert_location, new_needle_vertex;
-//    //todo insert_location initiation
-//    while (i+1 < points.size()) {
-//      if ((i+2 < points.size()) &&
-//        (Orientation_2(geom_traits,
-//                       points[i],
-//                       points[i+1],
-//                       points[i+2]) == CGAL::COLLINEAR)) {
-
-//        std::vector<Point_2> forward_needle;
-//        std::vector<Point_2> backward_needle;
-//        Point_2 needle_start = points[i];
-//        Direction_2 forward_dir(Segment_2(points[i], points[i+1]));
-//        forward_needle.push_back(points[i]);
-//        forward_needle.push_back(points[i+1]);
-
-//        while ((i+2 < points.size()) &&
-//              (Orientation_2(geom_traits,
-//                             points[i],
-//                             points[i+1],
-//                             points[i+2]) == CGAL::COLLINEAR)) {
-
-//          Direction_2 check_dir(Segment_2(points[i+1], points[i+2]));
-//          if (forward_dir == check_dir) {
-//            forward_needle.push_back(points[i+2]);
-//          }
-//          else if (check_dir == -forward_dir) {
-//            backward_needle.push_back(points[i+2]);
-//          }
-//          i++;
-//        }
-//        std::reverse(backward_needle.begin(), backward_needle.end());
-//        std::vector<Point_2> merged_needle;
-
-//        // Now merge the two vectors
-//        unsigned int itr_fst = 0, itr_snd = 0;
-//        while (itr_fst < forward_needle.size() &&
-//               itr_snd < backward_needle.size()) {
-
-//          if (LessDistanceToPoint_2(geom_traits,
-//                                    q,
-//                                    forward_needle[itr_fst],
-//                                    backward_needle[itr_snd])) {
-
-//            merged_needle.push_back(forward_needle[itr_fst]);
-//            itr_fst++;
-//          }
-//          else {
-//            merged_needle.push_back(backward_needle[itr_snd]);
-//            itr_snd++;
-//          }
-//        }
-//        while (itr_fst < forward_needle.size()) {
-//          merged_needle.push_back(forward_needle[itr_fst]);
-//          itr_fst++;
-//        }
-//        while (itr_snd < backward_needle.size()) {
-//          merged_needle.push_back(backward_needle[itr_snd]);
-//          itr_snd++;
-//        }
-//        //Todo insert in two directions from insert_location
-//        for (unsigned int p = 0 ; p+1 < merged_needle.size() ; p++) {
-//          Insert_edge(insert_location, new_needle_vertex, );
-//        }
-//      }
-//      else {
-//        segments.push_back(Segment_2(points[i], points[i+1]));
-//      }
-//      i++;
-//    }
-//  /*  std::cout << "SEGMENTS\n";
-//    for (unsigned int i = 0 ; i < segments.size() ; i++) {
-//      std::cout << segments[i] << std::endl;
-//    }
-//    std::cout << "SEGMENTS END\n";*/
 
 //  }
-
-  void Insert_edge(Vertex_handle insert_loc,
-                   Vertex_handle new_begin,
-                   const Point_2& end1,
-                   const Point_2& end2,
-                   const Point_2& needle_end,
-                   Output_arrangement_2& arr_out) {
-
-
-  }
 
 
   void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
