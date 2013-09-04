@@ -56,6 +56,7 @@ void test2(){
     exit(44);
   } catch(...) {}
 #endif
+  assert(CGAL::sqrt(NT(4))==2);
   assert(CGAL::sqrt(NT(.25))*2-1==0);
   assert(CGAL::is_zero(c));
   assert(!CGAL::is_zero(a));
