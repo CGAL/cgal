@@ -18,7 +18,7 @@ namespace CGAL
  *
  * This function implements the Shape Diameter Function (SDF) as described in \cgalCite{shapira2008consistent}.
  * It is possible to compute raw SDF values (see \ref Surface_mesh_segmentationRawSDF) and apply post-processing steps (see \ref Surface_mesh_segmentationPostprocessing).
- * For raw SDF values, -1.0 is used as an indicator for no SDF value.
+ * For raw SDF values, -1.0 is used to indicate that no SDF value could be computed for a facet.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @tparam Fast_sdf_calculation_mode regardless of `GeomTraits`, use inexact predicates while traversing AABB tree nodes.
