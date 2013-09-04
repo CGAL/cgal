@@ -38,11 +38,10 @@ typedef unspecified_type Triangle_3;
 
 /*!
 Function object that detects an intersection between a 3D segment and a 3D triangle. 
-Provides the operators: 
+Partial model of `::Kernel::DoIntersect_3`. Provides the operators: 
+- `bool operator()(Segment_3 seg, Triangle_3 tr)`
 
-`bool operator()(Segment_3 seg, Triangle_3 tr)` 
-
-`bool operator()(Triangle_3 tr, Segment_3 seg)` 
+- `bool operator()(Triangle_3 tr, Segment_3 seg)`
 
 which return `true`, iff the triangle and the segment 
 have a non empty intersection. 
@@ -52,11 +51,11 @@ typedef unspecified_type Do_intersect_3;
 /*!
 Function object that constructs the intersection 
 between a 3D segment and a 3D triangle. 
-Provides the operators: 
+Partial model of `::Kernel::Intersect_3`. Provides the operators: 
 
-`CGAL::Object operator()(Segment_3 seg, Triangle_3 tr)` 
+- `CGAL::Object operator()(Segment_3 seg, Triangle_3 tr)`
 
-`CGAL::Object operator()(Triangle_3 tr, Segment_3 seg)` 
+- `CGAL::Object operator()(Triangle_3 tr, Segment_3 seg)`
 
 which computes as a `CGAL::Object` 
 the intersection between the triangle and the segment. 
