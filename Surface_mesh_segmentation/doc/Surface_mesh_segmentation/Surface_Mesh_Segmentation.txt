@@ -82,11 +82,15 @@ The main reason for not assigning 0 to facets with no SDF values is that it can 
 These post-procesing steps can be applied on raw SDF values (or any scalar values associated with facets) using the function `postprocess_sdf_values()`.
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
-Given a number of clusters, the soft clustering applied on computed SDF values.  
-It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
+\todo ref for soft clustering?
+
+Given a number \f$ k \f$  of clusters, the soft clustering is a Gaussian mixture model that consists in fitting \f$ k \f$
+Gaussians to the histogram of the SDF values of the facets. It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
 Among these runs, the best result is used for initializing expectation maximization algorithm for fitting Gaussian mixture models.
 
-Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (i.e. disconnected components).
+\todo what is the best?
+
+Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the  final number of segments.
 Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets that have close SDF values
 without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh
 with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
@@ -95,19 +99,13 @@ with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
 Influence of the number of clusters over the segmentation. The number of clusters are set to 4, 3, and 2 respectively.
 \cgalFigureEnd
 
-The output of this step is a matrix that contains probability values for each facet to belong to each cluster.
-These probability values are used as input to the graph-cut step described next. 
+The output of this procedure is a matrix that contains probability values for each facet to belong to each cluster.
+These probability values are used as input by the hard clustering.
 
-\subsection Surface_mesh_segmentationGraphCut Graph-Cut
-The hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
-This energy function combines the aforementioned probability matrix and geometric surface features.
-The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a). 
-Also for each segment, a set of connected facets in the same cluster \cgalFigureRef{Cluster_vs_segment} (b) can be extracted.
+\subsection Surface_mesh_segmentationGraphCut Hard clustering
 
-\cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
-Clusters and segments. The number of clusters are set to 5. <b>(a)</b> graph-cut result. <b>(b)</b> post-processed result, each segment is extracted from clusters.
-Note that both versions are available in the API.
-\cgalFigureEnd
+The hard clustering yields the final segmentation of the input mesh and results from minimizing an energy function.
+combining the aforementioned probability matrix and geometric surface features.
 
 The energy function minimized using alpha-expansion graph cut algorithm \cgalCite{Boykov2001FastApproximate} is defined as follows:
 
@@ -132,7 +130,7 @@ where:
   - \f$N\f$ is the set of pairs of neighbor facets,
   - \f$x_f\f$ is the cluster assigned to facet \f$f\f$,
   - \f$P(f|x_p)\f$ is the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$,
-  - \f$\theta(f,g)\f$ is the dihedral angle between neighbor facets \f$f\f$, and \f$g\f$,
+  - \f$\theta(f,g)\f$ is the dihedral angle between neighbor facets \f$f\f$ and \f$g\f$:
 	 concave angles and convex angles are weighted by 1 and 0.1 respectively,
   - \f$\epsilon\f$ is the minimal probability threshold,
   - \f$\lambda \in [0,1]\f$ is a smoothness parameter.
@@ -142,16 +140,28 @@ where:
 
 The first term of the energy function provides the contribution of the soft clustering probabilities.
 The second term of the energy function is a geometric criteria that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
-The smoothness parameter makes this geometric criteria more or less prevalent. 
+The smoothness parameter makes this geometric criteria more or less prevalent.
 
 Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets that are placed under different clusters is less expensive than separating them and creating boundaries.
-On the contrary, assigning smaller values to smoothness parameter results in a high number of segments, by getting closer to the result of soft clustering
-(notice that setting the smoothness parameter to zero returns the result of the soft clustering). The effect of different smoothness parameters is depicted on \cgalFigureRef{Segmentation_lambdas}.
+On the contrary, assigning smaller values to smoothness parameter results in a high number of segments, by getting closer to the result of the soft clustering
+(notice that setting \f$ \lambda=0 \f$ provides the result of the soft clustering). See \cgalFigureRef{Segmentation_lambdas} for the effect of different smoothness parameters.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
 Influence of the smoothness parameter lambda over the segmentation(using 10 clusters). Smoothness parameters are set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
 \cgalFigureEnd
+
+The hard clustering assigns a cluster id to each facet (see \cgalFigureRef{Cluster_vs_segment} (a)).
+A segment consists in a set of connected facets in the same cluster (see \cgalFigureRef{Cluster_vs_segment} (b)).
+By default the function `segment_from_sdf_values()` assigns to each facet the id of its segment.
+It assigns to each facet the id of its cluster when set `extract_segments` is set to `false`.
+
+
+\cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
+Clusters and segments. The number of clusters are set to 5. <b>(a)</b> graph-cut result. <b>(b)</b> post-processed result, each segment is extracted from clusters.
+\cgalFigureEnd
+
+\todo number of clusters are set to 5???
 
 \section Surface_mesh_segmentationAPI API
 This package provides three functions:
