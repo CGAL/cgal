@@ -204,7 +204,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
     internal_sdf_map);
 
   compute_sdf_values<Fast_sdf_calculation_mode, Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
-  (polyhedron, sdf_property_map, cone_angle, number_of_rays, traits);
+  (polyhedron, sdf_property_map, cone_angle, number_of_rays, true, traits);
   return segment_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
          (polyhedron, sdf_property_map, segment_ids, number_of_levels, smoothing_lambda,
           extract_segments, traits);
