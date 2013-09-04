@@ -35,21 +35,21 @@ The segmentation algorithm consists of three main parts: Shape Diameter Function
 
 \subsection Surface_mesh_segmentationShapeDiameterFunction Shape Diameter Function
 The Shape Diameter Function provides a connection between the mesh and its volume.
-More specifically, the SDF is a scalar-valued function defined on facets of the mesh which measures the corresponding local object diameter.
+More specifically, the SDF is a scalar-valued function defined on facets of the mesh that measures the corresponding local object diameter.
 The SDF is used to distinguish between thin and thick parts by adding a local notion of thickness to the facets.
-In addition, the SDF is pose-invariant, which means that SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes}).
+In addition, the SDF is pose-invariant: SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes}).
 
 \cgalFigureBegin{Segmentation_pose_changes,pose_changes_sdf_low_3.png}
 Influence of pose changes over SDF values and the segmentation.
 \cgalFigureEnd
 \subsubsection Surface_mesh_segmentationRawSDF Computation of Raw SDF Values
 The SDF over a mesh is computed by processing each facet one by one. For a given facet, the SDF value computation begins with sampling
-several rays from a cone which is constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
+several rays from a cone constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
 These rays are casted based on inward-normal direction to the other side of the mesh. 
-Rays which form obtuse angle with inward-normal of intersected facets are rejected.
+Each ray forming an obtuse angle with the inward-normal of intersected facets is rejected.
 Using lenghts of accepted rays, which intuitively correspond to a local volume sampling,
 the SDF value is calculated by first applying outlier removal and then taking average of lengths (see \ref RaySamplingInShapeDiameterFunction for details).
-Note that only facets which have no accepted rays, get no SDF values.
+Note that only facets having no accepted rays get no SDF values.
 SDF values at this point can be considered as raw results, and are accessible through `compute_sdf_values()` in the API.  
 
 \subsubsection Surface_mesh_segmentationPostprocessing Postprocessing on Raw SDF Values
@@ -57,7 +57,7 @@ After having calculated the raw SDF value for each facet, several post-processin
 
 First, facets with no SDF values are assigned the average SDF value of their edge-adjacent neighbors. If there is still a facet having no SDF value, 
 the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper. 
-The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process which takes place at the beginning of `segment_from_sdf_values()`.
+The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process done at the beginning of `segment_from_sdf_values()`.
  
 Second, bilateral smoothing \cgalCite{Tomasi1998Bilateral}, which is an edge-preserving filtering technique, is applied.
 The purpose of edge-preserving smoothing is to remove the noise while keeping fast changes on SDF values in-place without smoothing,
@@ -67,7 +67,7 @@ since they are natural candidates for segment boundaries. The bilateral smoothin
 -\f$ \sigma_{r_i} = \sqrt{1/|w_i|\sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$, where \f$ w_i \f$ is the set of neighbor facets of \f$ f_i \f$ gathered using global \f$ w \f$ parameter
 
 Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
-Large range parameters make smoothing closer to Gaussian smoothing which may also lead to over-smoothed SDF values.
+Large range parameters make smoothing closer to Gaussian smoothing and may also lead to over-smoothed SDF values.
 
 Third, SDF values are linearly normalized between [0,1]. These steps can be applied on raw SDF values (or any scalar values associated with facets) using `postprocess_sdf_values()`.
 
@@ -77,7 +77,7 @@ It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple t
 Among these runs, the best result is used for initializing expectation maximization algorithm for fitting Gaussian mixture models.
 
 Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the number of segments (i.e. disconnected components).
-Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets which have close SDF values
+Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets that have close SDF values
 without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh
 with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
 
@@ -92,10 +92,10 @@ These probability values are used as input to the graph-cut step described next.
 The hard clustering, which yields the final segmentation of the mesh, is obtained by minimizing an energy function.
 This energy function combines the aforementioned probability matrix and geometric surface features.
 The algorithm assigns a cluster to each facet \cgalFigureRef{Cluster_vs_segment} (a). 
-Also, each segment, a set of facets which are connected and in the same cluster \cgalFigureRef{Cluster_vs_segment} (b), can be extracted.
+Also for each segment, a set of connected facets in the same cluster \cgalFigureRef{Cluster_vs_segment} (b) can be extracted.
 
 \cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}
-Clusters and segments. The number of clusters are set to 5. <b>(a)</b> is the result of the graph-cut. <b>(b)</b> is the post-processed result where each segment is extracted from clusters. 
+Clusters and segments. The number of clusters are set to 5. <b>(a)</b> graph-cut result. <b>(b)</b> post-processed result, each segment is extracted from clusters.
 Note that both versions are available in the API.
 \cgalFigureEnd
 
@@ -135,7 +135,7 @@ The second term of the energy function is a geometric criteria that is larger wh
 The smoothness parameter makes this geometric criteria more or less prevalent. 
 
 Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
-In other words, merging facets which are placed under different clusters is less expensive than separating them and creating boundaries.
+In other words, merging facets that are placed under different clusters is less expensive than separating them and creating boundaries.
 On the contrary, assigning smaller values to smoothness parameter results in a high number of segments, by getting closer to the result of soft clustering
 (notice that setting the smoothness parameter to zero returns the result of the soft clustering). The effect of different smoothness parameters is depicted on \cgalFigureRef{Segmentation_lambdas}.
 
@@ -162,7 +162,7 @@ The function `compute_sdf_values()` provides an implementation of the SDF comput
 Accessing either raw SDF values (see \ref Surface_mesh_segmentationRawSDF) or post-processed SDF values (see \ref Surface_mesh_segmentationPostprocessing) is possible through the same function.
 
 The output is the minimum and the maximum SDF values for raw SDF values or the minimum and the maximum SDF values before applying the linear normalization for post-procced SDF values, and a property map (see the chapter \ref Chapter_CGAL_and_Boost_Property_Maps
-"CGAL and Boost Property Maps") which associates to each facet its SDF value.
+"CGAL and Boost Property Maps") associating to each facet its SDF value.
 
 The function `postprocess_sdf_values()` post-process SDF values for a given mesh and associated values per facet (see \ref Surface_mesh_segmentationPostprocessing). 
 It is useful when using an alternative implementation of the SDF, or adding a custom post-processing step by computing raw SDF values with `compute_sdf_values()`.
@@ -180,7 +180,7 @@ This function allows to use the same SDF values several times but with different
 Accessing either segmented or clustered result is possible through the same function (see \cgalFigureRef{Cluster_vs_segment}). 
 Clustered result is useful for applications such as detecting analogical parts in a given mesh, and segmented result is just post-processed form of clustered result.
 
-The output is the number of segments (or number of clusters) and a property map which associates to each facet its segment-id (an integer between 0 and number-of-segments - 1) or cluster-id (between 0 and number-of-clusters-1).
+The output is the number of segments (or number of clusters) and a property map associating to each facet its segment-id (an integer between 0 and number-of-segments - 1) or cluster-id (between 0 and number-of-clusters-1).
 
 \subsubsection Example_2 Example: Segmentation from SDF Values
 \cgalExample{Surface_mesh_segmentation/segment_from_sdf_values_example.cpp}
@@ -314,7 +314,7 @@ Comparison of biased toward the center and uniform disk sampling for 64 rays.
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
 The sampling method is biased toward the center \cgalCite{Vogel1979Sampling} in order to make the sampling uniform to the angle.
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
-A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths which fall into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
+A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths falling into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
 
 \section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker during the 2012 season
