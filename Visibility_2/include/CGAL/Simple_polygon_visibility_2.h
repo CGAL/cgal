@@ -559,11 +559,12 @@ private:
                                                   (geom_traits, query_pt, w, vertices[k+1]))) {
     
           if (CGAL::Visibility_2::orientation_2(geom_traits, query_pt, w, vertices[k+2]) == RIGHT_TURN) {
-            if (CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]) == LEFT_TURN) {
+            CGAL::Orientation v_orient = CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]);
+            if (v_orient == LEFT_TURN) {
               upcase = SCANA;
               i = k+2;
             }
-            else if (CGAL::Visibility_2::orientation_2(geom_traits, vertices[k], vertices[k+1], vertices[k+2]) == RIGHT_TURN) {
+            else if (v_orient == RIGHT_TURN) {
               upcase = SCANA;
               s.push(vertices[k+1]);
               w = vertices[k+1];
