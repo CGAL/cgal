@@ -50,7 +50,7 @@ several rays are sampled in a cone constructed using the centroid of the facet a
 Each ray in casted into a segment, its endpoints being the apex of the cone and the first mesh facet intersection point.
 If a ray forms an obtuse angle with the inward-normal of the first intersected facet, it is not accepted.
 Using the lenghts of the accepted casted rays, which intuitively correspond to a local volume sampling,
-the raw SDF value is calculated by first applying an outlier removal procedure and then taking average of the lengths (see \ref RaySamplingInShapeDiameterFunction for details).
+the raw SDF value is calculated by first applying an outlier removal procedure and then taking average of the lengths.
 Note that only facets having no accepted rays get no raw SDF values
 (the package also accepts input meshes with holes, in such a case rays that can not be casted to a segment are also not accepted).
 
@@ -224,7 +224,7 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 100,332              | 1,112                 | 4,227                 | 11,850                 |  23,408
 </center>
 
-We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">the MaxFlow</a> instead of `boost::boykov_kolmogorov_max_flow`.
+We also provide an implementation that uses <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow</a> instead of `boost::boykov_kolmogorov_max_flow`.
 It can be activated by defining `CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE`.
 Performance of `segment_from_sdf_values()` with this implementation :
 
@@ -236,7 +236,7 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 100,332              |   437                 | 1,042                 |  2,373                 |   3,947
 </center>
 
-<BR>
+<!--
 \section ImplementationDetails Implementation Details
 \subsection RaySamplingInShapeDiameterFunction Ray Sampling in Shape Diameter Function
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
@@ -244,9 +244,10 @@ Comparison of biased toward the center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
 
 We generate a set of sample points in a unit circle and place it tangent to the cone, with it supporting plane orthogonal to the cone direction. Then we combine each point with the apex of the cone to construct the rays.
-The sampling method is biased toward the center \cgalCite{Vogel1979Sampling} in order to make the sampling uniform to the angle.
+The sampling method is biased toward the center \cite Vogel1979Sampling in order to make the sampling uniform to the angle.
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths falling into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
+-->
 
 \section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
