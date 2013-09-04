@@ -83,7 +83,8 @@ a local remeshing is performed at each iteration to collapse too short edges
 and split badly triangles while maintaing the manifold property. Specifically we
 split triangles at the edge \f$ e \f$ if its opposite angle is greater than 
 \f$ 110^{\circ} \f$. To determine the split point, we heuristically project the
-opposite vertex onto \f$ e \f$. The following figure shows the split process.
+opposite vertex onto \f$ e \f$. \cgalFigureRef{Flowchart} shows the split 
+process.
 
 \cgalFigureBegin{Split, split.png}
 \cgalFigureEnd
