@@ -32,8 +32,8 @@ public:
 /// @{
 
 /*!
-Numerical type. Must be a model of 
-`FieldWithSqrt` and constructible from a `double`. 
+Numerical type. Must be a model of `::FieldNumberType` and
+`::FieldWithSqrt`, and constructible from a `double`. 
 */ 
 typedef unspecified_type FT; 
 
