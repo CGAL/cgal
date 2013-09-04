@@ -104,7 +104,7 @@ These probability values are used as input by the hard clustering.
 
 \subsection Surface_mesh_segmentationGraphCut Hard clustering
 
-The hard clustering yields the final segmentation of the input mesh and results from minimizing an energy function.
+The hard clustering yields the final segmentation of the input mesh and results from minimizing an energy function
 combining the aforementioned probability matrix and geometric surface features.
 
 The energy function minimized using alpha-expansion graph cut algorithm \cgalCite{Boykov2001FastApproximate} is defined as follows:
@@ -312,7 +312,7 @@ Performance of `segment_from_sdf_values()` with this implementation :
 </center>
 <BR>
 \section ImplementationDetails Implementation Details
-\subsection RaySamplingInShapeDiameterFunction Ray Sampling in Spahe Diameter Function
+\subsection RaySamplingInShapeDiameterFunction Ray Sampling in Shape Diameter Function
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
 Comparison of biased toward the center and uniform disk sampling for 64 rays.
 \cgalFigureEnd
