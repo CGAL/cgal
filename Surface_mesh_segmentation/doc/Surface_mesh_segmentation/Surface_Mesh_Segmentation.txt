@@ -163,58 +163,44 @@ Clusters and segments. The number of clusters are set to 5. <b>(a)</b> graph-cut
 
 \todo number of clusters are set to 5???
 
-\section Surface_mesh_segmentationAPI API
-This package provides three functions:
-	- `compute_sdf_values()` : given a mesh, computes the SDF value of each facet either in raw or post-processed form.
-	- `postprocess_sdf_values()` : post-process raw SDF values.
-	- `segment_from_sdf_values()` : given a set of SDF values of facets of a mesh, computes the mesh segmentation.
-	- `compute_sdf_values_and_segment()` : given a mesh, combines the functions above in one line.
+\section Surface_mesh_segmentationAPI User Interface
+This package provides four functions:
+	- `compute_sdf_values()` : computes the SDF value of each facet of an input mesh either in raw or post-processed form.
+           SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
+"CGAL and Boost Property Maps").
+	- `postprocess_sdf_values()` : post-processes raw SDF values. The post-processing is decoupled from
+             the function `compute_sdf_values()` to allow the post-processing to be applied on an alternative
+             method to compute SDF values or to use an additional post-processing step for example.
+	- `segment_from_sdf_values()` : computes the mesh segmentation from the SDF values of the facets of an input mesh.
+            The input SDF values can be any set of scalar values associated with each facet as long as they have been normalized between 0 and 1.
+            This function allows to use the same SDF values several times but with different parameters for the segmentation stage.
+            The segment or cluster ids are associated to the facets using a property map.
+	- `compute_sdf_values_and_segment()` : combines the functions above in one line.
 
-These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input. Note that the current implementation is running fine on meshes with boundaries,
+These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input mesh.
+Note that the current implementation is running fine on meshes with boundaries,
 but considering how the SDF values are computed, using a polyhedron with large holes is likely to result in
 meaningless SDF values, and therefore unreliable segmentation.
 
 The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 
-\subsection Surface_mesh_segmentationSDFComputation SDF Computation
-The function `compute_sdf_values()` provides an implementation of the SDF computation for a given mesh.
-Accessing either raw SDF values (see \ref Surface_mesh_segmentationRawSDF) or post-processed SDF values (see \ref Surface_mesh_segmentationPostprocessing) is possible through the same function.
-
-The output is the minimum and the maximum SDF values for raw SDF values or the minimum and the maximum SDF values before applying the linear normalization for post-procced SDF values, and a property map (see the chapter \ref Chapter_CGAL_and_Boost_Property_Maps
-"CGAL and Boost Property Maps") associating to each facet its SDF value.
-
-The function `postprocess_sdf_values()` post-process SDF values for a given mesh and associated values per facet (see \ref Surface_mesh_segmentationPostprocessing). 
-It is useful when using an alternative implementation of the SDF, or adding a custom post-processing step by computing raw SDF values with `compute_sdf_values()`.
-The output is the minimum and the maximum SDF values before applying the linear normalization.
-
-\subsubsection Example_1 Example: Computation of SDF Values
+\subsection Example_1 Example: Computation of SDF Values
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_example.cpp}
 
-\subsection Surface_mesh_segmentationSurfaceMeshSegmentation Surface Mesh Segmentation
-The function `segment_from_sdf_values()` computes a segmentation of the mesh using SDF values given as input.
-Note that these SDF values can be any set of scalar values associated with each facet as long as they have been normalized between 0 and 1. 
-These values are also log-normalized at the beginning as the paper suggests.
-This function allows to use the same SDF values several times but with different parameters for the segmentation stage.
-
-Accessing either segmented or clustered result is possible through the same function (see \cgalFigureRef{Cluster_vs_segment}). 
-Clustered result is useful for applications such as detecting analogical parts in a given mesh, and segmented result is just post-processed form of clustered result.
-
-The output is the number of segments (or number of clusters) and a property map associating to each facet its segment-id (an integer between 0 and number-of-segments - 1) or cluster-id (between 0 and number-of-clusters-1).
-
-\subsubsection Example_2 Example: Segmentation from SDF Values
+\subsection Example_2 Example: Segmentation from SDF Values
 \cgalExample{Surface_mesh_segmentation/segment_from_sdf_values_example.cpp}
 
 \subsubsection Example_3 Computation of SDF Values and Segmentation
 The function `compute_sdf_values_and_segment()` combines the two aforementioned functions.
-Note that computing several segmentation of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
-it is advised to first compute the SDF values using `compute_sdf_values()` and use them for each call to `segment_from_sdf_values()`.
+Note that when computing several segmentation of a mesh with different parameters (i.e. number of levels, and smoothing lambda),
+it is advised to first compute the SDF values using `compute_sdf_values()` and use them in several calls of the function `segment_from_sdf_values()`.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp}
 
-\subsubsection Surface_mesh_segmentationUsingapolyhedron Using a Polyhedron with an ID per Facet
+\subsection Surface_mesh_segmentationUsingapolyhedron Using a Polyhedron with an ID per Facet
 The previous examples use a `std::map` as property maps for storing the SDF values and the segmentation results. This example uses
-a polyhedron type with a facet type having an extra ID field together with a vector as underlying data structure in the property maps.
+a polyhedron type with a facet type storing an extra ID field, together with a vector, as underlying data structure in the property maps.
 The main advantage is to decrease from log to constant the complexity for accessing the data associated to facets.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
