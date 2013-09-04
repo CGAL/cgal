@@ -83,9 +83,9 @@ int main()
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
   TESTIT(CGAL::Gmpzf, "Gmpzf")
-#ifdef CGAL_HAS_MPZF
+# ifdef CGAL_HAS_MPZF
   TESTIT(CGAL::mpzf, "mpzf")
-#endif
+# endif
   TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Gmpq, "Gmpq")
 #endif // CGAL_USE_GMP

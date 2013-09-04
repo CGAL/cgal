@@ -39,6 +39,8 @@
 /* Boost refuses to document this :-( */
 #include <boost/detail/endian.hpp>
 
+#include <CGAL/Coercion_traits.h>
+
 // The following is currently assumed in several places. I hope I am not
 // making too many other assumptions.
 // * limbs are 64 bits
@@ -786,30 +788,31 @@ struct mpzf {
   }
 
   friend mpzf mpzf_sqrt(mpzf const&x){
+    // FIXME: Untested
     if (x.size < 0) throw std::range_error("Sqrt of negative number");
     if (x.size == 0) return 0;
-    if (x.size % 2 == 0) {
-      mpzf res(allocate(), x.size / 2);
+    if (x.exp % 2 == 0) {
+      mpzf res(allocate(), (x.size + 1) / 2);
       res.exp = x.exp / 2;
-      res.size = x.size / 2;
+      res.size = (x.size + 1) / 2;
       CGAL_assertion_code(mp_size_t rem=)
       mpn_sqrtrem(res.data(), 0, x.data(), x.size);
       CGAL_assertion(rem==0);
       return res;
     }
     else if (x.data()[-1] == 0) {
-      mpzf res(allocate(), (x.size + 1) / 2);
+      mpzf res(allocate(), (x.size + 2) / 2);
       res.exp = (x.exp - 1) / 2;
-      res.size = (x.size + 1) / 2;
+      res.size = (x.size + 2) / 2;
       CGAL_assertion_code(mp_size_t rem=)
       mpn_sqrtrem(res.data(), 0, x.data()-1, x.size+1);
       CGAL_assertion(rem==0);
       return res;
     }
     else {
-      mpzf res(allocate(), (x.size + 1) / 2);
+      mpzf res(allocate(), (x.size + 2) / 2);
       res.exp = (x.exp - 1) / 2;
-      res.size = (x.size + 1) / 2;
+      res.size = (x.size + 2) / 2;
       CGAL_assertion_code(mp_size_t rem=)
       mpn_sqrtrem(res.data(), 0, x.data(), x.size);
       CGAL_assertion(rem==0);
@@ -1066,6 +1069,17 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 	};
 
     };
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float    ,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double   ,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpz     ,mpzf)
+#ifdef CGAL_USE_GMPXX
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(mpz_class,mpzf)
+#endif
 
 }
 #endif // GMP_NUMB_BITS == 64
