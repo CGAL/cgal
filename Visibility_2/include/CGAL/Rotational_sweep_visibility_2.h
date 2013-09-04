@@ -211,8 +211,8 @@ private:
   int quadrant(const Point_2& o, const Point_2& p) {
     typename K::Compare_x_2 compare_x;
     typename K::Compare_y_2 compare_y;
-    Comparison_result x = compare_x(o, p);
-    Comparison_result y = compare_y(o, p);
+    Comparison_result x = compare_x(p, o);
+    Comparison_result y = compare_y(p, o);
 
     if (x==LARGER && y!=SMALLER)
       return 1;
@@ -680,22 +680,22 @@ private:
 
   bool compare_angle(const Point_2& p1, const Point_2& p2)
   {
-    Direction_2 d1(Ray_2(q, p1));
-    Direction_2 d2(Ray_2(q, p2));
-    if (d1==d2)
-      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
-    else
-      return d1<d2;
-//    int qua1 = quadrant(q, p1);
-//    int qua2 = quadrant(q, p2);
-//    if (qua1 < qua2)
-//      return true;
-//    if (qua1 > qua2)
-//      return false;
-//    if (collinear(q, p1, p2))
+//    Direction_2 d1(Ray_2(q, p1));
+//    Direction_2 d2(Ray_2(q, p2));
+//    if (d1==d2)
 //      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
 //    else
-//      return CGAL::right_turn(p1, q, p2);
+//      return d1<d2;
+    int qua1 = quadrant(q, p1);
+    int qua2 = quadrant(q, p2);
+    if (qua1 < qua2)
+      return true;
+    if (qua1 > qua2)
+      return false;
+    if (collinear(q, p1, p2))
+      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+    else
+      return CGAL::right_turn(p1, q, p2);
   }
 
   bool is_good_edge(const Point_2& v1,
@@ -924,15 +924,15 @@ private:
       CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
   }
 
-  void Insert_edge(Vertex_handle insert_loc,
-                   Vertex_handle new_begin,
-                   const Point_2& end1,
-                   const Point_2& end2,
-                   const Point_2& needle_end,
-                   Output_arrangement_2& arr_out) {
+//  void Insert_edge(Vertex_handle insert_loc,
+//                   Vertex_handle new_begin,
+//                   const Point_2& end1,
+//                   const Point_2& end2,
+//                   const Point_2& needle_end,
+//                   Output_arrangement_2& arr_out) {
 
 
-  }
+//  }
 
 
   void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
