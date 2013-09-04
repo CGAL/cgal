@@ -962,7 +962,7 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 {
   double d;
   is >> d;
-  if (is.good())
+  if (is)
     a = d;
   return is;
 }
