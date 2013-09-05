@@ -181,7 +181,7 @@ template <
 class Polyhedron,
       class GeomTraits,
       bool fast_bbox_intersection = true,
-#ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+#ifndef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
       class GraphCut = Alpha_expansion_graph_cut_boykov_kolmogorov,
 #else
       class GraphCut = Alpha_expansion_graph_cut_boost,

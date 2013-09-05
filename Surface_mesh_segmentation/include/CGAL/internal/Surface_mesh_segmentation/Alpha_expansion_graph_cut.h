@@ -9,8 +9,11 @@
  *
  * Main differences between implementations are underlying max-flow algorithm and graph type (i.e. results are the same, performance differs).
  *
- * For activating MAXFLOW software, define CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE. It activates Alpha_expansion_graph_cut_boykov_kolmogorov,
- * and makes CGAL::internal::Surface_mesh_segmentation choose this implementation for graph-cut.
+ * By default, we use MAXFLOW and the class Alpha_expansion_graph_cut_boykov_kolmogorov.
+ * For deactivating MAXFLOW software and using boost implementation instead, define CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE.
+ * It deactivates Alpha_expansion_graph_cut_boykov_kolmogorov, activate boost versions
+ * and makes CGAL::internal::Surface_mesh_segmentation using Alpha_expansion_graph_cut_boost
+ * as default implementation for the graph-cut.
  *
  * Also algorithms can be used by their-own for applying alpha-expansion graph-cut on any graph.
  */
@@ -19,6 +22,7 @@
 #include <CGAL/trace.h>
 
 #include <boost/version.hpp>
+#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
 #if BOOST_VERSION >= 104400 // at this version kolmogorov_max_flow become depricated.
@@ -26,14 +30,14 @@
 #else
 #include <boost/graph/kolmogorov_max_flow.hpp>
 #endif
+#else
+#include <CGAL/internal/auxiliary/graph.h>
+#endif
 
 #include <vector>
 
-//#define CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 
-#ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-#include <CGAL/internal/auxiliary/graph.h>
-#endif
+
 
 namespace CGAL
 {
@@ -74,6 +78,7 @@ namespace internal
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 /**
  * @brief Implements alpha-expansion graph cut algorithm.
  *
@@ -481,7 +486,9 @@ public:
     return min_cut;
   }
 };
-#ifdef CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+#endif
+
+#ifndef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 /**
  * @brief Implements alpha-expansion graph cut algorithm.
  *
@@ -592,7 +599,7 @@ public:
     return min_cut;
   }
 };
-#endif //CGAL_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
+#endif //CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
 }//namespace internal
 /// @endcond
 }//namespace CGAL
