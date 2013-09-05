@@ -8,10 +8,12 @@
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Bbox_3.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
 #include <map>
@@ -51,14 +53,18 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Grap
 typedef boost::graph_traits<Graph>::vertex_descriptor                vertex_desc;
 typedef boost::graph_traits<Graph>::edge_iterator                    edge_iter;
 
-bool is_mesh_valid(Polyhedron *pMesh) 
+typedef CGAL::Bbox_3                                                 Bbox;
+
+// The input of the skeletonization algorithm must be a pure triangular closed
+// mesh and has only one component.
+bool is_mesh_valid(Polyhedron& pMesh)
 {
-  if (!pMesh->is_closed())
+  if (!pMesh.is_closed())
   {
     std::cerr << "The mesh is not closed.";
     return false;
   }
-  if (!pMesh->is_pure_triangle())
+  if (!pMesh.is_pure_triangle())
   {
     std::cerr << "The mesh is not a pure triangle mesh.";
     return false;
@@ -68,7 +74,7 @@ bool is_mesh_valid(Polyhedron *pMesh)
   // that has only one connected component
   std::size_t num_component;
   CGAL::Counting_output_iterator output_it(&num_component);
-  CGAL::internal::extract_connected_components(*pMesh, output_it);
+  CGAL::internal::extract_connected_components(pMesh, output_it);
   ++output_it;
   if (num_component != 1)
   {
@@ -77,6 +83,23 @@ bool is_mesh_valid(Polyhedron *pMesh)
     return false;
   }
   return true;
+}
+
+// Functor used to transform the vertex iterator to point iterator
+Point v_to_p(vertex_descriptor v)
+{ 
+  return v->point();
+}
+
+// compute the diagonal length for a bounding box
+double diagonal(Bbox& bbox)
+{
+  double dx = bbox.xmax() - bbox.xmin();
+  double dy = bbox.ymax() - bbox.ymin();
+  double dz = bbox.zmax() - bbox.zmin();
+
+  double diag = dx * dx + dy * dy + dz * dz;
+  return sqrt(diag);
 }
 
 int main()
@@ -88,70 +111,29 @@ int main()
     std::cerr << "Cannot open data/sindorelax.off" << std::endl;
     return 1;
   }
-  if (!is_mesh_valid) {
+  if (!is_mesh_valid(mesh)) {
     return 1;
   }
 
   // save a copy for correspondence
   Polyhedron mCopy(mesh);
 
-  // scale the mesh so diagonal of its bounding box equals to 1
-  Vector center;
-  double scale;
-
-  double min_x, min_y, min_z;
-  double max_x, max_y, max_z;
-  min_x = 1e10;
-  min_y = 1e10;
-  min_z = 1e10;
-  max_x = -1e10;
-  max_y = -1e10;
-  max_z = -1e10;
-
   vertex_iterator vb, ve;
-  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
-  {
-    min_x = std::min(min_x, vb->point().x());
-    min_y = std::min(min_y, vb->point().y());
-    min_z = std::min(min_z, vb->point().z());
-    max_x = std::max(max_x, vb->point().x());
-    max_y = std::max(max_y, vb->point().y());
-    max_z = std::max(max_z, vb->point().z());
-  }
-  center = Vector((min_x + max_x) * 0.5,
-      (min_y + max_y) * 0.5,
-      (min_z + max_z) * 0.5);
 
-  scale = (max_x - min_x) * (max_x - min_x) +
-    (max_y - min_y) * (max_y - min_y) +
-    (max_z - min_z) * (max_z - min_z);
-  scale = sqrt(scale);
+  boost::tie(vb, ve) = boost::vertices(mesh);
+  Bbox bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p), 
+                           boost::make_transform_iterator(ve, v_to_p));
+  double diag = diagonal(bbox);
 
-  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
-  {
-    vb->point() = vb->point() - center;
-    vb->point() = Point(vb->point().x() / scale,
-        vb->point().y() / scale,
-        vb->point().z() / scale);
-  }
-
-  Mean_curvature_skeleton *mcs = new Mean_curvature_skeleton(mesh, Vertex_index_map(), Edge_index_map(),
-                                          0.1, 0.2, 0.002, true, 0.0001);
+  Mean_curvature_skeleton *mcs = 
+    new Mean_curvature_skeleton(mesh, Vertex_index_map(), Edge_index_map(),
+                                0.1, 0.2, 0.002 * diag, true, 0.0001);
 
   Graph g;
   std::map<vertex_desc, Point> points;
   std::map<vertex_desc, std::vector<int> > corr;
 
   mcs->extract_skeleton(g, points, corr);
-
-  // undo the scaling
-  typename std::map<vertex_desc, Point>::iterator it;
-  for (it = points.begin(); it != points.end(); ++it)
-  {
-    it->second = Point((it->second).x() * scale + center.x(),
-        (it->second).y() * scale + center.y(),
-        (it->second).z() * scale + center.z());
-  }
 
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
   std::cout << "edges: " << boost::num_edges(g) << "\n";
