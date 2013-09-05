@@ -452,6 +452,17 @@ private:
 #define ARC_BLOCK_SIZE 1024
 #define NODEPTR_BLOCK_SIZE 128
 
+template <std::size_t size>
+struct Int_to_ptr;
+
+template<> struct Int_to_ptr<sizeof(int)> {
+  typedef int type;
+};
+template<> struct Int_to_ptr<sizeof(long)> {
+  typedef long type;
+};
+
+
 class Graph
 {
 public:
@@ -513,11 +524,15 @@ private:
   struct arc_forward_st;
   struct arc_reverse_st;
 
-#define IS_ODD(a) ((int)(a) & 1)
-#define MAKE_ODD(a)  ((arc_forward *) ((int)(a) | 1))
-#define MAKE_EVEN(a) ((arc_forward *) ((int)(a) & (~1)))
-#define MAKE_ODD_REV(a)  ((arc_reverse *) ((int)(a) | 1))
-#define MAKE_EVEN_REV(a) ((arc_reverse *) ((int)(a) & (~1)))
+  typedef Int_to_ptr< sizeof(void*) >::type INTEGER;
+#define IS_ODD(a) ((INTEGER)(a) & 1)
+#define MAKE_ODD(a)  ((arc_forward *) ((INTEGER)(a) | 1))
+#define MAKE_EVEN(a) ((arc_forward *) ((INTEGER)(a) & (~1)))
+#define MAKE_ODD_REV(a)  ((arc_reverse *) ((INTEGER)(a) | 1))
+#define MAKE_EVEN_REV(a) ((arc_reverse *) ((INTEGER)(a) & (~1)))
+#define POINTER_TO_INTEGER(ptr) ((INTEGER) ptr)
+
+
 
   /* node structure */
   typedef struct node_st {
@@ -559,7 +574,7 @@ private:
 #define NEIGHBOR_NODE(i, shift) ((node *) ((char *)(i) + (shift)))
 #define NEIGHBOR_NODE_REV(i, shift) ((node *) ((char *)(i) - (shift)))
   typedef struct arc_forward_st {
-    int				shift;		/* node_to = NEIGHBOR_NODE(node_from, shift) */
+    INTEGER			shift;		/* node_to = NEIGHBOR_NODE(node_from, shift) */
     captype			r_cap;		/* residual capacity */
     captype			r_rev_cap;	/* residual capacity of the reverse arc*/
   } arc_forward;
@@ -717,7 +732,7 @@ inline void Graph::add_edge(node_id from, node_id to, captype cap,
       if (error_function) (*error_function)("Not enough memory!");
       exit(1);
     }
-    if ((int)ptr & 1) arc_for_block_first = (arc_for_block *) (ptr + 1);
+    if (IS_ODD(ptr)) arc_for_block_first = (arc_for_block *) (ptr + 1);
     else              arc_for_block_first = (arc_for_block *) ptr;
     arc_for_block_first -> start = ptr;
     arc_for_block_first -> current = & ( arc_for_block_first -> arcs_for[0] );
@@ -733,7 +748,7 @@ inline void Graph::add_edge(node_id from, node_id to, captype cap,
       if (error_function) (*error_function)("Not enough memory!");
       exit(1);
     }
-    if ((int)ptr & 1) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
+    if (IS_ODD(ptr)) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
     else              arc_rev_block_first = (arc_rev_block *) ptr;
     arc_rev_block_first -> start = ptr;
     arc_rev_block_first -> current = & ( arc_rev_block_first -> arcs_rev[0] );
@@ -744,14 +759,14 @@ inline void Graph::add_edge(node_id from, node_id to, captype cap,
   a_rev = arc_rev_block_first -> current ++;
 
   a_rev -> sister = (arc_forward *) from;
-  a_for -> shift  = (int) to;
+  a_for -> shift  = POINTER_TO_INTEGER(to);
   a_for -> r_cap = cap;
   a_for -> r_rev_cap = rev_cap;
 
   ((node *)from) -> first_out =
-    (arc_forward *) ((int)(((node *)from) -> first_out) + 1);
+    (arc_forward *) (POINTER_TO_INTEGER(((node *)from) -> first_out) + 1);
   ((node *)to) -> first_in =
-    (arc_reverse *) ((int)(((node *)to) -> first_in) + 1);
+    (arc_reverse *) (POINTER_TO_INTEGER(((node *)to) -> first_in) + 1);
 }
 
 inline void Graph::set_tweights(node_id i, captype cap_source, captype cap_sink)
@@ -812,7 +827,7 @@ inline void Graph::prepare_graph()
   for (nb=node_block_first; nb; nb=nb->next) {
     for (i=&nb->nodes[0]; i<nb->current; i++) {
       /* outgoing arcs */
-      k = (int) i -> first_out;
+      k = POINTER_TO_INTEGER(i -> first_out);
       if (a_for + k > &ab_for->arcs_for[ARC_BLOCK_SIZE]) {
         if (k > ARC_BLOCK_SIZE) {
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
@@ -830,7 +845,7 @@ inline void Graph::prepare_graph()
             if (error_function) (*error_function)("Not enough memory!");
             exit(1);
           }
-          if ((int)ptr & 1) arc_for_block_first = (arc_for_block *) (ptr + 1);
+          if (IS_ODD(ptr)) arc_for_block_first = (arc_for_block *) (ptr + 1);
           else              arc_for_block_first = (arc_for_block *) ptr;
           arc_for_block_first -> start = ptr;
           arc_for_block_first -> current = & ( arc_for_block_first -> arcs_for[0] );
@@ -849,7 +864,7 @@ inline void Graph::prepare_graph()
       ab_for -> last_node = i;
 
       /* incoming arcs */
-      k = (int) i -> first_in;
+      k = POINTER_TO_INTEGER(i -> first_in);
       if (a_rev + k > &ab_rev->arcs_rev[ARC_BLOCK_SIZE]) {
         if (k > ARC_BLOCK_SIZE) {
           if (error_function) (*error_function)("# of arcs per node exceeds block size!");
@@ -864,7 +879,7 @@ inline void Graph::prepare_graph()
             if (error_function) (*error_function)("Not enough memory!");
             exit(1);
           }
-          if ((int)ptr & 1) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
+          if (IS_ODD(ptr)) arc_rev_block_first = (arc_rev_block *) (ptr + 1);
           else              arc_rev_block_first = (arc_rev_block *) ptr;
           arc_rev_block_first -> start = ptr;
           arc_rev_block_first -> current = & ( arc_rev_block_first -> arcs_rev[0] );
@@ -937,7 +952,7 @@ inline void Graph::prepare_graph()
     ab_for -> current -> shift     = a_for -> shift;
     ab_for -> current -> r_cap     = a_for -> r_cap;
     ab_for -> current -> r_rev_cap = a_for -> r_rev_cap;
-    a_for -> shift = (int) (ab_for -> current + 1);
+    a_for -> shift = POINTER_TO_INTEGER(ab_for -> current + 1);
     i -> first_out = (arc_forward *) (((char *)a_for) - 1);
   }
 
