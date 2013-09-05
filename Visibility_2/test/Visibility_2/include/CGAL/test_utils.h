@@ -302,6 +302,37 @@ void regularize(Arrangement_2& arr){
   //std::cout << "regularize done" << std::endl; 
 }
 
+template <class Arrangement_2>
+bool is_regular_arr(Arrangement_2& arr){
+  //std::cout << "\n regularize" << std::endl;
+  // remove all edges with the same face on both sides
+  typedef typename Arrangement_2::Edge_iterator EIT;
+  for(EIT eit = arr.edges_begin(); eit != arr.edges_end();){
+    if(eit->face() == eit->twin()->face()){
+      // arr.remove_edge(eit++,false,false); did not compile
+      EIT eh = eit;
+      ++eit;
+      return false;
+    }else{
+      ++eit;
+    }
+  }
+  // remove all isolated vertices (also those left from prvious step)
+  typedef typename Arrangement_2::Vertex_iterator VIT;
+  for(VIT vit = arr.vertices_begin(); vit != arr.vertices_end();){
+    if(vit->degree()== 0){
+      VIT vh = vit;
+      vit++;
+      return false;
+    }else{
+      vit++;
+    }
+  }
+  return true;
+  //std::cout << "regularize done" << std::endl;
+}
+
+
 template <class Visibility_2>
 bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
   typedef typename Visibility_2::Input_arrangement_2          Input_arrangement_2;
@@ -687,6 +718,8 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
   return true;
 }
 
+
+
 template <class Visibility_2_fst, class Visibility_2_snd>
 void simple_benchmark_one_unit(
           typename Visibility_2_fst::Input_arrangement_2 &arr,
@@ -846,6 +879,7 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
 //  std::cout << "Input arrangement has: "
 //            << GREEN << arr.number_of_faces()-1 << RESET
 //            << " faces." << std::endl;
+  //assert(is_regular_arr(arr));
   int query_cnt(0);
   double qtime1(0), qtime2(0), ptime1(0), ptime2(0);
   if (Visibility_2_fst::Supports_general_polygon_tag::value
