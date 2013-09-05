@@ -64,8 +64,7 @@ public:
   }
   const T& get(int i, int j) const {
     CGAL_assertion(bound_check(i,j));
-    typename std::map<std::pair<int,int>, T>::const_iterator ij 
-      = table.find(std::make_pair(i,j));
+    typename Map::const_iterator ij = table.find(std::make_pair(i,j));
     if(ij != table.end()) {
       return ij->second;
     }
@@ -538,7 +537,7 @@ private:
   {
     // warning: it should be designed to handle dimension 2 (e.g. f.first->vertex(3)->info() will crash)
     for(int i = 0; i < 4; ++i) {
-      if(i == f.second) { continue; }
+      if(i == f.second) { continue; } // skip the vertex which is not on `f`
       int f3 = f.first->vertex(i)->info();
       if(f3 != v0_info && f3 != v1_info) {
         return std::make_pair(f3, i); 
@@ -549,6 +548,7 @@ private:
   }
 
   int get_vertex_index(Cell_handle ch, int info) {
+    // warning: it should be designed to handle dimension 2 (e.g. f.first->vertex(3)->info() will crash)
     for(int i = 0; i < 4; ++i) {
       int v = ch->vertex(i)->info();
       if(v == info) { return i; }
@@ -647,10 +647,10 @@ public:
     for(int j = 2; j< n; ++j) {   // determines range (2 - 3 - 4 )
       for(int i=0; i<n-j; ++i) {  // iterates over ranges and find min triangulation in those ranges 
         int k = i+j;              // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
-
+        
         int m_min = -1;
         Weight w_min = Weight::NOT_VALID();
-
+        // i is the range start (e.g. 1) k is the range end (e.g. 5) -> [1-5]. Now subdivide the region [1-5] with m -> 2,3,4
         for(int m = i+1; m<k; ++m) { 
           // now the regions i-m and m-k might be valid(constructed) patches,
           // if not, we can not construct i-m-k triangle
