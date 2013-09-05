@@ -36,7 +36,7 @@ struct checked_NT {
   friend bool operator>=(checked_NT const&a,checked_NT const&b){bool res=a.x1>=b.x1;bool other=a.x2>=b.x2;assert(res==other);return res;}
   friend std::ostream& operator<<(std::ostream&o,const checked_NT&a){return o<<a.x1;}
   /*TODO: check input (output may be different).*/
-  friend std::istream& operator>>(std::istream&i,const checked_NT&a){i>>a.x1;a.x2=NT2(a.x1);return i;}
+  friend std::istream& operator>>(std::istream&i,checked_NT&a){i>>a.x1;a.x2=NT2(a.x1);return i;}
   /*TODO: conversion operators*/
 };
 

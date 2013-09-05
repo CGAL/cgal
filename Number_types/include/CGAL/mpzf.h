@@ -246,15 +246,15 @@ struct mpzf {
   typedef mpzf_impl::no_pool<mp_limb_t*,mpzf> pool;
 //#endif
 
-  mp_limb_t* data_;
+  mp_limb_t* data_; /* data_[0] is never 0 (except possibly for 0). */
   inline mp_limb_t*& data() { return data_; };
   inline mp_limb_t const* data() const { return data_; };
 
 #ifdef CGAL_MPZF_USE_CACHE
   mp_limb_t cache[cache_size + 1];
 #endif
-  int size;
-  int exp;
+  int size; /* Number of relevant limbs in data_. */
+  int exp; /* The number is data_ (an integer) * 2 ^ (64 * exp). */
 
   struct allocate{};
   struct noalloc{};
@@ -729,6 +729,7 @@ struct mpzf {
       )
     }
     else{
+      --res.exp;
       mpzf a2(allocate(),asize+1);
       a2.data()[0]=0;
       mpn_copyi(a2.data()+1,a.data(),asize);

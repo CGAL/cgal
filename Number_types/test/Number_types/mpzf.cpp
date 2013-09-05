@@ -27,6 +27,7 @@ void test1(){
   assert(!CGAL::is_square(a-1));
   assert(!CGAL::is_square(b));
   assert(e-e==0);
+  assert(NT(1)/16*16==1);
 }
 template<class NT>
 void test2(){
