@@ -677,7 +677,6 @@ protected:
     Tr tr(this);
     if(tr.container().empty()) { return;}
 
-    tr.update_indices();
     std::vector<HandleType> exists;
     for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
       if(tr.container().is_selected(it)) {
