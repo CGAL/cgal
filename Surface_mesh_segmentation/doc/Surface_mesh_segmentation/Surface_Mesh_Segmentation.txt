@@ -67,9 +67,9 @@ The main reason for not assigning 0 to facets with no SDF values is that it can 
 - A bilateral smoothing \cgalCite{Tomasi1998Bilateral} is applied.
   This smoothing technique removes the noise while trying to keep fast changes on SDF values unchanged since they are natural candidates for segment boundaries.
   The bilateral smoothing has three parameters that are set by default as follows:
-  -\f$ w = \lfloor\sqrt{  |F| / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ is the set of facets
+  -\f$ w = \lfloor\sqrt{  |F| / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ denotes the set of facets
   -\f$ \sigma_s = w / 2 \f$, the spatial parameter
-  -\f$ \sigma_{r_i} = \sqrt{1/|w_i| \sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$; \f$ w_i \f$ is the set of neighbor facets of \f$ f_i \f$ collected using \f$ w \f$ in the facet neighbor breadth-first search
+  -\f$ \sigma_{r_i} = \sqrt{1/|w_i| \sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$; \f$ w_i \f$ denotes the set of neighboring facets of \f$ f_i \f$ collected using \f$ w \f$ in the facet neighbor breadth-first search
 
   Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
   Large range parameters make smoothing closer to Gaussian smoothing and may also lead to over-smoothed SDF values.
@@ -119,14 +119,14 @@ The energy function minimized using alpha-expansion graph cut algorithm \cgalCit
 	 </td>
      <td>
 where:
-  - \f$F\f$ is the set of facets,
-  - \f$N\f$ is the set of pairs of neighbor facets,
-  - \f$x_f\f$ is the cluster assigned to facet \f$f\f$,
-  - \f$P(f|x_p)\f$ is the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$,
-  - \f$\theta(f,g)\f$ is the dihedral angle between neighbor facets \f$f\f$ and \f$g\f$:
+  - \f$F\f$ denotes the set of facets,
+  - \f$N\f$ denotes the set of pairs of neighboring facets,
+  - \f$x_f\f$ denotes the cluster assigned to facet \f$f\f$,
+  - \f$P(f|x_p)\f$ denotes the probability of assigning facet \f$f\f$ to cluster \f$x_p\f$,
+  - \f$\theta(f,g)\f$ denotes the dihedral angle between neighboring facets \f$f\f$ and \f$g\f$:
 	 concave angles and convex angles are weighted by 1 and 0.1 respectively,
-  - \f$\epsilon\f$ is the minimal probability threshold,
-  - \f$\lambda \in [0,1]\f$ is a smoothness parameter.
+  - \f$\epsilon\f$ denotes the minimal probability threshold,
+  - \f$\lambda \in [0,1]\f$ denotes a smoothness parameter.
 	 </td>
   </tr>
   </table>
@@ -170,10 +170,15 @@ This package provides four functions:
             The segment or cluster ids are associated to the facets using a property map.
 	- `compute_sdf_values_and_segment()` : combines the functions above in one line.
 
-These functions expects a manifold, normal oriented, and triangulated polyhedron without boundary as input mesh.
-Note that the current implementation is running fine on meshes with boundaries,
-but considering how the SDF values are computed, using a polyhedron with large holes is likely to result in
-meaningless SDF values, and therefore unreliable segmentation.
+These functions expects as input a triangulated surface mesh bounding a 3D solid object.
+It should have the following properties:
+- combinatorially 2-manifold
+- the vertices of the facets are oriented counterclockwise when seen from outside of the object.
+- intersection-free
+- boundary free.
+
+Note that the current implementation executes fine on meshes that do not match
+some of these properties, but may produce unreliable or meaningless segmentations.
 
 The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
