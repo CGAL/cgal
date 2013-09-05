@@ -22,7 +22,7 @@ The final segmentation is then obtained via a graph-cut algorithm that considers
 together with the result of the soft clustering.
 We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
-This package offers the computation of the SDF values and the mesh segmentation result as independant functions.
+This package offers the computation of the SDF values and the mesh segmentation result as independent functions.
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
 
@@ -47,16 +47,16 @@ Influence of pose changes over SDF values and the segmentation.
 \subsubsection Surface_mesh_segmentationRawSDF Computation of Raw SDF Values
 For a given input mesh, the raw SDF values are computed by processing each facet one by one. For a given facet,
 several rays are sampled in a cone constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
-Each ray in casted into a segment, its endpoints being the apex of the cone and the first mesh facet intersection point.
+Each ray in cast into a segment, its endpoints being the apex of the cone and the first mesh facet intersection point.
 If a ray forms an obtuse angle with the inward-normal of the first intersected facet, it is not accepted.
-Using the lenghts of the accepted casted rays, which intuitively correspond to a local volume sampling,
+Using the lengths of the accepted cast rays, which intuitively correspond to a local volume sampling,
 the raw SDF value is calculated by first applying an outlier removal procedure and then taking average of the lengths.
 Note that only facets having no accepted rays get no raw SDF values
-(the package also accepts input meshes with holes, in such a case rays that can not be casted to a segment are also not accepted).
+(the package also accepts input meshes with holes, in such a case rays that can not be cast to a segment are also not accepted).
 
 The raw SDF values can be computed using the function `compute_sdf_values()`, setting `postprocess` to `false`.
 
-\subsubsection Surface_mesh_segmentationPostprocessing Postprocessing of Raw SDF Values
+\subsubsection Surface_mesh_segmentationPostprocessing Post-processing of Raw SDF Values
 After having calculated the raw SDF value for each facet, the SDF values used in the segmentation algorithm are
 the result of several post-processing steps:
 
@@ -218,7 +218,7 @@ Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_
 100,332              | 48.7                        | 88.1
 </center>
 
-<!-- This is only to keep the results, the flag is not documentated
+<!-- This is only to keep the results, the flag is not documented
 <center>
 Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`) | `EPICK` with `Fast_sdf_calculation_mode = false`
 ---------------------| -------------------------:  | --------------------------------------------------------:  | -----------------------------------------------:
@@ -265,7 +265,7 @@ A comparison with biased and uniform sampling of points can be seen in \cgalFigu
 
 \section Surface_mesh_segmentationImplementationhistory Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
-of the Google Summer of Code. He has been mentored by Sebastien Loriot who also contributed to the documentation
+of the Google Summer of Code. He has been mentored by Sébastien Loriot who also contributed to the documentation
 and the API definition.
 
 */
