@@ -658,7 +658,7 @@ void MainWindow::reload_item() {
   new_item->setVisible(item->visible());
   new_item->changed();
   scene->replaceItem(item_index, new_item);
-  delete item;
+  item->deleteLater();
 }
 
 Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
