@@ -1528,8 +1528,6 @@ private:
 ///        controls the smoothness of the medial approximation
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param is_medially_centered
-///        should the skeleton be medially centered?
 /// @param area_TH
 ///        run_to_converge will stop if the change of area in one iteration
 ///        is less than `area_TH`
@@ -1591,8 +1589,6 @@ void extract_medial_skeleton(Graph& g,
 ///        a boost::graph containing the connectivity of the skeleotn
 /// @param points
 ///        the locations of the skeletal points
-/// @param corr
-///        for each skeletal point, record its correspondent surface points
 /// @param P
 ///        triangulated surface mesh used to extract skeleton
 /// @param Vertex_index_map
@@ -1605,8 +1601,6 @@ void extract_medial_skeleton(Graph& g,
 ///        controls the smoothness of the medial approximation
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param is_medially_centered
-///        should the skeleton be medially centered?
 /// @param area_TH
 ///        run_to_converge will stop if the change of area in one iteration
 ///        is less than `area_TH`
@@ -1664,6 +1658,8 @@ void extract_medial_skeleton(Graph& g,
 ///        a boost::graph containing the connectivity of the skeleotn
 /// @param points
 ///        the locations of the skeletal points
+/// @param corr
+///        for each skeletal point, record its correspondent surface points
 /// @param P
 ///        triangulated surface mesh used to extract skeleton
 /// @param Vertex_index_map
@@ -1674,8 +1670,6 @@ void extract_medial_skeleton(Graph& g,
 ///        controls the velocity of movement and approximation quality
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param is_medially_centered
-///        should the skeleton be medially centered?
 /// @param area_TH
 ///        run_to_converge will stop if the change of area in one iteration
 ///        is less than `area_TH`
@@ -1746,8 +1740,6 @@ void extract_skeleton(Graph& g,
 ///        controls the velocity of movement and approximation quality
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param is_medially_centered
-///        should the skeleton be medially centered?
 /// @param area_TH
 ///        run_to_converge will stop if the change of area in one iteration
 ///        is less than `area_TH`
