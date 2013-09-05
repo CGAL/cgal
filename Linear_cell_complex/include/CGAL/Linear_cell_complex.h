@@ -25,7 +25,6 @@
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace CGAL {
 
