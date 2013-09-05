@@ -46,11 +46,11 @@ int main()
         std::cout << segment_property_map[facet_it] << std::endl;
     }
 
-    const int number_of_levels = 4;       // use 4 clusters in soft clustering
+    const int number_of_clusters = 4;       // use 4 clusters in soft clustering
     const double smoothing_lambda = 0.3;  // importance of surface features, suggested to be in-between [0,1]
 
     // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.
     // This feature becomes important when we want to segment the mesh several times with different parameters.
     CGAL::segment_from_sdf_values(
-      mesh, sdf_property_map, segment_property_map, number_of_levels, smoothing_lambda);
+      mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
 }
