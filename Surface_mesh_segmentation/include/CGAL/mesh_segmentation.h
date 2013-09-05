@@ -43,15 +43,18 @@ compute_sdf_values( const Polyhedron& polyhedron,
  * -1 is used to indicate when no SDF value could be computed for a facet.
  *
  * @pre @a polyhedron.is_pure_triangle()
+ *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
+ *
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] sdf_values the SDF value of each facet
  * @param cone_angle opening angle in radians for the cone of each facet
  * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has a little effect on the quality of the segmentation result
  * @param postprocess if `true`, `CGAL::postprocess_sdf_values` is called on raw SDF value computed.
  * @param traits traits class
+ *
  * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
  */
 template <class Polyhedron, class SDFPropertyMap, class GeomTraits
@@ -87,6 +90,7 @@ compute_sdf_values( const Polyhedron& polyhedron,
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @pre Raw values should be greater or equal to 0. -1 indicates when no value could be computed
+ *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  *
@@ -122,10 +126,13 @@ postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
  * and the final number of segments after segmentation. However, setting a large number of clusters will result in a detailed segmentation of the mesh with a large number of segments.
  *
  * @pre @a polyhedron.is_pure_triangle()
+ * @pre @a number_of_clusters > 0
+ *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
+ *
  * @param polyhedron surface mesh corresponding to the SDF values
  * @param sdf_values the SDF value of each facet between [0-1]
  * @param[out] segment_ids the segment or cluster id of each facet
@@ -133,6 +140,7 @@ postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
  * @param extract_segments if `true` fill `segment_ids` with segment-ids and cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
  * @param traits traits class
+ *
  * @return number of segments if `extract_segments` is set to `true` and `number_of_clusters` otherwise
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
@@ -202,9 +210,12 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
  * `CGAL::segment_from_sdf_values()`.
  *
  * @pre @a polyhedron.is_pure_triangle()
+ * @pre @a number_of_clusters > 0
+ *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
+ *
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] segment_ids the segment or cluster id of each facet
  * @param cone_angle opening angle in radians for the cone of each facet
@@ -213,6 +224,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
  * @param extract_segments if `true` fill `segment_ids` with segment-ids and cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
  * @param traits traits class
+ *
  * @return number of segments if `extract_segments` is set to `true` and `number_of_clusters` otherwise
  */
 template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
