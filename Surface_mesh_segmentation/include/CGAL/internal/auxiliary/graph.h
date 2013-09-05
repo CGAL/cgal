@@ -236,7 +236,7 @@ public:
      (optionally) the pointer to the function which
      will be called if allocation failed; the message
      passed to this function is "Not enough memory!" */
-  Block(int size, void (*err_function)(char *) = NULL) {
+  Block(int size, void (*err_function)(const char *) = NULL) {
     first = last = NULL;
     block_size = size;
     error_function = err_function;
@@ -330,7 +330,7 @@ private:
   block	*scan_current_block;
   Type	*scan_current_data;
 
-  void	(*error_function)(char *);
+  void	(*error_function)(const char *);
 };
 
 /***********************************************************************/
@@ -344,7 +344,7 @@ public:
      (optionally) the pointer to the function which
      will be called if allocation failed; the message
      passed to this function is "Not enough memory!" */
-  DBlock(int size, void (*err_function)(char *) = NULL) {
+  DBlock(int size, void (*err_function)(const char *) = NULL) {
     first = NULL;
     first_free = NULL;
     block_size = size;
@@ -407,7 +407,7 @@ private:
   block		*first;
   block_item	*first_free;
 
-  void	(*error_function)(char *);
+  void	(*error_function)(const char *);
 };
 
 
@@ -474,7 +474,7 @@ public:
      function which will be called if an error occurs;
      an error message is passed to this function. If this
      argument is omitted, exit(1) will be called. */
-  Graph(void (*err_function)(char *) = NULL);
+  Graph(void (*err_function)(const char *) = NULL);
 
   /* Destructor */
   ~Graph();
@@ -615,7 +615,8 @@ private:
   arc_rev_block		*arc_rev_block_first;
   DBlock<nodeptr>		*nodeptr_block;
 
-  void	(*error_function)(char *);	/* this function is called if a error occurs,
+  void	(*error_function)(const char
+                          *);	/* this function is called if a error occurs,
 										   with a corresponding error message
 										   (or exit(1) is called if it's NULL) */
 
@@ -646,7 +647,7 @@ private:
 //#include <stdio.h>
 //#include "graph.h"
 
-inline Graph::Graph(void (*err_function)(char *))
+inline Graph::Graph(void (*err_function)(const char *))
 {
   error_function = err_function;
   node_block_first = NULL;
@@ -923,7 +924,7 @@ inline void Graph::prepare_graph()
           from -> parent = (arc_forward *)(((arc_reverse *)(from -> parent)) - 1);
           ar = (arc_reverse *)(from -> parent);
         }
-      } while (from=(node *)(ar->sister));
+      } while ( (from=(node *)(ar->sister)) );
 
       af -> shift = shift;
       af -> r_cap = r_cap;
@@ -1322,7 +1323,7 @@ inline void Graph::process_source_orphan(node *i)
     }
   }
 
-  if (i->parent = a0_min) {
+  if ( (i->parent = a0_min) ) {
     i -> TS = TIME;
     i -> DIST = d_min + 1;
   } else {
@@ -1482,7 +1483,7 @@ inline void Graph::process_sink_orphan(node *i)
     }
   }
 
-  if (i->parent = a0_min) {
+  if ( (i->parent = a0_min) ) {
     i -> TS = TIME;
     i -> DIST = d_min + 1;
   } else {
@@ -1542,7 +1543,7 @@ inline Graph::flowtype Graph::maxflow()
   nodeptr_block = new DBlock<nodeptr>(NODEPTR_BLOCK_SIZE, error_function);
 
   while ( 1 ) {
-    if (i=current_node) {
+    if ( (i=current_node) ) {
       i -> next = NULL; /* remove active flag */
       if (!i->parent) i = NULL;
     }
@@ -1678,11 +1679,11 @@ inline Graph::flowtype Graph::maxflow()
       /* augmentation end */
 
       /* adoption */
-      while (np=orphan_first) {
+      while ( (np=orphan_first) ) {
         np_next = np -> next;
         np -> next = NULL;
 
-        while (np=orphan_first) {
+        while ( (np=orphan_first) ) {
           orphan_first = np -> next;
           i = np -> ptr;
           nodeptr_block -> Delete(np);
