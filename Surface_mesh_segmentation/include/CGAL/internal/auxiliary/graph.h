@@ -458,9 +458,11 @@ struct Int_to_ptr;
 template<> struct Int_to_ptr<sizeof(int)> {
   typedef int type;
 };
+#if INT_MAX != LONG_MAX
 template<> struct Int_to_ptr<sizeof(long)> {
   typedef long type;
 };
+#endif
 
 
 class Graph
