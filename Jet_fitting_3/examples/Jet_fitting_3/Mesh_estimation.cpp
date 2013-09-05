@@ -65,7 +65,7 @@ typedef boost::associative_property_map<Facet2normal_map_type> Facet_PM_type;
 typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops;
 
 typedef double                   LFT;
-typedef CGAL::Cartesian<LFT>     Local_Kernel;
+typedef CGAL::Simple_cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
 typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
 
