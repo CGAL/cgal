@@ -62,6 +62,13 @@ The function `triangulate_hole_polyline()` can be used by providing a sequence o
 Result of refine example. 
 \cgalFigureEnd
 
+\subsubsection Example_3 Example: Fairing a region on mesh
+\cgalExample{Hole_filling/fair_polyhedron_example.cpp}
+
+\cgalFigureBegin{Max_fair, max_fair.png}
+Result of fair example. 
+\cgalFigureEnd
+
 */
  \cgalFigureBegin{Triangulated_fork, fork.gif}
  Holes in fork model are filled with only triangulating.
