@@ -34,6 +34,7 @@ int main()
     // print segment-ids
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
         facet_it != mesh.facets_end(); ++facet_it) {
-        std::cout << segment_property_map[facet_it] << std::endl;
+        std::cout << segment_property_map[facet_it] << " ";
     }
+    std::cout << std::endl;
 }

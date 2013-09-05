@@ -43,8 +43,9 @@ int main()
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
         // ids are between [0, number_of_segments -1]
-        std::cout << segment_property_map[facet_it] << std::endl;
+        std::cout << segment_property_map[facet_it] << " ";
     }
+    std::cout << std::endl;
 
     const int number_of_clusters = 4;       // use 4 clusters in soft clustering
     const double smoothing_lambda = 0.3;  // importance of surface features, suggested to be in-between [0,1]

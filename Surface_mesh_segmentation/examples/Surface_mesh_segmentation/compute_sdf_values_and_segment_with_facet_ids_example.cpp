@@ -60,8 +60,9 @@ int main()
     // access SDF values (with constant-complexity)
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
       facet_it != mesh.facets_end(); ++facet_it) {
-        std::cout << sdf_property_map[facet_it] << std::endl;
+        std::cout << sdf_property_map[facet_it] << " ";
     }
+    std::cout << std::endl;
 
     // create a property-map for segment-ids
     std::vector<int> segment_ids(mesh.size_of_facets());
@@ -72,6 +73,7 @@ int main()
     // access segment-ids (with constant-complexity)
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
       facet_it != mesh.facets_end(); ++facet_it) {
-        std::cout << segment_property_map[facet_it] << std::endl;
+        std::cout << segment_property_map[facet_it] << " ";
     }
+    std::cout << std::endl;
 }

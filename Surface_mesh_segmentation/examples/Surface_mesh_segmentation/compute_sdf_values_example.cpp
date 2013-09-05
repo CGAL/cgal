@@ -46,6 +46,7 @@ int main()
   // print SDF values
   for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
       facet_it != mesh.facets_end(); ++facet_it) {
-      std::cout << sdf_property_map[facet_it] << std::endl;
+      std::cout << sdf_property_map[facet_it] << " ";
   }
+  std::cout << std::endl;
 }
