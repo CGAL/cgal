@@ -122,15 +122,13 @@ int main()
   Bbox bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p), 
                            boost::make_transform_iterator(ve, v_to_p));
   double diag = diagonal(bbox);
-  
-  Mean_curvature_skeleton *mcs = 
-    new Mean_curvature_skeleton(mesh, Vertex_index_map(), Edge_index_map(),
-                                0.1, 0.2, 0.002 * diag, true, 0.0001);
 
   Graph g;
   std::map<vertex_desc, Point> points;
 
-  mcs->extract_skeleton(g, points);
+  CGAL::extract_medial_skeleton<Sparse_linear_solver>(g, points,
+                     mesh, Vertex_index_map(), Edge_index_map(),
+                     0.1, 0.2, 0.002 * diag, 0.0001);
 
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
   std::cout << "edges: " << boost::num_edges(g) << "\n";

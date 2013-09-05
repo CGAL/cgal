@@ -504,7 +504,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     Graph g;
     std::map<vertex_desc, Point> points;
 
-    CGAL::extract_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map, Graph>(g, points,
+    CGAL::extract_skeleton<Sparse_linear_solver>(g, points,
                      tempMesh, Vertex_index_map(), Edge_index_map(),
                      omega_H, edgelength_TH, area_TH);
 

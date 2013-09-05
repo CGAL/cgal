@@ -1494,10 +1494,10 @@ private:
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+/// @tparam HalfedgeGraph
+///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::vertex_descriptor as key and
@@ -1533,8 +1533,8 @@ private:
 ///        is less than `area_TH`
 /// @param iteration_TH
 ///        the maximum number of iterations to run
-template <class HalfedgeGraph,
-          class SparseLinearAlgebraTraits_d,
+template <class SparseLinearAlgebraTraits_d,
+          class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class Graph>
@@ -1569,10 +1569,10 @@ void extract_medial_skeleton(Graph& g,
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+/// @tparam HalfedgeGraph
+///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::vertex_descriptor as key and
@@ -1606,8 +1606,8 @@ void extract_medial_skeleton(Graph& g,
 ///        is less than `area_TH`
 /// @param iteration_TH
 ///        the maximum number of iterations to run
-template <class HalfedgeGraph,
-          class SparseLinearAlgebraTraits_d,
+template <class SparseLinearAlgebraTraits_d,
+          class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class Graph>
@@ -1638,10 +1638,10 @@ void extract_medial_skeleton(Graph& g,
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+/// @tparam HalfedgeGraph
+///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::vertex_descriptor as key and
@@ -1675,8 +1675,8 @@ void extract_medial_skeleton(Graph& g,
 ///        is less than `area_TH`
 /// @param iteration_TH
 ///        the maximum number of iterations to run
-template <class HalfedgeGraph,
-          class SparseLinearAlgebraTraits_d,
+template <class SparseLinearAlgebraTraits_d,
+          class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class Graph>
@@ -1710,10 +1710,10 @@ void extract_skeleton(Graph& g,
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+/// @tparam HalfedgeGraph
+///         a model of `HalfedgeGraph`
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Mean_curvature_skeleton::vertex_descriptor as key and
@@ -1745,8 +1745,8 @@ void extract_skeleton(Graph& g,
 ///        is less than `area_TH`
 /// @param iteration_TH
 ///        the maximum number of iterations to run
-template <class HalfedgeGraph,
-          class SparseLinearAlgebraTraits_d,
+template <class SparseLinearAlgebraTraits_d,
+          class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class Graph>
