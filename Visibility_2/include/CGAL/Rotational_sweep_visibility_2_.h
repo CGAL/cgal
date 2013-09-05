@@ -171,8 +171,9 @@ public:
     typename std::vector<Point_2>::iterator last = polygon.begin() + big;
     if (is_between) {
       std::vector<Point_2> polygon1(first, last+1);
-      if (is_vertex_query) polygon1.push_back(q);
-      build_arr(polygon1, out_arr);
+      if (is_vertex_query)
+        polygon1.push_back(q);
+      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon1, out_arr);
     }
     else {
       std::vector<Point_2> polygon1(polygon.begin(), first+1);
@@ -180,7 +181,7 @@ public:
       for (int i = big; i != polygon.size(); i++) {
         polygon1.push_back(polygon[i]);
       }
-      build_arr(polygon1, out_arr);
+      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon1, out_arr);
     }
 
     conditional_regularize(out_arr, Regularization_tag());
@@ -199,8 +200,7 @@ public:
     is_edge_query = false;
 
     visibility_region_impl(f, q);
-    build_arr(polygon, out_arr);
-
+    Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon, out_arr);
     conditional_regularize(out_arr, Regularization_tag());
     if (out_arr.faces_begin()->is_unbounded())
       return ++out_arr.faces_begin();
@@ -747,41 +747,6 @@ private:
     }
   }
 
-//  void input_neighbor_ve( const Halfedge_const_handle e) {
-//    if (is_vertex_query && e->target()==query_vertex)
-//      return;
-//    Point_2 v=e->target()->point();
-//    if (!vmap.count(v))
-//      vs.push_back(v);
-//    bool good_edge(true);
-//    for (int i=0; i<bad_edge_handles.size(); i++)
-//      if (e==bad_edge_handles[i]) {
-//        good_edge = false;
-//        break;
-//      }
-//    if (good_edge && e->source()->point())
-////      if (!is_good_edge(e->source()->point(), e->target()->point())) {
-////        std::cout<<"query point: "<<q<<std::endl;
-////        std::cout<<e->curve()<<std::endl;
-////      }
-////      else
-//      vmap[v].push_back(e->source()->point());
-
-//    good_edge = true;
-//    for (int i=0; i<bad_edge_handles.size(); i++)
-//      if (e->next()==bad_edge_handles[i]) {
-//        good_edge = false;
-//        break;
-//      }
-//    if (good_edge && e->next()->target()->point()!=q)
-////      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
-////        std::cout<<"query point: "<<q<<std::endl;
-////        std::cout<<e->next()->curve()<<std::endl;
-////      }
-////      else
-//        vmap[v].push_back(e->next()->target()->point());
-//  }
-
   //for face query: traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh)
   {
@@ -898,9 +863,9 @@ private:
     }
   }
 
-  bool is_on_ray(const Ray_2& r, const Point_2& p) {
-      return Direction_2(Vector_2(r.source(), p)) == Direction_2(r);
-  }
+//  bool is_on_ray(const Ray_2& r, const Point_2& p) {
+//      return Direction_2(Vector_2(r.source(), p)) == Direction_2(r);
+//  }
 
 
   //debug
@@ -941,16 +906,6 @@ private:
       CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
   }
 
-//  void Insert_edge(Vertex_handle insert_loc,
-//                   Vertex_handle new_begin,
-//                   const Point_2& end1,
-//                   const Point_2& end2,
-//                   const Point_2& needle_end,
-//                   Output_arrangement_2& arr_out) {
-
-
-//  }
-
 
   void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
@@ -960,10 +915,11 @@ private:
     //do nothing
   }
 
-  void regularize_output(Arrangement_2& out_arr) {
+  void regularize_output(Output_arrangement_2& out_arr) {
     typename Output_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ;
          e_itr != out_arr.edges_end() ; e_itr++) {
+
       Halfedge_handle he = e_itr;
       Halfedge_handle he_twin = he->twin();
       if (he->face() == he_twin->face()) {
