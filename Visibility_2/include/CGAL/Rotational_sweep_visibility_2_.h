@@ -78,11 +78,12 @@ private:
   std::map<Point_2, Pvec> vmap;   //vertex and two edges incident to it that might block vision
   std::map<Pair, int> edx;   //index of edge in the heap
   std::vector<Pair>  heap;
+
   std::vector<Point_2> vs;          //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
   bool is_big_cone;          //whether the angle of visibility_cone is greater than pi.
-  std::vector<Halfedge_const_handle> bad_edges;
+  std::vector<Halfedge_const_handle> bad_edge_handles;
   Vertex_const_handle query_vertex;
   Point_2         source;
   Point_2         target;
@@ -95,8 +96,9 @@ public:
 
   Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& out_arr) {
     out_arr.clear();
-    bad_edges.clear();
+    bad_edge_handles.clear();
     this->q = q;
+
     if (q == e->target()->point()) {
       query_vertex = e->target();
       is_vertex_query = true;
@@ -109,9 +111,9 @@ public:
       first = curr = e->target()->incident_halfedges();
       do {
         if (curr->face() == e->face())
-          bad_edges.push_back(curr);
+          bad_edge_handles.push_back(curr);
         else if (curr->twin()->face() == e->face())
-          bad_edges.push_back(curr->twin());
+          bad_edge_handles.push_back(curr->twin());
       } while (++curr != first);
     }
     else {
@@ -119,7 +121,7 @@ public:
       is_edge_query = true;
       source = e->source()->point();
       target = e->target()->point();
-      bad_edges.push_back(e);
+      bad_edge_handles.push_back(e);
       is_big_cone = false;
     }
     visibility_region_impl(e->face(), q);
@@ -307,9 +309,9 @@ private:
     vmap.clear();
     edx.clear();
 
-    std::vector<Pair> bbox;
+    std::vector<Pair> good_edges;
     if (is_vertex_query || is_edge_query)
-      input_face(f, bbox);
+      input_face(f, good_edges);
     else
       input_face(f);
     //initiation of vision ray
@@ -322,15 +324,16 @@ private:
         dir = Vector_2(0, -1);
     }
 
-    dp = Point_2(q.x()+dir.x(), q.y()+dir.y());
+    dp = q + dir;
 
     //initiation of active_edges
     if (is_vertex_query || is_edge_query) {
       //TODO: just check intersection with good edges
 
-      for (int i=0; i!=bbox.size(); i++) {
-        if (do_intersect_ray(q, dp, bbox[i].first, bbox[i].second))
-          heap_insert(bbox[i]);
+
+      for (int i=0; i!=good_edges.size(); i++) {
+        if (do_intersect_ray(q, dp, good_edges[i].first, good_edges[i].second))
+          heap_insert(good_edges[i]);
       }
     }
     else {
@@ -724,14 +727,16 @@ private:
     }
   }
 
-  void input_edge(const Halfedge_const_handle e) {
-    for (int i=0; i<bad_edges.size(); i++)
-      if (e == bad_edges[i])
+  void input_edge(const Halfedge_const_handle e,
+                  std::vector<Pair>& good_edges) {
+    for (int i=0; i<bad_edge_handles.size(); i++)
+      if (e == bad_edge_handles[i])
         return;
 
     Point_2 v1 = e->target()->point();
     Point_2 v2 = e->source()->point();
     if (is_in_cone(v1) || is_in_cone(v2)) {
+      good_edges.push_back(create_pair(v1, v2));
       if (!vmap.count(v1))
         vs.push_back(v1);
       vmap[v1].push_back(v2);
@@ -742,40 +747,40 @@ private:
     }
   }
 
-  void input_neighbor_ve( const Halfedge_const_handle e) {
-    if (is_vertex_query && e->target()==query_vertex)
-      return;
-    Point_2 v=e->target()->point();
-    if (!vmap.count(v))
-      vs.push_back(v);
-    bool good_edge(true);
-    for (int i=0; i<bad_edges.size(); i++)
-      if (e==bad_edges[i]) {
-        good_edge = false;
-        break;
-      }
-    if (good_edge && e->source()->point())
-//      if (!is_good_edge(e->source()->point(), e->target()->point())) {
-//        std::cout<<"query point: "<<q<<std::endl;
-//        std::cout<<e->curve()<<std::endl;
+//  void input_neighbor_ve( const Halfedge_const_handle e) {
+//    if (is_vertex_query && e->target()==query_vertex)
+//      return;
+//    Point_2 v=e->target()->point();
+//    if (!vmap.count(v))
+//      vs.push_back(v);
+//    bool good_edge(true);
+//    for (int i=0; i<bad_edge_handles.size(); i++)
+//      if (e==bad_edge_handles[i]) {
+//        good_edge = false;
+//        break;
 //      }
-//      else
-      vmap[v].push_back(e->source()->point());
+//    if (good_edge && e->source()->point())
+////      if (!is_good_edge(e->source()->point(), e->target()->point())) {
+////        std::cout<<"query point: "<<q<<std::endl;
+////        std::cout<<e->curve()<<std::endl;
+////      }
+////      else
+//      vmap[v].push_back(e->source()->point());
 
-    good_edge = true;
-    for (int i=0; i<bad_edges.size(); i++)
-      if (e->next()==bad_edges[i]) {
-        good_edge = false;
-        break;
-      }
-    if (good_edge && e->next()->target()->point()!=q)
-//      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
-//        std::cout<<"query point: "<<q<<std::endl;
-//        std::cout<<e->next()->curve()<<std::endl;
+//    good_edge = true;
+//    for (int i=0; i<bad_edge_handles.size(); i++)
+//      if (e->next()==bad_edge_handles[i]) {
+//        good_edge = false;
+//        break;
 //      }
-//      else
-        vmap[v].push_back(e->next()->target()->point());
-  }
+//    if (good_edge && e->next()->target()->point()!=q)
+////      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
+////        std::cout<<"query point: "<<q<<std::endl;
+////        std::cout<<e->next()->curve()<<std::endl;
+////      }
+////      else
+//        vmap[v].push_back(e->next()->target()->point());
+//  }
 
   //for face query: traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh)
@@ -812,15 +817,13 @@ private:
   }
   //for vertex or edge query: traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
-                   std::vector<Pair>& bbox)
+                   std::vector<Pair>& good_edges)
   {
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
       assert(curr->face() == fh);
-//    Point_2 v = curr->target()->point();
-      input_edge(curr);
-//    input_neighbor(v, curr->next()->target()->point(), bad_edges, curr->next());
+      input_edge(curr, good_edges);
     } while (++curr != circ);
 
     typename Arrangement_2::Hole_const_iterator hi;
@@ -828,9 +831,7 @@ private:
       Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
       do {
         assert(curr->face() == fh);
-//      Point_2 v = curr->target()->point();
-        input_edge(curr);
-//      input_neighbor(v, curr->next()->target()->point(), bad_edges, curr->next());
+        input_edge(curr, good_edges);
       } while (++curr != circ);
     }
 
@@ -848,11 +849,9 @@ private:
                       Point_2(xmax, ymax), Point_2(xmin, ymax)};
     for (int i=0; i<4; i++) {
       vs.push_back(box[i]);
-      Pvec pvec;
-      pvec.push_back(box[(i+3)%4]);
-      pvec.push_back(box[(i+1)%4]);
-      vmap[box[i]] = pvec;
-      bbox.push_back(create_pair(box[i], box[(i+1)%4]));
+      vmap[box[i]].push_back(box[(i+3)%4]);
+      vmap[box[i]].push_back(box[(i+1)%4]);
+      good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
     }
 
     quick_sort(vs, 0, vs.size()-1);
