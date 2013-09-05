@@ -105,7 +105,7 @@ public:
       target = e->next()->target()->point();
       is_big_cone = CGAL::right_turn(source, q, target);
 
-      Input_arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+      typename Input_arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
       first = curr = e->target()->incident_halfedges();
       do {
         if (curr->face() == e->face())
@@ -122,7 +122,7 @@ public:
       bad_edges.push_back(e);
       is_big_cone = false;
     }
-    visibility_region_impl(e->face(), q, e);
+    visibility_region_impl(e->face(), q);
 
     //Decide which inside of the visibility butterfly is needed.
     int source_i, target_i ;
@@ -196,7 +196,7 @@ public:
     is_vertex_query = false;
     is_edge_query = false;
 
-    visibility_region_impl(f, q, f->outer_ccb());
+    visibility_region_impl(f, q);
     build_arr(polygon, out_arr);
 
     conditional_regularize(out_arr, Regularization_tag());
@@ -300,7 +300,7 @@ private:
   }
 
 
-  void visibility_region_impl(const Face_const_handle f, const Point_2& q, const Halfedge_const_handle e) {
+  void visibility_region_impl(const Face_const_handle f, const Point_2& q) {
     vs.clear();
     polygon.clear();
     heap.clear();
@@ -325,31 +325,35 @@ private:
     dp = Point_2(q.x()+dir.x(), q.y()+dir.y());
 
     //initiation of active_edges
+    if (is_vertex_query || is_edge_query) {
+      //TODO: just check intersection with good edges
 
-    Ccb_halfedge_const_circulator curr = f->outer_ccb();
-    Ccb_halfedge_const_circulator circ = curr;
-    do {
-      Point_2 p1 = curr->target()->point();
-      Point_2 p2 = curr->source()->point();
-      if (q != p1 && q != p2 && do_intersect_ray(q, dp, p1, p2))
-        heap_insert(create_pair(p1, p2));
-    } while (++curr != circ);
-
-    typename Arrangement_2::Hole_const_iterator hi;
-    for (hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
-      Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
+      for (int i=0; i!=bbox.size(); i++) {
+        if (do_intersect_ray(q, dp, bbox[i].first, bbox[i].second))
+          heap_insert(bbox[i]);
+      }
+    }
+    else {
+      Ccb_halfedge_const_circulator curr = f->outer_ccb();
+      Ccb_halfedge_const_circulator circ = curr;
       do {
-        Point_2 p1 = c1->target()->point();
-        Point_2 p2 = c1->source()->point();
-        if (q != p1 && q != p2 && do_intersect_ray(q, dp, p1, p2))
+        Point_2 p1 = curr->target()->point();
+        Point_2 p2 = curr->source()->point();
+        if (do_intersect_ray(q, dp, p1, p2))
           heap_insert(create_pair(p1, p2));
-      } while (++c1 != c2);
-    }
-    for (int i=0; i!=bbox.size(); i++) {
-      if (do_intersect_ray(q, dp, bbox[i].first, bbox[i].second))
-        heap_insert(bbox[i]);
-    }
+      } while (++curr != circ);
 
+      typename Arrangement_2::Hole_const_iterator hi;
+      for (hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
+        Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
+        do {
+          Point_2 p1 = curr->target()->point();
+          Point_2 p2 = curr->source()->point();
+          if (do_intersect_ray(q, dp, p1, p2))
+            heap_insert(create_pair(p1, p2));
+        } while (++curr != circ);
+      }
+    }
     //angular sweep begins
 
     for (int i=0; i!=vs.size(); i++) {
@@ -713,16 +717,16 @@ private:
   }
   bool is_in_cone(Point_2 p) {
     if (is_big_cone) {
-      return !right_turn(source, q, p) || !left_turn(target, q, p);
+      return (!right_turn(source, q, p)) || (!left_turn(target, q, p));
     }
     else {
-      return !right_turn(source, q, p) && !left_turn(target, q, p);
+      return (!right_turn(source, q, p)) && (!left_turn(target, q, p));
     }
   }
 
   void input_edge(const Halfedge_const_handle e) {
     for (int i=0; i<bad_edges.size(); i++)
-      if (e = bad_edges[i])
+      if (e == bad_edges[i])
         return;
 
     Point_2 v1 = e->target()->point();
