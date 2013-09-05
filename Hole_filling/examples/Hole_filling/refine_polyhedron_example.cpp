@@ -11,10 +11,13 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+typedef Polyhedron::Facet_handle    Facet_handle;
+typedef Polyhedron::Vertex_handle   Vertex_handle;
+typedef Polyhedron::Facet           Facet;
 
 struct Facet_to_facet_handle 
-  : public std::unary_function<Polyhedron::Facet&, Polyhedron::Facet_handle>
+  : public std::unary_function<Facet&, Facet_handle>
 {
   result_type operator()(argument_type f) const
   { return f.halfedge()->facet(); }
@@ -36,8 +39,8 @@ int main() {
   }
   Polyhedron poly_2 = poly_1;
 
-  std::vector<Polyhedron::Facet_handle>  new_facets;
-  std::vector<Polyhedron::Vertex_handle> new_vertices;
+  std::vector<Facet_handle>  new_facets;
+  std::vector<Vertex_handle> new_vertices;
   // `facets_begin()` returns `Facet_iterator` which is an iterator over `Facet`, 
   // what `refine()` requires is an iterator over `Facet_handle`, hence a transformer is used
   CGAL::refine(poly_1, 
