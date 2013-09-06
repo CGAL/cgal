@@ -75,12 +75,12 @@ Scene::addItem(Scene_item* item)
 }
 
 Scene_item*
-Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destoryed)
+Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destroyed)
 {
   if(index < 0 || index >= m_entries.size())
     return 0;
 
-  if(emit_item_about_to_be_destoryed) {
+  if(emit_item_about_to_be_destroyed) {
     emit itemAboutToBeDestroyed(m_entries[index]);
   }
 
