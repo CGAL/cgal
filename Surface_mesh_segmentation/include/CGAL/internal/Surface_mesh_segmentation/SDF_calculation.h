@@ -273,8 +273,8 @@ public:
 
     Plane plane(center, normal);
     Vector v1 = plane.base1(), v2 = plane.base2();
-    v1 = scale_functor(v1, FT(1.0 / CGAL::sqrt(v1.squared_length())));
-    v2 = scale_functor(v2, FT(1.0 / CGAL::sqrt(v2.squared_length())));
+    v1 = scale_functor(v1, FT(1.0 / CGAL::sqrt( to_double(v1.squared_length()) )));
+    v2 = scale_functor(v2, FT(1.0 / CGAL::sqrt( to_double(v2.squared_length()) )));
 
     std::vector<std::pair<double, double> > ray_distances;
     ray_distances.reserve(disk_samples.size());
@@ -296,12 +296,13 @@ public:
       Vector ray_direction = sum_functor(scaled_normal, disk_vector);
 
       if(use_diagonal) {
-        FT max_distance( max_diagonal / std::sqrt(ray_direction.squared_length()));
-        const Vector& scaled_direction = scale_functor(ray_direction, max_distance);
-        const Vector& target_vector = sum_functor( Vector(Point(ORIGIN), center),
-                                      scaled_direction);
-        const Point&  target_point = translated_point_functor(Point(ORIGIN),
-                                     target_vector);
+        FT max_distance( max_diagonal / std::sqrt(to_double(
+                           ray_direction.squared_length())));
+        const Vector scaled_direction = scale_functor(ray_direction, max_distance);
+        const Vector target_vector = sum_functor( Vector(Point(ORIGIN), center),
+                                     scaled_direction);
+        const Point  target_point = translated_point_functor(Point(ORIGIN),
+                                    target_vector);
         Segment segment(center, target_point);
 
         if(traits.is_degenerate_3_object()(segment)) {
@@ -366,7 +367,8 @@ private:
     const Point& p3 = facet->halfedge()->prev()->vertex()->point();
     const Point center  = centroid_functor(p1, p2, p3);
     Vector normal = normal_functor(p2, p1, p3);
-    normal=scale_functor(normal,FT(1.0/std::sqrt(normal.squared_length())));
+    normal=scale_functor(normal,
+                         FT(1.0/std::sqrt(to_double(normal.squared_length()))));
 
     CGAL::internal::SkipPrimitiveFunctor<typename Polyhedron::Facet_const_handle>
     skip(facet);
@@ -420,7 +422,7 @@ private:
       }
 
       Vector i_ray(*i_point, query.source());
-      double new_distance = i_ray.squared_length();
+      double new_distance = to_double( i_ray.squared_length() );
       if(!min_distance.template get<0>()
           || new_distance < min_distance.template get<2>()) {
         min_distance.template get<3>() = id;
