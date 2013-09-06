@@ -69,6 +69,9 @@
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="1">
         <widget class="QSpinBox" name="Number_of_clusters_spin_box">
+         <property name="minimum">
+          <number>1</number>
+         </property>
          <property name="value">
           <number>5</number>
          </property>
@@ -116,7 +119,7 @@
           <enum>Qt::LeftToRight</enum>
          </property>
          <property name="text">
-          <string>Extract Segments</string>
+          <string>Extract segments:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
