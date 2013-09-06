@@ -743,21 +743,6 @@ private:
         vmap[v].push_back(e->next()->target()->point());
   }
 
-//    if (vmap.count(v)) {
-//      for (int i=0; i<2; i++) {
-//        if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
-//          vmap[v].push_back(nei[i]);
-//      }
-//    }
-//    else {
-//      vs.push_back(v);
-//      Pvec neighbor;
-//      for (int i=0; i<2; i++){
-//        if ((!is_vertex_query && !is_edge_query) || is_good_edge(q,a,b,v,nei[i]))
-//          neighbor.push_back(nei[i]);
-//      }
-//      vmap[v]
-//    }
 
   //traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,

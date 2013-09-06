@@ -203,13 +203,13 @@ void report_while_handling_needles(
     points.pop_back();
   }
 
-  while (collinear(geom_traits, 
-                   points[i], 
+  while (collinear(geom_traits,
+                   points[i],
                    points[points.size()-1],
-                   points[points.size()-2]) 
-      || collinear(geom_traits, 
-                   points[i], 
-                   points[i+1], 
+                   points[points.size()-2])
+      || collinear(geom_traits,
+                   points[i],
+                   points[i+1],
                    points[points.size()-1])) {
 
     points.push_back(points[i]);
@@ -327,6 +327,8 @@ void report_while_handling_needles(
     }
   }
 }
+
+
 
 } // end namespace Visibility_2
 } // end namespace CGAL
