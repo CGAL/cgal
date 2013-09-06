@@ -109,8 +109,8 @@ public:
   template<class SDFPropertyMap>
   std::pair<double, double> min_max_value(const Polyhedron& mesh,
                                           SDFPropertyMap sdf_values) {
-    double max_sdf = -(std::numeric_limits<double>::max)();
     double min_sdf = (std::numeric_limits<double>::max)();
+    double max_sdf = -min_sdf;
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
       double sdf_value = sdf_values[facet_it];
