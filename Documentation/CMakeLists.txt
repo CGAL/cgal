@@ -114,11 +114,9 @@ if(DOXYGEN_FOUND)
   # pkglist_filter gets the path to the pkglist_filter of this source
   # directory.
   if(WIN32)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.bat ${CMAKE_BINARY_DIR}/pkglist_filter)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.bat ${CMAKE_BINARY_DIR}/pkglist_filter.bat)
-  else()
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
   endif()
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
 
   foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
