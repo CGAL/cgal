@@ -523,7 +523,7 @@ public:
    * to a curve skeleton.
    *
    * @param g
-   *        a boost::graph containing the connectivity of the skeleotn
+   *        a boost::graph containing the connectivity of the skeleton
    * @param points
    *        the locations of the skeletal points
    */
@@ -539,7 +539,7 @@ public:
    * to a curve skeleton.
    *
    * @param g
-   *        a boost::graph containing the connectivity of the skeleotn
+   *        a boost::graph containing the connectivity of the skeleton
    * @param points
    *        the locations of the skeletal points
    * @param corr
@@ -1511,7 +1511,7 @@ private:
 ///         data structure for skeleton curve
 ///
 /// @param g
-///        a boost::graph containing the connectivity of the skeleotn
+///        a boost::graph containing the connectivity of the skeleton
 /// @param points
 ///        the locations of the skeletal points
 /// @param corr
@@ -1586,7 +1586,7 @@ void extract_medial_skeleton(Graph& g,
 ///         data structure for skeleton curve
 ///
 /// @param g
-///        a boost::graph containing the connectivity of the skeleotn
+///        a boost::graph containing the connectivity of the skeleton
 /// @param points
 ///        the locations of the skeletal points
 /// @param P
@@ -1655,7 +1655,7 @@ void extract_medial_skeleton(Graph& g,
 ///         data structure for skeleton curve
 ///
 /// @param g
-///        a boost::graph containing the connectivity of the skeleotn
+///        a boost::graph containing the connectivity of the skeleton
 /// @param points
 ///        the locations of the skeletal points
 /// @param corr
@@ -1727,7 +1727,7 @@ void extract_skeleton(Graph& g,
 ///         data structure for skeleton curve
 ///
 /// @param g
-///        a boost::graph containing the connectivity of the skeleotn
+///        a boost::graph containing the connectivity of the skeleton
 /// @param points
 ///        the locations of the skeletal points
 /// @param P
