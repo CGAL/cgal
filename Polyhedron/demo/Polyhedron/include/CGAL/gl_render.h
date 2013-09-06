@@ -34,7 +34,7 @@ void gl_render_facets(Polyhedron& polyhedron, const std::vector<QColor>& colors)
   GLint shading;
   ::glGetIntegerv(GL_SHADE_MODEL, &shading);
 
-  int patch_id = 0;
+  int patch_id = -1;
 
   Facet_iterator f;
   for(f = polyhedron.facets_begin();
