@@ -1490,7 +1490,7 @@ private:
 };
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract the medially centered curve skeleton for the mesh.
+/// @brief Extract a medially centered curve skeleton for the mesh.
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
@@ -1565,7 +1565,7 @@ void extract_medial_skeleton(Graph& g,
 }
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract the medially centered curve skeleton for the mesh.
+/// @brief Extract a medially centered curve skeleton for the mesh.
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
@@ -1634,7 +1634,7 @@ void extract_medial_skeleton(Graph& g,
 }
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract the medially centered curve skeleton for the mesh.
+/// @brief Extract a medially centered curve skeleton for the mesh.
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
@@ -1706,7 +1706,7 @@ void extract_skeleton(Graph& g,
 }
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract the medially centered curve skeleton for the mesh.
+/// @brief Extract a medially centered curve skeleton for the mesh.
 ///
 /// @pre the polyhedron is a watertight triangular mesh
 ///
