@@ -234,12 +234,12 @@ private:
   /** value very close to zero */
   double zero_TH;
   /** run_to_converge will stop if the change of area in one iteration
-   *  is less than `area_TH` */
-  double area_TH;
+   *  is less than `delta_area` */
+  double delta_area;
   /** surface area of original mesh */
   double original_area;
   /** maximum number of iterations */
-  int iteration_TH;
+  int max_iterations;
 
   /** cotangent weight calculator */
   Weight_calculator weight_calculator;
@@ -291,8 +291,8 @@ public:
                           EdgeIndexMap Edge_index_map,
                           double omega_H,
                           double edgelength_TH,
-                          double area_TH = 1e-5,
-                          int iteration_TH = 500
+                          double delta_area = 1e-5,
+                          int max_iterations = 500
                           )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -301,8 +301,8 @@ public:
      edgelength_TH(edgelength_TH),
      alpha_TH(110),
      zero_TH(1e-7),
-     area_TH(area_TH),
-     iteration_TH(iteration_TH),
+     delta_area(delta_area),
+     max_iterations(max_iterations),
      weight_calculator(Weight_calculator()),
      is_medially_centered(false)
   {
@@ -328,10 +328,10 @@ public:
    *        edges with length less than `edgelength_TH` will be collapsed
    * @param is_medially_centered
    *        should the skeleton be medially centered?
-   * @param area_TH
+   * @param delta_area
    *        run_to_converge will stop if the change of area in one iteration
-   *        is less than `area_TH`
-   * @param iteration_TH
+   *        is less than `delta_area`
+   * @param max_iterations
    *        the maximum number of iterations to run
    */
   Mean_curvature_skeleton(HalfedgeGraph& P,
@@ -341,8 +341,8 @@ public:
                           double omega_P,
                           double edgelength_TH,
                           bool is_medially_centered,
-                          double area_TH = 1e-5,
-                          int iteration_TH = 500
+                          double delta_area = 1e-5,
+                          int max_iterations = 500
                           )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -352,8 +352,8 @@ public:
      edgelength_TH(edgelength_TH),
      alpha_TH(110),
      zero_TH(1e-7),
-     area_TH(area_TH),
-     iteration_TH(iteration_TH),
+     delta_area(delta_area),
+     max_iterations(max_iterations),
      weight_calculator(Weight_calculator()),
      is_medially_centered(is_medially_centered)
   {
@@ -424,14 +424,14 @@ public:
     is_medially_centered = value;
   }
 
-  void set_iteration_TH(int value)
+  void set_max_iterations(int value)
   {
-    iteration_TH = value;
+    max_iterations = value;
   }
 
-  int get_iteration_TH()
+  int get_max_iterations()
   {
-    return iteration_TH;
+    return max_iterations;
   }
 
   HalfedgeGraph& get_halfedge_graph()
@@ -718,7 +718,7 @@ public:
   /**
    * Run iterations of `contract_geometry()`, `update_topology()` and
    * `detect_degeneracies()` until the change of surface area during one
-   * iteration is less than `area_TH` * original surface area.
+   * iteration is less than `delta_area` * original surface area.
    */
   void run_to_converge()
   {
@@ -739,14 +739,14 @@ public:
       MCFSKEL_INFO(std::cout << "|area - last_area| / original_area "
                              << area_ratio << "\n";)
 
-      if (area_ratio < area_TH)
+      if (area_ratio < delta_area)
       {
         break;
       }
       last_area = area;
 
       num_iteration++;
-      if (num_iteration >= iteration_TH)
+      if (num_iteration >= max_iterations)
       {
         break;
       }
@@ -1528,10 +1528,10 @@ private:
 ///        controls the smoothness of the medial approximation
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param area_TH
+/// @param delta_area
 ///        run_to_converge will stop if the change of area in one iteration
-///        is less than `area_TH`
-/// @param iteration_TH
+///        is less than `delta_area`
+/// @param max_iterations
 ///        the maximum number of iterations to run
 template <class SparseLinearAlgebraTraits_d,
           class HalfedgeGraph,
@@ -1549,14 +1549,14 @@ void extract_medial_skeleton(Graph& g,
                             double omega_H,
                             double omega_P,
                             double edgelength_TH,
-                            double area_TH = 1e-5,
-                            int iteration_TH = 500)
+                            double delta_area = 1e-5,
+                            int max_iterations = 500)
 {
   typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
   VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, omega_P, edgelength_TH, true, area_TH, iteration_TH);
+  omega_H, omega_P, edgelength_TH, true, delta_area, max_iterations);
 
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);
@@ -1601,10 +1601,10 @@ void extract_medial_skeleton(Graph& g,
 ///        controls the smoothness of the medial approximation
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param area_TH
+/// @param delta_area
 ///        run_to_converge will stop if the change of area in one iteration
-///        is less than `area_TH`
-/// @param iteration_TH
+///        is less than `delta_area`
+/// @param max_iterations
 ///        the maximum number of iterations to run
 template <class SparseLinearAlgebraTraits_d,
           class HalfedgeGraph,
@@ -1620,14 +1620,14 @@ void extract_medial_skeleton(Graph& g,
                             double omega_H,
                             double omega_P,
                             double edgelength_TH,
-                            double area_TH = 1e-5,
-                            int iteration_TH = 500)
+                            double delta_area = 1e-5,
+                            int max_iterations = 500)
 {
   typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
   VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, omega_P, edgelength_TH, true, area_TH, iteration_TH);
+  omega_H, omega_P, edgelength_TH, true, delta_area, max_iterations);
 
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);
@@ -1670,10 +1670,10 @@ void extract_medial_skeleton(Graph& g,
 ///        controls the velocity of movement and approximation quality
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param area_TH
+/// @param delta_area
 ///        run_to_converge will stop if the change of area in one iteration
-///        is less than `area_TH`
-/// @param iteration_TH
+///        is less than `delta_area`
+/// @param max_iterations
 ///        the maximum number of iterations to run
 template <class SparseLinearAlgebraTraits_d,
           class HalfedgeGraph,
@@ -1690,14 +1690,14 @@ void extract_skeleton(Graph& g,
                       EdgeIndexMap Edge_index_map,
                       double omega_H,
                       double edgelength_TH,
-                      double area_TH = 1e-5,
-                      int iteration_TH = 500)
+                      double delta_area = 1e-5,
+                      int max_iterations = 500)
 {
   typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
   VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, 0.0, edgelength_TH, false, area_TH, iteration_TH);
+  omega_H, 0.0, edgelength_TH, false, delta_area, max_iterations);
 
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);
@@ -1740,10 +1740,10 @@ void extract_skeleton(Graph& g,
 ///        controls the velocity of movement and approximation quality
 /// @param edgelength_TH
 ///        edges with length less than `edgelength_TH` will be collapsed
-/// @param area_TH
+/// @param delta_area
 ///        run_to_converge will stop if the change of area in one iteration
-///        is less than `area_TH`
-/// @param iteration_TH
+///        is less than `delta_area`
+/// @param max_iterations
 ///        the maximum number of iterations to run
 template <class SparseLinearAlgebraTraits_d,
           class HalfedgeGraph,
@@ -1758,14 +1758,14 @@ void extract_skeleton(Graph& g,
                       EdgeIndexMap Edge_index_map,
                       double omega_H,
                       double edgelength_TH,
-                      double area_TH = 1e-5,
-                      int iteration_TH = 500)
+                      double delta_area = 1e-5,
+                      int max_iterations = 500)
 {
   typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
   VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, 0.0, edgelength_TH, false, area_TH, iteration_TH);
+  omega_H, 0.0, edgelength_TH, false, delta_area, max_iterations);
 
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);
