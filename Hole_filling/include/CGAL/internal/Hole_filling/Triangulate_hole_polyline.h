@@ -592,17 +592,21 @@ private:
 
       if(v2 < v0 || v2 > v1) { continue; } // this will also skip infinite vertex
 
+      if(WC(P,Q, v0,v2,v1, lambda) == Weight::NOT_VALID())
+      { continue; } // computed weight in here is not correct weight
+                    // since max dih angle requires neighbor ranges to be already computed. It is just for checking validity.
+      
       Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index); // edge v0-v2
-      Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index); // edge v1-v2
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, WC);        // region v0-v2
+      const Weight& we0 = W.get(v0, v2);
+      if(we0 == Weight::NOT_VALID()) { continue; }
+      
+      Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index); // edge v2-v1
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, WC);        // region v2-v1
+      const Weight& we1 = W.get(v2, v1);
+      if(we1 == Weight::NOT_VALID()) { continue; }
 
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, WC); // region v0-v2
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, WC); // region v2-v1
-
-      Weight w_021 = WC(P,Q, v0,v2,v1, lambda);
-      if( W.get(v0, v2) == Weight::NOT_VALID() || W.get(v2, v1) == Weight::NOT_VALID() || w_021 == Weight::NOT_VALID())
-      { continue; }
-
-      Weight w = W.get(v0, v2) + W.get(v2, v1) + w_021;
+      Weight w = we0 + we1 + WC(P,Q, v0,v2,v1, lambda);
       if(m_min == -1 || w < w_min){
         w_min = w;
         m_min = v2;
