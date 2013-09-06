@@ -102,20 +102,21 @@ public:
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                             face->outer_ccb();
     typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
+     typename Input_arrangement_2::Ccb_halfedge_const_circulator start = curr;
     typename Input_arrangement_2::Halfedge_const_handle he = curr;
 
-    std::vector<Point_2> temp_vertices;
+ //   std::cout << "start\n";
     Point_2 min_intersect_pt;
     bool intersect_on_endpoint = false;
     Segment_2 curr_edge(he->source()->point(), he->target()->point());
     Segment_2 curr_min_edge(he->source()->point(), he->target()->point());
-    Point_2 curr_vertex = he->target()->point();
-    temp_vertices.push_back(curr_vertex);
+
     Number_type min_dist = CGAL::Visibility_2::compute_squared_distance_2
              <Geometry_traits_2, Point_2, Segment_2>(geom_traits, q, curr_edge);
     int min_dist_index = 0;
     int index = 1;
     curr++;
+
     // Push all vertices and determine edge minimum in terms 
     // of squared distance to query point
     do {
@@ -128,8 +129,8 @@ public:
         min_dist = curr_dist;
         min_dist_index = index;
         curr_min_edge = curr_edge;
+        start = curr;
       }
-      temp_vertices.push_back(he->target()->point());
       index++;
     } while (++curr != circ);
 
@@ -145,13 +146,12 @@ public:
     else {
       intersect_pt_on_seg_endpoint = true;
     }
-    // Now create vector so that first vertex v0 is visible
-    for (unsigned int k = min_dist_index ; k < temp_vertices.size() ; k++) {
-      vertices.push_back(temp_vertices[k]);
-    }
-    for (unsigned int k = 0 ; k < min_dist_index ; k++) {
-      vertices.push_back(temp_vertices[k]);
-    }
+
+    curr = start;
+    do {
+      he = curr;
+      vertices.push_back(he->target()->point());
+    } while(++curr != start);
 
     // Push first vertex again to fulfill algo precondition
     if (min_intersect_pt != curr_min_edge.source() && 
