@@ -839,7 +839,7 @@ void simple_benchmark_one_unit(
         std::cout << "query in Face:\n";
         CGAL::Visibility_2::print_simple_face<Face_const_handle, Ccb_halfedge_const_circulator>(fit);
       }
-      std::cout << "the query point is" << curr_query_pt << std::endl;
+      std::cout << "the query point is " << curr_query_pt << std::endl;
       std::cout << RED << "two outputs are different:\n"
                 << "first output is:\n" << RESET;
       CGAL::Visibility_2::print_arrangement(out_arr_fst);
