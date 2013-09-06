@@ -15,7 +15,7 @@ Skeletonization results for the horse model.
 
 Skeletons are effective shape abstractions commonly used in reconstruction, 
 segmentation, shape matching and virtual navigation. In this package, we 
-implement the algorithm described in \cite tagliasacchi2012mean, which extracts
+implement the algorithm described in \cgalCite{tagliasacchi2012mean}, which extracts
 a curve skeleton from a watertight surface mesh. The curve skeleton is a pure 1D
 structure, compared with the medial axis skeleton which consists of 2D surfaces
 and 1D curves. With a lower dimensionality, the curve skeleton still captures 
@@ -35,9 +35,9 @@ anti-normal direction with speed proportional with its mean curvature.
 \f]
 
 It is shown that MCF minimizes the membrane energy of a surface, which measures
-the surface area \cite botsch2010polygon. The area minimizing property makes MCF
+the surface area \cgalCite{botsch2010polygon}. The area minimizing property makes MCF
 an ideal candidate for the core of a skeletonization algorithm. In 
-\cite tagliasacchi2012mean, the authors prove the anisotropic property of MCF, 
+\cgalCite{tagliasacchi2012mean}, the authors prove the anisotropic property of MCF,
 which implies the triangles in the contracted mesh are along the low principle 
 curvature direction. This further justifies the use of MCF in skeletonization.
 
@@ -76,7 +76,7 @@ Note setting \f$ w_{H} \f$ too small results in a low quality of skeleton.
 
 \subsection MCFSkelSecRemesh Local Dynamic Remeshing
 
-As shown in \cite tagliasacchi2012mean, the MCF moves the surface points along
+As shown in \cgalCite{tagliasacchi2012mean}, the MCF moves the surface points along
 the max principle curvature directions, which could result in very high aspect
 ratio triangles that stiffens the finite element solver. To address the problem,
 a local remeshing is performed at each iteration to collapse too short edges 
