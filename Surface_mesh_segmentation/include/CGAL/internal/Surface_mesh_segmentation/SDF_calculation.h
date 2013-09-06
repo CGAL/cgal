@@ -93,7 +93,6 @@ private:
   typename GeomTraits::Construct_scaled_vector_3       scale_functor;
   typename GeomTraits::Construct_sum_of_vectors_3      sum_functor;
   typename GeomTraits::Construct_normal_3              normal_functor;
-  typename GeomTraits::Construct_unit_normal_3         unit_normal_functor;
   typename GeomTraits::Construct_translated_point_3    translated_point_functor;
   typename GeomTraits::Construct_centroid_3            centroid_functor;
 
@@ -117,7 +116,6 @@ public:
     scale_functor(traits.construct_scaled_vector_3_object()),
     sum_functor(traits.construct_sum_of_vectors_3_object()),
     normal_functor(traits.construct_normal_3_object()),
-    unit_normal_functor(traits.construct_unit_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
     use_diagonal(use_diagonal) {
@@ -154,7 +152,6 @@ public:
       scale_functor(traits.construct_scaled_vector_3_object()),
       sum_functor(traits.construct_sum_of_vectors_3_object()),
       normal_functor(traits.construct_normal_3_object()),
-      unit_normal_functor(traits.construct_unit_normal_3_object()),
       translated_point_functor(traits.construct_translated_point_3_object()),
       centroid_functor(traits.construct_centroid_3_object()),
       use_diagonal(false) {
@@ -367,8 +364,9 @@ private:
     const Point& p1 = facet->halfedge()->vertex()->point();
     const Point& p2 = facet->halfedge()->next()->vertex()->point();
     const Point& p3 = facet->halfedge()->prev()->vertex()->point();
-    const Point& center  = centroid_functor(p1, p2, p3);
-    const Vector& normal = unit_normal_functor(p2, p1, p3);
+    const Point center  = centroid_functor(p1, p2, p3);
+    Vector normal = normal_functor(p2, p1, p3);
+    normal=scale_functor(normal,FT(1.0/std::sqrt(normal.squared_length())));
 
     CGAL::internal::SkipPrimitiveFunctor<typename Polyhedron::Facet_const_handle>
     skip(facet);

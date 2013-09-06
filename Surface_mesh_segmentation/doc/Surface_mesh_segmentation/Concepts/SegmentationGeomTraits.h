@@ -63,11 +63,6 @@ Function object model of Kernel::ConstructCentroid_3 for the aforementioned geom
 typedef Hidden_type Construct_centroid_3;
 
 /*! 
-Function object model of Kernel::ConstructUnitNormal_3 for the aforementioned geometric types.
-*/
-typedef Hidden_type Construct_unit_normal_3;
-
-/*! 
 Function object model of Kernel::ConstructTranslatedPoint_3 for the aforementioned geometric types.
 */
 typedef Hidden_type Construct_translated_point_3;
