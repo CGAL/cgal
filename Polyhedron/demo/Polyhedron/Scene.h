@@ -45,7 +45,7 @@ public:
   ~Scene();
 
   int addItem(Scene_item* item);
-  Scene_item* replaceItem(int index, Scene_item* item);
+  Scene_item* replaceItem(int index, Scene_item* item, bool emit_item_about_to_be_destroyed = false);
 
   Q_INVOKABLE int erase(int);  
   int erase(QList<int>);  

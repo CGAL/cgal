@@ -407,6 +407,7 @@ template<unsigned int i> Attribute_const_range<i>::type & attributes() const;
 
 /*!
 Returns a range of all the darts of the orbit `<Beta...>(*dh)`.
+The first element in the range points onto `*dh`.
 \pre `*dh`\f$ \in\f$`darts()` and `Beta...` is a sequence of integers \f$ i_1\f$,\f$ \ldots\f$,\f$ i_k\f$,
     such that 0\f$ \leq\f$\f$ i_1\f$\f$ <\f$\f$ i_2\f$\f$ <\f$\f$ \ldots\f$\f$ <\f$\f$ i_k\f$\f$ \leq\f$\ref CombinatorialMap::dimension "dimension",
      and (\f$ i_1\f$\f$ \neq\f$ 0 or \f$ i_2\f$\f$ \neq\f$ 1).
@@ -415,12 +416,14 @@ template<unsigned int ... Beta> Dart_of_orbit_range darts_of_orbit(Dart_handle d
 
 /*!
 Returns a const range of all the darts of the orbit `<Beta...>(*dh)`.
+The first element in the range points onto `*dh`.
 \pre Same as for the non const version.
 */
 template<unsigned int ... Beta> Dart_of_orbit_const_range darts_of_orbit(Dart_const_handle dh) const;
 
 /*!
 Returns a range of all the darts of the <I>i</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 <I>i</I>-cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 range of all the darts of the connected component containing `dh`.
 \pre `*dh`\f$ \in\f$`darts()`, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>dim+1</I> and
@@ -430,6 +433,7 @@ template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range darts_of_
 
 /*!
 Returns a const range of all the darts of the <I>i</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 <I>i</I>-cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 const range of all the darts of the connected component containing `*dh`.
 \pre Same as for the non const version.
@@ -438,6 +442,7 @@ template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range dar
 
 /*!
 Returns a range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>,
 consider the connected component containing `*dh` instead of the <I>j</I>-cell.
@@ -449,6 +454,7 @@ template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_
 
 /*!
 Returns a const range of one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing `*dh`.
+The first element in the range points onto `*dh`.
 Cells are considered in <I>dim</I> dimension. If <I>i==dim+1</I>,
 consider each connected component instead of each <I>i</I>-cell. If <I>j==dim+1</I>,
 consider the connected component containing `*dh` instead of the <I>j</I>-cell.
