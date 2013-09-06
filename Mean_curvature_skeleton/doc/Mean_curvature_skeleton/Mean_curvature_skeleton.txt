@@ -10,22 +10,21 @@ namespace CGAL {
 \section MCFSkelSecMot Introduction
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
-Skeletonization results for the horse model. 
+Mean curvature flow skeleton of a horse model.
 \cgalFigureEnd
 
 Skeletons are effective shape abstractions commonly used in reconstruction, 
-segmentation, shape matching and virtual navigation. In this package, we 
+segmentation, shape matching, virtual navigation... In this package, we 
 implement the algorithm described in \cgalCite{tagliasacchi2012mean}, which extracts
-a curve skeleton from a watertight surface mesh. The curve skeleton is a pure 1D
-structure, compared with the medial axis skeleton which consists of 2D surfaces
-and 1D curves. With a lower dimensionality, the curve skeleton still captures 
-the essential topology of the shape: With a curve skeleton and a radius 
-function, a shape approximation can be generated.
+a curve skeleton from a watertight surface mesh. A curve skeleton is a pure 1D
+structure while a medial axis skeleton consists of 2D surfaces and 1D curves.
+Even if of a lower dimension, the curve skeleton still captures 
+the essential topology of the shape.
 
 \section MCFSkelSecAlgo Algorithm Description
 
-Mean curvature flow (MCF) is a motion that moves each surface point along its
-anti-normal direction with speed proportional with its mean curvature.
+<em>Mean curvature flow</em> (MCF) is a motion of each surface point along its
+anti-normal direction with a speed proportional to its mean curvature.
 
 \f[
 \begin{equation}
@@ -34,18 +33,25 @@ anti-normal direction with speed proportional with its mean curvature.
 \end{equation}
 \f]
 
-It is shown that MCF minimizes the membrane energy of a surface, which measures
+\todo Is the equation bringing something to the description?
+
+MCF minimizes the membrane energy of a surface, which measures
 the surface area \cgalCite{botsch2010polygon}. The area minimizing property makes MCF
 an ideal candidate for the core of a skeletonization algorithm. In 
 \cgalCite{tagliasacchi2012mean}, the authors prove the anisotropic property of MCF,
 which implies the triangles in the contracted mesh are along the low principle 
 curvature direction. This further justifies the use of MCF in skeletonization.
 
+The algorithm runs iteratively. In each iteration, the mesh is contracted by MCF,
+local remeshing and degeneracy detection is performed.
+
+\todo we say nothing about the skeleton extraction from the converged contracted mesh?
+
 \subsection MCFSkelSecContra Iterative Mesh Contraction via Mean Curvature Flow
 
-We formulate the MCF in an implicit form with discrete Laplaceian operator 
+We formulate the MCF in an implicit form with discrete Laplacian operator 
 \f$ L \f$. Since the Laplacian equation \f$ LV = 0 \f$ has a trivial solution,
-we solve a regularized version:
+the following regularized version is considered instead:
 
 \f[
 \begin{equation}
@@ -62,29 +68,38 @@ we solve a regularized version:
 \end{equation}
 \f]
 
-\f$ W_{H} \f$ is a diagonal matrix in which \f$ W_{H,i} = w_{H}\f$. \f$w_{H}\f$
-is a user supplied parameter to control the speed of MCF. Slowing down the MCF
+\todo the fact that the method is an iterative contraction is not mentioned (Well only in the section title).
+
+\todo what are \f$ V \f$ , \f$ V^{t+1} \f$. Explain how \f$ L \f$ is constructed or refer to a paper
+
+\f$ W_{H} \f$ is a diagonal matrix, all diagonal element being equal and denoted as  \f$ w_{H}\f$.
+\f$w_{H}\f$ is a user parameter that controls the speed of MCF. Slowing down the MCF
 is essential since as the mesh evolves, the local curvature changes and the 
 Laplacian operator needs to be updated to better approximate the mean curvature.
 
-The effect of \f$ w_{H} \f$ can be illustrated in \cgalFigureRef{WHeffect}.
+The effect of \f$ w_{H} \f$ is illustrated in \cgalFigureRef{WHeffect}.
 
 \cgalFigureBegin{WHeffect, WHeffect.png}
 From left to right, the \f$ w_{H} \f$ is 0.1, 0.05, 0.01, 0.005 respectively.
 Note setting \f$ w_{H} \f$ too small results in a low quality of skeleton.
 \cgalFigureEnd
 
+\todo Give the range of possible values for \f$ w_H \f$ with a guess on how to set it
+
 \subsection MCFSkelSecRemesh Local Dynamic Remeshing
 
 As shown in \cgalCite{tagliasacchi2012mean}, the MCF moves the surface points along
-the max principle curvature directions, which could result in very high aspect
+the maximum principle curvature directions, which could result in very high aspect
 ratio triangles that stiffens the finite element solver. To address the problem,
-a local remeshing is performed at each iteration to collapse too short edges 
-and split badly triangles while maintaing the manifold property. Specifically we
-split triangles at the edge \f$ e \f$ if its opposite angle is greater than 
-\f$ 110^{\circ} \f$. To determine the split point, we heuristically project the
-opposite vertex onto \f$ e \f$. \cgalFigureRef{Flowchart} shows the split 
+a local remeshing is performed at each iteration by collapsing short edges 
+and split badly triangles while maintaining the manifold property. 
+Specifically, an edge \f$ e \f$ is split if in an incident triangle,
+the angle at the opposite vertex in the triangle is greater than 
+\f$ 110^{\circ} \f$. The split point is the projection of the
+opposite vertex onto \f$ e \f$. \cgalFigureRef{Flowchart} illustrates shows the split 
 process.
+
+\todo how is the projection done? bissector?
 
 \cgalFigureBegin{Split, split.png}
 \cgalFigureEnd
@@ -92,18 +107,18 @@ process.
 \subsection MCFSkelSecDegeneracy Degeneracy Detection
 
 As the mesh contraction process continues, the collapsed branches of the shape
-would be pulled away from the medial axis aand the tips of the skeletal branches
+would be pulled away from the medial axis and the tips of the skeletal branches
 could be contracted back into the shape. We would like to stop the movement of 
 points in a branch when a branch is detected. If we think of a branch as 
 infinitesimal cross-sectional manifold, in the discrete case the problem is 
-reduced to monitor the euler characteristic of a point within a infinitesimal
+reduced to monitor the Euler characteristic of a point within a infinitesimal
 geodesic neighborhood. If the local neighborhood exhibits non-disk topology, we
 think the point is degenerate and fix it by setting the correspondent diagonal
 element in \f$ W_{H} \f$ as a very large number.
 
 \subsection MCFSkelSecMedial Medial Skeletonization Flow
 
-To compute a well-centered curve skeleton (i.e. one that lies on the medial 
+To compute a well-centered curve skeleton (i.e. one that lies close to the medial 
 axis) we modify Eq.\f$\eqref{eq:regularized_equation}\f$ to:
 
 \f[
@@ -132,9 +147,8 @@ edge.
 
 \subsection MCFSkelSecSummary Summary
 
-The algorithm runs iteratively. In each iteration, the mesh contraction by MCF,
-local remeshing and degeneracy detection is performed. The work flow of our 
-algorithm is illustrated in \cgalFigureRef{Flowchart}.
+
+The work flow of our algorithm is illustrated in \cgalFigureRef{Flowchart}.
 
 The input of our skeletonization algorithm is a watertight manifold triangle mesh.
 If the user wants to get a medially centered skeleton, the Voronoi poles are 
@@ -153,46 +167,20 @@ collapsing short edges until all the faces have been collapsed, which gives a
 A flow chart of the main algorithm.
 \cgalFigureEnd
 
-\section MCFSkelSecAPI API Description
+\todo I would put the diagram in the algorithm section and use English and not function names. If the function name chosen are
+obvious, the advanced class could be used without trouble.
+The level of details we are looking for in a user manual is to give an idea to the user how things are working
+and how parameters might influence the result of the functions they use
 
-This package provides the skeletonization function through a class object.
+\section MCFSkelSecAPI User Interface Description
 
-  - `Mean_curvature_skeleton(polyhedron, vertex_index_map, edge_index_map, omega_H, omega_P, edgelength_TH, is_medially_centered, area_TH = 1e-5, iteration_TH = 500)`
+The MCF skeleton and the MCF medial skeleton can be obtained by respectively using the free functions 
+`::CGAL::extract_skeleton()` and `::CGAL::extract_medial_skeleton()`.
+The class `::CGAL::Mean_curvature_skeleton` is also provided to allow advanced usage and having access to each step of the contraction.
 
-  - `vertex_index_map` and `edge_index_map` are property maps used for assigning
-  indices to vertices and edges. 
+It is also possible to get the correspondence between skeleton points and input vertices.
 
-  - `omega_H` controls the velocity of movement and approximation quality.
-
-  - `omega_P` controls the smoothness of the medial approximation.
-
-  - `edgelength_TH` controls the length of edges that will be collapsed in local
-  remeshing.
-
-  - `is_medially_centered` set to true means the skeleton extracted is medially
-  centered.
-
-  - `area_TH` controls the convergence criteria.
-
-  - `iteration_TH` sets a maximum number of iterations. It is useful when the 
-  `area_TH` is set so small that the algorithm cannot terminate in a reasonable
-  time.
-
-The extraction of skeleton can be done by calling the member function:
-
-  - `extract_skeleton(graph, points)`
-
-  - `graph` is a `boost::graph` data structure containing the connectivity 
-  information of the curve skeleton.
-
-  - `points` contains the embedding of the skeletal points.
-
-It is also possible to get the correspondent points by calling
-
-  - `extract_skeleton(graph, points, correspondent_points)`
-
-  - `correspondent_points` contains the correspondent points for each skeletal
-  points.
+\todo say something about the sparse linear solver and that we recommend to use Eigen 3.2 or later.
 
 The correspondent points for a skeletal vertex are original surface points that
 are collapsed onto the skeletal vertex. They are useful for tasks such as mesh
@@ -203,12 +191,11 @@ by connecting each skeletal point to its correspondent points.
 Every skeletal point is connected to its correspondent surface points.
 \cgalFigureEnd
 
-\note It could happen that a given skeletal point does not have correspondent
-surface points. Recall the correspondent points for a give point are original
-surface points collapsed onto it during local remeshing. If there are no points
-collapsed onto the given point, or points collapsed onto it do not belong to
-the original surface (they are actually new points generated in the split process in local remeshing), in the end the given point will have no correspondent 
-points.
+\todo I think it would be a good idea to provide the example using the segmentation algorithm function.
+I would not inline the example in the doc (just put a like to the file) but put a picture.
+The rational is that people always they are application but never show one. This is a concrete case.
+
+\note Due to the remeshing step (the edge split) in the algorithm, a given skeleton point might have no corresponding surface point.
 
 \subsection Skeletonization Examples
 
@@ -228,7 +215,7 @@ show how to access the correspondent points for each skeletal point.
 
 \section MCFSkelSecDesign Implementation History
 
-The initial implementation of this package is the result of the work of Xiang
+The initial implementation of this package is the result of the work of Xiang Gao
 during the 2013 season of the Google Summer of Code mentored by Andrea
 Tagliasacchi and Sébastien Loriot.
 
