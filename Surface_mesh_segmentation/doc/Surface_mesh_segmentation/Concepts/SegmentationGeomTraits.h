@@ -14,6 +14,14 @@ of the geometric traits needed by the segmentation functions.
 class SegmentationGeomTraits {
 public:
 
+/// \name Number Type
+/// @{
+/*!
+A number type model of `FieldNumberType` for which the method `::CGAL::to_double()` is defined
+*/
+typedef Hidden_type FT;
+/// @}
+
 /// \name Geometric Types 
 /// @{
 
