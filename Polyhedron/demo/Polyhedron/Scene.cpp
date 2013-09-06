@@ -75,10 +75,14 @@ Scene::addItem(Scene_item* item)
 }
 
 Scene_item*
-Scene::replaceItem(Scene::Item_id index, Scene_item* item)
+Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destoryed)
 {
   if(index < 0 || index >= m_entries.size())
     return 0;
+
+  if(emit_item_about_to_be_destoryed) {
+    emit itemAboutToBeDestroyed(m_entries[index]);
+  }
 
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
