@@ -27,7 +27,7 @@
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
-#include <CGAL/Rotational_sweep_visibility_2.h>
+#include <CGAL/Rotational_sweep_visibility_2_.h>
 
 #include <iostream>
 #include <fstream>
@@ -66,14 +66,14 @@ int main() {
         RSV;
       CGAL::test_model_methods<RSV>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV>(10, 2);
+      CGAL::run_tests<RSV>(17, 2);
     }
     {
       typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_true>
         RSV;
       CGAL::test_model_methods<RSV>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
-      CGAL::run_tests<RSV>(10, 2);
+      CGAL::run_tests<RSV>(17, 2);
     }
 }
     return 0;

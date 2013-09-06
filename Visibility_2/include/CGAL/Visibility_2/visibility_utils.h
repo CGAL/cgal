@@ -199,17 +199,17 @@ void report_while_handling_needles(
   typename std::vector<Segment_2>::size_type i = 0;
   typename std::vector<Segment_2>::size_type start_idx;
 
-  if (points[0] == points[points.size()-1]) {
+  if (points.front() == points.back()) {
     points.pop_back();
   }
 
-  while (collinear(geom_traits, 
-                   points[i], 
+  while (collinear(geom_traits,
+                   points[i],
                    points[points.size()-1],
-                   points[points.size()-2]) 
-      || collinear(geom_traits, 
-                   points[i], 
-                   points[i+1], 
+                   points[points.size()-2])
+      || collinear(geom_traits,
+                   points[i],
+                   points[i+1],
                    points[points.size()-1])) {
 
     points.push_back(points[i]);
@@ -258,7 +258,6 @@ void report_while_handling_needles(
       had_needle = true;
       std::vector<Point_2> forward_needle;
       std::vector<Point_2> backward_needle;          
-      Point_2 needle_start = points[i];
       Direction_2 forward_dir(Segment_2(points[i], points[i+1]));
       forward_needle.push_back(points[i]);
       forward_needle.push_back(points[i+1]);
@@ -362,6 +361,8 @@ void report_while_handling_needles(
     }
   }
 }
+
+
 
 } // end namespace Visibility_2
 } // end namespace CGAL
