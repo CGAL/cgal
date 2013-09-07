@@ -26,7 +26,9 @@
 #include <CGAL/tags.h>
 #include <CGAL/enum.h>
 #include <CGAL/Visibility_2/visibility_utils.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <stack>
+#include <map>
 
 namespace CGAL {
 
@@ -38,6 +40,7 @@ public:
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Geometry_traits_2::Kernel            K;
 
   typedef typename Arrangement_2::Halfedge_const_handle       
                                                         Halfedge_const_handle;
@@ -87,6 +90,7 @@ public:
     vertices.clear();
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
+    p_cdt = boost::shared_ptr<CDT>();
   }
 
   const Input_arrangement_2& arr() {
@@ -98,102 +102,31 @@ public:
 
     assert(query_pt_is_vertex == false);
     assert(query_pt_is_on_halfedge == false);
-   
+
+    init_cdt(face);
+    typename CDT::Face_handle fh = p_cdt->locate(q);
+    Point_2 start_point = fh->vertex(0)->point();
+
+    // Now retrieve the circulator to first visible vertex from triangulation
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
-                                                            face->outer_ccb();
+                                                    point_itr_map[start_point];
     typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
-     typename Input_arrangement_2::Ccb_halfedge_const_circulator start = curr;
-    typename Input_arrangement_2::Halfedge_const_handle he = curr;
+    typename Input_arrangement_2::Halfedge_const_handle he;
 
- //   std::cout << "start\n";
-    Point_2 min_intersect_pt;
-    bool intersect_on_endpoint = false;
-    Segment_2 curr_edge(he->source()->point(), he->target()->point());
-    Segment_2 curr_min_edge(he->source()->point(), he->target()->point());
-
-    Number_type min_dist = CGAL::Visibility_2::compute_squared_distance_2
-             <Geometry_traits_2, Point_2, Segment_2>(geom_traits, q, curr_edge);
-    int min_dist_index = 0;
-    int index = 1;
-    curr++;
-
-    // Push all vertices and determine edge minimum in terms 
-    // of squared distance to query point
-    do {
-      he = curr;          
-      curr_edge = Segment_2(he->source()->point(), he->target()->point());
-      Number_type curr_dist = CGAL::Visibility_2::compute_squared_distance_2
-             <Geometry_traits_2, Point_2, Segment_2>(geom_traits, q, curr_edge);
-        
-      if (curr_dist < min_dist) {
-        min_dist = curr_dist;
-        min_dist_index = index;
-        curr_min_edge = curr_edge;
-        start = curr;
-      }
-      index++;
-    } while (++curr != circ);
-
-    // Only now compute the intersection point
-    min_intersect_pt = CGAL::Visibility_2::construct_projected_point_2
-         <Geometry_traits_2, Segment_2, Point_2>(geom_traits, curr_min_edge, q);
-
-    bool intersect_pt_on_seg_endpoint = false;
-    if (min_intersect_pt != curr_min_edge.source() && 
-        min_intersect_pt != curr_min_edge.target()) {
-      vertices.push_back(min_intersect_pt);
-    }
-    else {
-      intersect_pt_on_seg_endpoint = true;
-    }
-
-    curr = start;
     do {
       he = curr;
-      vertices.push_back(he->target()->point());
-    } while(++curr != start);
+      vertices.push_back(he->source()->point());
+    } while(++curr != circ);
 
-    // Push first vertex again to fulfill algo precondition
-    if (min_intersect_pt != curr_min_edge.source() && 
-        min_intersect_pt != curr_min_edge.target()) {
-      vertices.push_back(min_intersect_pt);
-    }
-    else {
-      vertices.push_back(vertices[0]);
-    }
-    
+    vertices.push_back(vertices[0]);
+
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
-    if (!s.empty()) {
-      Point_2 prev_pt = s.top();
-      if (prev_pt == min_intersect_pt) {
-        if (intersect_pt_on_seg_endpoint) {
-          points.push_back(prev_pt);
-        }
-        s.pop();
-        if (!s.empty()) {
-          prev_pt = s.top();
-          points.push_back(prev_pt);
-        }
-      }
-      if (!s.empty()) {
-        s.pop();
-      }
-      while(!s.empty()) {
-        Point_2 curr_pt = s.top();
-        if (curr_pt == min_intersect_pt) {
-          if (intersect_pt_on_seg_endpoint) {
-            points.push_back(curr_pt);
-          }
-          s.pop();
-        }
-        else {
-          points.push_back(curr_pt);
-          prev_pt = curr_pt;
-          s.pop();
-        }
-      }
+    while (!s.empty()) {
+      Point_2 curr_point = s.top();
+      points.push_back(curr_point);
+      s.pop();
     }
 
     std::reverse(points.begin(), points.end());
@@ -301,7 +234,16 @@ public:
   }
 
 private:
+  typedef CGAL::Triangulation_vertex_base_2<K>                     Vb;
+  typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
+  typedef CGAL::No_intersection_tag                                Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+
+private:
   const Input_arrangement_2 *p_arr;
+  boost::shared_ptr<CDT> p_cdt;
+  std::map<Point_2, typename Input_arrangement_2::Ccb_halfedge_const_circulator> point_itr_map;
   const Geometry_traits_2 *geom_traits;
   std::stack<Point_2> s;
   std::vector<Point_2> vertices;
@@ -328,6 +270,25 @@ private:
         out_arr.remove_edge(he);
       }
     }
+  }
+
+   void init_cdt(const Face_const_handle face) { 
+
+    std::vector<std::pair<Point_2,Point_2> > constraints; 
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
+                                                            face->outer_ccb();
+    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
+    typename Input_arrangement_2::Halfedge_const_handle he;
+
+    do {
+      he = curr;
+      Point_2 source = he->source()->point();
+      Point_2 target = he->target()->point();
+      point_itr_map.insert(std::make_pair(source, curr));
+      constraints.push_back(std::make_pair(source,target));
+    } while(++curr != circ);
+
+    p_cdt = boost::shared_ptr<CDT>(new CDT(constraints.begin(),constraints.end()));
   }
 
   void visibility_region_impl(const Point_2& q) {
@@ -458,8 +419,21 @@ private:
                                                                      w, 
                                                                      s_j_prev);
         if (orient == CGAL::RIGHT_TURN || orient == CGAL::COLLINEAR) {
-
           found = true;
+          if (i+1 >= vertices.size()) {
+            Segment_2 s1(s_j_prev, s_j);
+            Ray_2 s2(query_pt, w);
+            Object_2 result = CGAL::Visibility_2::intersect_2
+                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
+            if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+              if (*ipoint != s_j_prev) {
+                s.push(*ipoint);
+              }
+            }
+            upcase = FINISH;
+            break;
+          }
+
           CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits, 
                                                                            query_pt,
                                                                            w, 
