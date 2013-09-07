@@ -142,9 +142,9 @@ private:
 };
 
 template <class K>
-inline Point_3<K> operator+(const Point_3<K> &p, const Periodic_2_offset_2 &off)
+inline typename K::Point_2 operator+(const typename K::Point_2 &p, const Periodic_2_offset_2 &off)
 {
-  return (off.is_null() ? p : Point_3<K>(p.x() + off.x(), p.y() + off.y()));
+  return (off.is_null() ? p : typename K::Point_2(p.x() + off.x(), p.y() + off.y()));
 }
 
 /// Inputs an Periodic_2_offset_2 from is.
