@@ -759,7 +759,7 @@ public:
       update_topology();
       detect_degeneracies();
 
-      double area = internal::get_surface_area(polyhedron);
+      double area = internal::get_surface_area(polyhedron, hg_point_pmap);
       double area_ratio = fabs(last_area - area) / original_area;
 
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -838,7 +838,7 @@ private:
     vertex_iterator vb, ve;
 
     alpha_TH *= (M_PI / 180.0);
-    double area = internal::get_surface_area(polyhedron);
+    double area = internal::get_surface_area(polyhedron, hg_point_pmap);
     original_area = area;
 
     // initialize index maps
@@ -1339,7 +1339,7 @@ private:
       }
       vertex_descriptor vk = boost::target(ek, polyhedron);
       Point pn = project_vertex(vs, vt, vk);
-      edge_descriptor en = internal::mesh_split(polyhedron, ei, pn);
+      edge_descriptor en = internal::mesh_split(polyhedron, hg_point_pmap, ei, pn);
       // set id for new vertex
       boost::put(vertex_id_pmap, en->vertex(), vertex_id_count++);
       cnt++;
