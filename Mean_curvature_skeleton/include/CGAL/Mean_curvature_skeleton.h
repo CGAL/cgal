@@ -1056,15 +1056,16 @@ private:
     // midpoint placement without geometric test
     SMS::Geometric_test_skipper< SMS::Midpoint_placement<HalfedgeGraph> > placement;
 
-    internal::Track_correspondence_visitor<HalfedgeGraph> vis;
+    internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap> vis;
     if (is_medially_centered)
     {
-      vis = internal::Track_correspondence_visitor<HalfedgeGraph>(&correspondence,
-                                                   &poles, &cell_dual, max_id);
+      vis = internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap>
+            (&hg_point_pmap, &correspondence, &poles, &cell_dual, max_id);
     }
     else
     {
-      vis = internal::Track_correspondence_visitor<HalfedgeGraph>(&correspondence, max_id);
+      vis = internal::Track_correspondence_visitor<HalfedgeGraph, HalfedgeGraphPointPMap>
+            (&hg_point_pmap, &correspondence, max_id);
     }
 
     int r = SMS::edge_collapse
@@ -1363,7 +1364,8 @@ private:
 
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
-        bool willbefixed = internal::is_vertex_degenerate(polyhedron, v, edgelength_TH);
+        bool willbefixed = internal::is_vertex_degenerate(polyhedron, hg_point_pmap,
+                                                          v, edgelength_TH);
         if (willbefixed)
         {
           is_vertex_fixed_map[idx] = willbefixed;

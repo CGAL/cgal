@@ -49,8 +49,9 @@ namespace internal {
 * @param root the given vertex
 * @param edgelength_TH the diameter of the geodesic disk
 */
-template<class HalfedgeGraph>
+template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
 bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
+                          HalfedgeGraphPointPMap& hg_point_pmap,
                           typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
                           double edgelength_TH)
 {
@@ -65,7 +66,7 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
   std::set<Face_handle> faces_in_disk;
 
   vertices_in_disk.clear();
-  search_vertices_in_disk(polyhedron, root, vertices_in_disk, edgelength_TH);
+  search_vertices_in_disk(polyhedron, hg_point_pmap, root, vertices_in_disk, edgelength_TH);
 
   typename std::set<vertex_descriptor>::iterator v_iter;
   for (v_iter = vertices_in_disk.begin(); v_iter != vertices_in_disk.end(); ++v_iter)
@@ -121,8 +122,9 @@ bool is_vertex_degenerate(HalfedgeGraph& polyhedron,
 * @param vertices_in_disk containing the found vertices within the disk
 * @param edgelength_TH the diameter of the geodesic disk
 */
-template<class HalfedgeGraph>
+template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
 void search_vertices_in_disk(HalfedgeGraph& polyhedron,
+                             HalfedgeGraphPointPMap& hg_point_pmap,
                              typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor root,
                              std::set<typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor>& vertices_in_disk,
                              double edgelength_TH)
@@ -153,7 +155,8 @@ void search_vertices_in_disk(HalfedgeGraph& polyhedron,
       vertex_descriptor new_v = boost::target(ed, polyhedron);
       if (vertex_visited.find(new_v) == vertex_visited.end())
       {
-        double distance = sqrtf(squared_distance(new_v->point(), root->point()));
+        double distance = sqrtf(squared_distance(boost::get(hg_point_pmap, new_v),
+                                                 boost::get(hg_point_pmap, root)));
         if (distance < dist_TH)
         {
           vertex_visited[new_v] = true;

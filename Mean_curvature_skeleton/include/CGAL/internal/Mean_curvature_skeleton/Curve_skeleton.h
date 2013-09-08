@@ -45,7 +45,8 @@ namespace CGAL {
 namespace internal {
 
 template <class HalfedgeGraph, class Graph,
-          class VertexIndexMap, class EdgeIndexMap>
+          class VertexIndexMap, class EdgeIndexMap,
+          class HalfedgeGraphPointPMap = typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type>
 class Curve_skeleton
 {
 // Public types
@@ -85,10 +86,11 @@ private:
   // vertex id mapped to vertex descriptor
   std::vector<vertex_descriptor> id_to_descriptor;
 
+  HalfedgeGraph& polyhedron;
+
   VertexIndexMap vertex_id_pmap;
   EdgeIndexMap edge_id_pmap;
-
-  HalfedgeGraph& polyhedron;
+  HalfedgeGraphPointPMap hg_point_pmap;
 
   std::vector<double> edge_lengths;
 
@@ -115,7 +117,8 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton(HalfedgeGraph& polyhedron) : polyhedron(polyhedron)
+  Curve_skeleton(HalfedgeGraph& polyhedron) : polyhedron(polyhedron),
+    hg_point_pmap(boost::get(vertex_point, polyhedron))
   {
   }
 
@@ -202,7 +205,7 @@ public:
       for (size_t i = 0; i < record[id].size(); ++i)
       {
         vertex_descriptor vd = id_to_descriptor[record[id][i]];
-        Point pv = vd->point();
+        Point pv = boost::get(hg_point_pmap, vd);
         pos = Point(pos.x() + pv.x(), pos.y() + pv.y(), pos.z() + pv.z());
       }
       double num = record[id].size();
@@ -278,8 +281,8 @@ private:
         // also cache the length of the edge
         vertex_descriptor v1 = ed->vertex();
         vertex_descriptor v2 = ed->opposite()->vertex();
-        Point source = v1->point();
-        Point target = v2->point();
+        Point source = boost::get(hg_point_pmap, v1);
+        Point target = boost::get(hg_point_pmap, v2);
         edge_lengths[idx] = sqrtf(squared_distance(source, target));
 
         idx++;
@@ -591,8 +594,8 @@ private:
     vertex_descriptor v1 = id_to_descriptor[vid1];
     vertex_descriptor v2 = id_to_descriptor[vid2];
 
-    Point source = v1->point();
-    Point target = v2->point();
+    Point source = boost::get(hg_point_pmap, v1);
+    Point target = boost::get(hg_point_pmap, v2);
     double new_len = sqrtf(squared_distance(source, target));
 
     if (queue.find(eid) != queue.end())

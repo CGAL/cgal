@@ -40,7 +40,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 namespace CGAL {
 namespace internal {
 
-template<class HalfedgeGraph>
+template<class HalfedgeGraph, class HalfedgeGraphPointPMap>
 struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGraph>
 {
   // HalfedgeGraph types
@@ -53,17 +53,21 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
 
   Track_correspondence_visitor(){}
 
-  Track_correspondence_visitor(std::map<int, std::vector<int> >* corr, 
+  Track_correspondence_visitor(HalfedgeGraphPointPMap* point_pmap,
+                               std::map<int, std::vector<int> >* corr,
                                int max_id) :
+    hg_point_pmap(point_pmap),
     corr(corr), 
     max_id(max_id), 
     is_medially_centered(false)
   {}
 
-  Track_correspondence_visitor(std::map<int, std::vector<int> >* corr,
+  Track_correspondence_visitor(HalfedgeGraphPointPMap* point_pmap,
+                       std::map<int, std::vector<int> >* corr,
                        std::map<int, int>* poles,
                        std::vector<Point>* cell_dual,
                        int max_id) :
+    hg_point_pmap(point_pmap),
     corr(corr), 
     max_id(max_id), 
     is_medially_centered(true),
@@ -120,7 +124,7 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
       Point pole1 = Point(to_double((*cell_dual)[(*poles)[id1]].x()),
                           to_double((*cell_dual)[(*poles)[id1]].y()),
                           to_double((*cell_dual)[(*poles)[id1]].z()));
-      Point p1 = v1->point();
+      Point p1 = boost::get(*hg_point_pmap, v1);
       double dis_to_pole0 = sqrtf(squared_distance(pole0, p1));
       double dis_to_pole1 = sqrtf(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
@@ -131,6 +135,8 @@ struct Track_correspondence_visitor : SMS::Edge_collapse_visitor_base<HalfedgeGr
       (*poles).erase(pole_iter);
     }
   }
+
+  HalfedgeGraphPointPMap* hg_point_pmap;
 
   std::map<int, std::vector<int> >* corr;
   int max_id;
