@@ -738,7 +738,7 @@ public:
     update_topology();
     detect_degeneracies();
 
-    MCFSKEL_INFO(double area = internal::get_surface_area(polyhedron);)
+    MCFSKEL_INFO(double area = internal::get_surface_area(polyhedron, hg_point_pmap);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
