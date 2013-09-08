@@ -508,7 +508,9 @@ wlop_simplify_and_regularize_point_set(
   #ifdef CGAL_LINKED_WITH_TBB
     if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
+   #ifdef CGAL_DEBUG_MODE
       std::cout<<"parallel section1 !"<<std::endl;
+   #endif
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0,nb_points_sample),
         [&](const tbb::blocked_range<size_t>&r)
