@@ -286,6 +286,8 @@ ALIASES+= "cgalHeading{1}= <B>\1</B><BR>"
 
 ALIASES+= "cgalClassifedRefPages=\htmlonly  <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly"
 
+ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
+
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding
 # "class=itcl::class" will allow you to use the command class in the
