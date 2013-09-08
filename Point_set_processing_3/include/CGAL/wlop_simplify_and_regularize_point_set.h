@@ -61,8 +61,7 @@ namespace simplify_and_regularize_internal{
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return average term vector
-template <typename Concurrency_tag,
-          typename Kernel>
+template <typename Kernel>
 typename Kernel::Point_3
 compute_update_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
@@ -75,8 +74,6 @@ compute_update_sample_point(
   const std::vector<typename Kernel::FT>& sample_densities ///< 
 )
 {
-  if (neighbor_original_points.size() < 1)   { return query; }
-
   CGAL_point_set_processing_precondition(radius > 0);
   CGAL_point_set_processing_precondition(neighbor_original_points.size() >= 1);
   bool is_original_densities_empty = original_densities.empty();
@@ -89,8 +86,6 @@ compute_update_sample_point(
   typedef rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   FT radius2 = radius * radius;
-  size_t nb_neighbor_sample_points = neighbor_sample_points.size();
-  size_t nb_neighbor_original_points = neighbor_original_points.size();
 
   //Compute average term
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
@@ -99,52 +94,21 @@ compute_update_sample_point(
 
   std::vector<Rich_point>::const_iterator iter;
   iter = neighbor_original_points.begin();
-  
-#ifdef CGAL_LINKED_WITH_TBB
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  for (; iter != neighbor_original_points.end(); ++iter)
   {
-    tbb::parallel_for(
-      tbb::blocked_range<size_t>(0,nb_neighbor_original_points),
-      [&](const tbb::blocked_range<size_t>&r)
+    const Point& np = iter->pt;
+    unsigned int idx_of_original = iter->index;
+
+    FT dist2 = CGAL::squared_distance(query, np);
+    weight = exp(dist2 * iradius16);
+
+    if(!is_original_densities_empty)
     {
-      for (size_t i = r.begin(); i != r.end(); i++)
-      {
-        const Point& np = neighbor_original_points[i].pt;
-        unsigned int idx_of_original = neighbor_original_points[i].index;
-
-        FT dist2 = CGAL::squared_distance(query, np);
-        weight = exp(dist2 * iradius16);
-
-        if(!is_original_densities_empty)
-        {
-          weight *= original_densities[idx_of_original];
-        }
-
-        average_weight_sum += weight;
-        average = average + (np - CGAL::ORIGIN) * weight;
-      }
+      weight *= original_densities[idx_of_original];
     }
-    );
-  }
-  else
-#endif
-  {
-    for (; iter != neighbor_original_points.end(); ++iter)
-    {
-      const Point& np = iter->pt;
-      unsigned int idx_of_original = iter->index;
 
-      FT dist2 = CGAL::squared_distance(query, np);
-      weight = exp(dist2 * iradius16);
-
-      if(!is_original_densities_empty)
-      {
-        weight *= original_densities[idx_of_original];
-      }
-
-      average_weight_sum += weight;
-      average = average + (np - CGAL::ORIGIN) * weight;
-    }
+    average_weight_sum += weight;
+    average = average + (np - CGAL::ORIGIN) * weight;
   }
 
   // Finishing compute average term
@@ -162,59 +126,25 @@ compute_update_sample_point(
   FT repulsion_weight_sum = (FT)0.0;
 
   Vector repulsion = CGAL::NULL_VECTOR; 
-
-#ifdef CGAL_LINKED_WITH_TBB
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  iter = neighbor_sample_points.begin();
+  for (; iter != neighbor_sample_points.end(); ++iter)
   {
-    tbb::parallel_for(
-      tbb::blocked_range<size_t>(0,nb_neighbor_sample_points),
-      [&](tbb::blocked_range<size_t>&r)
+    const Point& np = iter->pt;
+    unsigned int idx_of_sample = iter->index;
+
+    Vector diff = query - np;
+
+    FT dist2 = CGAL::squared_distance(query, np);
+    FT dist = std::sqrt(dist2);
+
+    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
+    if(!is_sample_densities_empty)
     {
-      for (size_t i = r.begin(); i != r.end(); i++)
-      {
-        const Point& np = neighbor_sample_points[i].pt;
-        unsigned int idx_of_sample = neighbor_sample_points[i].index;
-
-        Vector diff = query - np;
-        
-        FT dist2 = CGAL::squared_distance(query, np);
-        FT dist = std::sqrt(dist2);
-        dist = std::max(dist, 1e-6);//make sure that dist != 0
-        weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2);
-        if(!is_sample_densities_empty)
-        {
-          weight *= sample_densities[idx_of_sample];
-        }
-
-        repulsion_weight_sum += weight;
-        repulsion = repulsion + diff * weight;
-      }
+      weight *= sample_densities[idx_of_sample];
     }
-    );
-  }
-  else
-#endif
-  {
-    iter = neighbor_sample_points.begin();
-    for (; iter != neighbor_sample_points.end(); ++iter)
-    {
-      const Point& np = iter->pt;
-      unsigned int idx_of_sample = iter->index;
 
-      Vector diff = query - np;
-
-      FT dist2 = CGAL::squared_distance(query, np);
-      FT dist = std::sqrt(dist2);
-      dist = std::max(dist, 1e-6);//make sure that dist != 0
-      weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2);
-      if(!is_sample_densities_empty)
-      {
-        weight *= sample_densities[idx_of_sample];
-      }
-
-      repulsion_weight_sum += weight;
-      repulsion = repulsion + diff * weight;
-    }
+    repulsion_weight_sum += weight;
+    repulsion = repulsion + diff * weight;
   }
 
   // Finishing compute repulsion term
@@ -259,7 +189,7 @@ compute_density_weight_for_original_point(
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
-  FT iradius16 = -(FT)4.0 / radius2;
+  FT iradius16 = -(FT)4.0/radius2;
 
   std::vector<Point>::const_iterator iter;
   iter = neighbor_original_points.begin();
@@ -300,7 +230,7 @@ compute_density_weight_for_sample_point(
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
-  FT iradius16 = -(FT)4.0 / radius2;
+  FT iradius16 = -(FT)4.0/radius2;
 
   std::vector<Point>::const_iterator iter;
   iter = neighbor_sample_points.begin();
@@ -535,9 +465,9 @@ wlop_simplify_and_regularize_point_set(
   std::vector<Point>::iterator update_sample_iter;
   for (unsigned int iteration = 0; iteration < max_iter_number; iteration++)
   {
-    #ifdef CGAL_DEBUG_MODE
-      task_timer.reset();
-    #endif
+  #ifdef CGAL_DEBUG_MODE
+    task_timer.reset();
+  #endif
     // Build rich-grid for sample-sample neighborhood
     rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_points,
                                                         bbox, 
@@ -577,11 +507,12 @@ wlop_simplify_and_regularize_point_set(
   #ifdef CGAL_LINKED_WITH_TBB
     if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
-      std::cout<<"parallel section "<<std::endl;
+      std::cout<<"parallel section1 !"<<std::endl;
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0,nb_points_sample),
         [&](const tbb::blocked_range<size_t>&r)
       {
+        //parallel function "for" begin
         for (size_t i = r.begin(); i != r.end(); i++)
         {
           Point& p = sample_points[i];
@@ -610,20 +541,20 @@ wlop_simplify_and_regularize_point_set(
             Rich_point rp(sample_points[idx_of_sample], idx_of_sample);
             rich_sample_neighbors.push_back(rp);
           }
-          
+
           update_sample_points[i] = simplify_and_regularize_internal::
-            compute_update_sample_point<CGAL::Parallel_tag, Kernel>
+            compute_update_sample_point<Kernel>
             (sample_points[i],
              rich_original_neighbors,
              rich_sample_neighbors,
              neighbor_radius,
              original_densities,
              sample_densities);
-          }
+        }//parallel function "for" end
         }
       );
     }
-    else
+    else//parallel judge "else" begin
   #endif //CGAL_LINKED_WITH_TBB
     {
       for (update_sample_iter = update_sample_points.begin();
@@ -660,44 +591,26 @@ wlop_simplify_and_regularize_point_set(
         *update_sample_iter = simplify_and_regularize_internal::
           compute_update_sample_point<Kernel>
           (*sample_iter,
-           rich_original_neighbors,
-           rich_sample_neighbors,
-           neighbor_radius,
-           original_densities,
-           sample_densities);
+            rich_original_neighbors,
+            rich_sample_neighbors,
+            neighbor_radius,
+            original_densities,
+            sample_densities);
       }
-    }
 
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-    {
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>(0,nb_points_sample),
-        [&](const tbb::blocked_range<size_t>&r)
-        {
-          for (size_t i = r.begin(); i != r.end(); i++)
-          {
-            sample_points[i] = update_sample_points[i];
-            sample_rich_points[i].pt = sample_points[i];
-          }
-        }
-      );
-    }
-    else
-#endif
-    {
-      sample_iter = sample_points.begin();
-      sample_rich_iter = sample_rich_points.begin();
-      update_sample_iter = update_sample_points.begin();
+    }//parallel judge "else" end
 
-      for (; sample_iter != sample_points.end(); 
-        ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
-      {
-        *sample_iter = *update_sample_iter;
-        sample_rich_iter->pt = *sample_iter;
-      }
-    }
+    sample_iter = sample_points.begin();
+    sample_rich_iter = sample_rich_points.begin();
+    update_sample_iter = update_sample_points.begin();
     
+    for (; sample_iter != sample_points.end(); 
+         ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
+    {
+      *sample_iter = *update_sample_iter;
+      sample_rich_iter->pt = *sample_iter;
+    }
+
   #ifdef CGAL_DEBUG_MODE
     std::cout << "Compute average & repulsion term and updated" << std::endl;
     long memory = CGAL::Memory_sizer().virtual_size();
