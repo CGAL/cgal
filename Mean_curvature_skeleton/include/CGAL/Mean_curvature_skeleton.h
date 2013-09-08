@@ -31,6 +31,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/Default.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -92,6 +93,13 @@
 
 #include <queue>
 
+#include <Eigen/Sparse>
+
+// for default parameters
+#if defined(CGAL_EIGEN3_ENABLED)
+#include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
+#endif
+
 namespace SMS = CGAL::Surface_mesh_simplification;
 
 namespace CGAL {
@@ -143,15 +151,28 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 #ifdef DOXYGEN_RUNNING
 template <class HalfedgeGraph,
-          class SparseLinearAlgebraTraits_d,
           class VertexIndexMap,
           class EdgeIndexMap,
+          class Sparse_linear_solver
+          #ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+          = CGAL::Eigen_solver_traits<
+            Eigen::SimplicialLDLT<
+            CGAL::Eigen_sparse_matrix<double>::EigenType
+            > >
+          #endif
+          ,
+          class HalfedgeGraphPointPMap
+          #ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+          = boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type
+          #endif
+          ,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
 #else
 template <class HalfedgeGraph,
-          class SparseLinearAlgebraTraits_d,
           class VertexIndexMap,
           class EdgeIndexMap,
+          class HalfedgeGraphPointPMap = typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type,
+          class SparseLinearAlgebraTraits_d = CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> >,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
@@ -222,6 +243,10 @@ private:
   VertexIndexMap vertex_id_pmap;
   /** storing indices of all edges */
   EdgeIndexMap edge_id_pmap;
+  /** storing the point for HalfedgeGraph vertex_descriptor */
+  HalfedgeGraphPointPMap hg_point_pmap;
+//  /** storing the point for Graph vertex_descriptor */
+//  GraphPointPMap g_point_map;
 
   /** controls the velocity of movement and approximation quality */
   double omega_H;
@@ -297,6 +322,7 @@ public:
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
+     hg_point_pmap(boost::get(vertex_point, polyhedron)),
      omega_H(omega_H),
      edgelength_TH(edgelength_TH),
      alpha_TH(110),
@@ -347,6 +373,7 @@ public:
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
+     hg_point_pmap(boost::get(vertex_point, polyhedron)),
      omega_H(omega_H),
      omega_P(omega_P),
      edgelength_TH(edgelength_TH),
@@ -455,7 +482,7 @@ public:
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
       {
         vertex_descriptor vd = *vb;
-        fixed_points.push_back(vd->point());
+        fixed_points.push_back(boost::get(hg_point_pmap, vd));
       }
     }
   }
@@ -476,7 +503,7 @@ public:
       if (is_vertex_fixed_map.find(id) == is_vertex_fixed_map.end())
       {
           vertex_descriptor vd = *vb;
-          non_fixed_points.push_back(vd->point());
+          non_fixed_points.push_back(boost::get(hg_point_pmap, vd));
       }
     }
   }
@@ -605,7 +632,7 @@ public:
       int id = boost::get(vertex_id_pmap, vi);
       int i = new_id[id];
       Point p(X[i], Y[i], Z[i]);
-      vi->point() = p;
+      boost::put(hg_point_pmap, vi, p);
     }
 
     MCFSKEL_DEBUG(std::cerr << "leave contract geometry\n";)
@@ -961,9 +988,9 @@ private:
           }
         }
       }
-      Bx[i + nver] = vi->point().x() * oh;
-      By[i + nver] = vi->point().y() * oh;
-      Bz[i + nver] = vi->point().z() * oh;
+      Bx[i + nver] = boost::get(hg_point_pmap, vi).x() * oh;
+      By[i + nver] = boost::get(hg_point_pmap, vi).y() * oh;
+      Bz[i + nver] = boost::get(hg_point_pmap, vi).z() * oh;
       if (is_medially_centered)
       {
         double x = to_double(cell_dual[poles[id]].x());
@@ -1099,7 +1126,7 @@ private:
       Point pole1 = Point(to_double(cell_dual[poles[id1]].x()),
                           to_double(cell_dual[poles[id1]].y()),
                           to_double(cell_dual[poles[id1]].z()));
-      Point p1 = v1->point();
+      Point p1 = boost::get(hg_point_pmap, v1);
       double dis_to_pole0 = sqrt(squared_distance(pole0, p1));
       double dis_to_pole1 = sqrt(squared_distance(pole1, p1));
       if (dis_to_pole0 < dis_to_pole1)
@@ -1132,7 +1159,8 @@ private:
 
       vertex_descriptor vi = boost::source(ed, polyhedron);
       vertex_descriptor vj = boost::target(ed, polyhedron);
-      double edge_length = sqrt(squared_distance(vi->point(), vj->point()));
+      double edge_length = sqrt(squared_distance(boost::get(hg_point_pmap, vi),
+                                                 boost::get(hg_point_pmap, vj)));
       if (internal::is_collapse_ok(polyhedron, ed) && edge_length < edgelength_TH)
       {
         Point p = midpoint(
@@ -1212,9 +1240,9 @@ private:
         vertex_descriptor vj = boost::target(ed, polyhedron);
         edge_descriptor ed_next = ed->next();
         vertex_descriptor vk = boost::target(ed_next, polyhedron);
-        Point pi = vi->point();
-        Point pj = vj->point();
-        Point pk = vk->point();
+        Point pi = boost::get(hg_point_pmap, vi);
+        Point pj = boost::get(hg_point_pmap, vj);
+        Point pk = boost::get(hg_point_pmap, vk);
 
         double dis2_ij = squared_distance(pi, pj);
         double dis2_ik = squared_distance(pi, pk);
@@ -1242,9 +1270,9 @@ private:
                        const vertex_descriptor vt,
                        const vertex_descriptor vk)
   {
-    Point ps = vs->point();
-    Point pt = vt->point();
-    Point pk = vk->point();
+    Point ps = boost::get(hg_point_pmap, vs);
+    Point pt = boost::get(hg_point_pmap, vt);
+    Point pk = boost::get(hg_point_pmap, vk);
     CGAL::internal::Vector vec_st = CGAL::internal::Vector(ps, pt);
     CGAL::internal::Vector vec_sk = CGAL::internal::Vector(ps, pk);
 
@@ -1371,7 +1399,8 @@ private:
           edge_descriptor edge = *eb;
           vertex_descriptor v0 = boost::source(edge, polyhedron);
           vertex_descriptor v1 = boost::target(edge, polyhedron);
-          double length = sqrt(squared_distance(v0->point(), v1->point()));
+          double length = sqrt(squared_distance(boost::get(hg_point_pmap, v0),
+                                                boost::get(hg_point_pmap, v1)));
           if (length < elength_fixed)
           {
             if (!internal::is_collapse_ok(polyhedron, edge))
@@ -1418,7 +1447,9 @@ private:
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
-      Exact_point tp((v->point()).x(), (v->point()).y(), (v->point()).z());
+      Exact_point tp((boost::get(hg_point_pmap, v)).x(),
+                     (boost::get(hg_point_pmap, v)).y(),
+                     (boost::get(hg_point_pmap, v)).z());
       points.push_back(std::make_pair(tp, vid));
     }
 
@@ -1761,11 +1792,11 @@ void extract_skeleton(Graph& g,
                       double delta_area = 1e-5,
                       int max_iterations = 500)
 {
-  typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
-  VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
+  typedef Mean_curvature_skeleton<HalfedgeGraph,
+  VertexIndexMap, EdgeIndexMap> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, 0.0, edgelength_TH, false, delta_area, max_iterations);
+  omega_H, 0.0, edgelength_TH, false);
 
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);

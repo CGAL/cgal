@@ -59,7 +59,7 @@ typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_inde
 
 typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> > Sparse_linear_solver;
 
-typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
+typedef CGAL::Mean_curvature_skeleton<Polyhedron, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
