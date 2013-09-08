@@ -135,6 +135,7 @@ compute_update_sample_point(
     Vector diff = query - np;
 
     FT dist2 = CGAL::squared_distance(query, np);
+    dist2 = std::max(dist2, 1e-100);//make sure that dist != 0
     FT dist = std::sqrt(dist2);
 
     weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
