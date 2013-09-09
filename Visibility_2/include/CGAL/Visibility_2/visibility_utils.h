@@ -401,11 +401,11 @@ void report_while_handling_needles_(
 
   v_trg = v_fst = arr_out.insert_in_face_interior(points[i], arr_out.unbounded_face());
 
-  std::cout << "\nPOINTS\n";
-  for(unsigned int k = 0 ; k < points.size() ; k++) {
-    std::cout << points[k] << std::endl;
-  }
-  std::cout << "END\n";
+//  std::cout << "\nPOINTS\n";
+//  for(unsigned int k = 0 ; k < points.size() ; k++) {
+//    std::cout << points[k] << std::endl;
+//  }
+//  std::cout << "END\n";
 
 
   while (i+1 < points.size()) {
@@ -416,15 +416,16 @@ void report_while_handling_needles_(
       Vertex_handle v_needle_begin = v_trg;
       std::vector<Point_2> forward_needle;
       std::vector<Point_2> backward_needle;
-      std::vector<Point_2> closer_to_q_part;
-      closer_to_q_part.push_back(points[i]);
+      std::vector<Point_2> part_in_q_side;
+      part_in_q_side.push_back(points[i]);
       forward_needle.push_back((points[i]));
-      bool is_closer_to_q = less_distance_to_point_2(geom_traits,
-                                                     q,
-                                                     points[i+1],
-                                                     points[i]);
-      if (is_closer_to_q)
-        closer_to_q_part.push_back(points[i+1]);
+//      bool same_side_of_q = less_distance_to_point_2(geom_traits,
+//                                                     q,
+//                                                     points[i+1],
+//                                                     points[i]);
+      bool same_side_of_q = (compare_xy_2(geom_traits, points[i], q)==compare_xy_2(geom_traits, points[i], points[i+1]));
+      if (same_side_of_q)
+        part_in_q_side.push_back(points[i+1]);
       else
         forward_needle.push_back(points[i+1]);
       i++;
@@ -432,13 +433,14 @@ void report_while_handling_needles_(
                            points[i],
                            points[i+1],
                            q ) == CGAL::COLLINEAR) {
-        if (is_closer_to_q) {
-          closer_to_q_part.push_back(points[i+1]);
+        if (same_side_of_q) {
+          part_in_q_side.push_back(points[i+1]);
         }
         else {
-          if (less_distance_to_point_2(geom_traits, q, points[i+1], closer_to_q_part.front())) {
-            is_closer_to_q = true;
-            closer_to_q_part.push_back(points[i+1]);
+          if (compare_xy_2(geom_traits, part_in_q_side.front(), q)
+              == compare_xy_2(geom_traits, part_in_q_side.front(), points[i+1])) {
+            same_side_of_q = true;
+            part_in_q_side.push_back(points[i+1]);
           }
           else {
             if (less_distance_to_point_2(geom_traits, q, points[i], points[i+1]))
@@ -451,8 +453,8 @@ void report_while_handling_needles_(
       }
 
       Point_2 end_of_needle;
-      if (is_closer_to_q)
-        end_of_needle = closer_to_q_part.back();
+      if (same_side_of_q)
+        end_of_needle = part_in_q_side.back();
       else {
         if (backward_needle.empty()) {
           end_of_needle = forward_needle.back();
@@ -494,61 +496,58 @@ void report_while_handling_needles_(
 
       for (unsigned int p = 0 ; p+1 < merged_needle.size() ; p++) {
         if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, merged_needle[p], merged_needle[p+1]) == CGAL::SMALLER) {
-          std::cout << "insertingN seg " << Segment_2(merged_needle[p], merged_needle[p+1]) << " from left of " << v_trg->point() << std::endl;
+//          std::cout << "insertingN seg " << Segment_2(merged_needle[p], merged_needle[p+1]) << " from left of " << v_trg->point() << std::endl;
           he_handle = arr_out.insert_from_left_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);
         }
         else {
-          std::cout << "insertingN seg " << Segment_2(merged_needle[p], merged_needle[p+1]) << " from right of " << v_trg->point() << std::endl;
+//          std::cout << "insertingN seg " << Segment_2(merged_needle[p], merged_needle[p+1]) << " from right of " << v_trg->point() << std::endl;
           he_handle = arr_out.insert_from_right_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);
         }
         v_trg = he_handle->target();
         if (merged_needle[p+1] == end_of_needle) {
           v_needle_end = v_trg;
-         std::cout << "set needle end to " << v_needle_end->point();
+//         std::cout << "set needle end to " << v_needle_end->point();
         }
       }
-      if (is_closer_to_q) {
+      if (same_side_of_q) {
         v_trg = v_needle_begin;
-        for (unsigned int p = 0 ; p+1 < closer_to_q_part.size() ; p++) {
-          if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, merged_needle[p], merged_needle[p+1]) == CGAL::SMALLER) {
-         std::cout << "insertingN seg " << Segment_2(merged_needle[p], merged_needle[p+1]) << " from left of " << v_trg->point() << std::endl;
-            he_handle = arr_out.insert_from_left_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);
+        for (unsigned int p = 0 ; p+1 < part_in_q_side.size() ; p++) {
+          if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, part_in_q_side[p], part_in_q_side[p+1]) == CGAL::SMALLER) {
+//         std::cout << "insertingN seg " << Segment_2(part_in_q_side[p], part_in_q_side[p+1]) << " from left of " << v_trg->point() << std::endl;
+            he_handle = arr_out.insert_from_left_vertex(Segment_2(part_in_q_side[p], part_in_q_side[p+1]), v_trg);
           }
           else {
-        std::cout << "insertingN seg " << Segment_2(merged_needle[p], merged_needle[p+1]) << " from right of " << v_trg->point() << std::endl;
-            he_handle = arr_out.insert_from_right_vertex(Segment_2(merged_needle[p], merged_needle[p+1]), v_trg);
+//        std::cout << "insertingN seg " << Segment_2(part_in_q_side[p], part_in_q_side[p+1]) << " from right of " << v_trg->point() << std::endl;
+            he_handle = arr_out.insert_from_right_vertex(Segment_2(part_in_q_side[p], part_in_q_side[p+1]), v_trg);
           }
           v_trg = he_handle->target();
         }
       }
       else
         v_trg = v_needle_end;
-
-
     }
     else {
       if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, v_trg->point(), points[i+1]) == CGAL::SMALLER) {
-      std::cout << "inserting seg " << Segment_2(points[i], points[i+1]) << " from left of " << v_trg->point() << std::endl;
+//      std::cout << "inserting seg " << Segment_2(points[i], points[i+1]) << " from left of " << v_trg->point() << std::endl;
         he_handle = arr_out.insert_from_left_vertex(Segment_2(points[i], points[i+1]), v_trg);
       }
       else {
-      std::cout << "inserting seg " << Segment_2(points[i], points[i+1]) << " from right of " << v_trg->point() << std::endl;
+//      std::cout << "inserting seg " << Segment_2(points[i], points[i+1]) << " from right of " << v_trg->point() << std::endl;
         he_handle = arr_out.insert_from_right_vertex(Segment_2(points[i], points[i+1]), v_trg);
       }
       v_trg = he_handle->target();
+      i++;
     }
-    i++;
-    std::cout<<"next insertion: "<<v_trg->point()<<std::endl;
+//    std::cout<<"next insertion: "<<v_trg->point()<<std::endl;
     if (i+2 == points.size()) {
       v_trg = he_handle->target();
-      std::cout<<v_fst->point()<<std::endl;
-      std::cout<<v_trg->point()<<std::endl;
+//      std::cout<<v_fst->point()<<std::endl;
+//      std::cout<<v_trg->point()<<std::endl;
       arr_out.insert_at_vertices(Segment_2(points[points.size()-2], points[points.size()-1]), v_trg, v_fst);
       break;
     }
   }
 }
-
 
 } // end namespace Visibility_2
 } // end namespace CGAL

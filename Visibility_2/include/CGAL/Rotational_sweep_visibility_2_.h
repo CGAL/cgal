@@ -173,7 +173,7 @@ public:
       Pvec polygon_out(first, last+1);
       if (is_vertex_query)
         polygon_out.push_back(q);
-      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
+      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
       //build_arr(polygon_out, out_arr);
     }
     else {
@@ -182,7 +182,7 @@ public:
       for (int i = big_idx; i != polygon.size(); i++) {
         polygon_out.push_back(polygon[i]);
       }
-      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
+      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
      // build_arr(polygon_out, out_arr);
     }
 
@@ -202,7 +202,7 @@ public:
     is_edge_query = false;
 
     visibility_region_impl(f, q);
-    Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon, out_arr);
+    Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon, out_arr);
     //build_arr(polygon, out_arr);
     conditional_regularize(out_arr, Regularization_tag());
     if (out_arr.faces_begin()->is_unbounded())
