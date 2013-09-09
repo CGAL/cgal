@@ -536,7 +536,7 @@ programs that take advantage of multi-core processors.
 
 In \cgal, \sc{Tbb} is used by packages which offer parallel code.
 
-The \sc{Eigen} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
+The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
 
 \section secbuilding Building CGAL 
 
@@ -1374,10 +1374,10 @@ environment variable is sufficient.
 \subsection installation_tbb TBB Library
 
 If \sc{Tbb} is not automatically found, the user must set the `TBBROOT`
-environment variable. On Windows, "$TBBROOT\bin\tbbvars.bat <arch> <vs>" must be run 
-(running tbbvars.bat without args shows the available parameter values). On other 
-platforms, the environment variable TBB_ARCH_PLATFORM=<arch>/<kernel> must be set: 
-<arch> is "ia32" or "intel64" and <linux_kernel> is what is used in $TBBROOT/lib/<arch>.
+environment variable. On Windows, `$TBBROOT\bin\tbbvars.bat <arch> <vs>` must be run 
+(running `tbbvars.bat` without args shows the available parameter values). On other 
+platforms, the environment variable `TBB_ARCH_PLATFORM=<arch>/<kernel>` must be set: 
+`<arch>` is `ia32` or `intel64` and `<linux_kernel_or_gcc_version>` is what is used in `$TBBROOT/lib/<arch>`.
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
