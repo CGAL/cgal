@@ -45,12 +45,12 @@ The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(
 \f$\mathbf{v}_j\f$. In this case, the Laplacian coordinates of a vertex is the vector between this vertex
 and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 
-The cotangent weight \cgalCite{Pinkall1993Cotangent} scheme is more independant from the discretization of the original
+The cotangent weight \cgalCite{Pinkall1993Cotangent} scheme is more independent from the discretization of the original
 surface: Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
 cotangents of the angles opposite to the edge.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
-Laplacian cordinates of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the adjacent vertices of \f$ v_i \f$. The Laplacian coordinates \f$ \delta \f$ are represented as a blue vector.
+Laplacian coordinates of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the adjacent vertices of \f$ v_i \f$. The Laplacian coordinates \f$ \delta \f$ are represented as a blue vector.
 \cgalFigureEnd
 
 Considering the whole surface mesh, it is possible to write a linear system describing the Laplacian coordinates of all its vertices:
@@ -65,7 +65,7 @@ Considering the whole surface mesh, it is possible to write a linear system desc
 where:
 - \f$n\f$ is the number of vertices in the surface mesh,
 - \f$\mathbf{L}\f$ is a \f$n \times n\f$ symmetric sparse matrix, called the <em>Laplacian matrix</em>. The elements \f$ m_{ij} \f$, \f$i,j \in \{1 \dots n\} \f$ of \f$ \mathbf{L} \f$ are defined as follow: \f$ m_{ii} \f$ is equal to \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$; \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,  and \f$ 0 \f$ otherwise,
-- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the cartesian coordinates of the vertices;
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the Cartesian coordinates of the vertices;
 - \f$\Delta\f$ is a \f$n \times 3\f$ matrix called the Laplacian coordinates of the surface mesh.
 
 
@@ -101,14 +101,14 @@ Given a mesh deformation system of a surface mesh of \f$ n \f$ vertices that con
 \f]
 
 where:
-- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix. It is the unknow of the system that represents the coordinates of the vertices after deformation. The system is build such that the \f$ k \f$ last rows corresponds to the control vertices.
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix. It is the unknown of the system that represents the coordinates of the vertices after deformation. The system is build such that the \f$ k \f$ last rows corresponds to the control vertices.
 - \f$\mathbf{L}_f\f$ is the Laplacian matrix of the <em>free vertices</em> (those that are not control vertices). It is a \f$n-k \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
 - \f$\mathbf{I}_c\f$ is a \f$k \times k\f$ identity matrix.
 - \f${\Delta}_f\f$ is Laplacian coordinates of free vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
-- \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the cartesian coordinates of the target positions of the control vertices.
+- \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the Cartesian coordinates of the target positions of the control vertices.
 
-The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square nonsymmetric sparse matrix. To
-solve the aforementionned system, an appropriate solver (e.g. LU solver) need to be used. Note that solving this system
+The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square non-symmetric sparse matrix. To
+solve the aforementioned system, an appropriate solver (e.g. LU solver) need to be used. Note that solving this system
 the Laplacian coordinates of the surface mesh restricted to the free vertices while satisfying the deformation constraints.
 
 \note This section is an introduction to provide a background for the two next sections describing the algorithms implemented
@@ -166,7 +166,7 @@ For the vertex \f$\mathbf{v}_i\f$, we consider the covariance matrix \f$\mathbf{
 \f]
 
 It has been proven \cgalCite{Sorkine2009LeastSquaresRigid} that minimizing the term in the sum corresponding to
-\f$\mathbf{v}_i\f$ in Eq. \f$\eqref{eq:arap_energy}\f$ is equivalent to maximazing the trace of the matrix
+\f$\mathbf{v}_i\f$ in Eq. \f$\eqref{eq:arap_energy}\f$ is equivalent to maximizing the trace of the matrix
 \f$\mathbf{R}_i \mathbf{S}_i\f$. \f$\mathbf{R}_i \f$ is the transpose of the unitary matrix in the polar decomposition
 of \f$\mathbf{S}_i\f$.
 
