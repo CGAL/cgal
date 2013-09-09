@@ -264,7 +264,7 @@ As a result, we do not use the weighting scheme from the original algorithm in o
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths falling into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
 -->
 
-\section Surface_mesh_segmentationImplementationhistory Implementation History
+\section Surface_mesh_segmentationImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
 of the Google Summer of Code. He has been mentored by Sébastien Loriot who also contributed to the documentation
 and the API definition.
