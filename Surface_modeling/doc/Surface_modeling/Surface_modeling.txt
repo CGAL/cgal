@@ -8,19 +8,22 @@ namespace CGAL {
 \authors Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz
 
 \section Surface_Modeling_Intro Introduction
-Surface mesh deformation is the process of transforming the shape of a surface mesh under positional constraints without requiring any additional structure other than the surface mesh itself.
+A Surface mesh deformation algorithm provides new positions of the vertices of a surface mesh
+under positional constraints of some of its vertices without requiring any additional structure other than the surface mesh itself.
 
 In this package, we implement the algorithm described in \cgalCite{Sorkine2007AsRigidAs},
-where a nonlinear deformation energy is minimized under constraints to preserve rigidity as much as possible.
-In the following, we will use <em>surface mesh</em> to refer to a triangulated surface mesh.
+where a nonlinear deformation energy is minimized under constraints to preserve as much as possible rigidity.
+In the following, we use <em>surface mesh</em> to refer to a triangulated surface mesh.
 
 \cgalFigureBegin{Main_image_suggestion, main_image_suggestion_4_resized.png}
 Deformation example.
 \cgalFigureEnd
 
 \section Surface_Modeling_Overview Overview
-The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We first give an overview of how these
-methods work.
+The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We first give an overview of
+the principal of these methods.
+The purpose of this section is to not to do again the work done in the original papers but to illustrate what
+kind of problem is solved and in particular to make the link between the requirements and the input parameters of the main class.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
 The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em> \cgalCite{botsch2010polygon}) of a vertex in a surface mesh are one way to
@@ -35,8 +38,8 @@ L(\mathbf{v}_i) = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}_i - 
 \f]
 
 where:
-- \f$N(\mathbf{v}_i)\f$ is the set of vertices incident to \f$\mathbf{v}_i\f$;
--\f$w_{ij}\f$ is a weight between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$.
+- \f$N(\mathbf{v}_i)\f$ denotes the set of vertices incident to \f$\mathbf{v}_i\f$;
+-\f$w_{ij}\f$ denotes a weight between \f$\mathbf{v}_i\f$ and \f$\mathbf{v}_j\f$.
 
 The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each adjacent vertex
 \f$\mathbf{v}_j\f$. In this case, the Laplacian coordinates of a vertex is the vector between this vertex
@@ -67,8 +70,8 @@ where:
 
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
-A simple mesh deformation system consists of a surface mesh, a set of vertices (called the <em>handle vertices</em>)
-and a target positions (defining the <em>deformation constraints</em>) for each the handle vertices.
+A simple mesh deformation system consists of a surface mesh, a set of vertices (called the <em>control vertices</em>)
+and a target position for each the control vertices (defining the <em>deformation constraints</em>).
 
 The main idea behind Laplacian-based deformation techniques is to preserve the Laplacian coordinates
 under deformation constraints. Laplacian coordinates of the surface mesh are treated as a representative form of the discretized surface, and the deformation process must follow the deformation constraints while preserving the Laplacian coordinates as much as possible.
@@ -105,11 +108,11 @@ where:
 - \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the cartesian coordinates of the target positions of the control vertices.
 
 The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square nonsymmetric sparse matrix. To
-solve the aforementionned system, a appropriate solver (e.g. LU solver) need to be used. Note that solving this system
+solve the aforementionned system, an appropriate solver (e.g. LU solver) need to be used. Note that solving this system
 the Laplacian coordinates of the surface mesh restricted to the free vertices while satisfying the deformation constraints.
 
-\note This section is an introduction to provide a background for the two next sections dexcribing the algorithms implementated
-in this package. A system relying only the approach described above can result in non-smooth transitions in the neighborhood of
+\note This section is an introduction to provide a background for the two next sections describing the algorithms implemented
+in this package. A system relying only the approach described above results in non-smooth transitions in the neighborhood of
 the control vertices. For a survey on different Laplacian-based editing techniques please refer to
 \cgalCite{Botsch2008OnLinearVariational}.
 
@@ -135,20 +138,20 @@ where:
 
 An as-rigid-as possible surface mesh deformation \cgalCite{Sorkine2007AsRigidAs} is defined by minimizing
 this energy function under the deformation constraints, that is fixing \f$N(\mathbf{v}'_k)\f$ for each \f$N(\mathbf{v}_i)\f$
-in the set of control vertices. The intuitive idea behind this energy function is that allowing each one-ring neighborhood of
+in the set of control vertices. The intuitive idea behind this energy function is to allow each one-ring neighborhood of
 vertices to have an individual rotation, but at the same time prevents shearing by taking advantage of the
 overlapping of one-ring neighborhood of adjacent vertices (see \cgalFigureRef{Overlapping_cells}).
 
 
 \cgalFigureBegin{Overlapping_cells,overlapping_cells.png}
 Overlaps of one-ring neighborhood of vertices. The one-ring neighborhood of four vertices
-are drawn with different colors, with the corresponding vertex is colored accordingly.
+are drawn with different colors, the corresponding vertex is colored accordingly.
 Two adjacent vertices are in the one-ring neighborhood of each other.
 \cgalFigureEnd
 
 There are two unknowns per vertex in the Eq. \f$\eqref{eq:arap_energy}\f$, the new positions (\f$\mathbf{v}'_k\f$) of the free
 vertices and the rotation matrices (\f$\mathbf{R}_i\f$).
-If the weights \f$w_{ij}\f$ are positive, this boils down to minimize the energy term of each vertex \f$\mathbf{v}_i\f$.
+If the energy contribution of each vertex is positive, this boils down to minimize the energy term of each vertex \f$\mathbf{v}_i\f$.
 
 Each such term of the energy is minimized by using a two-step optimization approach (also called local-global approach).
 
@@ -204,8 +207,8 @@ we slightly changed Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \end{equation}
 \f]
 
-- the weight between two vertices is positive. However when using the cotangent weighting scheme
-(the default in our implementation), if the sum of the angle opposite to an edge is greater than \f$ \pi \f$,
+- The energy contribution of each vertex is positive. If the weight between two vertices is always positive, this is always the case.
+ However when using the cotangent weighting scheme (the default in our implementation), if the sum of the angle opposite to an edge is greater than \f$ \pi \f$,
 its cotangent weight is negative. As a workaround for bad quality meshes, we eliminate those negative weights
 by setting them to zero.
 
@@ -225,7 +228,8 @@ all the opposite edges in the facets incident to a vertex. The energy function t
 \end{equation}
 \f]
 
-where \f$E(\mathbf{v}_i)\f$ is the set of edges in the link to \f$\mathbf{v}_i\f$ in the surface mesh \f$M\f$
+where \f$E(\mathbf{v}_i)\f$ consists of the set of edges incident to \f$\mathbf{v}_i\f$ (the <em>spokes</em>) and 
+the set of edges in the link (the <em>rims</em>) to \f$\mathbf{v}_i\f$ in the surface mesh \f$M\f$
 (see \cgalFigureRef{Spoke_and_rim_edges}).
 
 The method to get the new positions of the free vertices is similar to the two-step optimization
@@ -261,8 +265,8 @@ where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are the rotation matrices of the
 the boundary of the surface mesh, then \f$ w_{ij} \f$ must be 0 and \f$ \mathbf{v}_m
 \f$ does not exist.
 
-An important property of this approach compared to \ref Surface_Modeling_Overview_ARAP is that the energy function is
-guaranteed to stay nonnegative.
+An important property of this approach compared to \ref Surface_Modeling_Overview_ARAP is that the contribution to the global energy 
+of each vertex is guaranteed to be non-negative.
 \todo Check with Olga
 
 We are using cotangent weights (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
@@ -277,7 +281,7 @@ Surface_Modeling_Overview_ARAP (center) and \ref Surface_Modeling_Overview_ARAP_
 latter version does not produced a symmetric result.
 \cgalFigureEnd
 
-\section Surface_Modeling_API Description of the API
+\section Surface_Modeling_API User Interface Description
 
 Our implementation operates on a surface mesh represented as a halfedge data structure that must
 be a model of the `HalfedgeGraph` concept.
