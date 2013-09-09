@@ -213,7 +213,7 @@ show how to access the correspondent points for each skeletal point.
 
 \cgalExample{Mean_curvature_skeleton/extract_correspondence_example.cpp}
 
-\section MCFSkelSecDesign Implementation History
+\section MCFSkelSecDesign Design and Implementation History
 
 The initial implementation of this package is the result of the work of Xiang Gao
 during the 2013 season of the Google Summer of Code mentored by Andrea
