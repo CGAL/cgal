@@ -79,7 +79,6 @@ public:
   /*! Constructor given an arrangement and the Regularization tag. */
   Triangular_expansion_visibility_2 (const Input_arrangement_2& arr)
     : p_arr(&arr){
-    //std::cout << "Triangular_expansion_visibility_2" << std::endl;
     init_cdt(); 
   }
 
@@ -89,10 +88,11 @@ public:
   }
 
   void attach(const Input_arrangement_2& arr) {
-    //std::cout << "attach" << std::endl;
     // todo observe changes in arr; 
-    p_arr = &arr;
-    init_cdt(); 
+    if(p_arr != &arr){
+      p_arr = &arr;
+      init_cdt(); 
+    }   
     //std::cout << "attach done" << std::endl;
   }
 
@@ -514,40 +514,43 @@ public:
   }
 
   Face_handle output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
-//    //std::cout << "\n Output Polygon" << std::endl; 
-//    //std::cout << needles.size() << std::endl; 
-//     for (int i = 0; i<needles.size();i++){
-//       //std::cout << needles[i].source() << " -- " 
-//                 << needles[i].target() << std::endl; 
-//     }
-//     //std::cout << raw_output.size() << std::endl; 
-    std::vector<Segment_2> segments(needles.begin(),needles.end()); 
-    for(int i = 0; i <raw_output.size();i++){
+
+    if(needles.size()>0){
+      std::vector<Segment_2> segments(needles.begin(),needles.end()); 
+      for(int i = 0; i <raw_output.size();i++){
 //      //std::cout <<  raw_output[i] << " -- " 
 //                <<  raw_output[(i+1)%raw_output.size()] << std::endl; 
-      segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
-    }
+        segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
+      }
    
-//    //std::cout << " done 1 " << std::endl ; 
-    // use something more clever 
-    CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
-    //CGAL::insert(out_arr,segments.begin(),segments.end());
- 
-//    //std::cout << " done 2 " << std::endl ; 
+      CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
+      //CGAL::insert(out_arr,segments.begin(),segments.end());
+    }else{      
+      Vertex_handle v_last, v_first;
+      v_last = v_first = 
+        out_arr.insert_in_face_interior(raw_output[0], out_arr.unbounded_face());
+      
+      for(int i = 0; i <raw_output.size()-1;i++){
+//      //std::cout <<  raw_output[i] << " -- " 
+//                <<  raw_output[(i+1)%raw_output.size()] << std::endl;
+        if(raw_output[i]<raw_output[(i+1)]){
+          v_last = out_arr.insert_from_left_vertex (Segment_2(raw_output[i], raw_output[i+1]), v_last)->target();  
+        }else{
+          v_last = out_arr.insert_from_right_vertex(Segment_2(raw_output[i], raw_output[i+1]), v_last)->target();   
+        }        
+      }
+      out_arr.insert_at_vertices(Segment_2(raw_output.front(),raw_output.back()),v_last,v_first);      
+    }
+
     assert(out_arr.number_of_faces()== 2);
 
-//    //std::cout<< "==============" <<std::endl;
     if(out_arr.faces_begin()->is_unbounded())
       return ++out_arr.faces_begin();
     else
       return out_arr.faces_begin();
-     
-    //std::cout<< "==============" <<std::endl;
-    
   }
 
   void init_cdt(){ 
-    //std::cout << "init_cdt" << std::endl;
     //std::cout<< "==============" <<std::endl;
     //std::cout<< "Input Polygon:" <<std::endl;
     //todo, avoid copy by using modified iterator 
