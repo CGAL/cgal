@@ -28,6 +28,11 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/utility.h>
 
+#include <CGAL/spatial_sort.h>
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
+
+#include <boost/iterator/counting_iterator.hpp>
+
 /*Sandeep for debugging
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -492,6 +497,127 @@ public:
     }
     size_type n_after = number_of_vertices();
     return n_after - n_before;
+  }
+
+  //insert a range of points using spatial sorting
+  std::size_t insert_points(std::vector<Point_2>& points)
+  {
+    size_type n = this->number_of_vertices();
+    spatial_sort (points.begin(), points.end(), geom_traits());
+    Vertex_handle hint;
+    for (typename std::vector<Point_2>::const_iterator
+          p = points.begin(), end = points.end(); p != end; ++p)
+    {
+      hint = insert(*p, hint);
+    }
+
+    return this->number_of_vertices() - n;
+  }
+
+  template <class PointIterator>
+  std::size_t insert_points(PointIterator first, PointIterator beyond)
+  {
+    std::vector<Point_2> points (first, beyond);
+    return insert_points(points);
+  }
+
+  template <class IndicesIterator>
+  std::size_t insert_segments( std::vector<Point_2>& points,
+                               IndicesIterator indices_first,
+                               IndicesIterator indices_beyond )
+  {
+    typedef std::vector<std::ptrdiff_t> Vertex_indices;
+    typedef std::vector<Vertex_handle> Vertices;
+
+    Vertex_indices vertex_indices;
+    vertex_indices.resize(points.size());
+
+    std::copy(boost::counting_iterator<std::ptrdiff_t>(0),
+              boost::counting_iterator<std::ptrdiff_t>(points.size()),
+              std::back_inserter(vertex_indices));
+
+    size_type n = this->number_of_vertices();
+    Spatial_sort_traits_adapter_2<Gt, Point_2*> sort_traits(&(points[0]));
+
+    spatial_sort(vertex_indices.begin(), vertex_indices.end(), sort_traits);
+
+    Vertices vertices;
+    vertices.resize(points.size());
+
+    Vertex_handle hint;
+    for(typename Vertex_indices::const_iterator
+          it_pti = vertex_indices.begin(), end = vertex_indices.end();
+          it_pti != end; ++it_pti)
+    {
+      hint = insert(points[*it_pti], hint);
+      vertices[*it_pti] = hint;
+    }
+
+    for(IndicesIterator it_cst=indices_first, end=indices_beyond;
+        it_cst!=end; ++it_cst)
+    {
+      Vertex_handle v1 = vertices[it_cst->first];
+      Vertex_handle v2 = vertices[it_cst->second];
+      if(v1 != v2) insert(v1, v2);
+    }
+
+    return this->number_of_vertices() - n;
+  }
+
+  template <class PointIterator, class IndicesIterator>
+  std::size_t insert_segments(PointIterator points_first,
+                              PointIterator points_beyond,
+                              IndicesIterator indices_first,
+                              IndicesIterator indices_beyond)
+  {
+    std::vector<Point_2> points (points_first, points_beyond);
+    return insert_segments(points, indices_first, indices_beyond);
+  }
+
+  static const Point_2& get_source(const std::pair<Point_2, Point_2>& segment){
+    return segment.first;
+  }
+  static const Point_2& get_target(const std::pair<Point_2, Point_2>& segment){
+    return segment.second;
+  }
+
+  template <class Segment_2>
+  static const Point_2& get_source(const Segment_2& segment){
+    return segment.source();
+  }
+  template <class Segment_2>
+  static const Point_2& get_target(const Segment_2& segment){
+    return segment.target();
+  }
+
+  template <class Segment_2>
+  static const Point_2& get_source(const Site_2& segment){
+    return segment.source_of_supporting_site();
+  }
+  template <class Segment_2>
+  static const Point_2& get_target(const Site_2& segment){
+    return segment.target_of_supporting_site();
+  }
+
+  template <class SegmentIterator>
+  std::size_t insert_segments(SegmentIterator first, SegmentIterator beyond)
+  {
+    std::vector<Point_2> points;
+    for (SegmentIterator s_it=first; s_it!=beyond; ++s_it)
+    {
+      points.push_back( get_source(*s_it) );
+      points.push_back( get_target(*s_it) );
+    }
+
+    std::vector< std::pair<std::size_t, std::size_t> > segment_indices;
+    std::size_t nb_segments = points.size() / 2;
+    segment_indices.reserve( nb_segments );
+    for (std::size_t k=0; k < nb_segments; ++k)
+      segment_indices.push_back( std::make_pair(2*k,2*k+1) );
+
+    return insert_segments( points,
+                            segment_indices.begin(),
+                            segment_indices.end() );
   }
 
   // insert a point
