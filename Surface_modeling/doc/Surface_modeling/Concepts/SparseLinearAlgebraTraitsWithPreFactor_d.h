@@ -33,6 +33,7 @@ SparseLinearAlgebraTraitsWithPreFactor_d();
 /*!
 Factorize the sparse matrix A.
 This factorization is used in SparseLinearAlgebraTraitsWithPreFactor_d::linear_solver to solve the system for different right-hand side vectors.
+See `::SparseLinearAlgebraTraits_d::linear_solver()` for the description of `D`.
 @return true if the factorization is successful
 */
 bool pre_factor(const Matrix& A, NT& D);
