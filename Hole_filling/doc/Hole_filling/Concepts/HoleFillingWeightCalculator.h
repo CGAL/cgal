@@ -1,7 +1,7 @@
  /// \ingroup PkgHoleFillingConcepts
  /// \cgalConcept
  ///
- /// @brief Concept describing the set of requirements for calculating weights for edges and vertices. 
+ /// @brief Concept describing requirements for calculating weights for edges and vertices. 
 
 class FairWeightCalculator
 {

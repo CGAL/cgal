@@ -15,16 +15,16 @@ namespace CGAL {
 
 /*!
 \ingroup PkgHoleFilling
-@brief Function triangulating and refining a hole in surface mesh.
+@brief Function triangulating and refining a hole in a surface mesh.
 
-@tparam Polyhedron a %CGAL polyhedron
+@tparam Polyhedron a \cgal polyhedron
 @tparam FacetOutputIterator iterator holding `Polyhedron::Facet_handle` for patch facets.
 @tparam VertexOutputIterator iterator holding `Polyhedron::Vertex_handle` for patch vertices.
 
 @param polyhedron surface mesh which has the hole
 @param border_halfedge a border halfedge incident to the hole
 @param facet_out iterator over patch facets
-@param vertex_out iterator over patch vertices without including boundary
+@param vertex_out iterator over patch vertices without including the boundary
 @param density_control_factor factor for density where larger values cause denser refinements
 
 @return pair of @a facet_out and @a vertex_out
@@ -53,21 +53,21 @@ triangulate_and_refine_hole(Polyhedron& polyhedron,
 \ingroup PkgHoleFilling
 @brief Function triangulating, refining and fairing a hole in surface mesh.
 
-@tparam SparseLinearSolver a model of SparseLinearAlgebraTraitsWithPreFactor_d and can be omitted if Eigen defined...(give exact models etc)
-@tparam WeightCalculator a model of FairWeightCalculator and can be omitted to use default Cotangent weights
-@tparam Polyhedron a %CGAL polyhedron
+@tparam SparseLinearSolver a model of `SparseLinearAlgebraTraitsWithPreFactor_d` and can be omitted if Eigen is defined...(give exact models etc)
+@tparam WeightCalculator a model of `FairWeightCalculator` and can be omitted to use default Cotangent weights
+@tparam Polyhedron a \cgal polyhedron
 @tparam FacetOutputIterator iterator holding `Polyhedron::Facet_handle` for patch facets.
 @tparam VertexOutputIterator iterator holding `Polyhedron::Vertex_handle` for patch vertices.
 
 @param polyhedron surface mesh which has the hole
 @param border_halfedge a border halfedge incident to the hole
 @param facet_out iterator over patch facets
-@param vertex_out iterator over patch vertices without including boundary
+@param vertex_out iterator over patch vertices without including the boundary
 @param weight_calculator function object to calculate weights, default to Cotangent weights and can be omitted
 @param density_control_factor factor for density where larger values cause denser refinements
-@param continuity tangential continuity, default to FAIRING_C_1 and can be omitted
+@param continuity tangential continuity, default to `FAIRING_C_1` and can be omitted
 @return tuple of 
- - bool: true if fairing is successful
+ - bool: `true` if fairing is successful
  - @a facet_out
  - @a vertex_out
  */
