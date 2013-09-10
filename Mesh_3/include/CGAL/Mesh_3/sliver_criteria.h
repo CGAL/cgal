@@ -38,6 +38,11 @@ class Sliver_criterion
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
   
 public:
+  virtual const double get_max_value() const = 0;
+  //Sliver_perturber performs perturbation "unit-per-unit"
+  // so it needs to know how much is a unit for each criterion
+  virtual const double get_perturbation_unit() const = 0;
+public:
   virtual double operator()(const Tetrahedron_3& t) const = 0;
 };
   
@@ -50,7 +55,10 @@ public:
   static double default_value;
   static double max_value;
   static double min_value;
-  
+
+  virtual const double get_max_value() const { return 90.; }
+  virtual const double get_perturbation_unit() const { return 1.; }
+
   double operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(minimum_dihedral_angle(t, K()));
@@ -71,7 +79,10 @@ public:
   static double default_value;
   static double max_value;
   static double min_value;
-  
+
+  virtual const double get_max_value() const { return 1.; }
+  virtual const double get_perturbation_unit() const { return 0.05; }
+
   double operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(radius_ratio(t, K()));

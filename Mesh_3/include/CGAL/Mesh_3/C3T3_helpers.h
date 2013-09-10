@@ -2420,7 +2420,7 @@ min_sliver_value(const Cell_vector& cells,
   using boost::make_transform_iterator;
   
   if ( cells.empty() )
-    return SliverCriterion::max_value;
+    return criterion.get_max_value();
   
   if ( ! use_cache )
   { 
@@ -2428,10 +2428,21 @@ min_sliver_value(const Cell_vector& cells,
   }
   
   // Return min dihedral angle
-  Sliver_criterion_value<SliverCriterion> sc_value(tr_,criterion);
-  
-  return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
-                            make_transform_iterator(cells.end(),sc_value)));
+  //Sliver_criterion_value<SliverCriterion> sc_value(tr_,criterion);
+  //
+  //return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
+  //                          make_transform_iterator(cells.end(),sc_value)));
+  FT min = criterion.get_max_value();
+  FT sliver_value = 0.;
+  for(typename Cell_vector::const_iterator it = cells.begin(); 
+      it != cells.end(); 
+      ++it)
+  {
+    sliver_value = criterion(c3t3_.triangulation().tetrahedron(*it));
+    if( sliver_value < min )
+	    min = sliver_value;
+  } 
+  return min;
 }
   
   

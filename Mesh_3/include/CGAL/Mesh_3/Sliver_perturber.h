@@ -237,8 +237,7 @@ public:
    * The perturber runs step by step, using delta as step size. 
    */
   Mesh_optimization_return_code
-  operator()(const FT& delta = FT(1.),
-             Visitor visitor = Visitor());
+  operator()(Visitor visitor = Visitor());
   
   /**
    * Adds a perturbation at the end of the perturbation queue
@@ -388,7 +387,7 @@ Sliver_perturber(C3T3& c3t3,
 template <typename C3T3, typename Md, typename Sc, typename V_>
 Mesh_optimization_return_code
 Sliver_perturber<C3T3,Md,Sc,V_>::
-operator()(const FT& delta, Visitor visitor)
+operator()(Visitor visitor)
 {
   // Reset sliver value cache
   helper_.reset_cache();
@@ -413,6 +412,7 @@ operator()(const FT& delta, Visitor visitor)
             << "(#vertices in pqueue, #iterations, #fails)" << std::endl;
 #endif
   
+  const FT& delta = sliver_criterion_.get_perturbation_unit();
   FT current_bound = delta;
   bool perturbation_ok = true;
   while ( current_bound <= sliver_bound() && perturbation_ok)
