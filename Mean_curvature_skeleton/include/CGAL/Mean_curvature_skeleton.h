@@ -174,6 +174,7 @@ template <class HalfedgeGraph,
           class HalfedgeGraphPointPMap = typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type,
           class SparseLinearAlgebraTraits_d = CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> >,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>,
+          class GraphCorrelationPMap = typename boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, std::vector<int> > >,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
@@ -211,6 +212,7 @@ public:
 
   // Repeat Graph types
   typedef typename boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
+  typedef typename boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
   typedef typename boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
   typedef typename boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
   typedef typename boost::graph_traits<Graph>::edge_iterator                   edge_iter;
@@ -293,7 +295,9 @@ private:
   std::map<int, std::vector<int> > correspondence;
   /** record the correspondence between skeletal points
    *  and original surface points */
-  std::map<vertex_desc, std::vector<int> > skeleton_to_surface;
+  std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
+           std::vector<int> > skeleton_to_surface_map;
+  GraphCorrelationPMap skeleton_to_surface;
 
   /** should the skeleton be medially centered? */
   bool is_medially_centered;
@@ -330,7 +334,8 @@ public:
      delta_area(delta_area),
      max_iterations(max_iterations),
      weight_calculator(Weight_calculator()),
-     is_medially_centered(false)
+     is_medially_centered(false),
+     skeleton_to_surface(skeleton_to_surface_map)
   {
     init();
   }
@@ -382,7 +387,8 @@ public:
      delta_area(delta_area),
      max_iterations(max_iterations),
      weight_calculator(Weight_calculator()),
-     is_medially_centered(is_medially_centered)
+     is_medially_centered(is_medially_centered),
+     skeleton_to_surface(skeleton_to_surface_map)
   {
     init();
   }
@@ -514,7 +520,7 @@ public:
    * @param corr
    *        for each skeletal point, record its correspondent surface points
    */
-  void get_correspondent_vertices(std::map<vertex_desc, std::vector<int> >& corr)
+  void get_correspondent_vertices(GraphCorrelationPMap& corr)
   {
     corr = skeleton_to_surface;
   }
@@ -573,7 +579,7 @@ public:
    *        for each skeletal point, record its correspondent surface points
    */
   void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points,
-                        std::map<vertex_desc, std::vector<int> >& corr)
+                        GraphCorrelationPMap& corr)
   {
     run_to_converge();
     convert_to_skeleton(g, points);
@@ -789,11 +795,12 @@ public:
     std::map<vertex_desc, std::vector<int> > record;
     skeleton.extract_skeleton(g, points, record);
 
-    skeleton_to_surface.clear();
     typename std::map<vertex_desc, std::vector<int> >::iterator iter;
     for (iter = record.begin(); iter != record.end(); ++iter)
     {
       vertex_desc i = iter->first;
+
+      skeleton_to_surface[i] = std::vector<int>();
       for (size_t j = 0; j < record[i].size(); ++j)
       {
         int id = record[i][j];
@@ -810,15 +817,6 @@ public:
         }
       }
     }
-    int cnt = 0;
-    for (iter = skeleton_to_surface.begin(); iter != skeleton_to_surface.end();
-         ++iter)
-    {
-      vertex_desc i = iter->first;
-      cnt += skeleton_to_surface[i].size();
-    }
-
-    MCFSKEL_INFO(std::cout << "tracked " << cnt << " vertices\n";)
   }
 
   /// \endcond

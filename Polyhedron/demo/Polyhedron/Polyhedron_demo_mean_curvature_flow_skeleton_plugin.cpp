@@ -73,6 +73,9 @@ typedef boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
 
+typedef std::map<vertex_desc, std::vector<int> >                    Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map>         Correspondence_pmap;
+
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -383,7 +386,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
 
-  std::map<vertex_desc, std::vector<int> > corr;
+  Correspondence_pmap corr;
 
   mcs->get_correspondent_vertices(corr);
 
@@ -415,10 +418,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   std::vector<double> distances;
   distances.resize(boost::num_vertices(*segment_mesh));
 
-  std::map<vertex_desc, std::vector<int> >::iterator iter;
-  for (iter = corr.begin(); iter != corr.end(); ++iter)
+  vertex_iter gvb, gve;
+  for (boost::tie(gvb, gve) = boost::vertices(skeleton_curve); gvb != gve; ++gvb)
   {
-    vertex_desc i = iter->first;
+    vertex_desc i = *gvb;
     Point skel = skeleton_points[i];
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
@@ -871,7 +874,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  std::map<vertex_desc, std::vector<int> > corr;
+  Correspondence_pmap corr;
 
   skeleton_curve.clear();
   skeleton_points.clear();
@@ -883,7 +886,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   Scene_polylines_item* skeleton = new Scene_polylines_item();
   skeleton->setColor(QColor(175, 0, 255));
 
-  boost::graph_traits<Graph>::edge_iterator ei, ei_end;
+  edge_iter ei, ei_end;
   for (boost::tie(ei, ei_end) = boost::edges(skeleton_curve); ei != ei_end; ++ei)
   {
     std::vector<Point> line;
@@ -910,11 +913,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   Scene_polylines_item* lines = new Scene_polylines_item();
 
-  std::map<vertex_desc, std::vector<int> >::iterator iter;
-  for (iter = corr.begin(); iter != corr.end(); ++iter)
+  vertex_iter gvb, gve;
+  for (boost::tie(gvb, gve) = boost::vertices(skeleton_curve); gvb != gve; ++gvb)
   {
-    vertex_desc i = iter->first;
+    vertex_desc i = *gvb;
     Point s = skeleton_points[i];
+    std::cout << "here\n";
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
       std::vector<Point> line;
