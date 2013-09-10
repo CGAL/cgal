@@ -2,12 +2,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/iterator.h>
 
 #include <iostream>
 #include <fstream>
 #include <functional>
 
-#include <boost/function_output_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -23,12 +23,6 @@ struct Facet_to_facet_handle
   { return f.halfedge()->facet(); }
 };
 
-struct Nop_functor 
-{
-  template<class T>
-  void operator()(const T & /*t*/) const {}
-};
-typedef boost::function_output_iterator<Nop_functor> Nop_out;
 
 int main() {
   Polyhedron poly_1;
@@ -55,7 +49,7 @@ int main() {
   CGAL::refine(poly_2, 
     boost::make_transform_iterator(poly_2.facets_begin(), Facet_to_facet_handle()),
     boost::make_transform_iterator(poly_2.facets_end()  , Facet_to_facet_handle()),
-    Nop_out(), Nop_out(), 3.0);
+               CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(), 3.0);
 	
   std::ofstream poly_2_off("data/poly_2.off");
   poly_2_off << poly_2;

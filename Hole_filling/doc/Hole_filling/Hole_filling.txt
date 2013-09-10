@@ -55,7 +55,7 @@ The function `triangulate_hole_polyline()` can be used by providing a sequence o
 
 
 \subsubsection Example_2 Example: Refining a region on mesh
-\todo is there a Nop_output_iterator somewhere in CGAL ?
+
 \cgalExample{Hole_filling/refine_polyhedron_example.cpp}
 
 \cgalFigureBegin{Max_refine, max_refine.png}
