@@ -534,7 +534,7 @@ It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.
 \sc{Tbb} (Threading Building Blocks) is a library developed by Intel Corporation for writing software 
 programs that take advantage of multi-core processors.
 
-In \cgal, \sc{Tbb} is used by packages which offer parallel code.
+In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
 
 The \sc{Tbb} web site is <A HREF="http://www.threadingbuildingblocks.org">`http://www.threadingbuildingblocks.org`</A>.
 
