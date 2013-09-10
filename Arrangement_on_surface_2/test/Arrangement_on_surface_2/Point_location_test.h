@@ -807,9 +807,11 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
   unsigned int qi; //qi is the query point index
   for (qi = 0; qi < size; ++qi) {
     // Assign object to a face
-    if (fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]))) {
+    fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
+    if (fh_ref) {
       for (unsigned int pl = 1; pl < pls_num; ++pl) {
-        if (fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]))) {
+	fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+        if (fh_cur) {
           if ((*fh_cur) != (*fh_ref)) {
             std::cout << "Error: point location number "
                       << pl << " return a different face" << std::endl;
@@ -820,11 +822,13 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
 
         std::cout << "Error in point location number " << pl;
         result += -1;
-        if (hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]))) {
+	hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+	if (hh_cur) {
           std::cout << ", an halfedge returned instead of a face" << std::endl;
           continue;
         }
-        if (vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]))) {
+	vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+        if (vh_cur) {
           std::cout << ", a vertex returned instead of a face" << std::endl;
           continue;
         }
@@ -839,10 +843,12 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
     }
 
     // Assign object to a halfedge
-    if (hh_ref = boost::get<Halfedge_const_handle>(&(objs[0][qi]))) {
+    hh_ref = boost::get<Halfedge_const_handle>(&(objs[0][qi]));
+    if (hh_ref) {
       std::cout << "Halfedge: " << (*hh_ref)->curve() << std::endl;
       for (unsigned int pl = 1; pl < pls_num; ++pl) {
-        if (hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]))) {
+	hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+        if (hh_cur) {
           if (((*hh_cur) != (*hh_ref)) && ((*hh_cur)->twin() != (*hh_ref))) {
             std::cout << "Error: point location number "
                       << pl << " return a different halfedge" << std::endl;
@@ -854,11 +860,13 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
 
         std::cout << "Error in point location number " << pl;
         result += -1;
-        if (fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]))) {
+	fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+        if (fh_cur) {
           std::cout << ", a face returned instead of an halfedge" << std::endl;
           continue;
         }
-        if (vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]))) {
+	vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+        if (vh_cur) {
           std::cout << ", a vertex returned instead of an halfedge"
                     << std::endl;
           continue;
@@ -870,9 +878,11 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
     }
 
     // Assign object to a vertex
-    if (vh_ref = boost::get<Vertex_const_handle>(&(objs[0][qi]))) {
+    vh_ref = boost::get<Vertex_const_handle>(&(objs[0][qi]));
+    if (vh_ref) {
       for (unsigned int pl = 1; pl < pls_num; ++pl) {
-        if (vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]))) {
+	vh_cur = boost::get<Vertex_const_handle>(&(objs[pl][qi]));
+        if (vh_cur) {
           if ((*vh_cur) != (*vh_ref)) {
             std::cout << "Error: point location number "
                       << pl << " return a different vertex"<< std::endl;
@@ -883,11 +893,13 @@ verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
 
         std::cout << "Error in point location number " << pl;
         result += -1;
-        if (fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]))) {
+	fh_cur = boost::get<Face_const_handle>(&(objs[pl][qi]));
+        if (fh_cur) {
           std::cout << ", a face returned instead of a vertex" << std::endl;
           continue;
         }
-        if (hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]))) {
+	hh_cur = boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
+        if (hh_cur) {
           std::cout << ", an halfedge returned instead of a vertex"
                     << std::endl;
           continue;

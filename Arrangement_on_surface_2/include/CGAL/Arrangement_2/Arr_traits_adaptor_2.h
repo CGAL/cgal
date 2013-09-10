@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // $Date$
-// 
+//
 //
 // Author(s)     : Ron Wein             <wein@post.tau.ac.il>s
 //                 Efi Fogel            <efif@post.tau.ac.il>
@@ -61,22 +61,22 @@ public:
   typedef typename Base::Has_left_category          Has_left_category;
   typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_category< Base >::Category 
+  typedef typename internal::Arr_complete_left_side_category< Base >::Category
                                                     Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Base >::Category 
+  typedef typename internal::Arr_complete_bottom_side_category< Base >::Category
                                                     Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Base >::Category 
+  typedef typename internal::Arr_complete_top_side_category< Base >::Category
                                                     Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Base >::Category 
+  typedef typename internal::Arr_complete_right_side_category< Base >::Category
                                                     Right_side_category;
 
 protected:
 
   // left-right dispatch
-  
-  typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
+
+  typedef CGAL::internal::Arr_left_right_implementation_dispatch<
     Left_side_category, Right_side_category > LR;
-  
+
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag      Psx_2_curve_end_tag;
   typedef typename LR::Parameter_space_in_x_2_curve_tag          Psx_2_curve_tag;
   typedef typename LR::Parameter_space_in_x_2_point_tag          Psx_2_point_tag;
@@ -84,12 +84,12 @@ protected:
   typedef typename LR::Is_on_y_identification_2_point_tag        Ioyi_2_point_tag;
   typedef typename LR::Compare_y_on_boundary_2_points_tag        Cmp_y_ob_2_points_tag;
   typedef typename LR::Compare_y_near_boundary_2_curve_ends_tag  Cmp_y_nb_2_curve_ends_tag;
-  
-  
+
+
   // bottom-top dispatch
-  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
+  typedef CGAL::internal::Arr_bottom_top_implementation_dispatch<
     Bottom_side_category, Top_side_category > BT;
-  
+
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag          Psy_2_curve_end_tag;
   typedef typename BT::Parameter_space_in_y_2_curve_tag              Psy_2_curve_tag;
   typedef typename BT::Parameter_space_in_y_2_point_tag              Psy_2_point_tag;
@@ -150,11 +150,11 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                   const X_monotone_curve_2& xcv2,
-                                  const Point_2& p) const 
+                                  const Point_2& p) const
     {
-      // The function is implemented based on the Has_left category. If the 
+      // The function is implemented based on the Has_left category. If the
       // category indicates that the "left" version is available, it calls the
-      // function with same name defined in the base class. Otherwise, it 
+      // function with same name defined in the base class. Otherwise, it
       // uses other predicates to provide this comparison.
       return _compare_y_at_x_left_imp(xcv1, xcv2, p, Has_left_category());
     }
@@ -174,7 +174,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the HasLeft tag is true.
      */
@@ -244,7 +244,7 @@ public:
         // Get the left endpoints of xcv1 and xcv2.
         Point_2        left1 = min_vertex(xcv1);
         Point_2        left2 = min_vertex(xcv2);
-          
+
         if (equal(left1, left2))
           // The two curves have a common left endpoint:
           // Compare them to the right of this point.
@@ -254,7 +254,7 @@ public:
       // We now that the curves do not share a common endpoint, and we can
       // compare their relative y-position (which does not change to the left
       // of the given point p).
-      return (m_self->compare_y_position_2_object()(xcv1, xcv2));      
+      return (m_self->compare_y_position_2_object()(xcv1, xcv2));
     }
   };
 
@@ -275,11 +275,11 @@ public:
      * \return true if xcv1 and xcv2 intersect false otherwise.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
-                    const X_monotone_curve_2& xcv2) const 
+                    const X_monotone_curve_2& xcv2) const
     {
       // The function is implemented based on the Has_do_intersect category.
       // If the category indicates that "do_intersect" is available, it calls
-      // the function with same name defined in the base class. Otherwise, it 
+      // the function with same name defined in the base class. Otherwise, it
       // uses the intersection construction to implement this predicate.
       return _do_intersect_imp(xcv1, xcv2, Has_do_intersect_category());
     }
@@ -299,7 +299,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the HasDoIntersect tag is true.
      */
@@ -339,8 +339,8 @@ public:
   //@{
 
   // left-right
-  
-  /*! A functor that determines the location of a geometric object 
+
+  /*! A functor that determines the location of a geometric object
    * with respect to the parameter space along the x axis.
    */
   class Parameter_space_in_x_2 {
@@ -404,7 +404,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-        
+
     /*!
      * Implementation of the operator() in case the base should be used.
      */
@@ -484,7 +484,7 @@ public:
      * constructing it.
      */
     Is_on_y_identification_2(const Base* base) : m_base(base) {}
-    
+
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
@@ -507,7 +507,7 @@ public:
      */
     bool operator()(const X_monotone_curve_2& xcv) const
     {
-      return is_on_y_idn(xcv,  Ioyi_2_curve_tag());      
+      return is_on_y_idn(xcv,  Ioyi_2_curve_tag());
     }
 
   private:
@@ -515,13 +515,13 @@ public:
     {
       return m_base->is_on_identification_2_object()(p);
     }
-    
+
     bool is_on_y_idn(const Point_2&, Arr_use_dummy_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
-    
+
     bool is_on_y_idn(const X_monotone_curve_2& xcv, Arr_use_traits_tag) const
     {
       return m_base->is_on_y_identification_2_object()(xcv);
@@ -559,12 +559,12 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the base should used.
      */
     Comparison_result comp_y_near_bnd(const X_monotone_curve_2& xcv1,
-                                      const X_monotone_curve_2& xcv2, 
+                                      const X_monotone_curve_2& xcv2,
                                       Arr_curve_end ce,
                                       Arr_use_traits_tag) const
     {
@@ -575,7 +575,7 @@ public:
      * Implementation of the operator() in case the dummy should be used.
      */
     Comparison_result comp_y_near_bnd(const X_monotone_curve_2&,
-                                      const X_monotone_curve_2&, 
+                                      const X_monotone_curve_2&,
                                       Arr_curve_end, Arr_use_dummy_tag) const
     {
       CGAL_error();
@@ -594,7 +594,7 @@ public:
      *         EQUAL in case of an overlap.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2, 
+                                 const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
       // The function is implemented based on the tag disatching
@@ -629,7 +629,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the base should be used.
      */
@@ -638,7 +638,7 @@ public:
     {
       return m_base->compare_y_on_boundary_2_object()(p1, p2);
     }
-    
+
     /*!
      * Implementation of the operator() in case the dummy should be used.
      */
@@ -675,7 +675,7 @@ public:
 
   // bottom-top
 
-  /*! A functor that determines the location of a geometric object 
+  /*! A functor that determines the location of a geometric object
    * with respect to the parameter space along the y axis.
    */
   class Parameter_space_in_y_2 {
@@ -718,7 +718,7 @@ public:
     {
       return parameter_space_in_y(p, Psy_2_point_tag());
     }
-      
+
   protected:
     //! The base traits.
     const Base* m_base;
@@ -734,7 +734,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the base should be used.
      */
@@ -814,7 +814,7 @@ public:
      * constructing it.
      */
     Is_on_x_identification_2(const Base* base) : m_base(base) {}
-    
+
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
@@ -837,7 +837,7 @@ public:
      */
     bool operator()(const X_monotone_curve_2& xcv) const
     {
-      return is_on_x_idn(xcv,  Ioxi_2_curve_tag());      
+      return is_on_x_idn(xcv,  Ioxi_2_curve_tag());
     }
 
   private:
@@ -845,13 +845,13 @@ public:
     {
       return m_base->is_on_x_identification_2_object()(p);
     }
-    
+
     bool is_on_x_idn(const Point_2&, Arr_use_dummy_tag) const
     {
       CGAL_error();
       return SMALLER;
     }
-    
+
     bool is_on_x_idn(const X_monotone_curve_2& xcv, Arr_use_traits_tag) const
     {
       return m_base->is_on_x_identification_2_object()(xcv);
@@ -889,7 +889,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the base should be used.
      */
@@ -916,7 +916,7 @@ public:
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1, 
+    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1,
                                       Arr_curve_end ce1,
                                       const X_monotone_curve_2& xcv2,
                                       Arr_curve_end ce2,
@@ -943,7 +943,7 @@ public:
      * curve end.
      * \param p A reference point; we refer to a vertical line incident to p.
      * \param xcv The compared curve.
-     * \param ind ARR_MIN_END if we refer to xcv's minimal end; 
+     * \param ind ARR_MIN_END if we refer to xcv's minimal end;
      *            ARR_MAX_END if we refer to its maximal end.
      * \pre xcv's relevant end has a special boundary in y.
      * \return SMALLER if p lies to the left of xcv;
@@ -959,10 +959,10 @@ public:
 
     /*! Compare the x-limits of two curve ends on the boundary.
      * \param xcv1 The first curve.
-     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end; 
+     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end;
      *             ARR_MAX_END if we refer to its maximal end.
      * \param xcv2 The second curve.
-     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end; 
+     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end;
      *             ARR_MAX_END if we refer to its maximal end.
      * \pre Both curve ends have a special boundary in y.
      * \return SMALLER if xcv1 lies to the left of xcv2;
@@ -1003,11 +1003,11 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1, 
+    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1,
                                       const X_monotone_curve_2& xcv2,
                                       Arr_curve_end ce,
                                       Arr_use_traits_tag) const
@@ -1032,7 +1032,7 @@ public:
     /*! Compare the relative x-positions of two curve ends.
      * \param xcv1 The first curve.
      * \param xcv2 The second curve.
-     * \param ce ARR_MIN_END if we refer to the curves' minimal end; 
+     * \param ce ARR_MIN_END if we refer to the curves' minimal end;
      *           ARR_MAX_END if we refer to the curves' maximal end.
      * \pre Both curve ends have a special boundary in y.
      * \return SMALLER if xcv1 lies to the left of xcv2;
@@ -1072,7 +1072,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-        
+
   public:
     /*! Compare the x-coordinate of two given points projected onto the
      * horizontal boundaries
@@ -1081,7 +1081,7 @@ public:
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      return comp_x_on_bnd(p1, p2, Cmp_x_ob_2_points_tag());      
+      return comp_x_on_bnd(p1, p2, Cmp_x_ob_2_points_tag());
     }
 
     /*! Compare the x-coordinate of a point and a curve-end projected onto the
@@ -1094,7 +1094,7 @@ public:
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
     {
-      return comp_x_on_bnd(pt, xcv, ce, Cmp_x_ob_2_point_curve_end_tag());      
+      return comp_x_on_bnd(pt, xcv, ce, Cmp_x_ob_2_point_curve_end_tag());
     }
 
     /*! Compare the x-coordinates of two curve-ends projected onto the horizontal
@@ -1105,7 +1105,7 @@ public:
      * \param ce2 the curve-end
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1, 
+                                 Arr_curve_end ce1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
     {
@@ -1145,7 +1145,7 @@ public:
 
 
     Comparison_result comp_x_on_bnd(const X_monotone_curve_2& xcv1,
-                                    Arr_curve_end ce1, 
+                                    Arr_curve_end ce1,
                                     const X_monotone_curve_2& xcv2,
                                     Arr_curve_end ce2,
                                      Arr_use_traits_tag) const
@@ -1164,7 +1164,7 @@ public:
     }
 
   };
-  
+
   /*! Obtain a Compare_x_on_boundary_2 function object. */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   {
@@ -1190,11 +1190,11 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
-    
+
     /*!
      * Implementation of the operator() in case the base should be used.
      */
-    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1, 
+    Comparison_result _compare_curves(const X_monotone_curve_2& xcv1,
                                       const X_monotone_curve_2& xcv2,
                                       Arr_curve_end ce,
                                       Arr_use_traits_tag) const
@@ -1219,7 +1219,7 @@ public:
     /*! Compare the relative x-positions of two curve ends.
      * \param xcv1 The first curve.
      * \param xcv2 The second curve.
-     * \param ce ARR_MIN_END if we refer to the curves' minimal end; 
+     * \param ce ARR_MIN_END if we refer to the curves' minimal end;
      *           ARR_MAX_END if we refer to the curves' maximal end.
      * \pre Both curve ends have a special boundary in y.
      * \return SMALLER if xcv1 lies to the left of xcv2;
@@ -1250,7 +1250,7 @@ public:
   class Compare_y_curve_ends_2 {
   protected:
     //! The base traits.
-    const Self* m_base;
+    const Self* m_self;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -1259,7 +1259,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_y_curve_ends_2(const Self* base) : m_base(base) {}
+    Compare_y_curve_ends_2(const Self* self) : m_self(self) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
@@ -1272,35 +1272,35 @@ public:
                                           Arr_curve_end ce,
                                           Arr_open_side_tag) const
     {
-      Comparison_result res = 
-        m_base->compare_y_near_boundary_2_object()(xcv1, xcv2, ce);
-      
+      Comparison_result res =
+        m_self->compare_y_near_boundary_2_object()(xcv1, xcv2, ce);
+
       return res;
     }
-    
+
     // for non-open
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           const X_monotone_curve_2& xcv2,
                                           Arr_curve_end ce,
                                           Arr_oblivious_side_tag) const
     {
-      Comparison_result res = 
-	m_base->compare_y_on_boundary_2_object()(
-          m_base->construct_vertex_at_curve_end_2_object()(xcv1, ce),
-          m_base->construct_vertex_at_curve_end_2_object()(xcv2, ce)
+      Comparison_result res =
+        m_self->compare_y_on_boundary_2_object()(
+          m_self->construct_vertex_at_curve_end_2_object()(xcv1, ce),
+          m_self->construct_vertex_at_curve_end_2_object()(xcv2, ce)
       );
-      
+
       return res;
     }
- 
+
   public:
 
     /*! Compare the relative y-positions of two curve ends.
      * \param xcv1 The first curve.
-     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end; 
+     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end;
      *             ARR_MAX_END if we refer to its maximal end.
      * \param xcv2 The second curve.
-     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end; 
+     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end;
      *             ARR_MAX_END if we refer to its maximal end.
      * \pre Both curve ends have a special boundary in y.
      * \return SMALLER if xcv1 lies to the left of xcv2;
@@ -1312,32 +1312,32 @@ public:
                                  Arr_curve_end ce) const
     {
 
-      Arr_parameter_space ps1 = 
-        m_base->parameter_space_in_x_2_object()(xcv1, ce);
+      Arr_parameter_space ps1 =
+        m_self->parameter_space_in_x_2_object()(xcv1, ce);
 
       CGAL_precondition(ps1 != ARR_INTERIOR);
 
       CGAL_assertion_code(
-        Arr_parameter_space ps2 = 
-        m_base->parameter_space_in_x_2_object()(xcv2, ce);
+        Arr_parameter_space ps2 =
+        m_self->parameter_space_in_x_2_object()(xcv2, ce);
       );
       CGAL_assertion(ps1 == ps2);
 
       switch (ps1) {
-        
+
       case ARR_LEFT_BOUNDARY:
        return _compare_curve_ends(xcv1, xcv2, ce, Left_side_category());
 
       case ARR_RIGHT_BOUNDARY:
         return _compare_curve_ends(xcv1, xcv2, ce, Right_side_category());
-        
+
       case ARR_INTERIOR:
         // fall-through
       default:
         CGAL_error(); // never reached
         return CGAL::EQUAL;
       }
-      
+
     }
   };
 
@@ -1353,7 +1353,7 @@ public:
   class Compare_x_point_curve_end_2 {
   protected:
     //! The base traits.
-    const Self* m_base;
+    const Self* m_self;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -1362,12 +1362,12 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_point_curve_end_2(const Self* base) : m_base(base) {}
+    Compare_x_point_curve_end_2(const Self* self) : m_self(self) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
- 
-  protected: 
+
+  protected:
 
     // for open
     Comparison_result _compare_point_curve_end(const Point_2& pt,
@@ -1375,17 +1375,17 @@ public:
                                                Arr_curve_end ce,
                                                Arr_open_side_tag) const
     {
-      Comparison_result res = 
-	m_base->compare_x_at_limit_2_object()(pt, xcv, ce);
-      
-      if (res != EQUAL || m_base->is_vertical_2_object()(xcv)) {
-	return res;
+      Comparison_result res =
+        m_self->compare_x_at_limit_2_object()(pt, xcv, ce);
+
+      if (res != EQUAL || m_self->is_vertical_2_object()(xcv)) {
+        return res;
       }
-      
-      // look at the side from which the 
-      // vertical asymptote is approached 
+
+      // look at the side from which the
+      // vertical asymptote is approached
       res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
-      
+
       return res;
     }
 
@@ -1396,17 +1396,17 @@ public:
                                                Arr_curve_end ce,
                                                Arr_contracted_side_tag) const
     {
-      Comparison_result res = 
-	m_base->compare_x_on_boundary_2_object()(pt, xcv, ce);
-      
-      if (res != EQUAL || m_base->is_vertical_2_object()(xcv)) {
-	return res;
+      Comparison_result res =
+        m_self->compare_x_on_boundary_2_object()(pt, xcv, ce);
+
+      if (res != EQUAL || m_self->is_vertical_2_object()(xcv)) {
+        return res;
       }
-      
-      // look at the side from which the 
-      // vertical asymptote is approached 
+
+      // look at the side from which the
+      // vertical asymptote is approached
       res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
-      
+
       return res;
     }
 
@@ -1416,9 +1416,9 @@ public:
                                                Arr_curve_end ce,
                                                Arr_oblivious_side_tag) const
     {
-      Comparison_result res = 
-	m_base->compare_x_on_boundary_2_object()
-        (pt, m_base->construct_vertex_at_curve_end_2_object()(xcv, ce));
+      Comparison_result res =
+        m_self->compare_x_on_boundary_2_object()
+          (pt, m_self->construct_vertex_at_curve_end_2_object()(xcv, ce));
 
       return res;
     }
@@ -1429,7 +1429,7 @@ public:
     /*! Compare the relative x-positions of a point and a curve end.
      * \param pt The point
      * \param xcv The curve.
-     * \param ce ARR_MIN_END if we refer to xcv's minimal end; 
+     * \param ce ARR_MIN_END if we refer to xcv's minimal end;
      *           ARR_MAX_END if we refer to its maximal end.
      * \pre The curve end has a special boundary in y.
      * \return SMALLER if pt lies to the left of xcv;
@@ -1440,18 +1440,18 @@ public:
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
     {
-      Arr_parameter_space ps = m_base->parameter_space_in_y_2_object()(xcv, ce);
-      
+      Arr_parameter_space ps = m_self->parameter_space_in_y_2_object()(xcv, ce);
+
       CGAL_precondition(ps != ARR_INTERIOR);
 
       switch (ps) {
-        
+
       case ARR_BOTTOM_BOUNDARY:
         return _compare_point_curve_end(pt, xcv, ce, Bottom_side_category());
 
       case ARR_TOP_BOUNDARY:
         return _compare_point_curve_end(pt, xcv, ce, Top_side_category());
-        
+
       case ARR_INTERIOR:
         // fall-through
       default:
@@ -1473,7 +1473,7 @@ public:
   class Compare_x_curve_ends_2 {
   protected:
     //! The base traits.
-    const Self* m_base;
+    const Self* m_self;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -1482,14 +1482,14 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_curve_ends_2(const Self* base) : m_base(base) {}
+    Compare_x_curve_ends_2(const Self* self) : m_self(self) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
- 
+
 
   protected:
-   
+
     Comparison_result _compare_curve_ends_same_x(const X_monotone_curve_2& xcv1,
                                                  Arr_curve_end ce1,
                                                  const X_monotone_curve_2& xcv2,
@@ -1498,12 +1498,12 @@ public:
       CGAL::Comparison_result res = CGAL::EQUAL;
 
       CGAL::Arr_parameter_space loc1 =
-        m_base->parameter_space_in_y_2_object()(xcv1, ce1);
+        m_self->parameter_space_in_y_2_object()(xcv1, ce1);
       CGAL::Arr_parameter_space loc2 =
-        m_base->parameter_space_in_y_2_object()(xcv2, ce2);
-      bool vert1 = m_base->is_vertical_2_object()(xcv1);
-      bool vert2 = m_base->is_vertical_2_object()(xcv2);
-      
+        m_self->parameter_space_in_y_2_object()(xcv2, ce2);
+      bool vert1 = m_self->is_vertical_2_object()(xcv1);
+      bool vert2 = m_self->is_vertical_2_object()(xcv2);
+
       // now we are in the open case: ARR_MIN_END > vertical > ARR_MAX_END
       if (vert1) {
 	if (!vert2) {
@@ -1515,22 +1515,22 @@ public:
 	  res = CGAL::EQUAL;
 	  return res;
 	}
-	res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? 
+	res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
 	       CGAL::SMALLER : CGAL::LARGER);
 	return res;
-      } 
-      
+      }
+
       if (vert2) {
 	res = (ce1 == CGAL::ARR_MIN_END ? CGAL::LARGER : CGAL::SMALLER);
 	return res;
       }
-      
-      // otherwise: both ends have asymptotic behaviour 
+
+      // otherwise: both ends have asymptotic behaviour
       if (ce1 == ce2) { // both ends approach asymptote from one side
 	if (loc1 == loc2) { // need special y-comparison
-	  res = m_base->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
+	  res = m_self->compare_x_near_limit_2_object()(xcv1, xcv2, ce2);
 	  return res;
-	} 
+	}
 	// else: order can be determined without y-comparison
 	res = CGAL::EQUAL;
 	return res;
@@ -1546,16 +1546,16 @@ public:
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce2, 
+                                          Arr_curve_end ce2,
                                           Arr_open_side_tag) const {
-      
-      Comparison_result res = 
-	m_base->compare_x_at_limit_2_object()(xcv1, ce1, xcv2, ce2);
-      
+
+      Comparison_result res =
+        m_self->compare_x_at_limit_2_object()(xcv1, ce1, xcv2, ce2);
+
       if (res == EQUAL) {
         res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
       }
-      
+
       return res;
     }
 
@@ -1563,16 +1563,16 @@ public:
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce2, 
+                                          Arr_curve_end ce2,
                                           Arr_contracted_side_tag) const {
-      
-      Comparison_result res = 
-	m_base->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
-      
+
+      Comparison_result res =
+        m_self->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
+
       if (res == EQUAL) {
         res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
       }
-      
+
       return res;
     }
 
@@ -1580,15 +1580,15 @@ public:
     Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce2, 
+                                          Arr_curve_end ce2,
                                           Arr_oblivious_side_tag) const {
-      
-      Comparison_result res = 
-	m_base->compare_x_on_boundary_2_object()(
-          m_base->construct_vertex_at_curve_end_2_object()(xcv1, ce1),
-          m_base->construct_vertex_at_curve_end_2_object()(xcv2, ce2)
+
+      Comparison_result res =
+        m_self->compare_x_on_boundary_2_object()(
+          m_self->construct_vertex_at_curve_end_2_object()(xcv1, ce1),
+          m_self->construct_vertex_at_curve_end_2_object()(xcv2, ce2)
       );
-      
+
       return res;
     }
 
@@ -1596,10 +1596,10 @@ public:
 
     /*! Compare the relative x-positions of two curve ends.
      * \param xcv1 The first curve.
-     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end; 
+     * \param ind1 ARR_MIN_END if we refer to xcv1's minimal end;
      *             ARR_MAX_END if we refer to its maximal end.
      * \param xcv2 The second curve.
-     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end; 
+     * \param ind2 ARR_MIN_END if we refer to xcv2's minimal end;
      *             ARR_MAX_END if we refer to its maximal end.
      * \pre Both curve ends have a special boundary in y.
      * \return SMALLER if xcv1 lies to the left of xcv2;
@@ -1611,33 +1611,33 @@ public:
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2) const
     {
-      bool first_open = !m_base->is_closed_2_object()(xcv1, ce1);
-      bool second_open = !m_base->is_closed_2_object()(xcv2, ce2);
+      bool first_open = !m_self->is_closed_2_object()(xcv1, ce1);
+      bool second_open = !m_self->is_closed_2_object()(xcv2, ce2);
 
       if (first_open) {
         if (second_open) {
-          return _compare_curve_ends(xcv1, ce1, xcv2, ce2, 
+          return _compare_curve_ends(xcv1, ce1, xcv2, ce2,
                                      // both sides are open, so pick one
                                      Bottom_side_category());
         } else {
           return CGAL::opposite
-            (m_base->compare_x_point_curve_end_2_object()
-             (m_base->construct_vertex_at_curve_end_2_object()(xcv2, ce2),
+            (m_self->compare_x_point_curve_end_2_object()
+             (m_self->construct_vertex_at_curve_end_2_object()(xcv2, ce2),
               xcv1, ce1));
         }
       } else {
         if (second_open) {
-          return m_base->compare_x_point_curve_end_2_object()
-            (m_base->construct_vertex_at_curve_end_2_object()(xcv1, ce1),
+          return m_self->compare_x_point_curve_end_2_object()
+            (m_self->construct_vertex_at_curve_end_2_object()(xcv1, ce1),
              xcv2, ce2);
-          
+
         } else {
-          return _compare_curve_ends(xcv1, ce1, xcv2, ce2, 
+          return _compare_curve_ends(xcv1, ce1, xcv2, ce2,
                                      // both sides are non-open, so pick one
                                      Bottom_side_category());
         }
       }
-    }      
+    }
   };
 
   /*! Obtain a Compare_x_curve_ends_2 function object. */
@@ -1645,11 +1645,11 @@ public:
   {
     return Compare_x_curve_ends_2(this);
   }
-  
+
   class Construct_vertex_at_curve_end_2 {
   protected:
     //! The base traits.
-    const Self* m_base;
+    const Self* m_self;
 
     /*! Constructor.
      * \param base The base traits class. It must be passed, to handle non
@@ -1658,22 +1658,22 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Construct_vertex_at_curve_end_2(const Self* base) : m_base(base) {}
+    Construct_vertex_at_curve_end_2(const Self* self) : m_self(self) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
 
-  public: 
+  public:
     Point_2 operator()(const X_monotone_curve_2& xcv, Arr_curve_end ce) const
     {
       if (ce == ARR_MIN_END) {
-        return m_base->construct_min_vertex_2_object()(xcv);
+        return m_self->construct_min_vertex_2_object()(xcv);
       }
       // else
-      return m_base->construct_max_vertex_2_object()(xcv);
-      
+      return m_self->construct_max_vertex_2_object()(xcv);
+
     }
-  };    
+  };
 
   /*! Obtain a Construct_vertex_at_curve_end_2 function object. */
   Construct_vertex_at_curve_end_2 construct_vertex_at_curve_end_2_object() const
@@ -1704,13 +1704,13 @@ public:
     {
       return true;
     }
-    
+
     inline
     bool _is_closed(Arr_open_side_tag) const
     {
       return false;
     }
-    
+
     inline
     bool _is_closed(const X_monotone_curve_2& xcv, Arr_curve_end ce) const
     {
@@ -1718,21 +1718,21 @@ public:
       if (ARR_INTERIOR == ps) {
         ps = m_self->parameter_space_in_y_2_object()(xcv, ce);
       }
-      
+
       switch (ps) {
-        
+
       case ARR_LEFT_BOUNDARY:
         return _is_closed(Left_side_category());
-        
+
       case ARR_BOTTOM_BOUNDARY:
         return _is_closed(Bottom_side_category());
-        
+
       case ARR_TOP_BOUNDARY:
         return _is_closed(Top_side_category());
-        
+
       case ARR_RIGHT_BOUNDARY:
         return _is_closed(Right_side_category());
-        
+
       case ARR_INTERIOR:
         // fall-through
       default:
@@ -1757,9 +1757,9 @@ public:
   {
     return Is_closed_2(this);
   }
-  
+
   //@}
-  
+
   /// \name Additional auxiliary functors.
   //@{
   class Is_in_x_range_2 {
@@ -1808,7 +1808,7 @@ public:
 
       if (bx != ARR_INTERIOR)
         return(true);
-      
+
       by = ps_y(xcv, ARR_MAX_END);
 
       res = (by == ARR_INTERIOR) ?
@@ -1897,7 +1897,7 @@ public:
           by_left = ps_y2;
         }
       }
-      
+
       // Locate the leftmost of the two right endpoints of the two curves.
       // Note that we guard for curve ends with special boundary.
       const X_monotone_curve_2* xcv_right;
@@ -1950,7 +1950,7 @@ public:
           by_right = ps_y2;
         }
       }
-          
+
       // Now compare the (finite) x-coordiates of the left end of xcv_left and
       // the right end of xcv_right.
       if (by_left == ARR_INTERIOR) {
@@ -2015,13 +2015,13 @@ public:
       CGAL_precondition(is_in_x_range(xcv1, xcv2));
 
       /* The traits class which the basic traits adaptor accepts as a template
-       * parameter is a model of the ArrangementBasicTraits_2 concept so it 
-       * needs not to support intersections at all, therefor it is complicated 
-       * to check if the x-curves are disjoint in their interiors. Moreover, 
-       * compare_y_position functor is called only from the arrangement class 
-       * itself (and some related point-location algorithms), and used only 
-       * for two curves associated with two arrangement halfedges. These curves 
-       * are guaranteed to be interior-disjoint. So, it seems that there is no 
+       * parameter is a model of the ArrangementBasicTraits_2 concept so it
+       * needs not to support intersections at all, therefor it is complicated
+       * to check if the x-curves are disjoint in their interiors. Moreover,
+       * compare_y_position functor is called only from the arrangement class
+       * itself (and some related point-location algorithms), and used only
+       * for two curves associated with two arrangement halfedges. These curves
+       * are guaranteed to be interior-disjoint. So, it seems that there is no
        * gain in checking the precondition, and it is left unimplemented.
        */
 
@@ -2036,7 +2036,7 @@ public:
         compare_x_curve_ends = m_self->compare_x_curve_ends_2_object();
       Compare_y_near_boundary_2
         compare_y_near_bnd = m_self->compare_y_near_boundary_2_object();
-      
+
       // First check whether any of the curves is defined at x boundary.
       const Arr_parameter_space ps_x1 = ps_x(xcv1, ARR_MIN_END);
       const Arr_parameter_space ps_x2 = ps_x(xcv2, ARR_MIN_END);
@@ -2052,7 +2052,7 @@ public:
           // Compare the relative position of the curves at x boundary.
           return (compare_y_near_bnd(xcv1, xcv2, ARR_MIN_END));
         }
-        
+
         // Check if the left end of xcv2 lies at y boundary.
         const Arr_parameter_space ps_y2 = ps_y(xcv2, ARR_MIN_END);
 
@@ -2060,7 +2060,7 @@ public:
           return (LARGER);          // xcv2 is obviously below xcv1.
         else if (ps_y2 == ARR_TOP_BOUNDARY)
           return (SMALLER);         // xcv2 is obviously above xcv1.
-          
+
         // Compare the position of the left end of xcv2 (which is a normal
         // point) to xcv1.
         res = compare_y_at_x(min_vertex(xcv2), xcv1);
@@ -2086,7 +2086,7 @@ public:
 
         return (res);
       }
-      
+
       // Check if the left curve end lies at y = +/- oo.
       const Arr_parameter_space ps_y1 = ps_y(xcv1, ARR_MIN_END);
       const Arr_parameter_space ps_y2 = ps_y(xcv2, ARR_MIN_END);
@@ -2117,7 +2117,7 @@ public:
         // xcv1 has a vertical asymptote and xcv2 has a normal left endpoint.
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left2 = min_vertex(xcv2);
-        
+
         l_res = compare_x_point_curve_end(left2, xcv1, ARR_MIN_END);
 
         if (l_res == LARGER) {
@@ -2138,7 +2138,7 @@ public:
         // xcv2 has a vertical asymptote and xcv1 has a normal left endpoint.
         // Compare the x-positions of this endpoint and the asymptote.
         const Point_2&  left1 = min_vertex(xcv1);
-        
+
         l_res = compare_x_point_curve_end(left1, xcv2, ARR_MIN_END);
 
         if (l_res == LARGER)
@@ -2167,7 +2167,7 @@ public:
 
         if (res == EQUAL) {
           // The two curves intersect at left1. If both curves are defined to
-          // the right of the reference point, we can compare them to its 
+          // the right of the reference point, we can compare them to its
           // right. Otherwise, their share a common endpoint (which is the only
           // overlap in their x-ranges) and are really equal.
           if (l_res == EQUAL)
@@ -2232,14 +2232,14 @@ public:
      * \pre p is an end-point of all three curves.
      * \return (true) if xcv is between xcv1 and xcv2; (false) otherwise.
      *         If xcv overlaps xcv1 or xcv2 the result is always (false).
-     *         If xcv1 and xcv2 overlap, the result is (true), unless xcv 
+     *         If xcv1 and xcv2 overlap, the result is (true), unless xcv
      *         also overlaps them.
      */
     bool operator()(const X_monotone_curve_2& xcv, bool xcv_to_right,
                      const X_monotone_curve_2& xcv1, bool xcv1_to_right,
                      const X_monotone_curve_2& xcv2, bool xcv2_to_right,
                      const Point_2& p,
-                     bool& xcv_equal_xcv1, 
+                     bool& xcv_equal_xcv1,
                      bool& xcv_equal_xcv2) const
     {
       Compare_y_at_x_left_2   compare_y_at_x_left =
@@ -2250,26 +2250,26 @@ public:
       // Initialize output flags.
       xcv_equal_xcv1 = false;
       xcv_equal_xcv2 = false;
-    
+
       // Take care of the general 4 cases:
       Comparison_result  l_res, r_res;
       Comparison_result  res1, res2;
-    
+
       if (!xcv1_to_right && !xcv2_to_right) {
         // Case 1: Both xcv1 and xcv2 are defined to the left of p.
         l_res = compare_y_at_x_left(xcv1, xcv2, p);
-      
+
         if (l_res == LARGER) {
           // Case 1(a) : xcv1 is above xcv2.
           if (!xcv_to_right) {
             res1 = compare_y_at_x_left(xcv1, xcv, p);
             res2 = compare_y_at_x_left(xcv2, xcv, p);
-          
+
             if (res1 == EQUAL)
               xcv_equal_xcv1 = true;
             if (res2 == EQUAL)
               xcv_equal_xcv2 = true;
-          
+
             return (res1 == SMALLER || res2 == LARGER);
           }
           return (true);
@@ -2279,12 +2279,12 @@ public:
           if (!xcv_to_right) {
             res1 = compare_y_at_x_left(xcv1, xcv, p);
             res2 = compare_y_at_x_left(xcv2, xcv, p);
-          
+
             if (res1 == EQUAL)
               xcv_equal_xcv1 = true;
             if (res2 == EQUAL)
               xcv_equal_xcv2 = true;
-          
+
             return (res1 == SMALLER && res2  == LARGER);
           }
           return (false);
@@ -2303,7 +2303,7 @@ public:
           return (true);
         }
       }
-      
+
       if (xcv1_to_right && xcv2_to_right) {
         // Case 2: Both xcv1 and xcv2 are defined to the right of p.
         r_res = compare_y_at_x_right(xcv1, xcv2, p);
@@ -2342,10 +2342,10 @@ public:
           // Overlapping segments.
           if (xcv_to_right) {
             res1 = compare_y_at_x_right(xcv1, xcv, p);
-          
+
             if (res1 == EQUAL) {
               xcv_equal_xcv1 = true;
-              xcv_equal_xcv2 = true;             
+              xcv_equal_xcv2 = true;
               return (false);
             }
             return (true);
@@ -2361,7 +2361,7 @@ public:
 
           if (res1 == EQUAL)
             xcv_equal_xcv1 = true;
-        
+
           return (res1 == SMALLER);
         }
         else {
@@ -2379,22 +2379,22 @@ public:
       // Case 4: xcv1 is defined to the right of p, and xcv2 to its left.
       if (xcv_to_right) {
 	res1 = compare_y_at_x_right(xcv1, xcv, p);
-	
+
 	if (res1 == EQUAL)
 	  xcv_equal_xcv1 = true;
-        
+
 	return (res1  == LARGER);
       }
       else {
         res2 = compare_y_at_x_left(xcv2, xcv, p);
-        
+
         if (res2 == EQUAL)
           xcv_equal_xcv2 = true;
-	
+
         return (res2 == LARGER);
       }
     }
-    
+
   protected:
     //! The base traits.
     const Self* m_self;
@@ -2409,7 +2409,7 @@ public:
     Is_between_cw_2(const Self* self) : m_self(self) {}
 
     //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_traits_basic_adaptor_2<Base>;    
+    friend class Arr_traits_basic_adaptor_2<Base>;
   };
 
   /*! Obtain an Is_between_cw_2 function object. */
@@ -2428,7 +2428,7 @@ public:
      * \param xcv2 The second curve.
      * \param xcv2_to_right Is xcv2 directed from left to right.
      * \param p The common endpoint.
-     * \param from_top (true) if we start from 12 o'clock, 
+     * \param from_top (true) if we start from 12 o'clock,
      *                 (false) if we start from 6 o'clock.
      * \pre The point p is an endpoint of both curves.
      * \return SMALLER if we encounter xcv1 before xcv2;
@@ -2447,13 +2447,13 @@ public:
         // Both are defined to the left of p, and we encounter xcv1 before
         // xcv2 if it is below xcv2:
         return (m_self->compare_y_at_x_left_2_object()(xcv1, xcv2, p));
-      
+
       if (xcv1_to_right && xcv2_to_right)
         // Both are defined to the right of p, and we encounter xcv1 before
         // xcv2 if it is above xcv2. We therefore reverse the order of the
         // curves when we invoke compare_y_at_x_right:
         return (m_self->compare_y_at_x_right_2_object()(xcv2, xcv1, p));
-      
+
       if (!xcv1_to_right && xcv2_to_right)
         // If we start from the top, we encounter the right curve (which
         // is xcv2) first. If we start from the bottom, we encounter xcv1 first.
@@ -2478,7 +2478,7 @@ public:
      * constructing it.
      */
     Compare_cw_around_point_2(const Self* self) : m_self(self) {}
-    
+
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
   };
@@ -2544,7 +2544,7 @@ public:
 
   // Note that the basic adaptor does not have to support these functors:
   typedef typename Base_traits_2::Make_x_monotone_2  Make_x_monotone_2;
-  typedef typename Base_traits_2::Split_2            Split_2; 
+  typedef typename Base_traits_2::Split_2            Split_2;
   typedef typename Base_traits_2::Intersect_2        Intersect_2;
 
   /// \name Overriden functors.
@@ -2582,14 +2582,14 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_adaptor_2<Base_traits_2>;
-        
+
     /*!
      * Implementation of the operator() in case the Has_merge tag is true.
      */
     bool _are_mergeable_imp(const X_monotone_curve_2& xcv1,
                              const X_monotone_curve_2& xcv2, Tag_true) const
     {
-      return (m_base->are_mergeable_2_object()(xcv1, xcv2));      
+      return (m_base->are_mergeable_2_object()(xcv1, xcv2));
     }
 
     /*!
@@ -2643,7 +2643,7 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_adaptor_2<Base_traits_2>;
-    
+
     /*!
      * Implementation of the operator() in case the HasMerge tag is true.
      */
@@ -2651,7 +2651,7 @@ public:
                     const X_monotone_curve_2& xcv2,
                     X_monotone_curve_2& c, Tag_true) const
     {
-      return (m_base->merge_2_object()(xcv1, xcv2, c));      
+      return (m_base->merge_2_object()(xcv1, xcv2, c));
     }
 
     /*!
