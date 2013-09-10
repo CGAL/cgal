@@ -36,21 +36,12 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Gmpq                                Number_type;
-//typedef CGAL::Cartesian<Number_type> 		    Kernel;
+typedef CGAL::Gmpq                                        Number_type;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel> 	    Traits_2;
-typedef Traits_2::Point_2		            Point_2;
-typedef Traits_2::X_monotone_curve_2		    Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>		    Arrangement_2;
-typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true>
-  Simple_polygon_visibility_2;
-typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>
-  Naive_visibility_2;
-typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2,CGAL::Tag_true>
-  Triangular_expansion_visibility_2;
-typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2,CGAL::Tag_true>
-  Rotational_visibility_2;
+typedef CGAL::Arr_segment_traits_2<Kernel> 	              Traits_2;
+typedef Traits_2::Point_2		                              Point_2;
+typedef Traits_2::X_monotone_curve_2		                  Segment_2;
+typedef CGAL::Arrangement_2<Traits_2>		                  Arrangement_2;
 
 template <class Visibility_fst, class Visibility_snd>
 void deploy_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
@@ -60,113 +51,81 @@ void deploy_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
       (v1, v2, qchoice, input);
 }
 
-template <class Visibility_fst>
+template <class Visibility_fst, class Regularization_tag>
 void define_snd_class(std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input){
   if (name2 == "S")
-    deploy_benchmark<Visibility_fst, Simple_polygon_visibility_2>
+    deploy_benchmark<Visibility_fst, CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "N")
-    deploy_benchmark<Visibility_fst, Naive_visibility_2>
+    deploy_benchmark<Visibility_fst, CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "T")
-    deploy_benchmark<Visibility_fst, Triangular_expansion_visibility_2>
+    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "R")
-    deploy_benchmark<Visibility_fst, Rotational_visibility_2>
+    deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
 }
 
+template <class Regularization_tag>
 void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input) {
   if (name1 == "S")
-    define_snd_class<Simple_polygon_visibility_2> (name2, qchoice, input);
+    define_snd_class<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "N")
-    define_snd_class<Naive_visibility_2> (name2, qchoice, input);
+    define_snd_class<CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "T")
-    define_snd_class<Triangular_expansion_visibility_2> (name2, qchoice, input);
+    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "R")
-    define_snd_class<Rotational_visibility_2> (name2, qchoice, input);
+    define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
 }
 
-
-
+void print_usage() {
+  std::cout << "Usage: ./benchmark [filename] [Class type 1] [Class type 2] [Query type] [Regularize]\n";
+  std::cout << "where [Class type] could be S(simple), N(naive), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
+  std::cout << "[Query type] can be: {vertex, edge, face}.\n";
+  std::cout << "[Regularize] can be: {true, false}.\n";
+}
 
 int main(int argc, char* argv[]) {
-{
 
-  Simple_polygon_visibility_2 simple_visibility;
-  Naive_visibility_2 naive_visibility;
-  Triangular_expansion_visibility_2 triangular_visibility;
   CGAL::Query_choice qchoice = CGAL::FACE;
+  std::string regularization_tag("true");
   if (argc > 1) {
     std::string input_arr_file(argv[1]);
     std::ifstream input(input_arr_file.c_str());
-    if (argc == 2) {
-      CGAL::simple_benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
-                    (simple_visibility, triangular_visibility, qchoice, input);
-      return 0;
-    }
-
-
-    if (argc == 4 || argc == 5) {
+    if (argc == 6) {
       qchoice = CGAL::FACE;
-      if (argc == 5) {
-        std::string query_type(argv[4]);
-        if (query_type == "vertex")
-          qchoice = CGAL::VERTEX;
-        else {
-          if (query_type == "edge")
-            qchoice = CGAL::EDGE;
-          else {
-            if (query_type == "face")
-              qchoice = CGAL::FACE;
-            else {
-              std::cout<<"query type is not matched.\n";
-              return 0;
-            }
-          }
-        }
+      std::string query_type(argv[4]);
+      if (query_type == "vertex")
+        qchoice = CGAL::VERTEX;
+      else if (query_type == "edge")
+        qchoice = CGAL::EDGE;
+      else if (query_type == "face")
+        qchoice = CGAL::FACE;
+      else {
+        std::cout<<"query type is not matched.\n";
+        return 0;
       }
 
+      regularization_tag = argv[5];
       std::string class1(argv[2]), class2(argv[3]);
-      benchmark_two_classes(class1, class2, qchoice, input);
-//      if ( class_name == "SN") {
-//        CGAL::benchmark<Simple_polygon_visibility_2, Naive_visibility_2>
-//            (simple_visibility, naive_visibility, qchoice, input);
-//        return 0;
-//      }
-//      if (class_name == "ST") {
-//        CGAL::benchmark<Simple_polygon_visibility_2, Triangular_expansion_visibility_2>
-//                      (simple_visibility, triangular_visibility, qchoice, input);
-//        return 0;
-//      }
-//      if (class_name == "NT") {
-//        CGAL::benchmark<Naive_visibility_2, Triangular_expansion_visibility_2>
-//                    (naive_visibility, triangular_visibility, qchoice, input);
-//        return 0;
-//      }
-//      if (class_name == "SS") {
-//        CGAL::benchmark<Simple_polygon_visibility_2, Simple_polygon_visibility_2>
-//                    (simple_visibility, simple_visibility, qchoice, input);
-//      }
-//      if (class_name == "NN") {
-//        CGAL::benchmark<Naive_visibility_2, Naive_visibility_2>
-//                    (naive_visibility, naive_visibility, qchoice, input);
-//      }
-//      if (class_name == "TT") {
-//        CGAL::benchmark<Triangular_expansion_visibility_2, Triangular_expansion_visibility_2>
-//                    (triangular_visibility, triangular_visibility, qchoice, input);
-//      }
-//      std::cout<<"no type is matched.\n";
+      if (regularization_tag == "true") {
+        benchmark_two_classes<CGAL::Tag_true>(class1, class2, qchoice, input);        
+      }
+      else {
+        benchmark_two_classes<CGAL::Tag_false>(class1, class2, qchoice, input);         
+      }
+
       return 0;
+    }
+    else {
+      print_usage();
+      exit(0);
     }
   }
   else {
-    std::cout << "Usage: ./benchmark [filename] [Class type 1] [Class type 2] [Query type]\n";
-    std::cout << "where [Class type] could be S(simple), N(naive), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
-    std::cout << "[Query type] could be vertex, edge, face.\n";
-    std::cout << "The default value of [Query type] is face.\n";
+    print_usage();
     exit(0);
   }
-}
 	return 0;
 }

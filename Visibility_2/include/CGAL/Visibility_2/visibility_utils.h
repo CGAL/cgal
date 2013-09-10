@@ -59,10 +59,9 @@ void print_arrangement_by_face(const Arrangement_2& arr) {
   Face_const_iterator fit;
   for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
     if (!fit->is_unbounded()) {
+      std::cout << "FACE\n";
       print_simple_face<Face_const_iterator, Ccb_halfedge_const_circulator>(fit);
-    }
-    else {
-      std::cout << "unbounded\n";
+      std::cout << "END FACE\n";
     }
   }
 }

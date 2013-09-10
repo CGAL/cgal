@@ -553,32 +553,24 @@ void convert_poly_to_env_file() {
   std::ifstream input;
   input.open("norway.poly");
 
-  int cnt = 0;
   if (input && norway) {
     std::string line;
-    while (std::getline(input, line)) {
-      if (cnt >= 60) {
-        break;
-      }
+    while (!input.eof()) {
+      std::getline(input, line);
       std::vector<std::string> vertices;
       line.erase(line.find_last_not_of(" \n\r\t")+1);
-      std::cout << "trimmed: |" << line << "|" << std::endl;
-      while (line != "POLYGON") {
-        norway << line;
-        vertics.
-        if (cnt >= 60) {
-          break;
-        }
-        std::getline(input, line);
-        std::cout << line << std::endl;
+
+      while (line != "POLYGON" && !input.eof()) {
         vertices.push_back(line);
-        cnt++;
+        std::getline(input, line);
+        line.erase(line.find_last_not_of(" \n\r\t")+1);
       }
-      norway << vertices.size() << std::endl;
-      for (int j = 0 ; j < vertices.size() ; j++) {
-        norway << vertices[j] << std::endl;
+      if (vertices.size() != 0) {
+        norway << vertices.size() << std::endl;
+        for (int j = 0 ; j < vertices.size() ; j++) {
+          norway << vertices[j] << std::endl;
+        }
       }
-      cnt++;
     }
   }
   else {
@@ -622,7 +614,9 @@ void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input)
         segments.push_back(Segment_2(points[j], points[j+1]));
       }
       segments.push_back(Segment_2(points.front(), points.back()));
+  //    std::cout << "before insertion\n";
       CGAL::insert(arr, segments.begin(), segments.end());
+ //     std::cout << "after\n";
     }
   }
   else {
@@ -814,7 +808,9 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
   } while (++curr != curr_max_circ);
 
   arr_out.clear();
-  CGAL::insert(arr_out, segments.begin(), segments.end());
+//  std::cout << "before insertion\n";
+  CGAL::insert_non_intersecting_curves(arr_out, segments.begin(), segments.end());
+//  std::cout << "after\n";
 
   Face_const_handle fch;
   curr_max = 0;
@@ -829,13 +825,17 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
   }
   Ccb_halfedge_const_circulator circ_p = fch->outer_ccb();
   Ccb_halfedge_const_circulator curr_p = circ_p;
-  Halfedge_const_handle he_p;
+  Halfedge_const_handle he_p;/*
   std::cout << "OUT FACE\n";
   do {
     he_p = curr_p;
+    Ccb_halfedge_const_circulator next = curr_p;
+    next++;
+    Halfedge_const_handle h_next = next;
+    assert(he_p->target() == h_next->source());
     std::cout << he_p->source()->point() << std::endl;
   } while(++curr_p != circ_p);
-  std::cout << "END\n";
+  std::cout << "END\n";*/
   return fch;
 }
 
