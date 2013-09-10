@@ -301,8 +301,7 @@ private:
   Polyhedron *mCopy;
 
   Graph skeleton_curve;
-  std::map<vertex_desc, Point> skeleton_points;
-
+  std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> skeleton_points_map;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -418,6 +417,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   std::vector<double> distances;
   distances.resize(boost::num_vertices(*segment_mesh));
 
+  boost::associative_property_map<std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> > skeleton_points(skeleton_points_map);
   vertex_iter gvb, gve;
   for (boost::tie(gvb, gve) = boost::vertices(skeleton_curve); gvb != gve; ++gvb)
   {
@@ -565,7 +565,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     Graph g;
-    std::map<vertex_desc, Point> points;
+    std::map<vertex_desc, Point> points_map;
+    boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, Point> > points(points_map);
 
     temp_mcs->extract_skeleton(g, points);
 
@@ -877,7 +878,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   Correspondence_pmap corr;
 
   skeleton_curve.clear();
-  skeleton_points.clear();
+  skeleton_points_map.clear();
+  boost::associative_property_map<std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> > skeleton_points(skeleton_points_map);
   mcs->convert_to_skeleton(skeleton_curve, skeleton_points);
   mcs->get_correspondent_vertices(corr);
 
@@ -918,7 +920,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   {
     vertex_desc i = *gvb;
     Point s = skeleton_points[i];
-    std::cout << "here\n";
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
       std::vector<Point> line;

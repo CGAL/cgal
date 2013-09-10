@@ -175,6 +175,7 @@ template <class HalfedgeGraph,
           class SparseLinearAlgebraTraits_d = CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> >,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>,
           class GraphCorrelationPMap = typename boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, std::vector<int> > >,
+          class GraphPointPMap = typename boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, typename HalfedgeGraph::Traits::Point_3 > >,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
@@ -208,7 +209,8 @@ public:
   internal::Cotangent_value_Meyer_secure<HalfedgeGraph> > >                    Weight_calculator;
 
   typedef internal::Curve_skeleton<HalfedgeGraph, Graph,
-  VertexIndexMap, EdgeIndexMap>                                                Skeleton;
+  VertexIndexMap, EdgeIndexMap,
+  HalfedgeGraphPointPMap, GraphPointPMap>                                      Skeleton;
 
   // Repeat Graph types
   typedef typename boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
@@ -560,7 +562,7 @@ public:
    * @param points
    *        the locations of the skeletal points
    */
-  void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
+  void extract_skeleton(Graph& g, GraphPointPMap& points)
   {
     run_to_converge();
     convert_to_skeleton(g, points);
@@ -578,7 +580,7 @@ public:
    * @param corr
    *        for each skeletal point, record its correspondent surface points
    */
-  void extract_skeleton(Graph& g, std::map<vertex_desc, Point>& points,
+  void extract_skeleton(Graph& g, GraphPointPMap& points,
                         GraphCorrelationPMap& corr)
   {
     run_to_converge();
@@ -789,7 +791,7 @@ public:
   /**
    * Convert the contracted mesh to a skeleton curve.
    */
-  void convert_to_skeleton(Graph& g, std::map<vertex_desc, Point>& points)
+  void convert_to_skeleton(Graph& g, GraphPointPMap& points)
   {
     Skeleton skeleton(polyhedron);
     std::map<vertex_desc, std::vector<int> > record;
@@ -1799,7 +1801,8 @@ void extract_skeleton(Graph& g,
   omega_H, 0.0, edgelength_TH, false);
 
   mcs.run_to_converge();
-  mcs.convert_to_skeleton(g, points);
+  boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, typename HalfedgeGraph::Traits::Point_3 > > points_pmap(points);
+  mcs.convert_to_skeleton(g, points_pmap);
 }
 
 } //namespace CGAL

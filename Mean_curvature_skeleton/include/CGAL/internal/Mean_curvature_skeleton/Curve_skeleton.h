@@ -46,7 +46,7 @@ namespace internal {
 
 template <class HalfedgeGraph, class Graph,
           class VertexIndexMap, class EdgeIndexMap,
-          class HalfedgeGraphPointPMap = typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type>
+          class HalfedgeGraphPointPMap, class GraphPointPMap>
 class Curve_skeleton
 {
 // Public types
@@ -123,7 +123,7 @@ public:
   }
 
   // extract the skeleton to a boost::graph data structure
-  void extract_skeleton(Graph& curve, std::map<vertex_desc, Point>& points,
+  void extract_skeleton(Graph& curve, GraphPointPMap& points,
                         std::map<vertex_desc, std::vector<int> >& corr)
   {
     init();
@@ -190,7 +190,7 @@ public:
     }
 
     vertex_iterator vb, ve;
-    points.clear();
+//    points.clear();
     for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
