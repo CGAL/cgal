@@ -554,7 +554,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::are_same_results()
 template <typename T_Geom_traits, typename T_Topol_traits>
 template <typename XcurveOutputIterator, typename PointOutputIterator>
 bool Overlay_test<T_Geom_traits, T_Topol_traits>::
-read_arr(std::istream& in, Arrangement& /* arr */a,
+read_arr(std::istream& in, Arrangement& /* arr */,
          XcurveOutputIterator xcurves, PointOutputIterator isolated_points)
 {
   unsigned int i;
