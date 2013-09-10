@@ -100,7 +100,7 @@ private:
   Vertex_const_handle query_vertex;
   Point_2         source;
   Point_2         target;
-  static const int M=16;
+  static const int M=10;
 
 
 public:
@@ -681,7 +681,7 @@ private:
       vmap[v].push_back(e->next()->target()->point());
   }
 
-  bool is_in_cone(Point_2 p) {
+  bool is_in_cone(Point_2& p) {
     if (is_big_cone)
       return (!CGAL::right_turn(source, q, p)) || (!CGAL::left_turn(target, q, p));
     else
@@ -809,23 +809,23 @@ private:
   }
 
 
-  void swap(Point_2& p, Point_2& q) {
-    Point_2 temp = q;
-    q = p;
-    p = temp;
+  void quicksort_swap(Point_2& p, Point_2& q) {
+    Point_2 temp = p;
+    p = q;
+    q = temp;
   }
 
   int partition(Pvec& vs, int left, int right, int pivotIndex) {
     Point_2 pivot_p = vs[pivotIndex];
-    swap(vs[pivotIndex], vs[right]);
+    quicksort_swap(vs[pivotIndex], vs[right]);
     int storeIndex = left;
     for (int i=left; i<right; i++) {
       if (is_sweeped_first(vs[i], pivot_p)) {
-        swap(vs[i], vs[storeIndex]);
+        quicksort_swap(vs[i], vs[storeIndex]);
         storeIndex += 1;
       }
     }
-    swap(vs[storeIndex], vs[right]);
+    quicksort_swap(vs[storeIndex], vs[right]);
     return storeIndex;
   }
 
@@ -836,23 +836,51 @@ private:
       quicksort(vs, left, pivotNewIndex-1);
       quicksort(vs, pivotNewIndex+1, right);
     }
+//    else {
+//      insertsort(vs, left, right);
+//    }
   }
 
   void insertsort(Pvec& a, int left, int right) {
-    int min=left;
-    for (int i=left+1; i<=right; ++i)
-      if (is_sweeped_first(a[i], a[min]))
-        min = i;
-    swap(a[min], a[left]);
-    if (right-left < 2) return;
-    for (int i=left+2; i<=right; ++i) {
-      Point_2 t = a[i];
-      int j = i;
-      while (is_sweeped_first(t, a[j-1]))
-        a[j] = a[--j];
-      a[j] = t;
+    if (left<right) {
+      int min = left;
+      for (int i=left+1; i<=right; i++) {
+        if (is_sweeped_first(a[i], a[min]))
+          min = i;
+      }
+      if (min != left)
+        quicksort_swap(a[min], a[left]);
+      if (right == left +1)
+        return;
+      for (int i=left+2; i<=right; i++) {
+        Point_2 t=a[i];
+        int j = i;
+        while (is_sweeped_first(t, a[j-1])) {
+          a[j] = a[j-1];
+          j--;
+        }
+        a[j]=t;
+      }
     }
   }
+
+//  void insertsort(Pvec& a, int left, int right) {
+//    if (right <= left)
+//      return;
+//    int min=left;
+//    for (int i=left+1; i<=right; ++i)
+//      if (is_sweeped_first(a[i], a[min]))
+//        min = i;
+//    quicksort_swap(a, min, left);
+//    if (right-left < 2) return;
+//    for (int i=left+2; i<=right; ++i) {
+//      Point_2 t = a[i];
+//      int j = i;
+//      while (is_sweeped_first(t, a[j-1]))
+//        a[j] = a[--j];
+//      a[j] = t;
+//    }
+//  }
 
   void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
       for (int i = 0; i != polygon.size()-1; i++ ) {
