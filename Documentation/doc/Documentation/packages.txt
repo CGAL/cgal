@@ -51,6 +51,7 @@ h1 {
 \section PartPolyhedra Cell Complexes and Polyhedra
 
 \package_listing{Polyhedron}
+\package_listing{Hole_filling}
 \package_listing{HalfedgeDS}
 \package_listing{Combinatorial_map}
 \package_listing{Linear_cell_complex}
