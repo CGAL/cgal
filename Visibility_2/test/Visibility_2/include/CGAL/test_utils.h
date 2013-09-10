@@ -785,12 +785,12 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
     }
   }
   std::vector<Segment_2> segments;
-  curr = circ;
+  curr = curr_max_circ;
   Halfedge_const_handle he;
   do {
     he = curr;
     segments.push_back(Segment_2(he->source()->point(), he->target()->point()));
-  } while (++curr != circ);
+  } while (++curr != curr_max_circ);
   arr_out.clear();
   CGAL::insert(arr_out, segments.begin(), segments.end());
   std::cout << "number of vrt: " << arr_out.number_of_vertices() << std::endl;
