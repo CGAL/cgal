@@ -47,8 +47,8 @@ public:
   // optional<double>() otherwise
   virtual boost::optional<double> operator()(const Tetrahedron_3& t) const = 0;
 
-  //virtual void before_move(const Tetrahedron_3& t) = 0;
-  //virtual bool valid_move(const Tetrahedron_3& t) = 0;
+  virtual void before_move(const Tetrahedron_3& t) = 0;
+  virtual bool valid_move(const Tetrahedron_3& t) = 0;
 };
   
 template <typename K>
@@ -68,6 +68,14 @@ public:
   virtual boost::optional<double> operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(minimum_dihedral_angle(t, K()));
+  }
+
+  virtual void before_move(const Tetrahedron_3& t)
+  {
+  }
+  virtual bool valid_move(const Tetrahedron_3& t)
+  {
+    return true;
   }
 
 public:
@@ -102,6 +110,14 @@ public:
     return CGAL::to_double(radius_ratio(t, K()));
   }
   
+  virtual void before_move(const Tetrahedron_3& t)
+  {
+  }
+  virtual bool valid_move(const Tetrahedron_3& t)
+  {
+    return true;
+  }
+
 public:
   RR_criterion(const double& sliver_bound_ = default_value)
     : sliver_bound(sliver_bound_)
