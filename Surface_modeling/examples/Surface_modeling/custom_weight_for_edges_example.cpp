@@ -29,6 +29,7 @@ typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 // a model of SurfaceModelingWeightCalculator using a map of pre-computed weights
 struct Weights_from_map
 {
+  typedef Polyhedron Halfedge_graph;
   Weights_from_map(std::map<edge_descriptor, double>* weight_map) : weight_map(weight_map)
   { }
   template<class VertexPointMap>
