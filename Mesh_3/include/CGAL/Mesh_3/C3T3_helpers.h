@@ -713,8 +713,9 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          FT sliver_value = criterion_(c3t3_.triangulation().tetrahedron(c));
-          c->set_sliver_value(sliver_value);
+          boost::optional<double> sliver_value 
+            = criterion_(c3t3_.triangulation().tetrahedron(c));
+          c->set_sliver_value(sliver_value.get());
         }
         return ( c->sliver_value() <= bound_ );
       }
@@ -931,8 +932,9 @@ private:
       
       if ( ! ch->is_cache_valid() )
       {
-        FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
-        ch->set_sliver_value(sliver_value);
+        boost::optional<double> sliver_value 
+          = criterion_(p_tr_->tetrahedron(ch));
+        ch->set_sliver_value(sliver_value.get());
       }
       return ch->sliver_value();
     }
@@ -2432,17 +2434,16 @@ min_sliver_value(const Cell_vector& cells,
   //
   //return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
   //                          make_transform_iterator(cells.end(),sc_value)));
-  FT min = criterion.get_max_value();
-  FT sliver_value = 0.;
+  FT min_value = criterion.get_max_value();
   for(typename Cell_vector::const_iterator it = cells.begin(); 
       it != cells.end(); 
       ++it)
   {
-    sliver_value = criterion(c3t3_.triangulation().tetrahedron(*it));
-    if( sliver_value < min )
-	    min = sliver_value;
+    boost::optional<double> sliver_value 
+      = criterion(c3t3_.triangulation().tetrahedron(*it));
+    min_value = (std::min)(sliver_value.get(), min_value);
   } 
-  return min;
+  return min_value;
 }
   
   

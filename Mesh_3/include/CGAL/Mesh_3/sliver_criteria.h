@@ -42,15 +42,21 @@ public:
   //Sliver_perturber performs perturbation "unit-per-unit"
   // so it needs to know how much is a unit for each criterion
   virtual const double get_perturbation_unit() const = 0;
-public:
-  virtual double operator()(const Tetrahedron_3& t) const = 0;
+
+  // returns the value of the criterion, if t is a sliver
+  // optional<double>() otherwise
+  virtual boost::optional<double> operator()(const Tetrahedron_3& t) const = 0;
+
+  //virtual void before_move(const Tetrahedron_3& t) = 0;
+  //virtual bool valid_move(const Tetrahedron_3& t) = 0;
 };
   
 template <typename K>
 class Min_dihedral_angle_criterion : public Sliver_criterion<K>
 {
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
-  
+  typedef Min_dihedral_angle_criterion<typename K> Dihedral_angle_criterion;
+
 public:
   static double default_value;
   static double max_value;
@@ -59,11 +65,18 @@ public:
   virtual const double get_max_value() const { return 90.; }
   virtual const double get_perturbation_unit() const { return 1.; }
 
-  double operator()(const Tetrahedron_3& t) const
+  virtual boost::optional<double> operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(minimum_dihedral_angle(t, K()));
   }
-  
+
+public:
+  Dihedral_angle_criterion(const double& sliver_bound_ = default_value)
+    : sliver_bound(sliver_bound_)
+  {}
+
+private:
+  double sliver_bound;  
 };
 
 template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 12.; 
@@ -71,9 +84,10 @@ template<typename K> double Min_dihedral_angle_criterion<K>::max_value = 90.;
 template<typename K> double Min_dihedral_angle_criterion<K>::min_value = 0.; 
   
 template <typename K>
-class Radius_radio_criterion : public Sliver_criterion<K>
+class Radius_ratio_criterion : public Sliver_criterion<K>
 {
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
+  typedef Radius_ratio_criterion<typename K> RR_criterion;
   
 public:
   static double default_value;
@@ -83,16 +97,23 @@ public:
   virtual const double get_max_value() const { return 1.; }
   virtual const double get_perturbation_unit() const { return 0.05; }
 
-  double operator()(const Tetrahedron_3& t) const
+  virtual boost::optional<double> operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(radius_ratio(t, K()));
   }
   
+public:
+  RR_criterion(const double& sliver_bound_ = default_value)
+    : sliver_bound(sliver_bound_)
+  {}
+
+private:
+  double sliver_bound;  
 };
 
-template<typename K> double Radius_radio_criterion<K>::default_value = 0.25; 
-template<typename K> double Radius_radio_criterion<K>::max_value = 1.;
-template<typename K> double Radius_radio_criterion<K>::min_value = 0.; 
+template<typename K> double Radius_ratio_criterion<K>::default_value = 0.25; 
+template<typename K> double Radius_ratio_criterion<K>::max_value = 1.;
+template<typename K> double Radius_ratio_criterion<K>::min_value = 0.; 
   
 } // end namespace Mesh_3
   
