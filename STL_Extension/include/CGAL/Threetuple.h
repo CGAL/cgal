@@ -32,16 +32,16 @@
 namespace CGAL {
 
 template < class T >
-struct Threetuple
+struct CGAL_DEPRECATED Threetuple
 {
   typedef T value_type;
 
   T  e0, e1, e2;
 
-  Threetuple() CGAL_DEPRECATED
+  Threetuple()
   {}
 
-  Threetuple(const T & a0, const T & a1, const T & a2) CGAL_DEPRECATED
+  Threetuple(const T & a0, const T & a1, const T & a2)
     : e0(a0), e1(a1), e2(a2)
   {}
 };
