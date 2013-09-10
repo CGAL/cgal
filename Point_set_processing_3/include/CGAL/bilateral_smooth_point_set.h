@@ -112,7 +112,7 @@ CGAL::Point_with_normal_3<Kernel>
 compute_denoise_projection(
   const CGAL::Point_with_normal_3<Kernel>& query,      ///< 3D point to project
   const std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
-    scalable_allocator<CGAL::Point_with_normal_3<Kernel>>>& neighbor_pwns,  //
+    scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
   typename Kernel::FT radius,          ///< accept neighborhood radius
   typename Kernel::FT sharpness_sigma  ///< control sharpness(0-90)
 )
@@ -178,7 +178,7 @@ compute_denoise_projection(
 template < typename Kernel,
            typename Tree>
 std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
-            scalable_allocator<CGAL::Point_with_normal_3<Kernel>>>
+            scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >
 compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
   Tree& tree,                            ///< KD-tree
@@ -203,7 +203,7 @@ compute_kdtree_neighbors(
   FT max_distance = (FT)0.0;
   unsigned int i;
   std::vector<CGAL::Point_with_normal_3<Kernel>, 
-    tbb::scalable_allocator<CGAL::Point_with_normal_3<Kernel>>> neighbor_pwns;
+    tbb::scalable_allocator<CGAL::Point_with_normal_3<Kernel> > > neighbor_pwns;
 
   for(i = 0; i < (k+1); ++i)
   {
