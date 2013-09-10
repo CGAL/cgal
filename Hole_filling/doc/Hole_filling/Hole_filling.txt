@@ -49,12 +49,12 @@ also for refining and fairing an arbitrary region on a mesh:
 
 The function `triangulate_hole_polyline()` can be used by providing a sequence of points defining the hole. Note that no degenerate triangle is produced as a result.
 
-\subsubsection Example_1 Example: Triangulating Polyline
+\subsubsection Example_1 Example: Triangulating a Polyline
 \cgalExample{Hole_filling/triangulate_polyline_example.cpp}
 
 
 
-\subsubsection Example_2 Example: Refining a region on mesh
+\subsubsection Example_2 Example: Refining a Region on a Mesh
 
 \cgalExample{Hole_filling/refine_polyhedron_example.cpp}
 
@@ -62,7 +62,7 @@ The function `triangulate_hole_polyline()` can be used by providing a sequence o
 Result of refine example. 
 \cgalFigureEnd
 
-\subsubsection Example_3 Example: Fairing a region on mesh
+\subsubsection Example_3 Example: Fairing a Region on a Mesh
 \cgalExample{Hole_filling/fair_polyhedron_example.cpp}
 
 \cgalFigureBegin{Max_fair, max_fair.png}
