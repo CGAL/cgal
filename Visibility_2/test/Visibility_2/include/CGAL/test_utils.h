@@ -545,32 +545,40 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     std::cout<<"Can't open the file. Check the file name.";
   }
 }
+ 
+void convert_poly_to_env_file() {
 
-template <class Arrangement_2> 
-void create_arrangement_from_cin_file(Arrangement_2 &arr, std::ifstream& input) {
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Geometry_traits_2::Segment_2         Segment_2;
-  typedef typename Geometry_traits_2::Point_2           Point_2;
-  typedef typename Geometry_traits_2::FT                Number_type;  
+  std::ofstream norway;
+  norway.open("norway.env");
+  std::ifstream input;
+  input.open("norway.poly");
 
-  if (input) {
+  int cnt = 0;
+  if (input && norway) {
     std::string line;
     while (std::getline(input, line)) {
-      std::vector<Segment_2> segments;
-      std::vector<Point_2> points;
-      while (line != "POLYGON\n") {
-        std::string n1, n2;
-        std::istringstream iss(line);
-        iss >> n1 >> n2;
-        points.push_back(Point_2(string2num<Number_type>(n1),   
-                                 string2num<Number_type>(n2)));
+      if (cnt >= 60) {
+        break;
+      }
+      std::vector<std::string> vertices;
+      line.erase(line.find_last_not_of(" \n\r\t")+1);
+      std::cout << "trimmed: |" << line << "|" << std::endl;
+      while (line != "POLYGON") {
+        norway << line;
+        vertics.
+        if (cnt >= 60) {
+          break;
+        }
         std::getline(input, line);
+        std::cout << line << std::endl;
+        vertices.push_back(line);
+        cnt++;
       }
-      for (int j = 0; j+1 < points.size() ; j++) {
-        segments.push_back(Segment_2(points[j], points[j+1]));
+      norway << vertices.size() << std::endl;
+      for (int j = 0 ; j < vertices.size() ; j++) {
+        norway << vertices[j] << std::endl;
       }
-      segments.push_back(Segment_2(points.front(), points.back()));
-      CGAL::insert(arr, segments.begin(), segments.end());
+      cnt++;
     }
   }
   else {
@@ -750,6 +758,21 @@ bool is_star_shape(const typename Visibility_2::Point_2& q,
 }
 
 template <class Arrangement_2>
+int count_edges_in_face(typename Arrangement_2::Face_const_handle &fch) {
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+                                                  Ccb_halfedge_const_circulator;
+
+  Ccb_halfedge_const_circulator circ = fch->outer_ccb();
+  Ccb_halfedge_const_circulator curr = circ;
+
+  int edge_cnt(0);
+  do {
+    edge_cnt++;
+  } while (++curr != circ);
+  return edge_cnt;
+}
+
+template <class Arrangement_2>
 typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
                                                     Arrangement_2 &arr_in,    
                                                     Arrangement_2 &arr_out) {
@@ -768,22 +791,20 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
   Ccb_halfedge_const_circulator circ;
   Ccb_halfedge_const_circulator curr;                                                        
   Face_const_iterator fit;
-  Face_const_handle fch;
 
+  int cnt(0);
   for (fit = arr_in.faces_begin() ; fit != arr_in.faces_end() ; fit++) {
     if (fit->has_outer_ccb()) {
       Ccb_halfedge_const_circulator circ = fit->outer_ccb();
-      Ccb_halfedge_const_circulator curr = circ;
-      int edge_cnt(0);
-      do {
-        edge_cnt++;
-      } while (++curr != circ);
+      int edge_cnt = count_edges_in_face<Arrangement_2>(fit);
       if (edge_cnt > curr_max) {
         curr_max = edge_cnt;
         curr_max_circ = circ;
       }
     }
+    cnt++;
   }
+
   std::vector<Segment_2> segments;
   curr = curr_max_circ;
   Halfedge_const_handle he;
@@ -791,10 +812,31 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
     he = curr;
     segments.push_back(Segment_2(he->source()->point(), he->target()->point()));
   } while (++curr != curr_max_circ);
+
   arr_out.clear();
   CGAL::insert(arr_out, segments.begin(), segments.end());
-  std::cout << "number of vrt: " << arr_out.number_of_vertices() << std::endl;
-  return he->face();
+
+  Face_const_handle fch;
+  curr_max = 0;
+  for (fit = arr_out.faces_begin() ; fit != arr_out.faces_end() ; fit++) {
+    if (fit->has_outer_ccb()) {
+      int edge_cnt = count_edges_in_face<Arrangement_2>(fit);
+      if (edge_cnt > curr_max) {
+        curr_max = edge_cnt;
+        fch = fit;
+      }
+    }
+  }
+  Ccb_halfedge_const_circulator circ_p = fch->outer_ccb();
+  Ccb_halfedge_const_circulator curr_p = circ_p;
+  Halfedge_const_handle he_p;
+  std::cout << "OUT FACE\n";
+  do {
+    he_p = curr_p;
+    std::cout << he_p->source()->point() << std::endl;
+  } while(++curr_p != circ_p);
+  std::cout << "END\n";
+  return fch;
 }
 
 template <class Visibility_2_fst, class Visibility_2_snd>
@@ -938,8 +980,6 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
 
   Input_arrangement_2 arr;
   create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
-
-  std::cout << "CHOICE = " << choice << std::endl;
 
   int query_cnt(0);
   double qtime1(0), qtime2(0), ptime1(0), ptime2(0);
