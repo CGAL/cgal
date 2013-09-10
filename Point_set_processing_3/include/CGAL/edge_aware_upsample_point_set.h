@@ -40,7 +40,7 @@
 //#include <tbb/parallel_for.h>
 //#include <tbb/blocked_range.h>
 
-#define  CGAL_DEBUG_MODE
+//#define  CGAL_DEBUG_MODE
 
 namespace CGAL {
 
@@ -68,7 +68,7 @@ base_point_selection(
                     neighbor_points,///< neighbor sample points
   const typename Kernel::FT edge_senstivity,///< edge senstivity parameter
   unsigned int& output_base_index ///< base point index
-)
+  )
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
@@ -149,11 +149,6 @@ update_new_point(
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
   unsigned int size = rich_point_set.size();
-
-  CGAL_point_set_processing_precondition(radius > 0);
-  CGAL_point_set_processing_precondition(sharpness_bandwidth > 0
-    && sharpness_bandwidth <= 90);
-
   CGAL_point_set_processing_precondition(father_index >= 0 &&
                                          father_index < size);
   CGAL_point_set_processing_precondition(mother_index >= 0 &&
@@ -248,8 +243,7 @@ update_new_point(
 
   // update position and normal
   Vector update_normal = normal_sum[best] / weight_sum[best];
-  FT sqrt_length_no_zero = std::max(1e-6, update_normal.squared_length());
-  new_v.normal = update_normal / sqrt(sqrt_length_no_zero);
+  new_v.normal = update_normal / sqrt(update_normal.squared_length());
 
   FT project_dist = project_dist_sum[best] / weight_sum[best];
   new_v.pt = new_v.pt + new_v.normal * project_dist;
@@ -417,7 +411,6 @@ edge_aware_upsample_point_set(
       }
     }
 
-    CGAL_point_set_processing_precondition(count_density != 0);
     density_pass_threshold = sqrt(sum_density / count_density) * 0.65;
     sum_density = 0.;
     count_density = 0;
@@ -594,7 +587,7 @@ edge_aware_upsample_point_set(
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
-)
+  )
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
@@ -629,7 +622,7 @@ edge_aware_upsample_point_set(
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.    
-)
+  )
 {
   // just deduce value_type of OutputIterator
   return edge_aware_upsample_point_set
@@ -662,17 +655,17 @@ edge_aware_upsample_point_set(
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.   
-) 
+  ) 
 {
   return edge_aware_upsample_point_set
     <OutputIteratorValueType>(
     first, beyond,
     output,
- #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(output),
- #else
+#else
     make_identity_property_map(OutputIteratorValueType()),
- #endif
+#endif
     normal_pmap,
     sharpness_sigma, 
     edge_senstivity,
@@ -697,7 +690,7 @@ edge_aware_upsample_point_set(
   double edge_senstivity,  ///< edge senstivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
   const unsigned int number_of_output_points///< number of iterations.     
-)
+  )
 {
   // just deduce value_type of OutputIterator
   return upsample_point_set
