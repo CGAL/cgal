@@ -34,7 +34,10 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/enum.h>
 
+#include <CGAL/Timer.h>
 namespace CGAL {
+
+
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Rotational_sweep_visibility_2 {
@@ -66,6 +69,16 @@ public:
   typedef CGAL::Tag_true                                Supports_general_polygon_tag;
   typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
 
+  //profile
+  Timer timer;
+  static double input_t;
+  static double sweep_t;
+  static double cut_from_butterfly_t;
+  static double heap_insert_t;
+  static double heap_remove_t;
+  static double heap_swap_t;
+  static double input_v_t;
+  static double quicksort_t;
 private:
   typedef std::vector<Point_2>          Pvec;
   typedef std::pair<Point_2, Point_2>   Pair;
@@ -87,6 +100,8 @@ private:
   Vertex_const_handle query_vertex;
   Point_2         source;
   Point_2         target;
+  static const int M=10;
+
 
 public:
   Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
@@ -125,6 +140,7 @@ public:
       is_big_cone = false;
     }
     visibility_region_impl(e->face(), q);
+
 
     //Decide which inside of the visibility butterfly is needed.
     int source_idx, target_idx ;
@@ -167,6 +183,8 @@ public:
         next_idx++;
       }
     }
+
+
     typename Pvec::iterator first = polygon.begin() + small_idx;
     typename Pvec::iterator last = polygon.begin() + big_idx;
     if (is_between) {
@@ -185,6 +203,8 @@ public:
       Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
      // build_arr(polygon_out, out_arr);
     }
+
+
 
     conditional_regularize(out_arr, Regularization_tag());
 
@@ -254,11 +274,11 @@ private:
                     const Point_2& dp,
                     const Point_2& p1,
                     const Point_2& p2) {
-    if (CGAL::collinear(q, dp, p1))
-      return quadrant(q, p1) == quadrant(q, dp);
+//    if (CGAL::collinear(q, dp, p1))
+//      return quadrant(q, p1) == quadrant(q, dp);
 
-    if (CGAL::collinear(q, dp, p2))
-      return quadrant(q, p2) == quadrant(q, dp);
+//    if (CGAL::collinear(q, dp, p2))
+//      return quadrant(q, p2) == quadrant(q, dp);
 
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
 
@@ -307,6 +327,7 @@ private:
 
 
   void visibility_region_impl(const Face_const_handle f, const Point_2& q) {
+
     vs.clear();
     polygon.clear();
     heap.clear();
@@ -358,6 +379,7 @@ private:
         } while (++curr != circ);
       }
     }
+
 
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
@@ -419,6 +441,7 @@ private:
       }
 
     }
+
   }
 
   Pair create_pair(const Point_2& p1, const Point_2& p2) const{
@@ -430,6 +453,8 @@ private:
   }
 
   void heap_insert(const Pair& e) {
+    timer.reset();
+    timer.start();
     heap.push_back(e);
     int i = heap.size()-1;
     edx[e] = i;
@@ -439,9 +464,14 @@ private:
       i = parent;
       parent = (i-1)/2;
     }
+    timer.stop();
+    heap_insert_t+=timer.time();
   }
 
   void heap_remove(int i) {
+    timer.reset();
+    timer.start();
+
     edx.erase(heap[i]);
     if (i== heap.size()-1)
     {
@@ -480,14 +510,23 @@ private:
         } while(swapped);
       }
     }
+
+    timer.stop();
+    heap_remove_t += timer.time();
   }
 
   void heap_swap(int i, int j) {
+    timer.reset();
+    timer.start();
+
     edx[heap[i]] = j;
     edx[heap[j]] = i;
     Pair temp = heap[i];
     heap[i] = heap[j];
     heap[j] = temp;
+
+    timer.stop();
+    heap_swap_t += timer.time();
   }
 
   bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) const{
@@ -642,7 +681,7 @@ private:
       vmap[v].push_back(e->next()->target()->point());
   }
 
-  bool is_in_cone(Point_2 p) {
+  bool is_in_cone(Point_2& p) {
     if (is_big_cone)
       return (!CGAL::right_turn(source, q, p)) || (!CGAL::left_turn(target, q, p));
     else
@@ -707,6 +746,9 @@ private:
   void input_face (Face_const_handle fh,
                    std::vector<Pair>& good_edges)
   {
+    timer.reset();
+    timer.start();
+
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
@@ -741,8 +783,14 @@ private:
       vmap[box[i]].push_back(box[(i+1)%4]);
       good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
     }
+    timer.stop();
+    input_v_t += timer.time();
+
+    timer.reset();
+    timer.start();
 
     quicksort(vs, 0, vs.size()-1);
+
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -755,25 +803,29 @@ private:
         funnel(i, j);
       i = j-1;
     }
+
+    timer.stop();
+    quicksort_t += timer.time();
   }
 
-  void quicksort_swap(Pvec& vs, int i, int j) {
-    Point_2 temp = vs[i];
-    vs[i] = vs[j];
-    vs[j] = temp;
+
+  void quicksort_swap(Point_2& p, Point_2& q) {
+    Point_2 temp = p;
+    p = q;
+    q = temp;
   }
 
   int partition(Pvec& vs, int left, int right, int pivotIndex) {
     Point_2 pivot_p = vs[pivotIndex];
-    quicksort_swap(vs, pivotIndex, right);
+    quicksort_swap(vs[pivotIndex], vs[right]);
     int storeIndex = left;
     for (int i=left; i<right; i++) {
       if (is_sweeped_first(vs[i], pivot_p)) {
-        quicksort_swap(vs, i, storeIndex);
+        quicksort_swap(vs[i], vs[storeIndex]);
         storeIndex += 1;
       }
     }
-    quicksort_swap(vs, storeIndex, right);
+    quicksort_swap(vs[storeIndex], vs[right]);
     return storeIndex;
   }
 
@@ -784,7 +836,51 @@ private:
       quicksort(vs, left, pivotNewIndex-1);
       quicksort(vs, pivotNewIndex+1, right);
     }
+//    else {
+//      insertsort(vs, left, right);
+//    }
   }
+
+  void insertsort(Pvec& a, int left, int right) {
+    if (left<right) {
+      int min = left;
+      for (int i=left+1; i<=right; i++) {
+        if (is_sweeped_first(a[i], a[min]))
+          min = i;
+      }
+      if (min != left)
+        quicksort_swap(a[min], a[left]);
+      if (right == left +1)
+        return;
+      for (int i=left+2; i<=right; i++) {
+        Point_2 t=a[i];
+        int j = i;
+        while (is_sweeped_first(t, a[j-1])) {
+          a[j] = a[j-1];
+          j--;
+        }
+        a[j]=t;
+      }
+    }
+  }
+
+//  void insertsort(Pvec& a, int left, int right) {
+//    if (right <= left)
+//      return;
+//    int min=left;
+//    for (int i=left+1; i<=right; ++i)
+//      if (is_sweeped_first(a[i], a[min]))
+//        min = i;
+//    quicksort_swap(a, min, left);
+//    if (right-left < 2) return;
+//    for (int i=left+2; i<=right; ++i) {
+//      Point_2 t = a[i];
+//      int j = i;
+//      while (is_sweeped_first(t, a[j-1]))
+//        a[j] = a[--j];
+//      a[j] = t;
+//    }
+//  }
 
   void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
       for (int i = 0; i != polygon.size()-1; i++ ) {
@@ -818,6 +914,23 @@ private:
   }
 
 };
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::sweep_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::cut_from_butterfly_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_insert_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_remove_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_swap_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_v_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::quicksort_t = 0;
+
 
 } // end namespace CGAL
 
