@@ -13,14 +13,14 @@ class Traits_adaptor_test :
 public:
   typedef T_Geom_traits                                 Geom_traits;
   typedef Traits_base_test<typename Geom_traits::Base>  Base;
-  
+
 private:
   /*! A map between (strings) commands and (member functions) operations */
   typedef bool (Traits_adaptor_test::* Wrapper)(std::istringstream &);
   typedef std::map<std::string, Wrapper> Wrapper_map;
   typedef typename Wrapper_map::iterator Wrapper_iter;
   Wrapper_map m_wrappers;
-  
+
   virtual bool exec(std::istringstream& str_stream,
                     const std::string& str_command,
                     bool& result)
@@ -69,7 +69,7 @@ public:
 };
 
 /*!
- * Constructor. 
+ * Constructor.
  * Accepts test data file name.
  */
 template <typename T_Geom_traits>
@@ -97,7 +97,7 @@ Traits_adaptor_test(const T_Geom_traits& geom_traits) :
 }
 
 /*!
- * Destructor. 
+ * Destructor.
  * Declares as virtual.
  */
 template <typename T_Geom_traits>
@@ -171,7 +171,7 @@ ta_compare_y_position_wrapper(std::istringstream & str_stream)
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
-  std::cout << "Test: compare_y_position( " << this->m_xcurves[id1] 
+  std::cout << "Test: compare_y_position( " << this->m_xcurves[id1]
             << "," << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
@@ -189,18 +189,18 @@ ta_is_between_cw_wrapper(std::istringstream & str_stream)
   bool b_ref1,b_ref2;
   str_stream >> xcv >> b >> xcv1 >> b1 >> xcv2 >> b2 >> p;
   bool exp_answer = this->get_expected_boolean(str_stream);
-  std::cout << "Test: is_between_cw( " << this->m_xcurves[xcv] << " , " 
+  std::cout << "Test: is_between_cw( " << this->m_xcurves[xcv] << " , "
             << (b == 0 ? "false" : "true") << " , " << this->m_xcurves[xcv1]
-            << " , " 
+            << " , "
             << (b1 == 0 ? "false" : "true") << " , " << this->m_xcurves[xcv2]
-            << " , " 
+            << " , "
             << (b2 == 0 ? "false" : "true") << " , " << this->m_points[p]
             << " ) ? ";
   std::cout << exp_answer << " ";
 
   bool real_answer =
-    m_geom_traits.is_between_cw_2_object()(this->m_xcurves[xcv], (b != 0), 
-                                           this->m_xcurves[xcv1], (b1 != 0), 
+    m_geom_traits.is_between_cw_2_object()(this->m_xcurves[xcv], (b != 0),
+                                           this->m_xcurves[xcv1], (b1 != 0),
                                            this->m_xcurves[xcv2], (b2 != 0),
                                            this->m_points[p], b_ref1, b_ref2);
   return this->compare(exp_answer, real_answer);
@@ -257,7 +257,7 @@ ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
   bool exp_answer = this->get_expected_boolean(str_stream);
   std::cout << "Test: are_mergeable( " << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
-  
+
   bool real_answer =
     this->m_geom_traits.are_mergeable_2_object()(this->m_xcurves[id1],
                                                  this->m_xcurves[id2]);
@@ -289,6 +289,7 @@ ta_merge_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
   typedef T_Geom_traits                             Geom_traits;
   typedef typename Geom_traits::X_monotone_curve_2  X_monotone_curve_2;
   typedef typename Geom_traits::Equal_2             Equal_2;
+  CGAL_USE_TYPE(Equal_2);
 
   unsigned int id1, id2, id;
   str_stream >> id1 >> id2 >> id;
