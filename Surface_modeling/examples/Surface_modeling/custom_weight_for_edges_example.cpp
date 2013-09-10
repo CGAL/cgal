@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-// Halfedge adapters for Polyhedron_3
+// HalfedgeGraph adapters for Polyhedron_3
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
@@ -26,7 +26,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-// a model for SurfaceModelingWeightCalculator, use precomputed weights stored in a map
+// a model of SurfaceModelingWeightCalculator using a map of pre-computed weights
 struct Weights_from_map
 {
   Weights_from_map(std::map<edge_descriptor, double>* weight_map) : weight_map(weight_map)
@@ -58,7 +58,8 @@ int main()
     weight_map[*eb] = 1.0; // store your precomputed weights
   }
 
-  // index maps should contain unique indices with 0 offset
+  // index maps must contain an index unique per vertex starting from 0
+  // to the total number of vertices
   Internal_vertex_map internal_vertex_index_map;
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;

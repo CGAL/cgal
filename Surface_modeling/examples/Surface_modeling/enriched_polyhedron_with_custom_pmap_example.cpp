@@ -50,7 +50,8 @@ int main()
     std::cerr<< "Cannot open  data/plane.off";
     return 1;
   }
-  // index maps should contain unique indices with 0 offset
+  // index maps must contain an index unique per vertex starting from 0
+  // to the total number of vertices
   Vertex_index_map vertex_index_map;
   vertex_iterator vb, ve;
   std::size_t counter = 0;

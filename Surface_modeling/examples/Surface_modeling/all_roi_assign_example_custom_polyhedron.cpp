@@ -83,7 +83,8 @@ int main()
     return 1;
   }
 
-  // index maps should contain unique indices with 0 offset
+  // index maps must contain an index unique per vertex starting from 0
+  // to the total number of vertices
   Internal_vertex_map internal_vertex_index_map;
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;

@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-// Halfedge adaptors for Polyhedron_3
+// HalfedgeGraph adaptors for Polyhedron_3
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
@@ -64,7 +64,8 @@ int main()
     return 1;
   }
 
-  // index maps should contain unique indices with 0 offset
+  // index maps must contain an index unique per vertex starting from 0
+  // to the total number of vertices
   Internal_vertex_map internal_vertex_index_map;
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;

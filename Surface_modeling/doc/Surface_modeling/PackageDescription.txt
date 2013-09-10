@@ -28,5 +28,6 @@
 \todo replace representative by handle
 \todo document why is it closest rotation
 \todo investigate if it is worth adding a flags in the weight calculator class to turn on/off some features
+\todo does it make senses to add a boolean parameter to `deform()` to automatically call `Deform_mesh::overwrite_original_positions()`
 */
 
