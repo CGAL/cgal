@@ -80,8 +80,7 @@ Note that if it is not done the first deformation step will call this function a
 compared to next deformation steps.
 
 This function also extends the ROI by adding as <em>fixed control vertex</em> any vertex not in the ROI that is edge-adjacent
-to a vertex of the ROI. The target position of a fixed control vertex is its current position and cannot be changed. This is done
-in order to produce nicer result at the boundary of the ROI.
+to a vertex of the ROI. The target position of a fixed control vertex is its current position and cannot be changed.
 
 The function `Deform_mesh::preprocess()` returns `true` if the factorization of the linear system in Eq.
 \f$\eqref{eq:lap_energy_system}\f$ is successful, and `false` otherwise.

@@ -89,7 +89,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
- /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `HalfedgeGraph::Point_3` as value type
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point from a \cgal Kernel as value type.
 template <
   class HG, 
   class VIM, 
@@ -616,7 +616,7 @@ public:
   /**
    * Queries whether a vertex is inside the region-of-interest.
    * @param vd the query vertex
-   * @return `true` if the vertex is inside the region-of-interest
+   * @return `true` if `vd` has been added (and not removed) using `insert_control()` or `insert_roi()`.
    */
   bool is_roi(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
@@ -624,7 +624,7 @@ public:
   /**
    * Queries whether a vertex is a control vertex.
    * @param vd the query vertex
-   * @return `true` if the vertex is a control vertex
+   * @return `true` if `vd` has been added (and not removed) using `insert_control`.
    */
   bool is_control(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
