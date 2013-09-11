@@ -26,10 +26,9 @@
 #include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
-#include <CGAL/multipass_distance.h>
 
 #include <iterator>
-#include <vector>
+#include <list>
 #include <cmath>
 
 namespace CGAL {
@@ -156,8 +155,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::vector<Point> points;  
-  points.reserve(2 * multipass_distance(first,beyond));
+  std::list<Point> points;  
   for(InputIterator it = first;
       it != beyond;
       it++)
