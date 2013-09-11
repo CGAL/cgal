@@ -1069,6 +1069,9 @@ private:
     // philaris: (cmplabsxy == EQUAL) means that lref is
     // one of the corners of the square with center vv
 
+    CGAL_SDG_DEBUG(std::cout << "debug linf_refine cmplabsxy = "
+      << cmplabsxy << std::endl;);
+
     if ((cmplabsxy == EQUAL) and is_l_h_or_v) {
       return POSITIVE;
     }
