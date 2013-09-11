@@ -42,6 +42,8 @@ namespace CGAL {
 template <typename Arrangement_2, typename RegularizationTag>
 class Rotational_sweep_visibility_2 {
 
+
+
 public:
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
@@ -79,6 +81,7 @@ public:
   static double heap_swap_t;
   static double input_v_t;
   static double quicksort_t;
+  static int different_closer;
 private:
   typedef std::vector<Point_2>          Pvec;
   typedef std::pair<Point_2, Point_2>   Pair;
@@ -252,23 +255,6 @@ const Input_arrangement_2& arr() {
 
 
 private:
-  int quadrant(const Point_2& o, const Point_2& p) const {
-    typename Geometry_traits_2::Compare_x_2 compare_x = geom_traits->compare_x_2_object();
-    typename Geometry_traits_2::Compare_y_2 compare_y = geom_traits->compare_y_2_object();
-
-    Comparison_result dx = compare_x(p, o);
-    Comparison_result dy = compare_y(p, o);
-
-    if (dx==LARGER && dy!=SMALLER)
-      return 1;
-    if (dx!=LARGER && dy==LARGER)
-      return 2;
-    if (dx==SMALLER && dy!=LARGER)
-      return 3;
-    if (dx!=SMALLER && dy==SMALLER)
-      return 4;
-    return 0;
-  }
 
   bool do_intersect_ray(const Point_2& q,
                     const Point_2& dp,
@@ -459,7 +445,7 @@ private:
     int i = heap.size()-1;
     edx[e] = i;
     int parent = (i-1)/2;
-    while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
+    while (i!=0 && is_closer(q, heap[i].first, heap[i].second, heap[parent].first, heap[parent].second)){
       heap_swap(i, parent);
       i = parent;
       parent = (i-1)/2;
@@ -484,7 +470,7 @@ private:
       int i_before_swap = i;
 
       int parent = (i-1)/2;
-      while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
+      while (i!=0 && is_closer(q, heap[i].first, heap[i].second, heap[parent].first, heap[parent].second)){
         heap_swap(i, parent);
         i = parent;
         parent = (i-1)/2;
@@ -495,10 +481,18 @@ private:
           int left_son = i*2+1;
           int right_son = i*2+2;
           int closest_idx = i;
-          if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
+          if (left_son < heap.size() && is_closer(q,
+                                                  heap[left_son].first,
+                                                  heap[left_son].second,
+                                                  heap[i].first,
+                                                  heap[i].second)) {
             closest_idx = left_son;
           }
-          if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest_idx])) {
+          if (right_son < heap.size() && is_closer(q,
+                                                   heap[right_son].first,
+                                                   heap[right_son].second,
+                                                   heap[closest_idx].first,
+                                                   heap[closest_idx].second)) {
             closest_idx = right_son;
           }
           swapped = false;
@@ -527,6 +521,71 @@ private:
 
     timer.stop();
     heap_swap_t += timer.time();
+  }
+  void print_point(const Point_2& p) {
+    std::cout<<p.x()<<','<<p.y()<<std::endl;
+  }
+
+
+
+  bool is_closer(const Point_2& q,
+                 const Point_2& s1,
+                 const Point_2& t1,
+                 const Point_2& s2,
+                 const Point_2& t2) {
+    Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
+    switch (e1q)
+    {
+    case COLLINEAR:
+      if (Visibility_2::collinear(geom_traits, q, s2, t2)) {
+        //q is collinear with e1 and e2.
+        return (Visibility_2::less_distance_to_point_2(geom_traits, q, s1, s2)
+                || Visibility_2::less_distance_to_point_2(geom_traits, q, t1, t2));
+      }
+      else {
+        //q is not collinear with e2. q is collinear with e1.
+        if (Visibility_2::collinear(geom_traits, s2, t2, s1))
+          return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                  == Visibility_2::orientation_2(geom_traits, s2, t2, t1));
+        else
+          return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                  == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
+      }
+    case RIGHT_TURN:
+      switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+      case COLLINEAR:
+        return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+      case RIGHT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return false;
+      case LEFT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return true;
+      }
+    case LEFT_TURN:
+      switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+      case COLLINEAR:
+        return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+      case LEFT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return false;
+      case RIGHT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return true;
+      }
+    }
   }
 
   bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) const{
@@ -656,7 +715,44 @@ private:
       }
     }
   }
+  class Is_sweeped_first:public std::binary_function<Point_2, Point_2, bool> {
+    const Point_2 q;
+    const Geometry_traits_2* geom_traits;
+  public:
+    Is_sweeped_first(const Point_2& q, const Geometry_traits_2* traits):q(q){
+      geom_traits = traits;
+    }
+    bool operator() (const Point_2& p1, const Point_2& p2) const {
+      int qua1 = quadrant(q, p1);
+      int qua2 = quadrant(q, p2);
+      if (qua1 < qua2)
+        return true;
+      if (qua1 > qua2)
+        return false;
+      if (collinear(q, p1, p2))
+        return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+      else
+        return CGAL::right_turn(p1, q, p2);
+    }
+    int quadrant(const Point_2& o, const Point_2& p) const {
+      typename Geometry_traits_2::Compare_x_2 compare_x = geom_traits->compare_x_2_object();
+      typename Geometry_traits_2::Compare_y_2 compare_y = geom_traits->compare_y_2_object();
 
+      Comparison_result dx = compare_x(p, o);
+      Comparison_result dy = compare_y(p, o);
+
+      if (dx==LARGER && dy!=SMALLER)
+        return 1;
+      if (dx!=LARGER && dy==LARGER)
+        return 2;
+      if (dx==SMALLER && dy!=LARGER)
+        return 3;
+      if (dx!=SMALLER && dy==SMALLER)
+        return 4;
+      return 0;
+    }
+
+  };
 
   bool is_sweeped_first(const Point_2& p1, const Point_2& p2)
   {
@@ -728,7 +824,7 @@ private:
       } while (++curr != circ);
     }
 
-    quicksort(vs, 0, vs.size()-1);
+    std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -789,8 +885,7 @@ private:
     timer.reset();
     timer.start();
 
-    quicksort(vs, 0, vs.size()-1);
-
+    std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -809,60 +904,60 @@ private:
   }
 
 
-  void quicksort_swap(Point_2& p, Point_2& q) {
-    Point_2 temp = p;
-    p = q;
-    q = temp;
-  }
+//  void quicksort_swap(Point_2& p, Point_2& q) {
+//    Point_2 temp = p;
+//    p = q;
+//    q = temp;
+//  }
 
-  int partition(Pvec& vs, int left, int right, int pivotIndex) {
-    Point_2 pivot_p = vs[pivotIndex];
-    quicksort_swap(vs[pivotIndex], vs[right]);
-    int storeIndex = left;
-    for (int i=left; i<right; i++) {
-      if (is_sweeped_first(vs[i], pivot_p)) {
-        quicksort_swap(vs[i], vs[storeIndex]);
-        storeIndex += 1;
-      }
-    }
-    quicksort_swap(vs[storeIndex], vs[right]);
-    return storeIndex;
-  }
-
-  void quicksort(Pvec& vs, int left, int right) {
-    if (left < right) {
-      int pivotIndex = left;
-      int pivotNewIndex = partition(vs, left, right, pivotIndex);
-      quicksort(vs, left, pivotNewIndex-1);
-      quicksort(vs, pivotNewIndex+1, right);
-    }
-//    else {
-//      insertsort(vs, left, right);
+//  int partition(Pvec& vs, int left, int right, int pivotIndex) {
+//    Point_2 pivot_p = vs[pivotIndex];
+//    quicksort_swap(vs[pivotIndex], vs[right]);
+//    int storeIndex = left;
+//    for (int i=left; i<right; i++) {
+//      if (is_sweeped_first(vs[i], pivot_p)) {
+//        quicksort_swap(vs[i], vs[storeIndex]);
+//        storeIndex += 1;
+//      }
 //    }
-  }
+//    quicksort_swap(vs[storeIndex], vs[right]);
+//    return storeIndex;
+//  }
 
-  void insertsort(Pvec& a, int left, int right) {
-    if (left<right) {
-      int min = left;
-      for (int i=left+1; i<=right; i++) {
-        if (is_sweeped_first(a[i], a[min]))
-          min = i;
-      }
-      if (min != left)
-        quicksort_swap(a[min], a[left]);
-      if (right == left +1)
-        return;
-      for (int i=left+2; i<=right; i++) {
-        Point_2 t=a[i];
-        int j = i;
-        while (is_sweeped_first(t, a[j-1])) {
-          a[j] = a[j-1];
-          j--;
-        }
-        a[j]=t;
-      }
-    }
-  }
+//  void quicksort(Pvec& vs, int left, int right) {
+//    if (left < right) {
+//      int pivotIndex = left;
+//      int pivotNewIndex = partition(vs, left, right, pivotIndex);
+//      quicksort(vs, left, pivotNewIndex-1);
+//      quicksort(vs, pivotNewIndex+1, right);
+//    }
+////    else {
+////      insertsort(vs, left, right);
+////    }
+//  }
+
+//  void insertsort(Pvec& a, int left, int right) {
+//    if (left<right) {
+//      int min = left;
+//      for (int i=left+1; i<=right; i++) {
+//        if (is_sweeped_first(a[i], a[min]))
+//          min = i;
+//      }
+//      if (min != left)
+//        quicksort_swap(a[min], a[left]);
+//      if (right == left +1)
+//        return;
+//      for (int i=left+2; i<=right; i++) {
+//        Point_2 t=a[i];
+//        int j = i;
+//        while (is_sweeped_first(t, a[j-1])) {
+//          a[j] = a[j-1];
+//          j--;
+//        }
+//        a[j]=t;
+//      }
+//    }
+//  }
 
 //  void insertsort(Pvec& a, int left, int right) {
 //    if (right <= left)
@@ -930,7 +1025,8 @@ template <typename Arrangement_2, typename RegularizationTag>
 double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_v_t = 0;
 template <typename Arrangement_2, typename RegularizationTag>
 double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::quicksort_t = 0;
-
+template <typename Arrangement_2, typename RegularizationTag>
+int CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::different_closer = 0;
 
 } // end namespace CGAL
 
