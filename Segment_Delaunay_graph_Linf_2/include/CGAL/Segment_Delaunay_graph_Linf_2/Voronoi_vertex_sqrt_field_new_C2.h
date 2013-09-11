@@ -2330,11 +2330,10 @@ private:
 
     // if t is an endpoint of either q or r, then t has to be outside
     // the Voronoi circle and thus the result is POSITIVE
-    // philaris: this might have to be changed
-    // philaris: I remove the following line to be on the safe side
-    //if ( is_endpoint_of(t, q) || is_endpoint_of(t, r) ) {
-    //  return POSITIVE;
-    //}
+    // philaris: this is only reached in validity checks
+    if ( is_endpoint_of(t, q) || is_endpoint_of(t, r) ) {
+      return POSITIVE;
+    }
 
 
     // philaris: addition for Linf
