@@ -2713,7 +2713,7 @@ private:
     Sign sl = incircle_xxxl(vv, p, q, r, l, type);
 
     CGAL_SDG_DEBUG(std::cout
-        << "debug incircle_xxxs: incircle_xxxl returned "
+        << "debug incircle_xxxs: incircle_xxxl returned sl="
         << sl << std::endl;);
 
     if (  certainly( sl == POSITIVE )  ) { return sl; }
