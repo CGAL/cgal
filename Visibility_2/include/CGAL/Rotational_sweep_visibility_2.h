@@ -91,7 +91,7 @@ private:
   Point_2         q;
   Point_2         dp;
   Pvec polygon;                   //visibility polygon
-  std::map<Point_2, Pvec> vmap;   //vertex and two edges incident to it that might block vision
+  std::map<Point_2, Pvec> neighbors;   //vertex and two edges incident to it that might block vision
   std::map<Pair, int> edx;        //index of edge in the heap
   std::vector<Pair>  heap;
 
@@ -276,8 +276,8 @@ private:
     Point_2& former = vs[i], temp;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
-      for (int k=0; k<vmap[vs[l]].size(); k++) {
-        temp= vmap[vs[l]][k];
+      for (int k=0; k<neighbors[vs[l]].size(); k++) {
+        temp= neighbors[vs[l]][k];
         if (Visibility_2::compare_xy_2(geom_traits, temp, former) == EQUAL) {
           has_predecessor = true;
           continue;
@@ -338,7 +338,7 @@ private:
     vs.clear();
     polygon.clear();
     heap.clear();
-    vmap.clear();
+    neighbors.clear();
     edx.clear();
 
     std::vector<Pair> good_edges;
@@ -403,14 +403,14 @@ private:
       Pair closest_e = heap.front();   //save the closest edge;
       int insert_cnt(0), remove_cnt(0);
       Point_2 p_remove, p_insert;
-      for (int j=0; j!=vmap[v].size(); j++) {
-        Pair e = create_pair(v, vmap[v][j]);
+      for (int j=0; j!=neighbors[v].size(); j++) {
+        Pair e = create_pair(v, neighbors[v][j]);
         if (edx.count(e)) {
-          p_remove = vmap[v][j];
+          p_remove = neighbors[v][j];
           remove_cnt++;
         }
         else {
-          p_insert = vmap[v][j];
+          p_insert = neighbors[v][j];
           insert_cnt++;
         }
       }
@@ -424,8 +424,8 @@ private:
         edx.erase(e_out);
       }
       else {
-        for (int j=0; j!=vmap[v].size(); j++) {
-          Pair e = create_pair(v, vmap[v][j]);
+        for (int j=0; j!=neighbors[v].size(); j++) {
+          Pair e = create_pair(v, neighbors[v][j]);
           if (edx.count(e)) {
             heap_remove(edx[e]);
             remove_cnt++;
@@ -799,7 +799,7 @@ private:
     }
   }
   class Is_sweeped_first:public std::binary_function<Point_2, Point_2, bool> {
-    const Point_2 q;
+    const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:
     Is_sweeped_first(const Point_2& q, const Geometry_traits_2* traits):q(q){
@@ -856,10 +856,10 @@ private:
   //when query is in face, every edge is good.
   void input_neighbor_f( const Halfedge_const_handle e) {
     Point_2 v = e->target()->point();
-    if (!vmap.count(v))
+    if (!neighbors.count(v))
       vs.push_back(v);
-      vmap[v].push_back(e->source()->point());
-      vmap[v].push_back(e->next()->target()->point());
+      neighbors[v].push_back(e->source()->point());
+      neighbors[v].push_back(e->next()->target()->point());
   }
 
   bool is_in_cone(Point_2& p) {
@@ -880,13 +880,13 @@ private:
     Point_2 v2 = e->source()->point();
     if (is_in_cone(v1) || is_in_cone(v2) || do_intersect_ray(q, source, v1, v2)) {
       good_edges.push_back(create_pair(v1, v2));
-      if (!vmap.count(v1))
+      if (!neighbors.count(v1))
         vs.push_back(v1);
-      vmap[v1].push_back(v2);
+      neighbors[v1].push_back(v2);
 
-      if (!vmap.count(v2))
+      if (!neighbors.count(v2))
         vs.push_back(v2);
-      vmap[v2].push_back(v1);
+      neighbors[v2].push_back(v1);
     }
   }
 
@@ -960,8 +960,8 @@ private:
                       Point_2(xmax, ymax), Point_2(xmin, ymax)};
     for (int i=0; i<4; i++) {
       vs.push_back(box[i]);
-      vmap[box[i]].push_back(box[(i+3)%4]);
-      vmap[box[i]].push_back(box[(i+1)%4]);
+      neighbors[box[i]].push_back(box[(i+3)%4]);
+      neighbors[box[i]].push_back(box[(i+1)%4]);
       good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
     }
 //    timer.stop();
