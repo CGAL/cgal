@@ -1,3 +1,5 @@
+#define CGAL_NO_DEPRECATION_WARNINGS 1
+
 #include <CGAL/Twotuple.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Fourtuple.h>
@@ -10,9 +12,9 @@ int main()
   CGAL::Fourtuple<int> d4, t4(0,1,2,3);
   CGAL::Sixtuple<int> d6, t6(0,1,2,3,4,5);
 
-  CGAL_USE(d2); CGAL_USE(t2); 
-  CGAL_USE(d3); CGAL_USE(t3); 
-  CGAL_USE(d4); CGAL_USE(t4); 
-  CGAL_USE(d6); CGAL_USE(t6); 
+  CGAL_USE(d2); CGAL_USE(t2);
+  CGAL_USE(d3); CGAL_USE(t3);
+  CGAL_USE(d4); CGAL_USE(t4);
+  CGAL_USE(d6); CGAL_USE(t6);
   return 0;
 }
