@@ -2516,7 +2516,7 @@ private:
     bool is_q_point = q.is_point();
     bool is_r_point = r.is_point();
 
-    int numpts_in_pqr =
+    unsigned int numpts_in_pqr =
       ((is_p_point)? 1 : 0) +
       ((is_q_point)? 1 : 0) +
       ((is_r_point)? 1 : 0)  ;
