@@ -34,11 +34,10 @@
   #include <boost/property_map.hpp>
 #endif
 
-#include "tbb/parallel_for.h"
-#include "tbb/blocked_range.h"
-#include "tbb/task_scheduler_init.h"
-
 #define CGAL_DEBUG_MODE
+
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
 
 namespace CGAL {
 
@@ -89,7 +88,7 @@ compute_update_sample_point(
 
   //Compute average term
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
-  FT iradius16 = -(FT)4.0 / radius2;
+  FT iradius16 = -(FT)4.0/radius2;
   Vector average = CGAL::NULL_VECTOR; 
 
   std::vector<Rich_point>::const_iterator iter;
@@ -112,7 +111,7 @@ compute_update_sample_point(
   }
 
   // Finishing compute average term
-  if(average_weight_sum > FT(1e-100))
+  if (average_weight_sum > FT(1e-100))
   {
     average = average / average_weight_sum; 
   }
@@ -135,7 +134,6 @@ compute_update_sample_point(
     Vector diff = query - np;
 
     FT dist2 = CGAL::squared_distance(query, np);
-    dist2 = std::max(dist2, 1e-100);//make sure that dist != 0
     FT dist = std::sqrt(dist2);
 
     weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
@@ -159,7 +157,7 @@ compute_update_sample_point(
   }
 
   // Compute update sample point
-  Point update_sample = CGAL::ORIGIN + average + FT(0.45) * repulsion;
+  Point update_sample = CGAL::ORIGIN + average + FT(0.5) * repulsion;
   return update_sample;
 }
 
@@ -172,7 +170,7 @@ compute_update_sample_point(
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return density weight
-template <typename Kernel>
+template <typename Concurrency_tag, typename Kernel>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
@@ -192,14 +190,44 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  std::vector<Point>::const_iterator iter;
+#ifdef CGAL_LINKED_WITH_TBB
+  size_t nb_neighbor_original_points = neighbor_original_points.size();
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_neighbor_original_points),
+      [&](tbb::blocked_range<size_t>&r)
+    {
+      for (size_t i = r.begin(); i != r.end(); ++i)
+      {
+        const Point& np = neighbor_original_points[i];
+        FT dist2 = CGAL::squared_distance(query, np);
+        density_weight += std::exp(dist2 * iradius16);
+      }
+    }
+    );
+  }
+  else
+#endif
+  {
+    std::vector<Point>::const_iterator iter;
+    iter = neighbor_original_points.begin();
+    for (; iter != neighbor_original_points.end(); ++iter)
+    {
+      const Point& np = *iter;
+      FT dist2 = CGAL::squared_distance(query, np);
+      density_weight += std::exp(dist2 * iradius16);
+    }
+  }
+
+  //sequential
+  /*std::vector<Point>::const_iterator iter;
   iter = neighbor_original_points.begin();
   for (; iter != neighbor_original_points.end(); ++iter)
   {
-    const Point& np = *iter;
-    FT dist2 = CGAL::squared_distance(query, np);
-    density_weight += std::exp(dist2 * iradius16);
-  }
+  const Point& np = *iter;
+  FT dist2 = CGAL::squared_distance(query, np);
+  density_weight += std::exp(dist2 * iradius16);
+  }*/
 
   // output
   return FT(1.0) / density_weight;
@@ -215,7 +243,7 @@ compute_density_weight_for_original_point(
 /// @tparam Kernel Geometric traits class.
 ///
 /// @return density weight
-template <typename Kernel>
+template <typename Concurrency_tag, typename Kernel>
 typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
@@ -233,14 +261,43 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  std::vector<Point>::const_iterator iter;
+  size_t nb_neighbor_sample_points = neighbor_sample_points.size();
+#ifdef CGAL_LINKED_WITH_TBB
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_neighbor_sample_points),
+      [&](tbb::blocked_range<size_t>& r)
+    {
+      for (size_t i = r.begin(); i != r.end(); ++i)
+      {
+        const Point& np = neighbor_sample_points[i];
+        FT dist2 = CGAL::squared_distance(query, np);
+        density_weight += std::exp(dist2 * iradius16);
+      }
+    }
+    );
+  }
+  else
+#endif
+  {
+    std::vector<Point>::const_iterator iter;
+    iter = neighbor_sample_points.begin();
+    for (; iter != neighbor_sample_points.end(); ++iter)
+    {
+      const Point& np = *iter;
+      FT dist2 = CGAL::squared_distance(query, np);
+      density_weight += std::exp(dist2 * iradius16);
+    }
+  }
+  //sequential
+  /*std::vector<Point>::const_iterator iter;
   iter = neighbor_sample_points.begin();
   for (; iter != neighbor_sample_points.end(); ++iter)
   {
-    const Point& np = *iter;
-    FT dist2 = CGAL::squared_distance(query, np);
-    density_weight += std::exp(dist2 * iradius16);
-  }
+  const Point& np = *iter;
+  FT dist2 = CGAL::squared_distance(query, np);
+  density_weight += std::exp(dist2 * iradius16);
+  }*/
 
   // output
   return density_weight;
@@ -253,10 +310,10 @@ compute_density_weight_for_sample_point(
 /// @return Points
 template <typename Kernel>
 std::vector<typename Kernel::Point_3>
-get_points_from_indexes(
+  get_points_from_indexes(
   const std::vector<unsigned int> indexes, ///< indexes
   const std::vector<typename Kernel::Point_3>& all_points ///< all points
-)
+  )
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
@@ -303,7 +360,7 @@ get_points_from_indexes(
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
-          typename RandomAccessIterator,
+          typename RandomAccessIterator ,
           typename PointPMap,
           typename Kernel>
 RandomAccessIterator 
@@ -319,7 +376,7 @@ wlop_simplify_and_regularize_point_set(
   const unsigned int max_iter_number,///< number of iterations, rang from 30 to 100 is good,
                                      /// default is 35.
   const bool need_compute_density, ///< if needed to compute density to 
-                                   ///generate more regularized result.                                
+                                   ///generate more rugularized result.                                
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
@@ -344,7 +401,7 @@ wlop_simplify_and_regularize_point_set(
   // Computes original(input) and sample points size 
   std::size_t nb_points_original = std::distance(first, beyond);
   std::size_t nb_points_sample = (std::size_t)(FT(nb_points_original) * 
-                                 (retain_percentage / 100.0));
+                                 (retain_percentage/100.0));
   std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
   // The first point iter of original and sample points
@@ -434,7 +491,8 @@ wlop_simplify_and_regularize_point_set(
                                              original_points );
 
       FT density = simplify_and_regularize_internal::
-                   compute_density_weight_for_original_point<Kernel>(
+                   compute_density_weight_for_original_point
+                   <Concurrency_tag, Kernel>(
                    *original_iter,
                    original_neighbors,
                    neighbor_radius);
@@ -448,6 +506,7 @@ wlop_simplify_and_regularize_point_set(
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "done: " << task_timer.time() << " seconds, " 
       << (memory>>20) << " Mb allocated" << std::endl << std::endl;
+    task_timer.reset();
   #endif
   }
 
@@ -462,13 +521,14 @@ wlop_simplify_and_regularize_point_set(
     *sample_rich_iter = Rich_point(*sample_iter, index++);
   }
 
+
   std::vector<Point> update_sample_points(nb_points_sample);
   std::vector<Point>::iterator update_sample_iter;
+  //most time consuming part
+
+  //iteration loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   for (unsigned int iteration = 0; iteration < max_iter_number; iteration++)
   {
-  #ifdef CGAL_DEBUG_MODE
-    task_timer.reset();
-  #endif
     // Build rich-grid for sample-sample neighborhood
     rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_points,
                                                         bbox, 
@@ -490,12 +550,21 @@ wlop_simplify_and_regularize_point_set(
                                           sample_points);
       
         FT density = simplify_and_regularize_internal::
-                     compute_density_weight_for_sample_point<Kernel>
+                     compute_density_weight_for_sample_point
+                     <Concurrency_tag, Kernel>
                      (*sample_iter, sample_neighbors, neighbor_radius);
       
         sample_densities.push_back(density);
       }
     }
+
+#ifdef CGAL_DEBUG_MODE
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cout << "Initialization / Compute Density For Sample" << std::endl;
+    std::cout << "done: " << task_timer.time() << " seconds, " 
+      << (memory>>20) << " Mb allocated" << std::endl << std::endl;
+    task_timer.reset();
+#endif
 
     // Build rich-grid for sample-original neighborhood
     rich_grid_internal::compute_ball_neighbors_one_to_another
@@ -505,7 +574,7 @@ wlop_simplify_and_regularize_point_set(
     sample_iter = sample_points.begin();
     sample_rich_iter = sample_rich_points.begin();
 
-  #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
     if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
     {
    #ifdef CGAL_DEBUG_MODE
@@ -603,30 +672,29 @@ wlop_simplify_and_regularize_point_set(
 
     }//parallel judge "else" end
 
+
+    // update sample points positions
     sample_iter = sample_points.begin();
     sample_rich_iter = sample_rich_points.begin();
     update_sample_iter = update_sample_points.begin();
-    
     for (; sample_iter != sample_points.end(); 
-         ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
+           ++sample_iter, ++sample_rich_iter, ++update_sample_iter)
     {
       *sample_iter = *update_sample_iter;
       sample_rich_iter->pt = *sample_iter;
     }
-
+  
   #ifdef CGAL_DEBUG_MODE
-    std::cout << "Compute average & repulsion term and updated" << std::endl;
-    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cout << "compute_update_sample_point time:" << std::endl;
+    memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "done: " << task_timer.time() << " seconds, " 
       << (memory>>20) << " Mb allocated" << std::endl;
+    task_timer.reset();
     std::cout << "iterate:  " << iteration + 1 << std::endl << std::endl;
   #endif
   }
 
   //Copy back modified sample points to original points for output
-  #ifdef CGAL_DEBUG_MODE
-  task_timer.reset();
-  #endif
   sample_iter = sample_points.begin();
   for(it = first_sample_point; it != beyond; ++it, ++sample_iter)
   {
@@ -643,7 +711,7 @@ wlop_simplify_and_regularize_point_set(
 
   #ifdef CGAL_DEBUG_MODE
     original_rich_points.erase(original_rich_points.begin(), 
-                                 original_rich_points.end());
+                                  original_rich_points.end());
     
     original_rich_points.clear();
 
@@ -667,7 +735,7 @@ wlop_simplify_and_regularize_point_set(
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
 template <typename Concurrency_tag,
-          typename RandomAccessIterator,
+          typename RandomAccessIterator, 
           typename PointPMap>
 RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
