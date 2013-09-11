@@ -311,6 +311,12 @@ private:
       vs[i+l+right.size()] = left[left.size()-1-l];
   }
 
+  void print_edx() {
+    for (int i=0; i<heap.size(); i++) {
+      std::cout<<i<<':'<< heap[i].first<<','<<heap[i].second<<std::endl;
+    }
+    assert(false);
+  }
 
   void visibility_region_impl(const Face_const_handle f, const Point_2& q) {
 
@@ -342,7 +348,13 @@ private:
       for (int i=0; i!=good_edges.size(); i++) {
         if (do_intersect_ray(q, dp, good_edges[i].first, good_edges[i].second))
           heap_insert(good_edges[i]);
+//          heap.push_back(good_edges[i]);
       }
+//      std::make_heap(heap.begin(), heap.end(), Is_closer(q, geom_traits));
+//      for (int i=0; i!=heap.size(); i++) {
+//        edx[heap[i]] = i;
+//      }
+//      print_edx();
     }
     else {
       Ccb_halfedge_const_circulator curr = f->outer_ccb();
@@ -365,6 +377,7 @@ private:
         } while (++curr != circ);
       }
     }
+
 
 
     //angular sweep begins
@@ -445,7 +458,7 @@ private:
     int i = heap.size()-1;
     edx[e] = i;
     int parent = (i-1)/2;
-    while (i!=0 && is_closer(q, heap[i].first, heap[i].second, heap[parent].first, heap[parent].second)){
+    while (i!=0 && is_closer(q, heap[i], heap[parent])){
       heap_swap(i, parent);
       i = parent;
       parent = (i-1)/2;
@@ -470,7 +483,7 @@ private:
       int i_before_swap = i;
 
       int parent = (i-1)/2;
-      while (i!=0 && is_closer(q, heap[i].first, heap[i].second, heap[parent].first, heap[parent].second)){
+      while (i!=0 && is_closer(q, heap[i], heap[parent])){
         heap_swap(i, parent);
         i = parent;
         parent = (i-1)/2;
@@ -481,18 +494,10 @@ private:
           int left_son = i*2+1;
           int right_son = i*2+2;
           int closest_idx = i;
-          if (left_son < heap.size() && is_closer(q,
-                                                  heap[left_son].first,
-                                                  heap[left_son].second,
-                                                  heap[i].first,
-                                                  heap[i].second)) {
+          if (left_son < heap.size() && is_closer(q, heap[left_son], heap[i])) {
             closest_idx = left_son;
           }
-          if (right_son < heap.size() && is_closer(q,
-                                                   heap[right_son].first,
-                                                   heap[right_son].second,
-                                                   heap[closest_idx].first,
-                                                   heap[closest_idx].second)) {
+          if (right_son < heap.size() && is_closer(q, heap[right_son], heap[closest_idx])) {
             closest_idx = right_son;
           }
           swapped = false;
@@ -526,13 +531,75 @@ private:
     std::cout<<p.x()<<','<<p.y()<<std::endl;
   }
 
-
+  class Is_closer:public std::binary_function<Pair, Pair, bool> {
+    const Point_2& q;
+    const Geometry_traits_2* geom_traits;
+  public:
+    Is_closer(const Point_2& q, const Geometry_traits_2* traits): q(q) {
+      geom_traits = traits;
+    }
+    bool operator() (const Pair& e1, const Pair& e2) const {
+      const Point_2& s1=e1.first, t1=e1.second, s2=e2.first, t2=e2.second;
+      Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
+      switch (e1q)
+      {
+      case COLLINEAR:
+        if (Visibility_2::collinear(geom_traits, q, s2, t2)) {
+          //q is collinear with e1 and e2.
+          return (Visibility_2::less_distance_to_point_2(geom_traits, q, s1, s2)
+                  || Visibility_2::less_distance_to_point_2(geom_traits, q, t1, t2));
+        }
+        else {
+          //q is not collinear with e2. q is collinear with e1.
+          if (Visibility_2::collinear(geom_traits, s2, t2, s1))
+            return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                    == Visibility_2::orientation_2(geom_traits, s2, t2, t1));
+          else
+            return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                    == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
+        }
+      case RIGHT_TURN:
+        switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+        case COLLINEAR:
+          return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+        case RIGHT_TURN:
+          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+          else
+            return false;
+        case LEFT_TURN:
+          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+          else
+            return true;
+        }
+      case LEFT_TURN:
+        switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+        case COLLINEAR:
+          return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+        case LEFT_TURN:
+          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+          else
+            return false;
+        case RIGHT_TURN:
+          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+          else
+            return true;
+        }
+      }
+    }
+  };
 
   bool is_closer(const Point_2& q,
-                 const Point_2& s1,
-                 const Point_2& t1,
-                 const Point_2& s2,
-                 const Point_2& t2) {
+                 const Pair& e1,
+                 const Pair& e2) {
+    const Point_2& s1=e1.first, t1=e1.second, s2=e2.first, t2=e2.second;
     Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
     switch (e1q)
     {
@@ -710,7 +777,8 @@ private:
       polygon.push_back(p);
     else
     {
-      if (polygon.back() != p){
+//      if (polygon.back() != p){
+      if (Visibility_2::compare_xy_2(geom_traits, polygon.back(), p) != EQUAL) {
         polygon.push_back(p);
       }
     }
@@ -753,6 +821,8 @@ private:
     }
 
   };
+
+
 
   bool is_sweeped_first(const Point_2& p1, const Point_2& p2)
   {
