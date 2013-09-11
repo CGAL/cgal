@@ -408,8 +408,13 @@ private:
           << " slope" << std::endl; );
 
 
-        Oriented_side side_of_pnt =
-          oriented_side_of_line(l, pnt);
+        Oriented_side side_of_pnt;
+        if (same_points(q.source_site(), p) or
+            same_points(q.target_site(), p)   ) {
+          side_of_pnt = ON_ORIENTED_BOUNDARY;
+        } else {
+          side_of_pnt = oriented_side_of_line(l, pnt);
+        }
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
           CGAL_assertion(same_points(q.source_site(), p) or
