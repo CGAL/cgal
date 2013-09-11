@@ -17,10 +17,10 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
-#ifndef CGAL_PERIODIC_2_TRIANGULATION_TRAITS_2_H
-#define CGAL_PERIODIC_2_TRIANGULATION_TRAITS_2_H
+#ifndef CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
+#define CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
 
-#include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Periodic_2_triangulation_traits_2.h>
 
 namespace CGAL
 {
@@ -37,4 +37,4 @@ class Periodic_2_Delaunay_triangulation_traits_2 :
 
 } //namespace CGAL
 
-#endif // CGAL_PERIODIC_2_TRIANGULATION_TRAITS_2_H
+#endif // CGAL_PERIODIC_2_DELAUNAY_TRIANGULATION_TRAITS_2_H
