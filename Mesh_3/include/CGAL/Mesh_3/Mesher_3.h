@@ -233,7 +233,7 @@ public:
   // Mesher_levels
   //-------------------------------------------------------
   /// Facets mesher level
-  typedef Mesh_3::Refine_facets_3<
+  typedef Refine_facets_3<
       Triangulation,
       typename MeshCriteria::Facet_criteria,
       MeshDomain,
@@ -242,7 +242,7 @@ public:
       Concurrency_tag>                              Facets_level;
 
   /// Cells mesher level
-  typedef Mesh_3::Refine_cells_3<
+  typedef Refine_cells_3<
       Triangulation,
       typename MeshCriteria::Cell_criteria,
       MeshDomain,

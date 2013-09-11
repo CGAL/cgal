@@ -26,8 +26,8 @@
 #ifndef CGAL_MESH_3_REFINE_FACETS_3_H
 #define CGAL_MESH_3_REFINE_FACETS_3_H
 
-#include <CGAL/Mesher_level.h>
-#include <CGAL/Mesher_level_default_implementations.h>
+#include <CGAL/Mesh_3/Mesher_level.h>
+#include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tbb.h>
 #endif
@@ -342,7 +342,7 @@ template<class Tr,
 class Refine_facets_3
 : public Refine_facets_3_base<typename MeshDomain::Index, typename Tr::Facet,
                               Concurrency_tag>
-, public Mesher_level<Tr,
+, public Mesh_3::Mesher_level<Tr,
                       Refine_facets_3<Tr,
                                       Criteria,
                                       MeshDomain,
@@ -412,7 +412,7 @@ public:
                   Previous_level_& previous,
                   C3T3& c3t3,
                   Lock_data_structure *lock_ds,
-                  Mesh_3::WorksharingDataStructureType *worksharing_ds);
+                  WorksharingDataStructureType *worksharing_ds);
 
   /// Destructor
   virtual ~Refine_facets_3() { }
@@ -827,7 +827,7 @@ Refine_facets_3(Tr& triangulation,
                 P_& previous,
                 C3T3& c3t3,
                 Lock_data_structure *lock_ds,
-                Mesh_3::WorksharingDataStructureType *worksharing_ds)
+                WorksharingDataStructureType *worksharing_ds)
   : Mesher_level<Tr, Self, Facet, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct>(previous)
   , C_()

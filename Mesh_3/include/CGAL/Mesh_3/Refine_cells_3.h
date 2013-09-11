@@ -23,8 +23,8 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Mesher_level.h>
-#include <CGAL/Mesher_level_default_implementations.h>
+#include <CGAL/Mesh_3/Mesher_level.h>
+#include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #include <CGAL/Meshes/Triangulation_mesher_level_traits_3.h>
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/tbb.h>
@@ -354,7 +354,7 @@ public:
                  Previous_& previous,
                  C3T3& c3t3,
                  Lock_data_structure *lock_ds,
-                 Mesh_3::WorksharingDataStructureType *worksharing_ds);
+                 WorksharingDataStructureType *worksharing_ds);
 
   // Destructor
   virtual ~Refine_cells_3() { }
@@ -571,7 +571,7 @@ Refine_cells_3(Tr& triangulation,
                P_& previous,
                C3T3& c3t3,
                Lock_data_structure *lock_ds,
-               Mesh_3::WorksharingDataStructureType *worksharing_ds)
+               WorksharingDataStructureType *worksharing_ds)
   : Mesher_level<Tr, Self, Cell_handle, P_,
       Triangulation_mesher_level_traits_3<Tr>, Ct >(previous, lock_ds, worksharing_ds)
   , C_()
