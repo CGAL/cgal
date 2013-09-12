@@ -360,7 +360,7 @@ public:
       delete it->frame;
     }
     handle_frame_map.clear();
-    deform_mesh.reset();
+    deform_mesh.clear_roi_vertices();
 
     create_handle_group(); // create one new handle group
   } 

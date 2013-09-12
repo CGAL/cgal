@@ -321,6 +321,27 @@ public:
     is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
     is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
   }
+
+  /**
+   * Removes all the vertices from the region-of-interest (including control vertices).
+   */
+  void clear_roi_vertices(){
+    need_preprocess_both();
+    // clear roi vertices
+    roi.clear();
+    //set to false all bits
+    is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
+    is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+  }
+
+  /**
+   * Removes all the vertices from the set of control vertices.
+   */
+  void clear_control_vertices(){
+    need_preprocess_factorization=true;
+    //set to false all bits
+    is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+  }
   
   /**
    * Inserts a vertex in the set of control vertices. The vertex is also inserted in the region-of-interest if it is not already in it.
