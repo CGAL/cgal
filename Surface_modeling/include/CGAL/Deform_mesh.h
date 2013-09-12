@@ -73,10 +73,10 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
  /// @tparam HG a model of HalfedgeGraph 
- /// @tparam VIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type,
- ///         containing unique indices to vertices with offset 0
- /// @tparam EIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type
- ///         containing unique indices to vertices with offset 0
+ /// @tparam VIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
+ ///         The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
+ /// @tparam EIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type.
+  ///         The default is `boost::property_map<HG, boost::%edge_index_t>::%type`.
  /// @tparam TAG tag for selecting the deformation algorithm
  /// @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Halfedge_graph` being `HG`
  /// @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
@@ -89,14 +89,15 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
- /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point as value type. The point type must be a model of `::SimplePoint_3`
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point as value type. The point type must be a model of `::SimplePoint_3`. 
+ /// The default is `boost::property_map<HG, CGAL::vertex_point_t>::%type`.
 template <
   class HG, 
-  class VIM, 
-  class EIM,
+  class VIM=Default, 
+  class EIM=Default,
   Deformation_algorithm_tag TAG = SPOKES_AND_RIMS,
   class WC = Default,
-  class ST = Default, 
+  class ST = Default,
   class CR = Default,
   class VPM = Default
   >
@@ -108,9 +109,24 @@ public:
   /// \name Template parameters
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
-  typedef HG Halfedge_graph; /**< model of HalfedgeGraph */  
-  typedef VIM Vertex_index_map; /**< model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type */
-  typedef EIM Edge_index_map; /**< model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type */
+  typedef HG Halfedge_graph; /**< model of HalfedgeGraph */
+
+// Index maps
+#ifndef DOXYGEN_RUNNING
+  typedef typename Default::Get<
+    VIM,
+    typename boost::property_map<Halfedge_graph, boost::vertex_index_t>::type
+  >::type Vertex_index_map;
+  typedef typename Default::Get<
+    EIM,
+    typename boost::property_map<Halfedge_graph, boost::edge_index_t>::type
+  >::type Edge_index_map;
+#else
+  /// model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
+  typedef VIM Vertex_index_map;
+  ///model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type.
+  typedef EIM Edge_index_map;
+#endif
 
 // weight calculator
 #ifndef DOXYGEN_RUNNING
@@ -235,8 +251,9 @@ private:
 public:
 
   /// \cond SKIP_FROM_MANUAL
-  Deform_mesh(Halfedge_graph& halfedge_graph, 
-              Vertex_index_map vertex_index_map, 
+  //vertex_point_map set by default
+  Deform_mesh(Halfedge_graph& halfedge_graph,
+              Vertex_index_map vertex_index_map,
               Edge_index_map edge_index_map,
               unsigned int iterations = 5,
               double tolerance = 1e-4,
@@ -247,7 +264,50 @@ public:
       is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       m_iterations(iterations), m_tolerance(tolerance),
-      need_preprocess_factorization(true), 
+      need_preprocess_factorization(true),
+      need_preprocess_region_of_solution(true),
+      last_preprocess_successful(false),
+      weight_calculator(weight_calculator),
+      vertex_point_map(boost::get(vertex_point, halfedge_graph))
+  {
+    init();
+  }
+
+  //vertex_point_map and edge_index_map set by default
+  Deform_mesh(Halfedge_graph& halfedge_graph,
+              Vertex_index_map vertex_index_map,
+              unsigned int iterations = 5,
+              double tolerance = 1e-4,
+              Weight_calculator weight_calculator = Weight_calculator()
+              )
+    : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map),
+      edge_index_map(boost::get(boost::edge_index, halfedge_graph)),
+      ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
+      is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
+      is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
+      m_iterations(iterations), m_tolerance(tolerance),
+      need_preprocess_factorization(true),
+      need_preprocess_region_of_solution(true),
+      last_preprocess_successful(false),
+      weight_calculator(weight_calculator),
+      vertex_point_map(boost::get(vertex_point, halfedge_graph))
+  {
+    init();
+  }
+  //vertex_point_map, edge_index_map and vertex_index_map set by default
+  Deform_mesh(Halfedge_graph& halfedge_graph,
+              unsigned int iterations = 5,
+              double tolerance = 1e-4,
+              Weight_calculator weight_calculator = Weight_calculator()
+              )
+    : m_halfedge_graph(halfedge_graph),
+      vertex_index_map(boost::get(boost::vertex_index, halfedge_graph)),
+      edge_index_map(boost::get(boost::edge_index, halfedge_graph)),
+      ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
+      is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
+      is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
+      m_iterations(iterations), m_tolerance(tolerance),
+      need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
       weight_calculator(weight_calculator),
@@ -263,8 +323,10 @@ public:
    *
    * @pre the halfedge_graph consists of only triangular facets
    * @param halfedge_graph triangulated surface mesh used to deform
-   * @param vertex_index_map property map for associating an id to each vertex
-   * @param edge_index_map property map for associating an id to each edge
+   * @param vertex_index_map property map for associating an id to each vertex, from `0` to `boost::num_vertices(halfedge_graph)-1`.
+   *        It is default to `boost::get(vertex_index, halfedge_graph)` and can be omitted.
+   * @param edge_index_map property map for associating an id to each edge, from `0` to `boost::num_edges(halfedge_graph)-1`.
+   *        It is default to `boost::get(edge_index, halfedge_graph)` and can be omitted.
    * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
    *        It is default to `boost::get(vertex_point, halfedge_graph)` and can be omitted.
    * @param iterations see `set_iterations()` for more details
