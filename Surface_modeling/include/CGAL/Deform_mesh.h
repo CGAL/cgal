@@ -152,9 +152,9 @@ public:
   #else
     CR // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
-  >::type Closest_rotation_helper;
+  >::type Closest_rotation_traits;
 #else
-  typedef CR Closest_rotation_helper; /**< model of DeformationClosestRotationTraits_3 */
+  typedef CR Closest_rotation_traits; /**< model of DeformationClosestRotationTraits_3 */
 #endif
 
 // vertex point pmap
@@ -180,8 +180,8 @@ private:
   typedef typename boost::graph_traits<Halfedge_graph>::in_edge_iterator    in_edge_iterator;
   typedef typename boost::graph_traits<Halfedge_graph>::out_edge_iterator   out_edge_iterator;
 
-  typedef typename Closest_rotation_helper::Matrix CR_matrix;
-  typedef typename Closest_rotation_helper::Vector CR_vector;
+  typedef typename Closest_rotation_traits::Matrix CR_matrix;
+  typedef typename Closest_rotation_traits::Vector CR_vector;
 
 public:
 
@@ -664,7 +664,7 @@ public:
     }    
 
     // also set rotation matrix to identity
-    std::fill(rot_mtr.begin(), rot_mtr.end(), Closest_rotation_helper().identity_matrix());
+    std::fill(rot_mtr.begin(), rot_mtr.end(), Closest_rotation_traits().identity_matrix());
 
     need_preprocess_both(); // now we need reprocess
   }
@@ -762,7 +762,7 @@ private:
         rot_mtr[v_ros_id] = old_rot_mtr[ old_ros_id_map[v_id] ];        
       }
       else {
-        rot_mtr[v_ros_id] = Closest_rotation_helper().identity_matrix();
+        rot_mtr[v_ros_id] = Closest_rotation_traits().identity_matrix();
       }
     }
     
@@ -929,8 +929,8 @@ private:
   }
   void optimal_rotations_arap()
   {     
-    Closest_rotation_helper cr_helper;
-    CR_matrix cov = cr_helper.zero_matrix();
+    Closest_rotation_traits cr_traits;
+    CR_matrix cov = cr_traits.zero_matrix();
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -938,7 +938,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
       // compute covariance matrix (user manual eq:cov_matrix)
-      cov = cr_helper.zero_matrix();
+      cov = cr_traits.zero_matrix();
 
       in_edge_iterator e, e_end;
       for (boost::tie(e,e_end) = boost::in_edges(vi, m_halfedge_graph); e != e_end; e++)
@@ -950,16 +950,16 @@ private:
         const CR_vector& qij = sub_to_CR_vector(solution[vi_id], solution[vj_id]);
         double wij = edge_weight[id(*e)];
 
-        cr_helper.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
+        cr_traits.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
       }
 
-      cr_helper.compute_close_rotation(cov, rot_mtr[vi_id]);
+      cr_traits.compute_close_rotation(cov, rot_mtr[vi_id]);
     }
   }
   void optimal_rotations_spokes_and_rims()
   {    
-    Closest_rotation_helper cr_helper;
-    CR_matrix cov =cr_helper.zero_matrix();   
+    Closest_rotation_traits cr_traits;
+    CR_matrix cov =cr_traits.zero_matrix();   
 
     // only accumulate ros vertices
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -967,7 +967,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
       // compute covariance matrix
-      cov = cr_helper.zero_matrix();
+      cov = cr_traits.zero_matrix();
 
       //iterate through all triangles 
       out_edge_iterator e, e_end;
@@ -987,12 +987,12 @@ private:
           const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
 
-          cr_helper.scalar_vector_vector_transpose_mult(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
+          cr_traits.scalar_vector_vector_transpose_mult(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, m_halfedge_graph)) != *e);
       }
 
-      cr_helper.compute_close_rotation(cov, rot_mtr[vi_id]);
+      cr_traits.compute_close_rotation(cov, rot_mtr[vi_id]);
     }
   }
 
@@ -1046,7 +1046,7 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
-    Closest_rotation_helper cr_helper;
+    Closest_rotation_traits cr_traits;
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1057,7 +1057,7 @@ private:
       if ( is_roi(vi) && !is_control(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber in user manual
-        CR_vector xyz = cr_helper.vector(0, 0, 0);
+        CR_vector xyz = cr_traits.vector(0, 0, 0);
 
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, m_halfedge_graph); e != e_end; e++)
@@ -1070,16 +1070,16 @@ private:
           double wij = edge_weight[id(*e)];
           double wji = edge_weight[id(CGAL::opposite_edge(*e, m_halfedge_graph))];
 #ifndef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
-          cr_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
+          cr_traits.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
 #else
-        cr_helper.scalar_matrix_scalar_matrix_vector_mult(xyz, wij * scales[vi_id], rot_mtr[vi_id], 
+        cr_traits.scalar_matrix_scalar_matrix_vector_mult(xyz, wij * scales[vi_id], rot_mtr[vi_id], 
           wji * scales[vj_id], rot_mtr[vj_id], pij);
 #endif
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
         }
-        Bx[vi_id] = cr_helper.vector_coeff(xyz, 0); 
-        By[vi_id] = cr_helper.vector_coeff(xyz, 1); 
-        Bz[vi_id] = cr_helper.vector_coeff(xyz, 2); 
+        Bx[vi_id] = cr_traits.vector_coeff(xyz, 0); 
+        By[vi_id] = cr_traits.vector_coeff(xyz, 1); 
+        Bz[vi_id] = cr_traits.vector_coeff(xyz, 2); 
       }
       else 
       {// constrained vertex
@@ -1108,7 +1108,7 @@ private:
     typename Sparse_linear_solver::Vector Y(ros.size()), By(ros.size());
     typename Sparse_linear_solver::Vector Z(ros.size()), Bz(ros.size());
 
-    Closest_rotation_helper cr_helper;
+    Closest_rotation_traits cr_traits;
 
     // assemble right columns of linear system
     for ( std::size_t k = 0; k < ros.size(); k++ )
@@ -1119,7 +1119,7 @@ private:
       if ( is_roi(vi) && !is_control(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber_rims in user manual
-        CR_vector xyz = cr_helper.vector(0, 0, 0);
+        CR_vector xyz = cr_traits.vector(0, 0, 0);
 
         out_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::out_edges(vi, m_halfedge_graph); e != e_end; e++)
@@ -1133,7 +1133,7 @@ private:
           {
             vertex_descriptor vn = boost::target(CGAL::next_edge(*e, m_halfedge_graph), m_halfedge_graph); // opp vertex of e_ij
             double wji = edge_weight[id(*e)] / 3.0;  // edge(pj - pi)           
-            cr_helper.scalar_mult_with_matrix_sum(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
+            cr_traits.scalar_mult_with_matrix_sum(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
             // corresponds  xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vn)])*pij;
           }
 
@@ -1142,13 +1142,13 @@ private:
           {
             vertex_descriptor vm = boost::target(CGAL::next_edge(opp, m_halfedge_graph), m_halfedge_graph); // other opp vertex of e_ij
             double wij = edge_weight[id(opp)] / 3.0;  // edge(pi - pj)
-            cr_helper.scalar_mult_with_matrix_sum(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
+            cr_traits.scalar_mult_with_matrix_sum(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
             // corresponds xyz += wij * ( rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)] ) * pij
           }
         }
-        Bx[vi_id] = cr_helper.vector_coeff(xyz, 0); 
-        By[vi_id] = cr_helper.vector_coeff(xyz, 1); 
-        Bz[vi_id] = cr_helper.vector_coeff(xyz, 2); 
+        Bx[vi_id] = cr_traits.vector_coeff(xyz, 0); 
+        By[vi_id] = cr_traits.vector_coeff(xyz, 1); 
+        Bz[vi_id] = cr_traits.vector_coeff(xyz, 2); 
       }
       else 
       {// constrained vertices
@@ -1198,7 +1198,7 @@ private:
   }
   double energy_arap() const
   {
-    Closest_rotation_helper cr_helper;
+    Closest_rotation_traits cr_traits;
 
     double sum_of_energy = 0;    
     // only accumulate ros vertices
@@ -1218,7 +1218,7 @@ private:
 
         double wij = edge_weight[id(*e)];
 
-        sum_of_energy += wij * cr_helper.squared_norm_vector_scalar_vector_subs(qij, rot_mtr[vi_id], pij);
+        sum_of_energy += wij * cr_traits.squared_norm_vector_scalar_vector_subs(qij, rot_mtr[vi_id], pij);
         // sum_of_energy += wij * ( qij - rot_mtr[vi_id]*pij )^2
       }
     }
@@ -1226,7 +1226,7 @@ private:
   }
   double energy_spokes_and_rims() const
   {
-    Closest_rotation_helper cr_helper;
+    Closest_rotation_traits cr_traits;
 
     double sum_of_energy = 0;
     // only accumulate ros vertices
@@ -1251,7 +1251,7 @@ private:
           const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
          
-          sum_of_energy += w12 * cr_helper.squared_norm_vector_scalar_vector_subs(q12, rot_mtr[vi_id], p12);
+          sum_of_energy += w12 * cr_traits.squared_norm_vector_scalar_vector_subs(q12, rot_mtr[vi_id], p12);
           // sum_of_energy += w12 * ( q12 - rot_mtr[vi_id]*p12 )^2
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, m_halfedge_graph)) != *e);
@@ -1269,7 +1269,7 @@ private:
   /// p1 - p2, return CR_vector
   CR_vector sub_to_CR_vector(const Point& p1, const Point& p2) const
   {
-    return Closest_rotation_helper().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+    return Closest_rotation_traits().vector(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
   }
 
   template<class Vect>
