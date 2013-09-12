@@ -57,11 +57,19 @@ typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_fac
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
 
-typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> > Sparse_linear_solver;
-
-typedef CGAL::Mean_curvature_skeleton<Polyhedron, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
+typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+
+typedef std::map<boost::graph_traits<Graph>::vertex_descriptor, std::vector<int> > Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map> GraphCorrelationPMap;
+
+typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
+
+typedef boost::associative_property_map<std::map<boost::graph_traits<Graph>::vertex_descriptor, Polyhedron::Traits::Point_3> > GraphPointPMap;
+
+typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
@@ -72,9 +80,6 @@ typedef boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
-
-typedef std::map<vertex_desc, std::vector<int> >                    Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map>         Correspondence_pmap;
 
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   public QObject,
@@ -210,17 +215,17 @@ public:
 
       // save a copy before any operation
       mCopy = new Polyhedron(*pMesh);
-      if (is_medially_centered)
-      {
-        mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                          omega_H, omega_P, edgelength_TH, true,
-                                          area_TH);
-      }
-      else
-      {
-        mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                         omega_H, edgelength_TH, area_TH);
-      }
+
+      CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
+      skeleton_args.set_omega_H(omega_H);
+      skeleton_args.set_omega_P(omega_P);
+      skeleton_args.set_edgelength_TH(edgelength_TH);
+      skeleton_args.set_is_medially_centered(is_medially_centered);
+      skeleton_args.set_delta_area(area_TH);
+
+      mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
+                                        skeleton_args);
+
       fixedPointsItemIndex = -1;
       nonFixedPointsItemIndex = -1;
       poleLinesItemIndex = -1;
@@ -244,17 +249,16 @@ public:
 
         // save a copy before any operation
         mCopy = new Polyhedron(*pMesh);
-        if (is_medially_centered)
-        {
-          mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                            omega_H, omega_P, edgelength_TH, true,
-                                            area_TH);
-        }
-        else
-        {
-          mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
-                                            omega_H, edgelength_TH, area_TH);
-        }
+
+        CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
+        skeleton_args.set_omega_H(omega_H);
+        skeleton_args.set_omega_P(omega_P);
+        skeleton_args.set_edgelength_TH(edgelength_TH);
+        skeleton_args.set_is_medially_centered(is_medially_centered);
+        skeleton_args.set_delta_area(area_TH);
+
+        mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
+                                          skeleton_args);
         fixedPointsItemIndex = -1;
         nonFixedPointsItemIndex = -1;
         poleLinesItemIndex = -1;
@@ -384,8 +388,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-
-  Correspondence_pmap corr;
+  Correspondence_map corr_map;
+  GraphCorrelationPMap corr(corr_map);
 
   mcs->get_correspondent_vertices(corr);
 
@@ -507,9 +511,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     Graph g;
     std::map<vertex_desc, Point> points;
 
-    CGAL::extract_skeleton<Sparse_linear_solver>(g, points,
-                     tempMesh, Vertex_index_map(), Edge_index_map(),
-                     omega_H, edgelength_TH, area_TH);
+//    CGAL::extract_skeleton<Sparse_linear_solver>(g, points,
+//                     tempMesh, Vertex_index_map(), Edge_index_map(),
+//                     omega_H, edgelength_TH, area_TH);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
@@ -556,17 +560,23 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     Polyhedron tempMesh = *pMesh;
 
-    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(), Edge_index_map(),
-                                                                    omega_H, omega_P, edgelength_TH, true,
-                                                                    area_TH);
+    CGAL::SkeletonArgs<Polyhedron> skeleton_args(tempMesh);
+    skeleton_args.set_omega_H(omega_H);
+    skeleton_args.set_omega_P(omega_P);
+    skeleton_args.set_edgelength_TH(edgelength_TH);
+    skeleton_args.set_is_medially_centered(true);
+    skeleton_args.set_delta_area(area_TH);
+
+    Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(),
+                                            Edge_index_map(), skeleton_args);
 
     QTime time;
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     Graph g;
-    std::map<vertex_desc, Point> points_map;
-    boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, Point> > points(points_map);
+    std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> points_map;
+    GraphPointPMap points(points_map);
 
     temp_mcs->extract_skeleton(g, points);
 
@@ -579,8 +589,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     {
       std::vector<Point> line;
       line.clear();
-      Point s = points[boost::source(*ei, g)];
-      Point t = points[boost::target(*ei, g)];
+      boost::graph_traits<Graph>::vertex_descriptor sv = boost::source(*ei, g);
+      boost::graph_traits<Graph>::vertex_descriptor tv = boost::target(*ei, g);
+      Point s = points[sv];
+      Point t = points[tv];
       line.push_back(s);
       line.push_back(t);
       skeleton->polylines.push_back(line);
@@ -875,7 +887,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Correspondence_pmap corr;
+  Correspondence_map corr_map;
+  GraphCorrelationPMap corr(corr_map);
 
   skeleton_curve.clear();
   skeleton_points_map.clear();

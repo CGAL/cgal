@@ -190,7 +190,6 @@ public:
     }
 
     vertex_iterator vb, ve;
-//    points.clear();
     for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);

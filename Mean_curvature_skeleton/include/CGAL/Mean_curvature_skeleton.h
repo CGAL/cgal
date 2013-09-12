@@ -35,8 +35,9 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-
 #include <boost/graph/copy.hpp>
+
+#include <boost/iterator/transform_iterator.hpp>
 
 // Compute cotangent Laplacian
 #include <CGAL/internal/Mean_curvature_skeleton/Weights.h>
@@ -91,6 +92,9 @@
 // Inside mesh test
 #include <CGAL/Point_inside_polyhedron_3.h>
 
+// Compute bounding box
+#include <CGAL/Bbox_3.h>
+
 #include <queue>
 
 #include <Eigen/Sparse>
@@ -123,6 +127,119 @@ enum Degeneracy_algorithm_tag
 };
 
 /// @endcond
+
+template <class FT>
+struct MCF_default_solver
+{
+  typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
+};
+
+template<class HalfedgeGraph>
+class SkeletonArgs
+{
+private:
+  double omega_H;
+  double omega_P;
+  double edgelength_TH;
+  double delta_area;
+  int max_iterations;
+  bool is_medially_centered;
+
+public:
+  typedef CGAL::Bbox_3                                                   Bbox;
+  typedef typename HalfedgeGraph::Traits                                 Kernel;
+  typedef typename Kernel::Point_3                                       Point;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator   vertex_iterator;
+
+  SkeletonArgs(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
+    delta_area(0.0001), max_iterations(500), is_medially_centered(true)
+  {
+    vertex_iterator vb, ve;
+    boost::tie(vb, ve) = boost::vertices(P);
+    Bbox bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p),
+                             boost::make_transform_iterator(ve, v_to_p));
+    double diag = diagonal(bbox);
+    edgelength_TH = 0.002 * diag;
+  }
+
+  // Functor used to transform the vertex iterator to point iterator
+  static Point v_to_p(vertex_descriptor v)
+  {
+    return v->point();
+  }
+
+  // compute the diagonal length for a bounding box
+  double diagonal(Bbox& bbox)
+  {
+    double dx = bbox.xmax() - bbox.xmin();
+    double dy = bbox.ymax() - bbox.ymin();
+    double dz = bbox.zmax() - bbox.zmin();
+
+    double diag = dx * dx + dy * dy + dz * dz;
+    return sqrt(diag);
+  }
+
+  double get_omega_H()
+  {
+    return omega_H;
+  }
+
+  double get_omega_P()
+  {
+    return omega_P;
+  }
+
+  double get_edgelength_TH()
+  {
+    return edgelength_TH;
+  }
+
+  double get_delta_area()
+  {
+    return delta_area;
+  }
+
+  int get_max_iterations()
+  {
+    return max_iterations;
+  }
+
+  bool get_is_medially_centered()
+  {
+    return is_medially_centered;
+  }
+
+  void set_omega_H(double value)
+  {
+    omega_H = value;
+  }
+
+  void set_omega_P(double value)
+  {
+    omega_P = value;
+  }
+
+  void set_edgelength_TH(double value)
+  {
+    edgelength_TH = value;
+  }
+
+  void set_delta_area(double value)
+  {
+    delta_area = value;
+  }
+
+  void set_max_iterations(int value)
+  {
+    max_iterations = value;
+  }
+
+  void set_is_medially_centered(bool value)
+  {
+    is_medially_centered = value;
+  }
+};
 
 /// \ingroup PkgMeanCurvatureSkeleton3
 /// @brief Class providing the functionalities for extracting
@@ -169,17 +286,17 @@ template <class HalfedgeGraph,
           class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> >
 #else
 template <class HalfedgeGraph,
+          class Graph,
           class VertexIndexMap,
           class EdgeIndexMap,
-          class HalfedgeGraphPointPMap = typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type,
-          class SparseLinearAlgebraTraits_d = CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> >,
-          class Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>,
-          class GraphCorrelationPMap = typename boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, std::vector<int> > >,
-          class GraphPointPMap = typename boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, typename HalfedgeGraph::Traits::Point_3 > >,
+          class GraphCorrelationPMap,
+          class HalfedgeGraphPointPMap,
+          class GraphPointPMap,
+          class SparseLinearAlgebraTraits_d,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
 #endif
-class Mean_curvature_skeleton
+class MCF_Skeleton
 {
 // Public types
 public:
@@ -249,8 +366,6 @@ private:
   EdgeIndexMap edge_id_pmap;
   /** storing the point for HalfedgeGraph vertex_descriptor */
   HalfedgeGraphPointPMap hg_point_pmap;
-//  /** storing the point for Graph vertex_descriptor */
-//  GraphPointPMap g_point_map;
 
   /** controls the velocity of movement and approximation quality */
   double omega_H;
@@ -269,6 +384,8 @@ private:
   double original_area;
   /** maximum number of iterations */
   int max_iterations;
+  /** should the skeleton be medially centered? */
+  bool is_medially_centered;
 
   /** cotangent weight calculator */
   Weight_calculator weight_calculator;
@@ -297,12 +414,8 @@ private:
   std::map<int, std::vector<int> > correspondence;
   /** record the correspondence between skeletal points
    *  and original surface points */
-  std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-           std::vector<int> > skeleton_to_surface_map;
-  GraphCorrelationPMap skeleton_to_surface;
+  std::map<vertex_desc, std::vector<int> > skeleton_to_surface_map;
 
-  /** should the skeleton be medially centered? */
-  bool is_medially_centered;
   /** record the corresponding pole of a point */
   std::map<int, int> poles;
   /** the normal of surface points */
@@ -316,35 +429,8 @@ public:
   /// \name Constructor and Destructor
   /// @{
 
-  /// \cond SKIP_FROM_MANUAL
-  Mean_curvature_skeleton(HalfedgeGraph& P,
-                          VertexIndexMap Vertex_index_map,
-                          EdgeIndexMap Edge_index_map,
-                          double omega_H,
-                          double edgelength_TH,
-                          double delta_area = 1e-5,
-                          int max_iterations = 500
-                          )
-    :polyhedron(P),
-     vertex_id_pmap(Vertex_index_map),
-     edge_id_pmap(Edge_index_map),
-     hg_point_pmap(boost::get(vertex_point, polyhedron)),
-     omega_H(omega_H),
-     edgelength_TH(edgelength_TH),
-     alpha_TH(110),
-     zero_TH(1e-7),
-     delta_area(delta_area),
-     max_iterations(max_iterations),
-     weight_calculator(Weight_calculator()),
-     is_medially_centered(false),
-     skeleton_to_surface(skeleton_to_surface_map)
-  {
-    init();
-  }
-  /// \endcond
-
   /**
-   * The constructor of a Mean_curvature_skeleton object.
+   * The constructor of a MCF_Skeleton object.
    *
    * @pre the polyhedron is a watertight triangular mesh
    * @param P
@@ -367,31 +453,17 @@ public:
    * @param max_iterations
    *        the maximum number of iterations to run
    */
-  Mean_curvature_skeleton(HalfedgeGraph& P,
-                          VertexIndexMap Vertex_index_map,
-                          EdgeIndexMap Edge_index_map,
-                          double omega_H,
-                          double omega_P,
-                          double edgelength_TH,
-                          bool is_medially_centered,
-                          double delta_area = 1e-5,
-                          int max_iterations = 500
-                          )
+  MCF_Skeleton(HalfedgeGraph& P,
+              VertexIndexMap Vertex_index_map,
+              EdgeIndexMap Edge_index_map,
+              SkeletonArgs<HalfedgeGraph> Skeleton_args
+              )
     :polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
-     hg_point_pmap(boost::get(vertex_point, polyhedron)),
-     omega_H(omega_H),
-     omega_P(omega_P),
-     edgelength_TH(edgelength_TH),
-     alpha_TH(110),
-     zero_TH(1e-7),
-     delta_area(delta_area),
-     max_iterations(max_iterations),
-     weight_calculator(Weight_calculator()),
-     is_medially_centered(is_medially_centered),
-     skeleton_to_surface(skeleton_to_surface_map)
+     hg_point_pmap(boost::get(vertex_point, P))
   {
+    init_args(Skeleton_args);
     init();
   }
 
@@ -522,9 +594,31 @@ public:
    * @param corr
    *        for each skeletal point, record its correspondent surface points
    */
-  void get_correspondent_vertices(GraphCorrelationPMap& corr)
+  void get_correspondent_vertices(GraphCorrelationPMap& skeleton_to_surface)
   {
-    corr = skeleton_to_surface;
+    typename std::map<vertex_desc, std::vector<int> >::iterator iter;
+    for (iter = skeleton_to_surface_map.begin();
+         iter != skeleton_to_surface_map.end(); ++iter)
+    {
+      vertex_desc i = iter->first;
+
+      skeleton_to_surface[i] = std::vector<int>();
+      for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
+      {
+        int id = skeleton_to_surface_map[i][j];
+        if (correspondence.find(id) != correspondence.end())
+        {
+          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
+                                        correspondence[id].begin(),
+                                        correspondence[id].end());
+        }
+
+        if (id < max_id)
+        {
+          skeleton_to_surface[i].push_back(id);
+        }
+      }
+    }
   }
 
   /**
@@ -581,12 +675,11 @@ public:
    *        for each skeletal point, record its correspondent surface points
    */
   void extract_skeleton(Graph& g, GraphPointPMap& points,
-                        GraphCorrelationPMap& corr)
+                        GraphCorrelationPMap& skeleton_to_surface)
   {
     run_to_converge();
     convert_to_skeleton(g, points);
-
-    corr = skeleton_to_surface;
+    get_correspondent_vertices(skeleton_to_surface);
   }
 
   /// @cond CGAL_DOCUMENT_INTERNAL
@@ -794,31 +887,8 @@ public:
   void convert_to_skeleton(Graph& g, GraphPointPMap& points)
   {
     Skeleton skeleton(polyhedron);
-    std::map<vertex_desc, std::vector<int> > record;
-    skeleton.extract_skeleton(g, points, record);
 
-    typename std::map<vertex_desc, std::vector<int> >::iterator iter;
-    for (iter = record.begin(); iter != record.end(); ++iter)
-    {
-      vertex_desc i = iter->first;
-
-      skeleton_to_surface[i] = std::vector<int>();
-      for (size_t j = 0; j < record[i].size(); ++j)
-      {
-        int id = record[i][j];
-        if (correspondence.find(id) != correspondence.end())
-        {
-          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
-                                        correspondence[id].begin(),
-                                        correspondence[id].end());
-        }
-
-        if (id < max_id)
-        {
-          skeleton_to_surface[i].push_back(id);
-        }
-      }
-    }
+    skeleton.extract_skeleton(g, points, skeleton_to_surface_map);
   }
 
   /// \endcond
@@ -831,6 +901,20 @@ private:
   // --------------------------------------------------------------------------
   // Initialization
   // --------------------------------------------------------------------------
+
+  /// Initialize the parameters for MCF_Skeleton
+  void init_args(SkeletonArgs<HalfedgeGraph> Skeleton_args)
+  {
+    omega_H = Skeleton_args.get_omega_H();
+    omega_P = Skeleton_args.get_omega_P();
+    edgelength_TH = Skeleton_args.get_edgelength_TH();
+    delta_area = Skeleton_args.get_delta_area();
+    max_iterations = Skeleton_args.get_max_iterations();
+    is_medially_centered = Skeleton_args.get_is_medially_centered();
+    weight_calculator = Weight_calculator();
+    alpha_TH = 110;
+    zero_TH = 1e-7;
+  }
 
   /// Initialize some global data structures such as vertex id.
   void init()
@@ -1566,243 +1650,30 @@ private:
 ///        is less than `delta_area`
 /// @param max_iterations
 ///        the maximum number of iterations to run
-template <class SparseLinearAlgebraTraits_d,
-          class HalfedgeGraph,
+template <class HalfedgeGraph,
+          class Graph,
           class VertexIndexMap,
           class EdgeIndexMap,
-          class Graph>
-void extract_medial_skeleton(Graph& g,
-                            std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                            typename HalfedgeGraph::Traits::Point_3>& points,
-                            std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                            std::vector<int> >& corr,
-                            HalfedgeGraph& P,
-                            VertexIndexMap Vertex_index_map,
-                            EdgeIndexMap Edge_index_map,
-                            double omega_H,
-                            double omega_P,
-                            double edgelength_TH,
-                            double delta_area = 1e-5,
-                            int max_iterations = 500)
+          class GraphCorrelationPMap,
+          class HalfedgeGraphPointPMap,
+          class GraphPointPMap,
+          class SparseLinearAlgebraTraits_d>
+void extract_skeleton(HalfedgeGraph& P,
+                     VertexIndexMap Vertex_index_map,
+                     EdgeIndexMap Edge_index_map,
+                     GraphCorrelationPMap Graph_correlation_map,
+                     SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                     Graph& g, GraphPointPMap& points)
 {
-  typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
-  VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
+  typedef CGAL::MCF_Skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
+  GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, SparseLinearAlgebraTraits_d> MCFSKEL;
 
-  MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, omega_P, edgelength_TH, true, delta_area, max_iterations);
+  MCFSKEL mcs(P, Vertex_index_map, Edge_index_map, Graph_correlation_map, Skeleton_args);
 
   mcs.run_to_converge();
   mcs.convert_to_skeleton(g, points);
 
-  mcs.get_correspondent_vertices(corr);
-}
-
-/// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract a medially centered curve skeleton for the mesh.
-///
-/// @pre the polyhedron is a watertight triangular mesh
-///
-/// @tparam SparseLinearAlgebraTraits_d
-///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
-/// @tparam VertexIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Mean_curvature_skeleton::vertex_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam EdgeIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Mean_curvature_skeleton::edge_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam Graph
-///         a model of boost::adjacency_list
-///         data structure for skeleton curve
-///
-/// @param g
-///        a boost::graph containing the connectivity of the skeleton
-/// @param points
-///        the locations of the skeletal points
-/// @param P
-///        triangulated surface mesh used to extract skeleton
-/// @param Vertex_index_map
-///        property map for associating an id to each vertex
-/// @param Edge_index_map
-///        property map for associating an id to each edge
-/// @param omega_H
-///        controls the velocity of movement and approximation quality
-/// @param omega_P
-///        controls the smoothness of the medial approximation
-/// @param edgelength_TH
-///        edges with length less than `edgelength_TH` will be collapsed
-/// @param delta_area
-///        run_to_converge will stop if the change of area in one iteration
-///        is less than `delta_area`
-/// @param max_iterations
-///        the maximum number of iterations to run
-template <class SparseLinearAlgebraTraits_d,
-          class HalfedgeGraph,
-          class VertexIndexMap,
-          class EdgeIndexMap,
-          class Graph>
-void extract_medial_skeleton(Graph& g,
-                            std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                            typename HalfedgeGraph::Traits::Point_3>& points,
-                            HalfedgeGraph& P,
-                            VertexIndexMap Vertex_index_map,
-                            EdgeIndexMap Edge_index_map,
-                            double omega_H,
-                            double omega_P,
-                            double edgelength_TH,
-                            double delta_area = 1e-5,
-                            int max_iterations = 500)
-{
-  typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
-  VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
-
-  MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, omega_P, edgelength_TH, true, delta_area, max_iterations);
-
-  mcs.run_to_converge();
-  mcs.convert_to_skeleton(g, points);
-}
-
-/// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract a medially centered curve skeleton for the mesh.
-///
-/// @pre the polyhedron is a watertight triangular mesh
-///
-/// @tparam SparseLinearAlgebraTraits_d
-///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
-/// @tparam VertexIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Mean_curvature_skeleton::vertex_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam EdgeIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Mean_curvature_skeleton::edge_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam Graph
-///         a model of boost::adjacency_list
-///         data structure for skeleton curve
-///
-/// @param g
-///        a boost::graph containing the connectivity of the skeleton
-/// @param points
-///        the locations of the skeletal points
-/// @param corr
-///        for each skeletal point, record its correspondent surface points
-/// @param P
-///        triangulated surface mesh used to extract skeleton
-/// @param Vertex_index_map
-///        property map for associating an id to each vertex
-/// @param Edge_index_map
-///        property map for associating an id to each edge
-/// @param omega_H
-///        controls the velocity of movement and approximation quality
-/// @param edgelength_TH
-///        edges with length less than `edgelength_TH` will be collapsed
-/// @param delta_area
-///        run_to_converge will stop if the change of area in one iteration
-///        is less than `delta_area`
-/// @param max_iterations
-///        the maximum number of iterations to run
-template <class SparseLinearAlgebraTraits_d,
-          class HalfedgeGraph,
-          class VertexIndexMap,
-          class EdgeIndexMap,
-          class Graph>
-void extract_skeleton(Graph& g,
-                      std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                      typename HalfedgeGraph::Traits::Point_3>& points,
-                      std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                      std::vector<int> >& corr,
-                      HalfedgeGraph& P,
-                      VertexIndexMap Vertex_index_map,
-                      EdgeIndexMap Edge_index_map,
-                      double omega_H,
-                      double edgelength_TH,
-                      double delta_area = 1e-5,
-                      int max_iterations = 500)
-{
-  typedef Mean_curvature_skeleton<HalfedgeGraph, SparseLinearAlgebraTraits_d,
-  VertexIndexMap, EdgeIndexMap, Graph> MCFSKEL;
-
-  MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, 0.0, edgelength_TH, false, delta_area, max_iterations);
-
-  mcs.run_to_converge();
-  mcs.convert_to_skeleton(g, points);
-
-  mcs.get_correspondent_vertices(corr);
-}
-
-/// \ingroup PkgMeanCurvatureSkeleton3
-/// @brief Extract a medially centered curve skeleton for the mesh.
-///
-/// @pre the polyhedron is a watertight triangular mesh
-///
-/// @tparam SparseLinearAlgebraTraits_d
-///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
-/// @tparam HalfedgeGraph
-///         a model of `HalfedgeGraph`
-/// @tparam VertexIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Mean_curvature_skeleton::vertex_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam EdgeIndexMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with Mean_curvature_skeleton::edge_descriptor as key and
-///         `unsigned int` as value type
-/// @tparam Graph
-///         a model of boost::adjacency_list
-///         data structure for skeleton curve
-///
-/// @param g
-///        a boost::graph containing the connectivity of the skeleton
-/// @param points
-///        the locations of the skeletal points
-/// @param P
-///        triangulated surface mesh used to extract skeleton
-/// @param Vertex_index_map
-///        property map for associating an id to each vertex
-/// @param Edge_index_map
-///        property map for associating an id to each edge
-/// @param omega_H
-///        controls the velocity of movement and approximation quality
-/// @param edgelength_TH
-///        edges with length less than `edgelength_TH` will be collapsed
-/// @param delta_area
-///        run_to_converge will stop if the change of area in one iteration
-///        is less than `delta_area`
-/// @param max_iterations
-///        the maximum number of iterations to run
-template <class SparseLinearAlgebraTraits_d,
-          class HalfedgeGraph,
-          class VertexIndexMap,
-          class EdgeIndexMap,
-          class Graph>
-void extract_skeleton(Graph& g,
-                      std::map<typename boost::graph_traits<Graph>::vertex_descriptor,
-                      typename HalfedgeGraph::Traits::Point_3>& points,
-                      HalfedgeGraph& P,
-                      VertexIndexMap Vertex_index_map,
-                      EdgeIndexMap Edge_index_map,
-                      double omega_H,
-                      double edgelength_TH,
-                      double delta_area = 1e-5,
-                      int max_iterations = 500)
-{
-  typedef Mean_curvature_skeleton<HalfedgeGraph,
-  VertexIndexMap, EdgeIndexMap> MCFSKEL;
-
-  MCFSKEL mcs(P, Vertex_index_map, Edge_index_map,
-  omega_H, 0.0, edgelength_TH, false);
-
-  mcs.run_to_converge();
-  boost::associative_property_map<std::map<typename boost::graph_traits<Graph>::vertex_descriptor, typename HalfedgeGraph::Traits::Point_3 > > points_pmap(points);
-  mcs.convert_to_skeleton(g, points_pmap);
+  mcs.get_correspondent_vertices(Graph_correlation_map);
 }
 
 } //namespace CGAL
