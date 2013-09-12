@@ -168,9 +168,17 @@ public:
 #endif
   /// @}
 
-  typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor	vertex_descriptor; /**< The type for vertex representative objects */
-  typedef typename boost::graph_traits<Halfedge_graph>::edge_descriptor		edge_descriptor;   /**< The type for edge representative objects */
-  typedef typename boost::property_traits<Vertex_point_map>::value_type Point; /**<The 3D point type*/
+/// \name Public Types
+/// @{
+  /// The type for vertex representative objects
+  typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor	vertex_descriptor;
+  /// The type for edge representative objects
+  typedef typename boost::graph_traits<Halfedge_graph>::edge_descriptor		edge_descriptor;
+  /// The 3D point type
+  typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
+  /// %Iterator over vertices in the region-of-interest.
+  typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_vertex_const_iterator;
+/// @}
 
 private:
   typedef Deform_mesh<HG, VIM, EIM, TAG, WC, ST, CR> Self;
@@ -185,11 +193,7 @@ private:
 
 public:
 
-   /** Iterator over vertex descriptors in the region-of-interest. Its value type is `const vertex_descriptor`*/
-  typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_vertex_const_iterator;
-
 // Data members.
-private:
   Halfedge_graph& m_halfedge_graph;															/**< Source triangulated surface mesh for modeling */
 
   std::vector<Point> original;                        ///< original positions of roi (size: ros + boundary_of_ros)
