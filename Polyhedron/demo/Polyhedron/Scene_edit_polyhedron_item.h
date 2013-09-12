@@ -123,7 +123,7 @@ public:
     frame->setPosition(frame_initial_center);
     frame->blockSignals(oldState);
   }
-  void assign()
+  void set_target_positions()
   {
     std::vector<vertex_descriptor>::iterator hb = handle_group.begin();
     for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
@@ -132,7 +132,7 @@ public:
       qglviewer::Vec rotated = frame->orientation() * dif_from_initial_center;
       qglviewer::Vec rotated_and_translated = rotated + frame->position();
 
-      deform_mesh->assign(*hb, Point(rotated_and_translated.x, rotated_and_translated.y, rotated_and_translated.z) );
+      deform_mesh->set_target_position(*hb, Point(rotated_and_translated.x, rotated_and_translated.y, rotated_and_translated.z) );
     }
   }
 

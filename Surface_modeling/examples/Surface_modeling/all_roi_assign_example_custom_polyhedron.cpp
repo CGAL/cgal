@@ -122,9 +122,9 @@ int main()
   }
 
 //// DEFORM SECTION ////
-  // now use assign() to provide constained positions of controls
+  // now use set_target_position() to provide constained positions of controls
   Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60); // target position of control_1
-  deform_mesh.assign(control_1, constrained_pos_1);
+  deform_mesh.set_target_position(control_1, constrained_pos_1);
   // note that we only assign a constraint for control_1, other controls will be constrained to last assigned positions
 
   // deform the mesh, now positions of vertices of 'mesh' will be changed
@@ -132,7 +132,7 @@ int main()
   deform_mesh.deform(); // you can call deform multiple times if you like
 
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
-  deform_mesh.assign(control_2, constrained_pos_2);
+  deform_mesh.set_target_position(control_2, constrained_pos_2);
   // note that control_1 will be still constrained to constrained_pos_1,
 
   deform_mesh.deform(10, 0.0); // deform(unsigned int iterations, double tolerance) can be called with instant parameters
@@ -154,7 +154,7 @@ int main()
 
 //// DEFORM SECTION AGAIN////
   Deform_mesh::Point constrained_pos_3(0.55, 0.30, -0.70);
-  deform_mesh.assign(control_3, constrained_pos_3);
+  deform_mesh.set_target_position(control_3, constrained_pos_3);
 
   deform_mesh.deform(15, 0.0);
 

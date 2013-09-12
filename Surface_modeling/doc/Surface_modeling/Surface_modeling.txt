@@ -98,7 +98,7 @@ This is done by setting the final position of the control vertices, or setting a
 to be applied to a control vertex or a range of control vertices.
 
 Note that the rotation and translation are always applied on the <em>original positions</em> of the control vertices. Hence,
-they are not cumulative (i.e. any call to `Deform_mesh::rotate()`, `Deform_mesh::translate()`, or `Deform_mesh::assign()`
+they are not cumulative (i.e. any call to `Deform_mesh::rotate()`, `Deform_mesh::translate()`, or `Deform_mesh::set_target_position()`
 overrides the previous call). In particular, in an interactive deformation session, the user is responsible for composing the
 affine transformations. The rationale for this choice is increase the numerical stability of the affine transformations.
 
@@ -122,7 +122,7 @@ This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
 
 \subsubsection Example_1 Using the Whole Mesh as Region-of-interest
 In this example, the whole mesh is used as ROI and a few vertices are added as control vertices.
-`Deform_mesh::assign()` is used for setting the target positions of the control vertices.
+`Deform_mesh::set_target_position()` is used for setting the target positions of the control vertices.
 
 \cgalExample{Surface_modeling/all_roi_assign_example.cpp}
 

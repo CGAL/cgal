@@ -90,7 +90,7 @@ void Scene_edit_polyhedron_item::deform()
   if(!is_there_any_handle()) { return; }
 
   for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
-  { it->assign(); }
+  { it->set_target_positions(); }
   deform_mesh.deform();
 
   poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
