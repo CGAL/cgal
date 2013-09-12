@@ -24,7 +24,6 @@
 
 #include <iostream>
 #include <vector>
-#include <list>
 #include <set>
 #include <map>
 #include <utility>
@@ -81,7 +80,7 @@ public:
   static double heap_swap_t;
   static double input_v_t;
   static double quicksort_t;
-  static int different_closer;
+
 private:
   typedef std::vector<Point_2>          Pvec;
   typedef std::pair<Point_2, Point_2>   Pair;
@@ -95,7 +94,7 @@ private:
   std::map<Pair, int> edx;        //index of edge in the heap
   std::vector<Pair>  heap;
 
-  Pvec vs;        //angular sorted vertices
+  Pvec vs;                        //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
   bool is_big_cone;               //whether the angle of visibility_cone is greater than pi.
@@ -103,7 +102,6 @@ private:
   Vertex_const_handle query_vertex;
   Point_2         source;
   Point_2         target;
-  static const int M=10;
 
 
 public:
@@ -112,8 +110,8 @@ public:
     geom_traits = p_arr->geometry_traits();
   }
 
-  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& out_arr) {
-    out_arr.clear();
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& arr_out) {
+    arr_out.clear();
     bad_edge_handles.clear();
     this->q = q;
 
@@ -194,8 +192,7 @@ public:
       Pvec polygon_out(first, last+1);
       if (is_vertex_query)
         polygon_out.push_back(q);
-      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
-      //build_arr(polygon_out, out_arr);
+      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
     else {
       Pvec polygon_out(polygon.begin(), first+1);
@@ -203,35 +200,31 @@ public:
       for (int i = big_idx; i != polygon.size(); i++) {
         polygon_out.push_back(polygon[i]);
       }
-      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, out_arr);
-     // build_arr(polygon_out, out_arr);
+      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
 
+    conditional_regularize(arr_out, Regularization_tag());
 
-
-    conditional_regularize(out_arr, Regularization_tag());
-
-    if (out_arr.faces_begin()->is_unbounded())
-      return ++out_arr.faces_begin();
+    if (arr_out.faces_begin()->is_unbounded())
+      return ++arr_out.faces_begin();
     else
-      return out_arr.faces_begin();
+      return arr_out.faces_begin();
 
   }
 
-  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) {
-    out_arr.clear();
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& arr_out) {
+    arr_out.clear();
     this->q = q;
     is_vertex_query = false;
     is_edge_query = false;
 
     visibility_region_impl(f, q);
-    Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon, out_arr);
-    //build_arr(polygon, out_arr);
-    conditional_regularize(out_arr, Regularization_tag());
-    if (out_arr.faces_begin()->is_unbounded())
-      return ++out_arr.faces_begin();
+    Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon, arr_out);
+    conditional_regularize(arr_out, Regularization_tag());
+    if (arr_out.faces_begin()->is_unbounded())
+      return ++arr_out.faces_begin();
     else
-      return out_arr.faces_begin();
+      return arr_out.faces_begin();
   }
 
 bool is_attached() {
@@ -260,14 +253,7 @@ private:
                     const Point_2& dp,
                     const Point_2& p1,
                     const Point_2& p2) {
-//    if (CGAL::collinear(q, dp, p1))
-//      return quadrant(q, p1) == quadrant(q, dp);
-
-//    if (CGAL::collinear(q, dp, p2))
-//      return quadrant(q, p2) == quadrant(q, dp);
-
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
-
   }
 
   void funnel(int i, int j) {
@@ -434,40 +420,6 @@ private:
           heap_insert(insert_e[j]);
         }
       }
-
-//      Point_2 p_remove, p_insert;
-
-//      for (int j=0; j!=neighbors[v].size(); j++) {
-//        Pair e = create_pair(v, neighbors[v][j]);
-//        if (edx.count(e)) {
-//          p_remove = neighbors[v][j];
-//          remove_cnt++;
-//        }
-//        else {
-//          p_insert = neighbors[v][j];
-//          insert_cnt++;
-//        }
-//      }
-//      if (remove_cnt == 1 && insert_cnt == 1) {
-//        //it's a special case that one edge is removed and one is inserted.
-//        //just replace the old one by the new one. no heap operation is needed.
-//        Pair e_out = create_pair(v, p_remove);
-//        Pair e_in = create_pair(v, p_insert);
-//        heap[edx[e_out]] = e_in;
-//        edx[e_in] = edx[e_out];
-//        edx.erase(e_out);
-//      }
-//      else {
-//        for (int j=0; j!=neighbors[v].size(); j++) {
-//          Pair e = create_pair(v, neighbors[v][j]);
-//          if (edx.count(e)) {
-//            heap_remove(edx[e]);
-//          }
-//          else {
-//            heap_insert(e);
-//          }
-//        }
-//      }
 
       if (closest_e != heap.front()) {
         //when the closest edge changed
@@ -702,87 +654,6 @@ private:
       }
     }
   }
-
-//  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) const{
-//    Point_2 touch1, touch2, end1, end2;
-//    int touch_ends_1(0), touch_ends_2(0);
-//    if (CGAL::collinear(q, dp, e1.first)) {
-//      touch_ends_1++;
-//      touch1 = e1.first;
-//      end1 = e1.second;
-//      if (CGAL::collinear(q, dp, e1.second)) {
-//        touch_ends_1++;
-//        if (CGAL::compare_distance_to_point(q, end1, touch1)==CGAL::SMALLER) {
-//          touch1 = e1.second;
-//          end1 = e1.first;
-//        }
-//      }
-//    }
-//    else {
-//      if (CGAL::collinear(q, dp, e1.second)) {
-//        touch_ends_1++;
-//        touch1 = e1.second;
-//        end1 = e1.first;
-//      }
-//    }
-
-//    if (CGAL::collinear(q, dp, e2.first)) {
-//      touch_ends_2++;
-//      touch2 = e2.first;
-//      end2 = e2.second;
-//      if (CGAL::collinear(q, dp, e2.second)) {
-//        touch_ends_2++;
-//        if (CGAL::compare_distance_to_point(q, end2, touch2)==CGAL::SMALLER) {
-//          touch2 = e2.second;
-//          end2 = e2.first;
-//        }
-//      }
-//    }
-//    else {
-//      if (CGAL::collinear(q, dp, e2.second)) {
-//        touch_ends_2++;
-//        touch2 = e2.second;
-//        end2 = e2.first;
-//      }
-//    }
-
-//    if (touch_ends_1>0 && touch_ends_2>0) {
-//      if (touch1 == touch2) {
-//        if (CGAL::right_turn(q, touch1, end1) && !CGAL::right_turn(q, touch1, end2))
-//            return true;
-//        if (CGAL::right_turn(q, touch1, end2) && !CGAL::right_turn(q, touch1, end1))
-//            return false;
-//        switch (CGAL::orientation(q, touch1, end1)) {
-//        case CGAL::COLLINEAR:
-//          return (CGAL::right_turn(q, touch1, end2));
-//        case CGAL::RIGHT_TURN:
-//          return (CGAL::right_turn(end1, touch1, end2));
-//        case CGAL::LEFT_TURN:
-//          return (CGAL::left_turn(end1, touch1, end2));
-//        }
-//      }
-//      else
-//        return CGAL::compare_distance_to_point(q, touch1, touch2)==CGAL::SMALLER;
-//    }
-
-
-//    if (touch_ends_1 == 2) {
-//      return CGAL::orientation(e2.first, e2.second, q)==CGAL::orientation(e2.first, e2.second, e1.first);
-//    }
-//    else {
-//      CGAL::Orientation oq = orientation(e1.first, e1.second, q);
-//      CGAL::Orientation o_fst = orientation(e1.first, e1.second, e2.first);
-//      CGAL::Orientation o_snd = orientation(e1.first, e1.second, e2.second);
-//      if (o_fst == CGAL::COLLINEAR)
-//        return oq!=o_snd;
-//      if (o_snd == CGAL::COLLINEAR)
-//        return oq!=o_fst;
-//      if (o_fst == o_snd)
-//        return oq!=o_fst;
-//      else
-//        return CGAL::orientation(e2.first, e2.second, e1.first)==CGAL::orientation(e2.first, e2.second, q);
-//    }
-//  }
 
   Point_2 ray_seg_intersection(
       const Point_2& q, const Point_2& dp, // the ray
@@ -1031,11 +902,11 @@ private:
   }
 
 
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
-    regularize_output(out_arr);
+  void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_true) {
+    regularize_output(arr_out);
   }
 
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_false) {
     //do nothing
   }
 
@@ -1070,8 +941,6 @@ template <typename Arrangement_2, typename RegularizationTag>
 double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_v_t = 0;
 template <typename Arrangement_2, typename RegularizationTag>
 double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::quicksort_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-int CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::different_closer = 0;
 
 } // end namespace CGAL
 
