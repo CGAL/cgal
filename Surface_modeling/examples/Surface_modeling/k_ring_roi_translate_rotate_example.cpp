@@ -104,8 +104,8 @@ int main()
   Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
   Eigen::Vector3d vect(0, 0, 0);
 
-  deform_mesh.rotate(controls_1_map.begin(), controls_1_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
-  deform_mesh.rotate(controls_2_map.begin(), controls_2_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate_and_translate(controls_1_map.begin(), controls_1_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
+  deform_mesh.rotate_and_translate(controls_2_map.begin(), controls_2_map.end(), Deform_mesh::Point(0,0,0), quad, vect);
 
   deform_mesh.deform();
 
@@ -114,7 +114,7 @@ int main()
   output.close();
 
   // Note that translate and rotate are not cumulative,
-  // they just use original positions (positions at the time of construction) of the controls while calculating target positions
+  // they just use original positions (positions at the time of construction) of the control verticess while calculating target positions
   deform_mesh.translate(controls_1_map.begin(), controls_1_map.end(), Eigen::Vector3d(0,0.30,0));
   deform_mesh.translate(controls_2_map.begin(), controls_2_map.end(), Eigen::Vector3d(0,0.30,0));
 
