@@ -170,9 +170,9 @@ public:
 
 /// \name Public Types
 /// @{
-  /// The type for vertex representative objects
+  /// The type for vertex descriptor
   typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor	vertex_descriptor;
-  /// The type for edge representative objects
+  /// The type for edge descriptor
   typedef typename boost::graph_traits<Halfedge_graph>::edge_descriptor		edge_descriptor;
   /// The 3D point type
   typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
