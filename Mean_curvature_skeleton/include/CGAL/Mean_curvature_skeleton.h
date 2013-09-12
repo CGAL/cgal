@@ -1705,6 +1705,29 @@ template <class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class GraphCorrelationPMap,
+          class GraphPointPMap,
+          class HalfedgeGraphPointPMap>
+void extract_skeleton(HalfedgeGraph& P,
+                      VertexIndexMap Vertex_index_map,
+                      EdgeIndexMap Edge_index_map,
+                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      Graph& g, GraphPointPMap& points,
+                      GraphCorrelationPMap& skeleton_to_surface)
+{
+  //typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type HalfedgeGraphPointPMap;
+  typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
+
+  extract_skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
+                   GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap,
+                   Sparse_linear_solver>
+      (P, Vertex_index_map, Edge_index_map, Skeleton_args, g, points, skeleton_to_surface);
+}
+
+template <class HalfedgeGraph,
+          class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class GraphCorrelationPMap,
           class GraphPointPMap>
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
