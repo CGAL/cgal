@@ -36,13 +36,6 @@ struct Custom_point_3{
   }
 };
 
-//needed by CGAL/boost/graph/properties_Polyhedron_3.h
-namespace CGAL{
-  double squared_distance(const Custom_point_3& p1, const Custom_point_3& p2){
-    return std::pow(p1.x()-p2.x(),2) + std::pow(p1.y()-p2.y(), 2) + std::pow(p1.z()-p2.z(), 2);
-  }
-}
-
 #include <CGAL/basic.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
