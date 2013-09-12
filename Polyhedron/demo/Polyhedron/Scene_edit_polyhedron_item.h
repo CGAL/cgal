@@ -328,7 +328,7 @@ public:
   
   bool erase_handle(vertex_descriptor v)
   {
-    if(deform_mesh.erase_control(v)) // API should be safe enough to do that (without checking empty handle group etc.)
+    if(deform_mesh.erase_control_vertex(v)) // API should be safe enough to do that (without checking empty handle group etc.)
     {
       refresh_all_handle_centers(); // since we don't know which handle group that v erased of, refresh all
       return true;
@@ -360,7 +360,7 @@ public:
       delete it->frame;
     }
     handle_frame_map.clear();
-    deform_mesh.clear_roi_vertices();
+    deform_mesh.reset();
 
     create_handle_group(); // create one new handle group
   } 
@@ -405,7 +405,7 @@ public:
       {
         delete it->frame;        
         for(std::vector<vertex_descriptor>::iterator v_it = it->handle_group.begin(); v_it != it->handle_group.end(); ++v_it) {
-          deform_mesh.erase_control(*v_it);
+          deform_mesh.erase_control_vertex(*v_it);
         }
         handle_frame_map.erase(it);
         break;

@@ -379,7 +379,7 @@ public:
    * @param vd the vertex to be erased
    * @return `true` if the removal is successful
    */
-  bool erase_control(vertex_descriptor vd)
+  bool erase_control_vertex(vertex_descriptor vd)
   {
     if(!is_control_vertex(vd)) { return false; }
     
@@ -429,7 +429,7 @@ public:
   {
     if(!is_roi_vertex(vd)) { return false; }  
     
-    erase_control(vd); // also erase from being control
+    erase_control_vertex(vd); // also erase from being control
 
     typename std::vector<vertex_descriptor>::iterator it = std::find(roi.begin(), roi.end(), vd);
     if(it != roi.end())
