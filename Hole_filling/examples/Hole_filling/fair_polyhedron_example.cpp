@@ -13,7 +13,7 @@ typedef Polyhedron::Vertex_iterator Vertex_iterator;
 typedef Polyhedron::Halfedge_around_vertex_circulator Halfedge_around_vertex_circulator;
 
 // extract vertices which are at most k (inclusive) far from vertex v
-std::vector<Vertex_handle> extract_k_ring(const Polyhedron &P, Vertex_handle v, int k)
+std::vector<Vertex_handle> extract_k_ring(Vertex_handle v, int k)
 {
   std::map<Vertex_handle, int>  D;
   std::vector<Vertex_handle>    Q;
@@ -45,7 +45,7 @@ int main() {
 
   Vertex_iterator v = poly.vertices_begin();
   std::advance(v, 8286);
-  const std::vector<Vertex_handle>& region = extract_k_ring(poly, v, 45);
+  const std::vector<Vertex_handle>& region = extract_k_ring(v, 45);
 
   bool success = CGAL::fair(poly, region.begin(), region.end());
   std::cout << "Is fairing successful: " << success << std::endl;
