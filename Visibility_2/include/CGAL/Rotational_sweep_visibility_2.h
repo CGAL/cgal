@@ -402,36 +402,36 @@ private:
       Pair closest_e = heap.front();   //save the closest edge;
       int insert_cnt(0), remove_cnt(0);
       std::vector<Point_2>& neis=neighbors[dp];
-      std::vector<Point_2> insert_ps, remove_ps;
+      std::vector<Pair> insert_e, remove_e;
 
       for (int j=0; j!=neis.size(); j++) {
-        Point_2& nei= neis[j];
+        Pair e = create_pair(dp, neis[j]);
 //        Orientation o=Visibility_2::orientation_2(geom_traits, q, dp, nei);
 /*        if (o==RIGHT_TURN ||
             (o==COLLINEAR && i>0 && Visibility_2::compare_xy_2(geom_traits, nei, vs[i-1])==EQUAL))*/
-        if (edx.count(create_pair(dp, nei))){
-          remove_ps.push_back(nei);
-          remove_cnt++;
+
+        if (edx.count(e)){
+          remove_e.push_back(e);
         }
         else {
-          insert_ps.push_back(nei);
-          insert_cnt++;
+          insert_e.push_back(e);
         }
 
       }
-      if (remove_ps.size()==1 && insert_ps.size()==1) {
-        Pair e_out = create_pair(dp, remove_ps.front());
-        Pair e_in = create_pair(dp, insert_ps.front());
-        heap[edx[e_out]] = e_in;
-        edx[e_in] = edx[e_out];
-        edx.erase(e_out);
+      insert_cnt = insert_e.size();
+      remove_cnt = remove_e.size();
+      if (remove_e.size()==1 && insert_e.size()==1) {
+        int remove_idx = edx[remove_e.front()];
+        heap[remove_idx] = insert_e.front();
+        edx[insert_e.front()] = remove_idx;
+        edx.erase(remove_e.front());
       }
       else {
-        for (int j=0; j!=remove_ps.size(); j++) {
-          heap_remove(edx[create_pair(dp, remove_ps[j])]);
+        for (int j=0; j!=remove_e.size(); j++) {
+          heap_remove(edx[remove_e[j]]);
         }
-        for (int j=0; j!=insert_ps.size(); j++) {
-          heap_insert(create_pair(dp, insert_ps[j]));
+        for (int j=0; j!=insert_e.size(); j++) {
+          heap_insert(insert_e[j]);
         }
       }
 
