@@ -399,58 +399,91 @@ private:
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
-      Point_2 v = dp;
       Pair closest_e = heap.front();   //save the closest edge;
       int insert_cnt(0), remove_cnt(0);
-      Point_2 p_remove, p_insert;
-      for (int j=0; j!=neighbors[v].size(); j++) {
-        Pair e = create_pair(v, neighbors[v][j]);
-        if (edx.count(e)) {
-          p_remove = neighbors[v][j];
+      std::vector<Point_2>& neis=neighbors[dp];
+      std::vector<Point_2> insert_ps, remove_ps;
+
+      for (int j=0; j!=neis.size(); j++) {
+        Point_2& nei= neis[j];
+//        Orientation o=Visibility_2::orientation_2(geom_traits, q, dp, nei);
+/*        if (o==RIGHT_TURN ||
+            (o==COLLINEAR && i>0 && Visibility_2::compare_xy_2(geom_traits, nei, vs[i-1])==EQUAL))*/
+        if (edx.count(create_pair(dp, nei))){
+          remove_ps.push_back(nei);
           remove_cnt++;
         }
         else {
-          p_insert = neighbors[v][j];
+          insert_ps.push_back(nei);
           insert_cnt++;
         }
+
       }
-      if (remove_cnt == 1 && insert_cnt == 1) {
-        //it's a special case that one edge is removed and one is inserted.
-        //just replace the old one by the new one. no heap operation is needed.
-        Pair e_out = create_pair(v, p_remove);
-        Pair e_in = create_pair(v, p_insert);
+      if (remove_ps.size()==1 && insert_ps.size()==1) {
+        Pair e_out = create_pair(dp, remove_ps.front());
+        Pair e_in = create_pair(dp, insert_ps.front());
         heap[edx[e_out]] = e_in;
         edx[e_in] = edx[e_out];
         edx.erase(e_out);
       }
       else {
-        for (int j=0; j!=neighbors[v].size(); j++) {
-          Pair e = create_pair(v, neighbors[v][j]);
-          if (edx.count(e)) {
-            heap_remove(edx[e]);
-            remove_cnt++;
-          }
-          else {
-            heap_insert(e);
-            insert_cnt++;
-          }
+        for (int j=0; j!=remove_ps.size(); j++) {
+          heap_remove(edx[create_pair(dp, remove_ps[j])]);
+        }
+        for (int j=0; j!=insert_ps.size(); j++) {
+          heap_insert(create_pair(dp, insert_ps[j]));
         }
       }
+
+//      Point_2 p_remove, p_insert;
+
+//      for (int j=0; j!=neighbors[v].size(); j++) {
+//        Pair e = create_pair(v, neighbors[v][j]);
+//        if (edx.count(e)) {
+//          p_remove = neighbors[v][j];
+//          remove_cnt++;
+//        }
+//        else {
+//          p_insert = neighbors[v][j];
+//          insert_cnt++;
+//        }
+//      }
+//      if (remove_cnt == 1 && insert_cnt == 1) {
+//        //it's a special case that one edge is removed and one is inserted.
+//        //just replace the old one by the new one. no heap operation is needed.
+//        Pair e_out = create_pair(v, p_remove);
+//        Pair e_in = create_pair(v, p_insert);
+//        heap[edx[e_out]] = e_in;
+//        edx[e_in] = edx[e_out];
+//        edx.erase(e_out);
+//      }
+//      else {
+//        for (int j=0; j!=neighbors[v].size(); j++) {
+//          Pair e = create_pair(v, neighbors[v][j]);
+//          if (edx.count(e)) {
+//            heap_remove(edx[e]);
+//          }
+//          else {
+//            heap_insert(e);
+//          }
+//        }
+//      }
+
       if (closest_e != heap.front()) {
         //when the closest edge changed
         if (remove_cnt > 0 && insert_cnt > 0) {
             //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
-            update_visibility(v);
+            update_visibility(dp);
         }
         if (remove_cnt == 0 && insert_cnt > 0) {
             //only add some edges, means the view ray is blocked by new edges.
             //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
           update_visibility(ray_seg_intersection(q, dp, closest_e.first, closest_e.second));
-          update_visibility(v);
+          update_visibility(dp);
         }
         if (remove_cnt > 0 && insert_cnt == 0) {
           //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
-          update_visibility(v);
+          update_visibility(dp);
           update_visibility(ray_seg_intersection(q, dp, heap.front().first, heap.front().second));
         }
       }
