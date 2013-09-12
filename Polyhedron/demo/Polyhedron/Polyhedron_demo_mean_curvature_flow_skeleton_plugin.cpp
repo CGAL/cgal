@@ -66,7 +66,8 @@ typedef boost::associative_property_map<Correspondence_map> GraphCorrelationPMap
 
 typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
 
-typedef boost::associative_property_map<std::map<boost::graph_traits<Graph>::vertex_descriptor, Polyhedron::Traits::Point_3> > GraphPointPMap;
+typedef std::map<boost::graph_traits<Graph>::vertex_descriptor, Polyhedron::Traits::Point_3> GraphPointMap;
+typedef boost::associative_property_map<GraphPointMap> GraphPointPMap;
 
 typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
 GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
@@ -196,7 +197,7 @@ public:
 
   // check if the Mean_curvature_skeleton exists
   // or has the same polyheron item
-  // check if the mesh is a watertigh triangle mesh
+  // check if the mesh is a watertight triangle mesh
   bool check_mesh(Scene_polyhedron_item* item) {
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
@@ -305,7 +306,7 @@ private:
   Polyhedron *mCopy;
 
   Graph skeleton_curve;
-  std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> skeleton_points_map;
+  GraphPointMap skeleton_points_map;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
@@ -421,7 +422,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   std::vector<double> distances;
   distances.resize(boost::num_vertices(*segment_mesh));
 
-  boost::associative_property_map<std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> > skeleton_points(skeleton_points_map);
+  GraphPointPMap skeleton_points(skeleton_points_map);
   vertex_iter gvb, gve;
   for (boost::tie(gvb, gve) = boost::vertices(skeleton_curve); gvb != gve; ++gvb)
   {
@@ -477,7 +478,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segment_mesh);
   scene->addItem(item_segmentation);
   item_segmentation->setName(QString("segmentation of %1").arg(item->name()));
-//  item_segmentation->setVisible(false);
 
   scene->itemChanged(index);
   scene->setSelectedItem(index);
@@ -575,7 +575,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     Graph g;
-    std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> points_map;
+    GraphPointMap points_map;
     GraphPointPMap points(points_map);
 
     temp_mcs->extract_skeleton(g, points);
@@ -808,61 +808,67 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     delete temp;
   }
 
+//#define DRAW_NON_FIXED_POINTS
+#ifdef DRAW_NON_FIXED_POINTS
   // draw non-fixed points
-//  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
-//  nonFixedPointsItem->setName("non-fixed points");
-//  nonFixedPointsItem->setColor(QColor(0, 255, 0));
-//  std::vector<Point> nonFixedPoints;
-//  mcs->get_non_fixed_points(nonFixedPoints);
-//  ps = nonFixedPointsItem->point_set();
-//  for (size_t i = 0; i < nonFixedPoints.size(); ++i)
-//  {
-//    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
-//    ps->push_back(point);
-//  }
-//  if (nonFixedPointsItemIndex == -1)
-//  {
-//    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
-//  }
-//  else
-//  {
-//    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
-//  }
+  Scene_points_with_normal_item* nonFixedPointsItem = new Scene_points_with_normal_item;
+  nonFixedPointsItem->setName("non-fixed points");
+  nonFixedPointsItem->setColor(QColor(0, 255, 0));
+  std::vector<Point> nonFixedPoints;
+  mcs->get_non_fixed_points(nonFixedPoints);
+  ps = nonFixedPointsItem->point_set();
+  for (size_t i = 0; i < nonFixedPoints.size(); ++i)
+  {
+    UI_point_3<Kernel> point(nonFixedPoints[i].x(), nonFixedPoints[i].y(), nonFixedPoints[i].z());
+    ps->push_back(point);
+  }
+  if (nonFixedPointsItemIndex == -1)
+  {
+    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
+  }
+  else
+  {
+    scene->replaceItem(nonFixedPointsItemIndex, nonFixedPointsItem, false);
+  }
+  scene->itemChanged(nonFixedPointsItemIndex);
+#endif
 
+//#define DRAW_POLE_LINE
+#ifdef DRAW_POLE_LINE
   // draw lines connecting surface points and their correspondent poles
-//  Scene_polylines_item* poleLinesItem = new Scene_polylines_item();
+  Scene_polylines_item* poleLinesItem = new Scene_polylines_item();
 
-//  Polyhedron* pMesh = item->polyhedron();
-//  std::vector<Point> pole_points;
-//  mcs->get_poles(pole_points);
-//  vertex_iterator vb, ve;
-//  int id = 0;
-//  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; ++vb)
-//  {
-//    std::vector<Point> line;
-//    line.clear();
+  Polyhedron* pMesh = item->polyhedron();
+  std::vector<Point> pole_points;
+  mcs->get_poles(pole_points);
+  vertex_iterator vb, ve;
+  int id = 0;
+  for (boost::tie(vb, ve) = boost::vertices(*pMesh); vb != ve; ++vb)
+  {
+    std::vector<Point> line;
+    line.clear();
 
-//    vertex_descriptor v = *vb;
-//    Point s = v->point();
-//    Point t = pole_points[id++];
+    vertex_descriptor v = *vb;
+    Point s = v->point();
+    Point t = pole_points[id++];
 
-//    line.push_back(s);
-//    line.push_back(t);
-//    poleLinesItem->polylines.push_back(line);
-//  }
+    line.push_back(s);
+    line.push_back(t);
+    poleLinesItem->polylines.push_back(line);
+  }
 
-//  if (poleLinesItemIndex == -1)
-//  {
-//    poleLinesItemIndex = scene->addItem(poleLinesItem, false);
-//  }
-//  else
-//  {
-//    scene->replaceItem(poleLinesItemIndex, poleLinesItem, false);
-//  }
+  if (poleLinesItemIndex == -1)
+  {
+    poleLinesItemIndex = scene->addItem(poleLinesItem, false);
+  }
+  else
+  {
+    scene->replaceItem(poleLinesItemIndex, poleLinesItem, false);
+  }
+#endif
 
   scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
-//  scene->itemChanged(nonFixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
@@ -892,7 +898,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   skeleton_curve.clear();
   skeleton_points_map.clear();
-  boost::associative_property_map<std::map<boost::graph_traits<Graph>::vertex_descriptor, Point> > skeleton_points(skeleton_points_map);
+  GraphPointPMap skeleton_points(skeleton_points_map);
   mcs->convert_to_skeleton(skeleton_curve, skeleton_points);
   mcs->get_correspondent_vertices(corr);
 

@@ -166,12 +166,12 @@
      <rect>
       <x>20</x>
       <y>170</y>
-      <width>53</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>area_TH</string>
+     <string>delta_area</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_omega_P">
