@@ -289,14 +289,17 @@ public:
 
     for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin(); 
         v_it != selected_vertices.end(); ++v_it) {
-      *item_bbox = item_bbox ? *item_bbox + (*v_it)->point().bbox() : (*v_it)->point().bbox();
+
+      if(item_bbox) { *item_bbox = *item_bbox + (*v_it)->point().bbox(); }
+      else          {  item_bbox = (*v_it)->point().bbox(); }
     }
 
     for(Selection_set_edge::const_iterator e_it = selected_edges.begin(); 
         e_it != selected_edges.end(); ++e_it) {
         CGAL::Bbox_3 e_bbox = (*e_it)->vertex()->point().bbox();
         e_bbox = e_bbox + (*e_it)->opposite()->vertex()->point().bbox();
-        *item_bbox = item_bbox ? *item_bbox + e_bbox : e_bbox;
+        if(item_bbox) { *item_bbox = *item_bbox + e_bbox; }
+        else          {  item_bbox = e_bbox; }
     }
 
     for(Selection_set_facet::const_iterator f_it = selected_facets.begin(); 
@@ -304,7 +307,8 @@ public:
 
         Polyhedron::Halfedge_around_facet_circulator he = (*f_it)->facet_begin(), cend = he;
         CGAL_For_all(he,cend) {
-          *item_bbox = item_bbox ? *item_bbox + he->vertex()->point().bbox() : he->vertex()->point().bbox();
+          if(item_bbox) { *item_bbox = *item_bbox + he->vertex()->point().bbox(); }
+          else          {  item_bbox = he->vertex()->point().bbox(); }
         }
     }
 
