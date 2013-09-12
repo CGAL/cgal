@@ -21,7 +21,6 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_CIRCLES_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>

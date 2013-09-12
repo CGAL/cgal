@@ -1,12 +1,11 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/random_convex_set_2.h>
 #include <CGAL/min_quadrilateral_2.h>
 #include <iostream>
 
-struct Kernel : public CGAL::Cartesian<double> {};
-
+typedef CGAL::Simple_cartesian<double>                   Kernel;
 typedef Kernel::Point_2                           Point_2;
 typedef Kernel::Line_2                            Line_2;
 typedef CGAL::Polygon_2<Kernel>                   Polygon_2;

@@ -1,11 +1,11 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Largest_empty_iso_rectangle_2.h>
 
 #include <fstream>
 
 typedef double                                 Number_Type;
-typedef CGAL::Cartesian<Number_Type>           K;
+typedef CGAL::Simple_cartesian<Number_Type>    K;
 typedef CGAL::Largest_empty_iso_rectangle_2<K> Largest_empty_iso_rect_2;
 typedef K::Iso_rectangle_2                     Iso_rectangle_2;
 typedef K::Point_2                             Point_2;

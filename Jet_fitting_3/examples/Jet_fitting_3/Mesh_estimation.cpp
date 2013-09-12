@@ -1,10 +1,9 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/property_map.h>
 
 #include <fstream>
 #include <cassert>
-
-#include <CGAL/property_map.h>
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -19,7 +18,7 @@ using namespace std;
 
 //Kernel of the PolyhedralSurf
 typedef double                DFT;
-typedef CGAL::Cartesian<DFT>  Data_Kernel;
+typedef CGAL::Simple_cartesian<DFT>  Data_Kernel;
 typedef Data_Kernel::Point_3  DPoint;
 typedef Data_Kernel::Vector_3 DVector;
 
@@ -66,7 +65,7 @@ typedef boost::associative_property_map<Facet2normal_map_type> Facet_PM_type;
 typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops;
 
 typedef double                   LFT;
-typedef CGAL::Cartesian<LFT>     Local_Kernel;
+typedef CGAL::Simple_cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
 typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
 
@@ -305,5 +304,7 @@ int main()
     out_verbose->close();
     delete out_verbose;
   }  
+
+  std::cerr << "done" << std::endl;
   return 0;
 }

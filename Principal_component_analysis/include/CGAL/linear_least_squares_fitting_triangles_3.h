@@ -21,11 +21,11 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_TRIANGLES_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen.h>
 #include <CGAL/PCA_util.h>
 
+#include <list>
 #include <iterator>
 
 namespace CGAL {
@@ -113,7 +113,6 @@ linear_least_squares_fitting_3(InputIterator first,
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
-  
   std::list<Point> points;
   for(InputIterator it = first;
       it != beyond;
@@ -204,14 +203,13 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+                               const CGAL::Dimension_tag<0>& tag)
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Point_3  Point;
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
-  
   std::list<Point> points;
   for(InputIterator it = first;
       it != beyond;

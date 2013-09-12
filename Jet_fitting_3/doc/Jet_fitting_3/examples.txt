@@ -1,5 +1,4 @@
 /*!
 \example Jet_fitting_3/Mesh_estimation.cpp
-\example Jet_fitting_3/PolyhedralSurf.cpp
 \example Jet_fitting_3/Single_estimation.cpp
 */

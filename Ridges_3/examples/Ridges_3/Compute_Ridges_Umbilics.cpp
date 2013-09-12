@@ -1,4 +1,8 @@
-#include <CGAL/Cartesian.h>
+
+//this is an enriched Polyhedron with facet normals
+#include "PolyhedralSurf.h"
+#include "PolyhedralSurf_rings.h"
+
 #include <CGAL/Ridges.h>
 #include <CGAL/Umbilics.h>
 #include <CGAL/Monge_via_jet_fitting.h>
@@ -12,9 +16,6 @@ namespace po = boost::program_options;
 
 using namespace std;
 
-//this is an enriched Polyhedron with facets' normal
-#include "PolyhedralSurf.h"
-#include "PolyhedralSurf_rings.h"
 
 typedef PolyhedralSurf::Traits          Kernel;
 typedef Kernel::FT                      FT;

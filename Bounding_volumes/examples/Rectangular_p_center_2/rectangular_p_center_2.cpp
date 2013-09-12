@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/rectangular_p_center_2.h>
 #include <CGAL/IO/Ostream_iterator.h>
@@ -9,7 +9,7 @@
 
 typedef double                                      FT;
 
-typedef CGAL::Cartesian<FT>                         Kernel;
+typedef CGAL::Simple_cartesian<FT>                  Kernel;
 
 typedef Kernel::Point_2                             Point;
 typedef std::vector<Point>                          Cont;

@@ -1,6 +1,4 @@
-#include <CGAL/basic.h> // include basic.h before testing #defines
-
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
@@ -20,7 +18,7 @@
 // Private types
 // ----------------------------------------------------------------------------
 
-typedef CGAL::Cartesian<double>             Kernel;
+typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
 // Polyhedron adaptor

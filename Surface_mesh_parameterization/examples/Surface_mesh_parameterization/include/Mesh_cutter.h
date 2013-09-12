@@ -16,8 +16,6 @@
 #ifndef MESH_CUTTER_H
 #define MESH_CUTTER_H
 
-#include <CGAL/Cartesian.h>
-
 #include "Polyhedron_ex.h"
 
 #include <list>

@@ -21,7 +21,6 @@
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_RECTANGLES_2_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Object.h>
 #include <CGAL/centroid.h>
 #include <CGAL/eigen_2.h>
 #include <CGAL/eigen.h>
@@ -29,7 +28,7 @@
 #include <CGAL/PCA_util.h>
 
 #include <iterator>
-#include <vector>
+#include <list>
 #include <cmath>
 
 namespace CGAL {
@@ -169,7 +168,6 @@ linear_least_squares_fitting_2(InputIterator first,
   CGAL_precondition(first != beyond);
 
   std::list<Segment_2> segments;
-  
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -205,7 +203,6 @@ linear_least_squares_fitting_2(InputIterator first,
   CGAL_precondition(first != beyond);
 
   std::list<Point_2> points;
-  
   for(InputIterator it = first;
       it != beyond;
       it++)
