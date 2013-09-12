@@ -373,18 +373,6 @@ public:
 /// \name Preprocessing
 /// @{
   /**
-   * Puts `*this` in the same state as after the creation (except iterations and tolerance).
-   */
-  void reset()
-  {
-    need_preprocess_both();
-    // clear vertices
-    roi.clear();
-    is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
-    is_ctrl_map.assign(boost::num_vertices(m_halfedge_graph), false);
-  }
-
-  /**
    * Removes all the vertices from the region-of-interest (including control vertices).
    */
   void clear_roi_vertices(){
@@ -505,14 +493,6 @@ public:
     
     CGAL_assertion(false); // inconsistency between is_roi_map, and roi vector!
     return false;
-  }
-
-  /** 
-   * Returns the range of vertices in the region-of-interest.
-   */
-  std::pair<Roi_vertex_const_iterator, Roi_vertex_const_iterator> roi_vertices() const
-  {
-    return std::make_pair(roi.begin(), roi.end());
   }
 
   /**
@@ -661,58 +641,18 @@ public:
     // copy solution to target mesh
     assign_solution();
   }
-/// @} Deformation
-
-/// \name Utilities
-/// @{
 
   /**
-   * Getter of `set_iterations()`
+   * Puts `*this` in the same state as after the creation (except iterations and tolerance).
    */
-  unsigned int iterations()
-  { return m_iterations; }
-  
-  /**
-   * Getter of `set_tolerance()`
-   */
-  double tolerance()
-  { return m_tolerance; }
-
-  /**
-   * Sets the number of iterations used in `deform()`
-   */
-  void set_iterations(unsigned int iterations)
-  { this->m_iterations = iterations; }
-  
-   /// @brief Sets the tolerance of convergence used in `deform()`.
-   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
-   ///
-   /// `tolerance >` \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ will be used as a termination criterium.
-  void set_tolerance(double tolerance)
-  { this->m_tolerance = tolerance; }
-
-  /**
-   * Queries whether a vertex is inside the region-of-interest.
-   * @param vd the query vertex
-   * @return `true` if `vd` has been added (and not removed) to the region-of-interest.
-   */
-  bool is_roi_vertex(vertex_descriptor vd) const
-  { return is_roi_map[id(vd)]; }
-
-  /**
-   * Queries whether a vertex is a control vertex.
-   * @param vd the query vertex
-   * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
-   */
-  bool is_control_vertex(vertex_descriptor vd) const
-  { return is_ctrl_map[id(vd)]; }
-
-  /**
-   * Provides access to the halfedge graph being deformed
-   * @return the halfedge graph
-   */
-  const Halfedge_graph& halfedge_graph() const
-  { return m_halfedge_graph; }
+  void reset()
+  {
+    need_preprocess_both();
+    // clear vertices
+    roi.clear();
+    is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
+    is_ctrl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+  }
 
   /**
    * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function has the same effect as creating
@@ -758,6 +698,67 @@ public:
 
     need_preprocess_both(); // now we need reprocess
   }
+  
+/// @} Deformation
+
+/// \name Utilities
+/// @{
+
+  /**
+   * Getter of `set_iterations()`
+   */
+  unsigned int iterations()
+  { return m_iterations; }
+  
+  /**
+   * Getter of `set_tolerance()`
+   */
+  double tolerance()
+  { return m_tolerance; }
+
+  /**
+   * Sets the number of iterations used in `deform()`
+   */
+  void set_iterations(unsigned int iterations)
+  { this->m_iterations = iterations; }
+  
+   /// @brief Sets the tolerance of convergence used in `deform()`.
+   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
+   ///
+   /// `tolerance >` \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ will be used as a termination criterium.
+  void set_tolerance(double tolerance)
+  { this->m_tolerance = tolerance; }
+
+  /** 
+   * Returns the range of vertices in the region-of-interest.
+   */
+  std::pair<Roi_vertex_const_iterator, Roi_vertex_const_iterator> roi_vertices() const
+  {
+    return std::make_pair(roi.begin(), roi.end());
+  }
+
+  /**
+   * Queries whether a vertex is inside the region-of-interest.
+   * @param vd the query vertex
+   * @return `true` if `vd` has been added (and not removed) to the region-of-interest.
+   */
+  bool is_roi_vertex(vertex_descriptor vd) const
+  { return is_roi_map[id(vd)]; }
+
+  /**
+   * Queries whether a vertex is a control vertex.
+   * @param vd the query vertex
+   * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
+   */
+  bool is_control_vertex(vertex_descriptor vd) const
+  { return is_ctrl_map[id(vd)]; }
+
+  /**
+   * Provides access to the halfedge graph being deformed
+   * @return the halfedge graph
+   */
+  const Halfedge_graph& halfedge_graph() const
+  { return m_halfedge_graph; }
 
 /// @} Utilities
 
