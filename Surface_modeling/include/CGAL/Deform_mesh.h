@@ -261,7 +261,7 @@ public:
    * @param halfedge_graph triangulated surface mesh used to deform
    * @param vertex_index_map property map for associating an id to each vertex
    * @param edge_index_map property map for associating an id to each edge
-   * @param vertex_point_map property map for associating a position to each vertex. 
+   * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
    *        It is default to `boost::get(vertex_point, halfedge_graph)` and can be omitted.
    * @param iterations see `set_iterations()` for more details
    * @param tolerance  see `set_tolerance()` for more details
@@ -319,7 +319,7 @@ public:
   }
   
   /**
-   * Inserts a vertex into control vertices. The vertex is also inserted in the region-of-interest if it is not already in it.
+   * Inserts a vertex in the set of control vertices. The vertex is also inserted in the region-of-interest if it is not already in it.
    * @param vd the vertex to be inserted
    * @return `true` if the insertion is successful
    */
@@ -335,7 +335,7 @@ public:
   }
 
   /**
-   * Inserts a range of vertices into control vertices. The vertices are also inserted in the region-of-interest if they are not already in it.
+   * Inserts a range of vertices in the set of control vertices. The vertices are also inserted in the region-of-interest if they are not already in it.
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
@@ -421,7 +421,7 @@ public:
   }
 
   /** 
-   * Const version
+   * Returns the range of vertices in the region-of-interest.
    */
   std::pair<Roi_vertex_const_iterator, Roi_vertex_const_iterator> roi_vertices() const
   {
@@ -429,13 +429,13 @@ public:
   }
 
   /**
-   * Triggers the necessary precomputation work before beginning deformation.
-   * \note Calling this function is optional.
-   * \note The insertion / removal of a vertex in control vertices or in the region-of-interest invalidates the
+   * Assembles and factorizes the Laplacian matrix used in the function `deform()`.
+   * \note A modification of the set of control vertices or the region-of-interest invalidates the
    * preprocessing data.
-   * @return `true` if Laplacian matrix factorization is successful.
+   * @return `true` if the Laplacian matrix factorization is successful.
    * A common reason for failure is that the system is rank deficient, 
-   * which happens if there is no path between a free vertex and a control vertex (i.e. both fixed and user-inserted).
+   * which happens for example when all the vertices are in the region-of-interest and no control vertices are set, or
+   * if the weighting scheme used features too many zero and breaks the connectivity information.
    */
   bool preprocess()
   {
@@ -446,11 +446,24 @@ public:
 /// @} Preprocessing
 
 /// \name Deformation
-/// @{  
+/// @{
+
   /**
-   * Sets the transformation to apply to all the vertices in a range of control vertices to be a translation by vector `t`.
-   * \note This transformation is applied on the original positions of the vertices 
-   * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`). 
+   * Sets the target position of a control vertex.
+   * @param vd the control vertex to be assigned target position
+   * @param target_position the new target position
+   */
+  void assign(vertex_descriptor vd, const Point& target_position)
+  {
+    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
+
+    if(!is_control(vd)) { return; }
+    solution[ros_id(vd)] = target_position;
+  }
+
+  /**
+   * Sets the target position of each control vertex in the range `[begin,end[` by applying a translation of vertex `t` to its original position
+   * (that is its positions at the time of the functor construction or after the last call to `overwrite_original_positions()`).
    * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
@@ -472,10 +485,10 @@ public:
   }
 
   /**
-   * Sets the transformation to apply to all the vertices in a range of control vertices to be a rotation around `rotation_center`
-   * defined by the quaternion `quat`, followed by a translation by vector `t`.
-   * \note This transformation is applied on the original positions of the vertices 
-   * (that is positions of vertices at the time of construction or after the last call to `overwrite_original_positions()`).  
+   * Sets the target position of each control vertex in the range `[begin,end[` by applying
+   * a rotation around `rotation_center` defined by the quaternion `quat`, followed by a
+   * translation by vector `t` to its original position (that is its positions at the time
+   * of the functor construction or after the last call to `overwrite_original_positions()`).
    * \note A call to this function cancels the last call to `rotate()`, `translate()`, or `assign()`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
@@ -502,22 +515,9 @@ public:
   }
 
   /**
-   * Assigns the target position of a control vertex 
-   * @param vd the control vertex to be assigned target position
-   * @param target_position the new target position
-   */
-  void assign(vertex_descriptor vd, const Point& target_position)
-  {
-    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
-
-    if(!is_control(vd)) { return; }
-    solution[ros_id(vd)] = target_position;
-  }
-
-  /**
-   * Deforms the region-of-interest according to the deformation algorithm, using target positions for each control vertex set by using `rotate()`, `translate()`, or `assign()`.
-   * The coordinates of the vertices of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
-   * deformation problem is using the coordinates of the input graph before calling the function.
+   * Deforms the region-of-interest according to the deformation algorithm, using the target positions of each control vertex set by using `rotate()`, `translate()`, or `assign()`.
+   * The points associated to each vertex of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
+   * deformation problem is using the points associated to the input graph before calling the function.
    * \note Nothing happens if `preprocess()` returns `false`.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
@@ -621,7 +621,7 @@ public:
   { return is_hdl_map[id(vd)]; }
 
   /**
-   * Provides access to halfedge graph being deformed
+   * Provides access to the halfedge graph being deformed
    * @return the halfedge graph
    */
   const Halfedge_graph& halfedge_graph() const
