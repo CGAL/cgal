@@ -258,7 +258,7 @@ public slots:
       bool changed = false;
       if(ui_widget->ROIRadioButton->isChecked()) {
         if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh); }
-        else          { changed = erase_roi(vh);  }
+        else          { changed = erase_roi_vertex(vh);  }
       }
       else {
         if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_handle(vh); }
@@ -338,10 +338,10 @@ public:
     return false;     
   }
 
-  bool erase_roi(vertex_descriptor v)
+  bool erase_roi_vertex(vertex_descriptor v)
   {
     erase_handle(v); // erase from handles
-    return deform_mesh.erase_roi(v);
+    return deform_mesh.erase_roi_vertex(v);
   }
 
   void set_all_vertices_as_roi()

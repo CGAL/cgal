@@ -425,7 +425,7 @@ public:
    * @param vd the vertex to be erased
    * @return `true` if the removal is successful
    */
-  bool erase_roi(vertex_descriptor vd)   
+  bool erase_roi_vertex(vertex_descriptor vd)   
   {
     if(!is_roi_vertex(vd)) { return false; }  
     
