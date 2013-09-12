@@ -229,8 +229,6 @@ private:
 
 // Public methods
 public:
-/// \name Preprocessing
-/// @{
 
   /// \cond SKIP_FROM_MANUAL
   Deform_mesh(Halfedge_graph& halfedge_graph, 
@@ -254,7 +252,8 @@ public:
     init();
   }
   /// \endcond
-
+/// \name Construction
+/// @{
     /**
    * The constructor of a deformation object
    *
@@ -289,6 +288,7 @@ public:
   {
     init();
   }
+/// @}
 
 private:
   void init() {
@@ -303,6 +303,9 @@ private:
   }
 
 public:
+
+/// \name Preprocessing
+/// @{
   /**
    * Puts `*this` in the same state as after the creation (except iterations and tolerance).
    */
