@@ -175,8 +175,8 @@ and how parameters might influence the result of the functions they use
 \section MCFSkelSecAPI User Interface Description
 
 The MCF skeleton and the MCF medial skeleton can be obtained by respectively using the free functions 
-`::CGAL::extract_skeleton()` and `::CGAL::extract_medial_skeleton()`.
-The class `::CGAL::Mean_curvature_skeleton` is also provided to allow advanced usage and having access to each step of the contraction.
+`::CGAL::extract_skeleton()`.
+The class `::CGAL::MCF_Skeleton` is also provided to allow advanced usage and having access to each step of the contraction.
 
 It is also possible to get the correspondence between skeleton points and input vertices.
 
