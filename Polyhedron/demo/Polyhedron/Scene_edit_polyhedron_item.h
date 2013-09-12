@@ -483,7 +483,7 @@ public:
     std::ofstream out(file_name);
     // save roi
     int hc = 0;
-    Deform_mesh::Roi_const_iterator rb, re;
+    Deform_mesh::Roi_vertex_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) { ++hc; }
     out << hc << std::endl;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
@@ -677,7 +677,7 @@ protected:
   bool keyPressEvent(QKeyEvent* e);
 
   void update_normals() {
-    Deform_mesh::Roi_const_iterator rb, re;
+    Deform_mesh::Roi_vertex_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) {
       std::size_t id = (*rb)->id();
       const Polyhedron::Traits::Vector_3& n = 

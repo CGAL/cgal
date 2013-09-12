@@ -186,7 +186,7 @@ private:
 public:
 
    /** Iterator over vertex descriptors in the region-of-interest. Its value type is `const vertex_descriptor`*/
-  typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_const_iterator;
+  typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_vertex_const_iterator;
 
 // Data members.
 private:
@@ -420,7 +420,7 @@ public:
   /** 
    * Const version
    */
-  std::pair<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
+  std::pair<Roi_vertex_const_iterator, Roi_vertex_const_iterator> roi_vertices() const
   {
     return std::make_pair(roi.begin(), roi.end());
   }
@@ -636,7 +636,7 @@ public:
 
     region_of_solution(); // the roi should be preprocessed since we are using original_position vec
 
-    Roi_const_iterator rb, re;
+    Roi_vertex_const_iterator rb, re;
     for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
     {
       original[ros_id(*rb)] = get(vertex_point_map, (*rb));

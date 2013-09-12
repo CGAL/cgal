@@ -192,7 +192,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
   color.set_rgb_color(0, 1.f, 0);
   // draw ROI
   if(ui_widget->ShowROICheckBox->isChecked()) {
-    Deform_mesh::Roi_const_iterator rb, re;
+    Deform_mesh::Roi_vertex_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
       if(!deform_mesh.is_control(*rb))
