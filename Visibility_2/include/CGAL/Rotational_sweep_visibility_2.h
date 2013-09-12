@@ -82,24 +82,30 @@ public:
   static double quicksort_t;
 
 private:
-  typedef std::vector<Point_2>          Pvec;
-  typedef std::pair<Point_2, Point_2>   Edge;
+  typedef std::vector<Point_2>          Points;
+  typedef Vertex_const_handle   Vertex;
+  typedef std::vector<Vertex>   Vertices;
+  typedef Halfedge_const_handle   Edge;
+  typedef std::vector<Edge> Edges;
+
 
   const Geometry_traits_2 *geom_traits;
   const Input_arrangement_2 *p_arr;
   Point_2         q;
   Point_2         dp;
-  Pvec polygon;                       //visibility polygon
-  std::map<Point_2, Pvec> neighbors;  //vertex and its neighbours that are relevant to visibility polygon
+  Points polygon;                       //visibility polygon
+  std::map<Vertex, Vertices> neighbors;  //vertex and its neighbours that are relevant to visibility polygon
+  std::map<Vertex, Edges>  incident_edges;
   std::map<Edge, int> edx;            //index of edge in the heap
-  std::vector<Edge>  active_edges;    //a heap of edges that interset the current vision ray.
+  Edges  active_edges;    //a heap of edges that interset the current vision ray.
 
-  Pvec vs;                            //angular sorted vertices
+  Vertices vs;                            //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
   bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
-  std::vector<Halfedge_const_handle> bad_edge;
-  Vertex_const_handle query_vertex;
+
+  Edges bad_edge;
+  Vertex query_vertex;
   Point_2  source;                    //one end of visibility cone
   Point_2  target;                    //another end of visibility cone
 
@@ -190,16 +196,16 @@ public:
     timer.stop();
     cut_from_butterfly_t+=timer.time();
 
-    typename Pvec::iterator first = polygon.begin() + small_idx;
-    typename Pvec::iterator last = polygon.begin() + big_idx;
+    typename Points::iterator first = polygon.begin() + small_idx;
+    typename Points::iterator last = polygon.begin() + big_idx;
     if (is_between) {
-      Pvec polygon_out(first, last+1);
+      Points polygon_out(first, last+1);
       if (is_vertex_query)
         polygon_out.push_back(q);
       Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
     else {
-      Pvec polygon_out(polygon.begin(), first+1);
+      Points polygon_out(polygon.begin(), first+1);
       if (is_vertex_query) polygon_out.push_back(q);
       for (int i = big_idx; i != polygon.size(); i++) {
         polygon_out.push_back(polygon[i]);
@@ -259,21 +265,21 @@ private:
   }
 
   void funnel(int i, int j) {
-    Pvec right, left;
+    Vertices right, left;
     bool block_left(false), block_right(false);
-    Point_2& former = vs[i], temp;
+    Vertex former = vs[i], neib;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
       for (int k=0; k<neighbors[vs[l]].size(); k++) {
-        temp= neighbors[vs[l]][k];
-        if (Visibility_2::compare_xy_2(geom_traits, temp, former) == EQUAL) {
+        neib= neighbors[vs[l]][k];
+        if ( neib == former )  {
           has_predecessor = true;
           continue;
         }
-        if (CGAL::left_turn(q, vs[l], temp))
+        if (CGAL::left_turn(q, vs[l], neib))
           left_v = true;
         else
-          right_v = CGAL::right_turn(q, vs[l], temp);
+          right_v = CGAL::right_turn(q, vs[l], neib);
       }
       if (has_predecessor) {
           block_left = block_left || left_v;
@@ -301,26 +307,26 @@ private:
       vs[i+l+right.size()] = left[left.size()-1-l];
   }
 
-  void compare_heap(std::vector<Edge>& heap1, std::vector<Edge>& heap2) {
-    if (heap1.size() != heap2.size()) {
-      print_heap(heap1);
-      print_heap(heap2);
-      return;
-    }
-    for (int i=0; i<heap1.size(); i++)
-      if (heap1[i] != heap2[i]) {
-        print_heap(heap1);
-        print_heap(heap2);
-        return;
-      }
-    std::cout<<"right heap has edges: "<<active_edges.size()<<std::endl;
-  }
+//  void compare_heap(std::vector<Edge>& heap1, std::vector<Edge>& heap2) {
+//    if (heap1.size() != heap2.size()) {
+//      print_heap(heap1);
+//      print_heap(heap2);
+//      return;
+//    }
+//    for (int i=0; i<heap1.size(); i++)
+//      if (heap1[i] != heap2[i]) {
+//        print_heap(heap1);
+//        print_heap(heap2);
+//        return;
+//      }
+//    std::cout<<"right heap has edges: "<<active_edges.size()<<std::endl;
+//  }
 
-  void print_heap(std::vector<Edge> heap) {
-    for (int i=0; i<heap.size(); i++) {
-      std::cout<<i<<':'<< heap[i].first<<','<<heap[i].second<<std::endl;
-    }
-  }
+//  void print_heap(std::vector<Edge> heap) {
+//    for (int i=0; i<heap.size(); i++) {
+//      std::cout<<i<<':'<< heap[i].first<<','<<heap[i].second<<std::endl;
+//    }
+//  }
 
   void visibility_region_impl(const Face_const_handle f, const Point_2& q) {
     vs.clear();
