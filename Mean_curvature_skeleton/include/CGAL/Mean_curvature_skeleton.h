@@ -134,6 +134,12 @@ struct MCF_default_solver
   typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
 };
 
+template <class Polyhedron>
+struct MCF_default_halfedge_graph_pmap
+{
+  typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type type;
+};
+
 template<class HalfedgeGraph>
 class SkeletonArgs
 {
@@ -262,13 +268,13 @@ public:
 ///         a model of `ReadWritePropertyMap`/a>
 ///         with Graph::vertex_descriptor as key and
 ///         `std::vector<int>` as value type
-/// @tparam HalfedgeGraphPointPMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with HalfedgeGraph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
 /// @tparam GraphPointPMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
+///         MCF_Skeleton::Point as value type
+/// @tparam HalfedgeGraphPointPMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with HalfedgeGraph::vertex_descriptor as key and
 ///         MCF_Skeleton::Point as value type
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
@@ -293,8 +299,8 @@ template <class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class GraphCorrelationPMap,
-          class HalfedgeGraphPointPMap,
           class GraphPointPMap,
+          class HalfedgeGraphPointPMap,
           class SparseLinearAlgebraTraits_d,
           Collapse_algorithm_tag Collapse_tag = LINEAR,
           Degeneracy_algorithm_tag Degeneracy_tag = EULER>
@@ -506,30 +512,6 @@ public:
     return delta_area;
   }
 
-  /// \cond SKIP_FROM_MANUAL
-
-  void set_alpha_TH(double value)
-  {
-    alpha_TH = value;
-  }
-
-  double get_alpha_TH()
-  {
-    return alpha_TH;
-  }
-
-  void set_zero_TH(double value)
-  {
-    zero_TH = value;
-  }
-
-  double get_zero_TH()
-  {
-    return zero_TH;
-  }
-
-  /// \endcond
-
   void set_is_medially_centered(bool value)
   {
     is_medially_centered = value;
@@ -554,6 +536,32 @@ public:
   {
     return polyhedron;
   }
+
+  /// \cond SKIP_FROM_MANUAL
+
+  void set_alpha_TH(double value)
+  {
+    alpha_TH = value;
+  }
+
+  double get_alpha_TH()
+  {
+    return alpha_TH;
+  }
+
+  void set_zero_TH(double value)
+  {
+    zero_TH = value;
+  }
+
+  double get_zero_TH()
+  {
+    return zero_TH;
+  }
+
+  /// \endcond
+
+  /// @cond CGAL_DOCUMENT_INTERNAL
 
   /**
    * Get the positions of fixed(degenerate) points.
@@ -598,39 +606,6 @@ public:
   }
 
   /**
-   * Get the correspondent surface points for the skeleton.
-   *
-   * @param skeleton_to_surface
-   *        for each skeletal point, record its correspondent surface points
-   */
-  void get_correspondent_vertices(GraphCorrelationPMap& skeleton_to_surface)
-  {
-    typename std::map<vertex_desc, std::vector<int> >::iterator iter;
-    for (iter = skeleton_to_surface_map.begin();
-         iter != skeleton_to_surface_map.end(); ++iter)
-    {
-      vertex_desc i = iter->first;
-
-      skeleton_to_surface[i] = std::vector<int>();
-      for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
-      {
-        int id = skeleton_to_surface_map[i][j];
-        if (correspondence.find(id) != correspondence.end())
-        {
-          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
-                                        correspondence[id].begin(),
-                                        correspondence[id].end());
-        }
-
-        if (id < max_id)
-        {
-          skeleton_to_surface[i].push_back(id);
-        }
-      }
-    }
-  }
-
-  /**
    * Get the Voronoi pole for the surface mesh.
    *
    * @param max_poles
@@ -648,6 +623,8 @@ public:
       max_poles[cnt++] = cell_dual[poles[vid]];
     }
   }
+
+  /// @endcond
 
   /// @} Setter and Getter
 
@@ -690,8 +667,6 @@ public:
     convert_to_skeleton(g, points);
     get_correspondent_vertices(skeleton_to_surface);
   }
-
-  /// @cond CGAL_DOCUMENT_INTERNAL
 
   /**
    * Contract the mesh by mean curvature flow.
@@ -896,6 +871,10 @@ public:
 
   /**
    * Convert the contracted mesh to a skeleton curve.
+   * @param g
+   *        a boost::graph containing the connectivity of the skeleton
+   * @param points
+   *        the locations of the skeletal points
    */
   void convert_to_skeleton(Graph& g, GraphPointPMap& points)
   {
@@ -904,7 +883,38 @@ public:
     skeleton.extract_skeleton(g, points, skeleton_to_surface_map);
   }
 
-  /// \endcond
+  /**
+   * Get the correspondent surface points for the skeleton.
+   *
+   * @param skeleton_to_surface
+   *        for each skeletal point, record its correspondent surface points
+   */
+  void get_correspondent_vertices(GraphCorrelationPMap& skeleton_to_surface)
+  {
+    typename std::map<vertex_desc, std::vector<int> >::iterator iter;
+    for (iter = skeleton_to_surface_map.begin();
+         iter != skeleton_to_surface_map.end(); ++iter)
+    {
+      vertex_desc i = iter->first;
+
+      skeleton_to_surface[i] = std::vector<int>();
+      for (size_t j = 0; j < skeleton_to_surface_map[i].size(); ++j)
+      {
+        int id = skeleton_to_surface_map[i][j];
+        if (correspondence.find(id) != correspondence.end())
+        {
+          skeleton_to_surface[i].insert(skeleton_to_surface[i].end(),
+                                        correspondence[id].begin(),
+                                        correspondence[id].end());
+        }
+
+        if (id < max_id)
+        {
+          skeleton_to_surface[i].push_back(id);
+        }
+      }
+    }
+  }
 
   /// @} Public Algorithm API
 
@@ -1669,8 +1679,8 @@ template <class HalfedgeGraph,
           class VertexIndexMap,
           class EdgeIndexMap,
           class GraphCorrelationPMap,
-          class HalfedgeGraphPointPMap,
           class GraphPointPMap,
+          class HalfedgeGraphPointPMap,
           class SparseLinearAlgebraTraits_d>
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
@@ -1680,7 +1690,7 @@ void extract_skeleton(HalfedgeGraph& P,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
   typedef CGAL::MCF_Skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
-  GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, SparseLinearAlgebraTraits_d> MCFSKEL;
+  GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, SparseLinearAlgebraTraits_d> MCFSKEL;
 
   MCFSKEL mcs(P, Vertex_index_map, Edge_index_map, Skeleton_args);
 
@@ -1688,6 +1698,29 @@ void extract_skeleton(HalfedgeGraph& P,
   mcs.convert_to_skeleton(g, points);
 
   mcs.get_correspondent_vertices(skeleton_to_surface);
+}
+
+template <class HalfedgeGraph,
+          class Graph,
+          class VertexIndexMap,
+          class EdgeIndexMap,
+          class GraphCorrelationPMap,
+          class GraphPointPMap>
+void extract_skeleton(HalfedgeGraph& P,
+                      VertexIndexMap Vertex_index_map,
+                      EdgeIndexMap Edge_index_map,
+                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      Graph& g, GraphPointPMap& points,
+                      GraphCorrelationPMap& skeleton_to_surface)
+{
+  //typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type HalfedgeGraphPointPMap;
+  typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
+  typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
+
+  extract_skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
+                   GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap,
+                   Sparse_linear_solver>
+      (P, Vertex_index_map, Edge_index_map, Skeleton_args, g, points, skeleton_to_surface);
 }
 
 } //namespace CGAL

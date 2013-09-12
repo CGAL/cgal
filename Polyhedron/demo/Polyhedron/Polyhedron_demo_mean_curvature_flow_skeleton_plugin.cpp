@@ -69,7 +69,7 @@ typedef boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
 typedef std::map<vertex_desc, std::vector<int> > Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map> GraphCorrelationPMap;
 
-typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
+typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type HalfedgeGraphPointPMap;
 
 typedef std::map<vertex_desc, Polyhedron::Traits::Point_3> GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap> GraphPointPMap;
@@ -77,7 +77,7 @@ typedef boost::associative_property_map<GraphPointMap> GraphPointPMap;
 typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
 
 typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
+GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
@@ -526,11 +526,21 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     Graph g;
-    std::map<vertex_desc, Point> points;
+    GraphPointMap points_map;
+    GraphPointPMap points(points_map);
 
-//    CGAL::extract_skeleton<Sparse_linear_solver>(g, points,
-//                     tempMesh, Vertex_index_map(), Edge_index_map(),
-//                     omega_H, edgelength_TH, area_TH);
+    Correspondence_map corr_map;
+    GraphCorrelationPMap corr(corr_map);
+
+    CGAL::SkeletonArgs<Polyhedron> skeleton_args(tempMesh);
+    skeleton_args.set_omega_H(omega_H);
+    skeleton_args.set_edgelength_TH(edgelength_TH);
+    skeleton_args.set_is_medially_centered(false);
+    skeleton_args.set_delta_area(area_TH);
+
+    CGAL::extract_skeleton(
+                     tempMesh, Vertex_index_map(), Edge_index_map(),
+                     skeleton_args, g, points, corr);
 
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
