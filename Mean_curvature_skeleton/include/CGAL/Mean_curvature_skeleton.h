@@ -389,6 +389,8 @@ private:
   int max_iterations;
   /** should the skeleton be medially centered? */
   bool is_medially_centered;
+  /** are poles computed */
+  bool are_poles_computed;
 
   /** cotangent weight calculator */
   Weight_calculator weight_calculator;
@@ -521,16 +523,21 @@ public:
     zero_TH = value;
   }
 
-  void get_zero_TH()
+  double get_zero_TH()
   {
     return zero_TH;
   }
 
   /// \endcond
 
-  void set_medially_centered(bool value)
+  void set_is_medially_centered(bool value)
   {
     is_medially_centered = value;
+  }
+
+  bool get_is_medially_centered()
+  {
+    return is_medially_centered;
   }
 
   void set_max_iterations(int value)
@@ -702,6 +709,10 @@ public:
     if (is_medially_centered)
     {
       nrows = nver * 3;
+      if (!is_medially_centered)
+      {
+        compute_voronoi_pole();
+      }
     }
     else
     {
@@ -945,10 +956,7 @@ private:
     is_vertex_fixed_map.clear();
     correspondence.clear();
 
-    if (is_medially_centered)
-    {
-      compute_voronoi_pole();
-    }
+    compute_voronoi_pole();
   }
 
   // --------------------------------------------------------------------------
@@ -1590,6 +1598,7 @@ private:
 
       poles[i] = max_neg_i;
     }
+    are_poles_computed = true;
   }
 
   /// Compute an approximate vertex normal for all vertices.

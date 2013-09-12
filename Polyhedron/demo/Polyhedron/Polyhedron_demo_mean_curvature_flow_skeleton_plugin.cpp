@@ -275,9 +275,25 @@ public:
         mcs->set_omega_P(omega_P);
         mcs->set_edgelength_TH(edgelength_TH);
         mcs->set_delta_area(area_TH);
+        mcs->set_is_medially_centered(is_medially_centered);
       }
     }
     return true;
+  }
+
+  void update_parameters(Mean_curvature_skeleton* mcs)
+  {
+    double omega_H = ui->omega_H->value();
+    double omega_P = ui->omega_P->value();
+    double edgelength_TH = ui->edgelength_TH->value();
+    double area_TH = ui->area_TH->value();
+    bool is_medially_centered = ui->is_medially_centered->isChecked();
+
+    mcs->set_omega_H(omega_H);
+    mcs->set_omega_P(omega_P);
+    mcs->set_edgelength_TH(edgelength_TH);
+    mcs->set_delta_area(area_TH);
+    mcs->set_is_medially_centered(is_medially_centered);
   }
 
 public slots:
@@ -630,6 +646,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
   std::cout << "Contract...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  update_parameters(mcs);
   mcs->contract_geometry();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -660,6 +677,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
   std::cout << "Collapse...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  update_parameters(mcs);
   int num_collapses = mcs->collapse_edges();
   std::cout << "collapsed " << num_collapses << " edges.\n";
 
@@ -692,6 +710,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
   std::cout << "Split...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  update_parameters(mcs);
   int num_split = mcs->split_triangles();
   std::cout << "split " << num_split << " triangles.\n";
 
@@ -723,6 +742,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   std::cout << "Detect degeneracy...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  update_parameters(mcs);
   mcs->detect_degeneracies();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -781,6 +801,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   std::cout << "Run one iteration...\n";
 
+  update_parameters(mcs);
   mcs->contract();
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
@@ -893,6 +914,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   QTime time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  update_parameters(mcs);
 
   Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
