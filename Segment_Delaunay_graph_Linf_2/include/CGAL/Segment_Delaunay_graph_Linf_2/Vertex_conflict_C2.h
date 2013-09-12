@@ -551,8 +551,16 @@ private:
 
         Point_2 pnt = q.point();
 
-        Oriented_side side_of_pnt =
-          oriented_side_of_line(l, pnt);
+        Oriented_side side_of_pnt;
+        if (same_points(p.source_site(), q) or
+            same_points(p.target_site(), q)   ) {
+          side_of_pnt = ON_ORIENTED_BOUNDARY;
+        } else {
+          side_of_pnt = oriented_side_of_line(l, pnt);
+        }
+
+        CGAL_SDG_DEBUG(std::cout << "debug incircle_p"
+           << " side_of_pnt=" << side_of_pnt << std::endl; );
 
         if (side_of_pnt == ON_ORIENTED_BOUNDARY) {
           CGAL_assertion(same_points(p.source_site(), q) or
