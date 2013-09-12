@@ -207,7 +207,7 @@ public:
 
   std::vector<std::size_t> ros_id_map;                ///< (size: num vertices)
   std::vector<bool>        is_roi_map;                ///< (size: num vertices)
-  std::vector<bool>        is_hdl_map;                ///< (size: num vertices)
+  std::vector<bool>        is_ctrl_map;                ///< (size: num vertices)
 
   std::vector<double> edge_weight;                    ///< all edge weights 
   std::vector<CR_matrix> rot_mtr;                     ///< rotation matrices of ros vertices (size: ros)
@@ -245,7 +245,7 @@ public:
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-      is_hdl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
+      is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       m_iterations(iterations), m_tolerance(tolerance),
       need_preprocess_factorization(true), 
       need_preprocess_region_of_solution(true),
@@ -282,7 +282,7 @@ public:
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
     ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
     is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-    is_hdl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
+    is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
     m_iterations(iterations), m_tolerance(tolerance),
     need_preprocess_factorization(true), 
     need_preprocess_region_of_solution(true),
@@ -319,7 +319,7 @@ public:
     // clear vertices
     roi.clear();
     is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
-    is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+    is_ctrl_map.assign(boost::num_vertices(m_halfedge_graph), false);
   }
 
   /**
@@ -331,7 +331,7 @@ public:
     roi.clear();
     //set to false all bits
     is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
-    is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+    is_ctrl_map.assign(boost::num_vertices(m_halfedge_graph), false);
   }
 
   /**
@@ -340,7 +340,7 @@ public:
   void clear_control_vertices(){
     need_preprocess_factorization=true;
     //set to false all bits
-    is_hdl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+    is_ctrl_map.assign(boost::num_vertices(m_halfedge_graph), false);
   }
   
   /**
@@ -355,7 +355,7 @@ public:
 
     insert_roi_vertex(vd); // also insert it as roi
 
-    is_hdl_map[id(vd)] = true;
+    is_ctrl_map[id(vd)] = true;
     return true;
   }
 
@@ -384,7 +384,7 @@ public:
     if(!is_control_vertex(vd)) { return false; }
     
     need_preprocess_factorization=true;
-    is_hdl_map[id(vd)] = false;
+    is_ctrl_map[id(vd)] = false;
     return true;
   }
 
@@ -643,7 +643,7 @@ public:
    * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
    */
   bool is_control_vertex(vertex_descriptor vd) const
-  { return is_hdl_map[id(vd)]; }
+  { return is_ctrl_map[id(vd)]; }
 
   /**
    * Provides access to the halfedge graph being deformed
@@ -859,7 +859,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi_vertex(vi) && !is_control_vertex(vi) )          // vertices of ( roi - hdl )
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) )          // vertices of ( roi - ctrl )
       {
         double diagonal = 0;
         in_edge_iterator e, e_end;
@@ -901,7 +901,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) // vertices of ( roi - hdl ): free vertices
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) // vertices of ( roi - ctrl ): free vertices
       {
         double diagonal = 0;
         out_edge_iterator e, e_end;
