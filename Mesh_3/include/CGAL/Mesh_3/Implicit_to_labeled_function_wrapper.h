@@ -31,10 +31,16 @@
 #define CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
 
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
+#endif
+
 namespace CGAL {
 
 namespace Mesh_3 {
 
+#include <CGAL/config.h>
 
 /**
  * @class Implicit_to_labeled_function_wrapper
@@ -135,5 +141,9 @@ private:
 }  // end namespace CGAL
 
 
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_MESH_3_IMPLICIT_TO_LABELED_FUNCTION_WRAPPER_H
