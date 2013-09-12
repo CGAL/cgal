@@ -213,8 +213,8 @@ public:
   std::vector<CR_matrix> rot_mtr;                     ///< rotation matrices of ros vertices (size: ros)
 
   Sparse_linear_solver m_solver;                      ///< linear sparse solver
-  unsigned int iterations;                            ///< number of maximal iterations
-  double tolerance;                                   ///< tolerance of convergence 
+  unsigned int m_iterations;                            ///< number of maximal iterations
+  double m_tolerance;                                   ///< tolerance of convergence 
 
   bool need_preprocess_factorization;                 ///< is there any need to compute L and factorize
   bool need_preprocess_region_of_solution;            ///< is there any need to compute region of solution 
@@ -246,7 +246,7 @@ public:
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       is_hdl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-      iterations(iterations), tolerance(tolerance),
+      m_iterations(iterations), m_tolerance(tolerance),
       need_preprocess_factorization(true), 
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
@@ -283,7 +283,7 @@ public:
     ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
     is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
     is_hdl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-    iterations(iterations), tolerance(tolerance),
+    m_iterations(iterations), m_tolerance(tolerance),
     need_preprocess_factorization(true), 
     need_preprocess_region_of_solution(true),
     last_preprocess_successful(false),
@@ -527,7 +527,7 @@ public:
    */
   void deform()
   {
-    deform(iterations, tolerance);
+    deform(m_iterations, m_tolerance);
   }
 
   /**
@@ -586,27 +586,27 @@ public:
   /**
    * Getter of `set_iterations()`
    */
-  unsigned int get_iterations()
-  { return iterations; }
+  unsigned int iterations()
+  { return m_iterations; }
   
   /**
    * Getter of `set_tolerance()`
    */
-  double get_tolerance()
-  { return tolerance; }
+  double tolerance()
+  { return m_tolerance; }
 
   /**
    * Sets the number of iterations used in `deform()`
    */
   void set_iterations(unsigned int iterations)
-  { this->iterations = iterations; }
+  { this->m_iterations = iterations; }
   
    /// @brief Sets the tolerance of convergence used in `deform()`.
    /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
    ///
    /// `tolerance >` \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ will be used as a termination criterium.
   void set_tolerance(double tolerance)
-  { this->tolerance = tolerance; }
+  { this->m_tolerance = tolerance; }
 
   /**
    * Queries whether a vertex is inside the region-of-interest.
