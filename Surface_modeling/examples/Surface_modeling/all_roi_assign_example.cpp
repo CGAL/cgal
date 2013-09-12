@@ -61,7 +61,7 @@ int main()
   // insert region of interest
   boost::tie(vb, ve) = boost::vertices(mesh);
 
-  deform_mesh.insert_roi(vb, ve); // insert whole mesh as roi
+  deform_mesh.insert_roi_vertices(vb, ve); // insert whole mesh as roi
 
   // insert controls
   vertex_descriptor control_1 = *boost::next(vb, 213);

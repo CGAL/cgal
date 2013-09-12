@@ -90,7 +90,7 @@ read_rois(DeformMesh& deform_mesh,
     hg.push_back(vertices[id]);
   }
   while(roi_stream >> id) {
-    deform_mesh.insert_roi(vertices[id]);
+    deform_mesh.insert_roi_vertex(vertices[id]);
   }
 
   return hg;

@@ -332,7 +332,7 @@ public:
     if(is_control(vd)) { return false; }
     need_preprocess_both();
 
-    insert_roi(vd); // also insert it as roi
+    insert_roi_vertex(vd); // also insert it as roi
 
     is_hdl_map[id(vd)] = true;
     return true;
@@ -374,11 +374,11 @@ public:
    * @param end past-the-end iterator of the range of vertices
    */
   template<class InputIterator>
-  void insert_roi(InputIterator begin, InputIterator end)
+  void insert_roi_vertices(InputIterator begin, InputIterator end)
   {
     for( ;begin != end; ++begin)
     {
-      insert_roi(*begin);
+      insert_roi_vertex(*begin);
     }
   }
 
@@ -387,7 +387,7 @@ public:
    * @param vd the vertex to be inserted
    * @return `true` if the insertion is successful
    */
-  bool insert_roi(vertex_descriptor vd)   
+  bool insert_roi_vertex(vertex_descriptor vd)   
   {
     if(is_roi(vd)) { return false; }
     need_preprocess_both();
@@ -611,7 +611,7 @@ public:
   /**
    * Queries whether a vertex is inside the region-of-interest.
    * @param vd the query vertex
-   * @return `true` if `vd` has been added (and not removed) using `insert_control_vertex()`, `insert_control_vertices()` or `insert_roi()`.
+   * @return `true` if `vd` has been added (and not removed) to the region-of-interest.
    */
   bool is_roi(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
@@ -619,7 +619,7 @@ public:
   /**
    * Queries whether a vertex is a control vertex.
    * @param vd the query vertex
-   * @return `true` if `vd` has been added (and not removed) using `insert_control_vertex()` or `insert_control_vertices()`.
+   * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
    */
   bool is_control(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }

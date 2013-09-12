@@ -257,7 +257,7 @@ public slots:
       vertex_descriptor vh = it->first;
       bool changed = false;
       if(ui_widget->ROIRadioButton->isChecked()) {
-        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi(vh); }
+        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_roi_vertex(vh); }
         else          { changed = erase_roi(vh);  }
       }
       else {
@@ -321,9 +321,9 @@ public:
     return inserted;
   }
 
-  bool insert_roi(vertex_descriptor v)
+  bool insert_roi_vertex(vertex_descriptor v)
   {
-    return deform_mesh.insert_roi(v);
+    return deform_mesh.insert_roi_vertex(v);
   }
   
   bool erase_handle(vertex_descriptor v)
@@ -349,7 +349,7 @@ public:
     vertex_iterator vb, ve;
     for(boost::tie(vb, ve) = boost::vertices(*polyhedron()); vb != ve; ++vb)
     {
-      insert_roi(*vb);
+      insert_roi_vertex(*vb);
     }   
   }
 
@@ -525,7 +525,7 @@ public:
     {
       std::size_t v_id;
       in >> v_id;
-      insert_roi(all_vertices[v_id]);
+      insert_roi_vertex(all_vertices[v_id]);
     }
     // read handles
     int handle_group_size;
@@ -570,7 +570,7 @@ public:
   struct Select_roi_output {
     Select_roi_output(Deform_mesh* dm) : dm(dm) { }
     void operator()(Vertex_handle vh) {
-      dm->insert_roi(vh);
+      dm->insert_roi_vertex(vh);
     }
     Deform_mesh* dm;
   };
