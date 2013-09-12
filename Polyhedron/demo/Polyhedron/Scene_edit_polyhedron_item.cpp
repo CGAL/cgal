@@ -32,8 +32,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
     
-  // create an empty handle group for starting
-  create_handle_group();
+  // create an empty group of control vertices for starting
+  create_ctrl_vertices_group();
    
   // start QObject's timer for continuous effects 
   // (deforming mesh while mouse not moving)
@@ -75,9 +75,9 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 {
-  while(is_there_any_handle_group())
+  while(is_there_any_ctrl_vertices_group())
   {
-    delete_handle_group(false);
+    delete_ctrl_vertices_group(false);
   }
   gluDeleteQuadric(quadric);
   if (own_poly_item) delete poly_item;
@@ -87,9 +87,9 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 /////////// Most relevant functions lie here ///////////
 void Scene_edit_polyhedron_item::deform()
 {
-  if(!is_there_any_handle()) { return; }
+  if(!is_there_any_ctrl_vertices()) { return; }
 
-  for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+  for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
   { it->set_target_positions(); }
   deform_mesh.deform();
 
@@ -162,7 +162,7 @@ void Scene_edit_polyhedron_item::draw_edges() const {
   glDisableClientState(GL_VERTEX_ARRAY); 
 
   if(rendering_mode == Wireframe) {
-    draw_ROI_and_handles();
+    draw_ROI_and_control_vertices();
   }
 }
 void Scene_edit_polyhedron_item::draw() const {
@@ -180,10 +180,10 @@ void Scene_edit_polyhedron_item::draw() const {
   color.set_rgb_color(0, 0, 0);
   draw_edges();
 
-  draw_ROI_and_handles();
+  draw_ROI_and_control_vertices();
 }
 
-void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
+void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices() const {
   GLboolean enable_back_lighting = glIsEnabled(GL_LIGHTING);
   glDisable(GL_LIGHTING);
 
@@ -201,10 +201,10 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
       }
     }          
   }
-  // draw handle related things
+  // draw control vertices related things
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
 
-  for(Handle_group_data_list::const_iterator hgb_data = handle_frame_map.begin(); hgb_data != handle_frame_map.end(); ++hgb_data)
+  for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
   {
     if(hgb_data->frame == viewer->manipulatedFrame())
     {      
@@ -225,10 +225,10 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
         ::glPopMatrix();
       }
     }
-    // draw handle points
+    // draw control vertices
     if(hgb_data == active_group) { color.set_rgb_color(1.0f, 0, 0); }
     else                    { color.set_rgb_color(0, 0, 1.0f); }
-    for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->handle_group.begin(); hb != hgb_data->handle_group.end(); ++hb)
+    for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
     {  gl_draw_point( (*hb)->point() );
     }
   }

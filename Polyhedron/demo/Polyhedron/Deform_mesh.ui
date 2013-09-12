@@ -37,7 +37,7 @@
              <item>
               <widget class="QLabel" name="label_2">
                <property name="text">
-                <string>Brush Size Handle:</string>
+                <string>Control Vertices Brush Size:</string>
                </property>
               </widget>
              </item>
@@ -49,7 +49,7 @@
               <widget class="QSpinBox" name="BrushSpinBoxRoi"/>
              </item>
              <item>
-              <widget class="QSpinBox" name="BrushSpinBoxHandle"/>
+              <widget class="QSpinBox" name="BrushSpinBoxCtrlVert"/>
              </item>
             </layout>
            </item>
@@ -76,8 +76,8 @@
         </layout>
        </item>
        <item row="2" column="0" rowspan="2">
-        <widget class="QGroupBox" name="ROIHandleGroupBox">
-         <layout class="QVBoxLayout" name="HandleRoiLayout">
+        <widget class="QGroupBox" name="ROICtrlVertGroupBox">
+         <layout class="QVBoxLayout" name="CtrlVertRoiLayout">
           <item>
            <widget class="QRadioButton" name="ROIRadioButton">
             <property name="toolTip">
@@ -92,12 +92,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="HandleRadioButton">
+           <widget class="QRadioButton" name="CtrlVertRadioButton">
             <property name="toolTip">
-             <string>Use Shift + Left Click to paint handle vertices</string>
+             <string>Use Shift + Left Click to paint control vertices</string>
             </property>
             <property name="text">
-             <string>Handle</string>
+             <string>Control vertices</string>
             </property>
            </widget>
           </item>
@@ -179,15 +179,15 @@
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="HandleGroupNavigationGroupBox">
+     <widget class="QGroupBox" name="CtrlVertGroupNavigationGroupBox">
       <property name="title">
-       <string>Handle Group Navigation</string>
+       <string>Group of Control Vertices Navigation</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="PrevHandlePushButton">
+          <widget class="QPushButton" name="PrevCtrlVertPushButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -200,7 +200,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="NextHandlePushButton">
+          <widget class="QPushButton" name="NextCtrlVertPushButton">
            <property name="text">
             <string>&gt;&gt;</string>
            </property>
@@ -211,14 +211,14 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QPushButton" name="AddHandlePushButton">
+          <widget class="QPushButton" name="AddCtrlVertPushButton">
            <property name="text">
             <string>Create new</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="DeleteHandlePushButton">
+          <widget class="QPushButton" name="DeleteCtrlVertPushButton">
            <property name="text">
             <string>Delete </string>
            </property>
@@ -302,14 +302,14 @@
       <item>
        <widget class="QPushButton" name="SaveROIPushButton">
         <property name="text">
-         <string>Save ROI / Handles</string>
+         <string>Save ROI / Control Vertices</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="ReadROIPushButton">
         <property name="text">
-         <string>Load ROI / Handles</string>
+         <string>Load ROI / Control Vertices</string>
         </property>
        </widget>
       </item>

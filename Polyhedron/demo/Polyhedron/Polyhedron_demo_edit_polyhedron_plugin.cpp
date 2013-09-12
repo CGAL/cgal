@@ -32,11 +32,11 @@ public slots:
   void on_actionDeformation_triggered();
   /////// Dock window signal handlers //////
   // what they do is simply transmiting required 'action' to selected scene_edit_polyhedron_item object
-  void on_AddHandlePushButton_clicked();
-  void on_PrevHandlePushButton_clicked();
-  void on_NextHandlePushButton_clicked();
+  void on_AddCtrlVertPushButton_clicked();
+  void on_PrevCtrlVertPushButton_clicked();
+  void on_NextCtrlVertPushButton_clicked();
   void on_SelectAllVerticesPushButton_clicked();
-  void on_DeleteHandlePushButton_clicked();  
+  void on_DeleteCtrlVertPushButton_clicked();  
   void on_ApplyAndClosePushButton_clicked();
   void on_ClearROIPushButton_clicked();
   void on_ShowROICheckBox_stateChanged(int state);
@@ -49,7 +49,7 @@ public slots:
   void on_Select_isolated_components_button_clicked();
   void on_Get_minimum_button_clicked();
 
-  void on_BrushSpinBoxHandle_changed(int);
+  void on_BrushSpinBoxCtrlVert_changed(int);
   void on_BrushSpinBoxRoi_changed(int);
   void on_ROIRadioButton_toggled(bool);
   void new_item_created(int item_id);
@@ -107,11 +107,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   ui_widget.setupUi(dock_widget); 
   mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
-  connect(ui_widget.AddHandlePushButton, SIGNAL(clicked()), this, SLOT(on_AddHandlePushButton_clicked()));
-  connect(ui_widget.PrevHandlePushButton, SIGNAL(clicked()), this, SLOT(on_PrevHandlePushButton_clicked()));
-  connect(ui_widget.NextHandlePushButton, SIGNAL(clicked()), this, SLOT(on_NextHandlePushButton_clicked()));
+  connect(ui_widget.AddCtrlVertPushButton, SIGNAL(clicked()), this, SLOT(on_AddCtrlVertPushButton_clicked()));
+  connect(ui_widget.PrevCtrlVertPushButton, SIGNAL(clicked()), this, SLOT(on_PrevCtrlVertPushButton_clicked()));
+  connect(ui_widget.NextCtrlVertPushButton, SIGNAL(clicked()), this, SLOT(on_NextCtrlVertPushButton_clicked()));
   connect(ui_widget.SelectAllVerticesPushButton, SIGNAL(clicked()), this, SLOT(on_SelectAllVerticesPushButton_clicked()));
-  connect(ui_widget.DeleteHandlePushButton, SIGNAL(clicked()), this, SLOT(on_DeleteHandlePushButton_clicked()));
+  connect(ui_widget.DeleteCtrlVertPushButton, SIGNAL(clicked()), this, SLOT(on_DeleteCtrlVertPushButton_clicked()));
   connect(ui_widget.ApplyAndClosePushButton, SIGNAL(clicked()), this, SLOT(on_ApplyAndClosePushButton_clicked()));
   connect(ui_widget.ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
   connect(ui_widget.ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
@@ -126,7 +126,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(dock_widget_visibility_changed(bool)) );
 
   connect(ui_widget.BrushSpinBoxRoi, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxRoi_changed(int)));
-  connect(ui_widget.BrushSpinBoxHandle, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxHandle_changed(int)));
+  connect(ui_widget.BrushSpinBoxCtrlVert, SIGNAL(valueChanged(int)), this, SLOT(on_BrushSpinBoxCtrlVert_changed(int)));
   connect(ui_widget.ROIRadioButton, SIGNAL(toggled(bool)), this, SLOT(on_ROIRadioButton_toggled(bool)));
   ///////////////////////////////////////////////////////////////////
 }
@@ -140,30 +140,30 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
 
 /////// Dock window signal handlers //////
 // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
-void Polyhedron_demo_edit_polyhedron_plugin::on_AddHandlePushButton_clicked()
+void Polyhedron_demo_edit_polyhedron_plugin::on_AddCtrlVertPushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->create_handle_group();
+  edit_item->create_ctrl_vertices_group();
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_PrevHandlePushButton_clicked()
+void Polyhedron_demo_edit_polyhedron_plugin::on_PrevCtrlVertPushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->prev_handle_group();
+  edit_item->prev_ctrl_vertices_group();
   scene->itemChanged(edit_item); // for repaint
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_NextHandlePushButton_clicked()
+void Polyhedron_demo_edit_polyhedron_plugin::on_NextCtrlVertPushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->next_handle_group();
+  edit_item->next_ctrl_vertices_group();
   scene->itemChanged(edit_item); // for repaint
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clicked()
@@ -175,13 +175,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clic
   edit_item->set_all_vertices_as_roi();
   scene->itemChanged(edit_item); // for repaint
 }
-void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteHandlePushButton_clicked()
+void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked()
 {
   int item_id = scene->mainSelectionIndex();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
-  edit_item->delete_handle_group();
+  edit_item->delete_ctrl_vertices_group();
   scene->itemChanged(edit_item); // for repaint
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
@@ -319,7 +319,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_ROIRadioButton_toggled(bool value) {
   int k_ring = value ? ui_widget.BrushSpinBoxRoi->value() : 
-                       ui_widget.BrushSpinBoxHandle->value();
+                       ui_widget.BrushSpinBoxCtrlVert->value();
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
     Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
@@ -329,7 +329,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ROIRadioButton_toggled(bool valu
   }
 }
 
-void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxHandle_changed(int value) {
+void Polyhedron_demo_edit_polyhedron_plugin::on_BrushSpinBoxCtrlVert_changed(int value) {
   if(ui_widget.ROIRadioButton->isChecked()) { return; }
   for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
   {
@@ -374,7 +374,7 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_edit_polyhedron(Item_id i,
   poly_item->setName(poly_item_name); // Because it is changed when the
                                       // name of edit_poly is changed.
   int k_ring = ui_widget.ROIRadioButton->isChecked() ? ui_widget.BrushSpinBoxRoi->value() : 
-                                                       ui_widget.BrushSpinBoxHandle->value();
+                                                       ui_widget.BrushSpinBoxCtrlVert->value();
   edit_poly->set_k_ring(k_ring);
   scene->replaceItem(i, edit_poly);
   return edit_poly;

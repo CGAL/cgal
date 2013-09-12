@@ -87,28 +87,28 @@ typedef CGAL::Deform_mesh<Polyhedron, Vertex_index_map, Edge_index_map, CGAL::OR
 
 typedef Deform_mesh::Point  Point;
 
-/// For storing associated data with handle group
-class Handle_group_data
+/// For storing associated data with a group of control vertices
+class Control_vertices_data
 {
 public:
-  std::vector<vertex_descriptor> handle_group;
-  qglviewer::ManipulatedFrame* frame;  // manframe assoc with handle group
+  std::vector<vertex_descriptor> ctrl_vertices_group;
+  qglviewer::ManipulatedFrame* frame;  // manframe assoc with a group of control vertices
   qglviewer::Vec frame_initial_center; // initial center of frame
-  Scene_interface::Bbox bbox;          // bbox of handles inside group  
+  Scene_interface::Bbox bbox;          // bbox of control vertices inside group  
   qglviewer::Vec rot_direction;        // vector for constraint rotation
 private:
   std::vector<qglviewer::Vec> initial_positions;
   Deform_mesh* deform_mesh;
 
 public:
-  Handle_group_data(Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
+  Control_vertices_data(Deform_mesh* deform_mesh, qglviewer::ManipulatedFrame* frame = 0)
     : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
   void refresh()
   {
-    for(std::vector<vertex_descriptor>::iterator it = handle_group.begin(); it != handle_group.end(); ) {
+    for(std::vector<vertex_descriptor>::iterator it = ctrl_vertices_group.begin(); it != ctrl_vertices_group.end(); ) {
       if(!deform_mesh->is_control_vertex(*it)) {
-        it = handle_group.erase(it);
+        it = ctrl_vertices_group.erase(it);
       }
       else { ++it; }
     }
@@ -125,7 +125,7 @@ public:
   }
   void set_target_positions()
   {
-    std::vector<vertex_descriptor>::iterator hb = handle_group.begin();
+    std::vector<vertex_descriptor>::iterator hb = ctrl_vertices_group.begin();
     for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it, ++hb)
     {
       qglviewer::Vec dif_from_initial_center = (*it) - frame_initial_center;
@@ -141,7 +141,7 @@ private:
   {
     initial_positions.clear();
     
-    for(std::vector<vertex_descriptor>::iterator hb = handle_group.begin(); hb != handle_group.end(); ++hb)
+    for(std::vector<vertex_descriptor>::iterator hb = ctrl_vertices_group.begin(); hb != ctrl_vertices_group.end(); ++hb)
     {
       qglviewer::Vec point((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z() );
       initial_positions.push_back(point);
@@ -245,7 +245,7 @@ public:
   
 protected:
   void timerEvent(QTimerEvent *event);
-  void draw_ROI_and_handles() const;
+  void draw_ROI_and_control_vertices() const;
 
 public slots:
   void changed();
@@ -261,8 +261,8 @@ public slots:
         else          { changed = erase_roi_vertex(vh);  }
       }
       else {
-        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_handle(vh); }
-        else          { changed = erase_handle(vh);  }
+        if(ui_widget->InsertRadioButton->isChecked()) { changed = insert_control_vertex(vh); }
+        else          { changed = erase_control_vertex(vh);  }
       }
       any_changes |= changed;
     }
@@ -288,11 +288,11 @@ private:
   std::vector<double> normals;
 
   Deform_mesh deform_mesh;
-typedef std::list<Handle_group_data> Handle_group_data_list;
-  Handle_group_data_list::iterator active_group;
-  Handle_group_data_list handle_frame_map; // keep list of handle_groups with assoc data
+  typedef std::list<Control_vertices_data> Ctrl_vertices_group_data_list;
+  Ctrl_vertices_group_data_list::iterator active_group;
+  Ctrl_vertices_group_data_list ctrl_vertex_frame_map; // keep list of group of control vertices with assoc data
 
-  double length_of_axis; // for drawing axis at a handle group
+  double length_of_axis; // for drawing axis at a group of control vertices
 
   // by interleaving 'viewer's events (check constructor), keep followings:
   Mouse_keyboard_state_deformation state;
@@ -306,16 +306,16 @@ typedef std::list<Handle_group_data> Handle_group_data_list;
 
 public:
   // Deformation related functions //
-  bool insert_handle(vertex_descriptor v)
+  bool insert_control_vertex(vertex_descriptor v)
   {
-    if(!is_there_any_handle_group()) {
-      print_message("There is no handle group, create one!");
+    if(!is_there_any_ctrl_vertices_group()) {
+      print_message("There is no group of control vertices, create one!");
       return false; 
-    } // no handle group to insert
+    } // no group of control vertices to insert
 
     bool inserted = deform_mesh.insert_control_vertex(v);
     if(inserted) {
-      active_group->handle_group.push_back(v);
+      active_group->ctrl_vertices_group.push_back(v);
       active_group->refresh();
     }
     return inserted;
@@ -326,21 +326,21 @@ public:
     return deform_mesh.insert_roi_vertex(v);
   }
   
-  bool erase_handle(vertex_descriptor v)
+  bool erase_control_vertex(vertex_descriptor v)
   {
-    if(deform_mesh.erase_control_vertex(v)) // API should be safe enough to do that (without checking empty handle group etc.)
+    if(deform_mesh.erase_control_vertex(v)) // API should be safe enough to do that (without checking empty group of control vertices etc.)
     {
-      refresh_all_handle_centers(); // since we don't know which handle group that v erased of, refresh all
+      refresh_all_group_centers(); // since we don't know which group of control vertices v is erased from, refresh all
       return true;
     }
 
-    print_message("Selected vertex is not handle!");
+    print_message("Selected vertex is not a control vertex!");
     return false;     
   }
 
   bool erase_roi_vertex(vertex_descriptor v)
   {
-    erase_handle(v); // erase from handles
+    erase_control_vertex(v); // erase control vertex
     return deform_mesh.erase_roi_vertex(v);
   }
 
@@ -355,80 +355,80 @@ public:
 
   void clear_roi()
   {
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     {
       delete it->frame;
     }
-    handle_frame_map.clear();
+    ctrl_vertex_frame_map.clear();
     deform_mesh.reset();
 
-    create_handle_group(); // create one new handle group
+    create_ctrl_vertices_group(); // create one new group of control vertices
   } 
 
-  void create_handle_group()
+  void create_ctrl_vertices_group()
   {
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it) {
-      if(it->handle_group.empty()) { 
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it) {
+      if(it->ctrl_vertices_group.empty()) { 
         active_group = it;
         return;
       }
     }
 
-    // No empty handle group
+    // No empty group of control vertices
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
 
-    Handle_group_data hgd(&deform_mesh, new_frame);
-    handle_frame_map.push_back(hgd);
+    Control_vertices_data hgd(&deform_mesh, new_frame);
+    ctrl_vertex_frame_map.push_back(hgd);
     hgd.refresh();
 
-    active_group = --handle_frame_map.end();
+    active_group = --ctrl_vertex_frame_map.end();
 
     connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
     // but it makes demo more responsive if we also add this signal
     emit itemChanged();
 
-    print_message("A new empty handle group is created.");
+    print_message("A new empty group of control vertices is created.");
   }
 
-  void delete_handle_group(bool create_new = true)
+  void delete_ctrl_vertices_group(bool create_new = true)
   {
-    if(!is_there_any_handle_group()) { 
-      print_message("There is no handle group to be deleted!");
+    if(!is_there_any_ctrl_vertices_group()) { 
+      print_message("There is no group of control vertices to be deleted!");
       return; 
-    } // no handle group
+    } // no group of control vertices
 
     // delete group representative    
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     {
       if(it == active_group)
       {
         delete it->frame;        
-        for(std::vector<vertex_descriptor>::iterator v_it = it->handle_group.begin(); v_it != it->handle_group.end(); ++v_it) {
+        for(std::vector<vertex_descriptor>::iterator v_it = it->ctrl_vertices_group.begin(); v_it != it->ctrl_vertices_group.end(); ++v_it) {
           deform_mesh.erase_control_vertex(*v_it);
         }
-        handle_frame_map.erase(it);
+        ctrl_vertex_frame_map.erase(it);
         break;
       }
     }
 
-    // assign another handle_group to active_group
-    Handle_group_data_list::iterator hgb, hge;
-    if( is_there_any_handle_group(hgb, hge) )
+    // assign another ctrl_vertices_group to active_group
+    Ctrl_vertices_group_data_list::iterator hgb, hge;
+    if( is_there_any_ctrl_vertices_group(hgb, hge) )
     { 
       active_group = hgb; 
-    } // no handle group 
+    } // no group of control vertices
     else if(create_new)
     { 
-      create_handle_group(); 
+      create_ctrl_vertices_group(); 
     }
   }
 
-  void prev_handle_group()
+  void prev_ctrl_vertices_group()
   {
-    Handle_group_data_list::iterator hgb, hge;
-    if( !is_there_any_handle_group(hgb, hge) ) {
-      print_message("There is no handle group to iterate on!");
+    Ctrl_vertices_group_data_list::iterator hgb, hge;
+    if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
+      print_message("There is no group of control vertices to iterate on!");
       return; 
     }
     // shift
@@ -436,11 +436,11 @@ public:
     else                    {--active_group; }    
   }
 
-  void next_handle_group()
+  void next_ctrl_vertices_group()
   {
-    Handle_group_data_list::iterator hgb, hge;
-    if( !is_there_any_handle_group(hgb, hge) ) {
-      print_message("There is no handle group to iterate on!");
+    Ctrl_vertices_group_data_list::iterator hgb, hge;
+    if( !is_there_any_ctrl_vertices_group(hgb, hge) ) {
+      print_message("There is no group of control vertices to iterate on!");
       return; 
     }
     // shift
@@ -450,7 +450,7 @@ public:
 
   void pivoting_end()
   {       
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     {
       //update constraint rotation vector, set only for the last group
       it->rot_direction = it->frame->rotation().rotate( qglviewer::Vec(0.,0.,1.) );
@@ -460,7 +460,7 @@ public:
       it->frame_initial_center = vec;
       it->frame->setPosition(vec);
     }
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     {
       it->frame->blockSignals(false);
     }
@@ -472,7 +472,7 @@ public:
     rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
 
     // just block signals to prevent deformation
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     {
       it->frame->blockSignals(true);
     }
@@ -491,13 +491,13 @@ public:
       out << (*rb )->id() << " ";
     }
     out << std::endl;
-    // save handles
+    // save control vertices
     
-    out << handle_frame_map.size() << std::endl; // handle count
-    for(Handle_group_data_list::const_iterator hgb = handle_frame_map.begin(); hgb != handle_frame_map.end(); ++hgb) {
+    out << ctrl_vertex_frame_map.size() << std::endl; // control vertices count
+    for(Ctrl_vertices_group_data_list::const_iterator hgb = ctrl_vertex_frame_map.begin(); hgb != ctrl_vertex_frame_map.end(); ++hgb) {
 
-      out << hgb->handle_group.size() << std::endl;
-      for(std::vector<vertex_descriptor>::const_iterator hb = hgb->handle_group.begin(); hb != hgb->handle_group.end(); ++hb) 
+      out << hgb->ctrl_vertices_group.size() << std::endl;
+      for(std::vector<vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb) 
       {
         out << (*hb)->id() << " ";
       }
@@ -508,7 +508,7 @@ public:
   void read_roi(const char* file_name)
   { 
     clear_roi();
-    delete_handle_group(false);
+    delete_ctrl_vertices_group(false);
 
     // put vertices to vector
     std::vector<vertex_descriptor> all_vertices;
@@ -527,19 +527,19 @@ public:
       in >> v_id;
       insert_roi_vertex(all_vertices[v_id]);
     }
-    // read handles
-    int handle_group_size;
-    in >> handle_group_size;
-    while(handle_group_size-- > 0)
+    // read control vertices
+    int ctrl_vertices_group_size;
+    in >> ctrl_vertices_group_size;
+    while(ctrl_vertices_group_size-- > 0)
     {
-      create_handle_group();
-      int handle_size;
-      in >> handle_size;      
-      while(handle_size-- > 0) 
+      create_ctrl_vertices_group();
+      int ctrl_size;
+      in >> ctrl_size;      
+      while(ctrl_size-- > 0) 
       {                    
         std::size_t v_id;
         in >> v_id;
-        insert_handle(all_vertices[v_id]);
+        insert_control_vertex(all_vertices[v_id]);
       }
     }
   }
@@ -548,7 +548,7 @@ public:
   {
     deform_mesh.overwrite_original_positions();
 
-    refresh_all_handle_centers();
+    refresh_all_group_centers();
   }
 
   struct Is_selected {
@@ -594,33 +594,33 @@ protected:
     // std::cout << message.toStdString() << std::endl;
   }
 
-  bool is_there_any_handle_group(Handle_group_data_list::iterator& hgb, Handle_group_data_list::iterator& hge)
+  bool is_there_any_ctrl_vertices_group(Ctrl_vertices_group_data_list::iterator& hgb, Ctrl_vertices_group_data_list::iterator& hge)
   {
-    hgb = handle_frame_map.begin(); hge = handle_frame_map.end();
+    hgb = ctrl_vertex_frame_map.begin(); hge = ctrl_vertex_frame_map.end();
     return hgb != hge;
   }
 
-  bool is_there_any_handle_group()
+  bool is_there_any_ctrl_vertices_group()
   {
-    Handle_group_data_list::iterator hgb, hge;
-    return is_there_any_handle_group(hgb, hge);
+    Ctrl_vertices_group_data_list::iterator hgb, hge;
+    return is_there_any_ctrl_vertices_group(hgb, hge);
   }
 
-  bool is_there_any_handle()
+  bool is_there_any_ctrl_vertices()
   {
-    Handle_group_data_list::iterator hgb, hge;
-    if(!is_there_any_handle_group(hgb, hge)) { return false; } // there isn't any handle group
+    Ctrl_vertices_group_data_list::iterator hgb, hge;
+    if(!is_there_any_ctrl_vertices_group(hgb, hge)) { return false; } // there isn't any group of control vertices
 
-    for(; hgb != hge; ++hgb) // check inside handle groups
+    for(; hgb != hge; ++hgb) // check inside groups of control vertices
     {
-      if(!hgb->handle_group.empty()) { return true; }
+      if(!hgb->ctrl_vertices_group.empty()) { return true; }
     }
     return false;
   }
 
-  void refresh_all_handle_centers()
+  void refresh_all_group_centers()
   {
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     { it->refresh(); }
   }
 
@@ -630,7 +630,7 @@ protected:
     { // user is deforming currently don't change the state 
       return false;  
     }
-    if(handle_frame_map.empty()) { return false; }
+    if(ctrl_vertex_frame_map.empty()) { return false; }
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
@@ -644,11 +644,11 @@ protected:
     }
     
     // now find closest frame and make it active manipulated frame
-    Handle_group_data_list::iterator min_it = handle_frame_map.begin();    
+    Ctrl_vertices_group_data_list::iterator min_it = ctrl_vertex_frame_map.begin();    
     const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(min_it->frame->position());
     float min_dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
 
-    for(Handle_group_data_list::iterator it = handle_frame_map.begin(); it != handle_frame_map.end(); ++it)
+    for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
     {
       const qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->frame->position());
       float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
