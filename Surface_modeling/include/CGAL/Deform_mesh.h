@@ -389,7 +389,7 @@ public:
    */
   bool insert_roi_vertex(vertex_descriptor vd)   
   {
-    if(is_roi(vd)) { return false; }
+    if(is_roi_vertex(vd)) { return false; }
     need_preprocess_both();
 
     is_roi_map[id(vd)] = true;
@@ -406,7 +406,7 @@ public:
    */
   bool erase_roi(vertex_descriptor vd)   
   {
-    if(!is_roi(vd)) { return false; }  
+    if(!is_roi_vertex(vd)) { return false; }  
     
     erase_control(vd); // also erase from being control
 
@@ -613,7 +613,7 @@ public:
    * @param vd the query vertex
    * @return `true` if `vd` has been added (and not removed) to the region-of-interest.
    */
-  bool is_roi(vertex_descriptor vd) const
+  bool is_roi_vertex(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
 
   /**
@@ -725,7 +725,7 @@ private:
     // (current ros is actually old ros - we did not change it yet)
     for(typename std::vector<vertex_descriptor>::iterator it = ros.begin(); it != ros.end(); ++it)
     {
-      if(!is_roi(*it)) {
+      if(!is_roi_vertex(*it)) {
         put(vertex_point_map, *it, old_original[ old_ros_id_map[id(*it)] ]);
       }
     }
@@ -785,7 +785,7 @@ private:
       std::size_t v_ros_id = ros_id(ros[i]);
       std::size_t v_id = id(ros[i]);
 
-      if(is_roi(ros[i]) && old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()) { 
+      if(is_roi_vertex(ros[i]) && old_ros_id_map[v_id] != (std::numeric_limits<std::size_t>::max)()) { 
         // if it is currently roi and previously ros + boundary
         // (actually I just need to assign old's to new's if a vertex is currently and previously ROI
         // but no harm on assigning if its also previously ros + boundary because 
@@ -838,7 +838,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi(vi) && !is_control(vi) )          // vertices of ( roi - hdl )
+      if ( is_roi_vertex(vi) && !is_control(vi) )          // vertices of ( roi - hdl )
       {
         double diagonal = 0;
         in_edge_iterator e, e_end;
@@ -880,7 +880,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi(vi) && !is_control(vi) ) // vertices of ( roi - hdl ): free vertices
+      if ( is_roi_vertex(vi) && !is_control(vi) ) // vertices of ( roi - hdl ): free vertices
       {
         double diagonal = 0;
         out_edge_iterator e, e_end;
@@ -1061,7 +1061,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi(vi) && !is_control(vi) ) 
+      if ( is_roi_vertex(vi) && !is_control(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber in user manual
         CR_vector xyz = cr_traits.vector(0, 0, 0);
@@ -1123,7 +1123,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi(vi) && !is_control(vi) ) 
+      if ( is_roi_vertex(vi) && !is_control(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber_rims in user manual
         CR_vector xyz = cr_traits.vector(0, 0, 0);
@@ -1183,7 +1183,7 @@ private:
   {
     for(std::size_t i = 0; i < ros.size(); ++i){
       std::size_t v_id = ros_id(ros[i]);
-      if(is_roi(ros[i]))
+      if(is_roi_vertex(ros[i]))
       {
         put(vertex_point_map, ros[i], solution[v_id]);
       }

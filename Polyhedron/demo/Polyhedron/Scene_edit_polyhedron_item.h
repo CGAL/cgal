@@ -555,7 +555,7 @@ public:
     Deform_mesh& dm;
     Is_selected(Deform_mesh& dm) : dm(dm) {}
     bool is_selected(Vertex_handle vh) const {
-      return dm.is_roi(vh);
+      return dm.is_roi_vertex(vh);
     }
   };
 
