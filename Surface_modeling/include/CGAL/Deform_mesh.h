@@ -89,7 +89,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// \endcode
  /// @tparam CR a model of DeformationClosestRotationTraits_3. If \ref thirdpartyEigen "Eigen" 3.1 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, 
  /// `Deformation_Eigen_polar_closest_rotation_traits_3` is provided as default parameter.
- /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point from a \cgal Kernel as value type.
+ /// @tparam VPM a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and a point as value type. The point type must be a model of `::SimplePoint_3`
 template <
   class HG, 
   class VIM, 
@@ -174,7 +174,7 @@ public:
   typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor	vertex_descriptor;
   /// The type for edge descriptor
   typedef typename boost::graph_traits<Halfedge_graph>::edge_descriptor		edge_descriptor;
-  /// The 3D point type
+  /// The 3D point type, model of `::SimplePoint_3`
   typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
   /// %Iterator over vertices in the region-of-interest.
   typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_vertex_const_iterator;
