@@ -504,16 +504,25 @@ private:
         Point_2 qsrc = q.segment().source();
         Point_2 qtrg = q.segment().target();
 
-        if (
-            (compare_x_2(psrc, mid) == compare_x_2(mid, ptrg)) and
-            (compare_y_2(psrc, mid) == compare_y_2(mid, ptrg))    )
+        Comparison_result cmpxpsm = compare_x_2(psrc, mid);
+        Comparison_result cmpxmpt = compare_x_2(mid, ptrg);
+        Comparison_result cmpypsm = compare_y_2(psrc, mid);
+        Comparison_result cmpympt = compare_y_2(mid, ptrg);
+
+        Comparison_result cmpxqsm = compare_x_2(qsrc, mid);
+        Comparison_result cmpxmqt = compare_x_2(mid, qtrg);
+        Comparison_result cmpyqsm = compare_y_2(qsrc, mid);
+        Comparison_result cmpymqt = compare_y_2(mid, qtrg);
+
+        if ((cmpxpsm == cmpxmpt) and (cmpypsm == cmpympt))
         {
           // mid is inside p
           CGAL_SDG_DEBUG(std::cout <<
               "debug bisector_SS mid in p" << std::endl;);
 
           // take any endpoint of q not the same as mid
-          Point_2 qrep = ( mid == qsrc) ? qtrg : qsrc;
+          Point_2 qrep = ( (cmpxqsm == EQUAL) or (cmpyqsm == EQUAL) )
+              ? qtrg : qsrc;
 
           Direction_2 dirq    ( Vector_2(mid, qrep) );
           Direction_2 dirpsrc ( Vector_2(mid, psrc) );
@@ -541,61 +550,76 @@ private:
           CGAL_SDG_DEBUG(std::cout <<
               "debug bisector_SS dout=" << dout << std::endl;);
 
-        } else if (
-            (compare_x_2(qsrc, mid) == compare_x_2(mid, qtrg)) and
-            (compare_y_2(qsrc, mid) == compare_y_2(mid, qtrg))    )
-        {
-          // mid is inside q
-          CGAL_SDG_DEBUG(std::cout <<
-              "debug bisector_SS mid in q" << std::endl;);
-
-          // take any endpoint of p not the same as mid
-          Point_2 prep = ( mid == psrc ) ? ptrg : psrc;
-
-          Direction_2 dirp    ( Vector_2(mid, prep) );
-          Direction_2 dirqsrc ( Vector_2(mid, qsrc) );
-          Direction_2 dirqtrg ( Vector_2(mid, qtrg) );
-
-          if (dirp.counterclockwise_in_between(dirqsrc, dirqtrg))
-          {
-            CGAL_SDG_DEBUG(std::cout <<
-                "debug bisector_SS spt" << std::endl;);
-            dinc = compute_linf_bisecting_direction(dirqsrc, dirp);
-            dout = compute_linf_bisecting_direction(dirp, dirqtrg);
-          } else
-          {
-            CGAL_SDG_DEBUG(std::cout <<
-                "debug bisector_SS tps" << std::endl;);
-            dinc = compute_linf_bisecting_direction(dirqtrg, dirp);
-            dout = compute_linf_bisecting_direction(dirp, dirqsrc);
-          }
-
-          CGAL_SDG_DEBUG(std::cout <<
-              "debug bisector_SS dinc=" << dinc << std::endl;);
-          CGAL_SDG_DEBUG(std::cout <<
-              "debug bisector_SS dout=" << dout << std::endl;);
-
         } else {
-          // here mid is neither inside p nor inside q
-          CGAL_SDG_DEBUG(std::cout <<
-              "debug bisector_SS mid not in p, q" << std::endl;);
+          if ((cmpxqsm == cmpxmqt) and (cmpyqsm == cmpymqt))
+          {
+            // mid is inside q
+            CGAL_SDG_DEBUG(std::cout <<
+                "debug bisector_SS mid in q" << std::endl;);
 
-          // take any endpoint of p not the same as mid
-          Point_2 prep = ( mid == psrc) ? ptrg : psrc;
+            // take any endpoint of p not the same as mid
+            Point_2 prep = ( (cmpxpsm == EQUAL) or (cmpypsm == EQUAL) )
+                ? ptrg : psrc;
 
-          // take any endpoint of q not the same as mid
-          Point_2 qrep = ( mid == qsrc) ? qtrg : qsrc;
+            Direction_2 dirp    ( Vector_2(mid, prep) );
+            Direction_2 dirqsrc ( Vector_2(mid, qsrc) );
+            Direction_2 dirqtrg ( Vector_2(mid, qtrg) );
 
-          Direction_2 dirp ( Vector_2(mid, prep) );
-          Direction_2 dirq ( Vector_2(mid, qrep) );
+            if (dirp.counterclockwise_in_between(dirqsrc, dirqtrg))
+            {
+              CGAL_SDG_DEBUG(std::cout <<
+                  "debug bisector_SS spt" << std::endl;);
+              dinc = compute_linf_bisecting_direction(dirqsrc, dirp);
+              dout = compute_linf_bisecting_direction(dirp, dirqtrg);
+            } else
+            {
+              CGAL_SDG_DEBUG(std::cout <<
+                  "debug bisector_SS tps" << std::endl;);
+              dinc = compute_linf_bisecting_direction(dirqtrg, dirp);
+              dout = compute_linf_bisecting_direction(dirp, dirqsrc);
+            }
 
-          Direction_2 d =
-            dirq.counterclockwise_in_between(dirp, -dirp) ?
-            compute_linf_bisecting_direction(dirp, dirq) :
-            - compute_linf_bisecting_direction(dirq, dirp) ;
+            CGAL_SDG_DEBUG(std::cout <<
+                "debug bisector_SS dinc=" << dinc << std::endl;);
+            CGAL_SDG_DEBUG(std::cout <<
+                "debug bisector_SS dout=" << dout << std::endl;);
 
-          dinc = -d;
-          dout = d;
+          } else {
+            // here mid is neither inside p nor inside q
+            CGAL_SDG_DEBUG(std::cout <<
+                "debug bisector_SS mid not in p, q" << std::endl;);
+
+            CGAL_SDG_DEBUG(std::cout
+                << "debug bisector_SS cmpxpsm cmpypsm cmpxqsm cmpyqsm is"
+                << cmpxpsm << cmpypsm << cmpxqsm << cmpyqsm << std::endl;);
+
+            // take any endpoint of p not the same as mid
+            Point_2 prep =
+              ( CGAL::has_larger_distance_to_point(mid, ptrg, psrc) )
+                ? ptrg : psrc;
+
+            // take any endpoint of q not the same as mid
+            Point_2 qrep =
+              ( CGAL::has_larger_distance_to_point(mid, qtrg, qsrc) )
+                ? qtrg : qsrc;
+
+            Direction_2 dirp ( Vector_2(mid, prep) );
+            Direction_2 dirq ( Vector_2(mid, qrep) );
+
+            CGAL_SDG_DEBUG(std::cout << "debug bisector_SS dirp="
+                << dirp << " dirq=" << dirq << std::endl;);
+
+            Direction_2 d =
+              dirq.counterclockwise_in_between(dirp, -dirp) ?
+              compute_linf_bisecting_direction(dirp, dirq) :
+              - compute_linf_bisecting_direction(dirq, dirp) ;
+
+            CGAL_SDG_DEBUG(std::cout << "debug bisector_SS d="
+                << d << std::endl;);
+
+            dinc = -d;
+            dout = d;
+          }
         }
       } // end of compute intersection numerically
     } // end of case of non-parallel segments
