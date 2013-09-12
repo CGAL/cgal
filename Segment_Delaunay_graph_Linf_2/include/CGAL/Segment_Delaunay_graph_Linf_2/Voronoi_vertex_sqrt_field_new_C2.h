@@ -1061,6 +1061,10 @@ private:
   {
     bool is_l_h_or_v = is_line_h_or_v(l);
 
+    if (not is_l_h_or_v) {
+      return EQUAL;
+    }
+
     FT difxvl = vv.x() - lref.x();
     FT difyvl = vv.y() - lref.y();
     FT absdifxvl = CGAL::abs(difxvl);
@@ -1093,17 +1097,21 @@ private:
       FT absdifxvp = CGAL::abs(difxvp);
       FT absdifyvp = CGAL::abs(difyvp);
       Comparison_result cmppabsxy = CGAL::compare(absdifxvp, absdifyvp);
-      if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
-      {
-        if (CGAL::compare(difxvl, difxvp) == EQUAL) {
-          compare_p = CGAL::compare(absdifyvl, absdifyvp);
+      CGAL_SDG_DEBUG(std::cout << "debug linf_refine cmplabsxy = "
+          << cmplabsxy << " cmppabsxy=" << cmppabsxy << std::endl;);
+      if (cmplabsxy != EQUAL) {
+        if (not ( (cmplabsxy == SMALLER) and (cmppabsxy == SMALLER) ))
+        {
+          if (CGAL::compare(difxvl, difxvp) == EQUAL) {
+            compare_p = CGAL::compare(absdifyvl, absdifyvp);
+          }
         }
-      }
-      if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
-      {
-        if (CGAL::compare(difyvl, difyvp) == EQUAL) {
-          CGAL_assertion(compare_p == EQUAL);
-          compare_p = CGAL::compare(absdifxvl, absdifxvp);
+        if (not ( (cmplabsxy == LARGER ) and (cmppabsxy == LARGER ) ))
+        {
+          if (CGAL::compare(difyvl, difyvp) == EQUAL) {
+            CGAL_assertion(compare_p == EQUAL);
+            compare_p = CGAL::compare(absdifxvl, absdifxvp);
+          }
         }
       }
     } else {
@@ -1127,17 +1135,21 @@ private:
       FT absdifxvq = CGAL::abs(difxvq);
       FT absdifyvq = CGAL::abs(difyvq);
       Comparison_result cmpqabsxy = CGAL::compare(absdifxvq, absdifyvq);
-      if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
-      {
-        if (CGAL::compare(difxvl, difxvq) == EQUAL) {
-          compare_q = CGAL::compare(absdifyvl, absdifyvq);
+      CGAL_SDG_DEBUG(std::cout << "debug linf_refine cmplabsxy = "
+          << cmplabsxy << " cmpqabsxy=" << cmpqabsxy << std::endl;);
+      if (cmplabsxy != EQUAL) {
+        if (not ( (cmplabsxy == SMALLER) and (cmpqabsxy == SMALLER) ))
+        {
+          if (CGAL::compare(difxvl, difxvq) == EQUAL) {
+            compare_q = CGAL::compare(absdifyvl, absdifyvq);
+          }
         }
-      }
-      if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
-      {
-        if (CGAL::compare(difyvl, difyvq) == EQUAL) {
-          CGAL_assertion(compare_q == EQUAL);
-          compare_q = CGAL::compare(absdifxvl, absdifxvq);
+        if (not ( (cmplabsxy == LARGER ) and (cmpqabsxy == LARGER ) ))
+        {
+          if (CGAL::compare(difyvl, difyvq) == EQUAL) {
+            CGAL_assertion(compare_q == EQUAL);
+            compare_q = CGAL::compare(absdifxvl, absdifxvq);
+          }
         }
       }
     } else {
@@ -1161,17 +1173,21 @@ private:
       FT absdifxvr = CGAL::abs(difxvr);
       FT absdifyvr = CGAL::abs(difyvr);
       Comparison_result cmprabsxy = CGAL::compare(absdifxvr, absdifyvr);
-      if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
-      {
-        if (CGAL::compare(difxvl, difxvr) == EQUAL) {
-          compare_r = CGAL::compare(absdifyvl, absdifyvr);
+      CGAL_SDG_DEBUG(std::cout << "debug linf_refine cmplabsxy = "
+          << cmplabsxy << " cmprabsxy=" << cmprabsxy << std::endl;);
+      if (cmplabsxy != EQUAL) {
+        if (not ( (cmplabsxy == SMALLER) and (cmprabsxy == SMALLER) ))
+        {
+          if (CGAL::compare(difxvl, difxvr) == EQUAL) {
+            compare_r = CGAL::compare(absdifyvl, absdifyvr);
+          }
         }
-      }
-      if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
-      {
-        if (CGAL::compare(difyvl, difyvr) == EQUAL) {
-          CGAL_assertion(compare_r == EQUAL);
-          compare_r = CGAL::compare(absdifxvl, absdifxvr);
+        if (not ( (cmplabsxy == LARGER ) and (cmprabsxy == LARGER ) ))
+        {
+          if (CGAL::compare(difyvl, difyvr) == EQUAL) {
+            CGAL_assertion(compare_r == EQUAL);
+            compare_r = CGAL::compare(absdifxvl, absdifxvr);
+          }
         }
       }
     } else {
