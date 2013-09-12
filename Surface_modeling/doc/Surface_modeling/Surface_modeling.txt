@@ -7,16 +7,15 @@ namespace CGAL {
 \cgalAutoToc
 \authors Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz
 
+\image latex main_image_suggestion_4_resized.png
+\image html main_image_suggestion_4_resized.png
+
 \section Surface_Modeling_Intro Introduction
 A Surface mesh deformation algorithm provides new positions of the vertices of a surface mesh
 under positional constraints of some of its vertices without requiring any additional structure other than the surface mesh itself.
 
 In this package, we implement the algorithm described in \cgalCite{Sorkine2007AsRigidAs},
 where a nonlinear deformation energy is minimized under constraints to preserve as much as possible rigidity.
-
-\cgalFigureBegin{Main_image_suggestion, main_image_suggestion_4_resized.png}
-Deformation example.
-\cgalFigureEnd
 
 \section Surface_Modeling_Def Definitions
 
