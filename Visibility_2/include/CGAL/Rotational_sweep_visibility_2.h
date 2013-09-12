@@ -142,16 +142,19 @@ public:
     }
     visibility_region_impl(e->face(), q);
 
-
+    timer.reset();
+    timer.start();
     //Decide which inside of the visibility butterfly is needed.
-    int source_idx, target_idx ;
+    int source_idx(-1), target_idx(-1) ;
     for (int i = 0; i != polygon.size(); i++) {
-      if ( polygon[i]== source ) {
-          source_idx = i;
+      if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], source)==EQUAL ) {
+        source_idx = i;
       }
-      else if ( polygon[i] == target ) {
-          target_idx = i;
+      else if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], target)==EQUAL ) {
+        target_idx = i;
       }
+      if (source_idx != -1 && target_idx != -1)
+        break;
     }
     int small_idx, big_idx;
     if ( source_idx < target_idx ) {
@@ -184,7 +187,8 @@ public:
         next_idx++;
       }
     }
-
+    timer.stop();
+    cut_from_butterfly_t+=timer.time();
 
     typename Pvec::iterator first = polygon.begin() + small_idx;
     typename Pvec::iterator last = polygon.begin() + big_idx;
@@ -239,7 +243,6 @@ void attach(const Input_arrangement_2& arr) {
 void detach() {
   p_arr = NULL;
   geom_traits = NULL;
-  vs.clear();
 }
 
 const Input_arrangement_2& arr() {
