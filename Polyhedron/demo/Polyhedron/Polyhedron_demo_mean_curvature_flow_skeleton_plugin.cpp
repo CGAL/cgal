@@ -57,20 +57,7 @@ typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_fac
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
 
-typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
-
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
-
-typedef std::map<boost::graph_traits<Graph>::vertex_descriptor, std::vector<int> > Correspondence_map;
-typedef boost::associative_property_map<Correspondence_map> GraphCorrelationPMap;
-
-typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
-
-typedef std::map<boost::graph_traits<Graph>::vertex_descriptor, Polyhedron::Traits::Point_3> GraphPointMap;
-typedef boost::associative_property_map<GraphPointMap> GraphPointPMap;
-
-typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
 
 typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
 typedef boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
@@ -78,6 +65,19 @@ typedef boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter
 typedef boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
 typedef boost::graph_traits<Graph>::edge_iterator                   edge_iter;
 typedef boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
+
+typedef std::map<vertex_desc, std::vector<int> > Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map> GraphCorrelationPMap;
+
+typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
+
+typedef std::map<vertex_desc, Polyhedron::Traits::Point_3> GraphPointMap;
+typedef boost::associative_property_map<GraphPointMap> GraphPointPMap;
+
+typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
+
+typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+GraphCorrelationPMap, HalfedgeGraphPointPMap, GraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
 
 typedef Polyhedron::Traits         Kernel;
 typedef Kernel::Point_3            Point;
@@ -274,6 +274,7 @@ public:
         mcs->set_omega_H(omega_H);
         mcs->set_omega_P(omega_P);
         mcs->set_edgelength_TH(edgelength_TH);
+        mcs->set_delta_area(area_TH);
       }
     }
     return true;
