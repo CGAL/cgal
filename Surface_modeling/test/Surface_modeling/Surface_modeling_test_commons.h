@@ -86,7 +86,7 @@ read_rois(DeformMesh& deform_mesh,
   std::vector<typename DeformMesh::vertex_descriptor> hg;
 
   while(handle_stream >> id) {
-    deform_mesh.insert_control(vertices[id]); 
+    deform_mesh.insert_control_vertex(vertices[id]);
     hg.push_back(vertices[id]);
   }
   while(roi_stream >> id) {

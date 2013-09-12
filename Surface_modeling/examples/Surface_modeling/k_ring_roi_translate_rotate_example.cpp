@@ -92,8 +92,8 @@ int main()
   std::vector<vertex_descriptor> controls_2_map = extract_k_ring(mesh, *boost::next(vb, 97), 1);
 
   deform_mesh.insert_roi(roi_map.begin(), roi_map.end());
-  deform_mesh.insert_control(controls_1_map.begin(), controls_1_map.end());
-  deform_mesh.insert_control(controls_2_map.begin(), controls_2_map.end());
+  deform_mesh.insert_control_vertices(controls_1_map.begin(), controls_1_map.end());
+  deform_mesh.insert_control_vertices(controls_2_map.begin(), controls_2_map.end());
 
   deform_mesh.preprocess();
 //// DEFORM SECTION ////

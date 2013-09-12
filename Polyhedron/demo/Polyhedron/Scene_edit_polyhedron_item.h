@@ -313,7 +313,7 @@ public:
       return false; 
     } // no handle group to insert
 
-    bool inserted = deform_mesh.insert_control(v);
+    bool inserted = deform_mesh.insert_control_vertex(v);
     if(inserted) {
       active_group->handle_group.push_back(v);
       active_group->refresh();

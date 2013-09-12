@@ -67,8 +67,8 @@ int main()
   vertex_descriptor control_1 = *boost::next(vb, 213);
   vertex_descriptor control_2 = *boost::next(vb, 157);
 
-  deform_mesh.insert_control(control_1); // insert controls
-  deform_mesh.insert_control(control_2);
+  deform_mesh.insert_control_vertex(control_1); // insert controls
+  deform_mesh.insert_control_vertex(control_2);
 
   // insertion of roi and controls completed, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
@@ -101,7 +101,7 @@ int main()
   // want to add another control
 //// PREPROCESS SECTION AGAIN////
   vertex_descriptor control_3 = *boost::next(vb, 92);
-  deform_mesh.insert_control(control_3); // now I need to prepocess again
+  deform_mesh.insert_control_vertex(control_3); // now I need to prepocess again
 
   if(!deform_mesh.preprocess()){ 
     std::cerr << "Check documentation of preprocess()" << std::endl;
