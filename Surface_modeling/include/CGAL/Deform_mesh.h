@@ -185,9 +185,7 @@ private:
 
 public:
 
-  /** Iterator over vertex descriptors in the region-of-interest. Its value type is `vertex_descriptor` */
-  typedef typename std::vector<vertex_descriptor>::iterator        Roi_iterator;
-   /** Const version of Roi_iterator*/
+   /** Iterator over vertex descriptors in the region-of-interest. Its value type is `const vertex_descriptor`*/
   typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_const_iterator;
 
 // Data members.
@@ -420,16 +418,6 @@ public:
   }
 
   /** 
-   * Provides access to the vertices in the region-of-interest. 
-   * \note Deleting a vertex from the region-of-interest invalidates iterators. 
-   * @return an iterator range
-   */
-  std::pair<Roi_iterator, Roi_iterator> roi_vertices()
-  {
-    return std::make_pair(roi.begin(), roi.end());
-  }
-
-  /** 
    * Const version
    */
   std::pair<Roi_const_iterator, Roi_const_iterator> roi_vertices() const
@@ -635,7 +623,7 @@ public:
    */
   const Halfedge_graph& halfedge_graph() const
   { return m_halfedge_graph; }
-  
+
   /**
    * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function has the same effect as creating
    * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and control vertices.
@@ -648,7 +636,7 @@ public:
 
     region_of_solution(); // the roi should be preprocessed since we are using original_position vec
 
-    Roi_iterator rb, re;
+    Roi_const_iterator rb, re;
     for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
     {
       original[ros_id(*rb)] = get(vertex_point_map, (*rb));
