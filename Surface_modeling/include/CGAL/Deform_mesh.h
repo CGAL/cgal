@@ -351,7 +351,7 @@ public:
   bool insert_control_vertex(vertex_descriptor vd)
   {
     if(is_control_vertex(vd)) { return false; }
-    need_preprocess_both();
+    need_preprocess_factorization=true;
 
     insert_roi_vertex(vd); // also insert it as roi
 
@@ -383,7 +383,7 @@ public:
   {
     if(!is_control_vertex(vd)) { return false; }
     
-    need_preprocess_both();
+    need_preprocess_factorization=true;
     is_hdl_map[id(vd)] = false;
     return true;
   }
