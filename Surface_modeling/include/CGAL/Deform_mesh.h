@@ -329,7 +329,7 @@ public:
    */
   bool insert_control_vertex(vertex_descriptor vd)
   {
-    if(is_control(vd)) { return false; }
+    if(is_control_vertex(vd)) { return false; }
     need_preprocess_both();
 
     insert_roi_vertex(vd); // also insert it as roi
@@ -360,7 +360,7 @@ public:
    */
   bool erase_control(vertex_descriptor vd)
   {
-    if(!is_control(vd)) { return false; }
+    if(!is_control_vertex(vd)) { return false; }
     
     need_preprocess_both();
     is_hdl_map[id(vd)] = false;
@@ -461,7 +461,7 @@ public:
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
-    if(!is_control(vd)) { return; }
+    if(!is_control_vertex(vd)) { return; }
     solution[ros_id(vd)] = target_position;
   }
 
@@ -621,7 +621,7 @@ public:
    * @param vd the query vertex
    * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
    */
-  bool is_control(vertex_descriptor vd) const
+  bool is_control_vertex(vertex_descriptor vd) const
   { return is_hdl_map[id(vd)]; }
 
   /**
@@ -838,7 +838,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi_vertex(vi) && !is_control(vi) )          // vertices of ( roi - hdl )
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) )          // vertices of ( roi - hdl )
       {
         double diagonal = 0;
         in_edge_iterator e, e_end;
@@ -880,7 +880,7 @@ private:
     {
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
-      if ( is_roi_vertex(vi) && !is_control(vi) ) // vertices of ( roi - hdl ): free vertices
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) // vertices of ( roi - hdl ): free vertices
       {
         double diagonal = 0;
         out_edge_iterator e, e_end;
@@ -1061,7 +1061,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi_vertex(vi) && !is_control(vi) ) 
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber in user manual
         CR_vector xyz = cr_traits.vector(0, 0, 0);
@@ -1123,7 +1123,7 @@ private:
       vertex_descriptor vi = ros[k];
       std::size_t vi_id = ros_id(vi);
 
-      if ( is_roi_vertex(vi) && !is_control(vi) ) 
+      if ( is_roi_vertex(vi) && !is_control_vertex(vi) ) 
       {// free vertices
         // sum of right-hand side of eq:lap_ber_rims in user manual
         CR_vector xyz = cr_traits.vector(0, 0, 0);

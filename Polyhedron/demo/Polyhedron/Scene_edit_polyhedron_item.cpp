@@ -195,7 +195,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_handles() const {
     Deform_mesh::Roi_vertex_const_iterator rb, re;
     for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
     {
-      if(!deform_mesh.is_control(*rb))
+      if(!deform_mesh.is_control_vertex(*rb))
       {
         gl_draw_point( (*rb)->point() );
       }

@@ -107,7 +107,7 @@ public:
   void refresh()
   {
     for(std::vector<vertex_descriptor>::iterator it = handle_group.begin(); it != handle_group.end(); ) {
-      if(!deform_mesh->is_control(*it)) {
+      if(!deform_mesh->is_control_vertex(*it)) {
         it = handle_group.erase(it);
       }
       else { ++it; }
