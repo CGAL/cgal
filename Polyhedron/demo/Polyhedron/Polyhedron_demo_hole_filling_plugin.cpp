@@ -14,6 +14,7 @@
 
 #include <CGAL/Hole_filling.h>
 #include <CGAL/Timer.h>
+#include <CGAL/iterator.h>
 
 #include <QTime>
 #include <QAction>
@@ -331,12 +332,6 @@ protected:
     if(collection) collection->block_poly_item_changed = false;
   }
 private:
-  struct Nop_functor {
-    template<class T>
-    void operator()(const T & /*t*/) const {}
-  };
-  typedef boost::function_output_iterator<Nop_functor> Nop_out;
-
   Messages_interface* messages;
   QAction* actionHoleFilling;
 
@@ -580,18 +575,18 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     CGAL::triangulate_hole(poly, it, std::back_inserter(patch), use_DT);
   }
   else if(action_index == 1) {
-    CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), Nop_out(), alpha, use_DT);
+    CGAL::triangulate_and_refine_hole(poly, it, std::back_inserter(patch), CGAL::Emptyset_iterator(), alpha, use_DT);
   }
   else {
     int weight_index = ui_widget.weight_combo_box->currentIndex();
 
     bool success;
     if(weight_index == 0) {
-      success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(), 
+      success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), CGAL::Emptyset_iterator(), 
        CGAL::internal::Uniform_weight_fairing<Polyhedron>(), alpha, use_DT, continuity).get<0>();
     }
     else {
-      success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), Nop_out(),
+      success = CGAL::triangulate_refine_and_fair_hole(poly, it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
         CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Polyhedron>(), alpha, use_DT, continuity).get<0>();
     }
 

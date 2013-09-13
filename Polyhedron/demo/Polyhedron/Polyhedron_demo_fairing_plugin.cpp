@@ -9,6 +9,7 @@
 #include "Polyhedron_type.h"
 
 #include <CGAL/Hole_filling.h>
+#include <CGAL/iterator.h>
 
 #include <QTime>
 #include <QAction>
@@ -24,7 +25,6 @@
 #include <algorithm>
 #include <queue>
 
-#include <boost/function_output_iterator.hpp>
 
 class Polyhedron_demo_fairing_plugin :
   public QObject,
@@ -100,7 +100,7 @@ public slots:
     std::vector<Polyhedron::Facet_handle> new_facets;
 
     CGAL::refine(*selection_item->polyhedron(), selection_item->selected_facets.begin(),
-      selection_item->selected_facets.end(), std::back_inserter(new_facets), Nop_out(), alpha);
+      selection_item->selected_facets.end(), std::back_inserter(new_facets), CGAL::Emptyset_iterator(), alpha);
     // add new facets to selection
     for(std::vector<Polyhedron::Facet_handle>::iterator it = new_facets.begin(); it != new_facets.end(); ++it) {
       selection_item->selected_facets.insert(*it);
@@ -110,12 +110,6 @@ public slots:
   }
 
 private:
-  struct Nop_functor {
-    template<class T>
-    void operator()(const T & /*t*/) const {}
-  };
-  typedef boost::function_output_iterator<Nop_functor> Nop_out;
-
   Messages_interface* messages;
   QAction* actionFairing;
 
