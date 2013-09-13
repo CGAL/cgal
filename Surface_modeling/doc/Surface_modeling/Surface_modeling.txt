@@ -94,13 +94,11 @@ it is better to use an individual deformation object for each connected componen
 \subsection Deform_section Deformation
 
 The deformation of the surface mesh is triggered by the displacement of the control vertices.
-This is done by setting the final position of the control vertices, or setting an affine transformation
-to be applied to a control vertex or a range of control vertices.
+This is done by setting the target position of the control vertices (directly or by using an affine transformation
+to be applied to a control vertex or a range of control vertices).
 
-Note that the rotation and translation are always applied on the <em>original positions</em> of the control vertices. Hence,
-they are not cumulative (i.e. any call to `Deform_mesh::rotate_and_translate()`, `Deform_mesh::translate()`, or `Deform_mesh::set_target_position()`
-overrides the previous call). In particular, in an interactive deformation session, the user is responsible for composing the
-affine transformations. The rationale for this choice is increase the numerical stability of the affine transformations.
+Note that a rotation or a translation of a control vertex is always applied on its last target position set:
+they are cumulative.
 
 The deformation of the mesh happens when calling the function `Deform_mesh::deform()`. The number of optimization iterations
 varies depending on whether the user choose a fixed number of iterations or a stop criteria based on the energy variation.
@@ -131,7 +129,7 @@ Deformation results when running example \ref Example_1 : `deform_1.off` and `de
 \cgalFigureEnd
 
 \subsubsection Example_2 Using Affine Transformation on Range of Vertices
-In this example, we use the functions `translate()` and `rotate_and_translate()` on a range of control vertices.
+In this example, we use the functions `translate()` and `rotate()` on a range of control vertices.
 
 \cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}
 

@@ -19,7 +19,5 @@
 \cgalPkgDemo{Edit plugin of the Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
-
-\todo change translate and rotate_and_translate to apply on the current position?
 */
 

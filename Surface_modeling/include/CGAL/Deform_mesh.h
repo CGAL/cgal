@@ -530,9 +530,7 @@ public:
   }
 
   /**
-   * Sets the target position of `vd` by applying a translation of vertex `t` to its original position
-   * (that is its position at the time of the functor construction or after the last call to `overwrite_original_positions()`).
-   * \note A call to this function cancels the last call to `rotate_and_translate()`, `translate()`, or `set_target_position()` involving `vd`.
+   * Updates the target position of `vd` by applying a translation of vector `t` to its last target position.
    *
    * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
    *
@@ -545,7 +543,7 @@ public:
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     std::size_t v_id = ros_id(vd);
-    solution[v_id] = add_to_point(original[v_id], t);
+    solution[v_id] = add_to_point(solution[v_id], t);
   }
 
   /**
@@ -565,15 +563,12 @@ public:
 
     for(; begin != end; ++begin) {
       std::size_t v_id = ros_id(*begin);
-      solution[v_id] = add_to_point(original[v_id], t);
+      solution[v_id] = add_to_point(solution[v_id], t);
     }
   }
 
   /**
-   * Sets the target position of `vd` by applying a rotation around `rotation_center` defined by the quaternion `quat`, followed by a
-   * translation by vector `t` to its original position (that is its position at the time of the functor construction or after
-   * the last call to `overwrite_original_positions()`).
-   * \note A call to this function cancels the last call to `rotate_and_translate()`, `translate()`, or `set_target_position()` involving `vd`.
+   * Updates the target position of `vd` by applying a rotation around `rotation_center` defined by the quaternion `quat` to its last target position.
    *
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
    * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
@@ -581,15 +576,14 @@ public:
    * @param vd a control vertex
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
-   * @param t post translation vector
    */
   template <typename Quaternion, typename Vect>
-  void rotate_and_translate(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat, const Vect& t)
+  void rotate(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     std::size_t v_id = ros_id(vd);
-    Vect v = quat * sub_to_vector<Vect>(original[v_id], rotation_center);
+    Vect v = quat * sub_to_vector<Vect>(solution[v_id], rotation_center);
     const Point& rotated = add_to_point(rotation_center, v);
     solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);
   }
@@ -605,23 +599,35 @@ public:
    * @param end past-the-end iterator of the range of vertices
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
-   * @param t post translation vector
    */
   template <typename InputIterator, typename Quaternion, typename Vect>
-  void rotate_and_translate(InputIterator begin, InputIterator end, const Point& rotation_center, const Quaternion& quat, const Vect& t)
+  void rotate(InputIterator begin, InputIterator end, const Point& rotation_center, const Quaternion& quat)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     for(; begin != end; ++begin) {
       std::size_t v_id = ros_id(*begin);
-      Vect v = quat * sub_to_vector<Vect>(original[v_id], rotation_center);
+      Vect v = quat * sub_to_vector<Vect>(solution[v_id], rotation_center);
       const Point& rotated = add_to_point(rotation_center, v);
       solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);
     }
   }
 
   /**
-   * Deforms the region-of-interest according to the deformation algorithm, using the target positions of each control vertex set by using `rotate_and_translate()`, `translate()`, or `set_target_position()`.
+    * Returns the target position of a control vertex.
+    * \param vd a control vertex
+    * \pre `is_roi(vd)`
+    */
+  const Point& target_position(vertex_descriptor vd)
+  {
+    region_of_solution();
+
+    CGAL_precondition( is_roi(vd) );
+    return solution[ ros_id(vd) ];
+  }
+
+  /**
+   * Deforms the region-of-interest according to the deformation algorithm, using the target positions of each control vertex set by using `rotate()`, `translate()`, or `set_target_position()`.
    * The points associated to each vertex of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
    * deformation problem is using the points associated to the input graph before calling the function.
    * \note Nothing happens if `preprocess()` returns `false`.
@@ -856,7 +862,7 @@ private:
     need_preprocess_region_of_solution = false;
 
     std::vector<std::size_t>  old_ros_id_map = ros_id_map;
-    std::vector<CR_matrix>   old_rot_mtr    = rot_mtr;
+    std::vector<CR_matrix>    old_rot_mtr    = rot_mtr;
     std::vector<Point>        old_solution   = solution;
     std::vector<Point>        old_original   = original;
     
