@@ -710,6 +710,13 @@ public:
    * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and the set of control vertices.
    * \note if the region-of-interest or the set of control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
+   * \warning This function might have a non-negligible effect on the result.
+   * The Laplacian matrix of the free vertices and the optimal rotations
+   * are computed using the original positions of the points
+   * associated to the vertices. Thus, if a deformed version of the mesh
+   * is used as <i>reference</i>, the mesh properties the algorithm
+   * tries to preserve are those of an altered version (which are already
+   * degradated).
    */
   void overwrite_original_positions()
   {
