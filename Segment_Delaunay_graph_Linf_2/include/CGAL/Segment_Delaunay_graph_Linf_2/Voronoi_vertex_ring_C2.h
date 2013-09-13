@@ -1054,6 +1054,69 @@ private:
         return POSITIVE;
       }
 
+      const Site_2 * p_ptr;
+      const Site_2 * q_ptr;
+      const Site_2 * r_ptr;
+
+      // renaming so that p_ptr, q_ptr, r_ptr are such that
+      // p_ptr, q_ptr point to points and r_ptr to the segment
+
+      if (p_.is_segment()) {
+        r_ptr = &p_;
+        p_ptr = &q_;
+        q_ptr = &r_;
+      } else if (q_.is_segment()) {
+        r_ptr = &q_;
+        p_ptr = &r_;
+        q_ptr = &p_;
+      } else {
+        CGAL_assertion(r_.is_segment());
+        r_ptr = &r_;
+        p_ptr = &p_;
+        q_ptr = &q_;
+      }
+
+      bool is_r_hor = is_site_horizontal(*r_ptr);
+      bool is_r_ver = is_site_vertical(*r_ptr);
+
+      bool is_p_endp_of_r = is_endpoint_of(*p_ptr, *r_ptr);
+      bool is_q_endp_of_r = is_endpoint_of(*q_ptr, *r_ptr);
+
+      // check for p or q endpoint of non-hv r
+      if ((not (is_r_hor or is_r_ver)) and
+          ((is_p_endp_of_r or is_q_endp_of_r))
+         ) {
+        CGAL_SDG_DEBUG(std::cout << "debug r is non-axis parallel"
+            << " and either p or q is r's endpoint" << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug per=" << is_p_endp_of_r
+            << " qer=" << is_q_endp_of_r << std::endl;);
+
+        // if new point t is on the same side of line pq
+        // as the other endpoint of r, then CONFLICT
+
+        Line_2 l = compute_line_from_to(p_ptr->point(), q_ptr->point());
+        Oriented_side ost = oriented_side_of_line(l, st.point());
+        CGAL_assertion(ost != ON_ORIENTED_BOUNDARY);
+        Point_2 other_of_r;
+        if (is_p_endp_of_r) {
+          other_of_r = (same_points(*p_ptr, r_ptr->source_site()))?
+            ((*r_ptr).target_site().point()) : ((*r_ptr).source_site().point());
+        } else { // is_q_endp_of_r
+          other_of_r = (same_points(*q_ptr, r_ptr->source_site()))?
+            ((*r_ptr).target_site().point()) : ((*r_ptr).source_site().point());
+        }
+        Oriented_side osother = oriented_side_of_line(l, other_of_r);
+
+        CGAL_assertion(osother != ON_ORIENTED_BOUNDARY);
+
+        if (osother == ost) {
+          return NEGATIVE;
+        } else {
+          return POSITIVE;
+        }
+
+      } // case r is non-hv and has endpoint p or q
+
       CGAL_assertion(num_same_quadrant_as_t == 0);
       return ZERO;
 
@@ -1729,8 +1792,6 @@ private:
     if ( is_p_tsrc or is_q_tsrc or is_r_tsrc ) {
       d1 = ZERO;
       ++numendpts_of_t;
-    } else if ( num_common_endp_tsrc >= 2 ) {
-      d1 = ZERO;
     } else {
       d1 = incircle_p(t.source_site());
     }
@@ -1791,8 +1852,6 @@ private:
     if ( is_p_ttrg or is_q_ttrg or is_r_ttrg ) {
       d2 = ZERO;
       ++numendpts_of_t;
-    } else if ( num_common_endp_ttrg >= 2 ) {
-      d2 = ZERO;
     } else {
       d2 = incircle_p(t.target_site());
     }
