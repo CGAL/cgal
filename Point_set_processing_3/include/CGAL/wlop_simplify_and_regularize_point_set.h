@@ -456,7 +456,6 @@ wlop_simplify_and_regularize_point_set(
   #endif
   }
 
-
   // initial rich sample points
   std::vector<Rich_point>::iterator sample_rich_iter;
   sample_rich_iter = sample_rich_points.begin();
@@ -467,20 +466,15 @@ wlop_simplify_and_regularize_point_set(
     *sample_rich_iter = Rich_point(*sample_iter, index++);
   }
 
-
   std::vector<Point> update_sample_points(nb_points_sample);
   std::vector<Point>::iterator update_sample_iter;
-  //most time consuming part
 
-  //iteration loop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   for (unsigned int iteration = 0; iteration < max_iter_number; iteration++)
   {
     // Build rich-grid for sample-sample neighborhood
     rich_grid_internal::compute_ball_neighbors_one_self(sample_rich_points,
                                                         bbox, 
                                                         neighbor_radius);
-  
-
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_densities;
     if (need_compute_density)
@@ -503,7 +497,6 @@ wlop_simplify_and_regularize_point_set(
         sample_densities.push_back(density);
       }
     }
-
 #ifdef CGAL_DEBUG_MODE
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "Initialization / Compute Density For Sample" << std::endl;
@@ -511,7 +504,6 @@ wlop_simplify_and_regularize_point_set(
       << (memory>>20) << " Mb allocated" << std::endl << std::endl;
     task_timer.reset();
 #endif
-
     // Build rich-grid for sample-original neighborhood
     rich_grid_internal::compute_ball_neighbors_one_to_another
                        (sample_rich_points,
