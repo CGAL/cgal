@@ -151,7 +151,7 @@
      <string>Run to convergence</string>
     </property>
    </widget>
-   <widget class="QDoubleSpinBox" name="area_TH">
+   <widget class="QDoubleSpinBox" name="delta_area">
     <property name="geometry">
      <rect>
       <x>124</x>
@@ -161,7 +161,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_area_TH">
+   <widget class="QLabel" name="label_delta_area">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -234,8 +234,8 @@
    <zorder>pushButton_run</zorder>
    <zorder>pushButton_skeletonize</zorder>
    <zorder>pushButton_converge</zorder>
-   <zorder>area_TH</zorder>
-   <zorder>label_area_TH</zorder>
+   <zorder>delta_area</zorder>
+   <zorder>label_delta_area</zorder>
    <zorder>label_omega_P</zorder>
    <zorder>omega_P</zorder>
    <zorder>is_medially_centered</zorder>

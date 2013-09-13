@@ -128,28 +128,48 @@ enum Degeneracy_algorithm_tag
 
 /// @endcond
 
+/// \ingroup PkgMeanCurvatureSkeleton3
+///@brief Define the default sparse linear solver type
 template <class FT>
 struct MCF_default_solver
 {
+
   typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
 };
 
+/// \ingroup PkgMeanCurvatureSkeleton3
+///@brief Define the default HalfedgeGraphPointPMap type
 template <class Polyhedron>
 struct MCF_default_halfedge_graph_pmap
 {
   typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type type;
 };
 
+/// \ingroup PkgMeanCurvatureSkeleton3
+/// @brief Class providing necessary parameters for `MCF_Skeleton`.
+///
+/// @tparam HalfedgeGraph
+///         a model of `HalfedgeGraph`
 template<class HalfedgeGraph>
 class SkeletonArgs
 {
 private:
-  double omega_H;
-  double omega_P;
-  double edgelength_TH;
-  double delta_area;
-  int max_iterations;
-  bool is_medially_centered;
+  /// Functor used to transform the vertex iterator to point iterator
+  static Point v_to_p(vertex_descriptor v)
+  {
+    return v->point();
+  }
+
+  /// compute the diagonal length for a bounding box
+  double diagonal(Bbox& bbox)
+  {
+    double dx = bbox.xmax() - bbox.xmin();
+    double dy = bbox.ymax() - bbox.ymin();
+    double dz = bbox.zmax() - bbox.zmin();
+
+    double diag = dx * dx + dy * dy + dz * dz;
+    return sqrt(diag);
+  }
 
 public:
   typedef CGAL::Bbox_3                                                   Bbox;
@@ -158,6 +178,24 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator   vertex_iterator;
 
+  /**
+   * The constructor of a SkeletonArgs object. The constructor
+   * will set the `edgelength_TH` to 0.002 * diagonal of the bounding box
+   * of the given mesh. The other parameters are set to their default values:
+   *
+   * omega_H = 0.1
+   *
+   * omega_P = 0.2
+   *
+   * delta_area = 0.0001
+   *
+   * max_iterations = 500
+   *
+   * is_medially_centered = true
+   *
+   * @param P
+   *        triangulated surface mesh used to extract skeleton
+   */
   SkeletonArgs(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
     delta_area(0.0001), max_iterations(500), is_medially_centered(true)
   {
@@ -169,82 +207,26 @@ public:
     edgelength_TH = 0.002 * diag;
   }
 
-  // Functor used to transform the vertex iterator to point iterator
-  static Point v_to_p(vertex_descriptor v)
-  {
-    return v->point();
-  }
-
-  // compute the diagonal length for a bounding box
-  double diagonal(Bbox& bbox)
-  {
-    double dx = bbox.xmax() - bbox.xmin();
-    double dy = bbox.ymax() - bbox.ymin();
-    double dz = bbox.zmax() - bbox.zmin();
-
-    double diag = dx * dx + dy * dy + dz * dz;
-    return sqrt(diag);
-  }
-
-  double get_omega_H()
-  {
-    return omega_H;
-  }
-
-  double get_omega_P()
-  {
-    return omega_P;
-  }
-
-  double get_edgelength_TH()
-  {
-    return edgelength_TH;
-  }
-
-  double get_delta_area()
-  {
-    return delta_area;
-  }
-
-  int get_max_iterations()
-  {
-    return max_iterations;
-  }
-
-  bool get_is_medially_centered()
-  {
-    return is_medially_centered;
-  }
-
-  void set_omega_H(double value)
-  {
-    omega_H = value;
-  }
-
-  void set_omega_P(double value)
-  {
-    omega_P = value;
-  }
-
-  void set_edgelength_TH(double value)
-  {
-    edgelength_TH = value;
-  }
-
-  void set_delta_area(double value)
-  {
-    delta_area = value;
-  }
-
-  void set_max_iterations(int value)
-  {
-    max_iterations = value;
-  }
-
-  void set_is_medially_centered(bool value)
-  {
-    is_medially_centered = value;
-  }
+  /** Control the velocity of movement and approximation quality.
+   *  Increasing `omega_H` will make the MCF based contraction converges
+   *  faster, but result in a skeleton of worse quality. */
+  double omega_H;
+  /** Control the smoothness of the medial approximation.
+   *  Increasing `omega_P` will result a skeleton more closely attached
+   *  to the medial axis, but slow down the speed of contraction. */
+  double omega_P;
+  /** Edges with length less than `edgelength_TH` will be collapsed */
+  double edgelength_TH;
+  /** `run_to_converge` function of `MCF_Skeleton` class will stop if
+   *  the change of area in one iteration is less than `delta_area` */
+  double delta_area;
+  /** Maximum number of iterations. Used to prevent the algorithm running
+      too many iterations but still does not satisfy the stopping criteria
+      defined by `delta_area` */
+  int max_iterations;
+  /** If set to true, the result skeleton is medially centered.
+      Otherwise set to false. */
+  bool is_medially_centered;
 };
 
 /// \ingroup PkgMeanCurvatureSkeleton3
@@ -928,12 +910,12 @@ private:
   /// Initialize the parameters for MCF_Skeleton
   void init_args(SkeletonArgs<HalfedgeGraph> Skeleton_args)
   {
-    omega_H = Skeleton_args.get_omega_H();
-    omega_P = Skeleton_args.get_omega_P();
-    edgelength_TH = Skeleton_args.get_edgelength_TH();
-    delta_area = Skeleton_args.get_delta_area();
-    max_iterations = Skeleton_args.get_max_iterations();
-    is_medially_centered = Skeleton_args.get_is_medially_centered();
+    omega_H = Skeleton_args.omega_H;
+    omega_P = Skeleton_args.omega_P;
+    edgelength_TH = Skeleton_args.edgelength_TH;
+    delta_area = Skeleton_args.delta_area;
+    max_iterations = Skeleton_args.max_iterations;
+    is_medially_centered = Skeleton_args.is_medially_centered;
     weight_calculator = Weight_calculator();
     alpha_TH = 110;
     zero_TH = 1e-7;

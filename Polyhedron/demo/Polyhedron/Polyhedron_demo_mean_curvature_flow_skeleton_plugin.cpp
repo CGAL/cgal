@@ -135,9 +135,9 @@ public:
     ui->edgelength_TH->setDecimals(7);
     ui->edgelength_TH->setValue(0.002 * diag);
     ui->edgelength_TH->setSingleStep(0.0000001);
-    ui->area_TH->setDecimals(7);
-    ui->area_TH->setValue(1e-4);
-    ui->area_TH->setSingleStep(1e-5);
+    ui->delta_area->setDecimals(7);
+    ui->delta_area->setValue(1e-4);
+    ui->delta_area->setSingleStep(1e-5);
     ui->is_medially_centered->setChecked(false);
 
     ui->label_omega_H->setToolTip(QString("omega_H controls the velocity of movement and approximation quality"));
@@ -202,7 +202,7 @@ public:
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
     double edgelength_TH = ui->edgelength_TH->value();
-    double area_TH = ui->area_TH->value();
+    double delta_area = ui->delta_area->value();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
     Polyhedron *pMesh = item->polyhedron();
@@ -218,11 +218,11 @@ public:
       mCopy = new Polyhedron(*pMesh);
 
       CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
-      skeleton_args.set_omega_H(omega_H);
-      skeleton_args.set_omega_P(omega_P);
-      skeleton_args.set_edgelength_TH(edgelength_TH);
-      skeleton_args.set_is_medially_centered(is_medially_centered);
-      skeleton_args.set_delta_area(area_TH);
+      skeleton_args.omega_H = omega_H;
+      skeleton_args.omega_P = omega_P;
+      skeleton_args.edgelength_TH = edgelength_TH;
+      skeleton_args.is_medially_centered = is_medially_centered;
+      skeleton_args.delta_area = delta_area;
 
       mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                         skeleton_args);
@@ -252,11 +252,11 @@ public:
         mCopy = new Polyhedron(*pMesh);
 
         CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
-        skeleton_args.set_omega_H(omega_H);
-        skeleton_args.set_omega_P(omega_P);
-        skeleton_args.set_edgelength_TH(edgelength_TH);
-        skeleton_args.set_is_medially_centered(is_medially_centered);
-        skeleton_args.set_delta_area(area_TH);
+        skeleton_args.omega_H = omega_H;
+        skeleton_args.omega_P = omega_P;
+        skeleton_args.edgelength_TH = edgelength_TH;
+        skeleton_args.is_medially_centered = is_medially_centered;
+        skeleton_args.delta_area = delta_area;
 
         mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                           skeleton_args);
@@ -274,7 +274,7 @@ public:
         mcs->set_omega_H(omega_H);
         mcs->set_omega_P(omega_P);
         mcs->set_edgelength_TH(edgelength_TH);
-        mcs->set_delta_area(area_TH);
+        mcs->set_delta_area(delta_area);
         mcs->set_is_medially_centered(is_medially_centered);
       }
     }
@@ -286,13 +286,13 @@ public:
     double omega_H = ui->omega_H->value();
     double omega_P = ui->omega_P->value();
     double edgelength_TH = ui->edgelength_TH->value();
-    double area_TH = ui->area_TH->value();
+    double delta_area = ui->delta_area->value();
     bool is_medially_centered = ui->is_medially_centered->isChecked();
 
     mcs->set_omega_H(omega_H);
     mcs->set_omega_P(omega_P);
     mcs->set_edgelength_TH(edgelength_TH);
-    mcs->set_delta_area(area_TH);
+    mcs->set_delta_area(delta_area);
     mcs->set_is_medially_centered(is_medially_centered);
   }
 
@@ -506,7 +506,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
   double diag = scene->len_diagonal();
   double omega_H = 0.1;
   double edgelength_TH = 0.002 * diag;
-  double area_TH = 1e-4;
+  double delta_area = 1e-4;
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -533,10 +533,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     GraphCorrelationPMap corr(corr_map);
 
     CGAL::SkeletonArgs<Polyhedron> skeleton_args(tempMesh);
-    skeleton_args.set_omega_H(omega_H);
-    skeleton_args.set_edgelength_TH(edgelength_TH);
-    skeleton_args.set_is_medially_centered(false);
-    skeleton_args.set_delta_area(area_TH);
+    skeleton_args.omega_H = omega_H;
+    skeleton_args.edgelength_TH = edgelength_TH;
+    skeleton_args.is_medially_centered = false;
+    skeleton_args.delta_area = delta_area;
 
     CGAL::extract_skeleton(
                      tempMesh, Vertex_index_map(), Edge_index_map(),
@@ -572,7 +572,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
   double omega_H = 0.1;
   double omega_P = 0.2;
   double edgelength_TH = 0.002 * diag;
-  double area_TH = 1e-4;
+  double delta_area = 1e-4;
 
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -588,11 +588,11 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     Polyhedron tempMesh = *pMesh;
 
     CGAL::SkeletonArgs<Polyhedron> skeleton_args(tempMesh);
-    skeleton_args.set_omega_H(omega_H);
-    skeleton_args.set_omega_P(omega_P);
-    skeleton_args.set_edgelength_TH(edgelength_TH);
-    skeleton_args.set_is_medially_centered(true);
-    skeleton_args.set_delta_area(area_TH);
+    skeleton_args.omega_H = omega_H;
+    skeleton_args.omega_P = omega_P;
+    skeleton_args.edgelength_TH = edgelength_TH;
+    skeleton_args.is_medially_centered = true;
+    skeleton_args.delta_area = delta_area;
 
     Mean_curvature_skeleton* temp_mcs = new Mean_curvature_skeleton(tempMesh, Vertex_index_map(),
                                             Edge_index_map(), skeleton_args);
