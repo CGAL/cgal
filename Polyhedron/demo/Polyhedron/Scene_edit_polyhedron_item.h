@@ -360,7 +360,7 @@ public:
       delete it->frame;
     }
     ctrl_vertex_frame_map.clear();
-    deform_mesh.reset();
+    deform_mesh.clear_roi_vertices();
 
     create_ctrl_vertices_group(); // create one new group of control vertices
   } 

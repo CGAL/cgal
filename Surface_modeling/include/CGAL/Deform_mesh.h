@@ -373,7 +373,7 @@ public:
 /// \name Preprocessing
 /// @{
   /**
-   * Removes all the vertices from the region-of-interest (including control vertices).
+   * Removes all the vertices from the region-of-interest (control vertices included).
    */
   void clear_roi_vertices(){
     need_preprocess_both();
@@ -425,7 +425,7 @@ public:
   }
 
   /**
-   * Erases a vertex from control vertices.
+   * Erases a vertex from the set of control vertices.
    * @param vd the vertex to be erased
    * @return `true` if the removal is successful
    */
@@ -469,7 +469,7 @@ public:
   }
 
   /**
-   * Erases a vertex from the region-of-interest. The vertex is also removed from control vertices if possible.
+   * Erases a vertex from the region-of-interest. The vertex is also removed from the set of control vertices if possible.
    * \note The next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position 
    * (that is position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
    * @param vd the vertex to be erased
@@ -643,21 +643,34 @@ public:
   }
 
   /**
-   * Puts `*this` in the same state as after the creation (except iterations and tolerance).
+   * Resets the points associated to the vertices of the input mesh at their
+   * original positions at time of the functor construction or after
+   * the last call to `overwrite_original_positions()`.
+   * \note if the region-of-interest or the set of control vertices have been
+   * modified since the last call to `preprocess()`, it will be called prior
+   * to the reset.
    */
   void reset()
   {
-    need_preprocess_both();
-    // clear vertices
-    roi.clear();
-    is_roi_map.assign(boost::num_vertices(m_halfedge_graph), false);
-    is_ctrl_map.assign(boost::num_vertices(m_halfedge_graph), false);
+    if(roi.empty()) { return; } // no ROI to reset
+
+    region_of_solution(); // since we are using original vector
+
+    //restore the current positions to be the original positions
+    BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
+    {
+      put(vertex_point_map, vd, original[ros_id(vd)]);
+    }
+
+    // also set rotation matrix to identity
+    std::fill(rot_mtr.begin(), rot_mtr.end(),
+              Closest_rotation_traits().identity_matrix());
   }
 
   /**
    * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function has the same effect as creating
-   * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and control vertices.
-   * \note if the region-of-interest or control vertices have been modified since the last call to `preprocess()`,
+   * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and the set of control vertices.
+   * \note if the region-of-interest or the set of control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
    */
   void overwrite_original_positions()
@@ -737,7 +750,7 @@ public:
   }
 
   /**
-   * Queries whether a vertex is inside the region-of-interest.
+   * Tests whether a vertex is inside the region-of-interest.
    * @param vd the query vertex
    * @return `true` if `vd` has been added (and not removed) to the region-of-interest.
    */
@@ -745,7 +758,7 @@ public:
   { return is_roi_map[id(vd)]; }
 
   /**
-   * Queries whether a vertex is a control vertex.
+   * Tests whether a vertex is a control vertex.
    * @param vd the query vertex
    * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
    */

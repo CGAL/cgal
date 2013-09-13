@@ -20,7 +20,6 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-\todo change the reset() function to behavior like an undo
 \todo say something about the influence of original position for optimal rotations
 \todo remove groups of handle and rotation/translate should have overload accepting ranges of vertex_descriptor
 \todo Add the fact that positive weights are expected for ARAP (and SaR?)
