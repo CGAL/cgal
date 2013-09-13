@@ -599,10 +599,6 @@ public:
         return true;
       }
     } else if (sgn == POSITIVE) {
-      // philaris: I assert that s and r are either both points
-      //           or both segments
-      CGAL_assertion( (s.is_point() and r.is_point())    or
-                      (s.is_segment() and r.is_segment())  ) ;
       CGAL_SDG_DEBUG(
           std::cout << "debug infinite-edge-int-cf special POS"
           << std::endl;);
@@ -633,7 +629,7 @@ public:
           return true;
           // otherwise it will return false later
         }
-      } else {
+      } else if (s.is_segment() and r.is_segment()) {
         // here s and r are both segments
 
         // philaris: I assert that q is an endpoint of both s and r
@@ -681,6 +677,14 @@ public:
             << (bside == ON_BOUNDED_SIDE) << std::endl;);
         return (bside == ON_BOUNDED_SIDE);
 
+      } else {
+        // here one of s, r is point and the other is a segment
+        CGAL_SDG_DEBUG(
+            std::cout
+            << "debug infinite-edge-int-cf with (q,s,r,t,sgn) "
+            << q << ' ' << s << ' ' << r << ' ' << t
+            << ' ' << sgn << " tocheck one seg one pnt in s, r"
+            << std::endl; ) ;
       }
     }
     // here it might be sgn == ZERO
