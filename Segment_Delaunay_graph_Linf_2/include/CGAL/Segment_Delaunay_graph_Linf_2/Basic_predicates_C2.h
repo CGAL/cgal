@@ -994,6 +994,40 @@ public:
     return cmpx(src, trg) == cmpy(src, trg);
   }
 
+  inline
+  static
+  Boolean
+  have_same_slope(const Site_2 & s, const Site_2 & t)
+  {
+    CGAL_precondition(s.is_segment());
+    CGAL_precondition(t.is_segment());
+    Compare_x_2 cmpx;
+    Compare_y_2 cmpy;
+    Point_2 ssrc = s.supporting_site().source();
+    Point_2 strg = s.supporting_site().target();
+    Comparison_result scmpx = cmpx(ssrc, strg);
+    Comparison_result scmpy = cmpy(ssrc, strg);
+    Point_2 tsrc = t.supporting_site().source();
+    Point_2 ttrg = t.supporting_site().target();
+    Comparison_result tcmpx = cmpx(tsrc, ttrg);
+    Comparison_result tcmpy = cmpy(tsrc, ttrg);
+    CGAL_SDG_DEBUG(std::cout << "debug have_same_slope"
+        << " scmpx=" << scmpx << " scmpy=" << scmpy
+        << " tcmpx=" << tcmpx << " tcmpy=" << tcmpy
+        << std::endl;);
+    if (   ((scmpx == EQUAL) and (tcmpx == EQUAL)) // vertical
+        or ((scmpy == EQUAL) and (tcmpy == EQUAL)) // horizontal
+        or ((scmpx == scmpy) and (tcmpx == tcmpy)) // positive
+        or ((scmpx != EQUAL) and (scmpy != EQUAL) and
+            (tcmpx != EQUAL) and (tcmpy != EQUAL) and
+            (scmpx != scmpy) and (tcmpx != tcmpy)) // negative
+       ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   static
   Boolean
   is_site_h_or_v(const Site_2 & s)
