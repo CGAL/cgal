@@ -109,7 +109,7 @@ int main()
 
   deform_mesh.deform();
 
-  std::ofstream output("data/deform_1.off");
+  std::ofstream output("deform_1.off");
   output << mesh; // save deformed mesh
   output.close();
 
@@ -122,7 +122,7 @@ int main()
   deform_mesh.set_tolerance(0.0);
   deform_mesh.deform(); // will iterate 10 times
 
-  output.open("data/deform_2.off");
+  output.open("deform_2.off");
   output << mesh;
 }
 
