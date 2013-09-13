@@ -21,6 +21,7 @@
 #define CGAL_GRID_SIMPLIFY_POINT_SET_H
 
 #include <CGAL/property_map.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <iterator>

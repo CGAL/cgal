@@ -20,6 +20,8 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
 #define CGAL_PERIODIC_2_TRIANGULATION_DUMMY_12_H
 
+#include <vector>
+
 template < class GT, class Tds >
 inline std::vector<typename Periodic_2_triangulation_2<GT, Tds>::Vertex_handle >
 Periodic_2_triangulation_2<GT, Tds>::insert_dummy_points()

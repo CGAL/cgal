@@ -29,6 +29,7 @@
 
 #include <boost/mpl/assert.hpp>
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 #include <list>

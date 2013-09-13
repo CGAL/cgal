@@ -26,11 +26,14 @@
 #ifndef CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H
 #define CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H 
 
+#include <vector>
+
 #include <CGAL/Circle_2.h>
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Line_arc_2.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Circular_arc_point_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
 
 namespace CGAL {
 

@@ -25,6 +25,8 @@
 #ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #define CGAL_OPTIMISATION_ASSERTIONS_H
 
+#include <CGAL/Uncertain.h>
+
 // macro definitions
 // =================
 

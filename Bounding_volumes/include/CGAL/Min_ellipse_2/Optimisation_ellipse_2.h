@@ -23,7 +23,7 @@
 
 #include <CGAL/Conic_2.h>
 #include <CGAL/Optimisation/assertions.h>
-
+#include <CGAL/Kernel/global_functions_2.h>
 
 
 namespace CGAL {

@@ -24,6 +24,7 @@
 
 #include <iterator>
 #include <boost/type_traits/is_convertible.hpp>
+#include <boost/type_traits/is_pointer.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/mpl/has_xxx.hpp>

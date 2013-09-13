@@ -27,7 +27,9 @@
 #define CGAL_CIRCULAR_ARC_2_H
 
 #include <CGAL/config.h>
-
+#include <CGAL/result_of.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/enum.h>
 namespace CGAL {
   
 template <class CircularKernel> 

@@ -1096,4 +1096,5 @@ Uncertain<Gmpfi> max BOOST_PREVENT_MACRO_SUBSTITUTION
 
 } // namespace CGAL
 
+
 #endif  // CGAL_GMPFI_TYPE_H

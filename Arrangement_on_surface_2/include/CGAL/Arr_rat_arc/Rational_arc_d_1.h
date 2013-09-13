@@ -18,6 +18,8 @@
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
+#if 0
+
 #ifndef CGAL_RATIONAL_ARC_D_1_H
 #define CGAL_RATIONAL_ARC_D_1_H
 
@@ -2602,3 +2604,5 @@ public:
 }       //namespace CGAL {
 
 #endif //CGAL_RATIONAL_ARC_D_1_H
+
+#endif

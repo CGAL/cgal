@@ -26,6 +26,8 @@
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_POINT_3_H
 
 #include <iostream>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Handle.h>
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
 //#include <CGAL/global_functions_on_roots_and_polynomials_2_2.h> 
 // fixme, devrait

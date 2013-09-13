@@ -24,7 +24,7 @@
 
 #include <cmath>
 #include <vector>
-
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

@@ -27,6 +27,9 @@
 #define CGAL_RAT_LEDA_IN_CGAL_2_H
 
 #include <CGAL/basic.h>
+
+#ifdef CGAL_USE_LEDA
+
 #include <CGAL/enum.h>
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
@@ -193,6 +196,8 @@ has_larger_signed_dist_to_line(const leda_rat_point& p,
 { return ( cmp_signed_dist_to_line(p,q,r,s) == LARGER ); }
 
 } //namespace CGAL
+
+#endif  // CGAL_USE_LEDA
 
 #endif // CGAL_RAT_LEDA_IN_CGAL_2_H
 

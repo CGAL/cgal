@@ -26,6 +26,9 @@
 #ifndef CGAL_LINE_ARC_2_H
 #define CGAL_LINE_ARC_2_H
 
+#include <CGAL/result_of.h>
+#include <CGAL/Bbox_2.h>
+
 namespace CGAL {
 
 template <class CircularKernel> 

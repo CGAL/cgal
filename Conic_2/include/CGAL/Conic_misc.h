@@ -26,6 +26,7 @@
 #define CGAL_CONIC_MISC_H
 
 #include <cmath>
+#include <CGAL/number_utils.h>
 #include <CGAL/kernel_assertions.h>
 
 namespace CGAL {

@@ -21,13 +21,8 @@
 #define CGAL_INDEX_PROPERTY_MAP_H
 
 #include <CGAL/point_set_processing_assertions.h>
-
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-#endif
+#include <CGAL/trace.h>
+#include <CGAL/property_map.h>
 #include <boost/shared_ptr.hpp>
 
 #include <iterator>

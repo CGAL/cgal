@@ -26,6 +26,8 @@
 #ifndef CGAL_SIMPLE_CIRCULAR_KERNEL_2_H
 #define CGAL_SIMPLE_CIRCULAR_KERNEL_2_H
 
+#if 0
+
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
@@ -100,5 +102,7 @@ struct Circular_kernel_2
 };
 
 } //namespace CGAL
+
+#endif
 
 #endif // CGAL_SIMPLE_CIRCULAR_KERNEL_2_H

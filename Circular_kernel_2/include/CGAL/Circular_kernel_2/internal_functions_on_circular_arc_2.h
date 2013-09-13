@@ -33,7 +33,6 @@
 namespace CGAL {
 namespace CircularFunctors {
   
-
   template < class CK >
   inline
   Comparison_result 

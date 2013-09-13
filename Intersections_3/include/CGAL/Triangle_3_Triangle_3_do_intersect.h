@@ -22,8 +22,14 @@
 #define CGAL_TRIANGLE_3_TRIANGLE_3_DO_INTERSECT_H
 
 #include <CGAL/Uncertain.h>
+#include <CGAL/enum.h>
+#include <CGAL/kernel_assertions.h>
+#include <CGAL/Intersection_traits_3.h>
 
 namespace CGAL {
+
+  template <class K>
+  class Triangle_3;
 
 namespace internal {
 

@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
+#include <CGAL/Kernel_d/Point_d.h>
 
 namespace CGAL {
 

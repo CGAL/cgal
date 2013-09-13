@@ -29,7 +29,10 @@
 #include <vector>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
+#include <CGAL/int.h>
 
+#include <boost/operators.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 

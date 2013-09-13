@@ -21,6 +21,7 @@
 #define CGAL_AVERAGE_SPACING_3_H
 
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/squared_distance_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>

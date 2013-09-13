@@ -24,6 +24,7 @@
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Origin.h>
 
 #include <boost/tuple/tuple.hpp>
 

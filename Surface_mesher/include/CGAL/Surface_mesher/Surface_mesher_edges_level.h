@@ -28,9 +28,13 @@
 #include <CGAL/Meshes/Simple_map_container.h>
 #include <CGAL/iterator.h> // for CGAL::inserter
 #include <CGAL/circulator.h> // for CGAL::Circulator_from_container<C>
-#include <sstream>
-#include <boost/format.hpp>
 #include <CGAL/use.h>
+
+#include <sstream>
+#include <set>
+
+#include <boost/format.hpp>
+
 
 namespace CGAL {
 namespace Surface_mesher {

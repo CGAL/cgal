@@ -28,7 +28,7 @@
 #include <CGAL/Segment_Delaunay_graph_2/Basic_predicates_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_points_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
-
+#include <CGAL/Kernel/global_functions_2.h>
 
 namespace CGAL {
 

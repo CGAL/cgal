@@ -29,7 +29,11 @@
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Line_arc_2.h>
 #include <CGAL/Circular_arc_point_2.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_point_2.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Line_arc_2.h>
 #include <CGAL/Filtered_bbox_circular_kernel_2/bbox_filtered_predicates.h>
+#include <CGAL/Kernel/Type_equality_wrapper.h>
 
 namespace CGAL {
 

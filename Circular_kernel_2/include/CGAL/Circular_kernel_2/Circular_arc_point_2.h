@@ -28,6 +28,7 @@
 
 #include <iostream>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Handle.h> // for identical()
 #include <CGAL/Interval_nt.h>
 #include <boost/type_traits/is_same.hpp>
 

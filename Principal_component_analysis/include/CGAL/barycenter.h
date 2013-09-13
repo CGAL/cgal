@@ -22,6 +22,7 @@
 #define CGAL_BARYCENTER_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Origin.h>
 #include <iterator>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Kernel/Dimension_utils.h>

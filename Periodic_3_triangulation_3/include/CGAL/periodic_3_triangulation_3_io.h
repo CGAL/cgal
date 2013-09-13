@@ -21,6 +21,9 @@
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
 #define CGAL_PERIODIC_3_TRIANGULATION_3_IO_H
 
+#include <CGAL/array.h>
+#include <iostream>
+
 template <class Stream, class Triangulation>
 Stream &write_triangulation_to_off(Stream &out, Triangulation &t) {
   typedef typename Triangulation::Point Point;

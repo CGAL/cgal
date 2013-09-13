@@ -22,6 +22,8 @@
 #ifndef CGAL_OPTIMISATION_SPHERE_D_H
 #define CGAL_OPTIMISATION_SPHERE_D_H
 
+#include <CGAL/representation_tags.h>
+
 namespace CGAL {
 
 // Class declarations

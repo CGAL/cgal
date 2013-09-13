@@ -20,6 +20,7 @@
 //
 
 #include <CGAL/Polyhedron_incremental_builder_3.h>
+#include <CGAL/Modifier_base.h>
 
 #ifndef CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H
 #define CGAL_CONVEX_HULL_3_TO_POLYHEDRON_3_H

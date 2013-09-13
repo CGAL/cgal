@@ -23,6 +23,9 @@
 #define CGAL_POINT_INSIDE_POLYHEDRON_RAY_3_TRIANGLE_3_TRAVERSAL_TRAITS_H
 
 #include <boost/logic/tribool.hpp>
+#include <CGAL/tags.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/Triangle_3_Ray_3_do_intersect.h>
 
 namespace CGAL {
 namespace internal {

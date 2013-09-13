@@ -25,6 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
 #include <CGAL/Periodic_2_offset_2.h>
+#include <CGAL/Triangulation_vertex_base_2.h>
 
 namespace CGAL
 {

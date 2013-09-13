@@ -30,6 +30,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/QP_solver/assertions.h>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/iterator/counting_iterator.hpp>

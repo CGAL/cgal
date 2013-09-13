@@ -24,6 +24,8 @@
 #ifndef CGAL_POLYHEDRON_DECORATOR_H_01282002
 #define CGAL_POLYHEDRON_DECORATOR_H_01282002
 
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 template <class Poly>

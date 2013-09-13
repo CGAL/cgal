@@ -21,13 +21,17 @@
 #ifndef CGAL_MIN_SPHERE_OF_SPHERES_D_TRAITS_D_H
 #define CGAL_MIN_SPHERE_OF_SPHERES_D_TRAITS_D_H
 
+#include <CGAL/tags.h>
+
 namespace CGAL {
+
+ struct Farthest_first_heuristic;
 
   template<typename K_,                      // kernel
     typename FT_,                            // number type
     int Dim_,                                // dimension
     typename UseSqrt_ = Tag_false,           // whether to use square-roots
-    typename Algorithm_ = Default_algorithm> // algorithm to use
+    typename Algorithm_ = Farthest_first_heuristic> // algorithm to use
   class Min_sphere_of_spheres_d_traits_d {
   public: // types:
     typedef FT_ FT;

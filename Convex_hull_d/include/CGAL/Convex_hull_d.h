@@ -70,6 +70,7 @@ Let |j = C.index_of_vertex_in_opposite_facet(f,i)|. Then
 |i = C.index_of_vertex_in_opposite_facet(g,j)|.}*/
 
 #include <CGAL/basic.h>
+#include <CGAL/Origin.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Regular_complex_d.h>
 #include <CGAL/Handle_for.h>

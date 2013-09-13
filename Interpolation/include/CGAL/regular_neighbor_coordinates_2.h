@@ -23,6 +23,7 @@
 
 #include <utility>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/iterator.h>
 
 //for definition of class Project_vertex_output_iterator
 #include <CGAL/natural_neighbor_coordinates_2.h>
