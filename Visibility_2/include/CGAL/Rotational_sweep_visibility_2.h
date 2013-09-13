@@ -24,7 +24,6 @@
 
 #include <iostream>
 #include <vector>
-#include <list>
 #include <set>
 #include <map>
 #include <utility>
@@ -34,10 +33,15 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/enum.h>
 
+#include <CGAL/Timer.h>
 namespace CGAL {
+
+
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Rotational_sweep_visibility_2 {
+
+
 
 public:
   typedef Arrangement_2                                 Input_arrangement_2;
@@ -66,110 +70,165 @@ public:
   typedef CGAL::Tag_true                                Supports_general_polygon_tag;
   typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
 
+  //profile
+  Timer timer;
+  static double input_t;
+  static double sweep_t;
+  static double cut_from_butterfly_t;
+  static double heap_insert_t;
+  static double heap_remove_t;
+  static double heap_swap_t;
+  static double input_v_t;
+  static double quicksort_t;
+
+private:
+  typedef std::vector<Point_2>          Pvec;
+  typedef std::pair<Point_2, Point_2>   Edge;
+
+  const Geometry_traits_2 *geom_traits;
+  const Input_arrangement_2 *p_arr;
+  Point_2         q;
+  Point_2         dp;
+  Pvec polygon;                       //visibility polygon
+  std::map<Point_2, Pvec> neighbors;  //vertex and its neighbours that are relevant to visibility polygon
+  std::map<Edge, int> edx;            //index of edge in the heap
+  std::vector<Edge>  active_edges;    //a heap of edges that interset the current vision ray.
+
+  Pvec vs;                            //angular sorted vertices
+  bool is_vertex_query;
+  bool is_edge_query;
+  bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
+  std::vector<Halfedge_const_handle> bad_edge;
+  Vertex_const_handle query_vertex;
+  Point_2  source;                    //one end of visibility cone
+  Point_2  target;                    //another end of visibility cone
 
 
-  Rotational_sweep_visibility_2(): p_arr(NULL) {}
-  Rotational_sweep_visibility_2(const Input_arrangement_2& arr): p_arr(&arr) {}
+public:
+  Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
+  Rotational_sweep_visibility_2(const Input_arrangement_2& arr): p_arr(&arr) {
+    geom_traits = p_arr->geometry_traits();
+  }
 
-
-  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& out_arr) {
-    out_arr.clear();
+  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& arr_out) {
+    arr_out.clear();
+    bad_edge.clear();
     this->q = q;
-    Point_2 source, target;
-    if (q == e->target()->point()) {
+
+    if (Visibility_2::compare_xy_2(geom_traits, q, e->target()->point())==EQUAL) {
+      query_vertex = e->target();
       is_vertex_query = true;
       is_edge_query = false;
       source = e->source()->point();
       target = e->next()->target()->point();
+      is_big_cone = CGAL::right_turn(source, q, target);
+
+      typename Input_arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+      first = curr = e->target()->incident_halfedges();
+      do {
+        if (curr->face() == e->face())
+          bad_edge.push_back(curr);
+        else if (curr->twin()->face() == e->face())
+          bad_edge.push_back(curr->twin());
+      } while (++curr != first);
     }
     else {
       is_vertex_query = false;
       is_edge_query = true;
       source = e->source()->point();
       target = e->target()->point();
+      bad_edge.push_back(e);
+      is_big_cone = false;
     }
-    visibility_region_impl(e->face(), q, e);
+    visibility_region_impl(e->face(), q);
 
+    timer.reset();
+    timer.start();
     //Decide which inside of the visibility butterfly is needed.
-    int source_i, target_i ;
+    int source_idx(-1), target_idx(-1) ;
     for (int i = 0; i != polygon.size(); i++) {
-      if ( polygon[i]== source ) {
-          source_i = i;
+      if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], source)==EQUAL ) {
+        source_idx = i;
       }
-      else if ( polygon[i] == target ) {
-          target_i = i;
+      else if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], target)==EQUAL ) {
+        target_idx = i;
       }
+      if (source_idx != -1 && target_idx != -1)
+        break;
     }
-    int small, big;
-    if ( source_i < target_i ) {
-      small = source_i;
-      big = target_i;
+    int small_idx, big_idx;
+    if ( source_idx < target_idx ) {
+      small_idx = source_idx;
+      big_idx = target_idx;
     }
     else {
-      small = target_i;
-      big = source_i;
+      small_idx = target_idx;
+      big_idx = source_idx;
     }
-    int next_i = small + 1;
+    int next_idx = small_idx + 1;
     bool is_between;
     if (CGAL::right_turn(source, q, target)) {
       is_between = false;
-      while (next_i != big) {
-        if (CGAL::left_turn(source, q, polygon[next_i]) || CGAL::left_turn(q, target, polygon[next_i])) {
+      while (next_idx != big_idx) {
+        if (CGAL::left_turn(source, q, polygon[next_idx]) || CGAL::left_turn(q, target, polygon[next_idx])) {
           is_between = true;
           break;
         }
-        next_i++;
+        next_idx++;
       }
     }
     else {
       is_between = true;
-      while (next_i != big) {
-        if (CGAL::right_turn(source, q, polygon[next_i]) || CGAL::right_turn(q, target, polygon[next_i])) {
+      while (next_idx != big_idx) {
+        if (CGAL::right_turn(source, q, polygon[next_idx]) || CGAL::right_turn(q, target, polygon[next_idx])) {
           is_between = false;
           break;
         }
-        next_i++;
+        next_idx++;
       }
     }
-    typename std::vector<Point_2>::iterator first = polygon.begin() + small;
-    typename std::vector<Point_2>::iterator last = polygon.begin() + big;
+    timer.stop();
+    cut_from_butterfly_t+=timer.time();
+
+    typename Pvec::iterator first = polygon.begin() + small_idx;
+    typename Pvec::iterator last = polygon.begin() + big_idx;
     if (is_between) {
-      std::vector<Point_2> polygon1(first, last+1);
-      if (is_vertex_query) polygon1.push_back(q);
-      build_arr(polygon1, out_arr);
+      Pvec polygon_out(first, last+1);
+      if (is_vertex_query)
+        polygon_out.push_back(q);
+      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
     else {
-      std::vector<Point_2> polygon1(polygon.begin(), first+1);
-      if (is_vertex_query) polygon1.push_back(q);
-      for (int i = big; i != polygon.size(); i++) {
-        polygon1.push_back(polygon[i]);
+      Pvec polygon_out(polygon.begin(), first+1);
+      if (is_vertex_query) polygon_out.push_back(q);
+      for (int i = big_idx; i != polygon.size(); i++) {
+        polygon_out.push_back(polygon[i]);
       }
-      build_arr(polygon1, out_arr);
+      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
 
-    conditional_regularize(out_arr, Regularization_tag());
+    conditional_regularize(arr_out, Regularization_tag());
 
-    if (out_arr.faces_begin()->is_unbounded())
-      return ++out_arr.faces_begin();
+    if (arr_out.faces_begin()->is_unbounded())
+      return ++arr_out.faces_begin();
     else
-      return out_arr.faces_begin();
+      return arr_out.faces_begin();
 
   }
 
-  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) {
-    out_arr.clear();
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& arr_out) {
+    arr_out.clear();
     this->q = q;
     is_vertex_query = false;
     is_edge_query = false;
 
-    visibility_region_impl(f, q, f->outer_ccb());
-    build_arr(polygon, out_arr);
-
-    conditional_regularize(out_arr, Regularization_tag());
-    if (out_arr.faces_begin()->is_unbounded())
-      return ++out_arr.faces_begin();
+    visibility_region_impl(f, q);
+    Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon, arr_out);
+    conditional_regularize(arr_out, Regularization_tag());
+    if (arr_out.faces_begin()->is_unbounded())
+      return ++arr_out.faces_begin();
     else
-      return out_arr.faces_begin();
+      return arr_out.faces_begin();
   }
 
 bool is_attached() {
@@ -178,13 +237,12 @@ bool is_attached() {
 
 void attach(const Input_arrangement_2& arr) {
   p_arr = &arr;
-//  geom_traits = p_arr->geometry_traits();
+  geom_traits = p_arr->geometry_traits();
 }
 
 void detach() {
   p_arr = NULL;
-//  geom_traits = NULL;
-  vs.clear();
+  geom_traits = NULL;
 }
 
 const Input_arrangement_2& arr() {
@@ -193,71 +251,25 @@ const Input_arrangement_2& arr() {
 
 
 private:
-  //members
-  typedef std::vector<Point_2>          Pvec;
-  typedef std::pair<Point_2, Point_2>   Pair;
-
-  const Input_arrangement_2 *p_arr;
-  Point_2         q;
-  Point_2         dp;
-  Pvec polygon;   //visibility polygon
-  std::map<Point_2, Pvec> vmap;   //vertex and two edges incident to it that might block vision
-  std::map<Pair, int> edx;   //index of edge in the heap
-  std::vector<Pair>  heap;
-  std::vector<Point_2> vs;          //angular sorted vertices
-  bool is_vertex_query;
-  bool is_edge_query;
-
-  int quadrant(const Point_2& o, const Point_2& p) {
-    typename K::Compare_x_2 compare_x;
-    typename K::Compare_y_2 compare_y;
-    Comparison_result x = compare_x(p, o);
-    Comparison_result y = compare_y(p, o);
-
-    if (x==LARGER && y!=SMALLER)
-      return 1;
-    if (x!=LARGER && y==LARGER)
-      return 2;
-    if (x==SMALLER && y!=LARGER)
-      return 3;
-    if (x!=SMALLER && y==SMALLER)
-      return 4;
-
-//    if (x>0 && y>=0)
-//      return 1;
-//    if (x<=0 && y>0)
-//      return 2;
-//    if (x<0 && y<=0)
-//      return 3;
-//    if (x>=0 && y<0)
-//      return 4;
-    return 0;
-  }
-
   bool do_intersect_ray(const Point_2& q,
                     const Point_2& dp,
                     const Point_2& p1,
                     const Point_2& p2) {
-    if (CGAL::collinear(q, dp, p1))
-      return quadrant(q, p1) == quadrant(q, dp);
-
-    if (CGAL::collinear(q, dp, p2))
-      return quadrant(q, p2) == quadrant(q, dp);
-
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
-
   }
 
   void funnel(int i, int j) {
     Pvec right, left;
     bool block_left(false), block_right(false);
-    Point_2 former = vs[i];
+    Point_2& former = vs[i], temp;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
-      for (int k=0; k<vmap[vs[l]].size(); k++) {
-        Point_2 temp= vmap[vs[l]][k];
-        if (temp == former)
+      for (int k=0; k<neighbors[vs[l]].size(); k++) {
+        temp= neighbors[vs[l]][k];
+        if (Visibility_2::compare_xy_2(geom_traits, temp, former) == EQUAL) {
           has_predecessor = true;
+          continue;
+        }
         if (CGAL::left_turn(q, vs[l], temp))
           left_v = true;
         else
@@ -289,19 +301,40 @@ private:
       vs[i+l+right.size()] = left[left.size()-1-l];
   }
 
+  void compare_heap(std::vector<Edge>& heap1, std::vector<Edge>& heap2) {
+    if (heap1.size() != heap2.size()) {
+      print_heap(heap1);
+      print_heap(heap2);
+      return;
+    }
+    for (int i=0; i<heap1.size(); i++)
+      if (heap1[i] != heap2[i]) {
+        print_heap(heap1);
+        print_heap(heap2);
+        return;
+      }
+    std::cout<<"right heap has edges: "<<active_edges.size()<<std::endl;
+  }
 
-  void visibility_region_impl(const Face_const_handle f, const Point_2& q, const Halfedge_const_handle e) {
+  void print_heap(std::vector<Edge> heap) {
+    for (int i=0; i<heap.size(); i++) {
+      std::cout<<i<<':'<< heap[i].first<<','<<heap[i].second<<std::endl;
+    }
+  }
+
+  void visibility_region_impl(const Face_const_handle f, const Point_2& q) {
     vs.clear();
     polygon.clear();
-    heap.clear();
-    vmap.clear();
+    active_edges.clear();
+    neighbors.clear();
     edx.clear();
 
-    std::vector<Pair> bbox;
-    input_face(f, q, e, bbox);
-
+    std::vector<Edge> good_edges;
+    if (is_vertex_query || is_edge_query)
+      input_face(f, good_edges);
+    else
+      input_face(f);
     //initiation of vision ray
-
     Vector_2 dir;
     if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back())))
     {
@@ -311,143 +344,147 @@ private:
         dir = Vector_2(0, -1);
     }
 
-    dp = Point_2(q.x()+dir.x(), q.y()+dir.y());
+    dp = q + dir;
 
+    std::vector<Edge> heapc;
+    heapc.clear();
     //initiation of active_edges
-
-    Ccb_halfedge_const_circulator curr = f->outer_ccb();
-    Ccb_halfedge_const_circulator circ = curr;
-    do {
-      Point_2 p1 = curr->target()->point();
-      Point_2 p2 = curr->source()->point();
-      if (q != p1 && q != p2 && do_intersect_ray(q, dp, p1, p2))
-        heap_insert(create_pair(p1, p2));
-    } while (++curr != circ);
-
-    typename Arrangement_2::Hole_const_iterator hi;
-    for (hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
-      Ccb_halfedge_const_circulator c1 = *hi, c2 = *hi;
-      do {
-        Point_2 p1 = c1->target()->point();
-        Point_2 p2 = c1->source()->point();
-        if (q != p1 && q != p2 && do_intersect_ray(q, dp, p1, p2))
-          heap_insert(create_pair(p1, p2));
-      } while (++c1 != c2);
+    if (is_vertex_query || is_edge_query) {
+      for (int i=0; i!=good_edges.size(); i++) {
+        if (do_intersect_ray(q, dp, good_edges[i].first, good_edges[i].second)) {
+          heap_insert(good_edges[i]);
+//          heapc.push_back(good_edges[i]);
+        }
+      }
+//      std::make_heap(heapc.begin(), heapc.end(), Is_closer(q, geom_traits));
+//      for (int i=0; i!=heap.size(); i++) {
+//        edx[heap[i]] = i;
+//      }
+//      compare_heap(heap, heapc);
     }
-    for (int i=0; i!=bbox.size(); i++) {
-      if (do_intersect_ray(q, dp, bbox[i].first, bbox[i].second))
-        heap_insert(bbox[i]);
+    else {
+      Ccb_halfedge_const_circulator curr = f->outer_ccb();
+      Ccb_halfedge_const_circulator circ = curr;
+      do {
+        Point_2 p1 = curr->target()->point();
+        Point_2 p2 = curr->source()->point();
+        if (do_intersect_ray(q, dp, p1, p2))
+          heap_insert(create_pair(p1, p2));
+      } while (++curr != circ);
+
+      typename Arrangement_2::Hole_const_iterator hi;
+      for (hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
+        Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
+        do {
+          Point_2 p1 = curr->target()->point();
+          Point_2 p2 = curr->source()->point();
+          if (do_intersect_ray(q, dp, p1, p2))
+            heap_insert(create_pair(p1, p2));
+        } while (++curr != circ);
+      }
     }
 
     //angular sweep begins
-
     for (int i=0; i!=vs.size(); i++) {
       dp = vs[i];
-      Point_2 v = dp;
-      Pair ce = heap.front(); //save closest edge;
+      Edge closest_e = active_edges.front();   //save the closest edge;
       int insert_cnt(0), remove_cnt(0);
-//      for (int j=0; j!=vmap[v].size(); j++) {
-//        Pair e = create_pair(v, vmap[v][j]);
-//        if (edx.count(e)) {
-//          heap_remove(edx[e]);
-//          remove_cnt++;
-//        }
-//        else {
-//          heap_insert(e);
-//          insert_cnt++;
-//        }
-//      }
-      Point_2 p_remove, p_insert;
-      for (int j=0; j!=vmap[v].size(); j++) {
-        Pair e = create_pair(v, vmap[v][j]);
-        if (edx.count(e)) {
-//          heap_remove(edx[e]);
-          p_remove = vmap[v][j];
-          remove_cnt++;
+      std::vector<Point_2>& neis=neighbors[dp];
+      std::vector<Edge> insert_e, remove_e;
+
+      for (int j=0; j!=neis.size(); j++) {
+        Edge e = create_pair(dp, neis[j]);
+//        Orientation o=Visibility_2::orientation_2(geom_traits, q, dp, nei);
+/*        if (o==RIGHT_TURN ||
+            (o==COLLINEAR && i>0 && Visibility_2::compare_xy_2(geom_traits, nei, vs[i-1])==EQUAL))*/
+
+        if (edx.count(e)){
+          remove_e.push_back(e);
         }
         else {
-//          heap_insert(e);
-          p_insert = vmap[v][j];
-          insert_cnt++;
+          insert_e.push_back(e);
         }
+
       }
-      if (remove_cnt == 1 && insert_cnt == 1) {
-        Pair e_out = create_pair(v, p_remove);
-        Pair e_in = create_pair(v, p_insert);
-        heap[edx[e_out]] = e_in;
-        edx[e_in] = edx[e_out];
-        edx.erase(e_out);
+      insert_cnt = insert_e.size();
+      remove_cnt = remove_e.size();
+      if (remove_e.size()==1 && insert_e.size()==1) {
+        int remove_idx = edx[remove_e.front()];
+        active_edges[remove_idx] = insert_e.front();
+        edx[insert_e.front()] = remove_idx;
+        edx.erase(remove_e.front());
       }
       else {
-        for (int j=0; j!=vmap[v].size(); j++) {
-          Pair e = create_pair(v, vmap[v][j]);
-          if (edx.count(e)) {
-            heap_remove(edx[e]);
-            remove_cnt++;
-          }
-          else {
-            heap_insert(e);
-            insert_cnt++;
-          }
+        for (int j=0; j!=remove_e.size(); j++) {
+          heap_remove(edx[remove_e[j]]);
+        }
+        for (int j=0; j!=insert_e.size(); j++) {
+          heap_insert(insert_e[j]);
         }
       }
-      if (ce != heap.front()) {
+
+      if (closest_e != active_edges.front()) {
         //when the closest edge changed
         if (remove_cnt > 0 && insert_cnt > 0) {
             //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
-            update_visibility(v);
+            update_visibility(dp);
         }
         if (remove_cnt == 0 && insert_cnt > 0) {
             //only add some edges, means the view ray is blocked by new edges.
             //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
-          update_visibility(ray_seg_intersection(q, dp, ce.first, ce.second));
-          update_visibility(v);
+          update_visibility(ray_seg_intersection(q, dp, closest_e.first, closest_e.second));
+          update_visibility(dp);
         }
         if (remove_cnt > 0 && insert_cnt == 0) {
           //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
-          update_visibility(v);
-          update_visibility(ray_seg_intersection(q, dp, heap.front().first, heap.front().second));
+          update_visibility(dp);
+          update_visibility(ray_seg_intersection(q, dp, active_edges.front().first, active_edges.front().second));
         }
       }
-
     }
   }
 
-  Pair create_pair(const Point_2& p1, const Point_2& p2){
+  Edge create_pair(const Point_2& p1, const Point_2& p2) const{
     assert(p1 != p2);
-    if (p1 < p2)
-      return Pair(p1, p2);
+    if (Visibility_2::compare_xy_2(geom_traits, p1, p2)==SMALLER)
+      return Edge(p1, p2);
     else
-      return Pair(p2, p1);
+      return Edge(p2, p1);
   }
 
-//todo add edge location record
-  void heap_insert(const Pair& e) {
-    heap.push_back(e);
-    int i = heap.size()-1;
+  void heap_insert(const Edge& e) {
+//    timer.reset();
+//    timer.start();
+    active_edges.push_back(e);
+    int i = active_edges.size()-1;
     edx[e] = i;
     int parent = (i-1)/2;
-    while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
+    while (i!=0 && is_closer(q, active_edges[i], active_edges[parent])){
       heap_swap(i, parent);
       i = parent;
       parent = (i-1)/2;
     }
+//    timer.stop();
+//    heap_insert_t+=timer.time();
   }
 
   void heap_remove(int i) {
-    edx.erase(heap[i]);
-    if (i== heap.size()-1)
+//    timer.reset();
+//    timer.start();
+
+    edx.erase(active_edges[i]);
+    if (i== active_edges.size()-1)
     {
-      heap.pop_back();
+      active_edges.pop_back();
     }
     else {
-      heap[i] = heap.back();
-      edx[heap[i]] = i;
-      heap.pop_back();
+      active_edges[i] = active_edges.back();
+      edx[active_edges[i]] = i;
+      active_edges.pop_back();
       int i_before_swap = i;
 
       int parent = (i-1)/2;
-      while (i!=0 && is_closer(q, dp, heap[i], heap[parent])){
+      while (i!=0 && is_closer(q, active_edges[i], active_edges[parent])){
         heap_swap(i, parent);
         i = parent;
         parent = (i-1)/2;
@@ -457,179 +494,172 @@ private:
         do {
           int left_son = i*2+1;
           int right_son = i*2+2;
-          int closest = i;
-          if (left_son < heap.size() && is_closer(q, dp, heap[left_son], heap[i])) {
-            closest = left_son;
+          int closest_idx = i;
+          if (left_son < active_edges.size() && is_closer(q, active_edges[left_son], active_edges[i])) {
+            closest_idx = left_son;
           }
-          if (right_son < heap.size() && is_closer(q, dp, heap[right_son], heap[closest])) {
-            closest = right_son;
+          if (right_son < active_edges.size() && is_closer(q, active_edges[right_son], active_edges[closest_idx])) {
+            closest_idx = right_son;
           }
           swapped = false;
-          if (closest != i) {
-            heap_swap(i, closest);
-            i = closest;
+          if (closest_idx != i) {
+            heap_swap(i, closest_idx);
+            i = closest_idx;
             swapped = true;
           }
         } while(swapped);
       }
     }
+
+//    timer.stop();
+//    heap_remove_t += timer.time();
   }
 
   void heap_swap(int i, int j) {
-    edx[heap[i]] = j;
-    edx[heap[j]] = i;
-    Pair temp = heap[i];
-    heap[i] = heap[j];
-    heap[j] = temp;
+//    timer.reset();
+//    timer.start();
+
+    edx[active_edges[i]] = j;
+    edx[active_edges[j]] = i;
+    Edge temp = active_edges[i];
+    active_edges[i] = active_edges[j];
+    active_edges[j] = temp;
+
+//    timer.stop();
+//    heap_swap_t += timer.time();
+  }
+  void print_point(const Point_2& p) {
+    std::cout<<p.x()<<','<<p.y()<<std::endl;
   }
 
-  //
-//  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
-//    Point_2 p1 = ray_seg_intersection(q, dp, e1.first, e1.second);
-//    Point_2 p2 = ray_seg_intersection(q, dp, e2.first, e2.second);
-//    if (p1 == p2) {
-//      Point_2 end1, end2;
-//      if (p1 == e1.first)
-//        end1 = e1.second;
-//      else
-//        end1 = e1.first;
-//      if (p2 == e2.first)
-//        end2 = e2.second;
-//      else
-//        end2 = e2.first;
-
-//      if (CGAL::right_turn(q, p1, end1) && !CGAL::right_turn(q, p1, end2))
-//          return true;
-//      if (CGAL::right_turn(q, p1, end2) && !CGAL::right_turn(q, p1, end1))
-//          return false;
-//      switch (CGAL::orientation(q, p1, end1)) {
-//      case CGAL::COLLINEAR:
-//          return (CGAL::right_turn(q, p1, end2));
-//      case CGAL::RIGHT_TURN:
-//          return (CGAL::right_turn(end1, p1, end2));
-//      case CGAL::LEFT_TURN:
-//          return (CGAL::left_turn(end1, p1, end2));
+//  class Is_closer:public std::binary_function<Pair, Pair, bool> {
+//    const Point_2& q;
+//    const Geometry_traits_2* geom_traits;
+//  public:
+//    Is_closer(const Point_2& q, const Geometry_traits_2* traits): q(q) {
+//      geom_traits = traits;
+//    }
+//    bool operator() (const Pair& e1, const Pair& e2) const {
+//      const Point_2& s1=e1.first, t1=e1.second, s2=e2.first, t2=e2.second;
+//      Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
+//      switch (e1q)
+//      {
+//      case COLLINEAR:
+//        if (Visibility_2::collinear(geom_traits, q, s2, t2)) {
+//          //q is collinear with e1 and e2.
+//          return (Visibility_2::less_distance_to_point_2(geom_traits, q, s1, s2)
+//                  || Visibility_2::less_distance_to_point_2(geom_traits, q, t1, t2));
+//        }
+//        else {
+//          //q is not collinear with e2. q is collinear with e1.
+//          if (Visibility_2::collinear(geom_traits, s2, t2, s1))
+//            return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+//                    == Visibility_2::orientation_2(geom_traits, s2, t2, t1));
+//          else
+//            return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+//                    == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
+//        }
+//      case RIGHT_TURN:
+//        switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+//        case COLLINEAR:
+//          return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+//        case RIGHT_TURN:
+//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+//          else
+//            return false;
+//        case LEFT_TURN:
+//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+//          else
+//            return true;
+//        }
+//      case LEFT_TURN:
+//        switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+//        case COLLINEAR:
+//          return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+//        case LEFT_TURN:
+//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+//          else
+//            return false;
+//        case RIGHT_TURN:
+//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+//          else
+//            return true;
+//        }
 //      }
+
 //    }
-//    else {
-//      return CGAL::compare_distance_to_point(q, p1, p2)==CGAL::SMALLER;
-//    }
-//  }
+//  };
 
-  bool is_closer(const Point_2& q, const Point_2& dp, const Pair& e1, const Pair& e2) {
-    Point_2 touch1, touch2, end1, end2;
-    int touch_ends_1(0), touch_ends_2(0);
-    if (CGAL::collinear(q, dp, e1.first)) {
-      touch_ends_1++;
-      touch1 = e1.first;
-      end1 = e1.second;
-      if (CGAL::collinear(q, dp, e1.second)) {
-        touch_ends_1++;
-        if (CGAL::compare_distance_to_point(q, end1, touch1)==CGAL::SMALLER) {
-          touch1 = e1.second;
-          end1 = e1.first;
-        }
+  bool is_closer(const Point_2& q,
+                 const Edge& e1,
+                 const Edge& e2) {
+    const Point_2& s1=e1.first, t1=e1.second, s2=e2.first, t2=e2.second;
+    Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
+    switch (e1q)
+    {
+    case COLLINEAR:
+      if (Visibility_2::collinear(geom_traits, q, s2, t2)) {
+        //q is collinear with e1 and e2.
+        return (Visibility_2::less_distance_to_point_2(geom_traits, q, s1, s2)
+                || Visibility_2::less_distance_to_point_2(geom_traits, q, t1, t2));
       }
-    }
-    else {
-      if (CGAL::collinear(q, dp, e1.second)) {
-        touch_ends_1++;
-        touch1 = e1.second;
-        end1 = e1.first;
+      else {
+        //q is not collinear with e2. q is collinear with e1.
+        if (Visibility_2::collinear(geom_traits, s2, t2, s1))
+          return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                  == Visibility_2::orientation_2(geom_traits, s2, t2, t1));
+        else
+          return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
+                  == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
       }
-    }
-
-    if (CGAL::collinear(q, dp, e2.first)) {
-      touch_ends_2++;
-      touch2 = e2.first;
-      end2 = e2.second;
-      if (CGAL::collinear(q, dp, e2.second)) {
-        touch_ends_2++;
-        if (CGAL::compare_distance_to_point(q, end2, touch2)==CGAL::SMALLER) {
-          touch2 = e2.second;
-          end2 = e2.first;
-        }
+    case RIGHT_TURN:
+      switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+      case COLLINEAR:
+        return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+      case RIGHT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return false;
+      case LEFT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return true;
       }
-    }
-    else {
-      if (CGAL::collinear(q, dp, e2.second)) {
-        touch_ends_2++;
-        touch2 = e2.second;
-        end2 = e2.first;
+    case LEFT_TURN:
+      switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
+      case COLLINEAR:
+        return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
+      case LEFT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return false;
+      case RIGHT_TURN:
+        if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
+          return Visibility_2::orientation_2(geom_traits, s2, t2, q)
+              == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
+        else
+          return true;
       }
-    }
-
-    if (touch_ends_1>0 && touch_ends_2>0) {
-      if (touch1 == touch2) {
-        if (CGAL::right_turn(q, touch1, end1) && !CGAL::right_turn(q, touch1, end2))
-            return true;
-        if (CGAL::right_turn(q, touch1, end2) && !CGAL::right_turn(q, touch1, end1))
-            return false;
-        switch (CGAL::orientation(q, touch1, end1)) {
-        case CGAL::COLLINEAR:
-            return (CGAL::right_turn(q, touch1, end2));
-        case CGAL::RIGHT_TURN:
-            return (CGAL::right_turn(end1, touch1, end2));
-        case CGAL::LEFT_TURN:
-            return (CGAL::left_turn(end1, touch1, end2));
-        }
-      }
-      else
-        return CGAL::compare_distance_to_point(q, touch1, touch2)==CGAL::SMALLER;
-    }
-
-
-    if (touch_ends_1 == 2) {
-      return CGAL::orientation(e2.first, e2.second, q)==CGAL::orientation(e2.first, e2.second, e1.first);
-    }
-    else {
-      CGAL::Orientation oq = orientation(e1.first, e1.second, q);
-      CGAL::Orientation o_fst = orientation(e1.first, e1.second, e2.first);
-      CGAL::Orientation o_snd = orientation(e1.first, e1.second, e2.second);
-      if (o_fst == CGAL::COLLINEAR)
-        return oq!=o_snd;
-      if (o_snd == CGAL::COLLINEAR)
-        return oq!=o_fst;
-      if (o_fst == o_snd)
-        return oq!=o_fst;
-      else
-        return CGAL::orientation(e2.first, e2.second, e1.first)==CGAL::orientation(e2.first, e2.second, q);
     }
   }
 
-//  Point_2 ray_seg_intersection(
-//      const Point_2& q, const Point_2& dp, // the ray
-//      const Point_2& s, const Point_2& t) // the segment
-//  {
-//    Ray_2 ray(q,dp);
-//    Segment_2 seg(s,t);
-//    CGAL::Object result = CGAL::intersection(ray, seg);
-//    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-//        return *ipoint;
-//    }
-//    else {
-//      if (const Segment_2 *iseg = CGAL::object_cast<Segment_2 >(&result)) {
-//          switch (CGAL::compare_distance_to_point(ray.source(), iseg->source(), iseg->target())) {
-//          case (CGAL::SMALLER):
-//              return iseg->source();
-//              break;
-//          case (CGAL::LARGER) :
-//              return iseg->target();
-//              break;
-//          }
-
-//      } else {
-//        std::cout<<"doesn't intersect\n";
-//        std::cout<<q<<','<<dp<<"   "<<s<<','<<t<<std::endl;
-//        assert(false);
-//      }
-//    }
-//  }
-
-  //Todo
   Point_2 ray_seg_intersection(
-      const Point_2& q, const Point_2& dp, // the ray
-      const Point_2& s, const Point_2& t) // the segment
+      const Point_2& q, const Point_2& dp,  // the ray
+      const Point_2& s, const Point_2& t)   // the segment
   {
     if (CGAL::collinear(q, dp, s)) {
       if (CGAL::collinear(q, dp, t)) {
@@ -644,26 +674,24 @@ private:
     Ray_2 ray(q,dp);
     Segment_2 seg(s,t);
     CGAL::Object result = CGAL::intersection(ray, seg);
-    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-        return *ipoint;
-    }
-    else {
-      if (const Segment_2 *iseg = CGAL::object_cast<Segment_2 >(&result)) {
-          switch (CGAL::compare_distance_to_point(ray.source(), iseg->source(), iseg->target())) {
-          case (CGAL::SMALLER):
-              return iseg->source();
-              break;
-          case (CGAL::LARGER) :
-              return iseg->target();
-              break;
-          }
-
-      } else {
-        std::cout<<"doesn't intersect\n";
-        std::cout<<q<<','<<dp<<"   "<<s<<','<<t<<std::endl;
-        assert(false);
-      }
-    }
+    return *(CGAL::object_cast<Point_2>(&result));
+//    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+//      return *ipoint;
+//    }
+//    else {
+//      if (const Segment_2 *iseg = CGAL::object_cast<Segment_2 >(&result)) {
+//        switch (CGAL::compare_distance_to_point(ray.source(), iseg->source(), iseg->target())) {
+//        case (CGAL::SMALLER):
+//          return iseg->source();
+//          break;
+//        case (CGAL::LARGER) :
+//          return iseg->target();
+//          break;
+//        }
+//      } else {
+//        assert(false);
+//      }
+//    }
   }
 
   void update_visibility(const Point_2& p){
@@ -671,21 +699,54 @@ private:
       polygon.push_back(p);
     else
     {
-      if (polygon.back() != p){
+      if (Visibility_2::compare_xy_2(geom_traits, polygon.back(), p) != EQUAL) {
         polygon.push_back(p);
       }
     }
   }
+  class Is_sweeped_first:public std::binary_function<Point_2, Point_2, bool> {
+    const Point_2& q;
+    const Geometry_traits_2* geom_traits;
+  public:
+    Is_sweeped_first(const Point_2& q, const Geometry_traits_2* traits):q(q){
+      geom_traits = traits;
+    }
+    bool operator() (const Point_2& p1, const Point_2& p2) const {
+      int qua1 = quadrant(q, p1);
+      int qua2 = quadrant(q, p2);
+      if (qua1 < qua2)
+        return true;
+      if (qua1 > qua2)
+        return false;
+      if (collinear(q, p1, p2))
+        return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
+      else
+        return CGAL::right_turn(p1, q, p2);
+    }
+    int quadrant(const Point_2& o, const Point_2& p) const {
+      typename Geometry_traits_2::Compare_x_2 compare_x = geom_traits->compare_x_2_object();
+      typename Geometry_traits_2::Compare_y_2 compare_y = geom_traits->compare_y_2_object();
+
+      Comparison_result dx = compare_x(p, o);
+      Comparison_result dy = compare_y(p, o);
+
+      if (dx==LARGER && dy!=SMALLER)
+        return 1;
+      if (dx!=LARGER && dy==LARGER)
+        return 2;
+      if (dx==SMALLER && dy!=LARGER)
+        return 3;
+      if (dx!=SMALLER && dy==SMALLER)
+        return 4;
+      return 0;
+    }
+
+  };
 
 
-  bool compare_angle(const Point_2& p1, const Point_2& p2)
+
+  bool is_sweeped_first(const Point_2& p1, const Point_2& p2)
   {
-//    Direction_2 d1(Ray_2(q, p1));
-//    Direction_2 d2(Ray_2(q, p2));
-//    if (d1==d2)
-//      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
-//    else
-//      return d1<d2;
     int qua1 = quadrant(q, p1);
     int qua2 = quadrant(q, p2);
     if (qua1 < qua2)
@@ -698,75 +759,51 @@ private:
       return CGAL::right_turn(p1, q, p2);
   }
 
-  bool is_good_edge(const Point_2& v1,
-                    const Point_2& v2) {
-    if (v1==q || v2==q)
-      return false;
-    if (CGAL::collinear(q, v1, v2))
-      if (CGAL::compare_distance_to_point(v1, q, v2) == CGAL::SMALLER &&
-          CGAL::compare_distance_to_point(v2, q, v1) == CGAL::SMALLER)
-        return false;
-    return true;
-  }
-  void input_neighbor( const std::vector<Halfedge_const_handle>& bad_edges,
-                       const Halfedge_const_handle e) {
+  //when query is in face, every edge is good.
+  void input_neighbor_f( const Halfedge_const_handle e) {
     Point_2 v = e->target()->point();
-    if (v==q) return;
-    if (!vmap.count(v))
+    if (!neighbors.count(v))
       vs.push_back(v);
-    bool good_edge(true);
-    for (int i=0; i<bad_edges.size(); i++)
-      if (e==bad_edges[i]) {
-        good_edge = false;
-        break;
-      }
-    if (good_edge && e->source()->point()!=q)
-//      if (!is_good_edge(e->source()->point(), e->target()->point())) {
-//        std::cout<<"query point: "<<q<<std::endl;
-//        std::cout<<e->curve()<<std::endl;
-//      }
-//      else
-      vmap[v].push_back(e->source()->point());
-
-    good_edge = true;
-    for (int i=0; i<bad_edges.size(); i++)
-      if (e->next()==bad_edges[i]) {
-        good_edge = false;
-        break;
-      }
-    if (good_edge && e->next()->target()->point()!=q)
-//      if (!is_good_edge(e->next()->source()->point(), e->next()->target()->point())) {
-//        std::cout<<"query point: "<<q<<std::endl;
-//        std::cout<<e->next()->curve()<<std::endl;
-//      }
-//      else
-        vmap[v].push_back(e->next()->target()->point());
+      neighbors[v].push_back(e->source()->point());
+      neighbors[v].push_back(e->next()->target()->point());
   }
 
+  bool is_in_cone(Point_2& p) {
+    if (is_big_cone)
+      return (!CGAL::right_turn(source, q, p)) || (!CGAL::left_turn(target, q, p));
+    else
+      return (!CGAL::right_turn(source, q, p)) && (!CGAL::left_turn(target, q, p));
+  }
 
-  //traverse the face to get all edges and sort vertices in counter-clockwise order.
-  void input_face (Face_const_handle fh,
-                   const Point_2& q,
-                   const Halfedge_const_handle e,
-                   std::vector<Pair>& bbox)
+  //for vertex and edge query: the visibility is limited in a cone.
+  void input_edge(const Halfedge_const_handle e,
+                  std::vector<Edge>& good_edges) {
+    for (int i=0; i<bad_edge.size(); i++)
+      if (e == bad_edge[i])
+        return;
+
+    Point_2 v1 = e->target()->point();
+    Point_2 v2 = e->source()->point();
+    if (is_in_cone(v1) || is_in_cone(v2) || do_intersect_ray(q, source, v1, v2)) {
+      good_edges.push_back(create_pair(v1, v2));
+      if (!neighbors.count(v1))
+        vs.push_back(v1);
+      neighbors[v1].push_back(v2);
+
+      if (!neighbors.count(v2))
+        vs.push_back(v2);
+      neighbors[v2].push_back(v1);
+    }
+  }
+
+  //for face query: traverse the face to get all edges and sort vertices in counter-clockwise order.
+  void input_face (Face_const_handle fh)
   {
-    std::vector<Halfedge_const_handle> bad_edges;
-    if (is_vertex_query) {
-      bad_edges.push_back(e);
-      bad_edges.push_back(e->next());
-    }
-    else {
-      if (is_edge_query)
-        bad_edges.push_back(e);
-    }
-
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
       assert(curr->face() == fh);
-//      Point_2 v = curr->target()->point();
-      input_neighbor(bad_edges, curr);
-//      input_neighbor(v, curr->next()->target()->point(), bad_edges, curr->next());
+      input_neighbor_f(curr);
     } while (++curr != circ);
 
     typename Arrangement_2::Hole_const_iterator hi;
@@ -774,55 +811,11 @@ private:
       Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
       do {
         assert(curr->face() == fh);
-//        Point_2 v = curr->target()->point();
-        input_neighbor(bad_edges, curr);
-//        input_neighbor(v, curr->next()->target()->point(), bad_edges, curr->next());
+        input_neighbor_f(curr);
       } while (++curr != circ);
     }
 
-
-    if (is_vertex_query || is_edge_query) {
-//      Number_type xmin, xmax, ymin, ymax;
-//      Point_2 q1 = vs.front();
-//      xmax = xmin = q1.x();
-//      ymin = ymax = q1.y();
-//      vs.push_back(q);
-//      for (typename Pvec::iterator it= vs.begin(); it!=vs.end(); it++) {
-//        Point_2 q1 = *it;
-//        if (q1.x() < xmin)    xmin = q1.x();
-//        if (q1.x() > xmax)    xmax = q1.x();
-//        if (q1.y() < ymin)    ymin = q1.y();
-//        if (q1.y() > ymax)    ymax = q1.y();
-//      }
-//      vs.pop_back();
-//      xmin -= 10;
-//      xmax += 10;
-//      ymin -= 10;
-//      ymax += 10;
-
-      vs.push_back(q);
-      typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(vs.begin(), vs.end());
-      vs.pop_back();
-      Number_type xmin, xmax, ymin, ymax;
-      typename K::Compute_x_2 computex;
-      typename K::Compute_y_2 computey;
-      xmin = computex(bb.min())-1;
-      ymin = computey(bb.min())-1;
-      xmax = computex(bb.max())+1;
-      ymax = computey(bb.max())+1;
-      Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
-                        Point_2(xmax, ymax), Point_2(xmin, ymax)};
-      for (int i=0; i<4; i++) {
-        vs.push_back(box[i]);
-        Pvec pvec;
-        pvec.push_back(box[(i+3)%4]);
-        pvec.push_back(box[(i+1)%4]);
-        vmap[box[i]] = pvec;
-        bbox.push_back(create_pair(box[i], box[(i+1)%4]));
-      }
-    }
-
-    quick_sort(vs, 0, vs.size()-1);
+    std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -836,70 +829,71 @@ private:
       i = j-1;
     }
   }
+  //for vertex or edge query: traverse the face to get all edges and sort vertices in counter-clockwise order.
+  void input_face (Face_const_handle fh,
+                   std::vector<Edge>& good_edges)
+  {
+//    timer.reset();
+//    timer.start();
 
-  void qs_swap(Pvec& vs, int i, int j) {
-    Point_2 temp = vs[i];
-    vs[i] = vs[j];
-    vs[j] = temp;
-  }
+    Ccb_halfedge_const_circulator curr = fh->outer_ccb();
+    Ccb_halfedge_const_circulator circ = curr;
+    do {
+      assert(curr->face() == fh);
+      input_edge(curr, good_edges);
+    } while (++curr != circ);
 
-  int partition(Pvec& vs, int left, int right, int pivotIndex) {
-    Point_2 pivot_p = vs[pivotIndex];
-    qs_swap(vs, pivotIndex, right);
-    int storeIndex = left;
-    for (int i=left; i<right; i++) {
-      if (compare_angle(vs[i], pivot_p)) {
-        qs_swap(vs, i, storeIndex);
-        storeIndex += 1;
+    typename Arrangement_2::Hole_const_iterator hi;
+    for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
+      Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
+      do {
+        assert(curr->face() == fh);
+        input_edge(curr, good_edges);
+      } while (++curr != circ);
+    }
+
+    vs.push_back(q);
+    typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(vs.begin(), vs.end());
+    vs.pop_back();
+    Number_type xmin, xmax, ymin, ymax;
+    typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
+    typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
+    xmin = compute_x(bb.min())-1;
+    ymin = compute_y(bb.min())-1;
+    xmax = compute_x(bb.max())+1;
+    ymax = compute_y(bb.max())+1;
+    Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
+                      Point_2(xmax, ymax), Point_2(xmin, ymax)};
+    for (int i=0; i<4; i++) {
+      vs.push_back(box[i]);
+      neighbors[box[i]].push_back(box[(i+3)%4]);
+      neighbors[box[i]].push_back(box[(i+1)%4]);
+      good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
+    }
+//    timer.stop();
+//    input_v_t += timer.time();
+
+//    timer.reset();
+//    timer.start();
+
+    std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
+
+    for (int i=0; i!=vs.size(); i++) {
+      int j = i+1;
+      while (j != vs.size()) {
+        if (!CGAL::collinear(q, vs[i], vs[j]))
+          break;
+        j++;
       }
+      if (j-i>1)
+        funnel(i, j);
+      i = j-1;
     }
-    qs_swap(vs, storeIndex, right);
-    return storeIndex;
+
+//    timer.stop();
+//    quicksort_t += timer.time();
   }
 
-  void quick_sort(Pvec& vs, int left, int right) {
-    if (left < right) {
-      int pivotIndex = left;
-      int pivotNewIndex = partition(vs, left, right, pivotIndex);
-      quick_sort(vs, left, pivotNewIndex-1);
-      quick_sort(vs, pivotNewIndex+1, right);
-    }
-  }
-
-  bool is_on_ray(const Ray_2& r, const Point_2& p) {
-      return Direction_2(Vector_2(r.source(), p)) == Direction_2(r);
-  }
-
-
-  //debug
-  void print_edges(std::vector<Pair>& edges){
-    std::cout<<edges.size()<<" edges in the heap now.\n";
-    for (int i = 0; i != edges.size(); i++) {
-          std::cout<<edges[i].first<<"->"<<edges[i].second<<std::endl;
-      }
-  }
-  void print_pair(Pair pr){
-    std::cout<<pr.first<<"->"<<pr.second<<std::endl;
-  }
-
-  void print_vertex(const Pvec& polygon) {
-    std::cout<<"print points in vector\n";
-    for (int i = 0; i != polygon.size(); i++) {
-      std::cout<<polygon[i]<<std::endl;
-    }
-  }
-  void print_edx() {
-    typename std::map<Pair, int>::iterator map_it = edx.begin();
-    std::cout<<"print edx\n";
-    while (map_it != edx.end()) {
-      std::cout<<map_it->first.first<<"->"<<map_it->first.second<<":"<<map_it->second<<std::endl;
-      map_it++;
-    }
-  }
-
-  bool close_point(const Point_2& shared, const Point_2& p2){
-    return (shared.x()-p2.x()<1 && shared.x()-p2.x()>-1 && shared.y()-p2.y()<1 && shared.y()-p2.y()>-1);
-  }
 
   void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
       for (int i = 0; i != polygon.size()-1; i++ ) {
@@ -909,38 +903,46 @@ private:
       CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
   }
 
-//  void Insert_edge(Vertex_handle insert_loc,
-//                   Vertex_handle new_begin,
-//                   const Point_2& end1,
-//                   const Point_2& end2,
-//                   const Point_2& needle_end,
-//                   Output_arrangement_2& arr_out) {
 
-
-//  }
-
-
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
-    regularize_output(out_arr);
+  void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_true) {
+    regularize_output(arr_out);
   }
 
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_false) {
     //do nothing
   }
 
-  void regularize_output(Arrangement_2& out_arr) {
+  void regularize_output(Output_arrangement_2& arr_out) {
     typename Output_arrangement_2::Edge_iterator e_itr;
-    for (e_itr = out_arr.edges_begin() ;
-         e_itr != out_arr.edges_end() ; e_itr++) {
+    for (e_itr = arr_out.edges_begin();
+         e_itr != arr_out.edges_end();
+         e_itr++) {
+
       Halfedge_handle he = e_itr;
       Halfedge_handle he_twin = he->twin();
       if (he->face() == he_twin->face()) {
-        out_arr.remove_edge(he);
+        arr_out.remove_edge(he);
       }
     }
   }
 
 };
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::sweep_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::cut_from_butterfly_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_insert_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_remove_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_swap_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_v_t = 0;
+template <typename Arrangement_2, typename RegularizationTag>
+double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::quicksort_t = 0;
 
 } // end namespace CGAL
 
