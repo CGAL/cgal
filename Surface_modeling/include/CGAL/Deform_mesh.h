@@ -717,7 +717,7 @@ public:
    * associated to the vertices. Thus, if a deformed version of the mesh
    * is used as <i>reference</i>, the mesh properties the algorithm
    * tries to preserve are those of an altered version (which are already
-   * degradated).
+   * degraded).
    */
   void overwrite_original_positions()
   {
