@@ -747,8 +747,8 @@ private:
       geom_traits = traits;
     }
     bool operator() (const Vertex v1, const Vertex v2) const {
-      Point_2& p1 = v1->point();
-      Point_2& p2 = v2->point();
+      const Point_2& p1 = v1->point();
+      const Point_2& p2 = v2->point();
       int qua1 = quadrant(q, p1);
       int qua2 = quadrant(q, p2);
       if (qua1 < qua2)
@@ -785,8 +785,8 @@ private:
     Vertex v = e->target();
     if (!neighbors.count(v))
       vs.push_back(v);
-      neighbors[v].push_back(e->source()->point());
-      neighbors[v].push_back(e->next()->target()->point());
+      neighbors[v].push_back(e->source());
+      neighbors[v].push_back(e->next()->target());
       incident_edges[v].push_back(e);
       incident_edges[v].push_back(e->next());
   }
@@ -876,29 +876,29 @@ private:
       } while (++curr != circ);
     }
     //todo
-    Points points;
-    for (int i=0; i<vs.size(); i++) {
-      points.push_back(vs[i]->point());
-    }
-    points.push_back(q);
-    typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(points.begin(), points.end());
-//    points.pop_back();
+//    Points points;
+//    for (int i=0; i<vs.size(); i++) {
+//      points.push_back(vs[i]->point());
+//    }
+//    points.push_back(q);
+//    typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(points.begin(), points.end());
+////    points.pop_back();
 
-    Number_type xmin, xmax, ymin, ymax;
-    typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
-    typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
-    xmin = compute_x(bb.min())-1;
-    ymin = compute_y(bb.min())-1;
-    xmax = compute_x(bb.max())+1;
-    ymax = compute_y(bb.max())+1;
-    Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
-                      Point_2(xmax, ymax), Point_2(xmin, ymax)};
-    for (int i=0; i<4; i++) {
-      vs.push_back(box[i]);
-      neighbors[box[i]].push_back(box[(i+3)%4]);
-      neighbors[box[i]].push_back(box[(i+1)%4]);
-      good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
-    }
+//    Number_type xmin, xmax, ymin, ymax;
+//    typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
+//    typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
+//    xmin = compute_x(bb.min())-1;
+//    ymin = compute_y(bb.min())-1;
+//    xmax = compute_x(bb.max())+1;
+//    ymax = compute_y(bb.max())+1;
+//    Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
+//                      Point_2(xmax, ymax), Point_2(xmin, ymax)};
+//    for (int i=0; i<4; i++) {
+//      vs.push_back(box[i]);
+//      neighbors[box[i]].push_back(box[(i+3)%4]);
+//      neighbors[box[i]].push_back(box[(i+1)%4]);
+//      good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
+//    }
 
     std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
 
