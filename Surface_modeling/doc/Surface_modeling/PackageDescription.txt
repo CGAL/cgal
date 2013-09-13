@@ -21,6 +21,5 @@
 \cgalPkgDescriptionEnd
 
 \todo change translate and rotate_and_translate to apply on the current position?
-\todo Add the fact that positive weights are expected for ARAP (and SaR?)
 */
 
