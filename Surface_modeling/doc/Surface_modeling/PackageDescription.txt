@@ -21,10 +21,8 @@
 \cgalPkgDescriptionEnd
 
 \todo say something about the influence of original position for optimal rotations
-\todo remove groups of handle and rotation/translate should have overload accepting ranges of vertex_descriptor
+\todo change translate and rotate_and_translate to apply on the current position?
+\todo translate and rotate_and_translate should have overloads taking one vertex only
 \todo Add the fact that positive weights are expected for ARAP (and SaR?)
-\todo document why is it closest rotation
-\todo investigate if it is worth adding a flags in the weight calculator class to turn on/off some features
-\todo does it make senses to add a boolean parameter to `deform()` to automatically call `Deform_mesh::overwrite_original_positions()`
 */
 
