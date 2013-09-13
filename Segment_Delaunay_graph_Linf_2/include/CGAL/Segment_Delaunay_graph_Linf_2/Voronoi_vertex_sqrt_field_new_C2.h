@@ -3431,12 +3431,12 @@ private:
       // philaris: I also remove it because of validity tests
       //CGAL_assertion(is_p_endp_of_r and is_p_endp_of_t);
 
-      // philaris: I have only kept the following weaker one
-      CGAL_assertion(
-          same_points(r.source_site(), t.source_site()) or
-          same_points(r.source_site(), t.target_site()) or
-          same_points(r.target_site(), t.source_site()) or
-          same_points(r.target_site(), t.target_site())   );
+      // philaris: I also remove the following assertion
+      //CGAL_assertion(
+      //    same_points(r.source_site(), t.source_site()) or
+      //    same_points(r.source_site(), t.target_site()) or
+      //    same_points(r.target_site(), t.source_site()) or
+      //    same_points(r.target_site(), t.target_site())   );
       return POSITIVE;
     }
 
