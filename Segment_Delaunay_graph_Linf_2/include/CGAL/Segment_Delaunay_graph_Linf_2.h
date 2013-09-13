@@ -1254,6 +1254,7 @@ public:
       }
       Vertex_circulator vc = incident_vertices(vh);
       Vertex_circulator vcstart = vc;
+      unsigned int count_neighs = 0;
       if (vc != 0) {
         do {
           vh = vc;
@@ -1262,8 +1263,10 @@ public:
           } else {
             os << "  " << vc->site();
           }
+          ++count_neighs;
         } while (++vc != vcstart);
       }
+      os << " count_neighs=" << count_neighs;
       os << std::endl;
     }
 
