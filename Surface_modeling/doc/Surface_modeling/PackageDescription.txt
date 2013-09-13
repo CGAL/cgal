@@ -22,7 +22,6 @@
 
 \todo say something about the influence of original position for optimal rotations
 \todo change translate and rotate_and_translate to apply on the current position?
-\todo translate and rotate_and_translate should have overloads taking one vertex only
 \todo Add the fact that positive weights are expected for ARAP (and SaR?)
 */
 

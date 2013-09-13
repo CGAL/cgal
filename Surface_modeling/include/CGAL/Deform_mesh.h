@@ -529,9 +529,26 @@ public:
   }
 
   /**
-   * Sets the target position of each control vertex in the range `[begin,end[` by applying a translation of vertex `t` to its original position
-   * (that is its positions at the time of the functor construction or after the last call to `overwrite_original_positions()`).
-   * \note A call to this function cancels the last call to `rotate_and_translate()`, `translate()`, or `set_target_position()`.
+   * Sets the target position of `vd` by applying a translation of vertex `t` to its original position
+   * (that is its position at the time of the functor construction or after the last call to `overwrite_original_positions()`).
+   * \note A call to this function cancels the last call to `rotate_and_translate()`, `translate()`, or `set_target_position()` involving `vd`.
+   *
+   * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   *
+   * @param vd a control vertex
+   * @param t translation vector
+   */
+  template<class Vect>
+  void translate(vertex_descriptor vd, const Vect& t)
+  {
+    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
+
+    std::size_t v_id = ros_id(vd);
+    solution[v_id] = add_to_point(original[v_id], t);
+  }
+
+  /**
+   * Equivalent to calling the overload taking only one control vertex, for each vertex in the range `[begin,end[`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
@@ -552,11 +569,32 @@ public:
   }
 
   /**
-   * Sets the target position of each control vertex in the range `[begin,end[` by applying
-   * a rotation around `rotation_center` defined by the quaternion `quat`, followed by a
-   * translation by vector `t` to its original position (that is its positions at the time
-   * of the functor construction or after the last call to `overwrite_original_positions()`).
-   * \note A call to this function cancels the last call to `rotate_and_translate()`, `translate()`, or `set_target_position()`.
+   * Sets the target position of `vd` by applying a rotation around `rotation_center` defined by the quaternion `quat`, followed by a
+   * translation by vector `t` to its original position (that is its position at the time of the functor construction or after
+   * the last call to `overwrite_original_positions()`).
+   * \note A call to this function cancels the last call to `rotate_and_translate()`, `translate()`, or `set_target_position()` involving `vd`.
+   *
+   * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
+   * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   *
+   * @param vd a control vertex
+   * @param rotation_center center of rotation
+   * @param quat rotation holder quaternion
+   * @param t post translation vector
+   */
+  template <typename Quaternion, typename Vect>
+  void rotate_and_translate(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat, const Vect& t)
+  {
+    region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
+
+    std::size_t v_id = ros_id(vd);
+    Vect v = quat * sub_to_vector<Vect>(original[v_id], rotation_center);
+    const Point& rotated = add_to_point(rotation_center, v);
+    solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);
+  }
+
+  /**
+   * Equivalent to calling the overload taking only one control vertex, for each vertex in the range `[begin,end[`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
