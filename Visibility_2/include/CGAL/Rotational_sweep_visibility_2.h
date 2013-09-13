@@ -83,31 +83,64 @@ public:
 
 private:
   typedef std::vector<Point_2>          Points;
-  typedef Vertex_const_handle   VH;
-  typedef std::vector<VH>   VHs;
+  typedef Vertex_const_handle   Vertex;
+  typedef std::vector<Vertex>   Vertices;
   typedef Halfedge_const_handle   Edge;
   typedef std::vector<Edge> Edges;
 
-
   const Geometry_traits_2 *geom_traits;
+
+  class Less_edge: public std::binary_function<Edge, Edge, bool> {
+    const Geometry_traits_2* traits;
+  public:
+//    Less_edge(const Geometry_traits_2* traits):traits(traits) {}
+    bool operator() (const Edge e1, const Edge e2) const {
+      if (e1 != e2) {
+        if (e1->source() != e2->source())
+          return e1->source()->point() < e2->source()->point();
+    //        return Visibility_2::compare_xy_2(traits, e1->source()->point(), e2->source()->point()) == SMALLER;
+        else
+          return e1->target()->point() < e2->target()->point();
+    //        return Visibility_2::compare_xy_2(traits, e1->target()->point(), e2->target()->point()) == SMALLER;
+        }
+      else
+        return false;
+    }
+  };
+
+  class Less_vertex: public std::binary_function<Vertex, Vertex, bool> {
+//    const Geometry_traits_2* geom_traits;
+  public:
+//    Compare_vertex(const Geometry_traits_2* traits):geom_traits(traits) {}
+    bool operator() (const Vertex v1, const Vertex v2) const {
+      if (v1 != v2)
+//        return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
+        return v1->point() < v2->point();
+      else
+        return false;
+    }
+  };
+
   const Input_arrangement_2 *p_arr;
   Point_2         q;
-//  Point_2         dp;
   Points polygon;                       //visibility polygon
-  std::map<VH, VHs> neighbors;  //vertex and its neighbours that are relevant to visibility polygon
-  std::map<VH, Edges>  incident_edges;
-  std::map<Edge, int> edx;            //index of edge in the heap
+  std::map<Vertex, Vertices, Less_vertex> neighbors;  //vertex and its neighbours that are relevant to visibility polygon
+  std::map<Vertex, Edges, Less_vertex>  incident_edges;
+  std::map<Edge, int, Less_edge> edx;            //index of edge in the heap
   Edges  active_edges;    //a heap of edges that interset the current vision ray.
 
-  VHs vs;                            //angular sorted vertices
+  Vertices vs;                            //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
   bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
 
   Edges bad_edge;
-  VH query_vertex;
+  Vertex query_vertex;
   Point_2  source;                    //one end of visibility cone
   Point_2  target;                    //another end of visibility cone
+
+
+
 
 
 public:
@@ -265,9 +298,9 @@ private:
   }
 
   void funnel(int i, int j) {
-    VHs right, left;
+    Vertices right, left;
     bool block_left(false), block_right(false);
-    VH former = vs[i], neib;
+    Vertex former = vs[i], neib;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
       for (int k=0; k<neighbors[vs[l]].size(); k++) {
@@ -359,7 +392,7 @@ private:
     //initiation of active_edges
     if (is_vertex_query || is_edge_query) {
       for (int i=0; i!=good_edges.size(); i++) {
-        if (do_intersect_ray(q, dp, good_edges[i].source()->point(), good_edges[i].target()->point())) {
+        if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point())) {
           heap_insert(good_edges[i]);
 //          heapc.push_back(good_edges[i]);
         }
@@ -394,13 +427,13 @@ private:
 
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
-      VH vh = vs[i];
+      Vertex vh = vs[i];
       Edge closest_e = active_edges.front();   //save the closest edge;
       int insert_cnt(0), remove_cnt(0);
       Edges& edges = incident_edges[vh];
       Edges insert_es, remove_es;
 
-      for (int j=0; j!=neis.size(); j++) {
+      for (int j=0; j!=edges.size(); j++) {
         Edge e = edges[j];
 //        Orientation o=Visibility_2::orientation_2(geom_traits, q, dp, nei);
 /*        if (o==RIGHT_TURN ||
@@ -449,7 +482,10 @@ private:
         if (remove_cnt > 0 && insert_cnt == 0) {
           //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
           update_visibility(vh->point());
-          update_visibility(ray_seg_intersection(q, vh, active_edges.front().first, active_edges.front().second));
+          update_visibility(ray_seg_intersection(q,
+                                                 vh->point(),
+                                                 active_edges.front()->target()->point(),
+                                                 active_edges.front()->source()->point()));
         }
       }
     }
@@ -703,14 +739,14 @@ private:
       }
     }
   }
-  class Is_sweeped_first:public std::binary_function<VH, VH, bool> {
+  class Is_sweeped_first:public std::binary_function<Vertex, Vertex, bool> {
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:
     Is_sweeped_first(const Point_2& q, const Geometry_traits_2* traits):q(q){
       geom_traits = traits;
     }
-    bool operator() (const VH v1, const VH v2) const {
+    bool operator() (const Vertex v1, const Vertex v2) const {
       Point_2& p1 = v1->point();
       Point_2& p2 = v2->point();
       int qua1 = quadrant(q, p1);
@@ -744,25 +780,9 @@ private:
 
   };
 
-
-
-//  bool is_sweeped_first(const Point_2& p1, const Point_2& p2)
-//  {
-//    int qua1 = quadrant(q, p1);
-//    int qua2 = quadrant(q, p2);
-//    if (qua1 < qua2)
-//      return true;
-//    if (qua1 > qua2)
-//      return false;
-//    if (collinear(q, p1, p2))
-//      return (CGAL::compare_distance_to_point(q, p1, p2) == CGAL::SMALLER);
-//    else
-//      return CGAL::right_turn(p1, q, p2);
-//  }
-
   //when query is in face, every edge is good.
   void input_neighbor_f( const Halfedge_const_handle e) {
-    VH v = e->target();
+    Vertex v = e->target();
     if (!neighbors.count(v))
       vs.push_back(v);
       neighbors[v].push_back(e->source()->point());
@@ -785,8 +805,8 @@ private:
       if (e == bad_edge[i])
         return;
 
-    VH v1 = e->target();
-    VH v2 = e->source();
+    Vertex v1 = e->target();
+    Vertex v2 = e->source();
     if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, source, v1->point(), v2->point())) {
       good_edges.push_back(e);
       if (!neighbors.count(v1))
@@ -893,7 +913,6 @@ private:
         funnel(i, j);
       i = j-1;
     }
-
   }
 
 
