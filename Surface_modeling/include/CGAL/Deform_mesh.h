@@ -699,6 +699,7 @@ public:
     BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
     {
       put(vertex_point_map, vd, original[ros_id(vd)]);
+      solution[ros_id(vd)]=original[ros_id(vd)];
     }
 
     // also set rotation matrix to identity
