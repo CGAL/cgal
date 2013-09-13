@@ -2820,7 +2820,7 @@ private:
     }
 
     CGAL_SDG_DEBUG(std::cout
-        << "debug incircle_xxxs non-zero sl: os1="
+        << "debug incircle_xxxs non-zero sl=" << sl << " : os1="
         << os1 << " os2=" << os2 << std::endl;);
 
     return (os1 == os2) ? POSITIVE : NEGATIVE;
