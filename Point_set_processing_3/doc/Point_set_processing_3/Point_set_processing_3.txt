@@ -7,7 +7,7 @@ namespace CGAL {
 
 \cgalAutoToc
 
-\authors Pierre Alliez, Laurent Saboret, Nader Salman
+\authors Pierre Alliez, Clément Jamin, Laurent Saboret, Nader Salman, Shihao Wu
 
 \section Point_set_processing_3Introduction Introduction
 
