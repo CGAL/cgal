@@ -3421,7 +3421,7 @@ private:
     }
     if ( same_segments(r.supporting_site(), t.supporting_site()) ) {
       CGAL_SDG_DEBUG(std::cout
-          << "debug r=" << q << " t=" << t
+          << "debug r=" << r << " t=" << t
           << " have support " << r.supporting_site()  << std::endl; );
 
       // philaris: r and t share a point, which must be p
