@@ -165,6 +165,11 @@ Point set simplification through grid-based clustering. Removed points are depic
 
 \subsection Point_set_processing_3Example_4 WLOP simplification example
 The following example reads a point set, simplifies and regularizes it by WLOP.
+
+\cgalFigureBegin{Point_set_processing_3figWlop_flow_chart, wlop_flow_chart.jpg}
+A flow chart of the wlop algorithm
+\cgalFigureEnd
+
 \cgalExample{Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp}
 
 \cgalFigureBegin{Point_set_processing_3figsimplification_comparison, simplification_comparison.jpg}
