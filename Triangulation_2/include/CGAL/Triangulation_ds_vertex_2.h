@@ -22,6 +22,7 @@
 #define CGAL_TRIANGULATION_DS_VERTEX_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/triangulation_assertions.h>
 
 namespace CGAL {
 

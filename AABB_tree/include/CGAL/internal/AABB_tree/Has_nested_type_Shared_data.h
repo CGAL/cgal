@@ -27,6 +27,7 @@
 #define CGAL_INTERNAL_AABB_TREE_HAS_NESTED_TYPE_SHARED_DATA_H
 
 #include <boost/mpl/has_xxx.hpp>
+#include <CGAL/tags.h>
 
 namespace CGAL{
 
