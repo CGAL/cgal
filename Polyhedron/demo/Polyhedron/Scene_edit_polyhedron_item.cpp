@@ -192,14 +192,11 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices() const {
   color.set_rgb_color(0, 1.f, 0);
   // draw ROI
   if(ui_widget->ShowROICheckBox->isChecked()) {
-    Deform_mesh::Roi_vertex_const_iterator rb, re;
-    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
     {
-      if(!deform_mesh.is_control_vertex(*rb))
-      {
-        gl_draw_point( (*rb)->point() );
-      }
-    }          
+      if(!deform_mesh.is_control_vertex(vd))
+        gl_draw_point( vd->point() );
+    }
   }
   // draw control vertices related things
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();

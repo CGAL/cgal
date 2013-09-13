@@ -26,6 +26,7 @@
 #include <list>
 #include <utility>
 #include <limits>
+#include <boost/foreach.hpp>
 
 /*
 #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE // define it to activate optimal scale calculation,
@@ -192,8 +193,9 @@ public:
   typedef typename boost::graph_traits<Halfedge_graph>::edge_descriptor		edge_descriptor;
   /// The 3D point type, model of `::SimplePoint_3`
   typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
-  /// %Iterator over vertices in the region-of-interest.
-  typedef typename std::vector<vertex_descriptor>::const_iterator  Roi_vertex_const_iterator;
+  /// A constant iterator range over the vertices of the region-of-interest. 
+  /// It is a model of `ConstRange` with `vertex_descriptor` as iterator value type.
+  typedef std::vector<vertex_descriptor> Roi_vertex_range;
 /// @}
 
 private:
@@ -206,8 +208,6 @@ private:
 
   typedef typename Closest_rotation_traits::Matrix CR_matrix;
   typedef typename Closest_rotation_traits::Vector CR_vector;
-
-public:
 
 // Data members.
   Halfedge_graph& m_halfedge_graph;															/**< Source triangulated surface mesh for modeling */
@@ -666,18 +666,17 @@ public:
 
     region_of_solution(); // the roi should be preprocessed since we are using original_position vec
 
-    Roi_vertex_const_iterator rb, re;
-    for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
+    BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
     {
-      original[ros_id(*rb)] = get(vertex_point_map, (*rb));
+      original[ros_id(vd)] = get(vertex_point_map, vd);
     }
 
     // now I need to compute weights for edges incident to roi vertices
     std::vector<bool> is_weight_computed(boost::num_edges(m_halfedge_graph), false);
-    for(boost::tie(rb, re) = roi_vertices(); rb != re; ++rb)
+    BOOST_FOREACH(vertex_descriptor vd, roi_vertices())
     {
       in_edge_iterator e, e_end;
-      for (boost::tie(e,e_end) = boost::in_edges(*rb, m_halfedge_graph); e != e_end; e++)
+      for (boost::tie(e,e_end) = boost::in_edges(vd, m_halfedge_graph); e != e_end; e++)
       {
         std::size_t id_e = id(*e);
         if(is_weight_computed[id_e]) { continue; }
@@ -732,9 +731,9 @@ public:
   /** 
    * Returns the range of vertices in the region-of-interest.
    */
-  std::pair<Roi_vertex_const_iterator, Roi_vertex_const_iterator> roi_vertices() const
+  Roi_vertex_range roi_vertices() const
   {
-    return std::make_pair(roi.begin(), roi.end());
+    return roi;
   }
 
   /**

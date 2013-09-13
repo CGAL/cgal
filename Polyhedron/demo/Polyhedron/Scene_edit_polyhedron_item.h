@@ -482,13 +482,10 @@ public:
   { 
     std::ofstream out(file_name);
     // save roi
-    int hc = 0;
-    Deform_mesh::Roi_vertex_const_iterator rb, re;
-    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) { ++hc; }
-    out << hc << std::endl;
-    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb)
+    out << deform_mesh.roi_vertices().size() << std::endl;
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
     {
-      out << (*rb )->id() << " ";
+      out << vd->id() << " ";
     }
     out << std::endl;
     // save control vertices
@@ -677,11 +674,11 @@ protected:
   bool keyPressEvent(QKeyEvent* e);
 
   void update_normals() {
-    Deform_mesh::Roi_vertex_const_iterator rb, re;
-    for(boost::tie(rb, re) = deform_mesh.roi_vertices(); rb != re; ++rb) {
-      std::size_t id = (*rb)->id();
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
+    {
+      std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n = 
-        compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(**rb);
+        compute_vertex_normal<Polyhedron::Vertex, Polyhedron::Traits>(*vd);
       normals[id*3] = n.x();
       normals[id*3+1] = n.y(); 
       normals[id*3+2] = n.z(); 
