@@ -22,6 +22,7 @@ typedef Kernel::Vector_3 Vector;
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point, Vector> PointVectorPair;
 
+
 int main(void)
 {
   const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
@@ -40,14 +41,15 @@ int main(void)
      return EXIT_FAILURE;
   }
 
-  //Algorithm parameters
-  int k = 120;  //neighborhood size
+                               //Algorithm parameters
+  int k = 120;                 //neighborhood size
   double sharpness_sigma = 25; // control sharpness(0-90), 
                                // the bigger, the result will be smoother.
-  int iter_number = 3; //times of projection
+  int iter_number = 3;         //times of projection
 
   CGAL::Timer task_timer;
   task_timer.start();
+
   std::cout << "Run algorithm example: " << std::endl;
 
   for (int i = 0; i < iter_number; i++)

@@ -110,11 +110,11 @@ public:
 template <typename Kernel>
 CGAL::Point_with_normal_3<Kernel>
 compute_denoise_projection(
-  const CGAL::Point_with_normal_3<Kernel>& query,      ///< 3D point to project
+  const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point to project
   const std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
     scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >& neighbor_pwns,  //
-  typename Kernel::FT radius,          ///< accept neighborhood radius
-  typename Kernel::FT sharpness_sigma  ///< control sharpness(0-90)
+  typename Kernel::FT radius,                   ///< accept neighborhood radius
+  typename Kernel::FT sharpness_sigma           ///< control sharpness(0-90)
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -181,8 +181,8 @@ std::vector<CGAL::Point_with_normal_3<Kernel>,tbb::
             scalable_allocator<CGAL::Point_with_normal_3<Kernel> > >
 compute_kdtree_neighbors(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
-  Tree& tree,                            ///< KD-tree
-  unsigned int k                         ///< number of neighbors         
+  Tree& tree,                                     ///< KD-tree
+  unsigned int k                                  ///< number of neighbors         
 )                       
 {
   // basic geometric types
@@ -233,8 +233,8 @@ template < typename Kernel,
 typename Kernel::FT
 compute_max_spacing(
   const CGAL::Point_with_normal_3<Kernel>& query, ///< 3D point
-  Tree& tree,                            ///< KD-tree
-  unsigned int k)                        ///< number of neighbors
+  Tree& tree,                                     ///< KD-tree
+  unsigned int k)                                 ///< number of neighbors
 {
   // basic geometric types
   typedef typename Kernel::FT FT;
@@ -342,11 +342,11 @@ template <typename Concurrency_tag,
           typename Kernel>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
-  const unsigned int k, ///< number of neighbors.
+  ForwardIterator first,    ///< iterator over the first input point.
+  ForwardIterator beyond,   ///< past-the-end iterator over the input points.
+  PointPMap point_pmap,     ///< property map ForwardIterator -> Point_3.
+  NormalPMap normal_pmap,   ///< property map ForwardIterator -> Vector_3.
+  const unsigned int k,     ///< number of neighbors.
   const typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
   const Kernel& /*kernel*/) ///< geometric traits.
 {
@@ -562,12 +562,12 @@ template <typename Concurrency_tag,
           typename NormalPMap>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
-  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
-  const unsigned int k, ///< number of neighbors.
-  double sharpness_sigma  ///< control sharpness(0-90)
+  ForwardIterator first,     ///< first input point.
+  ForwardIterator beyond,    ///< past-the-end input point.
+  PointPMap point_pmap,      ///< property map OutputIterator -> Point_3.
+  NormalPMap normal_pmap,    ///< property map ForwardIterator -> Vector_3.
+  const unsigned int k,      ///< number of neighbors.
+  double sharpness_sigma     ///< control sharpness(0-90)
 ) ///< property map OutputIterator -> Vector_3.
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
@@ -589,11 +589,11 @@ template <typename Concurrency_tag,
           typename NormalPMap>
 double
 bilateral_smooth_point_set(
-  ForwardIterator first, ///< first input point.
-  ForwardIterator beyond, ///< past-the-end input point.
-  const unsigned int k, ///< number of neighbors.
-  double sharpness_sigma,  ///< control sharpness(0-90)
-  NormalPMap normal_pmap) ///< property map OutputIterator -> Vector_3.
+  ForwardIterator first,        ///< first input point.
+  ForwardIterator beyond,       ///< past-the-end input point.
+  const unsigned int k,         ///< number of neighbors.
+  double sharpness_sigma,       ///< control sharpness(0-90)
+  NormalPMap normal_pmap)       ///< property map OutputIterator -> Vector_3.
 {
   return bilateral_smooth_point_set<Concurrency_tag>(
     first, beyond,
