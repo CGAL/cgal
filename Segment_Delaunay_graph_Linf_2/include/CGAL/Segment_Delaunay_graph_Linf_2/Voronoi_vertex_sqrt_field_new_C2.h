@@ -34,6 +34,7 @@ public:
   using Base::compute_horizontal_projection;
   using Base::compute_vertical_projection;
   using Base::has_positive_slope;
+  using Base::have_same_slope;
   using Base::is_site_horizontal;
   using Base::is_site_vertical;
   using Base::is_site_h_or_v;
@@ -2727,9 +2728,38 @@ private:
       }
     }
 
+    bool same_slope_at_corner(false);
+    if (numendpts_of_t > 0) {
+      CGAL_assertion(numendpts_of_t == 1);
+      CGAL_assertion(is_p_point);
+      if (not is_r_point) { // there is at least one segment in p, q, r
+        if (   (is_tsrc_endp_of_r and (is_p_tsrc or is_q_tsrc))
+            or (is_ttrg_endp_of_r and (is_p_ttrg or is_q_ttrg))
+           ) {
+          if (have_same_slope(r, t)) {
+            same_slope_at_corner = true;
+          }
+        }
+        if (   (is_tsrc_endp_of_q and (is_p_tsrc))
+            or (is_ttrg_endp_of_q and (is_p_ttrg))
+           ) {
+          if (have_same_slope(q, t)) {
+            same_slope_at_corner = true;
+          }
+        }
+      }
+    }
+
+    CGAL_SDG_DEBUG(std::cout
+        << "debug incircle_xxxs: same_slope_at_corner="
+        << same_slope_at_corner << std::endl;);
+
     Line_2 l = compute_supporting_line(t.supporting_site());
     compute_vv(p, q, r, type);
-    Sign sl = incircle_xxxl(vv, p, q, r, l, type);
+    Sign sl(ZERO);
+    if (not same_slope_at_corner) {
+      sl = incircle_xxxl(vv, p, q, r, l, type);
+    }
 
     CGAL_SDG_DEBUG(std::cout
         << "debug incircle_xxxs: incircle_xxxl returned sl="
