@@ -38,6 +38,7 @@
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <tbb/tbbmalloc_proxy.h>
 
 namespace CGAL {
 
@@ -190,44 +191,14 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-#ifdef CGAL_LINKED_WITH_TBB
-  size_t nb_neighbor_original_points = neighbor_original_points.size();
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-  {
-    tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_neighbor_original_points),
-      [&](tbb::blocked_range<size_t>&r)
-    {
-      for (size_t i = r.begin(); i != r.end(); ++i)
-      {
-        const Point& np = neighbor_original_points[i];
-        FT dist2 = CGAL::squared_distance(query, np);
-        density_weight += std::exp(dist2 * iradius16);
-      }
-    }
-    );
-  }
-  else
-#endif
-  {
-    std::vector<Point>::const_iterator iter;
-    iter = neighbor_original_points.begin();
-    for (; iter != neighbor_original_points.end(); ++iter)
-    {
-      const Point& np = *iter;
-      FT dist2 = CGAL::squared_distance(query, np);
-      density_weight += std::exp(dist2 * iradius16);
-    }
-  }
-
-  //sequential
-  /*std::vector<Point>::const_iterator iter;
+  std::vector<Point>::const_iterator iter;
   iter = neighbor_original_points.begin();
   for (; iter != neighbor_original_points.end(); ++iter)
   {
   const Point& np = *iter;
   FT dist2 = CGAL::squared_distance(query, np);
   density_weight += std::exp(dist2 * iradius16);
-  }*/
+  }
 
   // output
   return FT(1.0) / density_weight;
@@ -261,43 +232,14 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0/radius2;
 
-  size_t nb_neighbor_sample_points = neighbor_sample_points.size();
-#ifdef CGAL_LINKED_WITH_TBB
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-  {
-    tbb::parallel_for(tbb::blocked_range<size_t>(0,nb_neighbor_sample_points),
-      [&](tbb::blocked_range<size_t>& r)
-    {
-      for (size_t i = r.begin(); i != r.end(); ++i)
-      {
-        const Point& np = neighbor_sample_points[i];
-        FT dist2 = CGAL::squared_distance(query, np);
-        density_weight += std::exp(dist2 * iradius16);
-      }
-    }
-    );
-  }
-  else
-#endif
-  {
-    std::vector<Point>::const_iterator iter;
-    iter = neighbor_sample_points.begin();
-    for (; iter != neighbor_sample_points.end(); ++iter)
-    {
-      const Point& np = *iter;
-      FT dist2 = CGAL::squared_distance(query, np);
-      density_weight += std::exp(dist2 * iradius16);
-    }
-  }
-  //sequential
-  /*std::vector<Point>::const_iterator iter;
+  std::vector<Point>::const_iterator iter;
   iter = neighbor_sample_points.begin();
   for (; iter != neighbor_sample_points.end(); ++iter)
   {
   const Point& np = *iter;
   FT dist2 = CGAL::squared_distance(query, np);
   density_weight += std::exp(dist2 * iradius16);
-  }*/
+  }
 
   // output
   return density_weight;
@@ -360,14 +302,18 @@ std::vector<typename Kernel::Point_3>
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
+          typename OutputIteratorValueType,
+          typename OutputIterator,     //add output iterator
           typename RandomAccessIterator ,
           typename PointPMap,
           typename Kernel>
-RandomAccessIterator 
+void 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point.
   RandomAccessIterator  beyond, ///< past-the-end iterator over the input points.
+  OutputIterator output,        //add back-inserter
   PointPMap point_pmap, ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_output,
   const typename Kernel::FT retain_percentage, ///< percentage to retain,
                                                ///default is 5%
   typename Kernel::FT neighbor_radius, ///< size of neighbors,
@@ -672,7 +618,6 @@ wlop_simplify_and_regularize_point_set(
 
     }//parallel judge "else" end
 
-
     // update sample points positions
     sample_iter = sample_points.begin();
     sample_rich_iter = sample_rich_points.begin();
@@ -693,55 +638,33 @@ wlop_simplify_and_regularize_point_set(
     std::cout << "iterate:  " << iteration + 1 << std::endl << std::endl;
   #endif
   }
+  //iteration end
 
-  //Copy back modified sample points to original points for output
   sample_iter = sample_points.begin();
-  for(it = first_sample_point; it != beyond; ++it, ++sample_iter)
+  for (it = first_sample_point; it != beyond; ++it, ++sample_iter)
   {
     Point& sample_p = *sample_iter;
-
-  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    Point& original_p = get(point_pmap, it);
-    original_p = sample_p;
-  #else
-    Point& original_p = get(point_pmap, *it);
-    original_p = sample_p;
-  #endif
+     *output++ = sample_p;
   }
 
-  #ifdef CGAL_DEBUG_MODE
-    original_rich_points.erase(original_rich_points.begin(), 
-                                  original_rich_points.end());
-    
-    original_rich_points.clear();
-
-    std::cout << "Copy back done: " << task_timer.time() 
-      << " seconds "  << std::endl;
-
-    task_timer.reset();
-    original_rich_points.swap(std::vector<Rich_point>());
-    
-    std::cout << "STL release memory: " << task_timer.time() 
-              << " seconds "  << std::endl;
-    task_timer.stop();
-    
-    sample_rich_points.clear();
-    sample_points.clear();
-  #endif
-
-  return first_sample_point;
+  return ;
 }
+
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
 template <typename Concurrency_tag,
+          typename OutputIteratorValueType,
+          typename OutputIterator,     //add output iterator
           typename RandomAccessIterator, 
           typename PointPMap>
-RandomAccessIterator 
+void 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first, ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map RandomAccessIterator  -> Point_3
+  OutputIterator output,        //add back-inserter
+  PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_output,
   double retain_percentage, ///< percentage of points to retain
   double neighbor_radius, ///< size of neighbors.
   const unsigned int max_iter_number, ///< number of iterations.
@@ -751,9 +674,12 @@ wlop_simplify_and_regularize_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
+  typedef typename value_type_traits<OutputIterator>::type OutputIteratorType;
+  return wlop_simplify_and_regularize_point_set<Concurrency_tag, OutputIteratorType>(
     first, beyond,
+    output,
     point_pmap,
+    point_pmap_output,
     retain_percentage,
     neighbor_radius,
     max_iter_number,
@@ -762,13 +688,20 @@ wlop_simplify_and_regularize_point_set(
 }
 /// @endcond
 
+//second add!!!!!!!!!!!!!!!!!!!!!!!!!!!
 /// @cond SKIP_IN_MANUAL
 /// This variant creates a default point property map=Dereference_property_map.
-template <typename Concurrency_tag, typename RandomAccessIterator >
-RandomAccessIterator 
+template <typename Concurrency_tag, 
+          typename OutputIteratorValueType,
+          typename OutputIterator,     //add output iterator
+          typename RandomAccessIterator,
+          typename PointPMap>
+void
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator  first, ///< iterator over the first input point
+  RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
+  OutputIterator output,        //add back-inserter
+  PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
   double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
@@ -776,8 +709,46 @@ wlop_simplify_and_regularize_point_set(
                                           /// generate more uniform result. 
 )
 {
-  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
+   return wlop_simplify_and_regularize_point_set
+    <Concurrency_tag, OutputIteratorValueType>(
     first, beyond,
+    output,
+    point_pmap,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    make_dereference_property_map(output),
+#else
+    make_identity_property_map(OutputIteratorValueType()),
+#endif
+    retain_percentage, 
+    neighbor_radius, 
+    max_iter_number, 
+    need_compute_density);
+}
+/// @endcond
+
+
+/// @cond SKIP_IN_MANUAL
+/// This variant creates a default point property map=Dereference_property_map.
+template <typename Concurrency_tag, 
+          typename OutputIterator,     //add output iterator
+          typename RandomAccessIterator >
+void
+wlop_simplify_and_regularize_point_set(
+  RandomAccessIterator  first,  ///< iterator over the first input point
+  RandomAccessIterator  beyond, ///< past-the-end iterator
+  OutputIterator output,        //add back-inserter
+  double retain_percentage = 5, ///< percentage of points to retain
+  double neighbor_radius = -1, ///< size of neighbors.
+  const unsigned int max_iter_number = 35, ///< number of iterations.
+  const bool need_compute_density = true ///< if needed to compute density to   
+                                          /// generate more uniform result. 
+)
+{
+  typedef typename value_type_traits<OutputIterator>::type OutputIteratorType;
+  return wlop_simplify_and_regularize_point_set
+    <Concurrency_tag, OutputIteratorType>(
+    first, beyond,
+    output,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
 #else
