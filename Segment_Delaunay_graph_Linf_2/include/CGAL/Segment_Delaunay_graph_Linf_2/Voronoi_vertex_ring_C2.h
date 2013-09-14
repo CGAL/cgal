@@ -1442,9 +1442,13 @@ private:
       CGAL::max(CGAL::abs(ux_ - hp.x() * uz_),
                 CGAL::abs(uy_ - hp.y() * uz_));
 
+    RT scalediffdvtx = ux_ - t.x() * uz_;
+    RT scalediffdvty = uy_ - t.y() * uz_;
+
     RT dut =
-      CGAL::max(CGAL::abs(ux_ - t.x() * uz_),
-                CGAL::abs(uy_ - t.y() * uz_));
+      CGAL::max(
+        CGAL::abs(scalediffdvtx),
+        CGAL::abs(scalediffdvty) );
 
     Sign crude_sign = CGAL::sign(dut - dup);
     if (crude_sign != ZERO) {
@@ -1455,6 +1459,79 @@ private:
           << p_ << ", " << q_ << ", " << r_ << "), "
           << "t=" << t
           << std::endl;);
+
+      const Site_2 * s1_ptr;
+      const Site_2 * s2_ptr;
+
+      const Site_2 * s1ptr_arr[] = {&p_, &q_, &r_};
+      const Site_2 * s2ptr_arr[] = {&q_, &r_, &p_};
+
+      for (int i = 0; i < 3; i++) {
+        s1_ptr = s1ptr_arr[i];
+        s2_ptr = s2ptr_arr[i];
+
+        CGAL_SDG_DEBUG(std::cout << "debug vring check for candidates"
+            << "(s1, s2) = " << *s1_ptr << ", " << *s2_ptr << std::endl; );
+
+        bool is_s1src_s2 = is_endpoint_of((*s1_ptr).source_site(), *s2_ptr);
+        bool is_s1trg_s2 = is_endpoint_of((*s1_ptr).target_site(), *s2_ptr);
+
+        if (is_s1src_s2 or is_s1trg_s2) {
+          if ((is_site_h_or_v(*s1_ptr) and (not is_site_h_or_v(*s2_ptr))) or
+              (is_site_h_or_v(*s2_ptr) and (not is_site_h_or_v(*s1_ptr)))   )
+          {
+            CGAL_SDG_DEBUG(std::cout << "debug vring "
+                << "s1, s2 candidates" << std::endl; );
+            if (is_site_horizontal(*s1_ptr) or is_site_horizontal(*s2_ptr)) {
+              Site_2 s1test = is_s1src_s2?
+                ((*s1_ptr).source_site()):
+                ((*s1_ptr).target_site());
+              if (scmpx(s1test, st)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                Point_2 s1ref =
+                  (is_s1src_s2?
+                   (*s1_ptr).source_site(): (*s1_ptr).target_site())
+                  .point();
+                RT scalediffdvs1y = uy_ - s1ref.y() * uz_;
+                Comparison_result test =
+                  CGAL::compare(
+                      CGAL::abs(scalediffdvty),
+                      CGAL::abs(scalediffdvs1y));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+              }
+            } else { // one of q, r is vertical
+              if (scmpy(is_s1src_s2?
+                    (*s1_ptr).source_site(): (*s1_ptr).target_site(), st)
+                  == EQUAL)
+              {
+                // return NEGATIVE or ZERO
+                CGAL_SDG_DEBUG(std::cout << "debug vring "
+                    << "vertical case" << std::endl; );
+                Point_2 s1ref =
+                  (is_s1src_s2?
+                   (*s1_ptr).source_site(): (*s1_ptr).target_site())
+                  .point();
+                RT scalediffdvs1x = ux_ - s1ref.x() * uz_;
+                CGAL_SDG_DEBUG(std::cout << "debug vring "
+                    << "scalediffdvs1x=" << scalediffdvs1x
+                    << " scalediffdvtx=" << scalediffdvtx << std::endl; );
+                Comparison_result test =
+                  CGAL::compare(
+                      CGAL::abs(scalediffdvtx),
+                      CGAL::abs(scalediffdvs1x));
+                return (test == SMALLER) ? NEGATIVE : ZERO;
+              }
+            }
+          }
+        }
+      } // end for
+
+
+
+
+
       return ZERO;
     }
   }
