@@ -999,8 +999,13 @@ private:
             retval = CGAL::compare(d_fine, CGAL::abs(scalediffdvpx));
           }
         }
+        CGAL_SDG_DEBUG(std::cout << "vring test with p, retval="
+            << retval << std::endl; );
         if (retval == SMALLER) {
           return NEGATIVE;
+        }
+        if (retval == LARGER) {
+          return POSITIVE;
         }
       }
 
@@ -1024,6 +1029,9 @@ private:
         }
         if (retval == SMALLER) {
           return NEGATIVE;
+        }
+        if (retval == LARGER) {
+          return POSITIVE;
         }
       }
 
