@@ -124,7 +124,6 @@ private:
   const Input_arrangement_2 *p_arr;
   Point_2         q;
   Points polygon;                       //visibility polygon
-  std::map<Vertex, Vertices, Less_vertex> neighbors;  //vertex and its neighbours that are relevant to visibility polygon
   std::map<Vertex, Edges, Less_vertex>  incident_edges;
   std::map<Edge, int, Less_edge> edx;            //index of edge in the heap
   Edges  active_edges;    //a heap of edges that interset the current vision ray.
@@ -310,11 +309,8 @@ private:
     Vertex former = vs[i], neib;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
-//      for (int k=0; k<neighbors[vs[l]].size(); k++) {
-//        neib= neighbors[vs[l]][k];
         Edges& edges = incident_edges[vs[l]];
         for (int k=0; k<edges.size(); k++) {
-  //        neib= neighbors[vs[l]][k];
           neib = get_neighor(edges[k], vs[l]);
         if ( neib == former )  {
           has_predecessor = true;
@@ -356,7 +352,6 @@ private:
     polygon.clear();
     active_edges.clear();
     incident_edges.clear();
-    neighbors.clear();
     edx.clear();
 
     Edges good_edges;
@@ -710,10 +705,8 @@ private:
     Vertex v = e->target();
     if (!incident_edges.count(v))
       vs.push_back(v);
-//      neighbors[v].push_back(e->source());
-//      neighbors[v].push_back(e->next()->target());
-      incident_edges[v].push_back(e);
-      incident_edges[v].push_back(e->next());
+    incident_edges[v].push_back(e);
+    incident_edges[v].push_back(e->next());
   }
 
   bool is_in_cone(const Point_2& p) const{
@@ -734,13 +727,11 @@ private:
     Vertex v2 = e->source();
     if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, source, v1->point(), v2->point())) {
       good_edges.push_back(e);
-      if (!neighbors.count(v1))
+      if (!incident_edges.count(v1))
         vs.push_back(v1);
-      neighbors[v1].push_back(v2);
       incident_edges[v1].push_back(e);
-      if (!neighbors.count(v2))
+      if (!incident_edges.count(v2))
         vs.push_back(v2);
-      neighbors[v2].push_back(v1);
       incident_edges[v2].push_back(e);
     }
   }
@@ -829,20 +820,10 @@ private:
     do {
       Vertex v = curr->target();
       vs.push_back(v);
-      neighbors[v].push_back(curr->source());
-      neighbors[v].push_back(curr->next()->target());
       incident_edges[v].push_back(curr);
       incident_edges[v].push_back(curr->next());
       good_edges.push_back(curr);
     } while(++curr != circ);
-
-
-//    for (int i=0; i<4; i++) {
-//      vs.push_back(box[i]);
-//      neighbors[box[i]].push_back(box[(i+3)%4]);
-//      neighbors[box[i]].push_back(box[(i+1)%4]);
-//      good_edges.push_back(create_pair(box[i], box[(i+1)%4]));
-//    }
 
     std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
 
@@ -858,16 +839,6 @@ private:
       i = j-1;
     }
   }
-
-
-//  void build_arr(const Pvec& polygon, Output_arrangement_2& arr ) {
-//      for (int i = 0; i != polygon.size()-1; i++ ) {
-//          CGAL::insert(arr, Segment_2(polygon[i], polygon[i+1]));
-//      }
-//      //print_vectex(polygon);
-//      CGAL::insert(arr, Segment_2(polygon.front(), polygon.back()));
-//  }
-
 
   void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_true) {
     regularize_output(arr_out);
