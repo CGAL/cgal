@@ -340,27 +340,6 @@ private:
       vs[i+l+right.size()] = left[left.size()-1-l];
   }
 
-//  void compare_heap(std::vector<Edge>& heap1, std::vector<Edge>& heap2) {
-//    if (heap1.size() != heap2.size()) {
-//      print_heap(heap1);
-//      print_heap(heap2);
-//      return;
-//    }
-//    for (int i=0; i<heap1.size(); i++)
-//      if (heap1[i] != heap2[i]) {
-//        print_heap(heap1);
-//        print_heap(heap2);
-//        return;
-//      }
-//    std::cout<<"right heap has edges: "<<active_edges.size()<<std::endl;
-//  }
-
-//  void print_heap(std::vector<Edge> heap) {
-//    for (int i=0; i<heap.size(); i++) {
-//      std::cout<<i<<':'<< heap[i].first<<','<<heap[i].second<<std::endl;
-//    }
-//  }
-
   void visibility_region_impl(const Face_const_handle f, const Point_2& q) {
     vs.clear();
     polygon.clear();
@@ -370,8 +349,9 @@ private:
     edx.clear();
 
     Edges good_edges;
+    Input_arrangement_2 bbox;
     if (is_vertex_query || is_edge_query)
-      input_face(f, good_edges);
+      input_face(f, good_edges, bbox);
     else
       input_face(f);
     //initiation of vision ray
@@ -563,72 +543,6 @@ private:
   void print_point(const Point_2& p) {
     std::cout<<p.x()<<','<<p.y()<<std::endl;
   }
-
-//  class Is_closer:public std::binary_function<Pair, Pair, bool> {
-//    const Point_2& q;
-//    const Geometry_traits_2* geom_traits;
-//  public:
-//    Is_closer(const Point_2& q, const Geometry_traits_2* traits): q(q) {
-//      geom_traits = traits;
-//    }
-//    bool operator() (const Pair& e1, const Pair& e2) const {
-//      const Point_2& s1=e1.first, t1=e1.second, s2=e2.first, t2=e2.second;
-//      Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
-//      switch (e1q)
-//      {
-//      case COLLINEAR:
-//        if (Visibility_2::collinear(geom_traits, q, s2, t2)) {
-//          //q is collinear with e1 and e2.
-//          return (Visibility_2::less_distance_to_point_2(geom_traits, q, s1, s2)
-//                  || Visibility_2::less_distance_to_point_2(geom_traits, q, t1, t2));
-//        }
-//        else {
-//          //q is not collinear with e2. q is collinear with e1.
-//          if (Visibility_2::collinear(geom_traits, s2, t2, s1))
-//            return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
-//                    == Visibility_2::orientation_2(geom_traits, s2, t2, t1));
-//          else
-//            return (Visibility_2::orientation_2(geom_traits, s2, t2, q)
-//                    == Visibility_2::orientation_2(geom_traits, s2, t2, s1));
-//        }
-//      case RIGHT_TURN:
-//        switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
-//        case COLLINEAR:
-//          return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
-//        case RIGHT_TURN:
-//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
-//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
-//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
-//          else
-//            return false;
-//        case LEFT_TURN:
-//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
-//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
-//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
-//          else
-//            return true;
-//        }
-//      case LEFT_TURN:
-//        switch (Visibility_2::orientation_2(geom_traits, s1, t1, s2)) {
-//        case COLLINEAR:
-//          return Visibility_2::orientation_2(geom_traits, s1, t1, t2)!=e1q;
-//        case LEFT_TURN:
-//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == RIGHT_TURN)
-//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
-//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
-//          else
-//            return false;
-//        case RIGHT_TURN:
-//          if (Visibility_2::orientation_2(geom_traits, s1, t1, t2) == LEFT_TURN)
-//            return Visibility_2::orientation_2(geom_traits, s2, t2, q)
-//                == Visibility_2::orientation_2(geom_traits, s2, t2, s1);
-//          else
-//            return true;
-//        }
-//      }
-
-//    }
-//  };
 
   bool is_closer(const Point_2& q,
                  const Edge& e1,
@@ -855,7 +769,8 @@ private:
   }
   //for vertex or edge query: traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
-                   Edges& good_edges)
+                   Edges& good_edges,
+                   Input_arrangement_2& bbox)
   {
 //    timer.reset();
 //    timer.start();
@@ -876,23 +791,41 @@ private:
       } while (++curr != circ);
     }
     //todo
-//    Points points;
-//    for (int i=0; i<vs.size(); i++) {
-//      points.push_back(vs[i]->point());
-//    }
-//    points.push_back(q);
-//    typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(points.begin(), points.end());
-////    points.pop_back();
+    Points points;
+    for (int i=0; i<vs.size(); i++) {
+      points.push_back(vs[i]->point());
+    }
+    points.push_back(q);
+    typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(points.begin(), points.end());
+//    points.pop_back();
 
-//    Number_type xmin, xmax, ymin, ymax;
-//    typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
-//    typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
-//    xmin = compute_x(bb.min())-1;
-//    ymin = compute_y(bb.min())-1;
-//    xmax = compute_x(bb.max())+1;
-//    ymax = compute_y(bb.max())+1;
-//    Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
-//                      Point_2(xmax, ymax), Point_2(xmin, ymax)};
+    Number_type xmin, xmax, ymin, ymax;
+    typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
+    typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
+    xmin = compute_x(bb.min())-1;
+    ymin = compute_y(bb.min())-1;
+    xmax = compute_x(bb.max())+1;
+    ymax = compute_y(bb.max())+1;
+    Point_2 box[4] = {Point_2(xmin, ymin), Point_2(xmax, ymin),
+                      Point_2(xmax, ymax), Point_2(xmin, ymax)};
+    Halfedge_handle e1 = bbox.insert_in_face_interior(Segment_2(box[0], box[1]), bbox.unbounded_face());
+    Halfedge_handle e2 = bbox.insert_from_left_vertex(Segment_2(box[1], box[2]), e1->target());
+    Halfedge_handle e3 = bbox.insert_from_right_vertex(Segment_2(box[2], box[3]), e2->target());
+    bbox.insert_at_vertices(Segment_2(box[0], box[3]), e1->source(), e3->target());
+
+//    Face_const_handle f = e1->face();
+    circ = curr = e1->face()->outer_ccb();
+    do {
+      Vertex v = curr->target();
+      vs.push_back(v);
+      neighbors[v].push_back(curr->source());
+      neighbors[v].push_back(curr->next()->target());
+      incident_edges[v].push_back(curr);
+      incident_edges[v].push_back(curr->next());
+      good_edges.push_back(curr);
+    } while(++curr != circ);
+
+
 //    for (int i=0; i<4; i++) {
 //      vs.push_back(box[i]);
 //      neighbors[box[i]].push_back(box[(i+3)%4]);
