@@ -29,7 +29,7 @@
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
-
+#include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <iostream>
 
 /// \file LSCM_parameterizer_3.h

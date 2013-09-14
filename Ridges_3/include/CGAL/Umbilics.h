@@ -24,6 +24,7 @@
 #include <math.h>
 #include <CGAL/basic.h>
 #include <CGAL/PolyhedralSurf_neighbors.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 

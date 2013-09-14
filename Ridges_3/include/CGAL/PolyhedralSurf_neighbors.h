@@ -21,6 +21,7 @@
 
 #include <queue>
 #include <algorithm>
+#include <list>
 #include <CGAL/basic.h>
 
 namespace CGAL {
