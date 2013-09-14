@@ -1,6 +1,6 @@
 // standard includes
 
-//#define CGAL_SDG_VERBOSE 
+//#define CGAL_SDG_VERBOSE
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -41,7 +41,11 @@ int main( int argc, char *argv[] ) {
   SDG2::Site_2  site;
 
   // read the sites from the stream and insert them in the diagram
-  while ( ifs >> site ) { sdg.insert( site ); }
+  while ( ifs >> site ) {
+    sdg.insert( site );
+    CGAL_SDG_DEBUG( sdg.file_output_verbose(std::cout); );
+    CGAL_assertion( sdg.is_valid(false, 1) );
+  }
 
   ifs.close();
 
@@ -49,7 +53,7 @@ int main( int argc, char *argv[] ) {
   std::cout << "About to validate diagram ..." << std::endl;
 
   // validate the diagram
-  //assert( sdg.is_valid(true, 1) );
+  assert( sdg.is_valid(false, 1) );
   cout << endl << endl;
 
   std::cout << "Diagram validated." << std::endl;
