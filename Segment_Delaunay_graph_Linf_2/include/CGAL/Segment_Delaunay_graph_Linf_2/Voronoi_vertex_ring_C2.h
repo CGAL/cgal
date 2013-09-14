@@ -1446,7 +1446,17 @@ private:
       CGAL::max(CGAL::abs(ux_ - t.x() * uz_),
                 CGAL::abs(uy_ - t.y() * uz_));
 
-    return CGAL::sign(dut - dup);
+    Sign crude_sign = CGAL::sign(dut - dup);
+    if (crude_sign != ZERO) {
+      return crude_sign;
+    } else {
+      CGAL_SDG_DEBUG(std::cout
+          << "debug vring refining in incircle_p_no_easy SSS pqr=("
+          << p_ << ", " << q_ << ", " << r_ << "), "
+          << "t=" << t
+          << std::endl;);
+      return ZERO;
+    }
   }
 
 
@@ -1456,7 +1466,8 @@ private:
 
   Sign incircle_p(const Site_2& t) const
   {
-    CGAL_SDG_DEBUG(std::cout << "debug: entering vring incircle_p p="
+    CGAL_SDG_DEBUG(std::cout << "debug: entering vring incircle_p with "
+      << "v_type=" << v_type << " p="
       << p_ << " q=" << q_ << " r=" << r_ << " t=" << t
       << std::endl;);
 
