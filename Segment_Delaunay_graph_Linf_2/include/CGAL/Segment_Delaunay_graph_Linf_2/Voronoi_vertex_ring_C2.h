@@ -1090,6 +1090,50 @@ private:
       bool is_p_endp_of_r = is_endpoint_of(*p_ptr, *r_ptr);
       bool is_q_endp_of_r = is_endpoint_of(*q_ptr, *r_ptr);
 
+      // check for p, q with same coordinate and r non-hv segment
+      if ((not (is_r_hor or is_r_ver)) and
+          (not (is_p_endp_of_r or is_q_endp_of_r))
+         ) {
+        CGAL_SDG_DEBUG(std::cout << "debug vring r=" << *r_ptr
+            << "is non-axis parallel"
+            << " and no points are its endpoints" << std::endl;);
+        bool pqsamex = scmpx(*p_ptr, *q_ptr) == EQUAL;
+        bool pqsamey (false);
+        if (pqsamex) {
+          CGAL_SDG_DEBUG(std::cout << "debug vring points on same vertical side"
+              << std::endl;);
+        } else {
+          pqsamey = scmpy(*p_ptr, *q_ptr) == EQUAL;
+          if (pqsamey) {
+            CGAL_SDG_DEBUG(std::cout << "debug points on "
+                << "same horizontal side" << std::endl;);
+          }
+        }
+        if (pqsamex or pqsamey) {
+          Line_2 lr = compute_supporting_line((*r_ptr).supporting_site());
+          Homogeneous_point_2 rref = compute_linf_projection_hom(lr, point());
+          if (pqsamex) {
+            RT scalediffdvry = uy_ - rref.y() * uz_;
+            if (CGAL::sign(scalediffdvry) == CGAL::sign(scalediffdvty)) {
+              if (CGAL::compare(CGAL::abs(scalediffdvtx),
+                                CGAL::abs(scalediffdvty)) == SMALLER) {
+                return NEGATIVE;
+              }
+            }
+          } // end of pqsamex case
+          if (pqsamey) {
+            RT scalediffdvrx = ux_ - rref.x() * uz_;
+            if (CGAL::sign(scalediffdvrx) == CGAL::sign(scalediffdvtx)) {
+              if (CGAL::compare(CGAL::abs(scalediffdvty),
+                                CGAL::abs(scalediffdvtx)) == SMALLER) {
+                return NEGATIVE;
+              }
+            }
+          } // end of pqsamey case
+        } // end of case: pqsamex or pqsamey
+      } // end of non-hv segment r case with p, q non-endpoints of r
+
+
       // check for p or q endpoint of non-hv r
       if ((not (is_r_hor or is_r_ver)) and
           ((is_p_endp_of_r or is_q_endp_of_r))
