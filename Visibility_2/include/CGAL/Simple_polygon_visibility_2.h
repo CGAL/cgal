@@ -103,15 +103,10 @@ public:
     assert(query_pt_is_vertex == false);
     assert(query_pt_is_on_halfedge == false);
 
-    init_cdt(face);
-    typename CDT::Face_handle fh = p_cdt->locate(q);
-    Point_2 start_point = fh->vertex(0)->point();
-
     // Now retrieve the circulator to first visible vertex from triangulation
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
-                                                    point_itr_map[start_point];
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
-    typename Input_arrangement_2::Halfedge_const_handle he;
+    Ccb_halfedge_const_circulator circ = find_visible_start(face, q);
+    Ccb_halfedge_const_circulator curr = circ;
+    Halfedge_const_handle he;
 
     do {
       he = curr;
@@ -119,6 +114,12 @@ public:
     } while(++curr != circ);
 
     vertices.push_back(vertices[0]);
+
+    std::cout << "VERTICES\n";
+    for (unsigned int k = 0 ; k < vertices.size() ; k++) {
+      std::cout << vertices[k] << std::endl;
+    }
+    std::cout << "END VERTICES\n";
 
     visibility_region_impl(q);
 
@@ -130,8 +131,14 @@ public:
     }
 
     std::reverse(points.begin(), points.end());
-
-    CGAL::Visibility_2::report_while_handling_needles
+/*
+    std::cout << "POINTS\n";
+    for(unsigned int k = 0 ; k < points.size() ; k++) {
+      std::cout << points[k] << std::endl;
+    }
+    std::cout << "END\n";
+*/
+    CGAL::Visibility_2::report_while_handling_needles_
                               <Simple_polygon_visibility_2>(geom_traits, 
                                                             q, 
                                                             points,                                 
@@ -167,27 +174,25 @@ public:
       }
     }
 
-    typename Input_arrangement_2::Face_const_handle face = he->face();
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
-                                                              face->outer_ccb();
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr;
-    typename Input_arrangement_2::Halfedge_const_handle he_handle = circ;
-
-    while (he_handle != he) {
-      circ++;
-      he_handle = circ;
-    }
+    Ccb_halfedge_const_circulator circ = he;
     circ++;
-    curr = circ;
+    Ccb_halfedge_const_circulator curr = circ;
+
     do {
-      he_handle = curr;
+      Halfedge_const_handle he_handle = curr;
       Point_2 curr_vertex = he_handle->target()->point();
       vertices.push_back(curr_vertex);
     } while (++curr != circ);
 
     vertices.pop_back();
     vertices.push_back(vertices[0]);
-   
+
+    std::cout << "VERTICES\n";
+    for (unsigned int k = 0 ; k < vertices.size() ; k++) {
+      std::cout << vertices[k] << std::endl;
+    }
+    std::cout << "END VERTICES\n";
+
     visibility_region_impl(q);
 
     typename std::vector<Point_2> points;
@@ -216,7 +221,7 @@ public:
 
     std::reverse(points.begin(), points.end());
 
-    CGAL::Visibility_2::report_while_handling_needles
+    CGAL::Visibility_2::report_while_handling_needles_
                               <Simple_polygon_visibility_2>(geom_traits, 
                                                             q, 
                                                             points,                                
@@ -238,7 +243,7 @@ private:
   typedef CGAL::Constrained_triangulation_face_base_2<K>           Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
   typedef CGAL::No_intersection_tag                                Itag;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
+  typedef CGAL::Constrained_triangulation_2<K, TDS, Itag> CDT;
 
 private:
   const Input_arrangement_2 *p_arr;
@@ -272,7 +277,7 @@ private:
     }
   }
 
-   void init_cdt(const Face_const_handle face) { 
+   void init_cdt(const Face_const_handle &face) { 
 
     std::vector<std::pair<Point_2,Point_2> > constraints; 
     typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
@@ -289,6 +294,71 @@ private:
     } while(++curr != circ);
 
     p_cdt = boost::shared_ptr<CDT>(new CDT(constraints.begin(),constraints.end()));
+  }
+
+  Ccb_halfedge_const_circulator find_visible_start(Face_const_handle face, const Point_2 &q) {
+
+    init_cdt(face);
+    typename CDT::Face_handle fh = p_cdt->locate(q);
+    Point_2 start_point = fh->vertex(0)->point();
+    std::cout << "start pt = " << start_point << std::endl;
+
+    // Now retrieve the circulator to first visible vertex from triangulation
+    Ccb_halfedge_const_circulator circ = point_itr_map[start_point];
+    Ccb_halfedge_const_circulator curr = circ;
+    Ccb_halfedge_const_circulator prev = curr;
+    prev--;
+    Halfedge_const_handle he_curr = curr;
+    Halfedge_const_handle he_prev = prev;
+    std::cout << "prev he = " << he_prev->curve() << std::endl;
+    std::cout << "curr he = " << he_curr->curve() << std::endl;
+
+    if (CGAL::Visibility_2::orientation_2(geom_traits,
+                                          he_prev->source()->point(),
+                                          he_prev->target()->point(),
+                                          q) == CGAL::LEFT_TURN
+     || CGAL::Visibility_2::orientation_2(geom_traits,
+                                          he_curr->source()->point(),
+                                          he_curr->target()->point(),
+                                          q) == CGAL::LEFT_TURN) {
+      std::cout << "regular\n";
+      return circ;
+    }
+    else {
+      std::cout << "supercase\n";
+      std::cout << "start = " << he_curr->source()->point() << std::endl;
+      Ccb_halfedge_const_circulator incident_circ = he_curr->source()->incident_halfedges();
+      Ccb_halfedge_const_circulator incident_curr = incident_circ;
+      do {
+        Halfedge_const_handle he_curr_inc = incident_curr;
+        std::cout << "he_curr = " << he_curr_inc->curve() << std::endl;
+        if (he_curr_inc->face() != he_curr->face()) {
+          he_curr_inc = he_curr_inc->twin();
+        }
+//        std::cout << "in loop\n";
+
+          Ccb_halfedge_const_circulator incident_prev = incident_curr;
+          incident_prev--;
+          Halfedge_const_handle he_prev_inc = incident_prev;
+          if (he_prev_inc->face() != he_curr->face()) {
+            he_prev_inc = he_prev_inc->twin();
+          }
+          std::cout << "he_prev = " << he_prev_inc->curve() << std::endl;
+          if (CGAL::Visibility_2::orientation_2(geom_traits,
+                                          he_prev_inc->source()->point(),
+                                          he_prev_inc->target()->point(),
+                                          q) == CGAL::LEFT_TURN
+           || CGAL::Visibility_2::orientation_2(geom_traits,
+                                          he_curr_inc->source()->point(),
+                                          he_curr_inc->target()->point(),
+                                          q) == CGAL::LEFT_TURN) {
+            std::cout << "FOUND\n";
+            std::cout << "he = " << he_curr_inc->curve() << std::endl;
+            return incident_curr;
+        }
+      } while (++incident_curr != incident_circ);
+    }
+    std::cout << "out of loop\n";
   }
 
   void visibility_region_impl(const Point_2& q) {
@@ -361,42 +431,69 @@ private:
       upcase = FINISH;
     }
     else {
-      CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits,
-                                                                     query_pt, 
-                                                                     w, 
-                                                                     vertices[i+1]);
-      if (orient == CGAL::LEFT_TURN || orient == CGAL::COLLINEAR) {
-        upcase = LEFT;
-        s.push(vertices[i+1]);
-        w = vertices[i+1];
-        i++;
-      }
-      else {
-        Point_2 s_t = s.top();
-        s.pop();
-        Point_2 s_t_prev = s.top();                                                                                            
-
-        if (CGAL::Visibility_2::orientation_2(geom_traits,                                                                                                            
-                                            s_t_prev, 
-                                            vertices[i], 
-                                            vertices[i+1]) == CGAL::RIGHT_TURN) {
-          upcase = SCANA;
-          w = vertices[i];
+      std::cout << "L i = " << i << " v[i] = " << vertices[i] << " v[i+1] = " << vertices[i+1]
+                << " w = " << w << std::endl;
+//      assert(query_pt != vertices[i+1]);
+        if (w == query_pt) {
+          std::cout << "UNHANDLED\n";
+          Point_2 s_t = s.top();
+          s.pop();
+          Point_2 s_t_prev = s.top();
+  //        std::cout << "special left s[t] = " << s_t << std::endl;
+ //         std::cout << "special left s[t-1] = " << s_t_prev << std::endl;
+          if (CGAL::Visibility_2::orientation_2(geom_traits,                                                                                                            
+                                              s_t_prev, 
+                                              vertices[i], 
+                                              vertices[i+1]) == CGAL::RIGHT_TURN) {
+            upcase = SCANA;
+            w = vertices[i];
+          }
+          else {
+            upcase = RIGHT;
+            w = vertices[i+1];
+            i++;
+          }
+          s.push(s_t);
         }
         else {
-          upcase = RIGHT;
-          w = vertices[i+1];
-          i++;
+          CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits,
+                                                                         query_pt, 
+                                                                         w, 
+                                                                         vertices[i+1]);
+          if (orient == CGAL::LEFT_TURN || orient == CGAL::COLLINEAR) {
+            s.push(vertices[i+1]);
+            upcase = LEFT;
+            w = vertices[i+1];
+            i++;
+          }
+          else {
+            Point_2 s_t = s.top();
+            s.pop();
+            Point_2 s_t_prev = s.top();
+            std::cout << "left s[t] = " << s_t << std::endl;
+            std::cout << "left s[t-1] = " << s_t_prev << std::endl;
+            if (CGAL::Visibility_2::orientation_2(geom_traits,                                                                                                            
+                                                s_t_prev, 
+                                                vertices[i], 
+                                                vertices[i+1]) == CGAL::RIGHT_TURN) {
+              upcase = SCANA;
+              w = vertices[i];
+            }
+            else {
+              upcase = RIGHT;
+              w = vertices[i+1];
+              i++;
+            }
+            s.push(s_t);
+          }
         }
-        s.push(s_t);
-      }
     }
   }
 
   void right(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan s_t, s_t-1, ..., s_1, s_0 for the first edge (s_j, s_j-1) such that
     // (z, s_j, v_i) is a right turn and (z, s_j-1, v_i) is a left turn, or
-
+    std::cout << "R i = " << i << " w = " << w << std::endl;
     bool found = false;
     while(!found && upcase == RIGHT) {
       assert(!s.empty());
@@ -409,6 +506,10 @@ private:
           <Geometry_traits_2, Segment_2, Segment_2>(geom_traits,
                                                     Segment_2(s_j, s_j_prev), 
                                                     Segment_2(vertices[i-1], vertices[i]))) {
+        std::cout << "R special case\n";
+        std::cout << "R seg1 = " << s_j << ", " << s_j_prev << std::endl;
+        std::cout << "R seg2 = " << vertices[i-1] << ", " << vertices[i] << std::endl;
+        std::cout << "R switch to scana with w = " << s.top() << std::endl;
         upcase = SCANA;
         found = true;
         w = s.top();
@@ -433,7 +534,7 @@ private:
             upcase = FINISH;
             break;
           }
-
+          assert(query_pt != vertices[i+1]);
           CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits, 
                                                                            query_pt,
                                                                            w, 
@@ -505,19 +606,23 @@ private:
 
   void scana(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan v_i, v_i+1, ..., v_n for the first edge to intersect (z, s_t)
+    std::cout << "scana i = " << i << " w = " << w << std::endl;
     int k = i;
     while (k+1 < vertices.size()) {
+      assert(query_pt != vertices[i+1]);
+      std::cout << "scana v[k] = " << vertices[k] <<  " v[k+1] = " << vertices[k+1] << std::endl;
       CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits,
                                                                        query_pt,
                                                                        w,
                                                                        vertices[k+1]);
       if (qwv_orient == CGAL::LEFT_TURN) {
+        std::cout << "scana CLASSIC\n";
         Ray_2 s2(query_pt, s.top());
         Segment_2 s1(vertices[k], vertices[k+1]);
-
         Object_2 result = CGAL::Visibility_2::intersect_2
                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, s1, s2);
         if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+          std::cout << "scana ipt = " << *ipoint << std::endl;
           s.push(*ipoint);
           s.push(vertices[k+1]);
           w = vertices[k+1];
@@ -527,6 +632,7 @@ private:
         }
       }
       else if (qwv_orient == CGAL::COLLINEAR) {
+        std::cout << "scana COLLINEAR\n";
         if ((!query_pt_is_vertex && !query_pt_is_on_halfedge) 
             || ((query_pt_is_vertex || query_pt_is_on_halfedge)
                 && CGAL::Visibility_2::collinear_are_ordered_along_line_2<Geometry_traits_2>
@@ -563,15 +669,27 @@ private:
       }
       k++;
     }
+    std::cout << "exit scana w = " << w << " i = " << i << std::endl;
+ /*   if (i == 24 && query_pt == Point_2(129996, 459515)) {
+      std::cout << "STACK\n";
+      while(!s.empty()) {
+        Point_2 top = s.top();
+        std::cout << top << std::endl;
+        s.pop();
+      }
+      std::cout << "END STACK\n";
+    }*/
   }
 
   void scanc(int& i, Point_2& w, const Point_2& query_pt) {
     // Scan v_i, v_i+1, ..., v_n-1, v_n for the first edge to intersect (s_t, w)
+    std::cout << "scanc i = " << i << std::endl;
     assert(i != vertices.size()-1);
     Point_2 s_t = s.top();
     int k = i;
     Point_2 intersection_pt;
     while (k < vertices.size()) {
+      assert(query_pt != vertices[k]);
       CGAL::Orientation qwv_orient = CGAL::Visibility_2::orientation_2(geom_traits, query_pt, w, vertices[k]);
       if (qwv_orient == CGAL::RIGHT_TURN || qwv_orient == CGAL::COLLINEAR) {
         break;
