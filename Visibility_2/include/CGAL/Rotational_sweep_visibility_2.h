@@ -290,6 +290,13 @@ const Input_arrangement_2& arr() {
 
 
 private:
+  Vertex get_neighor(const Edge e, const Vertex v) {
+    if (e->source() == v)
+      return e->target();
+    else
+      return e->source();
+  }
+
   bool do_intersect_ray(const Point_2& q,
                     const Point_2& dp,
                     const Point_2& p1,
@@ -303,11 +310,15 @@ private:
     Vertex former = vs[i], neib;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
-      for (int k=0; k<neighbors[vs[l]].size(); k++) {
-        neib= neighbors[vs[l]][k];
+//      for (int k=0; k<neighbors[vs[l]].size(); k++) {
+//        neib= neighbors[vs[l]][k];
+        Edges& edges = incident_edges[vs[l]];
+        for (int k=0; k<edges.size(); k++) {
+  //        neib= neighbors[vs[l]][k];
+          neib = get_neighor(edges[k], vs[l]);
         if ( neib == former )  {
           has_predecessor = true;
-          continue;
+          break;
         }
         if (CGAL::left_turn(q, vs[l]->point(), neib->point()))
           left_v = true;
@@ -697,10 +708,10 @@ private:
   //when query is in face, every edge is good.
   void input_neighbor_f( const Halfedge_const_handle e) {
     Vertex v = e->target();
-    if (!neighbors.count(v))
+    if (!incident_edges.count(v))
       vs.push_back(v);
-      neighbors[v].push_back(e->source());
-      neighbors[v].push_back(e->next()->target());
+//      neighbors[v].push_back(e->source());
+//      neighbors[v].push_back(e->next()->target());
       incident_edges[v].push_back(e);
       incident_edges[v].push_back(e->next());
   }
