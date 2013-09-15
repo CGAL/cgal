@@ -1272,26 +1272,40 @@ private:
               (cmpy(testt, pnt_on_seg) == EQUAL )   ) {
             // here testt is the same as pnt_on_seg
 
+            Oriented_side oscandidate =
+              oriented_side_of_line(is_positive_slope? lhor : lver,
+                                    othert);
+            CGAL_SDG_DEBUG(std::cout << "debug oscandidate="
+                << oscandidate << std::endl; );
+
             CGAL_SDG_DEBUG(std::cout << "debug vc other=" << othert
                 << " pnt_on_seg=" << pnt_on_seg << std::endl; );
 
-            Oriented_side osp = oriented_side_of_line(l, p.point());
-            Oriented_side ost = oriented_side_of_line(l, othert);
+            if (oscandidate == ON_POSITIVE_SIDE) {
 
-            CGAL_assertion(osp != ON_ORIENTED_BOUNDARY);
+              Oriented_side osp = oriented_side_of_line(l, p.point());
+              Oriented_side ost = oriented_side_of_line(l, othert);
 
-            CGAL_SDG_DEBUG(std::cout << "debug p=" << p << " q=" << q
-                << " t=" << t << " osp="<< osp
-                << " ost=" << ost << std::endl;);
+              CGAL_assertion(osp != ON_ORIENTED_BOUNDARY);
 
-            if (osp == ost) {
-              CGAL_SDG_DEBUG(std::cout
-                  << "debug incircle_pss sameside return NEG"
-                  << std::endl; );
-              return NEGATIVE;
+              CGAL_SDG_DEBUG(std::cout << "debug p=" << p << " q=" << q
+                  << " t=" << t << " osp="<< osp
+                  << " ost=" << ost << std::endl;);
+
+              if (osp == ost) {
+                CGAL_SDG_DEBUG(std::cout
+                    << "debug incircle_pss sameside return NEG"
+                    << std::endl; );
+                return NEGATIVE;
+              } else {
+                CGAL_SDG_DEBUG(std::cout
+                    << "debug incircle_pss diffside return POS"
+                    << std::endl; );
+                return POSITIVE;
+              }
             } else {
               CGAL_SDG_DEBUG(std::cout
-                  << "debug incircle_pss diffside return POS"
+                  << "debug incircle_pss NOT othert on POS return POS"
                   << std::endl; );
               return POSITIVE;
             }
