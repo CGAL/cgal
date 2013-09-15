@@ -810,6 +810,8 @@ public:
       } else {
         Point_2 ip ( hx, hy, hw );
         CGAL_SDG_DEBUG(std::cout << "debug ip=" << ip << std::endl;);
+        CGAL_SDG_DEBUG(std::cout << "debug ip_hom="
+            << hx << ' ' << hy << ' ' << hw << std::endl;);
         Oriented_side os_lhor_ip = oriented_side_of_line(lhor, ip);
         Oriented_side os_lver_ip = oriented_side_of_line(lver, ip);
 
