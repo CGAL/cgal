@@ -131,6 +131,7 @@ private:
   VHs vs;                            //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
+  bool is_face_query;
   bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
 
   EHs bad_edge;
@@ -156,6 +157,7 @@ public:
       query_vertex = e->target();
       is_vertex_query = true;
       is_edge_query = false;
+      is_face_query = false;
       source = e->source();
       target = e->next()->target();
       is_big_cone = CGAL::right_turn(source->point(), q, target->point());
@@ -172,6 +174,7 @@ public:
     else {
       is_vertex_query = false;
       is_edge_query = true;
+      is_face_query = false;
       source = e->source();
       target = e->target();
       bad_edge.push_back(e);
@@ -258,6 +261,7 @@ public:
     this->q = q;
     is_vertex_query = false;
     is_edge_query = false;
+    is_face_query = true;
 
     visibility_region_impl(f, q);
     Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon, arr_out);
@@ -355,10 +359,10 @@ private:
 
     EHs good_edges;
     Input_arrangement_2 bbox;
-    if (is_vertex_query || is_edge_query)
-      input_face(f, good_edges, bbox);
-    else
+    if (is_face_query)
       input_face(f);
+    else
+      input_face(f, good_edges, bbox);
     //initiation of vision ray
     Vector_2 dir;
     if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back()->point())))
@@ -372,14 +376,7 @@ private:
     Point_2 dp = q + dir;
 
     //initiation of active_edges
-    if (is_vertex_query || is_edge_query) {
-      for (int i=0; i!=good_edges.size(); i++) {
-        if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point())) {
-          heap_insert(good_edges[i]);
-        }
-      }
-    }
-    else {
+    if (is_face_query) {
       Ccb_halfedge_const_circulator curr = f->outer_ccb();
       Ccb_halfedge_const_circulator circ = curr;
       do {
@@ -398,6 +395,13 @@ private:
           if (do_intersect_ray(q, dp, curr->target()->point(), curr->source()->point()))
             heap_insert(curr);
         } while (++curr != circ);
+      }
+    }
+    else {
+      for (int i=0; i!=good_edges.size(); i++) {
+        if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point())) {
+          heap_insert(good_edges[i]);
+        }
       }
     }
 
@@ -442,49 +446,74 @@ private:
 
       if (closest_e != active_edges.front()) {
         //when the closest edge changed
-        if (remove_cnt > 0 && insert_cnt > 0) {
-          //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
-          if (update_visibility(vh->point())) {
-            if (vh == source)
-              source_idx = polygon.size()-1;
-            else {
-              if (vh == target)
-                target_idx = polygon.size()-1;
-            }
+        if (is_face_query) {
+          if (remove_cnt > 0 && insert_cnt > 0) {
+            //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
+            update_visibility(vh->point());
+          }
+          if (remove_cnt == 0 && insert_cnt > 0) {
+            //only add some edges, means the view ray is blocked by new edges.
+            //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
+            update_visibility(ray_seg_intersection(q,
+                                                   vh->point(),
+                                                   closest_e->target()->point(),
+                                                   closest_e->source()->point()));
+            update_visibility(vh->point());
+          }
+          if (remove_cnt > 0 && insert_cnt == 0) {
+            //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
+            update_visibility(vh->point());
+            update_visibility(ray_seg_intersection(q,
+                                                   vh->point(),
+                                                   active_edges.front()->target()->point(),
+                                                   active_edges.front()->source()->point()));
           }
         }
-        if (remove_cnt == 0 && insert_cnt > 0) {
-          //only add some edges, means the view ray is blocked by new edges.
-          //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
-          update_visibility(ray_seg_intersection(q,
-                                                 vh->point(),
-                                                 closest_e->target()->point(),
-                                                 closest_e->source()->point()));
-//          update_visibility(vh->point());
-          if (update_visibility(vh->point())) {
-            if (vh == source)
-              source_idx = polygon.size()-1;
-            else {
-              if (vh == target)
-                target_idx = polygon.size()-1;
+        else {
+          if (remove_cnt > 0 && insert_cnt > 0) {
+            //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
+            if (update_visibility(vh->point())) {
+              if (vh == source)
+                source_idx = polygon.size()-1;
+              else {
+                if (vh == target)
+                  target_idx = polygon.size()-1;
+              }
             }
           }
-        }
-        if (remove_cnt > 0 && insert_cnt == 0) {
-          //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
-//          update_visibility(vh->point());
-          if (update_visibility(vh->point())) {
-            if (vh == source)
-              source_idx = polygon.size()-1;
-            else {
-              if (vh == target)
-                target_idx = polygon.size()-1;
+          if (remove_cnt == 0 && insert_cnt > 0) {
+            //only add some edges, means the view ray is blocked by new edges.
+            //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
+            update_visibility(ray_seg_intersection(q,
+                                                   vh->point(),
+                                                   closest_e->target()->point(),
+                                                   closest_e->source()->point()));
+  //          update_visibility(vh->point());
+            if (update_visibility(vh->point())) {
+              if (vh == source)
+                source_idx = polygon.size()-1;
+              else {
+                if (vh == target)
+                  target_idx = polygon.size()-1;
+              }
             }
           }
-          update_visibility(ray_seg_intersection(q,
-                                                 vh->point(),
-                                                 active_edges.front()->target()->point(),
-                                                 active_edges.front()->source()->point()));
+          if (remove_cnt > 0 && insert_cnt == 0) {
+            //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
+  //          update_visibility(vh->point());
+            if (update_visibility(vh->point())) {
+              if (vh == source)
+                source_idx = polygon.size()-1;
+              else {
+                if (vh == target)
+                  target_idx = polygon.size()-1;
+              }
+            }
+            update_visibility(ray_seg_intersection(q,
+                                                   vh->point(),
+                                                   active_edges.front()->target()->point(),
+                                                   active_edges.front()->source()->point()));
+          }
         }
       }
     }
