@@ -135,8 +135,10 @@ private:
 
   EHs bad_edge;
   VH query_vertex;
-  Point_2  source;                    //one end of visibility cone
-  Point_2  target;                    //another end of visibility cone
+  VH  source;                    //one end of visibility cone
+  VH  target;                    //another end of visibility cone
+  int source_idx;                     //
+  int target_idx;                     //
 
 
 public:
@@ -154,9 +156,9 @@ public:
       query_vertex = e->target();
       is_vertex_query = true;
       is_edge_query = false;
-      source = e->source()->point();
-      target = e->next()->target()->point();
-      is_big_cone = CGAL::right_turn(source, q, target);
+      source = e->source();
+      target = e->next()->target();
+      is_big_cone = CGAL::right_turn(source->point(), q, target->point());
 
       typename Input_arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
       first = curr = e->target()->incident_halfedges();
@@ -170,8 +172,8 @@ public:
     else {
       is_vertex_query = false;
       is_edge_query = true;
-      source = e->source()->point();
-      target = e->target()->point();
+      source = e->source();
+      target = e->target();
       bad_edge.push_back(e);
       is_big_cone = false;
     }
@@ -180,17 +182,17 @@ public:
     timer.reset();
     timer.start();
     //Decide which inside of the visibility butterfly is needed.
-    int source_idx(-1), target_idx(-1) ;
-    for (int i = 0; i != polygon.size(); i++) {
-      if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], source)==EQUAL ) {
-        source_idx = i;
-      }
-      else if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], target)==EQUAL ) {
-        target_idx = i;
-      }
-      if (source_idx != -1 && target_idx != -1)
-        break;
-    }
+//    int source_idx(-1), target_idx(-1) ;
+//    for (int i = 0; i != polygon.size(); i++) {
+//      if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], source)==EQUAL ) {
+//        source_idx = i;
+//      }
+//      else if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], target)==EQUAL ) {
+//        target_idx = i;
+//      }
+//      if (source_idx != -1 && target_idx != -1)
+//        break;
+//    }
     int small_idx, big_idx;
     if ( source_idx < target_idx ) {
       small_idx = source_idx;
@@ -202,10 +204,10 @@ public:
     }
     int next_idx = small_idx + 1;
     bool is_between;
-    if (CGAL::right_turn(source, q, target)) {
+    if (CGAL::right_turn(source->point(), q, target->point())) {
       is_between = false;
       while (next_idx != big_idx) {
-        if (CGAL::left_turn(source, q, polygon[next_idx]) || CGAL::left_turn(q, target, polygon[next_idx])) {
+        if (CGAL::left_turn(source->point(), q, polygon[next_idx]) || CGAL::left_turn(q, target->point(), polygon[next_idx])) {
           is_between = true;
           break;
         }
@@ -215,7 +217,7 @@ public:
     else {
       is_between = true;
       while (next_idx != big_idx) {
-        if (CGAL::right_turn(source, q, polygon[next_idx]) || CGAL::right_turn(q, target, polygon[next_idx])) {
+        if (CGAL::right_turn(source->point(), q, polygon[next_idx]) || CGAL::right_turn(q, target->point(), polygon[next_idx])) {
           is_between = false;
           break;
         }
@@ -442,7 +444,14 @@ private:
         //when the closest edge changed
         if (remove_cnt > 0 && insert_cnt > 0) {
           //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
-          update_visibility(vh->point());
+          if (update_visibility(vh->point())) {
+            if (vh == source)
+              source_idx = polygon.size()-1;
+            else {
+              if (vh == target)
+                target_idx = polygon.size()-1;
+            }
+          }
         }
         if (remove_cnt == 0 && insert_cnt > 0) {
           //only add some edges, means the view ray is blocked by new edges.
@@ -451,11 +460,27 @@ private:
                                                  vh->point(),
                                                  closest_e->target()->point(),
                                                  closest_e->source()->point()));
-          update_visibility(vh->point());
+//          update_visibility(vh->point());
+          if (update_visibility(vh->point())) {
+            if (vh == source)
+              source_idx = polygon.size()-1;
+            else {
+              if (vh == target)
+                target_idx = polygon.size()-1;
+            }
+          }
         }
         if (remove_cnt > 0 && insert_cnt == 0) {
           //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
-          update_visibility(vh->point());
+//          update_visibility(vh->point());
+          if (update_visibility(vh->point())) {
+            if (vh == source)
+              source_idx = polygon.size()-1;
+            else {
+              if (vh == target)
+                target_idx = polygon.size()-1;
+            }
+          }
           update_visibility(ray_seg_intersection(q,
                                                  vh->point(),
                                                  active_edges.front()->target()->point(),
@@ -630,15 +655,19 @@ private:
 //    }
   }
 
-  void update_visibility(const Point_2& p){
-    if (polygon.empty())
+  bool update_visibility(const Point_2& p){
+    if (polygon.empty()) {
       polygon.push_back(p);
+      return true;
+    }
     else
     {
       if (Visibility_2::compare_xy_2(geom_traits, polygon.back(), p) != EQUAL) {
         polygon.push_back(p);
+        return true;
       }
     }
+    return false;
   }
   class Is_sweeped_first:public std::binary_function<VH, VH, bool> {
     const Point_2& q;
@@ -692,9 +721,9 @@ private:
 
   bool is_in_cone(const Point_2& p) const{
     if (is_big_cone)
-      return (!CGAL::right_turn(source, q, p)) || (!CGAL::left_turn(target, q, p));
+      return (!CGAL::right_turn(source->point(), q, p)) || (!CGAL::left_turn(target->point(), q, p));
     else
-      return (!CGAL::right_turn(source, q, p)) && (!CGAL::left_turn(target, q, p));
+      return (!CGAL::right_turn(source->point(), q, p)) && (!CGAL::left_turn(target->point(), q, p));
   }
 
   //for vertex and edge query: the visibility is limited in a cone.
@@ -706,7 +735,7 @@ private:
 
     VH v1 = e->target();
     VH v2 = e->source();
-    if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, source, v1->point(), v2->point())) {
+    if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, source->point(), v1->point(), v2->point())) {
       good_edges.push_back(e);
       if (!incident_edges.count(v1))
         vs.push_back(v1);
