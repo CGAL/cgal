@@ -51,8 +51,9 @@ public:
   // optional<double>() otherwise
   virtual boost::optional<double> operator()(const Tetrahedron_3& t) const = 0;
 
-  virtual void before_move(const TetVector& t) = 0;
-  virtual bool valid_move(const TetVector& t) = 0;
+  virtual void before_move(const TetVector& t) const = 0;
+  virtual bool valid_move(const TetVector& t, 
+                          const bool soft = false) const = 0;
 };
   
 template <typename K>
@@ -75,15 +76,18 @@ public:
     return CGAL::to_double(minimum_dihedral_angle(t, K()));
   }
 
-  virtual void before_move(const TetVector& tetrahedra)
+  virtual void before_move(const TetVector& tetrahedra) const
   {
     Min_value<Dihedral_angle_criterion, TetVector> min_value_op(*this);
     min_value_before_move_ = min_value_op(tetrahedra);
   }
-  virtual bool valid_move(const TetVector& tetrahedra)
+  virtual bool valid_move(const TetVector& tetrahedra,
+                          const bool soft = false) const
   {
     Min_value<Dihedral_angle_criterion, TetVector> min_value_op(*this);
-    return (min_value_op(tetrahedra) >= min_value_before_move_);
+    double min_val = min_value_op(tetrahedra);
+    return (min_val > min_value_before_move_) 
+        || (soft && min_val > sliver_bound_);
   }
 
 public:
@@ -93,8 +97,7 @@ public:
 
 private:
   double sliver_bound_;  
-  double min_value_before_move_;
-
+  mutable double min_value_before_move_;
 };
 
 template<typename K> double Min_dihedral_angle_criterion<K>::default_value = 12.; 
@@ -121,15 +124,18 @@ public:
     return CGAL::to_double(radius_ratio(t, K()));
   }
   
-  virtual void before_move(const TetVector& tetrahedra)
+  virtual void before_move(const TetVector& tetrahedra) const
   {
     Min_value<RR_criterion, TetVector> min_value_op(*this);
     min_value_before_move_ = min_value_op(tetrahedra);
   }
-  virtual bool valid_move(const TetVector& tetrahedra)
+  virtual bool valid_move(const TetVector& tetrahedra,
+                          const bool soft = false) const
   {
     Min_value<RR_criterion, TetVector> min_value_op(*this);
-    return (min_value_op(tetrahedra) >= min_value_before_move_);
+    double min_val = min_value_op(tetrahedra);
+    return (min_val > min_value_before_move_) 
+        || (soft && min_val > sliver_bound_);
   }
 
 public:
@@ -139,7 +145,7 @@ public:
 
 private:
   double sliver_bound_;
-  double min_value_before_move_;
+  mutable double min_value_before_move_;
 };
 
 template<typename K> double Radius_ratio_criterion<K>::default_value = 0.25; 
