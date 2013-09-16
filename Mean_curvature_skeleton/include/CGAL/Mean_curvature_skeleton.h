@@ -98,6 +98,7 @@
 #include <queue>
 
 #include <Eigen/Sparse>
+#include <Eigen/SparseLU>
 
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -129,16 +130,15 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Define the default sparse linear solver type
+///@brief Define the default sparse linear solver type.
 template <class FT>
 struct MCF_default_solver
 {
-
   typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
 };
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Define the default HalfedgeGraphPointPMap type
+///@brief Define the default HalfedgeGraphPointPMap type.
 template <class Polyhedron>
 struct MCF_default_halfedge_graph_pmap
 {
@@ -153,6 +153,13 @@ struct MCF_default_halfedge_graph_pmap
 template<class HalfedgeGraph>
 class SkeletonArgs
 {
+public:
+  typedef CGAL::Bbox_3                                                   Bbox;
+  typedef typename HalfedgeGraph::Traits                                 Kernel;
+  typedef typename Kernel::Point_3                                       Point;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator   vertex_iterator;
+
 private:
   /// Functor used to transform the vertex iterator to point iterator
   static Point v_to_p(vertex_descriptor v)
@@ -172,11 +179,6 @@ private:
   }
 
 public:
-  typedef CGAL::Bbox_3                                                   Bbox;
-  typedef typename HalfedgeGraph::Traits                                 Kernel;
-  typedef typename Kernel::Point_3                                       Point;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator   vertex_iterator;
 
   /**
    * The constructor of a SkeletonArgs object. The constructor

@@ -388,20 +388,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
-  if (!check_item_index(index))
-  {
-    return;
-  }
-
-  Scene_polyhedron_item* item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-
-  if (!check_mesh(item))
-  {
-    return;
-  }
-
   QTime time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -491,13 +477,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     // ids are between [0, number_of_segments -1]
     facet_it->set_patch_id(segment_property_map[facet_it]);
   }
-
   Scene_polyhedron_item* item_segmentation = new Scene_polyhedron_item(segment_mesh);
   scene->addItem(item_segmentation);
-  item_segmentation->setName(QString("segmentation of %1").arg(item->name()));
+  item_segmentation->setName(QString("segmentation"));
 
-  scene->itemChanged(index);
-  scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
 }
 

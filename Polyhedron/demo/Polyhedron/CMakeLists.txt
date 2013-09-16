@@ -62,7 +62,7 @@ endif(QT4_FOUND)
 
 
 # Eigen is now used by default
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.2.0) #(requires 3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   # Find LAPACK (optional), for curvatures estimation
   find_package(LAPACK)
