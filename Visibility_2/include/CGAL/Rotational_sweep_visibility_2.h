@@ -72,58 +72,55 @@ private:
   typedef Halfedge_const_handle   EH;
   typedef std::vector<EH> EHs;
 
-  const Geometry_traits_2 *geom_traits;
+
 
   class Less_edge: public std::binary_function<EH, EH, bool> {
-    const Geometry_traits_2* traits;
+    const Geometry_traits_2* geom_traits;
   public:
-//    Less_edge(const Geometry_traits_2* traits):traits(traits) {}
+    Less_edge() {}
+    Less_edge(const Geometry_traits_2* traits):geom_traits(traits) {}
     bool operator() (const EH e1, const EH e2) const {
       if (e1 == e2)
         return false;
       else {
         if (e1->source() == e2->source())
-          return e1->target()->point() < e2->target()->point();
+          return Visibility_2::compare_xy_2(geom_traits, e1->target()->point(), e2->target()->point()) == SMALLER;
         else
-          return e1->source()->point() < e2->source()->point();
-    //        return Visibility_2::compare_xy_2(traits, e1->source()->point(), e2->source()->point()) == SMALLER;
-    //        return Visibility_2::compare_xy_2(traits, e1->target()->point(), e2->target()->point()) == SMALLER;
-        }
+          return Visibility_2::compare_xy_2(geom_traits, e1->source()->point(), e2->source()->point()) == SMALLER;
+      }
     }
   };
 
   class Less_vertex: public std::binary_function<VH, VH, bool> {
-//    const Geometry_traits_2* geom_traits;
+    const Geometry_traits_2* geom_traits;
   public:
-//    Compare_vertex(const Geometry_traits_2* traits):geom_traits(traits) {}
+    Less_vertex() {}
+    Less_vertex(const Geometry_traits_2* traits):geom_traits(traits) {}
     bool operator() (const VH v1, const VH v2) const {
       if (v1 == v2)
         return false;
       else
-//        return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
-        return v1->point() < v2->point();
+        return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
     }
   };
-
+  const Geometry_traits_2 *geom_traits;
   const Input_arrangement_2 *p_arr;
-  Point_2         q;
+  Point_2 q;   //query point
   Points polygon;                       //visibility polygon
-  std::map<VH, EHs, Less_vertex>  incident_edges;
-  std::map<EH, int, Less_edge> edx;            //index of edge in the heap
-  EHs  active_edges;    //a heap of edges that interset the current vision ray.
+  std::map<VH, EHs, Less_vertex>  incident_edges; //the edges that are
+  std::map<EH, int, Less_edge> edx;            //index of active edges in the heap
+  EHs active_edges;    //a heap of edges that interset the current vision ray.
+  VHs vs;                           //angular sorted vertices
+  EHs bad_edges;                    //edges that pass the query point
+  VH  cone_end1;                    //an end of visibility cone
+  VH  cone_end2;                    //another end of visibility cone
+  int cone_end1_idx;                //index of cone_end1->point() in polygon
+  int cone_end2_idx;                //index of cone_end2->point() in polygon
 
-  VHs vs;                            //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
   bool is_face_query;
-  bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
-
-  EHs bad_edge;
-  VH  cone_end1;                    //one end of visibility cone
-  VH  cone_end2;                    //another end of visibility cone
-  int cone_end1_idx;                     //
-  int cone_end2_idx;                     //
-
+  bool is_big_cone;                 //whether the angle of visibility_cone is greater than pi.
 
 public:
   Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
@@ -133,7 +130,7 @@ public:
 
   Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& arr_out) {
     arr_out.clear();
-    bad_edge.clear();
+    bad_edges.clear();
     this->q = q;
 
     if (Visibility_2::compare_xy_2(geom_traits, q, e->target()->point())==EQUAL) {
@@ -148,9 +145,9 @@ public:
       first = curr = e->target()->incident_halfedges();
       do {
         if (curr->face() == e->face())
-          bad_edge.push_back(curr);
+          bad_edges.push_back(curr);
         else if (curr->twin()->face() == e->face())
-          bad_edge.push_back(curr->twin());
+          bad_edges.push_back(curr->twin());
       } while (++curr != first);
     }
     else {
@@ -159,7 +156,7 @@ public:
       is_face_query = false;
       cone_end1 = e->source();
       cone_end2 = e->target();
-      bad_edge.push_back(e);
+      bad_edges.push_back(e);
       is_big_cone = false;
     }
     visibility_region_impl(e->face(), q);
@@ -256,15 +253,15 @@ const Input_arrangement_2& arr() {
   return *p_arr;
 }
 
-
 private:
-  VH get_neighor(const EH e, const VH v) {
+  //get the neighbor of v along edge e
+  VH get_neighbor(const EH e, const VH v) {
     if (e->source() == v)
       return e->target();
     else
       return e->source();
   }
-
+  //whether ray(q->dp) intersects segment(p1, p2)
   bool do_intersect_ray(const Point_2& q,
                         const Point_2& dp,
                         const Point_2& p1,
@@ -272,6 +269,7 @@ private:
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
   }
 
+  //arrange vertices that on a same vision ray in a 'funnel' order
   void funnel(int i, int j) {
     VHs right, left;
     bool block_left(false), block_right(false);
@@ -280,7 +278,7 @@ private:
       bool left_v(false), right_v(false), has_predecessor(false);
         EHs& edges = incident_edges[vs[l]];
         for (int k=0; k<edges.size(); k++) {
-          nb = get_neighor(edges[k], vs[l]);
+          nb = get_neighbor(edges[k], vs[l]);
         if ( nb == former )  {
           has_predecessor = true;
           break;
@@ -320,8 +318,8 @@ private:
     vs.clear();
     polygon.clear();
     active_edges.clear();
-    incident_edges.clear();
-    edx.clear();
+    incident_edges = std::map<VH, EHs, Less_vertex>(Less_vertex(geom_traits));
+    edx = std::map<EH, int, Less_edge>(Less_edge(geom_traits));
 
     EHs good_edges;
     Input_arrangement_2 bbox;
@@ -605,44 +603,27 @@ private:
     Segment_2 seg(s,t);
     CGAL::Object result = CGAL::intersection(ray, seg);
     return *(CGAL::object_cast<Point_2>(&result));
-//    if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
-//      return *ipoint;
-//    }
-//    else {
-//      if (const Segment_2 *iseg = CGAL::object_cast<Segment_2 >(&result)) {
-//        switch (CGAL::compare_distance_to_point(ray.source(), iseg->source(), iseg->target())) {
-//        case (CGAL::SMALLER):
-//          return iseg->source();
-//          break;
-//        case (CGAL::LARGER) :
-//          return iseg->target();
-//          break;
-//        }
-//      } else {
-//        assert(false);
-//      }
-//    }
   }
 
+  //check if p has been discovered before, if not update the  visibility polygon
   bool update_visibility(const Point_2& p){
     if (polygon.empty()) {
       polygon.push_back(p);
       return true;
     }
-    else
-    {
-      if (Visibility_2::compare_xy_2(geom_traits, polygon.back(), p) != EQUAL) {
-        polygon.push_back(p);
-        return true;
-      }
+    else if (Visibility_2::compare_xy_2(geom_traits, polygon.back(), p) != EQUAL) {
+      polygon.push_back(p);
+      return true;
     }
     return false;
   }
-  class Is_sweeped_first:public std::binary_function<VH, VH, bool> {
+
+  //functor to decide which vertex is visited earlier by the rotational sweeping ray
+  class Is_sweeped_earlier:public std::binary_function<VH, VH, bool> {
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:
-    Is_sweeped_first(const Point_2& q, const Geometry_traits_2* traits):q(q){
+    Is_sweeped_earlier(const Point_2& q, const Geometry_traits_2* traits):q(q){
       geom_traits = traits;
     }
     bool operator() (const VH v1, const VH v2) const {
@@ -688,6 +669,7 @@ private:
     incident_edges[v].push_back(e->next());
   }
 
+  //check if p is in the visibility cone
   bool is_in_cone(const Point_2& p) const{
     if (is_big_cone)
       return (!CGAL::right_turn(cone_end1->point(), q, p)) || (!CGAL::left_turn(cone_end2->point(), q, p));
@@ -698,8 +680,8 @@ private:
   //for vertex and edge query: the visibility is limited in a cone.
   void input_edge(const Halfedge_const_handle e,
                   EHs& good_edges) {
-    for (int i=0; i<bad_edge.size(); i++)
-      if (e == bad_edge[i])
+    for (int i=0; i<bad_edges.size(); i++)
+      if (e == bad_edges[i])
         return;
     VH v1 = e->target();
     VH v2 = e->source();
@@ -734,7 +716,7 @@ private:
       } while (++curr != circ);
     }
 
-    std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
+    std::sort(vs.begin(), vs.end(), Is_sweeped_earlier(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -800,7 +782,7 @@ private:
       good_edges.push_back(curr);
     } while(++curr != circ);
 
-    std::sort(vs.begin(), vs.end(), Is_sweeped_first(q, geom_traits));
+    std::sort(vs.begin(), vs.end(), Is_sweeped_earlier(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -828,16 +810,11 @@ private:
     for (e_itr = arr_out.edges_begin();
          e_itr != arr_out.edges_end();
          e_itr++) {
-      Halfedge_handle he = e_itr;
-      Halfedge_handle he_twin = he->twin();
-      if (he->face() == he_twin->face())
+      if (e_itr->face() == e_itr->twin()->face())
         arr_out.remove_edge(he);
     }
   }
-
 };
-
-
 } // end namespace CGAL
 
 
