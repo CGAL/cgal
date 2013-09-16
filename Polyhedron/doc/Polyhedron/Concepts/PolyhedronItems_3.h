@@ -60,6 +60,12 @@ typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane> Face;
 class PolyhedronItems_3 {
 public:
   /// \cgalConcept
+  ///
+  /// The `PolyhedronItems_3::Vertex` concept refines the
+  /// `HalfedgeDSItems::Vertex` concept. This concept adds the requirement
+  /// for the support of the geometry.
+  ///
+  /// \cgalRefines `HalfedgeDSItems::Vertex`
   class Vertex {
   public:
     /// \name Types in PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex
@@ -73,6 +79,16 @@ public:
     typedef unspecified_type Supports_vertex_point;
     /// @}
 
+    /// \name Creation
+    /// @{
+
+    /// Default constructor.
+    Vertex();
+
+    /// Constructor from a point
+    Vertex(Point);
+    /// @}
+
     /// \name Operations
     /// @{
     Point& point();
@@ -81,6 +97,12 @@ public:
   };
 
   /// \cgalConcept
+  ///
+  /// The `PolyhedronItems_3::Face` concept refines the
+  /// `HalfedgeDSItems::Face` concept. This concept adds the requirement
+  /// for the support of the geometry.
+  ///
+  /// \cgalRefines `HalfedgeDSItems::Face`
   class Face {
   public:
     /*!
