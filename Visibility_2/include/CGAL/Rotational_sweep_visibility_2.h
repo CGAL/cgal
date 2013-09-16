@@ -22,9 +22,7 @@
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 
-#include <iostream>
 #include <vector>
-#include <set>
 #include <map>
 #include <utility>
 #include <CGAL/Visibility_2/visibility_utils.h>
@@ -40,9 +38,6 @@ namespace CGAL {
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Rotational_sweep_visibility_2 {
-
-
-
 public:
   typedef Arrangement_2                                 Input_arrangement_2;
   typedef Arrangement_2                                 Output_arrangement_2;
@@ -69,17 +64,6 @@ public:
   typedef RegularizationTag                             Regularization_tag;
   typedef CGAL::Tag_true                                Supports_general_polygon_tag;
   typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
-
-  //profile
-  Timer timer;
-  static double input_t;
-  static double sweep_t;
-  static double cut_from_butterfly_t;
-  static double heap_insert_t;
-  static double heap_remove_t;
-  static double heap_swap_t;
-  static double input_v_t;
-  static double quicksort_t;
 
 private:
   typedef std::vector<Point_2>          Points;
@@ -135,11 +119,10 @@ private:
   bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
 
   EHs bad_edge;
-  VH query_vertex;
-  VH  source;                    //one end of visibility cone
-  VH  target;                    //another end of visibility cone
-  int source_idx;                     //
-  int target_idx;                     //
+  VH  cone_end1;                    //one end of visibility cone
+  VH  cone_end2;                    //another end of visibility cone
+  int cone_end1_idx;                     //
+  int cone_end2_idx;                     //
 
 
 public:
@@ -154,13 +137,12 @@ public:
     this->q = q;
 
     if (Visibility_2::compare_xy_2(geom_traits, q, e->target()->point())==EQUAL) {
-      query_vertex = e->target();
       is_vertex_query = true;
       is_edge_query = false;
       is_face_query = false;
-      source = e->source();
-      target = e->next()->target();
-      is_big_cone = CGAL::right_turn(source->point(), q, target->point());
+      cone_end1 = e->source();
+      cone_end2 = e->next()->target();
+      is_big_cone = CGAL::right_turn(cone_end1->point(), q, cone_end2->point());
 
       typename Input_arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
       first = curr = e->target()->incident_halfedges();
@@ -175,42 +157,29 @@ public:
       is_vertex_query = false;
       is_edge_query = true;
       is_face_query = false;
-      source = e->source();
-      target = e->target();
+      cone_end1 = e->source();
+      cone_end2 = e->target();
       bad_edge.push_back(e);
       is_big_cone = false;
     }
     visibility_region_impl(e->face(), q);
 
-    timer.reset();
-    timer.start();
     //Decide which inside of the visibility butterfly is needed.
-//    int source_idx(-1), target_idx(-1) ;
-//    for (int i = 0; i != polygon.size(); i++) {
-//      if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], source)==EQUAL ) {
-//        source_idx = i;
-//      }
-//      else if ( Visibility_2::compare_xy_2(geom_traits, polygon[i], target)==EQUAL ) {
-//        target_idx = i;
-//      }
-//      if (source_idx != -1 && target_idx != -1)
-//        break;
-//    }
     int small_idx, big_idx;
-    if ( source_idx < target_idx ) {
-      small_idx = source_idx;
-      big_idx = target_idx;
+    if ( cone_end1_idx < cone_end2_idx ) {
+      small_idx = cone_end1_idx;
+      big_idx = cone_end2_idx;
     }
     else {
-      small_idx = target_idx;
-      big_idx = source_idx;
+      small_idx = cone_end2_idx;
+      big_idx = cone_end1_idx;
     }
     int next_idx = small_idx + 1;
     bool is_between;
-    if (CGAL::right_turn(source->point(), q, target->point())) {
+    if (CGAL::right_turn(cone_end1->point(), q, cone_end2->point())) {
       is_between = false;
       while (next_idx != big_idx) {
-        if (CGAL::left_turn(source->point(), q, polygon[next_idx]) || CGAL::left_turn(q, target->point(), polygon[next_idx])) {
+        if (CGAL::left_turn(cone_end1->point(), q, polygon[next_idx]) || CGAL::left_turn(q, cone_end2->point(), polygon[next_idx])) {
           is_between = true;
           break;
         }
@@ -220,15 +189,13 @@ public:
     else {
       is_between = true;
       while (next_idx != big_idx) {
-        if (CGAL::right_turn(source->point(), q, polygon[next_idx]) || CGAL::right_turn(q, target->point(), polygon[next_idx])) {
+        if (CGAL::right_turn(cone_end1->point(), q, polygon[next_idx]) || CGAL::right_turn(q, cone_end2->point(), polygon[next_idx])) {
           is_between = false;
           break;
         }
         next_idx++;
       }
     }
-    timer.stop();
-    cut_from_butterfly_t+=timer.time();
 
     typename Points::iterator first = polygon.begin() + small_idx;
     typename Points::iterator last = polygon.begin() + big_idx;
@@ -253,7 +220,6 @@ public:
       return ++arr_out.faces_begin();
     else
       return arr_out.faces_begin();
-
   }
 
   Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& arr_out) {
@@ -366,82 +332,66 @@ private:
     //initiation of vision ray
     Vector_2 dir;
     if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back()->point())))
-    {
       dir = Vector_2(1, 0) + Vector_2(q, vs.back()->point());
-    }
-    else {
-        dir = Vector_2(0, -1);
-    }
-
+    else
+      dir = Vector_2(0, -1);
     Point_2 dp = q + dir;
 
-    //initiation of active_edges
+    //initiation of active_edges. For face query, all edges on boundary of face can affect visibility.
+    //For non-face query, only good_edges has to be considered.
     if (is_face_query) {
       Ccb_halfedge_const_circulator curr = f->outer_ccb();
       Ccb_halfedge_const_circulator circ = curr;
       do {
-//        Point_2 p1 = curr->target()->point();
-//        Point_2 p2 = curr->source()->point();
         if (do_intersect_ray(q, dp, curr->target()->point(), curr->source()->point()))
           heap_insert(curr);
       } while (++curr != circ);
 
       typename Arrangement_2::Hole_const_iterator hi;
       for (hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
-        Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
+        Ccb_halfedge_const_circulator curr = circ = *hi;
         do {
-//          Point_2 p1 = curr->target()->point();
-//          Point_2 p2 = curr->source()->point();
           if (do_intersect_ray(q, dp, curr->target()->point(), curr->source()->point()))
             heap_insert(curr);
         } while (++curr != circ);
       }
     }
     else {
-      for (int i=0; i!=good_edges.size(); i++) {
-        if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point())) {
+      for (int i=0; i!=good_edges.size(); i++)
+        if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point()))
           heap_insert(good_edges[i]);
-        }
-      }
     }
 
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
       VH vh = vs[i];
-      EH closest_e = active_edges.front();   //save the closest edge;
-      int insert_cnt(0), remove_cnt(0);
-      EHs& edges = incident_edges[vh];
-      EHs insert_es, remove_es;
+      //save the closest edge;
+      EH closest_e = active_edges.front();
 
+      EHs& edges = incident_edges[vh];
+      EHs insert_ehs, remove_ehs;
       for (int j=0; j!=edges.size(); j++) {
         EH e = edges[j];
-//        Orientation o=Visibility_2::orientation_2(geom_traits, q, dp, nei);
-/*        if (o==RIGHT_TURN ||
-            (o==COLLINEAR && i>0 && Visibility_2::compare_xy_2(geom_traits, nei, vs[i-1])==EQUAL))*/
-
-        if (edx.count(e)){
-          remove_es.push_back(e);
-        }
-        else {
-          insert_es.push_back(e);
-        }
-
+        if (edx.count(e))
+          remove_ehs.push_back(e);
+        else
+          insert_ehs.push_back(e);
       }
-      insert_cnt = insert_es.size();
-      remove_cnt = remove_es.size();
-      if (remove_es.size()==1 && insert_es.size()==1) {
-        int remove_idx = edx[remove_es.front()];
-        active_edges[remove_idx] = insert_es.front();
-        edx[insert_es.front()] = remove_idx;
-        edx.erase(remove_es.front());
+
+      int insert_cnt = insert_ehs.size();
+      int remove_cnt = remove_ehs.size();
+      if (remove_cnt==1 && insert_cnt==1) {
+        //it's a special case that one edge is inserted and one edge is removed. for this case, no heap operation is needed.
+        int remove_idx = edx[remove_ehs.front()];
+        active_edges[remove_idx] = insert_ehs.front();
+        edx[insert_ehs.front()] = remove_idx;
+        edx.erase(remove_ehs.front());
       }
       else {
-        for (int j=0; j!=remove_es.size(); j++) {
-          heap_remove(edx[remove_es[j]]);
-        }
-        for (int j=0; j!=insert_es.size(); j++) {
-          heap_insert(insert_es[j]);
-        }
+        for (int j=0; j!=remove_cnt; j++)
+          heap_remove(edx[remove_ehs[j]]);
+        for (int j=0; j!=insert_cnt; j++)
+          heap_insert(insert_ehs[j]);
       }
 
       if (closest_e != active_edges.front()) {
@@ -470,15 +420,14 @@ private:
           }
         }
         else {
+          //extra work here for edge/vertex query is the index of cone_end1 and cone_end2 will be recorded.
           if (remove_cnt > 0 && insert_cnt > 0) {
             //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
             if (update_visibility(vh->point())) {
-              if (vh == source)
-                source_idx = polygon.size()-1;
-              else {
-                if (vh == target)
-                  target_idx = polygon.size()-1;
-              }
+              if (vh == cone_end1)
+                cone_end1_idx = polygon.size()-1;
+              else if (vh == cone_end2)
+                cone_end2_idx = polygon.size()-1;
             }
           }
           if (remove_cnt == 0 && insert_cnt > 0) {
@@ -488,26 +437,20 @@ private:
                                                    vh->point(),
                                                    closest_e->target()->point(),
                                                    closest_e->source()->point()));
-  //          update_visibility(vh->point());
             if (update_visibility(vh->point())) {
-              if (vh == source)
-                source_idx = polygon.size()-1;
-              else {
-                if (vh == target)
-                  target_idx = polygon.size()-1;
-              }
+              if (vh == cone_end1)
+                cone_end1_idx = polygon.size()-1;
+              else if (vh == cone_end2)
+                cone_end2_idx = polygon.size()-1;
             }
           }
           if (remove_cnt > 0 && insert_cnt == 0) {
             //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
-  //          update_visibility(vh->point());
             if (update_visibility(vh->point())) {
-              if (vh == source)
-                source_idx = polygon.size()-1;
-              else {
-                if (vh == target)
-                  target_idx = polygon.size()-1;
-              }
+              if (vh == cone_end1)
+                cone_end1_idx = polygon.size()-1;
+              else if (vh == cone_end2)
+                cone_end2_idx = polygon.size()-1;
             }
             update_visibility(ray_seg_intersection(q,
                                                    vh->point(),
@@ -580,9 +523,6 @@ private:
     EH temp = active_edges[i];
     active_edges[i] = active_edges[j];
     active_edges[j] = temp;
-  }
-  void print_point(const Point_2& p) {
-    std::cout<<p.x()<<','<<p.y()<<std::endl;
   }
 
   bool is_closer(const Point_2& q,
@@ -739,7 +679,7 @@ private:
 
   };
 
-  //when query is in face, every edge is good.
+  //when the query point is in face, every edge is good.
   void input_neighbor_f( const Halfedge_const_handle e) {
     VH v = e->target();
     if (!incident_edges.count(v))
@@ -750,9 +690,9 @@ private:
 
   bool is_in_cone(const Point_2& p) const{
     if (is_big_cone)
-      return (!CGAL::right_turn(source->point(), q, p)) || (!CGAL::left_turn(target->point(), q, p));
+      return (!CGAL::right_turn(cone_end1->point(), q, p)) || (!CGAL::left_turn(cone_end2->point(), q, p));
     else
-      return (!CGAL::right_turn(source->point(), q, p)) && (!CGAL::left_turn(target->point(), q, p));
+      return (!CGAL::right_turn(cone_end1->point(), q, p)) && (!CGAL::left_turn(cone_end2->point(), q, p));
   }
 
   //for vertex and edge query: the visibility is limited in a cone.
@@ -761,10 +701,10 @@ private:
     for (int i=0; i<bad_edge.size(); i++)
       if (e == bad_edge[i])
         return;
-
     VH v1 = e->target();
     VH v2 = e->source();
-    if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, source->point(), v1->point(), v2->point())) {
+    //an edge will affect visibility only if it has an endpoint in the visibility cone or it crosses the boundary of the cone.
+    if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, cone_end1->point(), v1->point(), v2->point())) {
       good_edges.push_back(e);
       if (!incident_edges.count(v1))
         vs.push_back(v1);
@@ -813,9 +753,6 @@ private:
                    EHs& good_edges,
                    Input_arrangement_2& bbox)
   {
-//    timer.reset();
-//    timer.start();
-
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
@@ -825,20 +762,20 @@ private:
 
     typename Arrangement_2::Hole_const_iterator hi;
     for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
-      Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
+      Ccb_halfedge_const_circulator curr = circ = *hi;
       do {
         assert(curr->face() == fh);
         input_edge(curr, good_edges);
       } while (++curr != circ);
     }
-    //todo
+
+    //create a bounding box for all vertices such that during the sweeping, the vision ray will always interset at least an edge.
     Points points;
     for (int i=0; i<vs.size(); i++) {
       points.push_back(vs[i]->point());
     }
     points.push_back(q);
     typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(points.begin(), points.end());
-//    points.pop_back();
 
     Number_type xmin, xmax, ymin, ymax;
     typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
@@ -854,7 +791,6 @@ private:
     Halfedge_handle e3 = bbox.insert_from_right_vertex(Segment_2(box[2], box[3]), e2->target());
     bbox.insert_at_vertices(Segment_2(box[0], box[3]), e1->source(), e3->target());
 
-//    Face_const_handle f = e1->face();
     circ = curr = e1->face()->outer_ccb();
     do {
       VH v = curr->target();
@@ -892,32 +828,15 @@ private:
     for (e_itr = arr_out.edges_begin();
          e_itr != arr_out.edges_end();
          e_itr++) {
-
       Halfedge_handle he = e_itr;
       Halfedge_handle he_twin = he->twin();
-      if (he->face() == he_twin->face()) {
+      if (he->face() == he_twin->face())
         arr_out.remove_edge(he);
-      }
     }
   }
 
 };
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::sweep_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::cut_from_butterfly_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_insert_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_remove_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::heap_swap_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::input_v_t = 0;
-template <typename Arrangement_2, typename RegularizationTag>
-double CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>::quicksort_t = 0;
+
 
 } // end namespace CGAL
 
