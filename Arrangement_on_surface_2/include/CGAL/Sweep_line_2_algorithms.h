@@ -37,6 +37,7 @@
 #include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arr_linear_traits_2.h>
+#include <CGAL/Arr_rat_arc/Rational_arc_d_1.h>
 
 namespace CGAL {
 
