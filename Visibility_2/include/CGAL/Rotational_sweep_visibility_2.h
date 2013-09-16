@@ -585,6 +585,8 @@ private:
     }
   }
 
+  //compute the intersection of ray(q->dp) and segment(s, t)
+  //if they are collinear then return the endpoint which is closer to q.
   Point_2 ray_seg_intersection(
       const Point_2& q, const Point_2& dp,  // the ray
       const Point_2& s, const Point_2& t)   // the segment
@@ -623,9 +625,7 @@ private:
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:
-    Is_sweeped_earlier(const Point_2& q, const Geometry_traits_2* traits):q(q){
-      geom_traits = traits;
-    }
+    Is_sweeped_earlier(const Point_2& q, const Geometry_traits_2* traits):q(q), geom_traits(traits) {}
     bool operator() (const VH v1, const VH v2) const {
       const Point_2& p1 = v1->point();
       const Point_2& p2 = v2->point();
@@ -640,13 +640,13 @@ private:
       else
         return CGAL::right_turn(p1, q, p2);
     }
+    //return the quadrant of p with respect to o.
     int quadrant(const Point_2& o, const Point_2& p) const {
       typename Geometry_traits_2::Compare_x_2 compare_x = geom_traits->compare_x_2_object();
       typename Geometry_traits_2::Compare_y_2 compare_y = geom_traits->compare_y_2_object();
 
       Comparison_result dx = compare_x(p, o);
       Comparison_result dy = compare_y(p, o);
-
       if (dx==LARGER && dy!=SMALLER)
         return 1;
       if (dx!=LARGER && dy==LARGER)
@@ -657,7 +657,6 @@ private:
         return 4;
       return 0;
     }
-
   };
 
   //when the query point is in face, every edge is good.
