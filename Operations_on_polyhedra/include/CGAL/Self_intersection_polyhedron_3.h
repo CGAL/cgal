@@ -34,7 +34,7 @@
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/conditional.hpp>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -222,12 +222,12 @@ self_intersect(Polyhedron& polyhedron, OutputIterator out, const GeomTraits& geo
 {
   CGAL_assertion(polyhedron.is_pure_triangle());
 
-  typedef typename boost::conditional< boost::is_const<Polyhedron>::value,
-                                       typename Polyhedron::Facet_const_iterator, 
-                                       typename Polyhedron::Facet_iterator
-                                     >::type Facet_it;
+  typedef typename boost::mpl::if_c< boost::is_const<Polyhedron>::value,
+                                    typename Polyhedron::Facet_const_iterator,
+                                    typename Polyhedron::Facet_iterator
+                                   >::type Facet_it;
 
-  typedef typename boost::conditional< boost::is_const<Polyhedron>::value,
+  typedef typename boost::mpl::if_c< boost::is_const<Polyhedron>::value,
                                        typename Polyhedron::Facet_const_handle, 
                                        typename Polyhedron::Facet_handle
                                      >::type Facet_hdl;
