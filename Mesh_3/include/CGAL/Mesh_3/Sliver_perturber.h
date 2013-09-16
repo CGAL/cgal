@@ -114,7 +114,7 @@ private:
     PVertex()
     : vertex_handle_()
     , incident_sliver_nb_(0)
-    , min_value_(SliverCriterion::max_value)
+    , min_value_(std::numeric_limits<double>::max())
     , try_nb_(0)
     , p_perturbation_(NULL)
     , id_() 
@@ -123,7 +123,7 @@ private:
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
     , incident_sliver_nb_(0)
-    , min_value_(SliverCriterion::max_value)
+    , min_value_(std::numeric_limits<double>::max())
     , try_nb_(0)
     , p_perturbation_(NULL)
     , id_(id) 
@@ -225,7 +225,7 @@ public:
    */
   Sliver_perturber(C3T3& c3t3,
                    const MeshDomain& domain,
-                   const SliverCriterion& criterion);// = SliverCriterion());
+                   const SliverCriterion& criterion);
   
   /**
    * @brief Launch perturbation
@@ -374,7 +374,7 @@ Sliver_perturber(C3T3& c3t3,
   : c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
   , domain_(domain)
-  , sliver_bound_(Sc::max_value)
+  , sliver_bound_(criterion.get_max_value())
   , sliver_criterion_(criterion)
   , helper_(c3t3_,domain_)
   , next_perturbation_order_(0)
