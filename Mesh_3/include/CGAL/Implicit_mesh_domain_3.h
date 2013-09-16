@@ -26,6 +26,10 @@
 #ifndef CGAL_IMPLICIT_MESH_DOMAIN_3_H
 #define CGAL_IMPLICIT_MESH_DOMAIN_3_H
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
+#endif
 
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
@@ -79,5 +83,9 @@ private:
 
 
 }  // end namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_IMPLICIT_MESH_DOMAIN_3_H

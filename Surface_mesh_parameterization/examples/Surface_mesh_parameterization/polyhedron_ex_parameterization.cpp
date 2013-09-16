@@ -361,6 +361,7 @@ int main()
     }
     catch(...) {
       std::cerr << "Exception of unknown type!\n";
+      throw;
     }
 
     //***************************************
