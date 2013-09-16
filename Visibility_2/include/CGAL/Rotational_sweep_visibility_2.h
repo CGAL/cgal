@@ -83,63 +83,60 @@ public:
 
 private:
   typedef std::vector<Point_2>          Points;
-  typedef Vertex_const_handle   Vertex;
-  typedef std::vector<Vertex>   Vertices;
-  typedef Halfedge_const_handle   Edge;
-  typedef std::vector<Edge> Edges;
+  typedef Vertex_const_handle   VH;
+  typedef std::vector<VH>   VHs;
+  typedef Halfedge_const_handle   EH;
+  typedef std::vector<EH> EHs;
 
   const Geometry_traits_2 *geom_traits;
 
-  class Less_edge: public std::binary_function<Edge, Edge, bool> {
+  class Less_edge: public std::binary_function<EH, EH, bool> {
     const Geometry_traits_2* traits;
   public:
 //    Less_edge(const Geometry_traits_2* traits):traits(traits) {}
-    bool operator() (const Edge e1, const Edge e2) const {
-      if (e1 != e2) {
-        if (e1->source() != e2->source())
+    bool operator() (const EH e1, const EH e2) const {
+      if (e1 == e2)
+        return false;
+      else {
+        if (e1->source() == e2->source())
+          return e1->target()->point() < e2->target()->point();
+        else
           return e1->source()->point() < e2->source()->point();
     //        return Visibility_2::compare_xy_2(traits, e1->source()->point(), e2->source()->point()) == SMALLER;
-        else
-          return e1->target()->point() < e2->target()->point();
     //        return Visibility_2::compare_xy_2(traits, e1->target()->point(), e2->target()->point()) == SMALLER;
         }
-      else
-        return false;
     }
   };
 
-  class Less_vertex: public std::binary_function<Vertex, Vertex, bool> {
+  class Less_vertex: public std::binary_function<VH, VH, bool> {
 //    const Geometry_traits_2* geom_traits;
   public:
 //    Compare_vertex(const Geometry_traits_2* traits):geom_traits(traits) {}
-    bool operator() (const Vertex v1, const Vertex v2) const {
-      if (v1 != v2)
+    bool operator() (const VH v1, const VH v2) const {
+      if (v1 == v2)
+        return false;
+      else
 //        return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
         return v1->point() < v2->point();
-      else
-        return false;
     }
   };
 
   const Input_arrangement_2 *p_arr;
   Point_2         q;
   Points polygon;                       //visibility polygon
-  std::map<Vertex, Edges, Less_vertex>  incident_edges;
-  std::map<Edge, int, Less_edge> edx;            //index of edge in the heap
-  Edges  active_edges;    //a heap of edges that interset the current vision ray.
+  std::map<VH, EHs, Less_vertex>  incident_edges;
+  std::map<EH, int, Less_edge> edx;            //index of edge in the heap
+  EHs  active_edges;    //a heap of edges that interset the current vision ray.
 
-  Vertices vs;                            //angular sorted vertices
+  VHs vs;                            //angular sorted vertices
   bool is_vertex_query;
   bool is_edge_query;
   bool is_big_cone;                   //whether the angle of visibility_cone is greater than pi.
 
-  Edges bad_edge;
-  Vertex query_vertex;
+  EHs bad_edge;
+  VH query_vertex;
   Point_2  source;                    //one end of visibility cone
   Point_2  target;                    //another end of visibility cone
-
-
-
 
 
 public:
@@ -289,7 +286,7 @@ const Input_arrangement_2& arr() {
 
 
 private:
-  Vertex get_neighor(const Edge e, const Vertex v) {
+  VH get_neighor(const EH e, const VH v) {
     if (e->source() == v)
       return e->target();
     else
@@ -297,29 +294,29 @@ private:
   }
 
   bool do_intersect_ray(const Point_2& q,
-                    const Point_2& dp,
-                    const Point_2& p1,
-                    const Point_2& p2) {
+                        const Point_2& dp,
+                        const Point_2& p1,
+                        const Point_2& p2) {
     return (CGAL::orientation(q, dp, p1) != CGAL::orientation(q, dp, p2) && CGAL::orientation(q, p1, dp) == CGAL::orientation(q, p1, p2));
   }
 
   void funnel(int i, int j) {
-    Vertices right, left;
+    VHs right, left;
     bool block_left(false), block_right(false);
-    Vertex former = vs[i], neib;
+    VH former = vs[i], nb;
     for (int l=i; l<j; l++) {
       bool left_v(false), right_v(false), has_predecessor(false);
-        Edges& edges = incident_edges[vs[l]];
+        EHs& edges = incident_edges[vs[l]];
         for (int k=0; k<edges.size(); k++) {
-          neib = get_neighor(edges[k], vs[l]);
-        if ( neib == former )  {
+          nb = get_neighor(edges[k], vs[l]);
+        if ( nb == former )  {
           has_predecessor = true;
           break;
         }
-        if (CGAL::left_turn(q, vs[l]->point(), neib->point()))
+        if (CGAL::left_turn(q, vs[l]->point(), nb->point()))
           left_v = true;
         else
-          right_v = CGAL::right_turn(q, vs[l]->point(), neib->point());
+          right_v = CGAL::right_turn(q, vs[l]->point(), nb->point());
       }
       if (has_predecessor) {
           block_left = block_left || left_v;
@@ -354,7 +351,7 @@ private:
     incident_edges.clear();
     edx.clear();
 
-    Edges good_edges;
+    EHs good_edges;
     Input_arrangement_2 bbox;
     if (is_vertex_query || is_edge_query)
       input_face(f, good_edges, bbox);
@@ -372,22 +369,13 @@ private:
 
     Point_2 dp = q + dir;
 
-//    std::vector<Edge> heapc;
-//    heapc.clear();
-
     //initiation of active_edges
     if (is_vertex_query || is_edge_query) {
       for (int i=0; i!=good_edges.size(); i++) {
         if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point())) {
           heap_insert(good_edges[i]);
-//          heapc.push_back(good_edges[i]);
         }
       }
-//      std::make_heap(heapc.begin(), heapc.end(), Is_closer(q, geom_traits));
-//      for (int i=0; i!=heap.size(); i++) {
-//        edx[heap[i]] = i;
-//      }
-//      compare_heap(heap, heapc);
     }
     else {
       Ccb_halfedge_const_circulator curr = f->outer_ccb();
@@ -413,14 +401,14 @@ private:
 
     //angular sweep begins
     for (int i=0; i!=vs.size(); i++) {
-      Vertex vh = vs[i];
-      Edge closest_e = active_edges.front();   //save the closest edge;
+      VH vh = vs[i];
+      EH closest_e = active_edges.front();   //save the closest edge;
       int insert_cnt(0), remove_cnt(0);
-      Edges& edges = incident_edges[vh];
-      Edges insert_es, remove_es;
+      EHs& edges = incident_edges[vh];
+      EHs insert_es, remove_es;
 
       for (int j=0; j!=edges.size(); j++) {
-        Edge e = edges[j];
+        EH e = edges[j];
 //        Orientation o=Visibility_2::orientation_2(geom_traits, q, dp, nei);
 /*        if (o==RIGHT_TURN ||
             (o==COLLINEAR && i>0 && Visibility_2::compare_xy_2(geom_traits, nei, vs[i-1])==EQUAL))*/
@@ -477,15 +465,8 @@ private:
     }
   }
 
-//  Edge create_pair(const Point_2& p1, const Point_2& p2) const{
-//    assert(p1 != p2);
-//    if (Visibility_2::compare_xy_2(geom_traits, p1, p2)==SMALLER)
-//      return Edge(p1, p2);
-//    else
-//      return Edge(p2, p1);
-//  }
 
-  void heap_insert(const Edge e) {
+  void heap_insert(const EH e) {
     active_edges.push_back(e);
     int i = active_edges.size()-1;
     edx[e] = i;
@@ -542,7 +523,7 @@ private:
   void heap_swap(int i, int j) {
     edx[active_edges[i]] = j;
     edx[active_edges[j]] = i;
-    Edge temp = active_edges[i];
+    EH temp = active_edges[i];
     active_edges[i] = active_edges[j];
     active_edges[j] = temp;
   }
@@ -551,8 +532,8 @@ private:
   }
 
   bool is_closer(const Point_2& q,
-                 const Edge& e1,
-                 const Edge& e2) {
+                 const EH& e1,
+                 const EH& e2) {
     const Point_2& s1=e1->target()->point(),
         t1=e1->source()->point(),
         s2=e2->target()->point(),
@@ -659,14 +640,14 @@ private:
       }
     }
   }
-  class Is_sweeped_first:public std::binary_function<Vertex, Vertex, bool> {
+  class Is_sweeped_first:public std::binary_function<VH, VH, bool> {
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:
     Is_sweeped_first(const Point_2& q, const Geometry_traits_2* traits):q(q){
       geom_traits = traits;
     }
-    bool operator() (const Vertex v1, const Vertex v2) const {
+    bool operator() (const VH v1, const VH v2) const {
       const Point_2& p1 = v1->point();
       const Point_2& p2 = v2->point();
       int qua1 = quadrant(q, p1);
@@ -702,7 +683,7 @@ private:
 
   //when query is in face, every edge is good.
   void input_neighbor_f( const Halfedge_const_handle e) {
-    Vertex v = e->target();
+    VH v = e->target();
     if (!incident_edges.count(v))
       vs.push_back(v);
     incident_edges[v].push_back(e);
@@ -718,13 +699,13 @@ private:
 
   //for vertex and edge query: the visibility is limited in a cone.
   void input_edge(const Halfedge_const_handle e,
-                  Edges& good_edges) {
+                  EHs& good_edges) {
     for (int i=0; i<bad_edge.size(); i++)
       if (e == bad_edge[i])
         return;
 
-    Vertex v1 = e->target();
-    Vertex v2 = e->source();
+    VH v1 = e->target();
+    VH v2 = e->source();
     if (is_in_cone(v1->point()) || is_in_cone(v2->point()) || do_intersect_ray(q, source, v1->point(), v2->point())) {
       good_edges.push_back(e);
       if (!incident_edges.count(v1))
@@ -771,7 +752,7 @@ private:
   }
   //for vertex or edge query: traverse the face to get all edges and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
-                   Edges& good_edges,
+                   EHs& good_edges,
                    Input_arrangement_2& bbox)
   {
 //    timer.reset();
@@ -818,7 +799,7 @@ private:
 //    Face_const_handle f = e1->face();
     circ = curr = e1->face()->outer_ccb();
     do {
-      Vertex v = curr->target();
+      VH v = curr->target();
       vs.push_back(v);
       incident_edges[v].push_back(curr);
       incident_edges[v].push_back(curr->next());
