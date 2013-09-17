@@ -984,7 +984,7 @@ insert_balls(const Vertex_handle& vp,
     pt_dist = d_signF * step_size;
     norm_step_size = step_size;
   } else {
-    using boost::math::float_prior;
+    CGAL_assertion_code(using boost::math::float_prior);
     CGAL_assertion(n==0 ||
                    dleft_frac >= float_prior(float_prior(1.)));
   }
