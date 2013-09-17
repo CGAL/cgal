@@ -54,7 +54,7 @@
 // (You should not have to alter anything below here.)
 
 // If CGAL is not being used, we need to define certain things:
-#ifndef CGAL_VERSION
+#ifdef CGAL_JUST_MINIBALL
   namespace CGAL_MINIBALL_NAMESPACE {
     struct Tag_true {};
     struct Tag_false {};
