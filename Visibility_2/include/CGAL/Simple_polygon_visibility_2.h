@@ -252,7 +252,7 @@ private:
   const Geometry_traits_2 *geom_traits;
   std::stack<Point_2> s;
   std::vector<Point_2> vertices;
-  enum {LEFT, RIGHT, SCANA, SCANC, FINISH} upcase;
+  enum {LEFT, RIGHT, SCANA, SCANB, SCANC, FINISH} upcase;
   bool query_pt_is_vertex;
   bool query_pt_is_on_halfedge;
 
@@ -303,6 +303,8 @@ private:
     Point_2 start_point = fh->vertex(0)->point();
     std::cout << "start pt = " << start_point << std::endl;
 
+  //  CGAL::Visibility_2::print_simple_face<Face_const_handle, Ccb_halfedge_const_circulator>(face);
+
     // Now retrieve the circulator to first visible vertex from triangulation
     Ccb_halfedge_const_circulator circ = point_itr_map[start_point];
     Ccb_halfedge_const_circulator curr = circ;
@@ -312,6 +314,7 @@ private:
     Halfedge_const_handle he_prev = prev;
     std::cout << "prev he = " << he_prev->curve() << std::endl;
     std::cout << "curr he = " << he_curr->curve() << std::endl;
+    std::cout << "FACE cnt = " << CGAL::Visibility_2::count_edges_in_face<Input_arrangement_2>(face) << std::endl;
 
     if (CGAL::Visibility_2::orientation_2(geom_traits,
                                           he_prev->source()->point(),
@@ -332,17 +335,14 @@ private:
       do {
         Halfedge_const_handle he_curr_inc = incident_curr;
         std::cout << "he_curr = " << he_curr_inc->curve() << std::endl;
-        if (he_curr_inc->face() != he_curr->face()) {
-          he_curr_inc = he_curr_inc->twin();
-        }
+        std::cout << "FACE curr cnt = " << CGAL::Visibility_2::count_edges_in_face<Input_arrangement_2>(he_curr_inc->face()) << std::endl;
+        if (he_curr_inc->face() == face) {
 //        std::cout << "in loop\n";
 
           Ccb_halfedge_const_circulator incident_prev = incident_curr;
           incident_prev--;
           Halfedge_const_handle he_prev_inc = incident_prev;
-          if (he_prev_inc->face() != he_curr->face()) {
-            he_prev_inc = he_prev_inc->twin();
-          }
+
           std::cout << "he_prev = " << he_prev_inc->curve() << std::endl;
           if (CGAL::Visibility_2::orientation_2(geom_traits,
                                           he_prev_inc->source()->point(),
@@ -355,10 +355,12 @@ private:
             std::cout << "FOUND\n";
             std::cout << "he = " << he_curr_inc->curve() << std::endl;
             return incident_curr;
+          }
         }
       } while (++incident_curr != incident_circ);
     }
     std::cout << "out of loop\n";
+    std::cout << "couldn't find for q = " << q << std::endl;
   }
 
   void visibility_region_impl(const Point_2& q) {
@@ -510,9 +512,19 @@ private:
         std::cout << "R seg1 = " << s_j << ", " << s_j_prev << std::endl;
         std::cout << "R seg2 = " << vertices[i-1] << ", " << vertices[i] << std::endl;
         std::cout << "R switch to scana with w = " << s.top() << std::endl;
-        upcase = SCANA;
-        found = true;
-        w = s.top();
+        /*int &i, Point_2 &st, Point_2 &ipt, Point_2 &w, const Point_2 &query_pt) {
+        */
+        Segment_2 seg(vertices[i-1], vertices[i]);
+        Ray_2 ray(s_j, s_j_prev);
+        Object_2 result = CGAL::Visibility_2::intersect_2
+                        <Geometry_traits_2, Segment_2, Ray_2>(geom_traits, seg, ray);
+        if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+          if (*ipoint != s_j_prev) {
+            std::cout << "special window\n";
+            scanb(i, s_j_prev, *ipoint, query_pt, w);
+            found = true;
+          }
+        }
       }
       else {
         CGAL::Orientation orient = CGAL::Visibility_2::orientation_2(geom_traits, 
@@ -679,6 +691,31 @@ private:
       }
       std::cout << "END STACK\n";
     }*/
+  }
+
+  void scanb(int &i, const Point_2 &st, const Point_2 &ipt, const Point_2 &query_pt, Point_2 &w) {
+    std::cout << "scanb i = " << i << std::endl;
+    int k = i;
+    bool found = false;
+    while (!found && k+1 < vertices.size()) {
+      Segment_2 seg1(st, ipt);
+      Segment_2 seg2(vertices[k], vertices[k+1]);
+      if (CGAL::Visibility_2::do_intersect_2<Geometry_traits_2, Segment_2, Segment_2>
+                                                          (geom_traits, seg1, seg2)) {
+        Object_2 result = CGAL::Visibility_2::intersect_2
+                       <Geometry_traits_2, Segment_2, Segment_2>(geom_traits, seg1, seg2);
+        if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+          std::cout << "scanb ipt = " << *ipoint << std::endl;
+          s.push(*ipoint);
+          w = *ipoint;
+          i = k;
+          upcase = LEFT;
+          break;
+        }
+      }
+      k++;
+    }
+    std::cout << "exit scanb with i = " << i << std::endl;
   }
 
   void scanc(int& i, Point_2& w, const Point_2& query_pt) {
