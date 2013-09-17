@@ -69,7 +69,7 @@ public:
   }
 
 
-  Intrusive_list(const Intrusive_list& rhs)
+  Intrusive_list(const Intrusive_list& )
   {
     CGAL_assertion(false);
   }
