@@ -117,8 +117,14 @@ private:
 
 // Public methods
 public:
-  Curve_skeleton(HalfedgeGraph& polyhedron) : polyhedron(polyhedron),
-    hg_point_pmap(boost::get(vertex_point, polyhedron))
+  Curve_skeleton(HalfedgeGraph& polyhedron,
+                 VertexIndexMap vertex_id_pmap,
+                 EdgeIndexMap edge_id_pmap,
+                 HalfedgeGraphPointPMap hg_point_pmap) :
+                 polyhedron(polyhedron),
+                 vertex_id_pmap(vertex_id_pmap),
+                 edge_id_pmap(edge_id_pmap),
+                 hg_point_pmap(hg_point_pmap)
   {
   }
 

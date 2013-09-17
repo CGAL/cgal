@@ -934,7 +934,7 @@ public:
    */
   void convert_to_skeleton(Graph& g, GraphPointPMap& points)
   {
-    Skeleton skeleton(*polyhedron);
+    Skeleton skeleton(*polyhedron, vertex_id_pmap, edge_id_pmap, hg_point_pmap);
 
     skeleton.extract_skeleton(g, points, skeleton_to_surface_map);
   }
