@@ -38,6 +38,36 @@
 # Declare files that will always have LF line endings on checkout.
 Documentation/Doxyfile text eol=lf
 Documentation/pkglist_filter text eol=lf
+Scripts/developer_scripts/autotest_cgal text eol=lf
+Scripts/developer_scripts/autotest_cgal_with_cmake text eol=lf
+Scripts/developer_scripts/cgal_build text eol=lf
+Scripts/developer_scripts/cgal_depend text eol=lf
+Scripts/developer_scripts/cgal_generate_cmake_script text eol=lf
+Scripts/developer_scripts/cgal_git_update_hooks_for_client text eol=lf
+Scripts/developer_scripts/cgal_test_with_cmake text eol=lf
+Scripts/developer_scripts/cgal2gml text eol=lf
+Scripts/developer_scripts/check_library_uses_no_gpl_files text eol=lf
+Scripts/developer_scripts/check_licenses text eol=lf
+Scripts/developer_scripts/check_macro_names text eol=lf
+Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before text eol=lf
+Scripts/developer_scripts/check_svn_keywords text eol=lf
+Scripts/developer_scripts/create_cgal_test text eol=lf
+Scripts/developer_scripts/create_cgal_test_with_cmake text eol=lf
+Scripts/developer_scripts/create_internal_release text eol=lf
+Scripts/developer_scripts/create_macosx_installer text eol=lf
+Scripts/developer_scripts/create_new_release text eol=lf
+Scripts/developer_scripts/detect_files_with_mixed_eol_styles text eol=lf
+Scripts/developer_scripts/detect_packages_licenses text eol=lf
+Scripts/developer_scripts/licensecheck text eol=lf
+Scripts/developer_scripts/list_cgal_includes text eol=lf
+Scripts/developer_scripts/test_license_check text eol=lf
+Scripts/developer_scripts/test_testsuite_submission text eol=lf
+Scripts/developer_scripts/update_git_svn_clone text eol=lf
+Scripts/developer_scripts/clean_up_branch.sh text eol=lf
+Scripts/developer_scripts/create_demos_zip_files.sh text eol=lf
+Scripts/scripts/cgal_create_cmake_script text eol=lf
+Scripts/scripts/cgal_create_CMakeLists text eol=lf
+Scripts/scripts/cgal_create_assertions.sh text eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
 *.sln text eol=crlf
