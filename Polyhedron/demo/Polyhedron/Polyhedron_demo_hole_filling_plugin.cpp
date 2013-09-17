@@ -173,6 +173,12 @@ private:
   void get_holes() {
     typedef Polyhedron::Halfedge_iterator Halfedge_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator Halfedge_around_facet_circulator;
+    // save selected hole positions to keep selected holes selected
+    // we just use center position of holes for identification which might not work good for advanced cases...
+    std::vector<qglviewer::Vec> selected_hole_positions;
+    for(Selected_holes_set::const_iterator it = selected_holes.begin(); it != selected_holes.end(); ++it) {
+      selected_hole_positions.push_back((*it)->position);
+    }
 
     clear();
 
@@ -201,6 +207,12 @@ private:
         } while(++hf_around_facet != it->facet_begin());
         polyline_data.polyline->polylines.front().push_back(hf_around_facet->vertex()->point());
         polyline_data.position = center / counter;
+      }
+    }
+    //keep previous selected holes selected
+    for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
+      if(std::find(selected_hole_positions.begin(), selected_hole_positions.end(), it->position) != selected_hole_positions.end()) {
+        selected_holes.insert(it);
       }
     }
   }
