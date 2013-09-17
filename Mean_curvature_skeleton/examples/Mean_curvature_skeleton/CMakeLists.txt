@@ -51,10 +51,10 @@ endif()
 # include for local package
 include_directories( BEFORE ../../include )
 
-find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 if(NOT EIGEN3_FOUND)
-  message(STATUS "NOTICE: Eigen 3.1 (or greater) is not found.")
+  message(STATUS "NOTICE: Eigen 3.2 (or greater) is not found.")
 else()
   include( ${EIGEN3_USE_FILE} )
 endif(NOT EIGEN3_FOUND)
@@ -66,5 +66,5 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "simple_mcfskel_example.cpp" )
 
-create_single_source_cgal_program( "extract_correspondence_example.cpp" )
+#create_single_source_cgal_program( "extract_correspondence_example.cpp" )
 

@@ -1797,7 +1797,7 @@ void extract_skeleton(HalfedgeGraph& P,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
-  typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
+  typedef typename boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
   typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
 
   extract_skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
