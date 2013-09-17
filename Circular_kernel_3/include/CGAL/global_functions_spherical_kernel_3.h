@@ -28,7 +28,7 @@
 #define CGAL_SPHERICAL_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_3_H
 
 #include <CGAL/enum.h>
-#include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
+#include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 
 // global functions
 namespace CGAL {
