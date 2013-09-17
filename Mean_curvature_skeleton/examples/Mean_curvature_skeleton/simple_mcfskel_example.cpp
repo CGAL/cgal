@@ -58,13 +58,6 @@ typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeG
 typedef std::map<vertex_desc, Polyhedron::Traits::Point_3>             GraphPointMap;
 typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
 
-typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
-
-typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
-Mean_curvature_skeleton;
-
-
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
 bool is_mesh_valid(Polyhedron& pMesh)
