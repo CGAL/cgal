@@ -112,7 +112,7 @@ namespace CGAL {
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Edge collapse algorithm tag
+///@brief Edge collapse algorithm tag.
 enum Collapse_algorithm_tag
 {
   SIMPLIFICATION, /**< algorithm from simplification package */
@@ -120,7 +120,7 @@ enum Collapse_algorithm_tag
 };
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Degeneracy detection algorithm tag
+///@brief Degeneracy detection algorithm tag.
 enum Degeneracy_algorithm_tag
 {
   HEURISTIC, /**< a simple heuristic */
@@ -161,13 +161,13 @@ public:
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_iterator   vertex_iterator;
 
 private:
-  /// Functor used to transform the vertex iterator to point iterator
+  /// Functor used to transform the vertex iterator to point iterator.
   static Point v_to_p(vertex_descriptor v)
   {
     return v->point();
   }
 
-  /// compute the diagonal length for a bounding box
+  /// Compute the diagonal length for a bounding box.
   double diagonal(Bbox& bbox)
   {
     double dx = bbox.xmax() - bbox.xmin();
@@ -196,7 +196,7 @@ public:
    * is_medially_centered = true
    *
    * @param P
-   *        triangulated surface mesh used to extract skeleton
+   *        Triangulated surface mesh used to extract skeleton.
    */
   SkeletonArgs(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
     delta_area(0.0001), max_iterations(500), is_medially_centered(true)
@@ -239,7 +239,7 @@ public:
 ///         a model of `HalfedgeGraph`
 /// @tparam Graph
 ///         a model of boost::adjacency_list
-///         data structure for skeleton curve
+///         It is a data structure for the skeleton curve.
 /// @tparam VertexIndexMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with MCF_Skeleton::vertex_descriptor as key and
@@ -351,71 +351,79 @@ public:
 // Data members
 private:
 
-  /** source triangulated surface mesh for skeletonization */
-  HalfedgeGraph& polyhedron;
-  /** storing indices of all vertices */
+  /** Source triangulated surface mesh for skeletonization */
+  HalfedgeGraph* mesh;
+  /** A copy of source mesh.
+      All the modifications are operated on it. */
+  HalfedgeGraph* polyhedron;
+
+  /** If the object owns the copy of the polyhedron.
+   *  If true, the polyhedron will be deleted when the destructor is called. */
+  bool owns_polyhedron;
+
+  /** Storing indices of all vertices. */
   VertexIndexMap vertex_id_pmap;
-  /** storing indices of all edges */
+  /** Storing indices of all edges. */
   EdgeIndexMap edge_id_pmap;
-  /** storing the point for HalfedgeGraph vertex_descriptor */
+  /** Storing the point for HalfedgeGraph vertex_descriptor. */
   HalfedgeGraphPointPMap hg_point_pmap;
 
-  /** controls the velocity of movement and approximation quality */
+  /** Controling the velocity of movement and approximation quality. */
   double omega_H;
-  /** controls the smoothness of the medial approximation */
+  /** Controling the smoothness of the medial approximation. */
   double omega_P;
-  /** edges with length less than `edgelength_TH` will be collapsed */
+  /** Edges with length less than `edgelength_TH` will be collapsed. */
   double edgelength_TH;
-  /** triangles with angle greater than `alpha_TH` will be split */
+  /** Triangles with angle greater than `alpha_TH` will be split. */
   double alpha_TH;
-  /** value very close to zero */
+  /** Value very close to zero. */
   double zero_TH;
-  /** run_to_converge will stop if the change of area in one iteration
-   *  is less than `delta_area` */
+  /** `run_to_converge` will stop if the change of area in one iteration
+   *  is less than `delta_area`. */
   double delta_area;
-  /** surface area of original mesh */
+  /** Surface area of original mesh. */
   double original_area;
-  /** maximum number of iterations */
+  /** Maximum number of iterations. */
   int max_iterations;
-  /** should the skeleton be medially centered? */
+  /** Should the skeleton be medially centered? */
   bool is_medially_centered;
-  /** are poles computed */
+  /** Are poles computed. */
   bool are_poles_computed;
 
-  /** cotangent weight calculator */
+  /** Cotangent weight calculator. */
   Weight_calculator weight_calculator;
-  /** storing the weights for edges */
+  /** Storing the weights for edges. */
   std::vector<double> edge_weight;
-  /** the sparse solver */
+  /** The sparse solver. */
   SparseLinearAlgebraTraits_d m_solver;
 
-  /** assign a unique id to a new vertex */
+  /** Assign a unique id to a new vertex. */
   int vertex_id_count;
-  /** the maximum id for original surface. vertices with ids
+  /** The maximum id for original surface. vertices with ids
    *  greater than `max_id` are created during split,
-   *  thus will not be considered in correspondence tracking */
+   *  thus will not be considered in correspondence tracking. */
   int max_id;
-  /** used when assembling the matrix */
+  /** Used when assembling the matrix. */
   std::map<int, int> new_id;
 
-  /** store the id of fixed vertices */
+  /** Store the id of fixed vertices. */
   std::map<size_t, bool> is_vertex_fixed_map;
 
-  /** the incident angle for a halfedge */
+  /** The incident angle for a halfedge. */
   std::vector<double> halfedge_angle;
 
-  /** record the correspondence between final surface
-   *  and original surface points */
+  /** Record the correspondence between final surface
+   *  and original surface points. */
   std::map<int, std::vector<int> > correspondence;
-  /** record the correspondence between skeletal points
-   *  and original surface points */
+  /** Record the correspondence between skeletal points
+   *  and original surface points. */
   std::map<vertex_desc, std::vector<int> > skeleton_to_surface_map;
 
-  /** record the corresponding pole of a point */
+  /** Record the corresponding pole of a point. */
   std::map<int, int> poles;
-  /** the normal of surface points */
+  /** The normal of surface points. */
   std::vector<Vector> normals;
-  /** the dual of a cell in Triangulation(a Voronoi point) */
+  /** The dual of a cell in Triangulation(a Voronoi point). */
   std::vector<Point> cell_dual;
 
 // Public methods
@@ -430,7 +438,8 @@ public:
    * @pre the polyhedron is a watertight triangular mesh
    * @param P
    *        triangulated surface mesh used to extract skeleton
-   * \note  the mesh passed in will be modified by the algorithm
+   * \note  The algorithm will make a copy of the source mesh and
+   *        keep the source mesh intact.
    * @param Vertex_index_map
    *        property map for associating an id to each vertex
    * @param Edge_index_map
@@ -443,13 +452,50 @@ public:
               EdgeIndexMap Edge_index_map,
               SkeletonArgs<HalfedgeGraph> Skeleton_args
               )
-    :polyhedron(P),
+    :mesh(&P), polyhedron(new HalfedgeGraph(P)),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
      hg_point_pmap(boost::get(vertex_point, P))
   {
+    owns_polyhedron = true;
     init_args(Skeleton_args);
     init();
+  }
+
+  /**
+   * The constructor of a MCF_Skeleton object.
+   *
+   * @pre the polyhedron is a watertight triangular mesh
+   * @param P
+   *        triangulated surface mesh used to extract skeleton
+   * \note  The source mesh will be modified by the algorithm.
+   * @param Vertex_index_map
+   *        property map for associating an id to each vertex
+   * @param Edge_index_map
+   *        property map for associating an id to each edge
+   * @param Skeleton_args
+   *        parameters for MCF_Skeleton algorithm
+   */
+  MCF_Skeleton(HalfedgeGraph* P,
+              VertexIndexMap Vertex_index_map,
+              EdgeIndexMap Edge_index_map,
+              SkeletonArgs<HalfedgeGraph> Skeleton_args
+              )
+    :mesh(NULL), polyhedron(P),
+     vertex_id_pmap(Vertex_index_map),
+     edge_id_pmap(Edge_index_map),
+     hg_point_pmap(boost::get(vertex_point, *P))
+  {
+    init_args(Skeleton_args);
+    init();
+  }
+
+  ~MCF_Skeleton()
+  {
+    if (owns_polyhedron)
+    {
+      delete polyhedron;
+    }
   }
 
   /// @} Constructor and Destructor
@@ -517,9 +563,20 @@ public:
     return max_iterations;
   }
 
-  HalfedgeGraph& get_halfedge_graph()
+  /**
+   * Get the pointer to the contracted mesh.
+   */
+  HalfedgeGraph* get_halfedge_graph()
   {
     return polyhedron;
+  }
+
+  /**
+   * Get the pointer to the copy of source mesh.
+   */
+  HalfedgeGraph* get_mesh()
+  {
+    return mesh;
   }
 
   /// \cond SKIP_FROM_MANUAL
@@ -544,6 +601,20 @@ public:
     return zero_TH;
   }
 
+  /**
+   * @brief If set to true, the copy of the source mesh will be deleted when
+   *        the destructor is called.
+   */
+  void set_own_polyhedron(bool value)
+  {
+    owns_polyhedron = value;
+  }
+
+  bool get_own_polyhedron()
+  {
+    return owns_polyhedron;
+  }
+
   /// \endcond
 
   /// @cond CGAL_DOCUMENT_INTERNAL
@@ -558,7 +629,7 @@ public:
   {
     fixed_points.clear();
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
       if (is_vertex_fixed_map.find(id) != is_vertex_fixed_map.end())
@@ -579,7 +650,7 @@ public:
   {
     non_fixed_points.clear();
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
       if (is_vertex_fixed_map.find(id) == is_vertex_fixed_map.end())
@@ -598,10 +669,10 @@ public:
    */
   void get_poles(std::vector<Point>& max_poles)
   {
-    max_poles.resize(boost::num_vertices(polyhedron));
+    max_poles.resize(boost::num_vertices(*polyhedron));
     vertex_iterator vb, ve;
     int cnt = 0;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
@@ -664,7 +735,7 @@ public:
 
     compute_edge_weight();
 
-    int nver = boost::num_vertices(polyhedron);
+    int nver = boost::num_vertices(*polyhedron);
     int nrows;
     if (is_medially_centered)
     {
@@ -700,7 +771,7 @@ public:
 
     // copy to mesh
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor vi = *vb;
       int id = boost::get(vertex_id_pmap, vi);
@@ -812,7 +883,7 @@ public:
     update_topology();
     detect_degeneracies();
 
-    MCFSKEL_INFO(double area = internal::get_surface_area(polyhedron, hg_point_pmap);)
+    MCFSKEL_INFO(double area = internal::get_surface_area(*polyhedron, hg_point_pmap);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
@@ -833,7 +904,7 @@ public:
       update_topology();
       detect_degeneracies();
 
-      double area = internal::get_surface_area(polyhedron, hg_point_pmap);
+      double area = internal::get_surface_area(*polyhedron, hg_point_pmap);
       double area_ratio = fabs(last_area - area) / original_area;
 
       MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -863,7 +934,7 @@ public:
    */
   void convert_to_skeleton(Graph& g, GraphPointPMap& points)
   {
-    Skeleton skeleton(polyhedron);
+    Skeleton skeleton(*polyhedron);
 
     skeleton.extract_skeleton(g, points, skeleton_to_surface_map);
   }
@@ -930,20 +1001,26 @@ private:
     vertex_iterator vb, ve;
 
     alpha_TH *= (M_PI / 180.0);
-    double area = internal::get_surface_area(polyhedron, hg_point_pmap);
+    double area = internal::get_surface_area(*polyhedron, hg_point_pmap);
     original_area = area;
 
     // initialize index maps
     vertex_id_count = 0;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       boost::put(vertex_id_pmap, *vb, vertex_id_count++);
     }
+    vertex_id_count = 0;
+    for (boost::tie(vb, ve) = boost::vertices(*mesh); vb != ve; ++vb)
+    {
+      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+    }
+
     max_id = vertex_id_count;
 
     edge_iterator eb, ee;
     int idx = 0;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       boost::put(edge_id_pmap, *eb, idx++);
     }
@@ -962,11 +1039,11 @@ private:
   void compute_edge_weight()
   {
     edge_weight.clear();
-    edge_weight.reserve(boost::num_edges(polyhedron));
+    edge_weight.reserve(boost::num_edges(*polyhedron));
     edge_iterator eb, ee;
-    for(boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for(boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
-      edge_weight.push_back(this->weight_calculator(*eb, polyhedron));
+      edge_weight.push_back(this->weight_calculator(*eb, *polyhedron));
     }
   }
 
@@ -975,12 +1052,12 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start LHS\n";)
 
-    int nver = boost::num_vertices(polyhedron);
+    int nver = boost::num_vertices(*polyhedron);
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(polyhedron);
+    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(*polyhedron);
 
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
 
@@ -1006,7 +1083,7 @@ private:
       }
     }
 
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
       int i = new_id[id];
@@ -1018,9 +1095,9 @@ private:
       }
       double diagonal = 0;
       in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = boost::in_edges(*vb, polyhedron); e != e_end; ++e)
+      for (boost::tie(e, e_end) = boost::in_edges(*vb, *polyhedron); e != e_end; ++e)
       {
-        vertex_descriptor vj = boost::source(*e, polyhedron);
+        vertex_descriptor vj = boost::source(*e, *polyhedron);
         double wij = edge_weight[boost::get(edge_id_pmap, *e)] * 2.0;
         int jd = boost::get(vertex_id_pmap, vj);
         int j = new_id[jd];
@@ -1040,10 +1117,10 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
-    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(polyhedron);
+    Point_inside_polyhedron_3<HalfedgeGraph, Kernel> test_inside(*polyhedron);
 
     // assemble right columns of linear system
-    int nver = boost::num_vertices(polyhedron);
+    int nver = boost::num_vertices(*polyhedron);
     vertex_iterator vb, ve;
     for (int i = 0; i < nver; ++i)
     {
@@ -1052,7 +1129,7 @@ private:
       Bz[i] = 0;
     }
 
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor vi = *vb;
       int id = boost::get(vertex_id_pmap, vi);
@@ -1100,7 +1177,7 @@ private:
     new_id.clear();
     int cnt = 0;
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       int id = boost::get(vertex_id_pmap, *vb);
       new_id[id] = cnt++;
@@ -1117,10 +1194,10 @@ private:
     internal::Fixed_edge_map<HalfedgeGraph> fixed_edge_map;
 
     edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
-      vertex_descriptor vi = boost::source(*eb, polyhedron);
-      vertex_descriptor vj = boost::target(*eb, polyhedron);
+      vertex_descriptor vi = boost::source(*eb, *polyhedron);
+      vertex_descriptor vj = boost::target(*eb, *polyhedron);
       size_t vi_idx = boost::get(vertex_id_pmap, vi);
       size_t vj_idx = boost::get(vertex_id_pmap, vj);
 
@@ -1132,7 +1209,7 @@ private:
     }
 
     int edge_id = 0;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       boost::put(edge_id_pmap, *eb, edge_id++);
     }
@@ -1158,7 +1235,7 @@ private:
     }
 
     int r = SMS::edge_collapse
-                (polyhedron
+                (*polyhedron
                 ,stop
                 ,CGAL::get_cost(SMS::Edge_length_cost<HalfedgeGraph>())
                       .get_placement(placement)
@@ -1232,10 +1309,10 @@ private:
   int collapse_edges_linear(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
   {
     std::vector<edge_descriptor> edges;
-    edges.reserve(boost::num_edges(polyhedron));
+    edges.reserve(boost::num_edges(*polyhedron));
     edge_iterator eb, ee;
 
-    boost::tie(eb, ee) = boost::edges(polyhedron);
+    boost::tie(eb, ee) = boost::edges(*polyhedron);
     std::copy(eb, ee, std::back_inserter(edges));
 
     int cnt = 0;
@@ -1247,15 +1324,15 @@ private:
         continue;
       }
 
-      vertex_descriptor vi = boost::source(ed, polyhedron);
-      vertex_descriptor vj = boost::target(ed, polyhedron);
+      vertex_descriptor vi = boost::source(ed, *polyhedron);
+      vertex_descriptor vj = boost::target(ed, *polyhedron);
       double edge_length = sqrt(squared_distance(boost::get(hg_point_pmap, vi),
                                                  boost::get(hg_point_pmap, vj)));
-      if (internal::is_collapse_ok(polyhedron, ed) && edge_length < edgelength_TH)
+      if (internal::is_collapse_ok(*polyhedron, ed) && edge_length < edgelength_TH)
       {
         Point p = midpoint(
-          boost::get(vertex_point, polyhedron, boost::source(ed, polyhedron)),
-          boost::get(vertex_point, polyhedron, boost::target(ed, polyhedron)));
+          boost::get(vertex_point, *polyhedron, boost::source(ed, *polyhedron)),
+          boost::get(vertex_point, *polyhedron, boost::target(ed, *polyhedron)));
 
         // invalidate the edges that will be collapsed
         // since the mesh is closed, 6 halfedges will be collapsed
@@ -1266,8 +1343,8 @@ private:
         fixed_edge_map.set_is_fixed(ed->opposite()->prev(), true);
         fixed_edge_map.set_is_fixed(ed->opposite()->prev()->opposite(), true);
 
-        vertex_descriptor v = SMS::halfedge_collapse(ed, polyhedron);
-        boost::put(vertex_point, polyhedron, v, p);
+        vertex_descriptor v = SMS::halfedge_collapse(ed, *polyhedron);
+        boost::put(vertex_point, *polyhedron, v, p);
 
         track_correspondence(vi, vj, v);
 
@@ -1282,10 +1359,10 @@ private:
   void init_fixed_edge_map(internal::Fixed_edge_map<HalfedgeGraph>& fixed_edge_map)
   {
     edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
-      vertex_descriptor vi = boost::source(*eb, polyhedron);
-      vertex_descriptor vj = boost::target(*eb, polyhedron);
+      vertex_descriptor vi = boost::source(*eb, *polyhedron);
+      vertex_descriptor vj = boost::target(*eb, *polyhedron);
       size_t vi_idx = boost::get(vertex_id_pmap, vi);
       size_t vj_idx = boost::get(vertex_id_pmap, vj);
 
@@ -1305,17 +1382,17 @@ private:
   void compute_incident_angle()
   {
     halfedge_angle.clear();
-    int ne = boost::num_edges(polyhedron);
+    int ne = boost::num_edges(*polyhedron);
     halfedge_angle.resize(ne, 0);
 
     edge_iterator eb, ee;
     int idx = 0;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       boost::put(edge_id_pmap, *eb, idx++);
     }
 
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       int e_id = boost::get(edge_id_pmap, *eb);
       edge_descriptor ed = *eb;
@@ -1326,10 +1403,10 @@ private:
       }
       else
       {
-        vertex_descriptor vi = boost::source(ed, polyhedron);
-        vertex_descriptor vj = boost::target(ed, polyhedron);
+        vertex_descriptor vi = boost::source(ed, *polyhedron);
+        vertex_descriptor vj = boost::target(ed, *polyhedron);
         edge_descriptor ed_next = ed->next();
-        vertex_descriptor vk = boost::target(ed_next, polyhedron);
+        vertex_descriptor vk = boost::target(ed_next, *polyhedron);
         Point pi = boost::get(hg_point_pmap, vi);
         Point pj = boost::get(hg_point_pmap, vj);
         Point pk = boost::get(hg_point_pmap, vk);
@@ -1390,12 +1467,12 @@ private:
   /// Split triangles with an angle greater than `alpha_TH`.
   int split_flat_triangle()
   {
-    int ne = boost::num_edges(polyhedron);
+    int ne = boost::num_edges(*polyhedron);
     compute_incident_angle();
 
     int cnt = 0;
     edge_iterator eb, ee;
-    for (boost::tie(eb, ee) = boost::edges(polyhedron); eb != ee; ++eb)
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
     {
       edge_descriptor ei = *eb;
       edge_descriptor ej = ei->opposite();
@@ -1407,8 +1484,8 @@ private:
         continue;
       }
 
-      vertex_descriptor vs = boost::source(ei, polyhedron);
-      vertex_descriptor vt = boost::target(ei, polyhedron);
+      vertex_descriptor vs = boost::source(ei, *polyhedron);
+      vertex_descriptor vt = boost::target(ei, *polyhedron);
 
       double angle_i = halfedge_angle[ei_id];
       double angle_j = halfedge_angle[ej_id];
@@ -1426,9 +1503,9 @@ private:
       {
         ek = ej->next();
       }
-      vertex_descriptor vk = boost::target(ek, polyhedron);
+      vertex_descriptor vk = boost::target(ek, *polyhedron);
       Point pn = project_vertex(vs, vt, vk);
-      edge_descriptor en = internal::mesh_split(polyhedron, hg_point_pmap, ei, pn);
+      edge_descriptor en = internal::mesh_split(*polyhedron, hg_point_pmap, ei, pn);
       // set id for new vertex
       boost::put(vertex_id_pmap, en->vertex(), vertex_id_count++);
       cnt++;
@@ -1446,14 +1523,14 @@ private:
   {
     int num_fixed = 0;
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
 
       if (is_vertex_fixed_map.find(idx) == is_vertex_fixed_map.end())
       {
-        bool willbefixed = internal::is_vertex_degenerate(polyhedron, hg_point_pmap,
+        bool willbefixed = internal::is_vertex_degenerate(*polyhedron, hg_point_pmap,
                                                           v, edgelength_TH);
         if (willbefixed)
         {
@@ -1475,7 +1552,7 @@ private:
     int num_fixed = 0;
     double elength_fixed = edgelength_TH;
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int idx = boost::get(vertex_id_pmap, v);
@@ -1485,16 +1562,16 @@ private:
         int bad_counter = 0;
 
         in_edge_iterator eb, ee;
-        for (boost::tie(eb, ee) = boost::in_edges(v, polyhedron); eb != ee; ++eb)
+        for (boost::tie(eb, ee) = boost::in_edges(v, *polyhedron); eb != ee; ++eb)
         {
           edge_descriptor edge = *eb;
-          vertex_descriptor v0 = boost::source(edge, polyhedron);
-          vertex_descriptor v1 = boost::target(edge, polyhedron);
+          vertex_descriptor v0 = boost::source(edge, *polyhedron);
+          vertex_descriptor v1 = boost::target(edge, *polyhedron);
           double length = sqrt(squared_distance(boost::get(hg_point_pmap, v0),
                                                 boost::get(hg_point_pmap, v1)));
           if (length < elength_fixed)
           {
-            if (!internal::is_collapse_ok(polyhedron, edge))
+            if (!internal::is_collapse_ok(*polyhedron, edge))
             {
               bad_counter++;
             }
@@ -1531,10 +1608,10 @@ private:
     points.clear();
     cell_dual.clear();
     point_to_pole.clear();
-    point_to_pole.resize(boost::num_vertices(polyhedron));
+    point_to_pole.resize(boost::num_vertices(*polyhedron));
 
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
@@ -1599,10 +1676,10 @@ private:
   /// Compute an approximate vertex normal for all vertices.
   void compute_vertex_normal()
   {
-    normals.resize(boost::num_vertices(polyhedron));
+    normals.resize(boost::num_vertices(*polyhedron));
 
     vertex_iterator vb, ve;
-    for (boost::tie(vb, ve) = boost::vertices(polyhedron); vb != ve; ++vb)
+    for (boost::tie(vb, ve) = boost::vertices(*polyhedron); vb != ve; ++vb)
     {
       vertex_descriptor v = *vb;
       int vid = boost::get(vertex_id_pmap, v);
@@ -1699,7 +1776,6 @@ void extract_skeleton(HalfedgeGraph& P,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
-  //typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type HalfedgeGraphPointPMap;
   typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
 
   extract_skeleton<HalfedgeGraph, Graph, VertexIndexMap, EdgeIndexMap,
@@ -1721,7 +1797,6 @@ void extract_skeleton(HalfedgeGraph& P,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
-  //typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type HalfedgeGraphPointPMap;
   typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type HalfedgeGraphPointPMap;
   typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
 

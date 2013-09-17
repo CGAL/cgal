@@ -122,13 +122,15 @@ public:
   {
   }
 
-  // extract the skeleton to a boost::graph data structure
+  // Extracting the skeleton to a boost::graph data structure.
   void extract_skeleton(Graph& curve, GraphPointPMap& points,
                         std::map<vertex_desc, std::vector<int> >& corr)
   {
     init();
     collapse();
 
+    // orig_vertex_id maps the new id for a vertex to its original id.
+    // new_vertex_id only contains id for vertices that have not been deleted.
     std::vector<int> new_vertex_id;
     std::vector<int> orig_vertex_id;
     new_vertex_id.clear();
@@ -146,7 +148,7 @@ public:
       }
     }
 
-    // map a vertex id to its descriptor
+    // Mapping a skeleton vertex id to its descriptor.
     std::vector<vertex_desc> id_to_vd;
     id_to_vd.clear();
     id_to_vd.resize(id);

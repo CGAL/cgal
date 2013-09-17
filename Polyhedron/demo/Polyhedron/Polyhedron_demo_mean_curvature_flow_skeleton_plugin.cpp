@@ -214,9 +214,6 @@ public:
         return false;
       }
 
-      // save a copy before any operation
-      mCopy = new Polyhedron(*pMesh);
-
       CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
       skeleton_args.omega_H = omega_H;
       skeleton_args.omega_P = omega_P;
@@ -226,19 +223,26 @@ public:
 
       mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                         skeleton_args);
+      mcs->set_own_polyhedron(false);
+
+      Polyhedron* contracted_mesh = mcs->get_halfedge_graph();
+      Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
+      contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
+
+      mCopy = mcs->get_mesh();
+      copyItemIndex = scene->mainSelectionIndex();
+
+      contractedItemIndex = scene->addItem(contracted_item);
+
+      item->setVisible(false);
 
       fixedPointsItemIndex = -1;
       nonFixedPointsItemIndex = -1;
       poleLinesItemIndex = -1;
-
-      Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
-      copyItemIndex = scene->addItem(item_copy);
-      item_copy->setName(QString("original mesh of %1").arg(item->name()));
-      item_copy->setVisible(false);
     }
     else
     {
-      Polyhedron* mesh = &(mcs->get_halfedge_graph());
+      Polyhedron* mesh = mcs->get_halfedge_graph();
       if (mesh != pMesh)
       {
         if (!is_mesh_valid(pMesh))
@@ -247,9 +251,6 @@ public:
         }
 
         delete mcs;
-
-        // save a copy before any operation
-        mCopy = new Polyhedron(*pMesh);
 
         CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
         skeleton_args.omega_H = omega_H;
@@ -260,14 +261,22 @@ public:
 
         mcs = new Mean_curvature_skeleton(*pMesh, Vertex_index_map(), Edge_index_map(),
                                           skeleton_args);
+        mcs->set_own_polyhedron(false);
+
+        Polyhedron* contracted_mesh = mcs->get_halfedge_graph();
+        Scene_polyhedron_item* contracted_item = new Scene_polyhedron_item(contracted_mesh);
+        contracted_item->setName(QString("contracted mesh of %1").arg(item->name()));
+
+        mCopy = mcs->get_mesh();
+        copyItemIndex = scene->mainSelectionIndex();
+
+        contractedItemIndex = scene->addItem(contracted_item);
+
+        item->setVisible(false);
+
         fixedPointsItemIndex = -1;
         nonFixedPointsItemIndex = -1;
         poleLinesItemIndex = -1;
-
-        Scene_polyhedron_item* item_copy = new Scene_polyhedron_item(mCopy);
-        copyItemIndex = scene->addItem(item_copy);
-        item_copy->setName(QString("original mesh of %1").arg(item->name()));
-        item_copy->setVisible(false);
       }
       else
       {
@@ -309,6 +318,7 @@ public slots:
   void on_actionConverge();
   void on_actionUpdateBBox();
   void on_actionSegment();
+  void on_actionItemAboutToBeDestroyed(Scene_item*);
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -318,6 +328,7 @@ private:
   int fixedPointsItemIndex;
   int nonFixedPointsItemIndex;
   int poleLinesItemIndex;
+  int contractedItemIndex;
   int copyItemIndex;
 
   Polyhedron *mCopy;
@@ -376,6 +387,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
     fixedPointsItemIndex = -1;
     nonFixedPointsItemIndex = -1;
     poleLinesItemIndex = -1;
+    contractedItemIndex = -1;
     copyItemIndex = -1;
   }
 }
@@ -402,11 +414,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(*mCopy));
-  int id = 0;
   for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
-    id_to_vd[id++] = v;
+    id_to_vd[v->id()] = v;
   }
 
   // init segment mesh id
@@ -528,6 +539,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
     Scene_polylines_item* skeleton = new Scene_polylines_item();
+    skeleton->setColor(QColor(175, 0, 255));
 
     boost::graph_traits<Graph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
@@ -593,6 +605,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
     Scene_polylines_item* skeleton = new Scene_polylines_item();
+    skeleton->setColor(QColor(175, 0, 255));
 
     boost::graph_traits<Graph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
@@ -757,11 +770,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   if (fixedPointsItemIndex == -1)
   {
     fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
-    std::cerr << "add item " << fixedPointsItemIndex << "\n";
   }
   else
   {
-    std::cerr << "replace item " << fixedPointsItemIndex << "\n";
     Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem, false);
     delete temp;
   }
@@ -799,9 +810,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
+  Scene_interface::Item_id contracted_item_index = scene->mainSelectionIndex();
+  Scene_polyhedron_item* contracted_item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(contracted_item_index));
+
   // update scene
   Scene_points_with_normal_item* fixedPointsItem = new Scene_points_with_normal_item;
-  fixedPointsItem->setName(QString("fixed points of %1").arg(item->name()));
+  fixedPointsItem->setName(QString("fixed points of %1").arg(contracted_item->name()));
 
   std::vector<Point> fixedPoints;
   mcs->get_fixed_points(fixedPoints);
@@ -813,6 +828,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     ps->select(&point);
     ps->push_back(point);
   }
+
   if (fixedPointsItemIndex == -1)
   {
     fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
@@ -822,6 +838,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem, false);
     delete temp;
   }
+
+  QObject* scene_object = dynamic_cast<QObject*>(scene);
+  connect(scene_object, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
+          this, SLOT(on_actionItemAboutToBeDestroyed(Scene_item*)));
 
 //#define DRAW_NON_FIXED_POINTS
 #ifdef DRAW_NON_FIXED_POINTS
@@ -882,9 +902,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   }
 #endif
 
-  scene->itemChanged(index);
-  scene->itemChanged(fixedPointsItemIndex);
-  scene->setSelectedItem(index);
+  scene->itemChanged(contractedItemIndex);
+  scene->setSelectedItem(contractedItemIndex);
   QApplication::restoreOverrideCursor();
 }
 
@@ -938,15 +957,16 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton, false);
 
+  Polyhedron* mesh = mcs->get_mesh();
+
   vertex_iterator vb, ve;
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(*mCopy));
-  int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(*mCopy); vb != ve; ++vb)
+  id_to_vd.resize(boost::num_vertices(*mesh));
+  for (boost::tie(vb, ve) = boost::vertices(*mesh); vb != ve; ++vb)
   {
     vertex_descriptor v = *vb;
-    id_to_vd[id++] = v;
+    id_to_vd[v->id()] = v;
   }
 
   Scene_polylines_item* lines = new Scene_polylines_item();
@@ -1076,10 +1096,20 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     delete temp;
   }
 
-  scene->itemChanged(index);
   scene->itemChanged(fixedPointsItemIndex);
-  scene->setSelectedItem(index);
+  scene->itemChanged(contractedItemIndex);
+  scene->setSelectedItem(contractedItemIndex);
+
   QApplication::restoreOverrideCursor();
+}
+
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionItemAboutToBeDestroyed(Scene_item* item)
+{
+  if (mcs != NULL)
+  {
+    delete mcs;
+    mcs = NULL;
+  }
 }
 
 Q_EXPORT_PLUGIN2(Polyhedron_demo_mean_curvature_flow_skeleton_plugin, Polyhedron_demo_mean_curvature_flow_skeleton_plugin)
