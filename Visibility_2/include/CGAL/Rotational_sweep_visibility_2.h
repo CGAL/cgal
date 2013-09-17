@@ -810,7 +810,7 @@ private:
          e_itr != arr_out.edges_end();
          e_itr++) {
       if (e_itr->face() == e_itr->twin()->face())
-        arr_out.remove_edge(he);
+        arr_out.remove_edge(e_itr);
     }
   }
 };
