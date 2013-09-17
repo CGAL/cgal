@@ -16,6 +16,7 @@
  * as default implementation for the graph-cut.
  *
  * Also algorithms can be used by their-own for applying alpha-expansion graph-cut on any graph.
+ *
  */
 #include <CGAL/assertions.h>
 #include <CGAL/Timer.h>
@@ -76,6 +77,15 @@ namespace internal
 //     * Alpha_expansion_graph_cut_boykov_kolmogorov provides an implementation.
 //       MAXFLOW does not provide any option for pre-allocation (It is possible with v_3.02 though).
 //
+// Typical Benchmark result provided by Ilker
+//                                 | construction of vertices  |  construction of edges    | graph cut  | Total
+//   -----------------------------------------------------------------------------------------------------------
+//   boost with an adjacency list  |         1.53              | 1.51                      |  3.00      | 6.04
+//   boost with CSR                | 0.11 (gather in a vector) | 0.15 (gather in a vector) |  2.67      | 2.93
+//   MaxFlow                       |       0.042               | 0.076                     |  1.043     | 1.161
+//
+// The main issue for now with CSR is the construction of the opposite edge map that is too costly,
+// since it is done by exploring all edges to find opposite
 ////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
