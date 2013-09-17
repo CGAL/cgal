@@ -66,5 +66,5 @@ include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "simple_mcfskel_example.cpp" )
 
-#create_single_source_cgal_program( "extract_correspondence_example.cpp" )
+create_single_source_cgal_program( "MCF_Skeleton_example.cpp" )
 

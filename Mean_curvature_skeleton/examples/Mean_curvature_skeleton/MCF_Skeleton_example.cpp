@@ -41,19 +41,28 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_desc
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor             edge_descriptor;
 
-typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
-typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
-
-typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<CGAL::Eigen_sparse_matrix<double>::EigenType> > Sparse_linear_solver;
-
-typedef CGAL::Mean_curvature_skeleton<Polyhedron, Sparse_linear_solver, Vertex_index_map, Edge_index_map> Mean_curvature_skeleton;
-
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
-typedef boost::graph_traits<Graph>::vertex_descriptor                vertex_desc;
-typedef boost::graph_traits<Graph>::edge_iterator                    edge_iter;
+typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
+typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
+typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
 
-typedef CGAL::Bbox_3                                                 Bbox;
+typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map;
+typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;
+
+typedef std::map<vertex_desc, std::vector<int> >                       Correspondence_map;
+typedef boost::associative_property_map<Correspondence_map>            GraphCorrelationPMap;
+
+typedef CGAL::MCF_default_halfedge_graph_pmap<Polyhedron>::type        HalfedgeGraphPointPMap;
+
+typedef std::map<vertex_desc, Polyhedron::Traits::Point_3>             GraphPointMap;
+typedef boost::associative_property_map<GraphPointMap>                 GraphPointPMap;
+
+typedef CGAL::MCF_default_solver<double>::type                         Sparse_linear_solver;
+
+typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> 
+Mean_curvature_skeleton;
 
 // The input of the skeletonization algorithm must be a pure triangular closed
 // mesh and has only one component.
@@ -85,23 +94,6 @@ bool is_mesh_valid(Polyhedron& pMesh)
   return true;
 }
 
-// Functor used to transform the vertex iterator to point iterator
-Point v_to_p(vertex_descriptor v)
-{ 
-  return v->point();
-}
-
-// compute the diagonal length for a bounding box
-double diagonal(Bbox& bbox)
-{
-  double dx = bbox.xmax() - bbox.xmin();
-  double dy = bbox.ymax() - bbox.ymin();
-  double dz = bbox.zmax() - bbox.zmin();
-
-  double diag = dx * dx + dy * dy + dz * dz;
-  return sqrt(diag);
-}
-
 int main()
 {
   Polyhedron mesh;
@@ -115,44 +107,70 @@ int main()
     return 1;
   }
 
-  // save a copy for correspondence
-  Polyhedron mCopy(mesh);
+  Graph g;
+  GraphPointMap points_map;
+  GraphPointPMap points(points_map);
+
+  Correspondence_map corr_map;
+  GraphCorrelationPMap corr(corr_map);
+
+  CGAL::SkeletonArgs<Polyhedron> skeleton_args(mesh);
+
+  Mean_curvature_skeleton* mcs = new Mean_curvature_skeleton(mesh,
+      Vertex_index_map(), Edge_index_map(), skeleton_args);
+
+  // 1. Contract the mesh by mean curvature flow.
+  mcs->contract_geometry();
+
+  // 2. Collapse short edges and split bad triangles.
+  mcs->update_topology();
+
+  // 3. Fix degenerate vertices.
+  mcs->detect_degeneracies();
+
+  // Perform the above three steps in one iteration.
+  mcs->contract();
+
+  // Iteratively apply step 1 to 3 until convergence.
+  mcs->run_to_converge();
+
+  // Convert the contracted mesh into a curve skeleton.
+  mcs->convert_to_skeleton(g, points);
+
+  // Get the correspondent surface points.
+  mcs->get_correspondent_vertices(corr);
 
   vertex_iterator vb, ve;
-
-  boost::tie(vb, ve) = boost::vertices(mesh);
-  Bbox bbox = CGAL::bbox_3(boost::make_transform_iterator(vb, v_to_p), 
-                           boost::make_transform_iterator(ve, v_to_p));
-  double diag = diagonal(bbox);
-
-  Graph g;
-  std::map<vertex_desc, Point> points;
-  std::map<vertex_desc, std::vector<int> > corr;
-
-  CGAL::extract_medial_skeleton<Sparse_linear_solver>(g, points, corr,
-                     mesh, Vertex_index_map(), Edge_index_map(),
-                     0.1, 0.2, 0.002 * diag, 0.0001);
 
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
   std::cout << "edges: " << boost::num_edges(g) << "\n";
 
-  // output the skeletal point and correspondent surface points
-  std::vector<vertex_descriptor> id_to_vd;
-  id_to_vd.clear();
-  id_to_vd.resize(boost::num_vertices(mCopy));
-  int id = 0;
-  for (boost::tie(vb, ve) = boost::vertices(mCopy); vb != ve; ++vb)
+  // output all the edges
+  edge_iter ei, ei_end;
+  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
   {
-    vertex_descriptor v = *vb;
-    id_to_vd[id++] = v;
+    Point s = points[boost::source(*ei, g)];
+    Point t = points[boost::target(*ei, g)];
+    std::cout << s << " " << t << "\n";
   }
 
-  std::map<vertex_desc, std::vector<int> >::iterator iter;
-  for (iter = corr.begin(); iter != corr.end(); ++iter)
+  std::vector<vertex_descriptor> id_to_vd;
+  id_to_vd.clear();
+  id_to_vd.resize(boost::num_vertices(mesh));
+  for (boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb)
   {
-    vertex_desc i = iter->first;
+    vertex_descriptor v = *vb;
+    id_to_vd[v->id()] = v;
+  }
+
+  // output skeletal points and the corresponding surface points
+  vertex_iter gvb, gve;
+  for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
+  {
+    vertex_desc i = *gvb;
     Point skel = points[i];
     std::cout << skel << ": ";
+
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
       Point surf = id_to_vd[corr[i][j]]->point();
@@ -160,6 +178,7 @@ int main()
     }
     std::cout << "\n";
   }
+  
   return 0;
 }
 
