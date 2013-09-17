@@ -40,6 +40,13 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 
+//for AABB tree
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_point_primitive.h>
+#include <CGAL/Bbox_3.h>
+
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
@@ -106,10 +113,9 @@ compute_average_term(
   //unsigned int& k, // nb neighbors
   const typename Kernel::FT radius, //accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set//if  need density
-
 )
 {
-  CGAL_point_set_processing_precondition( k > 1);
+  //CGAL_point_set_processing_precondition( k > 1);
   CGAL_point_set_processing_precondition(radius > 0);
   bool is_density_weight_set_empty = density_weight_set.empty();
 
@@ -129,6 +135,23 @@ compute_average_term(
   typedef regularize_and_simplify_internal::Kd_tree_element<Kernel> Kd_tree_point;
   typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Traits;
   typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+
+
+  // AABB
+  typedef Kernel::Sphere_3 Circle;
+  //typedef std::vector<Kd_tree_point>::iterator Iterator;
+  typedef std::vector<Point>::iterator Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+
+  std::vector<typename Primitive::Id> neighbor_original_points_primitives;
+  //Circle sphere_query(query, radius);
+  Circle sphere_query(query, 5.0*5.0);
+
+  AABB_Tree aabb_tree;
+  aabb_tree.all_contained_primitives(sphere_query, 
+                      std::back_inserter(neighbor_original_points_primitives));
 
   //range search
   Fuzzy_sphere fs(query, radius, 0.0);
@@ -213,7 +236,7 @@ compute_repulsion_term(
   const std::vector<typename Kernel::FT>& density_weight_set //if need density
 )
 {
-  CGAL_point_set_processing_precondition( k > 1);
+ // CGAL_point_set_processing_precondition( k > 1);
   CGAL_point_set_processing_precondition(radius > 0);
   bool is_density_weight_set_empty = density_weight_set.empty();
 
