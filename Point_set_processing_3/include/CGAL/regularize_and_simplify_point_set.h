@@ -146,16 +146,17 @@ compute_average_term(
 
   std::vector<typename Primitive::Id> neighbor_original_points_primitives;
   Circle sphere_query(query, radius);
-  //Circle sphere_query(query, 5.0*5.0);
 
-  //empty tree so no result
   //AABB_Tree aabb_tree;
   tree.all_contained_primitives(sphere_query, 
                       std::back_inserter(neighbor_original_points_primitives));
 
+  std::cout<<neighbor_original_points_primitives.size()<<std::endl;
+  std::cout<<neighbor_original_points_primitives[0]->x()<<std::endl;
+  std::cout<<std::distance(neighbor_original_points_primitives[0],
+                           neighbor_original_points_primitives[1])<<std::endl;
   //range search
   //Fuzzy_sphere fs(query, radius, 0.0);
-  
   std::vector<Kd_tree_point> neighbor_original_points;
   //tree.search(std::back_inserter(neighbor_original_points), fs);
   //parallel,no
