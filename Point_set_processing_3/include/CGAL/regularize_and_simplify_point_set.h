@@ -136,8 +136,7 @@ compute_average_term(
   typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Traits;
   typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
 
-
-  // AABB
+  // types for AABB
   typedef Kernel::Sphere_3 Circle;
   //typedef std::vector<Kd_tree_point>::iterator Iterator;
   typedef std::vector<Point>::iterator Iterator;
@@ -146,17 +145,19 @@ compute_average_term(
   typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_original_points_primitives;
-  //Circle sphere_query(query, radius);
-  Circle sphere_query(query, 5.0*5.0);
+  Circle sphere_query(query, radius);
+  //Circle sphere_query(query, 5.0*5.0);
 
-  AABB_Tree aabb_tree;
-  aabb_tree.all_contained_primitives(sphere_query, 
+  //empty tree so no result
+  //AABB_Tree aabb_tree;
+  tree.all_contained_primitives(sphere_query, 
                       std::back_inserter(neighbor_original_points_primitives));
 
   //range search
-  Fuzzy_sphere fs(query, radius, 0.0);
+  //Fuzzy_sphere fs(query, radius, 0.0);
+  
   std::vector<Kd_tree_point> neighbor_original_points;
-  tree.search(std::back_inserter(neighbor_original_points), fs);
+  //tree.search(std::back_inserter(neighbor_original_points), fs);
   //parallel,no
   std::vector<Kd_tree_point>::iterator iter = neighbor_original_points.begin();
   std::vector<FT> density_set;
@@ -332,7 +333,7 @@ compute_density_weight_for_original_point(
   const typename Kernel::FT radius
 )
 {
-//  CGAL_point_set_processing_precondition( k > 1);
+  //CGAL_point_set_processing_precondition( k > 1);
   CGAL_point_set_processing_precondition(radius > 0);
 
   // basic geometric types
@@ -484,6 +485,14 @@ regularize_and_simplify_point_set(
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
 
+  // types for AABB
+  typedef Kernel::Sphere_3 Circle;
+  //typedef std::vector<Kd_tree_point>::iterator Iterator;
+  typedef std::vector<Point>::iterator Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
@@ -527,6 +536,8 @@ regularize_and_simplify_point_set(
   Tree original_tree(original_treeElements.begin(), 
                      original_treeElements.end());
 
+  AABB_Tree AABB_original_tree(first_original_point,
+                               beyond);
   // Compute original density weight for original points if user needed
   task_timer.reset();
   std::vector<FT> original_density_weight_set;
@@ -562,6 +573,7 @@ regularize_and_simplify_point_set(
       sample_treeElements.push_back(Kd_tree_element(p0,i));
     }
     Tree sample_tree(sample_treeElements.begin(), sample_treeElements.end());
+     
 
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_density_weight_set;
@@ -589,8 +601,8 @@ regularize_and_simplify_point_set(
     {
       Point& p = sample_points[i];
       average_set[i] = regularize_and_simplify_internal::
-                       compute_average_term<Kernel>
-                       (p, original_tree, radius, original_density_weight_set);
+                       compute_average_term<Kernel,AABB_Tree>
+                       (p, AABB_original_tree, radius, original_density_weight_set);
     }
 
     //task_timer.start("Compute Repulsion Term");
