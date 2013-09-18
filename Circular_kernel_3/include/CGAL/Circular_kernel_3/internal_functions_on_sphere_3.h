@@ -252,7 +252,6 @@ namespace CGAL {
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere; 
       typedef typename SK::Polynomials_for_line_3      Equation_line; 
       typedef typename SK::Root_for_spheres_2_3        Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3        Circular_arc_point_3;
       CGAL_kernel_precondition(!s.is_degenerate());
       CGAL_kernel_precondition(!l.is_degenerate());      
       Equation_sphere e1 = get_equation<SK>(s);
@@ -280,7 +279,6 @@ namespace CGAL {
        typedef typename SK::Circle_3  Circle_3;
        typedef typename SK::Point_3  Point_3;
        typedef typename SK::Sphere_3  Sphere_3;
-       typedef typename SK::Plane_3  Plane_3;
        typedef typename SK::Algebraic_kernel  Algebraic_kernel;
        typedef typename SK3_Intersection_traits<SK, Sphere_3, Sphere_3, Sphere_3>::type result_type;
 
@@ -375,12 +373,14 @@ namespace CGAL {
       typedef typename boost::variant< std::pair< typename SK::Circular_arc_point_3, unsigned int>,
                                        typename SK::Circle_3 > result_type;
       typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::Plane_3  Plane_3;
       typedef typename SK::Sphere_3 Sphere_3;
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
+      #if CGAL_INTERSECTION_VERSION < 2
+      typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
+      #endif
       CGAL_kernel_precondition(!p.is_degenerate());
       CGAL_kernel_precondition(!s1.is_degenerate());
       CGAL_kernel_precondition(!s2.is_degenerate());
@@ -439,7 +439,6 @@ namespace CGAL {
       typedef typename boost::variant< std::pair< typename SK::Circular_arc_point_3, unsigned int>, 
                                        typename SK::Circle_3 > result_type;
       typedef typename SK::Root_for_spheres_2_3  Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::Algebraic_kernel  Algebraic_kernel;
@@ -452,6 +451,7 @@ namespace CGAL {
         if(typename Intersection_traits<SK, Plane_3, Sphere_3>::result_type v = 
             SK().intersect_3_object()(p1, s)) {
            #if CGAL_INTERSECTION_VERSION < 2
+           typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
            if( const typename SK::Point_3* p = CGAL::object_cast<typename SK::Point_3>(&v) )
              *res++ = make_object(std::make_pair(Circular_arc_point_3(*p), 2u));
            else
@@ -500,7 +500,6 @@ namespace CGAL {
                 OutputIterator res)
     { 
       typedef typename SK::Root_for_spheres_2_3     Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
       typedef typename SK::Polynomials_for_circle_3 Equation_circle;
       typedef typename SK::Algebraic_kernel         Algebraic_kernel;
       typedef typename SK::Circle_3                 Circle_3;
@@ -528,7 +527,6 @@ namespace CGAL {
                 OutputIterator res)
     { 
       typedef typename SK::Root_for_spheres_2_3     Root_for_spheres_2_3;
-      typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
       typedef typename SK::Polynomials_for_circle_3 Equation_circle;
       typedef typename SK::Polynomials_for_line_3   Equation_line;
       typedef typename SK::Circle_3                 Circle_3;

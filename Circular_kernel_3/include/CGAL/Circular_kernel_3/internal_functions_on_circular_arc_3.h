@@ -196,7 +196,6 @@ namespace CGAL {
     {
       typedef typename SK3_Intersection_traits<SK, typename SK::Plane_3, typename SK::Circular_arc_3
         >::type result_type;
-      typedef typename SK::Point_3 Point_3;
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef std::vector<
         typename SK3_Intersection_traits<SK, typename SK::Circle_3, typename SK::Plane_3>::type
