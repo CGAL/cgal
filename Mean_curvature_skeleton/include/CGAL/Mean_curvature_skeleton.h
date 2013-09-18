@@ -1714,7 +1714,7 @@ private:
 ///         with MCF_Skeleton::edge_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam GraphCorrelationPMap
-///         a model of `ReadWritePropertyMap`/a>
+///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
 ///         `std::vector<int>` as value type
 /// @tparam HalfedgeGraphPointPMap
