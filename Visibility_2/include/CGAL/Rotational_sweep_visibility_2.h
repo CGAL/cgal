@@ -22,19 +22,11 @@
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 
-#include <vector>
-#include <map>
-#include <utility>
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/tags.h>
 #include <CGAL/bounding_box.h>
-#include <CGAL/enum.h>
 
-#include <CGAL/Timer.h>
 namespace CGAL {
-
-
 
 template <typename Arrangement_2, typename RegularizationTag>
 class Rotational_sweep_visibility_2 {
@@ -66,13 +58,11 @@ public:
   typedef CGAL::Tag_true                                Supports_simple_polygon_tag;
 
 private:
-  typedef std::vector<Point_2>          Points;
-  typedef Vertex_const_handle   VH;
-  typedef std::vector<VH>   VHs;
-  typedef Halfedge_const_handle   EH;
-  typedef std::vector<EH> EHs;
-
-
+  typedef std::vector<Point_2>                          Points;
+  typedef Vertex_const_handle                           VH;
+  typedef std::vector<VH>                               VHs;
+  typedef Halfedge_const_handle                         EH;
+  typedef std::vector<EH>                               EHs;
 
   class Less_edge: public std::binary_function<EH, EH, bool> {
     const Geometry_traits_2* geom_traits;
@@ -103,19 +93,20 @@ private:
         return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
     }
   };
+
   const Geometry_traits_2 *geom_traits;
   const Input_arrangement_2 *p_arr;
-  Point_2 q;   //query point
-  Points polygon;                       //visibility polygon
-  std::map<VH, EHs, Less_vertex>  incident_edges; //the edges that are
+  Point_2 q;                        //query point
+  Points polygon;                   //visibility polygon
+  std::map<VH, EHs, Less_vertex> incident_edges; //the edges that are
   std::map<EH, int, Less_edge> edx;            //index of active edges in the heap
-  EHs active_edges;    //a heap of edges that interset the current vision ray.
+  EHs active_edges;                 //a heap of edges that interset the current vision ray.
   VHs vs;                           //angular sorted vertices
   EHs bad_edges;                    //edges that pass the query point
   VH  cone_end1;                    //an end of visibility cone
   VH  cone_end2;                    //another end of visibility cone
-  int cone_end1_idx;                //index of cone_end1->point() in polygon
-  int cone_end2_idx;                //index of cone_end2->point() in polygon
+  int cone_end1_idx;                //index of cone_end1->point() in visibility polygon
+  int cone_end2_idx;                //index of cone_end2->point() in visibility polygon
 
   bool is_vertex_query;
   bool is_edge_query;
@@ -161,7 +152,7 @@ public:
     }
     visibility_region_impl(e->face(), q);
 
-    //Decide which inside of the visibility butterfly is needed.
+    //decide which inside of the visibility butterfly is needed.
     int small_idx, big_idx;
     if ( cone_end1_idx < cone_end2_idx ) {
       small_idx = cone_end1_idx;
@@ -173,6 +164,7 @@ public:
     }
     int next_idx = small_idx + 1;
     bool is_between;
+    //indicate whether the shape between small_idx and big_idx is the visibility region required.
     if (CGAL::right_turn(cone_end1->point(), q, cone_end2->point())) {
       is_between = false;
       while (next_idx != big_idx) {
@@ -261,7 +253,7 @@ private:
     else
       return e->source();
   }
-  //whether ray(q->dp) intersects segment(p1, p2)
+  //check whether ray(q->dp) intersects segment(p1, p2)
   bool do_intersect_ray(const Point_2& q,
                         const Point_2& dp,
                         const Point_2& p1,
@@ -272,6 +264,7 @@ private:
   //arrange vertices that on a same vision ray in a 'funnel' order
   void funnel(int i, int j) {
     VHs right, left;
+    //whether the edges incident to a vertex block the left side and right side of current vision ray.
     bool block_left(false), block_right(false);
     VH former = vs[i], nb;
     for (int l=i; l<j; l++) {
@@ -289,14 +282,17 @@ private:
           right_v = CGAL::right_turn(q, vs[l]->point(), nb->point());
       }
       if (has_predecessor) {
-          block_left = block_left || left_v;
-          block_right = block_right || right_v;
+        //if the current vertex connets to the vertex before by an edge,
+        //the vertex before can help it to block.
+        block_left = block_left || left_v;
+        block_right = block_right || right_v;
       }
       else {
-          block_left = left_v;
-          block_right = right_v;
+        block_left = left_v;
+        block_right = right_v;
       }
       if (block_left && block_right) {
+        //when both sides are blocked, there is no need to change the vertex after.
         right.push_back(vs[l]);
         break;
       }
@@ -321,13 +317,15 @@ private:
     incident_edges = std::map<VH, EHs, Less_vertex>(Less_vertex(geom_traits));
     edx = std::map<EH, int, Less_edge>(Less_edge(geom_traits));
 
-    EHs good_edges;
+    EHs relevant_edges; //all edges that can affect the visibility of query point.
     Input_arrangement_2 bbox;
     if (is_face_query)
       input_face(f);
     else
-      input_face(f, good_edges, bbox);
-    //initiation of vision ray
+      input_face(f, relevant_edges, bbox);
+    //the following code is the initiation of vision ray. the direction of the initial ray is between the direction
+    //from q to last vertex in vs and positive x-axis. By choosing this direction, we make
+    //sure that all plane is swept and there is not needle at the beginning of sweeping.
     Vector_2 dir;
     if (Direction_2(-1, 0) < Direction_2(Vector_2(q, vs.back()->point())))
       dir = Vector_2(1, 0) + Vector_2(q, vs.back()->point());
@@ -335,8 +333,8 @@ private:
       dir = Vector_2(0, -1);
     Point_2 dp = q + dir;
 
-    //initiation of active_edges. For face query, all edges on boundary of face can affect visibility.
-    //For non-face query, only good_edges has to be considered.
+    //initiation of active_edges. for face queries, all edges on the boundary can affect visibility.
+    //for non-face queries, only relevant_edges has to be considered.
     if (is_face_query) {
       Ccb_halfedge_const_circulator curr = f->outer_ccb();
       Ccb_halfedge_const_circulator circ = curr;
@@ -355,9 +353,9 @@ private:
       }
     }
     else {
-      for (int i=0; i!=good_edges.size(); i++)
-        if (do_intersect_ray(q, dp, good_edges[i]->source()->point(), good_edges[i]->target()->point()))
-          heap_insert(good_edges[i]);
+      for (int i=0; i!=relevant_edges.size(); i++)
+        if (do_intersect_ray(q, dp, relevant_edges[i]->source()->point(), relevant_edges[i]->target()->point()))
+          heap_insert(relevant_edges[i]);
     }
 
     //angular sweep begins
@@ -365,7 +363,6 @@ private:
       VH vh = vs[i];
       //save the closest edge;
       EH closest_e = active_edges.front();
-
       EHs& edges = incident_edges[vh];
       EHs insert_ehs, remove_ehs;
       for (int j=0; j!=edges.size(); j++) {
@@ -375,11 +372,11 @@ private:
         else
           insert_ehs.push_back(e);
       }
-
       int insert_cnt = insert_ehs.size();
       int remove_cnt = remove_ehs.size();
       if (remove_cnt==1 && insert_cnt==1) {
-        //it's a special case that one edge is inserted and one edge is removed. for this case, no heap operation is needed.
+        //it's a special case that one edge is inserted and one edge is removed.
+        //for this case, no heap operation is needed.
         int remove_idx = edx[remove_ehs.front()];
         active_edges[remove_idx] = insert_ehs.front();
         edx[insert_ehs.front()] = remove_idx;
@@ -443,7 +440,7 @@ private:
             }
           }
           if (remove_cnt > 0 && insert_cnt == 0) {
-            //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
+            //only delete some edges, means some block is removed and the vision ray can reach the segments after the block.
             if (update_visibility(vh->point())) {
               if (vh == cone_end1)
                 cone_end1_idx = polygon.size()-1;
@@ -459,7 +456,6 @@ private:
       }
     }
   }
-
 
   void heap_insert(const EH e) {
     active_edges.push_back(e);
@@ -523,13 +519,14 @@ private:
     active_edges[j] = temp;
   }
 
+  //check whether e2 is shadowed by e1 from q.
   bool is_closer(const Point_2& q,
                  const EH& e1,
-                 const EH& e2) {
+                 const EH& e2) const{
     const Point_2& s1=e1->target()->point(),
-        t1=e1->source()->point(),
-        s2=e2->target()->point(),
-        t2=e2->source()->point();
+                   t1=e1->source()->point(),
+                   s2=e2->target()->point(),
+                   t2=e2->source()->point();
     Orientation e1q = Visibility_2::orientation_2(geom_traits, s1, t1, q);
     switch (e1q)
     {
@@ -620,12 +617,12 @@ private:
     return false;
   }
 
-  //functor to decide which vertex is visited earlier by the rotational sweeping ray
-  class Is_sweeped_earlier:public std::binary_function<VH, VH, bool> {
+  //functor to decide which vertex is swept earlier by the rotational sweeping ray
+  class Is_swept_earlier:public std::binary_function<VH, VH, bool> {
     const Point_2& q;
     const Geometry_traits_2* geom_traits;
   public:
-    Is_sweeped_earlier(const Point_2& q, const Geometry_traits_2* traits):q(q), geom_traits(traits) {}
+    Is_swept_earlier(const Point_2& q, const Geometry_traits_2* traits):q(q), geom_traits(traits) {}
     bool operator() (const VH v1, const VH v2) const {
       const Point_2& p1 = v1->point();
       const Point_2& p2 = v2->point();
@@ -696,7 +693,8 @@ private:
     }
   }
 
-  //for face query: traverse the face to get all edges and sort vertices in counter-clockwise order.
+  //for face query: traverse the face to get all edges
+  //and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh)
   {
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
@@ -715,7 +713,7 @@ private:
       } while (++curr != circ);
     }
 
-    std::sort(vs.begin(), vs.end(), Is_sweeped_earlier(q, geom_traits));
+    std::sort(vs.begin(), vs.end(), Is_swept_earlier(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
@@ -729,7 +727,8 @@ private:
       i = j-1;
     }
   }
-  //for vertex or edge query: traverse the face to get all edges and sort vertices in counter-clockwise order.
+  //for vertex or edge query: traverse the face to get all edges
+  //and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
                    EHs& good_edges,
                    Input_arrangement_2& bbox)
@@ -781,7 +780,7 @@ private:
       good_edges.push_back(curr);
     } while(++curr != circ);
 
-    std::sort(vs.begin(), vs.end(), Is_sweeped_earlier(q, geom_traits));
+    std::sort(vs.begin(), vs.end(), Is_swept_earlier(q, geom_traits));
 
     for (int i=0; i!=vs.size(); i++) {
       int j = i+1;
