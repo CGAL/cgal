@@ -1,5 +1,3 @@
-#include <Eigen/Sparse>
-
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
@@ -114,7 +112,7 @@ int main()
   Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
 
-  CGAL::SkeletonArgs<Polyhedron> skeleton_args(mesh);
+  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
   Mean_curvature_skeleton* mcs = new Mean_curvature_skeleton(mesh,
       Vertex_index_map(), Edge_index_map(), skeleton_args);

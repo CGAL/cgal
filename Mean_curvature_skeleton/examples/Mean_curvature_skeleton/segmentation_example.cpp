@@ -3,10 +3,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Mean_curvature_skeleton.h>
-#include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Bbox_3.h>
+#include <CGAL/mesh_segmentation.h>
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -35,15 +34,16 @@ typedef Kernel::Point_3                                              Point;
 typedef Kernel::Vector_3                                             Vector;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
+typedef Polyhedron::Facet_iterator                                   Facet_iterator;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor           vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator             vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor             edge_descriptor;
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> SkeletonGraph;
 
-typedef boost::graph_traits<Graph>::vertex_descriptor                  vertex_desc;
-typedef boost::graph_traits<Graph>::vertex_iterator                    vertex_iter;
-typedef boost::graph_traits<Graph>::edge_iterator                      edge_iter;
+typedef boost::graph_traits<SkeletonGraph>::vertex_descriptor          vertex_desc;
+typedef boost::graph_traits<SkeletonGraph>::vertex_iterator            vertex_iter;
+typedef boost::graph_traits<SkeletonGraph>::edge_iterator              edge_iter;
 
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map;
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;
@@ -86,52 +86,34 @@ bool is_mesh_valid(Polyhedron& pMesh)
   return true;
 }
 
-// This example extracts a medially centered skeleton from a given mesh.
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/sindorelax.off");
+  std::ifstream input("data/161.off");
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
-    std::cerr << "Cannot open data/sindorelax.off" << std::endl;
+    std::cerr << "Cannot open data/161.off" << std::endl;
     return 1;
   }
   if (!is_mesh_valid(mesh)) {
     return 1;
   }
 
-  Graph g;
+  SkeletonGraph g;
   GraphPointMap points_map;
   GraphPointPMap points(points_map);
 
   Correspondence_map corr_map;
   GraphCorrelationPMap corr(corr_map);
 
-  // Create default parameters.
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
-
-  // Customize the parameters.
-  skeleton_args.omega_H = 0.2;
-  skeleton_args.omega_P = 0.3;
-
+  
   CGAL::extract_skeleton(
       mesh, Vertex_index_map(), Edge_index_map(),
       skeleton_args, g, points, corr);
 
+  // add segmentation
   vertex_iterator vb, ve;
-
-  std::cout << "vertices: " << boost::num_vertices(g) << "\n";
-  std::cout << "edges: " << boost::num_edges(g) << "\n";
-
-  // Output all the edges.
-  edge_iter ei, ei_end;
-  for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
-  {
-    Point s = points[boost::source(*ei, g)];
-    Point t = points[boost::target(*ei, g)];
-    std::cout << s << " " << t << "\n";
-  }
-
   std::vector<vertex_descriptor> id_to_vd;
   id_to_vd.clear();
   id_to_vd.resize(boost::num_vertices(mesh));
@@ -141,21 +123,61 @@ int main()
     id_to_vd[v->id()] = v;
   }
 
-  // Output skeletal points and the corresponding surface points
+  // create a property-map for sdf values (it is an adaptor for this case)
+  typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
+  Facet_double_map internal_sdf_map;
+  boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
+
+  std::vector<double> distances;
+  distances.resize(boost::num_vertices(mesh));
+
   vertex_iter gvb, gve;
   for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
   {
     vertex_desc i = *gvb;
     Point skel = points[i];
-    std::cout << skel << ": ";
-
     for (size_t j = 0; j < corr[i].size(); ++j)
     {
       Point surf = id_to_vd[corr[i][j]]->point();
-      std::cout << surf << " ";
+      distances[corr[i][j]] = sqrt(squared_distance(skel, surf));
     }
-    std::cout << "\n";
   }
+
+  // compute sdf values with skeleton
+  double min_dis = 1e10;
+  double max_dis = -1000;
+  for (Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
+  {
+    Polyhedron::Halfedge_const_handle he = f->facet_begin();
+    int vid1 = he->vertex()->id();
+    int vid2 = he->next()->vertex()->id();
+    int vid3 = he->next()->next()->vertex()->id();
+    double dis1 = distances[vid1];
+    double dis2 = distances[vid2];
+    double dis3 = distances[vid3];
+    double avg_dis = (dis1 + dis2 + dis3) / 3.0;
+    sdf_property_map[f] = avg_dis;
+    min_dis = std::min(min_dis, avg_dis);
+    max_dis = std::min(max_dis, avg_dis);
+  }
+
+  for (Facet_iterator f = mesh.facets_begin(); f != mesh.facets_end(); ++f)
+  {
+    sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
+  }
+
+  postprocess_sdf_values(mesh, sdf_property_map);
+
+  // create a property-map for segment-ids (it is an adaptor for this case)
+  typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
+  Facet_int_map internal_segment_map;
+  boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
+
+  // segment the mesh using default parameters for number of levels, and smoothing lambda
+  // Note that you can use your own scalar value, instead of using SDF calculation computed using the CGAL function
+  int number_of_segments = CGAL::segment_from_sdf_values(mesh, sdf_property_map, segment_property_map);
+  std::cout << "Number of segments: " << number_of_segments << std::endl;
+
   return 0;
 }
 

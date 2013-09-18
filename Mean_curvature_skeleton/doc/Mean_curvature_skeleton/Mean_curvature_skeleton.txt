@@ -141,7 +141,7 @@ The correspondent points for a skeletal vertex are original surface points that 
 Every skeletal point is connected to its correspondent surface points.
 \cgalFigureEnd
 
-As a proof of concept, we show an example of doing mesh segmentation with the skeleton extracted by this package. In the Mesh Segmentation package from CGAL, the first step is computing a shape diameter value, and the second step is solving a graph cut problem. Here we use our skeleton to compute the the shape diameter value. Specifically we compute the diameter value for each surface point as the distance between it and its corresponding skeletal point. Then we plug the diameter values into the graph cut algorithm from Segmentation package to get a continuous mesh segmentation. We show a sample segmentation in \cgalFigureRef{Segmentation}.
+As a proof of concept, we show an example of doing mesh segmentation with the skeleton extracted by this package. In the Mesh Segmentation package from CGAL, the first step is computing a shape diameter value, and the second step is solving a graph cut problem. Here we use our skeleton to compute the the shape diameter value. Specifically we compute the diameter value for each face as the average distance between its three incident vertices and their corresponding skeletal point. Then we plug the diameter values into the graph cut algorithm from Segmentation package to get a continuous mesh segmentation. We show a sample segmentation in \cgalFigureRef{Segmentation}.
 
 \cgalFigureBegin{Segmentation, segmentation.png}
 On the left is the curve skeleton extracted from the mesh. On the right is the segmentation result utilizing the skeleton.
@@ -151,17 +151,20 @@ On the left is the curve skeleton extracted from the mesh. On the right is the s
 
 \subsection MCFSkelSecExamples Skeletonization Examples
 
-\subsubsection Example_1 Extract Skeleton Without Correspondence Tracking
+\subsubsection Example_1 Extract Skeleton With Free Function
 
-In this example, we only extract the curve skeleton and outputs the embedding of the skeletal points.
+In this example, we extract the skeleton automatically by using the provided free function.
 
 \cgalExample{Mean_curvature_skeleton/simple_mcfskel_example.cpp}
 
-\subsubsection Example_2 Extract Skeleton With Correspondence Tracking
+\subsubsection Example_2 Extract Skeleton With `MCF_Skeleton` Class
 
-In this example, we extract the skeleton with correspondent points. Then we show how to access the correspondent points for each skeletal point.
+In this example, we show how to use the API from `MCF_Skeleton` class.
 
 \cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
+
+
+
 
 \section MCFSkelSecEvaluation Computational performance evaluation
 

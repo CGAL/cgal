@@ -130,10 +130,11 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Define the default sparse linear solver type.
+///@brief Define the default sparse linear systems solver type.
 template <class FT>
 struct MCF_default_solver
 {
+  /// Default solver type.
   typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
 };
 
@@ -142,6 +143,7 @@ struct MCF_default_solver
 template <class Polyhedron>
 struct MCF_default_halfedge_graph_pmap
 {
+  /// Default HalfedgeGraphPointPMap type.
   typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type type;
 };
 
@@ -151,7 +153,7 @@ struct MCF_default_halfedge_graph_pmap
 /// @tparam HalfedgeGraph
 ///         a model of `HalfedgeGraph`
 template<class HalfedgeGraph>
-class SkeletonArgs
+class MCF_skel_args
 {
 public:
   typedef CGAL::Bbox_3                                                   Bbox;
@@ -181,7 +183,7 @@ private:
 public:
 
   /**
-   * The constructor of a SkeletonArgs object. The constructor
+   * The constructor of a MCF_skel_args object. The constructor
    * will set the `edgelength_TH` to 0.002 * diagonal of the bounding box
    * of the given mesh. The other parameters are set to their default values:
    *
@@ -198,7 +200,7 @@ public:
    * @param P
    *        Triangulated surface mesh used to extract skeleton.
    */
-  SkeletonArgs(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
+  MCF_skel_args(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
     delta_area(0.0001), max_iterations(500), is_medially_centered(true)
   {
     vertex_iterator vb, ve;
@@ -387,7 +389,7 @@ private:
   int max_iterations;
   /** Should the skeleton be medially centered? */
   bool is_medially_centered;
-  /** Are poles computed. */
+  /** Are poles computed? */
   bool are_poles_computed;
 
   /** Cotangent weight calculator. */
@@ -450,7 +452,7 @@ public:
   MCF_Skeleton(HalfedgeGraph& P,
               VertexIndexMap Vertex_index_map,
               EdgeIndexMap Edge_index_map,
-              SkeletonArgs<HalfedgeGraph> Skeleton_args
+              MCF_skel_args<HalfedgeGraph> Skeleton_args
               )
     :mesh(&P), polyhedron(new HalfedgeGraph(P)),
      vertex_id_pmap(Vertex_index_map),
@@ -465,7 +467,8 @@ public:
   /**
    * The constructor of a MCF_Skeleton object.
    *
-   * @pre the polyhedron is a watertight triangular mesh
+   * @pre The polyhedron is a watertight triangular mesh.
+   * @pre Number of component equals 1.
    * @param P
    *        triangulated surface mesh used to extract skeleton
    * \note  The source mesh will be modified by the algorithm.
@@ -479,13 +482,14 @@ public:
   MCF_Skeleton(HalfedgeGraph* P,
               VertexIndexMap Vertex_index_map,
               EdgeIndexMap Edge_index_map,
-              SkeletonArgs<HalfedgeGraph> Skeleton_args
+              MCF_skel_args<HalfedgeGraph> Skeleton_args
               )
     :mesh(NULL), polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
      edge_id_pmap(Edge_index_map),
      hg_point_pmap(boost::get(vertex_point, *P))
   {
+    owns_polyhedron = false;
     init_args(Skeleton_args);
     init();
   }
@@ -740,7 +744,7 @@ public:
     if (is_medially_centered)
     {
       nrows = nver * 3;
-      if (!is_medially_centered)
+      if (!are_poles_computed)
       {
         compute_voronoi_pole();
       }
@@ -982,7 +986,7 @@ private:
   // --------------------------------------------------------------------------
 
   /// Initialize the parameters for MCF_Skeleton
-  void init_args(SkeletonArgs<HalfedgeGraph> Skeleton_args)
+  void init_args(MCF_skel_args<HalfedgeGraph> Skeleton_args)
   {
     omega_H = Skeleton_args.omega_H;
     omega_P = Skeleton_args.omega_P;
@@ -998,6 +1002,8 @@ private:
   /// Initialize some global data structures such as vertex id.
   void init()
   {
+    are_poles_computed = false;
+
     vertex_iterator vb, ve;
 
     alpha_TH *= (M_PI / 180.0);
@@ -1028,7 +1034,10 @@ private:
     is_vertex_fixed_map.clear();
     correspondence.clear();
 
-    compute_voronoi_pole();
+    if (is_medially_centered)
+    {
+      compute_voronoi_pole();
+    }
   }
 
   // --------------------------------------------------------------------------
@@ -1708,19 +1717,21 @@ private:
 ///         with MCF_Skeleton::edge_descriptor as key and
 ///         `unsigned int` as value type
 /// @tparam GraphCorrelationPMap
-///         a model of `ReadWritePropertyMap`/a>
+///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
 ///         `std::vector<int>` as value type
-/// @tparam HalfedgeGraphPointPMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with HalfedgeGraph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
 /// @tparam GraphPointPMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
 ///         MCF_Skeleton::Point as value type
+///         The default is boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type.
+/// @tparam HalfedgeGraphPointPMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with HalfedgeGraph::vertex_descriptor as key and
+///         MCF_Skeleton::Point as value type
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+///         The default is CGAL::MCF_default_solver<double>::type.
 ///
 /// @param P
 ///        triangulated surface mesh used to extract skeleton
@@ -1747,7 +1758,7 @@ template <class HalfedgeGraph,
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
                       EdgeIndexMap Edge_index_map,
-                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      MCF_skel_args<HalfedgeGraph> Skeleton_args,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
@@ -1772,7 +1783,7 @@ template <class HalfedgeGraph,
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
                       EdgeIndexMap Edge_index_map,
-                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      MCF_skel_args<HalfedgeGraph> Skeleton_args,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
@@ -1793,7 +1804,7 @@ template <class HalfedgeGraph,
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
                       EdgeIndexMap Edge_index_map,
-                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      MCF_skel_args<HalfedgeGraph> Skeleton_args,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
