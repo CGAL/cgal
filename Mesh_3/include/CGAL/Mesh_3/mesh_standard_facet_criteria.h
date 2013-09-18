@@ -439,10 +439,10 @@ private:
   
 public:
   /// Constructor
-  Facet_on_same_surface_criterion() {};
+  Facet_on_same_surface_criterion() {}
   /// Destructor
-  virtual ~Facet_on_same_surface_criterion() {};
-  
+  virtual ~Facet_on_same_surface_criterion() {}
+
 protected:
   virtual void do_accept(Visitor_& v) const
   {
