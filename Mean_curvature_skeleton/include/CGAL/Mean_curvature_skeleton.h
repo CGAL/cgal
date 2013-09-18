@@ -486,6 +486,7 @@ public:
      edge_id_pmap(Edge_index_map),
      hg_point_pmap(boost::get(vertex_point, *P))
   {
+    owns_polyhedron = false;
     init_args(Skeleton_args);
     init();
   }
@@ -740,7 +741,7 @@ public:
     if (is_medially_centered)
     {
       nrows = nver * 3;
-      if (!is_medially_centered)
+      if (!are_poles_computed)
       {
         compute_voronoi_pole();
       }
@@ -998,6 +999,8 @@ private:
   /// Initialize some global data structures such as vertex id.
   void init()
   {
+    are_poles_computed = false;
+
     vertex_iterator vb, ve;
 
     alpha_TH *= (M_PI / 180.0);
@@ -1028,7 +1031,10 @@ private:
     is_vertex_fixed_map.clear();
     correspondence.clear();
 
-    compute_voronoi_pole();
+    if (is_medially_centered)
+    {
+      compute_voronoi_pole();
+    }
   }
 
   // --------------------------------------------------------------------------
