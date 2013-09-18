@@ -214,9 +214,9 @@ Runtime in seconds of `compute_sdf_values()` with 25 rays showing the cost of th
 <center>
 Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_constructions_kernel` (`EPICK`)
 ---------------------| -------------------------:  | --------------------------------------------------------:
-  5,558              |  1.6                        |  3.9
- 34,986              | 13.6                        | 26.2
-100,332              | 48.7                        | 88.1
+  7,828              |  2.3                        |  3.8
+ 20,188              |  6.1                        |  9.5
+ 88,928              | 46.1                        | 62.3
 </center>
 
 <!-- This is only to keep the results, the flag is not documented
@@ -234,11 +234,12 @@ Runtime in milliseconds of `segment_from_sdf_values()`, the graph-cut part is us
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
 ---------------------| -------------------:  | -------------------:  | --------------------:  | -------------------:
-5,558                |    21                 |    58                 |    116                 |     168
-34,986               |   127                 |   280                 |    659                 |     960
-100,332              |   437                 | 1,042                 |  2,373                 |   3,947
+7,828                |    38                 |    61                 |    141                 |     204
+20,188               |    50                 |   163                 |    483                 |     608
+88,928               |   314                 | 1,260                 |  2,736                 |   4,239
 </center>
 
+Tested models in this benchmark are dinosaur (7,828 facets), bear (20,188 facets) and refined version of elephant model (88,928 facets).
 <!-- Internal for developers:
 This are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
 case boost::boykov_kolmogorov_max_flow is used instead of MaxFlow
