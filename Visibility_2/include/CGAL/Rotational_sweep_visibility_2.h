@@ -100,7 +100,7 @@ private:
   Points polygon;                   //visibility polygon
   std::map<VH, EHs, Less_vertex> incident_edges; //the edges that are
   std::map<EH, int, Less_edge> edx;            //index of active edges in the heap
-  EHs active_edges;                 //a heap of edges that interset the current vision ray.
+  EHs active_edges;                 //a heap of edges that intersect the current vision ray.
   VHs vs;                           //angular sorted vertices
   EHs bad_edges;                    //edges that pass the query point
   VH  cone_end1;                    //an end of visibility cone
@@ -282,7 +282,7 @@ private:
           right_v = CGAL::right_turn(q, vs[l]->point(), nb->point());
       }
       if (has_predecessor) {
-        //if the current vertex connets to the vertex before by an edge,
+        //if the current vertex connects to the vertex before by an edge,
         //the vertex before can help it to block.
         block_left = block_left || left_v;
         block_right = block_right || right_v;
@@ -393,12 +393,12 @@ private:
         //when the closest edge changed
         if (is_face_query) {
           if (remove_cnt > 0 && insert_cnt > 0) {
-            //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
+            //some edges are added and some are deleted, which means the vertex swept is part of visibility polygon.
             update_visibility(vh->point());
           }
           if (remove_cnt == 0 && insert_cnt > 0) {
             //only add some edges, means the view ray is blocked by new edges.
-            //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
+            //therefore first add the intersection of view ray and former closet edge, then add the vertice swept.
             update_visibility(ray_seg_intersection(q,
                                                    vh->point(),
                                                    closest_e->target()->point(),
@@ -417,7 +417,7 @@ private:
         else {
           //extra work here for edge/vertex query is the index of cone_end1 and cone_end2 will be recorded.
           if (remove_cnt > 0 && insert_cnt > 0) {
-            //some edges are added and some are deleted, which means the vertice sweeped is a vertice of visibility polygon.
+            //some edges are added and some are deleted, which means the vertice swept is part of visibility polygon.
             if (update_visibility(vh->point())) {
               if (vh == cone_end1)
                 cone_end1_idx = polygon.size()-1;
@@ -427,7 +427,7 @@ private:
           }
           if (remove_cnt == 0 && insert_cnt > 0) {
             //only add some edges, means the view ray is blocked by new edges.
-            //therefore first add the intersection of view ray and former closet edge, then add the vertice sweeped.
+            //therefore first add the intersection of view ray and former closet edge, then add the vertice swept.
             update_visibility(ray_seg_intersection(q,
                                                    vh->point(),
                                                    closest_e->target()->point(),
@@ -749,7 +749,7 @@ private:
       } while (++curr != circ);
     }
 
-    //create a box that cover all vertices such that during the sweeping, the vision ray will always interset at least an edge.
+    //create a box that cover all vertices such that during the sweeping, the vision ray will always intersect at least an edge.
     //this box doesn't intersect any relevant_edge.
     Points points;
     for (int i=0; i<vs.size(); i++) {
@@ -763,7 +763,7 @@ private:
     typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
     typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
 
-    //make the box a little bigger than bb so that it doesn't intersect any relevant_edge.
+    //make the box a little bigger than bb so that it won't intersect any relevant_edge.
     xmin = compute_x(bb.min())-1;
     ymin = compute_y(bb.min())-1;
     xmax = compute_x(bb.max())+1;
