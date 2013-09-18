@@ -192,7 +192,7 @@ public:
       Points polygon_out(first, last+1);
       if (is_vertex_query)
         polygon_out.push_back(q);
-      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
+      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
     else {
       Points polygon_out(polygon.begin(), first+1);
@@ -200,7 +200,7 @@ public:
       for (int i = big_idx; i != polygon.size(); i++) {
         polygon_out.push_back(polygon[i]);
       }
-      Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
+      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
     }
 
     conditional_regularize(arr_out, Regularization_tag());
@@ -219,7 +219,7 @@ public:
     is_face_query = true;
 
     visibility_region_impl(f, q);
-    Visibility_2::report_while_handling_needles_<Rotational_sweep_visibility_2>(geom_traits, q, polygon, arr_out);
+    Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon, arr_out);
     conditional_regularize(arr_out, Regularization_tag());
     if (arr_out.faces_begin()->is_unbounded())
       return ++arr_out.faces_begin();

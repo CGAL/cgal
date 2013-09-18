@@ -137,7 +137,7 @@ public:
 
     std::reverse(points.begin(), points.end());
 
-    CGAL::Visibility_2::report_while_handling_needles_
+    CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
                                                             q, 
                                                             points,                                 
@@ -216,7 +216,7 @@ public:
 
     std::reverse(points.begin(), points.end());
 
-    CGAL::Visibility_2::report_while_handling_needles_
+    CGAL::Visibility_2::report_while_handling_needles
                               <Simple_polygon_visibility_2>(geom_traits, 
                                                             q, 
                                                             points,                                
