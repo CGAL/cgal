@@ -16,7 +16,7 @@ struct Tracer_polyhedron
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
   typedef typename Polyhedron::Facet_handle    Facet_handle;
 
-  Tracer_polyhedron(OutputIterator& out,
+  Tracer_polyhedron(OutputIterator out,
                     Polyhedron& polyhedron,
                     std::vector<Halfedge_handle>& P)
     : out(out), polyhedron(polyhedron), P(P)
@@ -58,11 +58,12 @@ struct Tracer_polyhedron
     }
   }
 
-  OutputIterator& out;
+  OutputIterator out;
   Polyhedron& polyhedron;
   std::vector<Halfedge_handle>& P;
 };
 
+// This function is used in test cases (since it returns not just OutputIterator but also Weight)
 template<class Polyhedron, class OutputIterator>
 std::pair<OutputIterator, Weight_min_max_dihedral_and_area> 
 triangulate_hole_Polyhedron(Polyhedron& polyhedron, 
@@ -97,7 +98,7 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
   // existing_edges contains neighborhood information between boundary vertices
   // more precisely if v_i is neighbor to any other vertex than v_(i-1) and v_(i+1),
   // this edge is put into existing_edges
-  Edge_set existing_edges;
+  std::vector<std::pair<int, int> > existing_edges;
   for(Vertex_set_it v_it = vertex_set.begin(); v_it != vertex_set.end(); ++v_it) {
     int v_it_id = v_it->second;
     int v_it_prev = v_it_id == 0   ? n-1 : v_it_id-1;
@@ -110,7 +111,8 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
       if(v_it_neigh_it != vertex_set.end()) {
         int v_it_neigh_id = v_it_neigh_it->second;
         if( v_it_neigh_id != v_it_prev && v_it_neigh_id != v_it_next ) {
-          existing_edges.insert(std::make_pair(v_it_id, v_it_neigh_id));
+          if(v_it_id < v_it_neigh_id) // to include one edge just one time
+          { existing_edges.push_back(std::make_pair(v_it_id, v_it_neigh_id)); }
         }
       }
     } while(++circ_vertex != done_vertex);
@@ -118,15 +120,26 @@ triangulate_hole_Polyhedron(Polyhedron& polyhedron,
 
   CGAL::Timer timer; timer.start();
 
+  //#define CGAL_USE_WEIGHT_INCOMPLETE
+  #ifdef CGAL_USE_WEIGHT_INCOMPLETE
+  typedef Weight_calculator<Weight_incomplete<Weight_min_max_dihedral_and_area>, Is_valid_existing_edges_and_degenerate_triangle> WC;
+  #else
   typedef Weight_calculator<Weight_min_max_dihedral_and_area, Is_valid_existing_edges_and_degenerate_triangle> WC;
+  #endif
+
   Is_valid_existing_edges_and_degenerate_triangle iv(existing_edges);
   
   // fill hole using polyline function, with custom tracer for Polyhedron
-  Tracer_polyhedron<Polyhedron, OutputIterator> tracer(out, polyhedron, P_edges);
+  Tracer_polyhedron<Polyhedron, OutputIterator>
+    tracer(out, polyhedron, P_edges);
   Weight_min_max_dihedral_and_area weight = 
-    internal::triangulate_hole_polyline(P.begin(), P.end(), 
-                                        Q.begin(), Q.end(), 
-                                        tracer, WC(iv), use_delaunay_triangulation);
+    internal::triangulate_hole_polyline(P, Q, 
+                                        tracer, WC(iv), use_delaunay_triangulation)
+                                      #ifdef CGAL_USE_WEIGHT_INCOMPLETE
+                                        .weight; // get actual weight in Weight_incomplete
+                                      #else
+                                        ;
+                                      #endif
 
   CGAL_TRACE_STREAM << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
   return std::make_pair(tracer.out, weight);

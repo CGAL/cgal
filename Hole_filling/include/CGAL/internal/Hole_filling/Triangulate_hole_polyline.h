@@ -5,11 +5,14 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <CGAL/iterator.h>
 
 #include <vector>
 #include <stack>
 #include <map>
+
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/unordered_set.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -71,6 +74,26 @@ public:
     return default_;
   }
 
+  void set_range_to_default(int b, int e/*inclusive*/) {
+    // given a range b-e erase each entity which falls into b-e
+    // example: given range 2-6, entries need to be deleted  2-3, 2-4, 2-5, 2-6
+    //                                                            3-4, 3-5, 3-6
+    //                                                                 4-5, 4-6
+    //                                                                      5-6
+    Map::iterator it;
+    if(b == 0) { it = table.begin(); }
+    else       { 
+      it = table.upper_bound(std::make_pair(b-1, n)); // to find first entry where entry.first == b
+    }
+
+    while(it != table.end() && it->first.first != e) {
+      if(it->first.second <= e) 
+      { table.erase(it++); }
+      else 
+      { ++it; }
+    }
+  }
+
   int n;
 private:
   typedef std::map<std::pair<int,int>, T> Map;
@@ -83,37 +106,46 @@ private:
   Map table;
   T default_;
 };
+
 /************************************************************************
  * Is_valid classes (to be used in Weight_calculator)
  ************************************************************************/
-// to be used in existing_edges set
-struct Edge_comp {
-  bool operator()(const std::pair<int, int>& p0, const std::pair<int, int>& p1) const {
-    int p0_min = (std::min)(p0.first, p0.second);
-    int p0_max = (std::max)(p0.first, p0.second);
-    int p1_min = (std::min)(p1.first, p1.second);
-    int p1_max = (std::max)(p1.first, p1.second);
-    if(p0_min == p1_min) {
-      return p0_max < p1_max;
-    }
-    return p0_min < p1_min;
-  }
-};
-typedef std::set<std::pair<int, int>, Edge_comp> Edge_set;
-
 struct Is_valid_existing_edges 
 {
-  Is_valid_existing_edges(const Edge_set& existing_edges) : existing_edges(existing_edges) { }
+  typedef std::vector<std::pair<int, int> > Edge_container;
+  
+  Is_valid_existing_edges(Edge_container& existing_edges) 
+    : existing_edges(existing_edges)
+  {
+    std::sort(existing_edges.begin(), existing_edges.end());
+#ifndef CGAL_NDEBUG
+    // all pairs need to be satisfy pair.first < pair.second
+    for(Edge_container::iterator it = existing_edges.begin(); it != existing_edges.end(); ++it) {
+      CGAL_assertion(it->first < it->second);
+    }
+#endif
+  }
 
   template<class Point_3, class LookupTable>
   bool operator()(const std::vector<Point_3>&, const std::vector<Point_3>&, 
                   int v0, int v1, int v2, const LookupTable&) const 
   {
-    return existing_edges.find(std::make_pair(v0,v1)) == existing_edges.end() &&
-           existing_edges.find(std::make_pair(v1,v2)) == existing_edges.end() &&
-           existing_edges.find(std::make_pair(v0,v2)) == existing_edges.end();
+    CGAL_assertion(v0 < v1 && v1 < v2);
+    if(v0 + 1 != v1 && // border edges can not be inside existing_edges, so no need to check
+       std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v0,v1)) )
+    { return false; }
+
+    if(v1 + 1 != v2 &&
+      std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v1,v2)) )
+    { return false; }
+    
+    if(std::binary_search(existing_edges.begin(), existing_edges.end(), std::make_pair(v0,v2)) )
+    { return false; }
+
+    return true;
   }
-  const Edge_set& existing_edges;
+
+  Edge_container& existing_edges;
 };
 
 struct Is_valid_degenerate_triangle 
@@ -129,7 +161,8 @@ struct Is_valid_degenerate_triangle
 // Combine above two
 struct Is_valid_existing_edges_and_degenerate_triangle 
 {
-  Is_valid_existing_edges_and_degenerate_triangle(const Edge_set& edges) : is_valid_edges(edges) { }
+  Is_valid_existing_edges_and_degenerate_triangle(Is_valid_existing_edges::Edge_container& edges) 
+    : is_valid_edges(edges) { }
 
   template<class Point_3, class LookupTable>
   bool operator()(const std::vector<Point_3>& P, const std::vector<Point_3>& Q, 
@@ -145,31 +178,14 @@ struct Is_valid_existing_edges_and_degenerate_triangle
  * Weights
  ************************************************************************/
 
-// Weight calculator class is both responsible from calculating weights, and checking validity of triangle
-template<class Weight_, class IsValid>
-struct Weight_calculator 
-{
-  typedef Weight_ Weight;
-  Weight_calculator(const IsValid& is_valid = IsValid()) : is_valid(is_valid) { }
-
-  template<class Point_3, class LookupTable>
-  Weight operator()(const std::vector<Point_3>& P, 
-                    const std::vector<Point_3>& Q, 
-                    int i, int j, int k, 
-                    const LookupTable& lambda) const 
-  {
-    if( !is_valid(P, Q, i,j,k, lambda) ) 
-    { return Weight::NOT_VALID(); }
-    return Weight(P, Q, i,j,k, lambda);
-  }
-
-  IsValid is_valid;
-};
-
+// First minimizes the worst dihedral angle between patch triangles, then the total surface area as a tiebreaker.
 class Weight_min_max_dihedral_and_area 
 {
   template<class Weight_, class IsValid>
   friend struct Weight_calculator;
+
+  template<class Weight_>
+  friend class Weight_incomplete;
 
 public:
   // these two should not be used (used in test code)
@@ -320,19 +336,99 @@ public:
   }
 };
 
+// Weights for incomplete patches. It maximize patch size, then ActualWeight as a tiebreaker.
+template<class ActualWeight>
+class Weight_incomplete
+{
+  template<class Weight_, class IsValid>
+  friend struct Weight_calculator;
+
+private:
+  template<class Point_3, class LookupTable>
+  Weight_incomplete(const std::vector<Point_3>& P, 
+    const std::vector<Point_3>& Q, 
+    int i, int j, int k, 
+    const LookupTable& lambda)
+    : weight(P,Q,i,j,k,lambda), patch_size(1)
+  { }
+
+  Weight_incomplete(const ActualWeight& weight, int patch_size) 
+    : weight(weight), patch_size(patch_size)
+  { }
+
+public:
+  Weight_incomplete operator+(const Weight_incomplete& w2) const 
+  {
+    CGAL_assertion((*this) != NOT_VALID());
+    CGAL_assertion(w2 != NOT_VALID());
+
+    return Weight_incomplete(weight + w2.weight, patch_size + w2.patch_size);
+  }
+
+  bool operator<(const Weight_incomplete& w2) const
+  {
+    CGAL_assertion((*this) != NOT_VALID());
+    CGAL_assertion(w2 != NOT_VALID());
+
+    if(patch_size == w2.patch_size) {
+      return weight < w2.weight;
+    }
+    return patch_size > w2.patch_size; // if patch size is larger, then the weight is smaller
+  }
+
+  bool operator==(const Weight_incomplete& w2) const 
+  { return weight == w2.weight && patch_size == w2.patch_size; }
+
+  bool operator!=(const Weight_incomplete& w2) const 
+  { return !(*this == w2); }
+
+  static const Weight_incomplete DEFAULT() // rule: x + DEFAULT() == x
+  { return Weight_incomplete(ActualWeight::DEFAULT(), 0); }
+  static const Weight_incomplete NOT_VALID()
+  { return Weight_incomplete(ActualWeight::NOT_VALID(), 0); }
+
+  friend std::ostream& operator<<(std::ostream& out, const Weight_incomplete& w) {
+    out << "Patch size: " << w.patch_size << ", Actual weight: " << w.weight;
+    return out;
+  }
+
+  ActualWeight weight;
+  int patch_size;
+};
+
+// Weight calculator class is both responsible from calculating weights, and checking validity of triangle
+template<class Weight_, class IsValid>
+struct Weight_calculator 
+{
+  typedef Weight_ Weight;
+  Weight_calculator(const IsValid& is_valid = IsValid()) : is_valid(is_valid) { }
+
+  template<class Point_3, class LookupTable>
+  Weight operator()(const std::vector<Point_3>& P, 
+    const std::vector<Point_3>& Q, 
+    int i, int j, int k, 
+    const LookupTable& lambda) const 
+  {
+    if( !is_valid(P, Q, i,j,k, lambda) ) 
+    { return Weight::NOT_VALID(); }
+    return Weight(P, Q, i,j,k, lambda);
+  }
+
+  IsValid is_valid;
+};
 /************************************************************************
  * Tracer
  ************************************************************************/
-template<class OutputIteratorValueType, class OutputIterator>
-struct Tracer_polyline {
-  Tracer_polyline(OutputIterator& out) : out(out) 
+// It can produce a patch from both complete and incomplete lambda
+template<class OutputIteratorValueType, class OutputIteratorPatch, class OutputIteratorHole>
+struct Tracer_polyline_incomplete {
+  Tracer_polyline_incomplete(OutputIteratorPatch out, OutputIteratorHole out_hole) 
+    : out(out), out_hole(out_hole)
   { }
 
   template <class LookupTable>
   void
-  operator()(const LookupTable& lambda, 
-             int v0, 
-             int v1)
+  operator()(const LookupTable& lambda, int v0, int v1)
   {
     const int n = lambda.n;
     std::stack<std::pair<int, int> > ranges;
@@ -347,6 +443,11 @@ struct Tracer_polyline {
       if(r.first + 1 == r.second) { continue; }
 
       int la = lambda.get(r.first, r.second);
+      if(la == -1) {
+        *out_hole++ = std::make_pair(r.first, r.second);
+        continue;
+      }
+
       CGAL_assertion(la >= 0 && la < n);
       CGAL_assertion(r.first < la && r.second > la);
       *out++ = OutputIteratorValueType(r.first, la, r.second);
@@ -356,7 +457,8 @@ struct Tracer_polyline {
     }
   }
 
-  OutputIterator& out;
+  OutputIteratorPatch out;
+  OutputIteratorHole  out_hole;
 };
 
 /************************************************************************
@@ -367,20 +469,84 @@ struct Tracer_polyline {
 template<unsigned int Dimension, class Triangulator>
 struct Incident_facet_circulator;
 
+template<class Triangulator>
+struct Incident_facet_circulator_base 
+{
+  typedef typename Triangulator::Facet         Facet;
+  typedef typename Triangulator::Edge          Edge;
+  typedef typename Triangulator::Cell_handle   Cell_handle;
+
+  struct Edge_wrapper {
+    Edge_wrapper(Edge e) : e(e) { }
+
+    int vertex_first()
+    { return (std::min)(e.first->vertex(e.second)->info(), e.first->vertex(e.third)->info()); }
+    int vertex_second()
+    { return (std::max)(e.first->vertex(e.second)->info(), e.first->vertex(e.third)->info()); }
+    
+    Edge e;
+  };
+
+  // Finds the other vertex than e.v0 and e.v1 in facet f
+  // Note that this may return infinite vertex
+  int get_third(Facet f, Edge e) {
+    int v0_info = e.first->vertex(e.second)->info();
+    int v1_info = e.first->vertex(e.third )->info();
+    // warning: it should be designed to handle dimension 2 (e.g. f.first->vertex(3)->info() will crash)
+    for(int i = 0; i < 4; ++i) {
+      if(i == f.second) { continue; } // skip the vertex which is not on `f`
+      int f3 = f.first->vertex(i)->info();
+      if(f3 != v0_info && f3 != v1_info) {
+        return f3; 
+      }
+    }
+    CGAL_assertion(false);
+    return -1;
+  }
+
+  Edge_wrapper edge_first(Facet f, Edge e) {
+    int v0_info = (std::min)(e.first->vertex(e.second)->info(),
+                             e.first->vertex(e.third)->info());
+    return Edge(f.first, 
+                get_vertex_index(f.first, v0_info) , 
+                get_vertex_index(f.first, get_third(f,e)));
+  }
+
+  Edge_wrapper edge_second(Facet f, Edge e) {
+    int v1_info = (std::max)(e.first->vertex(e.second)->info(),
+                             e.first->vertex(e.third)->info());
+    return Edge(f.first,
+                get_vertex_index(f.first, v1_info),
+                get_vertex_index(f.first, get_third(f,e)));
+  }
+
+  int get_vertex_index(Cell_handle ch, int info) {
+    // warning: it should be designed to handle dimension 2 (e.g. f.first->vertex(3)->info() will crash)
+    for(int i = 0; i < 4; ++i) {
+      int v = ch->vertex(i)->info();
+      if(v == info) { return i; }
+    }
+    CGAL_assertion(false);
+    return -1;
+  }
+};
+
 // Use the fact that an edge can be incident to 2 facets in dimension 2
 // and all valid facets (which contains finite + infinite vertices but not the NULL vertex) are
 // pointed by index 3 in cells
 template<class Triangulator>
 struct Incident_facet_circulator<2, Triangulator>
+  : Incident_facet_circulator_base<Triangulator>
 {
   typedef typename Triangulator::Facet         Facet;
   typedef typename Triangulator::Edge          Edge;
   typedef typename Triangulator::Triangulation Triangulation;
-  
-  Incident_facet_circulator(Edge e, const Triangulation&)
-    : f1( Facet(e.first, 3) ),
-      f2( Facet(e.first->neighbor(3 - e.second - e.third), 3) ),
-      it(f1)
+  typedef typename Incident_facet_circulator_base<Triangulator>::Edge_wrapper Edge_wrapper;
+
+  Incident_facet_circulator(Edge_wrapper ew, const Triangulation&)
+    : f1( Facet(ew.e.first, 3) ),
+      f2( Facet(ew.e.first->neighbor(3 - ew.e.second - ew.e.third), 3) ),
+      it(f1), e(ew.e)
   {
      CGAL_assertion(f1 != f2);
      CGAL_assertion(e.second < 3 && e.third < 3);
@@ -390,34 +556,139 @@ struct Incident_facet_circulator<2, Triangulator>
     return *this;
   }
   operator bool() const { return it != f1; }
-  const Facet* operator->() const { return &it; }
-  Facet operator*() const { return it; }
+
+  int get_third()
+  { return Incident_facet_circulator_base<Triangulator>::get_third(it, e); }
+  Edge_wrapper edge_first() 
+  { return Incident_facet_circulator_base<Triangulator>::edge_first(it, e); }
+  Edge_wrapper edge_second() 
+  { return Incident_facet_circulator_base<Triangulator>::edge_second(it, e); }
 
   Facet f1, f2, it;
+  Edge e;
 };
 
 // Just a wrapper around Facet_circulator
 template<class Triangulator>
 struct Incident_facet_circulator<3, Triangulator>
+  : Incident_facet_circulator_base<Triangulator>
 {
   typedef typename Triangulator::Facet            Facet;
   typedef typename Triangulator::Edge             Edge;
   typedef typename Triangulator::Triangulation    Triangulation;
   typedef typename Triangulator::Facet_circulator Facet_circulator;
+  typedef typename Incident_facet_circulator_base<Triangulator>::Edge_wrapper Edge_wrapper;
 
-  Incident_facet_circulator(Edge e, const Triangulation& T)
-    : it(T.incident_facets(e)), end(it)
+  Incident_facet_circulator(Edge_wrapper ew, const Triangulation& T)
+    : it(T.incident_facets(ew.e)), end(it), e(ew.e)
   { }
   Incident_facet_circulator& operator++() {
     ++it;
     return *this;
   }
   operator bool() const { return it != end; }
-  Facet_circulator operator->() const { return it; }
-  Facet operator*() const { return *it; }
+  
+  int get_third() 
+  { return Incident_facet_circulator_base<Triangulator>::get_third(*it, e); }
+  Edge_wrapper edge_first() 
+  { return Incident_facet_circulator_base<Triangulator>::edge_first(*it, e); }
+  Edge_wrapper edge_second() 
+  { return Incident_facet_circulator_base<Triangulator>::edge_second(*it, e); }
 
   Facet_circulator it;
   Facet_circulator end;
+  Edge e;
+};
+
+// Another DS for search space, which can be used in triangulate_DT
+// It is useful for extending the search space of 3D Triangulation by appending new triangles
+struct Edge_graph 
+{
+  struct Edge_comp {
+    bool operator()(std::pair<int, int> p0, std::pair<int, int> p1) const {
+      if(p0.first > p0.second) { std::swap(p0.first, p0.second); }
+      if(p1.first > p1.second) { std::swap(p1.first, p1.second); }
+      return p0 < p1;
+    }
+  };
+
+  typedef boost::unordered_set<int> Vertex_container;
+  // contains edges as key, and each edge contains set of third vertices which denote neighbor facets to that edge
+  typedef std::map<std::pair<int, int>, Vertex_container, Edge_comp> Graph;
+
+  struct Edge_wrapper {
+    Edge_wrapper(std::pair<int, int> e) : e(e) { }
+
+    int vertex_first()  const { return (std::min)(e.first, e.second); }
+    int vertex_second() const { return (std::max)(e.first, e.second); }
+    std::pair<int, int> e;
+  };
+
+  struct Incident_facet_circulator
+  {
+    Incident_facet_circulator(Edge_wrapper ew, const Edge_graph& T)
+    {
+      Graph::const_iterator it_e = T.graph.find(ew.e);
+      CGAL_assertion(it_e != T.graph.end());
+      it = it_e->second.begin();
+      end = it_e->second.end();
+      e = ew.e;
+    }
+    Incident_facet_circulator& operator++() {
+      ++it;
+      return *this;
+    }
+    operator bool() const { return it != end; }
+
+    int get_third() const { return *it; }
+    Edge_wrapper edge_first()  const { return std::make_pair(Edge_wrapper(e).vertex_first(), *it); }
+    Edge_wrapper edge_second() const { return std::make_pair(Edge_wrapper(e).vertex_second(), *it); }
+
+    Vertex_container::const_iterator it;
+    Vertex_container::const_iterator end;
+    std::pair<int, int> e;
+  };
+
+  template<class IncidentFacetCirculator, class Triangulation>
+  void init(const Triangulation& T, const std::vector<bool>& edge_exist)
+  {
+    typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
+
+    n = edge_exist.size();
+    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
+    {
+      int v0 = eb->first->vertex(eb->second)->info();
+      int v1 = eb->first->vertex(eb->third )->info();
+      Vertex_container& e_neighs = graph[std::make_pair(v0, v1)];
+
+      IncidentFacetCirculator fb(*eb, T);
+      do {
+        int v2 = fb.get_third();
+        if(v2 == -1) { continue; }
+        e_neighs.insert(v2);
+      } while(++fb);
+    }
+
+    for(int i = 0; i < n; ++i) {
+      if(edge_exist[i]) { continue; }
+      int v0 = i == n-1 ? 0   : i;
+      int v1 = i == n-1 ? n-1 : i+1;
+      add_all_possible_to_edge(std::make_pair(v0, v1));
+    }
+  }
+
+  void add_all_possible_to_edge(std::pair<int, int> e) {
+    Vertex_container& e_neighs = graph[e];
+    for(int i = 0; i < n; ++i) {
+      if(i == e.first || i == e.second) { continue; }
+      e_neighs.insert(i);
+      graph[std::make_pair(i, e.first)].insert(e.second);
+      graph[std::make_pair(i, e.second)].insert(e.first);
+    }
+  }
+
+  Graph graph;
+  int n;
 };
 
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
@@ -433,14 +704,13 @@ class Triangulate_hole_polyline_DT
   struct Auto_count {
     typedef std::pair<typename Kernel::Point_3, int> result_type;
 
-    Auto_count() : count(0)  { }
+    Auto_count(int count = 0) : count(count)  { }
     result_type operator()(const typename Kernel::Point_3& p) const
     { return std::make_pair(p, count++); }
     mutable int count;
   };
 
 public:
-  typedef Triangulate_hole_polyline_DT                        Self;
   typedef typename WeightCalculator::Weight                   Weight;
   typedef typename Kernel::Point_3                            Point_3;
   typedef std::vector<Point_3>                                Polyline_3;
@@ -456,116 +726,84 @@ public:
   typedef typename Triangulation::Edge                        Edge;
   typedef typename Triangulation::Facet                       Facet;
 
+  typedef Incident_facet_circulator<2, Triangulate_hole_polyline_DT> IFC_2;
+  typedef Incident_facet_circulator<3, Triangulate_hole_polyline_DT> IFC_3;
+
   Weight operator()(const Polyline_3& P, 
                     const Polyline_3& Q,
                     Tracer& tracer,
-                    const WeightCalculator& WC)
+                    const WeightCalculator& WC) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
 
-    int n = P.size() - 1; // because the first and last point are equal
-
-    Triangulation T(boost::make_transform_iterator(P.begin(), Auto_count()),
-                    boost::make_transform_iterator(cpp11::prev(P.end()), Auto_count()));
-    T.infinite_vertex()->info() = -1;
-
-    // Check whether all edges are included in DT, and get v0-vn-1 edge
-    int nb_exists = 0;
-    Finite_edges_iterator v0_vn_edge; // v0 vn-1 edge
-    std::vector<bool> edge_exist(n, false);
-    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
-    {
-      int v0_id = eb->first->vertex(eb->second)->info();
-      int v1_id = eb->first->vertex(eb->third )->info();
-      if(v0_id > v1_id) { std::swap(v0_id, v1_id); }
-
-      // to start from v0 vn-1 edge
-      if(v0_id == 0 && v1_id == n-1) { v0_vn_edge = eb; }
-
-      // check whether the edge is border edge
-      int border_id = -1;
-      if(v0_id + 1 == v1_id)              { border_id = v0_id; }
-      else if(v0_id == 0 && v1_id == n-1) { border_id = v1_id; }
-
-      if(border_id != -1 && !edge_exist[border_id]) {
-        ++nb_exists;
-        edge_exist[border_id] = true;
-      }
-    }
-    CGAL_assertion(n >= nb_exists);
-
-    if(nb_exists != n) {
-      CGAL_TRACE_STREAM << "Not inside " << (n - nb_exists) << " of " << n << std::endl;
-      CGAL_warning(!"Returning no output. Not all border edges are included in 3D Triangulation!");
-      return Weight::NOT_VALID();
-    }
-
-    if(T.dimension() < 2) {
+    int n = P.size()-1; // because the first and last point are equal
+    Triangulation T;
+    std::vector<bool> edge_exist;
+    std::pair<int, int> range(0, n-1);
+    boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, T, edge_exist);
+    if(!res.get<2>()) {
       CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
       return Weight::NOT_VALID();
     }
-    
-    LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
-    LookupTable<int>    lambda(n,-1);
 
-    if(T.dimension() == 3) {
-      triangulate_DT<Incident_facet_circulator<3, Self> >
-        (P, Q, W, lambda, *v0_vn_edge, T, WC);
-    }
-    else {
-      CGAL_assertion(T.dimension() == 2);
-      triangulate_DT<Incident_facet_circulator<2, Self> >
-        (P, Q, W, lambda, *v0_vn_edge, T, WC);
+    // all border edges inside 3D Triangulation
+    if(res.get<1>()) {
+      LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
+      LookupTable<int>    lambda(n,-1);
+
+      typename Incident_facet_circulator_base<Triangulate_hole_polyline_DT>::Edge_wrapper
+        e_start(*res.get<0>()); 
+      if(T.dimension() == 3) {
+        triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, T, WC, false);
+      }
+      else {
+        CGAL_assertion(T.dimension() == 2);
+        triangulate_DT<IFC_2>(P, Q, W, lambda, e_start, T, WC, false);
+      }
+
+      if(W.get(0, n-1) == Weight::NOT_VALID()) {
+        CGAL_warning(!"Returning no output. No possible triangulation is found!");
+        return Weight::NOT_VALID();
+      }
+
+      tracer(lambda, 0, n-1);
+      return W.get(0,n-1);
     }
     
-    if(lambda.get(0, n-1) == -1) {
-      CGAL_warning(!"Returning no output. No possible triangulation is found!");
-      return Weight::NOT_VALID();
-    }
-
-    tracer(lambda, 0, n-1);
-    return W.get(0,n-1);
+    // How to handle missing border edges
+    #if 1
+    return fill_by_extra_triangles(T, edge_exist, P, Q, tracer, WC);
+    #else
+    // This approach produce better patches when used with Weight_incomplete 
+    // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
+    return fill_by_incomplete_patches(T, res.get<0>(), edge_exist, P, Q, tracer, WC);
+    #endif
   }
 
 private:
-  // Finds other vertex than v0 and v1 in facet f
-  // Note that this may return infinite vertex
-  std::pair<int, int> // <vertex id(info), index in cell>
-  get_facet_remaining_vertex(Facet f, int v0_info, int v1_info) 
-  {
-    // warning: it should be designed to handle dimension 2 (e.g. f.first->vertex(3)->info() will crash)
-    for(int i = 0; i < 4; ++i) {
-      if(i == f.second) { continue; } // skip the vertex which is not on `f`
-      int f3 = f.first->vertex(i)->info();
-      if(f3 != v0_info && f3 != v1_info) {
-        return std::make_pair(f3, i); 
-      }
-    }
-    CGAL_assertion(false);
-    return std::make_pair(-1, -1);
-  }
 
-  int get_vertex_index(Cell_handle ch, int info) {
-    // warning: it should be designed to handle dimension 2 (e.g. f.first->vertex(3)->info() will crash)
-    for(int i = 0; i < 4; ++i) {
-      int v = ch->vertex(i)->info();
-      if(v == info) { return i; }
-    }
-    CGAL_assertion(false);
-    return -1;
-  }
-
-  template<class IncidentFacetCirculator>
-  void 
-  triangulate_DT(const Polyline_3& P, 
-                 const Polyline_3& Q, 
-                 LookupTable<Weight>& W, 
-                 LookupTable<int>& lambda, 
-                 Edge e,
-                 const Triangulation& T,
-                 const WeightCalculator& WC)
+  /************************************************************************
+  * Main algorithm which construct a minimum patch top-down searching through the space of T
+  *
+  * + Edge_DT should have:
+  *   - vertex_first() vertex_second() functions where vertex_first() always returns vertex with smaller id
+  * + IncidentFacetCirculator should have:
+  *   - constructor with Edge_DT and Triangulation_DT
+  *   - pre-increment, conversion to bool
+  *   - get_third() returning the third vertex of facet pointed by circulator
+  *   - edge_first() and edge_second() neighbor edges to get_third() vertex
+  ************************************************************************/
+  template<class IncidentFacetCirculator, class Edge_DT, class Triangulation_DT>
+  void triangulate_DT(const Polyline_3& P, 
+                      const Polyline_3& Q, 
+                      LookupTable<Weight>& W, 
+                      LookupTable<int>& lambda, 
+                      Edge_DT e,
+                      const Triangulation_DT& T,
+                      const WeightCalculator& WC,
+                      const bool produce_incomplete) const
   {
     /**********************************************************************
      *  + Default W value is Weight::DEFAULT(), default lambda value is -1.
@@ -573,13 +811,13 @@ private:
      *  + If a range v0-v1 does not contains any possible triangulation, then W[v0,v1] = NOT_VALID() and lambda[v0,v1] = -1
      *  + Note that w + DEFAULT() == w must hold
      */
-    int v0 = e.first->vertex(e.second)->info();
-    int v1 = e.first->vertex(e.third)->info();
-    if(v0 > v1) { std::swap(v0, v1); }
+    int v0 = e.vertex_first();
+    int v1 = e.vertex_second();
+    CGAL_assertion(v0 < v1);  // vertex_first() should always return vertex with smaller index
     CGAL_assertion(v0 != -1); // edge can not be incident to infinite vertex
 
-    if( W.get(v0, v1) != Weight::DEFAULT() || // the range is previously processed
-        v0 + 1 == v1 ) // border edge - should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
+    if( v0 + 1 == v1 || // border edge - should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
+        W.get(v0, v1) != Weight::DEFAULT() ) // the range is previously processed
     { return; }
 
     int m_min = -1;
@@ -587,26 +825,36 @@ private:
 
     IncidentFacetCirculator fb(e, T);
     do {
-      int v2, v2_cell_index;
-      boost::tie(v2, v2_cell_index) = get_facet_remaining_vertex(*fb, v0, v1);
-
+      int v2 = fb.get_third();
       if(v2 < v0 || v2 > v1) { continue; } // this will also skip infinite vertex
 
       if(WC(P,Q, v0,v2,v1, lambda) == Weight::NOT_VALID())
       { continue; } // computed weight in here is not correct weight
                     // since max dih angle requires neighbor ranges to be already computed. It is just for checking validity.
       
-      Edge e0 = Edge(fb->first, get_vertex_index(fb->first, v0) , v2_cell_index); // edge v0-v2
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, WC);        // region v0-v2
-      const Weight& we0 = W.get(v0, v2);
-      if(we0 == Weight::NOT_VALID()) { continue; }
-      
-      Edge e1 = Edge(fb->first, get_vertex_index(fb->first, v1) , v2_cell_index); // edge v2-v1
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, WC);        // region v2-v1
-      const Weight& we1 = W.get(v2, v1);
-      if(we1 == Weight::NOT_VALID()) { continue; }
+      Weight w = Weight::DEFAULT();
 
-      Weight w = we0 + we1 + WC(P,Q, v0,v2,v1, lambda);
+      Edge_DT e0 = fb.edge_first(); // edge v0-v2
+      CGAL_assertion(e0.vertex_first() == v0 && e0.vertex_second() == v2);
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, T, WC, produce_incomplete); // region v0-v2
+      const Weight& we0 = W.get(v0, v2);
+
+      if(!produce_incomplete && we0 == Weight::NOT_VALID()) 
+      { continue; } // not producing incomplete patches and failed to fill sub-range v0-v2, so no reason to proceed
+      if(we0 != Weight::NOT_VALID()) // to not consider we0 if it is NOT_VALID (it is valid when produce_incomplete = true)
+      { w = w + we0; }
+
+      Edge_DT e1 = fb.edge_second(); // edge v2-v1
+      CGAL_assertion(e1.vertex_first() == v2 && e1.vertex_second() == v1);
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, T, WC, produce_incomplete); // region v2-v1
+      const Weight& we1 = W.get(v2, v1);
+
+      if(!produce_incomplete && we1 == Weight::NOT_VALID()) 
+      { continue; }
+      if(we1 != Weight::NOT_VALID()) // to not consider we1 if it is NOT_VALID (it is valid when produce_incomplete = true)
+      { w = w + we1; }
+
+      w = w + WC(P,Q, v0,v2,v1, lambda);
       if(m_min == -1 || w < w_min){
         w_min = w;
         m_min = v2;
@@ -614,11 +862,202 @@ private:
     } while(++fb);
 
     // can be m_min = -1 and w_min = NOT_VALID which means no possible triangulation between v0-v1
-    W.put(v0, v1, w_min);
+    W.put(v0,v1, w_min);
     lambda.put(v0,v1, m_min);
   }
+
+  // returns [h.first-h.second edge, true if all edges inside 3D triangulation, true if T.dimension() >= 2]
+  boost::tuple<boost::optional<Edge>, bool, bool>
+  construct_3D_triangulation(const Polyline_3& P, 
+                             std::pair<int,int> h, 
+                             Triangulation& T, 
+                             std::vector<bool>& edge_exist) const 
+  {
+    // construct 3D T with P[h.first], P[h.second] also assign ids from h.first to h.second
+    boost::optional<Edge> e;
+    int n_border = h.second - h.first + 1;
+    T.insert(boost::make_transform_iterator(boost::next(P.begin(), h.first), Auto_count(h.first)),
+             boost::make_transform_iterator(boost::next(P.begin(), h.second +1), Auto_count(h.first)));
+    T.infinite_vertex()->info() = -1;
+
+    if(T.dimension() < 2) { return boost::make_tuple(e, false, false); }
+
+    // check whether all edges are included in DT, and get v0-vn-1 edge
+    edge_exist.assign(n_border, false);
+    int nb_exists = 0;
+    Finite_edges_iterator v_first_v_second_edge; // range.first - range.second edge
+    for(Finite_edges_iterator eb = T.finite_edges_begin(); eb != T.finite_edges_end(); ++eb) 
+    {
+      int v0_id = eb->first->vertex(eb->second)->info();
+      int v1_id = eb->first->vertex(eb->third )->info();
+      if(v0_id > v1_id) { std::swap(v0_id, v1_id); }
+
+      // to start from v0 vn-1 edge
+      if(v0_id == h.first && v1_id == h.second) { v_first_v_second_edge = eb; }
+
+      // check whether the edge is border edge
+      int border_id = -1;
+      if(v0_id + 1 == v1_id)                         { border_id = v0_id; }
+      else if(v0_id == h.first && v1_id == h.second) { border_id = v1_id; }
+
+      if(border_id != -1 && !edge_exist[border_id - h.first]) {
+        ++nb_exists;
+        edge_exist[border_id - h.first] = true;
+      }
+    }
+    CGAL_assertion(n_border >= nb_exists);
+
+    bool is_3D_T_complete = nb_exists == n_border;
+    if(edge_exist[n_border-1]) { e = *v_first_v_second_edge; }
+    return boost::make_tuple(e, is_3D_T_complete, true);
+  }
+
+  /************************************************************************
+  * Try to construct hole part by part.
+  *
+  * What need to be improved:
+  *  + if 3D triangulation does not contain the start-edge (edge between v0 vn-1) we directly switch to all space. 
+  *  + when switched to all-space, we use map based lookup tables.
+  ************************************************************************/
+  Weight fill_by_incomplete_patches(Triangulation& T,
+                                    boost::optional<Edge> start_edge,
+                                    std::vector<bool>& edge_exist,
+                                    const Polyline_3& P, 
+                                    const Polyline_3& Q,
+                                    Tracer& tracer,
+                                    const WeightCalculator& WC) const
+  {
+    typedef std::pair<int, int> Range;
+    typedef std::back_insert_iterator<std::vector<Range> > Output_hole_iterator;
+    typedef Tracer_polyline_incomplete<boost::tuple<int, int, int>, Emptyset_iterator, Output_hole_iterator> Remaining_holes_tracer;
+    
+    std::vector<Range> remaining_holes;
+    
+    int n_all = P.size()-1;// because the first point and last point are equal
+    remaining_holes.push_back(Range(0, n_all-1)); // corresponds to start_edge 
+
+    LookupTable<Weight> W(n_all, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
+    LookupTable<int>    lambda(n_all,-1);
+
+    while(true) {
+      Range h = remaining_holes.back();
+      remaining_holes.pop_back();
+     
+      if(start_edge) {
+        typename IFC_3::Edge_wrapper e(*start_edge);
+        CGAL_assertion(h.first == e.vertex_first() && 
+                       h.second == e.vertex_second()); 
+      }
+
+      if(!start_edge) {
+        // switch to brute force 
+        Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
+        all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
+        if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
+          CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+          return Weight::NOT_VALID();
+        }
+      }
+      else {
+        // run the algorithm
+        typename IFC_3::Edge_wrapper e(*start_edge);
+        if(T.dimension() == 3) 
+        {
+          triangulate_DT<IFC_3>(P, Q, W, lambda, e, T, WC, true);
+        }
+        else {
+          CGAL_assertion(T.dimension() == 2);
+          triangulate_DT<IFC_2>(P, Q, W, lambda, e, T, WC, true);
+        }
+        // check whether there is any improvement (at least we should construct one triangle)
+        if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
+          // switch to brute force 
+          Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
+          all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
+          if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
+            CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+            return Weight::NOT_VALID();
+          }
+        }
+        // gather remaining holes
+        Remaining_holes_tracer hole_tracer((Emptyset_iterator()), (Output_hole_iterator(remaining_holes)));
+        hole_tracer(lambda, e.vertex_first(), e.vertex_second());
+      }
+
+      if(remaining_holes.empty()) { break; }
+      // construct T for next coming hole
+      h = remaining_holes.back();
+      T.clear();
+      boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, T, edge_exist);
+      if(!res.get<0>()) {
+        CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+        return Weight::NOT_VALID();
+      }
+      start_edge = *res.get<0>();
+      // clear related regions in W, lambda for next coming hole
+      W.set_range_to_default(h.first, h.second);
+      lambda.set_range_to_default(h.first, h.second);
+    }
+    tracer(lambda, 0, n_all-1);
+
+    // W.get(0, n_all -1) is not correct weight (since we do not update weights while we are filling remaining holes), 
+    // we need to recalculate it
+    std::stack<std::pair<int, int> > ranges;
+    ranges.push(std::make_pair(0, n_all-1));
+    Weight total_weight = Weight::DEFAULT();
+    while(!ranges.empty()) {
+      std::pair<int, int> r = ranges.top(); 
+      ranges.pop();
+      if(r.first + 1 == r.second) { continue; }
+      int la = lambda.get(r.first, r.second);
+      total_weight = total_weight + WC(P,Q, r.first,la,r.second, lambda);
+      ranges.push(std::make_pair(r.first, la));
+      ranges.push(std::make_pair(la, r.second));
+    }
+    return total_weight;
+  }
   
-};
+  /************************************************************************
+   * This approach extends the search space by adding extra triangles.
+   *
+   * + Initial search space is 3D Triangulation.
+   * + For each border edge which is not inside 3DT, we add all possible triangles containing that edge to the search space.
+   *   Example: say border edge [4-5] is not found in 3DT, then triangles = { [0,4,5] [1,4,5] [2,4,5] ... [ n-1,4,5] } 
+   *   are added to the search space.
+   *
+   * I guess this approach does not make the search space complete, since there are some cases that it still returns no patch.
+   ************************************************************************/
+  Weight fill_by_extra_triangles(const Triangulation& T, 
+                                 const std::vector<bool>& edge_exist,
+                                 const Polyline_3& P, 
+                                 const Polyline_3& Q,
+                                 Tracer& tracer,
+                                 const WeightCalculator& WC) const
+  {
+    int n = edge_exist.size();
+    LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
+    LookupTable<int>    lambda(n,-1);
+
+    Edge_graph edge_graph;
+
+    if(T.dimension() == 3) 
+    { edge_graph.init<IFC_3>(T, edge_exist); }
+    else 
+    { edge_graph.init<IFC_2>(T, edge_exist); }
+
+    Edge_graph::Edge_wrapper e_start(std::make_pair(0, n-1));
+    triangulate_DT<Edge_graph::Incident_facet_circulator>
+      (P, Q, W, lambda, e_start, edge_graph, WC, false);
+    
+    if(W.get(0, n-1) == Weight::NOT_VALID()) {
+      CGAL_warning(!"Returning no output. Filling hole with extra triangles is not successful!");
+      return Weight::NOT_VALID();
+    }
+
+    tracer(lambda, 0, n-1);
+    return W.get(0, n-1);
+  }
+}; // End of Triangulate_hole_polyline_DT
 
 /************************************************************************
  * Triangulate hole by using all search space
@@ -635,10 +1074,10 @@ public:
   typedef typename Kernel::Point_3           Point_3;
   typedef std::vector<Point_3>               Polyline_3;
 
-  Weight operator()(const Polyline_3& P, 
+  Weight operator()(const Polyline_3& P,
                     const Polyline_3& Q,
                     Tracer& tracer,
-                    const WeightCalculator& WC)
+                    const WeightCalculator& WC) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -648,24 +1087,41 @@ public:
     LookupTable<Weight> W(n,Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
     
-    for(int j = 2; j< n; ++j) {   // determines range (2 - 3 - 4 )
-      for(int i=0; i<n-j; ++i) {  // iterates over ranges and find min triangulation in those ranges 
-        int k = i+j;              // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
-        
+    triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
+
+    if(W.get(0,n-1) == Weight::NOT_VALID()) {
+      CGAL_warning(!"Returning no output. No possible triangulation is found!");
+      return Weight::NOT_VALID();
+    }
+
+    tracer(lambda, 0, n-1);
+    return W.get(0,n-1);
+  }
+
+  void triangulate_all(const Polyline_3& P,
+                       const Polyline_3& Q,
+                       const WeightCalculator& WC,
+                       std::pair<int, int> range,
+                       LookupTable<Weight>& W, 
+                       LookupTable<int>& lambda) const
+  {
+    for(int j = 2; j<= range.second; ++j) {              // determines range (2 - 3 - 4 )
+      for(int i=range.first; i<= range.second-j; ++i) {  // iterates over ranges and find min triangulation in those ranges 
+        int k = i+j;                                     // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
+
         int m_min = -1;
         Weight w_min = Weight::NOT_VALID();
         // i is the range start (e.g. 1) k is the range end (e.g. 5) -> [1-5]. Now subdivide the region [1-5] with m -> 2,3,4
         for(int m = i+1; m<k; ++m) { 
           // now the regions i-m and m-k might be valid(constructed) patches,
-          // if not, we can not construct i-m-k triangle
           if( W.get(i,m) == Weight::NOT_VALID() || W.get(m,k) == Weight::NOT_VALID() ) 
           { continue; }
 
-          Weight w_imk = WC(P,Q,i,m,k, lambda);
+          const Weight& w_imk = WC(P,Q,i,m,k, lambda);
           if(w_imk == Weight::NOT_VALID()) 
           { continue; }
 
-          Weight w = W.get(i,m) + W.get(m,k) + w_imk;
+          const Weight& w = W.get(i,m) + W.get(m,k) + w_imk;
           if(m_min == -1 || w < w_min) {
             w_min = w;
             m_min = m;
@@ -677,14 +1133,6 @@ public:
         lambda.put(i,k, m_min);
       }
     }
-
-    if(lambda.get(0,n-1) == -1) {
-      CGAL_warning(!"Returning no output. No possible triangulation is found!");
-      return Weight::NOT_VALID();
-    }
-
-    tracer(lambda, 0, n-1);
-    return W.get(0,n-1);
   }
 };
 
@@ -692,23 +1140,21 @@ public:
  * Internal entry point for both polyline and Polyhedron_3 triangulation functions
  ***********************************************************************************/
 template <
-  typename InputIterator,
+  typename Point_3,
   typename Tracer,
   typename WeightCalculator
 >
 typename WeightCalculator::Weight
-triangulate_hole_polyline(InputIterator pbegin, InputIterator pend, 
-                          InputIterator qbegin, InputIterator qend, 
+triangulate_hole_polyline(std::vector<Point_3>& P,
+                          std::vector<Point_3>& Q,
                           Tracer& tracer,
                           const WeightCalculator& WC,
                           bool use_delaunay_triangulation) 
 {
-  typedef typename CGAL::Kernel_traits< typename std::iterator_traits<InputIterator>::value_type>::Kernel Kernel;
+  typedef typename CGAL::Kernel_traits<Point_3>::Kernel Kernel;
   typedef CGAL::internal::Triangulate_hole_polyline_DT<Kernel, Tracer, WeightCalculator> Fill_DT;
   typedef CGAL::internal::Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator>    Fill;
 
-  typename Fill::Polyline_3 P(pbegin, pend);
-  typename Fill::Polyline_3 Q(qbegin, qend);
   if(P.front() != P.back()){
     P.push_back(P.front());
     if( !Q.empty() && P.size() > Q.size()) {
@@ -752,13 +1198,20 @@ triangulate_hole_polyline(InputIterator pbegin, InputIterator pend,
                           InputIterator qbegin, InputIterator qend, 
                           OutputIterator out, bool use_delaunay_triangulation = false)
 {
-  typedef internal::Weight_calculator<
-    internal::Weight_min_max_dihedral_and_area, 
-    internal::Is_valid_degenerate_triangle
-  > WC;
+  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+  typedef internal::Weight_min_max_dihedral_and_area      Weight;
+  typedef internal::Weight_calculator<Weight, internal::Is_valid_degenerate_triangle>  WC;
+  typedef std::vector<std::pair<int, int> > Holes;
+  typedef std::back_insert_iterator<Holes>  Holes_out;
 
-  internal::Tracer_polyline<OutputIteratorValueType, OutputIterator> tracer(out);
-  internal::triangulate_hole_polyline(pbegin, pend, qbegin, qend, tracer, WC(), use_delaunay_triangulation);
+  std::vector<Point_3> P(pbegin, pend);
+  std::vector<Point_3> Q(qbegin, qend);
+  Holes                holes; // no actual use, just to check there is no holes
+
+  internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out> 
+    tracer(out, Holes_out(holes));
+  internal::triangulate_hole_polyline(P, Q, tracer, WC(), use_delaunay_triangulation);
+  CGAL_assertion(holes.empty());
   return tracer.out;
 }
 
