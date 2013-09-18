@@ -376,7 +376,7 @@ private:
       int remove_cnt = remove_ehs.size();
       if (remove_cnt==1 && insert_cnt==1) {
         //it's a special case that one edge is inserted and one edge is removed.
-        //for this case, no heap operation is needed.
+        //for this case, replace the removed one by the inserted one, so no heap operation is needed.
         int remove_idx = edx[remove_ehs.front()];
         active_edges[remove_idx] = insert_ehs.front();
         edx[insert_ehs.front()] = remove_idx;
@@ -604,7 +604,7 @@ private:
     return *(CGAL::object_cast<Point_2>(&result));
   }
 
-  //check if p has been discovered before, if not update the  visibility polygon
+  //check if p has been discovered before, if not update the visibility polygon
   bool update_visibility(const Point_2& p){
     if (polygon.empty()) {
       polygon.push_back(p);
@@ -749,17 +749,21 @@ private:
       } while (++curr != circ);
     }
 
-    //create a bounding box for all vertices such that during the sweeping, the vision ray will always interset at least an edge.
+    //create a box that cover all vertices such that during the sweeping, the vision ray will always interset at least an edge.
+    //this box doesn't intersect any relevant_edge.
     Points points;
     for (int i=0; i<vs.size(); i++) {
       points.push_back(vs[i]->point());
     }
     points.push_back(q);
+    //first get the bounding box of all relevant points.
     typename Geometry_traits_2::Iso_rectangle_2 bb = bounding_box(points.begin(), points.end());
 
     Number_type xmin, xmax, ymin, ymax;
     typename Geometry_traits_2::Compute_x_2 compute_x = geom_traits->compute_x_2_object();
     typename Geometry_traits_2::Compute_y_2 compute_y = geom_traits->compute_y_2_object();
+
+    //make the box a little bigger than bb so that it doesn't intersect any relevant_edge.
     xmin = compute_x(bb.min())-1;
     ymin = compute_y(bb.min())-1;
     xmax = compute_x(bb.max())+1;
