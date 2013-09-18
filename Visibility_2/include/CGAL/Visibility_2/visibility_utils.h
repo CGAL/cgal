@@ -195,6 +195,7 @@ typename Geometry_traits_2::Point_2 construct_projected_point_2(
   }
 }
 
+//construct an arrangement of visibility region from a vector of circular ordered vertices with respect to the query point
 template <class Visibility_2>
 void report_while_handling_needles(
   const typename Visibility_2::Input_arrangement_2::Geometry_traits_2 *geom_traits,
@@ -228,21 +229,21 @@ void report_while_handling_needles(
   points.push_back(points[i]);
 
   Halfedge_handle he_handle;
-  Vertex_handle v_trg;
-  Vertex_handle v_fst;
-  Vertex_handle v_needle_end;
+  Vertex_handle v_trg;  //the handle of vertex where the next segment is inserted
+  Vertex_handle v_fst;  //the handle of vertex inserted first
+  Vertex_handle v_needle_end;  //the handle of vertex of the end of a needle
 
   v_trg = v_fst = arr_out.insert_in_face_interior(points[i], arr_out.unbounded_face());
-
+  //find a point that is right after a needle
   while (i+1 < points.size()) {
     if ( collinear(geom_traits,
                    points[i],
                    points[i+1],
                    q)) {
       Vertex_handle v_needle_begin = v_trg;
-      std::vector<Point_2> forward_needle;
-      std::vector<Point_2> backward_needle;
-      std::vector<Point_2> part_in_q_side;
+      std::vector<Point_2> forward_needle;   //vertices of the needle that are not between q and v_needle_begin; their direction is leaving q;
+      std::vector<Point_2> backward_needle;  //vertices of the needle that are not between q and v_needle_begin; their direction is towards q;
+      std::vector<Point_2> part_in_q_side;   //vertices of the needle that are between q and v_needle_begin
       part_in_q_side.push_back(points[i]);
       forward_needle.push_back((points[i]));
 
@@ -274,7 +275,7 @@ void report_while_handling_needles(
         }
         i++;
       }
-
+      //obtain the end point of a needle
       Point_2 end_of_needle;
       if (same_side_of_q)
         end_of_needle = part_in_q_side.back();
@@ -290,7 +291,7 @@ void report_while_handling_needles(
       std::reverse(backward_needle.begin(), backward_needle.end());
       std::vector<Point_2> merged_needle;
 
-      // Now merge the two vectors
+      // merge the forward_needle and backward_needle
       unsigned int itr_fst = 0, itr_snd = 0;
       while (itr_fst < forward_needle.size() &&
              itr_snd < backward_needle.size()) {
@@ -330,6 +331,7 @@ void report_while_handling_needles(
         }
       }
       if (same_side_of_q) {
+        //insert the part of needle between q and v_needle_begin
         v_trg = v_needle_begin;
         for (unsigned int p = 0 ; p+1 < part_in_q_side.size() ; p++) {
           if (CGAL::Visibility_2::compare_xy_2<Geometry_traits_2>(geom_traits, part_in_q_side[p], part_in_q_side[p+1]) == CGAL::SMALLER) {
@@ -355,6 +357,7 @@ void report_while_handling_needles(
       i++;
     }
     if (i+2 == points.size()) {
+      //close the boundary
       v_trg = he_handle->target();
       arr_out.insert_at_vertices(Segment_2(points[points.size()-2], points[points.size()-1]), v_trg, v_fst);
       break;
