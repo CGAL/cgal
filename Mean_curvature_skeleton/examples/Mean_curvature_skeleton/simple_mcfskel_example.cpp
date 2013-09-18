@@ -108,7 +108,7 @@ int main()
   GraphCorrelationPMap corr(corr_map);
 
   // Create default parameters.
-  CGAL::SkeletonArgs<Polyhedron> skeleton_args(mesh);
+  CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
   // Customize the parameters.
   skeleton_args.omega_H = 0.2;

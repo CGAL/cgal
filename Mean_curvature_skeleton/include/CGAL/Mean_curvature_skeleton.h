@@ -130,10 +130,11 @@ enum Degeneracy_algorithm_tag
 /// @endcond
 
 /// \ingroup PkgMeanCurvatureSkeleton3
-///@brief Define the default sparse linear solver type.
+///@brief Define the default sparse linear systems solver type.
 template <class FT>
 struct MCF_default_solver
 {
+  /// Default solver type.
   typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
 };
 
@@ -142,6 +143,7 @@ struct MCF_default_solver
 template <class Polyhedron>
 struct MCF_default_halfedge_graph_pmap
 {
+  /// Default HalfedgeGraphPointPMap type.
   typedef typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type type;
 };
 
@@ -151,7 +153,7 @@ struct MCF_default_halfedge_graph_pmap
 /// @tparam HalfedgeGraph
 ///         a model of `HalfedgeGraph`
 template<class HalfedgeGraph>
-class SkeletonArgs
+class MCF_skel_args
 {
 public:
   typedef CGAL::Bbox_3                                                   Bbox;
@@ -181,7 +183,7 @@ private:
 public:
 
   /**
-   * The constructor of a SkeletonArgs object. The constructor
+   * The constructor of a MCF_skel_args object. The constructor
    * will set the `edgelength_TH` to 0.002 * diagonal of the bounding box
    * of the given mesh. The other parameters are set to their default values:
    *
@@ -198,7 +200,7 @@ public:
    * @param P
    *        Triangulated surface mesh used to extract skeleton.
    */
-  SkeletonArgs(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
+  MCF_skel_args(HalfedgeGraph& P) : omega_H(0.1), omega_P(0.2),
     delta_area(0.0001), max_iterations(500), is_medially_centered(true)
   {
     vertex_iterator vb, ve;
@@ -450,7 +452,7 @@ public:
   MCF_Skeleton(HalfedgeGraph& P,
               VertexIndexMap Vertex_index_map,
               EdgeIndexMap Edge_index_map,
-              SkeletonArgs<HalfedgeGraph> Skeleton_args
+              MCF_skel_args<HalfedgeGraph> Skeleton_args
               )
     :mesh(&P), polyhedron(new HalfedgeGraph(P)),
      vertex_id_pmap(Vertex_index_map),
@@ -479,7 +481,7 @@ public:
   MCF_Skeleton(HalfedgeGraph* P,
               VertexIndexMap Vertex_index_map,
               EdgeIndexMap Edge_index_map,
-              SkeletonArgs<HalfedgeGraph> Skeleton_args
+              MCF_skel_args<HalfedgeGraph> Skeleton_args
               )
     :mesh(NULL), polyhedron(P),
      vertex_id_pmap(Vertex_index_map),
@@ -983,7 +985,7 @@ private:
   // --------------------------------------------------------------------------
 
   /// Initialize the parameters for MCF_Skeleton
-  void init_args(SkeletonArgs<HalfedgeGraph> Skeleton_args)
+  void init_args(MCF_skel_args<HalfedgeGraph> Skeleton_args)
   {
     omega_H = Skeleton_args.omega_H;
     omega_P = Skeleton_args.omega_P;
@@ -1753,7 +1755,7 @@ template <class HalfedgeGraph,
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
                       EdgeIndexMap Edge_index_map,
-                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      MCF_skel_args<HalfedgeGraph> Skeleton_args,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
@@ -1778,7 +1780,7 @@ template <class HalfedgeGraph,
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
                       EdgeIndexMap Edge_index_map,
-                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      MCF_skel_args<HalfedgeGraph> Skeleton_args,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {
@@ -1799,7 +1801,7 @@ template <class HalfedgeGraph,
 void extract_skeleton(HalfedgeGraph& P,
                       VertexIndexMap Vertex_index_map,
                       EdgeIndexMap Edge_index_map,
-                      SkeletonArgs<HalfedgeGraph> Skeleton_args,
+                      MCF_skel_args<HalfedgeGraph> Skeleton_args,
                       Graph& g, GraphPointPMap& points,
                       GraphCorrelationPMap& skeleton_to_surface)
 {

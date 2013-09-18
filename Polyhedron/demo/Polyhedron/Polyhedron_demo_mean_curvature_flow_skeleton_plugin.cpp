@@ -214,7 +214,7 @@ public:
         return false;
       }
 
-      CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
+      CGAL::MCF_skel_args<Polyhedron> skeleton_args(*pMesh);
       skeleton_args.omega_H = omega_H;
       skeleton_args.omega_P = omega_P;
       skeleton_args.edgelength_TH = edgelength_TH;
@@ -252,7 +252,7 @@ public:
 
         delete mcs;
 
-        CGAL::SkeletonArgs<Polyhedron> skeleton_args(*pMesh);
+        CGAL::MCF_skel_args<Polyhedron> skeleton_args(*pMesh);
         skeleton_args.omega_H = omega_H;
         skeleton_args.omega_P = omega_P;
         skeleton_args.edgelength_TH = edgelength_TH;
@@ -528,7 +528,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     Correspondence_map corr_map;
     GraphCorrelationPMap corr(corr_map);
 
-    CGAL::SkeletonArgs<Polyhedron> skeleton_args(tempMesh);
+    CGAL::MCF_skel_args<Polyhedron> skeleton_args(tempMesh);
     skeleton_args.omega_H = omega_H;
     skeleton_args.edgelength_TH = edgelength_TH;
     skeleton_args.is_medially_centered = false;
@@ -584,7 +584,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     Polyhedron tempMesh = *pMesh;
 
-    CGAL::SkeletonArgs<Polyhedron> skeleton_args(tempMesh);
+    CGAL::MCF_skel_args<Polyhedron> skeleton_args(tempMesh);
     skeleton_args.omega_H = omega_H;
     skeleton_args.omega_P = omega_P;
     skeleton_args.edgelength_TH = edgelength_TH;
