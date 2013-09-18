@@ -145,7 +145,7 @@ int main()
   std::cout << "vertices: " << boost::num_vertices(g) << "\n";
   std::cout << "edges: " << boost::num_edges(g) << "\n";
 
-  // output all the edges
+  // Output all the edges.
   edge_iter ei, ei_end;
   for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
   {
@@ -163,7 +163,7 @@ int main()
     id_to_vd[v->id()] = v;
   }
 
-  // output skeletal points and the corresponding surface points
+  // Output skeletal points and the corresponding surface points.
   vertex_iter gvb, gve;
   for (boost::tie(gvb, gve) = boost::vertices(g); gvb != gve; ++gvb)
   {

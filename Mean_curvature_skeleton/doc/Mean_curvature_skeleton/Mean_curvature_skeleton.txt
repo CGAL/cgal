@@ -87,11 +87,15 @@ Where the \f$ W_{P} \f$ is weights to control the smoothness of medial approxima
 
 \section MCFSkelSecAPI User Interface Description
 
-The MCF skeleton and the MCF medial skeleton can be obtained by respectively using the free functions 
-`::CGAL::extract_skeleton()`.
-The class `::CGAL::MCF_Skeleton` is also provided to allow advanced usage and having access to each step of the contraction.
+The curve skeleton can be extracted by the free function `::CGAL::extract_skeleton`. This function could be used to extract a skeleton from the given mesh automatically without any user interaction. The main parameters for the algorithm is passed through the `::CGAL::SkeletonArgs` structure. The constructor of `::CGAL::SkeletonArgs` will initialize the parameters to their default values, which works well in most cases. By default the skeleton extracted is medially centered. The user can set `is_medially_centered` in `SkeletonArgs` to `false` to get a skeleton without guarantee to be medially centered. More details on how to use the free function can be found in the example code.
 
-It is also possible to get the correspondence between skeleton points and input vertices.
+The class `::CGAL::MCF_Skeleton` is provided to allow the user to call the low level functions such as `::CGAL::MCF_Skeleton::contract_geometry` and `::CGAL::MCF_Skeleton::update_topology`. This gives the user full control of each step of the algorithm and very useful to develop an interative demo. The Polyhedron demo contains a plugin implemented based on the API from `::CGAL::MCF_Skeleton`. \cgalFigureRef{Demo} shows an example of an interative demo. In the example code, we show how to call those functions.
+
+\cgalFigureBegin{Demo, demo.png}
+A screenshot of the interactive demo.
+\cgalFigureEnd
+
+The algorithm also tracks the correspondence between skeleton points and input vertices.
 
 The correspondent points for a skeletal vertex are original surface points that are collapsed onto the skeletal vertex. They are useful for tasks such as mesh segmentation. In \cgalFigureRef{Correspondence}, we visualize such relationship by connecting each skeletal point to its correspondent points.
 
@@ -119,7 +123,38 @@ In this example, we only extract the curve skeleton and outputs the embedding of
 
 In this example, we extract the skeleton with correspondent points. Then we show how to access the correspondent points for each skeletal point.
 
-\cgalExample{Mean_curvature_skeleton/extract_correspondence_example.cpp}
+\cgalExample{Mean_curvature_skeleton/MCF_Skeleton_example.cpp}
+
+\section Performances
+
+We use the elephant model as an example to evaluate the running time of different sizes of the models. Loop subdivision is performed on the model to increase the number of vertices. \cgalFigureRef{Comparison} shows the extracted skeleton for each model. From the result we can see the skeleton is not completely inside the mesh if the model is not sufficiently sampled. The reason is the Voronoi poles may contain noise if the sampling is not dense. As we increase the level of sampling, the quality of the poles improve and so is the skeleton.
+
+\cgalFigureBegin{Comparison, comparison.png}
+The left model is original mesh. The one in the middle is after one loop subdivision. The right one is after two loop subdivisions.
+\cgalFigureEnd
+
+We have recorded the running time of the algorithm. The CPU of the test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. According to the results, the running time grows linearly as the size of the mesh. This is very natural as the most expensive part of the algorithm is solving a sparse linear system and most sparse solvers have linear time complexity.
+
+<center>
+<table border="1">
+<tr>
+	<td> Number of vertices </td>
+	<td> Time </td>
+</tr>
+<tr>
+	<td> 2,775 </td>
+	<td align='right'> 597ms </td>
+</tr>
+<tr>
+	<td> 11,112 </td>
+	<td align='right'> 1,943ms </td>
+</tr>
+<tr>
+	<td> 44,460 </td>
+	<td align='right'> 8,000ms </td>
+</tr>
+</table>
+</center>
 
 \section MCFSkelSecDesign Design and Implementation History
 
