@@ -21,7 +21,7 @@ void test_AK_3(){
   CGAL::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+
   
 
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Integer, Integer > > Poly;
