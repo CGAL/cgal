@@ -467,7 +467,8 @@ public:
   /**
    * The constructor of a MCF_Skeleton object.
    *
-   * @pre the polyhedron is a watertight triangular mesh
+   * @pre The polyhedron is a watertight triangular mesh.
+   * @pre Number of component equals 1.
    * @param P
    *        triangulated surface mesh used to extract skeleton
    * \note  The source mesh will be modified by the algorithm.
@@ -1719,16 +1720,18 @@ private:
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
 ///         `std::vector<int>` as value type
-/// @tparam HalfedgeGraphPointPMap
-///         a model of `ReadWritePropertyMap`</a>
-///         with HalfedgeGraph::vertex_descriptor as key and
-///         MCF_Skeleton::Point as value type
 /// @tparam GraphPointPMap
 ///         a model of `ReadWritePropertyMap`</a>
 ///         with Graph::vertex_descriptor as key and
 ///         MCF_Skeleton::Point as value type
+///         The default is boost::property_map<HalfedgeGraph, CGAL::vertex_point_t>::type.
+/// @tparam HalfedgeGraphPointPMap
+///         a model of `ReadWritePropertyMap`</a>
+///         with HalfedgeGraph::vertex_descriptor as key and
+///         MCF_Skeleton::Point as value type
 /// @tparam SparseLinearAlgebraTraits_d
 ///         a model of `SparseLinearAlgebraTraitsWithPreFactor_d`
+///         The default is CGAL::MCF_default_solver<double>::type.
 ///
 /// @param P
 ///        triangulated surface mesh used to extract skeleton
