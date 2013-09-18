@@ -1,4 +1,5 @@
 /*!
 \example Mean_curvature_skeleton/simple_mcfskel_example.cpp
 \example Mean_curvature_skeleton/MCF_Skeleton_example.cpp
+\example Mean_curvature_skeleton/segmentation_example.cpp
 */
