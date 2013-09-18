@@ -105,14 +105,14 @@ public:
 ///
 /// @return computed point
 
-template </*typename Concurreny_tag,*/typename Kernel, typename Tree>
+template </*typename Concurreny_tag,*/typename ForwardIterator, typename Kernel, typename Tree>
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& tree, ///< KD-tree
-  //unsigned int& k, // nb neighbors
+  Tree& aabb_tree, ///< AABB-tree
   const typename Kernel::FT radius, //accept neighborhood radius
-  const std::vector<typename Kernel::FT>& density_weight_set//if  need density
+  const std::vector<typename Kernel::FT>& density_weight_set,//if  need density
+  ForwardIterator original_first_iter //
 )
 {
   //CGAL_point_set_processing_precondition( k > 1);
@@ -124,21 +124,8 @@ compute_average_term(
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
-  FT radius2 = radius * radius;
-
-  // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
-
-  //types for range search
-  typedef regularize_and_simplify_internal::Kd_tree_element<Kernel> Kd_tree_point;
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Traits;
-  typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
-
   // types for AABB
   typedef Kernel::Sphere_3 Circle;
-  //typedef std::vector<Kd_tree_point>::iterator Iterator;
   typedef std::vector<Point>::iterator Iterator;
   typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
@@ -148,67 +135,50 @@ compute_average_term(
   Circle sphere_query(query, radius);
 
   //AABB_Tree aabb_tree;
-  tree.all_contained_primitives(sphere_query, 
+  aabb_tree.all_contained_primitives(sphere_query, 
                       std::back_inserter(neighbor_original_points_primitives));
 
-  std::cout<<neighbor_original_points_primitives.size()<<std::endl;
-  std::cout<<neighbor_original_points_primitives[0]->x()<<std::endl;
-  std::cout<<std::distance(neighbor_original_points_primitives[0],
-                           neighbor_original_points_primitives[1])<<std::endl;
-  //range search
-  //Fuzzy_sphere fs(query, radius, 0.0);
-  std::vector<Kd_tree_point> neighbor_original_points;
-  //tree.search(std::back_inserter(neighbor_original_points), fs);
-  //parallel,no
-  std::vector<Kd_tree_point>::iterator iter = neighbor_original_points.begin();
+  std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points_primitives.begin();
   std::vector<FT> density_set;
   std::vector<FT> dist2_set;
-  for (; iter != neighbor_original_points.end(); iter++)
+  FT radius2 = radius * radius;
+
+  for (; iter != neighbor_original_points_primitives.end(); iter++)
   {
-    Point& np = *iter;
-    Kd_tree_point& kp = *iter;
+    Point& np = *(*iter);
+    int original_index = std::distance(original_first_iter,
+                                       *iter);
+
     FT dist2 = CGAL::squared_distance(query, np);
     if (!is_density_weight_set_empty)
     {
-      density_set.push_back(density_weight_set[kp.index]);
+      density_set.push_back(density_weight_set[original_index]);
     }
     dist2_set.push_back(dist2);
   }
 
-  if (neighbor_original_points.empty())
+  if (neighbor_original_points_primitives.empty())
   {
     return query - CGAL::ORIGIN;
   }
-  CGAL_point_set_processing_precondition(neighbor_original_points.size() >= 1);
 
   //Compute average term
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
   FT iradius16 = -(FT)4.0 / radius2;
   Vector average = CGAL::NULL_VECTOR; 
-  //parallel
-//#ifdef CGAL_LINKED_WITH_TBB
-//  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-//  {
-//    std::cout<< "parallel"<<std::endl;
-//  }
-//  else
-//#endif
-//  {
-//
-//  }
 
-  //sequential
-  for (unsigned int i = 0; i < neighbor_original_points.size(); i++)
+  iter = neighbor_original_points_primitives.begin();
+  int index = 0;
+  for (; iter != neighbor_original_points_primitives.end(); ++iter, ++index)
   {
+    Point& np = *(*iter);
 
-    Point& np = neighbor_original_points[i];
-
-    FT dist2 = dist2_set[i];
+    FT dist2 = dist2_set[index];
     weight = exp(dist2 * iradius16);
 
     if(!is_density_weight_set_empty)
     {
-      weight *= density_set[i];
+      weight *= density_set[index];
     }
 
     average_weight_sum += weight;
@@ -602,8 +572,12 @@ regularize_and_simplify_point_set(
     {
       Point& p = sample_points[i];
       average_set[i] = regularize_and_simplify_internal::
-                       compute_average_term<Kernel,AABB_Tree>
-                       (p, AABB_original_tree, radius, original_density_weight_set);
+                       compute_average_term<ForwardIterator, Kernel, AABB_Tree>
+                       (p, 
+                        AABB_original_tree, 
+                        radius, 
+                        original_density_weight_set,
+                        first_original_point);
     }
 
     //task_timer.start("Compute Repulsion Term");

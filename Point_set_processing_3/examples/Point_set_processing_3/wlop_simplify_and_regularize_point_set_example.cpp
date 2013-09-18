@@ -34,8 +34,8 @@ int main(void)
 
   //Algorithm parameters
   const double retain_percentage = 10;   // percentage of points to retain.
-  const double neighbor_radius = 0.2;   // neighbors size.
-  const unsigned int iter_number = 10;     // number of iterations.
+  const double neighbor_radius = 0.3;   // neighbors size.
+  const unsigned int iter_number = 30;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density.
   
   // Make room for sample points
