@@ -57,14 +57,14 @@ typedef Polyhedron::Halfedge_around_facet_circulator                Halfedge_fac
 typedef Polyhedron_with_id_property_map<Polyhedron, vertex_descriptor> Vertex_index_map; // use id field of vertices
 typedef Polyhedron_with_id_property_map<Polyhedron, edge_descriptor>   Edge_index_map;   // use id field of edges
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> SkeletonGraph;
 
-typedef boost::graph_traits<Graph>::vertex_descriptor               vertex_desc;
-typedef boost::graph_traits<Graph>::vertex_iterator                 vertex_iter;
-typedef boost::graph_traits<Graph>::in_edge_iterator                in_edge_iter;
-typedef boost::graph_traits<Graph>::out_edge_iterator               out_edge_iter;
-typedef boost::graph_traits<Graph>::edge_iterator                   edge_iter;
-typedef boost::graph_traits<Graph>::edge_descriptor                 edge_desc;
+typedef boost::graph_traits<SkeletonGraph>::vertex_descriptor               vertex_desc;
+typedef boost::graph_traits<SkeletonGraph>::vertex_iterator                 vertex_iter;
+typedef boost::graph_traits<SkeletonGraph>::in_edge_iterator                in_edge_iter;
+typedef boost::graph_traits<SkeletonGraph>::out_edge_iterator               out_edge_iter;
+typedef boost::graph_traits<SkeletonGraph>::edge_iterator                   edge_iter;
+typedef boost::graph_traits<SkeletonGraph>::edge_descriptor                 edge_desc;
 
 typedef std::map<vertex_desc, std::vector<int> > Correspondence_map;
 typedef boost::associative_property_map<Correspondence_map> GraphCorrelationPMap;
@@ -76,7 +76,7 @@ typedef boost::associative_property_map<GraphPointMap> GraphPointPMap;
 
 typedef CGAL::MCF_default_solver<double>::type Sparse_linear_solver;
 
-typedef CGAL::MCF_Skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+typedef CGAL::MCF_Skeleton<Polyhedron, SkeletonGraph, Vertex_index_map, Edge_index_map,
 GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, Sparse_linear_solver> Mean_curvature_skeleton;
 
 typedef Polyhedron::Traits         Kernel;
@@ -333,7 +333,7 @@ private:
 
   Polyhedron *mCopy;
 
-  Graph skeleton_curve;
+  SkeletonGraph skeleton_curve;
   GraphPointMap skeleton_points_map;
 }; // end Polyhedron_demo_mean_curvature_flow_skeleton_plugin
 
@@ -472,6 +472,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     sdf_property_map[f] = (sdf_property_map[f] - min_dis) / (max_dis - min_dis);
   }
 
+  postprocess_sdf_values(*segment_mesh, sdf_property_map);
+
   // create a property-map for segment-ids (it is an adaptor for this case)
   typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
   Facet_int_map internal_segment_map;
@@ -482,7 +484,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   int number_of_segments = CGAL::segment_from_sdf_values(*segment_mesh, sdf_property_map, segment_property_map);
   std::cout << "Number of segments: " << number_of_segments << std::endl;
 
-  for (Polyhedron::Facet_iterator facet_it = segment_mesh->facets_begin();
+  for (Facet_iterator facet_it = segment_mesh->facets_begin();
   facet_it != segment_mesh->facets_end(); ++facet_it)
   {
     // ids are between [0, number_of_segments -1]
@@ -519,7 +521,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Graph g;
+    SkeletonGraph g;
     GraphPointMap points_map;
     GraphPointPMap points(points_map);
 
@@ -541,7 +543,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
     Scene_polylines_item* skeleton = new Scene_polylines_item();
     skeleton->setColor(QColor(175, 0, 255));
 
-    boost::graph_traits<Graph>::edge_iterator ei, ei_end;
+    boost::graph_traits<SkeletonGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
     {
       std::vector<Point> line;
@@ -596,7 +598,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    Graph g;
+    SkeletonGraph g;
     GraphPointMap points_map;
     GraphPointPMap points(points_map);
 
@@ -607,13 +609,13 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     Scene_polylines_item* skeleton = new Scene_polylines_item();
     skeleton->setColor(QColor(175, 0, 255));
 
-    boost::graph_traits<Graph>::edge_iterator ei, ei_end;
+    boost::graph_traits<SkeletonGraph>::edge_iterator ei, ei_end;
     for (boost::tie(ei, ei_end) = boost::edges(g); ei != ei_end; ++ei)
     {
       std::vector<Point> line;
       line.clear();
-      boost::graph_traits<Graph>::vertex_descriptor sv = boost::source(*ei, g);
-      boost::graph_traits<Graph>::vertex_descriptor tv = boost::target(*ei, g);
+      boost::graph_traits<SkeletonGraph>::vertex_descriptor sv = boost::source(*ei, g);
+      boost::graph_traits<SkeletonGraph>::vertex_descriptor tv = boost::target(*ei, g);
       Point s = points[sv];
       Point t = points[tv];
       line.push_back(s);
@@ -1019,7 +1021,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   junction_ps->set_selected_color(QColor(51, 255, 204));
   junction_ps->set_selected_diameter(6.0);
 
-  boost::graph_traits<Graph>::vertex_iterator vi;
+  boost::graph_traits<SkeletonGraph>::vertex_iterator vi;
   for (vi = vertices(skeleton_curve).first; vi != vertices(skeleton_curve).second; ++vi)
   {
     int deg = boost::out_degree(*vi, skeleton_curve);

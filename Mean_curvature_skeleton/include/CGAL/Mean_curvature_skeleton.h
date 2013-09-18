@@ -387,7 +387,7 @@ private:
   int max_iterations;
   /** Should the skeleton be medially centered? */
   bool is_medially_centered;
-  /** Are poles computed. */
+  /** Are poles computed? */
   bool are_poles_computed;
 
   /** Cotangent weight calculator. */
