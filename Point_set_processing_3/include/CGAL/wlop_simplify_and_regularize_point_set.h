@@ -357,43 +357,48 @@ wlop_simplify_and_regularize_point_set(
   std::advance(first_sample_point, first_index_to_sample);
 
   //Copy sample points
-  std::vector<Point> sample_points(nb_points_sample);
-  std::vector<Point>::iterator sample_iter = sample_points.begin();
-  for(it = first_sample_point; it != beyond; ++it, ++sample_iter)
+  std::vector<Point> sample_points;
+  sample_points.reserve(nb_points_sample);
+
+  for(it = first_sample_point; it != beyond; ++it)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      *sample_iter = get(point_pmap, it);
+    sample_points.push_back(get(point_pmap, it));
   #else
-      *sample_iter = get(point_pmap, *it);
+    sample_points.push_back(get(point_pmap, *it));
   #endif
   }
     
   //Copy original points(Maybe not the best choice)
-  std::vector<Point> original_points(nb_points_original);
-  std::vector<Point>::iterator original_iter = original_points.begin();
-  for(it = first_original_point; it != beyond; ++it, ++original_iter)
+  std::vector<Point> original_points;
+  original_points.reserve(nb_points_original);
+
+  for(it = first_original_point; it != beyond; ++it)
   {
   #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-     *original_iter = get(point_pmap, it);
+    original_points.push_back(get(point_pmap, it));
   #else
-     *original_iter = get(point_pmap, *it);
+    original_points.push_back(get(point_pmap, *it));
   #endif
   }
 
+  std::vector<Point>::iterator original_iter = original_points.begin();
+  std::vector<Point>::iterator sample_iter = sample_points.begin();
+
   // Initialization
-  std::vector<Rich_point> original_rich_points(nb_points_original);
-  std::vector<Rich_point> sample_rich_points(nb_points_sample);
+  std::vector<Rich_point> original_rich_points;
+  std::vector<Rich_point> sample_rich_points;
+  original_rich_points.reserve(nb_points_original);
+  sample_rich_points.reserve(nb_points_sample);
 
   CGAL::Bbox_3 bbox(0, 0, 0, 0, 0, 0);
   
-  original_iter = original_points.begin();
   int index = 0;
   std::vector<Rich_point>::iterator origianl_rich_iter;
-  origianl_rich_iter = original_rich_points.begin();
-  for (; original_iter != original_points.end();
-         ++original_iter,  ++origianl_rich_iter)
+  original_iter = original_points.begin();
+  for (; original_iter != original_points.end(); ++original_iter)
   {  
-    *origianl_rich_iter = Rich_point(*original_iter, index++);
+    original_rich_points.push_back(Rich_point(*original_iter, index++));
     bbox += original_iter->bbox();
   }
 
@@ -463,7 +468,8 @@ wlop_simplify_and_regularize_point_set(
   index = 0;
   for (; sample_iter != sample_points.end(); ++sample_iter, ++sample_rich_iter)
   {
-    *sample_rich_iter = Rich_point(*sample_iter, index++);
+    //*sample_rich_iter = Rich_point(*sample_iter, index++);
+    sample_rich_points.push_back(Rich_point(*sample_iter, index++));
   }
 
   std::vector<Point> update_sample_points(nb_points_sample);

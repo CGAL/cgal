@@ -50,7 +50,7 @@ int main(void)
   //Run algorithm 
 
   //after add output parameter
-  /*CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
             points.begin(), 
             points.end(), 
             std::back_inserter(output),
@@ -70,38 +70,39 @@ int main(void)
      out, output.begin(), output.end()))
    {
      return EXIT_FAILURE;
-   }*/
+   }
 
-  /*std::vector<Point>::const_iterator sample_points_begin =
-  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-  points.begin(), 
-  points.end());*/
+  //std::vector<Point>::const_iterator sample_points_begin =
+  //CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+  //points.begin(), 
+  //points.end(),
+  //output);
 
-  std::vector<Point>::const_iterator sample_points_begin = 
-    CGAL::regularize_and_simplify_point_set(
-    points.begin(),
-    points.end(),
-    retain_percentage, 
-    neighbor_radius,
-    iter_number,
-    need_compute_density);
+  //std::vector<Point>::const_iterator sample_points_begin = 
+  //  CGAL::regularize_and_simplify_point_set(
+  //  points.begin(),
+  //  points.end(),
+  //  retain_percentage, 
+  //  neighbor_radius,
+  //  iter_number,
+  //  need_compute_density);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
-  std::cout << "total done: " << task_timer.time() << " seconds, " 
-            << (memory>>20) << " Mb allocated" << std::endl;
-  
-  // Copy results to sample points
-  std::copy(sample_points_begin,
-            static_cast<std::vector<Point>::const_iterator>(points.end()),
-            points_sampled.begin());
+  //long memory = CGAL::Memory_sizer().virtual_size();
+  //std::cout << "total done: " << task_timer.time() << " seconds, " 
+  //          << (memory>>20) << " Mb allocated" << std::endl;
+  //
+  //// Copy results to sample points
+  //std::copy(sample_points_begin,
+  //          static_cast<std::vector<Point>::const_iterator>(points.end()),
+  //          points_sampled.begin());
 
-  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
-  if (!out ||
-     !CGAL::write_xyz_points(
-      out, points_sampled.begin(), points_sampled.end()))
-  {
-    return EXIT_FAILURE;
-  }
+  //std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
+  //if (!out ||
+  //   !CGAL::write_xyz_points(
+  //    out, points_sampled.begin(), points_sampled.end()))
+  //{
+  //  return EXIT_FAILURE;
+  //}
 
   system("Pause");
 
