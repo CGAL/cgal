@@ -14,13 +14,7 @@
 
 int main()
 {
-  // Set wrong rounding mode to test modular arithmetic 
-  CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
-  
   typedef CGAL::Arithmetic_kernel AK; 
-  
-  CGAL::set_pretty_mode(std::cerr);
-
   typedef AK::Integer Integer;
   typedef AK::Rational Rational; 
   

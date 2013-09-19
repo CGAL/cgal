@@ -19,8 +19,6 @@ int main()
   
   typedef CGAL::Arithmetic_kernel AK; 
   
-  CGAL::set_pretty_mode(std::cerr);
-  
   {
     //  Enforce IEEE double precision and to nearest before 
     //  using modular arithmetic
