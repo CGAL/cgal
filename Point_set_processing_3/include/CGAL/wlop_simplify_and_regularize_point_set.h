@@ -463,12 +463,10 @@ wlop_simplify_and_regularize_point_set(
 
   // initial rich sample points
   std::vector<Rich_point>::iterator sample_rich_iter;
-  sample_rich_iter = sample_rich_points.begin();
   sample_iter = sample_points.begin();
   index = 0;
-  for (; sample_iter != sample_points.end(); ++sample_iter, ++sample_rich_iter)
+  for (; sample_iter != sample_points.end(); ++sample_iter)
   {
-    //*sample_rich_iter = Rich_point(*sample_iter, index++);
     sample_rich_points.push_back(Rich_point(*sample_iter, index++));
   }
 
