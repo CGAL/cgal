@@ -1301,7 +1301,7 @@ perturb_vertex( PVertex pv
       // may be in other threads' queues
       else
       {
-        increment_erase_counter(pv.vertex());
+        this->increment_erase_counter(pv.vertex());
       }
 
       // If v has been moved
@@ -1572,7 +1572,7 @@ enqueue_task(const PVertex &pv,
              Bad_vertices_vector &bad_vertices
              ) const
 {
-  enqueue_work(
+  this->enqueue_work(
     [&, sliver_bound, pv /*, pqueue, visitor, bad_vertices*/]()
     {
       bool could_lock_zone;

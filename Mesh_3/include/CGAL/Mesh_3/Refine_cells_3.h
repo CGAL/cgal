@@ -384,13 +384,13 @@ public:
 
   Cell_handle get_next_element_impl()
   {
-    return extract_element_from_container_value(Container_::get_next_element_impl());
+    return this->extract_element_from_container_value(Container_::get_next_element_impl());
   }
 
   // Gets the point to insert from the element to refine
   Point refinement_point_impl(const Cell_handle& cell) const
   {
-    set_last_vertex_index(
+    this->set_last_vertex_index(
       r_oracle_.index_from_subdomain_index(cell->subdomain_index()) );
 
     //    last_vertex_index_ = Index(cell->subdomain_index());
@@ -906,7 +906,7 @@ compute_badness(const Cell_handle& cell)
   const Is_cell_bad is_cell_bad = r_criteria_(cell);
   if( is_cell_bad )
   {
-    this->add_bad_element(from_cell_to_refinement_queue_element(cell), *is_cell_bad);
+    this->add_bad_element(this->from_cell_to_refinement_queue_element(cell), *is_cell_bad);
   }
 }
 

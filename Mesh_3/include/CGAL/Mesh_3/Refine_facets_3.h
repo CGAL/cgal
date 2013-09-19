@@ -445,7 +445,7 @@ public:
 
   Facet get_next_element_impl()
   {
-    return extract_element_from_container_value(
+    return this->extract_element_from_container_value(
       Container_::get_next_element_impl());
   }
 
@@ -468,7 +468,7 @@ public:
               << get_facet_surface_center(facet) << std::endl;
 #endif
     CGAL_assertion (is_facet_on_surface(facet));
-    set_last_vertex_index(get_facet_surface_center_index(facet));
+    this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
   };
 
@@ -720,7 +720,7 @@ private:
     // Insert the facet and its mirror
     Facet mirror = mirror_facet(facet);
     this->add_bad_element(
-      from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),
+      this->from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),
       quality);
   }
 
@@ -1145,7 +1145,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
       if ( is_encroached_facet_refinable(*facet_it) )
       {
         // Even if it doesn't succeed, it will be tried again
-        try_to_refine_element(*facet_it, visitor);
+        this->try_to_refine_element(*facet_it, visitor);
         return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
       }
       else
@@ -1163,7 +1163,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
       if ( is_encroached_facet_refinable(*facet_it) )
       {
         // Even if it doesn't succeed, it will be tried again
-        try_to_refine_element(*facet_it, visitor);
+        this->try_to_refine_element(*facet_it, visitor);
         return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
       }
       else

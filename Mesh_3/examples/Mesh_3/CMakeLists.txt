@@ -11,6 +11,11 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
+## Compiler flags: C++11
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CGAL_CXX_FLAGS "${CGAL_CXX_FLAGS} -std=c++0x")
+endif()
+
 include_directories(../../include)
 include_directories(../../../Triangulation_3/include)
 include_directories(../../../STL_Extension/include)
@@ -59,10 +64,13 @@ if ( CGAL_FOUND )
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
   endif()
   
-  find_package(Boost)
+  find_package(Boost COMPONENTS program_options REQUIRED)
 
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
     include( CGAL_CreateSingleSourceCGALProgram )
+
+    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
+    link_libraries( ${Boost_PROGRAM_OPTIONS_LIBRARY} )
 
     # Compilable examples
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
@@ -70,6 +78,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "mesh_two_implicit_spheres_with_balls.cpp" )
 #    create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain_TEST_ANDREW.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     if( WITH_CGAL_ImageIO )
       create_single_source_cgal_program( "mesh_optimization_example.cpp" )

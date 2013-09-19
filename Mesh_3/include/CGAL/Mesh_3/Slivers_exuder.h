@@ -605,7 +605,7 @@ private:
       const double value = sliver_criteria_(tr_.tetrahedron(cit));
 
       if( value < sliver_bound_ )
-        cells_queue_insert(cit, value);
+        this->cells_queue_insert(cit, value);
     }
   }
 
@@ -688,11 +688,11 @@ private:
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
       enqueue_task<pump_vertices_on_surfaces>(
-        ch, get_erase_counter(ch), criterion_value);
+        ch, this->get_erase_counter(ch), criterion_value);
     // Sequential
     else
 #endif
-      cells_queue_insert(ch, criterion_value);
+      this->cells_queue_insert(ch, criterion_value);
 
   }
 
@@ -903,9 +903,9 @@ pump_vertices(double sliver_criterion_limit,
     {
       Queue_value_type front = *(this->cells_queue_front());
       this->cells_queue_pop_front();
-      Cell_handle c = extract_cell_handle_from_queue_value(front);
-      double q = extract_cell_quality_from_queue_value(front);
-      unsigned int ec = extract_erase_counter_from_queue_value(front);
+      Cell_handle c = this->extract_cell_handle_from_queue_value(front);
+      double q = this->extract_cell_quality_from_queue_value(front);
+      unsigned int ec = this->extract_erase_counter_from_queue_value(front);
       // Low quality first (i.e. low value of q)
       enqueue_task<pump_vertices_on_surfaces>(c, ec, q);
     }
@@ -933,7 +933,7 @@ pump_vertices(double sliver_criterion_limit,
     while( !this->cells_queue_empty() && !is_time_limit_reached() )
     {
       Queue_value_type front = *(this->cells_queue_front());
-      Cell_handle c = extract_cell_handle_from_queue_value(front);
+      Cell_handle c = this->extract_cell_handle_from_queue_value(front);
 
       // Low quality first (i.e. low value of cell quality)
       bool vertex_pumped = false;
@@ -1441,7 +1441,7 @@ update_mesh(const Weighted_point& new_point,
   Umbrella umbrella = get_umbrella(internal_facets, old_vertex);
 
   // Delete old cells from queue (they aren't in the triangulation anymore)
-  delete_cells_from_queue(deleted_cells);
+  this->delete_cells_from_queue(deleted_cells);
 
   // Delete old cells & facets from c3t3
   remove_from_c3t3(deleted_cells.begin(),deleted_cells.end());
@@ -1477,7 +1477,7 @@ void
 Slivers_exuder<C3T3,Md,SC,V_,FT>::
 enqueue_task(Cell_handle ch, unsigned int erase_counter, double value)
 {
-  enqueue_work(
+  this->enqueue_work(
     [&, ch, erase_counter]()
     {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING

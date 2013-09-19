@@ -550,7 +550,7 @@ public:
       previous_level.refine(visitor.previous_level());
       if(! no_longer_element_to_refine() )
       {
-        process_one_element(visitor);
+        this->process_one_element(visitor);
       }
     }
   }
@@ -559,7 +559,7 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = refinement_point(e);
+    const Point& p = this->refinement_point(e);
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -609,15 +609,15 @@ public:
 
     if(result == NO_CONFLICT)
     {
-      before_insertion(e, p, zone, visitor);
+      this->before_insertion(e, p, zone, visitor);
 
       Vertex_handle vh = insert(p, zone);
 
-      after_insertion(vh, visitor);
+      this->after_insertion(vh, visitor);
     }
     else
     {
-      after_no_insertion(e, p, zone, visitor);
+      this->after_no_insertion(e, p, zone, visitor);
     }
 
     return result;
@@ -655,7 +655,7 @@ public:
     if( result != NO_CONFLICT )
       return result;
 
-    return private_test_point_conflict(p, zone);
+    return this->private_test_point_conflict(p, zone);
   }
 
   /**
@@ -722,6 +722,8 @@ public:
   using Base::triangulation;
   using Base::insert;
   using Base::before_conflicts;
+  using Base::before_insertion;
+  using Base::after_insertion;
   using Base::previous_level;
   using Base::no_longer_element_to_refine;
   using Base::pop_next_element;
@@ -968,7 +970,7 @@ public:
   Mesher_level_conflict_status
   try_to_refine_element(Element e, Mesh_visitor visitor)
   {
-    const Point& p = refinement_point(e);
+    const Point& p = this->refinement_point(e);
 
 #ifdef CGAL_MESH_3_VERY_VERBOSE
     std::cerr << "Trying to insert point: " << p <<
@@ -1019,23 +1021,23 @@ public:
 
     if(result == NO_CONFLICT)
     {
-      before_insertion(e, p, zone, visitor);
+      this->before_insertion(e, p, zone, visitor);
 
       Vertex_handle vh = insert(p, zone);
 
       if (vh == Vertex_handle())
       {
-        after_no_insertion(e, p, zone, visitor);
+        this->after_no_insertion(e, p, zone, visitor);
         result = COULD_NOT_LOCK_ZONE;
       }
       else
       {
-        after_insertion(vh, visitor);
+        this->after_insertion(vh, visitor);
       }
     }
     else
     {
-      after_no_insertion(e, p, zone, visitor);
+      this->after_no_insertion(e, p, zone, visitor);
     }
 
     return result;
@@ -1128,7 +1130,7 @@ public:
     if( result != NO_CONFLICT )
       return result;
 
-    return private_test_point_conflict(p, zone);
+    return this->private_test_point_conflict(p, zone);
   }
 
   /**

@@ -501,7 +501,7 @@ public:
     for (int iVertex = 0 ; success && iVertex < 4 ; ++iVertex)
     {
       Vertex_handle vh = cell_handle->vertex(iVertex);
-      success = try_lock_vertex(vh, lock_radius);
+      success = this->try_lock_vertex(vh, lock_radius);
     }
 
     return success;
@@ -517,7 +517,7 @@ public:
           success && iVertex != facet.second ; iVertex = (iVertex+1)&3)
     {
       Vertex_handle vh = cell->vertex(iVertex);
-      success = try_lock_vertex(vh, lock_radius);
+      success = this->try_lock_vertex(vh, lock_radius);
     }
 
     return success;
@@ -2516,7 +2516,7 @@ move_point(const Vertex_handle& old_vertex,
   CGAL_assertion(could_lock_zone != NULL);
   *could_lock_zone = true;
 
-  if (!try_lock_vertex(old_vertex)) // LOCK
+  if (!this->try_lock_vertex(old_vertex)) // LOCK
   {
     *could_lock_zone = false;
     this->unlock_all_elements();
@@ -2533,7 +2533,7 @@ move_point(const Vertex_handle& old_vertex,
   }
   //======= /Get incident cells ==========
 
-  if (!try_lock_point(new_position)) // LOCK
+  if (!this->try_lock_point(new_position)) // LOCK
   {
     *could_lock_zone = false;
     this->unlock_all_elements();
@@ -3109,7 +3109,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
                                 Cell_vector &cells) const
 {
   Cell_handle d = v->cell();
-  if (!try_lock_element(d)) // LOCK
+  if (!this->try_lock_element(d)) // LOCK
   {
     this->unlock_all_elements();
     return false;
@@ -3126,7 +3126,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
         continue;
       Cell_handle next = c->neighbor(i);
 
-      if (!try_lock_element(next)) // LOCK
+      if (!this->try_lock_element(next)) // LOCK
       {
         BOOST_FOREACH(Cell_handle& ch,
           std::make_pair(cells.begin(), cells.end()))

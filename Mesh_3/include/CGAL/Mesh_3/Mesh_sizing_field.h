@@ -204,7 +204,7 @@ operator()(const Point_3& p, const Cell_handle& c) const
 #else
   const Cell_handle cell = tr_.locate(p,c);
 #endif
-  set_last_cell(cell);
+  this->set_last_cell(cell);
 
   if ( !tr_.is_infinite(cell) )
     return interpolate_on_cell_vertices(p,cell);

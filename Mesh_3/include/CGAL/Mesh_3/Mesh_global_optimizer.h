@@ -718,7 +718,7 @@ compute_move(const Vertex_handle& v)
   }
 
   // Update big moves
-  update_big_moves(local_move_sq_ratio);
+  this->update_big_moves(local_move_sq_ratio);
 
   return move;
 }
