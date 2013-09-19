@@ -122,7 +122,8 @@ public:
 
         bool is_valid()const;
         bool is_finite()const;
-        /*template<class>*/ double to_double()const;
+        //template<class>
+        double to_double()const;
         std::pair<double,double> to_interval() const;
         Algebraic_1 sqrt()const;
 }; // class Algebraic_1

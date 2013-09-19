@@ -35,7 +35,8 @@ template <class GcdPolicy>
 CGAL::Sign sign_1_no_rs(const RS_polynomial_1 &p,const Algebraic_1 &x){
         typedef GcdPolicy       Gcd;
 
-        unsigned bisect_steps=/*4*/1000;
+        //unsigned bisect_steps=4;
+        unsigned bisect_steps=1000;
         rs_sign s;
         CGAL::Sign sleft,sright;
         RS_polynomial_1 *gcd,*deriv;

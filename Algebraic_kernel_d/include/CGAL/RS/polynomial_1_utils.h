@@ -251,39 +251,37 @@ struct Ediv_1:
 public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1*>{
     RS_polynomial_1*
     operator()(const RS_polynomial_1 &f,const RS_polynomial_1 &g){
-        /*
-        int degf,degg,i;
-        mpz_ptr lcg;
-        mpz_t r;
-        degf=f.get_degree();
-        degg=g.get_degree();
-        RS_polynomial_1 *q=new RS_polynomial_1(degf-degg);
-        lcg=g.leading_coefficient();
-        if(!degg){
-            for(int i=0;i<=degf;++i)
-                mpz_divexact(q->coef(i),f.coef(i),lcg);
-            return q;
-        }
-        mpz_init(r);
-        mpz_set(r,f.leading_coefficient());
-        std::cout<<"f="<<f<<std::endl;
-        std::cout<<"g="<<g<<std::endl;
-        for(i=degf-degg;i>0;--i){
-            //std::cout<<"\ni="<<i;
-            mpz_divexact(q->coef(i),r/ *f.coef(i+degg)* /,lcg);
-            //--------------------------------------------------
-            // mpz_mul(r,q->coef(i),lcg);
-            // mpz_sub(r,f.coef(i+degf-degg-1),r);
-            //--------------------------------------------------
-            mpz_mul(r,q->coef(i),g.coef(degg-1));
-            mpz_sub(r,f.coef(i+degf-degg-1),r);
-            std::cout<<"i="<<i<<", q[i]="<<q->coef(i)<<", r="<<Gmpz(r)<<std::endl;
-        }
-        mpz_divexact(q->coef(0),r/ *f.coef(degg)* /,lcg);
-        mpz_clear(r);
-        //std::cout<<"\nediv("<<f<<","<<g<<") = "<<(*q)<<std::endl;
-        return q;
-        */
+        //int degf,degg,i;
+        //mpz_ptr lcg;
+        //mpz_t r;
+        //degf=f.get_degree();
+        //degg=g.get_degree();
+        //RS_polynomial_1 *q=new RS_polynomial_1(degf-degg);
+        //lcg=g.leading_coefficient();
+        //if(!degg){
+        //    for(int i=0;i<=degf;++i)
+        //        mpz_divexact(q->coef(i),f.coef(i),lcg);
+        //    return q;
+        //}
+        //mpz_init(r);
+        //mpz_set(r,f.leading_coefficient());
+        //std::cout<<"f="<<f<<std::endl;
+        //std::cout<<"g="<<g<<std::endl;
+        //for(i=degf-degg;i>0;--i){
+        //    //std::cout<<"\ni="<<i;
+        //    mpz_divexact(q->coef(i),r/ *f.coef(i+degg)* /,lcg);
+        //    //--------------------------------------------------
+        //    // mpz_mul(r,q->coef(i),lcg);
+        //    // mpz_sub(r,f.coef(i+degf-degg-1),r);
+        //    //--------------------------------------------------
+        //    mpz_mul(r,q->coef(i),g.coef(degg-1));
+        //    mpz_sub(r,f.coef(i+degf-degg-1),r);
+        //    std::cout<<"i="<<i<<", q[i]="<<q->coef(i)<<", r="<<Gmpz(r)<<std::endl;
+        //}
+        //mpz_divexact(q->coef(0),r/ *f.coef(degg)* /,lcg);
+        //mpz_clear(r);
+        ////std::cout<<"\nediv("<<f<<","<<g<<") = "<<(*q)<<std::endl;
+        //return q;
     // naive implementation
         RS_polynomial_1 *ret=new RS_polynomial_1(Pdivquo_1()(f,g));
         return ret;
