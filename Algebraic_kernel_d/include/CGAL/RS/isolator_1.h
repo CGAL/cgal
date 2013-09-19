@@ -69,10 +69,10 @@ public:
     /// The RealRootIsolator provides isolating intervals for the real
     /// roots of the polynomial
    RS_real_root_isolator(const Polynomial& p = Polynomial(Coefficient(0))) :
-      _m_polynomial(p)
-      //, _m_interval_given(false)
+      input_polynomial(p)
+      //, interval_given(false)
     {
-      _m_real_roots=RS::isolator<Polynomial>()(p);
+      real_roots=RS::isolator<Polynomial>()(p);
     }
 
     // @LUIS: add constructor from interval (maybe some time in the future)
@@ -81,12 +81,12 @@ public: // functions
 
     //! Returns the defining polynomial.
     Polynomial polynomial() const {
-      return _m_polynomial;
+      return input_polynomial;
     }
 
     //! Returns the number of real roots.
     int number_of_real_roots() const {
-      return _m_real_roots.size();
+      return real_roots.size();
     }
 
     /// Returns true if the isolating interval is degenerated to a
@@ -97,7 +97,7 @@ public: // functions
     /// If is_exact_root(i) is true,
     /// then right_bound(int i) equals  \f$root_i\f$. \n
     bool is_exact_root(int i) const {
-      return(_m_real_roots[i].inf()==_m_real_roots[i].sup());
+      return(real_roots[i].inf()==real_roots[i].sup());
     }
 
 public:
@@ -116,7 +116,7 @@ public:
     Bound left_bound(int i) const {
       CGAL_assertion(i >= 0);
       CGAL_assertion(i < this->number_of_real_roots());
-      return _m_real_roots[i].inf();
+      return real_roots[i].inf();
     }
 
     /// Returns  \f${r_i}\f$ the right bound of the isolating interval
@@ -134,19 +134,19 @@ public:
     Bound right_bound(int i) const {
       CGAL_assertion(i >= 0);
       CGAL_assertion(i < this->number_of_real_roots());
-      return _m_real_roots[i].sup();
+      return real_roots[i].sup();
     }
 
 private:
 
     //! the input polynomial
-    Polynomial _m_polynomial;
+    Polynomial input_polynomial;
 
     //! the solutions
-    std::vector<Interval> _m_real_roots;
+    std::vector<Interval> real_roots;
 
     //! restricted interval?
-    // TODO bool _m_interval_given;
+    // TODO bool interval_given;
 
 };
 
