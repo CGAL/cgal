@@ -722,7 +722,7 @@ class Node_visitor_refine_polyhedra{
   {
     std::sort(node_ids.begin(),
               node_ids.end(),
-              internal_IOP::Order_along_a_halfedge<Polyhedron,Nodes_vector,Is_polyhedron_const>(hedge,nodes)
+              internal_IOP::Order_along_a_halfedge<Polyhedron,Default_polyhedron_ppmap<Polyhedron>, Nodes_vector,Is_polyhedron_const>(hedge,nodes, Default_polyhedron_ppmap<Polyhedron>())
     );
   }
   

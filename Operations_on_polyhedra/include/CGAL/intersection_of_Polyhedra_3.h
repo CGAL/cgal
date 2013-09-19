@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
+#include <CGAL/property_map.h>
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/internal/corefinement/Polyhedron_constness_types.h>
@@ -82,6 +83,19 @@ namespace CGAL{
 // of T or segments adjacent to S.
 //
 // -- Sebastien Loriot, 2010/04/07
+
+template <class Polyhedron>
+struct Default_polyhedron_ppmap{
+  typedef typename Polyhedron::Point_3 value_type;
+  typedef const value_type& reference;
+  typedef typename Polyhedron::Vertex_handle key_type;
+  typedef boost::read_write_property_map_tag category;
+
+  friend reference get(Default_polyhedron_ppmap, key_type vh) {return vh->point();}
+  friend reference get(Default_polyhedron_ppmap, typename Polyhedron::Vertex_const_handle vh) {return vh->point();}
+  friend void put(Default_polyhedron_ppmap,key_type vh, const value_type& v) {vh->point()=v;}
+};
+
 
 namespace internal_IOP {
   //an enum do decide which kind of intersection points are needed
@@ -176,25 +190,26 @@ struct Compare_handle_pairs{
   }
 };
 
-template<class Polyhedron,class Nodes_vector,class Is_const>
+template<class Polyhedron,class PolyhedronPointPMap, class Nodes_vector,class Is_const>
 struct Order_along_a_halfedge{
   typedef typename Polyhedron_types<Polyhedron,Is_const>::Halfedge_handle Halfedge_handle;
   const Nodes_vector& nodes;
   Halfedge_handle hedge;
+  PolyhedronPointPMap ppmap;
   
-  Order_along_a_halfedge(Halfedge_handle hedge_,const Nodes_vector& nodes_):nodes(nodes_),hedge(hedge_){}
+  Order_along_a_halfedge(Halfedge_handle hedge_,const Nodes_vector& nodes_, PolyhedronPointPMap ppmap):nodes(nodes_),hedge(hedge_), ppmap(ppmap){}
   bool operator()(int i,int j) const {
     //returns true, iff q lies strictly between p and r.
     try{
       typename Nodes_vector::Protector p;
       CGAL::internal::use(p);
 
-      return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_interval(hedge->vertex()->point()),
+      return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_interval(get(ppmap, hedge->vertex())),
                                                              nodes.interval_node(j),
                                                              nodes.interval_node(i));
     }
     catch(CGAL::Uncertain_conversion_exception&){
-      return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_exact(hedge->vertex()->point()),
+      return CGAL::collinear_are_strictly_ordered_along_line(nodes.to_exact(get(ppmap, hedge->vertex())),
                                                              nodes.exact_node(j),
                                                              nodes.exact_node(i));      
     }
@@ -259,7 +274,9 @@ public:
 
 //WARNING THIS IS DONE ONLY FOR POLYHEDRON
 template<class Polyhedron,class Halfedge_predicate,
-         class Set_vertex_corner, class Kernel=typename Polyhedron::Traits::Kernel>
+         class Set_vertex_corner, 
+         class PolyhedronPointPMap=Default_polyhedron_ppmap<Polyhedron>,
+         class Kernel=typename Kernel_traits< typename boost::property_traits<PolyhedronPointPMap>::value_type>::Kernel >
 class Node_visitor_for_polyline_split{
 //typedefs  
   typedef typename Polyhedron::Halfedge_handle                         Halfedge_handle;
@@ -283,6 +300,7 @@ class Node_visitor_for_polyline_split{
   Hedge_to_polyhedron_map hedge_to_polyhedron;
   Halfedge_predicate is_on_polyline;
   Set_vertex_corner set_as_corner;
+  PolyhedronPointPMap ppmap;
 //functions  
   void handle_principal_edge(int node_id,
                              internal_IOP::Intersection_type type,
@@ -355,7 +373,7 @@ class Node_visitor_for_polyline_split{
   {
     std::sort(node_ids.begin(),
               node_ids.end(),
-              internal_IOP::Order_along_a_halfedge<Polyhedron,Nodes_vector,Is_polyhedron_const>(hedge,nodes)
+              internal_IOP::Order_along_a_halfedge<Polyhedron,PolyhedronPointPMap,Nodes_vector,Is_polyhedron_const>(hedge,nodes,ppmap)
     );
   }
   
@@ -366,8 +384,9 @@ public:
 
   Node_visitor_for_polyline_split(){}
   Node_visitor_for_polyline_split(const Halfedge_predicate& getting,
-                                  const Set_vertex_corner& setting)
-    :is_on_polyline(getting),set_as_corner(setting){}
+                                  const Set_vertex_corner& setting,
+                                  PolyhedronPointPMap ppmap)
+    :is_on_polyline(getting),set_as_corner(setting),ppmap(ppmap){}
 
   void new_node_added(int node_id,
                       internal_IOP::Intersection_type type,
@@ -490,21 +509,22 @@ public:
 
 namespace internal_IOP{
   
-  template <class Polyhedron,class In_kernel,class Exact_kernel>
+  template <class Polyhedron, class In_kernel,class Exact_kernel, class PolyhedronPointPMap>
   typename Exact_kernel::Point_3
   compute_triangle_segment_intersection_point(
     typename Polyhedron::Vertex_const_handle vh1,typename Polyhedron::Vertex_const_handle vh2,
     typename Polyhedron::Vertex_const_handle vf1,typename Polyhedron::Vertex_const_handle vf2,typename Polyhedron::Vertex_const_handle vf3,
-    const Exact_kernel& ek)       
+    const Exact_kernel& ek,
+    PolyhedronPointPMap ppmap)
   {
     CGAL::Cartesian_converter<In_kernel,Exact_kernel> to_exact;
-    typename Exact_kernel::Triangle_3 t(to_exact( vf1->point() ),
-                                        to_exact( vf2->point() ),
-                                        to_exact( vf3->point() )
+    typename Exact_kernel::Triangle_3 t(to_exact( get(ppmap, vf1) ),
+                                        to_exact( get(ppmap, vf2) ),
+                                        to_exact( get(ppmap, vf3) )
     );
     
-    typename Exact_kernel::Segment_3 s (to_exact( vh1->point() ),
-                                        to_exact( vh2->point() )
+    typename Exact_kernel::Segment_3 s (to_exact( get(ppmap, vh1) ),
+                                        to_exact( get(ppmap, vh2) )
     );
     
     typename Exact_kernel::Intersect_3 exact_intersect=ek.intersect_3_object();
@@ -515,17 +535,19 @@ namespace internal_IOP{
     return *e_pt;
   }
   
-  template <class Polyhedron,class In_kernel,class Exact_kernel>
+  template <class Polyhedron, class In_kernel,class Exact_kernel, class PolyhedronPointPMap>
   typename Exact_kernel::Point_3
   compute_triangle_segment_intersection_point(
     typename Polyhedron::Halfedge_const_handle edge,
     typename Polyhedron::Facet_const_handle facet,
-    const Exact_kernel& ek) 
+    const Exact_kernel& ek,
+    PolyhedronPointPMap pmap) 
   {
-    return compute_triangle_segment_intersection_point<Polyhedron,In_kernel,Exact_kernel>(
+    return compute_triangle_segment_intersection_point<Polyhedron,In_kernel>(
             edge->vertex(),edge->opposite()->vertex(),
             facet->halfedge()->vertex(),facet->halfedge()->next()->vertex(),facet->halfedge()->opposite()->vertex(),
-            ek);
+            ek,
+            pmap);
             
   }    
     
@@ -533,13 +555,13 @@ namespace internal_IOP{
   //A class containing a vector of the intersection points.
   //The third template parameter indicates whether an
   //exact representation is required
-  template <class Polyhedron,class Kernel,class Node_storage,bool Has_exact_constructions=!boost::is_floating_point<typename Kernel::FT>::value>
+  template <class Polyhedron, class PolyhedronPointPMap, class Kernel,class Node_storage,bool Has_exact_constructions=!boost::is_floating_point<typename Kernel::FT>::value>
   class Triangle_segment_intersection_points;
   
   
   //Store only the double version of the intersection points.
-  template <class Polyhedron,class Kernel>
-  class Triangle_segment_intersection_points<Polyhedron,Kernel,No_predicates_on_constructions,false>
+  template <class Polyhedron, class PolyhedronPointPMap, class Kernel>
+  class Triangle_segment_intersection_points<Polyhedron,PolyhedronPointPMap,Kernel,No_predicates_on_constructions,false>
   {
   //typedefs
     typedef std::vector <typename Kernel::Point_3>             Nodes_vector;
@@ -551,6 +573,7 @@ namespace internal_IOP{
     Nodes_vector nodes;
     Exact_kernel ek;
     Exact_to_double exact_to_double;
+    PolyhedronPointPMap ppmap;
   public:
     typedef CGAL::Interval_nt<true>::Protector                 Protector;
   
@@ -571,7 +594,7 @@ namespace internal_IOP{
     void add_new_node(Halfedge_handle edge,Facet_handle facet)
     {
       nodes.push_back (  exact_to_double(
-        compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,ek)
+        compute_triangle_segment_intersection_point<Polyhedron>(edge,facet,ek, ppmap)
       ));
     }
     
@@ -593,8 +616,8 @@ namespace internal_IOP{
   //can be edited and on if it cannot) building exact representation on demand.
   //In the former case, we were using facet and halfedge while in the latter
   //triple of vertex_handle and pair of vertex_handle
-  template <class Polyhedron,class Kernel>
-  class Triangle_segment_intersection_points<Polyhedron,Kernel,Predicates_on_constructions,false>
+  template <class Polyhedron, class PolyhedronPointPMap, class Kernel>
+  class Triangle_segment_intersection_points<Polyhedron,PolyhedronPointPMap,Kernel,Predicates_on_constructions,false>
   {
   //typedefs
   public: 
@@ -623,6 +646,7 @@ namespace internal_IOP{
     Double_to_interval  double_to_interval;
     Double_to_exact double_to_exact;
     Exact_kernel        ek;
+    PolyhedronPointPMap ppmap;
     
   public:
     typedef CGAL::Interval_nt<false>::Protector                 Protector;  
@@ -657,7 +681,7 @@ namespace internal_IOP{
 
     void add_new_node(Halfedge_handle edge,Facet_handle facet)
     {
-      enodes.push_back(compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,ek) );
+      enodes.push_back(compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,ek, ppmap) );
       inodes.push_back( exact_to_interval(enodes.back()) );
     }
 
@@ -675,8 +699,8 @@ namespace internal_IOP{
      // Triangle_segment_intersection_points<Polyhedron,Kernel,Predicates_on_constructions,false>
   
   //Third specialization: The kernel already has exact constructions.
-  template <class Polyhedron,class Kernel,class Node_storage>
-  class Triangle_segment_intersection_points<Polyhedron,Kernel,Node_storage,true>
+  template <class Polyhedron,class PolyhedronPointPMap,class Kernel,class Node_storage>
+  class Triangle_segment_intersection_points<Polyhedron,PolyhedronPointPMap,Kernel,Node_storage,true>
   {
   //typedefs
     typedef std::vector <typename Kernel::Point_3>             Nodes_vector;
@@ -685,6 +709,7 @@ namespace internal_IOP{
   //members
     Nodes_vector nodes;
     Kernel k;
+    PolyhedronPointPMap ppmap;
   public:
     typedef Kernel Ikernel;
     typedef Kernel Exact_kernel;
@@ -703,7 +728,7 @@ namespace internal_IOP{
     void add_new_node(Halfedge_handle edge,Facet_handle facet)
     {
       nodes.push_back (  
-        compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,k)
+        compute_triangle_segment_intersection_point<Polyhedron,Kernel>(edge,facet,k,ppmap)
       );
     }
 
@@ -728,14 +753,16 @@ template< class Polyhedron,
           class Kernel_=Default,
           class Node_visitor_=Default,
           class Node_storage_type_=Default,
-          class Use_const_polyhedron_=Default
+          class Use_const_polyhedron_=Default,
+          class PolyhedronPointPMap_=Default
          >
 class Intersection_of_Polyhedra_3{
 //Default template parameters
-  typedef typename Default::Get<Kernel_, typename Polyhedron::Traits::Kernel >::type Kernel;
   typedef typename Default::Get<Node_visitor_, Empty_node_visitor<Polyhedron> >::type Node_visitor;
   typedef typename Default::Get<Node_storage_type_, typename Node_visitor::Node_storage_type >::type Node_storage_type;
+  typedef typename Default::Get<PolyhedronPointPMap_, Default_polyhedron_ppmap<Polyhedron> > ::type PolyhedronPointPMap;
   typedef typename Default::Get<Use_const_polyhedron_, typename Node_visitor::Is_polyhedron_const >::type Use_const_polyhedron;
+  typedef typename Default::Get<Kernel_, typename Kernel_traits< typename boost::property_traits<PolyhedronPointPMap>::value_type >::Kernel >::type Kernel;
 
 //typedefs  
   typedef typename Kernel::Triangle_3                        Triangle;
@@ -768,7 +795,7 @@ class Intersection_of_Polyhedra_3{
   typedef std::set<Facet_pair,Compare_handle_pairs>          Coplanar_facets_set;//any insertion should be done with make_sorted_pair_of_facets
   typedef typename Kernel::Point_3                           Node;
   typedef internal_IOP::Triangle_segment_intersection_points
-            <Polyhedron,Kernel,Node_storage_type>            Nodes_vector;
+            <Polyhedron,PolyhedronPointPMap,Kernel,Node_storage_type>            Nodes_vector;
 
   typedef typename internal_IOP::
     Intersection_types<Polyhedron,Use_const_polyhedron>
@@ -781,6 +808,8 @@ class Intersection_of_Polyhedra_3{
   #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
   typedef std::set<Facet_pair,Compare_handle_pairs>          Coplanar_duplicated_intersection_set;
   #endif
+//member data
+  PolyhedronPointPMap ppmap;
 //helper functions
   static inline Facet_pair 
   make_sorted_pair_of_facets(Facet_handle fh1,Facet_handle fh2) {
@@ -883,14 +912,16 @@ class Intersection_of_Polyhedra_3{
     Polyhedron_ref polyhedron_triangle;
     Polyhedron_ref polyhedron_edge;
     Node_visitor& visitor;
+    PolyhedronPointPMap ppmap;
   public:
     Map_edge_facet_bbox_intersection_extract_coplanar(
       Edge_to_intersected_facets& map_,
       Coplanar_facets_set& coplanar_facets_,
       Polyhedron_ref  P,
       Polyhedron_ref Q,
-      Node_visitor& visitor_)
-      :edge_to_sfacet(map_),coplanar_facets(coplanar_facets_),polyhedron_triangle(P),polyhedron_edge(Q),visitor(visitor_)
+      Node_visitor& visitor_,
+      PolyhedronPointPMap ppmap)
+      :edge_to_sfacet(map_),coplanar_facets(coplanar_facets_),polyhedron_triangle(P),polyhedron_edge(Q),visitor(visitor_),ppmap(ppmap)
     {}
 
     void operator()( const Box* fb, const Box* eb) const {
@@ -899,21 +930,21 @@ class Intersection_of_Polyhedra_3{
       
       
       //check if the segment intersects the plane of the facet or if it is included in the plane
-      const typename Kernel::Point_3 & a = fh->vertex()->point();
-      const typename Kernel::Point_3 & b = fh->next()->vertex()->point();
-      const typename Kernel::Point_3 & c = fh->next()->next()->vertex()->point();
-      const Orientation abcp = orientation(a,b,c,eh->vertex()->point());
-      const Orientation abcq = orientation(a,b,c,eh->opposite()->vertex()->point());
+      const typename Kernel::Point_3 & a = get(ppmap, fh->vertex());
+      const typename Kernel::Point_3 & b = get(ppmap, fh->next()->vertex());
+      const typename Kernel::Point_3 & c = get(ppmap, fh->next()->next()->vertex());
+      const Orientation abcp = orientation(a,b,c, get(ppmap, eh->vertex()));
+      const Orientation abcq = orientation(a,b,c, get(ppmap, eh->opposite()->vertex()));
       if (abcp==abcq){
         if (abcp!=COPLANAR){
-//          std::cout << "rejected " << &(*fh->facet()) << "{" << &(*eh->facet()) << " " <<&(*eh->opposite()->facet()) << " "<< eh->vertex()->point() << " " << eh->opposite()->vertex()->point() << "}" <<std::endl;
+//          std::cout << "rejected " << &(*fh->facet()) << "{" << &(*eh->facet()) << " " <<&(*eh->opposite()->facet()) << " "<< get(ppmap, eh->vertex()) << " " << get(eh->opposite()->vertex()) << "}" <<std::endl;
           return; //no intersection
         }
         //WARNING THIS IS DONE ONLY FOR POLYHEDRON (MAX TWO INCIDENT FACETS TO EDGE)
-        if (!eh->is_border() && orientation(a,b,c,eh->next()->vertex()->point())==COPLANAR){
+        if (!eh->is_border() && orientation(a,b,c,get(ppmap, eh->next()->vertex()))==COPLANAR){
           coplanar_facets.insert(make_sorted_pair_of_facets(eh->facet(),fh->facet()));
         }
-        if (!eh->opposite()->is_border() && orientation(a,b,c,eh->opposite()->next()->vertex()->point())==COPLANAR){
+        if (!eh->opposite()->is_border() && orientation(a,b,c,get(ppmap, eh->opposite()->next()->vertex()))==COPLANAR){
           coplanar_facets.insert(make_sorted_pair_of_facets(eh->opposite()->facet(),fh->facet()));
         }
         visitor.add_filtered_intersection(eh,fh,polyhedron_edge,polyhedron_triangle);
@@ -935,9 +966,9 @@ class Intersection_of_Polyhedra_3{
     facet_boxes.reserve( P.size_of_facets());
     for ( Facet_iterator i = P.facets_begin(); i != P.facets_end(); ++i){
         facet_boxes.push_back(
-            Box( i->halfedge()->vertex()->point().bbox()
-               + i->halfedge()->next()->vertex()->point().bbox()
-               + i->halfedge()->next()->next()->vertex()->point().bbox(),
+            Box( get(ppmap, i->halfedge()->vertex()).bbox()
+               + get(ppmap, i->halfedge()->next()->vertex()).bbox()
+               + get(ppmap, i->halfedge()->next()->next()->vertex()).bbox(),
                  i->halfedge()));
     }
     std::vector<const Box*> facet_box_ptr;
@@ -949,8 +980,8 @@ class Intersection_of_Polyhedra_3{
     for ( Halfedge_iterator i = Q.halfedges_begin(); i != Q.halfedges_end(); ++i){
       if(&*i < &*(i->opposite())){
         edge_boxes.push_back(
-            Box( i->vertex()->point().bbox()
-                 + i->opposite()->vertex()->point().bbox(),
+            Box( get(ppmap, i->vertex()).bbox()
+                 + get(ppmap, i->opposite()->vertex()).bbox(),
                  i));
       }
    }
@@ -968,7 +999,7 @@ class Intersection_of_Polyhedra_3{
                               // non-const reference, here, to be filled.
                               Map_edge_facet_bbox_intersection(edge_to_sfacet,P,Q,*visitor),
     #else // not DO_NOT_HANDLE_COPLANAR_FACETS
-                              Map_edge_facet_bbox_intersection_extract_coplanar(edge_to_sfacet,coplanar_facets,P,Q,*visitor),
+                              Map_edge_facet_bbox_intersection_extract_coplanar(edge_to_sfacet,coplanar_facets,P,Q,*visitor,ppmap),
     #endif // not DO_NOT_HANDLE_COPLANAR_FACETS
                               std::ptrdiff_t(2000)
     );
@@ -1048,11 +1079,11 @@ class Intersection_of_Polyhedra_3{
   {
     bool is_vertex_coplanar = CGAL::cpp11::get<2>(inter_res);
     if (is_vertex_coplanar)
-      nodes.add_new_node(edge->vertex()->point());
+      nodes.add_new_node(get(ppmap, edge->vertex()));
     else{
       bool is_opposite_vertex_coplanar = CGAL::cpp11::get<3>(inter_res);
       if (is_opposite_vertex_coplanar)
-        nodes.add_new_node(edge->opposite()->vertex()->point());
+        nodes.add_new_node(get(ppmap, edge->opposite()->vertex()));
       else
         nodes.add_new_node(edge,facet);
     }
@@ -1070,12 +1101,12 @@ class Intersection_of_Polyhedra_3{
   #ifdef USE_DETECTION_MULTIPLE_DEFINED_EDGES
   void check_coplanar_edge(Halfedge_handle hedge,Facet_handle facet)
   {
-    const typename Kernel::Point_3& p0=facet->halfedge()->vertex()->point();
-    const typename Kernel::Point_3& p1=facet->halfedge()->next()->vertex()->point();
-    const typename Kernel::Point_3& p2=facet->halfedge()->opposite()->vertex()->point();
-    CGAL_precondition( orientation( p0,p1,p2,hedge->vertex()->point() ) == COPLANAR );
+    const typename Kernel::Point_3& p0=get(ppmap, facet->halfedge()->vertex());
+    const typename Kernel::Point_3& p1=get(ppmap, facet->halfedge()->next()->vertex());
+    const typename Kernel::Point_3& p2=get(ppmap, facet->halfedge()->opposite()->vertex());
+    CGAL_precondition( orientation( p0,p1,p2,get(ppmap, hedge->vertex()) ) == COPLANAR );
 
-    if ( has_at_least_two_incident_faces(hedge) &&  orientation( p0,p1,p2,hedge->opposite()->vertex()->point() ) == COPLANAR )
+    if ( has_at_least_two_incident_faces(hedge) &&  orientation( p0,p1,p2,get(ppmap, hedge->opposite()->vertex()) ) == COPLANAR )
     {
       //In case two facets are incident along such this edge, the intersection
       //will be reported twice. We keep track of this so that at the end, we can remove one intersecting edge out of the two
@@ -1086,10 +1117,10 @@ class Intersection_of_Polyhedra_3{
   }
   
   bool are_incident_facets_coplanar(Halfedge_handle hedge){
-    const typename Kernel::Point_3& p0=hedge->vertex()->point();
-    const typename Kernel::Point_3& p1=hedge->next()->vertex()->point();
-    const typename Kernel::Point_3& p2=hedge->opposite()->vertex()->point();
-    const typename Kernel::Point_3& p3=hedge->opposite()->next()->vertex()->point();
+    const typename Kernel::Point_3& p0=get(ppmap, hedge->vertex());
+    const typename Kernel::Point_3& p1=get(ppmap, hedge->next()->vertex());
+    const typename Kernel::Point_3& p2=get(ppmap, hedge->opposite()->vertex());
+    const typename Kernel::Point_3& p3=get(ppmap, hedge->opposite()->next()->vertex());
     return orientation( p0,p1,p2,p3 ) == COPLANAR;
   }
 
@@ -1140,12 +1171,12 @@ class Intersection_of_Polyhedra_3{
             if ( are_incident_facets_coplanar(additional_edge) )
             {
               Facet_handle facet=additional_edge->face();
-              const typename Kernel::Point_3& p0=facet->halfedge()->vertex()->point();
-              const typename Kernel::Point_3& p1=facet->halfedge()->next()->vertex()->point();
-              const typename Kernel::Point_3& p2=facet->halfedge()->opposite()->vertex()->point();
-              CGAL_precondition( orientation( p0,p1,p2,hedge->vertex()->point() ) == COPLANAR );
+              const typename Kernel::Point_3& p0=get(ppmap, facet->halfedge()->vertex());
+              const typename Kernel::Point_3& p1=get(ppmap, facet->halfedge()->next()->vertex());
+              const typename Kernel::Point_3& p2=get(ppmap, facet->halfedge()->opposite()->vertex());
+              CGAL_precondition( orientation( p0,p1,p2, get(ppmap, hedge->vertex()) ) == COPLANAR );
 
-              if ( has_at_least_two_incident_faces(hedge) &&  orientation( p0,p1,p2,hedge->opposite()->vertex()->point() ) == COPLANAR )
+              if ( has_at_least_two_incident_faces(hedge) &&  orientation( p0,p1,p2, get(ppmap, hedge->opposite()->vertex()) ) == COPLANAR )
               {
                 //In case two facets are incident along a common edge of two coplanar triangles.
                 //We need to remove three out of the four reported pair
@@ -1272,10 +1303,10 @@ class Intersection_of_Polyhedra_3{
     if (res.second){ //insert a new node
       
       if (ipt.type_1==internal_IOP::VERTEX)
-        add_new_node(ipt.info_1->vertex()->point());
+        add_new_node(get(ppmap, ipt.info_1->vertex()));
       else{
         if(ipt.type_2==internal_IOP::VERTEX)
-          add_new_node(ipt.info_2->vertex()->point());
+          add_new_node(get(ppmap, ipt.info_2->vertex()));
         else
           add_new_node(ipt.point);
       }
@@ -1457,7 +1488,7 @@ class Intersection_of_Polyhedra_3{
             CGAL_assertion(cgal_do_intersect_debug(edge,facet));
             int node_id=++current_node;
             Halfedge_handle vertex_intersected=CGAL::cpp11::get<1>(res);
-            add_new_node(vertex_intersected->vertex()->point()); //we use the original vertex to create the node
+            add_new_node(get(ppmap, vertex_intersected->vertex())); //we use the original vertex to create the node
             //before it was internal_IOP::FACET but do not remember why, probably a bug...
             visitor->new_node_added(node_id,internal_IOP::VERTEX,edge,vertex_intersected,CGAL::cpp11::get<2>(res),CGAL::cpp11::get<3>(res));
             for (;it_edge!=all_edges.end();++it_edge){
@@ -1795,23 +1826,23 @@ class Intersection_of_Polyhedra_3{
 //debug functions
   
   bool cgal_do_intersect_debug(Halfedge_handle eh,Facet_handle fh){
-    Triangle t( fh->halfedge()->vertex()->point(),
-                fh->halfedge()->next()->vertex()->point(),
-                fh->halfedge()->next()->next()->vertex()->point());
+    Triangle t( get(ppmap, fh->halfedge()->vertex()),
+                get(ppmap, fh->halfedge()->next()->vertex()),
+                get(ppmap, fh->halfedge()->next()->next()->vertex()));
 
-    Segment s( eh->vertex()->point(),
-               eh->opposite()->vertex()->point());
+    Segment s( get(ppmap, eh->vertex()),
+               get(ppmap, eh->opposite()->vertex()));
 
     return CGAL::do_intersect( s, t);
   }
 
   bool cgal_do_intersect_debug(Facet_handle fh1,Facet_handle fh2){
-    Triangle t1( fh1->halfedge()->vertex()->point(),
-                 fh1->halfedge()->next()->vertex()->point(),
-                 fh1->halfedge()->next()->next()->vertex()->point());
-    Triangle t2( fh2->halfedge()->vertex()->point(),
-                 fh2->halfedge()->next()->vertex()->point(),
-                 fh2->halfedge()->next()->next()->vertex()->point());
+    Triangle t1( get(ppmap, fh1->halfedge()->vertex()),
+                 get(ppmap, fh1->halfedge()->next()->vertex()),
+                 get(ppmap, fh1->halfedge()->next()->next()->vertex()));
+    Triangle t2( get(ppmap, fh2->halfedge()->vertex()),
+                 get(ppmap, fh2->halfedge()->next()->vertex()),
+                 get(ppmap, fh2->halfedge()->next()->next()->vertex()));
 
 
     return CGAL::do_intersect( t1, t2);
