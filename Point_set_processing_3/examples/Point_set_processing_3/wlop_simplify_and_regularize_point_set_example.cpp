@@ -17,8 +17,8 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
+  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
   //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
 
   // Reads a .xyz point set file in points[], *with normals*.
@@ -33,8 +33,8 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double retain_percentage = 10;   // percentage of points to retain.
-  const double neighbor_radius = 0.3;   // neighbors size.
+  const double retain_percentage = 2;   // percentage of points to retain.
+  const double neighbor_radius = 0.03;   // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density.
   
@@ -85,6 +85,10 @@ int main(void)
     neighbor_radius,
     iter_number,
     need_compute_density);
+
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "total done: " << task_timer.time() << " seconds, " 
+            << (memory>>20) << " Mb allocated" << std::endl;
   
   // Copy results to sample points
   std::copy(sample_points_begin,

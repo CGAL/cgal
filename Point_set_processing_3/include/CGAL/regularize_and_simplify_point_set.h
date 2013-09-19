@@ -58,43 +58,6 @@ namespace CGAL {
   
 namespace regularize_and_simplify_internal{
 
-// Item in the Kd-tree: position (Point_3) + index
-template <typename Kernel>
-class Kd_tree_element : public Kernel::Point_3
-{
-public:
-  unsigned int index;
-
-  // basic geometric types
-  typedef typename CGAL::Origin Origin;
-  typedef typename Kernel::Point_3 Base;
-
-  Kd_tree_element(const Origin& o = ORIGIN, unsigned int id=0)
-    : Base(o), index(id)
-  {}
-  Kd_tree_element(const Base& p, unsigned int id=0)
-    : Base(p), index(id)
-  {}
-  Kd_tree_element(const Kd_tree_element& other)
-    : Base(other), index(other.index)
-  {}
-};
-
-// Helper class for the Kd-tree
-template <typename Kernel>
-class Kd_tree_gt : public Kernel
-{
-public:
-  typedef Kd_tree_element<Kernel> Point_3;
-};
-
-template <typename Kernel>
-class Kd_tree_traits : public CGAL::Search_traits_3<Kd_tree_gt<Kernel> >
-{
-public:
-  typedef typename Kernel::Point_3 PointType;
-};
-
 /// Compute average term for each sample points
 /// According to their KNN neighborhood original points
 /// 
@@ -243,8 +206,7 @@ compute_repulsion_term(
   for(; iter != neighbor_sample_points.end(); iter++)
   {
     Point& np = *(*iter);
-    int sample_index = std::distance(sample_first_iter,
-                                     *iter);
+    int sample_index = std::distance(sample_first_iter, *iter);
 
     FT dist2 = CGAL::squared_distance(query, np);
     if (!is_density_weight_set_empty)
@@ -306,7 +268,7 @@ template </*typename Concurrency_tag, */typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& tree, ///< KD-tree
+  Tree& aabb_tree, ///< KD-tree
   const typename Kernel::FT radius
 )
 {
@@ -318,30 +280,30 @@ compute_density_weight_for_original_point(
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
-  // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
+  // types for AABB
+  typedef Kernel::Sphere_3 Circle;
+  typedef std::vector<Point>::iterator Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
-  //types for range search
-  typedef regularize_and_simplify_internal::Kd_tree_element<Kernel> Kd_tree_point;
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Traits;
-  typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+  std::vector<typename Primitive::Id> neighbor_original_points;
+  Circle sphere_query(query, radius);
 
+  aabb_tree.all_contained_primitives(sphere_query, 
+                                std::back_inserter(neighbor_original_points));
+  
+  
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  //range search 
-  Fuzzy_sphere fs(query, radius, 0.0);
-  std::vector<Kd_tree_point> neighbors;
-  tree.search(std::back_inserter(neighbors), fs);
   //parallel
-  std::vector<Kd_tree_point>::iterator iter = neighbors.begin();
-  for (; iter != neighbors.end(); iter++)
+  std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points.begin();
+  for (; iter != neighbor_original_points.end(); iter++)
   {
-    Point& np = *iter;
+    Point& np = *(*iter);
     FT dist2 = CGAL::squared_distance(query, np);
     density_weight += std::exp(dist2 * iradius16);
   }
@@ -364,7 +326,7 @@ template </*typename Concurrency_tag, */typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& tree, ///< KD-tree
+  Tree& aabb_tree, ///< KD-tree
   const typename Kernel::FT radius
 )
 {
@@ -373,30 +335,29 @@ compute_density_weight_for_sample_point(
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
-  // types for K nearest neighbors search
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
+  // types for AABB
+  typedef Kernel::Sphere_3 Circle;
+  typedef std::vector<Point>::iterator Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
-  //types for range search
-  typedef regularize_and_simplify_internal::Kd_tree_element<Kernel> Kd_tree_point;
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Traits;
-  typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
+  std::vector<typename Primitive::Id> neighbor_sample_points;
+  Circle sphere_query(query, radius);
+  aabb_tree.all_contained_primitives(sphere_query, 
+                                   std::back_inserter(neighbor_sample_points));
 
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
-
-  //range search 
-  Fuzzy_sphere fs(query, radius, 0.0);
-  std::vector<Point> neighbors;
-  tree.search(std::back_inserter(neighbors), fs);
+  
   //parallel
-  std::vector<Point>::iterator iter = neighbors.begin();
-  for (; iter != neighbors.end(); iter++)
+  std::vector<typename Primitive::Id>::iterator iter = neighbor_sample_points.begin();
+  for (; iter != neighbor_sample_points.end(); iter++)
   {
-    Point& np = *iter;
+    Point& np = *(*iter);
+   
     FT dist2 = CGAL::squared_distance(query, np);
     density_weight += std::exp(dist2 * iradius16);
   }
@@ -455,16 +416,9 @@ regularize_and_simplify_point_set(
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
 
-  // types for K nearest neighbors search structure
-  typedef regularize_and_simplify_internal::Kd_tree_element<Kernel> Kd_tree_element;
-  typedef regularize_and_simplify_internal::Kd_tree_traits<Kernel> Tree_traits;
-  typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // types for AABB
   typedef Kernel::Sphere_3 Circle;
-  //typedef std::vector<Kd_tree_point>::iterator Iterator;
   typedef std::vector<Point>::iterator Iterator;
   typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
   typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
@@ -503,15 +457,6 @@ regularize_and_simplify_point_set(
   task_timer.start();
   std::cout << "Initialization / Compute Density For Original" << std::endl;
 
-  std::vector<Kd_tree_element> original_treeElements;
-  //parallel
-  for (it = first_original_point, i=0 ; it != beyond ; ++it, ++i)
-  {
-    Point& p0 = get(point_pmap,it);
-    original_treeElements.push_back(Kd_tree_element(p0,i));
-  }
-  Tree original_tree(original_treeElements.begin(), 
-                     original_treeElements.end());
 
   AABB_Tree aabb_original_tree(first_original_point,
                                beyond);
@@ -524,9 +469,9 @@ regularize_and_simplify_point_set(
     for (it = first_original_point; it != beyond ; ++it)
     {
       FT density = regularize_and_simplify_internal::
-                   compute_density_weight_for_original_point<Kernel, Tree>
+                   compute_density_weight_for_original_point<Kernel, AABB_Tree>
                                                       (get(point_pmap, it), 
-                                                       original_tree, 
+                                                       aabb_original_tree, 
                                                        radius);
 
       original_density_weight_set.push_back(density);
@@ -543,16 +488,9 @@ regularize_and_simplify_point_set(
     task_timer.reset();
     std::cout << "Compute average term and repulsion term " << std::endl;
     // Initiate a KD-tree search for sample points
-    std::vector<Kd_tree_element> sample_treeElements;
+   
     //parallel
     ForwardIterator first_sample_point = sample_points.begin();
-    for (i=0 ; i < sample_points.size(); i++)
-    {
-      Point& p0 = sample_points[i];
-      sample_treeElements.push_back(Kd_tree_element(p0,i));
-    }
-    Tree sample_tree(sample_treeElements.begin(), sample_treeElements.end());
-     
     AABB_Tree aabb_sample_tree(sample_points.begin(),
                                sample_points.end());
     // Compute sample density weight for sample points if user needed
@@ -564,8 +502,8 @@ regularize_and_simplify_point_set(
       for (i=0 ; i < sample_points.size(); i++)
       {
         FT density = regularize_and_simplify_internal::
-                     compute_density_weight_for_sample_point<Kernel, Tree>
-                     (sample_points[i], sample_tree, radius);
+                     compute_density_weight_for_sample_point<Kernel, AABB_Tree>
+                     (sample_points[i], aabb_sample_tree, radius);
 
         sample_density_weight_set.push_back(density);
       }
@@ -596,11 +534,11 @@ regularize_and_simplify_point_set(
       Point& p = sample_points[i];
       repulsion_set[i] = regularize_and_simplify_internal::
                          compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
-                         (p, 
-                          aabb_sample_tree, 
-                          radius, 
-                          sample_density_weight_set,
-                          first_sample_point);
+                                               (p, 
+                                                aabb_sample_tree, 
+                                                radius, 
+                                                sample_density_weight_set,
+                                                first_sample_point);
     }
 
     for (i = 0; i < sample_points.size(); i++)
@@ -611,7 +549,7 @@ regularize_and_simplify_point_set(
 
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "done: " << task_timer.time() << " seconds, " 
-      << (memory>>20) << " Mb allocated" << std::endl;
+              << (memory>>20) << " Mb allocated" << std::endl;
    
     std::cout << "iterate: " << iter_n + 1 << std::endl << std::endl;
   }
