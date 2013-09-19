@@ -59,43 +59,43 @@ inline void rs3_rs_gmp_free(void * p,size_t s) {}
 #endif  // CGAL_USE_OLD_RS3
 
 //--------------------------------------------------
-// extern void * (*__cgalrs_allocate_func) (size_t);
-// extern void * (*__cgalrs_reallocate_func) (void *, size_t, size_t);
-// extern void   (*__cgalrs_free_func) (void *, size_t);
+// extern void * (*cgalrs_allocate_func) (size_t);
+// extern void * (*cgalrs_reallocate_func) (void *, size_t, size_t);
+// extern void   (*cgalrs_free_func) (void *, size_t);
 //--------------------------------------------------
-inline void* __cgalrs_default_allocate(size_t s){
+inline void* cgalrs_default_allocate(size_t s){
         return malloc(s);
 }
 
-inline void* __cgalrs_default_reallocate(void *a,size_t o,size_t n){
+inline void* cgalrs_default_reallocate(void *a,size_t o,size_t n){
         return realloc(a,n);
 }
 
-inline void __cgalrs_default_free(void *a,size_t s){
+inline void cgalrs_default_free(void *a,size_t s){
         return free(a);
 }
 
-CGALRS_THREAD_ATTR void * (*__cgalrs_allocate_func) (size_t) =
-                __cgalrs_default_allocate;
+CGALRS_THREAD_ATTR void * (*cgalrs_allocate_func) (size_t) =
+                cgalrs_default_allocate;
 
-CGALRS_THREAD_ATTR void * (*__cgalrs_reallocate_func) (void *, size_t, size_t) =
-                __cgalrs_default_reallocate;
+CGALRS_THREAD_ATTR void * (*cgalrs_reallocate_func) (void *, size_t, size_t) =
+                cgalrs_default_reallocate;
 
-CGALRS_THREAD_ATTR void   (*__cgalrs_free_func) (void *, size_t) =
-                __cgalrs_default_free;
+CGALRS_THREAD_ATTR void   (*cgalrs_free_func) (void *, size_t) =
+                cgalrs_default_free;
 
-inline void __cgalrs_dummy_free(void *p,size_t s){}
+inline void cgalrs_dummy_free(void *p,size_t s){}
 
 inline void cgalrs_set_memory_functions(
                         void *(*alloc_func) (size_t),
                         void *(*realloc_func) (void *, size_t, size_t),
                         void (*free_func) (void *, size_t)){
-        __cgalrs_allocate_func=
-                alloc_func?alloc_func:__cgalrs_default_allocate;
-        __cgalrs_reallocate_func=
-                realloc_func?realloc_func:__cgalrs_default_reallocate;
-        __cgalrs_free_func=
-                free_func?free_func:__cgalrs_default_free;
+        cgalrs_allocate_func=
+                alloc_func?alloc_func:cgalrs_default_allocate;
+        cgalrs_reallocate_func=
+                realloc_func?realloc_func:cgalrs_default_reallocate;
+        cgalrs_free_func=
+                free_func?free_func:cgalrs_default_free;
 }
 
 inline void cgalrs_get_memory_functions(
@@ -103,11 +103,11 @@ inline void cgalrs_get_memory_functions(
                         void *(**realloc_func) (void *, size_t, size_t),
                         void (**free_func) (void *, size_t)){
         if(alloc_func!=NULL)
-                *alloc_func=__cgalrs_allocate_func;
+                *alloc_func=cgalrs_allocate_func;
         if(realloc_func!=NULL)
-                *realloc_func=__cgalrs_reallocate_func;
+                *realloc_func=cgalrs_reallocate_func;
         if(free_func!=NULL)
-                *free_func=__cgalrs_free_func;
+                *free_func=cgalrs_free_func;
 }
 
 } // namespace CGAL

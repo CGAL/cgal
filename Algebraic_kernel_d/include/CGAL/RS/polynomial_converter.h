@@ -21,6 +21,7 @@
 
 #include <CGAL/Polynomial.h>
 #include <CGAL/RS/polynomial_1.h>
+#include <CGAL/RS/memory.h>
 
 namespace CGAL{
 
@@ -58,7 +59,7 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
                         for(int i=0;i<=d;++i) \
                                 _CONVERT; \
                         mp_get_memory_functions(&af,&rf,&ff); \
-                        mp_set_memory_functions(af,rf,__cgalrs_dummy_free); \
+                        mp_set_memory_functions(af,rf,cgalrs_dummy_free); \
                         RS_polynomial_1 *r=new RS_polynomial_1(&c,d); \
                         mp_set_memory_functions(af,rf,ff); \
                         return *r; \
