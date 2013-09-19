@@ -24,8 +24,8 @@
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/RS/functors_1.h>
 
-template <class _C,
-          class _G=
+template <class CoefficientType,
+          class GcdFunction=
 #ifdef CGAL_RS_USE_UGCD
                    CGAL::Modgcd_1
 #else
@@ -34,8 +34,8 @@ template <class _C,
 >
 struct Algebraic_kernel_rs_1{
 
-        typedef _C                                      Coefficient;
-        typedef _G                                      Gcd;
+        typedef CoefficientType                         Coefficient;
+        typedef GcdFunction                             Gcd;
         typedef CGAL::Polynomial<Coefficient>           Polynomial_1;
         typedef RSFunctors::Algebraic                   Algebraic_real_1;
         typedef RSFunctors::Bound                       Bound;

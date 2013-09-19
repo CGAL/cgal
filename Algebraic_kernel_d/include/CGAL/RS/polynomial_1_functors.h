@@ -272,19 +272,19 @@ public std::binary_function<Polynomial_1,Polynomial_1,Comparison_result>{
 // but they are related to polynomials (I think this is the best place
 // to do it)
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Is_square_free_1:
         public std::unary_function<Polynomial_1,bool>{
-                typedef _Gcd_policy     Gcd;
+                typedef GcdPolicy       Gcd;
                 inline bool operator()(const Polynomial_1 &p){
                         return(!(Gcd()(p,p.derive()).get_degree_static()));
                 };
         };      // Is_square_free_1
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Make_square_free_1:
         public std::unary_function<Polynomial_1,Polynomial_1>{
-                typedef _Gcd_policy     Gcd;
+                typedef GcdPolicy       Gcd;
                 inline Polynomial_1 operator()(const Polynomial_1 &p){
                         return sfpart_1<Gcd>(p);
                 };
@@ -292,33 +292,33 @@ struct Make_square_free_1:
 
 // this function is not well defined in algebraic kernel concepts; we
 // don't care, we do it correctly
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Square_free_factorize_1{
         template <class OutputIterator>
         int operator()(const Polynomial_1 &p,OutputIterator oi){
-                typedef _Gcd_policy     Gcd;
+                typedef GcdPolicy       Gcd;
                 sqfrvec factorization(sqfr_1<Gcd>(p));
                 std::copy(factorization.begin(),factorization.end(),oi);
                 return factorization.size();
         };
 };      // Square_free_factorize_1
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Is_coprime_1:
         public std::binary_function<Polynomial_1,Polynomial_1,bool>{
                 inline bool operator()
                         (const Polynomial_1 &p1,const Polynomial_1 &p2){
-                                typedef _Gcd_policy     Gcd;
+                                typedef GcdPolicy       Gcd;
                                 return(!Gcd()(p1,p2).get_degree_static());
                         };
         };      // Is_coprime_1
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Make_coprime_1{
         typedef bool            result_type;
         typedef Polynomial_1    P;
         bool operator()(const P &p1,const P &p2,P &g,P &q1,P &q2){
-                typedef _Gcd_policy     Gcd;
+                typedef GcdPolicy       Gcd;
                 g=Gcd()(p1,p2);
                 // we don't calculate q1 and q2 when g==1, shall we?
                 if(!(g.get_degree_static()))

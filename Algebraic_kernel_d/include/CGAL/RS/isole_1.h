@@ -33,15 +33,16 @@ namespace RS{
 // of Gmpfi's containing the solutions. Currently, the only implemented
 // isolator solves polynomials of type CGAL::Polynomial<CGAL::Gmpz>.
 
-template <class Polynomial_>
+template <class PolynomialType>
 struct isolator{
+        typedef PolynomialType          PolynomialT;
         inline std::vector<Gmpfi>
-        operator()(const Polynomial_&,unsigned int prec=CGAL_RS_DEF_PREC);
+        operator()(const PolynomialT&,unsigned int prec=CGAL_RS_DEF_PREC);
 };
 
-template <class Polynomial_>
+template <class PolynomialType>
 inline std::vector<Gmpfi>
-isolator<Polynomial_>::operator()(const Polynomial_ &p,unsigned int prec){
+isolator<PolynomialType>::operator()(const PolynomialType &p,unsigned int prec){
         CGAL_error_msg(
                 "isolator not implemented for this type of polynomials");
         return std::vector<Gmpfi>();

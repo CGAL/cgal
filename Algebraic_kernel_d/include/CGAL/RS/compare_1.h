@@ -49,10 +49,10 @@ compare_1_unequal(const Algebraic_1 &r1,const Algebraic_1 &r2){
         return(mpfr_less_p(r1.right(),r2.left())?SMALLER:LARGER);
 }
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 Comparison_result
 compare_1(const Algebraic_1 &r1,const Algebraic_1 &r2){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         //if(r1.pol()==r2.pol())
         //      return(r1.nr()!=r2.nr()?(r1.nr()<r2.nr()?SMALLER:LARGER):EQUAL);
         if(mpfr_lessequal_p(r1.left(),r2.left())){

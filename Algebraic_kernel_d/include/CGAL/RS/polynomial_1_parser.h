@@ -305,9 +305,9 @@ public:
 
 
     template < typename OutputIterator,
-               typename CONVERTER>
+               typename ConverterFunction>
     OutputIterator
-    result( OutputIterator oi, CONVERTER conv) const
+    result( OutputIterator oi, ConverterFunction conv) const
         {
             //for (int i = 0; i < sem.result.size(); ++i) {
             //  std::cout << "(" << sem.result[i].first << ", " <<

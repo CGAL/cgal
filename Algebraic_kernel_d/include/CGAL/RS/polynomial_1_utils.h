@@ -303,10 +303,10 @@ public std::unary_function<long,RS_polynomial_1>{
 // squarefree factorization, Yun's algorithm (1976)
 // if P=sum(P_i^i), this function returns a vector with pairs (P_i,i)
 // it gives for free the square-free part of P, which is C_1
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct do_sqfr_1:
 public std::unary_function<RS_polynomial_1,sqfrvec*>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     sqfrvec* operator()(const RS_polynomial_1 &P)const{
         sqfrvec *res=new sqfrvec();
         if(!P.get_degree()){
@@ -342,10 +342,10 @@ public std::unary_function<RS_polynomial_1,sqfrvec*>{
     }
 };
 
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct sqfr_1:
 public std::unary_function<RS_polynomial_1,sqfrvec>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     sqfrvec operator()(const RS_polynomial_1 &P){
         if(!P.has_sqfr()){
             sqfrptr sp(do_sqfr_1<Gcd>()(P));
@@ -357,10 +357,10 @@ public std::unary_function<RS_polynomial_1,sqfrvec>{
 
 // the square-free part of P is P/gcd(P,dP), but it can be also calculated
 // as the product of its sf factors
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct do_sfpart_1:
 public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     RS_polynomial_1* operator()(const RS_polynomial_1 &P)const{
         if(P.get_degree()){
             // TODO: not optimal
@@ -392,10 +392,10 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
 };
 #endif
 
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct sfpart_1:
 public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     const RS_polynomial_1& operator()(const RS_polynomial_1 &P){
         if(!P.has_sfpart()){
             polyptr pp(do_sfpart_1<Gcd>()(P));

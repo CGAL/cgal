@@ -36,9 +36,9 @@ class Algebraic_1;
 // bisects a's isolation interval in point p, returns a
 // Comparison_result, which is the comparison between a and p
 // precondition: p belongs to a's isolation interval
-template <class _Gcd_policy>
+template <class GcdPolicy>
 Comparison_result bisect_at(const Algebraic_1 &a,mpfr_srcptr p){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         Sign sl,sp;
         int round;
         sp=RSSign::signat(sfpart_1<Gcd>()(a.pol()),p);
@@ -73,9 +73,9 @@ Comparison_result bisect_at(const Algebraic_1 &a,mpfr_srcptr p){
 // all points inside a; the result will be zero when all points of
 // b result to be in a, negative when a<b and positive when a>b
 // precondition: a and b overlap
-template <class _Gcd_policy>
+template <class GcdPolicy>
 int bisect_at_endpoints(const Algebraic_1 &a,Algebraic_1 &b){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         CGAL_precondition(a.overlaps(b));
         if(mpfr_cmp(&(a.mpfi()->left),&(b.mpfi()->left))>0){
                 Comparison_result refinement=
@@ -93,9 +93,9 @@ int bisect_at_endpoints(const Algebraic_1 &a,Algebraic_1 &b){
 
 // bisect n times an interval; this function returns the number of
 // refinements made
-template <class _Gcd_policy>
+template <class GcdPolicy>
 int bisect_n(const Algebraic_1 &a,unsigned long n=1){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         Sign sl,sc;
         mp_prec_t pl,pc;
         mpfr_t center;
@@ -145,10 +145,10 @@ int bisect_n(const Algebraic_1 &a,unsigned long n=1){
 // is that dyadics will use the exact amount of bits needed, without
 // allocating a big amount of memory. Note that the dyadic numbers are
 // implemented as mpfrs, this implies that no conversion is needed.
-template <class _Gcd_policy>
+template <class GcdPolicy>
 int bisect_n_dyadic(const Algebraic_1 &a,unsigned long n=1){
 
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         Sign sl,sc;
         CGALRS_dyadic_t center;
         unsigned  long i;
@@ -175,9 +175,9 @@ int bisect_n_dyadic(const Algebraic_1 &a,unsigned long n=1){
 }
 
 // refine an interval, by bisecting it, until having a size smaller than 2^(-s)
-template <class _Gcd_policy>
+template <class GcdPolicy>
 int bisect(const Algebraic_1 &a,mp_exp_t s){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         long ed;
         mpfr_t d;       // interval size
         mpfr_init(d);
@@ -372,9 +372,9 @@ int refine_interval_by_factor(CGALRS_dyadic_ptr x_lo,CGALRS_dyadic_ptr x_hi,
 }
 
 // applies qir a given number of times
-template <class _Gcd_policy>
+template <class GcdPolicy>
 int qir_n(const Algebraic_1 &a,unsigned t=1){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         unsigned count=0;
         unsigned n=2;   // N=2^n
         CGALRS_dyadic_t x_lo,x_hi,f_lo,f_hi; // endpoints and their evaluations
@@ -419,9 +419,9 @@ int qir_n(const Algebraic_1 &a,unsigned t=1){
 }
 
 // applies qir until having an interval of size less than 2^(-t)
-template <class _Gcd_policy>
+template <class GcdPolicy>
 int qir(const Algebraic_1 &a,mp_exp_t t){
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         int count=0;
         long ed;
         unsigned n=2;   // N=2^n

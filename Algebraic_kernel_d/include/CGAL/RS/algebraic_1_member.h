@@ -183,12 +183,12 @@ bool Algebraic_1::is_finite()const{
         return (mpfi_bounded_p(mpfi())!=0);
 }
 
-//template <class _Gcd_policy>
+//template <class GcdPolicy>
 inline
 double Algebraic_1::to_double()const{
-        /*typedef _Gcd_policy     Gcd;
-        while(mpfr_get_d(left(),GMP_RNDU)!=mpfr_get_d(right(),GMP_RNDU))
-                bisect_n<Gcd>(*this,33);*/
+        //typedef GcdPolicy     Gcd;
+        //while(mpfr_get_d(left(),GMP_RNDU)!=mpfr_get_d(right(),GMP_RNDU))
+        //        bisect_n<Gcd>(*this,33);
         RS3::refine_1(*this,100);
         CGAL_assertion(mpfr_get_d(left(),GMP_RNDD)==
                        mpfr_get_d(right(),GMP_RNDD));

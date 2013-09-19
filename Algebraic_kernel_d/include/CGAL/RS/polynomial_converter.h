@@ -24,10 +24,11 @@
 
 namespace CGAL{
 
-template<class P>
+template<class Polynomial_>
 struct to_rs_poly:
-public std::unary_function<P,RS_polynomial_1>{
-        RS_polynomial_1 operator()(const P &p)const{
+public std::unary_function<Polynomial_,RS_polynomial_1>{
+        typedef Polynomial_     Polynomial;
+        RS_polynomial_1 operator()(const Polynomial &p)const{
                 std::cerr<<"can't convert to integer polynomial"<<std::endl;
                 exit(-1);
         }
@@ -118,10 +119,11 @@ public std::unary_function<Polynomial<Gmpq>,RS_polynomial_1>{
         }
 };
 
-template<class P>
+template<class Polynomial_>
 struct from_rs_poly:
-public std::unary_function<RS_polynomial_1,P>{
-        P operator()(const RS_polynomial_1 &p)const{
+public std::unary_function<RS_polynomial_1,Polynomial_>{
+        typedef Polynomial_     Polynomial;
+        Polynomial operator()(const RS_polynomial_1 &p)const{
                 std::cerr<<"can't convert to integer polynomial"<<std::endl;
                 exit(-1);
         }
