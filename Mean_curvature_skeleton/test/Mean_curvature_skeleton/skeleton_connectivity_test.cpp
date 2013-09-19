@@ -87,7 +87,6 @@ bool is_mesh_valid(Polyhedron& pMesh)
   return true;
 }
 
-// This example extracts a medially centered skeleton from a given mesh.
 int main()
 {
   Polyhedron mesh;
