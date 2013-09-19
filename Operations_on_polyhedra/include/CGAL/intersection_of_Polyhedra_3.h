@@ -40,6 +40,7 @@
 #include <CGAL/internal/corefinement/intersection_triangle_segment_3.h>
 #include <CGAL/internal/corefinement/intersection_coplanar_triangles_3.h>
 #include <CGAL/use.h>
+#include <CGAL/Default.h>
 
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
@@ -724,12 +725,17 @@ namespace internal_IOP{
 //be dramatic.
 
 template< class Polyhedron,
-          class Kernel=typename Polyhedron::Traits::Kernel,
-          class Node_visitor=Empty_node_visitor<Polyhedron>,
-          class Node_storage_type=typename Node_visitor::Node_storage_type,
-          class Use_const_polyhedron=typename Node_visitor::Is_polyhedron_const
+          class Kernel_=Default,
+          class Node_visitor_=Default,
+          class Node_storage_type_=Default,
+          class Use_const_polyhedron_=Default
          >
 class Intersection_of_Polyhedra_3{
+//Default template parameters
+  typedef typename Default::Get<Kernel_, typename Polyhedron::Traits::Kernel >::type Kernel;
+  typedef typename Default::Get<Node_visitor_, Empty_node_visitor<Polyhedron> >::type Node_visitor;
+  typedef typename Default::Get<Node_storage_type_, typename Node_visitor::Node_storage_type >::type Node_storage_type;
+  typedef typename Default::Get<Use_const_polyhedron_, typename Node_visitor::Is_polyhedron_const >::type Use_const_polyhedron;
 
 //typedefs  
   typedef typename Kernel::Triangle_3                        Triangle;
