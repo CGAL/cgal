@@ -14,8 +14,11 @@ namespace CGAL {
 A Surface mesh deformation algorithm provides new positions of the vertices of a surface mesh
 under positional constraints of some of its vertices without requiring any additional structure other than the surface mesh itself.
 
-In this package, we implement the algorithm described in \cgalCite{Sorkine2007AsRigidAs},
-where a nonlinear deformation energy is minimized under constraints to preserve as much as possible rigidity.
+This package implements the algorithm described in \cgalCite{Sorkine2007AsRigidAs} together with an
+alternative energy function \cgalCite{Chao2010SimpleGeomModel}.
+The algorithm minimizes a nonlinear deformation energy under positional constraints to preserve rigidity as much as possible.
+The minimization of the energy relies on solving sparse linear systems and finding closest rotations matrices. More details
+are provided in \ref Surface_Modeling_Overview.
 
 \section Surface_Modeling_Def Definitions
 
@@ -52,8 +55,11 @@ For more details on these algorithms, see section \ref Surface_Modeling_Overview
 
 \section Surface_Modeling_API User Interface Description
 
-Our implementation operates on a surface mesh represented as a halfedge data structure that must
+The deformation process is handled by the class `Deform_mesh` and the
+surface mesh is represented as a halfedge data structure that must
 be a model of the `HalfedgeGraph` concept.
+
+The class `Deform_mesh` provides two groups of functions for the preprocessing and the deformation.
 
 <!--
 We present the API by considering the user point of view during a deformation session
@@ -66,15 +72,13 @@ The deformation work flow.
 
 \subsection Preprocess_section Preprocessing
 
-The deformation process is handled thanks to a function object. The input surface mesh is specified in the constructor.
-A template parameter tag is used to select the method to use (the default being the \ref Surface_Modeling_Overview_ARAP_Rims).
-
-For the definition of the ROI, the following conventions are used:
+The preprocessing requires the surface mesh deformation system.
+The following conventions are used for the definition of the ROI:
  - a vertex added as a control vertex is added to the ROI
  - a control vertex removed from the ROI is no longer considered as a control vertex
  - a control vertex that is removed is not removed from the ROI
 
-Once the free and control vertices are set, the function `Deform_mesh::preprocess()` should be called to prepare the system resolution.
+Once the free and control vertices are set, the function `Deform_mesh::preprocess()` should be called to speed up solving the system.
 Note that if it is not done the first deformation step will call this function automatically and will have a longer runtime
 compared to next deformation steps.
 
@@ -232,7 +236,7 @@ under deformation constraints. Laplacian coordinates of the surface mesh are tre
 and the deformation process must follow the deformation constraints while preserving the Laplacian coordinates as much as possible.
 
 There are different ways to incorporate deformation constraints into the deformation system \cgalCite{Botsch2008OnLinearVariational}.
-In this package, we support hard constraints, that is target positions of control vertices are preserved after the deformation.
+This package supports hard constraints, that is target positions of control vertices are preserved after the deformation.
 
 Given a surface mesh deformation system with a ROI made of \f$ n \f$ vertices and \f$ k \f$ control vertices, we consider the following linear system:
 
@@ -266,8 +270,8 @@ The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$
 solve the aforementioned system, an appropriate solver (e.g. LU solver) need to be used. Note that solving this system
 preserves the Laplacian coordinates of the surface mesh restricted to the free vertices while satisfying the deformation constraints.
 
-\note This section is an introduction to provide a background for the two next sections describing the algorithms implemented
-in this package. A system relying only the approach described above results in non-smooth transitions in the neighborhood of
+\note This section is an introduction to provide the background for the two next sections describing the algorithms implemented
+in this package. A system relying only on the approach described above results in non-smooth transitions in the neighborhood of
 the control vertices. For a survey on different Laplacian-based editing techniques please refer to
 \cgalCite{Botsch2008OnLinearVariational}.
 
