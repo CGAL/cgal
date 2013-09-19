@@ -64,7 +64,7 @@ read_and_run(const std::string& file_name) {
   std::vector<double> timings;
   
   Polyhedron mesh;
-  std::ifstream input(file_name);
+  std::ifstream input(file_name.c_str());
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr << "Not a valid off file." << std::endl;
     assert(false);
@@ -73,7 +73,7 @@ read_and_run(const std::string& file_name) {
   timings.push_back( mesh.size_of_facets());
   // assign id field for each facet
   int facet_id = 0;
-  for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin();
+  for(typename Polyhedron::Facet_iterator facet_it = mesh.facets_begin();
     facet_it != mesh.facets_end(); ++facet_it, ++facet_id) {
       facet_it->id() = facet_id;
   }
