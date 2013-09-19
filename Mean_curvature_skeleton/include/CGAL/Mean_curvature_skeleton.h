@@ -1259,9 +1259,9 @@ private:
   void track_correspondence(vertex_descriptor v0, vertex_descriptor v1,
                             vertex_descriptor v)
   {
-    int id0 = v0->id();
-    int id1 = v1->id();
-    int vid = v->id();
+    int id0 = boost::get(vertex_id_pmap, v0);
+    int id1 = boost::get(vertex_id_pmap, v1);
+    int vid = boost::get(vertex_id_pmap, v);
     int from, to;
     if (id0 == vid)
     {
