@@ -41,7 +41,7 @@ Gmpz RS_polynomial_1::operator()(int x)const{
 
 inline
 RS_polynomial_1 RS_polynomial_1::operator-()const{
-        RS_polynomial_1 opposite(_degree);
+        RS_polynomial_1 opposite(polynomial_degree);
         int d=get_degree()+1;
         for(int i=0;i<d;++i)
                 mpz_neg(opposite.coef(i),coef(i));
@@ -50,22 +50,22 @@ RS_polynomial_1 RS_polynomial_1::operator-()const{
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator+=(const RS_polynomial_1 &s){
-        _is_sf=false;
-        _sfpart.reset();
-        _sqfr.reset();
+        is_square_free=false;
+        square_free_part.reset();
+        square_free_factorization.reset();
         int sd;
-        if(_degree<(sd=s.get_degree())){
-                mpz_t *coef_sum=(mpz_t*)(*_allocf)(sizeof(mpz_t)*(sd+1));
-                for(int i=0;i<_degree+1;++i){
+        if(polynomial_degree<(sd=s.get_degree())){
+                mpz_t *coef_sum=(mpz_t*)(*alloc_function)(sizeof(mpz_t)*(sd+1));
+                for(int i=0;i<polynomial_degree+1;++i){
                         mpz_init(coef_sum[i]);
                         mpz_add(coef_sum[i],s.coef(i),coef(i));
                         mpz_clear(coef(i));
                 }
-                for(int i=_degree+1;i<sd+1;++i)
+                for(int i=polynomial_degree+1;i<sd+1;++i)
                         mpz_init_set(coef_sum[i],s.coef(i));
-                (*_freef)(_coef,sizeof(mpz_t)*_capacity);
-                _coef=coef_sum;
-                _degree=sd;
+                (*free_function)(coefficient_array,sizeof(mpz_t)*capacity);
+                coefficient_array=coef_sum;
+                polynomial_degree=sd;
         }else
                 for(int i=0;i<sd+1;++i)
                         mpz_add(coef(i),s.coef(i),coef(i));
@@ -74,24 +74,24 @@ RS_polynomial_1& RS_polynomial_1::operator+=(const RS_polynomial_1 &s){
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator-=(const RS_polynomial_1 &s){
-        _is_sf=false;
-        _sfpart.reset();
-        _sqfr.reset();
+        is_square_free=false;
+        square_free_part.reset();
+        square_free_factorization.reset();
         int sd;
-        if(_degree<(sd=s.get_degree())){
-                mpz_t *coef_sum=(mpz_t*)(*_allocf)(sizeof(mpz_t)*(sd+1));
-                for(int i=0;i<_degree+1;++i){
+        if(polynomial_degree<(sd=s.get_degree())){
+                mpz_t *coef_sum=(mpz_t*)(*alloc_function)(sizeof(mpz_t)*(sd+1));
+                for(int i=0;i<polynomial_degree+1;++i){
                         mpz_init(coef_sum[i]);
                         mpz_sub(coef_sum[i],coef(i),s.coef(i));
                         mpz_clear(coef(i));
                 }
-                for(int i=_degree+1;i<sd+1;++i){
+                for(int i=polynomial_degree+1;i<sd+1;++i){
                         mpz_init(coef_sum[i]);
                         mpz_neg(coef_sum[i],s.coef(i));
                 }
-                (*_freef)(_coef,sizeof(mpz_t)*_capacity);
-                _coef=coef_sum;
-                _degree=sd;
+                (*free_function)(coefficient_array,sizeof(mpz_t)*capacity);
+                coefficient_array=coef_sum;
+                polynomial_degree=sd;
         }else
                 for(int i=0;i<sd+1;++i)
                         mpz_sub(coef(i),coef(i),s.coef(i));
@@ -115,9 +115,9 @@ RS_polynomial_1 RS_polynomial_1::operator*(const RS_polynomial_1 &f)const{
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator*=(const RS_polynomial_1 &f){
-        _is_sf=false;
-        _sfpart.reset();
-        _sqfr.reset();
+        is_square_free=false;
+        square_free_part.reset();
+        square_free_factorization.reset();
         RS_polynomial_1 aux(*this);
         *this=aux*f;
         return *this;
@@ -125,28 +125,28 @@ RS_polynomial_1& RS_polynomial_1::operator*=(const RS_polynomial_1 &f){
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator*=(mpz_srcptr s){
-        for(int i=0;i<_degree+1;++i)
+        for(int i=0;i<polynomial_degree+1;++i)
                 mpz_mul(coef(i),coef(i),s);
         return *this;
 }
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator*=(const CGAL::Gmpz &s){
-        for(int i=0;i<_degree+1;++i)
+        for(int i=0;i<polynomial_degree+1;++i)
                 mpz_mul(coef(i),coef(i),s.mpz());
         return *this;
 }
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator/=(mpz_srcptr d){
-        for(int i=0;i<_degree+1;++i)
+        for(int i=0;i<polynomial_degree+1;++i)
                 mpz_divexact(coef(i),coef(i),d);
         return *this;
 }
 
 inline
 RS_polynomial_1& RS_polynomial_1::operator/=(const CGAL::Gmpz &d){
-        for(int i=0;i<_degree+1;++i)
+        for(int i=0;i<polynomial_degree+1;++i)
                 mpz_divexact(coef(i),coef(i),d.mpz());
         return *this;
 }

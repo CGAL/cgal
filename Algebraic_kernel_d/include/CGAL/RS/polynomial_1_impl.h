@@ -31,13 +31,13 @@ RS_polynomial_1::RS_polynomial_1(InputIterator first,InputIterator last){
                 ++elements;
         // now we create the polynomial
         if(elements){
-                _degree=elements-1;
+                polynomial_degree=elements-1;
                 create_storage(elements);
                 int i=0;
                 for(it=first;it!=last;++it)
                         mpz_init_set(coef(i++),Gmpz(*it).mpz());
         }else{
-                _degree=0;
+                polynomial_degree=0;
                 create_storage(1);
                 mpz_init_set_ui(coef(0),0);
         }

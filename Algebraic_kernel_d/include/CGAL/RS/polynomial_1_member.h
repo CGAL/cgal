@@ -26,8 +26,8 @@ namespace CGAL{
 
 inline
 void RS_polynomial_1::create_storage(int size){
-        _coef=(mpz_t*)(*_allocf)(sizeof(mpz_t)*size);
-        _capacity=size;
+        coefficient_array=(mpz_t*)(*alloc_function)(sizeof(mpz_t)*size);
+        capacity=size;
 }
 
 inline
@@ -36,17 +36,19 @@ void RS_polynomial_1::free_storage(){
         void *(*rf)(void*,size_t,size_t);
         void (*ff)(void*,size_t);
         mp_get_memory_functions(&af,&rf,&ff);
-        mp_set_memory_functions(_allocf,_reallocf,_freef);
-        for(int i=0;i<_degree+1;++i)
+        mp_set_memory_functions(alloc_function,realloc_function,free_function);
+        for(int i=0;i<polynomial_degree+1;++i)
                 mpz_clear(coef(i));
         mp_set_memory_functions(af,rf,ff);
-        (*_freef)(_coef,sizeof(mpz_t)*_capacity);
-        _capacity=0;
+        (*free_function)(coefficient_array,sizeof(mpz_t)*capacity);
+        capacity=0;
 }
 
 inline
 void RS_polynomial_1::fetch_gmp_functions(){
-        mp_get_memory_functions(&_allocf,&_reallocf,&_freef);
+        mp_get_memory_functions(&alloc_function,
+                                &realloc_function,
+                                &free_function);
 }
 
 //////////////////////
@@ -57,16 +59,16 @@ void RS_polynomial_1::fetch_gmp_functions(){
 // the new coefficients
 inline
 void RS_polynomial_1::set_degree(int d){
-        if(d+1>_capacity){
+        if(d+1>capacity){
                 free_storage();
-                _degree=d;
+                polynomial_degree=d;
                 ++d;
                 create_storage(d);
-                for(int i=0;i<=_degree;++i)
+                for(int i=0;i<=polynomial_degree;++i)
                         mpz_init(coef(i));
         }else{
-                _degree=d;
-                for(int i=_degree+1;i<=d;++i)
+                polynomial_degree=d;
+                for(int i=polynomial_degree+1;i<=d;++i)
                         mpz_init(coef(i));
         }
         return;
@@ -74,120 +76,120 @@ void RS_polynomial_1::set_degree(int d){
 
 inline
 void RS_polynomial_1::force_degree(int n){
-        _degree=n;
+        polynomial_degree=n;
 }
 
 // to change the storage capacity of a polynomial object
 inline
 int RS_polynomial_1::resize(int newcap){
-        if(newcap<=_capacity)
+        if(newcap<=capacity)
                 return -1;
         int i;
-        mpz_t *newcoef=(mpz_t*)(*_allocf)(newcap*sizeof(mpz_t));
-        for(i=0;i<=_degree;++i){
-                mpz_init_set(newcoef[i],_coef[i]);
-                mpz_clear(_coef[i]);
+        mpz_t *newcoef=(mpz_t*)(*alloc_function)(newcap*sizeof(mpz_t));
+        for(i=0;i<=polynomial_degree;++i){
+                mpz_init_set(newcoef[i],coefficient_array[i]);
+                mpz_clear(coefficient_array[i]);
         }
-        for(i=_degree+1;i<newcap;++i)
+        for(i=polynomial_degree+1;i<newcap;++i)
                 mpz_init(newcoef[i]);
-        (*_freef)(_coef,sizeof(mpz_t)*_capacity);
-        _coef=newcoef;
-        _capacity=newcap;
+        (*free_function)(coefficient_array,sizeof(mpz_t)*capacity);
+        coefficient_array=newcoef;
+        capacity=newcap;
         return newcap;
 }
 
 inline
 void RS_polynomial_1::set_coef(int pow_x,mpz_srcptr z){
-        mpz_set(_coef[pow_x],z);
+        mpz_set(coefficient_array[pow_x],z);
 }
 
 inline
 void RS_polynomial_1::set_coef(int pow_x,const CGAL::Gmpz &z){
-        mpz_set(_coef[pow_x],z.mpz());
+        mpz_set(coefficient_array[pow_x],z.mpz());
 }
 
 inline
 void RS_polynomial_1::set_coef_ui(int pow_x,unsigned long z){
-        mpz_set_ui(_coef[pow_x],z);
+        mpz_set_ui(coefficient_array[pow_x],z);
 }
 
 inline
 void RS_polynomial_1::set_coef_si(int pow_x,long z){
-        mpz_set_si(_coef[pow_x],z);
+        mpz_set_si(coefficient_array[pow_x],z);
 }
 
 inline
 int RS_polynomial_1::get_degree()const{
-        while(!mpz_sgn(coef(_degree))&&_degree)
-                --_degree;
-        return _degree;
+        while(!mpz_sgn(coef(polynomial_degree))&&polynomial_degree)
+                --polynomial_degree;
+        return polynomial_degree;
 }
 
 inline
 int RS_polynomial_1::get_degree_static()const{
-        return _degree;
+        return polynomial_degree;
 }
 
 inline
 bool RS_polynomial_1::has_sfpart()const{
-        return (_is_sf?true:(_sfpart.get()!=NULL?true:false));
+        return (is_square_free?true:(square_free_part.get()!=NULL?true:false));
 }
 
 inline
 const RS_polynomial_1& RS_polynomial_1::sfpart()const{
-        if(_is_sf)
+        if(is_square_free)
                 return *this;
         else
-                return *_sfpart;
+                return *square_free_part;
 }
 
 inline
 void RS_polynomial_1::set_sfpart(RS_polynomial_1 *s)const{
-        _is_sf=false;
-        _sfpart=polyptr(s);
+        is_square_free=false;
+        square_free_part=polyptr(s);
 }
 
 inline
 void RS_polynomial_1::set_sfpart(const polyptr &s)const{
-        _is_sf=false;
-        _sfpart=s;
+        is_square_free=false;
+        square_free_part=s;
 }
 
 inline
 void RS_polynomial_1::set_sf()const{
-        _is_sf=true;
+        is_square_free=true;
 }
 
 inline
 bool RS_polynomial_1::has_sqfr()const{
-        return (_sqfr.get()!=NULL?true:false);
+        return (square_free_factorization.get()!=NULL?true:false);
 }
 
 inline
 sqfrvec& RS_polynomial_1::sqfr()const{
-        return *_sqfr;
+        return *square_free_factorization;
 }
 
 inline
 void RS_polynomial_1::set_sqfr(sqfrvec *s)const{
-        _sqfr=sqfrptr(s);
+        square_free_factorization=sqfrptr(s);
 }
 
 inline
 void RS_polynomial_1::set_sqfr(const sqfrptr &s)const{
-        _sqfr=s;
+        square_free_factorization=s;
 }
 
 inline
 mpz_ptr RS_polynomial_1::leading_coefficient()const{
-        return(_coef[get_degree()]);
+        return(coefficient_array[get_degree()]);
 }
 
 // gets the power of the lowest coefficient non-zero monomial
 inline
 int RS_polynomial_1::first_non_zero()const{
         int i=0;
-        while(i<=_degree)
+        while(i<=polynomial_degree)
                 if(mpz_sgn(coef(i)))
                         return i;
                 else
@@ -197,12 +199,12 @@ int RS_polynomial_1::first_non_zero()const{
 
 inline
 mpz_t* RS_polynomial_1::get_coefs()const{
-        return _coef;
+        return coefficient_array;
 }
 
 inline
 mpz_ptr RS_polynomial_1::coef(int i)const{
-        return _coef[i];
+        return coefficient_array[i];
 }
 
 inline
