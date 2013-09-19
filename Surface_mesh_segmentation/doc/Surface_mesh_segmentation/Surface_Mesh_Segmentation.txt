@@ -61,7 +61,7 @@ After having calculated the raw SDF value for each facet, the SDF values used in
 the result of several post-processing steps:
 
 - Facets with no raw SDF values are assigned the average raw SDF value of their edge-adjacent neighbors. If there is still a facet having no SDF value,
-the minimum SDF value is assigned to it (this step is not done in the implementation from the paper).
+the minimum amongst all the SDF values is assigned to it (this step is not done in the implementation from the paper).
 The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process done at the beginning of `segment_from_sdf_values()`.
 
 - A bilateral smoothing \cgalCite{Tomasi1998Bilateral} is applied.
@@ -207,6 +207,10 @@ The main advantage is to decrease from log to constant the complexity for access
 \section Performances Performances
 We provide runtime results for the functions `compute_sdf_values()` and `segment_from_sdf_values()`.
 These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
+The models used for the benchmarks are the <i>dinausaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
+
+
 \todo Update release number as well as first introduced in.
 
 Runtime in seconds of `compute_sdf_values()` with 25 rays showing the cost of the robustness:
@@ -229,7 +233,8 @@ Number of triangles  | `%Simple_cartesian<double>` | `%Exact_predicates_inexact_
 </center>
 -->
 
-Runtime in milliseconds of `segment_from_sdf_values()`, the graph-cut part is using the library <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow</a> v2.21:
+Runtime in milliseconds of `segment_from_sdf_values()` (using `%Simple_cartesian<double>` or `EPICK` gives the same results),
+the graph-cut part is using the library <a href="http://pub.ist.ac.at/~vnk/software.html">MaxFlow</a> v2.21:
 
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
@@ -239,7 +244,7 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 88,928               |   314                 | 1,260                 |  2,736                 |   4,239
 </center>
 
-Tested models in this benchmark are dinosaur (7,828 facets), bear (20,188 facets) and refined version of elephant model (88,928 facets).
+
 <!-- Internal for developers:
 This are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
 case boost::boykov_kolmogorov_max_flow is used instead of MaxFlow
