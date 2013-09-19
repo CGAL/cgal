@@ -583,6 +583,20 @@ public:
     return mesh;
   }
 
+  /**
+   * @brief If set to true, the copy of the source mesh will be deleted when
+   *        the destructor is called.
+   */
+  void set_own_polyhedron(bool value)
+  {
+    owns_polyhedron = value;
+  }
+
+  bool get_own_polyhedron()
+  {
+    return owns_polyhedron;
+  }
+
   /// \cond SKIP_FROM_MANUAL
 
   void set_alpha_TH(double value)
@@ -603,20 +617,6 @@ public:
   double get_zero_TH()
   {
     return zero_TH;
-  }
-
-  /**
-   * @brief If set to true, the copy of the source mesh will be deleted when
-   *        the destructor is called.
-   */
-  void set_own_polyhedron(bool value)
-  {
-    owns_polyhedron = value;
-  }
-
-  bool get_own_polyhedron()
-  {
-    return owns_polyhedron;
   }
 
   /// \endcond
@@ -1016,10 +1016,13 @@ private:
     {
       boost::put(vertex_id_pmap, *vb, vertex_id_count++);
     }
-    vertex_id_count = 0;
-    for (boost::tie(vb, ve) = boost::vertices(*mesh); vb != ve; ++vb)
+    if (mesh != NULL)
     {
-      boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+      vertex_id_count = 0;
+      for (boost::tie(vb, ve) = boost::vertices(*mesh); vb != ve; ++vb)
+      {
+        boost::put(vertex_id_pmap, *vb, vertex_id_count++);
+      }
     }
 
     max_id = vertex_id_count;
