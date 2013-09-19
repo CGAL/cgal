@@ -122,7 +122,7 @@ namespace CGAL
   };
 
     
-  template <class HDS, class NestedFacetConstruct, class NewNodeVertexVisitor>
+  template <class HDS, class NestedFacetConstruct, class NewNodeVertexVisitor, class PolyhedronPointPMap>
   class Triangulate_a_face : public CGAL::Modifier_base<HDS> {
     typedef typename HDS::Halfedge_handle Halfedge_handle;
     typedef typename HDS::Vertex_handle   Vertex_handle;
@@ -130,16 +130,18 @@ namespace CGAL
     typedef typename HDS::Vertex          Vertex;
     typedef typename HDS::Halfedge        Halfedge;
     typedef typename HDS::Face            Face;
+    typedef typename boost::property_traits<PolyhedronPointPMap>::value_type Point;
     
     //data members
     Face_handle current_face;
-    std::map<int,typename Vertex::Point >                  nodes_;
+    std::map<int, Point>                                   nodes_;
     std::map<int,Vertex_handle>&                           node_to_polyhedron_vertex_;
     std::map<std::pair<int,int>,Halfedge_handle>&          edge_to_hedge_;
     std::vector<std::pair<int,int> >                       edges_to_create_;
     std::vector<CGAL::cpp11::tuple<int,int,int> >          faces_to_create_;
     NestedFacetConstruct facet_construct;
     NewNodeVertexVisitor& node_vertex_visitor;
+    PolyhedronPointPMap ppmap;
 
     typename HDS::Halfedge::Base*
     unlock_halfedge(Halfedge_handle h){
@@ -161,8 +163,9 @@ namespace CGAL
                         std::map<std::pair<int,int>,Halfedge_handle>& edge_to_hedge,
                         const Triangulation& triangulation,
                         const NestedFacetConstruct& fc,
-                        NewNodeVertexVisitor& nv)
-    :current_face(face), node_to_polyhedron_vertex_(node_to_polyhedron_vertex), edge_to_hedge_(edge_to_hedge), facet_construct(fc), node_vertex_visitor(nv)
+                        NewNodeVertexVisitor& nv,
+                        PolyhedronPointPMap ppmap)
+    :current_face(face), node_to_polyhedron_vertex_(node_to_polyhedron_vertex), edge_to_hedge_(edge_to_hedge), facet_construct(fc), node_vertex_visitor(nv), ppmap(ppmap)
     {
       //grab vertices to be inserted to copy them from the vector
       for (std::vector<int>::const_iterator it=node_ids.begin();it!=node_ids.end();++it)
@@ -210,9 +213,10 @@ namespace CGAL
       
       //insert the intersection point interior to the face inside the polyhedron and
       //save their Polyhedron::vertex_handle 
-      for (typename std::map<int,typename Vertex::Point>::iterator it=nodes_.begin();it!=nodes_.end();++it)
+      for (typename std::map<int,Point>::iterator it=nodes_.begin();it!=nodes_.end();++it)
       {
-        Vertex_handle v=hds.vertices_push_back(Vertex(it->second));
+        Vertex_handle v=hds.vertices_push_back(Vertex());
+        put(ppmap, v, it->second);
         node_vertex_visitor.new_vertex_added(it->first, v);
         CGAL_assertion( node_to_polyhedron_vertex_.find( it->first ) == node_to_polyhedron_vertex_.end());
         node_to_polyhedron_vertex_.insert( std::make_pair(it->first,v) );
@@ -617,14 +621,17 @@ template< class Polyhedron,
           class Kernel_=Default,
           class EdgeMarkPropertyMap_=Default,
           class NestedFacetConstruct_=Default,
-          class NewNodeVertexVisitor_=Default
+          class NewNodeVertexVisitor_=Default,
+          class PolyhedronPointPMap_=Default
         >
 class Node_visitor_refine_polyhedra{
 //Default typedefs
-  typedef typename Default::Get<Kernel_, typename Polyhedron::Traits::Kernel>::type Kernel;
+  
   typedef typename Default::Get<EdgeMarkPropertyMap_, Dummy_edge_mark_property_map<Polyhedron> >::type EdgeMarkPropertyMap;
   typedef typename Default::Get<NestedFacetConstruct_, Default_facet_construct<Polyhedron > >::type NestedFacetConstruct;
   typedef typename Default::Get<NewNodeVertexVisitor_, Default_node_vertex_visitor<Polyhedron> >::type NewNodeVertexVisitor;
+  typedef typename Default::Get<PolyhedronPointPMap_, Default_polyhedron_ppmap<Polyhedron> >::type PolyhedronPointPMap;
+  typedef typename Default::Get<Kernel_, typename Kernel_traits< typename boost::property_traits<PolyhedronPointPMap>::value_type >::Kernel >::type Kernel;
 //typedefs  
   typedef typename Polyhedron::Halfedge_handle                         Halfedge_handle;
   typedef typename Polyhedron::Halfedge_const_handle                   Halfedge_const_handle;
@@ -686,6 +693,7 @@ class Node_visitor_refine_polyhedra{
   Combinatorial_map_3_*                 final_map_ptr;
   Combinatorial_map_3_&                 final_map() {return *final_map_ptr;}
   bool final_map_comes_from_outside;
+  
   //   new_hedge    hedge
   //  ----------->   ----------->
   //               v
@@ -696,7 +704,7 @@ class Node_visitor_refine_polyhedra{
                             const typename Kernel::Point_3& point,
                             Polyhedron& P)
   {
-    internal_IOP::Split_halfedge_at_point<typename Polyhedron::HalfedgeDS> delegated(hedge,point);
+    internal_IOP::Split_halfedge_at_point<typename Polyhedron::HalfedgeDS, PolyhedronPointPMap> delegated(hedge,point,ppmap);
     P.delegate( delegated );
     CGAL_assertion(P.is_valid());
     
@@ -711,7 +719,7 @@ class Node_visitor_refine_polyhedra{
     }
     
     Vertex_handle v=boost::prior(P.vertices_end());
-    CGAL_assertion(v->point()==point);
+    CGAL_assertion(get(ppmap,v)==point);
     return v;
   }
 
@@ -722,7 +730,7 @@ class Node_visitor_refine_polyhedra{
   {
     std::sort(node_ids.begin(),
               node_ids.end(),
-              internal_IOP::Order_along_a_halfedge<Polyhedron,Default_polyhedron_ppmap<Polyhedron>, Nodes_vector,Is_polyhedron_const>(hedge,nodes, Default_polyhedron_ppmap<Polyhedron>())
+              internal_IOP::Order_along_a_halfedge<Polyhedron,PolyhedronPointPMap, Nodes_vector,Is_polyhedron_const>(hedge,nodes, ppmap)
     );
   }
   
@@ -828,18 +836,18 @@ class Node_visitor_refine_polyhedra{
       return is_in_interior_of_object<typename Nodes_vector::Ikernel>(
         nodes.interval_node(O_prime_index),
         nodes.interval_node(O_index),
-        P1_index == -1 ? nodes.to_interval(P1->point()): nodes.interval_node(P1_index),
-        P2_index == -1 ? nodes.to_interval(P2->point()): nodes.interval_node(P2_index),
-        Q_index  == -1 ? nodes.to_interval(Q->point()) : nodes.interval_node(Q_index )
+        P1_index == -1 ? nodes.to_interval(get(ppmap,P1)): nodes.interval_node(P1_index),
+        P2_index == -1 ? nodes.to_interval(get(ppmap,P2)): nodes.interval_node(P2_index),
+        Q_index  == -1 ? nodes.to_interval(get(ppmap,Q)) : nodes.interval_node(Q_index )
       );
     }
     catch(Uncertain_conversion_exception&){
       return is_in_interior_of_object<typename Nodes_vector::Exact_kernel>(
         nodes.exact_node(O_prime_index),
         nodes.exact_node(O_index),
-        P1_index == -1 ? nodes.to_exact(P1->point()): nodes.exact_node(P1_index),
-        P2_index == -1 ? nodes.to_exact(P2->point()): nodes.exact_node(P2_index),
-        Q_index  == -1 ? nodes.to_exact(Q->point()) : nodes.exact_node(Q_index )
+        P1_index == -1 ? nodes.to_exact(get(ppmap,P1)): nodes.exact_node(P1_index),
+        P2_index == -1 ? nodes.to_exact(get(ppmap,P2)): nodes.exact_node(P2_index),
+        Q_index  == -1 ? nodes.to_exact(get(ppmap,Q)) : nodes.exact_node(Q_index )
       );
     }
   }
@@ -1228,14 +1236,16 @@ bool coplanar_triangles_case_handled(Halfedge_handle first_hedge,Halfedge_handle
   EdgeMarkPropertyMap m_edge_mark_pmap;     //property map to mark halfedge of the original polyhedra that are on the intersection
   NestedFacetConstruct facet_construct;  // functor called to create new triangular faces inside a given face
   NewNodeVertexVisitor node_vertex_visitor; // functor called when a new node is created and when a new vertex is added
+  PolyhedronPointPMap ppmap;
 public:
   Node_visitor_refine_polyhedra (
     Combinatorial_map_3_* ptr=NULL,
     bool do_not_build_cmap_=false,
     EdgeMarkPropertyMap pmap=EdgeMarkPropertyMap(),
     const NestedFacetConstruct& fc = NestedFacetConstruct(),
-    const NewNodeVertexVisitor& nv = NewNodeVertexVisitor()
-  ):do_not_build_cmap(do_not_build_cmap_), m_edge_mark_pmap(pmap), facet_construct(fc), node_vertex_visitor(nv)
+    const NewNodeVertexVisitor& nv = NewNodeVertexVisitor(),
+    PolyhedronPointPMap ppmap = PolyhedronPointPMap()
+  ):do_not_build_cmap(do_not_build_cmap_), m_edge_mark_pmap(pmap), facet_construct(fc), node_vertex_visitor(nv), ppmap(ppmap)
   {
     if (ptr!=NULL){
       final_map_comes_from_outside=true;
@@ -1646,10 +1656,10 @@ public:
 
       
       #ifdef DO_NO_USE_EXACT_CDT
-      typename Kernel::Plane_3 plane(triangle_boundary[0]->point(),triangle_boundary[1]->point(),triangle_boundary[2]->point());
+      typename Kernel::Plane_3 plane( get(ppmap,triangle_boundary[0]),get(ppmap,triangle_boundary[1]),get(ppmap,triangle_boundary[2]));
       #else
       CGAL::Cartesian_converter<Kernel,Exact_kernel> convert;
-      typename Exact_kernel::Plane_3 plane(convert(triangle_boundary[0]->point()),convert(triangle_boundary[1]->point()),convert(triangle_boundary[2]->point()));
+      typename Exact_kernel::Plane_3 plane(convert(get(ppmap,triangle_boundary[0])),convert(get(ppmap,triangle_boundary[1])),convert(get(ppmap,triangle_boundary[2])));
       #endif
       CDT triangulation;
       //insert point inside face
@@ -1666,14 +1676,14 @@ public:
       
       typename CDT::Vertex_handle triangle_vertices[3];
       #ifdef DO_NO_USE_EXACT_CDT
-      triangle_vertices[0]=triangulation.insert(plane.to_2d(triangle_boundary[0]->point()));
-      triangle_vertices[1]=triangulation.insert(plane.to_2d(triangle_boundary[1]->point()));
-      triangle_vertices[2]=triangulation.insert(plane.to_2d(triangle_boundary[2]->point()));
+      triangle_vertices[0]=triangulation.insert(plane.to_2d(get(ppmap,triangle_boundary[0])));
+      triangle_vertices[1]=triangulation.insert(plane.to_2d(get(ppmap,triangle_boundary[1])));
+      triangle_vertices[2]=triangulation.insert(plane.to_2d(get(ppmap,triangle_boundary[2])));
       #else
       //we can do this because these are input points.
-      triangle_vertices[0]=triangulation.insert(plane.to_2d(convert(triangle_boundary[0]->point())));
-      triangle_vertices[1]=triangulation.insert(plane.to_2d(convert(triangle_boundary[1]->point())));
-      triangle_vertices[2]=triangulation.insert(plane.to_2d(convert(triangle_boundary[2]->point())));      
+      triangle_vertices[0]=triangulation.insert(plane.to_2d(convert(get(ppmap,triangle_boundary[0]))));
+      triangle_vertices[1]=triangulation.insert(plane.to_2d(convert(get(ppmap,triangle_boundary[1]))));
+      triangle_vertices[2]=triangulation.insert(plane.to_2d(convert(get(ppmap,triangle_boundary[2]))));      
       #endif
       
       triangle_vertices[0]->info()=triangle_boundary_indices[0];
@@ -1810,8 +1820,8 @@ public:
       
       //create a modifier to insert nodes and copy the triangulation of the face
       //inside the polyhedron
-      internal_IOP::Triangulate_a_face<typename Polyhedron::HalfedgeDS, NestedFacetConstruct, NewNodeVertexVisitor> modifier(
-        f, nodes, node_ids, node_to_polyhedron_vertex, edge_to_hedge, triangulation, facet_construct, node_vertex_visitor);
+      internal_IOP::Triangulate_a_face<typename Polyhedron::HalfedgeDS, NestedFacetConstruct, NewNodeVertexVisitor, PolyhedronPointPMap> modifier(
+        f, nodes, node_ids, node_to_polyhedron_vertex, edge_to_hedge, triangulation, facet_construct, node_vertex_visitor, ppmap);
       
       CGAL_assertion(P->is_valid());
       P->delegate(modifier);
@@ -1855,7 +1865,7 @@ public:
     #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "Nb marked edges " << border_halfedges.size() << std::endl;
 //    for (typename Border_halfedges_map::iterator it=border_halfedges.begin();it!=border_halfedges.end();++it)
-//      std::cout << it->first->opposite()->vertex()->point() << " " << it->first->vertex()->point() << " is constrained " << std::endl;
+//      std::cout << it->first->get(ppmap,opposite()->vertex()) << " " << get(ppmap,it->first->vertex()) << " is constrained " << std::endl;
     std::cout << "Nb polylines " << an_edge_per_polyline.size() << std::endl;
     #endif
     
@@ -1955,10 +1965,10 @@ public:
       Halfedge_handle first_hedge=it->second.first.begin()->second;
       Halfedge_handle second_hedge=boost::next(it->second.first.begin())->second;
 
-      CGAL_assertion(nodes[indices.second]==first_hedge->vertex()->point());
-      CGAL_assertion(nodes[indices.first]==first_hedge->opposite()->vertex()->point());
-      CGAL_assertion(nodes[indices.second]==second_hedge->vertex()->point());
-      CGAL_assertion(nodes[indices.first]==second_hedge->opposite()->vertex()->point());
+      CGAL_assertion(nodes[indices.second]==get(ppmap,first_hedge->vertex()));
+      CGAL_assertion(nodes[indices.first]==get(ppmap,first_hedge->opposite()->vertex()));
+      CGAL_assertion(nodes[indices.second]==get(ppmap,second_hedge->vertex()));
+      CGAL_assertion(nodes[indices.first]==get(ppmap,second_hedge->opposite()->vertex()));
       
       Polyhedron* first_poly  = it->second.first.begin()->first;
       Polyhedron* second_poly = boost::next(it->second.first.begin())->first;
@@ -1999,13 +2009,13 @@ public:
           #ifdef CGAL_COREFINEMENT_DEBUG
           std::cout << index_p1 << " " << index_p2 << " " << index_q1 << " " <<index_q2 << std::endl;
           std::cout << nodes[indices.first] << " | " << nodes[indices.second] << std::endl;
-          std::cout << P1->point() << " | " << P2->point() << " | " << Q1->point() << " | " <<Q2->point() << std::endl;
+          std::cout << get(ppmap,P1) << " | " << get(ppmap,P2) << " | " << get(ppmap,Q1) << " | " <<get(ppmap,Q2) << std::endl;
           #endif
           
           if ( coplanar_triangles_case_handled(first_hedge,second_hedge,indices,nodes,index_p1,index_p2,index_q1,index_q2,selected_hedge_to_dart,mark_index,darts_to_remove,polyline_info) )
             continue;
           
-          CGAL_assertion(P1->point() !=Q1->point() && P1->point()!=Q2->point() && P2->point() !=Q1->point() && P2->point()!=Q2->point());
+          CGAL_assertion(get(ppmap,P1) !=get(ppmap,Q1) && get(ppmap,P1)!=get(ppmap,Q2) && get(ppmap,P2) !=get(ppmap,Q1) && get(ppmap,P2)!=get(ppmap,Q2));
           
           bool Q1_is_between_P1P2 = filtered_order_around_edge(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes);
           bool Q2_is_between_P1P2 = filtered_order_around_edge(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes);

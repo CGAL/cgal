@@ -217,14 +217,16 @@ struct Order_along_a_halfedge{
 };
 
 
-template <class HDS>
+template <class HDS, class PolyhedronPointPMap>
 class Split_halfedge_at_point : public CGAL::Modifier_base<HDS> {
   typedef typename HDS::Halfedge_handle Halfedge_handle;
   typedef typename HDS::Vertex_handle   Vertex_handle;
   typedef typename HDS::Vertex          Vertex;
+  typedef typename boost::property_traits<PolyhedronPointPMap>::value_type Point;
   Halfedge_handle hedge;
-  Vertex          vertex;
-  
+  Point point;
+  PolyhedronPointPMap ppmap;
+
   typename HDS::Halfedge::Base*
   unlock_halfedge(Halfedge_handle h){
     return static_cast<typename HDS::Halfedge::Base*>(&(*h));
@@ -232,8 +234,11 @@ class Split_halfedge_at_point : public CGAL::Modifier_base<HDS> {
   
 public:
   
-  template <class Point_3>
-  Split_halfedge_at_point( Halfedge_handle h,const Point_3& point):hedge(h),vertex(point){}
+  Split_halfedge_at_point(
+    Halfedge_handle h,
+    const Point& point,
+    PolyhedronPointPMap ppmap
+  ) : hedge(h), point(point), ppmap(ppmap){}
 
   //   new_hedge    hedge
   //  ----------->   ----------->
@@ -243,7 +248,8 @@ public:
   //  
   void operator()( HDS& hds) {
     
-    Vertex_handle v=hds.vertices_push_back(vertex);
+    Vertex_handle v=hds.vertices_push_back(Vertex());
+    put(ppmap, v, point);
     Halfedge_handle opposite=hedge->opposite();
     
     Halfedge_handle new_hedge=hds.edges_push_back(*hedge);
@@ -355,7 +361,7 @@ class Node_visitor_for_polyline_split{
   //   new_opposite     opposite 
   //  
   void split_edge_and_retriangulate(Halfedge_handle hedge,const typename Kernel::Point_3& point,Polyhedron& P){
-    internal_IOP::Split_halfedge_at_point<typename Polyhedron::HalfedgeDS> delegated(hedge,point);
+    internal_IOP::Split_halfedge_at_point<typename Polyhedron::HalfedgeDS, PolyhedronPointPMap> delegated(hedge,point,ppmap);
     P.delegate( delegated );
     CGAL_assertion(P.is_valid());
     //triangulate the two adjacent facets
