@@ -1175,7 +1175,7 @@ private:
     const Point_3 initial_location = v->point();
     
     // Initialize loop variables
-    bool min_angle_increased = false;
+    bool criterion_improved = false;
     Vertex_handle moving_vertex = v;
     Point_3 best_location = initial_location;
     std::set<Vertex_handle> mod_vertices;
@@ -1205,7 +1205,7 @@ private:
       
       if ( update.first )
       {
-        min_angle_increased = true;
+        criterion_improved = true;
         best_location = moving_vertex->point();
 
         mod_vertices.insert(tmp_mod_vertices.begin(), tmp_mod_vertices.end());
@@ -1232,7 +1232,7 @@ private:
     }//end while ( ++try_nb <= Base::max_try_nb() )
 
     
-    if ( min_angle_increased )
+    if ( criterion_improved )
     {
       std::copy(mod_vertices.begin(),
                 mod_vertices.end(),
@@ -1240,7 +1240,7 @@ private:
     }
     
     // Moving vertex is located on the best location
-    return std::make_pair(min_angle_increased, moving_vertex);
+    return std::make_pair(criterion_improved, moving_vertex);
   }
   
 private:
