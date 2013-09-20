@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_3D_Mean_Curvature_Skeleton
 
 \cgalAutoToc
-\author Xiang Gao and Andrea Tagliasacchi
+\author Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
 
 \section MCFSkelSecMot Introduction
 
