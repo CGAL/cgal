@@ -122,27 +122,42 @@ int main()
 
   CGAL::MCF_skel_args<Polyhedron> skeleton_args(mesh);
 
-  CGAL::Timer timer;
+  int NTEST = 10;
+  double sum = 0;
+  for (int i = 0; i < NTEST; i++)
+  {
+    g.clear();
+    points_map.clear();
+    corr_map.clear();
 
-  timer.start();
-  CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-  GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, SparseLU_solver>(
-      mesh, Vertex_index_map(), Edge_index_map(),
-      skeleton_args, g, points, corr);
-  timer.stop();
-  std::cout << "Time of SparseLU: " << timer.time() << "\n";
+    CGAL::Timer timer;
+    timer.start();
+    CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+      GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, SparseLU_solver>(
+          mesh, Vertex_index_map(), Edge_index_map(),
+          skeleton_args, g, points, corr);
+    timer.stop();
+    sum += timer.time();
+  }
+  std::cout << "Time of SparseLU: " << sum / NTEST << "\n";
 
-  g.clear();
-  points_map.clear();
-  corr_map.clear();
+  sum = 0;
+  for (int i = 0; i < NTEST; i++)
+  {
+    g.clear();
+    points_map.clear();
+    corr_map.clear();
 
-  timer.start();
-  CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
-  GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, SimplicialLDLT_solver>(
-      mesh, Vertex_index_map(), Edge_index_map(),
-      skeleton_args, g, points, corr);
-  timer.stop();
-  std::cout << "Time of SimplicialLDLT: " << timer.time() << "\n";
+    CGAL::Timer timer;
+    timer.start();
+    CGAL::extract_skeleton<Polyhedron, Graph, Vertex_index_map, Edge_index_map,
+      GraphCorrelationPMap, GraphPointPMap, HalfedgeGraphPointPMap, SimplicialLDLT_solver>(
+          mesh, Vertex_index_map(), Edge_index_map(),
+          skeleton_args, g, points, corr);
+    timer.stop();
+    sum += timer.time();
+  }
+  std::cout << "Time of SimplicialLDLT: " << sum / NTEST << "\n";
 
   return EXIT_SUCCESS;
 }
