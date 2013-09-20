@@ -1055,20 +1055,13 @@ update_mesh(const Weighted_point& new_point,
   remove_from_c3t3(boundary_facets.begin(),boundary_facets.end());
   remove_from_c3t3(internal_facets.begin(),internal_facets.end());
   
-  // Insert new point (v will be updated using a wp)
-  int dimension = c3t3_.in_dimension(old_vertex);
-  Index vertice_index = c3t3_.index(old_vertex);
-  
-  Vertex_handle new_vertex = tr_.insert(new_point);
-  c3t3_.set_dimension(new_vertex,dimension);
-  c3t3_.set_index(new_vertex,vertice_index);
-
+  // Change vertex weight (v will be updated using a wp)
+  old_vertex->set_point(new_point);
   CGAL_assertion(nb_vert == tr_.number_of_vertices());
     
   // Restore mesh
-  restore_cells_and_boundary_facets(boundary_facets_from_outside, new_vertex);
-  restore_internal_facets(umbrella, new_vertex);
-  CGAL_assertion(nb_vert == tr_.number_of_vertices());
+  restore_cells_and_boundary_facets(boundary_facets_from_outside, old_vertex);
+  restore_internal_facets(umbrella, old_vertex);
 }
 
   
