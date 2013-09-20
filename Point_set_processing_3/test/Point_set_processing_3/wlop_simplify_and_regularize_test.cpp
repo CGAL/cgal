@@ -11,6 +11,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/tags.h>
 
 // This package
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
@@ -33,13 +34,13 @@ typedef CGAL::Simple_cartesian<float> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 
-
 // ----------------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input point set                            
+void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input point set   
+                              std::vector<Point>& output,
                               double retain_percentage, // percentage of points to remove
                               double neighbor_radius, // neighborhood size
                               unsigned int iter_number, // iteration number
@@ -56,19 +57,14 @@ void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input poin
   points_sampled.resize(points.size() * (retain_percentage / 100.));
 
   // Run algorithm 
-  std::vector<Point>::const_iterator sample_points_begin =
-    CGAL::wlop_simplify_and_regularize_point_set(
+  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
             points.begin(), 
             points.end(), 
+            std::back_inserter(output),
             retain_percentage, 
             neighbor_radius,
             iter_number,
             need_compute_density);
-
-  // Copy results to sample points
-  std::copy(sample_points_begin,
-            static_cast<std::vector<Point>::const_iterator>(points.end()),
-            points_sampled.begin());
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
@@ -92,7 +88,7 @@ int main(int argc, char * argv[])
   // usage
   if(argc < 2)
   {
-      std::cerr << "For each input point set, remove outliers.\n";
+      std::cerr << "For each input point set, apply WLOP algorithm.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
       std::cerr << "Input file format is .xyz.\n";
@@ -142,8 +138,9 @@ int main(int argc, char * argv[])
     //***************************************
     // Test
     //***************************************
-
+    std::vector<Point> output;
     test_wlop_simplify_and_regularize(points, 
+                                      output,
                                       retain_percentage,
                                       neighbor_radius,
                                       iter_number,
