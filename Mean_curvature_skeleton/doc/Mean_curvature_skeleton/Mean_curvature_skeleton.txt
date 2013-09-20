@@ -99,7 +99,7 @@ To compute a well-centered curve skeleton (i.e. one that lies close to the media
 
 Where the \f$ W_{P} \f$ is weights to control the smoothness of medial approximation and \f$ P^{t} \f$ is correspondent medial poles for each vertex.  During the collapse in local remeshing, we need to update the pole. In particular, we position the new vertex to the middle point of the collapsed edge and choose the closest pole from the poles of the two incident vertices of the edge.
 
-\note To solve the spares linear system, Eigen 3.2 or later is recommended. Eigen is an open source library and easy to use.
+\note To solve the spares linear system, Eigen 3.2 or later is recommended. Eigen is an open source library and easy to use. The default solver is Eigen::SparseLU, since the matrix is SPsD.
 
 \section MCFSkelSecAPI User Interface Description
 
@@ -155,7 +155,7 @@ We use the elephant model as an example to evaluate the running time of differen
 The left model is original mesh. The one in the middle is after one loop subdivision. The right one is after two loop subdivisions.
 \cgalFigureEnd
 
-We have recorded the running time of the algorithm. The CPU of the test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. According to the results, the running time grows almost linearly as the size of the mesh.
+We have recorded the running time of the algorithm. The CPU of the test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. The code is compiled with clang in Release mode and '-O3' as compiling flags. The sparse solver used in the experiment is Eigen::SparseLU. The running time includes the time of computing Voronoi poles and contracting the meshes.
 
 <center>
 <table border="1">
@@ -167,17 +167,17 @@ We have recorded the running time of the algorithm. The CPU of the test machine 
 <tr>
 	<td align='center'> a </td>
 	<td align='right'> 2,775 </td>
-	<td align='right'> 597ms </td>
+	<td align='right'> 1,097ms </td>
 </tr>
 <tr>
 	<td align='center'> b </td>
 	<td align='right'> 11,112 </td>
-	<td align='right'> 1,943ms </td>
+	<td align='right'> 3,595ms </td>
 </tr>
 <tr>
 	<td align='center'> c </td>
 	<td align='right'> 44,460 </td>
-	<td align='right'> 8,000ms </td>
+	<td align='right'> 14,841ms </td>
 </tr>
 </table>
 </center>

@@ -135,7 +135,10 @@ template <class FT>
 struct MCF_default_solver
 {
   /// Default solver type.
-  typedef CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT<typename CGAL::Eigen_sparse_matrix<FT>::EigenType> > type;
+  typedef CGAL::Eigen_solver_traits<
+          Eigen::SparseLU<
+          CGAL::Eigen_sparse_matrix<double>::EigenType,
+          Eigen::COLAMDOrdering<int> > > type;
 };
 
 /// \ingroup PkgMeanCurvatureSkeleton3
