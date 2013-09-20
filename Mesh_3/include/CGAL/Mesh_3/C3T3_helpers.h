@@ -374,6 +374,7 @@ class C3T3_helpers
   typedef typename Gt::Point_3          Point_3;
   typedef typename Gt::Plane_3          Plane_3;
   typedef typename Gt::FT               FT;
+  typedef typename Gt::Tetrahedron_3    Tetrahedron;
   
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Cell_handle      Cell_handle;
@@ -386,6 +387,7 @@ class C3T3_helpers
   
   typedef std::vector<Cell_handle>      Cell_vector;
   typedef std::set<Cell_handle>         Cell_set;
+  typedef std::vector<Tetrahedron>      Tet_vector;
 
   typedef std::vector<Facet>            Facet_vector;
   typedef std::vector<Vertex_handle>    Vertex_vector;
@@ -1116,6 +1118,12 @@ private:
    * which has not his dimension < 3
    */
   bool check_no_inside_vertices(const Facet_vector& facets) const;
+
+  /**
+   * converts a Cell_handle vector into the corresponding
+   * tetrahedra vector
+  */
+  Tet_vector c3t3_tetrahedra(const Cell_vector& cells) const;
   
   /**
    * Returns the impacted cells when moving \c vertex to \c conflict_point
@@ -1555,18 +1563,16 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << ")\n";
 
   // Get old values
-  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  criterion.before_move(c3t3_tetrahedra(conflict_cells));
   Point_3 old_position = vertex->point();
   
   // Move point
   move_point_no_topo_change(vertex,new_position);
     
-  // Get new criterion value (conflict_zone did not change)
-  const FT new_sliver_value = 
-    min_sliver_in_c3t3_value(conflict_cells, criterion, false);
-  
+  // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
-  if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
+  if ( criterion.valid_move(c3t3_tetrahedra(conflict_cells))
+    && verify_surface(conflict_cells) )
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
                            vertex, modified_vertices);
@@ -1616,7 +1622,7 @@ update_mesh_topo_change(const Point_3& new_position,
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells)); 
   
-  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  criterion.before_move(c3t3_tetrahedra(conflict_cells));
   Point_3 old_position = old_vertex->point();
   
   // Keep old boundary
@@ -1642,11 +1648,10 @@ update_mesh_topo_change(const Point_3& new_position,
   }
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
-  FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
   
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
-  if ( new_sliver_value > old_sliver_value
+  if (criterion.valid_move(c3t3_tetrahedra(outdated_cells))
       && check_surface_mesh(get_facets(outdated_cells), old_surface_boundary) )
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
@@ -2648,6 +2653,23 @@ check_no_inside_vertices(const Facet_vector& facets) const
   }
   
   return true;
+}
+
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Tet_vector
+C3T3_helpers<C3T3,MD>::
+c3t3_tetrahedra(const Cell_vector& cells) const
+{
+  Cell_vector c3t3_cells;
+  std::remove_copy_if(cells.begin(),
+                      cells.end(),
+                      std::back_inserter(c3t3_cells),
+                      std::not1(Is_in_c3t3<Cell_handle>(c3t3_)));
+
+  Tet_vector tets(c3t3_cells.size());
+  for(std::size_t i = 0; i < c3t3_cells.size(); ++i)
+    tets[i] = c3t3_.triangulation().tetrahedron(c3t3_cells[i]);
+  return tets;
 }
   
   
