@@ -68,7 +68,7 @@ namespace regularize_and_simplify_internal{
 ///
 /// @return computed point
 
-template </*typename Concurreny_tag,*/
+template <typename Concurrency_tag,
           typename Kernel, 
           typename Tree,
           typename ForwardIterator>
@@ -130,6 +130,56 @@ compute_average_term(
   FT iradius16 = -(FT)4.0 / radius2;
   Vector average = CGAL::NULL_VECTOR; 
 
+  //parallel
+  //size_t nb_neighbor_original_points = neighbor_original_points.size();
+  //std::cout<<"nb_neighbor_original_points :" << nb_neighbor_original_points << std::endl;
+  //iter = neighbor_original_points.begin();
+  //int index = 0;
+//#ifdef CGAL_LINKED_WITH_TBB
+//  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+//  {
+//    tbb::parallel_for(
+//      tbb::blocked_range<size_t>(0,nb_neighbor_original_points),
+//      [&](const tbb::blocked_range<size_t>& r)
+//    {
+//      for (size_t i = r.begin(); i < r.end(); ++i)
+//      {
+//        index = i;
+//        //std::cout<<"index : "<<index<<std::endl;
+//        Point& np = *(neighbor_original_points[i]);
+//
+//        FT dist2 = dist2_set[index];
+//        weight = exp(dist2 * iradius16);
+//
+//        if (!is_density_weight_set_empty)
+//        {
+//          weight *= density_set[index];
+//        }
+//        average_weight_sum += weight;
+//        average = average + (np - CGAL::ORIGIN) * weight;
+//      }
+//    }
+//    );
+//  }else
+//#endif
+//  {
+//    for (; iter != neighbor_original_points.end(); ++iter, ++index)
+//    {
+//      Point& np = *(*iter);
+//
+//      FT dist2 = dist2_set[index];
+//      weight = exp(dist2 * iradius16);
+//
+//      if(!is_density_weight_set_empty)
+//      {
+//        weight *= density_set[index];
+//      }
+//
+//      average_weight_sum += weight;
+//      average = average + (np - CGAL::ORIGIN) * weight;
+//    }
+//  }
+  //sequential 
   iter = neighbor_original_points.begin();
   int index = 0;
   for (; iter != neighbor_original_points.end(); ++iter, ++index)
@@ -402,7 +452,7 @@ compute_density_weight_for_sample_point(
 
 
 // This variant requires all parameters.
-template <typename ForwardIterator, typename PointPMap, typename Kernel>
+template <typename Concurrency_tag, typename ForwardIterator, typename PointPMap, typename Kernel>
 ForwardIterator
 regularize_and_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
@@ -468,19 +518,43 @@ regularize_and_simplify_point_set(
                                beyond);
 
   // Compute original density weight for original points if user needed
-  std::vector<FT> original_density_weight_set;
+  std::vector<FT> original_density_weight_set(nb_points_original);
+
   if (need_compute_density)
   {
-    //first resize original_density_weight_set,then parallel
-    for (it = first_original_point; it != beyond ; ++it)
+    //parallel
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      FT density = regularize_and_simplify_internal::
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0,nb_points_original),
+        [&](const tbb::blocked_range<size_t>& r)
+      {
+        for (size_t i = r.begin(); i< r.end(); ++i)
+        {
+            FT density = regularize_and_simplify_internal::
                    compute_density_weight_for_original_point<Kernel, AABB_Tree>
                                                       (get(point_pmap, it), 
                                                        aabb_original_tree, 
                                                        radius);
 
-      original_density_weight_set.push_back(density);
+            original_density_weight_set[i] = density;
+        }
+      }
+      );
+    }else
+#endif
+    {
+      for (it = first_original_point; it != beyond ; ++it)
+      {
+        FT density = regularize_and_simplify_internal::
+                      compute_density_weight_for_original_point<Kernel, AABB_Tree>
+                                                        (get(point_pmap, it), 
+                                                         aabb_original_tree, 
+                                                         radius);
+
+        original_density_weight_set.push_back(density);
+      }
     }
   }
   
@@ -511,6 +585,7 @@ regularize_and_simplify_point_set(
         sample_density_weight_set.push_back(density);
       }
     }
+
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "compute density for sample done: " << task_timer.time() << " seconds, " 
       << (memory>>20) << " Mb allocated" << std::endl;
@@ -521,40 +596,87 @@ regularize_and_simplify_point_set(
     std::vector<Vector> average_set(nb_points_sample);
     std::vector<Vector> repulsion_set(nb_points_sample);
     //task_timer.start("Compute Average Term");
+
     //parallel
-    for (i = 0; i < sample_points.size(); i++)
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      Point& p = sample_points[i];
-      average_set[i] = regularize_and_simplify_internal::
-                       compute_average_term<Kernel, AABB_Tree, ForwardIterator>
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0,nb_points_sample),
+        [&](const tbb::blocked_range<size_t>& r)
+      {
+        for (size_t i = r.begin(); i< r.end(); ++i)
+        {
+          Point& p = sample_points[i];
+          average_set[i] = regularize_and_simplify_internal::
+                       compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
                                            (p, 
                                             aabb_original_tree, 
                                             radius, 
                                             original_density_weight_set,
                                             first_original_point);
+        }
+      }
+      );
+    }else
+#endif
+    {
+      for (i = 0; i < sample_points.size(); i++)
+      {
+        Point& p = sample_points[i];
+        average_set[i] = regularize_and_simplify_internal::
+          compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
+          (p, 
+          aabb_original_tree, 
+          radius, 
+          original_density_weight_set,
+          first_original_point);
+      }
     }
 
     std::cout<<"compute average term time: "<<task_timer.time()<<std::endl;
     task_timer.reset();
 
-    //task_timer.start("Compute Repulsion Term");
     //parallel
-    for (i = 0; i < sample_points.size(); i++)
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      Point& p = sample_points[i];
-      repulsion_set[i] = regularize_and_simplify_internal::
-                         compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
-                                               (p, 
-                                                aabb_sample_tree, 
-                                                radius, 
-                                                sample_density_weight_set,
-                                                first_sample_point);
-    }
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0,nb_points_sample),
+        [&](const tbb::blocked_range<size_t>& r)
+      {
+        for (size_t i = r.begin(); i< r.end(); ++i)
+        {
+          Point& p = sample_points[i];
+          repulsion_set[i] = regularize_and_simplify_internal::
+            compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
+            (p, 
+            aabb_sample_tree, 
+            radius, 
+            sample_density_weight_set,
+            first_sample_point);
 
-    for (i = 0; i < sample_points.size(); i++)
+          p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
+        }
+        
+      }
+      );
+    }else
+#endif
     {
-      Point& p = sample_points[i];
-      p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
+      for (i = 0; i < sample_points.size(); i++)
+      {
+        Point& p = sample_points[i];
+        repulsion_set[i] = regularize_and_simplify_internal::
+          compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
+          (p, 
+          aabb_sample_tree, 
+          radius, 
+          sample_density_weight_set,
+          first_sample_point);
+
+        p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
+      }
     }
 
     memory = CGAL::Memory_sizer().virtual_size();
@@ -578,7 +700,7 @@ regularize_and_simplify_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename ForwardIterator, typename PointPMap>
+template <typename Concurrency_tag, typename ForwardIterator, typename PointPMap>
 ForwardIterator
 regularize_and_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
@@ -593,7 +715,7 @@ regularize_and_simplify_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return regularize_and_simplify_point_set(
+  return regularize_and_simplify_point_set<Concurrency_tag>(
     first,beyond,
     point_pmap,
     retain_percentage,
@@ -606,7 +728,7 @@ regularize_and_simplify_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map
-template <typename ForwardIterator>
+template <typename Concurrency_tag, typename ForwardIterator>
 ForwardIterator
 regularize_and_simplify_point_set(
   ForwardIterator first, ///< iterator over the first input point
@@ -618,7 +740,7 @@ regularize_and_simplify_point_set(
                                   /// generate more rugularized result                               
 ) 
 {
-  return regularize_and_simplify_point_set(
+  return regularize_and_simplify_point_set<Concurrency_tag>(
     first,beyond,
     make_dereference_property_map(first),
     retain_percentage, radius, iter_number, need_compute_density);
