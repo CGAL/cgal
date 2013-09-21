@@ -98,10 +98,12 @@ compute_average_term(
   typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_original_points;
-  Circle sphere_query(query, radius);
+  Circle sphere_query(query, radius * radius);
 
   aabb_tree.all_contained_primitives(sphere_query, 
                       std::back_inserter(neighbor_original_points));
+
+  std::cout<<"neighbor_original_points size: "<<neighbor_original_points.size()<<std::endl;
 
   std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points.begin();
   std::vector<FT> density_set;
@@ -150,8 +152,19 @@ compute_average_term(
     average = average + (np - CGAL::ORIGIN) * weight;
   }
 
+  // Finishing compute average term
+  if (average_weight_sum > FT(1e-100))
+  {
+    average = average / average_weight_sum; 
+  }
+  else
+  {
+    average = query - CGAL::ORIGIN;
+  }
+
+  return average;
   // output
-  return average / average_weight_sum;
+  //return average / average_weight_sum;
 }
 
 /// Compute repulsion term for each sample points
@@ -194,7 +207,7 @@ compute_repulsion_term(
   typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
-  Circle sphere_query(query, radius);
+  Circle sphere_query(query, radius * radius);
   aabb_tree.all_contained_primitives(sphere_query, 
                             std::back_inserter(neighbor_sample_points));
 
@@ -250,9 +263,18 @@ compute_repulsion_term(
     repulsion_weight_sum += weight;
     repulsion = repulsion + diff * weight;
   }
-
+  // Finishing compute repulsion term
+  if (repulsion_weight_sum > FT(1e-100))
+  {
+    repulsion = repulsion / repulsion_weight_sum; 
+  }
+  else
+  {
+    repulsion = CGAL::NULL_VECTOR;
+  }
+  return repulsion;
   // output
-  return repulsion / repulsion_weight_sum;
+  //return repulsion / repulsion_weight_sum;
 }
 
 /// Compute density weight for each original points,
@@ -288,12 +310,10 @@ compute_density_weight_for_original_point(
   typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_original_points;
-  Circle sphere_query(query, radius);
 
+  Circle sphere_query(query, radius * radius);
   aabb_tree.all_contained_primitives(sphere_query, 
                                 std::back_inserter(neighbor_original_points));
-  
-  
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
@@ -343,7 +363,7 @@ compute_density_weight_for_sample_point(
   typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
-  Circle sphere_query(query, radius);
+  Circle sphere_query(query, radius * radius);
   aabb_tree.all_contained_primitives(sphere_query, 
                                    std::back_inserter(neighbor_sample_points));
 
@@ -455,11 +475,11 @@ regularize_and_simplify_point_set(
 
   // Initiate a KD-tree search for original points
   task_timer.start();
-  std::cout << "Initialization / Compute Density For Original" << std::endl;
-
-
+  
   AABB_Tree aabb_original_tree(first_original_point,
                                beyond);
+
+  std::cout<<" build AABB_Tree Time:"<<task_timer.time()<<std::endl;
   // Compute original density weight for original points if user needed
   task_timer.reset();
   std::vector<FT> original_density_weight_set;
@@ -479,20 +499,24 @@ regularize_and_simplify_point_set(
   }
   
   long memory = CGAL::Memory_sizer().virtual_size();
-  std::cout << "done: " << task_timer.time() << " seconds, " 
-    << (memory>>20) << " Mb allocated" << std::endl << std::endl;
+  std::cout << "compute density for original done: " << task_timer.time() << " seconds, " 
+    << (memory>>20) << " Mb allocated" << std::endl;
 
 
   for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
   {
     task_timer.reset();
-    std::cout << "Compute average term and repulsion term " << std::endl;
+    std::cout<<"AABB original tree size : "<<aabb_original_tree.size()<<std::endl;
+    std::cout<<"AABB tree root node's left data"<<aabb_original_tree.bbox()<<std::endl;
+    std::cout<<"Radius :"<<radius<<std::endl;
+    //std::cout << "Compute average term and repulsion term " << std::endl;
     // Initiate a KD-tree search for sample points
    
     //parallel
     ForwardIterator first_sample_point = sample_points.begin();
     AABB_Tree aabb_sample_tree(sample_points.begin(),
                                sample_points.end());
+    std::cout<<"build sample AABB-Tree time : "<<task_timer.time()<<std::endl;
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_density_weight_set;
    // task_timer.start("Compute Density For Sample");
@@ -508,6 +532,10 @@ regularize_and_simplify_point_set(
         sample_density_weight_set.push_back(density);
       }
     }
+    long memory = CGAL::Memory_sizer().virtual_size();
+    std::cout << "compute density for sample done: " << task_timer.time() << " seconds, " 
+      << (memory>>20) << " Mb allocated" << std::endl;
+    task_timer.reset();
 
     // Compute average term and repulsion term for each sample points ,
     // then update each sample points
@@ -526,6 +554,9 @@ regularize_and_simplify_point_set(
                                             original_density_weight_set,
                                             first_original_point);
     }
+
+    std::cout<<"compute average term time: "<<task_timer.time()<<std::endl;
+    task_timer.reset();
 
     //task_timer.start("Compute Repulsion Term");
     //parallel
@@ -547,8 +578,8 @@ regularize_and_simplify_point_set(
       p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
     }
 
-    long memory = CGAL::Memory_sizer().virtual_size();
-    std::cout << "done: " << task_timer.time() << " seconds, " 
+    memory = CGAL::Memory_sizer().virtual_size();
+    std::cout << "compute_repulsion_term done: " << task_timer.time() << " seconds, " 
               << (memory>>20) << " Mb allocated" << std::endl;
    
     std::cout << "iterate: " << iter_n + 1 << std::endl << std::endl;
