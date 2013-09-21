@@ -419,6 +419,8 @@ wlop_simplify_and_regularize_point_set(
 
   // Compute original density weight for original points if user needed
   std::vector<FT> original_densities;
+  original_densities.resize(nb_points_original);
+
   if (need_compute_density)
   {
   #ifdef CGAL_DEBUG_MODE
@@ -429,29 +431,82 @@ wlop_simplify_and_regularize_point_set(
     rich_grid_internal::compute_ball_neighbors_one_self(original_rich_points,
                                                         bbox, 
                                                         neighbor_radius);
-              
-    origianl_rich_iter = original_rich_points.begin();
-    original_iter = original_points.begin();
-    for (; original_iter != original_points.end(); 
-          ++original_iter, ++origianl_rich_iter)
+    //parallel
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      //get original point positions from indexes
-      std::vector<Point> original_neighbors = 
-           simplify_and_regularize_internal::get_points_from_indexes<Kernel>
-                                            (origianl_rich_iter->neighbors,
-                                             original_points );
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0,nb_points_original),
+        [&](const tbb::blocked_range<size_t>& r)
+      {
+        for (size_t i = r.begin(); i< r.end(); ++i)
+        {
+          //get original point positions from indexes
+          std::vector<Point> original_neighbors = 
+               simplify_and_regularize_internal::get_points_from_indexes<Kernel>
+                                                (original_rich_points[i].neighbors,
+                                                 original_points );
+          FT density = simplify_and_regularize_internal::
+                                       compute_density_weight_for_original_point
+                                       <Concurrency_tag, Kernel>(
+                                       *original_iter,
+                                       original_neighbors,
+                                       neighbor_radius);
 
-      FT density = simplify_and_regularize_internal::
-                   compute_density_weight_for_original_point
-                   <Concurrency_tag, Kernel>(
-                   *original_iter,
-                   original_neighbors,
-                   neighbor_radius);
+          original_densities[i] = density;
+          original_rich_points[i].neighbors.clear();
+        }
+      }
+      );
+    }else
+#endif
+    {
+      origianl_rich_iter = original_rich_points.begin();
+      original_iter = original_points.begin();
+      for (; original_iter != original_points.end(); 
+            ++original_iter, ++origianl_rich_iter)
+      {
+        //get original point positions from indexes
+        std::vector<Point> original_neighbors = 
+             simplify_and_regularize_internal::get_points_from_indexes<Kernel>
+                                              (origianl_rich_iter->neighbors,
+                                               original_points );
 
-      original_densities.push_back(density);
-      origianl_rich_iter->neighbors.clear();
-      //original_rich_points[i].neighbors.swap(std::vector<unsigned int>());
+        FT density = simplify_and_regularize_internal::
+                                      compute_density_weight_for_original_point
+                                      <Concurrency_tag, Kernel>(
+                                      *original_iter,
+                                      original_neighbors,
+                                      neighbor_radius);
+
+        original_densities.push_back(density);
+        origianl_rich_iter->neighbors.clear();
+      }
     }
+
+    //sequential
+    //origianl_rich_iter = original_rich_points.begin();
+    //original_iter = original_points.begin();
+    //for (; original_iter != original_points.end(); 
+    //      ++original_iter, ++origianl_rich_iter)
+    //{
+    //  //get original point positions from indexes
+    //  std::vector<Point> original_neighbors = 
+    //       simplify_and_regularize_internal::get_points_from_indexes<Kernel>
+    //                                        (origianl_rich_iter->neighbors,
+    //                                         original_points );
+
+    //  FT density = simplify_and_regularize_internal::
+    //               compute_density_weight_for_original_point
+    //               <Concurrency_tag, Kernel>(
+    //               *original_iter,
+    //               original_neighbors,
+    //               neighbor_radius);
+
+    //  original_densities.push_back(density);
+    //  origianl_rich_iter->neighbors.clear();
+    //  //original_rich_points[i].neighbors.swap(std::vector<unsigned int>());
+    //}
 
   #ifdef CGAL_DEBUG_MODE
     long memory = CGAL::Memory_sizer().virtual_size();
