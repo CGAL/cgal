@@ -75,13 +75,12 @@ template </*typename Concurreny_tag,*/
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree, ///< AABB-tree
-  const typename Kernel::FT radius, //accept neighborhood radius
+  Tree& aabb_tree,                       ///< AABB-tree
+  const typename Kernel::FT radius,      //accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set,//if  need density
-  ForwardIterator original_first_iter //
+  ForwardIterator original_first_iter
 )
 {
-  //CGAL_point_set_processing_precondition( k > 1);
   CGAL_point_set_processing_precondition(radius > 0);
   bool is_density_weight_set_empty = density_weight_set.empty();
 
@@ -103,8 +102,6 @@ compute_average_term(
   aabb_tree.all_contained_primitives(sphere_query, 
                       std::back_inserter(neighbor_original_points));
 
-  std::cout<<"neighbor_original_points size: "<<neighbor_original_points.size()<<std::endl;
-
   std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points.begin();
   std::vector<FT> density_set;
   std::vector<FT> dist2_set;
@@ -113,8 +110,7 @@ compute_average_term(
   for (; iter != neighbor_original_points.end(); iter++)
   {
     Point& np = *(*iter);
-    int original_index = std::distance(original_first_iter,
-                                       *iter);
+    int original_index = std::distance(original_first_iter,*iter);
 
     FT dist2 = CGAL::squared_distance(query, np);
     if (!is_density_weight_set_empty)
@@ -163,8 +159,6 @@ compute_average_term(
   }
 
   return average;
-  // output
-  //return average / average_weight_sum;
 }
 
 /// Compute repulsion term for each sample points
@@ -183,14 +177,12 @@ template </*typename Concurrency_tag,*/
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree, ///< KD-tree
-  //const unsigned int k, // nb neighbors
-  const typename Kernel::FT radius, //accept neighborhood radius
+  Tree& aabb_tree,                       ///<AABB-tree
+  const typename Kernel::FT radius,      //accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set, //if need density
   ForwardIterator sample_first_iter
 )
 {
- // CGAL_point_set_processing_precondition( k > 1);
   CGAL_point_set_processing_precondition(radius > 0);
   bool is_density_weight_set_empty = density_weight_set.empty();
 
@@ -239,7 +231,6 @@ compute_repulsion_term(
   FT iradius16 = -(FT)4.0/radius2;
   Vector repulsion = CGAL::NULL_VECTOR; 
   
-  //parallel
   iter = neighbor_sample_points.begin();
   int index = 0;
   for(; iter != neighbor_sample_points.end(); ++iter, ++index)
@@ -272,9 +263,8 @@ compute_repulsion_term(
   {
     repulsion = CGAL::NULL_VECTOR;
   }
+
   return repulsion;
-  // output
-  //return repulsion / repulsion_weight_sum;
 }
 
 /// Compute density weight for each original points,
@@ -290,11 +280,10 @@ template </*typename Concurrency_tag, */typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree, ///< KD-tree
+  Tree& aabb_tree, ///< AABB-tree
   const typename Kernel::FT radius
 )
 {
-  //CGAL_point_set_processing_precondition( k > 1);
   CGAL_point_set_processing_precondition(radius > 0);
 
   // basic geometric types
@@ -383,7 +372,6 @@ compute_density_weight_for_sample_point(
   }
   
   // output
-  //return std::sqrt(density_weight);
   return density_weight;
 }
 
@@ -473,15 +461,13 @@ regularize_and_simplify_point_set(
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
     sample_points[i] = get(point_pmap, it);
 
-  // Initiate a KD-tree search for original points
+  // Initiate a AABB_Tree search for original points
   task_timer.start();
   
   AABB_Tree aabb_original_tree(first_original_point,
                                beyond);
 
-  std::cout<<" build AABB_Tree Time:"<<task_timer.time()<<std::endl;
   // Compute original density weight for original points if user needed
-  task_timer.reset();
   std::vector<FT> original_density_weight_set;
   if (need_compute_density)
   {
@@ -500,23 +486,16 @@ regularize_and_simplify_point_set(
   
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "compute density for original done: " << task_timer.time() << " seconds, " 
-    << (memory>>20) << " Mb allocated" << std::endl;
+    << (memory>>20) << " Mb allocated" << std::endl << std::endl;
 
 
   for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
   {
     task_timer.reset();
-    std::cout<<"AABB original tree size : "<<aabb_original_tree.size()<<std::endl;
-    std::cout<<"AABB tree root node's left data"<<aabb_original_tree.bbox()<<std::endl;
-    std::cout<<"Radius :"<<radius<<std::endl;
-    //std::cout << "Compute average term and repulsion term " << std::endl;
-    // Initiate a KD-tree search for sample points
-   
     //parallel
     ForwardIterator first_sample_point = sample_points.begin();
     AABB_Tree aabb_sample_tree(sample_points.begin(),
                                sample_points.end());
-    std::cout<<"build sample AABB-Tree time : "<<task_timer.time()<<std::endl;
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_density_weight_set;
    // task_timer.start("Compute Density For Sample");
