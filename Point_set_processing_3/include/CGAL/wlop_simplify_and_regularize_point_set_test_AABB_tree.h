@@ -39,6 +39,7 @@
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <tbb/tbbmalloc_proxy.h>
 
 //for AABB tree
 #include <CGAL/Simple_cartesian.h>
@@ -130,56 +131,6 @@ compute_average_term(
   FT iradius16 = -(FT)4.0 / radius2;
   Vector average = CGAL::NULL_VECTOR; 
 
-  //parallel
-  //size_t nb_neighbor_original_points = neighbor_original_points.size();
-  //std::cout<<"nb_neighbor_original_points :" << nb_neighbor_original_points << std::endl;
-  //iter = neighbor_original_points.begin();
-  //int index = 0;
-//#ifdef CGAL_LINKED_WITH_TBB
-//  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-//  {
-//    tbb::parallel_for(
-//      tbb::blocked_range<size_t>(0,nb_neighbor_original_points),
-//      [&](const tbb::blocked_range<size_t>& r)
-//    {
-//      for (size_t i = r.begin(); i < r.end(); ++i)
-//      {
-//        index = i;
-//        //std::cout<<"index : "<<index<<std::endl;
-//        Point& np = *(neighbor_original_points[i]);
-//
-//        FT dist2 = dist2_set[index];
-//        weight = exp(dist2 * iradius16);
-//
-//        if (!is_density_weight_set_empty)
-//        {
-//          weight *= density_set[index];
-//        }
-//        average_weight_sum += weight;
-//        average = average + (np - CGAL::ORIGIN) * weight;
-//      }
-//    }
-//    );
-//  }else
-//#endif
-//  {
-//    for (; iter != neighbor_original_points.end(); ++iter, ++index)
-//    {
-//      Point& np = *(*iter);
-//
-//      FT dist2 = dist2_set[index];
-//      weight = exp(dist2 * iradius16);
-//
-//      if(!is_density_weight_set_empty)
-//      {
-//        weight *= density_set[index];
-//      }
-//
-//      average_weight_sum += weight;
-//      average = average + (np - CGAL::ORIGIN) * weight;
-//    }
-//  }
-  //sequential 
   iter = neighbor_original_points.begin();
   int index = 0;
   for (; iter != neighbor_original_points.end(); ++iter, ++index)
@@ -257,7 +208,7 @@ compute_repulsion_term(
   std::vector<FT> density_set;
   std::vector<FT> dist2_set;
   FT radius2 = radius * radius;
-  //parallel
+
   for(; iter != neighbor_sample_points.end(); iter++)
   {
     Point& np = *(*iter);
@@ -358,7 +309,6 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  //parallel
   std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points.begin();
   for (; iter != neighbor_original_points.end(); iter++)
   {
@@ -410,8 +360,7 @@ compute_density_weight_for_sample_point(
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
-  
-  //parallel
+
   std::vector<typename Primitive::Id>::iterator iter = neighbor_sample_points.begin();
   for (; iter != neighbor_sample_points.end(); iter++)
   {
@@ -511,9 +460,8 @@ regularize_and_simplify_point_set(
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
     sample_points[i] = get(point_pmap, it);
 
-  // Initiate a AABB_Tree search for original points
   task_timer.start();
-  
+  // Initiate a AABB_Tree search for original points
   AABB_Tree aabb_original_tree(first_original_point,
                                beyond);
 
@@ -566,7 +514,6 @@ regularize_and_simplify_point_set(
   for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
   {
     task_timer.reset();
-    //parallel
     ForwardIterator first_sample_point = sample_points.begin();
     AABB_Tree aabb_sample_tree(sample_points.begin(),
                                sample_points.end());
@@ -575,7 +522,6 @@ regularize_and_simplify_point_set(
    // task_timer.start("Compute Density For Sample");
     if (need_compute_density)
     {
-      //parallel
       for (i=0 ; i < sample_points.size(); i++)
       {
         FT density = regularize_and_simplify_internal::
@@ -609,12 +555,12 @@ regularize_and_simplify_point_set(
         {
           Point& p = sample_points[i];
           average_set[i] = regularize_and_simplify_internal::
-                       compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
-                                           (p, 
-                                            aabb_original_tree, 
-                                            radius, 
-                                            original_density_weight_set,
-                                            first_original_point);
+            compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
+            (p, 
+            aabb_original_tree, 
+            radius, 
+            original_density_weight_set,
+            first_original_point);
         }
       }
       );
