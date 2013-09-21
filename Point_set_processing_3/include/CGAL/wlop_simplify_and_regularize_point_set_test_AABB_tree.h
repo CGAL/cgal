@@ -33,15 +33,10 @@
 #include <cmath>
 #include <ctime>
 
-//for range search
-#include <CGAL/Fuzzy_sphere.h>
-#include <CGAL/Search_traits_3.h>
-
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/tbbmalloc_proxy.h>
 
-//for AABB tree
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -415,14 +410,12 @@ regularize_and_simplify_point_set(
   const Kernel& /*kernel*/ ///< geometric traits.
 )
 {
-//  CGAL_point_set_processing_precondition(k > 1);
   Timer task_timer;
 
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
   typedef typename Kernel::FT FT;
-
 
   // types for AABB
   typedef Kernel::Sphere_3 Circle;
@@ -456,11 +449,12 @@ regularize_and_simplify_point_set(
   //Copy sample points
   std::vector<Point> sample_points(nb_points_sample);
   unsigned int i; // sample point index
-  //parallel
+
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
     sample_points[i] = get(point_pmap, it);
 
   task_timer.start();
+
   // Initiate a AABB_Tree search for original points
   AABB_Tree aabb_original_tree(first_original_point,
                                beyond);
@@ -517,9 +511,9 @@ regularize_and_simplify_point_set(
     ForwardIterator first_sample_point = sample_points.begin();
     AABB_Tree aabb_sample_tree(sample_points.begin(),
                                sample_points.end());
+
     // Compute sample density weight for sample points if user needed
     std::vector<FT> sample_density_weight_set;
-   // task_timer.start("Compute Density For Sample");
     if (need_compute_density)
     {
       for (i=0 ; i < sample_points.size(); i++)

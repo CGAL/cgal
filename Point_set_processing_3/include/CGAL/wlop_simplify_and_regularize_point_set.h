@@ -484,30 +484,6 @@ wlop_simplify_and_regularize_point_set(
       }
     }
 
-    //sequential
-    //origianl_rich_iter = original_rich_points.begin();
-    //original_iter = original_points.begin();
-    //for (; original_iter != original_points.end(); 
-    //      ++original_iter, ++origianl_rich_iter)
-    //{
-    //  //get original point positions from indexes
-    //  std::vector<Point> original_neighbors = 
-    //       simplify_and_regularize_internal::get_points_from_indexes<Kernel>
-    //                                        (origianl_rich_iter->neighbors,
-    //                                         original_points );
-
-    //  FT density = simplify_and_regularize_internal::
-    //               compute_density_weight_for_original_point
-    //               <Concurrency_tag, Kernel>(
-    //               *original_iter,
-    //               original_neighbors,
-    //               neighbor_radius);
-
-    //  original_densities.push_back(density);
-    //  origianl_rich_iter->neighbors.clear();
-    //  //original_rich_points[i].neighbors.swap(std::vector<unsigned int>());
-    //}
-
   #ifdef CGAL_DEBUG_MODE
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "done: " << task_timer.time() << " seconds, " 
@@ -739,7 +715,6 @@ wlop_simplify_and_regularize_point_set(
 }
 /// @endcond
 
-//second add!!!!!!!!!!!!!!!!!!!!!!!!!!!
 /// @cond SKIP_IN_MANUAL
 /// This variant creates a default point property map=Dereference_property_map.
 template <typename Concurrency_tag, 
