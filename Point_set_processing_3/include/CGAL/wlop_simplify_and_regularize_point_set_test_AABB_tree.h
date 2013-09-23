@@ -68,14 +68,14 @@ namespace simplify_and_regularize_internal{
 template <typename Concurrency_tag,
           typename Kernel, 
           typename Tree,
-          typename ForwardIterator>
+          typename RandomAccessIterator>
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
   Tree& aabb_tree,                       ///< AABB-tree
   const typename Kernel::FT radius,      //accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set,//if  need density
-  ForwardIterator original_first_iter
+  RandomAccessIterator original_first_iter
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -170,14 +170,14 @@ compute_average_term(
 template </*typename Concurrency_tag,*/ 
           typename Kernel, 
           typename Tree,
-          typename ForwardIterator>
+          typename RandomAccessIterator>
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
   Tree& aabb_tree,                       ///<AABB-tree
   const typename Kernel::FT radius,      //accept neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set, //if need density
-  ForwardIterator sample_first_iter
+  RandomAccessIterator sample_first_iter
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -385,10 +385,10 @@ compute_density_weight_for_sample_point(
 /// with a density uniformization term. 
 /// For more details, please see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
-/// @tparam ForwardIterator iterator over input points.
+/// @tparam RandomAccessIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
-///         It can be omitted if ForwardIterator value_type is convertible to 
+///         It can be omitted if RandomAccessIterator value_type is convertible to 
 ///         Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
@@ -397,12 +397,12 @@ compute_density_weight_for_sample_point(
 
 
 // This variant requires all parameters.
-template <typename Concurrency_tag, typename ForwardIterator, typename PointPMap, typename Kernel>
-ForwardIterator
+template <typename Concurrency_tag, typename RandomAccessIterator, typename PointPMap, typename Kernel>
+RandomAccessIterator
 wlop_simplify_and_regularize_point_set(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  RandomAccessIterator first,  ///< iterator over the first input point.
+  RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map RandomAccessIterator -> Point_3
   double retain_percentage, ///< percentage of points to retain.
   double radius, ///< number of neighbors.
   const unsigned int iter_number,///< number of iterations.
@@ -442,9 +442,9 @@ wlop_simplify_and_regularize_point_set(
   std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
   // The first point iter of original and sample points
-  ForwardIterator it;// point iterator
-  ForwardIterator first_original_point = first;
-  ForwardIterator first_sample_point = first;
+  RandomAccessIterator it;// point iterator
+  RandomAccessIterator first_original_point = first;
+  RandomAccessIterator first_sample_point = first;
   std::advance(first_sample_point, first_index_to_sample);
 
   //Copy sample points
@@ -476,9 +476,11 @@ wlop_simplify_and_regularize_point_set(
       {
         for (size_t i = r.begin(); i< r.end(); ++i)
         {
+            RandomAccessIterator current_iter = first;
+            std::advance(current_iter, i);
             FT density = simplify_and_regularize_internal::
                    compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                                      (get(point_pmap, it), 
+                                                      (get(point_pmap, current_iter), 
                                                        aabb_original_tree, 
                                                        radius);
 
@@ -510,7 +512,7 @@ wlop_simplify_and_regularize_point_set(
   for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
   {
     task_timer.reset();
-    ForwardIterator first_sample_point = sample_points.begin();
+    RandomAccessIterator first_sample_point = sample_points.begin();
     AABB_Tree aabb_sample_tree(sample_points.begin(),
                                sample_points.end());
 
@@ -552,7 +554,7 @@ wlop_simplify_and_regularize_point_set(
         {
           Point& p = sample_points[i];
           average_set[i] = simplify_and_regularize_internal::
-            compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
+            compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
             (p, 
             aabb_original_tree, 
             radius, 
@@ -568,7 +570,7 @@ wlop_simplify_and_regularize_point_set(
       {
         Point& p = sample_points[i];
         average_set[i] = simplify_and_regularize_internal::
-          compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
+          compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
           (p, 
           aabb_original_tree, 
           radius, 
@@ -593,7 +595,7 @@ wlop_simplify_and_regularize_point_set(
         {
           Point& p = sample_points[i];
           repulsion_set[i] = simplify_and_regularize_internal::
-            compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
+            compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
             (p, 
             aabb_sample_tree, 
             radius, 
@@ -612,7 +614,7 @@ wlop_simplify_and_regularize_point_set(
       {
         Point& p = sample_points[i];
         repulsion_set[i] = simplify_and_regularize_internal::
-          compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
+          compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
           (p, 
           aabb_sample_tree, 
           radius, 
@@ -644,12 +646,12 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename Concurrency_tag, typename ForwardIterator, typename PointPMap>
-ForwardIterator
+template <typename Concurrency_tag, typename RandomAccessIterator, typename PointPMap>
+RandomAccessIterator
 wlop_simplify_and_regularize_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  RandomAccessIterator first, ///< iterator over the first input point
+  RandomAccessIterator beyond, ///< past-the-end iterator
+  PointPMap point_pmap, ///< property map RandomAccessIterator -> Point_3
   double retain_percentage, ///< percentage of points to retain.
   double radius, ///< number of neighbors.
   const unsigned int iter_number, ///< number of iterations.
@@ -672,11 +674,11 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Dereference_property_map
-template <typename Concurrency_tag, typename ForwardIterator>
-ForwardIterator
+template <typename Concurrency_tag, typename RandomAccessIterator>
+RandomAccessIterator
 wlop_simplify_and_regularize_point_set(
-  ForwardIterator first, ///< iterator over the first input point
-  ForwardIterator beyond, ///< past-the-end iterator
+  RandomAccessIterator first, ///< iterator over the first input point
+  RandomAccessIterator beyond, ///< past-the-end iterator
   double retain_percentage = 5, ///< percentage of points to retain.
   double radius = -1, ///< number of neighbors.
   const unsigned int iter_number = 30, ///< number of iterations.
