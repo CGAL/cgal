@@ -400,7 +400,7 @@ namespace CGAL {
       /// @{
 
       /*!
-        \deprecated Returns the number of points that comprise the polyline.
+        \deprecated Return the number of points that comprise the polyline.
         Note that for a bounded polyline, if there are \f$ n\f$ points in the
         polyline, it is comprised of \f$ (n - 1)\f$ segments.
         Currently, only bounded polylines are supported.
@@ -432,35 +432,35 @@ namespace CGAL {
       const_iterator rbegin() const;
 
       /*!
-        Returns an iterator pointing at the last segment of the polyline.
+        Return an iterator pointing at the last segment of the polyline.
       */
       Segment_const_reverse_iterator rbegin_segments() const;
 
       /*!
-        \deprecated Returns an iterator pointing before the beginning of the
+        \deprecated Return an iterator pointing before the beginning of the
         polyline.
       */
       const_iterator rend() const;
 
       /*!
-        Returns an iterator pointing at the past-the-end segment of
+        Return an iterator pointing at the past-the-end segment of
         the polyline in reverse order.
       */
       Segment_const_reverse_iterator rend_segments() const;
 
       /*!
-        \deprecated Returns the number of line segments composing the polyline
+        \deprecated Return the number of line segments composing the polyline
         (equivalent to `pi.points() - 1`). Was replaced by number_of_segments()
       */
       Segments_size_type size() const;
 
       /*!
-        Returns the number of segments that comprise the polyline.
+        Return the number of segments that comprise the polyline.
        */
       Segments_container_size number_of_segments() const;
 
       /*!
-        Returns the \f$ k\f$th segment of the polyline.
+        Return the \f$ k\f$th segment of the polyline.
         \pre \f$k\f$ is not greater then or equal to \f$n-1\f$, where
              \f$n\f$ is the number of segments.
       */
