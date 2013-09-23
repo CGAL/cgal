@@ -790,7 +790,7 @@ namespace CGAL {
       { cv.push_back(seg); }
 
       /* Append a point `p` to an existing polyline `xcv` at the back. */
-      void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
+      void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
       {
         typedef typename X_monotone_curve_2::Segments_size_type size_type;
         size_type num_seg = xcv.number_of_segments();
