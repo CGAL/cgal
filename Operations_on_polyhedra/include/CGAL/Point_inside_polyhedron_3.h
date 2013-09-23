@@ -61,22 +61,29 @@ class Point_inside_polyhedron_3{
   typename Kernel::Construct_ray_3     ray_functor;
   typename Kernel::Construct_vector_3  vector_functor;
   Tree tree;
-
+  TriangleAccessor_3 t3_accessor;
 public:
   /**
    * Default constructor. The domain is considered to be empty.
    */
-  Point_inside_polyhedron_3(const Kernel& kernel=Kernel())
+  Point_inside_polyhedron_3(
+    TriangleAccessor_3 accessor=TriangleAccessor_3(),
+    const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-  vector_functor(kernel.construct_vector_3_object())
+    vector_functor(kernel.construct_vector_3_object()),
+    t3_accessor(accessor)
   { }
  
   /** 
    * Constructor with one polyhedral surface. `polyhedron` must be closed and triangulated.
    */
-  Point_inside_polyhedron_3(const Polyhedron& polyhedron, const Kernel& kernel=Kernel()) 
+  Point_inside_polyhedron_3(
+    const Polyhedron& polyhedron,
+    TriangleAccessor_3 accessor=TriangleAccessor_3(),
+    const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-  vector_functor(kernel.construct_vector_3_object())
+    vector_functor(kernel.construct_vector_3_object()),
+    t3_accessor(accessor)
   {
     add_polyhedron(polyhedron);
   }
@@ -86,9 +93,13 @@ public:
    * \tparam InputIterator is an input iterator with `Polyhedron` or `cpp11::reference_wrapper<Polyhedron>` as value type.
    */
   template <class InputIterator>
-  Point_inside_polyhedron_3(InputIterator begin, InputIterator beyond, const Kernel& kernel=Kernel()) 
+  Point_inside_polyhedron_3(
+    InputIterator begin, InputIterator beyond,
+    TriangleAccessor_3 accessor=TriangleAccessor_3(),
+    const Kernel& kernel=Kernel())
   : ray_functor(kernel.construct_ray_3_object()),
-  vector_functor(kernel.construct_vector_3_object())
+    vector_functor(kernel.construct_vector_3_object()),
+    t3_accessor(accessor)
   {
     add_polyhedra(begin, beyond);
   }
@@ -106,8 +117,9 @@ public:
     CGAL_assertion(polyhedron.is_pure_triangle());
     CGAL_assertion(polyhedron.is_closed());
 
-    tree.insert(TriangleAccessor_3().triangles_begin(polyhedron),
-                TriangleAccessor_3().triangles_end(polyhedron));
+    tree.insert(t3_accessor.triangles_begin(polyhedron),
+                t3_accessor.triangles_end(polyhedron),
+                &t3_accessor);
   }
  
   /**

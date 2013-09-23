@@ -581,6 +581,10 @@ namespace internal_IOP{
     Exact_to_double exact_to_double;
     PolyhedronPointPMap ppmap;
   public:
+
+    Triangle_segment_intersection_points(PolyhedronPointPMap ppmap):
+      ppmap(ppmap){}
+
     typedef CGAL::Interval_nt<true>::Protector                 Protector;
   
     const typename Kernel::Point_3&
@@ -655,6 +659,10 @@ namespace internal_IOP{
     PolyhedronPointPMap ppmap;
     
   public:
+
+    Triangle_segment_intersection_points(PolyhedronPointPMap ppmap):
+      ppmap(ppmap){}
+
     typedef CGAL::Interval_nt<false>::Protector                 Protector;  
   
     typename Kernel::Point_3
@@ -720,6 +728,10 @@ namespace internal_IOP{
     typedef Kernel Ikernel;
     typedef Kernel Exact_kernel;
     typedef void* Protector;
+
+    Triangle_segment_intersection_points(PolyhedronPointPMap ppmap):
+      ppmap(ppmap){}
+
     const typename Kernel::Point_3&
     operator[](int i) const {
       return nodes[i];
@@ -1328,9 +1340,9 @@ class Intersection_of_Polyhedra_3{
     for (typename Coplanar_facets_set::iterator it=coplanar_facets.begin();it!=coplanar_facets.end();++it){
       Facet_handle f1=it->first;
       Facet_handle f2=it->second;
-      typedef internal_IOP::Intersection_point_with_info<Kernel,Halfedge_handle> Cpl_inter_pt;
+      typedef internal_IOP::Intersection_point_with_info<Kernel,Halfedge_handle,PolyhedronPointPMap> Cpl_inter_pt;
       std::list<Cpl_inter_pt> inter_pts;
-      internal_IOP::intersection_coplanar_facets<Kernel>(f1->halfedge(),f2->halfedge(),inter_pts);
+      internal_IOP::intersection_coplanar_facets<Kernel>(f1->halfedge(),f2->halfedge(),ppmap,inter_pts);
 //      std::cout << "found " << inter_pts.size() << " inter pts: "; 
       std::size_t nb_pts=inter_pts.size();
       std::vector<int> cpln_nodes; cpln_nodes.reserve(nb_pts);
@@ -1410,8 +1422,8 @@ class Intersection_of_Polyhedra_3{
       Facet_set& fset=it->second;
       while (!fset.empty()){
         Facet_handle facet=*fset.begin();
-        
-        Intersection_result res=internal_IOP::do_intersect<Polyhedron,Kernel,Use_const_polyhedron>(edge,facet);
+
+        Intersection_result res=internal_IOP::do_intersect<Polyhedron,Kernel,Use_const_polyhedron>(edge,facet,ppmap);
         internal_IOP::Intersection_type type=CGAL::cpp11::get<0>(res);
         
         //handle degenerate case: one extremity of edge below to facet
@@ -1922,8 +1934,13 @@ class Intersection_of_Polyhedra_3{
   }
   
 public:
-  Intersection_of_Polyhedra_3():visitor(new Node_visitor()),is_default_visitor(true){}
-  Intersection_of_Polyhedra_3(Node_visitor& v):visitor(&v),is_default_visitor(false){}
+  Intersection_of_Polyhedra_3(PolyhedronPointPMap ppmap=PolyhedronPointPMap())
+    :ppmap(ppmap),nodes(ppmap),
+     visitor(new Node_visitor()),
+     is_default_visitor(true){}
+  Intersection_of_Polyhedra_3(Node_visitor& v,
+                              PolyhedronPointPMap ppmap=PolyhedronPointPMap())
+    :ppmap(ppmap),nodes(ppmap),visitor(&v),is_default_visitor(false){}
   ~Intersection_of_Polyhedra_3(){if (is_default_visitor) delete visitor;}
   //pairwise intersection between all elements in the range
   template <class InputIterator, class OutputIterator>

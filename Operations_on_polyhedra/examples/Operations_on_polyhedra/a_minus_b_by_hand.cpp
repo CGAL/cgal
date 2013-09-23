@@ -113,9 +113,8 @@ int main(int argc,char** argv) {
     std::size_t nb_cc = cc.size();
     std::cout << "P has " << nb_cc << " connected components" << std::endl;
       
-    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel > Mesh_domain;
-    Mesh_domain domain(Q);
-    Mesh_domain::Is_in_domain is_in_domain(domain);
+    typedef CGAL::Point_inside_polyhedron_3<Polyhedron, Kernel> Inside_poly_test;
+    Inside_poly_test is_in_domain(Q);
 
     for( std::size_t i=0; i<nb_cc; ++i)
     {
@@ -133,10 +132,9 @@ int main(int argc,char** argv) {
     CGAL::internal::mark_connected_components(Q, criterium, marker, std::back_inserter(cc));
     std::size_t nb_cc = cc.size();
     std::cout << "Q has " << nb_cc << " connected components" << std::endl;
-      
-    typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Kernel > Mesh_domain;
-    Mesh_domain domain(P);
-    Mesh_domain::Is_in_domain is_in_domain(domain);
+
+    typedef CGAL::Point_inside_polyhedron_3<Polyhedron, Kernel> Inside_poly_test;
+    Inside_poly_test is_in_domain(P);
 
     for( std::size_t i=0; i<nb_cc; ++i)
     {

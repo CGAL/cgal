@@ -70,6 +70,38 @@ namespace CGAL
   
   namespace internal_IOP
   {
+
+    template < class Polyhedron, class Kernel, class PolyhedronPointPMap>
+    class Triangle_accessor_with_ppmap_3
+    {
+    public:
+      typedef typename Kernel::Triangle_3               Triangle_3;
+      typedef typename Polyhedron::Facet_const_iterator Triangle_iterator;
+      typedef typename Polyhedron::Facet_const_handle   Triangle_handle;
+      PolyhedronPointPMap ppmap;
+
+      Triangle_accessor_with_ppmap_3(PolyhedronPointPMap ppmap):ppmap(ppmap) {}
+
+      Triangle_iterator triangles_begin(const Polyhedron& p) const
+      {
+        return p.facets_begin();
+      }
+
+      Triangle_iterator triangles_end(const Polyhedron& p) const
+      {
+        return p.facets_end();
+      }
+
+      Triangle_3 triangle(const Triangle_handle& handle) const
+      {
+        typedef typename Kernel::Point_3 Point;
+        const Point& a = get(ppmap, handle->halfedge()->vertex());
+        const Point& b = get(ppmap,handle->halfedge()->next()->vertex());
+        const Point& c = get(ppmap,handle->halfedge()->next()->next()->vertex());
+        return Triangle_3(a,b,c);
+      }
+    };
+
     template <class Polyhedron>
     struct Compare_unik_address{
       typedef typename Polyhedron::Halfedge_handle        Halfedge_handle;
@@ -340,13 +372,14 @@ bool  is_in_interior_of_object(
 //import into the combinatorial map facets in the given range.
 //they are supposed to be in the same connected component.
 //two volume are created (each facets gives two opposite orientation 2-cell in the map)
-template<class Polyhedron, class Map, class Face_iterator, class Non_special_edge_predicate,class Halfedge_to_dart_map_ >
+template<class Polyhedron, class Map, class Face_iterator, class Non_special_edge_predicate,class Halfedge_to_dart_map_, class PolyhedronPointPMap >
 typename Map::Dart_handle import_from_polyhedron_subset(  Map& amap,
                                                           Face_iterator faces_begin,
                                                           Face_iterator faces_end,
                                                           const Non_special_edge_predicate& is_non_special_edge,
                                                           Halfedge_to_dart_map_& selected_hedge_to_dart,
-                                                          int mark_index
+                                                          int mark_index,
+                                                          PolyhedronPointPMap ppmap
   )
 {
   typedef typename Polyhedron::Halfedge_const_handle  Halfedge_const_handle;
@@ -418,7 +451,7 @@ typename Map::Dart_handle import_from_polyhedron_subset(  Map& amap,
       if (d->template attribute<0>() == NULL)
       {	    
         amap.template set_attribute<0>(d,
-           amap.template create_attribute<0>(current->opposite()->vertex()->point()));
+           amap.template create_attribute<0>(get(ppmap, current->opposite()->vertex())));
       }
       current=current->next();
     }
@@ -1241,10 +1274,10 @@ public:
   Node_visitor_refine_polyhedra (
     Combinatorial_map_3_* ptr=NULL,
     bool do_not_build_cmap_=false,
+    PolyhedronPointPMap ppmap = PolyhedronPointPMap(),
     EdgeMarkPropertyMap pmap=EdgeMarkPropertyMap(),
     const NestedFacetConstruct& fc = NestedFacetConstruct(),
-    const NewNodeVertexVisitor& nv = NewNodeVertexVisitor(),
-    PolyhedronPointPMap ppmap = PolyhedronPointPMap()
+    const NewNodeVertexVisitor& nv = NewNodeVertexVisitor()
   ):do_not_build_cmap(do_not_build_cmap_), m_edge_mark_pmap(pmap), facet_construct(fc), node_vertex_visitor(nv), ppmap(ppmap)
   {
     if (ptr!=NULL){
@@ -1926,7 +1959,7 @@ public:
       {
         //create in the final Cmap a 2D component containing faces of a connected component 
         //(twice: one with same orientation and one with the opposite orientation to model the other volume)
-        Dart_handle d = import_from_polyhedron_subset<Polyhedron>(final_map(),it_res->second.begin(),it_res->second.end(),criterium,selected_hedge_to_dart,mark_index);
+        Dart_handle d = import_from_polyhedron_subset<Polyhedron>(final_map(),it_res->second.begin(),it_res->second.end(),criterium,selected_hedge_to_dart,mark_index,ppmap);
         //set an attribute to one volume represented by this component to indicates 
         //a part outside of the polyhedron current_poly
         typename Combinatorial_map_3_::template Attribute_range<3>::type::iterator attrib=final_map().template create_attribute<3>();
@@ -2147,7 +2180,10 @@ public:
     //this happens when one polyhedron has a connected component
     //that do not intersect the other polyhedron
 
-    typedef Point_inside_polyhedron_3<Polyhedron, Kernel> Inside_poly_test;
+    typedef internal_IOP::Triangle_accessor_with_ppmap_3<
+        Polyhedron, Kernel, PolyhedronPointPMap> T3_accessor;
+    T3_accessor accessor(ppmap);
+    typedef Point_inside_polyhedron_3<Polyhedron, Kernel, T3_accessor> Inside_poly_test;
 
     CGAL_precondition(polyhedron_to_map_node_to_polyhedron_vertex.size()==2);
     Polyhedron* Poly_A = polyhedron_to_map_node_to_polyhedron_vertex.begin()->first;
@@ -2180,13 +2216,13 @@ public:
         if ( current_poly==Poly_A)
         {
           test_poly=Poly_B;
-          if (inside_B_test_ptr == NULL) inside_B_test_ptr=new Inside_poly_test(*Poly_B);
+          if (inside_B_test_ptr == NULL) inside_B_test_ptr=new Inside_poly_test(*Poly_B, accessor);
           inside_test_ptr=inside_B_test_ptr;
         }
         else
         {
           test_poly=Poly_A;
-          if (inside_A_test_ptr == NULL) inside_A_test_ptr=new Inside_poly_test(*Poly_A);
+          if (inside_A_test_ptr == NULL) inside_A_test_ptr=new Inside_poly_test(*Poly_A, accessor);
           inside_test_ptr=inside_A_test_ptr;
         }
 
