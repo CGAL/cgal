@@ -2036,21 +2036,28 @@ defines a type named `Number_type` as either `Gmpq` or
 `Quotient<MP_Float>`, depending on whether <span
 class="textsc">Gmp</span> is installed or not.}
 
-Exact computations are of course less efficient, compared to
-machine-precision floating-point arithmetic, so constructing an
-arrangement using the `Cartesian<Gmpq>` kernel (or, similarly,
-`Cartesian<Quotient<MP_Float> >`) is several times slower in
-comparison to a `Simple_cartesian<double>` kernel. However, in
-the latter case the correctness of the computation results is not
-guaranteed. In many cases it is possible to use <I>filtered</I>
-computations and benefit from both approaches, namely achieve fast
-running times with guaranteed results. In case we handle a set of
-line segments that have no degeneracies, namely no two segments
-share a common endpoint, and no three segments intersect at a common
-point - or alternatively, degeneracies exist but their number is
-relatively small - then filtered computation incur only a minor
-overhead compared to the floating-point arithmetic, while ensuring
-the correctness of the computation results.
+An instance of the `Arr_segment_traits_2<Kernel>` class
+template can be very efficient for constructing arrangements induced
+by line segments with a large number of intersections. Efficiency is
+affected by the substituted geometric kernel. Using
+`Cartesian<Gmpq>` as the kernel type is in general not a
+bad choice; the coordinates of the segment endpoints are represented
+as multi-precision rational-numbers, and this ensures the correctness
+of all computations regardless of the input. Computations on
+multi-precision number types, such as `Gmpq`, typically
+take longer than computations on machine-precision
+floating-point. However, in almost all cases it is possible to
+expedite the computation using numerical filtering; see
+`Kernel_2` and `Kernel_3`. If the input set of line segments do
+not have degeneracies; namely, no two segments in the set share a
+common endpoint, and no three segments intersect at a common point, or
+at least, degeneracies exist but their number is relatively small,
+then filtered computation incurs only negligible overhead compared to
+floating-point arithmetic, which is error-prone. Indeed, in almost all
+examples and applications given in this manual, a predefined filtered
+kernel is used to instantiate the line-segment traits class, namely
+`Exact_predicates_exact_constructions_kernel`. Furthermore, this kernel
+is used as a default kernel in case the user did not provide one.
 
 \cgalFigureBegin{arr_figpredef_kernels,fan_grids.gif,Europe.gif}
 (a) An arrangement of \f$ 104\f$ line segments from the input file `fan_grids.dat`. (b) An arrangement of more than \f$ 3000\f$ interior disjoint line segments, defined in the input file `Europe.dat`.
