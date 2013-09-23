@@ -1,8 +1,8 @@
 /// \ingroup PkgArrangement2Macros
 /// @{
 /*!
-  If macro set to one, then \f$x\f$-monotone curves are directed from
-  left-to-right.
+  If the macro is set to one, then \f$x\f$-monotone curves are always
+  directed from left-to-right.
 */
 #define CGAL_ALWAYS_LEFT_TO_RIGHT
 /// @}
@@ -16,8 +16,8 @@ namespace CGAL {
     curves, commonly referred to as polylines. Each polyline is a
     chain of segments, where each two neighboring segments in the
     chain share a common endpoint; that is, the polyline is
-    continuous. Furthermore, the source of the \f$i\f$-th segement of
-    a polyline has to coincide with the target of the \f$i+1\f$-st
+    continuous. Furthermore, the target of the \f$i\f$th segement of
+    a polyline has to coincide with the source of the \f$i+1\f$st
     segment; that is, the polyline has to be \a well-oriented. Note
     that it is possible to construct general polylines that are
     neither continuous nor well-oriented, as it is impossible to
@@ -25,7 +25,7 @@ namespace CGAL {
     the relevant concepts, see below). However, such polylines cannot
     be used for the actual computation of arrangements. The traits
     class template exploits the functionality of the `SegmentTraits`
-    template-parameter to handle the segments that comprise the
+    template-parameter to handle the segments that compose the
     polyline curves.
 
     The type substituting the template parameter `SegmentTraits` when
@@ -56,15 +56,15 @@ namespace CGAL {
     `SegmentTraits::X_monotone_curve_2` respectively.
 
     \cgalHeading{A note on Backwards compatibility} In \cgal version
-    4.2 (and earlier) the `X_monotone_curve_2` nested type of
-    `Arr_polyline_traits_2` maintained a direction invariant; namely,
-    its vertices were ordered in an \a ascending lexicographical
-    \f$(xy)\f$-order.  This restriction is no longer imposed and
-    `X_monotone_curve_2` can be now directed either from right-to-left
-    \a or left-to-right. If you wish to maintain a left-to-right
-    orientations of the \f$x\f$-monotone polylines, set the macro
-    `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
-    included.
+    4.2 (and earlier) any object of the `X_monotone_curve_2` nested
+    type of `Arr_polyline_traits_2` maintained a direction invariant;
+    namely, its vertices were ordered in an \a ascending
+    lexicographical \f$(xy)\f$-order.  This restriction is no longer
+    imposed and `X_monotone_curve_2` can be now directed either from
+    right-to-left \a or left-to-right. If you wish to maintain a
+    left-to-right orientations of the \f$x\f$-monotone polylines, set
+    the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header
+    is included.
 
     \cgalModels `ArrangementTraits_2`
     \cgalModels `ArrangementLandmarkTraits_2`
@@ -97,10 +97,10 @@ namespace CGAL {
       Construction functor of a general (not necessarily \f$x\f$-monotone)
       polyline.
 
-      This functor constructs general polylines given various possibilities of
-      input, as can be seen by the various overloads of the `operator()`.
+      This functor constructs general polylines. Its `operator()` is
+      oveloaded to support various input types.
 
-      Note that the constituting segments, depending on the `SegmentTraits`,
+      Note that the composing segments, depending on the `SegmentTraits`,
       might not be \f$x\f$-monotone.
      */
     class Construct_curve_2 {
@@ -109,7 +109,7 @@ namespace CGAL {
       /// @{
 
       /*!
-        Returns an polyline connecting the two given endpoints.
+        Return a polyline connecting the two given endpoints.
         \param p The first point.
         \param q The second point.
         \pre `p` and `q` are distinct.
@@ -118,7 +118,7 @@ namespace CGAL {
       Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
       /*!
-        Returns a polyline consists of one given segment.
+        Return a polyline that comprises of one given segment.
         \param seg input segment
         \pre `seg` is not degenerated (not tested)
         \return A polyline with one segment, namely `seg`.
@@ -286,20 +286,20 @@ namespace CGAL {
       * \pre if `cv` is not empty then it must be continuous and well-oriented.
       * \param cv The curve.
       * \param oi The output iterator, whose value-type is Object. The output
-      *           object is a wrapper of a X_monotone_curve_2.
+      *           object is a wrapper of a X_monotone_curve_2 objects.
       * \return The past-the-end iterator.
       */
       template<class OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const;
     };
 
-    /*!  The `Curve_2` class nested within the polyline traits is used
-      to represent general continuous piecewise-linear curves (a
+    /*!  The `Curve_2` type nested in the `Arr_polyline_traits_2`
+      represents general continuous piecewise-linear curves (a
       polyline can be self-intersecting) and support their
-      construction from range of segments. Construction of polylines
-      from other inputs is supported using the construction
-      functors. <em>In any case, it is strongly recommended to avoid
-      construction of `Curve_2` directly and prefer the useage of the
+      construction from range of segments. Construction of
+      polylines in various ways is supported using the construction
+      functors. <em>It is strongly recommended to avoid construction
+      of `Curve_2` objects directly and prefer the usage of the
       construction functors.</em> The type `Curve_2` has two template
       parameters, namely `Segment_type_T` and `Point_type_T`, which
       are `SegmentTraits::Curve_2` and `SegmentTraits::Point_2`
@@ -376,20 +376,20 @@ namespace CGAL {
       /*!
         Constructs a polyline defined by the given range of segments
         `[first, last)` (the value-type of `InputIterator` must be
-        `SegmentTraits::Segment_2`. In general, the segments might not
+        `SegmentTraits::Curve_2`. In general, the segments might not
         be \f$x\f$-monotone, furthermore, they might not form a
         continuous polyline.
 
         \pre The segments in the range should form a continuous and
              well-oriented polyline.
 
-        \deprecated For the sake of backwards compatibility, it is
-        possible to call this construction with a range whose
+        \deprecated For backwards compatibility, it is
+        possible to call this constructor with a range whose
         value-type is `SegmentTraits::Point_2`. In this case, the
-        constructed polyline will concatenate the \f$n\f$-th point
+        constructed polyline will concatenate the \f$n\f$th point
         with the \f$(n+1)\f$-st point in the range (using a
-        `SegmentTraits::Segment_2`'s). However, this possibility is \a
-        deprecated.
+        `SegmentTraits::Segment_2`'s). This functionality is \a deprecated.
+        Instead use the `Construct_curve_2` functors.
       */
       template <class InputIterator>
       Curve_2 (Iterator first, Iterator last);
@@ -403,29 +403,30 @@ namespace CGAL {
         \deprecated Returns the number of points that comprise the polyline.
         Note that for a bounded polyline, if there are \f$ n\f$ points in the
         polyline, it is comprised of \f$ (n - 1)\f$ segments.
+        Currently, only bounded polylines are supported.
       */
       unsigned_int points() const;
 
       /*!
-        \deprecated Returns an iterator pointing at the source point of the
+        \deprecated Return an iterator pointing at the source point of the
         polyline.
       */
       const_iterator begin() const;
 
-      /*! Get an iterator pointing at the first segment of the polyline. */
+      /*! Obtain an iterator pointing at the first segment of the polyline. */
       Segment_const_iterator begin_segments() const;
 
       /*!
-        \deprecated Returns an iterator pointing after the end of the polyline.
+        \deprecated Return an iterator pointing after the end of the polyline.
       */
       const_iterator end() const;
 
-      /*! Get an iterator pointing at the past the end segment of the
+      /*! Get an iterator pointing at the past-the-end segment of the
           polyline. */
       Segment_const_iterator end_segments() const;
 
       /*!
-        \deprecated Returns an iterator pointing at the target point of the
+        \deprecated Return an iterator pointing at the target point of the
         polyline.
       */
       const_iterator rbegin() const;
@@ -442,13 +443,13 @@ namespace CGAL {
       const_iterator rend() const;
 
       /*!
-        Returns an iterator pointing at past the end segment of the polyline
-        in reverse order.
+        Returns an iterator pointing at the past-the-end segment of
+        the polyline in reverse order.
       */
       Segment_const_reverse_iterator rend_segments() const;
 
       /*!
-        \deprecated Returns the number of line segments comprising the polyline
+        \deprecated Returns the number of line segments composing the polyline
         (equivalent to `pi.points() - 1`). Was replaced by number_of_segments()
       */
       Segments_size_type size() const;
@@ -459,15 +460,15 @@ namespace CGAL {
       Segments_container_size number_of_segments() const;
 
       /*!
-        Returns the \f$ k\f$-th segment of the polyline.
-        \pre \f$k\f$ is not greater or equal to \f$n-1\f$ where
+        Returns the \f$ k\f$th segment of the polyline.
+        \pre \f$k\f$ is not greater then or equal to \f$n-1\f$, where
              \f$n\f$ is the number of segments.
       */
       typename SegmentTraits::X_monotone_curve_2
       operator[] (size_t k) const;
 
       /*!
-        Return a bounding box of the polyline.
+        Return the bounding box of the polyline.
       */
       Bbox_2 bbox() const;
 
@@ -478,9 +479,9 @@ namespace CGAL {
 
       /*!
        * Append a segment to the polyline at the back.
-       * \a Warning: This is a risky function! Don't use it! Prefer the
-       *             corresponding functor which is provided in the traits
-       *             class.
+       * \a Warning: This function does not preform the precondition test
+                     that the `Push_back_2` functor does. Thus, it is
+                     recommended to use the latter.
        * \param seg The new segment to be appended to the polyline.
        * \pre If the polyline is not empty, the source of `seg` must coincide
        *      with the target point of the last segment in the polyline.
@@ -505,7 +506,7 @@ namespace CGAL {
       void push_back (const Point_2 & p);
 
       /*!
-        Resets the polyline.
+        Reset the polyline.
       */
       void clear();
 
@@ -526,10 +527,9 @@ namespace CGAL {
       `Curve_2` type, in this case, the segments that an
       `X_monotone_curve_2` comprises have to be instances of the type
       `SegmentTraits::X_monotone_curve_2`. Note that the \f$
-      x\f$-monotonicity ensures that an \f$ x\f$-monotone polyline is
-      never self-intersecting (thus, a self-intersecting polyline will
-      be subdivided to several interior-disjoint \f$ x\f$-monotone
-      subcurves).
+      x\f$-monotonicity ensures that an \f$ x\f$-monotone polyline
+      is not self-intersecting. (A self-intersecting polyline is
+      subdivided into several interior-disjoint \f$x\f$-monotone subcurves).
 
       The defined \f$ x\f$-monotone polyline can be directed either from
       right-to-left (and in turn its vertices are stored in an ascending
