@@ -476,13 +476,15 @@ wlop_simplify_and_regularize_point_set(
       {
         for (size_t i = r.begin(); i< r.end(); ++i)
         {
-            FT density = simplify_and_regularize_internal::
-                   compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                                      (get(point_pmap, it), 
-                                                       aabb_original_tree, 
-                                                       radius);
+          RandomAccessIterator cur = first;
+          std::advance(cur, i);
+          FT density = simplify_and_regularize_internal::
+                  compute_density_weight_for_original_point<Kernel, AABB_Tree>
+                                                    (get(point_pmap, cur), 
+                                                      aabb_original_tree, 
+                                                      radius);
 
-            original_density_weight_set[i] = density;
+          original_density_weight_set[i] = density;
         }
       }
       );
