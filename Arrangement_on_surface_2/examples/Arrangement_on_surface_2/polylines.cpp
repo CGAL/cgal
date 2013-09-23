@@ -11,20 +11,19 @@
 #include "arr_print.h"
 /*
   Define the Arrangement traits class to be used. You can either use some user
-  defined kernel and SegmentTraits or the defaults.
+  defined kernel and Segment_traits_2 or the defaults.
  */
-/*
-  Instantiate the traits class using the default SegmentTraits.
-  Note that in this case the Exact_predicates_exact_constructions_kernel
-  is used.
-*/
- typedef CGAL::Arr_polyline_traits_2<>                    Geom_traits_2;
-/*
-  Instantiate the traits class using a user-defined kernel and SegmentTraits
- */
-// typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-// typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
-// typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>     Geom_traits_2;
+
+// Instantiate the traits class using a user-defined kernel
+// and Segment_traits_2.
+typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
+typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>     Geom_traits_2;
+
+// Identical instantiation can be achieved using the default Kernel:
+// typedef CGAL::Arr_polyline_traits_2<>                    Geom_traits_2;
+
+
 typedef Geom_traits_2::Point_2                            Point_2;
 typedef Geom_traits_2::Segment_2                          Segment_2;
 typedef Geom_traits_2::Curve_2                            Polyline_2;
