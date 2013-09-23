@@ -446,7 +446,8 @@ protected:
     }
     
     // Topology could not change moving this vertex
-    if ( i > max_step_nb_ )
+    if ( i > max_step_nb_ 
+      || Th().inside_protecting_balls(c3t3.triangulation(), v, final_loc))
       return std::make_pair(false,v);
     
     // we know that there will be a combinatorial change
@@ -1164,6 +1165,8 @@ private:
                      const FT& sliver_bound,
                      std::vector<Vertex_handle>& modified_vertices) const
   {
+    typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
+
     modified_vertices.clear();
 
     // Create an helper
@@ -1192,6 +1195,11 @@ private:
       if ( c3t3.in_dimension(moving_vertex) < 3 )
         new_location = helper.project_on_surface(new_location, moving_vertex);
       
+      // check that we don't insert a vertex inside a protecting ball
+      if(Th().inside_protecting_balls(c3t3.triangulation(), 
+                                      moving_vertex, new_location))
+        continue;
+
       // try to move vertex
       std::vector<Vertex_handle> tmp_mod_vertices;
       std::pair<bool,Vertex_handle> update =
