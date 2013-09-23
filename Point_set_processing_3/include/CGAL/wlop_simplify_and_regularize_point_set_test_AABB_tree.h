@@ -35,6 +35,7 @@
 
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+//#include <tbb/task_scheduler_init.h>
 #include <tbb/tbbmalloc_proxy.h>
 
 #include <CGAL/Simple_cartesian.h>
@@ -52,7 +53,7 @@ namespace CGAL {
 // Private section
 // ----------------------------------------------------------------------------
   
-namespace regularize_and_simplify_internal{
+namespace simplify_and_regularize_internal{
 
 /// Compute average term for each sample points
 /// According to their KNN neighborhood original points
@@ -369,7 +370,7 @@ compute_density_weight_for_sample_point(
   return density_weight;
 }
 
-} // namespace regularize_and_simplify_internal
+} // namespace simplify_and_regularize_internal
 
 // ----------------------------------------------------------------------------
 // Public section
@@ -398,7 +399,7 @@ compute_density_weight_for_sample_point(
 // This variant requires all parameters.
 template <typename Concurrency_tag, typename ForwardIterator, typename PointPMap, typename Kernel>
 ForwardIterator
-regularize_and_simplify_point_set(
+wlop_simplify_and_regularize_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
@@ -468,13 +469,14 @@ regularize_and_simplify_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
+      //tbb::task_scheduler_init init(4);
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0,nb_points_original),
         [&](const tbb::blocked_range<size_t>& r)
       {
         for (size_t i = r.begin(); i< r.end(); ++i)
         {
-            FT density = regularize_and_simplify_internal::
+            FT density = simplify_and_regularize_internal::
                    compute_density_weight_for_original_point<Kernel, AABB_Tree>
                                                       (get(point_pmap, it), 
                                                        aabb_original_tree, 
@@ -489,7 +491,7 @@ regularize_and_simplify_point_set(
     {
       for (it = first_original_point; it != beyond ; ++it)
       {
-        FT density = regularize_and_simplify_internal::
+        FT density = simplify_and_regularize_internal::
                       compute_density_weight_for_original_point<Kernel, AABB_Tree>
                                                         (get(point_pmap, it), 
                                                          aabb_original_tree, 
@@ -518,7 +520,7 @@ regularize_and_simplify_point_set(
     {
       for (i=0 ; i < sample_points.size(); i++)
       {
-        FT density = regularize_and_simplify_internal::
+        FT density = simplify_and_regularize_internal::
                      compute_density_weight_for_sample_point<Kernel, AABB_Tree>
                      (sample_points[i], aabb_sample_tree, radius);
 
@@ -541,6 +543,7 @@ regularize_and_simplify_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
+      //tbb::task_scheduler_init init(4);
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0,nb_points_sample),
         [&](const tbb::blocked_range<size_t>& r)
@@ -548,7 +551,7 @@ regularize_and_simplify_point_set(
         for (size_t i = r.begin(); i< r.end(); ++i)
         {
           Point& p = sample_points[i];
-          average_set[i] = regularize_and_simplify_internal::
+          average_set[i] = simplify_and_regularize_internal::
             compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
             (p, 
             aabb_original_tree, 
@@ -564,7 +567,7 @@ regularize_and_simplify_point_set(
       for (i = 0; i < sample_points.size(); i++)
       {
         Point& p = sample_points[i];
-        average_set[i] = regularize_and_simplify_internal::
+        average_set[i] = simplify_and_regularize_internal::
           compute_average_term<Concurrency_tag, Kernel, AABB_Tree, ForwardIterator>
           (p, 
           aabb_original_tree, 
@@ -581,6 +584,7 @@ regularize_and_simplify_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
+      //tbb::task_scheduler_init init(4);
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0,nb_points_sample),
         [&](const tbb::blocked_range<size_t>& r)
@@ -588,7 +592,7 @@ regularize_and_simplify_point_set(
         for (size_t i = r.begin(); i< r.end(); ++i)
         {
           Point& p = sample_points[i];
-          repulsion_set[i] = regularize_and_simplify_internal::
+          repulsion_set[i] = simplify_and_regularize_internal::
             compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
             (p, 
             aabb_sample_tree, 
@@ -607,7 +611,7 @@ regularize_and_simplify_point_set(
       for (i = 0; i < sample_points.size(); i++)
       {
         Point& p = sample_points[i];
-        repulsion_set[i] = regularize_and_simplify_internal::
+        repulsion_set[i] = simplify_and_regularize_internal::
           compute_repulsion_term<Kernel, AABB_Tree, ForwardIterator>
           (p, 
           aabb_sample_tree, 
@@ -642,7 +646,7 @@ regularize_and_simplify_point_set(
 // This variant deduces the kernel from the iterator type.
 template <typename Concurrency_tag, typename ForwardIterator, typename PointPMap>
 ForwardIterator
-regularize_and_simplify_point_set(
+wlop_simplify_and_regularize_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
@@ -655,7 +659,7 @@ regularize_and_simplify_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return regularize_and_simplify_point_set<Concurrency_tag>(
+  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
     first,beyond,
     point_pmap,
     retain_percentage,
@@ -670,17 +674,17 @@ regularize_and_simplify_point_set(
 // This variant creates a default point property map = Dereference_property_map
 template <typename Concurrency_tag, typename ForwardIterator>
 ForwardIterator
-regularize_and_simplify_point_set(
+wlop_simplify_and_regularize_point_set(
   ForwardIterator first, ///< iterator over the first input point
   ForwardIterator beyond, ///< past-the-end iterator
-  double retain_percentage, ///< percentage of points to retain.
-  double radius, ///< number of neighbors.
-  const unsigned int iter_number, ///< number of iterations.
-  const bool need_compute_density ///< if needed to compute density to 
+  double retain_percentage = 5, ///< percentage of points to retain.
+  double radius = -1, ///< number of neighbors.
+  const unsigned int iter_number = 30, ///< number of iterations.
+  const bool need_compute_density = true ///< if needed to compute density to 
                                   /// generate more rugularized result                               
 ) 
 {
-  return regularize_and_simplify_point_set<Concurrency_tag>(
+  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
     first,beyond,
     make_dereference_property_map(first),
     retain_percentage, radius, iter_number, need_compute_density);
