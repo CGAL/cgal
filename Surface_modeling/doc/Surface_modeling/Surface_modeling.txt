@@ -425,8 +425,8 @@ the boundary of the surface mesh, then \f$ w_{ij} \f$ must be 0 and \f$ \mathbf{
 \f$ does not exist.
 
 An important property of this approach compared to \ref Surface_Modeling_Overview_ARAP is that the contribution to the global energy
-of each vertex is guaranteed to be non-negative.
-\todo Check with Olga
+of each vertex is guaranteed to be non-negative when using the cotangent weights \cgalCite{Chao2010SimpleGeomModel}.
+
 
 We are using cotangent weights by default (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
 
