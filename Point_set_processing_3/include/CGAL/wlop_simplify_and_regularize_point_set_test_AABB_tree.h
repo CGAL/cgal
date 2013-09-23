@@ -476,11 +476,9 @@ wlop_simplify_and_regularize_point_set(
       {
         for (size_t i = r.begin(); i< r.end(); ++i)
         {
-            RandomAccessIterator current_iter = first;
-            std::advance(current_iter, i);
             FT density = simplify_and_regularize_internal::
                    compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                                      (get(point_pmap, current_iter), 
+                                                      (get(point_pmap, it), 
                                                        aabb_original_tree, 
                                                        radius);
 
