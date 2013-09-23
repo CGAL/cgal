@@ -50,8 +50,15 @@ namespace CGAL {
     avoid robustness problems, although other inexact number types
     could be used at the user's own risk.
 
-    `Arr_polyline_traits_2` uses `SegmentTraits::Point_2` as its point
-    type. Its nested types `Segment_2` and `X_monotone_segment_2` are
+    A polyline that comprises \f$n > 0\f$ segments has \f$ n+1 \f$
+    points, and they are represented as objects of type
+    `SegmentTraits::Point_2`. Since the notion of a \a vertex is
+    reserved to 0-dimensional elements of an arrangement, we use, in
+    this context, the notion of \a points in order to refer to the
+    vertices of a polyline. For example, an arrangement induced by a
+    single non-self intersecting polyline has exactly two vertices
+    regardless of the number of points. Finally, the types `Segment_2`
+    and `X_monotone_segment_2` nested in `Arr_polyline_traits_2` are
     nothing but `SegmentTraits::Curve_2` and
     `SegmentTraits::X_monotone_curve_2` respectively.
 
@@ -159,7 +166,7 @@ namespace CGAL {
     class Construct_x_monotone_curve_2 {};
 
     /*!
-      Function object which returns the number of vertices of a polyline.
+      Function object which returns the number of points of a polyline.
     */
     class Number_of_points_2{};
 
