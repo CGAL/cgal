@@ -54,6 +54,7 @@ typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;
 
 /*!
 \deprecated 
+This requirement is deprecated and is no longer needed.
 */ 
 typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;
 
