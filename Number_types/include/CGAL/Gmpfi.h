@@ -20,6 +20,9 @@
 #ifndef CGAL_GMPFI_H
 #define CGAL_GMPFI_H
 
+#include <CGAL/config.h>
+#ifdef CGAL_USE_MPFI
+
 #include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/mpfi_coercion_traits.h>
@@ -356,6 +359,8 @@ namespace Eigen {
 
 #include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
+
+#endif
 
 #endif  // CGAL_GMPFI_H
 

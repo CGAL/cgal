@@ -623,7 +623,7 @@ void psqff(){
        test_sqff_utcf(a1,b1,c1);
     }
     {
-       typedef typename AT::Integer Integer;
+      typedef typename AT::Integer Integer; CGAL_USE_TYPE(Integer);
        typedef typename AT::Rational Rational;
        typedef CGAL::Sqrt_extension<Rational,Rational> NT;
        typedef CGAL::Polynomial<NT> POLY;

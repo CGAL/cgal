@@ -74,6 +74,9 @@ template <> class Real_embeddable_traits< int >
   
   A model of concept ModularTraits, supports \c int. 
 */
+  template <typename T>
+  class Modular_traits;
+
 template<>
 class Modular_traits<int>{
 public: 

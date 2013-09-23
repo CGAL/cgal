@@ -50,6 +50,7 @@ namespace CGAL {
 } // end namespace CGAL
 
 #include <CGAL/Surface_mesher/Combining_oracle.h>
+#include <CGAL/Surface_mesh_traits_generator_3.h>
 
 namespace CGAL {
   template <typename Surface_a, typename Surface_b>

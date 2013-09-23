@@ -23,6 +23,7 @@
 
 #include <CGAL/Voronoi_diagram_2/basic.h>
 #include <CGAL/Voronoi_diagram_2/Adaptation_traits_functors.h>
+#include <CGAL/Triangulation_utils_2.h>
 
 namespace CGAL {
 

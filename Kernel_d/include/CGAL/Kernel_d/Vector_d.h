@@ -29,6 +29,12 @@
 namespace CGAL {
  
 template <class pR>
+  class Direction_d;
+
+template <class pR>
+  class Point_d;
+
+template <class pR>
 class Vector_d : public pR::Vector_d_base
 { public:
 

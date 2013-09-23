@@ -26,6 +26,9 @@
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_face_graph_triangle_primitive.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_same.hpp>
+
 namespace CGAL {
     /// \ingroup PkgAABB_tree
     /// \deprecated This class is deprecated since \cgal 4.3, the class

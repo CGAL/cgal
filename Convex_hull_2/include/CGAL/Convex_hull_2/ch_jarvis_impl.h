@@ -25,6 +25,7 @@
 #include <CGAL/convexity_check_2.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
+#include <CGAL/IO/Tee_for_output_iterator.h>
 #include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/ch_selected_extreme_points_2.h>
 #include <algorithm>

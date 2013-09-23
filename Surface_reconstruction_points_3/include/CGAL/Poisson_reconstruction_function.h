@@ -48,6 +48,7 @@
 #include <CGAL/poisson_refine_triangulation.h>
 #include <CGAL/Robust_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
+#include <CGAL/Timer.h>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/array.hpp>

@@ -25,6 +25,9 @@
 #define CGAL_WEIGHTED_MINKOWSKI_DISTANCE_H
 
 #include <cmath>
+#include <vector>
+
+#include <CGAL/number_utils.h>
 #include <CGAL/Kd_tree_rectangle.h>
 
 namespace CGAL {

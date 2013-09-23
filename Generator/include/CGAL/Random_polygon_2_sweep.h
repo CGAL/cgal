@@ -181,7 +181,7 @@ less_than_in_tree(Vertex_index new_edge, Vertex_index tree_edge)
                                 m_vertex_data->point(right)));
     m_vertex_data->is_simple_result = false;
     Vertex_index mid_succ = m_vertex_data->next(mid);
-    if (mid_succ.as_int() <= min(left.as_int(), right.as_int()))
+    if (mid_succ.as_int() <= (std::min)(left.as_int(), right.as_int()))
     {
        //
        // have one of these two situations:

@@ -18,8 +18,13 @@
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
+
+
 #ifndef CGAL_ARR_HYPERBOLIC_ARC_TRAITS_2_H
 #define CGAL_ARR_HYPERBOLIC_ARC_TRAITS_2_H
+
+#include <CGAL/config.h>
+#ifdef CGAL_DONT_SUBMIT
 
 /*! \file
  * The header file for the Arr_hyperbolic_arc_traits_2<Kenrel> class.
@@ -412,4 +417,7 @@ public:
 
 } //namespace CGAL
 
+#endif // CGAL_DONT_SUBMIT
+
 #endif
+

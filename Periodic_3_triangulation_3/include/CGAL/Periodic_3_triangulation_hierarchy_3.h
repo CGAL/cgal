@@ -23,6 +23,7 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_HIERARCHY_3_H
 
 #include <CGAL/basic.h>
+#include <CGAL/array.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 
 #include <boost/random/linear_congruential.hpp>

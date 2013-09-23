@@ -27,6 +27,10 @@
  * arrangement package.
  */
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_DONT_SUBMIT
+
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -1130,5 +1134,7 @@ private:
 
 
 } //namespace CGAL
+
+#endif // CGAL_DONT_SUBMIT
 
 #endif

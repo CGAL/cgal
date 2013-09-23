@@ -25,7 +25,8 @@
 #ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
 #define CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_3_H
 
-
+#include <cstddef>
+#include <iterator>
 
 namespace CGAL {
 

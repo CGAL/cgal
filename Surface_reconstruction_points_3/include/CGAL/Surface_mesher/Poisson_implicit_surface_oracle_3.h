@@ -26,6 +26,7 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Surface_mesher/Sphere_oracle_3.h>
 #include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <boost/mpl/has_xxx.hpp>
 

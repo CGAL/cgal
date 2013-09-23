@@ -23,6 +23,10 @@
 #ifndef CGAL_ARR_VERTICAL_SEGMENT_TRAITS
 #define CGAL_ARR_VERTICAL_SEGMENT_TRAITS
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_DONT_SUBMIT
+
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/assertions.h>
@@ -1788,5 +1792,7 @@ public:
 
 } //namespace CGAL {
 
+#endif // CGAL_DONT_SUBMIT
 
 #endif  //CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
+

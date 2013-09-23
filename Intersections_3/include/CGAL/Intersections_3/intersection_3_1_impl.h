@@ -30,6 +30,26 @@
 
 namespace CGAL {
 
+  template <class K>
+  class Plane_3;
+
+  template <class K>
+  class Line_3;
+
+  template <class K>
+  class Segment_3;
+
+  template <class K>
+  class Ray_3;
+
+  template <class K>
+  class Sphere_3;
+
+  template <class K>
+  class Triangle_3;
+
+  template <class K>
+  class Iso_cuboid_3;
 
 // the special plane_3 function
 template <class K>

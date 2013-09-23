@@ -20,7 +20,11 @@
 #ifndef CGAL_SEARCH_TRAITS_VERTEX_HANDLE_3_H
 #define CGAL_SEARCH_TRAITS_VERTEX_HANDLE_3_H
 
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/Search_traits.h>
+#include <CGAL/Kd_tree_rectangle.h>
+
+#include <cmath>
 
 namespace CGAL {
 
@@ -80,6 +84,7 @@ public:
   friend struct Construct_cartesian_const_iterator_vertex_handle_3;
 
 }; // end of class Point_vertex_handle_3
+
 
 
 /// Kernel traits specialization for Point_vertex_handle_3.

@@ -24,6 +24,7 @@
 #define CGAL_FUNCTIONS_ON_SIGNS_H
 
 #include <CGAL/enum.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 #if 0

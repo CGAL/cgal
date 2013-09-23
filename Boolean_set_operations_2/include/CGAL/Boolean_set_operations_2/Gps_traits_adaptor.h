@@ -21,6 +21,9 @@
 #ifndef CGAL_GPS_TRAITS_ADAPTOR_H
 #define CGAL_GPS_TRAITS_ADAPTOR_H
 
+#include <CGAL/enum.h>
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 template <class Traits_>

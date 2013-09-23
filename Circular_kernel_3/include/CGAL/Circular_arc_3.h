@@ -25,6 +25,9 @@
 #ifndef CGAL_CIRCULAR_ARC_3_H
 #define CGAL_CIRCULAR_ARC_3_H
 
+#include <CGAL/result_of.h>
+#include <CGAL/Bbox_3.h>
+
 namespace CGAL {
   template <class SK> 
     class Circular_arc_3

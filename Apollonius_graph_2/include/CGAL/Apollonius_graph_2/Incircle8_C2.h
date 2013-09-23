@@ -61,7 +61,7 @@ private:
   }
 
   inline
-  Sign predicate(const FT& Exp, const FT& Eyp, const FT& Erp,
+  Sign predicate(const FT& Exp, const FT& Eyp, const FT& /* Erp */,
 		 const FT& Exrp, const FT& Eyrp, const FT& Exyp,
 		 const Integral_domain_without_division_tag&) const
   {

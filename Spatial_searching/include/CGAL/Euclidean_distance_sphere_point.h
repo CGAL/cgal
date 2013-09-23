@@ -21,7 +21,9 @@
 
 #ifndef CGAL_EUCLIDEAN_DISTANCE_SPHERE_POINT_H
 #define CGAL_EUCLIDEAN_DISTANCE_SPHERE_POINT_H
+
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

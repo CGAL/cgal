@@ -32,6 +32,7 @@
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
+#include <CGAL/Circle_2.h>
 #include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 
 namespace CGAL {

@@ -22,6 +22,7 @@
 
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/iterator.h>
+#include <CGAL/array.h>
 
 namespace CGAL
 {

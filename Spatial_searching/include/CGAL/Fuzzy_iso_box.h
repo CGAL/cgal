@@ -21,11 +21,18 @@
 
 #ifndef CGAL_FUZZY_ISO_BOX_H
 #define CGAL_FUZZY_ISO_BOX_H
+
+#include <algorithm>
+
 #include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Search_traits_adapter.h>
+
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/type_traits/remove_cv.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <CGAL/Search_traits_adapter.h>
+
 
 namespace CGAL {
 

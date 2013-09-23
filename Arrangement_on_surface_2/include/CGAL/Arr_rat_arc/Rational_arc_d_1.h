@@ -18,6 +18,7 @@
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
+
 #ifndef CGAL_RATIONAL_ARC_D_1_H
 #define CGAL_RATIONAL_ARC_D_1_H
 
@@ -435,15 +436,15 @@ public:
 
     _init(_numer,_denom,cache);
   }
-  void _init(const Polynomial_1& _P, const Polynomial_1& _Q, const Cache& cache) 
+  void _init(const Polynomial_1& P_, const Polynomial_1& Q_, const Cache& cache) 
   {
-    CGAL_precondition(!CGAL::is_zero(_Q));
+    CGAL_precondition(!CGAL::is_zero(Q_));
     //set rational function 
     // Set the numerator & denominator polynomials.
 
     Polynomial_1 P;
     Polynomial_1 Q;
-    _canonicalize(_P, _Q, P, Q);
+    _canonicalize(P_, Q_, P, Q);
                      
     _f = get_rational_function(P, Q, cache);
 
@@ -519,15 +520,15 @@ public:
     _init(_numer,_denom, x_s, dir_right, cache);
   }
 
-  void _init(const Polynomial_1& _P, const Polynomial_1& _Q,
+  void _init(const Polynomial_1& P_, const Polynomial_1& Q_,
              const Algebraic_real_1& x_s, bool dir_right,
              const Cache& cache) 
   {
-    CGAL_precondition(!CGAL::is_zero(_Q));
+    CGAL_precondition(!CGAL::is_zero(Q_));
     //set rational function 
     Polynomial_1 P;
     Polynomial_1 Q;
-    _canonicalize(_P,_Q,P,Q);
+    _canonicalize(P_,Q_,P,Q);
     _f = get_rational_function(P, Q, cache);
 
     // Mark that the target points of the polynomial is unbounded.
@@ -624,15 +625,15 @@ public:
     _init(_numer,_denom,x_s,x_t,cache);
   }
 
-  void _init(const Polynomial_1& _P, const Polynomial_1& _Q,
+  void _init(const Polynomial_1& P_, const Polynomial_1& Q_,
              const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
              const Cache& cache)
   {
-    CGAL_precondition(!CGAL::is_zero(_Q));
+    CGAL_precondition(!CGAL::is_zero(Q_));
     //set rational function 
     Polynomial_1 P;
     Polynomial_1 Q;
-    _canonicalize(_P, _Q, P, Q);
+    _canonicalize(P_, Q_, P, Q);
     _f = get_rational_function(P, Q, cache);
 
     // Compare the x-coordinates and determine the direction.
@@ -2602,3 +2603,4 @@ public:
 }       //namespace CGAL {
 
 #endif //CGAL_RATIONAL_ARC_D_1_H
+

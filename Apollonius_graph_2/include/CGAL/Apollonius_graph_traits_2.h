@@ -22,6 +22,7 @@
 #define CGAL_APOLLONIUS_GRAPH_TRAITS_2_H
 
 #include <CGAL/Apollonius_graph_2/Predicates_C2.h>
+#include <CGAL/Apollonius_graph_2/Constructions_C2.h>
 #include <CGAL/Apollonius_graph_2/Incircle8_C2.h>
 #ifdef CGAL_APOLLONIUS_GRAPH_D8_TRAITS_2
 #include <CGAL/Apollonius_graph_2/Orientation8_C2.h>

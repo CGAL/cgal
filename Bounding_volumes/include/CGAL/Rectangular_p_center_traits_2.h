@@ -24,6 +24,8 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/basic_constructions_2.h>
+#include <CGAL/pierce_rectangles_2.h>
+#include <CGAL/Optimisation/assertions.h>
 
 namespace CGAL {
 

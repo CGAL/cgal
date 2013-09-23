@@ -23,6 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
+#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Dummy_tds_2.h>
 
 namespace CGAL

@@ -23,8 +23,10 @@
 #ifndef CGAL_PARABOLA_2_H
 #define CGAL_PARABOLA_2_H
 
+#include <vector>
 #include <CGAL/determinant.h>
-
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

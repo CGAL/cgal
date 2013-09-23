@@ -26,8 +26,17 @@
 #define CGAL_POINT_D_H
 
 #include <CGAL/Dimension.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
+
+
+template <class pR>
+  class Direction_d;
+
+template <class pR>
+  class Vector_d;
+
 
 template <class pR>
 class Point_d : public pR::Point_d_base

@@ -22,6 +22,7 @@
 #ifndef CGAL_CONVERTIBLE_ITERATOR_PROJECT_H
 #define CGAL_CONVERTIBLE_ITERATOR_PROJECT_H
 
+#include <CGAL/config.h>
 #include <CGAL/Iterator_project.h>
 
 namespace CGAL {

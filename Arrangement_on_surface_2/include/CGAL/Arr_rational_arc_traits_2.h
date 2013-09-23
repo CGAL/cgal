@@ -28,6 +28,9 @@
 /*! \file
  * Definition of the Arr_rational_arc_traits_2 class. 
  */
+#include <CGAL/config.h>
+
+#ifdef CGAL_DONT_SUBMIT
 
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -815,5 +818,7 @@ public:
 };
 
 } //namespace CGAL
+
+#endif // CGAL_DONT_SUBMIT
 
 #endif

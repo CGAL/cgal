@@ -22,6 +22,8 @@
 #define CGAL_POISSON_MESH_CRITERIA_3_H
 
 #include <iostream>
+#include <CGAL/number_utils.h>
+#include <CGAL/utils.h> // for min
 
 namespace CGAL {
 

@@ -47,7 +47,7 @@ public:
 
 template < class Poly, class HDS, bool clear_target_before>
 void
-Polyhedron_copy_3<Poly,HDS,clear_target_before>:: operator()( HDS& target) {
+Polyhedron_copy_3<Poly,HDS,clear_target_before>::operator()(HDS& target) {
     typedef typename Poly::Vertex_const_iterator  Vertex_const_iterator;
     typedef typename Poly::Facet_const_iterator   Facet_const_iterator;
     typedef Inverse_index< Vertex_const_iterator> Index;

@@ -21,14 +21,17 @@
 #ifndef CGAL_ARR_TRIANGULATION_POINT_LOCATION_H
 #define CGAL_ARR_TRIANGULATION_POINT_LOCATION_H
 
+#include <CGAL/config.h>
+#ifdef CGAL_DONT_SUBMIT
+
 /*! \file
  * Definition of the Arr_triangulation_point_location<Arrangement> template.
  */
 
+#include <CGAL/Arr_observer.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location_result.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
@@ -138,7 +141,7 @@ public:
    *         query point. This object is either a Face_const_handle or a
    *         Halfedge_const_handle or a Vertex_const_handle.
    */
-  Object locate(const Point_2& p) const;
+  result_type locate(const Point_2& p) const;
 
    //Observer functions that are relevant to overload
    //-------------------------------------------------
@@ -335,5 +338,7 @@ protected:
 
 // The member-function definitions can be found under:
 #include <CGAL/Arr_point_location/Arr_triangulation_pl_functions.h>
+
+#endif // CGAL_DONT_SUBMIT
 
 #endif

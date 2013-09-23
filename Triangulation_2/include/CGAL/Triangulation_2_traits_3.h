@@ -25,7 +25,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
 #include <CGAL/Triangle_3.h>
-
+#include <CGAL/Kernel/global_functions_3.h>
 
 #include <CGAL/triangulation_assertions.h>
 

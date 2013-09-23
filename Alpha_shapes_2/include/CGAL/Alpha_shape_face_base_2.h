@@ -24,6 +24,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/internal/Lazy_alpha_nt_2.h>
 #include <CGAL/Default.h>
+#include <CGAL/Triangulation_face_base_2.h>
 
 namespace CGAL {
 

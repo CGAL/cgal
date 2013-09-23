@@ -25,6 +25,7 @@
 #include <CGAL/assertions.h>
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
+#include <CGAL/Segment_Delaunay_graph_2/Construct_storage_site_2.h>
 
 namespace CGAL {
 

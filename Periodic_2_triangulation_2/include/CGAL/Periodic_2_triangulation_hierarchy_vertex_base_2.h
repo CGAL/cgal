@@ -23,6 +23,9 @@
 #define CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_VERTEX_BASE_2_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
+
+#include <iostream>
 
 namespace CGAL
 {
@@ -31,6 +34,7 @@ template < class Gt, class Vb = CGAL::Periodic_2_triangulation_vertex_base_2<Gt>
 class Periodic_2_triangulation_hierarchy_vertex_base_2
   : public Vb
 {
+  typedef Vb Base;
   typedef typename Vb::Triangulation_data_structure    Tds;
   typedef Gt                                    Geom_traits;
   typedef typename Gt::Point_2                  Point;

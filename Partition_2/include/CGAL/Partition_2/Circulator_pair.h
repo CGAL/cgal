@@ -20,6 +20,8 @@
 #ifndef CGAL_CIRC_PAIR_H
 #define CGAL_CIRC_PAIR_H
 
+#include <CGAL/enum.h>
+
 namespace CGAL {
 
 //

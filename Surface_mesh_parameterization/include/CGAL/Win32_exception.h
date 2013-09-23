@@ -20,11 +20,13 @@
 #ifndef CGAL_WIN32_EXCEPTION_H
 #define CGAL_WIN32_EXCEPTION_H
 
+#ifdef _MSC_VER
+
 #include <exception>
 
 #include <windows.h>
 #include <eh.h>
-
+#include <iostream>
 
 namespace CGAL {
 
@@ -125,4 +127,5 @@ private:
 
 } //namespace CGAL
 
+#endif
 #endif // CGAL_WIN32_EXCEPTION_H

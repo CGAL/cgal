@@ -35,6 +35,8 @@
  * functors required by the concept it models.
  */
 
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/assertions.h>

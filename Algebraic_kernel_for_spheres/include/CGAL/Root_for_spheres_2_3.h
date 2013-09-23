@@ -35,6 +35,7 @@
 #include <CGAL/Polynomials_2_3.h>
 #include <CGAL/Polynomials_for_line_3.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
 

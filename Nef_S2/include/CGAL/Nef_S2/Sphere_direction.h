@@ -22,6 +22,7 @@
 #define CGAL_SPHERE_DIRECTION_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 

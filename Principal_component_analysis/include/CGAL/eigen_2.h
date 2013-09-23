@@ -21,6 +21,10 @@
 #ifndef CGAL_EIGEN_2_H
 #define CGAL_EIGEN_2_H
 
+#include <cmath>
+#include <utility>
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 
 namespace internal {

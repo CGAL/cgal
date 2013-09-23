@@ -22,6 +22,9 @@
 #ifndef CGAL_TRIANGULATION_SIMPLEX_3_H
 #define CGAL_TRIANGULATION_SIMPLEX_3_H
 
+#include <CGAL/assertions.h>
+#include <algorithm>
+
 namespace CGAL {
 
 template < class TriangulationDataStructure_3 >

@@ -23,13 +23,10 @@
 #ifndef CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_COMPLEX_2_IN_TRIANGULATION_CELL_BASE_3_H
 
-#ifndef CGAL_SURFACE_MESH_CELL_BASE_3_H
-#error You must include <CGAL/Surface_mesher_cell_base_3.h> instead.
-#endif
 
 #include <CGAL/Triangulation_cell_base_3.h>
-#include <bitset>
 
+#include <bitset>
 #include <string>
 
 namespace CGAL {

@@ -29,6 +29,9 @@
 
 namespace CGAL {
 
+  template <class K>
+  class Tetrahedron_3;
+
 namespace internal {
 
 // This code is not optimized:

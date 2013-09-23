@@ -1,5 +1,7 @@
 #include <iostream>
 #include <ctime>
+
+#define CGAL_JUST_MINIBALL
 #include <CGAL/Min_sphere_of_spheres_d.h>
 
 class Ball {

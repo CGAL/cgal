@@ -24,6 +24,9 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
+#include <CGAL/triangulation_assertions.h>
+#include <CGAL/spatial_sort.h>
+
 #include <map>
 
 #include <boost/random/linear_congruential.hpp>

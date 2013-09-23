@@ -21,7 +21,7 @@
 #ifndef CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H
 #define CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H
 
-
+#ifdef CGAL_USE_VTK
 
 #include <CGAL/config.h>
 #include <vtkPolyDataAlgorithm.h>
@@ -156,5 +156,6 @@ int vtkCGALSurfaceMesherContourFilter::RequestData(
 
   return 1;
 }
+#endif
 
 #endif // CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H

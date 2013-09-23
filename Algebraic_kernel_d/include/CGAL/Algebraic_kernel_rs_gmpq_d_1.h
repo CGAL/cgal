@@ -19,6 +19,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1
 #define CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_RS
 #include <CGAL/Gmpq.h>
 #include <CGAL/RS/Algebraic_kernel_rs_1.h>
 
@@ -27,5 +30,6 @@ namespace CGAL{
 typedef Algebraic_kernel_rs_1<Gmpq>     Algebraic_kernel_rs_gmpq_d_1;
 
 }
+#endif
 
 #endif  // CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1

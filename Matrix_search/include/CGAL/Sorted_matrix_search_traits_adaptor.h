@@ -21,6 +21,8 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H
 #define CGAL_SORTED_MATRIX_SEARCH_TRAITS_ADAPTOR_H 1
 
+#include <functional>
+
 namespace CGAL {
 
 template < class FeasibilityTest_, class Matrix_ >

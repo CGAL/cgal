@@ -23,6 +23,8 @@
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
+#ifdef CGAL_USE_TAUCS
+
 //
 // Include TAUCS main header taucs.h
 //
@@ -55,6 +57,8 @@ extern "C" {
 #endif
 #ifdef CGAL_TAUCS_DEFINES_MAX
     #undef max
+#endif
+
 #endif
 
 #endif // CGAL_TAUCS_FIX_H

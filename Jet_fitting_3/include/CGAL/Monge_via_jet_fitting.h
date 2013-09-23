@@ -26,7 +26,6 @@
 #include <CGAL/Cartesian_converter.h>
 #include <math.h>
 #include <utility>
-
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
 #else

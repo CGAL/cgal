@@ -18,6 +18,8 @@
 //
 // Author(s)     : Tran Kai Frank DA
 
+#if 0 // in dont_submit
+
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_2_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_2_H
 
@@ -238,3 +240,6 @@ Weighted_alpha_shape_2<Rt>::initialize_weights_to_the_nearest_vertex
 } //namespace CGAL
 
 #endif //CGAL_WEIGHTED_ALPHA_2_H
+
+
+#endif

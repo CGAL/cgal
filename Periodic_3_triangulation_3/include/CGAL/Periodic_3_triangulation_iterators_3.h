@@ -23,6 +23,7 @@
 #define CGAL_PERIODIC_3_TRIANGULATION_ITERATORS_3_H
 
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/array.h>
 #include <CGAL/iterator.h>
 
 namespace CGAL {

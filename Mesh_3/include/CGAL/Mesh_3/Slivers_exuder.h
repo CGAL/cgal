@@ -34,6 +34,7 @@
 #include <iomanip> // std::setprecision
 #include <iostream> // std::cerr/cout
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/function_output_iterator.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 

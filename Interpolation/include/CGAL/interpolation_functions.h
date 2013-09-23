@@ -25,6 +25,8 @@
 #include <CGAL/double.h>
 #include <CGAL/use.h>
 
+#include <vector>
+
 namespace CGAL {
 
 //Functor class for accessing the function values/gradients

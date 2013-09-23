@@ -20,6 +20,9 @@
 
 #ifndef CGAL_PLANE_SEPARATOR_H
 #define CGAL_PLANE_SEPARATOR_H
+
+#include <iostream>
+
 namespace CGAL {
 template < class FT> class Plane_separator {
 

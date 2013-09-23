@@ -31,6 +31,9 @@
 
 namespace CGAL {
 
+  template <class K>
+  class Triangle_3;
+
 namespace internal{
 
 template <class Kernel>

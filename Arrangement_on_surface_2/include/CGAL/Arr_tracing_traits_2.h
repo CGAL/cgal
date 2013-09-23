@@ -32,6 +32,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
 

@@ -90,9 +90,9 @@ public:
   Comparison_result
   compare() const
     {
-      Point p0 = get_point(0);
-      Point p1 = get_point(1);
-      Point p2 = get_point(2);
+      Point p0 = this->get_point(0);
+      Point p1 = this->get_point(1);
+      Point p2 = this->get_point(2);
       return cmp_dist_to_pointC2(x(p0),y(p0),x(p1),y(p1),x(p2),y(p2));
     }
 };

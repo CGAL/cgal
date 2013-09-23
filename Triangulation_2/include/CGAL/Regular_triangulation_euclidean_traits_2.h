@@ -22,10 +22,12 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 
+#include <CGAL/Line_2.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/representation_tags.h>
 
 #include <CGAL/predicates/Regular_triangulation_ftC2.h>
 #include <CGAL/constructions_on_weighted_points_cartesian_2.h>

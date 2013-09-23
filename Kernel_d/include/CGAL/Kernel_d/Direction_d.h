@@ -30,6 +30,9 @@
 namespace CGAL {
 
 template <class pR>
+  class Vector_d;
+
+template <class pR>
 class Direction_d : public pR::Direction_d_base
 { public:
 

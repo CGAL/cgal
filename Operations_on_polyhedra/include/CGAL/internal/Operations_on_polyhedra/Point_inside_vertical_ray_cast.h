@@ -24,6 +24,7 @@
 
 #include <CGAL/internal/Operations_on_polyhedra/Ray_3_Triangle_3_traversal_traits.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Origin.h>
 
 #include <boost/optional.hpp>
 
