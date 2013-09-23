@@ -67,7 +67,8 @@ namespace CGAL {
     is included.
 
     \cgalModels `ArrangementTraits_2`
-    \cgalModels `ArrangementLandmarkTraits_2`
+    \cgalModels `ArrangementLandmarkTraits_2` (if the template parameter
+                `SegmentTraits` models the concept as well)
     \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
 
     \sa `Arr_segment_traits_2<Kernel>`
