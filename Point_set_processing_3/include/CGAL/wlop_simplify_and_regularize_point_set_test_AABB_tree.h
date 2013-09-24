@@ -54,13 +54,142 @@ namespace CGAL {
   
 namespace simplify_and_regularize_internal{
 
-/// Compute average term for each sample points
-/// According to their KNN neighborhood original points
+
+/// Compute anverage and repulsion term and then 
+/// compute update sample points positions
+/// 
+/// \pre `radius > 0`
+///
+/// @tparam Kernel Geometric traits class.
+///
+/// @return average term vector
+template <typename Kernel,
+          typename Tree,
+          typename RandomAccessIterator>
+typename Kernel::Point_3
+compute_update_sample_point(
+  const typename Kernel::Point_3& query, ///< 3D point to project
+  Tree& original_aabb_tree,              ///< original AABB-tree
+  Tree& sample_aabb_tree,                ///< sample AABB-tree
+  const typename Kernel::FT radius2,     ///< neighborhood radius square
+  const std::vector<typename Kernel::FT>& original_densities, ///<
+  const std::vector<typename Kernel::FT>& sample_densities, ///< 
+  RandomAccessIterator original_first_iter, ///<
+  RandomAccessIterator sample_first_iter ///<
+)
+{
+  CGAL_point_set_processing_precondition(radius2 > 0);
+  bool is_original_densities_empty = original_densities.empty();
+  bool is_sample_densities_empty = sample_densities.empty();
+
+  // basic geometric types
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::FT FT;
+
+  // types for AABB
+  typedef Kernel::Sphere_3                                Circle;
+  typedef std::vector<Point>::iterator                    Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator>    Primitive;
+
+  //Compute average term
+  std::vector<typename Primitive::Id> neighbor_original_points;
+  Circle sphere_query(query, radius2);
+
+  original_aabb_tree.all_contained_primitives(sphere_query, 
+                           std::back_inserter(neighbor_original_points));
+
+  Vector average = CGAL::NULL_VECTOR; 
+  FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
+  FT iradius16 = -(FT)4.0/radius2;
+
+  std::vector<typename Primitive::Id>::iterator iter;
+  iter = neighbor_original_points.begin();
+  for (; iter != neighbor_original_points.end(); ++iter)
+  {
+    const Point& np = *(*iter);
+    int original_index = std::distance(original_first_iter, *iter);
+
+    FT dist2 = CGAL::squared_distance(query, np);
+    if (dist2 < 1e-10) continue;
+
+    weight = exp(dist2 * iradius16);
+
+    if (!is_original_densities_empty)
+    {
+      weight *= original_densities[original_index];
+    }
+
+    average_weight_sum += weight;
+    average = average + (np - CGAL::ORIGIN) * weight;
+  }
+
+  if (neighbor_original_points.empty() || average_weight_sum < FT(1e-100))
+  {
+    average = query - CGAL::ORIGIN;
+  }
+  else
+  {
+    average = average / average_weight_sum; 
+  }
+
+  //Compute repulsion term
+  std::vector<typename Primitive::Id> neighbor_sample_points;
+  Circle sphere_query2(query, radius2);
+
+  sample_aabb_tree.all_contained_primitives(sphere_query2, 
+                         std::back_inserter(neighbor_sample_points));
+
+  weight = (FT)0.0;
+  FT repulsion_weight_sum = (FT)0.0;
+  Vector repulsion = CGAL::NULL_VECTOR; 
+
+  iter = neighbor_sample_points.begin();
+  for(; iter != neighbor_sample_points.end(); ++iter)
+  {
+    Point& np = *(*iter);
+    int sample_index = std::distance(sample_first_iter, *iter);
+
+    FT dist2 = CGAL::squared_distance(query, np);
+    if (dist2 < 1e-10) continue;
+
+    FT dist = std::sqrt(dist2);
+    
+    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0)/dist, 2);
+
+    if (!is_sample_densities_empty)
+    {
+      weight *= sample_densities[sample_index];
+    }
+
+     Vector diff = query - np;
+
+    repulsion_weight_sum += weight;
+    repulsion = repulsion + diff * weight;
+  }
+
+  if (neighbor_sample_points.empty() || repulsion_weight_sum < FT(1e-100))
+  {
+    repulsion = CGAL::NULL_VECTOR;
+  }
+  else
+  {
+    repulsion = repulsion / repulsion_weight_sum; 
+  }
+
+  // Compute update sample point
+  Point update_sample = CGAL::ORIGIN + average + FT(0.45) * repulsion;
+  return update_sample;
+}
+
+
+/// Compute average term for each sample points,
+/// according to their neighbor original points
 /// 
 /// \pre `k >= 2`, radius > 0
 ///
 /// @tparam Kernel Geometric traits class.
-/// @tparam Tree KD-tree.
+/// @tparam Tree AABB-tree.
 ///
 /// @return computed point
 
@@ -71,7 +200,7 @@ template <typename Concurrency_tag,
 typename Kernel::Vector_3
 compute_average_term(
   const typename Kernel::Point_3& query,      ///< 3D point to project
-  Tree& aabb_tree,                            ///< AABB-tree
+  Tree& original_aabb_tree,                   ///< AABB-tree
   const typename Kernel::FT radius,           ///<  neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set,//if need density
   RandomAccessIterator original_first_iter
@@ -95,18 +224,19 @@ compute_average_term(
   std::vector<typename Primitive::Id> neighbor_original_points;
   Circle sphere_query(query, radius * radius);
 
-  aabb_tree.all_contained_primitives(sphere_query, 
+  original_aabb_tree.all_contained_primitives(sphere_query, 
                       std::back_inserter(neighbor_original_points));
 
-  std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points.begin();
+  std::vector<typename Primitive::Id>::iterator iter;
+  iter = neighbor_original_points.begin();
   std::vector<FT> density_set;
   std::vector<FT> dist2_set;
   FT radius2 = radius * radius;
 
-  for (; iter != neighbor_original_points.end(); iter++)
+  for (; iter != neighbor_original_points.end(); ++iter)
   {
     Point& np = *(*iter);
-    int original_index = std::distance(original_first_iter,*iter);
+    int original_index = std::distance(original_first_iter, *iter);
 
     FT dist2 = CGAL::squared_distance(query, np);
     if (!is_density_weight_set_empty)
@@ -158,7 +288,7 @@ compute_average_term(
 }
 
 /// Compute repulsion term for each sample points
-/// According to their KNN neighborhood sample points
+/// according to their neighbor sample points
 /// 
 /// \pre `k >= 2`, radius > 0
 ///
@@ -172,7 +302,7 @@ template <typename Kernel,
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree,                       ///< AABB-tree
+  Tree& sample_aabb_tree,                ///< AABB-tree
   const typename Kernel::FT radius,      ///< neighborhood radius
   const std::vector<typename Kernel::FT>& density_weight_set,///< if need density
   RandomAccessIterator sample_first_iter
@@ -195,15 +325,16 @@ compute_repulsion_term(
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
   Circle sphere_query(query, radius * radius);
-  aabb_tree.all_contained_primitives(sphere_query, 
+  sample_aabb_tree.all_contained_primitives(sphere_query, 
                             std::back_inserter(neighbor_sample_points));
 
-  std::vector<typename Primitive::Id>::iterator iter = neighbor_sample_points.begin();
+  std::vector<typename Primitive::Id>::iterator iter;
+  iter = neighbor_sample_points.begin();
   std::vector<FT> density_set;
   std::vector<FT> dist2_set;
   FT radius2 = radius * radius;
 
-  for(; iter != neighbor_sample_points.end(); iter++)
+  for(; iter != neighbor_sample_points.end(); ++iter)
   {
     Point& np = *(*iter);
     int sample_index = std::distance(sample_first_iter, *iter);
@@ -213,7 +344,7 @@ compute_repulsion_term(
     {
       density_set.push_back(density_weight_set[sample_index]);
     }
-    dist2_set.push_back(dist2);
+
   }
 
   if (neighbor_sample_points.empty())
@@ -263,19 +394,19 @@ compute_repulsion_term(
 }
 
 /// Compute density weight for each original points,
-/// according to their KNN neighborhood original points
+/// according to their neighbor original points
 /// 
 /// \pre `k >= 2`, radius > 0
 ///
 /// @tparam Kernel Geometric traits class.
-/// @tparam Tree KD-tree.
+/// @tparam Tree AABB-tree.
 ///
 /// @return computed point
 template <typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree,                       ///< AABB-tree
+  Tree& original_aabb_tree,                       ///< AABB-tree
   const typename Kernel::FT radius       ///< neighbor radius
 )
 {
@@ -296,7 +427,7 @@ compute_density_weight_for_original_point(
   std::vector<typename Primitive::Id> neighbor_original_points;
 
   Circle sphere_query(query, radius * radius);
-  aabb_tree.all_contained_primitives(sphere_query, 
+  original_aabb_tree.all_contained_primitives(sphere_query, 
                                 std::back_inserter(neighbor_original_points));
 
   //Compute density weight
@@ -318,19 +449,19 @@ compute_density_weight_for_original_point(
 
 
 /// Compute density weight for sample point,
-/// according to their KNN neighborhood sample points
+/// according to their neighbor sample points
 /// 
 /// \pre `k >= 2`, radius > 0
 ///
 /// @tparam Kernel Geometric traits class.
-/// @tparam Tree KD-tree.
+/// @tparam Tree AABB-tree.
 ///
 /// @return computed point
 template <typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree,                       ///< AABB-tree
+  Tree& sample_aabb_tree,                ///< AABB-tree
   const typename Kernel::FT radius       ///< neighbor radius
 )
 {
@@ -348,7 +479,7 @@ compute_density_weight_for_sample_point(
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
   Circle sphere_query(query, radius * radius);
-  aabb_tree.all_contained_primitives(sphere_query, 
+  sample_aabb_tree.all_contained_primitives(sphere_query, 
                                    std::back_inserter(neighbor_sample_points));
 
   //Compute density weight
@@ -448,15 +579,15 @@ wlop_simplify_and_regularize_point_set(
 
   // The first point iter of original and sample points
   RandomAccessIterator it;                             // point iterator
-  RandomAccessIterator first_original_point = first;
-  RandomAccessIterator first_sample_point = first;
-  std::advance(first_sample_point, first_index_to_sample);
+  RandomAccessIterator first_original_iter = first;
+  RandomAccessIterator first_sample_iter = first;
+  std::advance(first_sample_iter, first_index_to_sample);
 
   //Copy sample points
   std::vector<Point> sample_points(nb_points_sample);
   unsigned int i;                                     // sample point index
 
-  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
+  for(it = first_sample_iter, i = 0; it != beyond; ++it, ++i)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     sample_points[i] = get(point_pmap, it);
@@ -469,10 +600,10 @@ wlop_simplify_and_regularize_point_set(
   if (radius < 0)
   {
     CGAL::Bbox_3 bbox(0, 0, 0, 0, 0, 0);
-    for (i = 0; i < nb_points_original; ++i)
+    for (RandomAccessIterator temp = first; 
+         temp != beyond; ++temp)
     {
-      RandomAccessIterator temp = first;
-      std::advance(temp, i);
+      
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point original_p = get(point_pmap, temp);
 #else
@@ -491,16 +622,17 @@ wlop_simplify_and_regularize_point_set(
       << std::endl << std::endl;
 #endif
   }
+  FT radius2 = radius * radius;
 
   CGAL_point_set_processing_precondition(radius > 0);
   task_timer.start();
 
   // Initiate a AABB_Tree search for original points
-  AABB_Tree aabb_original_tree(first_original_point,
+  AABB_Tree orignal_aabb_tree(first_original_iter,
                                beyond);
 
   // Compute original density weight for original points if user needed
-  std::vector<FT> original_density_weight_set(nb_points_original);
+  std::vector<FT> original_density_weights(nb_points_original);
 
   if (need_compute_density)
   {
@@ -524,17 +656,17 @@ wlop_simplify_and_regularize_point_set(
                                               #else
                                                 get(point_pmap, *cur),
                                               #endif 
-                                                aabb_original_tree, 
+                                                orignal_aabb_tree, 
                                                 radius);
 
-          original_density_weight_set[i] = density;
+          original_density_weights[i] = density;
         }
       }
       );
     }else
 #endif
     {
-      for (it = first_original_point, i = 0; it != beyond ; ++it, ++i)
+      for (it = first_original_iter, i = 0; it != beyond ; ++it, ++i)
       {
         FT density = simplify_and_regularize_internal::
                       compute_density_weight_for_original_point<Kernel, AABB_Tree>
@@ -544,10 +676,10 @@ wlop_simplify_and_regularize_point_set(
                                               #else
                                                 get(point_pmap, *it),
                                               #endif  
-                                                aabb_original_tree, 
+                                                orignal_aabb_tree, 
                                                 radius);
 
-        original_density_weight_set[i] = density;
+        original_density_weights[i] = density;
       }
     }
   }
@@ -556,119 +688,150 @@ wlop_simplify_and_regularize_point_set(
   std::cout << "compute density for original done: " << task_timer.time() << " seconds, " 
     << (memory>>20) << " Mb allocated" << std::endl << std::endl;
 
-
+  std::vector<Point> update_sample_points(nb_points_sample);
+  std::vector<Point>::iterator sample_iter;
+  
   for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
   {
     task_timer.reset();
-    RandomAccessIterator first_sample_point = sample_points.begin();
-    AABB_Tree aabb_sample_tree(sample_points.begin(),
-                               sample_points.end());
+    RandomAccessIterator first_sample_iter = sample_points.begin();
+    AABB_Tree sample_aabb_tree(sample_points.begin(), sample_points.end());
 
     // Compute sample density weight for sample points if user needed
-    std::vector<FT> sample_density_weight_set;
+    std::vector<FT> sample_density_weights;
     if (need_compute_density)
     {
-      for (i=0 ; i < sample_points.size(); i++)
+      for (sample_iter = sample_points.begin();
+           sample_iter != sample_points.end(); ++sample_iter)
       {
         FT density = simplify_and_regularize_internal::
                      compute_density_weight_for_sample_point<Kernel, AABB_Tree>
-                     (sample_points[i], aabb_sample_tree, radius);
+                     (*sample_iter, 
+                      sample_aabb_tree, 
+                      radius);
 
-        sample_density_weight_set.push_back(density);
+        sample_density_weights.push_back(density);
       }
     }
 
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "compute density for sample done: " << task_timer.time() << " seconds, " 
-      << (memory>>20) << " Mb allocated" << std::endl;
+              << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.reset();
 
-    // Compute average term and repulsion term for each sample points ,
-    // then update each sample points
-    std::vector<Vector> average_set(nb_points_sample);
-    std::vector<Vector> repulsion_set(nb_points_sample);
-
-    //parallel
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    std::vector<Point>::iterator update_iter = update_sample_points.begin();
+    for (sample_iter = sample_points.begin();
+         sample_iter != sample_points.end(); ++sample_iter, ++update_iter)
     {
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, nb_points_sample),
-        [&](const tbb::blocked_range<size_t>& r)
-      {
-        for (size_t i = r.begin(); i < r.end(); ++i)
-        {
-          Point& p = sample_points[i];
-          average_set[i] = simplify_and_regularize_internal::
-            compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
-            (p, 
-            aabb_original_tree, 
-            radius, 
-            original_density_weight_set,
-            first_original_point);
-        }
-      }
-      );
-    }else
-#endif
-    {
-      for (i = 0; i < sample_points.size(); ++i)
-      {
-        Point& p = sample_points[i];
-        average_set[i] = simplify_and_regularize_internal::
-          compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
-          (p, 
-          aabb_original_tree, 
-          radius, 
-          original_density_weight_set,
-          first_original_point);
-      }
+      *update_iter = simplify_and_regularize_internal::
+                     compute_update_sample_point<Kernel,
+                                                 AABB_Tree,
+                                                 RandomAccessIterator>
+                     (*sample_iter,
+                      orignal_aabb_tree,
+                      sample_aabb_tree,
+                      radius2,
+                      original_density_weights, 
+                      sample_density_weights,
+                      first_original_iter,
+                      first_sample_iter
+                     );
     }
 
-    std::cout<<"compute average term time: "<<task_timer.time()<<std::endl;
-    task_timer.reset();
-
-    //parallel
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    sample_iter = sample_points.begin();
+    for (update_iter = update_sample_points.begin();
+         update_iter != update_sample_points.end();
+         ++update_iter, ++sample_iter)
     {
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, nb_points_sample),
-        [&](const tbb::blocked_range<size_t>& r)
-      {
-        for (size_t i = r.begin(); i < r.end(); ++i)
-        {
-          Point& p = sample_points[i];
-          repulsion_set[i] = simplify_and_regularize_internal::
-            compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
-            (p, 
-            aabb_sample_tree, 
-            radius, 
-            sample_density_weight_set,
-            first_sample_point);
-
-          p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
-        }
-        
-      }
-      );
-    }else
-#endif
-    {
-      for (i = 0; i < sample_points.size(); i++)
-      {
-        Point& p = sample_points[i];
-        repulsion_set[i] = simplify_and_regularize_internal::
-          compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
-          (p, 
-          aabb_sample_tree, 
-          radius, 
-          sample_density_weight_set,
-          first_sample_point);
-
-        p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
-      }
+      *sample_iter = *update_iter;
     }
+
+//    // Compute average term and repulsion term for each sample points ,
+//    // then update each sample points
+//    std::vector<Vector> average_set(nb_points_sample);
+//    std::vector<Vector> repulsion_set(nb_points_sample);
+//
+//    //parallel
+//#ifdef CGAL_LINKED_WITH_TBB
+//    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+//    {
+//      tbb::parallel_for(
+//        tbb::blocked_range<size_t>(0, nb_points_sample),
+//        [&](const tbb::blocked_range<size_t>& r)
+//      {
+//        for (size_t i = r.begin(); i < r.end(); ++i)
+//        {
+//          Point& p = sample_points[i];
+//          average_set[i] = simplify_and_regularize_internal::
+//            compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
+//            (p, 
+//            orignal_aabb_tree, 
+//            radius, 
+//            original_density_weights,
+//            first_original_iter);
+//        }
+//      }
+//      );
+//    }else
+//#endif
+//    {
+//      for (i = 0; i < sample_points.size(); ++i)
+//      {
+//        Point& p = sample_points[i];
+//        average_set[i] = simplify_and_regularize_internal::
+//          compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
+//          (p, 
+//          orignal_aabb_tree, 
+//          radius, 
+//          original_density_weights,
+//          first_original_iter);
+//      }
+//    }
+//
+//    std::cout<<"compute average term time: "<<task_timer.time()<<std::endl;
+//    task_timer.reset();
+//
+//    //parallel
+//#ifdef CGAL_LINKED_WITH_TBB
+//    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+//    {
+//      tbb::parallel_for(
+//        tbb::blocked_range<size_t>(0, nb_points_sample),
+//        [&](const tbb::blocked_range<size_t>& r)
+//      {
+//        for (size_t i = r.begin(); i < r.end(); ++i)
+//        {
+//          Point& p = sample_points[i];
+//          repulsion_set[i] = simplify_and_regularize_internal::
+//            compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
+//            (p, 
+//            sample_aabb_tree, 
+//            radius, 
+//            sample_density_weights,
+//            first_sample_iter);
+//
+//          p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
+//        }
+//        
+//      }
+//      );
+//    }else
+//#endif
+//    {
+//      for (i = 0; i < sample_points.size(); i++)
+//      {
+//        Point& p = sample_points[i];
+//        repulsion_set[i] = simplify_and_regularize_internal::
+//          compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
+//          (p, 
+//          sample_aabb_tree, 
+//          radius, 
+//          sample_density_weights,
+//          first_sample_iter);
+//
+//        p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
+//      }
+//    }
 
     memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "compute_repulsion_term done: " << task_timer.time() << " seconds, " 
@@ -677,10 +840,11 @@ wlop_simplify_and_regularize_point_set(
     std::cout << "iterate: " << iter_n + 1 << std::endl << std::endl;
   }
 
-  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
+  // final out put
+  for(sample_iter = sample_points.begin(); 
+      sample_iter != sample_points.end(); ++sample_iter)
   {
-    const Point& sample_p = sample_points[i];
-    *output++ = sample_p;
+    *output++ = *sample_iter;
   }
 
   return;
