@@ -36,7 +36,7 @@ int main(void)
   const double retain_percentage = 5;   // percentage of points to retain.
   const double neighbor_radius = 0.25;   // neighbors size.
   const unsigned int iter_number = 35;     // number of iterations.
-  const bool need_compute_density = false;  // if needed to compute density.
+  const bool need_compute_density = true;  // if needed to compute density.
   
   // Make room for sample points
   std::vector<Point> points_sampled;
@@ -81,10 +81,10 @@ int main(void)
 
   //begin
   std::vector<Point>::const_iterator sample_points_begin = 
-  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Sequential_tag>(
+  CGAL::regularize_and_simplify_point_set<CGAL::Parallel_tag>(
   points.begin(),
   points.end(),
-  back_inserter(output),
+  //back_inserter(output),
   retain_percentage, 
   neighbor_radius,
   iter_number,
@@ -93,11 +93,15 @@ int main(void)
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "total done: " << task_timer.time() << " seconds, " 
             << (memory>>20) << " Mb allocated" << std::endl;  
-  ////Save point set.
+  // Copy results to sample points
+  std::copy(sample_points_begin,
+            static_cast<std::vector<Point>::const_iterator>(points.end()),
+            points_sampled.begin());
+
   std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
   if (!out ||
-    !CGAL::write_xyz_points(
-    out, output.begin(), output.end()))
+     !CGAL::write_xyz_points(
+      out, points_sampled.begin(), points_sampled.end()))
   {
     return EXIT_FAILURE;
   }
