@@ -344,7 +344,6 @@ compute_repulsion_term(
     {
       density_set.push_back(density_weight_set[sample_index]);
     }
-
   }
 
   if (neighbor_sample_points.empty())
@@ -547,8 +546,9 @@ wlop_simplify_and_regularize_point_set(
   const Kernel&                    ///< geometric traits.
 )
 {
+#ifdef CGAL_DEBUG_MODE
   Timer task_timer;
-
+#endif
   // basic geometric types
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::Vector_3  Vector;
@@ -603,7 +603,6 @@ wlop_simplify_and_regularize_point_set(
     for (RandomAccessIterator temp = first; 
          temp != beyond; ++temp)
     {
-      
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point original_p = get(point_pmap, temp);
 #else
@@ -625,8 +624,9 @@ wlop_simplify_and_regularize_point_set(
   FT radius2 = radius * radius;
 
   CGAL_point_set_processing_precondition(radius > 0);
+#ifdef CGAL_DEBUG_MODE
   task_timer.start();
-
+#endif
   // Initiate a AABB_Tree search for original points
   AABB_Tree orignal_aabb_tree(first_original_iter,
                                beyond);
@@ -683,17 +683,21 @@ wlop_simplify_and_regularize_point_set(
       }
     }
   }
-  
+
+#ifdef CGAL_DEBUG_MODE
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "compute density for original done: " << task_timer.time() << " seconds, " 
     << (memory>>20) << " Mb allocated" << std::endl << std::endl;
+#endif
 
   std::vector<Point> update_sample_points(nb_points_sample);
   std::vector<Point>::iterator sample_iter;
   
   for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
   {
+#ifdef CGAL_DEBUG_MODE
     task_timer.reset();
+#endif
     RandomAccessIterator first_sample_iter = sample_points.begin();
     AABB_Tree sample_aabb_tree(sample_points.begin(), sample_points.end());
 
@@ -714,10 +718,12 @@ wlop_simplify_and_regularize_point_set(
       }
     }
 
+#ifdef CGAL_DEBUG_MODE
     long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "compute density for sample done: " << task_timer.time() << " seconds, " 
               << (memory>>20) << " Mb allocated" << std::endl;
     task_timer.reset();
+#endif
 
     std::vector<Point>::iterator update_iter = update_sample_points.begin();
     for (sample_iter = sample_points.begin();
@@ -832,12 +838,12 @@ wlop_simplify_and_regularize_point_set(
 //        p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
 //      }
 //    }
-
+#ifdef CGAL_DEBUG_MODE
     memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "compute_repulsion_term done: " << task_timer.time() << " seconds, " 
-              << (memory>>20) << " Mb allocated" << std::endl;
-   
+      << (memory>>20) << " Mb allocated" << std::endl;
     std::cout << "iterate: " << iter_n + 1 << std::endl << std::endl;
+#endif
   }
 
   // final out put
