@@ -18,8 +18,8 @@ typedef Kernel::Point_3 Point;
 int main(void)
 {
   //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
+  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<Point> points;
@@ -58,13 +58,13 @@ int main(void)
 
   //way 2 begin
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-    points.begin(),
-    points.end(),
-    back_inserter(output),
-    retain_percentage, 
-    neighbor_radius,
-    iter_number,
-    need_compute_density);
+                                               points.begin(),
+                                               points.end(),
+                                               back_inserter(output),
+                                               retain_percentage, 
+                                               neighbor_radius,
+                                               iter_number,
+                                               need_compute_density);
   //way 2 end
 
   long memory = CGAL::Memory_sizer().virtual_size();

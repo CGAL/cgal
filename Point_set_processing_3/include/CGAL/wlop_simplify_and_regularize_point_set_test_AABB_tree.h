@@ -214,7 +214,8 @@ compute_density_weight_for_original_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<typename Primitive::Id>::iterator iter = neighbor_original_points.begin();
+  std::vector<typename Primitive::Id>::iterator iter;
+  iter = neighbor_original_points.begin();
   for (; iter != neighbor_original_points.end(); iter++)
   {
     Point& np = *(*iter);
@@ -265,7 +266,8 @@ compute_density_weight_for_sample_point(
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
-  std::vector<typename Primitive::Id>::iterator iter = neighbor_sample_points.begin();
+  std::vector<typename Primitive::Id>::iterator iter;
+  iter = neighbor_sample_points.begin();
   for (; iter != neighbor_sample_points.end(); iter++)
   {
     Point& np = *(*iter);
@@ -292,13 +294,14 @@ compute_density_weight_for_sample_point(
 ///
 /// The core of the algorithm is a Weighted Locally Optimal projection operator
 /// with a density uniformization term. 
-/// For more details, please see: http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
+/// For more details, please see:
+/// http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
 /// @tparam RandomAccessIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
-///         It can be omitted if RandomAccessIterator value_type is convertible to 
-///         Point_3<Kernel>.
+///         It can be omitted if RandomAccessIterator value_type is convertible  
+///         to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
@@ -327,14 +330,10 @@ wlop_simplify_and_regularize_point_set(
                                ///< slow. Default: 0.05 * diameter of bbox.
   const unsigned int iter_number,  ///< number of iterations. Default: 35.
   const bool need_compute_density, ///< if needed to compute density when the
-                                   ///< input is highly nonuniform, but it 
-                                   ///< takes time. Default: ture.
+                                   ///< input is nonuniform, Default: ture. 
   const Kernel&                    ///< geometric traits.
 )
 {
-#ifdef CGAL_DEBUG_MODE
-  Timer task_timer;
-#endif
   // basic geometric types
   typedef typename Kernel::Point_3   Point;
   typedef typename Kernel::Vector_3  Vector;
@@ -411,26 +410,19 @@ wlop_simplify_and_regularize_point_set(
   FT radius2 = radius * radius;
   CGAL_point_set_processing_precondition(radius > 0);
 
-#ifdef CGAL_DEBUG_MODE
-  task_timer.start();
-#endif
   // Initiate a AABB_Tree search for original points
   AABB_Tree orignal_aabb_tree(first_original_iter, beyond);
-
-#ifdef CGAL_DEBUG_MODE
-  long memory = CGAL::Memory_sizer().virtual_size();
-  std::cout << "compute density for original done: " << task_timer.time() << " seconds, " 
-    << (memory>>20) << " Mb allocated" << std::endl << std::endl;
-#endif
 
   std::vector<Point> update_sample_points(number_of_sample);
   std::vector<Point>::iterator sample_iter;
   
+#ifdef CGAL_DEBUG_MODE
+  Timer task_timer;
+  task_timer.start();
+#endif
+
   for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
   {
-#ifdef CGAL_DEBUG_MODE
-    task_timer.reset();
-#endif
     RandomAccessIterator first_sample_iter = sample_points.begin();
     AABB_Tree sample_aabb_tree(sample_points.begin(), sample_points.end());
 
@@ -508,10 +500,11 @@ wlop_simplify_and_regularize_point_set(
     }
 
 #ifdef CGAL_DEBUG_MODE
-    memory = CGAL::Memory_sizer().virtual_size();
+    long memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "Iteration: " << iter_n << " takes "
               << task_timer.time() << " seconds, " 
               << (memory>>20) << " Mb allocated" << std::endl;
+    task_timer.reset();
 #endif
   }
 
@@ -548,7 +541,7 @@ wlop_simplify_and_regularize_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type  Point;
   typedef typename Kernel_traits<Point>::Kernel                   Kernel;
-  typedef typename value_type_traits<OutputIterator>::type        OutputIteratorType;
+  typedef typename value_type_traits<OutputIterator>::type  OutputIteratorType;
   return wlop_simplify_and_regularize_point_set
     <Concurrency_tag, OutputIteratorType>(
       first, beyond,
@@ -623,12 +616,13 @@ wlop_simplify_and_regularize_point_set(
           <Concurrency_tag, OutputIteratorType>(
           first, beyond,
           output,
-          #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+        #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
           make_dereference_property_map(first),
-          #else
-          make_identity_property_map(typename std::iterator_traits<RandomAccessIterator >::
-                                      value_type()),
-          #endif
+        #else
+          make_identity_property_map(typename std::iterator_traits
+                                     <RandomAccessIterator >::
+                                     value_type()),
+        #endif
           retain_percentage, 
           neighbor_radius, 
           max_iter_number, 
