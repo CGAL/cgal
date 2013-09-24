@@ -21,7 +21,6 @@
 
 #include <CGAL/Polynomial.h>
 #include <CGAL/RS/polynomial_1.h>
-#include <CGAL/RS/memory.h>
 
 namespace CGAL{
 
