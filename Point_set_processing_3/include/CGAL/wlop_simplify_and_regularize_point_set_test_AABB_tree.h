@@ -77,20 +77,20 @@ compute_average_term(
   RandomAccessIterator original_first_iter
 )
 {
-  CGAL_point_set_processing_precondition(radius > 0);
+  CGAL_point_set_processing_precondition( radius > 0 );
   bool is_density_weight_set_empty = density_weight_set.empty();
 
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3                        Point;
+  typedef typename Kernel::Vector_3                       Vector;
+  typedef typename Kernel::FT                             FT;
 
   // types for AABB
-  typedef Kernel::Sphere_3 Circle;
-  typedef std::vector<Point>::iterator Iterator;
-  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
-  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+  typedef Kernel::Sphere_3                                Circle;
+  typedef std::vector<Point>::iterator                    Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator>    Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive>            Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB>                    AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_original_points;
   Circle sphere_query(query, radius * radius);
@@ -172,9 +172,9 @@ template <typename Kernel,
 typename Kernel::Vector_3
 compute_repulsion_term(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree,                       ///<AABB-tree
-  const typename Kernel::FT radius,      //accept neighborhood radius
-  const std::vector<typename Kernel::FT>& density_weight_set, //if need density
+  Tree& aabb_tree,                       ///< AABB-tree
+  const typename Kernel::FT radius,      ///< neighborhood radius
+  const std::vector<typename Kernel::FT>& density_weight_set,///< if need density
   RandomAccessIterator sample_first_iter
 )
 {
@@ -182,16 +182,16 @@ compute_repulsion_term(
   bool is_density_weight_set_empty = density_weight_set.empty();
 
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3                         Point;
+  typedef typename Kernel::Vector_3                        Vector;
+  typedef typename Kernel::FT                              FT;
 
-  // types for AABB
-  typedef Kernel::Sphere_3 Circle;
-  typedef std::vector<Point>::iterator Iterator;
-  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
-  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+  // types for AABB                                        
+  typedef Kernel::Sphere_3                                 Circle;
+  typedef std::vector<Point>::iterator                     Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator>     Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive>             Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB>                     AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
   Circle sphere_query(query, radius * radius);
@@ -223,7 +223,7 @@ compute_repulsion_term(
 
   //Compute average term
   FT weight = (FT)0.0, repulsion_weight_sum = (FT)0.0;
-  FT iradius16 = -(FT)4.0/radius2;
+  FT iradius16 = -(FT)4.0 / radius2;
   Vector repulsion = CGAL::NULL_VECTOR; 
   
   iter = neighbor_sample_points.begin();
@@ -275,29 +275,30 @@ template <typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree, ///< AABB-tree
-  const typename Kernel::FT radius
+  Tree& aabb_tree,                       ///< AABB-tree
+  const typename Kernel::FT radius       ///< neighbor radius
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
 
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::FT FT;
-
-  // types for AABB
-  typedef Kernel::Sphere_3 Circle;
-  typedef std::vector<Point>::iterator Iterator;
-  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
-  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+  typedef typename Kernel::Point_3                         Point;
+  typedef typename Kernel::Vector_3                        Vector;
+  typedef typename Kernel::FT                              FT;
+                                                           
+  // types for AABB                                        
+  typedef Kernel::Sphere_3                                 Circle;
+  typedef std::vector<Point>::iterator                     Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator>     Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive>             Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB>                     AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_original_points;
 
   Circle sphere_query(query, radius * radius);
   aabb_tree.all_contained_primitives(sphere_query, 
                                 std::back_inserter(neighbor_original_points));
+
   //Compute density weight
   FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
@@ -329,21 +330,21 @@ template <typename Kernel, typename Tree>
 typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree, ///< KD-tree
-  const typename Kernel::FT radius
+  Tree& aabb_tree,                       ///< AABB-tree
+  const typename Kernel::FT radius       ///< neighbor radius
 )
 {
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3                          Point;
+  typedef typename Kernel::Vector_3                         Vector;
+  typedef typename Kernel::FT                               FT;
 
-  // types for AABB
-  typedef Kernel::Sphere_3 Circle;
-  typedef std::vector<Point>::iterator Iterator;
-  typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
-  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+  // types for AABB                                         
+  typedef Kernel::Sphere_3                                  Circle;
+  typedef std::vector<Point>::iterator                      Iterator;
+  typedef CGAL::AABB_point_primitive<Kernel, Iterator>      Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive>              Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB>                      AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
   Circle sphere_query(query, radius * radius);
@@ -396,7 +397,7 @@ compute_density_weight_for_sample_point(
 // This variant requires all parameters.
 template <typename Concurrency_tag,
           typename OutputIteratorValueType,
-          typename OutputIterator,     //add output iterator
+          typename OutputIterator,
           typename RandomAccessIterator ,
           typename PointPMap,
           typename Kernel>
@@ -404,30 +405,30 @@ void
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< iterator over the first input point.
   RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
-  OutputIterator output,        //add back-inserter
-  PointPMap point_pmap, ///< property map RandomAccessIterator  -> Point_3
-  PointPMap point_pmap_output,
-  double retain_percentage, ///< percentage of points to retain.
-  double radius, ///< number of neighbors.
-  const unsigned int iter_number,///< number of iterations.
+  OutputIterator output,       ///< add back-inserter
+  PointPMap point_pmap,        ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_output, ///< property map OutputIterator
+  double retain_percentage,    ///< percentage of points to retain.
+  double radius,               ///< neighbors radius.
+  const unsigned int iter_number,  ///< number of iterations.
   const bool need_compute_density, ///< if needed to compute density to
                                    /// generate more regularized result. 
-  const Kernel& /*kernel*/ ///< geometric traits.
+  const Kernel&                    ///< geometric traits.
 )
 {
   Timer task_timer;
 
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3   Point;
+  typedef typename Kernel::Vector_3  Vector;
+  typedef typename Kernel::FT        FT;
 
   // types for AABB
-  typedef Kernel::Sphere_3 Circle;
-  typedef std::vector<Point>::iterator Iterator;
+  typedef Kernel::Sphere_3                             Circle;
+  typedef std::vector<Point>::iterator                 Iterator;
   typedef CGAL::AABB_point_primitive<Kernel, Iterator> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits_AABB;
-  typedef CGAL::AABB_tree<Traits_AABB> AABB_Tree;
+  typedef CGAL::AABB_traits<Kernel, Primitive>         Traits_AABB;
+  typedef CGAL::AABB_tree<Traits_AABB>                 AABB_Tree;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -442,20 +443,20 @@ wlop_simplify_and_regularize_point_set(
   // Computes original(input) and sample points size 
   std::size_t nb_points_original = std::distance(first, beyond);
   std::size_t nb_points_sample = (std::size_t)(FT(nb_points_original) * 
-                                 (retain_percentage/100.0));
+                                 (retain_percentage / 100.0));
   std::size_t first_index_to_sample = nb_points_original - nb_points_sample;
 
   // The first point iter of original and sample points
-  RandomAccessIterator it;// point iterator
+  RandomAccessIterator it;                             // point iterator
   RandomAccessIterator first_original_point = first;
   RandomAccessIterator first_sample_point = first;
   std::advance(first_sample_point, first_index_to_sample);
 
   //Copy sample points
   std::vector<Point> sample_points(nb_points_sample);
-  unsigned int i; // sample point index
+  unsigned int i;                                     // sample point index
 
-  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
+  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     sample_points[i] = get(point_pmap, it);
@@ -508,10 +509,10 @@ wlop_simplify_and_regularize_point_set(
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(
-        tbb::blocked_range<size_t>(0,nb_points_original),
+        tbb::blocked_range<size_t>(0, nb_points_original),
         [&](const tbb::blocked_range<size_t>& r)
       {
-        for (size_t i = r.begin(); i< r.end(); ++i)
+        for (size_t i = r.begin(); i < r.end(); ++i)
         {
           RandomAccessIterator cur = first;
           std::advance(cur, i);
@@ -556,7 +557,7 @@ wlop_simplify_and_regularize_point_set(
     << (memory>>20) << " Mb allocated" << std::endl << std::endl;
 
 
-  for (unsigned int iter_n = 0; iter_n < iter_number; iter_n++)
+  for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
   {
     task_timer.reset();
     RandomAccessIterator first_sample_point = sample_points.begin();
@@ -592,10 +593,10 @@ wlop_simplify_and_regularize_point_set(
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(
-        tbb::blocked_range<size_t>(0,nb_points_sample),
+        tbb::blocked_range<size_t>(0, nb_points_sample),
         [&](const tbb::blocked_range<size_t>& r)
       {
-        for (size_t i = r.begin(); i< r.end(); ++i)
+        for (size_t i = r.begin(); i < r.end(); ++i)
         {
           Point& p = sample_points[i];
           average_set[i] = simplify_and_regularize_internal::
@@ -611,7 +612,7 @@ wlop_simplify_and_regularize_point_set(
     }else
 #endif
     {
-      for (i = 0; i < sample_points.size(); i++)
+      for (i = 0; i < sample_points.size(); ++i)
       {
         Point& p = sample_points[i];
         average_set[i] = simplify_and_regularize_internal::
@@ -632,10 +633,10 @@ wlop_simplify_and_regularize_point_set(
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::parallel_for(
-        tbb::blocked_range<size_t>(0,nb_points_sample),
+        tbb::blocked_range<size_t>(0, nb_points_sample),
         [&](const tbb::blocked_range<size_t>& r)
       {
-        for (size_t i = r.begin(); i< r.end(); ++i)
+        for (size_t i = r.begin(); i < r.end(); ++i)
         {
           Point& p = sample_points[i];
           repulsion_set[i] = simplify_and_regularize_internal::
@@ -676,7 +677,7 @@ wlop_simplify_and_regularize_point_set(
     std::cout << "iterate: " << iter_n + 1 << std::endl << std::endl;
   }
 
-  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
+  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
   {
     const Point& sample_p = sample_points[i];
     *output++ = sample_p;
@@ -694,31 +695,32 @@ template <typename Concurrency_tag,
           typename PointPMap>
 void 
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator  first, ///< iterator over the first input point
+  RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
-  OutputIterator output,        //add back-inserter
-  PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
-  PointPMap point_pmap_output,
-  double retain_percentage, ///< percentage of points to retain
-  double neighbor_radius, ///< size of neighbors.
+  OutputIterator output,        ///< add back-inserter
+  PointPMap point_pmap,         ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_output,  ///< property map OutputIterator
+  double retain_percentage,     ///< percentage of points to retain
+  double neighbor_radius,       ///< size of neighbors.
   const unsigned int max_iter_number, ///< number of iterations.
-  const bool need_compute_density  ///< if needed to compute density 
-                                   ///  to generate more rugularized result.                                 
+  const bool need_compute_density     ///< if needed to compute density 
+                                      ///  to generate more rugularized result.                                 
 ) 
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  typedef typename value_type_traits<OutputIterator>::type OutputIteratorType;
-  return wlop_simplify_and_regularize_point_set<Concurrency_tag, OutputIteratorType>(
-    first, beyond,
-    output,
-    point_pmap,
-    point_pmap_output,
-    retain_percentage,
-    neighbor_radius,
-    max_iter_number,
-    need_compute_density,
-    Kernel());
+  typedef typename boost::property_traits<PointPMap>::value_type      Point;
+  typedef typename Kernel_traits<Point>::Kernel                       Kernel;
+  typedef typename value_type_traits<OutputIterator>::type   OutputIteratorType;
+  return wlop_simplify_and_regularize_point_set
+    <Concurrency_tag, OutputIteratorType>(
+      first, beyond,
+      output,
+      point_pmap,
+      point_pmap_output,
+      retain_percentage,
+      neighbor_radius,
+      max_iter_number,
+      need_compute_density,
+      Kernel());
 }
 /// @endcond
 
@@ -769,12 +771,12 @@ void
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
-  OutputIterator output,        //add back-inserter
+  OutputIterator output,        ///< add back-inserter
   double retain_percentage = 5, ///< percentage of points to retain
-  double neighbor_radius = -1, ///< size of neighbors.
+  double neighbor_radius = -1,  ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
-  const bool need_compute_density = true ///< if needed to compute density to   
-                                          /// generate more uniform result. 
+  const bool need_compute_density = true   ///< if needed to compute density to   
+                                           /// generate more uniform result. 
 )
 {
   typedef typename value_type_traits<OutputIterator>::type OutputIteratorType;
