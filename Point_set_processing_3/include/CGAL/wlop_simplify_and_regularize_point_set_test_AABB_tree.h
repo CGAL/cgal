@@ -70,10 +70,10 @@ template <typename Concurrency_tag,
           typename RandomAccessIterator>
 typename Kernel::Vector_3
 compute_average_term(
-  const typename Kernel::Point_3& query, ///< 3D point to project
-  Tree& aabb_tree,                       ///< AABB-tree
-  const typename Kernel::FT radius,      //accept neighborhood radius
-  const std::vector<typename Kernel::FT>& density_weight_set,//if  need density
+  const typename Kernel::Point_3& query,      ///< 3D point to project
+  Tree& aabb_tree,                            ///< AABB-tree
+  const typename Kernel::FT radius,           ///<  neighborhood radius
+  const std::vector<typename Kernel::FT>& density_weight_set,//if need density
   RandomAccessIterator original_first_iter
 )
 {
@@ -463,7 +463,35 @@ wlop_simplify_and_regularize_point_set(
     sample_points[i] = get(point_pmap, *it);
 #endif
   }
+  
+  //compute default neighbor_radius, if no radius in
+  if (radius < 0)
+  {
+    CGAL::Bbox_3 bbox(0, 0, 0, 0, 0, 0);
+    for (i = 0; i < nb_points_original; ++i)
+    {
+      RandomAccessIterator temp = first;
+      std::advance(temp, i);
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      Point original_p = get(point_pmap, temp);
+#else
+      Point original_p = get(point_pmap, *temp);
+#endif 
+      bbox += original_p.bbox();
+    }
 
+    Point max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
+    Point min_p(bbox.xmin(), bbox.ymin(), bbox.zmin());
+    FT bbox_diameter = CGAL::squared_distance(max_p, min_p);
+    radius = std::sqrt(bbox_diameter) * 0.05;
+
+#ifdef CGAL_DEBUG_MODE
+    std::cout << "default estimate radius:  " << radius 
+      << std::endl << std::endl;
+#endif
+  }
+
+  CGAL_point_set_processing_precondition(radius > 0);
   task_timer.start();
 
   // Initiate a AABB_Tree search for original points
@@ -487,18 +515,18 @@ wlop_simplify_and_regularize_point_set(
         {
           RandomAccessIterator cur = first;
           std::advance(cur, i);
-            FT density = simplify_and_regularize_internal::
-                   compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                                (
-                                                #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                  get(point_pmap, cur),
-                                                #else
-                                                  get(point_pmap, *cur),
-                                                #endif 
-                                                  aabb_original_tree, 
-                                                  radius);
+          FT density = simplify_and_regularize_internal::
+                  compute_density_weight_for_original_point<Kernel, AABB_Tree>
+                                              (
+                                              #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                                get(point_pmap, cur),
+                                              #else
+                                                get(point_pmap, *cur),
+                                              #endif 
+                                                aabb_original_tree, 
+                                                radius);
 
-            original_density_weight_set[i] = density;
+          original_density_weight_set[i] = density;
         }
       }
       );
@@ -708,7 +736,7 @@ wlop_simplify_and_regularize_point_set(
   OutputIterator output,        //add back-inserter
   PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
   double retain_percentage = 5, ///< percentage of points to retain
-  double neighbor_radius = 0.25, ///< size of neighbors.
+  double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
   const bool need_compute_density = true ///< if needed to compute density to   
                                           /// generate more uniform result. 
@@ -743,7 +771,7 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  beyond, ///< past-the-end iterator
   OutputIterator output,        //add back-inserter
   double retain_percentage = 5, ///< percentage of points to retain
-  double neighbor_radius = 0.25, ///< size of neighbors.
+  double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
   const bool need_compute_density = true ///< if needed to compute density to   
                                           /// generate more uniform result. 
