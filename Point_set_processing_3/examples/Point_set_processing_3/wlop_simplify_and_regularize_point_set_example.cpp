@@ -49,22 +49,22 @@ int main(void)
   std::vector<Point> output;
 
   //way 1 begin
-  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Sequential_tag>(
+  /*CGAL::wlop_simplify_and_regularize_point_set<CGAL::Sequential_tag>(
   points.begin(), 
   points.end(),
-  back_inserter(output));
+  back_inserter(output));*/
   //way 1 end
 
 
   //way 2 begin
-  /*CGAL::wlop_simplify_and_regularize_point_set<CGAL::Sequential_tag>(
-  points.begin(),
-  points.end(),
-  back_inserter(output),
-  retain_percentage, 
-  neighbor_radius,
-  iter_number,
-  need_compute_density);*/
+  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+    points.begin(),
+    points.end(),
+    back_inserter(output),
+    retain_percentage, 
+    neighbor_radius,
+    iter_number,
+    need_compute_density);
   //way 2 end
 
   long memory = CGAL::Memory_sizer().virtual_size();
