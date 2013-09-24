@@ -165,6 +165,12 @@ struct Exact_ring_selector<Lazy_exact_nt<ET> >
 : Exact_ring_selector<ET>
 {};
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+// Added for backward compatibility
+template < typename ET >
+struct Exact_type_selector : Exact_field_selector< ET > {};
+#endif
+
 } } // namespace CGAL::internal
 
 #endif // CGAL_INTERNAL_EXACT_TYPE_SELECTOR_H
