@@ -621,6 +621,7 @@ wlop_simplify_and_regularize_point_set(
       << std::endl << std::endl;
 #endif
   }
+
   FT radius2 = radius * radius;
 
   CGAL_point_set_processing_precondition(radius > 0);
@@ -726,24 +727,55 @@ wlop_simplify_and_regularize_point_set(
 #endif
 
     std::vector<Point>::iterator update_iter = update_sample_points.begin();
-    for (sample_iter = sample_points.begin();
-         sample_iter != sample_points.end(); ++sample_iter, ++update_iter)
+    //parallel
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      *update_iter = simplify_and_regularize_internal::
-                     compute_update_sample_point<Kernel,
-                                                 AABB_Tree,
-                                                 RandomAccessIterator>
-                     (*sample_iter,
-                      orignal_aabb_tree,
-                      sample_aabb_tree,
-                      radius2,
-                      original_density_weights, 
-                      sample_density_weights,
-                      first_original_iter,
-                      first_sample_iter
-                     );
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, nb_points_sample),
+        [&](const tbb::blocked_range<size_t>& r)
+        {
+          for (size_t i = r.begin(); i != r.end(); ++i)
+          {
+              update_sample_points[i] = simplify_and_regularize_internal::
+                    compute_update_sample_point<Kernel,
+                                                AABB_Tree,
+                                                RandomAccessIterator>
+                    (sample_points[i],
+                    orignal_aabb_tree,
+                    sample_aabb_tree,
+                    radius2,
+                    original_density_weights, 
+                    sample_density_weights,
+                    first_original_iter,
+                    first_sample_iter
+                    );
+          }
+        }
+      );
+    }else
+#endif
+    {
+      //sequential
+      for (sample_iter = sample_points.begin();
+        sample_iter != sample_points.end(); ++sample_iter, ++update_iter)
+      {
+        *update_iter = simplify_and_regularize_internal::
+          compute_update_sample_point<Kernel,
+          AABB_Tree,
+          RandomAccessIterator>
+          (*sample_iter,
+          orignal_aabb_tree,
+          sample_aabb_tree,
+          radius2,
+          original_density_weights, 
+          sample_density_weights,
+          first_original_iter,
+          first_sample_iter
+          );
+      }
     }
-
+    
     sample_iter = sample_points.begin();
     for (update_iter = update_sample_points.begin();
          update_iter != update_sample_points.end();
@@ -752,92 +784,6 @@ wlop_simplify_and_regularize_point_set(
       *sample_iter = *update_iter;
     }
 
-//    // Compute average term and repulsion term for each sample points ,
-//    // then update each sample points
-//    std::vector<Vector> average_set(nb_points_sample);
-//    std::vector<Vector> repulsion_set(nb_points_sample);
-//
-//    //parallel
-//#ifdef CGAL_LINKED_WITH_TBB
-//    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-//    {
-//      tbb::parallel_for(
-//        tbb::blocked_range<size_t>(0, nb_points_sample),
-//        [&](const tbb::blocked_range<size_t>& r)
-//      {
-//        for (size_t i = r.begin(); i < r.end(); ++i)
-//        {
-//          Point& p = sample_points[i];
-//          average_set[i] = simplify_and_regularize_internal::
-//            compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
-//            (p, 
-//            orignal_aabb_tree, 
-//            radius, 
-//            original_density_weights,
-//            first_original_iter);
-//        }
-//      }
-//      );
-//    }else
-//#endif
-//    {
-//      for (i = 0; i < sample_points.size(); ++i)
-//      {
-//        Point& p = sample_points[i];
-//        average_set[i] = simplify_and_regularize_internal::
-//          compute_average_term<Concurrency_tag, Kernel, AABB_Tree, RandomAccessIterator>
-//          (p, 
-//          orignal_aabb_tree, 
-//          radius, 
-//          original_density_weights,
-//          first_original_iter);
-//      }
-//    }
-//
-//    std::cout<<"compute average term time: "<<task_timer.time()<<std::endl;
-//    task_timer.reset();
-//
-//    //parallel
-//#ifdef CGAL_LINKED_WITH_TBB
-//    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-//    {
-//      tbb::parallel_for(
-//        tbb::blocked_range<size_t>(0, nb_points_sample),
-//        [&](const tbb::blocked_range<size_t>& r)
-//      {
-//        for (size_t i = r.begin(); i < r.end(); ++i)
-//        {
-//          Point& p = sample_points[i];
-//          repulsion_set[i] = simplify_and_regularize_internal::
-//            compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
-//            (p, 
-//            sample_aabb_tree, 
-//            radius, 
-//            sample_density_weights,
-//            first_sample_iter);
-//
-//          p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
-//        }
-//        
-//      }
-//      );
-//    }else
-//#endif
-//    {
-//      for (i = 0; i < sample_points.size(); i++)
-//      {
-//        Point& p = sample_points[i];
-//        repulsion_set[i] = simplify_and_regularize_internal::
-//          compute_repulsion_term<Kernel, AABB_Tree, RandomAccessIterator>
-//          (p, 
-//          sample_aabb_tree, 
-//          radius, 
-//          sample_density_weights,
-//          first_sample_iter);
-//
-//        p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
-//      }
-//    }
 #ifdef CGAL_DEBUG_MODE
     memory = CGAL::Memory_sizer().virtual_size();
     std::cout << "compute_repulsion_term done: " << task_timer.time() << " seconds, " 
@@ -846,7 +792,7 @@ wlop_simplify_and_regularize_point_set(
 #endif
   }
 
-  // final out put
+  // final output
   for(sample_iter = sample_points.begin(); 
       sample_iter != sample_points.end(); ++sample_iter)
   {
