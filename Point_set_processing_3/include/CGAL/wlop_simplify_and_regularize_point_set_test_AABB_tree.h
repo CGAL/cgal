@@ -101,7 +101,7 @@ compute_update_sample_point(
 
   Vector average = CGAL::NULL_VECTOR; 
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
-  FT iradius16 = -(FT)4.0/radius2;
+  FT iradius16 = -(FT)4.0 / radius2;
 
   std::vector<typename Primitive::Id>::iterator iter;
   iter = neighbor_original_points.begin();
@@ -406,7 +406,7 @@ typename Kernel::FT
 compute_density_weight_for_original_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
   Tree& original_aabb_tree,                       ///< AABB-tree
-  const typename Kernel::FT radius       ///< neighbor radius
+  const typename Kernel::FT radius2       ///< neighbor radius
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -425,12 +425,12 @@ compute_density_weight_for_original_point(
 
   std::vector<typename Primitive::Id> neighbor_original_points;
 
-  Circle sphere_query(query, radius * radius);
+  Circle sphere_query(query, radius2);
   original_aabb_tree.all_contained_primitives(sphere_query, 
                                 std::back_inserter(neighbor_original_points));
 
   //Compute density weight
-  FT radius2 = radius * radius;
+  //FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
@@ -461,7 +461,7 @@ typename Kernel::FT
 compute_density_weight_for_sample_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
   Tree& sample_aabb_tree,                ///< AABB-tree
-  const typename Kernel::FT radius       ///< neighbor radius
+  const typename Kernel::FT radius2       ///< neighbor radius
 )
 {
   // basic geometric types
@@ -477,12 +477,12 @@ compute_density_weight_for_sample_point(
   typedef CGAL::AABB_tree<Traits_AABB>                      AABB_Tree;
 
   std::vector<typename Primitive::Id> neighbor_sample_points;
-  Circle sphere_query(query, radius * radius);
+  Circle sphere_query(query, radius2);
   sample_aabb_tree.all_contained_primitives(sphere_query, 
                                    std::back_inserter(neighbor_sample_points));
 
   //Compute density weight
-  FT radius2 = radius * radius;
+  //FT radius2 = radius * radius;
   FT density_weight = (FT)1.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
@@ -657,7 +657,7 @@ wlop_simplify_and_regularize_point_set(
                                                 get(point_pmap, *cur),
                                               #endif 
                                                 orignal_aabb_tree, 
-                                                radius);
+                                                radius2);//change from radius
 
           original_density_weights[i] = density;
         }
@@ -677,7 +677,7 @@ wlop_simplify_and_regularize_point_set(
                                                 get(point_pmap, *it),
                                               #endif  
                                                 orignal_aabb_tree, 
-                                                radius);
+                                                radius2);//change from radius
 
         original_density_weights[i] = density;
       }
@@ -712,7 +712,7 @@ wlop_simplify_and_regularize_point_set(
                      compute_density_weight_for_sample_point<Kernel, AABB_Tree>
                      (*sample_iter, 
                       sample_aabb_tree, 
-                      radius);
+                      radius2);
 
         sample_density_weights.push_back(density);
       }
