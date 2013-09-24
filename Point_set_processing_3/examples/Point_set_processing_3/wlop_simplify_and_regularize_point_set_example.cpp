@@ -18,8 +18,8 @@ typedef Kernel::Point_3 Point;
 int main(void)
 {
   //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
+  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<Point> points;

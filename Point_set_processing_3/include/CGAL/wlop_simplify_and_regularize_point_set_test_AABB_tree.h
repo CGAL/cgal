@@ -69,14 +69,12 @@ compute_update_sample_point(
   Tree& original_aabb_tree,              ///< original AABB-tree
   Tree& sample_aabb_tree,                ///< sample AABB-tree
   const typename Kernel::FT radius2,     ///< neighborhood radius square
-  const std::vector<typename Kernel::FT>& original_densities, ///<
   const std::vector<typename Kernel::FT>& sample_densities, ///< 
   RandomAccessIterator original_first_iter, ///<
   RandomAccessIterator sample_first_iter ///<
 )
 {
   CGAL_point_set_processing_precondition(radius2 > 0);
-  bool is_original_densities_empty = original_densities.empty();
   bool is_sample_densities_empty = sample_densities.empty();
 
   // basic geometric types
@@ -111,11 +109,6 @@ compute_update_sample_point(
     if (dist2 < 1e-10) continue;
 
     weight = exp(dist2 * iradius16);
-
-    if (!is_original_densities_empty)
-    {
-      weight *= original_densities[original_index];
-    }
 
     average_weight_sum += weight;
     average = average + (np - CGAL::ORIGIN) * weight;
@@ -424,59 +417,6 @@ wlop_simplify_and_regularize_point_set(
   // Initiate a AABB_Tree search for original points
   AABB_Tree orignal_aabb_tree(first_original_iter, beyond);
 
-  // Compute original density weight for original points if user needed
-  std::vector<FT> original_density_weights(number_of_original);
-
-  if (need_compute_density)
-  {
-    //parallel
-#ifdef CGAL_LINKED_WITH_TBB
-    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
-    {
-      tbb::parallel_for(
-        tbb::blocked_range<size_t>(0, number_of_original),
-        [&](const tbb::blocked_range<size_t>& r)
-      {
-        for (size_t i = r.begin(); i < r.end(); ++i)
-        {
-          RandomAccessIterator cur = first;
-          std::advance(cur, i);
-          FT density = simplify_and_regularize_internal::
-                  compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                              (
-                                              #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                get(point_pmap, cur),
-                                              #else
-                                                get(point_pmap, *cur),
-                                              #endif 
-                                                orignal_aabb_tree, 
-                                                radius2);
-
-          original_density_weights[i] = density;
-        }
-      }
-      );
-    }else
-#endif
-    {
-      for (it = first_original_iter, i = 0; it != beyond ; ++it, ++i)
-      {
-        FT density = simplify_and_regularize_internal::
-                      compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                              (
-                                              #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                get(point_pmap, it),
-                                              #else
-                                                get(point_pmap, *it),
-                                              #endif  
-                                                orignal_aabb_tree, 
-                                                radius2);
-
-        original_density_weights[i] = density;
-      }
-    }
-  }
-
 #ifdef CGAL_DEBUG_MODE
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cout << "compute density for original done: " << task_timer.time() << " seconds, " 
@@ -529,8 +469,7 @@ wlop_simplify_and_regularize_point_set(
                                                 (sample_points[i],
                                                  orignal_aabb_tree,
                                                  sample_aabb_tree,
-                                                 radius2,
-                                                 original_density_weights, 
+                                                 radius2, 
                                                  sample_density_weights,
                                                  first_original_iter,
                                                  first_sample_iter
@@ -553,7 +492,6 @@ wlop_simplify_and_regularize_point_set(
                                        orignal_aabb_tree,
                                        sample_aabb_tree,
                                        radius2,
-                                       original_density_weights, 
                                        sample_density_weights,
                                        first_original_iter,
                                        first_sample_iter
