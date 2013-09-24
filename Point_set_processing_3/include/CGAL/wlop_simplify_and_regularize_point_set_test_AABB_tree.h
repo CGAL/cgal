@@ -397,12 +397,19 @@ compute_density_weight_for_sample_point(
 
 
 // This variant requires all parameters.
-template <typename Concurrency_tag, typename RandomAccessIterator, typename PointPMap, typename Kernel>
+template <typename Concurrency_tag,
+          typename OutputIteratorValueType,
+          typename OutputIterator,     //add output iterator
+          typename RandomAccessIterator ,
+          typename PointPMap,
+          typename Kernel>
 RandomAccessIterator
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< iterator over the first input point.
   RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map RandomAccessIterator -> Point_3
+  OutputIterator output,        //add back-inserter
+  PointPMap point_pmap, ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_output,
   double retain_percentage, ///< percentage of points to retain.
   double radius, ///< number of neighbors.
   const unsigned int iter_number,///< number of iterations.
@@ -451,8 +458,16 @@ wlop_simplify_and_regularize_point_set(
   std::vector<Point> sample_points(nb_points_sample);
   unsigned int i; // sample point index
 
-  for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
-    sample_points[i] = get(point_pmap, it);
+  for(it = first_sample_point, i = 0; it != beyond; ++it, ++i)
+  {
+    sample_points[i] = get(point_pmap, *it);
+    /*#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    sample_points.push_back(get(point_pmap, it));
+    #else
+    sample_points.push_back(get(point_pmap, *it));
+    #endif*/
+  }
+    //sample_points[i] = get(point_pmap, *it);
 
   task_timer.start();
 
@@ -480,9 +495,15 @@ wlop_simplify_and_regularize_point_set(
           std::advance(cur, i);
           FT density = simplify_and_regularize_internal::
                   compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                                    (get(point_pmap, cur), 
-                                                      aabb_original_tree, 
-                                                      radius);
+                                (
+                                get(point_pmap, *cur),
+                                /*#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                get(point_pmap, cur),
+                                #else
+                                get(point_pmap, *cur),
+                                #endif   */   
+                                   aabb_original_tree, 
+                                   radius);
 
           original_density_weight_set[i] = density;
         }
@@ -491,15 +512,21 @@ wlop_simplify_and_regularize_point_set(
     }else
 #endif
     {
-      for (it = first_original_point; it != beyond ; ++it)
+      for (it = first_original_point, i = 0; it != beyond ; ++it, ++i)
       {
         FT density = simplify_and_regularize_internal::
                       compute_density_weight_for_original_point<Kernel, AABB_Tree>
-                                                        (get(point_pmap, it), 
-                                                         aabb_original_tree, 
-                                                         radius);
+                                 (
+                                 get(point_pmap, *it),
+                                 /*#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                 get(point_pmap, it),
+                                 #else
+                                 get(point_pmap, *it),
+                                 #endif*/      
+                                   aabb_original_tree, 
+                                   radius);
 
-        original_density_weight_set.push_back(density);
+        original_density_weight_set[i] = density;
       }
     }
   }
@@ -566,7 +593,7 @@ wlop_simplify_and_regularize_point_set(
     }else
 #endif
     {
-      for (i = 0; i < sample_points.size(); i++)
+      for (i = 0; i < nb_points_sample; i++)
       {
         Point& p = sample_points[i];
         average_set[i] = simplify_and_regularize_internal::
@@ -604,13 +631,12 @@ wlop_simplify_and_regularize_point_set(
 
           p = CGAL::ORIGIN + average_set[i] + (FT)0.5 * repulsion_set[i];
         }
-        
       }
       );
     }else
 #endif
     {
-      for (i = 0; i < sample_points.size(); i++)
+      for (i = 0; i < nb_points_sample; ++i)
       {
         Point& p = sample_points[i];
         repulsion_set[i] = simplify_and_regularize_internal::
@@ -636,9 +662,10 @@ wlop_simplify_and_regularize_point_set(
   //parallel
   for(it = first_sample_point, i = 0; it != beyond; ++it, i++)
   {
-    Point& original_p = get(point_pmap, it);
+    //Point& original_p = get(point_pmap, *it);
     const Point& sample_p = sample_points[i];
-    original_p = sample_p;
+    //original_p = sample_p;
+    *output++ = sample_p;
   }
 
   return first_sample_point;
@@ -646,50 +673,111 @@ wlop_simplify_and_regularize_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename Concurrency_tag, typename RandomAccessIterator, typename PointPMap>
-RandomAccessIterator
+template <typename Concurrency_tag,
+          typename OutputIteratorValueType,
+          typename OutputIterator,     //add output iterator
+          typename RandomAccessIterator, 
+          typename PointPMap>
+RandomAccessIterator 
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator first, ///< iterator over the first input point
-  RandomAccessIterator beyond, ///< past-the-end iterator
-  PointPMap point_pmap, ///< property map RandomAccessIterator -> Point_3
-  double retain_percentage, ///< percentage of points to retain.
-  double radius, ///< number of neighbors.
-  const unsigned int iter_number, ///< number of iterations.
-  const bool need_compute_density  ///< if needed to compute density to 
-                                   /// generate more rugularized result
+  RandomAccessIterator  first, ///< iterator over the first input point
+  RandomAccessIterator  beyond, ///< past-the-end iterator
+  OutputIterator output,        //add back-inserter
+  PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_output,
+  double retain_percentage, ///< percentage of points to retain
+  double neighbor_radius, ///< size of neighbors.
+  const unsigned int max_iter_number, ///< number of iterations.
+  const bool need_compute_density  ///< if needed to compute density 
+                                   ///  to generate more rugularized result.                                 
 ) 
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
-    first,beyond,
+  typedef typename value_type_traits<OutputIterator>::type OutputIteratorType;
+  return wlop_simplify_and_regularize_point_set<Concurrency_tag, OutputIteratorType>(
+    first, beyond,
+    output,
     point_pmap,
+    point_pmap_output,
     retain_percentage,
-    radius,
-    iter_number,
+    neighbor_radius,
+    max_iter_number,
     need_compute_density,
     Kernel());
 }
 /// @endcond
 
 /// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Dereference_property_map
-template <typename Concurrency_tag, typename RandomAccessIterator>
+/// This variant creates a default point property map=Dereference_property_map.
+template <typename Concurrency_tag, 
+          typename OutputIteratorValueType,
+          typename OutputIterator,     //add output iterator
+          typename RandomAccessIterator,
+          typename PointPMap>
 RandomAccessIterator
 wlop_simplify_and_regularize_point_set(
-  RandomAccessIterator first, ///< iterator over the first input point
-  RandomAccessIterator beyond, ///< past-the-end iterator
-  double retain_percentage = 5, ///< percentage of points to retain.
-  double radius = -1, ///< number of neighbors.
-  const unsigned int iter_number = 30, ///< number of iterations.
-  const bool need_compute_density = true ///< if needed to compute density to 
-                                  /// generate more rugularized result                               
-) 
+  RandomAccessIterator  first,  ///< iterator over the first input point
+  RandomAccessIterator  beyond, ///< past-the-end iterator
+  OutputIterator output,        //add back-inserter
+  PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
+  double retain_percentage = 5, ///< percentage of points to retain
+  double neighbor_radius = -1, ///< size of neighbors.
+  const unsigned int max_iter_number = 35, ///< number of iterations.
+  const bool need_compute_density = true ///< if needed to compute density to   
+                                          /// generate more uniform result. 
+)
 {
-  return wlop_simplify_and_regularize_point_set<Concurrency_tag>(
-    first,beyond,
+   return wlop_simplify_and_regularize_point_set
+    <Concurrency_tag, OutputIteratorValueType>(
+    first, beyond,
+    output,
+    point_pmap,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    make_dereference_property_map(output),
+#else
+    make_identity_property_map(OutputIteratorValueType()),
+#endif
+    retain_percentage, 
+    neighbor_radius, 
+    max_iter_number, 
+    need_compute_density);
+}
+/// @endcond
+
+
+/// @cond SKIP_IN_MANUAL
+/// This variant creates a default point property map=Dereference_property_map.
+template <typename Concurrency_tag, 
+          typename OutputIterator,     //add output iterator
+          typename RandomAccessIterator >
+RandomAccessIterator
+wlop_simplify_and_regularize_point_set(
+  RandomAccessIterator  first,  ///< iterator over the first input point
+  RandomAccessIterator  beyond, ///< past-the-end iterator
+  OutputIterator output,        //add back-inserter
+  double retain_percentage = 5, ///< percentage of points to retain
+  double neighbor_radius = -1, ///< size of neighbors.
+  const unsigned int max_iter_number = 35, ///< number of iterations.
+  const bool need_compute_density = true ///< if needed to compute density to   
+                                          /// generate more uniform result. 
+)
+{
+  typedef typename value_type_traits<OutputIterator>::type OutputIteratorType;
+  return wlop_simplify_and_regularize_point_set
+    <Concurrency_tag, OutputIteratorType>(
+    first, beyond,
+    output,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
-    retain_percentage, radius, iter_number, need_compute_density);
+#else
+    make_identity_property_map(typename std::iterator_traits<RandomAccessIterator >::
+                               value_type()),
+#endif
+    retain_percentage, 
+    neighbor_radius, 
+    max_iter_number, 
+    need_compute_density);
 }
 /// @endcond
 
