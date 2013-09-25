@@ -36,7 +36,7 @@ int main(void)
   const double retain_percentage = 2;   // percentage of points to retain.
   const double neighbor_radius = 0.03;   // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
-  const bool need_compute_density = true;  // if needed to compute density.
+  const bool need_compute_density = false;  // if needed to compute density.
   
   // Make room for sample points
   std::vector<Point> points_sampled;

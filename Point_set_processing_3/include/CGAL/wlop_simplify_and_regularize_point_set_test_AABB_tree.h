@@ -69,12 +69,13 @@ compute_update_sample_point(
   Tree& original_aabb_tree,              ///< original AABB-tree
   Tree& sample_aabb_tree,                ///< sample AABB-tree
   const typename Kernel::FT radius2,     ///< neighborhood radius square
-  const std::vector<typename Kernel::FT>& sample_densities, ///< 
+  const std::vector<typename Kernel::FT>& original_densities, ///<  const std::vector<typename Kernel::FT>& sample_densities, ///< 
   RandomAccessIterator original_first_iter, ///<
   RandomAccessIterator sample_first_iter ///<
 )
 {
   CGAL_point_set_processing_precondition(radius2 > 0);
+  bool is_original_densities_empty = original_densities.empty();
   bool is_sample_densities_empty = sample_densities.empty();
 
   // basic geometric types
@@ -110,6 +111,10 @@ compute_update_sample_point(
 
     weight = exp(dist2 * iradius16);
 
+    if (!is_original_densities_empty)
+    {
+      weight *= original_densities[original_index];
+    }
     average_weight_sum += weight;
     average = average + (np - CGAL::ORIGIN) * weight;
   }
@@ -330,7 +335,7 @@ wlop_simplify_and_regularize_point_set(
                                ///< slow. Default: 0.05 * diameter of bbox.
   const unsigned int iter_number,  ///< number of iterations. Default: 35.
   const bool need_compute_density, ///< if needed to compute density when the
-                                   ///< input is nonuniform, Default: ture. 
+                                   ///< input is nonuniform, Default: false. 
   const Kernel&                    ///< geometric traits.
 )
 {
@@ -416,7 +421,58 @@ wlop_simplify_and_regularize_point_set(
   std::vector<Point> update_sample_points(number_of_sample);
   std::vector<Point>::iterator sample_iter;
   
-#ifdef CGAL_DEBUG_MODE
+  // Compute original density weight for original points if user needed
+  std::vector<FT> original_density_weights(number_of_original);
+
+  if (need_compute_density)
+  {
+    //parallel
+#ifdef CGAL_LINKED_WITH_TBB
+    if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+    {
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>(0, number_of_original),
+        [&](const tbb::blocked_range<size_t>& r)
+      {
+        for (size_t i = r.begin(); i < r.end(); ++i)
+        {
+          RandomAccessIterator cur = first;
+          std::advance(cur, i);
+          FT density = simplify_and_regularize_internal::
+                  compute_density_weight_for_original_point<Kernel, AABB_Tree>
+                                              (
+                                              #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                                get(point_pmap, cur),
+                                              #else
+                                                get(point_pmap, *cur),
+                                              #endif 
+                                                orignal_aabb_tree, 
+                                                radius2);
+
+          original_density_weights[i] = density;
+        }
+      }
+      );
+    }else
+#endif
+    {
+      for (it = first_original_iter, i = 0; it != beyond ; ++it, ++i)
+      {
+        FT density = simplify_and_regularize_internal::
+                      compute_density_weight_for_original_point<Kernel, AABB_Tree>
+                                              (
+                                              #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                                                get(point_pmap, it),
+                                              #else
+                                                get(point_pmap, *it),
+                                              #endif  
+                                                orignal_aabb_tree, 
+                                                radius2);
+
+        original_density_weights[i] = density;
+      }
+    }
+  }#ifdef CGAL_DEBUG_MODE
   Timer task_timer;
   task_timer.start();
 #endif
@@ -426,7 +482,7 @@ wlop_simplify_and_regularize_point_set(
     RandomAccessIterator first_sample_iter = sample_points.begin();
     AABB_Tree sample_aabb_tree(sample_points.begin(), sample_points.end());
 
-    // Compute sample density weight for sample points if user needed
+    // Compute sample density weight for sample points
     std::vector<FT> sample_density_weights;
     if (need_compute_density)
     {
@@ -607,7 +663,7 @@ wlop_simplify_and_regularize_point_set(
   const double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1,  ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
-  const bool need_compute_density = true   ///< if needed to compute density to   
+  const bool need_compute_density = false  ///< if needed to compute density to   
                                            /// generate more uniform result. 
 )
 {
