@@ -214,9 +214,14 @@ private:
   template<typename Dummy>                                              \
   struct Lazy_wrapper_traits<typename Approximate_kernel::NAME, Dummy>  \
     : boost::mpl::int_<WRAPPER> {};
-  
+
+#if CGAL_INTERSECTION_VERSION > 1
   CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
+#else
+  CGAL_WRAPPER_TRAIT(Intersect_2, OBJECT)
+  CGAL_WRAPPER_TRAIT(Intersect_3, OBJECT)
+#endif
   CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
   CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
   CGAL_WRAPPER_TRAIT(Compute_y_3, NT)
