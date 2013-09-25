@@ -130,7 +130,7 @@ protected:
   template <typename Vertex_handle>
   struct Vertex_handle_unique_hash_map_generator
   {
-    typedef Unique_hash_map<Vertex_handle, 
+    typedef Unique_hash_map<Vertex_handle,
                             Vertex_handle,
                             Handle_hash_function> type;
   };
@@ -178,7 +178,7 @@ public:
 
   void unlock_all_elements() const {}
   template <typename P3> void unlock_all_elements_but_one_point(const P3 &) const {}
-  
+
   const Bbox_3 *get_bbox() const
   {
     return NULL;
@@ -208,23 +208,23 @@ protected:
   {
     std::swap(tr.m_lock_ds, m_lock_ds);
   }
-  
+
   template <typename Vertex_triple, typename Facet>
   struct Vertex_triple_Facet_map_generator
   {
     typedef std::map
     <
       Vertex_triple,
-      Facet, 
-      std::less<Vertex_triple>, 
+      Facet,
+      std::less<Vertex_triple>,
       tbb::scalable_allocator<std::pair<const Vertex_triple, Facet> >
     > type;
   };
-  
+
   template <typename Vertex_handle>
   struct Vertex_handle_unique_hash_map_generator
   {
-    typedef Unique_hash_map<Vertex_handle, 
+    typedef Unique_hash_map<Vertex_handle,
                             Vertex_handle,
                             Handle_hash_function,
                             tbb::scalable_allocator<Vertex_handle> > type;
@@ -744,7 +744,7 @@ public:
 
   Vertex_handle infinite_vertex() const
     { return infinite; }
-    
+
   void set_infinite_vertex(Vertex_handle v)
     { infinite=v;}
 
@@ -1219,7 +1219,7 @@ protected:
 
     if (could_lock_zone)
     {
-      if (!try_lock_cell(d))
+      if (!this->try_lock_cell(d))
       {
         *could_lock_zone = false;
         return it;
@@ -1250,7 +1250,7 @@ protected:
 #ifdef CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS
         if (could_lock_zone)
         {
-          if (!try_lock_cell(test))
+          if (!this->try_lock_cell(test))
           {
             *could_lock_zone = false;
             return it;
@@ -1282,7 +1282,7 @@ protected:
 #if !defined(CGAL_MESH_3_CONCURRENT_REFINEMENT_LOCK_ADJ_CELLS)
             if (could_lock_zone)
             {
-              if (!try_lock_cell(test))
+              if (!this->try_lock_cell(test))
               {
                 *could_lock_zone = false;
                 // Unlock
@@ -1547,7 +1547,7 @@ private:
     Vertex_triple, Facet>::type Vertex_triple_Facet_map;
   typedef typename Base::template Vertex_handle_unique_hash_map_generator<
     Vertex_handle>::type Vertex_handle_unique_hash_map;
-  
+
   Vertex_triple make_vertex_triple(const Facet& f) const;
   void make_canonical(Vertex_triple& t) const;
 
@@ -1875,7 +1875,7 @@ public:
       return false;
 
     Cell_handle d = v->cell();
-    if (!try_lock_cell(d)) // LOCK
+    if (!this->try_lock_cell(d)) // LOCK
     {
       return false;
     }
@@ -1891,7 +1891,7 @@ public:
           continue;
         Cell_handle next = c->neighbor(i);
 
-        if (!try_lock_cell(next)) // LOCK
+        if (!this->try_lock_cell(next)) // LOCK
         {
           BOOST_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
@@ -1928,7 +1928,7 @@ public:
       return false;
 
     Cell_handle d = v->cell();
-    if (!try_lock_cell(d)) // LOCK
+    if (!this->try_lock_cell(d)) // LOCK
     {
       return false;
     }
@@ -1944,7 +1944,7 @@ public:
           continue;
         Cell_handle next = c->neighbor(i);
 
-        if (!try_lock_cell(next)) // LOCK
+        if (!this->try_lock_cell(next)) // LOCK
         {
           BOOST_FOREACH(Cell_handle& ch,
             std::make_pair(cells.begin(), cells.end()))
@@ -2520,7 +2520,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
 
     if (could_lock_zone)
     {
-      if (!try_lock_cell(c))
+      if (!this->try_lock_cell(c))
       {
         *could_lock_zone = false;
         return Cell_handle();
@@ -2588,7 +2588,7 @@ exact_locate(const Point & p, Locate_type & lt, int & li, int & lj,
             {
               //previous->unlock(); // DON'T do that, "c" may be in
                                     // the same locking cell as "previous"
-              if (!try_lock_cell(c))
+              if (!this->try_lock_cell(c))
               {
                 *could_lock_zone = false;
                 return Cell_handle();
@@ -2825,7 +2825,7 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
   // CTODO: useless?
   if (could_lock_zone)
   {
-    if (!try_lock_cell(start))
+    if (!this->try_lock_cell(start))
     {
       *could_lock_zone = false;
       return Cell_handle();
@@ -2848,7 +2848,7 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
 
   if (could_lock_zone)
   {
-    if (!try_lock_cell(c))
+    if (!this->try_lock_cell(c))
     {
       *could_lock_zone = false;
       return Cell_handle();
@@ -2891,7 +2891,7 @@ inexact_locate(const Point & t, Cell_handle start, int n_of_turns,
     {
       //previous->unlock(); // DON'T do that, "c" may be in
                             // the same locking cell as "previous"
-      if (!try_lock_cell(c))
+      if (!this->try_lock_cell(c))
       {
         *could_lock_zone = false;
         return Cell_handle();
@@ -4815,7 +4815,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover,
   // in *this
 
   unsigned int i = 0;
-  Vertex_handle_unique_hash_map vmap;  
+  Vertex_handle_unique_hash_map vmap;
   Cell_handle ch = Cell_handle();
 #ifdef CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
   size_t num_vertices = adj_vertices.size();
@@ -5120,7 +5120,7 @@ remove_3D(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
 
-  Vertex_handle_unique_hash_map vmap;  
+  Vertex_handle_unique_hash_map vmap;
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
@@ -5457,7 +5457,7 @@ move_if_no_collision(Vertex_handle v, const Point &p,
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
 
-  Vertex_handle_unique_hash_map vmap;  
+  Vertex_handle_unique_hash_map vmap;
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
@@ -5837,7 +5837,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point &p,
   // and make a map from the vertices in remover.tmp towards the vertices
   // in *this
 
-  Vertex_handle_unique_hash_map vmap;  
+  Vertex_handle_unique_hash_map vmap;
   Cell_handle ch = Cell_handle();
   for(i=0; i < vertices.size(); i++){
     if(! is_infinite(vertices[i])){
