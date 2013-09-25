@@ -1291,3 +1291,10 @@ gmon.*
 /Principal_component_analysis/examples/Principal_component_analysis/cgal_test_with_cmake
 /Principal_component_analysis/examples/Principal_component_analysis/linear_least_squares_fitting_points_2
 /Principal_component_analysis/examples/Principal_component_analysis/linear_least_squares_fitting_triangles_3
+/Polygon/examples/Polygon/CMakeLists.txt
+/Polygon/examples/Polygon/cgal_test_with_cmake
+/Polygon/test/Polygon/CMakeLists.txt
+/Polygon/test/Polygon/cgal_test_with_cmake
+/Polygon/test/Polygon/polytest.ascii
+/Polygon/test/Polygon/polytest.binary
+/Polygon/test/Polygon/polytest.pretty
