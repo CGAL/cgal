@@ -69,7 +69,8 @@ compute_update_sample_point(
   Tree& original_aabb_tree,              ///< original AABB-tree
   Tree& sample_aabb_tree,                ///< sample AABB-tree
   const typename Kernel::FT radius2,     ///< neighborhood radius square
-  const std::vector<typename Kernel::FT>& original_densities, ///<  const std::vector<typename Kernel::FT>& sample_densities, ///< 
+  const std::vector<typename Kernel::FT>& original_densities, ///<  
+  const std::vector<typename Kernel::FT>& sample_densities, ///< 
   RandomAccessIterator original_first_iter, ///<
   RandomAccessIterator sample_first_iter ///<
 )
@@ -422,7 +423,7 @@ wlop_simplify_and_regularize_point_set(
   std::vector<Point>::iterator sample_iter;
   
   // Compute original density weight for original points if user needed
-  std::vector<FT> original_density_weights(number_of_original);
+  std::vector<FT> original_density_weights;
 
   if (need_compute_density)
   {
@@ -449,7 +450,7 @@ wlop_simplify_and_regularize_point_set(
                                                 orignal_aabb_tree, 
                                                 radius2);
 
-          original_density_weights[i] = density;
+          original_density_weights.push_back(density);
         }
       }
       );
@@ -469,10 +470,12 @@ wlop_simplify_and_regularize_point_set(
                                                 orignal_aabb_tree, 
                                                 radius2);
 
-        original_density_weights[i] = density;
+        original_density_weights.push_back(density);
       }
     }
-  }#ifdef CGAL_DEBUG_MODE
+  }
+
+#ifdef CGAL_DEBUG_MODE
   Timer task_timer;
   task_timer.start();
 #endif
@@ -484,20 +487,19 @@ wlop_simplify_and_regularize_point_set(
 
     // Compute sample density weight for sample points
     std::vector<FT> sample_density_weights;
-    if (need_compute_density)
-    {
-      for (sample_iter = sample_points.begin();
-           sample_iter != sample_points.end(); ++sample_iter)
-      {
-        FT density = simplify_and_regularize_internal::
-                     compute_density_weight_for_sample_point<Kernel, AABB_Tree>
-                     (*sample_iter, 
-                      sample_aabb_tree, 
-                      radius2);
 
-        sample_density_weights.push_back(density);
-      }
+    for (sample_iter = sample_points.begin();
+         sample_iter != sample_points.end(); ++sample_iter)
+    {
+      FT density = simplify_and_regularize_internal::
+                   compute_density_weight_for_sample_point<Kernel, AABB_Tree>
+                   (*sample_iter, 
+                    sample_aabb_tree, 
+                    radius2);
+
+      sample_density_weights.push_back(density);
     }
+    
 
     std::vector<Point>::iterator update_iter = update_sample_points.begin();
     //parallel
@@ -518,10 +520,10 @@ wlop_simplify_and_regularize_point_set(
                                                  orignal_aabb_tree,
                                                  sample_aabb_tree,
                                                  radius2, 
+                                                 original_density_weights,
                                                  sample_density_weights,
                                                  first_original_iter,
-                                                 first_sample_iter
-                                                );
+                                                 first_sample_iter);
           }
         }
       );
@@ -540,10 +542,10 @@ wlop_simplify_and_regularize_point_set(
                                        orignal_aabb_tree,
                                        sample_aabb_tree,
                                        radius2,
+                                       original_density_weights,
                                        sample_density_weights,
                                        first_original_iter,
-                                       first_sample_iter
-                                      );
+                                       first_sample_iter);
       }
     }
     
