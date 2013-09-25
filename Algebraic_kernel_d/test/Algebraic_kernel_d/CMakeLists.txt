@@ -50,7 +50,12 @@ include( CGAL_CreateSingleSourceCGALProgram )
 create_single_source_cgal_program( "Algebraic_curve_kernel_2.cpp" )
 create_single_source_cgal_program( "algebraic_curve_kernel_2_tools.cpp" )
 create_single_source_cgal_program( "Algebraic_kernel_d_1_LEDA.cpp" )
-create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE.cpp" )
+
+create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE_Integer_rational.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE_SqrtII_rational.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE_SqrtRI_rational.cpp" )
+create_single_source_cgal_program( "Algebraic_kernel_d_1_CORE_SqrtRR_rational.cpp" )
+
 create_single_source_cgal_program( "Algebraic_kernel_d_1_GMP.cpp" )
 create_single_source_cgal_program( "Algebraic_kernel_d_2.cpp" )
 create_single_source_cgal_program( "Algebraic_real_d_1.cpp" )

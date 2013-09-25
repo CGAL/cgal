@@ -89,13 +89,3 @@ void test_algebraic_kernel() {
     <CGAL::Sqrt_extension< Rational, Rational>, Rational>();
 #endif
 }
-
-int main() {
-#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
-  std::cout << " TEST AK1 USING CORE " << std::endl;
-  test_algebraic_kernel< CGAL::CORE_arithmetic_kernel >();
-#else
-  std::cout << " NOTHING TESTED " << std::endl;
-#endif
-  return 0;
-}
