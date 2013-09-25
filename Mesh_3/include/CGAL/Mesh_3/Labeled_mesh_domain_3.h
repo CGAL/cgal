@@ -207,8 +207,13 @@ public:
         clipped = CGAL::intersection(query, r_domain_.bbox_);
 
       if(clipped)
+#if CGAL_INTERSECTION_VERSION > 1
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);
+#else
+        if(const Segment_3* s = object_cast<Segment_3>(&clipped))
+          return this->operator()(*s);
+#endif
         
       return Surface_patch();
     }
@@ -332,8 +337,13 @@ public:
         clipped = CGAL::intersection(query, r_domain_.bbox_);
 
       if(clipped)
+#if CGAL_INTERSECTION_VERSION > 1
         if(const Segment_3* s = boost::get<Segment_3>(&*clipped))
           return this->operator()(*s);
+#else
+        if(const Segment_3* s = object_cast<Segment_3>(&clipped))
+          return this->operator()(*s);
+#endif
       
       return Intersection();
     }
