@@ -1,6 +1,8 @@
 namespace CGAL {
 /*!
 
+\todo add please cite if used
+
 \mainpage User Manual 
 \anchor Chapter_3D_Mean_Curvature_Skeleton
 
