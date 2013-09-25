@@ -111,7 +111,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
   CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lInserted    = 0 ) ;
   CGAL_SURF_SIMPL_TEST_assertion_code ( size_type lNotInserted = 0 ) ;
 
-  std::vector<Profile> zero_length_edges;
+  std::set<edge_descriptor> zero_length_edges;
 
   undirected_edge_iterator eb, ee ;
   for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
@@ -122,7 +122,6 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
     CGAL_assertion( get_directed_edge_id(opposite_edge(lEdge,mSurface)) == id+1 ) ;
 
     Profile const& lProfile = create_profile(lEdge);
-          
     if ( !equal_points(lProfile.p0(),lProfile.p1()) )
     {
       Edge_data& lData = get_data(lEdge);
@@ -136,7 +135,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
     }
     else
     {
-      zero_length_edges.push_back(lProfile);
+      zero_length_edges.insert(primary_edge(lEdge));
       CGAL_SURF_SIMPL_TEST_assertion_code ( ++ lNotInserted ) ;
     }
 
@@ -148,10 +147,22 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collect()
  
   CGAL_SURF_SIMPL_TEST_assertion ( lInserted + lNotInserted == mInitialEdgeCount ) ;
 
-  for (typename std::vector<Profile>::iterator it=zero_length_edges.begin(),it_end=zero_length_edges.end();it!=it_end;++it)
+  for (typename std::set<edge_descriptor>::iterator it=zero_length_edges.begin(),
+        it_end=zero_length_edges.end();it!=it_end;++it)
   {
-    Placement_type lPlacement = get_placement(*it);
-    Collapse(*it,lPlacement);
+    Profile const& lProfile = create_profile(*it);
+
+    if (!Is_collapse_topologically_valid(lProfile) ) continue;
+
+    // edges of length 0 removed no longer need to be treated
+    if ( lProfile.left_face_exists() )
+        zero_length_edges.erase( primary_edge(lProfile.vL_v0()) );
+    if  ( lProfile.right_face_exists() )
+        zero_length_edges.erase( primary_edge(lProfile.vR_v1()) );
+
+    //the placement is trivial, it's always the point itself
+    Placement_type lPlacement = lProfile.p0();
+    Collapse(lProfile ,lPlacement);
   }
   
   CGAL_ECMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
