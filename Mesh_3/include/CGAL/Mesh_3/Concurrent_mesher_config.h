@@ -46,7 +46,7 @@ class Concurrent_mesher_config
     refinement_batch_size(10000),
     min_num_vertices_of_coarse_mesh(100),
     num_vertices_of_coarse_mesh_per_core(3.5f),
-    num_pseudo_infinite_vertices_per_core(2.0f)
+    num_pseudo_infinite_vertices_per_core(5.0f)
   {}
 
 public:
