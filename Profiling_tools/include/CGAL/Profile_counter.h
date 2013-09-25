@@ -1,4 +1,4 @@
-// Copyright (c) 2005,2006,2008  INRIA Sophia-Antipolis (France).
+//r Copyright (c) 2005,2006,2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -38,6 +38,8 @@
 // - Profile_branch_counter_3 which keeps track of 3 counters, aiming at measuring
 //   the ratios corresponding to the number of times 2 branches are taken.
 //
+//  If CGAL_CONCURRENT_PROFILE is defined, the counters can be concurrently updated
+//  
 // See also CGAL/Profile_timer.h
 
 // TODO :
@@ -54,12 +56,31 @@
 #include <string>
 #include <map>
 
+// Automatically define CGAL_CONCURRENT_PROFILE if we're linked with TBB
+#ifdef CGAL_LINKED_WITH_TBB
+# ifndef CGAL_CONCURRENT_PROFILE
+#   define CGAL_CONCURRENT_PROFILE
+# endif
+#else
+// Automatically UNdefine CGAL_CONCURRENT_PROFILE if we're NOT linked with TBB
+# ifdef CGAL_CONCURRENT_PROFILE
+#   undef CGAL_CONCURRENT_PROFILE
+# endif
+#endif
+
+#ifdef CGAL_CONCURRENT_PROFILE
+# include "tbb/concurrent_hash_map.h"
+#endif
+
 namespace CGAL {
 
 struct Profile_counter
 {
     Profile_counter(const std::string & ss)
-      : i(0), s(ss) {}
+      : s(ss) 
+    {
+      i = 0; // needed here because of tbb::atomic 
+    }
 
     void operator++() { ++i; }
 
@@ -70,7 +91,11 @@ struct Profile_counter
     }
 
 private:
+#ifdef CGAL_CONCURRENT_PROFILE
+    tbb::atomic<unsigned int> i;
+#else
     unsigned int i;
+#endif
     const std::string s;
 };
 
@@ -78,10 +103,27 @@ private:
 
 struct Profile_histogram_counter
 {
+private:
+#ifdef CGAL_CONCURRENT_PROFILE
+    typedef tbb::concurrent_hash_map<unsigned, unsigned>  Counters;
+#else
+    typedef std::map<unsigned, unsigned>  Counters;
+#endif
+
+public:
     Profile_histogram_counter(const std::string & ss)
       : s(ss) {}
 
-    void operator()(unsigned i) { ++counters[i]; }
+    void operator()(unsigned i) 
+    { 
+#ifdef CGAL_CONCURRENT_PROFILE
+      Counters::accessor a;
+      counters.insert(a, i);
+      ++a->second;
+#else
+      ++counters[i]; 
+#endif
+    }
 
     ~Profile_histogram_counter()
     {
@@ -100,7 +142,6 @@ struct Profile_histogram_counter
     }
 
 private:
-    typedef std::map<unsigned, unsigned>  Counters;
     Counters  counters;
     const std::string s;
 };
@@ -109,7 +150,10 @@ private:
 struct Profile_branch_counter
 {
     Profile_branch_counter(const std::string & ss)
-      : i(0), j(0), s(ss) {}
+      : s(ss)
+    {
+      i = j = 0; // needed here because of tbb::atomic 
+    }
 
     void operator++() { ++i; }
 
@@ -123,7 +167,11 @@ struct Profile_branch_counter
     }
 
 private:
+#ifdef CGAL_CONCURRENT_PROFILE
+    tbb::atomic<unsigned int> i, j;
+#else
     unsigned int i, j;
+#endif
     const std::string s;
 };
 
@@ -131,7 +179,10 @@ private:
 struct Profile_branch_counter_3
 {
     Profile_branch_counter_3(const std::string & ss)
-      : i(0), j(0), k(0), s(ss) {}
+      : s(ss) 
+    {
+      i = j = k = 0; // needed here because of tbb::atomic 
+    }
 
     void operator++() { ++i; }
 
@@ -147,7 +198,11 @@ struct Profile_branch_counter_3
     }
 
 private:
+#ifdef CGAL_CONCURRENT_PROFILE
+    tbb::atomic<unsigned int> i, j, k;
+#else
     unsigned int i, j, k;
+#endif
     const std::string s;
 };
 

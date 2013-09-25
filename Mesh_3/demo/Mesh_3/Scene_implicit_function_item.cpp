@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_implicit_function_item.h"
 #include <QColor>
 #include <map>

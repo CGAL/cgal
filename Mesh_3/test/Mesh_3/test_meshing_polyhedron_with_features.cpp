@@ -37,7 +37,14 @@ struct Polyhedron_with_features_tester : public Tester<K>
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
     typedef CGAL::Polyhedral_mesh_domain_with_features_3<Gt> Mesh_domain;
     
-    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#ifdef CGAL_CONCURRENT_MESH_3
+    typedef CGAL::Mesh_triangulation_3<
+      Mesh_domain,
+      CGAL::Kernel_traits<Mesh_domain>::Kernel,
+      CGAL::Parallel_tag>::type Tr;
+#else
+    typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#endif
     typedef CGAL::Mesh_complex_3_in_triangulation_3 <
       Tr,
       typename Mesh_domain::Corner_index,

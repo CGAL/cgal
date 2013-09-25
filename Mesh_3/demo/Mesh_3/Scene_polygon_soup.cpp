@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Scene_polygon_soup.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 

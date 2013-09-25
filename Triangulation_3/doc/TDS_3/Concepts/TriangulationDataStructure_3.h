@@ -112,6 +112,12 @@ typedef unspecified_type Cell_handle;
 
 /*!
 \cgalAdvancedBegin
+Indicate if the TDS is concurrency-safe (i.e.\ if one can add/remove vertices and cells concurrently). 
+Can be `Sequential_tag` or `Parallel_tag`.
+*/
+typedef unspecified_type Concurrency_tag;
+
+/*! 
 This template class allows to get the type of a triangulation 
 data structure that only changes the vertex type. It has to define a type 
 `Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 

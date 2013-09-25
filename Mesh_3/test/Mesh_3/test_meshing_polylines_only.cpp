@@ -16,7 +16,14 @@ typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#ifdef CGAL_CONCURRENT_MESH_3
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    CGAL::Kernel_traits<Mesh_domain>::Kernel,
+    CGAL::Parallel_tag>::type Tr;
+#else
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#endif
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
 
