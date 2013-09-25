@@ -696,7 +696,7 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
     // assemble a default horizontal plane that goes
     // through the centroid.
     plane = Plane(c,Vector(FT(0),FT(0),FT(1)));
-    return (FT)0.0;
+    return FT(0);
   } 
   else // regular and line case
   {
@@ -704,7 +704,7 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
                   eigen_vectors[7],
                   eigen_vectors[8]);
     plane = Plane(c,normal);
-    return (FT)1.0 - eigen_values[2] / eigen_values[1];
+    return FT(1) - eigen_values[2] / eigen_values[1];
   } // end regular case
 }
 
