@@ -202,7 +202,8 @@ int main(int argc, char* argv[])
         Matrix SV;
         if (LA::homogeneous_linear_solver(E,x)) {
           CGAL_TEST(E*x==Vector(mat_dim));
-          CGAL_TEST(LA::homogeneous_linear_solver(E,SV)==LA::rank(SV));
+          int r = LA::homogeneous_linear_solver(E,SV);
+          CGAL_TEST(r==LA::rank(SV));
         }
 
         // inverse
@@ -399,7 +400,8 @@ int main(int argc, char* argv[])
         Matrix SV;
         if (LA::homogeneous_linear_solver(E,x)) {
           CGAL_TEST(E*x==Vector(mat_dim));
-          CGAL_TEST(LA::homogeneous_linear_solver(E,SV)==LA::rank(SV));
+          int r = LA::homogeneous_linear_solver(E,SV);
+          CGAL_TEST(r==LA::rank(SV));
         }
         // inverse
         if (LA::inverse(E,D,denom,c)) {
