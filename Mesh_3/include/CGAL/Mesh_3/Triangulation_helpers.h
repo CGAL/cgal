@@ -202,8 +202,10 @@ inside_protecting_balls(const Tr& tr,
                         const Point_3& p) const
 {
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
-  return CGAL::compare_squared_distance(p, nv->point(), 
-                                        nv->point().weight()) != CGAL::LARGER;   
+  if(nv->point().weight() > 0)
+    return CGAL::compare_squared_distance(p, nv->point(),
+                         nv->point().weight()) != CGAL::LARGER;
+  return false;
 }
 
   
