@@ -141,7 +141,7 @@ Triangulation_incremental_builder_3< TDS_ >::add_cell(
       CGAL_assertion(f.first->neighbor(f.second) != NULL);
       CGAL_assertion(ch->neighbor(i) != NULL);
     } else {
-      facets[vtriple] = Facet(ch, i);
+      facets.insert(std::make_pair(vtriple, Facet(ch, i)));
       CGAL_assertion(ch->neighbor(i) == NULL);
     }
   }
