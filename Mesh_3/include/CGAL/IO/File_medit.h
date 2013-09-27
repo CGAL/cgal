@@ -776,7 +776,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   // Header
   //-------------------------------------------------------
-  os << std::setprecision(20);
+  os << std::setprecision(17);
 
   os << "MeshVersionFormatted 1" << std::endl
      << "Dimension 3" << std::endl;

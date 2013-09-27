@@ -462,7 +462,7 @@ public:
         else {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
           std::stringstream stream;
-          stream.precision(23);
+          stream.precision(17);
           set_pretty_mode(stream);
           stream << 
             "Mesh_3 error : AABB_tree any_intersection result is "

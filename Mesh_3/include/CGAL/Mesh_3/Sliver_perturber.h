@@ -487,9 +487,10 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
   CGAL::Timer timer;
   timer.start();
-  std::cerr.precision(4);
+  std::streamsize prec = std::cerr.precision(4);
   std::cerr << "Perturb sliver vertices (bound: " << sliver_bound 
             << ") ..." << std::endl;
+  std::cerr.precision(prec);
 #endif
   
   // build priority queue
