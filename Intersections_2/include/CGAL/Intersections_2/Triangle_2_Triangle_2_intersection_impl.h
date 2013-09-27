@@ -114,8 +114,8 @@ void _cut_off(Pointlist_2_<K> &list,
            || (cur->side == ON_NEGATIVE_SIDE
                && last->side == ON_POSITIVE_SIDE)) {
             // add a vertex after cur
-            ++list.size;
             typename K::Line_2 l(cur->point, last->point);
+            ++list.size;
             newrec = new Pointlist_2_rec_<K>;
             newrec->next = last->next;
             last->next = newrec;
