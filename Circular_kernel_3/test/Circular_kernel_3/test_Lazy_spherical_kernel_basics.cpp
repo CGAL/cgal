@@ -19,14 +19,11 @@
 //
 // Author(s)     : Sylvain Pion
  
-#include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Spherical_kernel_3.h>
-#include <CGAL/Quotient.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <cassert>
 
-#include "CGAL/Precise_numbers.h"
 #include "CGAL/_test_io.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"
@@ -54,16 +51,16 @@ main()
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    Cls;
 
-  std::cout << "Testing 3d with Cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing 3d with Exact_predicates_exact_constructions_kernel :";
   std::cout << std::endl;
   _test_3( Cls() );
   _test_cls_circle_3( Cls() );
 
-  std::cout << "Testing new 3d with Cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing new 3d with Exact_predicates_exact_constructions_kernel :";
   std::cout << std::endl;
   test_new_3( Cls() );
 
-  std::cout << "Testing new parts with Cartesian<Quotient<Precise_integer>> :";
+  std::cout << "Testing new parts with Exact_predicates_exact_constructions_kernel :";
   std::cout << std::endl;
   _test_orientation_and_bounded_side( Cls() );
   _test_fct_points_implicit_sphere( Cls() );
@@ -73,7 +70,7 @@ main()
   _test_cls_iso_cuboid_3( Cls() );
   _test_angle( Cls() );
 
-  std::cout << "Testing 3d-2d with Cartesian<Quotient<Precise_integer> > :";
+  std::cout << "Testing 3d-2d with Exact_predicates_exact_constructions_kernel :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
 

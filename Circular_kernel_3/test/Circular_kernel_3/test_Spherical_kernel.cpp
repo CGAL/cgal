@@ -31,15 +31,15 @@
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
-#include <CGAL/Polynomials_1_3.h>
-#include <CGAL/Polynomials_2_3.h>
-#include <CGAL/Polynomials_for_line_3.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/_test_functionalities_on_sphere.h>
 
 int main()
 {
+#ifdef CGAL_USE_GMP
+  typedef CGAL::Gmpq                                          FT;
+#else
   typedef CGAL::Quotient< CGAL::MP_Float >                    FT;
+#endif
   typedef CGAL::Cartesian<FT>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<FT>          Algebraic_k1;
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
