@@ -21,9 +21,6 @@ if (CGAL_FOUND)
 
   include_directories (BEFORE include)
 
-# With iterator debugging of VC++this example takes forever
-  add_definitions( -D_HAS_ITERATOR_DEBUGGING=0 )
-
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/NGHK_skin_surface_simple.cpp")
     # The two following .cpp files are in dont_submit, and thus not in the
     # internal releases.
