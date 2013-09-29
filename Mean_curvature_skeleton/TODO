@@ -1,3 +1,5 @@
 Handling the case when solver fails.
 More tests for correctness.
 More benchmark.
+Add a command line tool.
+Improve the reference and user manual.
