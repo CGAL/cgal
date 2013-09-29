@@ -121,8 +121,9 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 #ifdef DOUBLE_FILTER
- double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
-      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
+      if(double_filter){
+      double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
+        bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
 
       bool pxqx = px <= qx;
       bool pyqy = py <= qy;
@@ -141,6 +142,7 @@ public:
           ( (qx >= bxmin) && (qx <= bxmax) && (qy >= bymin) && (qy <= bymax) && (qz >= bzmin) && (qz <= bzmax) ) ) {
         EXIT1++;
         return true;
+      }
       }
 #endif
       const Uncertain<result_type> ub = 

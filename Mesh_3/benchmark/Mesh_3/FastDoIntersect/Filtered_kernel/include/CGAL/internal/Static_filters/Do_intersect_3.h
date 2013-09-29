@@ -126,6 +126,7 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 #ifdef DOUBLE_FILTER
+      if(double_filter){
       bool pxqx = px <= qx;
       bool pyqy = py <= qy;
       bool pzqz = pz <= qz;
@@ -144,36 +145,9 @@ public:
         EXIT1++;
         return true;
       }
+      }
 #endif
-      /*
-      if(pxqx){
-        if((px > bxmax ) || (qx < bxmin)){
-          return false;
-        }
-      } else {
-        if((qx > bxmax ) || (px < bxmin)){
-          return false;
-        }
-      }
-      if(pyqy){
-        if((py > bymax ) || (qy < bymin)){
-          return false;
-        }
-      } else {
-        if((qy > bymax ) || (py < bymin)){
-          return false;
-        }
-      }
-      if(pzqz){
-        if((pz > bzmax ) || (qz < bzmin)){
-          return false;
-        }
-      } else {
-        if((qz > bzmax ) || (pz < bzmin)){
-          return false;
-        }
-      }
-      */
+    
       // -----------------------------------
       // treat x coord
       // -----------------------------------

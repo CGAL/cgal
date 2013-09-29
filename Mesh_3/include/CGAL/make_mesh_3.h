@@ -405,31 +405,33 @@ void make_mesh_3_impl(C3T3& c3t3,
  typedef typename C3T3::Triangulation::Point Point;
 
 #ifdef ADD_BBOX_POINTS
- tr.insert(Point(bb.xmin()-d, bb.ymin()-d, bb.zmin()-d));
- tr.insert(Point(bb.xmin()-2*d, bb.ymin()-2*d, bb.zmin()-2*d));
 
- tr.insert(Point(bb.xmax()+d, bb.ymin()-d, bb.zmin()-d));
- tr.insert(Point(bb.xmax()+2*d, bb.ymin()-2*d, bb.zmin()-2*d));
+ if(add_bbox_points){
+   tr.insert(Point(bb.xmin()-d, bb.ymin()-d, bb.zmin()-d));
+   tr.insert(Point(bb.xmin()-2*d, bb.ymin()-2*d, bb.zmin()-2*d));
 
- tr.insert(Point(bb.xmin()-d, bb.ymin()+d, bb.zmin()-d));
- tr.insert(Point(bb.xmin()-2*d, bb.ymin()+2*d, bb.zmin()-2*d));
+   tr.insert(Point(bb.xmax()+d, bb.ymin()-d, bb.zmin()-d));
+   tr.insert(Point(bb.xmax()+2*d, bb.ymin()-2*d, bb.zmin()-2*d));
 
- tr.insert(Point(bb.xmax()+d, bb.ymin()+d, bb.zmin()-d));
- tr.insert(Point(bb.xmax()+2*d, bb.ymin()+2*d, bb.zmin()-2*d));
+   tr.insert(Point(bb.xmin()-d, bb.ymin()+d, bb.zmin()-d));
+   tr.insert(Point(bb.xmin()-2*d, bb.ymin()+2*d, bb.zmin()-2*d));
+
+   tr.insert(Point(bb.xmax()+d, bb.ymin()+d, bb.zmin()-d));
+   tr.insert(Point(bb.xmax()+2*d, bb.ymin()+2*d, bb.zmin()-2*d));
 
 
- tr.insert(Point(bb.xmin()-d, bb.ymin()-d, bb.zmin()+d));
- tr.insert(Point(bb.xmin()-2*d, bb.ymin()-2*d, bb.zmin()+2*d));
+   tr.insert(Point(bb.xmin()-d, bb.ymin()-d, bb.zmin()+d));
+   tr.insert(Point(bb.xmin()-2*d, bb.ymin()-2*d, bb.zmin()+2*d));
 
- tr.insert(Point(bb.xmax()+d, bb.ymin()-d, bb.zmin()+d));
- tr.insert(Point(bb.xmax()+2*d, bb.ymin()-2*d, bb.zmin()+2*d));
+   tr.insert(Point(bb.xmax()+d, bb.ymin()-d, bb.zmin()+d));
+   tr.insert(Point(bb.xmax()+2*d, bb.ymin()-2*d, bb.zmin()+2*d));
 
- tr.insert(Point(bb.xmin()-d, bb.ymin()+d, bb.zmin()+d));
- tr.insert(Point(bb.xmin()-2*d, bb.ymin()+2*d, bb.zmin()+2*d));
+   tr.insert(Point(bb.xmin()-d, bb.ymin()+d, bb.zmin()+d));
+   tr.insert(Point(bb.xmin()-2*d, bb.ymin()+2*d, bb.zmin()+2*d));
 
- tr.insert(Point(bb.xmax()+d, bb.ymin()+d, bb.zmin()+d));
- tr.insert(Point(bb.xmax()+2*d, bb.ymin()+2*d, bb.zmin()+2*d));
-
+   tr.insert(Point(bb.xmax()+d, bb.ymin()+d, bb.zmin()+d));
+   tr.insert(Point(bb.xmax()+2*d, bb.ymin()+2*d, bb.zmin()+2*d));
+ }
 #endif
 
   internal::Mesh_3::C3t3_initializer< 

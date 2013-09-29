@@ -1,7 +1,12 @@
+
+// Poor man's profile counters to see which is the failure that leads to exact computation
+// in do_intersect(Bbox_3, Segment_3)
 int EXIT1, EXIT2, EXIT3, BASE1, BASE2, BASE3, BASE4, BASE5, BASE6, BASE7, BASE8,  BASE9, BASE10, CALLS;
 
 //#define ADD_BBOX_POINTS
  //#define DOUBLE_FILTER
+
+bool add_bbox_points, double_filter;
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -18,6 +23,9 @@ int EXIT1, EXIT2, EXIT3, BASE1, BASE2, BASE3, BASE4, BASE5, BASE6, BASE7, BASE8,
 // IO
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+#include <string>
+#include <boost/lexical_cast.hpp>
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
@@ -33,8 +41,24 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main()
+int main(int argc, char* argv[])
 {
+  add_bbox_points = double_filter = false;
+
+  if(argc>1){
+    add_bbox_points = boost::lexical_cast<int>(argv[1]);
+    if(add_bbox_points){
+      std::cerr << "Add bbox points" << std::endl;
+    }
+  }
+
+ if(argc>2){
+    double_filter = boost::lexical_cast<int>(argv[2]);
+    if(double_filter){
+      std::cerr << "Do double filtering" << std::endl;
+    }
+  }
+
   std::cerr.precision(20);
   std::cout.precision(20);
   CGAL::default_random = CGAL::Random(0);
