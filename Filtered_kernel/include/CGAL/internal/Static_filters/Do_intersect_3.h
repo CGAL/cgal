@@ -120,7 +120,29 @@ public:
         fit_in_double(get_approx(q).z(), qz) )   
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+#ifdef DOUBLE_FILTER
+ double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
+      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
 
+      bool pxqx = px <= qx;
+      bool pyqy = py <= qy;
+      bool pzqz = pz <= qz;
+     
+      if( (pxqx && ((px > bxmax ) || (qx < bxmin))) ||
+        ((!pxqx) && ((qx > bxmax ) || (px < bxmin))) ||
+        (pyqy && ((py > bymax ) || (qy < bymin))) ||
+        ((! pyqy) && ((qy > bymax ) || (py < bymin))) ||
+        (pzqz && ((pz > bzmax ) || (qz < bzmin))) ||
+          ((!pzqz) && ((qz > bzmax ) || (pz < bzmin)))){
+        EXIT2++;
+        return false;
+      }
+      if( ( (px >= bxmin) && (px <= bxmax) && (py >= bymin) && (py <= bymax) && (pz >= bzmin) && (pz <= bzmax) ) ||
+          ( (qx >= bxmin) && (qx <= bxmax) && (qy >= bymin) && (qy <= bymax) && (qz >= bzmin) && (qz <= bzmax) ) ) {
+        EXIT1++;
+        return true;
+      }
+#endif
       const Uncertain<result_type> ub = 
         do_intersect_bbox_segment_aux
         <double,

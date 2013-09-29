@@ -139,14 +139,9 @@ public:
         EXIT2++;
         return false;
       }
-      bool p_in_b = (px >= bxmin) && (px <= bxmax) && (py >= bymin) && (py <= bymax) && (pz >= bzmin) && (pz <= bzmax);
-      bool q_in_b = (qx >= bxmin) && (qx <= bxmax) && (qy >= bymin) && (qy <= bymax) && (qz >= bzmin) && (qz <= bzmax);
-      if( p_in_b != q_in_b){
+      if( ( (px >= bxmin) && (px <= bxmax) && (py >= bymin) && (py <= bymax) && (pz >= bzmin) && (pz <= bzmax) ) ||
+          ( (qx >= bxmin) && (qx <= bxmax) && (qy >= bymin) && (qy <= bymax) && (qz >= bzmin) && (qz <= bzmax) ) ) {
         EXIT1++;
-        return true;
-      }
-      if(p_in_b && q_in_b){
-        EXIT2++;
         return true;
       }
 #endif
