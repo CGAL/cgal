@@ -77,7 +77,8 @@ int main(int argc, char* argv[])
 
   // Mesh criteria (no cell_size set)
   //  Mesh_criteria criteria(facet_size=0.5111 *0.0035); // fandisk
-  Mesh_criteria criteria(facet_size=0.3034 *0.0045); // rocker-arm
+  //Mesh_criteria criteria(facet_size=0.3034 *0.0045); // rocker-arm
+  Mesh_criteria criteria(facet_size=0.3034 *0.03); // rocker-arm fast
  
   std::cerr << "Meshing... ";
   CGAL::Timer t;
@@ -91,11 +92,13 @@ int main(int argc, char* argv[])
   std::cerr << " "<< EXIT1 << " "<< EXIT2 << " " << EXIT3 << std::endl;
 
 #ifdef DOUBLE_FILTER
-  std::cerr << "Used double filter" << std::endl;
+  if (double_filter)
+    std::cerr << "Used double filter" << std::endl;
 #endif 
 
 #ifdef ADD_BBOX_POINTS
-  std::cerr << "Added bbox points" << std::endl;
+  if (add_bbox_points)
+    std::cerr << "Added bbox points" << std::endl;
 #endif
 
   // Output
