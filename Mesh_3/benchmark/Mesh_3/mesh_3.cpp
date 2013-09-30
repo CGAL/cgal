@@ -61,6 +61,10 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
+  std::cerr << "Usage: mesh_3 [Add_bbox_points (0 or 1)] "
+    << "[Double filtering (0 or 1)] [input_filename] [facet_size]" 
+    << std::endl << std::endl;
+  
   add_bbox_points = double_filter = false;
 
   if(argc>1){
@@ -70,11 +74,23 @@ int main(int argc, char* argv[])
     }
   }
 
- if(argc>2){
+  if(argc>2){
     double_filter = boost::lexical_cast<int>(argv[2]);
     if(double_filter){
       std::cerr << "Do double filtering" << std::endl;
     }
+  }
+
+  char *input_filename = NULL;
+  if(argc > 3)
+    input_filename = argv[3];
+  else
+    input_filename = "data/rocker-arm.off";
+  
+  double facetsize = 0.3034 *0.0045;
+  if(argc > 4)
+  {
+    facetsize = boost::lexical_cast<double>(argv[4]);
   }
 
   std::cerr.precision(20);
@@ -84,8 +100,14 @@ int main(int argc, char* argv[])
   EXIT1 = EXIT2 = EXIT3 = CALLS = BASE1 = BASE2 = BASE3 = BASE4 = BASE5 = BASE6 = BASE7 = BASE8 = BASE9 = BASE10 = 0;
   // Create input polyhedron
   Polyhedron polyhedron;
-  std::ifstream input("data/rocker-arm.off");
+  std::cerr << "Loading " << input_filename << "." << std::endl;
+  std::ifstream input(input_filename);
   input >> polyhedron;
+  if (input.fail())
+  {
+    std::cerr << "Unable to open file" << std::endl;
+    return EXIT_FAILURE;
+  }
    
   // Create domain
   Mesh_domain domain(polyhedron);
@@ -94,10 +116,10 @@ int main(int argc, char* argv[])
   std::cerr << "bbox(polyhedron) = " << bb << std::endl;
 
   // Mesh criteria (no cell_size set)
-  //  Mesh_criteria criteria(facet_size=0.5111 *0.0035); // fandisk
-  //Mesh_criteria criteria(facet_size=0.3034 *0.0045); // rocker-arm
-  Mesh_criteria criteria(facet_size=0.3034 *0.03); // rocker-arm fast
+  Mesh_criteria criteria(facet_size=facetsize);
  
+  std::cerr << "Criteria:" << std::endl
+    << "  * Facet size = " << facetsize << std::endl;
   std::cerr << "Meshing... ";
   CGAL::Timer t;
   t.start();
