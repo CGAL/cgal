@@ -92,6 +92,14 @@ protected:
 
     try
     {
+      std::ifstream in(filename);
+      if (in.fail())
+      {
+        std::string err = "could not open file ";
+        err += filename;
+        throw std::exception(err.c_str());
+      }
+
       // Declare the supported options.
       po::options_description desc("Allowed options");
       desc.add_options()
@@ -105,13 +113,13 @@ protected:
         ("num_vertices_of_coarse_mesh_per_core", po::value<float>(), "")
         ("num_pseudo_infinite_vertices_per_core", po::value<float>(), "");
 
-      std::ifstream in(filename);
+
       po::store(po::parse_config_file<char>(in, desc), m_variables_map);
       po::notify(m_variables_map);
     }
     catch (std::exception &e)
     {
-      std::cerr << "Config file error: " << e.what() << std::endl;
+      std::cerr << "Config file ERROR: " << e.what() << std::endl;
       return false;
     }
 
