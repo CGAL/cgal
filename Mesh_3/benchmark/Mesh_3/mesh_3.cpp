@@ -3,12 +3,30 @@
 // in do_intersect(Bbox_3, Segment_3)
 int EXIT1, EXIT2, EXIT3, BASE1, BASE2, BASE3, BASE4, BASE5, BASE6, BASE7, BASE8,  BASE9, BASE10, CALLS;
 
-//#define ADD_BBOX_POINTS
- //#define DOUBLE_FILTER
+#define ADD_BBOX_POINTS
+#define DOUBLE_FILTER
+#define DUMP_FAILURES
 
 bool add_bbox_points, double_filter;
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+void
+bbox_3_to_off(std::ostream& os, const CGAL::Bbox_3& bb)
+{
+  CGAL::Simple_cartesian<double>::Iso_cuboid_3 ic(bb);
+  os << "OFF\n8 6 0\n"; 
+  for(int i=0; i <8; i++){
+    os << ic[i] << std::endl;
+  }
+  os << "4 0 1 2 3\n";
+  os << "4 0 1 6 5\n";
+  os << "4 1 2 7 6\n";
+  os << "4 3 2 7 4\n";
+  os << "4 0 3 4 5\n";
+  os << "4 4 5 6 7" << std::endl;
+}
+
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>

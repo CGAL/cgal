@@ -121,9 +121,8 @@ public:
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 #ifdef DOUBLE_FILTER
-      if(double_filter){
-      double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
-        bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
+ double bxmin = b.xmin(), bymin = b.ymin(), bzmin = b.zmin(), 
+      bxmax = b.xmax(), bymax = b.ymax(), bzmax = b.zmax();
 
       bool pxqx = px <= qx;
       bool pyqy = py <= qy;
@@ -138,11 +137,15 @@ public:
         EXIT2++;
         return false;
       }
-      if( ( (px >= bxmin) && (px <= bxmax) && (py >= bymin) && (py <= bymax) && (pz >= bzmin) && (pz <= bzmax) ) ||
-          ( (qx >= bxmin) && (qx <= bxmax) && (qy >= bymin) && (qy <= bymax) && (qz >= bzmin) && (qz <= bzmax) ) ) {
+      bool p_in_b = (px >= bxmin) && (px <= bxmax) && (py >= bymin) && (py <= bymax) && (pz >= bzmin) && (pz <= bzmax);
+      bool q_in_b = (qx >= bxmin) && (qx <= bxmax) && (qy >= bymin) && (qy <= bymax) && (qz >= bzmin) && (qz <= bzmax);
+      if( p_in_b != q_in_b){
         EXIT1++;
         return true;
       }
+      if(p_in_b && q_in_b){
+        EXIT2++;
+        return true;
       }
 #endif
       const Uncertain<result_type> ub = 
@@ -158,13 +161,6 @@ public:
       if(!is_indeterminate(ub)) return ub.sup();
       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
-#ifdef DUMP_FAILURES
-    std::cerr << "s = "<< s << std::endl;
-    std::cerr << "b = "<< b << std::endl;
-    std::cerr << "2 "<< s << std::endl;
-    bbox_3_to_off(std::cerr, b);
-    std::cerr  << std::endl;
-#endif
     return Base::operator()(s,b);
   }
 
