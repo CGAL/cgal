@@ -133,17 +133,17 @@ invalidate this cache value.
 void invalidate_circumcenter();
 
 /// Only required by the parallel algoritms.
-/// Get the erase counter value. See `CompactContainerStrategy`
+/// Get the erase counter value. See `CGAL::Compact_container`
 /// for more details.
 unsigned int get_erase_counter() const;
 
 /// Only required by the parallel algoritms.
-/// Set the erase counter value. See `CompactContainerStrategy`
+/// Set the erase counter value. See `CGAL::Compact_container`
 /// for more details.
 void set_erase_counter(unsigned int c);
 
 /// Only required by the parallel algoritms.
-/// Increment the erase counter value. See `CompactContainerStrategy`
+/// Increment the erase counter value. See `CGAL::Compact_container`
 /// for more details.
 void increment_erase_counter();
 /// @}

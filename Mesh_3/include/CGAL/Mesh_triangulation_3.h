@@ -77,15 +77,7 @@ private:
     Cell_base_, 
     Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 
-#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)\
- || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
-  typedef Triangulation_data_structure_3<
-    Vertex_base, Cell_base,
-    Compact_container_strategy_with_counter, 
-    Compact_container_strategy_with_counter>                    Tds;
-#else
   typedef Triangulation_data_structure_3<Vertex_base,Cell_base> Tds;
-#endif
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
 
 public:
@@ -111,10 +103,7 @@ private:
     Compact_mesh_cell_base_3<Geom_traits, MD> >::type           Cell_base;
 
   typedef Triangulation_data_structure_3<
-    Vertex_base, Cell_base, 
-    Compact_container_strategy_with_counter, 
-    Compact_container_strategy_with_counter,
-    Parallel_tag>                                               Tds;
+    Vertex_base, Cell_base, Parallel_tag>                       Tds;
   typedef Regular_triangulation_3<Geom_traits, Tds>             Triangulation;
 
 public:

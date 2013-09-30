@@ -23,12 +23,6 @@ the requirements for the concepts `TriangulationDSCellBase_3` and
 They have the default values `Triangulation_ds_vertex_base_3<TDS>` and 
 `Triangulation_ds_cell_base_3<TDS>` respectively. 
 
-The `Vertex_container_strategy` and `Cell_container_strategy` parameters are the 
-strategies used by the `Compact_container` (or `Concurrent_compact_container` 
-if the TDS is concurrency-safe) storing the vertices and cells. They are models of 
-the concept `CompactContainerStrategy`. The default values are both
-`Compact_container_strategy_base`.
-
 The `Concurrency_tag` parameter allows to enable a concurrency-safe TDS (with regard to
 insertion and deletion of elements). Possible values are `Sequential_tag` (the default) and
 `Parallel_tag`. The concurrency-safe version uses two `Concurrent_compact_container` to store 
@@ -49,8 +43,6 @@ specified by the concept.
 */
 template< typename TriangulationDSVertexBase_3, 
           typename TriangulationDSCellBase_3,
-          typename Vertex_container_strategy,
-          typename Cell_container_strategy,
           typename Concurrency_tag >
 class Triangulation_data_structure_3 : public CGAL::Triangulation_utils_3 {
 public:
@@ -62,25 +54,13 @@ public:
 Vertex container type. If Concurrency_tag is Parallel_tag, a
 `Concurrent_compact_container` is used instead of a `Compact_container`.
 */ 
-typedef Compact_container<Vertex, Default, Vertex_container_strategy> Vertex_range; 
+typedef Compact_container<Vertex, Default> Vertex_range; 
 
 /*!
 Cell container type. If Concurrency_tag is Parallel_tag, a
 `Concurrent_compact_container` is used instead of a `Compact_container`.
 */ 
-typedef Compact_container<Cell, Default, Cell_container_strategy> Cell_range; 
-
-/*! 
-Strategy used by the `Compact_container` (or `Concurrent_compact_container` if the TDS
-is concurrency-safe) storing the vertices.
-*/ 
-typedef unspecified_type Vertex_container_strategy;
-
-/*! 
-Strategy used by the `Compact_container` (or `Concurrent_compact_container` if the TDS
-is concurrency-safe) storing the cells.
-*/ 
-typedef unspecified_type Cell_container_strategy;
+typedef Compact_container<Cell, Default> Cell_range; 
 /// @} 
 
 /// \name Operations 

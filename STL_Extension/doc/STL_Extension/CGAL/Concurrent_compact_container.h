@@ -8,7 +8,7 @@ namespace CGAL {
 
 The traits class `Concurrent_compact_container_traits` provides 
 the way to access the internal pointer required for `T` to be 
-used in a `Concurrent_compact_container<T, Allocator, Strategy>`. Note that this 
+used in a `Concurrent_compact_container<T, Allocator>`. Note that this 
 pointer needs to be accessible even when the object is not constructed, 
 which means it has to reside in the same memory place as `T`. 
 
@@ -121,15 +121,11 @@ The equality test and the relational order require the operators
 
 The parameter `Allocator` has to match the standard allocator 
 requirements, with value type `T`. This parameter has the default 
-value `CGAL_ALLOCATOR(T)`. 
-
-The parameter `Strategy` allows the user to specify a static class which has
-to match the requirements of the concept `CompactContainerStrategy`. This 
-parameter has the default value `Compact_container_strategy_base<T>`.
+value `CGAL_ALLOCATOR(T)`.
 
 */
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 class Concurrent_compact_container
 {
 public:
@@ -294,7 +290,7 @@ adds the items of `ccc2` to the end of `ccc` and `ccc2` becomes empty.
 The time complexity is O(`ccc`.`capacity()`-`ccc`.`size()`). 
 \pre `ccc2` must not be the same as `ccc`, and the allocators of `ccc` and `ccc2` must be compatible: `ccc.get_allocator() == ccc2.get_allocator()`. 
 */ 
-void merge(Concurrent_compact_container<T, Allocator, Strategy> &ccc2); 
+void merge(Concurrent_compact_container<T, Allocator> &ccc2); 
 
 /// @}
   
@@ -304,17 +300,17 @@ void merge(Concurrent_compact_container<T, Allocator, Strategy> &ccc2);
   test for equality: Two containers are equal, iff they have the 
   same size and if their corresponding elements are equal. 
   */ 
-  bool operator==(const Concurrent_compact_container<T, Allocator, Strategy> &ccc2) const; 
+  bool operator==(const Concurrent_compact_container<T, Allocator> &ccc2) const; 
   /// test for inequality: returns `!(ccc == ccc2)`. 
-  bool operator!=(const Concurrent_compact_container<T, Allocator, Strategy> &ccc2) const;
+  bool operator!=(const Concurrent_compact_container<T, Allocator> &ccc2) const;
   /// compares in lexicographical order. 
-  bool operator<(const Concurrent_compact_container<T, Allocator, Strategy> &ccc2) const; 
+  bool operator<(const Concurrent_compact_container<T, Allocator> &ccc2) const; 
   /// returns `ccc2 < ccc`.
-  bool operator>(const Concurrent_compact_container<T, Allocator, Strategy> &ccc2) const;
+  bool operator>(const Concurrent_compact_container<T, Allocator> &ccc2) const;
   /// returns `!(ccc > ccc2)`.
-  bool operator<=(const Concurrent_compact_container<T, Allocator, Strategy> &ccc2) const;
+  bool operator<=(const Concurrent_compact_container<T, Allocator> &ccc2) const;
   /// returns `!(ccc < ccc2)`.
-  bool operator>=(const Concurrent_compact_container<T, Allocator, Strategy> &ccc2) const;
+  bool operator>=(const Concurrent_compact_container<T, Allocator> &ccc2) const;
 /// @} 
 
 }; /* end Concurrent_compact_container */

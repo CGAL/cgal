@@ -37,15 +37,37 @@
 namespace CGAL {
   
 // Without erase counter
-template <typename Use_erase_counter>
+template <typename Concurrency_tag>
 class Mesh_vertex_base_3_base
 {
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+#endif
 };
 
 #ifdef CGAL_LINKED_WITH_TBB
-// Specialized version (with erase counter)
+// Specialized version (parallel)
 template <>
-class Mesh_vertex_base_3_base<Tag_true>
+class Mesh_vertex_base_3_base<Parallel_tag>
 {
 public:
   
@@ -80,7 +102,7 @@ template<class GT,
 class Mesh_vertex_base_3
 : public Vb,
   public Mesh_vertex_base_3_base<
-    typename Vb::Triangulation_data_structure::Cell_container_strategy::Uses_erase_counter>
+    typename Vb::Triangulation_data_structure::Concurrency_tag>
 {
 public:
   typedef Vb Cmvb3_base;

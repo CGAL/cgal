@@ -24,7 +24,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Default.h>
-#include <CGAL/Compact_container_strategies.h>
 
 #include <iterator>
 #include <algorithm>
@@ -33,12 +32,31 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
+#include <CGAL/CC_safe_handle.h>
 
 #include <tbb/tbb.h>
 
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {
+
+#define GENERATE_MEMBER_DETECTOR(X)                                             \
+template<typename T> class has_##X {                                          \
+    struct Fallback { int X; };                                               \
+    struct Derived : T, Fallback { };                                         \
+                                                                              \
+    template<typename U, U> struct Check;                                     \
+                                                                              \
+    typedef char ArrayOfOne[1];                                               \
+    typedef char ArrayOfTwo[2];                                               \
+                                                                              \
+    template<typename U> static ArrayOfOne & func(                            \
+                                            Check<int Fallback::*, &U::X> *); \
+    template<typename U> static ArrayOfTwo & func(...);                       \
+  public:                                                                     \
+    typedef has_##X type;                                                     \
+    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
+};
 
 #define CGAL_INIT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE 16
@@ -51,9 +69,49 @@ struct Concurrent_compact_container_traits {
   static void * & pointer(T &t)       { return t.for_compact_container(); }
 };
 
-namespace internal {
+namespace CCC_internal {
   template < class CCC, bool Const >
   class CCC_iterator;
+  
+  GENERATE_MEMBER_DETECTOR(increment_erase_counter);
+  
+  // A basic "no erase counter" strategy
+  template <bool Has_erase_counter_tag>
+  class Erase_counter_strategy {
+  public:
+    // Do nothing
+    template <typename Element>
+    static unsigned int get_erase_counter(const Element &) { return 0; }
+    template <typename Element>
+    static void set_erase_counter(Element &, unsigned int) {}
+    template <typename Element>
+    static void increment_erase_counter(Element &) {}
+  };
+
+
+  // A strategy managing an internal counter
+  template <>
+  class Erase_counter_strategy<true>
+  {
+  public:
+    template <typename Element>
+    static unsigned int get_erase_counter(const Element &e)
+    {
+      return e.get_erase_counter();
+    }
+
+    template <typename Element>
+    static void set_erase_counter(Element &e, unsigned int c)
+    {
+      e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void increment_erase_counter(Element &e)
+    {
+      e.increment_erase_counter();
+    }
+  };
 }
 
 // Free list (head and size)
@@ -103,19 +161,13 @@ protected:
 //
 // Safe concurrent "insert" and "erase".
 // Do not parse the container while others are modifying it.
-// Strategy_ is a functor which provides several functions
-// See Compact_container_strategy_base and
-// Compact_container_strategy_with_counter, and/or documentation
 //
-template < class T, class Allocator_ = Default, class Strategy_ = Default >
+template < class T, class Allocator_ = Default >
 class Concurrent_compact_container
 {
   typedef Allocator_                                                Al;
-  typedef Strategy_                                                 Strat;
   typedef typename Default::Get<Al, CGAL_ALLOCATOR(T) >::type       Allocator;
-  typedef typename Default::Get<
-    Strat, Compact_container_strategy_base >::type                  Strategy;
-  typedef Concurrent_compact_container <T, Al, Strat>               Self;
+  typedef Concurrent_compact_container <T, Al>                      Self;
   typedef Concurrent_compact_container_traits <T>                   Traits;
 
 public:
@@ -127,8 +179,8 @@ public:
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef internal::CCC_iterator<Self, false>       iterator;
-  typedef internal::CCC_iterator<Self, true>        const_iterator;
+  typedef CCC_internal::CCC_iterator<Self, false>   iterator;
+  typedef CCC_internal::CCC_iterator<Self, true>    const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
@@ -140,8 +192,8 @@ private:
   friend class Free_list<pointer, size_type, Self>;
 
 public:
-  friend class internal::CCC_iterator<Self, false>;
-  friend class internal::CCC_iterator<Self, true>;
+  friend class CCC_internal::CCC_iterator<Self, false>;
+  friend class CCC_internal::CCC_iterator<Self, true>;
 
   explicit Concurrent_compact_container(const Allocator &a = Allocator())
   : m_alloc(a)
@@ -355,8 +407,11 @@ public:
 private:
   void erase(iterator x, FreeList * fl)
   {
+    typedef internal::Erase_counter_strategy<
+      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
     CGAL_precondition(type(x) == USED);
-    Strategy::increment_erase_counter(*x);
+    EraseCounterStrategy::increment_erase_counter(*x);
     m_alloc.destroy(&*x);
 /* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
 #ifndef CGAL_NO_ASSERTIONS
@@ -599,8 +654,8 @@ private:
   mutable Mutex     m_mutex;
 };
 
-template < class T, class Allocator, class Strategy >
-void Concurrent_compact_container<T, Allocator, Strategy>::merge(Self &d)
+template < class T, class Allocator >
+void Concurrent_compact_container<T, Allocator>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
@@ -646,8 +701,8 @@ void Concurrent_compact_container<T, Allocator, Strategy>::merge(Self &d)
   d.init();
 }
 
-template < class T, class Allocator, class Strategy >
-void Concurrent_compact_container<T, Allocator, Strategy>::clear()
+template < class T, class Allocator >
+void Concurrent_compact_container<T, Allocator>::clear()
 {
   for (typename All_items::iterator it = m_all_items.begin(), itend = m_all_items.end();
        it != itend; ++it) {
@@ -662,10 +717,13 @@ void Concurrent_compact_container<T, Allocator, Strategy>::clear()
   init();
 }
 
-template < class T, class Allocator, class Strategy >
-void Concurrent_compact_container<T, Allocator, Strategy>::
+template < class T, class Allocator >
+void Concurrent_compact_container<T, Allocator>::
   allocate_new_block(FreeList * fl)
 {
+  typedef internal::Erase_counter_strategy<
+    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
   size_type old_block_size;
   pointer new_block;
 
@@ -699,62 +757,62 @@ void Concurrent_compact_container<T, Allocator, Strategy>::
   // will correspond to the iterator order...
   for (size_type i = old_block_size; i >= 1; --i)
   {
-    Strategy::set_erase_counter(*(new_block + i), 0);
+    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
     put_on_free_list(new_block + i, fl);
   }
 }
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 inline
-bool operator==(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
-                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+bool operator==(const Concurrent_compact_container<T, Allocator> &lhs,
+                const Concurrent_compact_container<T, Allocator> &rhs)
 {
   return lhs.size() == rhs.size() &&
     std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 inline
-bool operator!=(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
-                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+bool operator!=(const Concurrent_compact_container<T, Allocator> &lhs,
+                const Concurrent_compact_container<T, Allocator> &rhs)
 {
   return ! (lhs == rhs);
 }
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 inline
-bool operator< (const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
-                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+bool operator< (const Concurrent_compact_container<T, Allocator> &lhs,
+                const Concurrent_compact_container<T, Allocator> &rhs)
 {
   return std::lexicographical_compare(lhs.begin(), lhs.end(),
                                       rhs.begin(), rhs.end());
 }
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 inline
-bool operator> (const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
-                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+bool operator> (const Concurrent_compact_container<T, Allocator> &lhs,
+                const Concurrent_compact_container<T, Allocator> &rhs)
 {
   return rhs < lhs;
 }
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 inline
-bool operator<=(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
-                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+bool operator<=(const Concurrent_compact_container<T, Allocator> &lhs,
+                const Concurrent_compact_container<T, Allocator> &rhs)
 {
   return ! (lhs > rhs);
 }
 
-template < class T, class Allocator, class Strategy >
+template < class T, class Allocator >
 inline
-bool operator>=(const Concurrent_compact_container<T, Allocator, Strategy> &lhs,
-                const Concurrent_compact_container<T, Allocator, Strategy> &rhs)
+bool operator>=(const Concurrent_compact_container<T, Allocator> &lhs,
+                const Concurrent_compact_container<T, Allocator> &rhs)
 {
   return ! (lhs < rhs);
 }
 
-namespace internal {
+namespace CCC_internal {
 
   template < class CCC, bool Const >
   class CCC_iterator
@@ -762,7 +820,6 @@ namespace internal {
     typedef typename CCC::iterator                    iterator;
     typedef CCC_iterator<CCC, Const>                   Self;
   public:
-    typedef typename CCC::Strategy                    Strategy;
     typedef typename CCC::value_type                  value_type;
     typedef typename CCC::size_type                   size_type;
     typedef typename CCC::difference_type             difference_type;
@@ -813,7 +870,7 @@ namespace internal {
     } m_ptr;
 
     // Only Concurrent_compact_container should access these constructors.
-    friend class Concurrent_compact_container<value_type, typename CCC::Al, typename CCC::Strat>;
+    friend class Concurrent_compact_container<value_type, typename CCC::Al>;
 
     // For begin()
     CCC_iterator(pointer ptr, int, int)
@@ -965,7 +1022,7 @@ namespace internal {
     return &*rhs != NULL;
   }
 
-} // namespace internal
+} // namespace CCC_internal
 
 } //namespace CGAL
 

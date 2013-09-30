@@ -42,15 +42,38 @@
 
 namespace CGAL {
     
-// Without erase counter
-template <typename Use_erase_counter, typename Concurrency_tag>
+// Sequential
+template <typename Concurrency_tag>
 class Mesh_cell_base_3_base
 {
+public:
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+  // Erase counter (cf. Compact_container)
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+
+private:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+#endif
 };
 
-// Specialized version (with erase counter)
-template <typename Concurrency_tag>
-class Mesh_cell_base_3_base<Tag_true, Concurrency_tag>
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (parallel)
+template <>
+class Mesh_cell_base_3_base<Parallel_tag>
 {
 public:
   // Erase counter (cf. Compact_container)
@@ -60,7 +83,7 @@ public:
   }
   void set_erase_counter(unsigned int c)
   {
-	  this->m_erase_counter = c;
+    this->m_erase_counter = c;
   }
   void increment_erase_counter()
   {
@@ -68,18 +91,11 @@ public:
   }
   
 protected:
-  
-#ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c<
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
-    tbb::atomic<unsigned int>,
-    unsigned int>::type             Erase_counter_type;
-#else
-  typedef unsigned int              Erase_counter_type;
-#endif
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
-
 };
+#endif // CGAL_LINKED_WITH_TBB
+
 // Class Mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
@@ -90,7 +106,6 @@ template< class GT,
 class Mesh_cell_base_3
 : public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>,
   public Mesh_cell_base_3_base<
-    typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Cell_container_strategy::Uses_erase_counter,
     typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
 {
   typedef typename GT::FT FT;

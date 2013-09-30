@@ -34,27 +34,35 @@
 
 namespace CGAL {
 
-// Class Mesh_cell_base_3_base
+// Class Compact_mesh_cell_base_3_base
 // Base for Compact_mesh_cell_base_3, with specializations
-// for different walues of Parallel_tag and Use_erase_counter
-template <typename Use_erase_counter, typename Concurrency_tag>
-class Compact_mesh_cell_base_3_base;
-
-// Class Mesh_cell_base_3_base
-// Specialization for sequential - no erase counter
+// for different values of Concurrency_tag
+// Sequential
 template <typename Concurrency_tag>
-class Compact_mesh_cell_base_3_base<Tag_false, Concurrency_tag>
+class Compact_mesh_cell_base_3_base
 {
-  protected:
+protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0) {}
 
 public:
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
   // Erase counter (cf. Compact_container)
-  // Dummy functions
-  unsigned int get_erase_counter() const { return 0; }
-  void set_erase_counter(unsigned int c) {}
-  void increment_erase_counter() {}
+  unsigned int get_erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+#endif
 
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
@@ -79,69 +87,21 @@ public:
 
 private:
   char bits_;
-};
 
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
-
-// Class Mesh_cell_base_3_base
-// Specialization for sequential - WITH erase counter
-template <typename Concurrency_tag>
-class Compact_mesh_cell_base_3_base<Tag_true, Concurrency_tag>
-{
-protected:
-  Compact_mesh_cell_base_3_base()
-    : bits_(0) {}
-
-public:
-  // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
-  {
-    return this->m_erase_counter;
-  }
-  void set_erase_counter(unsigned int c)
-  {
-    this->m_erase_counter = c;
-  }
-  void increment_erase_counter()
-  {
-    ++this->m_erase_counter;
-  }
-
-  /// Marks \c facet as visited
-  void set_facet_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet <4);
-    bits_ |= (1 << facet);
-  }
-
-  /// Marks \c facet as not visited
-  void reset_visited (const int facet)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    bits_ &= (15 & ~(1 << facet));
-  }
-
-  /// Returns \c true if \c facet is marked as visited
-  bool is_facet_visited (const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return ( (bits_ & (1 << facet)) != 0 );
-  }
-
-private:
   typedef unsigned int              Erase_counter_type;
   Erase_counter_type                m_erase_counter;
-  /// Stores visited facets (4 first bits)
-  char                              bits_;
+#endif
 };
-
 
 
 #ifdef CGAL_LINKED_WITH_TBB
-// Class Mesh_cell_base_3_base
-// Specialization for parallel - WITH erase counter
+// Class Compact_mesh_cell_base_3_base
+// Specialization for parallel
 template <>
-class Compact_mesh_cell_base_3_base<Tag_true, Parallel_tag>
+class Compact_mesh_cell_base_3_base<Parallel_tag>
 {
 protected:
   Compact_mesh_cell_base_3_base()
@@ -203,7 +163,6 @@ private:
 #endif // CGAL_LINKED_WITH_TBB
 
 
-
 // Class Compact_mesh_cell_base_3
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
@@ -211,9 +170,7 @@ template< class GT,
           class MD,
           class TDS = void >
 class Compact_mesh_cell_base_3
-  : public Compact_mesh_cell_base_3_base<
-      typename TDS::Cell_container_strategy::Uses_erase_counter,
-      typename TDS::Concurrency_tag>
+  : public Compact_mesh_cell_base_3_base<typename TDS::Concurrency_tag>
 {
   typedef typename GT::FT FT;
 
