@@ -30,7 +30,9 @@
 #include <CGAL/iterator.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
 
+#ifdef CGAL_HAS_SDF_SEGMENTATION
 #include <CGAL/mesh_segmentation.h>
+#endif
 
 #include <queue>
 
@@ -317,7 +319,9 @@ public slots:
   void on_actionSkeletonize();
   void on_actionConverge();
   void on_actionUpdateBBox();
+  #ifdef CGAL_HAS_SDF_SEGMENTATION
   void on_actionSegment();
+  #endif
   void on_actionItemAboutToBeDestroyed(Scene_item*);
 
 private:
@@ -378,8 +382,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
             this, SLOT(on_actionConverge()));
     connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
             this, SLOT(on_actionUpdateBBox()));
+    #ifdef CGAL_HAS_SDF_SEGMENTATION
     connect(ui->pushButton_segment, SIGNAL(clicked()),
             this, SLOT(on_actionSegment()));
+    #else
+    ui->pushButton_segment->setEnabled(false);
+    #endif
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -398,6 +406,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionUpdateBBox()
   ui->edgelength_TH->setValue(0.002 * diag);
 }
 
+#ifdef CGAL_HAS_SDF_SEGMENTATION
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 {
   QTime time;
@@ -496,6 +505,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
   QApplication::restoreOverrideCursor();
 }
+
+#endif
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_skeleton_triggered()
 {
@@ -1105,7 +1116,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionItemAboutToBeDestroyed(Scene_item* item)
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionItemAboutToBeDestroyed(Scene_item* /* item */)
 {
   if (mcs != NULL)
   {
