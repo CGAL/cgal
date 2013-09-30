@@ -72,7 +72,7 @@ The deformation work flow.
 
 \subsection Preprocess_section Preprocessing
 
-The preprocessing requires the surface mesh deformation system.
+The preprocessing requires the ROI to be set (both control and free vertices).
 The following conventions are used for the definition of the ROI:
  - a vertex added as a control vertex is added to the ROI
  - a control vertex removed from the ROI is no longer considered as a control vertex

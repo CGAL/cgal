@@ -112,8 +112,7 @@ int main()
   //restore the positions of the vertices
   deform_mesh.reset();
 
-  // Note that translate and rotate are not cumulative,
-  // they just use original positions (positions at the time of construction) of the control verticess while calculating target positions
+  // Apply a translation on the original positions of the vertices (because reset() was called before)
   deform_mesh.translate(controls_1_map.begin(), controls_1_map.end(), Eigen::Vector3d(0,0.30,0));
   deform_mesh.translate(controls_2_map.begin(), controls_2_map.end(), Eigen::Vector3d(0,0.30,0));
 
