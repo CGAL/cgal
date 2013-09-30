@@ -7,7 +7,7 @@ namespace CGAL {
 \author Ilker %O. Yaz and Sébastien Loriot
 
 \cgalFigureBegin{Segmentation_Elephant_main,elephant_sdf_partition.png}
-Shape diameter function and segmentation with 6 clusters.
+The shape diameter function applied to the elephant and the corresponding segmentation (using 6 clusters).
 \cgalFigureEnd
 
 \section Surface_mesh_segmentationIntroduction Introduction
@@ -25,12 +25,6 @@ We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008Segm
 This package offers the computation of the SDF values and the mesh segmentation result as independent functions.
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
 and also to reuse the SDF values several times with different parameters for the segmentation algorithm.
-
-Since the mesh segmentation problem is ill-posed, we evaluate our implementation by using data set and evaluation software \cgalCite{Chen2009SegmentationBenchmark},
-and provide detailed results at the end of the manual.
-
-\todo either add pdf link at the end of the manual (may be together with a pdf which contains screenshots of segmented models etc.)
-\todo add the source code used for the benchmark
 
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 
@@ -205,8 +199,8 @@ The main advantage is to decrease from log to constant the complexity for access
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 <BR>
 \section Performances Performances
-We provide runtime results for the functions `compute_sdf_values()` and `segment_from_sdf_values()`.
-These results are produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+\subsection SMSRuntime Runtime of the functions compute_sdf_values() and segment_from_sdf_values()
+The following results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinausaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 
@@ -269,6 +263,15 @@ The sampling method is biased toward the center \cite Vogel1979Sampling in order
 As a result, we do not use the weighting scheme from the original algorithm in order to reduce the contributions of rays with larger angles.
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths falling into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
 -->
+
+\subsection SMSBench Mesh Segmentation Benchmark
+
+The mesh segmentation problem being ill-posed, the mesh segmentation community have proposed some benchmarks to evaluate the
+quality of a given algorithm. A benchmark is composed of a set of models and a software responsible for scoring
+the results. On a particular benchmark \cgalCite{Chen2009SegmentationBenchmark}, the current implementation obtains the
+score of XXX. The code used in the benchmark is provided as an exemple XXX.
+
+\todo Add the score and the source code used for the benchmark
 
 \section Surface_mesh_segmentationImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
