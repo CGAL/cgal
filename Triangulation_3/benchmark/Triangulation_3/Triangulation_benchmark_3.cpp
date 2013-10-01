@@ -89,40 +89,32 @@ typedef K::Point_3                                     Point;
   typedef CGAL::Triangulation_data_structure_3< 
     CGAL::Triangulation_vertex_base_3<K>, 
     CGAL::Triangulation_cell_base_3<K>, 
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Parallel_tag >	                             DT_Tds;
+    CGAL::Parallel_tag >	                        DT_Tds;
   typedef CGAL::Delaunay_triangulation_3<
-    K, DT_Tds, CGAL::Default, Lock_ds>	               DT3;
+    K, DT_Tds, CGAL::Default, Lock_ds>              DT3;
   /*typedef CGAL::Delaunay_triangulation_3<
-    K, DT_Tds, CGAL::Default, Lock_ds>	               DT3_FastLoc;*/ // CJTODO (no parallel fast location for now)
+    K, DT_Tds, CGAL::Default, Lock_ds>              DT3_FastLoc;*/ // CJTODO (no parallel fast location for now)
   
   // Regular T3
   typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<WK>, 
     CGAL::Triangulation_cell_base_3<WK>,
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Parallel_tag >	                                    RT_Tds;
-  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>	RT3;
+    CGAL::Parallel_tag                                       RT_Tds;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds> RT3;
 
   // Regular T3 with hidden points kept
   typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<WK>, 
     CGAL::Regular_triangulation_cell_base_3<WK>,
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Parallel_tag >	                                    RT_Tds_WithHP;
-  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>	RT3_WithHP;
+    CGAL::Parallel_tag                                       RT_Tds_WithHP;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds> RT3_WithHP;
 
   // Regular T3 with hidden points discarded
   typedef CGAL::Triangulation_data_structure_3<
     CGAL::Triangulation_vertex_base_3<WK>, 
     CGAL::Triangulation_cell_base_3<WK>,
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Compact_container_strategy_base, 
-    CGAL::Parallel_tag >	                                    RT_Tds_NoHP;
-  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>	RT3_NoHP;
+    CGAL::Parallel_tag >	                                  RT_Tds_NoHP;
+  typedef CGAL::Regular_triangulation_3<WK, RT_Tds, Lock_ds>  RT3_NoHP;
 
 #else
   typedef CGAL::Delaunay_triangulation_3<K>                   DT3;
