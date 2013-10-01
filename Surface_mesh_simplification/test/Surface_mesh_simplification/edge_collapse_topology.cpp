@@ -21,9 +21,22 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv ) 
 {
-  Surface surface; 
-  
-  std::ifstream is(argv[1]) ; is >> surface ;
+  if (argc!=2){
+    std::cerr << "Please provide only an off-file as input\n";
+    return 1;
+  }
+
+  std::ifstream is(argv[1]);
+
+  if (!is){
+    std::cerr << "Error reading the input\n";
+    return 1;
+  }
+
+  Surface surface;
+  is >> surface ;
+
+
 
   // Contract the surface as much as possible
   SMS::Count_stop_predicate<Surface> stop(0);
