@@ -81,7 +81,7 @@ the halfedge data structures.
 
 It supports bidirectional iterators and allows a constant time amortized 
 `insert()` operation. You cannot specify where to insert new objects 
-(i.e. you don't know where they will end up in the iterator sequence, 
+(i.e.\ you don't know where they will end up in the iterator sequence, 
 although `insert()` returns an iterator pointing to the newly inserted 
 object). You can erase any element with a constant time complexity. 
 
@@ -90,7 +90,7 @@ memory since it doesn't store two additional pointers for the iterator needs.
 It doesn't deallocate elements until the destruction or `clear()` of the 
 container. The iterator does not have constant amortized time complexity for 
 the increment and decrement operations in all cases, only when not too many 
-elements have not been freed (i.e. when the `size()` is close to the 
+elements have not been freed (i.e.\ when the `size()` is close to the 
 `capacity()`). Iterating from `begin()` to `end()` takes 
 `O(capacity())` time, not `size()`. In the case where the container 
 has a small `size()` compared to its `capacity()`, we advise to 
@@ -108,7 +108,27 @@ In addition, in a way inspired from the Boost.Intrusive containers, it is
 possible to construct iterators from references to values in containers 
 using the `iterator_to` and `s_iterator_to` functions. 
 
-
+The objects stored in the `Concurrent_compact_container` can optionally store an 
+"erase counter". If it exists, i.e.\ if the object is a model of the
+`ObjectWithEraseCounter` concept, each time an object is erased from the 
+container, the erase counter of the object will be incremented.
+For example, this erase counter can be exploited using the `CC_safe_handle` 
+helper class, so that one can know if a handle is still pointing at the same
+element.
+Note that this is meaningful only because the 
+`CGAL::Concurrent_compact_container` doesn't 
+deallocate elements until the destruction or clear() of the container.
+For example, this counter is used by
+the parallel 3D mesh generation engine to lazily manage the queues of bad cells:
+an element in the queue is a pair containing an cell iterator and the 
+erase counter value of the cell when it has been inserted. When an element
+is popped from the queue, the algorithm checks if the current value of
+the erase counter matches the stored value. If it doesn't match, it means
+the cell has been destroyed in the meantime and it ignores it. Without this
+lazy management, each time a cell is destroyed, the algorithm has to look
+for it in the queue and remove it. This is even more useful for the parallel 
+version of the meshing process, since each thread has its own queue and looking
+for a cell in all the queues would be very slow.
 
 \cgalHeading{Parameters}
 
@@ -199,7 +219,7 @@ complexity. No exception is thrown.
   reverse_iterator rbegin();
   /// returns a constant reverse iterator referring to the reverse beginning in `ccc`.
   const_reverse_iterator rbegin() const;
-  /// returns a mutable reverse which is the reverse past-end-value of `ccc`.
+  /// returns a mutable reverse iterator which is the reverse past-end-value of `ccc`.
   reverse_iterator rend();
   /// returns a constant reverse iterator which is the reverse past-end-value of `ccc`. 
   const_reverse_iterator rend() const;
