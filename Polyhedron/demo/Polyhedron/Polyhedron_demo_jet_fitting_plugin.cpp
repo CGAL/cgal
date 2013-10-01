@@ -10,7 +10,7 @@
 #include <QApplication>
 
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/compute_normal.h>
+#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
 class Polyhedron_demo_jet_fitting_plugin : 
   public QObject,
