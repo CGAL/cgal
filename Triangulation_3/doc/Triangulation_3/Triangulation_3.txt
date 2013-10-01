@@ -223,7 +223,7 @@ Chapter \ref chapterTDS3 "3D Triangulation Data Structure".
 triangulation class, described in Section \ref Triangulation3seclocpol.
 </UL>
 
-Optionnally, the main Delaunay and regular triangulations algorithms (insert, remove) 
+Optionally, the main Delaunay and regular triangulations algorithms (insert, remove) 
 support multi-core shared-memory architectures to take advantage of available parallelism.
 For this purpose, a model of the concept `SpatialLockDataStructure_3`,
 such as the `Spatial_grid_lock_data_structure_3` class, is used. This data structure

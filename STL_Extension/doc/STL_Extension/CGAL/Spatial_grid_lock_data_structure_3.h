@@ -10,7 +10,7 @@ it can be used by concurrent algorithms to lock simplices.
 
 \tparam Grid_lock_tag allows to choose the locking strategy used by the
 structure. The following tags are available:
-- `Tag_non_blocking` is non-blocking (i.e. try_lock will always
+- `Tag_non_blocking` is non-blocking (i.e.\ try_lock will always
 return immediately) and uses atomics to perform lock operations.
 - `Tag_priority_blocking` provides both non-blocking and
 partially-blocking `try_lock` versions. The partially-blocking version will 
