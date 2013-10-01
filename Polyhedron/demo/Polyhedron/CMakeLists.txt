@@ -106,7 +106,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt4_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt4_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
-  qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
+  #qt4_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt4_wrap_ui( funcUI_FILES Function_dialog.ui )
 
   qt4_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
@@ -383,8 +383,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(mesh_simplification_plugin Polyhedron_demo_mesh_simplification_plugin)
   target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 
-  polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_demo_polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
-  target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
+  #polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_demo_polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
+  #target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)
   
   #detect the sdf segmentation package for using the segmentation function
   find_path(SDF_SEGMENTATION_INCLUDE_DIR CGAL/mesh_segmentation.h DOC "Path to Segmenation package.")

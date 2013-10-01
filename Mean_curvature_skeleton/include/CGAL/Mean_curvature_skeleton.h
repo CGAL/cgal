@@ -833,6 +833,10 @@ public:
     int num_splits = 0;
     while (true)
     {
+      if (boost::num_vertices(*polyhedron) <= 3)
+      {
+        break;
+      }
       int cnt = split_flat_triangle();
       if (cnt == 0)
       {
@@ -889,6 +893,8 @@ public:
     contract_geometry();
     update_topology();
     detect_degeneracies();
+
+    MCFSKEL_DEBUG(print_edges();)
 
     MCFSKEL_INFO(double area = internal::get_surface_area(*polyhedron, hg_point_pmap);)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
@@ -1702,6 +1708,31 @@ private:
     }
   }
 
+  // --------------------------------------------------------------------------
+  // Debug
+  // --------------------------------------------------------------------------
+
+  void print_edges()
+  {
+    edge_iterator eb, ee;
+
+    std::map<edge_descriptor, bool> visited;
+
+    for (boost::tie(eb, ee) = boost::edges(*polyhedron); eb != ee; ++eb)
+    {
+      if (!visited[*eb])
+      {
+        vertex_descriptor vi = boost::source(*eb, *polyhedron);
+        vertex_descriptor vj = boost::target(*eb, *polyhedron);
+        size_t vi_idx = boost::get(vertex_id_pmap, vi);
+        size_t vj_idx = boost::get(vertex_id_pmap, vj);
+        std::cout << vi_idx << " " << vj_idx << "\n";
+
+        visited[*eb] = true;
+        visited[eb->opposite()] = true;
+      }
+    }
+  }
 };
 
 /// \ingroup PkgMeanCurvatureSkeleton3
