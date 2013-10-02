@@ -68,6 +68,11 @@ public:
 */ 
 typedef LocationPolicy Location_policy; 
 
+/*!
+
+*/ 
+typedef SpatialLockDataStructure_3 Lock_data_structure; 
+
 /// @}
 
 /*! \name

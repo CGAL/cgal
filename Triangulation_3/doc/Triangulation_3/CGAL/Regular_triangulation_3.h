@@ -66,6 +66,11 @@ typedef RegularTriangulationTraits_3::Bare_point Bare_point;
 */ 
 typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point; 
 
+/*!
+
+*/ 
+typedef SpatialLockDataStructure_3 Lock_data_structure;
+
 /// @} 
 
 /// \name Creation 
