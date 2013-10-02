@@ -407,8 +407,8 @@ public:
 private:
   void erase(iterator x, FreeList * fl)
   {
-    typedef internal::Erase_counter_strategy<
-      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+    typedef CCC_internal::Erase_counter_strategy<
+      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
 
     CGAL_precondition(type(x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
@@ -721,8 +721,8 @@ template < class T, class Allocator >
 void Concurrent_compact_container<T, Allocator>::
   allocate_new_block(FreeList * fl)
 {
-  typedef internal::Erase_counter_strategy<
-    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+  typedef CCC_internal::Erase_counter_strategy<
+    CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
 
   size_type old_block_size;
   pointer new_block;
