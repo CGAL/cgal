@@ -5,8 +5,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <cassert>
-#include <list>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -30,7 +28,7 @@ int main()
 {
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 
-  // Construction from a vector of 1000000 points
+  // Construction from a vector of 1,000,000 points
   std::vector<Point> V;
   V.reserve(1000000);
   for (int i = 0; i != 1000000; ++i)
@@ -43,7 +41,7 @@ int main()
   Rt rtr(V.begin(), V.end(), &locking_ds);
 
   std::cerr << "Remove";
-  // Remove the first 100000 vertices
+  // Remove the first 100,000 vertices
   std::vector<Vertex_handle> vertices_to_remove;
   int i = 0;
   Rt::Finite_vertices_iterator vit = rtr.finite_vertices_begin();

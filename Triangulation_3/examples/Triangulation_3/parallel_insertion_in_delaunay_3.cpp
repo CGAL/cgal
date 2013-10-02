@@ -4,8 +4,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <cassert>
-#include <list>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -23,7 +21,7 @@ int main()
 {
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 
-  // Construction from a vector of 1000000 points
+  // Construction from a vector of 1,000,000 points
   std::vector<Point> V;
   V.reserve(1000000);
   for (int i = 0; i != 1000000; ++i)
