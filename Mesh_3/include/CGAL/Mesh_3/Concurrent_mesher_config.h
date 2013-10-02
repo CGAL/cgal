@@ -97,7 +97,7 @@ protected:
       {
         std::string err = "could not open file ";
         err += filename;
-        throw std::exception(err.c_str());
+        throw std::runtime_error(err);
       }
 
       // Declare the supported options.
