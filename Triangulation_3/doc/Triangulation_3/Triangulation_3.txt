@@ -517,6 +517,19 @@ Another difference is that a specific traits class has to be used
 
 \cgalExample{Triangulation_3/regular_3.cpp}
 
+\subsection Triangulation_3ParallelDelaunay Parallel insertion in Delaunay triangulation
+
+This example shows the parallel building of a Delaunay triangulation.
+
+\cgalExample{Triangulation_3/parallel_insertion_in_delaunay_3.cpp}
+
+\subsection Triangulation_3ParallelRegular Parallel insertion and removal in Regular triangulation
+
+This example shows the parallel building of a Regular triangulation, followed by the parallel 
+removal of the first 100,000 vertices.
+
+\cgalExample{Triangulation_3/parallel_insertion_and_removal_in_regular_3.cpp}
+
 \section Triangulation3seccomplexity Complexity and Performance 
 
 In 3D, the worst case complexity of a triangulation is quadratic in the number
