@@ -1,6 +1,6 @@
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
-#include "CGAL/compute_normal.h"
+#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_off_points.h>

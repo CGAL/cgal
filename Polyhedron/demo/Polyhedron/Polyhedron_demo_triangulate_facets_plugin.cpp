@@ -7,8 +7,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
-#include "CGAL/compute_normal.h"
-#include "CGAL/triangulate_polyhedron.h"
+#include <CGAL/triangulate_polyhedron.h>
 
 class Polyhedron_demo_triangulate_facets_plugin : 
   public QObject,
