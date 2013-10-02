@@ -168,6 +168,12 @@ Release date: September 2013
     the Mesh_triangulation_3 class.
 
 
+* Triangulated Surface Mesh Simplification
+
+  - Fix a segmentation fault that was happening when some edges of length 0
+    were in the input mesh.
+
+
 * 3D Fast Intersection and Distance Computation
 
   - Following the intersection API change, Object_and_primitive_id has been
