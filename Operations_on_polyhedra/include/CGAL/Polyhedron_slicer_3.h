@@ -141,34 +141,34 @@ private:
 
     // in case of planar just Intersection_type is not empty in tuple
     if(t_os == ON_ORIENTED_BOUNDARY && s_os == ON_ORIENTED_BOUNDARY) {
-      ret.get<1>() = PLANAR;
+      ret.template get<1>() = PLANAR;
       return ret;
     }
     // in case of boundary Intersection_type and vertex are not empty in tuple
     if(t_os == ON_ORIENTED_BOUNDARY || s_os == ON_ORIENTED_BOUNDARY) { 
-      ret.get<1>() = BOUNDARY;
-      ret.get<2>() = t_os == ON_ORIENTED_BOUNDARY ? hf->opposite()->vertex() :
+      ret.template get<1>() = BOUNDARY;
+      ret.template get<2>() = t_os == ON_ORIENTED_BOUNDARY ? hf->opposite()->vertex() :
                                                     hf->vertex();
       return ret;
     }
 
     CGAL_assertion(t_os != s_os); // should one positive one negative
     // in case of interval Intersection_type and point are not empty in tuple
-    ret.get<1>() = INTERVAL;
+    ret.template get<1>() = INTERVAL;
     Object intersection = intersect_3_functor(plane, Segment(s,t));
 
     if(const Point* i_point  = object_cast<Point>(&intersection)) { 
-      ret.get<0>() = *i_point;
+      ret.template get<0>() = *i_point;
     }
     else if( object_cast<Segment>(&intersection) ) {
       // is it possible to predicate not-planar but construct segment ?
       CGAL_warning(!"on interval case - predicate not-planar but construct segment");
-      ret.get<1>() = PLANAR;
+      ret.template get<1>() = PLANAR;
     }
     else {
       // prediction indicates intersection but construction returns nothing, returning closest point
       CGAL_warning(!"on interval case - no intersection found");
-      ret.get<0>() = squared_distance(plane, s) < squared_distance(plane, t) ? s : t; 
+      ret.template get<0>() = squared_distance(plane, s) < squared_distance(plane, t) ? s : t; 
     }
     return ret;
   }
@@ -252,30 +252,30 @@ private:
       CGAL_assertion(assoc_nodes.vertex_count < 3); // every Node_pair can at most contain 2 nodes
 
       boost::tuple<Point, Intersection_type, Vertex_const_handle> intersection = halfedge_intersection(hf, plane);
-      edge_intersection_map[hf] = intersection.get<1>(); // save intersection type
+      edge_intersection_map[hf] = intersection.template get<1>(); // save intersection type
 
-      if(intersection.get<1>() == INTERVAL) {
+      if(intersection.template get<1>() == INTERVAL) {
         CGAL_PROFILER(" number of INTERVAL intersections.");
         CGAL_assertion(assoc_nodes.vertex_count == 0); 
 
         Vertex_g v = boost::add_vertex(node_graph);
-        node_graph[v].point = intersection.get<0>();
+        node_graph[v].point = intersection.template get<0>();
         assoc_nodes.put(v);
         // no related hf to edge node, done
       }
-      else if(intersection.get<1>() == BOUNDARY) {
+      else if(intersection.template get<1>() == BOUNDARY) {
         CGAL_PROFILER(" number of BOUNDARY intersections.");
         CGAL_assertion(assoc_nodes.vertex_count < 2); 
 
         if(assoc_nodes.vertex_count == 0) {
-          Vertex_const_handle v_h = intersection.get<2>(); // boundary vertex
+          Vertex_const_handle v_h = intersection.template get<2>(); // boundary vertex
           // update edge_node_map for neighbor halfedges of v_h
           add_intersection_node_to_one_ring(v_h, edge_node_map);
         } // else node is already added by other hf
       }
       else {// intersection.get<1>() == PLANAR
         CGAL_PROFILER(" number of PLANAR intersections.");
-        CGAL_assertion(intersection.get<1>() == PLANAR);
+        CGAL_assertion(intersection.template get<1>() == PLANAR);
 
         if(assoc_nodes.vertex_count != 2) {
           if(assoc_nodes.vertex_count == 1) { // there is one intersection node that we need to add
