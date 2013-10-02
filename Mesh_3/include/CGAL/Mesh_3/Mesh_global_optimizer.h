@@ -412,8 +412,10 @@ compute_moves(Moving_vertices_set& moving_vertices)
 	  if ( CGAL::NULL_VECTOR != move )
     {
       Point_3 new_position = translate(oldv->point(),move);
-      if( !Th().inside_protecting_balls(tr_, oldv, new_position))
-        moves.push_back(std::make_pair(oldv,new_position));
+      //if( !Th().inside_protecting_balls(tr_, oldv, new_position))
+      //note : this is not happening for Lloyd and ODT so it's commented
+      //       maybe for a new global optimizer it should be de-commented
+      moves.push_back(std::make_pair(oldv,new_position));
     }
   	else // CGAL::NULL_VECTOR == move
     {
