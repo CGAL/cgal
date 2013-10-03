@@ -41,12 +41,9 @@ In this package, two slightly different algorithms are implemented:
 - The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel} that is a slightly modified version of ARAP that is more
 stable but produces asymmetric results (See \cgalFigureRef{Arap_spokes_comparison}).
 
-\todo Olga: I think the blue vertices are not sufficiently different in color from the purple mesh. Better color contrast would be nicer.
-
-
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
 Comparison between \ref Surface_Modeling_Overview_ARAP and \ref Surface_Modeling_Overview_ARAP_Rims.
-On a square with spikes mesh, the ROI consists of all but the blue vertices. The control vertices are the red ones.
+On a square with spikes mesh, the ROI consists of all but the yellow vertices. The control vertices are the red ones.
 We translate the control vertices along the normal of the plane and observe the result produced by \ref
 Surface_Modeling_Overview_ARAP (center) and \ref Surface_Modeling_Overview_ARAP_Rims (right) from the same view point. The
 latter version does not produce a symmetric result.
