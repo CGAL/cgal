@@ -26,17 +26,17 @@ namespace CGAL{
 
 inline
 mpfi_srcptr Algebraic_1::mpfi()const{
-        return Ptr()->_mpfi;
+        return Ptr()->interval;
 }
 
 inline
 mpfi_ptr Algebraic_1::mpfi(){
-        return ptr()->_mpfi;
+        return ptr()->interval;
 }
 
 inline
 Gmpfi Algebraic_1::interval()const{
-        return Gmpfi(Ptr()->_mpfi);
+        return Gmpfi(Ptr()->interval);
 }
 
 inline
@@ -51,17 +51,17 @@ Gmpfr Algebraic_1::sup()const{
 
 inline
 const RS_polynomial_1& Algebraic_1::pol()const{
-        return *(Ptr()->_poly);
+        return *(Ptr()->polynomial);
 }
 
 inline
 int Algebraic_1::nr()const{
-        return ptr()->_nr;
+        return ptr()->numroot;
 }
 
 inline
 int Algebraic_1::mult()const{
-        return ptr()->_mult;
+        return ptr()->multiplicity;
 }
 
 inline
@@ -73,22 +73,22 @@ void Algebraic_1::set_mpfi_ptr(mpfi_srcptr x){
 
 inline
 void Algebraic_1::clear_pol(){
-        ptr()->_poly=NULL;
+        ptr()->polynomial=NULL;
 }
 
 inline
 void Algebraic_1::set_pol(const RS_polynomial_1 &p){
-        ptr()->_poly=const_cast<RS_polynomial_1*>(&p);
+        ptr()->polynomial=const_cast<RS_polynomial_1*>(&p);
 }
 
 inline
 void Algebraic_1::set_nr(int n){
-        ptr()->_nr=n;
+        ptr()->numroot=n;
 }
 
 inline
 void Algebraic_1::set_mult(int m){
-        ptr()->_mult=m;
+        ptr()->multiplicity=m;
 }
 
 inline
@@ -98,7 +98,7 @@ void Algebraic_1::set_prec(mp_prec_t p){
 
 inline
 void Algebraic_1::set_lefteval(Sign s)const{
-        Ptr()->_lefteval=s;
+        Ptr()->lefteval=s;
 }
 
 inline
@@ -118,7 +118,7 @@ mpfr_srcptr Algebraic_1::right()const{
 
 inline
 Sign Algebraic_1::lefteval()const{
-        return ptr()->_lefteval;
+        return ptr()->lefteval;
 }
 
 inline
@@ -183,12 +183,12 @@ bool Algebraic_1::is_finite()const{
         return (mpfi_bounded_p(mpfi())!=0);
 }
 
-//template <class _Gcd_policy>
+//template <class GcdPolicy>
 inline
 double Algebraic_1::to_double()const{
-        /*typedef _Gcd_policy     Gcd;
-        while(mpfr_get_d(left(),GMP_RNDU)!=mpfr_get_d(right(),GMP_RNDU))
-                bisect_n<Gcd>(*this,33);*/
+        //typedef GcdPolicy     Gcd;
+        //while(mpfr_get_d(left(),GMP_RNDU)!=mpfr_get_d(right(),GMP_RNDU))
+        //        bisect_n<Gcd>(*this,33);
         RS3::refine_1(*this,100);
         CGAL_assertion(mpfr_get_d(left(),GMP_RNDD)==
                        mpfr_get_d(right(),GMP_RNDD));

@@ -45,46 +45,46 @@ typedef CGAL::Algebraic_1               Algebraic;
 typedef CGAL::Gmpfr                     Bound;
 typedef int                             Multiplicity;
 
-template <class _P>
+template <class PolynomialType>
 struct Compute_polynomial_1:
-public std::unary_function<Algebraic,_P>{
-        typedef _P                      P;
+public std::unary_function<Algebraic,PolynomialType>{
+        typedef PolynomialType          P;
         typedef CGAL::from_rs_poly<P>   back;
         P operator()(const Algebraic &a)const{
                 return back()(a.pol());
         }
 };      // Compute_polynomial_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Is_square_free_1:
-public std::unary_function<_P,bool>{
-        typedef _P                      P;
+public std::unary_function<PolynomialType,bool>{
+        typedef PolynomialType          P;
         typedef CGAL::to_rs_poly<P>     convert;
-        typedef _Gcd_policy             Gcd;
+        typedef GcdPolicy               Gcd;
         bool operator()(const P &p)const{
                 Polynomial rsp=convert()(p);
                 return(!(Gcd()(rsp,rsp.derive()).get_degree_static()));
         }
 };      // Is_square_free_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Make_square_free_1:
-public std::unary_function<_P,_P>{
-        typedef _P                      P;
+public std::unary_function<PolynomialType,PolynomialType>{
+        typedef PolynomialType          P;
         typedef CGAL::to_rs_poly<P>     convert;
         typedef CGAL::from_rs_poly<P>   back;
-        typedef _Gcd_policy             Gcd;
+        typedef GcdPolicy               Gcd;
         P operator()(const P &p)const{
                 return back()(CGAL::sfpart_1<Gcd>()(convert()(p)));
         }
 };      // Make_square_free_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Square_free_factorize_1{
-        typedef _P                      P;
+        typedef PolynomialType          P;
         typedef CGAL::to_rs_poly<P>     convert;
         typedef CGAL::from_rs_poly<P>   back;
-        typedef _Gcd_policy             Gcd;
+        typedef GcdPolicy               Gcd;
         template <class OutputIterator>
         OutputIterator operator()(const P &p,OutputIterator oi)const{
                 Polynomial rsp=convert()(p);
@@ -98,12 +98,12 @@ struct Square_free_factorize_1{
         }
 };      // Square_free_factorize_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Is_coprime_1:
-public std::binary_function<_P,_P,bool>{
-        typedef _P                      P;
+public std::binary_function<PolynomialType,PolynomialType,bool>{
+        typedef PolynomialType          P;
         typedef CGAL::to_rs_poly<P>     convert;
-        typedef _Gcd_policy             Gcd;
+        typedef GcdPolicy               Gcd;
         bool operator()(const P &p1,const P &p2)const{
                 CGAL::RS_polynomial_1 rsp1=convert()(p1);
                 CGAL::RS_polynomial_1 rsp2=convert()(p2);
@@ -111,14 +111,14 @@ public std::binary_function<_P,_P,bool>{
         }
 };      // Is_coprime_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Make_coprime_1{
-        typedef _P                      P;
+        typedef PolynomialType          P;
         typedef CGAL::to_rs_poly<P>     convert;
         typedef CGAL::from_rs_poly<P>   back;
-        typedef _Gcd_policy             Gcd;
+        typedef GcdPolicy               Gcd;
         bool operator()(const P &p1,const P &p2,P &g,P &q1,P &q2)const{
-                typedef _Gcd_policy     Gcd;
+                typedef GcdPolicy       Gcd;
                 CGAL::RS_polynomial_1 rsp1=convert()(p1);
                 CGAL::RS_polynomial_1 rsp2=convert()(p2);
                 CGAL::RS_polynomial_1 rsg=convert()(g);
@@ -131,9 +131,9 @@ struct Make_coprime_1{
         }
 };      // Make_coprime_1
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Solve_RS_1{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     typedef CGAL::sfpart_1<Gcd> Sfpart;
     typedef CGAL::sqfr_1<Gcd>   Sqfr;
 
@@ -201,11 +201,11 @@ struct Solve_RS_1{
     }
 };  // Solve_RS_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Solve_1{
-    typedef _P                  P;
+    typedef PolynomialType      P;
     typedef CGAL::to_rs_poly<P> convert;
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     typedef Solve_RS_1<Gcd>     Solve_RS;
 
     template <class OutputIterator>
@@ -252,11 +252,11 @@ struct Solve_1{
   }
 };  // Solve_1
 
-template <class _P,class _Coeff_type,class _Gcd>
+template <class PolynomialType,class CoeffType,class GcdFunction>
 struct Construct_alg_1{
-    typedef _P                          Poly;
-    typedef _Coeff_type                 Coeff;
-    typedef _Gcd                        Gcd;
+    typedef PolynomialType              Poly;
+    typedef CoeffType                   Coeff;
+    typedef GcdFunction                 Gcd;
     typedef CGAL::to_rs_poly<Poly>      convert;
     typedef Solve_1<Poly,Gcd>           Solve;
 
@@ -291,10 +291,10 @@ struct Construct_alg_1{
     }
 };  // Construct_alg_1
 
-template <class _P>
+template <class PolynomialType>
 struct Number_of_solutions_1:
-public std::unary_function<_P,int>{
-    typedef _P                  P;
+public std::unary_function<PolynomialType,int>{
+    typedef PolynomialType      P;
     typedef CGAL::to_rs_poly<P> convert;
 
     int operator()(const P &p)const{
@@ -309,11 +309,11 @@ public std::unary_function<_P,int>{
     }
 };  // Number_of_solutions_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Sign_at_1:
-public std::binary_function<_P,Algebraic,CGAL::Sign>{
-    typedef _P                  P;
-    typedef _Gcd_policy         Gcd;
+public std::binary_function<PolynomialType,Algebraic,CGAL::Sign>{
+    typedef PolynomialType      P;
+    typedef GcdPolicy           Gcd;
     typedef CGAL::to_rs_poly<P> convert;
 
     CGAL::Sign operator()(const P &p,const Algebraic &a)const{
@@ -321,11 +321,11 @@ public std::binary_function<_P,Algebraic,CGAL::Sign>{
     }
 };  // Sign_at_1
 
-template <class _P,class _Gcd_policy>
+template <class PolynomialType,class GcdPolicy>
 struct Is_zero_at_1:
-public std::binary_function<_P,Algebraic,bool>{
-    typedef _P                  P;
-    typedef _Gcd_policy         Gcd;
+public std::binary_function<PolynomialType,Algebraic,bool>{
+    typedef PolynomialType      P;
+    typedef GcdPolicy           Gcd;
     typedef Sign_at_1<P,Gcd>    Sign_at;
 
     bool operator()(const P &p,const Algebraic &a)const{
@@ -333,10 +333,10 @@ public std::binary_function<_P,Algebraic,bool>{
     }
 };  // Is_zero_at_1
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Compare_1:
     public std::binary_function<Algebraic,Algebraic,CGAL::Comparison_result>{
-  typedef _Gcd_policy                   Gcd;
+  typedef GcdPolicy                     Gcd;
   typedef CGAL::Comparison_result       Comparison_result;
   typedef CGAL::Gmpz                    Gmpz;
   typedef CGAL::Gmpq                    Gmpq;
@@ -363,11 +363,11 @@ struct Compare_1:
     return this->operator()(r1,Algebraic(r2));}
 };  // Compare_1
 
-template <class _P,class _Gcd>
+template <class PolynomialType,class GcdFunction>
 struct Isolate_1:
-public std::binary_function<Algebraic,_P,std::pair<Bound,Bound> >{
-    typedef _P                          Poly;
-    typedef _Gcd                        Gcd;
+public std::binary_function<Algebraic,PolynomialType,std::pair<Bound,Bound> >{
+    typedef PolynomialType              Poly;
+    typedef GcdFunction                 Gcd;
     typedef CGAL::to_rs_poly<Poly>      convert;
     typedef Solve_1<Poly,Gcd>           Solve;
     typedef Compare_1<Gcd>              Compare;
@@ -382,10 +382,10 @@ public std::binary_function<Algebraic,_P,std::pair<Bound,Bound> >{
     }
 };  // Isolate_1
 
-template <class _Gcd_policy>
+template <class GcdPolicy>
 struct Bound_between_1:
     public std::binary_function<Algebraic,Algebraic,Bound>{
-        typedef _Gcd_policy     Gcd;
+        typedef GcdPolicy       Gcd;
         Bound operator()(const Algebraic &x1,const Algebraic &x2)const{
             double l,r,m;
             switch(CGAL::RS_COMPARE::compare_1<Gcd>(x1,x2)){

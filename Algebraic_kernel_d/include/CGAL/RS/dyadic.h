@@ -30,7 +30,7 @@
 #include <iostream>
 #endif
 
-#define CGALRS_dyadic_struct_struct     __mpfr_struct
+#define CGALRS_dyadic_struct            __mpfr_struct
 #define CGALRS_dyadic_t                 mpfr_t
 #define CGALRS_dyadic_ptr               mpfr_ptr
 #define CGALRS_dyadic_srcptr            mpfr_srcptr

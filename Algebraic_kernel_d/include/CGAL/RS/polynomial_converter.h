@@ -24,10 +24,11 @@
 
 namespace CGAL{
 
-template<class P>
+template<class Polynomial_>
 struct to_rs_poly:
-public std::unary_function<P,RS_polynomial_1>{
-        RS_polynomial_1 operator()(const P &p)const{
+public std::unary_function<Polynomial_,RS_polynomial_1>{
+        typedef Polynomial_     Polynomial;
+        RS_polynomial_1 operator()(const Polynomial &p)const{
                 std::cerr<<"can't convert to integer polynomial"<<std::endl;
                 exit(-1);
         }
@@ -44,20 +45,20 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
 // The conversions using this macro are efficient, since this construct an
 // RS polynomial only by copying pointers. The only implementation detail
 // is that it should not free the occuped by the pointed coefficients.
-#define CGALRS_POLYNOMIAL_CONVERTER_REF(_T,_CONVERT) \
+#define CGALRS_POLYNOMIAL_CONVERTER_REF(TYPE,CONVERT_FUNCTION) \
         template<> \
-        struct to_rs_poly<Polynomial<_T> >: \
-        public std::unary_function<Polynomial<_T>,RS_polynomial_1>{ \
-                RS_polynomial_1& operator()(const Polynomial<_T> &p)const{ \
+        struct to_rs_poly<Polynomial<TYPE> >: \
+        public std::unary_function<Polynomial<TYPE>,RS_polynomial_1>{ \
+                RS_polynomial_1& operator()(const Polynomial<TYPE> &p)const{ \
                         void *(*af)(size_t); \
                         void *(*rf)(void*,size_t,size_t); \
                         void (*ff)(void*,size_t); \
                         int d=p.degree(); \
                         mpz_t* c=(mpz_t*)malloc((d+1)*sizeof(mpz_t)); \
                         for(int i=0;i<=d;++i) \
-                                _CONVERT; \
+                                CONVERT_FUNCTION; \
                         mp_get_memory_functions(&af,&rf,&ff); \
-                        mp_set_memory_functions(af,rf,__cgalrs_dummy_free); \
+                        mp_set_memory_functions(af,rf,cgalrs_dummy_free); \
                         RS_polynomial_1 *r=new RS_polynomial_1(&c,d); \
                         mp_set_memory_functions(af,rf,ff); \
                         return *r; \
@@ -67,16 +68,16 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1>{
 // The conversions using this macro are not intended to be efficient, since
 // there is no direct way to convert from these types to mpz_t and we need
 // thus to create new mpz_t's.
-#define CGALRS_POLYNOMIAL_CONVERTER_COPY(_T,_CONVERT) \
+#define CGALRS_POLYNOMIAL_CONVERTER_COPY(TYPE,CONVERT_FUNCTION) \
         template<> \
-        struct to_rs_poly<Polynomial<_T> >: \
-        public std::unary_function<Polynomial<_T>,RS_polynomial_1>{ \
-                RS_polynomial_1& operator()(const Polynomial<_T> &p)const{ \
+        struct to_rs_poly<Polynomial<TYPE> >: \
+        public std::unary_function<Polynomial<TYPE>,RS_polynomial_1>{ \
+                RS_polynomial_1& operator()(const Polynomial<TYPE> &p)const{ \
                         int d=p.degree(); \
                         mpz_t* c=(mpz_t*)malloc((d+1)*sizeof(mpz_t)); \
                         for(int i=0;i<=d;++i){ \
                                 mpz_init(c[i]); \
-                                _CONVERT; \
+                                CONVERT_FUNCTION; \
                         } \
                         return *(new RS_polynomial_1(&c,d)); \
                 } \
@@ -118,10 +119,11 @@ public std::unary_function<Polynomial<Gmpq>,RS_polynomial_1>{
         }
 };
 
-template<class P>
+template<class Polynomial_>
 struct from_rs_poly:
-public std::unary_function<RS_polynomial_1,P>{
-        P operator()(const RS_polynomial_1 &p)const{
+public std::unary_function<RS_polynomial_1,Polynomial_>{
+        typedef Polynomial_     Polynomial;
+        Polynomial operator()(const RS_polynomial_1 &p)const{
                 std::cerr<<"can't convert to integer polynomial"<<std::endl;
                 exit(-1);
         }

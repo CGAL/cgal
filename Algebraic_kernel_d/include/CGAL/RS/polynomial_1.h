@@ -46,20 +46,20 @@ class RS_polynomial_1:
         > >
 {
         private:
-                int _capacity;
-                mutable int _degree;
-                mpz_t* _coef;
-                mutable bool _is_sf;
-                mutable polyptr _sfpart;
-                mutable sqfrptr _sqfr;
+                int capacity;
+                mutable int polynomial_degree;
+                mpz_t* coefficient_array;
+                mutable bool is_square_free;
+                mutable polyptr square_free_part;
+                mutable sqfrptr square_free_factorization;
                 void create_storage(int);
                 void free_storage();
                 // fetch_gmp_functions gathers the memory functions used by
-                // gmp at the object creation and stores them in _allocf,
-                // _reallocf and _freef
-                void *(*_allocf)(size_t);
-                void *(*_reallocf)(void*,size_t,size_t);
-                void (*_freef)(void*,size_t);
+                // gmp at the object creation and stores them in
+                // alloc_function, realloc_function and free_function
+                void *(*alloc_function)(size_t);
+                void *(*realloc_function)(void*,size_t,size_t);
+                void (*free_function)(void*,size_t);
                 void fetch_gmp_functions();
         public:
                 // copy constructor and copy assignement operator

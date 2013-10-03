@@ -36,13 +36,14 @@ bool operator==(const Algebraic_1&,const Algebraic_1&);
 // representation of algebraic numbers
 class Algebraic_1_rep{
 public:
-        mutable mpfi_t _mpfi;
-        RS_polynomial_1 *_poly;
-        int _nr;
-        int _mult;
-        mutable Sign _lefteval;
+        mutable mpfi_t interval;
+        RS_polynomial_1 *polynomial;
+        int numroot;
+        int multiplicity;
+        mutable Sign lefteval;
 
-        Algebraic_1_rep():_poly(NULL),_nr(-1),_mult(-1),_lefteval(ZERO){}
+        Algebraic_1_rep():
+                polynomial(NULL),numroot(-1),multiplicity(-1),lefteval(ZERO){}
         ~Algebraic_1_rep(){}
 
 private:
@@ -122,7 +123,8 @@ public:
 
         bool is_valid()const;
         bool is_finite()const;
-        /*template<class>*/ double to_double()const;
+        //template<class>
+        double to_double()const;
         std::pair<double,double> to_interval() const;
         Algebraic_1 sqrt()const;
 }; // class Algebraic_1

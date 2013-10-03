@@ -251,39 +251,37 @@ struct Ediv_1:
 public std::binary_function<RS_polynomial_1,RS_polynomial_1,RS_polynomial_1*>{
     RS_polynomial_1*
     operator()(const RS_polynomial_1 &f,const RS_polynomial_1 &g){
-        /*
-        int degf,degg,i;
-        mpz_ptr lcg;
-        mpz_t r;
-        degf=f.get_degree();
-        degg=g.get_degree();
-        RS_polynomial_1 *q=new RS_polynomial_1(degf-degg);
-        lcg=g.leading_coefficient();
-        if(!degg){
-            for(int i=0;i<=degf;++i)
-                mpz_divexact(q->coef(i),f.coef(i),lcg);
-            return q;
-        }
-        mpz_init(r);
-        mpz_set(r,f.leading_coefficient());
-        std::cout<<"f="<<f<<std::endl;
-        std::cout<<"g="<<g<<std::endl;
-        for(i=degf-degg;i>0;--i){
-            //std::cout<<"\ni="<<i;
-            mpz_divexact(q->coef(i),r/ *f.coef(i+degg)* /,lcg);
-            //--------------------------------------------------
-            // mpz_mul(r,q->coef(i),lcg);
-            // mpz_sub(r,f.coef(i+degf-degg-1),r);
-            //--------------------------------------------------
-            mpz_mul(r,q->coef(i),g.coef(degg-1));
-            mpz_sub(r,f.coef(i+degf-degg-1),r);
-            std::cout<<"i="<<i<<", q[i]="<<q->coef(i)<<", r="<<Gmpz(r)<<std::endl;
-        }
-        mpz_divexact(q->coef(0),r/ *f.coef(degg)* /,lcg);
-        mpz_clear(r);
-        //std::cout<<"\nediv("<<f<<","<<g<<") = "<<(*q)<<std::endl;
-        return q;
-        */
+        //int degf,degg,i;
+        //mpz_ptr lcg;
+        //mpz_t r;
+        //degf=f.get_degree();
+        //degg=g.get_degree();
+        //RS_polynomial_1 *q=new RS_polynomial_1(degf-degg);
+        //lcg=g.leading_coefficient();
+        //if(!degg){
+        //    for(int i=0;i<=degf;++i)
+        //        mpz_divexact(q->coef(i),f.coef(i),lcg);
+        //    return q;
+        //}
+        //mpz_init(r);
+        //mpz_set(r,f.leading_coefficient());
+        //std::cout<<"f="<<f<<std::endl;
+        //std::cout<<"g="<<g<<std::endl;
+        //for(i=degf-degg;i>0;--i){
+        //    //std::cout<<"\ni="<<i;
+        //    mpz_divexact(q->coef(i),r/ *f.coef(i+degg)* /,lcg);
+        //    //--------------------------------------------------
+        //    // mpz_mul(r,q->coef(i),lcg);
+        //    // mpz_sub(r,f.coef(i+degf-degg-1),r);
+        //    //--------------------------------------------------
+        //    mpz_mul(r,q->coef(i),g.coef(degg-1));
+        //    mpz_sub(r,f.coef(i+degf-degg-1),r);
+        //    std::cout<<"i="<<i<<", q[i]="<<q->coef(i)<<", r="<<Gmpz(r)<<std::endl;
+        //}
+        //mpz_divexact(q->coef(0),r/ *f.coef(degg)* /,lcg);
+        //mpz_clear(r);
+        ////std::cout<<"\nediv("<<f<<","<<g<<") = "<<(*q)<<std::endl;
+        //return q;
     // naive implementation
         RS_polynomial_1 *ret=new RS_polynomial_1(Pdivquo_1()(f,g));
         return ret;
@@ -303,10 +301,10 @@ public std::unary_function<long,RS_polynomial_1>{
 // squarefree factorization, Yun's algorithm (1976)
 // if P=sum(P_i^i), this function returns a vector with pairs (P_i,i)
 // it gives for free the square-free part of P, which is C_1
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct do_sqfr_1:
 public std::unary_function<RS_polynomial_1,sqfrvec*>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     sqfrvec* operator()(const RS_polynomial_1 &P)const{
         sqfrvec *res=new sqfrvec();
         if(!P.get_degree()){
@@ -342,10 +340,10 @@ public std::unary_function<RS_polynomial_1,sqfrvec*>{
     }
 };
 
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct sqfr_1:
 public std::unary_function<RS_polynomial_1,sqfrvec>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     sqfrvec operator()(const RS_polynomial_1 &P){
         if(!P.has_sqfr()){
             sqfrptr sp(do_sqfr_1<Gcd>()(P));
@@ -357,10 +355,10 @@ public std::unary_function<RS_polynomial_1,sqfrvec>{
 
 // the square-free part of P is P/gcd(P,dP), but it can be also calculated
 // as the product of its sf factors
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct do_sfpart_1:
 public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     RS_polynomial_1* operator()(const RS_polynomial_1 &P)const{
         if(P.get_degree()){
             // TODO: not optimal
@@ -392,10 +390,10 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
 };
 #endif
 
-template<class _Gcd_policy>
+template<class GcdPolicy>
 struct sfpart_1:
 public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
-    typedef _Gcd_policy         Gcd;
+    typedef GcdPolicy           Gcd;
     const RS_polynomial_1& operator()(const RS_polynomial_1 &P){
         if(!P.has_sfpart()){
             polyptr pp(do_sfpart_1<Gcd>()(P));
