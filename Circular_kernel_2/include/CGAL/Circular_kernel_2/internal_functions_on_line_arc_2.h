@@ -810,7 +810,7 @@ namespace CircularFunctors {
 	 it != solutions.end(); ++it) {
         #if CGAL_INTERSECTION_VERSION < 2
         const std::pair<Circular_arc_point_2, unsigned>* p =
-            object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it)) )
+            object_cast<std::pair<Circular_arc_point_2, unsigned> >(& (*it));
         Has_on_visitor<CK, Circular_arc_2> vis(&c);
         if(vis(*p)) *res++ = *it;
         #else

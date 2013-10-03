@@ -2532,6 +2532,11 @@ namespace CommonKernelFunctors {
       typedef typename Intersection_traits<K, A, B>::result_type type;
     };
 
+    // Solely to make the lazy kernel work
+    #if CGAL_INTERSECTION_VERSION < 2
+    typedef CGAL::Object result_type;
+    #endif
+
     // 25 possibilities, so I keep the template.
     template <class T1, class T2>
     typename Intersection_traits<K, T1, T2>::result_type
