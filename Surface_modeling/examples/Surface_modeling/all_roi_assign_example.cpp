@@ -61,7 +61,7 @@ int main()
   // insert region of interest
   boost::tie(vb, ve) = boost::vertices(mesh);
 
-  deform_mesh.insert_roi_vertices(vb, ve); // insert whole mesh as roi
+  deform_mesh.insert_roi_vertices(vb, ve); // insert whole mesh as ROI
 
   // insert controls
   vertex_descriptor control_1 = *boost::next(vb, 213);
@@ -70,7 +70,7 @@ int main()
   deform_mesh.insert_control_vertex(control_1); // insert controls
   deform_mesh.insert_control_vertex(control_2);
 
-  // insertion of roi and controls completed, call preprocess
+  // insertion of ROI and controls completed, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
   if(!is_matrix_factorization_OK){ 
     std::cerr << "Check documentation of preprocess()" << std::endl; 
