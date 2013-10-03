@@ -29,7 +29,7 @@
 - `SparseLinearAlgebraTraitsWithPreFactor_d`
 - `SurfaceModelingWeightCalculator`
 
-## Main Classe ##
+## Main Class ##
 - `#CGAL::Deform_mesh`
 
 ## Algebraic Traits ##
