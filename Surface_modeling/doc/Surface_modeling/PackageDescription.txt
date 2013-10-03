@@ -19,5 +19,22 @@
 \cgalPkgDemo{Edit plugin of the Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `DeformationClosestRotationTraits_3`
+- `SimplePoint_3`
+- `SparseLinearAlgebraTraitsWithPreFactor_d`
+- `SurfaceModelingWeightCalculator`
+
+## Main Classe ##
+- `#CGAL::Deform_mesh`
+
+## Algebraic Traits ##
+- `#CGAL::Deformation_Eigen_closest_rotation_traits_3`
+- `#CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
+
 */
 
