@@ -2,10 +2,12 @@
 // Poor man's profile counters to see which is the failure that leads to exact computation
 // in do_intersect(Bbox_3, Segment_3)
 int EXIT1, EXIT2, EXIT3, BASE1, BASE2, BASE3, BASE4, BASE5, BASE6, BASE7, BASE8,  BASE9, BASE10, CALLS;
+int EXACT;
 
 #define ADD_BBOX_POINTS
 #define DOUBLE_FILTER
-#define DUMP_FAILURES
+//#define DUMP_FAILURES
+#define DELAY_RETURN
 
 bool add_bbox_points, double_filter;
 
@@ -81,7 +83,7 @@ int main(int argc, char* argv[])
   std::cout.precision(20);
   CGAL::default_random = CGAL::Random(0);
 
-  EXIT1 = EXIT2 = EXIT3 = CALLS = BASE1 = BASE2 = BASE3 = BASE4 = BASE5 = BASE6 = BASE7 = BASE8 = BASE9 = BASE10 = 0;
+  EXACT = EXIT1 = EXIT2 = EXIT3 = CALLS = BASE1 = BASE2 = BASE3 = BASE4 = BASE5 = BASE6 = BASE7 = BASE8 = BASE9 = BASE10 = 0;
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input("data/rocker-arm.off");
@@ -104,11 +106,12 @@ int main(int argc, char* argv[])
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
   t.stop();
-  std::cerr << t.time() << std::endl;
+  std::cerr << "\n"<< t.time() << " sec." << std::endl;
   std::cerr <<  BASE1 << "  " <<  BASE2 << "  " <<  BASE3 << "  " <<  BASE4 << "  " <<  BASE5 << "  " <<  BASE6 << "  " <<  BASE7 << "  " <<  BASE8 << "  " <<  BASE9 << "  " << BASE10 << std::endl;
   std::cerr << " "<< CALLS << std::endl;
   std::cerr << " "<< EXIT1 << " "<< EXIT2 << " " << EXIT3 << std::endl;
-
+  std::cerr << "# exact tests = " << EXACT << std::endl;
+ 
 #ifdef DOUBLE_FILTER
   if (double_filter)
     std::cerr << "Used double filter" << std::endl;
@@ -120,9 +123,9 @@ int main(int argc, char* argv[])
 #endif
 
   // Output
-  // std::ofstream medit_file("fandisk_CGAL.mesh");
-  // c3t3.output_to_medit(medit_file);
-  // medit_file.close();
+   std::ofstream medit_file("fandisk_CGAL.mesh");
+   c3t3.output_to_medit(medit_file);
+   medit_file.close();
 
   // Set tetrahedron size (keep cell_radius_edge), ignore facets
   //Mesh_criteria new_criteria(cell_radius_edge=3, cell_size=0.03);
