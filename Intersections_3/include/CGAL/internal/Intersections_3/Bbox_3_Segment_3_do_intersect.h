@@ -333,21 +333,43 @@ namespace internal {
     typedef typename Is_greater::result_type Is_greater_value;
     Is_greater is_greater;
 
+#ifdef DELAY_RETURN
+    Is_greater_value result(true); // We early exit as soon as we obtain false, and accumulate uncertainty 
+#endif
     is_greater.register_new_input_values(tmin, dmin);
     is_greater.register_new_input_values(tymin, dymin);
     is_greater.register_new_input_values(tmax, dmax);
     is_greater.register_new_input_values(tymax, dymax);
 
     is_greater.compute_new_error_bound();
-    if(is_greater.bound_overflow() || is_greater.value_might_underflow())
+    if(is_greater.bound_overflow() || is_greater.value_might_underflow()){
       return Is_greater::uncertain();
+    }
 
     // If t1 > tymax/dymax || tymin/dymin > t2, return false.
     if( py != qy && px != qx ) { // dmin > 0, dymax >0, dmax > 0, dymin > 0
       const Is_greater_value b1 = is_greater(dymax* tmin,  dmin*tymax);
-      if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
+#ifndef DELAY_RETURN
+         if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
+#else
+      if(certainly(b1)){
+        return false;
+      }
+      if(is_indeterminate(b1)){
+        result = Is_greater::uncertain();
+      }
+#endif
       const Is_greater_value b2 = is_greater( dmax*tymin, dymin* tmax);
-      if(possibly(b2)) return !b2;
+#ifndef DELAY_RETURN
+       if(possibly(b2)) return !b2;
+#else
+      if(certainly(b2)){
+        return false;
+      }
+      if(is_indeterminate(b2)){
+        result = Is_greater::uncertain();
+      }
+#endif
     }
 
     Is_greater_value b = Is_greater_value();
@@ -359,10 +381,15 @@ namespace internal {
       tmin = tymin;
       dmin = dymin;
     }
-    if(is_indeterminate(b)) return b; // Note that the default-constructed
+    if(is_indeterminate(b)){
+#ifndef DELAY_RETURN
+      return b; // Note that the default-constructed
                                       // Is_greater_value cannot be
                                       // indeterminate.
-
+#else 
+      result = Is_greater::uncertain();
+#endif
+    }
     // If tymax/dymax < t2, set t2 = tymax/dymax.
     if( (px == qx) || // <=> (dmax > 0)
         ( (py != qy) && // <=> dymax > 0
@@ -371,8 +398,13 @@ namespace internal {
       tmax = tymax;
       dmax = dymax;
     }
-    if(is_indeterminate(b)) return b;
-
+    if(is_indeterminate(b)){
+#ifndef DELAY_RETURN
+      return b;
+#else
+      result = Is_greater::uncertain();
+#endif
+    }
     CGAL_assertion(dmin >= 0);
     CGAL_assertion(dmax >= 0);
 
@@ -385,15 +417,38 @@ namespace internal {
       is_greater.register_new_input_values(tzmax, dzmax);
 
       is_greater.compute_new_error_bound();
-      if(is_greater.bound_overflow() || is_greater.value_might_underflow())
-        return Is_greater::uncertain();
+      if(is_greater.bound_overflow() || is_greater.value_might_underflow()){
+         return Is_greater::uncertain();
+      }
 
       const Is_greater_value b1 = is_greater(dzmax* tmin,  dmin*tzmax);
+#ifndef DELAY_RETURN
       if(possibly(b1)) return !b1; // if(is_greater) return false; // or uncertain
+#else
+      if(certainly(b1)){
+        return false;
+      }
+      if(is_indeterminate(b1)){
+        result = Is_greater::uncertain();
+      }
+#endif
       const Is_greater_value b2 = is_greater( dmax*tzmin, dzmin* tmax);
+#ifndef DELAY_RETURN
       if(possibly(b2)) return !b2; // if(is_greater) return false; // or uncertain
+#else
+      if(certainly(b2)){
+        return false;
+      }
+      if(is_indeterminate(b2)){
+        result = Is_greater::uncertain();             
+      }
+#endif
     }
+#ifndef DELAY_RETURN
     return true;
+#else
+    return result; 
+#endif
   }
 
   template <class K>

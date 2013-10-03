@@ -165,6 +165,7 @@ public:
     bbox_3_to_off(std::cerr, b);
     std::cerr  << std::endl;
 #endif
+    EXACT++;
     return Base::operator()(s,b);
   }
 

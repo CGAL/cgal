@@ -19,6 +19,20 @@
 // Author(s)     : Stephane Tayeb
 //
 
+
+// Poor man's profile counters to see which is the failure that leads to exact computation
+// in do_intersect(Bbox_3, Segment_3)
+int EXACT, EXIT1, EXIT2, EXIT3, BASE1, BASE2, BASE3, BASE4, BASE5, BASE6, BASE7, BASE8,  BASE9, BASE10, CALLS;
+
+#define ADD_BBOX_POINTS
+#define DOUBLE_FILTER
+#define DELAY_RETURN
+//#define DUMP_FAILURES
+
+bool add_bbox_points, double_filter;
+
+
+
 #include <string>
 
 #include <CGAL/config.h>
@@ -669,6 +683,7 @@ bool test_kernel(bool exact_predicates = true, K /*k*/ = K())
 
 int main()
 {
+ add_bbox_points = double_filter = true;
   srand(0);
   std::cout << std::setprecision(5);
   

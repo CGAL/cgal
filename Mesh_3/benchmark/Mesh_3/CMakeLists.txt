@@ -19,7 +19,7 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
-  include_directories ( BEFORE ./FastDoIntersect/Filtered_kernel/include/  FastDoIntersect/Intersections_3/include )
+#  include_directories ( BEFORE ./FastDoIntersect/Filtered_kernel/include/  FastDoIntersect/Intersections_3/include )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
