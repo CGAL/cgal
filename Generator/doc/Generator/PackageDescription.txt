@@ -61,7 +61,10 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::Random_points_in_cube_3<Point_3, Creator>` 
 - `CGAL::Random_points_in_cube_d<Point_d>` 
 - `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
+- `CGAL::Random_points_in_triangle_2<Point_2, Creator>` 
 - `CGAL::Random_points_in_sphere_3<Point_3, Creator>` 
+- `CGAL::Random_points_in_triangle_3<Point_3, Creator>` 
+- `CGAL::Random_points_in_tetrahedron_3<Point_3, Creator>` 
 - `CGAL::Random_points_in_square_2<Point_2, Creator>` 
 - `CGAL::Random_points_on_circle_2<Point_2, Creator>` 
 - `CGAL::Random_points_on_segment_2<Point_2, Creator>` 
