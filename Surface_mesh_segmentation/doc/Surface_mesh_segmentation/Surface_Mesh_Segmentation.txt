@@ -199,8 +199,10 @@ The main advantage is to decrease from log to constant the complexity for access
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_with_facet_ids_example.cpp}
 <BR>
 \section Performances Performances
-\subsection SMSRuntime Runtime of the functions compute_sdf_values() and segment_from_sdf_values()
-The following results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+<!-- \subsection SMSRuntime Runtime of the functions compute_sdf_values() and segment_from_sdf_values() -->
+
+The following tables provides the runtime of the functions `compute_sdf_values()` and `segment_from_sdf_values()`.
+The results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinausaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 
@@ -232,7 +234,7 @@ the graph-cut part is using the library <a href="http://pub.ist.ac.at/~vnk/softw
 
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
----------------------| -------------------:  | -------------------:  | --------------------:  | -------------------:
+---------------------| -------------------:  | -------------------:  | --------------------:  | ---------------------:
 7,828                |    38                 |    61                 |    141                 |     204
 20,188               |    50                 |   163                 |    483                 |     608
 88,928               |   314                 | 1,260                 |  2,736                 |   4,239
@@ -240,7 +242,7 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 
 
 <!-- Internal for developers:
-This are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
+These are the runtimes in case CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE is defined, in which
 case boost::boykov_kolmogorov_max_flow is used instead of MaxFlow
 <center>
 Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of cluster = 10 | Number of cluster = 15
@@ -249,9 +251,7 @@ Number of triangles  | Number of cluster = 2 | Number of cluster = 5 | Number of
 34,986               |   351                 | 1,279                 |  3,551                 |   5,875
 100,332              | 1,112                 | 4,227                 | 11,850                 |  23,408
 </center>
--->
 
-<!-- Keep this internal for developers
 \section ImplementationDetails Implementation Details
 \subsection RaySamplingInShapeDiameterFunction Ray Sampling in Shape Diameter Function
 \cgalFigureBegin{Segmentation_vogel,vogel_uniform_biased.png}
@@ -264,14 +264,15 @@ As a result, we do not use the weighting scheme from the original algorithm in o
 A comparison with biased and uniform sampling of points can be seen in \cgalFigureRef{Segmentation_vogel}. The final SDF value of a facet is then calculated by averaging the ray lengths falling into 1.5 Median Absolute Deviation (MAD) from the median of all lengths.
 -->
 
+<!--
 \subsection SMSBench Mesh Segmentation Benchmark
-
 The mesh segmentation problem being ill-posed, the mesh segmentation community have proposed some benchmarks to evaluate the
 quality of a given algorithm. A benchmark is composed of a set of models and a software responsible for scoring
-the results. On a particular benchmark \cgalCite{Chen2009SegmentationBenchmark}, the current implementation obtains the
+the results. On a particular benchmark \cite Chen2009SegmentationBenchmark, the current implementation obtains the
 score of XXX. The code used in the benchmark is provided as an exemple XXX.
-
 \todo Add the score and the source code used for the benchmark
+-->
+
 
 \section Surface_mesh_segmentationImplementationhistory Design and Implementation History
 The initial implementation of this package is the result of the work of Ilker O. Yaz during the 2012 season
