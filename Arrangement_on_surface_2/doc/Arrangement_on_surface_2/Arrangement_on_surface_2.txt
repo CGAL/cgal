@@ -2135,10 +2135,11 @@ is sufficient to carry out computations on polylines, and to construct
 arrangements of polylines in an exact and robust manner.
 
 The `Arr_polyline_traits_2<SegmentTraits>` class template handles
-bounded polylines. It models the same concepts as the `SegmentTraits`
-template in use. In particular, the type that substitutes the template
-parameter `SegmentTraits` (when `Arr_polyline_traits_2<SegmentTraits>`
-is instantiated) must be a geometry-traits class that handles segments
+bounded polylines. It models the same concepts that the type that
+substitutes the template parameter `SegmentTraits` (when
+`Arr_polyline_traits_2<SegmentTraits>` is instantiated) models. In
+particular, the type that substitutes the template parameter
+`SegmentTraits` must be a geometry-traits class that handles segments
 and models the following concepts
 
 - `ArrangementTraits_2`
@@ -2149,24 +2150,25 @@ and models the following concepts
 
 The types `Curve_2` and `X_monotone_curve_2` which are nested in
 `Arr_polyline_traits_2<SegmentTraits>` represent polylines and
-\f$x\f$-monotone polylines, respectively.
+\f$x\f$-monotone polylines, respectively. We refer to the type that
+substitutes the template parameter `SegmentTraits` as the <em>segment
+traits</em> hereafter.
 
 Roughly speaking, the curves handled by each operation defined by the
-type that substitutes the `SegmentTraits` parameter are restricted to
-line segments. An instance of the polyline traits class-template
-inherits its nested point type, i.e., `Point_2` from the substituted
-segment traits. The nested type `Curve_2` and `X_monotone_curve_2`
-represent polylines and \f$x\f$-monotone polylines respectively. The
-nested `X_monotone_curve_2` type inherits from the nested type
-`Curve_2`. A polyline and an \f$x\f$-monotone polyline are stored as
-vectors of `SegmentTraits::Curve_2` and
+segment traits parameter are restricted to line segments. An instance
+of the polyline traits class-template inherits its nested point type,
+i.e., `Point_2` from the segment traits. The nested type `Curve_2` and
+`X_monotone_curve_2` represent polylines and \f$x\f$-monotone
+polylines respectively. The nested `X_monotone_curve_2` type inherits
+from the nested type `Curve_2`. A polyline and an \f$x\f$-monotone
+polyline are stored as vectors of `SegmentTraits::Curve_2` and
 `SegmentTraits::X_monotone_curve_2` respectively. We do not assume
-that a curve of type `Curve_2` nested in the substituted traits class
+that a curve of type `Curve_2` nested in the segment traits class
 (i.e. a segment of a polyline) is necessarily \f$x\f$-monotone and we
 treat the `Curve_2` and `X_monotone_curve_2` types nested in the
-substituted traits as different types. This makes the code as generic
-as possible and does not have a negative impact on the performance
-whatsoever. Nevertheless, the provided `SegmentTraits` must support a
+segment traits as different types. This makes the code as generic as
+possible and does not have a negative impact on the performance
+whatsoever. Nevertheless, the segment traits must support a
 construction of a unique \f$x\f$-monotone segment given two input
 points. Therefore, for instance, `Arr_circular_line_arc_traits_2`
 cannot be used as the template parameter. On the other hand,
@@ -2176,9 +2178,9 @@ matter of fact, by default, `Arr_segment_traits_2` is used to
 substitute the template parameter in case where no such parameter is
 provided. Note that in practice, as soon as `Arr_segment_traits_2` is
 used as the `SegmentTraits`, then the segments that a polyline
-comprises are linear segments, and in this case
-`SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2` are
-the same.
+comprises are linear segments. In particular, in this case the nested
+types `SegmentTraits::Curve_2` and `SegmentTraits::X_monotone_curve_2`
+are identical types representing linear segments.
 
 A polyline can be constructed given one of the following inputs:
 
@@ -2194,7 +2196,7 @@ parts.
 - <b>A pair of points \a or a single segment</b>. In this case a polyline
   that consists of a single segment is constructed.
 
-Note that degenerated polylines are not supported. That is, it is
+Note that degenerate polylines are not supported. That is, it is
 impossible to construct a polyline that contains a segment of length
 zero, or an isolated point. Finally, a polyline is
 <b><em>continuous</em></b> and <b><em>well-oriented</em></b>; that is,
@@ -2218,8 +2220,8 @@ be large.
 
 Technically speaking, it is possible to construct a general polyline
 which is neither well-oriented nor continuous. However, it is
-impossible to use such constructed polylines for the purpose of computing
-an arrangement.
+impossible to use such polylines for the purpose of computing an
+arrangement.
 
 \cgalAdvancedEnd
 
@@ -2231,16 +2233,17 @@ curve are always stored in a strongly monotonic lexicographical order.
 In other words, \f$x\f$-monotone polylines can be directed \a either
 left-to-right \a or right-to-left. If the macro
 #CGAL_ALWAYS_LEFT_TO_RIGHT is set to 1, then the \f$x\f$-monotone
-polylines are always directed from left-to-right.
+polylines are always directed from left-to-right (only proposed for
+backward compatibility).
 
 The polyline-traits class does not perform any geometric operations
 directly. Instead, it solely relies on the functionality of the
-substituted segment-traits class. For example, when we need to
-determine the position of a point with respect to an \f$x\f$-monotone
-polyline, we use binary search to locate the relevant segment that
-contains the point in its \f$x\f$-range. Then, we compute the position of
-the point with respect to this segment. Thus, operations on \f$x\f$-monotone
-polylines of size \f$m\f$ typically take \f$O(\log m)\f$ time.
+segment traits. For example, when we need to determine the position of
+a point with respect to an \f$x\f$-monotone polyline, we use binary
+search to locate the relevant segment that contains the point in its
+\f$x\f$-range. Then, we compute the position of the point with respect
+to this segment. Thus, operations on \f$x\f$-monotone polylines of
+size \f$m\f$ typically take \f$O(\log m)\f$ time.
 
 You are free to choose the underlying segment traits class. Your
 decision could be based, for example, on the number of expected

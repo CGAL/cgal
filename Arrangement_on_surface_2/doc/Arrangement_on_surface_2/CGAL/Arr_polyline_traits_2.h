@@ -34,10 +34,10 @@ namespace CGAL {
       - `ArrangementTraits_2` and
       - `ArrangementDirectionalXMonotoneTraits_2`.
 
-    If, in addition, `SegmentTraits` models the concept
+    If, in addition, the segment traits models the concept
     `ArrangementLandmarkTraits_2` then `Arr_polyline_traits_2` models
     this concept as well. If no type is provided, then
-    `Arr_segment_traits_2` (with
+    `Arr_segment_traits_2` (instantiated with
     `Exact_predicates_exact_constructions_kernel` as the kernel) is
     used. Otherwise, `Arr_segment_traits_2<Kernel>` or
     `Arr_non_caching_segment_traits_2<Kernel>` can be used, where the
@@ -60,12 +60,12 @@ namespace CGAL {
     regardless of the number of points. Finally, the types `Segment_2`
     and `X_monotone_segment_2` nested in `Arr_polyline_traits_2` are
     nothing but `SegmentTraits::Curve_2` and
-    `SegmentTraits::X_monotone_curve_2` respectively.
+    `SegmentTraits::X_monotone_curve_2`, respectively.
 
     \cgalHeading{A note on Backwards compatibility} In \cgal version
-    4.2 (and earlier) any object of the `X_monotone_curve_2` nested
-    type of `Arr_polyline_traits_2` maintained a direction invariant;
-    namely, its vertices were ordered in an \a ascending
+    4.2 (and earlier) any object of the `X_monotone_curve_2` type
+    nested in `Arr_polyline_traits_2` maintained a direction
+    invariant; namely, its vertices were ordered in an \a ascending
     lexicographical \f$(xy)\f$-order.  This restriction is no longer
     imposed and `X_monotone_curve_2` can be now directed either from
     right-to-left \a or left-to-right. If you wish to maintain a
