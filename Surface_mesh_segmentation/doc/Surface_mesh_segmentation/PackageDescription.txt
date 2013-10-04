@@ -12,7 +12,7 @@
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ilker %O. Yaz and Sébastien Loriot}
-\cgalPkgDesc{This package provides methods to generate automatic segmentation of triangulated surface mesh.}
+\cgalPkgDesc{This package provides methods to generate automatic segmentation of a triangulated surface mesh.}
 \cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentation}
 \cgalPkgSummaryEnd
 
@@ -25,5 +25,16 @@
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `#SegmentationGeomTraits`
+
+## Main Functions ##
+- `#CGAL::compute_sdf_values()`
+- `#CGAL::postprocess_sdf_values()`
+- `#CGAL::segment_from_sdf_values()`
+- `#CGAL::compute_sdf_values_and_segment()`
 
 */
