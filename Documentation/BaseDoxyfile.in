@@ -271,7 +271,7 @@ ALIASES += "cgalPkgLicense{1}=<B>License:</B> \1 <BR>"
 ALIASES += "cgalPkgDemo{2}=<B>Demo:</B> <a href=\"http://www.cgal.org/demo/4.3/\2\">\1</a><BR>"
 ALIASES += "cgalPkgDescriptionEnd="
 
-ALIASES+= "cgalModifBegin=\htmlonly <div class=\"CGALModif\"> \endhtmlonly \xrefitem modif \"Modifications\" \"MODIFICATIONS\" "
+ALIASES+= "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\" "
 ALIASES+= "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly"
 
 # this alias controls linking to the how to cite page, it is also
