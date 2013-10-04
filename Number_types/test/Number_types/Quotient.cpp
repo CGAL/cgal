@@ -24,9 +24,16 @@ void test_double_ctor()
   typedef CGAL::Quotient<T> Qt;
   double d1 = 1e100;
   double d2 = 0.5;
-  Qt q1 = d1;
-  Qt q2 = d2;
+  Qt q1 = d2;
+  Qt q2 = d1;
+  assert(q2.numerator() == T(d1));
+  assert(q2.denominator() == T(1));
+  assert(q1.numerator() == 1);
+  assert(q1.denominator() == 2);
+  q1 = d1;
+  q2 = d2;
   assert(q1.numerator() == T(d1));
+  assert(q1.denominator() == T(1));
   assert(q2.numerator() == 1);
   assert(q2.denominator() == 2);
 
