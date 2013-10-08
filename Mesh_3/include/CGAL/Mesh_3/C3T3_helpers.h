@@ -966,7 +966,7 @@ private:
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-    
+
     return min_sliver_value(c3t3_cells,criterion,use_cache);
   }
   
@@ -1498,6 +1498,7 @@ private:
   void reset_sliver_cache(CellForwardIterator cells_begin,
                             CellForwardIterator cells_end) const
   {
+    // std::cerr << "reset_sliver_cache\n";
     namespace bl = boost::lambda;
     std::for_each(cells_begin, cells_end,
                   bl::bind(&Cell::reset_cache_validity, *bl::_1) );
@@ -1581,6 +1582,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
 
   // Get old values
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = vertex->point();
   
   // Move point
@@ -1588,10 +1590,12 @@ update_mesh_no_topo_change(const Point_3& new_position,
   move_point_no_topo_change(vertex,new_position);
     
   // Get new criterion value (conflict_zone did not change)
+  // std::cerr << "call min_sliver_in_c3t3_value" << std::endl;
   const FT new_sliver_value = 
     min_sliver_in_c3t3_value(conflict_cells, criterion,
                              false); // use_cache = false
   // use_cache=false mean "update the sliver cache instead of using it"
+  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
   
   // Check that mesh is still valid
   if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
@@ -1622,6 +1626,10 @@ update_mesh_topo_change(const Point_3& new_position,
                         const SliverCriterion& criterion,
                         OutputIterator modified_vertices)
 {
+  // std::cerr << "update_mesh_topo_change(\n"
+  //           << new_position << ",\n"
+  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
+  //           << ")\n";
   // check_c3t3(c3t3_);
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
@@ -1642,6 +1650,7 @@ update_mesh_topo_change(const Point_3& new_position,
                  std::back_inserter(conflict_cells)); 
   
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = old_vertex->point();
   
   // Keep old boundary
@@ -1674,7 +1683,8 @@ update_mesh_topo_change(const Point_3& new_position,
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
   FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
-  
+  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
+
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
   if ( new_sliver_value > old_sliver_value
