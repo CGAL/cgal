@@ -1488,10 +1488,8 @@ private:
   template <typename CellRange>
   void reset_sliver_cache(CellRange& cell_range)
   {
-    using boost::begin;
-    using boost::end;
-    reset_sliver_cache(begin(cell_range),
-                       end(cell_range));
+    reset_sliver_cache(boost::begin(cell_range),
+                       boost::end(cell_range));
   }
 
   template <typename CellForwardIterator>
@@ -1507,10 +1505,8 @@ private:
   template <typename CellRange>
   void reset_circumcenter_cache(CellRange& cell_range)
   {
-    using boost::begin;
-    using boost::end;
-    reset_circumcenter_cache(begin(cell_range),
-                             end(cell_range));
+    reset_circumcenter_cache(boost::begin(cell_range),
+                             boost::end(cell_range));
   }
   
   template <typename CellForwardIterator>
