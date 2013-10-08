@@ -1590,14 +1590,14 @@ update_mesh_no_topo_change(const Point_3& new_position,
   // Get new criterion value (conflict_zone did not change)
   const FT new_sliver_value = 
     min_sliver_in_c3t3_value(conflict_cells, criterion,
-                             false); // do not update the sliver cache
+                             false); // use_cache = false
+  // use_cache=false mean "update the sliver cache instead of using it"
   
   // Check that mesh is still valid
   if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
                            vertex, modified_vertices);
-    reset_sliver_cache(conflict_cells);
     return std::make_pair(true,vertex);
   }
   else
@@ -1606,6 +1606,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
     //           << old_position << "\n";
     // revert move
     reset_circumcenter_cache(conflict_cells);
+    reset_sliver_cache(conflict_cells);
     move_point_no_topo_change(vertex,old_position);
     return std::make_pair(false,vertex);
   }
