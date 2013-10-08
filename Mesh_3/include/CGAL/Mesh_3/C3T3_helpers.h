@@ -1486,7 +1486,7 @@ private:
   }
 
   template <typename CellRange>
-  void reset_sliver_cache(CellRange& cell_range)
+  void reset_sliver_cache(CellRange& cell_range) const
   {
     reset_sliver_cache(boost::begin(cell_range),
                        boost::end(cell_range));
@@ -1503,7 +1503,7 @@ private:
   }
 
   template <typename CellRange>
-  void reset_circumcenter_cache(CellRange& cell_range)
+  void reset_circumcenter_cache(CellRange& cell_range) const
   {
     reset_circumcenter_cache(boost::begin(cell_range),
                              boost::end(cell_range));
