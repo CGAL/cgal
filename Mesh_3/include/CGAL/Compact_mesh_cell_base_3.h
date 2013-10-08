@@ -72,7 +72,7 @@ public:
   typedef const Point*     Point_const_iterator;
 
 public:
-  void invalidate_circumcenter()
+  void invalidate_circumcenter() const
   {
     if (circumcenter_) {
       delete circumcenter_;
@@ -339,7 +339,11 @@ public:
     sliver_cache_validity_ = true;
     sliver_value_ = value;
   }
-  const FT& sliver_value() const { return sliver_value_; }
+  const FT& sliver_value() const 
+  { 
+    CGAL_assertion(is_cache_valid());
+    return sliver_value_; 
+  }
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
 
