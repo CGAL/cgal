@@ -264,11 +264,16 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
+	  Point const& p0=*f++; // *--e ?
+	  return this->operator()(f,e,p0);
+	}
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter const& e, Point const& p0) const {
 	  typedef typename Get_functor<R, Squared_distance_to_origin_tag>::type Sqdo;
 	  typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
 	  typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 
-	  Point const& p0=*f++;
 	  int d=pd(p0);
 	  Matrix m(d+1,d+1);
 	  if(CGAL::Is_stored<Sqdo>::value) {
@@ -292,7 +297,10 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	      }
 	    }
 	  }
-	  return LA::sign_of_determinant(CGAL_MOVE(m));
+	  if(d%2)
+	    return -LA::sign_of_determinant(CGAL_MOVE(m));
+	  else
+	    return LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
 #ifdef CGAL_CXX0X

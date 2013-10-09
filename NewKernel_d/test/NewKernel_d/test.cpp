@@ -1,4 +1,4 @@
-#define BOOST_RESULT_OF_USE_DECLTYPE 1
+//#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
 #include <typeinfo>
 #include <CGAL/Kernel_d/Cartesian_base.h>
@@ -120,6 +120,20 @@ void test2(){
   P tab[]={a,b,c,d};
   std::cout << po (&tab[0],tab+3) << std::endl;
   std::cout << sos(&tab[0],tab+4) << std::endl;
+  P x1=cp(0,1);
+  P x2=cp(-1,-1);
+  P x3=cp(1,-1);
+  P x4=cp(0,0);
+  P x5=cp(0,-1);
+  P tab2[]={x1,x2,x3,x4};
+  assert(po(tab2+0,tab2+3)==CGAL::COUNTERCLOCKWISE);
+  assert(sos(tab2+0,tab2+3,x4)==CGAL::ON_POSITIVE_SIDE);
+#if 0
+  // Doesn't compile with Lazy yet.
+  FO fo=cfo(tab2+1,tab2+3);
+  assert(ifo(fo,tab2+1,tab2+3)==CGAL::POSITIVE);
+  assert(ifsos(fo,tab2+1,tab2+3,x5)==CGAL::ON_POSITIVE_SIDE);
+#endif
 }
 
 template<class CP> struct Construct_point3_helper {
@@ -230,6 +244,18 @@ void test3(){
   assert(!cah(y+0,y+3,buf[0]));
   assert(cl(a,a)==CGAL::EQUAL);
   assert(cl(a,b)==CGAL::LARGER);
+  P x1=cp(0,1,-1);
+  P x2=cp(-1,-1,-1);
+  P x3=cp(1,-1,-1);
+  P x4=cp(0,0,1);
+  P x5=cp(0,0,0);
+  P x6=cp(0,0,-1);
+  P tab2[]={x1,x2,x3,x4,x5};
+  assert(po(tab2+0,tab2+4)==CGAL::POSITIVE);
+  assert(sos(tab2+0,tab2+4,x5)==CGAL::ON_POSITIVE_SIDE);
+  FO fo4=cfo(tab2+0,tab2+3);
+  assert(ifo(fo4,tab2+0,tab2+3)==CGAL::POSITIVE);
+  assert(ifsos(fo4,tab2+0,tab2+3,x6)==CGAL::ON_POSITIVE_SIDE);
 }
 
 int main(){

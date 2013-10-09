@@ -233,7 +233,7 @@ template<class R_> struct In_flat_side_of_oriented_sphere : private Store_kernel
 			m(d+1,d+1)+=CGAL_NTS square(m(d+1,j+1));
 		}
 
-                return LA::sign_of_determinant(CGAL_MOVE(m));
+                return -LA::sign_of_determinant(CGAL_MOVE(m));
         }
 };
 
