@@ -452,7 +452,7 @@ struct SS_converter : Converter
   
   Target_trisegment_2_ptr cvt_single_trisegment( Source_trisegment_2_ptr const& tri ) const
   {
-    CGAL_precondition( tri ) ;
+    CGAL_precondition( tri!= Source_trisegment_2_ptr() ) ;
     
     return Target_trisegment_2_ptr ( new Target_trisegment_2(cvt_s(tri->e0())
                                                             ,cvt_s(tri->e1())

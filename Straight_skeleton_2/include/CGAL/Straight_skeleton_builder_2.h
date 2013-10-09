@@ -355,7 +355,7 @@ private :
                                                                         
     CGAL_STSKEL_BUILDER_TRACE(5,"Trisegment for " << aTriedge << ":" << r ) ;
     
-    CGAL_postcondition_msg(r, "Unable to determine edges collinearity");
+    CGAL_postcondition_msg((r!= Trisegment_2_ptr()), "Unable to determine edges collinearity");
       
     return r ;  
   }
