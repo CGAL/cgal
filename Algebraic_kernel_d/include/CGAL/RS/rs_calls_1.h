@@ -78,13 +78,14 @@ inline void affiche_sols_constr(int nr,mpfi_ptr p){
         CGALRS_PTR(ident_node);
         CGALRS_PTR(ident_vect);
         CGALRS_PTR(ident_elt);
-        int nb_elts,nb;
+        int nb_elts;
         ident_sols_eqs=rs_get_default_sols_ineqs();
         nb_elts=rs_export_list_vect_ibfr_nb(ident_sols_eqs);
         ident_node=rs_export_list_vect_ibfr_firstnode(ident_sols_eqs);
         for(int i=0;i<nb_elts;++i){
                 ident_vect=rs_export_list_vect_ibfr_monnode(ident_node);
-                nb=rs_export_dim_vect_ibfr(ident_vect);
+                CGAL_assertion_code(int nb=)
+                rs_export_dim_vect_ibfr(ident_vect);
                 CGAL_assertion_msg((nb==1),
                                 "the vector must contain one element");
                 ident_elt=rs_export_elt_vect_ibfr(ident_vect,0);
@@ -102,7 +103,7 @@ inline Sign affiche_signs_constr(int nroot){
         CGALRS_PTR(ident_node);
         CGALRS_PTR(ident_vect);
         CGALRS_PTR(ident_elt);
-        int nb_elts,nb;
+        int nb_elts;
         mpfi_t tmp;
         mpfi_init(tmp);
         ident_sols_eqs=rs_get_default_sols_ineqs();
@@ -110,7 +111,8 @@ inline Sign affiche_signs_constr(int nroot){
         ident_node=rs_export_list_vect_ibfr_firstnode(ident_sols_eqs);
         for(int i=1;i<nb_elts+1;++i){
                 ident_vect=rs_export_list_vect_ibfr_monnode(ident_node);
-                nb=rs_export_dim_vect_ibfr(ident_vect);
+                CGAL_assertion_code(int nb=)
+                rs_export_dim_vect_ibfr(ident_vect);
                 CGAL_assertion_msg((nb==1),
                                 "the vector must contain one element");
                 ident_elt=rs_export_elt_vect_ibfr(ident_vect,0);
