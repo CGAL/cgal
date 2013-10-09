@@ -1,17 +1,17 @@
-#include <iostream>
-#include <CGAL/basic.h>
-#include <cassert>
 
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
-#include <CGAL/Test/_test_algebraic_structure.h>
-#include <CGAL/Test/_test_real_embeddable.h>
-#include <CGAL/Test/_test_coercion_traits.h>
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Bigfloat_interval_traits.h>
 
+#include <CGAL/Test/_test_algebraic_structure.h>
+#include <CGAL/Test/_test_real_embeddable.h>
+#include <CGAL/Test/_test_coercion_traits.h>
+
 #include <cstdlib>
 #include <sstream>
+#include <iostream>
+#include <cassert>
 
 // TODO: Included from EXACUS/NumeriX/include/NiX/number_type_utils.h
 namespace CGAL {
@@ -741,19 +741,3 @@ void test_nt_converter()
   Source s;
   Target t=converter(s);
 }
-
-int main(){ 
-#ifdef CGAL_HAS_LEDA_ARITHMETIC_KERNEL
-  sqrt_extension_test<CGAL::LEDA_arithmetic_kernel,CGAL::Tag_false>();
-  sqrt_extension_test<CGAL::LEDA_arithmetic_kernel,CGAL::Tag_true>();
-#endif // CGAL_HAS_LEDA_ARITHMETIC_KERNEL
-
-#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
-  sqrt_extension_test<CGAL::CORE_arithmetic_kernel,CGAL::Tag_false>();
-  sqrt_extension_test<CGAL::CORE_arithmetic_kernel,CGAL::Tag_true>();
-#endif // CGAL_HAS_CORE_ARITHMETIC_KERNEL
-  test_nt_converter();
-  return 0;
-}
-
-
