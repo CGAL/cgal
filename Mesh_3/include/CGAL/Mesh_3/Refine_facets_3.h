@@ -209,7 +209,7 @@ public:
   std::string display_dual(Facet f) const 
   {
     std::stringstream stream;
-    stream.precision(23);
+    stream.precision(17);
     Object dual = r_tr_.dual(f);
 
     if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) ) {
@@ -597,14 +597,14 @@ before_insertion_impl(const Facet& facet,
                     "  Facet: (%1%, %2%) = (%6%, %7%, %8%)\n"
                     "  Dual: %3%\n"
                     "  Refinement point: %5%\n")
-      % group(setprecision(23), (&*facet.first))
-      % group(setprecision(23), facet.second)
+      % group(setprecision(17), (&*facet.first))
+      % group(setprecision(17), facet.second)
       % display_dual(facet)
       % 0 // dummy: %4% no longer used
-      % group(setprecision(23), point)
-      % group(setprecision(23), facet.first->vertex((facet.second + 1)&3)->point())
-      % group(setprecision(23), facet.first->vertex((facet.second + 2)&3)->point())
-      % group(setprecision(23), facet.first->vertex((facet.second + 3)&3)->point());
+      % group(setprecision(17), point)
+      % group(setprecision(17), facet.first->vertex((facet.second + 1)&3)->point())
+      % group(setprecision(17), facet.first->vertex((facet.second + 2)&3)->point())
+      % group(setprecision(17), facet.first->vertex((facet.second + 3)&3)->point());
 
     CGAL_error_msg(error_msg.str().c_str());
   }

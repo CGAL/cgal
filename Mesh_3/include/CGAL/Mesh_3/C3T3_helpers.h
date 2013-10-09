@@ -34,6 +34,7 @@
 #include <CGAL/iterator.h>
 
 #include <boost/foreach.hpp>
+#include <boost/range.hpp>
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/function_output_iterator.hpp>
@@ -405,9 +406,13 @@ class C3T3_helpers
 
   
 private:
-  // Facet_boundary stores the boundary of surface facets
+  // Facet_boundary stores the edges, of the boundary of surface facets,
+  // with meta-data.
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::pair<Surface_patch_index, std::pair<int, Index> > Facet_topology_description;
+  typedef std::pair<int, Index> Vertex_data;
+  // Vertex_data is the dimension and Index of the third vertex of the
+  // facet.
+  typedef std::pair<Surface_patch_index, Vertex_data>  Facet_topology_description;
   typedef std::map<Ordered_edge,Facet_topology_description>  Facet_boundary;
   
   typedef Triangulation_helpers<Tr> Th;
@@ -961,7 +966,7 @@ private:
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-    
+
     return min_sliver_value(c3t3_cells,criterion,use_cache);
   }
   
@@ -1097,16 +1102,23 @@ private:
   }
   
   /**
-   * Returns the boundary of facets of \c facets
+   * Returns the boundary of restricted facets of \c facets,
+     and the list of vertices of all restricted facets.
    */
-  Facet_boundary get_surface_boundary(const Facet_vector& facets) const;
+  Facet_boundary
+  get_surface_boundary(const Facet_vector& facets,
+                       Vertex_set& incident_surface_vertices) const;
   
   /**
-   * Returns the boundary of facets of \c cells
+   * Returns the boundary of restricted facets of \c cells
+     and the list of vertices of all restricted facets.
    */
-  Facet_boundary get_surface_boundary(const Cell_vector& cells) const
+  Facet_boundary
+  get_surface_boundary(const Cell_vector& cells,
+                       Vertex_set& incident_surface_vertices) const
   {
-    return get_surface_boundary(get_facets(cells));
+    return get_surface_boundary(get_facets(cells),
+                                incident_surface_vertices);
   }
   
   /**
@@ -1363,8 +1375,8 @@ private:
  
 
   /**
-   * Returns true if all surface facets of cells are really in restricted
-   * Delaunay.
+   * Returns false iff a surface facet of cells has entered or left the
+   * restricted Delaunay.
    */
   bool verify_surface(const Cell_vector& cells) const
   {
@@ -1430,28 +1442,20 @@ private:
   
   /**
    * Returns true if facets of \c facets have the same boundary as 
-   * \c old_boundary
+   * \c old_boundary, and if the list of vertices has not changed.
    */
   bool check_surface_mesh(const Facet_vector& facets,
-                          const Facet_boundary& old_boundary) const
+                          const Facet_boundary& old_boundary,
+                          const Vertex_set& old_incident_surface_vertices) const
   {
-    Facet_boundary new_boundary = get_surface_boundary(facets);
-    return ( old_boundary.size() == new_boundary.size()
-            && std::equal(new_boundary.begin(),
-                          new_boundary.end(),
-                          old_boundary.begin()) );
-  }
-  
-  /**
-   * Restore mesh for cells and facets of \c cells, then check that the new
-   * boundary of facets of \c cells is the same as \c old_boundary.
-   */
-  bool restore_and_check_mesh(const Cell_vector& cells,
-                              const Facet_boundary& old_boundary)
-  {
-    Facet_vector facets = get_facets(cells);
-    restore_mesh(cells.begin(), cells.end(), facets.begin(), facets.end());
-    return check_mesh(facets, old_boundary);
+    Vertex_set incident_surface_vertices;
+    Facet_boundary new_boundary = get_surface_boundary(facets,
+                                                       incident_surface_vertices);
+    return ( old_boundary.size() == new_boundary.size() &&
+             old_incident_surface_vertices == incident_surface_vertices &&
+             std::equal(new_boundary.begin(),
+                        new_boundary.end(),
+                        old_boundary.begin()) );
   }
   
   void set_facet_visited(const Facet& facet)
@@ -1467,6 +1471,8 @@ private:
   template <typename Handle>
   void order_handles(Handle& h1, Handle& h2, Handle& h3) const
   {
+    // Function used in get_surface_boundary
+
     if ( h2 < h1 )
       std::swap(h1,h2);
     
@@ -1479,15 +1485,38 @@ private:
     }
   }
 
-  template < typename ForwardIterator >
-  void reset_cache_validity(ForwardIterator cells_begin,
-                            ForwardIterator cells_end) const
+  template <typename CellRange>
+  void reset_sliver_cache(CellRange& cell_range) const
   {
+    reset_sliver_cache(boost::begin(cell_range),
+                       boost::end(cell_range));
+  }
+
+  template <typename CellForwardIterator>
+  void reset_sliver_cache(CellForwardIterator cells_begin,
+                            CellForwardIterator cells_end) const
+  {
+    // std::cerr << "reset_sliver_cache\n";
     namespace bl = boost::lambda;
     std::for_each(cells_begin, cells_end,
                   bl::bind(&Cell::reset_cache_validity, *bl::_1) );
   }
+
+  template <typename CellRange>
+  void reset_circumcenter_cache(CellRange& cell_range) const
+  {
+    reset_circumcenter_cache(boost::begin(cell_range),
+                             boost::end(cell_range));
+  }
   
+  template <typename CellForwardIterator>
+  void reset_circumcenter_cache(CellForwardIterator cells_begin,
+                            CellForwardIterator cells_end) const
+  {
+    namespace bl = boost::lambda;
+    std::for_each(cells_begin, cells_end,
+                  bl::bind(&Cell::invalidate_circumcenter, *bl::_1) );
+  }
 
 private:
   // -----------------------------------
@@ -1517,11 +1546,6 @@ update_mesh(const Point_3& new_position,
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
   if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
-    {
-      ch->invalidate_circumcenter();
-    }
     return update_mesh_no_topo_change(new_position,
                                       old_vertex,
                                       criterion,
@@ -1554,14 +1578,20 @@ update_mesh_no_topo_change(const Point_3& new_position,
 
   // Get old values
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = vertex->point();
   
   // Move point
+  reset_circumcenter_cache(conflict_cells);
   move_point_no_topo_change(vertex,new_position);
     
   // Get new criterion value (conflict_zone did not change)
+  // std::cerr << "call min_sliver_in_c3t3_value" << std::endl;
   const FT new_sliver_value = 
-    min_sliver_in_c3t3_value(conflict_cells, criterion, false);
+    min_sliver_in_c3t3_value(conflict_cells, criterion,
+                             false); // use_cache = false
+  // use_cache=false mean "update the sliver cache instead of using it"
+  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
   
   // Check that mesh is still valid
   if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
@@ -1575,8 +1605,9 @@ update_mesh_no_topo_change(const Point_3& new_position,
     // std::cerr << "update_mesh_no_topo_change: revert move to "
     //           << old_position << "\n";
     // revert move
+    reset_circumcenter_cache(conflict_cells);
+    reset_sliver_cache(conflict_cells);
     move_point_no_topo_change(vertex,old_position);
-    reset_cache_validity(conflict_cells.begin(), conflict_cells.end());
     return std::make_pair(false,vertex);
   }
 }
@@ -1591,11 +1622,11 @@ update_mesh_topo_change(const Point_3& new_position,
                         const SliverCriterion& criterion,
                         OutputIterator modified_vertices)
 {
-  // check_c3t3(c3t3_);
-  // std::cerr << "\n"
-  //           << "update_mesh_topo_change("<< new_position << ",\n"
-  //           << "                        " << (void*)(&*old_vertex) << "=" << old_vertex->point()
+  // std::cerr << "update_mesh_topo_change(\n"
+  //           << new_position << ",\n"
+  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
+  // check_c3t3(c3t3_);
   Cell_set insertion_conflict_cells;
   Cell_set removal_conflict_cells;
   Facet_vector insertion_conflict_boundary;
@@ -1615,11 +1646,17 @@ update_mesh_topo_change(const Point_3& new_position,
                  std::back_inserter(conflict_cells)); 
   
   FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = old_vertex->point();
   
   // Keep old boundary
-  Facet_boundary old_surface_boundary = get_surface_boundary(conflict_cells);
+  Vertex_set old_incident_surface_vertices;
+  Facet_boundary old_surface_boundary =
+    get_surface_boundary(conflict_cells, old_incident_surface_vertices);
   
+  reset_circumcenter_cache(conflict_cells);
+  reset_sliver_cache(conflict_cells);
+
   Cell_vector outdated_cells;
   outdated_cells.reserve(64);
     Vertex_handle new_vertex = 
@@ -1631,6 +1668,7 @@ update_mesh_topo_change(const Point_3& new_position,
                                                     removal_conflict_cells.end(),
                                                     std::back_inserter(outdated_cells),
                                                     CGAL::Emptyset_iterator());
+
   // If nothing changed, return
   if ( old_position == new_vertex->point() ) 
   {
@@ -1641,11 +1679,14 @@ update_mesh_topo_change(const Point_3& new_position,
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
   FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
-  
+  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
+
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
   if ( new_sliver_value > old_sliver_value
-      && check_surface_mesh(get_facets(outdated_cells), old_surface_boundary) )
+      && check_surface_mesh(get_facets(outdated_cells),
+                            old_surface_boundary,
+                            old_incident_surface_vertices) )
   {
     fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
                            new_vertex, modified_vertices);
@@ -1685,6 +1726,7 @@ update_mesh(const Point_3& new_position,
                                         new_position,
                                         std::back_inserter(outdated_cells),
                                         CGAL::Emptyset_iterator());
+  // move_point has invalidated caches
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
   
@@ -1844,11 +1886,8 @@ move_point(const Vertex_handle& old_vertex,
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
   if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
-    {
-      ch->invalidate_circumcenter();
-    }
+    reset_circumcenter_cache(incident_cells);
+    reset_sliver_cache(incident_cells);
     std::copy(incident_cells.begin(),incident_cells.end(), outdated_cells);
     return move_point_no_topo_change(old_vertex,
                                      new_position);
@@ -1875,11 +1914,8 @@ move_point(const Vertex_handle& old_vertex,
   tr_.incident_cells(old_vertex, std::back_inserter(incident_cells));
   if ( Th().no_topological_change(tr_, old_vertex, new_position, incident_cells) )
   {
-    BOOST_FOREACH(Cell_handle& ch, std::make_pair(incident_cells.begin(), 
-                                                  incident_cells.end()))
-    {
-      ch->invalidate_circumcenter();
-    }
+    reset_circumcenter_cache(incident_cells);
+    reset_sliver_cache(incident_cells);
     std::copy(incident_cells.begin(),incident_cells.end(), 
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
     return move_point_no_topo_change(old_vertex, new_position);
@@ -1911,6 +1947,10 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
                                 std::back_inserter(insertion_conflict_boundary),
                                 std::inserter(removal_conflict_cells, removal_conflict_cells.end()));
+  reset_circumcenter_cache(removal_conflict_cells);
+  reset_sliver_cache(removal_conflict_cells);
+  reset_circumcenter_cache(insertion_conflict_cells);
+  reset_sliver_cache(insertion_conflict_cells);
 
   for(typename Cell_set::iterator it = insertion_conflict_cells.begin();
       it != insertion_conflict_cells.end(); ++it)
@@ -1955,7 +1995,11 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 std::inserter(insertion_conflict_cells,insertion_conflict_cells.end()),
                                 std::back_inserter(insertion_conflict_boundary),
                                 std::inserter(removal_conflict_cells, removal_conflict_cells.end()));
-  
+  reset_circumcenter_cache(removal_conflict_cells);
+  reset_sliver_cache(removal_conflict_cells);
+  reset_circumcenter_cache(insertion_conflict_cells);
+  reset_sliver_cache(insertion_conflict_cells);
+
   Vertex_handle nv = move_point_topo_change_conflict_zone_known(old_vertex, new_position,
                                 insertion_conflict_boundary[0],
                                 insertion_conflict_cells.begin(),
@@ -2424,7 +2468,7 @@ min_sliver_value(const Cell_vector& cells,
   
   if ( ! use_cache )
   { 
-    reset_cache_validity(cells.begin(),cells.end());
+    reset_sliver_cache(cells.begin(),cells.end());
   }
   
   // Return min dihedral angle
@@ -2557,7 +2601,8 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Facet_boundary
 C3T3_helpers<C3T3,MD>::
-get_surface_boundary(const Facet_vector& facets) const
+get_surface_boundary(const Facet_vector& facets,
+                     Vertex_set& incident_surface_vertices) const
 {
   Facet_boundary boundary;
   typename Facet_vector::const_iterator fit = facets.begin();
@@ -2570,6 +2615,9 @@ get_surface_boundary(const Facet_vector& facets) const
       Vertex_handle v1 = fit->first->vertex((k+1)&3);
       Vertex_handle v2 = fit->first->vertex((k+2)&3);
       Vertex_handle v3 = fit->first->vertex((k+3)&3);
+      incident_surface_vertices.insert(v1);
+      incident_surface_vertices.insert(v2);
+      incident_surface_vertices.insert(v3);
       
       // Check that each vertex is a surface one
       // This is a trick to ensure that in_domain vertices stay inside
@@ -2577,15 +2625,9 @@ get_surface_boundary(const Facet_vector& facets) const
           || c3t3_.in_dimension(v2) > 2
           || c3t3_.in_dimension(v3) > 2 )
       {
-        // Ordered_edge(tr_.infinite_vertex(),v1) can't be in boundary
-        // So if there is a boundary facets which is not built on 3 boundary
-        // vertices, check of boundary equality before and after the move will
-        // fail (we know that this is not the case before)
-        update_boundary(boundary,
-                        Ordered_edge(Vertex_handle(),Vertex_handle()),
-                        v3,
-                        Surface_patch_index());
-        return boundary;
+        boundary.clear();
+        return boundary; // return an empty boundary, that cannot be equal
+                         // to a real boundary
       }
       
       order_handles(v1,v2,v3);

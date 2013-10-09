@@ -72,7 +72,7 @@ public:
   typedef const Point*     Point_const_iterator;
 
 public:
-  void invalidate_circumcenter()
+  void invalidate_circumcenter() const
   {
     if (circumcenter_) {
       delete circumcenter_;

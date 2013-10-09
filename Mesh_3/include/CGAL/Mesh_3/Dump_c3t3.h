@@ -40,7 +40,7 @@ struct Dump_c3t3 {
   void dump_c3t3(const C3t3& c3t3, std::string prefix) const {
     std::clog<<"======dump c3t3===== to: " << prefix << std::endl;
     std::ofstream medit_file((prefix+".mesh").c_str());
-    medit_file.precision(16);
+    medit_file.precision(17);
     CGAL::output_to_medit(medit_file, c3t3, false, true);
     medit_file.close();
 
