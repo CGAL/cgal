@@ -127,21 +127,21 @@ Triangulation_incremental_builder_3< TDS_ >::add_cell(
   vh0->set_cell(ch); vh1->set_cell(ch);
   vh2->set_cell(ch); vh3->set_cell(ch);
 
-  MapTripleIt neighbIt;
   for (int i=0; i<4; i++) {
     Vtriple vtriple=facet(
 		    ch->vertex((i+1)&3),
 		    ch->vertex((i+2)&3),
 		    ch->vertex((i+3)&3));
-    neighbIt = facets.find(vtriple);
-    if (neighbIt != facets.end()) {
+
+    std::pair<MapTripleIt,bool> res = facets.insert(std::make_pair(vtriple, Facet(ch, i)));
+    if (! res.second) { // we found an element with this key
+      MapTripleIt neighbIt = res.first;
       Facet f = (*neighbIt).second;
       glue_cells(f.first, f.second, ch, i);
       facets.erase(neighbIt);
       CGAL_assertion(f.first->neighbor(f.second) != NULL);
       CGAL_assertion(ch->neighbor(i) != NULL);
     } else {
-      facets[vtriple] = Facet(ch, i);
       CGAL_assertion(ch->neighbor(i) == NULL);
     }
   }
