@@ -69,7 +69,6 @@ squared_distance_to_triangle(
 {
   typename K::Construct_vector_3 vector;
   typedef typename K::Vector_3 Vector_3;
-  typedef typename K::RT RT;
   const Vector_3 e1 = vector(t0, t1);
   const Vector_3 oe3 = vector(t0, t2);
   const Vector_3 normal = wcross(e1, oe3, k);
