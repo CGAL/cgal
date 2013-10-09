@@ -118,17 +118,6 @@ element.
 Note that this is meaningful only because the 
 `CGAL::Concurrent_compact_container` doesn't 
 deallocate elements until the destruction or clear() of the container.
-For example, this counter is used by
-the parallel 3D mesh generation engine to lazily manage the queues of bad cells:
-an element in the queue is a pair containing an cell iterator and the 
-erase counter value of the cell when it has been inserted. When an element
-is popped from the queue, the algorithm checks if the current value of
-the erase counter matches the stored value. If it doesn't match, it means
-the cell has been destroyed in the meantime and it ignores it. Without this
-lazy management, each time a cell is destroyed, the algorithm has to look
-for it in the queue and remove it. This is even more useful for the parallel 
-version of the meshing process, since each thread has its own queue and looking
-for a cell in all the queues would be very slow.
 
 \cgalHeading{Parameters}
 
