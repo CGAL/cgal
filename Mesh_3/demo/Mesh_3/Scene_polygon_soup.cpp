@@ -143,7 +143,7 @@ Scene_polygon_soup::load(std::istream& in)
   }
   soup->fill_edges();
   oriented = false;
-  return in;
+  return ! in.bad();
 }
 
 void
@@ -293,7 +293,7 @@ bool
 Scene_polygon_soup::save(std::ostream& out) const
 {
   typedef Polygon_soup::size_type size_type;
-  CGAL::File_writer_OFF writer(out);
+  CGAL::File_writer_OFF writer(true); // verbose
   writer.write_header(out,
                       soup->points.size(),
                       0,
@@ -318,7 +318,7 @@ Scene_polygon_soup::save(std::ostream& out) const
   }
   writer.write_footer();
 
-  return out;
+  return ! out.bad();
 }
 
 QString 
