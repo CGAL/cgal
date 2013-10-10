@@ -308,10 +308,11 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = sliver_criteria_(tr_.tetrahedron(cit));
-      
+      const boost::optional<double> value 
+        = sliver_criteria_(tr_.tetrahedron(cit));
+
       if( value < sliver_bound_ )
-        cells_queue_.insert(cit, value);
+        cells_queue_.insert(cit, value.get());
     }
   }
   
@@ -452,8 +453,9 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const double value = sliver_criteria_(tr_.tetrahedron(cit));
-      
+      const boost::optional<double> value = 
+        sliver_criteria_(tr_.tetrahedron(cit));
+
       if( value < sliver_bound_ )
         return false;
     }
@@ -695,8 +697,8 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     // Sliver criterion values initialization
     if( c3t3_.is_in_complex(*cit) )
     {
-      double r = sliver_criteria_(tr_.tetrahedron(*cit));
-      criterion_values[f] = r;
+      boost::optional<double> r = sliver_criteria_(tr_.tetrahedron(*cit));
+      criterion_values[f] = r.get();
     }
     
 
@@ -799,8 +801,8 @@ expand_prestar(const Cell_handle& cell_to_add,
                           cell_to_add->vertex((i+2)&3)->point(),
                           cell_to_add->vertex((i+3)&3)->point());
         
-        double new_value = sliver_criteria_(tet);
-        criterion_values.insert(std::make_pair(current_facet,new_value));
+        boost::optional<double> new_value = sliver_criteria_(tet);
+        criterion_values.insert(std::make_pair(current_facet,new_value.get()));
       }
     }
   }        
@@ -949,10 +951,11 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      double criterion_value = sliver_criteria_(tr_.tetrahedron(*cit));
-
+      boost::optional<double> criterion_value 
+        = sliver_criteria_(tr_.tetrahedron(*cit));
+      
       if( criterion_value < sliver_bound_ )
-        cells_queue_.insert(*cit, criterion_value);
+        cells_queue_.insert(*cit, criterion_value.get());
     }
   }  
 }

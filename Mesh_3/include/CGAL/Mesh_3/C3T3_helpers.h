@@ -375,6 +375,7 @@ class C3T3_helpers
   typedef typename Gt::Point_3          Point_3;
   typedef typename Gt::Plane_3          Plane_3;
   typedef typename Gt::FT               FT;
+  typedef typename Gt::Tetrahedron_3    Tetrahedron;
   
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Cell_handle      Cell_handle;
@@ -387,6 +388,7 @@ class C3T3_helpers
   
   typedef std::vector<Cell_handle>      Cell_vector;
   typedef std::set<Cell_handle>         Cell_set;
+  typedef std::vector<Tetrahedron>      Tet_vector;
 
   typedef std::vector<Facet>            Facet_vector;
   typedef std::vector<Vertex_handle>    Vertex_vector;
@@ -718,8 +720,9 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          FT sliver_value = criterion_(c3t3_.triangulation().tetrahedron(c));
-          c->set_sliver_value(sliver_value);
+          boost::optional<double> sliver_value 
+            = criterion_(c3t3_.triangulation().tetrahedron(c));
+          c->set_sliver_value(sliver_value.get());
         }
         return ( c->sliver_value() <= bound_ );
       }
@@ -936,8 +939,9 @@ private:
       
       if ( ! ch->is_cache_valid() )
       {
-        FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
-        ch->set_sliver_value(sliver_value);
+        boost::optional<double> sliver_value 
+          = criterion_(p_tr_->tetrahedron(ch));
+        ch->set_sliver_value(sliver_value.get());
       }
       return ch->sliver_value();
     }
@@ -1126,6 +1130,12 @@ private:
    * which has not his dimension < 3
    */
   bool check_no_inside_vertices(const Facet_vector& facets) const;
+
+  /**
+   * converts a Cell_handle vector into the corresponding
+   * tetrahedra vector
+  */
+  Tet_vector c3t3_tetrahedra(const Cell_vector& cells) const;
   
   /**
    * Returns the impacted cells when moving \c vertex to \c conflict_point
@@ -1577,7 +1587,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << ")\n";
 
   // Get old values
-  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  criterion.before_move(c3t3_tetrahedra(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = vertex->point();
   
@@ -1585,16 +1595,10 @@ update_mesh_no_topo_change(const Point_3& new_position,
   reset_circumcenter_cache(conflict_cells);
   move_point_no_topo_change(vertex,new_position);
     
-  // Get new criterion value (conflict_zone did not change)
-  // std::cerr << "call min_sliver_in_c3t3_value" << std::endl;
-  const FT new_sliver_value = 
-    min_sliver_in_c3t3_value(conflict_cells, criterion,
-                             false); // use_cache = false
-  // use_cache=false mean "update the sliver cache instead of using it"
-  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
-  
+  // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
-  if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
+  if ( criterion.valid_move(c3t3_tetrahedra(conflict_cells))
+    && verify_surface(conflict_cells) )
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
                            vertex, modified_vertices);
@@ -1645,7 +1649,7 @@ update_mesh_topo_change(const Point_3& new_position,
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells)); 
   
-  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  criterion.before_move(c3t3_tetrahedra(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = old_vertex->point();
   
@@ -1678,12 +1682,11 @@ update_mesh_topo_change(const Point_3& new_position,
   }
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
-  FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
   // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
 
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
-  if ( new_sliver_value > old_sliver_value
+  if (criterion.valid_move(c3t3_tetrahedra(outdated_cells))
       && check_surface_mesh(get_facets(outdated_cells),
                             old_surface_boundary,
                             old_incident_surface_vertices) )
@@ -2464,7 +2467,7 @@ min_sliver_value(const Cell_vector& cells,
   using boost::make_transform_iterator;
   
   if ( cells.empty() )
-    return SliverCriterion::max_value;
+    return criterion.get_max_value();
   
   if ( ! use_cache )
   { 
@@ -2472,10 +2475,20 @@ min_sliver_value(const Cell_vector& cells,
   }
   
   // Return min dihedral angle
-  Sliver_criterion_value<SliverCriterion> sc_value(tr_,criterion);
-  
-  return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
-                            make_transform_iterator(cells.end(),sc_value)));
+  //Sliver_criterion_value<SliverCriterion> sc_value(tr_,criterion);
+  //
+  //return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
+  //                          make_transform_iterator(cells.end(),sc_value)));
+  FT min_value = criterion.get_max_value();
+  for(typename Cell_vector::const_iterator it = cells.begin(); 
+      it != cells.end(); 
+      ++it)
+  {
+    boost::optional<double> sliver_value 
+      = criterion(c3t3_.triangulation().tetrahedron(*it));
+    min_value = (std::min)(sliver_value.get(), min_value);
+  } 
+  return min_value;
 }
   
   
@@ -2678,6 +2691,23 @@ check_no_inside_vertices(const Facet_vector& facets) const
   }
   
   return true;
+}
+
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Tet_vector
+C3T3_helpers<C3T3,MD>::
+c3t3_tetrahedra(const Cell_vector& cells) const
+{
+  Cell_vector c3t3_cells;
+  std::remove_copy_if(cells.begin(),
+                      cells.end(),
+                      std::back_inserter(c3t3_cells),
+                      std::not1(Is_in_c3t3<Cell_handle>(c3t3_)));
+
+  Tet_vector tets(c3t3_cells.size());
+  for(std::size_t i = 0; i < c3t3_cells.size(); ++i)
+    tets[i] = c3t3_.triangulation().tetrahedron(c3t3_cells[i]);
+  return tets;
 }
   
   

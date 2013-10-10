@@ -152,6 +152,24 @@ minimum_dihedral_angle(const Tetrahedron_3& t )
 {
   return minimum_dihedral_angle(t, typename Kernel_traits<Tetrahedron_3>::Kernel() );
 }
+
+template<typename C3T3>
+typename C3T3::Triangulation::Geom_traits::FT
+minimum_dihedral_angle_in_c3t3(const C3T3& c3t3)
+{
+  typedef typename C3T3::Triangulation::Geom_traits K;
+  typename K::FT min_angle = (typename K::FT)(90.);
+
+  typename C3T3::Cells_in_complex_iterator cit;
+  for(cit = c3t3.cells_in_complex_begin();
+      cit != c3t3.cells_in_complex_end();
+      ++cit)
+  {
+    min_angle = (std::min)(min_angle, 
+      minimum_dihedral_angle(c3t3.triangulation().tetrahedron(cit)));
+  }
+  return min_angle;
+}
   
 
 } // end namespace Mesh_3

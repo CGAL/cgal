@@ -45,6 +45,7 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
+#include <CGAL/Mesh_3/sliver_criteria.h>
 
 #include <boost/format.hpp>
 #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
@@ -64,7 +65,8 @@ namespace Mesh_3 {
   
 template < typename C3T3,
            typename MeshDomain,
-           typename SliverCriterion,
+           typename SliverCriterion = Mesh_3::Min_dihedral_angle_criterion
+                                  <typename C3T3::Triangulation::Geom_traits>,
            typename Visitor_ = Null_perturber_visitor<C3T3> >
 class Sliver_perturber
 {
@@ -80,9 +82,6 @@ class Sliver_perturber
   
   typedef typename Gt::FT                       FT;
   
-  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
-  typedef boost::ptr_vector<Perturbation>                 Perturbation_vector;
-
   // Helper
   typedef class C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
   
@@ -91,6 +90,11 @@ class Sliver_perturber
   //  - bound_reached(FT bound)
   //  - end_of_perturbation_iteration(std::size_t vertices_left)
   typedef Visitor_ Visitor;
+
+  // perturbations
+public:
+  typedef Abstract_perturbation<C3T3,MeshDomain,SliverCriterion> Perturbation;
+  typedef boost::ptr_vector<Perturbation>                 Perturbation_vector;
   
 private:
   // Relaxed heap
@@ -110,7 +114,7 @@ private:
     PVertex()
     : vertex_handle_()
     , incident_sliver_nb_(0)
-    , min_value_(SliverCriterion::max_value)
+    , min_value_(std::numeric_limits<double>::max())
     , try_nb_(0)
     , p_perturbation_(NULL)
     , id_() 
@@ -119,7 +123,7 @@ private:
     PVertex(const Vertex_handle& vh, id_type id)
     : vertex_handle_(vh)
     , incident_sliver_nb_(0)
-    , min_value_(SliverCriterion::max_value)
+    , min_value_(std::numeric_limits<double>::max())
     , try_nb_(0)
     , p_perturbation_(NULL)
     , id_(id) 
@@ -221,7 +225,7 @@ public:
    */
   Sliver_perturber(C3T3& c3t3,
                    const MeshDomain& domain,
-                   const SliverCriterion& criterion = SliverCriterion());
+                   const SliverCriterion& criterion);
   
   /**
    * @brief Launch perturbation
@@ -233,9 +237,7 @@ public:
    * The perturber runs step by step, using delta as step size. 
    */
   Mesh_optimization_return_code
-  operator()(const FT& sliver_bound = SliverCriterion::max_value,
-             const FT& delta = FT(1.),
-             Visitor visitor = Visitor());
+  operator()(Visitor visitor = Visitor());
   
   /**
    * Adds a perturbation at the end of the perturbation queue
@@ -245,6 +247,10 @@ public:
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
+
+  /// Sliver bound
+  void set_sliver_bound(double bound) { sliver_bound_ = bound; }
+  double sliver_bound() const { return sliver_bound_; }
  
 private:
 
@@ -342,8 +348,8 @@ private:
   Tr& tr_;
   const MeshDomain& domain_;
   double sliver_bound_;
-  Perturbation_vector perturbation_vector_;
   SliverCriterion sliver_criterion_;
+  Perturbation_vector perturbation_vector_;
   C3T3_helpers helper_;
   
   // Internal perturbation ordering
@@ -368,6 +374,7 @@ Sliver_perturber(C3T3& c3t3,
   : c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
   , domain_(domain)
+  , sliver_bound_(criterion.get_max_value())
   , sliver_criterion_(criterion)
   , helper_(c3t3_,domain_)
   , next_perturbation_order_(0)
@@ -380,7 +387,7 @@ Sliver_perturber(C3T3& c3t3,
 template <typename C3T3, typename Md, typename Sc, typename V_>
 Mesh_optimization_return_code
 Sliver_perturber<C3T3,Md,Sc,V_>::
-operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
+operator()(Visitor visitor)
 {
   // Reset sliver value cache
   helper_.reset_cache();
@@ -405,9 +412,10 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
             << "(#vertices in pqueue, #iterations, #fails)" << std::endl;
 #endif
   
+  const FT& delta = sliver_criterion_.get_perturbation_unit();
   FT current_bound = delta;
   bool perturbation_ok = true;
-  while ( current_bound <= sliver_bound && perturbation_ok)
+  while ( current_bound <= sliver_bound() && perturbation_ok)
   {
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
     // reset_perturbation_counters is not const
@@ -418,10 +426,10 @@ operator()(const FT& sliver_bound, const FT& delta, Visitor visitor)
     visitor.bound_reached(current_bound);
     
     current_bound += delta;
-    if ( (current_bound >= sliver_bound)
-        && (current_bound < sliver_bound + delta) )
+    if ( (current_bound >= sliver_bound())
+        && (current_bound < sliver_bound() + delta) )
     { 
-      current_bound = sliver_bound;
+      current_bound = sliver_bound();
     }
   }
   
