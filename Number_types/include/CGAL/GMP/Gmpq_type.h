@@ -434,6 +434,18 @@ namespace Gmpq_detail {
     std::istream::char_type cc= c;
     return std::isdigit(cc, std::locale::classic() );
   }
+
+  inline std::istream::int_type peek(std::istream& is)
+  {
+    // Workaround for a bug in the version of libc++ that is shipped with
+    // Apple-clang-3.2. See the long comment in the function
+    // gmpz_new_read() in <CGAL/GMP/Gmpz_type.h>.
+
+    if(is.eof())
+      return std::istream::traits_type::eof();
+    else
+      return is.peek();
+  }
 }
 
 inline
@@ -453,21 +465,21 @@ operator>>(std::istream& is, Gmpq &z)
   bool negative = false; // do we have a leading '-'?
   bool digits = false;   // for fp-case: are there any digits at all?
 
-  c = is.peek();
+  c = Gmpq_detail::peek(is);
   if (c != '.') {
     // is there a sign?
     if (c == '-' || c == '+') {
       is.get();
       negative = (c == '-');
       gmpz_eat_white_space(is);
-      c=is.peek();
+      c=Gmpq_detail::peek(is);
     }
     // read n (could be empty)
     while (!Gmpq_detail::is_eof(is, c) && Gmpq_detail::is_digit(is, c)) {
       digits = true;
       n = n*10 + (c-zero);
       is.get();
-      c = is.peek();
+      c = Gmpq_detail::peek(is);
     }
     // are we done?
     if (Gmpq_detail::is_eof(is, c) || Gmpq_detail::is_space(is, c)) {
@@ -494,7 +506,7 @@ operator>>(std::istream& is, Gmpq &z)
 
     // floating point case; read number after '.' (may be empty)
     while (true) {
-      c = is.peek();
+      c = Gmpq_detail::peek(is);
       if (Gmpq_detail::is_eof(is, c) || !Gmpq_detail::is_digit(is, c))
         break;
       // now we have a digit

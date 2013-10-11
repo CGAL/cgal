@@ -411,8 +411,16 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 #define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
     alg1=_f;                                    \
     ss<<CGAL::oformat(alg1);			\
+    CGAL_assertion(ss.good());                  \
     ss>>CGAL::iformat(alg2);			\
+    CGAL_assertion(!ss.bad());                  \
+    ss.clear();                                 \
     assert(alg1==alg2)
+    // Note: after the reading ss>>CGAL::iformat(alg2) the state of ss can
+    // have the eofbit. The C++ norm says if one tries to write to a stream
+    // with eofbit, then the failbit will be set. That is why one must
+    // clear the iostate with ss.clear().
+
     
     Algebraic_real_1 alg1,alg2;
     std::stringstream ss;
