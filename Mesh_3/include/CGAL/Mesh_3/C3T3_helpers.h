@@ -941,6 +941,19 @@ private:
         FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
         ch->set_sliver_value(sliver_value);
       }
+      else
+      {
+#ifdef CGAL_EXPENSIVE_PERTURBER_DEBUG
+        FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
+        if(ch->sliver_value() != sliver_value)
+        {
+          std::cerr << "CACHE ERROR " << std::endl;
+          ch->set_sliver_value(sliver_value);
+        }
+#endif
+        CGAL_expensive_assertion(ch->sliver_value() == 
+                                 criterion_(p_tr_->tetrahedron(ch)));
+      }
       return ch->sliver_value();
     }
     
