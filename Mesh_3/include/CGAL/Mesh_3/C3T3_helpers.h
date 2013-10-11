@@ -723,6 +723,21 @@ private:
           FT sliver_value = sc_value(c);
           c->set_sliver_value(sliver_value);
         }
+        else
+        {
+#ifdef CGAL_EXPENSIVE_PERTURBER_DEBUG
+          Sliver_criterion_value<SliverCriterion> 
+            sc_value(c3t3_.triangulation(), criterion_);
+          FT sliver_value = sc_value(c);
+          if(c->sliver_value() != sliver_value)
+          {
+            std::cerr << "CACHE ERROR " << std::endl;
+            c->set_sliver_value(sliver_value);
+          }
+#endif
+          CGAL_expensive_assertion(c->sliver_value() == 
+                                   criterion_(p_tr_->tetrahedron(c)));
+        }
         return ( c->sliver_value() <= bound_ );
       }
       else
