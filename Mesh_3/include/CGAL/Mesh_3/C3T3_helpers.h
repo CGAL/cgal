@@ -718,7 +718,9 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          FT sliver_value = criterion_(c3t3_.triangulation().tetrahedron(c));
+          Sliver_criterion_value<SliverCriterion> 
+            sc_value(c3t3_.triangulation(), criterion_);
+          FT sliver_value = sc_value(c);
           c->set_sliver_value(sliver_value);
         }
         return ( c->sliver_value() <= bound_ );
