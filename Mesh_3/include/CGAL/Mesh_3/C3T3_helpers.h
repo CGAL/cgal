@@ -718,7 +718,7 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          Sliver_criterion_value<SliverCriterion> 
+          Sliver_criterion_value<SliverCriterion>
             sc_value(c3t3_.triangulation(), criterion_);
           FT sliver_value = sc_value(c);
           c->set_sliver_value(sliver_value);
@@ -726,7 +726,7 @@ private:
         else
         {
 #ifdef CGAL_EXPENSIVE_PERTURBER_DEBUG
-          Sliver_criterion_value<SliverCriterion> 
+          Sliver_criterion_value<SliverCriterion>
             sc_value(c3t3_.triangulation(), criterion_);
           FT sliver_value = sc_value(c);
           if(c->sliver_value() != sliver_value)
@@ -734,7 +734,7 @@ private:
             std::cerr << "ERROR : sliver cache is wrong" << std::endl;
           }
 #endif
-          CGAL_expensive_assertion(c->sliver_value() == 
+          CGAL_expensive_assertion(c->sliver_value() ==
                                    criterion_(p_tr_->tetrahedron(c)));
         }
         return ( c->sliver_value() <= bound_ );
@@ -964,7 +964,7 @@ private:
           std::cerr << "ERROR : sliver cache is wrong" << std::endl;
         }
 #endif
-        CGAL_expensive_assertion(ch->sliver_value() == 
+        CGAL_expensive_assertion(ch->sliver_value() ==
                                  criterion_(p_tr_->tetrahedron(ch)));
       }
       return ch->sliver_value();
