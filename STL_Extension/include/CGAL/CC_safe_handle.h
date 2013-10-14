@@ -40,7 +40,7 @@ public:
     return m_handle->get_erase_counter() != m_erase_counter_value;
   }
 
-  CC_iterator get_cc_iterator() const
+  CC_iterator cc_iterator() const
   {
     return m_handle;
   }

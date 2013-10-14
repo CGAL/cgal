@@ -45,7 +45,7 @@ public:
   /*!
   Returns the embedded `Compact_container` iterator.
   */
-  CC_iterator get_cc_iterator() const;
+  CC_iterator cc_iterator() const;
   /// @} 
 };
 
