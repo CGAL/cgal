@@ -253,7 +253,7 @@ normalized.
 If needed a random radius (with relevant distribution)
 is used to put the point inside the ball.
 
-Pedro M. M. de Castro and Alexandru Tifrea coded generators for points in 
+During Google Summer of Code 2013, Pedro M. M. de Castro and Alexandru Tifrea coded generators for points in 
 triangle (2D and 3D) and in tetrahedra (3D). Basically, in order to generate 
 a random point in a \f$N\f$-simplex (a triangle for \f$N = 2\f$, and tetrahedron 
 for \f$N = 3\f$), we generate numbers \f$a_1,a_2,\ldots,a_N\f$ identically and independently 
