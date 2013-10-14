@@ -322,6 +322,12 @@ public:
                                  this->vertex(2)->point(),
                                  this->vertex(3)->point()));
 #endif // CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
+    } else {
+      CGAL_expensive_assertion(gt.construct_circumcenter_3_object()
+                                (this->vertex(0)->point(),
+                                 this->vertex(1)->point(),
+                                 this->vertex(2)->point(),
+                                 this->vertex(3)->point()) == *circumcenter);
     }
     return *circumcenter_;
   }
