@@ -91,8 +91,6 @@ typedef CGAL::Spatial_grid_lock_data_structure_3<
 typedef CGAL::Triangulation_data_structure_3< 
   Vertex_base<Kernel>, 
   CGAL::Triangulation_ds_cell_base_3<>, 
-  CGAL::Compact_container_strategy_base, 
-  CGAL::Compact_container_strategy_base, 
   CGAL::Parallel_tag >	                              Tds;
 typedef CGAL::Delaunay_triangulation_3<
   Kernel, Tds, CGAL::Default, Lock_ds>	              DT3;
