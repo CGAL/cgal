@@ -37,7 +37,7 @@ public:
   /// \name Access Member Functions 
   /// @{ 
   /*!
-  Returns true if the pointee has been erased, i.e.\ if the iterator points to
+  Returns `true` if the pointee has been erased, i.e.\ if the iterator points to
   a freed object or to another object.
   */
   bool is_zombie() const;
