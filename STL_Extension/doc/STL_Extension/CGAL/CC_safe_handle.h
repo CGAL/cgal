@@ -6,7 +6,7 @@ namespace CGAL {
 /*!
 \ingroup CompactContainer
 
-The class `CC_safe_handle` is a helper class which embed a
+The class `CC_safe_handle` is a helper class which stores a
 `Compact_container` (or `Concurrent_compact_container`) iterator and 
 is able to know if the pointee has been erased since the creation of the
 `CC_safe_handle` instance. 
@@ -14,7 +14,7 @@ It stores the iterator and the erase counter value of the pointee when the
 `CC_safe_handle` instance was created.
 It can only be used when the pointee type is a model  uses an erase counter.
 
-\tparam CC_iterator is the type of the embedded `Compact_container` 
+\tparam CC_iterator is the type of the stored `Compact_container` 
                     (or `Concurrent_compact_container`) iterator
 
 \sa `Compact_container` 
@@ -43,7 +43,7 @@ public:
   bool is_zombie() const;
   
   /*!
-  Returns the embedded `Compact_container` iterator.
+  Returns the stored `Compact_container` iterator.
   */
   CC_iterator cc_iterator() const;
   /// @} 
