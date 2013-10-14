@@ -43,7 +43,12 @@ template <class Arrangement>
 class Arr_point_location_result
 {
 public:
-  /// The type of a point-location or vertical ray-shoot query return type.
+  /*! The type of the arrangement feature that is the result of a
+   * point-location query or a vertical ray-shoot query, namely,
+   * `boost::variant<Arrangement::Vertex_const_handle, Arrangement::Halfedge_const_handle, Arrangement::Face_const_handle>`
+   * if `CGAL_ARR_POINT_LOCATION_VERSION` == 2, which is the default, otherwise
+   * `CGAL::Object`.
+   */
   typedef Hidden_type Type;
-}; /* end Arr_walk_along_line_point_location */
+}; /* end Arr_point_location_result */
 } /* end namespace CGAL */
