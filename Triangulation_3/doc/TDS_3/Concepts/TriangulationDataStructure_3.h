@@ -112,8 +112,9 @@ typedef unspecified_type Cell_handle;
 
 /*!
 \cgalAdvancedBegin
-Indicate if the TDS is concurrency-safe (i.e.\ if one can add/remove vertices and cells concurrently). 
-Can be `Sequential_tag` or `Parallel_tag`.
+Can be `CGAL::Sequential_tag` or `CGAL::Parallel_tag`. If it is 
+`CGAL::Parallel_tag`, the following functions can be called concurrently:
+`create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
 */
 typedef unspecified_type Concurrency_tag;
 

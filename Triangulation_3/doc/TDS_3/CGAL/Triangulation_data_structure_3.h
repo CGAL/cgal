@@ -23,10 +23,13 @@ the requirements for the concepts `TriangulationDSCellBase_3` and
 They have the default values `Triangulation_ds_vertex_base_3<TDS>` and 
 `Triangulation_ds_cell_base_3<TDS>` respectively. 
 
-The `Concurrency_tag` parameter allows to enable a concurrency-safe TDS (with regard to
-insertion and deletion of elements). Possible values are `Sequential_tag` (the default) and
-`Parallel_tag`. The concurrency-safe version uses two `Concurrent_compact_container` to store 
-vertices and cells (instead of two `Compact_container`).
+The `Concurrency_tag` parameter allows to enable the use of a concurrent
+containers to store vertices and cells. It can be `Sequential_tag` (use of a 
+`Compact_container` to store vertices and cells) or `Parallel_tag` 
+(use of a `Concurrent_compact_container`). If it is 
+`CGAL::Parallel_tag`, the following functions can be called concurrently:
+`create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
+`Sequential_tag` is the default value.
 
 \cgalModels `TriangulationDataStructure_3`
 
