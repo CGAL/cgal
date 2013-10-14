@@ -731,8 +731,7 @@ private:
           FT sliver_value = sc_value(c);
           if(c->sliver_value() != sliver_value)
           {
-            std::cerr << "CACHE ERROR " << std::endl;
-            c->set_sliver_value(sliver_value);
+            std::cerr << "ERROR : sliver cache is wrong" << std::endl;
           }
 #endif
           CGAL_expensive_assertion(c->sliver_value() == 
@@ -962,8 +961,7 @@ private:
         FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
         if(ch->sliver_value() != sliver_value)
         {
-          std::cerr << "CACHE ERROR " << std::endl;
-          ch->set_sliver_value(sliver_value);
+          std::cerr << "ERROR : sliver cache is wrong" << std::endl;
         }
 #endif
         CGAL_expensive_assertion(ch->sliver_value() == 
