@@ -29,9 +29,9 @@ template <typename CC_iterator>
 class CC_safe_handle
 {
 public:
-  CC_safe_handle(CC_iterator handle)
-    : m_handle(handle)
-    , m_erase_counter_value(handle->get_erase_counter())
+  CC_safe_handle(CC_iterator iterator)
+    : m_handle(iterator)
+    , m_erase_counter_value(iterator->get_erase_counter())
   {
   }
 
@@ -51,9 +51,9 @@ protected:
 };
 
 template <typename CC_iterator>
-CC_safe_handle<CC_iterator> make_cc_safe_handle(CC_iterator handle)
+CC_safe_handle<CC_iterator> make_cc_safe_handle(CC_iterator iterator)
 {
-  return CC_safe_handle<CC_iterator>(handle);
+  return CC_safe_handle<CC_iterator>(iterator);
 }
 
 } //namespace CGAL

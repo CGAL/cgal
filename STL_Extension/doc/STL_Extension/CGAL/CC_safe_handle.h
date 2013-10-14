@@ -32,7 +32,7 @@ public:
   /*! 
   Introduces a safe handle from a `Compact_container` iterator
   */ 
-  CC_safe_handle(CC_iterator handle);
+  CC_safe_handle(CC_iterator iterator);
   
   /// \name Access Member Functions 
   /// @{ 
@@ -60,6 +60,6 @@ from a `Compact_container` (or `Concurrent_compact_container`) iterator.
 */
 
 template <typename CC_iterator>
-CC_safe_handle<CC_iterator> make_cc_safe_handle(CC_iterator handle);
+CC_safe_handle<CC_iterator> make_cc_safe_handle(CC_iterator iterator);
 
 } //namespace CGAL
