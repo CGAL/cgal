@@ -83,16 +83,10 @@ is opposite to the vertex with the same index. See
 
 ### Main Classes ###
 
-<<<<<<< HEAD
-- `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>`
-- `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3,LocationPolicy>`
-- `CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`
-=======
 - `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3,SpatialLockDataStructure_3>`
 - `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3,LocationPolicy,SpatialLockDataStructure_3>`
 - `CGAL::Triangulation_hierarchy_3<Tr>`
 - `CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SpatialLockDataStructure_3>`
->>>>>>> Mesh_3-parallel-cjamin-old
 - `CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>`
 - `CGAL::Triangulation_cell_base_with_info_3<Info, TriangulationTraits_3, TriangulationCellBase_3>`
 - `CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, TriangulationCellBase_3>`

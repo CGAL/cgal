@@ -137,8 +137,9 @@ then it is stored as a hidden point and this method returns the default
 constructed handle. 
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not null, the insertion will
-try to lock cells before modifying them. If it succeeds, `*could_lock_zone`
+version of the triangulation. If the pointer is not null, the insertion will
+try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+inside or on the boundary of the conflict zone. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false (and the point is not inserted). In any case, 
 the locked cells are not unlocked by the function, leaving this choice to the user.
 */ 
@@ -244,8 +245,9 @@ void remove(Vertex_handle v);
 /*!
 Removes the vertex `v` from the triangulation.
 
-This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock cells before deleting/modifying them. If it succeeds, `*could_lock_zone`
+This function is concurrency-safe if the triangulation is concurrency-safe. 
+It will first
+try to lock all the cells adjacent to `v`. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked cells are not unlocked by the function, leaving this choice to the user.
 
@@ -435,8 +437,10 @@ Compute the conflicts with `p`.
 @param bfit               The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
 @param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
 @param could_lock_zone    The optional argument `could_lock_zone` is used by the concurrency-safe
-                          version of the triangulation. When the pointer is not null, the algorithm will
-                          try to lock all the cells of the conflict zone. If it succeeds, `*could_lock_zone`
+                          version of the triangulation. If the pointer is not null, the algorithm will
+                          try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+                          inside or on the boundary of the conflict zone (as a result, the boundary cells become
+                          partially locked). If it succeeds, `*could_lock_zone`
                           is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                           the locked cells are not unlocked by the function, leaving this choice to the user.
 @param this_facet_must_be_in_the_cz 

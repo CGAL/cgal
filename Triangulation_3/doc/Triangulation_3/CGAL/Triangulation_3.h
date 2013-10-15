@@ -1209,9 +1209,6 @@ template <class OutputIterator>
 OutputIterator 
 incident_cells(Vertex_handle v, OutputIterator cells) const; 
 
-<<<<<<< HEAD
-/*!
-=======
 /*! 
 Try to lock and copy the `Cell_handle`s of all cells incident to `v` into
 `cells`. 
@@ -1224,8 +1221,7 @@ returns false. In any case, the locked cells are not unlocked by
 bool
   try_lock_and_get_incident_cells(Vertex_handle v,
                                   std::vector<Cell_handle>& cells) const;
-/*! 
->>>>>>> Mesh_3-parallel-cjamin-old
+/*!
 Copies the `Cell_handle`s of all finite cells incident to `v` to the output 
 iterator `cells`. 
 Returns the resulting output iterator. 

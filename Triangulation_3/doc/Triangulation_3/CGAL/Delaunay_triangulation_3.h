@@ -153,8 +153,9 @@ addition the empty sphere property of all the created faces.
 The optional argument `start` is used as a starting place for the search. 
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
-version of the triangulation. When the pointer is not null, the insertion will
-try to lock cells before modifying them. If it succeeds, `*could_lock_zone`
+version of the triangulation. If the pointer is not null, the insertion will
+try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+inside or on the boundary of the conflict zone. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false and the return value is Vertex_handle() 
 (the point is not inserted). In any case, the locked cells are not unlocked by the 
 function, leaving this choice to the user.
@@ -261,31 +262,26 @@ Removes the vertex `v` from the triangulation.
 */ 
 void remove(Vertex_handle v); 
 
-<<<<<<< HEAD
-/*!
-Removes the vertices specified by the iterator range `[first, beyond)`. 
-The function `remove(Vertex_handle)` is called over each element of the range. 
-The number of vertices removed is returned. 
-=======
 /*! 
 Removes the vertex `v` from the triangulation.
 
-This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock cells before deleting/modifying them. If it succeeds, `*could_lock_zone`
+This function is concurrency-safe if the triangulation is concurrency-safe. 
+It will first
+try to lock all the cells adjacent to `v`. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked cells are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
-decrease the dimension. If the removal would decrease dimension, the function returns false
-(providing the zone could be locked, i.e.\ `*could_lock_zone` is `true`).
-
-\pre `v` is a finite vertex of the triangulation. 
-\pre `dt`.`dimension()` \f$ =3\f$.
+decrease the dimension.
 
 The return value is only meaningful if `*could_lock_zone` is `true`:
   - returns true if the vertex was removed
   - returns false if the vertex wasn't removed since it would decrease 
     the dimension.
+
+\pre `v` is a finite vertex of the triangulation. 
+\pre `dt`.`dimension()` \f$ =3\f$.
+
 */ 
 bool remove(Vertex_handle v, bool *could_lock_zone);
 
@@ -296,7 +292,6 @@ If parallelism is enabled, the points will be removed in parallel.
 Note that if at some step, the triangulation dimension becomes lower than 3,
 the removal of the remaining points will go on sequentially.
 
->>>>>>> Mesh_3-parallel-cjamin-old
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.
@@ -420,8 +415,10 @@ respectively in the output iterators:
 conflict, but `t->neighbor(i)` is not. 
 
 - `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
-                     version of the triangulation. When the pointer is not null, the algorithm will
-                     try to lock all the cells of the conflict zone. If it succeeds, `*could_lock_zone`
+                     version of the triangulation. If the pointer is not null, the algorithm will
+                     try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+                     inside or on the boundary of the conflict zone (as a result, the boundary cells become
+                     partially locked). If it succeeds, `*could_lock_zone`
                      is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                      the locked cells are not unlocked by the function, leaving this choice to the user.
 
@@ -455,8 +452,10 @@ conflict, but `t->neighbor(i)` is not.
 two cells (resp facets) in conflict. 
 
 - `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
-                     version of the triangulation. When the pointer is not null, the algorithm will
-                     try to lock all the cells of the conflict zone. If it succeeds, `*could_lock_zone`
+                     version of the triangulation. If the pointer is not null, the algorithm will
+                     try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+                     inside or on the boundary of the conflict zone (as a result, the boundary cells become
+                     partially locked). If it succeeds, `*could_lock_zone`
                      is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                      the locked cells are not unlocked by the function, leaving this choice to the user.
 
