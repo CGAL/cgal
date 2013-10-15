@@ -720,9 +720,24 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          boost::optional<double> sliver_value 
-            = criterion_(c3t3_.triangulation().tetrahedron(c));
-          c->set_sliver_value(sliver_value.get());
+          Sliver_criterion_value<SliverCriterion>
+            sc_value(c3t3_.triangulation(), criterion_);
+          FT sliver_value = sc_value(c);
+          c->set_sliver_value(sliver_value);
+        }
+        else
+        {
+#ifdef CGAL_EXPENSIVE_PERTURBER_DEBUG
+          Sliver_criterion_value<SliverCriterion>
+            sc_value(c3t3_.triangulation(), criterion_);
+          FT sliver_value = sc_value(c);
+          if(c->sliver_value() != sliver_value)
+          {
+            std::cerr << "ERROR : sliver cache is wrong" << std::endl;
+          }
+#endif
+          CGAL_expensive_assertion(c->sliver_value() ==
+                                   criterion_(p_tr_->tetrahedron(c)));
         }
         return ( c->sliver_value() <= bound_ );
       }
@@ -943,6 +958,18 @@ private:
           = criterion_(p_tr_->tetrahedron(ch));
         ch->set_sliver_value(sliver_value.get());
       }
+      else
+      {
+#ifdef CGAL_EXPENSIVE_PERTURBER_DEBUG
+        FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
+        if(ch->sliver_value() != sliver_value)
+        {
+          std::cerr << "ERROR : sliver cache is wrong" << std::endl;
+        }
+#endif
+        CGAL_expensive_assertion(ch->sliver_value() ==
+                                 criterion_(p_tr_->tetrahedron(ch)));
+      }
       return ch->sliver_value();
     }
     
@@ -1107,10 +1134,12 @@ private:
   
   /**
    * Returns the boundary of restricted facets of \c facets,
-     and the list of vertices of all restricted facets.
+     and the list of vertices of all restricted facets,
+     which should not contain the vertex that is moving
    */
   Facet_boundary
-  get_surface_boundary(const Facet_vector& facets,
+  get_surface_boundary(const Vertex_handle& moving_vertex,
+                       const Facet_vector& facets,
                        Vertex_set& incident_surface_vertices) const;
   
   /**
@@ -1118,10 +1147,12 @@ private:
      and the list of vertices of all restricted facets.
    */
   Facet_boundary
-  get_surface_boundary(const Cell_vector& cells,
+  get_surface_boundary(const Vertex_handle& moving_vertex,
+                       const Cell_vector& cells,
                        Vertex_set& incident_surface_vertices) const
   {
-    return get_surface_boundary(get_facets(cells),
+    return get_surface_boundary(moving_vertex,
+                                get_facets(cells),
                                 incident_surface_vertices);
   }
   
@@ -1454,12 +1485,14 @@ private:
    * Returns true if facets of \c facets have the same boundary as 
    * \c old_boundary, and if the list of vertices has not changed.
    */
-  bool check_surface_mesh(const Facet_vector& facets,
+  bool check_surface_mesh(const Vertex_handle& moving_vertex,
+                          const Facet_vector& facets,
                           const Facet_boundary& old_boundary,
                           const Vertex_set& old_incident_surface_vertices) const
   {
     Vertex_set incident_surface_vertices;
-    Facet_boundary new_boundary = get_surface_boundary(facets,
+    Facet_boundary new_boundary = get_surface_boundary(moving_vertex,
+                                                       facets,
                                                        incident_surface_vertices);
     return ( old_boundary.size() == new_boundary.size() &&
              old_incident_surface_vertices == incident_surface_vertices &&
@@ -1656,7 +1689,7 @@ update_mesh_topo_change(const Point_3& new_position,
   // Keep old boundary
   Vertex_set old_incident_surface_vertices;
   Facet_boundary old_surface_boundary =
-    get_surface_boundary(conflict_cells, old_incident_surface_vertices);
+    get_surface_boundary(old_vertex, conflict_cells, old_incident_surface_vertices);
   
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
@@ -1687,7 +1720,8 @@ update_mesh_topo_change(const Point_3& new_position,
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
   if (criterion.valid_move(c3t3_tetrahedra(outdated_cells))
-      && check_surface_mesh(get_facets(outdated_cells),
+      && check_surface_mesh(new_vertex,
+                            get_facets(outdated_cells),
                             old_surface_boundary,
                             old_incident_surface_vertices) )
   {
@@ -2614,7 +2648,8 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Facet_boundary
 C3T3_helpers<C3T3,MD>::
-get_surface_boundary(const Facet_vector& facets,
+get_surface_boundary(const Vertex_handle& moving_vertex,
+                     const Facet_vector& facets,
                      Vertex_set& incident_surface_vertices) const
 {
   Facet_boundary boundary;
@@ -2652,6 +2687,8 @@ get_surface_boundary(const Facet_vector& facets,
       update_boundary(boundary, Ordered_edge(v1,v3), v2, surface_index);
       update_boundary(boundary, Ordered_edge(v2,v3), v1, surface_index);
     }
+
+    incident_surface_vertices.erase(moving_vertex);
   }
 
   // std::cerr.precision(17);
