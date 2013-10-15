@@ -16,9 +16,8 @@ It has the default value `Triangulation_data_structure_3< Triangulation_vertex_b
 It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
 TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
 It must be a model of the `SpatialLockDataStructure_3` concept.
-It allows to perform some operations concurrently (see the operations documentation below).
 The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking>` if
-the TDS is concurrency-safe, and `void` otherwise.
+the triangulation data structure is concurrency-safe, and `void` otherwise.
 In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
 instance via the constructor or `set_lock_data_structure`.
 

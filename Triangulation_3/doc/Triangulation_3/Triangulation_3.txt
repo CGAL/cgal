@@ -225,11 +225,13 @@ triangulation class, described in Section \ref Triangulation3seclocpol.
 
 Optionally, the main Delaunay and regular triangulations algorithms (insert, remove) 
 support multi-core shared-memory architectures to take advantage of available parallelism.
-For this purpose, a model of the concept `SpatialLockDataStructure_3`,
-such as the `Spatial_grid_lock_data_structure_3` class, is used. This data structure
+For this purpose, a model of the concept `SpatialLockDataStructure_3` can be 
+given as fourth template parameter; it defaults to 
+`Spatial_grid_lock_data_structure_3`. This data structure
 allows to lock points with coordinates (x, y, z) in a 3D domain. When a thread owns the
 lock on a point, no other thread can lock this point. Locking a facet (resp. a cell)
-boils down to locking all its 3 (resp. 4) incident vertices.
+boils down to locking all its 3 (resp. 4) incident vertices. 
+See Section \ref Triangulation_3ParallelAlgorithms for more details.
 
 \subsection Triangulation3secTraits The Geometric Traits Parameter 
 
