@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   if (argc == 2) {
     filename = argv[1];
   } else {
-    filename = "data/1t7i.pdb";
+    filename = "data/4lfq.pdb";
   }
   
  
