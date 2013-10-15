@@ -39,7 +39,7 @@ public:
 /// \name Operations 
 /// @{ 
 
-  /// Set the bounding box of the domain
+  /// Set the bounding box of the domain.
   void set_bbox(const CGAL::Bbox_3 &bbox);
 
 /// @}

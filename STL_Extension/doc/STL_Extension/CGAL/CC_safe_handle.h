@@ -30,7 +30,7 @@ class CC_safe_handle
 public:
   /// \name Creation 
   /*! 
-  Introduces a safe handle from a `Compact_container` iterator
+  Introduces a safe handle from a `Compact_container` iterator.
   */ 
   CC_safe_handle(CC_iterator iterator);
   
