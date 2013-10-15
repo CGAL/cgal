@@ -1,10 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
+set -o errexit
 
 cd /home/cgal-testsuite
 
-exec > doxygen_testsuite.log 2>&1
+# Rotate log files on one month: the logfile name contains the number of
+# the day
+LOGFILE=$PWD/doxygen_testsuite-`date '+%d'`.log
+
+exec > "$LOGFILE"
+
+# Display commands as if using `set -o xtrace`, but to the stdout
+trap 'echo "[$BASH_SOURCE:$LINENO] $BASH_COMMAND" >&1' DEBUG
+
+# A helper error function that outputs both to stderr and stdout before
+# aborting the script.
+function error() {
+    echo "Error: $@"
+    echo "Error: $@" >&2
+    echo "See $LOGFILE" >&2
+    exit 1
+}
 
 DIR=`readlink /home/lrineau/latest-internal-release-branch`
 
@@ -23,7 +39,11 @@ export PATH
     -DCGAL_DOC_PUBLISH_DIR=/var/CGAL/www/Members/Manual_doxygen_test \
     -DDOXYGEN_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/doxygen \
     -DPYTHON_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/python2 \
-    ..
+    .. 2>&1 || error "exit code $? returned by CMake"
 
-make Documentation_doc
-make Documentation_testsuite_publish
+make Documentation_doc 2>&1 || error "exit code $? returned by the command 'make Documentation_doc'"
+make Documentation_testsuite_publish 2>&1 || error "exit code $? returned by the command 'make Documentation_testsuite_publish'"
+
+# Then gzip the log file, to save space
+exec
+gzip -f "$LOGFILE"

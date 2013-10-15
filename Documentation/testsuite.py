@@ -187,7 +187,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
           nb_items=len(revs)
           for k in range(int(args.version_to_keep),nb_items):
             dir_to_remove=revs.eq(k).text().split()[0]
-            shutil.rmtree(publish_dir + dir_to_remove)
+            if os.access(publish_dir + dir_to_remove, os.W_OK):
+                shutil.rmtree(publish_dir + dir_to_remove)
+            else:
+                sys.stderr.write("Warning: the directory " + publish_dir + dir_to_remove + " does not exist or is not writable!\n")
             revs.eq(k).remove()
         write_out_html(d, publish_dir + 'index.html')
         log_target=publish_dir + version_string
@@ -201,8 +204,10 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
               shutil.copytree(args.output_dir, tgt, symlinks=True)
           except:
             sys.stderr.write("Error while copying documentation\n")
+            raise
         except:
           sys.stderr.write("Error while writing to "+log_target+". Does it already exists?\n")
+          raise
         
 if __name__ == "__main__":
     main()
