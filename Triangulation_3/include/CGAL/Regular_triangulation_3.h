@@ -153,7 +153,7 @@ namespace CGAL {
     using Tr_Base::find_conflicts;
     using Tr_Base::is_valid;
 
-    Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = 0)
+    Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
       : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {}
 
@@ -170,7 +170,7 @@ namespace CGAL {
     //insertion
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
-      const Gt & gt = Gt(), Lock_data_structure *lock_ds = 0)
+      const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
       : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);

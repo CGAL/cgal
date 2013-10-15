@@ -113,7 +113,7 @@ must be provided if concurrency is enabled.
 */ 
 Delaunay_triangulation_3 
 (const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
-SpatialLockDataStructure_3 *lock_ds = 0);
+SpatialLockDataStructure_3 *lock_ds = NULL);
 
 /*!
 Copy constructor. 
@@ -129,7 +129,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
 const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3(), 
-SpatialLockDataStructure_3 *lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = NULL); 
 
 /*! 
 Same as before, with last two parameters in reverse order.
@@ -153,7 +153,7 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the insertion will
-try to lock cells before modifying them. If it succeeds, *could_lock_zone
+try to lock cells before modifying them. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false and the return value is Vertex_handle() 
 (the point is not inserted). In any case, the locked cells are not unlocked by the 
 function, leaving this choice to the user.
@@ -270,18 +270,18 @@ The number of vertices removed is returned.
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock cells before deleting/modifying them. If it succeeds, *could_lock_zone
+try to lock cells before deleting/modifying them. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked cells are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
 decrease the dimension. If the removal would decrease dimension, the function returns false
-(providing the zone could be locked, i.e.\ *could_lock_zone = true).
+(providing the zone could be locked, i.e.\ `*could_lock_zone` is `true`).
 
 \pre `v` is a finite vertex of the triangulation. 
 \pre `dt`.`dimension()` \f$ =3\f$.
 
-The return value is only meaningful if *could_lock_zone is true:
+The return value is only meaningful if `*could_lock_zone` is `true`:
   - returns true if the vertex was removed
   - returns false if the vertex wasn't removed since it would decrease 
     the dimension.
@@ -420,7 +420,7 @@ conflict, but `t->neighbor(i)` is not.
 
 - `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
                      version of the triangulation. When the pointer is not null, the algorithm will
-                     try to lock all the cells of the conflict zone. If it succeeds, *could_lock_zone
+                     try to lock all the cells of the conflict zone. If it succeeds, `*could_lock_zone`
                      is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                      the locked cells are not unlocked by the function, leaving this choice to the user.
 
@@ -455,7 +455,7 @@ two cells (resp facets) in conflict.
 
 - `could_lock_zone`: The optional argument `could_lock_zone` is used by the concurrency-safe
                      version of the triangulation. When the pointer is not null, the algorithm will
-                     try to lock all the cells of the conflict zone. If it succeeds, *could_lock_zone
+                     try to lock all the cells of the conflict zone. If it succeeds, `*could_lock_zone`
                      is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                      the locked cells are not unlocked by the function, leaving this choice to the user.
 

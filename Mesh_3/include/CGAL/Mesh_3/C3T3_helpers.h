@@ -646,7 +646,7 @@ public:
    * Constructor
    */
   C3T3_helpers(C3T3& c3t3, const MeshDomain& domain,
-               Lock_data_structure *lock_ds = 0)
+               Lock_data_structure *lock_ds = NULL)
     : Base(lock_ds)
     , c3t3_(c3t3)
     , tr_(c3t3.triangulation())

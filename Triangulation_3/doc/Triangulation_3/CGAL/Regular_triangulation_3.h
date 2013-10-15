@@ -84,7 +84,7 @@ must be provided if concurrency is enabled.
 */ 
 Regular_triangulation_3 
 (const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
-SpatialLockDataStructure_3 *lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = NULL); 
 
 /*!
 Copy constructor. 
@@ -102,7 +102,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
 const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3(), 
-SpatialLockDataStructure_3 *lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = NULL); 
 
 /*! 
 Same as before, with last two parameters in reverse order.
@@ -139,7 +139,7 @@ constructed handle.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the insertion will
-try to lock cells before modifying them. If it succeeds, *could_lock_zone
+try to lock cells before modifying them. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false (and the point is not inserted). In any case, 
 the locked cells are not unlocked by the function, leaving this choice to the user.
 */ 
@@ -246,13 +246,13 @@ void remove(Vertex_handle v);
 Removes the vertex `v` from the triangulation.
 
 This function is concurrency-safe if the triangulation is concurrency-safe. The removal will
-try to lock cells before deleting/modifying them. If it succeeds, *could_lock_zone
+try to lock cells before deleting/modifying them. If it succeeds, `*could_lock_zone`
 is true, otherwise it is false (and the point is not removed). In any case, 
 the locked cells are not unlocked by the function, leaving this choice to the user.
 
 This function will try to remove `v` only if the removal does not
 decrease the dimension. 
-The return value is only meaningful if *could_lock_zone is true:
+The return value is only meaningful if `*could_lock_zone` is true:
   - returns true if the vertex was removed
   - returns false if the vertex wasn't removed since it would decrease 
     the dimension.
@@ -437,7 +437,7 @@ Compute the conflicts with `p`.
 @param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
 @param could_lock_zone    The optional argument `could_lock_zone` is used by the concurrency-safe
                           version of the triangulation. When the pointer is not null, the algorithm will
-                          try to lock all the cells of the conflict zone. If it succeeds, *could_lock_zone
+                          try to lock all the cells of the conflict zone. If it succeeds, `*could_lock_zone`
                           is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
                           the locked cells are not unlocked by the function, leaving this choice to the user.
 @param this_facet_must_be_in_the_cz 

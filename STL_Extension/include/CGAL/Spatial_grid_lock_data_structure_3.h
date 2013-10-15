@@ -61,7 +61,7 @@ class Spatial_grid_lock_data_structure_base_3
 private:
   static Derived*& debug_global_lock_ds()
   {
-    static Derived *p_g_lock_ds = 0;
+    static Derived *p_g_lock_ds = NULL;
     return p_g_lock_ds;
   }
 public:

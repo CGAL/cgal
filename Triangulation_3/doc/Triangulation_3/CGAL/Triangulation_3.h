@@ -223,13 +223,13 @@ must be provided if concurrency is enabled.
 */ 
 Triangulation_3 
 (const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
- SpatialLockDataStructure_3 *lock_ds = 0);
+ SpatialLockDataStructure_3 *lock_ds = NULL);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
 Triangulation_3 
-(SpatialLockDataStructure_3 *lock_ds = 0,
+(SpatialLockDataStructure_3 *lock_ds = NULL,
  const TriangulationTraits_3 & traits = TriangulationTraits_3());
 
 /*!
@@ -246,7 +246,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
 const TriangulationTraits_3 & traits = TriangulationTraits_3(),
-SpatialLockDataStructure_3 *lock_ds = 0); 
+SpatialLockDataStructure_3 *lock_ds = NULL); 
 
 /// @} 
 
@@ -274,7 +274,7 @@ Deletes all finite vertices and all cells of `t`.
 void clear(); 
 
 /*!
-Equality operator. Returns true iff there exist a bijection between the 
+Equality operator. Returns `true` iff there exist a bijection between the 
 vertices of `t1` and those of `t2` and a bijection between the cells of 
 `t1` and those of `t2`, which preserve the geometry of the 
 triangulation, that is, the points of each corresponding pair of vertices are 
@@ -615,8 +615,8 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the cells along the walk. If it succeeds, *could_lock_zone
-is true, otherwise it is false. In any case, the locked cells are not
+try to lock all the cells along the walk. If it succeeds, `*could_lock_zone`
+is `true`, otherwise it is false. In any case, the locked cells are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
@@ -664,8 +664,8 @@ The optional argument `start` is used as a starting place for the search.
 
 The optional argument `could_lock_zone` is used by the concurrency-safe
 version of the triangulation. When the pointer is not null, the locate will
-try to lock all the cells along the walk. If it succeeds, *could_lock_zone
-is true, otherwise it is false. In any case, the locked cells are not
+try to lock all the cells along the walk. If it succeeds, `*could_lock_zone`
+is `true`, otherwise it is false. In any case, the locked cells are not
 unlocked by `locate`, leaving this choice to the user.
 */ 
 Cell_handle 
@@ -1216,7 +1216,7 @@ incident_cells(Vertex_handle v, OutputIterator cells) const;
 /*! 
 Try to lock and copy the `Cell_handle`s of all cells incident to `v` into
 `cells`. 
-Returns true in case of success. Otherwise, `cells` is emptied and the function
+Returns `true` in case of success. Otherwise, `cells` is emptied and the function
 returns false. In any case, the locked cells are not unlocked by 
 `try_lock_and_get_incident_cells`, leaving this choice to the user.
 
@@ -1339,7 +1339,7 @@ Facet mirror_facet(Facet f) const;
 Checks the combinatorial validity of the triangulation. Checks also the 
 validity of its geometric embedding (see 
 Section \ref Triangulation3secintro). 
-When `verbose` is set to true, 
+When `verbose` is set to `true`, 
 messages describing the first invalidity encountered are printed. 
 \cgalDebugEnd
 */ 

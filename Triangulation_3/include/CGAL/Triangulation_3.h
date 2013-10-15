@@ -647,7 +647,7 @@ protected:
 public:
 
   // CONSTRUCTORS
-  Triangulation_3(const GT & gt = GT(), Lock_data_structure *lock_ds = 0)
+  Triangulation_3(const GT & gt = GT(), Lock_data_structure *lock_ds = NULL)
     : Base(lock_ds), _tds(), _gt(gt)
     {
       init_tds();
@@ -670,7 +670,7 @@ public:
 
   template < typename InputIterator >
   Triangulation_3(InputIterator first, InputIterator last,
-                  const GT & gt = GT(), Lock_data_structure *lock_ds = 0)
+                  const GT & gt = GT(), Lock_data_structure *lock_ds = NULL)
     : Base(lock_ds), _gt(gt)
   {
       init_tds();
@@ -681,7 +681,7 @@ public:
   // Precondition: p0, p1, p3 and p4 MUST BE positively oriented
   Triangulation_3(const Point &p0, const Point &p1,
                   const Point &p3, const Point &p4,
-                  const GT & gt = GT(), Lock_data_structure *lock_ds = 0)
+                  const GT & gt = GT(), Lock_data_structure *lock_ds = NULL)
     : Base(lock_ds), _gt(gt)
   {
     CGAL_triangulation_precondition(orientation(p0, p1, p3, p4) == POSITIVE);

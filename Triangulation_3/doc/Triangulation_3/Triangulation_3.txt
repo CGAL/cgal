@@ -413,7 +413,7 @@ Section \ref TDS3secdesign "Software Design" provides more detailed information.
 \subsection Triangulation_3ParallelAlgorithms Parallel Algorithms
 
 Parallel algorithms of `Delaunay_triangulation_3` and `Regular_triangulation_3` are enabled 
-if the `TriangulationDataStructure_3::Concurrency_tag` embeddded type is `Parallel_tag` and a
+if the `TriangulationDataStructure_3::Concurrency_tag` type is `Parallel_tag` and a
 reference to a `SpatialLockDataStructure_3` instance is provided via the constructor or 
 by using `set_lock_data_structure`.
 
