@@ -326,6 +326,8 @@ triangulations and handle degenerate dimensions \cgalCite{t-tdtc-99}.
 Sylvain Pion improved the software in several ways, in particular
 regarding the memory management.
 
+In 2013, Clément Jamin added the ability to create/delete vertices and cells
+in parallel. This feature is used by the parallel triangulation.
 */ 
 } /* namespace CGAL */
 
