@@ -22,6 +22,8 @@ hierarchy data structure \cgalCite{cgal:d-dh-02}.
 The default is `Compact_location`, which saves memory (3-5%) by avoiding the need for this 
 separate data structure, and point location is then performed roughly in 
 \f$ O(n^{1/3})\f$ time. 
+If the triangulation is parallel (see user manual), the default compact 
+location policy must be used.
 Note that this argument can also come in second position, which can be useful when 
 the default value for the `TriangulationDataStructure_3` parameter is 
 satisfactory (this is using so-called deduced parameters). 

@@ -412,10 +412,13 @@ Section \ref TDS3secdesign "Software Design" provides more detailed information.
 
 \subsection Triangulation_3ParallelAlgorithms Parallel Algorithms
 
-Parallel algorithms of `Delaunay_triangulation_3` and `Regular_triangulation_3` are enabled 
+Parallel algorithms of `Delaunay_triangulation_3` and 
+`Regular_triangulation_3` are enabled 
 if the `TriangulationDataStructure_3::Concurrency_tag` type is `Parallel_tag` and a
 reference to a `SpatialLockDataStructure_3` instance is provided via the constructor or 
-by using `set_lock_data_structure`.
+by using `set_lock_data_structure`. Note that the  parallel Delaunay 
+triangulation must use the default compact location policy (and not the fast 
+one).
 
 Parallel algorithms require the program to be linked against the Intel TBB library.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
