@@ -17,6 +17,7 @@
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
+//                 Clement Jamin
 
 #ifndef CGAL_TRIANGULATION_3_H
 #define CGAL_TRIANGULATION_3_H

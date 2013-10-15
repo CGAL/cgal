@@ -19,6 +19,7 @@
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
 //                 Andreas Fabri <Andreas.Fabri@sophia.inria.fr>
+//                 Clement Jamin
 
 #ifndef CGAL_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_DELAUNAY_TRIANGULATION_3_H

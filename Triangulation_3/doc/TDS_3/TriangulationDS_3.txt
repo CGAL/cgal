@@ -6,7 +6,7 @@
 \anchor chapterTDS3
 
 \cgalAutoToc
-\authors Sylvain Pion and Monique Teillaud
+\authors Clément Jamin, Sylvain Pion and Monique Teillaud
 
 A geometric triangulation has two aspects: the combinatorial structure, which
 gives the incidence and adjacency relations between faces, and the
