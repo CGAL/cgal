@@ -37,10 +37,13 @@ export PATH
     -DBUILD_DOC:BOOL=ON \
     -DCGAL_DOC_CREATE_LOGS:bool=ON \
     -DCGAL_DOC_MATHJAX_LOCATION:STRING=../../MathJax \
+    -DCGAL_DOC_RELEASE:BOOL=TRUE \
     -DCGAL_DOC_PUBLISH_DIR=/var/CGAL/www/Members/Manual_doxygen_test \
     -DDOXYGEN_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/doxygen \
     -DPYTHON_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/python2 \
     .. 2>&1 || error "exit code $? returned by CMake"
+# Note that -DCGAL_DOC_RELEASE:BOOL=TRUE should be only for master-only
+# internal releases, and not for integration releases.
 
 make Documentation_doc 2>&1 || error "exit code $? returned by the command 'make Documentation_doc'"
 make Documentation_testsuite_publish 2>&1 || error "exit code $? returned by the command 'make Documentation_testsuite_publish'"
