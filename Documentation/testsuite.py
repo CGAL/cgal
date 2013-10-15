@@ -202,6 +202,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
             if args.do_copy_results:
               tgt=os.path.join(log_target, 'output')
               shutil.copytree(args.output_dir, tgt, symlinks=True)
+              os.symlink("../MathJax", os.path.join(log_target, 'MathJax'))
           except:
             sys.stderr.write("Error while copying documentation\n")
             raise
