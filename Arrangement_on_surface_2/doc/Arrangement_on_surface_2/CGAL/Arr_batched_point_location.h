@@ -8,7 +8,7 @@ given arrangement. It accepts a range of query points, and locates each
 point in the arrangement. The query results are returned through the output 
 iterator. Each query result is given as a pair of the query point and an
 object representing the arrangement feature that contains it, namely a
-discriminated union container of the bounded types`Face_const_handle`,
+discriminated union container of the bounded types `Face_const_handle`,
 `Halfedge_const_handle`, and `Vertex_const_hanlde`. The resulting
 pairs in the output sequence are sorted in increasing \f$ xy\f$-lexicographical 
 order of the query points. The function returns a past-the-end iterator of 

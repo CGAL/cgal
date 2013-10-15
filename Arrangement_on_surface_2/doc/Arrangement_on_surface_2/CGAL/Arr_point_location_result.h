@@ -26,7 +26,7 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangement2PointLocation
 
-A binary metafunction to determine the return type of a point-location
+A unary metafunction to determine the return type of a point-location
 or vertical ray-shoot query.
 
 \tparam Arrangement must be an instance of the `CGAL::Arrangement_2<Traits,Dcel>` class template.
