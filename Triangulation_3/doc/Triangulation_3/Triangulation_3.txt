@@ -418,9 +418,11 @@ Parallel algorithms of `Delaunay_triangulation_3` and
 `Regular_triangulation_3` are enabled 
 if the `TriangulationDataStructure_3::Concurrency_tag` type is `Parallel_tag` and a
 reference to a lock data structure instance is provided via the constructor or 
-by using `Triangulation_3::set_lock_data_structure`. Note that the  parallel Delaunay 
+by using `Triangulation_3::set_lock_data_structure`. Note that the parallel Delaunay 
 triangulation must use the default compact location policy (and not the fast 
-one).
+one). If those conditions are fulfilled, the insertion/removal of a 
+range of points will be performed in parallel, and the individual 
+insert/remove operations will be optionally thread-safe.
 
 Parallel algorithms require the program to be linked against the Intel TBB library.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.

@@ -98,6 +98,7 @@ Regular_triangulation_3
 /*!
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
+If parallelism is enabled, the points will be inserted in parallel.
 \tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
 template < class InputIterator > 

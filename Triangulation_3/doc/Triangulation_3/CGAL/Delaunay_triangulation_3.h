@@ -127,7 +127,8 @@ Delaunay_triangulation_3 (const Delaunay_triangulation_3 & dt1);
 
 /*!
 Equivalent to constructing an empty triangulation with the optional 
-traits class argument and calling `insert(first,last)`. 
+traits class argument and calling `insert(first,last)`.
+If parallelism is enabled, the points will be inserted in parallel.
 */ 
 template < class InputIterator > 
 Delaunay_triangulation_3 (InputIterator first, InputIterator last, 
