@@ -155,7 +155,6 @@ Release date: September 2013
   - Introduce new data structures and options for speed-up and compacity. Note
     that Compact_mesh_cell_base_3 and Mesh_vertex_base_3 are now our favoured
     implementations of the concepts MeshCellBase_3 and MeshVertexBase_3.
-    Mesh_cell_base_3 is now deprecated.
 
   - Introduce a new constructor for Polyhedral_mesh_domain_3 that takes a
     bounding polyhedron to be meshed along with a polyhedral surface entirely
