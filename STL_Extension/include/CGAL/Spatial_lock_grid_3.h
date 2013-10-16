@@ -17,8 +17,8 @@
 //
 // Author(s)     : Clement Jamin
 
-#ifndef CGAL_MESH_3_LOCK_DATA_STRUCTURES_H
-#define CGAL_MESH_3_LOCK_DATA_STRUCTURES_H
+#ifndef CGAL_STL_EXTENSION_SPATIAL_LOCK_GRID_3_H
+#define CGAL_STL_EXTENSION_SPATIAL_LOCK_GRID_3_H
 
 #ifdef CGAL_LINKED_WITH_TBB
 
@@ -46,12 +46,12 @@ struct Tag_non_blocking_with_mutexes {};
 struct Tag_priority_blocking {};
 
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_base_3
+// class Spatial_lock_grid_base_3
 // (Uses Curiously recurring template pattern)
 //*****************************************************************************
 
 template <typename Derived>
-class Spatial_grid_lock_data_structure_base_3
+class Spatial_lock_grid_base_3
 {
 
 #ifdef CGAL_DEBUG_GLOBAL_LOCK_DS
@@ -364,7 +364,7 @@ public:
 protected:
 
   // Constructor
-  Spatial_grid_lock_data_structure_base_3(const Bbox_3 &bbox,
+  Spatial_lock_grid_base_3(const Bbox_3 &bbox,
                                           int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
       m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
@@ -373,7 +373,7 @@ protected:
   }
 
   /// Destructor
-  ~Spatial_grid_lock_data_structure_base_3()
+  ~Spatial_lock_grid_base_3()
   {
     for( TLS_grid::iterator it_grid = m_tls_grids.begin() ;
              it_grid != m_tls_grids.end() ;
@@ -465,27 +465,26 @@ protected:
 
 
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_3
+// class Spatial_lock_grid_3
 //*****************************************************************************
 template <typename Grid_lock_tag = Tag_priority_blocking>
-class Spatial_grid_lock_data_structure_3;
+class Spatial_lock_grid_3;
 
 
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_3<Tag_non_blocking>
+// class Spatial_lock_grid_3<Tag_non_blocking>
 //*****************************************************************************
 template <>
-class Spatial_grid_lock_data_structure_3<Tag_non_blocking>
-  : public Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_non_blocking> >
+class Spatial_lock_grid_3<Tag_non_blocking>
+  : public Spatial_lock_grid_base_3<
+      Spatial_lock_grid_3<Tag_non_blocking> >
 {
-  typedef Spatial_grid_lock_data_structure_base_3<
-    Spatial_grid_lock_data_structure_3<Tag_non_blocking> > Base;
+  typedef Spatial_lock_grid_base_3<
+    Spatial_lock_grid_3<Tag_non_blocking> > Base;
 
 public:
   // Constructors
-  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                     int num_grid_cells_per_axis)
+  Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
     int num_cells =
@@ -497,7 +496,7 @@ public:
       m_grid[i] = false;
   }
 
-  ~Spatial_grid_lock_data_structure_3()
+  ~Spatial_lock_grid_3()
   {
   }
 
@@ -531,22 +530,20 @@ protected:
 
 
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_3<Tag_priority_blocking>
+// class Spatial_lock_grid_3<Tag_priority_blocking>
 //*****************************************************************************
 
 template <>
-class Spatial_grid_lock_data_structure_3<Tag_priority_blocking>
-  : public Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_priority_blocking> >
+class Spatial_lock_grid_3<Tag_priority_blocking>
+  : public Spatial_lock_grid_base_3<Spatial_lock_grid_3<Tag_priority_blocking> >
 {
-  typedef Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_priority_blocking> > Base;
+  typedef Spatial_lock_grid_base_3<
+    Spatial_lock_grid_3<Tag_priority_blocking> > Base;
 
 public:
   // Constructors
 
-  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                     int num_grid_cells_per_axis)
+  Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
     m_tls_thread_ids(init_TLS_thread_ids)
   {
@@ -556,7 +553,7 @@ public:
   }
 
   /// Destructor
-  ~Spatial_grid_lock_data_structure_3()
+  ~Spatial_lock_grid_3()
   {
   }
 
@@ -633,22 +630,21 @@ protected:
 };
 
 //*****************************************************************************
-// class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes>
+// class Spatial_lock_grid_3<Tag_non_blocking_with_mutexes>
 // Note: undocumented, for testing only...
 //*****************************************************************************
 
 template <>
-class Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes>
-  : public Spatial_grid_lock_data_structure_base_3<
-      Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes> >
+class Spatial_lock_grid_3<Tag_non_blocking_with_mutexes>
+  : public Spatial_lock_grid_base_3<
+      Spatial_lock_grid_3<Tag_non_blocking_with_mutexes> >
 {
-  typedef Spatial_grid_lock_data_structure_base_3<
-    Spatial_grid_lock_data_structure_3<Tag_non_blocking_with_mutexes> > Base;
+  typedef Spatial_lock_grid_base_3<
+    Spatial_lock_grid_3<Tag_non_blocking_with_mutexes> > Base;
 
 public:
   // Constructors
-  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                     int num_grid_cells_per_axis)
+  Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis)
   {
     int num_cells =
@@ -657,7 +653,7 @@ public:
   }
 
   /// Destructor
-  ~Spatial_grid_lock_data_structure_3()
+  ~Spatial_lock_grid_3()
   {
   }
 
@@ -698,7 +694,7 @@ protected:
 namespace CGAL {
 
 template <typename Grid_lock_tag = void>
-class Spatial_grid_lock_data_structure_3
+class Spatial_lock_grid_3
 {
 };
 
@@ -706,4 +702,4 @@ class Spatial_grid_lock_data_structure_3
 
 #endif // CGAL_LINKED_WITH_TBB
 
-#endif // CGAL_MESH_3_LOCK_DATA_STRUCTURES_H
+#endif // CGAL_STL_EXTENSION_SPATIAL_LOCK_GRID_3_H

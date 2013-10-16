@@ -51,7 +51,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 
-#include <CGAL/Spatial_grid_lock_data_structure_3.h>
+#include <CGAL/Spatial_lock_grid_3.h>
 
 #include <boost/bind.hpp>
 #include <boost/random/linear_congruential.hpp>
@@ -192,10 +192,9 @@ template <typename Lock_data_structure_>
 class Triangulation_3_base<Parallel_tag, Lock_data_structure_>
 {
 public:
-  // If Lock_data_structure_ = Default => use Spatial_grid_lock_data_structure_3
+  // If Lock_data_structure_ = Default => use Spatial_lock_grid_3
   typedef typename Default::Get<
-    Lock_data_structure_,
-    Spatial_grid_lock_data_structure_3<Tag_priority_blocking> >
+    Lock_data_structure_, Spatial_lock_grid_3<Tag_priority_blocking> >
     ::type Lock_data_structure;
 
 protected:

@@ -82,7 +82,7 @@ typedef Regular_triangulation_euclidean_traits_3<K>    WK;
 typedef K::Point_3                                     Point;
 
 #ifdef CONCURRENT_TRIANGULATION_3
-  typedef CGAL::Spatial_grid_lock_data_structure_3<
+  typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                       Lock_ds;
 
   // Delaunay T3

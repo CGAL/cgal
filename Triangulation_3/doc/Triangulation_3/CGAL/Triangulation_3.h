@@ -12,14 +12,16 @@ of points.
 \tparam TriangulationDataStructure_3 is the triangulation data structure.
 It has the default value `Triangulation_data_structure_3< Triangulation_vertex_base_3<TriangulationTraits_3>,Triangulation_cell_base_3<TriangulationTraits_3> >`. 
 
-\tparam SpatialLockDataStructure_3 is an optional parameter to specify the type of the spatial lock data structure.
-It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
-TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
-It must be a model of the `SpatialLockDataStructure_3` concept.
-The default value is `Spatial_grid_lock_data_structure_3<Tag_priority_blocking>` if
-the triangulation data structure is concurrency-safe, and `void` otherwise.
-In order to use concurrent operations, the user must provide a reference to a `SpatialLockDataStructure_3`
-instance via the constructor or `set_lock_data_structure`.
+\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
+        It must be a model of the `SurjectiveLockDataStructure` concept,
+        with `Object` being a `Point`.
+        The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
+        the triangulation data structure is concurrency-safe, and `void` otherwise.
+        In order to use concurrent operations, the user must provide a
+        reference to a `SurjectiveLockDataStructure`
+        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
 
 \cgalHeading{Traversal of the Triangulation}
 
@@ -31,7 +33,7 @@ that allow one to traverse it (completely or partially).
 
 */
 template< typename TriangulationTraits_3, typename TriangulationDataStructure_3,
-          typename SpatialLockDataStructure_3 >
+          typename SurjectiveLockDataStructure >
 class Triangulation_3 : public Triangulation_utils_3 {
 public:
 
@@ -51,6 +53,11 @@ public:
 
 */ 
 typedef TriangulationDataStructure_3 Triangulation_data_structure; 
+
+/*!
+
+*/ 
+typedef SurjectiveLockDataStructure Lock_data_structure; 
 
 /*!
 
@@ -222,19 +229,19 @@ must be provided if concurrency is enabled.
 */ 
 Triangulation_3 
 (const TriangulationTraits_3 & traits = TriangulationTraits_3(), 
- SpatialLockDataStructure_3 *lock_ds = NULL);
+ Lock_data_structure *lock_ds = NULL);
 
 /*! 
 Same as the previous one, but with parameters in reverse order.
 */ 
 Triangulation_3 
-(SpatialLockDataStructure_3 *lock_ds = NULL,
+(Lock_data_structure *lock_ds = NULL,
  const TriangulationTraits_3 & traits = TriangulationTraits_3());
 
 /*!
 Copy constructor. All vertices and faces are duplicated. 
 The pointer to the lock data structure is not copied. Thus, the copy won't be
-concurrency-safe as long as the user has not call `set_lock_data_structure`.
+concurrency-safe as long as the user has not call `Triangulation_3::set_lock_data_structure`.
 */ 
 Triangulation_3 (const Triangulation_3 & tr); 
 
@@ -245,7 +252,7 @@ traits class argument and calling `insert(first,last)`.
 template < class InputIterator> 
 Triangulation_3 (InputIterator first, InputIterator last, 
 const TriangulationTraits_3 & traits = TriangulationTraits_3(),
-SpatialLockDataStructure_3 *lock_ds = NULL); 
+Lock_data_structure *lock_ds = NULL); 
 
 /// @} 
 
@@ -1406,7 +1413,7 @@ ostream& operator<< (ostream& os, const Triangulation_3 &t);
 /*! 
 Set the pointer to the lock data structure.
 */ 
-void set_lock_data_structure(SpatialLockDataStructure_3 *lock_ds) const;
+void set_lock_data_structure(Lock_data_structure *lock_ds) const;
 
 /// @} 
 

@@ -458,9 +458,8 @@ public:
   template <typename Cell_handle>
   bool is_cell_locked_by_this_thread(const Cell_handle &cell_handle) const
   {
-    CGAL::Spatial_grid_lock_data_structure_3<
-      Tag_priority_blocking> *lock_ds = 
-      CGAL::Spatial_grid_lock_data_structure_3::get_global_lock_ds();
+    CGAL::Spatial_lock_grid_3<Tag_priority_blocking> *lock_ds = 
+      CGAL::Spatial_lock_grid_3::get_global_lock_ds();
     bool locked = true;
     if (lock_ds)
     {

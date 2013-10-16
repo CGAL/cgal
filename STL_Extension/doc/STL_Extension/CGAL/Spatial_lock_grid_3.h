@@ -4,9 +4,14 @@ namespace CGAL {
 /*!
 \ingroup PkgStlExtension
 
-The class `Spatial_grid_lock_data_structure_3` allows to lock 
+The class `Spatial_lock_grid_3` allows to lock 
 points with coordinates (x, y, z) in a 3D grid. For example,
 it can be used by concurrent algorithms to lock simplices.
+It is a model of `SurjectiveLockDataStructure`, with `Object` being
+`P3` and `S(point)` being the cell of the 3D grid containing `point`.
+`P3` must provide x(), y() and z() functions,
+returning the respective point coordinates as numbers whose type is a 
+model of the concept of `CGAL::RealEmbeddable`.
 
 \tparam Grid_lock_tag allows to choose the locking strategy used by the
 structure. The following tags are available:
@@ -18,31 +23,31 @@ block (spin) if the thread owning the lock has a lower \"ID\" (each thread is
 given an arbitrary ID) or return immediately otherwise. It uses atomics to 
 perform lock operations.
 
-\cgalModels `SpatialLockDataStructure_3`
+\cgalModels `SurjectiveLockDataStructure`
 */
 
 template <typename Grid_lock_tag>
-class Spatial_grid_lock_data_structure_3
+class Spatial_lock_grid_3
 {
 public:
 
 /// \name Creation
 /// @{
 
-  /// Construct the lock grid of size `bbox`, with `num_grid_cells_per_axis` 
+  /// Constructs the lock grid of size `bbox`, with `num_grid_cells_per_axis` 
   /// cells per axis.
-  Spatial_grid_lock_data_structure_3(const Bbox_3 &bbox,
-                                     int num_grid_cells_per_axis);
+  Spatial_lock_grid_3(const Bbox_3 &bbox,
+                      int num_grid_cells_per_axis);
 
 /// @}
 
 /// \name Operations 
 /// @{ 
 
-  /// Set the bounding box of the domain.
+  /// Sets the bounding box of the domain.
   void set_bbox(const CGAL::Bbox_3 &bbox);
 
 /// @}
 
-}; /* end Spatial_grid_lock_data_structure_3 */
+}; /* end Spatial_lock_grid_3 */
 } /* end namespace CGAL */
