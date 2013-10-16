@@ -36,6 +36,11 @@ printf "Copy documentation...\n"
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
 cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output/* "$DEST_DIR/doc_html"
 
+printf "Modify ../../MathJax to MathJax CDN...\n"
+pushd "$DEST_DIR/doc_html"
+find -name '*.html' -exec sed -i -e 's|../../MathJax|http://cdn.mathjax.org/mathjax/latest|g' {} +
+popd
+
 printf "Create doc_html tarball...\n"
 tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
 
@@ -59,7 +64,7 @@ printf "%s\n" "${INTERNAL_RELEASE}" > "$DEST_DIR/internal_release"
 
 printf "Create cgal_manual.zip for the Windows installer..."
 pushd "$DEST_DIR/doc_html"
-zip -r ../cgal_manual.zip *
+zip -q -r ../cgal_manual.zip *
 popd
 
 pushd "$DEST_DIR"
