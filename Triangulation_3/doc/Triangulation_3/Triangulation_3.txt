@@ -768,6 +768,22 @@ Running times in seconds for algorithms on 3D triangulations.
 More benchmarks comparing \cgal to other software can be found
 in \cgalCite{msri52:liu-snoeyink-05}.
 
+\subsection Triangulation_3ParallelPerformance Parallel Performance
+
+Figure \cgalFigureRef{Triangulation3figparallelspeedup} shows insertion
+and removal speed-ups obtained using the parallel version of the 
+triangulation algorithms. The machine used is a PC running 
+Windows 7 64-bits with two 6-core 
+Intel Xeon CPU X5660 clocked at 2.80 GHz
+with 32GB of RAM. The program has been compiled with 
+Microsoft Visual C++ 2012 in Release mode.
+
+\cgalFigureBegin{Triangulation3figparallelspeedup,DT3_parallel_benchmark.png}
+Speed-up obtained for the insertion of 1M points randomly generated inside
+a cube (red), and the removal of 100K of them (blue), compared 
+to the sequential version of the algorithm.
+\cgalFigureEnd
+
 \subsection Triangulation_3MemoryUsage Memory Usage
 
 We give here some indication about the memory usage of the triangulations.
