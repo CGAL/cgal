@@ -12,8 +12,8 @@ for the 3D triangulation embedding the mesh.
 and defaults to `Kernel_traits<MD>::Kernel`.
 
 \tparam Concurrency_tag enables sequential versus parallel meshing and optimization algorithms.
-                        Possible values are `CGAL::Sequential_tag` (the default) and
-                        `CGAL::Parallel_tag`.
+                        Possible values are `Sequential_tag` (the default) and
+                        `Parallel_tag`.
 
 \tparam Vertex_base stands for a model of `MeshVertexBase_3`
 and defaults to `Mesh_vertex_base_3<Gt, MD>`.

@@ -120,20 +120,19 @@ Vertex_handle previous_intrusive() const;
 */
 void set_previous_intrusive(Vertex_handle);
 
-
+/// Get the erase counter. 
 /// Only required by the parallel algoritms.
-/// Get the erase counter value. See `CGAL::Compact_container`
-/// for more details.
+/// See `CGAL::Compact_container` for more details.
 unsigned int get_erase_counter() const;
 
+/// Sets the erase counter. 
 /// Only required by the parallel algoritms.
-/// Set the erase counter value. See `CGAL::Compact_container`
-/// for more details.
+/// See `CGAL::Compact_container` for more details.
 void set_erase_counter(unsigned int c);
 
-/// Only required by the parallel algoritms.
-/// Increment the erase counter value. See `CGAL::Compact_container`
-/// for more details.
+/// Increments the erase counter.
+/// Only required by the parallel algoritms. 
+/// See `CGAL::Compact_container` for more details.
 void increment_erase_counter();
 /// @}
 
