@@ -14,7 +14,7 @@ another point in the same voxel has been locked.
 The only requirement is that when a thread owns the lock of an object, no other
 thread can lock the same object.
 
-We call `S` the surjective function such as `S(object)`
+We call `S` the surjective function such that `S(object)`
 is the \"thing\" that is locked when one tries to lock `object`. 
 In the previous example, `S(point)` is the voxel containing `point`.
 
