@@ -29,6 +29,7 @@ of the concept `RegularTriangulationCellBase_3` and defaults to
 \cgalModels `MeshCellBase_3`
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>` 
+\sa `CGAL::Compact_mesh_cell_base_3<Gt, MD, Tds>`
 
 */
 template< typename Gt,  typename MD, typename Cb >
