@@ -548,11 +548,16 @@ those processes have themselves parameters (see details in reference pages) to t
 
 \subsection Mesh_3ParallelAlgorithms Parallel Algorithms
 
-Enabling parallel meshing and optimization algorithms is achieved through setting the third template parameter of the `Mesh_triangulation_3` class  to `Parallel_tag`, when defining the triangulation type. Note that when the user provides his/her own vertex and cell base classes, the `MeshVertexBase_3` and `MeshCellBase_3` concepts impose additionnal requirements.
+Enabling parallel meshing and optimization algorithms is achieved through 
+setting the third template parameter of the `Mesh_triangulation_3` class  
+to `Parallel_tag`, when defining the triangulation type. 
+Note that when the user provides his/her own vertex and 
+cell base classes, the `MeshVertexBase_3` and 
+`MeshCellBase_3` concepts impose additionnal requirements.
 
 Parallel algorithms require the executable to be linked against the Intel TBB library.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See TBB documentation for more details.
+See the TBB documentation for more details.
 
 \section Mesh_3_section_examples Examples
 
