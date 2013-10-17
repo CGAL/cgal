@@ -383,6 +383,10 @@ Mesh_optimization_return_code
 Sliver_perturber<C3T3,Md,Sc,V_>::
 operator()(Visitor visitor)
 {
+  //check criterion bound
+  if ( sliver_criterion_.sliver_bound() == 0 )
+    sliver_criterion_.set_sliver_bound(Sc::default_value);  
+
   // Reset sliver value cache
   helper_.reset_cache();
   
