@@ -62,13 +62,14 @@ exude_mesh_3_impl(C3T3& c3t3,
   typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
   
   // Create exuder
-  Exuder exuder(c3t3);
+  Sc criterion(sliver_bound);
+  Exuder exuder(c3t3, criterion);
 
   // Set time_limit
   exuder.set_time_limit(time_limit);
   
   // Launch exudation
-  return exuder(sliver_bound);
+  return exuder();
 }
 
 

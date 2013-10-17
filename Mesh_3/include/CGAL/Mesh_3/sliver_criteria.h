@@ -47,13 +47,19 @@ public:
   // so it needs to know how much is a unit for each criterion
   virtual const double get_perturbation_unit() const = 0;
 
-  // returns the value of the criterion, if t is a sliver
-  // optional<double>() otherwise
-  virtual boost::optional<double> operator()(const Tetrahedron_3& t) const = 0;
+  // returns the value of the criterion for t
+  virtual double operator()(const Tetrahedron_3& t) const = 0;
 
   virtual void before_move(const TetVector& t) const = 0;
   virtual bool valid_move(const TetVector& t, 
                           const bool soft = false) const = 0;
+
+  // Sliver bound
+  void set_sliver_bound(double bound) { sliver_bound_ = bound; }
+  double sliver_bound() const { return sliver_bound_; }
+
+protected:
+  double sliver_bound_;
 };
   
 template <typename K>
@@ -71,7 +77,7 @@ public:
   virtual const double get_max_value() const { return 90.; }
   virtual const double get_perturbation_unit() const { return 1.; }
 
-  virtual boost::optional<double> operator()(const Tetrahedron_3& t) const
+  virtual double operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(minimum_dihedral_angle(t, K()));
   }
@@ -91,12 +97,12 @@ public:
   }
 
 public:
-  Dihedral_angle_criterion(const double& sliver_bound = default_value)
-    : sliver_bound_(sliver_bound)
-  {}
+  Dihedral_angle_criterion(const double& sliver_bound)
+  {
+    set_sliver_bound(sliver_bound);
+  }
 
 private:
-  double sliver_bound_;  
   mutable double min_value_before_move_;
 };
 
@@ -119,7 +125,7 @@ public:
   virtual const double get_max_value() const { return 1.; }
   virtual const double get_perturbation_unit() const { return 0.05; }
 
-  virtual boost::optional<double> operator()(const Tetrahedron_3& t) const
+  virtual double operator()(const Tetrahedron_3& t) const
   {
     return CGAL::to_double(radius_ratio(t, K()));
   }
@@ -139,12 +145,12 @@ public:
   }
 
 public:
-  RR_criterion(const double& sliver_bound = default_value)
-    : sliver_bound_(sliver_bound)
-  {}
+  RR_criterion(const double& sliver_bound)
+  {
+    set_sliver_bound(sliver_bound);
+  }
 
 private:
-  double sliver_bound_;
   mutable double min_value_before_move_;
 };
 
@@ -165,8 +171,7 @@ public:
         it != tetrahedra.end();
         ++it)
     {
-      boost::optional<double> sc = criterion_(*it);
-      minimum = (std::min)(minimum, sc.get());
+      minimum = (std::min)(minimum, criterion_(*it));
     }
     return minimum;
   }

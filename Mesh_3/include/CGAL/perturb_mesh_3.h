@@ -44,14 +44,14 @@ BOOST_PARAMETER_FUNCTION(
     (time_limit_, *, 0 )
     (sliver_bound_, *, parameters::default_values::perturb_sliver_bound )
     (sliver_criterion_, *, 
-       parameters::default_values::default_sliver_criterion(c3t3))
+       parameters::default_values::default_sliver_criterion(c3t3,sliver_bound_))
     (perturbation_vector_, *, 
        default_perturbation_vector(c3t3,domain,sliver_criterion_))
   )
 )
 {
   return perturb_mesh_3_impl(c3t3, domain, time_limit_, sliver_criterion_,
-                             sliver_bound_, perturbation_vector_);
+                             perturbation_vector_);
 }
 
 
@@ -92,7 +92,6 @@ perturb_mesh_3_impl(C3T3& c3t3,
                     const MeshDomain& domain,
                     const double time_limit,
                     const SliverCriterion& sliver_criterion,
-                    const double sliver_bound,
                     const PPerturbationVector& perturbation_vector)
 {
   typedef MeshDomain Md;
@@ -110,10 +109,7 @@ perturb_mesh_3_impl(C3T3& c3t3,
   
   // Set max time
   perturber.set_time_limit(time_limit);
-
-  // Set sliver bound
-  perturber.set_sliver_bound(sliver_bound);
-  
+ 
   // Launch perturber
   return perturber();
 }

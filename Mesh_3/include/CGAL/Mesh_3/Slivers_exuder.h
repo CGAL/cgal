@@ -186,7 +186,7 @@ public: // methods
    * max_weight(v) < d*dist(v,nearest_vertice(v))
    */
   Slivers_exuder(C3T3& c3t3,
-                 const SliverCriteria& criteria = SliverCriteria(),
+                 const SliverCriteria& criterion,
                  double d = 0.45);
   
   /**
@@ -195,10 +195,9 @@ public: // methods
    * quality below this bound will be pumped
    */
   Mesh_optimization_return_code
-  operator()(double criterion_value_limit = SliverCriteria::default_value,
-             Visitor visitor = Visitor())
+  operator()(Visitor visitor = Visitor())
   {
-    return pump_vertices<true>(criterion_value_limit, visitor);
+    return pump_vertices<true>(sliver_criteria_.sliver_bound(), visitor);
   }
   
   /// Time accessors
@@ -287,12 +286,12 @@ private:
   /**
    * Initialization
    */
-  void init(double radius_ratio_limit = SliverCriteria::default_value )
+  void init(double limit_value)
   {
-    if ( 0 < radius_ratio_limit )
-      sliver_bound_ = radius_ratio_limit;
+    if ( 0 < limit_value )
+      sliver_criteria_.set_sliver_bound(limit_value);
     else
-      sliver_bound_ = SliverCriteria::max_value;
+      sliver_criteria_.set_sliver_bound(SliverCriteria::max_value);
       
     cells_queue_.clear();
     initialize_cells_priority_queue();
@@ -311,7 +310,7 @@ private:
       const boost::optional<double> value 
         = sliver_criteria_(tr_.tetrahedron(cit));
 
-      if( value < sliver_bound_ )
+      if( value < sliver_criteria_.sliver_bound() )
         cells_queue_.insert(cit, value.get());
     }
   }
@@ -456,7 +455,7 @@ private:
       const boost::optional<double> value = 
         sliver_criteria_(tr_.tetrahedron(cit));
 
-      if( value < sliver_bound_ )
+      if( value < sliver_criteria_.sliver_bound() )
         return false;
     }
     
@@ -470,7 +469,6 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   double sq_delta_;
-  double sliver_bound_;
   
   int num_of_pumped_vertices_;
   int num_of_ignored_vertices_;
@@ -549,7 +547,6 @@ Slivers_exuder(C3T3& c3t3, const SC& criteria, double d)
   : c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
   , sq_delta_(d*d)
-  , sliver_bound_(0)
   , num_of_pumped_vertices_(0)
   , num_of_ignored_vertices_(0)
   , num_of_treated_vertices_(0)
@@ -954,7 +951,7 @@ restore_cells_and_boundary_facets(
       boost::optional<double> criterion_value 
         = sliver_criteria_(tr_.tetrahedron(*cit));
       
-      if( criterion_value < sliver_bound_ )
+      if( criterion_value < sliver_criteria_.sliver_bound() )
         cells_queue_.insert(*cit, criterion_value.get());
     }
   }  

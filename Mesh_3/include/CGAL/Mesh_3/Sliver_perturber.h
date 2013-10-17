@@ -247,10 +247,6 @@ public:
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
-
-  /// Sliver bound
-  void set_sliver_bound(double bound) { sliver_bound_ = bound; }
-  double sliver_bound() const { return sliver_bound_; }
  
 private:
 
@@ -347,7 +343,6 @@ private:
   C3T3& c3t3_;
   Tr& tr_;
   const MeshDomain& domain_;
-  double sliver_bound_;
   SliverCriterion sliver_criterion_;
   Perturbation_vector perturbation_vector_;
   C3T3_helpers helper_;
@@ -374,7 +369,6 @@ Sliver_perturber(C3T3& c3t3,
   : c3t3_(c3t3)
   , tr_(c3t3_.triangulation())
   , domain_(domain)
-  , sliver_bound_(criterion.get_max_value())
   , sliver_criterion_(criterion)
   , helper_(c3t3_,domain_)
   , next_perturbation_order_(0)
@@ -415,7 +409,7 @@ operator()(Visitor visitor)
   const FT& delta = sliver_criterion_.get_perturbation_unit();
   FT current_bound = delta;
   bool perturbation_ok = true;
-  while ( current_bound <= sliver_bound() && perturbation_ok)
+  while(current_bound <= sliver_criterion_.sliver_bound() && perturbation_ok)
   {
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
     // reset_perturbation_counters is not const
@@ -426,10 +420,10 @@ operator()(Visitor visitor)
     visitor.bound_reached(current_bound);
     
     current_bound += delta;
-    if ( (current_bound >= sliver_bound())
-        && (current_bound < sliver_bound() + delta) )
+    if ( (current_bound >= sliver_criterion_.sliver_bound())
+        && (current_bound < sliver_criterion_.sliver_bound() + delta) )
     { 
-      current_bound = sliver_bound();
+      current_bound = sliver_criterion_.sliver_bound();
     }
   }
   
