@@ -66,6 +66,7 @@ namespace ArrTraits {}
 \cgalPkgSince{2.1}
 \cgalPkgBib{cgal:wfzh-a2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{2D Arrangements,arrangements_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

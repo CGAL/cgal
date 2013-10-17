@@ -48,7 +48,7 @@ pushd Spatial_searching_2_Demo;         zip ../spatial_searching.zip *;         
 pushd Linear_cell_complex_Demo;         zip ../linear_cell_complex_3.zip *;          popd
 
 # CGAL-4.2 but was forgot -> published with 4.3
-pushd Arrangement_on_surface_2_Demo;    zip ../arrangement_2.zip *;                  popd
+pushd Arrangement_on_surface_2_Demo;    zip ../arrangements_2.zip *;                  popd
 
 # check
 echo CHECK now
