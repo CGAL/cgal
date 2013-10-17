@@ -47,7 +47,9 @@ printf "Create doc_html tarball...\n"
 tar cf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -C "$DEST_DIR" doc_html
 
 printf "Create doc_html zip...\n"
-tar xf "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" -O | zip -q > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip"
+pushd "$DEST_DIR"
+zip -q -r "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip" doc_html
+popd
 
 printf "bzip2 doc_html tarball...\n"
 bzip2 --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.bz2"
