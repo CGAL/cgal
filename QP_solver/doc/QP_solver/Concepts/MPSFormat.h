@@ -161,7 +161,7 @@ program is a model of the concept `LinearProgram`.
 Our MPS format also supports an (optional) <TT>RANGES</TT> section, 
 but we don't explain this here. 
 
-\sa `CGAL::Quadratic_program_from_mps<NT>` 
+\sa `CGAL::Quadratic_program_from_mps<NT>`  
 
 */
 
