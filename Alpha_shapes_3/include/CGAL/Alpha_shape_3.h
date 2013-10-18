@@ -311,6 +311,12 @@ private :
                    : std::make_pair(v2,v1);
   }
 
+  Vertex_handle_pair
+  make_vertex_handle_pair(const Edge& e) const {
+    return make_vertex_handle_pair(e.first->vertex(e.second),
+                                   e.first->vertex(e.third));
+  }
+
  // the version to be used with Tag_true is templated to avoid
  // instanciation through explicit instantiation of the whole class
   void set_alpha_min_of_vertices(Tag_false) 
@@ -842,6 +848,18 @@ public:
       if (classify(vit, alpha) == type) *it++ = Vertex_handle(vit);
     }
     return it;
+  }
+
+  Alpha_status
+  get_alpha_status(const Edge& e) const
+  {
+    return *edge_alpha_map.find(make_vertex_handle_pair(e))->second;
+  }
+
+  Alpha_status
+  get_alpha_status(const Facet& f) const
+  {
+    return *(f.first->get_facet_status(f.second));
   }
 
   template<class OutputIterator>

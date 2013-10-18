@@ -273,6 +273,18 @@ Classification_type
 classify(Vertex_handle v, const FT& alpha = get_alpha()) const; 
 
 /*!
+Returns the alpha-status of the edge `e`.
+*/
+Alpha_status<FT>
+get_alpha_status(const Edge& e) const;
+
+/*!
+Returns the alpha-status of the facet `f`.
+*/
+Alpha_status<FT>
+get_alpha_status(const Facet& f) const;
+
+/*!
 Write the cells which are of type `type` for 
 the alpha value `alpha` to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
