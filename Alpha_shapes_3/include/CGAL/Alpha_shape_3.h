@@ -40,6 +40,7 @@
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h>
 #include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/iterator.h>
 #ifdef CGAL_USE_GEOMVIEW
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
@@ -883,7 +884,7 @@ public:
   { return get_alpha_shape_vertices(it, type, get_alpha());}
 
    template<class OutputIterator> 
-   OutputIterator filtration(OutputIterator it)  const
+   OutputIterator filtration_with_alpha_values(OutputIterator it)  const
    // scan  the  alpha_cell_map, alpha_min_facet_map,  alpha_min_edge_map  
    // and alpha_min_vertex in GENERAL mode 
    // only alpha_cell_map in REGULARIZED mode 
@@ -967,6 +968,13 @@ public:
      return it; 
    } 
 
+   template<class OutputIterator> 
+   OutputIterator filtration(OutputIterator it)  const
+   {
+      Dispatch_or_drop_output_iterator<cpp11::tuple<CGAL::Object>, cpp11::tuple<OutputIterator> > out(it);
+      return cpp11::template get<0>( filtration_with_alpha_values(out) );
+   }
+
   private: 
 
    template<class Alpha_face_iterator> 
@@ -988,19 +996,20 @@ public:
 
    template<class OutputIterator> 
    OutputIterator   
-   filtration_output( const NT & /*alpha*/,  
+   filtration_output( const NT & alpha,
  		     Vertex_handle vh,  
  		     OutputIterator it,  
  		     Tag_true)   const 
    { 
-     it++ = make_object(vh); 
+     *it++ = make_object(vh); 
+     *it++ = alpha;
      //std::cerr << "filtration " << alpha << " \t  VERTEX " << std::endl; 
      return it; 
    } 
 
    template<class OutputIterator> 
    OutputIterator   
-   filtration_output( const NT& /*alpha*/,  
+   filtration_output( const NT& alpha,
  		     Vertex_handle vh,  
  		     OutputIterator it,  
  		     Tag_false)     const 
@@ -1011,11 +1020,13 @@ public:
      if (get_mode() == GENERAL){
        Finite_vertices_iterator vit=finite_vertices_begin(); 
        for( ; vit != finite_vertices_end(); vit++) { 
-	 it++ = make_object( Vertex_handle(vit)); 
+	 *it++ = make_object( Vertex_handle(vit)); 
+         *it++ = alpha;
        } 
      }
      else {
-       it++ = make_object(vh);
+       *it++ = make_object(vh);
+       *it++ = alpha;
      }
      //std::cerr << "filtration " << alpha << " \t  VERTEX " << std::endl; 
      return it; 
@@ -1049,7 +1060,8 @@ public:
         vertex_set.insert(vh[i]); 
       } 
     } 
-    it++ = make_object(e); 
+    *it++ = make_object(e); 
+    *it++ = alpha; 
     //std::cerr << "filtration " << alpha << " \t EDGE " << std::endl; 
     return it; 
   } 
@@ -1087,7 +1099,8 @@ public:
       } 
     } 
 
-    it++ = make_object(f); 
+    *it++ = make_object(f); 
+    *it++ = alpha; 
     //std::cerr << "filtration " << alpha << " \t FACET " << std::endl; 
     return it; 
   } 
@@ -1115,7 +1128,8 @@ public:
       } 
     } 
 
-    it++ = make_object(c); 
+    *it++ = make_object(c);
+    *it++ = alpha;
     //std::cerr << "filtration " << alpha << " \t CELL " << std::endl; 
     return it; 
   } 
