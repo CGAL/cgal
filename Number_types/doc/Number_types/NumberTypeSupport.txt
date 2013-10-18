@@ -81,7 +81,7 @@ types.
 
 \anchor gmpnt
 
-\cgal provides wrapper classes for number types defined in the <span class="textsc">Gnu</span> Multiple Precision arithmetic library \cgalCite{g-ggmpa-}. The file
+\cgal provides wrapper classes for number types defined in the <span class="textsc">Gnu</span> Multiple Precision arithmetic library \cgalCite{g-ggmpa}. The file
 <TT>CGAL/Gmpz.h</TT> provides the class `Gmpz`, a wrapper class for
 the arbitrary-precision integer type `mpz_t`, which is compliant
 with the \cgal number type requirements. The file <TT>CGAL/Gmpq.h</TT>
