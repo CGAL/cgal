@@ -27,8 +27,6 @@
 #ifndef CGAL_UTILITY_H
 #define CGAL_UTILITY_H 1
 
-#include <CGAL/basic.h>
-
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
 // We recommend that you use cpp11::tuple or cpp11::array instead
 // for new uses.
