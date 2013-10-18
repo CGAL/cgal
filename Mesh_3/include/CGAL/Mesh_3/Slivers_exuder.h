@@ -307,11 +307,11 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const boost::optional<double> value 
-        = sliver_criteria_(tr_.tetrahedron(cit));
+      const double value 
+        = sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
-        cells_queue_.insert(cit, value.get());
+        cells_queue_.insert(cit, value);
     }
   }
   
@@ -452,8 +452,8 @@ private:
         cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
-      const boost::optional<double> value = 
-        sliver_criteria_(tr_.tetrahedron(cit));
+      const double value = 
+        sliver_criteria_(cit);
 
       if( value < sliver_criteria_.sliver_bound() )
         return false;
@@ -694,8 +694,7 @@ initialize_prestar_and_criterion_values(const Vertex_handle& v,
     // Sliver criterion values initialization
     if( c3t3_.is_in_complex(*cit) )
     {
-      boost::optional<double> r = sliver_criteria_(tr_.tetrahedron(*cit));
-      criterion_values[f] = r.get();
+      criterion_values[f] = sliver_criteria_(*cit);
     }
     
 
@@ -798,8 +797,8 @@ expand_prestar(const Cell_handle& cell_to_add,
                           cell_to_add->vertex((i+2)&3)->point(),
                           cell_to_add->vertex((i+3)&3)->point());
         
-        boost::optional<double> new_value = sliver_criteria_(tet);
-        criterion_values.insert(std::make_pair(current_facet,new_value.get()));
+        double new_value = sliver_criteria_(tet);
+        criterion_values.insert(std::make_pair(current_facet,new_value));
       }
     }
   }        
@@ -948,11 +947,11 @@ restore_cells_and_boundary_facets(
     // the maximum, push it in the cells queue.
     if( c3t3_.is_in_complex(*cit) )
     {
-      boost::optional<double> criterion_value 
-        = sliver_criteria_(tr_.tetrahedron(*cit));
+      double criterion_value 
+        = sliver_criteria_(*cit);
       
       if( criterion_value < sliver_criteria_.sliver_bound() )
-        cells_queue_.insert(*cit, criterion_value.get());
+        cells_queue_.insert(*cit, criterion_value);
     }
   }  
 }

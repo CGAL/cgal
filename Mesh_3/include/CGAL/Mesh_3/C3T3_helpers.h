@@ -720,14 +720,12 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          Sliver_criterion_value<SliverCriterion>
-            sc_value(c3t3_.triangulation(), criterion_);
+          Sliver_criterion_value<SliverCriterion> sc_value(criterion_);
           FT sliver_value = sc_value(c);//updates the cache
         }
         else
         {
-          CGAL_expensive_assertion(c->sliver_value() ==
-                                   criterion_(p_tr_->tetrahedron(c)));
+          CGAL_expensive_assertion(c->sliver_value() == criterion_(c));
         }
         if(bound_ > 0)
           return ( c->sliver_value() <= bound_ );
@@ -937,10 +935,8 @@ private:
     : public std::unary_function<Cell_handle, double>
   {
   public:
-    Sliver_criterion_value(const Tr& tr,
-                           const SliverCriterion& criterion)
-      : p_tr_(&tr)
-      , criterion_(criterion) {}
+    Sliver_criterion_value(const SliverCriterion& criterion)
+      : criterion_(criterion) {}
     
     FT operator()(const Cell_handle& ch) const
     {
@@ -948,20 +944,17 @@ private:
       
       if ( ! ch->is_cache_valid() )
       {
-        double sliver_value = criterion_(p_tr_->tetrahedron(ch));
+        double sliver_value = criterion_(ch);
         ch->set_sliver_value(sliver_value);
       }
       else
       {
-        CGAL_expensive_assertion(ch->sliver_value() ==
-                                 criterion_(p_tr_->tetrahedron(ch)));
+        CGAL_expensive_assertion(ch->sliver_value() == criterion_(ch));
       }
       return ch->sliver_value();
     }
     
   private:
-    // '=' is used, so p_tr_ must be a pointer ...
-    const Tr* p_tr_;
     SliverCriterion criterion_;
   };
   
@@ -978,15 +971,20 @@ private:
                               const bool use_cache = true) const
   {
     // Get complex cells only
+    Cell_vector c3t3_cells_ = c3t3_cells(cells);
+    return min_sliver_value(c3t3_cells_, criterion, use_cache);
+  }
+  
+  Cell_vector c3t3_cells(const Cell_vector& cells) const
+  {
     Cell_vector c3t3_cells;
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-
-    return min_sliver_value(c3t3_cells,criterion,use_cache);
+    return c3t3_cells;
   }
-  
+
   /**
    * Removes objects of [begin,end[ range from \c c3t3_
    */
@@ -1147,12 +1145,6 @@ private:
    * which has not his dimension < 3
    */
   bool check_no_inside_vertices(const Facet_vector& facets) const;
-
-  /**
-   * converts a Cell_handle vector into the corresponding
-   * tetrahedra vector
-  */
-  Tet_vector c3t3_tetrahedra(const Cell_vector& cells) const;
   
   /**
    * Returns the impacted cells when moving \c vertex to \c conflict_point
@@ -1606,7 +1598,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << ")\n";
 
   // Get old values
-  criterion.before_move(c3t3_tetrahedra(conflict_cells));
+  criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = vertex->point();
   
@@ -1616,7 +1608,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
     
   // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
-  if ( criterion.valid_move(c3t3_tetrahedra(conflict_cells))
+  if ( criterion.valid_move(c3t3_cells(conflict_cells))
     && verify_surface(conflict_cells) )
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
@@ -1668,7 +1660,7 @@ update_mesh_topo_change(const Point_3& new_position,
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells)); 
   
-  criterion.before_move(c3t3_tetrahedra(conflict_cells));
+  criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = old_vertex->point();
   
@@ -1705,7 +1697,7 @@ update_mesh_topo_change(const Point_3& new_position,
 
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
-  if (criterion.valid_move(c3t3_tetrahedra(outdated_cells))
+  if (criterion.valid_move(c3t3_cells(outdated_cells))
       && check_surface_mesh(new_vertex,
                             get_facets(outdated_cells),
                             old_surface_boundary,
@@ -2504,9 +2496,7 @@ min_sliver_value(const Cell_vector& cells,
       it != cells.end(); 
       ++it)
   {
-    boost::optional<double> sliver_value 
-      = criterion(c3t3_.triangulation().tetrahedron(*it));
-    min_value = (std::min)(sliver_value.get(), min_value);
+    min_value = (std::min)(criterion(*it), min_value);
   } 
   return min_value;
 }
@@ -2716,24 +2706,6 @@ check_no_inside_vertices(const Facet_vector& facets) const
   return true;
 }
 
-template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Tet_vector
-C3T3_helpers<C3T3,MD>::
-c3t3_tetrahedra(const Cell_vector& cells) const
-{
-  Cell_vector c3t3_cells;
-  std::remove_copy_if(cells.begin(),
-                      cells.end(),
-                      std::back_inserter(c3t3_cells),
-                      std::not1(Is_in_c3t3<Cell_handle>(c3t3_)));
-
-  Tet_vector tets(c3t3_cells.size());
-  for(std::size_t i = 0; i < c3t3_cells.size(); ++i)
-    tets[i] = c3t3_.triangulation().tetrahedron(c3t3_cells[i]);
-  return tets;
-}
-  
-  
 } // end namespace Mesh_3
 } // end namespace CGAL
 

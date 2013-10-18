@@ -56,13 +56,13 @@ exude_mesh_3_impl(C3T3& c3t3,
                   const double time_limit,
                   const double sliver_bound)
 {
-  typedef typename C3T3::Triangulation::Geom_traits Gt;
-  typedef Mesh_3::Min_dihedral_angle_criterion<Gt> Sc;
-  //typedef Mesh_3::Radius_radio_criterion<Gt> Sc;
+  typedef typename C3T3::Triangulation Tr;
+  typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
+  //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
   typedef typename Mesh_3::Slivers_exuder<C3T3, Sc> Exuder;
   
   // Create exuder
-  Sc criterion(sliver_bound);
+  Sc criterion(sliver_bound, c3t3.triangulation());
   Exuder exuder(c3t3, criterion);
 
   // Set time_limit
