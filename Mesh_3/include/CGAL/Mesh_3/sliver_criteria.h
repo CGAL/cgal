@@ -52,7 +52,12 @@ public:
   // returns the value of the criterion for t
   virtual double operator()(Cell_handle cell) const
   {
-    return operator()(tr_.tetrahedron(cell));
+    if( ! cell->is_cache_valid() )
+    {
+      double value = operator()(tr_.tetrahedron(cell));
+      cell->set_sliver_value(value);
+    }
+    return cell->sliver_value();
   }
 
   virtual double operator()(const Tetrahedron_3& t) const = 0;
