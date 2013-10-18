@@ -720,7 +720,8 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          Sliver_criterion_value<SliverCriterion> sc_value(criterion_);
+          Sliver_criterion_value<SliverCriterion> sc_value(c3t3.triangulation(),
+                                                           criterion_);
           FT sliver_value = sc_value(c);//updates the cache
         }
         else
@@ -935,8 +936,10 @@ private:
     : public std::unary_function<Cell_handle, double>
   {
   public:
-    Sliver_criterion_value(const SliverCriterion& criterion)
-      : criterion_(criterion) {}
+    Sliver_criterion_value(const Tr& tr,
+                           const SliverCriterion& criterion)
+      : p_tr_(&tr)
+      , criterion_(criterion) {}
     
     FT operator()(const Cell_handle& ch) const
     {
@@ -955,6 +958,8 @@ private:
     }
     
   private:
+    // '=' is used, so p_tr_ must be a pointer ...
+    const Tr* p_tr_;
     SliverCriterion criterion_;
   };
   
