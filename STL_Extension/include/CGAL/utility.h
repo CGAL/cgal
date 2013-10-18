@@ -27,6 +27,9 @@
 #ifndef CGAL_UTILITY_H
 #define CGAL_UTILITY_H 1
 
+#include <CGAL/config.h>
+#include <utility>
+
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
 // We recommend that you use cpp11::tuple or cpp11::array instead
 // for new uses.
@@ -273,6 +276,38 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
                    (!(y.third < x.third) && x.fourth < y.fourth)) ) ) ) );
 }
 
+#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
+template <class T, class Compare>
+inline
+std::pair<T,T> make_sorted_pair(T t1, T t2, Compare comp)
+{
+  return comp(t1, t2) ? std::make_pair(t1,t2) : std::make_pair(t2,t1);
+}
+
+template <class T>
+inline
+std::pair<T,T> make_sorted_pair(T t1, T t2)
+{
+  return make_sorted_pair(t1,t2, std::less<T>());
+}
+#else
+template <class T, class Compare>
+inline
+std::pair<typename std::decay<T>::type, typename std::decay<T>::type>
+make_sorted_pair(T&& t1, T&& t2, Compare comp)
+{
+  return comp(t1, t2) ? std::make_pair(std::forward<T>(t1), std::forward<T>(t2)) :
+                        std::make_pair(std::forward<T>(t2), std::forward<T>(t1) );
+}
+
+template <class T>
+inline
+std::pair<typename std::decay<T>::type, typename std::decay<T>::type>
+make_sorted_pair(T&& t1, T&& t2)
+{
+  return make_sorted_pair(std::forward<T>(t1), std::forward<T>(t2), std::less<T>());
+}
+#endif
 
 } //namespace CGAL
 
