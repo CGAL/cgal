@@ -720,7 +720,7 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          Sliver_criterion_value<SliverCriterion> sc_value(c3t3.triangulation(),
+          Sliver_criterion_value<SliverCriterion> sc_value(c3t3_.triangulation(),
                                                            criterion_);
           FT sliver_value = sc_value(c);//updates the cache
         }
