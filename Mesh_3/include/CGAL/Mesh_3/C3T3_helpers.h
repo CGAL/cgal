@@ -1609,11 +1609,13 @@ update_mesh_no_topo_change(const Point_3& new_position,
   
   // Move point
   reset_circumcenter_cache(conflict_cells);
+  reset_sliver_cache(conflict_cells);
   move_point_no_topo_change(vertex,new_position);
     
   // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
   if ( criterion.valid_move(c3t3_cells(conflict_cells))
+       //warning : valid_move updates caches
     && verify_surface(conflict_cells) )
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
@@ -1626,6 +1628,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
     //           << old_position << "\n";
     // revert move
     reset_circumcenter_cache(conflict_cells);
+    //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
     move_point_no_topo_change(vertex,old_position);
     return std::make_pair(false,vertex);

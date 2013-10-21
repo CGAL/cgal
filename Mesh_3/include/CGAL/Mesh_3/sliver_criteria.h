@@ -34,6 +34,7 @@ namespace CGAL {
 namespace Mesh_3 {
 
 template<typename Tr, //Triangulation
+         bool update_sliver_cache = true,
          typename Cell_vector = std::vector<typename Tr::Cell_handle> >
 class Sliver_criterion
 {
@@ -52,12 +53,18 @@ public:
   // returns the value of the criterion for t
   virtual double operator()(Cell_handle cell) const
   {
-    if( ! cell->is_cache_valid() )
+    if(update_sliver_cache)
     {
-      double value = operator()(tr_.tetrahedron(cell));
-      cell->set_sliver_value(value);
-    }
-    return cell->sliver_value();
+      if( ! cell->is_cache_valid() )
+      {
+        double value = operator()(tr_.tetrahedron(cell));
+        cell->set_sliver_value(value);
+      }
+      else 
+        CGAL_assertion(cell->sliver_value() == operator()(tr_.tetrahedron(cell)));
+      return cell->sliver_value();
+    }  
+    return operator()(tr_.tetrahedron(cell));
   }
 
   virtual double operator()(const Tetrahedron_3& t) const = 0;
@@ -82,14 +89,15 @@ protected:
   double sliver_bound_;
 };
   
-template <typename Tr>
-class Min_dihedral_angle_criterion : public Sliver_criterion<Tr>
+template <typename Tr,
+          bool update_sliver_cache = true>
+class Min_dihedral_angle_criterion 
+  : public Sliver_criterion<Tr, update_sliver_cache>
 {
 protected:
-  typedef Sliver_criterion<Tr> Base;
+  typedef Sliver_criterion<Tr, update_sliver_cache> Base;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
-  typedef Min_dihedral_angle_criterion<Tr> Dihedral_angle_criterion;
   
 public:
   static double default_value;
@@ -108,21 +116,21 @@ public:
 
   virtual void before_move(const Cell_vector& cells) const
   {
-    Min_value<Dihedral_angle_criterion, Cell_vector> min_value_op(*this);
+    Min_value<Min_dihedral_angle_criterion, Cell_vector> min_value_op(*this);
     min_value_before_move_ = min_value_op(cells);
   }
   virtual bool valid_move(const Cell_vector& cells,
                           const bool soft = false) const
   {
-    Min_value<Dihedral_angle_criterion, Cell_vector> min_value_op(*this);
+    Min_value<Min_dihedral_angle_criterion, Cell_vector> min_value_op(*this);
     double min_val = min_value_op(cells);
     return (min_val > min_value_before_move_) 
         || (soft && min_val > sliver_bound_);
   }
 
 public:
-  Dihedral_angle_criterion(const double& sliver_bound,
-                           const Tr& tr)
+  Min_dihedral_angle_criterion(const double& sliver_bound,
+                               const Tr& tr)
     : Base(sliver_bound, tr)
   {}
   
@@ -130,19 +138,24 @@ private:
   mutable double min_value_before_move_;
 };
 
-template<typename Tr> double Min_dihedral_angle_criterion<Tr>::default_value = 12.;
-template<typename Tr> double Min_dihedral_angle_criterion<Tr>::max_value = 90.; 
-template<typename Tr> double Min_dihedral_angle_criterion<Tr>::min_value = 0.; 
+template<typename Tr, bool update_sliver_cache> 
+double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::default_value = 12.;
+template<typename Tr, bool update_sliver_cache> 
+double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::max_value = 90.; 
+template<typename Tr, bool update_sliver_cache> 
+double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::min_value = 0.; 
   
-template <typename Tr>
-class Radius_ratio_criterion : public Sliver_criterion<Tr>
+template <typename Tr,
+          bool update_sliver_cache = true>
+class Radius_ratio_criterion 
+  : public Sliver_criterion<Tr, update_sliver_cache>
 {
 protected:
-  typedef Sliver_criterion<Tr> Base;
+  typedef Sliver_criterion<Tr, update_sliver_cache> Base;
   typedef typename Base::K              K;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
-  typedef Radius_ratio_criterion<Tr> RR_criterion;
+  typedef Radius_ratio_criterion<Tr, update_sliver_cache> RR_criterion;
   
 public:
   static double default_value;
@@ -183,9 +196,12 @@ private:
   mutable double min_value_before_move_;
 };
 
-template<typename Tr> double Radius_ratio_criterion<Tr>::default_value = 0.25; 
-template<typename Tr> double Radius_ratio_criterion<Tr>::max_value = 1.;
-template<typename Tr> double Radius_ratio_criterion<Tr>::min_value = 0.; 
+template<typename Tr, bool update_sliver_cache> 
+double Radius_ratio_criterion<Tr, update_sliver_cache>::default_value = 0.25; 
+template<typename Tr, bool update_sliver_cache> 
+double Radius_ratio_criterion<Tr, update_sliver_cache>::max_value = 1.;
+template<typename Tr, bool update_sliver_cache> 
+double Radius_ratio_criterion<Tr, update_sliver_cache>::min_value = 0.; 
 
 
 template<typename SliverCriterion, typename Cell_vector>
