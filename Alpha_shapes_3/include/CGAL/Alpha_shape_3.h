@@ -1217,7 +1217,7 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_facet_maps(bool reinitialize)
       pNeighbor->set_facet_status(iNeigh,as);
     }
   }
-    
+
   // initialize alpha_min if mode GENERAL 
   if(get_mode() == GENERAL &&  alpha_min_facet_map.empty()) {
     //already done if !alpha_min_facet_map.empty()
@@ -1232,7 +1232,19 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_facet_maps(bool reinitialize)
 	alpha_min_facet_map.insert(typename
 		                 Alpha_facet_map::value_type(alpha_min, *fit));
       }
-      else as->set_is_Gabriel(false);
+      else{
+        as->set_is_Gabriel(false);
+        as->set_alpha_min(as->alpha_mid());
+      }
+    }
+  }
+  else
+  {
+    for( fit = finite_facets_begin();
+	 fit != finite_facets_end(); ++fit)
+    {
+      as = fit->first->get_facet_status(fit->second);
+      as->set_alpha_min(as->alpha_mid());
     }
   }
   return;
@@ -1681,7 +1693,10 @@ compute_edge_status( const Cell_handle& c,
       as.set_is_Gabriel(true);
       as.set_alpha_min(alpha);
     }
-    else as.set_is_Gabriel(false);
+    else{
+      as.set_is_Gabriel(false);
+      as.set_alpha_min(as.alpha_mid());
+    }
   }   
 }
 
