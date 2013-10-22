@@ -16,7 +16,6 @@ namespace CGAL {
       typedef typename std::vector<inputDataType>::const_iterator InputConstIterator;
       typedef typename Kernel::FT FT;
       typedef typename Kernel::Point_3 Point;
-      typedef typename Kernel::Point_2 Point_2d;
       typedef typename Kernel::Vector_3 Vector;
       typedef typename Kernel::Plane_3 Plane_3;
       Plane_3	m_plane;
@@ -26,7 +25,7 @@ namespace CGAL {
     public:
       Plane() :  Primitive_ab<Kernel, inputDataType>(0.1, 0.9) {m_type = PLANE; m_type_name ="Plane";}
       Plane(FT _a, FT _b) : Primitive_ab<Kernel, inputDataType>(_a, _b) {m_type = PLANE;m_type_name ="Plane";}
-      void compute(std::set<int> &l_list_index_selected, Pwn_iterator &m_it_Point_Normal) 
+      void compute(std::set<int> &l_list_index_selected, InputConstIterator &m_it_Point_Normal) 
       {
         m_isValid = true;
         if ( l_list_index_selected.size() < 3) {
