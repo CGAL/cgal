@@ -21,6 +21,8 @@
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
+//                 Pedro Machado Manhaes de Castro  <pmmc@cin.ufpe.br>
+//                 Alexandru Tifrea
 
 #ifndef CGAL_POINT_GENERATORS_2_H
 #define CGAL_POINT_GENERATORS_2_H 1
