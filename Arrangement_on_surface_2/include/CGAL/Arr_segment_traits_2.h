@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -30,11 +30,13 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <fstream>
 
 namespace CGAL {
 
-template <class Kernel_> class Arr_segment_2;
+template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
+class Arr_segment_2;
 
 /*!
  * \class A traits class for maintaining an arrangement of segments, aoviding
@@ -46,7 +48,7 @@ template <class Kernel_> class Arr_segment_2;
  * Arrangement_2 type and require objects and operations supported by the
  * kernel, but not defined in this derived class.
  */
-template <class Kernel_>
+template <class Kernel_ = Exact_predicates_exact_constructions_kernel>
 class Arr_segment_traits_2 : public Kernel_
 {
   friend class Arr_segment_2<Kernel_>;
@@ -56,19 +58,19 @@ public:
   typedef Kernel_                         Kernel;
   typedef typename Kernel::FT             FT;
 
-  typedef typename Algebraic_structure_traits<FT>::Is_exact 
+  typedef typename Algebraic_structure_traits<FT>::Is_exact
                                           Has_exact_division;
 
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
   typedef Tag_false                       Has_do_intersect_category;
-  
+
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;
   typedef Arr_oblivious_side_tag          Top_side_category;
   typedef Arr_oblivious_side_tag          Right_side_category;
- 
+
   typedef typename Kernel::Line_2         Line_2;
   typedef CGAL::Segment_assertions<Arr_segment_traits_2<Kernel> >
                                           Segment_assertions;
@@ -124,7 +126,7 @@ public:
       is_pt_max = (res == SMALLER);
 
       CGAL_precondition_msg (! is_degen,
-                             "Cannot contruct a degenerate segment.");
+                             "Cannot construct a degenerate segment.");
 
       l = kernel.construct_line_2_object()(seg);
       is_vert = kernel.is_vertical_2_object()(seg);
@@ -147,7 +149,7 @@ public:
       is_pt_max = (res == SMALLER);
 
       CGAL_precondition_msg (! is_degen,
-                             "Cannot contruct a degenerate segment.");
+                             "Cannot construct a degenerate segment.");
 
       l = kernel.construct_line_2_object()(source, target);
       is_vert = kernel.is_vertical_2_object()(l);
@@ -232,8 +234,8 @@ public:
       CGAL_precondition_code (
         Kernel    kernel;
       );
-      CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, l, 
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on (p, l,
                                                   Has_exact_division()) &&
          kernel.compare_xy_2_object() (p, right()) == SMALLER);
 
@@ -262,8 +264,8 @@ public:
       CGAL_precondition_code (
         Kernel    kernel;
       );
-      CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, l, 
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on (p, l,
                                                   Has_exact_division()) &&
          kernel.compare_xy_2_object() (p, left()) == LARGER);
 
@@ -538,12 +540,12 @@ public:
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
       CGAL_precondition_code (
-        typename Kernel::Compare_xy_2 compare_xy = 
+        typename Kernel::Compare_xy_2 compare_xy =
                                                   kernel.compare_xy_2_object();
       );
 
-      CGAL_precondition 
-        (Segment_assertions::_assert_is_point_on (p, cv1, 
+      CGAL_precondition
+        (Segment_assertions::_assert_is_point_on (p, cv1,
                                                   Has_exact_division()) &&
          Segment_assertions::_assert_is_point_on (p, cv2,
                                                   Has_exact_division()));
@@ -589,12 +591,12 @@ public:
       // Make sure that p lies on both curves, and that both are defined to its
       // right (so their right endpoint is lexicographically larger than p).
       CGAL_precondition_code (
-        typename Kernel::Compare_xy_2 compare_xy = 
+        typename Kernel::Compare_xy_2 compare_xy =
                                                  kernel.compare_xy_2_object();
       );
 
       CGAL_precondition
-        (Segment_assertions::_assert_is_point_on (p, cv1, 
+        (Segment_assertions::_assert_is_point_on (p, cv1,
                                                   Has_exact_division()) &&
          Segment_assertions::_assert_is_point_on (p, cv2,
                                                   Has_exact_division()));
@@ -701,7 +703,7 @@ public:
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
         Kernel                        kernel;
-        typename Kernel::Compare_xy_2 compare_xy = 
+        typename Kernel::Compare_xy_2 compare_xy =
                                                  kernel.compare_xy_2_object();
       );
 
@@ -757,7 +759,7 @@ public:
 
       // Check if we have a single intersection point.
       const Point_2  *ip = object_cast<Point_2> (&obj);
-      
+
       if (ip != NULL)
       {
         // Check if the intersection point ip lies on both segments.
@@ -856,14 +858,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Are_mergeable_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_segment_traits_2<Kernel>;
-    
+
   public:
     /*!
      * Check whether it is possible to merge two given x-monotone curves.
@@ -879,12 +881,12 @@ public:
       if (!m_traits->equal_2_object()(cv1.right(), cv2.left()) &&
           !m_traits->equal_2_object()(cv2.right(), cv1.left()))
         return false;
-      
+
       // Check whether the two curves have the same supporting line.
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
-      return (equal(cv1.line(), cv2.line()) || 
-              equal(cv1.line(), 
+      return (equal(cv1.line(), cv2.line()) ||
+              equal(cv1.line(),
                     kernel->construct_opposite_line_2_object()(cv2.line())));
     }
   };
@@ -902,14 +904,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_segment_traits_2<Kernel>;
-    
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
@@ -925,7 +927,7 @@ public:
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv1, cv2));
 
       Equal_2 equal = m_traits->equal_2_object();
-      
+
       // Check which curve extends to the right of the other.
       if (equal(cv1.right(), cv2.left())) {
         // cv2 extends cv1 to the right.
@@ -959,7 +961,7 @@ public:
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an 
+     * \return An approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator() (const Point_2& p,
@@ -1004,7 +1006,7 @@ public:
 
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
- 
+
   class Compare_endpoints_xy_2
   {
   public:
@@ -1073,7 +1075,7 @@ public:
   Arr_segment_2 () :
     Base()
   {}
-    
+
   /*!
    * Constructor from a "kernel" segment.
    * \param seg The segment.
@@ -1130,7 +1132,7 @@ public:
    * Get the segment source.
    */
   const Point_2& source() const
-  { 
+  {
     return (this->ps);
   }
 
@@ -1152,7 +1154,7 @@ public:
     opp.is_pt_max = !(this->is_pt_max);
     opp.is_vert = this->is_vert;
     opp.is_degen = this->is_degen;
-    
+
     return (opp);
   }
 };
