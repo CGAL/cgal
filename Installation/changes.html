@@ -117,9 +117,17 @@ and <code>src/</code> directories).
     </li>
     <li> ... And the price</li>
   </ul>
+  <h3>3D Alpha Shapes</h3>
+  <ul>
+    <li> Add member functions in <code>CGAL::Alpha_shape_3</code> to give access to the alpha status
+         of edges and facets (<code>get_alpha_status())</code>.</li>
+    <li> Add another filtration method (<code>filtration_with_alpha_values()</code>) that reports
+          the alpha value at which each face appears in the filtration.</li>
+  </ul>
+
   <h3>STL Extensions for CGAL</h3>
   <ul>
-    <li> Adding the function <code>CGAL::make_sorted_pair</code>.</li>
+    <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
   </ul>
 
 </div>
