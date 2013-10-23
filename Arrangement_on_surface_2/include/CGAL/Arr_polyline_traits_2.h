@@ -615,7 +615,7 @@ namespace CGAL {
                                    const X_monotone_curve_2& xcv) const
       {
         // Get the index of the segment in xcv containing p.
-        unsigned int i = m_poly_traits.locate(xcv, p);
+        std::size_t i = m_poly_traits.locate(xcv, p);
         CGAL_precondition(i != INVALID_INDEX);
 
         // Compare the segment xcv[i] and p.
@@ -677,8 +677,8 @@ namespace CGAL {
       {
         // Get the indices of the segments in cv1 and cv2 containing p and
         // defined to its left.
-        unsigned int i1 = m_poly_traits.locate_side(cv1, p, false);
-        unsigned int i2 = m_poly_traits.locate_side(cv2, p, false);
+        std::size_t i1 = m_poly_traits.locate_side(cv1, p, false);
+        std::size_t i2 = m_poly_traits.locate_side(cv2, p, false);
 
         CGAL_precondition(i1 != INVALID_INDEX);
         CGAL_precondition(i2 != INVALID_INDEX);
@@ -722,8 +722,8 @@ namespace CGAL {
       {
         // Get the indices of the segments in cv1 and cv2 containing p and
         // defined to its right.
-        unsigned int i1=m_poly_traits.locate_side(cv1, p, true);
-        unsigned int i2=m_poly_traits.locate_side(cv2, p, true);
+        std::size_t i1=m_poly_traits.locate_side(cv1, p, true);
+        std::size_t i2=m_poly_traits.locate_side(cv2, p, true);
 
         CGAL_precondition(i1 != INVALID_INDEX);
         CGAL_precondition(i2 != INVALID_INDEX);
@@ -808,14 +808,14 @@ namespace CGAL {
         Point_2 point1, point2;
         Comparison_result res_x;
         Comparison_result res_y_at_x;
-        unsigned int i = 0, j = 0;
-        unsigned int n1 = cv1.number_of_segments();
-        unsigned int n2 = cv2.number_of_segments();
+        std::size_t i = 0, j = 0;
+        std::size_t n1 = cv1.number_of_segments();
+        std::size_t n2 = cv2.number_of_segments();
         Comparison_result is_cv1_left_to_right = comp_endpt(cv1[0]);
         Comparison_result is_cv2_left_to_right = comp_endpt(cv2[0]);
 
         while ((i < n1-1) || (j < n2-1)) {
-          int cv1_seg_ind,cv2_seg_ind;
+          std::size_t cv1_seg_ind,cv2_seg_ind;
           if (is_cv1_left_to_right == SMALLER){
             cv1_seg_ind = i;
             point1 = max_vertex(cv1[cv1_seg_ind]);
@@ -1440,7 +1440,7 @@ namespace CGAL {
         Comparison_result dir = cmp_seg_endpts(xcv[0]);
 
         // Locate the segment on the polyline xcv that contains p.
-        unsigned int i = m_poly_traits.locate(xcv, p);
+        std::size_t i = m_poly_traits.locate(xcv, p);
 
         CGAL_precondition(i != INVALID_INDEX);
 
@@ -1449,7 +1449,7 @@ namespace CGAL {
         xcv2.clear();
 
         // Push all segments labeled(0, 1, ... , i-1) into xcv1.
-        for (unsigned int j = 0; j < i; ++j)
+        for (std::size_t j = 0; j < i; ++j)
           xcv1.push_back(xcv[j]);
 
         if (dir == SMALLER){
@@ -1503,7 +1503,7 @@ namespace CGAL {
         }
 
         // Push all segments labeled(i+1, i+2, ... , n-1) into xcv1.
-        unsigned int n = xcv.number_of_segments();
+        std::size_t n = xcv.number_of_segments();
 
         for (int j = i+1; j < n; ++j)
           xcv2.push_back(xcv[j]);
@@ -1562,11 +1562,11 @@ namespace CGAL {
         Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
         Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
 
-        const unsigned int n1 = cv1.number_of_segments();
-        const unsigned int n2 = cv2.number_of_segments();
+        const std::size_t n1 = cv1.number_of_segments();
+        const std::size_t n2 = cv2.number_of_segments();
 
-        unsigned int i1 = (dir1 == SMALLER) ? 0 : n1-1;
-        unsigned int i2 = (dir2 == SMALLER) ? 0 : n2-1;
+        std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
+        std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
 
         X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
@@ -1828,8 +1828,8 @@ namespace CGAL {
         if (dir1 != dir2)
           return false;
 
-        const unsigned int n1 = cv1.number_of_segments();
-        const unsigned int n2 = cv2.number_of_segments();
+        const std::size_t n1 = cv1.number_of_segments();
+        const std::size_t n2 = cv2.number_of_segments();
 
         bool ver1 = is_seg_vertical(cv1[0]);
         bool ver2 = is_seg_vertical(cv2[0]);
@@ -1906,9 +1906,9 @@ namespace CGAL {
              (equal(get_min_v(cv1), get_max_v(cv2))))
             )
         {
-          const unsigned int n1 = cv1.number_of_segments();
-          const unsigned int n2 = cv2.number_of_segments();
-          unsigned int       i;
+          const std::size_t n1 = cv1.number_of_segments();
+          const std::size_t n2 = cv2.number_of_segments();
+          std::size_t       i;
 
           // cv2 extends cv1 to the right:
           for (i = 0; i < n1 - 1; ++i)
@@ -2688,14 +2688,14 @@ namespace CGAL {
      *         If q is not in the x-range of cv, returns INVALID_INDEX.
      */
     template <typename Compare>
-    unsigned int locate_gen(const X_monotone_curve_2& cv,
+    std::size_t locate_gen(const X_monotone_curve_2& cv,
                             Compare compare) const
     {
       // The direction of cv. SMALLER means left-to-right and
       // otherwise right-to-left
       Comparison_result direction = segment_traits_2()->
         compare_endpoints_xy_2_object()(cv[0]);
-      unsigned int from, to;
+      std::size_t from, to;
       if (direction == SMALLER) {
         from = 0;
         to = cv.number_of_segments() - 1;
@@ -2724,7 +2724,7 @@ namespace CGAL {
       while (((direction == SMALLER) && (to > from)) ||
              ((direction == LARGER) && (to < from)))
       {
-        unsigned int mid = (from + to) / 2;
+        std::size_t mid = (from + to) / 2;
         if (((direction == SMALLER) && (mid > from)) ||
             ((direction == LARGER) && (mid < from)))
         {
@@ -2814,7 +2814,7 @@ namespace CGAL {
     };
 
     //
-    unsigned int locate_impl(const X_monotone_curve_2& xcv,
+    std::size_t locate_impl(const X_monotone_curve_2& xcv,
                              const X_monotone_segment_2& xs,
                              Arr_curve_end ce,
                              Arr_not_all_sides_oblivious_tag) const
@@ -2835,7 +2835,7 @@ namespace CGAL {
     }
 
     //
-    unsigned int locate_impl(const X_monotone_curve_2& xcv,
+    std::size_t locate_impl(const X_monotone_curve_2& xcv,
                              const X_monotone_segment_2& xs,
                              Arr_curve_end ce,
                              Arr_all_sides_oblivious_tag) const
@@ -2848,7 +2848,7 @@ namespace CGAL {
     }
 
     //
-    unsigned int locate(const X_monotone_curve_2& xcv, const Point_2& q) const
+    std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q) const
     {
       const Segment_traits_2* seg_traits = segment_traits_2();
       if (seg_traits->is_vertical_2_object()(xcv[0])) {
@@ -2878,11 +2878,11 @@ namespace CGAL {
      * \return An index i such that segments[i] is defined to the left(or to the
      *         right) of q, or INVALID_INDEX if no such segment exists.
      */
-    unsigned int locate_side(const X_monotone_curve_2& cv,
+    std::size_t locate_side(const X_monotone_curve_2& cv,
                              const Point_2& q, const bool& to_right) const
     {
       // First locate a segment segments[i] that contains q in its x-range.
-      unsigned int i = locate(cv, q);
+      std::size_t i = locate(cv, q);
       if (i == INVALID_INDEX) return INVALID_INDEX;
 
       typename Segment_traits_2::Equal_2 equal =

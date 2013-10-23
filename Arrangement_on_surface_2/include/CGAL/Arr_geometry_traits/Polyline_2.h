@@ -206,7 +206,7 @@ namespace CGAL {
         // Compute the union of the bounding boxes of all segments.
         Segments_size_type n = this->number_of_segments();
         Bbox_2 bbox;
-        for (unsigned int i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
           bbox = (i > 0) ? (bbox + (*this)[i].bbox()) : (*this)[i].bbox();
         }
         return bbox;
@@ -392,7 +392,7 @@ namespace CGAL {
        * the traits class is needed.
        * \return The number of points.
        */
-      CGAL_DEPRECATED unsigned int points() const
+      CGAL_DEPRECATED std::size_t points() const
       {
         return (number_of_segments() == 0) ? 0 : number_of_segments() + 1;
       }
@@ -416,7 +416,7 @@ namespace CGAL {
        * \param i The segment index(from 0 to size()-1).
        * \return A const reference to the segment.
        */
-      inline const Segment_type_2& operator[](const unsigned int i) const
+      inline const Segment_type_2& operator[](const std::size_t i) const
       {
         CGAL_assertion(i < number_of_segments());
         return (m_segments[i]);
