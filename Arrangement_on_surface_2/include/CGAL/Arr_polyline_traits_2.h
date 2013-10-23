@@ -210,7 +210,7 @@ namespace CGAL {
        * \pre p2 does not lie on the boundary.
        */
       Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
-      { m_poly_traits.segment_traits_2()->compare_x_2_object()(p1, p2); }
+      { return m_poly_traits.segment_traits_2()->compare_x_2_object()(p1, p2); }
 
       /*! Compare two ends of x-monotone curves in x.
        * \param xs1 the first curve.
