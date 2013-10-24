@@ -1505,7 +1505,7 @@ namespace CGAL {
         // Push all segments labeled(i+1, i+2, ... , n-1) into xcv1.
         std::size_t n = xcv.number_of_segments();
 
-        for (int j = i+1; j < n; ++j)
+        for (std::size_t j = i+1; j < n; ++j)
           xcv2.push_back(xcv[j]);
 
         if (dir != SMALLER){
