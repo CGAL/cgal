@@ -45,10 +45,10 @@ public:
   typedef Cell_vector_ Cell_vector;
 
 public:
-  virtual const double get_max_value() const = 0;
+  virtual double get_max_value() const = 0;
   //Sliver_perturber performs perturbation "unit-per-unit"
   // so it needs to know how much is a unit for each criterion
-  virtual const double get_perturbation_unit() const = 0;
+  virtual double get_perturbation_unit() const = 0;
 
   // returns the value of the criterion for t
   virtual double operator()(Cell_handle cell) const
@@ -108,8 +108,8 @@ public:
   static double max_value;
   static double min_value;
 
-  virtual const double get_max_value() const { return 90.; }
-  virtual const double get_perturbation_unit() const { return 1.; }
+  virtual double get_max_value() const { return 90.; }
+  virtual double get_perturbation_unit() const { return 1.; }
 
   using Base::operator();
 
@@ -166,8 +166,8 @@ public:
   static double max_value;
   static double min_value;
 
-  virtual const double get_max_value() const { return 1.; }
-  virtual const double get_perturbation_unit() const { return 0.05; }
+  virtual double get_max_value() const { return 1.; }
+  virtual double get_perturbation_unit() const { return 0.05; }
 
   using Base::operator();
 
