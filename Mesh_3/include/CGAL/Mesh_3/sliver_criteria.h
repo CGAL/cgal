@@ -39,9 +39,9 @@ template<typename Tr, //Triangulation
 class Sliver_criterion
 {
 public:
-  typedef typename Tr::Geom_traits K;
+  typedef typename Tr::Geom_traits Gt;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename K::Tetrahedron_3 Tetrahedron_3;
+  typedef typename Gt::Tetrahedron_3 Tetrahedron_3;
   typedef Cell_vector_ Cell_vector;
 
 public:
@@ -101,7 +101,7 @@ protected:
   typedef Sliver_criterion<Tr, update_sliver_cache> Base;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
-  typedef typename Base::K              K;
+  typedef typename Base::Gt             Gt;
   
 public:
   static double default_value;
@@ -115,7 +115,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(minimum_dihedral_angle(t, K()));
+    return CGAL::to_double(minimum_dihedral_angle(t, Gt()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
@@ -156,7 +156,7 @@ class Radius_ratio_criterion
 {
 protected:
   typedef Sliver_criterion<Tr, update_sliver_cache> Base;
-  typedef typename Base::K              K;
+  typedef typename Base::Gt             Gt;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
   typedef Radius_ratio_criterion<Tr, update_sliver_cache> RR_criterion;
@@ -173,7 +173,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(radius_ratio(t, K()));
+    return CGAL::to_double(radius_ratio(t, Gt()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
