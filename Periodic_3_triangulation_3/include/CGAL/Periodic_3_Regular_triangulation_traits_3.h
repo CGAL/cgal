@@ -98,52 +98,52 @@ public:
 
 	Power_test_3 power_test_3_object () const
 	{
-		return Power_test_3();
+		return Power_test_3(&_domain);
 	}
 
 	Compare_power_distance_3 compare_power_distance_3_object () const
 	{
-		return Compare_power_distance_3();
+		return Compare_power_distance_3(&_domain);
 	}
 
 	In_smallest_orthogonal_sphere_3 in_smallest_orthogonal_sphere_3_object () const
 	{
-		return In_smallest_orthogonal_sphere_3();
+		return In_smallest_orthogonal_sphere_3(&_domain);
 	}
 
 	Side_of_bounded_orthogonal_sphere_3 side_of_bounded_orthogonal_sphere_3_object () const
 	{
-		return Side_of_bounded_orthogonal_sphere_3();
+		return Side_of_bounded_orthogonal_sphere_3(&_domain);
 	}
 
 	Does_simplex_intersect_dual_support_3 does_simplex_intersect_dual_support_3_object () const
 	{
-		return Does_simplex_intersect_dual_support_3();
+		return Does_simplex_intersect_dual_support_3(&_domain);
 	}
 
 	Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
 	{
-		return Construct_weighted_circumcenter_3();
+		return Construct_weighted_circumcenter_3(&_domain);
 	}
 
 	Compute_power_product_3 compute_power_product_3_object () const
 	{
-		return Compute_power_product_3();
+		return Compute_power_product_3(&_domain);
 	}
 
 	Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object () const
 	{
-		return Compute_squared_radius_smallest_orthogonal_sphere_3();
+		return Compute_squared_radius_smallest_orthogonal_sphere_3(&_domain);
 	}
 
 	Compute_critical_squared_radius_3 compute_critical_squared_radius_3_object () const
 	{
-		return Compute_critical_squared_radius_3();
+		return Compute_critical_squared_radius_3(&_domain);
 	}
 
 	Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object () const
 	{
-		return Compare_weighted_squared_radius_3();
+		return Compare_weighted_squared_radius_3(&_domain);
 	}
 
 	Compare_xyz_3 compare_xyz_3_object () const
