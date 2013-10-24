@@ -1828,9 +1828,6 @@ namespace CGAL {
         if (dir1 != dir2)
           return false;
 
-        const std::size_t n1 = cv1.number_of_segments();
-        const std::size_t n2 = cv2.number_of_segments();
-
         bool ver1 = is_seg_vertical(cv1[0]);
         bool ver2 = is_seg_vertical(cv2[0]);
 
