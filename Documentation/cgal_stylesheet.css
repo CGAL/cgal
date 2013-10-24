@@ -263,6 +263,30 @@ dl.deprecated
   margin-bottom:  1ex;
 }
 
+div.CGALModification
+{
+  background:     #f85858;
+  border:         1px solid #000000;
+  box-shadow:     0.5ex 0.5ex #777;
+  border-radius:  1ex;
+  padding-top:    0.5ex;
+  padding-bottom: 0.25ex;
+  padding-left:   1ex;
+  padding-right:  1ex;
+  margin-bottom:  1ex;
+}
+
+.Modification
+{
+  background:     #f85858;
+  border:         0px;
+  padding-top:    0ex;
+  padding-bottom: 0ex;
+  padding-left:   0ex;
+  padding-right:  0ex;
+  margin-bottom:  0ex;
+}
+
 /* The first div in CGALAdvanced sections is the "Advanced" header */
 div.CGALAdvanced > div,
 div.CGALDebug > div,
