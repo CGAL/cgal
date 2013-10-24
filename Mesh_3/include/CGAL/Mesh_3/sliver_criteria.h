@@ -101,6 +101,7 @@ protected:
   typedef Sliver_criterion<Tr, update_sliver_cache> Base;
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
+  typedef typename Base::K              K;
   
 public:
   static double default_value;
@@ -114,7 +115,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(minimum_dihedral_angle(t, typename Tr::Geom_traits()));
+    return CGAL::to_double(minimum_dihedral_angle(t, K()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
