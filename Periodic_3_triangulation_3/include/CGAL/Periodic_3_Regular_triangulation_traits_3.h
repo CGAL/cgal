@@ -3,6 +3,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Periodic_3_offset_3.h>
+#include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Weighted_point.h>
 #include <CGAL/representation_tags.h>
