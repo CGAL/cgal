@@ -66,7 +66,7 @@ default_perturbation_vector(const C3T3&,
   typedef MeshDomain Md;
   typedef SliverCriterion Sc;
   typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc>            Perturber;
-  typedef Perturber::Perturbation                         Perturbation;
+  typedef typename Perturber::Perturbation                Perturbation;
 
   typedef Mesh_3::Sq_radius_perturbation<C3T3,Md,Sc>      Sq_radius;
   typedef Mesh_3::Volume_perturbation<C3T3,Md,Sc>         Volume;

@@ -35,14 +35,14 @@ namespace Mesh_3 {
 
 template<typename Tr, //Triangulation
          bool update_sliver_cache = true,
-         typename Cell_vector = std::vector<typename Tr::Cell_handle> >
+         typename Cell_vector_ = std::vector<typename Tr::Cell_handle> >
 class Sliver_criterion
 {
 public:
   typedef typename Tr::Geom_traits K;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename K::Tetrahedron_3 Tetrahedron_3;
-  typedef Cell_vector Cell_vector;
+  typedef Cell_vector_ Cell_vector;
 
 public:
   virtual const double get_max_value() const = 0;
@@ -88,7 +88,10 @@ protected:
   const Tr& tr_;
   double sliver_bound_;
 };
-  
+
+template<typename SliverCriterion, typename Cell_vector>
+class Min_value;
+
 template <typename Tr,
           bool update_sliver_cache = true>
 class Min_dihedral_angle_criterion 
@@ -111,7 +114,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(minimum_dihedral_angle(t, K()));
+    return CGAL::to_double(minimum_dihedral_angle(t, typename Tr::Geom_traits()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
@@ -125,7 +128,7 @@ public:
     Min_value<Min_dihedral_angle_criterion, Cell_vector> min_value_op(*this);
     double min_val = min_value_op(cells);
     return (min_val > min_value_before_move_) 
-        || (soft && min_val > sliver_bound_);
+        || (soft && min_val > this->sliver_bound_);
   }
 
 public:
@@ -144,7 +147,7 @@ template<typename Tr, bool update_sliver_cache>
 double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::max_value = 90.; 
 template<typename Tr, bool update_sliver_cache> 
 double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::min_value = 0.; 
-  
+
 template <typename Tr,
           bool update_sliver_cache = true>
 class Radius_ratio_criterion 
@@ -183,11 +186,11 @@ public:
     Min_value<RR_criterion, Cell_vector> min_value_op(*this);
     double min_val = min_value_op(cells);
     return (min_val > min_value_before_move_) 
-        || (soft && min_val > sliver_bound_);
+        || (soft && min_val > this->sliver_bound_);
   }
 
 public:
-  RR_criterion(const double& sliver_bound,
+  Radius_ratio_criterion(const double& sliver_bound,
                const Tr& tr)
     : Base(sliver_bound, tr)
   {}
