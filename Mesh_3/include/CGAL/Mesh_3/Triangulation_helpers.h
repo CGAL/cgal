@@ -26,6 +26,7 @@
 #define CGAL_MESH_3_TRIANGULATION_HELPERS_H
 
 #include <vector>
+#include <CGAL/squared_distance_3.h>
 
 namespace CGAL {
 
@@ -78,6 +79,10 @@ public:
   bool no_topological_change(const Tr& tr,
                              const Vertex_handle& v,
                              const Point_3& p) const;
+
+  bool inside_protecting_balls(const Tr& tr,
+                               const Vertex_handle& v,
+                               const Point_3& p) const;
   
 private:
   /**
@@ -187,6 +192,20 @@ no_topological_change(const Tr& tr,
   cells_tos.reserve(64);
   tr.incident_cells(v0, std::back_inserter(cells_tos));
   return no_topological_change(tr, v0, p, cells_tos);
+}
+
+template<typename Tr>
+bool
+Triangulation_helpers<Tr>::
+inside_protecting_balls(const Tr& tr,
+                        const Vertex_handle& v,
+                        const Point_3& p) const
+{
+  Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
+  if(nv->point().weight() > 0)
+    return CGAL::compare_squared_distance(p, nv->point(),
+                         nv->point().weight()) != CGAL::LARGER;
+  return false;
 }
 
   

@@ -322,6 +322,12 @@ public:
                                  this->vertex(2)->point(),
                                  this->vertex(3)->point()));
 #endif // CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
+    } else {
+      CGAL_expensive_assertion(gt.construct_circumcenter_3_object()
+                                (this->vertex(0)->point(),
+                                 this->vertex(1)->point(),
+                                 this->vertex(2)->point(),
+                                 this->vertex(3)->point()) == *circumcenter);
     }
     return *circumcenter_;
   }
@@ -335,11 +341,17 @@ public:
   { subdomain_index_ = index; }  
   
   void set_sliver_value(const FT& value)
-  { 
+  {
     sliver_cache_validity_ = true;
     sliver_value_ = value;
   }
-  const FT& sliver_value() const { return sliver_value_; }
+
+  const FT& sliver_value() const
+  {
+    CGAL_assertion(is_cache_valid());
+    return sliver_value_;
+  }
+
   bool is_cache_valid() const { return sliver_cache_validity_; }
   void reset_cache_validity() const { sliver_cache_validity_ = false;  }
 
