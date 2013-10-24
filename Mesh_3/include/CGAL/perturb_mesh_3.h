@@ -95,7 +95,6 @@ perturb_mesh_3_impl(C3T3& c3t3,
                     const PPerturbationVector& perturbation_vector)
 {
   typedef MeshDomain Md;
-  typedef typename C3T3::Triangulation::Geom_traits Gt;
   typedef SliverCriterion Sc;
   
   typedef Mesh_3::Sliver_perturber<C3T3,Md,Sc> Perturber;

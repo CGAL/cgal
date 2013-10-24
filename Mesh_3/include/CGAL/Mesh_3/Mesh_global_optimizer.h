@@ -389,8 +389,6 @@ typename Mesh_global_optimizer<C3T3,Md,Mf,V_>::Moves_vector
 Mesh_global_optimizer<C3T3,Md,Mf,V_>::
 compute_moves(Moving_vertices_set& moving_vertices)
 {
-  typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
-
   typename Gt::Construct_translated_point_3 translate =
     Gt().construct_translated_point_3_object();
 
@@ -412,6 +410,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
 	  if ( CGAL::NULL_VECTOR != move )
     {
       Point_3 new_position = translate(oldv->point(),move);
+      // typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
       //if( !Th().inside_protecting_balls(tr_, oldv, new_position))
       //note : this is not happening for Lloyd and ODT so it's commented
       //       maybe for a new global optimizer it should be de-commented

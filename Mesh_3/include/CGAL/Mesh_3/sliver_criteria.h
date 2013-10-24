@@ -80,8 +80,8 @@ public:
 public:
   Sliver_criterion(const double& bound,
                    const Tr& tr)
-    : sliver_bound_(bound),
-      tr_(tr)
+    : tr_(tr)
+    , sliver_bound_(bound)
   {}
 
 protected:
