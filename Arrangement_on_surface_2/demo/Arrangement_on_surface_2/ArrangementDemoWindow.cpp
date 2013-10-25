@@ -509,6 +509,11 @@ void ArrangementDemoWindow::openDatFile( QString filename )
     return;
   }
 
+  Pol_traits traits;
+  Pol_traits::Construct_curve_2 poly_const =
+    traits.construct_curve_2_object();
+
+
   if ( CGAL::assign( pol, arr ) )
   {
     pol->clear( );
@@ -533,7 +538,7 @@ void ArrangementDemoWindow::openDatFile( QString filename )
         points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
       }
 
-      Arr_pol_2 curve (points.begin(), points.end());
+      Arr_pol_2 curve = poly_const(points.begin(), points.end());
       pol_list.push_back(curve);
     }
     CGAL::insert(*pol, pol_list.begin(), pol_list.end());
