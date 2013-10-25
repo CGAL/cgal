@@ -776,8 +776,6 @@ namespace CGAL {
           seg_traits->compare_x_2_object();
         typename Segment_traits_2::Compare_y_at_x_2 compare_y_at_x =
           seg_traits->compare_y_at_x_2_object();
-        typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-          seg_traits->construct_min_vertex_2_object();
         typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
           seg_traits->construct_max_vertex_2_object();
         typename Segment_traits_2::Compare_endpoints_xy_2 comp_endpt =
@@ -1210,8 +1208,6 @@ namespace CGAL {
              seg_traits->construct_max_vertex_2_object();
            typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
              seg_traits->construct_min_vertex_2_object();
-           typename Segment_traits_2::Compare_xy_2 comp_xy =
-             seg_traits->compare_xy_2_object();
            typename Segment_traits_2::Equal_2 equal =
              seg_traits->equal_2_object();
            typename Segment_traits_2::Is_vertical_2 is_vertical =
@@ -1718,13 +1714,20 @@ namespace CGAL {
 
             // Proceed forward.
             if (right_res != SMALLER)
-              if (dir2 == SMALLER) ++i2;
-              else if (i2 == 0) i2 = INVALID_INDEX;
-              else --i2;
+              if (dir2 == SMALLER)
+                ++i2;
+              else {
+                if (i2 == 0) i2 = INVALID_INDEX;
+                else --i2;
+              }
             if (right_res != LARGER)
-              if (dir1 == SMALLER) ++i1;
-              else if (i1 == 0) i1 = INVALID_INDEX;
-              else --i1;
+              if (dir1 == SMALLER)
+                ++i1;
+              else {
+                if (i1 == 0)
+                  i1 = INVALID_INDEX;
+                else --i1;
+              }
             left_res = (right_res == SMALLER) ? LARGER :
               (right_res == LARGER) ? SMALLER : EQUAL;
 
@@ -1757,7 +1760,7 @@ namespace CGAL {
           }
           else if (((i1 > 0) && (dir1 == SMALLER)) ||
                    ((i1 < n1) && (dir1 != SMALLER)) ||
-                   (i1 == INVALID_INDEX) && (dir1 != SMALLER))
+                   ((i1 == INVALID_INDEX) && (dir1 != SMALLER)))
           {
             ip = (dir1 == SMALLER) ?
               return_point(max_vertex(cv1[i1-1]), 0) :
@@ -2701,11 +2704,6 @@ namespace CGAL {
         from = cv.number_of_segments() - 1;
         to = 0;
       }
-
-      typename Segment_traits_2::Construct_min_vertex_2 min_vertex =
-        segment_traits_2()->construct_min_vertex_2_object();
-      typename Segment_traits_2::Construct_max_vertex_2 max_vertex =
-        segment_traits_2()->construct_max_vertex_2_object();
 
       // Test if q is one of cv's end points
       Comparison_result res_from = compare(cv[from], ARR_MIN_END);
