@@ -363,7 +363,8 @@ class Refine_facets_3
                                       MeshDomain,
                                       Complex3InTriangulation3,
                                       Previous_level_,
-                                      Base_>,
+                                      Base_,
+                                      Container_>,
                       typename Tr::Facet,
                       Previous_level_,
                       Triangulation_mesher_level_traits_3<Tr> >
