@@ -17,12 +17,50 @@
 
 namespace CGAL
 {
+template < class K, class Functor_ >
+class Regular_traits_with_offsets_adaptor : public Traits_with_offsets_adaptor<K, Functor_>
+{
+	typedef K Kernel;
+	typedef Functor_ Functor;
+	typedef Traits_with_offsets_adaptor<K, Functor_> Base;
+
+	typedef typename Kernel::Bare_point Bare_point;
+	typedef typename Kernel::Weighted_point Weighted_point;
+	typedef typename Kernel::Offset Offset;
+
+public:
+	typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
+	typedef typename Functor::result_type result_type;
+
+protected:
+	using Base::pp;
+
+public:
+	Regular_traits_with_offsets_adaptor (const Iso_cuboid_3 * dom)
+	: Base(dom)
+	{
+	}
+
+	result_type operator() (const Bare_point& p0, const Weighted_point& p1, const Weighted_point& p2,
+			                const Offset& o0, const Offset& o1, const Offset& o2) const
+	{
+		return Functor()(pp(p0, o0), pp(p1, o1), pp(p2, o2));
+	}
+	result_type operator() (const Bare_point& p0, const Weighted_point& p1, const Weighted_point& p2) const
+	{
+		return Functor()(p0, p1, p2);
+	}
+
+	using Base::operator();
+};
+
 template < typename K, typename Construct_point_3_base>
 class Periodic_3_construct_weighted_point_3 : public Construct_point_3_base
 {
 	typedef K Kernel;
 
 public:
+	typedef typename Kernel::Bare_point           Bare_point;
 	typedef typename Kernel::Weighted_point       Weighted_point;
 	typedef typename Kernel::Offset               Offset;
 	typedef typename Kernel::Iso_cuboid_3         Iso_cuboid_3;
@@ -34,9 +72,9 @@ public:
 
 	Weighted_point operator() (const Weighted_point& p, const Offset& o) const
 	{
-		return Weighted_point(p.x() + (_dom.xmax() - _dom.xmin()) * o.x(),
-				              p.y() + (_dom.ymax() - _dom.ymin()) * o.y(),
-				              p.z() + (_dom.zmax() - _dom.zmin()) * o.z(),
+		return Weighted_point(Bare_point(p.x() + (_dom.xmax() - _dom.xmin()) * o.x(),
+				                         p.y() + (_dom.ymax() - _dom.ymin()) * o.y(),
+				                         p.z() + (_dom.zmax() - _dom.zmin()) * o.z()),
 				              p.weight());
 	}
 
@@ -68,23 +106,24 @@ public:
 	typedef typename K::Triangle_3 Triangle_3;
 	typedef typename K::Tetrahedron_3 Tetrahedron_3;
 
-	typedef Traits_with_offsets_adaptor<Self, typename K::Power_test_3> Power_test_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3> Compare_power_distance_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Compute_power_product_3> Compute_power_product_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Power_test_3> Power_test_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_power_distance_3> Compare_power_distance_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_circumcenter_3> Construct_circumcenter_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_power_product_3> Compute_power_product_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
 
-	typedef Traits_with_offsets_adaptor<Self, typename K::Compare_xyz_3> Compare_xyz_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Orientation_3> Orientation_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Compare_xyz_3> Compare_xyz_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Orientation_3> Orientation_3;
 	typedef Periodic_3_construct_weighted_point_3<Self, typename K::Construct_point_3> Construct_point_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Construct_segment_3> Construct_segment_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3> Construct_triangle_3;
-	typedef Traits_with_offsets_adaptor<Self, typename K::Construct_tetrahedron_3> Construct_tetrahedron_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_segment_3> Construct_segment_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_triangle_3> Construct_triangle_3;
+	typedef Regular_traits_with_offsets_adaptor<Self, typename K::Construct_tetrahedron_3> Construct_tetrahedron_3;
 
 	void set_domain (const Iso_cuboid_3& domain)
 	{
@@ -124,6 +163,11 @@ public:
 	Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
 	{
 		return Construct_weighted_circumcenter_3(&_domain);
+	}
+
+	Construct_circumcenter_3 construct_circumcenter_3_object () const
+	{
+		return Construct_circumcenter_3(&_domain);
 	}
 
 	Compute_power_product_3 compute_power_product_3_object () const

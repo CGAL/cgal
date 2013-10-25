@@ -121,7 +121,39 @@ public:
 	{
 	}
 
-public:
+protected:
+	bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r)  const
+	{
+		return geom_traits().compare_power_distance_3_object()(p, q, r) == SMALLER;
+	}
+
+	bool less_power_distance (const Bare_point &p, const Weighted_point &q, const Weighted_point &r,
+			                  const Offset &o1, const Offset &o2, const Offset &o3)  const
+	{
+		return geom_traits().compare_power_distance_3_object()(p, q, r, o1, o2, o3) == SMALLER;
+	}
+
+	Bare_point construct_weighted_circumcenter (const Weighted_point &p, const Weighted_point &q, const Weighted_point &r, const Weighted_point &s) const
+	{
+		return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s);
+	}
+
+	Bare_point construct_weighted_circumcenter (const Weighted_point &p, const Weighted_point &q, const Weighted_point &r, const Weighted_point &s,
+			                                    const Offset& o1, const Offset& o2, const Offset& o3, const Offset& o4) const
+	{
+		return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r,s, o1,o2,o3,o4);
+	}
+
+	Bare_point construct_weighted_circumcenter(const Weighted_point &p, const Weighted_point &q, const Weighted_point &r) const
+	{
+		return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r);
+	}
+
+	Bare_point construct_weighted_circumcenter(const Weighted_point &p, const Weighted_point &q, const Weighted_point &r,
+			                                   const Offset& o1, const Offset& o2, const Offset& o3) const
+	{
+		return geom_traits().construct_weighted_circumcenter_3_object()(p,q,r);
+	}
 };
 }// namespace CGAL
 
