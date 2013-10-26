@@ -218,7 +218,7 @@ namespace CGAL {
       const_reverse_iterator;
 
       /*! An iterator for the polyline points. */
-      CGAL_DEPRECATED class const_iterator {
+      class CGAL_DEPRECATED const_iterator {
       public:
         // Type definitions:
         typedef std::bidirectional_iterator_tag     iterator_category;
@@ -470,7 +470,7 @@ namespace CGAL {
        * \pre The range of segments form an x-monotone polyline.
        */
       template <typename InputIterator>
-      void construct_x_monotone_polyline(InputIterator begin, InputIterator end,
+      void construct_x_monotone_polyline(InputIterator, InputIterator,
                                          boost::false_type)
       {}
 
@@ -479,8 +479,8 @@ namespace CGAL {
        * polyline segments.
        */
       template <typename InputIterator>
-      CGAL_DEPRECATED void construct_x_monotone_polyline(InputIterator begin,
-                                                         InputIterator end,
+      CGAL_DEPRECATED void construct_x_monotone_polyline(InputIterator,
+                                                         InputIterator,
                                                          boost::true_type)
       {}
     };

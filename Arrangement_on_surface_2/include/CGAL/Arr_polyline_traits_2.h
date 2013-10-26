@@ -414,7 +414,7 @@ namespace CGAL {
         m_poly_traits(traits)
       {}
 
-      const int operator()(const Curve_2& cv) const
+      int operator()(const Curve_2& cv) const
       {
         int num_seg = cv.number_of_segments();
         return (num_seg == 0) ? 0 : num_seg + 1;
@@ -991,8 +991,7 @@ namespace CGAL {
 
         typename std::vector<Object>::iterator it = x_seg_objects.begin();
         X_monotone_segment_2 x_seg;
-        bool check = CGAL::assign(x_seg, *it);
-        CGAL_assertion(check);
+        CGAL_assertion(CGAL::assign(x_seg, *it));
 
         // If the polyline consists of a single x-monotone segment, return.
         if (x_seg_objects.size() == 1) {
@@ -1037,8 +1036,7 @@ namespace CGAL {
 
         for (++it; it != x_seg_objects.end(); ++it) {
           X_monotone_segment_2 x_seg;
-          bool check = CGAL::assign(x_seg, *it);
-          CGAL_assertion(check);
+          CGAL_assertion(CGAL::assign(x_seg, *it));
 
           // Test that cv is continuous and well-oriented.
           CGAL_precondition_code
@@ -1629,11 +1627,11 @@ namespace CGAL {
         bool right_overlap = false;
 
         while (((dir1==SMALLER) && (dir2 == SMALLER) && (i1 < n1) &&(i2 < n2))||
-               ((dir1!=SMALLER) && (dir2 == SMALLER) && (i1 >= 0) &&
+               ((dir1!=SMALLER) && (dir2 == SMALLER) &&
                 (i1 != INVALID_INDEX) && (i2 < n2)) ||
                ((dir1==SMALLER) && (dir2 != SMALLER) && (i1 < n1) &&
-                (i2 >= 0) && (i2 != INVALID_INDEX)) ||
-               ((dir1!=SMALLER) && (dir2 != SMALLER) && (i1 >= 0) &&(i2 >= 0)&&
+                (i2 != INVALID_INDEX)) ||
+               ((dir1!=SMALLER) && (dir2 != SMALLER) &&
                 (i1 != INVALID_INDEX) && (i2 != INVALID_INDEX)))
           {
             right_res = compare_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
@@ -1713,14 +1711,17 @@ namespace CGAL {
             }
 
             // Proceed forward.
-            if (right_res != SMALLER)
+            if (right_res != SMALLER) {
               if (dir2 == SMALLER)
                 ++i2;
               else {
-                if (i2 == 0) i2 = INVALID_INDEX;
-                else --i2;
+                if (i2 == 0)
+                  i2 = INVALID_INDEX;
+                else
+                  --i2;
               }
-            if (right_res != LARGER)
+            }
+            if (right_res != LARGER) {
               if (dir1 == SMALLER)
                 ++i1;
               else {
@@ -1728,6 +1729,7 @@ namespace CGAL {
                   i1 = INVALID_INDEX;
                 else --i1;
               }
+            }
             left_res = (right_res == SMALLER) ? LARGER :
               (right_res == LARGER) ? SMALLER : EQUAL;
 

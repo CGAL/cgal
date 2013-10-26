@@ -43,7 +43,6 @@ template <typename stream>
 bool IO_base_test<T_Geom_traits>::
 read_point(stream& is, typename T_Geom_traits::Point_2& p)
 {
-  typedef T_Geom_traits                                      Traits;
   Basic_number_type x, y;
   is >> x >> y;
   p = typename T_Geom_traits::Point_2(x, y);
@@ -55,7 +54,6 @@ template <typename stream>
 bool IO_base_test<T_Geom_traits>::
 read_xcurve(stream& is, typename T_Geom_traits::X_monotone_curve_2& xcv)
 {
-  typedef T_Geom_traits                                      Traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   CGAL_assertion(!is.bad());
@@ -71,7 +69,6 @@ template <typename stream>
 bool IO_base_test<T_Geom_traits>::
 read_curve(stream& is, typename T_Geom_traits::Curve_2& cv)
 {
-  typedef T_Geom_traits                                 Traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
