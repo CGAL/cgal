@@ -259,11 +259,12 @@ public:
 public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
-    for ( unsigned int i = 0; i < curve.size( ); ++i )
-    {
-      Segment_2 segment = curve[ i ];
-      this->painterOstream << segment;
-    }
+    for (typename X_monotone_curve_2::Segment_const_iterator it =
+           curve.begin_segments();
+         it != curve.end_segments(); ++it)
+      {
+        this->painterOstream << *it;
+      }
     // TODO: implement polyline painting
 #if 0
     const Point_2& p1 = curve.source( );

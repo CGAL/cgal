@@ -20,11 +20,11 @@
 #include "IO_test.h"
 
 /*! Point location test */
-template <typename T_Geom_traits, typename T_Topol_traits>
-class Point_location_test : public IO_test<T_Geom_traits> {
+template <typename Geom_traits_T, typename Topol_traits_T>
+class Point_location_test : public IO_test<Geom_traits_T> {
 public:
-  typedef T_Geom_traits                                 Geom_traits;
-  typedef T_Topol_traits                                Topol_traits;
+  typedef Geom_traits_T                                 Geom_traits;
+  typedef Topol_traits_T                                Topol_traits;
   typedef IO_test<Geom_traits>                          Base;
 
   typedef typename Base::Point_2                        Point_2;
@@ -98,7 +98,8 @@ protected:
     Trapezoid_ric_point_location;
 
   //   typedef CGAL::Arr_triangulation_point_location<Arrangement>
-  //     Triangulation_point_location;
+
+  // Triangulation_point_location;
 
   // ===> Add new point location type here <===
 
@@ -206,8 +207,8 @@ public:
 /*!
  * Constructor.
  */
-template <typename T_Geom_traits, typename T_Topol_traits>
-Point_location_test<T_Geom_traits, T_Topol_traits>::
+template <typename Geom_traits_T, typename Topol_traits_T>
+Point_location_test<Geom_traits_T, Topol_traits_T>::
 Point_location_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
@@ -232,8 +233,8 @@ Point_location_test(const Geom_traits& geom_traits) :
 {}
 
 /*! Set the file names */
-template <typename T_Geom_traits, typename T_Topol_traits>
-void Point_location_test<T_Geom_traits, T_Topol_traits>::
+template <typename Geom_traits_T, typename Topol_traits_T>
+void Point_location_test<Geom_traits_T, Topol_traits_T>::
 set_filenames(const char* points_filename,
               const char* xcurves_filename,
               const char* curves_filename,
@@ -244,8 +245,8 @@ set_filenames(const char* points_filename,
 }
 
 /*! Initialize the data structures */
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::init()
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::init()
 {
   if (!Base::init()) return false;
 
@@ -257,8 +258,8 @@ bool Point_location_test<T_Geom_traits, T_Topol_traits>::init()
 }
 
 /*! Clear the data structures */
-template<class T_Geom_traits, typename T_Topol_traits>
-void Point_location_test<T_Geom_traits, T_Topol_traits>::clear()
+template<class Geom_traits_T, typename Topol_traits_T>
+void Point_location_test<Geom_traits_T, Topol_traits_T>::clear()
 {
   Base::clear();
   m_query_points.clear();
@@ -266,8 +267,8 @@ void Point_location_test<T_Geom_traits, T_Topol_traits>::clear()
 }
 
 /*! Clear the data structures */
-template<class T_Geom_traits, typename T_Topol_traits>
-void Point_location_test<T_Geom_traits, T_Topol_traits>::
+template<class Geom_traits_T, typename Topol_traits_T>
+void Point_location_test<Geom_traits_T, Topol_traits_T>::
 deallocate_pl_strategies()
 {
   if (m_naive_pl) {
@@ -347,15 +348,16 @@ deallocate_pl_strategies()
   }
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_arrangement()
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::allocate_arrangement()
 {
   if (!(m_arr = new Arrangement(&m_geom_traits))) return false;
   return true;
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-void Point_location_test<T_Geom_traits, T_Topol_traits>::deallocate_arrangement()
+template <typename Geom_traits_T, typename Topol_traits_T>
+void Point_location_test<Geom_traits_T, Topol_traits_T>::
+deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
@@ -363,8 +365,9 @@ void Point_location_test<T_Geom_traits, T_Topol_traits>::deallocate_arrangement(
   }
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::construct_arrangement()
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::
+construct_arrangement()
 {
   // Insert all into the arrangement
   CGAL::insert(*m_arr, this->m_xcurves.begin(), this->m_xcurves.end());
@@ -379,14 +382,15 @@ bool Point_location_test<T_Geom_traits, T_Topol_traits>::construct_arrangement()
   return true;
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-void Point_location_test<T_Geom_traits, T_Topol_traits>::clear_arrangement()
+template <typename Geom_traits_T, typename Topol_traits_T>
+void Point_location_test<Geom_traits_T, Topol_traits_T>::clear_arrangement()
 {
   if (m_arr) m_arr->clear();
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_pl_strategies()
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::
+allocate_pl_strategies()
 {
   // Allocate all point location strategies.
   if (!(m_naive_pl = new Naive_point_location())) return false;
@@ -418,8 +422,8 @@ bool Point_location_test<T_Geom_traits, T_Topol_traits>::allocate_pl_strategies(
   return true;
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::
 construct_pl_strategies()
 {
   // Initialize all point location strategies.
@@ -497,8 +501,8 @@ construct_pl_strategies()
   return true;
 }
 
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::attach_pl_strategies()
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::attach_pl_strategies()
 {
   // Initialize all point location strategies.
   CGAL::Timer timer;
@@ -575,8 +579,8 @@ bool Point_location_test<T_Geom_traits, T_Topol_traits>::attach_pl_strategies()
 }
 
 // Perform the test
-template <typename T_Geom_traits, typename T_Topol_traits>
-bool Point_location_test<T_Geom_traits, T_Topol_traits>::perform()
+template <typename Geom_traits_T, typename Topol_traits_T>
+bool Point_location_test<Geom_traits_T, Topol_traits_T>::perform()
 {
 #if ((CGAL_ARR_POINT_LOCATION_VERSION < 2) || \
      defined(CGAL_ARR_POINT_LOCATION_CONVERSION))
@@ -674,8 +678,8 @@ bool Point_location_test<T_Geom_traits, T_Topol_traits>::perform()
 }
 
 // Verify the results
-template <typename T_Geom_traits, typename T_Topol_traits>
-int Point_location_test<T_Geom_traits, T_Topol_traits>::
+template <typename Geom_traits_T, typename Topol_traits_T>
+int Point_location_test<Geom_traits_T, Topol_traits_T>::
 verify(Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
        size_t size, unsigned int pls_num)
 {
@@ -788,8 +792,8 @@ verify(Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
 }
 
 // Verify the results
-template <typename T_Geom_traits, typename T_Topol_traits>
-int Point_location_test<T_Geom_traits, T_Topol_traits>::
+template <typename Geom_traits_T, typename Topol_traits_T>
+int Point_location_test<Geom_traits_T, Topol_traits_T>::
 verify(Variants_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
        size_t size, unsigned int pls_num)
 {
