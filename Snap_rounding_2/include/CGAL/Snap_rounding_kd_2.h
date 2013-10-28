@@ -384,10 +384,25 @@ public:
       ++ind;
     }
 
+    delete[] kd_counter;
+
 #ifdef CGAL_SR_DEBUG
     std::cout << "Actual number of kd-trees created : " <<
       number_of_actual_kd_trees << std::endl;
 #endif
+
+  }
+
+  ~Multiple_kd_tree() {
+    for(typename Kd_triple_list::iterator it = kd_trees_list.begin(); 
+        it != kd_trees_list.end(); ++it) { 
+      delete (it->first);
+    }
+
+    for(typename Point_saved_pair_list::iterator it = input_points_list.begin(); 
+        it != input_points_list.end(); ++it) { 
+      delete (it->second);
+    }
 
   }
 
