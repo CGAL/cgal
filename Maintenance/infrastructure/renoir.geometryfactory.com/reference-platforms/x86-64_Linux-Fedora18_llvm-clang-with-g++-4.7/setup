@@ -7,4 +7,7 @@ source /home/lrineau/infrastructure/reference-platforms/setup-common
 BOOST_ROOT=/home/lrineau/CGAL/boost/boost-release-branch
 export BOOST_ROOT
 
-CXXFLAGS=-I$BOOST_ROOT/include
+CXXFLAGS=-I$BOOST_ROOT/include -fsanitize=address
+
+ASAN_OPTIONS="detect_leaks=1"
+export ASAN_OPTIONS
