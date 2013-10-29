@@ -331,7 +331,7 @@ using std::max;
 #if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
-#  define CGAL_ASSUME(EX) if(!EX) { __builtin_unreachable(); }
+#  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
 #elif defined(_MSC_VER)
 // MSVC has __assume
 #  define CGAL_ASSUME(EX) __assume(EX)
