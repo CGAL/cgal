@@ -29,6 +29,7 @@
 
 #include <CGAL/config.h>
 #include <utility>
+#include <functional>
 
 // The Triple and Quadruple classes are NOT RECOMMENDED anymore.
 // We recommend that you use cpp11::tuple or cpp11::array instead
