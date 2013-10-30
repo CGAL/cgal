@@ -6,6 +6,8 @@ int main()
 {
   
   volatile _image* i = _initImage();
-  
-  return (i != 0) ? 0 : 1;
+
+  bool ok = (i != 0);
+  _freeImage(const_cast<_image*>(i));
+  return ok ? 0 : 1;
 }
