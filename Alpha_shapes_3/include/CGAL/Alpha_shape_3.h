@@ -1238,15 +1238,6 @@ Alpha_shape_3<Dt,EACT>::initialize_alpha_facet_maps(bool reinitialize)
       }
     }
   }
-  else
-  {
-    for( fit = finite_facets_begin();
-	 fit != finite_facets_end(); ++fit)
-    {
-      as = fit->first->get_facet_status(fit->second);
-      as->set_alpha_min(as->alpha_mid());
-    }
-  }
   return;
  }
 
