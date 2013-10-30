@@ -46,6 +46,9 @@
 #include <CGAL/Circulator/Circulator_adapters.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/tuple.h>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/typeof/typeof.hpp>
 
 using namespace CGAL;
 
@@ -8191,6 +8194,19 @@ void test_make_sorted_pair() {
   std::pair<SP_struct,SP_struct> p3(s1,s2),
   p4=CGAL::make_sorted_pair(s2,s1,Cmp_SP_struct());
   assert(p3==p4);
+  int i=2;
+  assert( CGAL::make_sorted_pair(1,i) == std::make_pair(1,i) );
+  BOOST_STATIC_ASSERT( (boost::is_same<
+                          BOOST_TYPEOF(CGAL::make_sorted_pair<long>(1L,i)),
+                          std::pair<long,long> >::value) );
+  assert( (CGAL::make_sorted_pair<long>(i,1L) == std::pair<long,long>(1L,2L)) );
+
+  BOOST_STATIC_ASSERT( (boost::is_same<
+                          BOOST_TYPEOF(CGAL::make_sorted_pair<double>(1,2L)),
+                          std::pair<double,double> >::value) );
+  BOOST_STATIC_ASSERT( (boost::is_same<
+                          BOOST_TYPEOF(CGAL::make_sorted_pair<int>(1,2L)),
+                          std::pair<int,int> >::value) );
 }
 
 int main() {

@@ -431,9 +431,9 @@ Quadruple<T1, T2, T3, T4> make_tuple(T1 x, T2 y, T3 z, T4 w);
 Creates a pair `(t1,t2)` if `comp(t1,t2)==true` and `(t2,t1)` otherwise.
 `comp` is a binary function taking two elements of type T that returns
 a value convertible to `bool`.
-An overload is provided with `std::less` as default for `Compare`.
+An overload is provided with `std::less<T>` as default for `Compare`.
 \note If rvalue references are supported by the compiler, the return type of
-the function is that `std::make_pair(t1,t2)`.
+the function is that of `std::make_pair(t1,t2)`.
 */
 template <class T, class Compare>
 std::pair<T,T> make_sorted_pair(T t1, T t2, Compare comp)
