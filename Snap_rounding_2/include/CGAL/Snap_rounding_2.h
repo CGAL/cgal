@@ -287,10 +287,10 @@ Hot_pixel<Traits_>::Hot_pixel(const Point_2 & inp_point, NT inp_pixel_size) :
 template<class Traits_>
 Hot_pixel<Traits_>::~Hot_pixel()
 {
-  delete(right_seg);
-  delete(left_seg);
-  delete(top_seg);
-  delete(bot_seg);
+  delete right_seg;
+  delete left_seg;
+  delete top_seg;
+  delete bot_seg;
 }
 
 /*! */
@@ -714,7 +714,7 @@ iterate(OutputContainer & output_container,
       // segment entirely inside a pixel
       hp = new Hot_pixel(iter->source(), pixel_size);
       seg_output.push_back(hp->get_center(int_output));
-      delete(hp);
+      delete hp;
     } else {
       seg_output.push_back((*hot_pixel_iter)->get_center(int_output));
       if (number_of_intersections > 1) {
@@ -768,6 +768,10 @@ void snap_rounding_2(InputIterator begin,
                                         seg_list, &mul_kd_tree);
   s.iterate(output_container, pixel_size, int_output, do_isr,seg_list,
             mul_kd_tree);
+
+  // hope that find_hot_pixels_and_create_kd_trees does not suddenly
+  // new up an array of multiple kd_tree
+  delete mul_kd_tree;
 
 #ifdef CGAL_SR_DEBUG
   std::cout << "Overall number of false hot pixels in all the queries : "
