@@ -184,7 +184,7 @@ std::istream& IO_test<Geom_traits_T>::skip_comments(std::istream& is,
                                                     std::string& line)
 {
   while (std::getline(is, line))
-    if ((line[0] != '#') && !line.empty()) break;
+    if (!line.empty() && (line[0] != '#')) break;
   return is;
 }
 
