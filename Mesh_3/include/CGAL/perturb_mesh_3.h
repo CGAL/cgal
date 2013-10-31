@@ -32,6 +32,7 @@
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
 #include <vector>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -50,6 +51,7 @@ BOOST_PARAMETER_FUNCTION(
   )
 )
 {
+  CGAL_USE(sliver_bound_);
   return perturb_mesh_3_impl(c3t3, domain, time_limit_, sliver_criterion_,
                              perturbation_vector_);
 }
