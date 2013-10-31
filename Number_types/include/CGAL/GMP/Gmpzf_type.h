@@ -539,7 +539,7 @@ std::istream&  operator>> ( std::istream& is, Gmpzf& a)
   // simply read from double
   double d;
   is >> d;
-  if (is.good())
+  if (is)
     a = Gmpzf(d);
   return is;
 }
