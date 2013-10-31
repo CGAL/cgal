@@ -86,6 +86,15 @@ public:
   typedef typename Base::Covering_sheets  Covering_sheets;
 
   using Base::tds;
+  using Base::get_offset;
+  using Base::incident_cells;
+  using Base::incident_edges;
+  using Base::incident_facets;
+  using Base::segment;
+  using Base::set_offsets;
+  using Base::point;
+  using Base::periodic_tetrahedron;
+  using Base::nearest_vertex;
 
   Periodic_3_Delaunay_triangulation_3_Mesher_3(
     const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
