@@ -36,8 +36,6 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 //#include <CGAL/Gmpzf.h>
-/* Boost refuses to document this :-( */
-#include <boost/detail/endian.hpp>
 
 #include <CGAL/Coercion_traits.h>
 
@@ -49,8 +47,7 @@
 // * IEEE double
 // * not too fancy endianness
 #if __GNU_MP_VERSION * 10 + __GNU_MP_VERSION_MINOR >= 43 \
-    && GMP_NUMB_BITS == 64 \
-    && (defined BOOST_LITTLE_ENDIAN || defined BOOST_BIG_ENDIAN)
+    && GMP_NUMB_BITS == 64
 #define CGAL_HAS_MPZF 1
 
 // GMP-4.3.* has a different name for mpn_neg.
@@ -236,7 +233,7 @@ struct mpzf {
   // checked by including an array of 150 limbs in every mpzf (that's where
   // the 11% number comes from).
   // BONUS: doing that is thread-safe!
-  static const unsigned int cache_size = 9;
+  static const unsigned int cache_size = 8;
 #endif
 //#if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
 //  typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
@@ -376,9 +373,9 @@ struct mpzf {
     init();
     using boost::uint64_t;
     union {
-#ifdef BOOST_LITTLE_ENDIAN
+#ifdef CGAL_LITTLE_ENDIAN
       struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
-#else /* BOOST_BIG_ENDIAN */
+#else /* CGAL_BIG_ENDIAN */
       //WARNING: untested!
       struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
 #endif
@@ -457,6 +454,7 @@ struct mpzf {
     mpn_copyi(data(),z->_mp_d+exp,size);
   }
 
+#if 0
   // For debug purposes only
   void print()const{
     //std::cout << "size: " << size << std::endl;
@@ -470,6 +468,8 @@ struct mpzf {
     asize = std::abs(size);
     std::cout << "double: " << std::ldexp((double)data()[asize-1],64*(exp+asize-1))*((size<0)?-1:1) << '\n';
   }
+#endif
+
   friend int mpzf_abscmp(mpzf const&a, mpzf const&b){
     // This assumes that size==0 implies exp==0. Is it true?
     int asize=std::abs(a.size);
@@ -902,11 +902,18 @@ struct mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
+#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+  explicit
+#endif
   operator mpq_class () const {
     mpq_class q;
     export_to_mpq_t(q.get_mpq_t());
     return q;
   }
+#endif
+
+#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+  explicit
 #endif
   operator Gmpq () const {
     Gmpq q;
@@ -934,6 +941,9 @@ struct mpzf {
     }
   }
 #if 0
+#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+  explicit
+#endif
 // This makes mpzf==int ambiguous
   operator Gmpzf () const {
     mpz_t z;
