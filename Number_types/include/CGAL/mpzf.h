@@ -477,7 +477,7 @@ struct mpzf {
     int ah=asize+a.exp;
     int bh=bsize+b.exp;
     if(ah!=bh) return ah-bh;
-    int minsize=std::min(asize,bsize);
+    int minsize=(std::min)(asize,bsize);
     const mp_limb_t* adata=a.data()+(asize-1);
     const mp_limb_t* bdata=b.data()+(bsize-1);
     for(int i=0;i<minsize;++i,--adata,--bdata){
@@ -543,7 +543,7 @@ struct mpzf {
       int bexp=b.exp;
       if(aexp<bexp){ res.exp=a.exp; aexp=0; bexp=b.exp-a.exp; }
       else { res.exp=b.exp; aexp=a.exp-b.exp; bexp=0; }
-      res.init(std::max(absasize+aexp,absbsize+bexp)+1);
+      res.init((std::max)(absasize+aexp,absbsize+bexp)+1);
       mp_limb_t* rdata=res.data();
       res.size=0;
       // TODO: if aexp>0, swap a and b so we don't repeat the code.
@@ -616,7 +616,7 @@ struct mpzf {
       int yexp=y->exp;
       if(xexp<yexp){ res.exp=xexp; yexp-=xexp; xexp=0; }
       else { res.exp=yexp; xexp-=yexp; yexp=0; }
-      res.init(std::max(absxsize+xexp,absysize+yexp)+1);
+      res.init((std::max)(absxsize+xexp,absysize+yexp)+1);
       mp_limb_t* rdata=res.data();
       res.size=0;
       bool carry1=false;
@@ -646,7 +646,7 @@ struct mpzf {
 	  carry1=true; // assumes no trailing zeros
 	}
       }
-      int carry=mpn_sub(rdata, xdata, absxsize, ydata, absysize);
+      mp_limb_t carry=mpn_sub(rdata, xdata, absxsize, ydata, absysize);
       if(carry1) carry+=mpn_sub_1(rdata, rdata, absxsize, 1);
       assert(carry==0);
       res.size+=absxsize;
@@ -756,7 +756,7 @@ struct mpzf {
     int bsize=std::abs(b.size);
     int atz=mpzf_impl::ctz(a.data()[0]);
     int btz=mpzf_impl::ctz(b.data()[0]);
-    int rtz=std::min(atz,btz);
+    int rtz=(std::min)(atz,btz);
     mpzf tmp(allocate(), asize);
     mpzf res(allocate(), bsize);
     if (atz != 0) {
@@ -902,7 +902,7 @@ struct mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
-#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
 #endif
   operator mpq_class () const {
@@ -912,7 +912,7 @@ struct mpzf {
   }
 #endif
 
-#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
 #endif
   operator Gmpq () const {
@@ -941,7 +941,7 @@ struct mpzf {
     }
   }
 #if 0
-#ifndef BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+#ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
 #endif
 // This makes mpzf==int ambiguous
