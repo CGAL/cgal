@@ -471,9 +471,12 @@ struct mpzf {
 #endif
 
   friend int mpzf_abscmp(mpzf const&a, mpzf const&b){
-    // This assumes that size==0 implies exp==0. Is it true?
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
+    // size==0 should mean exp==-infinity, like with double.
+    // Since it doesn't, test for it explicitly.
+    if (bsize == 0) return asize;
+    if (asize == 0) return -1;
     int ah=asize+a.exp;
     int bh=bsize+b.exp;
     if(ah!=bh) return ah-bh;

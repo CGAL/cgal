@@ -8,16 +8,20 @@
 using CGAL::mpzf;
 template<class NT,class IT>
 void test1(){
+  NT z;
   NT a=IT(3);
   NT b=4.5;
   NT c=2*(a+b)+-a*5;
   assert(CGAL::sign(c)==0);
   NT d=b/a;
   NT e=.0003;
+  NT f=1e-90;
   assert(CGAL::to_double(b) == 4.5);
   std::pair<double,double> p=CGAL::to_interval(b);
   assert(p.first<=4.5 && p.second >= 4.5);
   assert(a<b && CGAL::compare(b,a)>0);
+  assert(z<f && CGAL::compare(z,f)<0 && CGAL::compare(f,z)>0);
+  assert(z==z && CGAL::compare(z,z)==0);
   assert(CGAL::square(b)*4==81);
   assert(CGAL::is_zero(c));
   assert(!CGAL::is_zero(a));
