@@ -18,7 +18,7 @@ This package provides an implementation of the algorithm relying on the <em>Shap
 Given a triangulated surface mesh (simply <em>mesh</em> in the following) bounding a 3D solid object,
 the SDF provides an estimate of the local object diameter for each facet of the mesh (the SDF values).
 The segmentation algorithm first applies a soft clustering on the facets using the associated SDF values.
-The final segmentation is then obtained via a graph-cut algorithm that considers surface-based features such as dihedral-angle and concavity,
+The final segmentation is then obtained via a graph-cut algorithm that considers surface-based features (dihedral-angle and concavity)
 together with the result of the soft clustering.
 We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
@@ -41,7 +41,7 @@ Influence of pose changes over SDF values and the segmentation.
 \subsubsection Surface_mesh_segmentationRawSDF Computation of Raw SDF Values
 For a given input mesh, the raw SDF values are computed by processing each facet one by one. For a given facet,
 several rays are sampled in a cone constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
-Each ray in cast into a segment, its endpoints being the apex of the cone and the first mesh facet intersection point.
+Each ray is cast into a segment, its endpoints being the apex of the cone and the first mesh facet intersection point.
 If a ray forms an obtuse angle with the inward-normal of the first intersected facet, it is not accepted.
 Using the lengths of the accepted cast rays, which intuitively correspond to a local volume sampling,
 the raw SDF value is calculated by first applying an outlier removal procedure and then taking average of the lengths.
@@ -55,7 +55,7 @@ After having calculated the raw SDF value for each facet, the SDF values used in
 the result of several post-processing steps:
 
 - Facets with no raw SDF values are assigned the average raw SDF value of their edge-adjacent neighbors. If there is still a facet having no SDF value,
-the minimum amongst all the SDF values is assigned to it (this step is not done in the implementation from the paper).
+the minimum amongst all the SDF values is assigned to it (this is a deviation from the description of the algorithm in \cgalCite{Shapira2008Consistent}).
 The main reason for not assigning 0 to facets with no SDF values is that it can obstruct log-normalization process done at the beginning of `segment_from_sdf_values()`.
 
 - A bilateral smoothing \cgalCite{Tomasi1998Bilateral} is applied.
@@ -150,7 +150,7 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 
 
 
-\section Surface_mesh_segmentationAPI User Interface
+\subsection Surface_mesh_segmentationAPI Summary
 This package provides four functions:
 	- `compute_sdf_values()` : computes the SDF value of each facet of an input mesh either in raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
@@ -177,6 +177,8 @@ some of these properties, but may produce unreliable or meaningless segmentation
 The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
 `::CGAL::Exact_predicates_inexact_constructions_kernel` is recommended as geometric traits for this algorithm.
+
+\section SDFExamples Examples
 
 \subsection Example_1 Example: Computation of SDF Values
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_example.cpp}
