@@ -44,6 +44,8 @@
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfi result (0,p); \
                 _fun(result.mpfi(),a.mpfi(),b.mpfi()); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
                 return result; \
 }
 
@@ -57,6 +59,8 @@
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfi result(0,p); \
                 _fun(result.mpfi(),a.mpfi(),_member); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
                 return result; \
         } \
         inline \
@@ -66,6 +70,8 @@
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfi result(0,p); \
                 _fun(result.mpfi(),a.mpfi(),_member); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
                 return result; \
         }
 
@@ -79,6 +85,8 @@
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfi result(0,p); \
                 _fun1(result.mpfi(),a.mpfi(),_member); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
                 return result; \
         } \
         inline \
@@ -88,6 +96,8 @@
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
                 Gmpfi result(0,p); \
                 _fun2(result.mpfi(),_member,a.mpfi()); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
                 return result; \
         }
 
