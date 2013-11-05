@@ -53,8 +53,8 @@ struct B
 template<class T>
 class C
 {
-  friend class B< C<T> >;
-  friend class B< C<T> >::Nested;
+  friend struct B< C<T> >;
+  friend struct B< C<T> >::Nested;
   // the following declaration (instead of the one above) is what
   // pgCC, Intel 8.x and MSVC 7.1 would accept:
   //  friend class A< C<T> >;
