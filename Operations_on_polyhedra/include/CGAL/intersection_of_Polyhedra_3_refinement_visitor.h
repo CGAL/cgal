@@ -248,8 +248,8 @@ namespace CGAL
       for (typename std::map<int,Point>::iterator it=nodes_.begin();it!=nodes_.end();++it)
       {
         Vertex_handle v=hds.vertices_push_back(Vertex());
-        put(ppmap, v, it->second);
         node_vertex_visitor.new_vertex_added(it->first, v);
+        put(ppmap, v, it->second);
         CGAL_assertion( node_to_polyhedron_vertex_.find( it->first ) == node_to_polyhedron_vertex_.end());
         node_to_polyhedron_vertex_.insert( std::make_pair(it->first,v) );
 //        std::cerr << "vertices " << it->first  << " " << &(*v) << std::endl;
@@ -732,15 +732,22 @@ class Node_visitor_refine_polyhedra{
   //               v
   //  <-----------   <-----------
   //   new_opposite     opposite 
-  //  
+  //
+  template <class Nodes_vector>
   Vertex_handle split_edge( Halfedge_handle hedge,
-                            const typename Kernel::Point_3& point,
-                            Polyhedron& P)
+                   int node_id,
+                   const Nodes_vector& nodes,
+                   Polyhedron& P)
   {
-    internal_IOP::Split_halfedge_at_point<typename Polyhedron::HalfedgeDS, PolyhedronPointPMap> delegated(hedge,point,ppmap);
+    internal_IOP::Split_halfedge<typename Polyhedron::HalfedgeDS> delegated(hedge);
     P.delegate( delegated );
     CGAL_assertion(P.is_valid());
-    
+
+    Vertex_handle vh=boost::prior(P.vertices_end());
+    node_vertex_visitor.new_vertex_added(node_id, vh);
+    put(ppmap, vh, nodes[node_id]);
+    CGAL_assertion(get(ppmap,vh)==nodes[node_id]);
+
     //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
     if ( get(m_edge_mark_pmap,std::make_pair(hedge,&P)) )
     {
@@ -750,10 +757,8 @@ class Node_visitor_refine_polyhedra{
       put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next(),&P),true);
       put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next()->opposite(),&P),true);
     }
-    
-    Vertex_handle v=boost::prior(P.vertices_end());
-    CGAL_assertion(get(ppmap,v)==point);
-    return v;
+
+    return vh;
   }
 
   //sort node ids so that we can split the hedge
@@ -1621,8 +1626,7 @@ public:
       bool first=true; Halfedge_handle hedge_incident_to_src;
       //do split the edges
       for (std::vector<int>::const_iterator it_id=node_ids.begin();it_id!=node_ids.end();++it_id){
-        Vertex_handle v=split_edge(hedge,nodes[*it_id],*P);
-        node_vertex_visitor.new_vertex_added(*it_id, v);
+        Vertex_handle v=split_edge(hedge, *it_id, nodes, *P);
         node_to_polyhedron_vertex.insert(std::make_pair(*it_id,v));
         if (first){
           first=false;
