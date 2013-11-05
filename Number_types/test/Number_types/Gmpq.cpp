@@ -124,10 +124,10 @@ void test_input_from_float()
   }
 }
 
-template<class _NT>
+template<class NumberType>
 int test_operators(){
         typedef CGAL::Gmpq      Gmpq;
-        typedef _NT             NT;
+        typedef NumberType      NT;
         Gmpq a(5.5);
         NT b(2);
         if((-a)==(-5.5)&&(a+b)==7.5&&(a-b)==3.5&&(a*b)==11&&(a/b)==2.75)
@@ -138,7 +138,7 @@ int test_operators(){
         }
 }
 
-#define _TEST(_string,_code) \
+#define TEST(_string,_code) \
         std::cerr<<"testing "<<_string<<": "<<std::flush; \
         _code; \
         std::cerr<<"OK"<<std::endl;
@@ -270,16 +270,16 @@ int main() {
 #endif
 
   // test operators Gmpq/Gmpfr (added by Luis)
-  _TEST("operators Gmpq",test_operators<CGAL::Gmpq>();)
-  _TEST("operators int",test_operators<int>();)
-  _TEST("operators long",test_operators<long>();)
-  _TEST("operators double",test_operators<double>();)
-  _TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
-  _TEST("operators Gmpfr",test_operators<CGAL::Gmpfr>();)
+  TEST("operators Gmpq",test_operators<CGAL::Gmpq>();)
+  TEST("operators int",test_operators<int>();)
+  TEST("operators long",test_operators<long>();)
+  TEST("operators double",test_operators<double>();)
+  TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
+  TEST("operators Gmpfr",test_operators<CGAL::Gmpfr>();)
 
   return 0;
 }
-#undef _TEST
+#undef TEST
 #else
 int main()
 {
