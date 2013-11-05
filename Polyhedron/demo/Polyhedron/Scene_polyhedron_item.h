@@ -181,6 +181,7 @@ private:
       const bool colors_only) const;
     double volume, area;
 
+  int m_min_patch_id; // the min value of the patch ids initialized in init()
 }; // end class Scene_polyhedron_item
 
 #endif // SCENE_POLYHEDRON_ITEM_H

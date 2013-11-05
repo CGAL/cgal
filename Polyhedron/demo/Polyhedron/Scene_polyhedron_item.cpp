@@ -626,15 +626,18 @@ init()
   {
     // Fill indices map and get max subdomain value
     int max = 0;
+    int min = (std::numeric_limits<int>::max)();
     for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
         fit != end; ++fit)
     {
       max = (std::max)(max, fit->patch_id());
+      min = (std::min)(min, fit->patch_id());
     }
-
-    colors_.resize(0);
-    compute_color_map(this->color(), max + 1,
+    
+    colors_.clear();
+    compute_color_map(this->color(), max + 1 - min,
                       std::back_inserter(colors_));
+    m_min_patch_id=min;
   }
   invalidate_stats();
 }
