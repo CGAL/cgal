@@ -186,8 +186,8 @@ numbers. Each interval has an associated <I>precision</I>, which is
 the maximum precision (number of bits used to represent the mantissa)
 of its endpoints. The result of the operations is guaranteed to be
 always contained in the returned interval. Since the interval arithmetic
-is implemented on top of `Gmpfr`, the global flags and the default
-precision are inherited from the `Gmpfr` interface. See
+is implemented on top of `Gmpfr`, the global flags
+is inherited from the `Gmpfr` interface. See
 \cgalCite{cgal:r-mpfi} and the `Gmpfi` reference manual for details.
 
 To use the `Gmpfi` class, <span class="textsc">Mpfi</span> must be installed.
@@ -209,7 +209,7 @@ It initially contained the `Quotient`, `Gmpz` and `Gmpq` classes,
 together with the interfaces to the number types provided by \leda, which were
 implemented by Stefan Schirra and Andreas Fabri.
 
-Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`
+Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`,
 `MP_Float` and `Lazy_exact_nt`, together with the interfaces to
 the `mpz_class` and `mpq_class` types from <span class="textsc">Gmp</span>.
 
