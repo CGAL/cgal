@@ -67,6 +67,15 @@
 #pragma intrinsic(_BitScanReverse64)
 #endif
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4146 4244 4267 4800)
+     // warning on - applied on unsigned number
+     // conversion with loss of data
+     // conversion with loss of data
+     // int to bool performance
+#endif
+
 #if defined(__GNUC__) && defined(__GNUC_MINOR__) \
     && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
     && __cplusplus >= 201103L
@@ -1096,5 +1105,10 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(mpz_class,mpzf)
 #endif
 
 }
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif // GMP_NUMB_BITS == 64
 #endif // CGAL_MPZF_H
