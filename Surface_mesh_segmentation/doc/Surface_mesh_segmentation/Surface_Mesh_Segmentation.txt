@@ -70,7 +70,7 @@ The main reason for not assigning 0 to facets with no SDF values is that it can 
   Large range parameters make smoothing closer to Gaussian smoothing and may also lead to over-smoothed SDF values.
 - SDF values are linearly normalized between [0,1].
 
-These post-processing steps can be applied on raw SDF values (or any scalar values associated with facets) using the function `postprocess_sdf_values()`.
+These post-processing steps can be applied to raw SDF values (or an alternative set of similar scalar values associated with facets) using the function `postprocess_sdf_values()`.
 
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 
