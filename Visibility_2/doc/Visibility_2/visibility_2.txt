@@ -32,7 +32,7 @@ Non-regularized visibility and regularized visibility.
 As demonstrated in \cgalFigureRef{definition-fig} (1) the visibility region \f$ V_q \f$ of a query point \f$ q \f$ may not be
 a valid polygon.  All labeled points are collinear, which implies that the point \f$ c \f$ is visible to \f$ q \f$, that is, 
 the segment \f$ bc \f$ is  part of the visibility area \f$ V_q \f$. 
-Subsequently we call such low dimensional features hat are caused by degeneracies `needles`. 
+Subsequently we call such low dimensional features that are caused by degeneracies `needles`. 
 However, for many applications these needles are are actually not relevant. 
 Moreover, for some algorithms it is actually easier (and more efficient) to ignore needles 
 in the first place. 
