@@ -84,13 +84,44 @@ Class 	                	|	Function                                     |  Prepro
 
 Where  \f$ n \f$ is the number of vertices of \f$ f \f$ and \f$ h \f$ is the number of holes+1.
 
+\section benchmarks Runtime in Practice 
+
+\cgalFigureBegin{cathedral-fig, cathedral_2.png}
+Example environment representing a cathedral. 
+\cgalFigureEnd
+
+The left hand side of Figure \cgalFigureRef{definition-fig} depicts the outer boundary of a cathedral,
+which is a simple polygon with 565 vertices. The right hand side shows the cathedral also with its inner 
+pillars, which is a polygon with 1153 vertices. The following table shows the total runtime to compute 
+all visibility polygons for all vertices of the boundary of the cathedral. 
+
+
+Boundary Cathedral  	       |	total preprocessing time | total query time  |  
+-------------------------------|-----------------------------------------------------|-------------------------------|
+ `Simple_polygon_visibility_2`                |  - |  0.388021 | 
+ `Rotational_sweep_visibility_2`              |  - |  1.01606  |  
+`Triangular_expansion_visibility_2`           |  0 |  0.064005 |  
+ `Preprocessed_rotational_sweep_visibility_2` |  - | -         | 
+
+The second table shows the same for the complete cathedral. The table does not report the time for `Simple_polygon_visibility_2`
+as this algorithm can only handle simple polygons. 
+
+Complete Cathedral             |	total preprocessing time | total query time          | 
+-------------------------------|-----------------------------------------------------|-------------------------------|
+ `Rotational_sweep_visibility_2`              |  -          | 1.91211   |  
+ `Triangular_expansion_visibility_2`          |  0.004001   | 0.044001  |  
+ `Preprocessed_rotational_sweep_visibility_2` |  -          | -  | 
+
+Thus, in general we recommend to use `Triangular_expansion_visibility_2` even if the polygon is simple. The main advantage 
+of the algorithm is its locality. After the triangle that contains the query point is located in the triangulation, 
+the algorithm explores neighboring triangles, but only those that are actually seen. In this sense the algorithm can be 
+considered as output sensitive. However, if the simple polygon is rather convex (i.e., nearly all boundary is seen) or 
+if only one (or very little) queries are required, using one of the algorithms without preprocessing is advantageous. 
+
 
 \section simple_polygon_visibility_example  Example of Visibility in a Simple Polygon
 The following example shows how to obtain the regularized and non-regularized visibility regions.
 \cgalExample{Visibility_2/simple_polygon_visibility_2.cpp}
-\cgalFigureBegin{simple_example, simple_example.png}
-Two different visibility regions in the example above.
-\cgalFigureEnd
 
 \section general_polygon_example Example of Visibility in a Polygon with Holes
 The following example shows how to obtain the regularized visibility region by model `Triangular_expansion_visibility_2`. See \cgalFigureRef{general_polygon}. The arrangement has six bounded faces and an unbounded face. The query point \f$ q \f$ is on a vertex. The red arrow denotes the halfedge \f$ \overrightarrow{pq} \f$, which helps to identify the face in which the visibility region is computed.
