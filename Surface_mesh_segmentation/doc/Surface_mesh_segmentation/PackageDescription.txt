@@ -12,7 +12,7 @@
  
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ilker %O. Yaz and Sébastien Loriot}
-\cgalPkgDesc{This package provides methods to generate automatic segmentation of a triangulated surface mesh.}
+\cgalPkgDesc{This package provides methods to generate automatic segmentations of triangulated surface mesh.}
 \cgalPkgManuals{Chapter_3D_SurfaceSegmentation,PkgSurfaceSegmentation}
 \cgalPkgSummaryEnd
 

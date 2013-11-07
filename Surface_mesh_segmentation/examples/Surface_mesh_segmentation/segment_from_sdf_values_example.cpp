@@ -35,7 +35,7 @@ int main()
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 
     // segment the mesh using default parameters for number of levels, and smoothing lambda
-    // Note that you can use your own scalar values, instead of using SDF values computed using the CGAL function
+    // Any other scalar values can be used instead of using SDF values computed using the CGAL function
     int number_of_segments = CGAL::segment_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
@@ -51,7 +51,7 @@ int main()
     const double smoothing_lambda = 0.3;  // importance of surface features, suggested to be in-between [0,1]
 
     // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.
-    // This feature becomes important when we want to segment the mesh several times with different parameters.
+    // This feature is relevant for segmenting the mesh several times with different parameters.
     CGAL::segment_from_sdf_values(
       mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
 }

@@ -13,6 +13,7 @@ The shape diameter function applied to the elephant and the corresponding segmen
 \section Surface_mesh_segmentationIntroduction Introduction
 Mesh segmentation is the process of decomposing a mesh into smaller and meaningful sub-meshes.
 This process is used in applications such as modeling, rigging, texturing, shape-retrieval, deformation ...
+We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
 This package provides an implementation of the algorithm relying on the <em>Shape Diameter Function</em> \cgalCite{Shapira2008Consistent} (SDF).
 Given a triangulated surface mesh (simply <em>mesh</em> in the following) bounding a 3D solid object,
@@ -20,7 +21,6 @@ the SDF provides an estimate of the local object diameter for each facet of the 
 The segmentation algorithm first applies a soft clustering on the facets using the associated SDF values.
 The final segmentation is then obtained via a graph-cut algorithm that considers surface-based features (dihedral-angle and concavity)
 together with the result of the soft clustering.
-We refer to a comprehensive survey on mesh segmentation \cgalCite{Shamir2008SegmentationSurvey} for different segmentation techniques.
 
 This package offers the computation of the SDF values and the mesh segmentation result as independent functions.
 This allows an alternative implementation of the SDF to be directly plugged into the segmentation algorithm,
@@ -29,7 +29,7 @@ and also to reuse the SDF values several times with different parameters for the
 \section Surface_mesh_segmentationOverviewoftheSegmentation Overview of the Segmentation Process
 
 \subsection Surface_mesh_segmentationShapeDiameterFunction Shape Diameter Function
-The Shape Diameter Function provides a connection between the mesh and the volume of the object it bounds.
+The Shape Diameter Function provides a connection between the surface mesh and the volume of the subtended 3D bounded object.
 More specifically, the SDF is a scalar-valued function defined on facets of the mesh that measures the corresponding local object diameter.
 The SDF is used to distinguish between thin and thick parts by adding a local notion of thickness to the facets.
 In addition, the SDF is pose-invariant: SDF values remain largely unaffected after changes of pose (see \cgalFigureRef{Segmentation_pose_changes}).
@@ -38,16 +38,16 @@ In addition, the SDF is pose-invariant: SDF values remain largely unaffected aft
 Influence of pose changes over SDF values and the segmentation.
 \cgalFigureEnd
 
-\subsubsection Surface_mesh_segmentationRawSDF Computation of Raw SDF Values
-For a given input mesh, the raw SDF values are computed by processing each facet one by one. For a given facet,
+\subsubsection Surface_mesh_segmentationRawSDF Computing Raw SDF Values
+For a given input mesh, the raw SDF values are computed by processing each facet one by one. For each facet,
 several rays are sampled in a cone constructed using the centroid of the facet as apex and inward-normal of the facet as axis.
 Each ray is truncated into a segment, its endpoints being the apex of the cone and the first mesh facet intersection point.
 Using the lengths of these truncated rays, which intuitively correspond to a local volume sampling,
-the raw SDF value is calculated by first applying an outlier removal procedure and then taking the average of the lengths.
+the raw SDF value is computed by first applying an outlier removal procedure and then taking the average of the lengths.
 
-The raw SDF values can be computed using the function `compute_sdf_values()`, setting `postprocess` to `false`.
+The raw SDF values are computed through function `compute_sdf_values()`, setting `postprocess` to `false`.
 
-\note This package also accepts input meshes with holes. In such a case rays that can not be truncated to a segment
+\note This package also accepts input meshes with holes. In such a case, rays that can not be truncated to segments,
 or rays that form an obtuse angle with the inward-normal of the first intersected facet are not accepted.
 Only facets having no accepted rays get no raw SDF values
 
@@ -66,7 +66,7 @@ The main reason for not assigning 0 to facets with no SDF values is that it can 
   -\f$ \sigma_s = w / 2 \f$, the spatial parameter
   -\f$ \sigma_{r_i} = \sqrt{1/|w_i| \sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$; \f$ w_i \f$ denotes the set of neighboring facets of \f$ f_i \f$ collected using \f$ w \f$ in the facet neighbor breadth-first search
 
-  Large window sizes are more effective on eliminating noise but may over-smooth SDF values along segment boundaries.
+  Large window sizes are more effective at eliminating noise but may over-smooth SDF values along segment boundaries.
   Large range parameters make smoothing closer to Gaussian smoothing and may also lead to over-smoothed SDF values.
 - SDF values are linearly normalized between [0,1].
 
@@ -75,7 +75,7 @@ These post-processing steps can be applied on raw SDF values (or any scalar valu
 \subsection Surface_mesh_segmentationSoftClustering Soft Clustering
 
 Given a number \f$ k \f$  of clusters, the soft clustering is a Gaussian mixture model that consists in fitting \f$ k \f$
-Gaussian distributions to the histogram of the SDF values of the facets. It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
+Gaussian distributions to the distribution of the SDF values of the facets. It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
 Among these runs, the best result is used for initializing the expectation-maximization algorithm for fitting the Gaussian distributions.
 
 Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the  final number of segments.
@@ -88,7 +88,7 @@ Influence of the number of clusters over the segmentation. The number of cluster
 \cgalFigureEnd
 
 The output of this procedure is a matrix that contains probability values for each facet to belong to each cluster.
-These probability values are used as input by the hard clustering.
+These probability values are used as input to the hard clustering.
 
 \subsection Surface_mesh_segmentationGraphCut Hard clustering
 
@@ -127,13 +127,13 @@ where:
   </table>
 
 The first term of the energy function provides the contribution of the soft clustering probabilities.
-The second term of the energy function is a geometric criteria that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
+The second term of the energy function is a geometric criterion that is larger when two adjacent facets sharing a sharp and concave edge are in the same cluster.
 The smoothness parameter makes this geometric criteria more or less prevalent.
 
-Basically, assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
+Assigning a high value to the smoothness parameter results in a small number of segments (since constructing a segment boundary would be expensive).
 In other words, merging facets that are placed under different clusters is less expensive than separating them and creating boundaries.
 On the contrary, assigning smaller values to smoothness parameter results in a high number of segments, by getting closer to the result of the soft clustering
-(notice that setting \f$ \lambda=0 \f$ provides the result of the soft clustering). See \cgalFigureRef{Segmentation_lambdas} for the effect of different smoothness parameters.
+(notice that setting \f$ \lambda=0 \f$ provides the result of the soft clustering). \cgalFigureRef{Segmentation_lambdas} depicts the influence of the smoothness parameter.
 
 \cgalFigureBegin{Segmentation_lambdas,dino_different_lambda_small.png}
 Influence of the smoothness parameter lambda over the segmentation (using 10 clusters). Smoothness parameters are set to 0.0, 0.1, 0.25, 0.5 and 1.0 respectively. The coloring reflects the segmentation result before assigning each connected component to its own segment.
@@ -152,25 +152,24 @@ Clusters and segments. The input number of clusters is set to 5. <b>(a)</b> Resu
 
 
 \subsection Surface_mesh_segmentationAPI Summary
-This package provides four functions:
-	- `compute_sdf_values()` : computes the SDF value of each facet of an input mesh either in raw or post-processed form.
+Four functions are provided:
+	- `compute_sdf_values()` : computes the SDF value of each facet of an input mesh in either raw or post-processed form.
            SDF values are associated to facets using a property map (see \ref Chapter_CGAL_and_Boost_Property_Maps
 "CGAL and Boost Property Maps").
 	- `postprocess_sdf_values()` : post-processes raw SDF values. The post-processing is decoupled from
-             the function `compute_sdf_values()` to allow the post-processing to be applied on an alternative
-             method to compute SDF values or to use an additional post-processing step for example.
+             the function `compute_sdf_values()` to allow the use of alternative methods to compute SDF values or additional post-processing step.
 	- `segment_from_sdf_values()` : computes the mesh segmentation from the SDF values of the facets of an input mesh.
-            The input SDF values can be any set of scalar values associated with each facet as long as they have been normalized between 0 and 1.
-            This function allows to use the same SDF values several times but with different parameters for the segmentation stage.
+            The input SDF values can be any set of scalar values associated to each facet as long as they have been normalized between 0 and 1.
+            This function allows using the same SDF values with different parameters for the segmentation stage.
             The segment or cluster ids are associated to the facets using a property map.
-	- `compute_sdf_values_and_segment()` : combines the functions above in one line.
+	- `compute_sdf_values_and_segment()` : combines the three functions above.
 
-These functions expects as input a triangulated surface mesh bounding a 3D solid object.
-It should have the following properties:
-- combinatorially 2-manifold
-- the vertices of the facets are oriented counterclockwise when seen from outside of the object.
-- intersection-free
-- boundary free.
+These functions expect as input a triangulated surface mesh bounding a 3D solid object, with 
+the following properties:
+- Combinatorially 2-manifold;
+- The vertices of the facets are oriented counterclockwise when seen from outside of the object;
+- Intersection-free;
+- Boundary free.
 
 Note that the current implementation executes fine on meshes that do not match
 some of these properties, but may produce unreliable or meaningless segmentations.
@@ -188,9 +187,9 @@ This operation is reliable when the `AABBTraits` model provided has exact predic
 \cgalExample{Surface_mesh_segmentation/segment_from_sdf_values_example.cpp}
 
 \subsubsection Example_3 Computation of SDF Values and Segmentation
-The function `compute_sdf_values_and_segment()` combines the two aforementioned functions.
-Note that when computing several segmentation of a mesh with different parameters (i.e. number of levels, and smoothing lambda),
-it is advised to first compute the SDF values using `compute_sdf_values()` and use them in several calls of the function `segment_from_sdf_values()`.
+The function `compute_sdf_values_and_segment()` combines the computation of sdf values, the post-processing and the segmentation.
+Note that when computing several segmentations of a mesh with different parameters (i.e. number of levels, and smoothing lambda),
+it is advised to first compute the SDF values using `compute_sdf_values()` and use them in calls of the function `segment_from_sdf_values()`.
 
 \cgalExample{Surface_mesh_segmentation/compute_sdf_values_and_segment_example.cpp}
 
@@ -204,10 +203,10 @@ The main advantage is to decrease from log to constant the complexity for access
 \section Performances Performances
 <!-- \subsection SMSRuntime Runtime of the functions compute_sdf_values() and segment_from_sdf_values() -->
 
-The following tables provides the runtime of the functions `compute_sdf_values()` and `segment_from_sdf_values()`.
+The following tables provide the runtime of the functions `compute_sdf_values()` and `segment_from_sdf_values()`.
 The results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
-The models used for the benchmarks are the <i>dinausaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
+The models used for the benchmarks are the <i>dinosaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
 
 
 \todo Update release number as well as first introduced in.

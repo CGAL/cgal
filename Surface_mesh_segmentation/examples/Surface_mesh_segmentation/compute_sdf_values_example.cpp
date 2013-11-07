@@ -33,8 +33,9 @@ int main()
   std::pair<double, double> min_max_sdf =
     CGAL::compute_sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays);
 
-  // It is possible to get the raw SDF values and calling the post-processing
-  // by hand using the following two lines
+
+  // It is possible to compute the raw SDF values and post-process them through
+  // the following two lines
   // CGAL::compute_sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays, false);
   // std::pair<double, double> min_max_sdf =
   //  CGAL::postprocess_sdf_values(mesh, sdf_property_map);
