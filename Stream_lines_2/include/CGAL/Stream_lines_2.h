@@ -102,8 +102,8 @@ protected:
   Point_2                                                        seed_point;
   int                                                            samp_step;
   unsigned int _number_of_lines;
-  Vector_field_2 * vf_2;
-  Integrator_2 * int_2;
+  const Vector_field_2& vf_2;
+  const Integrator_2& int_2;
 public:
   void set_separating_distance(FT new_value){separating_distance = new_value;}
   void set_saturation_ratio(FT new_value){ saturation_ratio = new_value;}
@@ -145,8 +145,7 @@ public:
     m_DT.insert(pPoint);
   }
       _number_of_lines = 0;
-      place_stream_lines(*vf_2, *int_2,
-       samp_step);     
+      place_stream_lines(vf_2, int_2, samp_step);     
     }
 protected:
   void place_stream_lines(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator,
@@ -215,6 +214,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::Stream_lines_2(const Vector_field_2
 vector_field_2, const Integrator_2 & m_integrator, const FT & m_separating_distance, const FT
 & m_saturation_ratio, const int & sampling_step, const bool &
                   step_by_step)
+   : vf_2(vector_field_2), int_2(m_integrator)
 {
   separating_distance = m_separating_distance;
   saturation_ratio = m_saturation_ratio;
@@ -247,8 +247,6 @@ vector_field_2, const Integrator_2 & m_integrator, const FT & m_separating_dista
       m_DT.insert(pPoint);
     }
   _number_of_lines = 0;
-  vf_2 = new Vector_field_2(vector_field_2);
-  int_2 = new Integrator_2(m_integrator);
   samp_step = sampling_step;
   stl_container.clear();
   place_stream_lines(vector_field_2, m_integrator,
