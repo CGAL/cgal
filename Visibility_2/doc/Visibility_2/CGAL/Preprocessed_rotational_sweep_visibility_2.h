@@ -6,7 +6,7 @@ namespace CGAL {
 a polygon that may have holes.
 
 \details The class template comprises the implementation of the algorithm of Takao Asano and Tetsuo Asano \cite aaghi-vpsesp-85. The algorithm, as the name of the class template suggests, requires preprocessing.
-The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space. With the help of preprocessing, the query time is reduced to \f$O(n)\f$.
+The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space, which reduces the query time to \f$O(n)\f$.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
@@ -121,25 +121,25 @@ Access to the attached arrangement
   const Input_arrangement_2& arr() const;
 
 /*! 
-Computes the visibility region for the given query point `q` in the
+Computes the visibility region of `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
-\pre `f` is a face of  `this->arr()` and represents a valid polygon. 
+\pre `f` is a face of `arr()` and represents a valid polygon. 
 \pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
   typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) const;
 
 /*!
-Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
+Computes the visibility region of `q` that is on `e`. If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
 The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
-\pre `e` is a halfedge of  `this->arr()`
+\pre `e` is a halfedge of `arr()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region

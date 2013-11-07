@@ -14,13 +14,18 @@ namespace CGAL {
 
 This package provides functionality to compute the visibility region within polygonal regions in two dimensions. 
 Using the terminology of the package \ref PkgBooleanSetOperations2Summary, we expect the input polygon  
-\f$ P \f$ to be a valid polygon or a valid polygon with holes, 
-that is, we expect \f$ P \f$ to be closed (\f$\partial P \subset P\f$) and each boundary loop 
-(only one outer boundary loop in case of no holes) to be relatively simple. 
+\f$ P \f$ to be a valid polygon or a valid polygon with holes (definition see below). 
 Given two points \f$ p \f$ and \f$ q \f$ in \f$ P \f$, they are said to be 
 visible to each other iff the segment \f$ pq \subset  P \f$, note that \f$\partial P \subset P\f$. 
 For a query point \f$ q \in P \f$, the set of points that are visible from \f$ q \f$ is defined as the visibility 
 region of \f$ q \f$, denoted by \f$ V_q \f$
+
+
+Definition [Valid Polygon]: 
+A polygon \f$ P \f$ is valid if  \f$ P \f$ is closed (\f$\partial P \subset P\f$) 
+and each boundary loop (only one outer boundary loop in case of no holes) is simple. 
+See also \ref PkgBooleanSetOperations2Summary. 
+
 
 \subsection visibility_2_degeneracies Degeneracies and Regularization 
 
@@ -60,8 +65,8 @@ the means to define a family of algorithms, each implemented by a separate class
 algorithms are made interchangeable, letting the algorithm in use vary according to the user choice.} for answering queries. 
 Similar to the point-location case, some of the strategies require preprocessing. Thus, before a visibility object is used
 to answer visibility queries, it must be attached to an arrangement object (subsequently also referred to as the environment).
-Since a viability object observers changes to the attached arrangement it is possible to
-also modify the arrangement after attaching the visibility object. 
+Afterwards the visibility object observers changes to the attached arrangement. 
+Thus, it is possible to modify the arrangement after attaching the visibility object. 
 However, this should be avoided as this also requires an update of the auxiliary 
 data structures in the attached object. 
 
@@ -77,10 +82,10 @@ The package provides the following models of the `Visibility_2` concept:
 
 Class 	                	|	Function                                     |  Preprocessing                |  Query                            |Algorithm
 -------------------------------|-----------------------------------------------------|-------------------------------|-----------------------------------|-------------------------------
- `Simple_polygon_visibility_2`       | simple valid polygons                  |       No                     |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | paper of B.Joe and R.B.Simpson \cite bjrb-clvpa-87
- `Rotational_sweep_visibility_2`        |  valid polygons with holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  paper of T.Asano \cite ta-aeafvpprh-85 
-`Triangular_expansion_visibility_2`     |  valid polygons with  holes |  \f$ O(n) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | reference is unknown. 
- `Preprocessed_rotational_sweep_visibility_2` | valid polygons with holes    | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | paper of Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
+ `Simple_polygon_visibility_2`       | simple valid polygons                  |       No        |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | B.Joe and R.B.Simpson \cite bjrb-clvpa-87
+ `Rotational_sweep_visibility_2`        |  valid polygons with holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  T.Asano \cite ta-aeafvpprh-85 
+`Triangular_expansion_visibility_2`     |  valid polygons with  holes |  \f$ O(n) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | new
+ `Preprocessed_rotational_sweep_visibility_2` | valid polygons with holes    | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
 
 Where  \f$ n \f$ is the number of vertices of \f$ f \f$ and \f$ h \f$ is the number of holes+1.
 

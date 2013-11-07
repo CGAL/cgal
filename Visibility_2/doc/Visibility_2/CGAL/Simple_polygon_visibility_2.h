@@ -5,17 +5,15 @@ namespace CGAL {
 \brief This class is a model of the concept `Visibility_2` can answer visibility queries within
 a simple polygon with no holes.
 
-\details This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87 to
-obtain the visibility region, based on a scan of the boundary of the polygon and the notion 
-of angular displacement as a control variable. The algorithm is a modification and extension 
-of the  linear time algorithm of Lee \cite dtl-voasp-83. It computes the visibility region from a 
-viewpoint that is in the interior or on the boundary of the polygon. 
+\details This class implements the algorithm of B.Joe and R.B.Simpson \cite bjrb-clvpa-87. 
+The algorithm is a modification and extension of the  linear time algorithm of Lee \cite dtl-voasp-83.
+It computes the visibility region from a viewpoint that is in the interior or on the boundary of the polygon. 
 
-The algorithm uses a stack to manipulate the vertices, and ultimately yields the visibility
-region. For each scanned edge, at most 2 points are pushed onto the stack. Overall, it
-will have at most 2\f$ n \f$ points pushed and popped, thus the time and space complexities of the
-algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where n is the number of 
-the vertices of the polygon.
+While scanning the boundary the algorithm uses a stack to manipulate the vertices, and ultimately 
+yields the visibility region. For each scanned edge, at most 2 points are pushed onto the stack. 
+Overall, at most 2\f$ n \f$ points are pushed or popped. Thus, the time and space complexities of the
+algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where \f$ n \f$ 
+is the number of the vertices of the polygon.
 
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility region.
@@ -128,13 +126,13 @@ Access to the attached arrangement
   const Input_arrangement_2& arr() const;
 
 /*! 
-Computes the visibility region for the given query point `q` in the
+Computes the visibility region of `q` in the
 face `f` of the arrangement that is attached to the visibility object. 
 The visibility region of `q` will be stored in `out_arr`.
 \param out_arr is the output arrangement 
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
-\pre `f` is a face of  `this->arr()` and represents a valid polygon. 
+\pre `f` is a face of `arr()` and represents a valid polygon. 
 \pre `q` is in the interior of the given face `f`
 \return a handle to the face in `out_arr` that represents the visibility region
 */ 
@@ -142,12 +140,12 @@ The visibility region of `q` will be stored in `out_arr`.
 
 
 /*!
-Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
+Computes the visibility region of `q` that is on `e`. If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
 The visibility region of `q` will be stored in `out_arr`.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
-\pre `e` is a halfedge of  `this->arr()`
+\pre `e` is a halfedge of `arr()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the visibility region
