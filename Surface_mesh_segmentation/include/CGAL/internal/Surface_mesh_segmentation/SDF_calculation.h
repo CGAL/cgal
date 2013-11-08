@@ -6,6 +6,7 @@
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traversal_traits.h>
 #include <CGAL/internal/Surface_mesh_segmentation/AABB_traits.h>
 #include <CGAL/internal/Surface_mesh_segmentation/Disk_samplers.h>
+#include <CGAL/constructions/kernel_ftC3.h>
 #include <vector>
 #include <algorithm>
 

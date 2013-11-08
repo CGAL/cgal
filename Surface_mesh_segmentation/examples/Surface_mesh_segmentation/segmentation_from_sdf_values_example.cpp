@@ -27,7 +27,7 @@ int main()
     boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
 
     // compute SDF values using default parameters for number of rays, and cone angle
-    CGAL::compute_sdf_values(mesh, sdf_property_map);
+    CGAL::sdf_values(mesh, sdf_property_map);
 
     // create a property-map for segment-ids
     typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
@@ -36,7 +36,7 @@ int main()
 
     // segment the mesh using default parameters for number of levels, and smoothing lambda
     // Any other scalar values can be used instead of using SDF values computed using the CGAL function
-    int number_of_segments = CGAL::segment_from_sdf_values(mesh, sdf_property_map, segment_property_map);
+    int number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
@@ -52,6 +52,6 @@ int main()
 
     // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.
     // This feature is relevant for segmenting the mesh several times with different parameters.
-    CGAL::segment_from_sdf_values(
+    CGAL::segmentation_from_sdf_values(
       mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
 }

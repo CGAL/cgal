@@ -27,7 +27,7 @@ int main()
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 
     // calculate SDF values and segment the mesh using default parameters.
-    int number_of_segments = CGAL::compute_sdf_values_and_segment(mesh, segment_property_map);
+    int number_of_segments = CGAL::segmentation_via_sdf_values(mesh, segment_property_map);
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
 

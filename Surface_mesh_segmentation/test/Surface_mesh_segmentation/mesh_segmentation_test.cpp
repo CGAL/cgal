@@ -25,14 +25,14 @@ int main(void)
     Facet_double_map internal_map;
     boost::associative_property_map<Facet_double_map> sdf_property_map(internal_map);
   
-    std::pair<double, double> min_max_sdf = CGAL::compute_sdf_values(mesh, sdf_property_map);
+    std::pair<double, double> min_max_sdf = CGAL::sdf_values(mesh, sdf_property_map);
     std::cout << "minimum sdf: " << min_max_sdf.first << " maximum sdf: " << min_max_sdf.second << std::endl;
   
     typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
   
-    int nb_segments = CGAL::segment_from_sdf_values(
+    int nb_segments = CGAL::segmentation_from_sdf_values(
       mesh, sdf_property_map, segment_property_map);
     
     if(nb_segments != 3)

@@ -31,14 +31,14 @@ int main()
 
   // compute SDF values
   std::pair<double, double> min_max_sdf =
-    CGAL::compute_sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays);
+    CGAL::sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays);
 
 
   // It is possible to compute the raw SDF values and post-process them through
   // the following two lines
-  // CGAL::compute_sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays, false);
+  // CGAL::sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays, false);
   // std::pair<double, double> min_max_sdf =
-  //  CGAL::postprocess_sdf_values(mesh, sdf_property_map);
+  //  CGAL::sdf_values_postprocessing(mesh, sdf_property_map);
 
   // print minimum & maximum SDF values
   std::cout << "minimum SDF: " << min_max_sdf.first

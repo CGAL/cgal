@@ -20,17 +20,17 @@ template <bool Fast_sdf_calculation_mode, class Polyhedron,
 #endif
          >
 std::pair<double, double>
-compute_sdf_values( const Polyhedron& polyhedron,
-                    SDFPropertyMap sdf_values,
-                    double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                    int number_of_rays = 25,
-                    bool postprocess = true,
-                    GeomTraits traits = GeomTraits())
+sdf_values( const Polyhedron& polyhedron,
+            SDFPropertyMap sdf_values_map,
+            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+            int number_of_rays = 25,
+            bool postprocess = true,
+            GeomTraits traits = GeomTraits())
 {
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits, Fast_sdf_calculation_mode>
   algorithm(polyhedron, traits);
-  return algorithm.calculate_sdf_values(cone_angle, number_of_rays, sdf_values,
-                                        postprocess);
+  return algorithm.calculate_sdf_values(cone_angle, number_of_rays,
+                                        sdf_values_map, postprocess);
 }
 /// @endcond
 
@@ -49,10 +49,10 @@ compute_sdf_values( const Polyhedron& polyhedron,
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh on which SDF values are computed
- * @param[out] sdf_values the SDF value of each facet
+ * @param[out] sdf_values_map the SDF value of each facet
  * @param cone_angle opening angle in radians for the cone of each facet
  * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has little effect on the quality of the segmentation result
- * @param postprocess if `true`, `CGAL::postprocess_sdf_values` is called on raw SDF value computed.
+ * @param postprocess if `true`, `CGAL::sdf_values_postprocessing` is called on raw SDF value computed.
  * @param traits traits class
  *
  * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
@@ -63,15 +63,15 @@ template <class Polyhedron, class SDFPropertyMap, class GeomTraits
 #endif
 >
 std::pair<double, double>
-compute_sdf_values( const Polyhedron& polyhedron,
-                    SDFPropertyMap sdf_values,
-                    double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                    int number_of_rays = 25,
-                    bool postprocess = true,
-                    GeomTraits traits = GeomTraits())
+sdf_values( const Polyhedron& polyhedron,
+            SDFPropertyMap sdf_values_map,
+            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+            int number_of_rays = 25,
+            bool postprocess = true,
+            GeomTraits traits = GeomTraits())
 {
-  return compute_sdf_values<true, Polyhedron, SDFPropertyMap, GeomTraits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays, postprocess, traits);
+  return sdf_values<true, Polyhedron, SDFPropertyMap, GeomTraits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, traits);
 }
 
 
@@ -82,7 +82,7 @@ compute_sdf_values( const Polyhedron& polyhedron,
  * Post-processing steps applied :
  *   - Facets with -1 SDF values are assigned the average SDF value of their edge-adjacent neighbors.
  *     If there is still a facet having -1 SDF value, the minimum valid SDF value assigned to it. Note that this step is not inherited from the paper.
- *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segment_from_sdf_values`.
+ *     The main reason for not assigning 0 to facets with no SDF values (i.e. -1) is that it can obstruct log-normalization process which takes place at the beginning of `CGAL::segmentation_from_sdf_values`.
  *   - SDF values are smoothed with bilateral filtering.
  *   - SDF values are linearly normalized between [0,1].
  *
@@ -95,17 +95,18 @@ compute_sdf_values( const Polyhedron& polyhedron,
  * @tparam SDFPropertyMap  a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
  *
  * @param polyhedron surface mesh on which SDF values are computed
- * @param[in, out] sdf_values the SDF value of each facet
+ * @param[in, out] sdf_values_map the SDF value of each facet
  *
  * @return minimum and maximum SDF values before linear normalization
  */
 template<class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
-postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
+sdf_values_postprocessing(const Polyhedron& polyhedron,
+                          SDFPropertyMap sdf_values_map)
 {
   CGAL_precondition(polyhedron.is_pure_triangle());
   return internal::Postprocess_sdf_values<Polyhedron>().postprocess(polyhedron,
-         sdf_values);
+         sdf_values_map);
 }
 
 
@@ -117,7 +118,7 @@ postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
  * or a cluster-id (in [0, `number_of_clusters` -1]) to each facet.
  * A segment is a set of connected facets which are placed under the same cluster (see \cgalFigureRef{Cluster_vs_segment}).
  *
- * \note Log-normalization is applied on `sdf_values` before segmentation.
+ * \note Log-normalization is applied on `sdf_values_map` before segmentation.
  *       As described in the original paper \cgalCite{shapira2008consistent},
  *       this normalization is done to preserve thin parts of the mesh
  *       by increasing the distance between smaller SDF values and reducing
@@ -134,7 +135,7 @@ postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh corresponding to the SDF values
- * @param sdf_values the SDF value of each facet between [0-1]
+ * @param sdf_values_map the SDF value of each facet between [0-1]
  * @param[out] segment_ids the segment or cluster id of each facet
  * @param number_of_clusters number of clusters for the soft clustering
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
@@ -150,17 +151,17 @@ template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
 #endif
          >
 int
-segment_from_sdf_values( const Polyhedron& polyhedron,
-                         SDFPropertyMap sdf_values,
-                         SegmentPropertyMap segment_ids,
-                         int number_of_clusters = 5,
-                         double smoothing_lambda = 0.26,
-                         bool output_cluster_ids = false,
-                         GeomTraits traits = GeomTraits())
+segmentation_from_sdf_values( const Polyhedron& polyhedron,
+                              SDFPropertyMap sdf_values_map,
+                              SegmentPropertyMap segment_ids,
+                              int number_of_clusters = 5,
+                              double smoothing_lambda = 0.26,
+                              bool output_cluster_ids = false,
+                              GeomTraits traits = GeomTraits())
 {
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
     polyhedron, traits);
-  return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values,
+  return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values_map,
                              segment_ids, !output_cluster_ids);
 }
 
@@ -172,14 +173,14 @@ template < bool Fast_sdf_calculation_mode, class Polyhedron,
 #endif
          >
 int
-compute_sdf_values_and_segment(const Polyhedron& polyhedron,
-                               SegmentPropertyMap segment_ids,
-                               double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                               int number_of_rays = 25,
-                               int number_of_clusters = 5,
-                               double smoothing_lambda = 0.26,
-                               bool output_cluster_ids = false,
-                               GeomTraits traits = GeomTraits())
+segmentation_via_sdf_values(const Polyhedron& polyhedron,
+                            SegmentPropertyMap segment_ids,
+                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                            int number_of_rays = 25,
+                            int number_of_clusters = 5,
+                            double smoothing_lambda = 0.26,
+                            bool output_cluster_ids = false,
+                            GeomTraits traits = GeomTraits())
 {
   typedef std::map< typename Polyhedron::Facet_const_handle, double>
   Facet_double_map;
@@ -187,9 +188,9 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
   boost::associative_property_map<Facet_double_map> sdf_property_map(
     internal_sdf_map);
 
-  compute_sdf_values<Fast_sdf_calculation_mode, Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
+  sdf_values<Fast_sdf_calculation_mode, Polyhedron, boost::associative_property_map<Facet_double_map>, GeomTraits>
   (polyhedron, sdf_property_map, cone_angle, number_of_rays, true, traits);
-  return segment_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
+  return segmentation_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
          (polyhedron, sdf_property_map, segment_ids, number_of_clusters,
           smoothing_lambda, output_cluster_ids, traits);
 }
@@ -200,14 +201,14 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
  * \ingroup PkgSurfaceSegmentation
  * @brief Function computing the segmentation of a surface mesh.
  *
- * This function is equivalent to calling the functions `CGAL::compute_sdf_values()` and
- * `CGAL::segment_from_sdf_values()` with the same parameters.
+ * This function is equivalent to calling the functions `CGAL::sdf_values()` and
+ * `CGAL::segmentation_from_sdf_values()` with the same parameters.
  *
  * \note There is no direct relation between the parameter `number_of_clusters`
  * and the final number of segments after segmentation. However, setting a large number of clusters will result in a detailed segmentation of the mesh with a large number of segments.
  * \note For computing segmentations of the mesh with different parameters (i.e. number of levels, and smoothing lambda),
- * it is more efficient to first compute the SDF values using `CGAL::compute_sdf_values()` and use them in different calls to
- * `CGAL::segment_from_sdf_values()`.
+ * it is more efficient to first compute the SDF values using `CGAL::sdf_values()` and use them in different calls to
+ * `CGAL::segmentation_from_sdf_values()`.
  *
  * @pre @a polyhedron.is_pure_triangle()
  * @pre @a number_of_clusters > 0
@@ -233,16 +234,16 @@ template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
 #endif
 >
 int
-compute_sdf_values_and_segment(const Polyhedron& polyhedron,
-                               SegmentPropertyMap segment_ids,
-                               double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                               int number_of_rays = 25,
-                               int number_of_clusters = 5,
-                               double smoothing_lambda = 0.26,
-                               bool output_cluster_ids = false,
-                               GeomTraits traits = GeomTraits())
+segmentation_via_sdf_values(const Polyhedron& polyhedron,
+                            SegmentPropertyMap segment_ids,
+                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                            int number_of_rays = 25,
+                            int number_of_clusters = 5,
+                            double smoothing_lambda = 0.26,
+                            bool output_cluster_ids = false,
+                            GeomTraits traits = GeomTraits())
 {
-  return compute_sdf_values_and_segment<true, Polyhedron, SegmentPropertyMap, GeomTraits>
+  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, GeomTraits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
           smoothing_lambda, output_cluster_ids, traits);
 }
@@ -251,73 +252,73 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
 #ifdef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
 template <bool Fast_sdf_calculation_mode, class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
-compute_sdf_values(const Polyhedron& polyhedron,
-                   SDFPropertyMap sdf_values,
-                   double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                   int number_of_rays = 25,
-                   bool postprocess = true,
-                   typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+sdf_values(const Polyhedron& polyhedron,
+           SDFPropertyMap sdf_values_map,
+           double cone_angle = 2.0 / 3.0 * CGAL_PI,
+           int number_of_rays = 25,
+           bool postprocess = true,
+           typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays, postprocess, traits);
+  return sdf_values<Fast_sdf_calculation_mode, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, traits);
 }
 
 template < class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
-compute_sdf_values(const Polyhedron& polyhedron,
-                   SDFPropertyMap sdf_values,
-                   double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                   int number_of_rays = 25,
-                   bool postprocess = true,
-                   typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+sdf_values( const Polyhedron& polyhedron,
+            SDFPropertyMap sdf_values_map,
+            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+            int number_of_rays = 25,
+            bool postprocess = true,
+            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values<true, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, cone_angle, number_of_rays, postprocess, traits);
+  return sdf_values<true, Polyhedron, SDFPropertyMap, typename Polyhedron::Traits>
+         (polyhedron, sdf_values_map, cone_angle, number_of_rays, postprocess, traits);
 }
 
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
 int
-segment_from_sdf_values(const Polyhedron& polyhedron,
-                        SDFPropertyMap sdf_values,
-                        SegmentPropertyMap segment_ids,
-                        int number_of_clusters = 5,
-                        double smoothing_lambda = 0.26,
-                        bool output_cluster_ids = false,
-                        typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+segmentation_from_sdf_values(const Polyhedron& polyhedron,
+                             SDFPropertyMap sdf_values_map,
+                             SegmentPropertyMap segment_ids,
+                             int number_of_clusters = 5,
+                             double smoothing_lambda = 0.26,
+                             bool output_cluster_ids = false,
+                             typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return segment_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, typename Polyhedron::Traits>
-         (polyhedron, sdf_values, segment_ids, number_of_clusters, smoothing_lambda,
+  return segmentation_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, typename Polyhedron::Traits>
+         (polyhedron, sdf_values_map, segment_ids, number_of_clusters, smoothing_lambda,
           output_cluster_ids, traits);
 }
 
 template <bool Fast_sdf_calculation_mode, class Polyhedron, class SegmentPropertyMap>
 int
-compute_sdf_values_and_segment(const Polyhedron& polyhedron,
-                               SegmentPropertyMap segment_ids,
-                               double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                               int number_of_rays = 25,
-                               int number_of_clusters = 5,
-                               double smoothing_lambda = 0.26,
-                               bool output_cluster_ids = false,
-                               typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+segmentation_via_sdf_values(const Polyhedron& polyhedron,
+                            SegmentPropertyMap segment_ids,
+                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                            int number_of_rays = 25,
+                            int number_of_clusters = 5,
+                            double smoothing_lambda = 0.26,
+                            bool output_cluster_ids = false,
+                            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values_and_segment< Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
+  return segmentation_via_sdf_values< Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
           smoothing_lambda, output_cluster_ids, traits);
 }
 
 template <class Polyhedron, class SegmentPropertyMap>
 int
-compute_sdf_values_and_segment(const Polyhedron& polyhedron,
-                               SegmentPropertyMap segment_ids,
-                               double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                               int number_of_rays = 25,
-                               int number_of_clusters = 5,
-                               double smoothing_lambda = 0.26,
-                               bool output_cluster_ids = false,
-                               typename Polyhedron::Traits traits = typename Polyhedron::Traits())
+segmentation_via_sdf_values(const Polyhedron& polyhedron,
+                            SegmentPropertyMap segment_ids,
+                            double cone_angle = 2.0 / 3.0 * CGAL_PI,
+                            int number_of_rays = 25,
+                            int number_of_clusters = 5,
+                            double smoothing_lambda = 0.26,
+                            bool output_cluster_ids = false,
+                            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
-  return compute_sdf_values_and_segment<true, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
+  return segmentation_via_sdf_values<true, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
           smoothing_lambda, output_cluster_ids, traits);
 }

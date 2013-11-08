@@ -12,6 +12,7 @@
 #include <map>
 #include <algorithm>
 #include <queue>
+#include <cmath>
 
 #include <boost/optional.hpp>
 

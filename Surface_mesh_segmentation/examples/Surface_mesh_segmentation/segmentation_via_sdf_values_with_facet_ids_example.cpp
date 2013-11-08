@@ -55,7 +55,7 @@ int main()
     std::vector<double> sdf_values(mesh.size_of_facets());
     Facet_with_id_pmap<double> sdf_property_map(sdf_values);
 
-    CGAL::compute_sdf_values(mesh, sdf_property_map);
+    CGAL::sdf_values(mesh, sdf_property_map);
 
     // access SDF values (with constant-complexity)
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
@@ -68,7 +68,7 @@ int main()
     std::vector<int> segment_ids(mesh.size_of_facets());
     Facet_with_id_pmap<int> segment_property_map(segment_ids);
 
-    CGAL::segment_from_sdf_values(mesh, sdf_property_map, segment_property_map);
+    CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     // access segment-ids (with constant-complexity)
     for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();

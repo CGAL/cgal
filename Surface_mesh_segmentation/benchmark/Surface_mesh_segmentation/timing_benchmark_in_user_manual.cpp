@@ -35,7 +35,7 @@ double compute_and_time_sdf(const Polyhedron& mesh, Facet_with_id_pmap<double, P
 {
   CGAL::Timer timer;
   timer.start();
-  std::pair<double, double> min_max_sdf = CGAL::compute_sdf_values(mesh, sdf_values);
+  std::pair<double, double> min_max_sdf = CGAL::sdf_values(mesh, sdf_values);
   timer.stop();
   std::cout << "  minimum SDF: " << min_max_sdf.first << " maximum SDF: " << min_max_sdf.second << std::endl;
   std::cout << "  SDF Time: " << timer.time() << std::endl;
@@ -50,7 +50,7 @@ double compute_and_time_segmentation(const Polyhedron& mesh, Facet_with_id_pmap<
 
   CGAL::Timer timer;
   timer.start();
-  int number_of_segments = CGAL::segment_from_sdf_values(mesh, sdf_values, segment_property_map, cluster);
+  int number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_values, segment_property_map, cluster);
   timer.stop();
   std::cout << "  number of segments: " << number_of_segments << std::endl;
   std::cout << "  Segmentation Time with " << cluster << " clusters : " << timer.time() << std::endl;
