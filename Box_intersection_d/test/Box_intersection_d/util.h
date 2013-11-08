@@ -61,22 +61,22 @@ struct Util {
     }
     
     struct Counter_callback {
-        unsigned int *counter;
-        Counter_callback() {
-          counter = new unsigned int(0);
-        }
+        unsigned int& counter;
+        Counter_callback(unsigned int& i)
+          : counter(i)
+      {}
         void operator()( const Box& a, const Box& b ) {
             assert_intersection( a, b );
-            ++(*counter);
+            ++counter;
         }
-        unsigned int get_counter() { return *counter; }
-        void reset_counter() { *counter = 0; }
+        unsigned int get_counter() { return counter; }
+        void reset_counter() { counter = 0; }
     };
     
     template< class Storage = Result_container >
     struct Storage_callback : public Counter_callback {
         Storage& storage;
-        Storage_callback( Storage& storage ) : storage( storage ) {}
+      Storage_callback( Storage& storage, unsigned int& i ) : Counter_callback(i), storage( storage ) {}
         void operator()( const Box& a, const Box& b ) {
             Counter_callback::operator()(a,b);
             storage.push_back( std::make_pair( a, b ) );
