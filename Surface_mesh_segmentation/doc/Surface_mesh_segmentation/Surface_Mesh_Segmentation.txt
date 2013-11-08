@@ -142,7 +142,7 @@ Influence of the smoothness parameter lambda over the segmentation (using 10 clu
 The hard clustering assigns a cluster id to each facet (see \cgalFigureRef{Cluster_vs_segment} (a)).
 A segment consists in a set of connected facets in the same cluster (see \cgalFigureRef{Cluster_vs_segment} (b)).
 By default the function `segment_from_sdf_values()` assigns to each facet the id of its segment.
-It assigns to each facet the id of its cluster when set `extract_segments` is set to `false`.
+It assigns to each facet the id of its cluster when `output_cluster_ids` is set to `true`.
 
 
 \cgalFigureBegin{Cluster_vs_segment,cluster_vs_segment.png}

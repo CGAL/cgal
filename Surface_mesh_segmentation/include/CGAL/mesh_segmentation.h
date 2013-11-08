@@ -51,7 +51,7 @@ compute_sdf_values( const Polyhedron& polyhedron,
  * @param polyhedron surface mesh on which SDF values are computed
  * @param[out] sdf_values the SDF value of each facet
  * @param cone_angle opening angle in radians for the cone of each facet
- * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has a little effect on the quality of the segmentation result
+ * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has little effect on the quality of the segmentation result
  * @param postprocess if `true`, `CGAL::postprocess_sdf_values` is called on raw SDF value computed.
  * @param traits traits class
  *
@@ -138,10 +138,10 @@ postprocess_sdf_values(const Polyhedron& polyhedron, SDFPropertyMap sdf_values)
  * @param[out] segment_ids the segment or cluster id of each facet
  * @param number_of_clusters number of clusters for the soft clustering
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
- * @param extract_segments if `true` fill `segment_ids` with segment-ids and cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
+ * @param output_cluster_ids if `false` fill `segment_ids` with segment-ids, and with cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
  * @param traits traits class
  *
- * @return number of segments if `extract_segments` is set to `true` and `number_of_clusters` otherwise
+ * @return number of segments if `output_cluster_ids` is set to `false` and `number_of_clusters` otherwise
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
          class GeomTraits
@@ -155,13 +155,13 @@ segment_from_sdf_values( const Polyhedron& polyhedron,
                          SegmentPropertyMap segment_ids,
                          int number_of_clusters = 5,
                          double smoothing_lambda = 0.26,
-                         bool extract_segments = true,
+                         bool output_cluster_ids = false,
                          GeomTraits traits = GeomTraits())
 {
   internal::Surface_mesh_segmentation<Polyhedron, GeomTraits> algorithm(
     polyhedron, traits);
   return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values,
-                             segment_ids, extract_segments);
+                             segment_ids, !output_cluster_ids);
 }
 
 ///\cond SKIP_IN_MANUAL
@@ -178,7 +178,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                int number_of_rays = 25,
                                int number_of_clusters = 5,
                                double smoothing_lambda = 0.26,
-                               bool extract_segments = true,
+                               bool output_cluster_ids = false,
                                GeomTraits traits = GeomTraits())
 {
   typedef std::map< typename Polyhedron::Facet_const_handle, double>
@@ -191,7 +191,7 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
   (polyhedron, sdf_property_map, cone_angle, number_of_rays, true, traits);
   return segment_from_sdf_values<Polyhedron, boost::associative_property_map<Facet_double_map>, SegmentPropertyMap, GeomTraits>
          (polyhedron, sdf_property_map, segment_ids, number_of_clusters,
-          smoothing_lambda, extract_segments, traits);
+          smoothing_lambda, output_cluster_ids, traits);
 }
 /// \endcond
 
@@ -222,10 +222,10 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
  * @param number_of_rays number of rays picked in the cone of each facet. In our experiments, we observe that increasing the number of rays beyond the default has a little effect on the quality of the segmentation result
  * @param number_of_clusters number of clusters for the soft clustering
  * @param smoothing_lambda factor which indicates the importance of the surface features for the energy minimization. It is recommended to choose a value in the interval [0,1]. See the section \ref Surface_mesh_segmentationGraphCut for more details.
- * @param extract_segments if `true` fill `segment_ids` with segment-ids and cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
+ * @param output_cluster_ids if `false` fill `segment_ids` with segment-ids, and with cluster-ids otherwise (see \cgalFigureRef{Cluster_vs_segment})
  * @param traits traits class
  *
- * @return number of segments if `extract_segments` is set to `true` and `number_of_clusters` otherwise
+ * @return number of segments if `output_cluster_ids` is set to `false` and `number_of_clusters` otherwise
  */
 template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
 #ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
@@ -239,12 +239,12 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                int number_of_rays = 25,
                                int number_of_clusters = 5,
                                double smoothing_lambda = 0.26,
-                               bool extract_segments = true,
+                               bool output_cluster_ids = false,
                                GeomTraits traits = GeomTraits())
 {
   return compute_sdf_values_and_segment<true, Polyhedron, SegmentPropertyMap, GeomTraits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
-          smoothing_lambda, extract_segments, traits);
+          smoothing_lambda, output_cluster_ids, traits);
 }
 
 
@@ -282,12 +282,12 @@ segment_from_sdf_values(const Polyhedron& polyhedron,
                         SegmentPropertyMap segment_ids,
                         int number_of_clusters = 5,
                         double smoothing_lambda = 0.26,
-                        bool extract_segments = true,
+                        bool output_cluster_ids = false,
                         typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return segment_from_sdf_values<Polyhedron, SDFPropertyMap, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, sdf_values, segment_ids, number_of_clusters, smoothing_lambda,
-          extract_segments, traits);
+          output_cluster_ids, traits);
 }
 
 template <bool Fast_sdf_calculation_mode, class Polyhedron, class SegmentPropertyMap>
@@ -298,12 +298,12 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                int number_of_rays = 25,
                                int number_of_clusters = 5,
                                double smoothing_lambda = 0.26,
-                               bool extract_segments = true,
+                               bool output_cluster_ids = false,
                                typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return compute_sdf_values_and_segment< Fast_sdf_calculation_mode, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
-          smoothing_lambda, extract_segments, traits);
+          smoothing_lambda, output_cluster_ids, traits);
 }
 
 template <class Polyhedron, class SegmentPropertyMap>
@@ -314,12 +314,12 @@ compute_sdf_values_and_segment(const Polyhedron& polyhedron,
                                int number_of_rays = 25,
                                int number_of_clusters = 5,
                                double smoothing_lambda = 0.26,
-                               bool extract_segments = true,
+                               bool output_cluster_ids = false,
                                typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
   return compute_sdf_values_and_segment<true, Polyhedron, SegmentPropertyMap, typename Polyhedron::Traits>
          (polyhedron, segment_ids, cone_angle, number_of_rays, number_of_clusters,
-          smoothing_lambda, extract_segments, traits);
+          smoothing_lambda, output_cluster_ids, traits);
 }
 
 
