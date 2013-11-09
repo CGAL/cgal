@@ -1,0 +1,15 @@
+QTDIR=/usr/lib64/qt-3.3
+LD_LIBRARY_PATH=/usr/local/packages/gcc-4.5/lib64
+CXX=/usr/local/packages/gcc-4.5/bin/g++
+CC=/usr/local/packages/gcc-4.5/bin/gcc
+
+export CXX CC
+export LD_LIBRARY_PATH QTDIR
+
+source /home/lrineau/infrastructure/reference-platforms/setup-common
+
+BOOST_ROOT=/home/lrineau/CGAL/boost/1.44-beta1
+export BOOST_ROOT
+
+CXXFLAGS=-I$BOOST_ROOT/include
+CXXFLAGS="-std=c++0x $CXX_FLAGS"

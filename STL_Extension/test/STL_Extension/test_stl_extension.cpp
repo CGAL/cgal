@@ -8159,6 +8159,40 @@ void test_copy_n() {
   assert(std::equal(V2.begin(), V2.end(), V.begin()));
 }
 
+struct SP_struct{
+  SP_struct(int k):i(k){}
+  int i;
+  bool operator==(SP_struct other) const{
+    return other.i==i;
+  }
+};
+
+struct Cmp_SP_struct{
+  bool operator()(SP_struct s1, SP_struct s2) const
+  {
+    return s1.i<s2.i;
+  }
+};
+
+void test_make_sorted_pair() {
+  std::pair<int,int> p1(1,2);
+  std::pair<int,int> p2(2,1);
+  assert( CGAL::make_sorted_pair(1,2)==p1 );
+  assert( CGAL::make_sorted_pair(2,1)==p1 );
+  assert( CGAL::make_sorted_pair(1,2,std::greater<int>())==p2 );
+  assert( CGAL::make_sorted_pair(2,1,std::greater<int>())==p2 );
+
+  SP_struct s1(1);
+  SP_struct s2(2);
+  assert( std::make_pair(s1,s2) ==
+          CGAL::make_sorted_pair(s2,s1,Cmp_SP_struct()) );
+  assert( std::make_pair(s2,s1) !=
+          CGAL::make_sorted_pair(s2,s1,Cmp_SP_struct()) );
+  std::pair<SP_struct,SP_struct> p3(s1,s2),
+  p4=CGAL::make_sorted_pair(s2,s1,Cmp_SP_struct());
+  assert(p3==p4);
+}
+
 int main() {
   init_global_data();
   test_Circulator_identity();
@@ -8180,6 +8214,7 @@ int main() {
   test_tuple();
   test_prev_next();
   test_copy_n();
+  test_make_sorted_pair();
   return 0;
 }
 // EOF //

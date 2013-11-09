@@ -31,9 +31,7 @@
 \cgalPkgDependsOn{\ref PkgTDS2Summary}
 \cgalPkgBib{cgal:y-t2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip}
-\cgalPkgDemo{Regular Triangulation,regular_triangulation_2.zip}
-\cgalPkgDemo{Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
+\cgalPkgDemo{Delaunay Triangulation,delaunay_triangulation_2.zip,Regular Triangulation,regular_triangulation_2.zip,Constrained Delaunay Triangulation,constrained_delaunay_triangulation_2.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

@@ -269,6 +269,25 @@ test_filtration(AS &A, bool verbose)
     assert(count_edges == A.number_of_finite_edges());
     assert(count_facets == A.number_of_finite_facets());
     assert(count_cells ==  A.number_of_finite_cells());	   
+
+    filtration.clear();
+    std::list<typename AS::FT> alpha_values;
+
+    A.filtration_with_alpha_values(
+      CGAL::dispatch_output<CGAL::Object,typename AS::FT>(
+        std::back_inserter(filtration),
+        std::back_inserter(alpha_values)
+      )
+    );
+  
+    assert( filtration.size() == alpha_values.size() );
+    typename std::list<typename AS::FT>::iterator av_it=alpha_values.begin();
+    typename AS::FT previous_alpha_value=*av_it++;
+    for(;av_it!=alpha_values.end();++av_it)
+    {
+      assert( previous_alpha_value <= *av_it );
+      previous_alpha_value=*av_it;
+    }
 }
 
 //TO DEBUG

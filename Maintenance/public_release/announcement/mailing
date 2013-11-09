@@ -1,25 +1,30 @@
-Subject: CGAL 4.2 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.3 Released, Computational Geometry Algorithms Library
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.2
+The CGAL Open Source Project is pleased to announce the release 4.3
 of CGAL, the Computational Geometry Algorithms Library.
 
 Besides fixes to existing packages, the following has changed since
-CGAL 4.1:
-
- o New compiler support
-
-   Microsoft Windows Visual C++ compiler 2012 (VC11) is now supported.
-
+CGAL 4.2:
 
  o The CGAL Manual generated with Doxygen
 
-   The CGAL project publishes a beta version of the CGAL manual generated
-   with Doxygen: http://doc.cgal.org/4.2/
+   The documentation of CGAL is now generated with Doxygen:
+   http://doc.cgal.org/4.3/
 
-   In future versions of CGAL, the manual generated with Doxygen is planned
-   to replace the manual that is currently published at
-   http://www.cgal.org/Manual/latest/
+   The conversion to Doxygen from our home-made tools was not completely
+   smooth. Please report any documentation bug you may discover to the
+   Inria Forge bug tracker:
+   https://gforge.inria.fr/tracker/?atid=13845&group_id=52&func=browse
+
+  o 2D Periodic Triangulations (new package)
+
+    This package allows to build and handle triangulations of point sets in
+    the two dimensional flat torus. Triangulations are built incrementally
+    and can be modified by insertion or removal of vertices. They offer
+    point location facilities. The package provides Delaunay triangulations
+    and offers nearest neighbor queries and primitives to build the dual
+    Voronoi diagrams.
 
 
 See http://www.cgal.org/releases.html for a complete list of changes.
@@ -28,8 +33,8 @@ See http://www.cgal.org/releases.html for a complete list of changes.
 The CGAL project is a collaborative effort to develop a robust,
 easy-to-use, and efficient C++ software library of geometric data
 structures and algorithms, like
-- triangulations (2D constrained triangulations and Delaunay
-  triangulations in 2D and 3D, periodic triangulations),
+- triangulations (2D constrained triangulations, Delaunay triangulations
+  and periodic triangulations in 2D and 3D),
 - Voronoi diagrams (for 2D and 3D points, 2D additively weighted
   Voronoi diagrams, and segment Voronoi diagrams),
 - Boolean operations on polygons and polyhedra,

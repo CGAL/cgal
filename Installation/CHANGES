@@ -31,8 +31,8 @@ Release date: September 2013
     intersection functions and functors. The change should be relatively
     transparent to the user thanks to the implicit constructor added to CGAL::
     Object. However, it is recommended to upgrade your code. The previous
-    behavior can be restored by defining the macro CGAL_INTERSECTION_VERSION to
-    1.
+    behavior can be restored by defining the macro CGAL_INTERSECTION_VERSION
+    to 1.
 
 
  ** 2D Arrangements

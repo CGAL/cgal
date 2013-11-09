@@ -44,5 +44,6 @@ int main()
     std::cout << "Resident size = " << r2
               << " (" << (r2>>20) << " MB)" << std::endl;
 
+    delete [] p;
     return 0;
 }

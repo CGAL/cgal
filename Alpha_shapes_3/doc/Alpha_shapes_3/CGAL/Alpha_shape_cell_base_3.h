@@ -53,8 +53,8 @@ if the face is a Gabriel face or a convex hull face.
 
 The class `Alpha_status` is parameterized by a number type `NT`. 
 
-\sa `AlphaShapeCellBase_3` 
-\sa `AlphaShapeVertexBase_3` 
+\sa `::AlphaShapeCell_3`
+\sa `::AlphaShapeVertex_3`
 
 */
 template< typename NT >

@@ -42,7 +42,7 @@
  ***************************************************************************/
 
 #ifndef _CORE_TIMER_H_
-#define _CORE_IIMER_H_
+#define _CORE_TIMER_H_
 
 #include <CGAL/CORE/Impl.h>
 #include <ctime>

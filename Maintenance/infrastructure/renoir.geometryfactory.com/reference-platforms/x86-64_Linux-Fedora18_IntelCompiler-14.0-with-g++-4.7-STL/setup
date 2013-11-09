@@ -1,0 +1,14 @@
+source /opt/intel/composer_xe_2013_sp1/bin/compilervars.sh intel64
+CXX=icpc
+CC=icc
+CXXFLAGS="-w1"
+export CXX CC CXXFLAGS
+export QTDIR=/usr/lib64/qt-3.3
+source /home/lrineau/infrastructure/reference-platforms/setup-common
+
+BOOST_INCLUDEDIR=/home/lrineau/CGAL/boost/boost-release-branch
+BOOST_LIBRARYDIR=/home/lrineau/CGAL/boost/boost-release-branch/stage-intel/lib
+export BOOST_INCLUDEDIR BOOST_LIBRARYDIR
+
+#CXXFLAGS="-I$BOOST_INCLUDEDIR/include $CXXFLAGS"
+export CXXFLAGS

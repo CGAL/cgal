@@ -47,6 +47,9 @@ pushd Spatial_searching_2_Demo;         zip ../spatial_searching.zip *;         
 # CGAL-4.0
 pushd Linear_cell_complex_Demo;         zip ../linear_cell_complex_3.zip *;          popd
 
+# CGAL-4.2 but was forgot -> published with 4.3
+pushd Arrangement_on_surface_2_Demo;    zip ../arrangements_2.zip *;                  popd
+
 # check
 echo CHECK now
 for f in *zip; do unzip -qql $f; done | awk '{print $4}' >| done

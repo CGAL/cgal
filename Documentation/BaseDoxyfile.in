@@ -268,13 +268,18 @@ ALIASES += "cgalPkgDesc{1}=<div class=\"PkgDescription\">\1</div>"
 ALIASES += "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>"
 ALIASES += "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>"
 ALIASES += "cgalPkgLicense{1}=<B>License:</B> \1 <BR>"
-ALIASES += "cgalPkgDemo{2}=<B>Demo:</B> <a href=\"http://www.cgal.org/demo/4.3/\2\">\1</a><BR>"
+ALIASES += "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"http://www.cgal.org/demo/4.3/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/4.3/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"http://www.cgal.org/demo/4.3/\2\">\1</a>, <a href=\"http://www.cgal.org/demo/4.3/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/4.3/CGAL-demoDLLs.zip\">dlls</a><BR>"
+ALIASES += "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"http://www.cgal.org/demo/4.3/\2\">\1</a>, <a href=\"http://www.cgal.org/demo/4.3/\4\">\3</a>, <a href=\"http://www.cgal.org/demo/4.3/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"http://www.cgal.org/demo/4.3/CGAL-demoDLLs.zip\">dlls</a><BR>"
+
 ALIASES += "cgalPkgDescriptionEnd="
+
+ALIASES+= "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\" "
+ALIASES+= "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly"
 
 # this alias controls linking to the how to cite page, it is also
 # responsible for adding the -YY{a,b} suffix to a cite
 ALIASES += "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-13b\">\1-13b</a><BR>"
-
 
 ALIASES += "cgalFootnote{1}=<span class=\"footnote\">\1</span>"
 ALIASES += "cgalAutoToc=\htmlonly <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly"

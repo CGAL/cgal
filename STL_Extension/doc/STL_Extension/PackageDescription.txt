@@ -48,6 +48,7 @@
 - `CGAL::cpp11::prev`
 - `CGAL::predecessor`
 - `CGAL::successor`
+- `CGAL::make_sorted_pair`
 
 ## Iterators and Iterator/Circulator Adaptors ##
 - `CGAL::Dispatch_output_iterator<V,O>`

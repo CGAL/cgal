@@ -273,6 +273,18 @@ Classification_type
 classify(Vertex_handle v, const FT& alpha = get_alpha()) const; 
 
 /*!
+Returns the alpha-status of the edge `e`.
+*/
+Alpha_status<FT>
+get_alpha_status(const Edge& e) const;
+
+/*!
+Returns the alpha-status of the facet `f`.
+*/
+Alpha_status<FT>
+get_alpha_status(const Facet& f) const;
+
+/*!
 Write the cells which are of type `type` for 
 the alpha value `alpha` to the sequence 
 pointed to by the output iterator `it`. Returns past the end 
@@ -317,15 +329,31 @@ Classification_type type,
 const FT& alpha); 
 
 /*!
-Output all the faces of the triangulation 
-in increasing order of the alpha value for which they appear 
-in the alpha complex. In case of equal alpha value 
-lower dimensional faces are output first. 
+Output all the faces of the triangulation
+in increasing order of the alpha value for which they appear
+in the alpha complex. In case of equal alpha value
+lower dimensional faces are output first.
 
-\tparam OutputIterator must be on output iterator with value type `Object`.
-*/ 
-template<class OutputIterator> 
-OutputIterator filtration(OutputIterator it); 
+\tparam OutputIterator must be an output iterator accepting
+variables of type `Object`.
+*/
+template<class OutputIterator>
+OutputIterator filtration(OutputIterator it) const;
+
+/*!
+Output all the faces of the triangulation
+in increasing order of the alpha value for which they appear
+in the alpha complex. In case of equal alpha value
+lower dimensional faces are output first. In addition the value of alpha
+at which each face appears are also reported. Each face and its alpha value
+are reported successively.
+
+\tparam OutputIterator must be an output iterator accepting variables of type
+`Object` and `FT`. The class `Dispatch_output_iterator` can be used for this
+purpose.
+*/
+template<class OutputIterator>
+OutputIterator filtration_with_alpha_values(OutputIterator it) const;
 
 /// @} 
 

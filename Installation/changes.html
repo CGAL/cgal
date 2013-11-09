@@ -59,7 +59,9 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release4.3">4.3</a>&nbsp;<td> (September 2013)
+<tr><td><a href="#release4.4">4.4</a>&nbsp;<td>
+<tr><td><a href="#release4.3">4.3.1</a>&nbsp;<td> (November 2013)
+<tr><td><a href="#release4.3">4.3</a>&nbsp;<td> (October 2013)
 <tr><td><a href="#release4.2">4.2</a>&nbsp;<td> (March 2013)
 <tr><td><a href="#release4.1">4.1</a>&nbsp;<td> (September 2012)
 <tr><td><a href="#release4.0.2">4.0.2</a>&nbsp;<td> (July 2012)
@@ -106,9 +108,43 @@ and <code>src/</code> directories).
 
 <HR>
 
+<h2 id="release4.4">Release 4.4 </h2>
+<div>
+  <!-- <p> Release date: October 2013 </p> -->
+  <h3>Vanilla package (fake package)</h3>
+  <ul>
+    <li> Blablabla
+      We change the flavour of vanilla.
+    </li>
+    <li> ... And the price</li>
+  </ul>
+  <h3>3D Alpha Shapes</h3>
+  <ul>
+    <li> Add member functions in <code>CGAL::Alpha_shape_3</code> to give access to the alpha status
+         of edges and facets (<code>get_alpha_status())</code>.</li>
+    <li> Add another filtration method (<code>filtration_with_alpha_values()</code>) that reports
+          the alpha value at which each face appears in the filtration.</li>
+  </ul>
+
+  <h3>STL Extensions for CGAL</h3>
+  <ul>
+    <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
+  </ul>
+
+</div>
+
+<h2 id="release4.3">Release 4.3.1 </h2>
+<div>
+  <!-- <p> Release date: October 2013 </p> -->
+  <h3>2D Snap Rounding</h3>
+  <ul>
+    <li>Fixed memory leak</li>
+  </ul>
+</div>
+
 <h2 id="release4.3">Release 4.3 </h2>
 <div>
-  <p> Release date: September 2013 </p>
+  <p> Release date: October 2013 </p>
 
   <h3>The CGAL Manual</h3>
   <ul>
@@ -142,7 +178,7 @@ and <code>src/</code> directories).
           constructor added to <code>CGAL::Object</code>. However, it is
           recommended to upgrade your code.  The previous behavior can be
           restored by defining the
-          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
+          macro <code>CGAL_INTERSECTION_VERSION</code> to 1.
         </li>
       </ul>
       <h4>2D Arrangements</h4>

@@ -646,7 +646,11 @@ else
 fi
 
 cd '${CGAL_BINARY_DIR}/test';
-[ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
+if [ -n "\${ULIMIT_OPTIONS}" ]; then
+  eval ulimit \${ULIMIT_OPTIONS};
+else
+  [ -n "${ULIMIT_OPTIONS}" ] && ulimit ${ULIMIT_OPTIONS};
+fi
 nice ${NICE_OPTIONS} make ${MAKE_OPTS} -k -fmakefile2;
 EOF
     for file in "${CGAL_BINARY_DIR}/localtestscript" "${CGAL_BINARY_DIR}/localtestscript-redo-results-collection"; do

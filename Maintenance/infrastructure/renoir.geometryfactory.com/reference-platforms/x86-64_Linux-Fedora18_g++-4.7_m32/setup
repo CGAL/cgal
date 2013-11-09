@@ -1,0 +1,8 @@
+export QTDIR=/usr/lib/qt-3.3
+
+CXXFLAGS=-m32
+CFLAGS=-m32
+export CXXFLAGS
+export CFLAGS
+
+source /home/lrineau/infrastructure/reference-platforms/setup-common-headers-only
