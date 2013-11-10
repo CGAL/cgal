@@ -313,9 +313,30 @@ protected:
   {
     if (!f->is_unbounded())  // f is not the unbounded face
     {
+      typedef typename CGAL::Arr_polyline_traits_2<Kernel_> Arr_poly_traits;
+      typedef typename Arr_poly_traits::Compare_endpoints_xy_2 Comp_end_pts_2;
+      typedef typename Arr_poly_traits::Construct_min_vertex_2 Poly_const_min_v;
+      typedef typename Arr_poly_traits::Construct_max_vertex_2 Poly_const_max_v;
+
+      // Obtain a polyline traits class and construct the needed functors
+      Arr_poly_traits poly_tr;
+      Comp_end_pts_2 comp_end_pts = poly_tr.compare_endpoints_xy_2_object();
+      Poly_const_min_v poly_const_min_v=poly_tr.construct_min_vertex_2_object();
+      Poly_const_max_v poly_const_max_v=poly_tr.construct_max_vertex_2_object();
+
+      // Construct needed functors from the segment traits
+      typedef typename Arr_poly_traits::Segment_traits_2       Segment_traits;
+      typedef typename Segment_traits::Construct_min_vertex_2  Seg_const_min_v;
+      typedef typename Segment_traits::Construct_max_vertex_2  Seg_const_max_v;
+      Seg_const_min_v construct_min_v = poly_tr.segment_traits_2()->
+        construct_min_vertex_2_object();
+      Seg_const_max_v construct_max_v = poly_tr.segment_traits_2()->
+        construct_max_vertex_2_object();
+
+      // Iterator of the segments of an x-monotone polyline
+      typename X_monotone_curve_2::Segment_const_iterator seg_it;
+
       QVector< QPointF > pts; // holds the points of the polygon
-      typename X_monotone_curve_2::const_iterator           pt_itr;
-      typename X_monotone_curve_2::const_reverse_iterator   pt_rev_itr;
       X_monotone_curve_2 cv;
 
       /* running with around the outer of the face and generate from it
@@ -324,29 +345,49 @@ protected:
       Ccb_halfedge_circulator cc = f->outer_ccb();
       do {
         cv = cc->curve();
-        bool curve_has_same_direction =
-          ( *(cc->curve().begin()) == cc->source()->point() );
-        if ( curve_has_same_direction )
-        {
-          for( pt_itr = cv.begin() , ++pt_itr ; pt_itr != cv.end(); ++pt_itr)
+
+        // Determine the direction of cv (left-to-right or right-to-left)
+        Comparison_result dir = comp_end_pts(cv);
+
+        for (seg_it = cv.begin_segments();
+             seg_it != cv.end_segments() ; ++seg_it)
           {
-            double x = CGAL::to_double((*pt_itr).x());
-            double y = CGAL::to_double((*pt_itr).y());
+            if (dir == SMALLER)
+              {
+                // cv is directed from left-to-right
+                // Adding the left-min vertex of the current segment
+                double x = CGAL::to_double((construct_min_v(*seg_it)).x());
+                double y = CGAL::to_double((construct_min_v(*seg_it)).y());
+                QPointF coord_source(x , y);
+                pts.push_back(coord_source );
+              }
+            else
+              {
+                // cv is directed from right-to-left
+                // Adding the right-max vertex of the current segment
+                double x = CGAL::to_double((construct_max_v(*seg_it)).x());
+                double y = CGAL::to_double((construct_max_v(*seg_it)).y());
+                QPointF coord_source(x , y);
+                pts.push_back(coord_source );
+              }
+          }
+
+        if (dir == SMALLER)
+          {
+            // Add the right-most point of cv
+            double x = CGAL::to_double((poly_const_max_v(cv)).x());
+            double y = CGAL::to_double((poly_const_max_v(cv)).y());
             QPointF coord_source(x , y);
             pts.push_back(coord_source );
           }
-        }
         else
-        {
-          for (pt_rev_itr = cv.rbegin() , ++pt_rev_itr; pt_rev_itr != cv.rend();
-               ++pt_rev_itr)
           {
-            double x = CGAL::to_double((*pt_rev_itr).x());
-            double y = CGAL::to_double((*pt_rev_itr).y());
+            // Add the left-most point of cv
+            double x = CGAL::to_double((poly_const_min_v(cv)).x());
+            double y = CGAL::to_double((poly_const_min_v(cv)).y());
             QPointF coord_source(x , y);
             pts.push_back(coord_source );
           }
-        }
         //created from the outer boundary of the face
       } while (++cc != f->outer_ccb());
 
