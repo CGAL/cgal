@@ -32,14 +32,14 @@ int main()
   last = InputList.end();
   std::cerr << InputList.size();
 
-  Range_tree_2_type *Range_tree_2 = new Range_tree_2_type(first,last);
+  Range_tree_2_type Range_tree_2(first,last);
 
   Key a=Key(4,8.1);
   Key b=Key(5,8.2);
   Interval win=Interval(a,b);
 
   std::cerr << "\n Window Query: \n";
-  Range_tree_2->window_query(win, std::back_inserter(OutputList));
+  Range_tree_2.window_query(win, std::back_inserter(OutputList));
   current=OutputList.begin();
 
   while(current!=OutputList.end())
@@ -48,7 +48,7 @@ int main()
     current++;
   }
 
-  if(Range_tree_2->range_tree_2->is_valid())
+  if(Range_tree_2.range_tree_2->is_valid())
     std::cerr << "Tree is valid\n";
   else
     std::cerr << "Tree is not valid\n";

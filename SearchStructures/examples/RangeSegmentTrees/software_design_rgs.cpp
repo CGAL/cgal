@@ -26,10 +26,11 @@ class Interval_traits{
 typedef Tree_anchor<Data,Window> Tree_Anchor;
 typedef Segment_tree_d<Data,Window,Interval_traits> Segment_Tree_d;
 
-void remove_warning(Segment_Tree_d*){}
 
 int main(){
   Tree_Anchor *anchor = new Tree_Anchor;
   Segment_Tree_d *segment_tree = new Segment_Tree_d(*anchor);
-  remove_warning(segment_tree);
+  delete anchor;
+  delete segment_tree;
+  return 0;
 }
