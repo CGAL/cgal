@@ -92,7 +92,7 @@ private:
     return OK;
   }
 
-  bool does_nef3_equals_file(Nef_polyhedron& N, const const std::string name, const std::string& suffix) {
+  bool does_nef3_equals_file(Nef_polyhedron& N, const std::string name, const std::string& suffix) {
     std::string fullname = datadir + name + suffix;
 
     std::ofstream out("data/temp.nef3");
@@ -116,7 +116,7 @@ private:
   }
 
 public:
-  void run_test(bool compare,const const std::string& suffix) {
+  void run_test(bool compare, const std::string& suffix) {
     Nef_polyhedron N = built_nef_from_off("nine_planes.off");
     if(compare)
       assert(does_nef3_equals_file(N,"nine_planes.nef3",suffix));
