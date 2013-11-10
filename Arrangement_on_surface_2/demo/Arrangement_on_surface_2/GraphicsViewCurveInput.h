@@ -175,6 +175,7 @@ class GraphicsViewCurveInput< CGAL::Arr_polyline_traits_2< SegmentTraits > >:
 {
 public:
   typedef CGAL::Arr_polyline_traits_2< SegmentTraits > Traits;
+  typedef typename Traits::Construct_curve_2 Construct_polyline;
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename SegmentTraits::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
@@ -199,6 +200,10 @@ protected:
 
   void mousePressEvent( QGraphicsSceneMouseEvent* event )
   {
+    // Obtain a functor for the construction of polylines
+    Traits poly_tr;
+    Construct_polyline construct_poly = poly_tr.construct_curve_2_object();
+
     Point_2 clickedPoint = this->snapPoint( event );
     if ( this->points.empty( ) )
     { // first
@@ -234,7 +239,8 @@ protected:
           delete this->polylineGuide[ i ];
         }
         this->polylineGuide.clear( );
-        Curve_2 res( this->points.begin( ), this->points.end( ) );
+        Curve_2 res =
+          construct_poly( this->points.begin( ), this->points.end( ) );
         this->points.clear( );
 
         emit generate( CGAL::make_object( res ) );
