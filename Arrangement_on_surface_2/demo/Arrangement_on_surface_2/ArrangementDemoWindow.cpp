@@ -46,7 +46,7 @@ ArrangementDemoWindow::ArrangementDemoWindow(QWidget* parent) :
 
   // set up the demo window
   // ArrangementDemoTabBase* demoTab =
-  this->makeTab( SEGMENT_TRAITS ); 
+  this->makeTab( SEGMENT_TRAITS );
   this->setupStatusBar( );
   this->setupOptionsMenu( );
   this->addAboutDemo( ":/help/about.html" );
@@ -330,7 +330,7 @@ void ArrangementDemoWindow::removeCallback( unsigned int tabIndex )
 #if 0
   QAction* activeMode = this->activeModes[ tabIndex ];
 #endif
-  
+
   activeScene->removeEventFilter( activeTab->getCurveInputCallback( ) );
   activeView->setDragMode( QGraphicsView::NoDrag );
   activeScene->removeEventFilter( activeTab->getDeleteCurveCallback( ) );
@@ -509,6 +509,11 @@ void ArrangementDemoWindow::openDatFile( QString filename )
     return;
   }
 
+  Pol_traits traits;
+  Pol_traits::Construct_curve_2 poly_const =
+    traits.construct_curve_2_object();
+
+
   if ( CGAL::assign( pol, arr ) )
   {
     pol->clear( );
@@ -520,20 +525,20 @@ void ArrangementDemoWindow::openDatFile( QString filename )
     std::list<Arr_pol_2> pol_list;
 
     unsigned int i;
-    for (i = 0; i < num_polylines; i++) 
+    for (i = 0; i < num_polylines; i++)
     {
       unsigned int num_segments;
       inputFile >> num_segments;
       points.clear();
       unsigned int j;
-      for (j = 0; j < num_segments; j++) 
+      for (j = 0; j < num_segments; j++)
       {
         int ix, iy;
         inputFile >> ix >> iy;
         points.push_back (Arr_pol_point_2(NT(ix),NT(iy)));
       }
 
-      Arr_pol_2 curve (points.begin(), points.end());
+      Arr_pol_2 curve = poly_const(points.begin(), points.end());
       pol_list.push_back(curve);
     }
     CGAL::insert(*pol, pol_list.begin(), pol_list.end());
@@ -714,7 +719,7 @@ void ArrangementDemoWindow::on_actionSaveAs_triggered( )
   int index = this->ui->tabWidget->currentIndex( );
   if ( index == -1 )
     return;
-  QString filename = 
+  QString filename =
     QFileDialog::getSaveFileName( this, tr( "Save file" ),
                                   "", "Arrangement (*.arr)" );
   if ( filename.isNull( ) )
@@ -804,7 +809,7 @@ void ArrangementDemoWindow::on_actionOpen_triggered( )
     QMessageBox::information( this, "Oops", "Create a new tab first" );
     return;
   }
-  QString filename = 
+  QString filename =
     QFileDialog::getOpenFileName( this, tr( "Open file" ),
                                   "", "Arrangement files (*.arr *.dat);;All files (*.*)" );
   if ( filename.isNull( ) )
@@ -826,9 +831,9 @@ void ArrangementDemoWindow::on_actionOpen_triggered( )
   QGraphicsView* view = currentTab->getView( );
   // std::cout << bb.left( ) << " " << bb.bottom( ) << ", " << bb.right( )
   //           << " " << bb.top( ) << std::endl;
-  if ( boost::math::isinf(bb.left( )) || 
-       boost::math::isinf(bb.right( )) || 
-       boost::math::isinf(bb.top( )) || 
+  if ( boost::math::isinf(bb.left( )) ||
+       boost::math::isinf(bb.right( )) ||
+       boost::math::isinf(bb.top( )) ||
        boost::math::isinf(bb.bottom( )) )
   {
     // std::cout << "unbounded; using default bb" << std::endl;
@@ -1120,7 +1125,7 @@ void ArrangementDemoWindow::on_actionPreferences_triggered( )
   VerticalRayShootCallbackBase* verticalRayShootCallback =
     currentTab->getVerticalRayShootCallback( );
   SplitEdgeCallbackBase* splitEdgeCallback = currentTab->getSplitEdgeCallback( );
-    
+
 #if 0
   QPen vertexPen = agi->getVerticesPen( );
   QPen edgePen = agi->getEdgesPen( );
@@ -1190,7 +1195,7 @@ void ArrangementDemoWindow::on_actionPreferences_triggered( )
     std::cout << vertexRadius << std::endl;
     std::cout << DeleteCurveMode::ToString( mode ).toStdString( ) << std::endl;
 #endif
-        
+
   }
 }
 
@@ -1209,5 +1214,3 @@ void ArrangementDemoWindow::on_actionFillColor_triggered( )
     this->updateFillColorSwatch( );
   }
 }
-
-

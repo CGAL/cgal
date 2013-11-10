@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s): Baruch Zukerman <baruchzu@post.tau.ac.il>
 //            Efi Fogel       <efif@post.tau.ac.il>
@@ -58,7 +58,8 @@ struct Default_arr_traits<CGAL::Arr_segment_2<Kernel> >
 };
 
 template <typename SegTraits>
-struct Default_arr_traits<CGAL::_Polyline_2<SegTraits> >
+struct Default_arr_traits<CGAL::polyline::Polyline_2
+                          <SegTraits, typename SegTraits::Point_2> >
 {
   typedef CGAL::Arr_polyline_traits_2<SegTraits>                        Traits;
 };
@@ -94,7 +95,7 @@ struct Default_arr_traits<CGAL::Arr_linear_object_2<Kernel> >
  * The intersections are calculated using the sweep-line algorithm.
  * \param begin An input iterator for the first curve in the range.
  * \param end A input past-the-end iterator for the range.
- * \param points Output: An output iterator for the intersection points 
+ * \param points Output: An output iterator for the intersection points
  *                       induced by the input curves.
  * \param report_endpoints If (true), the end points of the curves are also
  *                         reported as intersection points.
@@ -142,7 +143,7 @@ OutputIterator compute_intersection_points (CurveInputIterator curves_begin,
  * The subcurves are calculated using the sweep-line algorithm.
  * \param begin An input iterator for the first curve in the range.
  * \param end A input past-the-end iterator for the range.
- * \param points Output: An output iterator for the subcurve. 
+ * \param points Output: An output iterator for the subcurve.
  * \param mult_overlaps If (true), the overlapping subcurve will be reported
  *                      multiple times.
  * \pre The value-type of CurveInputIterator is Traits::Curve_2, and the
@@ -196,12 +197,12 @@ bool do_curves_intersect (CurveInputIterator curves_begin,
   typedef Sweep_line_do_curves_x_visitor<Traits>      Visitor;
   typedef Sweep_line_2<Traits, Sweep_line_do_curves_x_visitor<Traits> >
     Sweep_line;
-  
+
   // Perform the sweep and obtain the subcurves.
   Visitor     visitor;
   Sweep_line  sweep_line (&tr, &visitor);
   visitor.sweep(curves_begin, curves_end);
-  
+
   return (visitor.found_intersection());
 }
 
