@@ -550,39 +550,45 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
 
   unsigned int id;
   str_stream >> id;
+  std::cout << "YYYY1: id: " << id
+                    << std::endl;
   std::cout << "Test: make_x_monotone( " << this->m_curves[id]
             << " ) ? ";
   std::vector<CGAL::Object> object_vec;
   this->m_geom_traits.make_x_monotone_2_object()(this->m_curves[id],
                                                  std::back_inserter(object_vec));
+
+  std::cout << "YYYY2: # object_vecs: " << object_vec.size()
+            << std::endl;
+
   size_t num;
   str_stream >> num;
-  if (!this->compare(num, object_vec.size(), "size"))
-    return false;
+  std::cout << "YYYY3: num: " << num
+            << std::endl;
+  if (!this->compare(num, object_vec.size(), "size")) return false;
 
   for (size_t i = 0; i < num; ++i) {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
+    std::cout << "YYYY4: type: " << type
+              << std::endl;
 
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
+    std::cout << "YYYY5: id: " << id
+              << std::endl;
 
-    unsigned int exp_type = 1;
-    const X_monotone_curve_2 * xcv_ptr;
-    xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
+    const X_monotone_curve_2 * xcv_ptr =
+      xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
     if (xcv_ptr != NULL) {
-      if (!this->compare(type, exp_type, "type")) return false;
-
+      if (!this->compare(type, 1u, "type")) return false;
       if (!this->compare_curves(this->m_xcurves[id], *xcv_ptr)) return false;
       continue;
     }
 
-    exp_type = 0;
-    const Point_2 * pt_ptr;
-    pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
+    const Point_2 * pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
     assert (pt_ptr != NULL);
-    if (!this->compare(type, exp_type, "type")) return false;
-
+    if (!this->compare(type, 0u, "type")) return false;
     if (!this->compare_points(this->m_points[id], *pt_ptr)) return false;
   }
   object_vec.clear();
