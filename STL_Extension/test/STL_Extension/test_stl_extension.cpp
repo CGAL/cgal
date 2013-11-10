@@ -1663,7 +1663,7 @@ void test_Iterator_project()
     l.destroy();
     l2.destroy();
     }
-    
+
     //
     //
     //============================================
@@ -1990,7 +1990,7 @@ void test_Iterator_project()
     l.destroy();
     l2.destroy();
     }
-    
+
     //
     //
     //============================================
@@ -2888,8 +2888,14 @@ void test_Iterator_project()
     }
     CGAL::Assert_iterator( c_begin);
     CGAL::Assert_iterator( c_end);
+
+    while(! l.empty()){
+      delete l.back();
+      l.pop_back();
     }
-  
+
+    }
+
     //
     //
     //============================================
@@ -5172,6 +5178,7 @@ void test_Circulator_on_node() {
       delete start;
       start = p;
     }
+    delete end;
   }
 }
 void test_N_step_adaptor() {
