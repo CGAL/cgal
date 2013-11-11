@@ -1011,7 +1011,8 @@ namespace CGAL {
                   << std::endl;
         typename std::vector<Object>::iterator it = x_seg_objects.begin();
         X_monotone_segment_2 x_seg;
-        CGAL_assertion(CGAL::assign(x_seg, *it));
+        bool assign_res = CGAL::assign(x_seg, *it);
+        CGAL_assertion(assign_res);
         std::cout << "XXXX2: # x_seg: " << x_seg
                   << std::endl;
 
@@ -1065,7 +1066,8 @@ namespace CGAL {
 
         for (++it; it != x_seg_objects.end(); ++it) {
           X_monotone_segment_2 x_seg;
-          CGAL_assertion(CGAL::assign(x_seg, *it));
+          bool assign_res = CGAL::assign(x_seg, *it);
+          CGAL_assertion(assign_res);
           std::cout << "XXXX6: # x_seg: " << x_seg
                     << std::endl;
 
