@@ -24,7 +24,7 @@
 #include <math.h>
 #include <CGAL/basic.h>
 #include <CGAL/PolyhedralSurf_neighbors.h>
-#include <CGAL/Kernel/global_functions_3.h>
+#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -121,7 +121,7 @@ template < class TriangulatedSurfaceMesh,
   const TriangulatedSurfaceMesh& P;
   
   typedef T_PolyhedralSurf_neighbors<TriangulatedSurfaceMesh> Poly_neighbors;
-  Poly_neighbors* poly_neighbors;
+  boost::shared_ptr<Poly_neighbors> poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
   CGAL::To_double<FT> To_double;
@@ -154,7 +154,7 @@ Umbilic_approximation(const TriangulatedSurfaceMesh& p,
   Facet_const_iterator itb = P.facets_begin(), ite = P.facets_end();
   for(;itb!=ite;itb++) CGAL_precondition( itb->is_triangle() );
 
-  poly_neighbors = new Poly_neighbors(P);
+  poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
 
 template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >

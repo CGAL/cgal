@@ -248,7 +248,11 @@ int main()
   ridge_approximation.compute_max_ridges(ii, tag_order);  
   ridge_approximation.compute_min_ridges(ii, tag_order);  
   ridge_approximation.compute_crest_ridges(ii, tag_order);  
- 
+  std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(),
+    iter_end = ridge_lines.end();
+  for (;iter_lines!=iter_end;iter_lines++){
+    delete *iter_lines;
+  }
   //---------------------------------------------------------------------------
   // UMBILICS
   //--------------------------------------------------------------------------
@@ -269,8 +273,10 @@ int main()
    iter_umb_end = umbilics.end();
   // output
   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-  for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
- 
+  for (;iter_umb!=iter_umb_end;iter_umb++){
+    std::cout << **iter_umb;
+    delete *iter_umb;
+  }
   std::cout << "success\n";
   return 0;
 }
