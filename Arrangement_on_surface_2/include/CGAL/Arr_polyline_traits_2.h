@@ -788,22 +788,14 @@ namespace CGAL {
 
         // The first and last points of the segments should be equal.
         bool res = equal(xpoly_min_v(cv1), xpoly_min_v(cv2));
-        std::cout << "ZZZZ1: res: " << res
-                  << std::endl;
         if (!res) return false;
         res = equal(xpoly_max_v(cv1), xpoly_max_v(cv2));
-        std::cout << "ZZZZ2: res: " << res
-                  << std::endl;
         if (!res) return false;
 
         // If the first and last points are equal and the curves are vertical,
         // it means that it is equal.
         bool ver1 = is_vertical(cv1);
-        std::cout << "ZZZZ3: ver1: " << ver1
-                  << std::endl;
         bool ver2 = is_vertical(cv2);
-        std::cout << "ZZZZ4: ver2: " << ver2
-                  << std::endl;
         // both curves are vertical and therefore equal.
         if (ver1 && ver2) return true;
         // one is vertical and the other is not - hence not equal.
@@ -817,14 +809,6 @@ namespace CGAL {
         std::size_t n2 = cv2.number_of_segments();
         Comparison_result is_cv1_left_to_right = comp_endpt(cv1[0]);
         Comparison_result is_cv2_left_to_right = comp_endpt(cv2[0]);
-        std::cout << "ZZZZ5: n1: " << n1
-                  << std::endl;
-        std::cout << "ZZZZ6: n2: " << n2
-                  << std::endl;
-        std::cout << "ZZZZ7: is_cv1_left_to_right: " << is_cv1_left_to_right
-                  << std::endl;
-        std::cout << "ZZZZ8: is_cv2_left_to_right: " << is_cv2_left_to_right
-                  << std::endl;
 
         while ((i < (n1-1)) || (j < (n2-1))) {
           Point_2 point1, point2;
@@ -837,8 +821,6 @@ namespace CGAL {
             cv1_seg_ind = n1 - 1 - i;
             point1 = max_vertex(cv1[cv1_seg_ind]);
           }
-          std::cout << "ZZZZ9: point1: " << point1
-                    << std::endl;
           if (SMALLER == is_cv2_left_to_right) {
             cv2_seg_ind = j;
             point2 = max_vertex(cv2[cv2_seg_ind]);
@@ -847,8 +829,6 @@ namespace CGAL {
             cv2_seg_ind = n2 - 1 - j;
             point2 = max_vertex(cv2[cv2_seg_ind]);
           }
-          std::cout << "ZZZZ10: point2: " << point2
-                    << std::endl;
 
           bool res = equal(point1, point2);
           // Easy case - the two points are equal
@@ -1007,14 +987,10 @@ namespace CGAL {
         for (it_segs = cv.begin_segments(); it_segs != cv.end_segments();
              ++it_segs)
           make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
-        std::cout << "XXXX1: # x-monotone segments: " << x_seg_objects.size()
-                  << std::endl;
         typename std::vector<Object>::iterator it = x_seg_objects.begin();
         X_monotone_segment_2 x_seg;
         bool assign_res = CGAL::assign(x_seg, *it);
         CGAL_assertion(assign_res);
-        std::cout << "XXXX2: # x_seg: " << x_seg
-                  << std::endl;
 
         // If the polyline consists of a single x-monotone segment, return.
         if (x_seg_objects.size() == 1) {
@@ -1048,12 +1024,7 @@ namespace CGAL {
           m_poly_traits.segment_traits_2()->is_vertical_2_object();
 
         bool is_start_vertical = is_seg_vertical(x_seg);
-        std::cout << "XXXX3: is_start_vertical: " << is_start_vertical
-                  << std::endl;
-
         Comparison_result start_dir = cmp_seg_endpts(x_seg);
-        std::cout << "XXXX4: # start_dir: " << start_dir
-                  << std::endl;
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
         Push_front_2 push_front = m_poly_traits.push_front_2_object();
@@ -1061,15 +1032,11 @@ namespace CGAL {
           x_seg = ctr_seg_opposite(x_seg);
 #endif
         X_monotone_curve_2 x_polyline = ctr_x_curve(x_seg);
-        std::cout << "XXXX5: # x_polyline: " << x_polyline
-                  << std::endl;
 
         for (++it; it != x_seg_objects.end(); ++it) {
           X_monotone_segment_2 x_seg;
           bool assign_res = CGAL::assign(x_seg, *it);
           CGAL_assertion(assign_res);
-          std::cout << "XXXX6: # x_seg: " << x_seg
-                    << std::endl;
 
           // Test that cv is continuous and well-oriented.
           CGAL_precondition_code
@@ -1111,8 +1078,6 @@ namespace CGAL {
               push_back(x_polyline, x_seg);
 #else
             push_back(x_polyline, x_seg);
-            std::cout << "XXXX7: # x_polyline: " << x_polyline
-                      << std::endl;
 #endif
           }
         }
