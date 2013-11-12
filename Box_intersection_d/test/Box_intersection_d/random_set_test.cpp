@@ -54,7 +54,8 @@ test_n( unsigned int n,
     else
         boxes2 = boxes1;
     std::cout << std::endl;
-    typename Uti1::Counter_callback callback0, callback1, callback2;
+    unsigned int c0 = 0, c1 = 0, c2 = 0;
+    typename Uti1::Counter_callback callback0(c0), callback1(c1), callback2(c2);
     CGAL::Timer timer;
 
     if( n < allpairs_max ) {
