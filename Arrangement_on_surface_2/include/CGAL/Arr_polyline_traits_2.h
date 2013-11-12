@@ -989,8 +989,12 @@ namespace CGAL {
           make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
         typename std::vector<Object>::iterator it = x_seg_objects.begin();
         X_monotone_segment_2 x_seg;
+#if defined (CGAL_NO_ASSERTIONS)
+        CGAL::assign(x_seg, *it);
+#else
         bool assign_res = CGAL::assign(x_seg, *it);
         CGAL_assertion(assign_res);
+#endif
 
         // If the polyline consists of a single x-monotone segment, return.
         if (x_seg_objects.size() == 1) {
@@ -1035,8 +1039,12 @@ namespace CGAL {
 
         for (++it; it != x_seg_objects.end(); ++it) {
           X_monotone_segment_2 x_seg;
+#if defined (CGAL_NO_ASSERTIONS)
+          CGAL::assign(x_seg, *it);
+#else
           bool assign_res = CGAL::assign(x_seg, *it);
           CGAL_assertion(assign_res);
+#endif
 
           // Test that cv is continuous and well-oriented.
           CGAL_precondition_code
