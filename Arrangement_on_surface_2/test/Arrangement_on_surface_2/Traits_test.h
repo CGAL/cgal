@@ -568,7 +568,7 @@ make_x_monotone_wrapper(std::istringstream& str_stream)
     str_stream >> id;                   // ... curve respectively
 
     const X_monotone_curve_2 * xcv_ptr =
-      xcv_ptr = CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
+      CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
     if (xcv_ptr != NULL) {
       if (!this->compare(type, 1u, "type")) return false;
       if (!this->compare_curves(this->m_xcurves[id], *xcv_ptr)) return false;
