@@ -313,8 +313,12 @@ public:
     {}
 
     ~Point_data() {
-      delete right_tent;
-      delete left_tent;
+      if(right_tent != NULL){
+        delete right_tent;
+      }
+      if (left_tent != NULL){
+        delete left_tent;
+      }
     }
   }; 
 
@@ -817,11 +821,10 @@ Largest_empty_iso_rectangle_2<T>::remove(const Point& _p)
   if(iter1 == x_sorted.end() || (*iter1)->type != REG)
     return(false);
 
-  delete((*iter1)->right_tent);
-  delete((*iter2)->left_tent);
-
+  Point_data* ptr  = *iter1;
   x_sorted.erase(iter1);
   y_sorted.erase(iter2);
+  delete ptr;
 
   return(true);
 }
