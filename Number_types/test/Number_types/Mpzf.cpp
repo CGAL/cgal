@@ -1,11 +1,11 @@
 #include <CGAL/basic.h>
-#include <CGAL/mpzf.h>
+#include <CGAL/Mpzf.h>
 #include <iostream>
 #include <stdlib.h>
 #include "checked_NT.h"
 #include <CGAL/Gmpq.h>
 #ifdef CGAL_HAS_MPZF
-using CGAL::mpzf;
+using CGAL::Mpzf;
 template<class NT,class IT>
 void test1(){
   NT z;
@@ -76,14 +76,14 @@ void test2(){
 }
 int main(){
 #ifdef CGAL_USE_GMPXX
-  test1<CGAL::checked_NT<mpzf,mpq_class>,mpz_class>();
+  test1<CGAL::checked_NT<Mpzf,mpq_class>,mpz_class>();
 #else
-  test1<CGAL::checked_NT<mpzf,CGAL::Gmpq>,CGAL::Gmpz>();
+  test1<CGAL::checked_NT<Mpzf,CGAL::Gmpq>,CGAL::Gmpz>();
 #endif
-  test2<mpzf>();
+  test2<Mpzf>();
 }
 #else
 int main(){
-  std::cout << "mpzf is not supported on this platform.\n";
+  std::cout << "Mpzf is not supported on this platform.\n";
 }
 #endif

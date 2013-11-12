@@ -14,7 +14,7 @@
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
-#include <CGAL/mpzf.h>
+#include <CGAL/Mpzf.h>
 #include <CGAL/Gmpq.h>
 #endif
 
@@ -85,7 +85,7 @@ int main()
   TESTIT(CGAL::Gmpz, "Gmpz")
   TESTIT(CGAL::Gmpzf, "Gmpzf")
 # ifdef CGAL_HAS_MPZF
-  TESTIT(CGAL::mpzf, "mpzf")
+  TESTIT(CGAL::Mpzf, "Mpzf")
 # endif
   TESTIT(CGAL::Gmpq, "Gmpq")
 #endif // CGAL_USE_GMP

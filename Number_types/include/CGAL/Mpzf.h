@@ -116,7 +116,7 @@
 // Too bad for the others
 #endif
 namespace CGAL {
-namespace mpzf_impl {
+namespace Mpzf_impl {
 // Warning: these pools aren't generic at all!
 
 // Not thread-safe
@@ -221,7 +221,7 @@ inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
   return q;
 #endif
 }
-} // namespace mpzf_impl
+} // namespace Mpzf_impl
 
 #undef CGAL_MPZF_THREAD_LOCAL
 #undef CGAL_MPZF_TLS
@@ -229,7 +229,7 @@ inline mp_limb_t* fill_n_ptr(mp_limb_t* p, int n, int c) {
 // TODO:
 // * make data==0 a valid state for number 0. Incompatible with the cache. I
 //   tried, and it doesn't seem to help (may even hurt a bit).
-struct mpzf {
+struct Mpzf {
   private:
 #ifdef CGAL_MPZF_USE_CACHE
   // More experiments to determine the best value would be good. It likely
@@ -239,17 +239,17 @@ struct mpzf {
   // more complicated to handle.
   // Evaluating a polynomial in double will never require more than roughly
   // (2100*degree) bits, or (33*degree) mp_limb_t, which is very small. I
-  // checked by including an array of 150 limbs in every mpzf (that's where
+  // checked by including an array of 150 limbs in every Mpzf (that's where
   // the 11% number comes from).
   // BONUS: doing that is thread-safe!
   static const unsigned int cache_size = 8;
 #endif
 //#if !defined(CGAL_HAS_THREADS) || defined(CGAL_I_PROMISE_I_WONT_USE_MANY_THREADS)
-//  typedef mpzf_impl::pool2<mp_limb_t*,mpzf> pool;
+//  typedef Mpzf_impl::pool2<mp_limb_t*,Mpzf> pool;
 //#elif defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
-//  typedef mpzf_impl::pool3<mp_limb_t*,mpzf> pool;
+//  typedef Mpzf_impl::pool3<mp_limb_t*,Mpzf> pool;
 //#else
-  typedef mpzf_impl::no_pool<mp_limb_t*,mpzf> pool;
+  typedef Mpzf_impl::no_pool<mp_limb_t*,Mpzf> pool;
 //#endif
 
   mp_limb_t* data_; /* data_[0] is never 0 (except possibly for 0). */
@@ -291,8 +291,8 @@ struct mpzf {
     pool::push(data());
   }
 
-  mpzf(noalloc){}
-  mpzf(allocate,int i) { init(i); }
+  Mpzf(noalloc){}
+  Mpzf(allocate,int i) { init(i); }
 
   public:
 
@@ -301,13 +301,13 @@ struct mpzf {
       delete[] (pool::pop() - (pool::extra + 1));
   }
 
-  ~mpzf(){
+  ~Mpzf(){
     clear();
   }
-  mpzf(): size(0), exp(0) {
+  Mpzf(): size(0), exp(0) {
     init();
   }
-  mpzf& operator=(mpzf const& x){
+  Mpzf& operator=(Mpzf const& x){
     unsigned asize=std::abs(x.size);
     if(asize==0) { exp=0; size=0; return *this; }
     if(this==&x) return *this;
@@ -324,7 +324,7 @@ struct mpzf {
     mpn_copyi(data(),x.data(),asize);
     return *this;
   }
-  mpzf(mpzf const& x){
+  Mpzf(Mpzf const& x){
     int asize=std::abs(x.size);
     init(asize);
     size=x.size;
@@ -333,24 +333,24 @@ struct mpzf {
   }
 #if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) \
     && !defined(CGAL_MPZF_USE_CACHE)
-  mpzf(mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
+  Mpzf(Mpzf&& x):data_(x.data()),size(x.size),exp(x.exp){
     x.init(); // yes, that's a shame...
     x.size = 0;
     x.exp = 0;
   }
-  mpzf& operator=(mpzf&& x){
+  Mpzf& operator=(Mpzf&& x){
     std::swap(size,x.size);
     exp = x.exp;
     std::swap(data(),x.data());
     return *this;
   }
-  friend mpzf operator-(mpzf&& x){
-    mpzf ret = std::move(x);
+  friend Mpzf operator-(Mpzf&& x){
+    Mpzf ret = std::move(x);
     ret.size = -ret.size;
     return ret;
   }
 #endif
-  mpzf(int i) : exp(0) {
+  Mpzf(int i) : exp(0) {
     // assume that int is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
@@ -358,13 +358,13 @@ struct mpzf {
     else /* (i <  0) */ { size =-1; data()[0] = -(mp_limb_t)i; }
     // cast to mp_limb_t because -INT_MIN is undefined
   }
-  mpzf(unsigned int i) : exp(0) {
+  Mpzf(unsigned int i) : exp(0) {
     // assume that int is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
     else /* (i >  0) */ { size = 1; data()[0] = i; }
   }
-  mpzf(long i) : exp(0) {
+  Mpzf(long i) : exp(0) {
     // assume that long is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
@@ -372,13 +372,13 @@ struct mpzf {
     else /* (i <  0) */ { size =-1; data()[0] = -(mp_limb_t)i; }
     // cast to mp_limb_t because -LONG_MIN is undefined
   }
-  mpzf(unsigned long i) : exp(0) {
+  Mpzf(unsigned long i) : exp(0) {
     // assume that long is smaller than mp_limb_t
     init();
     if      (i == 0)    { size = 0; }
     else /* (i >  0) */ { size = 1; data()[0] = i; }
   }
-  mpzf(double d){
+  Mpzf(double d){
     init();
     using boost::uint64_t;
     union {
@@ -410,7 +410,7 @@ struct mpzf {
     // 52+1023+13==17*64 ?
 #if 0
     // This seems very slightly faster
-    if(mpzf_impl::ctz(m)+e2>=64){
+    if(Mpzf_impl::ctz(m)+e2>=64){
       data()[0] = m >> (64-e2);
       size = 1;
       ++exp;
@@ -449,11 +449,11 @@ struct mpzf {
   }
 
 #ifdef CGAL_USE_GMPXX
-  mpzf(mpz_class const&z){
+  Mpzf(mpz_class const&z){
     init_from_mpz_t(z.get_mpz_t());
   }
 #endif
-  mpzf(Gmpz const&z){
+  Mpzf(Gmpz const&z){
     init_from_mpz_t(z.mpz());
   }
   void init_from_mpz_t(mpz_t const z){
@@ -479,7 +479,7 @@ struct mpzf {
   }
 #endif
 
-  friend int mpzf_abscmp(mpzf const&a, mpzf const&b){
+  friend int Mpzf_abscmp(Mpzf const&a, Mpzf const&b){
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
     // size==0 should mean exp==-infinity, like with double.
@@ -499,35 +499,35 @@ struct mpzf {
     }
     return asize-bsize; // this assumes that we get rid of trailing zeros...
   }
-  friend int mpzf_cmp (mpzf const&a, mpzf const&b){
+  friend int Mpzf_cmp (Mpzf const&a, Mpzf const&b){
     if ((a.size ^ b.size) < 0) return (a.size < 0) ? -1 : 1;
-    int res = mpzf_abscmp(a, b);
+    int res = Mpzf_abscmp(a, b);
     return (a.size < 0) ? -res : res;
   }
-  friend bool operator<(mpzf const&a, mpzf const&b){
+  friend bool operator<(Mpzf const&a, Mpzf const&b){
     if((a.size ^ b.size) < 0) return a.size < 0;
-    return ((a.size < 0) ? mpzf_abscmp(b, a) : mpzf_abscmp(a, b)) < 0;
+    return ((a.size < 0) ? Mpzf_abscmp(b, a) : Mpzf_abscmp(a, b)) < 0;
   }
-  friend bool operator>(mpzf const&a, mpzf const&b){
+  friend bool operator>(Mpzf const&a, Mpzf const&b){
     return b<a;
   }
-  friend bool operator>=(mpzf const&a, mpzf const&b){
+  friend bool operator>=(Mpzf const&a, Mpzf const&b){
     return !(a<b);
   }
-  friend bool operator<=(mpzf const&a, mpzf const&b){
+  friend bool operator<=(Mpzf const&a, Mpzf const&b){
     return !(a>b);
   }
-  friend bool operator==(mpzf const&a, mpzf const&b){
+  friend bool operator==(Mpzf const&a, Mpzf const&b){
     if (a.exp != b.exp || a.size != b.size) return false;
     if (a.size == 0) return true;
     return mpn_cmp(a.data(), b.data(), std::abs(a.size)) == 0;
   }
-  friend bool operator!=(mpzf const&a, mpzf const&b){
+  friend bool operator!=(Mpzf const&a, Mpzf const&b){
     return !(a==b);
   }
   private:
-  static mpzf aors(mpzf const&a, mpzf const&b, int bsize){
-    mpzf res=noalloc();
+  static Mpzf aors(Mpzf const&a, Mpzf const&b, int bsize){
+    Mpzf res=noalloc();
     if(bsize==0){
       int size=std::abs(a.size);
       res.init(size);
@@ -563,7 +563,7 @@ struct mpzf {
 	if(absasize<=bexp){ // no overlap
 	  mpn_copyi(rdata, adata, absasize);
 	  rdata+=absasize;
-	  rdata=mpzf_impl::fill_n_ptr(rdata,bexp-absasize,0);
+	  rdata=Mpzf_impl::fill_n_ptr(rdata,bexp-absasize,0);
 	  mpn_copyi(rdata, bdata, absbsize);
 	  res.size=absbsize+bexp;
 	  if(bsize<0) res.size=-res.size;
@@ -580,7 +580,7 @@ struct mpzf {
 	if(absbsize<=aexp){ // no overlap
 	  mpn_copyi(rdata, bdata, absbsize);
 	  rdata+=absbsize;
-	  rdata=mpzf_impl::fill_n_ptr(rdata,aexp-absbsize,0);
+	  rdata=Mpzf_impl::fill_n_ptr(rdata,aexp-absbsize,0);
 	  mpn_copyi(rdata, adata, absasize);
 	  res.size=absasize+aexp;
 	  if(asize<0) res.size=-res.size;
@@ -613,10 +613,10 @@ struct mpzf {
       if(bsize<0) res.size=-res.size;
     } else {
       // Subtraction
-      const mpzf *x, *y;
+      const Mpzf *x, *y;
       int xsize=a.size;
       int ysize=bsize;
-      int cmp=mpzf_abscmp(a,b);
+      int cmp=Mpzf_abscmp(a,b);
       if(cmp==0){ res.init(); res.size=0; res.exp=0; return res; }
       if(cmp<0) { x=&b; y=&a; std::swap(xsize, ysize); }
       else { x=&a; y=&b; }
@@ -643,7 +643,7 @@ struct mpzf {
 	if(absysize<=xexp){ // no overlap
 	  mpn_neg(rdata, ydata, absysize); // assert that it returns 1
 	  rdata+=absysize;
-	  rdata=mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
+	  rdata=Mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
 	  mpn_sub_1(rdata, xdata, absxsize, 1);
 	  res.size=absxsize+xexp;
 	  if(res.data()[res.size-1]==0) --res.size;
@@ -670,19 +670,19 @@ struct mpzf {
   }
 
   public:
-  friend mpzf operator+(mpzf const&a, mpzf const&b){
+  friend Mpzf operator+(Mpzf const&a, Mpzf const&b){
     return aors(a,b,b.size);
   }
 
-  friend mpzf operator-(mpzf const&a, mpzf const&b){
+  friend Mpzf operator-(Mpzf const&a, Mpzf const&b){
     return aors(a,b,-b.size);
   }
 
-  friend mpzf operator*(mpzf const&a, mpzf const&b){
+  friend Mpzf operator*(Mpzf const&a, Mpzf const&b){
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
     int siz=asize+bsize;
-    mpzf res(allocate(),siz);
+    Mpzf res(allocate(),siz);
     if(asize==0||bsize==0){res.exp=0;res.size=0;return res;}
     res.exp=a.exp+b.exp;
     mp_limb_t high;
@@ -696,10 +696,10 @@ struct mpzf {
     return res;
   }
 
-  friend mpzf mpzf_square(mpzf const&a){
+  friend Mpzf Mpzf_square(Mpzf const&a){
     int asize=std::abs(a.size);
     int siz=2*asize;
-    mpzf res(allocate(),siz);
+    Mpzf res(allocate(),siz);
     res.exp=2*a.exp;
     if(asize==0){res.size=0;return res;}
     mpn_sqr(res.data(),a.data(),asize);
@@ -710,12 +710,12 @@ struct mpzf {
     return res;
   }
 
-  friend mpzf operator/(mpzf const&a, mpzf const&b){
+  friend Mpzf operator/(Mpzf const&a, Mpzf const&b){
     // FIXME: Untested
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
     int siz=asize+2-bsize;
-    mpzf res(allocate(),asize+2);
+    Mpzf res(allocate(),asize+2);
     if(bsize==0){throw std::range_error("Division by zero");}
     if(asize==0){res.exp=0;res.size=0;return res;}
     res.size=siz;
@@ -724,12 +724,12 @@ struct mpzf {
     const mp_limb_t *bdata = b.data();
     mp_limb_t *qp = res.data();
     mp_limb_t *rp = qp + siz;
-    if(mpzf_impl::ctz(adata[0]) >= mpzf_impl::ctz(bdata[0])){ // Easy case
+    if(Mpzf_impl::ctz(adata[0]) >= Mpzf_impl::ctz(bdata[0])){ // Easy case
       --res.size;
       mpn_tdiv_qr(qp, rp, 0, adata, asize, bdata, bsize);
       CGAL_assertion_code(
 	  for (int i=0; i<bsize; ++i)
-	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
+	    if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
       )
     }
     else if(adata[-1]==0){ // We are lucky
@@ -737,12 +737,12 @@ struct mpzf {
       mpn_tdiv_qr(qp, rp, 0, adata, asize, bdata, bsize);
       CGAL_assertion_code(
 	  for (int i=0; i<bsize; ++i)
-	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
+	    if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
       )
     }
     else{
       --res.exp;
-      mpzf a2(allocate(),asize+1);
+      Mpzf a2(allocate(),asize+1);
       a2.data()[0]=0;
       mpn_copyi(a2.data()+1,a.data(),asize);
       // No need to complete a2, we just want the buffer.
@@ -751,7 +751,7 @@ struct mpzf {
       mpn_tdiv_qr(qp, rp, 0, a2.data(), asize+1, bdata, bsize);
       CGAL_assertion_code(
 	  for (int i=0; i<bsize; ++i)
-	    if (rp[i] != 0) throw std::logic_error("non exact mpzf division");
+	    if (rp[i] != 0) throw std::logic_error("non exact Mpzf division");
       )
     }
     while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
@@ -760,17 +760,17 @@ struct mpzf {
     return res;
   }
 
-  friend mpzf mpzf_gcd(mpzf const&a, mpzf const&b){
+  friend Mpzf Mpzf_gcd(Mpzf const&a, Mpzf const&b){
     // FIXME: Untested
     if (a.size == 0) return b;
     if (b.size == 0) return a;
     int asize=std::abs(a.size);
     int bsize=std::abs(b.size);
-    int atz=mpzf_impl::ctz(a.data()[0]);
-    int btz=mpzf_impl::ctz(b.data()[0]);
+    int atz=Mpzf_impl::ctz(a.data()[0]);
+    int btz=Mpzf_impl::ctz(b.data()[0]);
     int rtz=(std::min)(atz,btz);
-    mpzf tmp(allocate(), asize);
-    mpzf res(allocate(), bsize);
+    Mpzf tmp(allocate(), asize);
+    Mpzf res(allocate(), bsize);
     if (atz != 0) {
       mpn_rshift(tmp.data(), a.data(), asize, atz);
       if(tmp.data()[asize-1]==0) --asize;
@@ -793,19 +793,19 @@ struct mpzf {
     return res;
   }
 
-  friend bool mpzf_is_square(mpzf const&x){
+  friend bool Mpzf_is_square(Mpzf const&x){
     if (x.size < 0) return false;
     if (x.size == 0) return true;
     // Assume that GMP_NUMB_BITS is even.
     return mpn_perfect_square_p (x.data(), x.size);
   }
 
-  friend mpzf mpzf_sqrt(mpzf const&x){
+  friend Mpzf Mpzf_sqrt(Mpzf const&x){
     // FIXME: Untested
     if (x.size < 0) throw std::range_error("Sqrt of negative number");
     if (x.size == 0) return 0;
     if (x.exp % 2 == 0) {
-      mpzf res(allocate(), (x.size + 1) / 2);
+      Mpzf res(allocate(), (x.size + 1) / 2);
       res.exp = x.exp / 2;
       res.size = (x.size + 1) / 2;
       CGAL_assertion_code(mp_size_t rem=)
@@ -814,7 +814,7 @@ struct mpzf {
       return res;
     }
     else if (x.data()[-1] == 0) {
-      mpzf res(allocate(), (x.size + 2) / 2);
+      Mpzf res(allocate(), (x.size + 2) / 2);
       res.exp = (x.exp - 1) / 2;
       res.size = (x.size + 2) / 2;
       CGAL_assertion_code(mp_size_t rem=)
@@ -823,7 +823,7 @@ struct mpzf {
       return res;
     }
     else {
-      mpzf res(allocate(), (x.size + 2) / 2);
+      Mpzf res(allocate(), (x.size + 2) / 2);
       res.exp = (x.exp - 1) / 2;
       res.size = (x.size + 2) / 2;
       CGAL_assertion_code(mp_size_t rem=)
@@ -834,14 +834,14 @@ struct mpzf {
     }
   }
 
-  friend mpzf operator-(mpzf const&x){
-    mpzf ret = x;
+  friend Mpzf operator-(Mpzf const&x){
+    Mpzf ret = x;
     ret.size = -ret.size;
     return ret;
   }
-  mpzf& operator+=(mpzf const&x){ *this=*this+x; return *this; }
-  mpzf& operator-=(mpzf const&x){ *this=*this-x; return *this; }
-  mpzf& operator*=(mpzf const&x){ *this=*this*x; return *this; }
+  Mpzf& operator+=(Mpzf const&x){ *this=*this+x; return *this; }
+  Mpzf& operator-=(Mpzf const&x){ *this=*this-x; return *this; }
+  Mpzf& operator*=(Mpzf const&x){ *this=*this*x; return *this; }
 
   bool is_canonical () const {
     if (size == 0) return true;
@@ -879,7 +879,7 @@ struct mpzf {
     int asize = std::abs(size);
     int e = 64 * (asize - 1 + exp);
     mp_limb_t x = data()[asize-1];
-    int lz = mpzf_impl::clz(x);
+    int lz = Mpzf_impl::clz(x);
     if (lz <= 11) {
       if (lz != 11) {
 	e += (11 - lz);
@@ -956,7 +956,7 @@ struct mpzf {
 #ifndef CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
   explicit
 #endif
-// This makes mpzf==int ambiguous
+// This makes Mpzf==int ambiguous
   operator Gmpzf () const {
     mpz_t z;
     z->_mp_d=const_cast<mp_limb_t*>(data());
@@ -968,7 +968,7 @@ struct mpzf {
   }
 #endif
 
-  friend void simplify_quotient(mpzf& a, mpzf& b){
+  friend void simplify_quotient(Mpzf& a, Mpzf& b){
     // Avoid quotient(2^huge_a/2^huge_b)
     a.exp -= b.exp;
     b.exp = 0;
@@ -978,13 +978,13 @@ struct mpzf {
 
 // Copied from Gmpzf, not sure that's the best thing to do.
 inline
-std::ostream& operator<< (std::ostream& os, const mpzf& a)
+std::ostream& operator<< (std::ostream& os, const Mpzf& a)
 {
     return os << a.to_double();
 }
 
 inline
-std::istream& operator>> (std::istream& is, mpzf& a)
+std::istream& operator>> (std::istream& is, Mpzf& a)
 {
   double d;
   is >> d;
@@ -994,8 +994,8 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 }
 
 
-  template <> struct Algebraic_structure_traits< mpzf >
-    : public Algebraic_structure_traits_base< mpzf, Integral_domain_without_division_tag >  {
+  template <> struct Algebraic_structure_traits< Mpzf >
+    : public Algebraic_structure_traits_base< Mpzf, Integral_domain_without_division_tag >  {
       typedef Tag_true            Is_exact;
       typedef Tag_false            Is_numerical_sensitive;
 
@@ -1018,14 +1018,14 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 	  Type operator()(
 	      const Type& x,
 	      const Type& y ) const {
-	    return mpzf_gcd(x, y);
+	    return Mpzf_gcd(x, y);
 	  }
 	};
 
       struct Square
 	: public std::unary_function< Type, Type > {
 	  Type operator()( const Type& x ) const {
-	    return mpzf_square(x);
+	    return Mpzf_square(x);
 	  }
 	};
 
@@ -1041,7 +1041,7 @@ std::istream& operator>> (std::istream& is, mpzf& a)
       struct Sqrt
 	: public std::unary_function< Type, Type > {
 	  Type operator()( const Type& x) const {
-	    return mpzf_sqrt(x);
+	    return Mpzf_sqrt(x);
 	  }
 	};
 
@@ -1049,18 +1049,18 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 	: public std::binary_function< Type, Type&, bool > {
 	  bool operator()( const Type& x, Type& y ) const {
 	    // TODO: avoid doing 2 calls.
-	    if (!mpzf_is_square(x)) return false;
-	    y = mpzf_sqrt(x);
+	    if (!Mpzf_is_square(x)) return false;
+	    y = Mpzf_sqrt(x);
 	    return true;
 	  }
 	  bool operator()( const Type& x) const {
-	    return mpzf_is_square(x);
+	    return Mpzf_is_square(x);
 	  }
 	};
 
     };
-  template <> struct Real_embeddable_traits< mpzf >
-    : public INTERN_RET::Real_embeddable_traits_base< mpzf , CGAL::Tag_true > {
+  template <> struct Real_embeddable_traits< Mpzf >
+    : public INTERN_RET::Real_embeddable_traits_base< Mpzf , CGAL::Tag_true > {
       struct Sgn
 	: public std::unary_function< Type, ::CGAL::Sign > {
 	  ::CGAL::Sign operator()( const Type& x ) const {
@@ -1080,7 +1080,7 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 	    Comparison_result operator()(
 		const Type& x,
 		const Type& y ) const {
-	      return CGAL::sign(mpzf_cmp(x,y));
+	      return CGAL::sign(Mpzf_cmp(x,y));
 	    }
 	};
 
@@ -1093,15 +1093,15 @@ std::istream& operator>> (std::istream& is, mpzf& a)
 
     };
 
-CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(mpzf)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,mpzf)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,mpzf)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,mpzf)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float    ,mpzf)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double   ,mpzf)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpz     ,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,Mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,Mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,Mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float    ,Mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double   ,Mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpz     ,Mpzf)
 #ifdef CGAL_USE_GMPXX
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(mpz_class,mpzf)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(mpz_class,Mpzf)
 #endif
 
 }
