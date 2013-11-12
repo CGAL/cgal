@@ -1,9 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/property_map.h>
 
 #include <fstream>
 #include <cassert>
+
+#include <CGAL/property_map.h>
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -123,11 +124,11 @@ int main()
 #endif
 {
   string if_name_string;
-  const char *if_name = NULL; //input file name
-  char *w_if_name = NULL;  //as above, but / replaced by _
-  char* res4openGL_fname;
-  char* verbose_fname = NULL;
-  std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
+  string if_name; //input file name
+  string w_if_name;  //as above, but / replaced by _
+  string res4openGL_fname;
+  string verbose_fname;
+  std::ofstream out_4ogl, out_verbose;
 
   try {
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
@@ -181,42 +182,41 @@ int main()
 
   //prepare output file names
   //--------------------------
-  if_name = if_name_string.data();
-  assert(if_name != NULL);
-  w_if_name = new char[strlen(if_name)+1];
-  strcpy(w_if_name, if_name);
-  for(unsigned int i=0; i<strlen(w_if_name); i++)
+  std::cerr << "if_name_string" << if_name_string  << std::endl;
+  if_name = if_name_string;
+
+  w_if_name = if_name;
+  for(unsigned int i=0; i<w_if_name.size(); i++)
     if (w_if_name[i] == '/') w_if_name[i]='_';
   cerr << if_name << '\n';
   cerr << w_if_name << '\n';
 
-  res4openGL_fname = new char[strlen(w_if_name) + 10];// append .4ogl.txt
-  sprintf(res4openGL_fname, "%s.4ogl.txt", w_if_name);
-  out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out);
-  assert(out_4ogl!=NULL);
+  res4openGL_fname = w_if_name + ".4ogl.txt";
+std::cerr << "res4openGL_fname" << res4openGL_fname  << std::endl;
+  out_4ogl.open(res4openGL_fname.c_str(), std::ios::out);
+  assert(out_4ogl.good());
   //if verbose only...
   if(verbose){
-    verbose_fname  = new char[strlen(w_if_name) + 10];// append .verb.txt
-    sprintf(verbose_fname, "%s.verb.txt", w_if_name);
-    out_verbose = new std::ofstream( verbose_fname, std::ios::out);
-    assert(out_verbose != NULL);
-    CGAL::set_pretty_mode(*out_verbose);
+    verbose_fname  = w_if_name + ".verb.txt";
+    out_verbose.open(verbose_fname.c_str(), std::ios::out);
+    assert(out_verbose.good());
+    CGAL::set_pretty_mode(out_verbose);
   }
   unsigned int nb_vertices_considered = 0;//count vertices for verbose
 
   //load the model from <mesh.off>
   //------------------------------
   PolyhedralSurf P;
-  std::ifstream stream(if_name);
+  std::ifstream stream(if_name.c_str());
   stream >> P;
   std::cout << "loadMesh...  "<< "Polysurf with " << P.size_of_vertices()
 	    << " vertices and " << P.size_of_facets()
 	    << " facets. " << std::endl;
 
   if(verbose)
-    (*out_verbose) << "Polysurf with " << P.size_of_vertices()
-		   << " vertices and " << P.size_of_facets()
-		   << " facets. " << std::endl;
+    out_verbose << "Polysurf with " << P.size_of_vertices()
+                << " vertices and " << P.size_of_facets()
+                << " facets. " << std::endl;
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())    exit(0);
 
@@ -278,33 +278,27 @@ int main()
     //global mean edges length computed only once on all edges of P
     DFT scale_ppal_dir = Poly_hedge_ops::compute_mean_edges_length_around_vertex(v, hepm)/2;
 
-    (*out_4ogl) << v->point()  << " ";
-    monge_form.dump_4ogl(*out_4ogl, scale_ppal_dir);
+    out_4ogl << v->point()  << " ";
+    monge_form.dump_4ogl(out_4ogl, scale_ppal_dir);
 
     //verbose txt output
     if (verbose) {
       std::vector<DPoint>::iterator itbp = in_points.begin(), itep = in_points.end();
-      (*out_verbose) << "in_points list : " << std::endl ;
-      for (;itbp!=itep;itbp++) (*out_verbose) << *itbp << std::endl ;
+      out_verbose << "in_points list : " << std::endl ;
+      for (;itbp!=itep;itbp++) out_verbose << *itbp << std::endl ;
 
-      (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered
-		     <<	" : " << v->point() << std::endl
-		     << "number of points used : " << in_points.size() << std::endl
+      out_verbose << "--- vertex " <<  ++nb_vertices_considered
+                  <<	" : " << v->point() << std::endl
+                  << "number of points used : " << in_points.size() << std::endl
 	;// << monge_form;
     }
   } //all vertices processed
 
   //cleanup filenames
   //------------------
-  delete res4openGL_fname;
-  out_4ogl->close();
-  delete out_4ogl;
+  out_4ogl.close();
   if(verbose) {
-    delete verbose_fname;
-    out_verbose->close();
-    delete out_verbose;
+    out_verbose.close();
   }  
-
-  std::cerr << "done" << std::endl;
   return 0;
 }
