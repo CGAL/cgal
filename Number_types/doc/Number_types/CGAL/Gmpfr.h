@@ -11,7 +11,7 @@ that the mantissa of each number is represented by a fixed amount of bits
 than the precision of the result number, the results are rounded following 
 different possible criteria (called <I>rounding modes</I>). 
 
-Currently, <span class="textsc">Mpfr</span> supports four rounding modes: round to nearest, 
+Currently, the `Gmpfr` interface supports four rounding modes: round to nearest,
 round toward zero, round down (or toward \f$ (-\infty)\f$) and round up 
 (or toward \f$ (+\infty)\f$). When not specified explicitly, the 
 operations use the default rounding mode, which is in practice a 
@@ -255,21 +255,19 @@ static bool erange_flag();
 
 /// @{
 
+/*!
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b); 
 
 /*!
-
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b, std::float_round_style r); 
 
 /*!
-
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p); 
 
 /*!
-
 */ 
 static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p, std::float_round_style r); 
 

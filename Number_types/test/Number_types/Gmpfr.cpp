@@ -28,21 +28,21 @@
 #include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/_test_io.h>
 
-#define _TEST(_string,_code) \
+#define TEST(_string,_code) \
         std::cerr<<"testing "<<_string<<": "<<std::flush; \
         _code; \
         std::cerr<<"OK"<<std::endl;
 
-#define _TEST_AS(_a,_b,_c) \
+#define TEST_AS(_a,_b,_c) \
         std::cerr<<"testing algebraic structure ("<< \
                 _a<<','<<_b<<','<<_c<<"): "<<std::flush; \
         CGAL::test_algebraic_structure<NT,Tag,Is_exact>(NT(_a),NT(_b),NT(_c)); \
         std::cerr<<"OK"<<std::endl;
 
-template<class _NT>
+template<class NumberType>
 int test_operators(){
         typedef CGAL::Gmpfr     Gmpfr;
-        typedef _NT             NT;
+        typedef NumberType      NT;
         Gmpfr a(5.0);
         NT b(2);
         if((-a)==-5&&(a+b)==7&&(a-b)==3&&(a*b)==10&&(a/b)==2.5)
@@ -66,10 +66,10 @@ int test_operators<CGAL::Gmpfr>(){
         }
 }
 
-template<class _NT>
+template<class NumberType>
 int test_arithmetic(){
         typedef CGAL::Gmpfr     Gmpfr;
-        typedef _NT             NT;
+        typedef NumberType      NT;
         Gmpfr a(7.0);
         NT b(2);
         Gmpfr::set_default_rndmode(std::round_to_nearest);
@@ -116,9 +116,9 @@ int test_to_integer_exp(CGAL::Gmpfr f){
         }
 }
 
-// This function checks equality between an _NT x and a Gmpfr y.
-template<class _NT>
-int are_different(const _NT &x,const CGAL::Gmpfr &y){
+// This function checks equality between an NumberType x and a Gmpfr y.
+template<class NumberType>
+int are_different(const NumberType &x,const CGAL::Gmpfr &y){
         return x!=y;
 }
 
@@ -127,10 +127,10 @@ int are_different(const std::pair<CGAL::Gmpz,long> &x,const CGAL::Gmpfr &y){
         return(mpfr_cmp_si_2exp(y.fr(),mpz_get_si(x.first.mpz()),x.second));
 }
 
-template<class _NT>
-int test_constructors(const _NT &x){
+template<class NumberType>
+int test_constructors(const NumberType &x){
         typedef CGAL::Gmpfr     Gmpfr;
-        typedef _NT             NT;
+        typedef NumberType      NT;
         bool fail=false;
         Gmpfr::set_default_precision(70);
         Gmpfr f(x);
@@ -164,65 +164,66 @@ int main(){
   typedef CGAL::Field_with_kth_root_tag Tag;
   typedef CGAL::Tag_false Is_exact;
 
-  _TEST("algebraic structure (default)",
-        (CGAL::test_algebraic_structure<NT,Tag,Is_exact>()))
-  _TEST_AS(4,6,15)
-  _TEST_AS(-4,6,15)
-  _TEST_AS(4,-6,15)
-  _TEST_AS(-4,-6,15)
-  _TEST_AS(4,6,-15)
-  _TEST_AS(-4,6,-15)
-  _TEST_AS(4,-6,-15)
-  _TEST_AS(-4,-6,-15)
-  _TEST("real embeddable",CGAL::test_real_embeddable<NT>())
+  TEST("algebraic structure (default)",
+       (CGAL::test_algebraic_structure<NT,Tag,Is_exact>()))
+  TEST_AS(4,6,15)
+  TEST_AS(-4,6,15)
+  TEST_AS(4,-6,15)
+  TEST_AS(-4,-6,15)
+  TEST_AS(4,6,-15)
+  TEST_AS(-4,6,-15)
+  TEST_AS(4,-6,-15)
+  TEST_AS(-4,-6,-15)
+  TEST("real embeddable",CGAL::test_real_embeddable<NT>())
 
-  _TEST("constructors int",test_constructors<int>(-3);)
-  _TEST("constructors long",test_constructors<long>(-456);)
-  _TEST("constructors unsigned long",test_constructors<unsigned long>(78);)
-  _TEST("constructors double",test_constructors<double>(7.5);)
-  _TEST("constructors long double",test_constructors<long double>(-7.5);)
-  _TEST("constructors Gmpz",
-        test_constructors<CGAL::Gmpz>((CGAL::Gmpz(1)<<1000)+CGAL::Gmpz(1));)
-  _TEST("constructors Gmpzf",test_constructors<CGAL::Gmpzf>(1025);)
+  TEST("constructors int",test_constructors<int>(-3);)
+  TEST("constructors long",test_constructors<long>(-456);)
+  TEST("constructors unsigned long",test_constructors<unsigned long>(78);)
+  TEST("constructors double",test_constructors<double>(7.5);)
+  TEST("constructors long double",test_constructors<long double>(-7.5);)
+  TEST("constructors Gmpz",
+       test_constructors<CGAL::Gmpz>((CGAL::Gmpz(1)<<1000)+CGAL::Gmpz(1));)
+  TEST("constructors Gmpzf",test_constructors<CGAL::Gmpzf>(1025);)
   typedef std::pair<CGAL::Gmpz,long>                            MantExp;
-  _TEST("constructors pair<Gmpz,long>",
-        test_constructors<MantExp>(std::make_pair(CGAL::Gmpz(4096),35));)
+  TEST("constructors pair<Gmpz,long>",
+       test_constructors<MantExp>(std::make_pair(CGAL::Gmpz(4096),35));)
 
-  _TEST("operators Gmpfr",test_operators<NT>();)
-  _TEST("operators Gmpzf",test_operators<CGAL::Gmpzf>();)
-  _TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
-  _TEST("operators int",test_operators<int>();)
-  _TEST("operators long",test_operators<long>();)
-  _TEST("operators unsigned long",test_operators<unsigned long>();)
+  TEST("operators Gmpfr",test_operators<NT>();)
+  TEST("operators Gmpzf",test_operators<CGAL::Gmpzf>();)
+  TEST("operators Gmpz",test_operators<CGAL::Gmpz>();)
+  TEST("operators int",test_operators<int>();)
+  TEST("operators long",test_operators<long>();)
+  TEST("operators unsigned long",test_operators<unsigned long>();)
 
-  _TEST("arithmetic Gmpfr",test_arithmetic<NT>();)
-  _TEST("arithmetic long",test_arithmetic<long>();)
-  _TEST("arithmetic unsigned long",test_arithmetic<unsigned long>();)
-  _TEST("arithmetic int",test_arithmetic<int>();)
-  _TEST("arithmetic Gmpz",test_arithmetic<CGAL::Gmpz>();)
-  _TEST("arithmetic Gmpzf",test_arithmetic<CGAL::Gmpzf>();)
+  TEST("arithmetic Gmpfr",test_arithmetic<NT>();)
+  TEST("arithmetic long",test_arithmetic<long>();)
+  TEST("arithmetic unsigned long",test_arithmetic<unsigned long>();)
+  TEST("arithmetic int",test_arithmetic<int>();)
+  TEST("arithmetic Gmpz",test_arithmetic<CGAL::Gmpz>();)
+  TEST("arithmetic Gmpzf",test_arithmetic<CGAL::Gmpzf>();)
 
   NT plus_infinity;
   NT minus_infinity;
   CGAL::Gmpzf f;
   mpfr_set_inf(plus_infinity.fr(),1);
   mpfr_set_inf(minus_infinity.fr(),-1);
-  _TEST("I/O positive int",(CGAL::test_io<NT,int>(2145338339));)
-  _TEST("I/O negative int",(CGAL::test_io<NT,int>(-25295236));)
-  _TEST("I/O double",(CGAL::test_io<NT,double>(.2147483647));)
-  _TEST("I/O +inf",(CGAL::test_io<NT,NT>(plus_infinity));)
-  _TEST("I/O -inf",(CGAL::test_io<NT,NT>(minus_infinity));)
-  _TEST("I/O Gmpzf",(CGAL::test_io<NT,CGAL::Gmpzf>(f));)
+  TEST("I/O positive int",(CGAL::test_io<NT,int>(2145338339));)
+  TEST("I/O negative int",(CGAL::test_io<NT,int>(-25295236));)
+  TEST("I/O double",(CGAL::test_io<NT,double>(.2147483647));)
+  TEST("I/O +inf",(CGAL::test_io<NT,NT>(plus_infinity));)
+  TEST("I/O -inf",(CGAL::test_io<NT,NT>(minus_infinity));)
+  TEST("I/O Gmpzf",(CGAL::test_io<NT,CGAL::Gmpzf>(f));)
 
   std::stringstream ss;
   CGAL::Gmpz z;
   ss<<"-4503599627370496";
   ss>>z;
-  _TEST("to_integer_exp e>0",(test_to_integer_exp(NT(std::make_pair(z,-50))));)
+  TEST("to_integer_exp e>0",(test_to_integer_exp(NT(std::make_pair(z,-50))));)
   z=CGAL::Gmpz(2147483647)*CGAL::Gmpz(2145338339);
-  NT::Precision_type zsize = static_cast<NT::Precision_type>( mpz_sizeinbase(z.mpz(),2) );
-  _TEST("to_integer_exp e==0",(test_to_integer_exp(NT(z,zsize)));)
-  _TEST("to_integer_exp e<0",(test_to_integer_exp(NT(std::make_pair(z,-97))));)
+  NT::Precision_type zsize=
+          static_cast<NT::Precision_type>( mpz_sizeinbase(z.mpz(),2) );
+  TEST("to_integer_exp e==0",(test_to_integer_exp(NT(z,zsize)));)
+  TEST("to_integer_exp e<0",(test_to_integer_exp(NT(std::make_pair(z,-97))));)
 
   // TODO: missing tests for conversion functions
   // to_double, to_interval, to_double_exp, to_interval_exp
@@ -230,8 +231,8 @@ int main(){
   return 0;
 }
 
-#undef _TEST
-#undef _TEST_AS
+#undef TEST
+#undef TEST_AS
 
 #else
 int main() { return 0; }

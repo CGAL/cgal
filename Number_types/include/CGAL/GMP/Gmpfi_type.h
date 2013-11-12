@@ -19,7 +19,7 @@
 #ifndef CGAL_GMPFI_TYPE_H
 #define CGAL_GMPFI_TYPE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <CGAL/GMP/Gmpfr_type.h>

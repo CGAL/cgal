@@ -42,10 +42,11 @@
                 if(!p) \
                         p=CGAL_GMPFI_PREC_2(a,b); \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfi_t result; \
-                mpfi_init2(result,p); \
-                _fun(result,a.mpfi(),b.mpfi()); \
-                return Gmpfi(result); \
+                Gmpfi result (0,p); \
+                _fun(result.mpfi(),a.mpfi(),b.mpfi()); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
+                return result; \
 }
 
 // CGAL_GMPFI_COMMUTATIVE_OP defines a commutative arithmetic operation
@@ -56,20 +57,22 @@
                 if(!p) \
                         p=CGAL_GMPFI_PREC(a); \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfi_t result; \
-                mpfi_init2(result,p); \
-                _fun(result,a.mpfi(),_member); \
-                return Gmpfi(result); \
+                Gmpfi result(0,p); \
+                _fun(result.mpfi(),a.mpfi(),_member); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
+                return result; \
         } \
         inline \
         Gmpfi Gmpfi::_name (_type b,const Gmpfi &a,Gmpfi::Precision_type p){ \
                 if(!p) \
                         p=CGAL_GMPFI_PREC(a); \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfi_t result; \
-                mpfi_init2(result,p); \
-                _fun(result,a.mpfi(),_member); \
-                return Gmpfi(result); \
+                Gmpfi result(0,p); \
+                _fun(result.mpfi(),a.mpfi(),_member); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
+                return result; \
         }
 
 // CGAL_GMPFI_NONCOMMUTATIVE_OP defines a non-commutative arithmetic
@@ -80,20 +83,22 @@
                 if(!p) \
                         p=CGAL_GMPFI_PREC(a); \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfi_t result; \
-                mpfi_init2(result,p); \
-                _fun1(result,a.mpfi(),_member); \
-                return Gmpfi(result); \
+                Gmpfi result(0,p); \
+                _fun1(result.mpfi(),a.mpfi(),_member); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
+                return result; \
         } \
         inline \
         Gmpfi Gmpfi::_name (_type b,const Gmpfi &a,Gmpfi::Precision_type p){ \
                 if(!p) \
                         p=CGAL_GMPFI_PREC(a); \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfi_t result; \
-                mpfi_init2(result,p); \
-                _fun2(result,_member,a.mpfi()); \
-                return Gmpfi(result); \
+                Gmpfi result(0,p); \
+                _fun2(result.mpfi(),_member,a.mpfi()); \
+                *(result._left.fr())=result._interval.left; \
+                *(result._right.fr())=result._interval.right; \
+                return result; \
         }
 
 CGAL_GMPFI_OP_GMPFI(add,mpfi_add)
