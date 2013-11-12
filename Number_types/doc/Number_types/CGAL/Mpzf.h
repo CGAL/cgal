@@ -19,8 +19,8 @@ similar to `MP_Float` and `Gmpzf` but is faster.
 
 This class is only available on platforms on which <span
 class="textsc">GMP</span> uses 64 bit limbs and the endianness is
-either big-endian or little-endian.  If this is true, the macro
-`CGAL_HAS_MPZF` is defined.  This class makes the assumption that the
+either big-endian or little-endian. The macro `CGAL_HAS_MPZF` will be defined
+when including `CGAL/Mpzf.h` if this is true.  This class makes the assumption that the
 representation of a `double` in memory follows IEEE 754.
 
 Currently, an `Mpzf` contains an array of a few limbs, in which it
