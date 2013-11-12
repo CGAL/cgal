@@ -230,7 +230,7 @@ namespace CGAL {
     {
       CGAL_assertion(this->cont());
 
-      if (mfirst_dir && (*this)->is_free(0))
+      if (mfirst_dir && this->mmap->is_free(*this, 0))
       {
         this->set_current_dart(this->mfirst_dart);
         mfirst_dir = false;
@@ -243,8 +243,8 @@ namespace CGAL {
 
       if (mfirst_dir)
       {
-        CGAL_assertion(!(*this)->is_free(0));
-        this->set_current_dart((*this)->beta(0));
+        CGAL_assertion(!this->mmap->is_free(*this, 0));
+        this->set_current_dart(this->mmap->beta(*this, 0));
 
         if ((*this)==this->mfirst_dart)
         {
@@ -254,14 +254,14 @@ namespace CGAL {
       }
       else
       {
-        if ((*this)->is_free(1))
+        if (this->mmap->is_free(*this, 1))
         {
           this->set_current_dart(NULL);
           this->mprev_op = OP_END;
         }
         else
         {
-          this->set_current_dart((*this)->beta(1));
+          this->set_current_dart(this->mmap->beta(*this, 1));
           this->mprev_op = OP_BETAI_INV;
         }
       }
@@ -320,7 +320,7 @@ namespace CGAL {
     {
       CGAL_assertion(this->cont());
 
-      if (mfirst_dir && (*this)->is_free(1))
+      if (mfirst_dir && this->mmap->is_free(*this, 1))
       {
         this->set_current_dart(this->mfirst_dart);
         mfirst_dir = false;
@@ -333,8 +333,8 @@ namespace CGAL {
 
       if (mfirst_dir)
       {
-        CGAL_assertion(!(*this)->is_free(1));
-        this->set_current_dart((*this)->beta(1));
+        CGAL_assertion(!this->mmap->is_free(*this, 1));
+        this->set_current_dart(this->mmap->beta(*this, 1));
 
         if ((*this)==this->mfirst_dart)
         {
@@ -344,14 +344,14 @@ namespace CGAL {
       }
       else
       {
-        if ((*this)->is_free(0))
+        if (this->mmap->is_free(*this, 0))
         {
           this->set_current_dart(NULL);
           this->mprev_op = OP_END;
         }
         else
         {
-          this->set_current_dart((*this)->beta(0));
+          this->set_current_dart(this->mmap->beta(*this, 0));
           this->mprev_op = OP_BETAI_INV;
         }
       }
@@ -400,14 +400,14 @@ namespace CGAL {
     Self& operator++()
     {
       CGAL_assertion(this->cont());
-      if ((*this)!=this->mfirst_dart || (*this)->is_free(Bi))
+      if ((*this)!=this->mfirst_dart || this->mmap->is_free(*this, Bi))
       {
         this->set_current_dart(NULL);
         this->mprev_op = OP_END;
       }
       else
       {
-        this->set_current_dart((*this)->beta(Bi));
+        this->set_current_dart(this->mmap->beta(*this, Bi));
         this->mprev_op = OP_BETAI;
       }
       return *this;
@@ -468,17 +468,17 @@ namespace CGAL {
 
       if (mcurdart==0)
       {
-        if (!(*this)->is_free(Bi))
+        if (!this->mmap->is_free(*this, Bi))
         {
-          this->set_current_dart((*this)->beta(Bi));
+          this->set_current_dart(this->mmap->beta(*this, Bi));
           this->mprev_op = OP_BETAI;
           mcurdart=1;
         }
         else
         {
-          if (!(*this)->is_free(Bi+delta))
+          if (!this->mmap->is_free(*this, Bi+delta))
           {
-            this->set_current_dart((*this)->beta(Bi+delta));
+            this->set_current_dart(this->mmap->beta(*this, Bi+delta));
             this->mprev_op = OP_BETAJ;
             mcurdart=3;
           }
@@ -491,9 +491,9 @@ namespace CGAL {
       }
       else if (mcurdart==1)
       {
-        if (!(*this)->is_free(Bi+delta))
+        if (!this->mmap->is_free(*this, Bi+delta))
         {
-          this->set_current_dart((*this)->beta(Bi+delta));
+          this->set_current_dart(this->mmap->beta(*this, Bi+delta));
           this->mprev_op = OP_BETAJ;
           mcurdart=2;
         }
@@ -505,8 +505,8 @@ namespace CGAL {
       }
       else if (mcurdart==2)
       {
-        CGAL_assertion(!(*this)->is_free(Bi));
-        this->set_current_dart((*this)->beta(Bi));
+        CGAL_assertion(!this->mmap->is_free(*this, Bi));
+        this->set_current_dart(this->mmap->beta(*this, Bi));
         this->mprev_op = OP_BETAI;
         mcurdart=1;
       }
@@ -623,7 +623,8 @@ namespace CGAL {
       mexist_betaj(false),
       mprev_betaj(false),
       mfirst_border(true)
-    { if (adart!=NULL) mexist_betaj=!adart->is_free(delta); }
+    { if (adart!=NULL)
+        mexist_betaj=!this->mmap->is_free(adart, delta); }
     
     /// Main constructor.
     CMap_dart_iterator_basic_of_two_beta(Map& amap, Dart_handle adart, 
@@ -633,7 +634,8 @@ namespace CGAL {
       mexist_betaj(false),
       mprev_betaj(false),
       mfirst_border(true)
-    { if (adart!=NULL) mexist_betaj=!adart->is_free(delta); }
+    { if (adart!=NULL)
+        mexist_betaj=!this->mmap->is_free(adart, delta); }
 
     /// Prefix ++ operator.
     Self& operator++()
@@ -643,7 +645,7 @@ namespace CGAL {
       {
         mprev_betaj = true;
         mfirst_border = ! mfirst_border;
-        this->set_current_dart((*this)->beta(delta));
+        this->set_current_dart(this->mmap->beta(*this, delta));
         this->mprev_op = OP_BETAJ;
       }
       else
@@ -721,7 +723,8 @@ namespace CGAL {
       mexist_betaj(false),
       mprev_betaj(false),
       mfirst_border(true)
-    { if (adart!=NULL) mexist_betaj=!adart->is_free(1+delta); }
+    { if (adart!=NULL)
+        mexist_betaj=!this->mmap->is_free(adart, 1+delta); }
     
     /// Main constructor.
     CMap_dart_iterator_basic_of_two_beta(Map& amap, Dart_handle adart, 
@@ -731,7 +734,8 @@ namespace CGAL {
       mexist_betaj(false),
       mprev_betaj(false),
       mfirst_border(true)
-    { if (adart!=NULL) mexist_betaj=!adart->is_free(1+delta); }
+    { if (adart!=NULL)
+        mexist_betaj=!this->mmap->is_free(adart, 1+delta); }
 
     /// Prefix ++ operator.
     Self& operator++()
@@ -741,7 +745,7 @@ namespace CGAL {
       {
         mprev_betaj = true;
         mfirst_border = ! mfirst_border;
-        this->set_current_dart((*this)->beta(1+delta));
+        this->set_current_dart(this->mmap->beta(*this, 1+delta));
         this->mprev_op = OP_BETAJ;
       }
       else
@@ -754,7 +758,7 @@ namespace CGAL {
         else
         {          
           if ( !mfirst_border ) 
-            this->set_current_dart(mit->beta(1+delta));
+            this->set_current_dart(this->mmap->beta(mit, 1+delta));
           else
             this->set_current_dart(mit);
         }
@@ -844,47 +848,47 @@ namespace CGAL {
       {
         if (mnext_try_betai)
         {
-          if ((*this)->is_free(Bi))
+          if (this->mmap->is_free(*this, Bi))
           {
             mfirst_dir = false;
-            if (this->mfirst_dart->is_free(Bi+1))
+            if (this->mmap->is_free(this->mfirst_dart, Bi+1))
             {
               this->mprev_op = OP_END;
               this->set_current_dart(NULL);
             }
             else
             {
-              this->set_current_dart(this->mfirst_dart->beta(Bi+1));
+              this->set_current_dart(this->mmap->beta(this->mfirst_dart, Bi+1));
               this->mprev_op = OP_JUMP;
             }
           }
           else
           {
-            this->set_current_dart((*this)->beta(Bi));
+            this->set_current_dart(this->mmap->beta(*this, Bi));
             mnext_try_betai = false;
             this->mprev_op = OP_BETAI;
           }
         }
         else
         {
-          if ((*this)->is_free(Bi+1))
+          if (this->mmap->is_free(*this, Bi+1))
           {
             mfirst_dir = false;
-            if (this->mfirst_dart->is_free(Bi+1))
+            if (this->mmap->is_free(this->mfirst_dart, Bi+1))
             {
               this->mprev_op = OP_END;
               this->set_current_dart(NULL);
             }
             else
             {
-              this->set_current_dart(this->mfirst_dart->beta(Bi+1));
+              this->set_current_dart(this->mmap->beta(this->mfirst_dart, Bi+1));
               mnext_try_betai = true;
               this->mprev_op = OP_JUMP;
             }
           }
           else
           {
-            this->set_current_dart((*this)->beta(Bi+1));
+            this->set_current_dart(this->mmap->beta(*this, Bi+1));
             if ((*this)==this->mfirst_dart)
             {
               this->mprev_op = OP_END;
@@ -902,28 +906,28 @@ namespace CGAL {
       {
         if (mnext_try_betai)
         {
-          if ((*this)->is_free(Bi))
+          if (this->mmap->is_free(*this, Bi))
           {
             this->mprev_op = OP_END;
             this->set_current_dart(NULL);
           }
           else
           {
-            this->set_current_dart((*this)->beta(Bi));
+            this->set_current_dart(this->mmap->beta(*this, Bi));
             mnext_try_betai = false;
             this->mprev_op = OP_BETAI;
           }
         }
         else
         {
-          if ((*this)->is_free(Bi+1))
+          if (this->mmap->is_free(*this, Bi+1))
           {
             this->mprev_op = OP_END;
             this->set_current_dart(NULL);
           }
           else
           {
-            this->set_current_dart((*this)->beta(Bi+1));
+            this->set_current_dart(this->mmap->beta(*this, Bi+1));
             mnext_try_betai = true;
             this->mprev_op = OP_BETAJ;
           }
@@ -1202,15 +1206,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
       for ( unsigned int k=i+1; k<=d; ++k )
@@ -1219,15 +1223,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 
@@ -1315,15 +1319,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 
@@ -1332,7 +1336,7 @@ namespace CGAL {
         if (!mto_treat.empty())
         {
           nd = mto_treat.front();
-          CGAL_assertion(nd!=Map::null_dart_handle);
+          CGAL_assertion(nd!=this->mmap->null_dart_handle);
           mto_treat.pop();
           this->mprev_op = OP_POP;
         }
@@ -1411,29 +1415,29 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(0)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, 0, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETA0I;
           }
           else
           {
-            mto_treat.push((*this)->beta(0)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, 0, k));
           }
-          this->mmap->mark((*this)->beta(0)->beta(k), mmark_number);                      
+          this->mmap->mark(this->mmap->beta(*this, 0, k), mmark_number);
         }
         if ( this->is_unmarked2((*this), k, 1, mmark_number) )
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k)->beta(1); 
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k, 1);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI1;
           }
           else
           {
-            mto_treat.push((*this)->beta(k)->beta(1));
+            mto_treat.push(this->mmap->beta(*this, k, 1));
           }
-          this->mmap->mark((*this)->beta(k)->beta(1), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k, 1), mmark_number);
         }
         for ( unsigned int l=k+1; l<=d; ++l )
         {
@@ -1441,29 +1445,29 @@ namespace CGAL {
           {
             if (nd == NULL)
             {
-              nd = (*this)->beta(k)->beta(l); 
-              CGAL_assertion(nd!=Map::null_dart_handle);
+              nd = this->mmap->beta(*this, k, l);
+              CGAL_assertion(nd!=this->mmap->null_dart_handle);
               this->mprev_op = OP_BETAIJ;
             }
             else
             {
-              mto_treat.push((*this)->beta(k)->beta(l));
+              mto_treat.push(this->mmap->beta(*this, k, l));
             }
-            this->mmap->mark((*this)->beta(k)->beta(l), mmark_number);
+            this->mmap->mark(this->mmap->beta(*this, k, l), mmark_number);
           }
           if ( this->is_unmarked2((*this), l, k, mmark_number) )
           {
             if (nd == NULL)
             {
-              nd = (*this)->beta(l)->beta(k); 
-              CGAL_assertion(nd!=Map::null_dart_handle);
+              nd = this->mmap->beta(*this, l, k);
+              CGAL_assertion(nd!=this->mmap->null_dart_handle);
               this->mprev_op = OP_BETAJI;
             }
             else
             {
-              mto_treat.push((*this)->beta(l)->beta(k));
+              mto_treat.push(this->mmap->beta(*this, l, k));
             }
-            this->mmap->mark((*this)->beta(l)->beta(k), mmark_number);
+            this->mmap->mark(this->mmap->beta(*this, l, k), mmark_number);
           }
         }
       }
@@ -1473,7 +1477,7 @@ namespace CGAL {
         if (!mto_treat.empty())
         {
           nd = mto_treat.front();
-          CGAL_assertion(nd!=Map::null_dart_handle);
+          CGAL_assertion(nd!=this->mmap->null_dart_handle);
           mto_treat.pop();
           this->mprev_op = OP_POP;
         }
@@ -1708,12 +1712,12 @@ namespace CGAL {
 
       if (mfirst_dir)
       {
-        this->set_current_dart((*this)->beta(0)->beta(2));
-        if ((*this)==Map::null_dart_handle)
+        this->set_current_dart(this->mmap->beta(*this, 0, 2));
+        if ((*this)==this->mmap->null_dart_handle)
         {
           mfirst_dir = false;
-          this->set_current_dart(this->mfirst_dart->beta(2)->beta(1));
-          if ((*this)==Map::null_dart_handle)
+          this->set_current_dart(this->mmap->beta(this->mfirst_dart, 2, 1));
+          if ((*this)==this->mmap->null_dart_handle)
           {
             this->mprev_op = OP_END;
             this->set_current_dart(NULL);
@@ -1736,8 +1740,8 @@ namespace CGAL {
       }
       else
       {
-        this->set_current_dart((*this)->beta(2)->beta(1));
-        if ((*this) == Map::null_dart_handle)
+        this->set_current_dart(this->mmap->beta(*this, 2, 1));
+        if ((*this) == this->mmap->null_dart_handle)
         {
           this->mprev_op = OP_END;
           this->set_current_dart(NULL);
@@ -1931,15 +1935,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 
@@ -1950,15 +1954,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 
@@ -2053,15 +2057,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
       for ( int k=2; k<=d; ++k )
@@ -2071,15 +2075,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 
@@ -2170,15 +2174,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 
@@ -2296,15 +2300,15 @@ namespace CGAL {
         {
           if (nd == NULL)
           {
-            nd = (*this)->beta(k);
-            CGAL_assertion(nd!=Map::null_dart_handle);
+            nd = this->mmap->beta(*this, k);
+            CGAL_assertion(nd!=this->mmap->null_dart_handle);
             this->mprev_op = OP_BETAI;
           }
           else
           {
-            mto_treat.push((*this)->beta(k));
+            mto_treat.push(this->mmap->beta(*this, k));
           }
-          this->mmap->mark((*this)->beta(k), mmark_number);
+          this->mmap->mark(this->mmap->beta(*this, k), mmark_number);
         }
       }
 

@@ -73,7 +73,7 @@ namespace CGAL {
  * @return true iff the face containing adart is a polygon of length alg.
  */
 template < class Map >
-bool is_face_combinatorial_polygon(const Map& /*amap*/,
+bool is_face_combinatorial_polygon(const Map& amap,
                                    typename Map::Dart_const_handle adart,
                                    unsigned int alg)
 {
@@ -85,8 +85,8 @@ bool is_face_combinatorial_polygon(const Map& /*amap*/,
   do
   {
     ++nb;
-    if ( cur==Map::null_dart_handle ) return false; // Open face
-    cur = cur->beta(1);
+    if ( cur==amap.null_dart_handle ) return false; // Open face
+    cur = amap.beta(cur,1);
   }
   while( cur!=adart );
   return (nb==alg);
@@ -109,11 +109,11 @@ bool is_face_combinatorial_polygon(const Map& /*amap*/,
                                  typename Map::Dart_handle d4)
   {
     amap.basic_link_beta_for_involution(d1, d2, 2);
-    amap.basic_link_beta_for_involution(d3, d2->beta(0), 2);
-    amap.basic_link_beta_for_involution(d1->beta(1), d3->beta(0), 2);
-    amap.basic_link_beta_for_involution(d4, d2->beta(1), 2);
-    amap.basic_link_beta_for_involution(d4->beta(0), d3->beta(1), 2);
-    amap.basic_link_beta_for_involution(d4->beta(1), d1->beta(0), 2);
+    amap.basic_link_beta_for_involution(d3, amap.beta(d2, 0), 2);
+    amap.basic_link_beta_for_involution(amap.beta(d1, 1), amap.beta(d3, 0), 2);
+    amap.basic_link_beta_for_involution(d4, amap.beta(d2, 1), 2);
+    amap.basic_link_beta_for_involution(amap.beta(d4, 0), amap.beta(d3, 1), 2);
+    amap.basic_link_beta_for_involution(amap.beta(d4, 1), amap.beta(d1, 0), 2);
 
     return d1;
   }
@@ -129,12 +129,12 @@ bool is_volume_combinatorial_tetrahedron(const Map& amap,
 {
   CGAL_assertion(d1!=NULL);
 
-  typename Map::Dart_const_handle d2 = d1->beta(2);
-  typename Map::Dart_const_handle d3 = d2->beta(0)->beta(2);
-  typename Map::Dart_const_handle d4 = d2->beta(1)->beta(2);
+  typename Map::Dart_const_handle d2 = amap.beta(d1, 2);
+  typename Map::Dart_const_handle d3 = amap.beta(d2, 0, 2);
+  typename Map::Dart_const_handle d4 = amap.beta(d2, 1, 2);
 
-  if ( d1==Map::null_dart_handle || d2==Map::null_dart_handle ||
-       d3==Map::null_dart_handle || d4==Map::null_dart_handle ) return false;
+  if ( d1==amap.null_dart_handle || d2==amap.null_dart_handle ||
+       d3==amap.null_dart_handle || d4==amap.null_dart_handle ) return false;
 
   if ( !is_face_combinatorial_polygon(amap, d1, 3) ||
        !is_face_combinatorial_polygon(amap, d2, 3) ||
@@ -193,32 +193,32 @@ bool is_volume_combinatorial_tetrahedron(const Map& amap,
                                 typename Map::Dart_handle d6)
   {
     amap.basic_link_beta_for_involution(d1,
-                                        d4->beta(1)->beta(1), 2);
-    amap.basic_link_beta_for_involution(d1->beta(1),
-                                        d6->beta(0)         , 2);
-    amap.basic_link_beta_for_involution(d1->beta(1)->beta(1),
+                                        amap.beta(d4, 1, 1), 2);
+    amap.basic_link_beta_for_involution(amap.beta(d1, 1),
+                                        amap.beta(d6, 0)    , 2);
+    amap.basic_link_beta_for_involution(amap.beta(d1, 1, 1),
                                         d2                  , 2);
-    amap.basic_link_beta_for_involution(d1->beta(0),
+    amap.basic_link_beta_for_involution(amap.beta(d1, 0),
                                         d5                  , 2);
 
     amap.basic_link_beta_for_involution(d3,
-                                        d2->beta(1)->beta(1), 2);
-    amap.basic_link_beta_for_involution(d3->beta(1),
-                                        d6->beta(1)         , 2);
-    amap.basic_link_beta_for_involution(d3->beta(1)->beta(1),
+                                        amap.beta(d2, 1, 1), 2);
+    amap.basic_link_beta_for_involution(amap.beta(d3, 1),
+                                        amap.beta(d6, 1)         , 2);
+    amap.basic_link_beta_for_involution(amap.beta(d3, 1, 1),
                                         d4                  , 2);
-    amap.basic_link_beta_for_involution(d3->beta(0),
-                                        d5->beta(1)->beta(1), 2);
+    amap.basic_link_beta_for_involution(amap.beta(d3, 0),
+                                        amap.beta(d5, 1, 1), 2);
 
     amap.basic_link_beta_for_involution(d6,
-                                        d4->beta(1)         , 2);
-    amap.basic_link_beta_for_involution(d6->beta(1)->beta(1),
-                                        d2->beta(1)         , 2);
+                                        amap.beta(d4, 1)         , 2);
+    amap.basic_link_beta_for_involution(amap.beta(d6, 1, 1),
+                                        amap.beta(d2, 1)         , 2);
 
-    amap.basic_link_beta_for_involution(d5->beta(0),
-                                        d4->beta(0)         , 2);
-    amap.basic_link_beta_for_involution(d5->beta(1),
-                                        d2->beta(0)         , 2);
+    amap.basic_link_beta_for_involution(amap.beta(d5, 0),
+                                        amap.beta(d4, 0)         , 2);
+    amap.basic_link_beta_for_involution(amap.beta(d5, 1),
+                                        amap.beta(d2, 0)         , 2);
 
     return d1;
   }
@@ -234,15 +234,15 @@ bool is_volume_combinatorial_hexahedron(const Map& amap,
 {
   CGAL_assertion(d1!=NULL);
 
-  typename Map::Dart_const_handle d2 = d1->beta(1)->beta(1)->beta(2);
-  typename Map::Dart_const_handle d3 = d2->beta(1)->beta(1)->beta(2);
-  typename Map::Dart_const_handle d4 = d3->beta(1)->beta(1)->beta(2);
-  typename Map::Dart_const_handle d5 = d1->beta(0)->beta(2);
-  typename Map::Dart_const_handle d6 = d4->beta(1)->beta(2);
+  typename Map::Dart_const_handle d2 = amap.beta(d1, 1, 1, 2);
+  typename Map::Dart_const_handle d3 = amap.beta(d2, 1, 1, 2);
+  typename Map::Dart_const_handle d4 = amap.beta(d3, 1, 1, 2);
+  typename Map::Dart_const_handle d5 = amap.beta(d1, 0, 2);
+  typename Map::Dart_const_handle d6 = amap.beta(d4, 1, 2);
 
-  if ( d1==Map::null_dart_handle || d2==Map::null_dart_handle ||
-       d3==Map::null_dart_handle || d4==Map::null_dart_handle ||
-       d5==Map::null_dart_handle || d6==Map::null_dart_handle ) return false;
+  if ( d1==amap.null_dart_handle || d2==amap.null_dart_handle ||
+       d3==amap.null_dart_handle || d4==amap.null_dart_handle ||
+       d5==amap.null_dart_handle || d6==amap.null_dart_handle ) return false;
 
   if (!is_face_combinatorial_polygon(amap, d1, 4) ||
       !is_face_combinatorial_polygon(amap, d2, 4) ||

@@ -181,8 +181,8 @@ bool test_LCC_4()
   if ( !check_number_of_cells_4(lcc, 19, 29, 19, 4, 3, 3) )
     return false;
 
-  CGAL::remove_cell<LCC,1>(lcc, dh14->beta(2)->beta(1));
-  CGAL::remove_cell<LCC,1>(lcc, dh14->beta(0));
+  CGAL::remove_cell<LCC,1>(lcc, lcc.beta(dh14,2,1));
+  CGAL::remove_cell<LCC,1>(lcc, lcc.beta(dh14,0));
   CGAL::remove_cell<LCC,1>(lcc, dh14);
   if ( !check_number_of_cells_4(lcc, 18, 26, 17, 4, 3, 3) )
     return false;
@@ -269,13 +269,13 @@ bool test_LCC_4()
     return false;
   }
 
-  dh3 = dh1->beta(2);
+  dh3 = lcc.beta(dh1,2);
   dh5 = lcc.template beta<1, 2>(dh1);
 
   lcc.template unsew<2>(dh3);
   lcc.template unsew<2>(dh5);
   lcc.template sew<2>(dh1, dh5);
-  lcc.template sew<2>(dh1->beta(1), dh3);
+  lcc.template sew<2>(lcc.beta(dh1,1), dh3);
 
   if ( lcc.template is_sewable<4>(dh1, dh2) )
   {

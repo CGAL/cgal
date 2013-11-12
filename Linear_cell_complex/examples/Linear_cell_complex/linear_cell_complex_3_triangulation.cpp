@@ -73,7 +73,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
   for (LCC_3::Vertex_attribute_const_range::iterator
          v=lcc.vertex_attributes().begin(),
          vend=lcc.vertex_attributes().end(); v!=vend; ++v)
-    std::cout << v->point() << "; ";
+    std::cout << lcc.point_of_vertex_attribute(v) << "; ";
   std::cout<<std::endl;
  
   LCC_3::Vector normal = CGAL::compute_normal_of_cell_2(lcc,d1);
@@ -84,12 +84,13 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
   LCC_3::Dart_of_orbit_range<1>::iterator
     it(lcc.darts_of_orbit<1>(d1).begin());
 
-   CDT::Vertex_handle previous=NULL, first=NULL, vh=NULL;
+  CDT::Vertex_handle previous=LCC_3::null_handle, first=LCC_3::null_handle,
+    vh=LCC_3::null_handle;
 
    for (LCC_3::Dart_of_orbit_range<1>::iterator
           itend(lcc.darts_of_orbit<1>(d1).end()); it!=itend; ++it)
    {     
-     vh = cdt.insert(LCC_3::point(it));
+     vh = cdt.insert(lcc.point(it));
      vh->info()=it;
      if( first==NULL ){
        first=vh;
@@ -174,7 +175,7 @@ void constrained_delaunay_triangulation(LCC_3 &lcc, Dart_handle d1)
        
        Dart_handle ndart=
          CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());         
-       va->info()=ndart->beta(2);
+       va->info()=lcc.beta<2>(ndart);
 
        fh->info().exist_edge[index]=true;
        opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
@@ -193,7 +194,7 @@ Dart_handle make_facet(LCC_3& lcc,const std::vector<Point>& points)
   for (unsigned int i=0; i<points.size(); ++i)
   {
     lcc.set_vertex_attribute_of_dart(d, lcc.create_vertex_attribute(points[i]));
-    d=d->beta(1);
+    d=lcc.beta<1>(d);
   }
   return d;
 }
@@ -229,7 +230,7 @@ int main()
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid()<<std::endl;  
   
-  constrained_delaunay_triangulation(lcc,d1->beta(2));
+  constrained_delaunay_triangulation(lcc,lcc.beta<2>(d1));
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid()<<std::endl;
   lcc.clear();

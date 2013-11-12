@@ -163,20 +163,19 @@ typedef CGAL::Linear_cell_complex<4,4, Traits4_a, Map_dart_max_items_4> Map9;
 struct Converter_map9_points_into_map5_points
 {
   Map5::Attribute_handle<0>::type operator()
-  (const Map9&, Map5& map2, Map9::Dart_const_handle dh1,
+  (const Map9& map1, Map5& map2, Map9::Dart_const_handle dh1,
    Map5::Dart_handle dh2) const
   {
-    CGAL_assertion( dh1->attribute<0>()!=NULL );
+    CGAL_assertion( map1.attribute<0>(dh1)!=NULL );
 
-    Map5::Attribute_handle<0>::type
-      res = dh2->attribute<0>();
+    Map5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
     if ( res==NULL )
     {
       res = map2.create_attribute<0>();
     }
 
-    const Map9::Point & p = dh1->attribute<0>()->point();
-    res->point() = Map5::Point(p[0],p[1],p[2]);
+    const Map9::Point & p = map1.point(dh1);
+    map2.point_of_vertex_attribute(res) = Map5::Point(p[0],p[1],p[2]);
     return res;
   }
 };
@@ -194,18 +193,21 @@ typename Map::Dart_handle getRandomDart(Map& map)
 }
 */
 
-template<typename Attr, typename Info=typename Attr::Info>
+template<typename Map, int i, typename Info=
+         typename Map::template Attribute_type<i>::type::Info>
 struct SetInfoIfNonVoid
 {
-  static void run(Attr&attr, int nb)
+  static void run(Map& map, typename Map::template Attribute_handle<i>::type attr,
+                  int nb)
   {
-    attr.info()=nb;
+    map.template info_of_attribute<i>(attr)=nb;
   }
 };
-template<typename Attr>
-struct SetInfoIfNonVoid<Attr, void>
+template<typename Map, int i>
+struct SetInfoIfNonVoid<Map, i, void>
 {
-  static void run(Attr&, int)
+  static void run(Map&, typename Map::template Attribute_handle<i>::type,
+                  int)
   {}
 };
 
@@ -219,11 +221,10 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( it->template attribute<i>()==NULL )
+      if ( map.template attribute<i>(it)==NULL )
       {
-        map.template set_attribute<i>
-            (it, map.template create_attribute<i>());
-        SetInfoIfNonVoid<Attr>::run(*(it->template attribute<i>()), ++nb);
+        map.template set_attribute<i>(it, map.template create_attribute<i>());
+        SetInfoIfNonVoid<Map, i>::run(map, map.template attribute<i>(it), ++nb);
       }
     }
   }
@@ -237,9 +238,8 @@ struct CreateAttributes<Map, 0, Attr>
     int nb=0;
     for ( typename Map::template Attribute_range<0>::type::iterator
           it=amap.template attributes<0>().begin(),
-          itend=amap.template attributes<0>().end();
-          it!=itend; ++it )
-      SetInfoIfNonVoid<Attr>::run(*it, ++nb);
+          itend=amap.template attributes<0>().end(); it!=itend; ++it )
+      SetInfoIfNonVoid<Map, 0>::run(amap, it, ++nb);
   }
 };
 
@@ -397,6 +397,7 @@ void create2Dmap(Map& map)
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
+  CGAL_assertion ( map.is_valid() );
 }
 template<typename Map>
 void create3Dmap(Map& map)
@@ -408,7 +409,7 @@ void create3Dmap(Map& map)
   for ( int i=0; i<20; ++i )
   {
     typename Map::Dart_handle d1=map.darts().begin();
-    while ( !d1->template is_free<3>() ) ++d1;
+    while ( !map.template is_free<3>(d1) ) ++d1;
     typename Map::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
@@ -417,6 +418,7 @@ void create3Dmap(Map& map)
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
+  CGAL_assertion ( map.is_valid() );
 }
 
 template<typename LCC>
@@ -440,7 +442,7 @@ void create4Dmap(Map& map)
   for ( int i=0; i<40; ++i )
   {
     typename Map::Dart_handle d1=map.darts().begin();
-    while ( !d1->template is_free<3>() ) ++d1;
+    while ( !map.template is_free<3>(d1) ) ++d1;
     typename Map::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
@@ -449,7 +451,7 @@ void create4Dmap(Map& map)
   for ( int i=0; i<20; ++i )
   {
     typename Map::Dart_handle d1=map.darts().begin();
-    while ( !d1->template is_free<4>() ) ++d1;
+    while ( !map.template is_free<4>(d1) ) ++d1;
     typename Map::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
@@ -459,6 +461,7 @@ void create4Dmap(Map& map)
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
   CreateAttributes<Map,4>::run(map);
+  CGAL_assertion ( map.is_valid() );
 }
 
 bool testCopy()

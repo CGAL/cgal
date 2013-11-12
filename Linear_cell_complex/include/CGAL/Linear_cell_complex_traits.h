@@ -83,7 +83,12 @@ namespace CGAL {
       Point operator() (const Point&p1, const Point& p2)
       { return typename Kernel::Midpoint_d()(p1, p2); }
     };
+    static const Vector NULL_VECTOR;
   };
+  template <unsigned int d_, class Kernel>
+  const typename Linear_cell_complex_traits<d_,Kernel>::Vector
+  Linear_cell_complex_traits<d_,Kernel>::NULL_VECTOR =
+    typename Linear_cell_complex_traits<d_,Kernel>::Vector(d_, CGAL::NULL_VECTOR);
 
   /** Trait class for Linear_cell_complex class.
    *  2D version specialization.
@@ -111,7 +116,12 @@ namespace CGAL {
 
     typedef typename Kernel::Construct_midpoint_2
     Construct_midpoint;
+    static const Vector NULL_VECTOR;
   };
+  template <class Kernel>
+  typename Linear_cell_complex_traits<2,Kernel>::Vector
+  const Linear_cell_complex_traits<2,Kernel>::NULL_VECTOR =
+  typename Linear_cell_complex_traits<2,Kernel>::Vector(CGAL::NULL_VECTOR);
 
   /** Trait class for Linear_cell_complex class.
    *  3D version specialization.
@@ -139,7 +149,12 @@ namespace CGAL {
     
     typedef typename Kernel::Construct_midpoint_3
     Construct_midpoint;
+    static const Vector NULL_VECTOR;
   };
+  template <class Kernel>
+  const typename Linear_cell_complex_traits<3,Kernel>::Vector
+  Linear_cell_complex_traits<3,Kernel>::NULL_VECTOR =
+  typename Linear_cell_complex_traits<3,Kernel>::Vector(CGAL::NULL_VECTOR);
 
 } // namespace CGAL
 
