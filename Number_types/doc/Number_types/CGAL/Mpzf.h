@@ -9,7 +9,9 @@ number which can represent numbers of the form \f$ m*2^e\f$, where \f$
 m\f$ is an arbitrary precision integer based on the <span
 class="textsc">GMP</span> library, and \f$ e\f$ is of type `int`. This
 type can be considered exact, even if the exponent is not a
-multiple-precision number. This number type offers functionality very
+multiple-precision number. A `Mpzf` constructed from integer and a floating point
+number type represents exactly this number, the input is valid and finite.
+This number type offers functionality very
 similar to `MP_Float` and `Gmpzf` but is faster.
 
 \cgalModels `IntegralDomainWithoutDivision`
