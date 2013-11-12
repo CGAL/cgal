@@ -94,6 +94,8 @@ arbitrary-precision floating-point type. Hence, It does not support
 operators like <TT>/</TT> to guarantee exactness of the operations. The
 arithmetic operations on this type are restricted to <TT>+</TT>, <TT>-</TT>,
 <TT>*</TT> and `integral_division()`.
+On some platforms, the file `CGAL/Mpzf.h` provides the class `Mpzf`,
+a faster alternative to `Gmpzf` that doesn't support `integral_division()`.
 
 The file <TT>CGAL/Gmpfr.h</TT> provides the class `Gmpfr`,
 a fixed-precision floating-point number type. Since the precision
