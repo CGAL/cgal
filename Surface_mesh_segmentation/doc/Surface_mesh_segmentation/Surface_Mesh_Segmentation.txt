@@ -48,8 +48,8 @@ the raw SDF value is computed by first applying an outlier removal procedure and
 The raw SDF values are computed through function `sdf_values()`, setting `postprocess` to `false`.
 
 \note This package also accepts input meshes with holes. In such a case, rays that can not be truncated to segments,
-or rays that form an obtuse angle with the inward-normal of the first intersected facet are not accepted.
-Only facets having no accepted rays get no raw SDF values
+or rays that form an obtuse angle with the inward-normal of the first intersected facet are ignored.
+Only facets having no ray get no raw SDF values
 
 \subsubsection Surface_mesh_segmentationPostprocessing Post-processing of Raw SDF Values
 After having calculated the raw SDF value for each facet, the SDF values used in the segmentation algorithm are
@@ -61,7 +61,7 @@ The main reason for not assigning 0 to facets with no SDF values is that it can 
 
 - A bilateral smoothing \cgalCite{Tomasi1998Bilateral} is applied.
   This smoothing technique removes the noise while trying to keep fast changes on SDF values unchanged since they are natural candidates for segment boundaries.
-  The bilateral smoothing has three parameters that are set as follows:
+  The bilateral smoothing \cgalCite{Tomasi1998Bilateral} has three parameters that are set as follows:
   -\f$ w = \lfloor\sqrt{  |F| / 2000}\rfloor + 1 \f$, the window size (i.e. maximum level for breadth-first neighbor selection), where \f$ F \f$ denotes the set of facets
   -\f$ \sigma_s = w / 2 \f$, the spatial parameter
   -\f$ \sigma_{r_i} = \sqrt{1/|w_i| \sum_{f_j \in w_i}(SDF(f_j) - SDF(f_i))^2} \f$, the range parameter set for each facet \f$ f_i \f$; \f$ w_i \f$ denotes the set of neighboring facets of \f$ f_i \f$ collected using \f$ w \f$ in the facet neighbor breadth-first search
@@ -78,7 +78,7 @@ Given a number \f$ k \f$  of clusters, the soft clustering is a Gaussian mixture
 Gaussian distributions to the distribution of the SDF values of the facets. It is initialized with k-means++ \cgalCite{Arthur2007Kmeans}, and run multiple times with random seeds.
 Among these runs, the best result is used for initializing the expectation-maximization algorithm for fitting the Gaussian distributions.
 
-Note that there is no direct relationship between the number of clusters (parameter for soft clustering) and the  final number of segments.
+\note There is no direct relationship between the number of clusters (parameter for soft clustering) and the  final number of segments.
 Intuitively, the number of clusters represents the number of levels of a segmentation by clustering facets that have close SDF values
 without considering their connectivity.  However, a large number of clusters is likely to result in detailed segmentation of the mesh
 with a large number of segments, see \cgalFigureRef{Segmentation_levels}.
@@ -171,8 +171,8 @@ the following properties:
 - Intersection-free;
 - Boundary free.
 
-Note that the current implementation executes fine on meshes that do not match
-some of these properties, but may produce unreliable or meaningless segmentations.
+\note The current implementation executes fine on meshes that do not match
+some of these properties but may produce unreliable or meaningless segmentations.
 
 The current implementation of the computation of the SDF values relies on the \ref PkgAABB_treeSummary package.
 This operation is reliable when the `AABBTraits` model provided has exact predicates.
