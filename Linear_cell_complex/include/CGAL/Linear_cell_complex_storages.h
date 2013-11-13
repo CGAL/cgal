@@ -58,6 +58,9 @@ namespace CGAL {
     typedef typename Dart_container::const_iterator Dart_const_handle;
     typedef typename Dart_container::size_type      size_type;
 
+    typedef CGAL::Void* Null_handle_type;
+    static Null_handle_type null_handle;
+
     typedef Items_ Items;
     typedef Alloc_ Alloc;
 
@@ -410,17 +413,31 @@ namespace CGAL {
     typename Helper::Attribute_containers mattribute_containers;
   };
 
+  /// null_handle
+  template <unsigned int d_, unsigned int ambient_dim,
+           class Traits_, class Items_, class Alloc_ >
+  typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::Null_handle_type
+  Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                Items_, Alloc_>::null_handle = NULL;
+
 #ifdef CGAL_CMAP_DEPRECATED
   /// Allocation of static data members
   /// mnull_dart_container
-  template<unsigned int d_, class Items_, class Alloc_ >
-  typename Linear_cell_complex_storage_1<d_, Items_, Alloc_>::Dart_container
-  Linear_cell_complex_storage_1<d_, Items_, Alloc_>::mnull_dart_container;
+  template <unsigned int d_, unsigned int ambient_dim,
+           class Traits_, class Items_, class Alloc_ >
+  typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::Dart_container
+  Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::mnull_dart_container;
 
   /// null_dart_handle
-  template < unsigned int d_, class Items_, class Alloc_ >
-  typename Linear_cell_complex_storage_1<d_, Items_, Alloc_>::Dart_handle
-  Linear_cell_complex_storage_1<d_, Items_, Alloc_>::null_dart_handle;
+  template <unsigned int d_, unsigned int ambient_dim,
+           class Traits_, class Items_, class Alloc_ >
+  typename Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::Dart_handle
+  Linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+                                         Items_, Alloc_>::null_dart_handle;
   // =  mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
   // Does not work on windows => segfault
   // Thus we initialize null_dart_handle in the Combinatorial_map constructor

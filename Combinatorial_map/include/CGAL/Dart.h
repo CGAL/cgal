@@ -263,17 +263,6 @@ namespace CGAL {
         (mattribute_handles);
     }
 
-    /// Set the handle on the i th attribute
-    template<int i>
-    void set_attribute( typename Attribute_handle<i>::type ahandle )
-    {
-      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
-                     "set_attribute<i> called but i-attributes are disabled.");
-      CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
-        (mattribute_handles) = ahandle;
-      if (ahandle!=NULL) ahandle->inc_nb_refs();
-    }
-
     /** Return the mark value of a given mark number.
      * @param amark the mark number.
      * @return the value for this number.

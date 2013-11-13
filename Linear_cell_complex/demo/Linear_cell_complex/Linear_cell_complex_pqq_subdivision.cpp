@@ -37,7 +37,6 @@ public:
   Vertex operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
-    CGAL_assertion (d != NULL);
 
     // Old points aren't concerned.
     if (mlcc.is_marked(d, old))
@@ -119,7 +118,6 @@ public:
   Vertex operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
-    CGAL_assertion (d != NULL);
 
     // Just old points are concerned.
     if (!mlcc.is_marked(d, old))

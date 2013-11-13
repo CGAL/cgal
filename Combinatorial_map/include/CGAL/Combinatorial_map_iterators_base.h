@@ -206,7 +206,7 @@ namespace CGAL {
       mmark_number(amark),
       minitial_dart(adart)
     {
-      if ( minitial_dart!=NULL )
+      if ( minitial_dart!=amap.null_handle )
       {
         this->mmap->mark_null_dart(mmark_number);
         this->mmap->mark(minitial_dart, mmark_number);
@@ -320,7 +320,7 @@ namespace CGAL {
     CMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
       Base(amap, adart, amark)
     {
-      if ( this->minitial_dart!=NULL &&
+      if ( this->minitial_dart!=amap.null_handle &&
            !this->mmap->is_free(this->minitial_dart, Bi) &&
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
       {
@@ -492,9 +492,9 @@ namespace CGAL {
       mmap(amap), mdart(adart), msize(0)
     {}
     iterator begin()             { return iterator(mmap,mdart); }
-    iterator end()               { return iterator(mmap,NULL); }
+    iterator end()               { return iterator(mmap,mmap.null_handle); }
     const_iterator begin() const { return const_iterator(mmap,mdart); }
-    const_iterator end() const   { return const_iterator(mmap,NULL); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
     typename Map_::size_type size()
     {
       if (msize==0)
@@ -520,9 +520,9 @@ namespace CGAL {
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     iterator begin()             { return iterator(mmap,mdart,mmark); }
-    iterator end()               { return iterator(mmap,NULL,mmark); }
+    iterator end()               { return iterator(mmap,mmap.null_handle,mmark); }
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
-    const_iterator end() const   { return const_iterator(mmap,NULL,mmark); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
     typename Map_::size_type size()
     {
       if (msize==0)
@@ -549,7 +549,7 @@ namespace CGAL {
       mmap(amap), mdart(adart), msize(0)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart); }
-    const_iterator end() const   { return const_iterator(mmap,NULL); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
     typename Map_::size_type size()
     {
       if (msize==0)
@@ -574,7 +574,7 @@ namespace CGAL {
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
-    const_iterator end() const   { return const_iterator(mmap,NULL,mmark); }
+    const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
     typename Map_::size_type size()
     {
       if (msize==0)

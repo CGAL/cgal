@@ -167,7 +167,7 @@ void MainWindow::clear_all()
 
 void MainWindow::on_new_volume(Dart_handle adart)
 {
-  CGAL_assertion( scene.lcc->attribute<3>(adart)==NULL);
+  CGAL_assertion( scene.lcc->attribute<3>(adart)==LCC::null_handle);
   CGAL::Set_i_attribute_functor<LCC, 3>::
       run(scene.lcc, adart, scene.lcc->create_attribute<3>());
   update_volume_list_add(scene.lcc->attribute<3>(adart));
@@ -178,7 +178,7 @@ void MainWindow::init_all_new_volumes()
   for (LCC::One_dart_per_cell_range<3>::iterator
        it(scene.lcc->one_dart_per_cell<3>().begin());
        it.cont(); ++it)
-    if ( scene.lcc->attribute<3>(it)==NULL )
+    if ( scene.lcc->attribute<3>(it)==LCC::null_handle )
     { on_new_volume(it); }
 }
 
@@ -751,7 +751,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
   timer.start();
 #endif
 
-  Dart_handle prev = NULL;
+  Dart_handle prev = scene.lcc->null_handle;
   for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
        itend=scene.lcc->darts().end(); it!=itend; )
   {
@@ -762,7 +762,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
     {
       CGAL::remove_cell<LCC,2>(*scene.lcc,it);
       itend=scene.lcc->darts().end();
-      if ( prev==NULL ) it=scene.lcc->darts().begin();
+      if ( prev==scene.lcc->null_handle ) it=scene.lcc->darts().begin();
       else { it=prev; if ( it!=itend ) ++it; }
     }
     else

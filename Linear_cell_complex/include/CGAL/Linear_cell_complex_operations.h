@@ -56,7 +56,7 @@ namespace CGAL {
       start = amap.template beta<0>(start);
 
     if ( amap.template is_free<1>(start) ||
-         amap.other_extremity(amap.template beta<1>(start))==NULL )
+         amap.other_extremity(amap.template beta<1>(start))==LCC::null_handle )
       return normal;
 
     unsigned int nb = 0;
@@ -64,7 +64,7 @@ namespace CGAL {
   
     const Point* prev = &amap.point(start);
     const Point* curr = &amap.point(adart);
-    for ( ; adart!=start && amap.other_extremity(adart)!=NULL;
+    for ( ; adart!=start && amap.other_extremity(adart)!=LCC::null_handle;
           adart=amap.template beta<1>(adart) )
     {
       const Point* next = &amap.point( amap.other_extremity(adart));

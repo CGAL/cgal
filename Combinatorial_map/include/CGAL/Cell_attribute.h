@@ -110,10 +110,10 @@ namespace CGAL {
     }
 
     /// Get the dart associated with the cell.
-    Dart_handle dart() { return NULL; }
+    Dart_handle dart() { return Refs::null_handle; }
 
     /// Get the dart associated with the cell.
-    Dart_const_handle dart() const { return NULL; }
+    Dart_const_handle dart() const { return Refs::null_handle; }
 
     /// Set the dart associated with the cell.
     void set_dart(Dart_handle) {}
@@ -234,7 +234,7 @@ namespace CGAL {
     /// Test if the cell is valid.
     /// A cell is valid if its dart is not NULL.
     bool is_valid() const
-    { return mdart!=NULL; }
+    { return mdart!=Refs::null_handle; }
 
     bool operator==(const Cell_attribute_without_info&) const
     { return true; }
@@ -244,7 +244,7 @@ namespace CGAL {
 
     //  protected:
     /// Contructor without parameter.
-    Cell_attribute_without_info() : mdart(NULL),
+    Cell_attribute_without_info() : mdart(Refs::null_handle),
                                     mrefcounting(0)
     {}
 

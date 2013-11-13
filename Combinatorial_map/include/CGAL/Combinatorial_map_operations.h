@@ -95,7 +95,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
       int mark_modified_darts = amap.get_new_mark();
@@ -109,14 +109,14 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !amap.template is_free<i+1>(it) && dg1==NULL )
+        if ( !amap.template is_free<i+1>(it) && dg1==amap.null_handle )
         { dg1=it; dg2=amap.template beta<i+1>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two (i+1)-cells incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
         CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
             run(&amap, dg1, dg2);
 
@@ -334,7 +334,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
 //      int mark_modified_darts = amap.get_new_mark();
@@ -345,14 +345,14 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !amap.template is_free<0>(it) && dg1==NULL )
+        if ( !amap.template is_free<0>(it) && dg1==amap.null_handle )
         { dg1=it; dg2=amap.template beta<0>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two edges incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
         CGAL::internal::Group_attribute_functor_run<CMap, 1>::
             run(&amap, dg1, dg2);
 
@@ -507,7 +507,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
       int mark_modified_darts = amap.get_new_mark();
@@ -520,14 +520,14 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !amap.template is_free<i-1>(it) && dg1==NULL )
+        if ( !amap.template is_free<i-1>(it) && dg1==amap.null_handle )
         { dg1=it; dg2=amap.template beta<i-1>(it); }
         amap.mark(it, mark);
         ++res;
       }
 
       // We group the two (i+1)-cells incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
          CGAL::internal::Group_attribute_functor_run<CMap,i-1>::
              run(&amap, dg1, dg2);
 
@@ -656,7 +656,7 @@ namespace CGAL
       size_t res = 0;
 
       typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=NULL, dg2=NULL;
+      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
       int mark = amap.get_new_mark();
 //      int mark_modified_darts = amap.get_new_mark();
@@ -667,7 +667,7 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( dg1==NULL && !amap.template is_free<0>(it) &&
+        if ( dg1==amap.null_handle && !amap.template is_free<0>(it) &&
              !amap.template is_free<1>(it) )
         { dg1=amap.template beta<0>(it); dg2=amap.template beta<1>(it); }
         amap.mark(it, mark);
@@ -675,7 +675,7 @@ namespace CGAL
       }
 
       // We group the two vertices incident if they exist.
-      if ( dg1!=NULL )
+      if ( dg1!=amap.null_handle )
         CGAL::internal::Group_attribute_functor_run<CMap, 0, 1>::
             run(&amap, dg1, dg2);
 

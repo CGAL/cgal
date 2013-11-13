@@ -35,7 +35,7 @@ template<class CMap>
 typename CMap::Dart_handle
 insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
                          typename CMap::template
-                         Attribute_handle<0>::type ah=NULL )
+                         Attribute_handle<0>::type ah=CMap::null_handle )
 {
   typename CMap::Dart_handle d1, d2;
   int mark=amap.get_new_mark();
@@ -112,14 +112,14 @@ template < class CMap >
 typename CMap::Dart_handle
 insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
                          typename CMap::template
-                         Attribute_handle<0>::type ah=NULL )
+                         Attribute_handle<0>::type ah=CMap::null_handle )
 {
-  CGAL_assertion(adart != NULL && adart!=amap.null_dart_handle);
+  CGAL_assertion(adart!=amap.null_dart_handle);
 
-  typename CMap::Dart_handle first=adart, prev=NULL, cur=NULL;
-  typename CMap::Dart_handle next=NULL, n1=NULL, n2=NULL;
-
-  typename CMap::Dart_handle nn1 = NULL, nn2 = NULL;
+  typename CMap::Dart_handle first=adart, prev=amap.null_handle,
+    cur=amap.null_handle, next=amap.null_handle,
+    n1=amap.null_handle, n2=amap.null_handle,
+    nn1=amap.null_handle, nn2=amap.null_handle;
 
   // If the facet is open, we search the dart 0-free
   while ( !amap.template is_free<0>(first) &&
@@ -145,21 +145,21 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
       n1=amap.create_dart();
       amap.link_beta_0(cur, n1);
     }
-    else n1 = NULL;
+    else n1 = amap.null_handle;
 
     if (!amap.template is_free<1>(cur))
     {
       n2 = amap.create_dart();
       amap.link_beta_1(cur, n2);
     }
-    else n2 = NULL;
+    else n2 = amap.null_handle;
 
-    if ( n1!=NULL )
+    if ( n1!=amap.null_handle )
     {
-      if ( n2!=NULL )
+      if ( n2!=amap.null_handle )
         amap.basic_link_beta_0(n1, n2);
 
-      if ( prev!=NULL )
+      if ( prev!=amap.null_handle )
         amap.template basic_link_beta_for_involution<2>(prev, n1);
 
       CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
@@ -172,15 +172,15 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
       {
         if ( !amap.is_marked(amap.beta(cur, dim), treated) )
         {
-          if (n1!=NULL)
+          if (n1!=amap.null_handle)
           {
             nn1=amap.create_dart();
             amap.link_beta_1(amap.beta(cur, dim), nn1);
             amap.basic_link_beta_for_involution(n1, nn1, dim);
           }
-          else nn1=NULL;
+          else nn1=amap.null_handle;
 
-          if (n2!=NULL)
+          if (n2!=amap.null_handle)
           {
             nn2=amap.create_dart();
             amap.link_beta_0(amap.beta(cur, dim), nn2);
@@ -188,12 +188,12 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
             CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
                 run(&amap, nn2, ah);
           }
-          else nn2=NULL;
+          else nn2=amap.null_handle;
 
-          if (nn1 != NULL && nn2 != NULL)
+          if (nn1 != amap.null_handle && nn2 != amap.null_handle)
             amap.basic_link_beta_1(nn1, nn2);
 
-          if (nn1 != NULL && prev != NULL)
+          if (nn1 != amap.null_handle && prev != amap.null_handle)
             amap.template basic_link_beta_for_involution<2>
               (nn1, amap.beta(prev, dim));
 
@@ -201,10 +201,10 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
         }
         else
         {
-          if ( n1!=NULL )
+          if ( n1!=amap.null_handle )
             amap.basic_link_beta_for_involution(n1,
                                                 amap.beta(cur, dim, 1), dim);
-          if ( n2!=NULL )
+          if ( n2!=amap.null_handle )
             amap.basic_link_beta_for_involution(n2,
                                                 amap.beta(cur, dim, 0), dim);
         }
@@ -216,7 +216,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
   }
   while(cur!=first && cur!=amap.null_dart_handle);
 
-  if (n2 != NULL)
+  if (n2 != amap.null_handle)
   {
     amap.template basic_link_beta_for_involution<2>
         (amap.template beta<0>(first), n2);
@@ -265,7 +265,7 @@ typename CMap::Dart_handle
 insert_dangling_cell_1_in_cell_2( CMap& amap,
                                   typename CMap::Dart_handle adart1,
                                   typename CMap::template
-                                  Attribute_handle<0>::type ah=NULL )
+                                  Attribute_handle<0>::type ah=CMap::null_handle )
 {
   int mark1 = amap.get_new_mark();
   std::deque<typename CMap::Dart_handle> to_unmark;
@@ -278,8 +278,8 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
     }
   }
 
-  typename CMap::Dart_handle d1 = NULL;
-  typename CMap::Dart_handle d2 = NULL;
+  typename CMap::Dart_handle d1 = amap.null_handle;
+  typename CMap::Dart_handle d2 = amap.null_handle;
   unsigned int s1 = 0;
 
   int treated=amap.get_new_mark();
@@ -386,7 +386,7 @@ insert_cell_1_in_cell_2(CMap& amap,
                         typename CMap::Dart_handle adart1,
                         typename CMap::Dart_handle adart2)
 {
-  if ( adart2==NULL ) return insert_dangling_cell_1_in_cell_2(amap,adart1);
+  if ( adart2==amap.null_handle ) return insert_dangling_cell_1_in_cell_2(amap,adart1);
 
   CGAL_assertion(is_insertable_cell_1_in_cell_2<CMap>(amap, adart1, adart2));
 
@@ -407,8 +407,8 @@ insert_cell_1_in_cell_2(CMap& amap,
     }
   }
 
-  typename CMap::Dart_handle d1=NULL;
-  typename CMap::Dart_handle d2=NULL;
+  typename CMap::Dart_handle d1=amap.null_handle;
+  typename CMap::Dart_handle d2=amap.null_handle;
   unsigned int s1=0;
 
   int treated=amap.get_new_mark();
@@ -511,20 +511,20 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
 
   // The path must have at least one dart.
   if (afirst==alast) return false;
-  typename CMap::Dart_const_handle prec = NULL;
-  typename CMap::Dart_const_handle od = NULL;
+  typename CMap::Dart_const_handle prec = amap.null_handle;
+  typename CMap::Dart_const_handle od = amap.null_handle;
 
   for (InputIterator it(afirst); it!=alast; ++it)
   {
     // The path must contain only non empty darts.
-    if (*it == NULL || *it==amap.null_dart_handle) return false;
+    if (*it == amap.null_handle || *it==amap.null_dart_handle) return false;
 
     // Two consecutive darts of the path must belong to two edges
     // incident to the same vertex of the same volume.
-    if (prec != NULL)
+    if (prec != amap.null_handle)
     {
       od = amap.other_extremity(prec);
-      if ( od==NULL ) return false;
+      if ( od==amap.null_handle ) return false;
 
       // of and *it must belong to the same vertex of the same volume
       if ( !CGAL::belong_to_same_cell<CMap, 0, 2>(amap, od, *it) )
@@ -535,7 +535,7 @@ bool is_insertable_cell_2_in_cell_3(const CMap& amap,
 
   // The path must be closed.
   od = amap.other_extremity(prec);
-  if ( od==NULL ) return false;
+  if ( od==amap.null_handle ) return false;
 
   if (!CGAL::belong_to_same_cell<CMap, 0, 2>(amap, od, *afirst))
     return false;
@@ -555,7 +555,8 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
 {
   CGAL_assertion(is_insertable_cell_2_in_cell_3(amap,afirst,alast));
 
-  typename CMap::Dart_handle prec = NULL, d = NULL, dd = NULL, first = NULL;
+  typename CMap::Dart_handle prec = amap.null_handle, d = amap.null_handle,
+    dd = amap.null_handle, first = amap.null_handle;
   bool withBeta3 = false;
 
   {
@@ -572,7 +573,7 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
       if ( withBeta3 )
         dd = amap.create_dart();
 
-      if (prec != NULL)
+      if (prec != amap.null_handle)
       {
         amap.basic_link_beta_0(prec, d);
         if (withBeta3)
@@ -604,8 +605,8 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
   {
     if ( !amap.is_free(first, dim) )
     {
-      typename CMap::Dart_handle first2 = NULL;
-      prec = NULL;
+      typename CMap::Dart_handle first2 = amap.null_handle;
+      prec = amap.null_handle;
       for ( CMap_dart_iterator_basic_of_orbit<CMap, 1> it(amap, first);
             it.cont(); ++it )
       {
@@ -618,7 +619,7 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast)
             (amap.template beta<2,3>(it), dd, dim);
           amap.template basic_link_beta_for_involution<3>(d, dd);
         }
-        if ( prec!=NULL )
+        if ( prec!=amap.null_handle )
         {
           amap.link_beta_0(prec, d);
           if ( withBeta3 )

@@ -321,7 +321,7 @@ namespace CGAL {
       for (typename Dart_range::const_iterator it(this->darts().begin()),
              itend(this->darts().end()); valid && it != itend; ++it)
       {
-        if ( vertex_attribute(it) == NULL )
+        if ( vertex_attribute(it)==null_handle )
         {
           std::cerr << "Map not valid: dart "<<&(*it)
                     <<" does not have a vertex."<< std::endl;
@@ -344,7 +344,7 @@ namespace CGAL {
       bool samegeometry = true;
       for ( ; samegeometry && it1.cont() && it2.cont(); ++it1, ++it2)
       {
-        if ( this->other_extremity(it2)!=NULL &&
+        if ( this->other_extremity(it2)!=null_handle &&
              point(it1)!=point(this->other_extremity(it2)) )
           samegeometry = false;
       }
@@ -686,7 +686,7 @@ namespace CGAL {
 
       Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v);
 
-      if ( first== NULL ) // If the triangulated facet was made of one dart
+      if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
@@ -739,7 +739,7 @@ namespace CGAL {
      * simultaneously through all the darts of the two lcc and we have
      * each time of the iteration two "dual" darts.
      */
-    Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=NULL)
+    Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=null_handle)
     {
       Dart_handle res = Base::dual(alcc, adart);
 
@@ -750,7 +750,7 @@ namespace CGAL {
       for (typename Dart_range::iterator it(this->darts().begin());
            it!=this->darts().end(); ++it, ++it2)
       {
-        if (vertex_attribute(it2) == NULL)
+        if (vertex_attribute(it2)==null_handle)
         {
           alcc.set_vertex_attribute(it2, alcc.create_vertex_attribute
                                     (barycenter<dimension>(it)));

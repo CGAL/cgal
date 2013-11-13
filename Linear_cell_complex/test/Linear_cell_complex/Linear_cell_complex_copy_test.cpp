@@ -166,10 +166,10 @@ struct Converter_map9_points_into_map5_points
   (const Map9& map1, Map5& map2, Map9::Dart_const_handle dh1,
    Map5::Dart_handle dh2) const
   {
-    CGAL_assertion( map1.attribute<0>(dh1)!=NULL );
+    CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
 
     Map5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
-    if ( res==NULL )
+    if ( res==map2.null_handle )
     {
       res = map2.create_attribute<0>();
     }
@@ -221,7 +221,7 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( map.template attribute<i>(it)==NULL )
+      if ( map.template attribute<i>(it)==map.null_handle )
       {
         map.template set_attribute<i>(it, map.template create_attribute<i>());
         SetInfoIfNonVoid<Map, i>::run(map, map.template attribute<i>(it), ++nb);

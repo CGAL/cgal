@@ -78,7 +78,6 @@ bool is_face_combinatorial_polygon(const Map& amap,
                                    unsigned int alg)
 {
   CGAL_assertion(alg>0);
-  CGAL_assertion(adart!=NULL);
 
   unsigned int nb = 0;
   typename Map::Dart_const_handle cur = adart;
@@ -127,8 +126,6 @@ template < class Map >
 bool is_volume_combinatorial_tetrahedron(const Map& amap,
                                          typename Map::Dart_const_handle d1)
 {
-  CGAL_assertion(d1!=NULL);
-
   typename Map::Dart_const_handle d2 = amap.beta(d1, 2);
   typename Map::Dart_const_handle d3 = amap.beta(d2, 0, 2);
   typename Map::Dart_const_handle d4 = amap.beta(d2, 1, 2);
@@ -232,8 +229,6 @@ template < class Map >
 bool is_volume_combinatorial_hexahedron(const Map& amap,
                                         typename Map::Dart_const_handle d1)
 {
-  CGAL_assertion(d1!=NULL);
-
   typename Map::Dart_const_handle d2 = amap.beta(d1, 1, 1, 2);
   typename Map::Dart_const_handle d3 = amap.beta(d2, 1, 1, 2);
   typename Map::Dart_const_handle d4 = amap.beta(d3, 1, 1, 2);

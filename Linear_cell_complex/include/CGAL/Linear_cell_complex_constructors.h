@@ -63,7 +63,7 @@ namespace CGAL {
 
     std::string txt;
     typename LCC::FT x, y;
-    Dart_handle d1 = NULL, d2 = NULL;
+    Dart_handle d1 = alcc.null_handle, d2 = alcc.null_handle;
     unsigned int v1, v2;
   
     unsigned int nbSommets = 0;
@@ -76,7 +76,7 @@ namespace CGAL {
       {
         std::cout << "Problem: file does not contain enough vertices."
                   << std::endl;
-        return NULL;
+        return alcc.null_handle;
       }
 
       ais >> x >> y;
@@ -92,7 +92,7 @@ namespace CGAL {
       {
         std::cout << "Problem: file does not contain enough edges."
                   << std::endl;
-        return NULL;
+        return alcc.null_handle;
       }
 
       // We read an egde (given by the number of its two vertices).
@@ -115,8 +115,8 @@ namespace CGAL {
     List_iterator it;
     LCC_iterator  it2;
 
-    Dart_handle first = NULL;
-    Dart_handle prec = NULL;
+    Dart_handle first = alcc.null_handle;
+    Dart_handle prec = alcc.null_handle;
     typename LCC::Point sommet1, sommet2;
   
     for (unsigned int i = 0; i < initVertices.size(); ++i)
@@ -182,10 +182,10 @@ namespace CGAL {
     CGAL_static_assertion( LCC::dimension>=2 && LCC::ambient_dimension==2 );
     
     // Case of empty triangulations.
-    if (atr.number_of_vertices() == 0) return NULL;
+    if (atr.number_of_vertices() == 0) return LCC::null_handle;
 
     // Check the dimension.
-    if (atr.dimension() != 2) return NULL;
+    if (atr.dimension() != 2) return LCC::null_handle;
     CGAL_assertion(atr.is_valid());
 
     typedef typename Triangulation::Vertex_handle         TVertex_handle;
@@ -213,8 +213,8 @@ namespace CGAL {
     
     itmap_tcell maptcell_it;
 
-    typename LCC::Dart_handle res=NULL, dart=NULL;
-    typename LCC::Dart_handle cur=NULL, neighbor=NULL;
+    typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
+    typename LCC::Dart_handle cur=LCC::null_handle, neighbor=LCC::null_handle;
 
     for (it = atr.all_faces_begin(); it != atr.all_faces_end(); ++it)
     {
@@ -228,7 +228,7 @@ namespace CGAL {
                                  TV[it->vertex(1)],
                                  TV[it->vertex(2)]);
 
-        if ( dart==NULL )
+        if ( dart==LCC::null_handle )
         {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
@@ -265,7 +265,7 @@ namespace CGAL {
       }
     }
 
-    CGAL_assertion(dart!=NULL);
+    CGAL_assertion(dart!=LCC::null_handle);
     return dart;
   }
   
@@ -285,10 +285,10 @@ namespace CGAL {
     CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
     
     // Case of empty triangulations.
-    if (atr.number_of_vertices() == 0) return NULL;
+    if (atr.number_of_vertices() == 0) return LCC::null_handle;
 
     // Check the dimension.
-    if (atr.dimension() != 3) return NULL;
+    if (atr.dimension() != 3) return LCC::null_handle;
     CGAL_assertion(atr.is_valid());
 
     typedef typename Triangulation::Vertex_handle    TVertex_handle;
@@ -316,8 +316,8 @@ namespace CGAL {
     
     itmap_tcell maptcell_it;
 
-    typename LCC::Dart_handle res=NULL, dart=NULL;
-    typename LCC::Dart_handle cur=NULL, neighbor=NULL;
+    typename LCC::Dart_handle res=LCC::null_handle, dart=LCC::null_handle;
+    typename LCC::Dart_handle cur=LCC::null_handle, neighbor=LCC::null_handle;
 
     for (it = atr.cells_begin(); it != atr.cells_end(); ++it)
     {
@@ -332,7 +332,7 @@ namespace CGAL {
                                     TV[it->vertex(2)],
                                     TV[it->vertex(3)]);
 
-        if ( dart==NULL )
+        if ( dart==LCC::null_handle )
         {
           if ( it->vertex(0) == atr.infinite_vertex() )
             dart = res;
@@ -375,7 +375,7 @@ namespace CGAL {
         (*mytc)[it] = res;
       }
     }
-    CGAL_assertion(dart!=NULL);
+    CGAL_assertion(dart!=LCC::null_handle);
     return dart;
   }
 
@@ -401,20 +401,20 @@ namespace CGAL {
     Halfedge_handle_map TC;
 
     itmap_hds it;
-    typename LCC::Dart_handle d = NULL, prev = NULL;
-    typename LCC::Dart_handle firstFacet = NULL, firstAll = NULL;
+    typename LCC::Dart_handle d = LCC::null_handle, prev = LCC::null_handle;
+    typename LCC::Dart_handle firstFacet = LCC::null_handle, firstAll = LCC::null_handle;
 
     // First traversal to build the darts and link them.
     for (Facet_iterator i = apoly.facets_begin(); i != apoly.facets_end(); ++i)
     {
       HF_circulator j = i->facet_begin();
-      prev = NULL;
+      prev = LCC::null_handle;
       do
       {
         d = alcc.create_dart();
         TC[j] = d;
       
-        if (prev != NULL) alcc.template link_beta<1>(prev, d);
+        if (prev != LCC::null_handle) alcc.template link_beta<1>(prev, d);
         else firstFacet = d;
         it = TC.find(j->opposite());
         if (it != TC.end())
@@ -423,7 +423,7 @@ namespace CGAL {
       }
       while (++j != i->facet_begin());
       alcc.template link_beta<1>(prev, firstFacet);
-      if (firstAll == NULL) firstAll = firstFacet;
+      if (firstAll == LCC::null_handle) firstAll = firstFacet;
     }
 
     // Second traversal to update the geometry.
@@ -434,7 +434,7 @@ namespace CGAL {
       do
       {
         d = TC[j]; // Get the dart associated to the Halfedge
-        if (alcc.temp_vertex_attribute(d) == NULL)
+        if (alcc.temp_vertex_attribute(d) == LCC::null_handle)
         {
           alcc.set_vertex_attribute
             (d, alcc.create_vertex_attribute(j->opposite()->vertex()->point()));
@@ -537,7 +537,7 @@ namespace CGAL {
     if (!ais.good())
     {
       std::cout << "Error reading flux." << std::endl;
-      return NULL;
+      return LCC::null_handle;
     }
     CGAL::Polyhedron_3<typename LCC::Traits> P;
     ais >> P;

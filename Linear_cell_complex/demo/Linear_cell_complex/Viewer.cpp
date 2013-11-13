@@ -76,7 +76,7 @@ void Viewer::drawFacet(Dart_const_handle ADart)
 {
   LCC &m = *scene->lcc;
   ::glBegin(GL_POLYGON);
-  CGAL_assertion( m.attribute<3>(ADart)!=NULL );
+  CGAL_assertion( m.attribute<3>(ADart)!=LCC::null_handle );
 
   //  double r = (double)ADart->attribute<3>()->info().r()/255.0;
   double r = (double)m.info<3>(ADart).color().r()/255.0;
@@ -128,7 +128,7 @@ void Viewer::drawEdges(Dart_const_handle ADart)
   {
     LCC::Point p = m.point(it);
     Dart_const_handle d2 = m.other_extremity(it);
-    if ( d2!=NULL )
+    if ( d2!=LCC::null_handle )
     {
       LCC::Point p2 = m.point(d2);
       glVertex3f( p.x(),p.y(),p.z());
@@ -158,7 +158,7 @@ void Viewer::draw_one_vol(Dart_const_handle adart, bool filled)
     for (LCC::One_dart_per_incident_cell_range<1,3>::const_iterator
            it(m,adart); it.cont(); ++it)
     {
-      if ( m.other_extremity(it)!=NULL )
+      if ( m.other_extremity(it)!=LCC::null_handle )
       {
         LCC::Point p1 = m.point(it);
         LCC::Point p2 = m.point(m.other_extremity(it));

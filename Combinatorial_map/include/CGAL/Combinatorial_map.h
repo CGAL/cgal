@@ -96,7 +96,9 @@ namespace CGAL {
 
     static const size_type NB_MARKS = Base::NB_MARKS;
     static const unsigned int dimension = Base::dimension;
-    static const typename Base::Null_handle_type null_handle;
+
+    typedef typename Base::Null_handle_type Null_handle_type;
+    static Null_handle_type null_handle;
 
     using Base::null_dart_handle;
     using Base::mdarts;
@@ -2100,7 +2102,7 @@ namespace CGAL {
      */
     void topo_unsew_1(Dart_handle adart)
     {
-      CGAL_assertion( adart!=NULL && !adart->template is_free<1>() );
+      CGAL_assertion( !is_free<1>(adart) );
 
       int m = get_new_mark();
       std::deque<Dart_handle> dartv;
@@ -2133,7 +2135,7 @@ namespace CGAL {
      */
     void topo_unsew_0(Dart_handle adart)
     {
-      CGAL_assertion( adart!=NULL && !adart->template is_free<0>() );
+      CGAL_assertion( !is_free<0>(adart) );
       topo_unsew_1( adart->template beta<0>() );
     }
 
@@ -2147,7 +2149,7 @@ namespace CGAL {
     template<unsigned int i>
     void topo_unsew_for_involution(Dart_handle adart)
     {
-      CGAL_assertion( adart!=NULL && !adart->template is_free<i>() );
+      CGAL_assertion( !is_free<i>(adart) );
       CGAL_assertion( 2<=i && i<=Self::dimension );
 
       for ( CGAL::CMap_dart_iterator_of_involution<Self,i> it(*this, adart);
@@ -3209,9 +3211,9 @@ namespace CGAL {
       Dart_basic_range(Self &amap) : mmap(amap)
       {}
       iterator begin() { return iterator(mmap); }
-      iterator end()   { return iterator(mmap,NULL); }
+      iterator end()   { return iterator(mmap,mmap.null_handle); }
       const_iterator begin() const { return const_iterator(mmap); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
+      const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
       size_type size()
       { return mmap.number_of_darts(); }
       bool empty() const
@@ -3226,7 +3228,7 @@ namespace CGAL {
       Dart_basic_const_range(Self &amap) : mmap(amap)
       {}
       const_iterator begin() const { return const_iterator(mmap); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
+      const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
       size_type size() const
       { return mmap.number_of_darts(); }
       bool empty() const
@@ -3281,9 +3283,9 @@ namespace CGAL {
       One_dart_per_cell_range(Self &amap) : mmap(amap), msize(0)
       {}
       iterator begin() { return iterator(mmap); }
-      iterator end()   { return iterator(mmap,NULL); }
+      iterator end()   { return iterator(mmap,mmap.null_handle); }
       const_iterator begin() const { return const_iterator(mmap); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
+      const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
       size_type size()
       {
         if (msize==0)
@@ -3306,7 +3308,7 @@ namespace CGAL {
       One_dart_per_cell_const_range(const Self &amap) : mmap(amap), msize(0)
       {}
       const_iterator begin() const { return const_iterator(mmap); }
-      const_iterator end() const   { return const_iterator(mmap,NULL); }
+      const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
       size_type size()
       {
         if (msize==0)
@@ -3371,13 +3373,13 @@ namespace CGAL {
      * simultaneously through all the darts of the two maps and we have
      * each time of the iteration two "dual" darts.
      */
-    Dart_handle dual(Self& amap, Dart_handle adart=NULL)
+    Dart_handle dual(Self& amap, Dart_handle adart=null_handle)
     {
       CGAL_assertion( is_without_boundary(dimension) );
 
       CGAL::Unique_hash_map< Dart_handle, Dart_handle,
         typename Self::Hash_function > dual;
-      Dart_handle d, d2, res = NULL;
+      Dart_handle d, d2, res = amap.null_handle;
 
       // We clear amap. TODO return a new amap ?
       amap.clear();
@@ -3387,7 +3389,7 @@ namespace CGAL {
             it!=darts().end(); ++it)
       {
         dual[it] = amap.create_dart();
-        if ( it==adart && res==NULL ) res = dual[it];
+        if ( it==adart && res==amap.null_handle ) res = dual[it];
       }
 
       // Then we link the darts by using the dual formula :
@@ -3422,7 +3424,7 @@ namespace CGAL {
 
       //  CGAL_postcondition(amap2.is_valid());
 
-      if ( res==NULL ) res = amap.darts().begin();
+      if ( res==amap.null_handle ) res = amap.darts().begin();
       return res;
     }
 
@@ -3669,7 +3671,7 @@ namespace CGAL {
 
   template < unsigned int d_, class Refs, class Items_, class Alloc_,
              class Storage_ >
-  const typename Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::
+  typename Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::
      Base::Null_handle_type
      Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::null_handle =
      Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::Base::null_handle;

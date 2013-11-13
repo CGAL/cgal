@@ -37,7 +37,6 @@ public:
   Vertex operator  () (Vertex & v) const
   {
     Dart_handle d = v.dart ();
-    CGAL_assertion (d != NULL);
 
     int degree = 0;
     bool open = false;
@@ -83,7 +82,7 @@ flip_edge (LCC & m, Dart_handle d)
   CGAL_assertion ( !m.is_free(d,1) && !m.is_free(d,0) );
   CGAL_assertion ( !m.is_free(m.beta(d,2), 0) && !m.is_free(m.beta(d, 2), 1) );
   
-  if (!CGAL::is_removable<LCC,1>(m,d)) return NULL;
+  if (!CGAL::is_removable<LCC,1>(m,d)) return LCC::null_handle;
 
   Dart_handle d1 = m.beta(d,1);
   Dart_handle d2 = m.beta(d,2,0);
@@ -170,12 +169,11 @@ subdivide_lcc_3 (LCC & m)
 
   // 4) We flip all the old edges.
   m.negate_mark (mark);  // Now only new darts are marked.
-  Dart_handle d2 = NULL;
+  Dart_handle d2 =LCC::null_handle;
   for (LCC::Dart_range::iterator it (m.darts().begin ());
        it != m.darts().end ();)
   {
     d2 = it++;
-    CGAL_assertion (d2 != NULL);
     if (!m.is_marked (d2, mark))  // This is an old dart.
     {
       // We process only the last dart of a same edge.

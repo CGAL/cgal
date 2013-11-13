@@ -58,6 +58,9 @@ namespace CGAL {
     typedef typename Dart_container::const_iterator Dart_const_handle;
     typedef typename Dart_container::size_type      size_type;
 
+    typedef CGAL::Void* Null_handle_type;
+    static Null_handle_type null_handle;
+
     typedef Items_ Items;
     typedef Alloc_ Alloc;
 
@@ -395,6 +398,11 @@ namespace CGAL {
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
+
+  /// null_handle
+  template < unsigned int d_, class Items_, class Alloc_ >
+  typename Combinatorial_map_storage_1<d_, Items_, Alloc_>::Null_handle_type
+  Combinatorial_map_storage_1<d_, Items_, Alloc_>::null_handle = NULL;
 
 #ifdef CGAL_CMAP_DEPRECATED
   /// Allocation of static data members
