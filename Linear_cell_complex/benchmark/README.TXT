@@ -22,12 +22,12 @@ CGoGN: http://cgogn.u-strasbg.fr/
 OpenMesh: http://www.openmesh.org/
 OpenVolumeMesh: http://www.openvolumemesh.org/
 
-2) create links (or copy directory): 
-* in the 2D directory: 
+2) create links (or copy directory):
+* in the 2D directory:
     one link called cgogn through the install directory of CGoGN;
     one link called openmesh through the install directory of OpenMesh.
 
-* in the 3D directory: 
+* in the 3D directory:
     one link called cgogn through the install directory of CGoGN;
     one link called openvolumemesh through the openvolumemesh directory itself.
 
@@ -37,8 +37,8 @@ OpenVolumeMesh: http://www.openvolumemesh.org/
 
 CGAL_BUILD_DIR being the build directory of the CGAL library.
 
-4) run the benchmarks. 
-* In 2D, the programs take off files as input. 
+4) run the benchmarks.
+* In 2D, the programs take off files as input.
 * In 3D, lcc and cgogn take tetmesh and OpenVolumeMesh takes ovm.
 
 You can create a tetmesh file using tetgen programm with an off file as input (http://tetgen.berlios.de/) with option -g to generate XXX.mesh file. Rename this file into XXX.tetmesh. Modify the file to keep only the two following sections:
