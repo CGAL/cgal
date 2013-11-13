@@ -10,7 +10,14 @@ else()
   cmake_policy(VERSION 2.6)
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core Qt4)
+# If you want to visualize a linear cell complex, there are 2 viewers
+# based on qt and vtk. Just uncomment the corresponding lines
+# find_package(CGAL QUIET COMPONENTS Core Qt4)
+# include("CMakeLCCViewerQt.inc")
+# include("CMakeLCCViewerVtk.inc")
+
+# If you don't want to visualize, use the following line (otherwise comment it)
+find_package(CGAL QUIET COMPONENTS Core)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
@@ -35,11 +42,6 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("plane_graph_to_lcc_2.cpp")
 
-# If you want to visualize a linear cell complex, there are 2 viewers 
-# based on qt and vtk. Just uncomment the corresponding line
-  # include("CMakeLCCViewerQt.inc")
-  # include("CMakeLCCViewerVtk.inc")
-
   add_executable(linear_cell_complex_3_triangulation
                           linear_cell_complex_3_triangulation.cpp)
   target_link_libraries(linear_cell_complex_3_triangulation ${CGAL_LIBRARIES}
@@ -55,9 +57,9 @@ if ( CGAL_FOUND )
                                   ${MAP_VIEWER_LIBRARIES})
 
 else()
-  
+
   message(STATUS "This program requires the CGAL library, "
                   "and will not be compiled.")
-  
+
 endif()
 
