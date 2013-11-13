@@ -22,8 +22,6 @@
 #define CGAL_STREAM_LINES_2_H_
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <queue>
