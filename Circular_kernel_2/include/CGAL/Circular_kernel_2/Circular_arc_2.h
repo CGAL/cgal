@@ -791,6 +791,9 @@ public:
     if(this != &c)
     {
       this->P_arc::operator=(c);
+      if (bb != NULL){
+        delete bb;
+      }
       bb = c.bb ? new Bbox_2(*(c.bb)) : NULL;
     }
     return *this;
