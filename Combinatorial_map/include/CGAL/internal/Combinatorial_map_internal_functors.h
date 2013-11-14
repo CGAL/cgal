@@ -482,7 +482,7 @@ struct Is_same_attribute_info_functor
 template <typename Map1, typename Map2, unsigned int i, typename T2>
 struct Is_same_attribute_info_functor<Map1, Map2, i, Void, T2>
 {
-  static bool run(const Map1* m1, const Map2* m2,
+  static bool run(const Map1*, const Map2* m2,
                   typename Map1::Dart_const_handle,
                   typename Map2::Dart_const_handle dh2)
   { return m2->template attribute<i>(dh2)==Map2::null_handle; }
@@ -492,7 +492,7 @@ struct Is_same_attribute_info_functor<Map1, Map2, i, Void, T2>
 template <typename Map1, typename Map2, unsigned int i, typename T1>
 struct Is_same_attribute_info_functor<Map1, Map2, i, T1, Void>
 {
-  static bool run(const Map1* m1, const Map2* m2,
+  static bool run(const Map1* m1, const Map2*,
                   typename Map1::Dart_const_handle dh1,
                   typename Map2::Dart_const_handle)
   { return m1->template attribute<i>(dh1)==Map1::null_handle; }
