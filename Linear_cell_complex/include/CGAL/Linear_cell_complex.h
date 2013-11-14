@@ -73,6 +73,25 @@ namespace CGAL {
 
     typedef typename Base::Dart_range Dart_range;
 
+    /// Typedef for attributes
+    template<int i>
+    struct Attribute_type: public Base::template Attribute_type<i>
+    {};
+    template<int i>
+    struct Attribute_handle: public Base::template Attribute_handle<i>
+    {};
+    template<int i>
+    struct Attribute_const_handle:
+      public Base::template Attribute_const_handle<i>
+    {};
+    template<int i>
+    struct Attribute_range: public Base::template Attribute_range<i>
+    {};
+    template<int i>
+    struct Attribute_const_range:
+      public Base::template Attribute_const_range<i>
+    {};
+
     typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
     typedef typename Base::template Attribute_handle<0>::type
     Vertex_attribute_handle;

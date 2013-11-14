@@ -127,21 +127,21 @@ namespace CGAL {
 
     /// Typedef for attributes
     template<int i>
-    struct Attribute_type: public Helper::template Attribute_type<i>
+    struct Attribute_type: public Base::template Attribute_type<i>
     {};
     template<int i>
-    struct Attribute_handle: public Helper::template Attribute_handle<i>
+    struct Attribute_handle: public Base::template Attribute_handle<i>
     {};
     template<int i>
     struct Attribute_const_handle:
-      public Helper::template Attribute_const_handle<i>
+      public Base::template Attribute_const_handle<i>
     {};
     template<int i>
-    struct Attribute_range: public Helper::template Attribute_range<i>
+    struct Attribute_range: public Base::template Attribute_range<i>
     {};
     template<int i>
     struct Attribute_const_range:
-      public Helper::template Attribute_const_range<i>
+      public Base::template Attribute_const_range<i>
     {};
 
   public:
