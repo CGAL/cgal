@@ -8,6 +8,7 @@
 #include <cctype>
 #include <algorithm>
 #include <cassert>
+#include <string>
 
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
@@ -17,24 +18,18 @@
 //========================================================================
 
 template<class NT>
-char* get_fname(const NT&, const char* ifname) {
-  char* fname = new char[50];
-  std::strcpy(fname, "data/");
-  std::strcat(fname, ifname);
-  std::strcat(fname, ".cin");
-  return fname;
+std::string get_fname(const NT&, std::string ifname)
+{
+  return std::string("data/") + ifname + ".cin";
 }
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 
 template<>
-char* get_fname(const CGAL::Gmpq&, const char* ifname) {
-  char* fname = new char[50];
-  std::strcpy(fname, "data/");
-  std::strcat(fname, ifname);
-  std::strcat(fname, ".Gmpq.cin");
-  return fname;
+std::string get_fname(const CGAL::Gmpq&, std::string ifname)
+{
+  return std::string("data/") + ifname + ".Gmpq.cin";
 }
 #endif
 
@@ -79,7 +74,7 @@ template<class SDG, class InputStream>
 bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 	      bool test_remove)
 {
-  char* ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
+  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
 
   typedef SDG SDG2;
 
@@ -366,7 +361,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     {
       sdg.clear();
 
-      std::ifstream ifs( ifname_full );
+      std::ifstream ifs( ifname_full.c_str() );
       assert( ifs );
       Site_2 t;
       while ( ifs >> t ) {
@@ -564,7 +559,6 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   start_testing("validity check and clear methods");
   end_testing("validity check and clear method");
 
-  delete ifname_full;
 
   return true;
 }
