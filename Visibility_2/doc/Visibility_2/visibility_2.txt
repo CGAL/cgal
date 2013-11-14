@@ -127,7 +127,7 @@ The following example shows how to obtain the regularized and non-regularized vi
 \cgalExample{Visibility_2/simple_polygon_visibility_2.cpp}
 
 \section general_polygon_example Example of Visibility in a Polygon with Holes
-The following example shows how to obtain the regularized visibility region by model `Triangular_expansion_visibility_2`. See \cgalFigureRef{general_polygon}. The arrangement has six bounded faces and an unbounded face. The query point \f$ q \f$ is on a vertex. The red arrow denotes the halfedge \f$ \overrightarrow{pq} \f$, which helps to identify the face in which the visibility region is computed.
+The following example shows how to obtain the regularized visibility region by model `Triangular_expansion_visibility_2`. See \cgalFigureRef{general_polygon}. The arrangement has six bounded faces and an unbounded face. The query point \f$ q \f$ is on a vertex. The red arrow denotes the halfedge \f$ \overrightarrow{pq} \f$, which also identifies the face in which the visibility region is computed.
 \cgalFigureBegin{general_polygon, general_polygon_example.png}
 The visibility region of \f$ q \f$ in a polygon with two holes.
 \cgalFigureEnd
