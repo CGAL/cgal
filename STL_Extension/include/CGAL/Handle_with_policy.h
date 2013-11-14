@@ -555,6 +555,7 @@ public:
                     }
                 } else {
                     h.delete_rep( rep); // we have to delete the current rep
+		    tmp->remove_reference();
                 }                
                 rep = tmp;
             }
