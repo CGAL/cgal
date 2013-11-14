@@ -20,7 +20,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include <climits>
-#include <assert.h>
 #include <vector>
 #include <math.h>
 #include <cmath>
@@ -393,6 +392,7 @@ struct Mpzf {
     u.d = d;
     uint64_t m;
     uint64_t dexp = u.s.exp;
+    CGAL_assertion_msg(dexp != 2047, "Creating an Mpzf from infinity or NaN.");
     if (dexp == 0) {
       if (d == 0) { size=0; exp=0; return; }
       else { // denormal number
@@ -445,7 +445,7 @@ struct Mpzf {
     }
 #endif
     if(u.s.sig) size=-size;
-    assert(to_double()==IA_force_to_double(d));
+    //assert(to_double()==IA_force_to_double(d));
   }
 
 #ifdef CGAL_USE_GMPXX
@@ -658,9 +658,12 @@ struct Mpzf {
 	  carry1=true; // assumes no trailing zeros
 	}
       }
-      mp_limb_t carry=mpn_sub(rdata, xdata, absxsize, ydata, absysize);
-      if(carry1) carry+=mpn_sub_1(rdata, rdata, absxsize, 1);
-      assert(carry==0);
+      CGAL_assertion_code( mp_limb_t carry= )
+	mpn_sub(rdata, xdata, absxsize, ydata, absysize);
+      if(carry1)
+	CGAL_assertion_code( carry+= )
+	  mpn_sub_1(rdata, rdata, absxsize, 1);
+      CGAL_assertion(carry==0);
       res.size+=absxsize;
       while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
       while(/*res.size>0&&*/res.data()[0]==0){--res.size;++res.data();++res.exp;}
