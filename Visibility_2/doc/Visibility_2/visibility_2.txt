@@ -85,7 +85,7 @@ Class 	                	|	Function                                     |  Prepro
  `Simple_polygon_visibility_2`       | simple valid polygons                  |       No        |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | B.Joe and R.B.Simpson \cite bjrb-clvpa-87
  `Rotational_sweep_visibility_2`        |  valid polygons with holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  T.Asano \cite ta-aeafvpprh-85 
 `Triangular_expansion_visibility_2`     |  valid polygons with  holes |  \f$ O(n) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | new
- `Preprocessed_rotational_sweep_visibility_2` | valid polygons with holes    | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
+
 
 Where  \f$ n \f$ is the number of vertices of \f$ f \f$ and \f$ h \f$ is the number of holes+1.
 
@@ -103,19 +103,17 @@ all visibility polygons for all vertices of the boundary of the cathedral.
 
 Boundary Cathedral  	       |	total preprocessing time | total query time  |  
 -------------------------------|-----------------------------------------------------|-------------------------------|
- `Simple_polygon_visibility_2`                |  - |  0.388021 | 
- `Rotational_sweep_visibility_2`              |  - |  1.01606  |  
-`Triangular_expansion_visibility_2`           |  0 |  0.064005 |  
- `Preprocessed_rotational_sweep_visibility_2` |  - | -         | 
+ `Simple_polygon_visibility_2`                |  - |  0.38 | 
+ `Rotational_sweep_visibility_2`              |  - |  1.01  |  
+`Triangular_expansion_visibility_2`           |  0.01 |  0.06 |  
 
 The second table shows the same for the complete cathedral. The table does not report the time for `Simple_polygon_visibility_2`
 as this algorithm can only handle simple polygons. 
 
 Complete Cathedral             |	total preprocessing time | total query time          | 
 -------------------------------|-----------------------------------------------------|-------------------------------|
- `Rotational_sweep_visibility_2`              |  -          | 1.91211   |  
- `Triangular_expansion_visibility_2`          |  0.004001   | 0.044001  |  
- `Preprocessed_rotational_sweep_visibility_2` |  -          | -  | 
+ `Rotational_sweep_visibility_2`              |  -          | 1.91   |  
+ `Triangular_expansion_visibility_2`          |  0.01   | 0.04  |  
 
 Thus, in general we recommend to use `Triangular_expansion_visibility_2` even if the polygon is simple. The main advantage 
 of the algorithm is its locality. After the triangle that contains the query point is located in the triangulation, 
@@ -140,3 +138,4 @@ The visibility region of \f$ q \f$ in a polygon with two holes.
 
 }
 
+// `Preprocessed_rotational_sweep_visibility_2` | valid polygons with holes    | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85

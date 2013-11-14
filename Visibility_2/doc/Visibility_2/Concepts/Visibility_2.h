@@ -108,7 +108,8 @@ Access to the attached arrangement
 /*! 
 Computes the visibility region for the given query point `q` in the
 face \f$ f \f$ of the arrangement that is attached to the visibility object.
-The visibility region of `q` will be saved to `out_arr`.
+The visibility region of `q` will be saved to `out_arr`, that is, 
+all features but the unbounded face of `out_arr` represent the visibility region. 
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
@@ -120,7 +121,8 @@ The visibility region of `q` will be saved to `out_arr`.
 
 /*!
 Computes the visibility region for the given query point `q` that is on `e`.If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
-The visibility region of `q` will be stored in `out_arr`.
+The visibility region of `q` will be stored in `out_arr`, that is, 
+all features but the unbounded face of `out_arr` represent the visibility region.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement

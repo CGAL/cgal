@@ -5,8 +5,14 @@ namespace CGAL {
 \brief This class is a model of the concept `Visibility_2` can answer visibility queries within
 a polygon that may have holes.
 
-\details The class template comprises the implementation of the algorithm of Takao Asano and Tetsuo Asano \cite aaghi-vpsesp-85. The algorithm, as the name of the class template suggests, requires preprocessing.
-The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space, which reduces the query time to \f$O(n)\f$.
+\details The class template comprises the implementation of the algorithm of Takao Asano and Tetsuo Asano \cite aaghi-vpsesp-85. The algorithm, as the name of the class template suggests, requires preprocessing. The preprocessing takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space, which reduces the query time to \f$O(n)\f$.
+
+The main preprocessing step is the dualization of all vertices of the input arrangment into an arrangment of lines. 
+Computing this arrangement takes \f$ O(n^2)\f$ time and \f$ O(n^2)\f$ space. 
+Using this arrangment it is possible to retrieve the angular order of all vertices around 
+a query point, which is one of the essential steps to achive linear query time. For more details we refer to \cite aaghi-vpsesp-85. 
+
+
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
 
