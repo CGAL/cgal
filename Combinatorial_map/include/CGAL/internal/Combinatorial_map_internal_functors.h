@@ -856,64 +856,56 @@ struct Reverse_orientation_of_connected_component_functor<CMap, CGAL::Void>
 // ****************************************************************************
 // Beta functor, used to combine several beta.
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-template<typename Dart_handle, typename ... Betas>
+template<typename CMap, typename Dart_handle, typename ... Betas>
 struct Beta_functor;
 
-template<typename Dart_handle>
-struct Beta_functor<Dart_handle, int>
+template<typename CMap, typename Dart_handle>
+struct Beta_functor<CMap, Dart_handle, int>
 {
-  static Dart_handle run(Dart_handle ADart, int B)
-  {
-    CGAL_assertion( ADart!=NULL );
-    return ADart->beta(B);
-  }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, int B)
+  { return AMap->get_beta(ADart, B); }
 };
 
-template<typename Dart_handle>
-struct Beta_functor<Dart_handle, unsigned int>
+template<typename CMap, typename Dart_handle>
+struct Beta_functor<CMap, Dart_handle, unsigned int>
 {
-  static Dart_handle run(Dart_handle ADart, unsigned int B)
-  {
-    CGAL_assertion( ADart!=NULL );
-    return ADart->beta(B);
-  }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, unsigned int B)
+  { return  AMap->get_beta(ADart, B); }
 };
 
-template<typename Dart_handle, typename ... Betas>
-struct Beta_functor<Dart_handle, int, Betas...>
+template<typename CMap, typename Dart_handle, typename ... Betas>
+struct Beta_functor<CMap, Dart_handle, int, Betas...>
 {
-  static Dart_handle run(Dart_handle ADart, int B, Betas... betas)
-  { return Beta_functor<Dart_handle, Betas...>::run(ADart->beta(B),
-                                                    betas...); }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, int B, Betas... betas)
+  { return Beta_functor<CMap, Dart_handle, Betas...>::
+      run(AMap, AMap->get_beta(ADart, B), betas...); }
 };
 
-template<typename Dart_handle, typename ... Betas>
-struct Beta_functor<Dart_handle, unsigned int, Betas...>
+template<typename CMap, typename Dart_handle, typename ... Betas>
+struct Beta_functor<CMap, Dart_handle, unsigned int, Betas...>
 {
-  static Dart_handle run(Dart_handle ADart, unsigned int B, Betas... betas)
-  { return Beta_functor<Dart_handle, Betas...>::run(ADart->beta(B),
-                                                    betas...); }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart, unsigned int B,
+                         Betas... betas)
+  { return Beta_functor<CMap, Dart_handle, Betas...>::
+      run(AMap, AMap->get_beta(ADart, B), betas...); }
 };
 // ****************************************************************************
-template<typename Dart_handle, int ... Betas>
+template<typename CMap, typename Dart_handle, int ... Betas>
 struct Beta_functor_static;
 
-template<typename Dart_handle, int B>
-struct Beta_functor_static<Dart_handle, B>
+template<typename CMap, typename Dart_handle, int B>
+struct Beta_functor_static<CMap, Dart_handle, B>
 {
-  static Dart_handle run(Dart_handle ADart)
-  {
-    CGAL_assertion( ADart!=NULL );
-    return ADart->template beta<B>();
-  }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart)
+  { return AMap->template get_beta<B>(ADart); }
 };
 
-template<typename Dart_handle, int B, int ... Betas>
-struct Beta_functor_static<Dart_handle, B, Betas...>
+template<typename CMap, typename Dart_handle, int B, int ... Betas>
+struct Beta_functor_static<CMap, Dart_handle, B, Betas...>
 {
-  static Dart_handle run(Dart_handle ADart)
-  { return Beta_functor_static<Dart_handle, Betas...>::
-        run(ADart->template beta<B>()); }
+  static Dart_handle run(CMap* AMap, Dart_handle ADart)
+  { return Beta_functor_static<CMap, Dart_handle, Betas...>::
+        run(AMap, AMap->template get_beta<B>(ADart)); }
 };
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 // ****************************************************************************

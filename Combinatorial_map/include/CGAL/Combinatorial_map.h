@@ -595,38 +595,30 @@ namespace CGAL {
     }
 
   public:
+
     /// @return the betas of ADart (beta are used in the same order than
     ///         they are given as parameters)
-    Dart_handle beta(Dart_handle ADart, int B1)
-    { return this->get_beta(ADart, B1); }
-    Dart_const_handle beta(Dart_const_handle ADart, int B1) const
-    { return this->get_beta(ADart, B1); }
-    template<int B1>
-    Dart_handle beta(Dart_handle ADart)
-    { return this->template get_beta<B1>(ADart); }
-    template<int B1>
-    Dart_const_handle beta(Dart_const_handle ADart) const
-    { return this->template get_beta<B1>(ADart); }
+
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     template<typename ...Betas>
     Dart_handle beta(Dart_handle ADart, Betas... betas)
-    { return CGAL::internal::Beta_functor<Dart_handle, Betas...>::
-        run(ADart, betas...); }
+    { return CGAL::internal::Beta_functor<Self, Dart_handle, Betas...>::
+        run(this, ADart, betas...); }
     template<typename ...Betas>
     Dart_const_handle beta(Dart_const_handle ADart, Betas... betas) const
-    { return CGAL::internal::Beta_functor<Dart_const_handle, Betas...>::
-        run(ADart, betas...); }
+    { return CGAL::internal::Beta_functor<const Self, Dart_const_handle, Betas...>::
+        run(this, ADart, betas...); }
     template<int... Betas>
     Dart_handle beta(Dart_handle ADart)
-    { return CGAL::internal::Beta_functor_static<Dart_handle, Betas...>::
-        run(ADart); }
+    { return CGAL::internal::Beta_functor_static<Self, Dart_handle, Betas...>::
+        run(this, ADart); }
     template<int... Betas>
     Dart_const_handle beta(Dart_const_handle ADart) const
-    { return CGAL::internal::Beta_functor_static<Dart_const_handle, Betas...>::
-        run(ADart); }
+    { return CGAL::internal::Beta_functor_static<const Self, Dart_const_handle, Betas...>::
+        run(this, ADart); }
 #else
-    // defined in Combinatorial_map_storage class
-    // Dart_handle beta(Dart_handle ADart, int B1)
+    Dart_handle beta(Dart_handle ADart, int B1)
+    { return this->get_beta(ADart, B1); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2)
     { return beta(beta(ADart, B1), B2); }
     Dart_handle beta(Dart_handle ADart, int B1, int B2, int B3)
@@ -650,84 +642,89 @@ namespace CGAL {
                            int B4, int B5, int B6, int B7, int B8, int B9)
     { return beta(beta(ADart, B1), B2, B3, B4, B5, B6, B7, B8, B9); }
 
+    template<int B1>
+    Dart_handle beta(Dart_handle ADart)
+    { return this->template get_beta<B1>(ADart); }
     template<int B1, int B2>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3, int B4>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3, B4>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3, int B4, int B5>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3, B4, B5>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3, int B4, int B5, int B6>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3, B4, B5, B6>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3, int B4, int B5, int B6,
              int B7>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3, B4, B5, B6, B7>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3, int B4, int B5, int B6,
              int B7, int B8>
-     Dart_handle beta(Dart_handle ADart)
+    Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3, B4, B5, B6, B7, B8>(beta<B1>(ADart)); }
     template<int B1, int B2, int B3, int B4, int B5, int B6,
              int B7, int B8, int B9>
      Dart_handle beta(Dart_handle ADart)
     { return beta<B2, B3, B4, B5, B6, B7, B8, B9>(beta<B1>(ADart)); }
 
-    //   Dart_const_handle beta(Dart_const_handle ADart, int B1) const
+    Dart_const_handle beta(Dart_const_handle ADart, int B1) const
+    { return this->get_beta(ADart, B1); }
     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2) const
     { return beta(beta(ADart, B1), B2); }
     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3) const
     { return beta(beta(ADart, B1), B2, B3); }
-     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+    Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
                            int B4) const
     { return beta(beta(ADart, B1), B2, B3, B4); }
-     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+    Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
                            int B4, int B5) const
     { return beta(beta(ADart, B1), B2, B3, B4, B5); }
-     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+    Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
                            int B4, int B5, int B6) const
     { return beta(beta(ADart, B1), B2, B3, B4, B5, B6); }
-     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+    Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
                            int B4, int B5, int B6, int B7) const
     { return beta(beta(ADart, B1), B2, B3, B4, B5, B6, B7); }
-     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+    Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
                            int B4, int B5, int B6, int B7, int B8) const
     { return beta(beta(ADart, B1), B2, B3, B4, B5, B6, B7, B8); }
-     Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
+    Dart_const_handle beta(Dart_const_handle ADart, int B1, int B2, int B3,
                            int B4, int B5, int B6, int B7, int B8, int B9) const
     { return beta(beta(ADart, B1), B2, B3, B4, B5, B6, B7, B8, B9); }
 
-    //   template<int B1>
-    //    Dart_const_handle beta(Dart_const_handle ADart) const
-     template<int B1, int B2>
+    template<int B1>
+    Dart_const_handle beta(Dart_const_handle ADart) const
+    { return this->template get_beta<B1>(ADart); }
+    template<int B1, int B2>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3>
+    template<int B1, int B2, int B3>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3, int B4>
+    template<int B1, int B2, int B3, int B4>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3, B4>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3, int B4, int B5>
+    template<int B1, int B2, int B3, int B4, int B5>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3, B4, B5>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3, int B4, int B5, int B6>
+    template<int B1, int B2, int B3, int B4, int B5, int B6>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3, B4, B5, B6>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3, int B4, int B5, int B6,
+    template<int B1, int B2, int B3, int B4, int B5, int B6,
               int B7>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3, B4, B5, B6, B7>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3, int B4, int B5, int B6,
+    template<int B1, int B2, int B3, int B4, int B5, int B6,
               int B7, int B8>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3, B4, B5, B6, B7, B8>(beta<B1>(ADart)); }
-     template<int B1, int B2, int B3, int B4, int B5, int B6,
+    template<int B1, int B2, int B3, int B4, int B5, int B6,
               int B7, int B8, int B9>
     Dart_const_handle beta(Dart_const_handle ADart) const
     { return beta<B2, B3, B4, B5, B6, B7, B8, B9>(beta<B1>(ADart)); }
