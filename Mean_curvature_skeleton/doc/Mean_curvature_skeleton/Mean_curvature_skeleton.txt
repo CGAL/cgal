@@ -31,6 +31,7 @@ The MCF is discretized by finite elements (discrete Laplacian operator) and solv
 
 <b>Medial Centering.</b> 
 The curve skeletons extracted by MCF only are not guaranteed to <em>lie medially</em> within the shape. To overcome this problem, the flow can be augmented with an attraction force that pulls the geometry toward the shape's medial axis. The algorithm employs a sampling of the medial axis obtained by computing the <em>Voronoi poles</em> of the input model. These poles are known to lie on the medial axis when the surface is sufficiently densely sampled \cgalCite{amenta2001power}. The density of mesh also affect the quality of poles. If the sampling of the mesh is not dense enough, the poles tend to contain noise, and would lead to skeletons in bad qualities(e.g. \cgalFigureRef{Comparison}). We provide the user a parameter \f$ omega\_P \f$ to control the degree to which the surface is attracted to the medial axis. The medial criteria can also be turned off by setting the parameter `::CGAL::MCF_skel_args::is_medially_centered` in `::CGAL::MCF_skel_args` to `false`.
+\todo What should be the value of Omega_P?
 
 <b>Local remeshing.</b> 
 While the anisotropic effects of MCF are essential for curve-skeletonization, this has the side effect of progressively degrading the quality of the triangulation. As a low quality triangulation hinders the finite element discretization, we perform local remeshing to remove these degeneracies. After each contraction iteration we perform two local remeshing operations. We collapse edges shorter than edgelength_TH and we split edges whose opposite angle is greater than angle_TH. By default edgelength_TH is set to 0.002 times diagonal of the bounding box of the original mesh while angle_TH is \f$ 110 ^{\circ} \f$.
@@ -69,6 +70,8 @@ The effect of \f$ w_{H} \f$ is illustrated in \cgalFigureRef{WHeffect}.
 \cgalFigureBegin{WHeffect, WHeffect.png}
 From left to right, the \f$ w_{H} \f$ is 0.1, 0.05, 0.01, 0.005 respectively.  Note setting \f$ w_{H} \f$ too small results in a low quality of skeleton.  By default, the \f$ w_{H} \f$ is set to 0.1, which works well in most cases.
 \cgalFigureEnd
+
+\todo w_h == omega_H right?
 
 \subsection MCFSkelSecRemesh Local Dynamic Remeshing
 
@@ -183,6 +186,8 @@ We have recorded the running time of the algorithm. The CPU of the test machine 
 </tr>
 </table>
 </center>
+
+\todo the benchmark should also contains something about omega_H and omega_P
 
 \section MCFSkelSecDesign Design and Implementation History
 
