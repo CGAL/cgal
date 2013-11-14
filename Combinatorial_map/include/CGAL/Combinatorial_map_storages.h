@@ -167,24 +167,24 @@ namespace CGAL {
     // Access to beta maps
     Dart_handle get_beta(Dart_handle ADart, int B1)
     {
-      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=dimension);
+      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=(int)dimension);
       return ADart->mbeta[B1];
     }
     Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
     {
-      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=dimension);
+      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=(int)dimension);
       return  ADart->mbeta[B1];
     }
     template<int B1>
     Dart_handle get_beta(Dart_handle ADart)
     {
-      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=dimension);
+      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=(int)dimension);
       return  ADart->mbeta[B1];
     }
     template<int B1>
     Dart_const_handle get_beta(Dart_const_handle ADart) const
     {
-      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=dimension);
+      CGAL_assertion(ADart!=NULL && B1>=0 && B1<=(int)dimension);
       return  ADart->mbeta[B1];
     }
 
