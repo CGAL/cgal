@@ -123,7 +123,7 @@ Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(int m,
   number_of_samples_y = n;
   domain_size_x = x;
   domain_size_y = y;
-  vector_field = boost::shared_ptr<std::vector<FT>>(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
+  vector_field = boost::shared_ptr<std::vector<FT> >(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
 }
 
 
