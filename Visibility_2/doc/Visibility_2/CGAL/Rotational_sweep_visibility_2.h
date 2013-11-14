@@ -16,7 +16,6 @@ specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false 
 \cgalModels `Visibility_2` 
 
 \sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
-\sa `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 
 */
@@ -63,12 +62,12 @@ public:
   typedef RegularizationTag Regularization_tag;
   
   /*! 
-    Tag identifying that the class supports general polygons (i.e.\ with holes). 
+    The class supports general polygons (i.e.\ with holes). 
   */
   typedef ::Tag_true Supports_general_polygon_tag; 
 
   /*! 
-    Tag identifying that the class supports general simple polygons. 
+    The class supports general simple polygons. 
   */
   typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}

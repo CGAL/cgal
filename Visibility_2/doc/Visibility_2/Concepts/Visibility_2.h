@@ -7,7 +7,6 @@ A model of the `Visibility_2` concept can be attached to an `Arrangement_2` inst
 
 \cgalHasModel `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
 \cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
-\cgalHasModel `CGAL::Preprocessed_rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
 \cgalHasModel `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
 
 */
