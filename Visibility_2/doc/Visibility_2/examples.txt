@@ -1,0 +1,4 @@
+/*!
+\example Visibility_2/simple_polygon_visibility_2.cpp
+\example Visibility_2/general_polygon_example.cpp
+*/

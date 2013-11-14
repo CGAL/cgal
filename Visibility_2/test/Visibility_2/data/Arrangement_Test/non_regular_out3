@@ -1,0 +1,15 @@
+# Non-regularized visibility result of Test case 3 for arbitrary arrangement. See https://cgal.geometryfactory.com/CGAL/Members/wiki/Visibility/TestCases
+6
+-1 4
+-1 -4
+1 0
+3 0
+5 0
+6 0
+6
+0 1
+1 2
+2 3
+3 4
+4 5
+0 3
