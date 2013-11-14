@@ -73,7 +73,7 @@ bool test1(const char* points_filename, const char* xcurves_filename,
   Point_location_test<Geom_traits, Topol_traits> pl_test(geom_traits);
   pl_test.set_filenames(points_filename, xcurves_filename,
                         curves_filename, queries_filename);
-  
+
   if (!pl_test.allocate_arrangement()) return false;
   if (!pl_test.construct_pl_strategies()) return false;
   if (!pl_test.init()) return false;
@@ -84,7 +84,7 @@ bool test1(const char* points_filename, const char* xcurves_filename,
   pl_test.clear();
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
-  
+
   return true;
 }
 
@@ -97,7 +97,7 @@ bool test2(Point_location_test<Geom_traits, Topol_traits>& pl_test)
 
   pl_test.clear();
   pl_test.clear_arrangement();
-  
+
   return true;
 }
 
@@ -109,7 +109,7 @@ bool test3(const char* points_filename, const char* xcurves_filename,
   pl_test.set_filenames(points_filename, xcurves_filename,
                         curves_filename, queries_filename);
 
-  
+
   if (!pl_test.allocate_pl_strategies()) return false;
   if (!pl_test.init()) return false;
 
@@ -121,7 +121,7 @@ bool test3(const char* points_filename, const char* xcurves_filename,
   pl_test.clear();
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
-  
+
   return true;
 }
 
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
     }
   }
 
-#if TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS  
+#if TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS
   // Test 2
   Geom_traits geom_traits;
   Point_location_test<Geom_traits, Topol_traits> pl_test(geom_traits);
@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
 
     pl_test.set_filenames(points_filename, xcurves_filename,
                           curves_filename, queries_filename);
-  
+
     if (!test2(pl_test)) {
       std::cout << "ERROR : " << argv[0] << " " << points_filename << " "
                 << xcurves_filename << " " << curves_filename
@@ -192,8 +192,8 @@ int main(int argc, char* argv[])
   pl_test.deallocate_arrangement();
   pl_test.deallocate_pl_strategies();
 #endif
-  
-#if TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS  
+
+#if TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS
   // Test 3
   for (int i = 1; i < argc; i += 4) {
     const char* points_filename = argv[i];
@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
     }
   }
 #endif
-  
+
   return success;
 }
 

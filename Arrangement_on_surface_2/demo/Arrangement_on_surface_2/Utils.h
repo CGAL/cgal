@@ -337,30 +337,28 @@ public:
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Segment_2 Segment_2;
   typedef typename Traits::Curve_2 Curve_2;
-  typedef typename Curve_2::const_iterator Curve_const_iterator;
   typedef typename Traits::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Curve_2::Segment_const_iterator Seg_const_it;
 
   double operator() ( const Point_2& p, const X_monotone_curve_2& c ) const
   {
-    Curve_const_iterator ps = c.begin();
-    Curve_const_iterator pt = ps; pt++;
+    Seg_const_it seg_it_s = c.begin_segments();
+
     bool first = true;
     FT min_dist = 0;
 
-    while ( pt != c.end() )
-    {
-      const Point_2& source = *ps;
-      const Point_2& target = *pt;
-      Segment_2 seg( source, target );
-      FT dist = this->squared_distance( p, seg );
-
-      if ( first || dist < min_dist )
+    while (seg_it_s != c.end_segments())
       {
-        first = false;
-        min_dist = dist;
+        Segment_2 seg = *seg_it_s;
+        FT dist = this->squared_distance( p, seg );
+
+        if ( first || dist < min_dist )
+          {
+            first = false;
+            min_dist = dist;
+          }
+        seg_it_s++;
       }
-      ps++; pt++;
-    }
 
     return CGAL::to_double( min_dist );
   }

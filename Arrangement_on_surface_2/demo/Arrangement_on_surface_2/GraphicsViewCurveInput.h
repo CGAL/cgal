@@ -175,6 +175,7 @@ class GraphicsViewCurveInput< CGAL::Arr_polyline_traits_2< SegmentTraits > >:
 {
 public:
   typedef CGAL::Arr_polyline_traits_2< SegmentTraits > Traits;
+  typedef typename Traits::Construct_curve_2 Construct_polyline;
   typedef typename Traits::Curve_2 Curve_2;
   typedef typename SegmentTraits::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
@@ -199,6 +200,10 @@ protected:
 
   void mousePressEvent( QGraphicsSceneMouseEvent* event )
   {
+    // Obtain a functor for the construction of polylines
+    Traits poly_tr;
+    Construct_polyline construct_poly = poly_tr.construct_curve_2_object();
+
     Point_2 clickedPoint = this->snapPoint( event );
     if ( this->points.empty( ) )
     { // first
@@ -234,7 +239,8 @@ protected:
           delete this->polylineGuide[ i ];
         }
         this->polylineGuide.clear( );
-        Curve_2 res( this->points.begin( ), this->points.end( ) );
+        Curve_2 res =
+          construct_poly( this->points.begin( ), this->points.end( ) );
         this->points.clear( );
 
         emit generate( CGAL::make_object( res ) );
@@ -423,10 +429,10 @@ protected:
         }
         this->polylineGuide.clear( );
 
-        double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
-        double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
-        double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
-        double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
+        double x1 = CGAL::to_double( this->points[ 0 ].x( ) );
+        double y1 = CGAL::to_double( this->points[ 0 ].y( ) );
+        double x2 = CGAL::to_double( this->points[ 1 ].x( ) );
+        double y2 = CGAL::to_double( this->points[ 1 ].y( ) );
         Curve_2 res = Curve_2( Rat_segment_2( Rat_point_2( x1, y1 ),
                                               Rat_point_2( x2, y2 ) ) );
         // std::cout << "res is " << ( (res.is_valid( ))? "" : "not ")
@@ -445,10 +451,10 @@ protected:
         this->circleItem = NULL;
 
         // std::cout << "TODO: Add the circle" << std::endl;
-        double x1 = CGAL::to_double( this->points[ 0 ].x( ) ); 
-        double y1 = CGAL::to_double( this->points[ 0 ].y( ) ); 
-        double x2 = CGAL::to_double( this->points[ 1 ].x( ) ); 
-        double y2 = CGAL::to_double( this->points[ 1 ].y( ) ); 
+        double x1 = CGAL::to_double( this->points[ 0 ].x( ) );
+        double y1 = CGAL::to_double( this->points[ 0 ].y( ) );
+        double x2 = CGAL::to_double( this->points[ 1 ].x( ) );
+        double y2 = CGAL::to_double( this->points[ 1 ].y( ) );
         double sq_rad = CGAL::square(x2 - x1) + CGAL::square(y2 - y1);
         Curve_2 res = Curve_2( Rat_circle_2( Rat_point_2( x1, y1 ), sq_rad ) );
 
@@ -547,7 +553,7 @@ protected:
             this->points.clear( );
             this->pointsGraphicsItem.clear( );
 
-          } 
+          }
           catch (...)
           {
             std::cout << "Points don't specify a valid conic. Try again!"
@@ -577,7 +583,7 @@ protected:
   ConicType conicType;
 };
 
-// class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2< 
+// class GraphicsViewCurveInput< CGAL::Arr_conic_traits_2<
 //                                 RatKernel, AlgKernel, NtTraits > >
 
 /**
@@ -897,7 +903,7 @@ public:
     Point_2 res = this->toArrPoint( pt );
     return res;
   }
-    
+
 protected:
   Traits traits;
   Converter< Kernel > convert;

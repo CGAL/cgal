@@ -50,10 +50,10 @@
  * ---------------------------------------------------------------------------
  */
 
-template <typename T_Traits>
-class Traits_base_test : public IO_test<T_Traits> {
+template <typename Geom_traits_T>
+class Traits_base_test : public IO_test<Geom_traits_T> {
 protected:
-  typedef T_Traits                                      Traits;
+  typedef Geom_traits_T                                 Traits;
   typedef IO_test<Traits>                               Base;
 
   typedef typename Base::Point_2                        Point_2;
@@ -177,8 +177,8 @@ public:
  * Constructor.
  * Accepts test data file name.
  */
-template <class T_Traits>
-Traits_base_test<T_Traits>::Traits_base_test(const Traits& traits) :
+template <typename Geom_traits_T>
+Traits_base_test<Geom_traits_T>::Traits_base_test(const Traits& traits) :
   Base(traits),
   m_abort_on_error(false)       // run all tests
 {
@@ -191,11 +191,11 @@ Traits_base_test<T_Traits>::Traits_base_test(const Traits& traits) :
 /*!
  * Destructor.
  */
-template <class T_Traits>
-Traits_base_test<T_Traits>::~Traits_base_test() { clear(); }
+template <typename Geom_traits_T>
+Traits_base_test<Geom_traits_T>::~Traits_base_test() { clear(); }
 
-template <class T_Traits>
-bool Traits_base_test<T_Traits>::parse(int argc, char* argv[])
+template <typename Geom_traits_T>
+bool Traits_base_test<Geom_traits_T>::parse(int argc, char* argv[])
 {
   Base::parse(argc, argv);
 
@@ -212,8 +212,8 @@ bool Traits_base_test<T_Traits>::parse(int argc, char* argv[])
 }
 
 /*! Clear the data structures */
-template<class T_Traits>
-void Traits_base_test<T_Traits>::clear()
+template<typename Geom_traits_T>
+void Traits_base_test<Geom_traits_T>::clear()
 {
   Base::clear();
   m_filename_commands.clear();
@@ -224,8 +224,8 @@ void Traits_base_test<T_Traits>::clear()
  * some action. See comments for suitable function in order to know specific
  * command arguments.
  */
-template <class T_Traits>
-bool Traits_base_test<T_Traits>::perform()
+template <typename Geom_traits_T>
+bool Traits_base_test<Geom_traits_T>::perform()
 {
   std::ifstream is(m_filename_commands.c_str());
   if (!is.is_open()) {
@@ -330,8 +330,8 @@ bool Traits_base_test<T_Traits>::perform()
 
 /*!
  */
-template <class T_Traits_class>
-bool Traits_base_test<T_Traits_class>::
+template <typename Geom_traits_T>
+bool Traits_base_test<Geom_traits_T>::
 translate_boolean(std::string& str_value)
 {
   if (str_value == "TRUE") return true;
@@ -340,9 +340,9 @@ translate_boolean(std::string& str_value)
 
 /*!
  */
-template <class T_Traits>
+template <typename Geom_traits_T>
 unsigned int
-Traits_base_test<T_Traits>::translate_enumerator(std::string& str_value)
+Traits_base_test<Geom_traits_T>::translate_enumerator(std::string& str_value)
 {
   if (str_value == "LARGER" ) {
     return static_cast<unsigned int>(CGAL::LARGER);
@@ -357,9 +357,9 @@ Traits_base_test<T_Traits>::translate_enumerator(std::string& str_value)
 
 /*!
  */
-template <class T_Traits>
-std::pair<typename Traits_base_test<T_Traits>::Enum_type, unsigned int>
-Traits_base_test<T_Traits>::translate_int_or_text(std::string& str_value)
+template <typename Geom_traits_T>
+std::pair<typename Traits_base_test<Geom_traits_T>::Enum_type, unsigned int>
+Traits_base_test<Geom_traits_T>::translate_int_or_text(std::string& str_value)
 {
   if (str_value == "MIN_END" ) {
     return std::pair<enum Enum_type, unsigned int>(CURVE_END,CGAL::ARR_MIN_END);
@@ -399,9 +399,8 @@ Traits_base_test<T_Traits>::translate_int_or_text(std::string& str_value)
 
 /*!
  */
-template <class T_Traits>
-bool
-Traits_base_test<T_Traits>::
+template <typename Geom_traits_T>
+bool Traits_base_test<Geom_traits_T>::
 get_expected_boolean(std::istringstream& str_stream)
 {
   char buff[1024];
@@ -413,9 +412,9 @@ get_expected_boolean(std::istringstream& str_stream)
 
 /*!
  */
-template <class T_Traits>
-unsigned int
-Traits_base_test<T_Traits>::get_expected_enum(std::istringstream& str_stream)
+template <typename Geom_traits_T>
+unsigned int Traits_base_test<Geom_traits_T>::
+get_expected_enum(std::istringstream& str_stream)
 {
   char buff[1024];
   str_stream.getline(buff, 1024, '.');
@@ -426,9 +425,9 @@ Traits_base_test<T_Traits>::get_expected_enum(std::istringstream& str_stream)
 
 /*!
  */
-template <class T_Traits>
-std::pair<typename Traits_base_test<T_Traits>::Enum_type, unsigned int>
-Traits_base_test<T_Traits>::get_next_input(std::istringstream& str_stream)
+template <typename Geom_traits_T>
+std::pair<typename Traits_base_test<Geom_traits_T>::Enum_type, unsigned int>
+Traits_base_test<Geom_traits_T>::get_next_input(std::istringstream& str_stream)
 {
   char buff[1024];
   do {
