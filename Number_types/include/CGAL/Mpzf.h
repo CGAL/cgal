@@ -45,7 +45,8 @@
 // * mpn_neg(_n) exists
 // * IEEE double
 // * not too fancy endianness
-#if __GNU_MP_VERSION * 10 + __GNU_MP_VERSION_MINOR >= 43 \
+#if !defined(CGAL_DO_NOT_USE_MPZF) \
+    && __GNU_MP_VERSION * 10 + __GNU_MP_VERSION_MINOR >= 43 \
     && GMP_NUMB_BITS == 64
 #define CGAL_HAS_MPZF 1
 
