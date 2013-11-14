@@ -27,12 +27,12 @@ public:
 /// @{
 
 /*!
-The type of the edge profile cache. Must be a model of the `EdgeProfile` concept. 
+The type of the edge profile cache, model of the `EdgeProfile` concept.
 */ 
 typedef unspecified_type Profile; 
 
 /*!
-The point type for the surface vertex. Must be a model of `Point_3`. 
+The point type for the surface vertex.
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
