@@ -51,6 +51,7 @@ typedef CGAL::Quotient<LNT> LFNT2;
 #include <CGAL/Timer.h>
 #include <fstream>
 #include <cassert>
+#include <string>
 
 template<typename Kernel>
 class test {
@@ -91,27 +92,22 @@ private:
     return OK;
   }
 
-  bool does_nef3_equals_file(Nef_polyhedron& N, const char* name, const char* suffix) {
-    char* fullname = new char[std::strlen(datadir)+std::strlen(name)+std::strlen(suffix)+1];
-    std::strcpy(fullname, datadir);
-    std::strcat(fullname, name);
-    std::strcat(fullname, suffix);
+  bool does_nef3_equals_file(Nef_polyhedron& N, const std::string name, const std::string& suffix) {
+    std::string fullname = datadir + name + suffix;
+
     std::ofstream out("data/temp.nef3");
     out << N;
-    bool b = are_files_equal("data/temp.nef3",fullname);
-    delete [] fullname;
+    bool b = are_files_equal("data/temp.nef3",fullname.c_str());
     return b;
   }
 
-  Nef_polyhedron built_nef_from_off(const char *name) {
+  Nef_polyhedron built_nef_from_off(const std::string& name) {
 
      Nef_polyhedron N;
 
-     char* fullname = new char[std::strlen(datadir)+std::strlen(name)+1];
-     std::strcpy(fullname, datadir);
-     std::strcat(fullname, name);
+     std::string fullname = datadir + name;
 
-     std::ifstream off_file (fullname);
+     std::ifstream off_file (fullname.c_str());
      assert(off_file.good());
 
      std::size_t discarded = CGAL::OFF_to_nef_3 (off_file, N, true);
@@ -120,8 +116,8 @@ private:
   }
 
 public:
-  void run_test(bool compare,const char* suffix) {
-    Nef_polyhedron N = built_nef_from_off( "nine_planes.off");
+  void run_test(bool compare, const std::string& suffix) {
+    Nef_polyhedron N = built_nef_from_off("nine_planes.off");
     if(compare)
       assert(does_nef3_equals_file(N,"nine_planes.nef3",suffix));
   }
