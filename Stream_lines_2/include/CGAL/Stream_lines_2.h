@@ -22,8 +22,6 @@
 #define CGAL_STREAM_LINES_2_H_
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <queue>
@@ -39,6 +37,7 @@
 #include <boost/random/uniform_real.hpp> // undocumented class
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -102,8 +101,8 @@ protected:
   Point_2                                                        seed_point;
   int                                                            samp_step;
   unsigned int _number_of_lines;
-  Vector_field_2 * vf_2;
-  Integrator_2 * int_2;
+  boost::shared_ptr<Vector_field_2> vf_2;
+  boost::shared_ptr<Integrator_2> int_2;
 public:
   void set_separating_distance(FT new_value){separating_distance = new_value;}
   void set_saturation_ratio(FT new_value){ saturation_ratio = new_value;}
@@ -247,8 +246,8 @@ vector_field_2, const Integrator_2 & m_integrator, const FT & m_separating_dista
       m_DT.insert(pPoint);
     }
   _number_of_lines = 0;
-  vf_2 = new Vector_field_2(vector_field_2);
-  int_2 = new Integrator_2(m_integrator);
+  vf_2 = boost::shared_ptr<Vector_field_2>(new Vector_field_2(vector_field_2));
+  int_2 = boost::shared_ptr<Integrator_2>(new Integrator_2(m_integrator));
   samp_step = sampling_step;
   stl_container.clear();
   place_stream_lines(vector_field_2, m_integrator,

@@ -24,6 +24,10 @@
 #include <CGAL/basic.h>
 #include <CGAL/streamlines_assertions.h>
 
+#include <boost/shared_ptr.hpp>
+
+#include <vector>
+
 namespace CGAL {
 
 // The class  Regular_grid_2 provides a rectangular visualization
@@ -40,7 +44,7 @@ public:
   typedef typename StreamLinesTraits_2::Point_2 Point_2;
   typedef typename StreamLinesTraits_2::Vector_2 Vector_2;
 protected:
-  FT *vector_field;
+  boost::shared_ptr< std::vector<FT> > vector_field;
   inline int get_index(int i,int j) const;
   int number_of_samples_x;
   int number_of_samples_y;
@@ -53,9 +57,7 @@ public:
   Regular_grid_2(int m, int n,const FT & x, const FT & y);
   //   Regular_grid_2();
   ~Regular_grid_2()
-    {
-      delete [] vector_field;
-    }
+  {}
 
   inline typename Geom_traits::Iso_rectangle_2 bbox() const;
 
@@ -88,7 +90,7 @@ public:
   inline FT container_value(int i) const
     {
       if (i < 2*number_of_samples_x*number_of_samples_y)
-        return vector_field[i];
+        return (*vector_field)[i];
       else
         return 0.0;
     }
@@ -121,7 +123,7 @@ Regular_grid_2<StreamLinesTraits_2>::Regular_grid_2(int m,
   number_of_samples_y = n;
   domain_size_x = x;
   domain_size_y = y;
-  vector_field = new FT[number_of_samples_x*number_of_samples_y* 2];
+  vector_field = boost::shared_ptr<std::vector<FT> >(new std::vector<FT>(number_of_samples_x*number_of_samples_y* 2));
 }
 
 
@@ -131,7 +133,7 @@ Regular_grid_2<StreamLinesTraits_2>::get_field(int i, int j) const
 {
   CGAL_streamlines_precondition(is_in_samples(i,j));
   int index = get_index(i,j);
-  return Vector_2(vector_field[index], vector_field[index+1]);
+  return Vector_2((*vector_field)[index], (*vector_field)[index+1]);
 }
 
 template <class StreamLinesTraits_2>
@@ -142,8 +144,8 @@ Regular_grid_2<StreamLinesTraits_2>::set_field(int i,
 {
   CGAL_streamlines_precondition(is_in_samples(i,j));
   int index = get_index(i,j);
-  vector_field[index++] = v.x();
-  vector_field[index] = v.y();
+  (*vector_field)[index++] = v.x();
+  (*vector_field)[index] = v.y();
 }
 
 template <class StreamLinesTraits_2>
