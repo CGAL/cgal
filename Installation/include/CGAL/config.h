@@ -125,6 +125,12 @@
 #define CGAL_CFG_NO_CPP0X_COPY_N 1
 #define CGAL_CFG_NO_CPP0X_NEXT_PREV 1
 #endif
+#if defined(BOOST_NO_EXPLICIT_CONVERSION_OPERATIONS) \
+    || defined(BOOST_NO_EXPLICIT_CONVERSION_OPERATORS) \
+    || defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS) \
+    || (BOOST_VERSION < 103600)
+#define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
+#endif
 
 
 //----------------------------------------------------------------------//

@@ -8,6 +8,7 @@
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
+#include <CGAL/Mpzf.h>
 #include <CGAL/Gmpq.h>
 #endif
 
@@ -89,8 +90,11 @@ int main()
 
   // GMP based NTs
 #ifdef CGAL_USE_GMP
-//  test_it<CGAL::Gmpz>("Gmpz");
-//  test_it<CGAL::Gmpz>("Gmpzf");
+  test_it<CGAL::Gmpz>("Gmpz");
+  test_it<CGAL::Gmpzf>("Gmpzf");
+# ifdef CGAL_HAS_MPZF
+  test_it<CGAL::Mpzf>("Mpzf");
+# endif
   test_it<CGAL::MP_Float>("MP_Float");
   test_it<CGAL::Gmpq>("Gmpq");
 #endif // CGAL_USE_GMP
