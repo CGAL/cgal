@@ -51,7 +51,7 @@ template< typename Map1, typename Map2, unsigned int i,
 struct Create_attribute_if_same_info_cmap
 {
   static typename Map2::template Attribute_handle<i>::type
-  run(Map2&, const Info2& )
+  run(Map2&, const Info1& )
   { return Map2::null_handle; }
 };
 
