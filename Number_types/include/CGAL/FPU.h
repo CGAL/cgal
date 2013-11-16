@@ -142,10 +142,31 @@ const double infinity = HUGE_VAL;
 // etc
 template <class T> inline T IA_opacify(T x)
 {
-#ifdef __GNUG__
+#ifdef __llvm__
+  // LLVM's support for inline asm is completely messed up:
+  // http://llvm.org/bugs/show_bug.cgi?id=17958
+  // http://llvm.org/bugs/show_bug.cgi?id=17959
+  // etc.
+  // This seems to produce code that is ok (not optimal but better than
+  // volatile). In case of trouble, use volatile instead.
+# ifdef CGAL_HAS_SSE2
+  asm volatile ("" : "+x"(x) );
+# else
+  asm volatile ("" : "+m"(x) );
+# endif
+  return x;
+#elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
-  // When T is a vector, gcc < 4.8 fails and we need "+mx" instead.
+  // When T is a vector, gcc < 4.8 fails with "+g" and we need "+mx" instead.
+  // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
+  // may not be safe?
+  // The constraint 'g' doesn't include floating point registers ???
+  // "+f" doesn't compile ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
+# ifdef CGAL_HAS_SSE2
+  asm volatile ("" : "+gx"(x) );
+# else
   asm volatile ("" : "+g"(x) );
+# endif
   return x;
 #else
   volatile T e = x;
@@ -168,7 +189,7 @@ inline double IA_force_to_double(double x)
 #  else
   // Similar to writing to a volatile and reading back, except that calling
   // it k times in a row only goes through memory once.
-  asm("" : "+m"(x) );
+  asm volatile ("" : "+m"(x) );
 #  endif
   return x;
 #else
