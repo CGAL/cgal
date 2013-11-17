@@ -158,12 +158,30 @@ template <class T> inline T IA_opacify(T x)
 #elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
   // When T is a vector, gcc < 4.8 fails with "+g" and we need "+mx" instead.
+  // "+f" doesn't compile on x86(_64)
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
   // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
   // may not be safe?
   // The constraint 'g' doesn't include floating point registers ???
-  // "+f" doesn't compile ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
 # ifdef CGAL_HAS_SSE2
+#  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
+  // ICEs in reload/LRA with older versions.
   asm volatile ("" : "+gx"(x) );
+#  else
+  asm volatile ("" : "+mx"(x) );
+#  endif
+# elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
+  // ARM
+  asm volatile ("" : "+gw"(x) );
+# elif defined __powerpc__ || defined __POWERPC__
+  // PowerPC
+  asm volatile ("" : "+gd"(x) );
+# elif defined __sparc
+  // Sparc
+  asm volatile ("" : "+ge"(x) );
+# elif defined __ia64
+  // Itanium
+  asm volatile ("" : "+gf"(x) );
 # else
   asm volatile ("" : "+g"(x) );
 # endif
