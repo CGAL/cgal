@@ -114,7 +114,8 @@ protected:
 
   // Data members:
   const Traits_adaptor_2* m_traits;     // Its associated traits object.
-  bool ignore_notifications;
+  bool m_ignore_notifications;
+  bool m_ignore_remove_edge;
   CDT cdt;
   bool updated_cdt;
 
@@ -124,12 +125,19 @@ protected:
 
 public:
   /*! Default constructor. */
-  Arr_triangulation_point_location() : m_traits(NULL) {}
+  Arr_triangulation_point_location() :
+    m_traits(NULL),
+    m_ignore_notifications(false),
+    m_ignore_remove_edge(false)
+  {}
 
   /*! Constructor given an arrangement.
    */
   Arr_triangulation_point_location(const Arrangement_2& arr) :
-    Arr_observer<Arrangement_2>(const_cast<Arrangement_2&>(arr))
+    Arr_observer<Arrangement_2>(const_cast<Arrangement_2&>(arr)),
+    m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
+    m_ignore_notifications(false),
+    m_ignore_remove_edge(false)
   { build_triangulation(); }
 
   /*! Locate the arrangement feature containing the given point.
@@ -173,16 +181,27 @@ public:
    */
   virtual void before_global_change()
   {
+    std::cout << "before_global_change()" << std::endl;
     clear_triangulation();
-    ignore_notifications = true;
+    m_ignore_notifications = true;
   }
 
   /*! Notification after a global operation is completed.
    */
   virtual void after_global_change()
   {
+    std::cout << "after_global_change()" << std::endl;
     build_triangulation();
-    ignore_notifications = false;
+    m_ignore_notifications = false;
+  }
+
+  /*! Notification before the removal of an edge.
+   * \param e A handle to one of the twin halfedges to be deleted.
+   */
+  virtual void before_remove_edge(Halfedge_handle /* e */)
+  {
+    std::cout << "before_remove_edge()" << std::endl;
+    m_ignore_remove_edge = true;
   }
 
   /*! Notification after the creation of a new vertex.
@@ -190,7 +209,7 @@ public:
    */
   virtual void after_create_vertex(Vertex_handle /* v */)
   {
-    if (! ignore_notifications) {
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
@@ -201,7 +220,7 @@ public:
    */
   virtual void after_create_edge(Halfedge_handle /* e */)
   {
-    if (! ignore_notifications) {
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
@@ -214,7 +233,8 @@ public:
   virtual void after_split_edge(Halfedge_handle /* e1 */,
                                 Halfedge_handle /* e2 */)
   {
-    if (! ignore_notifications) {
+    std::cout << "after_split_edge()" << std::endl;
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
@@ -229,18 +249,20 @@ public:
                                 Face_handle /* new_f */,
                                 bool /* is_hole */)
   {
-    if (! ignore_notifications) {
+    std::cout << "after_split_face()" << std::endl;
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
   }
 
-  /*! Notification after a hole was created inside a face.
-   * \param h A circulator representing the boundary of the new hole.
+  /*! Notification after an outer CCB was created inside a face.
+   * \param h A circulator representing the boundary of the new outer CCB.
    */
-  virtual void after_add_hole(Ccb_halfedge_circulator /* h */)
+  virtual void after_add_outer_ccb(Ccb_halfedge_circulator /* h */)
   {
-    if (! ignore_notifications) {
+    std::cout << "after_add_outer_ccb()" << std::endl;
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
@@ -251,7 +273,7 @@ public:
    */
   virtual void after_merge_edge(Halfedge_handle /* e */)
   {
-    if (! ignore_notifications) {
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
@@ -262,18 +284,20 @@ public:
    */
   virtual void after_merge_face(Face_handle /* f */)
   {
-    if (! ignore_notifications) {
+    std::cout << "after_merge_face() " << std::endl;
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
     }
   }
 
-  /*! Notification after a hole is moved from one face to another.
-   * \param h A circulator representing the boundary of the hole.
+  /*! Notification after an outer CCB  is moved from one face to another.
+   * \param h A circulator representing the boundary of the component.
    */
-  virtual void after_move_hole(Ccb_halfedge_circulator /* h */)
+  virtual void after_move_outer_ccb(Ccb_halfedge_circulator /* h */)
   {
-    if (! ignore_notifications) {
+    std::cout << "after_move_outer_ccb()" << std::endl;
+    if (! m_ignore_notifications) {
       clear_triangulation();
       build_triangulation();
     }
@@ -284,7 +308,7 @@ public:
    */
   virtual void after_remove_vertex()
   {
-    if (! ignore_notifications) {
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
     }
@@ -295,18 +319,57 @@ public:
    */
   virtual void after_remove_edge()
   {
-    if (! ignore_notifications) {
+    std::cout << "after_remove_edge()" << std::endl;
+    if (! m_ignore_notifications) {
+      clear_triangulation();
+      build_triangulation();
+    }
+    m_ignore_remove_edge = false;
+  }
+
+  /*! Notification before the removal of an outer CCB.
+   * \param f The face that used to own the outer CCB.
+   */
+  virtual void after_remove_outer_ccb(Face_handle /* f */)
+  {
+    std::cout << "after_remove_outer_ccb()" << std::endl;
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
     }
   }
 
-  /*! Notification before the removal of a hole.
-   * \param h A circulator representing the boundary of the hole.
+  /*! Notification after an inner CCB was created inside a face.
+   * \param h A circulator representing the boundary of the new inner CCB.
    */
-  virtual void after_remove_hole()
+  virtual void after_add_inner_ccb(Ccb_halfedge_circulator /* h */)
   {
-    if (! ignore_notifications) {
+    std::cout << "after_add_inner_ccb()" << std::endl;
+    if (! m_ignore_notifications) {
+      clear_triangulation();
+      build_triangulation();
+    }
+  }
+
+  /*! Notification after an inner CCB is moved from one face to another.
+   * \param h A circulator representing the boundary of the component.
+   */
+  virtual void after_move_inner_ccb(Ccb_halfedge_circulator /* h */)
+  {
+    std::cout << "after_move_inner_ccb()" << std::endl;
+    if (! m_ignore_notifications) {
+      clear_triangulation();
+      build_triangulation();
+    }
+  }
+
+  /*! Notificaion after the removal of an inner CCB.
+   * \param f The face that used to contain the inner CCB.
+   */
+  virtual void after_remove_inner_ccb(Face_handle /* f */)
+  {
+    std::cout << "after_remove_inner_ccb()" << std::endl;
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_triangulation();
       build_triangulation();
     }

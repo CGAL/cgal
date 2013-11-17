@@ -26,7 +26,7 @@
 * Arr_triangulation_point_location<Arrangement> class.
 */
 
-// #define CGAL_TRG_DEBUG
+#define CGAL_TRG_DEBUG
 
 #ifdef CGAL_TRG_DEBUG
   #define CGAL_TRG_PRINT_DEBUG(expr)   std::cout << expr << std::endl
