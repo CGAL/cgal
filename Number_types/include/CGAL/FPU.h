@@ -157,7 +157,7 @@ inline double IA_opacify(double x)
   return x;
 #elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
-  // When T is a vector, gcc < 4.8 fails with "+g" and we need "+mx" instead.
+  // With a vector, gcc < 4.8 fails with "+g" and we need "+mx" instead.
   // "+f" doesn't compile on x86(_64)
   // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
   // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
@@ -187,7 +187,7 @@ inline double IA_opacify(double x)
 # endif
   return x;
 #else
-  volatile T e = x;
+  volatile double e = x;
   return e;
 #endif
 }
