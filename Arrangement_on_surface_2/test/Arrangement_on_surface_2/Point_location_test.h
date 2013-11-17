@@ -15,7 +15,7 @@
 #include <CGAL/Arr_point_location/Arr_lm_middle_edges_generator.h>
 #include <CGAL/Arr_point_location/Arr_lm_specified_points_generator.h>
 #include <CGAL/Arr_point_location_result.h>
-//#include <CGAL/Arr_triangulation_point_location.h>
+#include <CGAL/Arr_triangulation_point_location.h>
 
 #include "IO_test.h"
 
@@ -97,9 +97,8 @@ protected:
   typedef typename CGAL::Arr_trapezoid_ric_point_location<Arrangement>
     Trapezoid_ric_point_location;
 
-  //   typedef CGAL::Arr_triangulation_point_location<Arrangement>
-
-  // Triangulation_point_location;
+  typedef CGAL::Arr_triangulation_point_location<Arrangement>
+    Triangulation_point_location;
 
   // ===> Add new point location type here <===
 
@@ -125,7 +124,7 @@ protected:
   Lm_halton_point_location* m_halton_lm_pl;                      // 6
   Lm_middle_edges_point_location* m_middle_edges_lm_pl;          // 7
   Lm_specified_points_point_location* m_specified_points_lm_pl;  // 8
-  // Triangulation_point_location m_triangulation_pl;            // 9
+  Triangulation_point_location* m_triangulation_pl;              // 9
   Trapezoid_ric_point_location* m_trapezoid_ric_pl;              // 10
   Trapezoid_ric_point_location* m_trapezoid_ric_no_grnt_pl;      // 11
 
@@ -137,7 +136,7 @@ protected:
 
   // // ===> Change the number of point-location startegies
   // //      when a new point location is added. <===
-  #define MAX_NUM_POINT_LOCATION_STRATEGIES 11
+  #define MAX_NUM_POINT_LOCATION_STRATEGIES 12
 
   int verify(Objects_vector objs[MAX_NUM_POINT_LOCATION_STRATEGIES],
              size_t size, unsigned int pls_num);
@@ -222,7 +221,7 @@ Point_location_test(const Geom_traits& geom_traits) :
   m_halton_lm_pl(NULL),
   m_middle_edges_lm_pl(NULL),
   m_specified_points_lm_pl(NULL),
-  // m_triangulation_pl(NULL),
+  m_triangulation_pl(NULL),
   m_trapezoid_ric_pl(NULL),
   m_trapezoid_ric_no_grnt_pl(NULL),
   m_random_g(NULL),
@@ -334,10 +333,13 @@ deallocate_pl_strategies()
   }
 #endif
 
-  // if (m_triangulation_pl) {
-  //   delete m_triangulation_pl;
-  //   m_triangulation_pl = NULL;
-  // }
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+  if (m_triangulation_pl) {
+    delete m_triangulation_pl;
+    m_triangulation_pl = NULL;
+  }
+#endif
+
   if (m_trapezoid_ric_pl) {
     delete m_trapezoid_ric_pl;
     m_trapezoid_ric_pl = NULL;
@@ -408,10 +410,10 @@ allocate_pl_strategies()
     return false;
   if (!(m_specified_points_lm_pl = new Lm_specified_points_point_location()))
     return false;
+#endif
 
-  // if (!(m_triangulation_pl = new Triangulation_point_location()))
-  //   return false;
-
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+  if (!(m_triangulation_pl = new Triangulation_point_location())) return false;
 #endif
 
   if (!(m_trapezoid_ric_pl = new Trapezoid_ric_point_location())) return false;
@@ -474,13 +476,14 @@ construct_pl_strategies()
   timer.stop();
   std::cout << "Specified_points lm construction took "
             << timer.time() << std::endl;
+#endif
 
-  // timer.reset(); timer.start();
-  // m_triangulation_pl = new Triangulation_point_location(*m_arr);     // 9
-  // timer.stop();
-  // std::cout << "Triangulation lm construction took "
-  //           << timer.time() << std::endl;
-
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+  timer.reset(); timer.start();
+  m_triangulation_pl = new Triangulation_point_location(*m_arr);        // 9
+  timer.stop();
+  std::cout << "Triangulation lm construction took "
+            << timer.time() << std::endl;
 #endif
 
   timer.reset(); timer.start();
@@ -550,13 +553,14 @@ bool Point_location_test<Geom_traits_T, Topol_traits_T>::attach_pl_strategies()
   timer.stop();
   std::cout << "Specified_points lm construction took "
             << timer.time() << std::endl;
+#endif
 
-  // timer.reset(); timer.start();
-  // m_location triangulation_lm_pl->attach(*m_arr);
-  // timer.stop();
-  // std::cout << "Triangulation lm construction took "
-  //           << timer.time() << std::endl;
-
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+  timer.reset(); timer.start();
+  m_triangulation_pl->attach(*m_arr);
+  timer.stop();
+  std::cout << "Triangulation lm construction took "
+            << timer.time() << std::endl;
 #endif
 
   timer.reset(); timer.start();
@@ -631,12 +635,12 @@ bool Point_location_test<Geom_traits_T, Topol_traits_T>::perform()
   query(*m_specified_points_lm_pl, "Landmarks specified points",
         m_query_points.begin(), m_query_points.end(),
         std::back_inserter(objs[pl_index++]));  // Landmarks specified points
+#endif
 
-  // Triangulation
-  // query(*m_triangulation_pl, "Triangulation",
-  //       m_query_points.begin(), m_query_points.end(),
-  //       std::back_inserter(objs[pl_index++]));  // Triangulation
-
+#if (TEST_GEOM_TRAITS == SEGMENT_GEOM_TRAITS)
+  query(*m_triangulation_pl, "Triangulation",
+        m_query_points.begin(), m_query_points.end(),
+        std::back_inserter(objs[pl_index++]));  // Triangulation
 #endif
 
   query(*m_trapezoid_ric_pl, "Trapezoidal RIC",
