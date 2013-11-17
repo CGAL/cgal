@@ -28,9 +28,9 @@ PointsGraphicsItem::PointsGraphicsItem( ) :
   color( ::Qt::blue )
 { }
 
-void PointsGraphicsItem::paint( QPainter* painter,
-                                const QStyleOptionGraphicsItem* option,
-                                QWidget* widget )
+void PointsGraphicsItem::paint(QPainter* painter,
+                               const QStyleOptionGraphicsItem* /* option */,
+                               QWidget* /* widget */)
 {
   double scale = painter->worldTransform( ).m11( );
   double radius = this->pointRadius;
