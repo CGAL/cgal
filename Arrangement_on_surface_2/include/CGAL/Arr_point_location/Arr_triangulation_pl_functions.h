@@ -26,7 +26,7 @@
 * Arr_triangulation_point_location<Arrangement> class.
 */
 
-#define CGAL_TRG_DEBUG
+// #define CGAL_TRG_DEBUG
 
 #ifdef CGAL_TRG_DEBUG
   #define CGAL_TRG_PRINT_DEBUG(expr)   std::cout << expr << std::endl
@@ -79,7 +79,7 @@ Arr_triangulation_point_location<Arrangement_2_>::locate(const Point_2& p)
   //locate point
   int li;
   CDT_Locate_type cdt_lt;
-  CDT_Face_handle fh = cdt.locate(p1, cdt_lt, li);
+  CDT_Face_handle fh = m_cdt.locate(p1, cdt_lt, li);
 
   switch (cdt_lt) {
    case CDT::OUTSIDE_AFFINE_HULL:
@@ -94,7 +94,7 @@ Arr_triangulation_point_location<Arrangement_2_>::locate(const Point_2& p)
    case CDT::EDGE:
     CGAL_TRG_PRINT_DEBUG("locate type = edge" << li);
     //li is the index of the vertex OPOSITE to the edge
-    if (cdt.is_constrained(CDT_Edge(fh,li))) {
+    if (m_cdt.is_constrained(CDT_Edge(fh,li))) {
       //the edge found is an edge in the plannar map
       CGAL_TRG_PRINT_DEBUG("the edge is a constrained");
       //get the 2 vertices incident to the edge in the plannar map
@@ -201,7 +201,7 @@ go over all halfedges, and insert each halfedge as a constraint to the cdt.
 */
 template <typename Arrangement_2_>
 void Arr_triangulation_point_location<Arrangement_2_>::clear_triangulation()
-{ cdt.clear(); }
+{ m_cdt.clear(); }
 
 //----------------------------------------------------
 /*! triangulate the arrangement into a cdt (Constaint Delauney Triangulation):
@@ -234,30 +234,27 @@ void Arr_triangulation_point_location<Arrangement_2_>::build_triangulation()
     if (m_traits->equal_2_object()(pm_p1, pm_p2)) {
       std::cerr << "WARNING: source point is equal to destination point!!! "
                 << pm_p1 << std::endl ;
-      CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
+      CDT_Vertex_handle cdt_vh1 = m_cdt.insert(cdt_p1);
       cdt_vh1->info() = pm_vh1;
       continue;
     }
 
     //insert vertices to the CDT
-    CDT_Vertex_handle cdt_vh1 = cdt.insert(cdt_p1);
-    CDT_Vertex_handle cdt_vh2 = cdt.insert(cdt_p2);
+    CDT_Vertex_handle cdt_vh1 = m_cdt.insert(cdt_p1);
+    CDT_Vertex_handle cdt_vh2 = m_cdt.insert(cdt_p2);
 
     //connect new CDT vertex with Pm vertex
     cdt_vh1->info() = pm_vh1;
     cdt_vh2->info() = pm_vh2;
 
     //add constraint from the two points
-    cdt.insert_constraint(cdt_vh1, cdt_vh2);
+    m_cdt.insert_constraint(cdt_vh1, cdt_vh2);
 
     //print
     CGAL_TRG_PRINT_DEBUG("source = " << pm_p1 << " , target = " << pm_p2);
   }
 
-  //the triangulation is now updated
-  updated_cdt = true;
-
-  CGAL_assertion(cdt.is_valid());
+  CGAL_assertion(m_cdt.is_valid());
   CGAL_TRG_PRINT_DEBUG("finished updating the CDT ");
 }
 

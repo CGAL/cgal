@@ -17,8 +17,9 @@
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
-#ifndef CGAL_ARR_LM_GRID_GENERATOR_H
-#define CGAL_ARR_LM_GRID_GENERATOR_H
+
+#ifndef CGAL_ARR_LANDMARKS_GRID_GENERATOR_H
+#define CGAL_ARR_LANDMARKS_GRID_GENERATOR_H
 
 /*! \file
 * Definition of the Arr_grid_landmarks_generator<Arrangement> template.
@@ -73,17 +74,17 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2*  m_traits;
-  unsigned int             num_landmarks;
-  Pairs_set                lm_pairs;
+  const Traits_adaptor_2* m_traits;
+  unsigned int num_landmarks;
+  Pairs_set lm_pairs;
 
-  ANT                      x_min, y_min;    // Bounding box for the
-  ANT                      x_max, y_max;    // arrangement vertices.
-  ANT                      step_x, step_y;  // Grid step sizes.
-  unsigned int             sqrt_n;
+  ANT x_min, y_min;    // Bounding box for the
+  ANT x_max, y_max;    // arrangement vertices.
+  ANT step_x, step_y;  // Grid step sizes.
+  unsigned int sqrt_n;
 
-  bool            fixed_number_of_lm; // indicates if the constructor got
-                                      // number of landmarks as parameter
+  bool fixed_number_of_lm; // indicates if the constructor got
+                           // number of landmarks as parameter
 
 private:
   /*! Copy constructor - not supported. */
@@ -93,34 +94,35 @@ private:
   Self& operator=(const Self&);
 
 public:
-  /*! Constructor. */
+  /*! Constructor from an arrangement.
+   * \param arr (in) The arrangement.
+   */
   Arr_grid_landmarks_generator(const Arrangement_2& arr) :
     Base(arr),
+    m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
     num_landmarks(0),
     fixed_number_of_lm(false)
   {
-    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
     build_landmark_set();//this->
   }
 
   Arr_grid_landmarks_generator(const Arrangement_2& arr,
                                unsigned int n_landmarks) :
     Base(arr),
+    m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
     num_landmarks(n_landmarks),
     fixed_number_of_lm(true)
   {
-    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
     build_landmark_set();//this->
   }
 
-  /*!
-   * Create the landmarks set (choosing the landmarks),
+  /*! Create the landmarks set (choosing the landmarks),
    * and store them in the nearest neighbor search structure.
    */
   virtual void build_landmark_set()
   {
     // Create a set of points on a grid.
-    Points_set    points;
+    Points_set points;
     _create_points_set(points);
     // Locate the landmarks in the arrangement using batched point-location
     // global function. Note that the resulting pairs are returned sorted by
@@ -131,8 +133,7 @@ public:
     this->updated = true;
   }
 
-  /*!
-   * Clear the set of landmarks.
+  /*! Clear the set of landmarks.
    */
   virtual void clear_landmark_set()
   {
@@ -140,11 +141,10 @@ public:
     this->updated = false;
   }
 
-  /*!
-   * Get the nearest neighbor (landmark) to the given point.
+  /*! Obtain the nearest neighbor (landmark) to the given point.
    * \param q The query point.
-   * \param obj Output: The location of the nearest landmark point in the
-   *                    arrangement (a vertex, halfedge, or face handle).
+   * \param obj (out) The location of the nearest landmark point in the
+   *                  arrangement (a vertex, halfedge, or face handle).
    * \return The nearest landmark point.
    */
   virtual Point_2 closest_landmark(const Point_2& q, PL_result_type& obj)
@@ -152,26 +152,17 @@ public:
     CGAL_assertion(this->updated);
 
     // Calculate the index of the nearest grid point point to q.
-    const ANT     qx = m_traits->approximate_2_object()(q, 0);
-    const ANT     qy = m_traits->approximate_2_object()(q, 1);
-    unsigned int  i, j;
-    unsigned int  index;
-
-    if (CGAL::compare(qx, x_min) == SMALLER)
-      i = 0;
-    else if (CGAL::compare(qx, x_max) == LARGER)
-      i = sqrt_n - 1;
-    else
-      i = static_cast<int>(((qx - x_min) / step_x) + 0.5);
-
-    if (CGAL::compare(qy, y_min) == SMALLER)
-      j = 0;
-    else if (CGAL::compare(qy, y_max) == LARGER)
-      j = sqrt_n - 1;
-    else
-      j = static_cast<int>(((qy - y_min) / step_y) + 0.5);
-
-    index = sqrt_n * i + j;
+    typename Geometry_traits_2::Approximate_2 approximate =
+      m_traits->approximate_2_object();
+    const ANT qx = approximate(q, 0);
+    const ANT qy = approximate(q, 1);
+    unsigned int i = (CGAL::compare(qx, x_min) == SMALLER) ? 0 :
+      (CGAL::compare(qx, x_max) == LARGER) ? (sqrt_n - 1) :
+      static_cast<int>(((qx - x_min) / step_x) + 0.5);
+    unsigned int j = (CGAL::compare(qy, y_min) == SMALLER) ? 0 :
+      (CGAL::compare(qy, y_max) == LARGER) ? (sqrt_n - 1) :
+      static_cast<int>(((qy - y_min) / step_y) + 0.5);
+    unsigned int index = sqrt_n * i + j;
 
     // Return the result.
     obj = lm_pairs[index].second;
@@ -179,8 +170,7 @@ public:
   }
 
 protected:
-  /*!
-   * Create a set of landmark points on a grid.
+  /*! Create a set of landmark points on a grid.
    */
   virtual void _create_points_set(Points_set& points)
   {
@@ -203,34 +193,29 @@ protected:
       return;
     }
 
-    ANT                      x, y;
-    Vertex_const_iterator    left, right, top, bottom;
+    ANT x, y;
+    Vertex_const_iterator left, right, top, bottom;
 
     left = right = top = bottom = vit;
 
-    for (++vit; vit != arr->vertices_end(); ++vit)
-    {
+    for (++vit; vit != arr->vertices_end(); ++vit) {
       x = m_traits->approximate_2_object()(vit->point(), 0);
       y = m_traits->approximate_2_object()(vit->point(), 1);
 
-      if (CGAL::compare(x, x_min) == SMALLER)
-      {
+      if (CGAL::compare(x, x_min) == SMALLER) {
         x_min = x;
         left = vit;
       }
-      else if (CGAL::compare(x, x_max) == LARGER)
-      {
+      else if (CGAL::compare(x, x_max) == LARGER) {
         x_max = x;
         right = vit;
       }
 
-      if (CGAL::compare(y, y_min) == SMALLER)
-      {
+      if (CGAL::compare(y, y_min) == SMALLER) {
         y_min = y;
         bottom = vit;
       }
-      else if (CGAL::compare(y, y_max) == LARGER)
-      {
+      else if (CGAL::compare(y, y_max) == LARGER) {
         y_max = y;
         top = vit;
       }
@@ -249,20 +234,15 @@ protected:
     CGAL_assertion(sqrt_n > 1);
 
     // Calculate the step sizes for the grid.
-    ANT    delta_x = m_traits->approximate_2_object()(right->point(), 0) -
-                     m_traits->approximate_2_object()(left->point(), 0);
-    ANT    delta_y = m_traits->approximate_2_object()(top->point(), 1) -
-                     m_traits->approximate_2_object()(bottom->point(), 1);
+    ANT delta_x = m_traits->approximate_2_object()(right->point(), 0) -
+      m_traits->approximate_2_object()(left->point(), 0);
+    ANT delta_y = m_traits->approximate_2_object()(top->point(), 1) -
+      m_traits->approximate_2_object()(bottom->point(), 1);
 
-    if (CGAL::sign(delta_x) == CGAL::ZERO)
-      delta_x = delta_y;
-
-    if (CGAL::sign(delta_y) == CGAL::ZERO)
-      delta_y = delta_x;
-
+    if (CGAL::sign(delta_x) == CGAL::ZERO) delta_x = delta_y;
+    if (CGAL::sign(delta_y) == CGAL::ZERO) delta_y = delta_x;
     CGAL_assertion((CGAL::sign(delta_x) == CGAL::POSITIVE) &&
                    (CGAL::sign(delta_y) == CGAL::POSITIVE));
-
     step_x = delta_x / (sqrt_n - 1);
     step_y = delta_y / (sqrt_n - 1);
 

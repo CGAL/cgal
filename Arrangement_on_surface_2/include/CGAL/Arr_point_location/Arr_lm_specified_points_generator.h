@@ -14,11 +14,11 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Shlomo Golubev   <golubevs@post.tau.ac.il>
 
-#ifndef CGAL_ARR_SPECIFIED_POINTS_GENERATOR_H
-#define CGAL_ARR_SPECIFIED_POINTS_GENERATOR_H
+#ifndef CGAL_ARR_LANDMARKS_SPECIFIED_POINTS_GENERATOR_H
+#define CGAL_ARR_LANDMARKS_SPECIFIED_POINTS_GENERATOR_H
 
 /*! \file
  * Definition of the Arr_lm_specified_points_generator<Arrangement> template.
@@ -65,7 +65,7 @@ public:
 
   typedef typename Nearest_neighbor::NN_Point_2         NN_Point_2;
   typedef std::list<NN_Point_2>                         NN_Point_list;
-  
+
 protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
   typedef typename Base::PL_result_type                 PL_result_type;
@@ -85,26 +85,28 @@ private:
   /*! Assignment operator - not supported. */
   Self& operator=(const Self&);
 
-public: 
-  /*! Constructor. */
+public:
+  /*! Constructor.
+   * Create landmarks in the points that are given to it.
+   */
   Arr_landmarks_specified_points_generator(const Arrangement_2& arr,
                                            const Points_set points) :
     Base(arr),
+    m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
+    m_points(points),
     num_landmarks(points.size())
-  {
-    //this constructor creates landmarks in the points that are given to it
-    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
-    m_points = points;
-    build_landmark_set();
-  }
+  { build_landmark_set(); }
 
+  /*! Constructor. from an arrangement.
+   * \param arr (in) The arrangement.
+   */
   Arr_landmarks_specified_points_generator(const Arrangement_2& arr) :
-    Base(arr)
+    Base(arr),
+    m_traits(static_cast<const Traits_adaptor_2*> (arr.geometry_traits())),
+    num_landmarks(1)
   {
     //this constructor creates a single landmark in the origin
     m_points.push_back(Point_2(0,0));
-    num_landmarks = 1;
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     build_landmark_set();
   }
 
@@ -114,28 +116,24 @@ public:
     CGAL_error();
   }
 
-  /*!
-   * Creates the landmark set, using all arrangement vertices.
+  /*! Create the landmark set, using all arrangement vertices.
    */
   void build_landmark_set()
   {
-
     lm_pairs.clear();
-    locate (*(this->arrangement()), m_points.begin(), m_points.end(),
-            std::back_inserter(lm_pairs));
+    locate(*(this->arrangement()), m_points.begin(), m_points.end(),
+           std::back_inserter(lm_pairs));
 
     // Go over the container of the specified points and insert them as
     // landmarks.
-    NN_Point_list                   nnp_list; 
+    NN_Point_list                   nnp_list;
     typename Points_set::iterator   pt_it;
     typename Pairs_set::iterator    pairs_it;
-    for (pt_it = m_points.begin(); pt_it != m_points.end(); ++pt_it)
-    {
+    for (pt_it = m_points.begin(); pt_it != m_points.end(); ++pt_it) {
       for (pairs_it = lm_pairs.begin();
            pairs_it != lm_pairs.end() && (*pairs_it).first != (*pt_it);
            ++pairs_it) {};
-      if ((*pairs_it).first == (*pt_it))
-      {
+      if ((*pairs_it).first == (*pt_it)) {
         nnp_list.push_back (NN_Point_2 ((*pt_it),(*pairs_it).second));
       }
     }

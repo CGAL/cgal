@@ -17,8 +17,9 @@
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <haranidi@post.tau.ac.il>
-#ifndef CGAL_ARR_LM_HALTON_GENERATOR_H
-#define CGAL_ARR_LM_HALTON_GENERATOR_H
+
+#ifndef CGAL_ARR_LANDMARKS_HALTON_GENERATOR_H
+#define CGAL_ARR_LANDMARKS_HALTON_GENERATOR_H
 
 /*! \file
 * Definition of the Arr_halton_landmarks_generator<Arrangement> template.
@@ -55,7 +56,7 @@ public:
 
 protected:
   // Data members:
-  unsigned int     num_landmarks; 
+  unsigned int     num_landmarks;
 
 private:
   /*! Copy constructor - not supported. */
@@ -64,10 +65,12 @@ private:
   /*! Assignment operator - not supported. */
   Self& operator=(const Self&);
 
-public: 
-  /*! Constructor. */
+public:
+  /*! Constructor from an arrangement.
+   * \param arr (in) The arrangement.
+   */
   Arr_halton_landmarks_generator(const Arrangement_2& arr,
-                                 unsigned int n_landmarks = 0) : 
+                                 unsigned int n_landmarks = 0) :
     Base(arr),
     num_landmarks(n_landmarks)
   { this->build_landmark_set(); }
@@ -79,18 +82,18 @@ protected:
    * The Halton points are constructed in the bounding rectangle of the
    * arrangement vertices.
    */
-  virtual void _create_points_set (Points_set& points)
+  virtual void _create_points_set(Points_set& points)
   {
     points.clear();
 
     // Go over the arrangement vertices and construct their boundig box.
     const Arrangement_2*  arr = this->arrangement();
-    Vertex_const_iterator vit; 
+    Vertex_const_iterator vit;
     double                x_min = 0, x_max = 1, y_min = 0, y_max = 1;
     double                x, y;
     bool                  first = true;
 
-    for (vit=arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
+    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
       x = CGAL::to_double(vit->point().x());
       y = CGAL::to_double(vit->point().y());
 
@@ -100,15 +103,11 @@ protected:
         first = false;
       }
       else {
-        if (x < x_min)
-          x_min = x;
-        else if (x > x_max)
-          x_max = x;
+        if (x < x_min) x_min = x;
+        else if (x > x_max) x_max = x;
 
-        if (y < y_min)
-          y_min = y;
-        else if (y > y_max)
-          y_max = y;
+        if (y < y_min) y_min = y;
+        else if (y > y_max) y_max = y;
       }
     }
 
@@ -117,11 +116,10 @@ protected:
     if (num_landmarks == 0)
       num_landmarks = static_cast<unsigned int>(arr->number_of_vertices());
 
-    if (num_landmarks == 0)
-      return;
+    if (num_landmarks == 0) return;
 
     if (num_landmarks == 1) {
-      points.push_back (Point_2 (x_max, y_max)); 
+      points.push_back (Point_2 (x_max, y_max));
       return;
     }
 
