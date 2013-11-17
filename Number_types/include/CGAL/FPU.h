@@ -140,7 +140,7 @@ const double infinity = HUGE_VAL;
 // - (-a)-b -> -(a+b)
 // - (-a)*b -> -(a*b)
 // etc
-template <class T> inline T IA_opacify(T x)
+inline double IA_opacify(double x)
 {
 #ifdef __llvm__
   // LLVM's support for inline asm is completely messed up:
