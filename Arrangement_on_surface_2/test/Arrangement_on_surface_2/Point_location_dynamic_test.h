@@ -78,7 +78,8 @@ construct_arrangement()
 {
   std::ifstream in_com(this->m_filename_commands.c_str());
   if (!in_com.is_open()) {
-    this->print_error(std::string("cannot open file ").append(this->m_filename_commands));
+    this->print_error(std::string("cannot open file ").
+                      append(this->m_filename_commands));
     return false;
   }
 
@@ -131,7 +132,7 @@ read_perform_opts(std::istream& is)
       rc = false;
       continue;
     }
-    if (cmd == 'i') CGAL::insert(*(this->m_arr), this->m_xcurves[id]);
+    if (cmd == 'i') insert(*(this->m_arr), this->m_xcurves[id]);
 
     if (cmd == 'd') {
       if (!remove(this->m_xcurves[id])) rc = false;
@@ -154,9 +155,8 @@ remove(const X_monotone_curve_2& xcv)
   const Geom_traits* traits = this->m_arr->geometry_traits();
   typename Geom_traits::Equal_2 equal = traits->equal_2_object();
 
-  typename Arrangement::Edge_iterator eit;
-  for (eit = this->m_arr->edges_begin(); eit != this->m_arr->edges_end(); ++eit)
-  {
+  typename Arrangement::Edge_iterator eit = this->m_arr->edges_begin();
+  for (; eit != this->m_arr->edges_end(); ++eit) {
     const X_monotone_curve_2& xcv_arr = eit->curve();
     if (equal(xcv, xcv_arr)) {
       this->m_arr->remove_edge(eit);
