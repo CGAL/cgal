@@ -158,18 +158,25 @@ inline double IA_opacify(double x)
 #elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
   // With a vector, gcc < 4.8 fails with "+g" and we need "+mx" instead.
-  // "+f" doesn't compile on x86(_64)
-  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
   // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
   // may not be safe?
   // The constraint 'g' doesn't include floating point registers ???
-# ifdef CGAL_HAS_SSE2
+  // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
+  // (-mno-sse2 works though), no work-around for now.
+# if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
 #  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
   // ICEs in reload/LRA with older versions.
   asm volatile ("" : "+gx"(x) );
 #  else
   asm volatile ("" : "+mx"(x) );
 #  endif
+# elif (defined __i386__ || defined __x86_64__)
+  // "+f" doesn't compile on x86(_64)
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
+  // Don't mix "t" with "g": http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59180
+  // We can't put "t" with "x" either, prefer "x" for -mfpmath=sse,387.
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59181 )
+  asm volatile ("" : "+mt"(x) );
 # elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
   // ARM
   asm volatile ("" : "+gw"(x) );
