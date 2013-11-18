@@ -211,7 +211,9 @@ type `LinearAlgebra`.
 
 The kernel `Epick_d<DimensionTag>`, short for Exact Predicates Inexact
 Constructions Kernel is a kernel particularly useful when the dimension of
-the space is known at compile-time. It uses a Cartesian representation and
+the space is known at compile-time; `DimensionTag` is then
+`Dimension_tag<d>` where `d` is an integer representing the dimension.
+It uses a Cartesian representation and
 supports construction of points from `double` coordinates. It provides exact
 geometric predicates, but the geometric constructions are not guaranteed to
 be exact.
