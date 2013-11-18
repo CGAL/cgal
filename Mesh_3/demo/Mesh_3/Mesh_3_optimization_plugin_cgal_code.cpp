@@ -283,8 +283,6 @@ class Optimization_function < Domain, Odt_parameters >
 {
   // Private types
   typedef C3t3::Triangulation  Tr;
-  typedef Tr::Geom_traits      Gt;
-  
   typedef CGAL::Mesh_3::Mesh_sizing_field<Tr>    Sizing;
   typedef CGAL::Mesh_3::Odt_move<C3t3,Sizing>    Move;
   typedef Global_visitor                         Visitor;
@@ -395,8 +393,6 @@ class Optimization_function < Domain, Lloyd_parameters >
 {
   // Private types
   typedef C3t3::Triangulation  Tr;
-  typedef Tr::Geom_traits      Gt;
-  
   typedef CGAL::Mesh_3::Mesh_sizing_field<Tr>    Sizing;
   typedef CGAL::Mesh_3::Lloyd_move<C3t3,Sizing>  Move;
   typedef Global_visitor                         Visitor;
@@ -521,8 +517,8 @@ class Optimization_function < Domain, Perturb_parameters >
   : public Optimization_function_base< Domain >
 {
   // Private types
-  typedef C3t3::Triangulation::Geom_traits                        Gt;
-  typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>          Sc;
+  typedef C3t3::Triangulation                                     Tr;
+  typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>          Sc;
   typedef Perturb_visitor                                         Visitor;
   
   typedef CGAL::Mesh_3::Sliver_perturber<C3t3,Domain,Sc,Visitor>  Perturber;
@@ -534,7 +530,8 @@ public:
   Optimization_function(C3t3& c3t3, Domain* d, const Perturb_parameters& p)
     : Base(c3t3,d)
     , perturb_(NULL)
-    , p_(p) {}
+    , p_(p)
+    , criterion_(p.sliver_bound, c3t3.triangulation()) {}
   
   /// Destructor
   ~Optimization_function() { delete perturb_; }
@@ -567,7 +564,7 @@ protected:
     typedef CGAL::Mesh_3::Li_random_perturbation<C3t3,Domain,Sc>      Li_random;
     
     // Build perturber
-    perturb_ = new Perturber(c3t3,domain);
+    perturb_ = new Perturber(c3t3, domain, criterion_);
     if ( NULL == perturb_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Add perturbations
@@ -583,13 +580,14 @@ protected:
     if ( 0 == p_.sliver_bound ) { p_.sliver_bound = Sc::max_value; }
     
     // Launch perturber
-    return (*perturb_)(p_.sliver_bound, 1, Visitor(&status_));
+    return (*perturb_)(Visitor(&status_));
   }
 
 private:
   Perturber* perturb_;
   Perturb_parameters p_;
   Perturb_status status_;
+  Sc criterion_;
 };
 
 
@@ -657,8 +655,8 @@ class Optimization_function < Domain, Exude_parameters >
   : public Optimization_function_base< Domain >
 {
   // Private types
-  typedef C3t3::Triangulation::Geom_traits                  Gt;
-  typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>    Sc;
+  typedef C3t3::Triangulation                               Tr;
+  typedef CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>    Sc;
   typedef Exude_visitor                                     Visitor;
   typedef CGAL::Mesh_3::Slivers_exuder<C3t3,Sc,Visitor>     Exuder;
   
@@ -669,7 +667,8 @@ public:
   Optimization_function(C3t3& c3t3, Domain* d, const Exude_parameters& p)
     : Base(c3t3,d)
     , exude_(NULL)
-    , p_(p) {}
+    , p_(p)
+    , criterion_(p.sliver_bound, c3t3.triangulation()) {}
   
   /// Destructor
   ~Optimization_function() { delete exude_; }
@@ -697,20 +696,21 @@ protected:
     if ( NULL != exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Create exuder
-    exude_ = new Exuder(c3t3);
+    exude_ = new Exuder(c3t3,criterion_);
     if ( NULL == exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Set time_limit
     exude_->set_time_limit(p_.time_limit);
     
     // Launch exudation
-    return (*exude_)(p_.sliver_bound, Visitor(&status_));
+    return (*exude_)(Visitor(&status_));
   }
   
 private:
   Exuder* exude_;
   Exude_parameters p_;
   Exude_status status_;
+  Sc criterion_;
 };
 
 
