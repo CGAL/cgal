@@ -182,7 +182,7 @@ template <class T, class = void> struct pool3 {
 // No caching
 template <class T, class = void> struct no_pool {
   static T pop() { throw "Shouldn't be here!"; }
-  static void push(T t) { delete (t - (extra+1)); }
+  static void push(T t) { delete [] (t - (extra+1)); }
   static bool empty() { return true; }
   static const int extra = 0;
 };
