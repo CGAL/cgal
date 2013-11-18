@@ -940,8 +940,8 @@ template <class Interval>
   {
     for(int i = 0; i<=topLevel; i++)
       delete markers[i];
-    delete forward;
-    delete markers;
+    delete [] forward;
+    delete [] markers;
     delete eqMarkers;
   }
 
