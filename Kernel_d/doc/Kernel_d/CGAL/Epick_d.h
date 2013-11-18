@@ -5,8 +5,9 @@ namespace CGAL {
 \ingroup PkgKernelDKernels
 
 A model for `Kernel_d` that uses %Cartesian coordinates to represent the
-geometric objects. The parameter `Dimension` is the dimension of the
-ambient Euclidean space. It may be either `Dimension_tag<d>` or
+geometric objects. The parameter `DimensionTag` is the dimension of the
+ambient Euclidean space. It may be either `Dimension_tag<d>` where `d` is
+an integer or
 `Dynamic_dimension_tag`. It supports construction of points from `double`
 %Cartesian coordinates. It provides exact geometric predicates, but
 the geometric constructions are not guaranteed to be exact. The geometric
@@ -33,7 +34,7 @@ concepts for the rest.
 \sa `CGAL::Homogeneous_d<RingNumberType>`
 
 */
-template< typename Dimension >
+template< typename DimensionTag >
 class Epick_d {
 public:
 /*!
@@ -46,7 +47,7 @@ class Point_d {
 public:
 /*! introduces a point with coordinates (x0, x1, ...) where the number of
     coordinates matches the dimension.
-    \pre `Dimension` is a fixed dimension, not `Dynamic_dimension_tag` */
+    \pre `DimensionTag` is a fixed dimension, not `Dynamic_dimension_tag` */
 Point_d(double x0, double x1, ...);
 
 /*! returns the i'th coordinate of a point.

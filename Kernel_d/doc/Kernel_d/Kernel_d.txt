@@ -209,7 +209,7 @@ type `LinearAlgebra`.
 
 \subsection Kernel_dEpickKernel Epick_d Kernel
 
-The kernel `Epick_d<Dimension>`, short for Exact Predicates Inexact
+The kernel `Epick_d<DimensionTag>`, short for Exact Predicates Inexact
 Constructions Kernel is a kernel particularly useful when the dimension of
 the space is known at compile-time. It uses a Cartesian representation and
 supports construction of points from `double` coordinates. It provides exact
@@ -218,7 +218,7 @@ be exact.
 
 Note that it provides few interfaces in addition to those documented in the
 `Kernel_d` concept. In particular, the type of a point is only available as
-`Epick_d<Dimension>::Point_d`, <B>not</B> `Point_d<Epick_d<Dimension>>`.
+`Epick_d<DimensionTag>::Point_d`, <B>not</B> `Point_d<Epick_d<DimensionTag>>`.
 
 
 \subsection Kernel_dNamingconventions Naming conventions
