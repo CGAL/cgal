@@ -66,7 +66,7 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
   }
 
   trace_test_end();
-  
+
   return true;
 }
 
@@ -557,7 +557,7 @@ bool test_LCC_3()
   if ( !check_number_of_cells_3(lcc, 2, 2, 1, 1, 1) )
     return false;
 
-  trace_test_begin();  
+  trace_test_begin();
   CGAL::contract_cell<LCC,2>(lcc,dh2);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;

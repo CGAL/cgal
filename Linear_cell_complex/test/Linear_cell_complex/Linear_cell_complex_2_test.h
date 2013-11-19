@@ -60,7 +60,7 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
       assert(false);
       return false;
     }
-  
+
   std::vector<unsigned int> nbc;
   nbc=lcc.count_all_cells();
 
@@ -85,7 +85,7 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
     }
 
   trace_test_end();
-  
+
   return true;
 }
 
@@ -125,7 +125,7 @@ bool test_LCC_2()
   Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1));
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
-  
+
   trace_test_begin();
   lcc.template sew<0>(dh2,dh1);
   lcc.template sew<1>(dh2,dh3);
@@ -134,7 +134,7 @@ bool test_LCC_2()
 
   trace_test_begin();
   Dart_handle dh5=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
-  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));    
+  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
   if ( !check_number_of_cells_2(lcc, 10, 9, 6, 3) )
     return false;
 
@@ -181,7 +181,7 @@ bool test_LCC_2()
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
           it!=itend; ++it )
     toremove.push_back( it );
-  
+
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
@@ -200,14 +200,14 @@ bool test_LCC_2()
           itend=lcc.template darts_of_cell<0,2>(dh8).end();
         it!=itend; ++it )
     toremove.push_back( it );
-  
+
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
-  
+
   trace_test_begin();
   CGAL::remove_cell<LCC,0>(lcc, dh7);
   if ( !check_number_of_cells_2(lcc, 8, 8, 6, 2) )
@@ -254,7 +254,7 @@ bool test_LCC_2()
       return false;
     lcc.clear();
   }
-    
+
   trace_test_begin();
   lcc.clear();
   dh1=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
@@ -266,7 +266,7 @@ bool test_LCC_2()
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   trace_test_end();
-  
+
   trace_test_begin();
   lcc.reverse_orientation();
   if ( !lcc.is_valid() ) { assert(false); return false; }
@@ -275,7 +275,7 @@ bool test_LCC_2()
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
   trace_test_end();
-  
+
   trace_test_begin();
   lcc.reverse_orientation();
   if ( !lcc.is_valid() ) { assert(false); return false; }
@@ -284,7 +284,7 @@ bool test_LCC_2()
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   trace_test_end();
-  
+
   trace_test_begin();
   lcc.reverse_orientation_connected_component(dh1);
   if ( !lcc.is_valid() ) { assert(false); return false; }
@@ -293,7 +293,7 @@ bool test_LCC_2()
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
   trace_test_end();
-  
+
   trace_test_begin();
   lcc.reverse_orientation_connected_component(dh1);
   if ( !lcc.is_valid() ) { assert(false); return false; }
