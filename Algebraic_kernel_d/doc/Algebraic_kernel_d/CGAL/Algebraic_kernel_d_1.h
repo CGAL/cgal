@@ -59,14 +59,14 @@ A model of `AlgebraicKernel_d_1::AlgebraicReal_1`.
 typedef unspecified_type Algebraic_real_1; 
 
 /*!
-The choice of `Coeff` also determines the provided bound, type. 
+The choice of `Coeff` also determines the provided bound type.
 In case of `Coeff` is: 
 
-- `Gmpz` or `Gmpq` this is `Gmpq`, 
+- `Gmpz` or `Gmpq`, this is `Gmpq`,
 
-- `CORE::BigInt` or `CORE::BigInt` this is `CORE::BigRat`, 
+- `CORE::BigInt` or `CORE::BigRat`, this is `CORE::BigRat`,
 
-- `leda_integer` or `leda_integer` this is `leda_rational`. 
+- `leda_integer` or `leda_rational`, this is `leda_rational`.
 */ 
 typedef unspecified_type Bound; 
 
