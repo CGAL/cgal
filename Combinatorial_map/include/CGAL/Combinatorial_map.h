@@ -150,8 +150,6 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
-      std::cout<<"Combinatorial_map_base() constructor..."<<std::flush;
-      
       CGAL_static_assertion_msg(Dart::dimension==dimension,
                   "Dimension of dart different from dimension of map");
 
@@ -173,8 +171,6 @@ namespace CGAL {
       init_dart(null_dart_handle);
 
       CGAL_assertion(number_of_darts()==0);
-
-      std::cout<<"ok."<<std::endl;
     }
 
     /** Copy the given combinatorial map into *this.

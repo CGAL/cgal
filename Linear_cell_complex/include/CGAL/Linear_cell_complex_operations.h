@@ -45,7 +45,7 @@ namespace CGAL {
     // Ny += (Vz - V'z) * (Vx + V'x);
     // Nz += (Vx - V'x) * (Vy + V'y);
     // But problem with functor since this is not the sum of normal vectors.
-  
+
     typedef typename LCC::Point Point;
     typedef typename LCC::Vector Vector;
     typename LCC::Dart_const_handle start=adart;
@@ -61,7 +61,7 @@ namespace CGAL {
 
     unsigned int nb = 0;
     adart = amap.template beta<1>(start);
-  
+
     const Point* prev = &amap.point(start);
     const Point* curr = &amap.point(adart);
     for ( ; adart!=start && amap.other_extremity(adart)!=LCC::null_handle;
@@ -78,9 +78,9 @@ namespace CGAL {
       }
       curr = next;
     }
-  
-    if ( nb<2 ) return normal;       
-    return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));  
+
+    if ( nb<2 ) return normal;
+    return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
     //  return normal / std::sqrt(normal * normal);
   }
 
@@ -96,7 +96,7 @@ namespace CGAL {
     typedef typename LCC::Vector Vector;
     Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
-  
+
     for ( CMap_one_dart_per_incident_cell_const_iterator<LCC,2,0>
             it(amap, adart); it.cont(); ++it )
     {
@@ -104,8 +104,8 @@ namespace CGAL {
         (normal, CGAL::compute_normal_of_cell_2(amap,it));
       ++nb;
     }
-  
-    if ( nb<2 ) return normal;       
+
+    if ( nb<2 ) return normal;
     return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
   }
   // Compute the barycenter of a given i-cell
@@ -167,13 +167,15 @@ namespace CGAL {
       CGAL_static_assertion(2<=LCC::dimension);
       CGAL_assertion(adart != LCC::null_handle);
 
-      typename LCC::Vector vec(LCC::NULL_VECTOR);
-      unsigned int nb = 0;
+      typename LCC::Vector vec
+        (typename LCC::Traits::Construct_vector()(CGAL::ORIGIN,
+                                                  amap.point(adart)));
+      unsigned int nb = 1;
 
-      for( typename LCC::template Dart_of_cell_range<2,2>::const_iterator
-             vhit  = amap.template darts_of_cell<2,2>(adart).begin(),
-             vhend = amap.template darts_of_cell<2,2>(adart).end();
-           vhit!=vhend; ++vhit )
+        typename LCC::template Dart_of_cell_range<2,2>::const_iterator
+          vhit  = amap.template darts_of_cell<2,2>(adart).begin(),
+          vhend = amap.template darts_of_cell<2,2>(adart).end();
+      for( ++vhit; vhit!=vhend; ++vhit )
       {
         vec = typename LCC::Traits::Construct_sum_of_vectors()
           (vec, typename LCC::Traits::Construct_vector()(CGAL::ORIGIN,

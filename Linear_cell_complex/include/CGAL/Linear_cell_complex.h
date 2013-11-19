@@ -114,8 +114,6 @@ namespace CGAL {
     using Base::null_handle;
     using Base::point_of_vertex_attribute;
 
-    static const Vector NULL_VECTOR;
-
     Linear_cell_complex_base() : Base()
     {}
 
@@ -779,19 +777,6 @@ namespace CGAL {
       return res;
     }
   };
-  template < unsigned int d_, unsigned int ambient_dim,
-             class Traits_,
-             class Items_,
-             class Alloc_,
-             template<unsigned int,class,class,class,class>
-             class CMap,
-             class Refs,
-             class Storage>
-  const typename Linear_cell_complex_base<d_, ambient_dim,
-                                Traits_, Items_, Alloc_,
-                                CMap, Refs, Storage>::Vector
-  Linear_cell_complex_base<d_, ambient_dim, Traits_, Items_,
-           Alloc_, CMap, Refs, Storage>::NULL_VECTOR = Traits_::NULL_VECTOR;
 
   // Linear_cell_complex using compact container with handle.
   // No difference with class Linear_cell_complex_base except the default
@@ -851,8 +836,6 @@ namespace CGAL {
       typedef typename Base::Use_index Use_index;
       typedef typename Base::Storage Storage;
 
-      static const Vector NULL_VECTOR;
-
       Linear_cell_complex() : Base()
       {}
 
@@ -879,18 +862,6 @@ namespace CGAL {
             (alcc, converters, pointconverter);}
 
     };
-
-    template < unsigned int d_, unsigned int ambient_dim,
-               class Traits_,
-               class Items_,
-               class Alloc_,
-               template<unsigned int,class,class,class,class>
-               class CMap,
-               class Storage>
-    const typename Linear_cell_complex<d_, ambient_dim,
-                                  Traits_, Items_, Alloc_, CMap, Storage>::Vector
-    Linear_cell_complex<d_, ambient_dim,
-                 Traits_, Items_, Alloc_, CMap, Storage>::NULL_VECTOR = Traits_::NULL_VECTOR;
 
 } // namespace CGAL
 
