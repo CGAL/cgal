@@ -1,9 +1,9 @@
-// Copyright (c) 2009,2010 Inria Lorraine (France). All rights reserved.
+// Copyright (c) 2006-2013 INRIA Nancy-Grand Est (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -14,29 +14,44 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@gmx.com>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
 
-#include <CGAL/Algebraic_kernel_rs_gmpz_d_1.h>
 #include "include/CGAL/_test_algebraic_kernel_1.h"
 
+// default RS_AK_1
+#include <CGAL/Algebraic_kernel_rs_gmpz_d_1.h>
 
-int main(){
-  typedef CGAL::Algebraic_kernel_rs_gmpz_d_1              AK;
-  typedef AK::Polynomial_1 Polynomial_1;
-  typedef AK::Coefficient Coefficient;
-  typedef AK::Bound Bound;
-  typedef AK::Algebraic_real_1 Algebraic_real_1;
-  typedef AK::Multiplicity_type Multiplicity_type;
+// different isolators
+#include <CGAL/RS/rs2_isolator_1.h>
+#ifdef CGAL_USE_RS3
+#include <CGAL/RS/rs23_k_isolator_1.h>
+#endif
 
-  AK ak; // an object of Algebraic_kernel_rs_gmpz_d_1
-  CGAL::test_algebraic_kernel_1<AK>(ak);
+// different refiners
+#include <CGAL/RS/bisection_refiner_1.h>
+#ifdef CGAL_USE_RS3
+#include <CGAL/RS/rs3_refiner_1.h>
+#include <CGAL/RS/rs3_k_refiner_1.h>
+#endif
 
-  AK::Solve_1 solve_1 = ak.solve_1_object();
-  Polynomial_1 x = CGAL::shift(AK::Polynomial_1(1),1);
+template <class AK_>
+int test_ak(){
+  typedef AK_                                           AK;
+  typedef typename AK::Polynomial_1                     Polynomial_1;
+  typedef typename AK::Coefficient                      Coefficient;
+  typedef typename AK::Bound                            Bound;
+  typedef typename AK::Algebraic_real_1                 Algebraic_real_1;
+  typedef typename AK::Multiplicity_type                Multiplicity_type;
+
+  AK ak; // an algebraic kernel object
+  CGAL::test_algebraic_kernel_1<AK>(ak); // we run standard tests first
+
+  typename AK::Solve_1 solve_1 = ak.solve_1_object();
+  Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);
   int returnvalue=0;
 
   // variant using a bool indicating a square free polynomial
@@ -110,8 +125,58 @@ int main(){
       " (x^2-2)*(x^2-3) are wrong"<<std::endl;
   }
 
+  typename AK::Number_of_solutions_1 nos_1 = ak.number_of_solutions_1_object();
+  if(nos_1(x*x*x-2)!=1){
+    returnvalue-=1024;
+    std::cerr<<"error 11: x^3-2 must have only one root"<<std::endl;
+  }
+
   return returnvalue;
 }
+
+int main(){
+        // We'll test three different RS-based univariate AK's:
+        // - the default RS one,
+        // - one with RS2 functions only, and
+        // - one with both RS2 and RS3 functions.
+
+        // the default RS kernel
+        typedef CGAL::Algebraic_kernel_rs_gmpz_d_1              AK_default;
+
+        typedef CGAL::Polynomial<CGAL::Gmpz>                    Polynomial;
+        typedef CGAL::Gmpfr                                     Bound;
+
+        // the RS2-only kernel
+        typedef CGAL::RS2::RS2_isolator_1<Polynomial,Bound>     RS2_isolator;
+        typedef CGAL::Bisection_refiner_1<Polynomial,Bound>     B_refiner;
+        typedef CGAL::RS_AK1::Algebraic_kernel_1<Polynomial,
+                                                 Bound,
+                                                 RS2_isolator,
+                                                 B_refiner>     AK_RS2;
+
+#ifdef CGAL_USE_RS3
+        // the RS2/RS3 kernel
+        typedef CGAL::RS23_k_isolator_1<Polynomial,Bound>       K_isolator;
+        typedef CGAL::RS3::RS3_k_refiner_1<Polynomial,Bound>    RS3_k_refiner;
+        typedef CGAL::RS_AK1::Algebraic_kernel_1<Polynomial,
+                                                 Bound,
+                                                 K_isolator,
+                                                 RS3_k_refiner> AK_RS2_RS3;
+#endif // CGAL_USE_RS3
+
+        // test all and return the result
+        int result;
+        std::cerr<<"testing default RS AK_1:";
+        result+=test_ak<AK_default>();
+        std::cerr<<"testing RS2 AK_1:";
+        result+=(2047+test_ak<AK_RS2>());
+#ifdef CGAL_USE_RS3
+        std::cerr<<"testing RS2/RS3 k_AK_1:";
+        result+=(4095+test_ak<AK_RS2_RS3>());
+#endif // CGAL_USE_RS3
+        return result;
+}
+
 #else
 int main(){
         return 0;
