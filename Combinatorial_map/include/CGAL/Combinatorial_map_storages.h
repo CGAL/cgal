@@ -234,23 +234,6 @@ namespace CGAL {
       return *ah;
     }
 
-    // Get the attribute of a dart
-    template<unsigned int i>
-    typename Attribute_type<i>::type& get_attribute_of_dart(Dart_handle adart)
-    {
-      CGAL_assertion( adart!=NULL );
-      CGAL_assertion( attribute<i>(adart)!=NULL );
-      return *attribute<i>(adart);
-    }
-    template<unsigned int i>
-    const typename Attribute_type<i>::type&
-    get_attribute_of_dart(Dart_const_handle adart) const
-    {
-      CGAL_assertion( adart!=NULL );
-      CGAL_assertion( attribute<i>(adart)!=NULL );
-      return *attribute<i>(adart);
-    }
-
     // Get the dart of the given attribute
     template<unsigned int i>
     Dart_handle dart_of_attribute(typename Attribute_handle<i>::type ah)

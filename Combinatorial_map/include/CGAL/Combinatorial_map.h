@@ -114,7 +114,6 @@ namespace CGAL {
     using Base::attribute;
     using Base::mattribute_containers;
     using Base::get_attribute;
-    using Base::get_attribute_of_dart;
     using Base::dart_of_attribute;
     using Base::set_dart_of_attribute;
     using Base::info_of_attribute;
@@ -550,8 +549,10 @@ namespace CGAL {
 
       if ( this->template attribute<i>(dh)!=null_handle )
       {
-        this->template get_attribute_of_dart<i>(dh).dec_nb_refs();
-        if ( this->template get_attribute_of_dart<i>(dh).get_nb_refs()==0 )
+        this->template get_attribute<i>(this->template attribute<i>(dh)).
+          dec_nb_refs();
+        if ( this->template get_attribute<i>(this->template attribute<i>(dh)).
+             get_nb_refs()==0 )
           this->template erase_attribute<i>(this->template attribute<i>(dh));
       }
 

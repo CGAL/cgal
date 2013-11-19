@@ -304,7 +304,7 @@ namespace CGAL {
     Point& point(Dart_handle adart)
     {
       CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
-      return this->template get_attribute_of_dart<0>(adart).point();
+      return point_of_vertex_attribute(this->template attribute<0>(adart));
     }
 
     /// Get the point associated with a const dart.
@@ -313,7 +313,7 @@ namespace CGAL {
     const Point& point(Dart_const_handle adart) const
     {
       CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
-      return this->template get_attribute_of_dart<0>(adart).point();
+      return point_of_vertex_attribute(this->template attribute<0>(adart));
     }
 #endif // CGAL_CMAP_DEPRECATED
 

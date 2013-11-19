@@ -116,21 +116,6 @@ struct Call_split_functor
   typedef typename CMap::template Attribute_type<i>::type Attribute;
   typedef typename Attribute::On_split On_split;
 
-  static void run_with_dart(CMap* amap, typename CMap::Dart_handle adart1,
-                            typename CMap::Dart_handle adart2)
-  {
-    // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_split>::
-      run(amap->template get_attribute_of_dart<i>(adart1),
-          amap->template get_attribute_of_dart<i>(adart2));
-    // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-         (amap->m_onsplit_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-        (amap->m_onsplit_functors)
-        (amap->template get_attribute_of_dart<i>(adart1),
-         amap->template get_attribute_of_dart<i>(adart2));
-  }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
@@ -168,21 +153,6 @@ struct Call_merge_functor
   typedef typename CMap::template Attribute_type<i>::type Attribute;
   typedef typename Attribute::On_merge On_merge;
 
-  static void run_with_dart(CMap* amap, typename CMap::Dart_handle adart1,
-                            typename CMap::Dart_handle adart2)
-  {
-    // Static version
-    CGAL::internal::Apply_cell_functor<CMap, Attribute, On_merge>::
-      run(amap->template get_attribute_of_dart<i>(adart1),
-          amap->template get_attribute_of_dart<i>(adart2));
-    // Dynamic version
-    if ( CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-         (amap->m_onmerge_functors) )
-      CGAL::cpp11::get<CMap::Helper::template Dimension_index<i>::value>
-        (amap->m_onmerge_functors)
-        (amap->template get_attribute_of_dart<i>(adart1),
-         amap->template get_attribute_of_dart<i>(adart2));
-  }
   static void
   run(CMap* amap, typename CMap::template Attribute_handle<i>::type a1,
       typename CMap::template Attribute_handle<i>::type a2)
@@ -351,8 +321,10 @@ struct Decrease_attribute_functor_run
   {
     if ( amap->template attribute<i>(adart)!=CMap::null_handle )
     {
-      amap->template get_attribute_of_dart<i>(adart).dec_nb_refs();
-      if ( amap->template get_attribute_of_dart<i>(adart).get_nb_refs()==0 )
+      amap->template get_attribute<i>(amap->template attribute<i>(adart)).
+        dec_nb_refs();
+      if ( amap->template get_attribute<i>(amap->template attribute<i>(adart)).
+           get_nb_refs()==0 )
         amap->template erase_attribute<i>(amap->template attribute<i>(adart));
     }
   }
@@ -564,8 +536,9 @@ struct Is_same_attribute_point_functor
       return false;
 
     return
-        Is_same_point<T1,T2>::run(m1->template get_attribute_of_dart<i>(dh1),
-                                  m2->template get_attribute_of_dart<i>(dh2));
+      Is_same_point<T1,T2>::run
+      (m1->template get_attribute<i>(m1->template attribute<i>(dh1)),
+       m2->template get_attribute<i>(m2->template attribute<i>(dh2)));
   }
 };
 

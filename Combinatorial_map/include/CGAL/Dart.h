@@ -103,6 +103,7 @@ namespace CGAL {
 
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d;
+
 #ifdef CGAL_CMAP_DEPRECATED
 
     /** Return if this dart is free for adimension.
@@ -131,7 +132,6 @@ namespace CGAL {
       { if ( !is_free(i) ) return i; }
       return -1;
     }
-
 
     /** Return a dart belonging to the same edge and to the second vertex
      * of the current edge (NULL if such a dart does not exist).
