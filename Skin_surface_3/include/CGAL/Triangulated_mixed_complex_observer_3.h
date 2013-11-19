@@ -24,6 +24,8 @@
 #include <CGAL/Skin_surface_quadratic_surface_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
+#include <boost/shared_ptr.hpp>
+
 namespace CGAL {
 
 template <class T>
@@ -162,7 +164,7 @@ public:
 
   FT shrink;
   Rt_Simplex prev_s;
-  Quadratic_surface *surf;
+  boost::shared_ptr<Quadratic_surface> surf;
 
   // c is the center of the orthogonal sphere
   // w is the weight of the orthogonal sphere
@@ -177,14 +179,14 @@ public:
       Q[1] = Q[3] = Q[4] = 0;
       Q[0] = Q[2] = Q[5] = orient;
 
-      surf = new Quadratic_surface(Q, c, s*w, (orient==1? 0 : 3));
+      surf = boost::shared_ptr<Quadratic_surface>(new Quadratic_surface(Q, c, s*w, (orient==1? 0 : 3)));
     } else {
       // Multiply with 1-s to make the function defining the 
       // skin surface implicitly continuous
       Q[1] = Q[3] = Q[4] = 0;
       Q[0] = Q[2] = Q[5] = orient*(1-s);
 
-      surf = new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 0 : 3));
+      surf = boost::shared_ptr<Quadratic_surface>(new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 0 : 3)));
     }
   }
 
@@ -204,7 +206,7 @@ public:
     Q[4] = orient*(-2*t.z()*t.y()/den);
     Q[5] = orient*(-  t.z()*t.z()/den + (1-s));
 
-    surf = new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 1 : 2));
+    surf = boost::shared_ptr<Quadratic_surface>(new Quadratic_surface(Q, c, s*(1-s)*w, (orient==1? 1 : 2)));
   }
 
   Surface_RT Q[6];
