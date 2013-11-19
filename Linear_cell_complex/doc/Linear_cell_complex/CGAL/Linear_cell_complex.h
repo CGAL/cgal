@@ -181,22 +181,32 @@ size_type number_of_vertex_attributes() const;
 /*!
 Returns the 0-attribute associated with `dh`.
 */
-static Vertex_attribute_handle vertex_attribute(Dart_handle dh);
+Vertex_attribute_handle vertex_attribute(Dart_handle dh);
 
 /*!
 Returns the 0-attribute associated with `dh`, when `dh` is const.
 */
-static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle dh);
+Vertex_attribute_const_handle vertex_attribute(Dart_const_handle dh);
+
+/*!
+Returns the point in the 0-attribute `vh`.
+*/
+Point& point_of_vertex_attribute(Vertex_attribute_handle vh);
+
+/*!
+Returns the point in the 0-attribute `vh`, when `vh` is const.
+*/
+const Point& point_of_vertex_attribute(Vertex_attribute_const_handle vh) const;
 
 /*!
 Returns the point in the 0-attribute associated with `dh`.
 */
-static Point& point(Dart_handle dh);
+Point& point(Dart_handle dh);
 
 /*!
 Returns the point in the 0-attribute associated with `dh`, when `dh` is const.
 */
-static const Point& point(Dart_const_handle dh);
+const Point& point(Dart_const_handle dh);
 
 /// @}
 

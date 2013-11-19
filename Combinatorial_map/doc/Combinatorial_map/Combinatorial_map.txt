@@ -613,7 +613,7 @@ sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a
 dart <I>d0</I> is <I>i</I>-free  if \f$
 \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$
 constant is represented in the class `Combinatorial_map` through a
-`static const Dart_handle`  called
+`Dart_handle`  called
 \link CombinatorialMap::null_dart_handle `null_dart_handle`\endlink.
 Finally, some
 high level operations are defined as global functions taking a
@@ -632,6 +632,9 @@ for a handle to the <I>i</I>-attributes (and the const version
 \link CombinatorialMap::Attribute_const_handle `Combinatorial_map::Attribute_const_handle<i>::type` \endlink) and
 \link CombinatorialMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the
 <I>i</I>-attributes.
+
+All information associated to darts (\f$ \beta\f$ links and attributes) can be accessed through member functions in `CombinatorialMap`.
+
 
 \subsection ssecitem Combinatorial Map Items
 
@@ -680,8 +683,7 @@ associated to this dart in a tuple of
 <I>i</I>-attribute.
 
 Methods are defined allowing to retrieve each \f$ \beta_i\f$ and each
-associated <I>i</I>-attribute of `d0`, and allowing to test if `d0`
-dart is <I>i</I>-free.
+associated <I>i</I>-attribute of `d0`.
 
 Note that the use of the `Dart` class is not hard wired in the
 combinatorial map class. Users can provide their own model of the

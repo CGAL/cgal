@@ -427,7 +427,7 @@ std::ostream& display_characteristics(std::ostream & os) const;
 
 /// \name Attributes Access Member Functions
 /// @{
-
+///
 /*!
 Returns a handle to the <I>i</I>-attribute associated to dart `*dh`.
 \pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
