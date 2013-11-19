@@ -73,10 +73,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   {
     typedef Algebraic_structure_traits<Bound> AST;
     typedef typename AST::Algebraic_category Algebraic_category;
-// TODO Luis
-//--------------------------------------------------
-//     test_algebraic_structure< Bound,Algebraic_category,Tag_true>();
-//-------------------------------------------------- 
+    test_algebraic_structure< Bound,Algebraic_category,Tag_true>();
     test_real_embeddable<Bound>();
   }
 
