@@ -62,7 +62,7 @@ RS23_k_isolator_1<CGAL::Polynomial<CGAL::Gmpz>,Gmpfr>::
 RS23_k_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
         typedef CGAL::Polynomial<CGAL::Gmpz>                    Pol;
         typedef CGAL::Gmpfr                                     Bound;
-        typedef typename CGAL::RS3::RS3_k_refiner_1<Pol,Bound>  KRefiner;
+        typedef CGAL::RS3::RS3_k_refiner_1<Pol,Bound>           KRefiner;
         int numsols;
         unsigned int degree=p.degree();
         mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
