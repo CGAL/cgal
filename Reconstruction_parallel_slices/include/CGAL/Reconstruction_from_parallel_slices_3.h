@@ -267,34 +267,34 @@ class Reconstruction_from_parallel_slices_3{
   };
   
   template < typename GT,
-             typename Fb = CGAL::Triangulation_face_base_2<GT> >
+             typename Fb_ = CGAL::Triangulation_face_base_2<GT> >
   class Triangulation_face_base_with_FaceInfo2
-    : public Fb
+    : public Fb_
   {
   public:
-    typedef typename Fb::Vertex_handle                   Vertex_handle;
-    typedef typename Fb::Face_handle                     Face_handle;
+    typedef typename Fb_::Vertex_handle                   Vertex_handle;
+    typedef typename Fb_::Face_handle                     Face_handle;
     typedef T_FaceInfo2<Face_handle>                       Info;
 
     template < typename TDS2 >
     struct Rebind_TDS {
-      typedef typename Fb::template Rebind_TDS<TDS2>::Other       Fb2;
+      typedef typename Fb_::template Rebind_TDS<TDS2>::Other       Fb2;
       typedef Triangulation_face_base_with_FaceInfo2<GT, Fb2>  Other;
     };
 
     Triangulation_face_base_with_FaceInfo2()
-      : Fb() {}
+      : Fb_() {}
 
     Triangulation_face_base_with_FaceInfo2(Vertex_handle v0, 
                                            Vertex_handle v1,
-                                           Vertex_handle v2): Fb(v0, v1, v2) {}
+                                           Vertex_handle v2): Fb_(v0, v1, v2) {}
 
     Triangulation_face_base_with_FaceInfo2(Vertex_handle v0, 
                                            Vertex_handle v1,
                                            Vertex_handle v2, 
                                            Face_handle   n0, 
                                            Face_handle   n1,
-                                           Face_handle   n2 ) : Fb(v0, v1, v2, n0, n1, n2) {}
+                                           Face_handle   n2 ) : Fb_(v0, v1, v2, n0, n1, n2) {}
 
     const Info& info() const { return _info; }
     Info&       info()       { return _info; }
