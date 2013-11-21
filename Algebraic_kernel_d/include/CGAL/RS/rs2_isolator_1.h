@@ -54,10 +54,10 @@ RS2_isolator_1(const Polynomial_ &p){
 template <>
 RS2_isolator_1<CGAL::Polynomial<CGAL::Gmpz>,Gmpfr>::
 RS2_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
-        unsigned int degree=p.degree();
+        unsigned degree=p.degree();
         mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
         mpfi_ptr *intervals_mpfi=(mpfi_ptr*)malloc(degree*sizeof(mpfi_ptr));
-        for(int i=0;i<=degree;++i)
+        for(unsigned i=0;i<=degree;++i)
                 coeffs[i][0]=*(p[i].mpz());
         RS2::RS2_calls::init_solver();
         RS2::RS2_calls::create_rs_upoly(coeffs,degree,rs_get_default_up());

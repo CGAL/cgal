@@ -64,10 +64,10 @@ RS23_k_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
         typedef CGAL::Gmpfr                                     Bound;
         typedef CGAL::RS3::RS3_k_refiner_1<Pol,Bound>           KRefiner;
         int numsols;
-        unsigned int degree=p.degree();
+        unsigned degree=p.degree();
         mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
         std::vector<Gmpfi> intervals;
-        for(int i=0;i<=degree;++i)
+        for(unsigned i=0;i<=degree;++i)
                 coeffs[i][0]=*(p[i].mpz());
         RS2::RS2_calls::init_solver();
         RS2::RS2_calls::create_rs_upoly(coeffs,degree,rs_get_default_up());

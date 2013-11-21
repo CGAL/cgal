@@ -183,7 +183,7 @@ struct Solve_1{
                 this->operator()(p,false,std::back_inserter(roots));
                 size_t nb_roots=roots.size();
                 // indices of the first and last roots to be reported:
-                int index_l=0,index_u;
+                size_t index_l=0,index_u;
                 while(index_l<nb_roots&&roots[index_l]<l)
                         ++index_l;
                 CGAL_assertion(index_l<=nb_roots);
@@ -205,7 +205,7 @@ struct Solve_1{
                 for(PMVI i=sfv.begin();i!=sfv.end();++i){
                         int k=Degree()(i->first);
                         Signat signof(i->first);
-                        for(int j=index_l;k&&j<index_u;++j){
+                        for(size_t j=index_l;k&&j<index_u;++j){
                                 if(!m[j]){
                                         CGAL::Sign sg_l=
                                                 signof(roots[j].get_left());
@@ -220,7 +220,7 @@ struct Solve_1{
                                 }
                         }
                 }
-                for(int l=index_l;l<index_u;++l)
+                for(size_t l=index_l;l<index_u;++l)
                         *res++=std::make_pair(roots[l],m[l]);
                 free(m);
                 return res;

@@ -134,6 +134,7 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
                 pol=a.get_pol();
                 left=a.get_left();
                 right=a.get_right();
+                return *this;
         }
 
         Polynomial get_pol()const{return pol;}
