@@ -78,7 +78,7 @@ template <
   /**< Previous level type, defaults to
      \c Null_mesher_level. */
   class Triangulation_traits /** Traits class that defines types for the
-				 triangulation. */
+         triangulation. */
   > 
 class Mesher_level
 {
@@ -121,7 +121,7 @@ public:
                        Derived,
                        Element,
                        Previous_level,
-		       Triangulation_traits> Self;
+                       Triangulation_traits> Self;
 
   /** \name CONSTRUCTORS */
   Mesher_level(Previous_level& previous)
@@ -193,7 +193,7 @@ public:
   /** Actions before testing conflicts for point \c p and element \c e */
   template <typename Mesh_visitor>
   void before_conflicts(const Element& e, const Point& p,
-			Mesh_visitor visitor)
+                        Mesh_visitor visitor)
   {
     visitor.before_conflicts(e, p);
     derived().before_conflicts_impl(e, p);
@@ -207,7 +207,7 @@ public:
         the tested element should be reconsidered latter.
   */
   Mesher_level_conflict_status private_test_point_conflict(const Point& p,
-							   Zone& zone)
+                                                           Zone& zone)
   {
     return derived().private_test_point_conflict_impl(p, zone);
   }
@@ -222,7 +222,7 @@ public:
   */
   Mesher_level_conflict_status
   test_point_conflict_from_superior(const Point& p,
-				    Zone& zone)
+                                    Zone& zone)
   {
     return derived().test_point_conflict_from_superior_impl(p, zone);
   }
@@ -254,7 +254,7 @@ public:
    *  if no point is inserted. */
   template <class Mesh_visitor>
   void after_no_insertion(const Element& e, const Point& p, Zone& zone,
-			  Mesh_visitor visitor)
+                          Mesh_visitor visitor)
   {
     derived().after_no_insertion_impl(e, p, zone);
     visitor.after_no_insertion(e, p, zone);

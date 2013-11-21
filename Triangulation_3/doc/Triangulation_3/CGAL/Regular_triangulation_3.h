@@ -27,15 +27,30 @@ the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres 
 of all simplices are regular. 
 
-
 \tparam  RegularTriangulationTraits_3 is the geometric traits class.
 
 \tparam TriangulationDataStructure_3 is the triangulation data structure. 
 It has the default value `Triangulation_data_structure_3<Triangulation_vertex_base_3<RegularTriangulationTraits_3>, Regular_triangulation_cell_base_3<RegularTriangulationTraits_3> >`. 
 
+\tparam SurjectiveLockDataStructure is an optional parameter to specify the type of the spatial lock data structure.
+        It is only used if the triangulation data structure used is concurrency-safe (i.e.\ when 
+        TriangulationDataStructure_3::Concurrency_tag is Parallel_tag).
+        It must be a model of the `SurjectiveLockDataStructure` concept,
+        with `Object` being a `Point`.
+        The default value is `Spatial_lock_grid_3<Tag_priority_blocking>` if
+        the triangulation data structure is concurrency-safe, and `void` otherwise.
+        In order to use concurrent operations, the user must provide a
+        reference to a `SurjectiveLockDataStructure`
+        instance via the constructor or `Triangulation_3::set_lock_data_structure`.
+        
+If `TriangulationDataStructure_3::Concurrency_tag` is `Parallel_tag`, some operations, 
+such as insertion/removal of a range of points, are performed in parallel. See 
+the documentation of the operations for more details.
+
+\sa `CGAL::Delaunay_triangulation_3` 
 */
-template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3 >
-class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3> {
+template< typename RegularTriangulationTraits_3, typename TriangulationDataStructure_3, typename SurjectiveLockDataStructure >
+class Regular_triangulation_3 : public Triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3,SurjectiveLockDataStructure> {
 public:
 
 /// \name Types 
@@ -52,6 +67,11 @@ typedef RegularTriangulationTraits_3::Bare_point Bare_point;
 */ 
 typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point; 
 
+/*!
+
+*/ 
+typedef SurjectiveLockDataStructure Lock_data_structure;
+
 /// @} 
 
 /// \name Creation 
@@ -60,12 +80,17 @@ typedef RegularTriangulationTraits_3::Weighted_point_3 Weighted_point;
 /*!
 Creates an empty regular triangulation, possibly specifying a traits class 
 `traits`. 
+`lock_ds` is an optional pointer to the lock data structure for parallel operations. It
+must be provided if concurrency is enabled.
 */ 
 Regular_triangulation_3 
-(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3()); 
+(const RegularTriangulationTraits_3 & traits = RegularTriangulationTraits_3(), 
+Lock_data_structure *lock_ds = NULL); 
 
 /*!
 Copy constructor. 
+The pointer to the lock data structure is not copied. Thus, the copy won't be
+concurrency-safe as long as the user has not called `Triangulation_3::set_lock_data_structure`.
 */ 
 Regular_triangulation_3 
 (const Regular_triangulation_3 & rt1); 
@@ -73,12 +98,21 @@ Regular_triangulation_3
 /*!
 Equivalent to constructing an empty triangulation with the optional 
 traits class argument and calling `insert(first,last)`. 
+If parallelism is enabled, the points will be inserted in parallel.
 \tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
 template < class InputIterator > 
 Regular_triangulation_3 (InputIterator first, InputIterator last, 
-const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3()); 
+const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3(), 
+Lock_data_structure *lock_ds = NULL); 
 
+/*! 
+Same as before, with last two parameters in reverse order.
+*/ 
+template < class InputIterator > 
+Regular_triangulation_3 (InputIterator first, InputIterator last, 
+Lock_data_structure *lock_ds, 
+const RegularTriangulationTraits_3& traits = RegularTriangulationTraits_3());
 /// @} 
 
 /*!\name Insertion 
@@ -104,14 +138,21 @@ remains unchanged.
 Otherwise if `p` does not appear as a vertex of the triangulation, 
 then it is stored as a hidden point and this method returns the default 
 constructed handle. 
+
+The optional argument `could_lock_zone` is used by the concurrency-safe
+version of the triangulation. If the pointer is not null, the insertion will
+try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+inside or on the boundary of the conflict zone. If it succeeds, `*could_lock_zone`
+is true, otherwise it is false (and the point is not inserted). In any case, 
+the locked cells are not unlocked by the function, leaving this choice to the user.
 */ 
 Vertex_handle insert(const Weighted_point & p, 
-Cell_handle start = Cell_handle() ); 
+Cell_handle start = Cell_handle(), bool *could_lock_zone = NULL); 
 
 /*!
 Same as above but uses `hint` as a starting place for the search. 
 */ 
-Vertex_handle insert(const Weighted_point & p, Vertex_handle hint); 
+Vertex_handle insert(const Weighted_point & p, Vertex_handle hint, bool *could_lock_zone = NULL); 
 
 /*!
 Inserts weighted point `p` in the triangulation and returns the corresponding 
@@ -120,7 +161,7 @@ parameter the return values of a previous location query. See description of
 `Triangulation_3::locate()`. 
 */ 
 Vertex_handle insert(const Weighted_point & p, Locate_type lt, 
-Cell_handle loc, int li, int lj); 
+Cell_handle loc, int li, int lj, bool *could_lock_zone = NULL); 
 
 /*!
 Inserts the weighted points in the range `[first,last)`. 
@@ -129,6 +170,7 @@ before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the points 
 following the order of `InputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
 
 \tparam InputIterator must be an input iterator with value type `Weighted_point`. 
 */ 
@@ -144,6 +186,7 @@ before the insertions (it may be negative due to hidden points).
 Note that this function is not guaranteed to insert the weighted points 
 following the order of `WeightedPointWithInfoInputIterator`, as `spatial_sort()` 
 is used to improve efficiency. 
+If parallelism is enabled, the points will be inserted in parallel.
 Given a pair `(p,i)`, the vertex `v` storing `p` also stores `i`, that is 
 `v.point() == p` and `v.info() == i`. If several pairs have the same point, 
 only one vertex is created, one of the objects of type `Vertex::Info` will be stored in the vertex. 
@@ -203,9 +246,33 @@ Removes the vertex `v` from the triangulation.
 void remove(Vertex_handle v); 
 
 /*!
-Removes the vertices specified by the iterator range `[first, beyond)`. 
-The function `remove(Vertex_handle)` is called over each element of the range. 
-The number of vertices removed is returned. 
+Removes the vertex `v` from the triangulation.
+
+This function is concurrency-safe if the triangulation is concurrency-safe. 
+It will first
+try to lock all the cells adjacent to `v`. If it succeeds, `*could_lock_zone`
+is true, otherwise it is false (and the point is not removed). In any case, 
+the locked cells are not unlocked by the function, leaving this choice to the user.
+
+This function will try to remove `v` only if the removal does not
+decrease the dimension. 
+The return value is only meaningful if `*could_lock_zone` is true:
+  - returns true if the vertex was removed
+  - returns false if the vertex wasn't removed since it would decrease 
+    the dimension.
+
+\pre `v` is a finite vertex of the triangulation. 
+\pre `dt`.`dimension()` \f$ =3\f$.
+*/ 
+bool remove(Vertex_handle v, bool *could_lock_zone);
+
+/*! 
+Removes the vertices specified by the iterator range `[first, beyond)`.
+The number of vertices removed is returned.
+If parallelism is enabled, the points will be removed in parallel.
+Note that if at some step, the triangulation dimension becomes lower than 3,
+the removal of the remaining points will go on sequentially.
+
 \pre (i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range. 
 
 \tparam InputIterator must be an input iterator with value type `Vertex_handle`.
@@ -367,11 +434,25 @@ A weighted point `p` is said to be in conflict with a cell `c` in dimension 3 (r
 
 Compute the conflicts with `p`. 
 
-@param p     The query point.
-@param c     The starting cell.
-@param cit  The cells (resp. facets) in conflict with `p`. 
-@param bfit The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
-@param ifit The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
+@param p                  The query point.
+@param c                  The starting cell.
+@param cit                The cells (resp. facets) in conflict with `p`. 
+@param bfit               The facets (resp. edges) on the boundary of the conflict zone, that is, the facets  (resp.\ edges) `(t, i)` where the cell (resp.. facet) `t` is in conflict, but `t->neighbor(i)` is not. 
+@param ifit               The facets (resp.\ edges) inside the conflict zone, that facets incident to two cells (resp.\ facets) in conflict. 
+@param could_lock_zone    The optional argument `could_lock_zone` is used by the concurrency-safe
+                          version of the triangulation. If the pointer is not null, the algorithm will
+                          try to lock all the cells of the conflict zone, i.e.\ all the vertices that are
+                          inside or on the boundary of the conflict zone (as a result, the boundary cells become
+                          partially locked). If it succeeds, `*could_lock_zone`
+                          is true, otherwise it is false (and the returned conflict zone is only partial). In any case, 
+                          the locked cells are not unlocked by the function, leaving this choice to the user.
+@param this_facet_must_be_in_the_cz 
+                          If the optional argument `this_facet_must_be_in_the_cz` is not null, the algorithm will check
+                          if this facet is in the conflict zone (it may be internal as well as boundary).
+@param the_facet_is_in_its_cz 
+                          This argument must be not null if the previous `this_facet_must_be_in_the_cz` argument is not null. 
+                          The boolean value pointed by this pointer is set to true if *`this_facet_must_be_in_the_cz` is
+                          among the internal or boundary facets of the conflict zone, and false otherwise.                         
 
 \pre  The starting cell (resp.\ facet) `c` must be in conflict with `p`. 
 \pre `rt`.`dimension()` \f$ \geq2\f$, and `c` is in conflict with `p`. 
@@ -389,7 +470,10 @@ OutputIteratorInternalFacets>
 find_conflicts(const Weighted_point p, Cell_handle c, 
 OutputIteratorBoundaryFacets bfit, 
 OutputIteratorCells cit, 
-OutputIteratorInternalFacets ifit); 
+OutputIteratorInternalFacets ifit,
+bool *could_lock_zone = NULL,
+const Facet *this_facet_must_be_in_the_cz = NULL,
+bool *the_facet_is_in_its_cz = NULL);
 
 /*!
 \deprecated This function is renamed `vertices_on_conflict_zone_boundary` since CGAL-3.8. 

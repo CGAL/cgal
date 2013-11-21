@@ -97,7 +97,16 @@ In addition, in a way inspired from the Boost.Intrusive containers, it is
 possible to construct iterators from references to values in containers 
 using the `iterator_to` and `s_iterator_to` functions. 
 
-
+The objects stored in the `Compact_container` can optionally store an 
+"erase counter". If it exists, i.e.\ if the object is a model of the
+`ObjectWithEraseCounter` concept, each time an object is erased from the 
+container, the erase counter of the object will be incremented.
+For example, this erase counter can be exploited using the `CC_safe_handle` 
+helper class, so that one can know if a handle is still pointing at the same
+element.
+Note that this is meaningful only because the 
+`CGAL::Compact_container` doesn't 
+deallocate elements until the destruction or clear() of the container.
 
 \cgalHeading{Parameters}
 

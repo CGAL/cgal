@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "Color_ramp.h"
 #include <iostream>
 
