@@ -18,6 +18,7 @@ its attribute handles initialized to `NULL`, for each non `void` attribute.
 
 \cgalHasModel \ref CGAL::Dart "CGAL::Dart<d,CMap>"
 
+\deprecated Since \cgal 4.4, `CombinatorialMap::null_dart_handle` is no more a static data member. This implies to move the following methods of Dart concept into CombinatorialMap concept: `is_free`, `highest_nonfree_dimension`, `opposite` and `other_extremity`. You can define the `CGAL_CMAP_DEPRECATED` macro to keep the old behavior.
 */
 
 class Dart {

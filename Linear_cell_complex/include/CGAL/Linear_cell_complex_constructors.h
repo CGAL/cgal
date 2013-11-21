@@ -555,17 +555,14 @@ namespace CGAL {
     writer.header().set_polyhedral_surface(true);
     writer.header().set_halfedges( alcc.number_of_darts());
 
-    /*std::cout<<"write_off: "<<alcc.number_of_vertex_attributes()<<" , "
-             <<alcc.template number_of_attributes<2>()<<" , "
-             <<alcc.number_of_darts()<<std::endl;*/
+    std::vector<unsigned int> cells; cells.push_back(2);
+    std::vector<unsigned int> res = alcc.count_cells(cells);
 
-     // Print header.
+    // Print header.
     writer.write_header( out,
                          alcc.number_of_vertex_attributes(),
                          alcc.number_of_darts(),
-                         alcc.template number_of_attributes<2>());
-    // TODO: if 2-attributes are void, count the number of faces.
-    // (need a functor with template specialization).
+                         res[2]);
 
     typedef typename LCC::Vertex_attribute_range::iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();
@@ -576,7 +573,7 @@ namespace CGAL {
                            ::CGAL::to_double( vit->point().z()));
     }
 
-    typedef Inverse_index< VCI> Index;
+    typedef Inverse_index< VCI > Index;
     Index index( alcc.vertex_attributes().begin(),
                  alcc.vertex_attributes().end());
     writer.write_facet_header();
@@ -604,7 +601,8 @@ namespace CGAL {
                 itfend=alcc.template darts_of_cell<2>(itall).end();
               itf!=itfend; ++itf )
         {
-          // TODO case with index writer.write_facet_vertex_index( index[ VCI(alcc.vertex_attribute(itf))]);
+          // TODO case with index
+          writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(itf))]);
           alcc.mark(itf, m);
         }
         writer.write_facet_end();

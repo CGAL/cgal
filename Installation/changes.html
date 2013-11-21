@@ -126,6 +126,12 @@ and <code>src/</code> directories).
           the alpha value at which each face appears in the filtration.</li>
   </ul>
 
+  <h3>Combinatorial Maps and Linear Cell Complex</h3>
+  <ul>
+    <li> <code>null_dart_handle</code> is no more a static data member in the <code>CombinatorialMap</code> concept. This implies to move the following methods of Dart concept into CombinatorialMap concept: <code>is_free</code>, <code>highest_nonfree_dimension</code>, <code>opposite</code> and <code>other_extremity</code>. This also implies to transform the static methods <code>vertex_attribute</code> and <code>point</code> of <code>Linear_cell_complex</code> class into non static methods. You can define the CGAL_CMAP_DEPRECATED macro to keep the old behavior.
+    </li>
+  </ul>
+
   <h3>STL Extensions for CGAL</h3>
   <ul>
     <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
