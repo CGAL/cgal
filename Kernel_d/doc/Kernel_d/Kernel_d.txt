@@ -211,8 +211,10 @@ type `LinearAlgebra`.
 
 The kernel `Epick_d<DimensionTag>`, short for Exact Predicates Inexact
 Constructions Kernel is a kernel particularly useful when the dimension of
-the space is known at compile-time; `DimensionTag` is then
-`Dimension_tag<d>` where `d` is an integer representing the dimension.
+the space is known at compile-time; \cgalModifBegin `DimensionTag` is then
+`Dimension_tag<d>` where `d` is an integer representing the dimension. It
+may also be used with parameter `Dynamic_dimension_tag`, in which case the
+dimension does not need to be known at compile-time.\cgalModifEnd
 It uses a Cartesian representation and
 supports construction of points from `double` coordinates. It provides exact
 geometric predicates, but the geometric constructions are not guaranteed to
@@ -237,7 +239,8 @@ they <B>always</B> consist of:
 
 <LI>A <I>representation class</I>, which itself may be parameterized with a
 number type, such as `Cartesian_d<double>` or `Homogeneous_d<leda_integer>`,
-where the type can be found.
+where the type can be found, \cgalModifBegin except for `Epick_d<DimensionTag>` where the
+number type is implicitly `double`\cgalModifEnd .
 </OL>
 
 \subsection Kernel_dKernelasaTraitsClass Kernel as a Traits Class
