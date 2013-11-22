@@ -235,6 +235,8 @@ public:
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
+    , V(rhs.V)
+    , N(rhs.N)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
