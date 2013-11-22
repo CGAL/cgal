@@ -128,7 +128,7 @@ and <code>src/</code> directories).
 
   <h3>Combinatorial Maps and Linear Cell Complex</h3>
   <ul>
-    <li> <code>null_dart_handle</code> is no more a static data member in the <code>CombinatorialMap</code> concept. This implies to move the following methods of Dart concept into CombinatorialMap concept: <code>is_free</code>, <code>highest_nonfree_dimension</code>, <code>opposite</code> and <code>other_extremity</code>. This also implies to transform the static methods <code>vertex_attribute</code> and <code>point</code> of <code>Linear_cell_complex</code> class into non static methods. You can define the CGAL_CMAP_DEPRECATED macro to keep the old behavior.
+    <li> <code>null_dart_handle</code> is no more a static data member in the <code>CombinatorialMap</code> concept. This implies to move the following methods of Dart concept into CombinatorialMap concept: <code>is_free</code>, <code>highest_nonfree_dimension</code>, <code>opposite</code> and <code>other_extremity</code>. We also transform the static methods <code>vertex_attribute</code> and <code>point</code> of <code>Linear_cell_complex</code> class into non static methods. You can define the CGAL_CMAP_DEPRECATED macro to keep the old behavior.
     </li>
   </ul>
 

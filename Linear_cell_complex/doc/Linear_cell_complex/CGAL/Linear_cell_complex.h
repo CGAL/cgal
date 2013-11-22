@@ -40,7 +40,7 @@ inherit from any model of the `CombinatorialMap` concept.
 \sa `LinearCellComplexTraits`
 \sa `CGAL::Linear_cell_complex_traits<d,K>`
 
-\deprecated Since \cgal 4.4, `CombinatorialMap::null_dart_handle` is no more a static data member. For this reasons, `vertex_attribute` and `point` methods are now no more static. You can define the `CGAL_CMAP_DEPRECATED` macro to keep the old behavior.
+\deprecated Since \cgal 4.4, `vertex_attribute` and `point` methods are no more static. You can define the `CGAL_CMAP_DEPRECATED` macro to keep the old behavior.
 
 */
 template< typename d, typename d2, typename LCCTraits, typename Items, typename Alloc >
