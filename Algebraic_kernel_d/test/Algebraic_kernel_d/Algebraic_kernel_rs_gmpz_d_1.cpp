@@ -42,7 +42,7 @@ template <class AK_>
 int test_ak(){
   typedef AK_                                           AK;
   typedef typename AK::Polynomial_1                     Polynomial_1;
-  typedef typename AK::Coefficient                      Coefficient;
+  //typedef typename AK::Coefficient                      Coefficient;
   typedef typename AK::Bound                            Bound;
   typedef typename AK::Algebraic_real_1                 Algebraic_real_1;
   typedef typename AK::Multiplicity_type                Multiplicity_type;

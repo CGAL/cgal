@@ -173,7 +173,6 @@ struct Solve_1{
                                   const Bound &u,
                                   OutputIterator res)const{
                 typedef std::vector<Algebraic>                  RV;
-                typedef typename RV::iterator                   RVI;
                 typedef std::pair<Polynomial_1,int>             PM;
                 typedef std::vector<PM>                         PMV;
                 typedef typename PMV::iterator                  PMVI;
@@ -303,7 +302,6 @@ public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
 
         public:
         CGAL::Sign operator()(const Polynomial_1 &p,Algebraic x)const{
-                typedef typename Ptraits::Substitute                    Subst;
                 typedef typename Ptraits::Gcd_up_to_constant_factor     Gcd;
                 typedef typename Ptraits::Make_square_free              Sfpart;
                 typedef typename Ptraits::Degree                        Degree;
@@ -389,7 +387,6 @@ public std::binary_function<Polynomial_,Algebraic_,bool>{
 
         public:
         bool operator()(const Polynomial_1 &p,Algebraic x)const{
-                typedef typename Ptraits::Substitute                    Subst;
                 typedef typename Ptraits::Gcd_up_to_constant_factor     Gcd;
                 typedef typename Ptraits::Make_square_free              Sfpart;
                 typedef typename Ptraits::Degree                        Degree;

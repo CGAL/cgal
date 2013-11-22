@@ -49,7 +49,6 @@ Bisection_refiner_1<Polynomial<Gmpz>,Gmpfr>::
 operator()(const Polynomial<Gmpz> &pol,Gmpfr &left,Gmpfr &right,int prec){
         typedef Polynomial<Gmpz>                        Polynomial;
         typedef Polynomial_traits_d<Polynomial>         Ptraits;
-        typedef Ptraits::Degree                         Degree;
         typedef Ptraits::Make_square_free               Sfpart;
         typedef CGAL::RS_AK1::Signat_1<Polynomial,Gmpfr>
                                                         Signat;

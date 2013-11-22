@@ -40,11 +40,10 @@ struct Signat_1{
 template <class Polynomial_,class Bound_>
 inline CGAL::Sign
 Signat_1<Polynomial_,Bound_>::operator()(const Bound_ &x)const{
-        typedef Polynomial_                                     Polynomial;
         typedef Bound_                                          Bound;
         typedef Real_embeddable_traits<Bound>                   REtraits;
         typedef typename REtraits::Sgn                          BSign;
-        typedef Algebraic_structure_traits<Bound>               AStraits;
+        //typedef Algebraic_structure_traits<Bound>               AStraits;
         // This generic signat works only when Bound_ is an exact type. For
         // non-exact types, an implementation must be provided.
         //BOOST_MPL_ASSERT((boost::is_same<AStraits::Is_exact,Tag_true>));
