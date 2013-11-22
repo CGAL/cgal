@@ -80,7 +80,7 @@ public:
     //                                                            3-4, 3-5, 3-6
     //                                                                 4-5, 4-6
     //                                                                      5-6
-    Map::iterator it;
+    typename Map::iterator it;
     if(b == 0) { it = table.begin(); }
     else       { 
       it = table.upper_bound(std::make_pair(b-1, n)); // to find first entry where entry.first == b
@@ -691,6 +691,14 @@ struct Edge_graph
   int n;
 };
 
+template<
+  class Kernel,
+  class Tracer,
+  class WeightCalculator,
+  template <class> class LookupTable = Lookup_table
+>
+class Triangulate_hole_polyline;
+
 // By default Lookup_table_map is used, since Lookup_table requires n*n mem.
 // Performance decrease is nearly 2x (for n = 10,000, for larger n Lookup_table just goes out of mem) 
 template<
@@ -1066,7 +1074,7 @@ template<
   class Kernel,
   class Tracer,
   class WeightCalculator,
-  template <class> class LookupTable = Lookup_table
+  template <class> class LookupTable
 >
 class Triangulate_hole_polyline {
 public:
