@@ -91,7 +91,7 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
         }
         Algebraic_1(const Algebraic &a):
         pol(a.pol),left(a.left),right(a.right){}
-        // This assumes that Gmpq is constructible from bound type and
+        // XXX: This assumes that Gmpq is constructible from bound type and
         // that polynomial coefficient type is constructible from mpz_t.
         Algebraic_1(const Bound &b):left(b),right(b){
                 typedef typename Ptraits::Shift         shift;
@@ -101,22 +101,9 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
                         Coefficient(mpq_numref(q.mpq()));
                 CGAL_assertion(left==right&&left==b);
         }
-        // TODO: make this constructor generic, the coefficient type is
-        // assumed to be constructible from mpz_t (rewrite in terms of
-        // Gmpq/Gmpz)
-        Algebraic_1(double d){
-                typedef typename Ptraits::Shift         shift;
-                Gmpq q(d);
-                pol=Coefficient(mpq_denref(q.mpq()))*
-                        shift()(Polynomial(1),1,0)-
-                        Coefficient(mpq_numref(q.mpq()));
-                left=Bound(d/*,std::round_toward_neg_infinity*/);
-                right=Bound(d/*,std::round_toward_infinity*/);
-                CGAL_assertion((left==right&&left==d)||(left<d&&right>d));
-        }
-        // TODO: Constructors from types such as int, unsigned and long. This
-        // implementation assumes that the bound type is Gmpfr and that T can
-        // be exactly converted to Gmpq.
+        // XXX: This implementation assumes that the bound type is Gmpfr
+        // and that T can be exactly converted to Gmpq. This constructor
+        // can handle types such as int, unsigned and long. 
         template <class T>
         Algebraic_1(const T &t){
                 typedef typename Ptraits::Shift         shift;
@@ -127,6 +114,23 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
                 left=Bound(t,std::round_toward_neg_infinity);
                 right=Bound(t,std::round_toward_infinity);
                 CGAL_assertion(left<=t&&right>=t);
+        }
+        // XXX: This constructor assumes the bound is a Gmpfr.
+        Algebraic_1(const CGAL::Gmpq &q){
+                typedef typename Ptraits::Shift         shift;
+                pol=Coefficient(mpq_denref(q.mpq()))*
+                    shift()(Polynomial(1),1,0)-
+                        Coefficient(mpq_numref(q.mpq()));
+                left=Bound();
+                right=Bound();
+                mpfr_t b;
+                mpfr_init(b);
+                mpfr_set_q(b,q.mpq(),GMP_RNDD);
+                mpfr_swap(b,left.fr());
+                mpfr_set_q(b,q.mpq(),GMP_RNDU);
+                mpfr_swap(b,right.fr());
+                mpfr_clear(b);
+                CGAL_assertion(left<=q&&right>=q);
         }
         ~Algebraic_1(){}
 
@@ -316,11 +320,11 @@ std::ostream& operator<<(std::ostream &o,
                a.get_right()<<']');
 }
 
+// XXX: This function works, but it will be nice to rewrite it cleanly.
 template <class P,class B,class R,class C,class T>
 inline
 std::istream& operator>>(std::istream &i,
                          RS_AK1::Algebraic_1<P,B,R,C,T> &a){
-        // TODO: cleanly write this function
         std::istream::int_type c;
         P pol;
         B lb,rb;

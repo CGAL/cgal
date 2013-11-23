@@ -51,6 +51,7 @@ RS2_isolator_1(const Polynomial_ &p){
         CGAL_error_msg("not implemented for these polynomial/bound types");
 }
 
+// Isolator of Gmpz polynomials and Gmpfr bounds (the best case for RS).
 template <>
 RS2_isolator_1<CGAL::Polynomial<CGAL::Gmpz>,Gmpfr>::
 RS2_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
@@ -67,6 +68,39 @@ RS2_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
         rs_run_algo((char*)"UISOLE");
         RS2::RS2_calls::insert_roots(std::back_inserter(_real_roots));
         free(intervals_mpfi);
+}
+
+// Isolator of Gmpq polynomials and Gmpfr bounds. The polynomial must be
+// converted to a Gmpz one with the same roots.
+template <>
+RS2_isolator_1<CGAL::Polynomial<CGAL::Gmpq>,Gmpfr>::
+RS2_isolator_1(const CGAL::Polynomial<CGAL::Gmpq> &p):_polynomial(p){
+        unsigned degree=p.degree();
+        // Compute first the LCM of the divisors of the coefficients.
+        mpz_t lcm;
+        mpz_init(lcm);
+        mpz_lcm(lcm,mpq_denref(p[0].mpq()),mpq_denref(p[degree].mpq()));
+        for(unsigned i=1;i<degree;++i)
+                mpz_lcm(lcm,lcm,mpq_denref(p[i].mpq()));
+        // Create an array of mpz_t, to store the new integer polynomial.
+        mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
+        for(unsigned i=0;i<=degree;++i){
+                mpz_init(coeffs[i]);
+                mpz_div(coeffs[i],lcm,mpq_denref(p[i].mpq()));
+                mpz_mul(coeffs[i],coeffs[i],mpq_numref(p[i].mpq()));
+        }
+        // Call RS to solve the computed integer polynomial.
+        RS2::RS2_calls::init_solver();
+        RS2::RS2_calls::create_rs_upoly(coeffs,degree,rs_get_default_up());
+        set_rs_precisol(0);
+        set_rs_verbose(0);
+        rs_run_algo((char*)"UISOLE");
+        RS2::RS2_calls::insert_roots(std::back_inserter(_real_roots));
+        // Done. Clear the mpz_t's and the free the array.
+        mpz_clear(lcm);
+        for(unsigned i=0;i<=degree;++i)
+                mpz_clear(coeffs[i]);
+        free(coeffs);
 }
 
 template <class Polynomial_,class Bound_>

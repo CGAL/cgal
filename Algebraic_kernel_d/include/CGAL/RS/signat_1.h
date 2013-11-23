@@ -77,6 +77,28 @@ Signat_1<Polynomial<Gmpz>,Gmpfr>::operator()(const Gmpfr &x)const{
         return h.sign();
 }
 
+// This is the same code as above.
+template <>
+inline CGAL::Sign
+Signat_1<Polynomial<Gmpq>,Gmpfr>::operator()(const Gmpfr &x)const{
+        typedef Signat_1<Polynomial,Gmpq>                       Exact_sign;
+        int d=Degree()(pol);
+        if(d==0)
+                return pol[0].sign();
+        Gmpfi h(pol[d],x.get_precision()+2*d);
+        Uncertain<CGAL::Sign> indet=Uncertain<CGAL::Sign>::indeterminate();
+        if(h.sign().is_same(indet))
+                return Exact_sign(pol)(x);
+        for(int i=1;i<=d;++i){
+                h*=x;
+                h+=pol[d-i];
+                if(h.sign().is_same(indet))
+                        return Exact_sign(pol)(x);
+        }
+        CGAL_assertion(!h.sign().is_same(indet));
+        return h.sign();
+}
+
 } // namespace RS_AK1
 } // namespace CGAL
 

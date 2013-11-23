@@ -166,12 +166,12 @@ int main(){
 
         // test all and return the result
         long result=0;
-        std::cerr<<"testing default RS AK_1:";
+        std::cerr<<"*** testing default RS AK_1:";
         result+=test_ak<AK_default>();
-        std::cerr<<"testing RS2 AK_1:";
+        std::cerr<<"*** testing RS2 AK_1:";
         result+=(2048*test_ak<AK_RS2>());
 #ifdef CGAL_USE_RS3
-        std::cerr<<"testing RS2/RS3 k_AK_1:";
+        std::cerr<<"*** testing RS2/RS3 k_AK_1:";
         result+=(4096*test_ak<AK_RS2_RS3>());
 #endif // CGAL_USE_RS3
         std::cerr<<"*** result of the tests (should be 0): "<<result<<std::endl;
