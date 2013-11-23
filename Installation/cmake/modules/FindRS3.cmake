@@ -23,7 +23,7 @@ if( MPFI_FOUND )
            )
 
   find_library(RS3_LIBRARIES
-               NAMES rs3
+               NAMES rs3_mt rs3
                HINTS ENV RS3_LIB_DIR
                      ENV RS3_DIR
                      ENV RS_LIB_DIR
