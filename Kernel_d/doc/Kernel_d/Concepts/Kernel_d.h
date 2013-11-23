@@ -20,6 +20,7 @@ replacing operators, especially for equality testing.
 
 \cgalHasModel `CGAL::Cartesian_d<FieldNumberType>`
 \cgalHasModel `CGAL::Homogeneous_d<RingNumberType>` 
+\cgalHasModel `CGAL::Epick_d<DimensionTag>` 
 */
 class Kernel_d {
 public:

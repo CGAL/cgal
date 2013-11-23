@@ -68,6 +68,13 @@ template <class T> struct is_iterator :
 template <class T,class Tag> struct is_iterator_type :
 	internal::is_iterator_type_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type,Tag> {};
 
+template <class T,class U,bool=is_iterator<T>::value> struct is_iterator_to {
+          enum { value=false };
+};
+template <class T,class U> struct is_iterator_to<T,U,true> :
+        boost::is_convertible<typename std::iterator_traits<T>::value_type,U>
+{ };
+
 }
 
 #endif // CGAL_IS_ITERATOR_H
