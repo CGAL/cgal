@@ -5,7 +5,7 @@
 
 */
 
-class Kernel_d::Lift_to_paraboloid_d {
+class KernelWithLifting_d::Lift_to_paraboloid_d {
 public:
 
 /// \name Operations
@@ -22,5 +22,5 @@ p);
 
 /// @}
 
-}; /* end Kernel_d::Lift_to_paraboloid_d */
+}; /* end KernelWithLifting_d::Lift_to_paraboloid_d */
 

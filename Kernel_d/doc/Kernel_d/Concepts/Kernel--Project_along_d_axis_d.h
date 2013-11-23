@@ -5,7 +5,7 @@
 
 */
 
-class Kernel_d::Project_along_d_axis_d {
+class KernelWithLifting_d::Project_along_d_axis_d {
 public:
 
 /// \name Operations
@@ -20,5 +20,5 @@ Kernel_d::Point_d operator()(const Kernel_d::Point_d& p);
 
 /// @}
 
-}; /* end Kernel_d::Project_along_d_axis_d */
+}; /* end KernelWithLifting_d::Project_along_d_axis_d */
 

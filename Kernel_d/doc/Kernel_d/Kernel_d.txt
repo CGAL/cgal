@@ -543,6 +543,10 @@ Stefan Schirra.
 This work was supported by ESPRIT IV Long Term Research Projects
 No. 21957 (CGAL) and No. 28155 (GALIA).
 
+The Epick_d kernel was partially supported by the IST Programme of the EU
+(FET Open) Project under Contract No IST-25582 – (CGL - Computational
+Geometric Learning).
+
 */ 
 } /* namespace CGAL */
 
