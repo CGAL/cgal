@@ -18,11 +18,6 @@ This kernel is default constructible and copyable. It does not carry any
 state so it is possible to use objects created by one instance with
 functors created by another one.
 
-Note that this kernel does not completely conform to the `Kernel_d`
-concept: it is missing the constructions `Lift_to_paraboloid_d` and
-`Project_along_d_axis_d` which do not make sense with a single fixed
-dimension.
-
 Only the interfaces specific to this class are listed here, refer to the
 concepts for the rest.
 
