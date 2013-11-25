@@ -8,6 +8,9 @@
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Search_traits_3.h>
 
+extern int ccTime;
+extern int ccCount;
+
 namespace CGAL {
 
   namespace Efficient_ransac {
@@ -36,8 +39,8 @@ namespace CGAL {
 
       typedef Primitive_ab<Kernel, inputDataType> Primitive;
 
-      Primitive_ab() {init();};
-      Primitive_ab(FT _ep, FT _t) {m_epsilon=_ep; m_normalThresh =_t; init();};
+      Primitive_ab() {init();}
+      Primitive_ab(FT _ep, FT _t) {m_epsilon=_ep; m_normalThresh =_t; init();}
       static Primitive_ab* create(int id, FT _m_epsilon = 0.9f, FT _normalThresh = 0.9f);
 
       enum TYPE : int {PLANE = 0, SPHERE = 1, CYLINDER = 2, CONE = 3, TORUS = 4};
@@ -57,6 +60,7 @@ namespace CGAL {
 
       FT m_sum_ExpectedValue;
       int m_nb_subset_used;		//count the number of subset used so far for the score, and thus indicate the next one to use
+      bool m_hasConnectedComponent;
 
       std::vector<int> m_indices;	//indices of the points fitting to the candidate
 
@@ -78,8 +82,6 @@ namespace CGAL {
       void save(const char* _n, const inputIterator _data/*, const bool _withAllPoints = false*/)
       {
         std::ofstream plyFile(_n);
-        std::cout << "saving " << _n << std::endl;
-        std::cout << plyFile.is_open() << std::endl;
 
         plyFile << "ply" << std::endl;
         plyFile << "format ascii 1.0" << std::endl;
@@ -114,7 +116,7 @@ namespace CGAL {
       virtual void cos_to_normal(InputConstIterator first, std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const = 0;
 
       virtual void parameterExtend(const Point &center, FT width, FT min[2], FT max[2]) const = 0;
-      virtual void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices) const = 0;
+      virtual void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const = 0;
       
       unsigned int connectedComponent(InputConstIterator first, FT m_bitmapEpsilon, const Point &center, FT width);
 
@@ -141,6 +143,7 @@ namespace CGAL {
       void init()
       {
         m_isValid = true;
+        m_hasConnectedComponent = false;
         m_score = 0;
         m_nb_subset_used = 0;
         m_sum_ExpectedValue = 0;
@@ -246,11 +249,24 @@ namespace CGAL {
     unsigned int Primitive_ab<Kernel, inputDataType>::connectedComponent(InputConstIterator first, FT m_bitmapEpsilon, const Point &center, FT width) {
       if (m_indices.size() == 0)
         return 0;
+
+//       if (m_hasConnectedComponent)
+//         return m_score;
+
+      m_hasConnectedComponent = true;
       if (!supportsConnectedComponent())
         return m_indices.size();
 
+      ccCount++;
+      clock_t s, e;
+      s = clock();
+
       FT min[2], max[2];
-      parameterExtend(center, width, min, max);
+      //parameterExtend(center, width, min, max);
+      std::vector<std::pair<FT, FT>> parameterSpace;
+      parameterSpace.resize(m_indices.size());
+
+      parameters(first, parameterSpace, m_indices, min, max);
       int iMin[2], iMax[2];
       iMin[0] = min[0] / m_bitmapEpsilon;
       iMin[1] = min[1] / m_bitmapEpsilon;
@@ -266,11 +282,6 @@ namespace CGAL {
       visited.resize(uExtend * vExtend, false);
 
       int maxIndex = uExtend * vExtend;
-
-      std::vector<std::pair<FT, FT>> parameterSpace;
-      parameterSpace.resize(m_indices.size());
-
-      parameters(first, parameterSpace, m_indices);
 
       bool wrapU = wrapsU();
       bool wrapV = wrapsV();
@@ -380,7 +391,10 @@ namespace CGAL {
 
       m_indices = cluster[maxCluster];
 
-      return m_indices.size();
+      e = clock();
+      ccTime += e - s;
+
+      return m_score = m_indices.size();
     }
   }
 }

@@ -77,11 +77,22 @@ namespace CGAL {
 
       Point pointOnPrimitive() const {return m_point_on_primitive;}
 
-      void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices) const {
-        for (unsigned int i = 0;i<indices.size();i++) {
-          Vector p = (first[indices[i]].first - m_plane.point());
+      void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
+        Vector p = (first[indices[0]].first - m_point_on_primitive);
           FT u = p * m_base1;
           FT v = p * m_base2;
+        parameterSpace[0] = std::pair<FT, FT>(u, v);
+        min[0] = max[0] = u;
+        min[1] = max[1] = v;
+
+        for (unsigned int i = 1;i<indices.size();i++) {
+          Vector p = (first[indices[i]].first - m_point_on_primitive);
+          FT u = p * m_base1;
+          FT v = p * m_base2;
+          min[0] = std::min<FT>(min[0], u);
+          max[0] = std::max<FT>(max[0], u);
+          min[1] = std::min<FT>(min[1], v);
+          max[1] = std::max<FT>(max[1], v);
           parameterSpace[i] = std::pair<FT, FT>(u, v);
         }
       }

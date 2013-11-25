@@ -117,7 +117,7 @@ namespace CGAL {
         return m_sphere.center() + Vector(0, 0, sqrt(m_sphere.squared_radius()));
       }
 
-      void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices) const {
+      void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices, FT min[2], FT max[2]) const {
       }
 
       void parameterExtend(const Point &center, FT width, FT min[2], FT max[2]) const {
