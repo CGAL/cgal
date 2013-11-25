@@ -80,7 +80,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	struct Construct_cartesian_const_iterator_d : private Store_kernel<R_> {
 	  CGAL_FUNCTOR_INIT_STORE(Construct_cartesian_const_iterator_d)
 	  typedef typename Get_functor<Base, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
-	  typedef typename Get_functor<Base, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CVI;
+	  typedef typename Get_functor<Base, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
 	  typedef typename CGAL::decay<typename boost::result_of<CPI(Point_d,CGAL::Begin_tag)>::type>::type result_type;
 	  // Kernel_d requires a common iterator type for points and vectors
 	  // TODO: provide this mixed functor in preKernel?

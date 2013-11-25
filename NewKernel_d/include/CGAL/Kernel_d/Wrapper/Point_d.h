@@ -26,6 +26,8 @@ class Point_d : public Get_type<typename R_::Kernel_base, Point_tag>::type
   typedef typename Get_type<R_, Vector_tag>::type	Vector_;
   typedef typename Get_functor<Kbase, Construct_ttag<Point_tag> >::type CPBase;
   typedef typename Get_functor<Kbase, Compute_point_cartesian_coordinate_tag>::type CCBase;
+  typedef typename Get_functor<Kbase, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
+
 
   typedef Point_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Point_tag>::type>::value));
@@ -36,8 +38,8 @@ public:
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
-  //typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
   typedef typename Get_type<Kbase, Point_tag>::type      Rep;
+  //typedef typename CGAL::decay<typename boost::result_of<CPI(Rep,Begin_tag)>::type>::type Cartesian_const_iterator;
 
   const Rep& rep() const
   {
@@ -114,6 +116,13 @@ public:
 	  return CCBase()(rep(),i);
   }
 
+  typename boost::result_of<CPI(Rep,Begin_tag)>::type cartesian_begin()const{
+	  return CPI()(rep(),Begin_tag());
+  }
+
+  typename boost::result_of<CPI(Rep,End_tag)>::type cartesian_end()const{
+	  return CPI()(rep(),End_tag());
+  }
 
   /*
   Direction_d direction() const

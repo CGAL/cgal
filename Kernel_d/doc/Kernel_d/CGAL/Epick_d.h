@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgKernelDKernels
 
 A model for `Kernel_d` that uses %Cartesian coordinates to represent the
-geometric objects. The parameter `DimensionTag` is the dimension of the
+geometric objects. The parameter `DimensionTag` is \cgalModifBegin a tag representing\cgalModifEnd the dimension of the
 ambient Euclidean space. It may be either `Dimension_tag<d>` \cgalModifBegin where `d` is
 an integer
 
@@ -50,7 +50,7 @@ Point_d(double x0, double x1, ...);
 
 /*! \cgalModifBegin introduces a point with coordinate set `[first,end)`.
     \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
-    \cgalRequires The value type of `InputIterator` is convertible to `FT`.
+    \cgalRequires The value type of `InputIterator` is convertible to `double`.
 
     \cgalModifEnd
     */
