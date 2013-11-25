@@ -4,7 +4,8 @@
 
 The concept `MeshCellBase_3` describes the requirements 
 for the `Cell` type of the triangulation 
-used in the 3D mesh generation process. The type `MeshCellBase_3` refines the concept `RegularTriangulationCellBase_3`. 
+used in the 3D mesh generation process. The type `MeshCellBase_3` refines the concept `RegularTriangulationCellBase_3`
+and must be copy constructible. 
 The concept `MeshCellBase_3` 
 includes a way to store and retrieve 
 if a given cell of the triangulation 
@@ -38,7 +39,8 @@ and is_facet_visited(1) in parallel must be safe)
 Moreover, the parallel algorithms require an erase counter in 
 each cell (see below).
 
-\cgalRefines `RegularTriangulationCellBase_3` 
+\cgalRefines `RegularTriangulationCellBase_3`
+\cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
 \cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
