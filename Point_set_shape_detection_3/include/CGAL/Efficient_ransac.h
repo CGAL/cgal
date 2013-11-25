@@ -65,7 +65,14 @@
 #include <boost/tuple/tuple.hpp>
 //---------------------
 
-//#define D1
+extern int octTime;
+extern int runTime;
+extern int candGenCount;
+extern int candGenTime;
+extern int findBestCount;
+extern int findBestTime;
+extern int improveCount;
+extern int improveTime;
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -77,12 +84,6 @@ namespace CGAL {
 #define printd(...) printf(__VA_ARGS__)
 #else
 #define printd(...) printf(__VA_ARGS__)
-#endif
-
-#ifdef D1
-#define printd1(...) printf(__VA_ARGS__)
-#else
-#define printd1(...)
 #endif
     
     //m for members
@@ -122,7 +123,7 @@ namespace CGAL {
       ~Efficient_ransac() {/*if (m_global_tree) delete m_global_tree;*/}
       Efficient_ransac(inputIterator first, inputIterator beyond);
 
-      void /*std::pair<std::vector<Primitive *>, std::vector<int> >*/ run();		 //the primitive and the index of the point sorted
+      void /*std::pair<std::vector<Primitive *>, std::vector<int> >*/ run(bool save = false);		 //the primitive and the index of the point sorted
       void addPrimitives(Primitive* p) {m_list_sought_primitives.insert(p->type());delete p;}
       const std::vector<Primitive *> &getExtractedPrimitives() {return m_extractedPrimitives;}
       int unassignedPoints() {return m_numAvailablePoints;}
@@ -177,6 +178,8 @@ namespace CGAL {
     {
       srand ( time(NULL) );
 
+      clock_t s = clock();
+
       m_global_octree = new IndexedOctree(first, beyond, 0);
       m_numAvailablePoints = beyond - first;
       
@@ -186,7 +189,7 @@ namespace CGAL {
       //create subsets ------------------------------------------------
       //how many subsets ?
       m_num_subsets = std::max( (int) std::floor(std::logf(m_numAvailablePoints)/std::logf(2) )-9, 2);
-      printd("number of subtree: %d\n", m_num_subsets);
+      printd("number of subtrees: %d\n", m_num_subsets);
 
       // SUBSET GENERATION ->
       // approach with increasing subset sizes -> replace with octree later on
@@ -234,6 +237,7 @@ namespace CGAL {
 
       m_global_octree = new IndexedOctree(first, beyond);
       m_global_octree->createTree();
+       octTime = clock() - s;
       //m_global_octree->verify();
 
       printd("init Ransac done\n");
@@ -246,9 +250,9 @@ namespace CGAL {
     };	
 
     template <typename Kernel, class inputDataType>
-    Primitive_ab<Kernel, inputDataType>* Efficient_ransac<Kernel, inputDataType>::getBestCandidate(std::vector<Primitive* >& l_list_candidates, const int _SizeP)
-    {
+    Primitive_ab<Kernel, inputDataType>* Efficient_ransac<Kernel, inputDataType>::getBestCandidate(std::vector<Primitive* >& l_list_candidates, const int _SizeP) {
       if (l_list_candidates.size() == 1)	return l_list_candidates.back();
+      clock_t s = clock();
 
       int index_worse_candidate = 0;
       bool improved = true;
@@ -286,11 +290,22 @@ namespace CGAL {
 
       if (index_worse_candidate == l_list_candidates.size()-1 && improved) printf("delete everything, should never happen (%d) !!!!!!\n", index_worse_candidate);
 
+      findBestTime += clock() - s;
+      findBestCount++;
+
       return l_list_candidates.back();
     };
     
     template <typename Kernel, class inputDataType>
     bool Efficient_ransac<Kernel, inputDataType>::improveBound(Primitive *candidate, const int _SizeP, unsigned int max_subset, unsigned int min_points) {
+      if (candidate->m_nb_subset_used >= max_subset)
+        return false;
+      if (candidate->m_nb_subset_used >= m_num_subsets)
+        return false;
+
+      improveCount++;
+      clock_t s = clock();
+
       candidate->m_nb_subset_used = (candidate->m_nb_subset_used >= m_num_subsets) ? m_num_subsets - 1 : candidate->m_nb_subset_used;
       
       //what it does is add another subset and recompute lower and upper bound
@@ -304,6 +319,7 @@ namespace CGAL {
 
       //2. need score of new subset as well as sum of the score of the previous considered subset
       int l_new_score = 0;
+      int l_new_sampled_points = 0;
 
       do
       {
@@ -318,11 +334,15 @@ namespace CGAL {
         //candidate->m_score_by_subset.push_back(l_new_score);	//add to vector of score
 
         l_nb_total_points_subsets += m_availableOctreeSizes[candidate->m_nb_subset_used]; //add point new subset
+        l_new_sampled_points += m_availableOctreeSizes[candidate->m_nb_subset_used];
+
         l_sum_score += l_new_score;
 
         candidate->m_nb_subset_used++;
       }
-      while (l_sum_score < min_points && candidate->m_nb_subset_used < m_num_subsets);
+      while (l_new_sampled_points < min_points && candidate->m_nb_subset_used < m_num_subsets);
+
+      candidate->m_score = candidate->m_indices.size();
 
 //       if (l_new_score == 0) {
 //         return false;
@@ -330,14 +350,17 @@ namespace CGAL {
 
       candidate->computeBound(l_nb_total_points_subsets, _SizeP);//estimate the bound
 
+      improveTime += clock() - s;
+
       return true;
     }
 
     template <typename Kernel, class inputDataType>
-    void Efficient_ransac<Kernel, inputDataType>::run()
-    {
+    void Efficient_ransac<Kernel, inputDataType>::run(bool save) {
       //no primitives added, exit
       if (m_list_sought_primitives.size() == 0) return;
+
+      clock_t s = clock();
 
       // initializing the shape index
       m_shapeIndex.resize(m_numAvailablePoints, -1);
@@ -364,6 +387,7 @@ namespace CGAL {
       {
         bestExp = 0;
 
+        clock_t sti = clock();
         //TODO: do this in batch of n candidate, and thus can be parallelized in n threads
         do	  //generate candidate
         {
@@ -377,9 +401,10 @@ namespace CGAL {
             done = m_global_octree->drawSamplesFromCellContainingPoint((m_it_Point_Normal + l_index_point_p1)->first, getLevelOctree(), indices, m_shapeIndex, requiredSamples);
           } while (m_shapeIndex[l_index_point_p1] != -1 || !done);
           
+          nbNewCandidates++;
+          
           //add candidate for each type of primitives
-          for(std::set<int>::iterator it =  m_list_sought_primitives.begin(); it != m_list_sought_primitives.end(); it++)		  //1 type
-          {
+          for(std::set<int>::iterator it =  m_list_sought_primitives.begin(); it != m_list_sought_primitives.end(); it++)	{
             Primitive *p = Primitive::create(*it, m_options.m_epsilon, m_options.m_normalThresh);
             p->compute(	indices, m_it_Point_Normal);	//compute the primitive and says if the candidate is valid 
 
@@ -391,10 +416,10 @@ namespace CGAL {
               if(p->maxBound() >= m_options.m_minNbPoints) {
                 if (bestExp < p->ExpectedValue()) bestExp = p->ExpectedValue();
                 l_list_candidates.push_back(p);
-                nbNewCandidates++;
               }
               else {
                 nbFailedCandidates++;
+                nbNewCandidates--;
                 delete p;
               }        
             }
@@ -404,19 +429,28 @@ namespace CGAL {
             }
           }
 
-          if (nbFailedCandidates >= 100000)
+          candGenCount++;
+
+          if (nbFailedCandidates >= 10000)
             forceExit = true;
 
         } while( !forceExit
           && StopProbability(bestExp, m_numAvailablePoints - numInvalid, nbNewCandidates /*l_list_candidates.size()*/, scm_max_depth_octree)                 > m_options.m_probability 
           && StopProbability(m_options.m_minNbPoints, m_numAvailablePoints - numInvalid, nbNewCandidates /*l_list_candidates.size()*/, scm_max_depth_octree) > m_options.m_probability);
         // end of generate candidate
+        candGenTime += clock() - sti;
 
         if (forceExit) break;
+
+        if (l_list_candidates.empty())
+          continue;
 
         //now get the best candidate in the current set of all candidates
         //Note that the function sort the candidates: the best candidate is always the last element of the vector
         Primitive *best_Candidate = getBestCandidate(l_list_candidates, m_numAvailablePoints - numInvalid);
+        if (!best_Candidate)
+          continue;
+
         best_Candidate->m_indices.clear();
         int s = m_global_octree->score(best_Candidate, m_it_Point_Normal, m_shapeIndex, 3 * m_options.m_epsilon, m_options.m_normalThresh);
         int cc = best_Candidate->connectedComponent(m_it_Point_Normal, m_options.m_bitmapEpsilon, m_global_octree->m_center, m_global_octree->m_width);
@@ -428,7 +462,6 @@ namespace CGAL {
           //we keep it
           if (best_Candidate->getPointsIndices()->size() >=  m_options.m_minNbPoints) 
           {
-            printd1(best_Candidate->info().c_str());
             l_list_candidates.back() = NULL;	//put null like that when we delete the vector, the object is not lost (pointer saved in bestCandidate)
 
             //1. add best candidate to final result.
@@ -478,7 +511,7 @@ namespace CGAL {
             //best_Candidate->LSfit();
 
             //4. save primitive
-            if (1) {
+            if (save) {
               std::cout << "extracted primitive: " << best_Candidate->info().c_str() << std::endl;
               std::stringstream ss;
               ss << "ours_" << best_Candidate->type_str() << "_" << l_result.size() << ".ply";
@@ -532,6 +565,7 @@ namespace CGAL {
 
       m_numAvailablePoints -= numInvalid;
 
+      runTime = clock() - s;
     };
   }
 }
