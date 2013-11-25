@@ -67,22 +67,45 @@ namespace CGAL {
       FT inline minBound() const {return  m_lowerBound;}
       FT inline maxBound() const {return  m_upperBound;}
       FT inline score() const {return m_score;} //return last computed score, or -1 if no score yet
+      int inline subsets() const {return m_nb_subset_used;}
 
       operator FT() const {return ExpectedValue();}//so we can sort by expected value
 
       void updatePoints(const std::vector<int> &shapeIndex);
-
       bool isValid() const {return m_isValid;}
       std::vector<int> *getPointsIndices() {return &m_indices;}
 
       void save(const char* _n, const inputIterator _data/*, const bool _withAllPoints = false*/)
       {
-        int nbPoints = m_indices.size();
-        std::ofstream f(_n);
-        f << "OFF\n";
-        f << nbPoints << " 0 0\n";
-        for (int i=0;i<	nbPoints ;i++)
-          f << 	(*(_data+ m_indices[i])).first << "\n";
+        std::ofstream plyFile(_n);
+        std::cout << "saving " << _n << std::endl;
+        std::cout << plyFile.is_open() << std::endl;
+
+        plyFile << "ply" << std::endl;
+        plyFile << "format ascii 1.0" << std::endl;
+        plyFile << "element vertex " << m_indices.size() << std::endl;
+        plyFile << "property float x" << std::endl;
+        plyFile << "property float y" << std::endl;
+        plyFile << "property float z" << std::endl;
+        plyFile << "property uchar red" << std::endl;
+        plyFile << "property uchar green" << std::endl;
+        plyFile << "property uchar blue" << std::endl;
+        plyFile << "end_header" << std::endl;
+
+        plyFile << std::setprecision(6);
+        unsigned char r, g, b;
+        r = 64 + getRandomInt()%192;
+        g = 64 + getRandomInt()%192;
+        b = 64 + getRandomInt()%192;
+
+        for (unsigned int i = 0;i<m_indices.size();i++) {
+          Point p = (*(_data+ m_indices[i])).first;
+          plyFile << p[0] << " " << p[1] << " " << p[2];
+          plyFile << " " << (int)r << " " << (int)g << " " << (int)b;
+          plyFile << std::endl;
+        }
+
+        plyFile.close();
       }
 
       virtual FT squared_distance(const Point &_p) const = 0;
@@ -98,6 +121,9 @@ namespace CGAL {
       virtual void compute(std::set<int> &l_list_index_selected, InputConstIterator &m_it_Point_Normal) = 0;
       virtual std::string info() = 0;
       virtual std::string type_str() const = 0;
+      inline bool operator<(const Primitive &c) const {
+        return ExpectedValue() < c.ExpectedValue();
+      }
       
     private:
       unsigned int cost_function(InputConstIterator &first, const std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold, const std::vector<unsigned int> &indices);

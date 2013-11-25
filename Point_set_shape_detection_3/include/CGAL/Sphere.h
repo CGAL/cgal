@@ -123,17 +123,6 @@ namespace CGAL {
       void parameterExtend(const Point &center, FT width, FT min[2], FT max[2]) const {
       }
 
-
-/*
-      Point projection() const {
-        return projection(pointOnPrimitive());
-      }
-
-      Point projection(const Point &_p) const {
-        std::cout << "Sphere::projection() is not yet implemented!" << std::endl;
-        return m_sphere.center();
-      }*/
-
       FT squared_distance(const Point &_p) const {
         FT d = sqrt((m_sphere.center() - _p).squared_length()) - m_radius;
         return d*d;

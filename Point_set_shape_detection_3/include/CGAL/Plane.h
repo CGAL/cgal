@@ -20,7 +20,8 @@ namespace CGAL {
       typedef typename Kernel::Plane_3 Plane_3;
       Plane_3	m_plane;
       Point m_point_on_primitive;
-      Vector m_base1, m_base2;
+      Vector m_base1, m_base2, m_normal;
+      FT m_d;
 
     public:
       Plane() :  Primitive_ab<Kernel, inputDataType>(0.1, 0.9) {m_type = PLANE; m_type_name ="Plane";}
@@ -33,22 +34,24 @@ namespace CGAL {
 
         std::vector<int> output(l_list_index_selected.begin(), l_list_index_selected.end()); 
 
+        Point p1 = (m_it_Point_Normal + output[0])->first;
+
         m_plane = Plane_3((m_it_Point_Normal + output[0])->first, 
           (m_it_Point_Normal + output[1])->first, 
           (m_it_Point_Normal + output[2])->first
           );
 
+        m_normal = m_plane.orthogonal_vector();
+        m_normal = m_normal * (1.0 / sqrt(m_normal.squared_length()));
+        m_d = p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2];
 
         //check deviation of the 3 normal
         Vector l_v;
-        //FT cosTheta;
         for (int i=0;i<3;i++)
         {
           l_v = (m_it_Point_Normal + output[i])->second;
-          //cosTheta= abs( l_v * m_plane.orthogonal_vector () )/sqrtf(l_v.squared_length()*m_plane.orthogonal_vector ().squared_length());
-          //printf("val %d %f\n", i, cosTheta); 
-          //if ( cosTheta < m_normalThresh)  m_isValid = false;
-          if (abs(l_v * m_plane.orthogonal_vector () ) < m_normalThresh * sqrt(l_v.squared_length() * m_plane.orthogonal_vector ().squared_length())) {
+
+          if (abs(l_v * m_normal ) < m_normalThresh * sqrt(l_v.squared_length())) {
             m_isValid = false;
             return;
           }
@@ -65,20 +68,14 @@ namespace CGAL {
       std::string info()
       {
         std::stringstream sstr;
-        Vector n = m_plane.orthogonal_vector();
-        n = n * (1.0 / sqrt(n.squared_length()));
-        FT d = (CGAL::ORIGIN - m_point_on_primitive) * n;
-        sstr << "Type: " << m_type_name << "(" << n.x() << ", " << n.y() << ", " << n.z() << ")x - " << d << "= 0"
+        sstr << "Type: " << m_type_name << "(" << m_normal.x() << ", " << m_normal.y() << ", " << m_normal.z() << ")x - " << m_d << "= 0"
           << " ev: " << ExpectedValue() << " s: " << m_nb_subset_used << " #Pts: " <<  m_indices.size()	<< std::endl;
 
         return sstr.str();
       };
       std::string type_str() const {return m_type_name;}
 
-      Point pointOnPrimitive() const {/*return m_plane.point();*/return m_point_on_primitive;}
-/*
-      Point projection() const {return projection(pointOnPrimitive()) ;}
-      Point projection(const Point &_p) const {return m_plane.projection (_p);}*/
+      Point pointOnPrimitive() const {return m_point_on_primitive;}
 
       void parameters(InputConstIterator first, std::vector<std::pair<FT, FT>> &parameterSpace, const std::vector<int> &indices) const {
         for (unsigned int i = 0;i<indices.size();i++) {
@@ -112,7 +109,13 @@ namespace CGAL {
         }
       }
 
-      FT squared_distance(const Point &_p) const {return CGAL::squared_distance ( m_plane, _p);}
+      FT squared_distance(const Point &_p) const {
+        return CGAL::squared_distance ( m_plane, _p);
+      }
+
+      FT distance(const Point &_p) const {
+        return m_normal[0] * _p[0] + m_normal[1] * _p[1] + m_normal[2] * _p[2] - m_d;
+      }
 
       void squared_distance(InputConstIterator first, std::vector<FT> &dists, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) {
         for (unsigned int i = 0;i<indices.size();i++) {
@@ -122,15 +125,15 @@ namespace CGAL {
       }
 
       void cos_to_normal(InputConstIterator first, std::vector<FT> &angles, const std::vector<int> &shapeIndex, const std::vector<unsigned int> &indices) const {
-        Vector n = m_plane.orthogonal_vector();
-        n = n / (sqrt(n.squared_length()));
         for (unsigned int i = 0;i<indices.size();i++) {
           if (shapeIndex[indices[i]] == -1)
-            angles[i] = abs(first[indices[i]].second * n);
+            angles[i] = abs(first[indices[i]].second * m_normal);
         }
       }
 
-      FT cos_to_normal(const Point &_p, const Vector &_n) const{return abs(_n * m_plane.orthogonal_vector());} 
+      FT cos_to_normal(const Point &_p, const Vector &_n) const{
+        return abs(_n * m_normal);
+      } 
 
       virtual bool supportsConnectedComponent() {return true;}
       virtual bool wrapsU() const {return false;}

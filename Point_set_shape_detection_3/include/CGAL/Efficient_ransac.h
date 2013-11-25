@@ -65,7 +65,7 @@
 #include <boost/tuple/tuple.hpp>
 //---------------------
 
-#define D1
+//#define D1
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -138,7 +138,10 @@ namespace CGAL {
       inline FT StopProbability(FT _sizeC, FT _np, FT _dC, FT _l) const
       {
         //printf("stop without thr %f\n", 	 std::pow(1.f - _sizeC/ (_np * _l * 4), _dC));
-        return std::min(std::pow(1.f - _sizeC / (_np * _l * 4), _dC), 1.);		//4 is (1 << (m_reqSamples - 1))) with m_reqSamples=3 (min number of points to create a candidate)
+        return std::min<float>(std::pow(1.f - _sizeC / (_np * _l * 4), _dC), 1.);		//4 is (1 << (m_reqSamples - 1))) with m_reqSamples=3 (min number of points to create a candidate)
+      }
+      static bool candComp(const Primitive* a, const Primitive* b) {
+        return a->ExpectedValue() < b->ExpectedValue();
       }
 
       //--------------------------------------------Functions
@@ -231,7 +234,7 @@ namespace CGAL {
 
       m_global_octree = new IndexedOctree(first, beyond);
       m_global_octree->createTree();
-      m_global_octree->verify();
+      //m_global_octree->verify();
 
       printd("init Ransac done\n");
     };	 
@@ -321,9 +324,9 @@ namespace CGAL {
       }
       while (l_sum_score < min_points && candidate->m_nb_subset_used < m_num_subsets);
 
-      if (l_new_score == 0) {
-        return false;
-      };
+//       if (l_new_score == 0) {
+//         return false;
+//       };
 
       candidate->computeBound(l_nb_total_points_subsets, _SizeP);//estimate the bound
 
@@ -475,10 +478,12 @@ namespace CGAL {
             //best_Candidate->LSfit();
 
             //4. save primitive
-            std::cout << "extracted primitive: " << best_Candidate->info().c_str() << std::endl;
-            std::stringstream ss;
-            ss << best_Candidate->type_str() << "_" << l_result.size() << ".off";
-            best_Candidate->save(ss.str().c_str(), m_it_Point_Normal);
+            if (1) {
+              std::cout << "extracted primitive: " << best_Candidate->info().c_str() << std::endl;
+              std::stringstream ss;
+              ss << "ours_" << best_Candidate->type_str() << "_" << l_result.size() << ".ply";
+              best_Candidate->save(ss.str().c_str(), m_it_Point_Normal);
+            }
             m_extractedPrimitives.push_back(best_Candidate);
           }
 

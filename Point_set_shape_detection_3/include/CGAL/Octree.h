@@ -161,6 +161,23 @@ namespace CGAL {
     public:
       Octree() : m_bucketSize(20), m_setMaxLevel(10), m_root(NULL) {}
       Octree(typename PointAccessor::inputIterator &begin, typename PointAccessor::inputIterator &beyond, unsigned int offset = 0, unsigned int bucketSize = 20, unsigned int maxLevel = 10) : PointAccessor(begin, beyond, offset), m_bucketSize(bucketSize), m_setMaxLevel(maxLevel), m_root(NULL) {}
+      ~Octree() {
+        if (!m_root)
+          return;
+
+        std::stack<Cell *> stack;
+        stack.push(m_root);
+        while (!stack.empty()) {
+          Cell *cell = stack.top();
+          stack.pop();
+
+          for (unsigned int i = 0;i<8;i++)
+            if (cell->child[i])
+              stack.push(cell->child[i]);
+
+          delete cell;
+        }
+      }
 
       // Sorting data in a way such that points of one cell are always in one range and ordered child-wise:
       // +---+---+
@@ -185,104 +202,104 @@ namespace CGAL {
           if (cell->level == m_setMaxLevel)
             continue;
 
-          verifyCell(cell);
+          //verifyCell(cell);
 
           int zLowYHighXSplit, zLowYLowXSplit, zLowYSplit, zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
           int zSplit = split(cell->first, cell->last, 2, cell->center[2]);
 
           if (zSplit != -1) {
-            verifyRange(cell->first, zSplit, 2, cell->center[2], true);
-            verifyRange(zSplit + 1, cell->last, 2, cell->center[2], false);
+//             verifyRange(cell->first, zSplit, 2, cell->center[2], true);
+//             verifyRange(zSplit + 1, cell->last, 2, cell->center[2], false);
 
             zLowYSplit = split(cell->first, zSplit, 1, cell->center[1]);
             if (zLowYSplit != -1) {
-              verifyRange(cell->first, zLowYSplit, 1, cell->center[1], true);
-              verifyRange(zLowYSplit + 1, zSplit, 1, cell->center[1], false);
+//               verifyRange(cell->first, zLowYSplit, 1, cell->center[1], true);
+//               verifyRange(zLowYSplit + 1, zSplit, 1, cell->center[1], false);
 
               zLowYLowXSplit = split(cell->first, zLowYSplit, 0, cell->center[0]);
-              if (zLowYLowXSplit != -1) {
-                verifyRange(cell->first, zLowYLowXSplit, 0, cell->center[0], true);
-                verifyRange(zLowYLowXSplit + 1, zLowYSplit, 0, cell->center[0], false);
-              }
+//               if (zLowYLowXSplit != -1) {
+//                 verifyRange(cell->first, zLowYLowXSplit, 0, cell->center[0], true);
+//                 verifyRange(zLowYLowXSplit + 1, zLowYSplit, 0, cell->center[0], false);
+//               }
 
               zLowYHighXSplit = split(zLowYSplit + 1, zSplit, 0, cell->center[0]);              
-              if (zLowYHighXSplit != -1) {
-                verifyRange(zLowYSplit + 1, zLowYHighXSplit, 0, cell->center[0], true);
-                verifyRange(zLowYHighXSplit + 1, zSplit, 0, cell->center[0], false);
-              }
+//               if (zLowYHighXSplit != -1) {
+//                 verifyRange(zLowYSplit + 1, zLowYHighXSplit, 0, cell->center[0], true);
+//                 verifyRange(zLowYHighXSplit + 1, zSplit, 0, cell->center[0], false);
+//               }
             }
             else {
               zLowYLowXSplit = -1;
               zLowYHighXSplit = split(cell->first, zSplit, 0, cell->center[0]);           
-              if (zLowYHighXSplit != -1) {
-                verifyRange(cell->first, zLowYHighXSplit, 0, cell->center[0], true);
-                verifyRange(zLowYHighXSplit + 1, zSplit, 0, cell->center[0], false);
-              }
+//               if (zLowYHighXSplit != -1) {
+//                 verifyRange(cell->first, zLowYHighXSplit, 0, cell->center[0], true);
+//                 verifyRange(zLowYHighXSplit + 1, zSplit, 0, cell->center[0], false);
+//               }
             }
 
             zHighYSplit = split(zSplit + 1, cell->last, 1, cell->center[1]);         
             if (zHighYSplit != -1) {
-              verifyRange(zSplit + 1, zHighYSplit, 1, cell->center[1], true);
-              verifyRange(zHighYSplit + 1, cell->last, 1, cell->center[1], false);
+//               verifyRange(zSplit + 1, zHighYSplit, 1, cell->center[1], true);
+//               verifyRange(zHighYSplit + 1, cell->last, 1, cell->center[1], false);
 
               zHighYHighXSplit = split(zHighYSplit + 1, cell->last, 0, cell->center[0]);       
-              if (zHighYHighXSplit != -1) {
-                verifyRange(zHighYSplit + 1, zHighYHighXSplit, 0, cell->center[0], true);
-                verifyRange(zHighYHighXSplit + 1, cell->last, 0, cell->center[0], false);
-              }
+//               if (zHighYHighXSplit != -1) {
+//                 verifyRange(zHighYSplit + 1, zHighYHighXSplit, 0, cell->center[0], true);
+//                 verifyRange(zHighYHighXSplit + 1, cell->last, 0, cell->center[0], false);
+//               }
 
               zHighYLowXSplit = split(zSplit + 1, zHighYSplit, 0, cell->center[0]);       
-              if (zHighYLowXSplit != -1) {
-                verifyRange(zSplit + 1, zHighYLowXSplit, 0, cell->center[0], true);
-                verifyRange(zHighYLowXSplit + 1, zHighYSplit, 0, cell->center[0], false);
-              }
+//               if (zHighYLowXSplit != -1) {
+//                 verifyRange(zSplit + 1, zHighYLowXSplit, 0, cell->center[0], true);
+//                 verifyRange(zHighYLowXSplit + 1, zHighYSplit, 0, cell->center[0], false);
+//               }
             }
             else {
               zHighYLowXSplit = -1;
               zHighYHighXSplit = split(zSplit + 1, cell->last, 0, cell->center[0]);    
-              if (zHighYLowXSplit != -1) {
-                verifyRange(zSplit + 1, zHighYLowXSplit, 0, cell->center[0], true);
-                verifyRange(zHighYLowXSplit + 1, cell->last, 0, cell->center[0], false);
-              }
+//               if (zHighYLowXSplit != -1) {
+//                 verifyRange(zSplit + 1, zHighYLowXSplit, 0, cell->center[0], true);
+//                 verifyRange(zHighYLowXSplit + 1, cell->last, 0, cell->center[0], false);
+//               }
             }
           }
           else {
-            verifyRange(cell->first, cell->last, 2, cell->center[2], false);
+//             verifyRange(cell->first, cell->last, 2, cell->center[2], false);
             zLowYSplit = -1;
             zLowYLowXSplit = -1;
             zLowYHighXSplit = -1;
 
             zHighYSplit = split(cell->first, cell->last, 1, cell->center[1]);     
-            if (zHighYSplit != -1) {
-              verifyRange(cell->first, zHighYSplit, 1, cell->center[1], true);
-              verifyRange(zHighYSplit + 1, cell->last, 1, cell->center[1], false);
-            }
+//             if (zHighYSplit != -1) {
+//               verifyRange(cell->first, zHighYSplit, 1, cell->center[1], true);
+//               verifyRange(zHighYSplit + 1, cell->last, 1, cell->center[1], false);
+//             }
 
             if (zHighYSplit != -1) {
               zHighYHighXSplit = split(zHighYSplit + 1, cell->last, 0, cell->center[0]); 
-              if (zHighYHighXSplit != -1) {
-                verifyRange(zHighYSplit + 1, zHighYHighXSplit, 0, cell->center[0], true);
-                verifyRange(zHighYHighXSplit + 1, cell->last, 0, cell->center[0], false);
-              }
+//               if (zHighYHighXSplit != -1) {
+//                 verifyRange(zHighYSplit + 1, zHighYHighXSplit, 0, cell->center[0], true);
+//                 verifyRange(zHighYHighXSplit + 1, cell->last, 0, cell->center[0], false);
+//               }
 
               zHighYLowXSplit = split(cell->first, zHighYSplit, 0, cell->center[0]); 
-              if (zHighYLowXSplit != -1) {
-                verifyRange(cell->first, zHighYLowXSplit, 0, cell->center[0], true);
-                verifyRange(zHighYLowXSplit + 1, zHighYSplit, 0, cell->center[0], false);
-              }
+//               if (zHighYLowXSplit != -1) {
+//                 verifyRange(cell->first, zHighYLowXSplit, 0, cell->center[0], true);
+//                 verifyRange(zHighYLowXSplit + 1, zHighYSplit, 0, cell->center[0], false);
+//               }
             }
             else {
               zHighYLowXSplit = -1;
               zHighYHighXSplit = split(cell->first, cell->last, 0, cell->center[0]); 
-              if (zHighYHighXSplit != -1) {
-                verifyRange(cell->first, zHighYHighXSplit, 0, cell->center[0], true);
-                verifyRange(zHighYHighXSplit + 1, cell->last, 0, cell->center[0], false);
-              }
+//               if (zHighYHighXSplit != -1) {
+//                 verifyRange(cell->first, zHighYHighXSplit, 0, cell->center[0], true);
+//                 verifyRange(zHighYHighXSplit + 1, cell->last, 0, cell->center[0], false);
+//               }
             }
           }
 
-          verifyCell(cell);
+          //verifyCell(cell);
 
           FT width = m_width / (1<<(cell->level + 1));
 
@@ -293,7 +310,7 @@ namespace CGAL {
                 if (cell->first <= zLowYLowXSplit) {
                   //---
                   cell->child[7] = new Cell(cell->first, zLowYLowXSplit, cell->center + Vector(-width,-width,-width), cell->level + 1);
-                  verifyCell(cell->child[7]);
+                  //verifyCell(cell->child[7]);
                   if (cell->child[7]->size() > m_bucketSize)
                     stack.push(cell->child[7]);
                 }
@@ -303,7 +320,7 @@ namespace CGAL {
               if (zLowYLowXSplit < zLowYSplit) {
                 //+--
                 cell->child[6] = new Cell(zLowYLowXSplit + 1, zLowYSplit, cell->center + Vector(width,-width,-width), cell->level + 1);
-                verifyCell(cell->child[6]);
+                //verifyCell(cell->child[6]);
                 if (cell->child[6]->size() > m_bucketSize)
                   stack.push(cell->child[6]);
               }
@@ -315,7 +332,7 @@ namespace CGAL {
               if (zLowYSplit < zLowYHighXSplit) {
                 //-+-
                 cell->child[5] = new Cell(zLowYSplit + 1, zLowYHighXSplit, cell->center + Vector(-width, width,-width), cell->level + 1);
-                verifyCell(cell->child[5]);
+                //verifyCell(cell->child[5]);
                 if (cell->child[5]->size() > m_bucketSize)
                   stack.push(cell->child[5]);
               }
@@ -325,7 +342,7 @@ namespace CGAL {
             if (zLowYHighXSplit < zSplit) {
               //++-
               cell->child[4] = new Cell(zLowYHighXSplit + 1, zSplit, cell->center + Vector(width, width,-width), cell->level + 1);
-              verifyCell(cell->child[4]);
+              //verifyCell(cell->child[4]);
               if (cell->child[4]->size() > m_bucketSize)
                 stack.push(cell->child[4]);
             }
@@ -338,7 +355,7 @@ namespace CGAL {
               if (zSplit < zHighYLowXSplit) {
                 //--+
                 cell->child[3] = new Cell(zSplit + 1, zHighYLowXSplit, cell->center + Vector(-width,-width, width), cell->level + 1);
-                verifyCell(cell->child[3]);
+                //verifyCell(cell->child[3]);
                 if (cell->child[3]->size() > m_bucketSize)
                   stack.push(cell->child[3]);
               }
@@ -348,7 +365,7 @@ namespace CGAL {
             if (zHighYLowXSplit < zHighYSplit) {
               //+-+
               cell->child[2] = new Cell(zHighYLowXSplit + 1, zHighYSplit, cell->center + Vector(width,-width, width), cell->level + 1);
-              verifyCell(cell->child[2]);
+              //verifyCell(cell->child[2]);
               if (cell->child[2]->size() > m_bucketSize)
                 stack.push(cell->child[2]);
             }
@@ -361,7 +378,7 @@ namespace CGAL {
             if (zHighYSplit < zHighYHighXSplit) {
               //-++
               cell->child[1] = new Cell(zHighYSplit + 1, zHighYHighXSplit, cell->center + Vector(-width, width, width), cell->level + 1);
-              verifyCell(cell->child[1]);
+              //verifyCell(cell->child[1]);
               if (cell->child[1]->size() > m_bucketSize)
                 stack.push(cell->child[1]);
             }
@@ -372,7 +389,7 @@ namespace CGAL {
             if (zHighYHighXSplit < cell->last) {
               //+++
               cell->child[0] = new Cell(zHighYHighXSplit + 1, cell->last, cell->center + Vector(width, width, width), cell->level + 1);
-              verifyCell(cell->child[0]);
+              //verifyCell(cell->child[0]);
               if (cell->child[0]->size() > m_bucketSize)
                 stack.push(cell->child[0]);
             }
@@ -530,7 +547,6 @@ namespace CGAL {
       }
 
       void verify() {
-        return;
         std::set<unsigned int> indices;
         for (unsigned int i = m_root->first;i<=m_root->last;i++) {
           indices.insert(index(i));
@@ -566,7 +582,6 @@ namespace CGAL {
       }
 
       void verifyCell(Cell *cell) {
-        return;
         FT width = m_width / (1<<(cell->level));
 
         FT diag = sqrt(3 * width * width);
@@ -583,7 +598,6 @@ namespace CGAL {
       }
 
       void verifyRange(int first, int last, int dimension, FT threshold, bool below) {
-        return;
         Point p;
         FT v;
 
