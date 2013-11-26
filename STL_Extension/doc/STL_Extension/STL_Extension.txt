@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_STL_Extensions_for_CGAL
 
 \cgalAutoToc
-\authors Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein
+\authors Michael Hoffmann, Clément Jamin, Lutz Kettner, Sylvain Pion, and Ron Wein
 
 \section stl_intro Introduction
 
