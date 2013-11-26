@@ -21,6 +21,9 @@
 #if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)
 
 #include "include/CGAL/_test_algebraic_kernel_1.h"
+#ifdef CGAL_RS_TEST_LOG_TIME
+#include <ctime>
+#endif
 
 #include <CGAL/Algebraic_kernel_rs_gmpq_d_1.h>
 
@@ -32,6 +35,10 @@ int test_ak(){
   typedef typename AK::Bound                            Bound;
   typedef typename AK::Algebraic_real_1                 Algebraic_real_1;
   typedef typename AK::Multiplicity_type                Multiplicity_type;
+
+#ifdef CGAL_RS_TEST_LOG_TIME
+  clock_t start=clock();
+#endif
 
   AK ak; // an algebraic kernel object
   CGAL::test_algebraic_kernel_1<AK>(ak); // we run standard tests first
@@ -117,14 +124,16 @@ int test_ak(){
     std::cerr<<"error 11: x^3-2 must have only one root"<<std::endl;
   }
 
+#ifdef CGAL_RS_TEST_LOG_TIME
+  std::cerr<<"*** test time: "<<(double)(clock()-start)/CLOCKS_PER_SEC<<
+          " seconds"<<std::endl;
+#endif
+
   return returnvalue;
 }
 
 int main(){
         typedef CGAL::Algebraic_kernel_rs_gmpq_d_1              AK_rational;
-
-        typedef CGAL::Polynomial<CGAL::Gmpq>                    Polynomial;
-        typedef CGAL::Gmpfr                                     Bound;
 
         // test and return the result
         long result=0;
