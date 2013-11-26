@@ -86,7 +86,7 @@ RS2_isolator_1(const CGAL::Polynomial<CGAL::Gmpq> &p):_polynomial(p){
         mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
         for(unsigned i=0;i<=degree;++i){
                 mpz_init(coeffs[i]);
-                mpz_div(coeffs[i],lcm,mpq_denref(p[i].mpq()));
+                mpz_divexact(coeffs[i],lcm,mpq_denref(p[i].mpq()));
                 mpz_mul(coeffs[i],coeffs[i],mpq_numref(p[i].mpq()));
         }
         // Call RS to solve the computed integer polynomial.
