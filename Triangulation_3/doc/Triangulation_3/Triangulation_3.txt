@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor chapterTriangulation3
 \cgalAutoToc
 
-\authors Clément Jamin, Sylvain Pion and Monique Teillaud
+\authors ClÃ©ment Jamin, Sylvain Pion and Monique Teillaud
 
 \image html triangulation3.png
 \image latex triangulation3.png
@@ -1090,7 +1090,7 @@ A new demo of this package was introduced in \cgal 3.8, coded by Fei
 (Sophie) Che, who was co-mentored by Manuel Caroli and Monique
 Teillaud in the framework of the Google Summer of Code, 2010.
 
-In 2013, Clément Jamin added parallel algorithms (insert, remove) to the
+In 2013, ClÃ©ment Jamin added parallel algorithms (insert, remove) to the
 Delaunay and regular triangulations.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
