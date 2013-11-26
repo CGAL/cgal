@@ -56,8 +56,9 @@ public:
 \ingroup CompactContainer
 
 An object of the class `Concurrent_compact_container` 
-is a container of objects of type `T`, which enables concurrency-safe 
-`insert` and `erase`. Other operations are not concurrency-safe.
+is a container of objects of type `T`, which allows to call
+`insert` and `erase` operations concurrently.
+Other operations are not concurrency-safe.
 For example, one should not parse the container while others are modifying it.
 It matches all the 
 standard requirements for reversible containers, except that 
@@ -227,7 +228,8 @@ complexity. No exception is thrown.
   /// returns the number of items in `ccc`. 
   /// Note: do not call this function while others are inserting/erasing elements
   size_type size() const;
-  /// returns the maximum possible size of the container `ccc`. 
+  /// returns the maximum possible size of the container `ccc`.
+  /// This is the allocator's max_size value
   size_type max_size() const; 
   /// returns the total number of elements that `ccc` can hold without requiring reallocation. 
   size_type capacity() const;

@@ -488,7 +488,8 @@ size_type size() const;
 /// \name Access Member Functions 
 /// @{ 
 /*!
-returns the maximum possible size of the container `cc`. 
+returns the maximum possible size of the container `cc`.
+This is the allocator's max_size value.
 */ 
 size_type max_size() const; 
 
