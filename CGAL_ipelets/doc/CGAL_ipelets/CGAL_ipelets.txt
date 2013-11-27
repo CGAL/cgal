@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_CGAL_Ipelets
 \anchor chapcgalipelets
 \cgalAutoToc
-\author S&eacute;bastien Loriot and Sylvain Pion
+\author Olivier Devillers, S&eacute;bastien Loriot, and Sylvain Pion
 
 \section CGAL_ipeletsIntroduction Introduction
 
@@ -66,6 +66,223 @@ as well as with the version 7 (at least up to version 7.10).
 These ipelets are a good starting point to design your own ipelet. For more details on how
 to compile an ipelet, please refer to the Ipe manual.
 
+Below is the list of Ipelets provided by the Demo Ipelets
+
+\subsection alpha_shapes_ipelet Alpha shapes
+
+Selection should be a set of points or circles (considered as weighted
+points). The different values of alpha where the alpha shape changes
+are computed. The value of alpha chosen by the user is asked.
+
+\subsection arrangement_ipelet Arrangement
+
+Selection should be segments, circles, and arcs of circles.
+All objects are broken at intersection points and at x extrema for circles.
+
+\subsection bbox_restriction_ipelet Bounding box restriction
+
+Replace the selection by a bounding box of the points in the selection.
+
+\subsection circle_pencils_ipelet Pencils of circles
+
+Selection must be three circles or points (points are considered as
+zero radius circles).
+
+<ul>
+<li><b> In pencil, orthogonal to one circle:</b>
+This option draw the circle orthogonal to the primary
+selection belonging to the pencil defined by the two other circles.
+<li><b> Orthogonal to three circles:</b>
+This option draw the circles orthogonal to the three
+selected circles.
+</ul>
+
+\subsection diagrams_ipelet Diagrams
+<ul>
+<li><b> Voronoi:</b>
+Selection should be points and segments. The Voronoi diagram
+is computed and clipped to a box a bit larger than the selection.
+The bisectors between a segment and its endpoints are drawn.
+<li><b> Segment Voronoi skeleton:</b>
+Same as the previous one, but the bisectors between a segment and its
+endpoints are not drawn.
+<li><b>Power diagram:</b>
+Selection should be points (zero radius circles) and circles. The power diagram
+is computed and clipped to a box a bit larger than the selection.
+The power diagram partitions the plane depending of the circle with smaller power.
+<li><b> Apollonius	    :</b>
+Selection should be points (zero radius circles) and circles. The Apollonius diagram
+is computed and clipped to a box a bit larger than the selection.
+The Apollonius diagram partitions the plane depending of closest circle.
+</ul>
+
+\subsection generator_ipelet Generators
+The number of points is asked in a dialog box.
+<ul>
+<li><b> Points in a disk:</b>
+Generate random points in the selected circle.
+ <li><b> Points on a grid:</b>
+Generate a grid inside a square bounding the selection. 
+ <li><b> Points in a square:</b>
+Generate random points inside a square bounding the selection. 
+ <li><b> Points on a convex hull:</b>
+Generate a random points inside a square bounding the selection and
+draw their convex hull. 
+ <li><b> Polygon:</b>
+Generate a random simple polygon inside a square bounding the selection. 
+ <li><b> Segments in a square:</b>
+Generate random line segments inside a square bounding the selection. 
+ <li><b> Circles (center in a square):</b>
+Generate random circles whose centers are inside a square bounding the selection. 
+</ul>
+
+\subsection hilbert_sort_ipelet Hilbert sort
+Sort the selected points with a space filling strategy.
+<ul>
+ <li><b> Hilbert sorting curve, median policy:</b>
+The set of points is split in two at the median, altenatively in x and
+y directions.
+ <li><b> Hilbert sorting curve, middle policy:</b>
+The set of points is split in two at the middle, altenatively in x and
+y directions.
+</ul>
+
+\subsection hull_ipelet Hulls
+<ul>
+ <li><b> Convex minimal:</b>
+Selection should be a set of points, line segments , and circles.
+The convex hull of the selected objects is drawn.
+ <li><b>t Crust:</b>
+Selection should be a set of points.
+The crust of this set is drawn (curve reconstruction).
+</ul>
+
+\subsection hyperbolic_ipelet Hyperbolic
+This ipelet provide some tools for hyperbolic geometry in the Poincare
+disk model.
+<ul>
+ <li><b> line:</b>
+Selection should be the Poincare circle and two points inside the
+circle. The hyperbolic line through the points is drawn.
+ <li><b> bisector:</b>
+Selection should be the Poincare circle and two points inside the
+circle. The hyperbolic bisector of the points is drawn.
+ <li><b> circle (center, point through):</b>
+Selection should be the Poincare circle and two points inside the
+circle, one of these points being the primary selection.
+ The hyperbolic circle centered at the primary selection through the
+ other point is drawn.
+</ul>
+
+\subsection mesh_2_ipelet Mesh_2 
+Selection should be a simple polygon, the maximal edge length is asked in a
+dialog box. A mesh of the polygon is computed and drawn.
+
+\subsection minkowski_ipelet Minkowski sum
+<ul>
+ <li><b>Minkowski Sum:</b>
+Selection should be two simple polygons.
+The Minkowski sum of the two polygons is computed and drawn.
+ <li><b>Polygon Offset:</b>
+Selection should be a circle and simple polygons.
+The Minkowski sum of the polygons with the circle is computed and drawn.
+</ul>
+
+\subsection multi_delaunay_ipelet k order Delaunay
+Selection should be a set of points.
+The order k Voronoi diagram or its dual the order k Delaunay is drawn.
+<ul>
+ <li><b> Delaunay:</b>
+Ordinary Delaunay triangulation.
+ <li><b> Delaunay 2:</b>
+Triangulation of middle of Delaunay edges.
+ <li><b> Delaunay 3:</b>
+Triangulation of barycenters of Delaunay triangles.
+ <li><b> Delaunay n-1:</b>
+Dual of farthest neighbor Voronoi diagram.
+ <li><b> Delaunay k:</b>
+k is asked in a dialog box.
+ <li><b> Voronoi:</b>
+Ordinary Voronoi diagram.
+ <li><b> Voronoi 2:</b>
+Order 2 Voronoi diagram.
+ <li><b> Voronoi 3:</b>
+Order 3 Voronoi diagram.
+ <li><b> Voronoi n-1:</b>
+Farthest neighbor Voronoi diagram.
+ <li><b> Voronoi k:</b>
+k is asked in a dialog box.
+</ul>
+
+\subsection multi_regular_ipelet k-order regular
+Selection should be a set of points and circles.
+The order k power diagram or its dual the order k regular triangulation is drawn.
+<ul>
+ <li><b>Regular:</b>
+ <li><b>Regular 2:</b>
+ <li><b>Regular 3:</b>
+ <li><b>Regular n-1:</b>
+ <li><b>Regular k:</b>
+ <li><b>Power Diagram:</b>
+ <li><b>Power Diagram 2:</b>
+ <li><b>Power Diagram 3:</b>
+ <li><b>Power Diagram n-1:</b>
+ <li><b>Power Diagram k:</b>
+</ul>
+
+\subsection partition_ipelet Polygon partition
+Selection should be simple polygons.
+The polygons are splitted according diffrent algorithms.
+<ul>
+ <li><b> Y monotone partition:</b>
+ <li><b> Greene's approx Convex Partition:</b>
+ <li><b> Approx Convex Partition:</b>
+ <li><b> Optimal Convex Partition:</b>
+</ul>
+
+\subsection pca_ipelet PCA
+A line segment giving the principal component analysis of the selection is drawn.
+
+\subsection skeleton_ipelet  Skeleton and offset
+Selection should be a simple polygon.
+The straight skeleton and associated offsets of the polygon are drawn.
+ <ul>
+<li><b> Interior skeleton:</b>
+Only the interior skeleton is drawn.
+ <li><b> Exterior skeleton:</b>
+Only the exterior skeleton is drawn.
+ <li><b> Interior offset:</b>
+One interior offset is drawn, offset value is asked in a dialog box.
+ <li><b> Exterior offset:</b>
+One exterior offset is drawn, offset value is asked in a dialog box.
+ <li><b> Interior offsets:</b>
+Several equally spaced  interior offsets are drawn, offset value is asked in a dialog box.
+ <li><b> Exterior offsets:</b>
+Several equally spaced  exterior offsets are drawn, offset value is asked in a dialog box.
+</ul>
+
+\subsection triangulation_ipelet Triangulations
+<ul>
+ <li><b> Delaunay:</b>
+Selection should be a set of points. The Delaunay triangulation of the
+ points is drawn.
+ <li><b> Constrained Delaunay:</b>
+Selection should be a set of points and line segments. The Delaunay
+ triangulation of the points and segment's endpoints that respects the constraints  is drawn.
+ <li><b>Conforming Delaunay:</b>
+Selection should be a set of points and line segments. Points are
+ added so that the Delaunay of selected points, segment's endpoints,
+ and added points respects the constraints. The triangulation  is drawn.
+ <li><b> Conforming Gabriel:</b>
+Selection should be a set of points and line segments. Points are
+ added so that the pieces of segments have Gabriel property (their
+ diametral disk is empty). The Delaunay triangulation  is drawn.
+ <li><b> Regular:</b>
+Selection should be a set of points and circles (weighted points). The
+ regular triangulation (dual of power diagram) of the
+ points and circle's centers is drawn.
+</ul>
+
 \section CGAL_ipeletsDesign Design and Implementation History
 
 A first draft of the \cgal ipelets has been implemented during the
@@ -75,6 +292,8 @@ Loriot as a stand-alone software with the help of Laurent Rineau.
 Finally, an enhanced version has been formally contributed to \cgal in 2009
 by Sebastien Loriot. Sylvain Pion has participated in the discussion
 of the overall design, and contributed the Hilbert sort ipelet demo.
+Olivier Devillers added the pencil of circles and hyperbolic geometry
+ipelets in 2014.
 
 */ 
 } /* namespace CGAL */
