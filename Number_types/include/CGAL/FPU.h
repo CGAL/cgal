@@ -157,7 +157,8 @@ inline double IA_opacify(double x)
   return x;
 #elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
-  // With a vector, gcc < 4.8 fails with "+g" and we need "+mx" instead.
+  // If we create a version of IA_opacify for vectors, note that gcc < 4.8
+  // fails with "+g" and we need to use "+mx" instead.
   // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
   // may not be safe?
   // The constraint 'g' doesn't include floating point registers ???
