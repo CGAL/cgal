@@ -176,20 +176,23 @@ void hyperbolicIpelet::protected_run(int fn)
 
   // clip circ by poincare 
   std::vector< CGAL::Object > result;
-  Kernel::Circular_arc_point_2 S,T;
+  Kernel::Circular_arc_point_2 L,R;
   std::pair<Kernel::Circular_arc_point_2, unsigned > the_pair;
 
   CGAL::intersection(circ, poincare, std::back_inserter(result));
   assert (result.size()==2);
   assign(the_pair, result[0]);
+  L = the_pair.first;
   assign(the_pair, result[1]);
-  S = the_pair.first;
-  T = the_pair.first;
-  Point_2 SS(CGAL::to_double(S.x()),CGAL::to_double(S.y()));
-  Point_2 TT(CGAL::to_double(T.x()),CGAL::to_double(T.y()));
-  Circular_arc_2 arc(circ,SS,TT,circ.orientation());
+  R = the_pair.first;
+  Point_2 LL(CGAL::to_double(L.x()),CGAL::to_double(L.y()));
+  Point_2 RR(CGAL::to_double(R.x()),CGAL::to_double(R.y()));
+  assert( LL.x() <= RR.x());
+  Circular_arc_2 arc;
+  if ( orientation(poincare.center(),circ.center(),LL) >0)
+    arc = Circular_arc_2(circ,LL,RR,circ.orientation());
+  else arc = Circular_arc_2(circ,RR,LL,circ.orientation());
   draw_in_ipe( arc );
-
 }
 }
 
