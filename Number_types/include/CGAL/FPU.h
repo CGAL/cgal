@@ -140,15 +140,62 @@ const double infinity = HUGE_VAL;
 // - (-a)-b -> -(a+b)
 // - (-a)*b -> -(a*b)
 // etc
-template <class T> inline T IA_opacify(T x)
+inline double IA_opacify(double x)
 {
-#ifdef __GNUG__
+#ifdef __llvm__
+  // LLVM's support for inline asm is completely messed up:
+  // http://llvm.org/bugs/show_bug.cgi?id=17958
+  // http://llvm.org/bugs/show_bug.cgi?id=17959
+  // etc.
+  // This seems to produce code that is ok (not optimal but better than
+  // volatile). In case of trouble, use volatile instead.
+# ifdef CGAL_HAS_SSE2
+  asm volatile ("" : "+x"(x) );
+# else
+  asm volatile ("" : "+m"(x) );
+# endif
+  return x;
+#elif defined __GNUG__
   // Intel used not to emulate this perfectly, we'll see.
-  // When T is a vector, gcc < 4.8 fails and we need "+mx" instead.
+  // If we create a version of IA_opacify for vectors, note that gcc < 4.8
+  // fails with "+g" and we need to use "+mx" instead.
+  // "+X" ICEs ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59155 ) and
+  // may not be safe?
+  // The constraint 'g' doesn't include floating point registers ???
+  // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
+  // (-mno-sse2 works though), no work-around for now.
+# if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
+#  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
+  // ICEs in reload/LRA with older versions.
+  asm volatile ("" : "+gx"(x) );
+#  else
+  asm volatile ("" : "+mx"(x) );
+#  endif
+# elif (defined __i386__ || defined __x86_64__)
+  // "+f" doesn't compile on x86(_64)
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59157 )
+  // Don't mix "t" with "g": http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59180
+  // We can't put "t" with "x" either, prefer "x" for -mfpmath=sse,387.
+  // ( http://gcc.gnu.org/bugzilla/show_bug.cgi?id=59181 )
+  asm volatile ("" : "+mt"(x) );
+# elif (defined __VFP_FP__ && !defined __SOFTFP__) || defined __aarch64__
+  // ARM
+  asm volatile ("" : "+gw"(x) );
+# elif defined __powerpc__ || defined __POWERPC__
+  // PowerPC
+  asm volatile ("" : "+gd"(x) );
+# elif defined __sparc
+  // Sparc
+  asm volatile ("" : "+ge"(x) );
+# elif defined __ia64
+  // Itanium
+  asm volatile ("" : "+gf"(x) );
+# else
   asm volatile ("" : "+g"(x) );
+# endif
   return x;
 #else
-  volatile T e = x;
+  volatile double e = x;
   return e;
 #endif
 }
@@ -168,7 +215,7 @@ inline double IA_force_to_double(double x)
 #  else
   // Similar to writing to a volatile and reading back, except that calling
   // it k times in a row only goes through memory once.
-  asm("" : "+m"(x) );
+  asm volatile ("" : "+m"(x) );
 #  endif
   return x;
 #else
