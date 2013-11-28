@@ -1,17 +1,19 @@
-#ifndef CGAL_AFSR_CELL_BASE_3_H
-#define CGAL_AFSR_CELL_BASE_3_H
+#ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_CELL_BASE_3_H
+#define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_CELL_BASE_3_H
+
+#include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
 
-template < class CellBase >
-class AFSR_cell_base_3 : public CellBase
+  template < class Kernel, class CellBase = Triangulation_cell_base_3<Kernel> >
+class Advancing_front_surface_reconstruction_cell_base_3 : public CellBase
 {
 
 public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename CellBase::template Rebind_TDS<TDS2>::Other  Cb2;
-    typedef AFSR_cell_base_3<Cb2>                    Other;
+    typedef Advancing_front_surface_reconstruction_cell_base_3<Cb2>                    Other;
   };
 
   typedef typename CellBase::Vertex_handle Vertex_handle;
@@ -39,7 +41,7 @@ private:
 
 public:
   
-  AFSR_cell_base_3() 
+  Advancing_front_surface_reconstruction_cell_base_3() 
     : CellBase(),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifdef AFSR_LAZY
@@ -53,7 +55,7 @@ public:
 #endif
     }
   
-  AFSR_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
+  Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
     : CellBase( v0, v1, v2, v3),
       _smallest_radius_facet_tab(NULL), selected_facet(0)
 #ifdef AFSR_LAZY
@@ -67,7 +69,7 @@ public:
 #endif
     }
   
-  AFSR_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+  Advancing_front_surface_reconstruction_cell_base_3(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 			      Cell_handle n0, Cell_handle n1, Cell_handle n2, Cell_handle n3)
     : CellBase(v0,  v1,  v2, v3,
 	       n0,  n1,  n2, n3),
@@ -85,7 +87,7 @@ public:
 
   //-------------------- DESTRUCTOR -----------------------------------
 
-  inline ~AFSR_cell_base_3()
+  inline ~Advancing_front_surface_reconstruction_cell_base_3()
     {
       if (_smallest_radius_facet_tab != NULL)
 	 delete[] _smallest_radius_facet_tab;
@@ -221,4 +223,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_AFSR_CELL_BASE_3_H
+#endif // CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_CELL_BASE_3_H

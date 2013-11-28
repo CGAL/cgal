@@ -1,5 +1,5 @@
-#ifndef CGAL_AFSR_VERTEX_BASE_WITH_ID_3_H
-#define CGAL_AFSR_VERTEX_BASE_WITH_ID_3_H
+#ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
+#define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
 
@@ -15,14 +15,14 @@
 namespace CGAL {
 
 template <class K, class VertexBase = Triangulation_vertex_base_3<K> >
-class AFSR_vertex_base_with_id_3 : public VertexBase
+class Advancing_front_surface_reconstruction_vertex_base_3 : public VertexBase
 {
 public:
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename VertexBase::template Rebind_TDS<TDS2>::Other  Vb2;
-    typedef AFSR_vertex_base_with_id_3<K,Vb2>                    Other;
+    typedef Advancing_front_surface_reconstruction_vertex_base_3<K,Vb2>                    Other;
   };
 
 
@@ -155,7 +155,7 @@ public:
   }
 
 
-  AFSR_vertex_base_with_id_3()
+  Advancing_front_surface_reconstruction_vertex_base_3()
     : VertexBase(), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -164,7 +164,7 @@ public:
       _incident_border = new_border();
     }
   
-  AFSR_vertex_base_with_id_3(const Point & p)
+  Advancing_front_surface_reconstruction_vertex_base_3(const Point & p)
     : VertexBase(p), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -173,7 +173,7 @@ public:
       _incident_border = new_border();
     }
   
-  AFSR_vertex_base_with_id_3(const Point & p, Cell_handle f)
+  Advancing_front_surface_reconstruction_vertex_base_3(const Point & p, Cell_handle f)
     : VertexBase(p, f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -182,7 +182,7 @@ public:
       _incident_border = new_border();
     }
 
-  AFSR_vertex_base_with_id_3(Cell_handle f)
+  Advancing_front_surface_reconstruction_vertex_base_3(Cell_handle f)
     : VertexBase(f), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -191,7 +191,7 @@ public:
       _incident_border = new_border();
     }
 
-	AFSR_vertex_base_with_id_3(const AFSR_vertex_base_with_id_3& other)
+	Advancing_front_surface_reconstruction_vertex_base_3(const Advancing_front_surface_reconstruction_vertex_base_3& other)
     : VertexBase(), _mark(-1), 
     _post_mark(-1), 
     ie_first(interior_edges.end()), ie_last(interior_edges.end()),
@@ -201,7 +201,7 @@ public:
 	}
   //-------------------- DESTRUCTOR -----------------------------------
 
-  ~AFSR_vertex_base_with_id_3()
+  ~Advancing_front_surface_reconstruction_vertex_base_3()
     {
       if (_incident_border != NULL)
 	{
@@ -538,20 +538,20 @@ public:
 
   
 template <class K, class VertexBase>
-boost::object_pool<typename AFSR_vertex_base_with_id_3<K,VertexBase>::Next_border_elt> AFSR_vertex_base_with_id_3<K,VertexBase>::nbe_pool;
+boost::object_pool<typename Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::Next_border_elt> Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::nbe_pool;
   
 template <class K, class VertexBase>
-boost::object_pool<typename AFSR_vertex_base_with_id_3<K,VertexBase>::Intern_successors_type> AFSR_vertex_base_with_id_3<K,VertexBase>::ist_pool;
+boost::object_pool<typename Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::Intern_successors_type> Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::ist_pool;
   
   
 
 template <class K, class VertexBase>
-std::list<typename AFSR_vertex_base_with_id_3<K,VertexBase>::Vertex_handle> AFSR_vertex_base_with_id_3<K,VertexBase>::interior_edges;
+std::list<typename Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::Vertex_handle> Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::interior_edges;
 
 template <class K, class VertexBase>
-std::list<typename AFSR_vertex_base_with_id_3<K,VertexBase>::Incidence_request_elt> AFSR_vertex_base_with_id_3<K,VertexBase>::incidence_requests;
+std::list<typename Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::Incidence_request_elt> Advancing_front_surface_reconstruction_vertex_base_3<K,VertexBase>::incidence_requests;
 
 } // namespace CGAL
 
-#endif // CGALAFSR_VERTEX_BASE_3_H
+#endif // CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_3_H
 
