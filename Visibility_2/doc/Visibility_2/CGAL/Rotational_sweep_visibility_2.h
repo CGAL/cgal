@@ -8,6 +8,7 @@ namespace CGAL {
 \details The algorithm does not require preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
 
 \tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
+Arrangement_2::Traits_2 must be an instance of Arr_segment_traits_2.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
@@ -36,22 +37,6 @@ public:
     */
   typedef Arrangement_2 Output_arrangement_2;
 
- /*! 
-   The 2D point type used for the queries.  
- */ 
-  typedef Input_arrangement_2::Point_2 Point_2; 
-
-  /*!
-   Face_const_handle type of the input arrangement.
-   */
-  typedef Input_arrangement_2::Face_const_handle Face_const_handle;
-
-  /*!
-   Halfedge_const_handle type of the input arrangement.
-   */
-  typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-
-
 /// @}
 
 /// \name Tags 
@@ -72,73 +57,21 @@ public:
   typedef ::Tag_true Supports_simple_polygon_tag; 
 /// @}
 
-/// \name Constructors 
+
+/// \name Functions 
 /// @{
 
-/*!
-Default constructor creates an empty `Rotational_sweep_visibility_2` object that is not
-attached to any arrangement yet.
-*/
-Rotational_sweep_visibility_2();
-
-/*! 
-Constructs a `Rotational_sweep_visibility_2` object that is attached to `arr`.
-*/ 
-Rotational_sweep_visibility_2(const Input_arrangement_2& arr); 
-
-/// @}
-
-/// \name functions 
-/// @{
 
 /*!
-Returns whether an arrangement is attached to the visibility object
-*/
-  bool is_attached() const;
+Attaches the given arrangement to the visibility object. 
 
-/*!
-Attaches the given arrangement to the visibility object.
+This operation takes \f$O(1)\f$ as the class does no pre-processing. 
+
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
   void attach(const Input_arrangement_2& arr);
   
-/*!
-Detaches the arrangement from the visibility object it is currently attached to
-*/
-  void detach();
-
-/*!
-Access to the attached arrangement
-*/
-  const Input_arrangement_2& arr() const;
-
-/*! 
-Computes the visibility region of `q` in the
-face `f` of the arrangement that is attached to the visibility object. 
-The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point
-\param f is the face of the arrangement in which the visibility region is computed
-\param out_arr is the output arrangement 
-\pre `f` is a face of `arr()` and represents a valid polygon. 
-\pre `q` is in the interior of the given face `f`
-\return a handle to the face in `out_arr` that represents the visibility region
-*/ 
-  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) const;
-
-/*!
-Computes the visibility region of `q` that is on `e`. If `q` is an interior point of `e`, the computed visibility region is restricted to the halfplane indicated by `e`. If `q` is an endpoint of `e`, the visibility region is restricted by `e` and its next.
-The visibility region of `q` will be stored in `out_arr`.
-\param q is the query point
-\param e the halfedge on which `q` is located
-\param out_arr is the output arrangement
-\pre `e` is a halfedge of `arr()`
-\pre `q` is on `e`
-\pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
-\return a handle to the face in `out_arr` that represents the visibility region
-*/
-  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr) const;
-
 
 /// @}
 
