@@ -285,11 +285,23 @@ public:
     return _tds_2;
   }
   
-  bool is_on_surface(const typename TDS_2::Vertex_handle vh) const
+  bool has_on_surface(typename TDS_2::Vertex_handle vh) const
   {
     return vh != _tds_2_inf;
   }
+   
+  bool has_on_surface(typename TDS_2::Face_handle fh) const
+  {
+    return fh->is_on_surface();
+  }
   
+ 
+   
+  bool has_on_surface(Facet fh) const
+  {
+    return fh.first->has_facet_on_surface(fh.second);
+  }
+
 
 
   int number_of_connected_components() const

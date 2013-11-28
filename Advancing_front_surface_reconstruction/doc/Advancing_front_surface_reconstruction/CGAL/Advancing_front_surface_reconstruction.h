@@ -25,9 +25,9 @@ public:
 /*! 
   The type of the 2D triangulation data structure describing the reconstructed surface.
   The type `TDS_2::Vertex` is model of the concept `TriangulationDataStructure_2::Vertex` and has additionally the 
-  method `vertex_3()` that returns a `Triangulation_3::Vertex_handle` to the associated 3D vertex
+  method `vertex_3()` that returns a `Vertex_handle` to the associated 3D vertex
   The type `TDS_2::Face` is model of the concept `TriangulationDataStructure_2::Face` and  has additionally the
-  method `facet()` that returns the associated `Triangulation_3::Facet`, and a method `bool is_on_surface()`
+  method `facet()` that returns the associated `Facet`, and a method `bool is_on_surface()`
   for testing if a face is part of the reconstructed surface or a face incident to a boundary edge.  
   In case the surface has boundaries, the 2D surface has one vertex which is associated to the infinite
   vertex of the 3D triangulation.  
@@ -39,6 +39,24 @@ The type of the 3D triangulation.
 
 */ 
   typedef Dt Triangulation_3; 
+
+/*! 
+The vertex handle type of the 3D triangulation.
+
+*/ 
+  typedef typename Triangulation_3::Vertex_handle Vertex_handle;
+
+/*! 
+The cell handle type of the 3D triangulation.
+
+*/ 
+  typedef typename Triangulation_3::Cell_handle Cell_handle;
+
+/*! 
+The facet type of the 3D triangulation.
+
+*/ 
+  typedef typename Triangulation_3::Facet Facet; 
 
 
 /*! 
@@ -107,12 +125,12 @@ Outlier_iterator outliers_end();
 /*! 
 An iterator over the boundary vertices. 
 */ 
-Boundary_iterator boundary_begin(); 
+Boundary_iterator boundaries_begin(); 
 
 /*! 
 Past-the-end iterator. 
 */ 
-Boundary_iterator boundary_end(); 
+Boundary_iterator boundaries_end(); 
 
 /// @} 
 
@@ -130,7 +148,7 @@ has_boundaries() const;
 returns `true` if the facet is on the surface.
 */ 
 bool
-has_on_surface(Triangulation_3::Facet f) const; 
+has_on_surface(Facet f) const; 
 
 /*! 
 returns `true` if the facet f is on the surface.
