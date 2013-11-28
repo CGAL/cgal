@@ -1,0 +1,36 @@
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_Advancing_Front_Surface_Reconstruction
+\anchor I1ChapterAdvancingFrontSurfaceReconstruction
+\cgalAutoToc
+\author Tran Kai Frank Da and David Cohen-Steiner
+
+\image html afsr.png 
+
+Assume we are given a set \f$ S\f$ of points in 3D and we'd like to
+
+
+\section AFSR_Definitions Definitions
+
+We distinguish 
+
+\section AFSR_Examples Examples
+
+\subsection AFSR_Example_function Example for Global Function 
+
+The basic
+\cgalExample{Advancing_front_surface_reconstruction/reconstruction_fct.cpp}
+
+
+\subsection AFSR_Example_class Example for Class
+
+A 
+
+\cgalExample{Advancing_front_surface_reconstruction/reconstruction_class.cpp}
+
+*/ 
+} /* namespace CGAL */
+

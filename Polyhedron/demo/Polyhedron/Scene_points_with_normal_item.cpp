@@ -275,11 +275,14 @@ QMenu* Scene_points_with_normal_item::contextMenu()
     actionResetSelection = menu->addAction(tr("Reset Selection"));
     actionResetSelection->setObjectName("actionResetSelection");
     connect(actionResetSelection, SIGNAL(triggered()),this, SLOT(resetSelection()));
+<<<<<<< HEAD
 
     actionSelectDuplicatedPoints = menu->addAction(tr("Select duplicated points"));
     actionSelectDuplicatedPoints->setObjectName("actionSelectDuplicatedPoints");
     connect(actionSelectDuplicatedPoints, SIGNAL(triggered()),this, SLOT(selectDuplicates()));
 
+=======
+>>>>>>> old
     menu->setProperty(prop_name, true);
   }
 
