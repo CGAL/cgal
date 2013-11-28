@@ -90,15 +90,14 @@ struct Naive_border_stitching_modifier:
   {}
 
   void update_target_vertex(Halfedge_handle h,
-                            Vertex_handle v,
+                            Vertex_handle v_kept,
                             CGAL::HalfedgeDS_decorator<HDS>& decorator)
   {
     Halfedge_handle start=h;
     do{
-      decorator.set_vertex(h, v);
+      decorator.set_vertex(h, v_kept);
       h=h->next()->opposite();
     } while( h!=start );
-    decorator.set_vertex_halfedge(v, h);
   }
 
 
@@ -113,20 +112,48 @@ struct Naive_border_stitching_modifier:
       hedges_to_stitch.insert( hedge_pairs_to_stitch[k].second );
     }
 
+    std::vector<Vertex_handle> vertices_to_delete;
     CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
     for (std::size_t k=0; k<nb_hedges; ++k)
     {
       Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
       Halfedge_handle h2=hedge_pairs_to_stitch[k].second;
 
-      CGAL_assertion(h1->vertex()->point() == h2->opposite()->vertex()->point() );
-      CGAL_assertion(h2->vertex()->point() == h1->opposite()->vertex()->point() );
       CGAL_assertion( h1->is_border() );
       CGAL_assertion( h2->is_border() );
       CGAL_assertion( !h1->opposite()->is_border() );
       CGAL_assertion( !h2->opposite()->is_border() );
 
-      //update next/prev of neighbor halfedges
+    /// Merge the vertices
+      Vertex_handle h1_tgt=h1->vertex();
+      Vertex_handle h2_src=h2->opposite()->vertex();
+
+      //update vertex pointers: target of h1 vs source of h2
+      if ( h1_tgt != h2_src )
+      {
+        //we remove h2->opposite()->vertex()
+        vertices_to_delete.push_back( h2_src );
+        update_target_vertex(h2->opposite(), h1_tgt, decorator);
+        decorator.set_vertex_halfedge(h1_tgt, h1);
+      }
+      else
+        decorator.set_vertex_halfedge(h1_tgt, h1);
+
+      Vertex_handle h1_src=h1->opposite()->vertex();
+      Vertex_handle h2_tgt=h2->vertex();
+      //update vertex pointers: target of h1 vs source of h2
+      if ( h1_src!= h2_tgt )
+      {
+        CGAL_assertion( h1_src->point() == h2_tgt->point() );
+        //we remove h1->opposite()->vertex()
+        vertices_to_delete.push_back( h1_src );
+        update_target_vertex(h1->opposite(), h2_tgt, decorator);
+        decorator.set_vertex_halfedge(h2_tgt, h1->opposite());
+      }
+      else
+        decorator.set_vertex_halfedge(h1_src, h1->opposite());
+
+    ///update next/prev of neighbor halfedges
       if ( hedges_to_stitch.find(h1->next())==hedges_to_stitch.end() )
       {
         CGAL_assertion( hedges_to_stitch.find(h2->prev())==hedges_to_stitch.end() );
@@ -165,43 +192,11 @@ struct Naive_border_stitching_modifier:
       h1->HBase::set_next(tmp);
       decorator.set_prev(tmp,h1);
 
-      //remove h2
+     ///remove h2
       hds.edges_erase(h2);
     }
 
-    //now update the vertex-halfedge relationship
-    std::vector<Vertex_handle> vertices_to_delete;
-    for (std::size_t k=0; k<nb_hedges; ++k)
-    {
-      Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
-      Vertex_handle h1_tgt=h1->vertex();
-      Vertex_handle h2_src=h1->next()->opposite()->vertex();
-
-      //update vertex pointers: target of h1 vs source of h2
-      if ( h1_tgt != h2_src )
-      {
-        CGAL_assertion( h1_tgt->point() == h2_src->point() );
-        //we remove h2->opposite()->vertex()
-        vertices_to_delete.push_back( h2_src );
-        update_target_vertex(h1, h1_tgt,decorator);
-      }
-      else
-        decorator.set_vertex_halfedge(h1_tgt, h1);
-
-      Vertex_handle h1_src=h1->opposite()->vertex();
-      Vertex_handle h2_tgt=h1->prev()->vertex();
-      //update vertex pointers: target of h1 vs source of h2
-      if ( h1_src!= h2_tgt )
-      {
-        CGAL_assertion( h1_src->point() == h2_tgt->point() );
-        //we remove h1->opposite()->vertex()
-        vertices_to_delete.push_back( h1_src );
-        update_target_vertex(h1->opposite(), h2_tgt,decorator);
-      }
-      else
-        decorator.set_vertex_halfedge(h1_src, h1->opposite());
-    }
-
+    //remove the extra vertices
     for(typename std::vector<Vertex_handle>::iterator
           itv=vertices_to_delete.begin(),itv_end=vertices_to_delete.end();
           itv!=itv_end; ++itv)
