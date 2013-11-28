@@ -14,8 +14,11 @@ void test(const char* fname)
 {
   std::cout << "Testing " << fname << "..." << std::flush;
   std::ifstream input(fname);
+  assert(input);
   Polyhedron P;
   input >> P;
+
+  assert(P.size_of_vertices()!=0);
 
   CGAL::polyhedron_stitching(P);
 
@@ -23,17 +26,17 @@ void test(const char* fname)
   output << P;
   output.close();
 
+  P.normalize_border();
   assert(P.is_valid(false, 5));
   std::cout << "OK\n";
 }
 
 int main()
 {
-  test("F17.off");
-  test("full_border.off");
-  test("full_border_quads.off");
-  test("half_border.off");
-  test("mid_border.off");
-  test("multiple_incidence.off");
+  test("data_stitching/full_border.off");
+  test("data_stitching/full_border_quads.off");
+  test("data_stitching/half_border.off");
+  test("data_stitching/mid_border.off");
+  test("data_stitching/multiple_incidence.off");
 }
 
