@@ -105,15 +105,33 @@ struct Naive_border_stitching_modifier:
   {
     std::size_t nb_hedges=hedge_pairs_to_stitch.size();
 
-    std::set <Halfedge_handle> hedges_to_stitch;
+    CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
+    /// Update next/prev of neighbor halfedges (that are not set for stiching)
+    /// _______   _______
+    ///        | |
+    ///        | |
+    /// In order to avoid having to maintain a set with halfedges to stitch
+    /// we do on purpose next-prev linking that might not be useful but that
+    /// is harmless and still less expensive than doing queries in a set
     for (std::size_t k=0; k<nb_hedges; ++k)
     {
-      hedges_to_stitch.insert( hedge_pairs_to_stitch[k].first );
-      hedges_to_stitch.insert( hedge_pairs_to_stitch[k].second );
+      Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
+      Halfedge_handle h2=hedge_pairs_to_stitch[k].second;
+
+      //link h2->prev() to h1->next()
+      Halfedge_handle prev=h2->prev();
+      Halfedge_handle next=h1->next();
+      prev->HBase::set_next(next);
+      decorator.set_prev(next, prev);
+
+      //link h1->prev() to h2->next()
+      prev=h1->prev();
+      next=h2->next();
+      prev->HBase::set_next(next);
+      decorator.set_prev(next, prev);
     }
 
     std::vector<Vertex_handle> vertices_to_delete;
-    CGAL::HalfedgeDS_decorator<HDS> decorator(hds);
     for (std::size_t k=0; k<nb_hedges; ++k)
     {
       Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
@@ -153,35 +171,8 @@ struct Naive_border_stitching_modifier:
       else
         decorator.set_vertex_halfedge(h1_src, h1->opposite());
 
-    ///update next/prev of neighbor halfedges
-      if ( hedges_to_stitch.find(h1->next())==hedges_to_stitch.end() )
-      {
-        CGAL_assertion( hedges_to_stitch.find(h2->prev())==hedges_to_stitch.end() );
-        Halfedge_handle prev=h2->prev();
-        Halfedge_handle next=h1->next();
-        prev->HBase::set_next(next);
-        decorator.set_prev(next, prev);
-      }
-      else
-      {
-        CGAL_assertion( hedges_to_stitch.find(h2->prev())!=hedges_to_stitch.end() );
-      }
-
-      if ( hedges_to_stitch.find(h2->next())==hedges_to_stitch.end() )
-      {
-        CGAL_assertion( hedges_to_stitch.find(h1->prev())==hedges_to_stitch.end() );
-        Halfedge_handle prev=h1->prev();
-        Halfedge_handle next=h2->next();
-        prev->HBase::set_next(next);
-        decorator.set_prev(next, prev);
-      }
-      else
-      {
-        CGAL_assertion( hedges_to_stitch.find(h1->prev())!=hedges_to_stitch.end() );
-      }
-
-      //we are going to remove h2 and its opposite
-      //set face-halfedge relationship
+    ///Set face-halfedge relationship
+      //h2 and its opposite will be removed
       decorator.set_face(h1,h2->opposite()->face());
       decorator.set_face_halfedge(h1->face(),h1);
       //update next/prev pointers
@@ -192,8 +183,8 @@ struct Naive_border_stitching_modifier:
       h1->HBase::set_next(tmp);
       decorator.set_prev(tmp,h1);
 
-     ///remove h2
-      hds.edges_erase(h2);
+    /// remove the extra halfedges
+      hds.edges_erase( h2 );
     }
 
     //remove the extra vertices
