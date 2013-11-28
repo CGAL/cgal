@@ -98,6 +98,7 @@ construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<K
 
   if ( !edge_map.empty()) {
     vinf = tds.create_vertex();
+    vinf->set_vertex(T.infinite_vertex());
     std::map<Vh_pair, Edge> inf_edge_map;
    while (!edge_map.empty()) {
      Face_handle fh = edge_map.begin()->second.first;
@@ -115,7 +116,6 @@ construct_surface(TDS& tds, const CGAL::Advancing_front_surface_reconstruction<K
    }
    CGAL_triangulation_assertion(inf_edge_map.empty());
   }
-  
   tds.reorient_faces();
   return vinf;
 

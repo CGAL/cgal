@@ -72,7 +72,6 @@ public:
 
   void reorient()
   {
-    
     Fb::reorient(); 
     if( is_on_surface()){
       _facet = std::make_pair(_facet.first->neighbor(_facet.second),

@@ -209,6 +209,25 @@ template <class OutputIterator, class Surface>
 OutputIterator
 write_triple_indices(OutputIterator out, const Surface& S)
 { 
+  std::cerr << "write triple indices" << std::endl;
+#if 1
+  typedef typename Surface::TDS_2 TDS_2;
+  typedef typename TDS_2::Face_iterator Face_iterator;
+  typedef typename Surface::Cell_handle Cell_handle;
+
+  const TDS_2& tds = S.tds_2();
+
+  for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){
+
+    if(fit->is_on_surface()){
+      *out++ = CGAL::Triple<std::size_t,std::size_t,std::size_t>(fit->vertex(0)->vertex_3()->id(),
+                                                                 fit->vertex(1)->vertex_3()->id(),
+                                                                 fit->vertex(2)->vertex_3()->id());
+    }
+  }
+    return out;
+
+#else 
   typedef typename Surface::Triangulation_3 Triangulation_3;
   typedef typename Surface::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Surface::Finite_facets_iterator Finite_facets_iterator;
@@ -250,6 +269,7 @@ write_triple_indices(OutputIterator out, const Surface& S)
 	}
     }
   return out;
+#endif
 }
 
 //---------------------------------------------------------------------

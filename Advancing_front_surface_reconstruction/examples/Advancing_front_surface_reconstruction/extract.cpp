@@ -409,7 +409,7 @@ int main(int argc,  char* argv[])
 
   file_input(opt, points);
  
-#if 0
+#if 1
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
   std::vector<CGAL::Triple<std::size_t,std::size_t,std::size_t> > triples;
   reconstruction_test(points.begin(), points.end(), std::back_inserter(triples));
