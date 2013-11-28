@@ -24,6 +24,7 @@ if ( CGAL_FOUND )
 #  include_directories (BEFORE ../../../../../trunk/Triangulation_2/include)
 
   create_single_source_cgal_program( "extract.cpp" )
+  create_single_source_cgal_program( "reconstruction_fct.cpp" )
 
 else()
   

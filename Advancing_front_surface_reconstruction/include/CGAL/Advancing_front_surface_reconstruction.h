@@ -12,6 +12,10 @@
 #include <cassert>
 #include <vector>
 #include <list>
+
+#include <CGAL/Advancing_front_surface_reconstruction_vertex_base_3.h>
+#include <CGAL/Advancing_front_surface_reconstruction_cell_base_3.h>
+
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/AFSR/Surface_vertex_base_2.h>
 #include <CGAL/AFSR/Surface_face_base_2.h>
@@ -1961,6 +1965,14 @@ public:
 
 
 }; // class Advancing_front_surface_reconstruction
+
+template <typename PointIterator, typename IndexTripleIterator>
+IndexTripleIterator
+advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTripleIterator out)
+{
+  return out;
+}
+
 
 } // namespace CGAL
 

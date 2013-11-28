@@ -14,9 +14,6 @@
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
-#include <CGAL/Advancing_front_surface_reconstruction_vertex_base_3.h>
-#include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Advancing_front_surface_reconstruction_cell_base_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/AFSR_options.h>
 #include <CGAL/IO/Advancing_front_surface_reconstruction.h>
@@ -28,7 +25,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::Point_3  Point;
-typedef Kernel::Vector_3  Vector;
 
 typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
 typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;

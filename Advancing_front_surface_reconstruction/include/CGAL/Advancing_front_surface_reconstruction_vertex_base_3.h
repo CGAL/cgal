@@ -2,6 +2,7 @@
 #define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/utility.h>
 
 #include <utility>
 
