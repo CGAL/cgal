@@ -60,9 +60,9 @@ private:
            it=mmap.darts_of_orbit<1>(dh).begin(),
            itend=mmap.darts_of_orbit<1>(dh).end();
          it!=itend; ++it, ++nb)
-    { sum+=it->beta<2>()->attribute<2>()->info(); }
+    { sum+=mmap.info<2>(mmap.beta<2>(it)); }
 
-    dh->attribute<2>()->info()=(sum/nb);
+    mmap.info<2>(dh)=(sum/nb);
   }
 
   CMap_3& mmap;
@@ -76,7 +76,7 @@ void display_map_and_2attributes(CMap_3& cm)
        it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end();
        it!=itend; ++it)
   {
-    std::cout<<it->info()<<"; ";
+    std::cout<<cm.info_of_attribute<2>(it)<<"; ";
   }
   std::cout<<std::endl;
   cm.display_characteristics(std::cout);

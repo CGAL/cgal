@@ -19,17 +19,6 @@ non void <I>i</I>-attribute.
 
 \cgalHeading{Complexity}
 
-Each \f$ \beta_i\f$ link is initialized to
-\ref CombinatorialMap::null_dart_handle "CMap::null_dart_handle", and each
-attribute handle of non void <I>i</I>-attribute is initialized to `NULL`
-at the creation of the dart, thus the complexity of the creation is in
-<I>O</I>(<I>d+1</I>).
-
-The complexity of `opposite` and `other_extremity` methods is in
-<I>O</I>(<I>d+1</I>).
-
-Other methods have all a constant time complexity.
-
 \sa `CombinatorialMap`
 
 */

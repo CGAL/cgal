@@ -78,24 +78,16 @@ struct Group_attribute_functor_of_dart_run
                               Dimension_index<i>::value>=0,
                               "Group_attribute_functor_of_dart_run<i> but "
                               "i-attributes are disabled");
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh1!=CMap::null_dart_handle );
-
     typename CMap::template Attribute_handle<i>::type
-        a1=dh1->template attribute<i>();
+        a1=amap->template attribute<i>(dh1);
     typename CMap::template Attribute_handle<i>::type
-        a2=dh2->template attribute<i>();
+        a2=amap->template attribute<i>(dh2);
 
     // If the two attributes are equal, nothing to do.
     if ( a1==a2 ) return;
 
-    if ( a1==NULL )
-      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, i>::
-          run(amap, dh1, a2);
-    else
-      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, i>::
-          run(amap, dh2, a1);
+    if ( a1==CMap::null_handle ) amap->template set_dart_attribute<i>(dh1, a2);
+    else amap->template set_dart_attribute<i>(dh2, a1);
   }
 };
 // Specialization for i=0 and 2<=j. We modify 0-attribute for beta_j j>=2.
@@ -107,40 +99,31 @@ struct Group_attribute_functor_of_dart_run<CMap, 0, j, T>
                   typename CMap::Dart_handle dh2)
   {
     CGAL_static_assertion(j!=0 && j!=1);
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh1!=CMap::null_dart_handle );
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Group_attribute_functor_of_dart_run<0> but "
                               "0-attributes are disabled");
     typename CMap::template Attribute_handle<0>::type
-        a1=NULL, a2=NULL;
+        a1=CMap::null_handle, a2=CMap::null_handle;
 
     // First extremity
-    typename CMap::Dart_handle od = dh2->other_extremity();
-    if ( od!=NULL )
+    typename CMap::Dart_handle od = amap->other_extremity(dh2);
+    if ( od!=amap->null_handle )
     {
-      a1=dh1->template attribute<0>();
-      a2=od->template attribute<0>();
+      a1=amap->template attribute<0>(dh1);
+      a2=amap->template attribute<0>(od);
 
-      if ( a1==NULL && a2!=NULL )
-      {
-        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-            run(amap, dh1, a2);
-      }
+      if ( a1==CMap::null_handle && a2!=CMap::null_handle )
+        amap->template set_dart_attribute<0>(dh1, a2);
     }
 
     // Second extremity
-    od = dh1->other_extremity();
-    if ( od!=NULL )
+    od = amap->other_extremity(dh1);
+    if ( od!=amap->null_handle )
     {
-      a1=od->template attribute<0>();
-      if ( a1!=NULL )
-      {
-        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-            run(amap, dh2, a1);
-      }
+      a1=amap->template attribute<0>(od);
+      if ( a1!=CMap::null_handle )
+        amap->template set_dart_attribute<0>(dh2, a1);
     }
   }
 };
@@ -152,26 +135,20 @@ struct Group_attribute_functor_of_dart_run<CMap, 0, 0, T>
                   typename CMap::Dart_handle dh1,
                   typename CMap::Dart_handle dh2)
   {
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh1!=CMap::null_dart_handle );
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Group_attribute_functor_of_dart_run<0> but "
                               "0-attributes are disabled");
-    typename CMap::Dart_handle od = dh2->other_extremity();
-    if ( od!=NULL )
+    typename CMap::Dart_handle od = amap->other_extremity(dh2);
+    if ( od!=amap->null_handle )
     {
       typename CMap::template Attribute_handle<0>::type
-          a1=dh1->template attribute<0>();
+          a1=amap->template attribute<0>(dh1);
       typename CMap::template Attribute_handle<0>::type
-          a2=od->template attribute<0>();
+          a2=amap->template attribute<0>(od);
 
-      if ( a1==NULL && a2!=NULL )
-      {
-        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-            run(amap, dh1, a2);
-      }
+      if ( a1==CMap::null_handle && a2!=CMap::null_handle )
+        amap->template set_dart_attribute<0>(dh1, a2);
     }
   }
 };
@@ -183,24 +160,18 @@ struct Group_attribute_functor_of_dart_run<CMap, 0, 1, T>
                   typename CMap::Dart_handle dh1,
                   typename CMap::Dart_handle dh2)
   {
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh1!=CMap::null_dart_handle );
     CGAL_static_assertion_msg(CMap::Helper::template
                               Dimension_index<0>::value>=0,
                               "Group_attribute_functor_of_dart_run<0> but "
                               "0-attributes are disabled");
-    typename CMap::Dart_handle od = dh1->other_extremity();
-    if ( od!=NULL )
+    typename CMap::Dart_handle od = amap->other_extremity(dh1);
+    if ( od!=amap->null_handle )
     {
       typename CMap::template Attribute_handle<0>::type
-          a1=od->template attribute<0>();
+          a1=amap->template attribute<0>(od);
 
-      if ( a1!=NULL )
-      {
-        CGAL::internal::Set_i_attribute_of_dart_functor<CMap, 0>::
-            run(amap, dh2, a1);
-      }
+      if ( a1!=CMap::null_handle )
+        amap->template set_dart_attribute<0>(dh2, a1);
     }
   }
 };
@@ -270,33 +241,29 @@ struct Group_attribute_functor_run
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<i>::value>=0,
           "Group_attribute_functor_run<i> but i-attributes are disabled" );
-    CGAL_assertion( adart1!=NULL && adart2!=NULL );
-    CGAL_assertion( adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle );
-
     typename CMap::template Attribute_handle<i>::type
-        a1=adart1->template attribute<i>();
+        a1=amap->template attribute<i>(adart1);
     typename CMap::template Attribute_handle<i>::type
-        a2=adart2->template attribute<i>();
+        a2=amap->template attribute<i>(adart2);
 
     // If the two attributes are equal, nothing to do.
     if ( a1 == a2 ) return;
 
-    typename CMap::Dart_handle toSet = NULL;
+    typename CMap::Dart_handle toSet = amap->null_handle;
 
     // If the attribute associated to adart1 is NULL, set it with
     // the attribute associated to adart2 (necessarily != NULL)
-    if (a1 == NULL)
+    if (a1 == CMap::null_handle)
     { toSet  = adart1; a1 = a2; }
     else
     {
       toSet = adart2;
-      if (a2 != NULL)
+      if (a2 != CMap::null_handle)
       {
         CGAL::internal::Call_merge_functor<CMap, i>::run(amap, a1, a2);
       }
     }
-    CGAL::Set_i_attribute_functor<CMap, i>::run(amap, toSet, a1);
+    amap->template set_attribute<i>(toSet, a1);
   }
 };
 // Specialization for i=0 and 2<=j. We update 0-attributes for beta_j j>=2.
@@ -311,54 +278,51 @@ struct Group_attribute_functor_run<CMap, 0, j, T>
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<0>::value>=0,
           "Group_attribute_functor_run<0> but 0-attributes are disabled" );
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh2!=CMap::null_dart_handle );
     CGAL_static_assertion(j!=0 && j!=1);
 
     typename CMap::template Attribute_handle<0>::type
-        a1=NULL, a2=NULL;
-    typename CMap::Dart_handle toSet=NULL;
+        a1=CMap::null_handle, a2=CMap::null_handle;
+    typename CMap::Dart_handle toSet=amap->null_handle;
     // First extremity
-    typename CMap::Dart_handle od=dh2->other_extremity();
-    if ( od!=NULL )
+    typename CMap::Dart_handle od=amap->other_extremity(dh2);
+    if ( od!=amap->null_handle )
     {
-      a1=dh1->template attribute<0>();
-      a2=od->template attribute<0>();
+      a1=amap->template attribute<0>(dh1);
+      a2=amap->template attribute<0>(od);
       if ( a1!=a2 )
       {
-        if ( a1==NULL )
+        if ( a1==CMap::null_handle )
         { toSet=dh1; a1=a2; }
         else
         {
           toSet=od;
-          if ( a2!=NULL )
+          if ( a2!=CMap::null_handle )
           {
             CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
-        CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
+        amap->template set_attribute<0>(toSet, a1);
       }
     }
     // Second extremity
-    od = dh1->other_extremity();
-    if ( od!=NULL )
+    od = amap->other_extremity(dh1);
+    if ( od!=amap->null_handle )
     {
-      a1=od->template attribute<0>();
-      a2=dh2->template attribute<0>();
+      a1=amap->template attribute<0>(od);
+      a2=amap->template attribute<0>(dh2);
       if ( a1!=a2 )
       {
-        if ( a1==NULL )
+        if ( a1==CMap::null_handle )
         { toSet=od; a1=a2; }
         else
         {
           toSet=dh2;
-          if ( a2!=NULL )
+          if ( a2!=CMap::null_handle )
           {
             CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
-        CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
+        amap->template set_attribute<0>(toSet, a1);
       }
     }
   }
@@ -375,31 +339,27 @@ struct Group_attribute_functor_run<CMap, 0, 0, T>
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<0>::value>=0,
           "Group_attribute_functor_run<0> but 0-attributes are disabled" );
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh2!=CMap::null_dart_handle );
-
-    typename CMap::Dart_handle od=dh2->other_extremity();
-    if ( od!=NULL )
+    typename CMap::Dart_handle od=amap->other_extremity(dh2);
+    if ( od!=amap->null_handle )
     {
-      typename CMap::Dart_handle toSet=NULL;
+      typename CMap::Dart_handle toSet=amap->null_handle;
       typename CMap::template Attribute_handle<0>::type
-          a1=dh1->template attribute<0>();
+          a1=amap->template attribute<0>(dh1);
       typename CMap::template Attribute_handle<0>::type
-          a2=od->template attribute<0>();
+          a2=amap->template attribute<0>(od);
       if ( a1!=a2 )
       {
-        if ( a1==NULL )
+        if ( a1==CMap::null_handle )
         { toSet=dh1; a1=a2; }
         else
         {
           toSet=od;
-          if ( a2!=NULL )
+          if ( a2!=CMap::null_handle )
           {
             CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
-        CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
+        amap->template set_attribute<0>(toSet, a1);
       }
     }
   }
@@ -416,31 +376,27 @@ struct Group_attribute_functor_run<CMap, 0, 1, T>
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<0>::value>=0,
           "Group_attribute_functor_run<0> but 0-attributes are disabled" );
-    CGAL_assertion( dh1!=NULL && dh2!=NULL );
-    CGAL_assertion( dh1!=CMap::null_dart_handle &&
-        dh2!=CMap::null_dart_handle );
-
-    typename CMap::Dart_handle od = dh1->other_extremity();
-    if ( od!=NULL )
+    typename CMap::Dart_handle od =amap->other_extremity(dh1);
+    if ( od!=amap->null_handle )
     {
-      typename CMap::Dart_handle toSet=NULL;
+      typename CMap::Dart_handle toSet=amap->null_handle;
       typename CMap::template Attribute_handle<0>::type
-          a1=od->template attribute<0>();
+          a1=amap->template attribute<0>(od);
       typename CMap::template Attribute_handle<0>::type
-          a2=dh2->template attribute<0>();
+          a2=amap->template attribute<0>(dh2);
       if ( a1!=a2 )
       {
-        if ( a1==NULL )
+        if ( a1==CMap::null_handle )
         { toSet=od; a1=a2; }
         else
         {
           toSet=dh2;
-          if ( a2!=NULL )
+          if ( a2!=CMap::null_handle )
           {
             CGAL::internal::Call_merge_functor<CMap, 0>::run(amap, a1, a2);
           }
         }
-        CGAL::Set_i_attribute_functor<CMap, 0>::run(amap, toSet, a1);
+        amap->template set_attribute<0>(toSet, a1);
       }
     }
   }
@@ -508,32 +464,30 @@ struct Degroup_attribute_functor_run
     CGAL_static_assertion_msg
         ( CMap::Helper::template Dimension_index<i>::value>=0,
           "Degroup_attribute_functor_run<i> but i-attributes are disabled" );
-    CGAL_assertion( adart1!=NULL && adart2!=NULL );
-    CGAL_assertion( adart1!=CMap::null_dart_handle &&
-        adart2!=CMap::null_dart_handle );
 
     typename CMap::template Attribute_handle<i>::type
-        a1=adart1->template attribute<i>();
+        a1=amap->template attribute<i>(adart1);
 
     // If there is no first attribute, nothing to degroup.
-    if ( a1==NULL ) return;
+    if ( a1==CMap::null_handle ) return;
 
     // If the second attribute is non null and already different from a1,
     // nothing to do.
-    if ( a1!=adart2->template attribute<i>() &&
-         adart2->template attribute<i>()!=NULL ) return;
+    if ( a1!=amap->template attribute<i>(adart2) &&
+         amap->template attribute<i>(adart2)!=CMap::null_handle ) return;
 
     CGAL_assertion( (!CGAL::belong_to_same_cell<CMap,i>
                      (*amap, adart1, adart2)) );
 
     // As we split, we set the dart of the first attribute to adart1 for which
     // we are sure it belongs to the first i-cell.
-    a1->set_dart(adart1);
+    amap->template get_attribute<i>(a1).set_dart(adart1);
 
     typename CMap::template Attribute_handle<i>::type
-        a2 = amap->template create_attribute<i>(*a1);
+      a2 = amap->template
+      create_attribute<i>(amap->template get_attribute<i>(a1));
 
-    CGAL::Set_i_attribute_functor<CMap, i>::run(amap, adart2, a2);
+    amap->template set_attribute<i>(adart2, a2);
     CGAL::internal::Call_split_functor<CMap, i>::run(amap, a1, a2);
   }
 };
@@ -567,10 +521,10 @@ template<typename CMap, unsigned int i>
 void test_split_attribute_functor_one_dart
 ( CMap* amap, typename CMap::Dart_handle adart,
   CGAL::Unique_hash_map<typename CMap::template Attribute_handle<i>::type,
-  unsigned int> & found_attributes, int mark )
+                        unsigned int, typename CMap::Hash_function> &
+  found_attributes, int mark )
 {
   CGAL_assertion( amap!=NULL );
-  CGAL_assertion( adart!=NULL );
   CGAL_static_assertion_msg(CMap::Helper::template
                             Dimension_index<i>::value>=0,
                             "Test_split_attribute_functor_one_dart<i> but "
@@ -581,20 +535,20 @@ void test_split_attribute_functor_one_dart
 
   // If the current dart has no attribute, or if it is aldready marked,
   // nothing to do.
-  if ( adart->template attribute<i>()==NULL ||
+  if ( amap->template attribute<i>(adart)==CMap::null_handle ||
        amap->is_marked(adart, mark) )
     return;
 
-  Attribute_handle_i a1 = adart->template attribute<i>();
+  Attribute_handle_i a1 = amap->template attribute<i>(adart);
   if ( found_attributes.is_defined(a1) )
   {  // Here the attribute was already present in the hash_map
-    Attribute_handle_i a2 = amap->template create_attribute<i>(*a1);
+    Attribute_handle_i a2 = amap->template
+      create_attribute<i>(amap->template get_attribute<i>(a1));
 
     for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap, i>
           itj(*amap, adart, mark); itj.cont(); ++itj )
     {
-      CGAL::internal::Set_i_attribute_of_dart_functor<CMap, i>::
-          run(amap, itj, a2);
+      amap->template set_dart_attribute<i>(itj, a2);
       amap->mark(itj, mark);
     }
     CGAL::internal::Call_split_functor<CMap, i>::run(amap, a1, a2);
@@ -603,12 +557,12 @@ void test_split_attribute_functor_one_dart
   {
     // Here the attribute was not in the hash_map.
     found_attributes[a1]=1;
-    a1->set_dart(adart);
+    amap->template set_dart_of_attribute<i>(a1, adart);
 
     for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap, i>
           itj(*amap, adart, mark); itj.cont(); ++itj )
     {
-      CGAL_assertion( itj->template attribute<i>()==a1 );
+      CGAL_assertion( amap->template attribute<i>(itj)==a1 );
       amap->mark(itj, mark);
     }
   }
@@ -639,8 +593,8 @@ struct Test_split_attribute_functor_run
     typedef typename CMap::template Attribute_handle<i>::type
         Attribute_handle_i;
 
-    CGAL::Unique_hash_map<Attribute_handle_i, unsigned int>
-        found_attributes;
+    CGAL::Unique_hash_map<Attribute_handle_i, unsigned int,
+                          typename CMap::Hash_function> found_attributes;
 
     int mark = amap->get_new_mark(); // to mark incident cells.
     typename std::deque<typename CMap::Dart_handle>::const_iterator
@@ -683,7 +637,8 @@ struct Test_split_attribute_functor_run
     typedef typename CMap::template Attribute_handle<i>::type
         Attribute_handle_i;
 
-    CGAL::Unique_hash_map<Attribute_handle_i, unsigned int> found_attributes;
+    CGAL::Unique_hash_map<Attribute_handle_i, unsigned int,
+                          typename CMap::Hash_function> found_attributes;
 
     int mark = amap->get_new_mark(); // to mark incident cells.
     typename std::deque<typename CMap::Dart_handle>::const_iterator
@@ -743,9 +698,9 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
     typedef typename CMap::template Attribute_handle<0>::type
         Attribute_handle_0;
 
-    CGAL::Unique_hash_map<Attribute_handle_0, unsigned int>
-        found_attributes;
-    typename CMap::Dart_handle od=NULL;
+    CGAL::Unique_hash_map<Attribute_handle_0, unsigned int,
+                          typename CMap::Hash_function> found_attributes;
+    typename CMap::Dart_handle od=amap->null_handle;
 
     int mark = amap->get_new_mark(); // to mark incident cells.
     typename std::deque<typename CMap::Dart_handle>::const_iterator
@@ -755,8 +710,8 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
       CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
           (amap, *it, found_attributes, mark);
 
-      od=(*it)->other_extremity();
-      if ( od!=NULL )
+      od=amap->other_extremity(*it);
+      if ( od!=amap->null_handle )
         CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
             (amap, od, found_attributes, mark);
     }
@@ -771,8 +726,8 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
       if ( !amap->is_marked(*it, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, *it, mark);
 
-      od=(*it)->other_extremity();
-      if ( od!=NULL && !amap->is_marked(od, mark) )
+      od=amap->other_extremity(*it);
+      if ( od!=amap->null_handle && !amap->is_marked(od, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, od, mark);
     }
 
@@ -796,9 +751,9 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
     typedef typename CMap::template Attribute_handle<0>::type
         Attribute_handle_0;
 
-    CGAL::Unique_hash_map<Attribute_handle_0, unsigned int>
-        found_attributes;
-    typename CMap::Dart_handle od=NULL;
+    CGAL::Unique_hash_map<Attribute_handle_0, unsigned int,
+                          typename CMap::Hash_function> found_attributes;
+    typename CMap::Dart_handle od=amap->null_handle;
 
     int mark = amap->get_new_mark(); // to mark incident cells.
     typename std::deque<typename CMap::Dart_handle>::const_iterator
@@ -808,8 +763,8 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
       CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
           (amap, *it, found_attributes, mark);
 
-      od=(*it)->other_extremity();
-      if ( od!=NULL )
+      od=amap->other_extremity(*it);
+      if ( od!=amap->null_handle )
         CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
             (amap, od, found_attributes, mark);
     }
@@ -820,8 +775,8 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
       CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
           (amap, *it2, found_attributes, mark);
 
-      od=(*it2)->other_extremity();
-      if ( od!=NULL )
+      od=amap->other_extremity(*it2);
+      if ( od!=amap->null_handle )
         CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
             (amap, od, found_attributes, mark);
     }
@@ -836,8 +791,8 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
       if ( !amap->is_marked(*it, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, *it, mark);
 
-      od=(*it)->other_extremity();
-      if ( od!=NULL && !amap->is_marked(od, mark) )
+      od=amap->other_extremity(*it);
+      if ( od!=amap->null_handle && !amap->is_marked(od, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, od, mark);
     }
     for ( it2=modified_darts2.begin(); it2!=modified_darts2.end(); ++it2 )
@@ -848,8 +803,8 @@ struct Test_split_attribute_functor_run<CMap, 0, j, T>
       if ( !amap->is_marked(*it2, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, *it2, mark);
 
-      od=(*it2)->other_extremity();
-      if ( od!=NULL && !amap->is_marked(od, mark) )
+      od=amap->other_extremity(*it2);
+      if ( od!=amap->null_handle && !amap->is_marked(od, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, od, mark);
     }
 
@@ -883,9 +838,9 @@ struct Test_split_attribute_functor_run<CMap, 0, 0, T>
     typedef typename CMap::template Attribute_handle<0>::type
         Attribute_handle_0;
 
-    CGAL::Unique_hash_map<Attribute_handle_0, unsigned int>
-        found_attributes;
-    typename CMap::Dart_handle od=NULL;
+    CGAL::Unique_hash_map<Attribute_handle_0, unsigned int,
+                          typename CMap::Hash_function> found_attributes;
+    typename CMap::Dart_handle od=amap->null_handle;
 
     int mark = amap->get_new_mark(); // to mark incident cells.
     typename std::deque<typename CMap::Dart_handle>::const_iterator
@@ -899,8 +854,8 @@ struct Test_split_attribute_functor_run<CMap, 0, 0, T>
         it2=modified_darts2.begin();
     for ( ; it2!=modified_darts2.end(); ++it2 )
     {
-      od=(*it2)->other_extremity();
-      if ( od!=NULL )
+      od=amap->other_extremity(*it2);
+      if ( od!=amap->null_handle )
         CGAL::internal::test_split_attribute_functor_one_dart<CMap,0>
             (amap, od, found_attributes, mark);
     }
@@ -920,8 +875,8 @@ struct Test_split_attribute_functor_run<CMap, 0, 0, T>
       if ( mark_modified_darts!=-1 )
         amap->unmark(*it2, mark_modified_darts);
 
-      od=(*it2)->other_extremity();
-      if ( od!=NULL && !amap->is_marked(od, mark) )
+      od=amap->other_extremity(*it2);
+      if ( od!=amap->null_handle && !amap->is_marked(od, mark) )
         CGAL::mark_cell<CMap, 0>(*amap, od, mark);
     }
 

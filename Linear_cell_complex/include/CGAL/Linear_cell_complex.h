@@ -21,10 +21,11 @@
 #define CGAL_LINEAR_CELL_COMPLEX_H 1
 
 #include <CGAL/Combinatorial_map.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Combinatorial_map_constructors.h>
+#include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Linear_cell_complex_traits.h>
+#include <CGAL/Linear_cell_complex_storages.h>
 
 namespace CGAL {
 
@@ -37,37 +38,59 @@ namespace CGAL {
    * The Linear_cell_complex a nD object with linear geometry, ie
    * an nD combinatorial map with point associated to each vertex.
    */
-  template < unsigned int d_, unsigned int ambient_dim = d_,
-             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-             class Items_ = Linear_cell_complex_min_items<d_>,
-             class Alloc_ = CGAL_ALLOCATOR(int),
-             template<unsigned int,class,class,class>
-             class CMap =  Combinatorial_map_base >
-  class Linear_cell_complex:
-    public CMap<d_,Linear_cell_complex<d_, ambient_dim, Traits_,
-                                       Items_, Alloc_>, Items_, Alloc_>
+  template < unsigned int d_, unsigned int ambient_dim,
+             class Traits_,
+             class Items_,
+             class Alloc_,
+             template<unsigned int,class,class,class,class>
+             class CMap,
+             class Refs,
+             class Storage_>
+  class Linear_cell_complex_base:
+    public CMap<d_, Refs, Items_, Alloc_, Storage_>
   {
   public:
-    typedef Linear_cell_complex<d_, ambient_dim,
-                                Traits_, Items_, Alloc_>  Self;
-    typedef Combinatorial_map_base<d_, Self, Items_, Alloc_> Base;
+    typedef Linear_cell_complex_base<d_, ambient_dim,
+                                Traits_, Items_, Alloc_, CMap,
+                                Refs, Storage_>  Self;
+    typedef CMap<d_, Refs, Items_, Alloc_, Storage_> Base;
 
     typedef Traits_ Traits;
     typedef Items_  Items;
     typedef Alloc_  Alloc;
+    typedef Storage_ Storage;
 
     static const unsigned int ambient_dimension = ambient_dim;
     static const unsigned int dimension = Base::dimension;
 
-    typedef typename Base::Dart_handle       Dart_handle;
-    typedef typename Base::Dart_const_handle Dart_const_handle;
-    typedef typename Base::Helper            Helper;
+    typedef typename Storage::Dart_handle       Dart_handle;
+    typedef typename Storage::Dart_const_handle Dart_const_handle;
+    typedef typename Storage::Helper            Helper;
 
-    typedef typename Traits::Point  Point;
-    typedef typename Traits::Vector Vector;
-    typedef typename Traits::FT     FT;
+    typedef typename Storage::Point  Point;
+    typedef typename Storage::Vector Vector;
+    typedef typename Storage::FT     FT;
 
     typedef typename Base::Dart_range Dart_range;
+
+    /// Typedef for attributes
+    template<int i>
+    struct Attribute_type: public Base::template Attribute_type<i>
+    {};
+    template<int i>
+    struct Attribute_handle: public Base::template Attribute_handle<i>
+    {};
+    template<int i>
+    struct Attribute_const_handle:
+      public Base::template Attribute_const_handle<i>
+    {};
+    template<int i>
+    struct Attribute_range: public Base::template Attribute_range<i>
+    {};
+    template<int i>
+    struct Attribute_const_range:
+      public Base::template Attribute_const_range<i>
+    {};
 
     typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
     typedef typename Base::template Attribute_handle<0>::type
@@ -81,11 +104,17 @@ namespace CGAL {
     Vertex_attribute_const_range;
 
     typedef typename Base::size_type size_type;
+    typedef typename Base::Use_index Use_index;
 
     /// To use previous definition of create_dart methods.
     using Base::create_dart;
+    using Base::beta;
+    using Base::is_free;
+    using Base::attribute;
+    using Base::null_handle;
+    using Base::point_of_vertex_attribute;
 
-    Linear_cell_complex() : Base()
+    Linear_cell_complex_base() : Base()
     {}
 
     /** Copy the given linear cell complex into *this.
@@ -93,19 +122,19 @@ namespace CGAL {
      *  @param alcc the linear cell complex to copy.
      *  @post *this is valid.
      */
-    Linear_cell_complex(const Self & alcc)
+    Linear_cell_complex_base(const Self & alcc)
     { Base::template copy<Self>(alcc); }
 
     template < class LCC2 >
-    Linear_cell_complex(const LCC2& alcc)
+    Linear_cell_complex_base(const LCC2& alcc)
     { Base::template copy<LCC2>(alcc);}
 
     template < class LCC2, typename Converters >
-    Linear_cell_complex(const LCC2& alcc, Converters& converters)
+    Linear_cell_complex_base(const LCC2& alcc, Converters& converters)
     { Base::template copy<LCC2, Converters>(alcc, converters);}
 
     template < class LCC2, typename Converters, typename Pointconverter >
-    Linear_cell_complex(const LCC2& alcc, Converters& converters,
+    Linear_cell_complex_base(const LCC2& alcc, Converters& converters,
                         const Pointconverter& pointconverter)
     { Base::template copy<LCC2, Converters, Pointconverter>
           (alcc, converters, pointconverter);}
@@ -233,42 +262,70 @@ namespace CGAL {
     typename Base::size_type number_of_vertex_attributes() const
     { return Base::template number_of_attributes<0>(); }
 
-    /// Get the vertex_attribute associated with a dart.
-    /// @param a dart
-    /// @return the vertex_attribute.
+#ifdef CGAL_CMAP_DEPRECATED
     static Vertex_attribute_handle vertex_attribute(Dart_handle adart)
     {
       CGAL_assertion(adart!=NULL);
       return adart->template attribute<0>();
     }
-
-    /// Get the vertex_attribute associated with a const dart.
-    /// @param a dart
-    /// @return the vertex_const_attribute.
-    static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle
+   static Vertex_attribute_const_handle vertex_attribute(Dart_const_handle
                                                           adart)
     {
       CGAL_assertion(adart!=NULL);
       return adart->template attribute<0>();
     }
-
-    /// Get the point associated with a dart.
-    /// @param a dart
-    /// @return the point.
     static Point& point(Dart_handle adart)
     {
       CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
       return adart->template attribute<0>()->point();
     }
-
-    /// Get the point associated with a const dart.
-    /// @param a dart
-    /// @return the point.
     static const Point& point(Dart_const_handle adart)
     {
       CGAL_assertion(adart!=NULL && adart->template attribute<0>()!=NULL );
       return adart->template attribute<0>()->point();
     }
+#else
+    /// Get the vertex_attribute associated with a dart.
+    /// @param a dart
+    /// @return the vertex_attribute.
+    Vertex_attribute_handle vertex_attribute(Dart_handle adart)
+    { return this->template attribute<0>(adart); }
+
+    /// Get the vertex_attribute associated with a const dart.
+    /// @param a dart
+    /// @return the vertex_const_attribute.
+    Vertex_attribute_const_handle
+    vertex_attribute(Dart_const_handle adart) const
+    { return this->template attribute<0>(adart); }
+
+    /// Get the point associated with a dart.
+    /// @param a dart
+    /// @return the point.
+    Point& point(Dart_handle adart)
+    {
+      CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
+      return point_of_vertex_attribute(this->template attribute<0>(adart));
+    }
+
+    /// Get the point associated with a const dart.
+    /// @param a dart
+    /// @return the point.
+    const Point& point(Dart_const_handle adart) const
+    {
+      CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
+      return point_of_vertex_attribute(this->template attribute<0>(adart));
+    }
+#endif // CGAL_CMAP_DEPRECATED
+
+    // Temporary methods to allow to write lcc->temp_vertex_attribute
+    // even with the old method. Depending if CGAL_CMAP_DEPRECATED is defined or not
+    // call the static method or the new method. To remove when we remove the
+    // old code.
+    Vertex_attribute_handle temp_vertex_attribute(Dart_handle adart)
+    {return vertex_attribute(adart); }
+    Vertex_attribute_const_handle
+    temp_vertex_attribute(Dart_const_handle adart) const
+    {return vertex_attribute(adart); }
 
     /** Test if the lcc is valid.
      * A Linear_cell_complex is valid if it is a valid Combinatorial_map with
@@ -281,7 +338,7 @@ namespace CGAL {
       for (typename Dart_range::const_iterator it(this->darts().begin()),
              itend(this->darts().end()); valid && it != itend; ++it)
       {
-        if ( vertex_attribute(it) == NULL )
+        if ( vertex_attribute(it)==null_handle )
         {
           std::cerr << "Map not valid: dart "<<&(*it)
                     <<" does not have a vertex."<< std::endl;
@@ -304,8 +361,8 @@ namespace CGAL {
       bool samegeometry = true;
       for ( ; samegeometry && it1.cont() && it2.cont(); ++it1, ++it2)
       {
-        if ( it2->other_extremity()!=NULL &&
-             point(it1)!=point(it2->other_extremity()) )
+        if ( this->other_extremity(it2)!=null_handle &&
+             point(it1)!=point(this->other_extremity(it2)) )
           samegeometry = false;
       }
       if ( it1.cont() != it2.cont() ) samegeometry = false;
@@ -366,12 +423,12 @@ namespace CGAL {
           typename std::vector<Dart_handle>::iterator it2=it1;
           for ( ++it2; it2!= it1end; ++it2 )
           {
-            if ( *it1!=*it2 && (*it1)->is_free(3) &&
-                 (*it2)->is_free(3) &&
-                 are_facets_same_geometry(*it1,(*it2)->beta(0)) )
+            if ( *it1!=*it2 && is_free(*it1, 3) &&
+                 is_free(*it2, 3) &&
+                 are_facets_same_geometry(*it1,beta(*it2, 0)) )
             {
               ++res;
-              this->template sew<3>(*it1,(*it2)->beta(0));
+              this->template sew<3>(*it1,beta(*it2, 0));
             }
           }
         }
@@ -403,7 +460,7 @@ namespace CGAL {
     {
       Dart_handle d1 = make_edge(*this);
       set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(d1->beta(2),h1);
+      set_vertex_attribute_of_dart(beta(d1, 2),h1);
 
       return d1;
     }
@@ -432,8 +489,8 @@ namespace CGAL {
       Dart_handle d1 = make_combinatorial_polygon(*this,3);
 
       set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(d1->beta(1),h1);
-      set_vertex_attribute_of_dart(d1->beta(0),h2);
+      set_vertex_attribute_of_dart(beta(d1, 1),h1);
+      set_vertex_attribute_of_dart(beta(d1, 0),h2);
 
       return d1;
     }
@@ -468,9 +525,9 @@ namespace CGAL {
       Dart_handle d1 = make_combinatorial_polygon(*this,4);
 
       set_vertex_attribute_of_dart(d1,h0);
-      set_vertex_attribute_of_dart(d1->beta(1),h1);
-      set_vertex_attribute_of_dart(d1->beta(1)->beta(1),h2);
-      set_vertex_attribute_of_dart(d1->beta(0),h3);
+      set_vertex_attribute_of_dart(beta(d1, 1),h1);
+      set_vertex_attribute_of_dart(beta(d1, 1, 1),h2);
+      set_vertex_attribute_of_dart(beta(d1, 0),h3);
 
       return d1;
     }
@@ -621,35 +678,7 @@ namespace CGAL {
     template<unsigned int i>
     Point barycenter(Dart_const_handle adart) const
     {
-      CGAL_static_assertion(0<i && i<=dimension);
-      CGAL_assertion(adart != NULL);
-
-      // Special case for edge.
-      if (i==1)
-      {
-        Dart_const_handle d2=adart->other_extremity();
-        if (d2==NULL) return point(adart);
-        return typename Traits::Construct_midpoint() (point(adart),
-                                                      point(d2));
-      }
-
-      // General case, 1<i<=dimension
-      Vector vec(typename Traits::Construct_vector()(CGAL::ORIGIN,
-                                                     point(adart)));
-      unsigned int nb = 1;
-
-      // TODO: test if we can optimize by using <Self,0,i,i+1> ?
-      CGAL::CMap_one_dart_per_incident_cell_const_iterator<Self,0,i>
-          it(*this, adart);
-      for ( ++it; it.cont(); ++it)
-      {
-        vec = typename Traits::Construct_sum_of_vectors()
-          (vec, typename Traits::Construct_vector()(CGAL::ORIGIN, point(it) ));
-        ++nb;
-      }
-
-      return typename Traits::Construct_translated_point()
-        (CGAL::ORIGIN, typename Traits::Construct_scaled_vector()(vec, 1.0/nb));
+      return CGAL::Barycenter_functor<Self, i>::run(*this, adart);
     }
 
     /** Insert a point in a given 1-cell.
@@ -674,10 +703,12 @@ namespace CGAL {
 
       Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v);
 
-      if ( first== NULL ) // If the triangulated facet was made of one dart
+      if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
 
+#ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
       CGAL_assertion( is_valid() );
+#endif
 
       return first;
     }
@@ -725,7 +756,7 @@ namespace CGAL {
      * simultaneously through all the darts of the two lcc and we have
      * each time of the iteration two "dual" darts.
      */
-    Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=NULL)
+    Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=null_handle)
     {
       Dart_handle res = Base::dual(alcc, adart);
 
@@ -736,7 +767,7 @@ namespace CGAL {
       for (typename Dart_range::iterator it(this->darts().begin());
            it!=this->darts().end(); ++it, ++it2)
       {
-        if (vertex_attribute(it2) == NULL)
+        if (vertex_attribute(it2)==null_handle)
         {
           alcc.set_vertex_attribute(it2, alcc.create_vertex_attribute
                                     (barycenter<dimension>(it)));
@@ -746,6 +777,91 @@ namespace CGAL {
       return res;
     }
   };
+
+  // Linear_cell_complex using compact container with handle.
+  // No difference with class Linear_cell_complex_base except the default
+  // template parameters for Refs class.
+  template < unsigned int d_, unsigned int ambient_dim = d_,
+             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
+             class Items_ = Linear_cell_complex_min_items<d_>,
+             class Alloc_ = CGAL_ALLOCATOR(int),
+             template<unsigned int,class,class,class,class>
+             class CMap = Combinatorial_map_base,
+             class Storage_ = Linear_cell_complex_storage_1<d_, ambient_dim,
+                                                            Traits_, Items_,
+                                                            Alloc_> >
+    class Linear_cell_complex: public Linear_cell_complex_base<d_,
+        ambient_dim, Traits_, Items_, Alloc_, CMap,
+        Linear_cell_complex<d_, ambient_dim,
+               Traits_, Items_, Alloc_, CMap, Storage_>,
+        Storage_>
+    {
+    public:
+      typedef Linear_cell_complex<d_, ambient_dim,
+                          Traits_, Items_, Alloc_, CMap, Storage_>  Self;
+
+      typedef Linear_cell_complex_base<d_, ambient_dim,
+                          Traits_, Items_, Alloc_, CMap, Self, Storage_> Base;
+
+      typedef Traits_ Traits;
+      typedef Items_  Items;
+      typedef Alloc_  Alloc;
+
+      static const unsigned int ambient_dimension = Base::ambient_dimension;
+      static const unsigned int dimension = Base::dimension;
+
+      typedef typename Base::Dart_handle       Dart_handle;
+      typedef typename Base::Dart_const_handle Dart_const_handle;
+      typedef typename Base::Helper            Helper;
+
+      typedef typename Base::Point  Point;
+      typedef typename Base::Vector Vector;
+      typedef typename Base::FT     FT;
+
+      typedef typename Base::Dart_range Dart_range;
+
+      typedef typename Base::template Attribute_type<0>::type Vertex_attribute;
+      typedef typename Base::template Attribute_handle<0>::type
+      Vertex_attribute_handle;
+      typedef typename Base::template Attribute_const_handle<0>::type
+      Vertex_attribute_const_handle;
+
+      typedef typename Base::template Attribute_range<0>::type
+      Vertex_attribute_range;
+      typedef typename Base::template Attribute_const_range<0>::type
+      Vertex_attribute_const_range;
+
+      typedef typename Base::size_type size_type;
+
+      typedef typename Base::Use_index Use_index;
+      typedef typename Base::Storage Storage;
+
+      Linear_cell_complex() : Base()
+      {}
+
+      /** Copy the given linear cell complex into *this.
+       *  Note that both LCC can have different dimensions and/or non void attributes.
+       *  @param alcc the linear cell complex to copy.
+       *  @post *this is valid.
+       */
+      Linear_cell_complex(const Self & alcc)
+      { Base::template copy<Self>(alcc); }
+
+      template < class LCC2 >
+      Linear_cell_complex(const LCC2& alcc)
+      { Base::template copy<LCC2>(alcc);}
+
+      template < class LCC2, typename Converters >
+      Linear_cell_complex(const LCC2& alcc, Converters& converters)
+      { Base::template copy<LCC2, Converters>(alcc, converters);}
+
+      template < class LCC2, typename Converters, typename Pointconverter >
+      Linear_cell_complex(const LCC2& alcc, Converters& converters,
+                                    const Pointconverter& pointconverter)
+      { Base::template copy<LCC2, Converters, Pointconverter>
+            (alcc, converters, pointconverter);}
+
+    };
 
 } // namespace CGAL
 

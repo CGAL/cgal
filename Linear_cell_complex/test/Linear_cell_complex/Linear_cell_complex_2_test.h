@@ -25,6 +25,31 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <fstream>
 
+#define LCC_TRACE_TEST_BEGIN 1
+
+void trace_test_begin()
+{
+#ifdef LCC_TRACE_TEST_BEGIN
+  static unsigned int nbtest = 0;
+
+  std::cout<<"Test "<<nbtest++<<" ..."<<std::flush;
+#endif
+}
+
+void trace_test_end()
+{
+#ifdef LCC_TRACE_TEST_BEGIN
+  std::cout<<"Ok."<<std::endl;
+#endif
+}
+
+void trace_display_msg(const char* msg)
+{
+#ifdef LCC_TRACE_TEST_BEGIN
+  std::cout<<"***************** "<<msg<<"***************** "<<std::endl;
+#endif
+}
+
 template<typename LCC>
 bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
                              unsigned int nbf, unsigned int nbcc)
@@ -35,7 +60,7 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
       assert(false);
       return false;
     }
-  
+
   std::vector<unsigned int> nbc;
   nbc=lcc.count_all_cells();
 
@@ -58,7 +83,9 @@ bool check_number_of_cells_2(LCC& lcc, unsigned int nbv, unsigned int nbe,
       assert(false);
       return false;
     }
-  
+
+  trace_test_end();
+
   return true;
 }
 
@@ -92,58 +119,69 @@ bool test_LCC_2()
   typedef typename LCC::Point Point;
 
   // Construction operations
+  trace_test_begin();
   Dart_handle dh1=lcc.make_segment(Point(0,0),Point(1,0));
   Dart_handle dh2=lcc.make_segment(Point(2,0),Point(2,1));
   Dart_handle dh3=lcc.make_segment(Point(2,2),Point(3,1));
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
-  
+
+  trace_test_begin();
   lcc.template sew<0>(dh2,dh1);
   lcc.template sew<1>(dh2,dh3);
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
+  trace_test_begin();
   Dart_handle dh5=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
-  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));    
+  Dart_handle dh6=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
   if ( !check_number_of_cells_2(lcc, 10, 9, 6, 3) )
     return false;
 
+  trace_test_begin();
   lcc.template sew<2>(dh5,dh6);
   if ( !check_number_of_cells_2(lcc, 8, 8, 6, 2) )
     return false;
 
+  trace_test_begin();
   Dart_handle dh7=lcc.template insert_barycenter_in_cell<1>(dh1);
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
 
+  trace_test_begin();
   Dart_handle dh8=lcc.template insert_barycenter_in_cell<2>(dh5);
   if ( !check_number_of_cells_2(lcc, 10, 12, 8, 2) )
     return false;
 
+  trace_test_begin();
   Dart_handle dh9=lcc.template insert_point_in_cell<1>(dh2,Point(1,0));
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
 
+  trace_test_begin();
   Dart_handle dh10=lcc.template insert_point_in_cell<2>(dh6,Point(6,5));
   if ( !check_number_of_cells_2(lcc, 12, 16, 10, 2) )
     return false;
 
+  trace_test_begin();
   Dart_handle dh11=lcc.insert_dangling_cell_1_in_cell_2(dh8,Point(6,5.2));
   if ( !check_number_of_cells_2(lcc, 13, 17, 10, 2) )
     return false;
 
   // Removal operations
+  trace_test_begin();
   CGAL::remove_cell<LCC,1>(lcc, dh11);
   if ( !check_number_of_cells_2(lcc, 12, 16, 10, 2) )
     return false;
 
+  trace_test_begin();
   std::vector<Dart_handle> toremove;
   for ( typename LCC::template Dart_of_cell_range<0,2>::iterator
           it=lcc.template darts_of_cell<0,2>(dh10).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
           it!=itend; ++it )
     toremove.push_back( it );
-  
+
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
@@ -151,44 +189,52 @@ bool test_LCC_2()
   if ( !check_number_of_cells_2(lcc, 11, 13, 8, 2) )
     return false;
 
+  trace_test_begin();
   CGAL::remove_cell<LCC,0>(lcc, dh9);
   if ( !check_number_of_cells_2(lcc, 10, 12, 8, 2) )
     return false;
 
+  trace_test_begin();
   for ( typename LCC::template Dart_of_cell_range<0,2>::iterator
           it=lcc.template darts_of_cell<0,2>(dh8).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh8).end();
         it!=itend; ++it )
     toremove.push_back( it );
-  
+
   for ( typename std::vector<Dart_handle>::iterator
           it=toremove.begin(), itend=toremove.end(); it!=itend; ++it )
     CGAL::remove_cell<LCC,1>(lcc, *it);
   toremove.clear();
   if ( !check_number_of_cells_2(lcc, 9, 9, 6, 2) )
     return false;
-  
+
+  trace_test_begin();
   CGAL::remove_cell<LCC,0>(lcc, dh7);
   if ( !check_number_of_cells_2(lcc, 8, 8, 6, 2) )
     return false;
 
+  trace_test_begin();
   lcc.template unsew<2>(dh5);
   if ( !check_number_of_cells_2(lcc, 10, 9, 6, 3) )
     return false;
 
+  trace_test_begin();
   CGAL::remove_cell<LCC,2>(lcc, dh6);
   CGAL::remove_cell<LCC,2>(lcc, dh5);
   if ( !check_number_of_cells_2(lcc, 4, 3, 4, 1) )
     return false;
 
+  trace_test_begin();
   lcc.template unsew<1>(dh2);
   if ( !check_number_of_cells_2(lcc, 5, 3, 5, 2) )
     return false;
 
+  trace_test_begin();
   lcc.template unsew<0>(dh2);
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
 
+  trace_test_begin();
   CGAL::remove_cell<LCC,1>(lcc, dh1);
   CGAL::remove_cell<LCC,1>(lcc, dh2);
   CGAL::remove_cell<LCC,1>(lcc, dh3);
@@ -196,6 +242,7 @@ bool test_LCC_2()
     return false;
 
   {
+    trace_test_begin();
     std::ifstream in("data/graph.txt");
     if ( in.fail() )
     {
@@ -207,7 +254,8 @@ bool test_LCC_2()
       return false;
     lcc.clear();
   }
-    
+
+  trace_test_begin();
   lcc.clear();
   dh1=lcc.make_triangle(Point(5,5),Point(7,5),Point(6,6));
   dh2=lcc.make_triangle(Point(5,4),Point(7,4),Point(6,3));
@@ -217,33 +265,41 @@ bool test_LCC_2()
   if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
+  trace_test_end();
 
+  trace_test_begin();
   lcc.reverse_orientation();
   if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
+  trace_test_end();
 
+  trace_test_begin();
   lcc.reverse_orientation();
   if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
+  trace_test_end();
 
+  trace_test_begin();
   lcc.reverse_orientation_connected_component(dh1);
   if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc, false) )
   { assert(false); return false; }
+  trace_test_end();
 
+  trace_test_begin();
   lcc.reverse_orientation_connected_component(dh1);
   if ( !lcc.is_valid() ) { assert(false); return false; }
   if ( !lcc2.is_isomorphic_to(lcc) )
   { assert(false); return false; }
-
+  trace_test_end();
 
   return true;
 }

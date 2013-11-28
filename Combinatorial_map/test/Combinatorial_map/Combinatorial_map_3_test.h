@@ -452,8 +452,8 @@ bool test3D()
        d3 = make_combinatorial_tetrahedron(map);
       // Sew the 2 tetrahedra along one facet
       map.template sew<3>(d1, d2);
-      map.template sew<3>(d2->beta(2), d3);
-      map.template sew<3>(d1->beta(2), d3->beta(2));
+      map.template sew<3>(map.beta(d2,2), d3);
+      map.template sew<3>(map.beta(d1,2), map.beta(d3,2));
     }
 
   // Two nested iterators
@@ -571,7 +571,7 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   d1 = make_edge(map);
-  d2 = d1->beta(2);
+  d2 = map.beta(d1,2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove vertex3: " << flush; CGAL::remove_cell<Map,0>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -579,13 +579,14 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   d1 = make_edge(map);
-  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
+  map.template sew<1>(d1, d1);
+  map.template sew<1>(map.beta(d1,2), map.beta(d1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove vertex5: " << flush; CGAL::remove_cell<Map,0>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   d1 = make_combinatorial_polygon(map,3);
-  d2 = d1->beta(0); d3 = d1->beta(1);
+  d2 = map.beta(d1,0); d3 = map.beta(d1,1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   cout << "remove vertex6: " << flush; CGAL::remove_cell<Map,0>(map,d1);
@@ -599,7 +600,7 @@ bool test3D()
 
   d1 = make_combinatorial_polygon(map,3);
   d2 = make_combinatorial_polygon(map,3);
-  map.template sew<3>(d1, d2); d2 = d1->beta(0); d3 = d1->beta(1);
+  map.template sew<3>(d1, d2); d2 = map.beta(d1,0); d3 = map.beta(d1,1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   cout << "remove vertex9: " << flush; CGAL::remove_cell<Map,0>(map,d1);
@@ -634,7 +635,8 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   d1 = make_edge(map);
-  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
+  map.template sew<1>(d1, d1);
+  map.template sew<1>(map.beta(d1,2), map.beta(d1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove edge4: " << flush; CGAL::remove_cell<Map,1>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -646,7 +648,7 @@ bool test3D()
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   d1 = make_combinatorial_polygon(map,3);
-  d2 = d1->beta(0); d3 = d1->beta(1);
+  d2 = map.beta(d1,0); d3 = map.beta(d1,1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   cout << "remove edge6: " << flush; CGAL::remove_cell<Map,1>(map,d1);
@@ -660,7 +662,7 @@ bool test3D()
 
   d1 = make_combinatorial_polygon(map,3);
   d2 = make_combinatorial_polygon(map,3);
-  map.template sew<3>(d1, d2); d2 = d1->beta(0); d3 = d1->beta(1);
+  map.template sew<3>(d1, d2); d2 = map.beta(d1,0); d3 = map.beta(d1,1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   cout << "remove edge9: " << flush; CGAL::remove_cell<Map,1>(map,d1);
@@ -683,7 +685,8 @@ bool test3D()
   d2 = make_combinatorial_polygon(map,3);
   map.template sew<2>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "remove edge13: " << flush; CGAL::remove_cell<Map,1>(map,d1->beta(1));
+  cout << "remove edge13: " << flush;
+  CGAL::remove_cell<Map,1>(map,map.beta(d1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove edge14: " << flush; CGAL::remove_cell<Map,1>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -740,19 +743,24 @@ bool test3D()
   d1 = make_combinatorial_hexahedron(map);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "remove facet4: " << flush; CGAL::remove_cell<Map,2>(map,d1->beta(2)->beta(1)->beta(1)->beta(2));
+  cout << "remove facet4: " << flush;
+  CGAL::remove_cell<Map,2>(map,map.beta(d1,2,1,1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "remove facet5: " << flush; CGAL::remove_cell<Map,2>(map,d1->beta(1)->beta(1)->beta(2));
+  cout << "remove facet5: " << flush;
+  CGAL::remove_cell<Map,2>(map,map.beta(d1,1,1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "remove facet6: " << flush; CGAL::remove_cell<Map,2>(map,d1->beta(2));
+  cout << "remove facet6: " << flush;
+  CGAL::remove_cell<Map,2>(map,map.beta(d1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "remove facet7: " << flush; CGAL::remove_cell<Map,2>(map,d1->beta(1)->beta(2));
+  cout << "remove facet7: " << flush;
+  CGAL::remove_cell<Map,2>(map,map.beta(d1,1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "remove facet8: " << flush; CGAL::remove_cell<Map,2>(map,d1->beta(0)->beta(2));
+  cout << "remove facet8: " << flush;
+  CGAL::remove_cell<Map,2>(map,map.beta(d1,0,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   cout << "remove facet9: " << flush; CGAL::remove_cell<Map,2>(map,d1);
@@ -762,15 +770,16 @@ bool test3D()
   d2 = make_combinatorial_hexahedron(map);
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  d3 = d1->beta(1)->beta(2);
+  d3 = map.beta(d1,1,2);
 
-  cout << "remove facet10: " << flush; CGAL::remove_cell<Map,2>(map,d1->beta(2));
+  cout << "remove facet10: " << flush;
+  CGAL::remove_cell<Map,2>(map,map.beta(d1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
   cout << "remove facet11: " << flush; CGAL::remove_cell<Map,2>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  d1 = d3->beta(0)->beta(2);
+  d1 = map.beta(d3,0,2);
   cout << "remove edge12: " << flush; CGAL::remove_cell<Map,1>(map,d3);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
@@ -836,7 +845,8 @@ bool test3D()
   map.clear();
 
   d1 = make_edge(map);
-  map.template sew<1>(d1, d1); map.template sew<1>(d1->beta(2), d1->beta(2));
+  map.template sew<1>(d1, d1);
+  map.template sew<1>(map.beta(d1,2), map.beta(d1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "insert vertex4: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -850,7 +860,7 @@ bool test3D()
   map.clear();
 
   d1 = make_combinatorial_polygon(map,3);
-  d2 = d1->beta(0); d3 = d1->beta(1);
+  d2 = map.beta(d1,0); d3 = map.beta(d1,1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "insert vertex6: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -862,7 +872,7 @@ bool test3D()
 
   d1 = make_combinatorial_polygon(map,3);
   d2 = make_combinatorial_polygon(map,3);
-  map.template sew<3>(d1, d2); d2 = d1->beta(0); d3 = d1->beta(1);
+  map.template sew<3>(d1, d2); d2 = map.beta(d1,0); d3 = map.beta(d1,1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "insert vertex9: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -884,7 +894,8 @@ bool test3D()
   d2 = make_combinatorial_polygon(map,3);
   map.template sew<2>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex13: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(1));
+  cout << "insert vertex13: " << flush;
+  CGAL::insert_cell_0_in_cell_1(map,map.beta(d1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "insert vertex14: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -895,11 +906,14 @@ bool test3D()
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
 
-  cout << "insert vertex15: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(1)->beta(1));
+  cout << "insert vertex15: " << flush;
+  CGAL::insert_cell_0_in_cell_1(map,map.beta(d1,1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex16: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(1));
+  cout << "insert vertex16: " << flush;
+  CGAL::insert_cell_0_in_cell_1(map,map.beta(d1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert vertex17: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1->beta(0));
+  cout << "insert vertex17: " << flush;
+  CGAL::insert_cell_0_in_cell_1(map,map.beta(d1,0));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "insert vertex18: " << flush; CGAL::insert_cell_0_in_cell_1(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
@@ -928,7 +942,7 @@ bool test3D()
   d1 = make_edge(map);
   d2 = make_edge(map);
   map.template sew<3>(d1, d2);
-  map.template sew<3>(d1->beta(2), d2->beta(2));
+  map.template sew<3>(map.beta(d1,2), map.beta(d2,2));
   map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   /*  cout << "insert edge3: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1);
@@ -937,7 +951,8 @@ bool test3D()
 
   d1 = make_combinatorial_polygon(map,4 );
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge4: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
+  cout << "insert edge4: " << flush;
+  CGAL::insert_cell_1_in_cell_2(map,d1, map.beta(d1,1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -945,7 +960,8 @@ bool test3D()
   d2 = make_combinatorial_polygon(map,4);
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge5: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
+  cout << "insert edge5: " << flush;
+  CGAL::insert_cell_1_in_cell_2(map,d1, map.beta(d1,1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -953,7 +969,8 @@ bool test3D()
   d2 = make_combinatorial_polygon(map,4);
   map.template sew<2>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert edge6: " << flush; CGAL::insert_cell_1_in_cell_2(map,d1, d1->beta(1)->beta(1));
+  cout << "insert edge6: " << flush;
+  CGAL::insert_cell_1_in_cell_2(map,d1, map.beta(d1,1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
   map.clear();
@@ -966,28 +983,34 @@ bool test3D()
 
   d1 = map.create_dart();
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge1: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge1: " << flush;
+  CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_edge(map);
   map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge2: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge2: " << flush;
+  CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_edge(map);
   d2 = make_edge(map);
-  map.template sew<3>(d1, d2); map.template sew<3>(d1->beta(2), d2->beta(2)); map.template sew<1>(d1, d1);
+  map.template sew<3>(d1, d2);
+  map.template sew<3>(map.beta(d1,2), map.beta(d2,2));
+  map.template sew<1>(d1, d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge3: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge3: " << flush;
+  CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
   d1 = make_combinatorial_polygon(map,4);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge4: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge4: " << flush;
+  CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -995,7 +1018,8 @@ bool test3D()
   d2 = make_combinatorial_polygon(map,4);
   map.template sew<3>(d1, d2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert dangling edge5: " << flush; CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
+  cout << "insert dangling edge5: " << flush;
+  CGAL::insert_dangling_cell_1_in_cell_2(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
 
@@ -1008,44 +1032,48 @@ bool test3D()
   std::vector<Dart_handle> v;
 
   d1 = make_combinatorial_polygon(map,4);
-  v.push_back(d1); v.push_back(v[0]->beta(1));
-  v.push_back(v[1]->beta(1)); v.push_back(v[2]->beta(1));
+  v.push_back(d1); v.push_back(map.beta(v[0],1));
+  v.push_back(map.beta(v[1],1)); v.push_back(map.beta(v[2],1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert facet1: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  cout << "insert facet1: " << flush;
+  CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
 
   d1 = make_combinatorial_polygon(map,3);
   d2 = make_combinatorial_polygon(map,3);
   map.template sew<2>(d1, d2);
-  v.push_back(d1); v.push_back(v[0]->beta(1)); v.push_back(v[1]->beta(1));
+  v.push_back(d1); v.push_back(map.beta(v[0],1));
+  v.push_back(map.beta(v[1],1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  cout << "insert facet2: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  cout << "insert facet2: " << flush;
+  CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
 
   d1 = make_combinatorial_hexahedron(map);
-  d2 = d1->beta(2);
+  d2 = map.beta(d1,2);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove facet3: " << flush; CGAL::remove_cell<Map,2>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  v.push_back(d2); v.push_back(v[0]->beta(1)->beta(2)->beta(1)); 
-  v.push_back(v[1]->beta(1)->beta(2)->beta(1)); v.push_back(v[2]->beta(1)->beta(2)->beta(1));
-  cout << "insert facet3: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
+  v.push_back(d2); v.push_back(map.beta(v[0],1,2,1));
+  v.push_back(map.beta(v[1],1,2,1)); v.push_back(map.beta(v[2],1,2,1));
+  cout << "insert facet3: " << flush;
+  CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();
     
   d1 = make_combinatorial_hexahedron(map);
   d2 = make_combinatorial_hexahedron(map);
   map.template sew<3>(d1,d2);   
-  d3 = d1->beta(2);
+  d3 = map.beta(d1, 2);
   d4 = map.beta(d1, 1,3,1,2);
-  assert(d4==d1->beta(1)->beta(3)->beta(1)->beta(2));
+  assert(d4==map.beta(d1,1,3,1,2));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   cout << "remove facet4: " << flush; CGAL::remove_cell<Map,2>(map,d1);
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
-  v.push_back(d3); v.push_back(v[0]->beta(1)->beta(2)->beta(1)); 
-  v.push_back(v[1]->beta(1)->beta(2)->beta(1)); v.push_back(v[2]->beta(1)->beta(2)->beta(1));
+  v.push_back(d3); v.push_back(map.beta(v[0],1,2,1));
+  v.push_back(map.beta(v[1],1,2,1)); v.push_back(map.beta(v[2],1,2,1));
   cout << "insert facet4: " << flush; CGAL::insert_cell_2_in_cell_3(map,v.begin(),v.end());
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear(); v.clear();    

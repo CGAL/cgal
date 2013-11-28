@@ -27,7 +27,7 @@ struct Display_vol_vertices : public std::unary_function<LCC, void>
            (lcc.dart_handle(d)).end();
          it!=itend; ++it)
     {
-      std::cout << LCC_3::point(it) << "; ";
+      std::cout << lcc.point(it) << "; ";
     }
     std::cout<<std::endl;
   }
@@ -56,7 +56,7 @@ int main()
          v=lcc.vertex_attributes().begin(),
          vend=lcc.vertex_attributes().end(); 
        v!=vend; ++v)
-    std::cout << v->point() << "; ";
+    std::cout << lcc.point_of_vertex_attribute(v) << "; ";
   std::cout<<std::endl;
 
   // Display the vertices of each volume by iterating on darts.
@@ -79,8 +79,8 @@ int main()
          itend=lcc.one_dart_per_incident_cell<0,3>(d2).end();
        it!=itend; ++it)
   {
-    LCC_3::point(it)=LCC_3::Traits::Construct_translated_point_3()
-      (LCC_3::point(it),v);
+    lcc.point(it)=LCC_3::Traits::Construct_translated_point_3()
+      (lcc.point(it),v);
   }
 
   // Display the vertices of each volume by iterating on darts.

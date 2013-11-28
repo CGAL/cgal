@@ -167,7 +167,7 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( it->template attribute<i>()==NULL )
+      if ( it->template attribute<i>()==map.null_handle )
         map.template set_attribute<i>
             (it, map.template create_attribute<i>(++nb));
     }
@@ -194,7 +194,7 @@ struct DisplayAttribs
           itend=amap.template attributes<i>().end();
           it!=itend; ++it )
     {
-      std::cout<<it->info()<<"; ";
+      std::cout<<amap.template get_attribute<i>(it).info()<<"; ";
     }
     std::cout<<std::endl;
   }
@@ -254,7 +254,7 @@ void create3Dmap(Map& map)
   for ( int i=0; i<20; ++i )
   {
     typename Map::Dart_handle d1=map.darts().begin();
-    while ( !d1->template is_free<3>() ) ++d1;
+    while ( !map.template is_free<3>(d1) ) ++d1;
     typename Map::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
@@ -273,7 +273,7 @@ void create4Dmap(Map& map)
   for ( int i=0; i<40; ++i )
   {
     typename Map::Dart_handle d1=map.darts().begin();
-    while ( !d1->template is_free<3>() ) ++d1;
+    while ( !map.template is_free<3>(d1) ) ++d1;
     typename Map::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
@@ -282,7 +282,7 @@ void create4Dmap(Map& map)
   for ( int i=0; i<20; ++i )
   {
     typename Map::Dart_handle d1=map.darts().begin();
-    while ( !d1->template is_free<4>() ) ++d1;
+    while ( !map.template is_free<4>(d1) ) ++d1;
     typename Map::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
@@ -314,6 +314,8 @@ bool testCopy()
   if ( !map1p.is_valid() || !map1.is_isomorphic_to(map1p) )
   { assert(false); return false; }
   Map2 map2p(map2);
+  if ( !map2.is_isomorphic_to(map2p, false) )
+  { assert(false); return false; }
   if ( !map2p.is_valid() || !map2.is_isomorphic_to(map2p) )
   { assert(false); return false; }
   Map3 map3p(map3);

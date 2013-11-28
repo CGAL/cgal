@@ -109,26 +109,13 @@ struct Test_is_valid_attribute_functor
 /// We can use any range as Range type, by default we use
 /// Dart_of_cell_range<i>
 template<typename CMap, unsigned int i,
-         typename Range=typename CMap::template Dart_of_cell_range<i>,
          typename T=typename CMap::template Attribute_type<i>::type>
 struct Set_i_attribute_functor
 {
   static void run( CMap* amap, typename CMap::Dart_handle dh,
-                   typename CMap::template Attribute_handle<i>::type
-                   ah )
+                   typename CMap::template Attribute_handle<i>::type ah )
   {
-    CGAL_static_assertion(i<=CMap::dimension);
-    CGAL_assertion( dh!=NULL && dh!=CMap::null_dart_handle && ah!=NULL );
-
-    for ( typename Range::iterator it(*amap, dh); it.cont(); ++it)
-    {
-      if ( it->template attribute<i>()!=ah )
-      {
-        internal::Decrease_attribute_functor_run<CMap, i>::run(amap, it);
-        it->template set_attribute<i>(ah);
-      }
-    }
-    ah->set_dart(dh);
+    amap->template set_attribute<i>(dh, ah);
   }
 };
 /// Specialization for void attributes.

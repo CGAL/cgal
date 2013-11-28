@@ -1,7 +1,6 @@
 #ifndef SCENE_COMBINATORIAL_MAP_ITEM_H
 #define SCENE_COMBINATORIAL_MAP_ITEM_H
 
-
 //=========
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
 #include "Scene_combinatorial_map_item_config.h"

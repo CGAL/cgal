@@ -71,10 +71,10 @@ int main()
   Dart_handle d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
 
   // 3-Sew the two cubes along one facet.
-  lcc.sew<3>(d1->beta(1)->beta(1)->beta(2), d2->beta(2));
+  lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
   // Barycentric triangulation of the facet between the two cubes.
-  lcc.insert_barycenter_in_cell<2>(d2->beta(2));
+  lcc.insert_barycenter_in_cell<2>(lcc.beta(d2, 2));
 
   // Display all the vertices of the map.
   for (LCC_3::Vertex_attribute_range::iterator 
@@ -82,7 +82,8 @@ int main()
          itend=lcc.vertex_attributes().end(); 
        it!=itend; ++it)
   {
-    std::cout<<"point: "<<it->point()<<", "<<"type: "<<it->point().type()
+    std::cout<<"point: "<<lcc.point_of_vertex_attribute(it)
+             <<", "<<"type: "<<lcc.point_of_vertex_attribute(it).type()
              <<std::endl;
   }
 
