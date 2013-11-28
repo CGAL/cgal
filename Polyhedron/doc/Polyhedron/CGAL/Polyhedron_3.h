@@ -337,7 +337,7 @@ public:
     Halfedge_around_vertex_circulator vertex_begin(); 
 
     /*!
-      circulator of halfedges around the vertex (clockwise). 
+      circulator of halfedges around the vertex (clockwise), the vertex of the halfedges being `*this`.
     */ 
     Halfedge_around_vertex_const_circulator vertex_begin() const; 
 
