@@ -132,18 +132,24 @@ struct Triangle_Line_visitor {
   ::result_type result_type;
 
   result_type
-  operator()(const typename K::Point_3& p, const typename K::Segment_3&) const {
-    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
+  operator()(const typename K::Point_3& p, const typename K::Segment_3& s) const {
+    if ( s.has_on(p) )
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
+    else
+      return result_type();
   }
 
   result_type
-  operator()(const typename K::Segment_3&, const typename K::Point_3& p) const {
-    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p);
+  operator()(const typename K::Segment_3& s, const typename K::Point_3& p) const {
+    return operator()(p,s);
   }
 
   result_type
-  operator()(const typename K::Point_3& p1, const typename K::Point_3&) const {
-    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p1);
+  operator()(const typename K::Point_3& p1, const typename K::Point_3& p2) const {
+    if (p1==p2)
+      return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(p1);
+    else
+      return result_type();
   }
 
   result_type
@@ -158,7 +164,7 @@ struct Triangle_Line_visitor {
         return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>(*p);
     }
 
-    return intersection_return<typename K::Intersect_3, typename K::Triangle_3, typename K::Triangle_3>();
+    return result_type();
   }
 };
   
