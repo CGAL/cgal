@@ -4,9 +4,10 @@
 // In order to activate lazy evaluation:
 // #define LAZY
 
-#include <CGAL/basic.h>
-#include <CGAL/squared_distance_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Triangulation_data_structure_3.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+
 #include <cstdio>
 #include <cstring>
 #include <cassert>
@@ -21,7 +22,7 @@
 #include <CGAL/AFSR/Surface_face_base_2.h>
 #include <CGAL/AFSR/construct_surface_2.h>
 #include <CGAL/AFSR_options.h>
-
+#include <CGAL/AFSR/write_triple_indices.h>
 namespace CGAL {
 
 // This iterator allows to visit all contours. It has the particularity
@@ -218,10 +219,6 @@ private:
   double total_area;
   double total_perimeter;
   //---------------------------------------------------------------------
-
-  CGAL::Timer t1;
-
-  //---------------------------------------------------------------------
   //Pour une visu correcte
   //pour retenir les facettes selectionnees
   int _vh_number;
@@ -237,7 +234,7 @@ private:
   int _number_of_connected_components;
 
 public:
-  Advancing_front_surface_reconstruction(Triangulation_3& T_, const AFSR_options& opt)
+  Advancing_front_surface_reconstruction(Triangulation_3& T_, const AFSR_options& opt = AFSR_options())
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
@@ -1528,7 +1525,6 @@ public:
     K = K_init; // valeur d'initialisation de K pour commencer prudemment...
 
     Vertex_handle v1, v2;
-    t1.start();
     if (_ordered_border.empty()) return;
     do
       {
@@ -1596,7 +1592,6 @@ public:
 	// faire des betises auparavant...
       }
     while((!_ordered_border.empty())&&(K <= K_max)&&(min_K != HUGE_VAL));
-    t1.stop();
 
 #ifdef VERBOSE
     if ((min_K < HUGE_VAL)&&(!_ordered_border.empty())) {
@@ -1966,10 +1961,37 @@ public:
 
 }; // class Advancing_front_surface_reconstruction
 
+namespace AFSR {
+  
+  template <typename T>
+struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
+    mutable int i;
+    Auto_count() : i(0){}
+    std::pair<T,int> operator()(const T& p) const {
+      return std::make_pair(p,i++);
+    }
+  };
+}
+
 template <typename PointIterator, typename IndexTripleIterator>
 IndexTripleIterator
 advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTripleIterator out)
 {
+  typedef Exact_predicates_inexact_constructions_kernel Kernel;
+  typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
+  typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
+
+  typedef Triangulation_data_structure_3<LVb,LCb> Tds;
+  typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
+
+  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Reconstruction;
+  typedef Kernel::Point_3 Point_3;
+  
+  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
+                      boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+
+  Reconstruction R(dt);
+  write_triple_indices(out, R);
   return out;
 }
 

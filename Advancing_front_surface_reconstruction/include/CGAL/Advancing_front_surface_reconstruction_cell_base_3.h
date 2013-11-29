@@ -13,7 +13,7 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename CellBase::template Rebind_TDS<TDS2>::Other  Cb2;
-    typedef Advancing_front_surface_reconstruction_cell_base_3<Cb2>                    Other;
+    typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel,Cb2>                    Other;
   };
 
   typedef typename CellBase::Vertex_handle Vertex_handle;

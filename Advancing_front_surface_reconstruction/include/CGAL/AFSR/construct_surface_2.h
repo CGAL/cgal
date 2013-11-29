@@ -1,4 +1,5 @@
 #ifndef CGAL_AFSR_CONSTRUCT_SURFACE_2
+#define CGAL_AFSR_CONSTRUCT_SURFACE_2
 
 namespace CGAL {
 

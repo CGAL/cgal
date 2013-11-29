@@ -204,7 +204,7 @@ write_to_file_gv(char* foutput, const Surface& S)
   std::cout << "-- oogl result written." << std::endl;
 }
 
-
+  /*
 template <class OutputIterator, class Surface>
 OutputIterator
 write_triple_indices(OutputIterator out, const Surface& S)
@@ -271,6 +271,8 @@ write_triple_indices(OutputIterator out, const Surface& S)
   return out;
 #endif
 }
+*/
+
 
 //---------------------------------------------------------------------
 template <class Surface>

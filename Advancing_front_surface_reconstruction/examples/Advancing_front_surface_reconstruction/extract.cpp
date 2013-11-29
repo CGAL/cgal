@@ -16,8 +16,10 @@
 
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/AFSR_options.h>
+#include <CGAL/AFSR/write_triple_indices.h>
 #include <CGAL/IO/Advancing_front_surface_reconstruction.h>
 
+#include <CGAL/Timer.h>
 
 
 
