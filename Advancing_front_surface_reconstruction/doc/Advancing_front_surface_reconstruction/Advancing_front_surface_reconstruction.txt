@@ -21,13 +21,23 @@ We distinguish
 
 \subsection AFSR_Example_function Example for Global Function 
 
-The basic
+The global function `advancing_front_surface_reconstruction/reconstruction()` 
+takes an iterator range of points as input and writes for each face of the 
+reconstructed surface a triple of point indices into an output iterator. 
+In the example we write the surface in the OFF format to `std::cout`. 
+
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_fct.cpp}
 
 
 \subsection AFSR_Example_class Example for Class
 
-A 
+When using the class `Advancing_front_surface_reconstruction/reconstruction`
+you can access a 2D triangulation data structure describing the surface.
+You can explore the surface by going from faces to neighboring faces, 
+and you can also go to the underlying 3D Delaunay triangulation.
+
+In the example we write the surface in the STL (Stereo Lithography) format
+to `std::cout`.
 
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_class.cpp}
 
