@@ -8,10 +8,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3  Point_3;
-typedef std::vector<Point_3> V;
 
 typedef CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t> Facet;
-typedef std::vector<Facet> F;
 
 namespace std {
   std::ostream& 
@@ -24,8 +22,8 @@ namespace std {
 
 int main()
 {
-  V points;
-  F facets;
+  std::vector<Point_3> points;
+  std::vector<Facet> facets;
 
   std::copy(std::istream_iterator<Point_3>(std::cin), 
             std::istream_iterator<Point_3>(), 

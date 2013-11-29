@@ -133,7 +133,8 @@ public:
 };  
 
 
-template <class Kernel, class Triangulation>
+  template <class Kernel, 
+            class Triangulation = Delaunay_triangulation_3<Kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Kernel>, Advancing_front_surface_reconstruction_cell_base_3<Kernel> > > >
 class Advancing_front_surface_reconstruction {
 
 public:
@@ -234,7 +235,7 @@ private:
   int _number_of_connected_components;
 
 public:
-  Advancing_front_surface_reconstruction(Triangulation_3& T_, const AFSR_options& opt = AFSR_options())
+    Advancing_front_surface_reconstruction(Triangulation_3& T_, const AFSR_options& opt = AFSR_options())
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
     eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
     STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1), 
@@ -242,7 +243,13 @@ public:
     abs_area(opt.abs_area), abs_perimeter(opt.abs_perimeter), total_area(0), total_perimeter(0),
     _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
      _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0)
-  {
+    
+    {}
+
+
+    void operator()(const AFSR_options& opt = AFSR_options())
+    {
+
     bool re_init = false;
     do 
       {
@@ -285,7 +292,15 @@ public:
   {
     return _tds_2;
   }
+
   
+  bool
+  has_boundaries() const
+  {
+    return _tds_2_inf->vertex_3() == triangulation().infinite_vertex();
+  }
+    
+
   bool has_on_surface(typename TDS_2::Vertex_handle vh) const
   {
     return vh != _tds_2_inf;

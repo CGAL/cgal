@@ -25,6 +25,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "extract.cpp" )
   create_single_source_cgal_program( "reconstruction_fct.cpp" )
+  create_single_source_cgal_program( "reconstruction_class.cpp" )
 
 else()
   
