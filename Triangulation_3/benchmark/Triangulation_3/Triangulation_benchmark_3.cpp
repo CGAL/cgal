@@ -195,8 +195,11 @@ void benchmark_remove()
 			++iterations;
 			Time_accumulator tt(time);
 			// We do chunks of 1024 vertex removal at once.
-			for(size_t i = 0; i < 1024; ++i, ++j)
+			for(size_t i = 0; i < 1024; ++i, ++j) {
 				tr.remove(vhs[j]);
+				//std::cout<<"\b\b\b\b\b\b"<<i<<std::flush;
+				//tr.is_valid();
+			}
 		} while (time < BENCH_MIN_TIME);
 		cout << nb_pts << "\t" << (time/iterations)/1024 << SHOW_ITERATIONS;
 	}

@@ -82,6 +82,30 @@ This is the sign of the determinant
   typedef typename PointD::R R;
   typename R::Orientation_d or_; return or_(first,last); }
 
+
+template <class ForwardIterator>
+Orientation
+coaffine_orientation(ForwardIterator first, ForwardIterator last)
+/*{\Mfunc determines the orientation of the points in the tuple 
+|A = tuple [first,last)| where $A$ consists of $k + 1$ points in $d$ - space. 
+This is the sign of the determinant
+  \[ \left\Lvert \begin{array}{cccc}
+  1 & 1 & 1 & 1 \\
+  A[0] & A[1] & \dots & A[k]
+  \end{array}  \right\Lvert  \]
+  where |A[a_i]| denotes the cartesian coordinate vector of 
+  the $i$-th point in $A$, after projection on an axis-aligned |k|-affine subspace.
+  \precond |size [first,last) <= d| and |A[i].dimension() == d| 
+  $\forall 0 \leq i \leq d$
+  and the value type of |ForwardIterator| is |Point_d<R>|.}*/
+{
+    typedef typename std::iterator_traits<ForwardIterator>::value_type PointD;
+    typedef typename PointD::R R;
+    typename R::Coaffine_orientation_d or_;
+    return or_(first,last);
+}
+
+
 template <class R, class ForwardIterator>
 Oriented_side side_of_oriented_sphere(
   ForwardIterator first, ForwardIterator last, 

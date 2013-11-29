@@ -1,0 +1,27 @@
+\begin{ccRefClass}{Triangulation_face<TriangulationDataStructure>}
+
+\ccDefinition
+
+A \ccRefName\ is a model of the concept \ccc{TriangulationDSFace}.
+
+\ccParameters
+
+Parameter \ccc{TriangulationDataStructure} must be a model of the concept
+\ccc{TriangulationDataStructure}.
+Actually, \ccRefName\ needs only that this concept defines the types
+\ccc{Full_cell_handle},
+\ccc{Vertex_handle}, and
+\ccc{Maximal_dimension}.
+
+% FUTURE: Do we create a \ccc{ProtoComplex} concept?
+
+\ccIsModel
+
+\ccc{TriangulationDSFace}
+
+\ccSeeAlso
+
+\ccc{TriangulationDSFace}\\
+\ccc{TriangulationDataStructure}
+
+\end{ccRefClass}

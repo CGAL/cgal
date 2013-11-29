@@ -75,14 +75,14 @@ PointCd(int d, InputIterator first, InputIterator last)
   // else first specifies common denominator:
   CGAL_assertion_msg(FT(*first)!=FT(0),
     "PointCd::constructor: denominator must be nonzero.");
-  for (int i=0; i<d; ++i) entry(i)/=FT(*first);
+  for (int i=0; i<d; ++i) entry(i)=entry(i)/FT(*first);
 }
 
 template <class InputIterator>
 PointCd (int d, InputIterator first, InputIterator last, 
   const FT& D) : Base( Tuple(d,first,last) )
 { CGAL_assertion_msg(D!=FT(0),"PointCd::constructor: D must be nonzero.");
-  for (int i=0; i<d; ++i) entry(i)/=D;
+  for (int i=0; i<d; ++i) entry(i)=entry(i)/D;
 }
 
 PointCd(int x, int y, int w = 1) : Base( Tuple((FT)x,(FT)y) )

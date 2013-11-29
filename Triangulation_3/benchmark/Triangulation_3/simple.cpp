@@ -1,6 +1,6 @@
 //#define CGAL_PROFILE
-#define CGAL_USE_SSE2_FABS
-#define CGAL_USE_SSE2_MAX
+//#define CGAL_USE_SSE2_FABS
+//#define CGAL_USE_SSE2_MAX
 //#define CGAL_MSVC_USE_STD_FABS  // use this one with precise 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
