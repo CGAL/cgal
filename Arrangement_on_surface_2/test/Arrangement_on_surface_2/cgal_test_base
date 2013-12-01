@@ -903,6 +903,18 @@ test_point_location_linear()
 }
 
 #---------------------------------------------------------------------#
+# batchecd point location with segments
+#---------------------------------------------------------------------#
+test_batched_point_location_segments()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_batched_point_location segments "$flags"
+}
+
+#---------------------------------------------------------------------#
 # segment traits
 #---------------------------------------------------------------------#
 test_segment_traits()
@@ -1425,6 +1437,8 @@ test_point_location_linear
 
 test_point_location_dynamic_segments
 
+test_batched_point_location_segments
+
 compile_and_run test_dual
 compile_and_run test_do_intersect
 compile_and_run test_zone
@@ -1440,7 +1454,7 @@ compile_and_run test_removal
 compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
 
-# if any error occured then append the full error description file to error file
+if any error occured then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
     echo "******************** appending all error outputs ********************" >> $ERRORFILE

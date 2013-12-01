@@ -1,8 +1,9 @@
 #include <iostream>
-
-#include "test_configuration.h"
+#include <boost/lexical_cast.hpp>
 
 #include <CGAL/basic.h>
+
+#include "test_configuration.h"
 
 #if ((TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) ||	\
      (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) ||	\
@@ -64,26 +65,21 @@ int main()
 #else
 
 #include "test_traits.h"
-#include "Point_location_dynamic_test.h"
+#include "Batched_point_location_test.h"
 
-bool test1(const char* points_filename, const char* xcurves_filename,
-           const char* curves_filename, const char* commands_filename,
-           const char* queries_filename)
+bool test(const char* points_filename, const char* xcurves_filename,
+          const char* curves_filename, const char* queries_filename,
+          size_t verbose_level)
 {
   Geom_traits geom_traits;
-  Point_location_dynamic_test<Geom_traits, Topol_traits> pl_test(geom_traits);
+  Batched_point_location_test<Geom_traits, Topol_traits> pl_test(geom_traits);
+  pl_test.set_verbose_level(verbose_level);
   pl_test.set_filenames(points_filename, xcurves_filename, curves_filename,
-                        commands_filename, queries_filename);
+                        queries_filename);
 
-  if (!pl_test.allocate_arrangement()) return false;
-  if (!pl_test.construct_pl_strategies()) return false;
   if (!pl_test.init()) return false;
-  if (!pl_test.construct_arrangement()) return false;
   if (!pl_test.perform()) return false;
-
   pl_test.clear();
-  pl_test.deallocate_arrangement();
-  pl_test.deallocate_pl_strategies();
 
   return true;
 }
@@ -95,34 +91,39 @@ int main(int argc, char* argv[])
   CGAL::set_pretty_mode(std::cerr);
 #endif
 
-  if (argc < 5) {
+  size_t verbose_level = 0;
+  int success = 0;
+  size_t i = 1;
+
+  // Test 1
+  if ((argc > 2) && (std::strncmp(argv[1], "-v", 2) == 0)) {
+    verbose_level = boost::lexical_cast<size_t>(argv[2]);
+    i += 2;
+  }
+
+  if (argc < (i + 4)) {
     std::cout << "Usage: " << argv[0]
-              << " point-file xcurve-file curve-file command-file query-file"
+              << " point-file xcurve-file curve-file query-file"
               << std::endl;
     std::cout << "point-file   - the input point file" << std::endl;
     std::cout << "xcurve-file  - the input x-monotone curves file" << std::endl;
-    std::cout << "command-file - the command file" << std::endl;
     std::cout << "curve-file   - the input curve file" << std::endl;
     std::cerr << "query-file  - the input query point file" << std::endl;
     return -1;
   }
 
-  int success = 0;
-
-  // Test 1
-  for (int i = 1; i < argc; i += 5) {
+  for (; i < argc; i += 4) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];
-    const char* commands_filename = argv[i+3];
-    const char* queries_filename = argv[i+4];
+    const char* queries_filename = argv[i+3];
 
-    if (!test1(points_filename, xcurves_filename,
-               curves_filename, commands_filename, queries_filename))
+    if (!test(points_filename, xcurves_filename, curves_filename,
+              queries_filename, verbose_level))
     {
-      std::cout << "ERROR : " << argv[0] << " " << points_filename << " "
-                << xcurves_filename << " " << curves_filename << " "
-                << commands_filename << " " << queries_filename << std::endl;
+      std::cout << "ERROR : " << argv[0] << " "
+                << points_filename << " " << xcurves_filename << " "
+                << curves_filename << " " << queries_filename << std::endl;
       success = -1;
     }
   }
