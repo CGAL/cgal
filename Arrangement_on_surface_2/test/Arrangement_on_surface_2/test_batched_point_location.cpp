@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
     i += 2;
   }
 
-  if (argc < (i + 4)) {
+  if (argc < (static_cast< int >(i) + 4)) {
     std::cout << "Usage: " << argv[0]
               << " point-file xcurve-file curve-file query-file"
               << std::endl;
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  for (; i < argc; i += 4) {
+  for (; static_cast< int >(i) < argc; i += 4) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];

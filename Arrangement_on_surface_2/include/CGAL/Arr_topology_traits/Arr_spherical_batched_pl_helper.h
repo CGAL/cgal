@@ -49,6 +49,7 @@ public:
   typedef Sweep_line_empty_visitor<Traits_2>           Base_visitor;
   typedef typename Base_visitor::Event                 Event;
   typedef typename Base_visitor::Subcurve              Subcurve;
+  typedef typename Event::Subcurve_iterator            Subcurve_iterator;
 
 protected:
 
@@ -79,7 +80,37 @@ public:
   /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    */
-  void after_handle_event(Event*) { return; }
+  void after_handle_event(Event* event) {
+
+    if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY) {
+      Arr_curve_end ind = ((event->number_of_left_curves() == 0) &&
+                           (event->number_of_right_curves() != 0)) ?
+        ARR_MIN_END : ARR_MAX_END;
+      Subcurve_iterator it, nit, it_end;
+      if (ind == ARR_MIN_END) {
+        it = nit = event->right_curves_begin();
+        it_end = event->right_curves_end();
+      } else {
+        it = nit = event->left_curves_begin();
+        it_end = event->left_curves_end();
+      }
+
+      ++nit;
+      if (it != it_end) {
+        while (nit != it_end) {
+          ++it;
+          ++nit;
+        }
+      }
+      const Subcurve* sc = *it;
+      // pick the one facing the top right corner now
+      m_spherical_face = sc->last_curve().halfedge_handle()->face();
+    }
+
+    // TODO EBEB 2013-12-01 do the same for right boundaryx
+
+    return;
+  }
   //@}
 
   /*! Obtain the current top face. */
