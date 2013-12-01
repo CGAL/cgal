@@ -915,6 +915,31 @@ test_batched_point_location_segments()
 }
 
 #---------------------------------------------------------------------#
+# batchecd point location with linear objects
+#---------------------------------------------------------------------#
+test_batched_point_location_linear()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_batched_point_location linear "$flags"
+}
+
+#---------------------------------------------------------------------#
+# batchecd point location with geodesic arcs on the sphere
+#---------------------------------------------------------------------#
+test_batched_point_location_spherical_arcs()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local topol_traits=$SPHERICAL_TOPOL_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
+  compile_and_run_with_flags test_batched_point_location geodesic_arcs_on_sphere "$flags"
+}
+
+#---------------------------------------------------------------------#
 # segment traits
 #---------------------------------------------------------------------#
 test_segment_traits()
@@ -1438,6 +1463,8 @@ test_point_location_linear
 test_point_location_dynamic_segments
 
 test_batched_point_location_segments
+test_batched_point_location_linear
+test_batched_point_location_spherical_arcs
 
 compile_and_run test_dual
 compile_and_run test_do_intersect
@@ -1454,7 +1481,7 @@ compile_and_run test_removal
 compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
 
-if any error occured then append the full error description file to error file
+# if any error occured then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
     echo "******************** appending all error outputs ********************" >> $ERRORFILE
