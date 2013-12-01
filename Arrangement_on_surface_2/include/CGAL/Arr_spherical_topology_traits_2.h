@@ -449,7 +449,8 @@ public:
 
   typedef Arr_inc_insertion_zone_visitor<Arr> Zone_insertion_visitor;
 
-  typedef Arr_naive_point_location<Arr>       Default_point_location_strategy;
+  typedef Arr_naive_point_location<Arr> Default_point_location_strategy;
+  typedef Arr_naive_point_location<Arr> Default_vertical_ray_shooting_strategy;
   //@}
 
   ///! \name Topology-traits methods.
