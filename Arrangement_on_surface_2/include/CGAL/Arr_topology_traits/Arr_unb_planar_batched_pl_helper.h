@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -91,7 +91,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -103,15 +103,15 @@ void Arr_unb_planar_batched_pl_helper<Tr, Arr>::before_sweep ()
   // Initialize the fictitious halfedge lying on the top edge of the
   // fictitious face. We start from the leftmost halfedge, which is
   // incident to the top-left vertex and directed from right to left.
-  Vertex_const_handle  v_tl = 
+  Vertex_const_handle  v_tl =
     Vertex_const_handle (m_top_traits->top_left_vertex());
 
   m_top_fict = v_tl->incident_halfedges();
   if (m_top_fict->direction() == ARR_LEFT_TO_RIGHT)
     m_top_fict = m_top_fict->next()->twin();
-  
+
   CGAL_assertion_code (
-    Vertex_const_handle  v_tr = 
+    Vertex_const_handle  v_tr =
       Vertex_const_handle (m_top_traits->top_right_vertex());
   );
   CGAL_assertion
@@ -138,10 +138,10 @@ after_handle_event (Event* event)
 
   if (event->parameter_space_in_x() != ARR_INTERIOR)
     return;
-    
+
   if (event->parameter_space_in_y() == ARR_TOP_BOUNDARY)
     m_top_fict = m_top_fict->twin()->next()->twin();
-    
+
   return;
 }
 
