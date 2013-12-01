@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein <wein@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -56,16 +56,16 @@ protected:
 
   // Data members:
   //! The topology-traits class.
-  const Topology_traits * m_top_traits;
+  const Topology_traits* m_top_traits;
 
   //! The unbounded arrangement face.
-  Face_const_handle m_unb_face;
+  Face_const_handle m_spherical_face;
 
 public:
   /*! Constructor.
    * \param arr The arrangement.
    */
-  Arr_spherical_batched_pl_helper(const Arrangement_2 *arr) :
+  Arr_spherical_batched_pl_helper(const Arrangement_2* arr) :
     m_top_traits(arr->topology_traits())
   {}
 
@@ -74,22 +74,16 @@ public:
 
   /*! A notification issued before the sweep process starts. */
   void before_sweep()
-  {
-    // Get the unbounded face.
-    m_unb_face = Face_const_handle(m_top_traits->unbounded_face());
-  }
+  { m_spherical_face = Face_const_handle(m_top_traits->spherical_face()); }
 
   /*! A notification invoked after the sweep-line finishes handling the given
    * event.
    */
-  void after_handle_event(Event * ) { return; }
+  void after_handle_event(Event*) { return; }
   //@}
 
-  /*! Get the current top face. */
-  Face_const_handle top_face() const
-  {
-    return m_unb_face;
-  }
+  /*! Obtain the current top face. */
+  Face_const_handle top_face() const { return m_spherical_face; }
 };
 
 } //namespace CGAL
