@@ -46,9 +46,6 @@ public:
 
   typedef typename Points_vector::iterator                Point_iterator;
 
-  typedef std::vector<CGAL::Object>                       Objects_vector;
-  typedef Objects_vector::iterator                        Object_iterator;
-
   typedef typename boost::variant<Vertex_const_handle,
                                   Halfedge_const_handle,
                                   Face_const_handle>      Cell_handle;
@@ -80,11 +77,11 @@ protected:
 
   /*! print the results.
    */
-  void print_results(const std::pair<Point_2, Cell_handle>& res);
+  void print(const std::pair<Point_2, Cell_handle>& res);
 
   /*! print the results.
    */
-  void print_results(const std::pair<Point_2, CGAL::Object>& res);
+  void print(const std::pair<Point_2, CGAL::Object>& res);
 
   /*! Compare the results.
    */
@@ -210,7 +207,7 @@ verify(InputIterator begin, InputIterator end)
   typedef TopolTraits_T TopolTraits;
 
   if (m_verbose_level > 1) {
-    for (InputIterator it = begin; it != end; ++it) print_results(*it);
+    for (InputIterator it = begin; it != end; ++it) print(*it);
   }
 
   typename TopolTraits::Default_point_location_strategy pl(m_arr);
@@ -257,8 +254,7 @@ compare(const Cell_handle& expected, const Cell_handle& actual)
       std::cout << "Actual: a vertex." << std::endl;
       return false;
     }
-    std::cout << "Actual: an unknowen object."
-              << std::endl;
+    std::cout << "Actual: an unknowen object." << std::endl;
     return false;
   }
 
@@ -437,7 +433,7 @@ compare(const CGAL::Object& expected, const CGAL::Object& actual)
 //! \brief prints the results.
 template <typename GeomTraits_T, typename TopolTraits_T>
 void Batched_point_location_test<GeomTraits_T, TopolTraits_T>::
-print_results(const std::pair<Point_2, Cell_handle>& res)
+print(const std::pair<Point_2, Cell_handle>& res)
 {
   // Print the results.
   std::cout << "The point (" << res.first << ") is located ";
@@ -459,7 +455,7 @@ print_results(const std::pair<Point_2, Cell_handle>& res)
 //! \brief prints the results.
 template <typename GeomTraits_T, typename TopolTraits_T>
 void Batched_point_location_test<GeomTraits_T, TopolTraits_T>::
-print_results(const std::pair<Point_2, CGAL::Object>& res)
+print(const std::pair<Point_2, CGAL::Object>& res)
 {
   // Print the results.
   std::cout << "The point (" << res.first << ") is located ";

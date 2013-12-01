@@ -17,12 +17,11 @@ typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 typedef Arrangement_2::Vertex_const_handle              Vertex_const_handle;
 typedef Arrangement_2::Halfedge_const_handle            Halfedge_const_handle;
 typedef Arrangement_2::Face_const_handle                Face_const_handle;
-
-typedef std::pair<Vertex_const_handle, std::pair<CGAL::Object, CGAL::Object> >
-                                                        Vert_decomp_entry;
+typedef std::pair<CGAL::Object, CGAL::Object>           Object_pair;
+typedef std::pair<Vertex_const_handle, Object_pair>     Vert_decomp_entry;
 typedef std::list<Vert_decomp_entry>                    Vert_decomp_list;
 
-int main ()
+int main()
 {
   // Construct the arrangement.
   Arrangement_2    arr;
@@ -38,37 +37,35 @@ int main ()
 
   // Perform vertical ray-shooting from every vertex and locate the feature
   // that lie below it and the feature that lies above it.
-  Vert_decomp_list  vd_list;
-
-  CGAL::decompose (arr, std::back_inserter(vd_list));
+  Vert_decomp_list vd_list;
+  CGAL::decompose(arr, std::back_inserter(vd_list));
 
   // Print the results.
-  Vert_decomp_list::const_iterator       vd_iter;
-  std::pair<CGAL::Object, CGAL::Object>  curr;
-  Vertex_const_handle                    vh;
-  Halfedge_const_handle                  hh;
-  Face_const_handle                      fh;
-
+  Vert_decomp_list::const_iterator vd_iter;
   for (vd_iter = vd_list.begin(); vd_iter != vd_list.end(); ++vd_iter) {
-    curr = vd_iter->second;
+    const Object_pair& curr = vd_iter->second;
     std::cout << "Vertex (" << vd_iter->first->point() << ") : ";
 
+    Vertex_const_handle vh;
+    Halfedge_const_handle hh;
+    Face_const_handle fh;
+
     std::cout << " feature below: ";
-    if (CGAL::assign (hh, curr.first))
+    if (CGAL::assign(hh, curr.first))
       std::cout << '[' << hh->curve() << ']';
-    else if (CGAL::assign (vh, curr.first))
+    else if (CGAL::assign(vh, curr.first))
       std::cout << '(' << vh->point() << ')';
-    else if (CGAL::assign (fh, curr.first))
+    else if (CGAL::assign(fh, curr.first))
       std::cout << "NONE";
     else
       std::cout << "EMPTY";
 
     std::cout << "   feature above: ";
-    if (CGAL::assign (hh, curr.second))
+    if (CGAL::assign(hh, curr.second))
       std::cout << '[' << hh->curve() << ']' << std::endl;
-    else if (CGAL::assign (vh, curr.second))
+    else if (CGAL::assign(vh, curr.second))
       std::cout << '(' << vh->point() << ')' << std::endl;
-    else if (CGAL::assign (fh, curr.second))
+    else if (CGAL::assign(fh, curr.second))
       std::cout << "NONE" << std::endl;
     else
       std::cout << "EMPTY" << std::endl;
