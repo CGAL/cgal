@@ -7,14 +7,10 @@ namespace CGAL {
 The class `Advancing_front_surface_reconstruction` 
 
 \tparam Dt must be a `Delaunay_triangulation_3` with
-`Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3`
-blended into the vertex and cell type. 
+`Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type, and the geometeic traits class must be the `Exact_predicates_inexact_constructions_kernel`.
 
-
-\cgalHeading{Implementation}
-
-The ..
 */
+
 template< typename Dt>
 class Advancing_front_surface_reconstruction {
 public:
@@ -95,7 +91,7 @@ Advancing_front_surface_reconstruction(Dt& dt);
 /*! 
 calls the surface reconstruction function with the default parameters.
 */ 
-  void operator()();
+  void operator()(double K=5, double beta= 0.18);
 
 /*! 
 returns the reconstructed surface.
@@ -167,4 +163,22 @@ has_on_surface(TDS_2::Vertex_handle v2) const;
 
 
 }; /* end Advancing_front_surface_reconstruction */
+
+
+/*!
+\ingroup PkgAdvancingFrontSurfaceReconstruction
+
+For a sequence of points computes a sequence of index triples
+describing the faces of the reconstructed surface.
+
+\tparam PointInputIterator must be an input iterator with 3D points from the `Exact_predicates_inexact_constructions_kernel` as value type.
+\tparam IndicesOutputIterator must be an output iterator to which 
+`CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
+
+
+*/
+  template <class PointInputIterator, IndicesOutputIterator>
+  void advancing_front_surface_reconstruction(PointInputIterator b, PointInputIterator e, IndicesOutputIterator out, double K=5, double beta= 0.18 );
+
+
 } /* end namespace CGAL */

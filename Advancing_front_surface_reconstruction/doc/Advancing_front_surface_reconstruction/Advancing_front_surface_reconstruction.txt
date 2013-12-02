@@ -13,7 +13,7 @@ namespace CGAL {
 Surface reconstruction from an unstructured point set is to find
 a surface that approximates these points. Several techniques have
 been applied to this problem.  Among them are variational
-methods \cgalCite{}, tensor voting \cgalCite{}, implicit surface \cgalCite{},
+methods \cgalCite{todo}, tensor voting \cgalCite{todo}, implicit surface \cgalCite{todo},
 and Delaunay triangulations. 
 
 For Delaunay based algorithms the output surface
@@ -23,7 +23,7 @@ which output the boundary of selected tetrahedra, or surface
 oriented, that is they explicitely select triangles.
 
 In most surface oriented Delaunay-based algorithms triangles are
-selected independently, that is in parallel \cgalCite{}.
+selected independently, that is in parallel \cgalCite{todo}.
 
 The surface oriented Delaunay-based surface reconstruction algorithm
 presented in this chapter selects triangles sequentially, that is by
@@ -32,7 +32,7 @@ most *plausible* triangle first, and only adds triangles in a way
 that the surface remains an orientable manifold.
  
 Two other examples of this greedy approach are the ball pivoting
-algorithm and Boyer and Petitjean's algorithm \cgalCite{}. In both
+algorithm and Boyer and Petitjean's algorithm \cgalCite{todo}. In both
 algorithms a triangulated surface is incrementally grown starting from
 a seed triangle. Ball pivoting is fast, but the quality of the
 reconstruction depends on user defined parameters corresponding to the
@@ -45,7 +45,7 @@ the next sections we describe the algorithm in detail, and give
 examples.
 
 
-\section AFSR_Definitions The Algorithm
+\section AFSR_Definitions Definitions and the Algorithm
 
 \subsection AFSR_Topology Topological Constraints
 
@@ -78,7 +78,7 @@ sample point. In other words, the radius \f$r_t\f$ is the distance
 from any vertex of \f$t\f$ to the Voronoi edge dual to \f$t\f$.
 
 While the radius is a good criterion in the case of 2D smooth curve 
-reconstruction \cgalCite{}, we need another criterion for 3D surface
+reconstruction \cgalCite{todo}, we need another criterion for 3D surface
 reconstruction, namely the dihedral angle between triangles on the
 surface, that is the angle between the normals of the triangles.
 
@@ -99,14 +99,16 @@ We define the *plausibility* grade \f$ p(t) \f$ as \f$ 1/r_t \f$, if
 
 \subsection AFSR_Algorithm The Algorithm
 
-The algorithm takes as input a reference to a Delaunay triangulation.
-
+The first step of the algorithm is the construction of a 3D Delaunay 
+triangulation of the point set.
 The Delaunay triangle with the smallest radius is the starting point
-for the greedy algorithm.  The algorithm maintains a priority queue of
+for the greedy algorithm.
+
+The algorithm maintains a priority queue of
 candidate triangles, that is of triangles incident to the boundary
 edges.  The priority is the plausibility.  While this priority queue
 is not empty, the algorithm adds the most plausible candidate into the
-surface, and inserts new candidates into the priority queue in case
+surface, and inserts new candidate triangles into the priority queue in case
 there are new boundary edges.
 
 
@@ -136,7 +138,7 @@ boundary detection.
 We discard any candidate triangle \f$ t \f$, for an edge \f$ e \f$
 such that \f$ p(t) < 0\f$, and \f$ r_t > K r_{t'}\f$ where \f$ t'\f$ is 
 the triangle on the surface incident on \f$ e \f$. The parameter \f$ K \f$ 
-can be chosen by the user.
+can be chosen by the user and is by default 5.
 
 
 Note that this heuristic implies that 
@@ -156,7 +158,7 @@ In the example we write the surface in the OFF format to `std::cout`.
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_fct.cpp}
 
 
-\subsection AFSR_Example_class Example for Class
+\subsection AFSR_Example_class Example for the Reconstruction Class
 
 When using the class `Advancing_front_surface_reconstruction`
 you can access a 2D triangulation data structure describing the surface.

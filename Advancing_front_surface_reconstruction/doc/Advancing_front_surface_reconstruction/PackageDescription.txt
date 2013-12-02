@@ -13,7 +13,7 @@
 \cgalPkgManuals{Chapter_Advancing_Front_Surface_Reconstruction,PkgAdvancingFrontSurfaceReconstruction}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{2.1}
+\cgalPkgSince{4.4}
 \cgalPkgDependsOn{\ref PkgTriangulation3Summary}
 \cgalPkgBib{cgal:dc-afsr}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
