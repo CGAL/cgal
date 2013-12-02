@@ -210,7 +210,7 @@ verify(InputIterator begin, InputIterator end)
   for (InputIterator it = begin; it != end; ++it) {
 
     if (m_verbose_level > 1)
-      print_results(*it);
+      print(*it);
 
     // Perform (single) point location.
     Result_type obj = pl.locate(it->first);
