@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
     i += 2;
   }
 
-  if (argc < (i + 3)) {
+  if (static_cast<int>(argc) < (i + 3)) {
     std::cout << "Usage: " << argv[0]
               << " point-file xcurve-file curve-file"
               << std::endl;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  for (; i < argc; i += 3) {
+  for (; i < static_cast<int>(argc); i += 3) {
     const char* points_filename = argv[i];
     const char* xcurves_filename = argv[i+1];
     const char* curves_filename = argv[i+2];
