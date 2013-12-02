@@ -20,8 +20,13 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-This chapter presents a ... The description is based on
-the articles \cite toto.
+This chapter presents a greedy algorithm for surface reconstruction from
+unorganized point sets. Starting from a seed facet, a piecewise linear 
+surface is grown by adding Delaunay triangles one by one. The most 
+plausible triangles are added first, in a way that avoids the appearance 
+of topolgical singularities. The output is thus guranteed to be a
+piecewise linear orientable manifold, possibly with boundary. 
+
 
 */
 
