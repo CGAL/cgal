@@ -600,6 +600,9 @@ This function returns a handle on a cell that is a good approximation of the exa
 location of `query`, while being faster. Note that it may return a handle on a cell 
 whose interior does not contain `query`.
 When the triangulation has dimension smaller than 3, `start` is returned.
+
+Note that this function is available only if the cartesian coordinates of `query`
+are accessible with functions `x()`, `y()` and `z()`.
 */
 Cell_handle
 inexact_locate(const Point & query, Cell_handle start = Cell_handle()) const;
