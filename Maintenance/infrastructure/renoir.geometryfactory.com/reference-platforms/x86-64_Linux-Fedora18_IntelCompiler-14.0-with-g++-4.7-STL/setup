@@ -1,4 +1,4 @@
-source /opt/intel/composer_xe_2013_sp1/bin/compilervars.sh intel64
+source /opt/intel/composer_xe_2013_sp1.1.106/bin/compilervars.sh intel64
 CXX=icpc
 CC=icc
 CXXFLAGS="-w1"
