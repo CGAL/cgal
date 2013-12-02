@@ -4,3 +4,5 @@ More benchmark.
 Add a command line tool.
 Improve the reference and user manual.
 Add an option to filter small parts of the skeleton (cf knot2.off)
+Resample the skeleton.
+Compute the distance between two skeletons.
