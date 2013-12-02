@@ -108,6 +108,8 @@ Where the \f$ W_{P} \f$ is weights to control the smoothness of medial approxima
 
 \section MCFSkelSecAPI User Interface Description
 
+\todo maximal curves extracted?
+
 The curve skeleton can be extracted by the free function `::CGAL::extract_skeleton`. This function could be used to extract a skeleton from the given mesh automatically without any user interaction. The main parameters for the algorithm is passed through the `::CGAL::MCF_skel_args` structure. The constructor of `::CGAL::MCF_skel_args` will initialize the parameters to their default values, which works well in most cases. By default the skeleton extracted is medially centered. The user can set `::CGAL::MCF_skel_args::is_medially_centered` in `::CGAL::MCF_skel_args` to `false` to get a skeleton without guarantee to be medially centered. More details on how to use the free function can be found in the example code.
 
 The class `::CGAL::MCF_Skeleton` is provided to allow the user to call the low level functions such as `::CGAL::MCF_Skeleton::contract_geometry` and `::CGAL::MCF_Skeleton::update_topology`. This gives the user full control of each step of the algorithm and very useful to develop an interative demo. The Polyhedron demo contains a plugin implemented based on the API from `::CGAL::MCF_Skeleton`. \cgalFigureRef{Demo} shows an example of an interative demo. In the example code, we show how to call those functions.
@@ -161,6 +163,7 @@ The left model is original mesh. The one in the middle is after one loop subdivi
 \cgalFigureEnd
 
 We have recorded the running time of the algorithm. The CPU of the test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. The code is compiled with clang in Release mode and '-O3' as compiling flags. The sparse solver used in the experiment is Eigen::SparseLU. The running time includes the time of computing Voronoi poles and contracting the meshes.
+\todo compiler version
 
 <center>
 <table border="1">
