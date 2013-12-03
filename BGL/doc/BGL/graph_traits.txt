@@ -1,13 +1,13 @@
 /*!
-\defgroup PkgBGLTraits boost::graph_traits specializations
-Specialization of `boost::graph_traits` for \cgal types.
+\defgroup PkgBGLTraits Specializations of boost::graph_traits
+Specializations of `boost::graph_traits` for \cgal types.
 \ingroup PkgBGL
 
-The boost graph library (BGL) uses the type trait class
+The boost %graph library (BGL) uses the type trait class
 <A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
-to provides a uniform interface to the properties and types of graph types.
+to provides a uniform interface to the properties and types of %graph types.
 
-\section BGLPolyGT Specialization for the Polyhedron Classes
+\section BGLPolyGT Specialization for the Polyhedron Class
 
 Defined in `<CGAL/boost/graph/graph_traits_Polyhedron_3.h>`
 
