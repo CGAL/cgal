@@ -60,7 +60,7 @@ void define_snd_class(std::string name2, CGAL::Query_choice& qchoice, std::ifstr
     deploy_benchmark<Visibility_fst, CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "T")
-    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2,Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "R")
     deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag> >
@@ -74,7 +74,7 @@ void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_cho
   if (name1 == "N")
     define_snd_class<CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "T")
-    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "R")
     define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
 }

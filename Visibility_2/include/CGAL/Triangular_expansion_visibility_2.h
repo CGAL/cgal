@@ -28,22 +28,22 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_ ,class RegularizationTag>
+template<class Arrangement_2_ , typename Visibility_arrangement_2_ = Arrangement_2_ ,class RegularizationTag = CGAL::Tag_true >
 class Triangular_expansion_visibility_2 {
-  typedef typename Arrangement_2_::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Arrangement_2_::Geometry_traits_2    Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 public:
   // Currently only consider with same type for both
   typedef Arrangement_2_			        Arrangement_2;
-  typedef Arrangement_2_				Visibility_arrangement_2;
+  typedef Visibility_arrangement_2_			Visibility_arrangement_2;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
   Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Face_handle     Face_handle;
-  typedef typename Arrangement_2::Vertex_const_handle     Vertex_const_handle;
-  typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
+  typedef typename Arrangement_2::Face_handle           Face_handle;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
 
   typedef typename K::Point_2           Point_2;
   typedef typename Geometry_traits_2::Ray_2             Ray_2;
@@ -348,7 +348,8 @@ public:
     
   }
 
-  Face_handle compute_visibility(const Point_2& q,
+  typename Visibility_arrangement_2::Face_handle 
+  compute_visibility(const Point_2& q,
       const Face_const_handle face,
       Visibility_arrangement_2& out_arr
   ){
@@ -396,7 +397,8 @@ public:
     return output(raw_output,out_arr);
   }
 
-  Face_handle compute_visibility(const Point_2& q, 
+  typename Visibility_arrangement_2::Face_handle 
+  compute_visibility(const Point_2& q, 
       const Halfedge_const_handle he,
       Visibility_arrangement_2& out_arr) {
     //std::cout << "visibility_region he" << std::endl;
@@ -513,7 +515,8 @@ public:
     return output(raw_output,out_arr);
   }
 
-  Face_handle output(std::vector<Point_2>& raw_output, Visibility_arrangement_2& out_arr){
+  typename Visibility_arrangement_2::Face_handle 
+  output(std::vector<Point_2>& raw_output, Visibility_arrangement_2& out_arr){
 
     if(needles.size()>0){
       std::vector<Segment_2> segments(needles.begin(),needles.end()); 
@@ -526,7 +529,7 @@ public:
       CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
       //CGAL::insert(out_arr,segments.begin(),segments.end());
     }else{      
-      Vertex_handle v_last, v_first;
+      typename Visibility_arrangement_2::Vertex_handle v_last, v_first;
       v_last = v_first = 
         out_arr.insert_in_face_interior(raw_output[0], out_arr.unbounded_face());
       

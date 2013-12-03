@@ -33,12 +33,17 @@ template <class Visibility_2>
 void test_model_methods_for_arr(
               typename Visibility_2::Arrangement_2 &arr) {
 
-  typedef typename Visibility_2::Arrangement_2       Arrangement_2;
-  typedef typename Visibility_2::Visibility_arrangement_2      Visibility_arrangement_2;
-  typedef typename Arrangement_2::Point_2            Point_2;
+  typedef typename Visibility_2::Arrangement_2       
+    Arrangement_2;
+  typedef typename Visibility_2::Visibility_arrangement_2      
+    Visibility_arrangement_2;
+  typedef typename Arrangement_2::Point_2            
+    Point_2;
   typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
-                                                           Segment_2;
-  typedef typename Arrangement_2::Face_handle        Face_handle;
+    Segment_2;
+
+  typedef typename Visibility_arrangement_2::Face_handle  VFH;
+
 
   Visibility_2 visibility;
   assert(false == visibility.is_attached());
@@ -60,8 +65,8 @@ void test_model_methods_for_arr(
   // First consider query point in the unbounded face
   const Point_2 query_pt(1, 1);
   // Check returned face_handle
-  Face_handle face_check = visibility.compute_visibility(query_pt, fit, arr_out);
-  Face_handle face;
+  VFH face_check = visibility.compute_visibility(query_pt, fit, arr_out);
+  VFH face;
   if (arr_out.faces_begin()->is_unbounded()) {
     face = ++arr_out.faces_begin();
   }
@@ -90,7 +95,7 @@ void test_model_methods_for_arr(
   const Point_2 query_pt2 = Point_2(0, 4);
   arr_out.clear();
   typename Arrangement_2::Halfedge_const_iterator hit;
-  Face_handle face_check_he;
+  VFH face_check_he;
   for (hit = arr.halfedges_begin(); 
     hit != arr.halfedges_end(); ++hit) {
 
@@ -118,7 +123,7 @@ void test_model_methods_for_arr(
   for (hit_snd = arr.halfedges_begin(); hit_snd != arr.halfedges_end(); ++hit_snd) {
     if(!hit_snd->face()->is_unbounded()){
       arr_out.clear();
-      Face_handle face_check_he_snd = visibility.compute_visibility(hit_snd->target()->point(), hit_snd, arr_out);
+      VFH face_check_he_snd = visibility.compute_visibility(hit_snd->target()->point(), hit_snd, arr_out);
       assert(!face_check_he_snd->is_unbounded());
       if (arr_out.faces_begin()->is_unbounded()) {
         face = ++arr_out.faces_begin();
@@ -138,17 +143,20 @@ template <class Visibility_2>
 void test_model_methods() {
 
   // Check concept obediance
-  typedef typename Visibility_2::Arrangement_2       Arrangement_2;
+  typedef typename Visibility_2::Arrangement_2       
+    Arrangement_2;
+  typedef typename Visibility_2::Visibility_arrangement_2 
+    Visibility_arrangement_2; 
   typedef typename Arrangement_2::Point_2            Point_2;
   typedef typename Arrangement_2::Face_handle        Face_handle;
   typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
-  typedef typename Visibility_2::Regularization_tag        Regularization_tag;
+  typedef typename Visibility_2::Regularization_tag  Regularization_tag;
   typedef typename Visibility_2::Supports_general_polygon_tag
-                                                  Supports_general_polygon_tag;
+    Supports_general_polygon_tag;
   typedef typename Visibility_2::Supports_simple_polygon_tag 
-                                                  Supports_simple_polygon_tag;
+    Supports_simple_polygon_tag;
   typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
-                                                           Segment_2;
+    Segment_2;
 
   Point_2 p1(0, 0), p2(8, 0), p3(8, 8), p4(0, 8);
   std::vector<Segment_2> seg_sq;

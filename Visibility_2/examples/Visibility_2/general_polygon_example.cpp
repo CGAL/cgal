@@ -16,8 +16,7 @@ typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
 typedef Arrangement_2::Vertex_const_handle                      Vertex_const_handle;
 typedef Arrangement_2::Halfedge_const_handle                    Halfedge_const_handle;
 typedef Arrangement_2::Face_handle                              Face_handle;
-typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2, CGAL::Tag_true>
-                                                                TEV;
+typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2>  TEV;
 int main() {
   Point_2 p1(1, 2), p2(12, 3), p3(19, -2), p4(12, 6), p5(14, 14), p6(9, 5);
   Point_2 h1(8,3), h2(10, 3), h3(8, 4), h4(10, 6), h5(11, 6), h6(11, 7);

@@ -88,17 +88,16 @@ typename Arrangement_2::Halfedge_handle get_initial_halfedge(const Arrangement_2
  * Function to compare two arrangements; first determines lowest vertex
  * from each arrangements, then it walks the edges and compares them
  */
-template <class _Arrangement_2> 
-bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
-
-  typedef _Arrangement_2 								  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
-  typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Arrangement_2::Halfedge              Halfedge;
-  typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
+template <class ARR1, class ARR2> 
+bool test_are_equal(const ARR1 &arr1, const ARR2 &arr2) {
+ 
+  typedef typename ARR1::Geometry_traits_2	  Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
   typedef typename Geometry_traits_2::Point_2	          Point_2;
+  
+  typedef typename ARR1::Halfedge_handle       HE1;
+  typedef typename ARR2::Halfedge_handle       HE2;
+  
 
   // First make sure they have the same size
   if (arr1.number_of_vertices() != arr2.number_of_vertices()) {
@@ -119,16 +118,16 @@ bool test_are_equal(const _Arrangement_2 &arr1, const _Arrangement_2 &arr2) {
   assert(arr2.number_of_faces() == 2);
 
   // get unique halfedge 
-  Halfedge_handle he_start_1 = get_initial_halfedge(arr1);
-  Halfedge_handle he_start_2 = get_initial_halfedge(arr2);
+  HE1 he_start_1 = get_initial_halfedge(arr1);
+  HE2 he_start_2 = get_initial_halfedge(arr2);
   
   // run on first loop and compare sources 
   assert(arr1.traits()->compare_xy_2_object()(
              he_start_1->source()->point(),
              he_start_2->source()->point()) == CGAL::EQUAL);
 
-  Halfedge_handle he_run_1 = he_start_1->next(); 
-  Halfedge_handle he_run_2 = he_start_2->next(); 
+  HE1 he_run_1 = he_start_1->next(); 
+  HE2 he_run_2 = he_start_2->next(); 
 
   while(he_run_1 != he_start_1){
     
