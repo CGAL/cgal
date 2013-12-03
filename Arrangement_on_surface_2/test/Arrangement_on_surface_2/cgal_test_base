@@ -933,7 +933,7 @@ test_batched_point_location_spherical_arcs()
 {
   local nt=$CGAL_GMPQ_NT;
   local kernel=$CARTESIAN_KERNEL;
-  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local geom_traits=$GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS;
   local topol_traits=$SPHERICAL_TOPOL_TRAITS;
   local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
   compile_and_run_with_flags test_batched_point_location geodesic_arcs_on_sphere "$flags"
@@ -1504,7 +1504,7 @@ test_batched_point_location_linear
 test_batched_point_location_spherical_arcs
 
 test_vertical_decomposition_segments
-# test_vertical_decomposition_linear
+test_vertical_decomposition_linear
 # test_vertical_decomposition_spherical_arcs
 
 compile_and_run test_dual
