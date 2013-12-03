@@ -14,7 +14,7 @@
 //
 // $URL: $
 // $Id: $
-// 
+//
 //
 // Author(s) : Efi Fogel   <efif@post.tau.ac.il>
 
@@ -33,6 +33,7 @@
 
 #include <CGAL/Object.h>
 
+#include <boost/optional.hpp>
 #include <boost/variant.hpp>
 
 #ifdef CGAL_CFG_BOOST_VARIANT_SWAP_BUG
@@ -96,19 +97,19 @@ struct Arr_point_location_result {
   static
   inline Type make_result(T t) { return Type(t); }
 
-  inline 
+  inline
   static
   boost::optional<Type> empty_optional_result() { return boost::optional<Type>(); }
 
   template<typename T>
   const T* assign(const Type& obj) const { return boost::get<T>(&obj); }
 #endif // CGAL_ARR_POINT_LOCATION_VERSION < 2
-  
-  //this one is only to remove warnings in functions 
+
+  //this one is only to remove warnings in functions
   static
-  inline Type default_result(){ 
+  inline Type default_result(){
     CGAL_error_msg("This functions should never have been called!");
-    return Type(); 
+    return Type();
   }
 };
 
