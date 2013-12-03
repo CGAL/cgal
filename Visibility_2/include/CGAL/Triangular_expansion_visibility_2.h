@@ -28,14 +28,14 @@
 
 namespace CGAL {
 
-template<class Arrangement_2 ,class RegularizationTag>
+template<class Arrangement_2_ ,class RegularizationTag>
 class Triangular_expansion_visibility_2 {
-  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef typename Arrangement_2_::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 public:
   // Currently only consider with same type for both
-  typedef Arrangement_2			                Input_arrangement_2;
-  typedef Arrangement_2					Output_arrangement_2;
+  typedef Arrangement_2_			        Arrangement_2;
+  typedef Arrangement_2_				Visibility_arrangement_2;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
@@ -69,7 +69,7 @@ private:
   
 
 private:
-  const Input_arrangement_2* p_arr;
+  const Arrangement_2* p_arr;
   boost::shared_ptr<CDT> p_cdt; 
   std::vector<Segment_2> needles; 
 
@@ -77,7 +77,7 @@ public:
   Triangular_expansion_visibility_2() : p_arr(NULL){}
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Triangular_expansion_visibility_2 (const Input_arrangement_2& arr)
+  Triangular_expansion_visibility_2 (const Arrangement_2& arr)
     : p_arr(&arr){
     init_cdt(); 
   }
@@ -87,7 +87,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_arrangement_2& arr) {
+  void attach(const Arrangement_2& arr) {
     // todo observe changes in arr; 
     if(p_arr != &arr){
       p_arr = &arr;
@@ -102,7 +102,7 @@ public:
     p_cdt = boost::shared_ptr<CDT>();
   }
 
-  const Input_arrangement_2& arr() {
+  const Arrangement_2& arr() {
     return *p_arr;
   }
 
@@ -350,7 +350,7 @@ public:
 
   Face_handle compute_visibility(const Point_2& q,
       const Face_const_handle face,
-      Output_arrangement_2& out_arr
+      Visibility_arrangement_2& out_arr
   ){
     //std::cout << "query in face interior" << std::endl;
     
@@ -398,7 +398,7 @@ public:
 
   Face_handle compute_visibility(const Point_2& q, 
       const Halfedge_const_handle he,
-      Output_arrangement_2& out_arr) {
+      Visibility_arrangement_2& out_arr) {
     //std::cout << "visibility_region he" << std::endl;
     
     assert(!he->face()->is_unbounded());    
@@ -513,7 +513,7 @@ public:
     return output(raw_output,out_arr);
   }
 
-  Face_handle output(std::vector<Point_2>& raw_output, Output_arrangement_2& out_arr){
+  Face_handle output(std::vector<Point_2>& raw_output, Visibility_arrangement_2& out_arr){
 
     if(needles.size()>0){
       std::vector<Segment_2> segments(needles.begin(),needles.end()); 
@@ -555,7 +555,7 @@ public:
     //std::cout<< "Input Polygon:" <<std::endl;
     //todo, avoid copy by using modified iterator 
     std::vector<std::pair<Point_2,Point_2> > constraints; 
-    for(typename Input_arrangement_2::Edge_const_iterator eit = p_arr->edges_begin();
+    for(typename Arrangement_2::Edge_const_iterator eit = p_arr->edges_begin();
         eit != p_arr->edges_end(); eit++){
       Point_2 source = eit->source()->point(); 
       Point_2 target = eit->target()->point(); 

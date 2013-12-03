@@ -32,13 +32,13 @@
 
 namespace CGAL {
 
-template<class Arrangement_2, class RegularizationTag> 
+template<class Arrangement_2_, class RegularizationTag> 
 class Simple_polygon_visibility_2 {
 
 public:
   // Currently only consider with same type for both
-  typedef Arrangement_2                                 Input_arrangement_2;
-  typedef Arrangement_2                                 Output_arrangement_2;
+  typedef Arrangement_2_                                Arrangement_2;
+  typedef Arrangement_2_                                Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 
@@ -68,7 +68,7 @@ public:
   Simple_polygon_visibility_2() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_polygon_visibility_2(const Input_arrangement_2& arr): 
+  Simple_polygon_visibility_2(const Arrangement_2& arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
     query_pt_is_vertex = false;
@@ -82,7 +82,7 @@ public:
   }
 
   /*! Attaches the visibility object to the 'arr' arrangement */
-  void attach(const Input_arrangement_2& arr) {
+  void attach(const Arrangement_2& arr) {
     p_arr = &arr;
     geom_traits = p_arr->geometry_traits();
     query_pt_is_vertex = false;
@@ -101,7 +101,7 @@ public:
   }
 
   /*! Getter method for the input arrangement*/
-  const Input_arrangement_2& arr() {
+  const Arrangement_2& arr() {
     return *p_arr;
   }
 
@@ -109,7 +109,7 @@ public:
       'face' and constructs the output in 'out_arr'*/
   Face_handle compute_visibility(const Point_2& q, 
                                  const Face_const_handle face,
-                                 Output_arrangement_2& out_arr) {
+                                 Visibility_arrangement_2& out_arr) {
 
     assert(query_pt_is_vertex == false);
     assert(query_pt_is_on_halfedge == false);
@@ -159,7 +159,7 @@ public:
       halfedge 'he' and constructs the output in 'out_arr'*/
   Face_handle compute_visibility(const Point_2& q, 
                                  const Halfedge_const_handle he,
-                                 Output_arrangement_2& out_arr ) {
+                                 Visibility_arrangement_2& out_arr ) {
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
 
@@ -241,12 +241,12 @@ private:
   typedef CGAL::Constrained_triangulation_2<K, TDS, Itag> CDT;
 
 private:
-  const Input_arrangement_2 *p_arr;
+  const Arrangement_2 *p_arr;
   /*! Boost pointer to the constrained Delaunay triangulation object*/
   boost::shared_ptr<CDT> p_cdt;
   /*! Mapping of the vertices of the input to the corresponding circulator
       needed for finding the first visible vertex in case of face queries*/
-  std::map<Point_2, typename Input_arrangement_2::Ccb_halfedge_const_circulator>
+  std::map<Point_2, typename Arrangement_2::Ccb_halfedge_const_circulator>
                                                                   point_itr_map;
   const Geometry_traits_2 *geom_traits;
   /*! Stack of visibile points; manipulated when going through the sequence
@@ -261,18 +261,18 @@ private:
   bool query_pt_is_on_halfedge;
 
   /*! Regularize output if flag is set to true*/
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
+  void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
   /*! No need to regularize output if flag is set to false*/
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
   /*! Regularizes the output - removes edges that have the same face on both
       sides */
-  void regularize_output(Output_arrangement_2& out_arr) {
-    typename Output_arrangement_2::Edge_iterator e_itr;
+  void regularize_output(Visibility_arrangement_2& out_arr) {
+    typename Visibility_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ; 
          e_itr != out_arr.edges_end() ; e_itr++) {
 
@@ -289,10 +289,10 @@ private:
   void init_cdt(const Face_const_handle &face) { 
 
     std::vector<std::pair<Point_2,Point_2> > constraints; 
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
+    typename Arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                             face->outer_ccb();
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
-    typename Input_arrangement_2::Halfedge_const_handle he;
+    typename Arrangement_2::Ccb_halfedge_const_circulator curr = circ;
+    typename Arrangement_2::Halfedge_const_handle he;
 
     do {
       he = curr;

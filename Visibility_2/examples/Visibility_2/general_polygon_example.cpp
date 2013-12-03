@@ -2,7 +2,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Triangular_expansion_visibility_2_.h>
+#include <CGAL/Triangular_expansion_visibility_2.h>
 
 
 #include <iostream>
@@ -36,7 +36,7 @@ int main() {
   s[10] = Segment_2(h5, h6);
   s[11] = Segment_2(h6, h4);
   Arrangement_2 env;
-  CGAL::insert_curves(env, &s[0], &s[12]);
+  CGAL::insert_non_intersecting_curves(env, &s[0], &s[12]);
   //find the halfedge whose target is the query point.
   Point_2 query_point = p4;
   Halfedge_const_handle he = env.halfedges_begin();

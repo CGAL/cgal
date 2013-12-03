@@ -28,12 +28,12 @@
 
 namespace CGAL {
 
-template <typename Arrangement_2, typename RegularizationTag>
+template <typename Arrangement_2_, typename RegularizationTag>
 class Rotational_sweep_visibility_2 {
 public:
-  typedef Arrangement_2                                 Input_arrangement_2;
-  typedef Arrangement_2                                 Output_arrangement_2;
-  typedef typename Input_arrangement_2::Geometry_traits_2     Geometry_traits_2;
+  typedef Arrangement_2_                                Arrangement_2;
+  typedef Arrangement_2_                                Visibility_arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
@@ -95,7 +95,7 @@ private:
   };
 
   const Geometry_traits_2 *geom_traits;
-  const Input_arrangement_2 *p_arr;
+  const Arrangement_2 *p_arr;
   Point_2 q;                        //query point
   Points polygon;                   //visibility polygon
   std::map<VH, EHs, Less_vertex> incident_edges; //the edges that are
@@ -115,7 +115,7 @@ private:
 
 public:
   Rotational_sweep_visibility_2(): p_arr(NULL), geom_traits(NULL) {}
-  Rotational_sweep_visibility_2(const Input_arrangement_2& arr): p_arr(&arr) {
+  Rotational_sweep_visibility_2(const Arrangement_2& arr): p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   }
 
@@ -132,7 +132,7 @@ public:
       cone_end2 = e->next()->target();
       is_big_cone = CGAL::right_turn(cone_end1->point(), q, cone_end2->point());
 
-      typename Input_arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
+      typename Arrangement_2::Halfedge_around_vertex_const_circulator first, curr;
       first = curr = e->target()->incident_halfedges();
       do {
         if (curr->face() == e->face())
@@ -211,7 +211,7 @@ public:
       return arr_out.faces_begin();
   }
 
-  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& arr_out) {
+  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Visibility_arrangement_2& arr_out) {
     arr_out.clear();
     this->q = q;
     is_vertex_query = false;
@@ -231,7 +231,7 @@ bool is_attached() {
   return (p_arr != NULL);
 }
 
-void attach(const Input_arrangement_2& arr) {
+void attach(const Arrangement_2& arr) {
   p_arr = &arr;
   geom_traits = p_arr->geometry_traits();
 }
@@ -241,7 +241,7 @@ void detach() {
   geom_traits = NULL;
 }
 
-const Input_arrangement_2& arr() {
+const Arrangement_2& arr() {
   return *p_arr;
 }
 
@@ -318,7 +318,7 @@ private:
     edx = std::map<EH, int, Less_edge>(Less_edge(geom_traits));
 
     EHs relevant_edges; //all edges that can affect the visibility of query point.
-    Input_arrangement_2 bbox;
+    Arrangement_2 bbox;
     if (is_face_query)
       input_face(f);
     else
@@ -731,7 +731,7 @@ private:
   //and sort vertices in counter-clockwise order.
   void input_face (Face_const_handle fh,
                    EHs& good_edges,
-                   Input_arrangement_2& bbox)
+                   Arrangement_2& bbox)
   {
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
@@ -799,16 +799,16 @@ private:
     }
   }
 
-  void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_true) {
+  void conditional_regularize(Visibility_arrangement_2& arr_out, CGAL::Tag_true) {
     regularize_output(arr_out);
   }
 
-  void conditional_regularize(Output_arrangement_2& arr_out, CGAL::Tag_false) {
+  void conditional_regularize(Visibility_arrangement_2& arr_out, CGAL::Tag_false) {
     //do nothing
   }
 
-  void regularize_output(Output_arrangement_2& arr_out) {
-    typename Output_arrangement_2::Edge_iterator e_itr;
+  void regularize_output(Visibility_arrangement_2& arr_out) {
+    typename Visibility_arrangement_2::Edge_iterator e_itr;
     for (e_itr = arr_out.edges_begin();
          e_itr != arr_out.edges_end();
          e_itr++) {

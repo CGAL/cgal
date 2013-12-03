@@ -37,8 +37,8 @@ class Simple_polygon_visibility_2_ {
 
 public:
   // Currently only consider with same type for both
-  typedef Arrangement_2                                 Input_arrangement_2;
-  typedef Arrangement_2                                 Output_arrangement_2;
+  typedef Arrangement_2                                 Arrangement_2;
+  typedef Arrangement_2                                 Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
 
   typedef typename Arrangement_2::Halfedge_const_handle       
@@ -65,7 +65,7 @@ public:
   Simple_polygon_visibility_2_() : p_arr(NULL), geom_traits(NULL) {};
 
   /*! Constructor given an arrangement and the Regularization tag. */
-  Simple_polygon_visibility_2_(const Input_arrangement_2& arr): 
+  Simple_polygon_visibility_2_(const Arrangement_2& arr): 
     p_arr(&arr) {
     geom_traits = p_arr->geometry_traits();
   };
@@ -74,7 +74,7 @@ public:
     return (p_arr != NULL);
   }
 
-  void attach(const Input_arrangement_2& arr) {
+  void attach(const Arrangement_2& arr) {
     p_arr = &arr;
     geom_traits = p_arr->geometry_traits();
   }
@@ -85,19 +85,19 @@ public:
     vertices.clear();
   }
 
-  const Input_arrangement_2& arr() {
+  const Arrangement_2& arr() {
     return *p_arr;
   }
 
   Face_handle compute_visibility(const Point_2& q, const Face_const_handle face,
-                         Output_arrangement_2& out_arr) {
+                         Visibility_arrangement_2& out_arr) {
 
-    CGAL::Visibility_2::print_arrangement_by_face<Input_arrangement_2>(*p_arr);
+    CGAL::Visibility_2::print_arrangement_by_face<Arrangement_2>(*p_arr);
    
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
+    typename Arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                             face->outer_ccb();
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr = circ;
-    typename Input_arrangement_2::Halfedge_const_handle he = curr;
+    typename Arrangement_2::Ccb_halfedge_const_circulator curr = circ;
+    typename Arrangement_2::Halfedge_const_handle he = curr;
 
     std::vector<Point_2> temp_vertices;
     Point_2 min_intersect_pt;
@@ -210,7 +210,7 @@ public:
                                                             points,                                 
                                                             out_arr);  
     std::cout << "OUTPUT\n";
-    CGAL::Visibility_2::print_arrangement_by_face<Output_arrangement_2>(out_arr);                              
+    CGAL::Visibility_2::print_arrangement_by_face<Visibility_arrangement_2>(out_arr);                              
     std::cout << "END OUTPUT\n";
     CGAL_precondition(out_arr.number_of_isolated_vertices() == 0);
     CGAL_precondition(s.size() == 0);
@@ -225,7 +225,7 @@ public:
   }
 
   Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle he,
-                           Output_arrangement_2& out_arr ) {
+                           Visibility_arrangement_2& out_arr ) {
 /*
     query_pt_is_vertex = false;
     if (q != he->source()->point()) {
@@ -239,11 +239,11 @@ public:
       }
     }
 
-    typename Input_arrangement_2::Face_const_handle face = he->face();
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator circ = 
+    typename Arrangement_2::Face_const_handle face = he->face();
+    typename Arrangement_2::Ccb_halfedge_const_circulator circ = 
                                                               face->outer_ccb();
-    typename Input_arrangement_2::Ccb_halfedge_const_circulator curr;
-    typename Input_arrangement_2::Halfedge_const_handle he_handle = circ;
+    typename Arrangement_2::Ccb_halfedge_const_circulator curr;
+    typename Arrangement_2::Halfedge_const_handle he_handle = circ;
 
     while (he_handle != he) {
       circ++;
@@ -314,7 +314,7 @@ public:
     CGAL_precondition(s.size() == 0);
     conditional_regularize(out_arr, Regularization_tag());
     vertices.clear();
-//    CGAL::Visibility_2::print_arrangement_by_face<Output_arrangement_2>(out_arr);
+//    CGAL::Visibility_2::print_arrangement_by_face<Visibility_arrangement_2>(out_arr);
     if (out_arr.faces_begin()->is_unbounded()) {
       return ++out_arr.faces_begin();
     }
@@ -324,7 +324,7 @@ public:
   }
 
 private:
-  const Input_arrangement_2 *p_arr;
+  const Arrangement_2 *p_arr;
   const Geometry_traits_2 *geom_traits;
   std::stack<Point_2> s;
   std::vector<Point_2> vertices;
@@ -347,11 +347,11 @@ private:
     return false;
   }
 
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
+  void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
 
-  void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
+  void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
@@ -428,8 +428,8 @@ private:
               << angular_displacement_vn.second << std::endl;
   }
 
-  void regularize_output(Output_arrangement_2& out_arr) {
-    typename Output_arrangement_2::Edge_iterator e_itr;
+  void regularize_output(Visibility_arrangement_2& out_arr) {
+    typename Visibility_arrangement_2::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ; 
          e_itr != out_arr.edges_end() ; e_itr++) {
 

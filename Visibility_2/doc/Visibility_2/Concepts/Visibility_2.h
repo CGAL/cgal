@@ -20,27 +20,27 @@ public:
  /*! 
    The arrangement type of the input.
  */ 
-  typedef Hidden_type Input_arrangement_2; 
+  typedef Hidden_type Arrangement_2; 
 
   /*!
     The arrangement type of the output.
    */
-  typedef Hidden_type Output_arrangement_2;
+  typedef Hidden_type Visibility_arrangement_2;
 
  /*! 
    The 2D point type used for the queries. 
  */ 
-  typedef Input_arrangement_2::Point_2 Point_2;
+  typedef Arrangement_2::Point_2 Point_2;
 
   /*!
    * The face handle type of the input arrangement.
    */
-  typedef Input_arrangement_2::Face_const_handle Face_const_handle;
+  typedef Arrangement_2::Face_const_handle Face_const_handle;
 
   /*!
    * The halfedge handle type of the input arrangement.
    */
-  typedef Input_arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
 
 /// @}
 
@@ -74,7 +74,7 @@ Visibility_2();
 /*! 
 Constructs a `Visibility_2` object that is attached to `arr`.
 */ 
-Visibility_2(const Input_arrangement_2& arr);
+Visibility_2(const Arrangement_2& arr);
 
 /// @}
 
@@ -92,7 +92,7 @@ Attaches the given arrangement `arr` to the visibility object.
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(const Input_arrangement_2& arr);
+  void attach(const Arrangement_2& arr);
 
   
 /*!
@@ -103,7 +103,7 @@ Detaches the arrangement from the visibility object it is currently attached to
 /*!
 Access to the attached arrangement
 */
-  const Input_arrangement_2& arr() const;
+  const Arrangement_2& arr() const;
 
 /*! 
 Computes the visibility region for the given query point `q` in the
@@ -117,7 +117,7 @@ all features but the unbounded face of `out_arr` represent the visibility region
 \pre `q` is in the interior of the given face `f`
 \return the face handle to the face in `out_arr` that represents iterior of the visibility region
 */ 
-  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Output_arrangement_2& out_arr) const;
+  typename Visibility_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Visibility_arrangement_2& out_arr) const;
 
 /*!
 Computes the visibility region in `e->face()` for the given query 
@@ -135,7 +135,7 @@ all features but the unbounded face of `out_arr` represent the visibility region
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
 \return a handle to the face in `out_arr` that represents the iterior of the visibility region
 */
-  typename Output_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Output_arrangement_2& out_arr) const;
+  typename Visibility_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Visibility_arrangement_2& out_arr) const;
 
 /// @}
 

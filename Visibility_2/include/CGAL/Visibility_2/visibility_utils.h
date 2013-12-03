@@ -198,16 +198,16 @@ typename Geometry_traits_2::Point_2 construct_projected_point_2(
 //construct an arrangement of visibility region from a vector of circular ordered vertices with respect to the query point
 template <class Visibility_2>
 void report_while_handling_needles(
-  const typename Visibility_2::Input_arrangement_2::Geometry_traits_2 *geom_traits,
-  const typename Visibility_2::Input_arrangement_2::Point_2& q,
-  std::vector<typename Visibility_2::Input_arrangement_2::Point_2>& points,
-  typename Visibility_2::Output_arrangement_2& arr_out) {
+  const typename Visibility_2::Arrangement_2::Geometry_traits_2 *geom_traits,
+  const typename Visibility_2::Arrangement_2::Point_2& q,
+  std::vector<typename Visibility_2::Arrangement_2::Point_2>& points,
+  typename Visibility_2::Visibility_arrangement_2& arr_out) {
 
-  typedef typename Visibility_2::Input_arrangement_2      Input_arrangement_2;
-  typedef typename Input_arrangement_2::Point_2           Point_2;
-  typedef typename Input_arrangement_2::Geometry_traits_2 Geometry_traits_2;
-  typedef typename Input_arrangement_2::Halfedge_handle   Halfedge_handle;
-  typedef typename Input_arrangement_2::Vertex_handle     Vertex_handle;
+  typedef typename Visibility_2::Arrangement_2      Arrangement_2;
+  typedef typename Arrangement_2::Point_2           Point_2;
+  typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
+  typedef typename Arrangement_2::Halfedge_handle   Halfedge_handle;
+  typedef typename Arrangement_2::Vertex_handle     Vertex_handle;
   typedef typename Geometry_traits_2::Segment_2           Segment_2;
   typedef typename Geometry_traits_2::Direction_2         Direction_2;
 

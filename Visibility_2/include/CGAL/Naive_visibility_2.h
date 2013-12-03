@@ -56,11 +56,11 @@ void print_edges(std::vector<Halfedge_handle> es){
       std::cout << es->curve() << std::endl;
     }
 }
-template <typename Arrangement_2, typename RegularizationTag>
+template <typename Arrangement_2_, typename RegularizationTag>
 class Naive_visibility_2 {
 public:
-    typedef Arrangement_2                                 Input_arrangement_2;
-    typedef Arrangement_2                                 Output_arrangement_2;
+    typedef Arrangement_2_                                Arrangement_2;
+    typedef Arrangement_2_                                Visibility_arrangement_2;
     typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
     typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
     typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
@@ -280,7 +280,7 @@ public:
     void detach() {
         attach_tag = false;
     }
-    const Input_arrangement_2& arr() {
+    const Arrangement_2& arr() {
       return arr_in;
     }
 
@@ -806,16 +806,16 @@ private:
 
     }
 
-    void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_true) {
+    void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_true) {
       regularize_output(out_arr);
     }
 
-    void conditional_regularize(Output_arrangement_2& out_arr, CGAL::Tag_false) {
+    void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_false) {
       //do nothing
     }
 
     void regularize_output(Arrangement_2& out_arr) {
-      typename Output_arrangement_2::Edge_iterator e_itr;
+      typename Visibility_arrangement_2::Edge_iterator e_itr;
       for (e_itr = out_arr.edges_begin() ;
            e_itr != out_arr.edges_end() ; e_itr++) {
         Halfedge_handle he = e_itr;

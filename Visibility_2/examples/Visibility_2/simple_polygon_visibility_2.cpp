@@ -29,7 +29,7 @@ int main() {
   s[4] = Segment_2(p5, p6);
   s[5] = Segment_2(p6, p1);
   Arrangement_2 env;
-  CGAL::insert_curves(env, &s[0], &s[6]);
+  CGAL::insert_non_intersecting_curves(env, &s[0], &s[6]);
   //locate the query point in the arrangement
   Point_2 query_point(0.5, 2);
   Arrangement_2::Face_const_handle face;

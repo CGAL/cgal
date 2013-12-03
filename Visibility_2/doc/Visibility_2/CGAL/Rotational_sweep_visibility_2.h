@@ -30,12 +30,12 @@ public:
  /*!
   The type of the input arrangement.
   */
-  typedef Arrangement_2  Input_arrangement_2;
+  typedef Arrangement_2  Arrangement_2;
 
    /*!
     The type of the output arrangement.
     */
-  typedef Arrangement_2 Output_arrangement_2;
+  typedef Arrangement_2 Visibility_arrangement_2;
 
 /// @}
 
@@ -70,7 +70,7 @@ This operation takes \f$O(1)\f$ as the class does no pre-processing.
 In case the object is already attached to another arrangement, 
 the visibility object gets detached before being attached to `arr`.
 */
-  void attach(const Input_arrangement_2& arr);
+  void attach(const Arrangement_2& arr);
   
 
 /// @}
