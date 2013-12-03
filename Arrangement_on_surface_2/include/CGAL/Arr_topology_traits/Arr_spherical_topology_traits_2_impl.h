@@ -64,24 +64,19 @@ assign(const Self& other)
   m_dcel.assign(other.m_dcel);
 
   // Take care of the traits object.
-  if (m_own_traits && m_traits != NULL)
-    delete m_traits;
+  if (m_own_traits && m_traits != NULL) delete m_traits;
 
-  if (other.m_own_traits)
-  {
+  if (other.m_own_traits) {
     m_traits = new Traits_adaptor_2;
     m_own_traits = true;
   }
-  else
-  {
+  else {
     m_traits = other.m_traits;
     m_own_traits = false;
   }
 
   // Update the rest of the properties.
   dcel_updated();
-
-  return;
 }
 
 /*! \brief initializes an empty DCEL structure. */
@@ -118,8 +113,7 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
   m_spherical_face = NULL;
   for (fit = this->m_dcel.faces_begin(); fit != this->m_dcel.faces_end(); ++fit)
   {
-    if (fit->number_of_outer_ccbs() == 0)
-    {
+    if (fit->number_of_outer_ccbs() == 0) {
       CGAL_assertion(m_spherical_face == NULL);
 
       m_spherical_face = &(*fit);
@@ -155,8 +149,8 @@ bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 {
   // std::cout << "is_in_face()" << std::endl;
-  CGAL_precondition(v == NULL || !v->has_null_point());
-  CGAL_precondition(v == NULL || m_traits->equal_2_object()(p, v->point()));
+  CGAL_precondition((v == NULL) || !v->has_null_point());
+  CGAL_precondition((v == NULL) || m_traits->equal_2_object()(p, v->point()));
 
   /* There is always one face that contains everything else. It has no
    * outer CCB's. When a new face is constructed, we make sure that the
@@ -191,6 +185,9 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
     m_traits->compare_y_at_x_2_object();
   typename Traits_adaptor_2::Compare_x_point_curve_end_2 cmp_x_pt_ce =
     m_traits->compare_x_point_curve_end_2_object();
+
+  // Process the input point.
+  bool p_is_interior_x = !(m_traits->is_on_y_identification_2_object()(p));
 
   /* Maintain a counter of the number of x-monotone curves that intersect an
    * upward vertical ray emanating from p. Handle degenerate cases as
@@ -245,9 +242,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       ps_x_source, ps_x_target = ARR_INTERIOR,
       ps_y_source, ps_y_target;
 
-    Arr_parameter_space ps_x_p = ARR_INTERIOR;
-    if (v != NULL) ps_x_p = v->parameter_space_in_x();
-
     do {
       /* Compare p to the target vertex of the current halfedge. If the
        * vertex v is on the boundary of the component, p is not in the interior
@@ -257,8 +251,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 
       // Ignore vertical curves:
       bool is_vertical = m_traits->is_vertical_2_object()(curr->curve());
-      if (is_vertical)
-      {
+      if (is_vertical) {
         /* If this outer ccb chain contains the north pole, and our point
          * lies horizontaly between the two vertical curves that meet at
          * the north pole, increase the intersection counter
@@ -309,7 +302,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       ps_y_source = ps_y_op(curr->curve(), ind_source);
       ps_y_target = ps_y_op(curr->curve(), ind_target);
 
-      if (ps_x_p != ARR_INTERIOR) {
+      if (!p_is_interior_x) {
         if (ps_x_source == ps_x_target) {
           curr = curr->next();
           continue;
@@ -342,14 +335,14 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       res_source = (ps_x_source == ARR_LEFT_BOUNDARY) ? LARGER :
         (ps_x_source == ARR_RIGHT_BOUNDARY) ? SMALLER :
         (ps_y_source == ARR_INTERIOR) ?
-          cmp_x_op(p, curr->opposite()->vertex()->point()) :
-          cmp_x_pt_ce(p, curr->curve(), ind_source);
+        cmp_x_op(p, curr->opposite()->vertex()->point()) :
+        cmp_x_pt_ce(p, curr->curve(), ind_source);
 
       res_target = (ps_x_target == ARR_LEFT_BOUNDARY) ? LARGER :
         (ps_x_target == ARR_RIGHT_BOUNDARY) ? SMALLER :
         (ps_y_target == ARR_INTERIOR) ?
-          cmp_x_op(p, curr->vertex()->point()) :
-          cmp_x_pt_ce(p, curr->curve(), ind_target);
+        cmp_x_op(p, curr->vertex()->point()) :
+        cmp_x_pt_ce(p, curr->curve(), ind_target);
 
       /* If a vertical ray is shot from p upward, the x-monotone curve
        * associated with curr is hit once.
@@ -385,7 +378,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
     } while (curr != first);
 
     if (last_pending) {
-      if (ps_x_p != ARR_INTERIOR) {
+      if (!p_is_interior_x) {
         if (ps_x_last == ps_x_target) {
           Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
           if (res_y_at_x == EQUAL) return false;
