@@ -7,7 +7,7 @@ The boost graph library (BGL) uses the type trait class
 <A HREF="http://www.boost.org/libs/graph/doc/graph_traits.html">`boost::graph_traits`</A>
 to provides a uniform interface to the properties and types of graph types.
 
-\section BGLPolyGT Specialization for the polyhedron classes
+\section BGLPolyGT Specialization for the Polyhedron Classes
 
 Defined in `<CGAL/boost/graph/graph_traits_Polyhedron_3.h>`
 
@@ -19,6 +19,8 @@ to the
 
 The const specialization, `boost::graph_traits< CGAL::Polyhedron_3<Traits> const>`
 is also defined, using the constant handles in the polyhedron.
+
+The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the following types:
 
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
@@ -35,9 +37,9 @@ is also defined, using the constant handles in the polyhedron.
 | `vertices_size_type`     | Polyhedron_3::size_type | The size type of the vertex list |
 | `edges_size_type`        | Polyhedron_3::size_type | The size type of the edge list |
 | `degree_size_type`       | Polyhedron_3::size_type | The size type of the adjacency list |
-<center> Types provided by <b>`template< typename T> > boost::graph_traits< CGAL::Polyhedron_3<T> >`</b> </center>
 
-\section BGLT2GT Specializations for the 2D triangulation classes
+
+\section BGLT2GT Specializations for the 2D Triangulation Classes
 
 Defined in `<CGAL/boost/graph/graph_traits_Triangulation_2.h>` and `<CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>`
 
@@ -66,6 +68,9 @@ you must upcast the object in order to use this partial specialization.
 For the user convenience, \cgal provides the partial specializations
 for all 2D triangulation classes.
 
+The traits class `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` and
+`boost::graph_traits< CGAL::Delaunay_triangulation_2<GT, TDS> >`
+provide the following types:
 
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
@@ -82,12 +87,8 @@ for all 2D triangulation classes.
 | `vertices_size_type`     | `Triangulation::size_type` | The size type of the vertex list |
 | `edges_size_type`        | `Triangulation::size_type` | The size type of the edge list |
 | `degree_size_type`       | `Triangulation::size_type` | The size type of the adjacency list |
-<center>
-Types provided by <b>`template< typename GT, typename TDS> > class graph_traits< CGAL::Triangulation_2<GT, TDS> >`</b> and
-<b>`template< typename GT, typename TDS> > class graph_traits< CGAL::Delaunay_triangulation_2<GT, TDS> >`</b>
-</center>
 
-\section BGLArgtGT Specialization for the arrangement classes
+\section BGLArgtGT Specialization for the Arrangement Classes
 
 Defined in `<CGAL/boost/graph/graph_traits_Arrangement_2.h>`
 
@@ -100,6 +101,8 @@ The class `Arrangement_2` is a model of to the
 The const specialization, `boost::graph_traits< CGAL::Arrangement_2<Traits,Dcel> const>`
 is also defined, using the constant handles in the arrangement.
 
+The traits class `boost::graph_traits< CGAL::Arrangement_2<T, DC> >`
+provides the following types:
 
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
@@ -116,10 +119,6 @@ is also defined, using the constant handles in the arrangement.
 | `vertices_size_type`     | `Arrangement_2::size_type` | The size type of the vertex list |
 | `edges_size_type`        | `Arrangement_2::size_type` | The size type of the edge list |
 | `degree_size_type`       | `Arrangement_2::size_type` | The size type of the adjacency list |
-<center>
-Types provided by <b>`template< typename T, typename DC> > class graph_traits< CGAL::Arrangement_2<T, DC> >`</b>
-</center>
-
 */
 
 
