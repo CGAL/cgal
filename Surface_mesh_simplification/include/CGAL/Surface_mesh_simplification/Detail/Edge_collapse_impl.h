@@ -19,6 +19,9 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H
 
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <boost/mpl/has_xxx.hpp>
+
 namespace CGAL {
 
 namespace Surface_mesh_simplification 
@@ -581,6 +584,12 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::find_exterior_link_triangle_3rd_vertex (
 }
 
 
+namespace internal{
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Do_skip_geom_test,Skip_geom_valid_test,false)
+
+} //namespace CGAL::internal
+
 // A collase is geometrically valid if, in the resulting local mesh no two adjacent triangles form an internal dihedral angle
 // greater than a fixed threshold (i.e. triangles do not "fold" into each other)
 //
@@ -590,7 +599,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Is_collapse_geometrically_valid( Pr
   bool rR = true ;
   
   CGAL_ECMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << aProfile.v0_v1()->id() );
-  if ( k0 )
+  if ( k0 && !internal::Do_skip_geom_test<GetPlacement>::value )
   {
     //
     // Use the current link to extract all local triangles incident to 'vx' in the collapsed mesh (which at this point doesn't exist yet)

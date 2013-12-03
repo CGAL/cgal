@@ -35,13 +35,14 @@ Scene::Scene(QObject* parent)
 }
 
 Scene::Item_id
-Scene::addItem(Scene_item* item)
+Scene::addItem(Scene_item* item, bool update_view)
 {
   m_entries.push_back(item);
 
   connect(item, SIGNAL(itemChanged()),
           this, SLOT(itemChanged()));
-  emit updated_bbox();
+  if (update_view)
+    emit updated_bbox();
   emit updated();
   QAbstractListModel::reset();
   Item_id id = m_entries.size() - 1;
@@ -63,7 +64,8 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
           this, SLOT(itemChanged()));
   std::swap(m_entries[index], item);
 
-  if ( item->isFinite() && !item->isEmpty() &&
+  if ( update_view &&
+       item->isFinite() && !item->isEmpty() &&
        m_entries[index]->isFinite() && !m_entries[index]->isEmpty() &&
         item->bbox()!=m_entries[index]->bbox() )
   {
