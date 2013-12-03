@@ -3594,7 +3594,7 @@ faces.
 \subsection arr_ssecbgl_primal The Primal Arrangement Representation
 
 Arrangement instances are adapted to <span class="textsc">Boost</span> graphs by specializing the
-`boost:graph_traits` template for `Arrangement_2` instances. The
+\link BGLArgtGT `boost:graph_traits` \endlink template for `Arrangement_2` instances. The
 graph-traits states the graph concepts that the arrangement class models
 (see below) and defines the types required by these concepts.
 
