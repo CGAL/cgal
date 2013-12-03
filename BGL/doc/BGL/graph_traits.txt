@@ -27,10 +27,10 @@ The traits class `boost::graph_traits< CGAL::Polyhedron_3<T> >` provides the fol
 | `vertex_descriptor`      | `Polyhedron_3::Vertex_handle`     | The vertex descriptor |
 | `edge_descriptor`        | `Polyhedron_3::Halfedge_handle`     | The edge descriptor |
 | `adjacency_iterator`     | Not provided | |
-| `out_edge_iterator`      | Wrapper around `Polyhedron_3::Halfedge_around_vertex_circulator` | An edge iterator which only iterates over the outgoing halfedges around a vertex. It corresponds to a `Polyhedron_3::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
-| `in_edge_iterator`       | Wrapper around `Polyhedron_3::Halfedge_around_vertex_circulator` | An edge iterator which only iterates over the incoming edges around a vertex. It corresponds to a `Polyhedron_3::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
-| `vertex_iterator`        | Wrapper around `Polyhedron_3::Vertex_handle`     | An iterator corresponding to `Polyhedron_3::Vertex_iterator`, with the difference that its value type is a vertex descriptor and not `Polyhedron_3::Vertex` |
-| `edge_iterator`          | Wrapper around `Polyhedron_3::Halfedge_iterator`     | An iterator corresponding to `Polyhedron_3::Halfedge_iterator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
+| `out_edge_iterator`      | `unspecified_type` | An edge iterator which only iterates over the outgoing halfedges around a vertex. It corresponds to a `Polyhedron_3::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
+| `in_edge_iterator`       | `unspecified_type` | An edge iterator which only iterates over the incoming edges around a vertex. It corresponds to a `Polyhedron_3::Halfedge_around_vertex_circulator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
+| `vertex_iterator`        | `unspecified_type`     | An iterator corresponding to `Polyhedron_3::Vertex_iterator`, with the difference that its value type is a vertex descriptor and not `Polyhedron_3::Vertex` |
+| `edge_iterator`          | `Polyhedron_3::Halfedge_iterator`     | An iterator corresponding to `Polyhedron_3::Halfedge_iterator` with the difference that its value type is an edge descriptor and not `Polyhedron_3::Halfedge` |
 | `directed_category`      | Inherits from `boost::bidirectional_graph_tag`, `boost::vertex_list_graph_tag` and `boost::edge_list_graph_tag` | |
 | `edge_parallel_category` | boost::disallow_parallel_edge_tag | Indicates that this graph does not support multiedges |
 | `traversal_category`     | boost::bidirectional_graph_tag | Indicates that this graph is bidirectional |
