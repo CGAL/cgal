@@ -17,8 +17,6 @@ HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
                     ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
                     ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite.html
 
-EXCLUDE_PATTERNS += */Developer_manual/*
-
 ALLEXTERNALS             = true
 EXTERNAL_GROUPS          = false
 GENERATE_TODOLIST        = false
