@@ -55,23 +55,29 @@ typedef CGAL::Mesh_constant_domain_field_3<Periodic_mesh_domain::R,
 Periodic_mesh_domain::Index> Field;
 
 
-int main()
+int main(int argc, char** argv)
 {
-  Periodic_mesh_domain domain(schwarz_p, CGAL::Bbox_3(0, 0, 0, 1, 1, 1));
+  int domain_size = 1;
+
+  if (argc > 1)
+	  domain_size = atoi(argv[1]);
+
+  Periodic_mesh_domain domain(schwarz_p, CGAL::Bbox_3(0, 0, 0, domain_size, domain_size, domain_size));
   
-  Mesh_criteria criteria(domain, facet_angle=30, facet_size=0.05, facet_distance=0.025,
+  Mesh_criteria criteria(domain, facet_angle=30, facet_size=0.05 * domain_size, facet_distance=0.025 * domain_size,
                                 cell_radius_edge_ratio=2, cell_size = 0.05);  
   
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_mesh_3<C3t3>(domain, criteria);
   
   // Output
-  std::ofstream medit_file("schwarz_p.mesh");
+  std::ofstream medit_file( (std::string("schwarz_p_") + argv[1] + ".mesh").data() );
   
   write_complex_to_medit(medit_file, c3t3);
   
   medit_file.close();
   
+  std::cout << "EXIIT SUCCESS" << std::endl;
   return 0;
 }
 
