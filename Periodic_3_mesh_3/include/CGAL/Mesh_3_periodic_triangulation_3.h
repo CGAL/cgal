@@ -243,7 +243,6 @@ public:
 
   //TODO: integrate into P3DT3, it almost corresponds to periodic_circumcenter
   Point canonicalize_point(const Point& p) const {
-    Covering_sheets nos = this->number_of_sheets();
     Iso_cuboid dom = this->domain();
     if (   !(p.x() < dom.xmin()) && p.x()<dom.xmax()
       && !(p.y() < dom.ymin()) && p.y()<dom.ymax()
