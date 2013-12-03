@@ -566,7 +566,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_sk
       skeleton->polylines.push_back(line);
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-    scene->addItem(skeleton, false);
+    scene->addItem(skeleton);
     item->setGouraudMode();
     item->switch_transparency_on_off();
 
@@ -634,7 +634,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
       skeleton->polylines.push_back(line);
     }
     skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-    scene->addItem(skeleton, false);
+    scene->addItem(skeleton);
     item->setGouraudMode();
     item->switch_transparency_on_off();
 
@@ -782,7 +782,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 
   if (fixedPointsItemIndex == -1)
   {
-    fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
   }
   else
   {
@@ -844,7 +844,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   if (fixedPointsItemIndex == -1)
   {
-    fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
   }
   else
   {
@@ -872,7 +872,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   }
   if (nonFixedPointsItemIndex == -1)
   {
-    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem, false);
+    nonFixedPointsItemIndex = scene->addItem(nonFixedPointsItem);
   }
   else
   {
@@ -907,7 +907,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   if (poleLinesItemIndex == -1)
   {
-    poleLinesItemIndex = scene->addItem(poleLinesItem, false);
+    poleLinesItemIndex = scene->addItem(poleLinesItem);
   }
   else
   {
@@ -968,7 +968,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     skeleton->polylines.push_back(line);
   }
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
-  scene->addItem(skeleton, false);
+  scene->addItem(skeleton);
 
   Polyhedron* mesh = mcs->get_mesh();
 
@@ -1001,7 +1001,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   }
   lines->setName(QString("correspondent vertices of %1").arg(item->name()));
   lines->setVisible(false);
-  scene->addItem(lines, false);
+  scene->addItem(lines);
 
   // set the fixed points and contracted mesh as invisible
   if (fixedPointsItemIndex >= 0)
@@ -1054,8 +1054,8 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     }
   }
 
-  scene->addItem(endPointsItem, false);
-  scene->addItem(junctionPointsItem, false);
+  scene->addItem(endPointsItem);
+  scene->addItem(junctionPointsItem);
 
   // update scene
   QApplication::restoreOverrideCursor();
@@ -1101,7 +1101,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   }
   if (fixedPointsItemIndex == -1)
   {
-    fixedPointsItemIndex = scene->addItem(fixedPointsItem, false);
+    fixedPointsItemIndex = scene->addItem(fixedPointsItem);
   }
   else
   {
