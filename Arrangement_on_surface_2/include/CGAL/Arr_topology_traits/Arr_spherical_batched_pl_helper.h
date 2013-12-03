@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011,2013 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -107,7 +107,25 @@ public:
       m_spherical_face = sc->last_curve().halfedge_handle()->face();
     }
 
-    // TODO EBEB 2013-12-01 do the same for right boundaryx
+    // EBEB 2013-12-012 do similar stuff for right boundary
+    if (event->parameter_space_in_y() == ARR_RIGHT_BOUNDARY) {
+      Subcurve_iterator it, nit, it_end;
+      it = nit = event->left_curves_begin();
+      it_end = event->left_curves_end();
+
+      ++nit;
+      if (it != it_end) {
+        while (nit != it_end) {
+          ++it;
+          ++nit;
+        }
+      }
+      const Subcurve* sc = *it;
+      // pick the one facing the top right corner now
+      CGAL_assertion(sc->last_curve().halfedge_handle()->direction() == ARR_LEFT_TO_RIGHT);
+      m_spherical_face = sc->last_curve().halfedge_handle()->face();
+    }
+
 
     return;
   }
