@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2009,2010,2011,2013 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -636,17 +636,17 @@ public:
   public:
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
-      return m_base->compare_x_on_boundary_2_object()(p1.base(), p2.base());
+      return m_base->compare_y_on_boundary_2_object()(p1.base(), p2.base());
     }
     Comparison_result operator() (const Point_2 & pt,
                                   const X_monotone_curve_2& xcv, Arr_curve_end ce) const
     {
-      return m_base->compare_x_on_boundary_2_object()(pt.base(), xcv.base(), ce);
+      return m_base->compare_y_on_boundary_2_object()(pt.base(), xcv.base(), ce);
     }
     Comparison_result operator() (const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
                                   const X_monotone_curve_2& xcv2, Arr_curve_end ce2) const
     {
-      return m_base->compare_x_on_boundary_2_object()(xcv1.base(), ce1, xcv2.base(), ce2);
+      return m_base->compare_y_on_boundary_2_object()(xcv1.base(), ce1, xcv2.base(), ce2);
     }
   };
 
