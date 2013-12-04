@@ -32,13 +32,13 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_, class Visibility_arrangement_2_ = Arrangement_2_, class RegularizationTag = CGAL::Tag_true> 
+template<class Arrangement_2_, class VisibilityArrangement_2 = Arrangement_2_, class RegularizationTag = CGAL::Tag_true> 
 class Simple_polygon_visibility_2 {
 
 public:
   // Currently only consider with same type for both
   typedef Arrangement_2_                                Arrangement_2;
-  typedef Visibility_arrangement_2_                     Visibility_arrangement_2;
+  typedef VisibilityArrangement_2                     Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 

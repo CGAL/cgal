@@ -19,7 +19,7 @@ is the number of the vertices of the polygon.
 It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
 CGAL::Arr_segment_traits_2. 
 
-\tparam Visibility_arrangement_2_ is the type of the arrangement representing the visibility polygon.
+\tparam VisibilityArrangement_2 is the type of the arrangement representing the visibility polygon.
 It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
 CGAL::Arr_segment_traits_2.
 
@@ -32,7 +32,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false 
 \sa `CGAL::Rotational_sweep_visibility_2`
 \sa `CGAL::Triangular_expansion_visibility_2`
 */
-template <typename Arrangement_2_, typename Visibility_arrangement_2_ = Arrangement_2_, typename RegularizationTag = Tag_true>
+template <typename Arrangement_2_, typename VisibilityArrangement_2 = Arrangement_2_, typename RegularizationTag = Tag_true>
 class Simple_polygon_visibility_2 {
 public:
 

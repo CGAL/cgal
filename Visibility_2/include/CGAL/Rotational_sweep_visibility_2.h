@@ -28,11 +28,11 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_ , typename Visibility_arrangement_2_ = Arrangement_2_ ,class RegularizationTag = CGAL::Tag_true >
+template<class Arrangement_2_ , typename VisibilityArrangement_2 = Arrangement_2_ ,class RegularizationTag = CGAL::Tag_true >
 class Rotational_sweep_visibility_2 {
 public:
   typedef Arrangement_2_                                Arrangement_2;
-  typedef Visibility_arrangement_2_                     Visibility_arrangement_2;
+  typedef VisibilityArrangement_2                     Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
