@@ -35,6 +35,7 @@ class Triangular_expansion_visibility_2 {
 public:
   // Currently only consider with same type for both
   typedef Arrangement_2_			        Arrangement_2;
+  typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator

@@ -32,6 +32,7 @@ template<class Arrangement_2_ , class RegularizationTag = CGAL::Tag_true >
 class Rotational_sweep_visibility_2 {
 public:
   typedef Arrangement_2_                                Arrangement_2;
+  typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;

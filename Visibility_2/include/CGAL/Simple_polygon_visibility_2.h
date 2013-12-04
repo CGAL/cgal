@@ -38,6 +38,7 @@ class Simple_polygon_visibility_2 {
 public:
   // Currently only consider with same type for both
   typedef Arrangement_2_                                Arrangement_2;
+  typedef typename Arrangement_2::Traits_2              Traits_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 

@@ -34,7 +34,8 @@ void test_model_methods_for_arr(
               typename Visibility_2::Arrangement_2 &arr) {
 
   typedef typename Visibility_2::Arrangement_2       
-    Arrangement_2;
+    Arrangement_2;  
+  typedef typename Visibility_2::Traits_2 Traits_2; 
   typedef typename Arrangement_2::Point_2            
     Point_2;
   typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
