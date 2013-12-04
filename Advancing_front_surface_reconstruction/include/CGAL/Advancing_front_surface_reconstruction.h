@@ -23,6 +23,7 @@
 #include <CGAL/AFSR/construct_surface_2.h>
 #include <CGAL/AFSR_options.h>
 #include <CGAL/AFSR/write_triple_indices.h>
+
 namespace CGAL {
 
 // This iterator allows to visit all contours. It has the particularity
@@ -166,7 +167,7 @@ public:
   typedef typename Triangulation_3::Finite_facets_iterator Finite_facets_iterator;
   typedef typename Triangulation_3::Finite_vertices_iterator  Finite_vertices_iterator;
   typedef typename Triangulation_3::Finite_edges_iterator  Finite_edges_iterator;
-  
+
   typedef typename Triangulation_3::All_cells_iterator  All_cells_iterator;
   typedef typename Triangulation_3::All_facets_iterator All_facets_iterator;
   typedef typename Triangulation_3::All_vertices_iterator  All_vertices_iterator;
@@ -178,6 +179,7 @@ public:
   typedef typename Triangulation_3::Vertex::Radius_edge_type Radius_edge_type;
   typedef typename Triangulation_3::Vertex::Border_elt Border_elt;
   typedef typename Triangulation_3::Vertex::Next_border_elt Next_border_elt;
+  typedef typename Triangulation_3::Vertex::Intern_successors_type Intern_successors_type; 
   typedef typename Triangulation_3::Vertex::Radius_ptr_type Radius_ptr_type;
 
   typedef typename Triangulation_3::Vertex::Incidence_request_iterator Incidence_request_iterator;
@@ -234,6 +236,276 @@ private:
 
   int _number_of_connected_components;
 
+    std::list<Vertex_handle> interior_edges;
+    std::list< Incidence_request_elt > incidence_requests;
+
+
+    std::list<Next_border_elt> nbe_pool;
+    std::list<Intern_successors_type> ist_pool;
+  
+
+  Intern_successors_type* new_border()
+  {  
+    nbe_pool.push_back(Next_border_elt());
+
+    Next_border_elt* p1 = & nbe_pool.back();
+    nbe_pool.push_back(Next_border_elt());
+    Next_border_elt* p2 = & nbe_pool.back();
+    
+    Intern_successors_type ist(p1,p2);
+    ist_pool.push_back(ist);
+
+    Intern_successors_type* ret = &ist_pool.back();
+
+    ret->first->first = NULL; 
+    ret->second->first = NULL;
+    return ret;
+  }
+
+
+    inline bool is_on_border(Vertex_handle vh, const int& i) const
+    {
+      if (vh->m_incident_border == NULL) return false; //vh is interior
+      if (vh->m_incident_border->first->first != NULL)
+	{ 
+	  if (vh->m_incident_border->second->first != NULL)
+	    return ((vh->m_incident_border->first->second.second == i)||
+		    (vh->m_incident_border->second->second.second == i));
+	  return (vh->m_incident_border->first->second.second == i);
+	}
+      return false; //vh is still exterior   
+    }
+
+    
+    void remove_border_edge(Vertex_handle w, Vertex_handle v)
+    {
+      if (w->m_incident_border != NULL)
+	{
+	  if (w->m_incident_border->second->first == v)
+	    {
+	      w->m_incident_border->second->first = NULL;
+	      set_interior_edge(w,v);
+	      return;
+	    }
+	  if (w->m_incident_border->first->first == v)
+	    {
+	      if (w->m_incident_border->second->first != NULL)
+		{
+		  Next_border_elt* tmp = w->m_incident_border->first;
+		  w->m_incident_border->first = w->m_incident_border->second;
+		  w->m_incident_border->second = tmp;
+		  w->m_incident_border->second->first = NULL;
+		  set_interior_edge(w,v);
+		  return;
+		}
+	      else
+		{ 
+		  w->m_incident_border->first->first = NULL;
+		  set_interior_edge(w,v);
+		  return;
+		}
+	    }
+	}
+    }
+
+
+    inline bool is_interior_edge(Vertex_handle w, Vertex_handle v) const
+    {
+
+      bool r1;
+      if(w->m_ie_first == interior_edges.end()){
+	r1 = false;
+      }else {
+	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
+	e++;
+	typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
+	r1 = ( r != e);
+      }
+
+      return r1;
+    }
+
+ //-------------------------------------------------------------------
+  // pour gerer certaines aretes interieures: a savoir celle encore connectee au 
+  // bord (en fait seule, les aretes interieures reliant 2 bords nous
+  // interressent...)
+
+    inline void set_interior_edge(Vertex_handle w, Vertex_handle v)
+    {
+      if(w->m_ie_last == interior_edges.end()){ // empty set
+	assert(w->m_ie_first == w->m_ie_last);
+	w->m_ie_last = interior_edges.insert(w->m_ie_last, v);
+	w->m_ie_first = w->m_ie_last;
+      } else {
+	typename std::list<Vertex_handle>::iterator e(w->m_ie_last);
+	e++;
+#ifdef DEBUG
+	typename std::list<Vertex_handle>::iterator r = std::find(w->m_ie_first, e, v);
+	assert(r == e);
+#endif
+	w->m_ie_last = interior_edges.insert(e, v);
+      }
+    }
+
+
+    inline void remove_interior_edge(Vertex_handle w, Vertex_handle v)
+    {
+      if(w->m_ie_first == interior_edges.end()){
+	assert(w->m_ie_last == w->m_ie_first);
+      } else if(w->m_ie_first == w->m_ie_last){ // there is only one element
+	if(*(w->m_ie_first) == v){
+	  interior_edges.erase(w->m_ie_first);
+	  w->m_ie_last = interior_edges.end();
+	  w->m_ie_first = w->m_ie_last;
+	}
+      } else {
+	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
+	e++;
+	typename std::list<Vertex_handle>::iterator r = std::find(b, e, v);
+	if(r != e){
+	  if(r == w->m_ie_first){
+	    w->m_ie_first++;
+	  }
+	  if(r == w->m_ie_last){
+	    w->m_ie_last--;
+	  }
+	  interior_edges.erase(r);
+	}
+      }
+    }
+
+
+ //-------------------------------------------------------------------
+  
+    inline void set_incidence_request(Vertex_handle w, const Incidence_request_elt& ir)
+    {
+      if(w->m_ir_last == incidence_requests.end()){
+	assert(w->m_ir_first == w->m_ir_last);
+	w->m_ir_last = incidence_requests.insert(w->m_ir_last, ir);
+	w->m_ir_first = w->m_ir_last;
+      } else {
+	typename std::list<Incidence_request_elt>::iterator e(w->m_ir_last);
+	e++;
+	w->m_ir_last = incidence_requests.insert(e, ir);
+      }
+    }
+
+  inline bool is_incidence_requested(Vertex_handle w) const
+    {
+      if(w->m_ir_last == incidence_requests.end()){
+	assert(w->m_ir_first == incidence_requests.end());
+      }
+      return (w->m_ir_last != incidence_requests.end());
+    }
+  
+  inline Incidence_request_iterator incidence_request_begin(Vertex_handle w)
+    {
+      return w->m_ir_first;
+    }
+
+  inline Incidence_request_iterator get_incidence_request_end(Vertex_handle w)
+    {
+      if(w->m_ir_last != incidence_requests.end()){
+	assert(w->m_ir_first != incidence_requests.end());
+	Incidence_request_iterator it(w->m_ir_last);
+	it++;
+	return it;
+      }
+      return w->m_ir_last;
+    }
+
+  inline void erase_incidence_request(Vertex_handle w)
+    { 
+      if(w->m_ir_last != incidence_requests.end()){
+	assert(w->m_ir_first != incidence_requests.end());
+	w->m_ir_last++;
+	incidence_requests.erase(w->m_ir_first, w->m_ir_last);
+	w->m_ir_first = incidence_requests.end();
+	w->m_ir_last = incidence_requests.end();
+      }
+    }
+  
+
+    void re_init(Vertex_handle w)
+    {
+      if (w->m_incident_border != NULL)
+	{
+	  w->delete_border();
+	}
+
+      if(w->m_ir_first != incidence_requests.end()){
+	assert(w->m_ir_last != incidence_requests.end());
+	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
+	e++;
+	incidence_requests.erase(b, e);
+	w->m_ir_first = incidence_requests.end();
+	w->m_ir_last = incidence_requests.end();
+      }
+
+      w->m_incident_border = new_border();
+      w->m_mark = -1;
+      w->m_post_mark = -1;
+    }
+
+
+
+  inline void dec_mark(Vertex_handle w)
+    {
+      w->m_mark--;
+      if(w->m_mark == 0)
+	{
+	  w->delete_border();
+	  erase_incidence_request(w);
+	}
+    }
+
+
+
+    void initialize_vertices_and_cells()
+    {
+      for(All_vertices_iterator fit = T.all_vertices_begin();
+          fit != T.all_vertices_end();
+          ++fit){
+        fit->m_ie_first =  fit->m_ie_last = interior_edges.end();
+        fit->m_ir_first = fit->m_ir_last = incidence_requests.end();
+        fit->m_incident_border = new_border();
+      }
+    }
+
+  //-------------------- DESTRUCTOR -----------------------------------
+
+  void clear_vertex(Vertex_handle w)
+    {
+      if (w->m_incident_border != NULL)
+	{
+	  w->delete_border();
+	}
+      if(w->m_ir_first != incidence_requests.end()){
+	assert(w->m_ir_last != incidence_requests.end());
+	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
+	e++;
+	incidence_requests.erase(b, e);
+      }
+
+      if(w->m_ie_first != interior_edges.end()){
+	assert(w->m_ie_last != interior_edges.end());
+	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
+	e++;
+	interior_edges.erase(b, e);
+      }
+    }
+
+
+    void clear_vertices()
+    {
+      for (All_vertices_iterator vit = T.all_vertices_begin();
+           vit != T.all_vertices_end();
+           ++vit){
+        clear_vertex(vit);
+      }
+    }
+
+
 public:
     Advancing_front_surface_reconstruction(Triangulation_3& T_, const AFSR_options& opt = AFSR_options())
     : T(T_), _number_of_border(1), SLIVER_ANGULUS(.86), DELTA(opt.delta), min_K(HUGE_VAL), 
@@ -249,7 +521,7 @@ public:
 
     void operator()(const AFSR_options& opt = AFSR_options())
     {
-
+      initialize_vertices_and_cells();
     bool re_init = false;
     do 
       {
@@ -257,7 +529,7 @@ public:
 
 	if ( (re_init = init(re_init)) )
 	  {
-	    std::cerr << "Growing connected component " << _number_of_connected_components << std::endl;
+	    //std::cerr << "Growing connected component " << _number_of_connected_components << std::endl;
 	    extend(opt.K_init, opt.K_step, opt.K);
 
 	    if ((number_of_facets() > static_cast<int>(T.number_of_vertices()))&&
@@ -274,10 +546,9 @@ public:
 	      (opt.max_connected_comp < 0))); 
 
     _tds_2_inf = AFSR::construct_surface(_tds_2, *this);
-  }
 
-  ~Advancing_front_surface_reconstruction()
-  {}
+    clear_vertices();
+  }
 
 
   typedef Triangulation_data_structure_2<AFSR::Surface_vertex_base_2<Kernel,Vertex_handle>,
@@ -384,7 +655,7 @@ public:
 
 
 
-   Next_border_elt* get_border_elt(const Vertex_handle& v1, const Vertex_handle& v2)
+   Next_border_elt* get_border_elt(const Vertex_handle& v1, const Vertex_handle& v2) const
   {
     return v1->get_border_elt(v2);
   }
@@ -415,14 +686,14 @@ public:
 
    bool is_border_elt(Edge_like& key, Border_elt& result) const
   {
-    Next_border_elt* it12 =  key.first->get_border_elt(key.second);
+    Next_border_elt* it12 = get_border_elt(key.first, key.second);
     if (it12 != NULL)
       {    
 	result = it12->second;
 	return true;
       }
 
-    Next_border_elt* it21 =  key.second->get_border_elt(key.first);
+    Next_border_elt* it21 =  get_border_elt(key.second, key.first);
     if (it21 != NULL)
       {    
 	result = it21->second;
@@ -434,13 +705,13 @@ public:
 
   //---------------------------------------------------------------------
    bool is_border_elt(Edge_like& key) const {
-    Next_border_elt* it12 =  key.first->get_border_elt(key.second);
+     Next_border_elt* it12 =  get_border_elt(key.first, key.second);
     if (it12 != NULL)
       {    
 	return true;
       }
 
-    Next_border_elt* it21 =  key.second->get_border_elt(key.first);
+    Next_border_elt* it21 =  get_border_elt(key.second, key.first);
     if (it21 != NULL)
       {    
 	std::swap(key.first, key.second);
@@ -452,7 +723,7 @@ public:
 
    bool is_ordered_border_elt(const Edge_like& key, Border_elt& result) const
   {
-    Next_border_elt* it12 =  key.first->get_border_elt(key.second);
+    Next_border_elt* it12 =  get_border_elt(key.first, key.second);
     if (it12 != NULL)
       {    
 	result = it12->second;
@@ -466,7 +737,7 @@ public:
   void
   remove_border_elt(const Edge_like& ordered_key)
   {
-    ordered_key.first->remove_border_edge(ordered_key.second);
+    remove_border_edge(ordered_key.first, ordered_key.second);
   }
 
   //---------------------------------------------------------------------
@@ -476,7 +747,7 @@ public:
   {
     Vertex_handle v1 = e.first;
 
-    Next_border_elt* it12 =  v1->get_border_elt(e.second);
+    Next_border_elt* it12 =  get_border_elt(v1, e.second);
     if (it12 != NULL)
       {   
 	ptr = &it12->second.first.second;
@@ -491,7 +762,7 @@ public:
 				    const Edge_like& e)
   {
     Incidence_request_elt incident_elt(value, e);
-    v->set_incidence_request(incident_elt);
+    set_incidence_request(v, incident_elt);
   }
 
   //---------------------------------------------------------------------
@@ -501,8 +772,8 @@ public:
     // bord (en fait seule, les aretes interieures reliant 2 bords nous
     // interressent...)
   {
-    return (key.first->is_interior_edge(key.second)||
-	    key.second->is_interior_edge(key.first));
+    return (is_interior_edge(key.first, key.second)||
+	    is_interior_edge(key.second, key.first));
   }
 
   //---------------------------------------------------------------------
@@ -1129,10 +1400,10 @@ public:
 
   void dequeue_incidence_request(const Vertex_handle& v)
   {
-    if (v->is_incidence_requested())
+    if (is_incidence_requested(v))
       {
-	for(Incidence_request_iterator v_it = v->incidence_request_begin();
-	    v_it != v->get_incidence_request_end();
+	for(Incidence_request_iterator v_it = incidence_request_begin(v);
+	    v_it != get_incidence_request_end(v);
 	    v_it++)
 	  {
 	    IO_edge_type* ptr;
@@ -1140,7 +1411,7 @@ public:
 	    if (is_ordered_border_elt(v_it->second, ptr))
 	      _ordered_border.insert(Radius_ptr_type(v_it->first, ptr));
 	  }
-	v->erase_incidence_request();
+	erase_incidence_request(v);
       }
   }
 
@@ -1166,7 +1437,7 @@ public:
       p2 = set_border_elt(ordered_el1.first, v2,
 			  Border_elt(e2,result1.second));
 
-    v1->dec_mark();
+    dec_mark(v1);
 
     _ordered_border.insert(Radius_ptr_type(e2.first, p2));
 
@@ -1256,9 +1527,9 @@ public:
 		force_merge(ordered_el1, result1);
 		force_merge(ordered_el2, result2);
 
-		v1->dec_mark();
-		v2->dec_mark();
-		c->vertex(i)->dec_mark();
+		dec_mark(v1);
+		dec_mark(v2);
+		dec_mark(c->vertex(i));
 
 		select_facet(c, edge_Efacet.second);	
 
@@ -1729,9 +2000,9 @@ public:
     Vertex_handle vh_int = c->vertex(i3);
     ordered_map_erase(border_elt.second.first.first, 
 		      get_border_IO_elt(vh, vh_succ));
-    vh->remove_border_edge(vh_succ);
+    remove_border_edge(vh, vh_succ);
     // 1- a virer au cas ou car vh va etre detruit
-    vh_succ->remove_interior_edge(vh);
+    remove_interior_edge(vh_succ, vh);
     bool while_cond(true);
     do
       {
@@ -1746,7 +2017,7 @@ public:
 
 	if (!vh_int->is_on_border())
 	  {
-	    vh_int->re_init(); 
+	    re_init(vh_int); 
 	    vh_int->inc_mark();
 	  }
 
@@ -1758,17 +2029,17 @@ public:
 	if (is_ordered_border_elt(Edge_like(vh_int, vh), result))
 	  {
 	    ordered_map_erase(result.first.first, get_border_IO_elt(vh_int, vh));
-	    vh_int->remove_border_edge(vh);
+	    remove_border_edge(vh_int, vh);
 	    // 1- a virer au cas ou car vh va etre detruit
-	    vh_int->remove_interior_edge(vh);
+	    remove_interior_edge(vh_int, vh);
 	    while_cond = false;
 	  }
 	// a titre  preventif... on essaye de s'assurer de marquer les aretes
 	// interieures au sens large...
 
 	// 2- a virer a tout pris pour que maintenir le sens de interior edge
-	vh_int->remove_interior_edge(vh_succ);
-	vh_succ->remove_interior_edge(vh_int);
+	remove_interior_edge(vh_int, vh_succ);
+	remove_interior_edge(vh_succ, vh_int);
       
 	IO_edge_type* p32 = set_border_elt(vh_int, vh_succ, 
 					   Border_elt(rad_elt_32, border_index));
@@ -1901,7 +2172,7 @@ public:
 	v_it != T.finite_vertices_end(); 
 	v_it++)
       {
-	v_it->erase_incidence_request();
+	erase_incidence_request(v_it);
 	if ((v_it->is_on_border())&&
 	    (!v_it->is_post_marked(_postprocessing_counter)))
 	  {
@@ -2006,6 +2277,7 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTr
                       boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
 
   Reconstruction R(dt);
+  R();
   write_triple_indices(out, R);
   return out;
 }
