@@ -520,7 +520,7 @@ public:
 
     if(needles.size()>0){
       std::vector<Segment_2> segments(needles.begin(),needles.end()); 
-      for(int i = 0; i <raw_output.size();i++){
+      for(unsigned int i = 0; i <raw_output.size();i++){
 //      //std::cout <<  raw_output[i] << " -- " 
 //                <<  raw_output[(i+1)%raw_output.size()] << std::endl; 
         segments.push_back(Segment_2(raw_output[i],raw_output[(i+1)%raw_output.size()]));
