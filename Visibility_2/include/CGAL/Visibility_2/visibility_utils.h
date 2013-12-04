@@ -204,6 +204,7 @@ void report_while_handling_needles(
   typename Visibility_2::Visibility_arrangement_2& arr_out) {
 
   typedef typename Visibility_2::Arrangement_2      Arrangement_2;
+  typedef typename Visibility_2::Visibility_arrangement_2      Visibility_arrangement_2;
   typedef typename Arrangement_2::Point_2           Point_2;
   typedef typename Arrangement_2::Geometry_traits_2 Geometry_traits_2;
   typedef typename Arrangement_2::Halfedge_handle   Halfedge_handle;
@@ -228,10 +229,10 @@ void report_while_handling_needles(
 
   points.push_back(points[i]);
 
-  Halfedge_handle he_handle;
-  Vertex_handle v_trg;  //the handle of vertex where the next segment is inserted
-  Vertex_handle v_fst;  //the handle of vertex inserted first
-  Vertex_handle v_needle_end;  //the handle of vertex of the end of a needle
+  typename Visibility_arrangement_2::Halfedge_handle he_handle;
+  typename Visibility_arrangement_2::Vertex_handle v_trg;  //the handle of vertex where the next segment is inserted
+  typename Visibility_arrangement_2::Vertex_handle v_fst;  //the handle of vertex inserted first
+  typename Visibility_arrangement_2::Vertex_handle v_needle_end;  //the handle of vertex of the end of a needle
 
   v_trg = v_fst = arr_out.insert_in_face_interior(points[i], arr_out.unbounded_face());
   //find a point that is right after a needle
@@ -240,7 +241,7 @@ void report_while_handling_needles(
                    points[i],
                    points[i+1],
                    q)) {
-      Vertex_handle v_needle_begin = v_trg;
+      typename Visibility_arrangement_2::Vertex_handle v_needle_begin = v_trg;
       std::vector<Point_2> forward_needle;   //vertices of the needle that are not between q and v_needle_begin; their direction is leaving q;
       std::vector<Point_2> backward_needle;  //vertices of the needle that are not between q and v_needle_begin; their direction is towards q;
       std::vector<Point_2> part_in_q_side;   //vertices of the needle that are between q and v_needle_begin

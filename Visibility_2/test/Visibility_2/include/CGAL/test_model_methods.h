@@ -49,8 +49,7 @@ void test_model_methods_for_arr(
   assert(false == visibility.is_attached());
   visibility.attach(arr);
   assert(true == visibility.is_attached());
-  assert(true == (CGAL::test_are_equal<Arrangement_2>(arr, 
-                                                            visibility.arr())));
+  assert(true == (CGAL::test_are_equal(arr,visibility.arr())));
 
   Visibility_arrangement_2 arr_out;
   Visibility_arrangement_2 arr_out_check;

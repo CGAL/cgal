@@ -13,9 +13,9 @@ typedef CGAL::Arrangement_2<Traits_2>                                   Arrangem
 typedef Arrangement_2::Edge_const_iterator                              Edge_const_iterator;
 typedef Arrangement_2::Face_handle                                      Face_handle;
 typedef Arrangement_2::Ccb_halfedge_circulator                          Ccb_halfedge_circulator;
-typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
+typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_false>
                                                                         NSPV;
-typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_true>
+typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_true>
                                                                         RSPV;
 
 int main() {

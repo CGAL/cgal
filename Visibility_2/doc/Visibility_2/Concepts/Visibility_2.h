@@ -6,9 +6,9 @@
 A model of the `Visibility_2` concept can be attached to an `Arrangement_2` instance to 
 answer visibility queries within the faces of this arrangement.
 
-\cgalHasModel `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
-\cgalHasModel `CGAL::Rotational_sweep_visibility_2<Arrangement_2, RegularizationTag>`
-\cgalHasModel `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
+\cgalHasModel `CGAL::Simple_polygon_visibility_2`
+\cgalHasModel `CGAL::Rotational_sweep_visibility_2`
+\cgalHasModel `CGAL::Triangular_expansion_visibility_2`
 
 */
 class Visibility_2 {

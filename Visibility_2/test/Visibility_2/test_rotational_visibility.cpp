@@ -28,53 +28,70 @@
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
 #include <CGAL/Rotational_sweep_visibility_2.h>
+#include <CGAL/Arr_extended_dcel.h>
+
 
 #include <iostream>
 #include <fstream>
 
 int main() {
-//{
-//    typedef CGAL::Gmpq                                              Number_type;
-//    typedef CGAL::Cartesian<Number_type> 							Kernel;
-//    typedef CGAL::Arr_segment_traits_2<Kernel> 						Traits_2;
-//    typedef Traits_2::Point_2										Point_2;
-//    typedef Traits_2::X_monotone_curve_2							Segment_2;
-//    typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-    
-//    {
-//      typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>                                                                    Naive_visibility_2;
-
-//      CGAL::test_model_methods<Naive_visibility_2>();
-//      std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-//      CGAL::run_tests<Naive_visibility_2>(10, 2);
-//    }{
-//      typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_true>                                                                    Naive_visibility_2;
-
-//      CGAL::test_model_methods<Naive_visibility_2>();
-//      std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
-//      CGAL::run_tests<Naive_visibility_2>(10, 2);
-//    }
-//}
 {
+  typedef CGAL::Cartesian<CGAL::Gmpq>                               Kernel;
+    typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
+    typedef Traits_2::Point_2                                       Point_2;
+    typedef Traits_2::X_monotone_curve_2                            Segment_2;
+    typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
+    {
+      typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_false>
+        RSV;
+      CGAL::test_model_methods<RSV>();
+      std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
+      CGAL::run_tests<RSV>(17, 2);
+    }
+    {
+      typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_true>
+        RSV;
+      CGAL::test_model_methods<RSV>();
+      std::cout << "Running test suite with " << GREEN << "Cartesian" << RESET << " Kernel..." << std::endl;
+      CGAL::run_tests<RSV>(17, 2);
+    }
+}{
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
     typedef Traits_2::Point_2                                       Point_2;
     typedef Traits_2::X_monotone_curve_2                            Segment_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
     {
-      typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_false>
+      typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_false>
         RSV;
       CGAL::test_model_methods<RSV>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
       CGAL::run_tests<RSV>(17, 2);
     }
     {
-      typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, CGAL::Tag_true>
+      typedef CGAL::Rotational_sweep_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_true>
         RSV;
       CGAL::test_model_methods<RSV>();
       std::cout << "Running test suite with " << GREEN << "EPECK" << RESET << " Kernel..." << std::endl;
       CGAL::run_tests<RSV>(17, 2);
     }
 }
-    return 0;
+{
+  // test Visibility_arrangement_type with extended DCEL     
+  typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
+  typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
+  typedef CGAL::Arrangement_2<Traits_2> ARR; 
+  typedef CGAL::Arr_extended_dcel<Traits_2, bool, bool, bool> EDCEL; 
+  typedef CGAL::Arrangement_2<Traits_2, EDCEL> EARR;   
+  {
+    typedef CGAL::Rotational_sweep_visibility_2<ARR,EARR,CGAL::Tag_true> Visibility_2;
+    CGAL::test_model_methods<Visibility_2>();
+    CGAL::run_tests<Visibility_2>(17, 2);
+  }{
+    typedef CGAL::Rotational_sweep_visibility_2<ARR,EARR,CGAL::Tag_false> Visibility_2;
+    CGAL::test_model_methods<Visibility_2>();
+    CGAL::run_tests<Visibility_2>(17, 2);
+  }
+}
+return 0;
 }

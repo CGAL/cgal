@@ -28,11 +28,11 @@
 
 namespace CGAL {
 
-template <typename Arrangement_2_, typename RegularizationTag>
+template<class Arrangement_2_ , typename Visibility_arrangement_2_ = Arrangement_2_ ,class RegularizationTag = CGAL::Tag_true >
 class Rotational_sweep_visibility_2 {
 public:
   typedef Arrangement_2_                                Arrangement_2;
-  typedef Arrangement_2_                                Visibility_arrangement_2;
+  typedef Visibility_arrangement_2_                     Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
@@ -119,7 +119,8 @@ public:
     geom_traits = p_arr->geometry_traits();
   }
 
-  Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Arrangement_2& arr_out) {
+  typename Visibility_arrangement_2::Face_handle 
+  compute_visibility(const Point_2& q, const Halfedge_const_handle e, Visibility_arrangement_2& arr_out) {
     arr_out.clear();
     bad_edges.clear();
     this->q = q;
@@ -211,7 +212,8 @@ public:
       return arr_out.faces_begin();
   }
 
-  Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Visibility_arrangement_2& arr_out) {
+  typename Visibility_arrangement_2::Face_handle 
+  compute_visibility(const Point_2& q, const Face_const_handle f, Visibility_arrangement_2& arr_out) {
     arr_out.clear();
     this->q = q;
     is_vertex_query = false;

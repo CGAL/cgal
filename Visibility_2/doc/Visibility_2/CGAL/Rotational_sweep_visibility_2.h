@@ -7,20 +7,27 @@ namespace CGAL {
 
 \details The algorithm does not require preprocessing. It relies on the algorithm of T. Asano \cite ta-aeafvpprh-85 based on angular plane sweep, with a time complexity of \f$O (n \log n)\f$ in the number of vertices.
 
-\tparam Arrangement_2 is the type of input polygonal environment and output visibility polygon.
-Arrangement_2::Traits_2 must be an instance of Arr_segment_traits_2.
+
+\tparam Arrangement_2_ is the type used to represent the input environment.
+It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
+CGAL::Arr_segment_traits_2. 
+
+\tparam Visibility_arrangement_2_ is the type of the arrangement representing the visibility polygon.
+It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
+CGAL::Arr_segment_traits_2.
 
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
 
 
+
 \cgalModels `Visibility_2` 
 
-\sa `CGAL::Simple_polygon_visibility_2<Arrangement_2, RegularizationTag>`
-\sa `CGAL::Triangular_expansion_visibility_2<Arrangement_2, RegularizationTag>`
+\sa `CGAL::Simple_polygon_visibility_2`
+\sa `CGAL::Triangular_expansion_visibility_2`
 
 */
-template <typename Arrangement_2, typename RegularizationTag = Tag_false>
+template <typename Arrangement_2_, typename Visibility_arrangement_2_ = Arrangement_2_, typename RegularizationTag = Tag_true>
 class Rotational_sweep_visibility_2 {
 public:
 
