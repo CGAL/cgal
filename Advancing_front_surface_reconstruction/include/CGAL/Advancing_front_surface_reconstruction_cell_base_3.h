@@ -121,7 +121,7 @@ public:
 
   //-------------------------------------------------------------------
 
-  inline coord_type get_smallest_radius(const int& i)
+  inline coord_type smallest_radius(const int& i)
     { 
       if (_smallest_radius_facet_tab == NULL)
 	return -1;
@@ -195,7 +195,7 @@ public:
  
   //-------------------------------------------------------------------
 
-  inline D_Point* get_lazy_circumcenter()
+  inline D_Point* lazy_circumcenter()
     {
       return _circumcenter;
     }
@@ -207,7 +207,7 @@ public:
   
   //-------------------------------------------------------------------
 
-  inline coord_type* get_lazy_squared_radius()
+  inline coord_type* lazy_squared_radius()
     { 
       return _squared_radius;
     }

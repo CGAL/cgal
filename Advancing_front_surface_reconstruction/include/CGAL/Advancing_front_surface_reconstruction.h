@@ -403,7 +403,7 @@ private:
       return w->m_ir_first;
     }
 
-  inline Incidence_request_iterator get_incidence_request_end(Vertex_handle w)
+  inline Incidence_request_iterator incidence_request_end(Vertex_handle w)
     {
       if(w->m_ir_last != incidence_requests.end()){
 	assert(w->m_ir_first != incidence_requests.end());
@@ -638,7 +638,7 @@ public:
 
   Boundary_iterator boundaries_begin() const
   {
-    return Boundary_iterator(*this, get_next_mark());
+    return Boundary_iterator(*this, next_mark());
   }
 
   Boundary_iterator boundaries_end() const
@@ -647,7 +647,7 @@ public:
   }
 
 
-  int get_next_mark() const
+  int next_mark() const
   {
     _postprocessing_counter++;
     return _postprocessing_counter;
@@ -655,45 +655,45 @@ public:
 
 
 
-   Next_border_elt* get_border_elt(const Vertex_handle& v1, const Vertex_handle& v2) const
+   Next_border_elt* border_elt(const Vertex_handle& v1, const Vertex_handle& v2) const
   {
-    return v1->get_border_elt(v2);
+    return v1->border_elt(v2);
   }
 
   //public
 
-   IO_edge_type* get_border_IO_elt(const Vertex_handle& v1, const Vertex_handle& v2)
+   IO_edge_type* border_IO_elt(const Vertex_handle& v1, const Vertex_handle& v2)
   {
-    return &get_border_elt(v1,v2)->second.first.second;
+    return &border_elt(v1,v2)->second.first.second;
   }
 
    IO_edge_type* set_border_elt(const Vertex_handle& v1, const Vertex_handle& v2,
 				      const Border_elt& e)
   {
     v1->set_next_border_elt(Next_border_elt (v2, e));
-    return get_border_IO_elt(v1, v2);
+    return border_IO_elt(v1, v2);
   }
 
 
    IO_edge_type* set_again_border_elt(const Vertex_handle& v1, const Vertex_handle& v2,
 					    const Border_elt& e)
   {
-    get_border_elt(v1,v2)->second = e;
-    return get_border_IO_elt(v1, v2);
+    border_elt(v1,v2)->second = e;
+    return border_IO_elt(v1, v2);
   }
 
   //---------------------------------------------------------------------
 
    bool is_border_elt(Edge_like& key, Border_elt& result) const
   {
-    Next_border_elt* it12 = get_border_elt(key.first, key.second);
+    Next_border_elt* it12 = border_elt(key.first, key.second);
     if (it12 != NULL)
       {    
 	result = it12->second;
 	return true;
       }
 
-    Next_border_elt* it21 =  get_border_elt(key.second, key.first);
+    Next_border_elt* it21 =  border_elt(key.second, key.first);
     if (it21 != NULL)
       {    
 	result = it21->second;
@@ -705,13 +705,13 @@ public:
 
   //---------------------------------------------------------------------
    bool is_border_elt(Edge_like& key) const {
-     Next_border_elt* it12 =  get_border_elt(key.first, key.second);
+     Next_border_elt* it12 =  border_elt(key.first, key.second);
     if (it12 != NULL)
       {    
 	return true;
       }
 
-    Next_border_elt* it21 =  get_border_elt(key.second, key.first);
+    Next_border_elt* it21 =  border_elt(key.second, key.first);
     if (it21 != NULL)
       {    
 	std::swap(key.first, key.second);
@@ -723,7 +723,7 @@ public:
 
    bool is_ordered_border_elt(const Edge_like& key, Border_elt& result) const
   {
-    Next_border_elt* it12 =  get_border_elt(key.first, key.second);
+    Next_border_elt* it12 =  border_elt(key.first, key.second);
     if (it12 != NULL)
       {    
 	result = it12->second;
@@ -747,7 +747,7 @@ public:
   {
     Vertex_handle v1 = e.first;
 
-    Next_border_elt* it12 =  get_border_elt(v1, e.second);
+    Next_border_elt* it12 =  border_elt(v1, e.second);
     if (it12 != NULL)
       {   
 	ptr = &it12->second.first.second;
@@ -780,30 +780,30 @@ public:
 
 #ifdef AFSR_LAZY
 
-   coord_type get_lazy_squared_radius(const Cell_handle& c)
+   coord_type lazy_squared_radius(const Cell_handle& c)
   {
-    if (c->get_lazy_squared_radius() != NULL)
-      return *(c->get_lazy_squared_radius());
+    if (c->lazy_squared_radius() != NULL)
+      return *(c->lazy_squared_radius());
 
     c->set_lazy_squared_radius
       (squared_radius(c->vertex(0)->point(),
 		      c->vertex(1)->point(),
 		      c->vertex(2)->point(),
 		      c->vertex(3)->point()));
-    return *(c->get_lazy_squared_radius());
+    return *(c->lazy_squared_radius());
   }
 
-   Point get_lazy_circumcenter(const Cell_handle& c)
+   Point lazy_circumcenter(const Cell_handle& c)
   {
-    if (c->get_lazy_circumcenter() != NULL)
-      return *(c->get_lazy_circumcenter());
+    if (c->lazy_circumcenter() != NULL)
+      return *(c->lazy_circumcenter());
 
     c->set_lazy_circumcenter
       (circumcenter(c->vertex(0)->point(),
 		    c->vertex(1)->point(),
 		    c->vertex(2)->point(),
 		    c->vertex(3)->point()));
-    return *(c->get_lazy_circumcenter());
+    return *(c->lazy_circumcenter());
   }
 
 #endif //NOLAZY
@@ -932,15 +932,15 @@ public:
 
   //=====================================================================
   
-  coord_type get_smallest_radius_delaunay_sphere(const Cell_handle& c,
-						 const int& index) const
+  coord_type smallest_radius_delaunay_sphere(const Cell_handle& c,
+                                             const int& index) const
   {
     int i1, i2, i3;
 
     Cell_handle n = c->neighbor(index);
     // lazy evaluation ...
-    coord_type value = c->get_smallest_radius(index);
-    if ((value >= 0)&&(n->get_smallest_radius(n->index(c)) == value))
+    coord_type value = c->smallest_radius(index);
+    if ((value >= 0)&&(n->smallest_radius(n->index(c)) == value))
       return value;
 
     const Point& cp0 = c->vertex(index)->point();
@@ -993,7 +993,7 @@ public:
 		facet_sphere.squared_radius())
 	      {
 #ifdef AFSR_LAZY
-		value = get_lazy_squared_radius(cc);
+		value = lazy_squared_radius(cc);
 #else
 		value = squared_radius(pp0, pp1, pp2, pp3);
 #endif
@@ -1005,8 +1005,8 @@ public:
 	  {
 	    Point cc, cn;
 #ifdef AFSR_LAZY
-	    cc = get_lazy_circumcenter(c);
-	    cn = get_lazy_circumcenter(n);
+	    cc = lazy_circumcenter(c);
+	    cn = lazy_circumcenter(n);
 #else
 	    cc = circumcenter(cp0, cp1, cp2, cp3);
 	    cn = circumcenter(np0, np1, np2, np3);
@@ -1134,7 +1134,7 @@ public:
 	       
 	       
 	    if(tmp != HUGE_VAL){
-	      tmp = get_smallest_radius_delaunay_sphere(neigh, n_ind);
+	      tmp = smallest_radius_delaunay_sphere(neigh, n_ind);
 	    }
 	    
 	    Edge_like el1(neigh->vertex(n_i1),neigh->vertex(n_i3)),
@@ -1207,7 +1207,7 @@ public:
 	else
 	  {
 	    //on refuse une trop grande non-uniformite
-	    coord_type tmp = get_smallest_radius_delaunay_sphere(c, i);
+	    coord_type tmp = smallest_radius_delaunay_sphere(c, i);
 	    if (min_valueA <= K * tmp)
 	      value = - min_valueP;
 	    else
@@ -1247,8 +1247,8 @@ public:
 	  facet_it != T.finite_facets_end(); 
 	  facet_it++)
 	{
-	  coord_type value = get_smallest_radius_delaunay_sphere((*facet_it).first,
-								 (*facet_it).second);
+	  coord_type value = smallest_radius_delaunay_sphere((*facet_it).first,
+                                                             (*facet_it).second);
 	  if (value < min_value)
 	    {
 	      min_facet = *facet_it;
@@ -1266,7 +1266,7 @@ public:
 	    if (c->vertex((index+2) & 3)->is_exterior())
 	      if (c->vertex((index+3) & 3)->is_exterior())
 		{
-		  coord_type value = get_smallest_radius_delaunay_sphere(c, index);
+		  coord_type value = smallest_radius_delaunay_sphere(c, index);
 		  coord_type pe=0;
 		  if(abs_perimeter != 0){
 		    pe = compute_perimeter(c->vertex((index+1)&3)->point(),
@@ -1346,7 +1346,7 @@ public:
     if (v1*v2 > SLIVER_ANGULUS*norm)    
       return 1; // label bonne pliure sinon:
 
-    if (ear_alpha <= K*get_smallest_radius_delaunay_sphere(neigh, n_ind))
+    if (ear_alpha <= K*smallest_radius_delaunay_sphere(neigh, n_ind))
       return 2; // label alpha coherent...
     
     return 0; //sinon oreille a rejeter...
@@ -1389,7 +1389,7 @@ public:
   force_merge(const Edge_like& ordered_key, const Border_elt& result)
   {
     criteria value = result.first.first;
-    IO_edge_type* pkey = get_border_IO_elt(ordered_key.first, ordered_key.second);
+    IO_edge_type* pkey = border_IO_elt(ordered_key.first, ordered_key.second);
 
     ordered_map_erase(value, pkey);
 
@@ -1403,7 +1403,7 @@ public:
     if (is_incidence_requested(v))
       {
 	for(Incidence_request_iterator v_it = incidence_request_begin(v);
-	    v_it != get_incidence_request_end(v);
+	    v_it != incidence_request_end(v);
 	    v_it++)
 	  {
 	    IO_edge_type* ptr;
@@ -1665,8 +1665,8 @@ public:
 			(result12.second==result_ear1.second))
 		      {
 			ear1_valid = test_merge(ear1_e, result_ear1, v1,
-						get_smallest_radius_delaunay_sphere(ear1_c, 
-										    ear1.second)) != 0;
+						smallest_radius_delaunay_sphere(ear1_c, 
+                                                                                ear1.second)) != 0;
 		      }
 		  
 		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
@@ -1674,8 +1674,8 @@ public:
 			(result12.second==result_ear2.second))
 		      {
 			ear2_valid = test_merge(ear2_e, result_ear2, v2,
-						get_smallest_radius_delaunay_sphere(ear2_c, 
-										    ear2.second)) != 0;
+						smallest_radius_delaunay_sphere(ear2_c, 
+                                                                                ear2.second)) != 0;
 		      } 
 
 		    if ((!ear1_valid)&&(!ear2_valid)) 
@@ -1935,7 +1935,7 @@ public:
 	      {
 		Edge_incident_facet ei_facet(Edge(neigh, i1, i2), 
 				     n_ind);
-		*get_border_IO_elt(key.first, key.second) =
+		*border_IO_elt(key.first, key.second) =
 		  IO_edge_type(ei_facet, ei_facet);
 	      }
 	    key = Edge_like(neigh->vertex(i1), neigh->vertex(i3));
@@ -1943,7 +1943,7 @@ public:
 	      {
 		Edge_incident_facet ei_facet(Edge(neigh, i1, i3), 
 				     n_ind);
-		*get_border_IO_elt(key.first, key.second) =
+		*border_IO_elt(key.first, key.second) =
 		  IO_edge_type(ei_facet, ei_facet);
 	      }
 	    key = Edge_like(neigh->vertex(i3), neigh->vertex(i2));
@@ -1951,7 +1951,7 @@ public:
 	      {
 		Edge_incident_facet ei_facet(Edge(neigh, i3, i2), 
 				     n_ind);
-		*get_border_IO_elt(key.first, key.second) =
+		*border_IO_elt(key.first, key.second) =
 		  IO_edge_type(ei_facet, ei_facet);
 	      }
 	  }
@@ -1999,7 +1999,7 @@ public:
     int i3 = 6 - index - i1 - i2;
     Vertex_handle vh_int = c->vertex(i3);
     ordered_map_erase(border_elt.second.first.first, 
-		      get_border_IO_elt(vh, vh_succ));
+		      border_IO_elt(vh, vh_succ));
     remove_border_edge(vh, vh_succ);
     // 1- a virer au cas ou car vh va etre detruit
     remove_interior_edge(vh_succ, vh);
@@ -2028,7 +2028,7 @@ public:
 	Border_elt result;
 	if (is_ordered_border_elt(Edge_like(vh_int, vh), result))
 	  {
-	    ordered_map_erase(result.first.first, get_border_IO_elt(vh_int, vh));
+	    ordered_map_erase(result.first.first, border_IO_elt(vh_int, vh));
 	    remove_border_edge(vh_int, vh);
 	    // 1- a virer au cas ou car vh va etre detruit
 	    remove_interior_edge(vh_int, vh);

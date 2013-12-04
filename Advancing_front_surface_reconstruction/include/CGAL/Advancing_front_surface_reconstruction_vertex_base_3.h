@@ -145,7 +145,7 @@ private:
   }
 
 
-  inline Next_border_elt* get_next_on_border(const int& i) const
+  inline Next_border_elt* next_on_border(const int& i) const
     { 
       if (m_incident_border == NULL) return NULL; //vh is interior
       if (m_incident_border->first->first != NULL)
@@ -167,7 +167,7 @@ private:
 	      (m_incident_border->second->first == v));
     }
 
-  inline Next_border_elt* get_border_elt(Vertex_handle v) const
+  inline Next_border_elt* border_elt(Vertex_handle v) const
     {
       if (m_incident_border == NULL) return NULL;
       if (m_incident_border->first->first == v) return m_incident_border->first;
