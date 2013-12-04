@@ -343,9 +343,7 @@ public:
       }
     }
     
-    // never reached ;)    
-    // assert(false);
-    
+    return oit;
   }
 
   typename Visibility_arrangement_2::Face_handle 
@@ -533,7 +531,7 @@ public:
       v_last = v_first = 
         out_arr.insert_in_face_interior(raw_output[0], out_arr.unbounded_face());
       
-      for(int i = 0; i <raw_output.size()-1;i++){
+      for(unsigned int i = 0; i <raw_output.size()-1;i++){
 //      //std::cout <<  raw_output[i] << " -- " 
 //                <<  raw_output[(i+1)%raw_output.size()] << std::endl;
         if(raw_output[i]<raw_output[(i+1)]){
