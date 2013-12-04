@@ -29,14 +29,12 @@
 
 namespace CGAL {
 
-template <class Visibility_2>
+template <class Visibility_2, class Visibility_arrangement_2>
 void test_model_methods_for_arr(
               typename Visibility_2::Arrangement_2 &arr) {
 
   typedef typename Visibility_2::Arrangement_2       
     Arrangement_2;
-  typedef typename Visibility_2::Visibility_arrangement_2      
-    Visibility_arrangement_2;
   typedef typename Arrangement_2::Point_2            
     Point_2;
   typedef typename Arrangement_2::Geometry_traits_2::Segment_2 
@@ -138,14 +136,12 @@ void test_model_methods_for_arr(
   }   
 }
 
-template <class Visibility_2>
+template <class Visibility_2, class Visibility_arrangement_2>
 void test_model_methods() {
 
   // Check concept obediance
   typedef typename Visibility_2::Arrangement_2       
     Arrangement_2;
-  typedef typename Visibility_2::Visibility_arrangement_2 
-    Visibility_arrangement_2; 
   typedef typename Arrangement_2::Point_2            Point_2;
   typedef typename Arrangement_2::Face_handle        Face_handle;
   typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
@@ -166,7 +162,7 @@ void test_model_methods() {
   Arrangement_2 arr_square;
   CGAL::insert(arr_square, seg_sq.begin(), seg_sq.end());
 
-  test_model_methods_for_arr<Visibility_2>(arr_square);
+  test_model_methods_for_arr<Visibility_2,Visibility_arrangement_2>(arr_square);
 
   std::vector<Segment_2> seg_tri;
   seg_tri.push_back(Segment_2(p1, p2));
@@ -175,7 +171,7 @@ void test_model_methods() {
   Arrangement_2 arr_triangle;
   CGAL::insert(arr_triangle, seg_tri.begin(), seg_tri.end());
 
-  test_model_methods_for_arr<Visibility_2>(arr_triangle);
+  test_model_methods_for_arr<Visibility_2,Visibility_arrangement_2>(arr_triangle);
 }
 
 } // end CGAL namespace

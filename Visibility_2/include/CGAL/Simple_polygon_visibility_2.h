@@ -32,13 +32,12 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_, class VisibilityArrangement_2 = Arrangement_2_, class RegularizationTag = CGAL::Tag_true> 
+template<class Arrangement_2_, class RegularizationTag = CGAL::Tag_true> 
 class Simple_polygon_visibility_2 {
 
 public:
   // Currently only consider with same type for both
   typedef Arrangement_2_                                Arrangement_2;
-  typedef VisibilityArrangement_2                     Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 
@@ -107,10 +106,11 @@ public:
 
   /*! Computes the visibility object from the query point 'q' in the face
       'face' and constructs the output in 'out_arr'*/
-  typename Visibility_arrangement_2::Face_handle 
+  template <typename VARR> 
+  typename VARR::Face_handle 
   compute_visibility(const Point_2& q, 
       const Face_const_handle face,
-      Visibility_arrangement_2& out_arr) {
+      VARR& out_arr) {
     
     assert(query_pt_is_vertex == false);
     assert(query_pt_is_on_halfedge == false);
@@ -158,11 +158,12 @@ public:
 
   /*! Computes the visibility region of the query point 'q' located on the
       halfedge 'he' and constructs the output in 'out_arr'*/
-  typename Visibility_arrangement_2::Face_handle 
+  template <typename VARR> 
+  typename VARR::Face_handle 
   compute_visibility(
       const Point_2& q, 
       const Halfedge_const_handle he,
-      Visibility_arrangement_2& out_arr ) 
+      VARR& out_arr ) 
   {
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
@@ -265,23 +266,26 @@ private:
   bool query_pt_is_on_halfedge;
 
   /*! Regularize output if flag is set to true*/
-  void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_true) {
+  template <typename VARR> 
+  void conditional_regularize(VARR& out_arr, CGAL::Tag_true) {
     regularize_output(out_arr);
   }
   /*! No need to regularize output if flag is set to false*/
-  void conditional_regularize(Visibility_arrangement_2& out_arr, CGAL::Tag_false) {
+  template <typename VARR> 
+  void conditional_regularize(VARR& out_arr, CGAL::Tag_false) {
     //do nothing
   }
 
   /*! Regularizes the output - removes edges that have the same face on both
       sides */
-  void regularize_output(Visibility_arrangement_2& out_arr) {
-    typename Visibility_arrangement_2::Edge_iterator e_itr;
+  template <typename VARR> 
+  void regularize_output(VARR& out_arr) {
+    typename VARR::Edge_iterator e_itr;
     for (e_itr = out_arr.edges_begin() ; 
          e_itr != out_arr.edges_end() ; e_itr++) {
 
-      typename Visibility_arrangement_2::Halfedge_handle he = e_itr;
-      typename Visibility_arrangement_2::Halfedge_handle he_twin = he->twin();
+      typename VARR::Halfedge_handle he = e_itr;
+      typename VARR::Halfedge_handle he_twin = he->twin();
       if (he->face() == he_twin->face()) {
         out_arr.remove_edge(he);
       }

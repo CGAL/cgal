@@ -20,12 +20,12 @@ public:
  /*! 
    The arrangement type of the input.
  */ 
-  typedef Hidden_type Arrangement_2; 
+  typedef Hidden_type Arrangement_2;  
 
-  /*!
-    The arrangement type of the output.
-   */
-  typedef Hidden_type Visibility_arrangement_2;
+ /*! 
+   The geometry traits class of Arrangement_2.
+ */ 
+  typedef Arrangement_2::Traits_2 Traits_2; 
 
  /*! 
    The 2D point type used for the queries. 
@@ -110,14 +110,21 @@ Computes the visibility region for the given query point `q` in the
 face \f$ f \f$ of the arrangement that is attached to the visibility object.
 The visibility region of `q` will be saved to `out_arr`, that is, 
 all features but the unbounded face of `out_arr` represent the visibility region. 
+
+\tparam VisibilityArrangement_2 is the type of the output arrangement representing the visibility polygon.
+It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 
+must be mutual convertible to Visibility_2::Traits_2. 
+
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
 \param out_arr is the output arrangement 
 \pre `f` is a face of  `this->arr()`
 \pre `q` is in the interior of the given face `f`
-\return the face handle to the face in `out_arr` that represents iterior of the visibility region
+\return the face handle to the face in `out_arr` that represents interior of the visibility region
 */ 
-  typename Visibility_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Face_const_handle f, Visibility_arrangement_2& out_arr) const;
+  template <typename VisibilityArrangement_2> 
+  typename Visibility_arrangement_2::Face_handle 
+  compute_visibility(const Point_2& q, const Face_const_handle f, VisibilityArrangement_2& out_arr) const;
 
 /*!
 Computes the visibility region in `e->face()` for the given query 
@@ -127,15 +134,21 @@ region is restricted to the side indicated by the halfedge `e`.
 If `q` is an endpoint of `e`, the visibility region is restricted by `e` and `e->next()`.
 The visibility region of `q` will be stored in `out_arr`, that is, 
 all features but the unbounded face of `out_arr` represent the visibility region.
+
+\tparam VisibilityArrangement_2 is the type of the output arrangement representing the visibility polygon.
+It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 
+must be mutual convertible to Visibility_2::Traits_2.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
 \pre `e` is a halfedge of `this->arr()`
 \pre `q` is on `e`
 \pre `q` equals to `e->target()->point()` if `q` is an endpoint of `e`
-\return a handle to the face in `out_arr` that represents the iterior of the visibility region
+\return a handle to the face in `out_arr` that represents the interior of the visibility region
 */
-  typename Visibility_arrangement_2::Face_handle compute_visibility(const Point_2& q, const Halfedge_const_handle e, Visibility_arrangement_2& out_arr) const;
+  template <typename VisibilityArrangement_2> 
+  typename Visibility_arrangement_2::Face_handle 
+  compute_visibility(const Point_2& q, const Halfedge_const_handle e, Visibility_arrangement_2& out_arr) const;
 
 /// @}
 

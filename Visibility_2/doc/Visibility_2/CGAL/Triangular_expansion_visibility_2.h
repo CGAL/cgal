@@ -15,10 +15,6 @@ the algorithm is even linear but it can also be  \f$ O(n^2)\f$ in the worst case
 It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
 CGAL::Arr_segment_traits_2. 
 
-\tparam VisibilityArrangement_2 is the type of the arrangement representing the visibility polygon.
-It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 must be an instance of 
-CGAL::Arr_segment_traits_2.
-
 \tparam RegularizationTag indicates whether the output should be regularized. It can be
 specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false is the default value.
 
@@ -29,7 +25,7 @@ specified by one of the following: ::Tag_true or ::Tag_false, where ::Tag_false 
 
 
 */
-template <typename Arrangement_2_, typename VisibilityArrangement_2 = Arrangement_2_, typename RegularizationTag = Tag_true>
+template <typename Arrangement_2_, typename RegularizationTag = Tag_true>
 class Triangular_expansion_visibility_2 {
 public:
 
@@ -40,11 +36,6 @@ public:
   The type of the input arrangement.
   */
    typedef Arrangement_2_ Arrangement_2;
-
- /*!
-  The type of the output arrangement.
-  */
-   typedef VisibilityArrangement_2 Visibility_arrangement_2;
 
 /// @}
 

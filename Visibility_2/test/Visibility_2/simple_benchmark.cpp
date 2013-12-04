@@ -27,7 +27,6 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
-#include <CGAL/Naive_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2.h>
 #include <CGAL/Rotational_sweep_visibility_2.h>
 #include <CGAL/test_model_methods.h>
@@ -54,34 +53,29 @@ void deploy_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
 template <class Visibility_fst, class Regularization_tag>
 void define_snd_class(std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input){
   if (name2 == "S")
-    deploy_benchmark<Visibility_fst, CGAL::Simple_polygon_visibility_2<Arrangement_2, Arrangement_2, Regularization_tag> >
-        (qchoice, input);
-  if (name2 == "N")
-    deploy_benchmark<Visibility_fst, CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "T")
-    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2,Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
   if (name2 == "R")
-    deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Arrangement_2, Regularization_tag> >
+    deploy_benchmark<Visibility_fst, CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag> >
         (qchoice, input);
 }
 
 template <class Regularization_tag>
 void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_choice& qchoice, std::ifstream& input) {
   if (name1 == "S")
-    define_snd_class<CGAL::Simple_polygon_visibility_2<Arrangement_2, Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
-  if (name1 == "N")
-    define_snd_class<CGAL::Naive_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "T")
-    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
   if (name1 == "R")
-    define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
+    define_snd_class<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>, Regularization_tag> (name2, qchoice, input);
 }
 
 void print_usage() {
   std::cout << "Usage: ./benchmark [filename] [Class type 1] [Class type 2] [Query type] [Regularize]\n";
-  std::cout << "where [Class type] could be S(simple), N(naive), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
+  std::cout << "where [Class type] could be S(simple), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
   std::cout << "[Query type] can be: {vertex, edge, face}.\n";
   std::cout << "[Regularize] can be: {true, false}.\n";
 }

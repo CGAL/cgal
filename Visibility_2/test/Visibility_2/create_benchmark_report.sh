@@ -1,5 +1,5 @@
 #!/bin/bash
-dir="/home/francisc/cgal/cgal-gsoc/Visibility_2/data/example"
+dir="../../data/example"
 nameend=".environment"
 type1=S
 type2=T

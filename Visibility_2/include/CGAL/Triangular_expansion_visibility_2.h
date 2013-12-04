@@ -28,14 +28,13 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_ , typename VisibilityArrangement_2 = Arrangement_2_ ,class RegularizationTag = CGAL::Tag_true >
+template<class Arrangement_2_ , class RegularizationTag = CGAL::Tag_true >
 class Triangular_expansion_visibility_2 {
   typedef typename Arrangement_2_::Geometry_traits_2    Geometry_traits_2;
   typedef typename Geometry_traits_2::Kernel            K;
 public:
   // Currently only consider with same type for both
   typedef Arrangement_2_			        Arrangement_2;
-  typedef VisibilityArrangement_2			Visibility_arrangement_2;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Ccb_halfedge_const_circulator
@@ -346,10 +345,11 @@ public:
     return oit;
   }
 
-  typename Visibility_arrangement_2::Face_handle 
+  template <typename VARR> 
+  typename VARR::Face_handle 
   compute_visibility(const Point_2& q,
       const Face_const_handle face,
-      Visibility_arrangement_2& out_arr
+      VARR& out_arr
   ){
     //std::cout << "query in face interior" << std::endl;
     
@@ -395,10 +395,11 @@ public:
     return output(raw_output,out_arr);
   }
 
-  typename Visibility_arrangement_2::Face_handle 
+  template <typename VARR> 
+  typename VARR::Face_handle 
   compute_visibility(const Point_2& q, 
       const Halfedge_const_handle he,
-      Visibility_arrangement_2& out_arr) {
+      VARR& out_arr) {
     //std::cout << "visibility_region he" << std::endl;
     
     assert(!he->face()->is_unbounded());    
@@ -513,8 +514,9 @@ public:
     return output(raw_output,out_arr);
   }
 
-  typename Visibility_arrangement_2::Face_handle 
-  output(std::vector<Point_2>& raw_output, Visibility_arrangement_2& out_arr){
+  template <typename VARR> 
+  typename VARR::Face_handle 
+  output(std::vector<Point_2>& raw_output, VARR& out_arr){
 
     if(needles.size()>0){
       std::vector<Segment_2> segments(needles.begin(),needles.end()); 
@@ -527,7 +529,7 @@ public:
       CGAL::insert_non_intersecting_curves(out_arr,segments.begin(),segments.end());
       //CGAL::insert(out_arr,segments.begin(),segments.end());
     }else{      
-      typename Visibility_arrangement_2::Vertex_handle v_last, v_first;
+      typename VARR::Vertex_handle v_last, v_first;
       v_last = v_first = 
         out_arr.insert_in_face_interior(raw_output[0], out_arr.unbounded_face());
       

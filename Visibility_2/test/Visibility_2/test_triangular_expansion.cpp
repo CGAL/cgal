@@ -40,16 +40,16 @@ int main() {
     typedef CGAL::Arr_segment_traits_2<Kernel> 	                   Traits_2;
     typedef CGAL::Arrangement_2<Traits_2>		           Arrangement_2;
     {
-      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , Arrangement_2 , CGAL::Tag_true>
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_true>
         Visibility_2;
-      CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(17, 2);
+      CGAL::test_model_methods<Visibility_2,Arrangement_2>();
+      CGAL::run_tests<Visibility_2,Arrangement_2>(17, 2);
     }
     {
-      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , Arrangement_2 , CGAL::Tag_false>
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 ,  CGAL::Tag_false>
         Visibility_2;
-      CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(17, 2);
+      CGAL::test_model_methods<Visibility_2,Arrangement_2>();
+      CGAL::run_tests<Visibility_2,Arrangement_2>(17, 2);
     }
   }
   {
@@ -57,15 +57,15 @@ int main() {
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
     typedef CGAL::Arrangement_2<Traits_2>                           Arrangement_2;
     {
-      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , Arrangement_2 , CGAL::Tag_true>
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_true>
         Visibility_2;
-      CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(17, 2);
+      CGAL::test_model_methods<Visibility_2,Arrangement_2>();
+      CGAL::run_tests<Visibility_2,Arrangement_2>(17, 2);
     }{
-      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , Arrangement_2 , CGAL::Tag_false>
+      typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2 , CGAL::Tag_false>
         Visibility_2;
-      CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(17, 2);
+      CGAL::test_model_methods<Visibility_2,Arrangement_2>();
+      CGAL::run_tests<Visibility_2,Arrangement_2>(17, 2);
     }
   }
 
@@ -77,13 +77,13 @@ int main() {
     typedef CGAL::Arr_extended_dcel<Traits_2, bool, bool, bool> EDCEL; 
     typedef CGAL::Arrangement_2<Traits_2, EDCEL> EARR;   
     {
-      typedef CGAL::Triangular_expansion_visibility_2<ARR,EARR,CGAL::Tag_true> Visibility_2;
-      CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(17, 2);
+      typedef CGAL::Triangular_expansion_visibility_2<ARR,CGAL::Tag_true> Visibility_2;
+      CGAL::test_model_methods<Visibility_2,EARR>();
+      CGAL::run_tests<Visibility_2,EARR>(17, 2);
     }{
-      typedef CGAL::Triangular_expansion_visibility_2<ARR,EARR,CGAL::Tag_false> Visibility_2;
-      CGAL::test_model_methods<Visibility_2>();
-      CGAL::run_tests<Visibility_2>(17, 2);
+      typedef CGAL::Triangular_expansion_visibility_2<ARR,CGAL::Tag_false> Visibility_2;
+      CGAL::test_model_methods<Visibility_2,EARR>();
+      CGAL::run_tests<Visibility_2,EARR>(17, 2);
     }
   }
 

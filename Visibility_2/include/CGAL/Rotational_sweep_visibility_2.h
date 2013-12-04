@@ -28,11 +28,10 @@
 
 namespace CGAL {
 
-template<class Arrangement_2_ , typename VisibilityArrangement_2 = Arrangement_2_ ,class RegularizationTag = CGAL::Tag_true >
+template<class Arrangement_2_ , class RegularizationTag = CGAL::Tag_true >
 class Rotational_sweep_visibility_2 {
 public:
   typedef Arrangement_2_                                Arrangement_2;
-  typedef VisibilityArrangement_2                     Visibility_arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Arrangement_2::Vertex_const_handle         Vertex_const_handle;
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
@@ -119,8 +118,9 @@ public:
     geom_traits = p_arr->geometry_traits();
   }
 
-  typename Visibility_arrangement_2::Face_handle 
-  compute_visibility(const Point_2& q, const Halfedge_const_handle e, Visibility_arrangement_2& arr_out) {
+  template <typename VARR> 
+  typename VARR::Face_handle 
+  compute_visibility(const Point_2& q, const Halfedge_const_handle e, VARR& arr_out) {
     arr_out.clear();
     bad_edges.clear();
     this->q = q;
@@ -193,7 +193,8 @@ public:
       Points polygon_out(first, last+1);
       if (is_vertex_query)
         polygon_out.push_back(q);
-      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
+      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>
+        (geom_traits, q, polygon_out, arr_out);
     }
     else {
       Points polygon_out(polygon.begin(), first+1);
@@ -201,7 +202,8 @@ public:
       for (int i = big_idx; i != polygon.size(); i++) {
         polygon_out.push_back(polygon[i]);
       }
-      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>(geom_traits, q, polygon_out, arr_out);
+      Visibility_2::report_while_handling_needles<Rotational_sweep_visibility_2>
+        (geom_traits, q, polygon_out, arr_out);
     }
 
     conditional_regularize(arr_out, Regularization_tag());
@@ -212,8 +214,9 @@ public:
       return arr_out.faces_begin();
   }
 
-  typename Visibility_arrangement_2::Face_handle 
-  compute_visibility(const Point_2& q, const Face_const_handle f, Visibility_arrangement_2& arr_out) {
+  template <typename VARR> 
+  typename VARR::Face_handle 
+  compute_visibility(const Point_2& q, const Face_const_handle f, VARR& arr_out) {
     arr_out.clear();
     this->q = q;
     is_vertex_query = false;
@@ -801,16 +804,19 @@ private:
     }
   }
 
-  void conditional_regularize(Visibility_arrangement_2& arr_out, CGAL::Tag_true) {
+  template <typename VARR> 
+  void conditional_regularize(VARR& arr_out, CGAL::Tag_true) {
     regularize_output(arr_out);
   }
 
-  void conditional_regularize(Visibility_arrangement_2& arr_out, CGAL::Tag_false) {
+  template <typename VARR> 
+  void conditional_regularize(VARR& arr_out, CGAL::Tag_false) {
     //do nothing
   }
 
-  void regularize_output(Visibility_arrangement_2& arr_out) {
-    typename Visibility_arrangement_2::Edge_iterator e_itr;
+  template <typename VARR> 
+  void regularize_output(VARR& arr_out) {
+    typename VARR::Edge_iterator e_itr;
     for (e_itr = arr_out.edges_begin();
          e_itr != arr_out.edges_end();
          e_itr++) {

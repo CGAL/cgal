@@ -27,7 +27,6 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
-#include <CGAL/Naive_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2.h>
 #include <CGAL/test_model_methods.h>
 #include <CGAL/test_utils.h>
@@ -44,12 +43,10 @@ int main(int argc, char* argv[]) {
   typedef Traits_2::Point_2										      Point_2;
   typedef Traits_2::X_monotone_curve_2							Segment_2;
   typedef CGAL::Arrangement_2<Traits_2>							Arrangement_2;
-  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, Arrangement_2, CGAL::Tag_false>
+  typedef CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>
                                                     Simple_polygon_visibility_2;
-  typedef CGAL::Naive_visibility_2<Arrangement_2, CGAL::Tag_false>
-                                                    Naive_visibility_2;
-  typedef CGAL::Triangular_expansion_visibility_2
-    <Arrangement_2, Arrangement_2, CGAL::Tag_false>
+
+  typedef CGAL::Triangular_expansion_visibility_2<Arrangement_2,  CGAL::Tag_false>
     Triangular_expansion_visibility_2;
 
   if (argc == 2) {
@@ -71,12 +68,6 @@ int main(int argc, char* argv[]) {
       Simple_polygon_visibility_2 simple_visibility;
       CGAL::test_star_shape<Simple_polygon_visibility_2>
                     (simple_visibility, qchoice, input);
-      return 0;
-    }
-    if (class_name == "naive") {
-      Naive_visibility_2 naive_visibility;
-      CGAL::test_star_shape<Naive_visibility_2>
-                    (naive_visibility, qchoice, input);
       return 0;
     }
     if (class_name == "triangular") {
@@ -113,12 +104,6 @@ int main(int argc, char* argv[]) {
       Simple_polygon_visibility_2 simple_visibility;
       CGAL::test_star_shape<Simple_polygon_visibility_2>
                     (simple_visibility, qchoice, input);
-      return 0;
-    }
-    if (class_name == "naive") {
-      Naive_visibility_2 naive_visibility;
-      CGAL::test_star_shape<Naive_visibility_2>
-                    (naive_visibility, qchoice, input);
       return 0;
     }
     if (class_name == "triangular") {
