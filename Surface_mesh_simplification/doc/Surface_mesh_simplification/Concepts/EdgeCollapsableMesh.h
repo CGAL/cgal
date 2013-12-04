@@ -77,7 +77,7 @@ remains.
 <I>External Adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02} 
 and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>). 
 
-\sa `boost::graph_traits< CGAL::Polyhedron_3<Traits> >`
+\sa \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink
 \sa `CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >`
 
 */
