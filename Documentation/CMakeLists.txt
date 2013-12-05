@@ -129,29 +129,34 @@ if(DOXYGEN_FOUND)
   # build-system, because it doesn't have a package_description subdir.
   configure_doxygen_package("Miscellany")
 
+  # Add a custom target "doc"
+  add_custom_target(doc)
+
   # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
   configure_doxygen_package("Documentation")
   set_target_properties(Documentation_doc PROPERTIES FOLDER Documentation)
+  add_dependencies(doc Documentation_doc)
 
-  # hard-code that Documentation_doc depends on all packages
+
+  # hard-code that doc depends on all packages
   file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
   foreach(depend ${DEPENDENCIES})
-    add_dependencies(Documentation_doc ${depend}_doc)
+    add_dependencies(doc ${depend}_doc)
   endforeach()
 
   if(PYTHONINTERP_FOUND)
     add_custom_target(Documentation_postprocess
       ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CMAKE_CURRENT_SOURCE_DIR}/resources
-      DEPENDS Documentation_doc)
+      DEPENDS doc)
 
     if(CGAL_DOC_CREATE_LOGS)
       add_custom_target(Documentation_test
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR}
-        DEPENDS Documentation_doc)
+        DEPENDS doc)
 
       add_custom_target(Documentation_test_publish
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
-        DEPENDS Documentation_doc)
+        DEPENDS doc)
 
       set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
 
