@@ -418,7 +418,7 @@ public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ELEMENT GATHERING
 
-    /*
+    
     template< typename OutputIterator >
     OutputIterator incident_full_cells(const Face & f, OutputIterator out) const
     {
@@ -440,7 +440,7 @@ public:
     {
         return tds().incident_faces(v, d, out);
     }
-
+    /*
     template< typename OutputIterator, class Comparator >
     OutputIterator incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out, Comparator cmp = Comparator())

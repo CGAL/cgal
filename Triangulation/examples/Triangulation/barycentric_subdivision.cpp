@@ -107,14 +107,14 @@ int main()
     for( int i = 1; i < sdim+2; ++i )
         tds.insert_increase_dimension(one_vertex);
     // we get a triangulation of space of dim sdim homeomorphic to
-    // a triangulation of the sphere in dim sdim+1  by a simplex
+    // the boundary of simplex of dimension sdim+1 with sdim+2 vertices
     assert( sdim   == tds.current_dimension() );
     assert( 2+sdim == tds.number_of_vertices() );
     assert( 2+sdim == tds.number_of_full_cells() );
 
     barycentric_subdivide(tds, tds.full_cells_begin());
 
-    // The number of full cells should be the twice the factorial of
+    // The number of full cells should be twice the factorial of
     // |tds.current_dimension()+1|. Eg, 1440 for dimension 5.
     std::cout << "Triangulation has " 
         << tds.number_of_full_cells() << " full cells";

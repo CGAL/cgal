@@ -3,11 +3,7 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Random.h>
 #include <CGAL/Timer.h>
-#include <iterator>
-#include <iostream>
-#include <vector>
 const int D=5;
 
 typedef CGAL::Cartesian_d<double>                              K;//D;
@@ -50,7 +46,7 @@ int main(int argc, char **argv)
   std::cout << "  adding "<<N<<" other points "<< std::endl;
   for(int i=0; i<N; ++i){
     T::Vertex_handle v;
-    T::Face	f(t.maximal_dimension()); 
+    T::Face	f(t.current_dimension()); 
     T::Facet	ft; 
     T::Full_cell_handle c; 
     T::Locate_type	lt;

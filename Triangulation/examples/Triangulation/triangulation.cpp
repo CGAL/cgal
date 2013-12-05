@@ -2,10 +2,6 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Random.h>
-#include <iterator>
-#include <iostream>
-#include <vector>
 
 typedef CGAL::Cartesian_d<double>  K;
 typedef CGAL::Triangulation<K>     Triangulation;
@@ -23,7 +19,6 @@ int main()
     assert(t.empty());
     t.insert(points.begin(), points.end());  // compute triangulation
     assert( t.is_valid() );
-
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 2
     typedef Triangulation::Face Face;
     typedef std::vector<Face> Faces;
@@ -33,5 +28,7 @@ int main()
     // collect faces of dimension 1 (edges) incident to the infinite vertex
     std::cout << "There are " << edges.size() 
 	      << " vertices on the convex hull." << std::endl;
+#include "triangulation1.cpp"    
+#include "triangulation2.cpp"    
     return 0;
 }

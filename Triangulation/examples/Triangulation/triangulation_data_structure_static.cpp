@@ -18,7 +18,8 @@ int main()
   for( int i = 1; i <= 5; ++i )
       V[i] = S.insert_increase_dimension(V[0]);
   // the first 6 vertices have created a triangulation
-  // of the 4-dimensional sphere
+  // of the 4-dimensional topological sphere 
+  // (the boundary of a five dimensional simplex).
   assert( 4 == S.current_dimension() );
   assert( 6 == S.number_of_vertices() );
   assert( 6 == S.number_of_full_cells() );
