@@ -418,7 +418,12 @@ Parallel algorithms of `Delaunay_triangulation_3` and
 `Regular_triangulation_3` are enabled 
 if the `TriangulationDataStructure_3::Concurrency_tag` type is `Parallel_tag` and a
 reference to a lock data structure instance is provided via the constructor or 
-by using `Triangulation_3::set_lock_data_structure`. Note that the parallel Delaunay 
+by using `Triangulation_3::set_lock_data_structure`. This data structure
+must be a model of the concept `SurjectiveLockDataStructure` and can be 
+optionally given as a template parameter of the triangulation; 
+it defaults to `Spatial_lock_grid_3`.
+
+Note that the parallel Delaunay 
 triangulation must use the default compact location policy (and not the fast 
 one). If those conditions are fulfilled, the insertion/removal of a 
 range of points will be performed in parallel, and the individual 
@@ -772,7 +777,7 @@ in \cgalCite{msri52:liu-snoeyink-05}.
 
 Figure \cgalFigureRef{Triangulation3figparallelspeedup} shows insertion
 and removal speed-ups obtained using the parallel version of the 
-triangulation algorithms. The machine used is a PC running 
+triangulation algorithms of \cgal 4.5. The machine used is a PC running 
 Windows 7 64-bits with two 6-core 
 Intel Xeon CPU X5660 clocked at 2.80 GHz
 with 32GB of RAM. The program has been compiled with 

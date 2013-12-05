@@ -3,8 +3,11 @@
 \ingroup PkgStlExtensionConcepts
 \cgalConcept
 
-The concept `SurjectiveLockDataStructure` is intended to be used by concurrent
-algorithms. It allows to lock objects in a multi-threaded environment.
+The concept `SurjectiveLockDataStructure` describes functionalities
+of a data structure whose goal is to lock 
+objects in a multi-threaded environment.
+Such data structures are intended to be used by concurrent
+algorithms.
 
 Note that it is allowed to \"lock too much\". E.g., the data structure 
 might be a voxel grid and locking a point might be locking the 
@@ -38,8 +41,7 @@ public:
   template <typename Object>
   bool try_lock(const Object &object);
 
-  /// Try to lock `object`. Returns `true` if the object is already locked 
-  /// by this thread or if the object could be locked.
+  /// Try to lock `object`. Returns `true` if the object is already locked by this thread or if the object could be locked.
   /// \tparam no_spin If `true`, force non-blocking operation (in any case, the
   ///                 function will return immediately, i.e.\ it will not
   ///                 wait for the ressource to be free). 

@@ -28,7 +28,7 @@ The `Concurrency_tag` parameter allows to enable the use of a concurrent
 container to store vertices and cells. It can be `Sequential_tag` (use of a 
 `Compact_container` to store vertices and cells) or `Parallel_tag` 
 (use of a `Concurrent_compact_container`). If it is 
-`CGAL::Parallel_tag`, the following functions can be called concurrently:
+`Parallel_tag`, the following functions can be called concurrently:
 `create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
 `Sequential_tag` is the default value.
 

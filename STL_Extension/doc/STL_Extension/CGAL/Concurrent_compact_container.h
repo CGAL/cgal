@@ -114,7 +114,7 @@ The objects stored in the `Concurrent_compact_container` can optionally store an
 `ObjectWithEraseCounter` concept, each time an object is erased from the 
 container, the erase counter of the object will be incremented.
 For example, this erase counter can be exploited using the `CC_safe_handle` 
-helper class, so that one can know if a handle is still pointing at the same
+helper class, so that one can know if a handle is still pointing to the same
 element.
 Note that this is meaningful only because the 
 `CGAL::Concurrent_compact_container` doesn't 

@@ -3,8 +3,9 @@
 \ingroup PkgStlExtensionConcepts
 \cgalConcept
 
-The concept `ObjectWithEraseCounter` is intended to be used by objects stored
-in a `CGAL::Compact_container` or a `CGAL::Concurrent_compact_container`.
+The concept `ObjectWithEraseCounter` describes the functionalities 
+an object must provide so that its erase counter is updated by
+a `CGAL::Compact_container` or a `CGAL::Concurrent_compact_container`.
 
 \sa `CGAL::Compact_container`
 \sa `CGAL::Concurrent_compact_container`

@@ -48,7 +48,9 @@ namespace CGAL {
 \ingroup CompactContainer
 
 An object of the class `Compact_container` 
-is a container of objects of type `T`. It matches all the 
+is a container of objects of type `T`. 
+
+This container matches all the 
 standard requirements for reversible containers, except that 
 the complexity of its iterator increment and decrement operations 
 is not always guaranteed to be amortized constant time. 
@@ -102,7 +104,7 @@ The objects stored in the `Compact_container` can optionally store an
 `ObjectWithEraseCounter` concept, each time an object is erased from the 
 container, the erase counter of the object will be incremented.
 For example, this erase counter can be exploited using the `CC_safe_handle` 
-helper class, so that one can know if a handle is still pointing at the same
+helper class, so that one can know if a handle is still pointing to the same
 element.
 Note that this is meaningful only because the 
 `CGAL::Compact_container` doesn't 
