@@ -12,6 +12,7 @@ if [ ! -f "$1" ]; then
     exit 1
 fi
 bibtex2html -nodoc $1
+mv ${1%.bib}.html tmp_array_bib.html
 mv ${1%.bib}_bib.html how_to_cite.html
 
 cat > how_to_cite_cgal.txt <<'EOF'
@@ -44,21 +45,20 @@ software.
 If you want to cite the %CGAL Library or project as a whole, please
 
 - cite: %CGAL, Computational Geometry Algorithms Library, http://www.cgal.org 
-- use the following <a href="how_to_cite.html">bibtex entry</a>.
+- use the following <a href="how_to_cite_cgal.bib">bibtex entry</a>.
 
 ## Citing the User and Reference Manual ##
 
 If you want to refer to %CGAL manual, please cite the appropriate
   entry from the bibliographic entries for individual chapters listed
   in the table below.
+
 EOF
 
-footer="*/"
+sed -i "s/how_to_cite_cgal_bib/how_to_cite/g" tmp_array_bib.html
+sed -i "s/CGAL/%CGAL/g" tmp_array_bib.html
+sed -i "s/Kernel/%Kernel/g" tmp_array_bib.html
+sed -i "s/Interval/%Interval/g" tmp_array_bib.html
+sed "s/Matrix/%Matrix/g" tmp_array_bib.html >> how_to_cite_cgal.txt
 
-sed -e "s|https://cgal.geometryfactory.com/~pmoeller/Doxygen/CGAL.CGAL/html/||g" ${1%.bib}.html | \
-    sed -e "s|${1%.bib}_bib.html|how_to_cite.html|g" | \
-    sed -e "s| CGAL| %CGAL|g" | sed -e "s|>CGAL|>%CGAL|g" >> how_to_cite_cgal.txt
-echo $footer >> how_to_cite_cgal.txt
-
-echo 
-echo "Do not forget to commit, now!"
+echo "*/" >> how_to_cite_cgal.txt

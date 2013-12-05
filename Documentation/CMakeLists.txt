@@ -108,6 +108,29 @@ if(DOXYGEN_FOUND)
   set(CGAL_DOC_HEADER_PACKAGE ${CGAL_DOC_DXY_DIR}/header_package.html)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/header_package.html ${CGAL_DOC_HEADER_PACKAGE} @ONLY)
 
+  #Generate the bibtex file
+  #TODO cmake_minimum_required(VERSION 2.8.11)
+  #this is needed also for BaseDoxyfile.in
+  string(TIMESTAMP CGAL_BUILD_YEAR4 "%Y")
+  string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
+  string(TIMESTAMP CGAL_BUILD_MONTH "%m")
+
+  if (${CGAL_BUILD_MONTH} GREATER 6)
+    SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}b")
+  else()
+    SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
+  endif()
+
+  #TODO hide output
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.bib.in
+  ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
+
+  # TODO this works only on Linux/Unix
+  execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
+                          ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib OUTPUT_QUIET)
+  ## end bibtex configuration
+
+
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
   
   set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
@@ -124,7 +147,6 @@ if(DOXYGEN_FOUND)
     configure_doxygen_package(${package})
   endforeach()
 
-  
   # hard-coded. this is not recognized as a package by the
   # build-system, because it doesn't have a package_description subdir.
   configure_doxygen_package("Miscellany")
