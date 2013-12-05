@@ -1,6 +1,6 @@
 /*!
 
-\page chapiterators_and_circulators Iterators, Circulators and Handles 
+\page devman_iterators_and_circulators Iterators, Circulators and Handles 
 
 \author Mariette Yvinec (<TT>yvinec@sophia.inria.fr</TT>)
 
@@ -18,28 +18,26 @@ achieve the communication between containers and algorithms.
 Iterators are widely used in \cgal too.
 \cgal extends the idea of the iterator, which works for linear data
 structures, to circular data structures by defining the concept of
-a circulator.  
-<A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html">Circulators</A>
-
-are quite similar to iterators, with the
+a circulator.
+\ref PkgHandlesAndCirculatorsSummary "Circulators" are quite similar to iterators, with the
 major difference being the absence of a past-the-end position in a sequence.
 Note that circulators are NOT part of the \stl, but of \cgal.
 
-In \cgal, we also define the concept of 
-<A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html">handle</A>, 
+In \cgal, we also define the concept of \ref PkgHandlesAndCirculatorsSummary "handle",
 
 which behaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the <A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html">chapter Circulators and Handles</A> of the Support Library part of \cgal manual. 
+the \ref PkgHandlesAndCirculatorsSummary "chapter Circulators and Handles"
+of the Support Library part of \cgal manual. 
 Section  \ref sechandle_vs_it_vs_circ  below discusses when handles
 should be used in your code.
 
 The concepts of iterators is relatively well described in textbooks such as 
 Stroustrup's book (<I>The C++ Programming Language</I> \cgalCite{cgal:s-cpl-97})
 and Austern's book (<I>Generic Programming and the \stl</I> \cgalCite{cgal:a-gps-98})
-and in chapter <A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html">Handles and Circulators</A> of the 
-<I>Support Library</I> part of the \cgal manual.
+and in chapter \ref PkgHandlesAndCirculatorsSummary "Handles and Circulators"
+of the <I>Support Library</I> part of the \cgal manual.
 which also presents the concepts of handles and circulators.
 Thus we will not give a full description of these concept here
 but only a few hints about how to use and write handle, iterators and circulators in \cgal.  Developers should consult the above-mentioned references to become
@@ -191,7 +189,7 @@ requirements of the stream classes are that they define `operator>>`
 Insert iterators are output iterators that can be used to insert items 
 into containers.
 With regular iterator classes, the code given above
-for the <A HREF="#copy_function">`copy` function</A> of \stl, 
+for the `copy` function of \stl, 
 causes the range `[first,last)` to be copied into an existing range 
 starting with `result`. No memory allocation is involved and the
 existing range is overwritten. With an 
@@ -334,7 +332,7 @@ over either a linear or circular sequence:
 
 `CGAL_For_all_backwards( ic1, ic2)`
 
-See the chapter  <A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html">Handles and Circulators</A>
+See the chapter \ref PkgHandlesAndCirculatorsSummary "Handles and Circulators"
  in the <I>Support Library</I> part of \cgal manual 
 for more information and examples.
 

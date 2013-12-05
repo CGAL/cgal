@@ -1,6 +1,6 @@
 /*!
 
-\page chapintro Introduction
+\page devman_intro Introduction
 
 \author Susan Hert
 \author Menelaos Karavelas (<TT>mkaravel@tem.uoc.gr</TT>)
@@ -53,7 +53,7 @@ like to provide algorithms handling degeneracies.
 A design goal particularly relevant for the implementation of
 geometric algorithms is robustness.  Many implementations of geometric
 algorithms lack robustness because of precision problems; see 
-Chapter  \ref chaprobustness  for a discussion of robustness issues within 
+Chapter  \ref devman_robustness  for a discussion of robustness issues within 
 \cgal.
 
 \subsection Developer_manualFlexibility Flexibility
@@ -197,7 +197,7 @@ template arguments that fulfill certain syntactical as well as semantic
 requirements. In order to avoid long parameter lists,
 the parameter types are collected into a single class, called the
 traits class in \cgal
-(Chapter  \ref chaptraits_classes ).
+(Chapter  \ref devman_traits_classes ).
 A <I>concept</I> is an abstraction of a type 
 defined by a set of requirements.
 Any concrete type is called a <I>model</I> for a 
@@ -258,7 +258,7 @@ the configuration layer.
 This layer takes care of setting configuration flags according to the outcome
 of tests run during installation.  The <I>support library</I> layer
  is documented in
-the <A HREF="http://www.cgal.org/Manual/latest/doc_html/cgal_manual/contents.html#part_XVII">Support Library Manual</A> and contains packages
+the \link PartSupportLibrary Support Library Manual \endlink and contains packages
 that deal with things such as visualization, number types, streams, and
 \stl extensions in \cgal.
 

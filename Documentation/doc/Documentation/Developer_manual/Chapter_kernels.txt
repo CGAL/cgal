@@ -1,6 +1,6 @@
 /*!
 
-\page chapkernels Geometry Kernels
+\page devman_kernels Geometry Kernels
 
 \authors Olivier Devillers (<TT>olivier.devillers@inria.fr</TT>)
 \authors Marc Glisse (<TT>marc.glisse@inria.fr</TT>)
@@ -16,7 +16,7 @@ class and also as either a member function or a global function.
 See \cgalCite{hhkps-aegk-01} for more details about this design.
 Ideally, if the kernel provides all the primitives required, you can
 use any kernel as a traits class directly with your algorithm or data
-structure; see also Chapter  \ref chaptraits_classes . If you need
+structure; see also Chapter  \ref devman_traits_classes . If you need
 primitives not provided by the kernel (yet), please read
 Section  \ref secNewKernelTraits  below.
 

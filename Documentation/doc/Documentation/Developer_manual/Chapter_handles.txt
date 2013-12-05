@@ -1,6 +1,6 @@
 /*!
 
-\page chapreference_counting Reference Counting and Handle Types
+\page devman_reference_counting Reference Counting and Handle Types
 
 \author Stefan Schirra (<TT>stschirr@mpi-sb.mpg.de</TT>)
 
@@ -272,6 +272,6 @@ class My_geo_object : public Handle_for<My_rep, leda_allocator<My_rep> >
 
 The default allocator is defined in `CGAL/memory.h`
 
-See Chapter  \ref chapmemory_management  for more information.
+See Chapter  \ref devman_memory_management  for more information.
 
 */

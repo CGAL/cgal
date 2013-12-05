@@ -1,6 +1,6 @@
 /*!
 
-\page chapchecks Checks: Pre- and Postconditions, Assertions, and Warnings
+\page devman_checks Checks: Pre- and Postconditions, Assertions, and Warnings
 
 \author Sven Sch&ouml;nherr (<TT>sven@inf.ethz.ch</TT>)
 

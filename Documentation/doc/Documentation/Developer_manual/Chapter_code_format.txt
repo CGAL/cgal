@@ -1,6 +1,6 @@
 /*! 
 
-\page chapcode_format Coding Conventions
+\page devman_code_format Coding Conventions
 
 \author Sven Sch&ouml;nherr
 
@@ -79,7 +79,7 @@ there are <I>convincing</I> reasons.
       `has_`, <I>e.g.</I> the data structure `Min_ellipse_2` has member
       functions `is_empty` and `has_on_bounded_side`.
 <LI>Access to data structures is given via iterators and
-      circulators (Chapter  \ref chapiterators_and_circulators ).
+      circulators (Chapter  \ref devman_iterators_and_circulators ).
       For iterators and functions
       returning them we extend
       the \stl names with a prefix describing the items to be accessed.
@@ -286,8 +286,8 @@ The following items can be seen as recommendations
 in contrast to the rules of previous paragraph.
 
 <UL>
-<LI>Use `#define` sparingly.
-<LI>Do not rename the base types of \cpp using `t`ypedef.
+<LI>Use \#`define` sparingly.
+<LI>Do not rename the base types of \cpp using `typedef`.
 <LI>When using an overloaded call, always give the exact match. Use
   explicit casting if necessary.
 <LI>Do not call global functions unqualified, that is, always
