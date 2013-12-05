@@ -189,16 +189,13 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   }
 
   // Go over the edge and create duplicates of the stored curves.
-  X_monotone_curve_2* dup_cv;
-  DHalfedge* p_e;
-
   typename Dcel::Edge_iterator eit;
   for (eit = _dcel().edges_begin(); eit != _dcel().edges_end(); ++eit) {
-    p_e = &(*eit);
+    DHalfedge* p_e = &(*eit);
 
     if (! p_e->has_null_curve()) {
       // Create the duplicate curve and store it in the curves container.
-      dup_cv = _new_curve(p_e->curve());
+      X_monotone_curve_2* dup_cv = _new_curve(p_e->curve());
 
       // Associate the halfedge (and its twin) with the duplicated curve.
       p_e->set_curve(dup_cv);
@@ -206,8 +203,10 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::assign(const Self& arr)
   }
 
   // Take care of the traits object.
-  if (m_own_traits && m_geom_traits != NULL)
+  if (m_own_traits && (m_geom_traits != NULL)) {
     delete m_geom_traits;
+    m_geom_traits = NULL;
+  }
 
   m_geom_traits = (arr.m_own_traits) ? new Traits_adaptor_2 : arr.m_geom_traits;
   m_own_traits = arr.m_own_traits;
@@ -234,12 +233,11 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::~Arrangement_on_surface_2()
     if (! eit->has_null_curve())
       _delete_curve(eit->curve());
 
-  // Clear the DCEL.
-  _dcel().delete_all();
-
   // Free the traits object, if necessary.
-  if (m_own_traits)
+  if (m_own_traits && (m_geom_traits != NULL)) {
     delete m_geom_traits;
+    m_geom_traits = NULL;
+  }
 
   // Detach all observers still attached to the arrangement.
   Observers_iterator  iter = m_observers.begin();

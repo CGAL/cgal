@@ -41,7 +41,7 @@ Arr_spherical_topology_traits_2() :
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
 }
 
-/*! \brief constructs with a geometry-traits class */
+/*! \brief constructs from a geometry-traits object. */
 template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
@@ -52,6 +52,20 @@ Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
 {
   m_geom_traits = static_cast<const Traits_adaptor_2*>(traits);
   m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
+}
+
+/*! \brief destructs */
+template <typename GeomTraits, typename Dcel>
+Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+~Arr_spherical_topology_traits_2()
+{
+  // Clear the DCEL.
+  m_dcel.delete_all();
+
+  if (m_own_geom_traits && (m_geom_traits != NULL)) {
+    delete m_geom_traits;
+    m_geom_traits = NULL;
+  }
 }
 
 /*! \brief assigns the contents of another topology-traits class */

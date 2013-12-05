@@ -107,7 +107,6 @@ public:
   };
 
 protected:
-
   // Data members:
   Face* unb_face;     // The unbounded face.
 
@@ -116,7 +115,6 @@ protected:
   Self& operator=(const Self&);
 
 public:
-
   ///! \name Construction methods.
   //@{
 
@@ -126,9 +124,9 @@ public:
     unb_face(NULL)
   {}
 
-  /*! Constructor with a geometry-traits class. */
-  Arr_bounded_planar_topology_traits_2(const Geometry_traits_2* tr) :
-    Base(tr),
+  /*! Constructor from a geometry-traits object. */
+  Arr_bounded_planar_topology_traits_2(const Geometry_traits_2* traits) :
+    Base(traits),
     unb_face(NULL)
   {}
 
@@ -148,7 +146,7 @@ public:
   }
 
   /*! Check if the given vertex is concrete (associated with a point). */
-  inline bool is_concrete_vertex (const Vertex*) const { return true; }
+  inline bool is_concrete_vertex(const Vertex*) const { return true; }
 
   /*! Get the number of concrete vertices. */
   Size number_of_concrete_vertices() const

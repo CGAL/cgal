@@ -192,10 +192,13 @@ public:
   /*! Default constructor. */
   Arr_spherical_topology_traits_2();
 
-  /*! Constructor with a geometry-traits class.
+  /*! Constructor from a geometry-traits object.
    * \param traits the traits.
    */
   Arr_spherical_topology_traits_2(const Geometry_traits_2* traits);
+
+  /*! Destructor */
+  ~Arr_spherical_topology_traits_2();
 
   /*! Assign the contents of another topology-traits class.
    * \param other the other spherical topology-traits.
