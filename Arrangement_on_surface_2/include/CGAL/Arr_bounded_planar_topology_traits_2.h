@@ -39,24 +39,22 @@
 namespace CGAL {
 
 // Forward declaration:
-template <class GeomTraits_, class TopTraits_>
+template <typename GeomTraits_, typename TopTraits_>
 class Arrangement_on_surface_2;
 
 /*! \class Arr_bounded_planar_topology_traits_2
  * A topology-traits class that encapsulates the embedding of 2D arrangements
  * of bounded curves on the plane.
  */
-template <class GeomTraits_,
-          class Dcel_ = Arr_default_dcel<GeomTraits_> >
+template <typename GeomTraits_,
+          typename Dcel_ = Arr_default_dcel<GeomTraits_> >
 class Arr_bounded_planar_topology_traits_2 :
   public Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
 {
 private:
-
   typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_> Base;
 
 public:
-
   ///! \name The geometry-traits types.
   //@{
   typedef GeomTraits_                                     Geometry_traits_2;
@@ -114,7 +112,7 @@ protected:
   Face* unb_face;     // The unbounded face.
 
   // Copy constructor and assignment operator - not supported.
-  Arr_bounded_planar_topology_traits_2 (const Self&);
+  Arr_bounded_planar_topology_traits_2(const Self&);
   Self& operator=(const Self&);
 
 public:
@@ -123,7 +121,7 @@ public:
   //@{
 
   /*! Default constructor. */
-  Arr_bounded_planar_topology_traits_2 () :
+  Arr_bounded_planar_topology_traits_2() :
     Base(),
     unb_face(NULL)
   {}
@@ -142,7 +140,7 @@ public:
   //@{
 
   /*! Determine whether the DCEL reprsenets an empty structure. */
-  bool is_empty_dcel () const
+  bool is_empty_dcel() const
   {
     // An empty bounded arrangement has no edges or vertices.
     return (this->m_dcel.size_of_vertices() == 0 &&
@@ -198,9 +196,8 @@ private:
 
   // Type definition for the constuction sweep-line visitor.
   typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve;
-  typedef Arr_construction_event<Geometry_traits_2,
-                                 CSubcurve,
-                                 Arr>                          CEvent;
+  typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
+                                                               CEvent;
   typedef Arr_bounded_planar_construction_helper<Geometry_traits_2,
                                                  Arr,
                                                  CEvent,
@@ -209,23 +206,17 @@ private:
   // Type definition for the basic insertion sweep-line visitor.
   typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr> BInsTraits;
   typedef Arr_construction_subcurve<BInsTraits>                BISubcurve;
-  typedef Arr_construction_event<BInsTraits,
-                                 BISubcurve,
-                                 Arr>                          BIEvent;
-  typedef Arr_bounded_planar_insertion_helper<BInsTraits,
-                                              Arr,
-                                              BIEvent,
+  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>
+                                                               BIEvent;
+  typedef Arr_bounded_planar_insertion_helper<BInsTraits, Arr, BIEvent,
                                               BISubcurve>      BIHelper;
 
   // Type definition for the insertion sweep-line visitor.
   typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>       InsTraits;
   typedef Arr_construction_subcurve<InsTraits>                 ISubcurve;
-  typedef Arr_construction_event<InsTraits,
-                                 ISubcurve,
-                                 Arr>                          IEvent;
-  typedef Arr_bounded_planar_insertion_helper<InsTraits,
-                                              Arr,
-                                              IEvent,
+  typedef Arr_construction_event<InsTraits, ISubcurve, Arr>
+                                                               IEvent;
+  typedef Arr_bounded_planar_insertion_helper<InsTraits, Arr, IEvent,
                                               ISubcurve>       IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
@@ -260,8 +251,7 @@ private:
     typedef typename Base::Subcurve                      Subcurve;
     typedef typename Base::Construction_helper           Construction_helper;
 
-    _Overlay_helper (const ArrangementA_* arr_a,
-                     const ArrangementB_* arr_b) :
+    _Overlay_helper(const ArrangementA_* arr_a, const ArrangementB_* arr_b) :
       Base(arr_a, arr_b)
     {}
   };
@@ -394,18 +384,18 @@ public:
                  const X_monotone_curve_2& cv, Arr_curve_end ind,
                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
-    CGAL_assertion ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
+    CGAL_assertion((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
 
     if (ind == ARR_MIN_END) {
       // Compare v with the left endpoint of cv.
-      return (this->traits->equal_2_object()
-              (this->traits->construct_min_vertex_2_object() (cv),
+      return (this->m_geom_traits->equal_2_object()
+              (this->m_geom_traits->construct_min_vertex_2_object()(cv),
                v->point()));
     }
     else {
       // Compare v with the right endpoint of cv.
-      return (this->traits->equal_2_object()
-              (this->traits->construct_max_vertex_2_object() (cv),
+      return (this->m_geom_traits->equal_2_object()
+              (this->m_geom_traits->construct_max_vertex_2_object()(cv),
                v->point()));
     }
   }
@@ -565,9 +555,8 @@ public:
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
    */
-  virtual Comparison_result compare_x(const Point_2& p,
-                                      const Vertex* v) const
-  { return (this->traits->compare_x_2_object()(p, v->point())); }
+  virtual Comparison_result compare_x(const Point_2& p, const Vertex* v) const
+  { return (this->m_geom_traits->compare_x_2_object()(p, v->point())); }
 
   /*!
    * Compare the given vertex and the given point.
@@ -575,9 +564,8 @@ public:
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
    */
-  virtual Comparison_result compare_xy(const Point_2& p,
-                                       const Vertex* v) const
-  { return (this->traits->compare_xy_2_object()(p, v->point())); }
+  virtual Comparison_result compare_xy(const Point_2& p, const Vertex* v) const
+  { return (this->m_geom_traits->compare_xy_2_object()(p, v->point())); }
 
   /*!
    * Compare the relative y-position of the given point and the given edge
@@ -589,7 +577,7 @@ public:
    */
   virtual Comparison_result compare_y_at_x(const Point_2& p,
                                            const Halfedge* he) const
-  { return (this->traits->compare_y_at_x_2_object()(p, he->curve())); }
+  { return (this->m_geom_traits->compare_y_at_x_2_object()(p, he->curve())); }
   //@}
 };
 

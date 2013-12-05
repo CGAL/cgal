@@ -38,25 +38,23 @@
 namespace CGAL {
 
 // Forward declaration:
-template <class GeomTraits_, class TopTraits_>
+template <typename GeomTraits_, typename TopTraits_>
 class Arrangement_on_surface_2;
 
 /*! \class Arr_unb_planar_topology_traits_2
  * A topology-traits class that encapsulates the embedding of 2D arrangements
  * of unbounded curves on the plane.
  */
-template <class GeomTraits_,
-          class Dcel_ = Arr_default_dcel<GeomTraits_> >
+template <typename GeomTraits_,
+          typename Dcel_ = Arr_default_dcel<GeomTraits_> >
 class Arr_unb_planar_topology_traits_2 :
   public Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
 {
 private:
-
-  typedef Arr_planar_topology_traits_base_2<GeomTraits_,
-                                            Dcel_>        Base;
+  typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
+                                                          Base;
 
 public:
-
   ///! \name The geometry-traits types.
   //@{
   typedef GeomTraits_                                     Geometry_traits_2;
@@ -75,7 +73,6 @@ public:
   typedef typename Base::Inner_ccb                        Inner_ccb;
   typedef typename Base::Isolated_vertex                  Isolated_vertex;
   //@}
-
 
   //! \name Arrangement types
   //!@{
@@ -120,46 +117,43 @@ public:
    * An auxiliary structure for rebinding the topology traits with a new
    * geometry-traits class and a new DCEL class.
    */
-  template<typename T, typename D>
-  struct rebind
-  {
-    typedef Arr_unb_planar_topology_traits_2<T,D> other;
+  template <typename T, typename D>
+  struct rebind {
+    typedef Arr_unb_planar_topology_traits_2<T, D> other;
   };
 
 protected:
-
   // Data members:
-  Vertex             *v_bl;         // A fictitious vertex at (-oo,-oo).
-  Vertex             *v_tl;         // A fictitious vertex at (-oo,+oo).
-  Vertex             *v_br;         // A fictitious vertex at (-oo,+oo).
-  Vertex             *v_tr;         // A fictitious vertex at (+oo,+oo).
-  Size                n_inf_verts;  // Number of vertices at infinity.
-  Face               *fict_face;    // The fictitious DCEL face.
+  Vertex* v_bl;         // A fictitious vertex at (-oo,-oo).
+  Vertex* v_tl;         // A fictitious vertex at (-oo,+oo).
+  Vertex* v_br;         // A fictitious vertex at (-oo,+oo).
+  Vertex* v_tr;         // A fictitious vertex at (+oo,+oo).
+  Size n_inf_verts;     // Number of vertices at infinity.
+  Face* fict_face;      // The fictitious DCEL face.
 
   // Copy constructor and assignment operator - not supported.
-  Arr_unb_planar_topology_traits_2 (const Self& );
-  Self& operator= (const Self& );
+  Arr_unb_planar_topology_traits_2(const Self&);
+  Self& operator=(const Self&);
 
 public:
-
   ///! \name Construction methods.
   //@{
 
   /*! Default constructor. */
-  Arr_unb_planar_topology_traits_2 ();
+  Arr_unb_planar_topology_traits_2();
 
   /*! Constructor with a geometry-traits class. */
-  Arr_unb_planar_topology_traits_2 (const Geometry_traits_2 *tr);
+  Arr_unb_planar_topology_traits_2(const Geometry_traits_2* tr);
 
   /*! Assign the contents of another topology-traits class. */
-  void assign (const Self& other);
+  void assign(const Self& other);
   //@}
 
   ///! \name Accessing the DCEL and constructing iterators.
   //@{
 
   /*! Determine whether the DCEL reprsenets an empty structure. */
-  bool is_empty_dcel () const
+  bool is_empty_dcel() const
   {
     // An empty arrangement contains just two four vertices at infinity
     // and eight fictitious halfedges connecting them.
@@ -168,40 +162,40 @@ public:
   }
 
   /*! Check if the given vertex is concrete (associated with a point). */
-  bool is_concrete_vertex (const Vertex *v) const
+  bool is_concrete_vertex(const Vertex* v) const
   {
     return (! v->has_null_point());
   }
 
   /*! Get the number of concrete vertices. */
-  Size number_of_concrete_vertices () const
+  Size number_of_concrete_vertices() const
   {
     // All vertices not lying at infinity are concrete.
     return (this->m_dcel.size_of_vertices() - n_inf_verts);
   }
 
   /*! Check if the given vertex is valid (not a fictitious one). */
-  bool is_valid_vertex (const Vertex *v) const
+  bool is_valid_vertex(const Vertex* v) const
   {
     return (! v->has_null_point() ||
             (v != v_bl && v != v_tl && v != v_br && v != v_tr));
   }
 
   /*! Get the number of valid vertices. */
-  Size number_of_valid_vertices () const
+  Size number_of_valid_vertices() const
   {
     // All vertices, except the four fictitious one, are valid.
     return (this->m_dcel.size_of_vertices() - 4);
   }
 
   /*! Check if the given halfedge is valid (not a fictitious one). */
-  bool is_valid_halfedge (const Halfedge *he) const
+  bool is_valid_halfedge(const Halfedge* he) const
   {
     return (! he->has_null_curve());
   }
 
   /*! Get the number of valid halfedges. */
-  Size number_of_valid_halfedges () const
+  Size number_of_valid_halfedges() const
   {
     // Note that we do not count fictitious halfedges (each vertex at infinity
     // induces two fictitious halfedges).
@@ -209,13 +203,13 @@ public:
   }
 
   /*! Check if the given face is valid (not a fictitious one). */
-  bool is_valid_face (const Face *f) const
+  bool is_valid_face (const Face* f) const
   {
     return (! f->is_fictitious());
   }
 
   /*! Get the number of valid faces. */
-  Size number_of_valid_faces () const
+  Size number_of_valid_faces() const
   {
     // We do not count the ficitious DCEL face.
     return (this->m_dcel.size_of_faces() - 1);
@@ -223,16 +217,14 @@ public:
   //@}
 
 private:
-
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>             Arr;
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>    Arr;
 
   // Type definition for the constuction sweep-line visitor.
   typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve;
-  typedef Arr_construction_event<Geometry_traits_2,
-                                 CSubcurve,
-                                 Arr>                          CEvent;
+  typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
+                                                               CEvent;
   typedef Arr_unb_planar_construction_helper<Geometry_traits_2,
                                              Arr,
                                              CEvent,
@@ -241,24 +233,18 @@ private:
   // Type definition for the basic insertion sweep-line visitor.
   typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr> BInsTraits;
   typedef Arr_construction_subcurve<BInsTraits>                BISubcurve;
-  typedef Arr_construction_event<BInsTraits,
-                                 BISubcurve,
-                                 Arr>                          BIEvent;
-  typedef Arr_unb_planar_insertion_helper<BInsTraits,
-                                          Arr,
-                                          BIEvent,
-                                          BISubcurve>          BIHelper;
+  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>
+                                                               BIEvent;
+  typedef Arr_unb_planar_insertion_helper<BInsTraits, Arr, BIEvent, BISubcurve>
+                                                               BIHelper;
 
   // Type definition for the insertion sweep-line visitor.
   typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>       InsTraits;
   typedef Arr_construction_subcurve<InsTraits>                 ISubcurve;
-  typedef Arr_construction_event<InsTraits,
-                                 ISubcurve,
-                                 Arr>                          IEvent;
-  typedef Arr_unb_planar_insertion_helper<InsTraits,
-                                          Arr,
-                                          IEvent,
-                                          ISubcurve>           IHelper;
+  typedef Arr_construction_event<InsTraits, ISubcurve, Arr>
+                                                               IEvent;
+  typedef Arr_unb_planar_insertion_helper<InsTraits, Arr, IEvent, ISubcurve>
+                                                               IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>             BplTraits;
@@ -292,15 +278,12 @@ private:
     typedef typename Base::Subcurve                      Subcurve;
     typedef typename Base::Construction_helper           Construction_helper;
 
-    _Overlay_helper (const ArrangementA_ *arrA,
-                     const ArrangementB_ *arrB) :
-      Base (arrA, arrB)
-    {}
+    _Overlay_helper(const ArrangementA_* arrA, const ArrangementB_* arrB) :
+      Base(arrA, arrB) {}
   };
   //@}
 
 public:
-
   ///! \name Visitor types.
   //@{
 
@@ -338,17 +321,16 @@ public:
     public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
   {
     typedef OutputIterator_                                   Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper,
-                                       Output_iterator>       Base;
+    typedef Arr_vert_decomp_sl_visitor<VdHelper, Output_iterator>
+                                                             Base;
 
     typedef typename Base::Traits_2                           Traits_2;
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor (const Arr *arr,
-                                               Output_iterator *oi) :
-      Base (arr, oi)
-    {}
+    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
+                                              Output_iterator* oi) :
+      Base(arr, oi) {}
   };
 
   template <class ArrangementA_, class ArrangementB_, class OverlayTraits_>
@@ -381,11 +363,11 @@ public:
     typedef typename Base::Event                     Event;
     typedef typename Base::Subcurve                  Subcurve;
 
-    Sweep_line_overlay_visitor (const ArrangementA_2 *arrA,
-                                const ArrangementB_2 *arrB,
-                                Arrangement_result_2 *arr_res,
-                                Overlay_traits *overlay_tr) :
-      Base (arrA, arrB, arr_res, overlay_tr)
+    Sweep_line_overlay_visitor(const ArrangementA_2* arrA,
+                               const ArrangementB_2* arrB,
+                               Arrangement_result_2* arr_res,
+                               Overlay_traits* overlay_tr) :
+      Base(arrA, arrB, arr_res, overlay_tr)
     {}
   };
 
