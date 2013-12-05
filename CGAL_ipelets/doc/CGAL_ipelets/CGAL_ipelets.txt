@@ -68,11 +68,13 @@ to compile an ipelet, please refer to the Ipe manual.
 
 Below is the list of Ipelets provided by the Demo Ipelets
 
+\section Ipelets_list List of provided Ipelets 
+
 \subsection alpha_shapes_ipelet Alpha shapes
 
-Selection should be a set of points or circles (considered as weighted
-points). The different values of alpha where the alpha shape changes
-are computed. The value of alpha chosen by the user is asked.
+Selection should be a set of points or circles (considered as weighted points). 
+The different values of alpha where the alpha shape changes are
+computed and the rank of the chosen alpha  is asked in a dialog box.
 
 \subsection arrangement_ipelet Arrangement
 
@@ -140,10 +142,10 @@ Generate random circles whose centers are inside a square bounding the selection
 Sort the selected points with a space filling strategy.
 <ul>
  <li><b> Hilbert sorting curve, median policy:</b>
-The set of points is split in two at the median, altenatively in x and
+The set of points is split in two at the median, alternatively in x and
 y directions.
  <li><b> Hilbert sorting curve, middle policy:</b>
-The set of points is split in two at the middle, altenatively in x and
+The set of points is split in two at the middle, alternatively in x and
 y directions.
 </ul>
 
@@ -152,7 +154,7 @@ y directions.
  <li><b> Convex minimal:</b>
 Selection should be a set of points, line segments , and circles.
 The convex hull of the selected objects is drawn.
- <li><b>t Crust:</b>
+ <li><b>Crust:</b>
 Selection should be a set of points.
 The crust of this set is drawn (curve reconstruction).
 </ul>
@@ -197,7 +199,7 @@ Ordinary Delaunay triangulation.
  <li><b> Delaunay 2:</b>
 Triangulation of middle of Delaunay edges.
  <li><b> Delaunay 3:</b>
-Triangulation of barycenters of Delaunay triangles.
+Triangulation of barycenters of some triangles.
  <li><b> Delaunay n-1:</b>
 Dual of farthest neighbor Voronoi diagram.
  <li><b> Delaunay k:</b>
@@ -218,26 +220,35 @@ k is asked in a dialog box.
 Selection should be a set of points and circles.
 The order k power diagram or its dual the order k regular triangulation is drawn.
 <ul>
- <li><b>Regular:</b>
- <li><b>Regular 2:</b>
+ <li><b>Regular:</b> Ordinary regular triangulation.
+ <li><b>Regular 2:</b> Triangulation of middle of  edges
+ of the regular triangulation.
  <li><b>Regular 3:</b>
+Triangulation of barycenters of some triangles.
  <li><b>Regular n-1:</b>
+Dual of farthest neighbor power diagram.
  <li><b>Regular k:</b>
- <li><b>Power Diagram:</b>
- <li><b>Power Diagram 2:</b>
- <li><b>Power Diagram 3:</b>
- <li><b>Power Diagram n-1:</b>
+k is asked in a dialog box.
+ <li><b>Power Diagram:</b> Ordinary power diagram.
+ <li><b>Power Diagram 2:</b> Order 2 power diagram.
+ <li><b>Power Diagram 3:</b> Order 3 power diagram.
+ <li><b>Power Diagram n-1:</b> Farthest neighbor power diagram.
  <li><b>Power Diagram k:</b>
+k is asked in a dialog box.
 </ul>
 
 \subsection partition_ipelet Polygon partition
 Selection should be simple polygons.
-The polygons are splitted according diffrent algorithms.
+The polygons are splitted according different algorithms.
 <ul>
- <li><b> Y monotone partition:</b>
- <li><b> Greene's approx Convex Partition:</b>
- <li><b> Approx Convex Partition:</b>
- <li><b> Optimal Convex Partition:</b>
+ <li><b> Y monotone partition:</b> Regions of the partition are \f$ y
+ \f$ monotone
+ <li><b> Greene's approx Convex Partition:</b> Regions of the
+ partition are convex.
+ <li><b> Approx Convex Partition:</b>Regions of the
+ partition are convex.
+ <li><b> Optimal Convex Partition:</b>Regions of the
+ partition are convex and their number is minimized.
 </ul>
 
 \subsection pca_ipelet PCA
