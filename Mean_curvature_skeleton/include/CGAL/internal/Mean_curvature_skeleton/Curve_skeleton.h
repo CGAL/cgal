@@ -113,7 +113,7 @@ private:
   };
 
   // type of priority queue for edges
-  typedef std::set<int, EdgeCompareFunctor>                                    Edge_queue;
+  typedef std::set<int, EdgeCompareFunctor>                                       Edge_queue;
 
 // Public methods
 public:
@@ -163,6 +163,7 @@ public:
     for (int i = 0; i < id; ++i)
     {
       id_to_vd[i] = boost::add_vertex(curve);
+      curve[id_to_vd[i]].id = i;
     }
 
     for (int i = 0; i < id; ++i)
@@ -217,7 +218,7 @@ public:
       }
       double num = record[id].size();
       pos = Point(pos.x() / num, pos.y() / num, pos.z() / num);
-      points[id_to_vd[new_id]] = pos;
+      points[new_id] = pos;
     }
   }
 
