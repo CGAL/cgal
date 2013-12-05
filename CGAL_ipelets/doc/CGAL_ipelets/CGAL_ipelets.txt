@@ -128,7 +128,7 @@ Generate a grid inside a square bounding the selection.
  <li><b> Points in a square:</b>
 Generate random points inside a square bounding the selection. 
  <li><b> Points on a convex hull:</b>
-Generate a random points inside a square bounding the selection and
+Generate a random convex polygon of given size  inside a square bounding the selection and
 draw their convex hull. 
  <li><b> Polygon:</b>
 Generate a random simple polygon inside a square bounding the selection. 
