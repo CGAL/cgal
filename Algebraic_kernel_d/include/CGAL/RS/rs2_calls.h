@@ -19,9 +19,10 @@
 #ifndef CGAL_RS_RS2_CALLS_H
 #define CGAL_RS_RS2_CALLS_H
 
-#include <gmp.h>
+#include <CGAL/Gmpz.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
+#include <CGAL/Polynomial.h>
 #include <rs_exports.h>
 
 #ifdef CGAL_RS_OLD_INCLUDES
@@ -45,18 +46,17 @@ struct RS2_calls{
                         rs_reset_all();
         }
 
-        static void create_rs_upoly(mpz_t *poly,
-                                    const int deg,
+        static void create_rs_upoly(CGAL::Polynomial<CGAL::Gmpz> poly,
                                     CGALRS_PTR(ident_pol)){
                 CGALRS_PTR(ident_mon);
                 CGALRS_PTR(ident_coeff);
                 rs_import_uppring((char*)"T");
-                for(int i=0;i<=deg;++i)
-                        if(mpz_sgn(poly[i])){   // don't add if == 0
+                for(int i=0;i<=poly.degree();++i)
+                        if(mpz_sgn(poly[i].mpz())){   // don't add if == 0
                                 ident_mon=rs_export_new_mon_upp_bz();
                                 ident_coeff=rs_export_new_gmp();
-                                rs_import_bz_gmp
-                                        (ident_coeff,TO_RSPTR_IN(&(poly[i])));
+                                rs_import_bz_gmp(ident_coeff,
+                                                 TO_RSPTR_IN(&(poly[i].mpz())));
                                 rs_dset_mon_upp_bz(ident_mon,ident_coeff,i);
                                 rs_dappend_list_mon_upp_bz(ident_pol,
                                                            ident_mon);
