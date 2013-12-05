@@ -2683,6 +2683,50 @@ namespace CGAL {
     Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
     { return Compare_y_near_boundary_2(*this); }
 
+    /*! A functor that indicates whether a geometric object lies on the
+     * vertical identification arc.
+     */
+    class Is_on_y_identification_2 {
+    protected:
+      typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
+      /*! The polyline traits (in case it has state) */
+      const Polyline_traits_2& m_poly_traits;
+
+    public:
+      /*! Constructor. */
+      Is_on_y_identification_2(const Polyline_traits_2& traits) :
+        m_poly_traits(traits)
+      {}
+
+      /*! Determine whether a point lies in the vertical boundary.
+       * \param p the point.
+       * \return a Boolean indicating whether p lies in the vertical boundary.
+       */
+      bool operator()(const Point_2& p) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        return seg_traits->is_on_y_identification_2_object()(p);
+      }
+
+      /*! Determine whether an x-monotone curve lies in the vertical boundary.
+       * \param xcv the x-monotone curve.
+       * \return a Boolean indicating whether xcv lies in the vertical boundary.
+       */
+      bool operator()(const X_monotone_curve_2& xcv) const
+      {
+        const Segment_traits_2* seg_traits = m_poly_traits.segment_traits_2();
+        typename X_monotone_curve_2::Segment_const_iterator it;
+        for (it = xcv.begin_segments(); it != xcv.end_segments(); ++it)
+          if (! seg_traits->is_on_y_identification_2_object()(*it))
+            return false;
+        return true;
+      }
+    };
+
+    /*! Obtain a Is_on_y_identification_2 function object */
+    Is_on_y_identification_2 is_on_y_identification_2_object() const
+    { return Is_on_y_identification_2(*this); }
+
   private:
     /*
      * Roadmap: locate() should return an iterator to the located segment
