@@ -135,14 +135,13 @@ if(DOXYGEN_FOUND)
   # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
   configure_doxygen_package("Documentation")
   set_target_properties(Documentation_doc PROPERTIES FOLDER Documentation)
-  add_dependencies(doc Documentation_doc)
-
 
   # hard-code that doc depends on all packages
   file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
   foreach(depend ${DEPENDENCIES})
     add_dependencies(doc ${depend}_doc)
   endforeach()
+  add_dependencies(doc Documentation_doc)
 
   if(PYTHONINTERP_FOUND)
     add_custom_target(doc_with_postprocessing
