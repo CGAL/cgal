@@ -461,16 +461,16 @@ public:
   
   Cell_iterator cells_end() const
   { return cells_in_complex_end(); }
-  
+#endif // CGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS
+  // -----------------------------------
+  // End backward Compatibility
+  // -----------------------------------
+
   size_type number_of_facets() const
   { return number_of_facets_in_complex(); }
 
   size_type number_of_cells() const
   { return number_of_cells_in_complex(); }
-#endif // CGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS
-  // -----------------------------------
-  // End backward Compatibility
-  // -----------------------------------
 
 public:
   template <typename Tr2>
