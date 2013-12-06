@@ -64,7 +64,7 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
                                    Comparator_,
                                    Ptraits_>,
                        double>{
-        private:
+        protected:
         typedef Polynomial_                             Polynomial;
         typedef Bound_                                  Bound;
         typedef Refiner_                                Refiner;

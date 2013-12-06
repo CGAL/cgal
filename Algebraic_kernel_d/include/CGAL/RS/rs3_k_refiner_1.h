@@ -22,6 +22,7 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include "rs2_calls.h"
 #include <rs3_fncts.h>
+#include "Gmpfr_make_unique.h"
 
 namespace CGAL{
 namespace RS3{
@@ -54,24 +55,8 @@ operator()
         int deg=Degree()(pol);
         mpz_t* coefficients=(mpz_t*)malloc((deg+1)*sizeof(mpz_t));
         __mpfi_struct interval;
-#ifndef CGAL_GMPFR_NO_REFCOUNT
-        // Make sure the endpoints do not share references. If some of them
-        // does, copy it.
-        if(!left.is_unique()){
-                Gmpfr new_left(0,left.get_precision());
-                mpfr_set(new_left.fr(),left.fr(),GMP_RNDN);
-                left=new_left;
-                CGAL_assertion_code(new_left=Gmpfr();)
-                CGAL_assertion(left.is_unique());
-        }
-        if(!right.is_unique()){
-                Gmpfr new_right(0,right.get_precision());
-                mpfr_set(new_right.fr(),right.fr(),GMP_RNDN);
-                right=new_right;
-                CGAL_assertion_code(new_right=Gmpfr();)
-                CGAL_assertion(right.is_unique());
-        }
-#endif // CGAL_GMPFR_NO_REFCOUNT
+        CGAL_RS_GMPFR_MAKE_UNIQUE(left,temp_left);
+        CGAL_RS_GMPFR_MAKE_UNIQUE(right,temp_right);
         interval.left=*(left.fr());
         interval.right=*(right.fr());
         for(int i=0;i<=deg;++i)

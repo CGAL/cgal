@@ -25,6 +25,9 @@
 #include "RS/functors_1.h"
 #include "RS/rs2_isolator_1.h"
 #include "RS/bisection_refiner_1.h"
+#ifdef CGAL_USE_RS3
+#include "RS/rs3_refiner_1.h"
+#endif
 #include "RS/ak_1.h"
 
 namespace CGAL{
@@ -33,9 +36,14 @@ namespace CGAL{
 typedef CGAL::RS2::RS2_isolator_1<CGAL::Polynomial<CGAL::Gmpq>,CGAL::Gmpfr>
                                                 Isolator;
 
-// Choice of the refiner: bisection.
+// Choice of the refiner: bisection or RS3 refinement.
+#ifdef CGAL_USE_RS3
+typedef CGAL::RS3::RS3_refiner_1<CGAL::Polynomial<CGAL::Gmpq>,CGAL::Gmpfr>
+                                                Refiner;
+#else
 typedef CGAL::Bisection_refiner_1<CGAL::Polynomial<CGAL::Gmpq>,CGAL::Gmpfr>
                                                 Refiner;
+#endif
 
 typedef CGAL::RS_AK1::Algebraic_kernel_1<
         CGAL::Polynomial<CGAL::Gmpq>,

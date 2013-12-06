@@ -24,6 +24,7 @@
 
 #include <CGAL/Polynomial_traits_d.h>
 #include "signat_1.h"
+#include "Gmpfr_make_unique.h"
 
 namespace CGAL{
 
@@ -59,24 +60,8 @@ operator()(const Polynomial<Gmpz> &pol,Gmpfr &left,Gmpfr &right,int prec){
         // or the evaluations on its endpoints have different signs
         //std::cout<<"refining ["<<left<<","<<right<<"]"<<std::endl;
 
-#ifndef CGAL_GMPFR_NO_REFCOUNT
-        // Make sure the endpoints do not share references. If some of them
-        // does, copy it.
-        if(!left.is_unique()){
-                Gmpfr new_left(0,left.get_precision());
-                mpfr_set(new_left.fr(),left.fr(),GMP_RNDN);
-                left=new_left;
-                CGAL_assertion_code(new_left=Gmpfr();)
-                CGAL_assertion(left.is_unique());
-        }
-        if(!right.is_unique()){
-                Gmpfr new_right(0,right.get_precision());
-                mpfr_set(new_right.fr(),right.fr(),GMP_RNDN);
-                right=new_right;
-                CGAL_assertion_code(new_right=Gmpfr();)
-                CGAL_assertion(right.is_unique());
-        }
-#endif // CGAL_GMPFR_NO_REFCOUNT
+        CGAL_RS_GMPFR_MAKE_UNIQUE(left,temp_left);
+        CGAL_RS_GMPFR_MAKE_UNIQUE(right,temp_right);
 
         Polynomial sfpp=Sfpart()(pol);
         Signat signof(sfpp);
@@ -137,24 +122,8 @@ operator()(const Polynomial<Gmpq> &pol,Gmpfr &left,Gmpfr &right,int prec){
         // or the evaluations on its endpoints have different signs
         //std::cout<<"refining ["<<left<<","<<right<<"]"<<std::endl;
 
-#ifndef CGAL_GMPFR_NO_REFCOUNT
-        // Make sure the endpoints do not share references. If some of them
-        // does, copy it.
-        if(!left.is_unique()){
-                Gmpfr new_left(0,left.get_precision());
-                mpfr_set(new_left.fr(),left.fr(),GMP_RNDN);
-                left=new_left;
-                CGAL_assertion_code(new_left=Gmpfr();)
-                CGAL_assertion(left.is_unique());
-        }
-        if(!right.is_unique()){
-                Gmpfr new_right(0,right.get_precision());
-                mpfr_set(new_right.fr(),right.fr(),GMP_RNDN);
-                right=new_right;
-                CGAL_assertion_code(new_right=Gmpfr();)
-                CGAL_assertion(right.is_unique());
-        }
-#endif // CGAL_GMPFR_NO_REFCOUNT
+        CGAL_RS_GMPFR_MAKE_UNIQUE(left,temp_left);
+        CGAL_RS_GMPFR_MAKE_UNIQUE(right,temp_right);
 
         Polynomial sfpp=Sfpart()(pol);
         Signat signof(sfpp);
