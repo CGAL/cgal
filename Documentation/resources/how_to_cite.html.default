@@ -1,5 +1,5 @@
-<h1>how_to_cite_cgal.bib</h1><a name="cgal:eb-%00a"></a><pre>
-@book{<a href="how_to_cite_cgal.html#cgal:eb-%00a">cgal:eb-%00a</a>,
+<h1>how_to_cite_cgal.bib</h1><a name="cgal:eb-00a"></a><pre>
+@book{<a href="how_to_cite_cgal.html#cgal:eb-00a">cgal:eb-00a</a>,
   title = {{CGAL} User and Reference Manual},
   author = {{The CGAL Project}},
   publisher = {{CGAL Editorial Board}},
@@ -9,8 +9,8 @@
 }
 </pre>
 
-<a name="cgal:h-af-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-af-%00a">cgal:h-af-%00a</a>,
+<a name="cgal:h-af-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-af-00a">cgal:h-af-00a</a>,
   author = {Michael Hemmer},
   title = {Algebraic Foundations},
   publisher = {{CGAL Editorial Board}},
@@ -21,8 +21,8 @@
 }
 </pre>
 
-<a name="cgal:bht-ak-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:bht-ak-%00a">cgal:bht-ak-%00a</a>,
+<a name="cgal:bht-ak-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:bht-ak-00a">cgal:bht-ak-00a</a>,
   author = {Eric Berberich and Michael Hemmer and Michael Kerber and Sylvain Lazard and Luis Pe{\~n}aranda and Monique Teillaud},
   title = {Algebraic Kernel},
   publisher = {{CGAL Editorial Board}},
@@ -33,8 +33,8 @@
 }
 </pre>
 
-<a name="cgal:hhkps-nt-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hhkps-nt-%00a">cgal:hhkps-nt-%00a</a>,
+<a name="cgal:hhkps-nt-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hhkps-nt-00a">cgal:hhkps-nt-00a</a>,
   author = {Michael Hemmer and Susan Hert and Lutz Kettner and Sylvain Pion and Stefan Schirra},
   title = {Number Types},
   publisher = {{CGAL Editorial Board}},
@@ -45,8 +45,8 @@
 }
 </pre>
 
-<a name="cgal:h-p-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-p-%00a">cgal:h-p-%00a</a>,
+<a name="cgal:h-p-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-p-00a">cgal:h-p-00a</a>,
   author = {Michael Hemmer},
   title = {Polynomial},
   publisher = {{CGAL Editorial Board}},
@@ -57,8 +57,8 @@
 }
 </pre>
 
-<a name="cgal:h-ma-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-ma-%00a">cgal:h-ma-%00a</a>,
+<a name="cgal:h-ma-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-ma-00a">cgal:h-ma-00a</a>,
   author = {Michael Hemmer},
   title = {Modular Arithmetic},
   publisher = {{CGAL Editorial Board}},
@@ -69,8 +69,8 @@
 }
 </pre>
 
-<a name="cgal:bfghhkps-lgk23-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:bfghhkps-lgk23-%00a">cgal:bfghhkps-lgk23-%00a</a>,
+<a name="cgal:bfghhkps-lgk23-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:bfghhkps-lgk23-00a">cgal:bfghhkps-lgk23-00a</a>,
   author = {Herv{\'e} Br{\"o}nnimann and Andreas Fabri and Geert-Jan Giezeman and Susan Hert and Michael Hoffmann and Lutz Kettner and Sylvain Pion and Stefan Schirra},
   title = {{2D} and {3D} Geometry Kernel},
   publisher = {{CGAL Editorial Board}},
@@ -81,8 +81,8 @@
 }
 </pre>
 
-<a name="cgal:s-gkd-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:s-gkd-%00a">cgal:s-gkd-%00a</a>,
+<a name="cgal:s-gkd-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:s-gkd-00a">cgal:s-gkd-00a</a>,
   author = {Michael Seel},
   title = {{dD} Geometry Kernel},
   publisher = {{CGAL Editorial Board}},
@@ -93,8 +93,8 @@
 }
 </pre>
 
-<a name="cgal:cpt-cgk2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:cpt-cgk2-%00a">cgal:cpt-cgk2-%00a</a>,
+<a name="cgal:cpt-cgk2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:cpt-cgk2-00a">cgal:cpt-cgk2-00a</a>,
   author = {Pedro Machado Manh\~{a}es de Castro and Sylvain Pion and Monique Teillaud},
   title = {{2D} Circular Geometry Kernel},
   publisher = {{CGAL Editorial Board}},
@@ -105,8 +105,8 @@
 }
 </pre>
 
-<a name="cgal:cclt-sgk3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:cclt-sgk3-%00a">cgal:cclt-sgk3-%00a</a>,
+<a name="cgal:cclt-sgk3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:cclt-sgk3-00a">cgal:cclt-sgk3-00a</a>,
   author = {Pedro Machado Manh\~{a}es de Castro and Fr{\'e}d{\'e}ric Cazals and S{\'e}bastien Loriot and Monique Teillaud},
   title = {{3D} Spherical Geometry Kernel},
   publisher = {{CGAL Editorial Board}},
@@ -117,8 +117,8 @@
 }
 </pre>
 
-<a name="cgal:hs-chep2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hs-chep2-%00a">cgal:hs-chep2-%00a</a>,
+<a name="cgal:hs-chep2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hs-chep2-00a">cgal:hs-chep2-00a</a>,
   author = {Susan Hert and Stefan Schirra},
   title = {{2D} Convex Hulls and Extreme Points},
   publisher = {{CGAL Editorial Board}},
@@ -129,8 +129,8 @@
 }
 </pre>
 
-<a name="cgal:hs-ch3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hs-ch3-%00a">cgal:hs-ch3-%00a</a>,
+<a name="cgal:hs-ch3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hs-ch3-00a">cgal:hs-ch3-00a</a>,
   author = {Susan Hert and Stefan Schirra},
   title = {{3D} Convex Hulls},
   publisher = {{CGAL Editorial Board}},
@@ -141,8 +141,8 @@
 }
 </pre>
 
-<a name="cgal:gw-p2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:gw-p2-%00a">cgal:gw-p2-%00a</a>,
+<a name="cgal:gw-p2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:gw-p2-00a">cgal:gw-p2-00a</a>,
   author = {Geert-Jan Giezeman and Wieger Wesselink},
   title = {{2D} Polygons},
   publisher = {{CGAL Editorial Board}},
@@ -153,8 +153,8 @@
 }
 </pre>
 
-<a name="cgal:h-pp2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-pp2-%00a">cgal:h-pp2-%00a</a>,
+<a name="cgal:h-pp2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-pp2-00a">cgal:h-pp2-00a</a>,
   author = {Susan Hert},
   title = {{2D} Polygon Partitioning},
   publisher = {{CGAL Editorial Board}},
@@ -165,8 +165,8 @@
 }
 </pre>
 
-<a name="cgal:hs-chdt3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hs-chdt3-%00a">cgal:hs-chdt3-%00a</a>,
+<a name="cgal:hs-chdt3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hs-chdt3-00a">cgal:hs-chdt3-00a</a>,
   author = {Susan Hert and Michael Seel},
   title = {{dD} Convex Hulls and {Delaunay} Triangulations},
   publisher = {{CGAL Editorial Board}},
@@ -177,8 +177,8 @@
 }
 </pre>
 
-<a name="cgal:k-ps-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:k-ps-%00a">cgal:k-ps-%00a</a>,
+<a name="cgal:k-ps-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:k-ps-00a">cgal:k-ps-00a</a>,
   author = {Lutz Kettner},
   title = {{3D} Polyhedral Surfaces},
   publisher = {{CGAL Editorial Board}},
@@ -189,8 +189,8 @@
 }
 </pre>
 
-<a name="cgal:k-hds-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:k-hds-%00a">cgal:k-hds-%00a</a>,
+<a name="cgal:k-hds-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:k-hds-00a">cgal:k-hds-00a</a>,
   author = {Lutz Kettner},
   title = {Halfedge Data Structures},
   publisher = {{CGAL Editorial Board}},
@@ -201,8 +201,8 @@
 }
 </pre>
 
-<a name="cgal:d-cm-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:d-cm-%00a">cgal:d-cm-%00a</a>,
+<a name="cgal:d-cm-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:d-cm-00a">cgal:d-cm-00a</a>,
   author = {Guillaume Damiand},
   title = {Combinatorial Maps},
   publisher = {{CGAL Editorial Board}},
@@ -213,8 +213,8 @@
 }
 </pre>
 
-<a name="cgal:d-lcc-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:d-lcc-%00a">cgal:d-lcc-%00a</a>,
+<a name="cgal:d-lcc-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:d-lcc-00a">cgal:d-lcc-00a</a>,
   author = {Guillaume Damiand},
   title = {Linear Cell Complex},
   publisher = {{CGAL Editorial Board}},
@@ -225,8 +225,8 @@
 }
 </pre>
 
-<a name="cgal:fwzh-rbso2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fwzh-rbso2-%00a">cgal:fwzh-rbso2-%00a</a>,
+<a name="cgal:fwzh-rbso2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fwzh-rbso2-00a">cgal:fwzh-rbso2-00a</a>,
   author = {Efi Fogel and  Ron Wein and  Baruch Zukerman and Dan Halperin},
   title = {{2D} Regularized {Boolean} Set-Operations},
   publisher = {{CGAL Editorial Board}},
@@ -237,8 +237,8 @@
 }
 </pre>
 
-<a name="cgal:w-rms2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:w-rms2-%00a">cgal:w-rms2-%00a</a>,
+<a name="cgal:w-rms2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:w-rms2-00a">cgal:w-rms2-00a</a>,
   author = {Ron Wein},
   title = {{2D} {Minkowski} Sums},
   publisher = {{CGAL Editorial Board}},
@@ -249,8 +249,8 @@
 }
 </pre>
 
-<a name="cgal:s-bonp2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:s-bonp2-%00a">cgal:s-bonp2-%00a</a>,
+<a name="cgal:s-bonp2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:s-bonp2-00a">cgal:s-bonp2-00a</a>,
   author = {Michael Seel},
   title = {{2D} {Boolean} Operations on {Nef} Polygons},
   publisher = {{CGAL Editorial Board}},
@@ -261,8 +261,8 @@
 }
 </pre>
 
-<a name="cgal:hk-bonpes2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hk-bonpes2-%00a">cgal:hk-bonpes2-%00a</a>,
+<a name="cgal:hk-bonpes2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hk-bonpes2-00a">cgal:hk-bonpes2-00a</a>,
   author = {Peter Hachenberger and Lutz Kettner},
   title = {{2D} {Boolean} Operations on {Nef} Polygons Embedded on the Sphere},
   publisher = {{CGAL Editorial Board}},
@@ -273,8 +273,8 @@
 }
 </pre>
 
-<a name="cgal:hk-bonp3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hk-bonp3-%00a">cgal:hk-bonp3-%00a</a>,
+<a name="cgal:hk-bonp3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hk-bonp3-00a">cgal:hk-bonp3-00a</a>,
   author = {Peter Hachenberger and Lutz Kettner},
   title = {{3D} {Boolean} Operations on {Nef} Polyhedra},
   publisher = {{CGAL Editorial Board}},
@@ -285,8 +285,8 @@
 }
 </pre>
 
-<a name="cgal:h-emspe-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-emspe-%00a">cgal:h-emspe-%00a</a>,
+<a name="cgal:h-emspe-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-emspe-00a">cgal:h-emspe-00a</a>,
   author = {Peter Hachenberger},
   title = {Convex Decomposition of Polyhedra},
   publisher = {{CGAL Editorial Board}},
@@ -297,8 +297,8 @@
 }
 </pre>
 
-<a name="cgal:h-msp3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-msp3-%00a">cgal:h-msp3-%00a</a>,
+<a name="cgal:h-msp3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-msp3-00a">cgal:h-msp3-00a</a>,
   author = {Peter Hachenberger},
   title = {{3D} {Minkowski} Sum of Polyhedra},
   publisher = {{CGAL Editorial Board}},
@@ -309,8 +309,8 @@
 }
 </pre>
 
-<a name="cgal:c-sspo2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:c-sspo2-%00a">cgal:c-sspo2-%00a</a>,
+<a name="cgal:c-sspo2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:c-sspo2-00a">cgal:c-sspo2-00a</a>,
   author = {Fernando Cacciola},
   title = {{2D} Straight Skeleton and Polygon Offsetting},
   publisher = {{CGAL Editorial Board}},
@@ -321,8 +321,8 @@
 }
 </pre>
 
-<a name="cgal:wfzh-a2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:wfzh-a2-%00a">cgal:wfzh-a2-%00a</a>,
+<a name="cgal:wfzh-a2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:wfzh-a2-00a">cgal:wfzh-a2-00a</a>,
   author = {Ron Wein and Eric Berberich and Efi Fogel and Dan Halperin and Michael Hemmer and Oren Salzman and Baruch Zukerman},
   title = {{2D} Arrangements},
   publisher = {{CGAL Editorial Board}},
@@ -333,8 +333,8 @@
 }
 </pre>
 
-<a name="cgal:wfz-ic2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:wfz-ic2-%00a">cgal:wfz-ic2-%00a</a>,
+<a name="cgal:wfz-ic2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:wfz-ic2-00a">cgal:wfz-ic2-00a</a>,
   author = {Baruch Zukerman and Ron Wein and Efi Fogel},
   title = {{2D} Intersection of Curves},
   publisher = {{CGAL Editorial Board}},
@@ -345,8 +345,8 @@
 }
 </pre>
 
-<a name="cgal:p-sr2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:p-sr2-%00a">cgal:p-sr2-%00a</a>,
+<a name="cgal:p-sr2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:p-sr2-00a">cgal:p-sr2-00a</a>,
   author = {Eli Packer},
   title = {{2D} Snap Rounding},
   publisher = {{CGAL Editorial Board}},
@@ -357,8 +357,8 @@
 }
 </pre>
 
-<a name="cgal:w-e2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:w-e2-%00a">cgal:w-e2-%00a</a>,
+<a name="cgal:w-e2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:w-e2-00a">cgal:w-e2-00a</a>,
   author = {Ron Wein},
   title = {{2D} Envelopes},
   publisher = {{CGAL Editorial Board}},
@@ -369,8 +369,8 @@
 }
 </pre>
 
-<a name="cgal:mwz-e3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:mwz-e3-%00a">cgal:mwz-e3-%00a</a>,
+<a name="cgal:mwz-e3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:mwz-e3-00a">cgal:mwz-e3-00a</a>,
   author = {Michal Meyerovitch and Ron Wein and Baruch Zukerman},
   title = {{3D} Envelopes},
   publisher = {{CGAL Editorial Board}},
@@ -381,8 +381,8 @@
 }
 </pre>
 
-<a name="cgal:y-t2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:y-t2-%00a">cgal:y-t2-%00a</a>,
+<a name="cgal:y-t2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:y-t2-00a">cgal:y-t2-00a</a>,
   author = {Mariette Yvinec},
   title = {{2D} Triangulations},
   publisher = {{CGAL Editorial Board}},
@@ -393,8 +393,8 @@
 }
 </pre>
 
-<a name="cgal:py-tds2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:py-tds2-%00a">cgal:py-tds2-%00a</a>,
+<a name="cgal:py-tds2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:py-tds2-00a">cgal:py-tds2-00a</a>,
   author = {Sylvain Pion and Mariette Yvinec},
   title = {{2D} Triangulation Data Structure},
   publisher = {{CGAL Editorial Board}},
@@ -405,8 +405,8 @@
 }
 </pre>
 
-<a name="cgal:pt-t3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:pt-t3-%00a">cgal:pt-t3-%00a</a>,
+<a name="cgal:pt-t3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:pt-t3-00a">cgal:pt-t3-00a</a>,
   author = {Sylvain Pion and Monique Teillaud},
   title = {{3D} Triangulations},
   publisher = {{CGAL Editorial Board}},
@@ -417,8 +417,8 @@
 }
 </pre>
 
-<a name="cgal:pt-tds3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:pt-tds3-%00a">cgal:pt-tds3-%00a</a>,
+<a name="cgal:pt-tds3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:pt-tds3-00a">cgal:pt-tds3-00a</a>,
   author = {Sylvain Pion and Monique Teillaud},
   title = {{3D} Triangulation Data Structure},
   publisher = {{CGAL Editorial Board}},
@@ -429,8 +429,8 @@
 }
 </pre>
 
-<a name="cgal:k-pt2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:k-pt2-%00a">cgal:k-pt2-%00a</a>,
+<a name="cgal:k-pt2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:k-pt2-00a">cgal:k-pt2-00a</a>,
   author = {Nico Kruithof},
   title = {{2D} Periodic Triangulations},
   publisher = {{CGAL Editorial Board}},
@@ -441,8 +441,8 @@
 }
 </pre>
 
-<a name="cgal:ct-pt3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:ct-pt3-%00a">cgal:ct-pt3-%00a</a>,
+<a name="cgal:ct-pt3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:ct-pt3-00a">cgal:ct-pt3-00a</a>,
   author = {Manuel Caroli and Monique Teillaud},
   title = {{3D} Periodic Triangulations},
   publisher = {{CGAL Editorial Board}},
@@ -453,8 +453,8 @@
 }
 </pre>
 
-<a name="cgal:d-as2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:d-as2-%00a">cgal:d-as2-%00a</a>,
+<a name="cgal:d-as2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:d-as2-00a">cgal:d-as2-00a</a>,
   author = {Tran Kai Frank Da},
   title = {{2D} Alpha Shapes},
   publisher = {{CGAL Editorial Board}},
@@ -465,8 +465,8 @@
 }
 </pre>
 
-<a name="cgal:dy-as3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:dy-as3-%00a">cgal:dy-as3-%00a</a>,
+<a name="cgal:dy-as3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:dy-as3-00a">cgal:dy-as3-00a</a>,
   author = {Tran Kai Frank Da and Mariette Yvinec},
   title = {{3D} Alpha Shapes},
   publisher = {{CGAL Editorial Board}},
@@ -477,8 +477,8 @@
 }
 </pre>
 
-<a name="cgal:k-sdg2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:k-sdg2-%00a">cgal:k-sdg2-%00a</a>,
+<a name="cgal:k-sdg2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:k-sdg2-00a">cgal:k-sdg2-00a</a>,
   author = {Menelaos Karavelas},
   title = {{2D} Segment {Delaunay} Graphs},
   publisher = {{CGAL Editorial Board}},
@@ -489,8 +489,8 @@
 }
 </pre>
 
-<a name="cgal:ky-ag2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:ky-ag2-%00a">cgal:ky-ag2-%00a</a>,
+<a name="cgal:ky-ag2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:ky-ag2-00a">cgal:ky-ag2-00a</a>,
   author = {Menelaos Karavelas and Mariette Yvinec},
   title = {{2D} {Apollonius} Graphs ({Delaunay} Graphs of Disks)},
   publisher = {{CGAL Editorial Board}},
@@ -501,8 +501,8 @@
 }
 </pre>
 
-<a name="cgal:k-vda2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:k-vda2-%00a">cgal:k-vda2-%00a</a>,
+<a name="cgal:k-vda2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:k-vda2-00a">cgal:k-vda2-00a</a>,
   author = {Menelaos Karavelas},
   title = {{2D} {Voronoi} Diagram Adaptor},
   publisher = {{CGAL Editorial Board}},
@@ -513,8 +513,8 @@
 }
 </pre>
 
-<a name="cgal:r-ctm2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:r-ctm2-%00a">cgal:r-ctm2-%00a</a>,
+<a name="cgal:r-ctm2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:r-ctm2-00a">cgal:r-ctm2-00a</a>,
   author = {Laurent Rineau},
   title = {{2D} Conforming Triangulations and Meshes},
   publisher = {{CGAL Editorial Board}},
@@ -525,8 +525,8 @@
 }
 </pre>
 
-<a name="cgal:ry-smg-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:ry-smg-%00a">cgal:ry-smg-%00a</a>,
+<a name="cgal:ry-smg-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:ry-smg-00a">cgal:ry-smg-00a</a>,
   author = {Laurent Rineau and Mariette Yvinec},
   title = {{3D} Surface Mesh Generation},
   publisher = {{CGAL Editorial Board}},
@@ -537,8 +537,8 @@
 }
 </pre>
 
-<a name="cgal:asg-srps-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:asg-srps-%00a">cgal:asg-srps-%00a</a>,
+<a name="cgal:asg-srps-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:asg-srps-00a">cgal:asg-srps-00a</a>,
   author = {Pierre Alliez and Laurent Saboret and Gael Guennebaud},
   title = {Surface Reconstruction from Point Sets},
   publisher = {{CGAL Editorial Board}},
@@ -549,8 +549,8 @@
 }
 </pre>
 
-<a name="cgal:k-ssm3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:k-ssm3-%00a">cgal:k-ssm3-%00a</a>,
+<a name="cgal:k-ssm3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:k-ssm3-00a">cgal:k-ssm3-00a</a>,
   author = {Nico Kruithof},
   title = {{3D} Skin Surface Meshing},
   publisher = {{CGAL Editorial Board}},
@@ -561,8 +561,8 @@
 }
 </pre>
 
-<a name="cgal:rty-m3-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:rty-m3-%00a">cgal:rty-m3-%00a</a>,
+<a name="cgal:rty-m3-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:rty-m3-00a">cgal:rty-m3-00a</a>,
   author = {Pierre Alliez and Laurent Rineau and St\'ephane Tayeb and  Jane Tournois and Mariette Yvinec},
   title = {{3D} Mesh Generation},
   publisher = {{CGAL Editorial Board}},
@@ -573,8 +573,8 @@
 }
 </pre>
 
-<a name="cgal:s-ssm2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:s-ssm2-%00a">cgal:s-ssm2-%00a</a>,
+<a name="cgal:s-ssm2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:s-ssm2-00a">cgal:s-ssm2-00a</a>,
   author = {Le-Jeng Andy Shiue},
   title = {{3D} Surface Subdivision Methods},
   publisher = {{CGAL Editorial Board}},
@@ -585,8 +585,8 @@
 }
 </pre>
 
-<a name="cgal:c-tsms-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:c-tsms-%00a">cgal:c-tsms-%00a</a>,
+<a name="cgal:c-tsms-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:c-tsms-00a">cgal:c-tsms-00a</a>,
   author = {Fernando Cacciola},
   title = {Triangulated Surface Mesh Simplification},
   publisher = {{CGAL Editorial Board}},
@@ -597,8 +597,8 @@
 }
 </pre>
 
-<a name="cgal:sal-pptsm2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:sal-pptsm2-%00a">cgal:sal-pptsm2-%00a</a>,
+<a name="cgal:sal-pptsm2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:sal-pptsm2-00a">cgal:sal-pptsm2-00a</a>,
   author = {Laurent Saboret and Pierre Alliez and Bruno L\'evy},
   title = {Planar Parameterization of Triangulated Surface Meshes},
   publisher = {{CGAL Editorial Board}},
@@ -609,8 +609,8 @@
 }
 </pre>
 
-<a name="cgal:b-ss2-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:b-ss2-%00a">cgal:b-ss2-%00a</a>,
+<a name="cgal:b-ss2-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:b-ss2-00a">cgal:b-ss2-00a</a>,
   author = {Matthias B{\"a}sken},
   title = {{2D} Range and Neighbor Search},
   publisher = {{CGAL Editorial Board}},
@@ -621,8 +621,8 @@
 }
 </pre>
 
-<a name="cgal:n-rstd-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:n-rstd-%00a">cgal:n-rstd-%00a</a>,
+<a name="cgal:n-rstd-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:n-rstd-00a">cgal:n-rstd-00a</a>,
   author = {Gabriele Neyer},
   title = {{dD} Range and Segment Trees},
   publisher = {{CGAL Editorial Board}},
@@ -633,8 +633,8 @@
 }
 </pre>
 
-<a name="cgal:f-isl-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:f-isl-%00a">cgal:f-isl-%00a</a>,
+<a name="cgal:f-isl-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:f-isl-00a">cgal:f-isl-00a</a>,
   author = {Andreas Fabri},
   title = {Interval Skip List},
   publisher = {{CGAL Editorial Board}},
@@ -645,8 +645,8 @@
 }
 </pre>
 
-<a name="cgal:tf-ssd-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:tf-ssd-%00a">cgal:tf-ssd-%00a</a>,
+<a name="cgal:tf-ssd-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:tf-ssd-00a">cgal:tf-ssd-00a</a>,
   author = {Hans Tangelder and Andreas Fabri},
   title = {{dD} Spatial Searching},
   publisher = {{CGAL Editorial Board}},
@@ -657,8 +657,8 @@
 }
 </pre>
 
-<a name="cgal:kmz-isiobd-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:kmz-isiobd-%00a">cgal:kmz-isiobd-%00a</a>,
+<a name="cgal:kmz-isiobd-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:kmz-isiobd-00a">cgal:kmz-isiobd-00a</a>,
   author = {Lutz Kettner and Andreas Meyer and Afra Zomorodian},
   title = {Intersecting Sequences of {dD} Iso-oriented Boxes},
   publisher = {{CGAL Editorial Board}},
@@ -669,8 +669,8 @@
 }
 </pre>
 
-<a name="cgal:fghhs-bv-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fghhs-bv-%00a">cgal:fghhs-bv-%00a</a>,
+<a name="cgal:fghhs-bv-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fghhs-bv-00a">cgal:fghhs-bv-00a</a>,
   author = {Kaspar Fischer and Bernd G{\"a}rtner and Thomas Herrmann and Michael Hoffmann and Sven Sch{\"o}nherr},
   title = {Bounding Volumes},
   publisher = {{CGAL Editorial Board}},
@@ -681,8 +681,8 @@
 }
 </pre>
 
-<a name="cgal:fgsw-lqps-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fgsw-lqps-%00a">cgal:fgsw-lqps-%00a</a>,
+<a name="cgal:fgsw-lqps-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fgsw-lqps-00a">cgal:fgsw-lqps-00a</a>,
   author = {Kaspar Fischer and Bernd G{\"a}rtner and Sven Sch{\"o}nherr and Frans Wessendorp},
   title = {Linear and Quadratic Programming Solver},
   publisher = {{CGAL Editorial Board}},
@@ -693,8 +693,8 @@
 }
 </pre>
 
-<a name="cgal:hp-ia-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hp-ia-%00a">cgal:hp-ia-%00a</a>,
+<a name="cgal:hp-ia-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hp-ia-00a">cgal:hp-ia-00a</a>,
   author = {Michael Hoffmann and Eli Packer},
   title = {Inscribed Areas},
   publisher = {{CGAL Editorial Board}},
@@ -705,8 +705,8 @@
 }
 </pre>
 
-<a name="cgal:fghhs-od-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fghhs-od-%00a">cgal:fghhs-od-%00a</a>,
+<a name="cgal:fghhs-od-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fghhs-od-00a">cgal:fghhs-od-00a</a>,
   author = {Kaspar Fischer and Bernd G{\"a}rtner and Thomas Herrmann and Michael Hoffmann
                 and Sven Sch{\"o}nherr},
   title = {Optimal Distances},
@@ -718,8 +718,8 @@
 }
 </pre>
 
-<a name="cgal:f-i-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:f-i-%00a">cgal:f-i-%00a</a>,
+<a name="cgal:f-i-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:f-i-00a">cgal:f-i-00a</a>,
   author = {Julia Fl{\"o}totto},
   title = {{2D} and Surface Function Interpolation},
   publisher = {{CGAL Editorial Board}},
@@ -730,8 +730,8 @@
 }
 </pre>
 
-<a name="cgal:ap-pcad-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:ap-pcad-%00a">cgal:ap-pcad-%00a</a>,
+<a name="cgal:ap-pcad-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:ap-pcad-00a">cgal:ap-pcad-00a</a>,
   author = {Pierre Alliez and Sylvain Pion and Ankit Gupta},
   title = {Principal Component Analysis},
   publisher = {{CGAL Editorial Board}},
@@ -742,8 +742,8 @@
 }
 </pre>
 
-<a name="cgal:m-ps-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:m-ps-%00a">cgal:m-ps-%00a</a>,
+<a name="cgal:m-ps-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:m-ps-00a">cgal:m-ps-00a</a>,
   author = {Abdelkrim Mebarki},
   title = {{2D} Placement of Streamlines},
   publisher = {{CGAL Editorial Board}},
@@ -754,8 +754,8 @@
 }
 </pre>
 
-<a name="cgal:cp-arutsm-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:cp-arutsm-%00a">cgal:cp-arutsm-%00a</a>,
+<a name="cgal:cp-arutsm-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:cp-arutsm-00a">cgal:cp-arutsm-00a</a>,
   author = {Marc Pouget and Fr\'ed\'eric Cazals},
   title = {Approximation of Ridges and Umbilics on Triangulated Surface Meshes},
   publisher = {{CGAL Editorial Board}},
@@ -766,8 +766,8 @@
 }
 </pre>
 
-<a name="cgal:pc-eldp-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:pc-eldp-%00a">cgal:pc-eldp-%00a</a>,
+<a name="cgal:pc-eldp-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:pc-eldp-00a">cgal:pc-eldp-00a</a>,
   author = {Marc Pouget and Fr\'ed\'eric Cazals},
   title = {Estimation of Local Differential Properties of Point-Sampled Surfaces},
   publisher = {{CGAL Editorial Board}},
@@ -778,8 +778,8 @@
 }
 </pre>
 
-<a name="cgal:ass-psp-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:ass-psp-%00a">cgal:ass-psp-%00a</a>,
+<a name="cgal:ass-psp-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:ass-psp-00a">cgal:ass-psp-00a</a>,
   author = {Pierre Alliez and Laurent Saboret and Nader Salman},
   title = {Point Set Processing},
   publisher = {{CGAL Editorial Board}},
@@ -790,8 +790,8 @@
 }
 </pre>
 
-<a name="cgal:r-kds-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:r-kds-%00a">cgal:r-kds-%00a</a>,
+<a name="cgal:r-kds-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:r-kds-00a">cgal:r-kds-00a</a>,
   author = {Daniel Russel},
   title = {Kinetic Data Structures},
   publisher = {{CGAL Editorial Board}},
@@ -802,8 +802,8 @@
 }
 </pre>
 
-<a name="cgal:r-kdsf-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:r-kdsf-%00a">cgal:r-kdsf-%00a</a>,
+<a name="cgal:r-kdsf-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:r-kdsf-00a">cgal:r-kdsf-00a</a>,
   author = {Daniel Russel},
   title = {Kinetic Framework},
   publisher = {{CGAL Editorial Board}},
@@ -814,8 +814,8 @@
 }
 </pre>
 
-<a name="cgal:cfw-cbgl-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:cfw-cbgl-%00a">cgal:cfw-cbgl-%00a</a>,
+<a name="cgal:cfw-cbgl-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:cfw-cbgl-00a">cgal:cfw-cbgl-00a</a>,
   author = {Andreas Fabri and Fernando Cacciola and Ron Wein},
   title = {{CGAL} and the {Boost} Graph Library},
   publisher = {{CGAL Editorial Board}},
@@ -826,8 +826,8 @@
 }
 </pre>
 
-<a name="cgal:fs-cbpm-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fs-cbpm-%00a">cgal:fs-cbpm-%00a</a>,
+<a name="cgal:fs-cbpm-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fs-cbpm-00a">cgal:fs-cbpm-00a</a>,
   author = {Andreas Fabri and Laurent Saboret},
   title = {{CGAL} and  {Boost} Property Maps},
   publisher = {{CGAL Editorial Board}},
@@ -838,8 +838,8 @@
 }
 </pre>
 
-<a name="cgal:dd-ss-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:dd-ss-%00a">cgal:dd-ss-%00a</a>,
+<a name="cgal:dd-ss-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:dd-ss-00a">cgal:dd-ss-00a</a>,
   author = {Christophe Delage and Olivier Devillers},
   title = {Spatial Sorting},
   publisher = {{CGAL Editorial Board}},
@@ -850,8 +850,8 @@
 }
 </pre>
 
-<a name="cgal:atw-aabb-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:atw-aabb-%00a">cgal:atw-aabb-%00a</a>,
+<a name="cgal:atw-aabb-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:atw-aabb-00a">cgal:atw-aabb-00a</a>,
   author = {Pierre Alliez and St\'ephane Tayeb and Camille Wormser},
   title = {3D Fast Intersection and Distance Computation (AABB Tree)},
   publisher = {{CGAL Editorial Board}},
@@ -862,8 +862,8 @@
 }
 </pre>
 
-<a name="cgal:h-msms-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:h-msms-%00a">cgal:h-msms-%00a</a>,
+<a name="cgal:h-msms-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:h-msms-00a">cgal:h-msms-00a</a>,
   author = {Michael Hoffmann},
   title = {Monotone and Sorted Matrix Search},
   publisher = {{CGAL Editorial Board}},
@@ -874,8 +874,8 @@
 }
 </pre>
 
-<a name="cgal:hkpw-se-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:hkpw-se-%00a">cgal:hkpw-se-%00a</a>,
+<a name="cgal:hkpw-se-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:hkpw-se-00a">cgal:hkpw-se-00a</a>,
   author = {Michael Hoffmann and  Lutz Kettner and Sylvain Pion and Ron Wein},
   title = {STL Extensions for {CGAL}},
   publisher = {{CGAL Editorial Board}},
@@ -886,8 +886,8 @@
 }
 </pre>
 
-<a name="cgal:dksy-hc-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:dksy-hc-%00a">cgal:dksy-hc-%00a</a>,
+<a name="cgal:dksy-hc-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:dksy-hc-00a">cgal:dksy-hc-00a</a>,
   author = {Olivier Devillers and Lutz Kettner and Michael Seel and Mariette Yvinec},
   title = {Handles and Circulators},
   publisher = {{CGAL Editorial Board}},
@@ -898,8 +898,8 @@
 }
 </pre>
 
-<a name="cgal:dhhk-gog-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:dhhk-gog-%00a">cgal:dhhk-gog-%00a</a>,
+<a name="cgal:dhhk-gog-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:dhhk-gog-00a">cgal:dhhk-gog-00a</a>,
   author = {Olivier Devillers and Susan Hert and Michael Hoffmann and Lutz Kettner and Sven Sch{\"o}nherr},
   title = {Geometric Object Generators},
   publisher = {{CGAL Editorial Board}},
@@ -910,8 +910,8 @@
 }
 </pre>
 
-<a name="cgal:kps-pthum-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:kps-pthum-%00a">cgal:kps-pthum-%00a</a>,
+<a name="cgal:kps-pthum-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:kps-pthum-00a">cgal:kps-pthum-00a</a>,
   author = {Lutz Kettner and Sylvain Pion and Michael Seel},
   title = {Profiling Tools Timers, Hash Map, Union-find, Modifiers},
   publisher = {{CGAL Editorial Board}},
@@ -922,8 +922,8 @@
 }
 </pre>
 
-<a name="cgal:fgk-ios-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fgk-ios-%00a">cgal:fgk-ios-%00a</a>,
+<a name="cgal:fgk-ios-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fgk-ios-00a">cgal:fgk-ios-00a</a>,
   author = {Andreas Fabri and Geert-Jan Giezeman and Lutz Kettner},
   title = {IO Streams},
   publisher = {{CGAL Editorial Board}},
@@ -934,8 +934,8 @@
 }
 </pre>
 
-<a name="cgal:fp-gv-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fp-gv-%00a">cgal:fp-gv-%00a</a>,
+<a name="cgal:fp-gv-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fp-gv-00a">cgal:fp-gv-00a</a>,
   author = {Andreas Fabri and Sylvain Pion},
   title = {Geomview},
   publisher = {{CGAL Editorial Board}},
@@ -946,8 +946,8 @@
 }
 </pre>
 
-<a name="cgal:fr-cqgvf-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:fr-cqgvf-%00a">cgal:fr-cqgvf-%00a</a>,
+<a name="cgal:fr-cqgvf-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:fr-cqgvf-00a">cgal:fr-cqgvf-00a</a>,
   author = {Andreas Fabri and Laurent Rineau},
   title = {{CGAL} and the Qt Graphics View Framework },
   publisher = {{CGAL Editorial Board}},
@@ -958,8 +958,8 @@
 }
 </pre>
 
-<a name="cgal:lp-gi-%00a"></a><pre>
-@incollection{<a href="how_to_cite_cgal.html#cgal:lp-gi-%00a">cgal:lp-gi-%00a</a>,
+<a name="cgal:lp-gi-00a"></a><pre>
+@incollection{<a href="how_to_cite_cgal.html#cgal:lp-gi-00a">cgal:lp-gi-00a</a>,
   author = {S\'ebastien Loriot and Sylvain Pion},
   title = {{CGAL} Ipelets },
   publisher = {{CGAL Editorial Board}},
