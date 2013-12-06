@@ -108,6 +108,44 @@ if(DOXYGEN_FOUND)
   set(CGAL_DOC_HEADER_PACKAGE ${CGAL_DOC_DXY_DIR}/header_package.html)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/header_package.html ${CGAL_DOC_HEADER_PACKAGE} @ONLY)
 
+  #Generate the bibtex file
+  #this is needed also for BaseDoxyfile.in
+  if ( ${CMAKE_VERSION} VERSION_GREATER "2.8.10")
+    string(TIMESTAMP CGAL_BUILD_YEAR4 "%Y")
+    string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
+    string(TIMESTAMP CGAL_BUILD_MONTH "%m")
+  else()
+    MESSAGE(STATUS "You're using an old version of CGAL, date in bibtex files will be incorrect")
+    set(CGAL_BUILD_YEAR4 "2000")
+    set(CGAL_BUILD_YEAR2 "00")
+    set(CGAL_BUILD_MONTH "1")
+  endif()
+
+  if (${CGAL_BUILD_MONTH} GREATER 6)
+    SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}b")
+  else()
+    SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
+  endif()
+
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.bib.in
+  ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
+
+  find_program(BIBTEX2HTML_EXECUTABLE bibtex2html DOC "Path to bibtex2html")
+  find_program(SH_EXECUTABLE sh DOC "Path to sh")
+  if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
+    execute_process(COMMAND ${SH_EXECUTABLE}
+                            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
+                            ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
+                            ${BIBTEX2HTML_EXECUTABLE}
+                            OUTPUT_QUIET
+                            ERROR_QUIET) #bibtex2html also prints info in stderr
+  else()
+    MESSAGE(STATUS "bibtex2html or sh missing, using default how_to_cite files")
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite.html.default ${CMAKE_BINARY_DIR}/how_to_cite.html COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.txt.default ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt COPYONLY)
+  endif()
+  ## end bibtex configuration
+
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
   
   set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
@@ -124,7 +162,6 @@ if(DOXYGEN_FOUND)
     configure_doxygen_package(${package})
   endforeach()
 
-  
   # hard-coded. this is not recognized as a package by the
   # build-system, because it doesn't have a package_description subdir.
   configure_doxygen_package("Miscellany")
