@@ -117,8 +117,8 @@ if(DOXYGEN_FOUND)
   else()
     MESSAGE(STATUS "You're using an old version of CGAL, date in bibtex files will be incorrect")
     set(CGAL_BUILD_YEAR4 "2000")
-    set(CGAL_BUILD_YEAR2 "%00")
-    set(CGAL_BUILD_MONTH "%1")
+    set(CGAL_BUILD_YEAR2 "00")
+    set(CGAL_BUILD_MONTH "1")
   endif()
 
   if (${CGAL_BUILD_MONTH} GREATER 6)
@@ -131,16 +131,16 @@ if(DOXYGEN_FOUND)
   ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
 
   find_program(BIBTEX2HTML_EXECUTABLE bibtex2html DOC "Path to bibtex2html")
-  find_program(BASH_EXECUTABLE bash DOC "Path to bash")
-  if (BIBTEX2HTML_EXECUTABLE AND BASH_EXECUTABLE)
-    execute_process(COMMAND ${BASH_EXECUTABLE}
+  find_program(SH_EXECUTABLE sh DOC "Path to sh")
+  if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
+    execute_process(COMMAND ${SH_EXECUTABLE}
                             ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
                             ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
                             ${BIBTEX2HTML_EXECUTABLE}
                             OUTPUT_QUIET
                             ERROR_QUIET) #bibtex2html also prints info in stderr
   else()
-    MESSAGE(STATUS "bibtex2html or bash missing, using default how_to_cite files")
+    MESSAGE(STATUS "bibtex2html or sh missing, using default how_to_cite files")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite.html.default ${CMAKE_BINARY_DIR}/how_to_cite.html COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.txt.default ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt COPYONLY)
   endif()
