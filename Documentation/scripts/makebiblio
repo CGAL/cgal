@@ -1,17 +1,6 @@
 #!/bin/sh
 
-if [ ! -x "`which bibtex2html`" ]; then
-    echo "You need to install bibtex2html first!"
-    exit 1
-fi
-
-if [ ! -f "$1" ]; then
-    echo "Usage: makebiblio path/to/manual-x.y.bib"
-    echo "Note that the file manual-x.y.bib, with x.y equal to the current version of CGAL"
-    echo "should be in the 'Manual' package, in Manual/doc_tex/Manual/..."
-    exit 1
-fi
-bibtex2html -nodoc $1
+$2 -nodoc $1
 mv ${1%.bib}.html tmp_array_bib.html
 mv ${1%.bib}_bib.html how_to_cite.html
 

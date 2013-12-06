@@ -109,11 +109,17 @@ if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/header_package.html ${CGAL_DOC_HEADER_PACKAGE} @ONLY)
 
   #Generate the bibtex file
-  #TODO cmake_minimum_required(VERSION 2.8.11)
   #this is needed also for BaseDoxyfile.in
-  string(TIMESTAMP CGAL_BUILD_YEAR4 "%Y")
-  string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
-  string(TIMESTAMP CGAL_BUILD_MONTH "%m")
+  if ( ${CMAKE_VERSION} VERSION_GREATER "2.8.10")
+    string(TIMESTAMP CGAL_BUILD_YEAR4 "%Y")
+    string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
+    string(TIMESTAMP CGAL_BUILD_MONTH "%m")
+  else()
+    MESSAGE(STATUS "You're using an old version of CGAL, date in bibtex files will be incorrect")
+    set(CGAL_BUILD_YEAR4 "2000")
+    set(CGAL_BUILD_YEAR2 "%00")
+    set(CGAL_BUILD_MONTH "%1")
+  endif()
 
   if (${CGAL_BUILD_MONTH} GREATER 6)
     SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}b")
@@ -121,15 +127,24 @@ if(DOXYGEN_FOUND)
     SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
   endif()
 
-  #TODO hide output
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.bib.in
   ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
 
-  # TODO this works only on Linux/Unix
-  execute_process(COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
-                          ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib OUTPUT_QUIET)
+  find_program(BIBTEX2HTML_EXECUTABLE bibtex2html DOC "Path to bibtex2html")
+  find_program(BASH_EXECUTABLE bash DOC "Path to bash")
+  if (BIBTEX2HTML_EXECUTABLE AND BASH_EXECUTABLE)
+    execute_process(COMMAND ${BASH_EXECUTABLE}
+                            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
+                            ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
+                            ${BIBTEX2HTML_EXECUTABLE}
+                            OUTPUT_QUIET
+                            ERROR_QUIET) #bibtex2html also prints info in stderr
+  else()
+    MESSAGE(STATUS "bibtex2html or bash missing, using default how_to_cite files")
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite.html.default ${CMAKE_BINARY_DIR}/how_to_cite.html COPYONLY)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.txt.default ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt COPYONLY)
+  endif()
   ## end bibtex configuration
-
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
   

@@ -41,7 +41,7 @@
 , author      = "{The CGAL Project}"
 , publisher     = "{CGAL Editorial Board}"
 , edition     = "{${CGAL_CREATED_VERSION_NUM}}"
-, year         = 2013
+, year         = ${CGAL_BUILD_YEAR4}
 , url =    "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html"
 }
 
