@@ -156,6 +156,16 @@ and <code>src/</code> directories).
   <ul>
     <li> Fix a bug introduced in CGAL 4.3 when computing the intersection of two 3D triangles.</li>
   </ul>
+
+  <h3>2D Triangulations</h3>
+  <ul>
+    <li>Add different overloads of the function <code>insert_constraints</code>
+        that inserts a range of points and segments, or a range of segments.
+        These functions uses the spatial sorting in order to speed
+        up the time needed for the insertion.
+    </li>
+  </ul>
+
 </div>
 
 <h2 id="release4.3">Release 4.3.1 </h2>
