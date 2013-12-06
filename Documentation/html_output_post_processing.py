@@ -183,7 +183,7 @@ def automagically_number_figures():
       if res:
         all_packages.append(res.group(1))
       else:
-        stderr.write("Error: Figure numbering; skipping"+text+"\n")
+        stderr.write("Error: Figure numbering; skipping "+text+"\n")
   
   #collect all the figure anchors in user manual and associate them a unique id
   pkg_id=1 # the id of a package
@@ -194,8 +194,14 @@ def automagically_number_figures():
     d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
     pkg_id+=1
 
+  #Figure link dev Manual
+  for fname in glob.glob("Manual/*.html"):
+    infos=figure_anchor_info(0, global_anchor_map)
+    d = pq(filename=fname, parser='html')
+    d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
+
   #replace each link to a figure by its unique id
-  all_files=package_glob("*/*.html")
+  all_files=glob.glob("*/*.html")
   for fname in all_files:
     #consider only a html files containing a figure ref.
     with codecs.open(fname, encoding='utf-8') as f:

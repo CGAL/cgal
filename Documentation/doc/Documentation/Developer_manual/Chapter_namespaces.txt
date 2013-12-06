@@ -1,6 +1,6 @@
 /*!
 
-\page chapnamespaces Namespaces
+\page devman_namespaces Namespaces
 
 \author Stefan Schirra
 

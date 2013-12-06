@@ -45,8 +45,8 @@ export PATH
 # Note that -DCGAL_DOC_RELEASE:BOOL=TRUE should be only for master-only
 # internal releases, and not for integration releases.
 
-make Documentation_doc 2>&1 || error "exit code $? returned by the command 'make Documentation_doc'"
-make Documentation_testsuite_publish 2>&1 || error "exit code $? returned by the command 'make Documentation_testsuite_publish'"
+make doc 2>&1 || error "exit code $? returned by the command 'make doc'"
+make doc_and_publish_testsuite 2>&1 || error "exit code $? returned by the command 'make doc_and_publish_testsuite'"
 
 # Then gzip the log file, to save space
 exec

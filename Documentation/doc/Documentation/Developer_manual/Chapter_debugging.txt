@@ -1,6 +1,6 @@
 /*! 
 
-\page chapdebugging Debugging Tips
+\page devman_debugging Debugging Tips
 \author Oren Nechushtan (<TT>theoren@math.tau.ac.il </TT>)
 
 Efficient debugging techniques can become an asset when writing geometric 
@@ -20,7 +20,7 @@ version of a program that was used in the early stages of development as a
 (graphical) debugging tool.  In many cases, the output of a geometric
 algorithm is much easier to interpret in graphical form than numeric
 form.  Thus you should use the powerful graphical output capabilities
-of \cgal (see the <A HREF="http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html">Support Library documentation</A>) 
+of \cgal (see the \link PartSupportLibrary Support Library documentation \endlink) 
 to develop 
 <UL>
    <LI>programs that can be used for debugging the internal workings
@@ -123,7 +123,7 @@ and similar problems:
 <UL>
    <LI>Use the `Simple_cartesian` kernel 
          
-         (Chapter  \ref chapkernels ), which does not do reference
+         (Chapter  \ref devman_kernels ), which does not do reference
          counting and uses no handles so data member values can be inspected
          directly.
          

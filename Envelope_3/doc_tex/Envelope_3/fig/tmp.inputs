@@ -1,9 +1,0 @@
-\usepackage{txfonts}
-\usepackage{pstricks}
-\usepackage{color}
-\usepackage{pst-plot}
-\usepackage{pst-tree}
-\usepackage{pst-eps}
-\usepackage{multido}
-\usepackage{pst-node}
-\usepackage{graphicx}        % for PostScript figures

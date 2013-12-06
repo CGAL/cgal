@@ -1,6 +1,6 @@
 /*!
 
-\page chapinfo Recommended Reading
+\page devman_info Recommended Reading
 
 The following books and papers are recommended as references:
 

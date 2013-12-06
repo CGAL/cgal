@@ -17,8 +17,6 @@ HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
                     ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
                     ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite.html
 
-EXCLUDE_PATTERNS += */Developer_manual/*
-
 ALLEXTERNALS             = true
 EXTERNAL_GROUPS          = false
 GENERATE_TODOLIST        = false
@@ -29,6 +27,7 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
+ALIASES                 += "cgalReleaseNumber=${CGAL_CREATED_VERSION_NUM}"
 
 # all image paths, maybe auto-generate this?
 IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \

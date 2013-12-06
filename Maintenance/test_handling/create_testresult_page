@@ -594,10 +594,6 @@ Look at the output to be sure!</b></p>
 <ol>
 <li><a href="${releases_url}">
 Downloading internal releases</a></li>
-<li><a href="${manual_test_url}${release_name}/" style="color: red">
-The documentation of this release</a>
-(and the <a href="${manual_test_url}LAST/">last one</a>
-directly)</li>
 <li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">
 The doxygen documentation testpage</a>
 (and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
