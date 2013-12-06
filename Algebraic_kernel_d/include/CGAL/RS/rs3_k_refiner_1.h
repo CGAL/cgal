@@ -87,6 +87,56 @@ operator()
         return;
 }
 
+template<>
+void
+RS3_k_refiner_1<Polynomial<Gmpq>,Gmpfr>::
+operator()
+(const Polynomial<Gmpq> &qpol,Gmpfr &left,Gmpfr &right,int prec){
+        typedef Polynomial<Gmpz>                        ZPolynomial;
+        typedef Polynomial_traits_d<ZPolynomial>        ZPtraits;
+        typedef ZPtraits::Degree                        ZDegree;
+        CGAL_precondition(left<=right);
+        // TODO: add precondition to check whether the interval is a point
+        // or the evaluations on its endpoints have different signs
+        //std::cout<<"refining ["<<left<<","<<right<<"]"<<std::endl;
+        Polynomial<Gmpz> zpol=CGAL::RS_AK1::Polynomial_converter_1<
+                                        CGAL::Polynomial<Gmpq>,
+                                        CGAL::Polynomial<Gmpz> >()(qpol);
+        int deg=ZDegree()(zpol);
+        mpz_t* coefficients=(mpz_t*)malloc((deg+1)*sizeof(mpz_t));
+        __mpfi_struct interval;
+        CGAL_RS_GMPFR_MAKE_UNIQUE(left,temp_left);
+        CGAL_RS_GMPFR_MAKE_UNIQUE(right,temp_right);
+        interval.left=*(left.fr());
+        interval.right=*(right.fr());
+        for(int i=0;i<=deg;++i)
+                coefficients[i][0]=*(zpol[i].mpz());
+        RS2::RS2_calls::init_solver();
+        rs3_refine_u_root(&interval,
+                          coefficients,
+                          deg,
+                          prec+CGAL::max(left.get_precision(),
+                                         right.get_precision()),
+                          1,
+                          1);
+        free(coefficients);
+        mpfr_clear(left.fr());
+        mpfr_clear(right.fr());
+        mpfr_custom_init_set(left.fr(),
+                             mpfr_custom_get_kind(&interval.left),
+                             mpfr_custom_get_exp(&interval.left),
+                             mpfr_get_prec(&interval.left),
+                             mpfr_custom_get_mantissa(&interval.left));
+        mpfr_custom_init_set(right.fr(),
+                             mpfr_custom_get_kind(&interval.right),
+                             mpfr_custom_get_exp(&interval.right),
+                             mpfr_get_prec(&interval.right),
+                             mpfr_custom_get_mantissa(&interval.right));
+        CGAL_postcondition(left<=right);
+        //std::cout<<"ref root is ["<<left<<","<<right<<"]"<<std::endl;
+        return;
+}
+
 } // namespace RS3
 } // namespace CGAL
 

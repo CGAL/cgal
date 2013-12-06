@@ -83,6 +83,35 @@ RS23_k_isolator_1(const CGAL::Polynomial<CGAL::Gmpz> &p):_polynomial(p){
         }
 }
 
+template <>
+RS23_k_isolator_1<CGAL::Polynomial<CGAL::Gmpq>,Gmpfr>::
+RS23_k_isolator_1(const CGAL::Polynomial<CGAL::Gmpq> &qp):_polynomial(qp){
+        typedef CGAL::Polynomial<CGAL::Gmpz>                    ZPol;
+        typedef CGAL::Gmpfr                                     Bound;
+        typedef CGAL::RS3::RS3_k_refiner_1<ZPol,Bound>          ZKRefiner;
+        int numsols;
+        std::vector<Gmpfi> intervals;
+        CGAL::Polynomial<CGAL::Gmpz> zp=CGAL::RS_AK1::Polynomial_converter_1<
+                                                CGAL::Polynomial<Gmpq>,
+                                                CGAL::Polynomial<Gmpz> >()(qp);
+        RS2::RS2_calls::init_solver();
+        RS2::RS2_calls::create_rs_upoly(zp,rs_get_default_up());
+        set_rs_precisol(0);
+        set_rs_verbose(0);
+        rs_run_algo((char*)"UISOLE");
+        RS2::RS2_calls::insert_roots(std::back_inserter(intervals));
+        // RS2 computed the isolating intervals. Now, we use RS3 to refine each
+        // root until reaching Kantorovich criterion, before adding it to the
+        // root vector.
+        numsols=intervals.size();
+        for(int j=0;j<numsols;++j){
+                Gmpfr left(intervals[j].inf());
+                Gmpfr right(intervals[j].sup());
+                ZKRefiner()(zp,left,right,53);
+                _real_roots.push_back(intervals[j]);
+        }
+}
+
 template <class Polynomial_,class Bound_>
 Polynomial_
 RS23_k_isolator_1<Polynomial_,Bound_>::polynomial()const{
