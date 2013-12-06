@@ -5,7 +5,7 @@ PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
 INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
-        ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite_cgal.txt
+        ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
@@ -15,7 +15,8 @@ FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
                     ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
-                    ${CMAKE_SOURCE_DIR}/Documentation/biblio/how_to_cite.html
+                    ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib \
+                    ${CMAKE_BINARY_DIR}/how_to_cite.html
 
 ALLEXTERNALS             = true
 EXTERNAL_GROUPS          = false
