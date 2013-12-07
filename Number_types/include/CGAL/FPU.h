@@ -41,8 +41,6 @@
 extern "C" {
 #  include <fenv.h>
 }
-#elif defined __powerpc__ && defined __linux__
-#  include <fpu_control.h>
 #elif defined __SUNPRO_CC && defined __sun
 #  include <ieeefp.h>
 #elif defined __osf || defined __osf__
@@ -326,15 +324,6 @@ typedef unsigned short FPU_CW_t;
 #define CGAL_FE_TOWARDZERO   (0xc00 | 0x127f)
 #define CGAL_FE_UPWARD       (0x800 | 0x127f)
 #define CGAL_FE_DOWNWARD     (0x400 | 0x127f)
-
-#elif defined __powerpc__ && defined __linux__
-#define CGAL_IA_SETFPCW(CW) _FPU_SETCW(CW)
-#define CGAL_IA_GETFPCW(CW) _FPU_GETCW(CW)
-typedef fpu_control_t FPU_CW_t;
-#define CGAL_FE_TONEAREST    (_FPU_RC_NEAREST | _FPU_DEFAULT)
-#define CGAL_FE_TOWARDZERO   (_FPU_RC_ZERO    | _FPU_DEFAULT)
-#define CGAL_FE_UPWARD       (_FPU_RC_UP      | _FPU_DEFAULT)
-#define CGAL_FE_DOWNWARD     (_FPU_RC_DOWN    | _FPU_DEFAULT)
 
 #elif defined __SUNPRO_CC && defined __sun
 #define CGAL_IA_SETFPCW(CW) fpsetround(fp_rnd(CW))
