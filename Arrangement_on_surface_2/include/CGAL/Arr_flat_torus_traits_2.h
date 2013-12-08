@@ -1153,12 +1153,25 @@ public:
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
     {
-      //! \todo
       CGAL_precondition(!xcv.is_degenerate());
+      CGAL_precondition(!m_traits.is_on_y_identification_2_object()(p1));
+      CGAL_precondition(!m_traits.is_on_y_identification_2_object()(p2));
+      CGAL_preconsition(kernel.orientation_2_object()(xcv1.source_point(),
+                                                      xcv2.target_point(),
+                                                      p) == COLLINEAR);
+      CGAL_preconsition(kernel.orientation_2_object()(xcv2.source_point(),
+                                                      xcv2.target_point(),
+                                                      p) == COLLINEAR);
+      xcv1 = X_monotone_curve(xcv.source(), p, xcv.is_vertical(),
+                              xcv.is_directed_right(), xcv.is_directed_top());
+      xcv1 = X_monotone_curve(p, xcv.target(), xcv.is_vertical(),
+                              xcv.is_directed_right(), xcv.is_directed_top());
     }
   };
 
-  /*! Obtain a Split_2 function object. */
+  /*! Obtain a Split_2 function object.
+   * \return an object of type Split_2.
+   */
   Split_2 split_2_object() const { return Split_2(*this); }
 
   /*! A functor that computes intersections between x-monotone arcs. */
@@ -1646,6 +1659,28 @@ public:
   /*! Determine whether the curve is degenerate */
   bool is_empty() const { return m_is_empty; }
 
+  /*! Determine whether the curve lie on the boundary. */
+  bool is_on_boundary() const
+  {
+    return (source_parameter_space_in_x == target_parameter_space_in_x) ||
+      (source_parameter_space_in_y == target_parameter_space_in_y);
+  }
+
+  /*! Flip the arc (swap it source and target) */
+  Arr_x_monotone_curve_on_flat_torus_3 opposite() const
+  {
+    Arr_x_monotone_curve_on_flat_torus_3 opp;
+    opp.m_source = this->m_target;
+    opp.m_target = this->m_source;
+    opp.m_is_directed_right = !(this->is_directed_right());
+    opp.m_is_directed_top = !(this->is_directed_top());
+    opp.m_is_vertical = this->is_vertical();
+    opp.m_is_full = this->is_full();
+    opp.m_is_degenerate = this->is_degenerate();
+    opp.m_is_empty = this->is_empty();
+    return opp;
+  }
+
   /*! Obtain the parameter space in x of the source point.
    */
   Arr_parameter_space source_parameter_space_in_x() const
@@ -1710,27 +1745,23 @@ public:
       (is_directed_top() ? 1 : 0) ;
   }
 
-  /*! Determine whether the curve lie on the boundary. */
-  bool is_on_boundary() const
-  {
-    return (source_parameter_space_in_x == target_parameter_space_in_x) ||
-      (source_parameter_space_in_y == target_parameter_space_in_y);
-  }
+  /*! Obtain the source point.
+   * \return the source point image
+   */
+  typename Kernel::Point_2 source_point()
+  { return typename Kernel::Point_2(xcv.source_x(), xcv.source_y()); }
 
-  /*! Flip the arc (swap it source and target) */
-  Arr_x_monotone_curve_on_flat_torus_3 opposite() const
-  {
-    Arr_x_monotone_curve_on_flat_torus_3 opp;
-    opp.m_source = this->m_target;
-    opp.m_target = this->m_source;
-    opp.m_is_directed_right = !(this->is_directed_right());
-    opp.m_is_directed_top = !(this->is_directed_top());
-    opp.m_is_vertical = this->is_vertical();
-    opp.m_is_full = this->is_full();
-    opp.m_is_degenerate = this->is_degenerate();
-    opp.m_is_empty = this->is_empty();
-    return opp;
-  }
+  /*! Obtain the target point.
+   * \return the target point image
+   */
+  typename Kernel::Point_2 target_point()
+  { return typename Kernel::Point_2(xcv.target_x(), xcv.target_y()); }
+
+  /*! Obtain the segment
+   * \return the segment;
+   */
+  typename Kernel::Segment_2 segment()
+  { return typename Kernel::Segment_2(source_point, target_point); }
 };
 
 //! A representation of a geodesic arc embedded on a flat torus,
