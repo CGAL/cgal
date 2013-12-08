@@ -27,11 +27,10 @@ Three iterations of MCF contraction of the horse in figure \cgalFigureRef{Main_i
 Mean Curvature Flow is a motion (i.e. flow) where each point on the surface is moved in a direction opposite to its normal with a speed proportional to its mean curvature. Its use in skeletonization is connected to its area minimization and anisotropic distortion properties; see \cgalCite{tagliasacchi2012mean} for details. In curve skeletonization, MCF is employed to iteratively contract (i.e. by reducing its area) the mesh geometry until it locally <em>degenerates</em> into a curve; see \cgalFigureRef{Iterations}. The contraction process halts when the surface area of the whole mesh has vanished by checking if \f$ |area_{i} - area_{i-1}|  \lt area_{TH} = delta\_area \times original\_area\f$ (\f$ area_{i} \f$ is the area in iteration \f$ i \f$, default value for \f$ delta\_area \f$ is 0.0001). Upon convergence, the mesh is then converted into a curve skeleton by a simple shortest edge collapse procedure.
 
 <b>Flow discretization and control.</b>
-The MCF is discretized by finite elements (discrete Laplacian operator) and solved by a sparse solver with factorization. After each iteration, the local curvature changes and the weights in the Laplacian operator need to be updated. A parameter \f$ omega\_H \f$ is provided to control the speed of the motion. By default the value is set to 0.1. There is a tradeoff between speed and accuracy. With higher \f$ omega\_H \f$, the algorithm converges quickly, however the result is less accurate.
+The MCF is discretized by finite elements (discrete Laplacian operator) and solved by a sparse solver with factorization. After each iteration, the local curvature changes and the weights in the Laplacian operator need to be updated. A parameter \f$ w\_H \f$ is provided to control the speed of the motion. By default the value is set to 0.1. There is a tradeoff between speed and accuracy. With higher \f$ w\_H \f$, the algorithm converges quickly, however the result is less accurate.
 
 <b>Medial Centering.</b> 
-The curve skeletons extracted by MCF only are not guaranteed to <em>lie medially</em> within the shape. To overcome this problem, the flow can be augmented with an attraction force that pulls the geometry toward the shape's medial axis. The algorithm employs a sampling of the medial axis obtained by computing the <em>Voronoi poles</em> of the input model. These poles are known to lie on the medial axis when the surface is sufficiently densely sampled \cgalCite{amenta2001power}. The density of mesh also affect the quality of poles. If the sampling of the mesh is not dense enough, the poles tend to contain noise, and would lead to skeletons in bad qualities(e.g. \cgalFigureRef{Comparison}). We provide the user a parameter \f$ omega\_P \f$ to control the degree to which the surface is attracted to the medial axis. The medial criteria can also be turned off by setting the parameter `::CGAL::MCF_skel_args::is_medially_centered` in `::CGAL::MCF_skel_args` to `false`.
-\todo What should be the value of Omega_P?
+The curve skeletons extracted by MCF only are not guaranteed to <em>lie medially</em> within the shape. To overcome this problem, the flow can be augmented with an attraction force that pulls the geometry toward the shape's medial axis. The algorithm employs a sampling of the medial axis obtained by computing the <em>Voronoi poles</em> of the input model. These poles are known to lie on the medial axis when the surface is sufficiently densely sampled \cgalCite{amenta2001power}. The density of mesh also affect the quality of poles. If the sampling of the mesh is not dense enough, the poles tend to contain noise, and would lead to skeletons in bad qualities(e.g. \cgalFigureRef{Comparison}). We provide the user a parameter \f$ w\_P \f$ to control the degree to which the surface is attracted to the medial axis. Some initial experiments suggest setting \f$ w\_P \f$ to 0.1 or 0.2 is a good choice. The medial criteria can also be turned off by setting the parameter `::CGAL::MCF_skel_args::is_medially_centered` in `::CGAL::MCF_skel_args` to `false`.
 
 <b>Local remeshing.</b> 
 While the anisotropic effects of MCF are essential for curve-skeletonization, this has the side effect of progressively degrading the quality of the triangulation. As a low quality triangulation hinders the finite element discretization, we perform local remeshing to remove these degeneracies. After each contraction iteration we perform two local remeshing operations. We collapse edges shorter than edgelength_TH and we split edges whose opposite angle is greater than angle_TH. By default edgelength_TH is set to 0.002 times diagonal of the bounding box of the original mesh while angle_TH is \f$ 110 ^{\circ} \f$.
@@ -70,8 +69,6 @@ The effect of \f$ w_{H} \f$ is illustrated in \cgalFigureRef{WHeffect}.
 \cgalFigureBegin{WHeffect, WHeffect.png}
 From left to right, the \f$ w_{H} \f$ is 0.1, 0.05, 0.01, 0.005 respectively.  Note setting \f$ w_{H} \f$ too small results in a low quality of skeleton.  By default, the \f$ w_{H} \f$ is set to 0.1, which works well in most cases.
 \cgalFigureEnd
-
-\todo w_h == omega_H right?
 
 \subsection MCFSkelSecRemesh Local Dynamic Remeshing
 
@@ -162,8 +159,7 @@ We use the elephant model as an example to evaluate the running time of differen
 The left model is original mesh. The one in the middle is after one loop subdivision. The right one is after two loop subdivisions.
 \cgalFigureEnd
 
-We have recorded the running time of the algorithm. The CPU of the test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. The code is compiled with clang in Release mode and '-O3' as compiling flags. The sparse solver used in the experiment is Eigen::SparseLU. The running time includes the time of computing Voronoi poles and contracting the meshes.
-\todo compiler version
+We have recorded the running time of the algorithm. The CPU of the test machine is Intel(R) Core(TM) i5-3427U CPU @ 1.80GHz. The code is compiled with clang version 4.1 in Release mode and '-O3' as compiling flags. The sparse solver used in the experiment is Eigen::SparseLU. The running time includes the time of computing Voronoi poles and contracting the meshes.
 
 <center>
 <table border="1">
