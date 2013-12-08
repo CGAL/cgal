@@ -69,8 +69,6 @@ typename Arr_triangulation_point_location<Arrangement_2_>::result_type
 Arr_triangulation_point_location<Arrangement_2_>::locate(const Point_2& p)
   const
 {
-  typedef Arrangement_2_                                Arrangement;
-
   CGAL_TRG_PRINT_DEBUG("------ locate point " << p);
 
   //locate in the CDT
