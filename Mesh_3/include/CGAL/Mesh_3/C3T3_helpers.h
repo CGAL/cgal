@@ -722,7 +722,7 @@ private:
         {
           Sliver_criterion_value<SliverCriterion> sc_value(c3t3_.triangulation(),
                                                            criterion_);
-          FT sliver_value = sc_value(c);//updates the cache
+          (void) sc_value(c); // 'sc_value::operator()' updates the cache of 'c'
         }
         else
         {
