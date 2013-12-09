@@ -100,7 +100,6 @@ assign(const Self& other)
 template <typename GeomTraits_, typename Dcel_>
 void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
 {
-  typedef GeomTraits_                                   GeomTraits;
   typedef Dcel_                                         Dcel;
 
   // Go over the DCEL vertices and locate the south and north pole (if any)
