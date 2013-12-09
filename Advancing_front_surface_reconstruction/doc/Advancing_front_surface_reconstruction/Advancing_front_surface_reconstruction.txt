@@ -13,17 +13,17 @@ namespace CGAL {
 Surface reconstruction from an unstructured point set is to find
 a surface that approximates these points. Several techniques have
 been applied to this problem.  Among them are variational
-methods \cgalCite{todo}, tensor voting \cgalCite{todo}, implicit surface \cgalCite{todo},
+methods \cgalCite{s-lsm-96,zomk-insru-00}, tensor voting \cgalCite{cgal:ml-cfsg-00}, implicit surface \cgalCite{hddhjmss-pssr-94,bc-ssrnn-00},
 and Delaunay triangulations. 
 
 For Delaunay based algorithms the output surface
 usually is the union of some triangles selected in the Delaunay
 triangulation of the input points.  Such algorithms can be volume oriented
-which output the boundary of selected tetrahedra, or surface
+which output the boundary of selected tetrahedra \cgalCite{abe-cbscc-97,ack-pcubm-01}, or surface
 oriented, that is they explicitely select triangles.
 
 In most surface oriented Delaunay-based algorithms triangles are
-selected independently, that is in parallel \cgalCite{todo}.
+selected independently, that is in parallel \cgalCite{agj-lcsr-00,ab-srvf-98}.
 
 The surface oriented Delaunay-based surface reconstruction algorithm
 presented in this chapter selects triangles sequentially, that is by
@@ -32,7 +32,7 @@ most *plausible* triangle first, and only adds triangles in a way
 that the surface remains an orientable manifold.
  
 Two other examples of this greedy approach are the ball pivoting
-algorithm and Boyer and Petitjean's algorithm \cgalCite{todo}. In both
+algorithm and Boyer and Petitjean's algorithm \cgalCite{bmrst-bpasr-99, pb-rnrps-01}. In both
 algorithms a triangulated surface is incrementally grown starting from
 a seed triangle. Ball pivoting is fast, but the quality of the
 reconstruction depends on user defined parameters corresponding to the
@@ -40,12 +40,14 @@ sampling density. The Boyer Petitjean approach can handle non-uniform
 sampling, but fails when near cocircular points are encountered, and
 it does not provide any guarantee on the topology of the surface.  
 
-In
-the next sections we describe the algorithm in detail, and give
+In the next sections we describe the algorithm, and give
 examples.
 
 
 \section AFSR_Definitions Definitions and the Algorithm
+
+A detailed desciption of the algorithm and the underlying theory can be found
+in \cgalCite{cgal:csd-gdbsra-04}.
 
 \subsection AFSR_Topology Topological Constraints
 
@@ -78,7 +80,7 @@ sample point. In other words, the radius \f$r_t\f$ is the distance
 from any vertex of \f$t\f$ to the Voronoi edge dual to \f$t\f$.
 
 While the radius is a good criterion in the case of 2D smooth curve 
-reconstruction \cgalCite{todo}, we need another criterion for 3D surface
+reconstruction \cgalCite{b-cccda-94}, we need another criterion for 3D surface
 reconstruction, namely the dihedral angle between triangles on the
 surface, that is the angle between the normals of the triangles.
 
