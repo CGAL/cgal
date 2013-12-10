@@ -21,6 +21,7 @@
 #include <CGAL/AFSR/Surface_vertex_base_2.h>
 #include <CGAL/AFSR/Surface_face_base_2.h>
 #include <CGAL/AFSR/construct_surface_2.h>
+#include <CGAL/AFSR/construct_polyhedron.h>
 #include <CGAL/AFSR_options.h>
 #include <CGAL/AFSR/write_triple_indices.h>
 
@@ -2280,6 +2281,26 @@ advancing_front_surface_reconstruction(PointIterator b, PointIterator e, IndexTr
   R();
   write_triple_indices(out, R);
   return out;
+}
+template <typename PointIterator, typename Kernel>
+void
+advancing_front_surface_reconstruction(PointIterator b, PointIterator e, Polyhedron_3<Kernel>& polyhedron)
+{
+  typedef Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
+  typedef Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
+
+  typedef Triangulation_data_structure_3<LVb,LCb> Tds;
+  typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
+
+  typedef Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Reconstruction;
+  typedef Kernel::Point_3 Point_3;
+  
+  Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count<Point_3>()),
+                      boost::make_transform_iterator(e, AFSR::Auto_count<Point_3>() )  );
+
+  Reconstruction R(dt);
+  R();
+  AFSR::construct_polyhedron(polyhedron, R);
 }
 
 
