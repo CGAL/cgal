@@ -190,12 +190,12 @@ struct Tester
   template<typename C3t3>
   double min_value(const C3t3& c3t3) const
   {
-    typedef typename C3t3::Triangulation::Geom_traits                 Gt;
-    typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>   Criterion;
+    typedef typename C3t3::Triangulation                              Tr;
+    typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>   Criterion;
     typedef typename C3t3::Cells_in_complex_iterator                  Cell_iterator;
     
-    Criterion criterion;
     double min_value = Criterion::max_value;
+    Criterion criterion(min_value, c3t3.triangulation());
     
     for ( Cell_iterator cit = c3t3.cells_in_complex_begin(),
          end = c3t3.cells_in_complex_end() ; cit != end ; ++cit )
