@@ -58,7 +58,16 @@ public:
     {
       if( ! cell->is_cache_valid() )
       {
-        double value = operator()(tr_.tetrahedron(cell));
+        // cell->sliver_value() is stored in a plain 64 bits floating point
+        // number, and the value computed by operator() might be 
+        // computed using the 80 bits floating point registers of the x87
+        // unit. 
+        // This could cause comparisons between sliver values to be 
+        // inconsistent when comparing caches and registers values
+        // (see also the comment below)
+        // IA_force_to_double is available in CGAL/FPU.h
+        double value 
+          = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
         cell->set_sliver_value(value);
       }
       else {
