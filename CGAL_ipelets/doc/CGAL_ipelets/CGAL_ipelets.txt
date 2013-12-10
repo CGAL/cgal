@@ -166,6 +166,9 @@ disk model.
  <li><b> line:</b>
 Selection should be the Poincare circle and two points inside the
 circle. The hyperbolic line through the points is drawn.
+ <li><b> segment:</b>
+Selection should be the Poincare circle and two points inside the
+circle. The hyperbolic line segment through the points is drawn.
  <li><b> bisector:</b>
 Selection should be the Poincare circle and two points inside the
 circle. The hyperbolic bisector of the points is drawn.
@@ -174,6 +177,10 @@ Selection should be the Poincare circle and two points inside the
 circle, one of these points being the primary selection.
  The hyperbolic circle centered at the primary selection through the
  other point is drawn.
+ <li><b> circumcenter:</b>
+Selection should be the Poincare circle and another circle inside
+the latter being the primary selection.
+ The hyperbolic center of the primary selection is drawn.
 </ul>
 
 \subsection mesh_2_ipelet Mesh_2 

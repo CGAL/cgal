@@ -27,44 +27,6 @@
 #include "include/CGAL_ipelets/pencils.h"
 
 
-/*
-template <typename T>
-double prob_2() {
-CGAL::Random_points_in_square_2<Point_2> g(1.0);
-double prob = 0.0;
-for (int i = 0; i < 10000; i++) {
-Point_2 p1, p2, p3, p4, p5, p6;
-p1 = *g++; p2 = *g++; p3 = *g++;
-p4 = *g++; p5 = *g++; p6 = *g++;
-// the pi's are points inherited from the Cartesian kernel Point_2, so,
-// the orientation predicate can be called on them
-if(CGAL::orientation(p1, p2, p3) != CGAL::COUNTERCLOCKWISE) std::swap(p1, p3);
-T o1 = T(p1, p2, p3);
-if(CGAL::orientation(p4, p5, p6) != CGAL::COUNTERCLOCKWISE) std::swap(p4, p6);
-T o2 = T(p4, p5, p6);
-typedef typename CGAL::CK2_Intersection_traits<Kernel, T, T>::type
-Intersection_result;
-std::vector<Intersection_result> res;
-CGAL::intersection(o1, o2, std::back_inserter(res));
-prob += (res.size() != 0) ? 1.0 : 0.0;
-}
-return prob/10000.0;
-}
-int main()
-{
-std::cout << "What is the probability that two arcs formed by" << std::endl;
-std::cout << "three random counterclockwise-oriented points on" << std::endl;
-std::cout << "an unit square intersect? (wait a second please)" << std::endl;
-std::cout << "The probability is: " << prob_2<Circular_arc_2>() <<
-std::endl << std::endl;
-std::cout << "And what about the probability that two circles formed by"
-<< std::endl;
-std::cout << "three random counterclockwise-oriented points on" << std::endl;
-std::cout << "an unit square intersect? (wait a second please)" << std::endl;
-std::cout << "The probability is: " << prob_2<Circle_2>() << std::endl;
-return 0;
-}
-*/
  
 #include <CGAL/Cartesian.h>
 namespace CGAL_hyperbolic{
@@ -75,20 +37,27 @@ typedef CGAL::Exact_circular_kernel_2 Kernel;
 // --------------------------------------------------------------------
 
 const std::string sublabel[] = {
-  "Line through two points","Circle by center and point", "Help"
+  "Line through two points",
+  "Segment through two points",
+  "Bisector of two points",
+  "Circle by center and point",
+  "Circle center", 
+  "Help"
 };
 
 const std::string helpmsg[] = {
-  "Draw the hyperbolic line trough two points",
-  "Draw the hyperbolic bisector of two points",
-  "Draw the hyperbolic circle given the center (primary selection) and a point",
+  "Draw the hyperbolic line trough two points in Poincare disk",
+  "Draw the hyperbolic segment trough two points in Poincare disk",
+  "Draw the hyperbolic bisector of two points in Poincare disk",
+  "Draw the hyperbolic circle given the center (primary selection) and a point in Poincare disk",
+  "Draw the hyperbolic center given a circle (primary selection) in Poincare disk",
 };
 
 class hyperbolicIpelet 
-  : public CGAL::Ipelet_base<Kernel,4> {
+  : public CGAL::Ipelet_base<Kernel,6> {
 public:
   hyperbolicIpelet() 
-    :CGAL::Ipelet_base<Kernel,4>("Hyperbolic",sublabel,helpmsg){}
+    :CGAL::Ipelet_base<Kernel,6>("Hyperbolic",sublabel,helpmsg){}
   void protected_run(int);
 };
 // --------------------------------------------------------------------
@@ -97,9 +66,9 @@ void hyperbolicIpelet::protected_run(int fn)
 {
   Circle_2 circ;     //constructed circle:
   Circle_2 p1,p2;
-  Circle_2  poincare;
+  Circle_2  poincare,selected;
   
-  if (fn==3) {
+  if (fn==5) {
     show_help();
     return;
   } 
@@ -126,22 +95,43 @@ void hyperbolicIpelet::protected_run(int fn)
   std::list<Point_2>::iterator it=pt_list.begin();
   std::list<Circle_2>::iterator cit=cir_list.begin();
 
-  if (pt_list.empty() || cir_list.empty()){
-    print_error_message(("two marks and a circle have to be selected"));
-    return;
+  if (fn!=4){
+    if (pt_list.empty() || cir_list.empty()){
+      print_error_message(("two marks and a circle have to be selected"));
+      return;
+    }
+  }else{
+    if (cir_list.empty()){
+      print_error_message(("two circles have to be selected"));
+      return;
+    }
   }
   
   poincare=*cit;++cit;
-  p1=Circle_2(*it,0);
-  ++it;
-  if (it!=pt_list.end())  {
-    p2=Circle_2(*it,0);
+  if(fn==4){
+    if( (cit==cir_list.end()) || (cit1==cir_list1.end())){
+      print_error_message(("two circles have to be selected"));
+      return;
+    }
+    if (*cit1==poincare) poincare=*cit;
+    selected=*cit1;
+  }else{
+    p1=Circle_2(*it,0);
     ++it;
-  }else{ print_error_message(("two marks and a circle have to be selected")); return;}
-  if( (it!=pt_list.end())||(cit!=cir_list.end()))
-    { print_error_message(("only two marks and a circle have to be selected")); return;}
+    if (it!=pt_list.end())  {
+      p2=Circle_2(*it,0);
+      ++it;
+    }else{ 
+      print_error_message(("two marks and a circle have to be selected")); 
+      return;
+    }
+    if( (it!=pt_list.end())||(cit!=cir_list.end())){
+      print_error_message(("only two marks and a circle have to be selected")); 
+      return;
+    }
+  }
 
-  if (fn==2){//primary selection must be a point (p1)
+  if (fn==3){//primary selection must be a point (p1)
     if (pt_list1.empty()){
       print_error_message(("Primary selection must be a mark (center)"));
       return;
@@ -164,13 +154,37 @@ void hyperbolicIpelet::protected_run(int fn)
     circ = compute_circle_orthogonal<Kernel>(p1,p2,poincare);
     break; //goto clip
   case 1:
+    // Circle orthogonal to p1, p2, and poincare
+    circ = compute_circle_orthogonal<Kernel>(p1,p2,poincare);
+    if (orientation(poincare.center(),p1.center(),p2.center())>0)
+      draw_in_ipe(Circular_arc_2(circ,p2.center(),p1.center(),circ.orientation()));
+    else
+      draw_in_ipe(Circular_arc_2(circ,p1.center(),p2.center(),circ.orientation()));
+    return;
+  case 2:
     // Circle of pencil generated by p1 p2 orthogonal to poincare
     circ = compute_circle_in_pencil<Kernel>(poincare,p1,p2);
     break; //goto clip
-  case 2:
+  case 3:
     // Circle of pencil p1 poincare through p2
     circ = compute_circle_in_pencil<Kernel>(p2,poincare,p1);
     draw_in_ipe(circ);
+    return;
+  case 4:
+    // Zere radius circle of pencil selected poincare inside
+    // translate so that Poincare : x^2+y^2=A
+    // and selected : x^2+y^2 -2ax -2by +a^2+ b^2=C
+    // look for l  so that l.Poincare + selected has zero radius
+    double a=selected.center().x().to_double()-poincare.center().x().to_double();
+    double b=selected.center().y().to_double()-poincare.center().y().to_double();
+    double C=selected.squared_radius().to_double();
+    double A=poincare.squared_radius().to_double();
+    double B=A+C-a*a-b*b;
+    double delta=B*B-4*A*C;
+    double l=(-B+sqrt(delta))/2/A;
+    l = 1/(1+l);
+    Point_2 center=poincare.center()+ (l*(selected.center()-poincare.center()));
+    draw_in_ipe(center);
     return;
   }     //end of switch
 

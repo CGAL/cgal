@@ -18,8 +18,10 @@ end
 
 methods = {
   { label= "line" },
+  { label= "segment" },
   { label= "bisector" },
-  { label= "circle (center, point through)" },
+  { label= "circle (center[prim. sel.], point through)" },
+  { label= "circumcenter" },
   { label="Help" },
 }
 
