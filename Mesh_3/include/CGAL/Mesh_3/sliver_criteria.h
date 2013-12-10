@@ -84,6 +84,8 @@ public:
     , sliver_bound_(bound)
   {}
 
+  virtual ~Sliver_criterion(){};
+
 protected:
   const Tr& tr_;
   double sliver_bound_;
