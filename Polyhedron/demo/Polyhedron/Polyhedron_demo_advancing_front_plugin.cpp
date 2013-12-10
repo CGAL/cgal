@@ -2,7 +2,7 @@
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
-#include <Scene_polygon_soup_item.h>
+#include <Scene_polyhedron_item.h>
 
 
 #include <QObject>
@@ -14,12 +14,10 @@
 
 #include "ui_Polyhedron_demo_advancing_front_plugin.h"
 
-// Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and writes facet indices into polygon soup.
-void advancing_front_reconstruct(const Point_set& points,
-                                 double sm_perimeter,
-                                 double sm_area,
-                                 Scene_polygon_soup_item*);
+Polyhedron* advancing_front_reconstruct(const Point_set& points,
+                                       double sm_perimeter,
+                                       double sm_area);
 
 class Polyhedron_demo_advancing_front_plugin :
   public QObject,
@@ -90,14 +88,11 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     // Add polyhedron to scene
-    Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
     
-    for(Point_set::iterator it = points->begin(); it!= points->end(); ++it){
-      new_item->new_vertex(it->x(), it->y(), it->z());
-    }
-
     // Reconstruct point set as a polyhedron
-    advancing_front_reconstruct(*points, sm_perimeter, sm_area, new_item);
+     Polyhedron *poly = advancing_front_reconstruct(*points, sm_perimeter, sm_area);
+
+     Scene_polyhedron_item* new_item = new Scene_polyhedron_item(poly);
 
 
     new_item->setName(tr("%1 Advancing Front (%2 %3)")
@@ -113,6 +108,7 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
     
 
     QApplication::restoreOverrideCursor();
+  
   }
 }
 

@@ -46,7 +46,7 @@ examples.
 
 \section AFSR_Definitions Definitions and the Algorithm
 
-A detailed desciption of the algorithm and the underlying theory can be found
+A detailed description of the algorithm and the underlying theory can be found
 in \cgalCite{cgal:csd-gdbsra-04}.
 
 \subsection AFSR_Topology Topological Constraints
