@@ -108,7 +108,7 @@ public:
   }
 
   // constructor for exp2
-  explicit BigFloat(BigFloatRep* r, bool b ) : RCBigFloat(r) {
+  explicit BigFloat(BigFloatRep* r, bool) : RCBigFloat(r) {
   }
 
 
