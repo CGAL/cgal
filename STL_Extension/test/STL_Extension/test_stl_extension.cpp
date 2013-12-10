@@ -2890,7 +2890,7 @@ void test_Iterator_project()
     CGAL::Assert_iterator( c_end);
 
     while(! l.empty()){
-      delete l.back();
+      delete static_cast<item*>(l.back());
       l.pop_back();
     }
 
