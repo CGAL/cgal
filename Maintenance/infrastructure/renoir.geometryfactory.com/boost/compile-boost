@@ -16,14 +16,14 @@ if [ ! -x $BJAM ]; then
     BJAM=bjam
 fi
 
-"$BJAM" --prefix="$BOOST_DIR/${VERSION}" --libdir="$BOOST_DIR/${VERSION}-gcc41/lib" --stagedir=stage-4.1 $OPTS --without-log toolset=gcc-4.1 install
-ln -sf ../${VERSION}/include "$BOOST_DIR/${VERSION}-gcc41/"
+# "$BJAM" --prefix="$BOOST_DIR/${VERSION}" --libdir="$BOOST_DIR/${VERSION}-gcc41/lib" --stagedir=stage-4.1 $OPTS --without-log toolset=gcc-4.1 install
+# ln -sf ../${VERSION}/include "$BOOST_DIR/${VERSION}-gcc41/"
 
-"$BJAM" --prefix="$BOOST_DIR/${VERSION}" $OPTS toolset=gcc-4.5.4 install
+# "$BJAM" --prefix="$BOOST_DIR/${VERSION}" $OPTS toolset=gcc-4.5.4 install
 
 "$BJAM" --prefix="$BOOST_DIR/${VERSION}" --libdir="$BOOST_DIR/${VERSION}-gcc-cxxdebug/lib" --stagedir=stage-cxxdebug $OPTS toolset=gcc-cxxdebug install
 ln -sf ../${VERSION}/include "$BOOST_DIR/${VERSION}-gcc-cxxdebug/"
 
-source ~/infrastructure/reference-platforms/x86-64_Linux-Fedora17_IntelCompiler-13.1-with-g++-4.7-STL/setup 
+source ~/infrastructure/reference-platforms/x86-64_Linux-Fedora19_IntelCompiler-14.0-with-g++-4.8-STL/setup
 "$BJAM" --prefix="$BOOST_DIR/${VERSION}" --libdir="$BOOST_DIR/${VERSION}-intel/lib" --stagedir=stage-intel $OPTS toolset=intel cxxflags="-D__SIZEOF_LONG__=8 -D__SIZEOF_LONG_LONG__=8" install
 ln -sf ../${VERSION}/include "$BOOST_DIR/${VERSION}-intel/"
