@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 #ifndef CGAL_ARR_LANDMARKS_VERTICES_GENERATOR_H
@@ -57,7 +57,7 @@ public:
   typedef typename Arrangement_2::Halfedge_handle       Halfedge_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  
+
   typedef typename Arrangement_2::Point_2               Point_2;
   typedef typename Arrangement_2::X_monotone_curve_2    X_monotone_curve_2;
 
@@ -81,28 +81,29 @@ private:
   Self& operator=(const Self&);
 
 public:
-  /*! Constructor. */
+  /*! Constructor from an arrangement.
+   * \param arr (in) The arrangement.
+   */
   Arr_landmarks_vertices_generator(const Arrangement_2& arr) :
-    Base (arr),
+    Base(arr),
     num_landmarks(0)
   {
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
     build_landmark_set();//this->
   }
 
   virtual void _create_points_set(Points_set & /* points */)
   {
-    std::cerr << "should not reach here!"<< std::endl;
+    std::cerr << "should not reach here!" << std::endl;
     CGAL_error();
   }
 
-  /*!
-   * Creates the landmark set, using all arrangement vertices.
+  /*! Create the landmark set, using all arrangement vertices.
    */
   virtual void build_landmark_set()
   {
     // Go over the arrangement, and insert all its vertices as landmarks.
-    NN_Point_list         nnp_list; 
+    NN_Point_list         nnp_list;
     const Arrangement_2*  arr = this->arrangement();
     Vertex_const_iterator vit;
     num_landmarks = 0;
@@ -120,10 +121,9 @@ public:
     this->updated = true;
   }
 
-  /*!
-   * Clear the landmark set.
+  /*! Clear the landmark set.
    */
-  virtual void clear_landmark_set ()
+  virtual void clear_landmark_set()
   {
     this->nn.clear();
     num_landmarks = 0;
@@ -132,13 +132,14 @@ public:
   }
 
 protected:
-  /*! Handle a local change. */
+  /*! Handle a local change.
+   */
   void _handle_local_change_notification()
   {
     // Rebuild the landmark set only if the number of small
     // changes is greater than sqrt(num_landmarks).
-    double    nl = static_cast<double>(num_landmarks);
-    const int sqrt_num_landmarks = static_cast<int> (std::sqrt (nl) + 0.5);
+    double nl = static_cast<double>(num_landmarks);
+    const int sqrt_num_landmarks = static_cast<int>(std::sqrt(nl) + 0.5);
 
     this->num_small_not_updated_changes++;
     if ((num_landmarks < 10) ||

@@ -45,7 +45,7 @@
 #include "ColorItemEditor.h"
 
 ColorItemEditor::ColorItemEditor( QWidget* widget ) : QPushButton( widget )
-{ 
+{
   this->setText( tr("Select a color") );
 }
 
@@ -59,14 +59,13 @@ void ColorItemEditor::setColor( QColor color )
   this->m_color = color;
 }
 
-void ColorItemEditor::mousePressEvent( QMouseEvent* e )
+void ColorItemEditor::mousePressEvent(QMouseEvent* /* e */)
 {
-  QColor selectedColor = QColorDialog::getColor( this->m_color );
-  if ( selectedColor.isValid( ) )
-  {
-    // std::cout << selectedColor.name( ).toStdString( ) << std::endl;
+  QColor selectedColor = QColorDialog::getColor(this->m_color);
+  if (selectedColor.isValid()) {
+    // std::cout << selectedColor.name().toStdString() << std::endl;
     this->setColor( selectedColor );
   }
 
-  emit confirmed( );
+  emit confirmed();
 }

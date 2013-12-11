@@ -18,8 +18,8 @@
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_LANDMARKS_GENERATOR_H
-#define CGAL_ARR_LANDMARKS_GENERATOR_H
+#ifndef CGAL_ARR_LANDMARKS_GENERATOR_BASE_H
+#define CGAL_ARR_LANDMARKS_GENERATOR_BASE_H
 
 /*! \file
 * Definition of the Arr_landmarks_generator_base<Arrangement> template.
@@ -87,70 +87,71 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2> Traits_adaptor_2;
 
   // Data members:
-  const Traits_adaptor_2  *m_traits;  // The associated traits object.
-  Nearest_neighbor         nn;      // The associated nearest neighbor object.
-  bool                     ignore_notifications;
-  bool                     updated;
-  int                      num_small_not_updated_changes;
+  const Traits_adaptor_2* m_traits;  // The associated traits object.
+  Nearest_neighbor nn;      // The associated nearest neighbor object.
+  bool m_ignore_notifications;
+  bool m_ignore_remove_edge;
+  bool updated;
+  int num_small_not_updated_changes;
 
   template<typename T>
   PL_result_type pl_make_result(T t) { return PL_result::make_result(t); }
-  inline PL_result_type pl_default_result() { return PL_result::default_result(); }
+  inline PL_result_type pl_default_result()
+  { return PL_result::default_result(); }
 
 public:
   bool is_empty() const { return nn.is_empty(); }
 
 private:
   /*! Copy constructor - not supported. */
-  Arr_landmarks_generator_base (const Self& );
+  Arr_landmarks_generator_base(const Self&);
 
   /*! Assignment operator - not supported. */
-  Self& operator= (const Self& );
+  Self& operator=(const Self& );
 
 public:
-  /*! Constructor. */
-  Arr_landmarks_generator_base (const Arrangement_2& arr) :
+  /*! Constructor from an arrangement.
+   * \param arr (in) The arrangement.
+   */
+  Arr_landmarks_generator_base(const Arrangement_2& arr) :
     Arr_observer<Arrangement_2> (const_cast<Arrangement_2 &>(arr)),
-    ignore_notifications (false),
-    updated (false),
+    m_traits(static_cast<const Traits_adaptor_2*>(arr.geometry_traits())),
+    m_ignore_notifications(false),
+    m_ignore_remove_edge(false),
+    updated(false),
     num_small_not_updated_changes(0)
   {
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
     // One needs to call build_landmark_set() in the constructor of any
     // inherited class.
   }
 
-  /*!
-   * Creates the landmarks set (choosing the landmarks) ,
+  /*! Create the landmarks set (choosing the landmarks) ,
    * and saving them in the nearest-neighbor search structure.
    */
-  virtual void build_landmark_set ()
+  virtual void build_landmark_set()
   {
     // Create the landmark points.
-    NN_Points_set     nn_points;
-
+    NN_Points_set nn_points;
     _create_nn_points_set(nn_points);
 
     // Update the search structure.
     nn.clear();
-    nn.init (nn_points.begin(), nn_points.end());
+    nn.init(nn_points.begin(), nn_points.end());
 
     num_small_not_updated_changes = 0;
     updated = true;
   }
 
-  /*!
-   * clear the set of landmarks.
+  /*! clear the set of landmarks.
    */
-  virtual void clear_landmark_set ()
+  virtual void clear_landmark_set()
   {
     nn.clear();
     num_small_not_updated_changes = 0;
     updated = false;
   }
 
-  /*!
-   * Get the nearest neighbor (landmark) to the given point.
+  /*! Obtain the nearest neighbor (landmark) to the given point.
    * \param p The query point.
    * \param obj Output: The location of the nearest landmark point in the
    *                    arrangement (a vertex, halfedge, or face handle).
@@ -170,208 +171,295 @@ public:
    * arrangement.
    * \param arr The arrangement to be copied.
    */
-  virtual void before_assign (const Arrangement_2& arr)
+  virtual void before_assign(const Arrangement_2& arr)
   {
     this->clear_landmark_set();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    ignore_notifications = true;
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
+    m_ignore_notifications = true;
   }
 
-  /*!
-   * Notification after the arrangement has been assigned with another
+  /*! Notification after the arrangement has been assigned with another
    * arrangement.
    */
-  virtual void after_assign ()
+  virtual void after_assign()
   {
     this->build_landmark_set();
-    ignore_notifications = false;
+    m_ignore_notifications = false;
   }
 
-  /*!
-   * Notification before the observer is attached to an arrangement.
+  /*! Notification before the observer is attached to an arrangement.
    * \param arr The arrangement we are about to attach the observer to.
    */
-  virtual void before_attach (const Arrangement_2& arr)
+  virtual void before_attach(const Arrangement_2& arr)
   {
     this->clear_landmark_set();
-    m_traits = static_cast<const Traits_adaptor_2*> (arr.geometry_traits());
-    ignore_notifications = true;
+    m_traits = static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
+    m_ignore_notifications = true;
   }
 
-  /*!
-   * Notification after the observer has been attached to an arrangement.
+  /*! Notification after the observer has been attached to an arrangement.
    */
-  virtual void after_attach ()
+  virtual void after_attach()
   {
     this->build_landmark_set();
-    ignore_notifications = false;
+    m_ignore_notifications = false;
   }
 
-  /*!
-   * Notification before the observer is detached from the arrangement.
+  /*! Notification before the observer is detached from the arrangement.
    */
-  virtual void before_detach ()
-  {
-    this->clear_landmark_set();
-  }
+  virtual void before_detach()
+  { this->clear_landmark_set(); }
 
-  /*!
-   * Notification after the arrangement is cleared.
+  /*! Notification after the arrangement is cleared.
    * \param u A handle to the unbounded face.
    */
-  virtual void after_clear ()
+  virtual void after_clear()
   {
     this->clear_landmark_set();
     this->build_landmark_set();
   }
 
-  /*! Notification before a global operation modifies the arrangement. */
-  virtual void before_global_change ()
+  /*! Notification before a global operation modifies the arrangement.
+   */
+  virtual void before_global_change()
   {
     this->clear_landmark_set();
-    ignore_notifications = true;
+    m_ignore_notifications = true;
   }
 
-  /*! Notification after a global operation is completed. */
-  virtual void after_global_change ()
+  /*! Notification after a global operation is completed.
+   */
+  virtual void after_global_change()
   {
     this->build_landmark_set();
-    ignore_notifications = false;
+    m_ignore_notifications = false;
   }
   //@}
 
   /// \name Overloaded observer functions on local changes.
   //@{
 
+  /*! Notification before the removal of an edge.
+   * \param e (in) A handle to one of the twin halfedges to be removed.
+   */
+  virtual void before_remove_edge(Halfedge_handle /* e */)
+  { m_ignore_remove_edge = true; }
+
   /*! Notification after the creation of a new vertex. */
-  virtual void after_create_vertex (Vertex_handle )
+  virtual void after_create_vertex(Vertex_handle)
   {
-    this->_handle_local_change_notification();
-  }
-
-  /*! Notification after the creation of a new edge. */
-  virtual void after_create_edge (Halfedge_handle )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an edge was split. */
-  virtual void after_split_edge(Halfedge_handle, Halfedge_handle)
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after a face was split. */
-  virtual void after_split_face(Face_handle, Face_handle, bool)
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an outer CCB was split.*/
-  virtual void after_split_outer_ccb (Face_handle ,
-                                      Ccb_halfedge_circulator ,
-                                      Ccb_halfedge_circulator )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an inner CCB was split. */
-  virtual void after_split_inner_ccb (Face_handle ,
-                                      Ccb_halfedge_circulator ,
-                                      Ccb_halfedge_circulator )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an outer CCB was added to a face. */
-  virtual void after_add_outer_ccb (Ccb_halfedge_circulator )
-  {
-    this->_handle_local_change_notification();
-  }
-
-  /*! Notification after an inner CCB was created inside a face. */
-  virtual void after_add_inner_ccb (Ccb_halfedge_circulator )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an isolated vertex was created inside a face. */
-  virtual void after_add_isolated_vertex (Vertex_handle )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an edge was merged. */
-  virtual void after_merge_edge (Halfedge_handle )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after a face was merged. */
-  virtual void after_merge_face (Face_handle )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an outer CCB was merged. */
-  virtual void after_merge_outer_ccb(Face_handle, Ccb_halfedge_circulator)
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an inner CCB was merged. */
-  virtual void after_merge_inner_ccb(Face_handle, Ccb_halfedge_circulator)
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an outer CCB is moved from one face to another. */
-  virtual void after_move_outer_ccb (Ccb_halfedge_circulator )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an inner CCB is moved from one face to another. */
-  virtual void after_move_inner_ccb (Ccb_halfedge_circulator )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after an isolated vertex is moved. */
-  virtual void after_move_isolated_vertex (Vertex_handle )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notificaion after the removal of a vertex. */
-  virtual void after_remove_vertex ()
-  { this->_handle_local_change_notification(); }
-
-  /*! Notification after the removal of an edge. */
-  virtual void after_remove_edge ()
-  { this->_handle_local_change_notification(); }
-
-  /*! Notificaion after the removal of an outer CCB. */
-  virtual void after_remove_outer_ccb (Face_handle )
-  { this->_handle_local_change_notification(); }
-
-  /*! Notificaion after the removal of an inner CCB. */
-  virtual void after_remove_inner_ccb (Face_handle )
-  { this->_handle_local_change_notification(); }
-  //@}
-
-protected:
-  /*! Handle a change notification. */
-  void _handle_local_change_notification ()
-  {
-    if (! ignore_notifications) {
+    if (! m_ignore_notifications) {
       clear_landmark_set();
       build_landmark_set();
     }
   }
 
-  /*!
-   * This function creates the list of landmarks with their location.
+  /*! Notification after the creation of a new edge. */
+  virtual void after_create_edge(Halfedge_handle)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an edge was split. */
+  virtual void after_split_edge(Halfedge_handle, Halfedge_handle)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after a face was split. */
+  virtual void after_split_face(Face_handle, Face_handle, bool)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an outer CCB was split.*/
+  virtual void after_split_outer_ccb(Face_handle,
+                                     Ccb_halfedge_circulator,
+                                     Ccb_halfedge_circulator)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an inner CCB was split. */
+  virtual void after_split_inner_ccb(Face_handle,
+                                     Ccb_halfedge_circulator,
+                                     Ccb_halfedge_circulator)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an outer CCB was added to a face. */
+  virtual void after_add_outer_ccb(Ccb_halfedge_circulator)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an inner CCB was created inside a face. */
+  virtual void after_add_inner_ccb(Ccb_halfedge_circulator)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an isolated vertex was created inside a face. */
+  virtual void after_add_isolated_vertex(Vertex_handle)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an edge was merged. */
+  virtual void after_merge_edge(Halfedge_handle)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after a face was merged. */
+  virtual void after_merge_face(Face_handle)
+  {
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an outer CCB was merged. */
+  virtual void after_merge_outer_ccb(Face_handle, Ccb_halfedge_circulator)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an inner CCB was merged. */
+  virtual void after_merge_inner_ccb(Face_handle, Ccb_halfedge_circulator)
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an outer CCB is moved from one face to another. */
+  virtual void after_move_outer_ccb(Ccb_halfedge_circulator )
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an inner CCB is moved from one face to another. */
+  virtual void after_move_inner_ccb(Ccb_halfedge_circulator )
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after an isolated vertex is moved. */
+  virtual void after_move_isolated_vertex(Vertex_handle )
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notificaion after the removal of a vertex. */
+  virtual void after_remove_vertex()
+  {
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notification after the removal of an edge. */
+  virtual void after_remove_edge()
+  {
+    if (! m_ignore_notifications) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+    m_ignore_remove_edge = false;
+  }
+
+  /*! Notificaion after the removal of an outer CCB. */
+  virtual void after_remove_outer_ccb(Face_handle)
+  {
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+
+  /*! Notificaion after the removal of an inner CCB. */
+  virtual void after_remove_inner_ccb(Face_handle)
+  {
+    if (! m_ignore_notifications && ! m_ignore_remove_edge) {
+      clear_landmark_set();
+      build_landmark_set();
+    }
+  }
+  //@}
+
+protected:
+  /*! Create the list of landmarks with their location.
    * This is a pure virtual function, and the class that inherites from
    * this generator must implement it.
    */
-  virtual void _create_points_set (Points_set &) = 0;
+  virtual void _create_points_set(Points_set&) = 0;
 
-  virtual void _create_nn_points_set (NN_Points_set &nn_points)
+  virtual void _create_nn_points_set(NN_Points_set& nn_points)
   {
-    Points_set           points;
-    Pairs_set            pairs;
+    Points_set points;
+    Pairs_set pairs;
 
     // Create the set of landmark points.
     _create_points_set(points);
 
     // Locate the landmarks in the arrangement using batched point-location
     // global function.
-    locate (*(this->arrangement()), points.begin(), points.end(),
-            std::back_inserter(pairs));
+    locate(*(this->arrangement()), points.begin(), points.end(),
+           std::back_inserter(pairs));
 
     // Apply a random shuffle on the points, since the batched point-location
     // returns them sorted.
-    std::random_shuffle (pairs.begin(), pairs.end());
+    std::random_shuffle(pairs.begin(), pairs.end());
 
     // Insert all landmarks (paired with their current location in the
     // arrangement) into the nearest-neighbor search structure.
-    Pairs_iterator   itr;
-
+    Pairs_iterator itr;
     for (itr = pairs.begin(); itr != pairs.end(); ++itr) {
-      NN_Point_2  np(itr->first, itr->second);
+      NN_Point_2 np(itr->first, itr->second);
       nn_points.push_back(np);
     }
   }

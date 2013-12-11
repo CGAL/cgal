@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s) : Ron Wein        <wein@post.tau.ac.il>
 //             Efi Fogel       <efif@post.tau.ac.il>
@@ -39,24 +39,22 @@
 namespace CGAL {
 
 // Forward declaration:
-template <class GeomTraits_, class TopTraits_> 
+template <typename GeomTraits_, typename TopTraits_>
 class Arrangement_on_surface_2;
 
 /*! \class Arr_bounded_planar_topology_traits_2
  * A topology-traits class that encapsulates the embedding of 2D arrangements
  * of bounded curves on the plane.
  */
-template <class GeomTraits_,
-          class Dcel_ = Arr_default_dcel<GeomTraits_> >
+template <typename GeomTraits_,
+          typename Dcel_ = Arr_default_dcel<GeomTraits_> >
 class Arr_bounded_planar_topology_traits_2 :
   public Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_>
 {
 private:
-
   typedef Arr_planar_topology_traits_base_2<GeomTraits_, Dcel_> Base;
 
 public:
-
   ///! \name The geometry-traits types.
   //@{
   typedef GeomTraits_                                     Geometry_traits_2;
@@ -81,14 +79,14 @@ public:
   typedef Arr_bounded_planar_topology_traits_2<Geometry_traits_2, Dcel> Self;
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   //!@}
-  
+
   ///! \name The side tags
   //@{
   typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
   typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
   typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
-  
+
   BOOST_MPL_ASSERT
   ((boost::is_same< Left_side_category, Arr_oblivious_side_tag >));
   BOOST_MPL_ASSERT
@@ -100,50 +98,47 @@ public:
   //@}
 
   /*! \struct
-   * An auxiliary structure for rebinding the topology traits with a new 
+   * An auxiliary structure for rebinding the topology traits with a new
    * geometry-traits class and a new DCEL class.
    */
   template<typename T, typename D>
-  struct rebind
-  {
-    typedef Arr_bounded_planar_topology_traits_2<T,D> other;
+  struct rebind {
+    typedef Arr_bounded_planar_topology_traits_2<T, D> other;
   };
 
 protected:
-
   // Data members:
-  Face               *unb_face;     // The unbounded face.  
+  Face* unb_face;     // The unbounded face.
 
   // Copy constructor and assignment operator - not supported.
-  Arr_bounded_planar_topology_traits_2 (const Self& );
-  Self& operator= (const Self& );
+  Arr_bounded_planar_topology_traits_2(const Self&);
+  Self& operator=(const Self&);
 
 public:
-
   ///! \name Construction methods.
   //@{
 
   /*! Default constructor. */
-  Arr_bounded_planar_topology_traits_2 () :
+  Arr_bounded_planar_topology_traits_2() :
     Base(),
-    unb_face (NULL)
+    unb_face(NULL)
   {}
 
-  /*! Constructor with a geometry-traits class. */
-  Arr_bounded_planar_topology_traits_2 (const Geometry_traits_2 *tr) :
-    Base (tr),
-    unb_face (NULL)
+  /*! Constructor from a geometry-traits object. */
+  Arr_bounded_planar_topology_traits_2(const Geometry_traits_2* traits) :
+    Base(traits),
+    unb_face(NULL)
   {}
 
   /*! Assign the contents of another topology-traits class. */
-  void assign (const Self& other);
+  void assign(const Self& other);
   //@}
 
   ///! \name Accessing the DCEL and constructing iterators.
   //@{
 
   /*! Determine whether the DCEL reprsenets an empty structure. */
-  bool is_empty_dcel () const
+  bool is_empty_dcel() const
   {
     // An empty bounded arrangement has no edges or vertices.
     return (this->m_dcel.size_of_vertices() == 0 &&
@@ -151,52 +146,40 @@ public:
   }
 
   /*! Check if the given vertex is concrete (associated with a point). */
-  inline bool is_concrete_vertex (const Vertex *) const
-  {
-    return (true);
-  }
+  inline bool is_concrete_vertex(const Vertex*) const { return true; }
 
   /*! Get the number of concrete vertices. */
-  Size number_of_concrete_vertices () const
+  Size number_of_concrete_vertices() const
   {
     // All vertices are concrete.
     return (this->m_dcel.size_of_vertices());
   }
 
   /*! Check if the given vertex is valid (not a fictitious one). */
-  inline bool is_valid_vertex (const Vertex *) const
-  {
-    return (true);
-  }
+  inline bool is_valid_vertex(const Vertex*) const { return true; }
 
   /*! Get the number of valid vertices. */
-  Size number_of_valid_vertices () const
+  Size number_of_valid_vertices() const
   {
     // All vertices are valid.
     return (this->m_dcel.size_of_vertices());
   }
 
   /*! Check if the given halfedge is valid (not a fictitious one). */
-  inline bool is_valid_halfedge (const Halfedge *) const
-  {
-    return (true);
-  }
+  inline bool is_valid_halfedge(const Halfedge*) const { return true; }
 
   /*! Get the number of valid halfedges. */
-  Size number_of_valid_halfedges () const
+  Size number_of_valid_halfedges() const
   {
     // All halfedges are valid.
     return (this->m_dcel.size_of_halfedges());
   }
 
   /*! Check if the given face is valid (not a fictitious one). */
-  inline bool is_valid_face (const Face *) const
-  {
-    return (true);
-  }
+  inline bool is_valid_face (const Face*) const { return true; }
 
   /*! Get the number of valid faces. */
-  Size number_of_valid_faces () const
+  Size number_of_valid_faces() const
   {
     // All faces are valid.
     return (this->m_dcel.size_of_faces());
@@ -207,13 +190,12 @@ private:
 
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>             Arr;
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>    Arr;
 
   // Type definition for the constuction sweep-line visitor.
-  typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve; 
-  typedef Arr_construction_event<Geometry_traits_2,
-                                 CSubcurve,
-                                 Arr>                          CEvent;
+  typedef Arr_construction_subcurve<Geometry_traits_2>         CSubcurve;
+  typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
+                                                               CEvent;
   typedef Arr_bounded_planar_construction_helper<Geometry_traits_2,
                                                  Arr,
                                                  CEvent,
@@ -221,24 +203,18 @@ private:
 
   // Type definition for the basic insertion sweep-line visitor.
   typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr> BInsTraits;
-  typedef Arr_construction_subcurve<BInsTraits>                BISubcurve; 
-  typedef Arr_construction_event<BInsTraits,
-                                 BISubcurve,
-                                 Arr>                          BIEvent;
-  typedef Arr_bounded_planar_insertion_helper<BInsTraits,
-                                              Arr,
-                                              BIEvent,
+  typedef Arr_construction_subcurve<BInsTraits>                BISubcurve;
+  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>
+                                                               BIEvent;
+  typedef Arr_bounded_planar_insertion_helper<BInsTraits, Arr, BIEvent,
                                               BISubcurve>      BIHelper;
 
   // Type definition for the insertion sweep-line visitor.
   typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>       InsTraits;
-  typedef Arr_construction_subcurve<InsTraits>                 ISubcurve; 
-  typedef Arr_construction_event<InsTraits,
-                                 ISubcurve,
-                                 Arr>                          IEvent;
-  typedef Arr_bounded_planar_insertion_helper<InsTraits,
-                                              Arr,
-                                              IEvent,
+  typedef Arr_construction_subcurve<InsTraits>                 ISubcurve;
+  typedef Arr_construction_event<InsTraits, ISubcurve, Arr>
+                                                               IEvent;
+  typedef Arr_bounded_planar_insertion_helper<InsTraits, Arr, IEvent,
                                               ISubcurve>       IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
@@ -273,9 +249,8 @@ private:
     typedef typename Base::Subcurve                      Subcurve;
     typedef typename Base::Construction_helper           Construction_helper;
 
-    _Overlay_helper (const ArrangementA_ *arrA,
-                     const ArrangementB_ *arrB) :
-      Base (arrA, arrB)
+    _Overlay_helper(const ArrangementA_* arr_a, const ArrangementB_* arr_b) :
+      Base(arr_a, arr_b)
     {}
   };
   //@}
@@ -293,7 +268,7 @@ public:
 
   typedef Sweep_line_construction_visitor
                              Sweep_line_non_intersecting_construction_visitor;
-  
+
   typedef Arr_basic_insertion_sl_visitor<BIHelper>
                              Sweep_line_non_intersecting_insertion_visitor;
 
@@ -308,9 +283,9 @@ public:
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_batched_point_location_visitor (const Arr *arr,
+    Sweep_line_batched_point_location_visitor(const Arr* arr,
                                               Output_iterator& oi) :
-      Base (arr, oi)
+      Base(arr, oi)
     {}
   };
 
@@ -325,9 +300,9 @@ public:
     typedef typename Base::Event                              Event;
     typedef typename Base::Subcurve                           Subcurve;
 
-    Sweep_line_vertical_decomposition_visitor (const Arr *arr,
-                                               Output_iterator *oi) :
-      Base (arr, oi)
+    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
+                                              Output_iterator* oi) :
+      Base(arr, oi)
     {}
   };
 
@@ -338,7 +313,7 @@ public:
         Arr_overlay_traits_2< Arr_traits_basic_adaptor_2<Geometry_traits_2>,
                               ArrangementA_,
                               ArrangementB_>,
-        ArrangementA_, 
+        ArrangementA_,
         ArrangementB_>,
       OverlayTraits_>
   {
@@ -347,7 +322,7 @@ public:
     typedef Arr                                      Arrangement_result_2;
     typedef OverlayTraits_                           Overlay_traits;
 
-    typedef Arr_overlay_traits_2< 
+    typedef Arr_overlay_traits_2<
               Arr_traits_basic_adaptor_2<Geometry_traits_2>,
               ArrangementA_2,
               ArrangementB_2>                        Geom_ovl_traits_2;
@@ -362,20 +337,22 @@ public:
     typedef typename Base::Event                     Event;
     typedef typename Base::Subcurve                  Subcurve;
 
-    Sweep_line_overlay_visitor (const ArrangementA_2 *arrA,
-                                const ArrangementB_2 *arrB,
-                                Arrangement_result_2 *arr_res,
-                                Overlay_traits *overlay_tr) :
+    Sweep_line_overlay_visitor (const ArrangementA_2* arrA,
+                                const ArrangementB_2* arrB,
+                                Arrangement_result_2* arr_res,
+                                Overlay_traits* overlay_tr) :
       Base (arrA, arrB, arr_res, overlay_tr)
     {}
   };
 
   typedef Arr_inc_insertion_zone_visitor<Arr>
-                                              Zone_insertion_visitor;
+                                        Zone_insertion_visitor;
 
   typedef Arr_walk_along_line_point_location<Arr>
-                                              Default_point_location_strategy;
+                                        Default_point_location_strategy;
 
+  typedef Arr_walk_along_line_point_location<Arr>
+                                        Default_vertical_ray_shooting_strategy;
   //@}
 
   ///! \name Topology-traits methods.
@@ -384,12 +361,12 @@ public:
   /*!
    * Initialize an empty DCEL structure.
    */
-  void init_dcel ();
+  void init_dcel();
 
   /*!
    * Make the necessary updates after the DCEL structure have been updated.
    */
-  void dcel_updated ();
+  void dcel_updated();
 
   /*!
    * Check if the given vertex is associated with the given curve end.
@@ -401,24 +378,22 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return Whether v represents the given curve end.
    */
-  bool are_equal (const Vertex *v,
-                  const X_monotone_curve_2& cv, Arr_curve_end ind,
-                  Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
+  bool are_equal(const Vertex* v,
+                 const X_monotone_curve_2& cv, Arr_curve_end ind,
+                 Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
-    CGAL_assertion ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
+    CGAL_assertion((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR));
 
-    if (ind == ARR_MIN_END)
-    {
+    if (ind == ARR_MIN_END) {
       // Compare v with the left endpoint of cv.
-      return (this->traits->equal_2_object()
-              (this->traits->construct_min_vertex_2_object() (cv),
+      return (this->m_geom_traits->equal_2_object()
+              (this->m_geom_traits->construct_min_vertex_2_object()(cv),
                v->point()));
     }
-    else
-    {
+    else {
       // Compare v with the right endpoint of cv.
-      return (this->traits->equal_2_object()
-              (this->traits->construct_max_vertex_2_object() (cv),
+      return (this->m_geom_traits->equal_2_object()
+              (this->m_geom_traits->construct_max_vertex_2_object()(cv),
                v->point()));
     }
   }
@@ -435,11 +410,11 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that contains the curve end.
    */
-  CGAL::Object place_boundary_vertex (Face *,
-                                      const X_monotone_curve_2&,
-                                      Arr_curve_end,
-                                      Arr_parameter_space /* ps_x */,
-                                      Arr_parameter_space /* ps_y */)
+  CGAL::Object place_boundary_vertex(Face*,
+                                     const X_monotone_curve_2&,
+                                     Arr_curve_end,
+                                     Arr_parameter_space /* ps_x */,
+                                     Arr_parameter_space /* ps_y */)
   {
     // This function should never be called:
     CGAL_error();
@@ -459,14 +434,14 @@ public:
    * \return An object that contains the curve end.
    */
   Halfedge*
-  locate_around_boundary_vertex (Vertex *,
-                                 const X_monotone_curve_2&,
-                                 Arr_curve_end,
-                                 Arr_parameter_space /* ps_x */,
-                                 Arr_parameter_space /* ps_y */) const
+  locate_around_boundary_vertex(Vertex*,
+                                const X_monotone_curve_2&,
+                                Arr_curve_end,
+                                Arr_parameter_space /* ps_x */,
+                                Arr_parameter_space /* ps_y */) const
   {
     CGAL_error();
-    return (NULL);
+    return NULL;
   }
 
   /*!
@@ -478,10 +453,10 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_curve_end (const X_monotone_curve_2&,
-                                 Arr_curve_end,
-                                 Arr_parameter_space /* ps_x */,
-                                 Arr_parameter_space /* ps_y */)
+  CGAL::Object locate_curve_end(const X_monotone_curve_2&,
+                                Arr_curve_end,
+                                Arr_parameter_space /* ps_x */,
+                                Arr_parameter_space /* ps_y */)
   {
     // This function should never be called:
     CGAL_error();
@@ -496,34 +471,28 @@ public:
    * \return A halfedge whose direction is the same as e's and whose target is
    *         the split vertex v.
    */
-  Halfedge* split_fictitious_edge (Halfedge *, Vertex *)
+  Halfedge* split_fictitious_edge (Halfedge*, Vertex*)
   {
     // This function should never be called:
     CGAL_error();
-    return (NULL);
+    return NULL;
   }
 
   /*!
    * Determine whether the given face is unbounded.
    * \param f The face.
    * \return Whether f is unbounded.
+   * There is only one unbounded face in the arrangement:
    */
-  bool is_unbounded (const Face *f) const
-  {
-    // There is only one unbounded face in the arrangement:
-    return (f == unb_face);
-  }
+  bool is_unbounded(const Face* f) const { return (f == unb_face); }
 
   /*!
    * Determine whether the given boundary vertex is redundant.
    * \param v The vertex.
    * \return Whether v is redundant, and should be erased.
+   * There are no redundant vertices.
    */
-  bool is_redundant (const Vertex *) const
-  {
-    // There are no redundant vertices.
-    return (false);
-  }
+  bool is_redundant(const Vertex*) const { return false; }
 
   /*!
    * Erase the given redundant vertex by merging a fictitious edge.
@@ -532,11 +501,11 @@ public:
    * \pre v is a redundant vertex.
    * \return One of the pair of halfedges that form the merged edge.
    */
-  Halfedge* erase_redundant_vertex (Vertex *)
+  Halfedge* erase_redundant_vertex(Vertex*)
   {
     // This function should never be called:
     CGAL_error();
-    return (NULL);
+    return NULL;
   }
 
     //! reference_face (const version).
@@ -545,21 +514,15 @@ public:
       point.
       \return A pointer to the reference face.
   */
-  const Face* reference_face() const
-  {
-    return unbounded_face();
-  }
- 
+  const Face* reference_face() const { return unbounded_face(); }
+
   //! reference_face (non-const version).
   /*! The function returns a reference face of the arrangement.
       All reference faces of arrangements of the same type have a common
       point.
       \return A pointer to the reference face.
   */
-  Face* reference_face()
-  {
-    return unbounded_face();
-  }
+  Face* reference_face() { return unbounded_face(); }
 
   //@}
 
@@ -567,22 +530,18 @@ public:
   //@{
 
   /*! This function is used by the "walk" point-location strategy. */
-  const Face* initial_face () const
+  const Face* initial_face() const
   {
     return (unb_face);
   }
 
   /*! Get the unbounded face (const version). */
-  const Face* unbounded_face () const
-  {
-    return (unb_face);
-  }
+  const Face* unbounded_face() const
+  { return (unb_face); }
 
   /*! Get the unbounded face (non-const version). */
-  Face* unbounded_face ()
-  {
-    return (unb_face);
-  }
+  Face* unbounded_face()
+  { return (unb_face); }
   //@}
 
   /// \name Additional predicates, specialized for this topology-traits class.
@@ -594,11 +553,8 @@ public:
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
    */
-  virtual Comparison_result compare_x (const Point_2& p,
-                                       const Vertex* v) const
-  {
-    return (this->traits->compare_x_2_object() (p, v->point()));
-  }
+  virtual Comparison_result compare_x(const Point_2& p, const Vertex* v) const
+  { return (this->m_geom_traits->compare_x_2_object()(p, v->point())); }
 
   /*!
    * Compare the given vertex and the given point.
@@ -606,11 +562,8 @@ public:
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
    */
-  virtual Comparison_result compare_xy (const Point_2& p,
-                                        const Vertex* v) const
-  {
-    return (this->traits->compare_xy_2_object() (p, v->point()));
-  }
+  virtual Comparison_result compare_xy(const Point_2& p, const Vertex* v) const
+  { return (this->m_geom_traits->compare_xy_2_object()(p, v->point())); }
 
   /*!
    * Compare the relative y-position of the given point and the given edge
@@ -620,11 +573,9 @@ public:
    * \pre p should lie in the x-range of the given edge.
    * \return The relative y-position of the point p and the edge.
    */
-  virtual Comparison_result compare_y_at_x (const Point_2& p,
-                                            const Halfedge* he) const
-  {
-    return (this->traits->compare_y_at_x_2_object() (p, he->curve()));
-  }
+  virtual Comparison_result compare_y_at_x(const Point_2& p,
+                                           const Halfedge* he) const
+  { return (this->m_geom_traits->compare_y_at_x_2_object()(p, he->curve())); }
   //@}
 };
 

@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Ron Wein          <wein@post.tau.ac.il>
 
@@ -29,33 +29,47 @@
 namespace CGAL {
 
 /*! \brief constructs default */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2() :
   m_spherical_face(NULL),
   m_north_pole(NULL),
   m_south_pole(NULL),
-  m_own_traits(true)
+  m_own_geom_traits(true)
 {
-  m_traits = new Traits_adaptor_2;
-  m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_traits));
+  m_geom_traits = new Traits_adaptor_2;
+  m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
 }
 
-/*! \brief constructs with a geometry-traits class */
-template <class GeomTraits, class Dcel>
+/*! \brief constructs from a geometry-traits object. */
+template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
   m_spherical_face(NULL),
   m_north_pole(NULL),
   m_south_pole(NULL),
-  m_own_traits(false)
+  m_own_geom_traits(false)
 {
-  m_traits = static_cast<const Traits_adaptor_2*>(traits);
-  m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_traits));
+  m_geom_traits = static_cast<const Traits_adaptor_2*>(traits);
+  m_boundary_vertices = Vertex_map(Vertex_key_comparer(m_geom_traits));
+}
+
+/*! \brief destructs */
+template <typename GeomTraits, typename Dcel>
+Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+~Arr_spherical_topology_traits_2()
+{
+  // Clear the DCEL.
+  m_dcel.delete_all();
+
+  if (m_own_geom_traits && (m_geom_traits != NULL)) {
+    delete m_geom_traits;
+    m_geom_traits = NULL;
+  }
 }
 
 /*! \brief assigns the contents of another topology-traits class */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 assign(const Self& other)
 {
@@ -64,44 +78,41 @@ assign(const Self& other)
   m_dcel.assign(other.m_dcel);
 
   // Take care of the traits object.
-  if (m_own_traits && m_traits != NULL)
-    delete m_traits;
-  
-  if (other.m_own_traits)
-  {
-    m_traits = new Traits_adaptor_2;
-    m_own_traits = true;
+  if (m_own_geom_traits && m_geom_traits != NULL) {
+    delete m_geom_traits;
+    m_geom_traits == NULL;
   }
-  else
-  {
-    m_traits = other.m_traits;
-    m_own_traits = false;
+
+  if (other.m_own_geom_traits) {
+    m_geom_traits = new Traits_adaptor_2;
+    m_own_geom_traits = true;
+  }
+  else {
+    m_geom_traits = other.m_geom_traits;
+    m_own_geom_traits = false;
   }
 
   // Update the rest of the properties.
   dcel_updated();
-
-  return;
 }
 
 /*! \brief initializes an empty DCEL structure. */
-template <class GeomTraits, class Dcel>
-void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
+template <typename GeomTraits_, typename Dcel_>
+void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
 {
+  typedef Dcel_                                         Dcel;
+
   // Go over the DCEL vertices and locate the south and north pole (if any)
   // and any other vertex on the line of discontinuity.
-  typename Dcel::Vertex_iterator       vit;
-  Arr_parameter_space                  bx, by;
 
   m_north_pole = NULL;
   m_south_pole = NULL;
   m_boundary_vertices.clear();
 
-  for (vit = this->m_dcel.vertices_begin();
-       vit != this->m_dcel.vertices_end(); ++vit)
-  {
-    bx = vit->parameter_space_in_x();
-    by = vit->parameter_space_in_y();
+  typename Dcel::Vertex_iterator vit = this->m_dcel.vertices_begin();
+  for (; vit != this->m_dcel.vertices_end(); ++vit) {
+    Arr_parameter_space bx = vit->parameter_space_in_x();
+    Arr_parameter_space by = vit->parameter_space_in_y();
 
     if (by == ARR_BOTTOM_BOUNDARY) m_south_pole = &(*vit);
     else if (by == ARR_TOP_BOUNDARY) m_north_pole = &(*vit);
@@ -113,13 +124,11 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
 
   // Go over the DCEL faces and locate the spherical face, which is the only
   // face with no outer CCB.
-  typename Dcel::Face_iterator         fit;
-  
+
   m_spherical_face = NULL;
-  for (fit = this->m_dcel.faces_begin(); fit != this->m_dcel.faces_end(); ++fit)
-  {
-    if (fit->number_of_outer_ccbs() == 0)
-    {
+  typename Dcel::Face_iterator fit = this->m_dcel.faces_begin();
+  for (; fit != this->m_dcel.faces_end(); ++fit) {
+    if (fit->number_of_outer_ccbs() == 0) {
       CGAL_assertion(m_spherical_face == NULL);
 
       m_spherical_face = &(*fit);
@@ -127,12 +136,10 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::dcel_updated()
     }
   }
   CGAL_assertion(m_spherical_face != NULL);
-
-  return;
 }
 
 /*! \brief initializes an empty DCEL structure. */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::init_dcel()
 {
   // std::cout << "init_dcel()" << std::endl;
@@ -150,20 +157,21 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::init_dcel()
 }
 
 /*! \brief determines whether a point lies in the interior of a given face. */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 {
   // std::cout << "is_in_face()" << std::endl;
-  CGAL_precondition(v == NULL || !v->has_null_point());
-  CGAL_precondition(v == NULL || m_traits->equal_2_object()(p, v->point()));
+  CGAL_precondition((v == NULL) || !v->has_null_point());
+  CGAL_precondition((v == NULL) ||
+                    m_geom_traits->equal_2_object()(p, v->point()));
 
   /* There is always one face that contains everything else. It has no
    * outer CCB's. When a new face is constructed, we make sure that the
    * face that contains everything also contains the north pole. (In the
    * degenerate case, where a vertex coincides with the north pole, the face
    * that contains everything is incident to the north pole.)
-   * If the face has no iuter ccb's, it contains everything:
+   * If the face has no outer ccb's, it contains everything:
    */
 #if 0
   std::cout << "p: " << p
@@ -172,26 +180,29 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 #endif
   if (f->number_of_outer_ccbs() == 0) return true;
   if (((v != NULL) && (v->parameter_space_in_y() == ARR_TOP_BOUNDARY)) ||
-      (m_traits->parameter_space_in_y_2_object()(p) == ARR_TOP_BOUNDARY))
+      (m_geom_traits->parameter_space_in_y_2_object()(p) == ARR_TOP_BOUNDARY))
     return false;
 
   /*! \todo a temporary test
    * if (((v != NULL) && (v->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)) ||
    *   (p.is_min_boundary()))
-   * return false;  
+   * return false;
    */
-  
+
   typename Traits_adaptor_2::Parameter_space_in_x_2 ps_x_op =
-    m_traits->parameter_space_in_x_2_object();
+    m_geom_traits->parameter_space_in_x_2_object();
   typename Traits_adaptor_2::Parameter_space_in_y_2 ps_y_op =
-    m_traits->parameter_space_in_y_2_object();
+    m_geom_traits->parameter_space_in_y_2_object();
   typename Traits_adaptor_2::Compare_x_2 cmp_x_op =
-    m_traits->compare_x_2_object();
+    m_geom_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
-    m_traits->compare_y_at_x_2_object();
+    m_geom_traits->compare_y_at_x_2_object();
   typename Traits_adaptor_2::Compare_x_point_curve_end_2 cmp_x_pt_ce =
-    m_traits->compare_x_point_curve_end_2_object();
-  
+    m_geom_traits->compare_x_point_curve_end_2_object();
+
+  // Process the input point.
+  bool p_is_interior_x = !(m_geom_traits->is_on_y_identification_2_object()(p));
+
   /* Maintain a counter of the number of x-monotone curves that intersect an
    * upward vertical ray emanating from p. Handle degenerate cases as
    * explained below).
@@ -211,7 +222,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
      */
     if (curr->opposite()->vertex() == v) return false;
 
-
     /*! We identify 2 main cases:
      * 1. The vertical ray intersects the boundary at a halfedge. In this
      * case the x-possition of p is strictly larger than the x-possition of
@@ -226,7 +236,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
      * than the x-possition of the next-curve target, or vise verase (that is,
      * the "smaller" and "larger" interchanged).
      */
-    
+
     /* Indicates that a change between the x-position of p and the x-position
      * of the current-curve source, and the x-position of p and the x-position
      * of the current-curve target is pending. Used to handle case (2) above.
@@ -245,9 +255,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       ps_x_source, ps_x_target = ARR_INTERIOR,
       ps_y_source, ps_y_target;
 
-    Arr_parameter_space ps_x_p = ARR_INTERIOR;
-    if (v != NULL) ps_x_p = v->parameter_space_in_x();
-    
     do {
       /* Compare p to the target vertex of the current halfedge. If the
        * vertex v is on the boundary of the component, p is not in the interior
@@ -256,27 +263,29 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       if (curr->vertex() == v) return false;
 
       // Ignore vertical curves:
-      bool is_vertical = m_traits->is_vertical_2_object()(curr->curve());
-      if (is_vertical) 
-      {
-        /* If this outer ccb chain contains the north pole, and our point 
+      bool is_vertical = m_geom_traits->is_vertical_2_object()(curr->curve());
+      if (is_vertical) {
+        /* If this outer ccb chain contains the north pole, and our point
          * lies horizontaly between the two vertical curves that meet at
          * the north pole, increase the intersection counter
          */
-        Arr_parameter_space ps_y_1 = ps_y_op(curr->curve(), ARR_MAX_END);
-        Arr_parameter_space ps_y_2 = ps_y_op(curr->next()->curve(), ARR_MAX_END);
-        if ((ps_y_1 == ARR_TOP_BOUNDARY) && (ps_y_2 == ARR_TOP_BOUNDARY)) {
-          // Compare the x-coordinates:
-          Comparison_result rc1 =
-            cmp_x_pt_ce(p, curr->curve(), ARR_MAX_END);
-          Comparison_result rc2 =
-            cmp_x_pt_ce(p, curr->next()->curve(), ARR_MAX_END);
-          if (rc1 == opposite(rc2)) ++num_intersections;
+        if (curr->direction() == ARR_LEFT_TO_RIGHT) {
+          Arr_parameter_space ps_y_1 = ps_y_op(curr->curve(), ARR_MAX_END);
+          Arr_parameter_space ps_y_2 = ps_y_op(curr->next()->curve(),
+                                               ARR_MAX_END);
+          if ((ps_y_1 == ARR_TOP_BOUNDARY) && (ps_y_2 == ARR_TOP_BOUNDARY)) {
+            // Compare the x-coordinates:
+            Comparison_result rc1 =
+              cmp_x_pt_ce(p, curr->curve(), ARR_MAX_END);
+            Comparison_result rc2 =
+              cmp_x_pt_ce(p, curr->next()->curve(), ARR_MAX_END);
+            if (rc1 == opposite(rc2)) ++num_intersections;
+          }
         }
         curr = curr->next();
         continue;
       }
-          
+
       /* If the current halfedge belongs to an "antenna". Namely, its
        * incident face is the same as its twin's, skip it to avoid counting
        * it twice.
@@ -286,7 +295,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       const Halfedge* opp_he = curr->opposite();
       const Face* opp_curr_face = (opp_he->is_on_inner_ccb()) ?
         opp_he->inner_ccb()->face() : opp_he->outer_ccb()->face();
-      
+
       if (curr_face == opp_curr_face) {
         curr = curr->next();
         continue;
@@ -296,7 +305,8 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       if (curr->direction() == ARR_LEFT_TO_RIGHT) {
         ind_source = ARR_MIN_END;
         ind_target = ARR_MAX_END;
-      } else {
+      }
+      else {
         ind_source = ARR_MAX_END;
         ind_target = ARR_MIN_END;
       }
@@ -306,13 +316,13 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 
       ps_y_source = ps_y_op(curr->curve(), ind_source);
       ps_y_target = ps_y_op(curr->curve(), ind_target);
-      
-      if (ps_x_p != ARR_INTERIOR) {
+
+      if (!p_is_interior_x) {
         if (ps_x_source == ps_x_target) {
           curr = curr->next();
           continue;
         }
-        
+
         if (ps_x_target != ARR_INTERIOR) {
           change_pending = true;
           ps_x_pending = (ps_x_target == ARR_LEFT_BOUNDARY) ?
@@ -340,14 +350,14 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       res_source = (ps_x_source == ARR_LEFT_BOUNDARY) ? LARGER :
         (ps_x_source == ARR_RIGHT_BOUNDARY) ? SMALLER :
         (ps_y_source == ARR_INTERIOR) ?
-          cmp_x_op(p, curr->opposite()->vertex()->point()) :
-          cmp_x_pt_ce(p, curr->curve(), ind_source);
-      
+        cmp_x_op(p, curr->opposite()->vertex()->point()) :
+        cmp_x_pt_ce(p, curr->curve(), ind_source);
+
       res_target = (ps_x_target == ARR_LEFT_BOUNDARY) ? LARGER :
         (ps_x_target == ARR_RIGHT_BOUNDARY) ? SMALLER :
         (ps_y_target == ARR_INTERIOR) ?
-          cmp_x_op(p, curr->vertex()->point()) :
-          cmp_x_pt_ce(p, curr->curve(), ind_target);
+        cmp_x_op(p, curr->vertex()->point()) :
+        cmp_x_pt_ce(p, curr->curve(), ind_target);
 
       /* If a vertical ray is shot from p upward, the x-monotone curve
        * associated with curr is hit once.
@@ -383,7 +393,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
     } while (curr != first);
 
     if (last_pending) {
-      if (ps_x_p != ARR_INTERIOR) {
+      if (!p_is_interior_x) {
         if (ps_x_last == ps_x_target) {
           Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
           if (res_y_at_x == EQUAL) return false;
@@ -409,17 +419,17 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 }
 
 /*! \brief compares the relative y-position of a point and a halfedge */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 Comparison_result
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 compare_y_at_x(const Point_2& p, const Halfedge* he) const
 {
   // std::cout << "compare_y_at_x(Point_2&,Halfedge*)" << std::endl;
-  return m_traits->compare_y_at_x_2_object()(p, he->curve());
+  return m_geom_traits->compare_y_at_x_2_object()(p, he->curve());
 }
 
 /*! \brief determine whether a vertex is associated with a curve end */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 are_equal(const Vertex* v,
           const X_monotone_curve_2& xc, Arr_curve_end ind,
@@ -439,9 +449,9 @@ are_equal(const Vertex* v,
   if (ps_y != v->parameter_space_in_y()) return false;
 
   if (ps_y != ARR_INTERIOR) return (ps_y == v->parameter_space_in_y());
-  
+
   if (((ps_x == ARR_INTERIOR) && (v->parameter_space_in_x() != ARR_INTERIOR)) ||
-      ((ps_x != ARR_INTERIOR) && (v->parameter_space_in_x() == ARR_INTERIOR))) 
+      ((ps_x != ARR_INTERIOR) && (v->parameter_space_in_x() == ARR_INTERIOR)))
     return false;
 
   CGAL_assertion(ps_x != ARR_INTERIOR);
@@ -450,13 +460,13 @@ are_equal(const Vertex* v,
    */
   const Point_2& p1 = v->point();
   const Point_2& p2 = (ind == ARR_MIN_END) ?
-    m_traits->construct_min_vertex_2_object()(xc) :
-    m_traits->construct_max_vertex_2_object()(xc);
-  return (m_traits->compare_y_on_boundary_2_object()(p1, p2) == EQUAL);
+    m_geom_traits->construct_min_vertex_2_object()(xc) :
+    m_geom_traits->construct_max_vertex_2_object()(xc);
+  return (m_geom_traits->compare_y_on_boundary_2_object()(p1, p2) == EQUAL);
 }
 
 /*! \brief receives a notification on the creation of a new boundary vertex */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 void
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 notify_on_boundary_vertex_creation(Vertex* v,
@@ -477,37 +487,38 @@ notify_on_boundary_vertex_creation(Vertex* v,
   }
   CGAL_assertion(ps_x != ARR_INTERIOR);
   const Point_2& key = (ind == ARR_MIN_END) ?
-    m_traits->construct_min_vertex_2_object()(xc) :
-    m_traits->construct_max_vertex_2_object()(xc);
+    m_geom_traits->construct_min_vertex_2_object()(xc) :
+    m_geom_traits->construct_max_vertex_2_object()(xc);
   m_boundary_vertices.insert(Vertex_value(key, v));
 }
 
-template <class GeomTraits, class Dcel>
-bool
-Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
+template <typename GeomTraits, typename Dcel>
+bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
                             std::pair< CGAL::Sign, CGAL::Sign> signs2,
-                            bool& swap_predecessors) const {
-  
-    CGAL_precondition(signs1.second == CGAL::ZERO); // no perimetric in top-bottom for first loop
-    CGAL_precondition(signs2.second == CGAL::ZERO); // no perimetric in top-bottom for second loop
+                            bool& swap_predecessors) const
+{
+  // no perimetric in top-bottom for first loop
+  CGAL_precondition(signs1.second == CGAL::ZERO);
 
-    // choose prev1 to define outer ccb of new face if it is a non-perimetric loop,
-    // otherwise choose prev2
-    // TODO what if both are non-zero? does it occur?
-    // TODO EBEB check this!!!!
-    swap_predecessors = (signs2.first != CGAL::POSITIVE);
+  // no perimetric in top-bottom for second loop
+  CGAL_precondition(signs2.second == CGAL::ZERO);
 
-    // but only if the at least one of the loops is perimetric, otherwise return false
-    // to let leftmost-vertex decide which becomes part of the new outer ccb
-    return signs1.first != CGAL::ZERO || signs2.first != CGAL::ZERO;
-  }
+  // choose prev1 to define outer ccb of new face if it is a non-perimetric loop,
+  // otherwise choose prev2
+  // TODO what if both are non-zero? does it occur?
+  // TODO EBEB check this!!!!
+  swap_predecessors = (signs2.first != CGAL::POSITIVE);
 
+  // but only if the at least one of the loops is perimetric, otherwise return
+  // false to let leftmost-vertex decide which becomes part of the new outer ccb
+  return (signs1.first != CGAL::ZERO) || (signs2.first != CGAL::ZERO);
+}
 
 /*! \brief given a curve end with boundary conditions and a face that contains
  * the interior of the curve, find a place for a boundary vertex that will
  * represent the curve end along the face boundary */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 CGAL::Object
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 place_boundary_vertex(Face* /* f */,
@@ -528,8 +539,8 @@ place_boundary_vertex(Face* /* f */,
   CGAL_assertion((ps_x == ARR_LEFT_BOUNDARY) || (ps_x == ARR_RIGHT_BOUNDARY));
 
   const Point_2& key = (ind == ARR_MIN_END) ?
-    m_traits->construct_min_vertex_2_object()(xc) :
-    m_traits->construct_max_vertex_2_object()(xc);
+    m_geom_traits->construct_min_vertex_2_object()(xc) :
+    m_geom_traits->construct_max_vertex_2_object()(xc);
   typename Vertex_map::iterator it = m_boundary_vertices.find(key);
 
   if (it != m_boundary_vertices.end()) {
@@ -539,12 +550,12 @@ place_boundary_vertex(Face* /* f */,
 
   // The vertex hasn't been created yet, return a null object:
   return Object();
-}  
+}
 
 /*! \brief locate the predecessor halfedge for the given curve around a given
  * vertex with boundary conditions. */
-template <class GeomTraits, class Dcel>
-typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge* 
+template <typename GeomTraits, typename Dcel>
+typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*
 Arr_spherical_topology_traits_2<GeomTraits,Dcel>::
 locate_around_boundary_vertex(Vertex* v,
                               const X_monotone_curve_2& xc,
@@ -569,7 +580,7 @@ locate_around_boundary_vertex(Vertex* v,
 }
 
 /*! \brief locates a DCEL feature that contains a given curve end. */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 CGAL::Object Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
                  Arr_parameter_space ps_x, Arr_parameter_space ps_y)
@@ -584,7 +595,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
   }
 
   typename Vertex_map::iterator it;
-  Vertex*                       v = NULL;
+  Vertex* v = NULL;
 
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // In case the curve end coincides with the south pole, return the vertex
@@ -600,8 +611,8 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     // discontinuity. If so, return this vertex. Otherwise, locate the first
     // vertex above it.
     const Point_2& key = (ind == ARR_MIN_END) ?
-      m_traits->construct_min_vertex_2_object()(xc) :
-      m_traits->construct_max_vertex_2_object()(xc);
+      m_geom_traits->construct_min_vertex_2_object()(xc) :
+      m_geom_traits->construct_max_vertex_2_object()(xc);
     it = m_boundary_vertices.find(key);
     if (it != m_boundary_vertices.end()) {
       v = it->second;
@@ -617,19 +628,19 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
   // we return the face that lies below the vertex v.
   if (it == m_boundary_vertices.end())
     return CGAL::make_object(m_spherical_face);
-  
+
   v = it->second;
   return CGAL::make_object(_face_below_vertex_on_discontinuity(v));
 }
 
 /*! \brief determines whether a given boundary vertex is redundant */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_redundant(const Vertex* v) const
 { return (v->halfedge() == NULL); }
 
 /* \brief erases a given redundant vertex */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 erase_redundant_vertex(Vertex* v)
@@ -650,9 +661,9 @@ erase_redundant_vertex(Vertex* v)
 }
 
 /*! \brief obtains the curve associated with a boundary vertex */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 const typename
-Arr_spherical_topology_traits_2<GeomTraits, Dcel>::X_monotone_curve_2& 
+Arr_spherical_topology_traits_2<GeomTraits, Dcel>::X_monotone_curve_2&
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 _curve(const Vertex* v, Arr_curve_end& ind) const
 {
@@ -666,7 +677,7 @@ _curve(const Vertex* v, Arr_curve_end& ind) const
  * the predecessor of a halfedge, the curve of which is given, that is about
  * to be inserted into the dcel.
  */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 _locate_around_vertex_on_discontinuity(Vertex* v,
@@ -689,11 +700,11 @@ _locate_around_vertex_on_discontinuity(Vertex* v,
   // Otherwise, we traverse the halfedges around v until we find the pair
   // of adjacent halfedges between which we should insert xc.
   typename Traits_adaptor_2::Is_between_cw_2 is_between_cw =
-    m_traits->is_between_cw_2_object();
+    m_geom_traits->is_between_cw_2_object();
   bool eq_curr, eq_next;
 
-  while (!is_between_cw(xc, (ind == ARR_MIN_END), curr->curve(), 
-                        (curr->direction() == ARR_RIGHT_TO_LEFT), next->curve(), 
+  while (!is_between_cw(xc, (ind == ARR_MIN_END), curr->curve(),
+                        (curr->direction() == ARR_RIGHT_TO_LEFT), next->curve(),
                         (next->direction() == ARR_RIGHT_TO_LEFT), v->point(),
                         eq_curr, eq_next))
   {
@@ -717,18 +728,17 @@ _locate_around_vertex_on_discontinuity(Vertex* v,
  * that is the predecessor of a halfedge, the curve of which is given, that
  * is about to be inserted into the dcel.
  */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Halfedge*
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 _locate_around_pole(Vertex* v,
                     const X_monotone_curve_2& xc, Arr_curve_end ind) const
 {
-  CGAL_assertion(v == m_south_pole || v == m_north_pole);
+  CGAL_assertion((v == m_south_pole) || (v == m_north_pole));
 
   // std::cout << "locate_around_pole() " << ind << std::endl;
   // If the vertex is isolated, return a null halfedge:
-  if (v->is_isolated())
-    return NULL;
+  if (v->is_isolated()) return NULL;
 
   // Get the first incident halfedge around v and the next halfedge:
   Halfedge* first = v->halfedge();
@@ -743,15 +753,15 @@ _locate_around_pole(Vertex* v,
   // pole, the result LARGER (resp. SMALLER) indicates that the line of
   // discontinuity is located in between the two curves.
   const Comparison_result cross_res = (v == m_south_pole) ? LARGER : SMALLER;
-  
+
   // Traverse all other halfedges, and compare their x-positions next to the
   // pole with the query curve xc.
   typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
-    m_traits->compare_x_curve_ends_2_object();
+    m_geom_traits->compare_x_curve_ends_2_object();
   Arr_curve_end curr_end, next_end;
   Comparison_result curr_res, next_res;
   Comparison_result curr_next_res;
-  
+
   curr_end =
     (curr->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
   curr_res = cmp_x_curve_ends(xc, ind, curr->curve(), curr_end);
@@ -787,14 +797,13 @@ _locate_around_pole(Vertex* v,
 /*! \brief Return the face that lies below the given vertex, which lies
  * on the line of discontinuity.
  */
-template <class GeomTraits, class Dcel>
+template <typename GeomTraits, typename Dcel>
 typename Arr_spherical_topology_traits_2<GeomTraits, Dcel>::Face*
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 _face_below_vertex_on_discontinuity(Vertex* v) const
 {
   // If the vertex is isolated, just return the face that contains it.
-  if (v->is_isolated())
-    return (v->isolated_vertex()->face());
+  if (v->is_isolated()) return (v->isolated_vertex()->face());
 
   // Get the first incident halfedge around v and the next halfedge.
   Halfedge* first = v->halfedge();
@@ -811,9 +820,9 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   // halfedge we encounter if we go from "6 o'clock" clockwise.
   // First locate the lower left and the top right halfedges around v.
   typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_y_at_x_op_right =
-    m_traits->compare_y_at_x_right_2_object();
+    m_geom_traits->compare_y_at_x_right_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_left_2  cmp_y_at_x_op_left =
-    m_traits->compare_y_at_x_left_2_object();
+    m_geom_traits->compare_y_at_x_left_2_object();
 
   Halfedge* lowest_left = NULL;
   Halfedge* top_right = NULL;
@@ -847,7 +856,7 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   } while (curr != first);
 
   // The first halfedge we encounter is the lowest to the left, but if there
-  // is no edge to the left, we first encounter the topmost halfedge to the 
+  // is no edge to the left, we first encounter the topmost halfedge to the
   // right. Note that as the halfedge we located has v as its target, we now
   // have to return its twin.
   first =
@@ -863,7 +872,6 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   return ((first->is_on_inner_ccb()) ?
           first->inner_ccb()->face() : first->outer_ccb()->face());
 }
-
 
 } //namespace CGAL
 

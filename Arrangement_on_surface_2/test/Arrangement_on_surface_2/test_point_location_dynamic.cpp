@@ -103,6 +103,7 @@ int main(int argc, char* argv[])
     std::cout << "xcurve-file  - the input x-monotone curves file" << std::endl;
     std::cout << "command-file - the command file" << std::endl;
     std::cout << "curve-file   - the input curve file" << std::endl;
+    std::cerr << "query-file  - the input query point file" << std::endl;
     return -1;
   }
 

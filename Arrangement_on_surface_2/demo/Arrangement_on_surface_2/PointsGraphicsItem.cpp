@@ -28,9 +28,9 @@ PointsGraphicsItem::PointsGraphicsItem( ) :
   color( ::Qt::blue )
 { }
 
-void PointsGraphicsItem::paint( QPainter* painter,
-                                const QStyleOptionGraphicsItem* option,
-                                QWidget* widget )
+void PointsGraphicsItem::paint(QPainter* painter,
+                               const QStyleOptionGraphicsItem* /* option */,
+                               QWidget* /* widget */)
 {
   double scale = painter->worldTransform( ).m11( );
   double radius = this->pointRadius;
@@ -53,19 +53,19 @@ QRectF PointsGraphicsItem::boundingRect( ) const
   {
     return QRectF( );
   }
-  double xmin = std::numeric_limits< double >::max( );
-  double xmax = -std::numeric_limits< double >::max( );
-  double ymin = std::numeric_limits< double >::max( );
-  double ymax = -std::numeric_limits< double >::max( );
-  for ( unsigned int i = 0; i < this->points.size( ); ++i )
+  double xmin = (std::numeric_limits< double >::max)( );
+  double xmax = -(std::numeric_limits< double >::max)( );
+  double ymin = (std::numeric_limits< double >::max)( );
+  double ymax = -(std::numeric_limits< double >::max)( );
+  for ( unsigned int i = 0; i < this->points.size(); ++i )
   {
     QPointF pt = this->points[ i ];
     double x = pt.x( );
     double y = pt.y( );
-    xmin = std::min( xmin, x );
-    xmax = std::max( xmax, x );
-    ymin = std::min( ymin, y );
-    ymax = std::max( ymax, y );
+    xmin = (std::min)( xmin, x );
+    xmax = (std::max)( xmax, x );
+    ymin = (std::min)( ymin, y );
+    ymax = (std::max)( ymax, y );
   }
   QRectF res( QPointF( xmin, ymin ), QPointF( xmax, ymax ) );
   res.adjust( -5, -5, 5, 5 ); // pad the borders a bit

@@ -17,8 +17,9 @@
 //
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
-#ifndef CGAL_ARR_LM_MIDDLE_EDGES_GENERATOR_H
-#define CGAL_ARR_LM_MIDDLE_EDGES_GENERATOR_H
+
+#ifndef CGAL_ARR_LANDMARKS_MIDDLE_EDGES_GENERATOR_H
+#define CGAL_ARR_LANDMARKS_MIDDLE_EDGES_GENERATOR_H
 
 /*! \file
 * Definition of the Arr_middle_edges_landmarks_generator<Arrangement> template.
@@ -81,7 +82,10 @@ private:
   Self& operator=(const Self&);
 
 public:
-  /*! Constructor. */
+  /*! Constructor from an arrangement.
+   * \param arr(in) The arrangement.
+   * \param lm_num(in)
+   */
   Arr_middle_edges_landmarks_generator(const Arrangement_2& arr,
                                        int /* lm_num */ = -1) :
     Base(arr)
@@ -93,20 +97,19 @@ public:
   // Observer functions that should be empty, because they
   // got nothing to do with middle edges
   //-------------------------------------------------
-  virtual void after_create_vertex (Vertex_handle /* v */) {}
-  virtual void after_split_face (Face_handle /* f */,
-                                 Face_handle /* new_f */, bool /* is_hole */)
+  virtual void after_create_vertex(Vertex_handle /* v */) {}
+  virtual void after_split_face(Face_handle /* f */,
+                                Face_handle /* new_f */, bool /* is_hole */)
   {}
-  virtual void after_add_hole (Ccb_halfedge_circulator /* h */) {}
+  virtual void after_add_hole(Ccb_halfedge_circulator /* h */) {}
 
-  virtual void after_merge_face (Face_handle /* f */) {}
-  virtual void after_move_hole (Ccb_halfedge_circulator /* h */) {}
-  virtual void after_remove_vertex () {}
-  virtual void after_remove_hole (Face_handle /* f */) {}
+  virtual void after_merge_face(Face_handle /* f */) {}
+  virtual void after_move_hole(Ccb_halfedge_circulator /* h */) {}
+  virtual void after_remove_vertex() {}
+  virtual void after_remove_hole(Face_handle /* f */) {}
 
 protected:
-  /*!
-   * create a set of middle_edges points
+  /*! Create a set of middle_edges points
    * the number of points is equal to the number of edges in the arrangement.
    */
   virtual void _create_nn_points_set(NN_Points_set& nn_points)
@@ -116,12 +119,11 @@ protected:
     Halfedge_const_handle  hh;
     Arrangement_2* arr = this->arrangement();
 
-    if (arr->number_of_vertices() == 1)
-    {
+    if (arr->number_of_vertices() == 1) {
       //special treatment for arrangement with one isolated verrtex
       Vertex_const_iterator vit = arr->vertices_begin();
       PL_result_type obj = this->pl_make_result(vit);
-      Point_2 p (vit->point());
+      Point_2 p(vit->point());
       NN_Point_2 np(p, obj);
       nn_points.push_back(np);
 
@@ -132,7 +134,7 @@ protected:
       hh = eit;
       const Point_2& p1 = hh->source()->point();
       const Point_2& p2 = hh->target()->point();
-      Point_2 p ((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
+      Point_2 p((p1.x()+p2.x())/2, (p1.y()+p2.y())/2);
 
       //CGAL_PRINT_DEBUG("mid point is= " << p);
 
@@ -142,9 +144,9 @@ protected:
     }
   }
 
-  virtual void _create_points_set (Points_set & /* points */)
+  virtual void _create_points_set(Points_set& /* points */)
   {
-    std::cerr << "should not reach here!"<< std::endl;
+    std::cerr << "should not reach here!" << std::endl;
     CGAL_error();
   }
 };
