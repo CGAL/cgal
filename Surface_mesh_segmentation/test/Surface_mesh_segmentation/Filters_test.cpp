@@ -23,7 +23,7 @@ int main(void)
 	Polyhedron mesh;
 	if( !read_to_polyhedron("./data/cactus.off", mesh) ) { return 1; }
 		
-	typedef std::map< typename Polyhedron::Facet_const_handle, double> Facet_double_map;
+	typedef std::map< Polyhedron::Facet_const_handle, double> Facet_double_map;
     Facet_double_map internal_1;
     boost::associative_property_map<Facet_double_map> value_pmap_1(internal_1);
 	
