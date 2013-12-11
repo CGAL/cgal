@@ -30,6 +30,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <boost/shared_ptr.hpp>
 
 // For the Weighted_converter
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
@@ -88,7 +89,7 @@ private:
 
 public:
   typedef Anchor_point                                  Vertex_info;
-  typedef std::pair<Simplex, Quadratic_surface *>       Cell_info;
+  typedef std::pair<Simplex, boost::shared_ptr<Quadratic_surface> >       Cell_info;
 
 private:
   // Triangulated_mixed_complex:
