@@ -884,10 +884,11 @@ void test_In_place_list() {
     assert( l.size() == 5);
     assert( std::equal( l.begin(), l.end(), b));
   }
+
   {
     typedef CGAL::In_place_list<Cont,false> ContList;
     typedef CGAL::In_place_list<Cont,false>::iterator Iterator;
-
+  
     ContList L;
     L.push_back(* new Cont(3));
     L.push_back(* new Cont(5));
@@ -900,7 +901,10 @@ void test_In_place_list() {
     for (++it2; it2 != L.end(); it1=it2, ++it2) {
       assert( (*it1).i_ <= (*it2).i_ );
     }
+    
+    L.destroy();
   }
+
 }
 
 int main() {
