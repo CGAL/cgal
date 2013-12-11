@@ -408,7 +408,7 @@ public:
   // -----------------------------------
 
 
-private:
+public:
   typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
 
 private:
@@ -452,6 +452,9 @@ private:
     return Iso_cuboid_3(p_min,p_max);
   }
   
+public:
+  const Iso_cuboid_3& periodic_cuboid() const { return bounding_box(); }
+
 protected:
   /// Returns bounding box
   const Iso_cuboid_3& bounding_box() const { return bbox_; }

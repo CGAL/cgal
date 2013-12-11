@@ -55,6 +55,8 @@ public:
 
   /// Public types
   typedef typename Base::Sphere_3 Sphere_3;
+  typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
+  typedef typename Base::Bbox_3 Bbox_3;
   typedef typename Base::FT FT;
   typedef BGT Geom_traits;
 
@@ -67,11 +69,23 @@ public:
   Implicit_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
                          const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), bounding_sphere, error_bound)  {}
+    : Base(Wrapper(f), bounding_sphere, error_bound) {}
+
+  /**
+   * Constructor
+   * @param f the function which negative values defines the domain
+   * @param bbox a bounding box of the domain, periodic domain
+   * @param error_bound the error bound relative to the sphere radius
+   */
+  Implicit_mesh_domain_3(Function& f,
+                         const Bbox_3& bbox,
+                         const FT& error_bound = FT(1e-3))
+    : Base(Wrapper(f), bbox, error_bound) {}
 
   /// Destructor
   virtual ~Implicit_mesh_domain_3() {}
 
+  const Iso_cuboid_3& periodic_cuboid() const { return Base::bounding_box(); }
 
 private:
   // Disabled copy constructor & assignment operator
