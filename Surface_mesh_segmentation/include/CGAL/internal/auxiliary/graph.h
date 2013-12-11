@@ -683,13 +683,13 @@ inline Graph::~Graph()
 
   while (arc_for_block_first) {
     arc_for_block *next = arc_for_block_first -> next;
-    delete arc_for_block_first -> start;
+    delete[] arc_for_block_first -> start;
     arc_for_block_first = next;
   }
 
   while (arc_rev_block_first) {
     arc_rev_block *next = arc_rev_block_first -> next;
-    delete arc_rev_block_first -> start;
+    delete[] arc_rev_block_first -> start;
     arc_rev_block_first = next;
   }
 }
