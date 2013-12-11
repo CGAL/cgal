@@ -15,7 +15,7 @@ namespace CGAL
 /// @cond SKIP_IN_MANUAL
 template <bool Fast_sdf_calculation_mode, class Polyhedron,
          class SDFPropertyMap, class GeomTraits
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
          = typename Polyhedron::Traits
 #endif
          >
@@ -58,7 +58,7 @@ sdf_values( const Polyhedron& polyhedron,
  * @return minimum and maximum raw SDF values if @a postprocess is `true`, otherwise minimum and maximum SDF values (before linear normalization)
  */
 template <class Polyhedron, class SDFPropertyMap, class GeomTraits
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
 = typename Polyhedron::Traits
 #endif
 >
@@ -146,7 +146,7 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  */
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
          class GeomTraits
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
          = typename Polyhedron::Traits
 #endif
          >
@@ -168,7 +168,7 @@ segmentation_from_sdf_values( const Polyhedron& polyhedron,
 ///\cond SKIP_IN_MANUAL
 template < bool Fast_sdf_calculation_mode, class Polyhedron,
          class SegmentPropertyMap, class GeomTraits
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
          = typename Polyhedron::Traits
 #endif
          >
@@ -229,7 +229,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @return number of segments if `output_cluster_ids` is set to `false` and `number_of_clusters` otherwise
  */
 template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
-#ifndef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
 = typename Polyhedron::Traits
 #endif
 >
@@ -249,7 +249,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
 }
 
 
-#ifdef BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#ifdef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
 template <bool Fast_sdf_calculation_mode, class Polyhedron, class SDFPropertyMap>
 std::pair<double, double>
 sdf_values(const Polyhedron& polyhedron,
