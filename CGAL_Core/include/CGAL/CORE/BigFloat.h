@@ -106,6 +106,12 @@ public:
   explicit BigFloat(BigFloatRep* r) : RCBigFloat(new BigFloatRep()) {
     rep = r;
   }
+
+  // constructor for exp2
+  explicit BigFloat(BigFloatRep* r, bool) : RCBigFloat(r) {
+  }
+
+
   //@}
 
   /// \name Copy-Assignment-Destructor
@@ -380,7 +386,7 @@ public:
 
   /// returns a BigFloat of value \f$ 2^e \f$
   static BigFloat exp2(int e) {
-    return BigFloat(BigFloatRep::exp2(e));
+    return BigFloat(BigFloatRep::exp2(e),true);
   }
 
 }; // class BigFloat
