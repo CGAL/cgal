@@ -22,7 +22,10 @@
 #include <CGAL/basic.h> // include basic.h before testing #defines
 
 #include <Eigen/Sparse>
+#include <Eigen/src/Core/util/Macros.h>
+#if EIGEN_VERSION_AT_LEAST(3,2,0)
 #include <Eigen/SparseLU>
+#endif
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <boost/shared_ptr.hpp>
@@ -46,10 +49,12 @@ namespace internal {
     typedef Eigen_sparse_symmetric_matrix<FT> type;
   };
 
+  #if EIGEN_VERSION_AT_LEAST(3,2,0)
   template <class FT, class EigenMatrix, class EigenOrdering>
   struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT> {
     typedef Eigen_sparse_matrix<FT> type;
   };
+  #endif
 } //internal 
   
 /// The class Eigen_solver_traits

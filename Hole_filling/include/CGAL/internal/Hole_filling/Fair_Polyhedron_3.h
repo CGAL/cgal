@@ -11,11 +11,6 @@
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
-#if defined(CGAL_SUPERLU_ENABLED)
-#include <Eigen/SuperLUSupport>
-#else
-#include <Eigen/SparseLU>
-#endif
 #endif
 
 namespace CGAL {
@@ -38,10 +33,14 @@ struct Fair_default_sparse_linear_solver {
   #if defined(CGAL_SUPERLU_ENABLED)
     CGAL::Eigen_solver_traits<Eigen::SuperLU<CGAL::Eigen_sparse_matrix<double>::EigenType> >
   #else
+    #if EIGEN_VERSION_AT_LEAST(3,2,0)
     CGAL::Eigen_solver_traits<
       Eigen::SparseLU<
         CGAL::Eigen_sparse_matrix<double>::EigenType,
         Eigen::COLAMDOrdering<int> >  >
+    #else
+    Fair_default_sparse_linear_solver // dummy type to make it compile
+    #endif
   #endif
 #else
   Fair_default_sparse_linear_solver // dummy type to make it compile
