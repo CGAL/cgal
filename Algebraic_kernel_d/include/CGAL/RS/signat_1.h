@@ -23,6 +23,7 @@
 #include <CGAL/Polynomial_traits_d.h>
 #include "exact_signat_1.h"
 //#include <boost/mpl/assert.hpp>
+#include <gmp.h>
 
 namespace CGAL{
 namespace RS_AK1{
@@ -58,8 +59,14 @@ Signat_1<Polynomial_,Bound_>::operator()(const Bound_ &x)const{
 template <>
 inline CGAL::Sign
 Signat_1<Polynomial<Gmpz>,Gmpfr>::operator()(const Gmpfr &x)const{
-        //typedef Signat_1<Polynomial,Gmpq>                       Exact_sign;
+        // In 32-bit systems, using Gmpfr arithmetic to perform exact
+        // evaluations can overflow. For that reason, we only use Gmpfr
+        // arithmetic in 64-bit systems.
+#if (GMP_LIMB_BITS==64)
         typedef ExactSignat_1<Polynomial,Gmpfr>                 Exact_sign;
+#else
+        typedef Signat_1<Polynomial,Gmpq>                       Exact_sign;
+#endif
         // This seems to work faster for small polynomials:
         // return Exact_sign(pol)(x);
         int d=Degree()(pol);
