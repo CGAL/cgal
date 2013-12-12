@@ -56,7 +56,7 @@ read_xcurve(stream& is, typename T_Geom_traits::X_monotone_curve_2& xcv)
 {
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
-  CGAL_assertion(!is.bad());
+  CGAL_assertion(!is.fail());
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);

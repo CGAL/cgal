@@ -17,7 +17,7 @@ int main()
     std::ifstream in("data/weighted_points_3");
     CGAL_assertion(in.good());
     in >> *tr.active_points_3_table_handle();
-    CGAL_assertion(!in.bad());
+    CGAL_assertion(!in.fail());
 
     std::cout << *tr.active_points_3_table_handle();
 

@@ -413,7 +413,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     ss<<CGAL::oformat(alg1);			\
     CGAL_assertion(ss.good());                  \
     ss>>CGAL::iformat(alg2);			\
-    CGAL_assertion(!ss.bad());                  \
+    CGAL_assertion(!ss.fail());                  \
     ss.clear();                                 \
     assert(alg1==alg2)
     // Note: after the reading ss>>CGAL::iformat(alg2) the state of ss can

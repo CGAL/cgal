@@ -23,7 +23,7 @@ bool read_data(int argc, char *argv[], Number_Type &prec, Seg_list &seg_list)
 
   std::ifstream is(argv[1]);
 
-  if (is.bad()) {
+  if (is.fail()) {
     std::cerr << "Bad input file : " << argv[1] << std::endl;
     return false;
   }

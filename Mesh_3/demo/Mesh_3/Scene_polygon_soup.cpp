@@ -143,7 +143,7 @@ Scene_polygon_soup::load(std::istream& in)
   }
   soup->fill_edges();
   oriented = false;
-  return ! in.bad();
+  return ! in.fail();
 }
 
 void
@@ -318,7 +318,7 @@ Scene_polygon_soup::save(std::ostream& out) const
   }
   writer.write_footer();
 
-  return ! out.bad();
+  return ! out.fail();
 }
 
 QString 
