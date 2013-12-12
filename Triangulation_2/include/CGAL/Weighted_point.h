@@ -129,6 +129,7 @@ operator>>(std::istream &is, Weighted_point<Point,Weight> &wp)
   Weight w;
   Point p;
   is >> p;
+  if(!is) return is;
   if(is_ascii(is))
     is >> w;
   else
