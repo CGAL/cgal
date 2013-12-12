@@ -20,8 +20,9 @@ typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
 #ifdef CGAL_CONCURRENT_MESH_3
   typedef CGAL::Mesh_triangulation_3<
     Mesh_domain,
-    CGAL::Kernel_traits<Mesh_domain>::Kernel,
-    CGAL::Parallel_tag>::type Tr;
+    CGAL::Kernel_traits<Mesh_domain>::Kernel, // Same as sequential
+    CGAL::Parallel_tag                        // Tag to activate parallelism
+  >::type Tr;
 #else
   typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 #endif
