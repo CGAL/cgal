@@ -462,6 +462,10 @@ template<> struct Int_to_ptr<sizeof(int)> {
 template<> struct Int_to_ptr<sizeof(long)> {
   typedef long type;
 };
+#else
+template<> struct Int_to_ptr<sizeof(long long)> {
+  typedef long long type;
+};
 #endif
 
 
