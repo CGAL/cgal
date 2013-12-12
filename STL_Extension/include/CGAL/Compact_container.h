@@ -138,7 +138,7 @@ namespace internal {
   public:
     // Do nothing
     template <typename Element>
-    static unsigned int get_erase_counter(const Element &) { return 0; }
+    static unsigned int erase_counter(const Element &) { return 0; }
     template <typename Element>
     static void set_erase_counter(Element &, unsigned int) {}
     template <typename Element>
@@ -152,9 +152,9 @@ namespace internal {
   {
   public:
     template <typename Element>
-    static unsigned int get_erase_counter(const Element &e)
+    static unsigned int erase_counter(const Element &e)
     {
-      return e.get_erase_counter();
+      return e.erase_counter();
     }
 
     template <typename Element>

@@ -45,7 +45,7 @@ class Mesh_vertex_base_3_base
 
 public:
   // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
+  unsigned int erase_counter() const
   {
     return this->m_erase_counter;
   }
@@ -72,7 +72,7 @@ class Mesh_vertex_base_3_base<Parallel_tag>
 public:
   
   // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
+  unsigned int erase_counter() const
   {
     return this->m_erase_counter;
   }

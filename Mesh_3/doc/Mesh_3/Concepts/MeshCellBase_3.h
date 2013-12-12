@@ -137,7 +137,7 @@ void invalidate_circumcenter();
 /// Get the erase counter. 
 /// Only required by the parallel algorithms.
 /// See `CGAL::Compact_container` for more details.
-unsigned int get_erase_counter() const;
+unsigned int erase_counter() const;
 
 /// Sets the erase counter. 
 /// Only required by the parallel algorithms.

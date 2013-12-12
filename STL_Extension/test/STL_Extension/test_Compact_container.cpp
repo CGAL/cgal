@@ -18,7 +18,7 @@ struct Node_1
   bool operator< (const Node_1 &) const { return false; }
 
   // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
+  unsigned int erase_counter() const
   {
     return this->m_erase_counter;
   }

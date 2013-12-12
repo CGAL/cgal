@@ -222,7 +222,7 @@ PVertex_()
 PVertex_(const Vertex_handle& vh, id_type id)
 : vertex_handle_(vh)
 , in_dimension_(vh->in_dimension())
-, vh_erase_counter_when_added_(vh->get_erase_counter())
+, vh_erase_counter_when_added_(vh->erase_counter())
 , incident_sliver_nb_(0)
 , min_value_(SliverCriterion::max_value)
 , try_nb_(0)
@@ -239,7 +239,7 @@ void set_vertex(const Vertex_handle& vh)
 }
 void update_saved_erase_counter()
 {
-  vh_erase_counter_when_added_ = vertex_handle_->get_erase_counter();
+  vh_erase_counter_when_added_ = vertex_handle_->erase_counter();
 }
 
 int in_dimension() const { return in_dimension_; }
@@ -276,7 +276,7 @@ id_type id() const { return id_; }
 /// Zombie
 bool is_zombie() const
 {
-  return vertex_handle_->get_erase_counter() != vh_erase_counter_when_added_;
+  return vertex_handle_->erase_counter() != vh_erase_counter_when_added_;
 }
 
 /// Operators

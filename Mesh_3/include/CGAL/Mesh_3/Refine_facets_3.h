@@ -105,9 +105,9 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
       Facet, unsigned int, Facet, unsigned int> &f) const
     {
 #ifdef _DEBUG
-      int f1_current_erase_counter = boost::get<0>(f).first->get_erase_counter();
+      int f1_current_erase_counter = boost::get<0>(f).first->erase_counter();
       int f1_saved_erase_counter = boost::get<1>(f);
-      int f2_current_erase_counter = boost::get<2>(f).first->get_erase_counter();
+      int f2_current_erase_counter = boost::get<2>(f).first->erase_counter();
       int f2_saved_erase_counter = boost::get<3>(f);
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
@@ -139,8 +139,8 @@ struct Get_Is_facet_bad<Facet_criteria, true> {
         //std::cerr << s << std::endl;
       }*/
 #endif
-      return (boost::get<0>(f).first->get_erase_counter() == boost::get<1>(f)
-        && boost::get<2>(f).first->get_erase_counter() == boost::get<3>(f) );
+      return (boost::get<0>(f).first->erase_counter() == boost::get<1>(f)
+        && boost::get<2>(f).first->erase_counter() == boost::get<3>(f) );
     }
   };
 
@@ -174,8 +174,8 @@ protected:
                                          const Facet &mirror) const
   {
     return boost::make_tuple(
-      facet, facet.first->get_erase_counter(),
-      mirror, mirror.first->get_erase_counter());
+      facet, facet.first->erase_counter(),
+      mirror, mirror.first->erase_counter());
   }
 
 public:
@@ -233,8 +233,8 @@ protected:
                                          const Facet &mirror) const
   {
     return boost::make_tuple(
-      facet, facet.first->get_erase_counter(),
-      mirror, mirror.first->get_erase_counter());
+      facet, facet.first->erase_counter(),
+      mirror, mirror.first->erase_counter());
   }
 
 public:

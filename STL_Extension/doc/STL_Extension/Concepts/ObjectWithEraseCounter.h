@@ -14,6 +14,8 @@ class ObjectWithEraseCounter {
 public:
 /// \name Operations 
 /// @{
+  /// Gets the value of the erase counter
+  unsigned int erase_counter() const;
   /// Sets the value of the erase counter
   void set_erase_counter(unsigned int c);
   /// Increment the value of the erase counter

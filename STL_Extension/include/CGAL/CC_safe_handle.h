@@ -31,13 +31,13 @@ class CC_safe_handle
 public:
   CC_safe_handle(CC_iterator iterator)
     : m_handle(iterator)
-    , m_erase_counter_value(iterator->get_erase_counter())
+    , m_erase_counter_value(iterator->erase_counter())
   {
   }
 
   bool is_zombie() const
   {
-    return m_handle->get_erase_counter() != m_erase_counter_value;
+    return m_handle->erase_counter() != m_erase_counter_value;
   }
 
   CC_iterator cc_iterator() const

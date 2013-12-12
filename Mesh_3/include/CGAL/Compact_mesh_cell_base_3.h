@@ -50,7 +50,7 @@ public:
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
   // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
+  unsigned int erase_counter() const
   {
     return this->m_erase_counter;
   }
@@ -111,7 +111,7 @@ protected:
 
 public:
   // Erase counter (cf. Compact_container)
-  unsigned int get_erase_counter() const
+  unsigned int erase_counter() const
   {
     return this->m_erase_counter;
   }
