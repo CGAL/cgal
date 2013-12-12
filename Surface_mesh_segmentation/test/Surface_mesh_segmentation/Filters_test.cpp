@@ -6,7 +6,7 @@
 
 #include <cmath>
 #include <map>
-#include <boost/property_map/property_map.hpp>
+#include <CGAL/property_map.h>
 
 #include "Utils.h"
 

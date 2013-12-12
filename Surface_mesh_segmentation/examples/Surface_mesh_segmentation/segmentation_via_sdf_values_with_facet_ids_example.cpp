@@ -4,7 +4,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/mesh_segmentation.h>
 
-#include <boost/property_map/property_map.hpp>
+#include <CGAL/property_map.h>
 
 #include <iostream>
 #include <fstream>

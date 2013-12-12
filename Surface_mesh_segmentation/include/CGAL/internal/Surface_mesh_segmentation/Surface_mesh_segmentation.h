@@ -8,7 +8,7 @@
 
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
 
-#include <boost/property_map/property_map.hpp>
+#include <CGAL/property_map.h>
 
 #include <cmath>
 #include <vector>
