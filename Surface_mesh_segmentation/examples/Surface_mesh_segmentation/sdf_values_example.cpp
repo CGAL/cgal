@@ -32,7 +32,7 @@ int main()
 
   // It is possible to compute the raw SDF values and post-process them using
   // the following lines:
-  // const int number_of_rays = 25;  // cast 25 rays per facet
+  // const std::size_t number_of_rays = 25;  // cast 25 rays per facet
   // const double cone_angle = 2.0 / 3.0 * CGAL_PI; // set cone opening-angle
   // CGAL::sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays, false);
   // std::pair<double, double> min_max_sdf =

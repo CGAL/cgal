@@ -39,10 +39,10 @@ int main(void)
     std::cout << "Calculation time (fast traversal off): *** " << timer.time() << std::endl;
 
     timer.reset();
-    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
+    typedef std::map<Polyhedron::Facet_const_handle, std::size_t> Facet_int_map;
     Facet_int_map internal_segment_map;
     // calculate SDF values and segment the mesh using default parameters.
-    int number_of_segments = CGAL::segmentation_via_sdf_values(mesh, 
+    std::size_t number_of_segments = CGAL::segmentation_via_sdf_values(mesh, 
       boost::associative_property_map<Facet_int_map>(internal_segment_map));
     std::cout << "Number of segments: " << number_of_segments << std::endl;
     std::cout << "Calculation time (fast traversal on): *** " << timer.time() << std::endl;

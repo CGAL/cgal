@@ -23,7 +23,7 @@ std::pair<double, double>
 sdf_values( const Polyhedron& polyhedron,
             SDFPropertyMap sdf_values_map,
             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-            int number_of_rays = 25,
+            std::size_t number_of_rays = 25,
             bool postprocess = true,
             GeomTraits traits = GeomTraits())
 {
@@ -66,7 +66,7 @@ std::pair<double, double>
 sdf_values( const Polyhedron& polyhedron,
             SDFPropertyMap sdf_values_map,
             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-            int number_of_rays = 25,
+            std::size_t number_of_rays = 25,
             bool postprocess = true,
             GeomTraits traits = GeomTraits())
 {
@@ -131,7 +131,7 @@ sdf_values_postprocessing(const Polyhedron& polyhedron,
  *
  * @tparam Polyhedron a %CGAL polyhedron
  * @tparam SDFPropertyMap  a `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
- * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh corresponding to the SDF values
@@ -150,11 +150,11 @@ template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap,
          = typename Polyhedron::Traits
 #endif
          >
-int
+std::size_t
 segmentation_from_sdf_values( const Polyhedron& polyhedron,
                               SDFPropertyMap sdf_values_map,
                               SegmentPropertyMap segment_ids,
-                              int number_of_clusters = 5,
+                              std::size_t number_of_clusters = 5,
                               double smoothing_lambda = 0.26,
                               bool output_cluster_ids = false,
                               GeomTraits traits = GeomTraits())
@@ -172,12 +172,12 @@ template < bool Fast_sdf_calculation_mode, class Polyhedron,
          = typename Polyhedron::Traits
 #endif
          >
-int
+std::size_t
 segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             SegmentPropertyMap segment_ids,
                             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                            int number_of_rays = 25,
-                            int number_of_clusters = 5,
+                            std::size_t number_of_rays = 25,
+                            std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
                             bool output_cluster_ids = false,
                             GeomTraits traits = GeomTraits())
@@ -214,7 +214,7 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
  * @pre @a number_of_clusters > 0
  *
  * @tparam Polyhedron a %CGAL polyhedron
- * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type
+ * @tparam SegmentPropertyMap a `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type
  * @tparam GeomTraits a model of SegmentationGeomTraits
  *
  * @param polyhedron surface mesh on which SDF values are computed
@@ -233,12 +233,12 @@ template < class Polyhedron, class SegmentPropertyMap, class GeomTraits
 = typename Polyhedron::Traits
 #endif
 >
-int
+std::size_t
 segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             SegmentPropertyMap segment_ids,
                             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                            int number_of_rays = 25,
-                            int number_of_clusters = 5,
+                            std::size_t number_of_rays = 25,
+                            std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
                             bool output_cluster_ids = false,
                             GeomTraits traits = GeomTraits())
@@ -255,7 +255,7 @@ std::pair<double, double>
 sdf_values(const Polyhedron& polyhedron,
            SDFPropertyMap sdf_values_map,
            double cone_angle = 2.0 / 3.0 * CGAL_PI,
-           int number_of_rays = 25,
+           std::size_t number_of_rays = 25,
            bool postprocess = true,
            typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
@@ -268,7 +268,7 @@ std::pair<double, double>
 sdf_values( const Polyhedron& polyhedron,
             SDFPropertyMap sdf_values_map,
             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-            int number_of_rays = 25,
+            std::size_t number_of_rays = 25,
             bool postprocess = true,
             typename Polyhedron::Traits traits = typename Polyhedron::Traits())
 {
@@ -277,11 +277,11 @@ sdf_values( const Polyhedron& polyhedron,
 }
 
 template <class Polyhedron, class SDFPropertyMap, class SegmentPropertyMap>
-int
+std::size_t
 segmentation_from_sdf_values(const Polyhedron& polyhedron,
                              SDFPropertyMap sdf_values_map,
                              SegmentPropertyMap segment_ids,
-                             int number_of_clusters = 5,
+                             std::size_t number_of_clusters = 5,
                              double smoothing_lambda = 0.26,
                              bool output_cluster_ids = false,
                              typename Polyhedron::Traits traits = typename Polyhedron::Traits())
@@ -292,12 +292,12 @@ segmentation_from_sdf_values(const Polyhedron& polyhedron,
 }
 
 template <bool Fast_sdf_calculation_mode, class Polyhedron, class SegmentPropertyMap>
-int
+std::size_t
 segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             SegmentPropertyMap segment_ids,
                             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                            int number_of_rays = 25,
-                            int number_of_clusters = 5,
+                            std::size_t number_of_rays = 25,
+                            std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
                             bool output_cluster_ids = false,
                             typename Polyhedron::Traits traits = typename Polyhedron::Traits())
@@ -308,12 +308,12 @@ segmentation_via_sdf_values(const Polyhedron& polyhedron,
 }
 
 template <class Polyhedron, class SegmentPropertyMap>
-int
+std::size_t
 segmentation_via_sdf_values(const Polyhedron& polyhedron,
                             SegmentPropertyMap segment_ids,
                             double cone_angle = 2.0 / 3.0 * CGAL_PI,
-                            int number_of_rays = 25,
-                            int number_of_clusters = 5,
+                            std::size_t number_of_rays = 25,
+                            std::size_t number_of_clusters = 5,
                             double smoothing_lambda = 0.26,
                             bool output_cluster_ids = false,
                             typename Polyhedron::Traits traits = typename Polyhedron::Traits())

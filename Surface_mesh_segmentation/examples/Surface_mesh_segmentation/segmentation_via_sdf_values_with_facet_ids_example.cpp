@@ -45,7 +45,7 @@ int main()
     }
 
     // assign id field for each facet
-    int facet_id = 0;
+    std::size_t facet_id = 0;
     for(Polyhedron::Facet_iterator facet_it = mesh.facets_begin();
       facet_it != mesh.facets_end(); ++facet_it, ++facet_id) {
         facet_it->id() = facet_id;
@@ -65,8 +65,8 @@ int main()
     std::cout << std::endl;
 
     // create a property-map for segment-ids
-    std::vector<int> segment_ids(mesh.size_of_facets());
-    Facet_with_id_pmap<int> segment_property_map(segment_ids);
+    std::vector<std::size_t> segment_ids(mesh.size_of_facets());
+    Facet_with_id_pmap<std::size_t> segment_property_map(segment_ids);
 
     CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 

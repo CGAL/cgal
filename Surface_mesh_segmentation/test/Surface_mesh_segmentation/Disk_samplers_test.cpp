@@ -7,8 +7,8 @@ typedef boost::tuple<double, double, double> boost_tuple;
 
 void print(const std::vector<boost_tuple>& samples)
 {
-  const int map_size = 31;
-  const int map_size_2 = 45;
+  const std::size_t map_size = 31;
+  const std::size_t map_size_2 = 45;
   std::vector<std::vector<bool> > sample_map(map_size, std::vector<bool>(map_size_2, false));
 
   for(std::vector<boost_tuple>::const_iterator sample_it = samples.begin(); 
@@ -18,13 +18,13 @@ void print(const std::vector<boost_tuple>& samples)
     double y = (sample_it->get<1>() +1)/2;
     x *= (map_size-1);
     y *= (map_size_2-1);
-    int x_c  = static_cast<int>(x + 0.49);
-    int y_c  = static_cast<int>(y + 0.49);
+    std::size_t x_c  = static_cast<std::size_t>(x + 0.49);
+    std::size_t y_c  = static_cast<std::size_t>(y + 0.49);
     sample_map[x_c][y_c] = true;
   }
-  for(int i = 0; i < map_size; ++i)
+  for(std::size_t i = 0; i < map_size; ++i)
   {
-    for(int j = 0; j < map_size_2; ++j)
+    for(std::size_t j = 0; j < map_size_2; ++j)
     {
       if(sample_map[i][j]){ std::cout << "*"; }
       else                { std::cout << " "; }

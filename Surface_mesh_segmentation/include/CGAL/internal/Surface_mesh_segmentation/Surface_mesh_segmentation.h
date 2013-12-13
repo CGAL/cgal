@@ -78,7 +78,7 @@ public:
       typename Facet::Halfedge_around_facet_const_circulator facet_circulator =
         facet_it->facet_begin();
       double total_neighbor_sdf = 0.0;
-      int nb_valid_neighbors = 0;
+      std::size_t nb_valid_neighbors = 0;
       do {
         if(!facet_circulator->opposite()->is_border()) {
           double neighbor_sdf = sdf_values[facet_circulator->opposite()->facet()];
@@ -152,9 +152,9 @@ public:
    *  - 8000-18000 -> 3
    *  - ...
    */
-  int get_window_size(const Polyhedron& mesh) {
+  std::size_t get_window_size(const Polyhedron& mesh) {
     double facet_sqrt = std::sqrt(mesh.size_of_facets() / 2000.0);
-    return static_cast<int>(facet_sqrt) + 1;
+    return static_cast<std::size_t>(facet_sqrt) + 1;
   }
 };
 
@@ -227,7 +227,7 @@ public:
 // Use these two functions together
   template <class SDFPropertyMap>
   std::pair<double, double>
-  calculate_sdf_values(double cone_angle, int number_of_rays,
+  calculate_sdf_values(double cone_angle, std::size_t number_of_rays,
                        SDFPropertyMap sdf_pmap, bool postprocess_req) {
     // calculate sdf values
     SDF_calculation_class sdf_calculator(mesh, false, true, traits);
@@ -241,9 +241,9 @@ public:
   }
 
   template <class FacetSegmentMap, class SDFPropertyMap>
-  int partition(std::size_t number_of_centers, double smoothing_lambda,
-                SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap,
-                bool clusters_to_segments) {
+  std::size_t partition(std::size_t number_of_centers, double smoothing_lambda,
+                        SDFPropertyMap sdf_pmap, FacetSegmentMap segment_pmap,
+                        bool clusters_to_segments) {
     smoothing_lambda = (std::max)(0.0, smoothing_lambda); // min zero
     smoothing_lambda *=
       CGAL_SMOOTHING_LAMBDA_MULTIPLIER; // scale it into meaningful range for graph-cut
@@ -256,7 +256,7 @@ public:
     Expectation_maximization fitter(number_of_centers, sdf_values,
                                     Expectation_maximization::K_MEANS_INITIALIZATION, 1);
 
-    std::vector<int> labels;
+    std::vector<std::size_t> labels;
     fitter.fill_with_center_ids(labels);
 
     std::vector<std::vector<double> > probability_matrix;
@@ -264,14 +264,14 @@ public:
     log_normalize_probability_matrix(probability_matrix);
 
     // calculating edge weights
-    std::vector<std::pair<int, int> > edges;
+    std::vector<std::pair<std::size_t, std::size_t> > edges;
     std::vector<double> edge_weights;
     calculate_and_log_normalize_dihedral_angles(smoothing_lambda, edges,
         edge_weights);
 
     // apply graph cut
     GraphCut()(edges, edge_weights, probability_matrix, labels);
-    std::vector<int>::iterator label_it = labels.begin();
+    std::vector<std::size_t>::iterator label_it = labels.begin();
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
         ++facet_it, ++label_it) {
@@ -279,8 +279,8 @@ public:
     }
     if(clusters_to_segments) {
       // assign a segment id for each facet
-      int number_of_segments = assign_segments(number_of_centers, sdf_pmap,
-                               segment_pmap);
+      std::size_t number_of_segments = assign_segments(number_of_centers, sdf_pmap,
+                                       segment_pmap);
       return number_of_segments;
     }
     return number_of_centers;
@@ -361,14 +361,14 @@ private:
    * @param[out] edge_weights calculated weight for each edge in @a edges
    */
   void calculate_and_log_normalize_dihedral_angles(double smoothing_lambda,
-      std::vector<std::pair<int, int> >& edges,
+      std::vector<std::pair<std::size_t, std::size_t> >& edges,
       std::vector<double>& edge_weights) const {
     // associate each facet with an id
     // important note: ids should be compatible with iteration order of facets:
     // [0 <- facet_begin(),...., size_of_facets() -1 <- facet_end()]
     // Why ? it is send to graph cut algorithm where other data associated with facets are also sorted according to iteration order.
-    std::map<Facet_const_handle, int> facet_index_map;
-    int facet_index = 0;
+    std::map<Facet_const_handle, std::size_t> facet_index_map;
+    std::size_t facet_index = 0;
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end();
         ++facet_it, ++facet_index) {
@@ -376,14 +376,14 @@ private:
     }
 
     const double epsilon = 5e-6;
-    // edges and their weights. pair<int, int> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
+    // edges and their weights. pair<std::size_t, std::size_t> stores facet-id pairs (see above) (may be using boost::tuple can be more suitable)
     for(Edge_const_iterator edge_it = mesh.edges_begin();
         edge_it != mesh.edges_end(); ++edge_it) {
       if(edge_it->is_border_edge()) {
         continue;  // if edge does not contain two neighbor facets then do not include it in graph-cut
       }
-      const int index_f1 = facet_index_map[edge_it->facet()];
-      const int index_f2 = facet_index_map[edge_it->opposite()->facet()];
+      const std::size_t index_f1 = facet_index_map[edge_it->facet()];
+      const std::size_t index_f2 = facet_index_map[edge_it->opposite()->facet()];
       edges.push_back(std::make_pair(index_f1, index_f2));
 
       double angle = calculate_dihedral_angle_of_edge(edge_it);
@@ -418,15 +418,15 @@ private:
    *
    * @param number_of_clusters cluster-ids in @a segments should be between [0, number_of_clusters -1]
    * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type.
+   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type.
    * @return number of segments
    */
   template<class SegmentPropertyMap, class SDFProperyMap>
-  int assign_segments(int number_of_clusters, SDFProperyMap sdf_values,
-                      SegmentPropertyMap segments) {
+  std::size_t assign_segments(std::size_t number_of_clusters,
+                              SDFProperyMap sdf_values, SegmentPropertyMap segments) {
     // assign a segment-id to each facet
-    int segment_id = number_of_clusters;
-    std::vector<std::pair<int, double> > segments_with_average_sdf_values;
+    std::size_t segment_id = number_of_clusters;
+    std::vector<std::pair<std::size_t, double> > segments_with_average_sdf_values;
 
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
@@ -443,21 +443,21 @@ private:
     // sort segments according to their average sdf value
     sort(segments_with_average_sdf_values.begin(),
          segments_with_average_sdf_values.end(),
-         Sort_pairs_with_second<std::pair<int, double> >());
+         Sort_pairs_with_second<std::pair<std::size_t, double> >());
     // map each segment-id to its new sorted index
-    std::vector<int> segment_id_to_sorted_id_map(
+    std::vector<std::size_t> segment_id_to_sorted_id_map(
       segments_with_average_sdf_values.size());
     for(std::size_t index = 0; index < segments_with_average_sdf_values.size();
         ++index) {
-      int segment_id = segments_with_average_sdf_values[index].first -
-                       number_of_clusters;
-      segment_id_to_sorted_id_map[segment_id] = static_cast<int>(index);
+      std::size_t segment_id = segments_with_average_sdf_values[index].first -
+                               number_of_clusters;
+      segment_id_to_sorted_id_map[segment_id] = index;
     }
     // make one-pass on facets. First make segment-id zero based by subtracting number_of_clusters
     //                        . Then place its sorted index to pmap
     for(Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
-      int segment_id = segments[facet_it] - number_of_clusters;
+      std::size_t segment_id = segments[facet_it] - number_of_clusters;
       segments[facet_it] = segment_id_to_sorted_id_map[segment_id];
     }
     return segment_id - number_of_clusters;
@@ -469,21 +469,21 @@ private:
    * @param facet root facet
    * @param segment_id segment-id of root facet
    * @param sdf_values `ReadablePropertyMap` with `Polyhedron::Facet_const_handle` as key and `double` as value type
-   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `int` as value type.
+   * @param[in, out] segments `ReadWritePropertyMap` with `Polyhedron::Facet_const_handle` as key and `std::size_t` as value type.
    * @return average sdf value for segment
    */
   template<class SegmentPropertyMap, class SDFProperyMap>
   double
-  breadth_first_traversal(Facet_const_handle root, int segment_id,
+  breadth_first_traversal(Facet_const_handle root, std::size_t segment_id,
                           SDFProperyMap sdf_values, SegmentPropertyMap segments) {
     std::queue<Facet_const_handle> facet_queue;
     facet_queue.push(root);
 
-    int prev_segment_id = segments[root];
+    std::size_t prev_segment_id = segments[root];
     segments[root] = segment_id;
 
     double total_sdf_value = sdf_values[root];
-    int    visited_facet_count = 1;
+    std::size_t    visited_facet_count = 1;
 
     while(!facet_queue.empty()) {
       Facet_const_handle facet = facet_queue.front();

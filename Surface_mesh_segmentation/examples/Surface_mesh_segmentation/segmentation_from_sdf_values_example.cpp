@@ -30,13 +30,13 @@ int main()
     CGAL::sdf_values(mesh, sdf_property_map);
 
     // create a property-map for segment-ids
-    typedef std::map<Polyhedron::Facet_const_handle, int> Facet_int_map;
+    typedef std::map<Polyhedron::Facet_const_handle, std::size_t> Facet_int_map;
     Facet_int_map internal_segment_map;
     boost::associative_property_map<Facet_int_map> segment_property_map(internal_segment_map);
 
     // segment the mesh using default parameters for number of levels, and smoothing lambda
     // Any other scalar values can be used instead of using SDF values computed using the CGAL function
-    int number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
+    std::size_t number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map);
 
     std::cout << "Number of segments: " << number_of_segments << std::endl;
     // print segment-ids
@@ -47,7 +47,7 @@ int main()
     }
     std::cout << std::endl;
 
-    const int number_of_clusters = 4;       // use 4 clusters in soft clustering
+    const std::size_t number_of_clusters = 4;       // use 4 clusters in soft clustering
     const double smoothing_lambda = 0.3;  // importance of surface features, suggested to be in-between [0,1]
 
     // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.

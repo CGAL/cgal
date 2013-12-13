@@ -64,12 +64,12 @@ public:
    *   - weight (proportional to distance from disk center)
    */
   template<class OutputIterator>
-  void operator()(int number_of_points,
+  void operator()(std::size_t number_of_points,
                   OutputIterator out_it) const {
     const double golden_ratio = 3.0 - std::sqrt(5.0);
 
     if(uniform) {
-      for(int i = 0; i < number_of_points; ++i) {
+      for(std::size_t i = 0; i < number_of_points; ++i) {
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::sqrt(static_cast<double>(i) / number_of_points);
         double weight =  exp(-0.5 * (std::pow(R / CGAL_ANGLE_ST_DEV_DIVIDER, 2)));
@@ -79,7 +79,7 @@ public:
       const double custom_power =
         1.0; // it determines how much sampling is biased to center
       // for uniform result one can use 0.5 (i.e. sqrt)
-      for(int i = 0; i < number_of_points; ++i) {
+      for(std::size_t i = 0; i < number_of_points; ++i) {
         double Q = i * golden_ratio * CGAL_PI;
         double R = std::pow(static_cast<double>(i) / number_of_points, custom_power);
         // use uniform weigths, since we already give importance to locations that are close to center.
@@ -134,14 +134,14 @@ public:
    * Note: returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   template<class OutputIterator>
-  void operator()(int number_of_points,
+  void operator()(std::size_t number_of_points,
                   OutputIterator out_it) const {
-    const int number_of_points_sqrt = static_cast<int>(std::sqrt(
-                                        static_cast<double>(number_of_points)));
+    const std::size_t number_of_points_sqrt = static_cast<std::size_t>(std::sqrt(
+          static_cast<double>(number_of_points)));
     // use cone_angle / 3 as one standard deviation while weighting.
 
-    for(int i = 1; i <= number_of_points_sqrt; ++i)
-      for(int j = 1; j <= number_of_points_sqrt; ++j) {
+    for(std::size_t i = 1; i <= number_of_points_sqrt; ++i)
+      for(std::size_t j = 1; j <= number_of_points_sqrt; ++j) {
         double w1 = static_cast<double>(i) / number_of_points_sqrt;
         double w2 = static_cast<double>(j) / number_of_points_sqrt;
         double R = w1;
@@ -197,15 +197,15 @@ public:
    * Note: returned samples size = \f$ \lfloor \sqrt {number\_of\_points} \rfloor ^ 2 \f$
    */
   template<class OutputIterator>
-  void operator()(int number_of_points,
+  void operator()(std::size_t number_of_points,
                   OutputIterator out_it) const {
-    const int number_of_points_sqrt = static_cast<int>(std::sqrt(
-                                        static_cast<double>(number_of_points)));
+    const std::size_t number_of_points_sqrt = static_cast<std::size_t>(std::sqrt(
+          static_cast<double>(number_of_points)));
     const double fraction = (number_of_points_sqrt == 1) ? 0.0
                             : 2.0 / (number_of_points_sqrt -1);
 
-    for(int i = 0; i < number_of_points_sqrt; ++i)
-      for(int j = 0; j < number_of_points_sqrt; ++j) {
+    for(std::size_t i = 0; i < number_of_points_sqrt; ++i)
+      for(std::size_t j = 0; j < number_of_points_sqrt; ++j) {
         double w1 = -1 + i * fraction;
         double w2 = -1 + j * fraction;
         double R, Q;

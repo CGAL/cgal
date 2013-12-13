@@ -286,7 +286,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::check_and_set_ids(Polyhedron* pol
     Polyhedron::Facet_iterator a_facet = polyhedron->facets_begin();
     Polyhedron::Facet_iterator another_facet = ++polyhedron->facets_begin();
     if(a_facet->id() != another_facet->id()) { return; } // ids are OK
-    int facet_id = 0;
+    std::size_t facet_id = 0;
     for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin();
         facet_it != polyhedron->facets_end(); ++facet_it, ++facet_id)
     {
@@ -302,7 +302,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
 {
     Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
-    int patch_id = 0;
+    std::size_t patch_id = 0;
     for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin(); 
         facet_it != polyhedron->facets_end(); ++facet_it, ++patch_id)   
     {
@@ -326,15 +326,15 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
 {
     Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
-    int max_segment = 0;
+    std::size_t max_segment = 0;
     for(Polyhedron::Facet_iterator facet_it = polyhedron->facets_begin(); 
         facet_it != polyhedron->facets_end(); ++facet_it)   
     {
-        int segment_id = segment_ids[facet_it];
+        std::size_t segment_id = segment_ids[facet_it];
         facet_it->set_patch_id(segment_id);
         max_segment = (std::max)(max_segment, segment_id);      
     }
-    for(int i = 0; i <= max_segment; ++i)   
+    for(std::size_t i = 0; i <= max_segment; ++i)   
     {
         QColor aColor = color_map_segmentation[(max_segment - i) % color_map_segmentation.size()]; 
         color_vector.push_back(aColor);     

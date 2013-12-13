@@ -103,7 +103,7 @@ public:
     // say, "distance_square" ->            [ 0.1, 0.2, 0.3, 0.0, 0.2 ... ]
     // then distance_square_cumulative ->   [ 0.1, 0.3, 0.6, 0.6, 0.8 ... ]
     std::size_t initial_index = random.get_int(0,
-                                static_cast<int>(points.size())); // [0, points size)
+                                points.size()); // [0, points size)
     centers.push_back(points[initial_index]);
 
     for(std::size_t i = 1; i < number_of_centers; ++i) {
@@ -149,8 +149,8 @@ class K_means_point
 {
 public:
   double data;      /**< Location of the point */
-  int    center_id; /**< Closest center to the point */
-  K_means_point(double data, int center_id = -1) : data(data),
+  std::size_t    center_id; /**< Closest center to the point */
+  K_means_point(double data, std::size_t center_id = -1) : data(data),
     center_id(center_id) {
   }
 
@@ -171,7 +171,7 @@ public:
   double mean; /**< Mean of the center */
 private:
   double new_mean;
-  int    new_number_of_points;
+  std::size_t    new_number_of_points;
   bool   empty;
 
 public:
@@ -231,12 +231,12 @@ public:
 inline bool K_means_point::calculate_new_center(std::vector<K_means_center>&
     centers)
 {
-  int new_center_id = 0;
+  std::size_t new_center_id = 0;
   double min_distance = std::abs(centers[0].mean - data);
   for(std::size_t i = 1; i < centers.size(); ++i) {
     double new_distance = std::abs(centers[i].mean - data);
     if(new_distance < min_distance) {
-      new_center_id = static_cast<int>(i);
+      new_center_id = i;
       min_distance = new_distance;
     }
   }
@@ -264,7 +264,7 @@ public:
 private:
   std::vector<K_means_center> centers;
   std::vector<K_means_point>  points;
-  int  maximum_iteration;
+  std::size_t  maximum_iteration;
 
   Initialization_types init_type;
 
@@ -287,8 +287,8 @@ public:
   K_means_clustering(std::size_t number_of_centers,
                      const std::vector<double>& data,
                      Initialization_types init_type = PLUS_INITIALIZATION,
-                     int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
-                     int maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
+                     std::size_t number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
+                     std::size_t maximum_iteration = CGAL_DEFAULT_MAXIMUM_ITERATION)
     :
     points(data.begin(), data.end()),
     maximum_iteration(maximum_iteration),
@@ -305,7 +305,7 @@ public:
    * Fills data_center by the id of the closest center for each point.
    * @param[out] data_centers
    */
-  void fill_with_center_ids(std::vector<int>& data_centers) {
+  void fill_with_center_ids(std::vector<std::size_t>& data_centers) {
     data_centers.reserve(points.size());
     for(std::vector<K_means_point>::iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
@@ -367,7 +367,7 @@ private:
    * Iterates until convergence occurs (i.e. no point changes its center) or maximum iteration limit is reached.
    */
   void calculate_clustering() {
-    int iteration_count = 0;
+    std::size_t iteration_count = 0;
     bool any_center_changed = true;
     while(any_center_changed && iteration_count++ < maximum_iteration) {
       any_center_changed = iterate();
@@ -382,7 +382,7 @@ private:
    * @see calculate_clustering(), within_cluster_sum_of_squares()
    */
   void calculate_clustering_with_multiple_run(std::size_t number_of_centers,
-      int number_of_run) {
+      std::size_t number_of_run) {
     std::vector<K_means_center> min_centers;
     double error = (std::numeric_limits<double>::max)();
     while(number_of_run-- > 0) {
