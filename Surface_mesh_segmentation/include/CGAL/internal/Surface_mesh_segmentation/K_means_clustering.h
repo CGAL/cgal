@@ -134,9 +134,9 @@ public:
       // this can not select an already selected item since either (by considering that upper bounds returns greater)
       //  - aready selected item is at 0, and its value is 0.0
       //  - or its value is equal to value of previous element
-      int selection_index = std::upper_bound(distance_square_cumulative.begin(),
-                                             distance_square_cumulative.end(), random_ds)
-                            - distance_square_cumulative.begin();
+      std::size_t selection_index = std::upper_bound(
+                                      distance_square_cumulative.begin(), distance_square_cumulative.end(), random_ds)
+                                    - distance_square_cumulative.begin();
 
       centers.push_back(points[selection_index]);
     }

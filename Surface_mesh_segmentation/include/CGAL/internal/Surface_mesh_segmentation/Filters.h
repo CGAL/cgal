@@ -155,7 +155,7 @@ public:
         neighbor_values.push_back(values[it->first]);
       }
       // Find median.
-      int half_neighbor_count = neighbor_values.size() / 2;
+      std::size_t half_neighbor_count = neighbor_values.size() / 2;
       std::nth_element(neighbor_values.begin(),
                        neighbor_values.begin() + half_neighbor_count, neighbor_values.end());
       double median_sdf = neighbor_values[half_neighbor_count];
