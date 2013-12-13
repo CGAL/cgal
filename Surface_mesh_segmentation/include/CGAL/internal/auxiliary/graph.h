@@ -811,7 +811,7 @@ inline void Graph::prepare_graph()
   arc_reverse *a_rev, *a_rev_scan, a_rev_tmp;
   node_block *nb;
   bool for_flag = false, rev_flag = false;
-  int k;
+  INTEGER k;
 
   if (!arc_rev_block_first) {
     node_id from = add_node(), to = add_node();
@@ -918,8 +918,8 @@ inline void Graph::prepare_graph()
       arc_forward *af;
       arc_reverse *ar;
       node *from;
-      int shift = 0, shift_new;
-      captype r_cap, r_rev_cap, r_cap_new, r_rev_cap_new;
+      INTEGER shift = 0, shift_new;
+      captype r_cap=0, r_rev_cap=0, r_cap_new, r_rev_cap_new;
 
       if (!(from=(node *)(a_rev->sister))) continue;
       af = a_for;
@@ -1553,8 +1553,8 @@ inline void Graph::process_sink_orphan(node *i)
 
 inline Graph::flowtype Graph::maxflow()
 {
-  node *i, *j, *current_node = NULL, *s_start, *t_start;
-  captype *cap_middle, *rev_cap_middle;
+  node *i, *j, *current_node = NULL, *s_start, *t_start=NULL;
+  captype *cap_middle=NULL, *rev_cap_middle=NULL;
   arc_forward *a_for, *a_for_first, *a_for_last;
   arc_reverse *a_rev, *a_rev_first, *a_rev_last;
   nodeptr *np, *np_next;
