@@ -435,15 +435,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
   
-  polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
-  target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item)
-  
-  polyhedron_demo_plugin(hole_filling_polyline_plugin Polyhedron_demo_hole_filling_polyline_plugin)
-  target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
-	
-  polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
-  target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
-  
+  if(EIGEN3_FOUND AND ${EIGEN3_VERSION} VERSION_GREATER "3.1.90")
+    polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
+    target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item)
+
+    polyhedron_demo_plugin(hole_filling_polyline_plugin Polyhedron_demo_hole_filling_polyline_plugin)
+    target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
+
+    polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
+    target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
+  else()
+    message(STATUS "NOTICE: Eigen 3.2 was not found, hole filling and fairing plugins will not be available.")
+  endif()
+
   polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
   target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item)
 #
