@@ -24,6 +24,7 @@
 #include "algebraic_1.h"
 #include "comparator_1.h"
 #include "signat_1.h"
+#include "functors_1.h"
 
 namespace CGAL{
 namespace RS_AK1{

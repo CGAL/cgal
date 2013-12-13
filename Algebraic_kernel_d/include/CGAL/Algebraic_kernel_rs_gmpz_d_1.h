@@ -22,7 +22,6 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Polynomial.h>
-#include "RS/functors_1.h"
 #include "RS/rs2_isolator_1.h"
 #ifdef CGAL_USE_RS3
 #include "RS/rs23_k_isolator_1.h"
