@@ -113,7 +113,7 @@ public:
    * @param threshold minimum allowed improvement on likelihood between iterations
    * @param maximum_iteration maximum allowed iteration in a single EM algorithm call
    */
-  Expectation_maximization(int number_of_centers,
+  Expectation_maximization(std::size_t number_of_centers,
                            const std::vector<double>& data,
                            Initialization_types init_type = PLUS_INITIALIZATION,
                            int number_of_runs = CGAL_DEFAULT_NUMBER_OF_RUN,
@@ -127,9 +127,7 @@ public:
     maximum_iteration(maximum_iteration),
     init_type(init_type),
     random(CGAL_DEFAULT_SEED) {
-    CGAL_assertion(number_of_centers > 0
-                   && "Number of centers should be positive.");
-    CGAL_assertion(data.size() >= static_cast<std::size_t>(number_of_centers)
+    CGAL_assertion(data.size() >= number_of_centers
                    && "Number of centers can not be more than number of data.");
 
     // For initialization with k-means, with one run
@@ -234,7 +232,7 @@ private:
    * Initializes centers by choosing random points from data.
    * @param number_of_centers
    */
-  void initiate_centers_randomly(int number_of_centers) {
+  void initiate_centers_randomly(std::size_t number_of_centers) {
     centers.clear();
     Selector().forgy_initialization(number_of_centers, points, centers, random);
 
@@ -246,7 +244,7 @@ private:
    * Probability of a point to become a center is proportional to its squared distance to the closest center.
    * @param number_of_centers
    */
-  void initiate_centers_plus_plus(int number_of_centers) {
+  void initiate_centers_plus_plus(std::size_t number_of_centers) {
     centers.clear();
     Selector().plus_plus_initialization(number_of_centers, points, centers, random);
 
@@ -361,7 +359,7 @@ private:
    * @param number_of_run
    * @see calculate_clustering()
    */
-  void calculate_clustering_with_multiple_run(int number_of_centers,
+  void calculate_clustering_with_multiple_run(std::size_t number_of_centers,
       int number_of_run) {
     std::vector<Gaussian_center> max_centers;
 

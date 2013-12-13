@@ -38,16 +38,16 @@ public:
    * I also left previous implementation below, it might be useful where number of centers close to number of points
    */
   template<class T1, class T2>
-  void forgy_initialization(int number_of_centers, const std::vector<T1>& points,
-                            std::vector<T2>& centers, CGAL::Random& random) {
+  void forgy_initialization(std::size_t number_of_centers,
+                            const std::vector<T1>& points, std::vector<T2>& centers, CGAL::Random& random) {
     centers.reserve(number_of_centers);
     std::set<std::size_t> selected;
 
-    for(int i = 0; i < number_of_centers; ++i) {
+    for(std::size_t i = 0; i < number_of_centers; ++i) {
       std::size_t random_range = points.size() - number_of_centers +
                                  i; // activate one more element in each iteration for as selectable
       std::size_t random_index = random.get_int(0,
-                                 static_cast<int>(random_range) + 1); // [0, random_range];
+                                 random_range + 1); // [0, random_range];
 
       std::pair<std::set<std::size_t>::iterator, bool> random_index_unique =
         selected.insert(random_index);
@@ -67,13 +67,13 @@ public:
   // where n = number of points; complexity = O(n), memory overhead = O(n)
   /*
   template<class T1, class T2>
-  void forgy_initialization(int number_of_centers, const std::vector<T1>& points, std::vector<T2>& centers)
+  void forgy_initialization(std::size_t number_of_centers, const std::vector<T1>& points, std::vector<T2>& centers)
   {
       std::vector<std::size_t> indices(points.size()); // it is required to not to swap points
       for(std::size_t i = 0; i < points.size(); ++i) { indices[i] = i; }
 
       centers.reserve(number_of_centers);
-      for(int i = 0; i < number_of_centers; ++i)
+      for(std::size_t i = 0; i < number_of_centers; ++i)
       {
           std::size_t random_index = rand() % (points.size() - i); // select a random index between 0 and not selected sample count
           centers.push_back(points[ indices[random_index] ]);
@@ -91,12 +91,8 @@ public:
    * T2 should be constructable by T1, and both T1 and T2 should have conversion operator to double.
    */
   template<class T1, class T2>
-  void plus_plus_initialization(int number_of_centers,
+  void plus_plus_initialization(std::size_t number_of_centers,
                                 const std::vector<T1>& points, std::vector<T2>& centers, CGAL::Random& random) {
-    if(number_of_centers <= 0) {
-      return;
-    }
-
     centers.reserve(number_of_centers);
 
     std::vector<double> distance_square(points.size(),
@@ -110,7 +106,7 @@ public:
                                 static_cast<int>(points.size())); // [0, points size)
     centers.push_back(points[initial_index]);
 
-    for(int i = 1; i < number_of_centers; ++i) {
+    for(std::size_t i = 1; i < number_of_centers; ++i) {
       double cumulative_distance_square = 0.0;
       // distance_square holds closest distance that points have, so just test new coming center (i.e. centers.back())
       for(std::size_t j = 0; j < points.size(); ++j) {
@@ -288,7 +284,7 @@ public:
    *
    *
    */
-  K_means_clustering(int number_of_centers,
+  K_means_clustering(std::size_t number_of_centers,
                      const std::vector<double>& data,
                      Initialization_types init_type = PLUS_INITIALIZATION,
                      int number_of_run = CGAL_DEFAULT_NUMBER_OF_RUN,
@@ -298,9 +294,7 @@ public:
     maximum_iteration(maximum_iteration),
     init_type(init_type),
     random(CGAL_DEFAULT_SEED) {
-    CGAL_precondition(number_of_centers > 0
-                      && "Number of centers should be positive.");
-    CGAL_precondition(data.size() >= static_cast<std::size_t>(number_of_centers)
+    CGAL_precondition(data.size() >= number_of_centers
                       && "Number of centers can not be more than number of data.");
 
     calculate_clustering_with_multiple_run(number_of_centers, number_of_run);
@@ -333,7 +327,7 @@ private:
    * Initializes centers by choosing random points from data. Does not select one points more than once as center.
    * @param number_of_centers
    */
-  void initiate_centers_randomly(int number_of_centers) {
+  void initiate_centers_randomly(std::size_t number_of_centers) {
     centers.clear();
     Selector().forgy_initialization(number_of_centers, points, centers, random);
   }
@@ -343,7 +337,7 @@ private:
    * Probability of a point to become a center is proportional to its squared distance to the closest center.
    * @param number_of_centers
    */
-  void initiate_centers_plus_plus(int number_of_centers) {
+  void initiate_centers_plus_plus(std::size_t number_of_centers) {
     centers.clear();
     Selector().plus_plus_initialization(number_of_centers, points, centers, random);
   }
@@ -387,7 +381,7 @@ private:
    * @param number_of_run
    * @see calculate_clustering(), within_cluster_sum_of_squares()
    */
-  void calculate_clustering_with_multiple_run(int number_of_centers,
+  void calculate_clustering_with_multiple_run(std::size_t number_of_centers,
       int number_of_run) {
     std::vector<K_means_center> min_centers;
     double error = (std::numeric_limits<double>::max)();
