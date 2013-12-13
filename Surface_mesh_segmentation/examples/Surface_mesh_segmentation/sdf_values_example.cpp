@@ -21,21 +21,19 @@ int main()
     return EXIT_FAILURE;
   }
 
-  const int number_of_rays = 20;           // cast 20 rays per facet
-  const double cone_angle = CGAL_PI / 2.0; // use 90 degrees for cone opening-angle
-
   // create a property-map
   typedef std::map<Polyhedron::Facet_const_handle, double> Facet_double_map;
   Facet_double_map internal_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(internal_map);
 
   // compute SDF values
-  std::pair<double, double> min_max_sdf =
-    CGAL::sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays);
+  std::pair<double, double> min_max_sdf = CGAL::sdf_values(mesh, sdf_property_map);
 
 
-  // It is possible to compute the raw SDF values and post-process them through
-  // the following two lines
+  // It is possible to compute the raw SDF values and post-process them using
+  // the following lines:
+  // const int number_of_rays = 25;  // cast 25 rays per facet
+  // const double cone_angle = 2.0 / 3.0 * CGAL_PI; // set cone opening-angle
   // CGAL::sdf_values(mesh, sdf_property_map, cone_angle, number_of_rays, false);
   // std::pair<double, double> min_max_sdf =
   //  CGAL::sdf_values_postprocessing(mesh, sdf_property_map);
