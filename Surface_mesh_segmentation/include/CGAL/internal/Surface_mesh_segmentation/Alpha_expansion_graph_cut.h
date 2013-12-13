@@ -418,9 +418,13 @@ public:
         }
         edge_creation_time += timer.time();
         timer.reset();
-
+#if BOOST_VERSION >= 104000
         Graph graph(boost::edges_are_unsorted, edge_map.begin(), edge_map.end(),
                     edge_map_weights.begin(), num_vert);
+#else
+        Graph graph(edge_map.begin(), edge_map.end(),
+                    edge_map_weights.begin(), num_vert);
+#endif
         graph_creation_time += timer.time();
         timer.reset();
 
