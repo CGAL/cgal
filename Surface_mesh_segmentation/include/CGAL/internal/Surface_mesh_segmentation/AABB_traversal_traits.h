@@ -59,5 +59,3 @@ private:
 
 } //namespace CGAL
 #endif
-
-
