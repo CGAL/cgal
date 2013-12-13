@@ -808,7 +808,7 @@ inline void Graph::prepare_graph()
   arc_for_block *ab_for, *ab_for_first;
   arc_rev_block *ab_rev, *ab_rev_first, *ab_rev_scan;
   arc_forward *a_for;
-  arc_reverse *a_rev, *a_rev_scan, a_rev_tmp;
+  arc_reverse *a_rev, *a_rev_scan, *a_rev_tmp=new arc_reverse;
   node_block *nb;
   bool for_flag = false, rev_flag = false;
   INTEGER k;
@@ -819,7 +819,7 @@ inline void Graph::prepare_graph()
   }
 
   /* FIRST STAGE */
-  a_rev_tmp.sister = NULL;
+  a_rev_tmp->sister = NULL;
   for (a_rev=arc_rev_block_first->current;
        a_rev<&arc_rev_block_first->arcs_rev[ARC_BLOCK_SIZE]; a_rev++) {
     a_rev -> sister = NULL;
@@ -864,7 +864,7 @@ inline void Graph::prepare_graph()
       if (ab_rev_scan) {
         a_rev_scan += k;
         i -> parent = (arc_forward *) a_rev_scan;
-      } else i -> parent = (arc_forward *) &a_rev_tmp;
+      } else i -> parent = (arc_forward *) a_rev_tmp;
       a_for += k;
       i -> first_out = a_for;
       ab_for -> last_node = i;
@@ -941,7 +941,7 @@ inline void Graph::prepare_graph()
         r_rev_cap = r_rev_cap_new;
 
         af = -- from -> first_out;
-        if ((arc_reverse *)(from->parent) != &a_rev_tmp) {
+        if ((arc_reverse *)(from->parent) != a_rev_tmp) {
           from -> parent = (arc_forward *)(((arc_reverse *)(from -> parent)) - 1);
           ar = (arc_reverse *)(from -> parent);
         }
@@ -991,6 +991,7 @@ inline void Graph::prepare_graph()
     a_rev -> sister = (arc_forward *) (ab_rev -> current + 1);
     i -> first_in = (arc_reverse *) (((char *)a_rev) - 1);
   }
+  delete a_rev_tmp;
 }
 
 /* maxflow.cpp */
