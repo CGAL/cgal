@@ -24,6 +24,12 @@
 namespace CGAL{
 namespace RS_AK1{
 
+// This class represents an algebraic number storing two polynomials of
+// which it is root: one of them is the given polynomial; the other one is
+// an integer polynomial, which is used to perform the operations such as
+// refinements. Since RS works only with integer polynomials, this
+// architecture permits to convert the input polynomials only once.
+
 template <class Polynomial_,
           class ZPolynomial_,
           class Bound_,

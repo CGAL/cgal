@@ -16,8 +16,8 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
-#ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_1
-#define CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_1
+#ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1
+#define CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpfr.h>
@@ -66,4 +66,4 @@ typedef CGAL::RS_AK1::Algebraic_kernel_1<
 
 }
 
-#endif // CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_1
+#endif // CGAL_ALGEBRAIC_KERNEL_RS_GMPZ_D_1

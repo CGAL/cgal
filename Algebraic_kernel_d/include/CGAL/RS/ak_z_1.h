@@ -26,8 +26,8 @@
 #include "signat_1.h"
 #include "functors_z_1.h"
 
-// This file defines the "Z-algebraic kernel". This kind of kernel makes
-// all the internal operations with an integer polynomial type (the name
+// This file defines the "Z-algebraic kernel". This kind of kernel performs
+// all the internal operations using an integer polynomial type (the name
 // "Z" comes from there). For this, a converter functor (passed as a
 // template parameter) is used, which converts the input polynomial to the
 // integer representation.
@@ -43,7 +43,7 @@ template <class ExtPolynomial_,
           class Refiner_,
           class Ptraits_=CGAL::Polynomial_traits_d<ExtPolynomial_>,
           class ZPtraits_=CGAL::Polynomial_traits_d<IntPolynomial_> >
-class Algebraic_kernel_1{
+class Algebraic_kernel_z_1{
         public:
         typedef ExtPolynomial_                          Polynomial_1;
         typedef IntPolynomial_                          ZPolynomial_1;
@@ -77,94 +77,93 @@ class Algebraic_kernel_1{
 
         // default constructor and destructor
         public:
-        Algebraic_kernel_1(){};
-        ~Algebraic_kernel_1(){};
+        Algebraic_kernel_z_1(){};
+        ~Algebraic_kernel_z_1(){};
 
         // functors from the CGAL concept
         public:
-        typedef CGAL::RS_AK1::Construct_algebraic_real_1<Polynomial_1,
-                                                         ZPolynomial_1,
-                                                         PolConverter,
-                                                         Algebraic_real_1,
-                                                         Bound,
-                                                         Coefficient,
-                                                         Isolator>
+        typedef CGAL::RS_AK1::Construct_algebraic_real_z_1<Polynomial_1,
+                                                           ZPolynomial_1,
+                                                           PolConverter,
+                                                           Algebraic_real_1,
+                                                           Bound,
+                                                           Coefficient,
+                                                           Isolator>
                                                 Construct_algebraic_real_1;
-        typedef CGAL::RS_AK1::Compute_polynomial_1<Polynomial_1,
-                                                   Algebraic_real_1>
+        typedef CGAL::RS_AK1::Compute_polynomial_z_1<Polynomial_1,
+                                                     Algebraic_real_1>
                                                         Compute_polynomial_1;
-        typedef CGAL::RS_AK1::Isolate_1<Polynomial_1,
+        typedef CGAL::RS_AK1::Isolate_z_1<Polynomial_1,
+                                          ZPolynomial_1,
+                                          PolConverter,
+                                          Bound,
+                                          Algebraic_real_1,
+                                          Isolator,
+                                          Comparator,
+                                          Signat,
+                                          Ptraits,
+                                          ZPtraits>
+                                                        Isolate_1;
+        typedef typename Ptraits::Is_square_free        Is_square_free_1;
+        typedef typename Ptraits::Make_square_free      Make_square_free_1;
+        typedef typename Ptraits::Square_free_factorize Square_free_factorize_1;
+        typedef CGAL::RS_AK1::Is_coprime_z_1<Polynomial_1,Ptraits>
+                                                        Is_coprime_1;
+        typedef CGAL::RS_AK1::Make_coprime_z_1<Polynomial_1,Ptraits>
+                                                        Make_coprime_1;
+        typedef CGAL::RS_AK1::Solve_z_1<Polynomial_1,
                                         ZPolynomial_1,
                                         PolConverter,
                                         Bound,
                                         Algebraic_real_1,
                                         Isolator,
-                                        Comparator,
                                         Signat,
                                         Ptraits,
                                         ZPtraits>
-                                                        Isolate_1;
-        typedef typename Ptraits::Is_square_free        Is_square_free_1;
-        typedef typename Ptraits::Make_square_free      Make_square_free_1;
-        typedef typename Ptraits::Square_free_factorize
-                                                Square_free_factorize_1;
-        typedef CGAL::RS_AK1::Is_coprime_1<Polynomial_1,Ptraits>
-                                                        Is_coprime_1;
-        typedef CGAL::RS_AK1::Make_coprime_1<Polynomial_1,Ptraits>
-                                                        Make_coprime_1;
-        typedef CGAL::RS_AK1::Solve_1<Polynomial_1,
-                                      ZPolynomial_1,
-                                      PolConverter,
-                                      Bound,
-                                      Algebraic_real_1,
-                                      Isolator,
-                                      Signat,
-                                      Ptraits,
-                                      ZPtraits>
                                                         Solve_1;
-        typedef CGAL::RS_AK1::Number_of_solutions_1<Polynomial_1,
-                                                    ZPolynomial_1,
-                                                    PolConverter,
-                                                    Isolator>
+        typedef CGAL::RS_AK1::Number_of_solutions_z_1<Polynomial_1,
+                                                      ZPolynomial_1,
+                                                      PolConverter,
+                                                      Isolator>
                                                         Number_of_solutions_1;
 
-        typedef CGAL::RS_AK1::Sign_at_1<Polynomial_1,
-                                        ZPolynomial_1,
-                                        PolConverter,
-                                        Bound,
-                                        Algebraic_real_1,
-                                        Refiner,
-                                        Signat,
-                                        Ptraits,
-                                        ZPtraits>
+        typedef CGAL::RS_AK1::Sign_at_z_1<Polynomial_1,
+                                          ZPolynomial_1,
+                                          PolConverter,
+                                          Bound,
+                                          Algebraic_real_1,
+                                          Refiner,
+                                          Signat,
+                                          Ptraits,
+                                          ZPtraits>
                                                         Sign_at_1;
-        typedef CGAL::RS_AK1::Is_zero_at_1<Polynomial_1,
-                                           ZPolynomial_1,
-                                           PolConverter,
-                                           Bound,
-                                           Algebraic_real_1,
-                                           Refiner,
-                                           Signat,
-                                           Ptraits,
-                                           ZPtraits>
+        typedef CGAL::RS_AK1::Is_zero_at_z_1<Polynomial_1,
+                                             ZPolynomial_1,
+                                             PolConverter,
+                                             Bound,
+                                             Algebraic_real_1,
+                                             Refiner,
+                                             Signat,
+                                             Ptraits,
+                                             ZPtraits>
                                                         Is_zero_at_1;
-        typedef CGAL::RS_AK1::Compare_1<Algebraic_real_1,
-                                        Bound,
-                                        Comparator>
+        typedef CGAL::RS_AK1::Compare_z_1<Algebraic_real_1,
+                                          Bound,
+                                          Comparator>
                                                         Compare_1;
-        typedef CGAL::RS_AK1::Bound_between_1<Algebraic_real_1,
-                                              Bound,
-                                              Comparator>
+        typedef CGAL::RS_AK1::Bound_between_z_1<Algebraic_real_1,
+                                                Bound,
+                                                Comparator>
                                                         Bound_between_1;
-        typedef CGAL::RS_AK1::Approximate_absolute_1<Polynomial_1,
-                                                     Bound,
-                                                     Algebraic_real_1,
-                                                     Refiner>
+        typedef CGAL::RS_AK1::Approximate_absolute_z_1<Polynomial_1,
+                                                       Bound,
+                                                       Algebraic_real_1,
+                                                       Refiner>
                                                 Approximate_absolute_1;
-        typedef CGAL::RS_AK1::Approximate_relative_1<Polynomial_1,
-                                                     Bound,
-                                                     Algebraic_real_1,
-                                                     Refiner>
+        typedef CGAL::RS_AK1::Approximate_relative_z_1<Polynomial_1,
+                                                       Bound,
+                                                       Algebraic_real_1,
+                                                       Refiner>
                                                 Approximate_relative_1;
 
 #define CREATE_FUNCTION_OBJECT(T,N) \
@@ -203,7 +202,7 @@ class Algebraic_kernel_1{
                                approximate_relative_1)
 #undef CREATE_FUNCTION_OBJECT
 
-}; // class Algebraic_kernel_1
+}; // class Algebraic_kernel_z_1
 
 } // namespace RS_AK1
 } // namespace CGAL
