@@ -544,37 +544,6 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
   }
 }
  
-void convert_poly_to_env_file() {
-
-  std::ofstream norway;
-  norway.open("norway.env");
-  std::ifstream input;
-  input.open("norway.poly");
-
-  if (input && norway) {
-    std::string line;
-    while (!input.eof()) {
-      std::getline(input, line);
-      std::vector<std::string> vertices;
-      line.erase(line.find_last_not_of(" \n\r\t")+1);
-
-      while (line != "POLYGON" && !input.eof()) {
-        vertices.push_back(line);
-        std::getline(input, line);
-        line.erase(line.find_last_not_of(" \n\r\t")+1);
-      }
-      if (vertices.size() != 0) {
-        norway << vertices.size() << std::endl;
-        for (int j = 0 ; j < vertices.size() ; j++) {
-          norway << vertices[j] << std::endl;
-        }
-      }
-    }
-  }
-  else {
-    std::cout<<"Can't open the file. Check the file name.";
-  }
-}
 
 template <class _Arrangement_2>
 void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input) {

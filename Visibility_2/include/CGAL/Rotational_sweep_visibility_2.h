@@ -25,6 +25,7 @@
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/bounding_box.h>
+#include <boost/unordered_map.hpp> 
 
 namespace CGAL {
 
@@ -73,10 +74,11 @@ private:
       if (e1 == e2)
         return false;
       else {
-        if (e1->source() == e2->source())
-          return Visibility_2::compare_xy_2(geom_traits, e1->target()->point(), e2->target()->point()) == SMALLER;
-        else
-          return Visibility_2::compare_xy_2(geom_traits, e1->source()->point(), e2->source()->point()) == SMALLER;
+         return &(*e1)<&(*e2);
+//         if (e1->source() == e2->source())
+//           return Visibility_2::compare_xy_2(geom_traits, e1->target()->point(), e2->target()->point()) == SMALLER;
+//          else
+//            return Visibility_2::compare_xy_2(geom_traits, e1->source()->point(), e2->source()->point()) == SMALLER;
       }
     }
   };
@@ -90,16 +92,29 @@ private:
       if (v1 == v2)
         return false;
       else
-        return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
+        // I know this is dirty but it speeds up by 25%. Michael 
+        return &(*v1)<&(*v2);
+//        return Visibility_2::compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
     }
   };
+  
+// Using hash_map or edx causes a seg fault, did not have the time to see why. Michael 
+//   class Hash_edge: public std::unary_function<VH,typename boost::hash<const typename Arrangement_2::X_monotone_curve_2*>::result_type> {
+//   public:
+//     typename boost::hash<const typename Arrangement_2::X_monotone_curve_2*>::result_type 
+//     operator() (const EH e1) const {      
+//       return boost::hash<const typename Arrangement_2::X_monotone_curve_2*>()(&(e1->curve())); 
+//     }
+//   };
 
+  
   const Geometry_traits_2 *geom_traits;
   const Arrangement_2 *p_arr;
   Point_2 q;                        //query point
   Points polygon;                   //visibility polygon
   std::map<VH, EHs, Less_vertex> incident_edges; //the edges that are
   std::map<EH, int, Less_edge> edx;            //index of active edges in the heap
+  // boost::unordered_map<EH,int,Hash_edge> edx; //index of active edges in the heap
   EHs active_edges;                 //a heap of edges that intersect the current vision ray.
   VHs vs;                           //angular sorted vertices
   EHs bad_edges;                    //edges that pass the query point
@@ -321,7 +336,8 @@ private:
     polygon.clear();
     active_edges.clear();
     incident_edges = std::map<VH, EHs, Less_vertex>(Less_vertex(geom_traits));
-    edx = std::map<EH, int, Less_edge>(Less_edge(geom_traits));
+    
+    edx  = std::map<EH, int, Less_edge>(Less_edge(geom_traits));
 
     EHs relevant_edges; //all edges that can affect the visibility of query point.
     Arrangement_2 bbox;
