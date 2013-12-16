@@ -10,8 +10,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Random.h>
 
-#define CGAL_DEFAULT_MAXIMUM_ITERATION 10
-#define CGAL_DEFAULT_NUMBER_OF_RUN 15
+#define CGAL_DEFAULT_MAXIMUM_ITERATION 10u
+#define CGAL_DEFAULT_NUMBER_OF_RUN 15u
 #define CGAL_DEFAULT_THRESHOLD 1e-3
 
 #define CGAL_DEFAULT_SEED 1340818006
@@ -157,7 +157,8 @@ public:
     for(std::vector<double>::iterator point_it = points.begin();
         point_it != points.end(); ++point_it) {
       double max_likelihood = 0.0;
-      std::size_t max_center = -1, center_counter = 0;
+      std::size_t max_center = (std::numeric_limits<std::size_t>::max)(),
+                  center_counter = 0;
       for(std::vector<Gaussian_center>::iterator center_it = centers.begin();
           center_it != centers.end(); ++center_it, ++center_counter) {
         double likelihood = center_it->probability_with_coef(*point_it);
@@ -166,6 +167,7 @@ public:
           max_center = center_counter;
         }
       }
+      CGAL_assertion( max_center!=(std::numeric_limits<std::size_t>::max)() );
       data_centers.push_back(max_center);
     }
   }

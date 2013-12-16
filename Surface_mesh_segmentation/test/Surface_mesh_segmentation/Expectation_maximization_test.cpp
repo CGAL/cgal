@@ -38,7 +38,7 @@ int main(void)
     std::vector<std::size_t> data_centers;
     for(std::vector<double>::iterator it = data.begin(); it != data.end(); ++it)
     {
-        std::size_t center_id = -1, center_counter = 0;;
+        std::size_t center_id = (std::numeric_limits<std::size_t>::max)(), center_counter = 0;;
         double min_distance = (std::numeric_limits<double>::max)();        
         for(std::vector< boost::normal_distribution<double> >::iterator dis_it = distributions.begin();
           dis_it != distributions.end(); ++dis_it, ++center_counter)

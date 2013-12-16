@@ -94,7 +94,8 @@ public:
       double total_sdf_value = 0.0, total_weight = 0.0;
       for(typename std::map<Facet_const_handle, std::size_t>::iterator it =
             neighbors.begin(); it != neighbors.end(); ++it) {
-        double spatial_weight = gaussian_function(it->second, spatial_parameter_actual);
+        double spatial_weight = gaussian_function(static_cast<double>(it->second),
+                                spatial_parameter_actual);
         double range_weight = gaussian_function(values[it->first] - current_sdf_value,
                                                 range_parameter_actual);
         // we can use just spatial_weight for Gaussian filtering
