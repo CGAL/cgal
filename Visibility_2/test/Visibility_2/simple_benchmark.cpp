@@ -18,7 +18,7 @@
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
 //             Michael Hemmer <michael.hemmer@cgal.org>
-//             Kan Huang      <huangkandiy@gmail.com
+//             Kan Huang      <huangkandiy@gmail.com>
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
@@ -74,7 +74,7 @@ void benchmark_two_classes(std::string name1, std::string name2, CGAL::Query_cho
 }
 
 void print_usage() {
-  std::cout << "Usage: ./benchmark [filename] [Class type 1] [Class type 2] [Query type] [Regularize]\n";
+  std::cout << "Usage: ./simple_benchmark [filename] [Class type 1] [Class type 2] [Query type] [Regularize]\n";
   std::cout << "where [Class type] could be S(simple), R(rotational sweep) and T(triangular), indicating which classes you want to test.\n";
   std::cout << "[Query type] can be: {vertex, edge, face}.\n";
   std::cout << "[Regularize] can be: {true, false}.\n";

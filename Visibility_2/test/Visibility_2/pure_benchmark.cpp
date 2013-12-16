@@ -27,7 +27,6 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
-#include <CGAL/Naive_visibility_2.h>
 #include <CGAL/Triangular_expansion_visibility_2.h>
 #include <CGAL/Rotational_sweep_visibility_2.h>
 #include <CGAL/test_model_methods.h>

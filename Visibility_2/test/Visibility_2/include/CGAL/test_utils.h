@@ -1059,6 +1059,161 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
             << "Model 2 uses " << ptime2 + qtime2 << "  sec" << std::endl;
 }
 
+template<class Visibility_2>
+void pure_benchmark_one_unit(
+          typename Visibility_2::Input_arrangement_2 &arr,
+          const Query_choice &choice,
+          typename Visibility_2::Input_arrangement_2::Face_const_handle &fit,
+          Visibility_2 visibility,
+          double& qtime,
+          int& query_cnt) {
+
+  typedef typename Visibility_2::Input_arrangement_2    Input_arrangement_2;
+  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Visibility_2::Output_arrangement_2   Output_arrangement_2;
+  typedef typename Input_arrangement_2::Halfedge_const_handle
+                                                            Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+                                                  Ccb_halfedge_const_circulator;
+
+  typedef typename Output_arrangement_2::Face_handle        Face_handle;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::FT                    Number_type;
+  typedef Timer Benchmark_timer;
+
+  Benchmark_timer timer;
+
+  Ccb_halfedge_const_circulator circ = fit->outer_ccb();
+  Ccb_halfedge_const_circulator curr = circ;
+
+  do {
+    Halfedge_const_handle he = curr;
+    Point_2 curr_query_pt;
+    bool selected_query_pt = true;
+    switch (choice) {
+      case VERTEX:
+        curr_query_pt = he->target()->point();
+        break;
+      case EDGE:
+        curr_query_pt = random_linear_interpolation<Point_2, Number_type>
+                      (he->source()->point(), he->target()->point());
+        break;
+      case FACE:
+        Ccb_halfedge_const_circulator curr_next = curr;
+        curr_next++;
+        Halfedge_const_handle he_next = curr_next;
+        Point_2 p1 = he->source()->point();
+        Point_2 p2 = he->target()->point();
+        Point_2 p3 = he_next->target()->point();
+        Point_2 avg((p1.x() + p2.x() + p3.x())/3, (p1.y() + p2.y() + p3.y())/3);
+        if (is_inside_face<Input_arrangement_2>(arr, fit, avg)) {
+          curr_query_pt = avg;
+        }
+        else {
+          selected_query_pt = false;
+        }
+        break;
+    }
+    if (!selected_query_pt) {
+      curr++;
+      if (curr == circ) {
+        break;
+      }
+      continue;
+    }
+
+    Output_arrangement_2 out_arr;
+    timer.reset();
+    timer.start();
+    Face_handle fh;
+    if (choice == CGAL::FACE) {
+      fh = visibility.compute_visibility(curr_query_pt, fit, out_arr);
+      query_cnt++;
+    }
+    else {
+      fh = visibility.compute_visibility(curr_query_pt, he, out_arr);
+      query_cnt++;
+    }
+    timer.stop();
+    qtime += timer.time();
+
+    timer.reset();
+  } while (++curr != circ);
+}
+
+template<class Visibility_2>
+void pure_benchmark(  Visibility_2 &visibility,
+                      const Query_choice &choice,
+                      std::ifstream &input) {
+
+  typedef typename Visibility_2::Input_arrangement_2
+                                                            Input_arrangement_2;
+  typedef typename Input_arrangement_2::Halfedge_const_handle
+                                                          Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Input_arrangement_2::Face_const_iterator Face_const_iterator;
+  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Input_arrangement_2::Hole_const_iterator Hole_const_iterator;
+  typedef typename Input_arrangement_2::Halfedge_const_handle
+                                                          Halfedge_const_handle;
+  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+                                                  Ccb_halfedge_const_circulator;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::Segment_2             Segment_2;
+
+  Input_arrangement_2 arr;
+  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+
+  int query_cnt(0);
+  double qtime(0), ptime(0);
+  if (Visibility_2::Supports_general_polygon_tag::value) {
+
+    Face_const_iterator fit;
+    Timer timer;
+
+    timer.start();
+    visibility.attach(arr);
+    timer.stop();
+    ptime = timer.time();
+
+    for (fit = arr.faces_begin() ; fit != arr.faces_end() ; fit++) {
+      if (!fit->is_unbounded()) {
+
+        pure_benchmark_one_unit<Visibility_2>( arr,
+                                               choice,
+                                               fit,
+                                               visibility,
+                                               qtime,
+                                               query_cnt);
+      }
+    }
+  }
+  else {
+    Input_arrangement_2 arr_trimmed;
+    Face_const_handle fch = construct_biggest_arr_with_no_holes
+                                        <Input_arrangement_2>(arr, arr_trimmed);
+    Timer timer;
+
+    timer.start();
+    visibility.attach(arr_trimmed);
+    timer.stop();
+    ptime = timer.time();
+
+    pure_benchmark_one_unit<Visibility_2>( arr_trimmed,
+                                           choice,
+                                           fch,
+                                           visibility,
+                                           qtime,
+                                           query_cnt);
+  }
+  std::cout << "Preprocessing: "  << std::endl
+            << "cost " << ptime << "  sec" << std::endl;
+  std::cout << query_cnt << " queries are done.\n"
+            << "cost " << qtime << "  sec" << std::endl;
+  std::cout << "total time is:" << ptime + qtime << "  sec" << std::endl;
+}
+
 template<class Segment_2, class Point_2>
 int intersect_seg(const Segment_2& seg1, const Segment_2& seg2, Segment_2& seg_out, Point_2& p_out)
 {
