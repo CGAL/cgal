@@ -17,7 +17,7 @@ public:
 /// \name Number Type
 /// @{
 /*!
-A number type model of `FieldNumberType` for which the method `::CGAL::to_double()` is defined
+A number type model of `FieldNumberType` for which an overload of the function `to_double()` is defined
 */
 typedef Hidden_type FT;
 /// @}
@@ -60,6 +60,21 @@ Function object model of Kernel::Angle_3 for the aforementioned geometric types.
 */
 typedef Hidden_type Angle_3;
 
+/*!
+Function object model of Kernel::ComputeScalarProduct_3 for the aforementioned geometric types.
+*/
+typedef Hidden_type Compute_scalar_product_3;
+
+/*!
+Function object model of Kernel::ComputeSquaredDistance_3 for the aforementioned geometric types.
+*/
+typedef Hidden_type Compute_squared_distance_3;
+
+/*!
+Function object model of Kernel::ConstructCrossProductVector_3 for the aforementioned geometric types.
+*/
+typedef Hidden_type Construct_cross_product_vector_3;
+
 /*! 
 Function object model of Kernel::ConstructNormal_3 for the aforementioned geometric types.
 */
@@ -84,11 +99,6 @@ typedef Hidden_type Construct_scaled_vector_3;
 Function object model of Kernel::ConstructSumOfVectors_3 for the aforementioned geometric types.
 */
 typedef Hidden_type Construct_sum_of_vectors_3;
-
-/*! 
-Function object model of Kernel::ComputeApproximatedDihedralAngle_3 for the aforementioned geometric types.
-*/
-typedef Hidden_type Compute_approximated_dihedral_angle_3;
 
 /// @}
 
