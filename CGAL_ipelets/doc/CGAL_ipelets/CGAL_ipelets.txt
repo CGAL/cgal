@@ -66,11 +66,11 @@ as well as with the version 7 (at least up to version 7.10).
 These ipelets are a good starting point to design your own ipelet. For more details on how
 to compile an ipelet, please refer to the Ipe manual.
 
-Below is the list of Ipelets provided by the Demo Ipelets
+Below is the list of ipelets provided by the demo:
 
 \section Ipelets_list List of provided Ipelets 
 
-\subsection alpha_shapes_ipelet Alpha shapes
+\subsection alpha_shapes_ipelet Alpha Shapes
 
 Selection should be a set of points or circles (considered as weighted points). 
 The different values of alpha where the alpha shape changes are
@@ -81,21 +81,21 @@ computed and the rank of the chosen alpha  is asked in a dialog box.
 Selection should be segments, circles, and arcs of circles.
 All objects are broken at intersection points and at x extrema for circles.
 
-\subsection bbox_restriction_ipelet Bounding box restriction
+\subsection bbox_restriction_ipelet Bounding Box Restriction
 
 Replace the selection by a bounding box of the points in the selection.
 
-\subsection circle_pencils_ipelet Pencils of circles
+\subsection circle_pencils_ipelet Pencils of Circles
 
 Selection must be three circles or points (points are considered as
 zero radius circles).
 
 <ul>
 <li><b> In pencil, orthogonal to one circle:</b>
-This option draw the circle orthogonal to the primary
+This option draws the circle orthogonal to the primary
 selection belonging to the pencil defined by the two other circles.
 <li><b> Orthogonal to three circles:</b>
-This option draw the circles orthogonal to the three
+This option draws the circle orthogonal to the three
 selected circles.
 </ul>
 
@@ -115,7 +115,8 @@ The power diagram partitions the plane depending of the circle with smaller powe
 <li><b> Apollonius	    :</b>
 Selection should be points (zero radius circles) and circles. The Apollonius diagram
 is computed and clipped to a box a bit larger than the selection.
-The Apollonius diagram partitions the plane depending of closest circle.
+The Apollonius diagram partitions the plane depending of closest
+circle (also called additively weighted Voronoi diagram).
 </ul>
 
 \subsection generator_ipelet Generators
@@ -138,7 +139,7 @@ Generate random line segments inside a square bounding the selection.
 Generate random circles whose centers are inside a square bounding the selection. 
 </ul>
 
-\subsection hilbert_sort_ipelet Hilbert sort
+\subsection hilbert_sort_ipelet Hilbert Sort
 Sort the selected points with a space filling strategy.
 <ul>
  <li><b> Hilbert sorting curve, median policy:</b>
@@ -187,7 +188,7 @@ the latter being the primary selection.
 Selection should be a simple polygon, the maximal edge length is asked in a
 dialog box. A mesh of the polygon is computed and drawn.
 
-\subsection minkowski_ipelet Minkowski sum
+\subsection minkowski_ipelet Minkowski Sum
 <ul>
  <li><b>Minkowski Sum:</b>
 Selection should be two simple polygons.
@@ -197,7 +198,7 @@ Selection should be a circle and simple polygons.
 The Minkowski sum of the polygons with the circle is computed and drawn.
 </ul>
 
-\subsection multi_delaunay_ipelet k order Delaunay
+\subsection multi_delaunay_ipelet k Order Delaunay
 Selection should be a set of points.
 The order k Voronoi diagram or its dual the order k Delaunay is drawn.
 <ul>
@@ -223,7 +224,7 @@ Farthest neighbor Voronoi diagram.
 k is asked in a dialog box.
 </ul>
 
-\subsection multi_regular_ipelet k-order regular
+\subsection multi_regular_ipelet k Order Regular
 Selection should be a set of points and circles.
 The order k power diagram or its dual the order k regular triangulation is drawn.
 <ul>
@@ -244,7 +245,7 @@ k is asked in a dialog box.
 k is asked in a dialog box.
 </ul>
 
-\subsection partition_ipelet Polygon partition
+\subsection partition_ipelet Polygon Partition
 Selection should be simple polygons.
 The polygons are splitted according different algorithms.
 <ul>
@@ -261,7 +262,7 @@ The polygons are splitted according different algorithms.
 \subsection pca_ipelet PCA
 A line segment giving the principal component analysis of the selection is drawn.
 
-\subsection skeleton_ipelet  Skeleton and offset
+\subsection skeleton_ipelet  Skeleton and Offset
 Selection should be a simple polygon.
 The straight skeleton and associated offsets of the polygon are drawn.
  <ul>

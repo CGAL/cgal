@@ -17,8 +17,8 @@ function run(model, num)
 end
 
 methods = {
-  { label= "in pencil, orthogonal to one circle" },
-  { label= "orthogonal to three circles" },
+  { label= "Circle in pencil, orthogonal to one circle" },
+  { label= "Circle orthogonal to three circles" },
   { label="Help" },
 }
 

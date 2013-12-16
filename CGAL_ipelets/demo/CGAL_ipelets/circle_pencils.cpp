@@ -1,4 +1,4 @@
-// Copyright (c) 2013  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2013  INRIA Sophia Antipolis -  Mediterranee (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -63,6 +63,12 @@ void pencilIpelet::protected_run(int fn)
 
 
   int i=get_IpePage()->primarySelection(); 
+
+  if (i<0) {
+    print_error_message(("No mark or circle selected"));
+    return;
+  }
+
   read_one_active_object(get_IpePage()->object(i),CGAL::dispatch_or_drop_output<Point_2,Circle_2>(
        std::back_inserter(pt_list1),
        std::back_inserter(cir_list1))); 
@@ -120,7 +126,6 @@ void pencilIpelet::protected_run(int fn)
     
   }     //end of switch
 
-  std::cout<<circ<<std::endl;
 
   if (circ.squared_radius()>0){
     draw_in_ipe(circ);

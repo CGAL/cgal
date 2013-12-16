@@ -17,11 +17,11 @@ function run(model, num)
 end
 
 methods = {
-  { label= "line" },
-  { label= "segment" },
-  { label= "bisector" },
-  { label= "circle (center[prim. sel.], point through)" },
-  { label= "circumcenter" },
+  { label= "Line" },
+  { label= "Segment" },
+  { label= "Bisector" },
+  { label= "Circle (center[prim. sel.], point through)" },
+  { label= "Circumcenter" },
   { label="Help" },
 }
 
