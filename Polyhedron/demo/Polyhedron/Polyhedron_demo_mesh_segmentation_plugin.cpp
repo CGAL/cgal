@@ -20,8 +20,8 @@
 #include <map>
 #include <algorithm>
 #include <vector>
-#include <boost/property_map/property_map.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <CGAL/property_map.hpp>
+
 
 template<class PolyhedronWithId, class ValueType>
 struct Polyhedron_with_id_to_vector_property_map
