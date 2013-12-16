@@ -62,7 +62,7 @@ void benchmark_one_class(std::string name, CGAL::Query_choice& qchoice, std::ifs
 
 void print_usage() {
   std::cout << "Usage: ./pure_benchmark [filename] [Class type] [Query type] [Regularize]\n";
-  std::cout << "where [Class type] could be S(simple), N(naive), R(rotational sweep) and T(triangular), indicating which class you want to test.\n";
+  std::cout << "where [Class type] could be S(simple), R(rotational sweep) and T(triangular), indicating which class you want to test.\n";
   std::cout << "[Query type] can be: {vertex, edge, face}.\n";
   std::cout << "[Regularize] can be: {true, false}.\n";
 }
