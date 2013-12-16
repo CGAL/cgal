@@ -72,135 +72,147 @@ Below is the list of ipelets provided by the demo:
 
 \subsection alpha_shapes_ipelet Alpha Shapes
 
-Selection should be a set of points or circles (considered as weighted points). 
-The different values of alpha where the alpha shape changes are
-computed and the rank of the chosen alpha  is asked in a dialog box.
+The input selection must be a set of points or circles
+(considered as weighted points).
+The whole spectrum of critical alpha values are computed and a dialog box
+allows to choose one.
+
 
 \subsection arrangement_ipelet Arrangement
 
-Selection should be segments, circles, and arcs of circles.
-All objects are broken at intersection points and at x extrema for circles.
+The input selection can feature segments, circles, and arcs of circles.
+The selected primitives are split at intersection points and arcs and
+circles are split at their x-extrema.
 
 \subsection bbox_restriction_ipelet Bounding Box Restriction
 
-Replace the selection by a bounding box of the points in the selection.
+The input selection can feature segments, circles and arcs of circles, and
+at least two points.
+The selected primitives are clipped to the bounding box of the set of
+points selected.
+
 
 \subsection circle_pencils_ipelet Pencils of Circles
 
-Selection must be three circles or points (points are considered as
+The input selection must be three circles or points (considered as
 zero radius circles).
 
 <ul>
-<li><b> Circle in pencil, orthogonal to one circle:</b>
-This option draws the circle orthogonal to the primary
+<li><b> Circle in pencil, orthogonal to one circle</b>
+draws the circle orthogonal to the primary
 selection belonging to the pencil defined by the two other circles.
-<li><b> Circle orthogonal to three circles:</b>
-This option draws the circle orthogonal to the three
-selected circles.
+<li><b> Circle orthogonal to three circles</b>
+draws the circle orthogonal to the three selected circles.
 </ul>
 
 \subsection diagrams_ipelet Diagrams
 <ul>
 <li><b> Voronoi:</b>
-Selection should be points and segments. The Voronoi diagram
+The input selection can feature points and segments. The Voronoi diagram
 is computed and clipped to a box a bit larger than the selection.
 The bisectors between a segment and its endpoints are drawn.
+The Voronoi diagram partitions the plane depending on the closest
+point or segment.
 <li><b> Segment Voronoi skeleton:</b>
 Same as the previous one, but the bisectors between a segment and its
-endpoints are not drawn.
+endpoints are not drawn (the Voronoi region of the segment endpoints are
+merged with that of the segment)
 <li><b>Power diagram:</b>
-Selection should be points (zero radius circles) and circles. The power diagram
+The input selection must feature circles and points (zero radius circles). The power diagram
 is computed and clipped to a box a bit larger than the selection.
-The power diagram partitions the plane depending of the circle with smaller power.
-<li><b> Apollonius	    :</b>
-Selection should be points (zero radius circles) and circles. The Apollonius diagram
-is computed and clipped to a box a bit larger than the selection.
-The Apollonius diagram partitions the plane depending of closest
+The power diagram partitions the plane depending on the circle with smaller power.
+<li><b> Apollonius:</b>
+The input selection must feature circles and points (zero radius circles).
+The Apollonius diagram is computed and clipped to a box a bit larger
+than the selection.
+The Apollonius diagram partitions the plane depending on the closest
 circle (also called additively weighted Voronoi diagram).
 </ul>
 
 \subsection generator_ipelet Generators
-The number of points is asked in a dialog box.
+A number of points to generate is asked in a dialog box.
 <ul>
-<li><b> Points in a disk:</b>
-Generate random points in the selected circle.
- <li><b> Points on a grid:</b>
-Generate a grid inside a square bounding the selection. 
- <li><b> Points in a square:</b>
-Generate random points inside a square bounding the selection. 
- <li><b> Points on a convex hull:</b>
-Generate a random convex polygon of given size  inside a square bounding the selection and
-draw their convex hull. 
- <li><b> Polygon:</b>
-Generate a random simple polygon inside a square bounding the selection. 
- <li><b> Segments in a square:</b>
-Generate random line segments inside a square bounding the selection. 
- <li><b> Circles (center in a square):</b>
-Generate random circles whose centers are inside a square bounding the selection. 
+<li><b> Points in a disk</b>
+generates random points in the selected circle.
+ <li><b> Points on a grid</b>
+generates a grid inside a square bounding the selection.
+ <li><b> Points in a square</b>
+generates random points inside a square bounding the selection.
+ <li><b> Points on a convex hull</b>
+generates a random convex polygon of given size  inside a square bounding the selection and
+draw their convex hull.
+ <li><b> Polygon</b>
+generates a random simple polygon inside a square bounding the selection.
+ <li><b> Segments in a square</b>
+generates random line segments inside a square bounding the selection.
+ <li><b> Circles (center in a square)</b>
+generates random circles whose centers are inside a square bounding the selection.
 </ul>
 
 \subsection hilbert_sort_ipelet Hilbert Sort
-Sort the selected points with a space filling strategy.
+The input selection must be a set of points.
 <ul>
- <li><b> Hilbert sorting curve, median policy:</b>
-The set of points is split in two at the median, alternatively in x and
-y directions.
- <li><b> Hilbert sorting curve, middle policy:</b>
-The set of points is split in two at the middle, alternatively in x and
-y directions.
+<li><b> Hilbert sorting curve, median policy</b>
+splits the set of points in two at the median, alternatively in x and
+y directions and draws the curve connecting the sorted points.
+ <li><b> Hilbert sorting curve, middle policy</b>
+splits the set of points in two at the middle, alternatively in x and
+y directions and draws the curve connecting the sorted points.
 </ul>
 
 \subsection hull_ipelet Hulls
 <ul>
  <li><b> Convex minimal:</b>
-Selection should be a set of points, line segments , and circles.
-The convex hull of the selected objects is drawn.
+The input selection must feature points, segments or circles.
+The convex hull of the selected primitive is drawn.
  <li><b>Crust:</b>
-Selection should be a set of points.
-The crust of this set is drawn (curve reconstruction).
+The input section must be a set of points.
+The crust of the point set is drawn (curve reconstruction).
 </ul>
 
 \subsection hyperbolic_ipelet Hyperbolic
-This ipelet provide some tools for hyperbolic geometry in the Poincare
-disk model.
+Tools for hyperbolic geometry in the Poincare disk model.
 
 <ul>
  <li><b> Line through two points:</b>
-Selection should be the Poincare circle and two points inside the
+The input selection must be the Poincare circle and two points inside the
 circle. The hyperbolic line through the points is drawn.
  <li><b> Segment through two points:</b>
-Selection should be the Poincare circle and two points inside the
+The input selection must be the Poincare circle and two points inside the
 circle. The hyperbolic line segment through the points is drawn.
  <li><b> Bisector of two points:</b>
-Selection should be the Poincare circle and two points inside the
+The input section must be the Poincare circle and two points inside the
 circle. The hyperbolic bisector of the points is drawn.
  <li><b> Circle by center and point:</b>
-Selection should be the Poincare circle and two points inside the
+The input selection must be the Poincare circle and two points inside the
 circle, one of these points being the primary selection.
  The hyperbolic circle centered at the primary selection through the
  other point is drawn.
  <li><b> Circle center:</b>
-Selection should be the Poincare circle and another circle inside
+The input selection must be the Poincare circle and another circle inside
 the latter being the primary selection.
  The hyperbolic center of the primary selection is drawn.
 </ul>
 
-\subsection mesh_2_ipelet Mesh_2 
-Selection should be a simple polygon, the maximal edge length is asked in a
-dialog box. A mesh of the polygon is computed and drawn.
+\subsection mesh_2_ipelet Mesh_2
+The input selection must be a set of polygons defining a domain,
+and a set of circles defining connected region that are not part
+of the domains (holes).
+A mesh of the domain is computed and drawn using the maximal edge
+length provided asked in a dialog box.
 
 \subsection minkowski_ipelet Minkowski Sum
 <ul>
  <li><b>Minkowski Sum:</b>
-Selection should be two simple polygons.
+The input selection must be two simple polygons.
 The Minkowski sum of the two polygons is computed and drawn.
  <li><b>Polygon Offset:</b>
-Selection should be a circle and simple polygons.
+The input selection must be a circle and simple polygons.
 The Minkowski sum of the polygons with the circle is computed and drawn.
 </ul>
 
 \subsection multi_delaunay_ipelet k Order Delaunay
-Selection should be a set of points.
+The input selection must be a set of points.
 The order k Voronoi diagram or its dual the order k Delaunay is drawn.
 <ul>
  <li><b> Delaunay:</b>
@@ -226,7 +238,7 @@ k is asked in a dialog box.
 </ul>
 
 \subsection multi_regular_ipelet k Order Regular
-Selection should be a set of points and circles.
+The input selection must be a set of points and circles.
 The order k power diagram or its dual the order k regular triangulation is drawn.
 <ul>
  <li><b>Regular:</b> Ordinary regular triangulation.
@@ -247,8 +259,8 @@ k is asked in a dialog box.
 </ul>
 
 \subsection partition_ipelet Polygon Partition
-Selection should be simple polygons.
-The polygons are splitted according different algorithms.
+The input selection must be simple polygons.
+The polygons are divided using different algorithms.
 <ul>
  <li><b> Y monotone partition:</b> Regions of the partition are \f$ y
  \f$ monotone
@@ -261,44 +273,44 @@ The polygons are splitted according different algorithms.
 </ul>
 
 \subsection pca_ipelet PCA
-A line segment giving the principal component analysis of the selection is drawn.
+The input selection must be a set of points.
+A line segment giving the principal direction of the selection is drawn.
 
 \subsection skeleton_ipelet  Skeleton and Offset
-Selection should be a simple polygon.
+The input selection must be a simple polygon.
 The straight skeleton and associated offsets of the polygon are drawn.
  <ul>
-<li><b> Interior skeleton:</b>
-Only the interior skeleton is drawn.
- <li><b> Exterior skeleton:</b>
-Only the exterior skeleton is drawn.
- <li><b> Interior offset:</b>
-One interior offset is drawn, offset value is asked in a dialog box.
- <li><b> Exterior offset:</b>
-One exterior offset is drawn, offset value is asked in a dialog box.
- <li><b> Interior offsets:</b>
-Several equally spaced  interior offsets are drawn, offset value is asked in a dialog box.
- <li><b> Exterior offsets:</b>
-Several equally spaced  exterior offsets are drawn, offset value is asked in a dialog box.
+<li><b> Interior skeleton</b> draws the interior skeleton.
+ <li><b> Exterior skeleton</b> draws the exterior skeleton.
+ <li><b> Interior offset</b>
+ draws an interior offset using the value provided in the dialog box.
+ <li><b> Exterior offset</b>
+ draws an exterior offset using the value provided in the dialog box.
+ <li><b> Interior offsets</b>
+draws several equally spaced  interior offsets are drawn
+using the value provided in the dialog box.
+ <li><b> Exterior offsets</b>
+draws several equally spaced exterior offsets using the value provided in the dialog box.
 </ul>
 
 \subsection triangulation_ipelet Triangulations
 <ul>
  <li><b> Delaunay:</b>
-Selection should be a set of points. The Delaunay triangulation of the
+The input selection must be a set of points. The Delaunay triangulation of the
  points is drawn.
  <li><b> Constrained Delaunay:</b>
-Selection should be a set of points and line segments. The Delaunay
- triangulation of the points and segment's endpoints that respects the constraints  is drawn.
+The input selection must be a set of points and line segments. The Delaunay
+ triangulation of the points and segment's endpoints that respects the constraints is drawn.
  <li><b>Conforming Delaunay:</b>
-Selection should be a set of points and line segments. Points are
+The input selection must be a set of points and line segments. Points are
  added so that the Delaunay of selected points, segment's endpoints,
  and added points respects the constraints. The triangulation  is drawn.
  <li><b> Conforming Gabriel:</b>
-Selection should be a set of points and line segments. Points are
+The input selection must be a set of points and line segments. Points are
  added so that the pieces of segments have Gabriel property (their
  diametral disk is empty). The Delaunay triangulation  is drawn.
  <li><b> Regular:</b>
-Selection should be a set of points and circles (weighted points). The
+The input selection must be a set of points and circles (weighted points). The
  regular triangulation (dual of power diagram) of the
  points and circle's centers is drawn.
 </ul>
@@ -315,6 +327,6 @@ of the overall design, and contributed the Hilbert sort ipelet demo.
 Olivier Devillers added the pencil of circles and hyperbolic geometry
 ipelets in 2014.
 
-*/ 
+*/
 } /* namespace CGAL */
 
