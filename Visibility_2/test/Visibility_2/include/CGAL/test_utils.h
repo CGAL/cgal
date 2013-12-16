@@ -1061,23 +1061,23 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
 
 template<class Visibility_2>
 void pure_benchmark_one_unit(
-          typename Visibility_2::Input_arrangement_2 &arr,
+          typename Visibility_2::Arrangement_2 &arr,
           const Query_choice &choice,
-          typename Visibility_2::Input_arrangement_2::Face_const_handle &fit,
+          typename Visibility_2::Arrangement_2::Face_const_handle &fit,
           Visibility_2 visibility,
           double& qtime,
           int& query_cnt) {
 
-  typedef typename Visibility_2::Input_arrangement_2    Input_arrangement_2;
-  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Visibility_2::Output_arrangement_2   Output_arrangement_2;
-  typedef typename Input_arrangement_2::Halfedge_const_handle
+  typedef typename Visibility_2::Arrangement_2    Arrangement_2;
+  typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Visibility_2::Arrangement_2   Visibility_arrangement_2;
+  typedef typename Arrangement_2::Halfedge_const_handle
                                                             Halfedge_const_handle;
-  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
 
-  typedef typename Output_arrangement_2::Face_handle        Face_handle;
+  typedef typename Visibility_arrangement_2::Face_handle        Face_handle;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::FT                    Number_type;
   typedef Timer Benchmark_timer;
@@ -1107,7 +1107,7 @@ void pure_benchmark_one_unit(
         Point_2 p2 = he->target()->point();
         Point_2 p3 = he_next->target()->point();
         Point_2 avg((p1.x() + p2.x() + p3.x())/3, (p1.y() + p2.y() + p3.y())/3);
-        if (is_inside_face<Input_arrangement_2>(arr, fit, avg)) {
+        if (is_inside_face<Arrangement_2>(arr, fit, avg)) {
           curr_query_pt = avg;
         }
         else {
@@ -1123,7 +1123,7 @@ void pure_benchmark_one_unit(
       continue;
     }
 
-    Output_arrangement_2 out_arr;
+    Visibility_arrangement_2 out_arr;
     timer.reset();
     timer.start();
     Face_handle fh;
@@ -1147,23 +1147,23 @@ void pure_benchmark(  Visibility_2 &visibility,
                       const Query_choice &choice,
                       std::ifstream &input) {
 
-  typedef typename Visibility_2::Input_arrangement_2
-                                                            Input_arrangement_2;
-  typedef typename Input_arrangement_2::Halfedge_const_handle
+  typedef typename Visibility_2::Arrangement_2
+                                                            Arrangement_2;
+  typedef typename Arrangement_2::Halfedge_const_handle
                                                           Halfedge_const_handle;
-  typedef typename Input_arrangement_2::Geometry_traits_2   Geometry_traits_2;
-  typedef typename Input_arrangement_2::Face_const_iterator Face_const_iterator;
-  typedef typename Input_arrangement_2::Face_const_handle   Face_const_handle;
-  typedef typename Input_arrangement_2::Hole_const_iterator Hole_const_iterator;
-  typedef typename Input_arrangement_2::Halfedge_const_handle
+  typedef typename Arrangement_2::Geometry_traits_2   Geometry_traits_2;
+  typedef typename Arrangement_2::Face_const_iterator Face_const_iterator;
+  typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
+  typedef typename Arrangement_2::Hole_const_iterator Hole_const_iterator;
+  typedef typename Arrangement_2::Halfedge_const_handle
                                                           Halfedge_const_handle;
-  typedef typename Input_arrangement_2::Ccb_halfedge_const_circulator
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::Segment_2             Segment_2;
 
-  Input_arrangement_2 arr;
-  create_arrangement_from_env_file<Input_arrangement_2>(arr, input);
+  Arrangement_2 arr;
+  create_arrangement_from_env_file<Arrangement_2>(arr, input);
 
   int query_cnt(0);
   double qtime(0), ptime(0);
@@ -1190,9 +1190,9 @@ void pure_benchmark(  Visibility_2 &visibility,
     }
   }
   else {
-    Input_arrangement_2 arr_trimmed;
+    Arrangement_2 arr_trimmed;
     Face_const_handle fch = construct_biggest_arr_with_no_holes
-                                        <Input_arrangement_2>(arr, arr_trimmed);
+                                        <Arrangement_2>(arr, arr_trimmed);
     Timer timer;
 
     timer.start();
