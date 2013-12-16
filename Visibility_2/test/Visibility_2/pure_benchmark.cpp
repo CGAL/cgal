@@ -53,11 +53,11 @@ void deploy_pure_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
 template <class Regularization_tag>
 void benchmark_one_class(std::string name, CGAL::Query_choice& qchoice, std::ifstream& input) {
   if (name == "S")
-    deploy_pure_benchmark<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag>> (qchoice, input);
+    deploy_pure_benchmark<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
   if (name == "T")
-    deploy_pure_benchmark<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>> (qchoice, input);
+    deploy_pure_benchmark<CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
   if (name == "R")
-    deploy_pure_benchmark<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>> (qchoice, input);
+    deploy_pure_benchmark<CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
 }
 
 void print_usage() {
