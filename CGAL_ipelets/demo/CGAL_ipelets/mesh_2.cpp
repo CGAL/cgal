@@ -31,7 +31,8 @@ namespace CGAL_mesh_2{
   typedef CGAL::Triangulation_vertex_base_2<Kernel>                 Vb;
   typedef CGAL::Delaunay_mesh_face_base_2<Kernel>                   Fb;
   typedef CGAL::Triangulation_data_structure_2<Vb, Fb>              Tds;
-  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel,Tds>    CDT;
+  typedef CGAL::Exact_predicates_tag                                     Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel,Tds,Itag>    CDT;
   typedef CGAL::Delaunay_mesh_size_criteria_2<CDT>                  Criteria;
   typedef CGAL::Delaunay_mesher_2<CDT, Criteria>                    Mesher;
     
