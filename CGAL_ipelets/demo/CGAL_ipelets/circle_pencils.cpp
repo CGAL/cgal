@@ -31,7 +31,7 @@ typedef CGAL::Cartesian<double>                                               Ke
 // --------------------------------------------------------------------
 
 const std::string sublabel[] = {
-  "Circle in pencil through orthogonal to circle", "Circle  orthogonal to three circles", "Help"
+  "Circle in pencil, orthogonal to circle", "Circle  orthogonal to three circles", "Help"
 };
 
 const std::string helpmsg[] = {

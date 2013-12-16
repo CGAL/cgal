@@ -91,10 +91,10 @@ Selection must be three circles or points (points are considered as
 zero radius circles).
 
 <ul>
-<li><b> In pencil, orthogonal to one circle:</b>
+<li><b> Circle in pencil, orthogonal to one circle:</b>
 This option draws the circle orthogonal to the primary
 selection belonging to the pencil defined by the two other circles.
-<li><b> Orthogonal to three circles:</b>
+<li><b> Circle orthogonal to three circles:</b>
 This option draws the circle orthogonal to the three
 selected circles.
 </ul>
@@ -163,22 +163,23 @@ The crust of this set is drawn (curve reconstruction).
 \subsection hyperbolic_ipelet Hyperbolic
 This ipelet provide some tools for hyperbolic geometry in the Poincare
 disk model.
+
 <ul>
- <li><b> line:</b>
+ <li><b> Line through two points:</b>
 Selection should be the Poincare circle and two points inside the
 circle. The hyperbolic line through the points is drawn.
- <li><b> segment:</b>
+ <li><b> Segment through two points:</b>
 Selection should be the Poincare circle and two points inside the
 circle. The hyperbolic line segment through the points is drawn.
- <li><b> bisector:</b>
+ <li><b> Bisector of two points:</b>
 Selection should be the Poincare circle and two points inside the
 circle. The hyperbolic bisector of the points is drawn.
- <li><b> circle (center, point through):</b>
+ <li><b> Circle by center and point:</b>
 Selection should be the Poincare circle and two points inside the
 circle, one of these points being the primary selection.
  The hyperbolic circle centered at the primary selection through the
  other point is drawn.
- <li><b> circumcenter:</b>
+ <li><b> Circle center:</b>
 Selection should be the Poincare circle and another circle inside
 the latter being the primary selection.
  The hyperbolic center of the primary selection is drawn.
