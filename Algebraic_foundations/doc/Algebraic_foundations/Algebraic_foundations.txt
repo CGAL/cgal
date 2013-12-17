@@ -136,7 +136,7 @@ Most number types represent some subset of the real numbers. From those types
 we expect functionality to compute the sign, absolute value or double 
 approximations. In particular we can expect an order on such a type that 
 reflects the order along the real axis. 
-All these properties are gathered in the concept `RealComparable`. 
+All these properties are gathered in the concept `::RealEmbeddable`.
 The concept is orthogonal to the algebraic structure concepts, 
 i.e., it is possible 
 that a type is a model of `RealEmbeddable` only, 
