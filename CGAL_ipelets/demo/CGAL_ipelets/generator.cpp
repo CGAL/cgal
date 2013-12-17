@@ -82,18 +82,19 @@ void generator::protected_run(int fn)
 
 
   if (fn==0){      
-    if (cir_list.size()==0) { print_error_message(("selection must be a circle")); return;}
+    if (cir_list.size()==0) { print_error_message(("Selection must be a circle")); return;}
     Circle_2  circ=*cir_list.begin();
     size =  sqrt(circ.squared_radius());
     origin= circ.center()-CGAL::ORIGIN;
   }else{
     size = (bbox.xmax()-bbox.xmin())/2;
     origin= Kernel::Vector_2((bbox.xmin()+bbox.xmax())/2,(bbox.ymin()+bbox.ymax())/2);
-    if (size==0){
-      boost::tie(ret_val,size)=request_value_from_user<int>((boost::format("Size (default : %1%)") % size).str());
-      if (ret_val == -1) return;
-      if (ret_val == 0) size=200;
-      origin =  Kernel::Vector_2(300,400);
+    if (size<1){
+      size=200;
+      //boost::tie(ret_val,size)=request_value_from_user<int>((boost::format("Size (default : %1%)") % size).str());
+      //if (ret_val == -1) return;
+      //if (ret_val == 0) size=200;
+      origin =  Kernel::Vector_2(200,200);
     }
   }
 

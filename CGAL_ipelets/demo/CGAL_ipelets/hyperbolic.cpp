@@ -103,12 +103,12 @@ void hyperbolicIpelet::protected_run(int fn)
 
   if (fn!=4){
     if (pt_list.empty() || cir_list.empty()){
-      print_error_message(("two marks and a circle have to be selected"));
+      print_error_message(("Two marks and a circle have to be selected"));
       return;
     }
   }else{
     if (cir_list.empty()){
-      print_error_message(("two circles have to be selected"));
+      print_error_message(("Two circles have to be selected"));
       return;
     }
   }
@@ -116,7 +116,7 @@ void hyperbolicIpelet::protected_run(int fn)
   poincare=*cit;++cit;
   if(fn==4){
     if( (cit==cir_list.end()) || (cit1==cir_list1.end())){
-      print_error_message(("two circles have to be selected"));
+      print_error_message(("Two circles have to be selected"));
       return;
     }
     if (*cit1==poincare) poincare=*cit;
@@ -128,11 +128,11 @@ void hyperbolicIpelet::protected_run(int fn)
       p2=Circle_2(*it,0);
       ++it;
     }else{ 
-      print_error_message(("two marks and a circle have to be selected")); 
+      print_error_message(("Two marks and a circle have to be selected")); 
       return;
     }
     if( (it!=pt_list.end())||(cit!=cir_list.end())){
-      print_error_message(("only two marks and a circle have to be selected")); 
+      print_error_message(("Only two marks and a circle have to be selected")); 
       return;
     }
   }

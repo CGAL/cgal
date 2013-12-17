@@ -130,7 +130,7 @@ void pencilIpelet::protected_run(int fn)
   if (circ.squared_radius()>0){
     draw_in_ipe(circ);
   }else{
-    print_error_message(("computed circle is imaginary"));
+    print_error_message(("Computed circle is imaginary"));
   }
 }
 }
