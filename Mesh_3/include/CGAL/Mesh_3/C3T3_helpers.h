@@ -375,6 +375,7 @@ class C3T3_helpers
   typedef typename Gt::Point_3          Point_3;
   typedef typename Gt::Plane_3          Plane_3;
   typedef typename Gt::FT               FT;
+  typedef typename Gt::Tetrahedron_3    Tetrahedron;
   
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Cell_handle      Cell_handle;
@@ -387,6 +388,7 @@ class C3T3_helpers
   
   typedef std::vector<Cell_handle>      Cell_vector;
   typedef std::set<Cell_handle>         Cell_set;
+  typedef std::vector<Tetrahedron>      Tet_vector;
 
   typedef std::vector<Facet>            Facet_vector;
   typedef std::vector<Vertex_handle>    Vertex_vector;
@@ -705,7 +707,7 @@ private:
   {
     Is_sliver(const C3T3& c3t3,
               const SliverCriterion& criterion,
-              const FT& bound)
+              const FT& bound = 0)
       : c3t3_(c3t3)
       , criterion_(criterion)
       , bound_(bound) { }
@@ -718,10 +720,18 @@ private:
         
         if ( ! c->is_cache_valid() )
         {
-          FT sliver_value = criterion_(c3t3_.triangulation().tetrahedron(c));
-          c->set_sliver_value(sliver_value);
+          Sliver_criterion_value<SliverCriterion> sc_value(c3t3_.triangulation(),
+                                                           criterion_);
+          (void) sc_value(c); // 'sc_value::operator()' updates the cache of 'c'
         }
-        return ( c->sliver_value() <= bound_ );
+        else
+        {
+          CGAL_expensive_assertion(c->sliver_value() == criterion_(c));
+        }
+        if(bound_ > 0)
+          return ( c->sliver_value() <= bound_ );
+        else
+          return ( c->sliver_value() <= criterion_.sliver_bound() );
       }
       else
         return false;
@@ -918,11 +928,12 @@ private:
   /**
    * @class Sliver_criterion_value
    *
-   * A functor which returns sliver criterion value for a Cell_handle 
+   * A functor which returns sliver criterion value for a Cell_handle
+   * and updates its cache value
    */
   template <typename SliverCriterion>
   class Sliver_criterion_value
-    : public std::unary_function<Cell_handle, FT>
+    : public std::unary_function<Cell_handle, double>
   {
   public:
     Sliver_criterion_value(const Tr& tr,
@@ -936,8 +947,12 @@ private:
       
       if ( ! ch->is_cache_valid() )
       {
-        FT sliver_value = criterion_(p_tr_->tetrahedron(ch));
+        double sliver_value = criterion_(ch);
         ch->set_sliver_value(sliver_value);
+      }
+      else
+      {
+        CGAL_expensive_assertion(ch->sliver_value() == criterion_(ch));
       }
       return ch->sliver_value();
     }
@@ -961,15 +976,20 @@ private:
                               const bool use_cache = true) const
   {
     // Get complex cells only
+    Cell_vector c3t3_cells_ = c3t3_cells(cells);
+    return min_sliver_value(c3t3_cells_, criterion, use_cache);
+  }
+  
+  Cell_vector c3t3_cells(const Cell_vector& cells) const
+  {
     Cell_vector c3t3_cells;
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
-
-    return min_sliver_value(c3t3_cells,criterion,use_cache);
+    return c3t3_cells;
   }
-  
+
   /**
    * Removes objects of [begin,end[ range from \c c3t3_
    */
@@ -1103,10 +1123,12 @@ private:
   
   /**
    * Returns the boundary of restricted facets of \c facets,
-     and the list of vertices of all restricted facets.
+     and the list of vertices of all restricted facets,
+     which should not contain the vertex that is moving
    */
   Facet_boundary
-  get_surface_boundary(const Facet_vector& facets,
+  get_surface_boundary(const Vertex_handle& moving_vertex,
+                       const Facet_vector& facets,
                        Vertex_set& incident_surface_vertices) const;
   
   /**
@@ -1114,10 +1136,12 @@ private:
      and the list of vertices of all restricted facets.
    */
   Facet_boundary
-  get_surface_boundary(const Cell_vector& cells,
+  get_surface_boundary(const Vertex_handle& moving_vertex,
+                       const Cell_vector& cells,
                        Vertex_set& incident_surface_vertices) const
   {
-    return get_surface_boundary(get_facets(cells),
+    return get_surface_boundary(moving_vertex,
+                                get_facets(cells),
                                 incident_surface_vertices);
   }
   
@@ -1444,12 +1468,14 @@ private:
    * Returns true if facets of \c facets have the same boundary as 
    * \c old_boundary, and if the list of vertices has not changed.
    */
-  bool check_surface_mesh(const Facet_vector& facets,
+  bool check_surface_mesh(const Vertex_handle& moving_vertex,
+                          const Facet_vector& facets,
                           const Facet_boundary& old_boundary,
                           const Vertex_set& old_incident_surface_vertices) const
   {
     Vertex_set incident_surface_vertices;
-    Facet_boundary new_boundary = get_surface_boundary(facets,
+    Facet_boundary new_boundary = get_surface_boundary(moving_vertex,
+                                                       facets,
                                                        incident_surface_vertices);
     return ( old_boundary.size() == new_boundary.size() &&
              old_incident_surface_vertices == incident_surface_vertices &&
@@ -1577,24 +1603,20 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << ")\n";
 
   // Get old values
-  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = vertex->point();
   
   // Move point
   reset_circumcenter_cache(conflict_cells);
+  reset_sliver_cache(conflict_cells);
   move_point_no_topo_change(vertex,new_position);
     
-  // Get new criterion value (conflict_zone did not change)
-  // std::cerr << "call min_sliver_in_c3t3_value" << std::endl;
-  const FT new_sliver_value = 
-    min_sliver_in_c3t3_value(conflict_cells, criterion,
-                             false); // use_cache = false
-  // use_cache=false mean "update the sliver cache instead of using it"
-  // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
-  
+  // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
-  if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
+  if ( criterion.valid_move(c3t3_cells(conflict_cells))
+       //warning : valid_move updates caches
+    && verify_surface(conflict_cells) )
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
                            vertex, modified_vertices);
@@ -1606,6 +1628,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
     //           << old_position << "\n";
     // revert move
     reset_circumcenter_cache(conflict_cells);
+    //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
     move_point_no_topo_change(vertex,old_position);
     return std::make_pair(false,vertex);
@@ -1645,14 +1668,14 @@ update_mesh_topo_change(const Point_3& new_position,
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells)); 
   
-  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = old_vertex->point();
   
   // Keep old boundary
   Vertex_set old_incident_surface_vertices;
   Facet_boundary old_surface_boundary =
-    get_surface_boundary(conflict_cells, old_incident_surface_vertices);
+    get_surface_boundary(old_vertex, conflict_cells, old_incident_surface_vertices);
   
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
@@ -1678,13 +1701,13 @@ update_mesh_topo_change(const Point_3& new_position,
   }
   
   restore_mesh(outdated_cells.begin(),outdated_cells.end());
-  FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
   // std::cerr << "new_sliver_value=" << new_sliver_value << std::endl;
 
   // Check that surface boundary does not change.
   // This check ensures that vertices which are inside c3t3 stay inside. 
-  if ( new_sliver_value > old_sliver_value
-      && check_surface_mesh(get_facets(outdated_cells),
+  if (criterion.valid_move(c3t3_cells(outdated_cells))
+      && check_surface_mesh(new_vertex,
+                            get_facets(outdated_cells),
                             old_surface_boundary,
                             old_incident_surface_vertices) )
   {
@@ -2464,7 +2487,7 @@ min_sliver_value(const Cell_vector& cells,
   using boost::make_transform_iterator;
   
   if ( cells.empty() )
-    return SliverCriterion::max_value;
+    return criterion.get_max_value();
   
   if ( ! use_cache )
   { 
@@ -2472,10 +2495,18 @@ min_sliver_value(const Cell_vector& cells,
   }
   
   // Return min dihedral angle
-  Sliver_criterion_value<SliverCriterion> sc_value(tr_,criterion);
-  
-  return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
-                            make_transform_iterator(cells.end(),sc_value)));
+  //Sliver_criterion_value<SliverCriterion> sc_value(tr_,criterion);
+  //
+  //return *(std::min_element(make_transform_iterator(cells.begin(),sc_value),
+  //                          make_transform_iterator(cells.end(),sc_value)));
+  FT min_value = criterion.get_max_value();
+  for(typename Cell_vector::const_iterator it = cells.begin(); 
+      it != cells.end(); 
+      ++it)
+  {
+    min_value = (std::min)(criterion(*it), min_value);
+  } 
+  return min_value;
 }
   
   
@@ -2601,7 +2632,8 @@ get_conflict_zone_topo_change(const Vertex_handle& vertex,
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Facet_boundary
 C3T3_helpers<C3T3,MD>::
-get_surface_boundary(const Facet_vector& facets,
+get_surface_boundary(const Vertex_handle& moving_vertex,
+                     const Facet_vector& facets,
                      Vertex_set& incident_surface_vertices) const
 {
   Facet_boundary boundary;
@@ -2639,6 +2671,8 @@ get_surface_boundary(const Facet_vector& facets,
       update_boundary(boundary, Ordered_edge(v1,v3), v2, surface_index);
       update_boundary(boundary, Ordered_edge(v2,v3), v1, surface_index);
     }
+
+    incident_surface_vertices.erase(moving_vertex);
   }
 
   // std::cerr.precision(17);
@@ -2679,8 +2713,7 @@ check_no_inside_vertices(const Facet_vector& facets) const
   
   return true;
 }
-  
-  
+
 } // end namespace Mesh_3
 } // end namespace CGAL
 

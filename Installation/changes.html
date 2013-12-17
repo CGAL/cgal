@@ -178,6 +178,15 @@ and <code>src/</code> directories).
 	and <code>number_of_cells</code> in
 	<code>Mesh_complex_3_in_triangulation_3</code>.
     </li>
+    <li>Change the internal API of the sliver perturber, to make possible for developers
+	to optimize another criterion than the (default) minimal dihedral angle.
+	Developers can also define a new perturbation vector (for angles we had 
+	gradient of squared circumradius, gradient of volume, gradient of minimal dihedral
+	angle, and random) which is better suitable to optimize their criterion.
+    </li>
+    <li>Improve the use of cache values in Mesh_cell_base to (re)compute circumcenters
+          and sliver criterion values only when needed.
+    </li>
   </ul>
 
 </div>
