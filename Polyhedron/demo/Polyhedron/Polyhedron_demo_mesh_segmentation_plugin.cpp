@@ -195,7 +195,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     check_and_set_ids(pair->first->polyhedron());
     pair->second.resize(item->polyhedron()->size_of_facets(), 0.0);
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double>  sdf_pmap(&pair->second);
+    QTime time;
+    time.start();
     std::pair<double, double> min_max_sdf = sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays);
+    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+
     std::cout << "SDF computation is completed. Min-SDF : " << min_max_sdf.first << " " "Max-SDF : " << min_max_sdf.second << std::endl;
 
     pair->first->set_color_vector_read_only(true);
@@ -251,6 +255,8 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     }
 
     check_and_set_ids(pair->first->polyhedron());
+    QTime time;
+    time.start();
     if(pair->second.empty()) { // SDF values are empty, calculate
       pair->second.resize(pair->first->polyhedron()->size_of_facets(), 0.0);
       Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
@@ -263,6 +269,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 
     std::size_t nb_segments = segmentation_from_sdf_values(*(pair->first->polyhedron())
         ,sdf_pmap, segment_pmap, number_of_clusters, smoothness, extract_segments); 
+    std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     std::cout << "Segmentation is completed. Number of segments : " << nb_segments << std::endl;  
     pair->first->set_color_vector_read_only(true);  
      
