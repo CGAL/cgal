@@ -411,7 +411,7 @@ bool run_test_case_from_file(Visibility_2 visibility, std::ifstream &input) {
   }
 
 
-  if (!test_are_equal<Visibility_arrangement_2>(arr_out, arr_correct_out)) {
+  if (!test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>(arr_out, arr_correct_out)) {
     std::cout<<"the result is:\n";
     CGAL::Visibility_2::print_arrangement(arr_out);
     std::cout<<"however, the expected answer is:\n";
