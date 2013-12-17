@@ -43,14 +43,14 @@ double compute_and_time_sdf(const Polyhedron& mesh, Facet_with_id_pmap<double, P
 }
 
 template<class Polyhedron>
-double compute_and_time_segmentation(const Polyhedron& mesh, Facet_with_id_pmap<double, Polyhedron> sdf_values, int cluster) {
+double compute_and_time_segmentation(const Polyhedron& mesh, Facet_with_id_pmap<double, Polyhedron> sdf_values, std::size_t cluster) {
   // Segment
-  std::vector<int> internal_segment_map(mesh.size_of_facets());
-  Facet_with_id_pmap<int, Polyhedron> segment_property_map(internal_segment_map);
+  std::vector<std::size_t> internal_segment_map(mesh.size_of_facets());
+  Facet_with_id_pmap<std::size_t, Polyhedron> segment_property_map(internal_segment_map);
 
   CGAL::Timer timer;
   timer.start();
-  int number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_values, segment_property_map, cluster);
+  std::size_t number_of_segments = CGAL::segmentation_from_sdf_values(mesh, sdf_values, segment_property_map, cluster);
   timer.stop();
   std::cout << "  number of segments: " << number_of_segments << std::endl;
   std::cout << "  Segmentation Time with " << cluster << " clusters : " << timer.time() << std::endl;
@@ -72,7 +72,7 @@ read_and_run(const std::string& file_name) {
   std::cout << " Number of Facets: " << mesh.size_of_facets() << std::endl;
   timings.push_back( mesh.size_of_facets());
   // assign id field for each facet
-  int facet_id = 0;
+  std::size_t facet_id = 0;
   for(typename Polyhedron::Facet_iterator facet_it = mesh.facets_begin();
     facet_it != mesh.facets_end(); ++facet_it, ++facet_id) {
       facet_it->id() = facet_id;
@@ -83,7 +83,7 @@ read_and_run(const std::string& file_name) {
   double sdf_time = compute_and_time_sdf(mesh, sdf_values);
   timings.push_back(sdf_time);
 
-  std::vector<int> cluster_counts;
+  std::vector<std::size_t> cluster_counts;
   cluster_counts.push_back(2);
   cluster_counts.push_back(5);
   cluster_counts.push_back(10);

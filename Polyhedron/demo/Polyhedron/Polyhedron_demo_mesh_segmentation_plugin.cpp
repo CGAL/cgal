@@ -171,13 +171,13 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 { dock_widget->show(); }
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
-{   
+{
     Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(!item) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
-    int number_of_rays = ui_widget.Number_of_rays_spin_box->value();
+    std::size_t number_of_rays = ui_widget.Number_of_rays_spin_box->value();
     double cone_angle = (ui_widget.Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;
     bool create_new_item = ui_widget.New_item_check_box->isChecked();
     
@@ -223,9 +223,9 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
-    int number_of_clusters = ui_widget.Number_of_clusters_spin_box->value();
+    std::size_t number_of_clusters = ui_widget.Number_of_clusters_spin_box->value();
     double smoothness = ui_widget.Smoothness_spin_box->value();
-    int number_of_rays = ui_widget.Number_of_rays_spin_box->value();
+    std::size_t number_of_rays = ui_widget.Number_of_rays_spin_box->value();
     double cone_angle = (ui_widget.Cone_angle_spin_box->value()  / 180.0) * CGAL_PI;
     bool create_new_item = ui_widget.New_item_check_box->isChecked();
     bool extract_segments = ui_widget.Extract_segments_check_box->isChecked();
@@ -257,11 +257,11 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
       sdf_values(*(pair->first->polyhedron()), sdf_pmap, cone_angle, number_of_rays); 
     }
 
-    std::vector<int> internal_segment_map(pair->first->polyhedron()->size_of_facets());
-    Polyhedron_with_id_to_vector_property_map<Polyhedron, int> segment_pmap(&internal_segment_map);
+    std::vector<std::size_t> internal_segment_map(pair->first->polyhedron()->size_of_facets());
+    Polyhedron_with_id_to_vector_property_map<Polyhedron, std::size_t> segment_pmap(&internal_segment_map);
     Polyhedron_with_id_to_vector_property_map<Polyhedron, double> sdf_pmap(&pair->second);
 
-    int nb_segments = segmentation_from_sdf_values(*(pair->first->polyhedron())
+    std::size_t nb_segments = segmentation_from_sdf_values(*(pair->first->polyhedron())
         ,sdf_pmap, segment_pmap, number_of_clusters, smoothness, extract_segments); 
     std::cout << "Segmentation is completed. Number of segments : " << nb_segments << std::endl;  
     pair->first->set_color_vector_read_only(true);  
