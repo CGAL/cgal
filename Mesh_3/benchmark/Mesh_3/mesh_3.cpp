@@ -4,10 +4,10 @@
 int EXIT1, EXIT2, EXIT3, BASE1, BASE2, BASE3, BASE4, BASE5, BASE6, BASE7, BASE8,  BASE9, BASE10, CALLS;
 int EXACT;
 
-#define ADD_BBOX_POINTS
-#define DOUBLE_FILTER
+//#define ADD_BBOX_POINTS
+#define POINT_IN_BBOX
 //#define DUMP_FAILURES
-#define DELAY_RETURN
+//#define DELAY_RETURN
 
 bool add_bbox_points, double_filter;
 
@@ -144,10 +144,11 @@ int main(int argc, char* argv[])
     std::cerr << "Added bbox points" << std::endl;
 #endif
 
+  std::cout << c3t3.number_of_cells() << std::endl;
   // Output
    std::ofstream medit_file("fandisk_CGAL.mesh");
-   c3t3.output_to_medit(medit_file);
-   medit_file.close();
+   //c3t3.output_to_medit(medit_file);
+   //medit_file.close();
 
   // Set tetrahedron size (keep cell_radius_edge), ignore facets
   //Mesh_criteria new_criteria(cell_radius_edge=3, cell_size=0.03);
