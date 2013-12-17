@@ -248,6 +248,42 @@ public:
     Do_intersect(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
       :m_traits(traits) {}
 
+#ifdef CGAL_AABB_TREE_USE_FASTER_DO_INTERSECT_RAY_SEGMENT_BBOX_PREDICATE
+    template <class K>
+    bool
+    operator()(const CGAL::Segment_3<K>& segment, const Bounding_box& bbox) const
+    {
+      const Point_3& p = segment.source();
+      const Point_3& q = segment.target();
+
+      return internal::do_intersect_bbox_segment_aux
+        <double,
+        true, // bounded at t=0
+        true, // bounded at t=1
+        false> // do not use static filters
+        (p.x(), p.y(), p.z(),
+        q.x(), q.y(), q.z(),
+        bbox);
+    }
+
+    template <class K>
+    bool
+    operator()(const CGAL::Ray_3<K>& ray, const Bounding_box& bbox) const
+    {
+      const Point_3& p = ray.source();
+      const Point_3& q = ray.second_point();
+
+      return internal::do_intersect_bbox_segment_aux
+        <double,
+        true, // bounded at t=0
+        false,// not bounded at t=1
+        false> // do not use static filters
+        (p.x(), p.y(), p.z(),
+        q.x(), q.y(), q.z(),
+        bbox);
+    }
+#endif
+
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
