@@ -20,7 +20,7 @@
 #include <map>
 #include <algorithm>
 #include <vector>
-#include <CGAL/property_map.hpp>
+#include <CGAL/property_map.h>
 
 
 template<class PolyhedronWithId, class ValueType>
