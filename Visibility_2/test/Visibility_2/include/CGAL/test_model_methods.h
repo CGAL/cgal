@@ -73,21 +73,21 @@ void test_model_methods_for_arr(
   }
   assert(face_check == face);
 
-  assert(true == test_are_equal<Arrangement_2, Visibility_arrangement_2>
-                                        (arr, arr_out));
+  assert((true == test_are_equal<Arrangement_2, Visibility_arrangement_2>
+          (arr, arr_out)));
   visibility.detach();
   assert(false == visibility.is_attached());
   visibility.attach(arr);
 
   visibility.compute_visibility(query_pt, fit, arr_out_check);
-  assert(true == test_are_equal<Visibility_arrangement_2, Arrangement_2>
-                                        (arr_out_check, arr));
-  assert(true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
-                                        (arr_out, arr_out_check));
+  assert((true == test_are_equal<Visibility_arrangement_2, Arrangement_2>
+          (arr_out_check, arr)));
+  assert((true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
+          (arr_out, arr_out_check)));
   arr_out.clear();
   visibility.compute_visibility(query_pt, fit, arr_out);
-  assert(true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
-                                        (arr_out, arr_out_check));
+  assert((true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
+          (arr_out, arr_out_check)));
 
   // Now consider the query point on a halfedge
   const Point_2 query_pt2 = Point_2(0, 4);
@@ -109,12 +109,11 @@ void test_model_methods_for_arr(
     face = arr_out.faces_begin();
   }
   assert(face_check_he == face);
-  assert(true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
-                                        (arr_out, arr));
+  assert((true == test_are_equal(arr_out, arr)));
   arr_out_check.clear();
   visibility.compute_visibility(query_pt2, hit, arr_out_check);
-  assert(true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
-                                        (arr_out, arr_out_check));  
+  assert((true == test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>
+          (arr_out, arr_out_check)));  
 
   // Now consider the query point as the target of a halfedge
   typename Arrangement_2::Halfedge_const_iterator hit_snd;
@@ -130,7 +129,7 @@ void test_model_methods_for_arr(
         face = arr_out.faces_begin();
       }
       assert(face_check_he_snd == face);
-      if (! test_are_equal<Visibility_arrangement_2, Visibility_arrangement_2>(arr_out, arr)) {
+      if (! test_are_equal(arr_out, arr)) {
         assert(false);
       }
     }
