@@ -198,7 +198,7 @@ The previous examples use a `std::map` as property maps for storing the SDF valu
 a polyhedron type with a facet type storing an extra ID field, together with a vector, as underlying data structure in the property maps.
 The main advantage is to decrease from log to constant the complexity for accessing the data associated to facets.
 
-\cgalExample{Surface_mesh_segmentation/segmentation_via_sdf_values_with_facet_ids_example.cpp}
+\cgalExample{Surface_mesh_segmentation/segmentation_with_facet_ids_example.cpp}
 <BR>
 \section Performances Performances
 <!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->
