@@ -20,7 +20,7 @@ int main(void)
       // unique point generate
       std::vector<double> points;
       for(std::size_t i = 0; i < center_size; ++i) {
-        points.push_back(i);
+        points.push_back(static_cast<double>(i));
       }
 
       // test kmeans, expected result: each point has its own cluster

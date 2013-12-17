@@ -148,8 +148,9 @@ class K_means_point
 public:
   double data;      /**< Location of the point */
   std::size_t    center_id; /**< Closest center to the point */
-  K_means_point(double data, std::size_t center_id = -1) : data(data),
-    center_id(center_id) {
+  K_means_point(double data,
+                std::size_t center_id = (std::numeric_limits<std::size_t>::max)())
+    : data(data), center_id(center_id) {
   }
 
   operator double() const {
