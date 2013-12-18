@@ -16,6 +16,66 @@ typedef std::pair<Point_2,std::string> Point;
 typedef std::list<Point>::iterator iterator;
 
 typedef std::pair<iterator,iterator> Segment;
+typedef std::vector<Segment>::iterator segment_iterator;
+typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,segment_iterator> Box;
+/*
+// callback function that reports all truly intersecting triangles
+void report_inters( const Box& a, const Box& b) 
+{
+  std::cout << "Box " << (a.handle() - triangles.begin()) << " and "
+            << (b.handle() - triangles.begin()) << " intersect\n";
+}
+*/
+void
+swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
+{
+  iterator pit = points.begin();
+  ++pit; // because the first point is duplicated
+
+  while(true){
+    bool swapped = false;
+    Point_2& p = pit->first;
+    iterator qit = pit;
+    ++qit;
+    if(qit == points.end()){
+      break;
+    }
+
+    Point_2& q = qit->first;
+    
+    iterator rit = qit;
+    ++rit;
+    while(true){
+      if(rit == points.end()){
+        break;
+      }
+      Point_2& r = rit->first;
+      iterator sit = rit;
+      ++sit;
+      if(sit == points.end()){
+        break;
+      }
+      Point_2& s = sit->first;
+      Segment_2 segA(p,q), segB(r,s);
+      if((CGAL::do_intersect(segA,segB)) &&
+         p!=r && p!=s && q!=r && q!=s){
+        std::list<std::pair<Point_2,std::string> > tmp;
+        tmp.splice(tmp.begin(),
+                   points,
+                   qit,
+                   sit);
+        tmp.reverse();
+        points.splice(sit,tmp);
+        swapped = true;
+        break;
+      }
+      ++rit;
+        }
+    if(! swapped){
+      ++pit;
+    }
+  }
+}
 
 
 void
@@ -23,7 +83,6 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
   while(true){
-  
     Point_2& p = pit->first;
     iterator qit = pit;
     ++qit;
@@ -72,7 +131,7 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
 
 void contour(int count, int n)
 {
-  //std::cerr << "contour  " << count << " with " << n << "vertices" << std::endl;
+  std::cerr << "contour  " << count << " with " << n << "vertices" << std::endl;
  
   std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
   std::list<std::pair<Point_2,std::string> > points;
@@ -150,9 +209,9 @@ void contour(int count, int n)
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
   } else {
     fix_loops(points);
-
     // remove the added second point;
     points.pop_back(); 
+    swap_intersections(points);
 
     std::cout << points.size() <<std::endl;
     for(iterator it = points.begin(); it!= points.end(); ++it){
