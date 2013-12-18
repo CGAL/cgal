@@ -321,7 +321,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
         else {
           color_vector.push_back(color_map_sdf[gray_color]);
         }
-        facet_it->set_patch_id(patch_id);
+        facet_it->set_patch_id(static_cast<int>(patch_id));
     }
 }
 
@@ -338,7 +338,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
         facet_it != polyhedron->facets_end(); ++facet_it)   
     {
         std::size_t segment_id = segment_ids[facet_it];
-        facet_it->set_patch_id(segment_id);
+        facet_it->set_patch_id(static_cast<int>(segment_id));
         max_segment = (std::max)(max_segment, segment_id);      
     }
     for(std::size_t i = 0; i <= max_segment; ++i)   
