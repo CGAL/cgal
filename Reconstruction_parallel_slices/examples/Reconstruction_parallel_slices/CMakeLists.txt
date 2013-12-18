@@ -27,6 +27,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "manifold_check.cpp" )
   create_single_source_cgal_program( "check_valid_input.cpp" )
   create_single_source_cgal_program( "edge_profile.cpp" )
+  create_single_source_cgal_program( "repair.cpp" )
 
 else()
   
