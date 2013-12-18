@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/box_intersection_d.h>
 #include <iostream>
 #include <fstream>
 #include <iterator>
@@ -11,15 +12,71 @@ typedef Kernel::Point_2 Point_2;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Segment_2 Segment_2;
 
+typedef std::pair<Point_2,std::string> Point;
+typedef std::list<Point>::iterator iterator;
 
+typedef std::pair<iterator,iterator> Segment;
+
+
+void
+fix_loops(std::list<std::pair<Point_2,std::string> >& points)
+{
+  iterator pit = points.begin();
+  while(true){
+  
+    Point_2& p = pit->first;
+    iterator qit = pit;
+    ++qit;
+    if(qit == points.end()){
+      break;
+    }
+
+    Point_2& q = qit->first;
+    
+    iterator rit = qit;
+    ++rit;
+    if(rit == points.end()){
+      break;
+    }
+    Point_2& r = rit->first;
+
+    iterator sit = rit;
+    ++sit;
+    if(sit == points.end()){
+      break;
+    }
+    Point_2& s = sit->first;
+    Segment_2 segA(p,q), segB(r,s);
+    if(CGAL::do_intersect(segA,segB)){
+      //std::cerr << "intersection\n2\n" << pit->second << std::endl << qit->second << std::endl;  
+      //std::cerr << "2\n" << rit->second << std::endl << sit->second << std::endl;
+
+      // without C++11
+      CGAL::cpp11::result_of<Kernel::Intersect_2(Segment_2, Segment_2)>::type
+        result = intersection(segA, segB);
+     
+      if(result) {
+        if(const Segment_2* rs = boost::get<Segment_2>(&*result)) {
+          std::cerr << "intersection is a segment" << std::endl;
+        } else {
+          const Point_2& rp = *boost::get<Point_2>(&*result);
+          //std::cerr << "point " << rp << std::endl;
+          //std::cerr << "perimeter " << std::sqrt(CGAL::squared_distance(rp,q))+ std::sqrt(CGAL::squared_distance(rp,r)) + std::sqrt(CGAL::squared_distance(r,q)) << std::endl;
+          std::swap(*qit,*rit);
+        }
+      }
+    }
+    ++pit;
+  }
+}
 
 void contour(int count, int n)
 {
-  std::cerr << "contour  " << count << " with " << n << "vertices" << std::endl;
+  //std::cerr << "contour  " << count << " with " << n << "vertices" << std::endl;
  
   std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
   std::list<std::pair<Point_2,std::string> > points;
-  typedef std::list<std::pair<Point_2,std::string> >::iterator iterator;
+
   for(int i = 0; i <n; i++){
     std::string line;
     std::getline(std::cin, line);
@@ -86,14 +143,16 @@ void contour(int count, int n)
     }
     ++pit; 
   }
-  // remove the added second point;
-  points.pop_back(); 
+ 
 
-
-  if(points.size() == 3){
+  if(points.size() == 4){
     std::cerr << "ignore segment" <<  std::endl;
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
   } else {
+    fix_loops(points);
+
+    // remove the added second point;
+    points.pop_back(); 
 
     std::cout << points.size() <<std::endl;
     for(iterator it = points.begin(); it!= points.end(); ++it){
