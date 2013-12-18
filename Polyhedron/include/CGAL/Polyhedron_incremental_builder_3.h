@@ -456,6 +456,10 @@ protected:
                         return Halfedge_handle();
                     }
                     decorator.set_face( e->next(), current_face);
+                    // The following line prevents e->next() to be picked
+                    // by get_vertex_to_edge_map(v) in an upcoming call
+                    // of lookup_halfedge(v, *)
+                    set_vertex_to_edge_map( v, e->next()->next()->opposite());
                     return e;
                 }
                 e = e->next()->opposite();
