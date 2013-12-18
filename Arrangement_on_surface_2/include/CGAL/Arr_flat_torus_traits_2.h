@@ -96,11 +96,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    //! The traits (in case it has state)
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Compare_x_2(const Traits& traits) : m_traits(traits) {}
 
@@ -116,16 +116,17 @@ public:
      * \pre p1 does not lie on the boundary.
      * \pre p2 does not lie on the boundary.
      * Note that in the implementation we only check that the points do not
-     * lie on the x-boundary.
+     * lie on the x-boundary, and we use this functor internally to compare
+     * the x-coordinates of two points on the y-boundary.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(p1));
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(p2));
 
-      const FT& d1 = p1.x();
-      const FT& d2 = p2.x();
-      return (d1 < d2) ? SMALLER : ((d1 == d2) ? EQUAL : LARGER);
+      const FT& x1 = p1.x();
+      const FT& x2 = p2.x();
+      return (x1 < x2) ? SMALLER : ((x1 == x2) ? EQUAL : LARGER);
     }
   };
 
@@ -142,8 +143,8 @@ public:
     //! The traits (in case it has state)
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Compare_y_2(const Traits& traits) : m_traits(traits) {}
 
@@ -159,16 +160,17 @@ public:
      * \pre p1 does not lie on the boundary.
      * \pre p2 does not lie on the boundary.
      * Note that in the implementation we only check that the points do not
-     * lie on the y-boundary.
+     * lie on the y-boundary, and we use this functor internally to compare
+     * the y-coordinates of two points on the x-boundary.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(p1));
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(p2));
 
-      const FT& d1 = p1.y();
-      const FT& d2 = p2.y();
-      return (d1 < d2) ? SMALLER : ((d1 == d2) ? EQUAL : LARGER);
+      const FT& y1 = p1.y();
+      const FT& y2 = p2.y();
+      return (y1 < y2) ? SMALLER : ((y1 == y2) ? EQUAL : LARGER);
     }
   };
 
@@ -177,17 +179,17 @@ public:
    */
   Compare_x_2 compare_y_2_object() const { return Compare_y_2(*this); }
 
-  /*! A functor that compares two directional points lexigoraphically:
-   * by x, then by y.
+  /*! A functor that lexigoraphically compares two points;
+   * first by x then by y.
    */
   class Compare_xy_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! Constructor from traits.
      * \param traits the traits (in case it has state)
      */
     Compare_xy_2(const Traits& traits) : m_traits(traits) {}
@@ -224,7 +226,7 @@ public:
    */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(*this); }
 
-  /*! A functor that obtain the left endpoint of an x-monotone curve. */
+  //! A functor that obtain the left endpoint of an x-monotone curve.
   class Construct_min_vertex_2 {
   public:
     /*! Obtain the left endpoint of an x-monotone curve.
@@ -241,7 +243,7 @@ public:
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return Construct_min_vertex_2(); }
 
-  /*! A functor that obtain the right endpoint of an x-monotone curve. */
+  //! A functor that obtain the right endpoint of an x-monotone curve.
   class Construct_max_vertex_2 {
   public:
     /*! Obtain the right endpoint of an x-monotone curve.
@@ -285,10 +287,10 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! Constructor from traits.
      * \param traits the traits (in case it has state)
      */
     Compare_y_at_x_2(const Traits& traits) : m_traits(traits) {}
@@ -296,7 +298,7 @@ public:
     friend class Arr_flat_torus_traits_2<Kernel>;
 
   public:
-    /*! Return the location of the given point with respect to the input
+    /*! Obtain the location of the given point with respect to the input
      * x-monotone curve.
      * \param xcv the x-monotone curve.
      * \param p the point.
@@ -337,9 +339,11 @@ public:
       const FT& source_y = xcv.source_y();
       const FT& target_x = xcv.target_x();
       const FT& target_y = xcv.target_y();
-      FT y = source_y +
-        (p_y - source_x) * (left_y - target_y) / (source_x - target_x);
-      return (p_y < y) ? SMALLER : ((p_y == y) ? EQUAL : LARGER);
+
+      typename Kernel::Orientation_2 orient = m_traits.orientation_2_object();
+      return (xcv.is_directed_right()) ?
+        orient(xcv.source_point(), xcv.target_point(), p) :
+        orient(xcv.target_point(), xcv.source_point(), p);
     }
   };
 
@@ -356,11 +360,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Compare_y_at_x_left_2(const Traits& traits) : m_traits(traits) {}
 
@@ -405,25 +409,26 @@ public:
       const Point_2& left1 = xcv1.left();
       const Point_2& left2 = xcv2.left();
 
-      Arr_parameter_space left_py1 =
-        xcv1.is_directed_right() ?
-        xcv1.source_parameter_space_in_y() : xcv1.target_parameter_space_in_y();
-
-      Arr_parameter_space left_py2 =
-        xcv2.is_directed_right() ?
-        xcv1.source_parameter_space_in_y() : xcv1.target_parameter_space_in_y();
-
+      // Compare the x-coordinate of the left endpoints of the ciurves.
       Comparison_result res = (left1.is_on_x_boundary()) ?
         ((left2.is_on_x_boundary()) ? EQUAL : SMALLER) :
         ((left2.is_on_x_boundary()) ? LARGER :
          m_traits->compare_x_object()(left1, left2));
 
+      Arr_parameter_space left_py2 =
+        xcv2.is_directed_right() ?
+        xcv2.source_parameter_space_in_y() : xcv2.target_parameter_space_in_y();
+
       if (res == SMALLER) {
         if (left_py2 == ARR_BOTTOM_BOUNDARY) return LARGER;
         if (left_py2 == ARR_TOP_BOUNDARY) return SMALLER;
         // use left2 and xcv1:
-        return m_traits->compare_y_at_x_object()(left2, xcv1);
+        return m_traits.opposite(m_traits->compare_y_at_x_object()(left2, xcv1));
       }
+
+      Arr_parameter_space left_py1 =
+        xcv1.is_directed_right() ?
+        xcv1.source_parameter_space_in_y() : xcv1.target_parameter_space_in_y();
 
       if (res == LERGER) {
         if (left_py1 == ARR_BOTTOM_BOUNDARY) return SMALLER;
@@ -451,16 +456,17 @@ public:
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(*this); }
 
-  //! A functor that compares the y-coordinates of two x-monotone curves
-  // immediately to the right of their intersection point.
+  /*! A functor that compares the y-coordinates of two x-monotone curves
+   * immediately to the right of their intersection point.
+   */
   class Compare_y_at_x_right_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! Constructor from traits.
      * \param traits the traits (in case it has state)
      */
     Compare_y_at_x_right_2(const Traits& traits) : m_traits(traits) {}
@@ -506,13 +512,9 @@ public:
       const Point_2& right1 = xcv1.right();
       const Point_2& right2 = xcv2.right();
 
-      Arr_parameter_space right_py1 =
-        xcv1.is_directed_right() ?
-        xcv1.target_parameter_space_in_y() : xcv1.source_parameter_space_in_y();
-
       Arr_parameter_space right_py2 =
         xcv2.is_directed_right() ?
-        xcv1.target_parameter_space_in_y() : xcv1.source_parameter_space_in_y();
+        xcv2.target_parameter_space_in_y() : xcv2.source_parameter_space_in_y();
 
       Comparison_result res = (right1.is_on_x_boundary()) ?
         ((right2.is_on_x_boundary()) ? EQUAL : LARGER) :
@@ -526,11 +528,15 @@ public:
         return m_traits->compare_y_at_x_object()(right2, xcv1);
       }
 
+      Arr_parameter_space right_py1 =
+        xcv1.is_directed_right() ?
+        xcv1.target_parameter_space_in_y() : xcv1.source_parameter_space_in_y();
+
       if (res == SMALLER) {
         if (right_py1 == ARR_BOTTOM_BOUNDARY) return SMALLER;
         if (right_py1 == ARR_TOP_BOUNDARY) return LARGER;
         // use left1 and xcv2:
-        return m_traits->compare_y_at_x_object()(left1, xcv2);
+        return m_traits.opposite(m_traits->compare_y_at_x_object()(left1, xcv2));
       }
 
       // (res == EQUAL)
@@ -559,7 +565,7 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
     /*! Constructor
@@ -616,6 +622,18 @@ public:
    * entity along the x-axis
    */
   class Parameter_space_in_x_2 {
+    typedef Arr_flat_torus_traits_2<Kernel> Traits;
+
+    //! The traits (in case it has state).
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Parameter_space_in_x_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_flat_torus_traits_2<Kernel>;
+
   public:
     /*! Obtains the parameter space at the end of an x-monotone curve along
      * the x-axis.
@@ -642,15 +660,17 @@ public:
          xcv.target_parameter_space_in_x() : xcv.source_parameter_space_in_x());
     }
 
-    /*! Obtains the parameter space at a point along the x-axis.
+    /*! Obtains the x-parameter space at a point along the x-axis.
+     * As a convention, if the point lies on the x-boundary, its x-coordinate
+     * is assumed to be smaller than the x-coordinate of a point that does not.
      * \param p the point.
      * \return the parameter space at p.
      * \pre p does not lie on the x-boundary.
      */
     Arr_parameter_space operator()(const Point_2 p) const
     {
-      CGAL_error();
-      return ARR_INTERIOR;
+      return (m_traits.is_on_x_identification_2_object()(p)) ?
+        ARR_LEFT_BOUNDARY : ARR_INTERIOR;
     }
   };
 
@@ -658,7 +678,7 @@ public:
    * \return an object of type Parameter_space_in_x_2.
    */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
-  { return Parameter_space_in_x_2(); }
+  { return Parameter_space_in_x_2(*this); }
 
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
@@ -693,14 +713,16 @@ public:
     }
 
     /*! Obtains the parameter space at a point along the y-axis.
+     * As a convention, if the point lies on the x-boundary, its x-coordinate
+     * is assumed to be smaller than the x-coordinate of a point that does not.
      * \param p the point.
      * \return the parameter space at p.
      * \pre p does not lie on the y-boundary.
      */
     Arr_parameter_space operator()(const Point_2 p) const
     {
-      CGAL_error();
-      return ARR_INTERIOR;
+      return (m_traits.is_on_y_identification_2_object()(p)) ?
+        ARR_LEFT_BOUNDARY : ARR_INTERIOR;
     }
   };
 
@@ -708,11 +730,12 @@ public:
    * \return an object of type Parameter_space_in_y_2.
    */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
-  { return Parameter_space_in_y_2(); }
+  { return Parameter_space_in_y_2(*this); }
 
 
-  //! A functor that compares the x-coordinate of curve ends on the boundary of
-  // the parameter space with curve ends and points.
+  /*! A functor that compares the x-coordinate of curve ends on the boundary of
+   * the parameter space with curve ends and points.
+   */
   class Compare_x_on_boundary_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
@@ -720,28 +743,30 @@ public:
     //! The traits (in case it has state).
     const Traits& m_traits;
 
-    //! Constructor
-    // \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
+     */
     Compare_x_on_boundary_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_flat_torus_traits_2<Kernel>;
 
   public:
-    //! Compare the x-coordinate of a point with the x-coordinate of an
-    // x-monotone curve end on the boundary.
-    // \param point the point.
-    // \param xcv the curve, the endpoint of which is compared.
-    // \param ce the curve-end indicator -
-    //            ARR_MIN_END - the minimal end of xc or
-    //            ARR_MAX_END - the maximal end of xc.
-    // \return the comparison result:
-    //         SMALLER - x(p) < x(xcv, ce);
-    //         EQUAL   - x(p) = x(xcv, ce);
-    //         LARGER  - x(p) > x(xcv, ce).
-    // \pre p does not lie on the x-boundary of the parameter space.
-    // \pre the ce end of the curve xcv lies on the y-boundary of the
-    //      parameter space.
-    // \pre xcv does not lie on the x-boundary of the parameter space.
+    /*! Compare the x-coordinate of a point with the x-coordinate of an
+     * x-monotone curve end on the boundary.
+     * \param point the point.
+     * \param xcv the curve, the endpoint of which is compared.
+     * \param ce the curve-end indicator -
+     *            ARR_MIN_END - the minimal end of xc or
+     *            ARR_MAX_END - the maximal end of xc.
+     * \return the comparison result:
+     *         SMALLER - x(p) < x(xcv, ce);
+     *         EQUAL   - x(p) = x(xcv, ce);
+     *         LARGER  - x(p) > x(xcv, ce).
+     * \pre p does not lie on the x-boundary of the parameter space.
+     * \pre the ce end of the curve xcv lies on the y-boundary of the
+     *      parameter space.
+     * \pre xcv does not lie on the x-boundary of the parameter space.
+     */
     Comparison_result operator()(const Point_2& point,
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
@@ -769,24 +794,25 @@ public:
          (m_traits->compare_x_object()(p, xcv.source())));
     }
 
-    //! Compare the x-coordinates of 2 arc ends near the boundary of the
-    // parameter space.
-    // \param xcv1 the first arc.
-    // \param ce1 the first arc end indicator -
-    //            ARR_MIN_END - the minimal end of xcv1 or
-    //            ARR_MAX_END - the maximal end of xcv1.
-    // \param xcv2 the second arc.
-    // \param ce2 the second arc end indicator -
-    //            ARR_MIN_END - the minimal end of xcv2 or
-    //            ARR_MAX_END - the maximal end of xcv2.
-    // \return the second comparison result:
-    //         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
-    //         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
-    //         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-    // \pre the ce1 end of the arc xcv1 lies on the y-boundary.
-    // \pre the ce2 end of the arc xcv2 lies on the y-boundary.
-    // \pre xcv1 does not lie in the x-identification curve.
-    // \pre xcv2 does not lie in the x- identification curve.
+    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
+     * parameter space.
+     * \param xcv1 the first arc.
+     * \param ce1 the first arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv1 or
+     *            ARR_MAX_END - the maximal end of xcv1.
+     * \param xcv2 the second arc.
+     * \param ce2 the second arc end indicator -
+     *            ARR_MIN_END - the minimal end of xcv2 or
+     *            ARR_MAX_END - the maximal end of xcv2.
+     * \return the second comparison result:
+     *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
+     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
+     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+     * \pre the ce1 end of the arc xcv1 lies on the y-boundary.
+     * \pre the ce2 end of the arc xcv2 lies on the y-boundary.
+     * \pre xcv1 does not lie in the x-identification curve.
+     * \pre xcv2 does not lie in the x- identification curve.
+     */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end ce1,
                                  const X_monotone_curve_2& xcv2,
@@ -860,11 +886,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Compare_x_near_boundary_2(const Traits& traits) : m_traits(traits) {}
 
@@ -884,7 +910,7 @@ public:
      *         LARGER  - x(xcv1, ce) > x(xcv2, ce).
      * \pre the ce end of the curve xcv1 lies on the y-boundary.
      * \pre the ce end of the curve xcv2 lies on the y-boundary.
-     * \pre the the x-coordinates of xcv1 and xcv2 at their ce end are equal.
+     * \pre the x-coordinates of xcv1 and xcv2 at their ce end are equal.
      * \pre xcv1 does not lie on the x-boundary.
      * \pre xcv2 does not lie on the x-boundary.
      */
@@ -892,8 +918,35 @@ public:
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      //! \todo
-      return EQUAL;
+      Point_2 l1, r1;
+      if (xcv1.is_directed_right()) {
+        l1 = xcv1.source_point();
+        r1 = xcv1.target_point();
+      }
+      else {
+        l1 = xcv1.target_point();
+        r1 = xcv1.source_point();
+      }
+      Point_2 l2, r2;
+      if (xcv2.is_directed_right()) {
+        l2 = xcv2.source_point();
+        r2 = xcv2.target_point();
+      }
+      else {
+        l2 = xcv2.target_point();
+        r2 = xcv2.source_point();
+      }
+
+      Parameter_space_in_y py = m_traits.parameter_space_in_y_2_object();
+      Arr_parameter_space py1 = py(xcv1, ce);
+      Arr_parameter_space py2 = py(xcv2, ce);
+      typename Kernel::Orientation_2 orient = m_traits.orientation_2_object();
+      if (py1 == ARR_BOTTOM_BOUNDARY) {
+        if (py2 == ARR_TOP_BOUNDARY) r2 = Point(r2.x(), 1 - r2.y());
+        return orient(r1, l1, r2);
+      }
+      if (py2 == ARR_BOTTOM_BOUNDARY) r2 = Point(r2.x(), 1 - r2.y());
+      orient(r2, l2, r1);
     }
   };
 
@@ -911,11 +964,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Compare_y_near_boundary_2(const Traits& traits) : m_traits(traits) {}
 
@@ -957,7 +1010,7 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
     /*! Constructor
@@ -1030,11 +1083,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Is_on_y_identification_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1072,10 +1125,10 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! Constructor from traits.
      * \param traits the traits (in case it has state)
      */
     Make_x_monotone_2(const Traits& traits) : m_traits(traits) {}
@@ -1095,7 +1148,7 @@ public:
     template<typename OutputIterator>
     OutputIterator operator()(const Curve_2& c, OutputIterator oi) const
     {
-      //!\todo
+      //! \todo
       if (c.is_degenerate()) {
         // The spherical_arc is a degenerate point - wrap it with an object:
         *oi++ = make_object(c.right());
@@ -1129,11 +1182,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Split_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1179,11 +1232,11 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Intersect_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1219,11 +1272,11 @@ public:
   class Are_mergeable_2 {
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Are_mergeable_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1256,16 +1309,16 @@ public:
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
-  /*! A functor that merges two x-monotone arcs into one */
+  //! A functor that merges two x-monotone arcs into one.
   class Merge_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    /*! Constructor
-     * \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
      */
     Merge_2(const Traits& traits) : m_traits(traits) {}
 
@@ -1309,7 +1362,7 @@ public:
 
   class Approximate_2 {
   public:
-    /*! Return an approximation of a point coordinate.
+    /*! Obtain an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
@@ -1333,17 +1386,18 @@ public:
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
-    //! The traits.
+    //! The traits (in case it has state).
     const Traits& m_traits;
 
-    //! Constructor
-    // \param traits the traits (in case it has state)
+    /*! Constructor from traits.
+     * \param traits the traits (in case it has state).
+     */
     onstruct_x_monotone_curve_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_flat_torus_traits_2<Kernel>;
 
   public:
-    /*! Return an x-monotone curve connecting the two given endpoints.
+    /*! Obtain an x-monotone curve connecting the two given endpoints.
      * \param p1 the first point.
      * \param p2 the second point.
      * \pre p1 and p2 must not be the same.
@@ -1362,11 +1416,12 @@ public:
                                 is_x_full, is_degenerate, is_empty);
     }
 
-    //! Return an x-monotone curve connecting the two given endpoints.
-    // \param p1 the first point.
-    // \param p2 the second point.
-    // \pre p1 and p2 must not be the same.
-    // \return an x-monotone torusial arc connecting p1 and p2.
+    /*! Obtain an x-monotone curve connecting the two given endpoints.
+     * \param p1 the first point.
+     * \param p2 the second point.
+     * \pre p1 and p2 must not be the same.
+     * \return an x-monotone torusial arc connecting p1 and p2.
+     */
     X_monotone_curve_2 operator()(const Point_2& source,
                                   const Point_2& target) const
     {
@@ -1598,12 +1653,12 @@ public:
     m_is_empty(is_empty)
   {}
 
-  /*! Set the source endpoint direction.
+  /*! Set the source endpoint.
    * \param p the endpoint to set.
    */
   void set_source(const Arr_point_on_flat_torus_3& p) { m_source = p; }
 
-  /*! Set the target endpoint direction.
+  /*! Set the target endpoint.
    * \param p the endpoint to set.
    */
   void set_target(const Arr_point_on_flat_torus_3& p) { m_target = p; }
@@ -1846,7 +1901,7 @@ InputStream& operator>>(InputStream& os,
   return os;
 }
 
-/*! Inserter for the flat-torus x-monotone curve used by the traits-class
+/*! Inserter for the flat-torus x-monotone curve used by the traits-class.
  */
 template <typename Kernel, typename OutputStream>
 OutputStream&
@@ -1861,7 +1916,8 @@ operator<<(OutputStream& os,
   return os;
 }
 
-/*! Inserter for the flat-torus curve used by the traits-class */
+/*! Inserter for the flat-torus curve used by the traits-class.
+ */
 template <typename Kernel, typename OutputStream>
 OutputStream&
 operator<<(OutputStream& os, const Arr_curve_on_flat_torus_3<Kernel>& cv)
@@ -1874,7 +1930,8 @@ operator<<(OutputStream& os, const Arr_curve_on_flat_torus_3<Kernel>& cv)
   return os;
 }
 
-/*! Extractor for the flat-torus point used by the traits-class */
+/*! Extractor for the flat-torus point used by the traits-class.
+ */
 template <typename Kernel_, typename InputStream>
 InputStream& operator>>(InputStream& is,
                         Arr_point_on_flat_torus_3<Kernel_>& point)
