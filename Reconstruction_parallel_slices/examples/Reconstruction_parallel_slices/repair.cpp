@@ -66,7 +66,7 @@ crossing(Point_2& p, Point_2& q, Point_2& q2,
 }
 
 bool
-find_save_start(std::list<std::pair<Point_2,std::string> >& points)
+find_safe_start(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
   iterator qit = pit; ++qit;
@@ -283,7 +283,7 @@ void contour(int count, int n)
     return;
   }
 
-  find_save_start(points);
+  find_safe_start(points);
   
   // in the data the first point is duplicated
   // to make the loop easier also duplicate the second point
