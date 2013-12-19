@@ -40,6 +40,10 @@ int
 crossing(Point_2& p, Point_2& q, Point_2& q2,
          Point_2& r, Point_2& s, Point_2& s2)
 {
+  std::cerr << "crossing test:\n" << p << std::endl;
+  std::cerr << q2 << std::endl;
+  std::cerr << r << std::endl;
+  std::cerr << s2 << std::endl;
   std::vector<std::pair<Direction_2, int> > directions;
   directions.push_back(std::make_pair(Direction_2(p-q),0));
   directions.push_back(std::make_pair(Direction_2(q2-q),0));
@@ -48,6 +52,11 @@ crossing(Point_2& p, Point_2& q, Point_2& q2,
 
   Less less;
   sort(directions.begin(), directions.end(),less);
+  if((directions[0].first == directions[1].first) ||
+     (directions[1].first == directions[2].first) ||
+     (directions[2].first == directions[3].first)){
+    return 0; // collinear segments 
+  }
   if((directions[0].second == directions[1].second) ||
      (directions[1].second == directions[2].second) ||
      (directions[2].second == directions[3].second)){
@@ -136,6 +145,29 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
                               r,s,s2);
           if(sign == 1){
             std::cerr << "crossing--------------------" << std::endl;
+            std::list<std::pair<Point_2,std::string> > tmp;
+            tmp.splice(tmp.begin(),
+                       points,
+                       q2it,
+                       sit);
+            tmp.reverse();
+            points.splice(s2it,tmp);
+            if((! CGAL::do_intersect(Segment_2(p,r),
+                                     Segment_2(s,s2))) && 
+               (! CGAL::do_intersect(Segment_2(p,r),
+                                     Segment_2(q,q2)))){
+              points.erase(qit);
+            } else if((! CGAL::do_intersect(Segment_2(q2,s2),
+                                           Segment_2(p,q))) &&
+                      (! CGAL::do_intersect(Segment_2(q2,s2),
+                                            Segment_2(q,r)))
+                      ) {
+              points.erase(sit);
+
+            } else {
+              std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+            }
+            points.splice(qit,tmp);
           } else if(sign == -1){
             std::cerr << "touching--------------------" << std::endl;
             std::cerr << "2\n" << p << std::endl << q2 << std::endl;
