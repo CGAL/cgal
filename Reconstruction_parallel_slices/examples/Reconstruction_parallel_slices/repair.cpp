@@ -11,6 +11,7 @@ typedef CGAL::Polygon_2<Kernel> Polygon_2;
 typedef Kernel::Point_2 Point_2;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Segment_2 Segment_2;
+typedef Kernel::Direction_2 Direction_2;
 
 typedef std::pair<Point_2,std::string> Point;
 typedef std::list<Point>::iterator iterator;
@@ -26,18 +27,34 @@ void report_inters( const Box& a, const Box& b)
             << (b.handle() - triangles.begin()) << " intersect\n";
 }
 */
-/*
+
+struct Less {
+  bool operator()(const std::pair<Direction_2, int> d1,
+                  const std::pair<Direction_2, int> d2) const
+  {
+    return CGAL::compare_angle_with_x_axis(d1.first,d2.first) == CGAL::SMALLER;
+  }
+};
+
 int
 crossing(Point_2& p, Point_2& q, Point_2& q2,
          Point_2& r, Point_2& s, Point_2& s2)
 {
-  Orientation o = CGAL::orientation_2(p,q,r);
-  if(o == CGAL::COLLINEAR) return 0;
-  Orientation o2 = CGAL::orientation_2(r,s,q2);
-  if(o2 == CGAL::COLLINEAR) return 0;
-  if(o2 != o) return 
+  std::vector<std::pair<Direction_2, int> > directions;
+  directions.push_back(std::make_pair(Direction_2(p-q),0));
+  directions.push_back(std::make_pair(Direction_2(q2-q),0));
+  directions.push_back(std::make_pair(Direction_2(r-q),1));
+  directions.push_back(std::make_pair(Direction_2(s2-q),1));
+
+  Less less;
+  sort(directions.begin(), directions.end(),less);
+  if((directions[0].second == directions[1].second) ||
+     (directions[1].second == directions[2].second) ||
+     (directions[2].second == directions[3].second)){
+    return -1; // no crossing 
+  }
+  return 1; // a crossing
 }
-*/
 
 bool
 find_save_start(std::list<std::pair<Point_2,std::string> >& points)
@@ -109,8 +126,8 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
           points.splice(sit,tmp);
           swapped = true;
           break;
-        } /*
-else if (q == s){
+        } 
+        else if (q == s){
           iterator q2it = qit; ++q2it;
           Point_2& q2 = q2it->first;
           iterator s2it = sit; ++s2it;
@@ -118,14 +135,31 @@ else if (q == s){
           int sign = crossing(p,q,q2,
                               r,s,s2);
           if(sign == 1){
+            std::cerr << "crossing--------------------" << std::endl;
           } else if(sign == -1){
+            std::cerr << "touching--------------------" << std::endl;
+            std::cerr << "2\n" << p << std::endl << q2 << std::endl;
+            std::cerr << "2\n" << r << std::endl << s2 << std::endl;
+            if((! CGAL::do_intersect(Segment_2(p,q2),
+                                     Segment_2(r,s))) && 
+               (! CGAL::do_intersect(Segment_2(p,q2),
+                                     Segment_2(s2,s)))){
+              points.erase(qit);
+            } else if((! CGAL::do_intersect(Segment_2(r,s2),
+                                           Segment_2(p,q))) &&
+                      (! CGAL::do_intersect(Segment_2(r,s2),
+                                            Segment_2(q2,q)))
+                      ) {
+              points.erase(sit);
 
+            } else {
+              std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+            }
           } else {
             std::cerr << "todo: treat overlapping segments" << std::endl;
           }
              
-        }
-          */
+        }          
       }
       ++rit;
         }
@@ -189,7 +223,7 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
 
 void contour(int count, int n)
 {
-  std::cerr << "contour  " << count << " with " << n << "vertices" << std::endl;
+  std::cerr << "\ncontour  " << count << " with " << n << " vertices" << std::endl;
  
   std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
   std::list<std::pair<Point_2,std::string> > points;
@@ -245,11 +279,13 @@ void contour(int count, int n)
 
     if(CGAL::collinear(p,q,r)){
       if(! CGAL::collinear_are_strictly_ordered_along_line(p,q,r)){
+        /*
         std::cerr << "not strictly collinear" << std::endl;
         std::cerr << p << std::endl;
         std::cerr << q << std::endl;
         std::cerr << r << std::endl;
         std::cerr << " in  polygon " << count << std::endl;
+        */
         points.erase(qit);
         if(pit->first == rit->first){
           std::cerr << "identical consecutive points " << pit->first << std::endl;
