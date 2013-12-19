@@ -39,6 +39,34 @@ crossing(Point_2& p, Point_2& q, Point_2& q2,
 }
 */
 
+bool
+find_save_start(std::list<std::pair<Point_2,std::string> >& points)
+{
+  iterator pit = points.begin();
+  iterator qit = pit; ++qit;
+  iterator rit = qit; ++rit;
+  std::size_t count = points.size();
+
+  points.pop_back();
+  while(collinear(pit->first, qit->first, rit->first) &&
+        collinear_are_strictly_ordered_along_line(pit->first,
+                                                  qit->first,
+                                                  rit->first)){
+    std::cerr << "change the start point" << std::endl;
+    points.splice(points.end(), points, pit);
+    if(--count == 0){
+      points.push_back(points.front());
+      return false;
+    }
+    pit = qit;
+    ++qit;
+    ++rit;
+  }
+  points.push_back(points.front());
+  return true;
+}
+
+
 void
 swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
 {
@@ -189,6 +217,8 @@ void contour(int count, int n)
     return;
   }
 
+  find_save_start(points);
+  
   // in the data the first point is duplicated
   // to make the loop easier also duplicate the second point
 
