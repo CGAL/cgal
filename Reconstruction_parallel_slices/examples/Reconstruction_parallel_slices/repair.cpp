@@ -26,6 +26,19 @@ void report_inters( const Box& a, const Box& b)
             << (b.handle() - triangles.begin()) << " intersect\n";
 }
 */
+/*
+int
+crossing(Point_2& p, Point_2& q, Point_2& q2,
+         Point_2& r, Point_2& s, Point_2& s2)
+{
+  Orientation o = CGAL::orientation_2(p,q,r);
+  if(o == CGAL::COLLINEAR) return 0;
+  Orientation o2 = CGAL::orientation_2(r,s,q2);
+  if(o2 == CGAL::COLLINEAR) return 0;
+  if(o2 != o) return 
+}
+*/
+
 void
 swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
 {
@@ -57,17 +70,34 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
       }
       Point_2& s = sit->first;
       Segment_2 segA(p,q), segB(r,s);
-      if((CGAL::do_intersect(segA,segB)) &&
-         p!=r && p!=s && q!=r && q!=s){
-        std::list<std::pair<Point_2,std::string> > tmp;
-        tmp.splice(tmp.begin(),
-                   points,
-                   qit,
-                   sit);
-        tmp.reverse();
-        points.splice(sit,tmp);
-        swapped = true;
-        break;
+      if(CGAL::do_intersect(segA,segB)){
+        if(p!=r && p!=s && q!=r && q!=s){
+          std::list<std::pair<Point_2,std::string> > tmp;
+          tmp.splice(tmp.begin(),
+                     points,
+                     qit,
+                     sit);
+          tmp.reverse();
+          points.splice(sit,tmp);
+          swapped = true;
+          break;
+        } /*
+else if (q == s){
+          iterator q2it = qit; ++q2it;
+          Point_2& q2 = q2it->first;
+          iterator s2it = sit; ++s2it;
+          Point_2& s2 = s2it->first;
+          int sign = crossing(p,q,q2,
+                              r,s,s2);
+          if(sign == 1){
+          } else if(sign == -1){
+
+          } else {
+            std::cerr << "todo: treat overlapping segments" << std::endl;
+          }
+             
+        }
+          */
       }
       ++rit;
         }
