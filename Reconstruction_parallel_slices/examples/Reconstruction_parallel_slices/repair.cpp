@@ -186,6 +186,7 @@ void contour(int count, int n)
   if(points.size() == 3){
     std::cerr << "ignore segment" <<  std::endl;
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
+    return;
   }
 
   // in the data the first point is duplicated
