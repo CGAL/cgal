@@ -3458,11 +3458,13 @@ class Reconstruction_from_parallel_slices_3{
     cdt_ptr=new CDT2();
     double z;
     do{
+      /// \todo see if it is worth using the spatial sorting
       bool contour_made_of_one_point=true;
       int n=polygon_reader.number_of_points();
       p2 = polygon_reader.get_point(z);
       vp = cdt_ptr->insert(p2);
       vp->info().z = z;
+      Point_2 first_point=p2;
       for(int i=1; i < n; i++){
         q2 = polygon_reader.get_point();
 
@@ -3477,6 +3479,14 @@ class Reconstruction_from_parallel_slices_3{
         vp = vq;
         p2 = q2;
       }
+      // add the last constraint if the first point is not duplicated
+      if (p2!=first_point)
+      {
+        vq = cdt_ptr->insert(first_point, vp->face());
+        vq->info().z = z;
+        cdt_ptr->insert_constraint(vp, vq);
+      }
+
       if (contour_made_of_one_point) vp->info().on_contour=false;
       if (polygon_reader.has_another_component()) polygon_reader.next_polygon();
       else break;
