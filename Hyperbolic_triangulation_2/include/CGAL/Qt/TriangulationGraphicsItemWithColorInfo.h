@@ -162,8 +162,15 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
+  //delete
+  QPen temp = painter->pen();
+  QPen old = temp;
+  temp.setWidthF(/*0.0035*/0.0045);
+  painter->setPen(temp);
+  //
+  
   painterostream = PainterOstream<Geom_traits>(painter);
- 
+  
   if(visibleEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
@@ -171,6 +178,11 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
       painterostream << t->segment(*eit);
     }
   }
+  
+  //delete
+  painter->setPen(old);
+  //
+  
   paintVertices(painter);
 }
 
@@ -196,10 +208,96 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       if(it->info().getColor() == 1) {
         painter->setPen(QPen(::Qt::green, 3.));
       }
+      
+      if(it->info().getColor() == 2) {
+        painter->setPen(QPen(::Qt::cyan, 3.));
+      }
+      
+      if(it->info().getColor() == 3) {
+        painter->setPen(QPen(::Qt::magenta, 3.));
+      }
+      
+      if(it->info().getColor() == 6) {
+        painter->setPen(QPen(::Qt::yellow, 3.));
+      }
+      
+      if(it->info().getColor() == 5) {
+        // brown
+        painter->setPen(QPen(QColor(139, 69, 19), 3.));
+      }
+      
+      if(it->info().getColor() == 4) {
+        painter->setPen(QPen(::Qt::blue, 3.));
+      }
+      
+      
+      if(it->info().getColor() == 7) {
+        // orange
+        QColor orange = QColor(255, 165, 0);
+        painter->setPen(QPen(orange, 3.));
+      }
+      
+      if(it->info().getColor() == 8) {
+        // dark green 
+        QColor blue = QColor(0, 102, 51);
+        painter->setPen(QPen(blue, 3.));
+      }
+      
+      if(it->info().getColor() == 9) {
+        // purple
+        QColor blue = QColor(102, 0, 102);
+        painter->setPen(QPen(blue, 3.));
+      }
+      
+      if(it->info().getColor() == 10) {
+        // close to blue
+        QColor blue = QColor(131, 111, 255);
+        painter->setPen(QPen(blue, 3.));
+      }
+      
       //
+      
+      // delete
+      QPen temp = painter->pen();
+      QPen old = temp;
+      temp.setWidth(9);
+      
+      double px = to_double(it->point().x());
+      double py = to_double(it->point().y());
+      double dist = px*px + py*py;
+      if(dist > 0.25) {
+        temp.setWidth(8);//6
+      }
+      if(dist > 0.64) {
+        temp.setWidth(7);//5
+      }
+      if(dist > 0.81) {
+        temp.setWidth(5);//3
+      }
+      if(dist > 0.92) {
+        temp.setWidth(4);//3
+      }
+      if(dist > 0.98) {
+        temp.setWidth(3);//3
+      }
+      //painter->setPen(temp);
       
       QPointF point = matrix.map(convert(it->point()));
       painter->drawPoint(point);
+      
+      painter->setPen(old);
+       
+      /*
+      QBrush temp = painter->brush();
+      QBrush old = temp;
+      temp.setColor(painter->pen().color());
+      
+      painter->setBrush(temp);
+      
+      painter->drawEllipse(point, 10, 10);
+      
+      painter->setBrush(old);
+       */
     }
   }
 }
@@ -222,8 +320,8 @@ void
 TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
 {
   Converter<Geom_traits> convert;
-
   m_painter->setPen(this->verticesPen());
+  
   QMatrix matrix = m_painter->matrix();
   m_painter->resetMatrix();
   m_painter->drawPoint(matrix.map(convert(vh->point())));
