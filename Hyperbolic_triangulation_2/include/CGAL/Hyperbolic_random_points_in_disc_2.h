@@ -25,6 +25,7 @@ FT r_e(FT r_h)
   return -dist;
 }
 
+// if seed = -1, then the seed will get a random value.
 template<class Gt>
 void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& output, int nb, int seed = 1, typename Gt::FT e = 0.0001)
 {
@@ -36,7 +37,11 @@ void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& outpu
   FT rh = r_h(re);
   
   typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
-  CGAL::Random rand(seed);
+  
+  CGAL::Random rand;
+  if (seed != -1) {
+    rand = CGAL::Random(seed);
+  }
   CGAL::Random_points_in_disc_2<Point_2, Creator> in_Euclidean_disk(rh, rand);
   
   std::vector<Point_2> pts;
