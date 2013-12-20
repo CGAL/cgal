@@ -123,7 +123,7 @@ public:
       
       Circle_2 circle( center, radius);
       // uncomment!!!
-      assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
+      //assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
       
       if(Orientation_2()(p, q, center) == LEFT_TURN) {
         return Arc_2(circle, p, q);
