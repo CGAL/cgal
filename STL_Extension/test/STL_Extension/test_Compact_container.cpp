@@ -216,6 +216,27 @@ void test(const Cont &)
   assert(check_empty(c9));
 }
 
+template < class Cont >
+void test_index(const Cont &C)
+{
+  test(C);
+
+  Cont c1;
+  for (int i = 0 ; i < 1000000 ; ++i)
+    c1.emplace();
+
+  typename Cont::iterator it = c1.begin();
+  for (int i=0; i < 1000000 ; ++i, ++it)
+  {
+    assert( c1[i]==*it ); // test the contents
+    if ( i%1000==0 )
+    {
+      assert( Cont::s_iterator_to(c1[i])==it );
+      assert( c1.iterator_to(c1[i])==it );
+      assert( Cont::s_iterator_to(c1[i])==it );
+    }
+  }
+}
 
 int main()
 {
@@ -223,6 +244,13 @@ int main()
   CGAL::Compact_container<Node_2> C2;
   test(C1);
   test(C2);
+
+  CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Constant_size_policy<1024> > C3;
+  CGAL::Compact_container<Node_2, CGAL::Default, CGAL::Addition_size_policy<14,16> > C4;
+
+  test_index(C3);
+  test_index(C4);
+
   return 0;
 }
 // EOF //
