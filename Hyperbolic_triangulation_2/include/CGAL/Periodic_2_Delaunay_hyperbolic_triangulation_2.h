@@ -88,6 +88,8 @@ private:
   void init_tds() {
     this->_infinite_vertex = tds().insert_first();
   }
+  
+  void paste_together_opposite_sides(const std::vector<Vertex_handle>& on_vertex, const std::vector<Vertex_handle>& on_boundary);
 };
 
 } // namespace CGAL
