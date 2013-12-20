@@ -110,7 +110,7 @@ void set_facet_visited (int i, bool b);
 /*!
 Returns a const reference to the surface center of `facet(i)`. 
 */ 
-const Point& facet_surface_center(int i); 
+const Point& get_facet_surface_center(int i); 
 
 /*!
 Sets point `p` as the surface center of `facet(i)`. 
