@@ -83,8 +83,59 @@
 namespace CGAL {
 
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
-#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16 
-  
+#define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
+
+template<unsigned int first_block_size_, unsigned int block_size_increment>
+struct Addition_size_policy
+{
+  static const unsigned int first_block_size = first_block_size_;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& cc)
+  { cc.block_size += block_size_increment; }
+
+  template<typename Compact_container>
+  static void get_index_and_block(typename Compact_container::size_type i,
+                                  typename Compact_container::size_type& index,
+                                  typename Compact_container::size_type& block)
+  {
+    typedef typename Compact_container::size_type ST;
+    const ST TWO_M_N = 2*first_block_size_ - block_size_increment;
+    ST delta = TWO_M_N*TWO_M_N + 8*block_size_increment*i;
+    block= (static_cast<ST>(std::sqrt(static_cast<double>(delta))) - TWO_M_N)
+      / (2*block_size_increment);
+
+    if ( block==0 )
+    { index = i + 1; }
+    else
+    {
+      const typename Compact_container::size_type first_element_in_block =
+        block*(first_block_size_+ (block_size_increment*(block - 1))/2);
+
+      index=i - first_element_in_block + 1;
+    }
+  }
+};
+
+template<unsigned int k>
+struct Constant_size_policy
+{
+  static const unsigned int first_block_size = k;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& /*cc*/)
+  {}
+
+  template<typename Compact_container>
+  static void get_index_and_block(typename Compact_container::size_type i,
+                                  typename Compact_container::size_type& index,
+                                  typename Compact_container::size_type& block)
+  {
+    block=i/k;
+    index=(i%k)+1;
+  }
+};
+
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
@@ -112,12 +163,15 @@ namespace internal {
   class CC_iterator;
 }
 
-template < class T, class Allocator_ = Default >
+template < class T, class Allocator_ = Default, class Increment_policy
+           =Addition_size_policy<CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE,
+                                 CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE> >
 class Compact_container
 {
   typedef Allocator_                                Al;
+  typedef Increment_policy                          Incr_policy;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
-  typedef Compact_container <T, Al>                 Self;
+  typedef Compact_container <T, Al, Increment_policy> Self;
   typedef Compact_container_traits <T>              Traits;
 public:
   typedef T                                         value_type;
@@ -128,13 +182,17 @@ public:
   typedef typename Allocator::const_pointer         const_pointer;
   typedef typename Allocator::size_type             size_type;
   typedef typename Allocator::difference_type       difference_type;
-  typedef internal::CC_iterator<Self, false>        iterator;
-  typedef internal::CC_iterator<Self, true>         const_iterator;
+  typedef internal::CC_iterator<Self, false> iterator;
+  typedef internal::CC_iterator<Self, true>  const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
   friend class internal::CC_iterator<Self, false>;
   friend class internal::CC_iterator<Self, true>;
+
+  template<unsigned int first_block_size_, unsigned int block_size_increment>
+    friend struct Addition_size_policy;
+  template<unsigned int k> friend struct Constant_size_policy;
 
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
@@ -172,6 +230,38 @@ public:
   ~Compact_container()
   {
     clear();
+  }
+
+  bool is_used(size_type i) const
+  {
+    typename Self::size_type block_number, index_in_block;
+    Increment_policy::template get_index_and_block<Self>(i,
+                                                         index_in_block,
+                                                         block_number);
+    return (type(&all_items[block_number].first[index_in_block])
+                 == USED);
+  }
+
+  const T& operator[] (size_type i) const
+  {
+    CGAL_assertion( is_used(i) );
+
+    typename Self::size_type block_number, index_in_block;
+    Increment_policy::template get_index_and_block<Self>(i,
+                                                         index_in_block,
+                                                         block_number);
+    return all_items[block_number].first[index_in_block];
+  }
+
+  T& operator[] (size_type i)
+  {
+    CGAL_assertion( is_used(i) );
+
+    typename Self::size_type block_number, index_in_block;
+    Increment_policy::template get_index_and_block<Self>(i,
+                                                         index_in_block,
+                                                         block_number);
+    return all_items[block_number].first[index_in_block];
   }
 
   void swap(Self &c)
@@ -309,7 +399,7 @@ public:
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-	  const T5 &t5)
+          const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -495,10 +585,46 @@ public:
   void reserve(size_type n)
   {
     if ( capacity_>=n ) return;
-    size_type tmp = block_size;
-    block_size = (std::max)( n - capacity_, block_size );
-    allocate_new_block();
-    block_size = tmp+CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+
+    size_type lastblock = all_items.size();
+
+    while ( capacity_<n )
+    { // Pb because the order of free list is no more the order of
+      // allocate_new_block();
+      pointer new_block = alloc.allocate(block_size + 2);
+      all_items.push_back(std::make_pair(new_block, block_size + 2));
+      capacity_ += block_size;
+      // We insert this new block at the end.
+      if (last_item == NULL) // First time
+      {
+        first_item = new_block;
+        last_item  = new_block + block_size + 1;
+        set_type(first_item, NULL, START_END);
+      }
+      else
+      {
+        set_type(last_item, new_block, BLOCK_BOUNDARY);
+        set_type(new_block, last_item, BLOCK_BOUNDARY);
+        last_item = new_block + block_size + 1;
+      }
+      set_type(last_item, NULL, START_END);
+      // Increase the block_size for the next time.
+      Increment_policy::increase_size(*this);
+    }
+
+    // Now we put all the new elements on freelist, starting from the last block
+    // inserted and mark them free in reverse order, so that the insertion order
+    // will correspond to the iterator order...
+    // We don't touch the first and the last one.
+    size_type curblock=all_items.size();
+    do
+    {
+      --curblock; // We are sure we have at least create a new block
+      pointer new_block = all_items[curblock].first;
+      for (size_type i = all_items[curblock].second-2; i >= 1; --i)
+        put_on_free_list(new_block + i);
+    }
+    while ( curblock>lastblock );
   }
   
 private:
@@ -567,7 +693,7 @@ private:
 
   void init()
   {
-    block_size = CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE;
+    block_size = Incr_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
     free_list  = NULL;
@@ -586,8 +712,8 @@ private:
   All_items        all_items;
 };
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::merge(Self &d)
+template < class T, class Allocator, class Increment_policy >
+void Compact_container<T, Allocator, Increment_policy>::merge(Self &d)
 {
   CGAL_precondition(&d != this);
 
@@ -612,7 +738,6 @@ void Compact_container<T, Allocator>::merge(Self &d)
     set_type(d.first_item, last_item, BLOCK_BOUNDARY);
     last_item = d.last_item;
   }
-  all_items.insert(all_items.end(), d.all_items.begin(), d.all_items.end());
   // Add the sizes.
   size_ += d.size_;
   // Add the capacities.
@@ -623,8 +748,8 @@ void Compact_container<T, Allocator>::merge(Self &d)
   d.init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::clear()
+template < class T, class Allocator, class Increment_policy >
+void Compact_container<T, Allocator, Increment_policy>::clear()
 {
   for (typename All_items::iterator it = all_items.begin(), itend = all_items.end();
        it != itend; ++it) {
@@ -639,8 +764,8 @@ void Compact_container<T, Allocator>::clear()
   init();
 }
 
-template < class T, class Allocator >
-void Compact_container<T, Allocator>::allocate_new_block()
+template < class T, class Allocator, class Increment_policy >
+void Compact_container<T, Allocator, Increment_policy>::allocate_new_block()
 {
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
@@ -665,55 +790,55 @@ void Compact_container<T, Allocator>::allocate_new_block()
   }
   set_type(last_item, NULL, START_END);
   // Increase the block_size for the next time.
-  block_size += CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE;
+  Increment_policy::increase_size(*this);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy >
 inline
-bool operator==(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator==(const Compact_container<T, Allocator, Increment_policy> &lhs,
+                const Compact_container<T, Allocator, Increment_policy> &rhs)
 {
   return lhs.size() == rhs.size() &&
     std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy >
 inline
-bool operator!=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator!=(const Compact_container<T, Allocator, Increment_policy> &lhs,
+                const Compact_container<T, Allocator, Increment_policy> &rhs)
 {
   return ! (lhs == rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy >
 inline
-bool operator< (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator< (const Compact_container<T, Allocator, Increment_policy> &lhs,
+                const Compact_container<T, Allocator, Increment_policy> &rhs)
 {
   return std::lexicographical_compare(lhs.begin(), lhs.end(),
                                       rhs.begin(), rhs.end());
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy >
 inline
-bool operator> (const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator> (const Compact_container<T, Allocator, Increment_policy> &lhs,
+                const Compact_container<T, Allocator, Increment_policy> &rhs)
 {
   return rhs < lhs;
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy >
 inline
-bool operator<=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator<=(const Compact_container<T, Allocator, Increment_policy> &lhs,
+                const Compact_container<T, Allocator, Increment_policy> &rhs)
 {
   return ! (lhs > rhs);
 }
 
-template < class T, class Allocator >
+template < class T, class Allocator, class Increment_policy >
 inline
-bool operator>=(const Compact_container<T, Allocator> &lhs,
-                const Compact_container<T, Allocator> &rhs)
+bool operator>=(const Compact_container<T, Allocator, Increment_policy> &lhs,
+                const Compact_container<T, Allocator, Increment_policy> &rhs)
 {
   return ! (lhs < rhs);
 }
@@ -770,7 +895,8 @@ namespace internal {
     } m_ptr;
 
     // Only Compact_container should access these constructors.
-    friend class Compact_container<value_type, typename DSC::Al>;
+    friend class Compact_container<value_type, typename DSC::Al,
+                                   typename DSC::Incr_policy>;
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
@@ -795,9 +921,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+         "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
-	 "Incrementing end() ?");
+         "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
@@ -815,9 +941,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+         "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
-	 "Decrementing begin() ?");
+         "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
@@ -836,7 +962,7 @@ namespace internal {
     Self & operator++()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+         "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
                          "Incrementing an invalid iterator.");
       increment();
@@ -846,9 +972,9 @@ namespace internal {
     Self & operator--()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+         "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-		      || DSC::type(m_ptr.p) == DSC::START_END,
+                      || DSC::type(m_ptr.p) == DSC::START_END,
                          "Decrementing an invalid iterator.");
       decrement();
       return *this;
@@ -916,11 +1042,11 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  Nullptr_t CGAL_assertion_code(n))
+                  Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;
-  }
+    }
 
 } // namespace internal
 
