@@ -28,6 +28,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "check_valid_input.cpp" )
   create_single_source_cgal_program( "edge_profile.cpp" )
   create_single_source_cgal_program( "repair.cpp" )
+  create_single_source_cgal_program( "extract.cpp" )
 
 else()
   
