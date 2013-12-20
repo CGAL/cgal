@@ -63,7 +63,7 @@ public:
     : Delaunay_triangulation_2<Gt,Tds>(tr)
   { CGAL_triangulation_postcondition( this->is_valid() ); }
   
-  /*vector<Vertex_handle>*/void insert_dummy_points();
+  /*vector<Vertex_handle>*/void insert_dummy_points() {}
   
   Object
   dual(const Finite_edges_iterator& ei) const {
