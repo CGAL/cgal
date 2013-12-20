@@ -102,10 +102,14 @@ Returns `true` iff `facet(i)` has been visited.
 bool is_facet_visited (int i); 
 
 /*!
-Marks `facet(i)` as visited if `b` is `true` 
-and non-visited otherwise. 
+Marks `facet(i)` as visited. 
 */ 
-void set_facet_visited (int i, bool b); 
+void set_facet_visited (int i); 
+
+/*!
+Marks `facet(i)` as non-visited. 
+*/ 
+void reset_visited (int i); 
 
 /*!
 Returns a const reference to the surface center of `facet(i)`. 
