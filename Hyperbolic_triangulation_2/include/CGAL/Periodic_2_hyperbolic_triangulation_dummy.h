@@ -120,9 +120,9 @@ void compute_redundant_dummy_points(std::vector<typename GT::Point_2>& inner_poi
     points_on_vertex.push_back(apply_rotation<K>(points_on_vertex[i-1]));
   }  
 }
-  
+
+/*
 template < class GT, class TDS >
-//inline std::vector<typename Periodic_2_Delaunay_hyperbolic_triangulation_2<GT,TDS>::Vertex_handle >
 void Periodic_2_Delaunay_hyperbolic_triangulation_2<GT, TDS>::insert_dummy_points() {
   clear();
   
@@ -143,87 +143,7 @@ void Periodic_2_Delaunay_hyperbolic_triangulation_2<GT, TDS>::insert_dummy_point
     vertices_on_vertex[i] = Base::insert(points_on_vertex[i]);
   }
   
-  
-/* 
-  size_t interval = on_boundary_nb/2;
-  Vertex_handle current_vertex, opposite_vertex;
-  Face_circulator current, next;
-  for(size_t i = 3; i < (3 + interval) % on_boundary_nb; i++) {
-    current_vertex = vertices_on_boundary[i];
-    opposite_vertex = vertices_on_boundary[(i + interval) % on_boundary_nb];
-    
-    next = incident_faces(current_vertex);
-    current = next++;
-    while(!(is_infinite(current) && is_infinite(next))) {
-      current = next++;
-    }
-    
-    // create 2 faces
-    
-  }*/
-  
-  /*
-  Vertex_handle vertex_to_change, current_vertex;
-  Face_circulator current, end;
-  int ind;
-  for(size_t i = 3; i < (3 + interval) % on_boundary_nb; i++) {
-    current_vertex = vertices_on_boundary[i];
-    vertex_to_change = vertices_on_boundary[(i + interval) % on_boundary_nb];
-    
-    std::vector<Face_handle> faces_to_modify;
-    current = end = incident_faces(vertex_to_change);
-    do {
-      faces_to_modify.push_back(current);
-      current++;
-    } while(current != end);
-    
-    std::cout << "change faces nb " << faces_to_modify.size() << std::endl;
-    for(size_t j = 0; j < faces_to_modify.size(); j++) {
-      ind = faces_to_modify[j]->index(vertex_to_change);
-      faces_to_modify[j]->set_vertex(ind, current_vertex);
-    }
-    //delete_vertex(vertex_to_change);
-  }
-  */
-  
-  
-  /*
-  size_t points_on_vertex_nb = points_on_vertex.size(); 
-  std::vector<Vertex_handle> vertices_on_vertex(points_on_vertex_nb);
-  for(size_t i = 0; i < points_on_vertex_nb; i++) {
-    vertices_on_vertex[i] = Base::insert(points_on_vertex[i]);
-  }*/
-  //Vertex_handle common_vertex = Base::insert(points_on_vertex[4]);
-  
-  /*
-  Vertex_handle common_vertex = vertices_on_vertex[4];
-  Face_circulator current, end;
-  int ind;
-  for(size_t i = 0; i < vertices_on_vertex.size(); i++) {
-    if(vertices_on_vertex[i] == common_vertex) {
-      continue;
-    }
-    
-    std::vector<Face_handle> faces_to_modify;
-    current = end = incident_faces(vertices_on_vertex[i]);
-    do {
-      if(is_infinite(current) == false) {
-        faces_to_modify.push_back(current);
-      }
-      current++;
-    } while(current != end);
-    
-    //
-    std::cout << "change faces nb " << faces_to_modify.size() << std::endl;
-    //
-    for(size_t j = 0; j < faces_to_modify.size(); j++) {
-      ind = faces_to_modify[j]->index(vertices_on_vertex[i]);
-      faces_to_modify[j]->set_vertex(ind, common_vertex);
-    }
-    //delete_vertex(vertices_on_vertex[i]);
-  }*/
-  
-}
+}*/
 
 } // namespace CGAL 
   
