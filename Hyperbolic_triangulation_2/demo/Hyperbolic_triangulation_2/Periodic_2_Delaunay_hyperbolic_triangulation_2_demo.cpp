@@ -38,7 +38,7 @@
 #include "ui_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel R;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel R;
 typedef CGAL::Triangulation_hyperbolic_traits_2<R> K;
 
 typedef K::Point_2 Point_2;
