@@ -20,6 +20,23 @@ int main()
 {
   typedef CGAL::Creator_uniform_2<FT, Point_2> Creator;
   
+  
+  long nbp = 1000;
+  vector<Point_2> pts;
+  Hyperbolic_random_points_in_disc_2<K>(pts, nbp, -1, 0.000001);
+  
+  // output file
+  ofstream out;
+  out.open("c1000points");
+  
+  // write random points to the file
+  for(int i = 0; i < nbp ; i++) {
+    out << pts[i] << std::endl;
+  }
+  out.close();
+  
+  return 0;
+  
   FT r = 1;
   cout << "Please, enter radius of the disk:" << std::endl;
   cin >> r;
@@ -34,6 +51,7 @@ int main()
     
     vector<Point_2> pts;
     // disk Poincare is of radius 1 by default
+    // seed = 1
     Hyperbolic_random_points_in_disc_2<K>(pts, 10*nb, 1, eps);
     
     string file_name;
