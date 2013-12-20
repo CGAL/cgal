@@ -285,6 +285,13 @@ MainWindow::MainWindow()
   qreal left_top_corner_y = origin_y - radius;
   qreal width = diameter, height = diameter;
   
+  // set background
+  qreal eps = 0.01;
+  QGraphicsRectItem* rect = new QGraphicsRectItem(left_top_corner_x - eps, left_top_corner_y - eps, width + 2*eps, height + 2*eps);
+  rect->setPen(Qt::NoPen);
+  rect->setBrush(Qt::white);
+  scene.addItem(rect);
+   
   disk = new QGraphicsEllipseItem(left_top_corner_x, left_top_corner_y, width, height);
   scene.addItem(disk);
   
@@ -750,9 +757,11 @@ MainWindow::open(QString fileName)
     
 }
 
+// taka a snapshot
 void
 MainWindow::on_actionSavePoints_triggered()
 {
+  /*
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
 						  ".");
@@ -765,7 +774,23 @@ MainWindow::on_actionSavePoints_triggered()
     {
       ofs << vit->point() << std::endl;
     }
-  }
+  }*/
+  
+  std::cout << "snapshot...";
+  
+  const QRect viewerRect = graphicsView->mapFromScene(scene.sceneRect()).boundingRect();
+  const QRect imageRect = QRect(QPoint(0, 0), viewerRect.size()); 
+  
+  QImage snapshot(imageRect.size(), QImage::Format_ARGB32_Premultiplied);//QImage::Format_ARGB32_Premultiplied
+
+  QPainter painter(&snapshot);
+  painter.setRenderHint(QPainter::Antialiasing);
+  
+  graphicsView->render(&painter, imageRect, viewerRect);
+  bool saved = snapshot.save("mysnap", "PNG", 100);
+  assert(saved == true);
+  
+  std::cout << "done" << std::endl;
 }
 
 
