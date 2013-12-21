@@ -43,7 +43,7 @@ typedef Traits_2::X_monotone_curve_2		                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>		                  Arrangement_2;
 
 template <class Visibility>
-void deploy_pure_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
+void deploy_pure_benchmark(const CGAL::Query_choice& qchoice, std::ifstream& input) {
   Visibility v;
   CGAL::pure_benchmark<Visibility>
       (v, qchoice, input);
@@ -51,7 +51,8 @@ void deploy_pure_benchmark(CGAL::Query_choice& qchoice, std::ifstream& input) {
 
 
 template <class Regularization_tag>
-void benchmark_one_class(std::string name, CGAL::Query_choice& qchoice, std::ifstream& input) {
+void benchmark_one_class(std::string name, const CGAL::Query_choice& qchoice, std::string input_arr_file) {
+  std::ifstream input(input_arr_file.c_str());
   if (name == "S")
     deploy_pure_benchmark<CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag> > (qchoice, input);
   if (name == "T")
@@ -73,8 +74,30 @@ int main(int argc, char* argv[]) {
   std::string regularization_tag("true");
   if (argc > 1) {
     std::string input_arr_file(argv[1]);
-    std::ifstream input(input_arr_file.c_str());
-    if (argc == 5) {
+
+    if (argc == 2) {   
+      std::cout << "NAME TAG PreProTime NQueries TimeQueries TotalTime QAVE TAVE" << std::endl; 
+      benchmark_one_class<CGAL::Tag_true>(std::string("T"), CGAL::VERTEX, input_arr_file);
+      benchmark_one_class<CGAL::Tag_true>(std::string("T"), CGAL::EDGE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_true>(std::string("T"), CGAL::FACE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("T"), CGAL::VERTEX, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("T"), CGAL::EDGE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("T"), CGAL::FACE, input_arr_file);   
+      std::cout << std::endl; 
+      benchmark_one_class<CGAL::Tag_true>(std::string("S"), CGAL::VERTEX, input_arr_file);
+      benchmark_one_class<CGAL::Tag_true>(std::string("S"), CGAL::EDGE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_true>(std::string("S"), CGAL::FACE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("S"), CGAL::VERTEX, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("S"), CGAL::EDGE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("S"), CGAL::FACE, input_arr_file);   
+      std::cout << std::endl; 
+      benchmark_one_class<CGAL::Tag_true>(std::string("R"), CGAL::VERTEX, input_arr_file);
+      benchmark_one_class<CGAL::Tag_true>(std::string("R"), CGAL::EDGE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_true>(std::string("R"), CGAL::FACE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("R"), CGAL::VERTEX, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("R"), CGAL::EDGE, input_arr_file);
+      benchmark_one_class<CGAL::Tag_false>(std::string("R"), CGAL::FACE, input_arr_file);      
+    } else if (argc == 5) {
       qchoice = CGAL::FACE;
       std::string query_type(argv[3]);
       if (query_type == "vertex")
@@ -91,10 +114,10 @@ int main(int argc, char* argv[]) {
       regularization_tag = argv[4];
       std::string classname(argv[2]);
       if (regularization_tag == "true") {
-        benchmark_one_class<CGAL::Tag_true>(classname, qchoice, input);
+        benchmark_one_class<CGAL::Tag_true>(classname, qchoice, input_arr_file);
       }
       else {
-        benchmark_one_class<CGAL::Tag_false>(classname, qchoice, input);
+        benchmark_one_class<CGAL::Tag_false>(classname, qchoice, input_arr_file);
       }
 
       return 0;
@@ -108,5 +131,5 @@ int main(int argc, char* argv[]) {
     print_usage();
     exit(0);
   }
-	return 0;
+  return 0;
 }

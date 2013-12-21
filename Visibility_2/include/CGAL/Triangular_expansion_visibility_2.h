@@ -67,7 +67,8 @@ private:
   typedef CGAL::No_intersection_tag                                Itag;
   typedef CGAL::Constrained_Delaunay_triangulation_2<K, TDS, Itag> CDT;
   
-
+public: 
+  const std::string name(){return std::string("T_visibility_2");}
 private:
   const Arrangement_2* p_arr;
   boost::shared_ptr<CDT> p_cdt; 

@@ -75,6 +75,9 @@ public:
     query_pt_is_on_halfedge = false;
   }
 
+  
+  const std::string name(){return std::string("S_visibility_2");}
+
   /*! Method to check if the visibility object is attached or not to
       an arrangement*/
   bool is_attached() {

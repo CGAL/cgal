@@ -1176,11 +1176,22 @@ void pure_benchmark(  Visibility_2 &visibility,
                                            qtime,
                                            query_cnt);
   }
-  std::cout << "Preprocessing: "  << std::endl
-            << "cost " << ptime << "  sec" << std::endl;
-  std::cout << query_cnt << " queries are done.\n"
-            << "cost " << qtime << "  sec" << std::endl;
-  std::cout << "total time is:" << ptime + qtime << "  sec" << std::endl;
+
+  // std::cout << "NAME TAG  PreProTime NQueries TimeQueries TotalTime QAVE TAVE" << std::endl; 
+  std::cout << " " << visibility.name() 
+            << " " << Visibility_2::Regularization_tag::value 
+            << "  " << ptime 
+            << " " << query_cnt 
+            << " " << qtime 
+            << " " << ptime+qtime 
+            << "  " << qtime/query_cnt 
+            << " " << (ptime+qtime)/query_cnt 
+            << " " << std::endl;
+//   std::cout << "Preprocessing: "  << std::endl
+//             << "cost " << ptime << "  sec" << std::endl;
+//   std::cout << query_cnt << " queries are done.\n"
+//             << "cost " << qtime << "  sec" << std::endl;
+//   std::cout << "total time is:" << ptime + qtime << "  sec" << std::endl;
 }
 
 template<class Segment_2, class Point_2>

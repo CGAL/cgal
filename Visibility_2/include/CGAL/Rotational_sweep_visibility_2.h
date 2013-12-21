@@ -134,6 +134,8 @@ public:
     geom_traits = p_arr->geometry_traits();
   }
 
+  const std::string name(){return std::string("R_visibility_2");}
+  
   template <typename VARR> 
   typename VARR::Face_handle 
   compute_visibility(const Point_2& q, const Halfedge_const_handle e, VARR& arr_out) {
