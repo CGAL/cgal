@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/box_intersection_d.h>
+#include <CGAL/property_map.h>
 #include <iostream>
 #include <fstream>
 #include <iterator>
@@ -253,7 +254,7 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
   }
 }
 
-void contour(int count, int n)
+void contour(int count, int n, int constant_coordinate)
 {
   std::cerr << "\ncontour  " << count << " with " << n << " vertices" << std::endl;
  
@@ -264,9 +265,11 @@ void contour(int count, int n)
     std::string line;
     std::getline(std::cin, line);
     std::istringstream iss(line);
-    double x,y,z;
-    iss >> x >> y >> z;
-    Point_2 p(x,z);
+    Kernel::Point_3 p3d;
+    iss >> p3d;
+    
+    Point_2 p( p3d[(constant_coordinate+1)%3],
+               p3d[(constant_coordinate+2)%3] );
     if(! points.empty()){
       if(p != points.back().first){
       points.push_back(std::make_pair(p, line));
@@ -351,13 +354,18 @@ void contour(int count, int n)
   
 }
 
-int main()
+int main(int argc, char** argv)
 {
- 
+  if (argc!=2)
+  {
+    std::cerr << "Please provide the constant coordinate index (0,1,2)\n";
+    return 1;
+  }
+
   int n;
   int count = 0;
   while(std::cin >> n){
-    contour(count, n);
+    contour(count, n, atoi(argv[1]));
     count++;
   }
   std::cerr << "done" << std::endl;
