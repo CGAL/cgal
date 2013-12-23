@@ -7,6 +7,8 @@
 #include <iterator>
 #include <sstream>
 
+#include <boost/lexical_cast.hpp>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polygon_2<Kernel> Polygon_2;
 typedef Kernel::Point_2 Point_2;
@@ -98,35 +100,43 @@ void
 swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
-  ++pit; // because the first point is duplicated
+  iterator end = points.end();
+  --end; // because the first segment is duplicated
+  //++pit; // because the first point is duplicated
 
   while(true){
     bool swapped = false;
     Point_2& p = pit->first;
     iterator qit = pit;
     ++qit;
-    if(qit == points.end()){
+    if(qit == end){
       break;
     }
 
     Point_2& q = qit->first;
-    
+    //std::cerr << "\nouter loop: " << p << "  " << q << std::endl;  
     iterator rit = qit;
     ++rit;
     while(true){
-      if(rit == points.end()){
+      if(rit == end){
         break;
       }
       Point_2& r = rit->first;
       iterator sit = rit;
       ++sit;
-      if(sit == points.end()){
+      if(sit == end){
         break;
       }
+
       Point_2& s = sit->first;
-      Segment_2 segA(p,q), segB(r,s);
+      //std::cerr << "  inner loop: " << r << "  " << s << std::endl;  
+      Segment_2 segA(p,q), segB(r,s); 
       if(CGAL::do_intersect(segA,segB)){
+          std::cerr << "intersection" << std::endl;
         if(p!=r && p!=s && q!=r && q!=s){
+          std::cerr << "real intersection" << std::endl;
+          std::cerr << segA << std::endl;
+          std::cerr << segB << std::endl;
           std::list<std::pair<Point_2,std::string> > tmp;
           tmp.splice(tmp.begin(),
                      points,
@@ -169,7 +179,7 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
               std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
             }
             points.splice(qit,tmp);
-          } else if(sign == -1){
+          } else if(sign != 1){
             std::cerr << "touching--------------------" << std::endl;
             std::cerr << "2\n" << p << std::endl << q2 << std::endl;
             std::cerr << "2\n" << r << std::endl << s2 << std::endl;
@@ -207,11 +217,13 @@ void
 fix_loops(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
+  iterator end = points.end();
+  --end;
   while(true){
     Point_2& p = pit->first;
     iterator qit = pit;
     ++qit;
-    if(qit == points.end()){
+    if(qit == end){
       break;
     }
 
@@ -219,14 +231,14 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
     
     iterator rit = qit;
     ++rit;
-    if(rit == points.end()){
+    if(rit == end){
       break;
     }
     Point_2& r = rit->first;
 
     iterator sit = rit;
     ++sit;
-    if(sit == points.end()){
+    if(sit == end){
       break;
     }
     Point_2& s = sit->first;
@@ -254,7 +266,8 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
   }
 }
 
-void contour(int count, int n, int constant_coordinate)
+
+void contour(int count, int n, int dim)
 {
   std::cerr << "\ncontour  " << count << " with " << n << " vertices" << std::endl;
  
@@ -265,11 +278,11 @@ void contour(int count, int n, int constant_coordinate)
     std::string line;
     std::getline(std::cin, line);
     std::istringstream iss(line);
-    Kernel::Point_3 p3d;
-    iss >> p3d;
+
+    double x,y,z;
+    iss >> x >> y >> z;
     
-    Point_2 p( p3d[(constant_coordinate+1)%3],
-               p3d[(constant_coordinate+2)%3] );
+    Point_2 p = (dim==0) ? Point_2(y,z) : (dim==1) ? Point_2(x,z) : Point_2(x,y);
     if(! points.empty()){
       if(p != points.back().first){
       points.push_back(std::make_pair(p, line));
@@ -280,7 +293,7 @@ void contour(int count, int n, int constant_coordinate)
      points.push_back(std::make_pair(p, line)); 
     }
   }
-  if(points.size() == 3){
+  if(points.size() <= 3){
     std::cerr << "ignore segment" <<  std::endl;
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
     return;
@@ -336,7 +349,7 @@ void contour(int count, int n, int constant_coordinate)
   }
  
 
-  if(points.size() == 4){
+  if(points.size() <= 4){
     std::cerr << "ignore segment" <<  std::endl;
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
   } else {
@@ -354,6 +367,7 @@ void contour(int count, int n, int constant_coordinate)
   
 }
 
+
 int main(int argc, char** argv)
 {
   if (argc!=2)
@@ -361,11 +375,11 @@ int main(int argc, char** argv)
     std::cerr << "Please provide the constant coordinate index (0,1,2)\n";
     return 1;
   }
-
+  int constant_coordinate = boost::lexical_cast<int>(argv[1]);
   int n;
   int count = 0;
   while(std::cin >> n){
-    contour(count, n, atoi(argv[1]));
+    contour(count, n, constant_coordinate);
     count++;
   }
   std::cerr << "done" << std::endl;
