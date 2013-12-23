@@ -77,11 +77,23 @@ find_safe_start(std::list<std::pair<Point_2,std::string> >& points)
   std::size_t count = points.size();
 
   points.pop_back();
+  while(std::find(qit, points.end(),*pit) != points.end()){
+   std::cerr << "change the start point (degree > 2)" << std::endl;
+    points.splice(points.end(), points, pit);
+    if(--count == 0){
+      points.push_back(points.front());
+      return false;
+    }
+    pit = qit;
+    ++qit;
+    ++rit;
+  }
+
   while(collinear(pit->first, qit->first, rit->first) &&
         collinear_are_strictly_ordered_along_line(pit->first,
                                                   qit->first,
                                                   rit->first)){
-    std::cerr << "change the start point" << std::endl;
+    std::cerr << "change the start point (collinear overlapping)" << std::endl;
     points.splice(points.end(), points, pit);
     if(--count == 0){
       points.push_back(points.front());
@@ -101,8 +113,6 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
   iterator end = points.end();
-  --end; // because the first segment is duplicated
-  //++pit; // because the first point is duplicated
 
   while(true){
     bool swapped = false;
@@ -132,11 +142,11 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
       //std::cerr << "  inner loop: " << r << "  " << s << std::endl;  
       Segment_2 segA(p,q), segB(r,s); 
       if(CGAL::do_intersect(segA,segB)){
-          std::cerr << "intersection" << std::endl;
+        //std::cerr << "intersection" << std::endl;
         if(p!=r && p!=s && q!=r && q!=s){
-          std::cerr << "real intersection" << std::endl;
-          std::cerr << segA << std::endl;
-          std::cerr << segB << std::endl;
+          //std::cerr << "real intersection" << std::endl;
+          //std::cerr << segA << std::endl;
+          //std::cerr << segB << std::endl;
           std::list<std::pair<Point_2,std::string> > tmp;
           tmp.splice(tmp.begin(),
                      points,
@@ -155,7 +165,7 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
           int sign = crossing(p,q,q2,
                               r,s,s2);
           if(sign == 1){
-            std::cerr << "crossing--------------------" << std::endl;
+            //std::cerr << "crossing--------------------" << std::endl;
             std::list<std::pair<Point_2,std::string> > tmp;
             tmp.splice(tmp.begin(),
                        points,
@@ -176,13 +186,13 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
               points.erase(sit);
 
             } else {
-              std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+              //std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
             }
             points.splice(qit,tmp);
           } else if(sign != 1){
-            std::cerr << "touching--------------------" << std::endl;
-            std::cerr << "2\n" << p << std::endl << q2 << std::endl;
-            std::cerr << "2\n" << r << std::endl << s2 << std::endl;
+            //std::cerr << "touching--------------------" << std::endl;
+            //std::cerr << "2\n" << p << std::endl << q2 << std::endl;
+            //std::cerr << "2\n" << r << std::endl << s2 << std::endl;
             if((! CGAL::do_intersect(Segment_2(p,q2),
                                      Segment_2(r,s))) && 
                (! CGAL::do_intersect(Segment_2(p,q2),
@@ -196,10 +206,10 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
               points.erase(sit);
 
             } else {
-              std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+              //std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
             }
           } else {
-            std::cerr << "todo: treat overlapping segments" << std::endl;
+            //std::cerr << "todo: treat overlapping segments" << std::endl;
           }
              
         }          
@@ -218,7 +228,7 @@ fix_loops(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
   iterator end = points.end();
-  --end;
+
   while(true){
     Point_2& p = pit->first;
     iterator qit = pit;
@@ -287,7 +297,7 @@ void contour(int count, int n, int dim)
       if(p != points.back().first){
       points.push_back(std::make_pair(p, line));
       } else {
-        std::cerr << "identical consecutive points " << p << count << std::endl;
+        std::cerr << "identical consecutive points " << p << std::endl;
       }
     } else {
      points.push_back(std::make_pair(p, line)); 
@@ -301,10 +311,6 @@ void contour(int count, int n, int dim)
 
   find_safe_start(points);
   
-  // in the data the first point is duplicated
-  // to make the loop easier also duplicate the second point
-
-  points.push_back(*(++points.begin()));
   iterator pit = points.begin();
   while(true){
     if(points.size() == 4){
@@ -321,23 +327,25 @@ void contour(int count, int n, int dim)
     iterator rit = qit;
     ++rit;
     if(rit == points.end()){
+      Point_2& r = (++points.begin())->first;
+      if(CGAL::collinear(p,q,r) && 
+         (! CGAL::collinear_are_strictly_ordered_along_line(p,q,r))){
+        points.pop_back();
+        points.pop_front();
+        points.push_back(points.front()); // duplicate the first point
+      }
       break;
     }
     Point_2& r = rit->first;
-
+    
     if(CGAL::collinear(p,q,r)){
       if(! CGAL::collinear_are_strictly_ordered_along_line(p,q,r)){
-        /*
-        std::cerr << "not strictly collinear" << std::endl;
-        std::cerr << p << std::endl;
-        std::cerr << q << std::endl;
-        std::cerr << r << std::endl;
-        std::cerr << " in  polygon " << count << std::endl;
-        */
         points.erase(qit);
+
         if(pit->first == rit->first){
           std::cerr << "identical consecutive points " << pit->first << std::endl;
           points.erase(rit);
+          
         }
         if(pit != points.begin()){
             --pit;
@@ -349,13 +357,12 @@ void contour(int count, int n, int dim)
   }
  
 
-  if(points.size() <= 4){
+  if(points.size() <= 3){
     std::cerr << "ignore segment" <<  std::endl;
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
   } else {
-    fix_loops(points);
-    // remove the added second point;
-    points.pop_back(); 
+    //fix_loops(points);
+
     swap_intersections(points);
 
     std::cout << points.size() <<std::endl;
