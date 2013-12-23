@@ -466,6 +466,22 @@ public:
     z=m_slices[m_current_slice][m_current_polygon]->operator[](m_current_point)[m_constant_coordinate];
     return get_point();
   }
+
+  /// Debug functions
+  void output_slices(std::ostream& output)
+  {
+    for (std::size_t s=0; s< m_slices.size(); ++s)
+    {
+      Slice& slice = m_slices[s];
+      CGAL_assertion( !slice.empty() );
+      for (std::size_t p=0; p<slice.size(); ++p)
+      {
+        output << slice[p]->size() << "\n";
+        std::copy( slice[p]->begin(), slice[p]->end(),
+                   std::ostream_iterator<Point_3>(output, "\n") );
+      }
+    }
+  }
   #endif
 };
 
