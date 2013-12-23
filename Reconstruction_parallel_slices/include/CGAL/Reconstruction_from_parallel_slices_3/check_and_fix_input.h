@@ -35,19 +35,19 @@ namespace CGAL{
 
 namespace Reconstruction_from_parallel_slices {
 
-enum Error_code {VALID_OR_TRIVIALLY_FIXED_POLYGON, INCONSISTENT_CST_COORD, DEGENERATE_POLYGON, POLYGON_NOT_SIMPLE, LOGIC_ERROR};
+enum Error_code {
+  VALID_OR_TRIVIALLY_FIXED_POLYGON,
+  INCONSISTENT_CST_COORD,
+  DEGENERATE_POLYGON,
+  POLYGON_NOT_SIMPLE,
+  LOGIC_ERROR };
 
 template <class Kernel>
 Error_code
 create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
                int constant_coordinate)
 {
-  std::size_t nb_pts=points_3d.size()-1;
-  if ( points_3d.front()!=points_3d.back() )
-  {
-    points_3d.push_back( points_3d.front() );
-    ++nb_pts;
-  }
+  std::size_t nb_pts=points_3d.size();
 
   //remove consecutive duplicated points
   for (std::size_t i=1; i< nb_pts; ++i)
@@ -57,14 +57,19 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
     {
       return INCONSISTENT_CST_COORD;
     }
-    if ( points_3d[i][constant_coordinate]==
-         points_3d[i-1][constant_coordinate] )
+    if ( points_3d[i]==points_3d[i-1] )
     {
       points_3d.erase(cpp11::next(points_3d.begin(),i));
       --i;
       --nb_pts;
       continue;
     }
+  }
+
+  if ( points_3d.front()!=points_3d.back() )
+  {
+    points_3d.push_back(points_3d.front());
+    ++nb_pts;
   }
 
   //handle collinear points not correctly ordered
@@ -74,7 +79,7 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   //now create the polygon
   Polygon_2<Kernel> polygon;
 
-  for (std::size_t i=0; i< nb_pts; ++i)
+  for (std::size_t i=0; i< nb_pts-1; ++i)
   {
     typename Kernel::Point_2 pt( points_3d[i][(constant_coordinate+1)%3],
                                  points_3d[i][(constant_coordinate+2)%3] );
@@ -261,7 +266,8 @@ bool check_input(std::vector< std::vector<typename Kernel::Point_3> >& contours,
   {
     std::set<std::pair<std::size_t, std::size_t> > intersecting_polygons;
     bool res =
-      check_intersection_in_slice<Kernel>(it->second, polygons,intersecting_polygons);
+      check_intersection_in_slice<Kernel>(it->second,
+                                          polygons,intersecting_polygons);
     if (!res)
       std::cerr << "Intersection in slice " << it->first << std::endl;
     valid&=res;
@@ -332,11 +338,6 @@ public:
     ,m_current_point(0)
   {}
 
-  void set_constant_coordinate(int i)
-  {
-    m_constant_coordinate=i;
-  }
-
   bool begin_slice()
   {
     if ( m_state==SLICE_BEGAN ) return false;
@@ -348,7 +349,8 @@ public:
   }
 
   Error_code
-  add_contour_to_slice(boost::shared_ptr< std::vector<typename Kernel::Point_3> > contour)
+  add_contour_to_slice(
+    boost::shared_ptr< std::vector<typename Kernel::Point_3> > contour)
   {
     if (m_constant_coordinate==-1) return LOGIC_ERROR;
     if (!m_last_contour_valid) return LOGIC_ERROR;
@@ -357,13 +359,19 @@ public:
 
     Error_code errcode =
       create_polygon<Kernel>( *contour, m_constant_coordinate );
-    if (errcode!=VALID_OR_TRIVIALLY_FIXED_POLYGON)
+
+    if (errcode==POLYGON_NOT_SIMPLE)
+    {
       m_last_contour_valid=false;
-    m_slices.back().push_back(contour);
+      m_slices.back().push_back(contour);
+    }
+    else
+      if (errcode==VALID_OR_TRIVIALLY_FIXED_POLYGON)
+        m_slices.back().push_back(contour);
     return errcode;
   }
 
-  //returns true if not empty and if the polygons does not self intersect
+  //returns true if not empty and if the polygon does not self intersect
   bool end_slice()
   {
     if (m_state==SLICE_ENDED) return false;
@@ -372,7 +380,10 @@ public:
 
     m_intersecting_polygons.clear();
 
-    check_intersection_in_slice<Kernel>(m_slices.back(), m_constant_coordinate, m_intersecting_polygons);
+    if (m_slices.back().size()<2)
+      check_intersection_in_slice<Kernel>(m_slices.back(),
+                                          m_constant_coordinate,
+                                          m_intersecting_polygons);
 
     if (m_intersecting_polygons.empty())
     {
@@ -402,6 +413,12 @@ public:
 
   int constant_coordinate() const{
     return m_constant_coordinate;
+  }
+
+
+  void set_constant_coordinate(int i)
+  {
+    m_constant_coordinate=i;
   }
 
 //  void fix_last_contour();
@@ -438,6 +455,7 @@ public:
   }
 
   Point_2 get_point(){
+    CGAL_assertion( m_constant_coordinate!=-1 );
     double x = m_slices[m_current_slice][m_current_polygon]->operator[](m_current_point)[(m_constant_coordinate+1)%3];
     double y = m_slices[m_current_slice][m_current_polygon]->operator[](m_current_point)[(m_constant_coordinate+2)%3];
     ++m_current_point;

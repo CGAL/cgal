@@ -42,6 +42,8 @@
 
 /// \todo test the duplication of contours to resolve non-manifold situations
 
+/// \todo handle if a slice contains only one point (in particular the first and the last one
+
 //#define DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
 #define CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL
 //#define DO_NOT_FILTER_NOTCHES
@@ -3459,6 +3461,7 @@ class Reconstruction_from_parallel_slices_3{
     double z;
     do{
       /// \todo see if it is worth using the spatial sorting
+      /// \todo shall we avoid inserting the last point and reuse the first vh?
       bool contour_made_of_one_point=true;
       int n=polygon_reader.number_of_points();
       p2 = polygon_reader.get_point(z);
