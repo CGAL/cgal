@@ -43,10 +43,10 @@ int
 crossing(Point_2& p, Point_2& q, Point_2& q2,
          Point_2& r, Point_2& s, Point_2& s2)
 {
-  std::cerr << "crossing test:\n" << p << std::endl;
-  std::cerr << q2 << std::endl;
-  std::cerr << r << std::endl;
-  std::cerr << s2 << std::endl;
+  //std::cerr << "crossing test:\n" << p << std::endl;
+  //std::cerr << q2 << std::endl;
+  //std::cerr << r << std::endl;
+  //std::cerr << s2 << std::endl;
   std::vector<std::pair<Direction_2, int> > directions;
   directions.push_back(std::make_pair(Direction_2(p-q),0));
   directions.push_back(std::make_pair(Direction_2(q2-q),0));
@@ -109,7 +109,7 @@ find_safe_start(std::list<std::pair<Point_2,std::string> >& points)
 
 
 void
-swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
+fix_intersections(std::list<std::pair<Point_2,std::string> >& points)
 {
   iterator pit = points.begin();
   iterator end = points.end();
@@ -223,95 +223,11 @@ swap_intersections(std::list<std::pair<Point_2,std::string> >& points)
 }
 
 
-void
-fix_loops(std::list<std::pair<Point_2,std::string> >& points)
+
+
+void fix_consecutive_overlapping_segments(std::list<std::pair<Point_2,std::string> >& points)
 {
-  iterator pit = points.begin();
-  iterator end = points.end();
-
-  while(true){
-    Point_2& p = pit->first;
-    iterator qit = pit;
-    ++qit;
-    if(qit == end){
-      break;
-    }
-
-    Point_2& q = qit->first;
-    
-    iterator rit = qit;
-    ++rit;
-    if(rit == end){
-      break;
-    }
-    Point_2& r = rit->first;
-
-    iterator sit = rit;
-    ++sit;
-    if(sit == end){
-      break;
-    }
-    Point_2& s = sit->first;
-    Segment_2 segA(p,q), segB(r,s);
-    if(CGAL::do_intersect(segA,segB)){
-      //std::cerr << "intersection\n2\n" << pit->second << std::endl << qit->second << std::endl;  
-      //std::cerr << "2\n" << rit->second << std::endl << sit->second << std::endl;
-
-      // without C++11
-      CGAL::cpp11::result_of<Kernel::Intersect_2(Segment_2, Segment_2)>::type
-        result = intersection(segA, segB);
-     
-      if(result) {
-        if(const Segment_2* rs = boost::get<Segment_2>(&*result)) {
-          std::cerr << "intersection is a segment" << std::endl;
-        } else {
-          const Point_2& rp = *boost::get<Point_2>(&*result);
-          //std::cerr << "point " << rp << std::endl;
-          //std::cerr << "perimeter " << std::sqrt(CGAL::squared_distance(rp,q))+ std::sqrt(CGAL::squared_distance(rp,r)) + std::sqrt(CGAL::squared_distance(r,q)) << std::endl;
-          std::swap(*qit,*rit);
-        }
-      }
-    }
-    ++pit;
-  }
-}
-
-
-void contour(int count, int n, int dim)
-{
-  std::cerr << "\ncontour  " << count << " with " << n << " vertices" << std::endl;
- 
-  std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-  std::list<std::pair<Point_2,std::string> > points;
-
-  for(int i = 0; i <n; i++){
-    std::string line;
-    std::getline(std::cin, line);
-    std::istringstream iss(line);
-
-    double x,y,z;
-    iss >> x >> y >> z;
-    
-    Point_2 p = (dim==0) ? Point_2(y,z) : (dim==1) ? Point_2(x,z) : Point_2(x,y);
-    if(! points.empty()){
-      if(p != points.back().first){
-      points.push_back(std::make_pair(p, line));
-      } else {
-        std::cerr << "identical consecutive points " << p << std::endl;
-      }
-    } else {
-     points.push_back(std::make_pair(p, line)); 
-    }
-  }
-  if(points.size() <= 3){
-    std::cerr << "ignore segment" <<  std::endl;
-    std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
-    return;
-  }
-
-  find_safe_start(points);
-  
-  iterator pit = points.begin();
+ iterator pit = points.begin();
   while(true){
     if(points.size() == 4){
       break;
@@ -355,25 +271,59 @@ void contour(int count, int n, int dim)
     }
     ++pit; 
   }
- 
+}
 
+void contour(int count, int n, int dim)
+{
+  std::cerr << "\ncontour  " << count << " with " << n << " vertices" << std::endl;
+ 
+  std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+  std::list<std::pair<Point_2,std::string> > points;
+
+  for(int i = 0; i <n; i++){
+    std::string line;
+    std::getline(std::cin, line);
+    std::istringstream iss(line);
+
+    double x,y,z;
+    iss >> x >> y >> z;
+    
+    Point_2 p = (dim==0) ? Point_2(y,z) : (dim==1) ? Point_2(x,z) : Point_2(x,y);
+    if(! points.empty()){
+      if(p != points.back().first){
+      points.push_back(std::make_pair(p, line));
+      } else {
+        std::cerr << "identical consecutive points " << p << std::endl;
+      }
+    } else {
+     points.push_back(std::make_pair(p, line)); 
+    }
+  }
   if(points.size() <= 3){
     std::cerr << "ignore segment" <<  std::endl;
     std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
-  } else {
-    //fix_loops(points);
-
-    swap_intersections(points);
-
-    std::cout << points.size() <<std::endl;
-    for(iterator it = points.begin(); it!= points.end(); ++it){
-      std::cout << it->second << std::endl;
-    }
-
+    return;
   }
-  
-}
 
+  if(find_safe_start(points)){ 
+    fix_consecutive_overlapping_segments(points);
+    
+    if(points.size() <= 3){
+      std::cerr << "ignore segment" <<  std::endl;
+      std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
+      return;
+    }
+  
+    fix_intersections(points);
+  } else {
+    std::cerr << "No safe start point found" << std::endl;
+  }
+
+  std::cout << points.size() <<std::endl;
+  for(iterator it = points.begin(); it!= points.end(); ++it){
+    std::cout << it->second << std::endl;
+  }
+}
 
 int main(int argc, char** argv)
 {
