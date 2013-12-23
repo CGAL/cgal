@@ -44,7 +44,7 @@ int main(int argc,char** argv){
 
   namespace RFPS = CGAL::Reconstruction_from_parallel_slices;
 
-  RFPS::Contour_checker_and_fixer<Kernel> checker(cc);
+  RFPS::Contour_checker_and_fixer<Kernel,true> checker(cc);
   RFPS::Error_code errcode;
   double last_elev;
   int k=0;

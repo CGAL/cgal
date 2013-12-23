@@ -45,7 +45,7 @@ enum Error_code {
 template <class Kernel>
 Error_code
 create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
-               int constant_coordinate)
+               int constant_coordinate, bool verbose)
 {
   std::size_t nb_pts=points_3d.size();
 
@@ -59,6 +59,7 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
     }
     if ( points_3d[i]==points_3d[i-1] )
     {
+      if (verbose) std::cerr << "Warning: removing duplicated point...\n";
       points_3d.erase(cpp11::next(points_3d.begin(),i));
       --i;
       --nb_pts;
@@ -68,6 +69,7 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
 
   if ( points_3d.front()!=points_3d.back() )
   {
+    if (verbose) std::cerr << "Warning: closing polygon...\n";
     points_3d.push_back(points_3d.front());
     ++nb_pts;
   }
@@ -181,7 +183,7 @@ bool check_intersection_in_slice(
   return intersecting_polygons.empty();
 }
 
-template <class Kernel>
+template <class Kernel, bool verbose=false>
 class Contour_checker_and_fixer{
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Point_2 Point_2;
@@ -239,7 +241,7 @@ public:
     if ( contour->empty() ) return DEGENERATE_POLYGON;
 
     Error_code errcode =
-      create_polygon<Kernel>( *contour, m_constant_coordinate );
+      create_polygon<Kernel>( *contour, m_constant_coordinate,verbose );
 
     if (errcode==POLYGON_NOT_SIMPLE)
     {
