@@ -145,33 +145,6 @@ struct Report_inters{
 
 } //end of namespace internal
 
-template <class Kernel, class Polygon>
-bool check_intersection_in_slice(
-  const std::vector<std::size_t>& indices,
-  const std::vector<Polygon>& polygons,
-  std::set<std::pair<std::size_t, std::size_t> >& intersecting_polygons)
-{
-  using namespace internal;
-
-  typedef Box_with_segment_and_polygon_id<Kernel> Box;
-  Report_inters<Kernel> report_inters(intersecting_polygons);
-
-  std::vector<Box> boxes;
-  std::size_t nb_polygons=indices.size();
-  for (std::size_t k=0;k<nb_polygons; ++k){
-    for(  typename Polygon::Edge_const_iterator
-            eit=polygons[ indices[k] ].edges_begin(),
-            eit_end=polygons[ indices[k] ].edges_end(); eit!=eit_end; ++eit )
-    {
-      boxes.push_back( Box(*eit, indices[k]) );
-    }
-  }
-
-  box_self_intersection_d( boxes.begin(), boxes.end(), report_inters);
-
-  return intersecting_polygons.empty();
-}
-
 template <class Kernel>
 bool check_intersection_in_slice(
   const std::vector< boost::shared_ptr< std::vector< typename Kernel::Point_3 > > >& slice,
@@ -207,98 +180,6 @@ bool check_intersection_in_slice(
 
   return intersecting_polygons.empty();
 }
-
-
-
-template <class Kernel>
-bool check_input(std::vector< std::vector<typename Kernel::Point_3> >& contours,
-                 int constant_coordinate)
-{
-  std::size_t nb_polygons=contours.size();
-  std::vector< Polygon_2<Kernel> > polygons(nb_polygons);
-
-  bool can_check_sorted=false;
-  bool increasing_coords=true;
-  double first_cst_coord=0;
-  std::map<double, std::vector<std::size_t> > polygons_by_slice;
-
-  for (std::size_t k=0;k<nb_polygons; ++k)
-  {
-    if ( contours[k].empty() ) continue;
-
-    double cst_coord = contours[k][0][constant_coordinate];
-
-    if ( create_polygon<Kernel>(contours[k],
-                                constant_coordinate,
-                                polygons[k])==VALID_OR_TRIVIALLY_FIXED_POLYGON )
-    {
-      //set for the intersection test
-      polygons_by_slice[cst_coord].push_back(k);
-    }
-
-    if (can_check_sorted)
-    {
-      if (
-          first_cst_coord != cst_coord &&
-          ( (first_cst_coord < cst_coord) != increasing_coords ) )
-      {
-        std::cerr << "Polygon " << k << " is not correctly sorted in the sequence of polygons.\n";
-      }
-    }
-    else
-      if (k!=0)
-      {
-        if ( cst_coord != first_cst_coord )
-        {
-          can_check_sorted=true;
-          increasing_coords = first_cst_coord < cst_coord;
-        }
-      }
-      else
-        first_cst_coord=cst_coord;
-  }
-
-  bool valid=true;
-
-  for(std::map<double, std::vector<std::size_t> >::iterator
-        it=polygons_by_slice.begin(),
-        it_end=polygons_by_slice.end(); it!=it_end; ++it)
-  {
-    std::set<std::pair<std::size_t, std::size_t> > intersecting_polygons;
-    bool res =
-      check_intersection_in_slice<Kernel>(it->second,
-                                          polygons,intersecting_polygons);
-    if (!res)
-      std::cerr << "Intersection in slice " << it->first << std::endl;
-    valid&=res;
-  }
-  return valid;
-}
-
-template <class Kernel>
-bool check_input(std::istream& input,
-                 int constant_coordinate)
-{
-  std::vector< std::vector<typename Kernel::Point_3> > contours;
-  std::size_t nbpt;
-  while( input >> nbpt && input)
-  {
-    contours.push_back(
-      std::vector<typename Kernel::Point_3>() );
-    contours.back().reserve(nbpt);
-
-    for (std::size_t k=0; k< nbpt; ++k )
-    {
-      typename Kernel::FT coords[3];
-      input >> coords[0] >> coords[1] >> coords[2];
-      contours.back().push_back(
-        typename Kernel::Point_3(coords[0], coords[1], coords[2]) );
-    }
-  }
-  return check_input<Kernel>(contours, constant_coordinate);
-}
-
-
 
 template <class Kernel>
 class Contour_checker_and_fixer{
