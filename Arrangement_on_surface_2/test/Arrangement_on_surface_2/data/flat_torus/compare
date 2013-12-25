@@ -1,0 +1,11 @@
+compare_x 3 3
+compare_x 3 4
+compare_x 3 5
+compare_x 4 3
+compare_x 4 4
+compare_x 4 5
+compare_x 5 3
+compare_x 5 4
+compare_x 5 5
+#
+compare_xy 4 4

@@ -58,9 +58,11 @@
 //#include <CGAL/Arr_rational_arc_traits_2.h>
 #include <CGAL/Arr_rational_function_traits_2.h>
 
-
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
+
+#elif TEST_GEOM_TRAITS == FLAT_TORUS_GEOM_TRAITS
+#include <CGAL/Arr_flat_torus_traits_2.h>
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
@@ -177,12 +179,15 @@ typedef Base_geom_traits::Algebraic_real_1                    Algebraic_real_1;
 typedef Base_geom_traits::Rat_vector                          Rat_vector;
 #define GEOM_TRAITS_TYPE "Rational Arc"
 
-
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 typedef CGAL::Arr_algebraic_segment_traits_2<Number_type>     Base_geom_traits;
 
 #define GEOM_TRAITS_TYPE "Algebraic"
 
+
+#elif TEST_GEOM_TRAITS == FLAT_TORUS_GEOM_TRAITS
+typedef CGAL::Arr_flat_torus_traits_2<Kernel>                 Base_geom_traits;
+#define GEOM_TRAITS_TYPE "Arc on flat torus"
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
