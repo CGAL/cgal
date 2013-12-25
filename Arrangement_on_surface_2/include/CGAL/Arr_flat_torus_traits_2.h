@@ -789,7 +789,7 @@ public:
       if (((ce == ARR_MIN_END) && xcv.is_directed_top()) ||
           ((ce == ARR_MAX_END) && !xcv.is_directed_top()))
       {
-        CGAL_precondition(xcv.source_parameter_space_in_y ==
+        CGAL_precondition(xcv.source_parameter_space_in_y() ==
                           ARR_BOTTOM_BOUNDARY);
         Arr_parameter_space ps_x = xcv.source_parameter_space_in_x();
         return (ps_x == ARR_LEFT_BOUNDARY) ? LARGER :
@@ -798,7 +798,7 @@ public:
       }
       // (ce == ARR_MIN_END) && !(xcv.is_directed_top() ||
       // (ce == ARR_MAX_END) && (xcv.is_directed_top() ||
-      CGAL_precondition(xcv.target_parameter_space_in_y ==
+      CGAL_precondition(xcv.target_parameter_space_in_y() ==
                         ARR_BOTTOM_BOUNDARY);
       Arr_parameter_space ps_x = xcv.target_parameter_space_in_x();
       return (ps_x == ARR_LEFT_BOUNDARY) ? LARGER :
@@ -1785,11 +1785,11 @@ public:
   /*! Determine whether the curve is degenerate */
   bool is_empty() const { return m_is_empty; }
 
-  /*! Determine whether the curve lie on the boundary. */
+  /*! Determine whether the curve lies on the boundary. */
   bool is_on_boundary() const
   {
-    return (source_parameter_space_in_x == target_parameter_space_in_x) ||
-      (source_parameter_space_in_y == target_parameter_space_in_y);
+    return (source_parameter_space_in_x() == target_parameter_space_in_x()) ||
+      (source_parameter_space_in_y() == target_parameter_space_in_y());
   }
 
   /*! Flip the arc (swap it source and target) */
