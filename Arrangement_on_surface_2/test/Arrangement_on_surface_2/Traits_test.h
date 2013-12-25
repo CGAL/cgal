@@ -534,11 +534,11 @@ Traits_test<T_Traits>::equal_curves_wrapper(std::istringstream& str_stream)
  * segment is vertical. Both firt and last are vertical. An internal segment
  * is vertical.
  */
-template <typename T_Traits>
+template <typename Traits_>
 bool
-Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
+Traits_test<Traits_>::make_x_monotone_wrapper(std::istringstream& str_stream)
 {
-  typedef T_Traits                              Traits;
+  typedef Traits_                               Traits;
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::X_monotone_curve_2   X_monotone_curve_2;
   CGAL_USE_TYPE(typename Traits::Curve_2);
@@ -573,7 +573,7 @@ Traits_test<T_Traits>::make_x_monotone_wrapper(std::istringstream& str_stream)
     }
 
     exp_type = 0;
-    const Point_2 * pt_ptr;
+    const Point_2* pt_ptr;
     pt_ptr = CGAL::object_cast<Point_2> (&(object_vec[i]));
     assert (pt_ptr != NULL);
     if (!this->compare(type, exp_type, "type")) return false;

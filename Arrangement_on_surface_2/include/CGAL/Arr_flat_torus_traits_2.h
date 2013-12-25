@@ -794,7 +794,7 @@ public:
         Arr_parameter_space ps_x = xcv.source_parameter_space_in_x();
         return (ps_x == ARR_LEFT_BOUNDARY) ? LARGER :
           ((ps_x == ARR_RIGHT_BOUNDARY) ? SMALLER :
-           (m_traits.compare_x_object()(p, xcv.source())));
+           (m_traits.compare_x_2_object()(point, xcv.source())));
       }
       // (ce == ARR_MIN_END) && !(xcv.is_directed_top() ||
       // (ce == ARR_MAX_END) && (xcv.is_directed_top() ||
@@ -803,7 +803,7 @@ public:
       Arr_parameter_space ps_x = xcv.target_parameter_space_in_x();
       return (ps_x == ARR_LEFT_BOUNDARY) ? LARGER :
         ((ps_x == ARR_RIGHT_BOUNDARY) ? SMALLER :
-         (m_traits.compare_x_object()(p, xcv.source())));
+         (m_traits.compare_x_2_object()(point, xcv.source())));
     }
 
     /*! Compare the x-coordinates of 2 arc ends near the boundary of the
@@ -847,7 +847,7 @@ public:
       }
 
       Arr_parameter_space ps2_x;
-      const Point_2* p1 = NULL;
+      const Point_2* p2 = NULL;
       if (((ce2 == ARR_MIN_END) && xcv2.is_directed_top()) ||
             ((ce2 == ARR_MAX_END) && !xcv2.is_directed_top()))
       {
@@ -860,7 +860,7 @@ public:
       }
 
       if ((ps1_x == ARR_INTERIOR) && (ps2_x == ARR_INTERIOR))
-        return m_traits.compare_x_object()(*p1, *p2);
+        return m_traits.compare_x_2_object()(*p1, *p2);
       if (ps1_x == ps2_x) return EQUAL;
       return (ps1_x == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
     }
@@ -880,7 +880,7 @@ public:
       CGAL_precondition(m_traits.is_on_y_identification_2_object()(p2));
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(p1));
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(p2));
-      return m_traits.compare_x_object()(p1, p2);
+      return m_traits.compare_x_2_object()(p1, p2);
     }
   };
 
@@ -930,7 +930,7 @@ public:
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      Point_2 l1, r1;
+      typename Kernel::Point_2 l1, r1;
       if (xcv1.is_directed_right()) {
         l1 = xcv1.source_point();
         r1 = xcv1.target_point();
@@ -939,7 +939,7 @@ public:
         l1 = xcv1.target_point();
         r1 = xcv1.source_point();
       }
-      Point_2 l2, r2;
+      typename Kernel::Point_2 l2, r2;
       if (xcv2.is_directed_right()) {
         l2 = xcv2.source_point();
         r2 = xcv2.target_point();
@@ -1051,7 +1051,7 @@ public:
       CGAL_precondition(m_traits.is_on_x_identification_2_object()(p2));
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(p1));
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(p2));
-      return m_traits.compare_y_object()(p1, p2);
+      return m_traits.compare_y_2_object()(p1, p2);
     }
   };
 
@@ -1525,12 +1525,12 @@ public:
   public:
     /*! Compare the endpoints of an $x$-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
-     * \param xc the curve.
+     * \param xcv the curve.
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv)
-    { return (xc.is_directed_right()) ? SMALLER : LARGER; }
+    { return (xcv.is_directed_right()) ? SMALLER : LARGER; }
   };
 
   /*! Obtain a Compare_endpoints_xy_2 function object.
@@ -1542,11 +1542,11 @@ public:
   class Construct_opposite_2 {
   public:
     /*! Construct an opposite x-monotone (with swapped source and target).
-     * \param xc the curve.
+     * \param xcv the curve.
      * \return the opposite curve.
      */
-    X_monotone_curve_2 operator()(const X_monotone_curve_2& xc)
-    { return xc.opposite(); }
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv)
+    { return xcv.opposite(); }
   };
 
   /*! Obtain a Construct_opposite_2 function object.
@@ -1610,17 +1610,17 @@ public:
    * \param y the y-coordinate.
    */
   Arr_point_on_flat_torus_3(const FT& x, const FT& y) :
-    Point_2(x, y),
+    Kernel::Point_2(x, y),
     m_on_x_boundary((x == 0) || (x == 1)),
     m_on_y_boundary((y == 0) || (y == 1))
   {}
 
-  /*! Constructor from a point.
+  /*! Constructor from a (kernel) point.
    * \param x the x-coordinate.
    * \param y the y-coordinate.
    */
-  Arr_point_on_flat_torus_3(const Point_2& p) :
-    Point_2(p),
+  Arr_point_on_flat_torus_3(const typename Kernel::Point_2& p) :
+    Kernel::Point_2(p),
     m_on_x_boundary((p.x() == 0) || (p.x() == 1)),
     m_on_y_boundary((p.y() == 0) || (p.y() == 1))
   {}
@@ -1642,7 +1642,7 @@ public:
    * of the parameter space.
    */
   bool is_on_boundary() const
-  { return is_on_ve_bountical_boundary() || is_on_y_boundary() }
+  { return is_on_x_boundary() || is_on_y_boundary(); }
 };
 
 //! A Representation of an x-monotone great circular arc embedded on a torus,
@@ -1984,8 +1984,9 @@ template <typename Kernel_, typename InputStream_>
 InputStream_& operator>>(InputStream_& os,
                          const Arr_point_on_flat_torus_3<Kernel_>& point)
 {
-  const Kernel::Point_2* p = &point;
-  os << *p
+  typedef Kernel_       Kernel;
+  const typename Kernel::Point_2* p = &point;
+  os << *p;
   return os;
 }
 
@@ -2024,7 +2025,8 @@ template <typename Kernel_, typename InputStream>
 InputStream& operator>>(InputStream& is,
                         Arr_point_on_flat_torus_3<Kernel_>& point)
 {
-  Kernel::Point_2 p;
+  typedef Kernel_       Kernel;
+  typename Kernel::Point_2 p;
   is >> p;
   point(p);
   return is;
@@ -2035,7 +2037,8 @@ template <typename Kernel_, typename InputStream_>
 InputStream_& operator>>(InputStream_& is,
                          Arr_x_monotone_curve_on_flat_torus_3<Kernel_>& xcv)
 {
-  Point_2 source, target;
+  typedef Kernel_       Kernel;
+  Arr_point_on_flat_torus_3<Kernel> source, target;
   is >> source;
   is >> target;
   xcv(source, target);
