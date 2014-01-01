@@ -25,7 +25,7 @@
 #include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_coercion_traits.h>
-#include <CGAL/Test/_test_polynomial_traits_d.h>
+#include "_test_ak_polynomial_traits_d.h"
 
 
 // Test for the Algebraic_kernel syntax
@@ -49,14 +49,17 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
   {
     // check Coefficient
     typedef Algebraic_structure_traits<Coefficient> AST;
+    typedef typename AST::Is_exact Is_exact;
     typedef typename AST::Algebraic_category Algebraic_category;
-    test_algebraic_structure< Coefficient,Algebraic_category,Tag_true>();
+    test_algebraic_structure< Coefficient,Algebraic_category,Is_exact>();
     test_real_embeddable<Coefficient>();
   }
   {
     // check Polynomial_1
-    typedef Polynomial_traits_d<Polynomial_1> PT;
-    test_polynomial_traits_d(PT());
+    typedef Algebraic_structure_traits<Coefficient> CAST;
+    typedef typename CAST::Is_exact Is_exact;
+    typedef typename CAST::Algebraic_category Algebraic_category;
+    test_ak_polynomial_traits_d<Is_exact,PT>()(PT());
 
     // test not possible due to bug in test_algebraic_structure
     // div(3,2)=3/2 != 0 in case of Polynomial<Rational>
