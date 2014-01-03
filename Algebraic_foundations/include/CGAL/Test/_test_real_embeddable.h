@@ -29,6 +29,7 @@
 #include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 
+#include <cassert>
 #include <CGAL/tags.h>
 
 //#include <CGAL/Algebraic_structure_traits.h>
@@ -61,7 +62,7 @@ namespace CGAL {
             CGAL_USE_TYPE(Argument_type);
             CGAL_static_assertion(( ::boost::is_same<double, Result_type>::value));
             CGAL_USE_TYPE(Result_type);
-            CGAL_assertion(42.0 == to_double(Type(42)));
+            assert(42.0 == to_double(Type(42)));
         }
     };
 
@@ -85,21 +86,21 @@ namespace CGAL {
             CGAL_static_assertion(( ::boost::is_same<Interval_type, Result_type>::value));
             CGAL_USE_TYPE(Result_type); CGAL_USE_TYPE(Interval_type);
 
-//            CGAL_assertion(NiX::in(42.0,to_Interval(Type(42))));
+//            assert(NiX::in(42.0,to_Interval(Type(42))));
             // Instead of 'NiX::in':
-            CGAL_assertion( 42.0 >= to_interval( Type(42) ).first );
-            CGAL_assertion( 42.0 <= to_interval( Type(42) ).second );
+            assert( 42.0 >= to_interval( Type(42) ).first );
+            assert( 42.0 <= to_interval( Type(42) ).second );
 
-            CGAL_assertion(to_interval(Type(42)).first > 41.99);
-            CGAL_assertion(to_interval(Type(42)).second < 42.01);
+            assert(to_interval(Type(42)).first > 41.99);
+            assert(to_interval(Type(42)).second < 42.01);
             
 	    // test neagtive numbers as well to catch obvious sign
 	    // errors
-	    CGAL_assertion( -42.0 >= to_interval( -Type(42) ).first );
-            CGAL_assertion( -42.0 <= to_interval( -Type(42) ).second );
+	    assert( -42.0 >= to_interval( -Type(42) ).first );
+            assert( -42.0 <= to_interval( -Type(42) ).second );
 
-            CGAL_assertion(to_interval(-Type(42)).first < -41.99);
-            CGAL_assertion(to_interval(-Type(42)).second > -42.01);
+            assert(to_interval(-Type(42)).first < -41.99);
+            assert(to_interval(-Type(42)).second > -42.01);
      
 
 	    /*
@@ -112,7 +113,7 @@ namespace CGAL {
             upper *= ipower(2.0,7);
 	    std::cout << lower << "," << upper << std::endl;
 	    std::cout << test.lower() << "," << test.upper() << std::endl;
-            CGAL_assertion( (in(lower,test) == true) && (in(upper,test) == true) );
+            assert( (in(lower,test) == true) && (in(upper,test) == true) );
             */
         }
     };
@@ -135,8 +136,8 @@ void test_min_max(){
   using std:: min BOOST_PREVENT_MACRO_SUBSTITUTION ;
   using std:: max BOOST_PREVENT_MACRO_SUBSTITUTION ;  
   NT x(1),y(2);
-  CGAL_assertion(min BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(1));
-  CGAL_assertion(max BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(2));
+  assert(min BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(1));
+  assert(max BOOST_PREVENT_MACRO_SUBSTITUTION (x,y)==NT(2));
 }
 
 //! tests if \c Type is a model for the \c RealComparable concept
@@ -163,11 +164,11 @@ void test_real_embeddable() {
     check_result_type(Compare(),Comparison_result());
 
     // test implicit interoperability with base type and proper default
-    CGAL_assertion(Boolean()              == bool());
-    CGAL_assertion(Sign()                 == CGAL::Sign());
-    CGAL_assertion(Comparison_result()    == CGAL::Comparison_result());
+    assert(Boolean()              == bool());
+    assert(Sign()                 == CGAL::Sign());
+    assert(Comparison_result()    == CGAL::Comparison_result());
     
-    CGAL_assertion_code(typename RET::Compare compare;)
+    typename RET::Compare compare;
     const Sgn     sign = Sgn();
     const Abs     abs=Abs(); 
     const Is_finite  is_finite=Is_finite();
@@ -178,49 +179,49 @@ void test_real_embeddable() {
     Type a(-2);
     Type b(1);
     Type c(0);
-    CGAL_assertion( is_finite(a) );
-    CGAL_assertion( is_finite(b) );
-    CGAL_assertion( is_finite(c) );
-    CGAL_assertion( !is_positive(a) );
-    CGAL_assertion( is_positive(b) );
-    CGAL_assertion( !is_positive(c) );
-    CGAL_assertion( is_negative(a) );
-    CGAL_assertion( !is_negative(b) );
-    CGAL_assertion( !is_negative(c) );
-    CGAL_assertion( !is_zero(a) );
-    CGAL_assertion( !is_zero(b) );
-    CGAL_assertion( is_zero(c) );    
-    CGAL_assertion( a <  b);
-    CGAL_assertion( b >  a);
-    CGAL_assertion( a <= b);
-    CGAL_assertion( b >= a);
-    CGAL_assertion( a <= a);
-    CGAL_assertion( a >= a);
-    CGAL_assertion( compare(a,b) == CGAL::SMALLER);
-    CGAL_assertion( compare(b,a) == CGAL::LARGER);
-    CGAL_assertion( compare(a,a) == CGAL::EQUAL);
-    CGAL_assertion( sign(a) == CGAL::NEGATIVE);
-    CGAL_assertion( sign(b) == CGAL::POSITIVE);
-    CGAL_assertion( sign(c) == CGAL::ZERO);
-    CGAL_assertion( sign(a) <  sign(b));
-    CGAL_assertion( sign(b) >  sign(a));
-    CGAL_assertion( sign(a) <= sign(b));
-    CGAL_assertion( sign(b) >= sign(a));
-    CGAL_assertion( sign(a) <= sign(a));
-    CGAL_assertion( sign(a) >= sign(a));
-    CGAL_assertion( sign(c) <  sign(b));
-    CGAL_assertion( sign(b) >  sign(c));
-    CGAL_assertion( sign(c) <= sign(b));
-    CGAL_assertion( sign(b) >= sign(c)); 
-    CGAL_assertion( sign(c) <= sign(c));
-    CGAL_assertion( sign(c) >= sign(c));
-    CGAL_assertion( sign(a) <  sign(c));
-    CGAL_assertion( sign(c) >  sign(a));
-    CGAL_assertion( sign(a) <= sign(c));
-    CGAL_assertion( sign(c) >= sign(a));
-    CGAL_assertion( abs(a) == Type(2));
-    CGAL_assertion( abs(b) == Type(1));
-    CGAL_assertion( abs(c) == Type(0));   
+    assert( is_finite(a) );
+    assert( is_finite(b) );
+    assert( is_finite(c) );
+    assert( !is_positive(a) );
+    assert( is_positive(b) );
+    assert( !is_positive(c) );
+    assert( is_negative(a) );
+    assert( !is_negative(b) );
+    assert( !is_negative(c) );
+    assert( !is_zero(a) );
+    assert( !is_zero(b) );
+    assert( is_zero(c) );    
+    assert( a <  b);
+    assert( b >  a);
+    assert( a <= b);
+    assert( b >= a);
+    assert( a <= a);
+    assert( a >= a);
+    assert( compare(a,b) == CGAL::SMALLER);
+    assert( compare(b,a) == CGAL::LARGER);
+    assert( compare(a,a) == CGAL::EQUAL);
+    assert( sign(a) == CGAL::NEGATIVE);
+    assert( sign(b) == CGAL::POSITIVE);
+    assert( sign(c) == CGAL::ZERO);
+    assert( sign(a) <  sign(b));
+    assert( sign(b) >  sign(a));
+    assert( sign(a) <= sign(b));
+    assert( sign(b) >= sign(a));
+    assert( sign(a) <= sign(a));
+    assert( sign(a) >= sign(a));
+    assert( sign(c) <  sign(b));
+    assert( sign(b) >  sign(c));
+    assert( sign(c) <= sign(b));
+    assert( sign(b) >= sign(c)); 
+    assert( sign(c) <= sign(c));
+    assert( sign(c) >= sign(c));
+    assert( sign(a) <  sign(c));
+    assert( sign(c) >  sign(a));
+    assert( sign(a) <= sign(c));
+    assert( sign(c) >= sign(a));
+    assert( abs(a) == Type(2));
+    assert( abs(b) == Type(1));
+    assert( abs(c) == Type(0));   
     
     // To_double --------------------------------------------------------------
     const To_double to_double = To_double();
@@ -235,15 +236,15 @@ void test_real_embeddable() {
     tti(to_interval);
     
     // additional functions     
-    CGAL_assertion( CGAL_NTS is_finite( Type(1) ) );
-    CGAL_assertion( CGAL_NTS sign(Type(-5))==CGAL::NEGATIVE);
-    CGAL_assertion( CGAL_NTS abs(Type(-5))==Type(5));
-//    CGAL_assertion(NiX::in(5.0,NiX::to_interval(Type(5))));
-    CGAL_assertion( CGAL_NTS compare(Type(-5),Type(6))==CGAL::SMALLER);
-    CGAL_assertion( CGAL_NTS is_positive(Type(23)) );
-    CGAL_assertion( CGAL_NTS is_negative(Type(-23)) );
-    CGAL_assertion( CGAL_NTS is_zero( Type(0) ) );
-    CGAL_assertion( !CGAL_NTS is_zero( Type(23) ) );
+    assert( CGAL_NTS is_finite( Type(1) ) );
+    assert( CGAL_NTS sign(Type(-5))==CGAL::NEGATIVE);
+    assert( CGAL_NTS abs(Type(-5))==Type(5));
+//    assert(NiX::in(5.0,NiX::to_interval(Type(5))));
+    assert( CGAL_NTS compare(Type(-5),Type(6))==CGAL::SMALLER);
+    assert( CGAL_NTS is_positive(Type(23)) );
+    assert( CGAL_NTS is_negative(Type(-23)) );
+    assert( CGAL_NTS is_zero( Type(0) ) );
+    assert( !CGAL_NTS is_zero( Type(23) ) );
 
 }
 
@@ -271,17 +272,17 @@ void test_not_real_embeddable() {
 //    typedef CGAL::Null_functor Null_functor;
 //    CGAL_static_assertion((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
 //
-//    CGAL_assertion( fl_log(Type( 7)) == 2 );
-//    CGAL_assertion( cl_log(Type( 7)) == 3 );
-//    CGAL_assertion( fl_log(Type( 8)) == 3 );
-//    CGAL_assertion( cl_log(Type( 8)) == 3 );
-//    CGAL_assertion( fl_log(Type(-9)) == 3 );
-//    CGAL_assertion( cl_log(Type(-9)) == 4 );
+//    assert( fl_log(Type( 7)) == 2 );
+//    assert( cl_log(Type( 7)) == 3 );
+//    assert( fl_log(Type( 8)) == 3 );
+//    assert( cl_log(Type( 8)) == 3 );
+//    assert( fl_log(Type(-9)) == 3 );
+//    assert( cl_log(Type(-9)) == 4 );
 //
-//    CGAL_assertion( NiX::floor_log2_abs(Type(  64)) == 6 );
-//    CGAL_assertion( NiX::ceil_log2_abs( Type(  64)) == 6 );
-//    CGAL_assertion( NiX::floor_log2_abs(Type(-126)) == 6 );
-//    CGAL_assertion( NiX::ceil_log2_abs( Type(-126)) == 7 );
+//    assert( NiX::floor_log2_abs(Type(  64)) == 6 );
+//    assert( NiX::ceil_log2_abs( Type(  64)) == 6 );
+//    assert( NiX::floor_log2_abs(Type(-126)) == 6 );
+//    assert( NiX::ceil_log2_abs( Type(-126)) == 7 );
 //}
 //
 //

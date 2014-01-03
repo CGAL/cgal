@@ -21,6 +21,7 @@
 // ============================================================================
 
 #include <CGAL/basic.h>
+#include <cassert>
 #include <CGAL/use.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
@@ -147,43 +148,43 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 
   Polynomial_1 x = typename PT::Shift()(Polynomial_1(1),1);
   {
-    CGAL_assertion( is_square_free_1(ipower((x-1),1)));
-    CGAL_assertion(!is_square_free_1(ipower((x-1),2)));
+    assert( is_square_free_1(ipower((x-1),1)));
+    assert(!is_square_free_1(ipower((x-1),2)));
   }
   {
-    CGAL_assertion( make_square_free_1(ipower(5*(x-1),2))==ipower((x-1),1));
+    assert( make_square_free_1(ipower(5*(x-1),2))==ipower((x-1),1));
   }
   {
     std::list< std::pair<Polynomial_1,int> > factors;
     square_free_factorize_1((x-1)*(x-2)*(x-2),std::back_inserter(factors));
-    CGAL_assertion(factors.size()==2);
-    CGAL_assertion(factors.front() != factors.back());
-    CGAL_assertion(
+    assert(factors.size()==2);
+    assert(factors.front() != factors.back());
+    assert(
         factors.front() == std::make_pair((x-1),1) ||
         factors.front() == std::make_pair((x-2),2) );
-    CGAL_assertion(
+    assert(
         factors.back()  == std::make_pair((x-1),1) ||
         factors.back()  == std::make_pair((x-2),2) );
   }
 
-  CGAL_assertion( is_coprime_1((x-1),(x-2)));
-  CGAL_assertion(!is_coprime_1((x-1)*(x-2),(x-1)*(x-3)));
+  assert( is_coprime_1((x-1),(x-2)));
+  assert(!is_coprime_1((x-1)*(x-2),(x-1)*(x-3)));
 
   {
     Polynomial_1 a,b,c,d,e;
     a = (x-1)*(x-2);
     b = (x-1)*(x-3);
-    CGAL_assertion(!make_coprime_1(a,b,c,d,e));
-    CGAL_assertion( c == (x-1) ); // gcd
-    CGAL_assertion( d == (x-2) );
-    CGAL_assertion( e == (x-3) );
+    assert(!make_coprime_1(a,b,c,d,e));
+    assert( c == (x-1) ); // gcd
+    assert( d == (x-2) );
+    assert( e == (x-3) );
 
     a = (x-1);
     b = (x-2);
-    CGAL_assertion( make_coprime_1(a,b,c,d,e) );
-    CGAL_assertion( c == (1) ); // gcd
-    CGAL_assertion( d == (x-1) );
-    CGAL_assertion( e == (x-2) );
+    assert( make_coprime_1(a,b,c,d,e) );
+    assert( c == (1) ); // gcd
+    assert( d == (x-1) );
+    assert( e == (x-2) );
   }
 
   {
@@ -193,17 +194,17 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     std::back_insert_iterator<ROOTS> biit =
       solve_1((x-1)*(x-2)*(x-2),std::back_inserter(roots));
 
-    CGAL_assertion(roots.size()==2);
-    CGAL_assertion(roots.front() != roots.back());
-    CGAL_assertion(
+    assert(roots.size()==2);
+    assert(roots.front() != roots.back());
+    assert(
         roots.front() == std::make_pair(Algebraic_real_1(1),(unsigned int)1) ||
         roots.front() == std::make_pair(Algebraic_real_1(2),(unsigned int)2) );
-    CGAL_assertion(
+    assert(
         roots.back()  == std::make_pair(Algebraic_real_1(1),(unsigned int)1) ||
         roots.back()  == std::make_pair(Algebraic_real_1(2),(unsigned int)2) );
 
     solve_1((x-1)*(x-2)*(x-2),biit); // use iterator again
-    CGAL_assertion(roots.size()==4);
+    assert(roots.size()==4);
   }
   {
     // Compute_polynomial
@@ -214,8 +215,8 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       solve_1(p1,std::back_inserter(roots));
     Algebraic_real_1 ar = roots[1].first;
     Polynomial_1 p2 = compute_polynomial_1(ar);
-    CGAL_assertion(!is_coprime_1(p1,p2));
-    CGAL_assertion(is_zero_at_1(p2,ar));
+    assert(!is_coprime_1(p1,p2));
+    assert(is_zero_at_1(p2,ar));
     
   }
   {
@@ -225,78 +226,78 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     std::back_insert_iterator<ROOTS> biit =
       solve_1((x-1)*(x-2)*(x-2),false,std::back_inserter(roots));
 
-    CGAL_assertion(roots.size()==2);
-    CGAL_assertion(roots.front() != roots.back());
-    CGAL_assertion(
+    assert(roots.size()==2);
+    assert(roots.front() != roots.back());
+    assert(
         roots.front() == Algebraic_real_1(1) ||
         roots.front() == Algebraic_real_1(2) );
-    CGAL_assertion(
+    assert(
         roots.back()  == Algebraic_real_1(1) ||
         roots.back()  == Algebraic_real_1(2) );
 
     solve_1((x-1)*(x-2),true,biit); // use iterator again
-    CGAL_assertion(roots.size()==4);
+    assert(roots.size()==4);
   }
   {
     // number_of_solutions
-    CGAL_assertion(3 == number_of_solutions_1((x-1)*(x-2)*(x-3)));
+    assert(3 == number_of_solutions_1((x-1)*(x-2)*(x-3)));
   }
   {
-    CGAL_assertion(sign_at_1(x*0,Algebraic_real_1(0)) == ZERO);
+    assert(sign_at_1(x*0,Algebraic_real_1(0)) == ZERO);
 
-    CGAL_assertion(sign_at_1(x-1,Algebraic_real_1(0)) == NEGATIVE);
-    CGAL_assertion(sign_at_1(x-1,Algebraic_real_1(1)) == ZERO);
-    CGAL_assertion(sign_at_1(x-1,Algebraic_real_1(2)) == POSITIVE);
+    assert(sign_at_1(x-1,Algebraic_real_1(0)) == NEGATIVE);
+    assert(sign_at_1(x-1,Algebraic_real_1(1)) == ZERO);
+    assert(sign_at_1(x-1,Algebraic_real_1(2)) == POSITIVE);
 
     std::vector<Algebraic_real_1> roots;
     solve_1(x*x-2,true,std::back_inserter(roots));
-    CGAL_assertion(sign_at_1((x+1),roots[0]) == CGAL::NEGATIVE);
+    assert(sign_at_1((x+1),roots[0]) == CGAL::NEGATIVE);
 
     Polynomial_1 f = (x*x-2)*(x*x-2);
-    CGAL_assertion(sign_at_1(f,roots[0]) == CGAL::ZERO);
+    assert(sign_at_1(f,roots[0]) == CGAL::ZERO);
   }
   {
     std::list<Algebraic_real_1> roots;
     solve_1((x*x-3),true,std::back_inserter(roots));
     Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
-    CGAL_assertion(sign_at_1(x*x-2,root) == POSITIVE);
-    CGAL_assertion(sign_at_1(x*x-3,root) == ZERO);
-    CGAL_assertion(sign_at_1((x*x-3)*(x-4),root) == ZERO);
-    CGAL_assertion(sign_at_1(x*x-4,root) == NEGATIVE);
+    assert(sign_at_1(x*x-2,root) == POSITIVE);
+    assert(sign_at_1(x*x-3,root) == ZERO);
+    assert(sign_at_1((x*x-3)*(x-4),root) == ZERO);
+    assert(sign_at_1(x*x-4,root) == NEGATIVE);
   }
   {
-    CGAL_assertion(is_zero_at_1(x*0,Algebraic_real_1(0)) == true);
+    assert(is_zero_at_1(x*0,Algebraic_real_1(0)) == true);
 
-    CGAL_assertion(is_zero_at_1(x-1,Algebraic_real_1(0)) == false);
-    CGAL_assertion(is_zero_at_1(x-1,Algebraic_real_1(1)) == true);
-    CGAL_assertion(is_zero_at_1(x-1,Algebraic_real_1(2)) == false);
+    assert(is_zero_at_1(x-1,Algebraic_real_1(0)) == false);
+    assert(is_zero_at_1(x-1,Algebraic_real_1(1)) == true);
+    assert(is_zero_at_1(x-1,Algebraic_real_1(2)) == false);
 
     std::list<Algebraic_real_1> roots;
     solve_1((x*x-3),true,std::back_inserter(roots));
     Algebraic_real_1 root = (CGAL::min)(roots.front(),roots.back());
-    CGAL_assertion(is_zero_at_1(x*x-2,root) == false);
-    CGAL_assertion(is_zero_at_1(x*x-3,root) == true);
-    CGAL_assertion(is_zero_at_1((x*x-3)*(x-4),root) == true);
-    CGAL_assertion(is_zero_at_1(x*x-4,root) == false);
+    assert(is_zero_at_1(x*x-2,root) == false);
+    assert(is_zero_at_1(x*x-3,root) == true);
+    assert(is_zero_at_1((x*x-3)*(x-4),root) == true);
+    assert(is_zero_at_1(x*x-4,root) == false);
   }
   {
-    CGAL_assertion(compare_1(Algebraic_real_1( 1),Algebraic_real_1( 2)) == SMALLER);
-    CGAL_assertion(compare_1(Algebraic_real_1( 2),Algebraic_real_1( 2)) == EQUAL);
-    CGAL_assertion(compare_1(Algebraic_real_1( 3),Algebraic_real_1( 2)) == LARGER);
-    CGAL_assertion(compare_1(Algebraic_real_1(-1),Algebraic_real_1(-2)) == LARGER);
-    CGAL_assertion(compare_1(Algebraic_real_1(-2),Algebraic_real_1(-2)) == EQUAL);
-    CGAL_assertion(compare_1(Algebraic_real_1(-3),Algebraic_real_1(-2)) == SMALLER);
+    assert(compare_1(Algebraic_real_1( 1),Algebraic_real_1( 2)) == SMALLER);
+    assert(compare_1(Algebraic_real_1( 2),Algebraic_real_1( 2)) == EQUAL);
+    assert(compare_1(Algebraic_real_1( 3),Algebraic_real_1( 2)) == LARGER);
+    assert(compare_1(Algebraic_real_1(-1),Algebraic_real_1(-2)) == LARGER);
+    assert(compare_1(Algebraic_real_1(-2),Algebraic_real_1(-2)) == EQUAL);
+    assert(compare_1(Algebraic_real_1(-3),Algebraic_real_1(-2)) == SMALLER);
   }
   {
     Bound bound = bound_between_1(Algebraic_real_1(1),Algebraic_real_1(2));
-    CGAL_assertion(compare_1(bound,Algebraic_real_1(1)) == LARGER  );
-    CGAL_assertion(compare_1(bound,Algebraic_real_1(2)) == SMALLER );
+    assert(compare_1(bound,Algebraic_real_1(1)) == LARGER  );
+    assert(compare_1(bound,Algebraic_real_1(2)) == SMALLER );
   }
 
   CGAL::set_pretty_mode(std::cerr);
 
   // Approximations
-  CGAL_assertion_code(bool all_right = true;)
+  bool all_right = true;
   std::cout << "start test_approximation (takes a while) " << std::flush;
   Coefficient c = CGAL::ipower(Coefficient(2), 2500) + 1;
   // we choose coefficients: small, large, (close to) power of two
@@ -345,12 +346,12 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_absolute_1(*rit,p);
-            CGAL_assertion(compare_1(bi.first ,*rit) != LARGER );
-            CGAL_assertion(compare_1(bi.second,*rit) != SMALLER);
-            CGAL_assertion(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
             if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1)) 
                   <= (p == 0 ? Bound(2) : Bound(1)) )) {
-              CGAL_assertion_code(all_right = false;)
+              all_right = false;
               std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << p 
                         << " of this root: " << *rit << std::endl;
             }
@@ -360,11 +361,11 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_absolute_1(*rit,-p);
-            CGAL_assertion(compare_1(bi.first ,*rit) != LARGER );
-            CGAL_assertion(compare_1(bi.second,*rit) != SMALLER);
-            CGAL_assertion(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
             if (!((bi.second - bi.first) <= ipower(Bound(2),1-(-p)) )) {
-              CGAL_assertion_code(all_right = false;)
+              all_right = false;
               std::cerr << "ERROR: Approximate_absolute_1 fails for prec = " << -p 
                         << " of this root: " << *rit << std::endl;
             }
@@ -374,12 +375,12 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_relative_1(*rit,p);
-            CGAL_assertion(compare_1(bi.first ,*rit) != LARGER );
-            CGAL_assertion(compare_1(bi.second,*rit) != SMALLER);
-            CGAL_assertion(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
             if (!((bi.second - bi.first) * (p == 0 ? Bound(1) : ipower(Bound(2),p-1))
                   <= (p == 0 ? Bound(2) : Bound(1)) * (CGAL::max)(abs(bi.first),abs(bi.second)))) {
-              CGAL_assertion_code(all_right = false;)
+              all_right = false;
               std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << p 
                         << " of this root: " << *rit << std::endl;
 
@@ -390,12 +391,12 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
           for (typename std::list< Algebraic_real_1 >::const_iterator rit = roots.begin();
                rit != roots.end(); rit++) {
             BInterval bi = approximate_relative_1(*rit,-p);
-            CGAL_assertion(compare_1(bi.first ,*rit) != LARGER );
-            CGAL_assertion(compare_1(bi.second,*rit) != SMALLER);
-            CGAL_assertion(CGAL::sign(bi.second - bi.first) != NEGATIVE);
+            assert(compare_1(bi.first ,*rit) != LARGER );
+            assert(compare_1(bi.second,*rit) != SMALLER);
+            assert(CGAL::sign(bi.second - bi.first) != NEGATIVE);
             if (!((bi.second - bi.first) <= 
                   ipower(Bound(2),1-(-p)) * (CGAL::max)(abs(bi.first),abs(bi.second)))) {
-              CGAL_assertion_code(all_right = false;)
+              all_right = false;
               std::cerr << "ERROR: Approximate_relative_1 fails for prec = " << -p 
                         << " of this root: " << *rit << std::endl;
             }
@@ -404,7 +405,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
       }
     } 
   }
-  CGAL_assertion(all_right); // some approximation was not good enough
+  assert(all_right); // some approximation was not good enough
   std::cout << " ok" << std::endl;
   { 
     
@@ -415,7 +416,7 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     ss>>CGAL::iformat(alg2);			\
     CGAL_assertion(!ss.bad());                  \
     ss.clear();                                 \
-    CGAL_assertion(alg1==alg2)
+    assert(alg1==alg2)
     // Note: after the reading ss>>CGAL::iformat(alg2) the state of ss can
     // have the eofbit. The C++ norm says if one tries to write to a stream
     // with eofbit, then the failbit will be set. That is why one must
