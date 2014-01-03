@@ -68,6 +68,7 @@ typedef CGAL::Cartesian<Algebraic>                                        Alg_ke
 typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Conic_traits_2;
 typedef Conic_traits_2::Point_2                                           Conic_point_2;
 typedef Conic_traits_2::Curve_2                                           Conic_arc_2;
+typedef Conic_traits_2::X_monotone_curve_2                                Conic_x_monotone_curve_2;
 typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Polycurve_conic_traits_2;
 typedef CGAL::Arrangement_2<Polycurve_conic_traits_2>                     Conic_arrangment_2; 
 
@@ -143,7 +144,7 @@ void Make_conic_polycurve(Conic_arrangment_2* Conic_arr)
 {
 
   // Insert a hyperbolic arc, supported by the hyperbola y = 1/x
-  // (or: xy - 1 = 0) with the endpoints (1/5, 4) and (2, 1/2).
+  // (or: xy - 1 = 0) with the endpoints (1/4, 4) and (2, 1/2).
   // Note that the arc is counterclockwise oriented.
   Conic_point_2       ps1 (Rational(1,4), 4);
   Conic_point_2       pt1 (2, Rational(1,2));
@@ -176,7 +177,7 @@ void Make_conic_polycurve(Conic_arrangment_2* Conic_arr)
 
 void Make_arc_polycurve( Arc_arrangment_2* Arc_arr)
 {
-  std::list<Arc_section_2>  curves;
+  std::vector<Arc_section_2>  curves;
 
   // Create a circular arc that correspond to the upper half of the
   // circle centered at (1,1) with squared radius 3. We create the
@@ -190,7 +191,18 @@ void Make_arc_polycurve( Arc_arrangment_2* Arc_arr)
   Arc_point_2       t1 = Arc_point_2 (one_plus_sqrt_3, CoordNT (1));
   curves.push_back (Arc_section_2 (circ1, s1, t1));
 
-  //insert ( *Arc_arr, curves.begin(), curves.end());
+  //insert ( *Arc_arr, curves[0]);
+
+  // Create a circular arc defined by two endpoints and a midpoint,
+  // all having rational coordinates. This arc is the upper-right
+  // quarter of a circle centered at the origin with radius 5.
+  Kernel::Point_2  p1 = Kernel::Point_2 (0, 5);
+  Kernel::Point_2  mid = Kernel::Point_2 (3, 4);
+  Kernel::Point_2  p2 = Kernel::Point_2 (5, 0);
+
+  Arc_section_2 cv = Arc_section_2 (p1, mid, p2);
+
+  //insert(*Arc_arr, cv);
 
   //to be removed later
   //Arrangement_2_test arr;
