@@ -991,7 +991,8 @@ private:
     CGAL::cpp11::array<VertexIdType, 4> vertices_;
   };
 
-  template<typename VertexIdType>
+  template<typename VertexIdType, 
+           bool store_c3t3_info = true>
   class Cell_data_backup
   {
     typedef Cell_from_ids<VertexIdType> Cell_from_ids;
@@ -1000,18 +1001,20 @@ private:
     Cell_data_backup(const Cell_handle& c)
       : cell_ids_(c)
     {
-      subdomain_index_ = c->subdomain_index();
-
-      if(subdomain_index_ != Subdomain_index())
+      if(Subdomain_index() != c->subdomain_index())
         sliver_value_ = c->sliver_value();
       else
         sliver_value_ = 0.;
 
-      for(std::size_t i = 0; i < 4; ++i)
+      if(store_c3t3_info)
       {
-        surface_index_table_[i] = c->surface_patch_index(i);
-        facet_surface_center_[i] = c->get_facet_surface_center(i);
-        surface_center_index_table_[i] = c->get_facet_surface_center_index(i);
+        subdomain_index_ = c->subdomain_index();
+        for(std::size_t i = 0; i < 4; ++i)
+        {
+          surface_index_table_[i] = c->surface_patch_index(i);
+          facet_surface_center_[i] = c->get_facet_surface_center(i);
+          surface_center_index_table_[i] = c->get_facet_surface_center_index(i);
+        }
       }
       //note c->next_intrusive() and c->previous_intrusive()
       //are lost by 'backup' and 'restore', 
@@ -1064,7 +1067,15 @@ private:
       
       if(sliver_value_ > 0.)
         c->set_sliver_value(sliver_value_);
-      
+
+      for(std::size_t i = 0; i < 4; ++i)
+        c->reset_visited(i);
+        //we don't need to store 'visited' information because it is 
+        //reset and used locally where is it needed
+
+      if(!store_c3t3_info)
+        return;
+
       //add_to_complex sets the index, and updates the cell counter 
       if(subdomain_index_ != Subdomain_index())
         c3t3.add_to_complex(c, subdomain_index_);
@@ -1072,7 +1083,6 @@ private:
       for(std::size_t i = 0; i < 4; ++i)
       {
         std::size_t old_i = index_map.at(i);
-
         //add_to_complex sets the index, and updates the cell counter 
         Surface_patch_index index = surface_index_table_[old_i];
         if(Surface_patch_index() != index)
@@ -1080,10 +1090,6 @@ private:
         
         c->set_facet_surface_center(i, facet_surface_center_[old_i]);
         c->set_facet_surface_center_index(i, surface_center_index_table_[old_i]);
-
-        c->reset_visited(i);
-        //we don't need to store 'visited' information because it is 
-        //reset and used locally where is it needed
       }
     }
 
@@ -1754,7 +1760,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   Point_3 old_position = vertex->point();
 
   //backup metadata
-  typedef Cell_data_backup<unsigned int/*BAD*/> Cell_data_backup;
+  typedef Cell_data_backup<unsigned int/*BAD*/, false> Cell_data_backup;
   std::vector<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
   
@@ -1766,7 +1772,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
   if ( criterion.valid_move(c3t3_cells(conflict_cells))
-   //warning : valid_move updates sliver caches
+       //warning : valid_move updates caches
     && verify_surface(conflict_cells) )
    //verify_surface does not change c3t3 when returns false, circumcenters yes
   {
@@ -1785,7 +1791,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
     move_point_no_topo_change(vertex,old_position);
 
     //restore meta-data (cells should have same connectivity as before move)
-    // (when no topological change, restores only sliver caches)
+    // (restores only sliver caches here)
     CGAL_assertion(conflict_cells.size() == cells_backup.size());
     restore_from_cells_backup(conflict_cells, cells_backup);
 
