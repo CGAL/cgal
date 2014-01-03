@@ -63,6 +63,13 @@ Type of indices for surface patches of the input complex. Must match the type `M
 */ 
 typedef unspecified_type Surface_patch_index;; 
 
+/*!
+ Type of indices to be stored at mesh vertices to characterize the lowest dimensional face 
+ of the input complex on which a possible future Steiner vertex lies.
+ Must match the type `MeshDomain_3::Index`.
+*/
+typedef unspecified_type Index;;
+
 /// @} 
 
 /// \name Operations 
@@ -120,6 +127,16 @@ const Point& get_facet_surface_center(int i);
 Sets point `p` as the surface center of `facet(i)`. 
 */ 
 void set_facet_surface_center (int i, Point p); 
+
+/*!
+Sets surface center index of `facet(i)` to `index`.
+*/
+void set_facet_surface_center_index(int i, Index index);
+
+/*!
+Returns surface center of `facet(i)`.
+*/
+Index get_facet_surface_center_index(int i);
 
 /*!
 Invalidates the circumcenter value stored in the cell.
