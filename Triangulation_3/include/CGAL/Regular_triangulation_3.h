@@ -948,10 +948,18 @@ dual(Cell_handle c) const
 {
   CGAL_triangulation_precondition(dimension()==3);
   CGAL_triangulation_precondition( ! is_infinite(c) );
+
+#ifdef CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
+
+  return c->circumcenter(geom_traits());
+
+#else // NOT CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
+
   return construct_weighted_circumcenter( c->vertex(0)->point(),
 					  c->vertex(1)->point(),
 					  c->vertex(2)->point(),
 					  c->vertex(3)->point() );
+#endif // NOT CGAL_REGULAR_TRIANGULATION_3_USE_CIRCUMCENTER_CACHE
 }
 
 template < class Gt, class Tds >
