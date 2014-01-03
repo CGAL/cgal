@@ -81,7 +81,7 @@ void check_equal(Polycurve_arc_traits_2::Equal_2 equal_2, Polycurve_arc_traits_2
   
   curve3 = Arc_section_2 (c6, 1, CGAL::CLOCKWISE, s6, t6);
   make_x_monotone_2(curve3, std::back_inserter(X_monotone_curves));
-  CGAL::assign( X_monotone_curve2, X_monotone_curves[ 2 ] );
+  CGAL::assign( X_monotone_curve3, X_monotone_curves[ 2 ] );
 
   Are_equal = equal_2(X_monotone_curve1, X_monotone_curve3);
 
@@ -168,7 +168,7 @@ void check_compare_end_points_xy_2(Polycurve_arc_traits_2::Compare_endpoints_xy_
   Kernel::Circle_2  circ2 = Kernel::Circle_2 (c2, 3, CGAL::COUNTERCLOCKWISE);
   Arc_point_2       t2 = Arc_point_2 (one_minus_sqrt_3, CoordNT (1));
   Arc_point_2       s2 = Arc_point_2 (one_plus_sqrt_3, CoordNT (1));
-  curve2= Arc_section_2 (circ2, s2, t2);
+  curve2= Arc_section_2 (circ2, s1, t1);
 
   make_x_monotone_2(curve2, std::back_inserter(X_monotone_curves));
   CGAL::assign( X_monotone_curve2, X_monotone_curves[ 1 ] );
@@ -203,6 +203,119 @@ void check_split( Polycurve_arc_traits_2::Split_2  split_2, Polycurve_arc_traits
   CGAL::assign( X_monotone_curve, X_monotone_curves[ 0 ] );
 
   //split_2(X_monotone_curve, Kernel::Point_2::Kernel::Point_2(1, 4), split_x_monotone_curve1, split_x_monotone_curve2);
+
+}
+
+void check_is_vertical(Polycurve_arc_traits_2::Make_x_monotone_2  make_x_monotone_2, Polycurve_arc_traits_2::Is_vertical_2 is_vertical)
+{
+  std::vector<Arc_section_2> curves;
+
+  // Create a circular arc defined by two endpoints and a midpoint,
+  // all having rational coordinates. This arc is the upper-right
+  // quarter of a circle centered at the origin with radius 5.
+  Kernel::Point_2  p1 = Kernel::Point_2 (0, 5);
+  Kernel::Point_2  mid = Kernel::Point_2 (3, 4);
+  Kernel::Point_2  p2 = Kernel::Point_2 (5, 0);
+  Kernel::Point_2  p3 = Kernel::Point_2 (0, -5);
+  curves.push_back (Arc_section_2 (p1, mid, p2)); //quarter of a circle
+  curves.push_back (Arc_section_2 (p1, mid, p3));  //semi-circle
+
+  //convert all curves to x-monotone curves
+  std::vector<CGAL::Object> X_monotone_curves;
+  for(int i=0; i<curves.size(); i++)
+    make_x_monotone_2(curves[i], std::back_inserter(X_monotone_curves));
+
+  //std::vector<Arc_section_x_monotone_2> x_monotone_polycurves;
+
+  Arc_section_x_monotone_2 x_monotone_polycurve1, x_monotone_polycurve2;
+  CGAL::assign( x_monotone_polycurve1, X_monotone_curves[ 0 ] );
+  CGAL::assign( x_monotone_polycurve2, X_monotone_curves[ 1 ] );
+
+  bool res = is_vertical(x_monotone_polycurve1);
+  std::cout << "Is_verticle:: The xmonotone curve (quarter circle) is : " << ( (res)? "vertical" : "not vertical" ) << std::endl;
+
+  res = is_vertical(x_monotone_polycurve2);
+  std::cout << "Is_verticle:: The xmonotone curve (Smi-circle) is : " << ( (res)? "vertical" : "not vertical" ) << std::endl;
+
+}
+
+void check_compare_y_at_x_2(Polycurve_arc_traits_2::Make_x_monotone_2  make_x_monotone_2, Polycurve_arc_traits_2::Compare_y_at_x_2 cmp_y_at_x_2)
+{
+
+  std::vector<Arc_section_2> curves;
+
+  // Create a circular arc defined by two endpoints and a midpoint,
+  // all having rational coordinates. This arc is the upper-right
+  // quarter of a circle centered at the origin with radius 5.
+  Kernel::Point_2  p1 = Kernel::Point_2 (1, 1);
+  Kernel::Point_2  mid = Kernel::Point_2 (4, 4);
+  Kernel::Point_2  p2 = Kernel::Point_2 (7, 1);
+  Kernel::Point_2  p3 = Kernel::Point_2 (1, 4);
+  curves.push_back (Arc_section_2 (p1, mid, p2)); //quarter of a circle
+  curves.push_back (Arc_section_2 (p1, mid, p3));  //semi-circle
+
+  //convert all curves to x-monotone curves
+  std::vector<CGAL::Object> X_monotone_curves;
+  for(int i=0; i<curves.size(); i++)
+    make_x_monotone_2(curves[i], std::back_inserter(X_monotone_curves));
+
+  Arc_section_x_monotone_2 x_monotone_polycurve1, x_monotone_polycurve2;
+  CGAL::assign( x_monotone_polycurve1, X_monotone_curves[ 0 ] );
+  CGAL::assign( x_monotone_polycurve2, X_monotone_curves[ 1 ] );
+
+  Kernel::Point_2  p_test = Kernel::Point_2 (3, 1);
+
+  //int res = cmp_y_at_x_2(p_test, x_monotone_polycurve1);
+              //cmp_y_at_x_2(x_monotone_polycurve1, CGAL::ARR_MIN_END, x_monotone_polycurve2);
+}
+
+void check_push_back(Polycurve_arc_traits_2::Make_x_monotone_2  make_x_monotone_2, Polycurve_arc_traits_2::Push_back_2  push_back_2)
+{
+   std::vector<Arc_section_2> curves;
+
+   //check if segment is pushed in empty curve.
+   Kernel::Point_2  p1 = Kernel::Point_2 (1, 1);
+   Kernel::Point_2  mid = Kernel::Point_2 (4, 4);
+   Kernel::Point_2  p2 = Kernel::Point_2 (7, 1);
+
+   Kernel::Point_2  mid2 = Kernel::Point_2 (10, 3);
+   Kernel::Point_2  p3 = Kernel::Point_2 (7, 7);   
+
+   curves.push_back(Arc_section_2 (p1, mid, p2));
+   curves.push_back(Arc_section_2 (p2, mid2, p3));
+   
+   CGAL::polyline::Polyline_2<Arc_section_2, Arc_point_2> polycurve;
+
+   ////pushing segments in polycurve
+   push_back_2(polycurve, curves[0]);
+   std::cout<< "size of polycurve after 1 push_back: " << polycurve.size() << std::endl;
+
+   push_back_2(polycurve, curves[1]);
+   std::cout<< "size of polycurve after 2 push_backs: " << polycurve.size() << std::endl; //throws a warning "size is depricated"
+
+   //pushing xmonotone segments in xmonotone polycurves
+  //  CGAL::polyline::Polyline_2<Arc_section_x_monotone_2, Arc_point_2> x_monotone_polycurve;
+
+  //  Kernel::Point_2  p5 = Kernel::Point_2 (7, 1);
+  //  Kernel::Point_2  p6 = Kernel::Point_2 (-3, -3);
+  //  Kernel::Point_2  p7 = Kernel::Point_2 (13, 1);
+  //  curves.push_back(Arc_section_2 (p5, p6, p7));
+
+  //  std::vector<CGAL::Object> X_monotone_curves;
+  //  make_x_monotone_2(curves[0], std::back_inserter(X_monotone_curves));
+  //  make_x_monotone_2(curves[1], std::back_inserter(X_monotone_curves));
+
+  // Arc_section_x_monotone_2 x_monotone_polycurve1, x_monotone_polycurve2;
+  // CGAL::assign( x_monotone_polycurve1, X_monotone_curves[ 0 ] );
+  // CGAL::assign( x_monotone_polycurve2, X_monotone_curves[ 1 ] );
+
+  // push_back_2(x_monotone_polycurve, x_monotone_polycurve1);
+  //  std::cout<< "size of x-monotone-polycurve after 1 push_back: " << polycurve.size() << std::endl;
+
+  //  push_back_2(x_monotone_polycurve, x_monotone_polycurve2);
+  //  std::cout<< "size of x-monotone-polycurve after 2 push_backs: " << polycurve.size() << std::endl; //throws a warning "size is depricated"
+
+
 
 }
 
@@ -277,6 +390,9 @@ int main ()
   check_intersect(make_x_monotone_2, intersect_2);
   check_compare_end_points_xy_2(compare_endpoints_xy_2, make_x_monotone_2);
   check_split(split_2, make_x_monotone_2);
+  check_is_vertical(make_x_monotone_2, is_vertical);
+  check_compare_y_at_x_2(make_x_monotone_2, cmp_y_at_x_2);
+  check_push_back(make_x_monotone_2, push_back_2);
 
   return 0;
 }
