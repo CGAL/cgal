@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------
--- CGAL Hilbert sort ipelet description
+-- CGAL hyperbolic geometry ipelet description
 ----------------------------------------------------------------------
 
-label = "Hilbert sort"
+label = "Hyperbolic"
 
 about = [[
 This ipelet is part of the CGAL_ipelet package. See www.cgal.org.
@@ -17,8 +17,11 @@ function run(model, num)
 end
 
 methods = {
-  { label="Hilbert sorting curve, median policy" },
-  { label="Hilbert sorting curve, middle policy" },
+  { label= "Line through two points" },
+  { label= "Segment through two points" },
+  { label= "Bisector of two points" },
+  { label= "Circle by center(prim. sel.) and point" },
+  { label= "Circle center" },
   { label="Help" },
 }
 

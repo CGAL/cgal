@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------
--- CGAL Hilbert sort ipelet description
+-- CGAL pencil of circles ipelet description
 ----------------------------------------------------------------------
 
-label = "Hilbert sort"
+label = "Pencils of circles"
 
 about = [[
 This ipelet is part of the CGAL_ipelet package. See www.cgal.org.
@@ -17,8 +17,8 @@ function run(model, num)
 end
 
 methods = {
-  { label="Hilbert sorting curve, median policy" },
-  { label="Hilbert sorting curve, middle policy" },
+  { label= "Circle in pencil, orthogonal to one circle" },
+  { label= "Circle orthogonal to three circles" },
   { label="Help" },
 }
 
