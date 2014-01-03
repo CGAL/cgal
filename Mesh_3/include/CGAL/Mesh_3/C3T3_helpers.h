@@ -966,19 +966,18 @@ private:
   /**
   * to be used by the perturber
   */
-  template<typename VertexIdType>
   class Cell_from_ids
-    : CGAL::cpp11::array<VertexIdType, 4>
+    : CGAL::cpp11::array<std::size_t, 4>
   {
   public:
     Cell_from_ids(const Cell_handle& c)
       : vertices_()
     {
       for(std::size_t i = 0; i < 4; ++i)
-        vertices_[i] = static_cast<VertexIdType>(c->vertex(i)->meshing_info());
+        vertices_[i] = static_cast<std::size_t>(c->vertex(i)->meshing_info());
     }
 
-    VertexIdType vertex_id(const std::size_t& i) const
+    std::size_t vertex_id(const std::size_t& i) const
     {
       CGAL_precondition(i >= 0 && i < 4);
       return vertices_[i];
@@ -988,15 +987,12 @@ private:
     // vertices IDs
     // they should be ordered in the same way as they were in the
     // cell to be backed-up
-    CGAL::cpp11::array<VertexIdType, 4> vertices_;
+    CGAL::cpp11::array<std::size_t, 4> vertices_;
   };
 
-  template<typename VertexIdType, 
-           bool store_c3t3_info = true>
+  template<bool store_c3t3_info = true>
   class Cell_data_backup
   {
-    typedef Cell_from_ids<VertexIdType> Cell_from_ids;
-
   public:
     Cell_data_backup(const Cell_handle& c)
       : cell_ids_(c)
@@ -1033,8 +1029,8 @@ private:
       IndexMap new_to_old_indices;
       for(std::size_t i = 0; i < 4; ++i)
       {
-        VertexIdType new_vi_index = 
-          static_cast<VertexIdType>(new_cell->vertex(i)->meshing_info());
+        std::size_t new_vi_index = 
+          static_cast<std::size_t>(new_cell->vertex(i)->meshing_info());
         for(std::size_t j = 0; j < 4; ++j)
         {
           if(new_vi_index == cell_ids_.vertex_id(j))
@@ -1760,7 +1756,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   Point_3 old_position = vertex->point();
 
   //backup metadata
-  typedef Cell_data_backup<unsigned int/*BAD*/, false> Cell_data_backup;
+  typedef Cell_data_backup<false/*store c3t3 info*/> Cell_data_backup;
   std::vector<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
   
@@ -1837,7 +1833,7 @@ update_mesh_topo_change(const Point_3& new_position,
   Point_3 old_position = old_vertex->point();
   
   //backup metadata
-  typedef Cell_data_backup<unsigned int/*BAD*/> Cell_data_backup;
+  typedef Cell_data_backup<true/*store c3t3 info*/> Cell_data_backup;
   std::vector<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
 

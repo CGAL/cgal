@@ -108,7 +108,7 @@ private:
   class PVertex
   {
   public:
-    typedef unsigned int id_type;
+    typedef std::size_t id_type;
     
     /// Constructor
     PVertex()
