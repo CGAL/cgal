@@ -49,12 +49,12 @@ Same type as the template argument `Coeff`.
 typedef unspecified_type Coefficient; 
 
 /*!
-A model of `AlgebraicKernel_d_1::Polynomial_1`. 
+A model of `::AlgebraicKernel_d_1::Polynomial_1`.
 */ 
 typedef unspecified_type Polynomial_1; 
 
 /*!
-A model of `AlgebraicKernel_d_1::AlgebraicReal_1`. 
+A model of `::AlgebraicKernel_d_1::Algebraic_real_1`.
 */ 
 typedef unspecified_type Algebraic_real_1; 
 
