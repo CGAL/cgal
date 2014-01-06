@@ -754,8 +754,6 @@ class Node_visitor_refine_polyhedra{
       CGAL_assertion( get(m_edge_mark_pmap,std::make_pair(hedge->opposite(),&P)) );
       put(m_edge_mark_pmap,std::make_pair(hedge->prev(),&P),true);
       put(m_edge_mark_pmap,std::make_pair(hedge->prev()->opposite(),&P),true);
-      put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next(),&P),true);
-      put(m_edge_mark_pmap,std::make_pair(hedge->opposite()->next()->opposite(),&P),true);
     }
 
     return vh;
