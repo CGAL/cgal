@@ -30,6 +30,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial/determinant.h>
+#include <CGAL/use.h>
 
 #include <vector>
 //#include <CGAL/Linear_algebraHd.h>
@@ -159,6 +160,7 @@ symmetric_bezout_matrix
     typedef typename Polynomial_traits_d::Coefficient_type NT;
     typename Polynomial_traits_d::Degree degree;
     CGAL_assertion_code(typename CGAL::Algebraic_structure_traits<Polynomial>::Is_zero is_zero;)
+    CGAL_USE_TYPE(Polynomial);
     typename Polynomial_traits_d::Get_coefficient coeff;
 
     typedef typename internal::Simple_matrix<NT> Matrix;

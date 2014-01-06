@@ -13,7 +13,6 @@ int main(int, char *[])
 {
 
   typedef CGAL::Kinetic::Exact_simulation_traits Simulation_traits;
-  typedef Simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
   typedef CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_2 Visitor;
   typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits, Visitor> KDel;
 
