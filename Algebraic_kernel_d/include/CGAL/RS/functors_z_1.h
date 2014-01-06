@@ -16,8 +16,8 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
-#ifndef CGAL_RS_FUNCTORS_1_H
-#define CGAL_RS_FUNCTORS_1_H
+#ifndef CGAL_RS_FUNCTORS_Z_1_H
+#define CGAL_RS_FUNCTORS_Z_1_H
 
 #include <vector>
 #include <CGAL/Gmpfi.h>
@@ -26,12 +26,16 @@ namespace CGAL{
 namespace RS_AK1{
 
 template <class Polynomial_,
+          class ZPolynomial_,
+          class PolConverter_,
           class Algebraic_,
           class Bound_,
           class Coefficient_,
           class Isolator_>
-struct Construct_algebraic_real_1{
+struct Construct_algebraic_real_z_1{
         typedef Polynomial_                                     Polynomial;
+        typedef ZPolynomial_                                    ZPolynomial;
+        typedef PolConverter_                                   PolConverter;
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
         typedef Coefficient_                                    Coefficient;
@@ -44,30 +48,34 @@ struct Construct_algebraic_real_1{
         }
 
         Algebraic operator()(const Polynomial &p,size_t i)const{
-                Isolator isol(p);
-                return Algebraic(p,isol.left_bound(i),isol.right_bound(i));
+                ZPolynomial zp=PolConverter()(p);
+                Isolator isol(zp);
+                return Algebraic(p,
+                                 zp,
+                                 isol.left_bound(i),
+                                 isol.right_bound(i));
         }
 
         Algebraic operator()(const Polynomial &p,
                              const Bound &l,
                              const Bound &r)const{
-                return Algebraic(p,l,r);
+                return Algebraic(p,PolConverter()(p),l,r);
         }
 
-}; // struct Construct_algebraic_1
+}; // struct Construct_algebraic_real_z_1
 
 template <class Polynomial_,class Algebraic_>
-struct Compute_polynomial_1:
+struct Compute_polynomial_z_1:
 public std::unary_function<Algebraic_,Polynomial_>{
         typedef Polynomial_                                     Polynomial;
         typedef Algebraic_                                      Algebraic;
         Polynomial operator()(const Algebraic &x)const{
                 return x.get_pol();
         }
-}; // struct Compute_polynomial_1
+}; // struct Compute_polynomial_z_1
 
 template <class Polynomial_,class Ptraits_>
-struct Is_coprime_1:
+struct Is_coprime_z_1:
 public std::binary_function<Polynomial_,Polynomial_,bool>{
         typedef Polynomial_                                     Polynomial;
         typedef Ptraits_                                        Ptraits;
@@ -76,10 +84,10 @@ public std::binary_function<Polynomial_,Polynomial_,bool>{
         inline bool operator()(const Polynomial &p1,const Polynomial &p2)const{
                 return Degree()(Gcd()(p1,p2))==0;
         }
-}; // struct Is_coprime_1
+}; // struct Is_coprime_z_1
 
 template <class Polynomial_,class Ptraits_>
-struct Make_coprime_1{
+struct Make_coprime_z_1{
         typedef Polynomial_                                     Polynomial;
         typedef Ptraits_                                        Ptraits;
         typedef typename Ptraits::Gcd_up_to_constant_factor     Gcd;
@@ -96,41 +104,56 @@ struct Make_coprime_1{
                 q2=IDiv()(p2,g);
                 return Degree()(Gcd()(p1,p2))==0;
         }
-}; // struct Make_coprime_1
+}; // struct Make_coprime_z_1
 
 template <class Polynomial_,
+          class ZPolynomial_,
+          class PolConverter_,
           class Bound_,
           class Algebraic_,
           class Isolator_,
           class Signat_,
-          class Ptraits_>
-struct Solve_1{
+          class Ptraits_,
+          class ZPtraits_>
+struct Solve_z_1{
         typedef Polynomial_                                     Polynomial_1;
+        typedef ZPolynomial_                                    ZPolynomial_1;
+        typedef PolConverter_                                   PolConverter;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
         typedef Isolator_                                       Isolator;
-        typedef Signat_                                         Signat;
+        typedef Signat_                                         ZSignat;
         typedef Ptraits_                                        Ptraits;
         typedef typename Ptraits::Gcd_up_to_constant_factor     Gcd;
         typedef typename Ptraits::Square_free_factorize_up_to_constant_factor
                                                                 Sqfr;
         typedef typename Ptraits::Degree                        Degree;
         typedef typename Ptraits::Make_square_free              Sfpart;
+        typedef ZPtraits_                                       ZPtraits;
+        typedef typename ZPtraits::Gcd_up_to_constant_factor    ZGcd;
+        typedef typename ZPtraits::Square_free_factorize_up_to_constant_factor
+                                                                ZSqfr;
+        typedef typename ZPtraits::Degree                       ZDegree;
+        typedef typename ZPtraits::Make_square_free             ZSfpart;
 
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_1 &p,
                                   OutputIterator res)const{
                 typedef std::pair<Polynomial_1,int>     polmult;
                 typedef std::vector<polmult>            sqvec;
+                typedef std::pair<ZPolynomial_1,int>    zpolmult;
+                typedef std::vector<zpolmult>           zsqvec;
 
+                ZPolynomial_1 zp=PolConverter()(p);
                 Polynomial_1 sfp=Sfpart()(p);
-                sqvec sfv;
-                Sqfr()(p,std::back_inserter(sfv));
-                Isolator isol(sfp);
+                ZPolynomial_1 zsfp=PolConverter()(sfp);
+                zsqvec zsfv;
+                ZSqfr()(zp,std::back_inserter(zsfv));
+                Isolator isol(zsfp);
                 int *m=(int*)calloc(isol.number_of_real_roots(),sizeof(int));
-                for(typename sqvec::iterator i=sfv.begin();i!=sfv.end();++i){
-                        int k=Degree()(i->first);
-                        Signat signof(i->first);
+                for(typename zsqvec::iterator i=zsfv.begin();i!=zsfv.end();++i){
+                        int k=ZDegree()(i->first);
+                        ZSignat signof(i->first);
                         for(int j=0;k&&j<isol.number_of_real_roots();++j){
                                 if(!m[j]){
                                         CGAL::Sign sg_l=
@@ -147,7 +170,8 @@ struct Solve_1{
                         }
                 }
                 for(int l=0;l<isol.number_of_real_roots();++l)
-                        *res++=std::make_pair(Algebraic(p,
+                        *res++=std::make_pair(Algebraic(sfp,
+                                                        zsfp,
                                                         isol.left_bound(l),
                                                         isol.right_bound(l)),
                                               m[l]);
@@ -159,9 +183,11 @@ struct Solve_1{
         OutputIterator operator()(const Polynomial_1 &p,
                                   bool known_to_be_square_free,
                                   OutputIterator res)const{
-                Isolator isol(p);
+                ZPolynomial_1 zp=PolConverter()(p);
+                Isolator isol(zp);
                 for(int l=0;l<isol.number_of_real_roots();++l)
                         *res++=Algebraic(p,
+                                         zp,
                                          isol.left_bound(l),
                                          isol.right_bound(l));
                 return res;
@@ -202,8 +228,9 @@ struct Solve_1{
                 // we iterate over all the pairs <root,mult> and match the
                 // roots in the interval [index_l,index_u)
                 for(PMVI i=sfv.begin();i!=sfv.end();++i){
-                        int k=Degree()(i->first);
-                        Signat signof(i->first);
+                        ZPolynomial_1 zifirst=PolConverter()(i->first);
+                        int k=ZDegree()(zifirst);
+                        ZSignat signof(zifirst);
                         for(size_t j=index_l;k&&j<index_u;++j){
                                 if(!m[j]){
                                         CGAL::Sign sg_l=
@@ -245,26 +272,32 @@ struct Solve_1{
                 return res;
         }
 
-}; // struct Solve_1
+}; // struct Solve_z_1
 
 template <class Polynomial_,
+          class ZPolynomial_,
+          class PolConverter_,
           class Bound_,
           class Algebraic_,
           class Refiner_,
           class Signat_,
-          class Ptraits_>
-class Sign_at_1:
+          class Ptraits_,
+          class ZPtraits_>
+class Sign_at_z_1:
 public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
         // This implementation will work with any polynomial type whose
         // coefficient type is explicit interoperable with Gmpfi.
         // TODO: Make this function generic.
         public:
         typedef Polynomial_                                     Polynomial_1;
+        typedef ZPolynomial_                                    ZPolynomial_1;
+        typedef PolConverter_                                   PolConverter;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
         typedef Refiner_                                        Refiner;
-        typedef Signat_                                         Signat;
+        typedef Signat_                                         ZSignat;
         typedef Ptraits_                                        Ptraits;
+        typedef ZPtraits_                                       ZPtraits;
 
         private:
         CGAL::Uncertain<CGAL::Sign> eval_interv(const Polynomial_1 &p,
@@ -286,7 +319,7 @@ public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
                 CGAL::Gmpfr xr(x.get_right());
                 CGAL::Uncertain<CGAL::Sign> s;
                 for(;;){
-                        Refiner()(x.get_pol(),
+                        Refiner()(x.get_zpol(),
                                   xl,
                                   xr,
                                   2*CGAL::max(xl.get_precision(),
@@ -333,7 +366,7 @@ public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
                 CGAL::Gmpfr xl(x.get_left());
                 CGAL::Gmpfr xr(x.get_right());
                 while(eval_interv(dsfpp,xl,xr).is_same(unknown)){
-                        Refiner()(x.get_pol(),
+                        Refiner()(x.get_zpol(),
                                   xl,
                                   xr,
                                   2*CGAL::max(xl.get_precision(),
@@ -344,33 +377,39 @@ public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
 
                 // How to know that the gcd has a root: evaluate endpoints.
                 CGAL::Sign sleft,sright;
-                Signat sign_at_gcd(gcd);
+                ZSignat sign_at_gcd(PolConverter()(gcd));
                 if((sleft=sign_at_gcd(x.get_left()))==CGAL::ZERO||
                    (sright=sign_at_gcd(x.get_right()))==CGAL::ZERO||
                    (sleft!=sright))
                         return CGAL::ZERO;
                 return refine_and_return(p,x);
         }
-}; // struct Sign_at_1
+}; // struct Sign_at_z_1
 
 template <class Polynomial_,
+          class ZPolynomial_,
+          class PolConverter_,
           class Bound_,
           class Algebraic_,
           class Refiner_,
           class Signat_,
-          class Ptraits_>
-class Is_zero_at_1:
+          class Ptraits_,
+          class ZPtraits_>
+class Is_zero_at_z_1:
 public std::binary_function<Polynomial_,Algebraic_,bool>{
         // This implementation will work with any polynomial type whose
         // coefficient type is explicit interoperable with Gmpfi.
         // TODO: Make this function generic.
         public:
         typedef Polynomial_                                     Polynomial_1;
+        typedef ZPolynomial_                                    ZPolynomial_1;
+        typedef PolConverter_                                   PolConverter;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
         typedef Refiner_                                        Refiner;
-        typedef Signat_                                         Signat;
+        typedef Signat_                                         ZSignat;
         typedef Ptraits_                                        Ptraits;
+        typedef ZPtraits_                                       ZPtraits;
 
         private:
         CGAL::Uncertain<CGAL::Sign> eval_interv(const Polynomial_1 &p,
@@ -418,7 +457,7 @@ public std::binary_function<Polynomial_,Algebraic_,bool>{
                 CGAL::Gmpfr xl(x.get_left());
                 CGAL::Gmpfr xr(x.get_right());
                 while(eval_interv(dsfpp,xl,xr).is_same(unknown)){
-                        Refiner()(x.get_pol(),
+                        Refiner()(x.get_zpol(),
                                   xl,
                                   xr,
                                   2*CGAL::max(xl.get_precision(),
@@ -429,33 +468,38 @@ public std::binary_function<Polynomial_,Algebraic_,bool>{
 
                 // How to know that the gcd has a root: evaluate endpoints.
                 CGAL::Sign sleft,sright;
-                Signat sign_at_gcd(gcd);
+                ZSignat sign_at_gcd(PolConverter()(gcd));
                 return((sleft=sign_at_gcd(x.get_left()))==CGAL::ZERO||
                        (sright=sign_at_gcd(x.get_right()))==CGAL::ZERO||
                        (sleft!=sright));
         }
-}; // class Is_zero_at_1
+}; // class Is_zero_at_z_1
 
 // TODO: it says in the manual that this should return a size_type, but test
 // programs assume that this is equal to int
-template <class Polynomial_,class Isolator_>
-struct Number_of_solutions_1:
+template <class Polynomial_,
+          class ZPolynomial_,
+          class PolConverter_,
+          class Isolator_>
+struct Number_of_solutions_z_1:
 public std::unary_function<Polynomial_,int>{
         typedef Polynomial_                                     Polynomial_1;
+        typedef ZPolynomial_                                    ZPolynomial_1;
+        typedef PolConverter_                                   PolConverter;
         typedef Isolator_                                       Isolator;
         size_t operator()(const Polynomial_1 &p)const{
                 // TODO: make sure that p is square free (precondition)
-                Isolator isol(p);
+                Isolator isol(PolConverter()(p));
                 return isol.number_of_real_roots();
         }
-}; // struct Number_of_solutions_1
+}; // struct Number_of_solutions_z_1
 
 // This functor not only compares two algebraic numbers. In case they are
 // different, it refines them until they do not overlap.
 template <class Algebraic_,
           class Bound_,
           class Comparator_>
-struct Compare_1:
+struct Compare_z_1:
 public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
@@ -466,8 +510,8 @@ public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
                 Bound ar=a.get_right();
                 Bound bl=b.get_left();
                 Bound br=b.get_right();
-                CGAL::Comparison_result c=Comparator()(a.get_pol(),al,ar,
-                                                       b.get_pol(),bl,br);
+                CGAL::Comparison_result c=Comparator()(a.get_zpol(),al,ar,
+                                                       b.get_zpol(),bl,br);
                 a.set_left(al);
                 a.set_right(ar);
                 b.set_left(bl);
@@ -479,8 +523,8 @@ public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
                 Bound al=a.get_left();
                 Bound ar=a.get_right();
                 Algebraic balg(b);
-                CGAL::Comparison_result c=Comparator()(a.get_pol(),al,ar,
-                                                       balg.get_pol(),b,b);
+                CGAL::Comparison_result c=Comparator()(a.get_zpol(),al,ar,
+                                                       balg.get_zpol(),b,b);
                 a.set_left(al);
                 a.set_right(ar);
                 return c;
@@ -491,10 +535,10 @@ public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
                 Bound al=a.get_left();
                 Bound ar=a.get_right();
                 Algebraic balg(b);
-                CGAL::Comparison_result c=Comparator()(a.get_pol(),
+                CGAL::Comparison_result c=Comparator()(a.get_zpol(),
                                                        al,
                                                        ar,
-                                                       balg.get_pol(),
+                                                       balg.get_zpol(),
                                                        balg.get_left(),
                                                        balg.get_right());
                 a.set_left(al);
@@ -502,19 +546,19 @@ public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
                 return c;
         }
 
-}; // class Compare_1
+}; // class Compare_z_1
 
 template <class Algebraic_,
           class Bound_,
           class Comparator_>
-struct Bound_between_1:
+struct Bound_between_z_1:
 public std::binary_function<Algebraic_,Algebraic_,Bound_>{
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
         typedef Comparator_                                     Comparator;
 
         Bound operator()(Algebraic a,Algebraic b)const{
-                typedef Compare_1<Algebraic,Bound,Comparator>   Compare;
+                typedef Compare_z_1<Algebraic,Bound,Comparator> Compare;
                 typename Bound::Precision_type prec;
                 switch(Compare()(a,b)){
                         case CGAL::LARGER:
@@ -538,36 +582,45 @@ public std::binary_function<Algebraic_,Algebraic_,Bound_>{
                                         "bound between two equal numbers");
                 }
         }
-}; // struct Bound_between_1
+}; // struct Bound_between_z_1
 
 template <class Polynomial_,
+          class ZPolynomial_,
+          class PolConverter_,
           class Bound_,
           class Algebraic_,
           class Isolator_,
           class Comparator_,
           class Signat_,
-          class Ptraits_>
-struct Isolate_1:
+          class Ptraits_,
+          class ZPtraits_>
+struct Isolate_z_1:
 public std::binary_function<Algebraic_,Polynomial_,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
+        typedef ZPolynomial_                                    ZPolynomial_1;
+        typedef PolConverter_                                   PolConverter;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
         typedef Isolator_                                       Isolator;
         typedef Comparator_                                     Comparator;
         typedef Signat_                                         Signat;
         typedef Ptraits_                                        Ptraits;
+        typedef ZPtraits_                                       ZPtraits;
 
         std::pair<Bound,Bound>
         operator()(const Algebraic &a,const Polynomial_1 &p)const{
                 std::vector<Algebraic> roots;
                 std::back_insert_iterator<std::vector<Algebraic> > rit(roots);
-                typedef Solve_1<Polynomial_1,
-                                Bound,
-                                Algebraic,
-                                Isolator,
-                                Signat,
-                                Ptraits>                        Solve;
-                typedef Compare_1<Algebraic,Bound,Comparator>   Compare;
+                typedef Solve_z_1<Polynomial_1,
+                                  ZPolynomial_1,
+                                  PolConverter,
+                                  Bound,
+                                  Algebraic,
+                                  Isolator,
+                                  Signat,
+                                  Ptraits,
+                                  ZPtraits>                     Solve;
+                typedef Compare_z_1<Algebraic,Bound,Comparator> Compare;
                 Solve()(p,false,rit);
                 for(typename std::vector<Algebraic>::size_type i=0;
                     i<roots.size();
@@ -579,13 +632,13 @@ public std::binary_function<Algebraic_,Polynomial_,std::pair<Bound_,Bound_> >{
                 }
                 return std::make_pair(a.left(),a.right());
         }
-}; // Isolate_1
+}; // Isolate_z_1
 
 template <class Polynomial_,
           class Bound_,
           class Algebraic_,
           class Refiner_>
-struct Approximate_absolute_1:
+struct Approximate_absolute_z_1:
 public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
@@ -603,7 +656,7 @@ public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
                 mpfr_log2(temp,temp,GMP_RNDU);
                 long refsteps=mpfr_get_si(temp,GMP_RNDU);
                 mpfr_clear(temp);
-                Refiner()(x.get_pol(),xl,xr,CGAL::abs(refsteps+a));
+                Refiner()(x.get_zpol(),xl,xr,CGAL::abs(refsteps+a));
                 x.set_left(xl);
                 x.set_right(xr);
                 CGAL_assertion(a>0?
@@ -611,13 +664,13 @@ public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
                                (xr-xl)<=CGAL::ipower(Bound(2),-a));
                 return std::make_pair(xl,xr);
         }
-}; // struct Approximate_absolute_1
+}; // struct Approximate_absolute_z_1
 
 template <class Polynomial_,
           class Bound_,
           class Algebraic_,
           class Refiner_>
-struct Approximate_relative_1:
+struct Approximate_relative_z_1:
 public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
@@ -631,7 +684,7 @@ public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
                 Bound xl(x.get_left()),xr(x.get_right());
                 Bound max_b=(CGAL::max)(CGAL::abs(xr),CGAL::abs(xl));
                 while(a>0?(xr-xl)*error>max_b:(xr-xl)>error*max_b){
-                        Refiner()(x.get_pol(),
+                        Refiner()(x.get_zpol(),
                                   xl,
                                   xr,
                                   std::max<unsigned>(
@@ -648,9 +701,9 @@ public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
                                 (xr-xl)<=CGAL::ipower(Bound(2),-a)*max_b);
                 return std::make_pair(xl,xr);
         }
-}; // struct Approximate_relative_1
+}; // struct Approximate_relative_z_1
 
 } // namespace RS_AK1
 } // namespace CGAL
 
-#endif // CGAL_RS_FUNCTORS_1_H
+#endif // CGAL_RS_FUNCTORS_Z_1_H
