@@ -33,7 +33,7 @@ struct test_ak_polynomial_traits_d<CGAL::Tag_true,PT>{
 
 template <class PT>
 struct test_ak_polynomial_traits_d<CGAL::Tag_false,PT>{
-        void operator()(const PT& traits){
+        void operator()(const PT& /* traits */){
                 std::cout<<
                         "\nATTENTION: not testing inexact polynomial traits"<<
                         std::endl;
