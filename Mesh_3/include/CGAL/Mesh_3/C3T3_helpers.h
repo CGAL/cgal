@@ -1788,8 +1788,8 @@ update_mesh_no_topo_change(const Point_3& new_position,
     move_point_no_topo_change(vertex,old_position);
 
     //restore meta-data (cells should have same connectivity as before move)
-    // (restores only sliver caches here)
-    CGAL_assertion(conflict_cells.size() == cells_backup.size());
+    // cells_backup does not contain infinite cells so they can be fewer
+    CGAL_assertion(conflict_cells.size() >= cells_backup.size());
     restore_from_cells_backup(conflict_cells, cells_backup);
 
     return std::make_pair(false,vertex);
@@ -1901,7 +1901,8 @@ update_mesh_topo_change(const Point_3& new_position,
 
     //restore meta-data (cells should have same connectivity as before move)
     //cells should be the same (connectivity-wise) as before initial move
-    CGAL_assertion(outdated_cells.size() == cells_backup.size());
+    //cells_backup does not contain infinite_cells so they can be fewer
+    CGAL_assertion(outdated_cells.size() >= cells_backup.size());
     restore_from_cells_backup(outdated_cells, cells_backup);
 
     // check_c3t3(c3t3_);
@@ -2727,6 +2728,8 @@ fill_cells_backup(const CellsVector& cells,
   typename CellsVector::const_iterator cit;
   for(cit = cells.begin(); cit != cells.end(); ++cit)
   {
+    if(tr_.is_infinite(*cit))
+      continue;//don't backup infinite cells
     cells_backup.push_back(Cell_data(*cit));
   }
 }
@@ -2738,7 +2741,6 @@ C3T3_helpers<C3T3,MD>::
 restore_from_cells_backup(const CellsVector& cells,
                           const CellDataVector& cells_backup) const
 {
-  CGAL_precondition(cells.size() == cells_backup.size());
   CGAL_assertion_code(unsigned int success_nb = 0);
 
   //todo : try to avoid the double for-loop
@@ -2746,6 +2748,8 @@ restore_from_cells_backup(const CellsVector& cells,
       cit != cells.end();
       ++cit)
   {
+    if(tr_.is_infinite(*cit))
+      continue;//don't restore infinite cells, they have not been backed-up
     for(typename CellDataVector::const_iterator cd_it = cells_backup.begin();
         cd_it != cells_backup.end();
         ++cd_it)
@@ -2758,7 +2762,7 @@ restore_from_cells_backup(const CellsVector& cells,
       }
     }
   }
-  CGAL_assertion(success_nb == cells.size());
+  CGAL_assertion(success_nb == cells_backup.size());
 }
 
 template <typename C3T3, typename MD>
