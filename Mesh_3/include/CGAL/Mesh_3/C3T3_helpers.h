@@ -821,6 +821,7 @@ private:
       // treat cell
       const Subdomain subdomain =
         domain_.is_in_domain_object()(c3t3_.triangulation().dual(ch));
+        // function dual(cell) updates the circumcenter cache if there is one
       
       if ( subdomain && update )
       {
@@ -1756,7 +1757,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   Point_3 old_position = vertex->point();
 
   //backup metadata
-  typedef Cell_data_backup<false/*store c3t3 info*/> Cell_data_backup;
+  typedef Cell_data_backup<true/*store c3t3 info*/> Cell_data_backup;
   std::vector<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
   
