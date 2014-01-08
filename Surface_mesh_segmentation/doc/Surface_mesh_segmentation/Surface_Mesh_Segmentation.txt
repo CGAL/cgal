@@ -164,7 +164,7 @@ Four functions are provided:
             The segment or cluster ids are associated to the facets using a property map.
 	- `segmentation_via_sdf_values()` : combines the three functions above.
 
-These functions expect as input a triangulated surface mesh bounding a 3D solid object, with 
+These functions expect as input a triangulated surface mesh bounding a 3D solid object, with
 the following properties:
 - Combinatorially 2-manifold;
 - The vertices of the facets are oriented counterclockwise when seen from outside of the object;

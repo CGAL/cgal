@@ -9,7 +9,7 @@
 
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Segmentation,PkgSurfaceSegmentationSummary}
 \cgalPkgPicture{segmentation_ico.png}
- 
+
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Ilker %O. Yaz and Sébastien Loriot}
 \cgalPkgDesc{This package provides methods to generate automatic segmentations of triangulated surface mesh.}
