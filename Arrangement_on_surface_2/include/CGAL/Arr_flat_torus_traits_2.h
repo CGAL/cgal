@@ -323,9 +323,14 @@ public:
         // return SMALLER or EQUAL, respectively.
         // Otherwise, compare with the top endpoint. If larger, return LARGER.
         // Otherwise, return EQUAL:
-        Comparison_result res = m_traits.compare_y_2_object()(p, xcv.bottom());
-        if (res != LARGER) return res;
-        res = m_traits.compare_y_2_object()(p, xcv.top());
+        const Point_2& bottom = xcv.bottom();
+        const Point_2& top = xcv.bottom();
+        if (! bottom.is_on_y_boundary()) {
+          Comparison_result res = m_traits.compare_y_2_object()(p, bottom);
+          if (res != LARGER) return res;
+        }
+        if (top.is_on_y_boundary()) return EQUAL;
+        Comparison_result res = m_traits.compare_y_2_object()(p, top);
         return (res == LARGER) ? LARGER : EQUAL;
       }
 
@@ -1079,7 +1084,10 @@ public:
      * \return a Boolean indicating whether xcv lies on the y-boundary.
      */
     bool operator()(const X_monotone_curve_2& xcv) const
-    { return (operator()(xcv.source()) && operator()(xcv.target())); }
+    {
+      return (!xcv.is_full_x() &&
+              operator()(xcv.source()) && operator()(xcv.target()));
+    }
   };
 
   /*! Obtain a Is_on_x_identification_2 function object.
@@ -1117,7 +1125,10 @@ public:
      * \return a Boolean indicating whether xcv lies on the x-boundary.
      */
     bool operator()(const X_monotone_curve_2& xcv) const
-    { return (operator()(xcv.source()) && operator()(xcv.target())); }
+    {
+      return (!xcv.is_full_y() &&
+              operator()(xcv.source()) && operator()(xcv.target()));
+    }
   };
 
   /*! Obtain a Is_on_y_identification_2 function object.
@@ -1419,11 +1430,12 @@ public:
                                   bool is_directed_top,
                                   bool is_degenerate = false,
                                   bool is_empty = false,
-                                  bool is_full = false) const
+                                  bool is_full_x = false,
+                                  bool is_full_y = false) const
     {
       return X_monotone_curve_2(source, target, is_vertical,
                                 is_directed_right, is_directed_top,
-                                is_full, is_degenerate, is_empty);
+                                is_full_x, is_full_y, is_degenerate, is_empty);
     }
 
     /*! Obtain an x-monotone curve connecting the two given endpoints.
@@ -1435,13 +1447,15 @@ public:
     X_monotone_curve_2 operator()(const Point_2& source,
                                   const Point_2& target) const
     {
-      CGAL_precondition(!m_traits.equal_2_object()(source, target));
+      bool is_full_x(((source.x() == 0) && (target.x() == 1)) ||
+                     ((target.x() == 0) && (source.x() == 1)));
+      bool is_full_y(((source.y() == 0) && (target.y() == 1)) ||
+                     ((target.y() == 0) && (source.y() == 1)));
+      CGAL_precondition(is_full_x || is_full_y ||
+                        !m_traits.equal_2_object()(source, target));
+
       bool is_degenerate(false);
       bool is_empty(false);
-
-      //! \todo
-      bool is_full(((source.x() == 0) && (target.x() == 1)) ||
-                   ((target.x() == 1) && (source.x() == 0)));
 
       bool is_directed_right((source.x() < target.x()) ||
                              ((source.x() == target.x()) &&
@@ -1449,12 +1463,10 @@ public:
       bool is_directed_top((source.y() < target.y()) ||
                              ((source.y() == target.y()) &&
                               (source.x() < target.x())));
-      bool is_vertical((source.x() == target.x()) ||
-                       (source.x() == 0) && (target.x() == 1) ||
-                       (source.x() == 1) && (target.x() == 0));
+      bool is_vertical(source.x() == target.x());
       return X_monotone_curve_2(source, target, is_vertical,
                                 is_directed_right, is_directed_top,
-                                is_full, is_degenerate, is_empty);
+                                is_full_x, is_full_y, is_degenerate, is_empty);
     }
   };
 
@@ -1493,21 +1505,22 @@ public:
       CGAL_precondition(!m_traits.equal_2_object()(source, target));
       bool is_degenerate(false);
       bool is_empty(false);
-      bool is_full(((source.x() == 0) && (target.x() == 1)) ||
+      bool is_full_x(((source.x() == 0) && (target.x() == 1)) ||
                      ((target.x() == 1) && (source.x() == 0)));
+      bool is_full_y(((source.y() == 0) && (target.y() == 1)) ||
+                     ((target.y() == 1) && (source.y() == 0)));
       bool is_directed_right((source.x() < target.x()) ||
                              ((source.x() == target.x()) &&
                               (source.y() < target.y())));
       bool is_directed_top((source.y() < target.y()) ||
                              ((source.y() == target.y()) &&
                               (source.x() < target.x())));
-      bool is_vertical((source.x() == target.x()) ||
-                       (source.x() == 0) && (target.x() == 1) ||
-                       (source.x() == 1) && (target.x() == 0));
+      bool is_vertical((num_horizontal_revolutions == 0) &&
+                       (source.x() == target.x()));
       return Curve_2(source, target,
                      num_horizontal_revolutions, num_vertical_revolutions,
                      is_vertical, is_directed_right, is_directed_top,
-                     is_full, is_degenerate, is_empty);
+                     is_full_x, is_full_y, is_degenerate, is_empty);
     }
   };
 
@@ -1676,8 +1689,11 @@ protected:
   //! Target is yx-lexicographically larger than source.
   bool m_is_directed_top;
 
-  //! The arc is a full circle.
-  bool m_is_full;
+  //! The arc spans the entire parameter space along the x-direction.
+  bool m_is_full_x;
+
+  //! The arc spans the entire parameter space along the y-direction.
+  bool m_is_full_y;
 
   // The arc is degenerate---it consists of a single point.
   bool m_is_degenerate;
@@ -1691,7 +1707,8 @@ public:
     m_is_vertical(false),
     m_is_directed_right(false),
     m_is_directed_top(false),
-    m_is_full(false),
+    m_is_full_x(false),
+    m_is_full_y(false),
     m_is_degenerate(false),
     m_is_empty(true)
   {}
@@ -1711,7 +1728,8 @@ public:
                                        bool is_vertical,
                                        bool is_directed_right,
                                        bool is_directed_top,
-                                       bool is_full = false,
+                                       bool is_full_x = false,
+                                       bool is_full_y = false,
                                        bool is_degenerate = false,
                                        bool is_empty = false) :
     m_source(src),
@@ -1719,7 +1737,8 @@ public:
     m_is_vertical(is_vertical),
     m_is_directed_right(is_directed_right),
     m_is_directed_top(is_directed_top),
-    m_is_full(is_full),
+    m_is_full_x(is_full_x),
+    m_is_full_y(is_full_y),
     m_is_degenerate(is_degenerate),
     m_is_empty(is_empty)
   {}
@@ -1737,7 +1756,8 @@ public:
   void set_is_vertical(bool flag) { m_is_vertical = flag; }
   void set_is_directed_right(bool flag) { m_is_directed_right = flag; }
   void set_is_directed_top(bool flag) { m_is_directed_top = flag; }
-  void set_is_full(bool flag) { m_is_full = flag; }
+  void set_is_full_x(bool flag) { m_is_full_x = flag; }
+  void set_is_full_y(bool flag) { m_is_full_y = flag; }
   void set_is_degenerate(bool flag) { m_is_degenerate = flag; }
   void set_is_empty(bool flag) { m_is_empty = flag; }
 
@@ -1777,7 +1797,10 @@ public:
   bool is_directed_top() const { return m_is_directed_top; }
 
   /*! Determine whether the curve spans the entire x-parameter_space. */
-  bool is_full() const { return m_is_full; }
+  bool is_full_x() const { return m_is_full_x; }
+
+  /*! Determine whether the curve spans the entire y-parameter_space. */
+  bool is_full_y() const { return m_is_full_y; }
 
   /*! Determine whether the curve is degenerate */
   bool is_degenerate() const { return m_is_degenerate; }
@@ -1801,7 +1824,8 @@ public:
     opp.m_is_directed_right = !(this->is_directed_right());
     opp.m_is_directed_top = !(this->is_directed_top());
     opp.m_is_vertical = this->is_vertical();
-    opp.m_is_full = this->is_full();
+    opp.m_is_full_x = this->is_full_x();
+    opp.m_is_full_y = this->is_full_y();
     opp.m_is_degenerate = this->is_degenerate();
     opp.m_is_empty = this->is_empty();
     return opp;
@@ -1938,7 +1962,8 @@ public:
    * \param is_vertical is the arc vertical ?
    * \param is_directed_right is the arc directed from left to right?
    * \param is_directed_top is the arc directed from bottom to top?
-   * \param is_full is the arc a full (great) circle?
+   * \param is_full_x is the arc an x-full (great) circle?
+   * \param is_full_y is the arc a y-full (great) circle?
    * \param is_degenerate is the arc degenerate (single point)?
    * \param is_empty is the curve empty
    */
@@ -1949,11 +1974,12 @@ public:
                             bool is_vertical,
                             bool is_directed_right,
                             bool is_directed_top,
-                            bool is_full = false,
+                            bool is_full_x = false,
+                            bool is_full_y = false,
                             bool is_degenerate = false,
                             bool is_empty = false) :
     Base(src, trg, is_vertical, is_directed_right, is_directed_top,
-         is_full, is_degenerate, is_empty),
+         is_full_x, is_full_y, is_degenerate, is_empty),
     m_num_horizontal_revolutions(num_horizontal_revolutions),
     m_num_vertical_revolutions(num_vertical_revolutions)
   {}

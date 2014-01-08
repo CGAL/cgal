@@ -426,7 +426,7 @@ compare_y_at_x_wrapper(std::istringstream& str_stream)
 
   unsigned int real_answer =
     this->m_geom_traits.compare_y_at_x_2_object()(this->m_points[id1],
-                                             this->m_xcurves[id2]);
+                                                  this->m_xcurves[id2]);
   return this->compare(exp_answer, real_answer);
 }
 
