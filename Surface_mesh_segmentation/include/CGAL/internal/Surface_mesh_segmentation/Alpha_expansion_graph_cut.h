@@ -19,7 +19,9 @@
  *
  */
 #include <CGAL/assertions.h>
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
 #include <CGAL/Timer.h>
+#endif
 #include <CGAL/trace.h>
 
 #include <boost/version.hpp>
@@ -174,9 +176,10 @@ public:
 
     double min_cut = (std::numeric_limits<double>::max)();
 
-    // for debug time
+    #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
     double vertex_creation_time, edge_creation_time, cut_time;
     vertex_creation_time = edge_creation_time = cut_time = 0.0;
+    #endif
 
     std::vector<Vertex_descriptor> inserted_vertices;
     inserted_vertices.resize(labels.size());
@@ -196,8 +199,11 @@ public:
         Vertex_descriptor cluster_source = boost::add_vertex(graph);
         Vertex_descriptor cluster_sink = boost::add_vertex(graph);
 
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         Timer timer;
         timer.start();
+        #endif
+
         // For E-Data
         // add every facet as a vertex to the graph, put edges to source & sink vertices
         for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
@@ -213,8 +219,11 @@ public:
           add_edge_and_reverse(cluster_source, new_vertex, source_weight, 0.0, graph);
           add_edge_and_reverse(new_vertex, cluster_sink, sink_weight, 0.0, graph);
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         vertex_creation_time += timer.time();
         timer.reset();
+        #endif
+
         // For E-Smooth
         // add edge between every vertex,
         std::vector<double>::const_iterator weight_it = edge_weights.begin();
@@ -238,7 +247,9 @@ public:
             add_edge_and_reverse(inbetween, cluster_sink, *weight_it, 0.0, graph);
           }
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         edge_creation_time += timer.time();
+        #endif
 
         // initialize vertex indices, it is neccessary since we are using VertexList = listS
         Vertex_iterator v_begin, v_end;
@@ -247,14 +258,18 @@ public:
           boost::put(boost::vertex_index, graph, *v_begin, index++);
         }
 
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         timer.reset();
+        #endif
 #if BOOST_VERSION >= 104400
         double flow = boost::boykov_kolmogorov_max_flow(graph, cluster_source,
                       cluster_sink);
 #else
         double flow = boost::kolmogorov_max_flow(graph, cluster_source, cluster_sink);
 #endif
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         cut_time += timer.time();
+        #endif
 
         if(min_cut - flow < flow * tolerance) {
           continue;
@@ -273,10 +288,13 @@ public:
       }
     } while(success);
 
+    #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
     CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
                       std::endl;
     CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
     CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+    #endif
+
     return min_cut;
   }
 };
@@ -349,11 +367,12 @@ public:
 
     double min_cut = (std::numeric_limits<double>::max)();
 
-    // for debug time
+    #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
     double vertex_creation_time, edge_creation_time, graph_creation_time,
            reverse_mapping_time, cut_time;
     vertex_creation_time = edge_creation_time = graph_creation_time =
                              reverse_mapping_time = cut_time = 0.0;
+    #endif
 
     Graph graph;
 
@@ -374,8 +393,10 @@ public:
         std::size_t cluster_source = 0;
         std::size_t cluster_sink = 1;
 
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         Timer timer;
         timer.start();
+        #endif
         // For E-Data
         // add every facet as a vertex to the graph, put edges to source & sink vertices
         for(std::size_t vertex_i = 0; vertex_i < labels.size(); ++vertex_i) {
@@ -391,8 +412,10 @@ public:
           add_edge_and_reverse(vertex_i + 2, cluster_sink, sink_weight, 0.0, edge_map,
                                edge_map_weights);
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         vertex_creation_time += timer.time();
         timer.reset();
+        #endif
         // For E-Smooth
         // add edge between every vertex,
         std::size_t num_vert = labels.size() + 2;
@@ -418,8 +441,10 @@ public:
                                  edge_map_weights);
           }
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         edge_creation_time += timer.time();
         timer.reset();
+        #endif
 #if BOOST_VERSION >= 104000
         Graph graph(boost::edges_are_unsorted, edge_map.begin(), edge_map.end(),
                     edge_map_weights.begin(), num_vert);
@@ -427,8 +452,10 @@ public:
         Graph graph(edge_map.begin(), edge_map.end(),
                     edge_map_weights.begin(), num_vert);
 #endif
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         graph_creation_time += timer.time();
         timer.reset();
+        #endif
 
         // PERFORMANCE PROBLEM
         // need to set reverse edge map, I guess there is no way to do that before creating the graph
@@ -445,8 +472,10 @@ public:
           graph[opp_edge.first].edge_reverse =
             *ei; // and edge_reverse of *ei will be (or already have been) set by the opp_edge
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         reverse_mapping_time += timer.time();
         timer.reset();
+        #endif
 
 #if BOOST_VERSION >= 104400
         // since properties are bundled, defaults does not work need to specify them
@@ -476,7 +505,9 @@ public:
                       cluster_sink
                                                 );
 #endif
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         cut_time += timer.time();
+        #endif
 
         if(min_cut - flow < flow * tolerance) {
           continue;
@@ -494,6 +525,7 @@ public:
       }
     } while(success);
 
+    #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
     CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
                       std::endl;
     CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
@@ -502,6 +534,7 @@ public:
     CGAL_TRACE_STREAM << "reverse mapping time: " << reverse_mapping_time <<
                       std::endl;
     CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+    #endif
     return min_cut;
   }
 };
@@ -535,9 +568,10 @@ public:
 
     double min_cut = (std::numeric_limits<double>::max)();
 
-    // for debug time
+    #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
     double vertex_creation_time, edge_creation_time, cut_time;
     vertex_creation_time = edge_creation_time = cut_time = 0.0;
+    #endif
 
     std::vector<MaxFlow::Graph::node_id> inserted_vertices;
     inserted_vertices.resize(labels.size());
@@ -549,8 +583,10 @@ public:
             probability_matrix.begin();
           it != probability_matrix.end(); ++it, ++alpha) {
         MaxFlow::Graph graph;
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         Timer timer;
         timer.start();
+        #endif
         // For E-Data
         // add every facet as a vertex to graph, put edges to source-sink vertices
         for(std::size_t vertex_i = 0; vertex_i <  labels.size(); ++vertex_i) {
@@ -565,8 +601,10 @@ public:
                                : probability_matrix[labels[vertex_i]][vertex_i];
           graph.add_tweights(new_vertex, source_weight, sink_weight);
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         vertex_creation_time += timer.time();
         timer.reset();
+        #endif
         // For E-Smooth
         // add edge between every vertex,
         std::vector<double>::const_iterator weight_it = edge_weights.begin();
@@ -591,11 +629,16 @@ public:
             graph.add_tweights(inbetween, 0.0, *weight_it);
           }
         }
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         edge_creation_time += timer.time();
         timer.reset();
+        #endif
 
         double flow = graph.maxflow();
+        #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
         cut_time += timer.time();
+        #endif
+
         if(min_cut - flow < flow * tolerance) {
           continue;
         }
@@ -612,10 +655,12 @@ public:
       }
     } while(success);
 
+    #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
     CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
                       std::endl;
     CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
     CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+    #endif
     return min_cut;
   }
 };
