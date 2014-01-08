@@ -417,7 +417,7 @@ public:
   \sa `Kernel::EqualX_3` 
   \sa `Kernel::EqualY_3` 
   \sa `Kernel::EqualZ_3` 
-  \sa `Kernel::Equal_2` 
+  \sa `Kernel::Equal_3` 
   \sa `Kernel::LessDistanceToPoint_3` 
   \sa `Kernel::LessSignedDistanceToPlane_3` 
   \sa `Kernel::LessXYZ_3` 
