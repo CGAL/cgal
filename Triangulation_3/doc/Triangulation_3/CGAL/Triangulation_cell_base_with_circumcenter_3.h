@@ -13,7 +13,7 @@ Note that input/output operators discard this additional information.
 All functions modifying the vertices of the cell, invalidate the cached 
 circumcenter. 
 
-\tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
+\tparam TriangulationTraits_3 is the geometric traits class. 
 
 \tparam TriangulationCellBase_3 is a cell base class from which 
 `Triangulation_cell_base_with_circumcenter_3` derives. 
@@ -25,9 +25,14 @@ It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 
 */
-template< typename DelaunayTriangulationTraits_3, typename TriangulationCellBase_3 >
+template< typename TriangulationTraits_3, typename TriangulationCellBase_3 >
 class Triangulation_cell_base_with_circumcenter_3 : public TriangulationCellBase_3 {
 public:
+	
+/// \name Types 
+/// @{
+typedef TriangulationTraits_3::Point_3 Point_3;
+/// @}
 
 /// \name Access Functions 
 /// @{
@@ -36,8 +41,8 @@ public:
 Computes the circumcenter of the tetrahedron, or retrieve it if already 
 computed. 
 */ 
-const DelaunayTriangulationTraits_3::Point_3& circumcenter( 
-const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const; 
+const Point_3& circumcenter( 
+const TriangulationTraits_3&gt = TriangulationTraits_3()) const; 
 
 /// @}
 
