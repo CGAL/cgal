@@ -7,9 +7,13 @@ The cell base required by the basic triangulation does not need to store any
 geometric information, so only the requirements of the triangulation data 
 structure apply. 
 
-However, for the Delaunay and Regular triangulations, the ability to store the circumcenter 
-is provided (for optimization reasons), hence an additional requirement only 
+However, for the Delaunay and Regular triangulations,
+the model `CGAL::Triangulation_cell_base_with_circumcenter_3`
+gives the ability to store the circumcenter (for optimization reasons),
+hence an additional requirement only 
 in this case, and only when the dual functions are called. 
+
+ 
 
 \cgalRefines `TriangulationDSCellBase_3`
 
