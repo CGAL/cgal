@@ -541,7 +541,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       helper_.incident_slivers(pv.vertex(), sliver_criterion_, sliver_bound);
 #endif
 
-    CGAL_assertion(!slivers.empty());
+    CGAL_assertion(slivers.size() == pv.sliver_nb());
     
     // Perturb vertex
     Vertex_vector modified_vertices;
@@ -788,6 +788,8 @@ make_pvertex(const Vertex_handle& vh,
              const FT& sliver_bound,
              const typename PVertex::id_type& pv_id) const
 {
+  CGAL_assertion(!tr_.is_infinite(vh));
+
   // Make pvertex in all cases
   PVertex pv(vh,pv_id);
   pv.set_perturbation(&perturbation_vector_.front());
