@@ -1406,9 +1406,33 @@ namespace for the XML file to be processed properly.  -->
           </list>
         </doxygen>
       </project>
+
+      <project>
+        <name>Triangulated Surface Mesh Segmentation</name>
+        <input>../Surface_mesh_segmentation/doc/Surface_mesh_segmentation</input>
+        <input>../Surface_mesh_segmentation/include</input>
+        <doxygen>
+          <string name="STRIP_FROM_PATH">../Surface_mesh_segmentation/include</string>
+          <string name="STRIP_FROM_INC_PATH">../Surface_mesh_segmentation/include/</string>
+          <string name="GENERATE_TAGFILE">./tags/Surface_mesh_segmentation.tag</string>
+          <string name="IMAGE_PATH">../Surface_mesh_segmentation/doc/Surface_mesh_segmentation/fig</string>
+          <string name="EXAMPLE_PATH">../Surface_mesh_segmentation/examples</string>
+          <bool name="EXTRACT_ALL">false</bool>
+          <bool name="HIDE_UNDOC_CLASSES">true</bool>
+          <bool name="WARN_IF_UNDOCUMENTED">false</bool>
+          <bool name="SHOW_INCLUDE_FILES">true</bool>
+          <list name="TAGFILES" append="true">
+            <item>./tags/AABB_tree.tag=../../CGAL.CGAL.3D-Fast-Intersection-and-Distance-Computation/html</item>
+            <item>./tags/Polyhedron.tag=../../CGAL.CGAL.3D-Polyhedral-Surface/html</item>
+            <item>./tags/BGL.tag=../../CGAL.CGAL.CGAL-and-the-Boost-Graph-Library/html</item>
+            <item>./tags/Property_map.tag=../../CGAL.CGAL.CGAL-and-Boost-Property-Maps/html</item>
+          </list>
+        </doxygen>
+      </project>
+
       <!-- subprojects end -->
     </project>
-    
+
     <!-- The main CGAL project containing the package list and complete reference documentation -->
     <project>
       <namespace>CGAL</namespace>
@@ -1516,7 +1540,8 @@ namespace for the XML file to be processed properly.  -->
           <item>../Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig</item>
           <item>../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig</item>
           <item>../Stream_lines_2/doc/Stream_lines_2/fig</item>
-          <item>../Stream_support/doc/Stream_support/fig</item>
+          <item>../Stream_support/doc/IOstream/fig</item>
+          <item>../Surface_mesh_segmentation/doc/Surface_mesh_segmentation/fig</item>
         </list>
         <list name="TAGFILES" append="false">
           <item>./tags/Algebraic_foundations.tag=../../CGAL.CGAL.Algebraic-Foundations/html</item>
@@ -1599,6 +1624,7 @@ namespace for the XML file to be processed properly.  -->
           <item>./tags/Stream_support.tag=../../CGAL.CGAL.IO-Streams/html</item>
           <item>./tags/Surface_mesh_parameterization.tag=../../CGAL.CGAL.Planar-Parameterization-of-Triangulated-Surface-Meshes/html</item>
           <item>./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html</item>
+          <item>./tags/Surface_mesh_segmentation.tag=../../CGAL.CGAL.Triangulated-Surface-Mesh-Segmentation/html</item>
         </list>
         <bool name="ALLEXTERNALS">true</bool>
         <bool name="EXTERNAL_GROUPS">false</bool>

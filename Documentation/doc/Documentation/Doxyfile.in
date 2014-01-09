@@ -106,6 +106,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Straight_skeleton_2/doc/Straight_skeleton_2/fig \
              ${CMAKE_SOURCE_DIR}/Voronoi_diagram_2/doc/Voronoi_diagram_2/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_simplification/doc/Surface_mesh_simplification/fig \
+             ${CMAKE_SOURCE_DIR}/Surface_mesh_segmentation/doc/Surface_mesh_segmentation/fig \
              ${CMAKE_SOURCE_DIR}/Subdivision_method_3/doc/Subdivision_method_3/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig \
              ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \

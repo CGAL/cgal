@@ -846,3 +846,13 @@
 , url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgCGALIpeletsSummary"
 , year =        ${CGAL_BUILD_YEAR4}
 }
+
+@incollection{cgal:lp-gi-${CGAL_RELEASE_YEAR_ID}
+, author =  "Ílker O. Yaz and S\'ebastien Loriot"
+, title =   "Triangulated Surface Mesh Segmentation"
+, publisher =  "{CGAL Editorial Board}"
+, edition =     "{${CGAL_CREATED_VERSION_NUM}}"
+, booktitle =   "{CGAL} User and Reference Manual"
+, url = "http://doc.cgal.org/${CGAL_CREATED_VERSION_NUM}/Manual/packages.html#PkgSurfaceSegmentationSummary"
+, year =        ${CGAL_BUILD_YEAR4}
+}
