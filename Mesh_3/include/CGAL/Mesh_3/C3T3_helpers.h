@@ -991,7 +991,6 @@ private:
     CGAL::cpp11::array<std::size_t, 4> vertices_;
   };
 
-  template<bool store_c3t3_info = true>
   class Cell_data_backup
   {
   public:
@@ -1003,15 +1002,12 @@ private:
       else
         sliver_value_ = 0.;
 
-      if(store_c3t3_info)
+      subdomain_index_ = c->subdomain_index();
+      for(std::size_t i = 0; i < 4; ++i)
       {
-        subdomain_index_ = c->subdomain_index();
-        for(std::size_t i = 0; i < 4; ++i)
-        {
-          surface_index_table_[i] = c->surface_patch_index(i);
-          facet_surface_center_[i] = c->get_facet_surface_center(i);
-          surface_center_index_table_[i] = c->get_facet_surface_center_index(i);
-        }
+        surface_index_table_[i] = c->surface_patch_index(i);
+        facet_surface_center_[i] = c->get_facet_surface_center(i);
+        surface_center_index_table_[i] = c->get_facet_surface_center_index(i);
       }
       //note c->next_intrusive() and c->previous_intrusive()
       //are lost by 'backup' and 'restore', 
@@ -1069,9 +1065,6 @@ private:
         c->reset_visited(i);
         //we don't need to store 'visited' information because it is 
         //reset and used locally where is it needed
-
-      if(!store_c3t3_info)
-        return;
 
       //add_to_complex sets the index, and updates the cell counter 
       if(subdomain_index_ != Subdomain_index())
@@ -1757,7 +1750,6 @@ update_mesh_no_topo_change(const Point_3& new_position,
   Point_3 old_position = vertex->point();
 
   //backup metadata
-  typedef Cell_data_backup<true/*store c3t3 info*/> Cell_data_backup;
   std::vector<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
   
@@ -1834,7 +1826,6 @@ update_mesh_topo_change(const Point_3& new_position,
   Point_3 old_position = old_vertex->point();
   
   //backup metadata
-  typedef Cell_data_backup<true/*store c3t3 info*/> Cell_data_backup;
   std::vector<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
 
