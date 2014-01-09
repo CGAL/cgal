@@ -17,7 +17,7 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.3}
+\cgalPkgSince{4.4}
 \cgalPkgDependsOn{\ref PkgAABB_treeSummary}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

@@ -204,12 +204,9 @@ The main advantage is to decrease from log to constant the complexity for access
 <!-- \subsection SMSRuntime Runtime of the functions sdf_values() and segmentation_from_sdf_values() -->
 
 The following tables provide the runtime of the functions `sdf_values()` and `segmentation_from_sdf_values()`.
-The results were produced with the release 4.X of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
+The results were produced with the release 4.4 of \cgal, on an Intel i7 3.2 Ghz laptop with 8 GB RAM, compiled by Visual C++ 2010 with /O2 option.
 The polyhedron types are using `Polyhedron_items_with_id_3` as item class.
 The models used for the benchmarks are the <i>dinosaur</i> model with 7,828 facets,  the <i>bear</i> model with 20,188 facets and the <i>elephant</i> model with 88,928 facets.
-
-
-\todo Update release number as well as first introduced in.
 
 Runtime in seconds of `sdf_values()` with 25 rays showing the cost of the robustness:
 
