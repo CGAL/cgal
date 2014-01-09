@@ -418,7 +418,7 @@ create_clusters_of_vertex(const Vertex_handle v)
               cluster_begin = current;
             }
         }
-      else
+      else {
         if(in_a_cluster)
           {
             // at this point, current is the end of a cluster and
@@ -426,8 +426,9 @@ create_clusters_of_vertex(const Vertex_handle v)
             construct_cluster(v, cluster_begin, current);
             in_a_cluster = false;
           }
+      }
+      current = next;
       ++next;
-      ++current;
     } while( current!=begin );
   if(in_a_cluster)
     {
