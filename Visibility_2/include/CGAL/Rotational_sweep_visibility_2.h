@@ -119,7 +119,7 @@ private:
         return 2;
       }
     }
-    bool operator() (const EH e1, const EH e2) const {
+    bool operator() (const EH& e1, const EH& e2) const {
       if (e1 == e2)
         return false;
       const Point_2& s1=e1->source()->point(),
@@ -127,9 +127,7 @@ private:
                      s2=e2->source()->point(),
                      t2=e2->target()->point();
       if (e1->source() == e2->source()) {
-//        const Point_2& p1 = t1,
-//                 p2 = t2,
-//                 c = s1;
+
         int vt1 = vtype(s1, t1),
             vt2 = vtype(s1, t2);
         if (vt1 != vt2)
@@ -523,37 +521,30 @@ private:
 //    std::cout<<active_edges.size()<<std::endl;
     for (int i=0; i!=vs.size(); i++) {
       VH vh = vs[i];
-      //save the closest edge;
       EH closest_e = *active_edges.begin();
-//      print_edge(closest_e);
       EHs& edges = incident_edges[vh];
       EHs insert_ehs, remove_ehs;
       for (int j=0; j!=edges.size(); j++) {
-        EH e = edges[j];
-//        print_edge(e);
-//        std::cout<<active_edges.count(e)<<std::endl;
-        if (active_edges.count(e))
-          remove_ehs.push_back(e);
-        else
+        EH& e = edges[j];
+        if (active_edges.find(e) == active_edges.end())
           insert_ehs.push_back(e);
+        else
+          remove_ehs.push_back(e);
       }
       int insert_cnt = insert_ehs.size();
       int remove_cnt = remove_ehs.size();
-//      if (insert_cnt == 1 && remove_cnt == 1) {
-//        typename std::set<EH, Closer_edge>::iterator iter = active_edges.find(remove_ehs.front());
-//        *iter = insert_ehs.front();
-//      }
-//      else {
-//        for (int j=0; j!=remove_cnt; j++)
-//          active_edges.erase(remove_ehs[j]);
-//        for (int j=0; j!=insert_cnt; j++)
-//          active_edges.insert(insert_ehs[j]);
-//      }
-      for (int j=0; j!=remove_cnt; j++)
-        active_edges.erase(remove_ehs[j]);
-      for (int j=0; j!=insert_cnt; j++)
-        active_edges.insert(insert_ehs[j]);
-//      print_edge(*active_edges.begin());
+      if (insert_cnt == 1 && remove_cnt == 1) {
+        const EH& ctemp_eh = *active_edges.find(remove_ehs.front());
+        EH& temp_eh = const_cast<EH&>(ctemp_eh);
+        temp_eh = insert_ehs.front();
+      }
+      else {
+        for (int j=0; j!=remove_cnt; j++)
+          active_edges.erase(remove_ehs[j]);
+        for (int j=0; j!=insert_cnt; j++)
+          active_edges.insert(insert_ehs[j]);
+      }
+
       if (closest_e != *active_edges.begin()) {
         //when the closest edge changed
         if (is_face_query) {
@@ -573,9 +564,6 @@ private:
           if (remove_cnt > 0 && insert_cnt == 0) {
             //only delete some edges, means some block is moved and the view ray can reach the segments after the block.
             update_visibility(vh->point());
-//            std::cout<<active_edges.size();
-//            int a = 0;
-//            std::cout<< a<< std::endl;
             update_visibility(ray_seg_intersection(q,
                                                    vh->point(),
                                                    (*active_edges.begin())->target()->point(),
