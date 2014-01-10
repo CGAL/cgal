@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgTriangulation3VertexCellClasses
 
 The class `Regular_triangulation_cell_base_3` is a model of the concept 
-`RegularTriangulationCellBase_3`. It is the default face base class 
+`RegularTriangulationCellBase_3`. It is the default cell base class 
 of regular triangulations. 
 
 
@@ -29,13 +29,15 @@ public:
 
 /*! \name Access function 
 
-As a model of the concept `RegularTriangulationCellBase_3` which
-refines `TriangulationCellBase_3`, `Regular_triangulation_cell_base_3` 
-provides a `circumcenter()` member fonction. In this model, we have choosen to
-override the `circumcenter()` member fonction of the base class so that it returns
-the <b>weighted circumcenter</b> of the cell, computed 
- by the `ConstructWeightedCircumcenter` constructor of the traits class.
-In this way, a class for the cells of regular triangulations with
+As a model of the concept `RegularTriangulationCellBase_3`, 
+`Regular_triangulation_cell_base_3` 
+provides a `circumcenter()` member fonction. 
+
+In this model, the `circumcenter()` member fonction returns the <b>weighted circumcenter</b>
+of the cell, computed by the `ConstructWeightedCircumcenter` constructor of the traits class. 
+However, this point has no weight.
+
+A class for the cells of regular triangulations with
 cached weighted circumcenters can simply be obtained by plugging 
 `Regular_triangulation_cell_base_3` in the second template parameter of 
 `CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`
@@ -43,14 +45,13 @@ cached weighted circumcenters can simply be obtained by plugging
 
 /// @{
 /*! 
-Returns the weighted circumcenter of the cell, or retrieve it if already computed.
-Be careful that, though the returned point is a `Traits::Point_3`,
-which is supposed to be a `Traits::Weighted_point_3`,
-the radius of the  weighted circumcenter is not supposed to be computed
+Returns the weighted circumcenter of the cell.
+Be careful that the return type is `Traits::Bare_point`, and the radius of the  weighted 
+circumcenter is not supposed to be computed
 by the constructor `ConstructWeightedCircumcenter` of the traits
-class, so the weight of the returned point is zero.
+class, so the returned point has no weight.
 */ 
-const Traits::Point_3& circumcenter(const Traits& gt = Traits()) const; 
+const Traits::Bare_point& circumcenter(const Traits& gt = Traits()) const; 
 
 /// @}
 	
