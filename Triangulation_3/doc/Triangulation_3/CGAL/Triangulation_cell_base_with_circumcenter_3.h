@@ -4,8 +4,8 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3VertexCellClasses
 
-The class `Triangulation_cell_base_with_circumcenter_3` is a model of the 
-concept `TriangulationCellBase_3`, the base cell of a 3D-triangulation. 
+The class `Triangulation_cell_base_with_circumcenter_3` derives from 
+`Cb`, a cell base class of a 3D triangulation or a 3D regular triangulation. 
 It provides an easy way to cache the computation of the circumcenter of 
 tetrahedra. 
 Note that input/output operators discard this additional information. 
@@ -15,18 +15,20 @@ circumcenter.
 
 \tparam TriangulationTraits_3 is the geometric traits class. 
 
-\tparam TriangulationCellBase_3 is a cell base class from which 
-`Triangulation_cell_base_with_circumcenter_3` derives. 
-It has the default value `Triangulation_cell_base_3<TriangulationTraits_3>`. 
+\tparam Cb is a cell base class from which 
+`Triangulation_cell_base_with_circumcenter_3` derives.  Cb should
+be a model of  `TriangulationCellBase_3` or `RegularTriangulationCellBase_3`. 
+It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_3>`. 
 
-\cgalModels `TriangulationCellBase_3`
+\cgalModels `TriangulationCellBase_3` or `RegularTriangulationCellBase_3`, 
+similarly to Cb.
 
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 
 */
-template< typename TriangulationTraits_3, typename TriangulationCellBase_3 >
-class Triangulation_cell_base_with_circumcenter_3 : public TriangulationCellBase_3 {
+template< typename TriangulationTraits_3, typename Cb >
+class Triangulation_cell_base_with_circumcenter_3 : public Cb {
 public:
 	
 /// \name Types 
