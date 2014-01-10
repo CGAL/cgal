@@ -41,8 +41,8 @@ namespace CGAL {
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
-          class Cb = CGAL::Regular_triangulation_cell_base_3<
-              GT, CGAL::Triangulation_cell_base_with_circumcenter_3<GT> > >
+          class Cb = CGAL::Triangulation_cell_base_with_circumcenter_3<
+              GT, CGAL::Regular_triangulation_cell_base_3<GT> > >
 class Mesh_cell_base_3
 : public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>
 {

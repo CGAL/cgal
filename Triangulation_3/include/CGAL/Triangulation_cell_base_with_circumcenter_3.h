@@ -26,11 +26,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/Triangulation_ds_cell_base_3.h>
+#include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
 
-template < typename GT, typename Cb = Triangulation_ds_cell_base_3<> >
+template < typename GT, typename Cb = Triangulation_cell_base_3<GT> >
 class Triangulation_cell_base_with_circumcenter_3
   : public Cb
 {
@@ -118,17 +118,10 @@ public:
   circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (circumcenter_ == NULL) {
-	  circumcenter_ = new Point_3(
-	      gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
-	                                           this->vertex(1)->point(),
-						   this->vertex(2)->point(),
-						   this->vertex(3)->point()));
+    	  circumcenter_ = new Point_3(this->Cb::circumcenter());
       } else {
-        CGAL_expensive_assertion(gt.construct_circumcenter_3_object()
-                                 (this->vertex(0)->point(),
-                                  this->vertex(1)->point(),
-                                  this->vertex(2)->point(),
-                                  this->vertex(3)->point()) == *circumcenter);
+        CGAL_expensive_assertion(
+          this->Cb::circumcenter() == *circumcenter);
       }
 
       return *circumcenter_;
