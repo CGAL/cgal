@@ -95,6 +95,7 @@ void hide_point(const Point & p);
 /// @{
 /*!
 Returns the weighted circumcenter of the cell, with no weight. 
+`TriangulationTraits_3` is the geometric traits class of the triangulation.
 */ 
 const Bare_point& circumcenter( 
 const TriangulationTraits_3&gt = TriangulationTraits_3()) const; 

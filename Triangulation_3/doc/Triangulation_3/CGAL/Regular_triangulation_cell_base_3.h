@@ -40,7 +40,7 @@ However, this point has no weight.
 A class for the cells of regular triangulations with
 cached weighted circumcenters can simply be obtained by plugging 
 `Regular_triangulation_cell_base_3` in the second template parameter of 
-`CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`
+`CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`.
 */
 
 /// @{
