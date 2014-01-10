@@ -61,7 +61,7 @@ public:
  *    and `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
  *
  *
- * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap`with `Id` as
+ * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be default constructible.
  * \tparam PointPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be default constructible.
