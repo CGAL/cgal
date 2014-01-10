@@ -17,7 +17,7 @@ circumcenter.
 
 \tparam TriangulationCellBase_3 is a cell base class from which 
 `Triangulation_cell_base_with_circumcenter_3` derives. 
-It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_3>`. 
+It has the default value `Triangulation_cell_base_3<TriangulationTraits_3>`. 
 
 \cgalModels `TriangulationCellBase_3`
 
