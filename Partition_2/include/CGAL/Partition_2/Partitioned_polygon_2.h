@@ -305,6 +305,12 @@ class Partition_vertex : public Traits_::Point_2
     typedef std::list<Circulator>                         Diagonal_list;
     typedef typename Diagonal_list::iterator              Diagonal_iterator;
 
+  //default constructor added for EPECK
+  Partition_vertex(): Base_point()
+  {
+    current_diag = diag_endpoint_refs.end() ;
+  }
+
   Partition_vertex(Base_point p)
     : Base_point(p) 
   { 
