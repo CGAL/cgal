@@ -32,6 +32,7 @@
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
+#include <CGAL/array.h>
 
 #include <boost/foreach.hpp>
 #include <boost/range.hpp>
@@ -974,8 +975,9 @@ private:
     Cell_from_ids(const Cell_handle& c)
       : vertices_()
     {
-      for(std::size_t i = 0; i < 4; ++i)
-        vertices_[i] = static_cast<std::size_t>(c->vertex(i)->meshing_info());
+      for(int i = 0; i < 4; ++i)
+        vertices_[static_cast<std::size_t>(i)] 
+          = static_cast<std::size_t>(c->vertex(i)->meshing_info());
     }
 
     std::size_t vertex_id(const std::size_t& i) const
@@ -1005,9 +1007,10 @@ private:
       subdomain_index_ = c->subdomain_index();
       for(std::size_t i = 0; i < 4; ++i)
       {
-        surface_index_table_[i] = c->surface_patch_index(i);
-        facet_surface_center_[i] = c->get_facet_surface_center(i);
-        surface_center_index_table_[i] = c->get_facet_surface_center_index(i);
+        const int ii = static_cast<const int>(i);//avoid warnings
+        surface_index_table_[i] = c->surface_patch_index(ii);
+        facet_surface_center_[i] = c->get_facet_surface_center(ii);
+        surface_center_index_table_[i] = c->get_facet_surface_center_index(ii);
       }
       //note c->next_intrusive() and c->previous_intrusive()
       //are lost by 'backup' and 'restore', 
@@ -1024,7 +1027,8 @@ private:
     bool restore(Cell_handle new_cell, C3T3& c3t3)
     {
       IndexMap new_to_old_indices;
-      for(std::size_t i = 0; i < 4; ++i)
+      unsigned int nbv_found = 0;
+      for(int i = 0; i < 4; ++i)
       {
         std::size_t new_vi_index = 
           static_cast<std::size_t>(new_cell->vertex(i)->meshing_info());
@@ -1032,14 +1036,15 @@ private:
         {
           if(new_vi_index == cell_ids_.vertex_id(j))
           {            
-            new_to_old_indices[i] = j;
+            new_to_old_indices[static_cast<std::size_t>(i)] = j;
+            ++nbv_found;
             break;//loop on j
           }
         }//end loop j
       }//end loop i
-      CGAL_assertion(new_to_old_indices.size() <= 4);
+      CGAL_assertion(nbv_found <= 4);
       
-      if(new_to_old_indices.size() == 4)
+      if(nbv_found == 4)
       {
         restore(new_cell, new_to_old_indices, c3t3);
         return true;
@@ -1048,31 +1053,29 @@ private:
     }
 
   private:
-    typedef std::map<std::size_t, std::size_t> IndexMap;
+    typedef CGAL::cpp11::array<std::size_t, 4> IndexMap;
       
     void restore(Cell_handle c, 
                  const IndexMap& index_map,//new_to_old_indices
                  C3T3& c3t3)
-    {
-      CGAL_precondition(index_map.size() == 4);
-      //if c should be in the c3t3, add_to_complex has to be used 
-      //to increment the nb of cells and facets in c3t3
-      
+    {     
       if(sliver_value_ > 0.)
         c->set_sliver_value(sliver_value_);
 
-      for(std::size_t i = 0; i < 4; ++i)
+      for(int i = 0; i < 4; ++i)
         c->reset_visited(i);
         //we don't need to store 'visited' information because it is 
-        //reset and used locally where is it needed
+        //reset and used locally where it is needed
 
       //add_to_complex sets the index, and updates the cell counter 
+      //if c should be in the c3t3, add_to_complex has to be used 
+      //to increment the nb of cells and facets in c3t3
       if(subdomain_index_ != Subdomain_index())
         c3t3.add_to_complex(c, subdomain_index_);
 
-      for(std::size_t i = 0; i < 4; ++i)
+      for(int i = 0; i < 4; ++i)
       {
-        std::size_t old_i = index_map.at(i);
+        std::size_t old_i = index_map.at(static_cast<std::size_t>(i));
         //add_to_complex sets the index, and updates the cell counter 
         Surface_patch_index index = surface_index_table_[old_i];
         if(Surface_patch_index() != index)
