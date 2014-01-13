@@ -68,13 +68,13 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	    return this->kernel().point_dimension_d_object()(p);
 	  }
 	  FT cartesian(Point_d const&p, int i){
-	    return this->kernel().compute_coordinate_d_object()(p);
+	    return this->kernel().compute_coordinate_d_object()(p,i);
 	  }
 	  RT homogeneous(Point_d const&p, int i){
 	    throw "not implemented yet";
 	    return 0;
 	    // FIXME
-	    //return this->kernel().compute_coordinate_d_object()(p);
+	    //return this->kernel().compute_coordinate_d_object()(p,i);
 	  }
 	};
 	struct Construct_cartesian_const_iterator_d : private Store_kernel<R_> {
