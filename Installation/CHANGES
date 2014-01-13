@@ -1,7 +1,113 @@
 
+-------------------------------- Release 4.4 --------------------------------
+
+
+* Triangulated Surface Mesh Segmentation (new package)
+
+  - This package implements the segmentation of triangulated surface meshes
+    based on the Shape Diameter Function (SDF). In addition, it also provides
+    functions to generate segmentations based on a user defined alternative to
+    the SDF.
+
+
+* 2D Regularized Boolean Set-Operations
+
+  - Fixed two memory leaks in CGAL::General_polygon_set_2.
+
+
+* 2D Arrangements
+
+  - Revise the API of polylines. In particular, construction is now done using
+    functors and iteration is possible only on the segments of a polyline.
+
+  - Fixed a bug in the Landmark point-location strategy.
+
+
+* 3D Alpha Shapes
+
+  - Add member functions in CGAL::Alpha_shape_3 to give access to the alpha
+    status of edges and facets (get_alpha_status()).
+
+  - Add another filtration method (filtration_with_alpha_values()) that reports
+    the alpha value at which each face appears in the filtration.
+
+
+* Combinatorial Maps and Linear Cell Complex
+
+  - null_dart_handle is no longer a static data member in the CombinatorialMap
+    concept. This implies to move the following methods of Dart concept into
+    CombinatorialMap concept: is_free, highest_nonfree_dimension, opposite and
+    other_extremity. We also transform the static methods vertex_attribute and
+    point of Linear_cell_complex class into non static methods. You can define
+    the CGAL_CMAP_DEPRECATED macro to keep the old behavior.
+
+
+* CGAL ipelets
+
+  - Better description of the demo ipelets in the user manual
+
+  - New ipelet for pencils of circles
+
+  - New ipelet for hyperbolic geometry in Poincare model
+
+  - Geberator ipelet now generates point in a selected zone
+
+  - Hilbert sort ipelet implements two policies
+
+
+* STL Extensions for CGAL
+
+  - Add the function CGAL::make_sorted_pair.
+
+
+* Number Types
+
+  - A new class CGAL::Mpzf is introduced on some platforms for exact ring
+    operations. It is used to improve the speed of the evaluation of predicates
+    in degenerate situations.
+
+
+* 2D and 3D Geometry Kernel
+
+  - Fix a bug introduced in CGAL 4.3 when computing the intersection of two 3D
+    triangles.
+
+
+* 2D Triangulations
+
+  - Add different overloads of the function insert_constraints that inserts a
+    range of points and segments, or a range of segments. These functions uses
+    the spatial sorting in order to speed up the time needed for the insertion.
+
+
+* 3D Mesh Generation
+
+  - Fix the access to functions number_of_facets and number_of_cells in
+    Mesh_complex_3_in_triangulation_3.
+
+  - Change the internal API of the sliver perturber, to make possible for
+    developers to optimize another criterion than the (default) minimal
+    dihedral angle. Developers can also define a new perturbation vector (for
+    angles we had gradient of squared circumradius, gradient of volume,
+    gradient of minimal dihedral angle, and random) which is better suitable to
+    optimize their criterion.
+
+  - Improve the use of cache values in Mesh_cell_base to (re)compute
+    circumcenters and sliver criterion values only when needed.
+
+  - Add caching of circumcenters to Regular_triangulation_cell_base_3. The
+    cache value is computed when cell->circumcenter() or rt.dual(cell)
+    functions are called.
+
+
+* 2D Snap Rounding
+
+  - Fixed memory leak
+
+
 -------------------------------- Release 4.3 --------------------------------
 
-Release date: September 2013
+Release date: October 2013
 
 
 * The CGAL Manual
