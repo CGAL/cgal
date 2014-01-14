@@ -377,30 +377,6 @@ void clear();
 /// @{
 
 /*!
-Returns a const reference to the triangulation traits object. 
-*/ 
-const Geom_traits& geom_traits() const; 
-
-/*!
-Returns a const reference to the triangulation data structure. 
-*/ 
-const TriangulationDataStructure_2 & tds() const; 
-
-/// @} 
-
-/// \name Non const access 
-/// \attention The responsibility of keeping a valid triangulation belongs to the
-/// user when using advanced operations allowing a direct manipulation
-/// of the `tds`. This method is mainly a help for users implementing
-/// their own triangulation algorithms.
-/// @{
-
-/*!
-Returns a reference to the triangulation data structure. 
-*/ 
-TriangulationDataStructure_2 & tds(); 
-
-/*!
 Returns the dimension of the convex hull. 
 */ 
 int dimension() const; 
@@ -424,14 +400,38 @@ Face_handle infinite_face() const;
 the infinite vertex. 
 */ 
 Vertex_handle 
-infinite_vertex(); 
+infinite_vertex() const;
 
 /*!
 a vertex distinct from the infinite vertex. 
 */ 
 Vertex_handle finite_vertex() const; 
 
-/// @} 
+/*!
+Returns a const reference to the triangulation traits object.
+*/
+const Geom_traits& geom_traits() const;
+
+/*!
+Returns a const reference to the triangulation data structure.
+*/
+const TriangulationDataStructure_2 & tds() const;
+
+/// @}
+
+/// \name Non const access
+/// \attention The responsibility of keeping a valid triangulation belongs to the
+/// user when using advanced operations allowing a direct manipulation
+/// of the `tds`. This method is mainly a help for users implementing
+/// their own triangulation algorithms.
+/// @{
+
+/*!
+Returns a reference to the triangulation data structure.
+*/
+TriangulationDataStructure_2 & tds();
+
+/// @}
 
 /// \name Predicates 
 /// The class `Triangulation_2` provides methods to test the finite or
