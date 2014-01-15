@@ -2,6 +2,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Reconstruction_from_parallel_slices_3/check_and_fix_input.h>
 #include <iostream>
 #include <fstream>
 #include <iterator>
@@ -66,49 +67,6 @@ crossing(const Point_2& p, const Point_2& q, const Point_2& q2,
     return -1; // no crossing 
   }
   return 1; // a crossing
-}
-
-template <class KeyType, class PointPmap>
-bool
-find_safe_start(std::list< KeyType >& points, PointPmap ppmap)
-{
-  iterator pit = points.begin();
-  iterator qit = pit; ++qit;
-  iterator rit = qit; ++rit;
-  std::size_t count = points.size();
-
-  points.pop_back();
-  while(std::find(qit, points.end(),*pit) != points.end()){
-   std::cerr << "change the start point (degree > 2)" << std::endl;
-    points.splice(points.end(), points, pit);
-    if(--count == 0){
-      points.push_back(points.front());
-      return false;
-    }
-    pit = qit;
-    ++qit;
-    ++rit;
-  }
-
-  while(collinear( get(ppmap, *pit),
-                   get(ppmap, *qit),
-                   get(ppmap, *rit) ) &&
-        collinear_are_strictly_ordered_along_line(get(ppmap, *pit),
-                                                  get(ppmap, *qit),
-                                                  get(ppmap, *rit))
-  ){
-    std::cerr << "change the start point (collinear overlapping)" << std::endl;
-    points.splice(points.end(), points, pit);
-    if(--count == 0){
-      points.push_back(points.front());
-      return false;
-    }
-    pit = qit;
-    ++qit;
-    ++rit;
-  }
-  points.push_back(points.front());
-  return true;
 }
 
 template <class KeyType, class PointPmap>
@@ -225,58 +183,6 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
   }
 }
 
-
-
-template <class KeyType, class PointPmap>
-void fix_consecutive_overlapping_segments(
-  std::list< KeyType >& points, PointPmap ppmap)
-{
- iterator pit = points.begin();
-  while(true){
-    if(points.size() == 4){
-      break;
-    }
-    iterator qit = pit;
-    ++qit;
-    if(qit == points.end()){
-      break;
-    }
-    const Point_2& p = get(ppmap, *pit);
-    const Point_2& q = get(ppmap, *qit);
-    
-    iterator rit = qit;
-    ++rit;
-    if(rit == points.end()){
-      const Point_2& r = get(ppmap, *(++points.begin()));
-      if(CGAL::collinear(p,q,r) && 
-         (! CGAL::collinear_are_strictly_ordered_along_line(p,q,r))){
-        points.pop_back();
-        points.pop_front();
-        points.push_back(points.front()); // duplicate the first point
-      }
-      break;
-    }
-    const Point_2& r = get(ppmap, *rit);
-    
-    if(CGAL::collinear(p,q,r)){
-      if(! CGAL::collinear_are_strictly_ordered_along_line(p,q,r)){
-        points.erase(qit);
-
-        if(get(ppmap, *pit) == get(ppmap, *rit)){
-          std::cerr << "identical consecutive points " << get(ppmap, *pit) << std::endl;
-          points.erase(rit);
-          
-        }
-        if(pit != points.begin()){
-            --pit;
-          }
-        continue;  // and do not advance pit, because its two successors are different
-      }
-    }
-    ++pit; 
-  }
-}
-
 struct Get_point_from_pair{
   //classical typedefs
   typedef const std::pair<Point_2, std::string>& key_type;
@@ -322,8 +228,11 @@ void contour(int count, int n, int dim)
 
   Get_point_from_pair ppmap;
   
-  if(find_safe_start(points, ppmap)){ 
-    fix_consecutive_overlapping_segments(points, ppmap);
+  if( CGAL::Reconstruction_from_parallel_slices::
+        find_safe_start_to_fix_consecutive_overlapping_segments(points, ppmap) )
+  {
+    CGAL::Reconstruction_from_parallel_slices::
+      fix_consecutive_overlapping_segments(points, ppmap);
     
     if(points.size() <= 3){
       std::cerr << "ignore segment" <<  std::endl;

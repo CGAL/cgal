@@ -27,6 +27,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/function_objects.h>
 #include <boost/shared_ptr.hpp>
+#include <CGAL/property_map.h>
 
 #include <set>
 #include <vector>
@@ -41,6 +42,118 @@ enum Error_code {
   DEGENERATE_POLYGON,
   POLYGON_NOT_SIMPLE,
   LOGIC_ERROR };
+
+
+template <class KeyType, class PointPmap>
+bool
+find_safe_start_to_fix_consecutive_overlapping_segments(
+  std::list< KeyType >& points, PointPmap ppmap)
+{
+  typedef typename std::list< KeyType >::iterator iterator;
+
+  iterator pit = points.begin();
+  iterator qit = pit; ++qit;
+  iterator rit = qit; ++rit;
+  std::size_t count = points.size();
+
+  points.pop_back();
+  while(std::find(qit, points.end(),*pit) != points.end()){
+   std::cerr << "change the start point (degree > 2)" << std::endl;
+    points.splice(points.end(), points, pit);
+    if(--count == 0){
+      points.push_back(points.front());
+      return false;
+    }
+    pit = qit;
+    ++qit;
+    ++rit;
+  }
+
+  while(collinear( get(ppmap, *pit),
+                   get(ppmap, *qit),
+                   get(ppmap, *rit) ) &&
+        collinear_are_strictly_ordered_along_line(get(ppmap, *pit),
+                                                  get(ppmap, *qit),
+                                                  get(ppmap, *rit))
+  ){
+    std::cerr << "change the start point (collinear overlapping)" << std::endl;
+    points.splice(points.end(), points, pit);
+    if(--count == 0){
+      points.push_back(points.front());
+      return false;
+    }
+    pit = qit;
+    ++qit;
+    ++rit;
+  }
+  points.push_back(points.front());
+  return true;
+}
+
+/// Given a list of points representing a polygon, remove whether
+/// consecutive collinear segments overlapping
+/// find_safe_start_to_fix_consecutive_overlapping_segments is supposed to be
+/// called prior to this function to prepare the data.
+/// ex: if my segments are ab and bc, then ab is kept
+///  --a----c----b--  --> --a------b--
+/// \return the number of points deleted
+template <class KeyType, class PointPmap>
+std::size_t fix_consecutive_overlapping_segments(
+  std::list< KeyType >& points, PointPmap ppmap)
+{
+  typedef typename boost::property_traits<PointPmap>::reference Point_2_ref;
+  typedef typename std::list< KeyType >::iterator iterator;
+
+  std::size_t nb_points_erased=0;
+
+  iterator pit = points.begin();
+  while(true){
+    if(points.size() == 4){
+      break;
+    }
+    iterator qit = pit;
+    ++qit;
+    if(qit == points.end()){
+      break;
+    }
+    Point_2_ref p = get(ppmap, *pit);
+    Point_2_ref q = get(ppmap, *qit);
+
+    iterator rit = qit;
+    ++rit;
+    if(rit == points.end()){
+      Point_2_ref r = get(ppmap, *(++points.begin()));
+      if(CGAL::collinear(p,q,r) &&
+         (! CGAL::collinear_are_strictly_ordered_along_line(p,q,r))){
+        points.pop_back();
+        points.pop_front();
+        points.push_back(points.front()); // duplicate the first point
+      }
+      break;
+    }
+    Point_2_ref r = get(ppmap, *rit);
+
+    if(CGAL::collinear(p,q,r)){
+      if(! CGAL::collinear_are_strictly_ordered_along_line(p,q,r)){
+        points.erase(qit);
+        ++nb_points_erased;
+
+        if(get(ppmap, *pit) == get(ppmap, *rit)){
+          // identical consecutive points
+          points.erase(rit);
+          ++nb_points_erased;
+
+        }
+        if(pit != points.begin()){
+            --pit;
+          }
+        continue;  // and do not advance pit, because its two successors are different
+      }
+    }
+    ++pit;
+  }
+  return nb_points_erased;
+}
 
 template <class Kernel>
 Error_code
