@@ -41,7 +41,7 @@ struct Less {
 
 int
 crossing(const Point_2& p, const Point_2& q, const Point_2& q2,
-         const Point_2& r, const Point_2& s, const Point_2& s2)
+         const Point_2& r, const Point_2& s2)
 {
   //std::cerr << "crossing test:\n" << p << std::endl;
   //std::cerr << q2 << std::endl;
@@ -166,7 +166,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
           iterator s2it = sit; ++s2it;
           const Point_2& s2 = get(ppmap, *s2it);
           int sign = crossing(p,q,q2,
-                              r,s,s2);
+                              r,s2);
           if(sign == 1){
             //std::cerr << "crossing--------------------" << std::endl;
             std::list<std::pair<Point_2,std::string> > tmp;
