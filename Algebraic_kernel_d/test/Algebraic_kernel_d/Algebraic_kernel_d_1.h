@@ -40,6 +40,7 @@ void test_algebraic_kernel_coeff_bound_rep() {
     Polynomial_1;
   typedef CGAL::internal::Algebraic_real_d_1
     < Coefficient, Bound, CGAL::Handle_policy_no_union, Rep_class >   Algebraic_real_1;
+  CGAL_USE_TYPE(Algebraic_real_1);
 
   typedef CGAL::internal::Descartes< Polynomial_1, Bound >               Descartes;
   typedef CGAL::internal::Bitstream_descartes<

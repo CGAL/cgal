@@ -3158,7 +3158,6 @@ OutputStream& operator<<(OutputStream& os,
                          const Arr_extended_direction_3<Kernel>& ed)
 {
 #if defined(CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS)
-  CGAL::To_double<typename Kernel::FT> todouble;
   os << "("
      << ed.dx() << ", " << ed.dy() << ",  " << ed.dz();
   os << ")"
@@ -3167,7 +3166,8 @@ OutputStream& operator<<(OutputStream& os,
          ed.is_max_boundary() ? "max" :
          ed.is_mid_boundary() ? "dis" : "reg");
 #else
-  //    << static_cast<float>(todouble(ed.dx())) << ", "
+  // CGAL::To_double<typename Kernel::FT> todouble;
+  // os << static_cast<float>(todouble(ed.dx())) << ", "
   //    << static_cast<float>(todouble(ed.dy())) << ", "
   //    << static_cast<float>(todouble(ed.dz()));
 #endif

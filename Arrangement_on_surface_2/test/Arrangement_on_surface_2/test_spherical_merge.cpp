@@ -75,7 +75,7 @@ bool test_one_file(std::ifstream& in_file, bool verbose)
     X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
     std::cout << "inserting " << xcv << " ... ";
     std::cout.flush();
-    Halfedge_handle he = CGAL::insert_non_intersecting_curve(arr, xcv);
+    CGAL::insert_non_intersecting_curve(arr, xcv);
     std::cout << "inserted" << std::endl;
   }
   curves.clear();
