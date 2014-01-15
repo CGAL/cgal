@@ -43,6 +43,24 @@ enum Error_code {
   POLYGON_NOT_SIMPLE,
   LOGIC_ERROR };
 
+namespace internal{
+  template <class Ppmap>
+  struct Identical_points{
+    typedef typename boost::property_traits<Ppmap>::key_type Key;
+
+    Ppmap ppmap;
+    Key ref;
+    Identical_points(Ppmap ppmap_, Key ref_)
+    : ppmap(ppmap_)
+    , ref(ref_)
+    {}
+    bool operator()(const Key& k) const
+    {
+      return get(ppmap,k) == get(ppmap,ref);
+    }
+  };
+} //end of namespace internal
+
 
 template <class KeyType, class PointPmap>
 bool
@@ -52,13 +70,14 @@ find_safe_start_to_fix_consecutive_overlapping_segments(
   typedef typename std::list< KeyType >::iterator iterator;
 
   iterator pit = points.begin();
-  iterator qit = pit; ++qit;
-  iterator rit = qit; ++rit;
+  iterator qit = cpp11::next(pit);
+  iterator rit = cpp11::next(qit);
   std::size_t count = points.size();
 
   points.pop_back();
-  while(std::find(qit, points.end(),*pit) != points.end()){
-   std::cerr << "change the start point (degree > 2)" << std::endl;
+  internal::Identical_points<PointPmap> same_pt(ppmap, *pit);
+  while(std::find_if(qit, points.end(),same_pt) != points.end()){
+   //change the start point (degree > 2)
     points.splice(points.end(), points, pit);
     if(--count == 0){
       points.push_back(points.front());
