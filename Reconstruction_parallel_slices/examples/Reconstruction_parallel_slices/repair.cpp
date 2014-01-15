@@ -40,8 +40,8 @@ struct Less {
 };
 
 int
-crossing(Point_2& p, Point_2& q, Point_2& q2,
-         Point_2& r, Point_2& s, Point_2& s2)
+crossing(const Point_2& p, const Point_2& q, const Point_2& q2,
+         const Point_2& r, const Point_2& s, const Point_2& s2)
 {
   //std::cerr << "crossing test:\n" << p << std::endl;
   //std::cerr << q2 << std::endl;
@@ -68,8 +68,9 @@ crossing(Point_2& p, Point_2& q, Point_2& q2,
   return 1; // a crossing
 }
 
+template <class KeyType, class PointPmap>
 bool
-find_safe_start(std::list<std::pair<Point_2,std::string> >& points)
+find_safe_start(std::list< KeyType >& points, PointPmap ppmap)
 {
   iterator pit = points.begin();
   iterator qit = pit; ++qit;
@@ -89,10 +90,13 @@ find_safe_start(std::list<std::pair<Point_2,std::string> >& points)
     ++rit;
   }
 
-  while(collinear(pit->first, qit->first, rit->first) &&
-        collinear_are_strictly_ordered_along_line(pit->first,
-                                                  qit->first,
-                                                  rit->first)){
+  while(collinear( get(ppmap, *pit),
+                   get(ppmap, *qit),
+                   get(ppmap, *rit) ) &&
+        collinear_are_strictly_ordered_along_line(get(ppmap, *pit),
+                                                  get(ppmap, *qit),
+                                                  get(ppmap, *rit))
+  ){
     std::cerr << "change the start point (collinear overlapping)" << std::endl;
     points.splice(points.end(), points, pit);
     if(--count == 0){
@@ -107,23 +111,22 @@ find_safe_start(std::list<std::pair<Point_2,std::string> >& points)
   return true;
 }
 
-
-void
-fix_intersections(std::list<std::pair<Point_2,std::string> >& points)
+template <class KeyType, class PointPmap>
+void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
 {
   iterator pit = points.begin();
   iterator end = points.end();
 
   while(true){
     bool swapped = false;
-    Point_2& p = pit->first;
+    const Point_2& p = get(ppmap, *pit);
     iterator qit = pit;
     ++qit;
     if(qit == end){
       break;
     }
 
-    Point_2& q = qit->first;
+    const Point_2& q = get(ppmap, *qit);
     //std::cerr << "\nouter loop: " << p << "  " << q << std::endl;  
     iterator rit = qit;
     ++rit;
@@ -131,14 +134,14 @@ fix_intersections(std::list<std::pair<Point_2,std::string> >& points)
       if(rit == end){
         break;
       }
-      Point_2& r = rit->first;
+      const Point_2& r = get(ppmap, *rit);
       iterator sit = rit;
       ++sit;
       if(sit == end){
         break;
       }
 
-      Point_2& s = sit->first;
+      const Point_2& s = get(ppmap, *sit);
       //std::cerr << "  inner loop: " << r << "  " << s << std::endl;  
       Segment_2 segA(p,q), segB(r,s); 
       if(CGAL::do_intersect(segA,segB)){
@@ -159,9 +162,9 @@ fix_intersections(std::list<std::pair<Point_2,std::string> >& points)
         } 
         else if (q == s){
           iterator q2it = qit; ++q2it;
-          Point_2& q2 = q2it->first;
+          const Point_2& q2 = get(ppmap, *q2it);
           iterator s2it = sit; ++s2it;
-          Point_2& s2 = s2it->first;
+          const Point_2& s2 = get(ppmap, *s2it);
           int sign = crossing(p,q,q2,
                               r,s,s2);
           if(sign == 1){
@@ -224,8 +227,9 @@ fix_intersections(std::list<std::pair<Point_2,std::string> >& points)
 
 
 
-
-void fix_consecutive_overlapping_segments(std::list<std::pair<Point_2,std::string> >& points)
+template <class KeyType, class PointPmap>
+void fix_consecutive_overlapping_segments(
+  std::list< KeyType >& points, PointPmap ppmap)
 {
  iterator pit = points.begin();
   while(true){
@@ -237,13 +241,13 @@ void fix_consecutive_overlapping_segments(std::list<std::pair<Point_2,std::strin
     if(qit == points.end()){
       break;
     }
-    Point_2& p = pit->first;
-    Point_2& q = qit->first;
+    const Point_2& p = get(ppmap, *pit);
+    const Point_2& q = get(ppmap, *qit);
     
     iterator rit = qit;
     ++rit;
     if(rit == points.end()){
-      Point_2& r = (++points.begin())->first;
+      const Point_2& r = get(ppmap, *(++points.begin()));
       if(CGAL::collinear(p,q,r) && 
          (! CGAL::collinear_are_strictly_ordered_along_line(p,q,r))){
         points.pop_back();
@@ -252,14 +256,14 @@ void fix_consecutive_overlapping_segments(std::list<std::pair<Point_2,std::strin
       }
       break;
     }
-    Point_2& r = rit->first;
+    const Point_2& r = get(ppmap, *rit);
     
     if(CGAL::collinear(p,q,r)){
       if(! CGAL::collinear_are_strictly_ordered_along_line(p,q,r)){
         points.erase(qit);
 
-        if(pit->first == rit->first){
-          std::cerr << "identical consecutive points " << pit->first << std::endl;
+        if(get(ppmap, *pit) == get(ppmap, *rit)){
+          std::cerr << "identical consecutive points " << get(ppmap, *pit) << std::endl;
           points.erase(rit);
           
         }
@@ -272,6 +276,17 @@ void fix_consecutive_overlapping_segments(std::list<std::pair<Point_2,std::strin
     ++pit; 
   }
 }
+
+struct Get_point_from_pair{
+  //classical typedefs
+  typedef const std::pair<Point_2, std::string>& key_type;
+  typedef Point_2 value_type;
+  typedef const value_type& reference;
+  typedef boost::readable_property_map_tag category;
+  friend reference get(const Get_point_from_pair&, key_type p) {
+    return p.first;
+  }
+};
 
 void contour(int count, int n, int dim)
 {
@@ -305,16 +320,18 @@ void contour(int count, int n, int dim)
     return;
   }
 
-  if(find_safe_start(points)){ 
-    fix_consecutive_overlapping_segments(points);
+  Get_point_from_pair ppmap;
+  
+  if(find_safe_start(points, ppmap)){ 
+    fix_consecutive_overlapping_segments(points, ppmap);
     
     if(points.size() <= 3){
       std::cerr << "ignore segment" <<  std::endl;
-      std::cerr << points.front().first << " -- " << (++points.begin())->first << std::endl;
+      std::cerr << points.front().first << " -- " << get(ppmap, *(++points.begin())) << std::endl;
       return;
     }
   
-    fix_intersections(points);
+    fix_intersections(points, ppmap);
   } else {
     std::cerr << "No safe start point found" << std::endl;
   }
