@@ -77,6 +77,8 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   //handle collinear points not correctly ordered
   /// \todo copy the code of Andreas
   /// \todo if a polygon contains only collinear points handle it as degenerate
+  ///       but it is only while the code does not handle it correctly because
+  ///       it should be allowed as well as isolated points
 
   //now create the polygon
   Polygon_2<Kernel> polygon;
@@ -189,7 +191,7 @@ class Contour_checker_and_fixer{
   typedef typename Kernel::Point_2 Point_2;
   typedef boost::shared_ptr< std::vector<typename Kernel::Point_3> > Point_container; /// \todo this should be a template
   typedef std::vector< boost::shared_ptr< std::vector<Point_3> > > Slice;
-  enum State{SLICE_BEGAN, SLICE_ENDED};
+  enum State{SLICE_BEGUN, SLICE_ENDED};
 ///data members
   std::vector< Slice > m_slices;
   int m_constant_coordinate;
@@ -223,11 +225,11 @@ public:
 
   bool begin_slice()
   {
-    if ( m_state==SLICE_BEGAN ) return false;
+    if ( m_state==SLICE_BEGUN ) return false;
     if ( !m_intersecting_polygons.empty() ) return false;
     if ( !m_last_contour_valid ) return false;
     m_slices.push_back( Slice() );
-    m_state=SLICE_BEGAN;
+    m_state=SLICE_BEGUN;
     return true;
   }
 
