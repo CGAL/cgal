@@ -675,6 +675,37 @@ public:
     return m_slices.empty();
   }
 
+  bool fix_self_intersections(){
+    if (m_last_contour_valid) return true;
+
+    std::vector<typename Kernel::Point_3>& points_3d=*m_slices.back().back();
+    std::list<std::size_t> point_indices(
+      boost::counting_iterator<std::size_t>(0),
+      boost::counting_iterator<std::size_t>(points_3d.size()) );
+
+    internal::Get_2D_point_from_3D_point_id<Kernel>
+      ppmap(points_3d, m_constant_coordinate);
+
+    if ( ::CGAL::Reconstruction_from_parallel_slices::
+          fix_self_intersections(point_indices, ppmap) )
+    {
+      //we need to rewrite the vector of points
+      std::vector<typename Kernel::Point_3> tmp;
+      tmp.reserve( points_3d.size() ); // the bound is not tight
+      for (std::list<std::size_t>::iterator it=point_indices.begin(),
+            end=point_indices.end(); it!=end; ++it)
+      {
+        tmp.push_back( points_3d[*it] );
+      }
+      points_3d.swap(tmp);
+
+      m_last_contour_valid=true;
+      return true;
+    }
+    else
+      return false;
+  }
+
   #ifndef SWIG
   void next_polygon(){
     ++m_current_polygon;
