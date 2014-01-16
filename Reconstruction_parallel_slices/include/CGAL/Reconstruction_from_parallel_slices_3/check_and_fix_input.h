@@ -245,8 +245,10 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   if( find_safe_start_to_fix_consecutive_overlapping_segments
         (point_indices, ppmap) )
   {
-    //std::size_t nb_pt_erased =
+    std::size_t nb_pt_erased =
       fix_consecutive_overlapping_segments(point_indices, ppmap);
+    if (verbose && nb_pt_erased!=0)
+      std::cerr << "Warning: removed some overlapping segments...\n";
   }
   else
     //only collinear points with overlapping segments have been found
