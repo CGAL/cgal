@@ -46,6 +46,10 @@
 
 /// \todo handle if a slice contains a polyline (in particular the first and the last one
 
+/// \todo handle pb of data/bug_no_branching.cgal
+
+/// \todo allow polygons sharing a vertex, an edge or part of an edge and update the checker
+
 //#define DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
 #define CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL
 //#define DO_NOT_FILTER_NOTCHES
