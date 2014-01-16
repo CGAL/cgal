@@ -248,8 +248,20 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   {
     std::size_t nb_pt_erased =
       fix_consecutive_overlapping_segments(point_indices, ppmap);
-    if (verbose && nb_pt_erased!=0)
-      std::cerr << "Warning: removed some overlapping segments...\n";
+    if (nb_pt_erased!=0)
+    {
+      if (verbose)
+        std::cerr << "Warning: removed some overlapping segments...\n";
+      //we need to rewrite the vector of points
+      std::vector<typename Kernel::Point_3> tmp;
+      tmp.reserve( points_3d.size()-nb_pt_erased );
+      for (std::list<std::size_t>::iterator it=point_indices.begin(),
+            end=point_indices.end(); it!=end; ++it)
+      {
+        tmp.push_back( points_3d[*it] );
+      }
+      points_3d.swap(tmp);
+    }
   }
   else
     //only collinear points with overlapping segments have been found
@@ -258,11 +270,9 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   //now create the polygon
   Polygon_2<Kernel> polygon;
 
-  point_indices.pop_back(); // remove the duplicated end point
-  for (std::list<std::size_t>::iterator it=point_indices.begin(),
-                                        end=point_indices.end(); it!=end; ++it)
+  for (std::size_t i=0, end=points_3d.size()-1;i!=end;++i)
   {
-    polygon.push_back(get(ppmap, *it));
+    polygon.push_back(get(ppmap, i));
   }
 
   if (polygon.size() < 3)
