@@ -29,6 +29,7 @@
 #include <boost/shared_ptr.hpp>
 #include <CGAL/property_map.h>
 #include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/Kernel_traits.h>
 
 #include <set>
 #include <vector>
@@ -275,6 +276,175 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   }
 
   return VALID_OR_TRIVIALLY_FIXED_POLYGON;
+}
+
+
+namespace internal {
+template <class Kernel>
+struct Less {
+  bool operator()(const std::pair<typename Kernel::Direction_2, int> d1,
+                  const std::pair<typename Kernel::Direction_2, int> d2) const
+  {
+    return CGAL::compare_angle_with_x_axis(d1.first,d2.first) == CGAL::SMALLER;
+  }
+};
+
+template <class Kernel>
+int
+crossing( const typename Kernel::Point_2& p,
+          const typename Kernel::Point_2& q,
+          const typename Kernel::Point_2& q2,
+          const typename Kernel::Point_2& r,
+          const typename Kernel::Point_2& s2)
+{
+  //std::cerr << "crossing test:\n" << p << std::endl;
+  //std::cerr << q2 << std::endl;
+  //std::cerr << r << std::endl;
+  //std::cerr << s2 << std::endl;
+  typedef typename Kernel::Direction_2 Direction_2;
+
+  std::vector<std::pair<Direction_2, int> > directions;
+  directions.push_back(std::make_pair(Direction_2(p-q),0));
+  directions.push_back(std::make_pair(Direction_2(q2-q),0));
+  directions.push_back(std::make_pair(Direction_2(r-q),1));
+  directions.push_back(std::make_pair(Direction_2(s2-q),1));
+
+  Less<Kernel> less;
+  sort(directions.begin(), directions.end(),less);
+  if((directions[0].first == directions[1].first) ||
+     (directions[1].first == directions[2].first) ||
+     (directions[2].first == directions[3].first)){
+    return 0; // collinear segments
+  }
+  if((directions[0].second == directions[1].second) ||
+     (directions[1].second == directions[2].second) ||
+     (directions[2].second == directions[3].second)){
+    return -1; // no crossing
+  }
+  return 1; // a crossing
+}
+
+} //end of namespace internal
+
+template <class KeyType, class PointPmap>
+bool fix_self_intersections(std::list< KeyType >& points, PointPmap ppmap)
+{
+  typedef typename boost::property_traits<PointPmap>::reference Point_2_ref;
+  typedef typename boost::property_traits<PointPmap>::value_type Point_2;
+  typedef typename std::list< KeyType >::iterator iterator;
+  typedef typename CGAL::Kernel_traits<Point_2>::Kernel Kernel;
+  typedef typename Kernel::Segment_2 Segment_2;
+
+  iterator pit = points.begin();
+  iterator end = points.end();
+
+  while(true){
+    bool swapped = false;
+    const Point_2& p = get(ppmap, *pit);
+    iterator qit = pit;
+    ++qit;
+    if(qit == end){
+      break;
+    }
+
+    const Point_2& q = get(ppmap, *qit);
+    //std::cerr << "\nouter loop: " << p << "  " << q << std::endl;
+    iterator rit = qit;
+    ++rit;
+    while(true){
+      if(rit == end){
+        break;
+      }
+      const Point_2& r = get(ppmap, *rit);
+      iterator sit = rit;
+      ++sit;
+      if(sit == end){
+        break;
+      }
+
+      const Point_2& s = get(ppmap, *sit);
+      //std::cerr << "  inner loop: " << r << "  " << s << std::endl;
+      Segment_2 segA(p,q), segB(r,s);
+      if(CGAL::do_intersect(segA,segB)){
+        //std::cerr << "intersection" << std::endl;
+        if(p!=r && p!=s && q!=r && q!=s){
+          //std::cerr << "real intersection" << std::endl;
+          //std::cerr << segA << std::endl;
+          //std::cerr << segB << std::endl;
+          std::list<std::pair<Point_2,std::string> > tmp;
+          tmp.splice(tmp.begin(),
+                     points,
+                     qit,
+                     sit);
+          tmp.reverse();
+          points.splice(sit,tmp);
+          swapped = true;
+          break;
+        }
+        else if (q == s){
+          iterator q2it = qit; ++q2it;
+          const Point_2& q2 = get(ppmap, *q2it);
+          iterator s2it = sit; ++s2it;
+          const Point_2& s2 = get(ppmap, *s2it);
+          int sign = internal::crossing<Kernel>(p,q,q2,r,s2);
+          if(sign == 1){
+            //std::cerr << "crossing--------------------" << std::endl;
+            std::list<std::pair<Point_2,std::string> > tmp;
+            tmp.splice(tmp.begin(),
+                       points,
+                       q2it,
+                       sit);
+            tmp.reverse();
+            points.splice(s2it,tmp);
+            if((! CGAL::do_intersect(Segment_2(p,r),
+                                     Segment_2(s,s2))) &&
+               (! CGAL::do_intersect(Segment_2(p,r),
+                                     Segment_2(q,q2)))){
+              points.erase(qit);
+            } else if((! CGAL::do_intersect(Segment_2(q2,s2),
+                                           Segment_2(p,q))) &&
+                      (! CGAL::do_intersect(Segment_2(q2,s2),
+                                            Segment_2(q,r)))
+                      ) {
+              points.erase(sit);
+
+            } else {
+              //std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+              return false;
+            }
+            points.splice(qit,tmp);
+          } else if(sign != 1){
+            //std::cerr << "touching--------------------" << std::endl;
+            //std::cerr << "2\n" << p << std::endl << q2 << std::endl;
+            //std::cerr << "2\n" << r << std::endl << s2 << std::endl;
+            if((! CGAL::do_intersect(Segment_2(p,q2),
+                                     Segment_2(r,s))) &&
+               (! CGAL::do_intersect(Segment_2(p,q2),
+                                     Segment_2(s2,s)))){
+              points.erase(qit);
+            } else if((! CGAL::do_intersect(Segment_2(r,s2),
+                                           Segment_2(p,q))) &&
+                      (! CGAL::do_intersect(Segment_2(r,s2),
+                                            Segment_2(q2,q)))
+                      ) {
+              points.erase(sit);
+
+            } else {
+              //std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+            }
+          } else {
+            //std::cerr << "todo: treat overlapping segments" << std::endl;
+          }
+
+        }
+      }
+      ++rit;
+        }
+    if(! swapped){
+      ++pit;
+    }
+  }
+  return true;
 }
 
 
