@@ -706,6 +706,12 @@ public:
       return false;
   }
 
+  boost::shared_ptr< std::vector<typename Kernel::Point_3> >
+  polygons_back()
+  {
+    return m_slices.back().back();
+  }
+
   #ifndef SWIG
   void next_polygon(){
     ++m_current_polygon;
