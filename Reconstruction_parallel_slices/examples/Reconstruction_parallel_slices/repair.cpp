@@ -70,7 +70,7 @@ crossing(const Point_2& p, const Point_2& q, const Point_2& q2,
 }
 
 template <class KeyType, class PointPmap>
-void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
+bool fix_self_intersections(std::list< KeyType >& points, PointPmap ppmap)
 {
   iterator pit = points.begin();
   iterator end = points.end();
@@ -148,6 +148,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
 
             } else {
               //std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
+              return false;
             }
             points.splice(qit,tmp);
           } else if(sign != 1){
@@ -181,6 +182,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
       ++pit;
     }
   }
+  return true;
 }
 
 struct Get_point_from_pair{
@@ -240,7 +242,8 @@ void contour(int count, int n, int dim)
       return;
     }
 
-    fix_intersections(points, ppmap);
+    if ( !fix_self_intersections(points, ppmap) )
+      std::cerr << "Could not fix the self-intersection\n";
   } else {
     std::cerr << "No safe start point found" << std::endl;
   }
