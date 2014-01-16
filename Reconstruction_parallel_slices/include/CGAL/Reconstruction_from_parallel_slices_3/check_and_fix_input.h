@@ -28,6 +28,7 @@
 #include <CGAL/function_objects.h>
 #include <boost/shared_ptr.hpp>
 #include <CGAL/property_map.h>
+#include <boost/iterator/counting_iterator.hpp>
 
 #include <set>
 #include <vector>
@@ -174,6 +175,31 @@ std::size_t fix_consecutive_overlapping_segments(
   return nb_points_erased;
 }
 
+namespace internal{
+  template <class Kernel>
+  struct Get_2D_point_from_3D_point_id{
+    typedef std::size_t key_type;
+    typedef typename Kernel::Point_2 value_type;
+    typedef value_type reference;
+    typedef boost::readable_property_map_tag category;
+
+    const std::vector< typename Kernel::Point_3 >& points_3d;
+    int constant_coordinate;
+
+    Get_2D_point_from_3D_point_id(
+      const std::vector< typename Kernel::Point_3 >& points_3d_,
+      int constant_coordinate_)
+    : points_3d(points_3d_)
+    , constant_coordinate(constant_coordinate_)
+    {}
+
+    friend reference get(Get_2D_point_from_3D_point_id map, key_type k) {
+      return value_type( map.points_3d[k][(map.constant_coordinate+1)%3],
+                         map.points_3d[k][(map.constant_coordinate+2)%3] );
+    }
+  };
+}
+
 template <class Kernel>
 Error_code
 create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
@@ -207,19 +233,33 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   }
 
   //handle collinear points not correctly ordered
-  /// \todo copy the code of Andreas
   /// \todo if a polygon contains only collinear points handle it as degenerate
   ///       but it is only while the code does not handle it correctly because
   ///       it should be allowed as well as isolated points
 
+  std::list<std::size_t> point_indices(
+    boost::counting_iterator<std::size_t>(0),
+    boost::counting_iterator<std::size_t>(points_3d.size()) );
+  internal::Get_2D_point_from_3D_point_id<Kernel>
+    ppmap(points_3d, constant_coordinate);
+  if( find_safe_start_to_fix_consecutive_overlapping_segments
+        (point_indices, ppmap) )
+  {
+    //std::size_t nb_pt_erased =
+      fix_consecutive_overlapping_segments(point_indices, ppmap);
+  }
+  else
+    //only collinear points with overlapping segments have been found
+    return DEGENERATE_POLYGON;
+
   //now create the polygon
   Polygon_2<Kernel> polygon;
 
-  for (std::size_t i=0; i< nb_pts-1; ++i)
+  point_indices.pop_back(); // remove the duplicated end point
+  for (std::list<std::size_t>::iterator it=point_indices.begin(),
+                                        end=point_indices.end(); it!=end; ++it)
   {
-    typename Kernel::Point_2 pt( points_3d[i][(constant_coordinate+1)%3],
-                                 points_3d[i][(constant_coordinate+2)%3] );
-    polygon.push_back(pt);
+    polygon.push_back(get(ppmap, *it));
   }
 
   if (polygon.size() < 3)
