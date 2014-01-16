@@ -445,12 +445,13 @@ bool fix_self_intersections(std::list< KeyType >& points, PointPmap ppmap)
               points.erase(sit);
 
             } else {
+              return false;
               //std::cerr << "shortcut of pqq2 or rss2 would introduce an intersection" << std::endl;
             }
           } else {
             //std::cerr << "todo: treat overlapping segments" << std::endl;
+            return false;
           }
-
         }
       }
       ++rit;
