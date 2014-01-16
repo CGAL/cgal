@@ -707,7 +707,7 @@ public:
   }
 
   boost::shared_ptr< std::vector<typename Kernel::Point_3> >
-  polygons_back()
+  contours_back()
   {
     return m_slices.back().back();
   }
