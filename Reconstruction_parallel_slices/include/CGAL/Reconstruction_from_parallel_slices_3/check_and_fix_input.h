@@ -707,10 +707,24 @@ public:
       return false;
   }
 
+  int size_of_contours() const {
+    return m_slices.back().size();
+  }
+
+  boost::shared_ptr< std::vector<typename Kernel::Point_3> >
+  contour(int i){
+    return m_slices.back()[i];
+  }
+
   boost::shared_ptr< std::vector<typename Kernel::Point_3> >
   contours_back()
   {
     return m_slices.back().back();
+  }
+
+  std::set< std::pair<std::size_t,std::size_t> >
+  intersection_contours(){
+    return m_intersecting_polygons;
   }
 
   #ifndef SWIG
