@@ -306,7 +306,7 @@ public:
   }
 
   const Point &
-  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
     if (circumcenter_ == NULL) {
       circumcenter_ = new Point(gt.construct_weighted_circumcenter_3_object()

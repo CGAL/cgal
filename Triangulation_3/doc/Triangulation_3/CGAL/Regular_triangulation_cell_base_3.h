@@ -31,9 +31,9 @@ public:
 
 As a model of the concept `RegularTriangulationCellBase_3`, 
 `Regular_triangulation_cell_base_3` 
-provides a `circumcenter()` member fonction. 
+provides a `weighted_circumcenter()` member fonction. 
 
-In this model, the `circumcenter()` member fonction returns the <b>weighted circumcenter</b>
+In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
 of the cell, computed by the `ConstructWeightedCircumcenter` constructor of the traits class. 
 However, this point has no weight.
 
@@ -54,6 +54,6 @@ class, so the returned point has no weight.
 const Traits::Bare_point& circumcenter(const Traits& gt = Traits()) const; 
 
 /// @}
-	
+
 }; /* end Regular_triangulation_cell_base_3 */
 } /* end namespace CGAL */
