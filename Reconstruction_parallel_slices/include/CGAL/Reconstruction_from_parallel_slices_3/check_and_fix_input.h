@@ -97,7 +97,7 @@ find_safe_start_to_fix_consecutive_overlapping_segments(
                                                   get(ppmap, *qit),
                                                   get(ppmap, *rit))
   ){
-    std::cerr << "change the start point (collinear overlapping)" << std::endl;
+    // change the start point (collinear overlapping)
     points.splice(points.end(), points, pit);
     if(--count == 0){
       points.push_back(points.front());
@@ -267,17 +267,22 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
     //only collinear points with overlapping segments have been found
     return DEGENERATE_POLYGON;
 
+  //check that the polygon is of dimension 2
+  nb_pts=points_3d.size();
+  if (nb_pts < 4) return DEGENERATE_POLYGON;
+  for (std::size_t i=0, j=1, k=3;;)
+  {
+    if ( CGAL::coplanar_orientation(points_3d[i],points_3d[j],points_3d[k]) !=
+         CGAL::COLLINEAR ) break;
+    if (++k==nb_pts) return DEGENERATE_POLYGON;
+  }
+
   //now create the polygon
   Polygon_2<Kernel> polygon;
 
   for (std::size_t i=0, end=points_3d.size()-1;i!=end;++i)
   {
     polygon.push_back(get(ppmap, i));
-  }
-
-  if (polygon.size() < 3)
-  {
-    return DEGENERATE_POLYGON;
   }
 
   if ( !polygon.is_simple() )
@@ -381,7 +386,7 @@ bool fix_self_intersections(std::list< KeyType >& points, PointPmap ppmap)
           //std::cerr << "real intersection" << std::endl;
           //std::cerr << segA << std::endl;
           //std::cerr << segB << std::endl;
-          std::list<std::pair<Point_2,std::string> > tmp;
+          std::list<KeyType> tmp;
           tmp.splice(tmp.begin(),
                      points,
                      qit,
@@ -399,7 +404,7 @@ bool fix_self_intersections(std::list< KeyType >& points, PointPmap ppmap)
           int sign = internal::crossing<Kernel>(p,q,q2,r,s2);
           if(sign == 1){
             //std::cerr << "crossing--------------------" << std::endl;
-            std::list<std::pair<Point_2,std::string> > tmp;
+            std::list<KeyType> tmp;
             tmp.splice(tmp.begin(),
                        points,
                        q2it,
@@ -492,6 +497,7 @@ struct Report_inters{
   void operator() ( const Box& a, const Box& b) {
     if (a.polygon_index==b.polygon_index) return;
 
+    /// \todo allow polygons to share a vertex?
     if( do_intersect(a.segment,b.segment) ){
         m_intersecting_polygons.insert(
           a.polygon_index < b.polygon_index ?
