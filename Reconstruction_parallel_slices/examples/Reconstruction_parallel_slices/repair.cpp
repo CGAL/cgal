@@ -25,7 +25,7 @@ typedef std::vector<Segment>::iterator segment_iterator;
 typedef CGAL::Box_intersection_d::Box_with_handle_d<double,3,segment_iterator> Box;
 /*
 // callback function that reports all truly intersecting triangles
-void report_inters( const Box& a, const Box& b) 
+void report_inters( const Box& a, const Box& b)
 {
   std::cout << "Box " << (a.handle() - triangles.begin()) << " and "
             << (b.handle() - triangles.begin()) << " intersect\n";
@@ -59,12 +59,12 @@ crossing(const Point_2& p, const Point_2& q, const Point_2& q2,
   if((directions[0].first == directions[1].first) ||
      (directions[1].first == directions[2].first) ||
      (directions[2].first == directions[3].first)){
-    return 0; // collinear segments 
+    return 0; // collinear segments
   }
   if((directions[0].second == directions[1].second) ||
      (directions[1].second == directions[2].second) ||
      (directions[2].second == directions[3].second)){
-    return -1; // no crossing 
+    return -1; // no crossing
   }
   return 1; // a crossing
 }
@@ -85,7 +85,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
     }
 
     const Point_2& q = get(ppmap, *qit);
-    //std::cerr << "\nouter loop: " << p << "  " << q << std::endl;  
+    //std::cerr << "\nouter loop: " << p << "  " << q << std::endl;
     iterator rit = qit;
     ++rit;
     while(true){
@@ -100,8 +100,8 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
       }
 
       const Point_2& s = get(ppmap, *sit);
-      //std::cerr << "  inner loop: " << r << "  " << s << std::endl;  
-      Segment_2 segA(p,q), segB(r,s); 
+      //std::cerr << "  inner loop: " << r << "  " << s << std::endl;
+      Segment_2 segA(p,q), segB(r,s);
       if(CGAL::do_intersect(segA,segB)){
         //std::cerr << "intersection" << std::endl;
         if(p!=r && p!=s && q!=r && q!=s){
@@ -117,7 +117,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
           points.splice(sit,tmp);
           swapped = true;
           break;
-        } 
+        }
         else if (q == s){
           iterator q2it = qit; ++q2it;
           const Point_2& q2 = get(ppmap, *q2it);
@@ -135,7 +135,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
             tmp.reverse();
             points.splice(s2it,tmp);
             if((! CGAL::do_intersect(Segment_2(p,r),
-                                     Segment_2(s,s2))) && 
+                                     Segment_2(s,s2))) &&
                (! CGAL::do_intersect(Segment_2(p,r),
                                      Segment_2(q,q2)))){
               points.erase(qit);
@@ -155,7 +155,7 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
             //std::cerr << "2\n" << p << std::endl << q2 << std::endl;
             //std::cerr << "2\n" << r << std::endl << s2 << std::endl;
             if((! CGAL::do_intersect(Segment_2(p,q2),
-                                     Segment_2(r,s))) && 
+                                     Segment_2(r,s))) &&
                (! CGAL::do_intersect(Segment_2(p,q2),
                                      Segment_2(s2,s)))){
               points.erase(qit);
@@ -172,8 +172,8 @@ void fix_intersections(std::list< KeyType >& points, PointPmap ppmap)
           } else {
             //std::cerr << "todo: treat overlapping segments" << std::endl;
           }
-             
-        }          
+
+        }
       }
       ++rit;
         }
@@ -197,7 +197,7 @@ struct Get_point_from_pair{
 void contour(int count, int n, int dim)
 {
   std::cerr << "\ncontour  " << count << " with " << n << " vertices" << std::endl;
- 
+
   std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
   std::list<std::pair<Point_2,std::string> > points;
 
@@ -208,7 +208,7 @@ void contour(int count, int n, int dim)
 
     double x,y,z;
     iss >> x >> y >> z;
-    
+
     Point_2 p = (dim==0) ? Point_2(y,z) : (dim==1) ? Point_2(x,z) : Point_2(x,y);
     if(! points.empty()){
       if(p != points.back().first){
@@ -217,7 +217,7 @@ void contour(int count, int n, int dim)
         std::cerr << "identical consecutive points " << p << std::endl;
       }
     } else {
-     points.push_back(std::make_pair(p, line)); 
+     points.push_back(std::make_pair(p, line));
     }
   }
   if(points.size() <= 3){
@@ -227,19 +227,19 @@ void contour(int count, int n, int dim)
   }
 
   Get_point_from_pair ppmap;
-  
+
   if( CGAL::Reconstruction_from_parallel_slices::
         find_safe_start_to_fix_consecutive_overlapping_segments(points, ppmap) )
   {
     CGAL::Reconstruction_from_parallel_slices::
       fix_consecutive_overlapping_segments(points, ppmap);
-    
+
     if(points.size() <= 3){
       std::cerr << "ignore segment" <<  std::endl;
       std::cerr << points.front().first << " -- " << get(ppmap, *(++points.begin())) << std::endl;
       return;
     }
-  
+
     fix_intersections(points, ppmap);
   } else {
     std::cerr << "No safe start point found" << std::endl;
