@@ -700,6 +700,16 @@ public:
       }
       points_3d.swap(tmp);
 
+      //make sure the polygon is now simple!
+      Polygon_2<Kernel> polygon;
+
+      for (std::size_t i=0, end=points_3d.size()-1;i!=end;++i)
+      {
+        polygon.push_back(get(ppmap, i));
+      }
+
+      if ( !polygon.is_simple() ) return false;
+
       m_last_contour_valid=true;
       return true;
     }
