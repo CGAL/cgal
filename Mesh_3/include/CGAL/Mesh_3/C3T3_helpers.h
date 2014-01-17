@@ -976,8 +976,11 @@ private:
       : vertices_()
     {
       for(int i = 0; i < 4; ++i)
+      {
         vertices_[static_cast<std::size_t>(i)] 
           = static_cast<std::size_t>(c->vertex(i)->meshing_info());
+      }
+      std::sort(vertices_.begin(), vertices_.end());
     }
 
     std::size_t vertex_id(const std::size_t& i) const
@@ -986,10 +989,14 @@ private:
       return vertices_[i];
     }
 
+    bool operator<(const Cell_from_ids& c) const
+    {
+      //std::array operator< compares lhs and rhs lexicographically
+      return vertices_ < c.vertices_;
+    }
+
   private:
-    // vertices IDs
-    // they should be ordered in the same way as they were in the
-    // cell to be backed-up
+    // vertices IDs, sorted
     CGAL::cpp11::array<std::size_t, 4> vertices_;
   };
 
@@ -1017,7 +1024,12 @@ private:
       //because all cells are changing during the move
       //they are not used in update_mesh functions involving a Sliver_criterion
     }
-        
+
+    bool operator<(const Cell_data_backup& cb) const
+    {
+      return cell_ids_ < cb.cell_ids_;
+    }
+
     /**
     * if new_cell has the same vertices as cell_ids_, 
     *       resets new_cell's meta-data to its back-uped values
@@ -1160,13 +1172,13 @@ private:
   /**
    * Backup cells meta-data to a vector of Cell_data_backup
    */
-  template <typename CellsVector, typename CellDataVector>
+  template <typename CellsVector, typename CellDataSet>
   void fill_cells_backup(const CellsVector& cells, 
-                         CellDataVector& cells_backup) const;
+                         CellDataSet& cells_backup) const;
 
-  template <typename CellsVector, typename CellDataVector>
+  template <typename CellsVector, typename CellDataSet>
   void restore_from_cells_backup(const CellsVector& cells,
-                                 const CellDataVector& cells_backup) const;
+                                 const CellDataSet& cells_backup) const;
   
   
   /**
@@ -1753,7 +1765,7 @@ update_mesh_no_topo_change(const Point_3& new_position,
   Point_3 old_position = vertex->point();
 
   //backup metadata
-  std::vector<Cell_data_backup> cells_backup;
+  std::set<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
   
   // Move point
@@ -1829,7 +1841,7 @@ update_mesh_topo_change(const Point_3& new_position,
   Point_3 old_position = old_vertex->point();
   
   //backup metadata
-  std::vector<Cell_data_backup> cells_backup;
+  std::set<Cell_data_backup> cells_backup;
   fill_cells_backup(conflict_cells, cells_backup);
 
   // Keep old boundary
@@ -2712,43 +2724,42 @@ fill_modified_vertices(InputIterator cells_begin,
   
   
 template <typename C3T3, typename MD>
-template <typename CellsVector, typename CellDataVector>
+template <typename CellsVector, typename CellDataSet>
 void
 C3T3_helpers<C3T3,MD>::
 fill_cells_backup(const CellsVector& cells, 
-                  CellDataVector& cells_backup) const
+                  CellDataSet& cells_backup) const
 {
-  typedef typename CellDataVector::value_type Cell_data;
+  typedef typename CellDataSet::value_type Cell_data;
   typename CellsVector::const_iterator cit;
   for(cit = cells.begin(); cit != cells.end(); ++cit)
   {
     if(tr_.is_infinite(*cit))
       continue;//don't backup infinite cells
-    cells_backup.push_back(Cell_data(*cit));
+    cells_backup.insert(Cell_data(*cit));
   }
 }
 
 template <typename C3T3, typename MD>
-template <typename CellsVector, typename CellDataVector>
+template <typename CellsVector, typename CellDataSet>
 void 
 C3T3_helpers<C3T3,MD>::
 restore_from_cells_backup(const CellsVector& cells,
-                          const CellDataVector& cells_backup) const
+                          const CellDataSet& cells_backup) const
 {
   CGAL_assertion_code(unsigned int success_nb = 0);
 
-  //todo : try to avoid the double for-loop
   for(typename CellsVector::const_iterator cit = cells.begin();
       cit != cells.end();
       ++cit)
   {
     if(tr_.is_infinite(*cit))
       continue;//don't restore infinite cells, they have not been backed-up
-    for(typename CellDataVector::const_iterator cd_it = cells_backup.begin();
-        cd_it != cells_backup.end();
-        ++cd_it)
+    
+    typename CellDataSet::const_iterator cd_it = cells_backup.find(*cit);
+    if(cd_it != cells_backup.end())
     {
-      typename CellDataVector::value_type cell_data = *cd_it;    
+      typename CellDataSet::value_type cell_data = *cd_it;
       if(cell_data.restore(*cit, c3t3_))
       {
         CGAL_assertion_code(success_nb++);
