@@ -37,6 +37,7 @@ SEGMENT_GEOM_TRAITS=0
 NON_CACHING_SEGMENT_GEOM_TRAITS=1
 POLYLINE_GEOM_TRAITS=2
 NON_CACHING_POLYLINE_GEOM_TRAITS=3
+POLYCURVE_CONIC_GEOM_TRAITS=14
 LINEAR_GEOM_TRAITS=4
 CORE_CONIC_GEOM_TRAITS=5
 LINE_ARC_GEOM_TRAITS=6
@@ -212,6 +213,7 @@ run_test_alt()
 {
   basedata=`basename "$5"`
   OUTPUTFILE=ProgramOutput.$1.`echo $5 | tr '/' '.'`.$6
+  #echo ****generating file $OUTPUTFILE
   #  dirdata=`dirname "$datafile"`
   rm -f $OUTPUTFILE
   COMMAND="./$1"
@@ -903,6 +905,80 @@ test_point_location_linear()
 }
 
 #---------------------------------------------------------------------#
+# batchecd point location with segments
+#---------------------------------------------------------------------#
+test_batched_point_location_segments()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_batched_point_location segments "$flags"
+}
+
+#---------------------------------------------------------------------#
+# batchecd point location with linear objects
+#---------------------------------------------------------------------#
+test_batched_point_location_linear()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_batched_point_location linear "$flags"
+}
+
+#---------------------------------------------------------------------#
+# batchecd point location with geodesic arcs on the sphere
+#---------------------------------------------------------------------#
+test_batched_point_location_spherical_arcs()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$GEODESIC_ARC_ON_SPHERE_GEOM_TRAITS;
+  local topol_traits=$SPHERICAL_TOPOL_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
+  compile_and_run_with_flags test_batched_point_location geodesic_arcs_on_sphere "$flags"
+}
+
+#---------------------------------------------------------------------#
+# vertical decomposition with segments
+#---------------------------------------------------------------------#
+test_vertical_decomposition_segments()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$SEGMENT_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_vertical_decomposition segments "$flags"
+}
+
+#---------------------------------------------------------------------#
+# vertical decomposition with linear objects
+#---------------------------------------------------------------------#
+test_vertical_decomposition_linear()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+  compile_and_run_with_flags test_vertical_decomposition linear "$flags"
+}
+
+#---------------------------------------------------------------------#
+# vertical decomposition with geodesic arcs on the sphere
+#---------------------------------------------------------------------#
+test_vertical_decomposition_spherical_arcs()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$LINEAR_GEOM_TRAITS;
+  local topol_traits=$SPHERICAL_TOPOL_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits -DTEST_TOPOL_TRAITS=$topol_traits";
+  compile_and_run_with_flags test_vertical_decomposition geodesic_arcs_on_sphere "$flags"
+}
+
+#---------------------------------------------------------------------#
 # segment traits
 #---------------------------------------------------------------------#
 test_segment_traits()
@@ -954,6 +1030,33 @@ test_non_caching_segment_traits()
       data/empty.zero data/segments/vertex non_caching_segment_traits
   else
     echo "   ERROR:    not executed   test_traits non_caching_segment_traits" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
+# polycurve traits
+#---------------------------------------------------------------------#
+test_polycurve_conic_traits()
+{
+  echo polycurve test starting
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$POLYCURVE_CONIC_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits conic_polycurve "$flags"
+  if [ -n "${SUCCESS}" ] ; then
+    #execute_commands_new_structure polycurves polyline_traits \
+     # COMPARE_Y_AT_X
+     run_trapped_test test_traits \
+      data/polycurves_conics/compare_y_at_x.pt \
+      data/polycurves_conics/compare_y_at_x.xcv \
+      data/polycurves_conics/compare_y_at_x.cv \
+      data/polycurves_conics/compare_y_at_x polycurve_conic_traits
+
+  else
+    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
   fi
   clean_tests
 }
@@ -1361,6 +1464,8 @@ touch $ERRORFILE
 #                    compile and run the tests
 #---------------------------------------------------------------------#
 
+
+
 if [ $# -ne 0 ] ; then
     case $1 in
 	-cmake) TEST_WITH_CMAKE="TRUE" ;;
@@ -1379,6 +1484,14 @@ fi
 if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     compile_and_run construction_test_suite_generator
 fi
+
+#waqar start
+test_polycurve_conic_traits
+#test_polyline_traits
+#waqar end
+
+#commenting of the code below it
+if [ 1 -eq 0 ]; then
 
 test_segment_traits
 test_non_caching_segment_traits
@@ -1425,6 +1538,14 @@ test_point_location_linear
 
 test_point_location_dynamic_segments
 
+test_batched_point_location_segments
+test_batched_point_location_linear
+test_batched_point_location_spherical_arcs
+
+test_vertical_decomposition_segments
+test_vertical_decomposition_linear
+# test_vertical_decomposition_spherical_arcs
+
 compile_and_run test_dual
 compile_and_run test_do_intersect
 compile_and_run test_zone
@@ -1439,6 +1560,8 @@ test_spherical_arcs_traits_adaptor
 compile_and_run test_removal
 compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
+
+fi
 
 # if any error occured then append the full error description file to error file
 

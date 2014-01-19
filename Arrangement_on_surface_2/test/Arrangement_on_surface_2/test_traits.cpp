@@ -75,12 +75,18 @@ int main(int argc, char* argv[])
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 #endif
-
+  //std::cout<< "**** 1 Geom_traits type: " << GEOM_TRAITS_TYPE << std::endl;
+  //std::cout<< "Test_geom_trait = " << TEST_GEOM_TRAITS << std:: endl;
   Geom_traits traits;
+
   Traits_test<Geom_traits> test(traits);
+  
   if (!test.parse(argc, argv)) return -1;
-  if (!test.init()) return -1;
-  if (!test.perform()) return -1;
+  
+  if (!test.init()) return -1;  //polycurves are made somewhere here.
+  
+  //if (!test.perform()) return -1;
+  //std::cout<< "**** 2 Geom_traits type: " << GEOM_TRAITS_TYPE << std::endl;
   return 0;
 }
 
