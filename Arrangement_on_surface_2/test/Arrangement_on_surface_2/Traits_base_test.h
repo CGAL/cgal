@@ -227,6 +227,7 @@ void Traits_base_test<Geom_traits_T>::clear()
 template <typename Geom_traits_T>
 bool Traits_base_test<Geom_traits_T>::perform()
 {
+  //std::cout << "*************" << m_filename_commands.c_str() << std::endl; // output is compare_y_at_x filepath
   std::ifstream is(m_filename_commands.c_str());
   if (!is.is_open()) {
     this->print_error(std::string("cannot open file ").append(m_filename_commands));
@@ -234,12 +235,12 @@ bool Traits_base_test<Geom_traits_T>::perform()
   }
 
   bool test_result = true;
-  std::cout << "Performing test: traits type is " << m_traitstype
+  std::cout << "Performing test: traits type is " << m_traitstype //m_traitstype = polycurve_conic_traits, arg 6 in script
             << ", input files are "
             << this->m_filename_points << " "
             << this->m_filename_xcurves << " "
             << this->m_filename_curves << " "
-            << m_filename_commands << std::endl;
+            << m_filename_commands << std::endl << std::endl;;
   this->m_eol_printed = true;
   std::string line;
   char buff[1024];
@@ -249,9 +250,10 @@ bool Traits_base_test<Geom_traits_T>::perform()
     std::istringstream str_stream(line, std::istringstream::in);
     buff[0] = '\0';
     str_stream.getline(buff, 1024, ' ');
-    std::string str_command(buff);
+    std::string str_command(buff);    //buff is "compare_y_at_x" which is a string taken from the start of every line of the file compare_y_at_x
     std::size_t location = 0;
     m_violation_occurred = m_violation_tested = NON;
+
 
     if ((int)str_command.find("_precondition", 0) != -1) {
       location = str_command.find("_precondition", 0);

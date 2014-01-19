@@ -54,6 +54,7 @@ template <typename stream>
 bool IO_base_test<T_Geom_traits>::
 read_xcurve(stream& is, typename T_Geom_traits::X_monotone_curve_2& xcv)
 {
+    //std::cout<< "**** curve is being read: Test_GEOM_TRAITS: " << TEST_GEOM_TRAITS<<std::endl;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
   CGAL_assertion(!is.fail());
@@ -139,6 +140,65 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
     points.push_back(p);
   }
   cv = m_geom_traits.construct_curve_2_object()(points.begin(), points.end());
+  return true;
+}
+
+//polycurve_conic
+#elif Test_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
+                                                 X_monotone_curve_2& xcv)
+{
+  unsigned int num_points;
+  is >> num_points;
+  std::vector<Point_2> points;
+  points.clear();
+  for (unsigned int j = 0; j < num_points; ++j) {
+    Basic_number_type x, y;
+    is >> x >> y;
+    Point_2 p(x, y);
+    points.push_back(p);
+  }
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(),
+                                                            points.end());
+  return true;
+}
+
+template <>
+template <typename stream>
+bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
+{
+
+  unsigned int num_points;
+  is >> num_points;
+  std::vector<Point_2> points;
+  points.clear();
+  for (unsigned int j = 0; j < num_points; ++j) {
+    Basic_number_type x, y;
+    is >> x >> y;
+    Point_2 p(x, y);
+    points.push_back(p);
+  }
+
+  //make conic segments from every set of 3 points and enter them in construct curve functor.
+   std::vector<Point_2> conic_curve_points;
+   std::vector<Curve_2> Conic_sections;
+   for (int i = 0; i < points.sie(); ++i)
+   {
+     conic_curve_points.push_back(points[i]);
+
+     if( conic_curve_points.size() == 3 )
+     {
+        //create segment and push back
+        Curve_2 section( conic_curve_points[0], conic_curve_points[1], conic_curve_points[2] );
+        Conic_sections.push_back(section);
+        conic_curve_points.clear();      
+     }
+   }
+
+
+  cv = m_geom_traits.construct_curve_2_object()(Conic_sections.begin(), Conic_sections.end());
   return true;
 }
 

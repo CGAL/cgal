@@ -140,6 +140,9 @@ void IO_test<Geom_traits_T>::set_filenames(const char* points_filename,
 template <typename Geom_traits_T>
 bool IO_test<Geom_traits_T>::parse(int argc, char* argv[])
 {
+  //waqar
+  // for(int i=0; i<argc; i++)
+  //   std::cout<< "arg #:   "<< i << argv[i] <<  std::endl;
   if (argc < 4) {
     print_info(std::string("Usage: ").append(argv[0]).
                append(" points_file xcurves_file curves_file"));
@@ -149,6 +152,7 @@ bool IO_test<Geom_traits_T>::parse(int argc, char* argv[])
   m_filename_points.assign(argv[1]);
   m_filename_xcurves.assign(argv[2]);
   m_filename_curves.assign(argv[3]);
+
   return true;
 }
 
@@ -159,6 +163,11 @@ bool IO_test<Geom_traits_T>::init()
   if (!read_points(m_filename_points.c_str(), m_points)) return false;
   if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves)) return false;
   if (!read_curves(m_filename_curves.c_str(), m_curves)) return false;
+
+  for (int i = 0; i < m_points.size(); ++i)
+  {
+    std::cout<< m_points[i] <<  " " ;
+  }
   return true;
 }
 
@@ -226,6 +235,7 @@ bool IO_test<Geom_traits_T>::read_points(const char* filename,
 
   std::string line;
   while (skip_comments(p_stream, line)) {
+    //std::cout << "\n ***" << line << std::endl;
     std::istringstream line_stream(line);
     typename Geom_traits::Point_2 p;
     this->read_point(line_stream, p);

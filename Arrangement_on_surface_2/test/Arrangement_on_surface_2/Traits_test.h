@@ -418,11 +418,12 @@ bool
 Traits_test<Geom_traits_T>::
 compare_y_at_x_wrapper(std::istringstream& str_stream)
 {
+  //std::cout<< "******** I am in the compare_y_at_x wrapper" << std::endl;
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
   std::cout << "Test: compare_y_at_x( " << this->m_points[id1] << ","
-            << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
+           << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
 
   unsigned int real_answer =
     this->m_geom_traits.compare_y_at_x_2_object()(this->m_points[id1],
