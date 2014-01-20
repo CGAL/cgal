@@ -32,6 +32,7 @@ namespace CGAL {
       // basic geometric types
       typedef typename Kernel::Point_3 Point;
       typedef typename Kernel::Vector_3 Vector;
+      typedef typename Kernel::Vector_2 Vector2;
       typedef typename Kernel::Plane_3 Plane_3;
       
       //more advance container for geometric types
@@ -76,6 +77,31 @@ namespace CGAL {
       operator FT() const {return ExpectedValue();}//so we can sort by expected value
 
       void updatePoints(const std::vector<int> &shapeIndex);
+      bool equals(InputConstIterator first, const Primitive *other) const {
+        FT e2 = m_epsilon * m_epsilon;
+        int fit = 0;
+        int tested = 0;
+        int toTest = std::min<unsigned int>(9, m_indices.size());
+        for (unsigned int i = 0;i<toTest;i++) {
+          int idx = getRandomInt() % m_indices.size();
+          if (other->squared_distance(first[m_indices[idx]].first) <= e2)
+            if (other->cos_to_normal(first[m_indices[idx]].first, first[m_indices[idx]].second) > m_normalThresh)
+              fit++;
+        }
+        tested = toTest;
+        toTest = std::min<unsigned int>(9, other->m_indices.size());
+
+        for (unsigned int i = 0;i<toTest;i++) {
+          int idx = getRandomInt() % other->m_indices.size();
+          if (squared_distance(first[other->m_indices[idx]].first) <= e2)
+            if (cos_to_normal(first[other->m_indices[idx]].first, first[other->m_indices[idx]].second) > m_normalThresh)
+              fit++;
+        }
+        tested += toTest;
+
+        return fit >= 2 * tested / 3;
+      }
+
       bool isValid() const {return m_isValid;}
       std::vector<int> *getPointsIndices() {return &m_indices;}
 
@@ -127,7 +153,7 @@ namespace CGAL {
         return ExpectedValue() < c.ExpectedValue();
       }
       
-    private:
+    protected:
       unsigned int cost_function(InputConstIterator &first, const std::vector<int> &shapeIndex, FT epsilon, FT normal_threshold, const std::vector<unsigned int> &indices);
 
       static bool default_cost_function (const Primitive_ab<Kernel, inputDataType> *_this, 
@@ -184,6 +210,12 @@ namespace CGAL {
     {
       switch (id)
       {
+      case CONE:
+        return new Cone<Kernel, inputDataType>(_epsilon, _normalThresh);
+
+      case TORUS:
+        return new Torus<Kernel, inputDataType>(_epsilon, _normalThresh);
+
       case PLANE:
         return new Plane<Kernel, inputDataType>(_epsilon, _normalThresh);
 
@@ -231,6 +263,8 @@ namespace CGAL {
 
     template <typename Kernel, class inputDataType>
     void Primitive_ab<Kernel, inputDataType>::updatePoints(const std::vector<int> &shapeIndex) {
+      if (!m_indices.size())
+        return;
       int start = 0, end = m_indices.size() - 1;
       while (start < end) {
         while (shapeIndex[m_indices[start]] == -1 && start < end) start++;

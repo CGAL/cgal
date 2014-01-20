@@ -31,9 +31,11 @@
 #include "Octree.h"
 #include "Primitive.h"
 
+#include "Cone.h"
 #include "Cylinder.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "Torus.h"
 
 //for octree ------------------------------
 #include <CGAL/Kd_tree.h>
@@ -280,7 +282,7 @@ namespace CGAL {
           //if we reach this point, there is an overlaps between best one and position_stop
           //so request refining bound on position_stop
           improved |= improveBound(l_list_candidates.at(position_stop), _SizeP, m_num_subsets, m_options.m_minNbPoints);//this include the next subset for computing bounds, -> the score is then returned by ExpectedValue()	
-          
+
           //test again after refined
           if  (l_list_candidates.back()->minBound() > l_list_candidates.at(position_stop)->maxBound() ) break;//the intervals do not overlaps anymore
         }
@@ -400,7 +402,7 @@ namespace CGAL {
             //done = m_global_octree->getPointsInCellContainingPoint((m_it_Point_Normal + l_index_point_p1)->first, getLevelOctree(), indices, m_shapeIndex);
             done = m_global_octree->drawSamplesFromCellContainingPoint((m_it_Point_Normal + l_index_point_p1)->first, getLevelOctree(), indices, m_shapeIndex, requiredSamples);
           } while (m_shapeIndex[l_index_point_p1] != -1 || !done);
-          
+
           nbNewCandidates++;
           
           //add candidate for each type of primitives
