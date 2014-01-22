@@ -1,4 +1,4 @@
-#define CGAL_MESH_3_PROTECTION_DEBUG 1
+//#define CGAL_MESH_3_PROTECTION_DEBUG 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -9,6 +9,8 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
+
+#include <cassert>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -93,4 +95,8 @@ int main(int argc, char** argv)
   c3t3.output_to_medit(medit_file);
   std::ofstream binary_file("out-mesh-polylines.binary.cgal", std::ios::binary|std::ios::out);
   save_binary_file(binary_file, c3t3);
+  std::cout << "Number of vertices in c3t3: "
+            << c3t3.triangulation().number_of_vertices() << std::endl;
+  assert(c3t3.triangulation().number_of_vertices() > 700);
+  assert(c3t3.triangulation().number_of_vertices() < 1000);
 }
