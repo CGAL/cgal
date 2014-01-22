@@ -718,7 +718,7 @@ public:
   }
 
   int size_of_contours() const {
-    return m_slices.back().size();
+    return m_slices.empty() ? 0 : m_slices.back().size();
   }
 
   boost::shared_ptr< std::vector<typename Kernel::Point_3> >
