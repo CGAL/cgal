@@ -54,34 +54,33 @@ struct AABB_traits_base<Primitive,true>{
   typename  Primitive::Shared_data m_primitive_data;
 
   #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-  template <class PrimitiveType, typename ... T>
+  template <typename ... T>
   void set_shared_data(T ... t){
-    m_primitive_data=PrimitiveType::construct_shared_data(t...);
+    m_primitive_data=Primitive::construct_shared_data(t...);
   }
   #else
-  template <class PrimitiveType>
   void set_shared_data(){
-    m_primitive_data=PrimitiveType::construct_shared_data();
+    m_primitive_data=Primitive::construct_shared_data();
   }
 
-  template <class PrimitiveType, class T1>
+  template <class T1>
   void set_shared_data(T1 t1){
-    m_primitive_data=PrimitiveType::construct_shared_data(t1);
+    m_primitive_data=Primitive::construct_shared_data(t1);
   }
 
-  template <class PrimitiveType, class T1,class T2,class T3>
+  template <class T1,class T2,class T3>
   void set_shared_data(T1 t1,T2 t2,T3 t3){
-    m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3);
+    m_primitive_data=Primitive::construct_shared_data(t1,t2,t3);
   }
 
-  template <class PrimitiveType, class T1,class T2,class T3,class T4>
+  template <class T1,class T2,class T3,class T4>
   void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4){
-    m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4);
+    m_primitive_data=Primitive::construct_shared_data(t1,t2,t3,t4);
   }
 
-  template <class PrimitiveType, class T1,class T2,class T3,class T4,class T5>
+  template <class T1,class T2,class T3,class T4,class T5>
   void set_shared_data(T1 t1,T2 t2,T3 t3,T4 t4,T5 t5){
-    m_primitive_data=PrimitiveType::construct_shared_data(t1,t2,t3,t4,t5);
+    m_primitive_data=Primitive::construct_shared_data(t1,t2,t3,t4,t5);
   }
   #endif
   const typename Primitive::Shared_data& shared_data() const {return m_primitive_data;}
