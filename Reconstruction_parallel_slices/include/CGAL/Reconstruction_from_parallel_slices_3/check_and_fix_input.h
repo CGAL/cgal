@@ -550,8 +550,8 @@ template <class Kernel, bool verbose=false>
 class Contour_checker_and_fixer{
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Point_2 Point_2;
-  typedef boost::shared_ptr< std::vector<typename Kernel::Point_3> > Point_container; /// \todo this should be a template
-  typedef std::vector< boost::shared_ptr< std::vector<Point_3> > > Slice;
+  typedef boost::shared_ptr< std::vector<Point_3> > Point_container; /// \todo this should be a template
+  typedef std::vector< Point_container > Slice;
   enum State{SLICE_BEGUN, SLICE_ENDED};
 ///data members
   std::vector< Slice > m_slices;
@@ -722,13 +722,21 @@ public:
   }
 
   boost::shared_ptr< std::vector<typename Kernel::Point_3> >
-  contour(int i){
+  contour(std::size_t i){
+    if (m_slices.empty() || m_slices.back().size() <= i )
+      return boost::shared_ptr< std::vector<typename Kernel::Point_3> >(
+          new std::vector<typename Kernel::Point_3>()
+        );
     return m_slices.back()[i];
   }
 
   boost::shared_ptr< std::vector<typename Kernel::Point_3> >
   contours_back()
   {
+    if ( m_slices.empty() || m_slices.back().empty() )
+      return boost::shared_ptr< std::vector<typename Kernel::Point_3> >(
+          new std::vector<typename Kernel::Point_3>()
+        );
     return m_slices.back().back();
   }
 
