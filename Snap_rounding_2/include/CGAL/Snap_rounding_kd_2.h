@@ -31,29 +31,149 @@
 
 #include <boost/type_traits/is_pointer.hpp>
 
+//waqar
+#include <CGAL/Kd_tree.h>
+#include <CGAL/Search_traits_2.h>
+
+
+//define search trait class here. 
+//
+//
+//in namespace internal.
+
+
+
 namespace CGAL {
+
+
+//////////////////////
+//////////////////////
+//My_point
+//////////////////////
 
 template<class Traits, class SAVED_OBJECT>
 class My_point : public Traits::Point_2 {
 private:
-  typedef typename Traits::Point_2              Point_2;
-  typedef typename Traits::FT                   NT;
-
+  typedef typename Traits::Point_2                                Point_2;
+  typedef typename Traits::FT                                     NT;
+  
 public:
+  typedef typename Traits::Point_2                                Point_d;
+  typedef typename Traits::FT                                     FT;
+  
+  typedef typename Traits::Iso_rectangle_2                        Iso_rectangle_2;
+  typedef typename Traits::Circle_2                               Circle_2;
+  typedef typename Traits::Cartesian_const_iterator_2             Cartesian_const_iterator_2;
+  typedef typename Traits::Construct_cartesian_const_iterator_2   Construct_cartesian_const_iterator_2;
+
+  typedef typename Traits::Construct_min_vertex_2                 Construct_min_vertex_2;
+  typedef typename Traits::Construct_max_vertex_2                 Construct_max_vertex_2;
+  typedef typename Traits::Construct_center_2                     Construct_center_2;
+  typedef typename Traits::Construct_iso_rectangle_2              Construct_iso_rectangle_2;
+
+  typedef typename Traits::Compute_squared_radius_2               Compute_squared_radius_2;
+
+  
   Point_2 orig;
   SAVED_OBJECT object;
-  My_point(const Point_2& p, const Point_2& inp_orig, SAVED_OBJECT obj) :
-           Point_2(p), orig(inp_orig), object(obj) {}
+  My_point(const Point_2& p, const Point_2& inp_orig, SAVED_OBJECT obj) : Point_2(p), orig(inp_orig), object(obj) {}
   My_point(const Point_2& p) : Point_2(p), orig(Point_2(0, 0)) {}
   My_point() : Point_2(),orig() {}
   My_point(NT x, NT y) : Point_2(x, y), orig(Point_2(0, 0)) {}
 };
 
+//////////////////////
+//////////////////////
+//Kd_tree_interface_new_2d
+//////////////////////
+
+template <class  PT>
+class  Kdtree_new_interface_2d
+{
+public:
+  typedef PT                                                      Point;
+  typedef typename PT::Point_d                                    Point_2; 
+  typedef typename PT::FT                                         FT; 
+    
+  typedef typename PT::Iso_rectangle_2                            Iso_rectangle_2;
+  typedef typename PT::Circle_2                                   Circle_2;
+  typedef typename PT::Cartesian_const_iterator_2                 Cartesian_const_iterator_2;
+  typedef typename PT::Construct_cartesian_const_iterator_2       Construct_cartesian_const_iterator_2;
+
+  typedef typename PT::Construct_min_vertex_2                     Construct_min_vertex_2;
+  typedef typename PT::Construct_max_vertex_2                     Construct_max_vertex_2;
+  typedef typename PT::Construct_center_2                         Construct_center_2;
+  typedef typename PT::Construct_iso_rectangle_2                  Construct_iso_rectangle_2;
+
+  typedef typename PT::Compute_squared_radius_2                   Compute_squared_radius_2;
+
+      static  int dimension( const PT  & pnt )
+    { 
+      return pnt.dimension(); //        return  pnt.dimensions();
+    }
+
+    static  int    compare( int  d, const PT   & a, const PT    & b )
+    {
+        if  ( a[ d ] < b[ d ] )
+            return  -1;
+        if  ( a[ d ] > b[ d ] )
+            return  1;
+
+        return  0;
+    }
+    static  void   copy_coord( int  d, PT   & a, const PT    & b )
+    {
+      if  ( d == 0 )
+        a = PT( b[ 0 ], a[1] );
+      else
+        if  ( d == 1 )
+          a = PT( a[ 0 ], b[1] );
+        else {
+          CGAL_error();
+        }
+    }
+};
+
+
+
+// //////////////////////
+// //////////////////////
+// //Search_traits_new_2
+// //////////////////////
+
+// template <class K > 
+// class Search_traits_new_2 {
+
+// public:
+//   typedef typename K::Point_2                               Point_d;
+//   typedef typename K::Iso_rectangle_2                       Iso_box_d;
+//   typedef typename K::Circle_2                              Sphere_d;
+//   typedef typename K::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
+//   typedef typename K::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
+
+//   typedef typename K::Construct_min_vertex_2                Construct_min_vertex_d;
+//   typedef typename K::Construct_max_vertex_2                Construct_max_vertex_d;
+//   typedef typename K::Construct_center_2                    Construct_center_d;
+//   typedef typename K::Compute_squared_radius_2              Compute_squared_radius_d;
+
+//   typedef typename K::Construct_iso_rectangle_2             Construct_iso_box_d;
+//   typedef typename K::FT                                    FT;
+
+//   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+//     return Construct_cartesian_const_iterator_d();
+//   }  
+// };
+
+//////////////////////
+//////////////////////
+//Multiple Kd_trees
+//////////////////////
+
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
   CGAL_static_assertion_msg((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
 private:
-  typedef Traits_                                       Traits;
+  typedef Traits_                                       Traits; //Snap_rounding_traits< <cartesean <NT> > >
   typedef typename Traits::FT                           NT;
   typedef typename Traits::Segment_2                    Segment_2;
   typedef typename Traits::Point_2                      Point_2;
@@ -62,10 +182,14 @@ private:
   typedef typename Traits::Direction_2                  Direction_2;
   typedef typename Traits::Line_2                       Line_2;
   typedef typename Traits::Aff_transformation_2         Transformation_2;
-  typedef My_point<Traits, SAVED_OBJECT>                My_point_saved;
-  typedef CGAL::Kdtree_interface_2d<My_point_saved>     Kd_interface;
+  
+  //CREATION OF TREE
+  typedef My_point<Traits, SAVED_OBJECT>                My_point_saved;   //Traits= snap_rounding_traits, SAVED_OBJECT= HOT_PIXEL * pointer.
+  //typedef CGAL::Kdtree_interface_2d<My_point_saved>     Kd_interfacea;
+  typedef Kdtree_new_interface_2d<My_point_saved>       Kd_interface;
   typedef CGAL::Kdtree_d<Kd_interface>                  Kd_tree;
   typedef typename Kd_tree::Box                         Box;
+  
   typedef std::list<My_point_saved>                     Points_List;
   typedef std::pair<Direction_2, NT>                    Direction_nt_pair;
   typedef std::pair<Kd_tree *,Direction_nt_pair>        Kd_triple;
@@ -87,6 +211,10 @@ private:
 
   typedef std::list<Direction_2>                        Direction_list;
   typedef typename Direction_list::const_iterator       Direction_const_iter;
+
+  //WAQAR:: CREATION OF NEW KD_TREE
+  typedef CGAL::Search_traits_2<Kd_interface>           Search_traits;
+  typedef CGAL::Kd_tree<Search_traits>                  Kd_tree_new;
 
 private:
   Traits m_gt;
@@ -155,10 +283,12 @@ private:
 
   inline NT min BOOST_PREVENT_MACRO_SUBSTITUTION  (NT x1, NT x2, NT x3, NT x4, NT x5,
                 NT x6)
-  {return(min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), min BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),min BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
+  {return(min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (min BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), 
+                                                min BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),min BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
 
   inline NT max BOOST_PREVENT_MACRO_SUBSTITUTION (NT x1, NT x2, NT x3, NT x4, NT x5, NT x6)
-  {return(max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), max BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),max BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
+  {return(max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (max BOOST_PREVENT_MACRO_SUBSTITUTION (x1, x2), 
+                                                max BOOST_PREVENT_MACRO_SUBSTITUTION (x3, x4)),max BOOST_PREVENT_MACRO_SUBSTITUTION (x5, x6)));}
 
   /*! */
   Direction_2 get_direction(Segment_2 seg)
