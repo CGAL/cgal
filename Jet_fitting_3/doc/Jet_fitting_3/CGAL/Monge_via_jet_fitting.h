@@ -13,7 +13,7 @@ the particular information returned depending on the degrees specified
 for the polynomial fitting and for the Monge form. 
 
 If `CGAL_EIGEN3_ENABLED` is defined, `LocalKernel` and `SvdTraits`
-template parameters have defaults, `Cartesian<double>` and `Eigen_svd` respectively.
+template parameters have defaults, `Simple_cartesian<double>` and `Eigen_svd` respectively.
 
 \tparam DataKernel provides the geometric classes and tools 
 corresponding to the input points, and also members of the 
