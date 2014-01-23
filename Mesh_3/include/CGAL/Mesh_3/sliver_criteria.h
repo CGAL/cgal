@@ -70,17 +70,6 @@ public:
           = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
         cell->set_sliver_value(value);
       }
-      //else {
-      //  // The following assertion would fail when the Intel x87 math
-      //  // coprocessor is used (on most Intel 32 bits architectures), if
-      //  // the IA_force_to_double function was not used. The reason is that
-      //  // the value on the left is stored in memory, in a plain 64 bits
-      //  // floating point number, whereas the value on the right might be
-      //  // computed using the 80 bits floating point registers of the x87
-      //  // unit. -- Laurent Rineau, 2013/12/09
-      //  CGAL_assertion(cell->sliver_value()
-      //        == CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell))));
-      //}
       return cell->sliver_value();
     }  
     return operator()(tr_.tetrahedron(cell));
