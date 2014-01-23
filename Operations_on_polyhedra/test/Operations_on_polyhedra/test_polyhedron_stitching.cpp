@@ -19,7 +19,7 @@ void test(const char* fname)
   input >> P;
 
   assert(P.size_of_vertices()!=0);
-
+  
   CGAL::polyhedron_stitching(P);
 
   std::ofstream output("output.off");
@@ -38,5 +38,6 @@ int main()
   test("data_stitching/half_border.off");
   test("data_stitching/mid_border.off");
   test("data_stitching/multiple_incidence.off");
+  test("data_stitching/incidence_3.off");
 }
 

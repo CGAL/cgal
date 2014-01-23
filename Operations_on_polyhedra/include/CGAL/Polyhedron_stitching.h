@@ -81,6 +81,7 @@ struct Naive_border_stitching_modifier:
   typedef typename HDS::Halfedge_handle Halfedge_handle;
   typedef typename HDS::Vertex_handle Vertex_handle;
   typedef typename HDS::Halfedge::Base HBase;
+  typedef typename Polyhedron::Vertex::Point Point_3;
 
   std::vector <std::pair<Halfedge_handle,Halfedge_handle> >& hedge_pairs_to_stitch;
 
@@ -109,6 +110,9 @@ struct Naive_border_stitching_modifier:
 
     /// Merge the vertices
     std::vector<Vertex_handle> vertices_to_delete;
+    // since there might be several vertices with identical point
+    // we use the following map to choose one vertex per point
+    std::map<Point_3, Vertex_handle> vertices_kept;
     for (std::size_t k=0; k<nb_hedges; ++k)
     {
       Halfedge_handle h1=hedge_pairs_to_stitch[k].first;
@@ -123,29 +127,47 @@ struct Naive_border_stitching_modifier:
       Vertex_handle h2_src=h2->opposite()->vertex();
 
       //update vertex pointers: target of h1 vs source of h2
-      if ( h1_tgt != h2_src )
+      Vertex_handle v_to_keep=h1_tgt;
+      std::pair<
+        typename std::map<Point_3, Vertex_handle>::iterator,
+        bool > insert_res =
+          vertices_kept.insert( std::make_pair(v_to_keep->point(), v_to_keep) );
+      if (!insert_res.second && v_to_keep!=insert_res.first->second)
+      {
+        v_to_keep=insert_res.first->second;
+        //we remove h1->vertex()
+        vertices_to_delete.push_back( h1_tgt );
+        update_target_vertex(h1, v_to_keep, decorator);
+      }
+      if (v_to_keep!=h2_src)
       {
         //we remove h2->opposite()->vertex()
         vertices_to_delete.push_back( h2_src );
-        update_target_vertex(h2->opposite(), h1_tgt, decorator);
-        decorator.set_vertex_halfedge(h1_tgt, h1);
+        update_target_vertex(h2->opposite(), v_to_keep, decorator);
       }
-      else
-        decorator.set_vertex_halfedge(h1_tgt, h1);
+      decorator.set_vertex_halfedge(v_to_keep, h1);
 
       Vertex_handle h1_src=h1->opposite()->vertex();
       Vertex_handle h2_tgt=h2->vertex();
+
       //update vertex pointers: target of h1 vs source of h2
-      if ( h1_src!= h2_tgt )
+      v_to_keep=h2_tgt;
+      insert_res =
+          vertices_kept.insert( std::make_pair(v_to_keep->point(), v_to_keep) );
+      if (!insert_res.second && v_to_keep!=insert_res.first->second)
       {
-        CGAL_assertion( h1_src->point() == h2_tgt->point() );
+        v_to_keep=insert_res.first->second;
+        //we remove h2->vertex()
+        vertices_to_delete.push_back( h2_tgt );
+        update_target_vertex(h2, v_to_keep, decorator);
+      }
+      if (v_to_keep!=h1_src)
+      {
         //we remove h1->opposite()->vertex()
         vertices_to_delete.push_back( h1_src );
-        update_target_vertex(h1->opposite(), h2_tgt, decorator);
-        decorator.set_vertex_halfedge(h2_tgt, h1->opposite());
+        update_target_vertex(h1->opposite(), v_to_keep, decorator);
       }
-      else
-        decorator.set_vertex_halfedge(h1_src, h1->opposite());
+      decorator.set_vertex_halfedge(v_to_keep, h1->opposite());
     }
 
     /// Update next/prev of neighbor halfedges (that are not set for stiching)
