@@ -19,7 +19,7 @@ By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>
 \sa `RegularTriangulationCellBase_3` 
 \sa `RegularTriangulationTraits_3` 
 \sa `CGAL::Regular_triangulation_3<Traits,Tds>` 
-\sa `CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`
+\sa `CGAL::Regular_triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`
 
 */
 

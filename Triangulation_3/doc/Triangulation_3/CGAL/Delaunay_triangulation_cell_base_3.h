@@ -19,7 +19,7 @@ By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>
 \sa `DelaunayTriangulationCellBase_3` 
 \sa `DelaunayTriangulationTraits_3` 
 \sa `CGAL::Delaunay_triangulation_3<Traits,Tds>` 
-\sa `CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, CellBase_3>`
+\sa `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, CellBase_3>`
 
 */
 
