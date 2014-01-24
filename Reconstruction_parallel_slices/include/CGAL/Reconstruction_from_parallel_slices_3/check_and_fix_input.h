@@ -626,7 +626,7 @@ public:
 
     m_intersecting_polygons.clear();
 
-    if (m_slices.back().size()<2)
+    if (m_slices.back().size()>1)
       check_intersection_in_slice<Kernel>(m_slices.back(),
                                           m_constant_coordinate,
                                           m_intersecting_polygons);
