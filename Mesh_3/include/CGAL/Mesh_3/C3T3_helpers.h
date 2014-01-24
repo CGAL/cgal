@@ -1006,7 +1006,7 @@ private:
     Cell_data_backup(const Cell_handle& c)
       : cell_ids_(c)
     {
-      if(Subdomain_index() != c->subdomain_index())
+      if(Subdomain_index() != c->subdomain_index() && c->is_cache_valid())
         sliver_value_ = c->sliver_value();
       else
         sliver_value_ = 0.;
@@ -2756,16 +2756,17 @@ restore_from_cells_backup(const CellsVector& cells,
     if(tr_.is_infinite(*cit))
       continue;//don't restore infinite cells, they have not been backed-up
     
-    typename CellDataSet::const_iterator cd_it = cells_backup.find(*cit);
+    Cell_data_backup cd(*cit);
+    typename CellDataSet::const_iterator cd_it = cells_backup.find(cd);
     if(cd_it != cells_backup.end())
     {
       typename CellDataSet::value_type cell_data = *cd_it;
       if(cell_data.restore(*cit, c3t3_))
       {
         CGAL_assertion_code(success_nb++);
-        break; //cell found and data restored, go to next Cell_handle
       }
     }
+    else CGAL_assertion(false);
   }
   CGAL_assertion(success_nb == cells_backup.size());
 }
