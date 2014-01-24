@@ -72,6 +72,8 @@ int main(int argc,char** argv){
             std::cerr << "Popping the slice made of polygons {";
             std::copy(slice.begin(), slice.end(), std::ostream_iterator<int>(std::cerr," ") );
             std::cerr << " } that have intersecting polygons (or is empty)\n";
+            for (std::size_t i=0; i<checker.size_of_contours(); ++i)
+              write_polygon(*checker.contour(i), bad);
             checker.pop_slice_back();
           }
           slice.clear();

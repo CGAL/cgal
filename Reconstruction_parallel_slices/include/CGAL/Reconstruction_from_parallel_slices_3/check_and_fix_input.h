@@ -717,7 +717,7 @@ public:
       return false;
   }
 
-  int size_of_contours() const {
+  std::size_t size_of_contours() const {
     return m_slices.empty() ? 0 : m_slices.back().size();
   }
 
