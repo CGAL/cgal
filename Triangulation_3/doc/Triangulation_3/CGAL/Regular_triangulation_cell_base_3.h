@@ -51,7 +51,7 @@ circumcenter is not supposed to be computed
 by the constructor `ConstructWeightedCircumcenter` of the traits
 class, so the returned point has no weight.
 */ 
-const Traits::Bare_point& circumcenter(const Traits& gt = Traits()) const; 
+const Traits::Bare_point& weighted_circumcenter(const Traits& gt = Traits()) const; 
 
 /// @}
 
