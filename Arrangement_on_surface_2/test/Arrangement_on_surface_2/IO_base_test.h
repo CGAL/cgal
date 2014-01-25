@@ -1066,11 +1066,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   read_point(is, p1);
   read_point(is, p2);
   CGAL_assertion(p1 != p2);
-  size_t num_horizontal_revolutions, num_vertical_revolutions;
-  is >> num_horizontal_revolutions >> num_vertical_revolutions;
-  cv = m_geom_traits.construct_curve_2_object()(p1, p2,
-                                                num_horizontal_revolutions,
-                                                num_vertical_revolutions);
+  cv = m_geom_traits.construct_curve_2_object()(p1, p2);
   return true;
 }
 

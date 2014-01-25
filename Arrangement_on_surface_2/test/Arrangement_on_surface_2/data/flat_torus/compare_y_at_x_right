@@ -1,0 +1,6 @@
+compare_y_at_x_right 26 29 4 SMALLER
+compare_y_at_x_right 27 28 4 SMALLER
+compare_y_at_x_right 29 26 4 LARGER
+compare_y_at_x_right 28 27 4 LARGER
+compare_y_at_x_right 27 27 4 EQUAL
+compare_y_at_x_right 28 28 4 EQUAL

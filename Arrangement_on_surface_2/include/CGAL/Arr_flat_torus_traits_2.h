@@ -34,6 +34,8 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Fraction_traits.h>
 
 namespace CGAL {
 
@@ -1145,6 +1147,16 @@ public:
    * do not cross the identification arc.
    */
   class Make_x_monotone_2 {
+  public:
+    typedef CGAL::Fraction_traits<FT>                   My_traits;
+    typedef typename My_traits::Numerator_type          Numerator_type;
+    typedef typename My_traits::Denominator_type        Denominator_type;
+    typedef typename My_traits::Compose                 Compose;
+    typedef typename My_traits::Decompose               Decompose;
+    typedef typename CGAL::Coercion_traits<Numerator_type,
+                                           Denominator_type>::Type
+                                                        Result_type;
+
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
@@ -1158,38 +1170,159 @@ public:
 
     friend class Arr_flat_torus_traits_2<Kernel>;
 
+    //! The reciprocal of the curve slope (dx/dy).
+    mutable FT m_slope;
+
+    /*! Cut the given curve into x-monotone subcurves and insert them into the
+     * given output iterator.
+     * \param source the curve source point.
+     * \param target the curve target point.
+     * \param oi the output iterator, whose value-type is Object. The output
+     *           object is a wrapper of an X_monotone_curve_2.
+     * \return the past-the-end iterator.
+     * \pre The curve is not degenerate.
+     * \pre The curve does not cross an x-grid line.
+     */
+    template<typename OutputIterator_>
+    OutputIterator_ operator()(const Point_2& source, const Point_2& target,
+                               OutputIterator_ oi) const
+    {
+      std::cout << "source: " << source << std::endl;
+      std::cout << "target: " << target << std::endl;
+      FT xs = source.x();
+      FT ys = source.y();
+      FT xt = target.x();
+      FT yt = target.y();
+
+      Numerator_type ys_num;
+      Denominator_type ys_den ;
+      Decompose()(ys, ys_num, ys_den);
+      Result_type ys_quotient, ys_reminder;
+      CGAL::div_mod(ys_num, ys_den, ys_quotient, ys_reminder);
+
+      Numerator_type yt_num;
+      Denominator_type yt_den;
+      Decompose()(yt, yt_num, yt_den);
+      Result_type yt_quotient, yt_reminder;
+      CGAL::div_mod(yt_num, yt_den, yt_quotient, yt_reminder);
+
+      typename Traits::Construct_x_monotone_curve_2 ctr =
+        m_traits.construct_x_monotone_curve_2_object();
+
+      ys -= ys_quotient;
+      yt_quotient -= ys_quotient;
+
+      // first
+      if (yt_quotient >= 1) {
+        FT dy = 1 - ys;
+        FT x_next_y = m_slope * dy + xs;
+        Point_2 from(xs, ys);
+        Point_2 to(x_next_y, 1);
+        X_monotone_curve_2 xcv = ctr(from, to);
+        *oi++ = make_object(xcv);
+        xs = x_next_y;
+        --yt_quotient;
+      }
+      // rest
+      Point_2 curr(xs, 0);
+      while (yt_quotient >= 1) {
+        FT x_next_y = m_slope + xs;
+        Point_2 to(x_next_y, 1);
+        X_monotone_curve_2 xcv = ctr(curr, to);
+        *oi++ = make_object(xcv);
+        xs = x_next_y;
+        --yt_quotient;
+        curr = Point_2(xs, 0);
+      }
+      // last
+      if (yt_reminder != 0) {
+        Point_2 to(xt, Compose()(yt_reminder, yt_den));
+        X_monotone_curve_2 xcv = ctr(curr, to);
+        *oi++ = make_object(xcv);
+      }
+      return oi;
+    }
+
   public:
     /*! Cut the given curve into x-monotone subcurves and insert them into the
-     * given output iterator. As spherical_arcs are always x_monotone, only one
-     * object will be contained in the iterator.
-     * \param xc the curve.
+     * given output iterator.
+     * \param cv the curve.
      * \param oi the output iterator, whose value-type is Object. The output
-     *           object is a wrapper of either an X_monotone_curve_2, or - in
-     *           case the input spherical_arc is degenerate - a Point_2 object.
+     *           object is a wrapper of either an X_monotone_curve_2, or, in
+     *           case the input curve is degenerate, a Point_2 object.
      * \return the past-the-end iterator.
      */
     template<typename OutputIterator_>
-    OutputIterator_ operator()(const Curve_2& c, OutputIterator_ oi) const
+    OutputIterator_ operator()(const Curve_2& cv, OutputIterator_ oi) const
     {
-      //! \todo
-      if (c.is_degenerate()) {
-        // The spherical_arc is a degenerate point - wrap it with an object:
-        *oi++ = make_object(c.right());
+      if (cv.is_degenerate()) {
+        // The curve is a degenerate point---wrap it with an object:
+        *oi++ = make_object(cv.right());
         return oi;
       }
 
-      if (c.is_x_monotone()) {
-        // The spherical arc is monotone - wrap it with an object:
+      std::cout << "cv.is_x_monotone(): " << cv.is_x_monotone() << std::endl;
+
+      if (cv.is_x_monotone()) {
+        // The curve is monotone---wrap it with an object:
         // *oi++ = make_object(X_monotone_curve_2(c));
-        const X_monotone_curve_2* xc = &c;
-        *oi++ = make_object(*xc);
+        const X_monotone_curve_2* xcv = &cv;
+        *oi++ = make_object(*xcv);
         return oi;
       }
 
-      // if (c.is_full()) {
-      // }
+      const Point_2& source = cv.source();
+      const Point_2& target = cv.target();
+      FT xs = source.x();
+      FT ys = source.y();
+      FT xt = target.x();
+      FT yt = target.y();
 
-      //! \todo
+      Numerator_type xs_num;
+      Denominator_type xs_den;
+      Decompose()(xs, xs_num, xs_den);
+      Result_type xs_quotient, xs_reminder;
+      CGAL::div_mod(xs_num, xs_den, xs_quotient, xs_reminder);
+
+      Numerator_type xt_num;
+      Denominator_type xt_den;
+      Decompose()(xt, xt_num, xt_den);
+      Result_type xt_quotient, xt_reminder;
+      CGAL::div_mod(xt_num, xt_den, xt_quotient, xt_reminder);
+
+      FT dx = xt - xs;
+      FT dy = yt - ys;
+      FT slope = dy / dx;
+      m_slope = dx / dy;
+
+      xs -= xs_quotient;
+      xt_quotient -= xs_quotient;
+
+      // first
+     if (xt_quotient >= 1) {
+        FT dx = 1 - xs;
+        FT y_next_x = slope * dx + ys;
+        Point_2 from(xs, ys);
+        Point_2 to(1, y_next_x);
+        *oi++ = operator()(from, to, oi);
+        ys = y_next_x;
+        --xt_quotient;
+      }
+      // rest
+      Point_2 curr(0, ys);
+      while (xt_quotient >= 1) {
+        FT y_next_x = slope + ys;
+        Point_2 to(1, y_next_x);
+        *oi++ = operator()(curr, to, oi);
+        ys = y_next_x;
+        --xt_quotient;
+        curr = Point_2(0, ys);
+      }
+      // last
+      if (xt_reminder != 0) {
+        Point_2 to(Compose()(xt_reminder, xt_den), yt);
+        *oi++ = operator()(curr, to, oi);
+      }
       return oi;
     }
   };
@@ -1492,17 +1625,14 @@ public:
     friend class Arr_flat_torus_traits_2<Kernel>;
 
   public:
-    /*! Obtain an x-monotone curve connecting the two given endpoints.
+    /*! Obtain a curve connecting the two given endpoints.
      * \param p1 the first point.
      * \param p2 the second point.
      * \pre p1 and p2 must not be the same.
-     * \return an x-monotone torusial arc connecting p1 and p2.
+     * \return a curve connecting p1 and p2.
      */
-    Curve_2 operator()(const Point_2& source, const Point_2& target,
-                       size_t num_horizontal_revolutions,
-                       size_t num_vertical_revolutions) const
+    Curve_2 operator()(const Point_2& source, const Point_2& target) const
     {
-      CGAL_precondition(!m_traits.equal_2_object()(source, target));
       bool is_degenerate(false);
       bool is_empty(false);
       bool is_full_x(((source.x() == 0) && (target.x() == 1)) ||
@@ -1515,10 +1645,10 @@ public:
       bool is_directed_top((source.y() < target.y()) ||
                              ((source.y() == target.y()) &&
                               (source.x() < target.x())));
-      bool is_vertical((num_horizontal_revolutions == 0) &&
-                       (source.x() == target.x()));
+      bool is_vertical(source.x() == target.x());
+      CGAL_precondition((source.x() != target.x()) ||
+                        (source.y() != target.y()));
       return Curve_2(source, target,
-                     num_horizontal_revolutions, num_vertical_revolutions,
                      is_vertical, is_directed_right, is_directed_top,
                      is_full_x, is_full_y, is_degenerate, is_empty);
     }
@@ -1716,8 +1846,6 @@ public:
   //! Constructor
   // \param src the source point of the arc
   // \param trg the target point of the arc
-  // \param num_horizontal_revolutions the number of horizontal of the arc
-  // \param num_vertical_revolutions the number of vertical of the arc
   // \param is_vertical is the arc vertical ?
   // \param is_directed_right is the curve directed from left to right?
   // \param is_directed_top is the curve directed from bottom to top?
@@ -1939,38 +2067,23 @@ protected:
 
   typedef typename Base::Arr_point_on_flat_torus_3   Arr_point_on_flat_torus_3;
 
-private:
-  //! The number of revolutions in the horizontal direction.
-  size_t m_num_horizontal_revolutions;
-
-  //! The number of revolutions in the vertical direction.
-  size_t m_num_vertical_revolutions;
-
 public:
   //! Default constructor - constructs an empty arc.
-  Arr_curve_on_flat_torus_3() :
-    Base(),
-    m_num_horizontal_revolutions(0),
-    m_num_vertical_revolutions(0)
-  {}
+  Arr_curve_on_flat_torus_3() : Base() {}
 
   /*! Constructor
-   * \param src the source point of the arc
-   * \param trg the target point of the arc
-   * \param num_horizontal_revolutions
-   * \param num_vertical_revolutions
-   * \param is_vertical is the arc vertical ?
-   * \param is_directed_right is the arc directed from left to right?
-   * \param is_directed_top is the arc directed from bottom to top?
-   * \param is_full_x is the arc an x-full (great) circle?
-   * \param is_full_y is the arc a y-full (great) circle?
-   * \param is_degenerate is the arc degenerate (single point)?
+   * \param src the source point of the curve
+   * \param trg the target point of the curve
+   * \param is_vertical is the curve vertical ?
+   * \param is_directed_right is the curve directed from left to right?
+   * \param is_directed_top is the curve directed from bottom to top?
+   * \param is_full_x is the curve an x-full (great) circle?
+   * \param is_full_y is the curve a y-full (great) circle?
+   * \param is_degenerate is the curve degenerate (single point)?
    * \param is_empty is the curve empty
    */
   Arr_curve_on_flat_torus_3(const Arr_point_on_flat_torus_3& src,
                             const Arr_point_on_flat_torus_3& trg,
-                            int num_horizontal_revolutions,
-                            int num_vertical_revolutions,
                             bool is_vertical,
                             bool is_directed_right,
                             bool is_directed_top,
@@ -1979,28 +2092,74 @@ public:
                             bool is_degenerate = false,
                             bool is_empty = false) :
     Base(src, trg, is_vertical, is_directed_right, is_directed_top,
-         is_full_x, is_full_y, is_degenerate, is_empty),
-    m_num_horizontal_revolutions(num_horizontal_revolutions),
-    m_num_vertical_revolutions(num_vertical_revolutions)
+         is_full_x, is_full_y, is_degenerate, is_empty)
   {}
-
-  //! Determines the number of horizontal_revolutions of the arc.
-  // \return the number of horizontal_revolutions.
-  int number_of_horizontal_revolutions() const
-  { return m_num_horizontal_revolutions; }
-
-  //! Determines the number of vertical_revolutions of the arc.
-  // \return the number of vertical_revolutions.
-  int number_of_vertical_revolutions() const
-  { return m_num_vertical_revolutions; }
 
   /*! Indicates whether the arc is x-monotone
    * \return true if the arc is x-monotone; false otherwise
    */
   bool is_x_monotone() const
   {
-    return ((m_num_horizontal_revolutions == 0) ||
-            (m_num_vertical_revolutions == 0));
+    typedef typename Kernel::FT FT;
+    FT xs = this->source().x();
+    FT ys = this->source().y();
+    FT xt = this->target().x();
+    FT yt = this->target().y();
+    // std::cout << "(" << xs << "," << ys << ")(" << xt << "," << yt << ")"
+    //           << std::endl;
+
+    typedef CGAL::Fraction_traits<FT>                   My_traits;
+    typedef typename My_traits::Numerator_type          Numerator_type;
+    typedef typename My_traits::Denominator_type        Denominator_type;
+    typedef typename My_traits::Decompose               Decompose;
+
+    Numerator_type xs_num, xt_num;
+    Numerator_type ys_num, yt_num;
+    Denominator_type xs_den, xt_den;
+    Denominator_type ys_den, yt_den;
+    Decompose()(xs, xs_num, xs_den);
+    Decompose()(ys, ys_num, ys_den);
+    Decompose()(xt, xt_num, xt_den);
+    Decompose()(yt, yt_num, yt_den);
+    // std::cout << "xs_num " << xs_num << std::endl;
+    // std::cout << "xs_den " << xs_den << std::endl;
+    // std::cout << "ys_num " << ys_num << std::endl;
+    // std::cout << "ys_den " << ys_den << std::endl;
+
+    typedef typename CGAL::Coercion_traits<Numerator_type,
+                                           Denominator_type>::Type
+                                                        Result_type;
+
+    Result_type xs_quotient, xs_reminder;
+    CGAL::div_mod(xs_num, xs_den, xs_quotient, xs_reminder);
+
+    Result_type xt_quotient, xt_reminder;
+    CGAL::div_mod(xt_num, xt_den, xt_quotient, xt_reminder);
+
+    Result_type ys_quotient, ys_reminder;
+    CGAL::div_mod(ys_num, ys_den, ys_quotient, ys_reminder);
+
+    Result_type yt_quotient, yt_reminder;
+    CGAL::div_mod(yt_num, yt_den, yt_quotient, yt_reminder);
+
+    //! \todo use directed_right
+    if (xs_quotient > xt_quotient) {
+      std::swap(xs_quotient, xt_quotient);
+      std::swap(xs_reminder, xt_reminder);
+    }
+
+    if ((xs_quotient + 1) < xt_quotient) return false;
+    if ((xs_quotient != xt_quotient) && (xt_reminder != 0)) return false;
+
+    //! \todo use directed_top
+    if (ys_quotient > yt_quotient) {
+      std::swap(ys_quotient, yt_quotient);
+      std::swap(ys_reminder, yt_reminder);
+    }
+    if ((ys_quotient + 1) < yt_quotient) return false;
+    if ((ys_quotient != yt_quotient) && (yt_reminder != 0)) return false;
+
+    return true;
   }
 };
 
