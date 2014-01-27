@@ -847,7 +847,7 @@
 , year =        ${CGAL_BUILD_YEAR4}
 }
 
-@incollection{cgal:lp-gi-${CGAL_RELEASE_YEAR_ID}
+@incollection{cgal:yl-tsms-${CGAL_RELEASE_YEAR_ID}
 , author =  "Ílker O. Yaz and S\'ebastien Loriot"
 , title =   "Triangulated Surface Mesh Segmentation"
 , publisher =  "{CGAL Editorial Board}"
