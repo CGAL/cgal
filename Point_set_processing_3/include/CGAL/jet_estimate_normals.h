@@ -51,6 +51,7 @@ namespace internal {
 ///
 /// @return Computed normal. Orientation is random.
 template < typename Kernel,
+           typename SvdTraits,
            typename Tree
 >
 typename Kernel::Vector_3
@@ -68,7 +69,9 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // types for jet fitting
-  typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
+  typedef Monge_via_jet_fitting< Kernel,
+                                 Simple_cartesian<double>,
+                                 SvdTraits> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
   // Gather set of (k+1) neighboring points.
@@ -114,19 +117,22 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///
 /// \pre `k >= 2`
 ///
-
+///
 /// @tparam ForwardIterator iterator model of the concept of the same name over input points and able to store output normals.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
 ///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
+/// @tparam SvdTraits template parameter for the class `Monge_via_jet_fitting` that
+///         can be ommited in conditions described in the documentation of `Monge_via_jet_fitting`.
 
 // This variant requires all parameters.
 template <typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
-          typename Kernel
+          typename Kernel,
+          typename SvdTraits
 >
 void
 jet_estimate_normals(
@@ -185,7 +191,7 @@ jet_estimate_normals(
   // vectors (already normalized)
   for(it = first; it != beyond; it++)
   {
-    Vector normal = internal::jet_estimate_normal<Kernel,Tree>(
+    Vector normal = internal::jet_estimate_normal<Kernel,SvdTraits,Tree>(
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       get(point_pmap,it), 
 #else
@@ -203,6 +209,32 @@ jet_estimate_normals(
 
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of jet_estimate_normals()\n");
+}
+
+#if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
+/// @cond SKIP_IN_MANUAL
+template <typename ForwardIterator,
+          typename PointPMap,
+          typename NormalPMap,
+          typename Kernel
+>
+void
+jet_estimate_normals(
+  ForwardIterator first,
+  ForwardIterator beyond,
+  PointPMap point_pmap,
+  NormalPMap normal_pmap,
+  unsigned int k,
+  const Kernel& kernel,
+  unsigned int degree_fitting = 2)
+{
+  #ifdef CGAL_EIGEN3_ENABLED
+  typedef Eigen_svd SvdTraits;
+  #else
+  typedef Lapack_svd SvdTraits;
+  #endif
+  jet_estimate_normals<ForwardIterator,PointPMap,NormalPMap,Kernel,SvdTraits>(
+    first, beyond, point_pmap, normal_pmap, k,  kernel, degree_fitting);
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -258,7 +290,7 @@ jet_estimate_normals(
     degree_fitting);
 }
 /// @endcond
-
+#endif
 
 } //namespace CGAL
 

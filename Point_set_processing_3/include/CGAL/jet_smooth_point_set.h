@@ -50,7 +50,9 @@ namespace internal {
 ///
 /// @return computed point
 template <typename Kernel,
-          typename Tree>
+          typename SvdTraits,
+          typename Tree
+          >
 typename Kernel::Point_3
 jet_smooth_point(
   const typename Kernel::Point_3& query, ///< 3D point to project
@@ -68,7 +70,9 @@ jet_smooth_point(
   typedef typename Neighbor_search::iterator Search_iterator;
 
   // types for jet fitting
-  typedef typename CGAL::Monge_via_jet_fitting<Kernel> Monge_jet_fitting;
+  typedef Monge_via_jet_fitting< Kernel,
+                                 Simple_cartesian<double>,
+                                 SvdTraits> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
 
   // Gather set of (k+1) neighboring points.
@@ -119,11 +123,14 @@ jet_smooth_point(
 ///        It can be omitted if InputIterator value_type is convertible to Point_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from PointPMap value_type.
+/// @tparam SvdTraits template parameter for the class `Monge_via_jet_fitting` that
+///         can be ommited in conditions described in the documentation of `Monge_via_jet_fitting`.
 
 // This variant requires all parameters.
 template <typename InputIterator,
           typename PointPMap,
-          typename Kernel
+          typename Kernel,
+          typename SvdTraits
 >
 void
 jet_smooth_point_set(
@@ -174,13 +181,41 @@ jet_smooth_point_set(
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     const Point& p = get(point_pmap, it);
     put(point_pmap, it ,
-        internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
+        internal::jet_smooth_point<Kernel, SvdTraits>(
+          p,tree,k,degree_fitting,degree_monge) );
 #else
     const Point& p = get(point_pmap, *it);
     put(point_pmap, *it ,
-        internal::jet_smooth_point<Kernel>(p,tree,k,degree_fitting,degree_monge) );
+        internal::jet_smooth_point<Kernel, SvdTraits>(
+          p,tree,k,degree_fitting,degree_monge) );
 #endif  
   }
+}
+
+
+#if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
+/// @cond SKIP_IN_MANUAL
+template <typename InputIterator,
+          typename PointPMap,
+          typename Kernel
+>
+void
+jet_smooth_point_set(
+  InputIterator first,  ///< iterator over the first input point.
+  InputIterator beyond, ///< past-the-end iterator over the input points.
+  PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3.
+  unsigned int k, ///< number of neighbors.
+  const Kernel& kernel, ///< geometric traits.
+  unsigned int degree_fitting = 2, ///< fitting degree
+  unsigned int degree_monge = 2)  ///< Monge degree
+{
+  #ifdef CGAL_EIGEN3_ENABLED
+  typedef Eigen_svd SvdTraits;
+  #else
+  typedef Lapack_svd SvdTraits;
+  #endif
+  jet_smooth_point_set<InputIterator, PointPMap, Kernel, SvdTraits>(
+    first, beyond, point_pmap, k, kernel, degree_fitting, degree_monge);
 }
 
 /// @cond SKIP_IN_MANUAL
@@ -232,7 +267,7 @@ jet_smooth_point_set(
     degree_fitting,degree_monge);
 }
 /// @endcond
-
+#endif
 
 } //namespace CGAL
 
