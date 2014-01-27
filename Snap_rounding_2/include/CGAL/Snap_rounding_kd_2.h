@@ -22,10 +22,10 @@
 
 #include <list>
 #include <CGAL/basic.h>
-#include <CGAL/kdtree_d.h>
+//#include <CGAL/kdtree_d.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <iostream>
-#include <CGAL/predicates_on_points_2.h>
+//#include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/assertions.h>
 
@@ -34,6 +34,8 @@
 //waqar
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
+#include <CGAL/Fuzzy_iso_box.h>
+
 
 
 //define search trait class here. 
@@ -164,6 +166,8 @@ public:
 //   }  
 // };
 
+
+
 //////////////////////
 //////////////////////
 //Multiple Kd_trees
@@ -185,10 +189,13 @@ private:
   
   //CREATION OF TREE
   typedef My_point<Traits, SAVED_OBJECT>                My_point_saved;   //Traits= snap_rounding_traits, SAVED_OBJECT= HOT_PIXEL * pointer.
-  //typedef CGAL::Kdtree_interface_2d<My_point_saved>     Kd_interfacea;
   typedef Kdtree_new_interface_2d<My_point_saved>       Kd_interface;
-  typedef CGAL::Kdtree_d<Kd_interface>                  Kd_tree;
-  typedef typename Kd_tree::Box                         Box;
+  //typedef CGAL::Kdtree_d<Kd_interface>                  Kd_tree;
+  //typedef typename Kd_tree::Box                         Box;
+  typedef CGAL::Search_traits_2<Kd_interface>           Search_traits;
+  typedef CGAL::Kd_tree<Search_traits>                  Kd_tree;
+  typedef CGAL::Fuzzy_iso_box<Search_traits>            Box;
+
   
   typedef std::list<My_point_saved>                     Points_List;
   typedef std::pair<Direction_2, NT>                    Direction_nt_pair;
@@ -213,8 +220,12 @@ private:
   typedef typename Direction_list::const_iterator       Direction_const_iter;
 
   //WAQAR:: CREATION OF NEW KD_TREE
-  typedef CGAL::Search_traits_2<Kd_interface>           Search_traits;
-  typedef CGAL::Kd_tree<Search_traits>                  Kd_tree_new;
+  // typedef CGAL::Search_traits_2<Kd_interface>           Search_traits;
+  // typedef CGAL::Kd_tree<Search_traits>                  Kd_tree_new;
+
+  // typedef std::pair<Kd_tree_new *,Direction_nt_pair>    Kd_triple_new;
+  // typedef std::pair<Kd_tree_new *, Direction_nt_pair>   Kd_direction_nt_pair_new;
+  // typedef std::list<Kd_direction_nt_pair_new>           Kd_triple_list_new;
 
 private:
   Traits m_gt;
@@ -241,10 +252,14 @@ private:
 
 
   /*! */
+  //WAQAR: CREATE_KD_TREE IS FINISHED FOR NEW KD_TREE.
   Kd_triple create_kd_tree(NT angle)
   {
     Points_List l;
     Kd_tree *tree = new Kd_tree(2);
+
+    //WAQAR INITIALIZATION OF THE NEW KD_TREE
+    //Kd_tree_new *new_tree = new Kd_tree_new(); 
 
     for (Point_saved_pair_iter iter = input_points_list.begin();
         iter != input_points_list.end(); ++iter)
@@ -252,14 +267,26 @@ private:
       Point_2 p(iter->first);
       rotate(p,angle);
       My_point_saved rotated_point(p,iter->first,iter->second);
-      l.push_back(rotated_point);
+      //WAQAR: Comenting this as this is only needed by the old kd_ttree
+      //l.push_back(rotated_point);
+
+      //WAQAR: INSERT POINTS INTO NEW KD_TREE
+      tree->insert(rotated_point);
     }
 
-    tree->build(l);
+    //WAQAR: new kd_tree doesn not have this constructor. 
+    //tree->build(l);
+    tree->build();
+
+    //WAQAR: BUILD THE NEW KD_TREE WITH THE ROTATED POINTS.
+    //new_tree->build();
 
     //checking validity
-    if (!tree->is_valid()) tree->dump();
-    CGAL_assertion(tree->is_valid());
+    //WAQAR: Commenting these two lines as they are not compatible with new kd_trees i.e. is_valid() and dump(). 
+    //if (!tree->is_valid()) tree->dump();
+    //CGAL_assertion(tree->is_valid());
+
+    //WAQAR: NO ALTERNATIVE FOR CHECKING IF TREE IS VALID IN THE NEW KD_TREE. SHOULD I ADD ONE?
 
     typename Traits::To_double to_dbl;
     double buffer_angle(to_dbl(angle) - half_pi / (2 * number_of_trees));
@@ -273,6 +300,8 @@ private:
     Direction_nt_pair kp(d, angle);
     Kd_triple kt(tree,kp);
 
+    //WAQAR: 
+    //Kd_triple_new kt_new(new_tree, kp);
     return(kt);
   }
 
@@ -461,6 +490,9 @@ public:
     number_of_trees(inp_number_of_trees), input_points_list(inp_points_list)
   {
     Kd_triple kd;
+    //WAQAR: 
+    //Kd_triple_new kd_new;
+
 
     // check that there are at least two trees
     CGAL_precondition_msg(number_of_trees >= 1, "There must be at least one kd-tree" );
@@ -621,17 +653,20 @@ public:
     My_point_saved point1(p1);
     My_point_saved point2(p2);
 
-    Box b(point1, point2, 2);
+    //Box b(point1, point2, 2);
+    //WAQAR: We use new Fuzzy box for new kd_trees.
+    //Box b(point1, point2);
+    //CGAL::My_class obj(2);
 
-    // the kd-tree query
-    My_point_saved_list res;
-    iter->first->search(std::back_inserter(res), b);
+    // // the kd-tree query
+    // My_point_saved_list res;
+    // iter->first->search(std::back_inserter(res), b);
 
-    // create result
-    result_list.empty();
-    for (My_point_saved_iter my_point_iter = res.begin();
-         my_point_iter != res.end(); ++my_point_iter)
-      result_list.push_back(my_point_iter->object);
+    // // create result
+    // result_list.empty();
+    // for (My_point_saved_iter my_point_iter = res.begin();
+    //      my_point_iter != res.end(); ++my_point_iter)
+    //   result_list.push_back(my_point_iter->object);
   }
 };
 
