@@ -1031,12 +1031,11 @@ private:
     }
 
     /**
-    * if new_cell has the same vertices as cell_ids_, 
+    * new_cell has the same vertices as cell_ids_ 
+    *       (checked before function is called)
     *       resets new_cell's meta-data to its back-uped values
-    *       and returns true
-    * otherwise returns false
     */
-    bool restore(Cell_handle new_cell, C3T3& c3t3)
+    void restore(Cell_handle new_cell, C3T3& c3t3)
     {
       IndexMap new_to_old_indices;
       unsigned int nbv_found = 0;
@@ -1054,14 +1053,9 @@ private:
           }
         }//end loop j
       }//end loop i
-      CGAL_assertion(nbv_found <= 4);
+      CGAL_assertion(nbv_found == 4);
 
-      if(nbv_found == 4)
-      {
-        restore(new_cell, new_to_old_indices, c3t3);
-        return true;
-      }
-      return false;
+      restore(new_cell, new_to_old_indices, c3t3);
     }
 
   private:
@@ -2747,28 +2741,21 @@ C3T3_helpers<C3T3,MD>::
 restore_from_cells_backup(const CellsVector& cells,
                           const CellDataSet& cells_backup) const
 {
-  CGAL_assertion_code(unsigned int success_nb = 0);
-
   for(typename CellsVector::const_iterator cit = cells.begin();
       cit != cells.end();
       ++cit)
   {
     if(tr_.is_infinite(*cit))
       continue;//don't restore infinite cells, they have not been backed-up
-    
-    Cell_data_backup cd(*cit);
-    typename CellDataSet::const_iterator cd_it = cells_backup.find(cd);
+
+    typename CellDataSet::const_iterator cd_it = cells_backup.find(*cit);
     if(cd_it != cells_backup.end())
     {
       typename CellDataSet::value_type cell_data = *cd_it;
-      if(cell_data.restore(*cit, c3t3_))
-      {
-        CGAL_assertion_code(success_nb++);
-      }
+      cell_data.restore(*cit, c3t3_);
     }
     else CGAL_assertion(false);
   }
-  CGAL_assertion(success_nb == cells_backup.size());
 }
 
 template <typename C3T3, typename MD>
