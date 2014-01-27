@@ -16,7 +16,7 @@ It can have any number of connected components, boundaries
 
 \cgalHeading{Valid Expressions}
 
-The mesh simplification algorithm requires the free function `collapse_triangulation_edge()`.
+The mesh simplification algorithm requires the free function `halfedge_collapse()`.
 
 Let `v0` be the source and `v1` be the target vertices of `v0v1`. 
 
