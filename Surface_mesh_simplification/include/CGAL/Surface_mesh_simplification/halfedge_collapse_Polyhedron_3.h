@@ -29,11 +29,12 @@ namespace CGAL {
 namespace Surface_mesh_simplification
 {
 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class EdgeIsConstrainedMap>
 typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
 halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor const& pq
                  , Polyhedron_3<Gt,I,HDS,A>& aSurface
-                 )     
+                 , EdgeIsConstrainedMap Edge_is_constrained_map
+                 )
 {
   typedef Polyhedron_3<Gt,I,HDS,A> Surface ;
   
@@ -115,6 +116,17 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
   
   return lP_Erased ? q : p ;
 } 
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
+halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor const& pq
+                 , Polyhedron_3<Gt,I,HDS,A>& aSurface
+                 )
+{
+  return halfedge_collapse( pq,
+                            aSurface,
+                            Default_is_constrained_edge_map<Polyhedron_3<Gt,I,HDS,A> >() );
+}
 
 } // namespace Surface_mesh_simplification
 
