@@ -1006,7 +1006,7 @@ private:
     Cell_data_backup(const Cell_handle& c)
       : cell_ids_(c)
     {
-      if(Subdomain_index() != c->subdomain_index() && c->is_cache_valid())
+      if(c->is_cache_valid())
         sliver_value_ = c->sliver_value();
       else
         sliver_value_ = 0.;
@@ -1046,7 +1046,7 @@ private:
         for(std::size_t j = 0; j < 4; ++j)
         {
           if(new_vi_index == cell_ids_.vertex_id(j))
-          {            
+          {
             new_to_old_indices[static_cast<std::size_t>(i)] = j;
             ++nbv_found;
             break;//loop on j
@@ -1082,8 +1082,8 @@ private:
       for(int i = 0; i < 4; ++i)
       {
         std::size_t old_i = index_map.at(static_cast<std::size_t>(i));
-        //add_to_complex sets the index, and updates the cell counter 
         Surface_patch_index index = surface_index_table_[old_i];
+        //add_to_complex sets the index, and updates the facet counter 
         if(Surface_patch_index() != index)
           c3t3.add_to_complex(Facet(c, i), index);
 
@@ -1753,15 +1753,15 @@ update_mesh_no_topo_change(const Point_3& new_position,
   //           << "                " << (void*)(&*vertex) << "=" << vertex->point()
   //           << ")\n";
 
+    //backup metadata
+  std::set<Cell_data_backup> cells_backup;
+  fill_cells_backup(conflict_cells, cells_backup);
+
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = vertex->point();
 
-  //backup metadata
-  std::set<Cell_data_backup> cells_backup;
-  fill_cells_backup(conflict_cells, cells_backup);
-  
   // Move point
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
@@ -1783,6 +1783,8 @@ update_mesh_no_topo_change(const Point_3& new_position,
     // std::cerr << "update_mesh_no_topo_change: revert move to "
     //           << old_position << "\n";
     // revert move
+    remove_cells_and_facets_from_c3t3(conflict_cells.begin(),
+                                      conflict_cells.end());
     reset_circumcenter_cache(conflict_cells);
     //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
@@ -1829,14 +1831,14 @@ update_mesh_topo_change(const Point_3& new_position,
   std::set_union(insertion_conflict_cells.begin(), insertion_conflict_cells.end(),
                  removal_conflict_cells.begin(), removal_conflict_cells.end(),
                  std::back_inserter(conflict_cells)); 
-  
+
+    //backup metadata
+  std::set<Cell_data_backup> cells_backup;
+  fill_cells_backup(conflict_cells, cells_backup);
+
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
   Point_3 old_position = old_vertex->point();
-  
-  //backup metadata
-  std::set<Cell_data_backup> cells_backup;
-  fill_cells_backup(conflict_cells, cells_backup);
 
   // Keep old boundary
   Vertex_set old_incident_surface_vertices;
