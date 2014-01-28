@@ -180,6 +180,9 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Loop()
   // Pops and processes each edge from the PQ
   //
   optional<edge_descriptor> lEdge ;
+  #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
+  int i_rm=0;
+  #endif
   while ( (lEdge = pop_from_PQ()) )
   {
     CGAL_SURF_SIMPL_TEST_assertion ( lLoop_watchdog ++ < mInitialEdgeCount ) ;
@@ -212,7 +215,22 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Loop()
         Placement_type lPlacement = get_placement(lProfile);
         
         if ( Is_collapse_geometrically_valid(lProfile,lPlacement) )
+        {
+          #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
+          std::cout << "step " << i_rm << " " << source(*lEdge,mSurface)->point() << " " << target(*lEdge,mSurface)->point() << "\n";
+          #endif
           Collapse(lProfile,lPlacement);
+          #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
+          std::stringstream sstr;
+          sstr << "debug/P-";
+          if (i_rm<10) sstr << "0";
+          if (i_rm<100) sstr << "0";
+          sstr <<  i_rm  << ".off";
+          std::ofstream out(sstr.str().c_str());
+          out << mSurface;
+          ++i_rm;
+          #endif
+        }
       }
       else
       {
@@ -603,7 +621,7 @@ EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::find_exterior_link_triangle_3rd_ver
 }
 
 
-// A collase is geometrically valid if, in the resulting local mesh no two adjacent triangles form an internal dihedral angle
+// A collapse is geometrically valid if, in the resulting local mesh no two adjacent triangles form an internal dihedral angle
 // greater than a fixed threshold (i.e. triangles do not "fold" into each other)
 //
 template<class M,class SP, class VIM,class EIM,class EBM,class ECTM, class CF,class PF,class V>
