@@ -12,7 +12,6 @@ The placement returned is a `boost::optional` value (i.e., it can
 be absent). An absent result indicates that the remaining vertex 
 must be kept in place, not moved to a new position. 
 
-\cgalRefines `DefaultConstructible` 
 \cgalRefines `CopyConstructible` 
 
 \cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
