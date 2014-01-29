@@ -16,9 +16,11 @@ It can have any number of connected components, boundaries
 
 \cgalHeading{Valid Expressions}
 
-The mesh simplification algorithm requires the free function `halfedge_collapse()`.
-
-Let `v0` be the source and `v1` be the target vertices of `v0v1`. 
+Let `v0v1` an edge of the triangulated surface mesh `ecm` and
+`v0` and `v1` being the source and target vertices of that edge.
+The mesh simplification algorithm requires the call to the function `halfedge_collapse(v0v1,ecm)`
+to be valid and to return the vertex not removed after collapsing
+the undirected edge `(v0v1,v1v0)`.
 
 For `e` \f$ \in \{\f$ `v0v1,v1v0` \f$ \}\f$, let `en` and `ep` be the next and previous 
 edges, that is `en = next_edge(e, mesh)`, `ep = prev_edge(e,mesh)`, and let 
@@ -30,15 +32,14 @@ Then, after the collapse of `(v0v1,v1v0)` the following holds:
 <UL> 
 <LI>The edge `e` is no longer in `mesh`. 
 <LI>One of \f$ \{\f$`v0,v1`\f$ \}\f$ is no longer in `mesh` while the other remains. 
-\cgalFootnote{Even though it would appear that v0 can always be the vertex being removed, there is a case when removing the edge `e` <I>requires</I> `v1` to be removed as well. See figure \ref CollapseFigure5.} 
+\cgalFootnote{Most of the time v0 is the vertex being removed but in some cases removing the edge e requires v1 to be removed. See Figure \ref CollapseFigure5.}
 Let `vgone` be the removed vertex and `vkept` be the remaining vertex. 
 <LI>If `e` was a border edge, that is `get(is_border, e, mesh) == true`, then `next_edge(ep) == en`, and `prev_edge(en) == ep`. 
 <LI>If `e` was not a border edge, that is `get(is_border, e, mesh) == false`, then `ep` and `epo` are no longer in `mesh` while `en` and `eno` are kept in `mesh`. 
 <LI>For all edges `ie` in `in_edges(vgone,mesh)`, `target(ie,mesh) == vkept` and `source(opposite_edge(ie),mesh) == vkept`. 
 <LI>No other incidence information has changed in `mesh`. 
-</UL> 
+</UL>
 
-The function returns vertex `vkept` (which can be either `v0` or `v1`). 
 
 \image html general_collapse.png
 \image latex general_collapse.png
@@ -64,7 +65,7 @@ When the collapsing edge is itself a border, only 1 triangle is
 removed. Thus, even if \f$ (ep',epo')\f$ exists, it's not removed.
 </b></center>
 
-\anchor CollapseFigure5 
+\anchor CollapseFigure5
 \image html border_collapse4.png
 \image latex border_collapse4.png
 <center><b>
@@ -73,9 +74,8 @@ This figure illustrates the single exceptional case when removing \f$
 remains.
 </b></center>
 
-\cgalHasModel `CGAL::Polyhedron_3<Traits>` (If it has only triangular faces, and via 
-<I>External Adaptation</I>, which is described in \cgalCite{cgal:sll-bgl-02} 
-and this <span class="textsc">Bgl</span> web page: <A HREF="http://www.boost.org/libs/graph/doc/leda_conversion.html"><TT>http://www.boost.org/libs/graph/doc/leda_conversion.html</TT></A>). 
+\cgalHasModel `CGAL::Polyhedron_3<Traits>` (If it has only triangular faces),
+using the specialization \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink.
 
 \sa \link BGLPolyGT `boost::graph_traits< CGAL::Polyhedron_3<Traits> >` \endlink
 \sa `CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >`
@@ -88,9 +88,9 @@ public:
 
 /*!
 Collapses the undirected edge `(v0v1,v1v0)` replacing it with `v0` or `v1`, 
-as described in the following paragraph. 
+as described in the paragraph above.
 \pre This function requires `mesh` to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge `(v0v1,v1v0)` must satisfy the <I>link condition</I> \cgalCite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse. 
-\relates EdgeCollapsableMesh 
+\relates EdgeCollapsableMesh
 */ 
 template<class EdgeCollapsableMesh> 
 typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor 
