@@ -132,6 +132,11 @@ Indicates if `v0v1` belongs to a finite face of the mesh (i.e, `v1v0` is not a b
 */ 
 bool right_face_exits() const; 
 
+/*!
+Returns the surface the edge belongs to.
+*/
+const ECM& surface() const;
+
 /// @}
 
 }; /* end EdgeProfile */
