@@ -22,7 +22,7 @@
 #define CGAL_ARR_FLAT_TORUS_TRAITS_2_H
 
 /*! \file
- * A class template that handles geodesics arcs embedded on the flat torus.
+ * A class template that handles curves on the flat torus.
  * Any instance of which is suitable as a geometry traits class for the
  * arrangement on surface package.
  */
@@ -51,9 +51,9 @@ template <typename Kernel> class Arr_point_on_flat_torus_3;
 template <typename Kernel> class Arr_x_monotone_curve_on_flat_torus_3;
 template <typename Kernel> class Arr_curve_on_flat_torus_3;
 
-/*! A traits class-template for constructing and maintaining arcs of great
- * circles embedded on tori. It is parameterized from a (linear) geometry
- * kernel, which it also derives from
+/*! A traits class-template for constructing and maintaining curves on the
+ * flat torus. It is parameterized by a (linear) geometry kernel, which it
+ * also derives from.
  */
 template <typename Kernel_>
 class Arr_flat_torus_traits_2 : public Kernel_ {
@@ -514,7 +514,7 @@ public:
       if (xcv1.is_vertical()) return LARGER;
       if (xcv2.is_vertical()) return SMALLER;
 
-      // Non of the arc is verticel.
+      // None of the curves are verticel.
       // Compare the y-coord. at the x-coord of the most left right-endpoint.
       const Point_2& right1 = xcv1.right();
       const Point_2& right2 = xcv2.right();
@@ -716,7 +716,7 @@ public:
      *   ARR_BOTTOM_BOUNDARY  - the curve reaches the y-boundary from above
      *                          at the curve ce end.
      *   ARR_INTERIOR         - the vurve does not reach the y-boundary.
-     *   ARR_TOP_BOUNDARY     - the arc reaches the y-boundary from below
+     *   ARR_TOP_BOUNDARY     - the curve reaches the y-boundary from below
      *                          at the curve ce end.
      * \pre xcv does not lie on the y-boundary.
      */
@@ -813,22 +813,22 @@ public:
          (m_traits.compare_x_2_object()(point, xcv.source())));
     }
 
-    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
+    /*! Compare the x-coordinates of 2 curve ends near the boundary of the
      * parameter space.
-     * \param xcv1 the first arc.
-     * \param ce1 the first arc end indicator -
+     * \param xcv1 the first curve.
+     * \param ce1 the first curve end indicator -
      *            ARR_MIN_END - the minimal end of xcv1 or
      *            ARR_MAX_END - the maximal end of xcv1.
-     * \param xcv2 the second arc.
-     * \param ce2 the second arc end indicator -
+     * \param xcv2 the second curve.
+     * \param ce2 the second curve end indicator -
      *            ARR_MIN_END - the minimal end of xcv2 or
      *            ARR_MAX_END - the maximal end of xcv2.
      * \return the second comparison result:
      *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
      *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
      *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-     * \pre the ce1 end of the arc xcv1 lies on the y-boundary.
-     * \pre the ce2 end of the arc xcv2 lies on the y-boundary.
+     * \pre the ce1 end of the curve xcv1 lies on the y-boundary.
+     * \pre the ce2 end of the curve xcv2 lies on the y-boundary.
      * \pre xcv1 does not lie in the x-identification curve.
      * \pre xcv2 does not lie in the x- identification curve.
      */
@@ -898,7 +898,7 @@ public:
   { return Compare_x_on_boundary_2(*this); }
 
 
-  /*! A functor that compares the x-coordinates of arc ends near the
+  /*! A functor that compares the x-coordinates of curve ends near the
    * boundary of the parameter space.
    */
   class Compare_x_near_boundary_2 {
@@ -976,7 +976,7 @@ public:
   { return Compare_x_near_boundary_2(*this); }
 
 
-  /*! A functor that compares the y-coordinates of arc ends near the
+  /*! A functor that compares the y-coordinates of curve ends near the
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
@@ -996,11 +996,11 @@ public:
   public:
     /*! Compare the y-coordinates of 2 x-monotone curves at their ends near
      * the boundary of the parameter space.
-     * \param xcv1 the first arc.
-     * \param xcv2 the second arc.
-     * \param ce the arc end indicator.
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param ce the curve end indicator.
      * \return the second comparison result.
-     * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
+     * \pre the ce ends of the curves xcv1 and xcv2 lie either on the left
      *      boundary or on the right boundary of the parameter space (implying
      *      that they cannot be vertical).
      * There is no horizontal identification curve!
@@ -1143,8 +1143,8 @@ public:
   /// \name Functor definitions for supporting intersections.
   //@{
 
-  /*! A functor that divides an arc into x-monotone arcs. That are, arcs that
-   * do not cross the identification arc.
+  /*! A functor that divides an curve into x-monotone curves. That are,
+   * curves that do not cross the identification curve.
    */
   class Make_x_monotone_2 {
   public:
@@ -1187,8 +1187,6 @@ public:
     OutputIterator_ operator()(const Point_2& source, const Point_2& target,
                                OutputIterator_ oi) const
     {
-      std::cout << "source: " << source << std::endl;
-      std::cout << "target: " << target << std::endl;
       FT xs = source.x();
       FT ys = source.y();
       FT xt = target.x();
@@ -1333,7 +1331,7 @@ public:
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(*this); }
 
-  /*! A functor that splits an x-monotone arc at a directional point. */
+  /*! A functor that splits an x-monotone curve at a directional point. */
   class Split_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
@@ -1371,9 +1369,11 @@ public:
       CGAL_precondition(m_traits.orientation_2_object()(xcv2.source_point(),
                                                         xcv2.target_point(),
                                                         p) == COLLINEAR);
-      xcv1 = X_monotone_curve_2(xcv.source(), p, xcv.is_vertical(),
+      xcv1 = X_monotone_curve_2(xcv.source(), p,
+                                xcv.is_horizontal(), xcv.is_vertical(),
                                 xcv.is_directed_right(), xcv.is_directed_top());
-      xcv2 = X_monotone_curve_2(p, xcv.target(), xcv.is_vertical(),
+      xcv2 = X_monotone_curve_2(p, xcv.target(),
+                                xcv.is_horizontal(), xcv.is_vertical(),
                                 xcv.is_directed_right(), xcv.is_directed_top());
     }
   };
@@ -1383,7 +1383,7 @@ public:
    */
   Split_2 split_2_object() const { return Split_2(*this); }
 
-  /*! A functor that computes intersections between x-monotone arcs. */
+  /*! A functor that computes intersections between x-monotone curves. */
   class Intersect_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
@@ -1398,17 +1398,64 @@ public:
 
     friend class Arr_flat_torus_traits_2<Kernel>;
 
+    /*! \class A visitor that handles the object returned by the function that
+     * computes the intersection. The return type can be either a point or
+     * a segment (in case of overlapping segments).
+     */
+    template <typename OutputIterator_>
+    struct Intersection_visitor {
+      typedef void                                      result_type;
+      typedef OutputIterator_                           Output_iterator;
+
+      //! The output iterator.
+      Output_iterator& m_oi;
+
+      //! The traits.
+      const Traits& m_traits;
+
+      /*! Constructor
+       * \param oi The output iterator.
+       * \param traits The flat torus traits.
+       */
+      Intersection_visitor(Output_iterator& oi, const Traits& traits) :
+        m_oi(oi),
+        m_traits(traits)
+      {}
+
+      /*! Handle the case where the intersection is a point.
+       * \param p The point of intersection.
+       */
+      result_type operator()(const typename Kernel::Point_2& p) const
+      {
+        std::cout << "point: " << p << std::endl;
+        std::pair<typename Traits::Point_2, Multiplicity> po(Point_2(p), 1);
+        *m_oi++ = make_object(po);
+      }
+
+      /*! Handle the case where the intersection is a segment.
+       * \param s The overlapping segment.
+       */
+      result_type operator()(const typename Kernel::Segment_2& s) const
+      {
+        std::cout << "segment: " << s << std::endl;
+        typename Traits::Construct_x_monotone_curve_2 ctr =
+          m_traits.construct_x_monotone_curve_2_object();
+        X_monotone_curve_2 xcv = ctr(Point_2(s.source()), Point_2(s.target()));
+        *m_oi++ = make_object(xcv);
+      }
+    };
+
   public:
     /*! Find the intersections of the two given curves and insert them into the
-     * given output iterator. As two spherical_arcs may itersect only once,
-     * only a single intersection will be contained in the iterator.
+     * given output iterator. As two curves may itersect only once,
+     * only a single intersection will be inserted into the output iterator.
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \param oi the output iterator.
-     * \return the past-the-end iterator.
+     * \return the past-the-end output iterator.
      * \pre xcv1 and xcv2 are not degenerate
      */
-    template<typename OutputIterator_>
+    template <typename OutputIterator_>
     OutputIterator_ operator()(const X_monotone_curve_2& xcv1,
                                const X_monotone_curve_2& xcv2,
                                OutputIterator_ oi) const
@@ -1416,7 +1463,22 @@ public:
       CGAL_precondition(!xcv1.is_degenerate());
       CGAL_precondition(!xcv2.is_degenerate());
 
-      //! \todo
+      typedef OutputIterator_                           Output_iterator;
+      typedef typename Kernel::Segment_2                Segment_2;
+      typedef typename Kernel::Construct_segment_2      Construct_segment_2;
+      typedef typename Kernel::Intersect_2              Intersect_2;
+
+      Construct_segment_2 ctr_seg = m_traits.construct_segment_2_object();
+      Segment_2 seg1 = ctr_seg(xcv1.source_point(), xcv1.target_point());
+      Segment_2 seg2 = ctr_seg(xcv2.source_point(), xcv2.target_point());
+      std::cout << "segment 1: " << seg1 << std::endl;
+      std::cout << "segment 2: " << seg2 << std::endl;
+
+      const Kernel& kernel = m_traits;
+      typename CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type
+        result = kernel.intersect_2_object()(seg1, seg2);
+      Intersection_visitor<Output_iterator> visitor(oi, m_traits);
+      if (result) boost::apply_visitor(visitor, *result);
       return oi;
     }
   };
@@ -1424,7 +1486,7 @@ public:
   /*! Obtain an Intersect_2 function object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
-  /*! A functor that tests whether two x-monotone arcs can be merged. */
+  /*! A functor that tests whether two x-monotone curves can be merged. */
   class Are_mergeable_2 {
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
 
@@ -1443,9 +1505,9 @@ public:
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \return true if the two curves are mergeable; false otherwise.
-     * Two arcs are mergeable if:
+     * Two curves are mergeable if:
      * 1. they are supported by the same plane, and
-     * 2. share a common endpoint that is not on the identification arc
+     * 2. share a common endpoint that is not on the identification curve
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
@@ -1463,7 +1525,7 @@ public:
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
-  //! A functor that merges two x-monotone arcs into one.
+  //! A functor that merges two x-monotone curves into one.
   class Merge_2 {
   protected:
     typedef Arr_flat_torus_traits_2<Kernel> Traits;
@@ -1479,7 +1541,7 @@ public:
     friend class Arr_flat_torus_traits_2<Kernel>;
 
   public:
-    /*! Merge two given x-monotone curves into a single curve (spherical_arc).
+    /*! Merge two given x-monotone curves into a single curve (spherical_curve).
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \param xcv Output: the merged curve.
@@ -1555,9 +1617,10 @@ public:
      * \param p1 the first point.
      * \param p2 the second point.
      * \pre p1 and p2 must not be the same.
-     * \return an x-monotone torusial arc connecting p1 and p2.
+     * \return an x-monotone torusial curve connecting p1 and p2.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target,
+                                  bool is_horizontal,
                                   bool is_vertical,
                                   bool is_directed_right,
                                   bool is_directed_top,
@@ -1566,7 +1629,7 @@ public:
                                   bool is_full_x = false,
                                   bool is_full_y = false) const
     {
-      return X_monotone_curve_2(source, target, is_vertical,
+      return X_monotone_curve_2(source, target, is_horizontal, is_vertical,
                                 is_directed_right, is_directed_top,
                                 is_full_x, is_full_y, is_degenerate, is_empty);
     }
@@ -1575,7 +1638,7 @@ public:
      * \param p1 the first point.
      * \param p2 the second point.
      * \pre p1 and p2 must not be the same.
-     * \return an x-monotone torusial arc connecting p1 and p2.
+     * \return an x-monotone torusial curve connecting p1 and p2.
      */
     X_monotone_curve_2 operator()(const Point_2& source,
                                   const Point_2& target) const
@@ -1596,8 +1659,9 @@ public:
       bool is_directed_top((source.y() < target.y()) ||
                              ((source.y() == target.y()) &&
                               (source.x() < target.x())));
+      bool is_horizontal(source.y() == target.y());
       bool is_vertical(source.x() == target.x());
-      return X_monotone_curve_2(source, target, is_vertical,
+      return X_monotone_curve_2(source, target, is_horizontal, is_vertical,
                                 is_directed_right, is_directed_top,
                                 is_full_x, is_full_y, is_degenerate, is_empty);
     }
@@ -1645,11 +1709,12 @@ public:
       bool is_directed_top((source.y() < target.y()) ||
                              ((source.y() == target.y()) &&
                               (source.x() < target.x())));
+      bool is_horizontal(source.y() == target.y());
       bool is_vertical(source.x() == target.x());
       CGAL_precondition((source.x() != target.x()) ||
                         (source.y() != target.y()));
-      return Curve_2(source, target,
-                     is_vertical, is_directed_right, is_directed_top,
+      return Curve_2(source, target, is_horizontal, is_vertical,
+                     is_directed_right, is_directed_top,
                      is_full_x, is_full_y, is_degenerate, is_empty);
     }
   };
@@ -1788,11 +1853,11 @@ public:
   { return is_on_x_boundary() || is_on_y_boundary(); }
 };
 
-//! A Representation of an x-monotone great circular arc embedded on a torus,
+//! A Representation of an x-monotone great circular curve embedded on a torus,
 // as used by the Arr_flat_torus_traits_2 traits-class template.
-// An x-monotone great circular arc cannot cross boundary of the parameter
+// An x-monotone great circular curve cannot cross boundary of the parameter
 // space.
-// \todo At this point such an arc cannot have an angle of 180 degrees.
+// \todo At this point such an curve cannot have an angle of 180 degrees.
 template <typename Kernel_>
 class Arr_x_monotone_curve_on_flat_torus_3 {
 public:
@@ -1804,13 +1869,16 @@ protected:
   // For some reason compilation under Windows fails without the qualifier
   typedef CGAL::Arr_point_on_flat_torus_3<Kernel>   Arr_point_on_flat_torus_3;
 
-  //! The source point of the arc.
+  //! The source point of the curve.
   Arr_point_on_flat_torus_3 m_source;
 
-  //! The target point of the arc.
+  //! The target point of the curve.
   Arr_point_on_flat_torus_3 m_target;
 
-  //! The arc is vertical.
+  //! The curve is horizontal.
+  bool m_is_horizontal;
+
+  //! The curve is vertical.
   bool m_is_vertical;
 
   //! Target is xy-lexicographically larger than source.
@@ -1819,21 +1887,22 @@ protected:
   //! Target is yx-lexicographically larger than source.
   bool m_is_directed_top;
 
-  //! The arc spans the entire parameter space along the x-direction.
+  //! The curve spans the entire parameter space along the x-direction.
   bool m_is_full_x;
 
-  //! The arc spans the entire parameter space along the y-direction.
+  //! The curve spans the entire parameter space along the y-direction.
   bool m_is_full_y;
 
-  // The arc is degenerate---it consists of a single point.
+  // The curve is degenerate---it consists of a single point.
   bool m_is_degenerate;
 
-  //! The arc is empty.
+  //! The curve is empty.
   bool m_is_empty;
 
 public:
-  //! Default constructor - constructs an empty arc.
+  //! Default constructor - constructs an empty curve.
   Arr_x_monotone_curve_on_flat_torus_3() :
+    m_is_horizontal(false),
     m_is_vertical(false),
     m_is_directed_right(false),
     m_is_directed_top(false),
@@ -1843,16 +1912,22 @@ public:
     m_is_empty(true)
   {}
 
-  //! Constructor
-  // \param src the source point of the arc
-  // \param trg the target point of the arc
-  // \param is_vertical is the arc vertical ?
-  // \param is_directed_right is the curve directed from left to right?
-  // \param is_directed_top is the curve directed from bottom to top?
-  // \param is_full is the arc a full circle?
-  // \param is_degenerate is the arc degenerate (single point)?
+  /*! Constructor
+   * \param src the source point of the curve
+   * \param trg the target point of the curve
+   * \param is_horizontal indicates whether the curve is horizontal.
+   * \param is_vertical indicates whether the curve is vertical.
+   * \param is_directed_right indicates whether the curve is directed
+   *        from left to right?
+   * \param is_directed_top indicates whether the curve is directed
+   *        from bottom to top?
+   * \param is_full indicates whether the curve is full.
+   * \param is_degenerate indicates whether the curve is degenerate
+   *         (a single point)?
+   */
   Arr_x_monotone_curve_on_flat_torus_3(const Arr_point_on_flat_torus_3& src,
                                        const Arr_point_on_flat_torus_3& trg,
+                                       bool is_horizontal,
                                        bool is_vertical,
                                        bool is_directed_right,
                                        bool is_directed_top,
@@ -1862,6 +1937,7 @@ public:
                                        bool is_empty = false) :
     m_source(src),
     m_target(trg),
+    m_is_horizontal(is_horizontal),
     m_is_vertical(is_vertical),
     m_is_directed_right(is_directed_right),
     m_is_directed_top(is_directed_top),
@@ -1881,6 +1957,7 @@ public:
    */
   void set_target(const Arr_point_on_flat_torus_3& p) { m_target = p; }
 
+  void set_is_horizontal(bool flag) { m_is_horizontal = flag; }
   void set_is_vertical(bool flag) { m_is_vertical = flag; }
   void set_is_directed_right(bool flag) { m_is_directed_right = flag; }
   void set_is_directed_top(bool flag) { m_is_directed_top = flag; }
@@ -1911,7 +1988,10 @@ public:
   const Arr_point_on_flat_torus_3& top() const
   { return (m_is_directed_top ? m_target : m_source); }
 
-  /*! Determine whether the curve is vertical */
+  /*! Determine whether the curve is horizontal. */
+  bool is_horizontal() const { return m_is_horizontal; }
+
+  /*! Determine whether the curve is vertical. */
   bool is_vertical() const { return m_is_vertical; }
 
   /*! Determine whether the curve is directed xy-lexicographically from left
@@ -1943,7 +2023,7 @@ public:
       (source_parameter_space_in_y() == target_parameter_space_in_y());
   }
 
-  /*! Flip the arc (swap it source and target) */
+  /*! Flip the curve (swap it source and target) */
   Arr_x_monotone_curve_on_flat_torus_3 opposite() const
   {
     Arr_x_monotone_curve_on_flat_torus_3 opp;
@@ -1951,6 +2031,7 @@ public:
     opp.m_target = this->m_source;
     opp.m_is_directed_right = !(this->is_directed_right());
     opp.m_is_directed_top = !(this->is_directed_top());
+    opp.m_is_horizontal = this->is_horizontal();
     opp.m_is_vertical = this->is_vertical();
     opp.m_is_full_x = this->is_full_x();
     opp.m_is_full_y = this->is_full_y();
@@ -1992,43 +2073,51 @@ public:
   }
 
   /*! Obtain the x-coordinate of the source point.
+   * \return the x-coordinate of the source point.
    */
   const FT& source_x() const
   {
     static FT zero(0);
     static FT one(1);
-    return (!m_source.is_on_x_boundary()) ? m_source.x() :
-      (is_directed_right() ? zero : one) ;
+    return (m_source.is_on_x_boundary() ?
+            (is_vertical() ? zero : ((is_directed_right()) ? zero : one)) :
+            m_source.x());
   }
 
   /*! Obtain the y-coordinate of the source point.
+   * \return the y-coordinate of the source point.
    */
   const FT& source_y() const
   {
     static FT zero(0);
     static FT one(1);
-    return (!m_source.is_on_y_boundary()) ? m_source.y() :
-      (is_directed_top() ? zero : one) ;
+    return (m_source.is_on_y_boundary() ?
+            (is_horizontal() ? zero : (is_directed_top() ? zero : one)) :
+            m_source.y());
   }
 
   /*! Obtain the x-coordinate of the target point.
+   * \return the x-coordinate of the target point.
    */
   const FT& target_x() const
   {
     static FT zero(0);
     static FT one(1);
-    return (!m_target.is_on_x_boundary()) ? m_target.x() :
-      (is_directed_right() ? one : zero) ;
+    return (m_target.is_on_x_boundary() ?
+            (is_vertical() ? zero : (is_directed_right() ? one : zero)) :
+            m_target.x());
   }
 
   /*! Obtain the y-coordinate of the target point.
+   * \return the y-coordinate of the target point.
    */
   const FT& target_y() const
   {
     static FT zero(0);
     static FT one(1);
-    return (!m_target.is_on_y_boundary()) ? m_target.y() :
-      (is_directed_top() ? one : zero) ;
+    return (m_target.is_on_y_boundary() ?
+            (is_horizontal() ? zero : (is_directed_top() ? one : zero)) :
+            m_target.y());
   }
 
   /*! Obtain the source point.
@@ -2050,10 +2139,10 @@ public:
   { return typename Kernel::Segment_2(source_point, target_point); }
 };
 
-//! A representation of a geodesic arc embedded on a flat torus,
+//! A representation of a geodesic curve embedded on the flat torus,
 // used by the Arr_flat_torus_traits_2 traits-class template.
-// An arc is uniqely represented by two endpoints, the source s and the
-// target t. The points of the arc are the locus of points visited when
+// An curve is uniqely represented by two endpoints, the source s and the
+// target t. The points of the curve are the locus of points visited when
 // moving from the source s toward the target t in a straight line in the
 // parameter space.
 template <typename Kernel_>
@@ -2068,22 +2157,27 @@ protected:
   typedef typename Base::Arr_point_on_flat_torus_3   Arr_point_on_flat_torus_3;
 
 public:
-  //! Default constructor - constructs an empty arc.
+  //! Default constructor - constructs an empty curve.
   Arr_curve_on_flat_torus_3() : Base() {}
 
   /*! Constructor
    * \param src the source point of the curve
    * \param trg the target point of the curve
-   * \param is_vertical is the curve vertical ?
-   * \param is_directed_right is the curve directed from left to right?
-   * \param is_directed_top is the curve directed from bottom to top?
-   * \param is_full_x is the curve an x-full (great) circle?
-   * \param is_full_y is the curve a y-full (great) circle?
-   * \param is_degenerate is the curve degenerate (single point)?
-   * \param is_empty is the curve empty
+   * \param is_horizontal indicates whether the curve is horizontal.
+   * \param is_vertical indicates whether the curve is vertical.
+   * \param is_directed_right indicates whether the curve is directed
+   *        from left to right.
+   * \param is_directed_top indicates whether the curve directed
+   *        from bottom to top.
+   * \param is_full_x indicates whether the curve is x-full.
+   * \param is_full_y indicates whether the curve is y-full.
+   * \param is_degenerate indicates whether the curve is degenerate
+   *        (a single point)?
+   * \param is_empty indicates whether the curve is empty.
    */
   Arr_curve_on_flat_torus_3(const Arr_point_on_flat_torus_3& src,
                             const Arr_point_on_flat_torus_3& trg,
+                            bool is_horizontak,
                             bool is_vertical,
                             bool is_directed_right,
                             bool is_directed_top,
@@ -2091,12 +2185,13 @@ public:
                             bool is_full_y = false,
                             bool is_degenerate = false,
                             bool is_empty = false) :
-    Base(src, trg, is_vertical, is_directed_right, is_directed_top,
+    Base(src, trg, is_horizontak, is_vertical,
+         is_directed_right, is_directed_top,
          is_full_x, is_full_y, is_degenerate, is_empty)
   {}
 
-  /*! Indicates whether the arc is x-monotone
-   * \return true if the arc is x-monotone; false otherwise
+  /*! Indicates whether the curve is x-monotone
+   * \return true if the curve is x-monotone; false otherwise
    */
   bool is_x_monotone() const
   {
