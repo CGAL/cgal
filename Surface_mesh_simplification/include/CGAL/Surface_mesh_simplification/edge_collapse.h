@@ -48,7 +48,7 @@ int edge_collapse ( ECM&                       aSurface
                   , VertexIndexMap       const& aVertex_index_map     // defaults to get(vertex_index,aSurface)
                   , EdgeIndexMap         const& aEdge_index_map       // defaults to get(edge_index,aSurface)
                   , EdgeIsBorderMap      const& aEdge_is_border_map   // defaults to get(edge_is_border,aSurface)
-                  , EdgeIsConstrainedMap const& aEdge_is_constrained_map   // defaults to Default_is_constrained_edge_map<ECM>()
+                  , EdgeIsConstrainedMap const& aEdge_is_constrained_map   // defaults to No_constrained_edge_map<ECM>()
                   
                   // optional strategy policies - defaults to LindstomTurk
                   , GetCost              const& aGet_cost
@@ -115,7 +115,7 @@ int edge_collapse ( ECM& aSurface
                       ,choose_const_pmap(get_param(aParams,boost::vertex_index),aSurface,boost::vertex_index)
                       ,choose_const_pmap(get_param(aParams,boost::edge_index),aSurface,boost::edge_index)
                       ,choose_const_pmap(get_param(aParams,edge_is_border),aSurface,edge_is_border)
-                      ,choose_param     (get_param(aParams,edge_is_constrained),Default_is_constrained_edge_map<ECM>())
+                      ,choose_param     (get_param(aParams,edge_is_constrained),No_constrained_edge_map<ECM>())
                       ,choose_param     (get_param(aParams,get_cost_policy), LindstromTurk_cost<ECM>())
                       ,choose_param     (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
                       ,choose_param     (get_param(aParams,vis), Dummy_visitor())

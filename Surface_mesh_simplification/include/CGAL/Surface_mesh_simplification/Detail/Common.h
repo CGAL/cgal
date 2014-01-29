@@ -81,12 +81,12 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
 }
 
 template <class ECM>
-struct Default_is_constrained_edge_map{
+struct No_constrained_edge_map{
   typedef typename boost::graph_traits<ECM>::edge_descriptor key_type;
   typedef bool value_type;
   typedef value_type reference;
   typedef boost::readable_property_map_tag category;
-  friend bool get(Default_is_constrained_edge_map, key_type) {
+  friend bool get(No_constrained_edge_map, key_type) {
     return false;
   }
 };

@@ -119,7 +119,9 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collect()
   for ( boost::tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb, id+=2 )
   {
     edge_descriptor lEdge = *eb ;
-  
+
+    if ( is_constrained(lEdge) ) continue;//no not insert constrainted edges
+
     CGAL_assertion( get_directed_edge_id(lEdge) == id ) ;
     CGAL_assertion( get_directed_edge_id(opposite_edge(lEdge,mSurface)) == id+1 ) ;
 
@@ -188,6 +190,8 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Loop()
     CGAL_SURF_SIMPL_TEST_assertion ( lLoop_watchdog ++ < mInitialEdgeCount ) ;
 
     CGAL_ECMS_TRACE(1,"Poped " << edge_to_string(*lEdge) ) ;
+
+    CGAL_assertion( !is_constrained(*lEdge) );
     
     Profile const& lProfile = create_profile(*lEdge);
 
@@ -398,6 +402,10 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
      
   if ( rR )
   {
+    /// ensure two constrained edges cannot get merged
+    if ( is_edge_adjacent_to_a_constrained_edge(
+          aProfile, Edge_is_constrained_map) ) return false ;
+
     if ( aProfile.is_v0_v1_a_border() )
     {
       if ( Is_open_triangle(aProfile.v0_v1()) )
@@ -731,6 +739,8 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
   if ( aProfile.left_face_exists() )
   {
     edge_descriptor lV0VL = primary_edge(aProfile.vL_v0());
+    if ( is_constrained(lV0VL) ) //make sure a constrained edge will not disappear
+      lV0VL=primary_edge(aProfile.v1_vL());
     
     CGAL_ECMS_TRACE(3,"V0VL E" << lV0VL->id()
                    << "(V" <<  lV0VL->vertex()->id() << "->V" << lV0VL->opposite()->vertex()->id() << ")"
@@ -750,7 +760,9 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
   if ( aProfile.right_face_exists() )
   {
     edge_descriptor lVRV1 = primary_edge(aProfile.vR_v1());
-    
+    if ( is_constrained(lVRV1) ) //make sure a constrained edge will not disappear
+      lVRV1=primary_edge(aProfile.v0_vR());
+
     CGAL_ECMS_TRACE(3,"V1VRE" << lVRV1->id()
                    << "(V" <<  lVRV1->vertex()->id() << "->V" << lVRV1->opposite()->vertex()->id() << ")"
                    ) ;
@@ -774,7 +786,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
   // (PT and QB are removed if they are not null).
   // All other edges must be kept.
   // All directed edges incident to vertex removed are relink to the vertex kept.
-  rResult = halfedge_collapse(aProfile.v0_v1(),mSurface, Edge_is_constrained_map);
+  rResult = halfedge_collapse_bk_compatibility(aProfile.v0_v1(), Edge_is_constrained_map);
 
   CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
 

@@ -332,7 +332,43 @@ private:
     }  
     return rEdge ;  
   }
-   
+
+  /// Functions to ensure the backward compatibility before addition of the constrained edge map
+  template<class AEdgeIsConstrainedMap>
+  vertex_descriptor
+  halfedge_collapse_bk_compatibility(
+    edge_descriptor const& pq, AEdgeIsConstrainedMap aEdge_is_constrained_map)
+  {
+    return halfedge_collapse(pq, mSurface, aEdge_is_constrained_map);
+  }
+
+  template<class ECM>
+  vertex_descriptor
+  halfedge_collapse_bk_compatibility(
+    edge_descriptor const& pq, No_constrained_edge_map<ECM> )
+  {
+    return halfedge_collapse(pq, mSurface);
+  }
+  ///
+
+  /// We wrap this test to avoid penalizing runtime when no constraints are present
+  template<class AEdgeIsConstrainedMap>
+  bool
+  is_edge_adjacent_to_a_constrained_edge(
+    Profile const& aProfile, AEdgeIsConstrainedMap)
+  {
+    return is_constrained(aProfile.v0()) && is_constrained(aProfile.v1());
+  }
+
+  template<class ECM>
+  bool
+  is_edge_adjacent_to_a_constrained_edge(
+    edge_descriptor const& pq, No_constrained_edge_map<ECM> )
+  {
+    return false;
+  }
+  ///
+
 private:
 
   ECM&                   mSurface ;
