@@ -828,7 +828,11 @@ private:
       {
         c3t3_.add_to_complex(ch,*subdomain);
       }
-      
+      else if(update)
+      {
+        c3t3_.remove_from_complex(ch);
+      }
+
       return subdomain;
     }
     
@@ -873,7 +877,11 @@ private:
         facet.first->set_facet_surface_center(facet.second,surface_center);
         
         // Update status in c3t3 
-        c3t3_.add_to_complex(facet,*surface);          
+        c3t3_.add_to_complex(facet,*surface);
+      }
+      else if(update)
+      {
+        c3t3_.remove_from_complex(facet);
       }
       
       return surface;
