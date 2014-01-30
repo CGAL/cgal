@@ -44,7 +44,7 @@
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
-- `CGAL::Constrained_placement_wrapper<Placement,ECM>`
+- `CGAL::Surface_mesh_simplification::Constrained_placement_wrapper<Placement,ECM>`
 
 */
 
