@@ -158,15 +158,43 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collect()
 
     // edges of length 0 removed no longer need to be treated
     if ( lProfile.left_face_exists() )
-        zero_length_edges.erase( primary_edge(lProfile.vL_v0()) );
-    if  ( lProfile.right_face_exists() )
-        zero_length_edges.erase( primary_edge(lProfile.vR_v1()) );
+    {
+      edge_descriptor lEdge_to_remove = is_constrained(lProfile.vL_v0()) ?
+                                          primary_edge(lProfile.v1_vL()) :
+                                          primary_edge(lProfile.vL_v0()) ;
+      zero_length_edges.erase( lEdge_to_remove );
+      Edge_data& lData = get_data(lEdge_to_remove) ;
+      if ( lData.is_in_PQ() ){
+        CGAL_ECMS_TRACE(2,"Removing E" << get(Edge_index_map,lEdge_to_remove) << " from PQ" );
+        remove_from_PQ(lEdge_to_remove,lData);
+      }
+      --mCurrentEdgeCount;
+    }
+
+    if ( lProfile.right_face_exists() )
+    {
+      edge_descriptor lEdge_to_remove = is_constrained(lProfile.vR_v1()) ?
+                                          primary_edge(lProfile.v0_vR()) :
+                                          primary_edge(lProfile.vR_v1()) ;
+      zero_length_edges.erase( lEdge_to_remove );
+      Edge_data& lData = get_data(lEdge_to_remove) ;
+      if ( lData.is_in_PQ() ){
+        CGAL_ECMS_TRACE(2,"Removing E" << get(Edge_index_map,lEdge_to_remove) << " from PQ" );
+        remove_from_PQ(lEdge_to_remove,lData);
+      }
+      --mCurrentEdgeCount;
+    }
+
+    --mCurrentEdgeCount;
 
     //the placement is trivial, it's always the point itself
     Placement_type lPlacement = lProfile.p0();
-    Collapse(lProfile ,lPlacement);
+    vertex_descriptor rResult
+      = halfedge_collapse_bk_compatibility(lProfile.v0_v1(), Edge_is_constrained_map);
+    put(vertex_point,mSurface,rResult,*lPlacement);
+    Visitor.OnCollapsed(lProfile,rResult);
   }
-  
+
   CGAL_ECMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
 }
 
