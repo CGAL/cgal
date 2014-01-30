@@ -64,8 +64,22 @@
 
 //for the time being this will run for conic polycurves only
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
+// #include <CGAL/Cartesian.h>
+// #include <CGAL/Quotient.h>
+// #include <CGAL/MP_Float.h>
+#include <CGAL/CORE_algebraic_number_traits.h>
+// #include <vector>
+// #include <list>
+
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_conic_traits_2.h>
+
+#elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Arr_circular_arc_traits_2.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
@@ -185,7 +199,6 @@ typedef Base_geom_traits::Rat_vector                          Rat_vector;
 
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 typedef CGAL::Arr_algebraic_segment_traits_2<Number_type>     Base_geom_traits;
-
 #define GEOM_TRAITS_TYPE "Algebraic"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
@@ -201,6 +214,13 @@ typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Conic_
 typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Base_geom_traits;
 #define GEOM_TRAITS_TYPE "Polycurves_conics"
 
+#elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
+typedef Kernel                                                		Linear_kernel;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   		Algebraic_kernel;
+typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>		Circular_kernel;
+typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>      		Circular_arc_traits;
+typedef CGAL::Arr_polyline_traits_2<Circular_arc_traits>      		Base_geom_traits;
+#define GEOM_TRAITS_TYPE "Polycurves_circular_arcs"
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!
