@@ -982,13 +982,15 @@ private:
   public:
     Cell_from_ids(const Cell_handle& c)
       : vertices_()
+      , sorted_vertices_()
     {
       for(int i = 0; i < 4; ++i)
       {
         vertices_[static_cast<std::size_t>(i)]
           = static_cast<std::size_t>(c->vertex(i)->meshing_info());
       }
-      std::sort(vertices_.begin(), vertices_.end());
+      sorted_vertices_ = vertices_;//makes a copy of each element
+      std::sort(sorted_vertices_.begin(), sorted_vertices_.end());
     }
 
     std::size_t vertex_id(const std::size_t& i) const
@@ -1000,12 +1002,14 @@ private:
     bool operator<(const Cell_from_ids& c) const
     {
       //std::array operator< compares lhs and rhs lexicographically
-      return vertices_ < c.vertices_;
+      return sorted_vertices_ < c.sorted_vertices_;
     }
 
   private:
-    // vertices IDs, sorted
+    // vertices IDs, not sorted, to keep the ordering of the Cell_handle id's
     CGAL::cpp11::array<std::size_t, 4> vertices_;
+    // vertices IDs, sorted, to be found in a std::set<Cell_from_ids>
+    CGAL::cpp11::array<std::size_t, 4> sorted_vertices_;
   };
 
   class Cell_data_backup
