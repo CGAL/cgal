@@ -158,6 +158,11 @@ public:
   }  
 };
 
+/////////////////////
+/////////////////////
+//Multiple_kd_tree
+/////////////////////
+
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
   CGAL_static_assertion_msg((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
