@@ -1011,8 +1011,19 @@ private:
   class Cell_data_backup
   {
   public:
-    Cell_data_backup(const Cell_handle& c)
+    Cell_data_backup(const Cell_handle& c,
+                     const bool do_backup = true)
       : cell_ids_(c)
+    {
+      //backup is not done when constructor is called to 
+      //convert a newly created cell (has nothing to backup)
+      //to a Cell_data_backup
+      if(do_backup)
+        backup(c);
+    }
+
+  private:
+    void backup(const Cell_handle& c)
     {
       if(c->is_cache_valid())
         sliver_value_ = c->sliver_value();
@@ -1033,6 +1044,7 @@ private:
       //they are not used in update_mesh functions involving a Sliver_criterion
     }
 
+  public:
     bool operator<(const Cell_data_backup& cb) const
     {
       return cell_ids_ < cb.cell_ids_;
@@ -2758,7 +2770,8 @@ restore_from_cells_backup(const CellsVector& cells,
     if(tr_.is_infinite(*cit))
       continue;//don't restore infinite cells, they have not been backed-up
 
-    typename CellDataSet::const_iterator cd_it = cells_backup.find(*cit);
+    typename CellDataSet::const_iterator cd_it 
+      = cells_backup.find(Cell_data_backup(*cit, false/*don't backup*/));
     if(cd_it != cells_backup.end())
     {
       typename CellDataSet::value_type cell_data = *cd_it;
