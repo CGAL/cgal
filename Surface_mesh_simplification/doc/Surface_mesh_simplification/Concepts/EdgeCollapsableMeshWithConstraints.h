@@ -7,7 +7,7 @@ The concept `EdgeCollapsableMeshWithConstraints` describes additional requiremen
 for the type of triangulated surface meshes that can be passed to the
 simplification algorithm.
 
-\cgalRefines `EdgeCollapsableMeshWithConstraints`
+\cgalRefines `EdgeCollapsableMesh`
 
 \cgalHeading{Valid Expressions}
 
