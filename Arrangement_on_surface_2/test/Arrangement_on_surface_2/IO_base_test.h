@@ -183,7 +183,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 
   //make conic segments from every set of 3 points and enter them in construct curve functor.
    std::vector<Point_2> conic_curve_points;
-   std::vector<Curve_2> Conic_sections;
+   std::vector<Curve_2> conic_sections;
    for (int i = 0; i < points.sie(); ++i)
    {
      conic_curve_points.push_back(points[i]);
@@ -192,13 +192,13 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
      {
         //create segment and push back
         Curve_2 section( conic_curve_points[0], conic_curve_points[1], conic_curve_points[2] );
-        Conic_sections.push_back(section);
+        conic_sections.push_back(section);
         conic_curve_points.clear();      
      }
    }
 
 
-  cv = m_geom_traits.construct_curve_2_object()(Conic_sections.begin(), Conic_sections.end());
+  cv = m_geom_traits.construct_curve_2_object()(conic_sections.begin(), conic_sections.end());
   return true;
 }
 
