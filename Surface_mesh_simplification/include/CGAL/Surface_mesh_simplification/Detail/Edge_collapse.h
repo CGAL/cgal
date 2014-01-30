@@ -363,7 +363,7 @@ private:
   template<class ECM>
   bool
   is_edge_adjacent_to_a_constrained_edge(
-    edge_descriptor const& pq, No_constrained_edge_map<ECM> )
+    edge_descriptor const&, No_constrained_edge_map<ECM> )
   {
     return false;
   }
