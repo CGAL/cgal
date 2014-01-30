@@ -326,7 +326,7 @@ The following example demonstrates the most common use of
 
 template<typename R>
 struct Intersection_visitor {
-  typedef result_type void;
+  typedef void result_type;
   void operator()(const Point_2<R>& p) const 
   { // handle point
   }
