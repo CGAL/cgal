@@ -31,7 +31,7 @@ The type of the edge profile cache, model of the `EdgeProfile` concept.
 typedef unspecified_type Profile; 
 
 /*!
-The point type for the surface vertex.
+The point type for the surface mesh vertex.
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 

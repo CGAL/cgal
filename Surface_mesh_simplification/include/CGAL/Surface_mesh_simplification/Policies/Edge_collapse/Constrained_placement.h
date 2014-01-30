@@ -52,20 +52,20 @@ public:
     typedef typename GraphTraits::in_edge_iterator  in_edge_iterator;
 
     in_edge_iterator eb, ee ;
-    for ( boost::tie(eb,ee) = in_edges(aProfile.v0(),aProfile.surface()) ;
+    for ( boost::tie(eb,ee) = in_edges(aProfile.v0(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
       if( get(Edge_is_constrained_map, *eb) )
         return get(vertex_point,
-                   aProfile.surface(),
+                   aProfile.surface_mesh(),
                    aProfile.v0());
     }
-    for ( boost::tie(eb,ee) = in_edges(aProfile.v1(),aProfile.surface()) ;
+    for ( boost::tie(eb,ee) = in_edges(aProfile.v1(),aProfile.surface_mesh());
       eb != ee ; ++ eb )
     {
       if( get(Edge_is_constrained_map, *eb) )
         return get(vertex_point,
-                   aProfile.surface(),
+                   aProfile.surface_mesh(),
                    aProfile.v1());
     }
 

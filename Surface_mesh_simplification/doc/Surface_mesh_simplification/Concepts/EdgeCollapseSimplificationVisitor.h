@@ -16,7 +16,7 @@ public:
 /// @{
 
 /*!
-The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
+The type of the surface mesh to simplify. Must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
 */ 
 typedef unspecified_type ECM; 
 
@@ -31,7 +31,7 @@ The type of the edge profile cache. Must be a model of the `EdgeProfile` concept
 typedef unspecified_type Profile; 
 
 /*!
-The point type for the surface vertex. Must be a model of `Point_3`. 
+The point type for the surface mesh vertex. Must be a model of `Point_3`. 
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
@@ -48,19 +48,19 @@ typedef unspecified_type size_type;
 /*!
 Called before the algorithm starts. 
 */ 
-void OnStarted( ECM& surface ); 
+void OnStarted( ECM& surface_mesh ); 
 
 /*!
 Called after the algorithm finishes. 
 */ 
-void OnFinished ( ECM& surface ) ; 
+void OnFinished ( ECM& surface_mesh ) ; 
 
 /*!
 Called when the `StopPredicate` returned `true` 
-(but not if the algorithm terminates because the surface could not be simplified any further). 
+(but not if the algorithm terminates because the surface mesh could not be simplified any further). 
 
 */ 
-void OnStopConditionReached( ECM& surface ) ; 
+void OnStopConditionReached( ECM& surface_mesh ) ; 
 
 /*!
 Called during the <I>collecting phase</I> (when a cost is assigned to the edges), 
@@ -105,7 +105,7 @@ void OnCollapsing( Profile const& profile
 /*!
 Called for each selected edge which cannot be 
 collapsed because doing so would change the topological 
-type of the surface (turn it into a non-manifold 
+type of the surface mesh (turn it into a non-manifold 
 for instance). 
 
 */ 

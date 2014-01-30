@@ -30,14 +30,14 @@ typedef Kernel::Point_3 Point ;
 //
 // Setup an enriched polyhedron type which stores an id() field in the items
 //
-typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface; 
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface_mesh; 
 
-typedef Surface::Halfedge_handle Halfedge_handle ;
-typedef Surface::Vertex_handle   Vertex_handle ;
+typedef Surface_mesh::Halfedge_handle Halfedge_handle ;
+typedef Surface_mesh::Vertex_handle   Vertex_handle ;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
-typedef SMS::Edge_profile<Surface> Profile ;
+typedef SMS::Edge_profile<Surface_mesh> Profile ;
 
 
 // The following is a Visitor that keeps track of the simplification process.
@@ -63,7 +63,7 @@ struct Stats
   std::size_t placement_uncomputable ; 
 } ;
 
-struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
+struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
 {
   My_visitor( Stats* s) : stats(s){} 
 
@@ -103,7 +103,7 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
   
   // Called for each edge which failed the so called link-condition,
   // that is, which cannot be collapsed because doing so would
-  // turn the surface into a non-manifold.
+  // turn the surface mesh into a non-manifold.
   void OnNonCollapsable( Profile const& )
   {
     ++ stats->non_collapsable;
@@ -121,9 +121,9 @@ struct My_visitor : SMS::Edge_collapse_visitor_base<Surface>
 
 int main( int argc, char** argv ) 
 {
-  Surface surface; 
+  Surface_mesh surface_mesh; 
   
-  std::ifstream is(argv[1]) ; is >> surface ;
+  std::ifstream is(argv[1]) ; is >> surface_mesh ;
 
   // The items in this polyhedron have an "id()" field 
   // which the default index maps used in the algorithm
@@ -132,16 +132,16 @@ int main( int argc, char** argv )
   // this id(), so we must do it here:
   int index = 0 ;
   
-  for( Surface::Halfedge_iterator eb = surface.halfedges_begin()
-     , ee = surface.halfedges_end()
+  for( Surface_mesh::Halfedge_iterator eb = surface_mesh.halfedges_begin()
+     , ee = surface_mesh.halfedges_end()
      ; eb != ee
      ; ++ eb
      ) 
     eb->id() = index++;
 
   index = 0 ;
-  for( Surface::Vertex_iterator vb = surface.vertices_begin()
-     , ve = surface.vertices_end()
+  for( Surface_mesh::Vertex_iterator vb = surface_mesh.vertices_begin()
+     , ve = surface_mesh.vertices_end()
      ; vb != ve
      ; ++ vb
      ) 
@@ -149,22 +149,22 @@ int main( int argc, char** argv )
     
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  SMS::Count_ratio_stop_predicate<Surface> stop(0.1);
+  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
  
   Stats stats ;
   
   My_visitor vis(&stats) ;
     
   // The index maps are not explicitelty passed as in the previous
-  // example because the surface items have a proper id() field.
+  // example because the surface mesh items have a proper id() field.
   // On the other hand, we pass here explicit cost and placement
   // function which differ from the default policies, ommited in
   // the previous example.
   int r = SMS::edge_collapse
-           (surface
+           (surface_mesh
            ,stop
-           ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
-                 .get_placement(SMS::Midpoint_placement<Surface>())
+           ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface_mesh>())
+                 .get_placement(SMS::Midpoint_placement<Surface_mesh>())
                  .visitor      (vis)
            );
   
@@ -178,9 +178,9 @@ int main( int argc, char** argv )
             << std::endl ; 
             
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
-            << (surface.size_of_halfedges()/2) << " final edges.\n" ;
+            << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
         
-  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface_mesh ;
   
   return 0 ;      
 }

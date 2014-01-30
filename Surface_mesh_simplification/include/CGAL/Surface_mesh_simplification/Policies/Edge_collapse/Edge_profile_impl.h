@@ -41,15 +41,15 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   ,mSurface(boost::addressof(aSurface))
   
 {
-  mV1V0 = opposite_edge(v0_v1(),surface());
+  mV1V0 = opposite_edge(v0_v1(),surface_mesh());
   
-  mV0 = source(v0_v1(),surface());
-  mV1 = target(v0_v1(),surface());
+  mV0 = source(v0_v1(),surface_mesh());
+  mV1 = target(v0_v1(),surface_mesh());
   
   CGAL_assertion( mV0 != mV1 );
   
-  mP0 = get(vertex_point,surface(),mV0);
-  mP1 = get(vertex_point,surface(),mV1);
+  mP0 = get(vertex_point,surface_mesh(),mV0);
+  mP1 = get(vertex_point,surface_mesh(),mV1);
   
   mIsBorderV0V1 = is_border[v0_v1()];
   mIsBorderV1V0 = is_border[v1_v0()];
@@ -58,12 +58,12 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   {
     CGAL_SURF_SIMPL_TEST_assertion( !mV0V1->is_border() ) ;
 
-    mVLV0 = prev_edge(v0_v1(),surface());
-    mV1VL = next_edge(v0_v1(),surface());
-    mVL   = target(v1_vL(),surface());
+    mVLV0 = prev_edge(v0_v1(),surface_mesh());
+    mV1VL = next_edge(v0_v1(),surface_mesh());
+    mVL   = target(v1_vL(),surface_mesh());
     
     CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVL );
-    CGAL_SURF_SIMPL_TEST_assertion( mVL == source(vL_v0(),surface()) );
+    CGAL_SURF_SIMPL_TEST_assertion( mVL == source(vL_v0(),surface_mesh()) );
   }
   else
   {
@@ -74,12 +74,12 @@ Edge_profile<ECM>::Edge_profile ( edge_descriptor  const& aV0V1
   {
     CGAL_SURF_SIMPL_TEST_assertion( !mV1V0->is_border() ) ;
 
-    mV0VR = next_edge(v1_v0(),surface());
-    mVRV1 = prev_edge(v1_v0(),surface());
-    mVR   = target(v0_vR(),surface());
+    mV0VR = next_edge(v1_v0(),surface_mesh());
+    mVRV1 = prev_edge(v1_v0(),surface_mesh());
+    mVR   = target(v0_vR(),surface_mesh());
     
     CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVR );
-    CGAL_SURF_SIMPL_TEST_assertion( mVR == source(vR_v1(),surface()) );
+    CGAL_SURF_SIMPL_TEST_assertion( mVR == source(vR_v1(),surface_mesh()) );
   }
   else
   {
@@ -99,10 +99,10 @@ void Edge_profile<ECM>::Extract_borders( vertex_descriptor const& v
                                        )
 {
   in_edge_iterator eb, ee ; 
-  for ( boost::tie(eb,ee) = in_edges(v,surface()) ; eb != ee ; ++ eb )
+  for ( boost::tie(eb,ee) = in_edges(v,surface_mesh()) ; eb != ee ; ++ eb )
   {
     edge_descriptor edge     = *eb ;
-    edge_descriptor opp_edge = opposite_edge(edge,surface()) ;
+    edge_descriptor opp_edge = opposite_edge(edge,surface_mesh()) ;
     
     bool is_edge_border     = is_border[edge] ;
     bool is_opp_edge_border = is_border[opp_edge] ;
@@ -150,7 +150,7 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
   // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
   
   // The triangle is oriented v0->v2->v1 if the next edge that follows e02 (which is the edge v0->v2) is v2->v1.
-  if ( target(next_edge(e02,surface()),surface()) == v1 ) 
+  if ( target(next_edge(e02,surface_mesh()),surface_mesh()) == v1 ) 
   {
     // The triangle is oriented v0->v2->v1.
     // In this case e02 is an edge of the facet.
@@ -163,7 +163,7 @@ void Edge_profile<ECM>::Extract_triangle( vertex_descriptor const& v0
     // The triangle is oriented v0->v1->v2.
     // In this case, e20 and not e02, is an edge of the facet.
     // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( !is_border[opposite_edge(e02,surface())] )
+    if ( !is_border[opposite_edge(e02,surface_mesh())] )
       mTriangles.push_back(Triangle(v0,v1,v2) ) ;
   }
 }
@@ -190,8 +190,8 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
   
   do
   {
-    e02 = opposite_edge(prev_edge(e02,surface()), surface());
-    vertex_descriptor v2 = target(e02,surface());
+    e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
+    vertex_descriptor v2 = target(e02,surface_mesh());
   
     if ( v2 != mV1 )
     {
@@ -212,20 +212,20 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
   
   v0 = mV1;
   
-  e02 = opposite_edge(prev_edge(mV1V0,surface()), surface());
+  e02 = opposite_edge(prev_edge(mV1V0,surface_mesh()), surface_mesh());
   
-  v1 = target(e02,surface()); 
+  v1 = target(e02,surface_mesh()); 
 
     
   // This could have been added to the link while circulating around mP
   if ( v1 != mV0 && lCollected.find(vertex_idx[v1]) == lCollected.end() )
     mLink.push_back(v1) ;
   
-  e02 = opposite_edge(prev_edge(e02,surface()), surface());
+  e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
   
   do
   {
-    vertex_descriptor v2 = target(e02,surface());
+    vertex_descriptor v2 = target(e02,surface_mesh());
 
     // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
     if ( v2 != mV0 && lCollected.find(vertex_idx[v2]) == lCollected.end() )
@@ -235,7 +235,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
     
     v1 = v2 ;
      
-    e02 = opposite_edge(prev_edge(e02,surface()), surface());
+    e02 = opposite_edge(prev_edge(e02,surface_mesh()), surface_mesh());
   }
   while ( e02 != mV1V0 ) ;
 }
