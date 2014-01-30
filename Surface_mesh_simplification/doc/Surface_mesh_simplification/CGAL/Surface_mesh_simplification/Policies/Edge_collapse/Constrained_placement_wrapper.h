@@ -7,12 +7,12 @@ namespace Surface_mesh_simplification {
 
 The class `Constrained_placement_wrapper` is a model for the `GetPlacement` concept
 provided the template parameter `BasePlacement` is such a model.
-The placement of an edge that is adjacent to a constrained edge is the point
-of the common vertex. Otherwise the placement is the one computed by `BasePlacement`.
+The placement of the vertex resulting from a contraction of an edge adjacent to a constrained edge
+is the point of the common vertex. Otherwise the placement is the one computed by `BasePlacement`.
 
 \tparam BasePlacement a model of `GetPlacement`.
 \tparam EdgeIsConstrainedMap a model of `boost::ReadablePropertyMap` with `GetPlacement::Profile::edge_descriptor`
-                             as key type and boolean as value type indicating if an edge is constrained.
+                             as key type and `bool` as value type indicating if an edge is constrained.
 
 \cgalModels `GetPlacement`
 
