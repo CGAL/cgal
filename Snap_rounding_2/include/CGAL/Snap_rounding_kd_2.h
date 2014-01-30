@@ -78,7 +78,7 @@ public:
 
 //////////////////////////
 //////////////////////////
-//Kd_tree_interface_new_2d
+//My_point_interface_2d
 //////////////////////////
 
 template <class  PT>
@@ -130,7 +130,7 @@ public:
 
 //////////////////////
 //////////////////////
-//Search_traits_new_2
+//Search_traits_kd_tree_2
 // 
 //(Search traits modified to be used by the Spacial Searching kd_trees for Snap rounding)
 //////////////////////
@@ -502,7 +502,9 @@ public:
 #ifdef CGAL_SR_DEBUG
     int number_of_actual_kd_trees = 0;
 #endif
+    
     i = 0;
+    
     for (NT angle = 0; i < number_of_trees;
          angle += NT(half_pi / number_of_trees),++i)
     {
@@ -522,13 +524,6 @@ public:
       ++ind;
     }
 
-    //debugging
-     //std::cout<< "*&^*&^*&^ Numer of old Kd_trees: " << kd_trees_list.size() << " , Number of new Kd_trees: " << kd_trees_new_list.size() << std::endl; 
-    // typename Kd_triple_list_new::const_iterator iter_new ;
-    // for(iter_new = kd_trees_new_list.begin();     iter_new!=kd_trees_new_list.end();  ++iter_new)
-    //   iter_new->first->statistics(std::cout);
-    //debugging end
-
     delete[] kd_counter;
 
 #ifdef CGAL_SR_DEBUG
@@ -538,7 +533,8 @@ public:
 
   }
 
-  ~Multiple_kd_tree() {
+  ~Multiple_kd_tree() 
+  {
     //delete all the kd_trees.
     for(typename Kd_triple_list::iterator it = kd_trees_list.begin();   it != kd_trees_list.end(); ++it)  
       delete (it->first);
@@ -593,7 +589,6 @@ public:
 
     while(i < n && !found) 
     {
-      
       if (iter->second.first > d) 
         found = true;
       
@@ -617,9 +612,11 @@ public:
     
     // query
     points_iter = points_list.begin();
-    Point_2 point_left,point_right,point_bot,point_top;
+    Point_2 point_left, point_right, point_bot, point_top;
     point_left = point_right = point_bot = point_top = *points_iter;
-    for (++points_iter; points_iter != points_list.end(); ++points_iter) {
+    
+    for (++points_iter; points_iter != points_list.end(); ++points_iter) 
+    {
       point_left = small_x_point(point_left,*points_iter);
       point_right = big_x_point(point_right,*points_iter);
       point_bot = small_y_point(point_bot,*points_iter);
