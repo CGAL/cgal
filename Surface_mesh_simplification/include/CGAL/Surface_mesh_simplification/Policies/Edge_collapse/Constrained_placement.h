@@ -28,7 +28,7 @@ namespace Surface_mesh_simplification
 {
 
 template<class BasePlacement, class EdgeIsConstrainedMap>
-class Constrained_placement_wrapper : public BasePlacement
+class Constrained_placement : public BasePlacement
 {
 public:
 
@@ -38,7 +38,7 @@ public:
   EdgeIsConstrainedMap Edge_is_constrained_map;
 
 public:
-  Constrained_placement_wrapper(
+  Constrained_placement(
     EdgeIsConstrainedMap map=EdgeIsConstrainedMap(),
     BasePlacement base=BasePlacement() )
   : BasePlacement(base)

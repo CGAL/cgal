@@ -293,7 +293,7 @@ and how to use a visitor object to track the simplification process.
 The following examples show how to use the optional named parameter `edge_is_constrained_map` to prevent
 edges from being removed. Edges marked as contrained are guaranteed to be in the final mesh. However,
 the vertices of the constrained edges may change and the placement may change the points.
-The wrapper `CGAL::Constrained_placement_wrapper` guarantees that these points are not changed.
+The wrapper `CGAL::Constrained_placement` guarantees that these points are not changed.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
 

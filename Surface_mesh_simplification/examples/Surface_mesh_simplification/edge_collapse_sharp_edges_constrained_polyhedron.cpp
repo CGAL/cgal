@@ -7,7 +7,7 @@
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement_wrapper.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Unique_hash_map.h>
@@ -70,9 +70,8 @@ int main( int argc, char** argv )
   is >> surface ;
 
   Constrained_edge_map constraints_map(constraint_hmap);
-  SMS::Constrained_placement_wrapper<SMS::Midpoint_placement<Surface>,
-                                     Constrained_edge_map >
-    placement(constraints_map);
+  SMS::Constrained_placement<SMS::Midpoint_placement<Surface>,
+                             Constrained_edge_map > placement(constraints_map);
 
   // map used to check that constrained_edges and the points of its vertices
   // are preserved at the end of the simplification

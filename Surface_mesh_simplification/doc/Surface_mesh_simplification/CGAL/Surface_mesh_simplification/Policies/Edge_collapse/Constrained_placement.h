@@ -5,7 +5,7 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplification
 
-The class `Constrained_placement_wrapper` is a model for the `GetPlacement` concept
+The class `Constrained_placement` is a model for the `GetPlacement` concept
 provided the template parameter `BasePlacement` is such a model.
 The placement of the vertex resulting from a contraction of an edge adjacent to a constrained edge
 is the point of the common vertex. Otherwise the placement is the one computed by `BasePlacement`.
@@ -18,7 +18,7 @@ is the point of the common vertex. Otherwise the placement is the one computed b
 
 */
 template<class BasePlacement, class EdgeIsConstrainedMap>
-class Constrained_placement_wrapper : public BasePlacement
+class Constrained_placement : public BasePlacement
 {
 public:
 
@@ -28,7 +28,7 @@ public:
 /*!
 Constructor 
 */ 
-  Constrained_placement_wrapper(
+  Constrained_placement(
     EdgeIsConstrainedMap map=EdgeIsConstrainedMap(),
     BasePlacement base= BasePlacement() ); 
 /// @} 

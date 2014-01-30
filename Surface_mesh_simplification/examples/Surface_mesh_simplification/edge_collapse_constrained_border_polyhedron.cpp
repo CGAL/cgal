@@ -16,7 +16,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 
 //Placement wrapper
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement_wrapper.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 
 // Stop-condition policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
@@ -43,9 +43,8 @@ struct Border_is_constrained_edge_map{
 //
 // Placement class
 //
-typedef SMS::Constrained_placement_wrapper<SMS::Midpoint_placement<Surface>,
-                                           Border_is_constrained_edge_map >
-  Placement;
+typedef SMS::Constrained_placement<SMS::Midpoint_placement<Surface>,
+                                   Border_is_constrained_edge_map > Placement;
 
 int main( int argc, char** argv )
 {
