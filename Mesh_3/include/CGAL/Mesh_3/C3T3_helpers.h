@@ -1743,14 +1743,14 @@ template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::  
 update_mesh_no_topo_change(const Point_3& new_position,
-                           const Vertex_handle& vertex,
+                           const Vertex_handle& old_vertex,
                            const SliverCriterion& criterion,
                            OutputIterator modified_vertices,
                            const Cell_vector& conflict_cells )
 {
   // std::cerr << "update_mesh_no_topo_change(\n"
   //           << new_position << ",\n"
-  //           << "                " << (void*)(&*vertex) << "=" << vertex->point()
+  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
 
     //backup metadata
@@ -1760,12 +1760,12 @@ update_mesh_no_topo_change(const Point_3& new_position,
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
-  Point_3 old_position = vertex->point();
+  Point_3 old_position = old_vertex->point();
 
   // Move point
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
-  move_point_no_topo_change(vertex,new_position);
+  move_point_no_topo_change(old_vertex,new_position);
     
   // Get new criterion value (conflict_zone did not change) 
   // Check that mesh is still valid
@@ -1775,8 +1775,8 @@ update_mesh_no_topo_change(const Point_3& new_position,
    //verify_surface does not change c3t3 when returns false, circumcenters yes
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
-                           vertex, modified_vertices);
-    return std::make_pair(true,vertex);
+                           old_vertex, modified_vertices);
+    return std::make_pair(true,old_vertex);
   }
   else
   {
@@ -1788,14 +1788,14 @@ update_mesh_no_topo_change(const Point_3& new_position,
     reset_circumcenter_cache(conflict_cells);
     //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
-    move_point_no_topo_change(vertex,old_position);
+    move_point_no_topo_change(old_vertex,old_position);
 
     //restore meta-data (cells should have same connectivity as before move)
     // cells_backup does not contain infinite cells so they can be fewer
     CGAL_assertion(conflict_cells.size() >= cells_backup.size());
     restore_from_cells_backup(conflict_cells, cells_backup);
 
-    return std::make_pair(false,vertex);
+    return std::make_pair(false,old_vertex);
   }
 }
 
