@@ -9,6 +9,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement_wrapper.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/property_map.h>
@@ -49,23 +50,6 @@ private:
   const CGAL::Unique_hash_map<key_type,bool>& mConstraints;
 };
 
-//
-// A stop predicate that never says to stop.
-//
-struct No_stop_predicate
-{
-  typedef Surface ECM;
-  typedef double FT;
-  typedef boost::graph_traits<ECM>::edges_size_type size_type;
-  typedef SMS::Edge_profile<Surface> Profile;
-
-  bool operator()( FT const&, Profile const&, size_type, size_type) const
-  {
-    return false;
-  }
-};
-
-
 int main( int argc, char** argv )
 {
   CGAL::Unique_hash_map<edge_descriptor,bool> constraint_hmap(false);
@@ -84,8 +68,6 @@ int main( int argc, char** argv )
   }
 
   is >> surface ;
-
-  No_stop_predicate stop;
 
   Constrained_edge_map constraints_map(constraint_hmap);
   SMS::Constrained_placement_wrapper<SMS::Midpoint_placement<Surface>,
@@ -129,6 +111,9 @@ int main( int argc, char** argv )
     }
   }
   cst_output.close();
+
+  // Contract the surface as much as possible
+  SMS::Count_stop_predicate<Surface> stop(0);
 
   int r
   = SMS::edge_collapse(surface
