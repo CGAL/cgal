@@ -157,8 +157,9 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
           aSurface.join_vertex(pq);
           return q;
         }
+        bool lQ_Erased=pq->next()->opposite()->is_border();
         aSurface.erase_facet(edges_to_erase[0]->opposite());
-        return pq->next()->opposite()->is_border()?p:q;
+        return lQ_Erased?p:q;
       }
 
       CGAL_assertion(lBottomFaceExists);
@@ -167,8 +168,9 @@ halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edg
         aSurface.join_vertex(qp);
         return p;
       }
+      bool lP_Erased=qp->next()->opposite()->is_border();
       aSurface.erase_facet(edges_to_erase[0]->opposite());
-      return qp->next()->opposite()->is_border()?q:p;
+      return lP_Erased?q:p;
   };
 }
 
