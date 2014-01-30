@@ -2400,7 +2400,6 @@ project_on_surface_aux(const Point_3& p,
                        const Vector_3& projection_vector) const
 {
   typedef typename Gt::Segment_3 Segment_3;
-  typedef typename MD::Intersection Intersection;
 
   // Build a segment directed as projection_direction,
   typename Gt::Compute_squared_distance_3 sq_distance =
@@ -2447,6 +2446,7 @@ project_on_surface_aux(const Point_3& p,
 
 #else // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
+  typedef typename MD::Intersection Intersection;
   Intersection intersection = construct_intersection(proj_segment);
   if(CGAL::cpp0x::get<2>(intersection) == 2)
     return CGAL::cpp0x::get<0>(intersection);
