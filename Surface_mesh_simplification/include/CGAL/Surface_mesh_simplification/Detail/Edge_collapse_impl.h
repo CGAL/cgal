@@ -859,6 +859,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Update_neighbors( vertex_descr
   typedef std::set<edge_descriptor,Compare_id> edges ;
   
   edges lToUpdate(Compare_id(this)) ;
+  edges lToInsert(Compare_id(this)) ;
   
   // (A.1) Loop around all vertices adjacent to the vertex kept
   in_edge_iterator eb1, ee1 ; 
@@ -877,10 +878,12 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Update_neighbors( vertex_descr
       Edge_data& lData2 = get_data(lEdge2);
       CGAL_ECMS_TRACE(4,"Inedge around V" << get(Vertex_index_map,lAdj_k) << edge_to_string(lEdge2) ) ;
     
-      // Only those edges still in the PQ _and_ not already collected are updated.
-      if ( lData2.is_in_PQ() && lToUpdate.find(lEdge2) == lToUpdate.end() )
+      // Only edges still in the PQ needs to be updated, the other needs to be re-inserted
+      if ( lData2.is_in_PQ() )
         lToUpdate.insert(lEdge2) ;
-    } 
+      else
+        lToInsert.insert(lEdge2) ;
+    }
   }  
   
   //
@@ -901,7 +904,28 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Update_neighbors( vertex_descr
     
     update_in_PQ(lEdge,lData);
   }
-    
+
+  //
+  // (C) Insert ignored edges
+  //
+  // I think that this should be done for edges eliminated because of the geometric criteria
+  // and not the topological one.However maintaining such a set might be more expensive
+  // and hard to be safe ...
+  for ( typename edges::iterator it = lToInsert.begin(),
+                                 eit = lToInsert.end() ; it != eit ; ++ it )
+  {
+    edge_descriptor lEdge = *it;
+    if ( is_constrained(lEdge) ) continue; //do not insert constrained edges
+    Edge_data& lData = get_data(lEdge);
+
+    Profile const& lProfile = create_profile(lEdge);
+
+    lData.cost() = get_cost(lProfile) ;
+
+    CGAL_ECMS_TRACE(3, edge_to_string(lEdge) << " re-inserted in the PQ") ;
+
+    insert_in_PQ(lEdge,lData);
+  }
 }
 
 
