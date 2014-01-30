@@ -262,13 +262,13 @@ private:
   std::string vertex_to_string( const_vertex_descriptor const& v ) const
   {
     Point const& p = get_point(v);
-    return boost::str( boost::format("[V%1%:%2%]") % v->id() % xyz_to_string(p) ) ;
+    return boost::str( boost::format("[V%1%:%2%]") % get(Vertex_index_map,v) % xyz_to_string(p) ) ;
   }
     
   std::string edge_to_string ( const_edge_descriptor const& aEdge ) const
   {
     const_vertex_descriptor p,q ; boost::tie(p,q) = get_vertices(aEdge);
-    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % aEdge->id() % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
+    return boost::str( boost::format("{E%1% %2%->%3%}%4%") % get(Edge_index_map,aEdge) % vertex_to_string(p) % vertex_to_string(q) % ( is_border(aEdge) ? " (BORDER)" : ( is_border(aEdge->opposite()) ? " (~BORDER)": "" ) ) ) ;
   }
   
   Cost_type get_cost ( Profile const& aProfile ) const

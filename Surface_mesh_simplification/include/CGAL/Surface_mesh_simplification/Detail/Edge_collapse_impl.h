@@ -307,8 +307,8 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
 {
   bool rR = true ;
 
-  CGAL_ECMS_TRACE(3,"Testing topological collapsabilty of p_q=V" << aProfile.v0()->id() << "(%" << aProfile.v0()->vertex_degree() << ")"
-                 << "->V" << aProfile.v1()->id() << "(%" << aProfile.v1()->vertex_degree() << ")" 
+  CGAL_ECMS_TRACE(3,"Testing topological collapsabilty of p_q=V" << get(Vertex_index_map,aProfile.v0()) << "(%" << aProfile.v0()->vertex_degree() << ")"
+                 << "->V" << get(Vertex_index_map,aProfile.v1()) << "(%" << aProfile.v1()->vertex_degree() << ")" 
                  );
                  
   CGAL_ECMS_TRACE(4, "is p_q border:" << aProfile.is_v0_v1_a_border() );
@@ -318,13 +318,13 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
   out_edge_iterator eb2, ee2 ; 
 
   CGAL_ECMS_TRACE(4,"  t=V" 
-                   << ( aProfile.left_face_exists() ? aProfile.vL()->id() : -1 )
+                   << ( aProfile.left_face_exists() ? get(Vertex_index_map,aProfile.vL()) : -1 )
                    << "(%" 
                    << ( aProfile.left_face_exists() ? aProfile.vL()->vertex_degree() : 0 ) 
                    << ")" 
                  );
   CGAL_ECMS_TRACE(4,"  b=V" 
-                   << ( aProfile.right_face_exists() ? aProfile.vR()->id() : -1 )
+                   << ( aProfile.right_face_exists() ? get(Vertex_index_map,aProfile.vR()) : -1 )
                    << "(%" 
                    << ( aProfile.right_face_exists() ? aProfile.vR()->vertex_degree() :0 ) 
                    << ")" 
@@ -387,13 +387,13 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_topologically_vali
 
           if ( !lIsFace )
           {
-            CGAL_ECMS_TRACE(3,"  k=V" << k->id() << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
+            CGAL_ECMS_TRACE(3,"  k=V" << get(Vertex_index_map,k) << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
             rR = false ;
             break ;
           }  
           else 
           {
-            CGAL_ECMS_TRACE(4,"  k=V" << k->id() << " is in a face with p-q") ;
+            CGAL_ECMS_TRACE(4,"  k=V" << get(Vertex_index_map,k) << " is in a face with p-q") ;
           }
         }
       }  
@@ -511,7 +511,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_open_triangle( edge_descrip
   if ( next_edge(h3,mSurface) == h1 )
   {
     // Now check if it is open
-    CGAL_ECMS_TRACE(4,"  p-q is a border edge... checking E" << h2->id() << " and E" << h3->id() ) ;
+    CGAL_ECMS_TRACE(4,"  p-q is a border edge... checking E" << get(Edge_index_map,h2) << " and E" << get(Edge_index_map,h3) ) ;
     
     rR = is_border(h2) && is_border(h3);  
   
@@ -637,7 +637,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
 {
   bool rR = true ;
   
-  CGAL_ECMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << aProfile.v0_v1()->id() );
+  CGAL_ECMS_TRACE(3,"Testing geometrical collapsabilty of v0-v1=E" << get(Edge_index_map,aProfile.v0_v1()) );
   if ( k0 )
   {
     //
@@ -658,7 +658,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
       vertex_descriptor k2 = * l ;
       vertex_descriptor k3 = *nx ;
       
-      CGAL_ECMS_TRACE(4,"  Screening link vertices k1=V" << k1->id() << " k2=V" << k2->id() << " k3=V" << k3->id() ) ;
+      CGAL_ECMS_TRACE(4,"  Screening link vertices k1=V" << get(Vertex_index_map,k1) << " k2=V" << get(Vertex_index_map,k2) << " k3=V" << get(Vertex_index_map,k3) ) ;
       
       edge_descriptor e12 = find_connection(k1,k2);
       edge_descriptor e23 = k3 != k1 ? find_connection(k2,k3) : edge_descriptor() ;
@@ -670,7 +670,7 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
         
         if ( !are_shared_triangles_valid( *k0, get_point(k1), get_point(k2), get_point(k3) ) )
         {
-          CGAL_ECMS_TRACE(3,"    Triangles VX-V" << k1->id() << "-V" << k2->id() << " and VX-V" << k3->id() << " are not geometrically valid. Collapse rejected");
+          CGAL_ECMS_TRACE(3,"    Triangles VX-V" << get(Vertex_index_map,k1) << "-V" << get(Vertex_index_map,k2) << " and VX-V" << get(Vertex_index_map,k3) << " are not geometrically valid. Collapse rejected");
           rR = false ;
         }
       }
@@ -683,11 +683,11 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
         // There is indeed a triangle shared along e12
         if ( handle_assigned(k4) )
         {
-          CGAL_ECMS_TRACE(4,"    Found exterior link triangle shared along E" << e12->id() << " with third vertex: V" << k4->id() ) ;
+          CGAL_ECMS_TRACE(4,"    Found exterior link triangle shared along E" << get(Edge_index_map,e12) << " with third vertex: V" << get(Vertex_index_map,k4) ) ;
           
           if ( !are_shared_triangles_valid( get_point(k1), get_point(k4), get_point(k2), *k0 ) )
           {
-            CGAL_ECMS_TRACE(3,"    Triangles V" << k1->id() << "-V" << k4->id() << " and V" << k2->id() << "-VX are not geometrically valid. Collapse rejected");
+            CGAL_ECMS_TRACE(3,"    Triangles V" << get(Vertex_index_map,k1) << "-V" << get(Vertex_index_map,k4) << " and V" << get(Vertex_index_map,k2) << "-VX are not geometrically valid. Collapse rejected");
             rR = false ;
           }
         }
@@ -701,11 +701,11 @@ bool EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
         // There is indeed a triangle shared along e12
         if ( handle_assigned(k5) )
         {
-          CGAL_ECMS_TRACE(4,"    Found exterior link triangle shared along E" << e23->id() << " with third vertex: V" << k5->id() ) ;
+          CGAL_ECMS_TRACE(4,"    Found exterior link triangle shared along E" << get(Edge_index_map,e23) << " with third vertex: V" << get(Vertex_index_map,k5) ) ;
           
           if ( !are_shared_triangles_valid( get_point(k2), get_point(k5), get_point(k3), *k0 ) )
           {
-            CGAL_ECMS_TRACE(3,"    Triangles V" << k2->id() << "-V" << k5->id() << " and V" << k3->id() << "-VX are not geometrically valid. Collapse rejected");
+            CGAL_ECMS_TRACE(3,"    Triangles V" << get(Vertex_index_map,k2) << "-V" << get(Vertex_index_map,k5) << " and V" << get(Vertex_index_map,k3) << "-VX are not geometrically valid. Collapse rejected");
             rR = false ;
           }
         }
@@ -742,14 +742,14 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
     if ( is_constrained(lV0VL) ) //make sure a constrained edge will not disappear
       lV0VL=primary_edge(aProfile.v1_vL());
     
-    CGAL_ECMS_TRACE(3,"V0VL E" << lV0VL->id()
-                   << "(V" <<  lV0VL->vertex()->id() << "->V" << lV0VL->opposite()->vertex()->id() << ")"
+    CGAL_ECMS_TRACE(3,"V0VL E" << get(Edge_index_map,lV0VL)
+                   << "(V" <<  get(Vertex_index_map,lV0VL->vertex()) << "->V" << get(Vertex_index_map,lV0VL->opposite()->vertex()) << ")"
                    ) ;
                    
     Edge_data& lData = get_data(lV0VL) ;
     if ( lData.is_in_PQ() )
     {
-      CGAL_ECMS_TRACE(2,"Removing E" << lV0VL->id() << " from PQ" ) ;
+      CGAL_ECMS_TRACE(2,"Removing E" << get(Edge_index_map,lV0VL) << " from PQ" ) ;
       remove_from_PQ(lV0VL,lData) ;
     }
 
@@ -763,21 +763,21 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
     if ( is_constrained(lVRV1) ) //make sure a constrained edge will not disappear
       lVRV1=primary_edge(aProfile.v0_vR());
 
-    CGAL_ECMS_TRACE(3,"V1VRE" << lVRV1->id()
-                   << "(V" <<  lVRV1->vertex()->id() << "->V" << lVRV1->opposite()->vertex()->id() << ")"
+    CGAL_ECMS_TRACE(3,"V1VRE" << get(Edge_index_map,lVRV1)
+                   << "(V" <<  get(Vertex_index_map,lVRV1->vertex()) << "->V" << get(Vertex_index_map,lVRV1->opposite()->vertex()) << ")"
                    ) ;
                    
     Edge_data& lData = get_data(lVRV1) ;
     if ( lData.is_in_PQ() )
     {
-      CGAL_ECMS_TRACE(2,"Removing E" << lVRV1->id() << " from PQ") ;
+      CGAL_ECMS_TRACE(2,"Removing E" << get(Edge_index_map,lVRV1) << " from PQ") ;
       remove_from_PQ(lVRV1,lData) ;
     }
     -- mCurrentEdgeCount ;
     CGAL_SURF_SIMPL_TEST_assertion_code( -- lResultingEdgeCount ) ; 
   }
 
-  CGAL_ECMS_TRACE(1,"Removing:\n  v0v1: E" << aProfile.v0_v1()->id() << "(V" << aProfile.v0()->id() << "->V" << aProfile.v1()->id() << ")" );
+  CGAL_ECMS_TRACE(1,"Removing:\n  v0v1: E" << get(Edge_index_map,aProfile.v0_v1()) << "(V" << get(Vertex_index_map,aProfile.v0()) << "->V" << get(Vertex_index_map,aProfile.v1()) << ")" );
   
     
   // Perform the actuall collapse.
@@ -798,7 +798,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Collapse( Profile const& aProf
 
   CGAL_SURF_SIMPL_TEST_assertion( mSurface.is_valid() && mSurface.is_pure_triangle() ) ;
   
-  CGAL_ECMS_TRACE(1,"V" << rResult->id() << " kept." ) ;
+  CGAL_ECMS_TRACE(1,"V" << get(Vertex_index_map,rResult) << " kept." ) ;
                  
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
   out_edge_iterator eb1, ee1 ;     
@@ -847,7 +847,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,ECTM,CF,PF,V>::Update_neighbors( vertex_descr
       edge_descriptor lEdge2 = primary_edge(*eb2) ;
       
       Edge_data& lData2 = get_data(lEdge2);
-      CGAL_ECMS_TRACE(4,"Inedge around V" << lAdj_k->id() << edge_to_string(lEdge2) ) ;
+      CGAL_ECMS_TRACE(4,"Inedge around V" << get(Vertex_index_map,lAdj_k) << edge_to_string(lEdge2) ) ;
     
       // Only those edges still in the PQ _and_ not already collected are updated.
       if ( lData2.is_in_PQ() && lToUpdate.find(lEdge2) == lToUpdate.end() )
