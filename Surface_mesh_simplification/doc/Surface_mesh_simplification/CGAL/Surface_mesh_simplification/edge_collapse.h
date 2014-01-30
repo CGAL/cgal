@@ -106,7 +106,7 @@ and whose `value_type` is `bool`.
 \attention If this parameter is provided, `surface` must be a model of the
 `EdgeCollapsableMeshWithConstraints` concept.
 
-<B>%Default</B>: A property map allows returning `false`, that is no edge is constrained.
+<B>%Default</B>: A property map always returning `false`, that is no edge is constrained.
 
 \cgalHeading{get_cost(GetCost gc)}
 
