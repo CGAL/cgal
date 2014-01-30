@@ -1058,7 +1058,7 @@ private:
     void restore(Cell_handle new_cell, C3T3& c3t3)
     {
       IndexMap new_to_old_indices;
-      unsigned int nbv_found = 0;
+      CGAL_assertion_code(unsigned int nbv_found = 0);
       for(int i = 0; i < 4; ++i)
       {
         std::size_t new_vi_index = 
@@ -1068,7 +1068,7 @@ private:
           if(new_vi_index == cell_ids_.vertex_id(j))
           {
             new_to_old_indices[static_cast<std::size_t>(i)] = j;
-            ++nbv_found;
+            CGAL_assertion_code(++nbv_found);
             break;//loop on j
           }
         }//end loop j
