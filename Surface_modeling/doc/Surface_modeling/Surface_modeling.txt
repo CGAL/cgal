@@ -43,7 +43,7 @@ stable but produces asymmetric results (See \cgalFigureRef{Arap_spokes_compariso
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
 Comparison between \ref Surface_Modeling_Overview_ARAP and \ref Surface_Modeling_Overview_ARAP_Rims.
-On a square with spikes mesh, the ROI consists of all but the yellow vertices. The control vertices are the red ones.
+On a square with spikes mesh, the ROI consists of the green vertices. The control vertices are the red ones.
 We translate the control vertices along the normal of the plane and observe the result produced by \ref
 Surface_Modeling_Overview_ARAP (center) and \ref Surface_Modeling_Overview_ARAP_Rims (right) from the same view point. The
 latter version does not produce a symmetric result.
