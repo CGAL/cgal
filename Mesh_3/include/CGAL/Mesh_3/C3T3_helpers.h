@@ -1201,7 +1201,7 @@ private:
 
   template <typename CellsVector, typename CellDataSet>
   void restore_from_cells_backup(const CellsVector& cells,
-                                 const CellDataSet& cells_backup) const;
+                                 CellDataSet& cells_backup) const;
   
   
   /**
@@ -2761,7 +2761,7 @@ template <typename CellsVector, typename CellDataSet>
 void
 C3T3_helpers<C3T3,MD>::
 restore_from_cells_backup(const CellsVector& cells,
-                          const CellDataSet& cells_backup) const
+                          CellDataSet& cells_backup) const
 {
   for(typename CellsVector::const_iterator cit = cells.begin();
       cit != cells.end();
@@ -2776,9 +2776,11 @@ restore_from_cells_backup(const CellsVector& cells,
     {
       typename CellDataSet::value_type cell_data = *cd_it;
       cell_data.restore(*cit, c3t3_);
+      cells_backup.erase(cd_it);
     }
-    else CGAL_assertion(false);
+    else CGAL_error();
   }
+  CGAL_assertion(cells_backup.empty());
 }
 
 template <typename C3T3, typename MD>
