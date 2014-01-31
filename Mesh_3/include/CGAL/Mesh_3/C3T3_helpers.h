@@ -386,6 +386,9 @@ class C3T3_helpers
   typedef typename C3T3::Surface_patch_index  Surface_patch_index;
   typedef typename C3T3::Subdomain_index      Subdomain_index;
   typedef typename C3T3::Index                Index;
+
+  typedef boost::optional<Surface_patch_index>  Surface_patch;
+  typedef boost::optional<Subdomain_index>      Subdomain;
   
   typedef std::vector<Cell_handle>      Cell_vector;
   typedef std::set<Cell_handle>         Cell_set;
@@ -763,7 +766,25 @@ private:
      * @param update if set to \c false, checking only is done
      * @return true if \c facet is in c3t3
      */
-    bool operator()(const Facet& facet, const bool update = true) const
+    Surface_patch operator()(const Facet& facet, const bool update = true) const
+    {
+      return this->operator()(facet, update, update);
+    }
+
+    /**
+     * @brief Updates facet \c facet in c3t3
+     * @param facet the facet to update
+     * @param update_c3t3 if set to \c false, checking only is done
+     * @param update_surface_center if set to \c true, the facet surface
+     * center is updated.
+     * @return true if \c facet is in c3t3
+     *
+     * By default, \c update_c3t3 is \c true, and \c update_surface_center
+     * is equal to \c update_c3t3.
+     */
+    Surface_patch operator()(const Facet& facet,
+                             const bool update_c3t3,
+                             const bool update_surface_center) const
     {
       typedef typename C3T3::Triangulation::Geom_traits Gt;
       typedef typename Gt::Segment_3 Segment_3;
@@ -772,7 +793,7 @@ private:
       
       // Nothing to do for infinite facets
       if ( c3t3_.triangulation().is_infinite(facet) )
-        return false;
+        return Surface_patch();
       
       // Functors
       typename Gt::Is_degenerate_3 is_degenerate = 
@@ -785,25 +806,28 @@ private:
       if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )
       {
         if (is_degenerate(*p_segment)) 
-          return false;
+          return Surface_patch();
         
-        return dual_intersect(*p_segment,facet,update);
+        return dual_intersect(*p_segment,facet,
+                              update_c3t3,
+                              update_surface_center);
       }
       else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) )
       {
         if (is_degenerate(*p_ray))
-          return false;
+          return Surface_patch();
         
-        return dual_intersect(*p_ray,facet,update);
+        return dual_intersect(*p_ray,facet,update_c3t3,
+                              update_surface_center);
       }
       else if ( const Line_3* p_line = object_cast<Line_3>(&dual) )
       {
-        return dual_intersect(*p_line,facet,update);
+        return dual_intersect(*p_line,facet,update_c3t3,
+                              update_surface_center);
       }
       
-      // Should not happen
-      CGAL_assertion(false);
-      return false;
+      CGAL_error_msg("This should not happen");
+      return Surface_patch();
     }
     
     /**
@@ -812,10 +836,8 @@ private:
      * @param update if set to \c false, checking only is done
      * @return true if \c ch is in c3t3
      */
-    bool operator()(const Cell_handle& ch, const bool update = true) const
+    Subdomain operator()(const Cell_handle& ch, const bool update = true) const
     {
-      typedef boost::optional<typename MeshDomain::Subdomain_index> Subdomain;
-      
       if ( c3t3_.triangulation().is_infinite(ch) )
         return false;
       
@@ -840,11 +862,11 @@ private:
     
     // Returns true if query intersects the surface.
     template <typename Query>
-    bool dual_intersect(const Query& dual,
-                        const Facet& facet,
-                        const bool update) const
+    Surface_patch dual_intersect(const Query& dual,
+                                 const Facet& facet,
+                                 const bool update_c3t3,
+                                 const bool update_surface_center) const
     {
-      typedef boost::optional<typename MeshDomain::Surface_patch_index> Surface_patch;
       typedef typename MeshDomain::Intersection Intersection;
       
       typename MeshDomain::Construct_intersection construct_intersection =
@@ -866,23 +888,29 @@ private:
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
      
       // Update if needed
-      if ( surface && update )
+      if(update_c3t3) 
       {
+        // Update status in c3t3 
+        if(surface)
+          c3t3_.add_to_complex(facet,*surface);
+        else
+          c3t3_.remove_from_complex(facet);
+      }
+
+      if(update_surface_center)
+      {
+        if(surface) {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-        Intersection intersection = construct_intersection(dual);
+          Intersection intersection = construct_intersection(dual);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-        // Update facet surface center
-        Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
-        facet.first->set_facet_surface_center(facet.second,surface_center);
-        
-        // Update status in c3t3 
-        c3t3_.add_to_complex(facet,*surface);
-      }
-      else if(update)
-      {
-        c3t3_.remove_from_complex(facet);
-        facet.first->set_facet_surface_center(facet.second,Point_3());
+          // Update facet surface center
+          Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
+          facet.first->set_facet_surface_center(facet.second,surface_center);
+        }
+        else {
+          facet.first->set_facet_surface_center(facet.second,Point_3());
+        }
       }
       
       return surface;
@@ -1201,7 +1229,7 @@ private:
 
   template <typename CellsVector, typename CellDataSet>
   void restore_from_cells_backup(const CellsVector& cells,
-                                 const CellDataSet& cells_backup) const;
+                                 CellDataSet& cells_backup) const;
   
   
   /**
@@ -1567,8 +1595,12 @@ private:
  
 
   /**
-   * Returns false iff a surface facet of cells has entered or left the
-   * restricted Delaunay.
+   * Returns false iff a surface facet of `cells` has entered or left the
+   * restricted Delaunay, or if its surface patch index has changed
+   *
+   * That function does not modify the c3t3, but it does update the facet
+   * surface centers. The function is only called by
+   * `update_mesh_no_topo_change()`.
    */
   bool verify_surface(const Cell_vector& cells) const
   {
@@ -1587,15 +1619,14 @@ private:
       {
         surface_facets.push_back(*fit);
       }
-      
-      if ( c3t3_.is_in_complex(*fit) != checker(*fit,false) )
+      const Surface_patch sp = checker(*fit,
+                                       false, /* do not update c3t3 */
+                                       true); /* update surface centers */
+      // false means "do not update the c3t3"
+      if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
+           ((bool)sp && c3t3_.surface_patch_index(*fit) != sp.get()) )
         return false;
     }
-    
-    // Facet surface center must be updated if verify_surface is ok
-    std::for_each(surface_facets.begin(),surface_facets.end(),checker);
-    // cells should also be updated
-    std::for_each(cells.begin(), cells.end(), checker);
     
     return true;
   }
@@ -1753,14 +1784,14 @@ template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::  
 update_mesh_no_topo_change(const Point_3& new_position,
-                           const Vertex_handle& vertex,
+                           const Vertex_handle& old_vertex,
                            const SliverCriterion& criterion,
                            OutputIterator modified_vertices,
                            const Cell_vector& conflict_cells )
 {
   // std::cerr << "update_mesh_no_topo_change(\n"
   //           << new_position << ",\n"
-  //           << "                " << (void*)(&*vertex) << "=" << vertex->point()
+  //           << "                " << (void*)(&*old_vertex) << "=" << old_vertex->point()
   //           << ")\n";
 
     //backup metadata
@@ -1770,12 +1801,12 @@ update_mesh_no_topo_change(const Point_3& new_position,
   // Get old values
   criterion.before_move(c3t3_cells(conflict_cells));
   // std::cerr << "old_sliver_value=" << old_sliver_value << std::endl;
-  Point_3 old_position = vertex->point();
+  Point_3 old_position = old_vertex->point();
 
   // Move point
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
-  move_point_no_topo_change(vertex,new_position);
+  move_point_no_topo_change(old_vertex,new_position);
   
   // Check that surface mesh is still valid
   // and Get new criterion value (conflict_zone did not change) 
@@ -1786,8 +1817,8 @@ update_mesh_no_topo_change(const Point_3& new_position,
     && criterion.valid_move(c3t3_cells(conflict_cells)))
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
-                           vertex, modified_vertices);
-    return std::make_pair(true,vertex);
+                           old_vertex, modified_vertices);
+    return std::make_pair(true,old_vertex);
   }
   else // revert move
   {
@@ -1796,14 +1827,14 @@ update_mesh_no_topo_change(const Point_3& new_position,
     reset_circumcenter_cache(conflict_cells);
     //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
-    move_point_no_topo_change(vertex,old_position);
+    move_point_no_topo_change(old_vertex,old_position);
 
     //restore meta-data (cells should have same connectivity as before move)
     // cells_backup does not contain infinite cells so they can be fewer
     CGAL_assertion(conflict_cells.size() >= cells_backup.size());
     restore_from_cells_backup(conflict_cells, cells_backup);
 
-    return std::make_pair(false,vertex);
+    return std::make_pair(false,old_vertex);
   }
 }
 
@@ -2354,7 +2385,6 @@ project_on_surface_aux(const Point_3& p,
                        const Vector_3& projection_vector) const
 {
   typedef typename Gt::Segment_3 Segment_3;
-  typedef typename MD::Intersection Intersection;
 
   // Build a segment directed as projection_direction,
   typename Gt::Compute_squared_distance_3 sq_distance =
@@ -2401,6 +2431,7 @@ project_on_surface_aux(const Point_3& p,
 
 #else // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
+  typedef typename MD::Intersection Intersection;
   Intersection intersection = construct_intersection(proj_segment);
   if(CGAL::cpp0x::get<2>(intersection) == 2)
     return CGAL::cpp0x::get<0>(intersection);
@@ -2695,7 +2726,7 @@ template <typename CellsVector, typename CellDataSet>
 void
 C3T3_helpers<C3T3,MD>::
 restore_from_cells_backup(const CellsVector& cells,
-                          const CellDataSet& cells_backup) const
+                          CellDataSet& cells_backup) const
 {
   for(typename CellsVector::const_iterator cit = cells.begin();
       cit != cells.end();
@@ -2710,9 +2741,11 @@ restore_from_cells_backup(const CellsVector& cells,
     {
       typename CellDataSet::value_type cell_data = *cd_it;
       cell_data.restore(*cit, c3t3_);
+      cells_backup.erase(cd_it);
     }
-    else CGAL_assertion(false);
+    else CGAL_error();
   }
+  CGAL_assertion(cells_backup.empty());
 }
 
 template <typename C3T3, typename MD>
