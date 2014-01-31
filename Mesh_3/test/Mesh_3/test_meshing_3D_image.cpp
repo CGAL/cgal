@@ -63,7 +63,37 @@ public:
                                         CGAL::parameters::no_perturb());
     
     // Verify
+    this->verify_c3t3_combinatorics(c3t3);
     this->verify(c3t3,domain,criteria);
+  }
+
+  template<typename C3t3>
+  void verify_c3t3_combinatorics(const C3t3& c3t3) const
+  {
+    typedef typename C3t3::Triangulation        Tr;
+    typedef typename Tr::Facet                  Facet;
+    typedef typename Tr::Cell_handle            Cell_handle;
+    typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
+    typedef typename C3t3::Surface_patch_index  Surface_patch_index;
+
+    for(Finite_facets_iterator fit =c3t3.triangulation().finite_facets_begin();
+      fit != c3t3.triangulation().finite_facets_end();
+      ++fit)
+    {
+      Facet f = *fit;
+      Surface_patch_index index = c3t3.surface_patch_index(f);
+      if(!c3t3.is_in_complex(f))
+        assert(index == Surface_patch_index());
+      else
+      {
+        Cell_handle c1 = f.first;
+        Cell_handle c2 = f.first->neighbor(f.second);
+        assert( (c1->subdomain_index() == index.first 
+          && c2->subdomain_index() == index.second)
+          || (c2->subdomain_index() == index.first
+          && c1->subdomain_index() == index.second));
+      }
+    }
   }
 };
 
