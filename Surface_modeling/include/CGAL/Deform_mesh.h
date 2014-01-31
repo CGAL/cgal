@@ -574,18 +574,19 @@ public:
    * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
    *
    * @param vd a control vertex
-   * @param rotation_center center of rotation
+   * @param to_rotation_center the vector to translate the origin to the center of the rotation
    * @param quat rotation holder quaternion
    */
-  template <typename Vect, typename Quaternion>
-  void rotate(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat)
+  template <typename Quaternion, typename Vect>
+  void rotate(vertex_descriptor vd, const Vect& to_rotation_center, const Quaternion& quat)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     std::size_t v_id = ros_id(vd);
-    Vect v = quat * sub_to_vector<Vect>(solution[v_id], rotation_center);
-    const Point& rotated = add_to_point(rotation_center, v);
-    solution[v_id] = Point(rotated[0], rotated[1], rotated[2]);
+    Vect v = quat * sub_to_vect(solution[v_id], to_rotation_center);
+    solution[v_id] = Point( to_rotation_center[0]+v[0],
+                            to_rotation_center[1]+v[1],
+                            to_rotation_center[2]+v[2] );
   }
 
   /**
@@ -597,19 +598,20 @@ public:
    *
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
-   * @param rotation_center center of rotation
+   * @param to_rotation_center the vector to translate the origin to the center of the rotation
    * @param quat rotation holder quaternion
    */
-  template <typename Vect, typename InputIterator, typename Quaternion>
-  void rotate(InputIterator begin, InputIterator end, const Point& rotation_center, const Quaternion& quat)
+  template <typename InputIterator, typename Vect, typename Quaternion>
+  void rotate(InputIterator begin, InputIterator end, const Vect& to_rotation_center, const Quaternion& quat)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     for(; begin != end; ++begin) {
       std::size_t v_id = ros_id(*begin);
-      Vect v = quat * sub_to_vector<Vect>(solution[v_id], rotation_center);
-      const Point& rotated = add_to_point(rotation_center, v);
-      solution[v_id] = Point(rotated[0], rotated[1], rotated[2]);
+      Vect v = quat * sub_to_vect(solution[v_id], to_rotation_center);
+      solution[v_id] = Point( to_rotation_center[0]+v[0],
+                              to_rotation_center[1]+v[1],
+                              to_rotation_center[2]+v[2] );
     }
   }
 
@@ -1430,12 +1432,12 @@ private:
 
   template<class Vect>
   Point add_to_point(const Point& p, const Vect& v) {
-    return Point(
-      p.x() + v[0], p.y() + v[1], p.z() + v[2]);
+    return Point(p.x() + v[0], p.y() + v[1], p.z() + v[2]);
   }
+
   template<class Vect>
-  Vect sub_to_vector(const Point& p1, const Point& p2) {
-    return Vect(p1.x() - p2.x(), p1.y() - p2.y(), p1.z() - p2.z());
+  Vect sub_to_vect(const Point& p, const Vect& v) {
+    return Vect(p.x() - v[0], p.y() - v[1], p.z() - v[2]);
   }
 
   /// shorthand of get(vertex_index_map, v)

@@ -143,11 +143,13 @@ Deformation results when running example \ref Example_2 : `deform_1.off` and `de
 \cgalFigureEnd
 
 \subsubsection Example_3 Using an Enriched Polyhedron with Ids
-In this example, we use an <i>enriched</i> polyhedron storing an ID in its halfedges and vertices
-and use it to store indices. The main advantage is to decrease the complexity of accessing
-associated indices to edges and vertices from logarithmic to constant.
-
-\cgalExample{Surface_modeling/enriched_polyhedron_with_custom_pmap_example.cpp}
+In the former examples, we used an <i>enriched</i> polyhedron storing an ID
+in its halfedges and vertices together with the default property maps
+in the deformation object to access them.
+In the following example, we show how we can use alternative property maps.
+Note that in practice, you better rely on the former examples as using a `std::map`
+to access indices increases the complexity from constant to logarithmic.
+\cgalExample{Surface_modeling/deform_polyhedron_with_custom_pmap_example.cpp}
 
 \subsubsection Example_4 Using a Custom Edge Weighting Scheme
 Using a custom weighting scheme for edges is also possible if one provides a model of `SurfaceModelingWeightCalculator`.
