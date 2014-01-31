@@ -64,9 +64,21 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `ch_graham_andrew_scan()` generates the counterclockwise sequence of extreme 
-points from a given set of input points that are not left of the line defined 
-by the first and last points in this sequence. 
+The function `ch_graham_andrew_scan()`
+generates the counterclockwise sequence of extreme
+points from a given sequence of input points that are not left of the line defined
+by the first and last points in this sequence.
+
+It generates the counterclockwise sequence of extreme
+points from a given sequence of input points that are not left of the line
+\f$ pq\f$ defined by the first (\f$p\f$) and last (\f$q\f$) points
+in this sequence (\f$ p\f$ is the value of `first` and \f$ q\f$ is
+the value of `beyond` \f$ -1\f$).
+The resulting sequence is placed
+starting at `result` with \f$ p\f$; point \f$ q\f$ is omitted.
+The past-the-end iterator for the sequence is returned.
+
+\pre The range [`first`,`beyond`) contains at least two different points. The points in [`first`,`beyond`) are sorted with respect to \f$ pq\f$, <I>i.e.</I>, the sequence of points in [`first`,`beyond`) define a counterclockwise polygon, for which the Graham-Sklansky-procedure \cgalCite{s-mcrm-72} works.
 
 The default traits class `Default_traits` is the kernel in which the 
 type `BidirectionalIterator::value_type` is defined. 
@@ -92,9 +104,8 @@ functions that return instances of these types:
 
 \cgalHeading{Implementation}
 
-The function uses Andrew's 
-variant of the Graham scan algorithm \cgalCite{a-aeach-79}. This algorithm 
-requires \f$ O(n \log n)\f$ time in the worst case for \f$ n\f$ input points. 
+This algorithm requires \f$ O(n)\f$ time in the worst case for
+\f$ n\f$ input points.
 
 \cgalHeading{Example}
 
@@ -111,36 +122,31 @@ Graham scan is usually inferior to Andrew's variant because of its higher
 arithmetic demand. 
 
 \code
-template <class InputIterator, class OutputIterator, class Traits> 
-OutputIterator 
-ch_graham_anderson( InputIterator first, InputIterator beyond, 
-OutputIterator result, const Traits& ch_traits) 
-{ 
-typedef typename TraitsLess_xy_2 Less_xy_2; 
-typedef typename Traits::Point_2 Point_2; 
-typedef typename Traits::Less_rotate_ccw_2 Less_rotate_ccw_2; 
+template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator
+ch_graham_anderson( InputIterator  first, InputIterator  beyond,
+                    OutputIterator result, const Traits&  ch_traits)
+{
+  using namespace boost;
 
-if (first == beyond) return result; 
-std::vector< Point_2 > V; 
-copy( first, beyond, back_inserter(V) ); 
-typename std::vector< Point_2 >::iterator it = 
-std::min_element(V.begin(), V.end(), Less_xy_2()); 
-std::sort( V.begin(), V.end(), CGAL::bind_1(Less_rotate_ccw_2(), *it) ); 
-if ( *(V.begin()) == *(V.rbegin()) ) 
-{ 
-*result = *(V.begin()); ++result; 
-return result; 
-} 
-return ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits); 
-} 
+  typedef typename Traits::Point_2            Point_2;
+  typedef typename Traits::Less_xy_2          Less_xy_2;
+  typedef typename Traits::Less_rotate_ccw_2  Less_rotate_ccw_2;
+
+  if (first == beyond) return result;
+  std::vector< Point_2 >  V (first, beyond);
+  typename std::vector< Point_2 >::iterator it =
+               std::min_element(V.begin(), V.end(), Less_xy_2());
+  std::sort( V.begin(), V.end(), boost::bind(Less_rotate_ccw_2(), *it, _1, _2) );
+  if ( *(V.begin()) != *(V.rbegin()) )
+  {
+    result = CGAL::ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
+  }
+
+  *result = *(V.rbegin());  ++result;
+  return result;
+}
 \endcode
-
-generates the counterclockwise sequence of extreme points that are
-not left of \f$ pq\f$, where \f$ p\f$ is the value of `first` and \f$ q\f$ is
-the value of `beyond` \f$ -1\f$. The resulting sequence is placed
-starting at `result` with \f$ p\f$; point \f$ q\f$ is omitted. The
-past-the-end iterator for the sequence is returned.
-\pre The range [`first`,`beyond`) contains at least two different points. The points in [`first`,`beyond`) are sorted with respect to \f$ pq\f$, <I>i.e.</I>, the sequence of points in [`first`,`beyond`) define a counterclockwise polygon, for which the Graham-Sklansky-procedure \cgalCite{s-mcrm-72} works.
 */
 template <class BidirectionalIterator, class OutputIterator, 
 class Traits>
