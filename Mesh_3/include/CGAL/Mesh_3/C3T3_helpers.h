@@ -1604,16 +1604,7 @@ private:
     
     return true;
   }
-  
-  
-  /**
-   * Restore mesh for cells and facets of \c cells, using domain_
-   */ 
-  void restore_mesh(const Cell_vector& cells)
-  {
-    restore_mesh(cells.begin(), cells.end());
-  }
-  
+
   /**
    * Restore mesh for cells and facets of \c cells, using domain_
    */ 
