@@ -1601,6 +1601,8 @@ private:
     
     // Facet surface center must be updated if verify_surface is ok
     std::for_each(surface_facets.begin(),surface_facets.end(),checker);
+    // cells should also be updated
+    std::for_each(cells.begin(), cells.end(), checker);
     
     return true;
   }
@@ -1781,25 +1783,23 @@ update_mesh_no_topo_change(const Point_3& new_position,
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
   move_point_no_topo_change(vertex,new_position);
-    
-  // Get new criterion value (conflict_zone did not change) 
-  // Check that mesh is still valid
-  if ( criterion.valid_move(c3t3_cells(conflict_cells))
-       //warning : valid_move updates caches
-    && verify_surface(conflict_cells) )
-   //verify_surface does not change c3t3 when returns false, circumcenters yes
+  
+  // Check that surface mesh is still valid
+  // and Get new criterion value (conflict_zone did not change) 
+    // warnings : valid_move updates caches
+    //     verify_surface does not change c3t3 when returns false, 
+    //     but it does change circumcenters
+  if( verify_surface(conflict_cells)
+    && criterion.valid_move(c3t3_cells(conflict_cells)))
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
                            vertex, modified_vertices);
     return std::make_pair(true,vertex);
   }
-  else
+  else // revert move
   {
     // std::cerr << "update_mesh_no_topo_change: revert move to "
     //           << old_position << "\n";
-    // revert move
-    remove_cells_and_facets_from_c3t3(conflict_cells.begin(),
-                                      conflict_cells.end());
     reset_circumcenter_cache(conflict_cells);
     //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
