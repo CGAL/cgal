@@ -1894,10 +1894,9 @@ update_mesh_topo_change(const Point_3& new_position,
   }
   else
   {
-    // Remove from c3t3 cells which will be destroyed by revert_move
-    remove_cells_and_facets_from_c3t3(outdated_cells.begin(),
-                                      outdated_cells.end());
-    
+    // Removing from c3t3 cells which will be destroyed by revert_move
+    // is done by move_point_topo_change_conflict_zone_known, called by revert_move
+
     // std::cerr << "update_mesh_topo_change: revert move to "
     //           << old_position << "\n";
     //reset caches in case cells are re-used by the compact container
