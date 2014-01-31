@@ -47,7 +47,6 @@ public:
 
   result_type operator()( Profile const& aProfile ) const
   {
-    typedef typename Profile::edge_descriptor        edge_descriptor;
     typedef typename Profile::ECM                                ECM;
     typedef typename boost::graph_traits<ECM>            GraphTraits;
     typedef typename GraphTraits::in_edge_iterator  in_edge_iterator;
