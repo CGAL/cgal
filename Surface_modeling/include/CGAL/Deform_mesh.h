@@ -577,7 +577,7 @@ public:
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
    */
-  template <typename Quaternion, typename Vect>
+  template <typename Vect, typename Quaternion>
   void rotate(vertex_descriptor vd, const Point& rotation_center, const Quaternion& quat)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
@@ -585,7 +585,7 @@ public:
     std::size_t v_id = ros_id(vd);
     Vect v = quat * sub_to_vector<Vect>(solution[v_id], rotation_center);
     const Point& rotated = add_to_point(rotation_center, v);
-    solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);
+    solution[v_id] = Point(rotated[0], rotated[1], rotated[2]);
   }
 
   /**
@@ -600,7 +600,7 @@ public:
    * @param rotation_center center of rotation
    * @param quat rotation holder quaternion
    */
-  template <typename InputIterator, typename Quaternion, typename Vect>
+  template <typename Vect, typename InputIterator, typename Quaternion>
   void rotate(InputIterator begin, InputIterator end, const Point& rotation_center, const Quaternion& quat)
   {
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
@@ -609,7 +609,7 @@ public:
       std::size_t v_id = ros_id(*begin);
       Vect v = quat * sub_to_vector<Vect>(solution[v_id], rotation_center);
       const Point& rotated = add_to_point(rotation_center, v);
-      solution[v_id] = Point(rotated[0] + t[0], rotated[1] + t[1], rotated[2] + t[2]);
+      solution[v_id] = Point(rotated[0], rotated[1], rotated[2]);
     }
   }
 
