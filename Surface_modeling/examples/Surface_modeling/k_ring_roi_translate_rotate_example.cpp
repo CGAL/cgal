@@ -25,7 +25,8 @@ typedef Eigen::Vector3d                                                Vector3d;
 
 typedef CGAL::Deform_mesh<Polyhedron>                               Deform_mesh;
 
-// extract vertices which are at most k (inclusive) far from vertex v
+// Collect vertices which are at distance less or equal to k
+// from the vertex v in the graph of vertices connected by the edges of P
 std::vector<vertex_descriptor> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
 {
   std::map<vertex_descriptor, int>  D;
@@ -55,7 +56,7 @@ int main()
   std::ifstream input("data/plane.off");
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
-    std::cerr<< "Cannot open  data/plane.off";
+    std::cerr<< "Cannot open data/plane.off";
     return 1;
   }
 
@@ -93,8 +94,8 @@ int main()
   deform_mesh.reset();
 
   // Apply a translation on the original positions of the vertices (because reset() was called before)
-  deform_mesh.translate(cvertices_1.begin(), cvertices_1.end(), Vector3d(0,0.30,0));
-  deform_mesh.translate(cvertices_2.begin(), cvertices_2.end(), Vector3d(0,0.30,0));
+  deform_mesh.translate(cvertices_1.begin(), cvertices_1.end(), Vector3d(0,0.3,0));
+  deform_mesh.translate(cvertices_2.begin(), cvertices_2.end(), Vector3d(0,0.3,0));
 
   deform_mesh.set_iterations(10);
   deform_mesh.set_tolerance(0.0);

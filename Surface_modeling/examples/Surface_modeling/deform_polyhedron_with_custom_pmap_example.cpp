@@ -55,6 +55,6 @@ int main()
                            Vertex_id_pmap(vertex_index_map),
                            Edge_id_pmap(edge_index_map) );
 
-  // Now deform mesh as you wish
+  // Now deform mesh as desired
   // .....
 }
