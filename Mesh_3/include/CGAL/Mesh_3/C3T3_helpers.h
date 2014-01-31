@@ -1239,18 +1239,6 @@ private:
                          OutdatedCellsOutputIterator outdated_cells,
                          DeletedCellsOutputIterator deleted_cells);
   
-  template < typename ConflictCellsInputIterator,
-             typename OutdatedCellsOutputIterator,
-             typename DeletedCellsOutputIterator >
-  Vertex_handle 
-  move_point_topo_change_conflict_zone_known(
-     const Vertex_handle& old_vertex,
-     const Point_3& new_position,
-     ConflictCellsInputIterator conflict_cells_begin,
-     ConflictCellsInputIterator conflict_cells_end,
-     OutdatedCellsOutputIterator outdated_cells,
-     DeletedCellsOutputIterator deleted_cells);
-
   Vertex_handle move_point_topo_change(const Vertex_handle& old_vertex,
                                        const Point_3& new_position);
   
@@ -2303,59 +2291,6 @@ move_point_topo_change_conflict_zone_known(
 
   return new_vertex;
 }
-
-template <typename C3T3, typename MD>
-template < typename ConflictCellsInputIterator,
-           typename OutdatedCellsOutputIterator,
-           typename DeletedCellsOutputIterator >
-typename C3T3_helpers<C3T3,MD>::Vertex_handle 
-C3T3_helpers<C3T3,MD>:: 
-move_point_topo_change_conflict_zone_known(
-    const Vertex_handle& old_vertex,
-    const Point_3& new_position,
-    ConflictCellsInputIterator conflict_cells_begin,
-    ConflictCellsInputIterator conflict_cells_end,
-    OutdatedCellsOutputIterator outdated_cells,
-    DeletedCellsOutputIterator deleted_cells)
-{
-  Point_3 old_position = old_vertex->point();
-  
-  // Remove conflict zone cells from c3t3 (cells will be destroyed)  
-  remove_cells_and_facets_from_c3t3(conflict_cells_begin, conflict_cells_end);
-  
-#ifdef CGAL_INTRUSIVE_LIST
-  // AF: moved here from below, because the cells still exist
-  //     and as we want to remove on the fly from the inplace list
-  std::copy(conflict_cells_begin, conflict_cells_end, deleted_cells);
-#endif
-
-  // Move point
-  Vertex_handle new_vertex = move_point_topo_change(old_vertex,new_position);
-  
-  // If nothing changed, return
-  if ( Vertex_handle() == new_vertex )
-  {
-    std::copy(conflict_cells_begin,conflict_cells_end,outdated_cells);
-    return old_vertex;
-  }
-  
-  // Get conflict zone in new triangulation and set cells outdated
-  Cell_vector new_conflict_cells;
-  new_conflict_cells.reserve(64);
-  get_conflict_zone_topo_change(new_vertex, old_position,
-                                std::back_inserter(new_conflict_cells));
-  
-  std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
-
-   // Fill deleted_cells
-#ifndef CGAL_INTRUSIVE_LIST
-  //AF: move this higher up so that we can remove in the inplace list 
-  std::copy(conflict_cells_begin, conflict_cells_end, deleted_cells);
-#endif
-
-  return new_vertex;
-}
-
 
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
