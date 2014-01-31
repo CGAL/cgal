@@ -63,14 +63,14 @@ int main()
 
   deform_mesh.insert_roi_vertices(vb, ve); // insert whole mesh as ROI
 
-  // insert controls
+  // insert control vertices
   vertex_descriptor control_1 = *boost::next(vb, 213);
   vertex_descriptor control_2 = *boost::next(vb, 157);
 
-  deform_mesh.insert_control_vertex(control_1); // insert controls
+  deform_mesh.insert_control_vertex(control_1); // insert control vertices
   deform_mesh.insert_control_vertex(control_2);
 
-  // insertion of ROI and controls completed, call preprocess
+  // insertion of ROI and control vertices completed, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
   if(!is_matrix_factorization_OK){ 
     std::cerr << "Check documentation of preprocess()" << std::endl; 
@@ -78,10 +78,10 @@ int main()
   }
 
 //// DEFORM SECTION ////
-  // now use set_target_position() to provide constained positions of controls
+  // now use set_target_position() to provide constained positions of control vertices
   Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60); // target position of control_1
   deform_mesh.set_target_position(control_1, constrained_pos_1);
-  // note that we only assign a constraint for control_1, other controls will be constrained to last assigned positions
+  // note that we only assign a constraint for control_1, other control vertices will be constrained to last assigned positions
 
   // deform the mesh, now positions of vertices of 'mesh' will be changed
   deform_mesh.deform();

@@ -100,8 +100,8 @@ int main()
 
   Eigen::Quaternion<double> quad(0.92, 0, 0, -0.38);
 
-  deform_mesh.rotate(controls_1_map.begin(), controls_1_map.end(), Deform_mesh::Point(0,0,0), quad);
-  deform_mesh.rotate(controls_2_map.begin(), controls_2_map.end(), Deform_mesh::Point(0,0,0), quad);
+  deform_mesh.rotate<Eigen::Vector3d>(controls_1_map.begin(), controls_1_map.end(), Deform_mesh::Point(0,0,0), quad);
+  deform_mesh.rotate<Eigen::Vector3d>(controls_2_map.begin(), controls_2_map.end(), Deform_mesh::Point(0,0,0), quad);
 
   deform_mesh.deform();
 
