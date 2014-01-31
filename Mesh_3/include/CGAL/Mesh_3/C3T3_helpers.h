@@ -882,6 +882,7 @@ private:
       else if(update)
       {
         c3t3_.remove_from_complex(facet);
+        facet.first->set_facet_surface_center(facet.second,Point_3());
       }
       
       return surface;
@@ -1102,6 +1103,8 @@ private:
       //to increment the nb of cells and facets in c3t3
       if(Subdomain_index() != subdomain_index_)
         c3t3.add_to_complex(c, subdomain_index_);
+      else
+        c3t3.remove_from_complex(c);
 
       for(int i = 0; i < 4; ++i)
       {
@@ -1110,6 +1113,8 @@ private:
         //add_to_complex sets the index, and updates the facet counter 
         if(Surface_patch_index() != index)
           c3t3.add_to_complex(Facet(c, i), index);
+        else
+          c3t3.remove_from_complex(Facet(c,i));
 
         c->set_facet_surface_center(i, facet_surface_center_[old_i]);
         c->set_facet_surface_center_index(i, surface_center_index_table_[old_i]);
