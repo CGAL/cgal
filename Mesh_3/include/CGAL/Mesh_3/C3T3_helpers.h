@@ -1607,8 +1607,12 @@ private:
  
 
   /**
-   * Returns false iff a surface facet of cells has entered or left the
-   * restricted Delaunay.
+   * Returns false iff a surface facet of `cells` has entered or left the
+   * restricted Delaunay, or if its surface patch index has changed
+   *
+   * That function does not modify the c3t3, but it does update the facet
+   * surface centers. The function is only called by
+   * `update_mesh_no_topo_change()`.
    */
   bool verify_surface(const Cell_vector& cells) const
   {
@@ -1627,15 +1631,14 @@ private:
       {
         surface_facets.push_back(*fit);
       }
-      
-      if ( c3t3_.is_in_complex(*fit) != (bool)checker(*fit,false) )
+      const Surface_patch sp = checker(*fit,
+                                       false, /* do not update c3t3 */
+                                       true); /* update surface centers */
+      // false means "do not update the c3t3"
+      if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
+           ((bool)sp && c3t3_.surface_patch_index(*fit) != sp.get()) )
         return false;
     }
-    
-    // Facet surface center must be updated if verify_surface is ok
-    std::for_each(surface_facets.begin(),surface_facets.end(),checker);
-    // cells should also be updated
-    std::for_each(cells.begin(), cells.end(), checker);
     
     return true;
   }
