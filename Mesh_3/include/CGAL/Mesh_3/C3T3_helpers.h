@@ -1100,7 +1100,7 @@ private:
       //add_to_complex sets the index, and updates the cell counter
       //if c should be in the c3t3, add_to_complex has to be used
       //to increment the nb of cells and facets in c3t3
-      if(subdomain_index_ != Subdomain_index())
+      if(Subdomain_index() != subdomain_index_)
         c3t3.add_to_complex(c, subdomain_index_);
 
       for(int i = 0; i < 4; ++i)
