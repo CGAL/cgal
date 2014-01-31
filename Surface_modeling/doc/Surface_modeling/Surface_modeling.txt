@@ -28,12 +28,12 @@ A <em>surface mesh deformation system</em> consists of:
 - a subset of vertices from the ROI that the user wants to move (called the <em>control vertices</em>),
 - a target position for each control vertex (defining the <em>deformation constraints</em>).
 
-A vertex from the ROI that is not a control vertex is called a <em>free vertex</em>. These definitions are illustrated on \cgalFigureRef{Simple_roi}.
+A vertex from the ROI that is not a control vertex is called a <em>unconstrained vertex</em>. These definitions are illustrated on \cgalFigureRef{Simple_roi}.
 
 \cgalFigureBegin{Simple_roi, roi_example.png}
-The ROI features the green vertices (the free vertices) and the red vertices (the control vertices).
+The ROI features the green vertices (the unconstrained vertices) and the red vertices (the control vertices).
 (Left) The initial surface mesh; (Right) A target position is defined for each control vertex,
-the coordinates of the free vertices are updated by the deformation algorithm.
+the coordinates of the unconstrained vertices are updated by the deformation algorithm.
 \cgalFigureEnd
 
 In this package, two slightly different algorithms are implemented:
@@ -72,13 +72,13 @@ The deformation work flow.
 
 \subsection Preprocess_section Preprocessing
 
-The preprocessing requires the ROI to be set (both control and free vertices).
+The preprocessing requires the ROI to be set (both control and unconstrained vertices).
 The following conventions are used for the definition of the ROI:
  - a vertex added as a control vertex is added to the ROI
  - a control vertex removed from the ROI is no longer considered as a control vertex
  - a control vertex that is removed is not removed from the ROI
 
-Once the free and control vertices are set, the function `Deform_mesh::preprocess()` should be called to speed up solving the system.
+Once the unconstrained and control vertices are set, the function `Deform_mesh::preprocess()` should be called to speed up solving the system.
 Note that if it is not done, the first deformation step will call this function automatically and will have a longer runtime
 compared to subsequent deformation steps.
 
@@ -108,7 +108,7 @@ The deformation of the mesh happens when calling the function `Deform_mesh::defo
 varies depending on whether the user chose a fixed number of iterations or a stopping criteria based on the energy variation.
 
 After the call to the deformation function, the input mesh is updated and the control vertices are at
-their target positions and the free vertices are moved accordingly.
+their target positions and the unconstrained vertices are moved accordingly.
 The function `Deform_mesh::deform()` can be called several times consecutively, in particular
 if the convergence has not been reached yet (otherwise it has no effect).
 <!-- The current deformed mesh is only used as the initial guess. -->
@@ -263,14 +263,14 @@ Given a surface mesh deformation system with a ROI made of \f$ n \f$ vertices an
 
 where:
 - \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix. It is the unknown of the system that represents the coordinates of the vertices after deformation. The system is build such that the \f$ k \f$ last row corresponds to the control vertices.
-- \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the free vertices. It is a \f$n-k \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
+- \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the unconstrained vertices. It is a \f$n-k \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
 - \f$\mathbf{I}_c\f$ is a \f$k \times k\f$ identity matrix.
-- \f${\Delta}_f\f$ denotes the Laplacian coordinates of the free vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
+- \f${\Delta}_f\f$ denotes the Laplacian coordinates of the unconstrained vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$, but removing the rows corresponding to the control vertices.
 - \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the %Cartesian coordinates of the target positions of the control vertices.
 
 The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square non-symmetric sparse matrix. To
 solve the aforementioned system, an appropriate solver (e.g. LU solver) needs to be used. Note that solving this system
-preserves the Laplacian coordinates of the surface mesh restricted to the free vertices while satisfying the deformation constraints.
+preserves the Laplacian coordinates of the surface mesh restricted to the unconstrained vertices while satisfying the deformation constraints.
 
 \note This section is an introduction to provide the background for the two next sections describing the algorithms implemented
 in this package. A system relying only on the approach described above results in non-smooth transitions in the neighborhood of
@@ -310,7 +310,7 @@ are drawn with different colors, the corresponding vertex is colored accordingly
 Two adjacent vertices are in the one-ring neighborhood of each other.
 \cgalFigureEnd
 
-There are two unknowns per vertex in the Eq. \f$\eqref{eq:arap_energy}\f$, the new positions (\f$\mathbf{v}'_k\f$) of the free
+There are two unknowns per vertex in the Eq. \f$\eqref{eq:arap_energy}\f$, the new positions (\f$\mathbf{v}'_k\f$) of the unconstrained
 vertices and the rotation matrices (\f$\mathbf{R}_i\f$).
 If the energy contribution of each vertex is positive, this boils down to minimizing the energy contribution of each vertex \f$\mathbf{v}_i\f$.
 
@@ -346,11 +346,11 @@ following equation:
 
 The left-hand side of this equation corresponds to the one of Eq.\f$\eqref{eq:lap_open}\f$,
 and we can set \f$\Delta\f$ to be the right-hand side.
-Solving the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ gives the new positions of the free vertices.
+Solving the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ gives the new positions of the unconstrained vertices.
 
 This two-step optimization can be applied several times iteratively to obtain a better result.
 
-\note The matrix built with the Laplacian matrix of the free vertices in the left-hand side of
+\note The matrix built with the Laplacian matrix of the unconstrained vertices in the left-hand side of
 Eq. \f$\eqref{eq:lap_energy_system}\f$ depends only on the initial mesh structure and on which vertices
 are control vertices. Once the control vertices are set, we can use a direct solver to factorize
 the sparse matrix in Eq. \f$\eqref{eq:lap_energy_system}\f$, and reuse this factorization during
@@ -398,7 +398,7 @@ The vertices \f$ \mathbf{v}_n\f$ and \f$ \mathbf{v}_m\f$ are the opposite vertic
 (\mathbf{v}_i,\mathbf{v}_j)\f$.
 \cgalFigureEnd
 
-The method to get the new positions of the free vertices is similar to the two-step optimization
+The method to get the new positions of the unconstrained vertices is similar to the two-step optimization
 method explained in \ref Surface_Modeling_Overview_ARAP.
 For the first step, the Eq. \f$\eqref{eq:cov_matrix}\f$ is modified to take into account the edges in \f$E(\mathbf{v}_i)\f$:
 
