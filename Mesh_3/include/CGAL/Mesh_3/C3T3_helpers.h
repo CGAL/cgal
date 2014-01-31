@@ -882,6 +882,7 @@ private:
       else if(update)
       {
         c3t3_.remove_from_complex(facet);
+        facet.first->set_facet_surface_center(facet.second,Point_3());
       }
       
       return surface;
@@ -982,13 +983,15 @@ private:
   public:
     Cell_from_ids(const Cell_handle& c)
       : vertices_()
+      , sorted_vertices_()
     {
       for(int i = 0; i < 4; ++i)
       {
         vertices_[static_cast<std::size_t>(i)]
           = static_cast<std::size_t>(c->vertex(i)->meshing_info());
       }
-      std::sort(vertices_.begin(), vertices_.end());
+      sorted_vertices_ = vertices_;//makes a copy of each element
+      std::sort(sorted_vertices_.begin(), sorted_vertices_.end());
     }
 
     std::size_t vertex_id(const std::size_t& i) const
@@ -1000,19 +1003,32 @@ private:
     bool operator<(const Cell_from_ids& c) const
     {
       //std::array operator< compares lhs and rhs lexicographically
-      return vertices_ < c.vertices_;
+      return sorted_vertices_ < c.sorted_vertices_;
     }
 
   private:
-    // vertices IDs, sorted
+    // vertices IDs, not sorted, to keep the ordering of the Cell_handle id's
     CGAL::cpp11::array<std::size_t, 4> vertices_;
+    // vertices IDs, sorted, to be found in a std::set<Cell_from_ids>
+    CGAL::cpp11::array<std::size_t, 4> sorted_vertices_;
   };
 
   class Cell_data_backup
   {
   public:
-    Cell_data_backup(const Cell_handle& c)
+    Cell_data_backup(const Cell_handle& c,
+                     const bool do_backup = true)
       : cell_ids_(c)
+    {
+      //backup is not done when constructor is called to 
+      //convert a newly created cell (has nothing to backup)
+      //to a Cell_data_backup
+      if(do_backup)
+        backup(c);
+    }
+
+  private:
+    void backup(const Cell_handle& c)
     {
       if(c->is_cache_valid())
         sliver_value_ = c->sliver_value();
@@ -1033,6 +1049,7 @@ private:
       //they are not used in update_mesh functions involving a Sliver_criterion
     }
 
+  public:
     bool operator<(const Cell_data_backup& cb) const
     {
       return cell_ids_ < cb.cell_ids_;
@@ -1046,7 +1063,7 @@ private:
     void restore(Cell_handle new_cell, C3T3& c3t3)
     {
       IndexMap new_to_old_indices;
-      unsigned int nbv_found = 0;
+      CGAL_assertion_code(unsigned int nbv_found = 0);
       for(int i = 0; i < 4; ++i)
       {
         std::size_t new_vi_index = 
@@ -1056,7 +1073,7 @@ private:
           if(new_vi_index == cell_ids_.vertex_id(j))
           {
             new_to_old_indices[static_cast<std::size_t>(i)] = j;
-            ++nbv_found;
+            CGAL_assertion_code(++nbv_found);
             break;//loop on j
           }
         }//end loop j
@@ -1084,8 +1101,10 @@ private:
       //add_to_complex sets the index, and updates the cell counter
       //if c should be in the c3t3, add_to_complex has to be used
       //to increment the nb of cells and facets in c3t3
-      if(subdomain_index_ != Subdomain_index())
+      if(Subdomain_index() != subdomain_index_)
         c3t3.add_to_complex(c, subdomain_index_);
+      else
+        c3t3.remove_from_complex(c);
 
       for(int i = 0; i < 4; ++i)
       {
@@ -1094,6 +1113,8 @@ private:
         //add_to_complex sets the index, and updates the facet counter 
         if(Surface_patch_index() != index)
           c3t3.add_to_complex(Facet(c, i), index);
+        else
+          c3t3.remove_from_complex(Facet(c,i));
 
         c->set_facet_surface_center(i, facet_surface_center_[old_i]);
         c->set_facet_surface_center_index(i, surface_center_index_table_[old_i]);
@@ -1585,19 +1606,12 @@ private:
     
     // Facet surface center must be updated if verify_surface is ok
     std::for_each(surface_facets.begin(),surface_facets.end(),checker);
+    // cells should also be updated
+    std::for_each(cells.begin(), cells.end(), checker);
     
     return true;
   }
-  
-  
-  /**
-   * Restore mesh for cells and facets of \c cells, using domain_
-   */ 
-  void restore_mesh(const Cell_vector& cells)
-  {
-    restore_mesh(cells.begin(), cells.end());
-  }
-  
+
   /**
    * Restore mesh for cells and facets of \c cells, using domain_
    */ 
@@ -1774,25 +1788,23 @@ update_mesh_no_topo_change(const Point_3& new_position,
   reset_circumcenter_cache(conflict_cells);
   reset_sliver_cache(conflict_cells);
   move_point_no_topo_change(old_vertex,new_position);
-    
-  // Get new criterion value (conflict_zone did not change) 
-  // Check that mesh is still valid
-  if ( criterion.valid_move(c3t3_cells(conflict_cells))
-       //warning : valid_move updates caches
-    && verify_surface(conflict_cells) )
-   //verify_surface does not change c3t3 when returns false, circumcenters yes
+  
+  // Check that surface mesh is still valid
+  // and Get new criterion value (conflict_zone did not change) 
+    // warnings : valid_move updates caches
+    //     verify_surface does not change c3t3 when returns false, 
+    //     but it does change circumcenters
+  if( verify_surface(conflict_cells)
+    && criterion.valid_move(c3t3_cells(conflict_cells)))
   {
     fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
                            old_vertex, modified_vertices);
     return std::make_pair(true,old_vertex);
   }
-  else
+  else // revert move
   {
     // std::cerr << "update_mesh_no_topo_change: revert move to "
     //           << old_position << "\n";
-    // revert move
-    remove_cells_and_facets_from_c3t3(conflict_cells.begin(),
-                                      conflict_cells.end());
     reset_circumcenter_cache(conflict_cells);
     //sliver caches have been updated by valid_move
     reset_sliver_cache(conflict_cells);
@@ -2758,7 +2770,8 @@ restore_from_cells_backup(const CellsVector& cells,
     if(tr_.is_infinite(*cit))
       continue;//don't restore infinite cells, they have not been backed-up
 
-    typename CellDataSet::const_iterator cd_it = cells_backup.find(*cit);
+    typename CellDataSet::const_iterator cd_it 
+      = cells_backup.find(Cell_data_backup(*cit, false/*don't backup*/));
     if(cd_it != cells_backup.end())
     {
       typename CellDataSet::value_type cell_data = *cd_it;
