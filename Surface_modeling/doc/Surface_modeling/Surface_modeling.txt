@@ -109,7 +109,8 @@ varies depending on whether the user chose a fixed number of iterations or a sto
 
 After the call to the deformation function, the input mesh is updated and the control vertices are at
 their target positions and the free vertices are moved accordingly.
-The function `Deform_mesh::deform()` can be called as many time as desired.
+The function `Deform_mesh::deform()` can be called several times consecutively, in particular
+if the convergence has not been reached yet (otherwise it has no effect).
 <!-- The current deformed mesh is only used as the initial guess. -->
 
 
@@ -132,7 +133,7 @@ In this example, the whole mesh is used as ROI and a few vertices are added as c
 Deformation results when running example \ref Example_1 : `deform_1.off` and `deform_2.off`.
 \cgalFigureEnd
 
-\subsubsection Example_2 Using Affine Transformation on Range of Vertices
+\subsubsection Example_2 Using an Affine Transformation on a Range of Vertices
 In this example, we use the functions `translate()` and `rotate()` on a range of control vertices.
 
 \cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}

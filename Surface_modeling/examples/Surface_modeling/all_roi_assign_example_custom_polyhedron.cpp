@@ -122,7 +122,8 @@ int main()
 
   // deform the mesh, now positions of vertices of 'mesh' will be changed
   deform_mesh.deform();
-  deform_mesh.deform(); // you can call deform multiple times if you like
+  // deform can be called several times if the convergence has not been reached yet
+  deform_mesh.deform();
 
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
