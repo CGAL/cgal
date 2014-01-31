@@ -386,6 +386,9 @@ class C3T3_helpers
   typedef typename C3T3::Surface_patch_index  Surface_patch_index;
   typedef typename C3T3::Subdomain_index      Subdomain_index;
   typedef typename C3T3::Index                Index;
+
+  typedef boost::optional<Surface_patch_index>  Surface_patch;
+  typedef boost::optional<Subdomain_index>      Subdomain;
   
   typedef std::vector<Cell_handle>      Cell_vector;
   typedef std::set<Cell_handle>         Cell_set;
@@ -763,7 +766,25 @@ private:
      * @param update if set to \c false, checking only is done
      * @return true if \c facet is in c3t3
      */
-    bool operator()(const Facet& facet, const bool update = true) const
+    Surface_patch operator()(const Facet& facet, const bool update = true) const
+    {
+      return this->operator()(facet, update, update);
+    }
+
+    /**
+     * @brief Updates facet \c facet in c3t3
+     * @param facet the facet to update
+     * @param update_c3t3 if set to \c false, checking only is done
+     * @param update_surface_center if set to \c true, the facet surface
+     * center is updated.
+     * @return true if \c facet is in c3t3
+     *
+     * By default, \c update_c3t3 is \c true, and \c update_surface_center
+     * is equal to \c update_c3t3.
+     */
+    Surface_patch operator()(const Facet& facet,
+                             const bool update_c3t3,
+                             const bool update_surface_center) const
     {
       typedef typename C3T3::Triangulation::Geom_traits Gt;
       typedef typename Gt::Segment_3 Segment_3;
@@ -772,7 +793,7 @@ private:
       
       // Nothing to do for infinite facets
       if ( c3t3_.triangulation().is_infinite(facet) )
-        return false;
+        return Surface_patch();
       
       // Functors
       typename Gt::Is_degenerate_3 is_degenerate = 
@@ -785,25 +806,28 @@ private:
       if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )
       {
         if (is_degenerate(*p_segment)) 
-          return false;
+          return Surface_patch();
         
-        return dual_intersect(*p_segment,facet,update);
+        return dual_intersect(*p_segment,facet,
+                              update_c3t3,
+                              update_surface_center);
       }
       else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) )
       {
         if (is_degenerate(*p_ray))
-          return false;
+          return Surface_patch();
         
-        return dual_intersect(*p_ray,facet,update);
+        return dual_intersect(*p_ray,facet,update_c3t3,
+                              update_surface_center);
       }
       else if ( const Line_3* p_line = object_cast<Line_3>(&dual) )
       {
-        return dual_intersect(*p_line,facet,update);
+        return dual_intersect(*p_line,facet,update_c3t3,
+                              update_surface_center);
       }
       
-      // Should not happen
-      CGAL_assertion(false);
-      return false;
+      CGAL_error_msg("This should not happen");
+      return Surface_patch();
     }
     
     /**
@@ -812,10 +836,8 @@ private:
      * @param update if set to \c false, checking only is done
      * @return true if \c ch is in c3t3
      */
-    bool operator()(const Cell_handle& ch, const bool update = true) const
+    Subdomain operator()(const Cell_handle& ch, const bool update = true) const
     {
-      typedef boost::optional<typename MeshDomain::Subdomain_index> Subdomain;
-      
       if ( c3t3_.triangulation().is_infinite(ch) )
         return false;
       
@@ -840,11 +862,11 @@ private:
     
     // Returns true if query intersects the surface.
     template <typename Query>
-    bool dual_intersect(const Query& dual,
-                        const Facet& facet,
-                        const bool update) const
+    Surface_patch dual_intersect(const Query& dual,
+                                 const Facet& facet,
+                                 const bool update_c3t3,
+                                 const bool update_surface_center) const
     {
-      typedef boost::optional<typename MeshDomain::Surface_patch_index> Surface_patch;
       typedef typename MeshDomain::Intersection Intersection;
       
       typename MeshDomain::Construct_intersection construct_intersection =
@@ -866,23 +888,29 @@ private:
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
      
       // Update if needed
-      if ( surface && update )
+      if(update_c3t3) 
       {
+        // Update status in c3t3 
+        if(surface)
+          c3t3_.add_to_complex(facet,*surface);
+        else
+          c3t3_.remove_from_complex(facet);
+      }
+
+      if(update_surface_center)
+      {
+        if(surface) {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-        Intersection intersection = construct_intersection(dual);
+          Intersection intersection = construct_intersection(dual);
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-        // Update facet surface center
-        Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
-        facet.first->set_facet_surface_center(facet.second,surface_center);
-        
-        // Update status in c3t3 
-        c3t3_.add_to_complex(facet,*surface);
-      }
-      else if(update)
-      {
-        c3t3_.remove_from_complex(facet);
-        facet.first->set_facet_surface_center(facet.second,Point_3());
+          // Update facet surface center
+          Point_3 surface_center = CGAL::cpp0x::get<0>(intersection);
+          facet.first->set_facet_surface_center(facet.second,surface_center);
+        }
+        else {
+          facet.first->set_facet_surface_center(facet.second,Point_3());
+        }
       }
       
       return surface;
@@ -1600,7 +1628,7 @@ private:
         surface_facets.push_back(*fit);
       }
       
-      if ( c3t3_.is_in_complex(*fit) != checker(*fit,false) )
+      if ( c3t3_.is_in_complex(*fit) != (bool)checker(*fit,false) )
         return false;
     }
     
