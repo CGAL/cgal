@@ -73,7 +73,7 @@
 //  Use an implementation of fabs with sse2 on Windows
 //----------------------------------------------------------------------//
 
-#if defined( _MSC_VER )
+#if (_M_IX86_FP >= 2) || defined(_M_X64)
 #define CGAL_USE_SSE2_FABS
 #endif
 
