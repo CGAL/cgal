@@ -5,7 +5,7 @@ CGAL_INC = -I../../../Algebraic_foundations/include -I../../../STL_Extension/inc
 EIGEN_INC = `pkg-config --cflags eigen3|sed -e 's/-I/-isystem/g'` -DCGAL_EIGEN3_ENABLED
 
 normal:
-	g++ test.cpp -O2 -lCGAL -lboost_thread -frounding-math -Wall -Wextra -I. -lmpfr -lgmp -I../../include ${EIGEN_INC} ${CGAL_INC} -DCGAL_CFG_NO_CPP0X_COPY_N -DCGAL_CFG_NO_CPP0X_NEXT_PREV
+	g++ test.cpp -O2 -lCGAL -lboost_thread -frounding-math -Wall -Wextra -I. -lmpfr -lgmp -I../../include ${EIGEN_INC} ${CGAL_INC} -DCGAL_CFG_NO_CPP0X_COPY_N -DCGAL_CFG_NO_CPP0X_NEXT_PREV -DCGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS
 	./a.out
 
 cxx0x:

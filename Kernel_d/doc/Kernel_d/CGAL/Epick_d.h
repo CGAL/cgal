@@ -5,13 +5,11 @@ namespace CGAL {
 \ingroup PkgKernelDKernels
 
 A model for `Kernel_d` that uses %Cartesian coordinates to represent the
-geometric objects. The parameter `DimensionTag` is \cgalModifBegin a tag representing\cgalModifEnd the dimension of the
-ambient Euclidean space. It may be either `Dimension_tag<d>` \cgalModifBegin where `d` is
+geometric objects. The parameter `DimensionTag` is a tag representing the dimension of the
+ambient Euclidean space. It may be either `Dimension_tag<d>` where `d` is
 an integer
-
-\cgalModifEnd or `Dynamic_dimension_tag`. \cgalModifBegin In the later case, the dimension of the space is specified for each point when it is constructed, so it doesn't need to be known at compile-time.
-
-\cgalModifEnd This kernel supports construction of points from `double`
+or `Dynamic_dimension_tag`. In the later case, the dimension of the space is specified for each point when it is constructed, so it doesn't need to be known at compile-time.
+This kernel supports construction of points from `double`
 %Cartesian coordinates. It provides exact geometric predicates, but
 the geometric constructions are not guaranteed to be exact. The geometric
 predicates are made exact without sacrificing speed thanks to the use of
@@ -48,11 +46,9 @@ public:
     \pre `DimensionTag` is a fixed dimension, not `Dynamic_dimension_tag`. */
 Point_d(double x0, double x1, ...);
 
-/*! \cgalModifBegin introduces a point with coordinate set `[first,end)`.
+/*! introduces a point with coordinate set `[first,end)`.
     \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
     \cgalRequires The value type of `InputIterator` is convertible to `double`.
-
-    \cgalModifEnd
     */
 template<typename InputIterator>
 Point_d(InputIterator first, InputIterator end);
@@ -61,13 +57,9 @@ Point_d(InputIterator first, InputIterator end);
     \pre `i` is non-negative and less than the dimension. */
 double operator[](int i)const;
 
-/*! \cgalModifBegin returns an iterator pointing to the zeroth Cartesian coordinate.
-
-  \cgalModifEnd */
+/*! returns an iterator pointing to the zeroth Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_begin()const;
-/*! \cgalModifBegin returns an iterator pointing beyond the last Cartesian coordinate.
-
-  \cgalModifEnd */
+/*! returns an iterator pointing beyond the last Cartesian coordinate. */
 Cartesian_const_iterator_d cartesian_end()const;
 };
 /// @}

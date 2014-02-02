@@ -115,6 +115,9 @@ public:
   typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
 	  return CCBase()(rep(),i);
   }
+  typename boost::result_of<CCBase(Rep,int)>::type operator[](int i)const{
+	  return CCBase()(rep(),i);
+  }
 
   typename boost::result_of<CPI(Rep,Begin_tag)>::type cartesian_begin()const{
 	  return CPI()(rep(),Begin_tag());

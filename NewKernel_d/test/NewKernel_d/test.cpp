@@ -205,7 +205,7 @@ void test3(){
   S s=cs(c,d);
   std::cout << cc(a,1) << std::endl;
   std::cout << cc(b,2) << std::endl;
-  std::cout << cc(cse(s,0),1) << std::endl;
+  std::cout << cse(s,0)[1] << std::endl;
   std::cout << cc(cse(s,1),2) << std::endl;
   for(CI i=ci(a);i!=ci(a,0);++i)
     std::cout << *i << ' ';
