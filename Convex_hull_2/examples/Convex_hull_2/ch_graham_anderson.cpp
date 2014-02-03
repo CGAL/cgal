@@ -28,7 +28,9 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
   {
     result = CGAL::ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
   }
-  *result = *(V.rbegin());  ++result;
+  // add the last point of the sequence that is
+  // not added by ch_graham_andrew_scan
+  *result++ = *(V.rbegin());
   return result;
 
 }
