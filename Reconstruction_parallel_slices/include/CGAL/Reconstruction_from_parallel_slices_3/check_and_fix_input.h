@@ -270,7 +270,7 @@ create_polygon(std::vector<typename Kernel::Point_3>& points_3d,
   //check that the polygon is of dimension 2
   nb_pts=points_3d.size();
   if (nb_pts < 4) return DEGENERATE_POLYGON;
-  for (std::size_t i=0, j=1, k=3;;)
+  for (std::size_t i=0, j=1, k=2;;)
   {
     if ( CGAL::coplanar_orientation(points_3d[i],points_3d[j],points_3d[k]) !=
          CGAL::COLLINEAR ) break;
