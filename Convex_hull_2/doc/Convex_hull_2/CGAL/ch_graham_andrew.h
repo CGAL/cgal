@@ -109,7 +109,7 @@ This algorithm requires \f$ O(n)\f$ time in the worst case for
 
 \cgalHeading{Example}
 
-In the following example `ch_graham_andrew_scan()` is used to 
+In the example \ref Convex_hull_2/ch_graham_anderson.cpp, `ch_graham_andrew_scan()` is used to
 realize Anderson's variant \cgalCite{a-readc-78} of the Graham Scan 
 \cgalCite{g-eadch-72}. The points are sorted counterclockwise around the leftmost 
 point using the `Less_rotate_ccw_2` predicate, as defined in 
@@ -121,32 +121,6 @@ sorted sequence. It is not hard to see that the preconditions of
 Graham scan is usually inferior to Andrew's variant because of its higher 
 arithmetic demand. 
 
-\code
-template <class InputIterator, class OutputIterator, class Traits>
-OutputIterator
-ch_graham_anderson( InputIterator  first, InputIterator  beyond,
-                    OutputIterator result, const Traits&  ch_traits)
-{
-  using namespace boost;
-
-  typedef typename Traits::Point_2            Point_2;
-  typedef typename Traits::Less_xy_2          Less_xy_2;
-  typedef typename Traits::Less_rotate_ccw_2  Less_rotate_ccw_2;
-
-  if (first == beyond) return result;
-  std::vector< Point_2 >  V (first, beyond);
-  typename std::vector< Point_2 >::iterator it =
-               std::min_element(V.begin(), V.end(), Less_xy_2());
-  std::sort( V.begin(), V.end(), boost::bind(Less_rotate_ccw_2(), *it, _1, _2) );
-  if ( *(V.begin()) != *(V.rbegin()) )
-  {
-    result = CGAL::ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
-  }
-
-  *result = *(V.rbegin());  ++result;
-  return result;
-}
-\endcode
 */
 template <class BidirectionalIterator, class OutputIterator, 
 class Traits>
