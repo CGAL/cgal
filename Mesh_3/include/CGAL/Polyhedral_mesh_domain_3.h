@@ -434,10 +434,10 @@ public:
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-     CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
+        CGAL_precondition(r_domain_.do_intersect_surface_object()(q));
 #endif // NOT CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-      intersection = r_domain_.tree_.any_intersection(q);
+        intersection = r_domain_.tree_.any_intersection(q);
       }
       if ( intersection )
       {
