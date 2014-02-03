@@ -301,6 +301,7 @@ public:
         // If the two points are enough close, then we return midpoint
         if ( squared_distance(p1, p2) < r_domain_.squared_error_bound_ )
         {
+          CGAL_assertion(value_at_p1 != value_at_p2);
           return Intersection(
               mid,
               r_domain_.index_from_surface_patch_index(
