@@ -64,12 +64,11 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `ch_graham_andrew_scan()`
 generates the counterclockwise sequence of extreme
 points from a given sequence of input points that are not left of the line defined
 by the first and last points in this sequence.
 
-It generates the counterclockwise sequence of extreme
+More precisely, it generates the counterclockwise sequence of extreme
 points from a given sequence of input points that are not left of the line
 \f$ pq\f$ defined by the first (\f$p\f$) and last (\f$q\f$) points
 in this sequence (\f$ p\f$ is the value of `first` and \f$ q\f$ is
