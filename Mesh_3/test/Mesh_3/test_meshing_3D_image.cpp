@@ -63,6 +63,7 @@ public:
                                         CGAL::parameters::no_perturb());
     
     // Verify
+    this->verify_c3t3_volume(c3t3, 1772330, 0.1);
     this->verify_c3t3_combinatorics(c3t3);
     this->verify(c3t3,domain,criteria);
   }
