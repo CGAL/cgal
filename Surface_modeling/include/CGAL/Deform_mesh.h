@@ -74,9 +74,9 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @brief Class providing the functionalities for deforming a triangulated surface mesh
  ///
  /// @tparam HG a model of HalfedgeGraph 
- /// @tparam VIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
+ /// @tparam VIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
- /// @tparam EIM a model of `ReadOnlyPropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type.
+ /// @tparam EIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%edge_index_t>::%type`.
  /// @tparam TAG tag for selecting the deformation algorithm
  /// @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Halfedge_graph` being `HG`.
@@ -108,10 +108,11 @@ class Deform_mesh
 //Typedefs
 public:
 
-  /// \name Template parameters
+  /// \name Public Template Parameter Types
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
-  typedef HG Halfedge_graph; /**< model of HalfedgeGraph */
+  ///
+  typedef HG Halfedge_graph;
 
 // Index maps
 #ifndef DOXYGEN_RUNNING
@@ -124,9 +125,9 @@ public:
     typename boost::property_map<Halfedge_graph, boost::edge_index_t>::type
   >::type Edge_index_map;
 #else
-  /// model of `ReadWritePropertyMap`  with Deform_mesh::vertex_descriptor as key and `unsigned int` as value type.
+  ///
   typedef VIM Vertex_index_map;
-  ///model of `ReadWritePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type.
+  ///
   typedef EIM Edge_index_map;
 #endif
 
@@ -137,7 +138,8 @@ public:
     typename internal::Weight_calculator_selector<HG, TAG>::weight_calculator
   >::type Weight_calculator;
 #else
-  typedef WC Weight_calculator; /**< model of SurfaceModelingWeightCalculator */
+  ///
+  typedef WC Weight_calculator;
 #endif
 
 // sparse linear solver
@@ -158,7 +160,8 @@ public:
   #endif
   >::type Sparse_linear_solver;
 #else
-  typedef ST Sparse_linear_solver; /**< model of SparseLinearAlgebraTraitsWithPreFactor_d */
+  ///
+  typedef ST Sparse_linear_solver;
 #endif
 
 // CR helper
@@ -172,7 +175,8 @@ public:
   #endif
   >::type Closest_rotation_traits;
 #else
-  typedef CR Closest_rotation_traits; /**< model of DeformationClosestRotationTraits_3 */
+  ///
+  typedef CR Closest_rotation_traits;
 #endif
 
 // vertex point pmap
@@ -182,7 +186,8 @@ public:
     typename boost::property_map<Halfedge_graph, CGAL::vertex_point_t>::type
   >::type Vertex_point_map;
 #else
-  typedef VPM Vertex_point_map; /**<  a model of `ReadWritePropertyMap`</a>  with Deform_mesh::vertex_descriptor as key and `Point` as value type */
+  ///
+  typedef VPM Vertex_point_map;
 #endif
   /// @}
 
@@ -246,7 +251,7 @@ private:
   std::vector<double> scales;
 #endif
 private:
-  Deform_mesh(const Self& s) { } 
+  Deform_mesh(const Self&) { } 
 
 // Public methods
 public:
@@ -325,14 +330,12 @@ public:
    * @pre the halfedge_graph consists of only triangular facets
    * @param halfedge_graph triangulated surface mesh used to deform
    * @param vertex_index_map property map for associating an id to each vertex, from `0` to `boost::num_vertices(halfedge_graph)-1`.
-   *        It is default to `boost::get(vertex_index, halfedge_graph)` and can be omitted.
    * @param edge_index_map property map for associating an id to each edge, from `0` to `boost::num_edges(halfedge_graph)-1`.
-   *        It is default to `boost::get(edge_index, halfedge_graph)` and can be omitted.
    * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
-   *        It is default to `boost::get(vertex_point, halfedge_graph)` and can be omitted.
    * @param iterations see `set_iterations()` for more details
    * @param tolerance  see `set_tolerance()` for more details
    * @param weight_calculator function object or pointer for weight calculation
+   * \todo document the default inline using bgl default parameters
    */
   Deform_mesh(Halfedge_graph& halfedge_graph, 
     Vertex_index_map vertex_index_map, 
@@ -374,7 +377,7 @@ public:
 /// \name Preprocessing
 /// @{
   /**
-   * Removes all the vertices from the region-of-interest (control vertices included).
+   * Erases all the vertices from the region-of-interest (control vertices included).
    */
   void clear_roi_vertices(){
     need_preprocess_both();
@@ -386,7 +389,7 @@ public:
   }
 
   /**
-   * Removes all the vertices from the set of control vertices.
+   * Erases all the vertices from the set of control vertices.
    */
   void clear_control_vertices(){
     need_preprocess_factorization=true;
@@ -397,7 +400,7 @@ public:
   /**
    * Inserts a vertex in the set of control vertices. The vertex is also inserted in the region-of-interest if it is not already in it.
    * @param vd the vertex to be inserted
-   * @return `true` if the insertion is successful
+   * @return `true` if `vd` is not already a control vertex.
    */
   bool insert_control_vertex(vertex_descriptor vd)
   {
@@ -428,7 +431,7 @@ public:
   /**
    * Erases a vertex from the set of control vertices.
    * @param vd the vertex to be erased
-   * @return `true` if the removal is successful
+   * @return `true` if `vd` was a control vertex.
    */
   bool erase_control_vertex(vertex_descriptor vd)
   {
@@ -457,7 +460,7 @@ public:
   /**
    * Inserts a vertex in the region-of-interest
    * @param vd the vertex to be inserted
-   * @return `true` if the insertion is successful
+   * @return `true` if `vd` is not already in the region-of-interest.
    */
   bool insert_roi_vertex(vertex_descriptor vd)   
   {
@@ -470,11 +473,11 @@ public:
   }
 
   /**
-   * Erases a vertex from the region-of-interest. The vertex is also removed from the set of control vertices if possible.
-   * \note The next call to `preprocess()`, any vertex which is no longer in the region-of-interest will be assigned to its original position 
-   * (that is position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
+   * Erases a vertex from the region-of-interest and the set of control vertices.
+   * \note At the next call to `preprocess()`, any vertex that is no longer in the region-of-interest will be assigned to its original position 
+   * (that is the position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
    * @param vd the vertex to be erased
-   * @return `true` if the removal is successful
+   * @return `true` `vd` was a vertex from the region-of-interest.
    */
   bool erase_roi_vertex(vertex_descriptor vd)   
   {
@@ -497,10 +500,17 @@ public:
   }
 
   /**
-   * Assembles and factorizes the Laplacian matrix used in the function `deform()`.
+   * Preprocessing function that need to be called each time the region-of-interest or the set
+   * of control vertices are changed before calling `deform()`.
+   * If not already done, `deform()` first calls this function.
+   * \cgalAdvancedBegin
+   * Collects the vertices not in the region-of-interest that are adjacent to a vertex from the
+   * region-of-interest (these vertices are internally considered as fixed control vertices).
+   * Then assembles and factorizes the Laplacian matrix used in the function `deform()`.
+   * \cgalAdvancedEnd
    * \note A modification of the set of control vertices or the region-of-interest invalidates the
    * preprocessing data.
-   * @return `true` if the Laplacian matrix factorization is successful.
+   * @return `true` if successful.
    * A common reason for failure is that the system is rank deficient, 
    * which happens for example when all the vertices are in the region-of-interest and no control vertices are set, or
    * if the weighting scheme used features too many zero and breaks the connectivity information.
@@ -530,12 +540,14 @@ public:
   }
 
   /**
-   * Updates the target position of `vd` by applying a translation of vector `t` to its last target position.
+   * Updates the target position of `vd` by applying     a translation of vector `t`.
    *
-   * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
    *
    * @param vd a control vertex
    * @param t translation vector
+   * \pre `is_control_vertex(vd)`
    */
   template<class Vect>
   void translate(vertex_descriptor vd, const Vect& t)
@@ -550,7 +562,8 @@ public:
    * Equivalent to calling the overload taking only one control vertex, for each vertex in the range `[begin,end[`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
-   * @tparam Vect is a 3D vector class, `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
    *
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
@@ -568,18 +581,24 @@ public:
   }
 
   /**
-   * Updates the target position of `vd` by applying a rotation around `rotation_center` defined by the quaternion `quat` to its last target position.
+   * Updates the target position of `vd` by applying to its last target position
+   * a rotation defined by the quaternion `quat`, the center of the rotation being
+   * the origin translated by `to_rotation_center` .
    *
-   * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
-   * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` returning the product of a quaternion with a vector
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
    *
    * @param vd a control vertex
    * @param to_rotation_center the vector to translate the origin to the center of the rotation
-   * @param quat rotation holder quaternion
+   * @param quat quaternion of the rotation
+   * \pre `is_control_vertex(vd)`
+   * \pre `quad` represents a rotation
    */
   template <typename Quaternion, typename Vect>
   void rotate(vertex_descriptor vd, const Vect& to_rotation_center, const Quaternion& quat)
   {
+    CGAL_precondition( is_control_vertex(vd) );
     region_of_solution(); // we require ros ids, so if there is any need to preprocess of region of solution -do it.
 
     std::size_t v_id = ros_id(vd);
@@ -593,13 +612,15 @@ public:
    * Equivalent to calling the overload taking only one control vertex, for each vertex in the range `[begin,end[`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
-   * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` being defined and returns the product of a quaternion with a vector
-   * @tparam Vect is a 3D vector class, `Vect(double x,double y, double z)` being a constructor available and `Vect::operator[](int i)` with i=0,1 or 2 returns its coordinates
+   * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` returning the product of a quaternion with a vector
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
    *
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
    * @param to_rotation_center the vector to translate the origin to the center of the rotation
-   * @param quat rotation holder quaternion
+   * @param quat quaternion of the rotation
+   * \pre `quad` represents a rotation
    */
   template <typename InputIterator, typename Vect, typename Quaternion>
   void rotate(InputIterator begin, InputIterator end, const Vect& to_rotation_center, const Quaternion& quat)
@@ -618,20 +639,23 @@ public:
   /**
     * Returns the target position of a control vertex.
     * \param vd a control vertex
-    * \pre `is_roi(vd)`
+    * \pre `is_control_vertex(vd)`
     */
-  const Point& target_position(vertex_descriptor vd)
+  const Point& get_target_position(vertex_descriptor vd)
   {
     region_of_solution();
 
-    CGAL_precondition( is_roi(vd) );
+    CGAL_precondition( is_control_vertex(vd) );
     return solution[ ros_id(vd) ];
   }
 
   /**
    * Deforms the region-of-interest according to the deformation algorithm, using the target positions of each control vertex set by using `rotate()`, `translate()`, or `set_target_position()`.
-   * The points associated to each vertex of the input graph that are inside the region-of-interest are updated. The initial guess for solving the
+   * The points associated to each vertex of the input graph that are inside the region-of-interest are updated.
+   * \cgalAdvancedBegin
+   * The initial guess for solving the
    * deformation problem is using the points associated to the input graph before calling the function.
+   * \cgalAdvancedEnd
    * \note Nothing happens if `preprocess()` returns `false`.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
@@ -716,17 +740,19 @@ public:
   }
 
   /**
-   * Sets the original positions to be the current positions for vertices inside region-of-interest. Calling this function has the same effect as creating
+   * Sets the original positions to be the current positions for all the vertices inside the region-of-interest. Calling this function has the same effect as creating
    * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and the set of control vertices.
    * \note if the region-of-interest or the set of control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
-   * \warning This function might have a non-negligible effect on the result.
+   * \cgalAdvancedBegin 
+   * This function might have a non-negligible effect on the result.
    * The Laplacian matrix of the free vertices and the optimal rotations
    * are computed using the original positions of the points
    * associated to the vertices. Thus, if a deformed version of the mesh
    * is used as <i>reference</i>, the mesh properties the algorithm
    * tries to preserve are those of an altered version (which are already
    * degraded).
+   * \cgalAdvancedEnd
    */
   void overwrite_original_positions()
   {
@@ -772,15 +798,15 @@ public:
 /// @{
 
   /**
-   * Getter of `set_iterations()`
+   * Gets the number of iterations set using the constructor or the function `set_iterations()`
    */
-  unsigned int iterations()
+  unsigned int get_iterations()
   { return m_iterations; }
   
   /**
-   * Getter of `set_tolerance()`
+   * Gets the tolerance parameter set using the constructor or the function `set_iterations()`
    */
-  double tolerance()
+  double get_tolerance()
   { return m_tolerance; }
 
   /**
@@ -789,7 +815,7 @@ public:
   void set_iterations(unsigned int iterations)
   { this->m_iterations = iterations; }
   
-   /// @brief Sets the tolerance of convergence used in `deform()`.
+   /// @brief Sets the tolerance of the convergence used in `deform()`.
    /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
    ///
    /// `tolerance >` \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ will be used as a termination criterium.
@@ -807,7 +833,7 @@ public:
   /**
    * Tests whether a vertex is inside the region-of-interest.
    * @param vd the query vertex
-   * @return `true` if `vd` has been added (and not removed) to the region-of-interest.
+   * @return `true` if `vd` has been inserted to (and not erased from) the region-of-interest.
    */
   bool is_roi_vertex(vertex_descriptor vd) const
   { return is_roi_map[id(vd)]; }
@@ -815,14 +841,13 @@ public:
   /**
    * Tests whether a vertex is a control vertex.
    * @param vd the query vertex
-   * @return `true` if `vd` has been added (and not removed) to the set of control vertices.
+   * @return `true` if `vd` has been inserted to (and not erased from) the set of control vertices.
    */
   bool is_control_vertex(vertex_descriptor vd) const
   { return is_ctrl_map[id(vd)]; }
 
   /**
    * Provides access to the halfedge graph being deformed
-   * @return the halfedge graph
    */
   const Halfedge_graph& halfedge_graph() const
   { return m_halfedge_graph; }

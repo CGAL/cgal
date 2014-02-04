@@ -2,21 +2,23 @@
 \ingroup PkgSurfaceModelingConcepts
 \cgalConcept
 
-@brief Concept describing the set of requirements for computing a close rotation to a 3x3 matrix together with basic computations used in the class `CGAL::Deform_mesh`.
+@brief Concept describing the set of requirements for computing a 3x3 rotation matrix that is close to a given 3x3 matrix, together with basic computations used in the class `CGAL::Deform_mesh`.
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement models of this concept.
 
 \cgalHasModel `CGAL::Deformation_Eigen_closest_rotation_traits_3`
 \cgalHasModel `CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
 
+\todo update the code when the names in the review have converged
+
 */
 class DeformationClosestRotationTraits_3{
 public:
 /// \name Types 
 /// @{
-  /// <I>3x3</I> matrix type having a copy constructor and an assignment operator
+  /// 3x3 matrix type having a copy constructor and an assignment operator
   typedef Hidden_type Matrix;
-  /// <I>3D</I> vector type having a copy constructor
+  /// 3D vector type having a copy constructor
   typedef Hidden_type Vector;
 /// @} 
 
@@ -29,14 +31,14 @@ public:
 /// \name Operations 
 /// @{
   
-  /// Equivalent to `result += w * (v1*v2^t)`
-  void scalar_vector_vector_transpose_mult(Matrix& result, double w, const Vector& v1, const Vector& v2);
+  /// Equivalent to `result = result + w * (v1*v2^t)`
+  void add_scalar_t_vector_t_vector_transpose(Matrix& result, double w, const Vector& v1, const Vector& v2);
   
-  /// Equivalent to `result += (w1*m1 + w2*m2) * v`
-  void scalar_matrix_scalar_matrix_vector_mult(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v);
+  /// Equivalent to `result = result + (w1*m1 + w2*m2) * v`
+  void add__scalar_t_matrix_p_scalar_t_matrix__t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v);
   
-  /// Equivalent to `result += w1 * (m1 + m2 + m3) * v`
-  void scalar_mult_with_matrix_sum(Vector& result, double w1, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v);
+  /// Equivalent to `result = result + w1 * (m1 + m2 + m3) * v`
+  void add_scalar_t_matrix_sum_t_vector(Vector& result, double w1, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v);
   
   /// Returns the squared norm of `v1 - m*v2`
   double squared_norm_vector_scalar_vector_subs(const Vector& v1, const Matrix& m, const Vector& v2);

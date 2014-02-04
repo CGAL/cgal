@@ -39,7 +39,7 @@ See `::SparseLinearAlgebraTraits_d::linear_solver()` for the description of `D`.
 bool pre_factor(const Matrix& A, NT& D);
 
 /*!
-Solve the sparse linear system <I>A\f$ \times \f$ X = B</I>, with the matrix provided in SparseLinearAlgebraTraitsWithPreFactor_d::pre_factor.
+Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix provided in SparseLinearAlgebraTraitsWithPreFactor_d::pre_factor.
 @return true if the solver is successful
 */
 bool linear_solver(const Vector& B, Vector& X);

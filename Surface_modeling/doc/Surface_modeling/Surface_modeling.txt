@@ -12,7 +12,7 @@ namespace CGAL {
 
 \section Surface_Modeling_Intro Introduction
 This package offers a surface mesh deformation algorithm which provides new positions of the vertices of a surface mesh
-under positional constraints of some of its vertices without requiring any additional structure other than the surface mesh itself.
+under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself.
 
 This package implements the algorithm described in \cgalCite{Sorkine2007AsRigidAs} together with an
 alternative energy function \cgalCite{Chao2010SimpleGeomModel}.
@@ -76,17 +76,19 @@ needs to be called.
 Note that if it is not done, the first deformation step calls this function automatically
 and has a longer runtime compared to subsequent deformation steps.
 
+<!--- This is a pure implementation details as it does not shows up in the ROI
 This function also extends the ROI by adding as <em>fixed control vertex</em> any vertex not in the ROI that is edge-adjacent
 to a vertex of the ROI. The target position of a fixed control vertex is its current position and cannot be changed.
+-->
 
 The function `Deform_mesh::preprocess()` returns `true` if the factorization is successful, and `false` otherwise.
 
 Rank deficiency is the main reason for failure. Typical failure cases are:
   - All the vertices are in the ROI and no control vertices are set
-  - The weighting scheme used features too many zeros and breaks the connectivity information
+  - The weighting scheme used to fill the sparse matrix(model of `SurfaceModelingWeightCalculator`) features too many zeros and breaks the connectivity information
 
 \note The ROI does not need to be a connected component of the surface mesh graph. However for better performances
-it is better to use an individual deformation object for each connected component.
+it is better to use an individual instance of the deformation object for each connected component.
 
 \subsection Deform_section Deformation
 
@@ -108,7 +110,7 @@ if the convergence has not been reached yet (otherwise it has no effect).
 
 
 \warning Vertices can be inserted into or removed from the ROI and the set of control vertices at any time.
-In particular, any vertex which is no longer inside the ROI will be assigned to its original position when
+In particular, any vertex that is no longer inside the ROI will be assigned to its original position when
 `Deform_mesh::preprocess()` is first called.
 The original positions can be updated by calling `Deform_mesh::overwrite_original_positions()` (
 which will also require a new preprocessing step).
@@ -289,7 +291,7 @@ where:
 - \f$\mathbf{R}_i\f$ is a \f$ 3 \times 3 \f$ rotation matrix for the vertex \f$\mathbf{v}_i\f$
 - \f$w_{ij}\f$ denotes a weight
 - \f$N(\mathbf{v}_i)\f$ denotes the set of vertices adjacent to \f$\mathbf{v}_i\f$ in \f$M\f$
-- \f$N(\mathbf{v}'_i)\f$ deontes a new position of the vertex \f$N(\mathbf{v}_i)\f$ after a given deformation
+- \f$N(\mathbf{v}'_i)\f$ denotes a new position of the vertex \f$N(\mathbf{v}_i)\f$ after a given deformation
 
 An as-rigid-as possible surface mesh deformation \cgalCite{Sorkine2007AsRigidAs} is defined by minimizing
 this energy function under the deformation constraints, that is fixing \f$ {v}'_i\f$ for each vertex \f$ \mathbf{v}_i\f$
