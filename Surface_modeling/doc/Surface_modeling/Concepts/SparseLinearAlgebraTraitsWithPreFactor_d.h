@@ -4,7 +4,8 @@
 \cgalConcept
 
 @brief Concept describing the set of requirements for a direct sparse linear system solver with factorization.
-A model of this concept provides an additional factorization method to solve the system for different right-hand vectors.
+A model of this concept stores the left-hand matrix (denoted \f$ A \f$) and provides an additional factorization
+method to solve the system for different right-hand vectors.
 
 \cgalRefines `SparseLinearAlgebraTraits_d`
 
