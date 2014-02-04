@@ -201,9 +201,10 @@ The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(
 \f$\mathbf{v}_j\f$. In this case, the Laplacian coordinates of a vertex is the vector between this vertex
 and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 
-The cotangent weight scheme \cgalCite{Pinkall1993Cotangent} is more independent from the discretization of the original
-surface: Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
-cotangents of the angles opposite to the edge.
+In the surface mesh deformation context, a popular choice is the cotangent weight scheme \cgalCite{Pinkall1993Cotangent} :
+Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
+cotangents of the angles opposite to the edge. It was shown to produce results not biased by the mesh of the approximated surface
+\cgalCite{Sorkine2007AsRigidAs}.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
 Laplacian coordinates of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the vertices adjacent to \f$ v_i \f$. The Laplacian coordinates \f$ \delta \f$ are represented as a blue vector.
