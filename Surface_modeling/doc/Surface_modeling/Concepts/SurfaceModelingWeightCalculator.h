@@ -16,6 +16,9 @@
  ///   { return 1.0; }
  /// };
  /// \endcode
+ ///
+ /// \todo discuss the name of the concept
+ ///
 class SurfaceModelingWeightCalculator
 {
 public:

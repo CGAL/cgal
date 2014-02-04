@@ -542,8 +542,8 @@ public:
   /**
    * Updates the target position of `vd` by applying     a translation of vector `t`.
    *
-   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
-   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its %Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its %Cartesian coordinates.
    *
    * @param vd a control vertex
    * @param t translation vector
@@ -562,8 +562,8 @@ public:
    * Equivalent to calling the overload taking only one control vertex, for each vertex in the range `[begin,end[`.
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
-   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
-   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its %Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its %Cartesian coordinates.
    *
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
@@ -586,8 +586,8 @@ public:
    * the origin translated by `to_rotation_center` .
    *
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` returning the product of a quaternion with a vector
-   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
-   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its %Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its %Cartesian coordinates.
    *
    * @param vd a control vertex
    * @param to_rotation_center the vector to translate the origin to the center of the rotation
@@ -613,8 +613,8 @@ public:
    *
    * @tparam InputIterator input iterator type with `vertex_descriptor` as value type
    * @tparam Quaternion is a quaternion class with `Vect operator*(Quaternion, Vect)` returning the product of a quaternion with a vector
-   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its Cartesian coordinates
-   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its Cartesian coordinates.
+   * @tparam Vect is a 3D vector class, with `Vect(double x,double y, double z)` being a constructor from its %Cartesian coordinates
+   *         and `double Vect::operator[](int i)` with i=0,1 or 2 returning its %Cartesian coordinates.
    *
    * @param begin first iterator of the range of vertices
    * @param end past-the-end iterator of the range of vertices
@@ -744,6 +744,7 @@ public:
    * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and the set of control vertices.
    * \note if the region-of-interest or the set of control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
+   *
    * \cgalAdvancedBegin 
    * This function might have a non-negligible effect on the result.
    * The Laplacian matrix of the free vertices and the optimal rotations

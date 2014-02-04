@@ -7,13 +7,14 @@
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Deformation,PkgSurfaceModelingSummary}
 \cgalPkgPicture{deform-ico.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Sébastien Loriot, Olga Sorkine, Yin Xu and Ilker %O. Yaz}
-\cgalPkgDesc{This package allows to apply a as-rigid-as-possible deformation to a 3D triangulated surface mesh.}
+\cgalPkgAuthor{Sébastien Loriot, Olga Sorkine-Hornung, Yin Xu and Ilker %O. Yaz}
+\cgalPkgDesc{This package offers surface mesh deformation algorithms which provide new positions to the vertices of a surface mesh
+under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself.}
 \cgalPkgManuals{Chapter_SurfaceModeling,PkgSurfaceModeling}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.3}
-\cgalPkgDependsOn{Sparse symmetric solver such as those from  \ref thirdpartyEigen}
+\cgalPkgDependsOn{Sparse symmetric solver such as those from \ref thirdpartyEigen}
 \cgalPkgBib{cgal:todo}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Edit plugin of the Polyhedron demo,polyhedron_3.zip}

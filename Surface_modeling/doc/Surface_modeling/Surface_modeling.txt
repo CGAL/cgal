@@ -11,7 +11,7 @@ namespace CGAL {
 \image html main_image_suggestion_4_resized.png
 
 \section Surface_Modeling_Intro Introduction
-This package offers a surface mesh deformation algorithm which provides new positions of the vertices of a surface mesh
+This package offers a surface mesh deformation algorithms which provide new positions to the vertices of a surface mesh
 under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself.
 
 This package implements the algorithm described in \cgalCite{Sorkine2007AsRigidAs} together with an
@@ -27,7 +27,7 @@ A <em>surface mesh deformation system</em> consists of:
 - a subset of vertices from the ROI that the user wants to move (refered to as the <em>control vertices</em>),
 - a target position for each control vertex (defining the <em>deformation constraints</em>).
 
-A vertex from the ROI that is not a control vertex is called a <em>unconstrained vertex</em>. These definitions are depicted in \cgalFigureRef{Simple_roi}.
+A vertex from the ROI that is not a control vertex is called an <em>unconstrained vertex</em>. These definitions are depicted in \cgalFigureRef{Simple_roi}.
 
 \cgalFigureBegin{Simple_roi, roi_example.png}
 The ROI features the green vertices (the unconstrained vertices) and the red vertices (the control vertices).
@@ -45,7 +45,7 @@ Comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation 
 On the mesh of a square with spikes depicted on the left, the ROI consists of the green vertices. The control vertices are the red ones.
 We translate the control vertices along the normal of the plane and observe the result produced by
 the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from the same view point. The
-the latter method does not produce a symmetric result.
+latter method does not produce a symmetric result.
 \cgalFigureEnd
 
 Both methods are iterative and produce a different mesh at each step until convergence is reached.
@@ -77,7 +77,7 @@ The following conventions are used for the definition of the ROI:
  - A control vertex that is removed is not removed from the ROI.
 
 Each time the ROI is modified, the preprocessing function `preprocess()`
-needs to be called.
+must be called.
 Note that if it is not done, the first deformation step calls this function automatically
 and has a longer runtime compared to subsequent deformation steps.
 
@@ -99,7 +99,7 @@ The defaults provided give good results in general but we provide a way to
 change the weighing scheme to experiment or improve the result in specific cases.
 \cgalAdvancedEnd
 
-\note The ROI does not need to be a connected component of the surface mesh graph. However for better performances
+\note The ROI does not have to be a connected component of the surface mesh graph. However, for better performances
 it is better to use an individual instance of the deformation object for each connected component.
 
 \subsection Deform_section Deformation
@@ -378,7 +378,7 @@ we slightly changed Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f]
 
 - The energy contribution of each vertex is positive. If the weight between two vertices is always positive, this is always the case.
- However when using the cotangent weighting scheme (the default in our implementation), if the sum of the angles opposite to an edge is greater than \f$ \pi \f$,
+ However, when using the cotangent weighting scheme (the default in our implementation), if the sum of the angles opposite to an edge is greater than \f$ \pi \f$,
 its cotangent weight is negative. As a workaround for bad quality meshes, we eliminate those negative weights
 by setting them to zero.
 
