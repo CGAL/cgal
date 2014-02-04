@@ -55,11 +55,10 @@ int main()
   edge_iterator eb, ee;
   for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb)
   {
-    weight_map[*eb] = 1.0; // store your precomputed weights
+    weight_map[*eb] = 1.0; // store some precomputed weights
   }
 
-  // index maps must contain an index unique per vertex starting from 0
-  // to the total number of vertices
+  // Create an initialize the vertex index map
   Internal_vertex_map internal_vertex_index_map;
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
@@ -68,6 +67,7 @@ int main()
     put(vertex_index_map, *vb, counter);
   }
 
+  // Create and initialize the edge index map
   Internal_edge_map internal_edge_index_map;
   Edge_index_map edge_index_map(internal_edge_index_map);
   counter = 0;
@@ -76,5 +76,5 @@ int main()
   }
   Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map, 5, 1e-4, Weights_from_map(&weight_map));
 
-  // Deform mesh as you wish
+  // Deform mesh as desired
 }
