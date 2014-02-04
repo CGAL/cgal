@@ -260,8 +260,7 @@ public:
   //vertex_point_map set by default
   Deform_mesh(Halfedge_graph& halfedge_graph,
               Vertex_index_map vertex_index_map,
-              Edge_index_map edge_index_map,
-              Weight_calculator weight_calculator = Weight_calculator()
+              Edge_index_map edge_index_map
               )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
@@ -271,7 +270,7 @@ public:
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
-      weight_calculator(weight_calculator),
+      weight_calculator(Weight_calculator()),
       vertex_point_map(boost::get(vertex_point, halfedge_graph))
   {
     init();
@@ -279,8 +278,7 @@ public:
 
   //vertex_point_map and edge_index_map set by default
   Deform_mesh(Halfedge_graph& halfedge_graph,
-              Vertex_index_map vertex_index_map,
-              Weight_calculator weight_calculator = Weight_calculator()
+              Vertex_index_map vertex_index_map
               )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map),
       edge_index_map(boost::get(boost::edge_index, halfedge_graph)),
@@ -291,14 +289,13 @@ public:
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
-      weight_calculator(weight_calculator),
+      weight_calculator(Weight_calculator()),
       vertex_point_map(boost::get(vertex_point, halfedge_graph))
   {
     init();
   }
   //vertex_point_map, edge_index_map and vertex_index_map set by default
-  Deform_mesh(Halfedge_graph& halfedge_graph,
-              Weight_calculator weight_calculator = Weight_calculator()
+  Deform_mesh(Halfedge_graph& halfedge_graph
               )
     : m_halfedge_graph(halfedge_graph),
       vertex_index_map(boost::get(boost::vertex_index, halfedge_graph)),
@@ -310,25 +307,13 @@ public:
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
-      weight_calculator(weight_calculator),
+      weight_calculator(Weight_calculator()),
       vertex_point_map(boost::get(vertex_point, halfedge_graph))
   {
     init();
   }
-  /// \endcond
-/// \name Construction
-/// @{
-    /**
-   * The constructor of a deformation object
-   *
-   * @pre the halfedge_graph consists of only triangular facets
-   * @param halfedge_graph triangulated surface mesh used to deform
-   * @param vertex_index_map property map for associating an id to each vertex, from `0` to `boost::num_vertices(halfedge_graph)-1`.
-   * @param edge_index_map property map for associating an id to each edge, from `0` to `boost::num_edges(halfedge_graph)-1`.
-   * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
-   * @param weight_calculator function object or pointer for weight calculation
-   * \todo document the default inline using bgl default parameters
-   */
+
+  // Constructor with all the parameters provided
   Deform_mesh(Halfedge_graph& halfedge_graph, 
     Vertex_index_map vertex_index_map, 
     Edge_index_map edge_index_map,
@@ -348,7 +333,28 @@ public:
   {
     init();
   }
+  /// \endcond
+  #if DOXYGEN_RUNNING
+/// \name Construction
+/// @{
+    /**
+   * The constructor of a deformation object
+   *
+   * @pre the halfedge_graph consists of only triangular facets
+   * @param halfedge_graph triangulated surface mesh used to deform
+   * @param vertex_index_map property map for associating an id to each vertex, from `0` to `boost::num_vertices(halfedge_graph)-1`.
+   * @param edge_index_map property map for associating an id to each edge, from `0` to `boost::num_edges(halfedge_graph)-1`.
+   * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
+   * @param weight_calculator function object or pointer for weight calculation
+   */
+  Deform_mesh(Halfedge_graph& halfedge_graph,
+    Vertex_index_map vertex_index_map=boost::get(boost::vertex_index, halfedge_graph),
+    Edge_index_map edge_index_map=boost::get(boost::edge_index, halfedge_graph),
+    Vertex_point_map vertex_point_map=boost::get(vertex_point, halfedge_graph),
+    Weight_calculator weight_calculator = Weight_calculator()
+    );
 /// @}
+  #endif
 
 private:
   void init() {

@@ -74,7 +74,11 @@ int main()
   for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter) {
     put(edge_index_map, *eb, counter);
   }
-  Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map, Weights_from_map(&weight_map));
+  Deform_mesh deform_mesh(mesh,
+                          vertex_index_map,
+                          edge_index_map,
+                          boost::get(CGAL::vertex_point, mesh),
+                          Weights_from_map(&weight_map));
 
   // Deform mesh as desired
 }
