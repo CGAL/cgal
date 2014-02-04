@@ -1,5 +1,6 @@
 #include "Surface_modeling_test_commons.h"
 #include <algorithm>
+#include <sstream>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>

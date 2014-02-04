@@ -52,8 +52,10 @@ int main()
     deformation_iteration);
 
   std::cerr << "Save deformed models" << std::endl;
-  std::ofstream("data/Symmetry_test_deformed_arap.off") << mesh_1;
-  std::ofstream("data/Symmetry_test_deformed_spokes.off") << mesh_2;
+  std::ofstream output("data/Symmetry_test_deformed_arap.off");
+  output << mesh_1; output.close();
+  output.open("data/Symmetry_test_deformed_spokes.off");
+  output << mesh_2;
   std::cerr << "All done!" << std::endl;
   return EXIT_SUCCESS;
 }

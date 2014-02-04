@@ -61,8 +61,8 @@ read_rois(DeformMesh& deform_mesh,
   const std::string& roi_file,
   const std::string& handle_file)
 {
-  std::ifstream roi_stream(roi_file);
-  std::ifstream handle_stream(handle_file);
+  std::ifstream roi_stream(roi_file.c_str());
+  std::ifstream handle_stream(handle_file.c_str());
   if(!roi_stream || !handle_stream) {
     std::cerr << "Error: can not read roi or handle files" << std::endl;
     assert(false);
