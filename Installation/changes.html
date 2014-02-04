@@ -141,15 +141,26 @@ and <code>src/</code> directories).
   </ul>
   <h3>3D Alpha Shapes</h3>
   <ul>
-    <li> Add member functions in <code>CGAL::Alpha_shape_3</code> to give access to the alpha status
-         of edges and facets (<code>get_alpha_status())</code>.</li>
-    <li> Add another filtration method (<code>filtration_with_alpha_values()</code>) that reports
-          the alpha value at which each face appears in the filtration.</li>
+    <li> Add member functions in <code>CGAL::Alpha_shape_3</code> to give
+         access to the alpha status of edges and facets
+         (<code>get_alpha_status())</code>.</li>
+    <li> Add another filtration method
+          (<code>filtration_with_alpha_values()</code>) that reports the
+          alpha value at which each face appears in the filtration.</li>
   </ul>
 
   <h3>Combinatorial Maps and Linear Cell Complex</h3>
   <ul>
-    <li> <code>null_dart_handle</code> is no longer a static data member in the <code>CombinatorialMap</code> concept. This implies to move the following methods of Dart concept into CombinatorialMap concept: <code>is_free</code>, <code>highest_nonfree_dimension</code>, <code>opposite</code> and <code>other_extremity</code>. We also transform the static methods <code>vertex_attribute</code> and <code>point</code> of <code>Linear_cell_complex</code> class into non static methods. You can define the CGAL_CMAP_DEPRECATED macro to keep the old behavior.
+    <li> <code>null_dart_handle</code> is no longer a static data member in
+      the <code>CombinatorialMap</code> concept. This implies to move the
+      following methods of <code>Dart</code> concept
+      into <code>CombinatorialMap</code>
+      concept: <code>is_free</code>, <code>highest_nonfree_dimension</code>,
+      <code>opposite</code> and <code>other_extremity</code>. We also
+      transform the static methods <code>vertex_attribute</code>
+      and <code>point</code> of <code>Linear_cell_complex</code> class into
+      non static methods. You can define the CGAL_CMAP_DEPRECATED macro to
+      keep the old behavior.
     </li>
   </ul>
 
@@ -176,7 +187,8 @@ and <code>src/</code> directories).
 
   <h3>2D and 3D Geometry Kernel </h3>
   <ul>
-    <li> Fix a bug introduced in CGAL 4.3 when computing the intersection of two 3D triangles.</li>
+    <li> Fix a bug introduced in CGAL 4.3 when computing the intersection
+         of two 3D triangles.</li>
   </ul>
 
   <h3>2D Triangulations</h3>
@@ -194,14 +206,17 @@ and <code>src/</code> directories).
 	and <code>number_of_cells</code> in
 	<code>Mesh_complex_3_in_triangulation_3</code>.
     </li>
-    <li>Change the internal API of the sliver perturber, to make possible for developers
-	to optimize another criterion than the (default) minimal dihedral angle.
-	Developers can also define a new perturbation vector (for angles we had 
-	gradient of squared circumradius, gradient of volume, gradient of minimal dihedral
-	angle, and random) which is better suitable to optimize their criterion.
+    <li>Change the internal API of the sliver perturber, to make possible
+	for developers to optimize another criterion than the (default)
+	minimal dihedral angle.  Developers can also define a new
+	perturbation vector (for angles we had gradient of squared
+	circumradius, gradient of volume, gradient of minimal dihedral
+	angle, and random) which is better suitable to optimize their
+	criterion.
     </li>
-    <li>Improve the use of cache values in Mesh_cell_base to (re)compute circumcenters
-          and sliver criterion values only when needed.
+    <li>Improve the use of cache values in <code>Mesh_cell_base_3</code> to
+          (re)compute circumcenters and sliver criterion values only when
+          needed.
     </li>
   </ul>
 
