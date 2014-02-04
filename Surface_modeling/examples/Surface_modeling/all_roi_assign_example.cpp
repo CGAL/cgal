@@ -48,7 +48,7 @@ int main()
   deform_mesh.insert_control_vertex(control_1);
   deform_mesh.insert_control_vertex(control_2);
 
-  // The definition of the      ROI and the control vertices is done, call preprocess
+  // The definition of the ROI and the control vertices is done, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
   if(!is_matrix_factorization_OK){
     std::cerr << "Error in preprocessing, check documentation of preprocess()" << std::endl;

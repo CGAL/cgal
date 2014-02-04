@@ -261,15 +261,13 @@ public:
   Deform_mesh(Halfedge_graph& halfedge_graph,
               Vertex_index_map vertex_index_map,
               Edge_index_map edge_index_map,
-              unsigned int iterations = 5,
-              double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator()
               )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-      m_iterations(iterations), m_tolerance(tolerance),
+      m_iterations(5), m_tolerance(1e-4),
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
@@ -282,8 +280,6 @@ public:
   //vertex_point_map and edge_index_map set by default
   Deform_mesh(Halfedge_graph& halfedge_graph,
               Vertex_index_map vertex_index_map,
-              unsigned int iterations = 5,
-              double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator()
               )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map),
@@ -291,7 +287,7 @@ public:
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-      m_iterations(iterations), m_tolerance(tolerance),
+      m_iterations(5), m_tolerance(1e-4),
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
@@ -302,8 +298,6 @@ public:
   }
   //vertex_point_map, edge_index_map and vertex_index_map set by default
   Deform_mesh(Halfedge_graph& halfedge_graph,
-              unsigned int iterations = 5,
-              double tolerance = 1e-4,
               Weight_calculator weight_calculator = Weight_calculator()
               )
     : m_halfedge_graph(halfedge_graph),
@@ -312,7 +306,7 @@ public:
       ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
       is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-      m_iterations(iterations), m_tolerance(tolerance),
+      m_iterations(5), m_tolerance(1e-4),
       need_preprocess_factorization(true),
       need_preprocess_region_of_solution(true),
       last_preprocess_successful(false),
@@ -332,8 +326,6 @@ public:
    * @param vertex_index_map property map for associating an id to each vertex, from `0` to `boost::num_vertices(halfedge_graph)-1`.
    * @param edge_index_map property map for associating an id to each edge, from `0` to `boost::num_edges(halfedge_graph)-1`.
    * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
-   * @param iterations see `set_iterations()` for more details
-   * @param tolerance  see `set_tolerance()` for more details
    * @param weight_calculator function object or pointer for weight calculation
    * \todo document the default inline using bgl default parameters
    */
@@ -341,15 +333,13 @@ public:
     Vertex_index_map vertex_index_map, 
     Edge_index_map edge_index_map,
     Vertex_point_map vertex_point_map,
-    unsigned int iterations = 5,
-    double tolerance = 1e-4,
     Weight_calculator weight_calculator = Weight_calculator()
     )
     : m_halfedge_graph(halfedge_graph), vertex_index_map(vertex_index_map), edge_index_map(edge_index_map),
     ros_id_map(std::vector<std::size_t>(boost::num_vertices(halfedge_graph), (std::numeric_limits<std::size_t>::max)() )),
     is_roi_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
     is_ctrl_map(std::vector<bool>(boost::num_vertices(halfedge_graph), false)),
-    m_iterations(iterations), m_tolerance(tolerance),
+    m_iterations(5), m_tolerance(1e-4),
     need_preprocess_factorization(true), 
     need_preprocess_region_of_solution(true),
     last_preprocess_successful(false),
@@ -799,25 +789,25 @@ public:
 /// @{
 
   /**
-   * Gets the number of iterations set using the constructor or the function `set_iterations()`
+   * Gets the default number of iterations (5) or the value passed to the function `set_iterations()`
    */
   unsigned int get_iterations()
   { return m_iterations; }
   
   /**
-   * Gets the tolerance parameter set using the constructor or the function `set_iterations()`
+   * Gets the default tolerance parameter (1e-4) or the value passed to the function `set_tolerance()`
    */
   double get_tolerance()
   { return m_tolerance; }
 
   /**
-   * Sets the number of iterations used in `deform()`
+   * Sets the maximum number of iterations ran by `deform()`
    */
   void set_iterations(unsigned int iterations)
   { this->m_iterations = iterations; }
   
    /// @brief Sets the tolerance of the convergence used in `deform()`.
-   /// Set to zero if energy based termination is not required, which also eliminates energy calculation effort in each iteration. 
+   /// If `tolerance==0`, no energy based termination criteria is used (preventing to do the energy computation at each iteration step)
    ///
    /// `tolerance >` \f$|\mathrm{energy}(m_i) - \mathrm{energy}(m_{i-1})| / \mathrm{energy}(m_i)\f$ will be used as a termination criterium.
   void set_tolerance(double tolerance)
