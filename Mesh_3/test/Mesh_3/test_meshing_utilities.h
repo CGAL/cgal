@@ -28,12 +28,16 @@
 #include "test_utilities.h"
 
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/optimize_mesh_3.h>
+
+#include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
+#include <CGAL/Triangle_accessor_3.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
 
 #include <vector>
 #include <boost/optional/optional_io.hpp>
@@ -42,10 +46,8 @@
 #include <fstream>
 #include <iostream>
 
-#include <cfloat>
 #include <climits>
 #define STD_SIZE_T_MAX UINT_MAX
-#define DOUBLE_MAX DBL_MAX
 
 struct Bissection_tag {};
 struct Polyhedral_tag {};
@@ -87,6 +89,7 @@ struct Tester
                 max_cells_expected);
 
     double volume = compute_volume(c3t3);
+    double hdist = compute_hausdorff_distance(c3t3, domain, domain_type);
 
     // Refine again and verify nothing changed
     std::cerr << "Refining again...\n";
@@ -117,7 +120,8 @@ struct Tester
 #endif
     
     verify_c3t3(c3t3,domain,domain_type,v,v,f,f,c,c);
-    
+    verify_c3t3_hausdorff_distance(c3t3, domain, domain_type, hdist);
+
     // Exude.
     // Vertex number should not change (obvious)
     // Facet number should not change as exuder preserves boundary facets
@@ -128,6 +132,7 @@ struct Tester
     verify_c3t3(exude_c3t3,domain,domain_type,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
     verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
+    verify_c3t3_hausdorff_distance(exude_c3t3, domain, domain_type, hdist);
     
     // Perturb.
     // Vertex number should not change (obvious)
@@ -138,6 +143,7 @@ struct Tester
     verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
+    verify_c3t3_hausdorff_distance(perturb_c3t3, domain, domain_type, hdist);
 
     // Odt-smoothing
     // Vertex number should not change (obvious)
@@ -147,6 +153,7 @@ struct Tester
                               CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(odt_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
+    verify_c3t3_hausdorff_distance(odt_c3t3, domain, domain_type, hdist);
     
     // Lloyd-smoothing
     // Vertex number should not change (obvious)
@@ -156,6 +163,7 @@ struct Tester
                                 CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(lloyd_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
+    verify_c3t3_hausdorff_distance(lloyd_c3t3, domain, domain_type, hdist);
   }
 
   template<typename C3t3, typename Domain, typename Domain_type_tag>
@@ -318,6 +326,64 @@ struct Tester
         }
       }
     }
+  }
+
+  // For bissection domains, do nothing.
+  template<typename C3t3, typename MeshDomain>
+  double compute_hausdorff_distance(const C3t3& c3t3,
+                                    const MeshDomain& domain,
+                                    const Bissection_tag) const
+  {
+    return 0.;
+  }
+
+  // For polyhedral domains, compute the distance to polyhedron 
+  // using the domain's AABBtree
+  template<typename C3t3, typename MeshDomain>
+  double compute_hausdorff_distance(const C3t3& c3t3,
+                                    const MeshDomain& domain,
+                                    const Polyhedral_tag) const
+  {
+    std::cerr.precision(17);
+    typedef typename C3t3::Triangulation        Tr;
+    typedef typename Tr::Facet                  Facet;
+    typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
+    const Tr& tr = c3t3.triangulation();
+    const typename MeshDomain::AABB_tree& aabb_tree = domain.aabb_tree();
+
+    double max_sqd = 0.;
+    for(Finite_facets_iterator fit = tr.finite_facets_begin();
+        fit != tr.finite_facets_end();
+        ++fit)
+    {
+      Facet f = *fit;
+      if(!c3t3.is_in_complex(f))
+        continue;
+
+      max_sqd = (std::max)(max_sqd, 
+        aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
+    }
+    double hdist = std::sqrt(max_sqd);
+    std::cout << "\tHausdorff distance to polyhedron is " << hdist << std::endl;
+    return hdist;
+  }
+
+  template<typename C3t3, typename MeshDomain>
+  void verify_c3t3_hausdorff_distance(const C3t3& c3t3,
+                                      const MeshDomain& domain,
+                                      const Polyhedral_tag,
+                                      const double reference_value) const
+  {
+    double hdist = compute_hausdorff_distance(c3t3, domain, Polyhedral_tag());
+    assert(hdist <= reference_value*1.01);
+  }
+
+  template<typename C3t3, typename MeshDomain>
+  void verify_c3t3_hausdorff_distance(const C3t3& c3t3,
+                                      const MeshDomain& domain,
+                                      const Bissection_tag,
+                                      const double reference_value) const
+  { //nothing to do
   }
 };
 
