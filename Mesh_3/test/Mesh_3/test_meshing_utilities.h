@@ -41,9 +41,10 @@
 #include <fstream>
 #include <iostream>
 
+#include <cfloat>
 #include <climits>
 #define STD_SIZE_T_MAX UINT_MAX
-
+#define DOUBLE_MAX DBL_MAX
 
 template <typename K>
 struct Tester
@@ -57,7 +58,7 @@ struct Tester
               const std::size_t min_facets_expected = 0,
               const std::size_t max_facets_expected = STD_SIZE_T_MAX,
               const std::size_t min_cells_expected = 0,
-              const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
+              const std::size_t max_cells_expected = STD_SIZE_T_MAX) const
   {
     typedef typename C3t3::size_type size_type;
 
@@ -74,6 +75,8 @@ struct Tester
                 max_facets_expected,
                 min_cells_expected,
                 max_cells_expected);
+
+    double volume = compute_volume(c3t3);
 
     // Refine again and verify nothing changed
     std::cerr << "Refining again...\n";
@@ -98,7 +101,7 @@ struct Tester
       
       v = c3t3.triangulation().number_of_vertices();
       f = c3t3.number_of_facets_in_complex();
-      c = c3t3.number_of_cells_in_complex();      
+      c = c3t3.number_of_cells_in_complex();
     }
     assert ( n < 11 );
 #endif
@@ -114,6 +117,7 @@ struct Tester
     CGAL::exude_mesh_3(exude_c3t3);
     verify_c3t3(exude_c3t3,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
+    verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
     
     // Perturb.
     // Vertex number should not change (obvious)
@@ -123,7 +127,8 @@ struct Tester
     CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit=5);
     verify_c3t3(perturb_c3t3,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
-    
+    verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
+
     // Odt-smoothing
     // Vertex number should not change (obvious)
     C3t3 odt_c3t3(c3t3);
@@ -131,6 +136,7 @@ struct Tester
     CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit=5,
                               CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(odt_c3t3,v,v);
+    verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
     
     // Lloyd-smoothing
     // Vertex number should not change (obvious)
@@ -139,6 +145,7 @@ struct Tester
     CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
                                 CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
     verify_c3t3(lloyd_c3t3,v,v);
+    verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
   }
 
   template<typename C3t3>
@@ -207,9 +214,7 @@ struct Tester
   }
 
   template<typename C3t3>
-  void verify_c3t3_volume(const C3t3& c3t3,
-                          const double input_volume,
-                          const double acceptable_error/*percent*/) const
+  double compute_volume(const C3t3& c3t3) const
   {
     typedef typename C3t3::Triangulation              Tr;
     typedef typename C3t3::Cells_in_complex_iterator  Cell_iterator;
@@ -220,11 +225,20 @@ struct Tester
     {
       volume += c3t3.triangulation().tetrahedron(cit).volume();
     }
+    return volume;
+  }
 
-    double lower_bound = input_volume * (1. - acceptable_error);
-    double upper_bound = input_volume * (1. + acceptable_error);
-    assert(volume >= lower_bound);
-    assert(volume <= upper_bound);
+  template<typename C3t3>
+  void verify_c3t3_volume(const C3t3& c3t3,
+                          const double volume_min,
+                          const double volume_max) const
+  {
+    double volume = compute_volume(c3t3);
+    std::cerr.precision(15);
+    std::cerr << "\tVolume is " << volume << std::endl;
+
+    assert(volume >= volume_min);
+    assert(volume <= volume_max);
   }
 };
 
