@@ -89,7 +89,7 @@ public:
       {
         Cell_handle c1 = f.first;
         Cell_handle c2 = f.first->neighbor(f.second);
-        assert( (c1->subdomain_index() == index.first 
+        assert( (c1->subdomain_index() == index.first
           && c2->subdomain_index() == index.second)
           || (c2->subdomain_index() == index.first
           && c1->subdomain_index() == index.second));
