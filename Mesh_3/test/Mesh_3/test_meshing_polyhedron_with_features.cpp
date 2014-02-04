@@ -66,7 +66,8 @@ struct Polyhedron_with_features_tester : public Tester<K>
                                         CGAL::parameters::no_perturb());
     
     // Verify
-    this->verify(c3t3,domain,criteria); //, 1099, 1099, 1158, 1158, 4902, 4902);
+    this->verify(c3t3,domain,criteria,
+                 Polyhedral_tag()); //, 1099, 1099, 1158, 1158, 4902, 4902);
 
     std::ofstream out_medit("test-medit.mesh");
     CGAL::output_to_medit(out_medit, c3t3);

@@ -84,7 +84,7 @@ struct Implicit_tester : public Tester<K>
                         CGAL::parameters::no_perturb());
     
     // Verify
-    this->verify(c3t3,domain,criteria,50,58,80,90);
+    this->verify(c3t3,domain,criteria,Bissection_tag(),50,58,80,90);
   }
 };
 

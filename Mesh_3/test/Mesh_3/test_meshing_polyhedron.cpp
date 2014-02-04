@@ -76,8 +76,8 @@ struct Polyhedron_tester : public Tester<K>
     // Verify
     double vol = 0.479171765761454;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
-    this->verify(c3t3,domain,criteria, 119, 121, 200, 204, 350, 360);
-  }
+    this->verify(c3t3,domain,criteria,Polyhedral_tag(),
+                 119, 121, 200, 204, 350, 360);  }
 };
 
 int main()
