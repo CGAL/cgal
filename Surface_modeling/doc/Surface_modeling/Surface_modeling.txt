@@ -54,24 +54,29 @@ For more details on these algorithms, see section \ref Surface_Modeling_Overview
 
 \section Surface_Modeling_API User Interface Description
 
+The deformation methods implemented rely on solving a sparse linear system.
+The sparse matrix definition depends on the weighting scheme
+and on the unconstrained and control vertices.
+The right term depends only on the target positions of the control vertices.
+
 The deformation process is handled by the class `Deform_mesh` and the
 surface mesh is represented as a halfedge data structure that must
 be a model of the `HalfedgeGraph` concept.
 
-The class `Deform_mesh` provides two groups of functions for the preprocessing and the deformation.
+The class `Deform_mesh` provides two groups of functions for
+the preprocessing (sparse matrix definition) and the deformation (right hand term definition).
 
 \subsection Preprocess_section Preprocessing
 
-The preprocessing requires the ROI to be defined.
+The preprocessing consists in computing a factorization of the aforementioned sparse
+matrix to speed up the linear system resolution.
+It requires the ROI to be defined.
 The following conventions are used for the definition of the ROI:
  - A vertex added as a control vertex is added to the ROI;
  - A control vertex removed from the ROI is no longer considered as a control vertex;
  - A control vertex that is removed is not removed from the ROI.
 
-The deformation methods implemented rely on solving a sparse linear system. The sparse matrix
-definition depends on the unconstrained and the control vertices, while the right term does not.
-The preprocessing consists in computing a factorization of this sparse matrix to speed up
-the linear system resolution. Each time the ROI is modified, the preprocessing function `preprocess()`
+Each time the ROI is modified, the preprocessing function `preprocess()`
 needs to be called.
 Note that if it is not done, the first deformation step calls this function automatically
 and has a longer runtime compared to subsequent deformation steps.
@@ -85,7 +90,14 @@ The function `Deform_mesh::preprocess()` returns `true` if the factorization is 
 
 Rank deficiency is the main reason for failure. Typical failure cases are:
   - All the vertices are in the ROI and no control vertices are set
-  - The weighting scheme used to fill the sparse matrix(model of `SurfaceModelingWeightCalculator`) features too many zeros and breaks the connectivity information
+  - The weighting scheme used to fill the sparse matrix (model of `SurfaceModelingWeightCalculator`) features too many zeros and breaks the connectivity information
+
+\cgalAdvancedBegin
+The choice of the weighting scheme allows a fine tuning on the way the
+control vertices motion will influence the unconstrained vertices motion.
+The defaults provided give good results in general but we provide a way to
+change the weighing scheme to experiment or improve the result in specific cases.
+\cgalAdvancedEnd
 
 \note The ROI does not need to be a connected component of the surface mesh graph. However for better performances
 it is better to use an individual instance of the deformation object for each connected component.
