@@ -36,6 +36,7 @@
 #include <CGAL/optimize_mesh_3.h>
 
 #include <vector>
+#include <boost/optional/optional_io.hpp>
 
 // IO
 #include <fstream>
@@ -46,13 +47,22 @@
 #define STD_SIZE_T_MAX UINT_MAX
 #define DOUBLE_MAX DBL_MAX
 
+struct Bissection_tag {};
+struct Polyhedral_tag {};
+
+
 template <typename K>
 struct Tester
 {
-  template<typename C3t3, typename Domain, typename Criteria>
+  template<typename C3t3,
+           typename Domain,
+           typename Criteria,
+           typename Domain_type_tag
+           >
   void verify(C3t3& c3t3,
               const Domain& domain,
               const Criteria& criteria,
+              const Domain_type_tag domain_type,
               const std::size_t min_vertices_expected = 0,
               const std::size_t max_vertices_expected = STD_SIZE_T_MAX,
               const std::size_t min_facets_expected = 0,
@@ -68,7 +78,7 @@ struct Tester
     size_type c = c3t3.number_of_cells_in_complex();
 
     // Verify
-    verify_c3t3(c3t3,
+    verify_c3t3(c3t3,domain,domain_type,
                 min_vertices_expected,
                 max_vertices_expected,
                 min_facets_expected,
@@ -106,7 +116,7 @@ struct Tester
     assert ( n < 11 );
 #endif
     
-    verify_c3t3(c3t3,v,v,f,f,c,c);
+    verify_c3t3(c3t3,domain,domain_type,v,v,f,f,c,c);
     
     // Exude.
     // Vertex number should not change (obvious)
@@ -115,7 +125,7 @@ struct Tester
     C3t3 exude_c3t3(c3t3);
     std::cerr << "Exude...\n";
     CGAL::exude_mesh_3(exude_c3t3);
-    verify_c3t3(exude_c3t3,v,v,f,f);
+    verify_c3t3(exude_c3t3,domain,domain_type,v,v,f,f);
     verify_c3t3_quality(c3t3,exude_c3t3);
     verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
     
@@ -125,7 +135,7 @@ struct Tester
     C3t3 perturb_c3t3(c3t3);
     std::cerr << "Perturb...\n";
     CGAL::perturb_mesh_3(perturb_c3t3, domain, CGAL::parameters::time_limit=5);
-    verify_c3t3(perturb_c3t3,v,v);
+    verify_c3t3(perturb_c3t3,domain,domain_type,v,v);
     verify_c3t3_quality(c3t3,perturb_c3t3);
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
 
@@ -135,7 +145,7 @@ struct Tester
     std::cerr << "Odt...\n";
     CGAL::odt_optimize_mesh_3(odt_c3t3, domain, CGAL::parameters::time_limit=5,
                               CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
-    verify_c3t3(odt_c3t3,v,v);
+    verify_c3t3(odt_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
     
     // Lloyd-smoothing
@@ -144,12 +154,14 @@ struct Tester
     std::cerr << "Lloyd...\n";
     CGAL::lloyd_optimize_mesh_3(lloyd_c3t3, domain, CGAL::parameters::time_limit=5,
                                 CGAL::parameters::convergence=0.001, CGAL::parameters::freeze_bound=0.0005);
-    verify_c3t3(lloyd_c3t3,v,v);
+    verify_c3t3(lloyd_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(lloyd_c3t3, volume*0.95, volume*1.05);
   }
 
-  template<typename C3t3>
+  template<typename C3t3, typename Domain, typename Domain_type_tag>
   void verify_c3t3(const C3t3& c3t3,
+                   const Domain& domain,
+                   const Domain_type_tag domain_type,
                    const std::size_t min_vertices_expected = 0,
                    const std::size_t max_vertices_expected = STD_SIZE_T_MAX,
                    const std::size_t min_facets_expected = 0,
@@ -179,6 +191,7 @@ struct Tester
     assert(min_cells_expected <= c3t3.number_of_cells_in_complex());
     assert(max_cells_expected >= c3t3.number_of_cells_in_complex());
     assert(dist_cells == c3t3.number_of_cells_in_complex());
+    verify_c3t3_combinatorics(c3t3, domain, domain_type);
   }
   
   template<typename C3t3>
@@ -216,7 +229,6 @@ struct Tester
   template<typename C3t3>
   double compute_volume(const C3t3& c3t3) const
   {
-    typedef typename C3t3::Triangulation              Tr;
     typedef typename C3t3::Cells_in_complex_iterator  Cell_iterator;
 
     double volume = 0.;
@@ -239,6 +251,73 @@ struct Tester
 
     assert(volume >= volume_min);
     assert(volume <= volume_max);
+  }
+
+  // For polyhedral domains, do nothing.
+  template<typename C3t3, typename MeshDomain>
+  void verify_c3t3_combinatorics(const C3t3& c3t3,
+                                 const MeshDomain& domain,
+                                 const Polyhedral_tag) const
+  {}
+
+  // For bissection domains, check the consistency between the subdomain
+  // indices and the surface patch indices.
+  template<typename C3t3, typename MeshDomain>
+  void verify_c3t3_combinatorics(const C3t3& c3t3,
+                                 const MeshDomain& domain,
+                                 const Bissection_tag) const
+  {
+    typedef typename C3t3::Triangulation        Tr;
+    typedef typename Tr::Facet                  Facet;
+    typedef typename Tr::Cell_handle            Cell_handle;
+    typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
+    typedef typename C3t3::Surface_patch_index  Surface_patch_index;
+    const Tr& tr = c3t3.triangulation();
+    std::cerr.precision(17);
+
+    for(Finite_facets_iterator fit = tr.finite_facets_begin();
+      fit != tr.finite_facets_end();
+      ++fit)
+    {
+      Facet f = *fit;
+      Surface_patch_index index = c3t3.surface_patch_index(f);
+      if(!c3t3.is_in_complex(f))
+        assert(index == Surface_patch_index());
+      else
+      {
+        assert(index.first != index.second);
+        Cell_handle c1 = f.first;
+        Cell_handle c2 = f.first->neighbor(f.second);
+        if( ! (
+               (c1->subdomain_index() == index.first
+                && c2->subdomain_index() == index.second)
+               ||
+               (c2->subdomain_index() == index.first
+                && c1->subdomain_index() == index.second)
+               ))
+        {
+          std::cerr << "ERROR:"
+                    << "\nc1->subdomain_index(): " << c1->subdomain_index()
+                    << "\nc2->subdomain_index(): " << c2->subdomain_index()
+                    << "\nc3t3.surface_patch_index(f).first:  " << index.first
+                    << "\nc3t3.surface_patch_index(f).second: " << index.second;
+          if(tr.is_infinite(c1)) std::cerr << "\nc1 is infinite";
+          else {
+            std::cerr << "\nc1 circumcenter: " << tr.dual(c1);
+            std::cerr << "\nc1 is in domain: "
+                      << domain.is_in_domain_object()(tr.dual(c1));
+          }
+          if(tr.is_infinite(c2)) std::cerr << "\nc2 is infinite";
+          else {
+            std::cerr << "\nc2 circumcenter: "<< tr.dual(c2);
+            std::cerr << "\nc2 is in domain: "
+                      << domain.is_in_domain_object()(tr.dual(c2));
+          }
+          std::cerr << std::endl;
+          assert(false);
+        }
+      }
+    }
   }
 };
 

@@ -74,7 +74,8 @@ struct Polyhedron_tester : public Tester<K>
                         CGAL::parameters::no_perturb());
     
     // Verify
-    this->verify(c3t3,domain,criteria, 119, 121, 200, 204, 350, 360);
+    this->verify(c3t3,domain,criteria,Polyhedral_tag(),
+                 119, 121, 200, 204, 350, 360);
   }
 };
 
