@@ -119,34 +119,33 @@ and <code>src/</code> directories).
          to the SDF.
     </li>
   </ul>
+
+
+  <h3>Number Types</h3>
+  <ul>
+    <li> A new class <code>CGAL::Mpzf</code> is introduced on some platforms
+      for exact ring operations. It is used to improve the speed of the
+      evaluation of predicates in degenerate situations.</li>
+  </ul>
+
+  <h3>2D and 3D Geometry Kernel </h3>
+  <ul>
+    <li> Fix a bug introduced in CGAL 4.3 when computing the intersection
+         of two 3D triangles.</li>
+  </ul>
+
   <h3>2D Polygon Partitioning</h3>
   <ul>
     <li>Bug fix to make the partition algorithms working with a Lazy kernel such as
         <code>Exact_predicates_exact_constructions_kernel</code>.
     </li>
   </ul>
+
   <h3>2D Regularized Boolean Set-Operations</h3>
   <ul>
     <li>Fix two memory leaks in
       <code>CGAL::General_polygon_set_2</code>.
     </li>
-  </ul>
-  <h3>2D Arrangements</h3>
-  <ul>
-    <li> Revise the API of <b>polylines</b>. In particular,
-      <i>construction</i> is now done using functors
-      and <i>iteration</i> is possible only on the segments of a
-      polyline.
-    <li>Fix a bug in the <i>Landmark</i> point-location strategy.</li>
-  </ul>
-  <h3>3D Alpha Shapes</h3>
-  <ul>
-    <li> Add member functions in <code>CGAL::Alpha_shape_3</code> to give
-         access to the alpha status of edges and facets
-         (<code>get_alpha_status())</code>.</li>
-    <li> Add another filtration method
-          (<code>filtration_with_alpha_values()</code>) that reports the
-          alpha value at which each face appears in the filtration.</li>
   </ul>
 
   <h3>Combinatorial Maps and Linear Cell Complex</h3>
@@ -164,31 +163,18 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
- <h3>CGAL ipelets</h3>
+  <h3>2D Arrangements</h3>
   <ul>
-    <li> Better description of the demo ipelets in the user manual     </li>
-    <li> New ipelet for pencils of circles</li>
-    <li> New ipelet for hyperbolic geometry in Poincare model</li>
-    <li> The generator ipelet now generates point in a selected zone</li>
-    <li> Hilbert sort ipelet implements two policies</li>
+    <li> Revise the API of <b>polylines</b>. In particular,
+      <i>construction</i> is now done using functors
+      and <i>iteration</i> is possible only on the segments of a
+      polyline.
+    <li>Fix a bug in the <i>Landmark</i> point-location strategy.</li>
   </ul>
 
-  <h3>STL Extensions for CGAL</h3>
+  <h3>2D Snap Rounding</h3>
   <ul>
-    <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
-  </ul>
-
-  <h3>Number Types</h3>
-  <ul>
-    <li> A new class <code>CGAL::Mpzf</code> is introduced on some platforms
-      for exact ring operations. It is used to improve the speed of the
-      evaluation of predicates in degenerate situations.</li>
-  </ul>
-
-  <h3>2D and 3D Geometry Kernel </h3>
-  <ul>
-    <li> Fix a bug introduced in CGAL 4.3 when computing the intersection
-         of two 3D triangles.</li>
+    <li>Fix a memory leak</li>
   </ul>
 
   <h3>2D Triangulations</h3>
@@ -198,6 +184,16 @@ and <code>src/</code> directories).
         These functions uses the spatial sorting in order to speed
         up the time needed for the insertion.
     </li>
+  </ul>
+
+  <h3>3D Alpha Shapes</h3>
+  <ul>
+    <li> Add member functions in <code>CGAL::Alpha_shape_3</code> to give
+         access to the alpha status of edges and facets
+         (<code>get_alpha_status())</code>.</li>
+    <li> Add another filtration method
+          (<code>filtration_with_alpha_values()</code>) that reports the
+          alpha value at which each face appears in the filtration.</li>
   </ul>
 
   <h3>3D Mesh Generation</h3>
@@ -220,10 +216,20 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
-  <h3>2D Snap Rounding</h3>
+  <h3>STL Extensions for CGAL</h3>
   <ul>
-    <li>Fix a memory leak</li>
+    <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
   </ul>
+
+ <h3>CGAL ipelets</h3>
+  <ul>
+    <li> Better description of the demo ipelets in the user manual     </li>
+    <li> New ipelet for pencils of circles</li>
+    <li> New ipelet for hyperbolic geometry in Poincare model</li>
+    <li> The generator ipelet now generates point in a selected zone</li>
+    <li> Hilbert sort ipelet implements two policies</li>
+  </ul>
+
 </div>
 
 <h2 id="release4.3">Release 4.3 </h2>
