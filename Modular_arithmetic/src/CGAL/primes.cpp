@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Michael Hemmer
+// Author(s)     : Michael Hemmer, Alexander Kobel
 
 #include <CGAL/basic.h>
 #include <CGAL/primes.h>
