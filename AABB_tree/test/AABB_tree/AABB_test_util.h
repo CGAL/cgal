@@ -822,18 +822,26 @@ private:
       Point_and_primitive_id point_tree = tree.closest_point_and_primitive(query);
       tree_timer.stop();
 
-      if ( point_naive.second == point_tree.second )
-      {
-        // Points should be the same
-        assert(point_naive.first == point_tree.first);
-      }
-      else
+      // Laurent Rineau, 2014/02/05: With a non exact kernel, there is no
+      // reason that the points are equal!
+      // if ( point_naive.second == point_tree.second )
+      // {
+      //   // Points should be the same
+      //   assert(point_naive.first == point_tree.first);
+      // }
+      // else
       {
         // Compare distance
         FT dist_naive = CGAL::squared_distance(query, point_naive.first);
         FT dist_tree = CGAL::squared_distance(query, point_tree.first);
 
-        const FT epsilon =  FT(1e-8);
+        const FT epsilon =  FT(1e-7);
+        if (CGAL::abs(dist_naive - dist_tree) > epsilon) {
+          std::cerr.precision(17);
+          std::cerr << "dist_tree: " << dist_tree
+                    << "\ndist_naive: " << dist_naive
+                    << "\ndifference: " << (dist_naive - dist_tree) << std::endl;
+        }
         assert( (dist_naive - dist_tree) <= epsilon );
         assert( (dist_naive - dist_tree) >= (-1. * epsilon) );
       }
