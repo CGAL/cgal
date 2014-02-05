@@ -24,12 +24,15 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
   typename std::vector< Point_2 >::iterator it =
                std::min_element(V.begin(), V.end(), Less_xy_2());
   std::sort( V.begin(), V.end(), boost::bind(Less_rotate_ccw_2(), *it, _1, _2) );
-  if ( *(V.begin()) == *(V.rbegin()) )
+  if ( *(V.begin()) != *(V.rbegin()) )
   {
-      *result = *(V.begin());  ++result;
-      return result;
+    result = CGAL::ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
   }
-  return CGAL::ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
+  // add the last point of the sequence that is
+  // not added by ch_graham_andrew_scan
+  *result++ = *(V.rbegin());
+  return result;
+
 }
 
 int main()

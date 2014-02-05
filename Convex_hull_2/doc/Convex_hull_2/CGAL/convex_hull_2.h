@@ -81,10 +81,10 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `lower_hull_points_2()` generates the counterclockwise sequence of extreme 
+generates the counterclockwise sequence of extreme 
 points on the lower hull of a given set of input points. 
 
-It generates the counterclockwise sequence of extreme points
+More precisely, it generates the counterclockwise sequence of extreme points
 on the lower hull of the points in the range [`first`,
 `beyond`). The resulting sequence is placed starting at
 position `result`, and the past-the-end iterator for
@@ -145,10 +145,10 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexHull2Subsequence
 
-The function `upper_hull_points_2()` generates the counterclockwise sequence of extreme 
+generates the counterclockwise sequence of extreme 
 points on the upper hull of a given set of input points. 
 
-It generates the counterclockwise sequence of extreme points
+More precisely, it generates the counterclockwise sequence of extreme points
 on the upper hull of the points in the range [`first`,
 `beyond`). The resulting sequence is placed starting at
 position `result`, and the past-the-end iterator for
