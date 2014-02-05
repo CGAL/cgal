@@ -16,7 +16,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Sylvain Pion, Michael Hemmer
+// Author(s)     : Sylvain Pion, Michael Hemmer, Alexander Kobel
 
 #ifndef CGAL_RESIDUE_TYPE_H
 #define CGAL_RESIDUE_TYPE_H
@@ -227,8 +227,8 @@ public:
     }
 
     //! constructor of Residue, from long 
-    Residue(long n){
-        x_= RES_reduce((double)n);
+    Residue (long n) {
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
    
     //! Access operator for x, \c const 
