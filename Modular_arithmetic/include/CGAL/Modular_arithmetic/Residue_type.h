@@ -156,6 +156,8 @@ private:
     /* a^-1, using Bezout (extended Euclidian algorithm). */
     static inline 
     double RES_inv (double ri1){
+        CGAL_precondition (ri1 != 0.0);
+
         double bi = 0.0;
         double bi1 = 1.0;
         double ri = get_prime();
