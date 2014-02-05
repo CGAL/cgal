@@ -303,7 +303,7 @@ public:
     NormalPMap normal_pmap ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
   )
     : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
-    , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
+    , average_spacing(CGAL::compute_average_spacing(first, beyond, point_pmap, 6))
   {
     forward_constructor(first, beyond, point_pmap, normal_pmap, Poisson_visitor());
   }
@@ -321,7 +321,7 @@ public:
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     Visitor visitor)
     : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
-    , average_spacing(CGAL::compute_average_spacing(first, beyond, 6))
+    , average_spacing(CGAL::compute_average_spacing(first, beyond, point_pmap, 6))
   {
     forward_constructor(first, beyond, point_pmap, normal_pmap, visitor);
   }
