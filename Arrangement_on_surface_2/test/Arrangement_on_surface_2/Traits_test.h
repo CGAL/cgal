@@ -732,13 +732,14 @@ Traits_test<Geom_traits_T>::merge_wrapper_imp(std::istringstream& str_stream,
 
   unsigned int id1, id2, id;
   str_stream >> id1 >> id2 >> id;
-  X_monotone_curve_2 cv;
+  X_monotone_curve_2 xcv;
   std::cout << "Test: merge( " << this->m_xcurves[id1] << ", "
             << this->m_xcurves[id2] << " ) ? " << this->m_xcurves[id] << " ";
 
   this->m_geom_traits.merge_2_object()(this->m_xcurves[id1],
-                                       this->m_xcurves[id2], cv);
-  return this->compare_curves(this->m_xcurves[id], cv);
+                                       this->m_xcurves[id2], xcv);
+  std::cout << "Merge: " << xcv << std::endl;
+  return this->compare_curves(this->m_xcurves[id], xcv);
 }
 
 /*! Tests Approximate_2.
