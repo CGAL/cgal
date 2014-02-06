@@ -1049,18 +1049,18 @@ test_polycurve_conic_traits()
   local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
   
   compile_test_with_flags test_traits conic_polycurve "$flags"
-  #if [ -n "${SUCCESS}" ] ; then
+  if [ -n "${SUCCESS}" ] ; then
   #  #execute_commands_new_structure polycurves polyline_traits \
-  #   # COMPARE_Y_AT_X
-  #   run_trapped_test test_traits \
-  #    data/polycurves_conics/compare_y_at_x.pt \
-  #    data/polycurves_conics/compare_y_at_x.xcv \
-  #    data/polycurves_conics/compare_y_at_x.cv \
-  #    data/polycurves_conics/compare_y_at_x polycurve_conic_traits
+     # COMPARE_Y_AT_X
+     run_trapped_test test_traits \
+      data/polycurves_conics/compare_y_at_x.pt \
+      data/polycurves_conics/compare_y_at_x.xcv \
+      data/polycurves_conics/compare_y_at_x.cv \
+      data/polycurves_conics/compare_y_at_x polycurve_conic_traits
 
-  #else
-  #  echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
-  #fi
+  else
+    echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE
+  fi
   clean_tests
 }
 
