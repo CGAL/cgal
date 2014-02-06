@@ -2,4 +2,4 @@
 
 setopt extendedglob
 
-ls -1 ^(build*|Scripts)/**/(#i)*.^(py|sh|run|sh|csh|pl)(.x)
+ls -1 ^build*/**/(#i)*.^(py|sh|run|sh|csh|pl|perl)(.x)
