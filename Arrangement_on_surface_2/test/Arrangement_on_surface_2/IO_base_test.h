@@ -61,6 +61,9 @@ read_xcurve(stream& is, typename T_Geom_traits::X_monotone_curve_2& xcv)
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
+  // if(Test_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS)
+  //   std::cerr<< "####### POLYCURVE_CONIC_GEOM_TRAITS######" << std::endl;
+ //waqar:: error
   xcv = typename T_Geom_traits::X_monotone_curve_2(p1, p2);
   return true;
 }
@@ -75,6 +78,7 @@ read_curve(stream& is, typename T_Geom_traits::Curve_2& cv)
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
   CGAL_assertion(p1 != p2);
+  //Waqar::error
   cv = typename T_Geom_traits::Curve_2(p1, p2);
   return true;
 }
@@ -120,6 +124,10 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
     Point_2 p(x, y);
     points.push_back(p);
   }
+  //waqar: debugging remove later
+  // for(int i=0; i<points.size(); i++)
+  //       std::cout << "*#*#*#*# points are: " << points[i] << std::endl; 
+
   xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(),
                                                             points.end());
   return true;
@@ -144,63 +152,76 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 }
 
 //polycurve_conic
-#elif Test_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
-template <>
-template <typename stream>
-bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
-                                                 X_monotone_curve_2& xcv)
-{
-  unsigned int num_points;
-  is >> num_points;
-  std::vector<Point_2> points;
-  points.clear();
-  for (unsigned int j = 0; j < num_points; ++j) {
-    Basic_number_type x, y;
-    is >> x >> y;
-    Point_2 p(x, y);
-    points.push_back(p);
-  }
-  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(),
-                                                            points.end());
-  return true;
-}
+#elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
+  template <>
+  template <typename stream>
+  bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
+                                                   X_monotone_curve_2& xcv)
+  {
+    unsigned int num_points;
+    is >> num_points;
+    std::cout<< "num_points: " << num_points<< std::endl;
+    std::vector<Point_2> points;
+    points.clear();
+    
+    for (unsigned int j = 0; j < num_points; ++j) 
+    {
+      // Basic_number_type x, y;
+      // is >> x >> y;
+      // Point_2 p(x, y);
+      // points.push_back(p);
 
-template <>
-template <typename stream>
-bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
-{
 
-  unsigned int num_points;
-  is >> num_points;
-  std::vector<Point_2> points;
-  points.clear();
-  for (unsigned int j = 0; j < num_points; ++j) {
-    Basic_number_type x, y;
-    is >> x >> y;
-    Point_2 p(x, y);
-    points.push_back(p);
+      Rational rat_x, rat_y;
+      is >> rat_x >> rat_y;
+      Basic_number_type x(rat_x), y(rat_y);
+      Point_2 p(x, y);
+      points.push_back(p);
+    }
+    
+    //debug
+    for(int i=0; i<points.size(); i++)
+        std::cout << "*#*#*#*# points are: " << points[i] << std::endl; 
+    //xcv = m_geom_traits.construct_x_monotone_curve_2_object()(points.begin(), points.end());
+    return true;
   }
 
-  //make conic segments from every set of 3 points and enter them in construct curve functor.
-   std::vector<Point_2> conic_curve_points;
-   std::vector<Curve_2> conic_sections;
-   for (int i = 0; i < points.sie(); ++i)
-   {
-     conic_curve_points.push_back(points[i]);
+  template <>
+  template <typename stream>
+  bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
+  {
 
-     if( conic_curve_points.size() == 3 )
-     {
-        //create segment and push back
-        Curve_2 section( conic_curve_points[0], conic_curve_points[1], conic_curve_points[2] );
-        conic_sections.push_back(section);
-        conic_curve_points.clear();      
-     }
-   }
+    // unsigned int num_points;
+    // is >> num_points;
+    // std::vector<Point_2> points;
+    // points.clear();
+    // for (unsigned int j = 0; j < num_points; ++j) {
+    //   Basic_number_type x, y;
+    //   is >> x >> y;
+    //   Point_2 p(x, y);
+    //   points.push_back(p);
+    // }
+
+    // //make conic segments from every set of 3 points and enter them in construct curve functor.
+    //  std::vector<Point_2> conic_curve_points;
+    //  std::vector<Curve_2> conic_sections;
+    //  for (int i = 0; i < points.sie(); ++i)
+    //  {
+    //    conic_curve_points.push_back(points[i]);
+
+    //    if( conic_curve_points.size() == 3 )
+    //    {
+    //       //create segment and push back
+    //       Curve_2 section( conic_curve_points[0], conic_curve_points[1], conic_curve_points[2] );
+    //       conic_sections.push_back(section);
+    //       conic_curve_points.clear();      
+    //    }
+    //  }
 
 
-  cv = m_geom_traits.construct_curve_2_object()(conic_sections.begin(), conic_sections.end());
-  return true;
-}
+    // cv = m_geom_traits.construct_curve_2_object()(conic_sections.begin(), conic_sections.end());
+    return true;
+  }
 
 // Circle segment
 #elif TEST_GEOM_TRAITS == CIRCLE_SEGMENT_GEOM_TRAITS
