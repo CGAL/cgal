@@ -263,6 +263,7 @@ QMenu* Scene_c3t3_item::contextMenu()
 void Scene_c3t3_item::recenter_cut_plane()
 {
   Show_point_dialog dialog(0);
+  dialog.setWindowTitle(tr("Change cut plane center..."));
   int i = dialog.exec();
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
