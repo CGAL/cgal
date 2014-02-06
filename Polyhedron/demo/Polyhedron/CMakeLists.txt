@@ -201,6 +201,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item)
 	
   add_item(scene_c3t3_item Scene_c3t3_item.cpp Scene_c3t3_item.moc)
+  target_link_libraries(scene_c3t3_item point_dialog)
 
   if(EIGEN3_FOUND OR TAUCS_FOUND)
     add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
