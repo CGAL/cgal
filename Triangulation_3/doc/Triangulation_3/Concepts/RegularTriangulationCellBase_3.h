@@ -36,6 +36,7 @@ and an operator to compute its weighted circumcenter.
 \cgalRefines `TriangulationCellBase_3`
 
 \cgalHasModel CGAL::Regular_triangulation_cell_base_3 
+\cgalHasModel CGAL::Regular_triangulation_cell_base_with_circumcenter_3
 
 \sa `TriangulationCellBase_3` 
 \sa `RegularTriangulationTraits_3`
@@ -52,18 +53,13 @@ public:
 Must be the same as the point type `RegularTriangulationTraits_3::Weighted_point_3` 
 defined by the geometric traits class of the triangulation. 
 */ 
-typedef unspecified_type Point; 
+typedef unspecified_type Weighted_point; 
 
 /*!
 Iterator of value type Point 
 */ 
 typedef unspecified_type Point_iterator; 
 
-/*!
-Must be the same as the point type `RegularTriangulationTraits_3::Bare_point` 
-defined by the geometric traits class of the triangulation. 
-*/ 
-typedef unspecified_type Bare_point; 
 
 /// @} 
 
@@ -98,7 +94,7 @@ void hide_point(const Point & p);
 Returns the weighted circumcenter of the cell, with no weight. 
 `RegularTriangulationTraits_3` is the geometric traits class of the triangulation.
 */ 
-const Bare_point& weighted_circumcenter( 
+const RegularTriangulationTraits_3::Bare_point& weighted_circumcenter( 
 const RegularTriangulationTraits_3&gt = RegularTriangulationTraits_3()) const; 
 /// @} 
 

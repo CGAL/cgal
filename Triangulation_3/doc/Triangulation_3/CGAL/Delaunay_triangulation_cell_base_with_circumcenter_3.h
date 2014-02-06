@@ -37,7 +37,15 @@ public:
 typedef TriangulationTraits_3::Point_3 Point_3;
 /// @}
 
-/// \name Access Functions 
+/*! \name Access function 
+
+As a model of the concept `DelaunayTriangulationCellBase_3`, 
+`Delaunay_triangulation_cell_base_3` 
+provides a `circumcenter()` member fonction. 
+
+If it has already been computed in the past, the cached value is returned.
+*/
+
 /// @{
 
 /*!

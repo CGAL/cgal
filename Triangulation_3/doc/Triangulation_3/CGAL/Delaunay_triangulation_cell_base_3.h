@@ -32,11 +32,6 @@ public:
 As a model of the concept `DelaunayTriangulationCellBase_3`, 
 `Delaunay_triangulation_cell_base_3` 
 provides a `circumcenter()` member fonction. 
-
-A class for the cells of Delaunay triangulations with
-cached circumcenters can simply be obtained by plugging 
-`Delaunay_triangulation_cell_base_3` in the second template parameter of 
-`CGAL::Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, CellBase_3>`.
 */
 
 /// @{

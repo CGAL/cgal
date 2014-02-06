@@ -37,7 +37,19 @@ public:
 typedef TriangulationTraits_3::Bare_point Bare_point;
 /// @}
 
-/// \name Access Functions 
+/*! \name Access function 
+
+As a model of the concept `RegularTriangulationCellBase_3`, 
+`Regular_triangulation_cell_base_3` 
+provides a `weighted_circumcenter()` member fonction. 
+
+In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
+of the cell, computed by the `ConstructWeightedCircumcenter` constructor of the traits class. 
+However, this point has no weight.
+
+If it has already been computed in the past, the cached value is returned.
+*/
+
 /// @{
 
 /*!

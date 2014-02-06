@@ -36,11 +36,6 @@ provides a `weighted_circumcenter()` member fonction.
 In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
 of the cell, computed by the `ConstructWeightedCircumcenter` constructor of the traits class. 
 However, this point has no weight.
-
-A class for the cells of regular triangulations with
-cached weighted circumcenters can simply be obtained by plugging 
-`Regular_triangulation_cell_base_3` in the second template parameter of 
-`CGAL::Triangulation_cell_base_with_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`.
 */
 
 /// @{
