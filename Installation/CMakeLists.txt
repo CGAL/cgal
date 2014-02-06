@@ -323,11 +323,12 @@ endif()
 #   CGAL-4.1   : 10.0.0 (No way to check the binary compatibility.)
 #   CGAL-4.2   : 10.0.1 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.3   : 10.0.2 (Nothing different in CGAL compiled libraries¹.)
+#   CGAL-4.4   : 10.0.3 (Nothing different in CGAL compiled libraries¹.)
 
 # ¹) According to abi-http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "10" )
-set( CGAL_SOVERSION      "10.0.2" )
+set( CGAL_SOVERSION      "10.0.3" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
