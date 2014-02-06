@@ -38,11 +38,11 @@ namespace CGAL {
 
 //////////////////////
 //////////////////////
-//My_point
+//Point_with_hot_pixel_history
 //////////////////////
 
 template<class Traits, class SAVED_OBJECT>
-class My_point : public Traits::Point_2 {
+class Point_with_hot_pixel_history : public Traits::Point_2 {
 private:
   typedef typename Traits::Point_2                                Point_2;
   typedef typename Traits::FT                                     NT;
@@ -52,81 +52,25 @@ public:
   typedef typename Traits::FT                                     FT;
   
   typedef typename Traits::Iso_rectangle_2                        Iso_rectangle_2;
-  typedef typename Traits::Circle_2                               Circle_2;
   typedef typename Traits::Cartesian_const_iterator_2             Cartesian_const_iterator_2;
   typedef typename Traits::Construct_cartesian_const_iterator_2   Construct_cartesian_const_iterator_2;
 
   typedef typename Traits::Construct_min_vertex_2                 Construct_min_vertex_2;
   typedef typename Traits::Construct_max_vertex_2                 Construct_max_vertex_2;
-  typedef typename Traits::Construct_center_2                     Construct_center_2;
   typedef typename Traits::Construct_iso_rectangle_2              Construct_iso_rectangle_2;
-
-  typedef typename Traits::Compute_squared_radius_2               Compute_squared_radius_2;
 
   Point_2 orig;
   SAVED_OBJECT object;
   
-  My_point(const Point_2& p, const Point_2& inp_orig, SAVED_OBJECT obj) : Point_2(p), orig(inp_orig), object(obj) {}
+  Point_with_hot_pixel_history(const Point_2& p, const Point_2& inp_orig, SAVED_OBJECT obj) : Point_2(p), orig(inp_orig), object(obj) {}
   
-  My_point(const Point_2& p) : Point_2(p), orig(Point_2(0, 0)) {}
+  Point_with_hot_pixel_history(const Point_2& p) : Point_2(p), orig(Point_2(0, 0)) {}
   
-  My_point() : Point_2(),orig() {}
+  Point_with_hot_pixel_history() : Point_2(),orig() {}
   
-  My_point(NT x, NT y) : Point_2(x, y), orig(Point_2(0, 0)) {}
+  Point_with_hot_pixel_history(NT x, NT y) : Point_2(x, y), orig(Point_2(0, 0)) {}
 };
 
-
-//////////////////////////
-//////////////////////////
-//My_point_interface_2d
-//////////////////////////
-
-template <class  PT>
-class  My_point_interface_2d
-{
-public:
-  typedef PT                                                      Point;
-  typedef typename PT::Point_d                                    Point_2; 
-  typedef typename PT::FT                                         FT; 
-    
-  typedef typename PT::Iso_rectangle_2                            Iso_rectangle_2;
-  typedef typename PT::Circle_2                                   Circle_2;
-  typedef typename PT::Cartesian_const_iterator_2                 Cartesian_const_iterator_2;
-  typedef typename PT::Construct_cartesian_const_iterator_2       Construct_cartesian_const_iterator_2;
-
-  typedef typename PT::Construct_min_vertex_2                     Construct_min_vertex_2;
-  typedef typename PT::Construct_max_vertex_2                     Construct_max_vertex_2;
-  typedef typename PT::Construct_center_2                         Construct_center_2;
-  typedef typename PT::Construct_iso_rectangle_2                  Construct_iso_rectangle_2;
-
-  typedef typename PT::Compute_squared_radius_2                   Compute_squared_radius_2;
-
-      static  int dimension( const PT  & pnt )
-    { 
-      return pnt.dimension(); //        return  pnt.dimensions();
-    }
-
-    static  int    compare( int  d, const PT   & a, const PT    & b )
-    {
-        if  ( a[ d ] < b[ d ] )
-            return  -1;
-        if  ( a[ d ] > b[ d ] )
-            return  1;
-
-        return  0;
-    }
-    static  void   copy_coord( int  d, PT   & a, const PT    & b )
-    {
-      if  ( d == 0 )
-        a = PT( b[ 0 ], a[1] );
-      else
-        if  ( d == 1 )
-          a = PT( a[ 0 ], b[1] );
-        else {
-          CGAL_error();
-        }
-    }
-};
 
 //////////////////////
 //////////////////////
@@ -139,23 +83,22 @@ template <class K >
 class Search_traits_kd_tree_2 {
 
 public:
-  typedef typename K::Point                                 Point_d;
+  typedef  K                                                Point_d;
   typedef typename K::Iso_rectangle_2                       Iso_box_d;
-  typedef typename K::Circle_2                              Sphere_d;
   typedef typename K::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
   typedef typename K::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
 
   typedef typename K::Construct_min_vertex_2                Construct_min_vertex_d;
   typedef typename K::Construct_max_vertex_2                Construct_max_vertex_d;
-  typedef typename K::Construct_center_2                    Construct_center_d;
-  typedef typename K::Compute_squared_radius_2              Compute_squared_radius_d;
 
   typedef typename K::Construct_iso_rectangle_2             Construct_iso_box_d;
   typedef typename K::FT                                    FT;
 
-  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const 
+  {
     return Construct_cartesian_const_iterator_d();
   }  
+
 };
 
 /////////////////////
@@ -177,24 +120,23 @@ private:
   typedef typename Traits::Line_2                       Line_2;
   typedef typename Traits::Aff_transformation_2         Transformation_2;
   
-  typedef My_point<Traits, SAVED_OBJECT>                      My_point_saved;
-  typedef My_point_interface_2d<My_point_saved>               My_point_interface;
-  typedef CGAL::Search_traits_kd_tree_2<My_point_interface>   Search_traits;
-  typedef CGAL::Kd_tree<Search_traits>                        Kd_tree;
-  typedef CGAL::Fuzzy_iso_box<Search_traits>                  Box;
+  typedef Point_with_hot_pixel_history<Traits, SAVED_OBJECT>                        Point_with_hot_pixel_history_saved;
+  typedef CGAL::Search_traits_kd_tree_2<Point_with_hot_pixel_history_saved>         Search_traits;
+  typedef CGAL::Kd_tree<Search_traits>                                              Kd_tree;
+  typedef CGAL::Fuzzy_iso_box<Search_traits>                                        Box;
   
-  typedef std::list<My_point_saved>                     Points_List;
-  typedef std::pair<Direction_2, NT>                    Direction_nt_pair;
-  typedef std::pair<Kd_tree *,Direction_nt_pair>        Kd_triple;
-  typedef std::pair<Kd_tree *, Direction_nt_pair>       Kd_direction_nt_pair;
-  typedef std::list<Kd_direction_nt_pair>               Kd_triple_list;
+  typedef std::list<Point_with_hot_pixel_history_saved>   Points_List;
+  typedef std::pair<Direction_2, NT>                      Direction_nt_pair;
+  typedef std::pair<Kd_tree *,Direction_nt_pair>          Kd_triple;
+  typedef std::pair<Kd_tree *, Direction_nt_pair>         Kd_direction_nt_pair;
+  typedef std::list<Kd_direction_nt_pair>                 Kd_triple_list;
 
   typedef std::pair<Point_2, SAVED_OBJECT>              Point_saved_pair;
   typedef std::list<Point_saved_pair>                   Point_saved_pair_list;
   typedef typename Point_saved_pair_list::iterator      Point_saved_pair_iter;
 
-  typedef typename std::list<My_point_saved>            My_point_saved_list;
-  typedef typename My_point_saved_list::iterator        My_point_saved_iter;
+  typedef typename std::list<Point_with_hot_pixel_history_saved>            Point_with_hot_pixel_history_saved_list;
+  typedef typename Point_with_hot_pixel_history_saved_list::iterator        Point_with_hot_pixel_history_saved_iter;
 
   typedef std::list<Point_2>                            Point_list;
   typedef typename Point_list::iterator                 Point_iter;
@@ -242,18 +184,13 @@ private:
     {
       Point_2 p(iter->first);
       rotate(p,angle);
-      My_point_saved rotated_point(p,iter->first,iter->second);
+      Point_with_hot_pixel_history_saved rotated_point(p,iter->first,iter->second);
       
       tree->insert(rotated_point);
     }
 
     tree->build();
 
-    //Code used by the old kd_trees.
-    //TODO: check if it is required by the new kd_trees.
-    //checking validity
-    //if (!tree->is_valid()) tree->dump();
-    //CGAL_assertion(tree->is_valid());
 
     typename Traits::To_double to_dbl;
     double buffer_angle(to_dbl(angle) - half_pi / (2 * number_of_trees));
@@ -632,20 +569,20 @@ public:
     Point_2 p1 = rec.vertex(0);
     Point_2 p2 = rec.vertex(2);
 
-    My_point_saved point1(p1);
-    My_point_saved point2(p2);
+    Point_with_hot_pixel_history_saved point1(p1);
+    Point_with_hot_pixel_history_saved point2(p2);
 
     Box b(point1, point2);
 
     // the kd-tree query
-    My_point_saved_list result;
+    Point_with_hot_pixel_history_saved_list result;
     
     iter->first->search(std::back_inserter(result), b);
 
     // create result
     result_list.empty();
 
-    for( My_point_saved_iter my_point_iter = result.begin();    my_point_iter != result.end();   ++my_point_iter ) 
+    for( Point_with_hot_pixel_history_saved_iter my_point_iter = result.begin();    my_point_iter != result.end();   ++my_point_iter ) 
       result_list.push_back(my_point_iter->object);
   }
 };
