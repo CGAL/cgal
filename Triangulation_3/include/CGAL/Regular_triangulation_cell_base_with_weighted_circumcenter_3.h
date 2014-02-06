@@ -32,7 +32,7 @@
 namespace CGAL {
 
 template < typename GT, typename Cb = Triangulation_cell_base_3<GT> >
-class Regular_triangulation_cell_base_with_circumcenter_3
+class Regular_triangulation_cell_base_with_weighted_circumcenter_3
   : public Cb
 {
   typedef typename GT::Point_3                         Point_3;
@@ -58,41 +58,44 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other         Cb2;
-    typedef Regular_triangulation_cell_base_with_circumcenter_3<GT, Cb2>  Other;
+    typedef 
+      Regular_triangulation_cell_base_with_weighted_circumcenter_3<GT, Cb2>
+      Other;
   };
 
-  Regular_triangulation_cell_base_with_circumcenter_3()
+  Regular_triangulation_cell_base_with_weighted_circumcenter_3()
     : Cb(), weighted_circumcenter_(NULL) {}
 
-  Regular_triangulation_cell_base_with_circumcenter_3
-        (const Regular_triangulation_cell_base_with_circumcenter_3 &c)
+  Regular_triangulation_cell_base_with_weighted_circumcenter_3
+        (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
     : Cb(c), 
       weighted_circumcenter_(c.weighted_circumcenter_ != NULL ? 
                              new Bare_point(*(c.weighted_circumcenter_)) : 
                              NULL)
   {}
 
-  Regular_triangulation_cell_base_with_circumcenter_3&
-  operator=(const Regular_triangulation_cell_base_with_circumcenter_3 &c)
+  Regular_triangulation_cell_base_with_weighted_circumcenter_3&
+  operator=
+    (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
   {
-      Regular_triangulation_cell_base_with_circumcenter_3 tmp=c;
+      RT_cell_base_with_weighted_circumcenter_3 tmp=c;
       std::swap(tmp, *this);
       return *this;
   }
 
-  Regular_triangulation_cell_base_with_circumcenter_3(
+  Regular_triangulation_cell_base_with_weighted_circumcenter_3(
 	                    Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3), weighted_circumcenter_(NULL) {}
 
-  Regular_triangulation_cell_base_with_circumcenter_3(
+  Regular_triangulation_cell_base_with_weighted_circumcenter_3(
 	                    Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
     : Cb(v0, v1, v2, v3, n0, n1, n2, n3), weighted_circumcenter_(NULL) {}
 
-  ~Regular_triangulation_cell_base_with_circumcenter_3()
+  ~Regular_triangulation_cell_base_with_weighted_circumcenter_3()
   {
       delete weighted_circumcenter_;
   }

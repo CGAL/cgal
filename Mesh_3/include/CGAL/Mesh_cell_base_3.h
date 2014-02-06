@@ -30,7 +30,7 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/Regular_triangulation_cell_base_with_circumcenter_3.h>
+#include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
@@ -40,8 +40,8 @@ namespace CGAL {
 // Cell base class used in 3D meshing process.
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
-          class MD,
-          class Cb = CGAL::Regular_triangulation_cell_base_with_circumcenter_3<
+  class MD,
+  class Cb= CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<
               GT, CGAL::Regular_triangulation_cell_base_3<GT> > >
 class Mesh_cell_base_3
 : public Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>

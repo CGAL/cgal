@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgTriangulation3VertexCellClasses
 
-The class `Regular_triangulation_cell_base_with_circumcenter_3` derives from 
+The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives from 
 `Cb`, a cell base class of a 3D triangulation.
 It provides an easy way to cache the computation of the weighted circumcenters of 
 tetrahedra. 
@@ -17,7 +17,7 @@ circumcenter.
 of `RegularTriangulationTraits_3`.
 
 \tparam Cb is a cell base class from which 
-`Regular_triangulation_cell_base_with_circumcenter_3` derives. Cb should
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
 be a model of `RegularTriangulationCellBase_3`.
 It has the default value `Triangulation_cell_base_3<RegularTriangulationTraits_3>`. 
 
@@ -29,7 +29,7 @@ It has the default value `Triangulation_cell_base_3<RegularTriangulationTraits_3
 
 */
 template< typename TriangulationTraits_3, typename Cb >
-class Regular_triangulation_cell_base_with_circumcenter_3 : public Cb {
+class Regular_triangulation_cell_base_with_weighted_circumcenter_3 : public Cb {
 public:
 	
 /// \name Types 
@@ -63,5 +63,5 @@ const Bare_point& weighted_circumcenter(
 
 /// @}
 
-}; /* end Regular_triangulation_cell_base_with_circumcenter_3 */
+}; /* end Regular_triangulation_cell_base_with_weighted_circumcenter_3 */
 } /* end namespace CGAL */

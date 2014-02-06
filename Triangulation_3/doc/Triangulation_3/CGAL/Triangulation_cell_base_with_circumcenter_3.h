@@ -6,7 +6,7 @@ namespace CGAL {
 \deprecated This class is deprecated since \cgal 4.4. The class
 `Delaunay_triangulation_cell_base_with_circumcenter_3` should
 be used instead. 
-`Regular_triangulation_cell_base_with_circumcenter_3` and
+`Regular_triangulation_cell_base_with_weighted_circumcenter_3` and
 `Triangulation_cell_base_with_info_3` can also be used in other frameworks.
 
 The class `Triangulation_cell_base_with_circumcenter_3` derives from 
