@@ -33,6 +33,7 @@ int main(int argc, char* argv[])
 {
   // Collect options
   std::size_t nb_runs = 1;
+  char* filename = "run";
   bool do_lloyd = false;
   bool do_odt = false;
   bool do_perturb = false;
@@ -41,6 +42,7 @@ int main(int argc, char* argv[])
   {
     std::string arg = argv[i];
     if(arg == "-n")             nb_runs = atoi(argv[i+1]);
+    else if(arg == "-name")     filename = argv[i+1];
     else if(arg == "-lloyd")    do_lloyd = true;
     else if(arg == "-odt")      do_odt = true;
     else if(arg == "-perturb")  do_perturb = true;
@@ -61,8 +63,12 @@ int main(int argc, char* argv[])
 
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
+    CGAL::default_random = CGAL::Random(0);
+
+    std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
+
     std::ostringstream oss;
-    oss << "run" << (i+1) << "_";
+    oss << filename << (i+1) << "_";
     std::string num_str(oss.str().data());
 
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
