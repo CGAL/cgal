@@ -440,11 +440,8 @@ private:
     w = w / CGAL::sqrt(w*w);
     
     if(CGAL::ORIGIN + v < CGAL::ORIGIN + u)
-    {
-      Vector_3 tmp = v;
-      v = u;
-      u = tmp;
-    }
+      std::swap(u,v);
+
     return Aff_transformation_3(u.x(),v.x(),w.x(),reference_point.x(),
                                 u.y(),v.y(),w.y(),reference_point.y(),
                                 u.z(),v.z(),w.z(),reference_point.z());
