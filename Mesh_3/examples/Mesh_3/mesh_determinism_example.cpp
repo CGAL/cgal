@@ -62,42 +62,42 @@ int main(int argc, char* argv[])
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
     std::ostringstream oss;
-    oss << i << "_";
-    char* num_str = (char*)(oss.str().data());
+    oss << "run" << (i+1) << "_";
+    std::string num_str(oss.str().data());
 
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         no_perturb(),
                                         no_exude());
 
-    std::ofstream medit_file(strcat(num_str,"out0-refinement.mesh"));
+    std::ofstream medit_file(num_str + std::string("out0-refinement.mesh"));
     c3t3.output_to_medit(medit_file);
   
     //LLOYD
     if(do_lloyd)
     {
       CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = 10);
-      std::ofstream medit_file1(strcat(num_str,"out1-lloyd.mesh"));
+      std::ofstream medit_file1(num_str + std::string("out1-lloyd.mesh"));
       c3t3.output_to_medit(medit_file1);
     }
     //ODT
     if(do_odt)
     {
       CGAL::odt_optimize_mesh_3(c3t3, domain, max_iteration_number = 10);
-      std::ofstream medit_file2(strcat(num_str,"out2-odt.mesh"));
+      std::ofstream medit_file2(num_str + std::string("out2-odt.mesh"));
       c3t3.output_to_medit(medit_file2);
     }
     //PERTURB
     if(do_perturb)
     {
       CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=10);
-      std::ofstream medit_file3(strcat(num_str,"out3-perturb.mesh"));
+      std::ofstream medit_file3(num_str + std::string("out3-perturb.mesh"));
       c3t3.output_to_medit(medit_file3);
     }
     //EXUDE
     if(do_exude)
     {
       CGAL::exude_mesh_3(c3t3, sliver_bound=12);
-      std::ofstream medit_file4(strcat(num_str,"out4-exude.mesh"));
+      std::ofstream medit_file4(num_str + std::string("out4-exude.mesh"));
       c3t3.output_to_medit(medit_file4);
     }
   }
