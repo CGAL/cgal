@@ -9,11 +9,6 @@ of the concept `DelaunayTriangulationCellBase_3`, which refines
 the concept `TriangulationCellBase_3` by adding 
 in the cell an operator that computes its circumcenter. 
 
-For the Delaunay triangulation,
-the model `CGAL::Triangulation_cell_base_with_circumcenter_3`
-gives the ability to store the circumcenter (for optimization reasons),
-hence this additional requirement. 
-
 
 \cgalRefines `TriangulationCellBase_3`
 
@@ -32,6 +27,8 @@ public:
 /*!
 Returns the circumcenter of the cell. 
 `DelaunayTriangulationTraits_3` is the geometric traits class of the triangulation.
+
+This operator is required only when the dual functions are called.
 */ 
 const DelaunayTriangulationTraits_3::Point_3& circumcenter( 
 const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const; 
