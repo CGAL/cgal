@@ -198,8 +198,8 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 
 CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
-namespace CartesianDKernelFunctors {
 #if 0
+namespace CartesianDKernelFunctors {
 template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation)
 	typedef R_ R;
@@ -249,8 +249,10 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 	}
 	//TODO: version that takes objects directly instead of iterators
 };
+}
 #endif
 
+namespace CartesianDKernelFunctors {
 template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)
 	typedef R_ R;
@@ -320,6 +322,46 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 }
 
 CGAL_KD_DEFAULT_FUNCTOR(Side_of_oriented_sphere_tag,(CartesianDKernelFunctors::Side_of_oriented_sphere<K>),(Point_tag),(Point_dimension_tag,Squared_distance_to_origin_tag,Compute_point_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
+// TODO: implement it directly, it should be at least as fast as Side_of_oriented_sphere.
+template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Side_of_bounded_sphere)
+	typedef R_ R;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	typedef typename Get_type<R, Bounded_side_tag>::type result_type;
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter const& e) const {
+	  Point const& p0 = *f++; // *--e ?
+	  return operator() (f, e, p0);
+	}
+
+	template<class Iter>
+	result_type operator()(Iter const& f, Iter const& e, Point const& p0) const {
+	  typename Get_functor<R, Side_of_oriented_sphere_tag>::type sos (this->kernel());
+	  typename Get_functor<R, Orientation_of_points_tag>::type op (this->kernel());
+	  // enum_cast is not very generic, but since this function isn't supposed to remain like this...
+	  return enum_cast<Bounded_side> (sos (f, e, p0) * op (f, e));
+	}
+
+#ifdef CGAL_CXX0X
+	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
+	result_type operator()(U&&...u) const {
+		return operator()({std::forward<U>(u)...});
+	}
+
+	template <class P>
+	result_type operator()(std::initializer_list<P> l) const {
+		return operator()(l.begin(),l.end());
+	}
+#else
+	//TODO
+#endif
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Side_of_bounded_sphere_tag,(CartesianDKernelFunctors::Side_of_bounded_sphere<K>),(Point_tag),(Side_of_oriented_sphere_tag,Orientation_of_points_tag));
 
 namespace CartesianDKernelFunctors {
 template<class R_> struct Point_to_vector : private Store_kernel<R_> {

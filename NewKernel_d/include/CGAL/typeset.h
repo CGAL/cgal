@@ -51,7 +51,7 @@ namespace CGAL {
   template<> struct typeset<> {
     typedef typeset type;
     template<class X> struct contains : boost::false_type {};
-    template<class X> struct add : typeset<X> {};
+    template<class X> struct add : CGAL::typeset<X> {};
   };
 
   template<class H,class T>

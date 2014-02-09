@@ -1,5 +1,5 @@
-#ifndef bd_h
-#define db_h
+#ifndef CGAL_KD_DIMENSION_BASE_h
+#define CGAL_KD_DIMENSION_BASE_h
 #include <CGAL/Dimension.h>
 #include <CGAL/assertions.h>
 #include <CGAL/marcutils.h>

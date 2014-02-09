@@ -260,6 +260,7 @@ namespace CGAL {
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
 	DECL_PREDICATE(Side_of_oriented_sphere);
+	DECL_PREDICATE(Side_of_bounded_sphere);
 	DECL_PREDICATE(Contained_in_affine_hull);
 	DECL_PREDICATE(In_flat_orientation);
 	DECL_PREDICATE(In_flat_side_of_oriented_sphere);

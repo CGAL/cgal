@@ -76,6 +76,7 @@ void test2(){
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
   typedef typename K1::Orientation_d PO;
   typedef typename K1::Side_of_oriented_sphere_d SOS;
+  typedef typename K1::Side_of_bounded_sphere_d SBS;
   typedef typename K1::Compute_coordinate_d CC;
   typedef typename K1::Construct_flat_orientation_d CFO;
   typedef typename K1::In_flat_orientation_d IFO;
@@ -99,6 +100,7 @@ void test2(){
   CS cs Kinit(construct_segment_d_object);
   CSE cse (k);
   SOS sos Kinit(side_of_oriented_sphere_d_object);
+  SBS sbs Kinit(side_of_bounded_sphere_d_object);
   CFO cfo Kinit(construct_flat_orientation_d_object);
   IFO ifo Kinit(in_flat_orientation_d_object);
   IFSOS ifsos Kinit(in_flat_side_of_oriented_sphere_d_object);
@@ -118,8 +120,9 @@ void test2(){
     std::cout << *i << ' ';
   std::cout << '\n';
   P tab[]={a,b,c,d};
-  std::cout << po (&tab[0],tab+3) << std::endl;
-  std::cout << sos(&tab[0],tab+4) << std::endl;
+  std::cout << po (&tab[0],tab+3) << ' ';
+  std::cout << sos(&tab[0],tab+4) << ' ';
+  std::cout << sbs(&tab[0],tab+4) << std::endl;
   P x1=cp(0,1);
   P x2=cp(-1,-1);
   P x3=cp(1,-1);
@@ -128,6 +131,7 @@ void test2(){
   P tab2[]={x1,x2,x3,x4};
   assert(po(tab2+0,tab2+3)==CGAL::COUNTERCLOCKWISE);
   assert(sos(tab2+0,tab2+3,x4)==CGAL::ON_POSITIVE_SIDE);
+  assert(sbs(tab2+0,tab2+3,x4)==CGAL::ON_BOUNDED_SIDE);
 #if 0
   // Doesn't compile with Lazy yet.
   FO fo=cfo(tab2+1,tab2+3);
@@ -168,6 +172,7 @@ void test3(){
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
   typedef typename K1::Orientation_d PO;
   typedef typename K1::Side_of_oriented_sphere_d SOS;
+  typedef typename K1::Side_of_bounded_sphere_d SBS;
   typedef typename K1::Compute_coordinate_d CC;
   typedef typename K1::Construct_flat_orientation_d CFO;
   typedef typename K1::In_flat_orientation_d IFO;
@@ -192,6 +197,7 @@ void test3(){
   CS cs Kinit(construct_segment_d_object);
   CSE cse (k);
   SOS sos Kinit(side_of_oriented_sphere_d_object);
+  SBS sbs Kinit(side_of_bounded_sphere_d_object);
   CFO cfo Kinit(construct_flat_orientation_d_object);
   IFO ifo Kinit(in_flat_orientation_d_object);
   IFSOS ifsos Kinit(in_flat_side_of_oriented_sphere_d_object);
@@ -212,8 +218,9 @@ void test3(){
   std::cout << '\n';
   P e=cp(-2,3,0);
   P tab[]={a,b,c,d,e};
-  std::cout << po (&tab[0],tab+4) << std::endl;
-  std::cout << sos(&tab[0],tab+5) << std::endl;
+  std::cout << po (&tab[0],tab+4) << ' ';
+  std::cout << sos(&tab[0],tab+5) << ' ';
+  std::cout << sbs(&tab[0],tab+5) << std::endl;
   FO fo=cfo(&tab[0],tab+3);
   std::cout << fo;
   P x[]={cp(2,2,3),cp(2,2,0),cp(1,2,1)};
@@ -253,11 +260,14 @@ void test3(){
   P tab2[]={x1,x2,x3,x4,x5};
   assert(po(tab2+0,tab2+4)==CGAL::POSITIVE);
   assert(sos(tab2+0,tab2+4,x5)==CGAL::ON_POSITIVE_SIDE);
+  assert(sbs(tab2+0,tab2+4,x5)==CGAL::ON_BOUNDED_SIDE);
   FO fo4=cfo(tab2+0,tab2+3);
   assert(ifo(fo4,tab2+0,tab2+3)==CGAL::POSITIVE);
   assert(ifsos(fo4,tab2+0,tab2+3,x6)==CGAL::ON_POSITIVE_SIDE);
 }
-
+template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
+template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
+template struct CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
 int main(){
   test2<CGAL::Kernel_d_interface<KK> >();
   test2<CGAL::Epick_d<CGAL::Dimension_tag<2> > >();

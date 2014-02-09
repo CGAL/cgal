@@ -114,7 +114,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	//typedef typename Get_functor<Base, Linear_rank_tag>::type Linear_rank_d;
 	//typedef typename Get_functor<Base, Linearly_independent_tag>::type Linearly_independent_d;
 	typedef typename Get_functor<Base, Oriented_side_tag>::type Oriented_side_d;
-	//typedef typename Get_functor<Base, Side_of_bounded_sphere_tag>::type Side_of_bounded_sphere_d;
+	typedef typename Get_functor<Base, Side_of_bounded_sphere_tag>::type Side_of_bounded_sphere_d;
 
 	typedef typename Get_functor<Base, Center_of_sphere_tag>::type Center_of_sphere_d;
 	typedef typename Get_functor<Base, Value_at_tag>::type Value_at_d;
@@ -134,6 +134,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Orientation_d orientation_d_object()const{ return Orientation_d(*this); }
 	Point_dimension_d point_dimension_d_object()const{ return Point_dimension_d(*this); }
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
+	Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
 	Contained_in_affine_hull_d contained_in_affine_hull_d_object()const{ return Contained_in_affine_hull_d(*this); }
 	Construct_flat_orientation_d construct_flat_orientation_d_object()const{ return Construct_flat_orientation_d(*this); }
 	In_flat_orientation_d in_flat_orientation_d_object()const{ return In_flat_orientation_d(*this); }
