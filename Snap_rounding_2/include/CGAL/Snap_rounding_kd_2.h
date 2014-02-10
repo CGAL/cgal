@@ -179,6 +179,8 @@ private:
   {
 
     Kd_tree *tree = new Kd_tree();
+    //test function that reserves the size of the vector first.
+    tree->reserve_to_capacity(input_points_list.size());
 
     for (Point_saved_pair_iter iter = input_points_list.begin();  iter != input_points_list.end();  ++iter)
     {

@@ -267,6 +267,11 @@ public:
     pts.insert(pts.end(),first, beyond);
   }
 
+  void reserve_to_capacity(size_t size)
+  {
+    pts.reserve(size);
+  }
+
 
   template <class OutputIterator, class FuzzyQueryItem>
   OutputIterator 
