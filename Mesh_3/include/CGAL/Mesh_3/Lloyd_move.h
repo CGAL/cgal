@@ -31,6 +31,7 @@
 #include <CGAL/ch_graham_andrew.h>
 
 #include <CGAL/Mesh_3/Uniform_sizing_field.h>
+#include <CGAL/Mesh_3/comparison_operators.h>
 
 #include <string>
 
@@ -174,16 +175,23 @@ private:
     {
       const int& k = (*cit)->index(v);
       
+      std::array<Vertex_handle,3> vertices;
+      for(int i = 1; i < 4; ++i)
+        vertices[i-1] = (*cit)->vertex((k+i)&3);
+      CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> vcomp;
+      std::sort(vertices.begin(), vertices.end(), vcomp);
+
       // For each vertex of the cell
-      for ( int i=1 ; i<4 ; ++i )
+      for ( int i=0 ; i<3 ; ++i )
       {
-        const Vertex_handle& v1 = (*cit)->vertex((k+i)&3);
+        const Vertex_handle& v1 = vertices[i];
         if ( treated_vertex.find(v1) != treated_vertex.end() )
           continue;
         
         // Vertex has not been treated: turn around edge(v,v1)
         treated_vertex.insert(v1);
-        turn_around_edge(v, Edge(*cit,k,(k+i)&3), tr,
+        const int& k1 = (*cit)->index(v1);
+        turn_around_edge(v, Edge(*cit,k,k1), tr,
                          move, sum_masses, sizing_field);
       }
     }
@@ -214,6 +222,7 @@ private:
       }
       case 2: // centroid 
       {
+        sort_weighted_points(points);
         const Point_3& a = points.front();
         const Point_3& b = points.back();
         return centroid_segment_move(v,a,b,sizing_field);
@@ -221,6 +230,7 @@ private:
       }
       case 3: // triangle centroid 
       {
+        sort_weighted_points(points);
         const Point_3& a = points.at(0);
         const Point_3& b = points.at(1);
         const Point_3& c = points.at(2);
@@ -228,13 +238,41 @@ private:
         break;
       }
       default: // >= 4 points, centroid + projection
+        sort_weighted_points(points);
         return centroid_general_move(v,points.begin(),points.end(),sizing_field);
         break;
     }
     
     return CGAL::NULL_VECTOR;
   }
-  
+
+  void sort_weighted_points(std::vector<Point_3>& points) const
+  {
+    switch(points.size())
+    {
+    case 0: // nothing to do
+    case 1: // nothing to do
+    case 2:
+      if(points[0].point() > points[1].point()) 
+        std::swap(points[0], points[1]);
+      break;
+    default: // >= 3 points
+      std::size_t index_of_min = 0;
+      for(std::size_t i = 1; i < points.size(); ++i)
+      {
+        if(points[i].point() < points[index_of_min].point())
+          index_of_min = i;
+      }
+      if(index_of_min == 0)
+        return;
+      std::vector<Point_3> copy_of_points;
+      std::copy(points.begin(), points.end(),
+        std::back_inserter(copy_of_points));
+      for(std::size_t i = 0; i < points.size(); ++i)
+        points[i] = copy_of_points[(index_of_min+i)%(points.size())];
+    }
+  }
+
   /**
    * Returns a vector containing surface delaunay ball center of surface
    * facets incident to vertex \c v

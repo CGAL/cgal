@@ -32,6 +32,12 @@ namespace CGAL {
   namespace Mesh_3 {
     
     // http://en.wikipedia.org/wiki/Sorting_network
+    template <typename T>
+    void sort4(T& q0, T& q1, T& q2, T& q3)
+    {
+      sort4(q0, q1, q2, q3, std::less<T>());
+    }
+
     template <typename T, typename Comparator>
     void
     sort4(T& q0, T& q1, T& q2, T& q3, const Comparator& less)
@@ -44,6 +50,12 @@ namespace CGAL {
       if(less(q2,q1)) std::swap(q1,q2);
     }
 
+    template <typename T>
+    void sort3(T& q0, T& q1, T& q2)
+    {
+      sort3(q0, q1, q2, std::less<T>());
+    }
+
     template <typename T, typename Comparator>
     void
     sort3(T& q0, T& q1, T& q2, const Comparator& less)
@@ -52,6 +64,12 @@ namespace CGAL {
       if(less(q2,q0)) std::swap(q0,q2);
       if(less(q1,q0)) std::swap(q0,q1);
       if(less(q2,q1)) std::swap(q1,q2);
+    }
+
+    template <typename T>
+    void sort2(T& q0, T& q1)
+    {
+      sort2(q0, q1, std::less<T>());
     }
 
     template <typename T, typename Comparator>
