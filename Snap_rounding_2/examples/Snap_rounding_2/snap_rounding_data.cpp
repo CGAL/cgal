@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 		
 		seg_list.push_back(Segment_2(Point_2(point_start_x, point_start_y), Point_2(point_end_x, point_end_y)));
 	}
-	std::cout << "Segment list size: "<<seg_list.size() << std::endl;
+	
 	segment_creation_time.stop();
 
 
