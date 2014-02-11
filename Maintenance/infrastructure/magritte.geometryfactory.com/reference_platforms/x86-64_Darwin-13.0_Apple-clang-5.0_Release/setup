@@ -1,0 +1,4 @@
+CXX=/Library/Developer/CommandLineTools/usr/bin/clang++
+CC=/Library/Developer/CommandLineTools/usr/bin/clang
+CXXFLAGS="-Wall -Wextra"
+export CXX CC CXXFLAGS

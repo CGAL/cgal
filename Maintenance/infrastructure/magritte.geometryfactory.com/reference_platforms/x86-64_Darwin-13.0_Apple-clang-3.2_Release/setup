@@ -1,0 +1,4 @@
+CXX=/usr/bin/clang++
+CC=/usr/bin/clang
+CXXFLAGS="-Wall -Wextra"
+export CXX CC CXXFLAGS
