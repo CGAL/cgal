@@ -108,13 +108,15 @@ CGAL_Qt4_LIB_DEPENDS:STATIC=general;C:/3rdPartyLibs/VC-32/gmp-5.0.1_and_mpfr-3.0
 //Value Computed by CMake
 CGAL_SOURCE_DIR:STATIC=C:/CGAL/CGAL-I-REF
 
-//No help, variable specified on the command line.
-CMAKE_BUILD_TYPE:UNINITIALIZED=Debug
+//Choose the type of build, options are: None(CMAKE_CXX_FLAGS or
+// CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel.
+CMAKE_BUILD_TYPE:STRING=Debug
 
-//Semicolon separated list of supported configuration types, only
-// supports Debug, Release, MinSizeRel, and RelWithDebInfo, anything
-// else will be ignored.
-CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release;MinSizeRel;RelWithDebInfo
+//Enable/Disable color output during build.
+CMAKE_COLOR_MAKEFILE:BOOL=ON
+
+//CXX compiler.
+CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/cl.exe
 
 //User-defined flags
 CMAKE_CXX_FLAGS:STRING= /DWIN32 /D_WINDOWS /W3 /GR /EHsc -D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS /fp:strict /fp:except-
@@ -123,7 +125,7 @@ CMAKE_CXX_FLAGS:STRING= /DWIN32 /D_WINDOWS /W3 /GR /EHsc -D_CRT_SECURE_NO_DEPREC
 CMAKE_CXX_FLAGS_DEBUG:STRING=/D_DEBUG /MDd /Ob0 /Od /RTC1
 
 //Flags used by the compiler during release minsize builds.
-CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1
+CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 
 
 //Flags used by the compiler during release builds (/MD /Ob1 /Oi
 // /Ot /Oy /Gs will produce slightly less optimized but smaller
@@ -135,6 +137,9 @@ CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=/MD /O2 /Ob1
 
 //Libraries linked by defalut with all C++ applications.
 CMAKE_CXX_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
+
+//C compiler.
+CMAKE_C_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/cl.exe
 
 //Flags used by the compiler during all build types.
 CMAKE_C_FLAGS:STRING= /DWIN32 /D_WINDOWS /W3
@@ -177,8 +182,8 @@ CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/CGAL
 //Path to a program.
 CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/link.exe
 
-//make program
-CMAKE_MAKE_PROGRAM:FILEPATH=C:/PROGRA~2/MSBuild/12.0/Bin/MSBuild.exe
+//Program used to build from makefiles.
+CMAKE_MAKE_PROGRAM:STRING=nmake
 
 //Flags used by the linker during the creation of modules.
 CMAKE_MODULE_LINKER_FLAGS:STRING=' /machine:X86 '
@@ -198,7 +203,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=CGAL
 
-//RC compiler
+//RC compiler.
 CMAKE_RC_COMPILER:FILEPATH=C:/Program Files (x86)/Windows Kits/8.1/bin/x86/rc.exe
 
 //Flags for Fortran compiler.
@@ -965,8 +970,6 @@ ZLIB_LIBRARY:FILEPATH=C:/3rdPartyLibs/VC-32/zlib/zdll.lib
 # INTERNAL cache entries
 ########################
 
-//Stored GUID
-ALL_BUILD_GUID_CMAKE:INTERNAL=75F747FA-4C88-49AE-9464-0BE77FACCA48
 //ADVANCED property for variable: Boost_DIR
 Boost_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_INCLUDE_DIR
@@ -1041,8 +1044,6 @@ CGAL_Core_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Core_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
 CGAL_Core_3RD_PARTY_LIBRARIES:INTERNAL=
 CGAL_Core_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-//Stored GUID
-CGAL_Core_GUID_CMAKE:INTERNAL=5AE9CE5B-D4F3-4DB4-9CDD-1AA259FEA0FC
 CGAL_Core_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_Core_LIBRARY_INSTALLED:INTERNAL=
@@ -1085,14 +1086,10 @@ CGAL_EXT_LIB_RS_PREFIX:INTERNAL=RS
 CGAL_EXT_LIB_TAUCS_PREFIX:INTERNAL=TAUCS
 //Variable hidden from user
 CGAL_EXT_LIB_ZLIB_PREFIX:INTERNAL=ZLIB
-//Stored GUID
-CGAL_GUID_CMAKE:INTERNAL=381ADEC3-B219-4FD3-8817-38B3935563F6
 CGAL_ImageIO_3RD_PARTY_DEFINITIONS:INTERNAL=-DCGAL_USE_ZLIB
 CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/3rdPartyLibs/VC-32/zlib
 CGAL_ImageIO_3RD_PARTY_LIBRARIES:INTERNAL=glu32;opengl32;C:/3rdPartyLibs/VC-32/zlib/zdll.lib
 CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-//Stored GUID
-CGAL_ImageIO_GUID_CMAKE:INTERNAL=8D8BD0B9-21FE-4F8A-A499-78C9A51D4E98
 CGAL_ImageIO_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_ImageIO_LIBRARY_INSTALLED:INTERNAL=
@@ -1110,8 +1107,6 @@ CGAL_Qt4_3RD_PARTY_DEFINITIONS:INTERNAL=-DQT_DLL
 CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS:INTERNAL=C:/3rdPartyLibs/VC12-32/QT-4.8.4/include
 CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmain.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/qtmaind.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGL4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtOpenGLd4.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGui4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtGuid4.lib;optimized;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCore4.lib;debug;C:/3rdPartyLibs/VC12-32/QT-4.8.4/lib/QtCored4.lib;glu32;opengl32
 CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-//Stored GUID
-CGAL_Qt4_GUID_CMAKE:INTERNAL=412D9B2D-13ED-4B1F-A0B4-54CD39753D38
 CGAL_Qt4_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_Qt4_LIBRARY_INSTALLED:INTERNAL=
@@ -1122,7 +1117,7 @@ CGAL_WIN32_CMAKE_ON_CYGWIN:INTERNAL=TRUE
 //ADVANCED property for variable: CMAKE_BUILD_TOOL
 CMAKE_BUILD_TOOL-ADVANCED:INTERNAL=1
 //What is the target build tool cmake is generating for.
-CMAKE_BUILD_TOOL:INTERNAL=C:/PROGRA~2/MSBuild/12.0/Bin/MSBuild.exe
+CMAKE_BUILD_TOOL:INTERNAL=nmake
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=c:/CGAL/reference_platforms/x64_Cygwin-Windows8_MSVC2013-Debug-32bits
 //Major version of cmake used to create the current loaded cache
@@ -1131,14 +1126,16 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=11
+//ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
+CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Program Files (x86)/CMake 2.8/bin/cmake.exe
-//ADVANCED property for variable: CMAKE_CONFIGURATION_TYPES
-CMAKE_CONFIGURATION_TYPES-ADVANCED:INTERNAL=1
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=C:/Program Files (x86)/CMake 2.8/bin/cpack.exe
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=C:/Program Files (x86)/CMake 2.8/bin/ctest.exe
+//ADVANCED property for variable: CMAKE_CXX_COMPILER
+CMAKE_CXX_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS
 CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS_DEBUG
@@ -1151,6 +1148,8 @@ CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_STANDARD_LIBRARIES
 CMAKE_CXX_STANDARD_LIBRARIES-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_C_COMPILER
+CMAKE_C_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS
 CMAKE_C_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS_DEBUG
@@ -1178,7 +1177,7 @@ CMAKE_EXE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=Visual Studio 12
+CMAKE_GENERATOR:INTERNAL=NMake Makefiles
 //Name of generator toolset.
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Start directory with the top level CMakeLists.txt file for this
@@ -1242,10 +1241,6 @@ FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[C:/3rdPartyLibs/VC-32/zlib/zdll.lib]
 GMP_COMPILE_RES:INTERNAL=TRUE
 //Result of TRY_RUN
 GMP_RUN_RES:INTERNAL=0
-//Generator uses intermediate configuration directory
-HAS_CFG_INTDIR:INTERNAL=TRUE
-//Stored GUID
-INSTALL_GUID_CMAKE:INTERNAL=488F8717-7480-420F-96E7-E09B6844E4CC
 //Variable hidden from user
 LIBRARY_OUTPUT_PATH:INTERNAL=
 //Result of TRY_COMPILE
@@ -1690,18 +1685,6 @@ Q_WS_QWS:INTERNAL=
 Q_WS_WIN:INTERNAL=1
 //Have symbol Q_WS_X11
 Q_WS_X11:INTERNAL=
-//Stored GUID
-SG_Filter_CMake Rules_GUID_CMAKE:INTERNAL=374D9F17-617F-447C-9673-27B4C3A63AA6
-//Stored GUID
-SG_Filter_Header Files_GUID_CMAKE:INTERNAL=B13D3813-42B1-4E0E-8BFC-8CD0F7D70C48
-//Stored GUID
-SG_Filter_Object Files_GUID_CMAKE:INTERNAL=18761F21-106C-4535-9C61-1589139ABD08
-//Stored GUID
-SG_Filter_Resources_GUID_CMAKE:INTERNAL=E4857457-BA31-45C6-A4D1-E427BDD7DCA3
-//Stored GUID
-SG_Filter_Source Files_GUID_CMAKE:INTERNAL=86E5AE5A-61C0-4202-BD03-B750420E978A
-//Stored GUID
-ZERO_CHECK_GUID_CMAKE:INTERNAL=4D43C007-C51C-430D-894C-A5F2CA45EBA0
 //Result of TRY_COMPILE
 ZLIB_COMPILE_RES:INTERNAL=TRUE
 //ADVANCED property for variable: ZLIB_INCLUDE_DIR
@@ -1722,12 +1705,4 @@ _Boost_LIBRARY_DIR_LAST:INTERNAL=C:/3rdPartyLibs/boost_1_55_0/lib32
 _Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
 //Last used Boost_USE_STATIC_LIBS value.
 _Boost_USE_STATIC_LIBS_LAST:INTERNAL=OFF
-//Stored GUID
-demos_GUID_CMAKE:INTERNAL=5BC64474-51CC-47E9-B75B-4B650CDD066A
-//Stored GUID
-examples_GUID_CMAKE:INTERNAL=B67E8B1B-A070-4C69-B784-59B7EA2719A4
-//Stored GUID
-install_FindCGAL_GUID_CMAKE:INTERNAL=1C4ECC6D-3981-4873-8437-D347F46BE90C
-//Stored GUID
-tests_GUID_CMAKE:INTERNAL=DA6AF244-32B2-4558-BE68-24D0E0512E1E
 
