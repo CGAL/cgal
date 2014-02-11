@@ -1050,6 +1050,8 @@ Makefile
 *.manifest
 *.manifest.res
 *.vcproj
+*.vcxproj
+*.vcxproj.filters
 *.sln
 *.depends
 
