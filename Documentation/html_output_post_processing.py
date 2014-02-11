@@ -171,7 +171,11 @@ def update_figure_ref(i,global_anchor_map):
   link = pq(this)
   link_name=link.text()
   if re.match("fig__.+",link_name) != None:
-    link.text( "Figure "+str(global_anchor_map[link_name]) )
+    #replace the link only if it was collected
+    if global_anchor_map.has_key(link_name):
+      link.text( "Figure "+str(global_anchor_map[link_name]) )
+    else:
+      stderr.write("Error: Figure numbering; "+link_name+" was not collected\n")
 
 ## number figures and reference to figures
 def automagically_number_figures():
