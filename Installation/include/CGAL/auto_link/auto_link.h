@@ -165,6 +165,16 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
    // vc11:
 #  define CGAL_LIB_TOOLSET "vc110"
 
+#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1800)
+
+   // vc12:
+#  define CGAL_LIB_TOOLSET "vc120"
+
+#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1900)
+
+   // vc13:
+#  define CGAL_LIB_TOOLSET "vc130"
+
 #elif defined(__BORLANDC__)
 
    // CBuilder 6:
