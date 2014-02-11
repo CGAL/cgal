@@ -104,6 +104,8 @@ def re_replace_in_file(pat, s_after, fname):
         for line in f:
             out.write(re.sub(pat, s_after, line))
         out.close()
+        f.close()
+        os.remove(fname)
         os.rename(out_fname, fname)
 
 def re_replace_first_in_file(pat, s_after, fname):
@@ -124,6 +126,8 @@ def re_replace_first_in_file(pat, s_after, fname):
             else:
               out.write(line)
         out.close()
+        f.close()
+        os.remove(fname)
         os.rename(out_fname, fname)
 
 def is_concept_file(filename):
