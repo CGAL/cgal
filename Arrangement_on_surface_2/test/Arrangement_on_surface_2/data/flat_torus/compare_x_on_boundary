@@ -10,3 +10,5 @@ compare_x_on_boundary 9 40 MAX_END SMALLER
 compare_x_on_boundary 9 13 MAX_END SMALLER
 compare_x_on_boundary 11 40 MAX_END LARGER
 compare_x_on_boundary 11 13 MAX_END LARGER
+
+compare_x_on_boundary 15 MAX_END 30 MAX_END SMALLER

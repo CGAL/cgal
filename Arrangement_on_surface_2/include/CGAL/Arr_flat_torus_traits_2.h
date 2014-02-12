@@ -849,37 +849,43 @@ public:
     {
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(xcv1));
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(xcv2));
+      CGAL_precondition(m_traits.parameter_space_in_y_2_object()(xcv1, ce1) !=
+                        ARR_INTERIOR);
+      CGAL_precondition(m_traits.parameter_space_in_y_2_object()(xcv2, ce2) !=
+                        ARR_INTERIOR);
 
       Arr_parameter_space ps1_x;
       const Point_2* p1 = NULL;
-      if (((ce1 == ARR_MIN_END) && xcv1.is_directed_top()) ||
-          ((ce1 == ARR_MAX_END) && !xcv1.is_directed_top()))
+      if (((ce1 == ARR_MIN_END) && !xcv1.is_directed_right()) ||
+          ((ce1 == ARR_MAX_END) && xcv1.is_directed_right()))
       {
-        Arr_parameter_space ps1_x = xcv1.source_parameter_space_in_x();
-        p1 = &(xcv1.source());
-      }
-      else {
         Arr_parameter_space ps1_x = xcv1.target_parameter_space_in_x();
         p1 = &(xcv1.target());
+      }
+      else {
+        Arr_parameter_space ps1_x = xcv1.source_parameter_space_in_x();
+        p1 = &(xcv1.source());
       }
 
       Arr_parameter_space ps2_x;
       const Point_2* p2 = NULL;
-      if (((ce2 == ARR_MIN_END) && xcv2.is_directed_top()) ||
-            ((ce2 == ARR_MAX_END) && !xcv2.is_directed_top()))
+      if (((ce2 == ARR_MIN_END) && !xcv2.is_directed_right()) ||
+            ((ce2 == ARR_MAX_END) && xcv2.is_directed_right()))
       {
-        Arr_parameter_space ps2_x = xcv1.source_parameter_space_in_x();
-        p2 = &(xcv2.source());
+        Arr_parameter_space ps2_x = xcv2.target_parameter_space_in_x();
+        p2 = &(xcv2.target());
       }
       else {
-        Arr_parameter_space ps2_x = xcv1.target_parameter_space_in_x();
-        p2 = &(xcv2.target());
+        Arr_parameter_space ps2_x = xcv2.source_parameter_space_in_x();
+        p2 = &(xcv2.source());
       }
 
       if ((ps1_x == ARR_INTERIOR) && (ps2_x == ARR_INTERIOR))
         return m_traits.compare_x_2_object()(*p1, *p2);
       if (ps1_x == ps2_x) return EQUAL;
-      return (ps1_x == ARR_BOTTOM_BOUNDARY) ? SMALLER : LARGER;
+      return (ps1_x == ARR_LEFT_BOUNDARY) ? SMALLER :
+        ((ps1_x == ARR_RIGHT_BOUNDARY) ? LARGER :
+         ((ps2_x == ARR_LEFT_BOUNDARY) ? LARGER : SMALLER));
     }
 
     /*! Compare the x-coordinate of two given points that lie on the
