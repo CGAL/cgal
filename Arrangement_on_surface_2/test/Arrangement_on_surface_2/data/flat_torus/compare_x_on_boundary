@@ -1,0 +1,12 @@
+compare_x_on_boundary 4 38 MAX_END EQUAL
+compare_x_on_boundary 4 8 MAX_END EQUAL
+compare_x_on_boundary 9 38 MAX_END SMALLER
+compare_x_on_boundary 9 8 MAX_END SMALLER
+compare_x_on_boundary 11 38 MAX_END LARGER
+compare_x_on_boundary 11 8 MAX_END LARGER
+compare_x_on_boundary 4 40 MAX_END EQUAL
+compare_x_on_boundary 4 13 MAX_END EQUAL
+compare_x_on_boundary 9 40 MAX_END SMALLER
+compare_x_on_boundary 9 13 MAX_END SMALLER
+compare_x_on_boundary 11 40 MAX_END LARGER
+compare_x_on_boundary 11 13 MAX_END LARGER

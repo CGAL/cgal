@@ -796,9 +796,9 @@ public:
      *         EQUAL   - x(p) = x(xcv, ce);
      *         LARGER  - x(p) > x(xcv, ce).
      * \pre p does not lie on the x-boundary of the parameter space.
+     * \pre xcv does not lie on the x-boundary of the parameter space.
      * \pre the ce end of the curve xcv lies on the y-boundary of the
      *      parameter space.
-     * \pre xcv does not lie on the x-boundary of the parameter space.
      */
     Comparison_result operator()(const Point_2& point,
                                  const X_monotone_curve_2& xcv,
@@ -806,22 +806,18 @@ public:
     {
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(point));
       CGAL_precondition(!m_traits.is_on_x_identification_2_object()(xcv));
+      CGAL_precondition(m_traits.parameter_space_in_y_2_object()(xcv, ce) !=
+                        ARR_INTERIOR);
 
-      if (((ce == ARR_MIN_END) && xcv.is_directed_top()) ||
-          ((ce == ARR_MAX_END) && !xcv.is_directed_top()))
+      if (((ce == ARR_MIN_END) && !xcv.is_directed_right()) ||
+          ((ce == ARR_MAX_END) && xcv.is_directed_right()))
       {
-        CGAL_precondition(xcv.source_parameter_space_in_y() ==
-                          ARR_BOTTOM_BOUNDARY);
-        Arr_parameter_space ps_x = xcv.source_parameter_space_in_x();
+        Arr_parameter_space ps_x = xcv.target_parameter_space_in_x();
         return (ps_x == ARR_LEFT_BOUNDARY) ? LARGER :
           ((ps_x == ARR_RIGHT_BOUNDARY) ? SMALLER :
-           (m_traits.compare_x_2_object()(point, xcv.source())));
+           (m_traits.compare_x_2_object()(point, xcv.target())));
       }
-      // (ce == ARR_MIN_END) && !(xcv.is_directed_top() ||
-      // (ce == ARR_MAX_END) && (xcv.is_directed_top() ||
-      CGAL_precondition(xcv.target_parameter_space_in_y() ==
-                        ARR_BOTTOM_BOUNDARY);
-      Arr_parameter_space ps_x = xcv.target_parameter_space_in_x();
+      Arr_parameter_space ps_x = xcv.source_parameter_space_in_x();
       return (ps_x == ARR_LEFT_BOUNDARY) ? LARGER :
         ((ps_x == ARR_RIGHT_BOUNDARY) ? SMALLER :
          (m_traits.compare_x_2_object()(point, xcv.source())));
