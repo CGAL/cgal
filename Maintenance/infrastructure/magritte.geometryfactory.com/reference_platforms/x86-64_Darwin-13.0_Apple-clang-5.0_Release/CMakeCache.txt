@@ -18,22 +18,22 @@
 BUILD_SHARED_LIBS:BOOL=ON
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=/usr/local/include
+Boost_INCLUDE_DIR:PATH=/Users/cgaltester/boost-cpp11/boost_1_54_0
 
 //Boost library directory
-Boost_LIBRARY_DIR:PATH=/usr/local/lib
+Boost_LIBRARY_DIR:PATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
 
 //Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libboost_system-mt.dylib
+Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib
 
 //Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/usr/local/lib/libboost_system-mt.dylib
+Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib
 
 //Boost thread library (debug)
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/usr/local/lib/libboost_thread-mt.dylib
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib
 
 //Boost thread library (release)
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/usr/local/lib/libboost_thread-mt.dylib
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib
 
 //Select to allow to use all preconfigured external libraries
 CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT:BOOL=OFF
@@ -48,7 +48,7 @@ CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
 CGAL_Core_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL_Core.dylib
 
 //Dependencies for the target
-CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib;general;/usr/local/lib/libboost_thread-mt.dylib;general;/usr/local/lib/libboost_system-mt.dylib;
+CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
 
 //Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS.
 // When this is FALSE, all the CMAKE_*_FLAGS flags are overriden
@@ -88,19 +88,19 @@ CGAL_INSTALL_MAN_DIR:STRING=share/man/man1
 CGAL_ImageIO_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL_ImageIO.dylib
 
 //Dependencies for the target
-CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib;general;/usr/local/lib/libboost_thread-mt.dylib;general;/usr/local/lib/libboost_system-mt.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;general;/usr/lib/libz.dylib;
+CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;general;/usr/lib/libz.dylib;
 
 //The CGAL library
 CGAL_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib
 
 //Dependencies for the target
-CGAL_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/usr/local/lib/libboost_thread-mt.dylib;general;/usr/local/lib/libboost_system-mt.dylib;
+CGAL_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;
 
 //The CGAL_Qt4 library
 CGAL_Qt4_LIBRARY:STRING=/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL_Qt4.dylib
 
 //Dependencies for the target
-CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib;general;/usr/local/lib/libboost_thread-mt.dylib;general;/usr/local/lib/libboost_system-mt.dylib;general;/usr/local/lib/QtOpenGL.framework;general;/usr/local/lib/QtGui.framework;general;/usr/local/lib/QtCore.framework;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;
+CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/local/lib/libmpfr.dylib;general;/usr/local/lib/libgmp.dylib;general;/Users/cgaltester/cgal_test/reference_platforms/x86-64_Darwin-13.0_Apple-clang-5.0_Release/lib/libCGAL.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;general;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib;general;/usr/local/lib/QtOpenGL.framework;general;/usr/local/lib/QtGui.framework;general;/usr/local/lib/QtCore.framework;general;/System/Library/Frameworks/AGL.framework;general;/System/Library/Frameworks/OpenGL.framework;
 
 //Value Computed by CMake
 CGAL_SOURCE_DIR:STATIC=/Users/cgaltester/cgal_test/CGAL-I
@@ -1012,9 +1012,9 @@ Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
 Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
-CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/local/include
-CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/usr/local/lib/libboost_thread-mt.dylib;/usr/local/lib/libboost_system-mt.dylib
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/usr/local/lib
+CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0
+CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_thread.dylib;/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib/libboost_system.dylib
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
 CGAL_3RD_PARTY_PRECONFIGURED:INTERNAL=
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
@@ -1081,7 +1081,7 @@ CGAL_Core_LIBRARY-ADVANCED:INTERNAL=1
 //Variable hidden from user
 CGAL_Core_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL_Core.dylib
 //Variable hidden from user
-CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR
+CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR;GMP;MPFR
 CGAL_EXECUTABLE_TARGETS:INTERNAL=
 //Variable hidden from user
 CGAL_EXT_LIB_BLAS_PREFIX:INTERNAL=BLAS
@@ -1753,9 +1753,9 @@ _Boost_ADDITIONAL_VERSIONS_LAST:INTERNAL=1.56.1;1.56.0;1.56;1.55.1;1.55.0;1.55;1
 //Components requested for this build tree.
 _Boost_COMPONENTS_SEARCHED:INTERNAL=system;thread
 //Last used Boost_INCLUDE_DIR value.
-_Boost_INCLUDE_DIR_LAST:INTERNAL=/usr/local/include
+_Boost_INCLUDE_DIR_LAST:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0
 //Last used Boost_LIBRARY_DIR value.
-_Boost_LIBRARY_DIR_LAST:INTERNAL=/usr/local/lib
+_Boost_LIBRARY_DIR_LAST:INTERNAL=/Users/cgaltester/boost-cpp11/boost_1_54_0/stage/lib
 //Last used Boost_USE_MULTITHREADED value.
 _Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
 //Last used Boost_USE_STATIC_LIBS value.
