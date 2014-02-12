@@ -611,6 +611,20 @@ public:
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
     {
+      /* If both are full in the x and in the y dimensions, they must have
+       * either
+       * the same vertical directions and the same horizontal directions, or
+       * the opposite vertical directions and the opposite horizontal directions
+       */
+      if (xcv1.is_full() && xcv2.is_full())
+        return (((xcv1.is_directed_right() == xcv2.is_directed_right()) &&
+                 (xcv1.is_directed_top() == xcv2.is_directed_top())) ||
+                ((xcv1.is_directed_right() != xcv2.is_directed_right()) &&
+                 (xcv1.is_directed_top() != xcv2.is_directed_top())));
+
+      if (xcv1.is_full_x() != xcv2.is_full_x()) return false;
+      if (xcv1.is_full_y() != xcv2.is_full_y()) return false;
+
       return (operator()(xcv1.left(), xcv2.left()) &&
               operator()(xcv1.right(), xcv2.right()));
     }
@@ -725,10 +739,10 @@ public:
     {
       CGAL_precondition(!m_traits.is_on_y_identification_2_object()(xcv));
       return (ce == ARR_MIN_END) ?
-        (xcv.is_directed_top() ?
-         xcv.source_parameter_space_in_x() : xcv.target_parameter_space_in_x()) :
-        (xcv.is_directed_top() ?
-         xcv.target_parameter_space_in_x() : xcv.source_parameter_space_in_x());
+        (xcv.is_directed_right() ?
+         xcv.source_parameter_space_in_y() : xcv.target_parameter_space_in_y()) :
+        (xcv.is_directed_right() ?
+         xcv.target_parameter_space_in_y() : xcv.source_parameter_space_in_y());
     }
 
     /*! Obtains the parameter space at a point along the y-axis.
@@ -1471,8 +1485,8 @@ public:
       Construct_segment_2 ctr_seg = m_traits.construct_segment_2_object();
       Segment_2 seg1 = ctr_seg(xcv1.source_point(), xcv1.target_point());
       Segment_2 seg2 = ctr_seg(xcv2.source_point(), xcv2.target_point());
-      std::cout << "segment 1: " << seg1 << std::endl;
-      std::cout << "segment 2: " << seg2 << std::endl;
+      // std::cout << "segment 1: " << seg1 << std::endl;
+      // std::cout << "segment 2: " << seg2 << std::endl;
 
       const Kernel& kernel = m_traits;
       typename CGAL::cpp11::result_of<Intersect_2(Segment_2, Segment_2)>::type
@@ -1506,15 +1520,41 @@ public:
      * \param xcv2 the second curve.
      * \return true if the two curves are mergeable; false otherwise.
      * Two curves are mergeable if:
-     * 1. they are supported by the same plane, and
-     * 2. share a common endpoint that is not on the identification curve
+     * 1. they have the same underlying lines, and
+     * 2. share a common endpoint. This point cannot be on the boundary.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
     {
       if (xcv1.is_empty() || xcv2.is_empty()) return true;
 
-      //! \todo
+      if (xcv1.is_full_x() || xcv1.is_full_y() ||
+          xcv2.is_full_x() || xcv2.is_full_y())
+        return false;
+
+      // Merge only curves the directions of which are the same.
+      if (xcv1.is_directed_top() != xcv2.is_directed_top()) return false;
+      if (xcv1.is_directed_right() != xcv2.is_directed_right()) return false;
+      if (xcv1.is_vertical() != xcv2.is_vertical()) return false;
+
+      // Check whether the curves share an endpoint:
+      typename Traits::Equal_2 eq = m_traits.equal_2_object();
+      const Point_2& source1 = xcv1.source();
+      const Point_2& target1 = xcv1.target();
+      const Point_2& source2 = xcv2.source();
+      const Point_2& target2 = xcv2.target();
+      if ((!eq(target1, source2) || target1.is_on_boundary()) &&
+          (!eq(target2, source1) || target2.is_on_boundary()))
+        return false;
+
+      // Check whether the undelining lines are the same:
+      typedef typename Kernel::Line_2                   Line_2;
+      typedef typename Kernel::Construct_line_2         Construct_line_2;
+      const Kernel& kernel = m_traits;
+      Construct_line_2 ctr_line = kernel.construct_line_2_object();
+      Line_2 line1 = ctr_line(xcv1.source_point(), xcv1.target_point());
+      Line_2 line2 = ctr_line(xcv2.source_point(), xcv2.target_point());
+      return kernel.equal_2_object()(line1, line2);
       return false;
     }
   };
@@ -1562,7 +1602,25 @@ public:
         xcv = xcv1;
         return;
       }
-      //! \todo
+
+      // Find the common endpoint:
+
+      // Construct the merged x-monotone curve:
+      // Check whether the curves share an endpoint:
+      typename Traits::Equal_2 eq = m_traits.equal_2_object();
+      typename Traits::Construct_x_monotone_curve_2 ctr =
+        m_traits.construct_x_monotone_curve_2_object();
+
+      const Point_2& target1 = xcv1.target();
+      const Point_2& source2 = xcv2.source();
+      if (eq(target1, source2) && !target1.is_on_boundary()) {
+        xcv = ctr(xcv1.source_point(), xcv2.target_point());
+        return;
+      }
+      const Point_2& target2 = xcv2.target();
+      const Point_2& source1 = xcv1.source();
+      CGAL_assertion(eq(target2, source1) && !target2.is_on_boundary());
+      xcv = ctr(xcv2.source_point(), xcv1.target_point());
     }
   };
 
@@ -2009,6 +2067,9 @@ public:
 
   /*! Determine whether the curve spans the entire y-parameter_space. */
   bool is_full_y() const { return m_is_full_y; }
+
+  /*! Determine whether the curve spans the entire x- and y-parameter_spaces. */
+  bool is_full() const { return (is_full_x() && is_full_y()); }
 
   /*! Determine whether the curve is degenerate */
   bool is_degenerate() const { return m_is_degenerate; }
