@@ -859,11 +859,11 @@ public:
       if (((ce1 == ARR_MIN_END) && !xcv1.is_directed_right()) ||
           ((ce1 == ARR_MAX_END) && xcv1.is_directed_right()))
       {
-        Arr_parameter_space ps1_x = xcv1.target_parameter_space_in_x();
+        ps1_x = xcv1.target_parameter_space_in_x();
         p1 = &(xcv1.target());
       }
       else {
-        Arr_parameter_space ps1_x = xcv1.source_parameter_space_in_x();
+        ps1_x = xcv1.source_parameter_space_in_x();
         p1 = &(xcv1.source());
       }
 
@@ -872,11 +872,11 @@ public:
       if (((ce2 == ARR_MIN_END) && !xcv2.is_directed_right()) ||
             ((ce2 == ARR_MAX_END) && xcv2.is_directed_right()))
       {
-        Arr_parameter_space ps2_x = xcv2.target_parameter_space_in_x();
+        ps2_x = xcv2.target_parameter_space_in_x();
         p2 = &(xcv2.target());
       }
       else {
-        Arr_parameter_space ps2_x = xcv2.source_parameter_space_in_x();
+        ps2_x = xcv2.source_parameter_space_in_x();
         p2 = &(xcv2.source());
       }
 
@@ -1278,8 +1278,6 @@ public:
         return oi;
       }
 
-      std::cout << "cv.is_x_monotone(): " << cv.is_x_monotone() << std::endl;
-
       if (cv.is_x_monotone()) {
         // The curve is monotone---wrap it with an object:
         // *oi++ = make_object(X_monotone_curve_2(c));
@@ -1446,7 +1444,6 @@ public:
        */
       result_type operator()(const typename Kernel::Point_2& p) const
       {
-        std::cout << "point: " << p << std::endl;
         std::pair<typename Traits::Point_2, Multiplicity> po(Point_2(p), 1);
         *m_oi++ = make_object(po);
       }
@@ -1456,7 +1453,6 @@ public:
        */
       result_type operator()(const typename Kernel::Segment_2& s) const
       {
-        std::cout << "segment: " << s << std::endl;
         typename Traits::Construct_x_monotone_curve_2 ctr =
           m_traits.construct_x_monotone_curve_2_object();
         X_monotone_curve_2 xcv = ctr(Point_2(s.source()), Point_2(s.target()));
