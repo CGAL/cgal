@@ -951,6 +951,12 @@ public:
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
+      Parameter_space_in_y_2 py = m_traits.parameter_space_in_y_2_object();
+      Arr_parameter_space py1 = py(xcv1, ce);
+      Arr_parameter_space py2 = py(xcv2, ce);
+      CGAL_precondition(py1 != ARR_INTERIOR);
+      CGAL_precondition(py2 != ARR_INTERIOR);
+
       typename Kernel::Point_2 l1, r1;
       if (xcv1.is_directed_right()) {
         l1 = xcv1.source_point();
@@ -970,16 +976,13 @@ public:
         r2 = xcv2.source_point();
       }
 
-      Parameter_space_in_y_2 py = m_traits.parameter_space_in_y_2_object();
-      Arr_parameter_space py1 = py(xcv1, ce);
-      Arr_parameter_space py2 = py(xcv2, ce);
       typename Kernel::Orientation_2 orient = m_traits.orientation_2_object();
       if (py1 == ARR_BOTTOM_BOUNDARY) {
-        if (py2 == ARR_TOP_BOUNDARY) r2 = Point_2(r2.x(), 1 - r2.y());
-        return orient(r1, l1, r2);
+        if (ce == ARR_MAX_END) return orient(l2, r1, l1);
+        return orient(r2, l1, r1);
       }
-      if (py2 == ARR_BOTTOM_BOUNDARY) r2 = Point_2(r2.x(), 1 - r2.y());
-      orient(r2, l2, r1);
+      if (ce == ARR_MAX_END) return orient(l1, r1, l2);
+      return orient(r1, l1, r2);
     }
   };
 
