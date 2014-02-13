@@ -2,6 +2,35 @@
 
 std::size_t TS;
 
+template <typename C3T3>
+void incident(const C3T3& c3t3)
+{
+  typedef typename C3T3::Triangulation Tr;
+
+ const Tr& tr_ = c3t3.triangulation();
+ for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin();
+          it!= tr_.finite_vertices_end();
+        ++it){
+      typedef std::vector<typename Tr::Facet> Facet_vector;
+      Facet_vector facets;
+      typename Tr::Vertex_handle vh = it; 
+      tr_.finite_incident_facets(vh, std::back_inserter(facets));
+      std::cout << "vertex " << vh->ts << std::endl;
+      for(typename Facet_vector::iterator fit2 = facets.begin() ;
+           fit2 != facets.end() ;
+           ++fit2 ){
+        typename Tr::Cell_handle c = fit2->first;
+        int ii = fit2->second;
+        std::cout << "  f  " << c->ts << " " << ii; 
+        typename Tr::Facet mf = tr_.mirror_facet(*fit2);
+        c = mf.first;
+        ii = mf.second;
+        std::cout << "  n  " << c->ts << " " << ii << std::endl;
+      }      
+ }
+
+}
+
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -32,8 +61,12 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
+
+
 int main(int argc, char* argv[])
 {
+  std::cout.precision(17);
+
   // Collect options
   std::size_t nb_runs = 1;
   char* filename = "run";
@@ -113,6 +146,8 @@ int main(int argc, char* argv[])
     std::ofstream medit_file(num_str + std::string("out0-refinement.mesh"));
     c3t3.output_to_medit(medit_file);
   
+    incident(c3t3);
+
     //LLOYD
     if(do_lloyd)
     {
