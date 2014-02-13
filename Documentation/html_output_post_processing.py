@@ -68,7 +68,7 @@ def write_out_html(d, fn):
     f.close()
 
 def package_glob(target):
-    return filter(lambda x: not './Manual/' in x, glob.glob(target))
+    return filter(lambda x: not os.path.join(os.path.join('.','Manual'),'')  in x, glob.glob(target))
 
 # remove duplicate files
 def clean_doc():
@@ -104,6 +104,8 @@ def re_replace_in_file(pat, s_after, fname):
         for line in f:
             out.write(re.sub(pat, s_after, line))
         out.close()
+        f.close()
+        os.remove(fname)
         os.rename(out_fname, fname)
 
 def re_replace_first_in_file(pat, s_after, fname):
@@ -124,6 +126,8 @@ def re_replace_first_in_file(pat, s_after, fname):
             else:
               out.write(line)
         out.close()
+        f.close()
+        os.remove(fname)
         os.rename(out_fname, fname)
 
 def is_concept_file(filename):
@@ -167,7 +171,11 @@ def update_figure_ref(i,global_anchor_map):
   link = pq(this)
   link_name=link.text()
   if re.match("fig__.+",link_name) != None:
-    link.text( "Figure "+str(global_anchor_map[link_name]) )
+    #replace the link only if it was collected
+    if global_anchor_map.has_key(link_name):
+      link.text( "Figure "+str(global_anchor_map[link_name]) )
+    else:
+      stderr.write("Error: Figure numbering; "+link_name+" has not been collected\n")
 
 ## number figures and reference to figures
 def automagically_number_figures():
@@ -184,7 +192,6 @@ def automagically_number_figures():
         all_packages.append(res.group(1))
       else:
         stderr.write("Error: Figure numbering; skipping "+text+"\n")
-  
   #collect all the figure anchors in user manual and associate them a unique id
   pkg_id=1 # the id of a package
   global_anchor_map={} #map a figure anchor to it unique name: pkg_id+.+fig_nb
@@ -232,9 +239,9 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     automagically_number_figures()
 
     #replace icons with CGAL colored ones
-    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("Manual/", "ftv2cl.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("Manual/", "ftv2ns.png"))
-    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("Manual/", "ftv2cpt.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cl.png"),path.join("Manual", "ftv2cl.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2ns.png"),path.join("Manual", "ftv2ns.png"))
+    shutil.copy(path.join(resources_absdir,"ftv2cpt.png"),path.join("Manual", "ftv2cpt.png"))
 
     annotated_files=package_glob('./*/annotated.html')
     for fn in annotated_files:
@@ -293,12 +300,12 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
                        "'src','../Manual/ftv2",
-                       'Manual/dynsections.js')
+                       os.path.join('Manual','dynsections.js') )
 
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
 
-    re_replace_in_file('\[external\]', '', './Manual/annotated.html')
+    re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
 
     # fix class/concept mismatch in generated pages
     relationship_pages=package_glob('./*/hasModels.html')
@@ -349,11 +356,13 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     #add a canonical link to all pages
     all_pages=glob.glob('*/*.html')
     for f in all_pages:
-      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+f+"\"/>\n"
+      url_f=os.path.split(f)
+      url_f=url_f[0]+"/"+url_f[1]
+      canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/"+url_f+"\"/>\n"
       re_replace_first_in_file(r'<head>', r'<head>\n'+canonical_link, f)
     ## special case for how_to_cite.html
     canonical_link="<link rel=\"canonical\" href=\"http://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
-    re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", "Manual/how_to_cite.html")
+    re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
 
     #copy deprecated.html
     shutil.copy(path.join(resources_absdir,"deprecated.html"),path.join("Manual/", "deprecated.html"))
