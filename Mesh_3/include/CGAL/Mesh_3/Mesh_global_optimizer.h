@@ -292,14 +292,18 @@ operator()(int nb_iterations, Visitor visitor)
   int i = -1;
   while ( ++i < nb_iterations && ! is_time_limit_reached() )
   {
+    std::cout << "ODT iteration " << i << std::endl;
     if(!do_freeze_) 
       nb_frozen_points_ = 0;
     else
       nb_vertices_moved = moving_vertices.size();
 
+
     // Compute move for each vertex
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
+
+    incident(c3t3_);
 
     //Pb with Freeze : sometimes a few vertices continue moving indefinitely
     //if the nb of moving vertices is < 1% of total nb AND does not decrease
@@ -318,6 +322,7 @@ operator()(int nb_iterations, Visitor visitor)
       break;
     
     // Update mesh with those moves
+   
     update_mesh(moves, moving_vertices, visitor);
     visitor.end_of_iteration(i);
 
@@ -452,13 +457,17 @@ compute_move(const Vertex_handle& v)
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
-  
+
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
     Point_3 new_position = translate(v->point(),move);
     move = vector(v->point(), helper_.project_on_surface(new_position,v));
   }
+  //std::cout << "mv " << v->point() 
+		//	<< "\t to " << translate(v->point(),move)
+  //          << "\t(ts = "<< v->ts <<")" 
+  //          << "\t(d = "<< c3t3_.in_dimension(v) <<")" << std::endl;
   
   FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
   if ( FT(0) == local_sq_size )
