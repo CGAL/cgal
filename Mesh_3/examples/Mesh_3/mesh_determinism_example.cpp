@@ -1,5 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+std::size_t TS;
+
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -51,7 +53,7 @@ int main(int argc, char* argv[])
 
   // Domain
   CGAL::Image_3 image;
-  image.read("data/liver.inr.gz");
+  image.read("data/liver.inr");
   Mesh_domain domain(image);
 
   // Mesh criteria
@@ -63,6 +65,8 @@ int main(int argc, char* argv[])
 
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
+    TS = 0;
+
     CGAL::default_random = CGAL::Random(0);
 
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
@@ -106,6 +110,7 @@ int main(int argc, char* argv[])
       std::ofstream medit_file4(num_str + std::string("out4-exude.mesh"));
       c3t3.output_to_medit(medit_file4);
     }
+    std::cerr << "TS = " << TS << std::endl;
   }
 
   return 0;

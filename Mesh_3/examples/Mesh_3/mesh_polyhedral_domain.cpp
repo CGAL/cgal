@@ -1,4 +1,9 @@
+
+
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+std::size_t TS;
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -26,8 +31,10 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main()
+int fct()
 {
+  CGAL::default_random = CGAL::Random();
+  TS = 0;
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input("data/elephant.off");
@@ -41,13 +48,14 @@ int main()
                          cell_radius_edge_ratio=3);
   
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+
 
   // Output
   std::ofstream medit_file("out_1.mesh");
   c3t3.output_to_medit(medit_file);
   medit_file.close();
-
+#if 0
   // Set tetrahedron size (keep cell_radius_edge_ratio), ignore facets
   Mesh_criteria new_criteria(cell_radius_edge_ratio=3, cell_size=0.03);
 
@@ -57,6 +65,16 @@ int main()
   // Output
   medit_file.open("out_2.mesh");
   c3t3.output_to_medit(medit_file);
+#endif
 
+  std::cerr << "TS = " << TS << std::endl;
   return 0;
+}
+
+
+int main()
+{
+  for(int i = 0; i < 3; i++){
+    fct();
+  }
 }

@@ -94,8 +94,7 @@ public:
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
-  {
-  }
+  {}
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
     : circumcenter_(NULL)
@@ -499,6 +498,8 @@ private:
   char bits_;
   mutable bool sliver_cache_validity_;
 
+public: 
+  std::size_t ts;
 
 };  // end class Compact_mesh_cell_base_3
 

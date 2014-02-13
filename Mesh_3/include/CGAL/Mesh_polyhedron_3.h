@@ -44,6 +44,10 @@ private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
   
   Set_of_indices indices;
+
+public:
+  std::size_t ts;
+
 public:
   int nb_of_feature_edges;
   
@@ -74,6 +78,10 @@ public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
   bool feature_edge;
+
+public:
+  std::size_t ts;
+
 public:
   
   Mesh_polyhedron_halfedge() 
@@ -95,6 +103,10 @@ public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
   Patch_id_ patch_id_;
+
+public:
+  std::size_t ts;
+
 public:
 
   typedef Patch_id_ Patch_id;

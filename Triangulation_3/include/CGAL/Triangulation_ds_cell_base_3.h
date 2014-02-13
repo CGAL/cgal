@@ -207,6 +207,8 @@ private:
   Cell_handle   N[4];
   Vertex_handle V[4];
   TDS_data      _tds_data;
+public:
+  std::size_t ts;
 };
 
 template < class TDS >

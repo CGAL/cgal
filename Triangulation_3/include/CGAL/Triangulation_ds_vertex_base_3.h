@@ -64,6 +64,8 @@ public:
 
 private:
   Cell_handle _c;
+public:
+  std::size_t ts;
 };
 
 template < class TDS >

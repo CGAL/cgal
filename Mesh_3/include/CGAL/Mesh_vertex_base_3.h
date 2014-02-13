@@ -158,6 +158,10 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
+
+public:
+  std::size_t ts;
+
 private:
 
   int number_of_incident_facets_;

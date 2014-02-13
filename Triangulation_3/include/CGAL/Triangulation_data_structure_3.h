@@ -156,7 +156,7 @@ public:
     }
   };
 //#endif  
- 
+
 
 public:
   Triangulation_data_structure_3()
@@ -207,12 +207,16 @@ public:
 
   Vertex_handle create_vertex(const Vertex &v)
   {
-      return vertices().insert(v);
+      Vertex_handle vh = vertices().insert(v);
+      vh->ts = TS++;
+      return vh;
   }
 
   Vertex_handle create_vertex()
   {
-      return vertices().emplace();
+      Vertex_handle vh = vertices().emplace(); 
+      vh->ts = TS++;
+      return vh;
   }
 
   Vertex_handle create_vertex(Vertex_handle v)
@@ -222,12 +226,16 @@ public:
 
   Cell_handle create_cell(const Cell &c)
     {
-      return cells().insert(c);
+      Cell_handle ch = cells().insert(c);
+      ch->ts = TS++;
+      return ch;
     }
 
   Cell_handle create_cell()
     {
-      return cells().emplace();
+      Cell_handle ch = cells().emplace(); 
+      ch->ts = TS++;
+      return ch;
     }
 
   Cell_handle create_cell(Cell_handle c)
@@ -238,7 +246,9 @@ public:
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
 	                  Vertex_handle v2, Vertex_handle v3)
     {
-      return cells().emplace(v0, v1, v2, v3);
+      Cell_handle ch = cells().emplace(v0, v1, v2, v3);
+      ch->ts = TS++;
+      return ch;
     }
 
   Cell_handle create_cell(Vertex_handle v0, Vertex_handle v1,
@@ -246,7 +256,9 @@ public:
 		          Cell_handle n0, Cell_handle n1,
 			  Cell_handle n2, Cell_handle n3)
     {
-      return cells().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
+      Cell_handle ch = cells().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
+      ch->ts = TS++;
+      return ch;
     }
 
   Cell_handle create_face()
@@ -259,7 +271,9 @@ public:
 	                  Vertex_handle v2)
     {
       CGAL_triangulation_precondition(dimension()<3);
-      return cells().emplace(v0, v1, v2, Vertex_handle());
+      Cell_handle ch = cells().emplace(v0, v1, v2, Vertex_handle());
+      ch->ts = TS++;
+      return ch;
     }
 
   // The following functions come from TDS_2.
@@ -3641,6 +3655,17 @@ count_cells(size_type & i, bool verbose, int level) const
   }
   return true;
 }
+
+
+
+template <class Vb, class Cb >
+bool 
+  operator< (typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle a, typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle b)
+  {
+    std::cerr << "operator<" << std::endl;
+    return a->ts < b->ts;
+}
+
 
 } //namespace CGAL
 

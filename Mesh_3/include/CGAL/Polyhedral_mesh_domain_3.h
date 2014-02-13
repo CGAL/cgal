@@ -637,9 +637,8 @@ Construct_initial_points::operator()(OutputIterator pts,
   const Point_3 center( FT( (bbox.xmin() + bbox.xmax()) / 2),
                         FT( (bbox.ymin() + bbox.ymax()) / 2),
                         FT( (bbox.zmin() + bbox.zmax()) / 2) );
-  
-  Random_points_on_sphere_3<Point_3> random_point(1.);
 
+  Random_points_on_sphere_3<Point_3> random_point(1.);
   int i = n;
 #ifdef CGAL_MESH_3_VERBOSE
   std::cerr << "construct initial points:" << std::endl;

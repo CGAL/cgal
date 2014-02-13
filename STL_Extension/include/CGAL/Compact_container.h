@@ -864,21 +864,25 @@ namespace internal {
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
+      return m_ptr.p->ts < other.m_ptr.p->ts;
       return (m_ptr.p < other.m_ptr.p);
     }
 
     bool operator>(const CC_iterator& other) const
     {
+      std::cerr << ">"<< std::endl;
       return (m_ptr.p > other.m_ptr.p);
     }
 
     bool operator<=(const CC_iterator& other) const
     {
+      std::cerr << "<="<< std::endl;
       return (m_ptr.p <= other.m_ptr.p);
     }
 
     bool operator>=(const CC_iterator& other) const
     {
+      std::cerr << ">="<< std::endl;
       return (m_ptr.p >= other.m_ptr.p);
     }
 
