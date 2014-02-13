@@ -1952,7 +1952,6 @@ public:
 // as used by the Arr_flat_torus_traits_2 traits-class template.
 // An x-monotone great circular curve cannot cross boundary of the parameter
 // space.
-// \todo At this point such an curve cannot have an angle of 180 degrees.
 template <typename Kernel_>
 class Arr_x_monotone_curve_on_flat_torus_3 {
 public:
