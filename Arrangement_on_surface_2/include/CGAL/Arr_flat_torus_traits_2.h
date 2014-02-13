@@ -1020,17 +1020,20 @@ public:
      * \param ce the curve end indicator.
      * \return the second comparison result.
      * \pre the ce ends of the curves xcv1 and xcv2 lie either on the left
-     *      boundary or on the right boundary of the parameter space (implying
-     *      that they cannot be vertical).
-     * There is no horizontal identification curve!
+     *      boundary or on the right boundary of the parameter space.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      //! \todo
       CGAL_precondition(!xcv1.is_degenerate());
       CGAL_precondition(!xcv2.is_degenerate());
+      CGAL_precondition(m_traits.parameter_space_in_x_2_object()(xcv1, ce) !=
+                        ARR_INTERIOR);
+      CGAL_precondition(m_traits.parameter_space_in_x_2_object()(xcv2, ce) !=
+                        ARR_INTERIOR);
+
+      //! \todo
       return EQUAL;
     }
   };
