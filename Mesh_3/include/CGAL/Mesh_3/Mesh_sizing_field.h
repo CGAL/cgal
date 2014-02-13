@@ -26,7 +26,7 @@
 #ifndef CGAL_MESH_3_MESH_SIZING_FIELD_H
 #define CGAL_MESH_3_MESH_SIZING_FIELD_H
 
-#include <CGAL/Mesh_3/comparison_operators.h>
+#include <CGAL/Mesh_3/compare.h>
 
 namespace CGAL {
 
