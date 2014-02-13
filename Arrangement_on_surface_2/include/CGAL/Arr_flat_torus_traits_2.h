@@ -1033,8 +1033,41 @@ public:
       CGAL_precondition(m_traits.parameter_space_in_x_2_object()(xcv2, ce) !=
                         ARR_INTERIOR);
 
-      //! \todo
-      return EQUAL;
+      typename Kernel::Point_2 l1, r1;
+      if (xcv1.is_directed_right()) {
+        l1 = xcv1.source_point();
+        r1 = xcv1.target_point();
+      }
+      else {
+        l1 = xcv1.target_point();
+        r1 = xcv1.source_point();
+      }
+      typename Kernel::Point_2 l2, r2;
+      if (xcv2.is_directed_right()) {
+        l2 = xcv2.source_point();
+        r2 = xcv2.target_point();
+      }
+      else {
+        l2 = xcv2.target_point();
+        r2 = xcv2.source_point();
+      }
+
+      const Kernel& kernel = m_traits;
+      typename Kernel::Orientation_2 orient = kernel.orientation_2_object();
+      typename Kernel::Compare_y_2 cmp_y = kernel.compare_y_2_object();
+      Arr_parameter_space px1 =
+        m_traits.parameter_space_in_x_2_object()(xcv1, ce);
+      if (px1 == ARR_LEFT_BOUNDARY) {
+        CGAL_assertion(ce == ARR_MIN_END);
+        Comparison_result rc = cmp_y(l1, l2);
+        if (rc != EQUAL) return rc;
+        return orient(r1, l1, r2);
+      }
+      CGAL_assertion(px1 == ARR_RIGHT_BOUNDARY);
+      CGAL_assertion(ce == ARR_MAX_END);
+      Comparison_result rc = cmp_y(r1, r2);
+      if (rc != EQUAL) return rc;
+      return orient(l2, r2, l1);
     }
   };
 
