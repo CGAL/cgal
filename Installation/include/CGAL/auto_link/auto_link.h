@@ -160,10 +160,20 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
    // vc10:
 #  define CGAL_LIB_TOOLSET "vc100"
 
-#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1700)
+#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1700)
 
    // vc11:
 #  define CGAL_LIB_TOOLSET "vc110"
+
+#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1800)
+
+   // vc12:
+#  define CGAL_LIB_TOOLSET "vc120"
+
+#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1900)
+
+   // vc13:
+#  define CGAL_LIB_TOOLSET "vc130"
 
 #elif defined(__BORLANDC__)
 
