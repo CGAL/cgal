@@ -63,6 +63,9 @@ namespace CGAL {
     FT high_val;
                 
   public:
+    std::size_t ts;
+
+  public:
 		
     void *   for_compact_container() const { return lower_ch.for_compact_container(); }
     void * & for_compact_container()       { return lower_ch.for_compact_container(); }
@@ -72,11 +75,11 @@ namespace CGAL {
     {}
 
     Kd_tree_node(Node_type t ) 
-      : the_node_type(t) 
+      : the_node_type(t) , ts(0)
     {}
 
     Kd_tree_node(unsigned int n_, Node_type t ) 
-      : the_node_type(t), n(n_)
+      : the_node_type(t), n(n_),  ts(0)
     {}
 
     // members for all nodes
