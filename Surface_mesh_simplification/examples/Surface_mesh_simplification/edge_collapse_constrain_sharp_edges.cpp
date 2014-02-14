@@ -17,15 +17,15 @@
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
-typedef CGAL::Polyhedron_3<Kernel> Surface;
-typedef boost::graph_traits<Surface const>::edge_descriptor edge_descriptor;
+typedef CGAL::Polyhedron_3<Kernel> Surface_mesh;
+typedef boost::graph_traits<Surface_mesh const>::edge_descriptor edge_descriptor;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
 
-typedef Surface::Facet_iterator Facet_iterator;
-typedef Surface::Halfedge_handle Halfedge_handle;
-typedef Surface::Halfedge_iterator Halfedge_iterator;
+typedef Surface_mesh::Facet_iterator Facet_iterator;
+typedef Surface_mesh::Halfedge_handle Halfedge_handle;
+typedef Surface_mesh::Halfedge_iterator Halfedge_iterator;
 
 
 //
@@ -54,7 +54,7 @@ int main( int argc, char** argv )
 {
   CGAL::Unique_hash_map<edge_descriptor,bool> constraint_hmap(false);
 
-  Surface surface;
+  Surface_mesh surface_mesh;
 
   if (argc!=2){
     std::cerr<< "Usage: " << argv[0] << " input.off\n";
@@ -67,10 +67,10 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  is >> surface ;
+  is >> surface_mesh  ;
 
   Constrained_edge_map constraints_map(constraint_hmap);
-  SMS::Constrained_placement<SMS::Midpoint_placement<Surface>,
+  SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
                              Constrained_edge_map > placement(constraints_map);
 
   // map used to check that constrained_edges and the points of its vertices
@@ -78,12 +78,12 @@ int main( int argc, char** argv )
   // Warning: the computation of the diedral angle is only an approximation and can
   //          be far from the real value and could influence the detection of sharp
   //          edges after the simplification
-  std::map<Surface::Halfedge_handle,std::pair<Point_3, Point_3> >constrained_edges;
+  std::map<Surface_mesh::Halfedge_handle,std::pair<Point_3, Point_3> >constrained_edges;
   std::size_t nb_sharp_edges=0;
 
   // detect sharp edges
   std::ofstream cst_output("constrained_edges.cgal");
-  for(Surface::Edge_iterator eb = surface.edges_begin(), ee = surface.edges_end() ; eb != ee ; ++eb )
+  for(Surface_mesh::Edge_iterator eb = surface_mesh.edges_begin(), ee = surface_mesh.edges_end() ; eb != ee ; ++eb )
   {
     if ( eb->is_border_edge() ){
       ++nb_sharp_edges;
@@ -111,25 +111,25 @@ int main( int argc, char** argv )
   }
   cst_output.close();
 
-  // Contract the surface as much as possible
-  SMS::Count_stop_predicate<Surface> stop(0);
+  // Contract the surface mesh as much as possible
+  SMS::Count_stop_predicate<Surface_mesh> stop(0);
 
   int r
-  = SMS::edge_collapse(surface
+  = SMS::edge_collapse(surface_mesh
                        ,stop
-                       ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface))
-                       .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface))
+                       ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface_mesh))
+                       .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface_mesh))
                        .edge_is_constrained_map(constraints_map)
                        .get_placement(placement)
    );
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
-  << (surface.size_of_halfedges()/2) << " final edges.\n" ;
-  std::ofstream os(argc > 2 ? argv[2] : "out.off") ; os << surface ;
+  << (surface_mesh.size_of_halfedges()/2) << " final edges.\n" ;
+  std::ofstream os(argc > 2 ? argv[2] : "out.off") ; os << surface_mesh ;
 
   std::cout  << "Checking sharped edges were preserved...\n";
   // check sharp edges were preserved
-  for(Surface::Edge_iterator eb = surface.edges_begin(), ee = surface.edges_end() ; eb != ee ; ++eb )
+  for(Surface_mesh::Edge_iterator eb = surface_mesh.edges_begin(), ee = surface_mesh.edges_end() ; eb != ee ; ++eb )
   {
     if ( eb->is_border_edge() ){
       --nb_sharp_edges;

@@ -10,7 +10,7 @@ It computes the placement, that is, the new position for the remaining vertex af
 a halfedge-collapse, following the Lindstrom-Turk strategy 
 (Section \ref SurfaceMeshSimplificationLindstromTurkStrategy). 
 
-\tparam ECM is the type of surface being simplified, and must be a model of the `EdgeCollapsableMesh` concept. 
+\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
 
 \cgalModels `GetPlacement`
 

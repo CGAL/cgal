@@ -18,22 +18,22 @@ public:
 /// @{
 
 /*!
-The type of the surface to simplify. Must be a model of the `EdgeCollapsableMesh` concept. 
+The type of the surface mesh to simplify. Must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
 */ 
 typedef unspecified_type ECM; 
 
 /*!
-A <span class="textsc">Bgl</span> vertex descriptor representing a vertex of the surface. 
+A <span class="textsc">Bgl</span> vertex descriptor representing a vertex of the surface mesh. 
 */ 
 typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor; 
 
 /*!
-A <span class="textsc">Bgl</span> edge descriptor representing an edge of the surface. 
+A <span class="textsc">Bgl</span> edge descriptor representing an edge of the surface mesh. 
 */ 
 typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor; 
 
 /*!
-The point type for the surface vertex. Must be a model of `Point_3`. 
+The point type for the surface mesh vertex. Must be a model of `Point_3`. 
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
@@ -123,19 +123,19 @@ The unique collection of the border directed edges incident upon ` v0` and ` v1`
 std::vector<edge_descriptor> border_edges() const; 
 
 /*!
-Indicates if `v0v1` belongs to a finite face of the mesh (i.e, `v0v1` is not a border edge). 
+Indicates if `v0v1` belongs to a finite face of the surface mesh (i.e, `v0v1` is not a border edge). 
 */ 
 bool left_face_exits() const; 
 
 /*!
-Indicates if `v0v1` belongs to a finite face of the mesh (i.e, `v1v0` is not a border edge). 
+Indicates if `v0v1` belongs to a finite face of the surface mesh (i.e, `v1v0` is not a border edge). 
 */ 
 bool right_face_exits() const; 
 
 /*!
-Returns the surface the edge belongs to.
+Returns the surface mesh the edge belongs to.
 */
-const ECM& surface() const;
+const ECM& surface_mesh() const;
 
 /// @}
 

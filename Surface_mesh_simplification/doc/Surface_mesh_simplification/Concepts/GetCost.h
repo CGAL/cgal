@@ -36,7 +36,7 @@ A field type representing the collapse cost
 typedef unspecified_type FT; 
 
 /*!
-The point type for the surface vertex. Must be a model of `Point_3`. 
+The point type for the surface mesh vertex. Must be a model of `Point_3`. 
 */ 
 typename CGAL::halfedge_graph_traits<ECM>::Point Point; 
 
