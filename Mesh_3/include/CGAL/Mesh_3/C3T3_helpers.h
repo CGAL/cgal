@@ -2031,7 +2031,6 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
        it != vertex_to_proj.end() ;
        ++it )
   {
-          std::cout << "vp " << (*it)->ts << "\t" << (*it)->point() << std::endl;
     Point_3 new_pos = project_on_surface((*it)->point(),*it);
 
     if ( new_pos != Point_3() )
@@ -2480,27 +2479,6 @@ get_least_square_surface_plane(const Vertex_handle& v,
       const int& i = fit->second;
       
       surface_point_vector.push_back(cell->get_facet_surface_center(i));
-      /*  
-      if(cell->ts == 658591 || cell->ts == 658596)
-      {
-       for( typename Facet_vector::iterator fit2 = facets.begin() ;
-           fit2 != facets.end() ;
-           ++fit2 )
-       {
-              Cell_handle c = fit2->first;
-                  int ii = fit2->second;
-                  std::cout << "  f  "<< ii << " " << c->ts 
-                          <<": " << c->get_facet_surface_center(ii)
-                          << std::endl;
-                  Facet mf = tr_.mirror_facet(*fit2);
-              c = mf.first;
-                  ii = mf.second;
-                  std::cout << "  fn "<< ii << " " << c->ts 
-                          <<": " << c->get_facet_surface_center(ii)
-                          << std::endl;
-                }
-      }
-*/
     }
   }
 

@@ -292,7 +292,6 @@ operator()(int nb_iterations, Visitor visitor)
   int i = -1;
   while ( ++i < nb_iterations && ! is_time_limit_reached() )
   {
-    std::cout << "ODT iteration " << i << std::endl;
     if(!do_freeze_) 
       nb_frozen_points_ = 0;
     else
@@ -462,10 +461,6 @@ compute_move(const Vertex_handle& v)
     Point_3 new_position = translate(v->point(),move);
     move = vector(v->point(), helper_.project_on_surface(new_position,v));
   }
-  //std::cout << "mv " << v->point() 
-		//	<< "\t to " << translate(v->point(),move)
-  //          << "\t(ts = "<< v->ts <<")" 
-  //          << "\t(d = "<< c3t3_.in_dimension(v) <<")" << std::endl;
   
   FT local_sq_size = min_circumradius_sq_length(v, incident_cells);
   if ( FT(0) == local_sq_size )
