@@ -208,14 +208,12 @@ public:
   Vertex_handle create_vertex(const Vertex &v)
   {
       Vertex_handle vh = vertices().insert(v);
-      vh->ts = TS++;
       return vh;
   }
 
   Vertex_handle create_vertex()
   {
       Vertex_handle vh = vertices().emplace(); 
-      vh->ts = TS++;
       return vh;
   }
 
@@ -227,14 +225,12 @@ public:
   Cell_handle create_cell(const Cell &c)
     {
       Cell_handle ch = cells().insert(c);
-      ch->ts = TS++;
       return ch;
     }
 
   Cell_handle create_cell()
     {
       Cell_handle ch = cells().emplace(); 
-      ch->ts = TS++;
       return ch;
     }
 
@@ -247,7 +243,6 @@ public:
 	                  Vertex_handle v2, Vertex_handle v3)
     {
       Cell_handle ch = cells().emplace(v0, v1, v2, v3);
-      ch->ts = TS++;
       return ch;
     }
 
@@ -257,7 +252,6 @@ public:
 			  Cell_handle n2, Cell_handle n3)
     {
       Cell_handle ch = cells().emplace(v0, v1, v2, v3, n0, n1, n2, n3);
-      ch->ts = TS++;
       return ch;
     }
 
@@ -272,7 +266,6 @@ public:
     {
       CGAL_triangulation_precondition(dimension()<3);
       Cell_handle ch = cells().emplace(v0, v1, v2, Vertex_handle());
-      ch->ts = TS++;
       return ch;
     }
 
@@ -3654,16 +3647,6 @@ count_cells(size_type & i, bool verbose, int level) const
     ++i;
   }
   return true;
-}
-
-
-
-template <class Vb, class Cb >
-bool 
-  operator< (typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle a, typename Triangulation_data_structure_3<Vb,Cb>::Cell_handle b)
-  {
-    std::cerr << "operator<" << std::endl;
-    return a->ts < b->ts;
 }
 
 

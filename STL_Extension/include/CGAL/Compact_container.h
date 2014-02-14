@@ -157,6 +157,7 @@ public:
   {
     init();
     block_size = c.block_size;
+    time_stamp = c.time_stamp;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
@@ -184,6 +185,7 @@ public:
     std::swap(last_item, c.last_item);
     std::swap(free_list, c.free_list);
     all_items.swap(c.all_items);
+    std::swap(time_stamp, c.time_stamp);
   }
 
   iterator begin() { return iterator(first_item, 0, 0); }
@@ -229,6 +231,7 @@ public:
     new (ret) value_type(args...);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 #else
@@ -243,6 +246,7 @@ public:
     new (ret) value_type();
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -258,6 +262,7 @@ public:
     new (ret) value_type(t1);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -273,6 +278,7 @@ public:
     new (ret) value_type(t1, t2);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -288,6 +294,7 @@ public:
     new (ret) value_type(t1, t2, t3);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -303,6 +310,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -319,6 +327,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -336,6 +345,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -353,6 +363,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -370,6 +381,7 @@ public:
     new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -384,6 +396,7 @@ public:
     alloc.construct(ret, t);
     CGAL_assertion(type(ret) == USED);
     ++size_;
+    ret->ts = time_stamp++;
     return iterator(ret, 0);
   }
 
@@ -574,6 +587,7 @@ private:
     first_item = NULL;
     last_item  = NULL;
     all_items  = All_items();
+    time_stamp = 0;
   }
 
   allocator_type   alloc;
@@ -584,6 +598,7 @@ private:
   pointer          first_item;
   pointer          last_item;
   All_items        all_items;
+  std::size_t      time_stamp;
 };
 
 template < class T, class Allocator >
@@ -865,25 +880,21 @@ namespace internal {
     bool operator<(const CC_iterator& other) const
     {
       return m_ptr.p->ts < other.m_ptr.p->ts;
-      return (m_ptr.p < other.m_ptr.p);
     }
 
     bool operator>(const CC_iterator& other) const
     {
-      std::cerr << ">"<< std::endl;
-      return (m_ptr.p > other.m_ptr.p);
+      return m_ptr.p->ts > other.m_ptr.p->ts;
     }
 
     bool operator<=(const CC_iterator& other) const
     {
-      std::cerr << "<="<< std::endl;
-      return (m_ptr.p <= other.m_ptr.p);
+      return m_ptr.p->ts <= other.m_ptr.p->ts;
     }
 
     bool operator>=(const CC_iterator& other) const
     {
-      std::cerr << ">="<< std::endl;
-      return (m_ptr.p >= other.m_ptr.p);
+      return m_ptr.p->ts >= other.m_ptr.p->ts;
     }
 
     // Can itself be used for bit-squatting.
