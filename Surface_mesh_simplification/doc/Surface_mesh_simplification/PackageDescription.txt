@@ -25,6 +25,7 @@
 
 ## Concepts ##
 - `EdgeCollapsableMesh`
+- `EdgeCollapsableMeshWithConstraints`
 - `EdgeProfile`
 - `StopPredicate`
 - `GetCost`
@@ -43,6 +44,7 @@
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>`
+- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement,ECM>`
 
 */
 

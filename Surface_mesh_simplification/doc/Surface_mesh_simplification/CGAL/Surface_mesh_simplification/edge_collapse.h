@@ -94,6 +94,20 @@ and whose `value_type` is `bool`.
 
 <B>%Default</B>: the property map obtained by calling `get(edge_is_border,surface)`. 
 
+\cgalHeading{edge_is_constrained_map(EdgeIsConstrainedMap ecm)}
+
+Maps each <I>undirected</I> edge in the surface into a Boolean value
+which indicates if the edge is constrained.
+`EdgeIsConstrainedMap` must be a model
+`ReadablePropertyMap` whose `key_type` is
+`boost::graph_traits<EdgeCollapsableMesh const>::%edge_descriptor`
+and whose `value_type` is `bool`.
+
+\attention If this parameter is provided, `surface` must be a model of the
+`EdgeCollapsableMeshWithConstraints` concept.
+
+<B>%Default</B>: A property map always returning `false`, that is no edge is constrained.
+
 \cgalHeading{get_cost(GetCost gc)}
 
 The policy which returns the collapse cost for an edge. 

@@ -288,12 +288,14 @@ and how to use a visitor object to track the simplification process.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
-\subsection Surface_mesh_simplificationExamplewithedges Example with edges marked as non-removable
+\subsection Surface_mesh_simplificationExamplewithedges Example with Edges Marked as Non-Removable
 
-The following example shows how to use the optional named parameter `edge_is_border_map` to prevent
-edges from being removed even if they are not really borders.
+The following examples show how to use the optional named parameter `edge_is_constrained_map` to prevent
+edges from being removed. Edges marked as contrained are guaranteed to be in the final mesh. However,
+the vertices of the constrained edges may change and the placement may change the points.
+The wrapper `CGAL::Constrained_placement` guarantees that these points are not changed.
 
-\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
 
 */ 
 } /* namespace CGAL */
