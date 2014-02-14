@@ -136,6 +136,12 @@ public:
 
 public:
 
+  Oriented_side
+  oriented_side_face_tiebreak(
+    Face_handle f, const Vertex_handle& v, const Site_2 & sitev,
+    const Site_2 & sitev_supp, const Site_2 & t) const;
+
+
   Face_pair
   find_faces_to_split(const Vertex_handle& v, const Site_2& t,
                       unsigned int & flips_nop,
