@@ -153,5 +153,23 @@ int main( int argc, char** argv )
   }
   std::cout  << "OK\n";
 
+  std::cout << "Check that no removable edge has been forgotten..." << std::endl;
+  r = SMS::edge_collapse(surface
+                         ,stop
+                         ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface))
+                         .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface))
+                         .edge_is_constrained_map(constraints_map)
+                         .get_placement(placement)
+   );
+
+  assert(r==0);
+
+  if ( r==0 )
+    std::cout  << "OK\n";
+  else{
+    std::cout  << "ERROR! " << r << " edges removed!\n";
+    return 1;
+  }
+
   return 0;
 }
