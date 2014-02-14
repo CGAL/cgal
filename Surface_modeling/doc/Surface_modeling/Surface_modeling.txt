@@ -194,9 +194,9 @@ The algorithm implemented is a so-called <em>Laplacian-based deformation</em> te
 the principle of these methods.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
-The <em>Laplacian coordinates</em> (also called <em>Laplace coordinates</em> \cgalCite{botsch2010polygon})
+The <em>Laplacian representation</em> (referd to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
 of a vertex in a surface mesh are one way to <em>encode</em> the local neighborhood of a vertex in the mesh.
-The Laplacian coordinates of a vertex \f$ \mathbf{v}_i \f$ is a 3D vector defined as:
+In this representation, a vertex \f$ \mathbf{v}_i \f$ is associated a 3D vector defined as:
 
 \f[
 \begin{equation}
@@ -210,7 +210,7 @@ where:
 -\f$w_{ij}\f$ denotes a weight for the directed edge \f$\mathbf{v}_i\ \mathbf{v}_j\f$.
 
 The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each adjacent vertex
-\f$\mathbf{v}_j\f$. In this case, the Laplacian coordinates of a vertex is the vector between this vertex
+\f$\mathbf{v}_j\f$. In this case, the Laplacian representation of a vertex is the vector between this vertex
 and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 
 In the surface mesh deformation context, a popular choice is the cotangent weight scheme \cgalCite{Pinkall1993Cotangent} :
@@ -219,10 +219,10 @@ cotangents of the angles opposite to the edge. It was shown to produce results n
 \cgalCite{Sorkine2007AsRigidAs}.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
-Laplacian coordinates of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the vertices adjacent to \f$ v_i \f$. The Laplacian coordinates \f$ \delta \f$ are represented as a blue vector.
+Laplacian representation of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the vertices adjacent to \f$ v_i \f$. The Laplacian representation \f$ \delta \f$ are represented as a blue vector.
 \cgalFigureEnd
 
-Considering the whole surface mesh, it is possible to write a linear system describing the Laplacian coordinates of all its vertices:
+Considering the whole surface mesh, it is possible to write a linear system describing the Laplacian representation of all its vertices:
 
 \f[
 \begin{equation}
@@ -238,13 +238,13 @@ where:
   - \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,
   - \f$ 0 \f$ otherwise.
 - \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the %Cartesian coordinates of the vertices;
-- \f$\Delta\f$ is a \f$n \times 3\f$ matrix refered to as the Laplacian coordinates of the surface mesh.
+- \f$\Delta\f$ is a \f$n \times 3\f$ matrix refered to as the Laplacian representation of the surface mesh.
 
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
-The main idea behind Laplacian-based deformation techniques is to preserve the Laplacian coordinates
-under deformation constraints. Laplacian coordinates of the surface mesh are treated as a representative form of the discretized surface,
-and the deformation process must follow the deformation constraints while preserving the Laplacian coordinates as much as possible.
+The main idea behind Laplacian-based deformation techniques is to preserve the Laplacian representation
+under deformation constraints. The Laplacian represention of a surface mesh are treated as a representative form of the discretized surface,
+and the deformation process must follow the deformation constraints while preserving the Laplacian representation as much as possible.
 
 There are different ways to incorporate deformation constraints into the deformation system \cgalCite{Botsch2008OnLinearVariational}.
 This package supports hard constraints, that is, target positions of control vertices are preserved after the deformation.
@@ -274,12 +274,12 @@ where:
 - \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix denoting the unknowns of the system that represent the vertex coordinates after deformation. The system is built such that the \f$ k \f$ last row corresponds to the control vertices.
 - \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the unconstrained vertices. It is a \f$n-k \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$  with the rows corresponding to the control vertices removed.
 - \f$\mathbf{I}_c\f$ is a \f$k \times k\f$ identity matrix.
-- \f${\Delta}_f\f$ denotes the Laplacian coordinates of the unconstrained vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$ with the rows corresponding to the control vertices removed.
+- \f${\Delta}_f\f$ denotes the Laplacian representation of the unconstrained vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$ with the rows corresponding to the control vertices removed.
 - \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the %Cartesian coordinates of the target positions of the control vertices.
 
 The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square non-symmetric sparse matrix. To
 solve the aforementioned system, an appropriate solver (e.g. LU solver) needs to be used. Note that solving this system
-preserves the Laplacian coordinates of the surface mesh restricted to the unconstrained vertices while satisfying the deformation constraints.
+preserves the Laplacian representation of the surface mesh restricted to the unconstrained vertices while satisfying the deformation constraints.
 
 \note This section is an introduction to provide the background for the two next sections describing the algorithms implemented
 in this package. A system relying only on the approach described above results in non-smooth transitions in the neighborhood of
