@@ -82,7 +82,7 @@ Note that if it is not done, the first deformation step calls this function auto
 and has a longer runtime compared to subsequent deformation steps.
 
 <!--- This is a pure implementation details as it does not shows up in the ROI
-This function also extends the ROI by adding as <em>fixed control vertex</em> any vertex not in the ROI that is edge-adjacent
+This function also extends the ROI by adding as <em>fixed control vertex</em> any vertex not in the ROI that is adjacent
 to a vertex of the ROI. The target position of a fixed control vertex is its current position and cannot be changed.
 -->
 
@@ -206,7 +206,7 @@ L(\mathbf{v}_i) = \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} w_{ij}(\mathbf{v}_i - 
 \f]
 
 where:
-- \f$N(\mathbf{v}_i)\f$ denotes the set of vertices edge-adjacent to \f$\mathbf{v}_i\f$;
+- \f$N(\mathbf{v}_i)\f$ denotes the set of vertices adjacent to \f$\mathbf{v}_i\f$;
 -\f$w_{ij}\f$ denotes a weight for the directed edge \f$\mathbf{v}_i\ \mathbf{v}_j\f$.
 
 The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(\mathbf{v}_i)| \f$ for each adjacent vertex
