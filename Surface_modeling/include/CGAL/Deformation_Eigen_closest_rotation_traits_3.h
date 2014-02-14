@@ -80,7 +80,7 @@ public:
   }
   
   /// Returns a coefficient of a vector
-  double vector_coeff(const Vector& v, int i)
+  double vector_coordinate(const Vector& v, int i)
   {
     return v(i);
   }

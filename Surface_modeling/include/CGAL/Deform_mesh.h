@@ -1257,9 +1257,9 @@ private:
 #endif
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
         }
-        Bx[vi_id] = cr_traits.vector_coeff(xyz, 0); 
-        By[vi_id] = cr_traits.vector_coeff(xyz, 1); 
-        Bz[vi_id] = cr_traits.vector_coeff(xyz, 2); 
+        Bx[vi_id] = cr_traits.vector_coordinate(xyz, 0); 
+        By[vi_id] = cr_traits.vector_coordinate(xyz, 1); 
+        Bz[vi_id] = cr_traits.vector_coordinate(xyz, 2); 
       }
       else 
       {// constrained vertex
@@ -1326,9 +1326,9 @@ private:
             // corresponds xyz += wij * ( rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)] ) * pij
           }
         }
-        Bx[vi_id] = cr_traits.vector_coeff(xyz, 0); 
-        By[vi_id] = cr_traits.vector_coeff(xyz, 1); 
-        Bz[vi_id] = cr_traits.vector_coeff(xyz, 2); 
+        Bx[vi_id] = cr_traits.vector_coordinate(xyz, 0); 
+        By[vi_id] = cr_traits.vector_coordinate(xyz, 1); 
+        Bz[vi_id] = cr_traits.vector_coordinate(xyz, 2); 
       }
       else 
       {// constrained vertices

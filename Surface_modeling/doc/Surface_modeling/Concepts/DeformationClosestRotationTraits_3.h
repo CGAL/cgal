@@ -46,14 +46,14 @@ public:
   /// Returns an identity matrix
   Matrix identity_matrix();
   
-  /// Returns a matrix initialized with zero
+  /// Returns a matrix initialized with zeros
   Matrix zero_matrix();
 
   /// Returns the vector (x,y,z)
   Vector vector(double x, double y, double z);
   
   /// Returns `i`th coefficient of a vector
-  double vector_coeff(const Vector& v, int i);
+  double vector_coordinate(const Vector& v, int i);
     
   /// Computes a rotation matrix close to `m` and places it into `R`
   void compute_close_rotation(const Matrix& m, Matrix& R);
