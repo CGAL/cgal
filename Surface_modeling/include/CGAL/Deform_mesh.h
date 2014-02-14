@@ -637,7 +637,7 @@ public:
     * \param vd a control vertex
     * \pre `is_control_vertex(vd)`
     */
-  const Point& get_target_position(vertex_descriptor vd)
+  const Point& target_position(vertex_descriptor vd)
   {
     region_of_solution();
 
@@ -797,13 +797,13 @@ public:
   /**
    * Gets the default number of iterations (5) or the value passed to the function `set_iterations()`
    */
-  unsigned int get_iterations()
+  unsigned int iterations()
   { return m_iterations; }
   
   /**
    * Gets the default tolerance parameter (1e-4) or the value passed to the function `set_tolerance()`
    */
-  double get_tolerance()
+  double tolerance()
   { return m_tolerance; }
 
   /**
