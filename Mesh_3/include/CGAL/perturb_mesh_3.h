@@ -77,9 +77,9 @@ default_perturbation_vector(const C3T3&,
   
   std::vector<Perturbation*> perturbation_vect;
   perturbation_vect.push_back(new Sq_radius(40,0.05));
-  //perturbation_vect.push_back(new Volume(40,0.05));
-  //perturbation_vect.push_back(new Dihedral_angle(40,0.05));
-  //perturbation_vect.push_back(new Li_random(100,0.15));
+  perturbation_vect.push_back(new Volume(40,0.05));
+  perturbation_vect.push_back(new Dihedral_angle(40,0.05));
+  perturbation_vect.push_back(new Li_random(100,0.15));
 
   return perturbation_vect;
 }
