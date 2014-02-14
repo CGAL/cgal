@@ -123,8 +123,6 @@ After the call to the deformation function, the input surface mesh is updated an
 their target positions and the unconstrained vertices are moved accordingly.
 The function `Deform_mesh::deform()` can be called several times consecutively, in particular
 if the convergence has not been reached yet (otherwise it has no effect).
-<!-- The current deformed mesh is only used as the initial guess. -->
-
 
 \warning Vertices can be inserted into or removed from the ROI and the set of control vertices at any time.
 In particular, any vertex that is no longer inside the ROI will be assigned to its original position when

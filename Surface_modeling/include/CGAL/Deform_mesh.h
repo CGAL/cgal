@@ -648,10 +648,6 @@ public:
   /**
    * Deforms the region-of-interest according to the deformation algorithm, using the target positions of each control vertex set by using `rotate()`, `translate()`, or `set_target_position()`.
    * The points associated to each vertex of the input graph that are inside the region-of-interest are updated.
-   * \cgalAdvancedBegin
-   * The initial guess for solving the
-   * deformation problem is using the points associated to the input graph before calling the function.
-   * \cgalAdvancedEnd
    * \note Nothing happens if `preprocess()` returns `false`.
    * @see set_iterations(unsigned int iterations), set_tolerance(double tolerance), deform(unsigned int iterations, double tolerance)
    */
