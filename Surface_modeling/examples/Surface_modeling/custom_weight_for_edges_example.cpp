@@ -25,7 +25,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-// a model of SurfaceModelingWeightCalculator using a map of pre-computed weights
+// a model of SurfaceModelingWeights using a map of pre-computed weights
 struct Weights_from_map
 {
   typedef Polyhedron Halfedge_graph;

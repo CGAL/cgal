@@ -90,7 +90,7 @@ The function `Deform_mesh::preprocess()` returns `true` if the factorization is 
 
 Rank deficiency is the main reason for failure. Typical failure cases are:
   - All the vertices are in the ROI and no control vertices are set
-  - The weighting scheme used to fill the sparse matrix (model of `SurfaceModelingWeightCalculator`) features too many zeros and breaks the connectivity information
+  - The weighting scheme used to fill the sparse matrix (model of `SurfaceModelingWeights`) features too many zeros and breaks the connectivity information
 
 \cgalAdvancedBegin
 The choice of the weighting scheme allows a fine tuning on the way the
@@ -159,11 +159,11 @@ to access indices increases the complexity from constant to logarithmic.
 \cgalExample{Surface_modeling/deform_polyhedron_with_custom_pmap_example.cpp}
 
 \subsubsection Example_4 Using a Custom Edge Weighting Scheme
-Using a custom weighting scheme for edges is also possible if one provides a model of `SurfaceModelingWeightCalculator`.
+Using a custom weighting scheme for edges is also possible if one provides a model of `SurfaceModelingWeights`.
 In this example, the weight of each edge is pre-computed, and an internal map is used for storing and accessing them.
 
 
-Another example is given on the manual page of the concept `::SurfaceModelingWeightCalculator`.
+Another example is given on the manual page of the concept `::SurfaceModelingWeights`.
 
 \cgalExample{Surface_modeling/custom_weight_for_edges_example.cpp}
 

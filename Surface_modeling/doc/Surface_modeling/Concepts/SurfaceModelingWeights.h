@@ -6,7 +6,7 @@
  /// \cgalHeading{Example:}
  ///
  /// \code
- /// // a simple model to SurfaceModelingWeightCalculator concept, which provides uniform weights
+ /// // a simple model to SurfaceModelingWeights concept, which provides uniform weights
  /// template <class HalfedgeGraph>
  /// struct Identity_weight
  /// {
@@ -19,7 +19,7 @@
  ///
  /// \todo discuss the name of the concept
  ///
-class SurfaceModelingWeightCalculator
+class SurfaceModelingWeights
 {
 public:
 /// \name Types 
@@ -31,7 +31,7 @@ public:
 /// \name Creation 
 /// @{
   /// Default constructor. Required only if the default parameter is used in the constructor of `CGAL::Deform_mesh`.
-  SurfaceModelingWeightCalculator();
+  SurfaceModelingWeights();
 /// @} 
 
 /// \name Operations 

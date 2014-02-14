@@ -79,7 +79,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @tparam EIM a model of `ReadablePropertyMap`</a>  with Deform_mesh::edge_descriptor as key and `unsigned int` as value type.
  ///         The default is `boost::property_map<HG, boost::%edge_index_t>::%type`.
  /// @tparam TAG tag for selecting the deformation algorithm
- /// @tparam WC a model of SurfaceModelingWeightCalculator, with `WC::Halfedge_graph` being `HG`.
+ /// @tparam WC a model of SurfaceModelingWeights, with `WC::Halfedge_graph` being `HG`.
  ///         If `TAG` is `ORIGINAL_ARAP`, the weights must be positive to guarantee a correct energy minimization.
  /// @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
  /// and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.\n
