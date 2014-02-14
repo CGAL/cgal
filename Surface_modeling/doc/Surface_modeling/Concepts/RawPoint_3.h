@@ -3,13 +3,13 @@
 ///
 /// Concept describing the set of requirements of a simple point type.
 ///
-class SimplePoint_3
+class RawPoint_3
 {
 public:
 /// \name Creation
 /// @{
-  SimplePoint_3();
-  SimplePoint_3(double x, double y, double z);
+  RawPoint_3();
+  RawPoint_3(double x, double y, double z);
 /// @}
 
 /// \name Coordinates Accessors
