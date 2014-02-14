@@ -37,8 +37,16 @@ the coordinates of the unconstrained vertices being updated by the deformation a
 
 In this package, two slightly different algorithms are implemented:
 - The <em>As-Rigid-As-Possible</em> (<em>ARAP</em>) method described in \cgalCite{Sorkine2007AsRigidAs};
-- The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel}, a slightly modified version of ARAP that is numerically more
-stable but produces asymmetric results (See \cgalFigureRef{Arap_spokes_comparison}).
+- The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel}.
+
+Both methods iteratively minimize an energy function and produce a different surface mesh at each step until convergence is reached.
+
+<em>Spokes and Rims</em> is the default method proposed by the package. It provides an unconditional
+convergence where as the <em>ARAP</em> method requires the edge weights to be positive. However,
+the results obtained using the <em>Spokes and Rims</em> method are more dependent on the discretization
+of the deformed surface (See \cgalFigureRef{Arap_spokes_comparison}).
+
+More details on these algorithms are provided in the section \ref Surface_Modeling_Overview.
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
 Comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation methods.
@@ -48,9 +56,6 @@ the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from t
 latter method does not produce a symmetric result.
 \cgalFigureEnd
 
-Both methods are iterative and produce a different surface mesh at each step until convergence is reached.
-
-For more details on these algorithms, see section \ref Surface_Modeling_Overview.
 
 \section Surface_Modeling_API User Interface Description
 
@@ -160,7 +165,7 @@ to access indices increases the complexity from constant to logarithmic.
 
 \subsubsection Example_4 Using a Custom Edge Weighting Scheme
 Using a custom weighting scheme for edges is also possible if one provides a model of `SurfaceModelingWeights`.
-In this example, the weight of each edge is pre-computed, and an internal map is used for storing and accessing them.
+In this example, the weight of each edge is pre-computed and an internal map is used for storing and accessing them.
 
 
 Another example is given on the manual page of the concept `::SurfaceModelingWeights`.
@@ -189,12 +194,12 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 </center>
 @endhtmlonly
 
-\section Surface_Modeling_Overview Overview of the Method
+\section Surface_Modeling_Overview Overview of the Methods
 The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We first provide an overview of
 the principle of these methods.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
-The <em>Laplacian representation</em> (referd to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
+The <em>Laplacian representation</em> (refered to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
 of a vertex in a surface mesh are one way to <em>encode</em> the local neighborhood of a vertex in the surface mesh.
 In this representation, a vertex \f$ \mathbf{v}_i \f$ is associated a 3D vector defined as:
 
@@ -213,7 +218,8 @@ The simplest choice for the weights is the uniform scheme where \f$ w_{ij}=1/|N(
 \f$\mathbf{v}_j\f$. In this case, the Laplacian representation of a vertex is the vector between this vertex
 and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 
-In the surface mesh deformation context, a popular choice is the cotangent weight scheme \cgalCite{Pinkall1993Cotangent} :
+In the surface mesh deformation context, a popular choice is the cotangent weight scheme
+that derives from the discretization of the Laplace operator \cgalCite{Pinkall1993Cotangent} :
 Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
 cotangents of the angles opposite to the edge. It was shown to produce results not biased by the surface mesh of the approximated surface
 \cgalCite{Sorkine2007AsRigidAs}.
@@ -243,7 +249,7 @@ where:
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
 The main idea behind Laplacian-based deformation techniques is to preserve the Laplacian representation
-under deformation constraints. The Laplacian represention of a surface mesh are treated as a representative form of the discretized surface,
+under deformation constraints. The Laplacian representation of a surface mesh are treated as a representative form of the discretized surface,
 and the deformation process must follow the deformation constraints while preserving the Laplacian representation as much as possible.
 
 There are different ways to incorporate deformation constraints into the deformation system \cgalCite{Botsch2008OnLinearVariational}.
@@ -382,13 +388,11 @@ we slightly changed Eq. \f$\eqref{eq:lap_ber}\f$ to:
 its cotangent weight is negative. As a workaround for bad quality meshes, we eliminate those negative weights
 by setting them to zero.
 
-\todo Pierre says: A workaround is possible though either edge subdivision or using mean value coordinates
-
-A slightly modified version is described next to avoid the latter issue.
+A method minimizing another energy function is described next to avoid the latter issue.
 
 \subsection Surface_Modeling_Overview_ARAP_Rims Spokes and Rims Version
 
-The modified energy function proposed by \cgalCite{Chao2010SimpleGeomModel} takes also into account
+The elastic energy function proposed by \cgalCite{Chao2010SimpleGeomModel} additionally takes into account
 all the opposite edges in the facets incident to a vertex. The energy function to minimize becomes:
 
 \f[
