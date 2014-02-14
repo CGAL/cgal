@@ -42,13 +42,13 @@ stable but produces asymmetric results (See \cgalFigureRef{Arap_spokes_compariso
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
 Comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation methods.
-On the mesh of a square with spikes depicted on the left, the ROI consists of the green vertices. The control vertices are the red ones.
+On the surface mesh of a square with spikes depicted on the left, the ROI consists of the green vertices. The control vertices are the red ones.
 We translate the control vertices along the normal of the plane and observe the result produced by
 the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from the same view point. The
 latter method does not produce a symmetric result.
 \cgalFigureEnd
 
-Both methods are iterative and produce a different mesh at each step until convergence is reached.
+Both methods are iterative and produce a different surface mesh at each step until convergence is reached.
 
 For more details on these algorithms, see section \ref Surface_Modeling_Overview.
 
@@ -99,7 +99,7 @@ The defaults provided give good results in general but we provide a way to
 change the weighing scheme to experiment or improve the result in specific cases.
 \cgalAdvancedEnd
 
-\note The ROI does not have to be a connected component of the surface mesh graph. However, for better performances
+\note The ROI does not have to be a connected component of the graph of the surface mesh. However, for better performances
 it is better to use an individual instance of the deformation object for each connected component.
 
 \subsection Deform_section Deformation
@@ -111,10 +111,10 @@ to be applied to a control vertex or a range of control vertices).
 Note that a rotation or a translation of a control vertex is always applied on its last target position set:
 they are cumulative.
 
-The deformation of the mesh happens when calling the function `Deform_mesh::deform()`. The number of optimization iterations
+The deformation of the surface mesh happens when calling the function `Deform_mesh::deform()`. The number of optimization iterations
 varies depending on whether the user chooses a fixed number of iterations or a stopping criteria based on the energy variation.
 
-After the call to the deformation function, the input mesh is updated and the control vertices are at
+After the call to the deformation function, the input surface mesh is updated and the control vertices are at
 their target positions and the unconstrained vertices are moved accordingly.
 The function `Deform_mesh::deform()` can be called several times consecutively, in particular
 if the convergence has not been reached yet (otherwise it has no effect).
@@ -130,8 +130,8 @@ This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
 
 \subsection Surface_modeling_examples Examples
 
-\subsubsection Example_1 Using the Whole Mesh as Region-of-Interest
-In this example, the whole mesh is used as ROI and a few vertices are added as control vertices.
+\subsubsection Example_1 Using the Whole Surface Mesh as Region-of-Interest
+In this example, the whole surface mesh is used as ROI and a few vertices are added as control vertices.
 `Deform_mesh::set_target_position()` is used for setting the target positions of the control vertices.
 
 \cgalExample{Surface_modeling/all_roi_assign_example.cpp}
@@ -195,7 +195,7 @@ the principle of these methods.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
 The <em>Laplacian representation</em> (referd to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
-of a vertex in a surface mesh are one way to <em>encode</em> the local neighborhood of a vertex in the mesh.
+of a vertex in a surface mesh are one way to <em>encode</em> the local neighborhood of a vertex in the surface mesh.
 In this representation, a vertex \f$ \mathbf{v}_i \f$ is associated a 3D vector defined as:
 
 \f[
@@ -215,7 +215,7 @@ and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 
 In the surface mesh deformation context, a popular choice is the cotangent weight scheme \cgalCite{Pinkall1993Cotangent} :
 Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
-cotangents of the angles opposite to the edge. It was shown to produce results not biased by the mesh of the approximated surface
+cotangents of the angles opposite to the edge. It was shown to produce results not biased by the surface mesh of the approximated surface
 \cgalCite{Sorkine2007AsRigidAs}.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
@@ -360,7 +360,7 @@ Solving the linear system in Eq. \f$\eqref{eq:lap_energy_system}\f$ gives the ne
 This two-step optimization can be applied several times iteratively to obtain a better result.
 
 \note The matrix built with the Laplacian matrix of the unconstrained vertices in the left-hand side of
-Eq. \f$\eqref{eq:lap_energy_system}\f$ depends only on the initial mesh structure and on which vertices
+Eq. \f$\eqref{eq:lap_energy_system}\f$ depends only on the initial surface mesh structure and on which vertices
 are control vertices. Once the control vertices are set, we can use a direct solver to factorize
 the sparse matrix in Eq. \f$\eqref{eq:lap_energy_system}\f$, and reuse this factorization during
 each iteration of the optimization procedure.

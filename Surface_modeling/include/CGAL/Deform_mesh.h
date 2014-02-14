@@ -705,7 +705,7 @@ public:
         }
       }
     }
-    // copy solution to target mesh
+    // copy solution to the target surface mesh
     assign_solution();
   }
 
@@ -745,8 +745,8 @@ public:
    * This function might have a non-negligible effect on the result.
    * The Laplacian matrix of the free vertices and the optimal rotations
    * are computed using the original positions of the points
-   * associated to the vertices. Thus, if a deformed version of the mesh
-   * is used as <i>reference</i>, the mesh properties the algorithm
+   * associated to the vertices. Thus, if a deformed version of the surface mesh
+   * is used as <i>reference</i>, the surface mesh properties the algorithm
    * tries to preserve are those of an altered version (which are already
    * degraded).
    * \cgalAdvancedEnd
@@ -1351,7 +1351,7 @@ private:
     }
   }
 
-  /// Assign solution to target mesh
+  /// Assign solution to target surface mesh
   void assign_solution()
   {
     for(std::size_t i = 0; i < ros.size(); ++i){
