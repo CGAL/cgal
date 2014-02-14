@@ -64,15 +64,15 @@
 
 //for the time being this will run for conic polycurves only
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
+#include <CGAL/CORE_algebraic_number_traits.h>
+#include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_conic_traits_2.h>
 // #include <CGAL/Cartesian.h>
 // #include <CGAL/Quotient.h>
 // #include <CGAL/MP_Float.h>
-#include <CGAL/CORE_algebraic_number_traits.h>
 // #include <vector>
 // #include <list>
 
-#include <CGAL/Arr_polyline_traits_2.h>
-#include <CGAL/Arr_conic_traits_2.h>
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
 #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
@@ -202,16 +202,18 @@ typedef CGAL::Arr_algebraic_segment_traits_2<Number_type>     Base_geom_traits;
 #define GEOM_TRAITS_TYPE "Algebraic"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
-typedef CGAL::CORE_algebraic_number_traits                                Nt_traits;
-typedef Nt_traits::Rational                                               Rational;
-typedef Nt_traits::Algebraic                                              Algebraic;
-typedef CGAL::Cartesian<Rational>                                         Rat_kernel;
-typedef Rat_kernel::Point_2                                               Rat_point_2;
-typedef Rat_kernel::Segment_2                                             Rat_segment_2;
-typedef Rat_kernel::Circle_2                                              Rat_circle_2;
-typedef CGAL::Cartesian<Algebraic>                                        Alg_kernel;
+typedef CGAL::CORE_algebraic_number_traits              					Nt_traits;
+typedef Nt_traits::Rational                            					 	Rational;
+typedef Nt_traits::Algebraic                            					Algebraic;
+typedef CGAL::Cartesian<Rational>                       					Rat_kernel;
+typedef CGAL::Cartesian<Algebraic>                      					Alg_kernel;
 typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>       Conic_traits_2;
 typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Base_geom_traits;
+
+//needed when we want to construct ellips, parabola and hyperbolas
+typedef Conic_traits_2::Rat_point_2                   Rat_point;
+typedef Conic_traits_2::Rat_circle_2                  Rat_circle;
+typedef Conic_traits_2::Rat_segment_2                 Rat_segment;
 #define GEOM_TRAITS_TYPE "Polycurves_conics"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS

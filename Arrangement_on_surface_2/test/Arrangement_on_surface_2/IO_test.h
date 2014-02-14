@@ -140,9 +140,15 @@ void IO_test<Geom_traits_T>::set_filenames(const char* points_filename,
 template <typename Geom_traits_T>
 bool IO_test<Geom_traits_T>::parse(int argc, char* argv[])
 {
-  //waqar
-  // for(int i=0; i<argc; i++)
-  //   std::cout<< "arg #:   "<< i << argv[i] <<  std::endl;
+  /* Waqar
+  The arguments are
+  argv 0 is ./test_traits (string)
+  argv 1 is data/polycurves_conics/compare_y_at_x.pt
+  argv 2 is data/polycurves_conics/compare_y_at_x.xcv
+  argv 3 is data/polycurves_conics/compare_y_at_x.cv
+  argv 4 is data/polycurves_conics/compare_y_at_x
+  argv 5 is polycurve_conic_traits (string)
+  */
   if (argc < 4) {
     print_info(std::string("Usage: ").append(argv[0]).
                append(" points_file xcurves_file curves_file"));
@@ -160,14 +166,15 @@ bool IO_test<Geom_traits_T>::parse(int argc, char* argv[])
 template <typename Geom_traits_T>
 bool IO_test<Geom_traits_T>::init()
 {
+  //std:: cout << "Yeahhhhh babyyyyyyyy I am initiallllizzzzzinngngggggggg" << std::endl;
   if (!read_points(m_filename_points.c_str(), m_points)) return false;
   if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves)) return false;
   if (!read_curves(m_filename_curves.c_str(), m_curves)) return false;
 
-  for (int i = 0; i < m_points.size(); ++i)
-  {
-    std::cout<< m_points[i] <<  " " ;
-  }
+  // for (int i = 0; i < m_points.size(); ++i)
+  // {
+  //   std::cout<< m_points[i] <<  " " ;
+  // }
   return true;
 }
 
@@ -259,7 +266,7 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
     std::cerr << "Cannot open file " << filename << "!" << std::endl;
     return false;
   }
-
+  std::cout<< "Test_geom_traits: " << TEST_GEOM_TRAITS << std::endl;
   std::string line;
   while (skip_comments(xcv_stream, line)) {
     std::istringstream line_stream(line);

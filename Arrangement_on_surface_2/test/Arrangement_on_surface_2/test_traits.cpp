@@ -75,18 +75,42 @@ int main(int argc, char* argv[])
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 #endif
-  std::cerr<< std::endl << std::endl <<  "**** 1 Geom_traits type: " << GEOM_TRAITS_TYPE << std::endl << std::endl;
-  std::cout<< "Test_geom_trait = " << TEST_GEOM_TRAITS << std:: endl;
+  // std::cerr<< std::endl << std::endl <<  "**** 1 Geom_traits type: " << GEOM_TRAITS_TYPE << std::endl << std::endl;
+  // std::cout<< "Test_geom_trait = " << TEST_GEOM_TRAITS << std:: endl;
   Geom_traits traits;
 
   Traits_test<Geom_traits> test(traits);
   
+  
+  /*
+  the parse() function is present in "Traits_base_tests.h" which further call parse() in "IO_test.h"
+  The parse() in "Traits_base_test.h" simply assign the command file which is argv[4] i.e. compare_y_at_x file to the 'm_filename_commands' variable and also assigns the polycurve_conic_traits string.
+  The parse() in "IO_test.h" assigns the argv[1, 2 and 3] i.e files paths of points, xcurves and curves to appropriate string variables. 
+
+  Inheritance tree  Traits_test --> Traits_base_test --> IO_test --> IO_base_test
+  */
   if (!test.parse(argc, argv)) return -1;
   
-  if (!test.init()) return -1;  //polycurves are made somewhere here.
+ 
+
+  /*
+    Inheritance tree  Traits_test --> Traits_base_test --> IO_test --> IO_base_test
+
+    The init() function is present in "IO_test.h" the function simply initiate the points, curves and x-monotone curves vectors through the input data files provided by calling 
+    read_points() read_curves() and read_xcurves() respectively. Each of these functions calls read_point(), read_curve() and read_xcurve() for construction from "IO_base_test.h"
+
+    read_point(), read_curve() and read_xcurve() from "IO_base_test.h" construct the appriopriate point, curve and xcurve using 
+    appropriate GEOM_TRAITS i.e. in this case POLYCURVE_CONIC_GEOM_TRAITS and using overridden functions. Note: these functions only make 1 curve.   
+  */
+  if (!test.init()) return -1;  //polycurves are made here.
   
-  //if (!test.perform()) return -1;
-  // std::cout<< "**** 2 Geom_traits type: " << GEOM_TRAITS_TYPE << std::endl;
+  
+
+  /*
+    
+  */
+  //if (!test.perform()) return -1; //perform() function is present in "Traits_base_tests.h"
+
   return 0;
 }
 

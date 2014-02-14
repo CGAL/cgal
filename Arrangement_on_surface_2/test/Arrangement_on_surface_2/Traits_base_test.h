@@ -197,6 +197,16 @@ Traits_base_test<Geom_traits_T>::~Traits_base_test() { clear(); }
 template <typename Geom_traits_T>
 bool Traits_base_test<Geom_traits_T>::parse(int argc, char* argv[])
 {
+  
+  /* Waqar
+  The arguments are
+  argv 0 is ./test_traits (string)
+  argv 1 is data/polycurves_conics/compare_y_at_x.pt
+  argv 2 is data/polycurves_conics/compare_y_at_x.xcv
+  argv 3 is data/polycurves_conics/compare_y_at_x.cv
+  argv 4 is data/polycurves_conics/compare_y_at_x
+  argv 5 is polycurve_conic_traits (string)
+  */
   Base::parse(argc, argv);
 
   if (argc != 6) {

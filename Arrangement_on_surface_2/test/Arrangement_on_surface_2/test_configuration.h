@@ -84,8 +84,10 @@
 #endif
 
 // Illegal combinations:
-#if (TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) && (TEST_NT != CORE_EXPR_NT)
-#error "Core conic traits implies Core Expr number type!"
+#if (TEST_GEOM_TRAITS == CORE_CONIC_GEOM_TRAITS) || (TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS)
+  #if(TEST_NT != CORE_EXPR_NT)
+		#error "Core conic traits implies Core Expr number type!"
+  #endif
 #endif
 
 #if (TEST_GEOM_TRAITS == BEZIER_GEOM_TRAITS) && (TEST_NT != CORE_EXPR_NT)
