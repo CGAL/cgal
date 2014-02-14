@@ -67,6 +67,7 @@ public:
   typedef ST                                     Storage_traits;
 
   typedef typename Base::Site_2                  Site_2;
+  typedef typename Base::Point_2                 Point_2;
 
   typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
 
@@ -154,6 +155,27 @@ public:
   Vertex_triple
   insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 				Vertex_handle v);
+
+
+  // Linf tiebreaker for finite vertex
+  inline Oriented_side
+  oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
+		const Site_2& supp, const Site_2& p,
+                const Point_2& pt ) const {
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return Base::geom_traits().oriented_side_2_object()(
+        s1, s2, s3, supp, p, pt);
+  }
+
+  // Linf tiebreaker for infinite vertex
+  inline Oriented_side
+  oriented_side(const Site_2& s1, const Site_2& s2,
+		const Site_2& supp, const Site_2& p,
+                const Point_2& pt ) const {
+    CGAL_precondition( supp.is_segment() && p.is_point() );
+    return Base::geom_traits().oriented_side_2_object()(
+        s1, s2, supp, p, pt);
+  }
 
 
   void file_output_verbose(std::ostream& os) const {
