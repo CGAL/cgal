@@ -124,7 +124,7 @@ if the convergence has not been reached yet (otherwise it has no effect).
 \warning Vertices can be inserted into or removed from the ROI and the set of control vertices at any time.
 In particular, any vertex that is no longer inside the ROI will be assigned to its original position when
 `Deform_mesh::preprocess()` is first called.
-The original positions can be updated by calling `Deform_mesh::overwrite_original_positions()` (
+The original positions can be updated by calling `Deform_mesh::overwrite_initial_geometry()` (
 which will also require a new preprocessing step).
 This behavior is illustrated in the video \ref Surface_Modeling_Demo_Tutorial.
 

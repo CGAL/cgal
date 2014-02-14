@@ -471,7 +471,7 @@ public:
   /**
    * Erases a vertex from the region-of-interest and the set of control vertices.
    * \note At the next call to `preprocess()`, any vertex that is no longer in the region-of-interest will be assigned to its original position 
-   * (that is the position of the vertex at the time of construction or after the last call to `overwrite_original_positions()`).
+   * (that is the position of the vertex at the time of construction or after the last call to `overwrite_initial_geometry()`).
    * @param vd the vertex to be erased
    * @return `true` `vd` was a vertex from the region-of-interest.
    */
@@ -712,7 +712,7 @@ public:
   /**
    * Resets the points associated to the vertices of the input mesh at their
    * original positions at time of the functor construction or after
-   * the last call to `overwrite_original_positions()`.
+   * the last call to `overwrite_initial_geometry()`.
    * \note if the region-of-interest or the set of control vertices have been
    * modified since the last call to `preprocess()`, it will be called prior
    * to the reset.
@@ -751,7 +751,7 @@ public:
    * degraded).
    * \cgalAdvancedEnd
    */
-  void overwrite_original_positions()
+  void overwrite_initial_geometry()
   {
     if(roi.empty()) { return; } // no ROI to overwrite
 
