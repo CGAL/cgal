@@ -731,7 +731,6 @@ private:
                                    const Vertex_handle& v) const
   {
     CGAL_assertion(cell->has_vertex(v));
-    std::cout << cell->ts << "  " << v->ts << std::endl;
     const int i = cell->index(v);
     
     // fixed vertices: (the ones with index != i)
