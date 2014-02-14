@@ -137,6 +137,10 @@ public:
 
 public:
 
+// print face in standard output
+  void face_output(const char *before, Face_handle f,
+                   const char *after) const;
+
   Oriented_side
   oriented_side_face_tiebreak(
     Face_handle f, const Vertex_handle& v, const Site_2 & sitev,
