@@ -303,8 +303,6 @@ operator()(int nb_iterations, Visitor visitor)
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
 
-    incident(c3t3_);
-
     //Pb with Freeze : sometimes a few vertices continue moving indefinitely
     //if the nb of moving vertices is < 1% of total nb AND does not decrease
     if(do_freeze_ 
