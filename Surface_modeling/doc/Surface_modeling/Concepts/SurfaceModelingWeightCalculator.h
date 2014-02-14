@@ -39,7 +39,7 @@ public:
   /// Function computing the edge weight of edge `e`
   /// \tparam VertexPointMap a model of `ReadWritePropertyMap`</a>  with boost::graph_traits<Halfedge_graph>::vertex_descriptor as key and a 3D point from a \cgal Kernel as value type
   template <class VertexPointMap>
-  double operator()(boost::graph_traits<Halfedge_graph>::edge_descriptor  e, const HalfedgeGraph& halfedge_graph, VertexPointMap vpm);
+  double operator()(boost::graph_traits<Halfedge_graph>::edge_descriptor  e, const Halfedge_graph& halfedge_graph, VertexPointMap vpm);
 /// @}
 };
 
