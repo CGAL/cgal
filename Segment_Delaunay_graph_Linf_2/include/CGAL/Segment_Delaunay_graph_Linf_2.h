@@ -136,6 +136,7 @@ public:
 
 public:
 
+  Face_pair
   find_faces_to_split(const Vertex_handle& v, const Site_2& t,
                       unsigned int & flips_nop,
                       unsigned int & flips_pon) const;
