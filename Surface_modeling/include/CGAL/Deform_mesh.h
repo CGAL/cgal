@@ -710,8 +710,8 @@ public:
   }
 
   /**
-   * Resets the points associated to the vertices of the input mesh at their
-   * original positions at time of the functor construction or after
+   * Resets the points associated to the vertices of the region-of-interest at their
+   * initial positions at time of the functor construction or after
    * the last call to `overwrite_initial_geometry()`.
    * \note if the region-of-interest or the set of control vertices have been
    * modified since the last call to `preprocess()`, it will be called prior
@@ -736,7 +736,7 @@ public:
   }
 
   /**
-   * Sets the original positions to be the current positions for all the vertices inside the region-of-interest. Calling this function has the same effect as creating
+   * Sets the initial positions of the vertices from the region-of-interest to the current positions. Calling this function has the same effect as creating
    * a new deformation object with the current deformed halfedge-graph, keeping the region-of-interest and the set of control vertices.
    * \note if the region-of-interest or the set of control vertices have been modified since the last call to `preprocess()`,
    * it will be called prior to the overwrite.
