@@ -108,7 +108,7 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 	typedef typename R::LA::template Rebind_dimension<Dynamic_dimension_tag,Dplusone>::Other LA;
 	typedef typename LA::Square_matrix Matrix;
 
-	// mostly copied from Construct_flat_orientation. TODO: dedup this code.
+	// mostly copied from Construct_flat_orientation. TODO: dedup this code or use LA.
         template<class Iter>
         result_type operator()(Iter f, Iter e, Point const&x) const {
 		PD pd (this->kernel());

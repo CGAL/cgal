@@ -255,6 +255,44 @@ template<class R_> struct Linearly_independent : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Linearly_independent_tag,(CartesianDKernelFunctors::Linearly_independent<K>),(Vector_tag),(Point_dimension_tag,Linear_rank_tag));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Contained_in_linear_hull : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Contained_in_linear_hull)
+	typedef R_ R;
+	typedef typename Get_type<R, Vector_tag>::type Vector;
+	// Computing a sensible Uncertain<bool> is not worth it
+	typedef bool result_type;
+	typedef typename R::LA::Dynamic_matrix Matrix;
+
+	template<class Iter,class V>
+	result_type operator()(Iter f, Iter e,V const&w)const{
+		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		int n=std::distance(f,e);
+		if (n==0) return false;
+		// FIXME: Uh? Using it on a vector ?!
+		int d=vd(w);
+		Matrix m(d,n+1);
+		for(int i=0; f!=e; ++f,++i){
+		  Vector const& v = *f;
+		  for(int j=0;j<d;++j){
+		    m(i,j)=c(v,j);
+		  }
+		}
+		for(int j=0;j<d;++j){
+		  m(n+1,j)=c(w,j);
+		}
+		int r1 = R::LA::rank(m);
+		m.conservativeResize(Eigen::NoChange, n);
+		int r2 = R::LA::rank(CGAL_MOVE(m));
+		return r1 == r2;
+		// This is very very far from optimal...
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Contained_in_linear_hull_tag,(CartesianDKernelFunctors::Contained_in_linear_hull<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Affine_rank : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Affine_rank)
 	typedef R_ R;
@@ -298,7 +336,7 @@ template<class R_> struct Affinely_independent : private Store_kernel<R_> {
 		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
 		int n=std::distance(f,e);
 		int d=pd(*f);
-		if (n>d) return false;
+		if (n>d+1) return false;
 		typename Get_functor<R, Affine_rank_tag>::type ar(this->kernel());
 		return ar(f,e) == n;
 	}

@@ -108,7 +108,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
 	typedef typename Get_functor<Base, Affine_rank_tag>::type Affine_rank_d;
 	typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;
-	//typedef typename Get_functor<Base, Contained_in_linear_hull_tag>::type Contained_in_linear_hull_d;
+	typedef typename Get_functor<Base, Contained_in_linear_hull_tag>::type Contained_in_linear_hull_d;
 	//typedef typename Get_functor<Base, Contained_in_simplex_tag>::type Contained_in_simplex_d;
 	typedef typename Get_functor<Base, Has_on_positive_side_tag>::type Has_on_positive_side_d;
 	typedef typename Get_functor<Base, Linear_rank_tag>::type Linear_rank_d;
@@ -136,6 +136,8 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
 	Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
 	Contained_in_affine_hull_d contained_in_affine_hull_d_object()const{ return Contained_in_affine_hull_d(*this); }
+	Contained_in_linear_hull_d contained_in_linear_hull_d_object()const{ return Contained_in_linear_hull_d(*this); }
+	//Contained_in_simplex_d contained_in_simplex_d_object()const{ return Contained_in_simplex_d(*this); }
 	Construct_flat_orientation_d construct_flat_orientation_d_object()const{ return Construct_flat_orientation_d(*this); }
 	In_flat_orientation_d in_flat_orientation_d_object()const{ return In_flat_orientation_d(*this); }
 	In_flat_side_of_oriented_sphere_d in_flat_side_of_oriented_sphere_d_object()const{ return In_flat_side_of_oriented_sphere_d(*this); }
