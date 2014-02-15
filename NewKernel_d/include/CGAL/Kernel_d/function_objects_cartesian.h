@@ -345,6 +345,54 @@ template<class R_> struct Affinely_independent : private Store_kernel<R_> {
 
 CGAL_KD_DEFAULT_FUNCTOR(Affinely_independent_tag,(CartesianDKernelFunctors::Affinely_independent<K>),(Point_tag),(Point_dimension_tag,Affine_rank_tag));
 
+namespace CartesianDKernelFunctors {
+template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Contained_in_simplex)
+	typedef R_ R;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	// Computing a sensible Uncertain<*> is not worth it
+	typedef typename Get_type<R, Bounded_side_tag>::type result_type;
+	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
+	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
+	typedef typename R::LA::template Rebind_dimension<D1,D2>::Other LA;
+	typedef typename LA::Dynamic_matrix Matrix;
+	typedef typename LA::Dynamic_vector DynVec;
+	typedef typename LA::Vector Vec;
+
+	template<class Iter, class P>
+	result_type operator()(Iter f, Iter e, P const&q)const{
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+		int n=std::distance(f,e);
+		if (n==0) return ON_UNBOUNDED_SIDE;
+		int d=pd(q);
+		Matrix m(d+1,n);
+		DynVec a(n);
+		// FIXME: Should use the proper vector constructor (Iterator_and_last)
+		Vec b(d+1);
+		for(int j=0;j<d;++j) b[j]=c(q,j);
+		b[d]=1;
+
+		for(int i=0; ++f!=e; ++i){
+		  Point const& p = *f;
+		  for(int j=0;j<d;++j){
+		    m(i,j)=c(p,j);
+		  }
+		  m(i,d)=1;
+		}
+		if (!LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b))) return false;
+		result_type res = ON_BOUNDED_SIDE;
+		for(int i=0;i<n;++i){
+		  if (a[i]<0) return ON_UNBOUNDED_SIDE;
+		  if (a[i]==0) res = ON_BOUNDARY;
+		}
+		return res;
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Contained_in_simplex_tag,(CartesianDKernelFunctors::Contained_in_simplex<K>),(Point_tag),(Point_dimension_tag,Compute_point_cartesian_coordinate_tag));
+
 #if 0
 namespace CartesianDKernelFunctors {
 template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {

@@ -103,6 +103,12 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		return decomp.rank();
 	}
 
+	// m*a==b
+	static bool solve(Dynamic_vector&a, Dynamic_matrix const&m, Vector const& b){
+		a = m.colPivHouseholderQr().solve(b);
+		return b.isApprox(m*a);
+	}
+
 	template<class Vec1,class Vec2> static Vector homogeneous_add(Vec1 const&a,Vec2 const&b){
 		//TODO: use compile-time size when available
 		int d=a.size();
