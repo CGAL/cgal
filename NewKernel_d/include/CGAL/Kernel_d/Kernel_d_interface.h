@@ -106,13 +106,13 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	};
 	typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
 	typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
-	//typedef typename Get_functor<Base, Affine_rank_tag>::type Affine_rank_d;
-	//typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;
+	typedef typename Get_functor<Base, Affine_rank_tag>::type Affine_rank_d;
+	typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;
 	//typedef typename Get_functor<Base, Contained_in_linear_hull_tag>::type Contained_in_linear_hull_d;
 	//typedef typename Get_functor<Base, Contained_in_simplex_tag>::type Contained_in_simplex_d;
 	typedef typename Get_functor<Base, Has_on_positive_side_tag>::type Has_on_positive_side_d;
-	//typedef typename Get_functor<Base, Linear_rank_tag>::type Linear_rank_d;
-	//typedef typename Get_functor<Base, Linearly_independent_tag>::type Linearly_independent_d;
+	typedef typename Get_functor<Base, Linear_rank_tag>::type Linear_rank_d;
+	typedef typename Get_functor<Base, Linearly_independent_tag>::type Linearly_independent_d;
 	typedef typename Get_functor<Base, Oriented_side_tag>::type Oriented_side_d;
 	typedef typename Get_functor<Base, Side_of_bounded_sphere_tag>::type Side_of_bounded_sphere_d;
 
@@ -141,6 +141,10 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	In_flat_side_of_oriented_sphere_d in_flat_side_of_oriented_sphere_d_object()const{ return In_flat_side_of_oriented_sphere_d(*this); }
 	Point_to_vector_d point_to_vector_d_object()const{ return Point_to_vector_d(*this); }
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
+	Affine_rank_d affine_rank_d_object()const{ return Affine_rank_d(*this); }
+	Affinely_independent_d affinely_independent_d_object()const{ return Affinely_independent_d(*this); }
+	Linear_rank_d linear_rank_d_object()const{ return Linear_rank_d(*this); }
+	Linearly_independent_d linearly_independent_d_object()const{ return Linearly_independent_d(*this); }
 	Midpoint_d midpoint_d_object()const{ return Midpoint_d(*this); }
 	Component_accessor_d component_accessor_d_object()const{ return Component_accessor_d(*this); }
 	Orthogonal_vector_d orthogonal_vector_d_object()const{ return Orthogonal_vector_d(*this); }

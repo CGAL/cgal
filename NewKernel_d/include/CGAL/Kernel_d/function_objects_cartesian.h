@@ -198,6 +198,115 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 
 CGAL_KD_DEFAULT_FUNCTOR(Orientation_of_vectors_tag,(CartesianDKernelFunctors::Orientation_of_vectors<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
+namespace CartesianDKernelFunctors {
+template<class R_> struct Linear_rank : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Linear_rank)
+	typedef R_ R;
+	typedef typename Get_type<R, Vector_tag>::type Vector;
+	// Computing a sensible Uncertain<int> is not worth it
+	typedef int result_type;
+	typedef typename R::LA::Dynamic_matrix Matrix;
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter e)const{
+		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		int n=std::distance(f,e);
+		if (n==0) return 0;
+		Vector const& v0 = *f;
+		// FIXME: Uh? Using it on a vector ?!
+		int d=vd(v0);
+		Matrix m(d,n);
+		for(int j=0;j<d;++j){
+		  m(0,j)=c(v0,j);
+		}
+		for(int i=0; ++f!=e; ++i){
+		  Vector const& v = *f;
+		  for(int j=0;j<d;++j){
+		    m(i,j)=c(v,j);
+		  }
+		}
+		return R::LA::rank(CGAL_MOVE(m));
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Linear_rank_tag,(CartesianDKernelFunctors::Linear_rank<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
+template<class R_> struct Linearly_independent : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Linearly_independent)
+	typedef R_ R;
+	typedef typename Get_type<R, Bool_tag>::type result_type;
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter e)const{
+		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		int n=std::distance(f,e);
+		// FIXME: Uh? Using it on a vector ?!
+		int d=vd(*f);
+		if (n>d) return false;
+		typename Get_functor<R, Linear_rank_tag>::type lr(this->kernel());
+		return lr(f,e) == n;
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Linearly_independent_tag,(CartesianDKernelFunctors::Linearly_independent<K>),(Vector_tag),(Point_dimension_tag,Linear_rank_tag));
+
+namespace CartesianDKernelFunctors {
+template<class R_> struct Affine_rank : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Affine_rank)
+	typedef R_ R;
+	typedef typename Get_type<R, Point_tag>::type Point;
+	// Computing a sensible Uncertain<int> is not worth it
+	typedef int result_type;
+	typedef typename R::LA::Dynamic_matrix Matrix;
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter e)const{
+		typename Get_functor<R, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+		int n=std::distance(f,e);
+		if (n<=1) return n;
+		--n;
+		Point const& p0 = *f;
+		int d=pd(p0);
+		Matrix m(d,n);
+		for(int i=0; ++f!=e; ++i){
+		  Point const& p = *f;
+		  for(int j=0;j<d;++j){
+		    m(i,j)=c(p,j)-cp(p0,j);
+		    // TODO: cache p0[j] in case it is computed?
+		  }
+		}
+		return R::LA::rank(CGAL_MOVE(m))+1;
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Affine_rank_tag,(CartesianDKernelFunctors::Affine_rank<K>),(Point_tag),(Point_dimension_tag,Compute_point_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
+template<class R_> struct Affinely_independent : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Affinely_independent)
+	typedef R_ R;
+	typedef typename Get_type<R, Bool_tag>::type result_type;
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter e)const{
+		typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+		int n=std::distance(f,e);
+		int d=pd(*f);
+		if (n>d) return false;
+		typename Get_functor<R, Affine_rank_tag>::type ar(this->kernel());
+		return ar(f,e) == n;
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Affinely_independent_tag,(CartesianDKernelFunctors::Affinely_independent<K>),(Point_tag),(Point_dimension_tag,Affine_rank_tag));
+
 #if 0
 namespace CartesianDKernelFunctors {
 template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {

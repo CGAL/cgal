@@ -96,6 +96,13 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		return CGAL::sign(m.determinant());
 	}
 
+	template<class Mat_> static int rank(Mat_ const&m){
+		// return m.rank();
+		Eigen::ColPivHouseholderQR<Mat_> decomp(m);
+		// decomp.setThreshold(0);
+		return decomp.rank();
+	}
+
 	template<class Vec1,class Vec2> static Vector homogeneous_add(Vec1 const&a,Vec2 const&b){
 		//TODO: use compile-time size when available
 		int d=a.size();

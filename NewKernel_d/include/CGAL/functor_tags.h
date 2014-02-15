@@ -232,6 +232,7 @@ namespace CGAL {
 	DECL_CONSTRUCT(Translated_point,Point);
 	DECL_CONSTRUCT(Point_to_vector,Vector);
 	DECL_CONSTRUCT(Vector_to_point,Point);
+	//DECL_CONSTRUCT(Linear_base,); --> in Misc?
 #undef DECL_CONSTRUCT
 #if 0
 #define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
@@ -265,6 +266,12 @@ namespace CGAL {
 	DECL_PREDICATE(In_flat_orientation);
 	DECL_PREDICATE(In_flat_side_of_oriented_sphere);
 	DECL_PREDICATE(Construct_flat_orientation); // Making it a predicate is a questionable choice, it should be possible to let it be a construction for some implementations. Not sure how to do that... TODO
+	DECL_PREDICATE(Linear_rank);
+	DECL_PREDICATE(Affine_rank);
+	DECL_PREDICATE(Linearly_independent);
+	DECL_PREDICATE(Affinely_independent);
+	DECL_PREDICATE(Contained_in_linear_hull);
+	DECL_PREDICATE(Contained_in_simplex);
 #undef DECL_PREDICATE
 
 #define DECL_MISC(X) struct X##_tag {}; \
