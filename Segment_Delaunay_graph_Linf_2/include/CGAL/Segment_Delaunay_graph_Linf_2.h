@@ -144,7 +144,7 @@ public:
     : Base(gt, st)
   {
     setup_insert_on_pointers_linf();
-    insert(first, beyond);
+    Base::insert(first, beyond);
   }
 
   Segment_Delaunay_graph_Linf_2(const Self& other);
