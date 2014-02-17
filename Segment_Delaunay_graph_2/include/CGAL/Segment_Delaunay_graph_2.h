@@ -309,12 +309,35 @@ protected:
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Which_list<Edge,List_tag>::List 
   List;
 
+
+protected:
+  // types for insert on segment functions
+  typedef Vertex_triple (Self::*Insert_on_Type)(
+      const Storage_site_2& ss, const Site_2& t,
+      Vertex_handle v, const Tag_true&);
+  Insert_on_Type insert_point_on_segment_ptr;
+
+  typedef Vertex_triple (Self::*Insert_Exact_on_Type)(
+      const Storage_site_2& ss, const Site_2& t,
+      Vertex_handle v);
+  Insert_Exact_on_Type insert_exact_point_on_segment_ptr;
+
+private:
+  // CREATION helper
+  void setup_insert_on_pointers_l2(void) {
+    insert_point_on_segment_ptr = &Self::insert_point_on_segment;
+    insert_exact_point_on_segment_ptr = &Self::insert_exact_point_on_segment;
+  }
+
 public:
   // CREATION
   //---------
   Segment_Delaunay_graph_2(const Geom_traits& gt = Geom_traits(),
 			   const Storage_traits& st = Storage_traits())
-    : DG(gt), st_(st) {}
+    : DG(gt), st_(st)
+  {
+    setup_insert_on_pointers_l2();
+  }
 
   template< class Input_iterator >
   Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond,
@@ -322,6 +345,7 @@ public:
 			   const Storage_traits& st = Storage_traits())
     : DG(gt), st_(st)
   {
+    setup_insert_on_pointers_l2();
     insert(first, beyond);
   }
 
@@ -1061,11 +1085,11 @@ protected:
   Vertex_handle insert_point2(const Storage_site_2& ss,
 			      const Site_2& t, Vertex_handle vnear);
 
-  Triple<Vertex_handle,Vertex_handle,Vertex_handle>
+  Vertex_triple
   insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 			  Vertex_handle v, const Tag_true&);
 
-  Triple<Vertex_handle,Vertex_handle,Vertex_handle>
+  Vertex_triple
   insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 				Vertex_handle v);
 

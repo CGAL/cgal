@@ -338,7 +338,8 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
     if ( at_res == AT2::INTERIOR ) {
       CGAL_assertion( t.is_input() );
 
-      Vertex_triple vt = insert_exact_point_on_segment(ss, t, vnearest);
+      Vertex_triple vt = (this->*insert_exact_point_on_segment_ptr)(
+          ss, t, vnearest);
       return vt.first;
     } else {
       // the point to be inserted does not belong to the interior of a
@@ -931,7 +932,7 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     return v;
   }
 
-  Vertex_triple vt = insert_point_on_segment(ss, t, v, tag);
+  Vertex_triple vt = (this->*insert_point_on_segment_ptr)(ss, t, v, tag);
 
   Vertex_handle vsx = vt.first;
   
@@ -2778,6 +2779,11 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy(Segment_Delaunay_graph_2& other)
 {
+  // copy the insert_on method pointers
+  insert_point_on_segment_ptr = other.insert_point_on_segment_ptr;
+  insert_exact_point_on_segment_ptr =
+    other.insert_exact_point_on_segment_ptr;
+
   // first copy the point container
   pc_ = other.pc_;
 
