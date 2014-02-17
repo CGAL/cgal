@@ -44,10 +44,12 @@ As a model of the concept `RegularTriangulationCellBase_3`,
 provides a `weighted_circumcenter()` member fonction. 
 
 In this model, the `weighted_circumcenter()` member fonction returns the <b>weighted circumcenter</b>
-of the cell, computed by the `ConstructWeightedCircumcenter` constructor of the traits class. 
-However, this point has no weight.
+of the cell.
+This `Bare_point` is computed by the `ConstructWeightedCircumcenter` constructor of the traits class
+when this function is first called.
+In the next calls, the cached value is returned.
 
-If it has already been computed in the past, the cached value is returned.
+Note that this point has no weight.
 */
 
 /// @{

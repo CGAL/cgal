@@ -15,7 +15,7 @@ in the cell an operator that computes its circumcenter.
 \cgalHasModel CGAL::Delaunay_triangulation_cell_base_3 
 \cgalHasModel CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3
 
-\sa `TriangulationCellBase_3` 
+\sa `DelaunayTriangulationTraits_3`
 
 */
 
