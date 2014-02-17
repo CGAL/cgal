@@ -84,6 +84,7 @@ public:
   typedef typename Base::Face_circulator       Face_circulator;
 
 protected:
+  typedef typename Base::Intersections_tag Intersections_tag;
   typedef typename Base::Face_pair        Face_pair;
   typedef typename Base::Storage_site_2   Storage_site_2;
 
@@ -118,10 +119,25 @@ public:
 
 private:
   // CREATION helper
-  void setup_insert_on_pointers_linf(void) {
+  template<class ITag>
+  inline
+  void setup_if_intersecting_pointer(ITag tag) {
+    setup_if_intersecting_pointer_with_tag(tag);
+  }
+
+  void setup_if_intersecting_pointer_with_tag(Tag_false) {
+    Base::insert_point_on_segment_ptr = nullptr;
+  }
+
+  void setup_if_intersecting_pointer_with_tag(Tag_true) {
     Base::insert_point_on_segment_ptr =
       static_cast<typename Base::Insert_on_Type>(
         &Self::insert_point_on_segment);
+  }
+
+  void setup_insert_on_pointers_linf(void) {
+    Intersections_tag itag;
+    setup_if_intersecting_pointer(itag);
     Base::insert_exact_point_on_segment_ptr =
       static_cast<typename Base::Insert_Exact_on_Type>(
         &Self::insert_exact_point_on_segment);
