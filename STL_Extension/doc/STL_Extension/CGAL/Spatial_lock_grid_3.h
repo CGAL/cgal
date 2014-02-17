@@ -5,13 +5,16 @@ namespace CGAL {
 \ingroup PkgStlExtension
 
 The class `Spatial_lock_grid_3` allows to lock 
-points with coordinates (x, y, z) in a 3D grid. For example,
-it can be used by concurrent algorithms to lock simplices.
-It is a model of `SurjectiveLockDataStructure`, with `Object` being
-`P3` and `S(point)` being the cell of the 3D grid containing `point`.
-`P3` must provide x(), y() and z() functions,
+points with coordinates (x, y, z) in a 3D grid.
+The point type is called `P3` here. `P3` must provide x(), y() and z() functions,
 returning the respective point coordinates as numbers whose type is a 
 model of the concept of `CGAL::RealEmbeddable`.
+
+It is a model of `SurjectiveLockDataStructure`, with `Object` being
+`P3` and `S` being the function that maps a point to 
+the cell of the 3D grid containing this point.
+
+For example, it can be used by concurrent algorithms to lock simplices.
 
 \tparam Grid_lock_tag allows to choose the locking strategy used by the
 structure. The following tags are available:

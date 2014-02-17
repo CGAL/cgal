@@ -555,9 +555,11 @@ Note that when the user provides his/her own vertex and
 cell base classes, the `MeshVertexBase_3` and 
 `MeshCellBase_3` concepts impose additionnal requirements.
 
-Parallel algorithms require the executable to be linked against the Intel TBB library.
+Parallel algorithms require the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the TBB documentation for more details.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+for more details.
 
 \section Mesh_3_section_examples Examples
 
