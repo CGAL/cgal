@@ -19,8 +19,7 @@ It can only be used when the pointee type is a model of the
                     or a `Concurrent_compact_container`) 
 
 \sa `Compact_container` 
-\sa `Concurrent_compact_container` 
-\sa `CompactContainerStrategy` 
+\sa `Concurrent_compact_container`
 */
 
 template <typename CC_iterator>
