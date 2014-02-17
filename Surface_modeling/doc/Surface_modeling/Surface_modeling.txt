@@ -441,11 +441,10 @@ the boundary of the surface mesh, then \f$ w_{ij} \f$ must be 0 and \f$ \mathbf{
 
 An important property of this approach compared to \ref Surface_Modeling_Overview_ARAP is that the contribution to the global energy
 of each vertex is guaranteed to be non-negative when using the cotangent weights \cgalCite{Chao2010SimpleGeomModel}.
+Thus even with negative weights, the minimization of the energy with the iterative method presented is always guaranteed.
+However, this method is more dependent on the discretization of the deformed surface (See \cgalFigureRef{Arap_spokes_comparison}).
 
-
-We are using cotangent weights by default (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
-
-A drawback of this method is that the results can be asymmetric as shown on \cgalFigureRef{Arap_spokes_comparison}.
+The implementation in this packages uses the cotangent weights by default (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
 
 \section Surface_Modeling_History Design and Implementation History
 An initial version of this package has been implemented during the 2011 Google Summer of Code by Yin Xu under the guidance of Olga Sorkine and Andreas Fabri.
