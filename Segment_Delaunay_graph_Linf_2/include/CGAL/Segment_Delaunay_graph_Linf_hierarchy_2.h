@@ -18,6 +18,25 @@ class Segment_Delaunay_graph_Linf_hierarchy_2
   : public Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,
              Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >
 {
+  protected:
+  typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,
+             Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >
+          Base;
+
+  public:
+  // CONSTRUCTORS
+  //-------------
+  Segment_Delaunay_graph_Linf_hierarchy_2(const Gt& gt = Gt())
+    : Base(gt) {}
+
+  template<class Input_iterator>
+  Segment_Delaunay_graph_Linf_hierarchy_2(Input_iterator first,
+				     Input_iterator beyond,
+				     const Gt& gt=Gt())
+    : Base(first, beyond, gt)
+  {
+  }
+
 };
 
 
