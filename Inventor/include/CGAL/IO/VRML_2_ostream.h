@@ -47,13 +47,13 @@ public:
         || defined BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
     typedef const void* Const_void_ptr;
     operator Const_void_ptr () const {
-        if ( m_os)
-            return *m_os;
+      if ( m_os->fail() )
         return 0;
+      else
+        return static_cast<Const_void_ptr>(m_os);
     }
     #else
-    explicit operator bool ()
-    {
+    explicit operator bool () {
       return m_os && !m_os->fail();
     }
     #endif
