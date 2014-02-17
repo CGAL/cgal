@@ -535,6 +535,8 @@ MainWindow::loadEdgConstraints(QString fileName)
 
   tim.stop();
   statusBar()->showMessage(QString("Insertion took %1 seconds").arg(tim.time()), 2000);
+  initializeID(cdt);
+  discoverComponents(cdt);
   // default cursor
   QApplication::restoreOverrideCursor();
   emit(changed());
