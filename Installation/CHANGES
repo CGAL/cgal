@@ -2,6 +2,15 @@
 -------------------------------- Release 4.4 --------------------------------
 
 
+* Installation
+
+  - Additional supported platforms:
+
+      - The Apple Clang compiler version 5.0 is now supported on
+        OS X Mavericks.
+
+
+
 * Triangulated Surface Mesh Segmentation (new package)
 
   - This package implements the segmentation of triangulated surface meshes
@@ -105,6 +114,12 @@
   - The generator ipelet now generates point in a selected zone
 
   - Hilbert sort ipelet implements two policies
+
+
+* Triangulated Surface Mesh Simplification
+
+  - Fix a bug in the way edges can be marked as non-removable by adding a
+    named-parameter edge_is_constrained_map to the function edge_collapse
 
 
 -------------------------------- Release 4.3 --------------------------------
