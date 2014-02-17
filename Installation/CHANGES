@@ -98,6 +98,12 @@
     circumcenters and sliver criterion values only when needed.
 
 
+* Triangulated Surface Mesh Simplification
+
+  - Fix a bug in the way edges can be marked as non-removable by adding a
+    named-parameter edge_is_constrained_map to the function edge_collapse
+
+
 * STL Extensions for CGAL
 
   - Add the function CGAL::make_sorted_pair.
@@ -114,12 +120,6 @@
   - The generator ipelet now generates point in a selected zone
 
   - Hilbert sort ipelet implements two policies
-
-
-* Triangulated Surface Mesh Simplification
-
-  - Fix a bug in the way edges can be marked as non-removable by adding a
-    named-parameter edge_is_constrained_map to the function edge_collapse
 
 
 -------------------------------- Release 4.3 --------------------------------

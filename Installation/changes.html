@@ -229,6 +229,13 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
+  <h3>Triangulated Surface Mesh Simplification</h3>
+  <ul>
+    <li>Fix a bug in the way edges can be marked as non-removable by adding
+        a named-parameter <code>edge_is_constrained_map</code> to the function
+        <code>edge_collapse</code></li>
+  </ul>
+
   <h3>STL Extensions for CGAL</h3>
   <ul>
     <li> Add the function <code>CGAL::make_sorted_pair</code>.</li>
@@ -241,13 +248,6 @@ and <code>src/</code> directories).
     <li> New ipelet for hyperbolic geometry in Poincare model</li>
     <li> The generator ipelet now generates point in a selected zone</li>
     <li> Hilbert sort ipelet implements two policies</li>
-  </ul>
-
-  <h3>Triangulated Surface Mesh Simplification</h3>
-  <ul>
-    <li>Fix a bug in the way edges can be marked as non-removable by adding
-        a named-parameter <code>edge_is_constrained_map</code> to the function
-        <code>edge_collapse</code></li>
   </ul>
 </div>
 
