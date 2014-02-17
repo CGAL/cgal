@@ -13,7 +13,7 @@ method to solve the system for different right-hand vectors.
 \todo check what is a prefactorization
 */
 
-class SparseLinearAlgebraTraitsWithPreFactor_d {
+class SparseLinearAlgebraTraitsWithFactor_d {
 public:
 
 /// \name Creation
@@ -24,7 +24,7 @@ public:
 Default constructor.
 
 */
-SparseLinearAlgebraTraitsWithPreFactor_d();
+SparseLinearAlgebraTraitsWithFactor_d();
 
 /// @}
 
@@ -33,19 +33,19 @@ SparseLinearAlgebraTraitsWithPreFactor_d();
 
 /*!
 Factorize the sparse matrix A.
-This factorization is used in SparseLinearAlgebraTraitsWithPreFactor_d::linear_solver to solve the system for different right-hand side vectors.
+This factorization is used in SparseLinearAlgebraTraitsWithFactor_d::linear_solver to solve the system for different right-hand side vectors.
 See `::SparseLinearAlgebraTraits_d::linear_solver()` for the description of `D`.
 @return true if the factorization is successful
 */
-bool pre_factor(const Matrix& A, NT& D);
+bool factor(const Matrix& A, NT& D);
 
 /*!
-Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix provided in SparseLinearAlgebraTraitsWithPreFactor_d::pre_factor.
+Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix provided in SparseLinearAlgebraTraitsWithFactor_d::factor.
 @return true if the solver is successful
 */
 bool linear_solver(const Vector& B, Vector& X);
 
 /// @}
 
-}; /* end SparseLinearAlgebraTraitsWithPreFactor_d */
+}; /* end SparseLinearAlgebraTraitsWithFactor_d */
 

@@ -64,7 +64,7 @@ namespace internal {
 /// The default solver is the iterative bi-congugate gradient stabilized solver
 /// Eigen::BiCGSTAB for double.
 ///
-/// @heading Is Model for the Concepts: Model of the SparseLinearAlgebraTraits_d concept.
+/// \cgalModels `SparseLinearAlgebraTraitsWithFactor_d`.
 
 template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 class Eigen_solver_traits
@@ -106,7 +106,7 @@ public:
       return m_solver_sptr->info() == Eigen::Success;
    }
 
-  bool pre_factor (const Matrix& A, NT& D)
+  bool factor (const Matrix& A, NT& D)
   {
     D = 1;
     
@@ -117,7 +117,7 @@ public:
 	
   bool linear_solver(const Vector& B, Vector& X)
   {
-    CGAL_precondition(m_mat!=NULL); //pre_factor should have been called first
+    CGAL_precondition(m_mat!=NULL); //factor should have been called first
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }

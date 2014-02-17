@@ -81,7 +81,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @tparam TAG tag for selecting the deformation algorithm
  /// @tparam WC a model of SurfaceModelingWeights, with `WC::Halfedge_graph` being `HG`.
  ///         If `TAG` is `ORIGINAL_ARAP`, the weights must be positive to guarantee a correct energy minimization.
- /// @tparam ST a model of SparseLinearAlgebraTraitsWithPreFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
+ /// @tparam ST a model of SparseLinearAlgebraTraitsWithFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available 
  /// and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.\n
   /// \code
  ///     CGAL::Eigen_solver_traits<
@@ -1032,7 +1032,7 @@ private:
 
     // now factorize
     double D;
-    last_preprocess_successful = m_solver.pre_factor(A, D);
+    last_preprocess_successful = m_solver.factor(A, D);
     CGAL_warning(last_preprocess_successful);
   }
   /// Construct matrix that corresponds to left-hand side of eq:lap_ber_rims in user manual
@@ -1087,7 +1087,7 @@ private:
 
     // now factorize
     double D;
-    last_preprocess_successful = m_solver.pre_factor(A, D);
+    last_preprocess_successful = m_solver.factor(A, D);
     CGAL_warning(last_preprocess_successful);
   }
 

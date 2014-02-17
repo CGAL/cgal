@@ -179,7 +179,7 @@ public:
     }
 
 
-	bool pre_factor (const Matrix& A, NT& D)
+	bool factor (const Matrix& A, NT& D)
 	{
 		D = 1;          // TAUCS does not support homogeneous coordinates
 
@@ -445,7 +445,7 @@ public:
 
 
 
-	bool pre_factor (const Matrix& A, NT& D)
+	bool factor (const Matrix& A, NT& D)
 	{
 		D = 1;          // TAUCS does not support homogeneous coordinates
 
