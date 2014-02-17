@@ -37,7 +37,7 @@ void compare_mesh(const Polyhedron& mesh_1, const Polyhedron& mesh_2)
 
   std::cerr << "Average mesh difference: " << average_mesh_dif << std::endl;
 
-  assert( average_mesh_dif > squared_threshold);
+  assert( average_mesh_dif < squared_threshold);
 }
 
 // read deformation session saved as a handle differences
@@ -58,13 +58,18 @@ void read_handle_difs_and_deform(DeformMesh& deform_mesh, InputIterator begin, I
   { dif_vector.push_back(Vector(x, y, z)); }
 
   CGAL::Timer timer;
-  
+
+  //the original behavior of translate was to overwrite the previous
+  //translation. Now that it is cumulative, we need to substract the
+  //previous translation vector to mimic the overwrite
+  Vector previous(0,0,0);
   for(std::size_t i = 0; i < dif_vector.size(); ++i)
   {
     timer.start();
-    deform_mesh.translate(begin, end, dif_vector[i]);
+    deform_mesh.translate(begin, end, dif_vector[i]-previous);
     deform_mesh.deform();
     timer.stop();
+    previous=dif_vector[i];
 
     // read pre-deformed cactus
     std::stringstream predeformed_cactus_file;    
