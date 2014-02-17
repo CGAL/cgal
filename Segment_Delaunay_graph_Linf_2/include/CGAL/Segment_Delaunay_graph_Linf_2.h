@@ -116,19 +116,35 @@ public:
   using Base::is_infinite;
   using Base::storage_traits;
 
+private:
+  // CREATION helper
+  void setup_insert_on_pointers_linf(void) {
+    Base::insert_point_on_segment_ptr =
+      static_cast<typename Base::Insert_on_Type>(
+        &Self::insert_point_on_segment);
+    Base::insert_exact_point_on_segment_ptr =
+      static_cast<typename Base::Insert_Exact_on_Type>(
+        &Self::insert_exact_point_on_segment);
+  }
+
 public:
   // CREATION
   //---------
   Segment_Delaunay_graph_Linf_2(const Geom_traits& gt = Geom_traits(),
 			   const Storage_traits& st = Storage_traits())
-    : Base(gt,st) {}
+    : Base(gt,st)
+  {
+    setup_insert_on_pointers_linf();
+  }
 
   template< class Input_iterator >
   Segment_Delaunay_graph_Linf_2(Input_iterator first, Input_iterator beyond,
 			   const Geom_traits& gt = Geom_traits(),
 			   const Storage_traits& st = Storage_traits())
-    : Base(first, beyond, gt, st)
+    : Base(gt, st)
   {
+    setup_insert_on_pointers_linf();
+    insert(first, beyond);
   }
 
   Segment_Delaunay_graph_Linf_2(const Self& other);
