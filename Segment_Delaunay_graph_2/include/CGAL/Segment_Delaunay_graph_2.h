@@ -322,10 +322,33 @@ protected:
       Vertex_handle v);
   Insert_Exact_on_Type insert_exact_point_on_segment_ptr;
 
+  Vertex_triple
+  insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+			  Vertex_handle v, const Tag_true&);
+
+  Vertex_triple
+  insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+				Vertex_handle v);
+
 private:
   // CREATION helper
-  void setup_insert_on_pointers_l2(void) {
+  template<class ITag>
+  inline
+  void setup_if_intersecting_pointer(ITag tag) {
+    setup_if_intersecting_pointer_with_tag(tag);
+  }
+
+  void setup_if_intersecting_pointer_with_tag(Tag_false) {
+    insert_point_on_segment_ptr = nullptr;
+  }
+
+  void setup_if_intersecting_pointer_with_tag(Tag_true) {
     insert_point_on_segment_ptr = &Self::insert_point_on_segment;
+  }
+
+  void setup_insert_on_pointers_l2(void) {
+    Intersections_tag itag;
+    setup_if_intersecting_pointer(itag);
     insert_exact_point_on_segment_ptr = &Self::insert_exact_point_on_segment;
   }
 
@@ -1084,14 +1107,6 @@ protected:
 			     const Site_2& t, Vertex_handle vnear);
   Vertex_handle insert_point2(const Storage_site_2& ss,
 			      const Site_2& t, Vertex_handle vnear);
-
-  Vertex_triple
-  insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			  Vertex_handle v, const Tag_true&);
-
-  Vertex_triple
-  insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-				Vertex_handle v);
 
   Vertex_handle insert_segment(const Storage_site_2& ss, const Site_2& t,
 			       Vertex_handle vnear);
