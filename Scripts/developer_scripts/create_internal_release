@@ -223,7 +223,7 @@ sub create_version_file()
 {
 #if VERSION starts with CGAL-, we remove "CGAL-" from version
 #the $newver variable will store the right version
-    if ($result = $VERSION =~ /CGAL-(.*)/){
+    if ($VERSION =~ /CGAL-(.*)/) {
         $newver = $1;
     } else {
         $newver = $VERSION;
