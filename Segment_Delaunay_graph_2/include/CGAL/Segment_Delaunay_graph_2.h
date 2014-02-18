@@ -339,7 +339,7 @@ private:
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_false) {
-    insert_point_on_segment_ptr = nullptr;
+    insert_point_on_segment_ptr = NULL;
   }
 
   void setup_if_intersecting_pointer_with_tag(Tag_true) {
