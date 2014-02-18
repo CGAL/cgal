@@ -9,8 +9,8 @@
 
 int main(int, char**)
 {
-  CGAL::test_hierarchy_x(std::cin, "bizarre");
-  CGAL::test_hierarchy_no_x(std::cin, "bizarre");
+  CGAL::test_hierarchy_x(std::cin, "bizarre", false);
+  CGAL::test_hierarchy_no_x(std::cin, "bizarre", false);
 
   CGAL::test_hierarchy_x(std::cin, "sitesx", false);
   CGAL::test_hierarchy_no_x(std::cin, "sitesx", false);

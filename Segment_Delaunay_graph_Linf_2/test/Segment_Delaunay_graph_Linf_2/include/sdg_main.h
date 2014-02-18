@@ -9,8 +9,8 @@
 
 int main()
 {
-  CGAL::test_x(std::cin, "bizarre");
-  CGAL::test_no_x(std::cin, "bizarre");
+  CGAL::test_x(std::cin, "bizarre", false);
+  CGAL::test_no_x(std::cin, "bizarre", false);
 
   CGAL::test_x(std::cin, "sitesx", false);
   CGAL::test_no_x(std::cin, "sitesx", false);
