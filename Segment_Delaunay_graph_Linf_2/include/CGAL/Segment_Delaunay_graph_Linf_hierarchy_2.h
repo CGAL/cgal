@@ -22,6 +22,8 @@ class Segment_Delaunay_graph_Linf_hierarchy_2
   typedef Segment_Delaunay_graph_hierarchy_2<Gt,ST,STag,D_S,LTag,
              Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag> >
           Base;
+  typedef Segment_Delaunay_graph_Linf_hierarchy_2<Gt,ST,STag,D_S,LTag>
+          Self;
 
   public:
   // CONSTRUCTORS
@@ -35,6 +37,17 @@ class Segment_Delaunay_graph_Linf_hierarchy_2
 				     const Gt& gt=Gt())
     : Base(first, beyond, gt)
   {
+  }
+
+  Segment_Delaunay_graph_Linf_hierarchy_2(const Self& other)
+    : Base(other) {}
+
+  Self& operator=(const Self& other)
+  {
+    if ( this != &other ) {
+      Base::operator=(other);
+    }
+    return *this;
   }
 
 };
