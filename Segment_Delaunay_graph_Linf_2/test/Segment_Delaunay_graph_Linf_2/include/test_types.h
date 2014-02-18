@@ -8,6 +8,7 @@
 #include <cctype>
 #include <algorithm>
 #include <cassert>
+#include <string>
 
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
@@ -17,32 +18,18 @@
 //========================================================================
 
 template<class NT>
-char* get_fname(const NT&, const char* ifname) {
-  char* fname = new char[50];
-  std::strcpy(fname, "data/");
-  std::strcat(fname, ifname);
-  std::strcat(fname, ".cin");
-  return fname;
-}
-
-char* get_fname_plain(const char* ifname) {
-  char* fname = new char[50];
-  std::strcpy(fname, "data/");
-  std::strcat(fname, ifname);
-  std::strcat(fname, ".cin");
-  return fname;
+std::string get_fname(const NT&, std::string ifname)
+{
+  return std::string("data/") + ifname + ".cin";
 }
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpq.h>
 
 template<>
-char* get_fname(const CGAL::Gmpq&, const char* ifname) {
-  char* fname = new char[50];
-  std::strcpy(fname, "data/");
-  std::strcat(fname, ifname);
-  std::strcat(fname, ".Gmpq.cin");
-  return fname;
+std::string get_fname(const CGAL::Gmpq&, std::string ifname)
+{
+  return std::string("data/") + ifname + ".Gmpq.cin";
 }
 #endif
 
@@ -87,7 +74,7 @@ template<class SDG, class InputStream>
 bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 	      bool test_remove)
 {
-  char* ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
+  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
 
   typedef SDG SDG2;
 
@@ -374,7 +361,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     {
       sdg.clear();
 
-      std::ifstream ifs( ifname_full );
+      std::ifstream ifs( ifname_full.c_str() );
       assert( ifs );
       Site_2 t;
       while ( ifs >> t ) {
@@ -572,39 +559,6 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   start_testing("validity check and clear methods");
   end_testing("validity check and clear method");
 
-  start_testing("file input validity check methods");
-  std::cout << std::endl;
-  {
-    std::cout << "  clearing diagram..." << std::endl;
-    sdg.clear();
-    std::ifstream ifs( ifname_full );
-    if (not ifs) {
-      std::cout << "  file does not exist " << ifname_full << std::endl;
-      delete ifname_full;
-      ifname_full = get_fname_plain(ifname);
-      ifs.open( ifname_full );
-      assert( ifs ) ;
-    }
-    std::cout << "  reading input from file " << ifname_full
-              << " ..." << std::flush;
-    Site_2 t;
-    while ( ifs >> t ) {
-      sdg.insert(t);
-    }
-    std::cout << " done" << std::endl;
-    std::cout << "  validating: " << std::flush;
-    sdg.is_valid(true, 1);
-    std::cout << std::endl;
-    std::cout << "  clearing diagram..." << std::endl;
-    sdg.clear();
-    std::cout << "  validating: " << std::flush;
-    sdg.is_valid(true, 1);
-    std::cout << std::endl;
-  }
-  start_testing("file input validity check methods");
-  end_testing("file input validity check methods");
-
-  delete ifname_full;
 
   return true;
 }
