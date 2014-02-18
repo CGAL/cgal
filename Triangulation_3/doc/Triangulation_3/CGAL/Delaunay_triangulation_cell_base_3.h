@@ -23,9 +23,14 @@ By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>
 
 */
 
-template< typename Traits, typename Cb >
+template< typename TriangulationTraits_3, typename Cb >
 class Delaunay_triangulation_cell_base_3 : public Cb {
 public:
+
+/// \name Types 
+/// @{
+typedef TriangulationTraits_3::Point_3 Point_3;
+/// @}
 
 /*! \name Access function 
 
@@ -38,7 +43,8 @@ provides a `circumcenter()` member fonction.
 /*! 
 Returns the circumcenter of the cell.
 */ 
-const Traits::Point_3& circumcenter(const Traits& gt = Traits()) const;
+const Point_3& circumcenter(
+  const TriangulationTraits_3& gt = TriangulationTraits_3()) const;
 
 /// @}
 
