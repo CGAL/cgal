@@ -163,8 +163,16 @@ public:
     Base::insert(first, beyond);
   }
 
-  Segment_Delaunay_graph_Linf_2(const Self& other);
-  Self& operator=(const Self& other);
+  Segment_Delaunay_graph_Linf_2(const Self& other)
+    : Base(other) {}
+
+  Self& operator=(const Self& other)
+  {
+    if ( this != &other ) {
+      Base::operator=(other);
+    }
+    return (*this);
+  }
 
 
 public:
