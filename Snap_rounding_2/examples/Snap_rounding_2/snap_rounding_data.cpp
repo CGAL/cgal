@@ -17,9 +17,9 @@ typedef std::list<Polyline_2>                    Polyline_list_2;
 
 int main(int argc, char* argv[])
 {
-	if(argc != 2)
+	if(argc > 3 || argc < 2)
 	{
-		std::cout<< "Incorrect input. please provide the file path of the data file only." << std::endl;
+		std::cout<< "Incorrect input. please provide the file path of the data file only. (optionally) enter the output file name" << std::endl;
 		return -1;
 	}
 
@@ -27,13 +27,28 @@ int main(int argc, char* argv[])
 	Polyline_list_2 output_list;
 
 	std::ifstream my_read_file;
+	std::ofstream my_write_file;
+
 	my_read_file.open(argv[1]);
 
 	if(!my_read_file.is_open())
 	{
-		std::cout<< "Error opening the file"<< std::endl;
+		std::cout<< "Error opening the input file"<< std::endl;
 		return -1;
 	}
+
+	if(argc==3)
+	{
+		my_write_file.open(argv[2]);
+
+		if(!my_read_file.is_open())
+		{
+			std::cout<< "Error opening the output file"<< std::endl;
+			return -1;
+		}
+	}
+
+	
 
 	CGAL::Timer segment_creation_time, snap_rounding_time;
 
@@ -60,23 +75,44 @@ int main(int argc, char* argv[])
 	// Generate an iterated snap-rounding representation, where the centers of
 	// the hot pixels bear their original coordinates, using 1 kd trees:
 	CGAL::snap_rounding_2<Traits,Segment_list_2::const_iterator,Polyline_list_2>
-	  (seg_list.begin(), seg_list.end(), output_list, 1.0, true, false, 1);
+	  									(seg_list.begin(), seg_list.end(), output_list, 1.0, true, false, 1);
 
 	snap_rounding_time.stop();  
 
  	int counter = 0;
 	Polyline_list_2::const_iterator iter1;
-	for (iter1 = output_list.begin(); iter1 != output_list.end(); ++iter1) 
+	
+	if(argc == 3) //output to the file
 	{
-	    std::cout << "Polyline number " << ++counter << ":\n";
-	    Polyline_2::const_iterator iter2;
-	    
-	    for (iter2 = iter1->begin(); iter2 != iter1->end(); ++iter2)
-	      std::cout << "    (" << iter2->x() << ":" << iter2->y() << ")\n";
+		for (iter1 = output_list.begin(); iter1 != output_list.end(); ++iter1) 
+		{
+		    my_write_file << "Polyline number " << ++counter << ":\n";
+		    Polyline_2::const_iterator iter2;
+		    
+		    for (iter2 = iter1->begin(); iter2 != iter1->end(); ++iter2)
+		      my_write_file << "    (" << iter2->x() << ":" << iter2->y() << ")\n";
+		}
+		
+		my_write_file << "\n\nSegment creation of " << number_of_lines << " took: " << segment_creation_time.time() << " sec" <<std::endl;
+		my_write_file << "\n\nSnap rounding took: " << snap_rounding_time.time() << " sec" <<std::endl;
+		my_write_file.close();
 	}
-
+	else //output to std output
+	{
+		for (iter1 = output_list.begin(); iter1 != output_list.end(); ++iter1) 
+		{
+		    std::cout << "Polyline number " << ++counter << ":\n";
+		    Polyline_2::const_iterator iter2;
+		    
+		    for (iter2 = iter1->begin(); iter2 != iter1->end(); ++iter2)
+		      std::cout << "    (" << iter2->x() << ":" << iter2->y() << ")\n";
+		}
+	
 	std::cerr << "\n\nSegment creation of " << number_of_lines << " took: " << segment_creation_time.time() << " sec" <<std::endl;
 	std::cerr << "\n\nSnap rounding took: " << snap_rounding_time.time() << " sec" <<std::endl;
+	}
+	
+	my_read_file.close();
 
 	return(0);
 }

@@ -79,20 +79,20 @@ public:
 //(Search traits modified to be used by the Spacial Searching kd_trees for Snap rounding)
 //////////////////////
 
-template <class K > 
+template <class Traits > 
 class Search_traits_kd_tree_2 {
 
 public:
-  typedef  K                                                Point_d;
-  typedef typename K::Iso_rectangle_2                       Iso_box_d;
-  typedef typename K::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
-  typedef typename K::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
+  typedef  Traits                                                Point_d;
+  typedef typename Traits::Iso_rectangle_2                       Iso_box_d;
+  typedef typename Traits::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
+  typedef typename Traits::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
 
-  typedef typename K::Construct_min_vertex_2                Construct_min_vertex_d;
-  typedef typename K::Construct_max_vertex_2                Construct_max_vertex_d;
+  typedef typename Traits::Construct_min_vertex_2                Construct_min_vertex_d;
+  typedef typename Traits::Construct_max_vertex_2                Construct_max_vertex_d;
 
-  typedef typename K::Construct_iso_rectangle_2             Construct_iso_box_d;
-  typedef typename K::FT                                    FT;
+  typedef typename Traits::Construct_iso_rectangle_2             Construct_iso_box_d;
+  typedef typename Traits::FT                                    FT;
 
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const 
   {
