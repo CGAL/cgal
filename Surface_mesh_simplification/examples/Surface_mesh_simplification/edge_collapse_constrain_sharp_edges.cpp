@@ -154,10 +154,10 @@ int main( int argc, char** argv )
   std::cout  << "OK\n";
 
   std::cout << "Check that no removable edge has been forgotten..." << std::endl;
-  r = SMS::edge_collapse(surface
+  r = SMS::edge_collapse(surface_mesh
                          ,stop
-                         ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface))
-                         .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface))
+                         ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index, surface_mesh))
+                         .edge_index_map  (boost::get(CGAL::edge_external_index, surface_mesh))
                          .edge_is_constrained_map(constraints_map)
                          .get_placement(placement)
    );
