@@ -37,7 +37,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
 
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "IMAGE_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/fig\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/\n")
@@ -61,11 +61,34 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
         ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
       
       # TODO we also want to run html_post_process per package as a custom_command with POST_BUILD
-      add_custom_target(${CGAL_PACKAGE_NAME}_doc
+      # target that build the doc and put the tag file in the generation directory CGAL_DOC_TAG_GEN_DIR
+      add_custom_target(${CGAL_PACKAGE_NAME}_internal_doxygen_run
         ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
 
-      set_target_properties(${CGAL_PACKAGE_NAME}_doc PROPERTIES FOLDER Documentation/Packages)
+      set_target_properties(${CGAL_PACKAGE_NAME}_internal_doxygen_run PROPERTIES FOLDER Documentation/Packages)
 
+      #target moving the tag file into the read directory CGAL_DOC_TAG_DIR
+      if ( "${CGAL_PACKAGE_NAME}" STREQUAL "Documentation" )
+        set(CGAL_PACKAGE_TAGFILE "Manual.tag")
+      else()
+        set(CGAL_PACKAGE_TAGFILE "${CGAL_PACKAGE_NAME}.tag")
+      endif()
+      add_custom_target(${CGAL_PACKAGE_NAME}_copy_doc_tags
+                        ${CMAKE_COMMAND} -E copy
+                          "${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_TAGFILE}"
+                          "${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_TAGFILE}"
+      )
+
+      #add the doc target doing both the doc generation and then the tag file copy
+      add_custom_target(${CGAL_PACKAGE_NAME}_doc
+        ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
+        COMMAND
+        ${CMAKE_COMMAND} -E copy
+                          "${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_TAGFILE}"
+                          "${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_TAGFILE}"
+      )
+
+      #     ${depend}_doc)
       # don't do this for now
       # foreach(depend ${DEPENDENCIES})
       #   add_dependencies(${CGAL_PACKAGE_NAME}_doc
@@ -98,6 +121,10 @@ if(DOXYGEN_FOUND)
     file(MAKE_DIRECTORY "${CGAL_DOC_LOG_DIR}")
   endif()
 
+  #we use two directories for the generation/reading of tag files to prevent issues
+  #if the targets are built in parallel
+  set(CGAL_DOC_TAG_GEN_DIR "${CMAKE_BINARY_DIR}/doc_gen_tags")
+  file(MAKE_DIRECTORY "${CGAL_DOC_TAG_GEN_DIR}")
   set(CGAL_DOC_TAG_DIR "${CMAKE_BINARY_DIR}/doc_tags")
   file(MAKE_DIRECTORY "${CGAL_DOC_TAG_DIR}")
   set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
@@ -168,6 +195,8 @@ if(DOXYGEN_FOUND)
 
   # Add a custom target "doc"
   add_custom_target(doc)
+  add_custom_target(doc_pre)
+  add_custom_target(doc_post)
 
   # do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
   configure_doxygen_package("Documentation")
@@ -176,9 +205,16 @@ if(DOXYGEN_FOUND)
   # hard-code that doc depends on all packages
   file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
   foreach(depend ${DEPENDENCIES})
-    add_dependencies(doc ${depend}_doc)
+    add_dependencies(doc_pre ${depend}_internal_doxygen_run)
+    add_dependencies(doc_post ${depend}_copy_doc_tags)
+    add_dependencies(${depend}_copy_doc_tags doc_pre)
   endforeach()
-  add_dependencies(doc Documentation_doc)
+  add_dependencies(doc_pre Documentation_internal_doxygen_run)
+  add_dependencies(doc_post Documentation_copy_doc_tags)
+  add_dependencies(Documentation_copy_doc_tags doc_pre)
+
+  #total level doc dependencies
+  add_dependencies(doc doc_post)
 
   if(PYTHONINTERP_FOUND)
     add_custom_target(doc_with_postprocessing
