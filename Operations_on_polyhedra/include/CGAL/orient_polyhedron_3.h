@@ -50,6 +50,8 @@ struct Axis_compare {
  *
  * @param polyhedron a closed polyhedron to be tested
  *
+ * \todo The following only handle polyhedron with one connected component
+ *       the code, the sample example and the plugin must be updated.
  * @code
  * // use inside out to fix orientation
  * if(!is_oriented(polyhedron)) {
