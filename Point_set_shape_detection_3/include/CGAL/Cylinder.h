@@ -121,9 +121,13 @@ namespace CGAL {
             std::cout << "Cylinder::pointOnPrimitive() construction failed!" << std::endl;
           }
         }
+        d2 = d2 / sqrt(l);
 
         d1 = CGAL::cross_product(m_axis.to_vector(), d2);
         d1 = d1 * (1.0 / sqrt(d1.squared_length()));
+
+        // 1.0 / circumfence
+        FT c = 1.0 / 2 * M_PI * m_radius;
 
         // first one separate for initializing min/max
         Vector vec = first[indices[0]].first - m_point_on_axis;
@@ -134,7 +138,7 @@ namespace CGAL {
         FT a1 = acos(vec * d1);
         FT a2 = acos(vec * d2);
 
-        FT u = (a2 < M_PI_2) ? 2 * M_PI - a1 : a1;
+        FT u = ((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
 
         parameterSpace[0] = std::pair<FT, FT>(u, v);
 
@@ -150,7 +154,7 @@ namespace CGAL {
           FT a1 = acos(vec * d1);
           FT a2 = acos(vec * d2);
 
-          FT u = (a2 < M_PI_2) ? 2 * M_PI - a1 : a1;
+          FT u = ((a2 < M_PI_2) ? 2 * M_PI - a1 : a1) * c;
 
           min[0] = std::min<FT>(min[0], u);
           max[0] = std::max<FT>(max[0], u);
