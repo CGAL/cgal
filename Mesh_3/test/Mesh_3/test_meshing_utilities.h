@@ -263,8 +263,8 @@ struct Tester
 
   // For polyhedral domains, do nothing.
   template<typename C3t3, typename MeshDomain>
-  void verify_c3t3_combinatorics(const C3t3& c3t3,
-                                 const MeshDomain& domain,
+  void verify_c3t3_combinatorics(const C3t3&,
+                                 const MeshDomain&,
                                  const Polyhedral_tag) const
   {}
 
@@ -330,8 +330,8 @@ struct Tester
 
   // For bissection domains, do nothing.
   template<typename C3t3, typename MeshDomain>
-  double compute_hausdorff_distance(const C3t3& c3t3,
-                                    const MeshDomain& domain,
+  double compute_hausdorff_distance(const C3t3&,
+                                    const MeshDomain&,
                                     const Bissection_tag) const
   {
     return 0.;
@@ -379,10 +379,10 @@ struct Tester
   }
 
   template<typename C3t3, typename MeshDomain>
-  void verify_c3t3_hausdorff_distance(const C3t3& c3t3,
-                                      const MeshDomain& domain,
+  void verify_c3t3_hausdorff_distance(const C3t3&,
+                                      const MeshDomain&,
                                       const Bissection_tag,
-                                      const double reference_value) const
+                                      const double) const
   { //nothing to do
   }
 };
