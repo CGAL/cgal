@@ -183,22 +183,26 @@ if(DOXYGEN_FOUND)
   if(PYTHONINTERP_FOUND)
     add_custom_target(doc_with_postprocessing
       ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CMAKE_CURRENT_SOURCE_DIR}/resources
-      DEPENDS doc)
+    )
+    add_dependencies(doc_with_postprocessing doc)
 
     if(CGAL_DOC_CREATE_LOGS)
       add_custom_target(Documentation_test
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR}
-        DEPENDS doc)
+      )
+      add_dependencies(Documentation_test doc)
 
       add_custom_target(Documentation_test_publish
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
-        DEPENDS doc)
+      )
+      add_dependencies(Documentation_test_publish doc)
 
       set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
 
       add_custom_target(doc_and_publish_testsuite
         ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
-        DEPENDS doc_with_postprocessing)
+      )
+      add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
     endif()
   endif()
   
