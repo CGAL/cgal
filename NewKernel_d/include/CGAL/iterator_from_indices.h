@@ -26,6 +26,7 @@ class Iterator_from_indices
 	friend class boost::iterator_core_access;
 	//FIXME: use int to save space
 	//FIXME: use a signed type
+	//TODO: use a tuple to save space when Coord_access is empty
 	typedef std::size_t index_t;
 	Container_* cont;
 	index_t index;

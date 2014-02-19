@@ -120,7 +120,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Value_at_tag>::type Value_at_d;
 	typedef typename Get_functor<Base, Point_of_sphere_tag>::type Point_of_sphere_d;
 	typedef typename Get_functor<Base, Orthogonal_vector_tag>::type Orthogonal_vector_d;
-	//typedef typename Get_functor<Base, Linear_base_tag>::type Linear_base_d;
+	typedef typename Get_functor<Base, Linear_base_tag>::type Linear_base_d;
 
 	//typedef ??? Intersect_d;
 
@@ -145,6 +145,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Vector_to_point_d vector_to_point_d_object()const{ return Vector_to_point_d(*this); }
 	Affine_rank_d affine_rank_d_object()const{ return Affine_rank_d(*this); }
 	Affinely_independent_d affinely_independent_d_object()const{ return Affinely_independent_d(*this); }
+	Linear_base_d linear_base_d_object()const{ return Linear_base_d(*this); }
 	Linear_rank_d linear_rank_d_object()const{ return Linear_rank_d(*this); }
 	Linearly_independent_d linearly_independent_d_object()const{ return Linearly_independent_d(*this); }
 	Midpoint_d midpoint_d_object()const{ return Midpoint_d(*this); }

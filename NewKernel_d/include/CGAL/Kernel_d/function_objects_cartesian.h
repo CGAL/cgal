@@ -6,6 +6,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/store_kernel.h>
 #include <CGAL/is_iterator.h>
+#include <CGAL/iterator_from_indices.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>
@@ -392,6 +393,66 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 }
 
 CGAL_KD_DEFAULT_FUNCTOR(Contained_in_simplex_tag,(CartesianDKernelFunctors::Contained_in_simplex<K>),(Point_tag),(Point_dimension_tag,Compute_point_cartesian_coordinate_tag));
+
+namespace CartesianDKernelFunctors {
+  namespace internal {
+    template<class Ref_>
+    struct Matrix_col_access {
+      typedef Ref_ result_type;
+      int col;
+      Matrix_col_access(int r):col(r){}
+      template<class Mat> Ref_ operator()(Mat const& m, int row)const{
+	return m(row,col);
+      }
+    };
+  }
+template<class R_> struct Linear_base : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Linear_base)
+	typedef R_ R;
+	typedef typename Get_type<R, Vector_tag>::type Vector;
+	typedef typename Get_type<R, FT_tag>::type FT;
+	typedef void result_type;
+	typedef typename R::LA::Dynamic_matrix Matrix;
+
+	template<class Iter, class Oter>
+	result_type operator()(Iter f, Iter e, Oter&o)const{
+		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
+		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
+		typename Get_functor<R, Construct_ttag<Vector_tag> >::type cv(this->kernel());
+		int n=std::distance(f,e);
+		if (n==0) return;
+		Vector const& v0 = *f;
+		// FIXME: Uh? Using it on a vector ?!
+		int d=vd(v0);
+		Matrix m(d,n);
+		for(int j=0;j<d;++j){
+		  m(0,j)=c(v0,j);
+		}
+		for(int i=0; ++f!=e; ++i){
+		  Vector const& v = *f;
+		  for(int j=0;j<d;++j){
+		    m(i,j)=c(v,j);
+		  }
+		}
+		Matrix b = R::LA::basis(CGAL_MOVE(m));
+		for(int i=0; i < R::LA::columns(b); ++i){
+		  //*o++ = Vector(b.col(i));
+		  typedef 
+#ifdef CGAL_CXX0X
+		    decltype(std::declval<const Matrix>()(0,0))
+#else
+		    FT
+#endif
+		    Ref;
+		  typedef Iterator_from_indices<Matrix, FT, Ref,
+			  internal::Matrix_col_access<Ref> > IFI;
+		  *o++ = cv(IFI(b,0,i),IFI(b,d,i));
+		}
+	}
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Linear_base_tag,(CartesianDKernelFunctors::Linear_base<K>),(Vector_tag),(Point_dimension_tag,Compute_vector_cartesian_coordinate_tag));
 
 #if 0
 namespace CartesianDKernelFunctors {

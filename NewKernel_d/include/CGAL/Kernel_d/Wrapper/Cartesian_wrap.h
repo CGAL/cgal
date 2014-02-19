@@ -29,12 +29,12 @@ template<class T> struct Is_wrapper<T,true> {
 	enum { value=type::value };
 };
 
-template<class T,bool=is_iterator<T>::value> struct Is_wrapper_iterator {
+template<class T,bool=is_iterator_type<T,std::input_iterator_tag>::value> struct Is_wrapper_iterator {
 	enum { value=false };
 	typedef Tag_false type;
 };
 template<class T> struct Is_wrapper_iterator<T,true> :
-	Is_wrapper<typename std::iterator_traits<T>::value_type>
+	Is_wrapper<typename std::iterator_traits<typename CGAL::decay<T>::type>::value_type>
 { };
 
 struct Forward_rep {
@@ -65,6 +65,7 @@ template<class> struct result;
 template<class T> struct result<Forward_rep(T)> : result_<T> {};
 
 template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type const& operator()(T const& t) const {return t;}
+template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type& operator()(T& t) const {return t;}
 
 template <class T> typename boost::enable_if<Is_wrapper<T>,T>::type::Rep const& operator()(T const& t) const {return t.rep();}
 
@@ -126,6 +127,15 @@ struct Cartesian_wrap : public Base_
 			    return b(BOOST_PP_ENUM(N,VAR,)); \
 		    }
 		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
+#undef CODE
+#undef VAR
+// In case the last argument needs to be non-const. Fragile...
+#define VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U),class V> result_type \
+		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u),V&v)const{ \
+			    return b(BOOST_PP_ENUM(N,VAR,),v); \
+		    }
+		    BOOST_PP_REPEAT_FROM_TO(1,8,CODE,_)
 #undef CODE
 #undef VAR
 #endif

@@ -55,6 +55,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 
 	template<class Vec_>static Vector_const_iterator vector_end(Vec_ const&a){
 #if (EIGEN_WORLD_VERSION>=3)
+	  // FIXME: Isn't that dangerous if a is an expression and not a concrete vector?
 	  return &a[0]+a.size();
 #else
 	  return Vector_const_iterator(a,a.size());
@@ -85,6 +86,13 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		return a.dot(b);
 	}
 
+	template<class Vec_> static int rows(Vec_ const&v) {
+		return v.rows();
+	}
+	template<class Vec_> static int columns(Vec_ const&v) {
+		return v.cols();
+	}
+
 	template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
 		return m.determinant();
 	}
@@ -107,6 +115,10 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 	static bool solve(Dynamic_vector&a, Dynamic_matrix const&m, Vector const& b){
 		a = m.colPivHouseholderQr().solve(b);
 		return b.isApprox(m*a);
+	}
+
+	static Dynamic_matrix basis(Dynamic_matrix const&m){
+		return m.fullPivLu().image(m);
 	}
 
 	template<class Vec1,class Vec2> static Vector homogeneous_add(Vec1 const&a,Vec2 const&b){

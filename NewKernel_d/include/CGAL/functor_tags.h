@@ -232,7 +232,6 @@ namespace CGAL {
 	DECL_CONSTRUCT(Translated_point,Point);
 	DECL_CONSTRUCT(Point_to_vector,Vector);
 	DECL_CONSTRUCT(Vector_to_point,Point);
-	//DECL_CONSTRUCT(Linear_base,); --> in Misc?
 #undef DECL_CONSTRUCT
 #if 0
 #define DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
@@ -281,6 +280,7 @@ namespace CGAL {
 	//DECL_MISC(Construct_vector_cartesian_const_iterator);
 	DECL_MISC(Point_dimension);
 	DECL_MISC(Vector_dimension);
+	DECL_MISC(Linear_base); // Find a more appropriate category?
 #undef DECL_MISC
 
 
