@@ -30,6 +30,7 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Mesh_3/Has_timestamp.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -121,8 +122,8 @@ public:
   CGAL_time_stamper(const CGAL_time_stamper& ts)
    : time_stamp_(ts.time_stamp_) {}
 
-  void set_time_stamp(T* pt)    { pt->ts = time_stamp_++; }
-  static std::size_t get(T* pt) { return pt->ts; }
+  void set_time_stamp(T* pt)    { pt->time_stamp_ = time_stamp_++; }
+  static std::size_t get(T* pt) { return pt->time_stamp_; }
   void reset()                  { time_stamp_ = 0; }
 
   std::size_t time_stamp_;
@@ -147,7 +148,8 @@ class Compact_container
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   
   typedef TimeStamper_                              Ts;
-  typedef typename boost::mpl::if_c< true,// CGAL::has_timestamp<T>, 
+  typedef typename boost::mpl::if_c<
+        CGAL::internal::Mesh_3::Has_timestamp<T>::value,
         typename CGAL_time_stamper<T>,
         typename CGAL_no_time_stamp<T> >::type      Time_stamper_;
   typedef typename Default::Get<Ts, Time_stamper_>::type Time_stamper;

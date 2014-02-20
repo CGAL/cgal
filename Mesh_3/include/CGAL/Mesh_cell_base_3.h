@@ -33,6 +33,8 @@
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Mesh_3/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
   
@@ -169,8 +171,19 @@ private:
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
 
+public: 
+  std::size_t time_stamp_;
+
 };  // end class Mesh_cell_base_3
 
+namespace internal {
+namespace Mesh_3 {
+  template < class GT, class MT, class Cb >
+  struct Has_timestamp< Mesh_cell_base_3<GT, MT, Cb> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
 
 
 template < class GT, class MT, class Cb >

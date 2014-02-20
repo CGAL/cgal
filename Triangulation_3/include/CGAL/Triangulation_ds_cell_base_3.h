@@ -26,6 +26,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
@@ -207,8 +208,6 @@ private:
   Cell_handle   N[4];
   Vertex_handle V[4];
   TDS_data      _tds_data;
-public:
-  std::size_t ts;
 };
 
 template < class TDS >

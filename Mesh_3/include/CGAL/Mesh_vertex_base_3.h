@@ -30,9 +30,10 @@
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Mesh_3/Has_features.h>
 #include <CGAL/internal/Mesh_3/get_index.h>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Mesh_3/Has_timestamp.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
@@ -160,7 +161,7 @@ public:
   }
 
 public:
-  std::size_t ts;
+  std::size_t time_stamp_;
 
 private:
 
@@ -187,6 +188,10 @@ private:
 
 namespace internal {
 namespace Mesh_3 {
+  template < class GT, class MT, class Vb >
+  struct Has_timestamp< Mesh_vertex_base_3<GT, MT, Vb> > 
+    : public CGAL::Tag_true
+    {};
 } // end namespace internal::Mesh_3
 } // end namespace internal
 
