@@ -46,7 +46,7 @@ private:
   Set_of_indices indices;
 
 public:
-  std::size_t ts;
+  std::size_t time_stamp_;
 
 public:
   int nb_of_feature_edges;
@@ -80,7 +80,7 @@ private:
   bool feature_edge;
 
 public:
-  std::size_t ts;
+  std::size_t time_stamp_;
 
 public:
   
@@ -105,7 +105,7 @@ private:
   Patch_id_ patch_id_;
 
 public:
-  std::size_t ts;
+  std::size_t time_stamp_;
 
 public:
 

@@ -159,17 +159,17 @@ initialize_ts(Polyhedron& p)
   for(typename Polyhedron::Vertex_iterator v = p.vertices_begin(),
       end = p.vertices_end() ; v != end ; ++v)
   {
-    v->ts = ts++;
+    v->time_stamp_ = ts++;
   }
   for(typename Polyhedron::Facet_iterator fit = p.facets_begin(),
        end = p.facets_end() ; fit != end ; ++fit )
   {
-    fit->ts = ts++;
+    fit->time_stamp_ = ts++;
   }
   for(typename Polyhedron::Halfedge_iterator hit = p.halfedges_begin(),
        end = p.halfedges_end() ; hit != end ; ++hit )
   {
-    hit->ts = ts++;
+    hit->time_stamp_ = ts++;
   }
 }
 
