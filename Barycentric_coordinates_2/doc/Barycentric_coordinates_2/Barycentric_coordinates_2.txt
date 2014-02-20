@@ -54,14 +54,6 @@ We also do this for Segment and Triangle coordinates
 - `Barycentric_coordinates::Seg_coordinates_2` and
 - `Barycentric_coordinates::Tri_coordinates_2`.
 
-The last five classes are intended to parallel the computation of coordinates for multiple points. These classes are parameterized by `CGAL::Polygon_2` class, they require a container with points, and they return an <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> with coordinates
-
-- `Barycentric_coordinates::Segment_coordinates_parallel_2`,
-- `Barycentric_coordinates::Triangle_coordinates_parallel_2`,
-- `Barycentric_coordinates::Wachspress_coordinates_parallel_2`, 
-- `Barycentric_coordinates::Mean_value_coordinates_parallel_2`, and
-- `Barycentric_coordinates::Discrete_harmonic_coordinates_parallel_2`.
-
 \subsection gbc_int_compute_weights Computation of the weight functions
 
 Since all the closed-form generalized barycentric coordinates are normalized weight functions (See \ref gbc_theory section for more information), the base class is able to compute weights directly without normalization for a strictly interior query point. To do so, you can use the following function 
@@ -121,7 +113,7 @@ In the following example we create a random strictly convex polygon with 1000 ra
 \cgalExample{Barycentric_coordinates_2/Wachspress_coordinates_example.cpp}
 
 \subsection dh_example Discrete Harmonic coordinates example
-In this example we are going to compute the set of Discrete Harmonic coordinates for a set of <kbd style="color:#00CC00">green</kbd> (interior), <kbd style="color:#FF0033">red</kbd> (boundary), and <kbd style="color:#0099FF">blue</kbd> (exterior) points with respect to the unit square. We will also show how to accelerate computations using additional parameters of the function `compute()`. The used kernel is exact, and we use <a href="http://en.cppreference.com/w/cpp/container/list">`std::list`</a> as an output container. Since all the points are symmetric, it is easy to debug the correctness of the obtained coordinate values. Output iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
+In this example we are going to compute the set of Discrete Harmonic coordinates for a set of <kbd style="color:#00CC00">interior</kbd>, <kbd style="color:#FF0033">boundary</kbd>, and <kbd style="color:#0099FF">exterior</kbd> points with respect to the unit square. We will also show how to accelerate computations using additional parameters of the function `compute()`. The used kernel is exact, and we use <a href="http://en.cppreference.com/w/cpp/container/list">`std::list`</a> as an output container. Since all the points are symmetric, it is easy to debug the correctness of the obtained coordinate values. Output iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
 
 \anchor dh_coord_example
 \cgalFigureBegin{dh__example,discrete_harmonic_coordinates_example.png}
@@ -166,7 +158,7 @@ Example's point pattern.
 Segment coordinates can be computed exactly if an exact data type is chosen. The segment itself, with respect to which we compute coordinates, must be not degenerate. If the both conditions are satisfied, the computation never breaks down. But, we have to do some clarification here. To compute coordinate functions, the user must be positive about a query point being exactly on the line \f$L\f$ supporting the segment. Since in many applications it is not the case, and a query point may lie very close but not exactly on this line, the class is able to handle this situation.
 
 \cgalFigureBegin{projection,projection.png}
-Scalar projection \f$p'\f$ of the vector \f$p\f$ on the vector \f$q\f$.
+Scalar projection \f$p'\f$ of the <kbd style="color:#006400">vector</kbd> \f$p\f$ on the <kbd style="color:#800000">vector</kbd> \f$q\f$.
 \cgalFigureEnd
 
 Let us imagine that some query point \f$v\f$ does not lie exactly on the line \f$L\f$, but it is of some distance \f$d\f$ away as it is shown in the figure above. If we want to compute Segment barycentric coordinate \f$b_1(v)\f$ with respect to the vertex \f$v_1\f$, we, first, find a scalar projection \f$p'\f$ of the vector \f$p\f$ on the vector \f$q\f$ and then normalize it by the length of \f$q\f$. It gives us Segment barycentric coordinate \f$b_1(v') = b_1(v)\f$ if \f$v\f$ lied exactly on the line.
@@ -250,7 +242,7 @@ Since \f$\bar{w}_i\f$ is always positive, we have to append to it the proper sig
 
 Apart the most important requirement on barycentric coordinates to be as much as possible precise, it is very important for them to be as fast as possible to evaluate. These coordinate functions are used in many applications where they must be computed for millions of points and, thus, the real time usage of coordinates is crucial. When writing the code, we tried to fulfil this important requirement, and in this section we present the reader a few results about the computational time of the implemented coordinate functions.
 
-The structure of the speed test that we run for all the functions consists of computing coordinate (or weight) values at \f$10^6-10^9\f$ strictly interior points with respect to some polygon (triangle or segment). At each iteration of the loop we create a query point, pass it to the function, and compute all the related coordinates. We run this loop 10 times in a row, and the time presented in the Table 1 is the arithmetic mean of all the trials. A typical example of the performed test for Triangle coordinates can be found below. This example also shows how to construct your own iterator and pass it to our class. In our example we create an iterator that writes coordinate values for each new query point over coordinate values of the previous point in the fixed-size standard C++ array, so that memory is allocated only once.
+The structure of the speed test that we run for all the functions consists of computing coordinate (or weight) values at \f$10^8-10^{10}\f$ strictly interior points with respect to some polygon (triangle or segment). At each iteration of the loop we create a query point, pass it to the function, and compute all the related coordinates. We run this loop 10 times in a row, and the time presented in the Table 1 is the arithmetic mean of all the trials. A typical example of the performed test for Triangle coordinates can be found below. This example also shows how to construct your own iterator and pass it to our class. In our example we create an iterator that writes coordinate values for each new query point over coordinate values of the previous point in the fixed-size standard C++ array, so that memory is allocated only once.
 
 \cgalExample{Barycentric_coordinates_2/Triangle_coordinates_speed_test.cpp}
 
@@ -260,175 +252,155 @@ The machine that has been used in all the tests is MacBook Pro 2011 with 2 GHz I
 
 <table align=center width="70%" cellspacing="0" border="1" style="border-collapse: collapse">
 <tr>
-<th colspan="4" height="30px" style="background: #ccc">Time to compute Segment and Triangle coordinates</th>
+<th colspan="5" height="30px" style="background: #ccc">Time to compute Segment and Triangle coordinates (seconds)</th>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b></b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n)\f$ algorithm</b></td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Segment coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$2\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^{10}\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$2\cdot 10^{10}\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">13.86494708</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Triangle coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$3\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^{10}\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$3\cdot 10^{10}\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">13.91510820</td>
 </tr>
 <tr>
-<th colspan="4" height="30px" style="background: #ccc">Time to compute coordinate functions on a unit square</th>
+<th colspan="5" height="30px" style="background: #ccc">Time to compute weight functions on a unit square (seconds)</th>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
-</tr>
-<tr>
-<td align=center style="border: 1px solid #800; padding: 4px;">Wachspress coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
-</tr>
-<tr>
-<td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
-</tr>
-<tr>
-<td align=center style="border: 1px solid #800; padding: 4px;">Mean Value coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
-</tr>
-<tr>
-<th colspan="4" height="30px" style="background: #ccc">Time to compute weight functions on a unit square</th>
-</tr>
-<tr>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of weights</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of weight values</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b></b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n)\f$ algorithm</b></td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Wachspress weights</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">47.25240803</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic weights</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">58.56583214</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Mean Value weights</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">97.41971302</td>
 </tr>
 <tr>
-<th colspan="4" height="30px" style="background: #ccc">Time to compute coordinate functions on a strictly convex polygon with 16 vertices</th>
+<th colspan="5" height="30px" style="background: #ccc">Time to compute coordinate functions on a unit square (seconds)</th>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n^2)\f$ algorithm</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n)\f$ algorithm</b></td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Wachspress coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">48.64753795</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">64.24326611</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">61.93832940</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">78.09849691</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Mean Value coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">99.83270693</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">113.8180611</td>
 </tr>
 <tr>
-<th colspan="4" height="30px" style="background: #ccc">Time to compute weight functions on a strictly convex polygon with 16 vertices</th>
+<th colspan="5" height="30px" style="background: #ccc">Time to compute weight functions on a strictly convex polygon with 16 vertices (seconds)</th>
 </tr>
 <tr>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of weights</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of weight values</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b></b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n)\f$ algorithm</b></td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Wachspress weights</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">20.44883299</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic weights</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">22.88397408</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Mean Value weights</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
 <td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">39.10448194</td>
 </tr>
 <tr>
-<th colspan="4" height="30px" style="background: #ccc">Parallel computation along segment, triangle, and unit square</th>
+<th colspan="5" height="30px" style="background: #ccc">Time to compute coordinate functions on a strictly convex polygon with 16 vertices (seconds)</th>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
 <td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
-<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
-</tr>
-<tr>
-<td align=center style="border: 1px solid #800; padding: 4px;">Segment coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$2\cdot 10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
-</tr>
-<tr>
-<td align=center style="border: 1px solid #800; padding: 4px;">Triangle coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$3\cdot 10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n^2)\f$ algorithm</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time \f$O(n)\f$ algorithm</b></td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Wachspress coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">37.88853598</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">23.22868419</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">39.69916701</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">25.71915221</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Mean Value coordinates</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^6\f$</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">58.91693497</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">41.49101996</td>
 </tr>
 <tr>
-<th colspan="4" height="30px" style="background: #ccc">Table 1</th>
+<th colspan="5" height="30px" style="background: #ccc">Table 1</th>
 </tr>
 </table>
 <BR>
@@ -474,7 +446,7 @@ Some statistics about current implementation of the package can be found in the 
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Classes</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">16</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">11</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Enumerations</td>
@@ -482,7 +454,7 @@ Some statistics about current implementation of the package can be found in the 
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Lines of code</td>
-<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+<td align=center style="border: 1px solid #800; padding: 4px;">2590</td>
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Supported kernels</td>
@@ -518,7 +490,7 @@ Some statistics about current implementation of the package can be found in the 
 </tr>
 <tr>
 <td align=center style="border: 1px solid #800; padding: 4px;">Number of speed tests</td>
-<td align=center style="border: 1px solid #800; padding: 4px;">19</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">18</td>
 </tr>
 <tr>
 <th colspan="2" height="30px" style="background: #ccc">Table 2</th>
@@ -555,7 +527,7 @@ Wachspress coordinates with respect to \f$v_2 = (1.0,\ 1.0)\f$. The colour bar i
 
 Another type of generalized barycentric coordinates proposed by Pinkall and Polthier in 1993 \cite cgal:pp-cdmsc-93 and by Eck et al. in 1995 \cite cgal:bc:eddhls-maam-95 in the context of a \ref chapsurface_mesh_parameterization "triangle mesh parameterization" is called Discrete Harmonic coordinates. These coordinates are defined, similar to the Wachspress approach, for an arbitrary <em>strictly convex</em> polygon and inherit all the properties of Triangle coordinates <em>apart the positivity inside a polygon</em> because they can be negative in some regions of some irregular polygons. Another interesting property of these coordinate functions is that they coincide with Wachspress coordinates for any polygon whose vertices lie on a circle.
 
-To plot the Discrete Harmonic coordinates we take \ref dh_coord_example "the unit square" \f$[v_0, \dots, v_3]\f$ used with Wachspress coordinates and plot the function with respect to the same vertex \f$v_2\f$. Since a unit square is a regular polygon that is its vertices lie on a circle, we get the plot identical to the \ref wp_plot  "Wachspress one".
+To plot Discrete Harmonic coordinates we take \ref dh_coord_example "the unit square" \f$[v_0, \dots, v_3]\f$ used with Wachspress coordinates and plot the function with respect to the same vertex \f$v_2\f$. Since a unit square is a regular polygon that is its vertices lie on a circle, we get the plot identical to the \ref wp_plot  "Wachspress one".
 
 The last type of generalized barycentric coordinates, we want to discuss, is Mean Value coordinates \cite cgal:f-mvc-03 proposed by M. Floater in 2003. Based on the <a href="http://en.wikipedia.org/wiki/Mean_value_theorem" target=blanc>Mean Value theorem</a> these coordinates, unlike Wachspress and Discrete Harmonic ones, are defined for an arbitrary <em>simple polygon</em>, inherit all the properties of Triangle coordinates for any convex polygon, and <em>lack the only positivity property for some concave ones</em>. It is proven by Hormann and Floater that these coordinates are positive only inside the kernel of a star-shaped polygon \cite cgal:bc:hf-mvcapp-06. The same as for Discrete Harmonic coordinates, Mean Value weights are often used in the context of a \ref chapsurface_mesh_parameterization "triangle mesh parameterization."
 
@@ -566,6 +538,9 @@ Mean Value coordinates with respect to \f$v_7\f$. The colour bar indicates the r
 \cgalFigureEnd
 
 \b Family: All the coordinates discussed in this section and implemented in the package come from one and the same family of generalized barycentric coordinates named <em>3-Point Family of Coordinates</em> \cite cgal:bc:fhk-gcbcocp-06. 
+
+\section gbc_acknowledgments Acknowledgments
+The authors wish to thank <a href="http://www.inf.usi.ch/phd/schneider/">Teseo Schneider</a> and <a href="http://search.usi.ch/people/5ae37d3d990b431a02b95b0b606da2e6/Schaerfig-Randolf">Randolf Schaerfig</a> for helpful comments and discussions. 
 
 */
 
