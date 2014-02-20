@@ -29,6 +29,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "edge_profile.cpp" )
   create_single_source_cgal_program( "repair.cpp" )
   create_single_source_cgal_program( "extract.cpp" )
+  create_single_source_cgal_program( "detect_intersecting_segments.cpp" )
 
 else()
   
