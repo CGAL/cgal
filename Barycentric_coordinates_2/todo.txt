@@ -1,0 +1,3 @@
+1. To make the code parallel. Get iteration number from the thread. Add parallel class to each type of the coordinate functions. Use begin() + offset. Resize vector. Parallel class takes as parameters list of points and polygon. Use random access iterator.
+
+2. Ask developer list about template + virtual problem.

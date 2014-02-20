@@ -1,0 +1,19 @@
+/// \defgroup PkgBarycentric_coordinates_2 2D Generalized Barycentric Coordinates Reference
+
+/*!
+\addtogroup PkgBarycentric_coordinates_2
+\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentric_coordinates_2Summary}
+\cgalPkgPicture{barcoord_thumb.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Anisimov Dmitry, David Bommes, Kai Hormann, and Pierre Alliez}
+\cgalPkgDesc{2D Generalized Barycentric Coordinates package offers three different types of closed-form generalized barycentric coordinates defined for some sets of simple polygons. In particular, it includes an implementation of Wachspress, Mean Value, and Discrete Harmonic coordinates together with special cases for triangles and segments.}
+\cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentric_coordinates_2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.4}
+\cgalPkgBib{cgal:abha-gbc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+\cgalClassifedRefPages
+*/

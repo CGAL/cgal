@@ -1,0 +1,572 @@
+namespace CGAL {
+
+/*!
+
+\mainpage User Manual
+\anchor Chapter_2D_Generalized_Barycentric_Coordinates
+\anchor chapterGeneralizedBarycentricCoordinates
+\cgalAutoToc
+
+\authors Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
+
+\section gbc_introduction Introduction
+
+<em>2D Generalized Barycentric Coordinates</em> package offers three different types of closed-form barycentric coordinates defined for some sets of simple polygons. In particular, it includes an implementation of \ref wp_example "Wachspress", \ref mv_example "Mean Value", and \ref dh_example "Discrete Harmonic coordinates". In addition to these generalized types, the package provides some functions to compute barycentric coordinates with respect to a segment (\ref seg_example "Segment coordinates") and a triangle (\ref tri_example "Triangle coordinates"). If you are not familiar with barycentric coordinates, please read the \ref gbc_theory section, first. 
+
+Mean Value coordinates are the most generic type of the coordinates in this package because they allow an arbitrary simple polygon as an input. Wachspress and Discrete Harmonic coordinates are, by definition, limited to an arbitrary, though, strictly convex polygon. Segment coordinates take as an input any non-degenerate segment, and Triangle coordinate functions allow an arbitrary non-degenerate triangle. See \ref gbc_degeneracies section for more information on input.
+
+As a query point, it may be taken any point in the plane. However, we do not recommend to use Wachspress and Discrete Harmonic coordinates with points outside the closure of a polygon because at some of those points these coordinate functions are not well-defined. See \ref gbc_degeneracies section for more details.
+
+If you need coordinates with respect to multivariate scattered data instead of a polygon, please refer to the package \ref chapinterpolation "2D and Surface Function Interpolation".    
+
+\section gbc_interface Interface
+
+\subsection gbc_int_namespace Namespace
+
+In order not to confuse between different currently used global names in the `CGAL` library and some names from the package, all the classes and functions of the package are members of the namespace `CGAL::Barycentric_coordinates`. For your convenience and to shorten the name of this namespace, we also provide its alias called `CGAL::BC`. 
+
+\subsection gbc_int_construction Construction
+
+The main entry point to the component is the class with a name of the required coordinate function with an input reference to the polygon of the type `CGAL::Polygon_2`. Once instantiated for some polygon, the coordinate function can be computed multiple times for different query points with respect to all the vertices of the provided polygon. Triangle coordinates require `CGAL::Triangle_2` data structure, and Segment coordinates use `CGAL::Segment_2` as an input referenced segment.
+
+\subsection gbc_int_hierarchy Hierarchy of the classes
+
+This package consists of three main and thirteen derived classes. The main classes are 
+
+- `Barycentric_coordinates::Segment_coordinates_2`,
+- `Barycentric_coordinates::Triangle_coordinates_2`, and
+- `Barycentric_coordinates::Barycentric_coordinates_base_2`.
+
+The latter one is the base class for all 2D generalized barycentric coordinates. We use it to derive the following three classes
+
+- `Barycentric_coordinates::Wachspress_coordinates_2`, 
+- `Barycentric_coordinates::Mean_value_coordinates_2`, and 
+- `Barycentric_coordinates::Discrete_harmonic_coordinates_2`. 
+
+These classes are parameterized by `CGAL::Polygon_2` class and `Iterator` class. To simplify the user's life we overload this general `Iterator` class with particular <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>, which is parameterized by an appropriate STL container class. The default container is <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>. The obtained classes are
+
+- `Barycentric_coordinates::WP_coordinates_2`, 
+- `Barycentric_coordinates::MV_coordinates_2`, and 
+- `Barycentric_coordinates::DH_coordinates_2`.
+
+We also do this for Segment and Triangle coordinates
+
+- `Barycentric_coordinates::Seg_coordinates_2` and
+- `Barycentric_coordinates::Tri_coordinates_2`.
+
+The last five classes are intended to parallel the computation of coordinates for multiple points. These classes are parameterized by `CGAL::Polygon_2` class, they require a container with points, and they return an <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> with coordinates
+
+- `Barycentric_coordinates::Segment_coordinates_parallel_2`,
+- `Barycentric_coordinates::Triangle_coordinates_parallel_2`,
+- `Barycentric_coordinates::Wachspress_coordinates_parallel_2`, 
+- `Barycentric_coordinates::Mean_value_coordinates_parallel_2`, and
+- `Barycentric_coordinates::Discrete_harmonic_coordinates_parallel_2`.
+
+\subsection gbc_int_compute_weights Computation of the weight functions
+
+Since all the closed-form generalized barycentric coordinates are normalized weight functions (See \ref gbc_theory section for more information), the base class is able to compute weights directly without normalization for a strictly interior query point. To do so, you can use the following function 
+
+- `Barycentric_coordinates::Barycentric_coordinates_base_2::compute_weights()`.
+
+Note that `Segment_coordinates_2` and `Triangle_coordinates_2` classes do not have this function.
+
+\subsection gbc_int_compute_bases Computation of the basis functions
+
+In order to compute basis functions you have to use
+
+- `Barycentric_coordinates::Barycentric_coordinates_base_2::compute()`.
+
+The naive call of this function with a provided query point as an input computes the barycentric coordinates of a chosen type at the query point with respect to all the vertices of the polygon. During the running time of the function some interior tests are performed in order to make the computation as much as possible precise. However, if the user knows in advance the exact query point's location, meaning, he can distinguish between a strictly interior point, a point on the edge, a point at the vertex, or a strictly exterior point, he can use this information as an additional parameter to the function to accelerate the computation. This parameter is called `query_point_location`, and it is of the type `Barycentric_coordinates::Query_point_location`, which can be one of the following constants
+
+- `Barycentric_coordinates::UNSPECIFIED_LOCATION` - the default constant;
+- `Barycentric_coordinates::AT_VERTEX` - if a query point is at one of the polygon's vertices;
+- `Barycentric_coordinates::ON_BOUNDARY` - if a query point is on the polygon's boundary; 
+- `Barycentric_coordinates::ON_BOUNDED_SIDE` - if a query point is strictly inside the polygon;
+- `Barycentric_coordinates::ON_UNBOUNDED_SIDE` - if a query point is strictly outside the polygon.
+
+Another parameter to this function is `type_of_algorithm` of the type `Barycentric_coordinates::Type_of_algorithm`. This parameter is used to choose between two generic concepts when computing coordinates
+
+- `Barycentric_coordinates::PRECISE` - default slow algorithm, which is precise as much as possible, and
+- `Barycentric_coordinates::FAST` - fast algorithm, which is less precise but much faster.
+
+In some cases they can be the same. The base class also provides some other functions to compute coordinates that can be summarized as follows
+
+- `Barycentric_coordinates::Barycentric_coordinates_base_2::compute_on_edge()` - this function allows to compute coordinates for a query point on the polygon's boundary with beforehand known index of the edge to which this point belongs;
+- `Barycentric_coordinates::Barycentric_coordinates_base_2::compute_at_vertex()` - this function allows to compute coordinates for a query point, which coincides with one of the polygon's vertices, with beforehand known index.
+
+Note, that function `compute()` from `Segment_coordinates_2` and `Triangle_coordinates_2` classes does not accept the parameters `query_point_location` and `type_of_algorithm`, and both classes do not have the functions `compute_on_edge()` and `compute_at_vertex()`.
+
+\subsection gbc_int_output Output
+
+Output of the computation is a set of coordinate values at the current query point with respect to all the vertices of the polygon, and it can be stored in an arbitrary container providing an appropriate output iterator. More information about output can be found in the \ref gbc_implementation section.
+
+\subsection gbc_int_advance Other functions
+
+Some additional functions are implemented to give the user more information about coordinates
+
+- `Barycentric_coordinates::Segment_coordinates_2::print_info()` - returns some information about current segment and Segment coordinates' behaviour;
+- `Barycentric_coordinates::Triangle_coordinates_2::print_info()` - returns some information about current triangle and Triangle coordinates' behaviour;
+- `Barycentric_coordinates::Barycentric_coordinates_base_2::print_info()` - returns some information about current polygon and coordinates' behaviour for this type of polygons.
+
+`Seg_coordinates_2` and `Tri_coordinates_2` classes also provide the following static functions
+
+- `Barycentric_coordinates::Seg_coordinates_2::Compute()` - this function takes a segment and a query point and returns a `CGAL::Point_2` type of coordinates;
+- `Barycentric_coordinates::Tri_coordinates_2::Compute()` - this function takes a triangle and a query point and returns a `CGAL::Point_3` type of coordinates.
+
+\section gbc_examples Examples
+
+\subsection wp_example Wachspress coordinates example
+In the following example we create a random strictly convex polygon with 1000 random interior points and compute Wachspress coordinates at all these points with respect to all the polygon's vertices. We use a simple Cartesian kernel with double type and store obtained coordinate values in <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container. Output iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>, and it is handled automatically by the class.
+
+\cgalExample{Barycentric_coordinates_2/Wachspress_coordinates_example.cpp}
+
+\subsection dh_example Discrete Harmonic coordinates example
+In this example we are going to compute the set of Discrete Harmonic coordinates for a set of <kbd style="color:#00CC00">green</kbd> (interior), <kbd style="color:#FF0033">red</kbd> (boundary), and <kbd style="color:#0099FF">blue</kbd> (exterior) points with respect to the unit square. We will also show how to accelerate computations using additional parameters of the function `compute()`. The used kernel is exact, and we use <a href="http://en.cppreference.com/w/cpp/container/list">`std::list`</a> as an output container. Since all the points are symmetric, it is easy to debug the correctness of the obtained coordinate values. Output iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
+
+\anchor dh_coord_example
+\cgalFigureBegin{dh__example,discrete_harmonic_coordinates_example.png}
+Example's point pattern.
+\cgalFigureEnd
+
+\cgalExample{Barycentric_coordinates_2/Discrete_harmonic_coordinates_example.cpp}
+
+\subsection mv_example Mean Value coordinates example
+This is an example that shows how to compute Mean Value coordinates for a set of <kbd style="color:#00CC00">green points</kbd> in the star-shaped polygon. We note that this type of coordinates is well-defined for such a concave polygon while Wachspress and Discrete Harmonic coordinates are not. However, it may give negative values for all the points outside <kbd style="color:#CC0000">the kernel</kbd>. We use inexact kernel, <a href="http://en.cppreference.com/w/cpp/container/deque">`std::deque`</a> container, and <a href="http://en.cppreference.com/w/cpp/iterator/front_insert_iterator">std::front_insert_iterator</a> to compute and store the resulting coordinate values. 
+
+\anchor mv_coord_example
+\cgalFigureBegin{mv__example,mean_value_coordinates_example.png}
+Example's point pattern.
+\cgalFigureEnd
+
+\cgalExample{Barycentric_coordinates_2/Mean_value_coordinates_example.cpp}
+
+\subsection tri_example Triangle coordinates example
+In this example we show how to use `CGAL::Barycentric_coordinates::Triangle_coordinates_2` class with simple Cartesian kernel for a float type. We compute coordinates for three sets of points: <kbd style="color:#00CC00">interior</kbd>, <kbd style="color:#FF0033">boundary</kbd>, and <kbd style="color:#0099FF">exterior</kbd>. Note, that some of the coordinate values for all the exterior points will be negative. We use a standard <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container and <a href="http://en.cppreference.com/w/cpp/iterator/insert_iterator">std::insert_iterator</a> to access and store the resulting values.
+
+\anchor tri_coord_example
+\cgalFigureBegin{tri__example,triangle_coordinates_example.png}
+Example's point pattern.
+\cgalFigureEnd
+
+\cgalExample{Barycentric_coordinates_2/Triangle_coordinates_example.cpp}
+
+\subsection seg_example Segment coordinates example
+This is a very simple and short example on how to use `CGAL::Barycentric_coordinates::Seg_coordinates_2` class. We compute coordinate functions at three <kbd style="color:#00CC00">interior points</kbd> along the segment \f$[v_0, v_1]\f$ and at two <kbd style="color:#0099FF">exterior points</kbd> outside this segment along its supporting line. We use exact kernel and return coordinate values as a 2D point of the type `CGAL::Point_2`. Again, symmetry of points allows us to see if there are any errors in the coordinates' computation.
+
+\anchor seg_coord_example
+\cgalFigureBegin{seg__example,segment_coordinates_example.png}
+Example's point pattern.
+\cgalFigureEnd
+
+\cgalExample{Barycentric_coordinates_2/Segment_coordinates_example.cpp}
+
+\section gbc_degeneracies Degeneracies and special cases
+
+\subsection gbc_deg_segment_coordinates Segment coordinates
+Segment coordinates can be computed exactly if an exact data type is chosen. The segment itself, with respect to which we compute coordinates, must be not degenerate. If the both conditions are satisfied, the computation never breaks down. But, we have to do some clarification here. To compute coordinate functions, the user must be positive about a query point being exactly on the line \f$L\f$ supporting the segment. Since in many applications it is not the case, and a query point may lie very close but not exactly on this line, the class is able to handle this situation.
+
+\cgalFigureBegin{projection,projection.png}
+Scalar projection \f$p'\f$ of the vector \f$p\f$ on the vector \f$q\f$.
+\cgalFigureEnd
+
+Let us imagine that some query point \f$v\f$ does not lie exactly on the line \f$L\f$, but it is of some distance \f$d\f$ away as it is shown in the figure above. If we want to compute Segment barycentric coordinate \f$b_1(v)\f$ with respect to the vertex \f$v_1\f$, we, first, find a scalar projection \f$p'\f$ of the vector \f$p\f$ on the vector \f$q\f$ and then normalize it by the length of \f$q\f$. It gives us Segment barycentric coordinate \f$b_1(v') = b_1(v)\f$ if \f$v\f$ lied exactly on the line.
+
+\b Warning: Do not abuse the feature described above because it does not give correct Segment barycentric coordinates for the point \f$v\f$ but rather those for \f$v'\f$. Moreover, Segment barycentric coordinates for the point \f$v\f$ being not exactly on \f$L\f$ do not exist. But, if the non zero distance \f$d\f$ is due to some numerical instability when computing the location of the point \f$v\f$ or any other problem which causes the point be not exactly on the line, the final Segment barycentric coordinates will be correct.
+
+With inexact data types coordinates give the correct result up to the precision of the chosen type.
+
+\subsection gbc_deg_triangular_coordinates Triangle coordinates
+
+These coordinates can be computed exactly, if an exact data type is chosen, for any query point in the plane, and with respect to any non-degenerate triangle. No special cases are handled. The computation always gives the correct result. The notion of correctness depends on the precision of the used data type. Note, that for exterior points some coordinate values will be negative.
+
+\subsection gbc_deg_wachspress_coordinates Wachspress coordinates
+Wachspress coordinates are well-defined in the closure of any <b>strictly convex polygon</b>. Therefore, for any query point from the polygon's closure with an exact data type these coordinates can be computed exactly, and no corrupted result is expected. For inexact data types the resulting precision of computation is due to the involved algorithm and chosen data type. In the following paragraph we will discuss two available algorithms to compute Wachspress coordinate functions. One of them is CGAL::Barycentric_coordinates::PRECISE and another one is CGAL::Barycentric_coordinates::FAST. 
+
+\cgalFigureBegin{wp__notations,wp_notations.png}
+Notations for Wachspress coordinates.
+\cgalFigureEnd
+
+To compute Wachspress weights we follow \cite cgal:bc:fhk-gcbcocp-06 and use the formula 
+
+<center>\f$w_i = \frac{C_i}{A_{i-1}A_i}\f$</center> 
+
+with \f$i = 1\dots n\f$ where \f$n\f$ - is number of polygon's vertices. In order to compute coordinates, we normalize these weights as follows
+
+<center>\f$b_i = \frac{w_i}{W}\f$ with \f$W = \sum_{j=1}^n w_j.\f$</center>
+
+This formula becomes unstable when approaching to the boundary of the polygon (\f$\approx 1.0e-10\f$ and closer). To fix the problem we modify weights \f$w_i\f$ as it is shown below
+
+<center>\f$\bar{w}_i = C_i\prod_{j\not=i-1,i} A_j\f$.</center>
+
+This gives us the precise algorithm to compute Wachspress coordinates but with \f$O(n^2)\f$ performance only. The fast \f$O(n)\f$ algorithm uses the standard weights \f$w_i\f$.
+
+It is known that for strictly convex polygons the denominator's zero set of the Wachspress coordinates (\f$W = 0~\f$) is a curve, which (in many cases) lies quite far away from the polygon. Speaking precisely, it goes through the intersection points of the continuations of the polygon's edges. Therefore, computation of Wachspress coordinates outside the polygon is possible only at points that do not belong to this curve.
+
+\cgalFigureBegin{zero__set,zero_set.png}
+<em style="color:#800000">Zero set</em> of the Wachspress coordinates' denominator \f$W\f$ for the non-regular hexagon.
+\cgalFigureEnd
+
+\b Warning: We do not recommend to use Wachspress coordinates with exterior points!
+
+\subsection gbc_deg_discrete_harmonic_coordinates Discrete Harmonic coordinates
+
+Discrete Harmonic coordinates have the same requirements as Wachspress coordinates. They are well-defined in the closure of any <b>strictly convex polygon</b> and, if an exact data type is chosen, they can be computed exactly. But, unlike Wachspress basis functions, these coordinates are not necessarily positive. In particular, the weight function \f$w_i\f$ is positive if and only if \f$\alpha+\beta < \pi\f$. For inexact data types the resulting precision of computation is due to the involved algorithm and chosen data type. Again, we describe two algorithms to compute the coordinate functions: one is precise and one is fast.
+
+\cgalFigureBegin{dh__notations,dh_notations.png}
+Notations for Discrete Harmonic coordinates.
+\cgalFigureEnd
+
+To compute Discrete Harmonic weights we follow \cite cgal:bc:fhk-gcbcocp-06 and use the formula
+
+<center>\f$w_i = \frac{r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i}{A_{i-1}A_i}\f$</center> 
+
+with \f$i = 1\dots n\f$ where \f$n\f$ - is number of polygon's vertices. In order to compute coordinates, we normalize these weights as follows
+
+<center>\f$b_i = \frac{w_i}{W}\f$ with \f$W = \sum_{j=1}^n w_j.\f$</center>
+
+This formula becomes unstable when approaching to the boundary of the polygon (\f$\approx 1.0e-10\f$ and closer). To fix the problem, similarly to the previous subsection, we modify weights \f$w_i\f$ as it is shown below
+
+<center>\f$\bar{w}_i = (r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i)\prod_{j\not=i-1,i} A_j\f$.</center>
+
+This gives us the precise algorithm to compute Discrete Harmonic coordinates but with \f$O(n^2)\f$ performance only. The fast \f$O(n)\f$ algorithm uses the standard weights \f$w_i\f$.
+
+\b Warning: As for Wachspress coordinates, we do not recommend to use Discrete Harmonic coordinates with exterior points because the curve \f$W = 0\f$ may have several components, and one of them always goes through the polygon's vertices. However, if you are sure that your point does not belong to this curve, you can use them as in \ref dh_example.
+
+\subsection gbc_deg_mean_value_coordinates Mean Value coordinates
+
+Unlike all the previous coordinates, Mean Value functions cannot be computed exactly due to the involved square root operation. Although, if an exact data type is used, the precision of the computation depends only on two CGAL functions: `CGAL::to_double()` and `CGAL::sqrt()`. From other hand Mean Value coordinates are well-defined everywhere in the plane for any simple polygon.
+
+\cgalFigureBegin{mv__notations,mv_notations.png}
+Notations for Mean Value coordinates.
+\cgalFigureEnd
+
+For these coordinate functions we also have two algorithms: one is precise and one is fast. The first one works everywhere in the plane, and the resulting precision of computation depends only on the chosen data type. However, its limit is standard double type which is used internally to compute the square root. The algorithm is based on the following formula from \cite cgal:bc:f-wmvc-14
+
+<center>\f$w_i = \sigma_i\bar{w}_i\f$ with \f$\bar{w}_i = (r_{i-1}r_{i+1}-d_{i-1}d_{i+1})^{1/2}\prod_{j\not= i-1,i}(r_jr_{j+1} + d_jd_{j+1})^{1/2}\f$ where \f$r_i = \|d_i\|.\f$</center> 
+
+Since \f$\bar{w}_i\f$ is always positive, we have to append to it the proper sign \f$\sigma_i\f$ of the signed Mean Value weight function, which can be found fast and efficiently. After normalization of these weights we obtain \f$0(n^2)\f$ precise algorithm. The fast \f$O(n)\f$ algorithm uses the pseudo code from <a href="http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>. To compute weights \f$w_i\f$ without normalization we use formulas from the same pseudo code. Note, that they are getting unstable if a query point is \f$1.0e-10\f$ away or closer to the polygon's boundary similarly to Wachspress and Discrete Harmonic coordinates.
+
+\section Performances
+
+Apart the most important requirement on barycentric coordinates to be as much as possible precise, it is very important for them to be as fast as possible to evaluate. These coordinate functions are used in many applications where they must be computed for millions of points and, thus, the real time usage of coordinates is crucial. When writing the code, we tried to fulfill this important requirement, and in this section we present the reader a few results about the computational time of the implemented coordinate functions.
+
+The structure of the speed test that we run for all the functions consists of computing coordinate (or weight) values at \f$10^6-10^9\f$ strictly interior points with respect to some polygon (triangle or segment). At each iteration of the loop we create a query point, pass it to the function, and compute all the related coordinates. We run this loop 10 times in a row, and the time presented in the Table 1 is the arithmetic mean of all the trials. A typical example of the performed test for Triangle coordinates can be found below. This example also shows how to construct your own iterator and pass it to our class. In our example we create an iterator that writes coordinate values for each new query point over coordinate values of the previous point in the fixed-size standard C++ array, so that memory is allocated only once.
+
+\cgalExample{Barycentric_coordinates_2/Triangle_coordinates_speed_test.cpp}
+
+The time to compute coordinates depends on many factors such that memory allocation, input kernel, output container, number of points, and so on. In our tests we have tried to use the most standard C++ and CGAL features with minimum memory allocation. Therefore, the final time presented is average time that you can get without deep optimization but still with efficient memory allocation. It also means that it may vary depending on the usage.
+
+The machine that has been used in all the tests is MacBook Pro 2011 with 2 GHz Intel Core i7 processor and 2 cores, 8 GB 1333 MHz DDR3 memory, and AMD Radeon HD 6490M 256 MB graphics card. The installed operating system is OS X 10.9 Maverick. In order to compile the speed test suit we used Clang 5.0 64bit compiler. The resulting time can be found in the table below.
+
+<table align=center width="70%" cellspacing="0" border="1" style="border-collapse: collapse">
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Time to compute Segment and Triangle coordinates</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Segment coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$2\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Triangle coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$3\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Time to compute coordinate functions on a unit square</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Wachspress coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Mean Value coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Time to compute weight functions on a unit square</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of weights</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of weight values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Wachspress weights</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic weights</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Mean Value weights</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^9\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Time to compute coordinate functions on a strictly convex polygon with 16 vertices</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Wachspress coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Mean Value coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Time to compute weight functions on a strictly convex polygon with 16 vertices</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of weights</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of weight values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Wachspress weights</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic weights</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Mean Value weights</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$16\cdot 10^8\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Parallel computation along segment, triangle, and unit square</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Type of coordinates</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of points</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Number of coordinate values</b></td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><b>Time in seconds</b></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Segment coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$2\cdot 10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Triangle coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$3\cdot 10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Wachspress coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Discrete Harmonic coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Mean Value coordinates</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\f$4\cdot 10^6\f$</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<th colspan="4" height="30px" style="background: #ccc">Table 1</th>
+</tr>
+</table>
+<br></br>
+
+\section gbc_implementation Implementation details
+
+\subsection gbc_impl_design Design
+The generic design of the package was developed in 2013 by Dmitry Anisimov and David Bommes with many useful comments of Kai Hormann and Pierre Alliez. The package consists of \ref gbc_interface "7 headers, 16 classes, 3 enumerations, and one namespace". The input data structures are `CGAL::Polygon_2`, `CGAL::Triangle_2`, and `CGAL::Segment_2`. Appropriate iterators are used to provide an efficient access to the chosen data structures and send these data to one of the generic algorithms to compute coordinates. Once instantiated for a polygon (triangle, segment), the coordinate function can be computed multiple times for different query points with respect to all the vertices of the provided polygon (triangle, segment). All the classes are fully templated and have simple and similar design. For example, if the function to compute coordinates within one class is named `compute()`, it has the same name within all other classes. Yet, the number of functions can differ from one class to another. 
+
+Implemented algorithms to compute coordinates do not depend on a particular kernel, and all the coordinate functions can be computed exactly if an exact kernel is used apart the Mean Value coordinates. The latter coordinates, unfortunately, involve the square root operation, which results in a slightly worse precision with exact data types due to temporal converting into a floating point type. The computed coordinates can be stored in an arbitrary container if an appropriate <a href="http://en.cppreference.com/w/cpp/concept/Iterator">output iterator</a> has been provided. 
+
+It is worth noting that `CGAL::Barycentric_coordinates::Segment_coordinates_2` are used to compute generalized barycentric coordinates along the polygon's boundary. Hence, one might use a trick for Segment coordinates from \ref gbc_degeneracies section if he/she is convinced that a point must lie exactly on the polygon's boundary but due to some numerical instabilities it is not there.
+
+\subsection gbc_impl_extendability Extendability
+
+We have implemented this package in a way that later on, if needed, other 2-dimensional generalized types of barycentric coordinates can be easily added as subclasses to our base class `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2`. To do so, you have to simply inherit your class from our base class and overload six virtual functions: `weights()`, `coordinates_on_bounded_side_precise()`, `coordinates_on_bounded_side_fast()`, `coordinates_on_unbounded_side_precise()`, `coordinates_on_unbounded_side_fast()`, and `print_coordinates_info()`. If you want to add a class for generalized barycentric coordinates in a higher dimension d > 2, you can overload our two-dimensional base class with a type of the required d-polytope and inherit from it your d-dimensional coordinates.
+
+\subsection gbc_impl_algorithms Algorithms
+The algorithms to compute coordinates are mainly inspired by the papers \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:bc:f-wmvc-14, and \cite cgal:bc:hf-mvcapp-06 but do not follow exactly the pseudo-codes given there. Many new features are added in order to be more efficient, faster, and handle special cases described in the \ref gbc_degeneracies section. 
+
+\subsection gbc_impl_statistics Statistics
+Some statistics about current implementation of the package can be found in the table below.
+
+<table align=center width="50%" cellspacing="0" border="1" style="border-collapse: collapse">
+<tr>
+<th colspan="2" height="30px" style="background: #ccc">Statistics</th>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">\b Property</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">\b Value</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Version</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">1.0</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Headers</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">7</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Namespaces</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">1</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Classes</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">16</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Enumerations</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">3</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Lines of code</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"></td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Supported kernels</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">Any</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Supported input data structures</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">CGAL::Polygon_2, CGAL::Triangle_2, CGAL::Segment_2</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Supported query points</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">CGAL::Point_2</td>
+</tr>
+<tr >
+<td align=center style="border: 1px solid #800; padding: 4px;">Supported iterators</td>
+<td align=center style="border: 1px solid #800; padding: 4px;"><a href="http://en.cppreference.com/w/cpp/concept/Iterator">Any STL like iterator</a></td>
+</tr>
+<tr >
+<td align=center style="border: 1px solid #800; padding: 4px;">Supported output containers</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">Any</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Ability to extend later</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">Yes</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Number of examples</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">6</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Number of precision tests</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">24</td>
+</tr>
+<tr>
+<td align=center style="border: 1px solid #800; padding: 4px;">Number of speed tests</td>
+<td align=center style="border: 1px solid #800; padding: 4px;">19</td>
+</tr>
+<tr>
+<th colspan="2" height="30px" style="background: #ccc">Table 2</th>
+</tr>
+</table>
+<br></br>
+
+\section gbc_theory Theory of 2D generalized barycentric coordinates
+
+In 1827 famous German mathematician and theoretical astronomer <a href="http://en.wikipedia.org/wiki/August_Ferdinand_Möbius" target=blanc>August Ferdinand Möbius</a> (1790--1868) proposed a method \cite cgal:bc:m-dbc-27  to find coordinates of a point in the plane with respect to vertices of a triangle. These coordinates are called <a href="http://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>Triangle barycentric coordinates</a> (sometimes <a href="http://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>Area coordinates</a>), and they are widely used in a variety of applications. Some of these applications are linear interpolation over a triangle and a triangle inclusion test. The first one is a part of so called <a href="http://en.wikipedia.org/wiki/Shading" target=blanc>shading</a>, and the second one arises in the <a href="http://en.wikipedia.org/wiki/Rasterization" target=blanc>rasterization</a> step when taking an image in a vector graphics format and converting it into a raster image. 
+
+Triangle barycentric coordinates have many important properties including \em constant and <em>linear precision</em>, <em>Lagrange property</em>, and <em>positivity inside a triangle</em>. These properties make these coordinates a unique tool in many scientific fields. If we restrict Triangle coordinates to one of its edges and supporting its line, we get barycentric coordinates with respect to a segment. We call these coordinates \ref gbc_deg_segment_coordinates "Segment coordinates" and compute them in a way explained in the previous sections.
+
+Let us show a couple of plots with coordinates described above. To plot Segment coordinates we take a line \f$y = 0.4\f$ and define \ref seg_coord_example "a segment" \f$[v_0, v_1]\f$ on this line. Then we sample this segment and compute Segment coordinates for all the sample points. If we plot the Segment coordinate function at all the defined points with respect to \f$v_1\f$, we get the blue line depicted in the figure below. It grows from zero at \f$v_0\f$ to one at \f$v_1\f$.
+
+\cgalFigureBegin{seg__coord__interp,seg__coord__interp.png}
+<kbd style="color:blue">Segment coordinates</kbd> for all the <kbd style="color:#800000">segment points</kbd> with respect to \f$v_1 = (2.0,\ 0.4)\f$.
+\cgalFigureEnd
+
+If we want to plot Triangle coordinates, we follow a quite similar approach. We take \ref tri_coord_example "a triangle" \f$[v_0, v_1, v_2]\f$ in the plane and sample its interior and boundary with a number of points. Once we have this sampling, we plot Triangle coordinate function at all the defined sample points with respect to the third vertex of the triangle. The same way we can plot it for the first and second vertices. The plotted function appear to be a linear function (shown in the figure below) which grows from zero along the first edge \f$[v_0, v_1]\f$ to one at the chosen vertex \f$v_2\f$.
+
+\cgalFigureBegin{tri__coord__interp,tri__coord__interp.png}
+Triangle coordinates with respect to \f$v_2 = (1.0,\ 2.0)\f$. The colour bar indicates the range of values for the chosen coordinate function.
+\cgalFigureEnd
+
+Since many applications require more difficult planar geometric shapes, to work with, than segment and triangle, it seems to us natural an investigation of a generalized version of Triangle coordinates with respect to an arbitrary polygon. The first attempt was taken in 1975 by E. L. Wachspress \cite cgal:bc:w-rfeb-75 and the resulting generalized barycentric coordinates have been called Wachspress coordinates \cite cgal:bc:mlbd-gbcip-02. These coordinates are defined for an arbitrary <em>strictly convex</em> polygon and have all the properties of Triangle coordinates \cite cgal:bc:fhk-gcbcocp-06. Unfortunately, they are not defined for weakly convex and concave polygons and break down in this setting. 
+
+Analogously to the previous cases we want to plot the Wachspress coordinate function and see how it looks like. Let us choose a \ref wp_coord_example "unit square" \f$[v_0, \dots, v_3]\f$ as our strictly convex polygon, sample its interior and boundary as before, and plot the coordinate function with respect to its third vertex at all the defined sample points. We see that what we get is a smooth function which is linear along the boundary and grows from zero to one, as the colour bar indicates.
+
+\anchor wp_plot
+\cgalFigureBegin{wp__coord__interp,wp__coord__interp.png}
+Wachspress coordinates with respect to \f$v_2 = (1.0,\ 1.0)\f$. The colour bar indicates the range of values for the chosen coordinate function.
+\cgalFigureEnd
+
+Another type of generalized barycentric coordinates proposed by Pinkall and Polthier in 1993 \cite cgal:pp-cdmsc-93 and by Eck et al. in 1995 \cite cgal:bc:eddhls-maam-95 in the context of a \ref chapsurface_mesh_parameterization "triangle mesh parameterization" is called Discrete Harmonic coordinates. These coordinates are defined, similar to the Wachspress approach, for an arbitrary <em>strictly convex</em> polygon and inherit all the properties of Triangle coordinates <em>apart the positivity inside a polygon</em> because they can be negative in some regions of some irregular polygons. Another interesting property of these coordinate functions is that they coincide with Wachspress coordinates for any polygon whose vertices lie on a circle.
+
+To plot the Discrete Harmonic coordinates we take \ref dh_coord_example "the unit square" \f$[v_0, \dots, v_3]\f$ used with Wachspress coordinates and plot the function with respect to the same vertex \f$v_2\f$. Since a unit square is a regular polygon that is its vertices lie on a circle, we get the plot identical to the \ref wp_plot  "Wachspress one".
+
+The last type of generalized barycentric coordinates, we want to discuss, is Mean Value coordinates \cite cgal:f-mvc-03 proposed by M. Floater in 2003. Based on the <a href="http://en.wikipedia.org/wiki/Mean_value_theorem" target=blanc>Mean Value theorem</a> these coordinates, unlike Wachspress and Discrete Harmonic ones, are defined for an arbitrary <em>simple polygon</em>, inherit all the properties of Triangle coordinates for any convex polygon, and <em>lack the only positivity property for some concave ones</em>. It is proven by Hormann and Floater that these coordinates are positive only inside the kernel of a star-shaped polygon \cite cgal:bc:hf-mvcapp-06. The same as for Discrete Harmonic coordinates, Mean Value weights are often used in the context of a \ref chapsurface_mesh_parameterization "triangle mesh parameterization."
+
+In order to show the particular behavior of Mean Value coordinates with an application to concave polygons, we take \ref mv_coord_example "a star-shaped polygon" with ten vertices \f$[v_0, \dots, v_9]\f$, sample its interior and boundary, and plot the coordinate function with respect to the eighth vertex \f$v_7\f$. As the colour bar indicates, the obtained function grows from a slightly negative value to one at the chosen vertex. It is also smooth and linear along edges.
+
+\cgalFigureBegin{mv__coord__interp,mv__coord__interp.png}
+Mean Value coordinates with respect to \f$v_7\f$. The colour bar indicates the range of values for the chosen coordinate function.
+\cgalFigureEnd
+
+\b Family: All the coordinates discussed in this section and implemented in the package come from one and the same family of generalized barycentric coordinates named <em>3-Point Family of Coordinates</em> \cite cgal:bc:fhk-gcbcocp-06. 
+
+*/
+
+}
