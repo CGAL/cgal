@@ -248,7 +248,7 @@ Since \f$\bar{w}_i\f$ is always positive, we have to append to it the proper sig
 
 \section Performances
 
-Apart the most important requirement on barycentric coordinates to be as much as possible precise, it is very important for them to be as fast as possible to evaluate. These coordinate functions are used in many applications where they must be computed for millions of points and, thus, the real time usage of coordinates is crucial. When writing the code, we tried to fulfill this important requirement, and in this section we present the reader a few results about the computational time of the implemented coordinate functions.
+Apart the most important requirement on barycentric coordinates to be as much as possible precise, it is very important for them to be as fast as possible to evaluate. These coordinate functions are used in many applications where they must be computed for millions of points and, thus, the real time usage of coordinates is crucial. When writing the code, we tried to fulfil this important requirement, and in this section we present the reader a few results about the computational time of the implemented coordinate functions.
 
 The structure of the speed test that we run for all the functions consists of computing coordinate (or weight) values at \f$10^6-10^9\f$ strictly interior points with respect to some polygon (triangle or segment). At each iteration of the loop we create a query point, pass it to the function, and compute all the related coordinates. We run this loop 10 times in a row, and the time presented in the Table 1 is the arithmetic mean of all the trials. A typical example of the performed test for Triangle coordinates can be found below. This example also shows how to construct your own iterator and pass it to our class. In our example we create an iterator that writes coordinate values for each new query point over coordinate values of the previous point in the fixed-size standard C++ array, so that memory is allocated only once.
 
@@ -431,7 +431,7 @@ The machine that has been used in all the tests is MacBook Pro 2011 with 2 GHz I
 <th colspan="4" height="30px" style="background: #ccc">Table 1</th>
 </tr>
 </table>
-<br></br>
+<BR>
 
 \section gbc_implementation Implementation details
 
@@ -524,7 +524,7 @@ Some statistics about current implementation of the package can be found in the 
 <th colspan="2" height="30px" style="background: #ccc">Table 2</th>
 </tr>
 </table>
-<br></br>
+<BR>
 
 \section gbc_theory Theory of 2D generalized barycentric coordinates
 
@@ -546,7 +546,7 @@ Triangle coordinates with respect to \f$v_2 = (1.0,\ 2.0)\f$. The colour bar ind
 
 Since many applications require more difficult planar geometric shapes, to work with, than segment and triangle, it seems to us natural an investigation of a generalized version of Triangle coordinates with respect to an arbitrary polygon. The first attempt was taken in 1975 by E. L. Wachspress \cite cgal:bc:w-rfeb-75 and the resulting generalized barycentric coordinates have been called Wachspress coordinates \cite cgal:bc:mlbd-gbcip-02. These coordinates are defined for an arbitrary <em>strictly convex</em> polygon and have all the properties of Triangle coordinates \cite cgal:bc:fhk-gcbcocp-06. Unfortunately, they are not defined for weakly convex and concave polygons and break down in this setting. 
 
-Analogously to the previous cases we want to plot the Wachspress coordinate function and see how it looks like. Let us choose a \ref wp_coord_example "unit square" \f$[v_0, \dots, v_3]\f$ as our strictly convex polygon, sample its interior and boundary as before, and plot the coordinate function with respect to its third vertex at all the defined sample points. We see that what we get is a smooth function which is linear along the boundary and grows from zero to one, as the colour bar indicates.
+Analogously to the previous cases we want to plot the Wachspress coordinate function and see how it looks like. Let us choose a \ref wp_example "unit square" \f$[v_0, \dots, v_3]\f$ as our strictly convex polygon, sample its interior and boundary as before, and plot the coordinate function with respect to its third vertex at all the defined sample points. We see that what we get is a smooth function which is linear along the boundary and grows from zero to one, as the colour bar indicates.
 
 \anchor wp_plot
 \cgalFigureBegin{wp__coord__interp,wp__coord__interp.png}
@@ -559,7 +559,7 @@ To plot the Discrete Harmonic coordinates we take \ref dh_coord_example "the uni
 
 The last type of generalized barycentric coordinates, we want to discuss, is Mean Value coordinates \cite cgal:f-mvc-03 proposed by M. Floater in 2003. Based on the <a href="http://en.wikipedia.org/wiki/Mean_value_theorem" target=blanc>Mean Value theorem</a> these coordinates, unlike Wachspress and Discrete Harmonic ones, are defined for an arbitrary <em>simple polygon</em>, inherit all the properties of Triangle coordinates for any convex polygon, and <em>lack the only positivity property for some concave ones</em>. It is proven by Hormann and Floater that these coordinates are positive only inside the kernel of a star-shaped polygon \cite cgal:bc:hf-mvcapp-06. The same as for Discrete Harmonic coordinates, Mean Value weights are often used in the context of a \ref chapsurface_mesh_parameterization "triangle mesh parameterization."
 
-In order to show the particular behavior of Mean Value coordinates with an application to concave polygons, we take \ref mv_coord_example "a star-shaped polygon" with ten vertices \f$[v_0, \dots, v_9]\f$, sample its interior and boundary, and plot the coordinate function with respect to the eighth vertex \f$v_7\f$. As the colour bar indicates, the obtained function grows from a slightly negative value to one at the chosen vertex. It is also smooth and linear along edges.
+In order to show the particular behaviour of Mean Value coordinates with an application to concave polygons, we take \ref mv_coord_example "a star-shaped polygon" with ten vertices \f$[v_0, \dots, v_9]\f$, sample its interior and boundary, and plot the coordinate function with respect to the eighth vertex \f$v_7\f$. As the colour bar indicates, the obtained function grows from a slightly negative value to one at the chosen vertex. It is also smooth and linear along edges.
 
 \cgalFigureBegin{mv__coord__interp,mv__coord__interp.png}
 Mean Value coordinates with respect to \f$v_7\f$. The colour bar indicates the range of values for the chosen coordinate function.

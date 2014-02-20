@@ -1,3 +1,4 @@
+// Author(s) : Dmitry Anisimov.
 // We test speed of Discrete Harmonic coordinates on a set of automatically generated
 // points inside a convex polygon with 16 vertices. We use inexact kernel.
 
