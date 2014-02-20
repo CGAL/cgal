@@ -44,8 +44,6 @@ private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
   
   Set_of_indices indices;
-
-public:
   std::size_t time_stamp_;
 
 public:
@@ -61,6 +59,13 @@ public:
   
   void add_incident_patch(const Patch_id i) {
     indices.insert(i);
+  }
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
   }
   
   const Set_of_indices&
@@ -78,8 +83,6 @@ public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
 private:
   bool feature_edge;
-
-public:
   std::size_t time_stamp_;
 
 public:
@@ -95,6 +98,13 @@ public:
     feature_edge = b;
     this->opposite()->feature_edge = b;
   }
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
 };
 
 template <class Refs, class T_, class Pln_, class Patch_id_>
@@ -103,8 +113,6 @@ public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
 {
 private:
   Patch_id_ patch_id_;
-
-public:
   std::size_t time_stamp_;
 
 public:
@@ -120,6 +128,13 @@ public:
   
   void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
+  }
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
   }
 };
 

@@ -467,10 +467,14 @@ public:
   }
 #endif // CGAL_INTRUSIVE_LIST
 
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
 
 private:
-
-
   /// Stores surface_index for each facet of the cell
   CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
   /// Stores surface center of each facet of the cell
@@ -485,6 +489,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
+  std::size_t time_stamp_;
 
   CGAL::cpp11::array<Index, 4> surface_center_index_table_;
   /// Stores visited facets (4 first bits)
@@ -499,9 +504,6 @@ private:
   TDS_data      _tds_data;
   char bits_;
   mutable bool sliver_cache_validity_;
-
-public: 
-  std::size_t time_stamp_;
 
 };  // end class Compact_mesh_cell_base_3
 

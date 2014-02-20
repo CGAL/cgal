@@ -122,10 +122,11 @@ public:
   CGAL_time_stamper(const CGAL_time_stamper& ts)
    : time_stamp_(ts.time_stamp_) {}
 
-  void set_time_stamp(T* pt)    { pt->time_stamp_ = time_stamp_++; }
-  static std::size_t get(T* pt) { return pt->time_stamp_; }
+  void set_time_stamp(T* pt)    { pt->set_time_stamp(time_stamp_++); }
+  static std::size_t get(T* pt) { return pt->time_stamp(); }
   void reset()                  { time_stamp_ = 0; }
 
+private:
   std::size_t time_stamp_;
 };
 

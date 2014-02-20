@@ -159,7 +159,14 @@ public:
     previous_intrusive_ = c; 
   }
 #endif // CGAL_INTRUSIVE_LIST
-  
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+
 private:
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_;
@@ -170,8 +177,6 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
-
-public: 
   std::size_t time_stamp_;
 
 };  // end class Mesh_cell_base_3

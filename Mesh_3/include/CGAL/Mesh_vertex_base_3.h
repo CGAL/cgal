@@ -125,6 +125,13 @@ public:
   }
 #endif
 
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+
   bool is_c2t3_cache_valid() const {
     return cache_validity;
   }
@@ -160,9 +167,6 @@ public:
       Get_io_signature<Index>()();
   }
 
-public:
-  std::size_t time_stamp_;
-
 private:
 
   int number_of_incident_facets_;
@@ -184,6 +188,8 @@ private:
   Vertex_handle next_intrusive_;
   Vertex_handle previous_intrusive_;
 #endif
+  std::size_t time_stamp_;
+
 };  // end class Mesh_vertex_base_3
 
 namespace internal {
