@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2010,2011,2013 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011,2013,2014 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,11 +20,11 @@
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Eric Berberich <eric.berberich@cgal.org>
 
-#ifndef CGAL_ARR_VANILLA_CONSTRUCTION_HELPER_H
-#define CGAL_ARR_VANILLA_CONSTRUCTION_HELPER_H
+#ifndef CGAL_ARR_TOROIDAL_CONSTRUCTION_HELPER_H
+#define CGAL_ARR_TOROIDAL_CONSTRUCTION_HELPER_H
 
 /*! \file
- * Definition of the Arr_vanilla_construction_helper class-template.
+ * Definition of the Arr_toroidal_construction_helper class-template.
  */
 
 #include <CGAL/Sweep_line_empty_visitor.h>
@@ -32,13 +32,13 @@
 
 namespace CGAL {
 
-/*! \class Arr_vanilla_construction_helper
+/*! \class Arr_toroidal_construction_helper
  * A template helper class for the construction sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class.
  */
 template <typename Traits_, typename Arrangement_, typename Event_,
           typename Subcurve_>
-class Arr_vanilla_construction_helper {
+class Arr_toroidal_construction_helper {
 public:
   typedef Traits_                                         Traits_2;
   typedef Arrangement_                                    Arrangement_2;
@@ -84,14 +84,14 @@ protected:
 
 public:
   /*! Constructor. */
-  Arr_vanilla_construction_helper(Arrangement_2* arr) :
+  Arr_toroidal_construction_helper(Arrangement_2* arr) :
     m_top_traits(arr->topology_traits()),
     m_arr_access(*arr),
     m_he_ind_map_p(NULL)
   {}
 
   /*! Destructor. */
-  virtual ~Arr_vanilla_construction_helper() {}
+  virtual ~Arr_toroidal_construction_helper() {}
 
   /// \name Notification functions.
   //@{
@@ -151,8 +151,8 @@ public:
     list_ref.splice(list_ref.end(), m_subcurves_at_tf);
   }
 
-}; // Arr_vanilla_construction_helper
+}; // Arr_toroidal_construction_helper
 
 } //namespace CGAL
 
-#endif
+#endif // CGAL_ARR_TOROIDAL_CONSTRUCTION_HELPER_H

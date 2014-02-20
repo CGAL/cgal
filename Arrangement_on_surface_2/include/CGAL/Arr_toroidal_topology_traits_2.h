@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2008,2009,2010,2011,2012,2013 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011,2012,2013,2014 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,8 +18,8 @@
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Eric Berberich    <eric.berberich@cgal.org>
 
-#ifndef CGAL_ARR_VANILLA_TOPOLOGY_TRAITS_2_H
-#define CGAL_ARR_VANILLA_TOPOLOGY_TRAITS_2_H
+#ifndef CGAL_ARR_TOROIDAL_TOPOLOGY_TRAITS_2_H
+#define CGAL_ARR_TOROIDAL_TOPOLOGY_TRAITS_2_H
 
 /*! \file
  * A template topology traits for the arrangement package.
@@ -44,11 +44,11 @@
 #include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
-#include <CGAL/Arr_topology_traits/Arr_vanilla_construction_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_vanilla_insertion_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_vanilla_overlay_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_vanilla_batched_pl_helper.h>
-#include <CGAL/Arr_topology_traits/Arr_vanilla_vert_decomp_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_construction_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_insertion_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_overlay_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_batched_pl_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
 
 #include <map>
@@ -63,7 +63,7 @@ class Arrangement_on_surface_2;
  * embedded on a 2D parametric surface.
  */
 template <class GeomTraits, class T_Dcel = Arr_default_dcel<GeomTraits> >
-class Arr_vanilla_topology_traits_2 {
+class Arr_toroidal_topology_traits_2 {
 public:
 
   ///! \name The geometry-traits types.
@@ -87,7 +87,7 @@ public:
 
   //! \name Arrangement types
   //!@{
-  typedef Arr_vanilla_topology_traits_2<Geometry_traits_2, Dcel> Self;
+  typedef Arr_toroidal_topology_traits_2<Geometry_traits_2, Dcel> Self;
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   //!@}
 
@@ -108,7 +108,7 @@ public:
   template<typename T, typename D>
   struct rebind
   {
-    typedef Arr_vanilla_topology_traits_2<T,D> other;
+    typedef Arr_toroidal_topology_traits_2<T,D> other;
   };
 
 private:
@@ -129,7 +129,7 @@ protected:
   bool m_own_traits;
 
   // Copy constructor and assignment operator - not supported.
-  Arr_vanilla_topology_traits_2(const Self &);
+  Arr_toroidal_topology_traits_2(const Self &);
   Self& operator=(const Self &);
 
 public:
@@ -137,12 +137,12 @@ public:
   //@{
 
   /*! Default constructor. */
-  Arr_vanilla_topology_traits_2();
+  Arr_toroidal_topology_traits_2();
 
   /*! Constructor with a geometry-traits class.
    * \param traits the traits.
    */
-  Arr_vanilla_topology_traits_2(const Geometry_traits_2* traits);
+  Arr_toroidal_topology_traits_2(const Geometry_traits_2* traits);
 
   /*! Assign the contents of another topology-traits class.
    * \param other the other spherical topology-traits.
@@ -214,40 +214,40 @@ private:
   typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve;
   typedef Arr_construction_event<Geometry_traits_2,CSubcurve,Arr>
                                                                 CEvent;
-  typedef Arr_vanilla_construction_helper<Geometry_traits_2,Arr,
+  typedef Arr_toroidal_construction_helper<Geometry_traits_2,Arr,
     CEvent,CSubcurve>                                           CHelper;
 
   // Type definition for the basic insertion sweep-line visitor.
   typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  BInsTraits;
   typedef Arr_construction_subcurve<BInsTraits>                 BISubcurve;
   typedef Arr_construction_event<BInsTraits,BISubcurve,Arr>     BIEvent;
-  typedef Arr_vanilla_insertion_helper<BInsTraits,Arr,BIEvent,BISubcurve>
+  typedef Arr_toroidal_insertion_helper<BInsTraits,Arr,BIEvent,BISubcurve>
                                                                 BIHelper;
 
   // Type definition for the insertion sweep-line visitor.
   typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        InsTraits;
   typedef Arr_construction_subcurve<InsTraits>                  ISubcurve;
   typedef Arr_construction_event<InsTraits,ISubcurve,Arr>       IEvent;
-  typedef Arr_vanilla_insertion_helper<InsTraits,Arr,IEvent,ISubcurve>
+  typedef Arr_toroidal_insertion_helper<InsTraits,Arr,IEvent,ISubcurve>
                                                                 IHelper;
 
   // Type definition for the batched point-location sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
-  typedef Arr_vanilla_batched_pl_helper<BplTraits, Arr>       BplHelper;
+  typedef Arr_toroidal_batched_pl_helper<BplTraits, Arr>       BplHelper;
 
   // Type definition for the vertical decomposition sweep-line visitor.
   typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
-  typedef Arr_vanilla_vert_decomp_helper<VdTraits, Arr>       VdHelper;
+  typedef Arr_toroidal_vert_decomp_helper<VdTraits, Arr>       VdHelper;
 
   // Type definition for the overlay sweep-line visitor.
   template <class ExGeomTraits_, class ArrangementA_, class ArrangementB_>
   struct _Overlay_helper :
-    public Arr_vanilla_overlay_helper<ExGeomTraits_, ArrangementA_,
+    public Arr_toroidal_overlay_helper<ExGeomTraits_, ArrangementA_,
     ArrangementB_, Arr, Arr_construction_event<ExGeomTraits_,
     Arr_overlay_subcurve<ExGeomTraits_>, Arr>,
     Arr_overlay_subcurve<ExGeomTraits_> >
   {
-    typedef Arr_vanilla_overlay_helper<ExGeomTraits_, ArrangementA_,
+    typedef Arr_toroidal_overlay_helper<ExGeomTraits_, ArrangementA_,
       ArrangementB_, Arr, Arr_construction_event<ExGeomTraits_,
       Arr_overlay_subcurve<ExGeomTraits_>, Arr>,
       Arr_overlay_subcurve<ExGeomTraits_> >             Base;
@@ -524,10 +524,10 @@ public:
   }
   //@}
 
-}; // Arr_vanilla_topology_traits_2
+}; // Arr_toroidal_topology_traits_2
 
 } //namespace CGAL
 
-#include <CGAL/Arr_topology_traits/Arr_vanilla_topology_traits_2_impl.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_topology_traits_2_impl.h>
 
-#endif
+#endif // CGAL_ARR_TOROIDAL_TOPOLOGY_TRAITS_2_H

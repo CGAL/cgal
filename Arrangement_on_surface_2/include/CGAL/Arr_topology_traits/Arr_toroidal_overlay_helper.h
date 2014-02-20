@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2010,2011,2013 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011,2013,2014 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,18 +21,18 @@
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Eric Berberich <eric.berberich@cgal.org>
 
-#ifndef CGAL_ARR_VANILLA_OVERLAY_HELPER_H
-#define CGAL_ARR_VANILLA_OVERLAY_HELPER_H
+#ifndef CGAL_ARR_TOROIDAL_OVERLAY_HELPER_H
+#define CGAL_ARR_TOROIDAL_OVERLAY_HELPER_H
 
 /*! \file
- * Definition of the Arr_vanilla_overlay_helper class-template.
+ * Definition of the Arr_toroidal_overlay_helper class-template.
  */
 
-#include <CGAL/Arr_topology_traits/Arr_vanilla_construction_helper.h>
+#include <CGAL/Arr_topology_traits/Arr_toroidal_construction_helper.h>
 
 namespace CGAL {
 
-/*! \class Arr_vanilla_overlay_helper
+/*! \class Arr_toroidal_overlay_helper
  * A helper class for the overlay sweep-line visitor, suitable for the overlay
  * of Arrangement_on_surface_2 objects instantiated with a topology-traits
  * class for bounded curves in the plane.
@@ -43,7 +43,7 @@ template <class Traits_,
           class Arrangement_,
           class Event_,
           class Subcurve_>
-class Arr_vanilla_overlay_helper
+class Arr_toroidal_overlay_helper
 {
 public:
   typedef Traits_                                         Traits_2;
@@ -67,7 +67,7 @@ public:
   typedef typename Arrangement_blue_2::Face_const_handle  Face_handle_blue;
 
   // Define the helper class for the construction visitor.
-  typedef Arr_vanilla_construction_helper<Traits_2, Arrangement_2, Event,
+  typedef Arr_toroidal_construction_helper<Traits_2, Arrangement_2, Event,
                                             Subcurve>     Construction_helper;
 
 protected:
@@ -75,15 +75,15 @@ protected:
   const Topology_traits_red* m_red_top_traits;
   const Topology_traits_blue* m_blue_top_traits;
 
-  //! Red vanilla face
+  //! Red toroidal face
   Face_handle_red m_red_tf;
 
-  //! Blue vanilla face
+  //! Blue toroidal face
   Face_handle_blue m_blue_tf;
 
 public:
   /*! Constructor, given the input red and blue arrangements. */
-  Arr_vanilla_overlay_helper(const Arrangement_red_2* red_arr,
+  Arr_toroidal_overlay_helper(const Arrangement_red_2* red_arr,
                                const Arrangement_blue_2* blue_arr) :
     m_red_top_traits(red_arr->topology_traits()),
     m_blue_top_traits(blue_arr->topology_traits())
@@ -119,8 +119,8 @@ public:
   const Topology_traits_blue* blue_topology_traits() const
   { return m_blue_top_traits; }
 
-}; // Arr_vanilla_overlay_helper
+}; // Arr_toroidal_overlay_helper
 
 } //namespace CGAL
 
-#endif
+#endif // CGAL_ARR_TOROIDAL_OVERLAY_HELPER_H

@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2010,2011,2013 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
+// Copyright (c) 2007,2009,2010,2011,2013,2014 Max-Planck-Institute Saarbruecken (Germany), Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,23 +20,23 @@
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Eric Berberich <eric.berberich@cgal.org>
 
-#ifndef CGAL_ARR_VANILLA_BATCHED_PL_HELPER_H
-#define CGAL_ARR_VANILLA_BATCHED_PL_HELPER_H
+#ifndef CGAL_ARR_TOROIDAL_BATCHED_PL_HELPER_H
+#define CGAL_ARR_TOROIDAL_BATCHED_PL_HELPER_H
 
 /*! \file
- * Definition of the Arr_vanilla_batched_pl_helper class-template.
+ * Definition of the Arr_toroidal_batched_pl_helper class-template.
  */
 
 namespace CGAL {
 
 #include <CGAL/Sweep_line_empty_visitor.h>
 
-/*! \class Arr_vanilla_batched_pl_helper
+/*! \class Arr_toroidal_batched_pl_helper
  * A helper class for the batched point-location sweep-line visitor, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class.
  */
 template <class Traits_, class Arrangement_>
-class Arr_vanilla_batched_pl_helper
+class Arr_toroidal_batched_pl_helper
 {
 public:
 
@@ -64,7 +64,7 @@ public:
   /*! Constructor.
    * \param arr The arrangement.
    */
-  Arr_vanilla_batched_pl_helper(const Arrangement_2 *arr) :
+  Arr_toroidal_batched_pl_helper(const Arrangement_2 *arr) :
     m_top_traits(arr->topology_traits())
   {}
 
@@ -92,4 +92,4 @@ public:
 
 } //namespace CGAL
 
-#endif
+#endif // CGAL_ARR_TOROIDAL_BATCHED_PL_HELPER_H
