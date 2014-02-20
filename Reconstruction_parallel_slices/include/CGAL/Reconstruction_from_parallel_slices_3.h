@@ -2084,6 +2084,7 @@ class Reconstruction_from_parallel_slices_3{
 
   void write_first_planar_facets(const CDT2& top_layer,bool is_increasing_z) //OUTPUT
   {
+    #ifndef CGAL_DO_NO_WRITE_TOP_BOTTOM
     for (typename CDT2::Finite_faces_iterator fit=top_layer.finite_faces_begin(),
                                               end=top_layer.finite_faces_end();fit!=end;++fit)
     {
@@ -2098,10 +2099,11 @@ class Reconstruction_from_parallel_slices_3{
         );
       }
     }
+    #endif
   }
   
   void add_last_bottom_layer_facets_to_surface(CDT2& last_layer,bool is_increasing_z){ //OUTPUT
-    
+    #ifndef CGAL_DO_NO_WRITE_TOP_BOTTOM
     #ifndef DO_NOT_HANDLE_NON_MANIFOLD_POINT
     reinit_non_contour_vertices_poly_index(last_layer);
     #endif
@@ -2119,6 +2121,7 @@ class Reconstruction_from_parallel_slices_3{
         );
       }
     }
+    #endif
     slice_writer_ptr->finalize_layer();
   }
   
