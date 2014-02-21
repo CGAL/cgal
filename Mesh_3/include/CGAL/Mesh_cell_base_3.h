@@ -85,6 +85,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
   {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
@@ -99,6 +100,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
   {}
   
   Mesh_cell_base_3 (Vertex_handle v0,
@@ -117,6 +119,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
   {}
   
   // Default copy constructor and assignment operator are ok

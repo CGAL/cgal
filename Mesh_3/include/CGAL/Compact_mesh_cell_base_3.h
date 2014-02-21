@@ -96,6 +96,7 @@ public:
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
+    , time_stamp_(-1)
   {}
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
@@ -108,6 +109,7 @@ public:
     , subdomain_index_(rhs.subdomain_index_)
     , bits_(0)
     , sliver_cache_validity_(false)
+    , time_stamp_(rhs.time_stamp_)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
@@ -132,6 +134,7 @@ public:
     , subdomain_index_() 
     , bits_(0) 
     , sliver_cache_validity_(false)
+    , time_stamp_(-1)
   {
     set_vertices(v0, v1, v2, v3);
   }
@@ -157,6 +160,7 @@ public:
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
+    , time_stamp_(-1)
   {
     set_neighbors(n0, n1, n2, n3);
     set_vertices(v0, v1, v2, v3);
