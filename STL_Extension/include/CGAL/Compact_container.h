@@ -123,7 +123,12 @@ public:
    : time_stamp_(ts.time_stamp_) {}
 
   void set_time_stamp(T* pt)    { pt->set_time_stamp(time_stamp_++); }
-  static std::size_t get(T* pt) { return pt->time_stamp(); }
+  static bool less(T* p_t1, T* p_t2)
+  {
+    if(p_t1 == NULL)      return (p_t2 != NULL);
+    else if(p_t2 == NULL) return false;
+    else                  return p_t1->time_stamp() < p_t2->time_stamp(); 
+  }
   void reset()                  { time_stamp_ = 0; }
 
 private:
@@ -136,7 +141,10 @@ struct CGAL_no_time_stamp
 public:
   CGAL_no_time_stamp()        {}
   void set_time_stamp(T* pt)  {}
-  static T* get(T* pt)        { return pt; }
+  static bool less(T* p_t1, T* p_t2)
+  { 
+    return p_t1 < p_t2; 
+  }
   void reset()                {}
 };
 
@@ -923,22 +931,24 @@ namespace internal {
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
-      return TimeStamper::get(m_ptr.p) < TimeStamper::get(other.m_ptr.p);
+      return TimeStamper::less(m_ptr.p, other.m_ptr.p);
     }
 
     bool operator>(const CC_iterator& other) const
     {
-      return TimeStamper::get(m_ptr.p) > TimeStamper::get(other.m_ptr.p);
+      return TimeStamper::less(other.m_ptr.p, m_ptr.p);
     }
 
     bool operator<=(const CC_iterator& other) const
     {
-      return TimeStamper::get(m_ptr.p) <= TimeStamper::get(other.m_ptr.p);
+      return TimeStamper::less(m_ptr.p, other.m_ptr.p)
+          || (*this == other);
     }
 
     bool operator>=(const CC_iterator& other) const
     {
-      return TimeStamper::get(m_ptr.p) >= TimeStamper::get(other.m_ptr.p);
+      return TimeStamper::less(other.m_ptr.p, m_ptr.p)
+          || (*this == other);
     }
 
     // Can itself be used for bit-squatting.
