@@ -1,51 +1,6 @@
 #define CGAL_MESH_3_EXAMPLE_POLYHEDRAL_DOMAIN
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-//std::size_t TS;
-
-//template <typename C3T3>
-//void incident(const C3T3& c3t3)
-//{
-//  typedef typename C3T3::Triangulation Tr;
-//
-//  const Tr& tr_ = c3t3.triangulation();
-//  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin();
-//    it!= tr_.finite_vertices_end();
-//    ++it)
-//  {
-//    typename C3T3::Vertex_handle v = it;
-//    incident(c3t3,v);
-//  }
-//}
-//
-//template <typename C3T3>
-//void incident(const C3T3& c3t3,
-//  typename C3T3::Vertex_handle vh)
-//{
-//  typedef typename C3T3::Triangulation Tr;
-//
-//  const Tr& tr_ = c3t3.triangulation();
-//  typedef std::vector<typename Tr::Facet> Facet_vector;
-//  Facet_vector facets;
-//
-//  tr_.finite_incident_facets(vh, std::back_inserter(facets));
-//  std::cout << "vertex " << vh->ts << std::endl;
-//  for(typename Facet_vector::iterator fit2 = facets.begin() ;
-//    fit2 != facets.end() ;
-//    ++fit2 )
-//  {
-//    typename Tr::Cell_handle c = fit2->first;
-//    int ii = fit2->second;
-//    std::cout << "  f  " << c->ts << " " << ii;
-//
-//    typename Tr::Facet mf = tr_.mirror_facet(*fit2);
-//    c = mf.first;
-//    ii = mf.second;
-//    std::cout << "  n  " << c->ts << " " << ii << std::endl;
-//  }
-//}
-
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -147,12 +102,9 @@ int main(int argc, char* argv[])
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.02,
-                         facet_angle = 30, facet_size = 0.02, facet_distance = 0.002,
-                         cell_radius_edge_ratio = 3, cell_size = 0.02);
-  //Mesh_criteria criteria(edge_size = 0.025,
-  //                       facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
-  //                       cell_radius_edge_ratio = 3, cell_size = 0.05);
+  Mesh_criteria criteria(edge_size = 0.025,
+                         facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
+                         cell_radius_edge_ratio = 3, cell_size = 0.05);
 #else
   // Domain
   CGAL::Image_3 image;
@@ -172,8 +124,6 @@ int main(int argc, char* argv[])
 
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
-//    TS = 0;
-
     CGAL::default_random = CGAL::Random(0);
 
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
@@ -228,7 +178,6 @@ int main(int argc, char* argv[])
       c3t3.output_to_medit(medit_file4);
     }
     std::cout << "[Timer at " << time.time() << " sec]" << std::endl;
-//    std::cerr << "TS = " << TS << std::endl;
   }
 
   std::cout << "Total time :         " << time.time() << std::endl;
