@@ -26,8 +26,6 @@
 #ifndef CGAL_MESH_3_MESH_SIZING_FIELD_H
 #define CGAL_MESH_3_MESH_SIZING_FIELD_H
 
-#include <CGAL/Mesh_3/compare.h>
-
 namespace CGAL {
 
 namespace Mesh_3
@@ -46,8 +44,6 @@ class Mesh_sizing_field
 
   typedef typename Tr::Vertex_handle      Vertex_handle;
   typedef typename Tr::Cell_handle        Cell_handle;
-
-  typedef typename CGAL::Mesh_3::Vertex_handle_comparator<Vertex_handle> Vcomp;
   
 public:
   // update vertices of mesh triangulation ? 
@@ -180,7 +176,7 @@ operator()(const Point_3&, const std::pair<Cell_handle,bool>& c) const
   v.push_back(cell->vertex(1));
   v.push_back(cell->vertex(2));
   v.push_back(cell->vertex(3));
-  std::sort(v.begin(), v.end(), Vcomp());
+  std::sort(v.begin(), v.end());
    
   // Interpolate value using tet vertices values
   const FT& va = v[0]->meshing_info();
@@ -205,7 +201,7 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
   v.push_back(cell->vertex(1));
   v.push_back(cell->vertex(2));
   v.push_back(cell->vertex(3));
-  std::sort(v.begin(), v.end(), Vcomp());
+  std::sort(v.begin(), v.end());
 
   // Interpolate value using tet vertices values
   const FT& va = v[0]->meshing_info();
