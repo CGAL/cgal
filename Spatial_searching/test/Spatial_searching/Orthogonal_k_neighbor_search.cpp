@@ -16,8 +16,9 @@ typedef CGAL::Search_traits_2<K>                                        TreeTrai
 typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits>                  Neighbor_search;
 //typdefs fo Point_with_info
 typedef Point_with_info_helper<Point>::type                                                             Point_with_info;
-typedef CGAL::Search_traits_adapter<Point_with_info,Point_property_map,TreeTraits>                        Traits_with_info;
-typedef CGAL::Distance_adapter <Point_with_info,Point_property_map,Neighbor_search::Distance>   Distance_adapter;
+typedef Point_property_map<Point>                                                  Ppmap;
+typedef CGAL::Search_traits_adapter<Point_with_info,Ppmap,TreeTraits>                        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Ppmap,Neighbor_search::Distance>   Distance_adapter;
 typedef CGAL::Orthogonal_k_neighbor_search<Traits_with_info,Distance_adapter>                         Neighbor_search_with_info;
 
 template <class K_search>
