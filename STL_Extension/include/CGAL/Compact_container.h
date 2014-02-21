@@ -159,8 +159,8 @@ class Compact_container
   typedef TimeStamper_                              Ts;
   typedef typename boost::mpl::if_c<
         CGAL::internal::Mesh_3::Has_timestamp<T>::value,
-        typename CGAL_time_stamper<T>,
-        typename CGAL_no_time_stamp<T> >::type      Time_stamper_;
+        CGAL_time_stamper<T>,
+        CGAL_no_time_stamp<T> >::type      Time_stamper_;
   typedef typename Default::Get<Ts, Time_stamper_>::type Time_stamper;
   
   typedef Compact_container <T, Al, Ts>             Self;
