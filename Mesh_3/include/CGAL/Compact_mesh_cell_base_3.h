@@ -91,12 +91,12 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
-    , time_stamp_(-1)
   {}
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
@@ -105,11 +105,11 @@ public:
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
+    , time_stamp_(rhs.time_stamp_)
     , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_)
     , bits_(0)
     , sliver_cache_validity_(false)
-    , time_stamp_(rhs.time_stamp_)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
@@ -129,12 +129,12 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_() 
     , bits_(0) 
     , sliver_cache_validity_(false)
-    , time_stamp_(-1)
   {
     set_vertices(v0, v1, v2, v3);
   }
@@ -155,12 +155,12 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
-    , time_stamp_(-1)
   {
     set_neighbors(n0, n1, n2, n3);
     set_vertices(v0, v1, v2, v3);
