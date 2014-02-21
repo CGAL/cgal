@@ -26,6 +26,7 @@ COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_R
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Debug"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Release"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.0_Release"
+COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.0_Release-cpp11"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-llvm-gcc-4.2_Release"
 
 BUILD_ON_localhost=all
