@@ -243,7 +243,7 @@ sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVI
 sed -i -e "s/define CGAL_GIT_HASH .*/define CGAL_GIT_HASH $CGAL_GIT_HASH/" include/CGAL/version.h
 cd ..
 # Make the release tarball
-rm -f "${public_release_name}".tar*
+rm -f "${release_name}".tar*
 tar -cf "${release_name}.tar" "${release_name}"
 gzip "${release_name}.tar"
 cp "${release_name}.tar.gz" "${HTML_DIR}"
