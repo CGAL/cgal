@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/wlop_simplify_and_regularize_point_set_test_AABB_tree.h>
-//#include <CGAL/wlop_simplify_and_regularize_point_set.h>
+#include <CGAL/wlop_simplify_and_regularize_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
@@ -17,9 +16,7 @@ typedef Kernel::Point_3 Point;
 
 int main(void)
 {
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/sphere_20k";
   const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
-  //const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise";
 
   // Reads a .xyz point set file in points[], *with normals*.
   std::vector<Point> points;
@@ -34,9 +31,6 @@ int main(void)
 
   //Algorithm parameters
   const double retain_percentage = 2;   // percentage of points to retain.
-  const double neighbor_radius = 0.03;   // neighbors size.
-  const unsigned int iter_number = 30;     // number of iterations.
-  const bool need_compute_density = false;  // if needed to compute density.
   
   // Make room for sample points
   std::vector<Point> points_sampled;
@@ -49,14 +43,17 @@ int main(void)
   std::vector<Point> output;
 
   //way 1 begin
-  /*CGAL::wlop_simplify_and_regularize_point_set<CGAL::Sequential_tag>(
+  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
   points.begin(), 
   points.end(),
-  back_inserter(output));*/
+  back_inserter(output));
   //way 1 end
 
 
   //way 2 begin
+  /*const double neighbor_radius = 0.03;   // neighbors size.
+  const unsigned int iter_number = 30;     // number of iterations.
+  const bool need_compute_density = false;  // if needed to compute density.
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
                                                points.begin(),
                                                points.end(),
@@ -64,7 +61,7 @@ int main(void)
                                                retain_percentage, 
                                                neighbor_radius,
                                                iter_number,
-                                               need_compute_density);
+                                               need_compute_density);*/
   //way 2 end
 
   long memory = CGAL::Memory_sizer().virtual_size();
