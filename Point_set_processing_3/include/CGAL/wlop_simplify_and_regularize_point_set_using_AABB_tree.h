@@ -405,11 +405,11 @@ wlop_simplify_and_regularize_point_set(
     Point max_p(bbox.xmax(), bbox.ymax(), bbox.zmax());
     Point min_p(bbox.xmin(), bbox.ymin(), bbox.zmin());
     FT bbox_diameter = CGAL::squared_distance(max_p, min_p);
-    radius = std::sqrt(bbox_diameter) * 0.05;
+    radius = std::sqrt(bbox_diameter) * 0.025; // this estimation may fail
 
 #ifdef CGAL_DEBUG_MODE
-    std::cout << "default estimate radius:  " << radius 
-      << std::endl << std::endl;
+    std::cout << "default estimated radius:  " << radius 
+              << std::endl << std::endl;
 #endif
   }
 
