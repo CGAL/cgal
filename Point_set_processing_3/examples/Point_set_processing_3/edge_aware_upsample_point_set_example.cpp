@@ -39,9 +39,9 @@ int main(void)
   }
 
   //Algorithm parameters
-  const double sharpness_sigma = 25;   //control sharpness of the result.
+  const double sharpness_sigma = 25;   // control sharpness of the result.
   const double edge_senstivity = 0;    // more points will up-sample on edge.          
-  const double neighbor_radius = 0.2;      // initial neighbors size.
+  const double neighbor_radius = 0.2;  // initial neighbors size.
   const unsigned int number_of_output_points = points.size() * 50;   
 
 

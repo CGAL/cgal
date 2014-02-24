@@ -37,9 +37,6 @@
   #include <boost/property_map.hpp>
 #endif
 
-//#include <tbb/parallel_for.h>
-//#include <tbb/blocked_range.h>
-
 //#define  CGAL_DEBUG_MODE
 
 namespace CGAL {
