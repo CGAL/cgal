@@ -1,0 +1,17 @@
+========================================================================
+Contents of the directory
+========================================================================
+
+This directory contains:
+   README          -- this file
+   INSTALL         -- directions for how to INSTALL this package in order
+                      to create the manuals and run the tests
+
+   doc_tex/        -- directory containing the main tex files for the 
+                      manuals (the "driver"), i.e., those files not 
+                      submitted with packages but needed to create the manual.
+   developer_scripts/ 
+                   -- directory of scripts used for creating the manual
+
+
+========================================================================
