@@ -357,12 +357,12 @@ if [ -n "$DO_PUBLIC" ]; then
 fi
 
 # Remove local directory and tarball
-rm -rf ${release_name}
+rm -rf "${release_name}"
 rm ${release_name}.tar.gz
 if [ -n "$DO_PUBLIC" ]; then
-  rm -rf  ${public_release_name}-NSIS
+  rm -rf  "${public_release_name}-NSIS"
   rm -rf doc
 #  rm -rf doc_tex
   rm -rf doc_html
-  rm  ${public_release_name}.tar.gz ${public_release_name}.zip
+  rm  "${public_release_name}.tar.gz" "${public_release_name}.zip"
 fi
