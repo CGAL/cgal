@@ -26,7 +26,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
-#include <CGAL/tags.h>
 
 namespace CGAL {
 

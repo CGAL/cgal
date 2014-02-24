@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-std::size_t TS;
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -23,10 +22,8 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-void fct()
+int main()
 {
-  CGAL::default_random = CGAL::Random();
-  TS = 0;
   // Create domain
   Mesh_domain domain("data/fandisk.off");
   
@@ -39,22 +36,9 @@ void fct()
                          cell_radius_edge_ratio = 3, cell_size = 0.05);
   
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, 
-                                      odt(max_iteration_number =1), 
-                                      no_perturb(), 
-                                      no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
   // Output
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
-
- 
-  std::cerr << "TS = " << TS << std::endl;
-}
-
-int main()
-{
-  for(int i = 0; i < 3; i++){
-    fct();
-  }
 }

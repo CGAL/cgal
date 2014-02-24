@@ -79,7 +79,7 @@ public:
 #ifdef CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR
   template <typename IT>
   Intrusive_list(IT first, IT last)
-        : f(), b(), n(0)
+	: f(), b(), n(0)
   {
     if(first == last){
       return;
@@ -89,7 +89,7 @@ public:
     Type_handle ch = f;
     ++n;
     ++first;
-        while(first != last){
+	while(first != last){
       if((ch != Type(*first)) && ((*first)->next_intrusive()==Type_handle())){
         // not yet inserted
         ch->set_next_intrusive(*first);
@@ -194,9 +194,9 @@ public:
       if(pos != Type_handle()){
         if(pos == b){
           pos = Type_handle(); // past the end
-                    }else {
+		    }else {
           pos = pos->next_intrusive();
-                    }
+		    }
       }
       return *this;
     }
@@ -669,7 +669,7 @@ private:
       Facet mirror = tr_.mirror_facet(facet);
       return ( (mirror<facet)?mirror:facet );
 #else
-          Cell_handle n = c->neighbor(i);
+  	  Cell_handle n = c->neighbor(i);
       if(c < n){
         return Facet(c,i);
       }else{
@@ -791,7 +791,7 @@ private:
       typedef typename Gt::Ray_3 Ray_3;
       typedef typename Gt::Line_3 Line_3;
       typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
-        
+
       // Nothing to do for infinite facets
       if ( c3t3_.triangulation().is_infinite(facet) )
         return Surface_patch();
@@ -2704,7 +2704,7 @@ fill_modified_vertices(InputIterator cells_begin,
   {
     for ( int i=0 ; i<4 ; ++i )
     {
-          // Insert vertices if not already inserted
+	  // Insert vertices if not already inserted
       const Vertex_handle& current_vertex = (*it)->vertex(i);
       if ( !tr_.is_infinite(current_vertex)
           && already_inserted_vertices.insert(current_vertex).second )

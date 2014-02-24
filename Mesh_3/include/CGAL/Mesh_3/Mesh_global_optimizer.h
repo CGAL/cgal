@@ -297,7 +297,6 @@ operator()(int nb_iterations, Visitor visitor)
     else
       nb_vertices_moved = moving_vertices.size();
 
-
     // Compute move for each vertex
     Moves_vector moves = compute_moves(moving_vertices);
     visitor.after_compute_moves();
@@ -319,7 +318,6 @@ operator()(int nb_iterations, Visitor visitor)
       break;
     
     // Update mesh with those moves
-   
     update_mesh(moves, moving_vertices, visitor);
     visitor.end_of_iteration(i);
 

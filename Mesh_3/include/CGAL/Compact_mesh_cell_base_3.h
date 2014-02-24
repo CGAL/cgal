@@ -509,6 +509,7 @@ private:
   char bits_;
   mutable bool sliver_cache_validity_;
 
+
 };  // end class Compact_mesh_cell_base_3
 
 namespace internal {

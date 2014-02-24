@@ -24,8 +24,6 @@
 
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
-#include <CGAL/tags.h>
-
 namespace CGAL {
 
   template <class SearchTraits, class Splitter, class UseExtendedNode> 
@@ -63,7 +61,7 @@ namespace CGAL {
     // private variables for extended internal nodes
     FT low_val;
     FT high_val;
-
+                
   public:
 		
     void *   for_compact_container() const { return lower_ch.for_compact_container(); }
@@ -74,7 +72,7 @@ namespace CGAL {
     {}
 
     Kd_tree_node(Node_type t ) 
-      : the_node_type(t)
+      : the_node_type(t) 
     {}
 
     Kd_tree_node(unsigned int n_, Node_type t ) 
