@@ -138,7 +138,7 @@ int main(int argc, char * argv[])
   } // for each input file
 
   std::cerr << std::endl;
-
+  system("Pause");
   // Returns accumulated fatal error
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;

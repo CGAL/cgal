@@ -56,20 +56,28 @@ void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input poin
   std::vector<Point> points_sampled;
   points_sampled.resize(points.size() * (retain_percentage / 100.));
 
+  output.clear();
   // Run algorithm 
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-            points.begin(), 
-            points.end(), 
-            std::back_inserter(output),
-            retain_percentage, 
-            neighbor_radius,
-            iter_number,
-            need_compute_density);
+    points.begin(), 
+    points.end(),
+    back_inserter(output));
+
+  //CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+  //                                             points.begin(), 
+  //                                             points.end(), 
+  //                                             std::back_inserter(output),
+  //                                             retain_percentage, 
+  //                                             neighbor_radius,
+  //                                             iter_number,
+  //                                             need_compute_density);
+
+  output.clear();
 
   long memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
-                        << (memory>>20) << " Mb allocated"
-                        << std::endl;
+                      << (memory>>20) << " Mb allocated"
+                      << std::endl;
 }
 
 
@@ -97,8 +105,8 @@ int main(int argc, char * argv[])
   }
 
   //Algorithm parameters
-  const double retain_percentage = 10;   // percentage of points to retain.
-  const double neighbor_radius = 0.25;   // neighbors size.
+  const double retain_percentage = 2;   // percentage of points to retain.
+  const double neighbor_radius = 0.03;   // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
   const bool need_compute_density = true;  // if needed to compute density.
 
@@ -139,6 +147,8 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
     std::vector<Point> output;
+
+
     test_wlop_simplify_and_regularize(points, 
                                       output,
                                       retain_percentage,
@@ -149,7 +159,7 @@ int main(int argc, char * argv[])
   } // for each input file
 
   std::cerr << std::endl;
-
+  system("Pause");
   // Returns accumulated fatal error
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
