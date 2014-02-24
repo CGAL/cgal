@@ -44,9 +44,9 @@ int main(void)
 
   //way 1 begin
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-  points.begin(), 
-  points.end(),
-  back_inserter(output));
+                                               points.begin(), 
+                                               points.end(),
+                                               back_inserter(output));
   //way 1 end
 
 
