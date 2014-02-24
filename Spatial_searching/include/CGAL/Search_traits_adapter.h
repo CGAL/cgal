@@ -72,9 +72,9 @@ template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
   PointPropertyMap ppmap;
 
-  BOOST_STATIC_ASSERT( boost::is_same< boost::lvalue_property_map_tag,
-                        typename boost::property_traits<PointPropertyMap>::category
-                       >::value );
+  BOOST_STATIC_ASSERT( ( boost::is_same< boost::lvalue_property_map_tag,
+                           typename boost::property_traits<PointPropertyMap>::category
+                         >::value ) );
 public:
   typedef Base_traits Base;
   typedef typename internal::Get_iso_box_d<Base>::type Iso_box_d;
@@ -128,9 +128,9 @@ class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
   typedef typename Base_distance::FT FT;
 
-  BOOST_STATIC_ASSERT( boost::is_same< boost::lvalue_property_map_tag,
-                      typename boost::property_traits<PointPropertyMap>::category
-                     >::value );
+  BOOST_STATIC_ASSERT( ( boost::is_same< boost::lvalue_property_map_tag,
+                           typename boost::property_traits<PointPropertyMap>::category
+                         >::value ) );
 public:
     
   Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),
