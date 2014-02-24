@@ -43,11 +43,10 @@
 
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
-//#include "tbb/task_scheduler_init.h"
 #include "tbb/scalable_allocator.h"
-//#include "tbb/tbbmalloc_proxy.h"
 
-#define CGAL_DEBUG_MODE
+
+//#define CGAL_DEBUG_MODE //on-off cout
 
 namespace CGAL {
 

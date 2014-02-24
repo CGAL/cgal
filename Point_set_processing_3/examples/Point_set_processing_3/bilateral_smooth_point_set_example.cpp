@@ -25,7 +25,7 @@ typedef std::pair<Point, Vector> PointVectorPair;
 
 int main(void)
 {
-  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/qtr_piston_noise_with_normal";
+  const std::string INPUT_FILENAME_WITHOUT_EXT = "data/fin90_with_PCA_normals";
 
   // Reads a .xyz point set file in points[].
   std::vector<PointVectorPair> points;
@@ -41,11 +41,11 @@ int main(void)
      return EXIT_FAILURE;
   }
 
-                               //Algorithm parameters
-  int k = 120;                 //neighborhood size
+                               // Algorithm parameters
+  int k = 120;                 // neighborhood size
   double sharpness_sigma = 25; // control sharpness(0-90), 
                                // the bigger, the result will be smoother.
-  int iter_number = 3;         //times of projection
+  int iter_number = 3;         // times of projection
 
   CGAL::Timer task_timer;
   task_timer.start();
@@ -75,7 +75,7 @@ int main(void)
 
 
   //// Save point set.
-  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_jet DENOISED.xyz");   
+  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_bilateral DENOISED.xyz");   
   if (!out ||
       !CGAL::write_xyz_points_and_normals(
       out, points.begin(), points.end(), 
