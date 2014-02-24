@@ -167,7 +167,6 @@ public:
       Get_io_signature<int>()() + "+" +
       Get_io_signature<Index>()();
   }
-
 private:
 
   int number_of_incident_facets_;

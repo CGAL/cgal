@@ -479,6 +479,8 @@ public:
   }
 
 private:
+
+
   /// Stores surface_index for each facet of the cell
   CGAL::cpp11::array<Surface_patch_index, 4> surface_index_table_;
   /// Stores surface center of each facet of the cell

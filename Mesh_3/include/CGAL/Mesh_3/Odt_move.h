@@ -55,7 +55,6 @@ class Odt_move
   
   typedef typename Gt::FT FT;
   typedef typename Gt::Vector_3 Vector_3;
-  typedef typename Gt::Tetrahedron_3 Tetrahedron;
   
 public:
   typedef SizingField Sizing_field;

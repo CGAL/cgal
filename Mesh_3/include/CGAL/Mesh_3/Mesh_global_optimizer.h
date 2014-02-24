@@ -452,7 +452,7 @@ compute_move(const Vertex_handle& v)
 
   // Get move from move function
   Vector_3 move = move_function_(v, incident_cells, c3t3_, sizing_field_);
-
+  
   // Project surface vertex
   if ( c3t3_.in_dimension(v) == 2 )
   {
