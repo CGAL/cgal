@@ -272,6 +272,8 @@ public:
 
 
 //WARNING THIS IS DONE ONLY FOR POLYHEDRON
+// Warning this will split only existing edges, newly created edge intersected
+// by the intersection polyline won't be split
 template<class Polyhedron,class Halfedge_predicate,
          class Set_vertex_corner, 
          class PolyhedronPointPMap=Default_polyhedron_ppmap<Polyhedron>,
