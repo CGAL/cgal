@@ -129,23 +129,13 @@ private:
     
     typename Gt::Construct_centroid_3 centroid =
     Gt().construct_centroid_3_object();
-
-    //trick to compute centroid and volume with tet points
-    // always in the same order, to avoid numerical errors
-    std::vector<Point_3> points;
-    points.push_back(cell->vertex(0)->point());
-    points.push_back(cell->vertex(1)->point());
-    points.push_back(cell->vertex(2)->point());
-    points.push_back(cell->vertex(3)->point());
-    std::sort(points.begin(), points.end(), std::less<Point_3>());
     
-    Point_3 c = centroid(points[0], points[1], points[2], points[3]);
+    Point_3 c = centroid(tr.tetrahedron(cell));
     FT s = sizing_field(c,std::make_pair(cell,true));
     CGAL_assertion(!is_zero(s));
 
     // Points of cell are positively oriented
-    FT abs_volume = volume(points[0], points[1], points[2], points[3]);
-    abs_volume = std::abs(abs_volume);
+    FT abs_volume = volume(tr.tetrahedron(cell));
     CGAL_assertion(abs_volume >= 0);
     
     return abs_volume / (s*s*s);

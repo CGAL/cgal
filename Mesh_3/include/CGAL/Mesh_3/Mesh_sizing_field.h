@@ -171,18 +171,12 @@ operator()(const Point_3&, const std::pair<Cell_handle,bool>& c) const
 {
   // Assumes that p is the centroid of c
   const Cell_handle& cell = c.first;
-  std::vector<Vertex_handle> v;
-  v.push_back(cell->vertex(0));
-  v.push_back(cell->vertex(1));
-  v.push_back(cell->vertex(2));
-  v.push_back(cell->vertex(3));
-  std::sort(v.begin(), v.end());
-   
+  
   // Interpolate value using tet vertices values
-  const FT& va = v[0]->meshing_info();
-  const FT& vb = v[1]->meshing_info();
-  const FT& vc = v[2]->meshing_info();
-  const FT& vd = v[3]->meshing_info();
+  const FT& va = cell->vertex(0)->meshing_info();
+  const FT& vb = cell->vertex(1)->meshing_info();
+  const FT& vc = cell->vertex(2)->meshing_info();
+  const FT& vd = cell->vertex(3)->meshing_info();
   
   return ( (va+vb+vc+vd)/4 );
 }
