@@ -128,6 +128,7 @@ compute_update_sample_point(
   {
     average = average / average_weight_sum; 
   }
+  neighbor_original_points.clear();
 
   //Compute repulsion term
   std::vector<typename Primitive::Id> neighbor_sample_points;
@@ -143,28 +144,27 @@ compute_update_sample_point(
   iter = neighbor_sample_points.begin();
   for(; iter != neighbor_sample_points.end(); ++iter)
   {
-    Point& np = *(*iter);
+    Point np = *(*iter);
     int sample_index = std::distance(sample_first_iter, *iter);
 
     FT dist2 = CGAL::squared_distance(query, np);
-    if (dist2 < 1e-10) continue;
-
     FT dist = std::sqrt(dist2);
+    if (dist < 1e-10) continue;
     
     weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2);
-
+   
     if (!is_sample_densities_empty)
     {
       weight *= sample_densities[sample_index];
     }
 
-     Vector diff = query - np;
+    Vector diff = query - np;
 
     repulsion_weight_sum += weight;
     repulsion = repulsion + diff * weight;
   }
 
-  if (neighbor_sample_points.empty() || repulsion_weight_sum < FT(1e-100))
+  if (neighbor_sample_points.size() < 3 || repulsion_weight_sum < FT(1e-10))
   {
     repulsion = CGAL::NULL_VECTOR;
   }
@@ -172,6 +172,7 @@ compute_update_sample_point(
   {
     repulsion = repulsion / repulsion_weight_sum; 
   }
+  neighbor_sample_points.clear();
 
   // Compute update sample point
   Point update_sample = CGAL::ORIGIN + average + FT(0.45) * repulsion;

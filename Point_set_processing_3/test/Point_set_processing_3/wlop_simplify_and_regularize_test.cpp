@@ -39,7 +39,8 @@ typedef Kernel::Point_3 Point;
 // ----------------------------------------------------------------------------
 
 // Removes outliers
-void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input point set   
+void test_wlop_simplify_and_regularize(
+                              std::vector<Point>& points, // input point set   
                               std::vector<Point>& output,
                               double retain_percentage, // percentage of points to remove
                               double neighbor_radius, // neighborhood size
@@ -58,19 +59,19 @@ void test_wlop_simplify_and_regularize(std::vector<Point>& points, // input poin
 
   output.clear();
   // Run algorithm 
-  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-    points.begin(), 
-    points.end(),
-    back_inserter(output));
-
   //CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-  //                                             points.begin(), 
-  //                                             points.end(), 
-  //                                             std::back_inserter(output),
-  //                                             retain_percentage, 
-  //                                             neighbor_radius,
-  //                                             iter_number,
-  //                                             need_compute_density);
+  //  points.begin(), 
+  //  points.end(),
+  //  back_inserter(output));
+
+  CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
+                                               points.begin(), 
+                                               points.end(), 
+                                               std::back_inserter(output),
+                                               retain_percentage, 
+                                               neighbor_radius,
+                                               iter_number,
+                                               need_compute_density);
 
   output.clear();
 
@@ -108,7 +109,7 @@ int main(int argc, char * argv[])
   const double retain_percentage = 2;   // percentage of points to retain.
   const double neighbor_radius = 0.03;   // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
-  const bool need_compute_density = true;  // if needed to compute density.
+  const bool need_compute_density = false;  // if needed to compute density.
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
