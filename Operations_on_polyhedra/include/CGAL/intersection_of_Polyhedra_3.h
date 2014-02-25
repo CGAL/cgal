@@ -602,7 +602,7 @@ namespace internal_IOP{
     void add_new_node(Halfedge_handle edge,Facet_handle facet)
     {
       nodes.push_back (  exact_to_double(
-        compute_triangle_segment_intersection_point<Polyhedron>(edge,facet,ek, ppmap)
+        compute_triangle_segment_intersection_point<Polyhedron, Kernel>(edge,facet,ek, ppmap)
       ));
     }
     
