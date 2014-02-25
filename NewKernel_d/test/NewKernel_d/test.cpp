@@ -64,6 +64,8 @@ void test2(){
   typedef Ker K1;
   typedef typename K1::Point_d P;
   typedef typename K1::Cartesian_const_iterator_d CI;
+  typedef typename K1::Hyperplane_d H;
+  typedef typename K1::Sphere_d Sp;
   typedef typename K1::Vector_d V;
   typedef typename K1::Segment_d S;
   typedef typename K1::Flat_orientation_d FO;
@@ -84,9 +86,12 @@ void test2(){
   typedef typename K1::In_flat_side_of_oriented_sphere_d IFSOS;
   typedef typename K1::Contained_in_affine_hull_d CAH;
   typedef typename K1::Compare_lexicographically_d CL;
+  typedef typename K1::Value_at_d VA;
+  typedef typename K1::Construct_hyperplane_d CH;
 
   USE_TYPE(FO);
   USE_TYPE(CL);
+  USE_TYPE(Sp);
   Ker k
 #if 0
     (2)
@@ -98,6 +103,8 @@ void test2(){
   CC cc Kinit(compute_coordinate_d_object);
   PO po Kinit(orientation_d_object);
   CS cs Kinit(construct_segment_d_object);
+  VA va Kinit(value_at_d_object);
+  CH ch Kinit(construct_hyperplane_d_object);
   CSE cse (k);
   SOS sos Kinit(side_of_oriented_sphere_d_object);
   SBS sbs Kinit(side_of_bounded_sphere_d_object);
@@ -140,7 +147,11 @@ void test2(){
   std::back_insert_iterator<std::vector<V> > bii(v);
   lb(tab3+0,tab3+2,bii);
   assert(v.size()==1);
-#if 0
+  H h=ch(tab2+1,tab2+3);
+  assert(fabs(va(h,x2)-1)<.0001);
+  assert(fabs(va(h,x3)-1)<.0001);
+  assert(fabs(va(h,x1)+1)<.0001);
+#if 1
   // Doesn't compile with Lazy yet.
   FO fo=cfo(tab2+1,tab2+3);
   assert(ifo(fo,tab2+1,tab2+3)==CGAL::POSITIVE);

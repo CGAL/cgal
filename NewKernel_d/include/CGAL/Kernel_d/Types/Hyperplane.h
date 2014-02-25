@@ -1,6 +1,8 @@
 #ifndef CGAL_KD_TYPE_HYPERPLANE_H
 #define CGAL_KD_TYPE_HYPERPLANE_H
 #include <CGAL/store_kernel.h>
+#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Hyperplane {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
@@ -21,13 +23,49 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   typedef typename Get_type<R_, Hyperplane_tag>::type	result_type;
   typedef typename Get_type<R_, Vector_tag>::type	Vector;
   typedef typename Get_type<R_, FT_tag>::type FT;
-  typedef typename R_::LA LA;
+  typedef typename R_::LA::Square_matrix Matrix;
+  private:
+  struct One {
+    typedef int result_type;
+    template<class T>int const& operator()(T const&)const{
+      static const int one = 1;
+      return one;
+    }
+  };
+  public:
+
   result_type operator()(Vector const&a, FT const&b)const{
     return result_type(a,b);
   }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
-    throw "not implemented yet!";
+    typedef typename R_::LA LA;
+    typedef typename LA::Vector Vec;
+    typedef typename LA::Construct_vector CVec;
+    typedef typename Get_type<R_, Point_tag>::type	Point;
+    typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
+    typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
+    typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
+
+    Point const& p0=*f;
+    int d = pd(p0);
+    Matrix m(d,d);
+    for(int j=0;j<d;++j)
+      m(0,j)=c(p0,j);
+    // Write the point coordinates in lines.
+    for(int i=1;++f!=e;++i) {
+      Point const& p=*f;
+      for(int j=0;j<d;++j)
+	m(i,j)=c(p,j);
+    }
+    Vec one = typename CVec::Iterator()(d,
+	boost::make_transform_iterator(boost::counting_iterator<int>(0),One()),
+	boost::make_transform_iterator(boost::counting_iterator<int>(d),One()));
+    Vec res = typename CVec::Dimension()(d);;
+    std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
+    LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(one));
+    std::cout << "Sol: " << res << std::endl;
+    return this->operator()(cv(d,LA::vector_begin(res),LA::vector_end(res)),1);
   }
 };
 template <class R_> struct Orthogonal_vector {
@@ -62,10 +100,6 @@ template <class R_> struct Value_at : Store_kernel<R_> {
     return dot(h.orthogonal_vector(),p2v(p));
     // Use Orthogonal_vector to make it generic?
     // Copy the code from Scalar_product to avoid p2v?
-  }
-  template <class Iter>
-  result_type operator()(Iter f, Iter e)const{
-    throw "not implemented yet!";
   }
 };
 }

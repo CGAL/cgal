@@ -149,6 +149,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Linear_rank_d linear_rank_d_object()const{ return Linear_rank_d(*this); }
 	Linearly_independent_d linearly_independent_d_object()const{ return Linearly_independent_d(*this); }
 	Midpoint_d midpoint_d_object()const{ return Midpoint_d(*this); }
+	Value_at_d value_at_d_object()const{ return Value_at_d(*this); }
 	Component_accessor_d component_accessor_d_object()const{ return Component_accessor_d(*this); }
 	Orthogonal_vector_d orthogonal_vector_d_object()const{ return Orthogonal_vector_d(*this); }
 	Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object()const{ return Construct_cartesian_const_iterator_d(*this); }

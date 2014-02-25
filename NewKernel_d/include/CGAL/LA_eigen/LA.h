@@ -112,7 +112,8 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 	}
 
 	// m*a==b
-	static bool solve(Dynamic_vector&a, Dynamic_matrix const&m, Vector const& b){
+	template<class DV, class DM, class V>
+	static bool solve(DV&a, DM const&m, V const& b){
 		a = m.colPivHouseholderQr().solve(b);
 		return b.isApprox(m*a);
 	}

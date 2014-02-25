@@ -103,15 +103,15 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 #undef CODE
 
 #endif
-  };
+    };
 
-struct Values_divide {
+    struct Values_divide {
 #ifdef CGAL_CXX0X
-  template<class H,class...U>
-    result_type operator()(H const&h,U&&...u) const {
-      check_dim(sizeof...(U)); // TODO: use static_assert
-      return Initializer_list()({Rational_traits<NT>().make_rational(std::forward<U>(u),h)...});
-    }
+      template<class H,class...U>
+	result_type operator()(H const&h,U&&...u) const {
+	  check_dim(sizeof...(U)); // TODO: use static_assert
+	  return Initializer_list()({Rational_traits<NT>().make_rational(std::forward<U>(u),h)...});
+	}
 #else
 
 #define VAR(Z,N,_) ( Rational_traits<NT>().make_rational( t##N ,h) )
@@ -127,7 +127,7 @@ struct Values_divide {
 #undef VAR
 
 #endif
-};
-};
+    };
+  };
 }
 #endif

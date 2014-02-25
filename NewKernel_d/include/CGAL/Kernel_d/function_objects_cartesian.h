@@ -42,12 +42,13 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 		Point const& p0=*f++;
 		int d=pd(p0);
 		Matrix m(d,d);
+		// FIXME: this writes the vector coordinates in lines ? check all the other uses in this file, this may be wrong for some.
 		for(int i=0;f!=e;++f,++i) {
-			Point const& p=*f;
-		for(int j=0;j<d;++j){
-			m(i,j)=c(p,j)-c(p0,j);
-			// should we cache the coordinates of p0 in case they are computed?
-		}
+		  Point const& p=*f;
+		  for(int j=0;j<d;++j){
+		    m(i,j)=c(p,j)-c(p0,j);
+		    // should we cache the coordinates of p0 in case they are computed?
+		  }
 		}
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
@@ -632,7 +633,7 @@ template<class R_> struct Point_to_vector : private Store_kernel<R_> {
 	typedef Point argument_type;
 	result_type operator()(argument_type const&v)const{
 		CI ci(this->kernel());
-		return CV(this->kernel())(ci(v,Begin_tag(),ci(v,End_tag())));
+		return CV(this->kernel())(ci(v,Begin_tag()),ci(v,End_tag()));
 	}
 };
 }
