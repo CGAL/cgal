@@ -1891,11 +1891,17 @@ public:
         }
       }
     }
-   
-    if (do_not_build_cmap) return;
-    
+
+    if (!do_not_build_cmap) build_cmap(border_halfedges, nodes);
+  }
+
+  template <class Nodes_vector>
+  void build_cmap(
+    const std::map<Halfedge_const_handle,std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
+    const Nodes_vector& nodes)
+  {
     //4) create one output polyhedron per connected component of polyhedron,
-    //   connected by an edge which is not an intersection edge  
+    //   connected by an edge which is not an intersection edge
     //5) import into a Combinatorial map
     #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "Nb marked edges " << border_halfedges.size() << std::endl;
@@ -1903,11 +1909,11 @@ public:
 //      std::cout << it->first->get(ppmap,opposite()->vertex()) << " " << get(ppmap,it->first->vertex()) << " is constrained " << std::endl;
     std::cout << "Nb polylines " << an_edge_per_polyline.size() << std::endl;
     #endif
-    
+
     internal_IOP::Non_intersection_halfedge<Polyhedron> criterium(border_halfedges);
 
     int mark_index=final_map().get_new_mark(); //mark used to tag dart that are on an intersection
-    
+
     //define a map that will contain the correspondance between selected halfedges of the boundary and
     //their corresponding Dart_handle in the cmap.
     typedef std::map<Halfedge_const_handle,typename Combinatorial_map_3::Dart_handle,internal_IOP::Compare_address<Polyhedron> > Halfedge_to_dart_map;
@@ -1918,17 +1924,17 @@ public:
       //orientation of faces around the edge (to be sure we can do it)
       Halfedge_handle first_hedge=it->second.first.begin()->second;
       Halfedge_handle second_hedge=boost::next(it->second.first.begin())->second;
-      
+
       if (!first_hedge->is_border())               selected_hedge_to_dart.insert(std::make_pair(first_hedge,Dart_handle(NULL)));
       if (!first_hedge->opposite()->is_border())   selected_hedge_to_dart.insert(std::make_pair(first_hedge->opposite(),Dart_handle(NULL)));
       if (!second_hedge->is_border())              selected_hedge_to_dart.insert(std::make_pair(second_hedge,Dart_handle(NULL)));
       if (!second_hedge->opposite()->is_border())  selected_hedge_to_dart.insert(std::make_pair(second_hedge->opposite(),Dart_handle(NULL)));
     }
-    
+
     #ifdef CGAL_COREFINEMENT_DEBUG
     int polynb=0;
     #endif
-    for (typename Poly_to_map_node::iterator 
+    for (typename Poly_to_map_node::iterator
           it=polyhedron_to_map_node_to_polyhedron_vertex.begin();
           it!=polyhedron_to_map_node_to_polyhedron_vertex.end();
           ++it
@@ -1939,30 +1945,29 @@ public:
       typedef typename UF::handle UF_handle;
       typedef std::map<Facet_const_handle,std::list<Facet_const_handle>,internal::Compare_handle_ptr<Polyhedron> > Result;
       typedef std::map<Facet_const_handle,UF_handle,internal::Compare_handle_ptr<Polyhedron> > Facet_to_handle_map;
-      
+
       UF uf;
       Facet_to_handle_map map_f2h;
       Result result;
       Polyhedron* current_poly=it->first;
-      
+
       #ifdef CGAL_COREFINEMENT_DEBUG
       std::cout << "writing poly debug"<< std::endl;
-      std::stringstream ss; 
+      std::stringstream ss;
       ss << "output_debug-" << ++polynb << ".off";
       std::ofstream output_debug(ss.str().c_str());
       output_debug << *current_poly;
       #endif
-      
+
       extract_connected_components(*(static_cast<Polyhedron const *> (current_poly) ),criterium,uf,map_f2h,result);
 
-      
       //add each connected component in the map with 2 volumes per component.
       for (typename Result::iterator it_res=result.begin();it_res!=result.end();++it_res)
       {
-        //create in the final Cmap a 2D component containing faces of a connected component 
+        //create in the final Cmap a 2D component containing faces of a connected component
         //(twice: one with same orientation and one with the opposite orientation to model the other volume)
         Dart_handle d = import_from_polyhedron_subset<Polyhedron>(final_map(),it_res->second.begin(),it_res->second.end(),criterium,selected_hedge_to_dart,mark_index,ppmap);
-        //set an attribute to one volume represented by this component to indicates 
+        //set an attribute to one volume represented by this component to indicates
         //a part outside of the polyhedron current_poly
         typename Combinatorial_map_3_::template Attribute_range<3>::type::iterator attrib=final_map().template create_attribute<3>();
         attrib->info().outside.insert(current_poly);
@@ -1970,8 +1975,8 @@ public:
         //set the attribute for the opposite volume: represent a part inside current_poly
         attrib=final_map().template create_attribute<3>();
         attrib->info().inside.insert(current_poly);
-        final_map().template set_attribute<3>(d->beta(3),attrib);        
-        
+        final_map().template set_attribute<3>(d->beta(3),attrib);
+
         #ifdef CGAL_COREFINEMENT_DEBUG
         final_map().display_characteristics(std::cout);
         std::cout << std::endl;
@@ -1982,11 +1987,11 @@ public:
     for(typename Halfedge_to_dart_map::iterator it=selected_hedge_to_dart.begin();it!=selected_hedge_to_dart.end();++it)
       CGAL_assertion(it->second!=Dart_handle(NULL));
     #endif
-    
+
     CGAL_assertion(final_map().is_valid());
 
     std::set<Dart_handle> darts_to_remove;
-    
+
     //6) Glue pieces together
     //   using one edge per intersection polyline, we merge the different volumes
     for (typename An_edge_per_polyline_map::iterator it=an_edge_per_polyline.begin();it!=an_edge_per_polyline.end();++it)
@@ -2004,10 +2009,10 @@ public:
       CGAL_assertion(nodes[indices.first]==get(ppmap,first_hedge->opposite()->vertex()));
       CGAL_assertion(nodes[indices.second]==get(ppmap,second_hedge->vertex()));
       CGAL_assertion(nodes[indices.first]==get(ppmap,second_hedge->opposite()->vertex()));
-      
+
       Polyhedron* first_poly  = it->second.first.begin()->first;
       Polyhedron* second_poly = boost::next(it->second.first.begin())->first;
-      
+
       //different handling depending on the number of incident triangles to the edge.
       //After sewing there are two,three or four volumes if there are two,three or four incident triangles respectively
       if ( first_hedge->is_border() || first_hedge->opposite()->is_border() ){
@@ -2026,46 +2031,45 @@ public:
           //  counterclockwise oriented facets.
           Vertex_handle P1=first_hedge->opposite()->next()->vertex();
           Vertex_handle P2=first_hedge->next()->vertex();
-          //    when looking from the side of indices.second, the interior of the first polyhedron is described 
+          //    when looking from the side of indices.second, the interior of the first polyhedron is described
           //    by turning counterclockwise from P1 to P2
           Vertex_handle Q1=second_hedge->opposite()->next()->vertex();
           Vertex_handle Q2=second_hedge->next()->vertex();
-          //    when looking from the side of indices.second, the interior of the second polyhedron is described 
+          //    when looking from the side of indices.second, the interior of the second polyhedron is described
           //    by turning from Q1 to Q2
-          
+
           //check if the third point of each triangular face is an original point (stay -1)
           //or a intersection point (in that case we need the index of the corresponding node to
-          //have the exact value of the point)      
+          //have the exact value of the point)
           int index_p1=node_index_of_incident_vertex(first_hedge->opposite()->next(),border_halfedges);
           int index_p2=node_index_of_incident_vertex(first_hedge->next(),border_halfedges);
           int index_q1=node_index_of_incident_vertex(second_hedge->opposite()->next(),border_halfedges);
-          int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);      
-          
+          int index_q2=node_index_of_incident_vertex(second_hedge->next(),border_halfedges);
+
           #ifdef CGAL_COREFINEMENT_DEBUG
           std::cout << index_p1 << " " << index_p2 << " " << index_q1 << " " <<index_q2 << std::endl;
           std::cout << nodes[indices.first] << " | " << nodes[indices.second] << std::endl;
           std::cout << get(ppmap,P1) << " | " << get(ppmap,P2) << " | " << get(ppmap,Q1) << " | " <<get(ppmap,Q2) << std::endl;
           #endif
-          
+
           if ( coplanar_triangles_case_handled(first_hedge,second_hedge,indices,nodes,index_p1,index_p2,index_q1,index_q2,selected_hedge_to_dart,mark_index,darts_to_remove,polyline_info) )
             continue;
-          
+
           CGAL_assertion(get(ppmap,P1) !=get(ppmap,Q1) && get(ppmap,P1)!=get(ppmap,Q2) && get(ppmap,P2) !=get(ppmap,Q1) && get(ppmap,P2)!=get(ppmap,Q2));
-          
+
           bool Q1_is_between_P1P2 = filtered_order_around_edge(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes);
           bool Q2_is_between_P1P2 = filtered_order_around_edge(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes);
-          
-          
+
           //Recover the dart that will be the start point of the different sewing
           //  dof_X_outside = dart of face of , meaning the triangle containing the
-          //  point X and part of the volume outside of the corresponding polyhedron      
+          //  point X and part of the volume outside of the corresponding polyhedron
           //-----first polyhedron
           Dart_handle dof_P1_outside = get_associated_dart(first_hedge->opposite(),selected_hedge_to_dart);
           Dart_handle dof_P2_outside = get_associated_dart(first_hedge,selected_hedge_to_dart);
           //-----second polyhedron
           Dart_handle dof_Q1_outside = get_associated_dart(second_hedge->opposite(),selected_hedge_to_dart);
-          Dart_handle dof_Q2_outside = get_associated_dart(second_hedge,selected_hedge_to_dart);   
-          
+          Dart_handle dof_Q2_outside = get_associated_dart(second_hedge,selected_hedge_to_dart);
+
           if ( Q1_is_between_P1P2 ){
             if( Q2_is_between_P1P2 )
             {
@@ -2094,7 +2098,7 @@ public:
                 sew_2_marked_darts( final_map(),dof_P1_outside->beta(3) , dof_Q2_outside->beta(3) ,mark_index, nodes, indices, polyline_info); //P1Q2
                 //update inside outside info (because darts from the same volume have been merged)
                 dof_Q2_outside->template attribute<3>()->info().inside.insert(first_poly); //update Q2Q1 inside poly
-                dof_P2_outside->template attribute<3>()->info().inside.insert(second_poly);//update P2P1 inside poly            
+                dof_P2_outside->template attribute<3>()->info().inside.insert(second_poly);//update P2P1 inside poly
               }
             }
             else
@@ -2107,7 +2111,7 @@ public:
               sew_2_marked_darts( final_map(),dof_P2_outside          , dof_Q2_outside->beta(3) ,mark_index, nodes, indices, polyline_info); //P2Q2
               sew_2_marked_darts( final_map(),dof_Q1_outside->beta(3) , dof_P2_outside->beta(3) ,mark_index, nodes, indices, polyline_info); //Q1P2
               sew_2_marked_darts( final_map(),dof_Q2_outside          , dof_P1_outside          ,mark_index, nodes, indices, polyline_info); //Q2P1
-            }        
+            }
           }
           else
           {
@@ -2136,7 +2140,7 @@ public:
                 sew_2_marked_darts( final_map(),dof_Q2_outside          , dof_P1_outside          ,mark_index, nodes, indices, polyline_info); //Q2P1
                 //update inside outside info (because darts from the same volume have been merged)
                 dof_Q1_outside->beta(3)->template attribute<3>()->info().outside.insert(first_poly); //update Q1Q2 outside poly
-                dof_P1_outside->beta(3)->template attribute<3>()->info().outside.insert(second_poly);//update P2P1 outside poly            
+                dof_P1_outside->beta(3)->template attribute<3>()->info().outside.insert(second_poly);//update P2P1 outside poly
               }
               else{
                 // poly_first  - poly_second            = {0}
@@ -2149,13 +2153,13 @@ public:
                 sew_2_marked_darts( final_map(),dof_Q2_outside          , dof_Q1_outside          ,mark_index, nodes, indices, polyline_info); //Q2Q1
                 //update inside outside info (because darts from the same volume have been merged)
                 dof_P1_outside->beta(3)->template attribute<3>()->info().inside.insert(second_poly); //update P1P2 inside poly
-                dof_Q2_outside->template attribute<3>()->info().outside.insert(first_poly);//update Q2Q1 outside poly            
+                dof_Q2_outside->template attribute<3>()->info().outside.insert(first_poly);//update Q2Q1 outside poly
               }
             }
           }
-        }      
+        }
     }
-    
+
     #ifdef CGAL_COREFINEMENT_DEBUG
     std::cout << "number of darts to remove: " << darts_to_remove.size() <<std::endl;
     #endif
@@ -2163,10 +2167,10 @@ public:
     for (typename std::set<Dart_handle>::iterator itdart=darts_to_remove.begin(),end=darts_to_remove.end();itdart!=end;++itdart){
       final_map().erase_dart(*itdart);
     }
-    
+
     //remove empty volumes
     typedef typename Combinatorial_map_3_::template Attribute_range<3>::type Volume_attribute_range;
-    Volume_attribute_range& ratrib=final_map().template attributes<3>();     
+    Volume_attribute_range& ratrib=final_map().template attributes<3>();
     typename Volume_attribute_range::iterator curr=ratrib.begin(),end=ratrib.end();
     do{
       if (curr->info().is_empty)
@@ -2175,9 +2179,9 @@ public:
         ++curr;
     }
     while(curr!=end);
-    
+
     CGAL_assertion(final_map().is_valid());
-    
+
     //update the info of each volume knowing about only one polyhedron:
     //this happens when one polyhedron has a connected component
     //that do not intersect the other polyhedron
@@ -2290,6 +2294,7 @@ public:
     if (inside_A_test_ptr!=NULL) delete inside_A_test_ptr;
     if (inside_B_test_ptr!=NULL) delete inside_B_test_ptr;
   }
+
 };
 
 }//namespace CGAL
