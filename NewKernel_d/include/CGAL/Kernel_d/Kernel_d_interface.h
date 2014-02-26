@@ -159,6 +159,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Construct_sphere_d construct_sphere_d_object()const{ return Construct_sphere_d(*this); }
 	Construct_hyperplane_d construct_hyperplane_d_object()const{ return Construct_hyperplane_d(*this); }
 	Squared_distance_d squared_distance_d_object()const{ return Squared_distance_d(*this); }
+	Center_of_sphere_d center_of_sphere_d_object()const{ return Center_of_sphere_d(*this); }
 	Construct_direction_d construct_direction_d_object()const{ return Construct_direction_d(*this); }
 	Construct_line_d construct_line_d_object()const{ return Construct_line_d(*this); }
 	Construct_ray_d construct_ray_d_object()const{ return Construct_ray_d(*this); }

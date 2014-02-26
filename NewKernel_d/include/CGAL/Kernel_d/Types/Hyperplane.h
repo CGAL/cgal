@@ -53,18 +53,18 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
     for(int j=0;j<d;++j)
       m(0,j)=c(p0,j);
     // Write the point coordinates in lines.
-    for(int i=1;++f!=e;++i) {
+    int i;
+    for (i=1; ++f!=e; ++i) {
       Point const& p=*f;
       for(int j=0;j<d;++j)
 	m(i,j)=c(p,j);
     }
+    CGAL_assertion (i == d);
     Vec one = typename CVec::Iterator()(d,
 	boost::make_transform_iterator(boost::counting_iterator<int>(0),One()),
 	boost::make_transform_iterator(boost::counting_iterator<int>(d),One()));
-    Vec res = typename CVec::Dimension()(d);;
-    std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
+    Vec res = typename CVec::Dimension()(d);
     LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(one));
-    std::cout << "Sol: " << res << std::endl;
     return this->operator()(cv(d,LA::vector_begin(res),LA::vector_end(res)),1);
   }
 };

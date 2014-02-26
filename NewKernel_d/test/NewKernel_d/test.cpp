@@ -74,6 +74,7 @@ void test2(){
   typedef typename K1::Construct_point_d CP;
   typedef typename K1::Construct_vector_d CV;
   typedef typename K1::Construct_segment_d CS;
+  typedef typename K1::Construct_sphere_d CSp;
   typedef typename CGAL::Get_functor<K1, CGAL::Segment_extremity_tag>::type CSE;
   typedef typename K1::Construct_cartesian_const_iterator_d CCI;
   typedef typename K1::Linear_base_d LB;
@@ -88,10 +89,10 @@ void test2(){
   typedef typename K1::Compare_lexicographically_d CL;
   typedef typename K1::Value_at_d VA;
   typedef typename K1::Construct_hyperplane_d CH;
+  typedef typename K1::Center_of_sphere_d COS;
 
   USE_TYPE(FO);
   USE_TYPE(CL);
-  USE_TYPE(Sp);
   Ker k
 #if 0
     (2)
@@ -103,6 +104,7 @@ void test2(){
   CC cc Kinit(compute_coordinate_d_object);
   PO po Kinit(orientation_d_object);
   CS cs Kinit(construct_segment_d_object);
+  CSp csp Kinit(construct_sphere_d_object);
   VA va Kinit(value_at_d_object);
   CH ch Kinit(construct_hyperplane_d_object);
   CSE cse (k);
@@ -113,6 +115,7 @@ void test2(){
   IFSOS ifsos Kinit(in_flat_side_of_oriented_sphere_d_object);
   CAH cah Kinit(contained_in_affine_hull_d_object);
   LB lb Kinit(linear_base_d_object);
+  COS cos Kinit(center_of_sphere_d_object);
   P a=cp(3,4);
   P b=cp(5,6,7);
   int rr[]={3,5,2};
@@ -157,6 +160,18 @@ void test2(){
   assert(ifo(fo,tab2+1,tab2+3)==CGAL::POSITIVE);
   assert(ifsos(fo,tab2+1,tab2+3,x5)==CGAL::ON_POSITIVE_SIDE);
 #endif
+  P z0=cp( 0+2,5-3);
+  P z1=cp(-5+2,0-3);
+  P z2=cp( 3+2,4-3);
+  P tabz[]={z0,z1,z2};
+  Sp sp = csp(tabz+0,tabz+3);
+  P cent0=cos(sp);
+  P cent1=cos(tabz+0,tabz+3);
+  assert(fabs(cent0[0]-2)<.0001);
+  assert(fabs(cent0[1]+3)<.0001);
+  assert(fabs(cent1[0]-2)<.0001);
+  assert(fabs(cent1[1]+3)<.0001);
+  assert(fabs(sp.squared_radius()-25)<.0001);
 }
 
 template<class CP> struct Construct_point3_helper {
