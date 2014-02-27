@@ -104,9 +104,13 @@
     named-parameter edge_is_constrained_map to the function edge_collapse
 
 
-* STL Extensions for CGAL
+* dD Spatial Searching
 
-  - Add the function CGAL::make_sorted_pair.
+  - Fix a documentation bug: The property map passed as template parameter to
+    the classes Search_traits_adapter and Distance_adapter must be a lvalue
+    property map. To avoid incorrect usage, a static assertion has been added
+    in the CGAL code to prevent the user from instantiating these classes with
+    an incorrect property map type.
 
 
 * CGAL ipelets
