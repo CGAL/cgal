@@ -84,7 +84,7 @@ public:
                                  const FT& distance_bound,
                                  const Mesh_facet_topology topology =
                                  FACET_VERTICES_ON_SURFACE) :
-    helper_(periodic_domain.bounding_box())
+    helper_(periodic_domain.periodic_bounding_box())
   {
     if ( FT(0) != angle_bound )
       init_aspect(angle_bound);

@@ -165,7 +165,7 @@ void init_triangualation(C3T3& c3t3, MeshDomain& domain)
   typedef typename C3T3::Triangulation Tr;
   
   Tr& tr = c3t3.triangulation();
-  tr.set_domain(domain.bounding_box());
+  tr.set_domain(domain.periodic_bounding_box());
   
   init_default_triangulation_vertices(c3t3, domain);
   

@@ -59,30 +59,19 @@ public:
   /**
    * Constructor
    * @param f the function which negative values defines the domain
-   * @param bbox a bounding box of the domain, periodic domain
-   * @param error_bound the error bound relative to the sphere radius
-   */
-  Periodic_implicit_mesh_domain_3(Function& f,
-                         const Bbox_3& bbox,
-                         const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), bbox, error_bound) {}
-
-  /**
-   * Constructor
-   * @param f the function which negative values defines the domain
    * @param cuboid a bounding box of the domain, periodic domain
    * @param error_bound the error bound relative to the sphere radius
    */
   Periodic_implicit_mesh_domain_3(Function& f,
                          const Iso_cuboid_3& cuboid,
                          const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), cuboid.bbox(), error_bound) {}
+    : Base(Wrapper(f), cuboid, error_bound) {}
 
   /// Destructor
   virtual ~Periodic_implicit_mesh_domain_3() {}
 
   /// returns periodic cuboid
-  const Iso_cuboid_3& periodic_cuboid() const { return Base::bounding_box(); }
+  const Iso_cuboid_3& periodic_bounding_box() const { return Base::bounding_box(); }
 
 
 private:

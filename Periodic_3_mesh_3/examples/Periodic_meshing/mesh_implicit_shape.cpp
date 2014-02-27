@@ -64,7 +64,7 @@ int main(int argc, char** argv)
   if (argc > 1)
 	  domain_size = atoi(argv[1]);
 
-  Periodic_mesh_domain domain(schwarz_p, CGAL::Bbox_3(0, 0, 0, domain_size, domain_size, domain_size));
+  Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, domain_size, domain_size, domain_size));
   
   Mesh_criteria criteria(domain, facet_angle=30, facet_size=0.05 * domain_size, facet_distance=0.025 * domain_size,
                                 cell_radius_edge_ratio=2, cell_size = 0.05);  

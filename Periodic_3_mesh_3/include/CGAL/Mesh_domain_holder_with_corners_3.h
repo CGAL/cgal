@@ -79,9 +79,9 @@ public:
   
   typedef typename Base::Iso_cuboid_3 Iso_cuboid_3;
   
-  const Iso_cuboid_3& bounding_box() const
+  const Iso_cuboid_3& periodic_bounding_box() const
   {
-    return mesh_domain_.bounding_box();
+    return mesh_domain_.periodic_bounding_box();
   }
   
   typedef typename Base::Construct_initial_points Construct_initial_points;

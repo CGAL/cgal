@@ -62,7 +62,7 @@ Periodic_mesh_domain::Index> Field;
 
 int main()
 {
-  Periodic_mesh_domain domain(schwarz_p, CGAL::Bbox_3(0, 0, 0, 1, 1, 1));
+  Periodic_mesh_domain domain(schwarz_p, CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
 
   double kidney_size = 0.3;
   int volume_dimension = 3;

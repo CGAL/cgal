@@ -231,7 +231,7 @@ int main()
     try {
     
       // Periodic mesh domain (Warning: Sphere_3 constructor uses squared radius !)
-      Periodic_mesh_domain domain(*implicit_function[i], CGAL::Bbox_3(0, 0, 0, 1, 1, 1));
+      Periodic_mesh_domain domain(*implicit_function[i], CGAL::Iso_cuboid_3<K>(0, 0, 0, 1, 1, 1));
       
       /*
       double kidney_size = 3.;
