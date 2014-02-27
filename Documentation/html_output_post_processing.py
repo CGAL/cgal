@@ -46,6 +46,8 @@ def conceptify(d):
     # fix the title
     title = d(".title")
     title.html(re.sub("((Class)|(Struct))( Template)? Reference", "Concept Reference", title.html()))
+    title = d("title")
+    title.html(re.sub("((Class)|(Struct))( Template)? Reference", "Concept Reference", title.html()))
     # remove the include
     include_statement = d(".contents").children().eq(0)
     # should check that this is really the div we think it is
