@@ -16,17 +16,24 @@ struct Point_with_info_helper{
   typedef My_point_with_info<Point_> type;
 };
 
-
+template <class Point>
 struct Point_property_map{
-  template <class Point>
-  friend const Point& get(Point_property_map,const My_point_with_info<Point>& p) {return p.point();}
+  typedef Point value_type;
+  typedef const value_type& reference;
+  typedef const My_point_with_info<Point>& key_type;
+  typedef boost::lvalue_property_map_tag category;  
+
+  reference operator[](key_type k) const {return k.point();}
+
+  friend reference get(const Point_property_map& ppmap, key_type i) 
+  {return ppmap[i];}
 };
 
 template <class Point>
 const Point& get_point(const Point& p) {return p;}
 
 template <class Point>
-const Point& get_point(const My_point_with_info<Point>& p) {return get(Point_property_map(),p);}
+const Point& get_point(const My_point_with_info<Point>& p) {return get(Point_property_map<Point>(),p);}
 
 template <class Point>
 struct Create_point_with_info : public std::unary_function<Point,Point>{
