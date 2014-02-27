@@ -43,13 +43,14 @@
 #include <CGAL/AABB_point_primitive.h>
 #include <CGAL/Bbox_3.h>
 
-/// \cond SKIP_IN_MANUAL
 #define CGAL_DEBUG_MODE
 
 namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
+
 namespace simplify_and_regularize_internal{
 
 /// Compute anverage and repulsion term and then 
@@ -288,12 +289,13 @@ compute_density_weight_for_sample_point(
 
 } // namespace simplify_and_regularize_internal
 
-
+/// \endcond
 
 // ----------------------------------------------------------------------------
 // Public section
 // ----------------------------------------------------------------------------
 
+//=============================================================================
 /// \ingroup PkgPointSetProcessing
 /// WLOP Algorithm: The simplification algorithm can produces a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 

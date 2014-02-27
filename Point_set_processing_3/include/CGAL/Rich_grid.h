@@ -517,6 +517,8 @@ void compute_ball_neighbors_one_to_another(
 
 } //namespace internal
 
+/// \endcond
+
 } //namespace CGAL
 
 #endif // CGAL_RICH_GRID_H
