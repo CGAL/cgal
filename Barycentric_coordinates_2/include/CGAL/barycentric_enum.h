@@ -29,8 +29,8 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * Barycentric_coordinates namespace contains all the generalized barycentric
- * coordinates' implementations: 2D, 3D, related enumerations, and so on.
+ * Barycentric_coordinates namespace contains implementations of all the generalized barycentric
+ * coordinates: 2D, 3D, related enumerations, and so on.
  * It has an alies (short name) called `BC`.
  */
 
@@ -46,7 +46,7 @@ namespace Barycentric_coordinates {
 /// \name Locations of a query point
 /// @{
 
-/// Query_point_location is enumeration with possible locations of currently used
+/// Query_point_location is enumeration with possible locations of a
 /// query point provided by the user.
 enum Query_point_location
 {
@@ -69,16 +69,16 @@ enum Query_point_location
 /// @}
 
 // We can have two different algorithms to compute coordinates.
-// PRECISE - Default slow algorithm, which is precise as much as possible.
+// PRECISE - Default slow algorithm, which is as precise as possible.
 // FAST - Fast algorithm, which is less precise but much faster.
 
-/// \name Type of the algorithm
+/// \name Types of an algorithm
 /// @{
 
 /// Type_of_algorithm is enumeration with possible algorithms to compute coordinates.
 enum Type_of_algorithm
 {
-    /// Default slow algorithm, which is precise as much as possible.
+    /// Default slow algorithm, which is as precise as possible.
     PRECISE,
 
     /// Fast algorithm, which is less precise but much faster.
@@ -87,7 +87,7 @@ enum Type_of_algorithm
 
 /// @}
 
-// Possible types of a polygon.
+// Possible types of the input polygon.
 // CONCAVE - Concave polygon = Non-convex polygon.
 // WEAKLY_CONVEX - This is a convex polygon with collinear vertices.
 // STRICTLY_CONVEX - This is a convex polygon without collinear vertices.
@@ -95,8 +95,8 @@ enum Type_of_algorithm
 /// \name Types of a polygon
 /// @{
 
-/// Type_of_polyon is enumeration with possible types of a polygon
-/// used internally to precondition coordinates.
+/// Type_of_polygon is enumeration with possible types of the input polygon.
+/// It is used internally to precondition coordinates.
 enum Type_of_polygon
 {
     /// Concave polygon = non-convex polygon.
@@ -118,7 +118,7 @@ enum Type_of_polygon
 /// \name Namespace alias
 /// @{
 
-/// A short name (alias) of `CGAL::Barycentric_coordinates` namespace.
+/// A short name (alias) of the namespace `CGAL::Barycentric_coordinates`.
 namespace BC = Barycentric_coordinates;
 
 /// @}

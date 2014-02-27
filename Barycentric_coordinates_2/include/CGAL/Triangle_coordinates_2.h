@@ -44,7 +44,7 @@ namespace Barycentric_coordinates {
  * \ingroup PkgBarycentric_coordinates_2
  * The class Triangle_coordinates_2 implements barycentric coordinates ( <a href="http://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
  * <a href="http://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
- * This class is parameterized by `CGAL::Triangle_2` class and `Iterator` class.
+ * This class is parameterized by the `CGAL::Triangle_2` and the `Iterator` class.
  * The latter can be any class that fulfills the requirements for an STL iterator.
  *
  * \sa `Iterator`
@@ -85,7 +85,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Triangle_coordinates_2 class for a provided triangle passed as a reference.
+    /// Creates an instance of the class Triangle_coordinates_2 for a provided triangle passed as a reference.
     /// \pre `!_triangle.is_degenerate()`
     Triangle_coordinates_2(const Triangle &_triangle) : triangle(_triangle)
     {
@@ -96,10 +96,10 @@ public:
 
     // Coordinates.
 
-    /// \name Computation of the basis functions
+    /// \name Computation of basis functions
     /// @{
 
-    /// Computes Triangle barycentric coordinates for current query point with
+    /// Computes Triangle barycentric coordinates for the current query point with
     /// respect to all three vertices of the triangle.
     inline std::pair<OutputIterator, bool> compute(const Point &query_point, OutputIterator output)
     {
@@ -113,7 +113,7 @@ public:
     /// \name Information functions
     /// @{
 
-    /// Print some information about currently used triangle and Triangle coordinates.
+    /// Print some information about the currently used triangle and Triangle coordinates.
     void print_info() const
     {
         std::cout << std::endl << "INFORMATION: " << std::endl;
@@ -181,8 +181,8 @@ private:
  * \ingroup PkgBarycentric_coordinates_2
  * The class Tri_coordinates_2 implements barycentric coordinates ( <a href="http://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
  * <a href="http://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
- * This class is parameterized by `CGAL::Triangle_2` class and a Container class.
- * The latter can be any class that fulfills the requirements for <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
+ * This class is parameterized by the `CGAL::Triangle_2` and a Container class.
+ * The latter can be any class that fulfills the requirements for the <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
  * It defaults to <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container.
  *
  * \sa <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
@@ -211,7 +211,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Triangle_coordinates_2 class for a provided triangle passed as a reference.
+    /// Creates an instance of the class Triangle_coordinates_2 for a provided triangle passed as a reference.
     /// The used iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
     Tri_coordinates_2(const Triangle_2 &_triangle) : Base(_triangle) { }
 
@@ -219,10 +219,10 @@ public:
 
     // Coordinates.
 
-    /// \name Computation of the basis functions
+    /// \name Computation of basis functions
     /// @{
 
-    /// Computes Triangle barycentric coordinates for current query point with
+    /// Computes Triangle barycentric coordinates for the current query point with
     /// respect to all three vertices of the triangle.
     inline std::pair<std::back_insert_iterator<Container>, bool> compute(const typename Triangle_2::R::Point_2 &query_point, Container &container)
     {

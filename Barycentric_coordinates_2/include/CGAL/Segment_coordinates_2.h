@@ -42,8 +42,8 @@ namespace Barycentric_coordinates {
 /*!
  * \ingroup PkgBarycentric_coordinates_2
  * The class Segment_coordinates_2 implements barycentric coordinates with respect to an arbitrary
- * non-degenerate segment along an arbitrary line in the plane. This class is parameterized by
- * `CGAL::Segment_2` class and `Iterator` class. The latter can be any class that fulfills
+ * non-degenerate segment along an arbitrary line in the plane. This class is parameterized by the 
+ * `CGAL::Segment_2` and the `Iterator` class. The latter can be any class that fulfills
  * the requirements for an STL iterator.
  *
  * \sa `Iterator`
@@ -84,7 +84,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Segment_coordinates_2 class for a provided segment passed as a reference.
+    /// Creates an instance of the class Segment_coordinates_2 for a provided segment passed as a reference.
     /// \pre `!_segment.is_degenerate()`
     Segment_coordinates_2(const Segment &_segment) : segment(_segment)
     {
@@ -95,10 +95,10 @@ public:
 
     // Coordinates.
 
-    /// \name Computation of the basis functions
+    /// \name Computation of basis functions
     /// @{
 
-    /// Computes Segment barycentric coordinates for current query point with
+    /// Computes Segment barycentric coordinates for the current query point with
     /// respect to both vertices of the segment.
     inline std::pair<OutputIterator, bool> compute(const Point &query_point, OutputIterator output)
     {
@@ -112,7 +112,7 @@ public:
     /// \name Information functions
     /// @{
 
-    /// Print some information about currently used segment and Segment coordinates.
+    /// Print some information about the currently used segment and Segment coordinates.
     void print_info() const
     {
         std::cout << std::endl << "INFORMATION: " << std::endl;
@@ -165,9 +165,9 @@ private:
 /*!
  * \ingroup PkgBarycentric_coordinates_2
  * The class Seg_coordinates_2 implements barycentric coordinates with respect to an arbitrary
- * non-degenerate segment along an arbitrary line in the plane. This class is parameterized by
- * `CGAL::Segment_2` class and a Container class. The latter can be any class that fulfills
- * the requirements for <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
+ * non-degenerate segment along an arbitrary line in the plane. This class is parameterized by the 
+ * `CGAL::Segment_2` and a Container class. The latter can be any class that fulfills
+ * the requirements for the <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
  * It defaults to <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container.
  *
  * \sa <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
@@ -196,7 +196,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Segment_coordinates_2 class for a provided segment passed as a reference.
+    /// Creates an instance of the class Segment_coordinates_2 for a provided segment passed as a reference.
     /// The used iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
     Seg_coordinates_2(const Segment_2 &_segment) : Base(_segment) { }
 
@@ -204,10 +204,10 @@ public:
 
     // Coordinates.
 
-    /// \name Computation of the basis functions
+    /// \name Computation of basis functions
     /// @{
 
-    /// Computes Segment barycentric coordinates for current query point with
+    /// Computes Segment barycentric coordinates for the current query point with
     /// respect to both vertices of the segment.
     inline std::pair<std::back_insert_iterator<Container>, bool> compute(const typename Segment_2::R::Point_2 &query_point, Container &container)
     {

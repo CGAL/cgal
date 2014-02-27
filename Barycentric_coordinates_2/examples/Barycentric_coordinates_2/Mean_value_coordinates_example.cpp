@@ -52,7 +52,7 @@ int main()
 
     // Compute Mean Value coordinates for all the defined interior points.
 
-    // We speed up the computation using O(n) algorithm called with parameter CGAL::Barycentric_coordinates::FAST.
+    // We speed up the computation using the O(n) algorithm called with parameter CGAL::Barycentric_coordinates::FAST.
     const CGAL::Barycentric_coordinates::Type_of_algorithm type_of_algorithm = CGAL::Barycentric_coordinates::FAST;
 
     // Use parameter query_point_location = CGAL::Barycentric_coordinates::ON_BOUNDED_SIDE.

@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangle_coordinates_2.h>
 
-// Construct our own iterator that takes as an input current data type and pointer to the first element in the standard C++ array.
+// Construct an iterator that takes as an input current data type and pointer to the first element in the standard C++ array.
 
 template<typename Scalar>
     class overwrite_iterator
@@ -15,12 +15,12 @@ private:
 public:
     explicit overwrite_iterator(Scalar* _pointer) : pointer(_pointer) { }
 
-    // These are only two operations that we need to overload in order to use Triangle coordinates class.
+    // There are only two operations that we need to overload in order to use the Triangle coordinates class.
 
-    // This operation is intended to return current coordinate value.
+    // This operation is intended to return the current coordinate value.
     inline Scalar& operator* () { return *pointer; }
 
-    // This operation is intended to increase index of the coordinate.
+    // This operation is intended to increase the index of the coordinate.
     inline void operator++ () { ++pointer; }
 };
 
@@ -59,7 +59,7 @@ int main()
     // Create a right triangle with a slight offset from zero.
     const Triangle right_triangle( Point(zero - x_step, zero - x_step), Point(two + y_step, zero - x_step), Point(zero - x_step, two + y_step) );
 
-    // Instantiate Triangle coordinates class for the right triangle defined above.
+    // Instantiate the Triangle coordinates class for the right triangle defined above.
     Triangle_coordinates triangle_coordinates(right_triangle);
 
     // Create an instance of a standard C++ array to store coordinates.

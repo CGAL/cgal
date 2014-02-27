@@ -39,10 +39,10 @@ namespace Barycentric_coordinates {
 /*!
  * \ingroup PkgBarycentric_coordinates_2
  * The class Discrete_harmonic_coordinates_2 implements 2D Discrete Harmonic coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 )
- * with respect to an arbitrary strictly convex polygon. This class is parameterized by `CGAL::Polygon_2` class and `Iterator` class.
+ * with respect to an arbitrary strictly convex polygon. This class is parameterized by the `CGAL::Polygon_2` and the `Iterator` class.
  * The latter can be any class that fulfills the requirements for an STL iterator. This class is derived
- * from `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2` class.
- * For a polygon with three vertices (triangle) it is better to use `CGAL::Barycentric_coordinates::Triangle_coordinates_2` class.
+ * from the class `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2`.
+ * For a polygon with three vertices (triangle) it is better to use the class `CGAL::Barycentric_coordinates::Triangle_coordinates_2`.
  * Discrete Harmonic coordinates can be computed exactly. By definition, they do not necesserily give positive values.
  *
  * \sa `Iterator`
@@ -87,9 +87,9 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Discrete_harmonic_coordinates_2 class for a provided polygon passed as a reference.
+    /// Creates an instance of the class Discrete_harmonic_coordinates_2 for a provided polygon passed as a reference.
     /// For preconditions and functions to compute weights or coordinates
-    /// see `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2` class.
+    /// see the class `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2`.
     Discrete_harmonic_coordinates_2(const Polygon &_polygon) :
         Barycentric_coordinates_base_2<Polygon, OutputIterator>(_polygon)
     {
@@ -338,11 +338,11 @@ private:
 /*!
  * \ingroup PkgBarycentric_coordinates_2
  * The class DH_coordinates_2 implements 2D Discrete Harmonic coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 )
- * with respect to an arbitrary strictly convex polygon. This class is parameterized by `CGAL::Polygon_2` class and a Container class.
- * The latter can be any class that fulfills the requirements for <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
+ * with respect to an arbitrary strictly convex polygon. This class is parameterized by the `CGAL::Polygon_2` and a Container class.
+ * The latter can be any class that fulfills the requirements for the <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>. 
  * It defaults to <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a> container.
- * This class is derived from `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2` class.
- * For a polygon with three vertices (triangle) it is better to use `CGAL::Barycentric_coordinates::Tri_coordinates_2` class.
+ * This class is derived from the class `CGAL::Barycentric_coordinates::Barycentric_coordinates_base_2`.
+ * For a polygon with three vertices (triangle) it is better to use the class `CGAL::Barycentric_coordinates::Tri_coordinates_2`.
  * Discrete Harmonic coordinates can be computed exactly. By definition, they do not necesserily give positive values.
  *
  * \sa <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
@@ -372,7 +372,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Discrete_harmonic_coordinates_2 class for a provided polygon passed as a reference.
+    /// Creates an instance of the class Discrete_harmonic_coordinates_2 for a provided polygon passed as a reference.
     /// The used iterator is <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>.
     DH_coordinates_2(const Polygon_2 &_polygon) : Base(_polygon) { }
 
@@ -380,10 +380,11 @@ public:
 
     // Weights.
 
-    /// \name Computation of the weight functions
+    /// \name Computation of weight functions
     /// @{
 
     /// Computes Discrete Harmonic weights for any strictly interior query point with respect to all the vertices of the polygon.
+    /// \pre `_polygon.bounded_side(query_point) == CGAL::ON_BOUNDED_SIDE`
     inline std::pair<std::back_insert_iterator<Container>, bool> compute_weights(const typename Polygon_2::Point_2 &query_point, Container &container)
     {
         return Base::compute_weights(query_point, std::back_inserter(container));
@@ -393,10 +394,11 @@ public:
 
     // Coordinates.
 
-    /// \name Computation of the basis functions at the vertices (with index)
+    /// \name Computation of basis functions at the vertices (with index)
     /// @{
 
-    /// Computes Discrete Harmonic coordinates for a query point, which coincides with one of the polygon's vertices, with beforehand known index.
+    /// Computes Discrete Harmonic coordinates for a query point, which coincides with one of the polygon's vertices, with known index.
+    /// \pre `(0 <= index) && (index < number_of_polygon_vertices)`
     inline std::pair<std::back_insert_iterator<Container>, bool> compute_at_vertex(const int index, Container &container) const
     {
         return Base::compute_at_vertex(index, std::back_inserter(container));
@@ -404,10 +406,12 @@ public:
 
     /// @}
 
-    /// \name Computation of the basis functions along edges (with index)
+    /// \name Computation of basis functions along edges (with index)
     /// @{
 
-    /// Computes Discrete Harmonic coordinates for a query point on the polygon's boundary with beforehand known index of the edge to which this point belongs.
+    /// Computes Discrete Harmonic coordinates for a query point on the polygon's boundary with known index of the edge to which this point belongs.
+    /// \pre `_polygon.bounded_side(query_point) == CGAL::ON_BOUNDARY`
+    /// \pre `(0 <= index) && (index < number_of_polygon_vertices)`
     inline std::pair<std::back_insert_iterator<Container>, bool> compute_on_edge(const typename Polygon_2::Point_2 &query_point, const int index, Container &container) const
     {    
         return Base::compute_on_edge(query_point, index, std::back_inserter(container));
@@ -415,10 +419,10 @@ public:
 
     /// @}
 
-    /// \name Computation of the basis functions at an arbitrary point
+    /// \name Computation of basis functions at an arbitrary point
     /// @{
 
-    /// Computes Discrete Harmonic coordinates for any query point with respect to all the vertices of the polygon.
+    /// Computes Discrete Harmonic coordinates for any query point in the plane with respect to all the vertices of the polygon.
     inline std::pair<std::back_insert_iterator<Container>, bool> compute(const typename Polygon_2::Point_2 &query_point, Container &container, Query_point_location query_point_location = UNSPECIFIED_LOCATION, Type_of_algorithm type_of_algorithm = PRECISE)
     {   
         return Base::compute(query_point, std::back_inserter(container), query_point_location, type_of_algorithm);

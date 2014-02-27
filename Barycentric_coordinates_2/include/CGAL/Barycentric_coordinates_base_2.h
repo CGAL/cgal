@@ -40,9 +40,9 @@ namespace Barycentric_coordinates {
 
 /*!
  * \ingroup PkgBarycentric_coordinates_2
- * The Barycentric_coordinates_base_2 is an abstract base class for
+ * The class Barycentric_coordinates_base_2 is an abstract base class for
  * all the types of two-dimensional generalized barycentric coordinates.
- * This class is parameterized by `CGAL::Polygon_2` class and `Iterator` class.
+ * This class is parameterized by the `CGAL::Polygon_2` and the `Iterator` class.
  * The latter can be any class that fulfills the requirements for an STL iterator.
  *
  * \sa `Iterator`
@@ -62,7 +62,7 @@ public:
     /// \name Creation
     /// @{
 
-    /// Creates an instance of Barycentric_coordinates_base_2 class for a provided polygon passed as a reference.
+    /// Creates an instance of the class Barycentric_coordinates_base_2 for a provided polygon passed as a reference.
     /// \pre `number_of_polygon_vertices > 2`
     /// \pre `_polygon.is_simple()`
     Barycentric_coordinates_base_2(const Polygon_2 &_polygon) : 
@@ -81,7 +81,7 @@ public:
 
     // Compute weights.
 
-    /// \name Computation of the weight functions
+    /// \name Computation of weight functions
     /// @{
 
     /// Computes generalized barycentric weights for any strictly interior
@@ -98,11 +98,11 @@ public:
 
     // Compute coordinates only at vertex.
 
-    /// \name Computation of the basis functions at the vertices (with index)
+    /// \name Computation of basis functions at the vertices (with index)
     /// @{
 
     /// Computes generalized barycentric coordinates for a query point, which coincides with one
-    /// of the polygon's vertices, with beforehand known index.
+    /// of the polygon's vertices, with known index.
     /// \pre `(0 <= index) && (index < number_of_polygon_vertices)`
     inline std::pair<Iterator, bool> compute_at_vertex(const int index, Iterator output) const
     {
@@ -113,11 +113,11 @@ public:
 
     // Compute coordinates only along edge.
 
-    /// \name Computation of the basis functions along edges (with index)
+    /// \name Computation of basis functions along edges (with index)
     /// @{
 
     /// Computes generalized barycentric coordinates for a query point
-    /// on the polygon's boundary with beforehand known index of the edge to which this point belongs.
+    /// on the polygon's boundary with known index of the edge to which this point belongs.
     /// \pre `_polygon.bounded_side(query_point) == CGAL::ON_BOUNDARY`
     /// \pre `(0 <= index) && (index < number_of_polygon_vertices)`
     inline std::pair<Iterator, bool> compute_on_edge(const typename Polygon_2::Point_2 &query_point, const int index, Iterator output) const
@@ -129,17 +129,17 @@ public:
 
     // Compute coordinates.
 
-    /// \name Computation of the basis functions at an arbitrary point
+    /// \name Computation of basis functions at an arbitrary point
     /// @{
 
-    /// Computes generalized barycentric coordinates for any query point with respect to all the vertices of the polygon.
+    /// Computes generalized barycentric coordinates for any query point in the plane with respect to all the vertices of the polygon.
     /// This function is overloaded within each of the derived classes for a particular type of the coordinate function.
-    /// Different choices of `query_point_location` parameter are possible: `CGAL::BC::UNSPECIFIED_LOCATION` -
+    /// Different choices of the `query_point_location` parameter are possible: `CGAL::BC::UNSPECIFIED_LOCATION` -
     /// default constant with automatic check for a location, `CGAL::BC::ON_BOUNDED_SIDE` - for a strictly
     /// interior query point, `CGAL::BC::ON_BOUNDARY` - for a query point on the boundary of the polygon, and
     /// `CGAL::ON_UNBOUNDED_SIDE` - for a strictly exterior query point. Another parameter is `type_of_algorithm`
-    /// with the following possible constants: `CGAL::BC::PRECISE` - default slow algorithm, which is precise as
-    /// much as possible and `CGAL::BC::FAST` - fast algorithm, which is less precise but much faster. For some
+    /// with the following possible constants: `CGAL::BC::PRECISE` - default slow algorithm, which is as precise as
+    /// possible and `CGAL::BC::FAST` - fast algorithm, which is less precise but much faster. For some
     /// coordinate functions both algorithms can be the same.
     inline std::pair<Iterator, bool> compute(const typename Polygon_2::Point_2 &query_point, Iterator output, Query_point_location query_point_location = UNSPECIFIED_LOCATION, Type_of_algorithm type_of_algorithm = PRECISE)
     {   
@@ -153,7 +153,7 @@ public:
     /// \name Information functions
     /// @{
 
-    /// Print some information about currently used polygon and coordinate functions.
+    /// Print some information about the currently used polygon and coordinate functions.
     /// This function is partly overloaded within each of the
     /// derived classes for a particular type of the coordinate function.
     void print_info() const

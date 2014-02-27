@@ -26,7 +26,7 @@ using std::cout; using std::endl; using std::string;
 
 int main()
 {
-    // Construct a unit square.
+    // Construct the unit square.
     const int number_of_vertices = 4;
     const Point vertices[number_of_vertices] = { Point(0, 0), Point(1, 0), Point(1, 1), Point(0, 1) };
     const Polygon unit_square(vertices, vertices + number_of_vertices);

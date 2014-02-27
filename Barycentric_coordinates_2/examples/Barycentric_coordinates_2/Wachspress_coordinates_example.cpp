@@ -28,9 +28,6 @@ int main()
     // Choose how many random points we want to generate.
     const int number_of_points = 1000;
 
-    // Choose a diameter of generated set of points.
-    const double diameter = 1.0;
-
     // Create a random numbers generator.
     CGAL::Random rand;
 
@@ -45,17 +42,17 @@ int main()
 
     points.resize(number_of_points);
 
-    // Generate a set of random points between 0 and diameter.
+    // Generate a set of random points between 0 and 1.
     for(int i = 0; i < number_of_points; ++i) {
 
-        x[i] = rand.get_double(0.0, diameter);
-        y[i] = rand.get_double(0.0, diameter);
+        x[i] = rand.get_double(0.0, 1.0);
+        y[i] = rand.get_double(0.0, 1.0);
 
         points[i] = Point(Scalar(x[i]), Scalar(y[i]));
     }
 
-    // Find a convex hull of the generated set of points.
-    // This convex hull gives us vertices of a convex polygon containing all the generated points.
+    // Find the convex hull of the generated set of points.
+    // This convex hull gives us vertices of a convex polygon that contains all the generated points.
     CGAL::convex_hull_2(points.begin(), points.end(), std::back_inserter(vertices));
 
     const int number_of_vertices = vertices.size();
@@ -69,7 +66,7 @@ int main()
     // Print some information about the polygon and coordinate functions.
     wachspress_coordinates.print_info();
     
-    // Compute Wachspress coordinates for all the defined points.
+    // Compute Wachspress coordinates for all the randomly defined points.
     cout << endl << "Computed Wachspress coordinates are " << endl << endl;
     for(int i = 0; i < number_of_points; ++i) {
         // Compute coordinates.
