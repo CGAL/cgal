@@ -1,4 +1,5 @@
 Subject: CGAL 4.4 Beta 1 Released, Computational Geometry Algorithms Library
+Content-Type: text/plain; charset="utf-8"
 Body: 
 
 The CGAL Open Source Project is pleased to announce the release 4.4 Beta 1
@@ -11,6 +12,12 @@ release of the final version of CGAL 4.4 mid-March.
 
 Besides fixes to existing packages, the following has changed since
 CGAL 4.3:
+
+  o New compiler support
+
+    The Apple Clang compiler version 5.0 is now supported on
+    OS X Mavericks.
+
 
   o Triangulated Surface Mesh Segmentation (new package)
 
