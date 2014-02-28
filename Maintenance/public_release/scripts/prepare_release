@@ -32,7 +32,7 @@ printf "Copy documentation to doc_html/ and doc_html_online/...\n"
 
 [ -d "$DEST_DIR" ] || mkdir "$DEST_DIR"
 [ -d "$DEST_DIR/doc_html" ] || mkdir "$DEST_DIR/doc_html"
-[ -d "/var/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual" ] || mkdir "/var/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual"
+[ -d "/var/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual" ] || mkdir -p "/var/CGAL/www/${PUBLIC_RELEASE_NAME#CGAL-}/Manual"
 
 cp "$PUBLIC_RELEASE_DIR"/*(.) "${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
 cp -a "$MANUAL_TESTS_DIR/$INTERNAL_RELEASE"/output/* "$DEST_DIR/doc_html"
