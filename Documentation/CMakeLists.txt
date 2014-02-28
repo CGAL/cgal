@@ -160,6 +160,7 @@ if(DOXYGEN_FOUND)
   find_program(BIBTEX2HTML_EXECUTABLE bibtex2html DOC "Path to bibtex2html")
   find_program(SH_EXECUTABLE sh DOC "Path to sh")
   if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
+    set(ENV{openout_any} "a") # may be needed with TexLive
     execute_process(COMMAND ${SH_EXECUTABLE}
                             ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
                             ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
