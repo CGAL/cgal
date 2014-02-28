@@ -135,6 +135,71 @@ private:
 
 };  // end class Implicit_to_labeled_function_wrapper
 
+template<class Function_, class BGT>
+class Implicit_multi_domain_to_labeled_function_wrapper
+{
+public:
+	  // Types
+  typedef int                     return_type;
+  typedef typename BGT::Point_3   Point_3;
+  typedef Function_               Function;
+
+private:
+	std::vector<Function> funcs;
+	std::vector<Sign> mask;
+
+public:
+	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs, const std::vector<Sign>& mask)
+    : funcs(funcs), mask(mask)
+    {
+		assert(funcs.size() == mask.size());
+    }
+
+	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs, const std::string& mask_str)
+    : funcs(funcs), mask()
+    {
+		assert(funcs.size() == mask_str.length());
+
+		mask.reserve(mask_str.length());
+		Sign table [256];
+		table['+'] = POSITIVE;
+		table['-'] = NEGATIVE;
+
+		for (std::string::const_iterator iter = mask_str.begin(), endIter = mask_str.end(); iter != endIter; ++iter)
+		{
+			std::string::value_type character = *iter;
+			assert(character == '+' || character == '-');
+			mask.push_back(table[character]);
+		}
+    }
+
+    return_type operator()(const Point_3& p, const bool = true) const
+	{
+		boost::dynamic_bitset<> result(funcs.size());
+
+		typename std::vector<Function>::const_iterator iter = funcs.begin(), endIter = funcs.end();
+		typename std::vector<Sign>::const_iterator     it   = mask.begin(),  endIt   = mask.end();
+		boost::dynamic_bitset<> bit(funcs.size(), true);
+
+		for (; iter != endIter; ++iter, ++it, bit <<= 1)
+		{
+			const Function& function = *iter;
+			Sign mask_item = *it;
+
+			double fres = function(p);
+			Sign sres = ZERO;
+			if (fres < 0)
+				sres = NEGATIVE;
+			else if (fres > 0)
+				sres = POSITIVE;
+
+			if (sres == mask_item)
+				result |= bit;
+		}
+
+		return static_cast<return_type>(result.to_ulong());
+	}
+};
 
 }  // end namespace Mesh_3
 
