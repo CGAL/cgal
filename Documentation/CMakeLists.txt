@@ -164,8 +164,20 @@ if(DOXYGEN_FOUND)
                             ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
                             ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
                             ${BIBTEX2HTML_EXECUTABLE}
-                            OUTPUT_QUIET
-                            ERROR_QUIET) #bibtex2html also prints info in stderr
+                    OUTPUT_VARIABLE makebiblio_OUTPUT
+                    ERROR_VARIABLE makebiblio_ERROR
+                    RESULT_VARIABLE makebiblio_RESULT) #bibtex2html also prints info in stderr
+    if(makebiblio_RESULT GREATER 0)
+      message(WARNING "
+= makebiblio returned the error number ${makebiblio_RESULT}
+
+== Its standard output was:
+${makebiblio_OUTPUT}
+== Its error output was:
+${makebiblio_ERROR}
+"
+        )
+    endif()
   else()
     MESSAGE(WARNING "bibtex2html or sh missing, using default how_to_cite files")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite.html.default ${CMAKE_BINARY_DIR}/how_to_cite.html COPYONLY)
