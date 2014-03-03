@@ -278,6 +278,68 @@ int main ()
 	}
         std::cout << "OK." << std::endl;
     }
+	{
+      std::cout << "Testing Spherical (median policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++);
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+	cost.reset();cost.start();
+        CGAL::hilbert_sort(v.begin(),v.end());
+	cost.stop();
+
+        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
+    }
+	{
+      std::cout << "Testing Spherical (middle policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++);
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+	cost.reset();cost.start();
+        CGAL::spherical_hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
+	cost.stop();
+
+        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
+    }
     {
       int dim =5;
       std::cout << "Testing "<<dim<<"D: Generating "<<nb_points_d<<" random points... " << std::flush;

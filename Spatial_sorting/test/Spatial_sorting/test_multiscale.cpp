@@ -94,6 +94,36 @@ int main ()
         std::cout << "no points lost." << std::endl;
     }
 
+	{
+        std::cout << "Testing Spherical: Generating points... " << std::flush;
+
+        std::vector<Point_3> v;
+        v.reserve (nb_points_3);
+
+        CGAL::Random_points_on_sphere_3<Point_3,Creator_3> gen (1.0, random);
+
+        for (int i = 0; i < nb_points_3; ++i)
+            v.push_back (*gen++);
+
+        std::cout << "done." << std::endl;
+
+        std::vector<Point_3> v2 (v);
+
+        std::cout << "            Sorting points...    " << std::flush;
+
+        CGAL::spherical_spatial_sort (v.begin(), v.end());
+
+        std::cout << "done." << std::endl;
+
+        std::cout << "            Checking...          " << std::flush;
+
+        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+        assert(v == v2);
+
+        std::cout << "no points lost." << std::endl;
+    }
+
     {
       int dim=5;
       std::cout << "Testing "<<dim<<"D: Generating points... " << std::flush;
