@@ -5,6 +5,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL_demo/Scene_item.h>
 #include <iostream>
+#include <QGLViewer/manipulatedFrame.h>
 
 class Volume_plane_interface : public Scene_item {
 Q_OBJECT

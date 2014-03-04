@@ -4,6 +4,7 @@
 #include "Scene_draw_interface.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QGLViewer/manipulatedCameraFrame.h>
 
 class Viewer_impl {
 public:

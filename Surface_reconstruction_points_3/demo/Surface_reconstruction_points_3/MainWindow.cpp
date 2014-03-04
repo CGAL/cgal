@@ -17,6 +17,8 @@
 #include <QMessageBox>
 #include <QScrollBar>
 
+#include <QGLViewer/manipulatedFrame.h>
+
 #include "Polyhedron_demo_plugin_interface.h"
 #include "Polyhedron_demo_io_plugin_interface.h"
 

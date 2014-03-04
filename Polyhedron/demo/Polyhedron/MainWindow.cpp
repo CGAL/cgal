@@ -45,6 +45,9 @@
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
+#include <QGLViewer/manipulatedCameraFrame.h>
+#include <QGLViewer/manipulatedFrame.h>
+
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
