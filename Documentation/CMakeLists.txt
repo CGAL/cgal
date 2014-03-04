@@ -142,7 +142,7 @@ if(DOXYGEN_FOUND)
     string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
     string(TIMESTAMP CGAL_BUILD_MONTH "%m")
   else()
-    MESSAGE(STATUS "You're using an old version of CGAL, date in bibtex files will be incorrect")
+    MESSAGE(WARNING "You're using an old version of CMake, date in bibtex files will be incorrect")
     set(CGAL_BUILD_YEAR4 "2000")
     set(CGAL_BUILD_YEAR2 "00")
     set(CGAL_BUILD_MONTH "1")
@@ -160,14 +160,27 @@ if(DOXYGEN_FOUND)
   find_program(BIBTEX2HTML_EXECUTABLE bibtex2html DOC "Path to bibtex2html")
   find_program(SH_EXECUTABLE sh DOC "Path to sh")
   if (BIBTEX2HTML_EXECUTABLE AND SH_EXECUTABLE)
+    set(ENV{openout_any} "a") # may be needed with TexLive
     execute_process(COMMAND ${SH_EXECUTABLE}
                             ${CMAKE_CURRENT_SOURCE_DIR}/scripts/makebiblio
                             ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib
                             ${BIBTEX2HTML_EXECUTABLE}
-                            OUTPUT_QUIET
-                            ERROR_QUIET) #bibtex2html also prints info in stderr
+                    OUTPUT_VARIABLE makebiblio_OUTPUT
+                    ERROR_VARIABLE makebiblio_ERROR
+                    RESULT_VARIABLE makebiblio_RESULT) #bibtex2html also prints info in stderr
+    if(makebiblio_RESULT GREATER 0)
+      message(WARNING "
+= makebiblio returned the error number ${makebiblio_RESULT}
+
+== Its standard output was:
+${makebiblio_OUTPUT}
+== Its error output was:
+${makebiblio_ERROR}
+"
+        )
+    endif()
   else()
-    MESSAGE(STATUS "bibtex2html or sh missing, using default how_to_cite files")
+    MESSAGE(WARNING "bibtex2html or sh missing, using default how_to_cite files")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite.html.default ${CMAKE_BINARY_DIR}/how_to_cite.html COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/resources/how_to_cite_cgal.txt.default ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt COPYONLY)
   endif()
