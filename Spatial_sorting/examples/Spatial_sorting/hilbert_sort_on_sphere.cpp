@@ -13,7 +13,7 @@ int main ()
   std::size_t size = 32;
   std::vector<Point> v; v.reserve(size);
 
-  CGAL::Random random (42);
+  CGAL::Random random (42);                                         // generate points
   CGAL::Random_points_on_sphere_3<Point> gen(1.0, random);
   for (int i = 0; i < size; ++i) v.push_back(*gen++);
 
