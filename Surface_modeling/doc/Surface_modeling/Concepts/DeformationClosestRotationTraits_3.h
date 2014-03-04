@@ -10,8 +10,6 @@ to implement models of this concept.
 \cgalHasModel `CGAL::Deformation_Eigen_closest_rotation_traits_3`
 \cgalHasModel `CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
 
-\todo update the code when the names in the review have converged
-
 */
 class DeformationClosestRotationTraits_3{
 public:
