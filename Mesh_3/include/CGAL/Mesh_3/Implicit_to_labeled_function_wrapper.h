@@ -145,6 +145,7 @@ public:
   typedef int                     return_type;
   typedef typename BGT::Point_3   Point_3;
   typedef Function_               Function;
+  typedef std::vector<Function_>   Function_vector;
 
 private:
 	std::vector<Function> funcs;
