@@ -543,7 +543,7 @@ public:
 
   void overwrite_deform_object()
   {
-    deform_mesh.overwrite_original_positions();
+    deform_mesh.overwrite_initial_geometry();
 
     refresh_all_group_centers();
   }
