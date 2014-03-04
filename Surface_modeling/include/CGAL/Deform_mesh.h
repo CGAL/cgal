@@ -108,7 +108,7 @@ class Deform_mesh
 //Typedefs
 public:
 
-  /// \name Public Types
+  /// \name Types
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
   ///

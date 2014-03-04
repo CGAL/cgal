@@ -282,10 +282,10 @@ Given a surface mesh deformation system with a ROI made of \f$ n \f$ vertices an
 \f]
 
 where:
-- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix denoting the unknowns of the system that represent the vertex coordinates after deformation. The system is built so that the \f$ k \f$ last row correspond to the control vertices.
-- \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the unconstrained vertices. It is a \f$ (n-k) \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$  with the rows corresponding to the control vertices removed.
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix denoting the unknowns of the system that represent the vertex coordinates after deformation. The system is built so that the \f$ k \f$ last rows correspond to the control vertices.
+- \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the unconstrained vertices. It is a \f$ (n-k) \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$ but removing the rows corresponding to the control vertices.
 - \f$\mathbf{I}_c\f$ is the \f$k \times k\f$ identity matrix.
-- \f${\Delta}_f\f$ denotes the Laplacian representation of the unconstrained vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$ with the rows corresponding to the control vertices removed.
+- \f${\Delta}_f\f$ denotes the Laplacian representation of the unconstrained vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$ but removing the rows corresponding to the control vertices.
 - \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the %Cartesian coordinates of the target positions of the control vertices.
 
 The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square non-symmetric sparse matrix. To
@@ -313,9 +313,9 @@ where:
 - \f$N(\mathbf{v}'_i)\f$ denotes a new position of the vertex \f$N(\mathbf{v}_i)\f$ after a given deformation
 
 An as-rigid-as possible surface mesh deformation \cgalCite{Sorkine2007AsRigidAs} is defined by minimizing
-this energy function under the deformation constraints, that is the assigned position
+this energy function under the deformation constraints, i.e. the assigned position
 \f$ {v}'_i\f$ for each vertex \f$ \mathbf{v}_i\f$ in the set of control vertices.
-Defining the <i>one-ring neighborhood</i> of a vertex as its set of adjacent vertices,s
+Defining the <i>one-ring neighborhood</i> of a vertex as its set of adjacent vertices,
 the intuitive idea behind this energy function is to allow each one-ring neighborhood of
 vertices to have an individual rotation, and at the same time prevents shearing by taking advantage of the
 overlapping of one-ring neighborhoods of adjacent vertices (see \cgalFigureRef{Overlapping_cells}).
@@ -411,8 +411,8 @@ the set of edges in the link (the <em>rims</em>) of \f$\mathbf{v}_i\f$ in the su
 (see \cgalFigureRef{Spoke_and_rim_edges}).
 
 \cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges_2.png}
-The vertices \f$ \mathbf{v}_n\f$ and \f$ \mathbf{v}_m\f$ are the opposite vertices to the edge \f$
-\mathbf{v}_i \mathbf{v}_j\f$.
+The vertices \f$ \mathbf{v}_n\f$ and \f$ \mathbf{v}_m\f$ are the opposite vertices to the edge
+\f$ \mathbf{v}_i \mathbf{v}_j\f$.
 \cgalFigureEnd
 
 The method to get the new positions of the unconstrained vertices is similar to the two-step optimization
@@ -438,7 +438,7 @@ respect to \f$\mathbf{v}_i\f$ gives the following equation:
 \f]
 
 where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are the rotation matrices of the vertices \f$\mathbf{v}_m\f$,
-\f$\mathbf{v}_n\f$ which are the opposite vertices of the edge \f$\mathbf{v}_i, \mathbf{v}_j\f$
+\f$\mathbf{v}_n\f$ which are the opposite vertices of the edge \f$\mathbf{v}_i \mathbf{v}_j\f$
 (see \cgalFigureRef{Spoke_and_rim_edges}). Note that if the edge \f$ \mathbf{v}_i \mathbf{v}_j \f$ is on
 the boundary of the surface mesh, then \f$ w_{ij} \f$ must be 0 and \f$ \mathbf{v}_m
 \f$ does not exist.
