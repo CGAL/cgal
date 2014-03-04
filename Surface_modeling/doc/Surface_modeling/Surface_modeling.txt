@@ -317,7 +317,7 @@ this energy function under the deformation constraints, i.e. the assigned positi
 \f$ {v}'_i\f$ for each vertex \f$ \mathbf{v}_i\f$ in the set of control vertices.
 Defining the <i>one-ring neighborhood</i> of a vertex as its set of adjacent vertices,
 the intuitive idea behind this energy function is to allow each one-ring neighborhood of
-vertices to have an individual rotation, and at the same time prevents shearing by taking advantage of the
+vertices to have an individual rotation, and at the same time to prevent shearing by taking advantage of the
 overlapping of one-ring neighborhoods of adjacent vertices (see \cgalFigureRef{Overlapping_cells}).
 
 
