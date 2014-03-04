@@ -103,8 +103,8 @@ void usage(char* program)
   std::cerr << std::endl << "OPTIONS" << std::endl
 	    << "     -xyz             : input data in xyz format" << std::endl
 	    << "     -no_border -nb   : " << std::endl
-	    << "     -in fname        : reads points from file ./fname" << std::endl
-	    << "     -out fname       : writes points to file ./fname" << std::endl
+	    << "     -in fname        : reads points from file fname" << std::endl
+	    << "     -out fname       : writes points to file fname" << std::endl
 	    << "     -out_format -of  : choose file format for output (iv, wrl, off, medit," << std::endl
 	    << "                                                     ply, stl, all, none)" << std::endl
             << "     -rgb r g b       : color of the surface" << std::endl
@@ -115,7 +115,6 @@ void usage(char* program)
 	    << "     -abs_perimeter p : No faces with perimeter longer than abs_perimeter" << std::endl
             << "\n     Options for internal use" << std::endl
 
-	    << "     -sect_in fname   : reads points from sections file ./fname" << std::endl
 	    << "     -binary          : binary I/O" << std::endl
 	    << "     -delta x         : set the delta constant" << std::endl
 	    << "     -ki x y          : set the K interval (default : [1.1  5])" << std::endl
@@ -405,15 +404,15 @@ int main(int argc,  char* argv[])
 
   file_input(opt, points);
  
-#if 1
+#if 0
   std::cerr << "Time for reading "  << timer.time() << " sec." << std::endl;
-  std::vector<CGAL::Triple<std::size_t,std::size_t,std::size_t> > triples;
+  std::vector<CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t> > triples;
   reconstruction_test(points.begin(), points.end(), std::back_inserter(triples));
 
 
   std::cout << triples.size() << std::endl;  
   for(int i = 0; i < triples.size(); ++i){
-    std::cout << "3 " << triples[i].first << " " << triples[i].second << " " << triples[i].third << " " << std::endl;
+    std::cout << "3 " << get<0>(triples[i]) << " " << get<1>(triples[i]) << " " << get<2>(triples[i]) << " " << std::endl;
   }
 
 #else

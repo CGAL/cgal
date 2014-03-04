@@ -175,12 +175,13 @@ private:
       return NULL; 
     }
 
+public:
   inline Next_border_elt* first_incident() const
     {
       if (m_incident_border == NULL) return NULL;
       return m_incident_border->first;
     }
-
+private:
   inline Next_border_elt* second_incident() const
     {
       if (m_incident_border == NULL) return NULL;
@@ -238,7 +239,7 @@ private:
     }
 
   //-------------------------------------------------------------------
-
+public:
   inline void set_post_mark(const int& i)
     {
       m_post_mark = i;
