@@ -38,19 +38,19 @@ public:
   typedef Eigen::Vector3d Vector;
 
   /// Equivalent to `result += w * (v1*v2^t)`
-  void scalar_vector_vector_transpose_mult(Matrix& result, double w, const Vector& v1, const Vector& v2) 
+  void add_scalar_t_vector_t_vector_transpose(Matrix& result, double w, const Vector& v1, const Vector& v2) 
   {
     result += w * (v1*v2.transpose());
   }
   
   /// Equivalent to `result += (w1*m1 + w2*m2) * v`
-  void scalar_matrix_scalar_matrix_vector_mult(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v) 
+  void add__scalar_t_matrix_p_scalar_t_matrix__t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v) 
   {
     result += (w1*m1 + w2*m2) * v;
   }
   
   /// Equivalent to `result += w * (m1 + m2 + m3) * v`
-  void scalar_mult_with_matrix_sum(Vector& result, double w, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v) 
+  void add_scalar_t_matrix_sum_t_vector(Vector& result, double w, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v) 
   { 
     result += w * (m1 + m2 + m3) * v;
   }

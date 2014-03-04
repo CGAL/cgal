@@ -1123,7 +1123,7 @@ private:
         const CR_vector& qij = sub_to_CR_vector(solution[vi_id], solution[vj_id]);
         double wij = edge_weight[id(*e)];
 
-        cr_traits.scalar_vector_vector_transpose_mult(cov, wij, pij, qij); // cov += wij * (pij * qij)
+        cr_traits.add_scalar_t_vector_t_vector_transpose(cov, wij, pij, qij); // cov += wij * (pij * qij)
       }
 
       cr_traits.compute_close_rotation(cov, rot_mtr[vi_id]);
@@ -1160,7 +1160,7 @@ private:
           const CR_vector& q12 = sub_to_CR_vector(solution[v1_id], solution[v2_id]);
           double w12 = edge_weight[id(edge_around_facet)];
 
-          cr_traits.scalar_vector_vector_transpose_mult(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
+          cr_traits.add_scalar_t_vector_t_vector_transpose(cov, w12, p12, q12); // cov += w12 * (p12 * q12);
 
         } while( (edge_around_facet = CGAL::next_edge(edge_around_facet, m_halfedge_graph)) != *e);
       }
@@ -1243,9 +1243,9 @@ private:
           double wij = edge_weight[id(*e)];
           double wji = edge_weight[id(CGAL::opposite_edge(*e, m_halfedge_graph))];
 #ifndef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
-          cr_traits.scalar_matrix_scalar_matrix_vector_mult(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
+          cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
 #else
-        cr_traits.scalar_matrix_scalar_matrix_vector_mult(xyz, wij * scales[vi_id], rot_mtr[vi_id], 
+        cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij * scales[vi_id], rot_mtr[vi_id], 
           wji * scales[vj_id], rot_mtr[vj_id], pij);
 #endif
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij
@@ -1306,7 +1306,7 @@ private:
           {
             vertex_descriptor vn = boost::target(CGAL::next_edge(*e, m_halfedge_graph), m_halfedge_graph); // opp vertex of e_ij
             double wji = edge_weight[id(*e)] / 3.0;  // edge(pj - pi)           
-            cr_traits.scalar_mult_with_matrix_sum(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
+            cr_traits.add_scalar_t_matrix_sum_t_vector(xyz, wji, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vn)], pij);
             // corresponds  xyz += wji*(rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vn)])*pij;
           }
 
@@ -1315,7 +1315,7 @@ private:
           {
             vertex_descriptor vm = boost::target(CGAL::next_edge(opp, m_halfedge_graph), m_halfedge_graph); // other opp vertex of e_ij
             double wij = edge_weight[id(opp)] / 3.0;  // edge(pi - pj)
-            cr_traits.scalar_mult_with_matrix_sum(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
+            cr_traits.add_scalar_t_matrix_sum_t_vector(xyz, wij, rot_mtr[vi_id], rot_mtr[vj_id], rot_mtr[ros_id(vm)], pij);
             // corresponds xyz += wij * ( rot_mtr[vi_id] + rot_mtr[vj_id] + rot_mtr[ros_id(vm)] ) * pij
           }
         }
