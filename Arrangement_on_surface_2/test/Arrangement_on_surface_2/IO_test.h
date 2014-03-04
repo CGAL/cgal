@@ -262,19 +262,25 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
 
   // read x-monotone curves from file into associative container
   std::ifstream xcv_stream(filename);
-  if (!xcv_stream.is_open()) {
+
+  if (!xcv_stream.is_open()) 
+  {
     std::cerr << "Cannot open file " << filename << "!" << std::endl;
     return false;
   }
+  
   std::cout<< "Test_geom_traits: " << TEST_GEOM_TRAITS << std::endl;
   std::string line;
-  while (skip_comments(xcv_stream, line)) {
+  
+  while (skip_comments(xcv_stream, line)) 
+  {
     std::istringstream line_stream(line);
     typename Geom_traits::X_monotone_curve_2 xcv;
     this->read_xcurve(line_stream, xcv);
     xcurves.push_back(xcv);
     line_stream.clear();
   }
+  
   xcv_stream.close();
   return true;
 }
@@ -289,19 +295,24 @@ IO_test<Geom_traits_T>::read_curves(const char* filename,
 
   // Read curves from file into associative container
   std::ifstream cv_stream(filename);
-  if (!cv_stream.is_open()) {
+  
+  if (!cv_stream.is_open()) 
+  {
     std::cerr << "Cannot open file " << filename << "!" << std::endl;
     return false;
   }
 
   std::string line;
-  while (skip_comments(cv_stream, line)) {
+  
+  while (skip_comments(cv_stream, line)) 
+  {
     std::istringstream line_stream(line);
     typename Geom_traits::Curve_2 cv;
     this->read_curve(line_stream, cv);
     curves.push_back(cv);
     line_stream.clear();
   }
+  
   cv_stream.close();
   return true;
 }

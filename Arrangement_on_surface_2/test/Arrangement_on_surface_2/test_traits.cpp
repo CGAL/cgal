@@ -81,6 +81,7 @@ int main(int argc, char* argv[])
 
   Traits_test<Geom_traits> test(traits);
   
+  //std::cout << "Geom traits are: " << TEST_GEOM_TRAITS << std::endl;
   
   /*
   the parse() function is present in "Traits_base_tests.h" which further call parse() in "IO_test.h"

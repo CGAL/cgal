@@ -75,10 +75,11 @@
 
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Arr_circular_arc_traits_2.h>
+// #include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+// #include <CGAL/Circular_kernel_2.h>
+// #include <CGAL/Arr_circular_arc_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
+#include <CGAL/Arr_circle_segment_traits_2.h>
 
 
 #else
@@ -217,11 +218,20 @@ typedef Conic_traits_2::Rat_segment_2                 Rat_segment;
 #define GEOM_TRAITS_TYPE "Polycurves_conics"
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
-typedef Kernel                                                		Linear_kernel;
-typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   		Algebraic_kernel;
-typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>		Circular_kernel;
-typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>      		Circular_arc_traits;
-typedef CGAL::Arr_polyline_traits_2<Circular_arc_traits>      		Base_geom_traits;
+// typedef Kernel                                                		Linear_kernel;
+// typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>   		Algebraic_kernel;
+// typedef CGAL::Circular_kernel_2<Linear_kernel,Algebraic_kernel>		Circular_kernel;
+// typedef CGAL::Arr_circular_arc_traits_2<Circular_kernel>      		Circular_arc_traits;
+// typedef CGAL::Arr_polyline_traits_2<Circular_arc_traits>      		Base_geom_traits;
+typedef CGAL::Cartesian<Number_type>                          	 Rat_kernel;
+typedef CGAL::Arr_circle_segment_traits_2<Kernel>             	 Circle_segment_traits_2;
+typedef CGAL::Arr_polyline_traits_2<Circle_segment_traits_2>     Base_geom_traits;
+
+typedef Rat_kernel::FT                                        Rat_nt;
+typedef Rat_kernel::Circle_2                                  Circle_2;
+typedef Rat_kernel::Line_2                                    Line_2;
+typedef Rat_kernel::Segment_2                                 Segment_2;
+typedef Rat_kernel::Point_2                                   Rat_point_2;
 #define GEOM_TRAITS_TYPE "Polycurves_circular_arcs"
 
 #else
