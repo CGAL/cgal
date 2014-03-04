@@ -3,6 +3,7 @@
 \cgalConcept
 
 @brief Concept describing the set of requirements for computing a 3x3 rotation matrix that is close to a given 3x3 matrix, together with basic computations used in the class `CGAL::Deform_mesh`.
+The definition of close depends on the model.
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement models of this concept.
 
@@ -17,9 +18,9 @@ public:
 /// \name Types 
 /// @{
   /// 3x3 matrix type having a copy constructor and an assignment operator
-  typedef Hidden_type Matrix;
+  typedef unspecified_type Matrix;
   /// 3D vector type having a copy constructor
-  typedef Hidden_type Vector;
+  typedef unspecified_type Vector;
 /// @} 
 
 /// \name Creation

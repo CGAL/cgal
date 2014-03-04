@@ -128,7 +128,7 @@ int main()
   
 
   // Call the function deform() with one-time parameters:
-  // iterate 10 times and do not use energy based termination criterium
+  // iterate 10 times and do not use energy based termination criterion
   deform_mesh.deform(10, 0.0); 
 
   std::ofstream output("deform_1.off");

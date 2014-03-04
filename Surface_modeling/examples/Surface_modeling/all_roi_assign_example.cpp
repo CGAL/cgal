@@ -70,7 +70,7 @@ int main()
   deform_mesh.set_target_position(control_2, constrained_pos_2);
 
   // Call the function deform() with one-time parameters:
-  // iterate 10 times and do not use energy based termination criterium
+  // iterate 10 times and do not use energy based termination criterion
   deform_mesh.deform(10, 0.0);
 
   // Save the deformed mesh into a file

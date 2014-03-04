@@ -39,19 +39,19 @@ In this package, two algorithms are implemented:
 - The <em>As-Rigid-As-Possible</em> (<em>ARAP</em>) method described in \cgalCite{Sorkine2007AsRigidAs};
 - The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel}.
 
-Both methods iteratively minimize an energy function and produce a different surface mesh at each step until convergence is reached.
+Given an edge weighting scheme, both methods iteratively minimize an energy function and produce a different surface mesh at each step until convergence is reached.
 
 <em>Spokes and Rims</em> is the default method proposed by the package. It provides an unconditional
 convergence while the <em>ARAP</em> method requires the edge weights to be positive. However,
 the results obtained using the <em>Spokes and Rims</em> method are more dependent on the discretization
 of the deformed surface (See \cgalFigureRef{Arap_spokes_comparison}).
 
-More details on these algorithms are provided in the section \ref Surface_Modeling_Overview.
+More details on these algorithms are provided in section \ref Surface_Modeling_Overview.
 
 \cgalFigureBegin{Arap_spokes_comparison, arap_spokes_comparison.png}
 Comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation methods.
 On the surface mesh of a square with spikes depicted on the left, the ROI consists of the green vertices. The control vertices are the red ones.
-We translate the control vertices along the normal of the plane and observe the result produced by
+We translate the control vertices along the normal to the plane and observe the result produced by
 the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from the same view point. The
 latter method provides unconditional convergence does not produce a symmetric result.
 \cgalFigureEnd
@@ -77,9 +77,9 @@ The preprocessing consists in computing a factorization of the aforementioned sp
 matrix to speed up the linear system resolution.
 It requires the ROI to be defined.
 The following conventions are used for the definition of the ROI:
- - A vertex added as a control vertex is added to the ROI;
- - A control vertex removed from the ROI is no longer considered as a control vertex;
- - A control vertex that is removed is not removed from the ROI.
+ - A vertex inserted in the set of control vertices is inserted in the ROI;
+ - A control vertex erased from the ROI is no longer considered as a control vertex;
+ - A control vertex that is erased is not erased from the ROI.
 
 Each time the ROI is modified, the preprocessing function `preprocess()`
 must be called.
@@ -110,21 +110,21 @@ it is better to use an individual instance of the deformation object for each co
 \subsection Deform_section Deformation
 
 The deformation of the surface mesh is triggered by the displacement of the control vertices.
-This is achieve through setting the target position of the control vertices (directly or by using an affine transformation
+This is achieve through setting the target positions of the control vertices (directly or by using an affine transformation
 to be applied to a control vertex or a range of control vertices).
 
 Note that a rotation or a translation of a control vertex is always applied on its last target position set:
 they are cumulative.
 
 The deformation of the surface mesh happens when calling the function `Deform_mesh::deform()`. The number of optimization iterations
-varies depending on whether the user chooses a fixed number of iterations or a stopping criteria based on the energy variation.
+varies depending on whether the user chooses a fixed number of iterations or a stopping criterion based on the energy variation.
 
 After the call to the deformation function, the input surface mesh is updated and the control vertices are at
 their target positions and the unconstrained vertices are moved accordingly.
 The function `Deform_mesh::deform()` can be called several times consecutively, in particular
 if the convergence has not been reached yet (otherwise it has no effect).
 
-\warning Vertices can be inserted into or removed from the ROI and the set of control vertices at any time.
+\warning Vertices can be inserted into or erased from the ROI and the set of control vertices at any time.
 In particular, any vertex that is no longer inside the ROI will be assigned to its original position when
 `Deform_mesh::preprocess()` is first called.
 The original positions can be updated by calling `Deform_mesh::overwrite_initial_geometry()` (
@@ -145,6 +145,7 @@ Deformation results when running example \ref Example_1 : `deform_1.off` and `de
 
 \subsubsection Example_2 Using an Affine Transformation on a Range of Vertices
 In this example, we use the functions `translate()` and `rotate()` on a range of control vertices.
+Note that the translations and the rotations are defined using a 3D vector type and a quaternion type from the \ref thirdpartyEigen "Eigen library".
 
 \cgalExample{Surface_modeling/k_ring_roi_translate_rotate_example.cpp}
 
@@ -173,7 +174,7 @@ Another example is given on the manual page of the concept `::SurfaceModelingWei
 \cgalExample{Surface_modeling/custom_weight_for_edges_example.cpp}
 
 \section Surface_Modeling_Demo How to Use the Demo
-\todo update these videos when the review is converging
+\todo Update these videos when the demo is stable
 
 A plugin for the polyhedron demo is available to test the algorithm. The following video tutorials explain how to use it.
 
@@ -195,12 +196,12 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 @endhtmlonly
 
 \section Surface_Modeling_Overview Overview of the Methods
-The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We first provide an overview of
-the principle of these methods.
+The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We provide an overview of
+the principle of this method.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
 The <em>Laplacian representation</em> (referred to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
-of a vertex in a surface mesh are one way to <em>encode</em> the local neighborhood of a vertex in the surface mesh.
+of a vertex in a surface mesh is one way to <em>encode</em> the local neighborhood of a vertex in the surface mesh.
 In this representation, a vertex \f$ \mathbf{v}_i \f$ is associated a 3D vector defined as:
 
 \f[
@@ -221,14 +222,14 @@ and the centroid of its adjacent vertices (\cgalFigureRef{Simple_laplacian}).
 In the surface mesh deformation context, a popular choice is the cotangent weight scheme
 that derives from the discretization of the Laplace operator \cgalCite{Pinkall1993Cotangent} :
 Given an edge of the surface mesh, its corresponding cotangent weight is the mean of the
-cotangents of the angles opposite to the edge. It was shown to produce results not biased by the surface mesh of the approximated surface
+cotangents of the angles opposite to the edge. It was shown to produce results that are not biased by the surface mesh of the approximated surface
 \cgalCite{Sorkine2007AsRigidAs}.
 
 \cgalFigureBegin{Simple_laplacian,simple_mesh_with_laplacian.png}
-Laplacian representation of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the vertices adjacent to \f$ v_i \f$. The Laplacian representation \f$ \delta \f$ are represented as a blue vector.
+Laplacian representation of \f$ v_i \f$ with uniform weights: the red square vertex is the centroid of the vertices adjacent to \f$ v_i \f$. The Laplacian representation \f$ L(v_i) \f$ is represented as a blue vector.
 \cgalFigureEnd
 
-Considering the whole surface mesh, it is possible to write a linear system describing the Laplacian representation of all its vertices:
+Considering a surface mesh with \f$n\f$ vertices, it is possible to define its <i>Laplacian representation</i> \f$\Delta\f$ as a \f$n \times 3\f$ matrix:
 
 \f[
 \begin{equation}
@@ -238,18 +239,22 @@ Considering the whole surface mesh, it is possible to write a linear system desc
 \f]
 
 where:
-- \f$n\f$ denotes the number of vertices in the surface mesh,
 - \f$\mathbf{L}\f$ is a \f$n \times n\f$ sparse matrix, referred to as the <em>Laplacian matrix</em>. Its elements \f$ m_{ij} \f$, \f$i,j \in \{1 \dots n\} \f$ are defined as follows:
   - \f$ m_{ii} \f$ = \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$,
   - \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,
   - \f$ 0 \f$ otherwise.
-- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the %Cartesian coordinates of the vertices;
-- \f$\Delta\f$ is a \f$n \times 3\f$ matrix referred to as the Laplacian representation of the surface mesh.
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the %Cartesian coordinates of the vertices.
 
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
+
+This sub-section is an introduction to provide the background for the next two sub-sections describing the algorithms implemented
+in this package. A system relying only on the approach described below results in non-smooth transitions in the neighborhood of
+the control vertices. For a survey on different Laplacian-based editing techniques we refer to
+\cgalCite{Botsch2008OnLinearVariational}.
+
 The main idea behind Laplacian-based deformation techniques is to preserve the Laplacian representation
-under deformation constraints. The Laplacian representation of a surface mesh are treated as a representative form of the discretized surface,
+under deformation constraints. The Laplacian representation of a surface mesh is treated as a representative form of the discretized surface,
 and the deformation process must follow the deformation constraints while preserving the Laplacian representation as much as possible.
 
 There are different ways to incorporate deformation constraints into the deformation system \cgalCite{Botsch2008OnLinearVariational}.
@@ -277,20 +282,15 @@ Given a surface mesh deformation system with a ROI made of \f$ n \f$ vertices an
 \f]
 
 where:
-- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix denoting the unknowns of the system that represent the vertex coordinates after deformation. The system is built such that the \f$ k \f$ last row corresponds to the control vertices.
-- \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the unconstrained vertices. It is a \f$n-k \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$  with the rows corresponding to the control vertices removed.
-- \f$\mathbf{I}_c\f$ is a \f$k \times k\f$ identity matrix.
+- \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix denoting the unknowns of the system that represent the vertex coordinates after deformation. The system is built so that the \f$ k \f$ last row correspond to the control vertices.
+- \f$\mathbf{L}_f\f$ denotes the Laplacian matrix of the unconstrained vertices. It is a \f$ (n-k) \times n \f$ matrix as defined in Eq. \f$\eqref{eq:lap_system}\f$  with the rows corresponding to the control vertices removed.
+- \f$\mathbf{I}_c\f$ is the \f$k \times k\f$ identity matrix.
 - \f${\Delta}_f\f$ denotes the Laplacian representation of the unconstrained vertices as defined in Eq. \f$\eqref{eq:lap_system}\f$ with the rows corresponding to the control vertices removed.
 - \f$\mathbf{V}_c\f$ is a \f$k \times 3\f$ matrix containing the %Cartesian coordinates of the target positions of the control vertices.
 
 The left-hand side matrix of the system of Eq.\f$\eqref{eq:lap_energy_system}\f$ is a square non-symmetric sparse matrix. To
 solve the aforementioned system, an appropriate solver (e.g. LU solver) needs to be used. Note that solving this system
 preserves the Laplacian representation of the surface mesh restricted to the unconstrained vertices while satisfying the deformation constraints.
-
-\note This section is an introduction to provide the background for the two next sections describing the algorithms implemented
-in this package. A system relying only on the approach described above results in non-smooth transitions in the neighborhood of
-the control vertices. For a survey on different Laplacian-based editing techniques we refer to
-\cgalCite{Botsch2008OnLinearVariational}.
 
 \subsection Surface_Modeling_Overview_ARAP As-Rigid-As Possible Deformation
 
@@ -307,25 +307,27 @@ constraints, we consider the following energy function:
 \f]
 
 where:
-- \f$\mathbf{R}_i\f$ is a \f$ 3 \times 3 \f$ rotation matrix for the vertex \f$\mathbf{v}_i\f$
+- \f$\mathbf{R}_i\f$ is a \f$ 3 \times 3 \f$ rotation matrix
 - \f$w_{ij}\f$ denotes a weight
 - \f$N(\mathbf{v}_i)\f$ denotes the set of vertices adjacent to \f$\mathbf{v}_i\f$ in \f$M\f$
 - \f$N(\mathbf{v}'_i)\f$ denotes a new position of the vertex \f$N(\mathbf{v}_i)\f$ after a given deformation
 
 An as-rigid-as possible surface mesh deformation \cgalCite{Sorkine2007AsRigidAs} is defined by minimizing
-this energy function under the deformation constraints, that is fixing \f$ {v}'_i\f$ for each vertex \f$ \mathbf{v}_i\f$
-in the set of control vertices. The intuitive idea behind this energy function is to allow each one-ring neighborhood of
-vertices to have an individual rotation and at the same time prevents shearing by taking advantage of the
-overlapping of one-ring neighborhood of adjacent vertices (see \cgalFigureRef{Overlapping_cells}).
+this energy function under the deformation constraints, that is the assigned position
+\f$ {v}'_i\f$ for each vertex \f$ \mathbf{v}_i\f$ in the set of control vertices.
+Defining the <i>one-ring neighborhood</i> of a vertex as its set of adjacent vertices,s
+the intuitive idea behind this energy function is to allow each one-ring neighborhood of
+vertices to have an individual rotation, and at the same time prevents shearing by taking advantage of the
+overlapping of one-ring neighborhoods of adjacent vertices (see \cgalFigureRef{Overlapping_cells}).
 
 
 \cgalFigureBegin{Overlapping_cells,overlapping_cells.png}
-Overlaps of one-ring neighborhood of vertices. The one-ring neighborhood of four vertices
+Overlaps of one-ring neighborhoods of vertices.
+The one-ring neighborhoods of four vertices
 are drawn with different colors, the corresponding vertex is colored accordingly.
-Two adjacent vertices are in the one-ring neighborhood of each other.
 \cgalFigureEnd
 
-There are two unknowns per vertex in the Eq. \f$\eqref{eq:arap_energy}\f$, the new positions (\f$\mathbf{v}'_k\f$) of the unconstrained
+There are two unknowns per vertex in Eq. \f$\eqref{eq:arap_energy}\f$: the new positions (\f$\mathbf{v}'_k\f$) of the unconstrained
 vertices and the rotation matrices (\f$\mathbf{R}_i\f$).
 If the energy contribution of each vertex is positive, this boils down to minimizing the energy contribution of each vertex \f$\mathbf{v}_i\f$.
 
@@ -374,7 +376,7 @@ each iteration of the optimization procedure.
 The original algorithm \cgalCite{Sorkine2007AsRigidAs} we described assumes that:
 
 - the weight between two vertices is symmetric. In order to support asymmetric weights in our implementation,
-we slightly changed Eq. \f$\eqref{eq:lap_ber}\f$ to:
+we slightly change Eq. \f$\eqref{eq:lap_ber}\f$ to:
 \f[
 \begin{equation}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)} (w_{ij} + w_{ji})(\mathbf{v}'_i - \mathbf{v}'_j) =
@@ -410,7 +412,7 @@ the set of edges in the link (the <em>rims</em>) of \f$\mathbf{v}_i\f$ in the su
 
 \cgalFigureBegin{Spoke_and_rim_edges, spoke_and_rim_edges_2.png}
 The vertices \f$ \mathbf{v}_n\f$ and \f$ \mathbf{v}_m\f$ are the opposite vertices to the edge \f$
-(\mathbf{v}_i,\mathbf{v}_j)\f$.
+\mathbf{v}_i \mathbf{v}_j\f$.
 \cgalFigureEnd
 
 The method to get the new positions of the unconstrained vertices is similar to the two-step optimization
@@ -436,8 +438,8 @@ respect to \f$\mathbf{v}_i\f$ gives the following equation:
 \f]
 
 where \f$\mathbf{R}_m\f$ and \f$\mathbf{R}_n\f$ are the rotation matrices of the vertices \f$\mathbf{v}_m\f$,
-\f$\mathbf{v}_n\f$ which are the opposite vertices of the edge \f$(\mathbf{v}_i, \mathbf{v}_j)\f$
-(see \cgalFigureRef{Spoke_and_rim_edges}). Note that if the edge \f$ (\mathbf{v}_i \mathbf{v}_j) \f$ is on
+\f$\mathbf{v}_n\f$ which are the opposite vertices of the edge \f$\mathbf{v}_i, \mathbf{v}_j\f$
+(see \cgalFigureRef{Spoke_and_rim_edges}). Note that if the edge \f$ \mathbf{v}_i \mathbf{v}_j \f$ is on
 the boundary of the surface mesh, then \f$ w_{ij} \f$ must be 0 and \f$ \mathbf{v}_m
 \f$ does not exist.
 
@@ -446,7 +448,7 @@ of each vertex is guaranteed to be non-negative when using the cotangent weights
 Thus even with negative weights, the minimization of the energy with the iterative method presented is always guaranteed.
 However, this method is more dependent on the discretization of the deformed surface (See \cgalFigureRef{Arap_spokes_comparison}).
 
-The implementation in this packages uses the cotangent weights by default (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
+The implementation in this package uses the cotangent weights by default (negative values included) as proposed in \cgalCite{Chao2010SimpleGeomModel}.
 
 \section Surface_Modeling_History Design and Implementation History
 An initial version of this package has been implemented during the 2011 Google Summer of Code by Yin Xu under the guidance of Olga Sorkine and Andreas Fabri.

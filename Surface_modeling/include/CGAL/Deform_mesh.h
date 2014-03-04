@@ -108,7 +108,7 @@ class Deform_mesh
 //Typedefs
 public:
 
-  /// \name Public Template Parameter Types
+  /// \name Public Types
   /// @{
   // typedefed template parameters, main reason is doxygen creates autolink to typedefs but not template parameters
   ///
@@ -189,10 +189,7 @@ public:
   ///
   typedef VPM Vertex_point_map;
 #endif
-  /// @}
 
-/// \name Public Types
-/// @{
   /// The type for vertex descriptor
   typedef typename boost::graph_traits<Halfedge_graph>::vertex_descriptor	vertex_descriptor;
   /// The type for edge descriptor
@@ -341,7 +338,7 @@ public:
    * The constructor of a deformation object
    *
    * @pre the halfedge_graph consists of only triangular facets
-   * @param halfedge_graph triangulated surface mesh used to deform
+   * @param halfedge_graph triangulated surface mesh to deform
    * @param vertex_index_map property map for associating an id to each vertex, from `0` to `boost::num_vertices(halfedge_graph)-1`.
    * @param edge_index_map property map for associating an id to each edge, from `0` to `boost::num_edges(halfedge_graph)-1`.
    * @param vertex_point_map property map used to access the points associated to each vertex of the graph.
@@ -742,7 +739,7 @@ public:
    * The Laplacian matrix of the free vertices and the optimal rotations
    * are computed using the original positions of the points
    * associated to the vertices. Thus, if a deformed version of the surface mesh
-   * is used as <i>reference</i>, the surface mesh properties the algorithm
+   * is used as reference, the surface mesh properties the algorithm
    * tries to preserve are those of an altered version (which are already
    * degraded).
    * \cgalAdvancedEnd

@@ -98,7 +98,7 @@ int main()
   deform_mesh.translate(cvertices_2.begin(), cvertices_2.end(), Vector3d(0,0.3,0));
 
   // Call the function deform() with one-time parameters:
-  // iterate 10 times and do not use energy based termination criterium
+  // iterate 10 times and do not use energy based termination criterion
   deform_mesh.set_iterations(10);
   deform_mesh.set_tolerance(0.0);
   deform_mesh.deform();

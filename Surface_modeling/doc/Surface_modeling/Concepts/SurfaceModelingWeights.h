@@ -17,7 +17,6 @@
  /// };
  /// \endcode
  ///
- /// \todo discuss the name of the concept
  ///
 class SurfaceModelingWeights
 {
@@ -25,7 +24,7 @@ public:
 /// \name Types 
 /// @{
   /// a model of HalfedgeGraph
-  typedef Hidden_type Halfedge_graph;
+  typedef unspecified_type Halfedge_graph;
 /// @} 
 
 /// \name Creation 
