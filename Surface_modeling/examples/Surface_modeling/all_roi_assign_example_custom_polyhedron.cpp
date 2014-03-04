@@ -4,7 +4,7 @@
 #include <boost/property_map/property_map.hpp>
 
 struct Custom_point_3{
-  //needed by File_scanner_OFF
+  // Required by File_scanner_OFF
   struct R{
     typedef double RT;
   };
@@ -75,7 +75,7 @@ int main()
     return 1;
   }
 
-  // index maps must contain an index unique per vertex starting from 0
+  // Index maps must contain an index unique per vertex starting from 0
   // to the total number of vertices
   Internal_vertex_map internal_vertex_index_map;
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
@@ -92,60 +92,59 @@ int main()
   for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb, ++counter) {
     put(edge_index_map, *eb, counter);
   }
-//// PREPROCESS SECTION ////
+
   Deform_mesh deform_mesh(mesh, vertex_index_map, edge_index_map);
 
-  // insert region of interest
+  // Insert the whole mesh as region of interest
   boost::tie(vb, ve) = boost::vertices(mesh);
+  deform_mesh.insert_roi_vertices(vb, ve);
 
-  deform_mesh.insert_roi_vertices(vb, ve); // insert whole mesh as roi
-
+  // Insert two control vertices
   vertex_descriptor control_1 = *boost::next(vb, 213);
   vertex_descriptor control_2 = *boost::next(vb, 157);
-
-  deform_mesh.insert_control_vertex(control_1); // insert control vertices
+  deform_mesh.insert_control_vertex(control_1); 
   deform_mesh.insert_control_vertex(control_2);
 
-  // insertion of roi and control vertices completed, call preprocess
+  // The definition of the ROI and the control vertices is done, call preprocess
   bool is_matrix_factorization_OK = deform_mesh.preprocess();
   if(!is_matrix_factorization_OK){ 
     std::cerr << "Check documentation of preprocess()" << std::endl; 
     return 1;
   }
 
-//// DEFORM SECTION ////
-  // now use set_target_position() to provide constained positions of control vertices
-  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60); // target position of control_1
+  // Use set_target_position() to set the constained position 
+  // of control_1. control_2 remains at the last assigned positions
+  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
-  // note that we only assign a constraint for control_1, other control vertices will be constrained to last assigned positions
-
-  // deform the mesh, now positions of vertices of 'mesh' will be changed
+  
+  // Deform the mesh, the positions of vertices of 'mesh' are updated
   deform_mesh.deform();
-  // deform can be called several times if the convergence has not been reached yet
+  // The function deform() can be called several times if the convergence has not been reached yet
   deform_mesh.deform();
 
+  // Set the constained position of control_2
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
-  // note that control_1 will be still constrained to constrained_pos_1,
+  
 
-  deform_mesh.deform(10, 0.0); // deform(unsigned int iterations, double tolerance) can be called with instant parameters
-  // this time iterate 10 times, and do not use energy based termination
+  // Call the function deform() with one-time parameters:
+  // iterate 10 times and do not use energy based termination criterium
+  deform_mesh.deform(10, 0.0); 
 
   std::ofstream output("deform_1.off");
   output << mesh; // save deformed mesh
   output.close();
 
-  // want to add another control
-//// PREPROCESS SECTION AGAIN////
+  // Add another control vertex
   vertex_descriptor control_3 = *boost::next(vb, 92);
-  deform_mesh.insert_control_vertex(control_3); // now I need to prepocess again
-
+  deform_mesh.insert_control_vertex(control_3);
+  
+  // The prepocessing step is again needed
   if(!deform_mesh.preprocess()) {
     std::cerr << "Check documentation of preprocess()" << std::endl; 
     return 1;
   }
 
-//// DEFORM SECTION AGAIN////
   Deform_mesh::Point constrained_pos_3(0.55, 0.30, -0.70);
   deform_mesh.set_target_position(control_3, constrained_pos_3);
 

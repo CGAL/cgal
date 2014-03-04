@@ -18,7 +18,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator        vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor        edge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_iterator            edge_iterator;
 
-//define the maps
+// Define the maps
 typedef std::map<vertex_descriptor, std::size_t>                  Vertex_id_map;
 typedef std::map<edge_descriptor, std::size_t>                      Edge_id_map;
 typedef boost::associative_property_map<Vertex_id_map>           Vertex_id_pmap;
@@ -37,14 +37,14 @@ int main()
     return 1;
   }
 
-  // Init the indices of the vertices from 0 to num_vertices(mesh)
+  // Init the indices of the vertices from 0 to num_vertices(mesh)-1
   Vertex_id_map vertex_index_map;
   vertex_iterator vb, ve;
   std::size_t counter = 0;
   for(boost::tie(vb, ve) = boost::vertices(mesh); vb != ve; ++vb, ++counter)
     vertex_index_map[*vb]=counter;
 
-  //Init the indices of the halfedges from 0 to num_edges(mesh)
+  // Init the indices of the halfedges from 0 to num_edges(mesh)-1
   Edge_id_map edge_index_map;
   counter = 0;
   edge_iterator eb, ee;

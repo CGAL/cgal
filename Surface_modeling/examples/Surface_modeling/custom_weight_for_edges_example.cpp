@@ -25,7 +25,7 @@ typedef std::map<edge_descriptor, std::size_t>     Internal_edge_map;
 typedef boost::associative_property_map<Internal_vertex_map>   Vertex_index_map;
 typedef boost::associative_property_map<Internal_edge_map>     Edge_index_map;
 
-// a model of SurfaceModelingWeights using a map of pre-computed weights
+// A model of SurfaceModelingWeights using a map of pre-computed weights
 struct Weights_from_map
 {
   typedef Polyhedron Halfedge_graph;
@@ -51,14 +51,14 @@ int main()
   }
 
   std::map<edge_descriptor, double> weight_map;
-  // Store all weights
+  // Store all the weights
   edge_iterator eb, ee;
   for(boost::tie(eb, ee) = boost::edges(mesh); eb != ee; ++eb)
   {
     weight_map[*eb] = 1.0; // store some precomputed weights
   }
 
-  // Create an initialize the vertex index map
+  // Create and initialize the vertex index map
   Internal_vertex_map internal_vertex_index_map;
   Vertex_index_map vertex_index_map(internal_vertex_index_map);
   vertex_iterator vb, ve;
@@ -81,4 +81,5 @@ int main()
                           Weights_from_map(&weight_map));
 
   // Deform mesh as desired
+  // .....
 }

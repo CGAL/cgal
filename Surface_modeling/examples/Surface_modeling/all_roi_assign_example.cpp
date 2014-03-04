@@ -29,10 +29,10 @@ int main()
     return 1;
   }
 
-  //Init the indices of the halfedges and the vertices.
+  // Init the indices of the halfedges and the vertices.
   set_halfedgeds_items_id(mesh);
 
-  //Create deformation object
+  // Create a deformation object
   Deform_mesh deform_mesh(mesh);
 
   // Definition of the region of interest (use the whole mesh)
@@ -55,31 +55,34 @@ int main()
     return 1;
   }
 
-  // now use set_target_position() to provide constained positions of control vertices
-  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60); // target position of control_1
+  // Use set_target_position() to set the constained position 
+  // of control_1. control_2 remains at the last assigned positions
+  Deform_mesh::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
-  // note that we only assign a constraint for control_1, other control vertices will be constrained to last assigned positions
 
-  // deform the mesh, now the positions of vertices of 'mesh' will be changed
+  // Deform the mesh, the positions of vertices of 'mesh' are updated
   deform_mesh.deform();
-  // deform can be called several times if the convergence has not been reached yet
+  // The function deform() can be called several times if the convergence has not been reached yet
   deform_mesh.deform();
 
+  // Set the constained position of control_2
   Deform_mesh::Point constrained_pos_2(0.55, -0.30, 0.70);
   deform_mesh.set_target_position(control_2, constrained_pos_2);
-  // note that control_1 will be still constrained to constrained_pos_1,
 
-  deform_mesh.deform(10, 0.0); // deform(unsigned int iterations, double tolerance) can be called with instant parameters
-  // this time iterate 10 times, and do not use energy based termination
+  // Call the function deform() with one-time parameters:
+  // iterate 10 times and do not use energy based termination criterium
+  deform_mesh.deform(10, 0.0);
 
+  // Save the deformed mesh into a file
   std::ofstream output("deform_1.off");
-  output << mesh; // save deformed mesh
+  output << mesh;
   output.close();
 
-  // We add another control vertex which require another call to preprocess
+  // Add another control vertex which requires another call to preprocess
   vertex_descriptor control_3 = *boost::next(vb, 92);
-  deform_mesh.insert_control_vertex(control_3); // now I need to prepocess again
+  deform_mesh.insert_control_vertex(control_3);
 
+  // The prepocessing step is again needed
   if(!deform_mesh.preprocess()){
     std::cerr << "Error in preprocessing, check documentation of preprocess()" << std::endl;
     return 1;

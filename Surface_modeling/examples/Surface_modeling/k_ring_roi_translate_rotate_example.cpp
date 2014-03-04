@@ -25,7 +25,7 @@ typedef Eigen::Vector3d                                                Vector3d;
 
 typedef CGAL::Deform_mesh<Polyhedron>                               Deform_mesh;
 
-// Collect vertices which are at distance less or equal to k
+// Collect the vertices which are at distance less or equal to k
 // from the vertex v in the graph of vertices connected by the edges of P
 std::vector<vertex_descriptor> extract_k_ring(const Polyhedron &P, vertex_descriptor v, int k)
 {
@@ -93,13 +93,15 @@ int main()
   // Restore the positions of the vertices
   deform_mesh.reset();
 
-  // Apply a translation on the original positions of the vertices (because reset() was called before)
+  // Apply a translation on the original positions of the vertices (reset() was called before)
   deform_mesh.translate(cvertices_1.begin(), cvertices_1.end(), Vector3d(0,0.3,0));
   deform_mesh.translate(cvertices_2.begin(), cvertices_2.end(), Vector3d(0,0.3,0));
 
+  // Call the function deform() with one-time parameters:
+  // iterate 10 times and do not use energy based termination criterium
   deform_mesh.set_iterations(10);
   deform_mesh.set_tolerance(0.0);
-  deform_mesh.deform(); // will iterate 10 times
+  deform_mesh.deform();
 
   // Save the deformed mesh
   output.open("deform_2.off");

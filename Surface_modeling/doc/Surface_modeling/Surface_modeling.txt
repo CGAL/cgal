@@ -11,8 +11,8 @@ namespace CGAL {
 \image html main_image_suggestion_4_resized.png
 
 \section Surface_Modeling_Intro Introduction
-This package offers a surface mesh deformation algorithms which provide new positions to the vertices of a surface mesh
-under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself.
+This package offers surface mesh deformation algorithms which compute new vertex positions of a surface mesh
+under positional constraints of some of its vertices, without requiring any additional structure other than the surface mesh itself
 
 This package implements the algorithm described in \cgalCite{Sorkine2007AsRigidAs} together with an
 alternative energy function \cgalCite{Chao2010SimpleGeomModel}.
@@ -23,8 +23,8 @@ The minimization of the energy relies on solving sparse linear systems and findi
 
 A <em>surface mesh deformation system</em> consists of:
 - a triangulated surface mesh (<em>surface mesh</em> in the following),
-- a set of vertices defining the region to deform (refered to as the <em>region-of-interest</em> and abbreviated <em>ROI</em>),
-- a subset of vertices from the ROI that the user wants to move (refered to as the <em>control vertices</em>),
+- a set of vertices defining the region to deform (referred to as the <em>region-of-interest</em> and abbreviated <em>ROI</em>),
+- a subset of vertices from the ROI that the user wants to move (referred to as the <em>control vertices</em>),
 - a target position for each control vertex (defining the <em>deformation constraints</em>).
 
 A vertex from the ROI that is not a control vertex is called an <em>unconstrained vertex</em>. These definitions are depicted in \cgalFigureRef{Simple_roi}.
@@ -35,14 +35,14 @@ The ROI features the green vertices (the unconstrained vertices) and the red ver
 the coordinates of the unconstrained vertices being updated by the deformation algorithm.
 \cgalFigureEnd
 
-In this package, two slightly different algorithms are implemented:
+In this package, two algorithms are implemented:
 - The <em>As-Rigid-As-Possible</em> (<em>ARAP</em>) method described in \cgalCite{Sorkine2007AsRigidAs};
 - The <em>Spokes and Rims</em> method \cgalCite{Chao2010SimpleGeomModel}.
 
 Both methods iteratively minimize an energy function and produce a different surface mesh at each step until convergence is reached.
 
 <em>Spokes and Rims</em> is the default method proposed by the package. It provides an unconditional
-convergence where as the <em>ARAP</em> method requires the edge weights to be positive. However,
+convergence while the <em>ARAP</em> method requires the edge weights to be positive. However,
 the results obtained using the <em>Spokes and Rims</em> method are more dependent on the discretization
 of the deformed surface (See \cgalFigureRef{Arap_spokes_comparison}).
 
@@ -53,7 +53,7 @@ Comparison between the As-Rigid-As-Possible and the Spokes and Rims deformation 
 On the surface mesh of a square with spikes depicted on the left, the ROI consists of the green vertices. The control vertices are the red ones.
 We translate the control vertices along the normal of the plane and observe the result produced by
 the As-Rigid-As-Possible (center) and the Spokes and Rims (right) methods from the same view point. The
-latter method does not produce a symmetric result.
+latter method provides unconditional convergence does not produce a symmetric result.
 \cgalFigureEnd
 
 
@@ -98,10 +98,10 @@ Rank deficiency is the main reason for failure. Typical failure cases are:
   - The weighting scheme used to fill the sparse matrix (model of `SurfaceModelingWeights`) features too many zeros and breaks the connectivity information
 
 \cgalAdvancedBegin
-The choice of the weighting scheme allows a fine tuning on the way the
-control vertices motion will influence the unconstrained vertices motion.
-The defaults provided give good results in general but we provide a way to
-change the weighing scheme to experiment or improve the result in specific cases.
+The choice of the weighting scheme provides a mean to adjust the way the control vertices
+influences the unconstrained vertices. The defaults provides satisfactory results in general
+but other weighting schemes may be selected or designed to experiment or improve the results
+in specific cases.
 \cgalAdvancedEnd
 
 \note The ROI does not have to be a connected component of the graph of the surface mesh. However, for better performances
@@ -110,7 +110,7 @@ it is better to use an individual instance of the deformation object for each co
 \subsection Deform_section Deformation
 
 The deformation of the surface mesh is triggered by the displacement of the control vertices.
-This is done by setting the target position of the control vertices (directly or by using an affine transformation
+This is achieve through setting the target position of the control vertices (directly or by using an affine transformation
 to be applied to a control vertex or a range of control vertices).
 
 Note that a rotation or a translation of a control vertex is always applied on its last target position set:
@@ -157,7 +157,9 @@ In the previous examples, we used an <i>enriched</i> polyhedron storing an ID
 in its halfedges and vertices together with the default property maps
 in the deformation object to access them.
 In the following example, we show how we can use alternative property maps.
-Note that in practice, you better rely on the former examples as using a `std::map`
+
+For practical performance however we recommend relying upon
+the former examples instead, as using a `std::map`
 to access indices increases the complexity from constant to logarithmic.
 \cgalExample{Surface_modeling/deform_polyhedron_with_custom_pmap_example.cpp}
 
@@ -197,7 +199,7 @@ The algorithm implemented is a so-called <em>Laplacian-based deformation</em> te
 the principle of these methods.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
-The <em>Laplacian representation</em> (refered to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
+The <em>Laplacian representation</em> (referred to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
 of a vertex in a surface mesh are one way to <em>encode</em> the local neighborhood of a vertex in the surface mesh.
 In this representation, a vertex \f$ \mathbf{v}_i \f$ is associated a 3D vector defined as:
 
@@ -237,12 +239,12 @@ Considering the whole surface mesh, it is possible to write a linear system desc
 
 where:
 - \f$n\f$ denotes the number of vertices in the surface mesh,
-- \f$\mathbf{L}\f$ is a \f$n \times n\f$ sparse matrix, refered to as the <em>Laplacian matrix</em>. Its elements \f$ m_{ij} \f$, \f$i,j \in \{1 \dots n\} \f$ are defined as follows:
+- \f$\mathbf{L}\f$ is a \f$n \times n\f$ sparse matrix, referred to as the <em>Laplacian matrix</em>. Its elements \f$ m_{ij} \f$, \f$i,j \in \{1 \dots n\} \f$ are defined as follows:
   - \f$ m_{ii} \f$ = \f$ \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}w_{ij} \f$,
   - \f$ m_{ij} = -w_{ij} \f$ if \f$ \mathbf{v}_j \in N(\mathbf{v_i}) \f$,
   - \f$ 0 \f$ otherwise.
 - \f$\mathbf{V}\f$ is a \f$n \times 3\f$ matrix made of the %Cartesian coordinates of the vertices;
-- \f$\Delta\f$ is a \f$n \times 3\f$ matrix refered to as the Laplacian representation of the surface mesh.
+- \f$\Delta\f$ is a \f$n \times 3\f$ matrix referred to as the Laplacian representation of the surface mesh.
 
 
 \subsection Surface_Modeling_Overview_Laplacian_Deformation Naive Laplacian Deformation
