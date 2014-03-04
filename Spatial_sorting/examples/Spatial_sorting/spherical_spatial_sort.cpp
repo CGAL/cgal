@@ -17,7 +17,7 @@ int main ()
   CGAL::Random_points_on_sphere_3<Point> gen(1.0, random);
   for (int i = 0; i < size; ++i) v.push_back(*gen++);
 
-  CGAL::spherical_spatial_sort(v.begin(), v.end());                 // sort
+  CGAL::spatial_sort_on_sphere(v.begin(), v.end());                 // sort
 
   for(std::size_t i=0; i<size; ++i) std::cout << v[i] << std::endl; //output
   return 0;

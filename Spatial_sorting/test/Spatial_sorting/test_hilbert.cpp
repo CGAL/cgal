@@ -327,7 +327,7 @@ int main ()
         std::cout << "            Sorting points...    " << std::flush;
 
 	cost.reset();cost.start();
-        CGAL::spherical_hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
+        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
 	cost.stop();
 
         std::cout << "done in "<<cost.time()<<"seconds." << std::endl;

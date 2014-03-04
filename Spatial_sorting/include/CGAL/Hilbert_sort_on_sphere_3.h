@@ -18,8 +18,8 @@
 // Author(s)     : Olivier Devillers
 //                 Pedro Machado Manhaes de Castro
 
-#ifndef CGAL_SPHERICAL_HILBERT_SORT_3_H
-#define CGAL_SPHERICAL_HILBERT_SORT_3_H
+#ifndef CGAL_HILBERT_SORT_ON_SPHERE_3_H
+#define CGAL_HILBERT_SORT_ON_SPHERE_3_H
 
 #include <CGAL/Hilbert_sort_2.h>
 #include <CGAL/internal/Transform_coordinates_traits_3.h>
@@ -29,7 +29,7 @@
 namespace CGAL {
 
 template <class K,  class Hilbert_policy >
-class Spherical_hilbert_sort_3 {
+class Hilbert_sort_on_sphere_3 {
 	
 	static const double _sqrt_of_one_over_three = 0.57735026919;
 	
@@ -56,7 +56,7 @@ class Spherical_hilbert_sort_3 {
 	K _k;
 	
 public:
-	Spherical_hilbert_sort_3 (const K &k=K() , std::ptrdiff_t limit=1 ) 
+	Hilbert_sort_on_sphere_3 (const K &k=K() , std::ptrdiff_t limit=1 ) 
 	: _k(k), 
 	  _hs_1_object(Face_1_traits_3(),limit), 
 	  _hs_2_object(Face_2_traits_3(),limit),
@@ -100,4 +100,4 @@ public:
 
 } // namespace CGAL
 
-#endif//CGAL_SPHERICAL_HILBERT_SORT_3_H
+#endif//CGAL_HILBERT_SORT_ON_SPHERE_3_H

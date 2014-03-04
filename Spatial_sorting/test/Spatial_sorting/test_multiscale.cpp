@@ -111,7 +111,7 @@ int main ()
 
         std::cout << "            Sorting points...    " << std::flush;
 
-        CGAL::spherical_spatial_sort (v.begin(), v.end());
+        CGAL::spatial_sort_on_sphere (v.begin(), v.end());
 
         std::cout << "done." << std::endl;
 

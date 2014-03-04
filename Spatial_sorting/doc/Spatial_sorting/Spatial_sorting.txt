@@ -69,11 +69,32 @@ a space filling curve as illustrated in \cgalFigureRef{Spatial_sorting_fig_Hilbe
 Hilbert sort with middle policy
 \cgalFigureEnd
 
+We also consider space filling curves on the unit sphere. 
+Actually, we approximate a space filling curve on
+the unit sphere by a space filling curve on a cube (with faces at \f$x, y, z = \pm 1/\sqrt{3}\f$). 
+Roughly speaking, we split the original set of points in six disjoint subsets: for each face \f$f\f$ of the cube we consider points that are above \f$f\f$ as belonging
+to one of such subsets. And then we basically use the 2D Hilbert sort as explained above for each subset, following the correct axis orientation;
+see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
+
+\cgalFigureBegin{Spatial_sorting_fig_Faces_orientations,HilbertOnSphere.png}
+A 2D Hilbert sort for each face of the cube
+\cgalFigureEnd
+
+Points sorted on the sphere are depicted in \cgalFigureRef{Spatial_sorting_fig_Hilbert_on_sphere}.
+
+\cgalFigureBegin{Spatial_sorting_fig_Hilbert_on_sphere,HilbertOnSphereIllustration.png}
+Hilbert sort on the sphere
+\cgalFigureEnd
+
 \subsection Spatial_sortingExamples Examples
 
 The code to use Hilbert sort is as simple as the following example:
 
 \cgalExample{Spatial_sorting/hilbert.cpp}
+
+Or you might see the following example for a code using Hilbert sort on the sphere:
+
+\cgalExample{Spatial_sorting/hilbert_sort_on_sphere.cpp}
 
 If instead of subdividing the square in a fixed way at its middle point,
 as above, we subdivide it
@@ -132,6 +153,10 @@ Delaunay with median spatial sort... done in 0.022415 seconds.
 \endcode
 
 \cgalExample{Spatial_sorting/small_example_delaunay_2.cpp}
+
+You might use Spatial sort on the sphere as well, as shown in the following example.
+
+\cgalExample{Spatial_sorting/spherical_spatial_sort.cpp}
 
 \subsection Spatial_sortingUsingYourOwnPointType Using Your Own Point Type
 
