@@ -98,7 +98,11 @@ public:
   typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
-  // no BOOST mpl tests here
+  BOOST_MPL_ASSERT((boost::is_same< Left_side_category, Arr_identified_side_tag >));
+  BOOST_MPL_ASSERT((boost::is_same< Bottom_side_category, Arr_identified_side_tag >));
+  BOOST_MPL_ASSERT((boost::is_same< Top_side_category, Arr_identified_side_tag >));
+  BOOST_MPL_ASSERT((boost::is_same< Right_side_category, Arr_identified_side_tag >));
+
   //@}
 
   /*! \struct

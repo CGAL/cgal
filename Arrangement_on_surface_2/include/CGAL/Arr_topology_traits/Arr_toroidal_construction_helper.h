@@ -97,7 +97,9 @@ public:
   //@{
 
   /* A notification issued before the sweep process starts. */
-  virtual void before_sweep() { return; }
+  virtual void before_sweep() {
+    m_top_face = Face_handle(m_top_traits->reference_face());
+  }
 
   /*! A notification invoked before the sweep-line starts handling the given
    * event.

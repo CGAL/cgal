@@ -113,22 +113,39 @@ void
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 init_dcel()
 {
-  // std::cout << "init_dcel()" << std::endl;
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
+  std::cout << "TOR-TOP: init_dcel()" << std::endl;
+#endif
+
   // Clear the current DCEL.
   m_dcel.delete_all();
 
-  CGAL_error();
-  /* dummy implementation */
+  // create the reference face
+  this->m_reference_face = this->m_dcel.new_face();
+
+#if CGAL_ARR_TOPOLOGY_TRAITS_VERBOSE
+  std::cout << "TOR-TOP reference face: " << this->m_reference_face << std::endl;
+#endif
+
+  // and set properties
+  // bounded
+  this->m_reference_face->set_unbounded (false);
+  // set not fictious
+  this->m_reference_face->set_fictitious (false);
+
+  // TODO create identifications
+
 }
 
 /*! Determine whether the given vertex is concrete. */
 template <class GeomTraits, class Dcel>
 bool
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
-is_concrete_vertex(const Vertex* /* v */) const
+is_concrete_vertex(const Vertex* v) const
 {
-  CGAL_error();
-  /* dummy implementation */ return true;
+  // every vertex has geometry!
+  CGAL_precondition(!v->has_null_point());
+  return true;
 }
 
 /*! Obtain the number of concrete vertices. */
@@ -137,8 +154,8 @@ typename Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::Size
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 number_of_concrete_vertices() const
 {
-  CGAL_error();
-  /* dummy implementation */ return (m_dcel.size_of_vertices());
+  // every vertex has geometry
+  return (m_dcel.size_of_vertices());
 }
 
 /*! Determine whether the given vertex is valid. */
@@ -146,8 +163,8 @@ template <class GeomTraits, class Dcel>
 bool
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 is_valid_vertex (const Vertex* /* v */) const {
-  CGAL_error();
-  /* dummy implementation */ return false;
+  // all vertices are valid
+  return false;
 }
 
 /*! Obtain the number of valid vertices. */
@@ -156,8 +173,8 @@ typename Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::Size
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 number_of_valid_vertices() const
 {
-  CGAL_error();
-  /* dummy implementation */ return (m_dcel.size_of_vertices());
+  // all vertices are valid
+  return (m_dcel.size_of_vertices());
 }
 
 /*! Determine whether the given halfedge is valid. */
@@ -166,8 +183,8 @@ bool
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 is_valid_halfedge (const Halfedge* /* he */) const
 {
-  CGAL_error();
-  /* dummy implementation */ return true;
+  // all halfedges are valid
+  return true;
 }
 
 /*! Obtain the number of valid halfedges. */
@@ -176,8 +193,8 @@ typename Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::Size
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 number_of_valid_halfedges() const
 {
-  CGAL_error();
-  /* dummy implementation */ return (m_dcel.size_of_halfedges());
+  // all halfedges are valid
+  return (m_dcel.size_of_halfedges());
 }
 
 /*! Determine whether the given face is valid. */
@@ -186,8 +203,8 @@ bool
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 is_valid_face (const Face* /* f */) const
 {
-  CGAL_error();
-  /* dummy implementation */ return true;
+  // each face is valid
+  return true;
 }
 
 /*! Obtain the number of valid faces. */
@@ -196,8 +213,8 @@ typename Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::Size
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 number_of_valid_faces() const
 {
-  CGAL_error();
-  /* dummy implementation */ return (m_dcel.size_of_faces());
+  // each face is valid
+  return (m_dcel.size_of_faces());
 }
 
 
