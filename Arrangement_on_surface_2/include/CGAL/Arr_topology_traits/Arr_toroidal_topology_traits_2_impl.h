@@ -336,7 +336,7 @@ Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 split_fictitious_edge(Halfedge* /* e */, Vertex* /* v */)
 {
   CGAL_error();
-  /* dummy implementation */ return NULL;
+  /* should never be called, as there are no fictitious edges */ return NULL;
 }
 
 /*! \brief determines whether a given boundary vertex is redundant */
@@ -345,8 +345,8 @@ bool
 Arr_toroidal_topology_traits_2<GeomTraits, Dcel>::
 is_unbounded(const Face* f) const
 {
-  CGAL_error();
-  /* dummy implementation */ return false;
+  // no face is unbounded
+  return false;
 }
 
 /*! \brief determines whether a given boundary vertex is redundant */
