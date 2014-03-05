@@ -26,18 +26,18 @@ other option is `Hilbert_sort_middle_policy()`.
 
 \cgalHeading{Implementation}
 
-Creates an instance of `Multiscale_sort<Hilbert_sort>` 
-where `Hilbert_sort` is an Hilbert sorting object, 
+Creates an instance of `Multiscale_sort<Hilbert_sort_on_sphere_3>` 
+where `Hilbert_sort_on_sphere_3` is an Hilbert sorting on the sphere object, 
 and calls its `operator()`. 
 
 The `threshold_hilbert` is the minimal size of a point set to be 
 subdivided recursively during Hilbert sorting, otherwise random order is used. 
 The `threshold_multiscale` value is the minimal size for a sample to 
-call Hilbert sort, otherwise random order is used. 
+call the `Hilbert_sort_on_sphere_3` functor, otherwise random order is used. 
 The `ratio` value is used to split the original set in two subsets, 
 spatial sort is applied on the first subset of size 
 `ratio` 
-times the original size of the set, Hilbert sort is applied on the 
+times the original size of the set, `Hilbert_sort_on_sphere_3` functor is applied on the 
 second subset. 
 
 */
