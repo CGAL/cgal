@@ -595,11 +595,12 @@ public:
       const FT& x2 = p2.x();
       const FT& y2 = p2.y();
 
-      return (((p1.is_on_x_boundary() && p2.is_on_x_boundary()) &&
-               (p1.is_on_y_boundary() && p2.is_on_y_boundary())) ||
+      return (
+              ((p1.is_on_x_boundary() && p2.is_on_x_boundary()) && (p1.is_on_y_boundary() && p2.is_on_y_boundary())) ||
               ((p1.is_on_x_boundary() && p2.is_on_x_boundary()) && (y1 == y2)) ||
-              ((x1 == x2)) && (p1.is_on_y_boundary() && p2.is_on_y_boundary()) ||
-              ((x1 == x2) && (y1 == y2)));
+              (((x1 == x2)) && (p1.is_on_y_boundary() && p2.is_on_y_boundary())) ||
+              ((x1 == x2) && (y1 == y2))
+              );
     }
 
     /*! Determines whether the two x-monotone curves are the same (have the
