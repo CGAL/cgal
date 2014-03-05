@@ -195,9 +195,13 @@ A plugin for the polyhedron demo is available to test the algorithm. The followi
 </center>
 @endhtmlonly
 
-\section Surface_Modeling_Overview Overview of the Methods
-The algorithm implemented is a so-called <em>Laplacian-based deformation</em> technique. We provide an overview of
-the principle of this method.
+
+\section Surface_Modeling_Overview Energies and Weighting Scheme
+This section gives the theorical background to make the user manual self-contained
+and at the same time explains where the weights comes in. This allows advanced users
+of this package to tune the weighting scheme by developing a model of the concept
+`SurfaceModelingWeights` used in the class `Deform_mesh`.
+This section is not a tutorial on how to design your own weighting scheme.
 
 \subsection Surface_Modeling_Overview_Laplacian Laplacian Representation
 The <em>Laplacian representation</em> (referred to as <em>Laplace coordinates</em> in \cgalCite{botsch2010polygon})
