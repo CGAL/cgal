@@ -43,7 +43,7 @@ second subset.
 */
 template <class RandomAccessIterator, class Traits, class PolicyTag>
 void
-spatial_sort( RandomAccessIterator begin,
+spatial_sort_on_sphere( RandomAccessIterator begin,
 RandomAccessIterator end,
 const Traits& traits = Default_traits,
 PolicyTag policy = Default_policy,
