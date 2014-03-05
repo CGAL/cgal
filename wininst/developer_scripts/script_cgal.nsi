@@ -231,11 +231,13 @@ SectionEnd
 
 ; Download and install LAPACK and TAUCSbinaries.
 ; Depend only on the platform (one variant per platform)
-Section /o "LAPACK and TAUCS precompiled libs"  TAUCS_LIB_Idx
-  !ifndef FetchLocal
-    !insertmacro Install_LAPACK_TAUCS_libs "$Platform"
-  !endif
-SectionEnd
+
+; Laurent Rineau, 2014/03/05: Remove TAUCS from the installer
+;Section /o "LAPACK and TAUCS precompiled libs"  TAUCS_LIB_Idx
+;  !ifndef FetchLocal
+;    !insertmacro Install_LAPACK_TAUCS_libs "$Platform"
+;  !endif
+;SectionEnd
 
 
 ;--------------------------------
@@ -312,7 +314,8 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${MAIN_Idx}      $(DESC_MAIN)
     !insertmacro MUI_DESCRIPTION_TEXT ${SAMPLES_Idx}   $(DESC_SAMPLES)
     !insertmacro MUI_DESCRIPTION_TEXT ${GMP_LIB_Idx}   $(DESC_GMP_LIB)
-    !insertmacro MUI_DESCRIPTION_TEXT ${TAUCS_LIB_Idx} $(DESC_TAUCS_LIB)
+; Laurent Rineau, 2014/03/05: Remove TAUCS from the installer
+;    !insertmacro MUI_DESCRIPTION_TEXT ${TAUCS_LIB_Idx} $(DESC_TAUCS_LIB)
     !insertmacro MUI_DESCRIPTION_TEXT ${DOC_Idx}       $(DESC_DOC)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
