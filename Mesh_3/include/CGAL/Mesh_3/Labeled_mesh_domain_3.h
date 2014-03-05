@@ -456,9 +456,6 @@ private:
 
     return Iso_cuboid_3(p_min,p_max);
   }
-  
-public:
-  const Iso_cuboid_3& periodic_cuboid() const { return bounding_box(); }
 
 protected:
   /// Returns bounding box
