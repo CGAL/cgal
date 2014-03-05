@@ -6,6 +6,12 @@
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/algorithm.h>
 
+// Boost
+#ifndef Q_MOC_RUN
+#include <CGAL/convex_random_polygon_in_disc.h>
+
+#endif
+
 // Qt headers
 #include <QtGui>
 #include <QString>
@@ -102,6 +108,7 @@ public slots:
   void on_actionGeneratePointsInDisc_triggered();
   void on_actionGenerateSegments_triggered();
   void on_actionGenerateSegmentFans_triggered();
+  void on_actionGeneratePolytopeInDisc_triggered();
   void clear();
 
 signals:
@@ -260,7 +267,59 @@ MainWindow::on_actionGenerateSegmentFans_triggered()
 
   emit(changed());
 }
+void
+MainWindow::on_actionGeneratePolytopeInDisc_triggered()
+{
+    typedef CGAL::Points_on_segment_2<Point_2>                PG;
+    boost::random::mt19937 gen;
+    gen.seed(time(0));
+    std::list<Point_2> list_of_points;
+    QRectF rect = CGAL::Qt::viewportsBbox(&scene);
+    CGAL::Qt::Converter<K> convert;
+    Iso_rectangle_2 isor = convert(rect);
+    Point_2 center = CGAL::midpoint(isor[0], isor[2]);
+    Vector_2 offset = center - CGAL::ORIGIN;
+    double w = isor.xmax() - isor.xmin();
+    double h = isor.ymax() - isor.ymin();
+    double radius = (w<h) ? w/2 : h/2;
+    
+    //G pg(radius);
+    bool ok = false;
+    const int number_of_points =
+    QInputDialog::getInteger(this,
+                             tr("Number of random points"),
+                             tr("Enter number of random points"),
+                             100,
+                             0,
+                             (std::numeric_limits<int>::max)(),
+                             1,
+                             &ok);
+    
+    if(!ok) {
+        return;
+    }
+    
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    
+    segments.reserve(segments.size() + 100);
 
+    CGAL::convex_random_polygon(number_of_points,100,list_of_points,gen);
+    std::list<Point_2>::iterator it2=list_of_points.begin();
+    for(std::list<Point_2>::iterator it=list_of_points.begin();it!=list_of_points.end();it++){
+        it2++;
+        if (it2==list_of_points.end()) it2=list_of_points.begin();
+        Segment_2 p(*it+offset,*it2+offset);
+        segments.push_back(p);
+    }
+
+
+    // default cursor
+    QApplication::restoreOverrideCursor();
+
+    
+    emit(changed());
+}
 
 void
 MainWindow::clear()

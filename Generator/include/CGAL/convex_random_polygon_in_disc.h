@@ -145,7 +145,7 @@ namespace CGAL{
     using namespace internal;
     //////////////////////////////////////////////////////////////////////////////
     template<class P, class GEN>
-    void convex_random_polygon(long n, double radius, std::list<P> & l,GEN & gen ){
+    void convex_random_polygon(long n, double radius, std::list<P> & l,GEN & gen, bool fast=true ){
         typedef typename Kernel_traits<P>::Kernel K;
          long simulated_points=0;
         long generated_points=0;
@@ -158,8 +158,8 @@ namespace CGAL{
             generated_points+=init;
             Graham_without_sort_2(l,K());
         } while ((bounded_side_2(l.begin(),l.end(),P  (0,0),K())!=ON_BOUNDED_SIDE)&&(simulated_points<n)); //initialisation such that 0 in P_n
-        
-         long T=std::floor(n/(double)std::pow(log(n),2));
+        long T=n;
+        if (!fast) long T=std::floor(n/(double)std::pow(log(n),2));
         int nb_etapes=0;
         while (simulated_points<n)
         {
