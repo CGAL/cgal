@@ -34,6 +34,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   // Read the points:
   unsigned int num_of_points;
   in_file >> num_of_points;
+  std::cout << "#pts: " << num_of_points << std::endl;
   std::vector<Point_2> points(num_of_points);
   for (i = 0; i < num_of_points; ++i)
     in_file >> points[i];
@@ -41,16 +42,16 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   // Read the curves:
   unsigned int num_of_curves;
   in_file >> num_of_curves;
-  std::vector<std::pair<unsigned int, unsigned int> > curves(num_of_curves);
+  std::cout << "#cvs: " << num_of_curves << std::endl;
+  std::vector< X_monotone_curve_2 > xcurves(num_of_curves);
   for (i = 0; i < num_of_curves; ++i) {
-    unsigned int j, k;
-    in_file >> j >> k;
-    curves[i] = std::pair<unsigned int, unsigned int>(j, k);
+    in_file >> xcurves[i];
   }
 
   // Read the isolated points.
   unsigned int num_of_isolated_points;
   in_file >> num_of_isolated_points;
+  std::cout << "#ipts: " << num_of_isolated_points << std::endl;
   std::vector<unsigned int> isolated_points(num_of_isolated_points);
   for (i = 0; i < num_of_isolated_points; ++i)
     in_file >> isolated_points[i];
@@ -58,46 +59,41 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   // Read the number of edges to remove.
   unsigned int num_edges_to_remove;
   in_file >> num_edges_to_remove;
+  std::cout << "#e2r: " << num_edges_to_remove << std::endl;
 
   // Read the number of cells left.
   Arrangement_2::Size num_vertices_left, num_edges_left, num_faces_left;
   in_file >> num_vertices_left >> num_edges_left >> num_faces_left;
 
+  std::cout << "#v: " << num_vertices_left << std::endl;
+  std::cout << "#e: " << num_edges_left << std::endl;
+  std::cout << "#f: " << num_faces_left << std::endl;
+
   Arrangement_2 arr;
   std::vector<Halfedge_handle> halfedges;
-  std::vector<std::pair<unsigned int, unsigned int> >::const_iterator cit;
+  std::vector< X_monotone_curve_2 >::const_iterator xit;
 
-#if 1
+#if 0
   // Insert the curves incrementally.
-  for (cit = curves.begin(); cit != curves.end(); ++cit) {
-    // TODO construction
-    //X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
-    X_monotone_curve_2 xcv;
-    std::cout << "inserting " << xcv << " ... ";
+  for (xit = xcurves.begin(); xit != xcurves.end(); ++xit) {
+    std::cout << "inserting " << *xit << " ... ";
     std::cout.flush();
-    Halfedge_handle he = CGAL::insert_non_intersecting_curve(arr, xcv);
+    Halfedge_handle he = CGAL::insert_non_intersecting_curve(arr, *xit);
     halfedges.push_back(he);
     std::cout << "inserted" << std::endl;
   }
 #else
   // Insert the curves aggregately.
-  std::list<X_monotone_curve_2> xcurves;
-  for (cit = curves.begin(); cit != curves.end(); ++cit) {
-    // TODO construction
-    //X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
-    X_monotone_curve_2 xcv;
-    xcurves.push_back(xcv);
-  }
   std::cout << "inserting " << " ... ";
   std::cout.flush();
-  CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
+  CGAL::insert(arr, xcurves.begin(), xcurves.end());
   std::cout << "inserted" << std::endl;
   for (Halfedge_iterator hit = arr.halfedges_begin(); hit != arr.halfedges_end(); hit++) {
     halfedges.push_back(hit);
   }
 #endif
 
-  curves.clear();
+  xcurves.clear();
 
   // Insert the isolated points.
   if (isolated_points.size() != 0) {
