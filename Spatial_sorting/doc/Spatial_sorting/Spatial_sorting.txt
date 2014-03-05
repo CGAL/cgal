@@ -73,8 +73,8 @@ We also consider space filling curves on the unit sphere.
 Actually, we approximate a space filling curve on
 the unit sphere by a space filling curve on a cube (with faces at \f$x, y, z = \pm 1/\sqrt{3}\f$). 
 Roughly speaking, we split the original set of points in six disjoint subsets: for each face \f$f\f$ of the cube we consider points that are above \f$f\f$ as belonging
-to one of such subsets. And then we basically use the 2D Hilbert sort as explained above for each subset, following the correct axis orientation;
-see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
+to one of such subsets. And then we basically use the 2D Hilbert sort as explained above for the projection of the points in each subset on its corresponding face of the cube.
+The axes orientation on each face is chosen so that the space filling curve covers the whole cube without any jump; see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
 
 \cgalFigureBegin{Spatial_sorting_fig_Faces_orientations,HilbertOnSphere.png}
 A 2D Hilbert sort for each face of the cube
