@@ -214,6 +214,7 @@ namespace CGAL {
           itype = T::UNIQUE_COVER_DOMAIN;
           break;
         case NONE:
+        default:
           assert(false);
           itype = T::STORED;
           break;
