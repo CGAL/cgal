@@ -40,7 +40,8 @@ int main ()
   CGAL::Random_points_on_sphere_3<Point> given_sphere(2.0, random);  // generate points
   for (int i = 0; i < size; ++i) v.push_back(*given_sphere++ + trans);
 
-  CGAL::spatial_sort_on_sphere(v.begin(), v.end(), sphere);          // sort
+  CGAL::spatial_sort_on_sphere(v.begin(), v.end(),                   // sort
+    sphere.squared_radius(), sphere.center());
 
   for(std::size_t i=0; i<size; ++i) std::cout << v[i] << std::endl; //output
 

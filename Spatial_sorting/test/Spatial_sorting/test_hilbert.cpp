@@ -23,7 +23,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point_2;
 typedef K::Point_3                                          Point_3;
 typedef K::Vector_3                                         Vector_3;
-typedef K::Sphere_3                                         Sphere_3;
 typedef CGAL::Creator_uniform_2<double,Point_2>             Creator_2;
 typedef CGAL::Creator_uniform_3<double,Point_3>             Creator_3;
 
@@ -329,7 +328,7 @@ int main ()
         std::cout << "            Sorting points...    " << std::flush;
 
 	cost.reset();cost.start();
-        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),Sphere_3(CGAL::ORIGIN + Vector_3(3,5,5),4));
+        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
 	cost.stop();
 
         std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
@@ -391,7 +390,7 @@ int main ()
         std::cout << "            Sorting points...    " << std::flush;
 
 	cost.reset();cost.start();
-        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy(), Sphere_3(CGAL::ORIGIN + Vector_3(3,5,5), 4));
+        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
 	cost.stop();
 
         std::cout << "done in "<<cost.time()<<"seconds." << std::endl;

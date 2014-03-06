@@ -30,9 +30,7 @@ namespace CGAL {
 
 template <class K,  class Hilbert_policy >
 class Hilbert_sort_on_sphere_3 {
-	typedef typename K::Sphere_3 Sphere_3;
 	typedef typename K::Point_3  Point_3;
-	typedef typename K::FT       FT;
 	
 	static const double _sqrt_of_one_over_three = 0.57735026919;
 	
@@ -57,13 +55,15 @@ class Hilbert_sort_on_sphere_3 {
 	Hilbert_sort_2<Face_5_traits_3, Hilbert_policy > _hs_5_object;
 	Hilbert_sort_2<Face_6_traits_3, Hilbert_policy > _hs_6_object;
 	K _k;
-	Sphere_3 _s;
+	Point_3 _p;
+	double _sq_r;
 	
 public:
 	Hilbert_sort_on_sphere_3 (const K &k=K(),  
-							  const Sphere_3 &s = Sphere_3(Point_3(FT(0),FT(0),FT(0)),FT(1)),
+	                          double sq_r = 1.0,
+							  const Point_3 &p = Point_3(0,0,0),
 							  std::ptrdiff_t limit=1)
-	: _k(k), _s(s),
+	: _k(k), _p(p), _sq_r(sq_r),
 	  _hs_1_object(Face_1_traits_3(),limit), 
 	  _hs_2_object(Face_2_traits_3(),limit),
 	  _hs_3_object(Face_3_traits_3(),limit),
@@ -77,11 +77,10 @@ public:
 		typedef typename std::iterator_traits<RandomAccessIterator>::value_type Point;
 		std::vector< Point > vec[6];
 		
-		const FT mulcte = FT(_sqrt_of_one_over_three) * 
-						  FT(CGAL_NTS sqrt(CGAL_NTS to_double(_s.squared_radius())));
-		const FT lxi = _s.center().x() - mulcte, lxs = _s.center().x() + mulcte;
-		const FT lyi = _s.center().y() - mulcte, lys = _s.center().y() + mulcte;
-		const FT lzs = _s.center().z() + mulcte;
+		const double mulcte = _sqrt_of_one_over_three * CGAL_NTS sqrt(_sq_r);
+		const double lxi = _p.x() - mulcte, lxs = _p.x() + mulcte;
+		const double lyi = _p.y() - mulcte, lys = _p.y() + mulcte;
+		const double lzs = _p.z() + mulcte;
 		
 		for(RandomAccessIterator i = begin; i != end; ++i) {
 			const Point &p = *i;
