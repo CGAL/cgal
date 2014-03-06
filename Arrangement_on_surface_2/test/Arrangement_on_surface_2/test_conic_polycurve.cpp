@@ -241,6 +241,7 @@ void check_compare_y_at_x_2()
 
   Conic_curve_2     c3(0,0,1,0,0,-1,CGAL::COUNTERCLOCKWISE, Conic_point_2( Rational(1, 5), Rational(4, 1) ), Conic_point_2( Rational(2, 1), Rational(1, 2) ) );
   Conic_curve_2     c4(0,0,1,0,0,-1,CGAL::COUNTERCLOCKWISE, Conic_point_2( Rational(2, 1), Rational(1, 2) ), Conic_point_2( Rational(3, 5), Rational(4, 1) ) );
+  //Conic_curve_2     c5 (58, 72, -48, 0, 0, -360);
 
   std::vector<Conic_curve_2> conic_curves, conic_curves_2;
   conic_curves.push_back(c1);
@@ -251,8 +252,9 @@ void check_compare_y_at_x_2()
 
   Conic_x_monotone_curve_2 xc1 (c1);
   Conic_x_monotone_curve_2 xc2 (c2);
-  Conic_x_monotone_curve_2 xc3 (c3);
-  Conic_x_monotone_curve_2 xc4 (c4);
+  //Conic_x_monotone_curve_2 xc3 (c3);
+  //Conic_x_monotone_curve_2 xc4 (c4);
+  //Conic_x_monotone_curve_2 xc5 (c5);
   
   std::vector<Conic_x_monotone_curve_2> xmono_conic_curves, xmono_conic_curves_2;
   /* VERY IMPORTANT
@@ -261,13 +263,13 @@ void check_compare_y_at_x_2()
   */
   xmono_conic_curves.push_back(xc1);
   xmono_conic_curves.push_back(xc2);
-  xmono_conic_curves_2.push_back(xc3);
-  xmono_conic_curves_2.push_back(xc4);
+  //xmono_conic_curves_2.push_back(xc3);
+  //xmono_conic_curves_2.push_back(xc4);
 
 
   //construct x-monotone poly-curve
   Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve = construct_x_mono_polycurve(xmono_conic_curves.begin(), xmono_conic_curves.end());
-  Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+  //Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
   //construct poly-curve
   Polycurve_conic_traits_2::Curve_2 conic_polycurve = construct_polycurve( conic_curves.begin(), conic_curves.end() );
@@ -283,9 +285,9 @@ void check_compare_y_at_x_2()
 
   CGAL::Comparison_result result;
 
-  result =  cmp_y_at_x_2(point_above_line, conic_x_mono_polycurve);
-  std::cout << "Compare_y_at_x_2:: for point above the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":
-               (result == CGAL::LARGER ? "Above" : "On-line")) << std::endl;
+  // result =  cmp_y_at_x_2(point_above_line, conic_x_mono_polycurve_2);
+  // std::cout << "Compare_y_at_x_2:: for point above the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":
+  //              (result == CGAL::LARGER ? "Above" : "On-line")) << std::endl;
 
   result =  cmp_y_at_x_2(point_below_line, conic_x_mono_polycurve);
   std::cout << "Compare_y_at_x_2:: for point below the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":

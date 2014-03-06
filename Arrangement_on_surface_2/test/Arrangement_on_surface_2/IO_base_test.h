@@ -365,7 +365,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
       if( !read_general_curve(is, tmp_cv) )
         return false;
 
-      //X_monotone_segment_2 tmp_xcv(tmp_cv);
+      X_monotone_segment_2 tmp_xcv(tmp_cv);
 
       //conic_x_monotone_segments.push_back ( tmp_xcv );  
     }

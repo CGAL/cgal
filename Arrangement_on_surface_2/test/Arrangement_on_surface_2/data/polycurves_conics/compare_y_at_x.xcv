@@ -2,5 +2,5 @@
 #Insert a  2 hyperbolic arcs, supported by the hyperbola y = 1/x
 #(or: xy - 1 = 0) with the endpoints (1/5, 4) - (2, 1/2) and (2, 1/2) - (3/5, 4).
 #Note that the arc is counterclockwise oriented.
-a 2 0 0 1 0 0 -1 0 1 5 4 1 2 1 1 2 0 0 1 0 0 -1 0 2 1 1 2 4 1 4 1
+a 2 0 0 1 0 0 -1 0 1 5 4 1 2 1 1 2 0 0 1 0 0 -1 0 2 1 1 2 -4 1 -4 1
 
