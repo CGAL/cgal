@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/hilbert_sort.h>
+#include <CGAL/spatial_sort.h>
 #include <iostream>
 #include <vector>
 
@@ -24,7 +24,7 @@ int main ()
   CGAL::Random_points_on_sphere_3<Point> unit_sphere(1.0, random);  // generate points
   for (int i = 0; i < size; ++i) v.push_back(*unit_sphere++);
 
-  CGAL::hilbert_sort_on_sphere(v.begin(), v.end());                 // sort
+  CGAL::spatial_sort_on_sphere(v.begin(), v.end());                 // sort
 
   for(std::size_t i=0; i<size; ++i) std::cout << v[i] << std::endl; //output
 
@@ -40,7 +40,7 @@ int main ()
   CGAL::Random_points_on_sphere_3<Point> given_sphere(2.0, random);  // generate points
   for (int i = 0; i < size; ++i) v.push_back(*given_sphere++ + trans);
 
-  CGAL::hilbert_sort_on_sphere(v.begin(), v.end(), sphere);          // sort
+  CGAL::spatial_sort_on_sphere(v.begin(), v.end(), sphere);          // sort
 
   for(std::size_t i=0; i<size; ++i) std::cout << v[i] << std::endl; //output
 
