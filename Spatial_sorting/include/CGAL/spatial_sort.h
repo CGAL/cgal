@@ -17,6 +17,7 @@
 //
 // Author(s)     : Christophe Delage
 //               : Olivier Devillers
+//               : Pedro Machado Manhaes de Castro
 
 #ifndef CGAL_SPATIAL_SORT_H
 #define CGAL_SPATIAL_SORT_H
