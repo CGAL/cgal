@@ -1,4 +1,4 @@
-// Copyright (c) 1997
+// Copyright (c) 2014
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
@@ -28,7 +28,11 @@
 #include <iostream>
 #include <list>
 #include <algorithm>
+
+#ifndef Q_MOC_RUN
 #include <boost/random.hpp>
+#endif
+
 #include <cmath>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/convex_hull_traits_2.h>
@@ -89,7 +93,8 @@ namespace CGAL{
     template <class P>
     void Cyclic_increment_iterator(typename std::list<P>::iterator & it,std::list<P> & l){
         ++it;
-        if (it==l.end()) {
+        if (it==l.end()) 
+        {
             it=l.begin();
         }
         
@@ -102,7 +107,8 @@ namespace CGAL{
         Left_turn left_turn = ch_traits.left_turn_2_object();
         typename std::list<P>::iterator  pmin=l.begin();
         for (typename std::list<P>::iterator it=l.begin(); it!=l.end(); ++it) {
-            if ((*pmin).x()>(*it).x()) {
+            if ((*pmin).x()>(*it).x())
+            {
                 pmin=it;
             }
         }//*pmin is the extremal point on the left
@@ -142,24 +148,25 @@ namespace CGAL{
     } //namespace CGAL::internal
     
     
-    using namespace internal;
     //////////////////////////////////////////////////////////////////////////////
-    template<class P, class GEN>
-    void convex_random_polygon(long n, double radius, std::list<P> & l,GEN & gen, bool fast=true ){
+    template<class P,class GEN>
+    void convex_random_polygon(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,GEN & gen, bool fast=true ){
+        CGAL_precondition( n >= 3);
         typedef typename Kernel_traits<P>::Kernel K;
-         long simulated_points=0;
-        long generated_points=0;
+        typedef typename Kernel_traits<P>::Kernel::FT FT;
+        size_t simulated_points=0;
+        size_t generated_points=0;
         do
         { //Initialisation
-            long init=std::min(( long)100,n-simulated_points);
-            generate_points_annulus(init,-CGAL_PI, CGAL_PI,0,radius,l,gen);
+            size_t init=std::min( (size_t)100,n-simulated_points );
+            internal::generate_points_annulus(init,-CGAL_PI, CGAL_PI,0,radius,l,gen);
             
             simulated_points+=init;
             generated_points+=init;
-            Graham_without_sort_2(l,K());
+            internal::Graham_without_sort_2(l,K());
         } while ((bounded_side_2(l.begin(),l.end(),P  (0,0),K())!=ON_BOUNDED_SIDE)&&(simulated_points<n)); //initialisation such that 0 in P_n
-        long T=n;
-        if (!fast) long T=std::floor(n/(double)std::pow(log(n),2));
+        size_t T=n;
+        if (!fast)  T=(size_t)std::floor(n/std::pow(log(n),2));
         int nb_etapes=0;
         while (simulated_points<n)
         {
@@ -182,24 +189,24 @@ namespace CGAL{
                 }
                 
             }
-            double small_radius=radius;
+            FT squared_radius=radius*radius;
+            FT squared_small_radius=squared_radius;
             
             {
                 
                 P zero(0,0);
                 typename std::list<P>::iterator it=l.begin();
                 typename std::list<P>::iterator it2=++it;
-                for(;it!=l.end();++it,Cyclic_increment_iterator(it2,l)){ //computation of  annulus
+                for(;it!=l.end();++it,internal::Cyclic_increment_iterator(it2,l)){ //computation of  annulus
                     typename K::Segment_2 s(*it,*it2);
-                    double temp=std::sqrt(to_double(squared_distance(s,zero)));
-                    if (small_radius>temp)  small_radius=temp;
+                    FT temp=squared_distance(s,zero);
+                    if (squared_small_radius>temp)  squared_small_radius=temp;
                 }
-            }//smallradius=small radius of the annulus
+            }//squared_small_radius=squared small radius of the annulus
             
             
-            double p_disc=((small_radius*small_radius)/(double)(radius*radius));
-            long nb;
-           // double T=n/std::pow(log(simulated_points),2);
+            FT p_disc=squared_small_radius/squared_radius;
+            size_t nb;
             if (simulated_points< T){nb=std::min(simulated_points,n-simulated_points);}
             else {nb=std::min(T,n-simulated_points); }
             boost::random::binomial_distribution<long> dbin(nb,p_disc);
@@ -211,12 +218,12 @@ namespace CGAL{
             
             std::list<P> m;
             m.clear();
-            generate_points_annulus(nb-k_disc,-CGAL_PI, CGAL_PI,small_radius,radius,m,gen);
-            l.merge(m,compare_points_angle<P>());
+            internal::generate_points_annulus(nb-k_disc,-CGAL_PI, CGAL_PI,std::sqrt(to_double(squared_small_radius)),to_double(radius),m,gen);
+            l.merge(m,internal::compare_points_angle<P>());
             generated_points+=nb-k_disc;
             simulated_points+=nb-k_disc;
             m.clear();
-            Graham_without_sort_2(l,K());
+            internal::Graham_without_sort_2(l,K());
         }
     }
     

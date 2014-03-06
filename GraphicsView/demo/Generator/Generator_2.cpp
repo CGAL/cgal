@@ -5,12 +5,8 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/algorithm.h>
-
-// Boost
-#ifndef Q_MOC_RUN
 #include <CGAL/convex_random_polygon_in_disc.h>
 
-#endif
 
 // Qt headers
 #include <QtGui>
