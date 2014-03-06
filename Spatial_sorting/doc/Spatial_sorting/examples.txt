@@ -7,5 +7,5 @@
 \example Spatial_sorting/sp_sort_using_property_map_2.cpp
 \example Spatial_sorting/sp_sort_using_property_map_3.cpp
 \example Spatial_sorting/sp_sort_using_property_map_d.cpp
-\example Spatial_sorting/spherical_spatial_sort.cpp
+\example Spatial_sorting/spatial_sort_on_sphere.cpp
 */

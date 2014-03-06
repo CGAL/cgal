@@ -69,18 +69,22 @@ a space filling curve as illustrated in \cgalFigureRef{Spatial_sorting_fig_Hilbe
 Hilbert sort with middle policy
 \cgalFigureEnd
 
-We also consider space filling curves on the unit sphere. 
+We also consider space filling curves on a given sphere. In this text, our description is for the unit sphere. However, for a given sphere,
+the description remains the same up to an affine transformation.
+ 
 Actually, we approximate a space filling curve on
 the unit sphere by a space filling curve on a cube (with faces at \f$x, y, z = \pm 1/\sqrt{3}\f$). 
-Roughly speaking, we split the original set of points in six disjoint subsets: for each face \f$f\f$ of the cube we consider points that are above \f$f\f$ as belonging
-to one of such subsets. And then we basically use the 2D Hilbert sort as explained above for the projection of the points in each subset on its corresponding face of the cube.
+Roughly speaking, we split the original set of points in six disjoint subsets: for each face \f$f\f$ of the cube, we consider points that are in the opposite side of \f$f\f$ with respect to the origin as belonging to one of such subsets. And then we basically use the 2D Hilbert sort as explained above for the projection of the points in each subset on its corresponding face of the cube.
 The axes orientation on each face is chosen so that the space filling curve covers the whole cube without any jump; see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
+
+It might be possible for a point to be at the opposite side of two or more faces of the cube simultaneously. In order to solve such a problem, we give a priority order for the faces, so in case of conflict the one is chosen according to its priority. The priority order is:
+first, the face of the cube at \f$x = 1/\sqrt{3}\f$; second, the face of the cube at \f$y = 1/\sqrt{3}\f$; third, the face of the cube at \f$ x = -1/\sqrt{3}\f$; fourth, the face of the cube at \f$ z = 1/\sqrt{3}\f$; fifth, the face of the cube at \f$ y = -1/\sqrt{3}\f$; and, sixth, the face of the cube at \f$ z = -1/\sqrt{3}\f$. If points are not close to the sphere, points are still sorted with respect to their corresponding faces, following the priority order above, however there is no guarantee that such an order is good anymore.
 
 \cgalFigureBegin{Spatial_sorting_fig_Faces_orientations,HilbertOnSphere.png}
 A 2D Hilbert sort for each face of the cube
 \cgalFigureEnd
 
-Points sorted on the sphere are depicted in \cgalFigureRef{Spatial_sorting_fig_Hilbert_on_sphere}.
+Points sorted on the sphere according to the description above are depicted in \cgalFigureRef{Spatial_sorting_fig_Hilbert_on_sphere}.
 
 \cgalFigureBegin{Spatial_sorting_fig_Hilbert_on_sphere,HilbertOnSphereIllustration.png}
 Hilbert sort on the sphere
@@ -156,7 +160,7 @@ Delaunay with median spatial sort... done in 0.022415 seconds.
 
 You might use Spatial sort on the sphere as well, as shown in the following example.
 
-\cgalExample{Spatial_sorting/spherical_spatial_sort.cpp}
+\cgalExample{Spatial_sorting/spatial_sort_on_sphere.cpp}
 
 \subsection Spatial_sortingUsingYourOwnPointType Using Your Own Point Type
 

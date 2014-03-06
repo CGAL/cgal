@@ -3,9 +3,8 @@ namespace CGAL {
 /*!
 \ingroup PkgSpatialSortingFunctions
 
-The function `hilbert_sort_on_sphere()` sorts an iterator range of points that are supposed to be close to a unit sphere
-along a Hilbert curve on the unit sphere. Actually, it approximates a Hilbert curve on
-the sphere by a Hilbert curve on a cube.
+The function `hilbert_sort_on_sphere()` sorts an iterator range of points that are supposed to be close to a given sphere
+along a Hilbert curve on that same sphere. 
 
 sorts the range `[begin, end)` in place. 
 
@@ -14,12 +13,17 @@ The default traits class `Default_traits` is the kernel in which the type
 The default policy is `Hilbert_sort_median_policy()` and the 
 other option is `Hilbert_sort_middle_policy()`. 
 
+The input sphere is given by a squared radius and a center, parameter `sqr_radius` and parameter `center` respectively.
+The default squared radius of the sphere is 1.0.
+The default center of the sphere is the origin (0,0,0).
+
 \cgalHeading{Requirements}
 
 <OL> 
 <LI>`std::iterator_traits<RandomAccessIterator>::%value_type` is convertible to 
 `Traits::Point_3`. 
-<LI>`Traits` is a model for concept `SpatialSortingTraits_3`. 
+<LI>`Traits` is a model for concept `SpatialSortingTraits_3`.
+<LI>`sqr_radius` greater than 0. 
 </OL> 
 
 \cgalHeading{Implementation}
@@ -33,7 +37,9 @@ void
 hilbert_sort_on_sphere( RandomAccessIterator begin,
 RandomAccessIterator end,
 const Traits& traits = Default_traits,
-PolicyTag policy = Default_policy);
+PolicyTag policy = Default_policy,
+double sqr_radius = 1.0,
+const Traits::Point_3 &center = Default_center);
 
 } /* namespace CGAL */
 
