@@ -27,6 +27,10 @@ CGAL 4.3:
     the SDF.
 
 
+Note that Microsoft Visual Studio 2013, and its VC++ 12 compiler are not
+yet supported.
+
+
 See http://www.cgal.org/releases.html for a complete list of changes.
 
 
