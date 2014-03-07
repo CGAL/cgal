@@ -196,9 +196,10 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
     if ( v2 != mV1 )
     {
       mLink.push_back(v2) ;
-      bool lInserted = lCollected.insert(vertex_idx[v2]).second ;
+      CGAL_assertion_code( bool lInserted = )
+        lCollected.insert(vertex_idx[v2])
+          CGAL_assertion_code( .second ) ;
       CGAL_assertion(lInserted);
-      CGAL_USE(lInserted);
     }
       
     Extract_triangle(v0,v1,v2,e02,is_border);
