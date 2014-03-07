@@ -105,6 +105,12 @@ The value type of the `InputIterator` must be `Point_d`.
 */ 
 template <class InputIterator> void insert(InputIterator first, InputIterator beyond); 
 
+
+/*
+Reserve the memory for the 'Points' vector to the 'size' 
+*/
+void reserve(size_t size);
+
 /*!
 Reports the points that are approximately contained by `q`. 
 The types `FuzzyQueryItem::Point_d` and `Point_d` must be equivalent. 
