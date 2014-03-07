@@ -94,12 +94,12 @@ public:
 			else if(y < lyi) vec[4].push_back(p);        // Face 5, y < -sqrt(1/3)
 			else vec[5].push_back(p);                    // Face 6, z < -sqrt(1/3)
 		}
-		_hs_1_object(vec[0].begin(), vec[0].end());
-		_hs_2_object(vec[1].begin(), vec[1].end());
-		_hs_3_object(vec[2].begin(), vec[2].end());
-		_hs_4_object(vec[3].begin(), vec[3].end());
-		_hs_5_object(vec[4].begin(), vec[4].end());
-		_hs_6_object(vec[5].begin(), vec[5].end());
+		if(vec[0].size()) _hs_1_object(vec[0].begin(), vec[0].end());
+		if(vec[1].size()) _hs_2_object(vec[1].begin(), vec[1].end());
+		if(vec[2].size()) _hs_3_object(vec[2].begin(), vec[2].end());
+		if(vec[3].size()) _hs_4_object(vec[3].begin(), vec[3].end());
+		if(vec[4].size()) _hs_5_object(vec[4].begin(), vec[4].end());
+		if(vec[5].size()) _hs_6_object(vec[5].begin(), vec[5].end());
 		
 		// this is the order that set of points in a face should appear 
 		// after sorting points wrt each face
