@@ -1,5 +1,4 @@
-// Copyright (c) 2001  Tel-Aviv University (Israel).
-// 2009,2014 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2001,2009,2014  Tel-Aviv University (Israel), Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,9 +14,9 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// author(s)     : Eli Packer <elip@post.tau.ac.il>, 
+//
+// author(s)     : Eli Packer <elip@post.tau.ac.il>,
 //                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_SNAP_ROUNDING_2_TRAITS_H
@@ -58,7 +57,7 @@ public: // otherwise Segment_data cannot access the types
   typedef CGAL::Arr_segment_traits_2<Base_kernel>                         Base_traits;
   typedef typename Base_traits::Compare_x_2                               Compare_x_2;
   typedef CGAL::To_double<NT>                                             To_double;
-  
+
 public:
   /*! Functor */
   class Snap_2 {
