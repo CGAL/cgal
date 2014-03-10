@@ -122,17 +122,21 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	typedef typename Get_functor<Base, Orthogonal_vector_tag>::type Orthogonal_vector_d;
 	typedef typename Get_functor<Base, Linear_base_tag>::type Linear_base_d;
 
+	//TODO:
 	//typedef ??? Intersect_d;
 
 
 	Compute_coordinate_d compute_coordinate_d_object()const{ return Compute_coordinate_d(*this); }
+	Has_on_positive_side_d has_on_positive_side_d_object()const{ return Has_on_positive_side_d(*this); }
 	Compare_lexicographically_d compare_lexicographically_d_object()const{ return Compare_lexicographically_d(*this); }
 	Equal_d equal_d_object()const{ return Equal_d(*this); }
 	Less_lexicographically_d less_lexicographically_d_object()const{ return Less_lexicographically_d(*this); }
 	Less_or_equal_lexicographically_d less_or_equal_lexicographically_d_object()const{ return Less_or_equal_lexicographically_d(*this); }
 	Less_coordinate_d less_coordinate_d_object()const{ return Less_coordinate_d(*this); }
 	Orientation_d orientation_d_object()const{ return Orientation_d(*this); }
+	Oriented_side_d oriented_side_d_object()const{ return Oriented_side_d(*this); }
 	Point_dimension_d point_dimension_d_object()const{ return Point_dimension_d(*this); }
+	Point_of_sphere_d point_of_sphere_d_object()const{ return Point_of_sphere_d(*this); }
 	Side_of_oriented_sphere_d side_of_oriented_sphere_d_object()const{ return Side_of_oriented_sphere_d(*this); }
 	Side_of_bounded_sphere_d side_of_bounded_sphere_d_object()const{ return Side_of_bounded_sphere_d(*this); }
 	Contained_in_affine_hull_d contained_in_affine_hull_d_object()const{ return Contained_in_affine_hull_d(*this); }
@@ -150,6 +154,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	Linearly_independent_d linearly_independent_d_object()const{ return Linearly_independent_d(*this); }
 	Midpoint_d midpoint_d_object()const{ return Midpoint_d(*this); }
 	Value_at_d value_at_d_object()const{ return Value_at_d(*this); }
+	/// Intersect_d intersect_d_object()const{ return Intersect_d(*this); }
 	Component_accessor_d component_accessor_d_object()const{ return Component_accessor_d(*this); }
 	Orthogonal_vector_d orthogonal_vector_d_object()const{ return Orthogonal_vector_d(*this); }
 	Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object()const{ return Construct_cartesian_const_iterator_d(*this); }

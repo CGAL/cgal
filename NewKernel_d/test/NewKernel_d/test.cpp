@@ -90,9 +90,24 @@ void test2(){
   typedef typename K1::Value_at_d VA;
   typedef typename K1::Construct_hyperplane_d CH;
   typedef typename K1::Center_of_sphere_d COS;
+  typedef typename K1::Affine_rank_d AR;
+  typedef typename K1::Linear_rank_d LR;
+  typedef typename K1::Affinely_independent_d AI;
+  typedef typename K1::Linearly_independent_d LI;
+  typedef typename K1::Has_on_positive_side_d HOPS;
+  typedef typename K1::Less_coordinate_d LC;
+  typedef typename K1::Less_lexicographically_d LL;
+  typedef typename K1::Less_or_equal_lexicographically_d LEL;
+  typedef typename K1::Midpoint_d M;
+  typedef typename K1::Oriented_side_d OS;
+  typedef typename K1::Orthogonal_vector_d OV;
+  typedef typename K1::Point_dimension_d PD;
+  typedef typename K1::Point_of_sphere_d PS;
+  typedef typename K1::Point_to_vector_d PV;
+  typedef typename K1::Vector_to_point_d VP;
 
+  // FIXME: really test everything at least once (clang warnings can list untested things).
   USE_TYPE(FO);
-  USE_TYPE(CL);
   Ker k
 #if 0
     (2)
@@ -116,6 +131,23 @@ void test2(){
   CAH cah Kinit(contained_in_affine_hull_d_object);
   LB lb Kinit(linear_base_d_object);
   COS cos Kinit(center_of_sphere_d_object);
+  LR lr Kinit(linear_rank_d_object);
+  AR ar Kinit(affine_rank_d_object);
+  AI ai Kinit(affinely_independent_d_object);
+  LI li Kinit(linearly_independent_d_object);
+  HOPS hops Kinit(has_on_positive_side_d_object);
+  LC lc Kinit(less_coordinate_d_object);
+  CL cl Kinit(compare_lexicographically_d_object);
+  LL ll Kinit(less_lexicographically_d_object);
+  LEL lel Kinit(less_or_equal_lexicographically_d_object);
+  M m Kinit(midpoint_d_object);
+  OS os Kinit(oriented_side_d_object);
+  OV ov Kinit(orthogonal_vector_d_object);
+  PD pd Kinit(point_dimension_d_object);
+  PS ps Kinit(point_of_sphere_d_object);
+  PV pv Kinit(point_to_vector_d_object);
+  VP vp Kinit(vector_to_point_d_object);
+
   P a=cp(3,4);
   P b=cp(5,6,7);
   int rr[]={3,5,2};
@@ -212,7 +244,12 @@ void test3(){
   typedef typename K1::In_flat_orientation_d IFO;
   typedef typename K1::In_flat_side_of_oriented_sphere_d IFSOS;
   typedef typename K1::Contained_in_affine_hull_d CAH;
+  typedef typename K1::Contained_in_linear_hull_d CLH;
+  typedef typename K1::Contained_in_simplex_d CiS;
   typedef typename K1::Compare_lexicographically_d CL;
+  typedef typename K1::Component_accessor_d CA;
+  typedef typename K1::Equal_d E;
+  typedef typename K1::Squared_distance_d SD;
 
   USE_TYPE(V);
   USE_TYPE(CV);
@@ -236,6 +273,11 @@ void test3(){
   IFO ifo Kinit(in_flat_orientation_d_object);
   IFSOS ifsos Kinit(in_flat_side_of_oriented_sphere_d_object);
   CAH cah Kinit(contained_in_affine_hull_d_object);
+  CLH clh Kinit(contained_in_linear_hull_d_object);
+  CiS cis Kinit(contained_in_simplex_d_object);
+  CA ca Kinit(component_accessor_d_object);
+  E ed Kinit(equal_d_object);
+  SD sd Kinit(squared_distance_d_object);
   P a=cp(2,3,4);
   P b=cp(5,6,7,8);
   int rr[]={3,5,2,3};
