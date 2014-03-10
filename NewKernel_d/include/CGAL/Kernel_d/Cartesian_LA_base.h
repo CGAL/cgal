@@ -10,11 +10,11 @@
 #include <CGAL/typeset.h>
 #include <CGAL/Kernel_d/Dimension_base.h>
 #include <CGAL/Kernel_d/Cartesian_LA_functors.h>
-#include <CGAL/Vector/array.h>
+#include <CGAL/Kernel_d/Vector/array.h>
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/LA_eigen/LA.h>
+#include <CGAL/Kernel_d/LA_eigen/LA.h>
 #else
-#include <CGAL/LA_default/LA.h>
+#include <CGAL/Kernel_d/LA_default/LA.h>
 #endif
 
 namespace CGAL {

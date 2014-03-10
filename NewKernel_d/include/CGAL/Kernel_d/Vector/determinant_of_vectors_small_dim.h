@@ -12,7 +12,7 @@
 #define CGAL_SIGN_FUNC sign_of_determinant_of_vectors
 #define CGAL_SHIFT 0
 
-#include <CGAL/Vector/determinant_of_vectors_small_dim_internal.h>
+#include <CGAL/Kernel_d/Vector/determinant_of_vectors_small_dim_internal.h>
 
 #undef CGAL_CLASS
 #undef CGAL_TAG
@@ -26,7 +26,7 @@
 #define CGAL_SIGN_FUNC sign_of_determinant_of_vectors_omit_last
 #define CGAL_SHIFT 1
 
-#include <CGAL/Vector/determinant_of_vectors_small_dim_internal.h>
+#include <CGAL/Kernel_d/Vector/determinant_of_vectors_small_dim_internal.h>
 
 #undef CGAL_CLASS
 #undef CGAL_TAG

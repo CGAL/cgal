@@ -8,7 +8,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <CGAL/Dimension.h>
 #include <Eigen/Dense>
-#include <CGAL/LA_eigen/constructors.h>
+#include <CGAL/Kernel_d/LA_eigen/constructors.h>
 #include <CGAL/iterator_from_indices.h>
 
 namespace CGAL {

@@ -5,7 +5,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Lazy.h>
 #include <CGAL/Default.h>
-#include <CGAL/Filtered_predicate2.h>
+#include <CGAL/Kernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/Kernel_d/Define_kernel_types.h>
 
