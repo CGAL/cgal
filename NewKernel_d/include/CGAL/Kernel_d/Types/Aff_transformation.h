@@ -1,6 +1,6 @@
 #ifndef CGAL_KD_TYPE_AFF_TRANSFORMATION_H
 #define CGAL_KD_TYPE_AFF_TRANSFORMATION_H
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 #include <boost/preprocessor/repetition.hpp>
 
 // Dummy, that's all the Kernel_d concept requires, so a useful class will wait.

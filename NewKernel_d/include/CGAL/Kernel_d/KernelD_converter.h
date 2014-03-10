@@ -11,7 +11,7 @@
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 #include <boost/utility/enable_if.hpp>
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 #include <CGAL/Kernel_d/Kernel_object_converter.h>
 
 namespace CGAL {

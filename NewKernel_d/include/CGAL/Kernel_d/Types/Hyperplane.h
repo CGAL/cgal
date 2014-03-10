@@ -1,6 +1,6 @@
 #ifndef CGAL_KD_TYPE_HYPERPLANE_H
 #define CGAL_KD_TYPE_HYPERPLANE_H
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 namespace CGAL {

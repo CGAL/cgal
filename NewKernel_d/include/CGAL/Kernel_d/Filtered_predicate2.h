@@ -26,7 +26,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 #include <boost/preprocessor.hpp>
 
 namespace CGAL {

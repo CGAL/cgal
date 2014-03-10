@@ -6,7 +6,7 @@
 #include <CGAL/argument_swaps.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 
 namespace CGAL {
 namespace CartesianDVectorBase {

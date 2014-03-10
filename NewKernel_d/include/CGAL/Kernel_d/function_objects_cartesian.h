@@ -4,7 +4,7 @@
 #include <CGAL/marcutils.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Uncertain.h>
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/number_utils.h>
@@ -12,7 +12,7 @@
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/transforming_pair_iterator.h>
 #include <CGAL/functor_tags.h>
-#include <CGAL/functor_properties.h>
+#include <CGAL/Kernel_d/functor_properties.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
 #ifdef CGAL_CXX0X

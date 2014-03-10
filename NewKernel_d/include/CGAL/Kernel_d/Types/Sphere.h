@@ -1,6 +1,6 @@
 #ifndef CGAL_KD_TYPE_SPHERE_H
 #define CGAL_KD_TYPE_SPHERE_H
-#include <CGAL/store_kernel.h>
+#include <CGAL/Kernel_d/store_kernel.h>
 #include <boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
