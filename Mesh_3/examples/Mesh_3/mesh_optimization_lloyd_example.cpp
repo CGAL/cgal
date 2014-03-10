@@ -13,7 +13,15 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Labeled_image_mesh_domain_3<CGAL::Image_3,K> Mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#ifdef CGAL_CONCURRENT_MESH_3
+  typedef CGAL::Mesh_triangulation_3<
+    Mesh_domain,
+    CGAL::Kernel_traits<Mesh_domain>::Kernel, // Same as sequential
+    CGAL::Parallel_tag                        // Tag to activate parallelism
+  >::type Tr;
+#else
+  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+#endif
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Mesh Criteria
@@ -44,7 +52,7 @@ int main()
                                           no_perturb(), no_exude());
   
   CGAL::lloyd_optimize_mesh_3(c3t3_bis, domain, time_limit=30);
-  CGAL::exude_mesh_3(c3t3_bis, sliver_bound=10, time_limit=10);
+  CGAL::exude_mesh_3(c3t3_bis, domain, sliver_bound=10, time_limit=10);
   
   // Output
   std::ofstream medit_file("out.mesh");

@@ -17,7 +17,7 @@ public:
   virtual Scene_item* load(QFileInfo fileinfo) = 0;
 
   virtual bool canSave(const Scene_item*) = 0;
-  virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
+  virtual bool save(const Scene_item*, QFileInfo fileinfo, QString selectedFilter) = 0;
 };
 
 Q_DECLARE_INTERFACE(Io_plugin_interface,

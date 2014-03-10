@@ -14,8 +14,9 @@ application.
 
 \tparam TriangulationTraits_3 is the geometric traits class. It is actually not used by this class. 
 
-\tparam TriangulationDSCellBase_3 is a combinatorial cell base class from which 
-`Triangulation_cell_base_3` derives. 
+\tparam TriangulationDSCellBase_3_ is a combinatorial cell base class from which 
+`Triangulation_cell_base_3` derives.
+It must be a model of the `TriangulationDSCellBase_3` concept.
 It has the default value `Triangulation_ds_cell_base_3<TDS>`. 
 
 Note that this model does not store the circumcenter, but computes it 
@@ -31,8 +32,8 @@ circumcenter computation.
 \sa `CGAL::Triangulation_vertex_base_3` 
 
 */
-template< typename TriangulationTraits_3, typename TriangulationDSCellBase_3 >
-class Triangulation_cell_base_3 : public TriangulationDSCellBase_3 {
+template< typename TriangulationTraits_3, typename TriangulationDSCellBase_3_ >
+class Triangulation_cell_base_3 : public TriangulationDSCellBase_3_ {
 public:
 
 /// @}

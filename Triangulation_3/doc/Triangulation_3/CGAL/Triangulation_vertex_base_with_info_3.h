@@ -15,8 +15,10 @@ to a vertex. It has to be `DefaultConstructible` and `Assignable`.
 \tparam TriangulationTraits_3  is the geometric traits class 
  which provides the `Point_3`. 
 
-\tparam TriangulationVertexBase_3 is a vertex base class from which 
-`Triangulation_vertex_base_with_info_3` derives. It has the default 
+\tparam TriangulationVertexBase_3_ is a vertex base class from which 
+`Triangulation_vertex_base_with_info_3` derives.
+It must be a model of the `TriangulationVertexBase_3` concept.
+It has the default 
 value `Triangulation_vertex_base_3<TriangulationTraits_3>`. 
 
 \cgalModels `TriangulationVertexBase_3`
@@ -26,8 +28,8 @@ value `Triangulation_vertex_base_3<TriangulationTraits_3>`.
 \sa `CGAL::Triangulation_vertex_base_3` 
 
 */
-template< typename Info, typename TriangulationTraits_3, typename TriangulationVertexBase_3 >
-class Triangulation_vertex_base_with_info_3 : public TriangulationVertexBase_3 {
+template< typename Info, typename TriangulationTraits_3, typename TriangulationVertexBase_3_ >
+class Triangulation_vertex_base_with_info_3 : public TriangulationVertexBase_3_ {
 public:
 
 /// \name Types 

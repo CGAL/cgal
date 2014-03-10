@@ -38,24 +38,26 @@ BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   exude_mesh_3,
   parameters::tag,
-  (required (in_out(c3t3),*) )
+  (required (in_out(c3t3),*) (domain,*) )
   (optional
     (time_limit_, *, 0 )
     (sliver_bound_, *, parameters::default_values::exude_sliver_bound )
   )
 )
 {
-  return exude_mesh_3_impl(c3t3, time_limit_, sliver_bound_);
+  return exude_mesh_3_impl(c3t3, domain, time_limit_, sliver_bound_);
 }
 
 
 
-template <typename C3T3> 
+template <typename C3T3, typename MeshDomain>
 Mesh_optimization_return_code
 exude_mesh_3_impl(C3T3& c3t3,
+                  const MeshDomain& domain,
                   const double time_limit,
                   const double sliver_bound)
 {
+  typedef MeshDomain Md;
   typedef typename C3T3::Triangulation Tr;
   typedef Mesh_3::Min_dihedral_angle_criterion<Tr> Sc;
   //typedef Mesh_3::Radius_radio_criterion<Tr> Sc;
@@ -63,7 +65,7 @@ exude_mesh_3_impl(C3T3& c3t3,
   
   // Create exuder
   Sc criterion(sliver_bound, c3t3.triangulation());
-  Exuder exuder(c3t3, criterion);
+  Exuder exuder(c3t3, domain, criterion);
 
   // Set time_limit
   exuder.set_time_limit(time_limit);

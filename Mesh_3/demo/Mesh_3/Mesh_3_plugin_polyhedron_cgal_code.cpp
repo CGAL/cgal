@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
 #include "Polyhedron_type.h"
@@ -19,6 +21,9 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   if( NULL == pMesh ) { return NULL; }
   
   Polyhedral_mesh_domain* p_domain = new Polyhedral_mesh_domain(*pMesh);
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SHARP_FEATURES_IN_POLYHEDRAL_DOMAIN
+  p_domain->detect_features();
+#endif
   
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item();
   

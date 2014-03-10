@@ -35,6 +35,62 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
+  
+// Without erase counter
+template <typename Concurrency_tag>
+class Mesh_vertex_base_3_base
+{
+#if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
+ || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
+
+public:
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef unsigned int              Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+#endif
+};
+
+#ifdef CGAL_LINKED_WITH_TBB
+// Specialized version (parallel)
+template <>
+class Mesh_vertex_base_3_base<Parallel_tag>
+{
+public:
+  
+  // Erase counter (cf. Compact_container)
+  unsigned int erase_counter() const
+  {
+    return this->m_erase_counter;
+  }
+  void set_erase_counter(unsigned int c)
+  {
+    this->m_erase_counter = c;
+  }
+  void increment_erase_counter()
+  {
+    ++this->m_erase_counter;
+  }
+  
+protected:
+  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  Erase_counter_type                m_erase_counter;
+
+};
+#endif // CGAL_LINKED_WITH_TBB
 
 // Class Mesh_vertex_base_3
 // Vertex base class used in 3D meshing process.
@@ -44,7 +100,9 @@ template<class GT,
          class MD,
          class Vb = Triangulation_vertex_base_3<GT> >
 class Mesh_vertex_base_3
-: public Vb
+: public Vb,
+  public Mesh_vertex_base_3_base<
+    typename Vb::Triangulation_data_structure::Concurrency_tag>
 {
 public:
   typedef Vb Cmvb3_base;

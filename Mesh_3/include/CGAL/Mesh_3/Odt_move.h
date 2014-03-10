@@ -113,8 +113,8 @@ public:
       return CGAL::NULL_VECTOR;
   }
   
-  
-#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+#if defined(CGAL_MESH_3_OPTIMIZER_VERBOSE) \
+ || defined (CGAL_MESH_3_EXPORT_PERFORMANCE_DATA)
   static std::string name() { return std::string("Odt"); }
 #endif
   

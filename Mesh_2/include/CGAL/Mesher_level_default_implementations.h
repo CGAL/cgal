@@ -63,9 +63,19 @@ struct No_private_test_point_conflict
     function. */
 struct No_test_point_conflict_from_superior
 {
+  // For sequential
   template <typename Point, typename Zone>
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Point&, const Zone&) const 
+  {
+    return NO_CONFLICT;
+  }
+
+  // For parallel
+  template <typename Point, typename Zone, typename Mesh_visitor>
+  Mesher_level_conflict_status
+  test_point_conflict_from_superior_impl(const Point&, const Zone&, 
+                                         Mesh_visitor &) const
   {
     return NO_CONFLICT;
   }

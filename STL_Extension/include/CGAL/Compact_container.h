@@ -30,6 +30,7 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
+#include <CGAL/CC_safe_handle.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -82,9 +83,27 @@
 
 namespace CGAL {
 
+#define GENERATE_MEMBER_DETECTOR(X)                                             \
+template<typename T> class has_##X {                                          \
+    struct Fallback { int X; };                                               \
+    struct Derived : T, Fallback { };                                         \
+                                                                              \
+    template<typename U, U> struct Check;                                     \
+                                                                              \
+    typedef char ArrayOfOne[1];                                               \
+    typedef char ArrayOfTwo[2];                                               \
+                                                                              \
+    template<typename U> static ArrayOfOne & func(                            \
+                                            Check<int Fallback::*, &U::X> *); \
+    template<typename U> static ArrayOfTwo & func(...);                       \
+  public:                                                                     \
+    typedef has_##X type;                                                     \
+    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
+};
+
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16 
-  
+
 // The following base class can be used to easily add a squattable pointer
 // to a class (maybe you loose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
@@ -110,9 +129,51 @@ struct Compact_container_traits {
 namespace internal {
   template < class DSC, bool Const >
   class CC_iterator;
+
+  GENERATE_MEMBER_DETECTOR(increment_erase_counter);
+
+  // A basic "no erase counter" strategy
+  template <bool Has_erase_counter_tag>
+  class Erase_counter_strategy {
+  public:
+    // Do nothing
+    template <typename Element>
+    static unsigned int erase_counter(const Element &) { return 0; }
+    template <typename Element>
+    static void set_erase_counter(Element &, unsigned int) {}
+    template <typename Element>
+    static void increment_erase_counter(Element &) {}
+  };
+
+
+  // A strategy managing an internal counter
+  template <>
+  class Erase_counter_strategy<true>
+  {
+  public:
+    template <typename Element>
+    static unsigned int erase_counter(const Element &e)
+    {
+      return e.erase_counter();
+    }
+
+    template <typename Element>
+    static void set_erase_counter(Element &e, unsigned int c)
+    {
+      e.set_erase_counter(c);
+    }
+
+    template <typename Element>
+    static void increment_erase_counter(Element &e)
+    {
+      e.increment_erase_counter();
+    }
+  };
 }
 
-template < class T, class Allocator_ = Default >
+// Class Compact_container
+//
+template < class T, class Allocator_ = Default>
 class Compact_container
 {
   typedef Allocator_                                Al;
@@ -139,7 +200,7 @@ public:
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
   {
-    init();
+    init (); 
   }
 
   template < class InputIterator >
@@ -309,7 +370,7 @@ public:
   template < typename T1, typename T2, typename T3, typename T4, typename T5 >
   iterator
   emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-	  const T5 &t5)
+    const T5 &t5)
   {
     if (free_list == NULL)
       allocate_new_block();
@@ -403,11 +464,15 @@ public:
 
   void erase(iterator x)
   {
+    typedef internal::Erase_counter_strategy<
+      internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
     CGAL_precondition(type(&*x) == USED);
+    EraseCounterStrategy::increment_erase_counter(*x);
     alloc.destroy(&*x);
-#ifndef CGAL_NO_ASSERTIONS
+/*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
-#endif
+#endif*/
     put_on_free_list(&*x);
     --size_;
   }
@@ -642,6 +707,9 @@ void Compact_container<T, Allocator>::clear()
 template < class T, class Allocator >
 void Compact_container<T, Allocator>::allocate_new_block()
 {
+  typedef internal::Erase_counter_strategy<
+    internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
+
   pointer new_block = alloc.allocate(block_size + 2);
   all_items.push_back(std::make_pair(new_block, block_size + 2));
   capacity_ += block_size;
@@ -649,7 +717,10 @@ void Compact_container<T, Allocator>::allocate_new_block()
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type i = block_size; i >= 1; --i)
+  {
+    EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
     put_on_free_list(new_block + i);
+  }
   // We insert this new block at the end.
   if (last_item == NULL) // First time
   {
@@ -754,13 +825,19 @@ namespace internal {
       m_ptr.p = &(*it);
       return *this;
     }
+    
+    // CJTODO: TEMP (see parallel scan_triangulation)
+    CC_iterator(value_type *p)
+    {
+      m_ptr.p = p;
+    }
 
     // Construction from NULL
-    CC_iterator (Nullptr_t CGAL_assertion_code(n))
+    /*CC_iterator (Nullptr_t CGAL_assertion_code(n))
     {
       CGAL_assertion (n == NULL);
       m_ptr.p = NULL;
-    }
+    }*/
 
   private:
 
@@ -795,9 +872,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+   "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
-	 "Incrementing end() ?");
+   "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
@@ -815,9 +892,9 @@ namespace internal {
     {
       // It's either pointing to end(), or valid.
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+   "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
-	 "Decrementing begin() ?");
+   "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
@@ -836,7 +913,7 @@ namespace internal {
     Self & operator++()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Incrementing a singular iterator or an empty container iterator ?");
+   "Incrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
                          "Incrementing an invalid iterator.");
       increment();
@@ -846,9 +923,9 @@ namespace internal {
     Self & operator--()
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
-	 "Decrementing a singular iterator or an empty container iterator ?");
+   "Decrementing a singular iterator or an empty container iterator ?");
       CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-		      || DSC::type(m_ptr.p) == DSC::START_END,
+          || DSC::type(m_ptr.p) == DSC::START_END,
                          "Decrementing an invalid iterator.");
       decrement();
       return *this;
@@ -916,7 +993,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-		  Nullptr_t CGAL_assertion_code(n))
+      Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return &*rhs != NULL;

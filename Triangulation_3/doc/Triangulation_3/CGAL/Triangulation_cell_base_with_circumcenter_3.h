@@ -15,8 +15,9 @@ circumcenter.
 
 \tparam DelaunayTriangulationTraits_3 is the geometric traits class. 
 
-\tparam TriangulationCellBase_3 is a cell base class from which 
-`Triangulation_cell_base_with_circumcenter_3` derives. 
+\tparam TriangulationCellBase_3_ is a cell base class from which 
+`Triangulation_cell_base_with_circumcenter_3` derives.
+It must be a model of the `TriangulationCellBase_3` concept.
 It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_3>`. 
 
 \cgalModels `TriangulationCellBase_3`
@@ -25,8 +26,8 @@ It has the default value `Triangulation_cell_base_3<DelaunayTriangulationTraits_
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 
 */
-template< typename DelaunayTriangulationTraits_3, typename TriangulationCellBase_3 >
-class Triangulation_cell_base_with_circumcenter_3 : public TriangulationCellBase_3 {
+template< typename DelaunayTriangulationTraits_3, typename TriangulationCellBase_3_ >
+class Triangulation_cell_base_with_circumcenter_3 : public TriangulationCellBase_3_ {
 public:
 
 /// \name Access Functions 
