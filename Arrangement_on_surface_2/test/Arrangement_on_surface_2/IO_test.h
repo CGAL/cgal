@@ -166,7 +166,6 @@ bool IO_test<Geom_traits_T>::parse(int argc, char* argv[])
 template <typename Geom_traits_T>
 bool IO_test<Geom_traits_T>::init()
 {
-  //std:: cout << "Yeahhhhh babyyyyyyyy I am initiallllizzzzzinngngggggggg" << std::endl;
   if (!read_points(m_filename_points.c_str(), m_points)) return false;
   if (!read_xcurves(m_filename_xcurves.c_str(), m_xcurves)) return false;
   if (!read_curves(m_filename_curves.c_str(), m_curves)) return false;
@@ -268,8 +267,7 @@ bool IO_test<Geom_traits_T>::read_xcurves(const char* filename,
     std::cerr << "Cannot open file " << filename << "!" << std::endl;
     return false;
   }
-  
-  std::cout<< "Test_geom_traits: " << TEST_GEOM_TRAITS << std::endl;
+
   std::string line;
   
   while (skip_comments(xcv_stream, line)) 
