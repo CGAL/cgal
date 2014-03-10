@@ -716,7 +716,7 @@ protected:
     if ( NULL != exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Create exuder
-    exude_ = new Exuder(c3t3, criterion_, domain);
+    exude_ = new Exuder(c3t3, domain, criterion_);
     if ( NULL == exude_ ) { return CGAL::MESH_OPTIMIZATION_UNKNOWN_ERROR; }
     
     // Set time_limit
