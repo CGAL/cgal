@@ -105,6 +105,13 @@ void test2(){
   typedef typename K1::Point_of_sphere_d PS;
   typedef typename K1::Point_to_vector_d PV;
   typedef typename K1::Vector_to_point_d VP;
+  typedef typename K1::Barycentric_coordinates_d BC;
+  typedef typename K1::Construct_direction_d CD;
+  typedef typename K1::Construct_line_d CLi;
+  typedef typename K1::Construct_ray_d CR;
+  typedef typename K1::Construct_iso_box_d CIB;
+  typedef typename K1::Construct_aff_transformation_d CAT;
+  typedef typename K1::Position_on_line_d PoL;
 
   // FIXME: really test everything at least once (clang warnings can list untested things).
   USE_TYPE(FO);
@@ -147,6 +154,13 @@ void test2(){
   PS ps Kinit(point_of_sphere_d_object);
   PV pv Kinit(point_to_vector_d_object);
   VP vp Kinit(vector_to_point_d_object);
+  BC bc Kinit(barycentric_coordinates_d_object);
+  CD cd Kinit(construct_direction_d_object);
+  CLi cli Kinit(construct_line_d_object);
+  CR cr Kinit(construct_ray_d_object);
+  CIB cib Kinit(construct_iso_box_d_object);
+  CAT cat Kinit(construct_aff_transformation_d_object);
+  PoL pol Kinit(position_on_line_d_object);
 
   P a=cp(3,4);
   P b=cp(5,6,7);
