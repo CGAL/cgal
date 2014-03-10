@@ -108,9 +108,9 @@ int main(int argc, char* argv[])
   
 
   /*
-    
+    The perform() function is present in "Traits_base_test.h"/
   */
-  //if (!test.perform()) return -1; //perform() function is present in "Traits_base_tests.h"
+  if (!test.perform()) return -1;
 
   return 0;
 }

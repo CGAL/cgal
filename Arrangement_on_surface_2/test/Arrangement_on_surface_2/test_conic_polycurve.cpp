@@ -219,7 +219,130 @@ void check_is_vertical()
 
 }
 
-void check_compare_y_at_x_2()
+/*! */
+template <typename stream>
+bool read_orientation(stream& is, CGAL::Orientation& orient)
+{
+  int i_orient;
+  is >> i_orient;
+  orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
+    (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
+  return true;
+}
+
+/*! */
+template <typename stream>
+bool read_app_point(stream& is, Conic_point_2& p)
+{
+  //waqar: original
+  double x, y;
+  is >> x >> y;
+  p = Conic_point_2(Algebraic(x), Algebraic(y));
+  return true;
+
+  //waqar: my modification
+  // long int rat_x_num, rat_x_den, rat_y_num, rat_y_den;
+  // is >> rat_x_num >> rat_x_den >> rat_y_num >> rat_y_den;
+  
+  //Basic_number_type x(rat_x), y(rat_y);
+ // p = Conic_point_2( Rational(rat_x_num, rat_x_den), Rational(rat_y_num, rat_y_den) );
+  //return true;
+}
+
+/*! */
+template <typename stream>
+bool read_orientation_and_end_points(stream& is, CGAL::Orientation& orient,
+                                     Conic_point_2& source, Conic_point_2& target)
+{
+  // Read the orientation.
+  if (!read_orientation(is, orient)) return false;
+
+  // Read the end points of the arc and create it.
+  if (!read_app_point(is, source)) return false;
+  if (!read_app_point(is, target)) return false;
+  return true;
+}
+
+/*! */
+template <typename stream, typename Curve>
+bool read_general_arc(stream& is, Curve& cv)
+{
+  // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+  Rational r, s, t, u, v, w;                // The conic coefficients.
+  is >> r >> s >> t >> u >> v >> w;
+    // Read the orientation.
+  int i_orient = 0;
+  is >> i_orient;
+  CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
+    (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
+
+  // Read the approximated source, along with a general conic
+  // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
+  // defines the source.
+  Conic_point_2 app_source;
+  if (!read_app_point(is, app_source)) return false;
+  Rational r1, s1, t1, u1, v1, w1;
+  is >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
+
+  // Read the approximated target, along with a general conic
+  // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
+  // defines the target.
+  Conic_point_2 app_target;
+  if (!read_app_point(is, app_target)) return false;
+
+  Rational r2, s2, t2, u2, v2, w2;
+  is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
+
+  std::cout << "line is: " << r << s << t << u << v << w << i_orient << r1 << s1 << t1 << u1 << v1 << w1 << r2 << s2 << t2 << u2 << v2 << w2 << std::endl;
+
+  // Create the conic arc.
+  cv = Curve(r, s, t, u, v, w, orient,
+              app_source, r1, s1, t1, u1, v1, w1,
+              app_target, r2, s2, t2, u2, v2, w2);
+  return true;
+}
+
+/*! */
+template <typename stream, typename Curve>
+bool read_general_conic(stream& is, Curve& cv)
+{
+  // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+  Rational r, s, t, u, v, w;
+  is >> r >> s >> t >> u >> v >> w;
+  // Create a full conic (should work only for ellipses).
+  cv = Curve(r, s, t, u, v, w);
+  return true;
+}
+
+
+
+// /*! */
+template <typename stream, typename Curve>
+bool read_general_curve(stream& is, Curve& cv)
+{
+  Rational r, s, t, u, v, w;                // The conic coefficients.
+  // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+  is >> r >> s >> t >> u >> v >> w;
+  CGAL::Orientation orient;
+  Conic_point_2 source, target;
+  if (!read_orientation_and_end_points(is, orient, source, target))
+    return false;
+
+  // Create the conic (or circular) arc.
+  //std::cout<< "arc coefficients: " << r << " " << s << " " << t << " " << u << " " << v << " " << w << std::endl;
+  //std::cout<< "Read Points : " << source.x() << " " << source.y() << " " << target.x() << " " << target.y() << std::endl;
+  cv = Curve(r, s, t, u, v, w, orient, source, target);
+  return true;
+}
+std::istream& skip_comments(std::istream& is,
+                                                    std::string& line)
+{
+  while (std::getline(is, line))
+    if (!line.empty() && (line[0] != '#')) break;
+  return is;
+}
+
+bool check_compare_y_at_x_2()
 {
   Polycurve_conic_traits_2 traits;
   Polycurve_conic_traits_2::Compare_y_at_x_2 cmp_y_at_x_2 = traits.compare_y_at_x_2_object();
@@ -239,22 +362,21 @@ void check_compare_y_at_x_2()
   Rat_point_2       pt2 (20, 10);
   Conic_curve_2     c2 (ps2, pmid2, pt2);
 
-  Conic_curve_2     c3(0,0,1,0,0,-1,CGAL::COUNTERCLOCKWISE, Conic_point_2( Rational(1, 5), Rational(4, 1) ), Conic_point_2( Rational(2, 1), Rational(1, 2) ) );
-  Conic_curve_2     c4(0,0,1,0,0,-1,CGAL::COUNTERCLOCKWISE, Conic_point_2( Rational(2, 1), Rational(1, 2) ), Conic_point_2( Rational(3, 5), Rational(4, 1) ) );
-  //Conic_curve_2     c5 (58, 72, -48, 0, 0, -360);
+  Conic_curve_2     c3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(3), Algebraic(9) ) );
+  Conic_curve_2     c4(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(3), Algebraic(9) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
 
-  std::vector<Conic_curve_2> conic_curves, conic_curves_2;
+  std::vector<Conic_curve_2> conic_curves, conic_curves_2, Conic_curves_3;
   conic_curves.push_back(c1);
   conic_curves.push_back(c2);
 
-  conic_curves_2.push_back(c3);
-  conic_curves_2.push_back(c4);
+  //conic_curves_2.push_back(c3);
+  //conic_curves_2.push_back(c4);
 
   Conic_x_monotone_curve_2 xc1 (c1);
   Conic_x_monotone_curve_2 xc2 (c2);
-  //Conic_x_monotone_curve_2 xc3 (c3);
-  //Conic_x_monotone_curve_2 xc4 (c4);
-  //Conic_x_monotone_curve_2 xc5 (c5);
+  Conic_x_monotone_curve_2 xc3 (c3);
+  Conic_x_monotone_curve_2 xc4 (c4);
+
   
   std::vector<Conic_x_monotone_curve_2> xmono_conic_curves, xmono_conic_curves_2;
   /* VERY IMPORTANT
@@ -263,39 +385,72 @@ void check_compare_y_at_x_2()
   */
   xmono_conic_curves.push_back(xc1);
   xmono_conic_curves.push_back(xc2);
-  //xmono_conic_curves_2.push_back(xc3);
-  //xmono_conic_curves_2.push_back(xc4);
+  xmono_conic_curves_2.push_back(xc3);
+  xmono_conic_curves_2.push_back(xc4);
+
+  ////////////////////
+  //Reading from a file
+  ////////////////
+  // std::string filename = "data/polycurves_conics/compare_y_at_x.xcv";
+  // std::ifstream cv_stream(filename);
+  
+  // if (!cv_stream.is_open()) 
+  // {
+  //   std::cerr << "Cannot open file " << filename << "!" << std::endl;
+  //   return false;
+  // }
+
+  // std::string line;
+  
+  // while (skip_comments(cv_stream, line)) 
+  // {
+  //   std::cout<< "line fiele is :" << line << std::endl;
+  //   std::istringstream line_stream(line);
+  //   Conic_curve_2 cv;
+  //   read_general_arc(line_stream, cv);
+  //   //Conic_curves_3.push_back(cv);
+  //   line_stream.clear();
+  // }
+  
+  // cv_stream.close();
+
+  ////////
+  ///////
+
+
 
 
   //construct x-monotone poly-curve
   Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve = construct_x_mono_polycurve(xmono_conic_curves.begin(), xmono_conic_curves.end());
-  //Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+  Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
 
   //construct poly-curve
   Polycurve_conic_traits_2::Curve_2 conic_polycurve = construct_polycurve( conic_curves.begin(), conic_curves.end() );
-  Polycurve_conic_traits_2::Curve_2 conic_polycurve_2 = construct_polycurve( conic_curves_2.begin(), conic_curves_2.end() );
+  //Polycurve_conic_traits_2::Curve_2 conic_polycurve_2 = construct_polycurve( conic_curves_2.begin(), conic_curves_2.end() );
 
   //make x-monotone curve
   //Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = construct_x_monotone_curve_2(c1);
  
   //create points
-  Polycurve_conic_traits_2::Point_2 point_above_line = Polycurve_conic_traits_2::Point_2(6,6), 
-                                    point_below_line = Polycurve_conic_traits_2::Point_2(15,5), 
-                                    point_on_line    = Polycurve_conic_traits_2::Point_2(5,4);
+  Polycurve_conic_traits_2::Point_2 point_above_line = Polycurve_conic_traits_2::Point_2(2,10), 
+                                    point_below_line = Polycurve_conic_traits_2::Point_2(4,7), 
+                                    point_on_line    = Polycurve_conic_traits_2::Point_2(2,4);
 
   CGAL::Comparison_result result;
 
-  // result =  cmp_y_at_x_2(point_above_line, conic_x_mono_polycurve_2);
-  // std::cout << "Compare_y_at_x_2:: for point above the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":
-  //              (result == CGAL::LARGER ? "Above" : "On-line")) << std::endl;
+  result =  cmp_y_at_x_2(point_above_line, conic_x_mono_polycurve_2);
+  std::cout << "Compare_y_at_x_2:: for point above the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":
+               (result == CGAL::LARGER ? "Above" : "On-line")) << std::endl;
 
-  result =  cmp_y_at_x_2(point_below_line, conic_x_mono_polycurve);
+  result =  cmp_y_at_x_2(point_below_line, conic_x_mono_polycurve_2);
   std::cout << "Compare_y_at_x_2:: for point below the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":
                (result == CGAL::LARGER ? "Above" : "On-line")) << std::endl;
 
-  result =  cmp_y_at_x_2(point_on_line, conic_x_mono_polycurve);
+  result =  cmp_y_at_x_2(point_on_line, conic_x_mono_polycurve_2);
   std::cout << "Compare_y_at_x_2:: for point on the curve computed Answer is:  "<< (result == CGAL::SMALLER ? "Below":
                (result == CGAL::LARGER ? "Above" : "On-line")) << std::endl;
+
+  return true;
 }
 
 void check_push_back()
@@ -318,14 +473,14 @@ void check_push_back()
   Conic_curve_2     c2 (ps2, pmid2, pt2);
   
 
-  push_back_2(polycurve, c1);
-  std::cout<< "Push_back_2::size of polycurve after 1 segment push_back: " << polycurve.size() << std::endl;
+  // push_back_2(polycurve, c1);
+  // std::cout<< "Push_back_2::size of polycurve after 1 segment push_back: " << polycurve.size() << std::endl;
 
-  push_back_2(polycurve, c2);
-  std::cout<< "Push_back_2::size of polycurve after 2 segment push_back: " << polycurve.size() << std::endl;
+  // push_back_2(polycurve, c2);
+  // std::cout<< "Push_back_2::size of polycurve after 2 segment push_back: " << polycurve.size() << std::endl;
 
-  push_back_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c1) );
-  std::cout<< "Push_back_2::size of x-monotone polycurve after 1 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
+  // push_back_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c1) );
+  // std::cout<< "Push_back_2::size of x-monotone polycurve after 1 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
   
   //error
   //push_back_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c2) );
@@ -352,14 +507,14 @@ void check_push_front()
   Rat_point_2       pt2 (20, 10);
   Conic_curve_2     c2 (ps2, pmid2, pt2);
 
-  push_front_2(polycurve, c1);
-  std::cout<< "Push_front_2::size of polycurve after 1 segment push_back: " << polycurve.size() << std::endl;
+  // push_front_2(polycurve, c1);
+  // std::cout<< "Push_front_2::size of polycurve after 1 segment push_back: " << polycurve.size() << std::endl;
 
-  push_front_2(polycurve, c2);
-  std::cout<< "Push_front_2::size of polycurve after 2 segment push_back: " << polycurve.size() << std::endl;
+  // push_front_2(polycurve, c2);
+  // std::cout<< "Push_front_2::size of polycurve after 2 segment push_back: " << polycurve.size() << std::endl;
 
-  push_front_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c1) );
-  std::cout<< "Push_front_2::size of x-monotone polycurve after 1 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
+  // push_front_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c1) );
+  // std::cout<< "Push_front_2::size of x-monotone polycurve after 1 x-monotone segment push_back: " << x_monotone_polycurve.size() << std::endl;
   
   //error
   //push_front_2( x_monotone_polycurve, Polycurve_conic_traits_2::X_monotone_segment_2(c2) );

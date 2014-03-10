@@ -221,55 +221,6 @@ bool IO_base_test<Base_geom_traits>::read_point(stream& is, Point_2& p)
   return true;
 }
 
-/*! */
-// template <typename stream, typename Curve>
-// bool read_general_arc(stream& is, Curve& cv)
-// {
-//   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-//   Rational r, s, t, u, v, w;                // The conic coefficients.
-//   is >> r >> s >> t >> u >> v >> w;
-//     // Read the orientation.
-//   int i_orient = 0;
-//   is >> i_orient;
-//   CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
-//     (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
-
-//   // Read the approximated source, along with a general conic
-//   // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
-//   // defines the source.
-//   Point_2 app_source;
-//   if (!read_app_point(is, app_source)) return false;
-//   Rational r1, s1, t1, u1, v1, w1;
-//   is >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
-
-//   // Read the approximated target, along with a general conic
-//   // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
-//   // defines the target.
-//   Point_2 app_target;
-//   if (!read_app_point(is, app_target)) return false;
-
-//   Rational r2, s2, t2, u2, v2, w2;
-//   is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
-
-//   // Create the conic arc.
-//   cv = Curve(r, s, t, u, v, w, orient,
-//               app_source, r1, s1, t1, u1, v1, w1,
-//               app_target, r2, s2, t2, u2, v2, w2);
-//   return true;
-// }
-
-/*! */
-// template <typename stream, typename Curve>
-// bool read_general_conic(stream& is, Curve& cv)
-// {
-//   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-//   Rational r, s, t, u, v, w;
-//   is >> r >> s >> t >> u >> v >> w;
-//   // Create a full conic (should work only for ellipses).
-//   //cv = Curve_2(r, s, t, u, v, w);
-//   cv = Curve(r, s, t, u, v, w);
-//   return true;
-// }
 
 /*! */
 template <typename stream>
@@ -287,18 +238,18 @@ template <typename stream>
 bool read_app_point(stream& is, Point_2& p)
 {
   ////waqar: original
-  // double x, y;
-  // is >> x >> y;
-  // p = Point_2(Algebraic(x), Algebraic(y));
-  // return true;
+  double x, y;
+  is >> x >> y;
+  p = Point_2(Algebraic(x), Algebraic(y));
+  return true;
 
   //waqar: my modification
-  long int rat_x_num, rat_x_den, rat_y_num, rat_y_den;
-  is >> rat_x_num >> rat_x_den >> rat_y_num >> rat_y_den;
+  // long int rat_x_num, rat_x_den, rat_y_num, rat_y_den;
+  // is >> rat_x_num >> rat_x_den >> rat_y_num >> rat_y_den;
   
   //Basic_number_type x(rat_x), y(rat_y);
-  p = Point_2( Rational(rat_x_num, rat_x_den), Rational(rat_y_num, rat_y_den) );
-  return true;
+  //p = Point_2( Rational(rat_x_num, rat_x_den), Rational(rat_y_num, rat_y_den) );
+  //return true;
 }
 
 /*! */
@@ -315,6 +266,57 @@ bool read_orientation_and_end_points(stream& is, CGAL::Orientation& orient,
   return true;
 }
 
+/*! */
+template <typename stream, typename Curve>
+bool read_general_arc(stream& is, Curve& cv)
+{
+  // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+  Rational r, s, t, u, v, w;                // The conic coefficients.
+  is >> r >> s >> t >> u >> v >> w;
+    // Read the orientation.
+  int i_orient = 0;
+  is >> i_orient;
+  CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
+    (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
+
+  // Read the approximated source, along with a general conic
+  // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
+  // defines the source.
+  Point_2 app_source;
+  if (!read_app_point(is, app_source)) return false;
+  Rational r1, s1, t1, u1, v1, w1;
+  is >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
+
+  // Read the approximated target, along with a general conic
+  // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
+  // defines the target.
+  Point_2 app_target;
+  if (!read_app_point(is, app_target)) return false;
+
+  Rational r2, s2, t2, u2, v2, w2;
+  is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
+
+  // Create the conic arc.
+  cv = Curve(r, s, t, u, v, w, orient,
+              app_source, r1, s1, t1, u1, v1, w1,
+              app_target, r2, s2, t2, u2, v2, w2);
+  return true;
+}
+
+/*! */
+template <typename stream, typename Curve>
+bool read_general_conic(stream& is, Curve& cv)
+{
+  // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+  Rational r, s, t, u, v, w;
+  is >> r >> s >> t >> u >> v >> w;
+  // Create a full conic (should work only for ellipses).
+  cv = Curve(r, s, t, u, v, w);
+  return true;
+}
+
+
+
 // /*! */
 template <typename stream, typename Curve>
 bool read_general_curve(stream& is, Curve& cv)
@@ -328,8 +330,6 @@ bool read_general_curve(stream& is, Curve& cv)
     return false;
 
   // Create the conic (or circular) arc.
-  std::cout<< "arc coefficients: " << r << " " << s << " " << t << " " << u << " " << v << " " << w << std::endl;
-  std::cout<< "Read Points : " << source.x() << " " << source.y() << " " << target.x() << " " << target.y() << std::endl;
   cv = Curve(r, s, t, u, v, w, orient, source, target);
   return true;
 }
@@ -366,13 +366,31 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(stream& is,
         return false;
 
       X_monotone_segment_2 tmp_xcv(tmp_cv);
-
-      //conic_x_monotone_segments.push_back ( tmp_xcv );  
+      conic_x_monotone_segments.push_back ( tmp_xcv );  
     }
-  }
+
+    else if ((type == 'c') || (type == 'C')) 
+    {
+      if( !read_general_conic(is, tmp_cv) )
+        return false;
+
+      X_monotone_segment_2 tmp_xcv(tmp_cv);
+      conic_x_monotone_segments.push_back ( tmp_xcv );  
+    }
+    
+    else if ((type == 'i') || (type == 'I')) 
+    {
+      if( !read_general_arc(is, tmp_cv) )
+        return false;
+
+      X_monotone_segment_2 tmp_xcv(tmp_cv);
+      conic_x_monotone_segments.push_back ( tmp_xcv );  
+    }
+
+  } //for loop
   
   //construct x-monotone polycurve
-  //xcv = m_geom_traits.construct_x_monotone_curve_2_object()(conic_x_monotone_segments.begin(), conic_x_monotone_segments.end());
+  xcv = m_geom_traits.construct_x_monotone_curve_2_object()(conic_x_monotone_segments.begin(), conic_x_monotone_segments.end());
   
   return true;
 }
@@ -408,8 +426,22 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 
       conic_segments.push_back( tmp_cv );  
     }
-    //eles if ((type == 'c') || (type == 'C')) return read_general_conic(is, cv);
-    //else if ((type == 'i') || (type == 'I')) return read_general_arc(is, cv);
+    
+    else if ((type == 'c') || (type == 'C')) 
+    {
+      if( !read_general_conic(is, tmp_cv) )
+        return false;
+
+      conic_segments.push_back( tmp_cv );
+    }
+    
+    else if ((type == 'i') || (type == 'I')) 
+    {
+      if( !read_general_arc(is, tmp_cv) )
+        return false;
+
+      conic_segments.push_back( tmp_cv );
+    }
     //else if ((type == 'e') || (type == 'E')) return read_partial_ellipse(is, cv);
     //else if ((type == 'h') || (type == 'H')) return read_hyperbola(is, cv);
     //else if ((type == 'p') || (type == 'P')) return read_parabola(is, cv);
@@ -422,7 +454,8 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
       std::cerr << "Illegal conic type specification: " << type << "." << std::endl;
       return false;
     }
-  }
+
+  } //for loop
   
   //construct the polycurve 
   cv = m_geom_traits.construct_curve_2_object()(conic_segments.begin(), conic_segments.end());

@@ -42,6 +42,10 @@ private:
                     const std::string& str_command,
                     bool& result)
   {
+    //std::cout<< "***** inside exec ***** str_stream: " << str_stream << std::endl;
+    
+    //str_stream is the input file object.
+    //Get the appropriate functor. "str_command" consist of the appropriate functor string.
     Wrapper_iter wi = m_wrappers.find(str_command);
     str_stream.clear();
     if (wi == m_wrappers.end()) return true;
@@ -421,6 +425,8 @@ compare_y_at_x_wrapper(std::istringstream& str_stream)
   //std::cout<< "******** I am in the compare_y_at_x wrapper" << std::endl;
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
+  //waqar
+  //std::cout<< "Compare y at x wrapper ids are: " << id1 << " " << id2 << std::endl;
   unsigned int exp_answer = this->get_expected_enum(str_stream);
   std::cout << "Test: compare_y_at_x( " << this->m_points[id1] << ","
            << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";

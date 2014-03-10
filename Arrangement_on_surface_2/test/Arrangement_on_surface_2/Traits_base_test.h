@@ -239,7 +239,9 @@ bool Traits_base_test<Geom_traits_T>::perform()
 {
   //std::cout << "*************" << m_filename_commands.c_str() << std::endl; // output is compare_y_at_x filepath
   std::ifstream is(m_filename_commands.c_str());
-  if (!is.is_open()) {
+  
+  if (!is.is_open()) 
+  {
     this->print_error(std::string("cannot open file ").append(m_filename_commands));
     return false;
   }
@@ -251,12 +253,15 @@ bool Traits_base_test<Geom_traits_T>::perform()
             << this->m_filename_xcurves << " "
             << this->m_filename_curves << " "
             << m_filename_commands << std::endl << std::endl;;
+  
   this->m_eol_printed = true;
   std::string line;
   char buff[1024];
   // bool abort = false;
   int counter = 0;
-  while (this->skip_comments(is, line)) {
+  
+  while (this->skip_comments(is, line)) 
+  {
     std::istringstream str_stream(line, std::istringstream::in);
     buff[0] = '\0';
     str_stream.getline(buff, 1024, ' ');
@@ -265,26 +270,35 @@ bool Traits_base_test<Geom_traits_T>::perform()
     m_violation_occurred = m_violation_tested = NON;
 
 
-    if ((int)str_command.find("_precondition", 0) != -1) {
+    if ((int)str_command.find("_precondition", 0) != -1) 
+    {
       location = str_command.find("_precondition", 0);
       m_violation_tested = PRECONDITION;
     }
-    else if ((int)str_command.find("_postcondition",0) != -1) {
+    
+    else if ((int)str_command.find("_postcondition",0) != -1) 
+    {
       location = str_command.find("_postcondition", 0);
       m_violation_tested = POSTCONDITION;
     }
-    else if ((int)str_command.find("_assertion", 0) != -1) {
+    
+    else if ((int)str_command.find("_assertion", 0) != -1) 
+    {
       location = str_command.find("_assertion", 0);
       m_violation_tested = ASSERTION;
     }
-    else if ((int)str_command.find("_warning", 0) != -1) {
+    
+    else if ((int)str_command.find("_warning", 0) != -1) 
+    {
       location = str_command.find("_warning", 0);
       m_violation_tested = WARNING;
     }
 
     counter++;
     std::cout << "case number : " << counter << std::endl;
-    if (m_violation_tested != NON) {
+    
+    if (m_violation_tested != NON) 
+    {
 #if !defined(CGAL_NDEBUG)
       str_command = str_command.substr(0, location);
       std::cout << "Test " << m_violation_map[m_violation_tested]
@@ -296,7 +310,8 @@ bool Traits_base_test<Geom_traits_T>::perform()
 #endif
     }
 
-    try {
+    try 
+    {
       bool result;
       bool ignore = exec(str_stream, str_command, result);
       if (ignore) continue;
@@ -307,34 +322,48 @@ bool Traits_base_test<Geom_traits_T>::perform()
         result = false;
         // if (m_abort_on_error) abort = true;
       }
+      
       this->print_result(result);
       test_result &= result;
     }
-    catch (CGAL::Precondition_exception /* e */) {
-      if (m_violation_tested != PRECONDITION) {
+    
+    catch (CGAL::Precondition_exception /* e */) 
+    {
+      if (m_violation_tested != PRECONDITION) 
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Postcondition_exception /* e */) {
-      if (m_violation_tested != POSTCONDITION) {
+    
+    catch (CGAL::Postcondition_exception /* e */) 
+    {
+      if (m_violation_tested != POSTCONDITION) 
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Warning_exception /* e */) {
-      if (m_violation_tested != WARNING) {
+    
+    catch (CGAL::Warning_exception /* e */) 
+    {
+      if (m_violation_tested != WARNING) 
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Assertion_exception /* e */) {
-      if (m_violation_tested != ASSERTION) {
+    
+    catch (CGAL::Assertion_exception /* e */) 
+    {
+      if (m_violation_tested != ASSERTION) 
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-  }
+  
+  } //while (this->skip_comments(is, line)) loop
 
   is.close();
   return test_result;
