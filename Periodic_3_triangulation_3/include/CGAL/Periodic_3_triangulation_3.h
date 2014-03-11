@@ -796,7 +796,7 @@ public:
 
 #ifdef CGAL_NO_STRUCTURAL_FILTERING
   Cell_handle
-  locate(const Point & p,
+  periodic_locate(const Point & p, const Offset &o_p,
 	 Locate_type & lt, int & li, int & lj,
 	 Cell_handle start = Cell_handle()) const;
 #else // no CGAL_NO_STRUCTURAL_FILTERING
@@ -806,38 +806,38 @@ public:
 
 public:
   Cell_handle
-  inexact_locate(const Point& p,
+  inexact_periodic_locate(const Point& p, const Offset &o_p,
                  Cell_handle start = Cell_handle(),
                  int max_num_cells = CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
 protected:
   Cell_handle
-  exact_locate(const Point& p,
+  exact_periodic_locate(const Point& p, const Offset &o_p,
                Locate_type& lt,
                int& li, int & lj,
                Cell_handle start) const;
 
   Cell_handle
-  generic_locate(const Point& p,
+  generic_periodic_locate(const Point& p, const Offset &o_p,
                  Locate_type& lt,
                  int& li, int & lj,
                  Cell_handle start,
                  internal::Periodic_structural_filtering_3_tag) const {
-    return exact_locate(p, lt, li, lj, inexact_locate(p, start));
+    return exact_periodic_locate(p, o_p, lt, li, lj, inexact_periodic_locate(p, o_p, start));
   }
 
   Cell_handle
-  generic_locate(const Point& p,
+  generic_periodic_locate(const Point& p, const Offset &o_p,
                  Locate_type& lt,
                  int& li, int & lj,
                  Cell_handle start,
                  internal::No_periodic_structural_filtering_3_tag) const {
-    return exact_locate(p, lt, li, lj, start);
+    return exact_periodic_locate(p, o_p, lt, li, lj, start);
   }
 
 public:
 
   Cell_handle
-  locate(const Point & p,
+  periodic_locate(const Point & p, const Offset &o_p,
          Locate_type & lt, int & li, int & lj,
          Cell_handle start = Cell_handle()) const
   {
@@ -845,14 +845,14 @@ public:
     typedef typename internal::Periodic_structural_filtering_selector_3<
       TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
 
-    return generic_locate(p, lt, li, lj, start, Should_filter_tag());
+    return generic_periodic_locate(p, o_p, lt, li, lj, start, Should_filter_tag());
   }
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
 protected:
   /** @name Location helpers */ //@{
-  Cell_handle periodic_locate(const Point & p, const Offset &o_p,
-    Locate_type & lt, int & li, int & lj, Cell_handle start) const;
+//  Cell_handle periodic_locate(const Point & p, const Offset &o_p,
+//    Locate_type & lt, int & li, int & lj, Cell_handle start) const;
 
   Bounded_side side_of_cell(const Point & p, const Offset &off,
       Cell_handle c, Locate_type & lt, int & i, int & j) const;
@@ -871,10 +871,10 @@ public:
   /** Wrapper function calling locate with an empty offset if there was no
     * offset given.
     */
-//  Cell_handle locate(const Point & p, Locate_type & lt, int & li, int & lj,
-//      Cell_handle start = Cell_handle()) const {
-//    return periodic_locate(p, Offset(), lt, li, lj, start);
-//  }
+  Cell_handle locate(const Point & p, Locate_type & lt, int & li, int & lj,
+      Cell_handle start = Cell_handle()) const {
+    return periodic_locate(p, Offset(), lt, li, lj, start);
+  }
 
   Bounded_side side_of_cell(const Point & p,
       Cell_handle c, Locate_type & lt, int & i, int & j) const {
@@ -1582,9 +1582,14 @@ periodic_triangle(const Cell_handle c, int i) const
   * returns a vertex (Cell_handle,li) if lt == VERTEX
   */
 template < class GT, class TDS >
-typename Periodic_3_triangulation_3<GT,TDS>::Cell_handle
-Periodic_3_triangulation_3<GT,TDS>::periodic_locate(
-    const Point & p, const Offset &o_p,
+inline typename Periodic_3_triangulation_3<GT,TDS>::Cell_handle
+Periodic_3_triangulation_3<GT,TDS>::
+#ifdef CGAL_NO_STRUCTURAL_FILTERING
+periodic_locate
+#else
+exact_periodic_locate
+#endif
+(const Point & p, const Offset &o_p,
     Locate_type & lt, int & li, int & lj, Cell_handle start) const {
   int cumm_off = 0;
   Offset off_query = o_p;
@@ -1754,24 +1759,12 @@ try_next_cell:
   return c;
 }
 
-template < class GT, class TDS >
-inline typename Periodic_3_triangulation_3<GT,TDS>::Cell_handle
-Periodic_3_triangulation_3<GT,TDS>::
-#ifdef CGAL_NO_STRUCTURAL_FILTERING
-locate
-#else
-exact_locate
-#endif
-(const Point & p, Locate_type & lt, int & li, int & lj,
-    Cell_handle start) const {
-  return periodic_locate(p, Offset(), lt, li, lj, start);
-}
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 template < class GT, class TDS >
 typename Periodic_3_triangulation_3<GT,TDS>::Cell_handle
 Periodic_3_triangulation_3<GT,TDS>::
-inexact_locate(const Point& p,
+inexact_periodic_locate(const Point& p, const Offset& o_p,
                Cell_handle start,
                int max_num_cells) const
 {
