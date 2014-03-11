@@ -891,6 +891,14 @@ public:
 
     return generic_periodic_locate(p, o_p, lt, li, lj, start, Should_filter_tag());
   }
+
+  Cell_handle
+  inexact_locate(const Point& p,
+                 Cell_handle start = Cell_handle(),
+                 int max_num_cells = CGAL_PT3_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const
+  {
+	  return inexact_periodic_locate(p, Offset(), start, max_num_cells);
+  }
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
 protected:
