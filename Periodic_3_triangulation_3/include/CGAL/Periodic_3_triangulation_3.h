@@ -834,6 +834,50 @@ protected:
     return exact_periodic_locate(p, o_p, lt, li, lj, start);
   }
 
+  Orientation
+  inexact_orientation(const Point &p, const Point &q,
+                      const Point &r, const Point &s) const
+  {
+    const double px = to_double(p.x());
+    const double py = to_double(p.y());
+    const double pz = to_double(p.z());
+    const double qx = to_double(q.x());
+    const double qy = to_double(q.y());
+    const double qz = to_double(q.z());
+    const double rx = to_double(r.x());
+    const double ry = to_double(r.y());
+    const double rz = to_double(r.z());
+    const double sx = to_double(s.x());
+    const double sy = to_double(s.y());
+    const double sz = to_double(s.z());
+
+    const double pqx = qx - px;
+    const double pqy = qy - py;
+    const double pqz = qz - pz;
+    const double prx = rx - px;
+    const double pry = ry - py;
+    const double prz = rz - pz;
+    const double psx = sx - px;
+    const double psy = sy - py;
+    const double psz = sz - pz;
+
+    const double det = determinant(pqx, pqy, pqz,
+                                   prx, pry, prz,
+                                   psx, psy, psz);
+    if (det > 0) return POSITIVE;
+    if (det < 0) return NEGATIVE;
+    return ZERO;
+  }
+
+  Orientation
+  inexact_orientation(const Point &p, const Point &q,
+                      const Point &r, const Point &s,
+                      const Offset& o_p, const Offset& o_q,
+                      const Offset& o_r, const Offset& o_s) const
+  {
+	  return inexact_orientation(p+o_p, q+o_q, r+o_r, s+o_s);
+  }
+
 public:
 
   Cell_handle
@@ -1768,7 +1812,126 @@ inexact_periodic_locate(const Point& p, const Offset& o_p,
                Cell_handle start,
                int max_num_cells) const
 {
-	return start;
+	int cumm_off = 0;
+	Offset off_query = o_p;
+	if (number_of_vertices() == 0) {
+		return Cell_handle();
+	}
+	CGAL_triangulation_assertion(number_of_vertices() != 0);
+
+	if (start == Cell_handle()) {
+		start = cells_begin();
+	}
+
+	cumm_off = start->offset(0) | start->offset(1)
+	    		| start->offset(2) | start->offset(3);
+	if (is_1_cover() && cumm_off != 0) {
+		if (((cumm_off & 4) == 4) && (FT(2)*p.x()<(_domain.xmax()+_domain.xmin())))
+			off_query += Offset(1,0,0);
+		if (((cumm_off & 2) == 2) && (FT(2)*p.y()<(_domain.ymax()+_domain.ymin())))
+			off_query += Offset(0,1,0);
+		if (((cumm_off & 1) == 1) && (FT(2)*p.z()<(_domain.zmax()+_domain.zmin())))
+			off_query += Offset(0,0,1);
+	}
+
+	CGAL_triangulation_postcondition(start!=Cell_handle());
+	CGAL_triangulation_assertion(start->neighbor(0)->neighbor(
+			start->neighbor(0)->index(start))==start);
+	CGAL_triangulation_assertion(start->neighbor(1)->neighbor(
+			start->neighbor(1)->index(start))==start);
+	CGAL_triangulation_assertion(start->neighbor(2)->neighbor(
+			start->neighbor(2)->index(start))==start);
+	CGAL_triangulation_assertion(start->neighbor(3)->neighbor(
+			start->neighbor(3)->index(start))==start);
+
+	// We implement the remembering visibility/stochastic walk.
+
+	// Remembers the previous cell to avoid useless orientation tests.
+	Cell_handle previous = Cell_handle();
+	Cell_handle c = start;
+
+	boost::rand48 rng;
+	boost::uniform_smallint<> four(0, 3);
+	boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
+
+
+	// Now treat the cell c.
+try_next_cell:
+	// For the remembering stochastic walk,
+	// we need to start trying with a random index :
+	int i = die4();
+	// For the remembering visibility walk (Delaunay only), we don't :
+	// int i = 0;
+
+	cumm_off =
+			c->offset(0) | c->offset(1) | c->offset(2) | c->offset(3);
+
+	bool simplicity_criterion = (cumm_off == 0) && (off_query.is_null());
+
+	// We know that the 4 vertices of c are positively oriented.
+	// So, in order to test if p is seen outside from one of c's facets,
+	// we just replace the corresponding point by p in the orientation
+	// test.  We do this using the arrays below.
+
+	Offset off[4];
+	const Point* pts[4] = { &(c->vertex(0)->point()),
+			&(c->vertex(1)->point()),
+			&(c->vertex(2)->point()),
+			&(c->vertex(3)->point()) };
+
+	if (!simplicity_criterion && is_1_cover() ) {
+		for (int i=0; i<4; i++) {
+			off[i] = int_to_off(c->offset(i));
+		}
+	}
+
+	if (!is_1_cover()) {
+		// Just fetch the vertices of c as points with offsets
+		for (int i=0; i<4; i++) {
+			pts[i] = &(c->vertex(i)->point());
+			off[i] = get_offset(c,i);
+		}
+	}
+
+	for (int i=0; i != 4; ++i) {
+		Cell_handle next = c->neighbor(i);
+		if (previous == next) {
+			continue;
+		}
+
+		// We temporarily put p at i's place in pts.
+		const Point* backup = pts[i];
+		pts[i] = &p;
+
+		if (simplicity_criterion && is_1_cover() ) {
+			if ( inexact_orientation(*pts[0], *pts[1], *pts[2], *pts[3]) != NEGATIVE ) {
+				pts[i] = backup;
+				continue;
+			}
+		}
+		else {
+			Offset backup_off;
+
+			backup_off = off[i];
+			off[i] = off_query;
+
+			if ( inexact_orientation(*pts[0], *pts[1], *pts[2], *pts[3],
+					off[0], off[1], off[2], off[3]) != NEGATIVE ) {
+				pts[i] = backup;
+				off[i] = backup_off;
+				continue;
+			}
+		}
+
+		// Test whether we need to adapt the offset of the query point.
+		// This means, if we get out of the current cover.
+		off_query = combine_offsets(off_query, get_neighbor_offset(c,i,next));
+		previous = c;
+		c = next;
+		goto try_next_cell;
+	}
+
+	return c;
 }
 #endif
 
