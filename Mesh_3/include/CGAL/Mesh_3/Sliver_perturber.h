@@ -46,6 +46,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
+#include <CGAL/Mesh_3/Has_timestamp.h>
 
 #include <boost/format.hpp>
 #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
@@ -250,11 +251,20 @@ public:
  
 private:
 
-  struct VHash 
+  template <bool HasTimestamp>
+  struct VHash
   {
     std::size_t operator()(Vertex_handle vh) const
     {
-	  	return boost::hash_value(&*vh);
+      return vh->time_stamp();
+    }
+  };
+  template <>
+  struct VHash<false>
+  {
+    std::size_t operator()(Vertex_handle vh) const
+    {
+      return boost::hash_value(&*vh);
     }
   };
 
@@ -602,7 +612,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
                                "(%1%,%2%,%4%) (%|3$.1f| iteration/s)")
     % pqueue_size
     % iteration_nb
-    % (iteration_nb / timer.time())
+    % 0//(iteration_nb / timer.time())
     % bad_vertices.size();
 #endif
     
@@ -612,7 +622,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
                                "bound %5%: (%1%,%2%,%4%) (%|3$.1f| iteration/s)")
     % pqueue_size
     % iteration_nb
-    % (iteration_nb / running_time_.time())
+    % 0//(iteration_nb / running_time_.time())
     % bad_vertices.size()
     % sliver_bound;
 #endif
@@ -651,7 +661,10 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   int pqueue_size = 0;
 
-  typedef boost::unordered_map<Vertex_handle,PVertex,VHash> M;
+  typedef std::iterator_traits<Vertex_handle>::value_type Vertex;
+  typedef VHash<CGAL::internal::Mesh_3::Has_timestamp<Vertex>::value> Hash_fct;
+  typedef boost::unordered_map<Vertex_handle,PVertex,Hash_fct> M;
+
   M vpm;
   for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
        cit != tr_.finite_cells_end() ;
