@@ -1,5 +1,4 @@
-// Copyright (c) 2001  Tel-Aviv University (Israel).
-// 2009,2014 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2001, 2009, 2014 Tel-Aviv University (Israel), Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +16,7 @@
 // $Id$
 //
 //
-// author(s)     : Eli Packer <elip@post.tau.ac.il>, 
+// author(s)     : Eli Packer <elip@post.tau.ac.il>,
 //                 Waqar Khan <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_SNAP_ROUNDING_KD_2_H
