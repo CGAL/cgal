@@ -126,6 +126,12 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
       LA_vector::template Property<Has_dot_product_tag>::value> {
 	    typedef CartesianDVectorBase::Squared_distance_to_origin_via_dotprod<Self> type;
     };
+    template<class D> struct Functor<Point_to_vector_tag,D> {
+	    typedef CartesianDVectorBase::Identity_functor<Self> type;
+    };
+    template<class D> struct Functor<Vector_to_point_tag,D> {
+	    typedef CartesianDVectorBase::Identity_functor<Self> type;
+    };
 
     CGAL_CONSTEXPR Cartesian_LA_base_d(){}
     CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}

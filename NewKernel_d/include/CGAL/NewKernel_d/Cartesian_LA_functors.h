@@ -307,6 +307,11 @@ template<class R_> struct PV_dimension {
 	}
 };
 
+template<class R_> struct Identity_functor {
+  CGAL_FUNCTOR_INIT_IGNORE(Identity_functor)
+  template<class T>
+  T const& operator()(T const&t) const { return t; }
+};
 
 }
 } // namespace CGAL
