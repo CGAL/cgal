@@ -1,6 +1,6 @@
 #ifndef CGAL_VECTOR_DET_ITER_VEC_VEC_H
 #define CGAL_VECTOR_DET_ITER_VEC_VEC_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

@@ -1,7 +1,7 @@
 #ifndef CGAL_KERNELD_TYPES_RAY_H
 #define CGAL_KERNELD_TYPES_RAY_H
 #include <utility>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
 namespace CGAL {
 template <class R_> class Ray {

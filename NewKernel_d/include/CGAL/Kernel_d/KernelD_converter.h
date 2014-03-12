@@ -6,7 +6,7 @@
 #include <CGAL/typeset.h>
 #include <CGAL/Object.h>
 #include <CGAL/NT_converter.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>

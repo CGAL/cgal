@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iterator>
 #include <CGAL/Dimension.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 
 namespace CGAL {
 namespace CartesianDKernelFunctors {

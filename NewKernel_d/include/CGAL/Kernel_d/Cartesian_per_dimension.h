@@ -1,6 +1,6 @@
 #ifndef CGAL_KD_CARTESIAN_PER_DIM_H
 #define CGAL_KD_CARTESIAN_PER_DIM_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 

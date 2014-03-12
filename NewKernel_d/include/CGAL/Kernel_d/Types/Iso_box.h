@@ -2,7 +2,7 @@
 #define CGAL_KERNELD_TYPES_ISO_BOX_H
 #include <utility>
 #include <CGAL/basic.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/transforming_pair_iterator.h>
 namespace CGAL {

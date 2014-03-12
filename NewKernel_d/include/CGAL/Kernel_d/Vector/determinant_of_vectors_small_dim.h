@@ -1,6 +1,6 @@
 #ifndef CGAL_VECTOR_DETVEC_SMALL_H
 #define CGAL_VECTOR_DETVEC_SMALL_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/determinant_of_vectors.h>
 

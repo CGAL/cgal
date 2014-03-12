@@ -7,7 +7,7 @@
 #endif
 #include <x86intrin.h> // FIXME: other platforms call it differently
 
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/enum.h> // CGAL::Sign
 #include <CGAL/number_utils.h> // CGAL::sign

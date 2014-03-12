@@ -11,7 +11,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/transforming_pair_iterator.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Kernel_d/functor_properties.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>

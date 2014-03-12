@@ -1,6 +1,6 @@
 #ifndef CGAL_KD_CARTESIAN_STATIC_FILTERS_H
 #define CGAL_KD_CARTESIAN_STATIC_FILTERS_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/internal/Static_filters/tools.h> // bug, should be included by the next one
 #include <CGAL/internal/Static_filters/Orientation_2.h>

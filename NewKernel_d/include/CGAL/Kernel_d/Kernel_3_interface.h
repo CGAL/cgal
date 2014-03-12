@@ -1,7 +1,7 @@
 #ifndef CGAL_KD_KERNEL_3_INTERFACE_H
 #define CGAL_KD_KERNEL_3_INTERFACE_H
 
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/marcutils.h>
 #include <CGAL/tuple.h>

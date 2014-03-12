@@ -2,7 +2,7 @@
 #define CGAL_VECTOR_DET_ITER_PTS_ITER_VEC_H
 #include <functional>
 #include <CGAL/transforming_iterator.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

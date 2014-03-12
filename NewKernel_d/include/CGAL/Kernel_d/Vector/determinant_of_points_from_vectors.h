@@ -1,6 +1,6 @@
 #ifndef CGAL_VECTOR_DETPTS_H
 #define CGAL_VECTOR_DETPTS_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

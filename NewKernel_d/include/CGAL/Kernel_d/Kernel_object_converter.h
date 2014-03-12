@@ -1,7 +1,7 @@
 #ifndef CGAL_KD_KO_CONVERTER_H
 #define CGAL_KD_KO_CONVERTER_H
 #include <CGAL/marcutils.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h> // First_if_different
 namespace CGAL {
 template <class Tag_, class K1, class K2> struct KO_converter;

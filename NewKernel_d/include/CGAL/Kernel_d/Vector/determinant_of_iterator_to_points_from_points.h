@@ -1,6 +1,6 @@
 #ifndef CGAL_VECTOR_DET_ITER_PTS_PTS_H
 #define CGAL_VECTOR_DET_ITER_PTS_PTS_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
 
 namespace CGAL {

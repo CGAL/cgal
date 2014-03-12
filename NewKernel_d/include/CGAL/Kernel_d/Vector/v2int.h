@@ -10,7 +10,7 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/transforming_iterator.h>
 #include <CGAL/determinant_of_vectors.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 
 
 // What are the pros and cons of having NT be int vs double?

@@ -5,7 +5,7 @@
 #include <CGAL/Origin.h>
 
 #include <CGAL/representation_tags.h>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/typeset.h>
 #include <CGAL/Kernel_d/Dimension_base.h>

@@ -1,6 +1,6 @@
 #ifndef CGAL_DEFINE_KERNEL_TYPES_H
 #define CGAL_DEFINE_KERNEL_TYPES_H
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 #include <CGAL/typeset.h>
 #ifdef CGAL_CXX0X
 #include <type_traits>

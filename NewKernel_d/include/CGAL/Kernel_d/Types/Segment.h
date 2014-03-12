@@ -1,7 +1,7 @@
 #ifndef CGAL_KERNELD_SEGMENTD_H
 #define CGAL_KERNELD_SEGMENTD_H
 #include <utility>
-#include <CGAL/functor_tags.h>
+#include <CGAL/Kernel_d/functor_tags.h>
 namespace CGAL {
 template <class R_> class Segment {
 	typedef typename Get_type<R_, FT_tag>::type FT_;
