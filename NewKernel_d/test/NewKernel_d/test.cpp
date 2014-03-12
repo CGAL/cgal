@@ -1,13 +1,13 @@
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
 #include <typeinfo>
-#include <CGAL/Kernel_d/Cartesian_base.h>
-#include <CGAL/Kernel_d/Cartesian_static_filters.h>
-#include <CGAL/Kernel_d/Cartesian_filter_NT.h>
-#include <CGAL/Kernel_d/Cartesian_filter_K.h>
-#include <CGAL/Kernel_d/Lazy_cartesian.h>
-#include <CGAL/Kernel_d/Wrapper/Cartesian_wrap.h>
-#include <CGAL/Kernel_d/Kernel_d_interface.h>
+#include <CGAL/NewKernel_d/Cartesian_base.h>
+#include <CGAL/NewKernel_d/Cartesian_static_filters.h>
+#include <CGAL/NewKernel_d/Cartesian_filter_NT.h>
+#include <CGAL/NewKernel_d/Cartesian_filter_K.h>
+#include <CGAL/NewKernel_d/Lazy_cartesian.h>
+#include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
+#include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>

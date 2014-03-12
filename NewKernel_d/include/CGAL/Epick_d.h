@@ -1,10 +1,10 @@
 #ifndef CGAL_EPICK_D_H
 #define CGAL_EPICK_D_H
-#include <CGAL/Kernel_d/Cartesian_base.h>
-#include <CGAL/Kernel_d/Cartesian_static_filters.h>
-#include <CGAL/Kernel_d/Cartesian_filter_K.h>
-#include <CGAL/Kernel_d/Wrapper/Cartesian_wrap.h>
-#include <CGAL/Kernel_d/Kernel_d_interface.h>
+#include <CGAL/NewKernel_d/Cartesian_base.h>
+#include <CGAL/NewKernel_d/Cartesian_static_filters.h>
+#include <CGAL/NewKernel_d/Cartesian_filter_K.h>
+#include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
+#include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
 
