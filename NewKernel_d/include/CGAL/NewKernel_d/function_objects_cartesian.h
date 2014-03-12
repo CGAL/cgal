@@ -879,6 +879,30 @@ template<class R_> struct Squared_distance : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Squared_distance_tag,(CartesianDKernelFunctors::Squared_distance<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
+template<class R_> struct Scalar_product : private Store_kernel<R_> {
+  CGAL_FUNCTOR_INIT_STORE(Scalar_product)
+  typedef R_ R;
+  typedef typename Get_type<R, RT_tag>::type RT;
+  typedef typename Get_type<R, Vector_tag>::type Vector;
+  typedef typename Get_functor<R, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CI;
+  typedef RT result_type;
+  typedef Vector first_argument_type;
+  typedef Vector second_argument_type;
+  result_type operator()(Vector const&a, Vector const&b)const{
+    CI ci(this->kernel());
+    std::multiplies<RT> f;
+    // TODO: avoid this RT(0)+...
+    return std::accumulate(
+	make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),f),
+	make_transforming_pair_iterator(ci(a,  End_tag()),ci(b,  End_tag()),f),
+	RT(0));
+  }
+};
+}
+
+CGAL_KD_DEFAULT_FUNCTOR(Scalar_product_tag,(CartesianDKernelFunctors::Scalar_product<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
+
+namespace CartesianDKernelFunctors {
 template<class R_> struct Compare_distance : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Compare_distance)
 	typedef R_ R;
