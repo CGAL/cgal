@@ -1,0 +1,150 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PreKernel.tex
+% +------------------------------------------------------------------------+
+% | 21.05.2012   Marc Glisse
+% | Package: NewKernel_d
+% |
+\RCSdef{\RCSPreKernelRev}{$Id$}
+\RCSdefDate{\RCSPreKernelDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PreKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+%copied from Kernel_23
+The concept of a {\em prekernel} is defined by a set of requirements on
+the provision of certain types and access member functions to create
+objects of these types. The types are function object classes to be used
+within the algorithms and data structures of \cgal. This allows you to
+use any model of a kernel as a traits class in the Cgal algorithms and
+data structures, unless they require types beyond those provided by a
+kernel.
+
+A kernel provides types, construction objects, and generalized
+predicates. The former replace constructors of the kernel classes and
+constructive procedures in the kernel. There are also function objects
+replacing operators, especially for equality testing. 
+
+Types and functors are identified by tags, which may be any type (like
+\ccc{CGAL::Segment_tag}). As a special case, the construction functor of
+a type identified by \ccc{Some_tag} is identified by the tag
+\ccc{Construct_ttag<Some_tag>}, and the conversion functor by
+\ccc{Convert_ttag<Some_tag>}.
+
+Depending on \ccc{Default_ambient_dimension}, a kernel has 2
+constructors, a default constructor and a constructor that takes as
+argument an \ccc{int} for the dimension.
+
+
+%\ccGeneralizes
+%
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+
+\ccNestedType{Default_ambient_dimension}{\ccc{Dimension_tag<d>} where \ccc{d} is the ambient dimension or \ccc{Dynamic_dimension_tag} if the dimension is unknown.}
+\ccGlue
+\ccNestedType{Max_ambient_dimension}{\ccc{Dimension_tag<d>} where \ccc{d} is an upper bound on the ambient dimension or \ccc{Dynamic_dimension_tag}.}
+
+\ccNestedType{FT}{a model of \ccc{FieldNumberType}}
+\ccGlue
+\ccNestedType{RT}{a model of \ccc{RingNumberType}}
+
+% Not documented in the first version
+\ccNestedType{LA}{a model of \ccc{LinearAlgebraSomething} using \ccc{RT}}
+
+The following types describe the return types of predicates.  They typically
+map to \ccc{bool} and \cgal\ kernel enum types, except when an interval arithmetic
+number type is used such as within the filtering kernels, in which case it is
+\ccc{Uncertain<bool>} or similar.
+
+\ccNestedType{Boolean}{\ccc{bool} or \ccc{Uncertain<bool>}}
+\ccGlue
+\ccNestedType{Sign}{\ccc{CGAL::Sign} or \ccc{Uncertain<CGAL::Sign>}}
+\ccGlue
+\ccNestedType{Comparison_result}{\ccc{CGAL::Comparison_result} or \ccc{Uncertain<CGAL::Comparison_result>}}
+\ccGlue
+\ccNestedType{Orientation}{\ccc{CGAL::Orientation} or \ccc{Uncertain<CGAL::Orientation>}}
+\ccGlue
+\ccNestedType{Oriented_side}{\ccc{CGAL::Oriented_side} or \ccc{Uncertain<CGAL::Oriented_side>}}
+\ccGlue
+\ccNestedType{Bounded_side}{\ccc{CGAL::Bounded_side} or \ccc{Uncertain<CGAL::Bounded_side>}}
+\ccGlue
+\ccNestedType{Angle}{\ccc{CGAL::Angle} or \ccc{Uncertain<CGAL::Angle>}}
+
+\ccHeading{Geometric Objects}
+
+%\ccNestedType{template <class Tag> struct Type<Tag>}{This nested template class defines an object type \ccc{type}. For instance, \ccc{Type<Point_tag>::type} is the type of points.}
+\ccNestedType{Point, \ldots}{Geometric object type}
+
+\ccNestedType{Object_list}{A typedef for \ccc{typeset<Point_tag,...>}
+with the list of tags corresponding to the provided geometric object
+types.}
+
+\ccHeading{Iterators}
+
+\ccNestedType{Point_cartesian_const_iterator, \ldots}{Iterator}
+
+\ccNestedType{Iterator_list}{A typedef for
+\ccc{typeset<Point_cartesian_const_iterator_tag,...>} with the list of
+tags corresponding to the provided iterators.}
+
+
+\ccHeading{Function objects}
+
+\ccNestedType{template <class Tag, class Option> struct Functor<Tag,Option=Default>}{This nested template class defines a functor type \ccc{type}. For instance, \ccc{Functor<Orientation_tag>::type} is the orientation predicate. Functors that are not provided should all be \ccc{Null_functor}.}
+
+
+\ccCreation
+\ccCreationVariable{kernel}  %% choose variable name
+
+\ccConstructor{PreKernel();}{default constructor.}
+\ccConstructor{PreKernel(int d);}{constructor for dimension $d$.}
+
+\ccOperations
+
+\ccMethod{int dimension();}{returns the dimension (or UNKNOWN\_DIMENSION)}
+
+\ccHasModels
+
+\ccc{Some_class},
+\ccc{Some_other_class}.
+
+\ccSeeAlso
+
+Kernel\_d
+%Some\_other\_concept,
+%%\ccc{some_other_function}.
+
+%\ccExample
+%
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/PreKernel.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+%
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/PreKernel.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
