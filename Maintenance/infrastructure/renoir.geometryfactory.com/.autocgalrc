@@ -1,7 +1,7 @@
 # -*- mode: shell-script -*-
 
 CGAL_TESTER="lrineau"
-CGAL_TESTER_NAME="GeometryFactory"
+CGAL_TESTER_NAME="renoir (GF)"
 CGAL_TESTER_ADDRESS=Laurent.Rineau__cgal_testsuite@normalesup.org
 MYSHELL="/bin/sh -c"
 LC_ALL=C

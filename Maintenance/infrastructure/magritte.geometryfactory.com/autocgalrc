@@ -1,7 +1,7 @@
 PATH=$PATH:/usr/local/bin
 export PATH
 CGAL_TESTER="cgaltester"
-CGAL_TESTER_NAME="GeometryFactory"
+CGAL_TESTER_NAME="magritte (GF)"
 CGAL_TESTER_ADDRESS=sebastien.loriot@geometryfactory.com
 CGAL_ROOT=$HOME/cgal_test
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
