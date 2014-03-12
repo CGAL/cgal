@@ -140,6 +140,20 @@
 #define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
 #endif
 
+// Some random list to let us write C++11 without thinking about
+// each feature we are using.
+#if __cplusplus >= 201103L && \
+    !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && \
+    !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE && \
+    !defined CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS && \
+    !defined CGAL_CFG_NO_CPP0X_TUPLE && \
+    !defined CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX && \
+    !defined CGAL_CFG_NO_CPP0X_STATIC_ASSERT && \
+    !defined CGAL_CFG_NO_CPP0X_DECLTYPE && \
+    !defined CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS && \
+    !defined CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
+#define CGAL_CXX11
+#endif
 
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it

@@ -1,5 +1,6 @@
 #ifndef CGAL_KERNELD_SEGMENTD_H
 #define CGAL_KERNELD_SEGMENTD_H
+#include <CGAL/config.h>
 #include <utility>
 #include <CGAL/NewKernel_d/functor_tags.h>
 namespace CGAL {

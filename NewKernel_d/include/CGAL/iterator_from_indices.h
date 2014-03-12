@@ -1,5 +1,6 @@
 #ifndef CGAL_ITERATOR_FROM_INDICES_H
 #define CGAL_ITERATOR_FROM_INDICES_H
+#include <CGAL/config.h>
 #include <boost/iterator/iterator_facade.hpp>
 namespace CGAL {
 template <class Ref_>

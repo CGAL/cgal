@@ -1,6 +1,6 @@
 #ifndef CGAL_LA_EIGEN_H
 #define CGAL_LA_EIGEN_H
-
+#include <CGAL/config.h>
 #ifndef CGAL_EIGEN3_ENABLED
 #error Requires Eigen
 #endif

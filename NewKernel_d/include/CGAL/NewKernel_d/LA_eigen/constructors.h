@@ -1,6 +1,6 @@
 #ifndef ecs_h
 #define ecs_h
-
+#include <CGAL/config.h>
 #ifndef CGAL_EIGEN3_ENABLED
 #error Requires Eigen
 #endif
@@ -20,8 +20,8 @@ namespace CGAL {
     typedef typename Vector_::Scalar NT;
 
     private:
-    static void check_dim(int d){
-      int m = result_type::MaxSizeAtCompileTime;
+    static void check_dim(int CGAL_assertion_code(d)){
+      CGAL_assertion_code(int m = result_type::MaxSizeAtCompileTime;)
       CGAL_assertion((m == Eigen::Dynamic) || (d <= m));
       // could omit the first check since they use a big value for Dynamic.
     }

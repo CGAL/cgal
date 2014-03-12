@@ -1,5 +1,6 @@
 #ifndef CGAL_TYPESET_H
 #define CGAL_TYPESET_H
+#include <CGAL/config.h>
 #ifdef CGAL_CXX11
 #include <type_traits>
 #else

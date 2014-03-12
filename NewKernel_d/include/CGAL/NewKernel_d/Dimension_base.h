@@ -21,7 +21,7 @@ struct Dimension_base {
 template<int dim_>
 struct Dimension_base<Dimension_tag<dim_> > {
 	Dimension_base(){}
-	Dimension_base(int dim){CGAL_assertion(dim_==dim);}
+	Dimension_base(int CGAL_assertion_code(dim)){CGAL_assertion(dim_==dim);}
 	int dimension()const{return dim_;}
 	void set_dimension(int dim){CGAL_assertion(dim_==dim);}
 };

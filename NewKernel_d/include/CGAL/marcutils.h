@@ -1,6 +1,7 @@
 #ifndef marcutils
 #define marcutils
 
+#include <CGAL/config.h>
 #ifdef CGAL_CXX11
 #include <type_traits>
 #include <utility>

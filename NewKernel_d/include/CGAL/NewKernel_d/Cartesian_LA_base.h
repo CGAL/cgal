@@ -14,6 +14,7 @@
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/NewKernel_d/LA_eigen/LA.h>
 #else
+#error Eigen3 is required
 #include <CGAL/NewKernel_d/LA_default/LA.h>
 #endif
 

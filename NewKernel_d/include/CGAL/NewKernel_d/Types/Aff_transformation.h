@@ -1,5 +1,6 @@
 #ifndef CGAL_KD_TYPE_AFF_TRANSFORMATION_H
 #define CGAL_KD_TYPE_AFF_TRANSFORMATION_H
+#include <CGAL/config.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <boost/preprocessor/repetition.hpp>
 
