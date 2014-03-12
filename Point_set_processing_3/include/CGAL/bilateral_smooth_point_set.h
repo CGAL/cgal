@@ -319,9 +319,10 @@ public:
 //=============================================================================
 /// \ingroup PkgPointSetProcessing
 /// 
-/// A function for bilateral point set denoising(smoothing) with sharp features
-/// More information see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
-/// \pre normals must be unit vectors
+/// This algorithm performs a bilateral point set denoising (smoothing) 
+/// while preserving sharp features.
+/// For more information, see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
+/// \pre Normals must be unit vectors
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
@@ -331,7 +332,7 @@ public:
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return average point move error.
+/// @return Average point move error.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
@@ -343,10 +344,10 @@ double
 bilateral_smooth_point_set(
   ForwardIterator first,    ///< iterator over the first input point.
   ForwardIterator beyond,   ///< past-the-end iterator over the input points.
-  PointPMap point_pmap,     ///< property map ForwardIterator -> Point_3.
-  NormalPMap normal_pmap,   ///< property map ForwardIterator -> Vector_3.
-  const unsigned int k,     ///< number of neighbors.
-  const typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
+  PointPMap point_pmap,     ///< property map: value_type of ForwardIterator -> Point_3.
+  NormalPMap normal_pmap,   ///< property map: value_type of ForwardIterator -> Vector_3.
+  unsigned int k,           ///< number of neighbors.
+  typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types

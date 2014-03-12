@@ -297,7 +297,7 @@ compute_density_weight_for_sample_point(
 
 //=============================================================================
 /// \ingroup PkgPointSetProcessing
-/// WLOP Algorithm: The simplification algorithm can produces a set of 
+/// The WLOP simplification algorithm can produce a set of 
 /// denoised, outlier-free and evenly distributed particles over the original 
 /// dense point cloud, so as to improve the reliability of other algorithms. 
 ///
@@ -314,7 +314,7 @@ compute_density_weight_for_sample_point(
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return iterator of the first point to down sampled points.
+/// @return iterator over the first point of down sampled points.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,
@@ -328,19 +328,21 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< iterator over the first input point.
   RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
   OutputIterator output,       ///< add back-inserter
-  PointPMap point_pmap,        ///< property map RandomAccessIterator-> Point_3
-  PointPMap point_pmap_output, ///< property map OutputIterator
-  const double retain_percentage,///< percentage of points to retain. 
-                                 ///< Default: 5%.
+  PointPMap point_pmap,        ///< property map: value_type of 
+                               ///< RandomAccessIterator -> Point_3
+  PointPMap point_pmap_output, ///< property map: value_type of 
+                               ///< OutputIterator -> Point_3
+  double retain_percentage,    ///< percentage of points to retain. 
+                               ///< Default: 5%.
   double radius,               ///< neighbors radius.
                                ///< this is the most important parameter need
                                ///< to tune.If it's too small, the result is 
                                ///< irregular. If it's too big, it will be very
                                ///< slow. Default: 0.05 * diameter of bbox.
-  const unsigned int iter_number,  ///< number of iterations. Default: 35.
-  const bool need_compute_density, ///< if needed to compute density when the
-                                   ///< input is nonuniform, Default: false. 
-  const Kernel&                    ///< geometric traits.
+  unsigned int iter_number,    ///< number of iterations. Default: 35.
+  bool need_compute_density,   ///< if needed to compute density when the
+                               ///< input is nonuniform, Default: false. 
+  const Kernel&                ///< geometric traits.
 )
 {
   // basic geometric types

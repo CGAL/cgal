@@ -126,7 +126,6 @@ base_point_selection(
 ///
 /// @tparam Kernel Geometric traits class.
 ///
-/// @return void
 template <typename Kernel>
 void
 update_new_point(
@@ -283,7 +282,6 @@ update_new_point(
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return void
 
 // This variant requires all parameters.
 template <typename OutputIteratorValueType,
@@ -297,8 +295,8 @@ edge_aware_upsample_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   OutputIterator output, ///< output iterator over points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
-  NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
+  PointPMap point_pmap, ///< property map: value_type of ForwardIterator -> Point_3
+  NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
   const typename Kernel::FT sharpness_sigma,  ///< control sharpness(0-90)
   const typename Kernel::FT edge_senstivity,  ///< edge senstivity(0-5)
   const typename Kernel::FT neighbor_radius, ///< initial size of neighbors.
