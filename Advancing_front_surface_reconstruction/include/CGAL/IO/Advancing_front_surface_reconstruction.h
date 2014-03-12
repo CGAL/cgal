@@ -143,6 +143,7 @@ write_to_file_gv(char* foutput, const Surface& S)
   else
     std::cout << ">> file for output : " << foutput_tmp << std::endl;
 
+  os.precision(17);
   os.clear();
 
   CGAL::set_ascii_mode(os);
@@ -660,6 +661,7 @@ write_to_file_iv(char* foutput, const Surface& S,
   else
     std::cout << ">> file for output : " << foutput_tmp << std::endl;
 
+  os.precision(17);
   os.clear();
 
   CGAL::set_ascii_mode(os);
@@ -856,6 +858,7 @@ write_to_file_vrml2(char* foutput, const Surface& S,
   else
     std::cout << ">> file for output : " << foutput_tmp << std::endl;
 
+  os.precision(17);
   os.clear();
 
   CGAL::set_ascii_mode(os);
@@ -929,6 +932,7 @@ write_to_file_stl(char* foutput, const Surface& S)
   else
     std::cout << ">> file for output : " << foutput_tmp << std::endl;
 
+  os.precision(17);
   os.clear();
 
   CGAL::set_ascii_mode(os);

@@ -13,17 +13,17 @@ namespace CGAL {
 Surface reconstruction from an unstructured point set is to find
 a surface that approximates these points. Several techniques have
 been applied to this problem.  Among them are variational
-methods \cgalCite{s-lsm-96,zomk-insru-00}, tensor voting \cgalCite{cgal:ml-cfsg-00}, implicit surface \cgalCite{hddhjmss-pssr-94,bc-ssrnn-00},
+methods \cgalCite{s-lsm-96}\cgalCite{zomk-insru-00}, tensor voting \cgalCite{cgal:ml-cfsg-00}, implicit surface \cgalCite{hddhjmss-pssr-94}\cgalCite{bc-ssrnn-00},
 and Delaunay triangulations. 
 
 For Delaunay based algorithms the output surface
 usually is the union of some triangles selected in the Delaunay
 triangulation of the input points.  Such algorithms can be volume oriented
-which output the boundary of selected tetrahedra \cgalCite{abe-cbscc-97,ack-pcubm-01}, or surface
+which output the boundary of selected tetrahedra \cgalCite{abe-cbscc-97}\cgalCite{ack-pcubm-01}, or surface
 oriented, that is they explicitely select triangles.
 
 In most surface oriented Delaunay-based algorithms triangles are
-selected independently, that is in parallel \cgalCite{agj-lcsr-00,ab-srvf-98}.
+selected independently, that is in parallel \cgalCite{agj-lcsr-00}\cgalCite{ab-srvf-98}.
 
 The surface oriented Delaunay-based surface reconstruction algorithm
 presented in this chapter selects triangles sequentially, that is by
@@ -32,7 +32,7 @@ most *plausible* triangle first, and only adds triangles in a way
 that the surface remains an orientable manifold.
  
 Two other examples of this greedy approach are the ball pivoting
-algorithm and Boyer and Petitjean's algorithm \cgalCite{bmrst-bpasr-99, pb-rnrps-01}. In both
+algorithm and Boyer and Petitjean's algorithm \cgalCite{bmrst-bpasr-99}\cgalCite{pb-rnrps-01}. In both
 algorithms a triangulated surface is incrementally grown starting from
 a seed triangle. Ball pivoting is fast, but the quality of the
 reconstruction depends on user defined parameters corresponding to the
