@@ -5,7 +5,7 @@
 #include <CGAL/NewKernel_d/Cartesian_filter_K.h>
 #include <CGAL/NewKernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/NewKernel_d/Kernel_d_interface.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/Interval_nt.h>
 
 
@@ -14,7 +14,7 @@ namespace CGAL {
   Cartesian_filter_K< \
     Cartesian_base_d<double, Dim>, \
     Cartesian_base_d<Interval_nt_advanced, Dim>, \
-    Cartesian_base_d<Gmpq, Dim> \
+    Cartesian_base_d<internal::Exact_field_selector<double>::Type, Dim> \
   >
 template<class Dim>
 struct Epick_d_help1
