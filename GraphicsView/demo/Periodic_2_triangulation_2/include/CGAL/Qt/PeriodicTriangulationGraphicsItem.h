@@ -214,6 +214,7 @@ namespace CGAL {
           itype = T::UNIQUE_COVER_DOMAIN;
           break;
         case NONE:
+        default:
           assert(false);
           itype = T::STORED;
           break;
@@ -344,7 +345,9 @@ namespace CGAL {
       typename T::Covering_sheets sheets = t->number_of_sheets();
       for (int x=0; x<sheets[0]; ++x) {
         for (int y=0; y<sheets[1]; ++y) {
-          painter->drawRect(domain.xmin() + x*dx, domain.ymin() + y*dy, dx, dy);
+          painter->drawRect((int)(domain.xmin() + x*dx),
+                            (int)(domain.ymin() + y*dy),
+                            (int)dx, (int)dy);
         }
       }
       m_painter = painter;
