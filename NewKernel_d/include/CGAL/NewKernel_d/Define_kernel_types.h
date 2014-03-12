@@ -2,7 +2,7 @@
 #define CGAL_DEFINE_KERNEL_TYPES_H
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/typeset.h>
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 #include <type_traits>
 #else
 #include <boost/type_traits.hpp>

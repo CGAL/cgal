@@ -10,7 +10,7 @@
 
 namespace CGAL {
 namespace CartesianDVectorBase {
-#ifndef CGAL_CXX0X
+#ifndef CGAL_CXX11
 namespace internal {
 template<class R_,int dim_> struct Construct_LA_vector_ {
 	struct Never_use {};
@@ -36,7 +36,7 @@ BOOST_PP_REPEAT_FROM_TO(2, 11, CODE, _ )
 
 template<class R_,class Zero_> struct Construct_LA_vector
 : private Store_kernel<R_>
-#ifndef CGAL_CXX0X
+#ifndef CGAL_CXX11
 , public internal::Construct_LA_vector_<R_,R_::Default_ambient_dimension::value>
 #endif
 {
@@ -62,12 +62,12 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	result_type operator()(result_type const& v)const{
 		return v;
 	}
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	result_type operator()(result_type&& v)const{
 		return std::move(v);
 	}
 #endif
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template<class...U>
 	typename std::enable_if<Constructible_from_each<RT,U...>::value &&
 		(sizeof...(U)==static_dim), result_type>::type
@@ -151,7 +151,7 @@ template<class R_> struct Compute_cartesian_coordinate {
 	typedef typename R::Vector_ first_argument_type;
 	typedef int second_argument_type;
 	typedef Tag_true Is_exact;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 #else
 	typedef RT const& result_type;

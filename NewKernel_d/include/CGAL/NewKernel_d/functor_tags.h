@@ -17,7 +17,7 @@ namespace CGAL {
     : K::template Type<T> {};
   template <class K, class F, class O=void, class=void> struct Get_functor
     : K::template Functor<F, O> {};
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
   template <class K, class T> using Type = typename Get_type<K, T>::type;
   template <class K, class T> using Functor = typename Get_functor<K, T>::type;
 #endif

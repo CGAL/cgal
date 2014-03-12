@@ -8,7 +8,7 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX0X
+#ifndef CGAL_CXX11
 #include <boost/preprocessor/repetition.hpp>
 #endif
 #include <boost/utility/result_of.hpp>
@@ -49,7 +49,7 @@ public:
 
   typedef          R_                       R;
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment_d> >::value>::type> explicit Segment_d(U&&...u)
 	  : Rep(CSBase()(std::forward<U>(u)...)){}
 

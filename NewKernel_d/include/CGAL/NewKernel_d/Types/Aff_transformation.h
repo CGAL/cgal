@@ -15,7 +15,7 @@ template<class R_> struct Construct_aff_transformation {
   CGAL_FUNCTOR_INIT_IGNORE(Construct_aff_transformation)
   typedef R_ R;
   typedef typename Get_type<R, Aff_transformation_tag>::type result_type;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
   template<class...T>
   result_type operator()(T&&...)const{return result_type();}
 #else

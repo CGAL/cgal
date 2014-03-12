@@ -73,7 +73,7 @@ namespace CGAL {
 	}
     };
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
     struct Initializer_list {
       // Fix T==NT?
       template<class T>
@@ -84,7 +84,7 @@ namespace CGAL {
 #endif
 
     struct Values {
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
       // TODO avoid going through Initializer_list which may cause extra copies. Possibly use forward_as_tuple.
       template<class...U>
 	result_type operator()(U&&...u) const {
@@ -106,7 +106,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
     };
 
     struct Values_divide {
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
       template<class H,class...U>
 	result_type operator()(H const&h,U&&...u) const {
 	  check_dim(sizeof...(U)); // TODO: use static_assert

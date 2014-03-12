@@ -39,7 +39,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 	typedef NT const* Vector_const_iterator;
 #else
 	typedef Iterator_from_indices<const type,const NT
-#ifndef CGAL_CXX0X
+#ifndef CGAL_CXX11
 	  ,NT
 #endif
 	  > Vector_const_iterator;

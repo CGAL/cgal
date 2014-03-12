@@ -12,7 +12,7 @@ struct Default_coordinate_access {
 
 //TODO: default type for Value_: typename same_cv<Container_,typename remove_cv<Container_>::type::value_type>::type
 template <class Container_, class Value_, class Ref_=
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	decltype(std::declval<Container_>()[0])
 #else
 	Value_&

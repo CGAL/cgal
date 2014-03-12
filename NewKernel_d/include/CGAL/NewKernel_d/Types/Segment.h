@@ -13,7 +13,7 @@ template <class R_> class Segment {
 	Data_ data;
 	public:
 	//typedef Segmentd<R_> Segment;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	//FIXME: don't forward directly, piecewise_constuct should call the point construction functor (I guess? or is it unnecessary?)
 	template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>::type>
 	Segment(U&&...u):data(std::forward<U>(u)...){}
@@ -77,7 +77,7 @@ template<class R_> struct Segment_extremity {
 		CGAL_assertion(i==1);
 		return s.target();
 	}
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	result_type operator()(Segment &&s, int i)const{
 		if(i==0) return std::move(s.source());
 		CGAL_assertion(i==1);

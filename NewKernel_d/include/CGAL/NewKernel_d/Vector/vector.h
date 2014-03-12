@@ -80,7 +80,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
 #endif
 
 		struct Values {
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 			template<class...U>
 				Vector operator()(U&&...u) const {
 					//TODO: check the right number of {}, g++ accepts one and two
@@ -104,7 +104,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 		};
 
 		struct Values_divide {
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 			template<class H,class...U>
 				Vector operator()(H const&h,U&&...u) const {
 					//TODO: do we want to cast at some point?

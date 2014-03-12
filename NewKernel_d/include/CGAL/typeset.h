@@ -1,6 +1,6 @@
 #ifndef CGAL_TYPESET_H
 #define CGAL_TYPESET_H
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 #include <type_traits>
 #else
 #include <boost/type_traits.hpp>
@@ -10,7 +10,7 @@
 // instantiate).
 
 namespace CGAL {
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
   template<class...> struct typeset;
   template<class H,class...U> struct typeset<H,U...> {
     typedef H head;
@@ -72,7 +72,7 @@ namespace CGAL {
       typedef typename T1::head H;
       typedef typename typeset_intersection_<typename T1::tail,T2>::type U;
       typedef typename
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	std::conditional<T2::template contains<H>::value,
 #else
 	boost::mpl::if_<typename T2::template contains<H>,
@@ -82,7 +82,7 @@ namespace CGAL {
   template<class T>
     struct typeset_intersection_<typeset<>,T> : typeset<> {};
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
   template<class T1, class T2>
     using typeset_union = typename typeset_union_<T1,T2>::type;
   template<class T1, class T2>

@@ -15,7 +15,7 @@
 #include <CGAL/NewKernel_d/functor_properties.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <functional>
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 #include <initializer_list>
 #endif
 
@@ -53,7 +53,7 @@ template<class R_,class D_=typename R_::Default_ambient_dimension,bool=internal:
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	// Since the dimension is at least 2, there are at least 3 points and no ambiguity with iterators.
 	// template <class...U,class=typename std::enable_if<std::is_same<Dimension_tag<sizeof...(U)-1>,typename R::Default_ambient_dimension>::value>::type>
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
@@ -86,7 +86,7 @@ BOOST_PP_REPEAT_FROM_TO(7, 10, CODE, _ )
 #endif
 };
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 template<class R_,int d> struct Orientation_of_points<R_,Dimension_tag<d>,true> : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation_of_points)
 	typedef R_ R;
@@ -182,7 +182,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=3)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -439,7 +439,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		for(int i=0; i < R::LA::columns(b); ++i){
 		  //*o++ = Vector(b.col(i));
 		  typedef 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		    decltype(std::declval<const Matrix>()(0,0))
 #else
 		    FT
@@ -562,7 +562,7 @@ template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
 	    return LA::sign_of_determinant(CGAL_MOVE(m));
 	}
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -602,7 +602,7 @@ template<class R_> struct Side_of_bounded_sphere : private Store_kernel<R_> {
 	  return enum_cast<Bounded_side> (sos (f, e, p0) * op (f, e));
 	}
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template <class...U,class=typename std::enable_if<(sizeof...(U)>=4)>::type>
 	result_type operator()(U&&...u) const {
 		return operator()({std::forward<U>(u)...});
@@ -955,7 +955,7 @@ template<class R_> struct Compare_lexicographically : private Store_kernel<R_> {
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{
 		CI c(this->kernel());
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		auto
 #else
 		typename CI::result_type
@@ -1024,7 +1024,7 @@ template<class R_> struct Equal_points : private Store_kernel<R_> {
 	template<class V,class W>
 	result_type operator()(V const&a, W const&b)const{
 		CI c(this->kernel());
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		auto
 #else
 		typename CI::result_type

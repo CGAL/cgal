@@ -4,14 +4,14 @@
 #include <CGAL/config.h>
 #include <utility>
 
-#ifndef CGAL_CXX0X
+#ifndef CGAL_CXX11
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/utility/result_of.hpp>
 #endif
 
 namespace CGAL {
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 
 namespace internal {
 
@@ -50,7 +50,7 @@ struct Apply_to_last_then_rest {
 	}
 };
 
-#else // CGAL_CXX0X
+#else // CGAL_CXX11
 
 struct Apply_to_last_then_rest {
 #define CODE(Z,N,_) template<class F,class T,BOOST_PP_ENUM_PARAMS(N,class T)> \
@@ -62,7 +62,7 @@ struct Apply_to_last_then_rest {
 #undef CODE
 };
 
-#endif // CGAL_CXX0X
+#endif // CGAL_CXX11
 
 } // namespace CGAL
 

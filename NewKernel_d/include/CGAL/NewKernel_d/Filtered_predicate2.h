@@ -80,7 +80,7 @@ public:
     : ep(k.exact_kernel()), ap(k.approximate_kernel()), c2e(k,k.exact_kernel()), c2a(k,k.approximate_kernel())
   {}
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
   template <typename... Args>
   result_type
   operator()(Args&&... args) const

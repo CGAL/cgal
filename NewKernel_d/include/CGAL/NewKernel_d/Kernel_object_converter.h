@@ -21,7 +21,7 @@ struct Point_converter_help {
 		return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
 	}
 };
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 // This doesn't seem so useful, the compiler should be able to handle
 // the iterators just as efficiently.
 template <int d, class K1, class K2>

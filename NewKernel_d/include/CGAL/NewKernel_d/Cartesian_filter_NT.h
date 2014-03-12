@@ -29,7 +29,7 @@ struct Cartesian_filter_NT : public Base_
 		    type(Cartesian_filter_NT const&k):p1(reinterpret_cast<K1 const&>(k)),p2(reinterpret_cast<K2 const&>(k)){}
 		    //FIXME: if predicate's constructor takes a kernel as argument, how do we translate that? reinterpret_cast is really ugly and possibly unsafe.
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		    template<class...U> result_type operator()(U&&...u)const{
 			    {
 			          Protect_FPU_rounding<true> p;

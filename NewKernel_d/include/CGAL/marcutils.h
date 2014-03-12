@@ -1,7 +1,7 @@
 #ifndef marcutils
 #define marcutils
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 #include <type_traits>
 #include <utility>
 #define CGAL_FORWARDABLE(T) T&&
@@ -22,7 +22,7 @@
 #include <boost/mpl/not.hpp>
 #include <boost/type_traits.hpp>
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 #define BOOSTD std::
 #else
 #define BOOSTD boost::
@@ -53,7 +53,7 @@ struct Has_type_different_from <T, No, true>
 
 	// like std::forward, except for basic types where it does a cast, to
 	// avoid issues with narrowing conversions
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template<class T,class U,class V> inline
 		typename std::conditional<std::is_arithmetic<T>::value&&std::is_arithmetic<typename std::remove_reference<U>::type>::value,T,U&&>::type
 	       	forward_safe(V&& u) { return std::forward<U>(u); }
@@ -63,7 +63,7 @@ struct Has_type_different_from <T, No, true>
 	}
 #endif
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template<class...> struct Constructible_from_each;
 	template<class To,class From1,class...From> struct Constructible_from_each<To,From1,From...>{
 		enum { value=std::is_convertible<From1,To>::value&&Constructible_from_each<To,From...>::value };
@@ -79,7 +79,7 @@ struct Has_type_different_from <T, No, true>
 		T const& scale;
 		Scale(T const& t):scale(t){}
 		template<class FT>
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		auto operator()(FT&& x)const->decltype(scale*std::forward<FT>(x))
 #else
 		FT operator()(FT const& x)const
@@ -89,7 +89,7 @@ struct Has_type_different_from <T, No, true>
 		}
 	};
 	template<class NT,class T> struct Divide {
-#if !defined(CGAL_CXX0X) || !defined(BOOST_RESULT_OF_USE_DECLTYPE)
+#if !defined(CGAL_CXX11) || !defined(BOOST_RESULT_OF_USE_DECLTYPE)
 		// requires boost > 1.44
 		// shouldn't be needed with C++0X
 		//template<class> struct result;
@@ -101,7 +101,7 @@ struct Has_type_different_from <T, No, true>
 		T const& scale;
 		Divide(T const& t):scale(t){}
 		template<class FT>
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		//FIXME: gcc complains for Gmpq
 		//auto operator()(FT&& x)const->decltype(Rational_traits<NT>().make_rational(std::forward<FT>(x),scale))
 		NT operator()(FT&& x)const
@@ -120,11 +120,11 @@ struct Has_type_different_from <T, No, true>
 	};
 
 	// like std::multiplies but allows mixing types
-	// in C++0x in doesn't need to be a template
+	// in C++11 in doesn't need to be a template
 	template < class Ret >
 	struct multiplies {
 		template<class A,class B>
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		auto operator()(A&&a,B&&b)const->decltype(std::forward<A>(a)*std::forward<B>(b))
 #else
 		Ret operator()(A const& a, B const& b)const
@@ -136,7 +136,7 @@ struct Has_type_different_from <T, No, true>
 	template < class Ret >
 	struct division {
 		template<class A,class B>
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		auto operator()(A&&a,B&&b)const->decltype(std::forward<A>(a)/std::forward<B>(b))
 #else
 		Ret operator()(A const& a, B const& b)const
@@ -146,7 +146,7 @@ struct Has_type_different_from <T, No, true>
 		}
 	};
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	using std::decay;
 #else
 	template<class T> struct decay : boost::remove_cv<typename boost::decay<T>::type> {};
@@ -154,7 +154,7 @@ struct Has_type_different_from <T, No, true>
 
 	template<class T,class U> struct Type_copy_ref { typedef U type; };
 	template<class T,class U> struct Type_copy_ref<T&,U> { typedef U& type; };
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template<class T,class U> struct Type_copy_ref<T&&,U> { typedef U&& type; };
 #endif
 	template<class T,class U> struct Type_copy_cv { typedef U type; };
@@ -176,7 +176,7 @@ struct Has_type_different_from <T, No, true>
 			}
 	};
 
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	template<int...> struct Indices{};
 	template<class> struct Next_increasing_indices;
 	template<int...I> struct Next_increasing_indices<Indices<I...> > {
@@ -212,7 +212,7 @@ BOOST_PP_REPEAT_FROM_TO(0, 8, CODE, _ )
 
 	template<class A> struct Factory {
 	  typedef A result_type;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 	  template<class...U> result_type operator()(U&&...u)const{
 	    return A(std::forward<U>(u)...);
 	  }

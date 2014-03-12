@@ -39,7 +39,7 @@ template<class T> struct Is_wrapper_iterator<T,true> :
 
 struct Forward_rep {
 //TODO: make a good C++0X version with perfect forwarding
-//#ifdef CGAL_CXX0X
+//#ifdef CGAL_CXX11
 //template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
 //T&& operator()(typename std::remove_reference<T>::type&& t) const {return static_cast<T&&>(t);};
 //template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>
@@ -116,7 +116,7 @@ struct Cartesian_wrap : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return b(internal::Forward_rep()(u)...);
 		    }
@@ -158,7 +158,7 @@ struct Cartesian_wrap : public Base_
 		    typedef typename map_result_tag<T>::type result_tag;
 		    // FIXME: Self or Derived?
 		    typedef typename Get_type<Self,result_tag>::type result_type;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
 		    }
@@ -212,7 +212,7 @@ struct Cartesian_refcount : public Base_
 		    type(){}
 		    type(Self const&k):b(k){}
 		    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return b(internal::Forward_rep()(u)...);
 		    }
@@ -245,7 +245,7 @@ struct Cartesian_refcount : public Base_
 		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
 		    typedef typename Get_type<Self,result_tag>::type result_type;
-#ifdef CGAL_CXX0X
+#ifdef CGAL_CXX11
 		    template<class...U> result_type operator()(U&&...u)const{
 			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
 		    }
