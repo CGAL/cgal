@@ -68,8 +68,10 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
 template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Center_of_sphere)
   typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
-  typedef typename Get_type<R_, Point_tag>::type const&	result_type;
-  result_type operator()(Sphere const&s)const{
+  // No reference because of the second overload
+  typedef typename Get_type<R_, Point_tag>::type	result_type;
+
+  result_type const& operator()(Sphere const&s)const{
     return s.center();
   }
 

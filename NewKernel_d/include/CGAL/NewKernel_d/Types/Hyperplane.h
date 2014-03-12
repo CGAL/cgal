@@ -14,7 +14,7 @@ template <class R_> class Hyperplane {
 	Hyperplane(Vector_ const&v, FT_ const&s): v_(v), s_(s) {}
 	// TODO: Add a piecewise constructor?
 
-	Vector_ orthogonal_vector()const{return v_;}
+	Vector_ const& orthogonal_vector()const{return v_;}
 	FT_ translation()const{return s_;}
 };
 namespace CartesianDKernelFunctors {
@@ -70,8 +70,8 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
 };
 template <class R_> struct Orthogonal_vector {
   CGAL_FUNCTOR_INIT_IGNORE(Orthogonal_vector)
-  typedef typename Get_type<R_, Hyperplane_tag>::type	Hyperplane;
-  typedef typename Get_type<R_, Vector_tag>::type	result_type;
+  typedef typename Get_type<R_, Hyperplane_tag>::type		Hyperplane;
+  typedef typename Get_type<R_, Vector_tag>::type const&	result_type;
   result_type operator()(Hyperplane const&s)const{
     return s.orthogonal_vector();
   }
