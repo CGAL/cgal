@@ -14,10 +14,10 @@ template <class R_> class Iso_box {
 	public:
 	Iso_box(){}
 	Iso_box(Point_ const&a, Point_ const&b): data(a,b) {}
-	Point_ min()const{
+	Point_ min BOOST_PREVENT_MACRO_SUBSTITUTION ()const{
 	  return data.first;
 	}
-	Point_ max()const{
+	Point_ max BOOST_PREVENT_MACRO_SUBSTITUTION ()const{
 	  return data.second;
 	}
 };
