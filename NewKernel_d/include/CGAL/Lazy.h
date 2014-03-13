@@ -101,11 +101,11 @@ depth(const Lazy<AT,ET,EFT,E2A>& l)
 
 
 template<class T>
-inline T const & approx(T const& d) { return d; };
+inline T const & approx(T const& d) { return d; }
 template<class T>
-inline T const & exact (T const& d) { return d; };
+inline T const & exact (T const& d) { return d; }
 template<class T>
-inline unsigned  depth (T const&  ) { return 0; };
+inline unsigned  depth (T const&  ) { return 0; }
 /*
 #define CGAL_LAZY_FORWARD(T) \
   inline const T & approx(const T& d) { return d; } \
