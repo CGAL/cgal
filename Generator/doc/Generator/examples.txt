@@ -12,4 +12,5 @@
 \example Generator/sphere_d.cpp
 \example Generator/combination_enumerator.cpp
 \example Generator/name_pairs.cpp
+\example Generator/random_convex_polygon.cpp
 */

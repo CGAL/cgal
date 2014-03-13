@@ -3,45 +3,30 @@ namespace CGAL {
 /*!
 \ingroup PkgGenerators
 
-\brief computes a random convex polygon by writing its vertices (oriented
-counterclockwise) in the list `l`, as the convex hull of \f$ n \$ random points in a disc centered in \f$0\f$ with radius \f$radius\$.
-The generated polygon will have an average number of vertices \$f n^\frac{1}{3}(1+o(1))\f$.
-
+\brief Computes a random convex polygon by writing its vertices (oriented
+counterclockwise) in the list `l`, as the convex hull of \f$ n \f$ random points in a disc centered in \f$0\f$ with radius \f$radius\f$.
+The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(1+o(1))\f$. 
+\pre \f$n \geq 3 \f$
 
 \cgalHeading{Requirements}
-
-- `Traits` is a model of the concept RandomPolygonTraits_2 
-- `PointGenerator::value_type` is equivalent to 
-`Traits::Point_2` and `OutputIterator::value_type`. 
-
-
-The default traits class `Default_traits` is the kernel in which 
-`Traits::Point_2` is defined. 
-
-\sa `CGAL::Random_points_in_disc_2<Point_2, Creator>` 
-\sa `CGAL::Random_points_in_square_2<Point_2, Creator>` 
+`Generator` has to be a Boost random generator, such as `boost::random::mt19937`. 
 
 \cgalHeading{Implementation}
 
-The implementation is based on the method of eliminating self-intersections in 
-a polygon by using so-called "2-opt" moves. Such a move eliminates an 
-intersection between two edges by reversing the order of the vertices between 
-the edges. No more than \f$ O(n^3)\f$ such moves are required to simplify a polygon 
-defined on \f$ n\f$ points \cgalCite{ls-utstp-82}. 
-Intersecting edges are detected using a simple sweep through the vertices 
-and then one intersection is chosen at random to eliminate after each sweep. 
-The worse-case running time is therefore \f$ O(n^4 \log n)\f$. 
+The implementation is based on an incremental construction of a convex hull. At each step a quantity of points that won't be an extremal is evaluted using a binomial law. 
+Thus, all the points doesn't have to be generated, reducing the time and size complexity.
+A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, the time complexity is
+ \f$O\left(n^\frac{1}{3}\right)\f$ and the size complexity is \f$O\left(n^\frac{1}{3}\log^2 n \right)\f$. 
+ If this option is disabled, both time and size complexities become  \f$O\left(n^\frac{1}{3}\log^\frac{2}{3}n \right)\f$. 
 
 \cgalHeading{Example}
 
-The following program displays a random simple polygon with up to 100 
-vertices, where the vertex coordinates are drawn uniformly from the 
-unit square centered at the origin. 
+The following program displays a random simple polygon made of \f$10000\f$ points uniformly generated in a disc.
 
 \cgalExample{Generator/random_convex_polygon.cpp} 
 
 */
 
-    template<class P,class GEN>
-    void convex_random_polygon(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,GEN & gen, bool fast=true );
+    template<class P,class Generator>
+    void convex_random_polygon(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,Generator & g, bool fast=true );
 } /* namespace CGAL */

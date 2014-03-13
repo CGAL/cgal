@@ -48,7 +48,7 @@ achieve random permutations for otherwise regular generators (
 - `CGAL::random_convex_set_2()` 
 - `CGAL::random_polygon_2()` 
 - `CGAL::random_selection()` 
-
+- `CGAL::convex_random_polygon()`
 ## Variables ##
 
 - `CGAL::default_random` 
