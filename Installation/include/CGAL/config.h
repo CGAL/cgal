@@ -354,13 +354,6 @@ using std::max;
 #  define CGAL_UNUSED
 #endif
 
-// Macro to specify that gcc's pedantic mode should not warn.
-#ifdef __GNUG__
-#  define CGAL_GNU_EXTENSION  __extension__
-#else
-#  define CGAL_GNU_EXTENSION
-#endif
-
 // Macro CGAL_ASSUME
 // Call a builtin of the compiler to pass a hint to the compiler
 #if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500 && !__STRICT_ANSI__)

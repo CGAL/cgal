@@ -90,9 +90,8 @@ template <> class Real_embeddable_traits< unsigned long long >
 
 #ifdef BOOST_HAS_INT128
 // __int128
-CGAL_GNU_EXTENSION
-template<> class Algebraic_structure_traits< __int128 >
-  : public Algebraic_structure_traits_base< __int128,
+template<> class Algebraic_structure_traits< boost::int128_type >
+  : public Algebraic_structure_traits_base< boost::int128_type,
                                             Euclidean_ring_tag > {
 
   public:
@@ -104,9 +103,8 @@ template<> class Algebraic_structure_traits< __int128 >
 
 };
 
-CGAL_GNU_EXTENSION
-template <> class Real_embeddable_traits< __int128 >
-  : public INTERN_RET::Real_embeddable_traits_base< __int128 , CGAL::Tag_true > {
+template <> class Real_embeddable_traits< boost::int128_type >
+  : public INTERN_RET::Real_embeddable_traits_base< boost::int128_type , CGAL::Tag_true > {
   public:
 
     class To_interval
@@ -119,9 +117,8 @@ template <> class Real_embeddable_traits< __int128 >
 };
 
 // unsigned __int128
-CGAL_GNU_EXTENSION
-template <> class Real_embeddable_traits< unsigned __int128 >
-  : public INTERN_RET::Real_embeddable_traits_base< unsigned __int128 , CGAL::Tag_true > {
+template <> class Real_embeddable_traits< boost::uint128_type >
+  : public INTERN_RET::Real_embeddable_traits_base< boost::uint128_type , CGAL::Tag_true > {
   public:
 
     class To_interval
