@@ -88,9 +88,9 @@ template <> class Real_embeddable_traits< unsigned long long >
     };
 };
 
-#ifdef __SIZEOF_INT128__
+#ifdef BOOST_HAS_INT128
 // __int128
-__extension__ // For gcc's pedantic mode
+CGAL_GNU_EXTENSION
 template<> class Algebraic_structure_traits< __int128 >
   : public Algebraic_structure_traits_base< __int128,
                                             Euclidean_ring_tag > {
@@ -104,7 +104,7 @@ template<> class Algebraic_structure_traits< __int128 >
 
 };
 
-__extension__ // For gcc's pedantic mode
+CGAL_GNU_EXTENSION
 template <> class Real_embeddable_traits< __int128 >
   : public INTERN_RET::Real_embeddable_traits_base< __int128 , CGAL::Tag_true > {
   public:
@@ -119,7 +119,7 @@ template <> class Real_embeddable_traits< __int128 >
 };
 
 // unsigned __int128
-__extension__ // For gcc's pedantic mode
+CGAL_GNU_EXTENSION
 template <> class Real_embeddable_traits< unsigned __int128 >
   : public INTERN_RET::Real_embeddable_traits_base< unsigned __int128 , CGAL::Tag_true > {
   public:
