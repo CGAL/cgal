@@ -26,8 +26,8 @@ struct CGAL_CLASS : LA {
 template <class LA, class Max_dim_>
 struct CGAL_CLASS
 <LA, Dimension_tag<2+CGAL_SHIFT>, Max_dim_, false> : LA {
-  using typename LA::NT;
-  using typename LA::Vector;
+  typedef typename LA::NT NT;
+  typedef typename LA::Vector Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -49,8 +49,8 @@ struct CGAL_CLASS
 template <class LA, class Max_dim_>
 struct CGAL_CLASS
 <LA, Dimension_tag<3+CGAL_SHIFT>, Max_dim_, false> : LA {
-  using typename LA::NT;
-  using typename LA::Vector;
+  typedef typename LA::NT NT;
+  typedef typename LA::Vector Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -73,8 +73,8 @@ struct CGAL_CLASS
 template <class LA, class Max_dim_>
 struct CGAL_CLASS
 <LA, Dimension_tag<4+CGAL_SHIFT>, Max_dim_, false> : LA {
-  using typename LA::NT;
-  using typename LA::Vector;
+  typedef typename LA::NT NT;
+  typedef typename LA::Vector Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -97,8 +97,8 @@ struct CGAL_CLASS
 template <class LA, class Max_dim_>
 struct CGAL_CLASS
 <LA, Dimension_tag<5+CGAL_SHIFT>, Max_dim_, false> : LA {
-  using typename LA::NT;
-  using typename LA::Vector;
+  typedef typename LA::NT NT;
+  typedef typename LA::Vector Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
@@ -121,8 +121,8 @@ struct CGAL_CLASS
 template <class LA, class Max_dim_>
 struct CGAL_CLASS
 <LA, Dimension_tag<6+CGAL_SHIFT>, Max_dim_, false> : LA {
-  using typename LA::NT;
-  using typename LA::Vector;
+  typedef typename LA::NT NT;
+  typedef typename LA::Vector Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;

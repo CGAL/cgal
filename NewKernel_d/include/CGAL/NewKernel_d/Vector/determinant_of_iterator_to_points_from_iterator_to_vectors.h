@@ -22,8 +22,8 @@ struct Add_determinant_of_iterator_to_points_from_iterator_to_vectors : LA {
 template <class LA, class Dim_,class Max_dim_>
 struct Add_determinant_of_iterator_to_points_from_iterator_to_vectors
 <LA, Dim_, Max_dim_, false, true> : LA {
-  using typename LA::NT;
-  using typename LA::Vector;
+  typedef typename LA::NT NT;
+  typedef typename LA::Vector Vector;
   template< class D2, class D3=D2 >
     struct Rebind_dimension {
       typedef typename LA::template Rebind_dimension<D2,D3> LA2;
