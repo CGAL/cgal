@@ -28,7 +28,7 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 		struct Vector_2 {};
 		struct Circle_2 {};
 		struct Orientation_2 {
-			typedef Orientation_of_points_2::result_type result_type;
+			typedef typename Orientation_of_points_2::result_type result_type;
 			result_type operator()(Point_2 const&A, Point_2 const&B, Point_2 const&C)const{
 				Point const* t[3]={&A.p,&B.p,&C.p};
 				return Orientation_base(A.r)(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+3));
