@@ -2,9 +2,13 @@
 #define CGAL_FUNCTOR_TAGS_H
 #include <CGAL/tags.h> // for Null_tag
 #include <CGAL/marcutils.h>
+#ifdef CGAL_CXX11
+#include <type_traits>
+#include <utility>
+#endif
+#include <boost/type_traits.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/empty.hpp>
 #include <boost/mpl/front.hpp>
