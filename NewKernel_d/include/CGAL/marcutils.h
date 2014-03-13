@@ -206,7 +206,11 @@ struct Has_type_different_from <T, No, true>
 			cpp0x::tuple<BOOST_PP_ENUM_PARAMS(N,U)> const&t) { \
 		return f(BOOST_PP_ENUM(N,VAR,)); \
 	}
-BOOST_PP_REPEAT_FROM_TO(0, 8, CODE, _ )
+	template<class Res, class F>
+	inline Res call_on_tuple_elements(F const&f, cpp0x::tuple<>) {
+		return f();
+	}
+BOOST_PP_REPEAT_FROM_TO(1, 8, CODE, _ )
 #undef CODE
 #undef VAR
 #endif
