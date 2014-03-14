@@ -67,7 +67,7 @@ template<class T> struct result<Forward_rep(T)> : result_<T> {};
 template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type const& operator()(T const& t) const {return t;}
 template <class T> typename boost::disable_if<boost::mpl::or_<Is_wrapper<T>,Is_wrapper_iterator<T> >,T>::type& operator()(T& t) const {return t;}
 
-template <class T> typename boost::enable_if<Is_wrapper<T>,T>::type::Rep const& operator()(T const& t) const {return t.rep();}
+template <class T> typename T::Rep const& operator()(T const& t, typename boost::enable_if<Is_wrapper<T> >::type* = 0) const {return t.rep();}
 
 template <class T> transforming_iterator<Forward_rep,typename boost::enable_if<Is_wrapper_iterator<T>,T>::type> operator()(T const& t) const {return make_transforming_iterator(t,Forward_rep());}
 //#endif
