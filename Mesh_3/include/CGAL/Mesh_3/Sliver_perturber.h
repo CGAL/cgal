@@ -62,8 +62,31 @@
 
 namespace CGAL {
 
+namespace internal { namespace Mesh_3 {
+
+  // Hash function for boost::unordered_map<Vertex_handle,...>
+  template <typename Tr, bool HasTimestamp>
+  struct VHash
+  {
+    typedef typename Tr::Vertex_handle Vertex_handle;
+    std::size_t operator()(Vertex_handle vh) const
+    {
+      return vh->time_stamp();
+    }
+  };
+  template <typename Tr>
+  struct VHash<Tr, false>
+  {
+    typedef typename Tr::Vertex_handle Vertex_handle;
+    std::size_t operator()(Vertex_handle vh) const
+    {
+      return boost::hash_value(&*vh);
+    }
+  };
+}} // end internal::Mesh_3
+
 namespace Mesh_3 {
-  
+
 template < typename C3T3,
            typename MeshDomain,
            typename SliverCriterion = Mesh_3::Min_dihedral_angle_criterion
@@ -250,23 +273,6 @@ public:
   double time_limit() const { return time_limit_; }
  
 private:
-
-  template <bool HasTimestamp>
-  struct VHash
-  {
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return vh->time_stamp();
-    }
-  };
-  template <>
-  struct VHash<false>
-  {
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return boost::hash_value(&*vh);
-    }
-  };
 
   // -----------------------------------
   // Private methods
@@ -661,8 +667,10 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
 
   int pqueue_size = 0;
 
-  typedef std::iterator_traits<Vertex_handle>::value_type Vertex;
-  typedef VHash<CGAL::internal::Mesh_3::Has_timestamp<Vertex>::value> Hash_fct;
+  typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
+  typedef CGAL::internal::Mesh_3::Has_timestamp<Vertex> Vertex_has_timestamp;
+  using CGAL::internal::Mesh_3::VHash;
+  typedef VHash<Tr, Vertex_has_timestamp::value> Hash_fct;
   typedef boost::unordered_map<Vertex_handle,PVertex,Hash_fct> M;
 
   M vpm;
