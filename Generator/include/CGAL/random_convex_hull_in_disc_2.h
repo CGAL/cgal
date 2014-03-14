@@ -23,8 +23,8 @@
 // Author(s)     : Remy Thomasse  <remy.thomasse@inria.fr>
 
 
-#ifndef  CGAL_CONVEX_RANDOM_POLYTOPE_IN_DISC_H
-#define CGAL_CONVEX_RANDOM_POLYTOPE_IN_DISC_H
+#ifndef  CGAL_RANDOM_CONVEX_HULL_DISC_H
+#define  CGAL_RANDOM_CONVEX_HULL_DISC_H
 #include <iostream>
 #include <list>
 #include <algorithm>
@@ -36,6 +36,7 @@
 #include <cmath>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/convex_hull_traits_2.h>
+#include <CGAL/function_objects.h>
 namespace CGAL{
     namespace internal{
     template<class P >
@@ -80,7 +81,8 @@ namespace CGAL{
             boost::random::variate_generator<GEN &,boost::random::uniform_real_distribution<double> >g(gen,gd);
             double alpha=h();
             double r=big_radius*std::sqrt(g());
-            typedef Creator_uniform_2<typename Kernel_traits<P>::Kernel::RT,P> Creator;
+            //typedef Creator_uniform_2<typename Kernel_traits<P>::Kernel::FT,P> Creator;
+            typedef Creator_uniform_2<double, P> Creator;
             Creator creator;
             typedef typename Creator::argument_type T;
             l.push_back(creator(T(r*cos(alpha)) ,T(r*std::sin(alpha))));
@@ -150,7 +152,7 @@ namespace CGAL{
     
     //////////////////////////////////////////////////////////////////////////////
     template<class P,class GEN>
-    void convex_random_polygon(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,GEN & gen, bool fast=true ){
+    void random_convex_hull_in_disc_2(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,GEN & gen, bool fast=true ){
         CGAL_precondition( n >= 3);
         typedef typename Kernel_traits<P>::Kernel K;
         typedef typename Kernel_traits<P>::Kernel::FT FT;
@@ -159,7 +161,7 @@ namespace CGAL{
         do
         { //Initialisation
             size_t init=std::min( (size_t)100,n-simulated_points );
-            internal::generate_points_annulus(init,-CGAL_PI, CGAL_PI,0,radius,l,gen);
+            internal::generate_points_annulus(init,-CGAL_PI, CGAL_PI,0,to_double(radius),l,gen);
             
             simulated_points+=init;
             generated_points+=init;
@@ -167,10 +169,8 @@ namespace CGAL{
         } while ((bounded_side_2(l.begin(),l.end(),P  (0,0),K())!=ON_BOUNDED_SIDE)&&(simulated_points<n)); //initialisation such that 0 in P_n
         size_t T=n;
         if (!fast)  T=(size_t)std::floor(n/std::pow(log(n),2));
-        int nb_etapes=0;
         while (simulated_points<n)
         {
-            nb_etapes++;
             //l is a list coming from a convex hull operation. we are moving the points s.t the angles are from -pi to pi.
             {
                 typename std::list<P>::iterator it=l.begin();
@@ -209,7 +209,7 @@ namespace CGAL{
             size_t nb;
             if (simulated_points< T){nb=std::min(simulated_points,n-simulated_points);}
             else {nb=std::min(T,n-simulated_points); }
-            boost::random::binomial_distribution<long> dbin(nb,p_disc);
+            boost::random::binomial_distribution<long> dbin(nb,to_double(p_disc));
             boost::random::variate_generator<GEN&, boost::random::binomial_distribution<long> >bin(gen,dbin);
             
               //How many points are falling in the small disc and wont be generated:
@@ -217,7 +217,6 @@ namespace CGAL{
             simulated_points+=k_disc;
             
             std::list<P> m;
-            m.clear();
             internal::generate_points_annulus(nb-k_disc,-CGAL_PI, CGAL_PI,std::sqrt(to_double(squared_small_radius)),to_double(radius),m,gen);
             l.merge(m,internal::compare_points_angle<P>());
             generated_points+=nb-k_disc;

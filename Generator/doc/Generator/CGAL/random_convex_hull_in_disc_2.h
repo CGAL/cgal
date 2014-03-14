@@ -15,18 +15,18 @@ The generated polygon will have an average number of vertices \f$ n^\frac{1}{3}(
 
 The implementation is based on an incremental construction of a convex hull. At each step a quantity of points that won't be an extremal is evaluted using a binomial law. 
 Thus, all the points doesn't have to be generated, reducing the time and size complexity.
-A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, the time complexity is
- \f$O\left(n^\frac{1}{3}\right)\f$ and the size complexity is \f$O\left(n^\frac{1}{3}\log^2 n \right)\f$. 
+A tradeoff between time and memory is provided with the option `fast`, true by default. Using the `fast` option, the expected time complexity is
+ \f$O\left(n^\frac{1}{3}\right)\f$ and the expected size complexity is \f$O\left(n^\frac{1}{3}\log^2 n \right)\f$. 
  If this option is disabled, both time and size complexities become  \f$O\left(n^\frac{1}{3}\log^\frac{2}{3}n \right)\f$. 
 
 \cgalHeading{Example}
 
 The following program displays a random simple polygon made of \f$10000\f$ points uniformly generated in a disc.
 
-\cgalExample{Generator/random_convex_polygon.cpp} 
+\cgalExample{Generator/random_convex_hull_2.cpp} 
 
 */
 
     template<class P,class Generator>
-    void convex_random_polygon(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,Generator & g, bool fast=true );
+    void random_convex_hull_in_disc_2(size_t n,  typename Kernel_traits<P>::Kernel::FT radius, std::list<P> & l,Generator & g, bool fast=true );
 } /* namespace CGAL */

@@ -5,7 +5,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/convex_random_polygon_in_disc.h>
+#include <CGAL/random_convex_hull_in_disc_2.h>
 
 
 // Qt headers
@@ -300,7 +300,7 @@ MainWindow::on_actionGeneratePolytopeInDisc_triggered()
     
     segments.reserve(segments.size() + 100);
 
-    CGAL::convex_random_polygon(number_of_points,100,list_of_points,gen);
+    CGAL::random_convex_hull_in_disc_2(number_of_points,100,list_of_points,gen);
     std::list<Point_2>::iterator it2=list_of_points.begin();
     for(std::list<Point_2>::iterator it=list_of_points.begin();it!=list_of_points.end();it++){
         it2++;

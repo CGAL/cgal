@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/convex_random_polygon_in_disc.h>
+#include <CGAL/random_convex_hull_in_disc_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
 
 
@@ -17,7 +17,7 @@ typedef double FT;
 #include <fstream>
 #include <list>
 
-typedef CGAL::Simple_cartesian<RT>                        K;
+typedef CGAL::Simple_cartesian<FT>                        K;
 typedef K::Point_2                                        Point_2;
 
 const int n=10000;
@@ -28,9 +28,9 @@ int main( )
    boost::random::mt19937 gen;
    gen.seed(time(0));
 
-   CGAL::convex_random_polygon(n,radius,point_set,gen);
+   CGAL::random_convex_hull_in_disc_2(n,radius,point_set,gen);
    int size = point_set.size();
-   RT area=CGAL::polygon_area_2(l.begin(),l.end(),K());
-   std::cout<<"A random convex polygon inscribed in a disc with "<<size<<" vertices and area"<<area<<"has been generated."
+   FT area=CGAL::polygon_area_2(point_set.begin(),point_set.end(),K());
+   std::cout<<"A random convex polygon inscribed in a disc with "<<size<<" vertices and area"<<area<<"has been generated."<<std::endl;;
    return 0;
 }
