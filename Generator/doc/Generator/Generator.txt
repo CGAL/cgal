@@ -251,6 +251,7 @@ sphere/ball boundary as a product of normal distributions, then it is
 normalized.
 If needed a random radius (with relevant distribution)
 is used to put the point inside the ball.
+
 Remy Thomasse coded the random convex hull in a disc.
 */ 
 } /* namespace CGAL */
