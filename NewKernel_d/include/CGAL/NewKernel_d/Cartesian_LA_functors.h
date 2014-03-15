@@ -88,7 +88,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
 		(Iter f,Iter g,Cartesian_tag t)const
 	{
-		return this->operator()(std::distance(f,g),f,g,t);
+		return this->operator()((int)std::distance(f,g),f,g,t);
 	}
 	template<class Iter> inline
 	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
@@ -103,7 +103,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 		(Iter f,Iter g,Homogeneous_tag)const
 	{
 		--g;
-		return this->operator()(std::distance(f,g),f,g,*g);
+		return this->operator()((int)std::distance(f,g),f,g,*g);
 	}
 	template<class Iter> inline
 	  typename boost::enable_if<is_iterator_type<Iter,std::bidirectional_iterator_tag>,result_type>::type operator()
@@ -140,7 +140,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 	  typename boost::enable_if<is_iterator_type<Iter,std::forward_iterator_tag>,result_type>::type operator()
 		(Iter f,Iter g,NT const&l)const
 	{
-		return this->operator()(std::distance(f,g),f,g,l);
+		return this->operator()((int)std::distance(f,g),f,g,l);
 	}
 };
 

@@ -70,7 +70,7 @@ template<class R_> struct Construct_flat_orientation : private Store_kernel<R_> 
 			// use a coordinate iterator instead?
 			for(int i=0; i<dim; ++i) coord(col, i) = ccc(p, i);
 			coord(col,dim)=1;
-			int d = proj.size()+1;
+			int d = (int)proj.size()+1;
 			Matrix m (d, d);
 			// Fill the matrix with what we already have
 			for(int i=0; i<d; ++i)
@@ -123,7 +123,7 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 			Point const&p=*f;
 			for(int i=0; i<dim; ++i) coord(col, i) = ccc(p, i);
 			coord(col,dim)=1;
-			int d = proj.size()+1;
+			int d = (int)proj.size()+1;
 			Matrix m (d, d);
 			for(int i=0; i<d; ++i)
 			for(int j=0; j<d-1; ++j)
@@ -139,7 +139,7 @@ template<class R_> struct Contained_in_affine_hull : private Store_kernel<R_> {
 		}
 			for(int i=0; i<dim; ++i) coord(col, i) = ccc(x, i);
 			coord(col,dim)=1;
-			int d = proj.size()+1;
+			int d = (int)proj.size()+1;
 			Matrix m (d, d);
 			for(int i=0; i<d; ++i)
 			for(int j=0; j<d-1; ++j)

@@ -420,7 +420,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		typename Get_functor<R, Compute_vector_cartesian_coordinate_tag>::type c(this->kernel());
 		typename Get_functor<R, Point_dimension_tag>::type vd(this->kernel());
 		typename Get_functor<R, Construct_ttag<Vector_tag> >::type cv(this->kernel());
-		int n=std::distance(f,e);
+		int n=(int)std::distance(f,e);
 		if (n==0) return;
 		Vector const& v0 = *f;
 		// FIXME: Uh? Using it on a vector ?!

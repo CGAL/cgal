@@ -79,7 +79,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 #endif
 
 	template<class Vec_>static int size_of_vector(Vec_ const&v){
-		return v.size();
+		return (int)v.size();
 	}
 
 	template<class Vec_>static NT dot_product(Vec_ const&a,Vec_ const&b){
@@ -87,10 +87,10 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 	}
 
 	template<class Vec_> static int rows(Vec_ const&v) {
-		return v.rows();
+		return (int)v.rows();
 	}
 	template<class Vec_> static int columns(Vec_ const&v) {
-		return v.cols();
+		return (int)v.cols();
 	}
 
 	template<class Mat_> static NT determinant(Mat_ const&m,bool=false){

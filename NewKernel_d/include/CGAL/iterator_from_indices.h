@@ -6,7 +6,7 @@ namespace CGAL {
 template <class Ref_>
 struct Default_coordinate_access {
 	typedef Ref_ result_type;
-	template<class T> Ref_ operator()(T const& t, int i)const{
+	template<class T> Ref_ operator()(T const& t, std::size_t i)const{
 		return t[i];
 	}
 };
