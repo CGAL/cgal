@@ -39,6 +39,12 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Profile_counter.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4146)
+     // warning on - applied on unsigned number
+#endif
+
 namespace CGAL {
 
 // Wrapper around mpq_t to get the destructor call mpq_clear.
@@ -115,7 +121,7 @@ public:
   Gmpq(long long n)
   {
     if (sizeof(long)==sizeof(long long))
-      mpq_set_si(mpq(), n, 1);
+      mpq_set_si(mpq(), (long)n, 1);
     else if (n>=0)
       init_ull(n);
     else {
@@ -581,5 +587,9 @@ inline Gmpq max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
 }
 
 } //namespace CGAL
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_GMPQ_TYPE_H
