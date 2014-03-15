@@ -73,7 +73,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
 	  RT homogeneous(Point_d const&p, int i){
 	    if (i == dimension(p))
 	      return 1;
-	    return cartesian(p);
+	    return cartesian(p, i);
 	  }
 	};
 	struct Construct_cartesian_const_iterator_d : private Store_kernel<R_> {
