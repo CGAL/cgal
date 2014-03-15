@@ -106,7 +106,7 @@ private:
 public:
   Gmpq(unsigned long long n)
   {
-    if (n <= std::numeric_limits<unsigned long>::max())
+    if (n <= std::numeric_limits<unsigned long>::max BOOST_PREVENT_MACRO_SUBSTITUTION ())
       mpq_set_ui(mpq(), (unsigned long)n, 1);
     else
       init_ull(n);
