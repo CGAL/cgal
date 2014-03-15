@@ -91,7 +91,15 @@ namespace CGAL {
 	template <class K, class T, class D=void,
 		  //bool=Provides_functor<K,T>::value,
 		  //bool=Provides_functor_i<K,T>::value,
-		  bool=internal::has_Functor<K>::value>
+		  bool =
+#ifdef __INTEL_COMPILER
+// FIXME: this is obviously wrong, but Intel's compiler evaluates it to false
+// and Epick_d doesn't seem to use the other case currently.
+		    true
+#else
+		    internal::has_Functor<K>::value
+#endif
+		  >
 	struct Inherit_functor : K::template Functor<T> {};
 	template <class K, class T, class D>
 	struct Inherit_functor <K, T, D, false> {};
