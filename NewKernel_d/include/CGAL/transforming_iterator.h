@@ -36,7 +36,7 @@ template <typename Derived, typename F, typename Iter, typename Ref, typename Va
 class transforming_iterator_helper
 {
 	typedef typename Default::Get<Ref,
-#ifndef CGAL_CFG_NO_CPP0X_DECLTYPE
+#ifdef CGAL_CXX11
 		decltype(std::declval<F>()(std::declval<typename std::iterator_traits<Iter>::reference>()))
 #else
 		typename boost::result_of<F(typename std::iterator_traits<Iter>::value_type)>::type
