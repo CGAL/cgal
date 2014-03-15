@@ -11,6 +11,7 @@
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 #include <boost/utility/enable_if.hpp>
+#include <boost/mpl/if.hpp>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/NewKernel_d/Kernel_object_converter.h>
 
@@ -64,7 +65,7 @@ class KernelD_converter_
 
 	// Disable the conversion in some cases:
 	struct Do_not_use{};
-	typedef typename BOOSTD conditional<
+	typedef typename boost::mpl::if_c <
 	  // If Point==Vector, keep only one conversion
 	  duplicate::value ||
 	  // For iterator objects, the default is make_transforming_iterator

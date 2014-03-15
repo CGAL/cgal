@@ -4,7 +4,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/internal/Static_filters/tools.h> // bug, should be included by the next one
 #include <CGAL/internal/Static_filters/Orientation_2.h>
-#include <boost/type_traits/conditional.hpp>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 namespace SFA { // static filter adapter
@@ -62,8 +62,8 @@ struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
 	template <class T, class=void> struct Functor : Inherit_functor<R_, T> {};
 	template <class D> struct Functor <Orientation_of_points_tag,D> {
 		typedef
-			//typename boost::conditional<
-			//boost::is_same<D,No_filter_tag>::value,
+			//typename boost::mpl::if_ <
+			//boost::is_same<D,No_filter_tag>,
 			//typename Get_functor<R_, Orientation_of_points_tag>::type,
 			SFA::Orientation_of_points_2<R_,Derived>
 			//	>::type
