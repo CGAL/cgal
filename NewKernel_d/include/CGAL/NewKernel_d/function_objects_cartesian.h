@@ -429,7 +429,7 @@ template<class R_> struct Linear_base : private Store_kernel<R_> {
 		for(int j=0;j<d;++j){
 		  m(0,j)=c(v0,j);
 		}
-		for(int i=0; ++f!=e; ++i){
+		for(int i=1; ++f!=e; ++i){
 		  Vector const& v = *f;
 		  for(int j=0;j<d;++j){
 		    m(i,j)=c(v,j);
