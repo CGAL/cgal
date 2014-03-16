@@ -1,4 +1,7 @@
-#<command>	 <point> <xcurve> <result>
+## -*- comment-start: "#"; -*-
+# 
+# Format
+# <command>	<point> <xcurve> <result>
 #
 # First Quadrant
 compare_y_at_x 0 0 LARGER

@@ -1,0 +1,10 @@
+## -*- comment-start: "#"; -*-
+# 
+# Format
+# <command>	<xcurve> <result>
+#
+#
+is_vertical 0 false
+is_vertical 1 false
+is_vertical 2 false
+is_vertical 3 false

@@ -614,23 +614,30 @@ intersect_wrapper(std::istringstream& str_stream)
   this->m_geom_traits.intersect_2_object()(this->m_xcurves[id1],
                                            this->m_xcurves[id2],
                                            std::back_inserter(object_vec));
+  
   std::cout << "Test: intersect( " << this->m_xcurves[id1] << ","
             << this->m_xcurves[id2] << " ) ? ";
   size_t num;
   str_stream >> num;
   if (!this->compare(num, object_vec.size(), "size")) return false;
 
-  for (size_t i = 0; i < num; ++i) {
+  for (size_t i = 0; i < num; ++i) 
+  {
     unsigned int type;                  // 0 - point, 1 - x-monotone curve
     str_stream >> type;
+    
     unsigned int id;                    // The id of the point or x-monotone
     str_stream >> id;                   // ... curve respectively
+    
     unsigned int multiplicity;
     if (type == 0) str_stream >> multiplicity;
+    
     unsigned int exp_type = 1;
     const X_monotone_curve_2 * xcv_ptr =
       CGAL::object_cast<X_monotone_curve_2> (&(object_vec[i]));
-    if (xcv_ptr != NULL) {
+    
+    if (xcv_ptr != NULL) 
+    {
       if (!this->compare(type, exp_type, "type")) return false;
 
       if (!this->compare_curves(this->m_xcurves[id], *xcv_ptr)) return false;
@@ -643,11 +650,10 @@ intersect_wrapper(std::istringstream& str_stream)
       CGAL::object_cast<Point_2_pair> (&(object_vec[i]));
     assert(pt_pair_ptr != NULL);
     if (!this->compare(type, exp_type, "type")) return false;
-    if (!this->compare_points(this->m_points[id], (*pt_pair_ptr).first))
-      return false;
-    if (!this->compare(multiplicity, (*pt_pair_ptr).second, "multiplicity"))
-      return false;
-  }
+    if (!this->compare_points(this->m_points[id], (*pt_pair_ptr).first)) return false;
+    if (!this->compare(multiplicity, (*pt_pair_ptr).second, "multiplicity")) return false;
+  } //forloop
+
   object_vec.clear();
   return true;
 }
@@ -656,7 +662,7 @@ intersect_wrapper(std::istringstream& str_stream)
  * Split a given x-monotone curve at a given point into two sub-curves.
  * Degenerate cases for polylines: the point and a polyline internal point
  * coincides.
- */
+ */ 
 template <typename Geom_traits_T>
 bool Traits_test<Geom_traits_T>::split_wrapper(std::istringstream& str_stream)
 {
@@ -670,7 +676,7 @@ bool Traits_test<Geom_traits_T>::split_wrapper(std::istringstream& str_stream)
             << this->m_points[id2] << " ) ? ";
 
   this->m_geom_traits.split_2_object()(this->m_xcurves[id1],
-                                       this->m_points[id2], cv1, cv2);
+                                     this->m_points[id2], cv1, cv2);
   return this->compare_curves(this->m_xcurves[id3], cv1) &&
     this->compare_curves(this->m_xcurves[id4], cv2);
 }
@@ -682,6 +688,8 @@ template <typename Geom_traits_T>
 bool Traits_test<Geom_traits_T>::
 are_mergeable_wrapper(std::istringstream& str_stream)
 {
+  //waqar
+  std::cout << "I made it into the wrapper" << std::endl;
   typedef typename Geom_traits_T::Has_merge_category       Has_merge_category;
   return are_mergeable_wrapper_imp(str_stream, Has_merge_category());
 }
@@ -691,6 +699,8 @@ bool
 Traits_test<Geom_traits_T>::
 are_mergeable_wrapper_imp(std::istringstream&, CGAL::Tag_false)
 {
+  //waqar
+  std::cout << "I am at the wrong place" << std::endl;
   CGAL_error();
   return false;
 }

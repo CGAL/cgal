@@ -71,17 +71,15 @@ typedef Geom_traits::X_monotone_curve_2 X_monotone_curve_2;
 
 int main(int argc, char* argv[])
 {
+
 #if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 #endif
-  // std::cerr<< std::endl << std::endl <<  "**** 1 Geom_traits type: " << GEOM_TRAITS_TYPE << std::endl << std::endl;
-  // std::cout<< "Test_geom_trait = " << TEST_GEOM_TRAITS << std:: endl;
+
   Geom_traits traits;
 
   Traits_test<Geom_traits> test(traits);
-  
-  //std::cout << "Geom traits are: " << TEST_GEOM_TRAITS << std::endl;
   
   /*
   the parse() function is present in "Traits_base_tests.h" which further call parse() in "IO_test.h"
@@ -101,7 +99,8 @@ int main(int argc, char* argv[])
     read_points() read_curves() and read_xcurves() respectively. Each of these functions calls read_point(), read_curve() and read_xcurve() for construction from "IO_base_test.h"
 
     read_point(), read_curve() and read_xcurve() from "IO_base_test.h" construct the appriopriate point, curve and xcurve using 
-    appropriate GEOM_TRAITS i.e. in this case POLYCURVE_CONIC_GEOM_TRAITS and using overridden functions. Note: these functions only make 1 curve.   
+    appropriate GEOM_TRAITS i.e. in this case POLYCURVE_CONIC_GEOM_TRAITS and using overridden functions. Note: these functions only make 1 curve. So if we want a polycurve, it should be 
+    taken care of in these function.   
   */
   if (!test.init()) return -1;  //polycurves are made here.
   

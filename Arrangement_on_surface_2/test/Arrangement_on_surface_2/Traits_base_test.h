@@ -375,7 +375,7 @@ template <typename Geom_traits_T>
 bool Traits_base_test<Geom_traits_T>::
 translate_boolean(std::string& str_value)
 {
-  if (str_value == "TRUE") return true;
+  if (str_value == "TRUE" || str_value == "true") return true;
   return false;
 }
 

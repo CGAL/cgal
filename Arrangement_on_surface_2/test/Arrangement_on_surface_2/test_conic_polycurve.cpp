@@ -41,6 +41,7 @@ typedef Conic_traits_2::Point_2                                           Conic_
 typedef Conic_traits_2::Curve_2                                           Conic_curve_2;
 typedef Conic_traits_2::X_monotone_curve_2                                Conic_x_monotone_curve_2;
 typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Polycurve_conic_traits_2;
+typedef Polycurve_conic_traits_2::X_monotone_curve_2                      Pc_x_monotone_curve_2;
 //typedef Polycurve_conic_traits_2::Point_2                                 polypoint;
 
 
@@ -99,44 +100,25 @@ typedef CGAL::Arr_polyline_traits_2<Conic_traits_2>                       Polycu
 
  }
 
- void check_intersect()
+ template <typename curve_type>
+ void check_intersect( curve_type &xcv1, curve_type &xcv2 )
  {
 
   Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Intersect_2 intersect_2 = traits.intersect_2_object();
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2  construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-
-  Rat_point_2       ps1 (Rational(1,4), 4);
-  Rat_point_2       pmid1(Rational(3,2), 2);
-  Rat_point_2       pt1 (2, Rational(1,3));
-  Conic_curve_2     c1 (ps1, pmid1, pt1);
-
-  Rat_point_2       ps2 (1, 10);
-  Rat_point_2       pmid2(5, 4);
-  Rat_point_2       pt2 (10, 1);
-  Conic_curve_2     c2 (ps2, pmid2, pt2);
-
-  Rat_point_2       ps3 (10, 1);
-  Rat_point_2       pmid3(5, 4);
-  Rat_point_2       pt3 (1, 10);
-  Conic_curve_2     c3 (ps3, pmid3, pt3);
-
-
-  //construct x-monotone curve (compatible with polyline class)
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = construct_x_monotone_curve_2(c1);
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc2 = construct_x_monotone_curve_2(c2);
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc3 = construct_x_monotone_curve_2(c3);  
-
 
   std::vector<CGAL::Object> intersection_points;
 
-  intersect_2(polyline_xmc1, polyline_xmc2, std::back_inserter(intersection_points));
-  std::cout<< "For non-intersecting curves,  " << intersection_points.size() << " number of intersecting points were computed" << std::endl;
+  traits.intersect_2_object()(xcv1, xcv2, std::back_inserter(intersection_points));
+  std::cout<< "Number of intersection Points: " << intersection_points.size()  << std::endl;
 
-  intersection_points.clear();
-
-  intersect_2(polyline_xmc2, polyline_xmc3, std::back_inserter(intersection_points));
-  std::cout<< "For intersecting curves,  " << intersection_points.size() << " number of intersecting points were computed" << std::endl;
+  //dynamic cast the cgal_objects
+  // std::vector< std::pair<Polycurve_conic_traits_2::Point_2, Polycurve_conic_traits_2::Multiplicity> > pm_vector;
+  // for(int i=0; i<intersection_points.size(); i++)
+  // {
+  //   std::pair<Polycurve_conic_traits_2::Point_2, Polycurve_conic_traits_2::Multiplicity> pm = 
+  //   CGAL::object_cast< std::pair<Polycurve_conic_traits_2::Point_2, Polycurve_conic_traits_2::Multiplicity> > (&(intersection_points[i]));
+  //   pm_vector.push_back(pm);
+  // }
 
  }
 
@@ -178,25 +160,45 @@ void check_compare_end_points_xy_2()
                (res == CGAL::LARGER ? "LARGER" : "EQUAL")) << std::endl;
 }
 
-void check_split()
+template <typename Curve_type>
+void check_split( Curve_type &xcv1, Curve_type &xcv2 )
 {
   Polycurve_conic_traits_2 traits;
-  Polycurve_conic_traits_2::Construct_x_monotone_curve_2  construct_x_monotone_curve_2 = traits.construct_x_monotone_curve_2_object();
-  Polycurve_conic_traits_2::Split_2  split_2 = traits.split_2_object();
 
-  //create a curve
-  Rat_point_2       ps2 (1, 10);
-  Rat_point_2       pmid2(5, 4);
-  Rat_point_2       pt2 (10, 1);
-  Conic_curve_2     c1 (ps2, pmid2, pt2);
+  //split x poly-curves
 
-  Polycurve_conic_traits_2::X_monotone_curve_2 polyline_xmc1 = construct_x_monotone_curve_2(c1);
+  Conic_curve_2     c6(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-7), Algebraic(13) ), Conic_point_2( Algebraic(-3), Algebraic(9) ) );
+  Conic_curve_2     c7(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-3), Algebraic(9) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
+  Conic_curve_2     c8(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(4), Algebraic(-2) ) );
+
+  Conic_x_monotone_curve_2 xc6 (c6);
+  Conic_x_monotone_curve_2 xc7 (c7);
+  Conic_x_monotone_curve_2 xc8 (c8);
+  std::vector<Conic_x_monotone_curve_2> xmono_conic_curves_2;
+  
+  xmono_conic_curves_2.push_back(xc6);
+  xmono_conic_curves_2.push_back(xc7);
+  Pc_x_monotone_curve_2 split_expected_1 = traits.construct_x_monotone_curve_2_object()(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+
+  xmono_conic_curves_2.clear();
+  xmono_conic_curves_2.push_back(xc8);
+  Pc_x_monotone_curve_2 split_expected_2 = traits.construct_x_monotone_curve_2_object()(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+
+
   Polycurve_conic_traits_2::X_monotone_curve_2 split_curve_1, split_curve_2;
-  Polycurve_conic_traits_2::Point_2 point_of_split = Polycurve_conic_traits_2::Point_2(5,4);
+  Polycurve_conic_traits_2::Point_2 point_of_split = Polycurve_conic_traits_2::Point_2(0,0);
 
-  split_2(polyline_xmc1, point_of_split, split_curve_1, split_curve_2);
+  //Split functor 
+  traits.split_2_object()(xcv2, point_of_split, split_curve_1, split_curve_2);
 
-  //TODO: check whether the split is correct  
+  bool split_1_chk = traits.equal_2_object() (split_curve_1, split_expected_1);
+  bool split_2_chk = traits.equal_2_object() (split_curve_2, split_expected_2);
+
+  if(split_1_chk && split_2_chk)
+    std::cout<< "Split is working fine" << std::endl;
+  else
+    std::cout<< "Something is wrong with split" << std::endl;
+  
 }
 
 void check_is_vertical()
@@ -387,38 +389,6 @@ bool check_compare_y_at_x_2()
   xmono_conic_curves.push_back(xc2);
   xmono_conic_curves_2.push_back(xc3);
   xmono_conic_curves_2.push_back(xc4);
-
-  ////////////////////
-  //Reading from a file
-  ////////////////
-  // std::string filename = "data/polycurves_conics/compare_y_at_x.xcv";
-  // std::ifstream cv_stream(filename);
-  
-  // if (!cv_stream.is_open()) 
-  // {
-  //   std::cerr << "Cannot open file " << filename << "!" << std::endl;
-  //   return false;
-  // }
-
-  // std::string line;
-  
-  // while (skip_comments(cv_stream, line)) 
-  // {
-  //   std::cout<< "line fiele is :" << line << std::endl;
-  //   std::istringstream line_stream(line);
-  //   Conic_curve_2 cv;
-  //   read_general_arc(line_stream, cv);
-  //   //Conic_curves_3.push_back(cv);
-  //   line_stream.clear();
-  // }
-  
-  // cv_stream.close();
-
-  ////////
-  ///////
-
-
-
 
   //construct x-monotone poly-curve
   Polycurve_conic_traits_2::X_monotone_curve_2 conic_x_mono_polycurve = construct_x_mono_polycurve(xmono_conic_curves.begin(), xmono_conic_curves.end());
@@ -670,26 +640,82 @@ void check_compare_y_at_x_left()
 
 int main ()
 {
+  Polycurve_conic_traits_2 traits;
+    //polycurve constructors
+  Polycurve_conic_traits_2::Construct_x_monotone_curve_2 construct_x_mono_polycurve = traits.construct_x_monotone_curve_2_object();
+  Polycurve_conic_traits_2::Construct_curve_2  construct_polycurve = traits.construct_curve_2_object();
+
+   //create a curve
+
+
+  Conic_curve_2     c3(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(3), Algebraic(9) ) );
+  Conic_curve_2     c4(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(3), Algebraic(9) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
+  Conic_curve_2     c5(0,1,0,1,0,0, CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-25), Algebraic(-5) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
+
+
+  Conic_curve_2     c6(1,1,0,6,-26,162,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-7), Algebraic(13) ), Conic_point_2( Algebraic(-3), Algebraic(9) ) );
+  Conic_curve_2     c7(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-3), Algebraic(9) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
+  Conic_curve_2     c8(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(4), Algebraic(-2) ) );
+
+  //This vector is used to store curves that will be used to create polycurve
+  std::vector<Conic_curve_2> conic_curves;
+
+  //construct poly-curve
+  //Polycurve_conic_traits_2::Curve_2 conic_polycurve = construct_polycurve( conic_curves.begin(), conic_curves.end() );
+
+  
+  /* VERY IMPORTANT
+  For efficiency reasons, we recommend users not to construct x-monotone conic arc directly, 
+  but rather use the Make_x_monotone_2 functor supplied by the conic-arc traits class to convert conic curves to x-monotone curves.
+  */
+  Conic_x_monotone_curve_2 xc3 (c3);
+  Conic_x_monotone_curve_2 xc4 (c4);
+  Conic_x_monotone_curve_2 xc5 (c5);
+  Conic_x_monotone_curve_2 xc6 (c6);
+  Conic_x_monotone_curve_2 xc7 (c7);
+  Conic_x_monotone_curve_2 xc8 (c8);
+
+  //This vector is used to store curves that will be used to create X-monotone-polycurve
+  std::vector<Conic_x_monotone_curve_2> xmono_conic_curves_2;
+  xmono_conic_curves_2.push_back(xc5);
+  xmono_conic_curves_2.push_back(xc3);
+  xmono_conic_curves_2.push_back(xc4);
+  
+
+  //construct x-monotone poly-curve
+  Pc_x_monotone_curve_2 conic_x_mono_polycurve_1 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+
+  xmono_conic_curves_2.clear();
+  xmono_conic_curves_2.push_back(xc6);
+  xmono_conic_curves_2.push_back(xc7);
+  xmono_conic_curves_2.push_back(xc8);
+  //construct x-monotone poly-curve
+  Pc_x_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
+
+
+
+
+
 
   // std::cout<< std::endl;
 
   // check_equal();
   // std::cout<< std::endl;
   
-  // check_intersect();
-  // std::cout<< std::endl;
+   //check_intersect( conic_x_mono_polycurve_1, conic_x_mono_polycurve_2 );
+   //std::cout<< std::endl;
   
   // check_compare_end_points_xy_2();
   // std::cout<< std::endl;
 
-  // check_split();
+  //check_split( conic_x_mono_polycurve_1, conic_x_mono_polycurve_2 );
   // std::cout<< std::endl;
 
   // check_is_vertical();
   // std::cout<< std::endl;
 
-   check_compare_y_at_x_2();
-   std::cout<< std::endl;
+   //check_compare_y_at_x_2();
+   //std::cout<< std::endl;
 
   // check_push_back();
   // std::cout<< std::endl;

@@ -1,0 +1,7 @@
+## -*- comment-start: "#"; -*-
+# 
+# Format
+# <command>	<xcurve 1> <xcurve_2> <result>
+#
+are_mergeable 0 1 true
+are_mergeable 1 1 false
