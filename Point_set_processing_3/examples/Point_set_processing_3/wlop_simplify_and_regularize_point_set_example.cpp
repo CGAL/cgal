@@ -30,10 +30,6 @@ int main(void)
   //Algorithm parameters
   const double retain_percentage = 2;   // percentage of points to retain.
   
-  // Make room for sample points
-  std::vector<Point> points_sampled;
-  points_sampled.resize(points.size() * (retain_percentage / 100.));
-
   std::cout << "Run algorithm example: " << std::endl;
 
   std::vector<Point> output;
