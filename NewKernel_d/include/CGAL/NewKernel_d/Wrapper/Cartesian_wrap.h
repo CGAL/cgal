@@ -97,6 +97,7 @@ struct Cartesian_wrap : public Base_
     CGAL_CONSTEXPR Cartesian_wrap(int d):Base_(d){}
     typedef Base_ Kernel_base;
     typedef Cartesian_wrap Self;
+    // TODO: pass the 2 types Self and Derived to the wrappers, they can use Self for most purposes and Derived only for Kernel_traits' typedef R.
     typedef typename Default::Get<Derived_, Self>::type Derived;
     // FIXME: The list doesn't belong here.
     typedef boost::mpl::vector<Point_tag,Segment_tag,Sphere_tag,Vector_tag> Wrapped_list;

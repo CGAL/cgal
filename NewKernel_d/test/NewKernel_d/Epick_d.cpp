@@ -274,7 +274,7 @@ void test3(){
 #endif
     ;
   CP_ cp_ Kinit(construct_point_d_object);
-  typename boost::conditional<boost::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>::value,Construct_point3_helper<CP_>,CP_>::type cp(cp_);
+  typename boost::mpl::if_<boost::is_same<typename Ker::Default_ambient_dimension,CGAL::Dynamic_dimension_tag>,Construct_point3_helper<CP_>,CP_>::type cp(cp_);
   CCI ci Kinit(construct_cartesian_const_iterator_d_object);
   CC cc Kinit(compute_coordinate_d_object);
   CL cl Kinit(compare_lexicographically_d_object);
