@@ -43,8 +43,6 @@
 #include <CGAL/AABB_point_primitive.h>
 #include <CGAL/Bbox_3.h>
 
-#define CGAL_DEBUG_MODE
-
 namespace CGAL {
 // ----------------------------------------------------------------------------
 // Private section
@@ -412,10 +410,6 @@ wlop_simplify_and_regularize_point_set(
     FT bbox_diameter = CGAL::squared_distance(max_p, min_p);
     radius = std::sqrt(bbox_diameter) * 0.025; // this estimation may fail
 
-#ifdef CGAL_DEBUG_MODE
-    std::cout << "default estimated radius:  " << radius 
-              << std::endl << std::endl;
-#endif
   }
 
   FT radius2 = radius * radius;
@@ -479,11 +473,6 @@ wlop_simplify_and_regularize_point_set(
       }
     }
   }
-
-#ifdef CGAL_DEBUG_MODE
-  Timer task_timer;
-  task_timer.start();
-#endif
 
   for (unsigned int iter_n = 0; iter_n < iter_number; ++iter_n)
   {
@@ -562,13 +551,6 @@ wlop_simplify_and_regularize_point_set(
       *sample_iter = *update_iter;
     }
 
-#ifdef CGAL_DEBUG_MODE
-    long memory = CGAL::Memory_sizer().virtual_size();
-    std::cout << "Iteration: " << iter_n << " takes "
-              << task_timer.time() << " seconds, " 
-              << (memory>>20) << " Mb allocated" << std::endl;
-    task_timer.reset();
-#endif
   }
 
   // final output
