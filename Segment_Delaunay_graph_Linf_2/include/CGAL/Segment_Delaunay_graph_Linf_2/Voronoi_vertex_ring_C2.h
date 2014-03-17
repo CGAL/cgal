@@ -732,6 +732,8 @@ private:
       vv = p.target();
     } else {
       // here, not all segments have a common point
+      CGAL_SDG_DEBUG(std::cout << "debug vring compute_sss p="
+        << p << " q=" << q  << " r=" << r << std::endl;);
       Polychainline_2 bpq = bisector_linf(p, q);
       Polychainline_2 bqr = bisector_linf(q, r);
       vv = bpq.first_intersection_point_with(bqr);
