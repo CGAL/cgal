@@ -870,7 +870,7 @@ private:
       if ((not (bpqset and bqrset))) {
         brp = bisector_linf(sr, sp);
         CGAL_SDG_DEBUG(std::cout
-            << "debug: vsqr bqr r=" << sr << " p=" << sp << std::endl;);
+            << "debug: vsqr brp r=" << sr << " p=" << sp << std::endl;);
         CGAL_SDG_DEBUG(std::cout
             << "debug: vsqr brp =" << brp << std::endl;);
         brpset = true;
