@@ -5,8 +5,6 @@
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/bilateral_smooth_point_set.h>
-#include <CGAL/Timer.h>
-#include <CGAL/Memory_sizer.h>
 #include <CGAL/tags.h>
 
 #include <utility> // defines std::pair
@@ -46,10 +44,7 @@ int main(void)
   double sharpness_sigma = 25; // control sharpness(0-90), 
                                // the bigger, the result will be smoother.
   int iter_number = 3;         // times of projection
-
-  CGAL::Timer task_timer;
-  task_timer.start();
-
+  
   std::cout << "Run algorithm example: " << std::endl;
 
   for (int i = 0; i < iter_number; i++)
@@ -67,13 +62,7 @@ int main(void)
 
     std::cout << std::endl << "move error: " << error << std::endl;
   }
-
-  long memory = CGAL::Memory_sizer().virtual_size();
-  std::cout << "done: " << task_timer.time() << " seconds, "
-            << (memory>>20) << " Mb allocated" << std::endl;
-  task_timer.stop();  
-
-
+  
   //// Save point set.
   std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_bilateral DENOISED.xyz");   
   if (!out ||

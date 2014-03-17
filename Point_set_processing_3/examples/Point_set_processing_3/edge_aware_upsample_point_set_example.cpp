@@ -2,12 +2,9 @@
 #include <CGAL/edge_aware_upsample_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/Timer.h>
 
 #include <vector>
 #include <fstream>
-#include <time.h>
-
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -44,9 +41,6 @@ int main(void)
   const double neighbor_radius = 0.2;  // initial neighbors size.
   const unsigned int number_of_output_points = points.size() * 50;   
 
-
-  CGAL::Timer task_timer;
-  task_timer.start();
   std::cout << "Run upsample algorithm example: " << std::endl;
 
    //Run algorithm 
@@ -60,11 +54,6 @@ int main(void)
             edge_senstivity,
             neighbor_radius,
             number_of_output_points);
-
-  long memory = CGAL::Memory_sizer().virtual_size();
-  std::cout << "done: " << task_timer.time() << " seconds, " 
-            << (memory>>20) << " Mb allocated" << std::endl;
-  task_timer.stop();  
 
   // Saves point set.
   std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_UPSAMPLED.xyz");  
