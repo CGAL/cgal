@@ -12,14 +12,15 @@ of Delaunay triangulations.
 \tparam Traits must be a model of `DelaunayTriangulationTraits_3`. 
 
 \tparam Cb must be a model of `TriangulationCellBase_3`. 
-By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>`. 
+By default, this parameter is instantiated by 
+`Triangulation_cell_base_3<TriangulationTraits_3>`. 
 
 \cgalModels `DelaunayTriangulationCellBase_3`
 
 \sa `DelaunayTriangulationCellBase_3` 
 \sa `DelaunayTriangulationTraits_3` 
-\sa `CGAL::Delaunay_triangulation_3<Traits,Tds>` 
-\sa `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, CellBase_3>`
+\sa `CGAL::Delaunay_triangulation_3` 
+\sa `CGAL::Delaunay_triangulation_cell_base_with_circumcenter_3`
 
 */
 

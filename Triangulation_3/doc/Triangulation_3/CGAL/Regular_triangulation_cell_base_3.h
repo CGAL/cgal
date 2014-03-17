@@ -12,14 +12,15 @@ It is the default cell base class of regular triangulations.
 
 \tparam Cb is a cell base class from which `Regular_triangulation_cell_base_3`
 derives. It must be a model of `TriangulationCellBase_3`. 
-By default, this parameter is instantiated by `Triangulation_cell_base_3<Traits>`. 
+By default, this parameter is instantiated by 
+`Triangulation_cell_base_3<TriangulationTraits_3>`. 
 
 \cgalModels `RegularTriangulationCellBase_3`
 
 \sa `RegularTriangulationCellBase_3` 
 \sa `RegularTriangulationTraits_3` 
-\sa `CGAL::Regular_triangulation_3<Traits,Tds>` 
-\sa `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3<RegularTriangulationTraits_3, CellBase_3>`
+\sa `CGAL::Regular_triangulation_3` 
+\sa `CGAL::Regular_triangulation_cell_base_with_weighted_circumcenter_3`
 
 */
 

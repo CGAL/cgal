@@ -16,13 +16,7 @@ application.
 
 \tparam TriangulationDSCellBase_3 is a combinatorial cell base class from which 
 `Triangulation_cell_base_3` derives. 
-It has the default value `Triangulation_ds_cell_base_3<TDS>`. 
-
-Note that this model does not store the circumcenter, but computes it 
-every time the circumcenter function is called. See 
-`Delaunay_triangulation_cell_base_with_circumcenter_3` and
-`Regular_triangulation_cell_base_with_weighted_circumcenter_3` for a way to cache the 
-circumcenter computation. 
+It has the default value `Triangulation_ds_cell_base_3`. 
 
 \cgalModels `TriangulationCellBase_3`
 
