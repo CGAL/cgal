@@ -329,29 +329,44 @@ private:
     typedef Traits_P Traits;
     typedef typename Traits_P::Direction_2 IncomingDirection;
     typedef typename Traits_P::Direction_2 OutgoingDirection;
+    typedef typename Traits_P::Line_2      Line_2;
+    typedef typename Traits_P::Ray_2       Ray_2;
+    typedef typename Traits_P::Segment_2   Segment_2;
+    typedef typename Traits_P::Point_2     Point_2;
     typedef Polychainray_2<Traits_P, Container_P>  Base;
     typedef Polychainline_2<Traits_P, Container_P> Self;
 
     IncomingDirection incoming;
+    bool is_line_optimization;
 
 public:
 
     // constructors
 
-    Polychainline_2() : Base(), incoming() {}
+    Polychainline_2() : Base(), incoming(),
+      is_line_optimization(false)
+    {}
 
     Polychainline_2(const Self& pcl)
-      : Base((Base) pcl), incoming(pcl.incoming) {}
+      : Base((Base) pcl), incoming(pcl.incoming),
+        is_line_optimization(pcl.is_line_optimization)
+    {}
 
     template <class InputIterator>
     Polychainline_2(IncomingDirection dinc,
 	            InputIterator first, InputIterator last,
 	            OutgoingDirection dout,
                     Traits p_traits = Traits())
-        : Base(first, last, dout, p_traits), incoming(dinc)
+        : Base(first, last, dout, p_traits), incoming(dinc),
+          is_line_optimization(false)
     {
     }
 
+    void set_line_optimization() {
+      CGAL_assertion(this->size() == 1);
+      CGAL_assertion(this->incoming == - this->outgoing);
+      is_line_optimization = true;
+    }
 
     // get_incoming
 
@@ -409,8 +424,66 @@ public:
                       reverse.end(),
                       this->get_incoming());
 
+      if (is_line_optimization) {
+        pclreverse.set_line_optimization();
+      }
+
       return pclreverse;
     }
+
+    // line_first_intersection_point_with
+    typename Traits_P::Point_2
+    line_first_intersection_point_with(
+        const Polychainline_2<Traits_P,Container_P>& pcl)
+    {
+      CGAL_assertion(is_line_optimization);
+      Line_2 line((*this)[0], this->get_outgoing());
+
+      typedef typename
+	  Polychainline_2<Traits_P,Container_P>::
+                     Vertex_const_iterator
+          VI;
+
+      typedef typename std::vector<typename Traits_P::Segment_2>::
+               const_iterator SI;
+
+      CGAL::Object result;
+
+      VI sourcepcl  = pcl.vertices_begin();
+      Ray_2 rayincpcl (*sourcepcl,  pcl.get_incoming());
+      result = CGAL::intersection(line, rayincpcl);
+      if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+        return *ipoint;
+      }
+
+      if (pcl.size() > 1) {
+        VI targetpcl = sourcepcl+1;
+        for( ;
+            targetpcl != pcl.vertices_end();
+            ++sourcepcl, ++targetpcl)
+        {
+          Segment_2 testseg(*sourcepcl, *targetpcl);
+          result = CGAL::intersection(line, testseg);
+          if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+            return *ipoint;
+          }
+        }
+      }
+      Ray_2 rayoutpcl(*sourcepcl, pcl.get_outgoing());
+      result = CGAL::intersection(line, rayoutpcl);
+      if (const Point_2 *ipoint = CGAL::object_cast<Point_2>(&result)) {
+        return *ipoint;
+      }
+
+      CGAL_SDG_DEBUG(std::cout
+          << "debug error: no intersection found for "
+          << "this=" << *this << " pcl=" << pcl << std::endl;);
+
+      CGAL_assertion(false);
+
+      return Point_2();
+
+    } // end of line_first_intersection_point_with
 
     // first_intersection_point_with
     typename Traits_P::Point_2
@@ -419,10 +492,6 @@ public:
     {
       // for every piece of object,
       // try intersecting with every piece of pcl
-
-      typedef typename Traits_P::Point_2    Point_2;
-      typedef typename Traits_P::Ray_2      Ray_2;
-      typedef typename Traits_P::Segment_2  Segment_2;
 
       CGAL_SDG_DEBUG(std::cout
           << "debug first_intersection entering this="
@@ -438,6 +507,10 @@ public:
 
       CGAL_assertion( this->size() > 0 );
       CGAL_assertion( pcl.size() > 0 );
+
+      if (this->is_line_optimization) {
+        return line_first_intersection_point_with(pcl);
+      }
 
 #if 0
       CGAL_SDG_DEBUG(std::cout << "debug first_intersection "
