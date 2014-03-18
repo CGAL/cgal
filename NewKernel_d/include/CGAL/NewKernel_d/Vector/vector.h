@@ -138,7 +138,7 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CODE, _ )
 		return a.end();
 	}
 	static int size_of_vector(Vector const&a){
-		return a.size();
+		return (int)a.size();
 	}
 };
 

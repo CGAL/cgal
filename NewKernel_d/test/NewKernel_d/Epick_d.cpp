@@ -358,6 +358,9 @@ void test3(){
 template struct CGAL::Epick_d<CGAL::Dimension_tag<2> >;
 template struct CGAL::Epick_d<CGAL::Dimension_tag<3> >;
 template struct CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
+CGAL_static_assertion((boost::is_same<CGAL::Dimension_tag<2>,CGAL::Epick_d<CGAL::Dimension_tag<2> >::Dimension>::value));
+CGAL_static_assertion((boost::is_same<CGAL::Dimension_tag<3>,CGAL::Epick_d<CGAL::Dimension_tag<3> >::Dimension>::value));
+CGAL_static_assertion((boost::is_same<CGAL::Dynamic_dimension_tag,CGAL::Epick_d<CGAL::Dynamic_dimension_tag>::Dimension>::value));
 int main(){
   //Broken with Linear_base_d (output iterator)
   //test2<CGAL::Kernel_d_interface<KK> >();
