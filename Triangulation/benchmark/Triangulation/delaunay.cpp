@@ -24,7 +24,7 @@ void test(const int d, const std::string & type, const int N)
     typedef typename DT::Geom_traits::RT RT;
     typedef typename DT::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
 
-    typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
+    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
     CGAL::Timer cost;  // timer
 
     DT dt(d);
