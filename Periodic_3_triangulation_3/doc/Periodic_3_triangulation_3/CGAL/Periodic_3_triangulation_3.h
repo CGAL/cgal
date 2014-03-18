@@ -792,8 +792,8 @@ This function returns a handle on a cell that is a good approximation of the exa
 location of `query`, while being faster. Note that it may return a handle on a cell
 whose interior does not contain `query`.
 
-Note that this function is available only if the cartesian coordinates of `query`
-are accessible with functions `x()`, `y()` and `z()`.}
+Note that this function is available only if the Cartesian coordinates of `query`
+are accessible with functions `x()`, `y()` and `z()`.
 
 */
 Cell_handle
