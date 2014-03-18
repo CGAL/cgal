@@ -32,7 +32,6 @@
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/Mesh_polyhedron_3.h>
 
-#include <CGAL/Mesh_polyhedron_3.h>
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra.h>
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 #include <CGAL/Mesh_3/Detect_features_in_polyhedra.h>
