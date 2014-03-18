@@ -190,23 +190,16 @@ interpolate_on_cell_vertices(const Point_3& p, const Cell_handle& cell) const
   typename Gt::Compute_volume_3 volume =
     Gt().compute_volume_3_object();
   
-  std::vector<Vertex_handle> v;
-  v.push_back(cell->vertex(0));
-  v.push_back(cell->vertex(1));
-  v.push_back(cell->vertex(2));
-  v.push_back(cell->vertex(3));
-  std::sort(v.begin(), v.end());
-
   // Interpolate value using tet vertices values
-  const FT& va = v[0]->meshing_info();
-  const FT& vb = v[1]->meshing_info();
-  const FT& vc = v[2]->meshing_info();
-  const FT& vd = v[3]->meshing_info();
+  const FT& va = cell->vertex(0)->meshing_info();
+  const FT& vb = cell->vertex(1)->meshing_info();
+  const FT& vc = cell->vertex(2)->meshing_info();
+  const FT& vd = cell->vertex(3)->meshing_info();
   
-  const Point_3& a = v[0]->point();
-  const Point_3& b = v[1]->point();
-  const Point_3& c = v[2]->point();
-  const Point_3& d = v[3]->point();
+  const Point_3& a = cell->vertex(0)->point();
+  const Point_3& b = cell->vertex(1)->point();
+  const Point_3& c = cell->vertex(2)->point();
+  const Point_3& d = cell->vertex(3)->point();
   
   const FT abcp = CGAL::abs(volume(a,b,c,p));
   const FT abdp = CGAL::abs(volume(a,d,b,p));
