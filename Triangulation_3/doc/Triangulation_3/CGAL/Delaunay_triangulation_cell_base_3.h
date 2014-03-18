@@ -8,8 +8,8 @@ The class `Delaunay_triangulation_cell_base_3` is a model of the concept
 `DelaunayTriangulationCellBase_3`. It is the default cell base class 
 of Delaunay triangulations. 
 
-
-\tparam Traits must be a model of `DelaunayTriangulationTraits_3`. 
+\tparam TriangulationTraits_3 is the geometric traits class. It should be a model
+of `DelaunayTriangulationTraits_3`.
 
 \tparam Cb must be a model of `TriangulationCellBase_3`. 
 By default, this parameter is instantiated by 

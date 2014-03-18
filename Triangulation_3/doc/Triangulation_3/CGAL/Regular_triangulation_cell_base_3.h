@@ -8,7 +8,8 @@ The class `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives
 `Cb`, a cell base class of a 3D triangulation.
 It is the default cell base class of regular triangulations.
 
-\tparam Traits must be a model of `RegularTriangulationTraits_3`. 
+\tparam TriangulationTraits_3 is the geometric traits class. It should be a model
+of `RegularTriangulationTraits_3`. 
 
 \tparam Cb is a cell base class from which `Regular_triangulation_cell_base_3`
 derives. It must be a model of `TriangulationCellBase_3`. 
@@ -49,7 +50,8 @@ Note that this point has no weight.
 /// @{
 /*! 
 Returns the weighted circumcenter of the cell.
-Be careful that the return type is `Traits::Bare_point`, and the radius of the weighted 
+Be careful that the return type is `TriangulationTraits_3::Bare_point`,
+and the radius of the weighted 
 circumcenter is not supposed to be computed
 by the constructor `ConstructWeightedCircumcenter` of the traits
 class, so the returned point has no weight.

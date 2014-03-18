@@ -14,7 +14,7 @@ All functions modifying the vertices of the cell invalidate the cached
 circumcenter. 
 
 \tparam TriangulationTraits_3 is the geometric traits class. It should be a model
-of `RegularTriangulationTraits_3`.
+of `RegularTriangulationTraits_3`. 
 
 \tparam Cb is a cell base class from which 
 `Regular_triangulation_cell_base_with_weighted_circumcenter_3` derives. Cb should
