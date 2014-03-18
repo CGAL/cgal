@@ -66,6 +66,7 @@ int main(int argc, char **argv)
     go<5, double>(N);
     go<6, double>(N);
     go<7, double>(N);
+    go<8, double>(N);
 
 
     return 0;
