@@ -13,6 +13,11 @@ no more a requirement from the documentation, so that the code (Tr.h and
 Delaunay_tr.h) should be changed. OR, we re-document 0 as the index of the
 vertex at infinity.
 
+
+
+ALL Remarks below are done or not important
+
+
 --------------------------------------------------
 Problems to be solved from the reviews (beginning 2012)
 --------------------------------------------------
