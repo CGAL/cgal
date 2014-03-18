@@ -364,7 +364,7 @@ public:
 
     void set_line_optimization() {
       CGAL_assertion(this->size() == 1);
-      CGAL_assertion(this->incoming == - this->outgoing);
+      CGAL_assertion(this->incoming == - this->get_outgoing());
       is_line_optimization = true;
     }
 
