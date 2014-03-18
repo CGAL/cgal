@@ -618,7 +618,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
                                "(%1%,%2%,%4%) (%|3$.1f| iteration/s)")
     % pqueue_size
     % iteration_nb
-    % 0//(iteration_nb / timer.time())
+    % (iteration_nb / timer.time())
     % bad_vertices.size();
 #endif
     
@@ -628,7 +628,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
                                "bound %5%: (%1%,%2%,%4%) (%|3$.1f| iteration/s)")
     % pqueue_size
     % iteration_nb
-    % 0//(iteration_nb / running_time_.time())
+    % (iteration_nb / running_time_.time())
     % bad_vertices.size()
     % sliver_bound;
 #endif
