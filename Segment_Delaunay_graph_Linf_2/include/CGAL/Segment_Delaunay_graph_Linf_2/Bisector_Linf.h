@@ -384,6 +384,8 @@ private:
 
     bool have_common_endp = is_mid_psrc or is_mid_ptrg;
 
+    bool optimize_for_line(false);
+
     Are_parallel_2 are_parallel;
 
     // compute supporting lines of segments
@@ -449,6 +451,8 @@ private:
 
       dinc = -d;
       dout = d;
+
+      optimize_for_line = true;
 
     } else {
       // here p and q are not parallel
@@ -628,6 +632,10 @@ private:
     //  << points[0] << std::endl;);
 
     Polychainline pcl (dinc, points, points + 1, dout);
+
+    if (optimize_for_line) {
+      pcl.set_line_optimization();
+    }
 
     return pcl;
 
