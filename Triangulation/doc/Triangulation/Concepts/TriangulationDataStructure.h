@@ -30,7 +30,7 @@ geometric realization of the `TriangulationDataStructure` (<I>e.g.</I>, in a
 corresponds to <I>the vertex at infinity</I>.
 
 <DT><B>0</B><DD> This corresponds to two vertices, each incident to one \f$ 0\f$-face;
-the two full cells being neighbor of each other. This is the unique
+the two full cells being neighbors of each other. This is the unique
 triangulation of the \f$ 0\f$-sphere.
 
 <DT><B>\f$ d>0\f$</B><DD> This corresponds to a standard triangulation of the sphere
@@ -44,7 +44,7 @@ is a proper face of \f$ \sigma\f$.
 We call a \f$ 0\f$-simplex a <I>vertex</I>, a \f$ (d-1)\f$-simplex a <I>facet</I> and a
 \f$ d\f$-simplex a <I>full cell</I>. A <I>face</I> can have any dimension.
 Two full cells are <I>adjacent</I> if they share a facet. Two faces are
-<I>incident</I> if one is included un the other.
+<I>incident</I> if one is included in the other.
 
 Input/Output
 --------------
@@ -64,7 +64,7 @@ The information stored in the `iostream` is:
 - for each full cell the indices of its neighbors.
 
 The indices of vertices and full cells correspond to the order in the
-file, the user cannot control it.
+file; the user cannot control it.
 The classes `Vertex` and
 `Full_cell` have to provide the relevant I/O operators
 (possibly empty).
@@ -271,8 +271,10 @@ that the argument `c` is a good full cell. The full cells are then
 recursively explored by examining if, from a given good full cell, its adjacent
 full cells are also good.
 
-The argument `tp` is a predicate that takes as argument a `Facet`
-whose defining `Full_cell` is good. The predicate must return `true`
+The argument `tp` is a predicate, i.e.\ a function or a functor providing 
+`operator()`, that takes as argument a `Facet`
+whose defining `Full_cell` is good.
+The predicate must return `true`
 if the traversal of that `Facet` leads to a good full cell.
 
 All the good full cells are output into the last argument `out`.
@@ -305,20 +307,21 @@ incident_full_cells(const Face & f, OutputIterator out) const;
 
 /*!
 Insert in `out` all the full cells that share at least one vertex with the `Face f`. Returns the output iterator.
+\pre `f.full_cell()!=Full_cell_handle()`.
 
 */
 template< typename OutputIterator > OutputIterator
 star(const Face & f, OutputIterator out) const;
 
 /*!
-Constructs all the `Face`s of dimension `d` incident to
-`Vertex` v and inserts them in the `OutputIterator out`. If `d >=` `tds`.`current_dimension()`, then no `Face` is
+Constructs all the `Face`s of dimension `dim` incident to
+`Vertex` v and inserts them in the `OutputIterator out`. If `dim >=` `tds`.`current_dimension()`, then no `Face` is
 constructed.
-\pre `0 < d` and `v!=Vertex_handle()`.
+\pre `0 < dim` and `v!=Vertex_handle()`.
 
 */
 template< typename OutputIterator > OutputIterator
-incident_faces(Vertex_handle v, const int d, OutputIterator
+incident_faces(Vertex_handle v, const int dim, OutputIterator
 out);
 
 /// @}
@@ -374,7 +377,7 @@ Vertex_iterator vertices_end();
 Returns a full cell incident to `Vertex` `v`. Note that this
 full cell is
 not unique (`v` is typically incident to more than one full cell).
-\pre `v` is not the default constructed `Vertex_handle`
+\pre `v != Vertex_handle`
 */
 Full_cell_handle full_cell(Vertex_handle v) const;
 
@@ -383,7 +386,7 @@ Returns a `Full_cell_handle` pointing to the `Full_cell`
 opposite to the `i`-th vertex of `c`.
 \pre \f$0 \leq i \leq \f$`tds`.`current_dimension()`
 
-and `c` is not the default constructed `Full_cell_handle`
+and `c != Full_cell_handle()`
 */
 Full_cell_handle neighbor(Full_cell_handle c, int i) const;
 
@@ -522,7 +525,7 @@ Vertex_handle insert_increase_dimension(Vertex_handle star);
 
 /*!
 Adds a new full cell to `tds` and
-returns a handle to it. The new full cell has no vertex and no neighbor yet.
+returns a handle to it. The new full cell has no vertices and no neighbors yet.
 */
 Full_cell_handle new_full_cell();
 
@@ -533,7 +536,7 @@ no associated full cell nor index yet.
 Vertex_handle new_vertex();
 
 /*!
-Sets the `i`-th vertex of `c` to `v` and, if `v` is non-NULL,
+Sets the `i`-th vertex of `c` to `v` and, if `v != Vertex_handle()`,
 sets `c` as the incident full cell of `v`.
 */
 void associate_vertex_with_full_cell(Full_cell_handle c, int i,
@@ -584,17 +587,16 @@ Vertex_handle collapse_face(const Face & f);
 This method does exactly the opposite of
 `insert_increase_dimension()`:
 `v` is removed,
-full cells not containing `star` are removed
-full cells containing `star` but not `v` loose vertex `star`
+full cells not containing `star` are removed,
+full cells containing `star` but not `v` loose vertex `star`,
 full cells containing `star` and `v` loose vertex `v`
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
-\pre All cells contains either `star` or `v`.
+\pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation
 and `current_dimension()!=2`.
 
 */
-void remove_decrease_dimension(Vertex_handle v, Vertex_handle
-star);
+void remove_decrease_dimension(Vertex_handle v, Vertex_handle star);
 
 /*!
 Remove the vertex `v` from the triangulation.

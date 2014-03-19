@@ -169,7 +169,7 @@ TDS_data & get_tds_data();
 \cgalAdvanced Returns a handle to the mirror vertex of the `i`-th vertex of full cell
 `c`. This function works even if the adjacency information stored in the
 neighbor full cell `*``c``.neighbor(i)` is corrupted. This is useful
-when temporary corruption is necessary during surgical operation on a
+when temporary corruption is necessary during surgical operations on a
 triangulation. \pre \f$0 \leq i,\f$ `cur_dim` \f$ \leq \f$ `maximal_dimension()`.
 */
 Vertex_handle mirror_vertex(const int i, const int cur_dim) const;

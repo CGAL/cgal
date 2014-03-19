@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `DelaunayTriangulationTraits` describes the various types and functions that a class
-has to provide as the first parameter (`DCTraits`) to the class template
+has to provide as the first parameter (`DelaunayTriangulationTraits`) to the class template
 `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. 
 
 It brings the geometric ingredients to the definition of a Delaunay

@@ -15,7 +15,7 @@ a class provided as `TriangulationTraits` should also satisfy the concept
 `SpatialSortingTraits_d`. 
 
 \cgalRefines ::SpatialSortingTraits_d If a range of points is inserted, the 
-traits must refine `SpatialSortingTraits_d`, This is not needed 
+traits must refine `SpatialSortingTraits_d`. This is not needed 
 if the points are inserted one by one. 
 
 \cgalHasModel `CGAL::Cartesian_d<FT, Dim, LA>`
@@ -89,7 +89,7 @@ typedef Hidden_type Contained_in_affine_hull_d;
 /// In the \f$ D\f$-dimensional oriented space, a \f$ k-1\f$
 /// dimensional subspace (flat) define by \f$ k\f$ points can be
 /// oriented in two different ways. Choosing the orientation of any
-/// simplex defined by \f$ k\f$ points fix the orientation of all
+/// simplex defined by \f$ k\f$ points fixes the orientation of all
 /// other simplices. To be able to orient lower dimensional flats, we
 /// use the following classes:
 /// @{

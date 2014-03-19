@@ -10,7 +10,7 @@ represent a vertex.
 \cgalRefines ::TriangulationDSVertex 
 We only list below the additional specific requirements of ::TriangulationVertex. 
 Compared to ::TriangulationDSVertex, the main difference is the addition of 
-an association of the vertex into a geometric point. 
+an association of the vertex with a geometric point. 
 
 \cgalHasModel CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex> 
 
