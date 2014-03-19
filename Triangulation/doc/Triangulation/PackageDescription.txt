@@ -19,7 +19,7 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-A triangulation is a pure simplicial complex, connected and without
+A triangulation is a pure simplicial complex which is connected and has no
 singularities. Its faces are such that two of them either do not
 intersect or share a common face.
 
@@ -70,7 +70,7 @@ following concepts:
 
 `TriangulationDSFace`
 
-## (Geometric) triangulations ##
+## Triangulations ##
 
 `TriangulationTraits`
 
