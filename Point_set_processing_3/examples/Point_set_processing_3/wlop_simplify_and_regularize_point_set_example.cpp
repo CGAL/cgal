@@ -29,9 +29,6 @@ int main(void)
 
   //Algorithm parameters
   const double retain_percentage = 2;   // percentage of points to retain.
-  
-  std::cout << "Run algorithm example: " << std::endl;
-
   std::vector<Point> output;
 
   //way 1 begins

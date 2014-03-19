@@ -319,16 +319,17 @@ template <typename Concurrency_tag,
           typename OutputIteratorValueType,
           typename OutputIterator,
           typename RandomAccessIterator ,
-          typename PointPMap,
+          typename PointPMapIn,
+          typename PointPMapOut,
           typename Kernel>
 void
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator first,  ///< iterator over the first input point.
   RandomAccessIterator beyond, ///< past-the-end iterator over the input points.
   OutputIterator output,       ///< add back-inserter
-  PointPMap point_pmap,        ///< property map: value_type of 
+  PointPMapIn point_pmap_input,        ///< property map: value_type of 
                                ///< RandomAccessIterator -> Point_3
-  PointPMap point_pmap_output, ///< property map: value_type of 
+  PointPMapOut point_pmap_output, ///< property map: value_type of 
                                ///< OutputIterator -> Point_3
   double retain_percentage,    ///< percentage of points to retain. 
                                ///< Default: 5%.
@@ -385,9 +386,9 @@ wlop_simplify_and_regularize_point_set(
   for(it = first_sample_iter; it != beyond; ++it)
   {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    sample_points.push_back(get(point_pmap, it));
+    sample_points.push_back(get(point_pmap_input, it));
 #else
-    sample_points.push_back(get(point_pmap, *it));
+    sample_points.push_back(get(point_pmap_input, *it));
 #endif
   }
   
@@ -398,9 +399,9 @@ wlop_simplify_and_regularize_point_set(
     for (RandomAccessIterator temp = first; temp != beyond; ++temp)
     {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point original_p = get(point_pmap, temp);
+      Point original_p = get(point_pmap_input, temp);
 #else
-      Point original_p = get(point_pmap, *temp);
+      Point original_p = get(point_pmap_input, *temp);
 #endif 
       bbox += original_p.bbox();
     }
@@ -442,9 +443,9 @@ wlop_simplify_and_regularize_point_set(
                   compute_density_weight_for_original_point<Kernel, AABB_Tree>
                                               (
                                               #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                get(point_pmap, cur),
+                                                get(point_pmap_input, cur),
                                               #else
-                                                get(point_pmap, *cur),
+                                                get(point_pmap_input, *cur),
                                               #endif 
                                                 orignal_aabb_tree, 
                                                 radius2);
@@ -462,9 +463,9 @@ wlop_simplify_and_regularize_point_set(
                       compute_density_weight_for_original_point<Kernel, AABB_Tree>
                                               (
                                               #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                get(point_pmap, it),
+                                                get(point_pmap_input, it),
                                               #else
-                                                get(point_pmap, *it),
+                                                get(point_pmap_input, *it),
                                               #endif  
                                                 orignal_aabb_tree, 
                                                 radius2);
@@ -567,16 +568,17 @@ wlop_simplify_and_regularize_point_set(
 // This variant deduces the kernel from the iterator type.
 template <typename Concurrency_tag,
           typename OutputIteratorValueType,
-          typename OutputIterator,     //add output iterator
+          typename OutputIterator,     
           typename RandomAccessIterator, 
-          typename PointPMap>
+          typename PointPMapIn,
+          typename PointPMapOut>
 void 
 wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
   OutputIterator output,        ///< add back-inserter
-  PointPMap point_pmap,         ///< property map RandomAccessIterator  -> Point_3
-  PointPMap point_pmap_output,  ///< property map OutputIterator
+  PointPMapIn point_pmap_input,         ///< property map RandomAccessIterator  -> Point_3
+  PointPMapOut point_pmap_output,  ///< property map OutputIterator
   const double retain_percentage,     ///< percentage of points to retain
   double neighbor_radius,       ///< size of neighbors.
   const unsigned int max_iter_number, ///< number of iterations.
@@ -584,14 +586,14 @@ wlop_simplify_and_regularize_point_set(
                                       ///  to generate more rugularized result.                                 
 ) 
 {
-  typedef typename boost::property_traits<PointPMap>::value_type  Point;
+  typedef typename boost::property_traits<PointPMapIn>::value_type  Point;
   typedef typename Kernel_traits<Point>::Kernel                   Kernel;
   typedef typename value_type_traits<OutputIterator>::type  OutputIteratorType;
   return wlop_simplify_and_regularize_point_set
     <Concurrency_tag, OutputIteratorType>(
       first, beyond,
       output,
-      point_pmap,
+      point_pmap_input,
       point_pmap_output,
       retain_percentage,
       neighbor_radius,
@@ -613,7 +615,7 @@ wlop_simplify_and_regularize_point_set(
   RandomAccessIterator  first,  ///< iterator over the first input point
   RandomAccessIterator  beyond, ///< past-the-end iterator
   OutputIterator output,        //add back-inserter
-  PointPMap point_pmap,      ///< property map RandomAccessIterator  -> Point_3
+  PointPMap point_pmap_input,      ///< property map RandomAccessIterator  -> Point_3
   const double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
@@ -625,7 +627,7 @@ wlop_simplify_and_regularize_point_set(
             <Concurrency_tag, OutputIteratorValueType>(
             first, beyond,
             output,
-            point_pmap,
+            point_pmap_input,
         #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
             make_dereference_property_map(output),
         #else
