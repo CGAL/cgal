@@ -383,7 +383,7 @@ public:
     template< typename OutputIterator >
     Full_cell_handle insert_in_tagged_hole(Vertex_handle, Facet, OutputIterator);
 
-	Vertex_handle insert_increase_dimension(Vertex_handle); /* Concept */
+    Vertex_handle insert_increase_dimension(Vertex_handle); /* Concept */
 
 private:
 
@@ -580,22 +580,22 @@ public:
     OutputIterator star(const Face &, OutputIterator) const; /* Concept */
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
-    OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
+    OutputIterator incident_upper_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp = Comparator())
     {
-        return incident_faces(v, d, out, cmp, true);
+        return incident_faces(v, dim, out, cmp, true);
     }
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
 #else
     template< typename OutputIterator, typename Comparator >
-    OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
+    OutputIterator incident_upper_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp = Comparator())
     {
-        return incident_faces(v, d, out, cmp, true);
+        return incident_faces(v, dim, out, cmp, true);
     }
     template< typename OutputIterator >
-    OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out)
+    OutputIterator incident_upper_faces(Vertex_const_handle v, const int dim, OutputIterator out)
     {
-        return incident_faces(v, d, out, std::less<Vertex_const_handle>(), true);
+        return incident_faces(v, dim, out, std::less<Vertex_const_handle>(), true);
     }
     template< typename OutputIterator, typename Comparator >
     OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
@@ -696,10 +696,10 @@ template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Fcb>
-::incident_faces(Vertex_const_handle v, const int d, OutputIterator out,
+::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out,
     std::less<Vertex_const_handle> cmp, bool upper_faces)
 {
-    return incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, d, out, cmp, upper_faces);
+    return incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, dim, out, cmp, upper_faces);
 }
 #endif
 
@@ -707,10 +707,10 @@ template< class Dim, class Vb, class Fcb >
 template< typename OutputIterator, typename Comparator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Fcb>
-::incident_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp, bool upper_faces)
+::incident_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp, bool upper_faces)
 {
-    CGAL_precondition( 0 < d );
-    if( d >= current_dimension() )
+    CGAL_precondition( 0 < dim );
+    if( dim >= current_dimension() )
         return out;
     typedef std::vector<Full_cell_handle> Simplices;
     Simplices simps;
@@ -726,7 +726,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
     // setup Face comparator and Face_set
     typedef internal::Triangulation::Compare_faces_with_common_first_vertex<Self>
         Upper_face_comparator;
-    Upper_face_comparator ufc(d);
+    Upper_face_comparator ufc(dim);
     typedef std::set<Face, Upper_face_comparator> Face_set;
     Face_set face_set(ufc);
     for( typename Simplices::const_iterator s = simps.begin(); s != simps.end(); ++s )
@@ -752,20 +752,20 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             ++vbegin;
             std::sort(vbegin, vertices.end(), cmp);
         }
-        if( v_idx + d > current_dimension() )
+        if( v_idx + dim > current_dimension() )
             continue; // |v| is too far to the right
         // stores the index of the vertices of s in the same order
         // as in |vertices|:
         for( int i = 0; i <= current_dimension(); ++i )
             sorted_idx[i] = (*s)->index(vertices[i]);
         // init state for enumerating all candidate faces:
-        internal::Combination_enumerator f_idx(d, v_idx + 1, current_dimension());
+        internal::Combination_enumerator f_idx(dim, v_idx + 1, current_dimension());
         Face f(*s);
         f.set_index(0, v_idx);
         while( ! f_idx.end() )
         {
             // check if face has already been found
-            for( int i = 0; i < d; ++i )
+            for( int i = 0; i < dim; ++i )
                 f.set_index(1 + i, sorted_idx[f_idx[i]]);
             face_set.insert(f);
             // compute next sorted face (lexicographic enumeration)
