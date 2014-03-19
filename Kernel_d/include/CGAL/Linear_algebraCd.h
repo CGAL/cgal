@@ -119,5 +119,6 @@ public:
 } //namespace CGAL
 
 #include <CGAL/Kernel_d/Linear_algebraCd_impl.h>
+//#include <CGAL/Kernel_d/Interval_linear_algebra.h>
 
 #endif // CGAL_LINEAR_ALGEBRACD_H

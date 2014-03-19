@@ -1,0 +1,70 @@
+\begin{ccRefConcept}{TriangulationVertex}
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements on the type used by the
+class \ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}, and its derived classes, to
+represent a vertex.
+
+\ccRefines
+
+\ccc{TriangulationDSVertex}
+
+We only list below the additional specific requirements of \ccRefName.
+
+Compared to \ccc{TriangulationDSVertex}, the main difference is the addition of
+an association of the vertex into a geometric point.
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}
+
+\ccTypes
+\ccThree{TriangulationVertex}{v(Full_cell_handle c, const Point & p);}{}
+\ccThreeToTwo
+
+\ccNestedType{Point}{The type of the point stored in the vertex. It must be
+the same as the point type \ccc{TriangulationTraits::Point} (or its refined
+concepts) when the \ccc{TriangulationVertex} is used in the class
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>} (or its derived classes).}
+
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{TriangulationVertex(Full_cell_handle c, const Point & p);}%
+{Constructs a vertex with incident full cell \ccc{c}. The vertex is embedded at point \ccc{p}.}
+
+\ccGlue\ccConstructor{TriangulationVertex(const Point & p);}%
+{Same as above, but without incident full cell.}%{ (Who would have guessed?)}
+
+\ccGlue\ccConstructor{TriangulationVertex();}%
+{Same as above, but with a default-constructed \ccc{Point}.}
+
+\ccOperations
+
+\ccMethod{void set_point(const Point & p);}%
+{The parameter \ccc{p} becomes the new geometrical position of the vertex.}
+
+\ccMethod{const Point & point() const;}%
+{Returns the vertex's position.}
+
+\ccHeading{Input/Output}
+
+These operators can be used directly and are called by the I/O
+operator of class \ccc{Triangulation}.
+
+\ccFunction{istream & operator>>(istream & is, TriangulationVertex & v);}%
+{Inputs the non-combinatorial information given by the vertex, {i.e.},
+the point and other possible information.}
+
+\ccFunction{ostream & operator<<(ostream & os, const TriangulationVertex & v);}%
+{Outputs the non-combinatorial information given by the vertex, {i.e.},
+the point and other possible information.}
+
+\ccSeeAlso
+
+\ccc{Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>}\\
+\ccc{TriangulationFullCell}\\
+\ccc{Triangulation<TriangulationTraits, TriangulationDataStructure>}
+
+\end{ccRefConcept}
