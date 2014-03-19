@@ -45,12 +45,8 @@ int main(void)
                                // the bigger, the result will be smoother.
   int iter_number = 3;         // times of projection
   
-  std::cout << "Run algorithm example: " << std::endl;
-
   for (int i = 0; i < iter_number; i++)
   {
-    std::cout << std::endl << "Iteration: " << i+1 << std::endl;
-   
     double error = 
     CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
           points.begin(), 
@@ -59,8 +55,6 @@ int main(void)
           CGAL::Second_of_pair_property_map<PointVectorPair>(),
           k,
           sharpness_sigma);
-
-    std::cout << std::endl << "move error: " << error << std::endl;
   }
   
   //// Save point set.

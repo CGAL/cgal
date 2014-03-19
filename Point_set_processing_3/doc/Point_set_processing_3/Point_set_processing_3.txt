@@ -152,8 +152,7 @@ Function `wlop_simplify_and_regularize_point_set()` not only simplifies,
 but also regularizes downsampled points. This is an implementation of
 the WLOP (Weighted Locally Optimal Projection) algorithm 
 <a href="http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html">[Huang et al. 2009]</a>.
-
-A parallelized version (required TBB library) is also provided. The parallelism can be turned on/off by assigning "Parallel_tag"/"Sequential_tag" to the template parameter: <Concurrency_tag>.
+A parallelized version of WLOP (required TBB library) is also provided. The parallelism can be turned on/off by assigning "Parallel_tag"/"Sequential_tag" to the template parameter: <Concurrency_tag>.
  
 \subsection Point_set_processing_3Example_3 Grid simplification example
 

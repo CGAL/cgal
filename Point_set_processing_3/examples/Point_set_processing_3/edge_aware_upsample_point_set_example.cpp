@@ -41,8 +41,6 @@ int main(void)
   const double neighbor_radius = 0.2;  // initial neighbors size.
   const unsigned int number_of_output_points = points.size() * 50;   
 
-  std::cout << "Run upsample algorithm example: " << std::endl;
-
    //Run algorithm 
    CGAL::edge_aware_upsample_point_set(
             points.begin(), 
