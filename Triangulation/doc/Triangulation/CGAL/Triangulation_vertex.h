@@ -31,7 +31,7 @@ also accepts the tag `CGAL::Default` as third parameter. In both cases,
 `TriangulationDSVertex` defaults to `CGAL::Triangulation_ds_vertex<>`.
 
 \cgalModels ::TriangulationVertex Additionally, the class
-`Triangulation_vertex` also provides the following types, constructors
+`Triangulation_vertex` provides the following types, constructors
 and methods:
 
 \sa `Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`

@@ -30,7 +30,7 @@ It also accepts the tag `CGAL::Default` as third parameter. In both
 cases, `TriangulationDSFullCell` defaults to `CGAL::Triangulation_ds_full_cell<>`. 
 
 \cgalModels ::TriangulationFullCell Additionally, the class
-`Triangulation_full_cell` also provides the following types,
+`Triangulation_full_cell` provides the following types,
 constructors and methods:
 
 \sa `Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>` 

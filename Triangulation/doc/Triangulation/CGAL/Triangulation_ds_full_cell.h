@@ -36,7 +36,8 @@ When the second parameter is specified, its possible ``values''
 are:<UL> 
 
 <LI>`CGAL::Default`, which is the default value. In that case, the 
-policy `CGAL::TDS_full_cell_default_storage_policy` is used. 
+policy `CGAL::TDS_full_cell_default_storage_policy` is used (i.e.\ the mirror 
+indices are not stored).
 
 <LI>`CGAL::TDS_full_cell_default_storage_policy`. In that case, the mirror 
 indices are not stored. 

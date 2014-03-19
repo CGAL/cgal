@@ -67,7 +67,7 @@ Full_cell_handle remove(Vertex_handle v);
 /*!
 Remove the points or the vertices (through their
 `Vertex_handle`) in the range `[start, end)`.
-`*start` must be of type `Vertex_handle`.
+`ForwardIterator::value_type` must be `Vertex_handle`.
 
 */
 template< typename ForwardIterator > void remove(ForwardIterator

@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Triangulation` is used to store and query the full cells and vertices of
 a triangulationin dimension \f$ d\f$. A special vertex, named
-em infinite vertex, is used to triangulate the outside of the convex
+<I>infinite vertex</I>, is used to triangulate the outside of the convex
 hull of the points in so called <I>infinite cells</I>.
 
 Parameters
@@ -56,8 +56,9 @@ typedef TriangulationTraits::Point_d Point;
 
 /*!
 This indicates whether the dimension of the underlying space is static
-(`Maximal_dimension`=`CGAL::``Dimension_tag<int dim>`) or
-dynamic (`Maximal_dimension`=`CGAL::``Dynamic_dimension_tag`).
+(i.e.\ if the type of `Maximal_dimension` is `CGAL::Dimension_tag<int dim>`)
+or dynamic (i.e.\ if the type of `Maximal_dimension` is 
+`CGAL::Dynamic_dimension_tag`).
 In the latter case, the `dim` parameter passed to the class's constructor
 is used.
 */
@@ -378,7 +379,7 @@ triangulation, then <I>locate</I> returns a default constructed
 If the point `query` lies in the interior of a bounded (finite) full cell of `tr`,
 the latter full cell is returned.
 
-If `query` lies on the boundary of some finite full cells, one of them
+If `query` lies on the boundary of some finite full cells, one of the cells
 is returned.
 
 Let \f$ d=\f$`tr`.`current_dimension()`. If the point `query` lies
@@ -464,7 +465,7 @@ Vertex_handle collapse_face(const Point & p, const Face & f);
 /*!
 Inserts the points found in range `[s,e)` in the triangulation. Returns
 the number of vertices actually inserted. (If several vertices share the
-same position in space, only the first insertion is counted.)
+same position in space, only the vertex that was actually inserted is counted.)
 */
 template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);
