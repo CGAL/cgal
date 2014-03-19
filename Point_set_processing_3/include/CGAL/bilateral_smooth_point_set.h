@@ -324,6 +324,9 @@ public:
 /// For more information, see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
 /// \pre Normals must be unit vectors
 ///
+/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.

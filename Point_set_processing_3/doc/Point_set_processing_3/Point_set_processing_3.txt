@@ -152,7 +152,12 @@ Function `wlop_simplify_and_regularize_point_set()` not only simplifies,
 but also regularizes downsampled points. This is an implementation of
 the WLOP (Weighted Locally Optimal Projection) algorithm 
 <a href="http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html">[Huang et al. 2009]</a>.
-A parallelized version of WLOP (required TBB library) is also provided. The parallelism can be turned on/off by assigning "Parallel_tag"/"Sequential_tag" to the template parameter: <Concurrency_tag>.
+A parallel version of WLOP is provided.
+It requires the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+for more details.
  
 \subsection Point_set_processing_3Example_3 Grid simplification example
 
@@ -194,8 +199,13 @@ projecting each point onto a smooth parametric surface patch
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
 Bilateral projection can preserve sharp features according to the normal (gradient) information.
-So, points' normals are required as input. Also, a parallelized version (required TBB library) is provided.
-The parallelism can be turned on/off by assigning "Parallel_tag"/"Sequential_tag" to the template parameter: <Concurrency_tag>.
+So, points' normals are required as input. 
+A parallel version of the algorithm is provided.
+It requires the executable to be linked against the 
+<a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+To control the number of threads used, the user may use the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+for more details.
 
 \subsection Point_set_processing_3Example_5 Jet smoothing example
 

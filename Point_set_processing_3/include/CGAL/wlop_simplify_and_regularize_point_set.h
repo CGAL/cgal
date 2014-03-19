@@ -304,6 +304,9 @@ compute_density_weight_for_sample_point(
 /// For more details, please see:
 /// http://web.siat.ac.cn/~huihuang/WLOP/WLOP_page.html
 ///
+/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam RandomAccessIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
@@ -318,7 +321,7 @@ compute_density_weight_for_sample_point(
 template <typename Concurrency_tag,
           typename OutputIteratorValueType,
           typename OutputIterator,
-          typename RandomAccessIterator ,
+          typename RandomAccessIterator,
           typename PointPMapIn,
           typename PointPMapOut,
           typename Kernel>
