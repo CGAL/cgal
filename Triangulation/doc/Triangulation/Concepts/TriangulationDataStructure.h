@@ -3,19 +3,16 @@
 \ingroup PkgTriangulationsConcepts
 \cgalConcept
 
-The `TriangulationDataStructure` concept describes objects responsible for storing and
-maintaining the combinatorial part of a
-\f$ d\f$-dimensional pure simplicial complex (all simplices that are not
-sub-faces of another have the same dimension \f$ d\f$).
-Its topology is the topology
-of the sphere \f$ \mathcal S^d\f$ with \f$ d\in[-2,D]\f$.
-In a pure (or homogeneous) simplicial \f$ d\f$-complex, all
-faces are sub-faces of some \f$ d\f$-simplex. (A
-simplex is also a face of itself.) In particular, it does not
-contain any \f$ d+1\f$-face, and any \f$ d-1\f$-face belongs to exactly
-two \f$ d\f$-dimensional full cells.
+The `TriangulationDataStructure` concept describes objects responsible for 
+storing and maintaining the combinatorial part of a
+\f$ d\f$-dimensional pure simplicial complex that has the topology
+of the \f$ d\f$-dimensional sphere \f$ \mathcal S^d\f$ with \f$ d\in[-2,D]\f$.
+Since the simplicial \f$ d\f$-complex is pure, all
+faces are sub-faces of some \f$ d\f$-simplex. And since it has the 
+topology of the sphere \f$ \mathcal S^d\f$, it is manifold, thus 
+any \f$ d-1\f$-face belongs to exactly two \f$ d\f$-dimensional full cells.
 
-Values of \f$ d\f$ (the <I>current dimension</I> of the complex) include
+Possible values for the current dimension \f$ d\f$ include
 
 <DL>
 <DT><B>-2</B><DD> This corresponds to the non-existence of any object in
@@ -43,7 +40,7 @@ is a proper face of \f$ \sigma\f$.
 
 We call a \f$ 0\f$-simplex a <I>vertex</I>, a \f$ (d-1)\f$-simplex a <I>facet</I> and a
 \f$ d\f$-simplex a <I>full cell</I>. A <I>face</I> can have any dimension.
-Two full cells are <I>adjacent</I> if they share a facet. Two faces are
+Two full cells are <I>neighbors</I> if they share a facet. Two faces are
 <I>incident</I> if one is included in the other.
 
 Input/Output
@@ -86,14 +83,14 @@ public:
 
 /*!
 
-Vertex type.
+The vertex type. A model of the concept `TriangulationDSVertex`.
 
 */
 typedef Hidden_type Vertex;
 
 /*!
 
-Full cell type.
+The full cell type. A model of the concept `TriangulationDSFullCell`.
 
 */
 typedef Hidden_type Full_cell;
@@ -101,7 +98,7 @@ typedef Hidden_type Full_cell;
 /*!
 
 The concept `TriangulationDataStructure` also defines a type for
-describing facets of the triangulation with codimension 1.
+describing faces of the triangulation with codimension 1.
 
 The constructor `Facet(c,i)` constructs a `Facet` representing the facet of
 full cell `c` opposite to its `i`-th vertex. Its dimension is
@@ -140,24 +137,21 @@ typedef Hidden_type Full_cell_handle;
 /// @}
 
 /// \name Rebind
-/// Requirements for `Vertex` and `Full_cell` are described in
-/// concepts `TriangulationDataStructure::Vertex` and
-/// `TriangulationDataStructure::FullCell` .
 /// @{
 
 /*!
 This nested template class allows to get the type of a triangulation
 data structure that only changes the vertex type. It has to define a type
-`Other` which is a <I>rebound</I> triangulation data structure, that is, the
-one whose `TriangulationDSVertexBase` will be `Vb2`.
+`Other` which is a <I>rebound</I> triangulation data structure with `Vb2`
+as vertex type.
 */
 typedef Hidden_type template <typename Vb2> struct Rebind_vertex;
 
 /*!
 This nested template class allows to get the type of a triangulation
 data structure that only changes the full cell type. It has to define a type
-`Other` which is a <I>rebound</I> triangulation data structure, that is, the
-one whose `TriangulationDSFullCellBase` will be `Fcb2`.
+`Other` which is a <I>rebound</I> triangulation data structure with `Fcb2`
+as full cell type.
 */
 typedef Hidden_type template <typename Fcb2> struct Rebind_full_cell;
 

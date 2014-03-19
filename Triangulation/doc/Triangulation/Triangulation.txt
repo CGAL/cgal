@@ -56,8 +56,8 @@ entry</A> for more about simplicial complexes.
 
 ## What's in this package? ##
 
-This \cgal package deals with pure finite simplicial complexes
-without boundary, which
+This \cgal package deals with pure simplicial complexes which are connected 
+and have no singularities, which
 we will simply call in the sequel <I>triangulations</I>. It provides three main classes
 for creating and manipulating triangulations.
 
