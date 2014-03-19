@@ -22,6 +22,7 @@ functors created by another one.
 Only the interfaces specific to this class are listed here, refer to the
 concepts for the rest.
 
+Known bug: the functor `Intersect_d` is not yet implemented.
 
 \cgalModels `Kernel_d`
 \cgalModels `DelaunayTriangulationTraits`

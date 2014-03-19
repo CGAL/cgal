@@ -538,6 +538,8 @@ evolution of the low-dimensional kernel. The kernel was revised
 based on suggestions by Herv&eacute; Br&ouml;nnimann, Michael Hoffmann, and
 Stefan Schirra.
 
+Epick_d was added by Marc Glisse in 2014.
+
 \subsection Kernel_dAcknowledgments Acknowledgments
 
 This work was supported by ESPRIT IV Long Term Research Projects

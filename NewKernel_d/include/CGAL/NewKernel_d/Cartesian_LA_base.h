@@ -46,6 +46,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef Dim_              Max_ambient_dimension;
     typedef Dim_              Dimension;
     typedef LA_               LA;
+    template <class> struct Ambient_dimension { typedef Dim_ type; };
 
     typedef Vec_     LA_vector;
     typedef typename LA_vector::Vector Point;
