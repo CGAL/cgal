@@ -152,6 +152,11 @@ private:
 	std::vector<Sign> mask;
 
 public:
+	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs)
+    : funcs(funcs), mask(funcs.size(), NEGATIVE)
+    {
+    }
+
 	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs, const std::vector<Sign>& mask)
     : funcs(funcs), mask(mask)
     {
