@@ -60,10 +60,8 @@ typedef Data Data;
 
 /*! 
 Sets the maximum possible dimension of the cell to `dmax`. 
-The parameter `t` is passed to the `Data` constructor. 
 */ 
-template< typename T> Triangulation_full_cell(int dmax, const T 
-& t); 
+template< typename T> Triangulation_full_cell(int dmax); 
 
 /// @} 
 

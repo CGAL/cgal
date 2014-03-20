@@ -23,7 +23,7 @@ structure. `TriangulationDataStructure` must be a model of the concept
 be defined by specifying only the first parameter, or by using the
 tag `CGAL::Default` as
 the second parameter. In both cases, `TriangulationDataStructure` defaults to
-`Triangulation_data_structure<Maximal_dimension<TriangulationTraits::Point_d>::type, Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>`.
+`Triangulation_data_structure<TriangulationTraits::Dimension, Triangulation_vertex<TriangulationTraits>, Triangulation_full_cell<TriangulationTraits>>`.
 
 The class `Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` inherits all the types
 defined in the base class `Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. Additionally, it

@@ -63,10 +63,10 @@ Triangulation_face(Full_cell_handle c);
 
 /*!
 Setup the `Face` knowing
-the maximal dimension `ad`. Sets the `Face`'s full cell to the
+the maximal dimension `md`. Sets the `Face`'s full cell to the
 default-constructed one.
 */
-Triangulation_face(const int ad);
+Triangulation_face(const int md);
 
 /// @}
 

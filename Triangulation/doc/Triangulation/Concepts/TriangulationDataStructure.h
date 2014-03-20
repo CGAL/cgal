@@ -267,7 +267,7 @@ full cells are also good.
 
 The argument `tp` is a predicate, i.e.\ a function or a functor providing 
 `operator()`, that takes as argument a `Facet`
-whose defining `Full_cell` is good.
+whose `Full_cell` is good.
 The predicate must return `true`
 if the traversal of that `Facet` leads to a good full cell.
 
@@ -330,8 +330,7 @@ Returns a handle to the `i`-th `Vertex` of the `Full_cell` `c`.
 Vertex_handle vertex(Full_cell_handle c, const int i) const;
 
 /*!
-Returns the index of the vertex mirror of the `i`-th vertex of `c`.
-Equivalently, returns the index of `c` as a neighbor of its `i`-th neighbor.
+Returns the index of `c` as a neighbor of its `i`-th neighbor.
 \pre \f$0 \leq i \leq \f$`tds`.`current_dimension`()
 
 and `c!=Full_cell_handle()`.
@@ -339,8 +338,7 @@ and `c!=Full_cell_handle()`.
 int mirror_index(Full_cell_handle c, int i) const;
 
 /*!
-Returns the vertex mirror of the `i`-th vertex of `c`.
-Equivalently, returns the vertex of the `i`-th neighbor of `c`
+Returns the vertex of the `i`-th neighbor of `c`
 that is not vertex of `c`.
 \pre \f$0 \leq i \leq \f$`tds`.`current_dimension`()
 
@@ -472,7 +470,7 @@ does not, with `f=(c,i)`.
 \f$ H\f$ the union of full cells in \f$ C\f$ is simply connected and its
 boundary \f$ \partial H\f$ is a
 combinatorial triangulation of the sphere \f$ \mathcal S^{d-1}\f$.
-All vertices of the triangulation are on \f$ \partial H\f$.
+All vertices of cells of \f$ C\f$ are on \f$ \partial H\f$.
 
 \cgalFigureBegin{triangulationfiginserthole,insert-in-hole.png}
 Insertion in a hole, \f$ d=2\f$
@@ -504,9 +502,9 @@ full cell is such that, if `f` was a full cell of maximal dimension in the
 initial complex, then `(f,v)`, in this order, is the corresponding full cell
 in the updated triangulation. A handle to `v` is returned
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
-\pre `tds`.
+\pre
 If the current dimension is -2 (empty triangulation), then `star`
-has to be omitted, otherwise
+can be omitted (it is ignored), otherwise
 the current dimension must be strictly less than the maximal dimension
 and `star` must be a vertex of `tds`.
 
@@ -628,6 +626,9 @@ neighbors as its number of facets (`current_dimension()+1`).
 <LI>check that each full cell share exactly `tds`.`current_dimension()`
 vertices with each of its neighbor.
 </UL>
+
+When `verbose` is set to `true`, messages are printed to give
+a precise indication on the kind of invalidity encountered.
 
 Returns `true` if all the tests pass, `false` if any test fails. See
 the documentation for the models of this concept to see the additionnal (if

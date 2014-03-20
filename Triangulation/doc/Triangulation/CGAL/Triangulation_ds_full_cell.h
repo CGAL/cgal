@@ -73,9 +73,7 @@ The `is_valid` method is only minimally defined in the
 precisely here, for the model `Triangulation_ds_full_cell`.
 
 \cgalAdvanced Implements the validity checks required by the concept 
-`TriangulationDSFullCell`. In addition, it is checked that there is no 
-`NULL` handle to vertices in the middle of non-`NULL` ones, that is, 
-that the internal memory layout is not corrupted. 
+`TriangulationDSFullCell`.
 */ 
 bool is_valid(bool verbose=false) const; 
 

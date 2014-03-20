@@ -19,8 +19,8 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-A triangulation is a pure simplicial complex which is connected and has no
-singularities. Its faces are such that two of them either do not
+A triangulation is a pure manifold simplicial complex which is connected and has no
+boundaries. Its faces are such that two of them either do not
 intersect or share a common face.
 
 The basic triangulation class of \cgal is primarily designed to

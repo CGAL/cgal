@@ -1140,10 +1140,6 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         CGAL_precondition( Vertex_handle() != star );
         CGAL_expensive_precondition(is_vertex(star));
     }
-    else
-    {
-        CGAL_precondition( Vertex_handle() == star );
-    }
 
     set_current_dimension(prev_cur_dim + 1);
     Vertex_handle v = new_vertex();

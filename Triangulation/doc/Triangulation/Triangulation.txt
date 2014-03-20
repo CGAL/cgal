@@ -41,6 +41,12 @@ In the sequel, we will call these maximal simplices <I>full cells</I>.
 A <I>face</I> of a simplex is a subset of it.
 A <I>proper face</I> of a simplex is a strict subset of it.
 
+\cgalModifBegin
+A complex has <i>no boundaries</i> if any proper face of a simplex is also a 
+proper face of another simplex. A pure complex is <i>manifold</i> if all faces
+of dimension \f$ d-1 \f$ are proper faces of exactly two simplices.
+\cgalModifEnd
+
 If the vertices are embedded into Euclidean space \f$ \R^d\f$, we deal with
 <I>finite simplicial complexes</I> which have slightly different simplices
 and additional requirements:
@@ -56,8 +62,8 @@ entry</A> for more about simplicial complexes.
 
 ## What's in this package? ##
 
-This \cgal package deals with pure simplicial complexes which are connected 
-and have no singularities, which
+This \cgal package deals with pure manifold simplicial complexes which are connected 
+and have no boundaries, which
 we will simply call in the sequel <I>triangulations</I>. It provides three main classes
 for creating and manipulating triangulations.
 
@@ -65,9 +71,12 @@ The class `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVer
 class are not embedded in Euclidean space but are only of combinatorial
 nature.
 
-The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` embeds an abstract
-triangulation in Euclidean space, thus forming a geometric
-triangulation. Methods are
+\cgalModifBegin 
+The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
+describes an embedded triangulation that has as vertices a given set of points
+and which fills the convex hull of these points.
+\cgalModifEnd
+Methods are
 provided for the insertion of points in the triangulation, the
 traversal of various elements of the triangulation, as well as the localization of a
 query point inside the triangulation.
@@ -332,6 +341,10 @@ The template parameter `TriangulationTraits` must be a model of the concept
 `TriangulationTraits` which provides the geometric `Point` type as well
 as various geometric predicates used by the `Triangulation` class.
 
+\cgalModifBegin
+The dimension of the predicates provided by `TriangulationTraits` must match
+the dimension of the `TriangulationDataStructure`.
+\cgalModifEnd
 
 \cgalModifBegin
 The template parameter `TriangulationDataStructure` must be a model of the concept
@@ -451,6 +464,8 @@ triangulation, and sorts the points with spatial sort to insert a
 set of points. Thus the theoretical complexity are
 \f$ O(n\log n)\f$ for inserting \f$ n\f$ random points and \f$ O(n^{\frac{1}{d}})\f$
 for inserting one point in a triangulation of \f$ n\f$ random points.
+In the worst case, the expected complexity is 
+\f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$.
 
 The actual timing are the following:
 

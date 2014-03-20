@@ -57,13 +57,9 @@ public:
         typedef typename Base::template Rebind_TDS<TDS2>::Other TDSFullCell2;
         typedef Triangulation_full_cell<TriangulationTraits, Data_, TDSFullCell2> Other;
     };
-
+ 
     Triangulation_full_cell(const int d)
         : Base(d), data_() {}
-
-    template< typename T >
-    Triangulation_full_cell(const int d, const T & t)
-        : Base(d), data_(t) {}
 
     Triangulation_full_cell(const Self & s)
         : Base(s), data_(s.data_)  {}

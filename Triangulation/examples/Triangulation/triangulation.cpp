@@ -28,7 +28,9 @@ int main()
     // collect faces of dimension 1 (edges) incident to the infinite vertex
     std::cout << "There are " << edges.size() 
 	      << " vertices on the convex hull." << std::endl;
-#include "triangulation1.cpp"    
-#include "triangulation2.cpp"    
+
+#include "triangulation1.cpp" // See below
+#include "triangulation2.cpp"
+
     return 0;
 }
