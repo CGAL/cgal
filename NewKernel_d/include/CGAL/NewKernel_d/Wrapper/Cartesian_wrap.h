@@ -134,7 +134,7 @@ struct Cartesian_wrap : public Base_
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U),class V> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u),V&v)const{ \
-			    return b(BOOST_PP_ENUM(N,VAR,),v); \
+			    return b(BOOST_PP_ENUM(N,VAR,),internal::Forward_rep()(v)); \
 		    }
 		    BOOST_PP_REPEAT_FROM_TO(1,8,CODE,_)
 #undef CODE
