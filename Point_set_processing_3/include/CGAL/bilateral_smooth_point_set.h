@@ -332,10 +332,12 @@ public:
 ///         with a value_type = Point_3<Kernel>.
 ///         It can be omitted if ForwardIterator value_type is convertible to 
 ///         Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` 
+///                    with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
-/// @return Average point move error.
+/// @return Average point movement error.
 
 // This variant requires all parameters.
 template <typename Concurrency_tag,

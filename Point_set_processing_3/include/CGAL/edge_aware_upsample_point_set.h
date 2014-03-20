@@ -274,11 +274,17 @@ update_new_point(
 /// approaching the edge singularities. 
 /// For more details, please see: http://web.siat.ac.cn/~huihuang/EAR/EAR_page.html
 ///
+/// @tparam OutputIteratorValueType type of objects that in `OutputIterator`.
+///         It is default to `value_type_traits<OutputIterator>::%type` 
+///         and can be omitted when the default is fine.
+/// @tparam OutputIterator iterator over output points.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` 
 ///         with a value_type = Point_3<Kernel>.
 ///         It can be omitted if ForwardIterator value_type is convertible to 
 ///         Point_3<Kernel>.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` 
+///                    with a value_type = Vector_3<Kernel>.
 /// @tparam Kernel Geometric traits class.
 ///      It can be omitted and deduced automatically from PointPMap value_type.
 ///
