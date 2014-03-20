@@ -28,6 +28,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/tags.h>
+#include <CGAL/Mesh_3/Has_timestamp.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
@@ -89,13 +91,13 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
     , bits_(0)
     , sliver_cache_validity_(false)
-  {
-  }
+  {}
 
   Compact_mesh_cell_base_3(const Compact_mesh_cell_base_3& rhs) 
     : circumcenter_(NULL)
@@ -103,6 +105,7 @@ public:
     , next_intrusive_(rhs.next_intrusive_)
     , previous_intrusive_(rhs.previous_intrusive_)
 #endif
+    , time_stamp_(rhs.time_stamp_)
     , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_)
     , bits_(0)
@@ -126,6 +129,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_() 
@@ -151,6 +155,7 @@ public:
     , next_intrusive_()
     , previous_intrusive_()
 #endif
+    , time_stamp_(-1)
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
     , subdomain_index_()
@@ -466,6 +471,12 @@ public:
   }
 #endif // CGAL_INTRUSIVE_LIST
 
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
 
 private:
 
@@ -484,6 +495,7 @@ private:
 #ifdef CGAL_INTRUSIVE_LIST
   Cell_handle next_intrusive_, previous_intrusive_;
 #endif
+  std::size_t time_stamp_;
 
   CGAL::cpp11::array<Index, 4> surface_center_index_table_;
   /// Stores visited facets (4 first bits)
@@ -502,6 +514,14 @@ private:
 
 };  // end class Compact_mesh_cell_base_3
 
+namespace internal {
+namespace Mesh_3 {
+  template < class GT, class MT, class Cb >
+  struct Has_timestamp< Compact_mesh_cell_base_3<GT, MT, Cb> > 
+    : public CGAL::Tag_true
+    {};
+} // end namespace internal::Mesh_3
+} // end namespace internal
 
 
 template < class GT, class MT, class Cb >

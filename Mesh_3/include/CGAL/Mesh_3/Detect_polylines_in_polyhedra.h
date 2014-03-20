@@ -31,7 +31,7 @@ namespace CGAL { namespace Mesh_3 {
 struct Detect_polyline_less {
   template <typename Handle>
   bool operator()(const Handle& va, const Handle& vb) const {
-    return &*va < &*vb;
+    return va->time_stamp() < vb->time_stamp();
   }
 };
 
