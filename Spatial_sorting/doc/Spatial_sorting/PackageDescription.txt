@@ -18,7 +18,6 @@
 
 /*!
 \addtogroup PkgSpatialSorting
-\todo check generated documentation
 \cgalPkgDescriptionBegin{Spatial Sorting,PkgSpatialSortingSummary}
 \cgalPkgPicture{hilbert.png}
 \cgalPkgSummaryBegin

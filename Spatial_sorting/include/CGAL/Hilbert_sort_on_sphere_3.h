@@ -69,7 +69,9 @@ public:
 	  _hs_3_object(Face_3_traits_3(),limit),
 	  _hs_4_object(Face_4_traits_3(),limit),
 	  _hs_5_object(Face_5_traits_3(),limit),
-	  _hs_6_object(Face_6_traits_3(),limit) {}
+	  _hs_6_object(Face_6_traits_3(),limit) {
+		CGAL_precondition( sq_r > 0 );
+	}
 	
 	
 	template <class RandomAccessIterator>

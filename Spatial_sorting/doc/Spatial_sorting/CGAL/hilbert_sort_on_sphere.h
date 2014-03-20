@@ -5,8 +5,9 @@ namespace CGAL {
 
 The function `hilbert_sort_on_sphere()` sorts an iterator range of points that are supposed to be close to a given sphere
 along a Hilbert curve on that same sphere. 
+(If input points are not close to the input sphere, this function stills work, but it might not be a good sorting function for such points.)
 
-sorts the range `[begin, end)` in place. 
+It sorts the range `[begin, end)` in place. 
 
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
@@ -23,8 +24,13 @@ The default center of the sphere is the origin (0,0,0).
 <LI>`std::iterator_traits<RandomAccessIterator>::%value_type` is convertible to 
 `Traits::Point_3`. 
 <LI>`Traits` is a model for concept `SpatialSortingTraits_3`.
-<LI>`sqr_radius` greater than 0. 
 </OL> 
+
+\cgalHeading{Precondition}
+
+<OL> 
+<LI>`sqr_radius` greater than 0. 
+</OL>
 
 \cgalHeading{Implementation}
 

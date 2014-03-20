@@ -28,7 +28,7 @@ Hilbert_sort_d(const Traits &traits = Traits());
 /// @{
 
 /*!
-sorts the range `[begin, end)`. 
+It sorts the range `[begin, end)`. 
 \tparam RandomAccessIterator must be an iteratoe with value type `Traits::Point_d`. 
 */ 
 template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const; 

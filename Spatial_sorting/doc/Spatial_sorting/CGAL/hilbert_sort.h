@@ -6,7 +6,7 @@ namespace CGAL {
 The function `hilbert_sort()` sorts an iterator range of points 
 along a Hilbert curve. 
 
-sorts the range `[begin, end)` in place. 
+It sorts the range `[begin, end)` in place. 
 
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
