@@ -56,8 +56,6 @@ int main(int argc, char* argv[])
   output_c3t3.reserve(5 * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
-    CGAL::default_random = CGAL::Random(0);
-
     std::cout << "------- Iteration " << (i+1) << " -------" << std::endl;
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                         no_perturb(),
