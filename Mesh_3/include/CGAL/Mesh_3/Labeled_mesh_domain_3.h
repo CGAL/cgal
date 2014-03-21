@@ -38,6 +38,7 @@
 #include <boost/optional.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Random.h>
 
 namespace CGAL {
 
@@ -55,7 +56,9 @@ namespace Mesh_3 {
  *  tags of it's incident subdomain.
  *  Thus, a boundary facet of the domain is labelled <0,b>, where b!=0.
  */
-template<class Function, class BGT>
+template<class Function,
+         class BGT,
+         class RNG = CGAL::Random >
 class Labeled_mesh_domain_3
 {
 public:
@@ -94,10 +97,12 @@ public:
    */
   Labeled_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
+                         RNG rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3));
 
   Labeled_mesh_domain_3(const Function& f,
                          const Bbox_3& bbox,
+                         RNG rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3));
 
   /// Destructor
@@ -461,13 +466,15 @@ private:
   const Function function_;
   /// The bounding box
   const Iso_cuboid_3 bbox_;
+  /// The random number generator used by Construct_initial_points
+  RNG& rng_;
   /// Error bound relative to sphere radius
   FT squared_error_bound_;
 
 
 private:
   // Disabled copy constructor & assignment operator
-  typedef Labeled_mesh_domain_3<Function,BGT> Self;
+  typedef Labeled_mesh_domain_3<Function,BGT,RNG> Self;
   Labeled_mesh_domain_3(const Self& src);
   Self& operator=(const Self& src);
 
@@ -479,25 +486,29 @@ private:
 //-------------------------------------------------------
 // Method implementation
 //-------------------------------------------------------
-template<class F, class BGT>
-Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
+template<class F, class BGT, class RNG>
+Labeled_mesh_domain_3<F,BGT,RNG>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
+                       RNG rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bounding_sphere.bbox()))
+, rng_(rng)
 , squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
 {
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
 }
 
-template<class F, class BGT>
-Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
+template<class F, class BGT, class RNG>
+Labeled_mesh_domain_3<F,BGT,RNG>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
+                       RNG rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bbox))
+, rng_(rng)
 , squared_error_bound_(squared_error_bound(bbox_,error_bound))
 {
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
@@ -505,10 +516,10 @@ Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
 
 
 
-template<class F, class BGT>
+template<class F, class BGT, class RNG>
 template<class OutputIterator>
 OutputIterator
-Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
+Labeled_mesh_domain_3<F,BGT,RNG>::Construct_initial_points::operator()(
                                                     OutputIterator pts,
                                                     const int nb_points) const
 {
@@ -522,8 +533,8 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
 
   const double radius = std::sqrt(CGAL::to_double(squared_radius));
 
-  Random_points_on_sphere_3 random_point_on_sphere(radius);
-  Random_points_in_sphere_3 random_point_in_sphere(radius);
+  Random_points_on_sphere_3 random_point_on_sphere(radius, r_domain_.rng_);
+  Random_points_in_sphere_3 random_point_in_sphere(radius, r_domain_.rng_);
 
   // Get some functors
   typename BGT::Construct_segment_3 segment_3 =

@@ -36,6 +36,7 @@
 #include <CGAL/AABB_traits.h>
 #include <sstream>
 
+#include <CGAL/Random.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Mesh_3/Creator_weighted_point_3.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
@@ -148,6 +149,7 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 template<class Polyhedron,
          class IGT_,
          class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT_>,
+         class RNG=CGAL::Random,
          class Use_patch_id_tag=Tag_false,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 class Polyhedral_mesh_domain_3
@@ -203,17 +205,23 @@ public:
   Polyhedral_mesh_domain_3()
     : tree_()
     , bounding_tree_(&tree_) 
-    , has_cache(false) {}
+    , has_cache(false)
+    , rng_(CGAL::default_random)
+  {
+    CGAL::default_random = CGAL::Random(0);
+  }
   
   /**
    * @brief Constructor. Contruction from a polyhedral surface
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
-  Polyhedral_mesh_domain_3(const Polyhedron& p)
+  Polyhedral_mesh_domain_3(const Polyhedron& p,
+                           RNG rng = CGAL::Random(0))
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p)),
       bounding_tree_(&tree_) // the bounding tree is tree_
     , has_cache(false)
+    , rng_(rng)
   { 
     if(!p.is_pure_triangle()) {
       std::cerr << "Your input polyhedron must be triangulated!\n";
@@ -222,12 +230,14 @@ public:
   }
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           const Polyhedron& bounding_polyhedron)
+                           const Polyhedron& bounding_polyhedron,
+                           RNG rng = CGAL::Random(0))
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p))
     , bounding_tree_(new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                                     TriangleAccessor().triangles_end(bounding_polyhedron)))
     , has_cache(false)
+    , rng_(rng)
   { 
     tree_.insert(TriangleAccessor().triangles_begin(bounding_polyhedron),
                  TriangleAccessor().triangles_end(bounding_polyhedron));
@@ -249,8 +259,10 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           const Polyhedron& bounding_polyhedron)
-    : has_cache(false) 
+                           const Polyhedron& bounding_polyhedron,
+                           RNG rng = CGAL::Random(0))
+    : has_cache(false)
+    , rng_(rng)
   {
     if(begin != end) { 
       for(; begin != end; ++begin) {
@@ -284,8 +296,10 @@ public:
    */
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
-                           InputPolyhedraPtrIterator end)
-    : has_cache(false) 
+                           InputPolyhedraPtrIterator end,
+                           RNG rng = CGAL::Random(0))
+    : has_cache(false)
+    , rng_(rng)
   {
     if(begin != end) {
       for(; begin != end; ++begin) {
@@ -595,6 +609,9 @@ private:
   mutable Cached_query cached_query;
   mutable AABB_primitive_id cached_primitive_id;
 
+  //random number generator for Construct_initial_points
+  RNG& rng_;
+
 public:
 
   template <typename Query>
@@ -623,10 +640,11 @@ private:
 
 
 
-template<typename P_, typename IGT_, typename TA, typename Tag, typename E_tag_>
+template<typename P_, typename IGT_, typename TA, 
+         typename RNG_, typename Tag, typename E_tag_>
 template<class OutputIterator>
 OutputIterator
-Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
+Polyhedral_mesh_domain_3<P_,IGT_,TA,RNG_,Tag,E_tag_>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int n) const
 {
@@ -638,7 +656,7 @@ Construct_initial_points::operator()(OutputIterator pts,
                         FT( (bbox.ymin() + bbox.ymax()) / 2),
                         FT( (bbox.zmin() + bbox.zmax()) / 2) );
   
-  Random_points_on_sphere_3<Point_3> random_point(1.);
+  Random_points_on_sphere_3<Point_3> random_point(1., r_domain_.rng_);
 
   int i = n;
 #ifdef CGAL_MESH_3_VERBOSE
@@ -678,9 +696,10 @@ Construct_initial_points::operator()(OutputIterator pts,
 }
 
 
-template<typename P_, typename IGT_, typename TA, typename Tag, typename E_tag_>
-typename Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::Subdomain
-Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
+template<typename P_, typename IGT_, typename TA, 
+         typename RNG_, typename Tag, typename E_tag_>
+typename Polyhedral_mesh_domain_3<P_,IGT_,TA,RNG_,Tag,E_tag_>::Subdomain
+Polyhedral_mesh_domain_3<P_,IGT_,TA,RNG_,Tag,E_tag_>::
 Is_in_domain::operator()(const Point_3& p) const
 {
   if(r_domain_.bounding_tree_ == 0) return Subdomain();
