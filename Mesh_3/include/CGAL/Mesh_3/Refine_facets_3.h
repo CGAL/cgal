@@ -346,7 +346,7 @@ private:
    * @param facet The input facet
    * @return \c true if \c facet is on surface, \c false otherwise
    */
-  Facet_properties compute_facet_properties(const Facet& facet) const;
+  void compute_facet_properties(const Facet& facet, Facet_properties& fp ) const;
 
   /// Returns true if point encroaches facet
   bool is_facet_encroached(const Facet& facet, const Point& point) const;
@@ -681,7 +681,8 @@ Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
 treat_new_facet(Facet& facet)
 {
   // Treat facet
-  Facet_properties properties = compute_facet_properties(facet);
+  Facet_properties properties;
+  compute_facet_properties(facet, properties);
   if ( properties )
   {
     const Surface_patch_index& surface_index = CGAL::cpp11::get<0>(*properties);
@@ -713,9 +714,10 @@ treat_new_facet(Facet& facet)
 
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
-typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::Facet_properties
+void
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
-compute_facet_properties(const Facet& facet) const
+compute_facet_properties(const Facet& facet,
+                         Facet_properties& fp) const
 {
   //-------------------------------------------------------
   // Facet must be finite
@@ -739,7 +741,7 @@ compute_facet_properties(const Facet& facet) const
   // If the dual is a segment
   if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )
   {
-    if (is_degenerate(*p_segment)) { return Facet_properties(); }
+    if (is_degenerate(*p_segment)) { fp = Facet_properties(); return; }
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -772,9 +774,10 @@ compute_facet_properties(const Facet& facet) const
         r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
-                                                CGAL::cpp0x::get<1>(intersect),
-                                                CGAL::cpp0x::get<0>(intersect)));
+      fp =  Facet_properties(CGAL::cpp0x::make_tuple(*surface,
+                                                     CGAL::cpp0x::get<1>(intersect),
+                                                     CGAL::cpp0x::get<0>(intersect)));
+      return;
     }
   }
   // If the dual is a ray
@@ -786,7 +789,7 @@ compute_facet_properties(const Facet& facet) const
     // vector with small coordinates. Its can happen than the
     // constructed ray is degenerate (the point(1) of the ray is
     // point(0) plus a vector whose coordinates are epsilon).
-    if (is_degenerate(*p_ray)) { return Facet_properties(); }
+    if (is_degenerate(*p_ray)) { fp = Facet_properties(); return; }
 
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     Surface_patch surface = do_intersect_surface(*p_ray);
@@ -803,9 +806,13 @@ compute_facet_properties(const Facet& facet) const
         r_oracle_.surface_patch_index(CGAL::cpp0x::get<1>(intersect));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-        return Facet_properties(CGAL::cpp0x::make_tuple(*surface,
-                                                CGAL::cpp0x::get<1>(intersect),
-                                                CGAL::cpp0x::get<0>(intersect)));
+        {
+          fp = Facet_properties(CGAL::cpp0x::make_tuple(*surface,
+                                                        CGAL::cpp0x::get<1>(intersect),
+                                                        CGAL::cpp0x::get<0>(intersect)));
+          return;
+        }
+      
     }
   }
   // If the dual is a line
@@ -831,9 +838,10 @@ compute_facet_properties(const Facet& facet) const
       }
 
       Intersection intersect = construct_intersection(line);
-      return Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                                CGAL::cpp11::get<1>(intersect),
-                                                CGAL::cpp11::get<0>(intersect)));
+      fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
+                                                    CGAL::cpp11::get<1>(intersect),
+                                                    CGAL::cpp11::get<0>(intersect)));
+      return;
     }
   }
   else
@@ -845,7 +853,7 @@ compute_facet_properties(const Facet& facet) const
     CGAL_error();
   }
 
-  return Facet_properties();
+  fp = Facet_properties();
 }
 
 
