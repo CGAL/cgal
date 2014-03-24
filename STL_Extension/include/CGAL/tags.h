@@ -43,6 +43,10 @@ struct Boolean_tag {
   typedef Boolean_tag<b> type;
   operator bool() const { return this->value; }
 };
+/* In C++11, try:
+template <bool b>
+using Boolean_tag = std::integral_constant<bool, b>;
+*/
 
 typedef Boolean_tag<true>   Tag_true;
 typedef Boolean_tag<false>  Tag_false; 

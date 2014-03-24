@@ -1,0 +1,27 @@
+\begin{ccRefClass}{Cartesian_wrap<Base>}
+\ccInclude{CGAL/NewKernel_d/Cartesian_wrap.h}
+
+\ccDefinition
+This class derives from a \ccc{Kernel} \ccc{Base} and replaces a number
+of types (point, segment) with wrappers that have intuitive member
+functions that call the corresponding functors. For instance, the
+constructors forward to \ccc{Functor<Construct_ttag<Tag>>::type},
+\ccc{Point::operator[]} forwards to
+\ccc{Functor<Compute_cartesian_coordinate_tag>::type},
+\ccc{operator+(Vector,Vector)} forwards to
+\ccc{Functor<Construct_sum_of_vectors_tag>::type}, etc.
+
+For stateful kernels, the wrappers will store a pointer to the kernel
+instance. This means in particular that for such a kernel, one can't
+just create a point from its coordinates (like \ccc{Point M(1,2,3);}),
+they have to create it using some functor or an operation on existing
+objects.
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccImplementation
+The implementation \emph{tries} to avoid any extra copying that could be
+caused by the wrapping.
+
+\end{ccRefClass}
