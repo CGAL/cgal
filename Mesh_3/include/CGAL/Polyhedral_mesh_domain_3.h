@@ -205,8 +205,10 @@ public:
     : tree_()
     , bounding_tree_(&tree_) 
     , has_cache(false)
-    , rng_(CGAL::Random(0))
-  {}
+    , rng_(CGAL::default_random)
+  {
+    rng_ = CGAL::Random(0);
+  }
   
   /**
    * @brief Constructor. Contruction from a polyhedral surface
@@ -623,6 +625,11 @@ public:
   template <typename Query>
   bool query_is_cached(const Query& q) const {
     return has_cache && (cached_query == Cached_query(q));
+  }
+
+  void set_random_generator(CGAL::Random& rng)
+  {
+    rng_ = rng;
   }
 
 private:
