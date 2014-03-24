@@ -1,9 +1,5 @@
-// Copyright (c) 2014  
-// Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland),
-// INRIA Sophia-Antipolis (France),
-// Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// Copyright (c) 2014  GeometryFactory Sarl (France)
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -18,15 +14,14 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Laurent Rineau
+//
+// Author(s)     :  Andreas Fabri, Laurent Rineau
 
 //| This flag is set if the compiler bugs with some "using Base::Member;" in
 //| a derived class.  The workaround is to write a forwarder or not use using.
 
-
-struct Point { 
+struct Point {
 };
 
 
