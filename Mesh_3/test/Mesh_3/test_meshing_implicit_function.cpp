@@ -58,7 +58,8 @@ struct Implicit_tester : public Tester<K>
     // Data generation
     //-------------------------------------------------------
     Mesh_domain domain(Implicit_tester<K>::sphere_function,
-                       Sphere_3(CGAL::ORIGIN,2.));
+                       Sphere_3(CGAL::ORIGIN,2.),
+                       CGAL::default_random);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(0, 0, 0.3);

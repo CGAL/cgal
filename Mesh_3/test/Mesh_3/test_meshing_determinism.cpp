@@ -39,7 +39,8 @@ int main(int argc, char* argv[])
 
   // Domain
   Mesh_domain domain("data/cube.off");
-  
+    //no random generator is given, so CGAL::Random(0) is used
+
   // Get sharp features
   domain.detect_features();
 

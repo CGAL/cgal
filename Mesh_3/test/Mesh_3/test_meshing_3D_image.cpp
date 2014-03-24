@@ -50,7 +50,7 @@ public:
     //-------------------------------------------------------
     Image image;
     image.read("data/liver.inr.gz");
-    Mesh_domain domain(image,1e-9);
+    Mesh_domain domain(image,CGAL::default_random,1e-9);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(25, 20*image.vx(), 5*image.vx());
