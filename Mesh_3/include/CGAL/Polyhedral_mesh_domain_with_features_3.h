@@ -57,7 +57,6 @@ namespace CGAL {
 template < class IGT_,
            class Polyhedron_ = typename Mesh_polyhedron_3<IGT_>::type,
            class TriangleAccessor=Triangle_accessor_3<Polyhedron_,IGT_>,
-           class RNG=CGAL::Random,
            class Use_patch_id_tag = Tag_true,
            class Use_exact_intersection_construction_tag = CGAL::Tag_true >
 class Polyhedral_mesh_domain_with_features_3
@@ -65,13 +64,12 @@ class Polyhedral_mesh_domain_with_features_3
       Polyhedral_mesh_domain_3< Polyhedron_,
                                 IGT_,
                                 TriangleAccessor,
-                                RNG,
                                 Use_patch_id_tag,
                                 Use_exact_intersection_construction_tag > >
 {
   typedef Mesh_domain_with_polyline_features_3<
     Polyhedral_mesh_domain_3<
-      Polyhedron_, IGT_, TriangleAccessor, RNG,
+      Polyhedron_, IGT_, TriangleAccessor,
       Use_patch_id_tag, Use_exact_intersection_construction_tag > > Base;
   
   typedef Polyhedron_ Polyhedron;
@@ -128,8 +126,8 @@ private:
 
 
 template < typename GT_, typename P_, typename TA_,
-           typename RNG_, typename Tag_, typename E_tag_>
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,RNG_,Tag_,E_tag_>::
+           typename Tag_, typename E_tag_>
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
   : Base()
   , polyhedron_(p)
@@ -138,8 +136,8 @@ Polyhedral_mesh_domain_with_features_3(const Polyhedron& p)
 }
 
 template < typename GT_, typename P_, typename TA_,
-           typename RNG_, typename Tag_, typename E_tag_>
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,RNG_,Tag_,E_tag_>::
+           typename Tag_, typename E_tag_>
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const std::string& filename)
   : Base()
   , polyhedron_()
@@ -152,9 +150,9 @@ Polyhedral_mesh_domain_with_features_3(const std::string& filename)
 
 
 template < typename GT_, typename P_, typename TA_,
-           typename RNG_, typename Tag_, typename E_tag_>
+           typename Tag_, typename E_tag_>
 void
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,RNG_,Tag_,E_tag_>::
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 initialize_ts(Polyhedron& p)
 {
   std::size_t ts = 0;
@@ -177,9 +175,9 @@ initialize_ts(Polyhedron& p)
 
 
 template < typename GT_, typename P_, typename TA_,
-           typename RNG_, typename Tag_, typename E_tag_>
+           typename Tag_, typename E_tag_>
 void
-Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,RNG_,Tag_,E_tag_>::
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 detect_features(FT angle_in_degree, Polyhedron& p)
 {
   initialize_ts(p);

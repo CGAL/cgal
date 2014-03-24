@@ -149,7 +149,6 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 template<class Polyhedron,
          class IGT_,
          class TriangleAccessor=Triangle_accessor_3<Polyhedron,IGT_>,
-         class RNG=CGAL::Random,
          class Use_patch_id_tag=Tag_false,
          class Use_exact_intersection_construction_tag = CGAL::Tag_true>
 class Polyhedral_mesh_domain_3
@@ -206,17 +205,15 @@ public:
     : tree_()
     , bounding_tree_(&tree_) 
     , has_cache(false)
-    , rng_(CGAL::default_random)
-  {
-    CGAL::default_random = CGAL::Random(0);
-  }
+    , rng_(CGAL::Random(0))
+  {}
   
   /**
    * @brief Constructor. Contruction from a polyhedral surface
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           RNG rng = CGAL::Random(0))
+                           CGAL::Random& rng = CGAL::Random(0))
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p)),
       bounding_tree_(&tree_) // the bounding tree is tree_
@@ -231,7 +228,7 @@ public:
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
-                           RNG rng = CGAL::Random(0))
+                           CGAL::Random& rng = CGAL::Random(0))
     : tree_(TriangleAccessor().triangles_begin(p),
             TriangleAccessor().triangles_end(p))
     , bounding_tree_(new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
@@ -260,7 +257,7 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron,
-                           RNG rng = CGAL::Random(0))
+                           CGAL::Random& rng = CGAL::Random(0))
     : has_cache(false)
     , rng_(rng)
   {
@@ -297,7 +294,7 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           RNG rng = CGAL::Random(0))
+                           CGAL::Random& rng = CGAL::Random(0))
     : has_cache(false)
     , rng_(rng)
   {
@@ -610,7 +607,7 @@ private:
   mutable AABB_primitive_id cached_primitive_id;
 
   //random number generator for Construct_initial_points
-  RNG& rng_;
+  CGAL::Random& rng_;
 
 public:
 
@@ -641,10 +638,10 @@ private:
 
 
 template<typename P_, typename IGT_, typename TA, 
-         typename RNG_, typename Tag, typename E_tag_>
+         typename Tag, typename E_tag_>
 template<class OutputIterator>
 OutputIterator
-Polyhedral_mesh_domain_3<P_,IGT_,TA,RNG_,Tag,E_tag_>::
+Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Construct_initial_points::operator()(OutputIterator pts,
                                      const int n) const
 {
@@ -697,9 +694,9 @@ Construct_initial_points::operator()(OutputIterator pts,
 
 
 template<typename P_, typename IGT_, typename TA, 
-         typename RNG_, typename Tag, typename E_tag_>
-typename Polyhedral_mesh_domain_3<P_,IGT_,TA,RNG_,Tag,E_tag_>::Subdomain
-Polyhedral_mesh_domain_3<P_,IGT_,TA,RNG_,Tag,E_tag_>::
+         typename Tag, typename E_tag_>
+typename Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::Subdomain
+Polyhedral_mesh_domain_3<P_,IGT_,TA,Tag,E_tag_>::
 Is_in_domain::operator()(const Point_3& p) const
 {
   if(r_domain_.bounding_tree_ == 0) return Subdomain();

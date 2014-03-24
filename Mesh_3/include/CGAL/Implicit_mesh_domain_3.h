@@ -46,14 +46,13 @@ namespace CGAL {
  */
 template<class Function,
   class BGT,
-  class RNG = CGAL::Random,
   class Wrapper = Mesh_3::Implicit_to_labeled_function_wrapper<Function,BGT> >
 class Implicit_mesh_domain_3
- : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT, RNG>
+ : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT>
 {
 public:
   /// Base type
-  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT, RNG> Base;
+  typedef Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT> Base;
 
   /// Public types
   typedef typename Base::Sphere_3 Sphere_3;
@@ -68,7 +67,7 @@ public:
    */
   Implicit_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         RNG rng = CGAL::Random(0),
+                         CGAL::Random& rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3))
     : Base(Wrapper(f), bounding_sphere, rng, error_bound)  {}
 
@@ -78,7 +77,7 @@ public:
 
 private:
   // Disabled copy constructor & assignment operator
-  typedef Implicit_mesh_domain_3<Function,BGT,RNG> Self;
+  typedef Implicit_mesh_domain_3<Function,BGT> Self;
   Implicit_mesh_domain_3(const Self& src);
   Self& operator=(const Self& src);
 
