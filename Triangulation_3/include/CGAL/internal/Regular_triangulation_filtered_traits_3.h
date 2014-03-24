@@ -46,12 +46,13 @@ struct Weighted_converter_3
   typedef typename Source_kernel::Point_3  Source_p;
   typedef typename Target_kernel::Point_3  Target_p;
 
-#if _MSC_VER == 1800
+#ifdef CGAL_CFG_MATCHING_BUG_7
 
   typedef typename Source_kernel::FT  Source_FT;
   typedef typename Target_kernel::FT  Target_FT;
 
-
+  
+  // needed for weighted Alpha shapes
  Target_FT
   operator()(const Source_FT &p) const
   {
