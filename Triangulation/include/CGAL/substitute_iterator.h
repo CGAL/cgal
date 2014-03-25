@@ -99,7 +99,6 @@ public:
 
 
 template < class I, class P >
-inline
 bool operator==(const Substitute_iterator<I,P>& it1,
                 const Substitute_iterator<I,P>& it2)
 {
@@ -107,7 +106,6 @@ bool operator==(const Substitute_iterator<I,P>& it1,
 }
 
 template < class I, class P >
-inline
 bool operator!=(const Substitute_iterator<I,P>& it1,
                 const Substitute_iterator<I,P>& it2)
 { return !(it1 == it2); }
