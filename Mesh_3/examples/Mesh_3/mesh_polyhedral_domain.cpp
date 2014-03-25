@@ -34,7 +34,7 @@ int main()
   input >> polyhedron;
    
   // Create domain
-  Mesh_domain domain(polyhedron);
+  Mesh_domain domain(polyhedron, CGAL::default_random);
   
   // Mesh criteria (no cell_size set)
   Mesh_criteria criteria(facet_angle=25, facet_size=0.15, facet_distance=0.008,

@@ -32,7 +32,7 @@ int main()
   image.read("data/liver.inr.gz");
 
   // Domain
-  Mesh_domain domain(image);
+  Mesh_domain domain(image, CGAL::default_random);
 
   // Sizing field: set global size to 8 and kidney size (label 127) to 3
   double kidney_size = 3.;

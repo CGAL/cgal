@@ -27,7 +27,7 @@ int main()
   // Domain
   CGAL::Image_3 image;
   image.read("data/liver.inr.gz");
-  Mesh_domain domain(image);
+  Mesh_domain domain(image, CGAL::default_random);
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_distance=1.2,
