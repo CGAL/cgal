@@ -16,11 +16,7 @@ unorganized 3D point sets. The input is an unorganized 3D point set,
 possibly with normal attributes (unoriented or oriented). This point
 set can be analyzed to measure geometric properties such as average
 spacing between the points and their `k` nearest neighbors. It
-can be processed with functions devoted to the simplification, outlier
-removal, smoothing, normal estimation and normal orientation. The
-processing of point sets is often needed in applications dealing with
-measurement data, such as surface reconstruction from laser scanned
-data (see \cgalFigureRef{Point_set_processing_3figintroduction}).
+can be processed with functions devoted to the simplification, regularization, upsampling, outlier removal, smoothing, normal estimation and normal orientation. The processing of point sets is often needed in applications dealing with measurement data, such as surface reconstruction from laser scanned data (see \cgalFigureRef{Point_set_processing_3figintroduction}).
 
 \cgalFigureBegin{Point_set_processing_3figintroduction,introduction.jpg}
 Point set processing. Left: 275K points sampled on the statue of an elephant with a Minolta laser scanner. Right: point set after clean-up and simplification to 17K points.
@@ -172,7 +168,7 @@ Point set simplification through grid-based clustering. Removed points are depic
 The following example reads a point set, simplifies and regularizes it by WLOP.
 
 \cgalFigureBegin{Point_set_processing_3figWlop_flow_chart, wlop_flow_chart.jpg}
-A flow chart of the wlop algorithm
+A flow chart of the WLOP algorithm
 \cgalFigureEnd
 
 \cgalExample{Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp}
@@ -183,6 +179,8 @@ Comparison for three simplification methods: Left: Random simplification result.
 
 \subsubsection Point_set_processing_3WLOP_Parameter Parameter: need_compute_density
 Computing density weights for each point is an optional preprocessing. It can deal with nonuniform distribution inputs, at the expense of computational time.
+
+TODO: explain what it means to deal with - are you resilient to non-uniform sampling? or do you preserve non-uniform sampling.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
 Comparison between with and without density: Left: "need_compute_density = false", 14 seconds. Right: "need_compute_density = true", 18 seconds.
@@ -198,14 +196,11 @@ projecting each point onto a smooth parametric surface patch
 
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
-Bilateral projection can preserve sharp features according to the normal (gradient) information.
-So, points' normals are required as input. 
-A parallel version of the algorithm is provided.
-It requires the executable to be linked against the 
+Bilateral projection preserves sharp features according to the normal (gradient) information. Normals are thus required as input. 
+The parallel version of the algorithm requires the executable to be linked against the 
 <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
-To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
-for more details.
+The number of threads used is controlled through the tbb::task_scheduler_init class.
+See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details.
 
 \subsection Point_set_processing_3Example_5 Jet smoothing example
 
@@ -277,17 +272,19 @@ The following example reads a point set from a file, upsamples it to get a much 
 \cgalExample{Point_set_processing_3/edge_aware_upsample_point_set_example.cpp}
 
 \subsubsection Point_set_processing_3Upsample_Parameter1 Parameter: edge_sensitivity
-The parameter controls where the new points will be inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp edge.
+This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp edges.
+
+TODO: on sharp creases only? or more generally on sharp features? (tips, darts, cusps, creases and corners)
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
-Upsample results for different edge-sensitivity parameter values. The input contains 850 points was upsampled to 1,500 points in all the cases shown in this figure.
+Upsample results for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3Upsample_Parameter2 Parameter: sharpness_sigma
-The parameter controls how sharp the upsample result will be.
+This parameter controls the preservation of sharp features.
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_sigma, upsample_sharpness_sigma.jpg}
-Upsample results for different sharpness_sigma parameter values. The input contains 850 points was upsampled to 425K points in all the cases shown in this figure, spending around 5 minutes.
+Upsample results for different sharpness_sigma parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
 \cgalFigureEnd
 
 
