@@ -1,3 +1,5 @@
+#define CGAL_MESH_3_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -32,7 +34,7 @@ int main()
   image.read("data/liver.inr.gz");
 
   // Domain
-  Mesh_domain domain(image, CGAL::default_random);
+  Mesh_domain domain(image);
 
   // Sizing field: set global size to 8 and kidney size (label 127) to 3
   double kidney_size = 3.;

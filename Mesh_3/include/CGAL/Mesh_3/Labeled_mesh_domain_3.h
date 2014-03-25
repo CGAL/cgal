@@ -96,16 +96,20 @@ public:
    */
   Labeled_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         CGAL::Random& rng = CGAL::Random(0),
+                         CGAL::Random* p_rng = NULL,
                          const FT& error_bound = FT(1e-3));
 
   Labeled_mesh_domain_3(const Function& f,
                          const Bbox_3& bbox,
-                         CGAL::Random& rng = CGAL::Random(0),
+                         CGAL::Random* p_rng = NULL,
                          const FT& error_bound = FT(1e-3));
 
   /// Destructor
-  virtual ~Labeled_mesh_domain_3()  {}
+  virtual ~Labeled_mesh_domain_3()
+  {
+    if(delete_rng_)
+      delete p_rng_;
+  }
 
   /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
@@ -466,7 +470,8 @@ private:
   /// The bounding box
   const Iso_cuboid_3 bbox_;
   /// The random number generator used by Construct_initial_points
-  CGAL::Random& rng_;
+  CGAL::Random* p_rng_;
+  bool delete_rng_;
   /// Error bound relative to sphere radius
   FT squared_error_bound_;
 
@@ -489,30 +494,40 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
-                       CGAL::Random& rng,
+                       CGAL::Random* p_rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bounding_sphere.bbox()))
-, rng_(rng)
+, p_rng_(p_rng)
+, delete_rng_(false)
 , squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
 {
-  std::cout << "seed : " << rng_.get_seed() << std::endl;
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
+  if(!p_rng_)
+  {
+    p_rng_ = new CGAL::Random(0);
+    delete_rng_ = true;
+  }
 }
 
 template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
-                       CGAL::Random& rng,
+                       CGAL::Random* p_rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bbox))
-, rng_(rng)
+, p_rng_(p_rng)
+, delete_rng_(false)
 , squared_error_bound_(squared_error_bound(bbox_,error_bound))
 {
-  std::cout << "seed : " << rng_.get_seed() << std::endl;
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
+  if(!p_rng_)
+  {
+    p_rng_ = new CGAL::Random(0);
+    delete_rng_ = true;
+  }
 }
 
 
@@ -534,8 +549,9 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
 
   const double radius = std::sqrt(CGAL::to_double(squared_radius));
 
-  Random_points_on_sphere_3 random_point_on_sphere(radius, r_domain_.rng_);
-  Random_points_in_sphere_3 random_point_in_sphere(radius, r_domain_.rng_);
+  CGAL::Random& rng = *(r_domain_.p_rng_);
+  Random_points_on_sphere_3 random_point_on_sphere(radius, rng);
+  Random_points_in_sphere_3 random_point_in_sphere(radius, rng);
 
   // Get some functors
   typename BGT::Construct_segment_3 segment_3 =
@@ -571,7 +587,6 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
       *pts++ = std::make_pair(intersect_pt,
                               r_domain_.index_from_surface_patch_index(*surface));
       --n;
-      std::cout << "ipoint : " << intersect_pt << std::endl;
 
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"

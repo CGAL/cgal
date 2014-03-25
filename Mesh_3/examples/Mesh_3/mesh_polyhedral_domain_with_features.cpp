@@ -25,7 +25,7 @@ using namespace CGAL::parameters;
 int main()
 {
   // Create domain
-  Mesh_domain domain("data/fandisk.off", CGAL::default_random);
+  Mesh_domain domain("data/fandisk.off");
   
   // Get sharp features
   domain.detect_features();

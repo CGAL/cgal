@@ -46,8 +46,7 @@ int main()
 {
   // Domain (Warning: Sphere_3 constructor uses squared radius !)
   Mesh_domain domain(sphere_function, 
-                     K::Sphere_3(CGAL::ORIGIN, 2.),
-                     CGAL::default_random);
+                     K::Sphere_3(CGAL::ORIGIN, 2.));
 
   // Mesh criteria
   Spherical_sizing_field size;

@@ -67,9 +67,9 @@ public:
    */
   Implicit_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         CGAL::Random& rng = CGAL::Random(0),
+                         CGAL::Random* p_rng = NULL,
                          const FT& error_bound = FT(1e-3))
-    : Base(Wrapper(f), bounding_sphere, rng, error_bound)  {}
+    : Base(Wrapper(f), bounding_sphere, p_rng, error_bound)  {}
 
   /// Destructor
   virtual ~Implicit_mesh_domain_3() {}

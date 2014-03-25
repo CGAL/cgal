@@ -56,11 +56,11 @@ public:
 
   /// Constructor
   Labeled_image_mesh_domain_3(const Image& image,
-                              CGAL::Random& rng = CGAL::Random(0),
+                              CGAL::Random* p_rng = NULL,
                               const FT& error_bound = FT(1e-3))
     : Base(Wrapper(image),
            compute_bounding_box(image),
-           rng,
+           p_rng,
            error_bound)
   {}
 

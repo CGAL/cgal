@@ -52,7 +52,7 @@ struct Polyhedron_tester : public Tester<K>
     input >> polyhedron;
     input.close();
     
-    Mesh_domain domain(polyhedron);
+    Mesh_domain domain(polyhedron, &CGAL::default_random);
     
     // Set mesh criteria
     Facet_criteria facet_criteria(30, 0.2, 0.02);

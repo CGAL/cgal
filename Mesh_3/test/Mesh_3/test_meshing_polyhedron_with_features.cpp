@@ -51,7 +51,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
     //-------------------------------------------------------
     // Data generation
     //-------------------------------------------------------
-    Mesh_domain domain("data/cube.off");
+    Mesh_domain domain("data/cube.off", &CGAL::default_random);
     domain.detect_features();
     
     // Set mesh criteria
