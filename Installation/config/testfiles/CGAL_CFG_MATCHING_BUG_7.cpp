@@ -21,6 +21,10 @@
 //| This flag is set if the compiler bugs with some "using Base::Member;" in
 //| a derived class.  The workaround is to write a forwarder or not use using.
 
+#include <cassert>
+
+int I;
+
 struct Point {
 };
 
@@ -38,7 +42,7 @@ struct Conv
   Conv() {}
 
   template <typename T>
-  void operator()(const T& t){}
+  void operator()(const T& t){ I = 1;}
 };
 
 
@@ -48,17 +52,20 @@ struct WConv : Conv
 
   WConv() {}
 
-  void operator()(const WP& w){}
+  void operator()(const WP& w){I=2;}
+
 };
 
 
 int main()
 {
+  I = 0;
   Point p;
 
   WConv wconv;
 
   wconv(p);
 
+  assert(I==1);
   return 0;
 }
