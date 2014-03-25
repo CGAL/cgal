@@ -17,6 +17,7 @@ int main(void)
   const std::string INPUT_FILENAME_WITHOUT_EXT = "data/saint_jean_370K";
 
   // Reads a .xyz point set file in points[], *with normals*.
+	// TOFIX: do we have an extension for points with normals?
   std::vector<Point> points;
   std::ifstream stream(INPUT_FILENAME_WITHOUT_EXT + ".xyz");
 

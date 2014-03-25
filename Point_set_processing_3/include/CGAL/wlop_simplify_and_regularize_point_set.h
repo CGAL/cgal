@@ -51,8 +51,8 @@ namespace CGAL {
 
 namespace simplify_and_regularize_internal{
 
-/// Compute anverage and repulsion term and then 
-/// compute update sample points positions
+/// Compute average and repulsion term, then 
+/// compute and update sample point locations
 /// 
 /// \pre `radius > 0`
 ///
@@ -341,13 +341,13 @@ wlop_simplify_and_regularize_point_set(
   double retain_percentage,    ///< percentage of points to retain. 
                                ///< Default: 5%.
   double radius,               ///< neighbors radius.
-                               ///< this is the most important parameter need
-                               ///< to tune.If it's too small, the result is 
-                               ///< irregular. If it's too big, it will be very
-                               ///< slow. Default: 0.05 * diameter of bbox.
+                               ///< main user parameter.  
+                               ///< The result is irregular for small values.
+                               ///< The algorithm is very slow for large values.
+                               ///< Default: 0.05 * diameter of bounding box.
   unsigned int iter_number,    ///< number of iterations. Default: 35.
   bool need_compute_density,   ///< if needed to compute density when the
-                               ///< input is nonuniform, Default: false. 
+                               ///< input is nonuniform. Default: false. 
   const Kernel&                ///< geometric traits.
 )
 {
