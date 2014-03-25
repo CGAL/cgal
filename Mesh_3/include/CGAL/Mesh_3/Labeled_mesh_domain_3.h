@@ -96,13 +96,13 @@ public:
    */
   Labeled_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         CGAL::Random* p_rng = NULL,
-                         const FT& error_bound = FT(1e-3));
+                         const FT& error_bound = FT(1e-3),
+                         CGAL::Random* p_rng = NULL);
 
   Labeled_mesh_domain_3(const Function& f,
                          const Bbox_3& bbox,
-                         CGAL::Random* p_rng = NULL,
-                         const FT& error_bound = FT(1e-3));
+                         const FT& error_bound = FT(1e-3),
+                         CGAL::Random* p_rng = NULL);
 
   /// Destructor
   virtual ~Labeled_mesh_domain_3()
@@ -494,8 +494,8 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
-                       CGAL::Random* p_rng,
-                       const FT& error_bound )
+                       const FT& error_bound,
+                       CGAL::Random* p_rng)
 : function_(f)
 , bbox_(iso_cuboid(bounding_sphere.bbox()))
 , p_rng_(p_rng)
@@ -514,8 +514,8 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
-                       CGAL::Random* p_rng,
-                       const FT& error_bound )
+                       const FT& error_bound,
+                       CGAL::Random* p_rng)
 : function_(f)
 , bbox_(iso_cuboid(bbox))
 , p_rng_(p_rng)

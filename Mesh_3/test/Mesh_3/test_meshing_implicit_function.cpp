@@ -59,6 +59,7 @@ struct Implicit_tester : public Tester<K>
     //-------------------------------------------------------
     Mesh_domain domain(Implicit_tester<K>::sphere_function,
                        Sphere_3(CGAL::ORIGIN,2.),
+                       1e-3,
                        &CGAL::default_random);
     
     // Set mesh criteria
