@@ -96,12 +96,12 @@ public:
    */
   Labeled_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         CGAL::Random& rng = CGAL::Random(0),
+                         const CGAL::Random& rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3));
 
   Labeled_mesh_domain_3(const Function& f,
                          const Bbox_3& bbox,
-                         CGAL::Random& rng = CGAL::Random(0),
+                         const CGAL::Random& rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3));
 
   /// Destructor
@@ -466,7 +466,7 @@ private:
   /// The bounding box
   const Iso_cuboid_3 bbox_;
   /// The random number generator used by Construct_initial_points
-  CGAL::Random& rng_;
+  mutable CGAL::Random rng_;
   /// Error bound relative to sphere radius
   FT squared_error_bound_;
 
@@ -489,7 +489,7 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
-                       CGAL::Random& rng,
+                       const CGAL::Random& rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bounding_sphere.bbox()))
@@ -503,7 +503,7 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
-                       CGAL::Random& rng,
+                       const CGAL::Random& rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bbox))
