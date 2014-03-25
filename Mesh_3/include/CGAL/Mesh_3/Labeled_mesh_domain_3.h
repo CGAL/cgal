@@ -96,12 +96,12 @@ public:
    */
   Labeled_mesh_domain_3(const Function& f,
                          const Sphere_3& bounding_sphere,
-                         const CGAL::Random& rng = CGAL::Random(0),
+                         CGAL::Random& rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3));
 
   Labeled_mesh_domain_3(const Function& f,
                          const Bbox_3& bbox,
-                         const CGAL::Random& rng = CGAL::Random(0),
+                         CGAL::Random& rng = CGAL::Random(0),
                          const FT& error_bound = FT(1e-3));
 
   /// Destructor
@@ -466,7 +466,7 @@ private:
   /// The bounding box
   const Iso_cuboid_3 bbox_;
   /// The random number generator used by Construct_initial_points
-  mutable CGAL::Random rng_;
+  CGAL::Random& rng_;
   /// Error bound relative to sphere radius
   FT squared_error_bound_;
 
@@ -489,13 +489,14 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Sphere_3& bounding_sphere,
-                       const CGAL::Random& rng,
+                       CGAL::Random& rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bounding_sphere.bbox()))
 , rng_(rng)
 , squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
 {
+  std::cout << "seed : " << rng_.get_seed() << std::endl;
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
 }
 
@@ -503,13 +504,14 @@ template<class F, class BGT>
 Labeled_mesh_domain_3<F,BGT>::Labeled_mesh_domain_3(
                        const F& f,
                        const Bbox_3& bbox,
-                       const CGAL::Random& rng,
+                       CGAL::Random& rng,
                        const FT& error_bound )
 : function_(f)
 , bbox_(iso_cuboid(bbox))
 , rng_(rng)
 , squared_error_bound_(squared_error_bound(bbox_,error_bound))
 {
+  std::cout << "seed : " << rng_.get_seed() << std::endl;
   // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
 }
 
@@ -569,6 +571,7 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
       *pts++ = std::make_pair(intersect_pt,
                               r_domain_.index_from_surface_patch_index(*surface));
       --n;
+      std::cout << "ipoint : " << intersect_pt << std::endl;
 
 #ifdef CGAL_MESH_3_VERBOSE
       std::cerr << boost::format("\r             \r"

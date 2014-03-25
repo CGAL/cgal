@@ -95,10 +95,9 @@ public:
 
   /// Constructors
   Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-    const CGAL::Random& rng = CGAL::Random(0));
+    CGAL::Random& rng = CGAL::Random(0));
   Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-    const CGAL::Random& rng = CGAL::Random(0));
-
+    CGAL::Random& rng = CGAL::Random(0));
 
   template <typename T1, typename T2, typename T3>
   Polyhedral_mesh_domain_with_features_3(const T1& a, const T2& b, const T3& c)
@@ -129,7 +128,7 @@ template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const Polyhedron& p,
-                                       const CGAL::Random& rng)
+                                       CGAL::Random& rng)
   : Base()
   , polyhedron_(p)
 {
@@ -141,7 +140,7 @@ template < typename GT_, typename P_, typename TA_,
            typename Tag_, typename E_tag_>
 Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
 Polyhedral_mesh_domain_with_features_3(const std::string& filename,
-                                       const CGAL::Random& rng)
+                                       CGAL::Random& rng)
   : Base()
   , polyhedron_()
 {
