@@ -20,8 +20,8 @@
 //
 //******************************************************************************
 // File Description :
-// Implicit_to_labeled_function_wrapper and
-// Implicit_vector_to_labeled_function_wrapper class declaration
+// Implicit_to_labeling_function_wrapper and
+// Implicit_vector_to_labeling_function_wrapper class declaration
 // and implementation.
 //
 // See classes description to have more information.
@@ -45,14 +45,14 @@ namespace Mesh_3 {
 #include <CGAL/config.h>
 
 /**
- * @class Implicit_to_labeled_function_wrapper
+ * @class Implicit_to_labeling_function_wrapper
  *
  * This class is designed to wrap an implicit function which describes a domain
  * by [p is inside if f(p)<0] to a function which takes its values into {0,1}.
  * f(p)=0 means that p is outside the domain.
  */
 template<class Function_, class BGT>
-class Implicit_to_labeled_function_wrapper
+class Implicit_to_labeling_function_wrapper
 {
 public:
   // Types
@@ -60,13 +60,13 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Implicit_to_labeled_function_wrapper(const Function_& f)
+  Implicit_to_labeling_function_wrapper(const Function_& f)
     : r_f_(f) {}
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Implicit_to_labeled_function_wrapper() {}
+  ~Implicit_to_labeling_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
@@ -78,12 +78,14 @@ private:
   /// Function to wrap
   const Function_& r_f_;
 
-};  // end class Implicit_to_labeled_function_wrapper
+};  // end class Implicit_to_labeling_function_wrapper
 
 
 
 /**
- * @class Implicit_vector_to_labeled_function_wrapper
+ * \deprecated
+ *
+ * @class Implicit_vector_to_labeling_function_wrapper
  *
  * Wraps a set of implicit function [f1,f2,...] to one function F which
  * takes its values into N.
@@ -94,7 +96,7 @@ private:
  * It can handle at most 8 functions.
  */
 template<class Function_, class BGT>
-class Implicit_vector_to_labeled_function_wrapper
+class Implicit_vector_to_labeling_function_wrapper
 {
 public:
   // Types
@@ -103,13 +105,13 @@ public:
   typedef typename BGT::Point_3     Point_3;
 
   /// Constructor
-  Implicit_vector_to_labeled_function_wrapper(const std::vector<Function_*>& v)
+  Implicit_vector_to_labeling_function_wrapper(const std::vector<Function_*>& v)
     : function_vector_(v) {}
 
   // Default copy constructor and assignment operator are ok
 
   /// Destructor
-  ~Implicit_vector_to_labeled_function_wrapper() {}
+  ~Implicit_vector_to_labeling_function_wrapper() {}
 
   /// Operator ()
   return_type operator()(const Point_3& p, const bool = true) const
@@ -135,10 +137,10 @@ private:
   /// Functions to wrap
   const Function_vector function_vector_;
 
-};  // end class Implicit_to_labeled_function_wrapper
+};  // end class Implicit_to_labeling_function_wrapper
 
 template<class Function_, class BGT>
-class Implicit_multi_domain_to_labeled_function_wrapper
+class Implicit_multi_domain_to_labeling_function_wrapper
 {
 public:
 	  // Types
@@ -152,18 +154,18 @@ private:
 	std::vector<Sign> mask;
 
 public:
-	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs)
+	Implicit_multi_domain_to_labeling_function_wrapper (const std::vector<Function>& funcs)
     : funcs(funcs), mask(funcs.size(), NEGATIVE)
     {
     }
 
-	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs, const std::vector<Sign>& mask)
+	Implicit_multi_domain_to_labeling_function_wrapper (const std::vector<Function>& funcs, const std::vector<Sign>& mask)
     : funcs(funcs), mask(mask)
     {
 		assert(funcs.size() == mask.size());
     }
 
-	Implicit_multi_domain_to_labeled_function_wrapper (const std::vector<Function>& funcs, const std::string& mask_str)
+	Implicit_multi_domain_to_labeling_function_wrapper (const std::vector<Function>& funcs, const std::string& mask_str)
     : funcs(funcs), mask()
     {
 		assert(funcs.size() == mask_str.length());

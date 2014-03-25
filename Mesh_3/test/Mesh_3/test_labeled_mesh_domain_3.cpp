@@ -24,7 +24,7 @@
 
 #include "test_meshing_utilities.h"
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Implicit_to_labeling_function_wrapper.h>
 
 
 template <typename K>
@@ -34,7 +34,7 @@ struct LM3_tester
   typedef typename K::FT FT;
 
   typedef FT (*Function)(const Point_3&);
-  typedef CGAL::Mesh_3::Implicit_to_labeled_function_wrapper<Function, K> Function_wrapper;
+  typedef CGAL::Mesh_3::Implicit_to_labeling_function_wrapper<Function, K> Function_wrapper;
   typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
 
   static FT shape_function (const Point_3& p)

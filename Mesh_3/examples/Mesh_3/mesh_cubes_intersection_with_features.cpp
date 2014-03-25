@@ -12,7 +12,7 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
-#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Implicit_to_labeling_function_wrapper.h>
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include <CGAL/make_mesh_3.h>
@@ -27,7 +27,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 typedef K::FT FT;
 typedef FT (*Function)(const Point&);
-typedef CGAL::Mesh_3::Implicit_multi_domain_to_labeled_function_wrapper<Function, K>
+typedef CGAL::Mesh_3::Implicit_multi_domain_to_labeling_function_wrapper<Function, K>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
 typedef CGAL::Mesh_3::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;

@@ -32,7 +32,7 @@
 #endif
 
 #include <CGAL/Mesh_3/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/Implicit_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Implicit_to_labeling_function_wrapper.h>
 
 namespace CGAL {
 
@@ -45,7 +45,7 @@ namespace CGAL {
  */
 template<class Function,
   class BGT,
-  class Wrapper = Mesh_3::Implicit_to_labeled_function_wrapper<Function,BGT> >
+  class Wrapper = Mesh_3::Implicit_to_labeling_function_wrapper<Function,BGT> >
 class Implicit_mesh_domain_3
  : public Mesh_3::Labeled_mesh_domain_3<Wrapper, BGT >
 {
