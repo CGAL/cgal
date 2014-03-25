@@ -1,3 +1,5 @@
 #
-# curve(y=x^2) 1:[(0,0)->(3,9)] curve 2 (y=x^2):[(0,0)->(5,-25)] both counter-clockwise 
-a 2 1 0 0 0 -1 0 1 0 0 3 9 -1 0 0 0 -1 0 1 0 0 5 -25 
+# curve 1: (y=x^2)[(0,0)->(5,25)] 
+# curve 2: (y=x^2) (y=x^2):[(0,0)->(5,-25)] both counter-clockwise 
+# Curve id: 0
+a 2 -1 0 0 0 1 0 1 -5 25 0 0 -1 0 0 0 1 0 1 0 0 5 25 

@@ -1054,6 +1054,7 @@ test_polycurve_conic_traits()
   compile_test_with_flags test_traits conic_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
     
+    # The input arguments for the execute_commands_new_structure, 
     # Polycurve_conics is the directory name in "data"
     # polycurve_conic_traits is a string
     # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
@@ -1064,7 +1065,10 @@ test_polycurve_conic_traits()
       EQUAL \
       IS_VERTICAL \
       SPLIT \
-      ARE_MERGEABLE
+      ARE_MERGEABLE \
+      COMPARE_Y_AT_X_LEFT \
+      COMPARE_Y_AT_X_RIGHT \
+      MAKE_X_MONOTONE
 
   else
     echo "   ERROR:    not executed   test_traits polyline_traits" >> $ERRORFILE

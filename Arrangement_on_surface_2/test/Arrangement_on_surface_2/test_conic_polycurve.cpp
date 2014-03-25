@@ -638,6 +638,27 @@ void check_compare_y_at_x_left()
                (result == CGAL::LARGER ? "Larger" : "equal")) << std::endl;
 }
 
+template <typename Curve_type>
+void check_make_x_monotne_curve( Curve_type c1)
+{
+  Polycurve_conic_traits_2 traits;
+
+  std::vector<CGAL::Object> obj_vec;
+
+  traits.make_x_monotone_2_object() (c1, std::back_inserter(obj_vec));
+
+  std::cout << "The polycurve is: " << c1 << std::endl; 
+
+  std::cout<< "The poly curve have been split into " << obj_vec.size() << " polycurves" << std::endl;
+
+  const Pc_x_monotone_curve_2 *split_curve_1 = CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[0]));
+  //const Pc_x_monotone_curve_2 *split_curve_2 = CGAL::object_cast<Pc_x_monotone_curve_2> (&(obj_vec[1]));
+
+  std::cout << "The split curve 1 is: " << *split_curve_1 << std::endl;
+  //std::cout << "The split curve 2 is: " << *split_curve_2 << std::endl;  
+
+}
+
 int main ()
 {
   Polycurve_conic_traits_2 traits;
@@ -657,11 +678,15 @@ int main ()
   Conic_curve_2     c7(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-3), Algebraic(9) ), Conic_point_2( Algebraic(0), Algebraic(0) ) );
   Conic_curve_2     c8(0,1,0,-1,0,0, CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(0), Algebraic(0) ), Conic_point_2( Algebraic(4), Algebraic(-2) ) );
 
+  Conic_curve_2     c9(1,0,0,0,-1,0,CGAL::COUNTERCLOCKWISE, Conic_point_2( Algebraic(-5), Algebraic(25) ), Conic_point_2( Algebraic(5), Algebraic(25) ) );
+  Conic_curve_2     c10( 58, 72, -48, 0, 0, -360 );
+
   //This vector is used to store curves that will be used to create polycurve
   std::vector<Conic_curve_2> conic_curves;
+  conic_curves.push_back(c9);
 
   //construct poly-curve
-  //Polycurve_conic_traits_2::Curve_2 conic_polycurve = construct_polycurve( conic_curves.begin(), conic_curves.end() );
+  Polycurve_conic_traits_2::Curve_2 conic_polycurve = construct_polycurve( conic_curves.begin(), conic_curves.end() );
 
   
   /* VERY IMPORTANT
@@ -674,6 +699,7 @@ int main ()
   Conic_x_monotone_curve_2 xc6 (c6);
   Conic_x_monotone_curve_2 xc7 (c7);
   Conic_x_monotone_curve_2 xc8 (c8);
+  
 
   //This vector is used to store curves that will be used to create X-monotone-polycurve
   std::vector<Conic_x_monotone_curve_2> xmono_conic_curves_2;
@@ -690,10 +716,7 @@ int main ()
   xmono_conic_curves_2.push_back(xc7);
   xmono_conic_curves_2.push_back(xc8);
   //construct x-monotone poly-curve
-  Pc_x_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());
-
-
-
+  Pc_x_monotone_curve_2 conic_x_mono_polycurve_2 = construct_x_mono_polycurve(xmono_conic_curves_2.begin(), xmono_conic_curves_2.end());;
 
 
 
@@ -710,6 +733,9 @@ int main ()
 
   //check_split( conic_x_mono_polycurve_1, conic_x_mono_polycurve_2 );
   // std::cout<< std::endl;
+
+  check_make_x_monotne_curve( conic_polycurve );
+   std::cout<< std::endl;
 
   // check_is_vertical();
   // std::cout<< std::endl;

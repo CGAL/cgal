@@ -1,4 +1,4 @@
-## -*- comment-start: "#"; -*-
+# -*- comment-start: "#"; -*-
 # 
 # Format
 # <command>	<point> <xcurve> <result>

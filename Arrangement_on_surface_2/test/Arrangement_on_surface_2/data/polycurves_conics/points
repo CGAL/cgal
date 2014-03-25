@@ -8,6 +8,7 @@
 0/1 8/4
 #
 # For 2nd quadrant x-poly curvecurve
+# Point Id: 7
 -7/1 15/1
 -7/1 12/1
 -4/1 17/1
@@ -18,10 +19,11 @@
 -7/1 13/1
 -3/1 9/1
 # For 2nd and 4th Quadrant poly-curve
+# Point Id: 16 
 4/1 -1/1
 4/1 -4/1
 1/1 -1/1
 #
 # origin 
-# Point id 19
+# Point id: 19
 0/1 0/1

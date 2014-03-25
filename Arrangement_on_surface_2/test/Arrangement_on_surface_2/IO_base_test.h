@@ -150,54 +150,6 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   return true;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //polycurve_conic
 #elif TEST_GEOM_TRAITS == POLYCURVE_CONIC_GEOM_TRAITS
 
@@ -442,6 +394,8 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
 
       conic_segments.push_back( tmp_cv );
     }
+    
+    // Enable these later if needed.
     //else if ((type == 'e') || (type == 'E')) return read_partial_ellipse(is, cv);
     //else if ((type == 'h') || (type == 'H')) return read_hyperbola(is, cv);
     //else if ((type == 'p') || (type == 'P')) return read_parabola(is, cv);
@@ -462,52 +416,6 @@ bool IO_base_test<Base_geom_traits>::read_curve(stream& is, Curve_2& cv)
   
   return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #elif TEST_GEOM_TRAITS == POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS
