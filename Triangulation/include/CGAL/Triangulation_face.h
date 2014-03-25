@@ -84,8 +84,8 @@ public:
 
     void clear() /* Concept */
     {    
-        const int d = indices_.size();
-        for(int i = 0; i < d; ++i )
+        const std::size_t d = indices_.size();
+        for(std::size_t i = 0; i < d; ++i )
             indices_[i] = -1;
     }
 

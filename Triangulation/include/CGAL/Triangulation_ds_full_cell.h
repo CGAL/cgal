@@ -51,7 +51,7 @@ public:
 private: // STORAGE
     typedef TFC_data< Vertex_handle, Full_cell_handle,
                       Maximal_dimension, Storage_policy >   Combinatorics;
-    friend class TFC_data< Vertex_handle, Full_cell_handle,
+    friend struct TFC_data< Vertex_handle, Full_cell_handle,
                       Maximal_dimension, Storage_policy >;
     // array of vertices
     typedef typename Combinatorics::Vertex_handle_array     Vertex_handle_array;
