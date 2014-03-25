@@ -37,17 +37,50 @@ namespace CGAL {
 template <  class TriangulationTraits, class TDS_ = Default >
 class Triangulation
 {
-    typedef typename Ambient_dimension<typename TriangulationTraits::Point_d>::type
-                                                    Maximal_dimension_;
+    typedef typename TriangulationTraits::Dimension Maximal_dimension_;
     typedef typename Default::Get<TDS_, Triangulation_data_structure
                     <   Maximal_dimension_,
                         Triangulation_vertex<TriangulationTraits>,
                         Triangulation_full_cell<TriangulationTraits> >
                         >::type                     TDS;
     typedef Triangulation<TriangulationTraits, TDS_> Self;
+    
+protected:
+    typedef typename TriangulationTraits::Flat_orientation_d Flat_orientation_d;
+    typedef typename TriangulationTraits::Construct_flat_orientation_d Construct_flat_orientation_d;
+    typedef typename TriangulationTraits::In_flat_orientation_d In_flat_orientation_d;
+    
+    // Wrapper
+    struct Coaffine_orientation_d 
+    {
+      boost::optional<Flat_orientation_d>* fop;
+      Construct_flat_orientation_d cfo;
+      In_flat_orientation_d ifo;
 
-    typedef typename TriangulationTraits::Coaffine_orientation_d
-                                                    Coaffine_orientation_d;
+      Coaffine_orientation_d(
+        boost::optional<Flat_orientation_d>& x, 
+        Construct_flat_orientation_d const&y, 
+        In_flat_orientation_d const&z)
+      : fop(&x), cfo(y), ifo(z) {}
+      
+      template<class Iter> 
+      CGAL::Orientation operator()(Iter a, Iter b) const
+      {
+        // CJTODO: temporary code
+        if (!*fop)
+          *fop = cfo(a,b);
+        return ifo(fop->get(),a,b);
+        // CJTODO: replace with this code:
+        /*if (*fop)
+          return ifo(fop->get(),a,b);
+        *fop = cfo(a,b);
+        CGAL_assertion(ifo(fop->get(),a,b) == CGAL::POSITIVE);
+        return CGAL::POSITIVE;*/
+      }
+    };
+
+    void reset_flat_orientation(){flat_orientation_=boost::none;}
+
     typedef typename TriangulationTraits::Orientation_d
                                                     Orientation_d;
 
@@ -111,7 +144,7 @@ protected: // DATA MEMBERS
     const Geom_traits                   kernel_;
     Vertex_handle                       infinity_;
     mutable std::vector<Oriented_side>  orientations_;
-    Coaffine_orientation_d              coaffine_orientation_;
+    mutable boost::optional<Flat_orientation_d> flat_orientation_;
     // for stochastic walk in the locate() function:
     mutable Random                      rng_;
 #ifdef CGAL_TRIANGULATION_STATISTICS
@@ -185,7 +218,7 @@ public:
         // A full_cell has at most 1 + maximal_dimension() facets:
         orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
-        coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
+        reset_flat_orientation();
     }
 
     ~Triangulation() {}
@@ -215,14 +248,13 @@ public:
         tds().set_visited(s, b);
     } */
 
-    Coaffine_orientation_d & coaffine_orientation_predicate()
+    Coaffine_orientation_d coaffine_orientation_predicate() const
     {
-        return coaffine_orientation_;
-    }
-
-    const Coaffine_orientation_d & coaffine_orientation_predicate() const
-    {
-        return coaffine_orientation_;
+      return Coaffine_orientation_d (
+        flat_orientation_, 
+        geom_traits().construct_flat_orientation_d_object(), 
+        geom_traits().in_flat_orientation_d_object()
+      );
     }
 
     const Triangulation_ds & tds() const
@@ -482,7 +514,7 @@ public:
         // A full_cell has at most 1 + maximal_dimension() facets:
         orientations_.resize(1 + maximal_dimension());
         // Our coaffine orientation predicates HAS state member variables
-        coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
+        reset_flat_orientation();
 #ifdef CGAL_TRIANGULATION_STATISTICS
         walk_size_ = 0;
 #endif
@@ -519,7 +551,7 @@ protected:
     template< typename OrientationPredicate >
     Full_cell_handle do_locate(   const Point &, Locate_type &, Face &, Facet &,
                                 Full_cell_handle start = Full_cell_handle(),
-                                OrientationPredicate & o = geom_traits().orientation_d_object()) const;
+                                const OrientationPredicate & o = geom_traits().orientation_d_object()) const;
 public:
     Full_cell_handle locate(  const Point &, Locate_type &, Face &, Facet &,
                             Full_cell_handle start = Full_cell_handle()) const;
@@ -579,11 +611,11 @@ public:
     {
         Triangulation & t_;
         const Point & p_;
-        OrientationPredicate & ori_;
+        OrientationPredicate const& ori_;
         int cur_dim_;
     public:
         Outside_convex_hull_traversal_predicate(Triangulation & t, const Point & p,
-                                    OrientationPredicate & ori)
+                                    OrientationPredicate const& ori)
         : t_(t), p_(p), ori_(ori), cur_dim_(t.current_dimension()) {}
         // FUTURE change parameter to const reference
         bool operator()(Facet f) const
@@ -798,7 +830,7 @@ Triangulation<TT, TDS>
     CGAL_precondition( current_dimension() < maximal_dimension() );
     Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
     // reset the orientation predicate:
-    coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
+    reset_flat_orientation();
     v->set_point(p);
     if( current_dimension() >= 1 )
     {
@@ -824,7 +856,7 @@ Triangulation<TT, TDS>
             Face & face,// the face containing the query in its interior (when appropriate)
             Facet & facet,// the facet containing the query in its interior (when appropriate)
             const Full_cell_handle start// starting full_cell for the walk
-            , OrientationPredicate & orientation_pred
+            , OrientationPredicate const& orientation_pred
         ) const
 {
     const int cur_dim = current_dimension();
@@ -919,7 +951,7 @@ Triangulation<TT, TDS>
                 points_begin(s) + cur_dim + 1);
 
             // restore the correct point for vertex |i| of the full_cell
-            s->vertex(i)->set_point(backup); /**/
+            s->vertex(i)->set_point(backup); */
 
             if( orientations_[i] != NEGATIVE )
             {

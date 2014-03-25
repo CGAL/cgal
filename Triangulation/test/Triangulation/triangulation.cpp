@@ -1,6 +1,5 @@
+#include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
 #include <tilted_grid.h>
@@ -34,10 +33,10 @@ void test(const int d, const string & type, int N)
     assert(tri.empty());
 
     vector<RT> coords(d);
-	vector<Point> points;
+    vector<Point> points;
     CGAL::Random rng;
-	Random_points_iterator rand_it(d, 1.0, rng);
-	CGAL::copy_n(rand_it, N, std::back_inserter(points));
+    Random_points_iterator rand_it(d, 1.0, rng);
+    CGAL::copy_n(rand_it, N, std::back_inserter(points));
 
     cerr << '\n' << points.size() << " points in the grid.";
 
@@ -107,17 +106,15 @@ void test(const int d, const string & type, int N)
 template< int D >
 void go(int N)
 {
-    typedef double RT;
-    typedef CGAL::Cartesian_d<RT> K;
-    typedef CGAL::Filtered_kernel_d<K> FK;
-    typedef CGAL::Triangulation<FK> Triangulation;
-    //test<Triangulation>(D, "static", N);
-    test<Triangulation>(D, "dynamic", N);
+    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
+    typedef CGAL::Triangulation<K> Triangulation;
+    test<Triangulation>(D, "static", N);
+    //test<Triangulation>(D, "dynamic", N);
 }
 
 int main(int argc, char **argv)
 {
-    srand48(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
     int N = 1000;
     if( argc > 1 )
         N = atoi(argv[1]);

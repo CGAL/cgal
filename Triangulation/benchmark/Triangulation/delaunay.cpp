@@ -1,6 +1,4 @@
-#include <CGAL/Cartesian_d.h>
-//#include <CGAL/Simple_cartesian_d.h>
-//#include <CGAL/Filtered_kernel_d.h>
+#include <CGAL/Epick_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Timer.h>
@@ -38,35 +36,33 @@ void test(const int d, const std::string & type, const int N)
     std::cout << "  Delaunay triangulation of "<<N<<" points in dim "<<d<< std::flush;
     dt.insert(points.begin(), points.end());
     std::cout << " done in "<<cost.time()<<" seconds." << std::endl;
-    int nbfc= dt.number_of_finite_full_cells();
-    int nbc= dt.number_of_full_cells();
+    std::size_t nbfc= dt.number_of_finite_full_cells();
+    std::size_t nbc= dt.number_of_full_cells();
     std::cout << dt.number_of_vertices() << " vertices, " 
 	      << nbfc << " finite simplices and " 
 	      << (nbc-nbfc) << " convex hull Facets."
 	      << std::endl;
 }
 
-template< int D, typename RT >
+template< int D >
 void go(const int N)
 {
-    //typedef CGAL::Simple_cartesian_d<RT, D> K;
-    typedef CGAL::Cartesian_d<RT> K;
-    //typedef CGAL::Filtered_kernel_d<K> FK;
+    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
     typedef CGAL::Delaunay_triangulation<K> Triangulation;
     test<Triangulation>(D, "static", N);
 }
 
 int main(int argc, char **argv)
 {
-    srand48(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
     int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-    go<2, double>(N);
-    go<3, double>(N);
-    go<4, double>(N);
-    go<5, double>(N);
-    go<6, double>(N);
-    go<7, double>(N);
-    go<8, double>(N);
+    go<2>(N);
+    go<3>(N);
+    go<4>(N);
+    go<5>(N);
+    go<6>(N);
+    go<7>(N);
+    go<8>(N);
 
 
     return 0;

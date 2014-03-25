@@ -1,12 +1,6 @@
+#include <CGAL/Epick_d.h>
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
-//#define USE_NEW_KERNEL
-#ifndef USE_NEW_KERNEL
-#include <CGAL/Cartesian_d.h> // this is for Old_kernel_d
-#else
-#include <CGAL/Simple_cartesian_d.h> // this is for New_kernel_d
-#endif
-#include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
 #include <tilted_grid.h>
@@ -50,7 +44,7 @@ void test(const int D, const int d, const int N, bool no_transform)
     CGAL::internal::Combination_enumerator combi(k, 0, D-1);
     if( no_transform )
     {   // choose a random set of axes:
-        int nb = lrand48() % 1000;
+        int nb = rand() % 1000;
         for( int i = 0; i < nb; ++i )
         {
             ++combi;
@@ -70,7 +64,7 @@ void test(const int D, const int d, const int N, bool no_transform)
             {
                 int c(0);
                 while( 0 == c )
-                    c = (lrand48() % 11) - 5;
+                    c = (rand() % 11) - 5;
                 aff[j].push_back(c);
             }
         }
@@ -116,16 +110,8 @@ void test(const int D, const int d, const int N, bool no_transform)
 template< int D >
 void go(const int N, const int nb_trials)
 {
-    typedef double RT;
-    //typedef CGAL::Quotient<CGAL::MP_Float> RT;
-    //typedef CGAL::Gmpq RT;
-#ifndef USE_NEW_KERNEL
-    typedef CGAL::Cartesian_d<RT> K; // this is for Old_kernel_d
-#else
-    typedef CGAL::Simple_cartesian_d<RT, D> K; // this is for New_kernel_d
-#endif
-    typedef CGAL::Filtered_kernel_d<K> FK;
-    typedef CGAL::Delaunay_triangulation<FK> Triangulation;
+    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
+    typedef CGAL::Delaunay_triangulation<K> Triangulation;
     for( int d = 0; d <= D; ++d )
     {
         cout << "\n\n** Delaunay of " << d
@@ -150,7 +136,7 @@ int main(int argc, char **argv)
    if( argc > 3 )
         rand_init = atoi(argv[3]);
    std::cout<<argv[0]<<" "<<N<<" "<<nb_trials<<" "<<rand_init<<std::endl;
-    srand48(rand_init);
+    srand(rand_init);
     go<1>(N, nb_trials);
     go<2>(N, nb_trials);
     go<3>(N, nb_trials);

@@ -30,13 +30,12 @@ template< typename DCTraits, typename _TDS = Default >
 class Delaunay_triangulation
 : public Triangulation<DCTraits,
             typename Default::Get<_TDS, Triangulation_data_structure<
-                             typename Ambient_dimension<typename DCTraits::Point_d>::type,
+                             typename DCTraits::Dimension,
                              Triangulation_vertex<DCTraits>,
                              Triangulation_full_cell<DCTraits> >
                     >::type >
 {
-    typedef typename Ambient_dimension<typename DCTraits::Point_d>::type
-                                                    Maximal_dimension_;
+    typedef typename DCTraits::Dimension Maximal_dimension_;
     typedef typename Default::Get<_TDS, Triangulation_data_structure<
                          Maximal_dimension_,
                          Triangulation_vertex<DCTraits>,
@@ -45,13 +44,35 @@ class Delaunay_triangulation
     typedef Triangulation<DCTraits, TDS>        Base;
     typedef Delaunay_triangulation<DCTraits, _TDS>   Self;
 
-    typedef typename DCTraits::Side_of_oriented_subsphere_d
-                                                    Side_of_oriented_subsphere_d;
     typedef typename DCTraits::Side_of_oriented_sphere_d
                                                     Side_of_oriented_sphere_d;
-    typedef typename DCTraits::Coaffine_orientation_d
-                                                    Coaffine_orientation_d;
     typedef typename DCTraits::Orientation_d        Orientation_d;
+
+    //*** Side_of_oriented_subsphere_d ***
+    using Base::Flat_orientation_d;
+    using Base::Construct_flat_orientation_d;
+    typedef typename DCTraits::In_flat_side_of_oriented_sphere_d In_flat_side_of_oriented_sphere_d;
+    // Wrapper
+    struct Side_of_oriented_subsphere_d
+    {
+      boost::optional<Flat_orientation_d>* fop;
+      Construct_flat_orientation_d cfo;
+      In_flat_side_of_oriented_sphere_d ifsoos;
+
+      Side_of_oriented_subsphere_d(
+        boost::optional<Flat_orientation_d>& x, 
+        Construct_flat_orientation_d const&y, 
+        In_flat_side_of_oriented_sphere_d const&z)
+      : fop(&x), cfo(y), ifsoos(z) {}
+      
+      template<class Iter> 
+      CGAL::Orientation operator()(Iter a, Iter b, const Point & p)const
+      {
+        if(!*fop)
+          *fop=cfo(a,b);
+        return ifsoos(fop->get(),a,b,p);
+      }
+    };
 
 public: // PUBLIC NESTED TYPES
 
@@ -84,13 +105,13 @@ public: // PUBLIC NESTED TYPES
 
 protected: // DATA MEMBERS
 
-    Side_of_oriented_subsphere_d side_of_oss_;
 
 public:
     
     using Base::maximal_dimension;
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
+    using Base::reset_flat_orientation;
     using Base::current_dimension;
     //using Base::star;
     //using Base::incident_full_cells;
@@ -145,7 +166,7 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
 
     Delaunay_triangulation(const int dim, const Geom_traits k = Geom_traits())
-    : Base(dim, k), side_of_oss_()
+    : Base(dim, k)
     {
     }
 
@@ -154,16 +175,15 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ACCESS
 
     // Not Documented
-    Side_of_oriented_subsphere_d & side_of_oriented_subsphere_predicate()
+    Side_of_oriented_subsphere_d side_of_oriented_subsphere_predicate() const
     {
-       return side_of_oss_;
+      return Side_of_oriented_subsphere_d (
+        flat_orientation_, 
+        geom_traits().construct_flat_orientation_d_object(), 
+        geom_traits().in_flat_side_of_oriented_sphere_d_object()
+      );
     }
 
-    // Not Documented
-    const Side_of_oriented_subsphere_d & side_of_oriented_subsphere_predicate() const
-    {
-        return side_of_oss_;
-    }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
@@ -307,6 +327,8 @@ public:
 
 private:
     // Some internal types to shorten notation
+    using Base::Coaffine_orientation_d;
+    using Base::flat_orientation_;
     typedef Conflict_predicate<Coaffine_orientation_d, Side_of_oriented_subsphere_d>
             Conflict_pred_in_subspace;
     typedef Conflict_predicate<Orientation_d, Side_of_oriented_sphere_d>
@@ -653,8 +675,7 @@ Delaunay_triangulation<DCTraits, TDS>
     CGAL_precondition( current_dimension() >= 0 );
     tds().remove_decrease_dimension(v, infinite_vertex());
     // reset the predicates:
-    coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
-    side_of_oriented_subsphere_predicate() = geom_traits().side_of_oriented_subsphere_d_object();
+    reset_flat_orientation();
     if( 1 <= current_dimension() )
     {
         // FIXME: infinite vertex is NOT at index 0 a priori.
@@ -712,8 +733,7 @@ Delaunay_triangulation<DCTraits, TDS>
     CGAL_precondition( current_dimension() < maximal_dimension() );
     Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
     // reset the predicates:
-    coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
-    side_of_oriented_subsphere_predicate() = geom_traits().side_of_oriented_subsphere_d_object();
+    reset_flat_orientation();
     v->set_point(p);
     if( current_dimension() >= 1 )
     {

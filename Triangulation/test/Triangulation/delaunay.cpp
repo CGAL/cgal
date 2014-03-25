@@ -1,7 +1,5 @@
+#include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
-//#include <CGAL/Simple_cartesian_d.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/algorithm.h>
@@ -43,11 +41,11 @@ void test(const int d, const string & type, const int N)
     Random_points_iterator rand_it(d, 2.0, rng);
     //CGAL::copy_n(rand_it, N, back_inserter(points));
     
-	vector<int> coords(d);
+    vector<int> coords(d);
     for( int i = 0; i < N; ++i )
     {
         for( int j = 0; j < d; ++j )
-            coords[j] = lrand48() % 100000;
+            coords[j] = rand() % 100000;
         points.push_back(Point(d, coords.begin(), coords.end()));
     }
     pc.insert(points.begin(),  points.end());
@@ -112,19 +110,20 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-    typedef double RT;
+    //typedef double RT;
     //typedef CGAL::Gmpq RT;
-    typedef CGAL::Cartesian_d<RT> K;
+    //typedef CGAL::Cartesian_d<RT> K;
     //typedef CGAL::Simple_cartesian_d<RT, D> K;
-    typedef CGAL::Filtered_kernel_d<K> FK;
+    //typedef CGAL::Filtered_kernel_d<K> FK;
+    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
     typedef CGAL::Delaunay_triangulation<FK> Triangulation;
-    test<Triangulation>(D, "dynamic", N);
-    //test<Triangulation>(D, "static", N);
+    //test<Triangulation>(D, "dynamic", N);
+    test<Triangulation>(D, "static", N);
 }
 
 int main(int argc, char **argv)
 {
-    srand48(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
     int N = 100;
     if( argc > 1 )
         N = atoi(argv[1]);
