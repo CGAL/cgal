@@ -186,7 +186,9 @@ Triangulation(const Triangulation & t2);
 /// @{
 
 /*!
-\cgalAdvanced Returns a const reference to the underlying triangulation data structure.
+\cgalAdvancedBegin
+Returns a const reference to the underlying triangulation data structure.
+\cgalAdvancedEnd
 */
 const Triangulation_ds & tds() const;
 
@@ -447,12 +449,13 @@ Face & f, Vertex_handle hint) const;
 /// @{
 
 /*!
-\cgalAdvanced Contracts the `Face f` to a single vertex at
+\cgalAdvancedBegin
+Contracts the `Face f` to a single vertex at
 position `p`. Returns a handle to that vertex. 
 
 \pre The boundary of the union of full cells incident to `f` must be a triangulation of a
 sphere of dimension `tr`.`current_dimension()`).
-
+\cgalAdvancedEnd
 */
 Vertex_handle collapse_face(const Point & p, const Face & f);
 
@@ -485,7 +488,8 @@ Same as above but uses a vertex `hint` as the starting place for the search.
 Vertex_handle insert(const Point p, Vertex_handle hint);
 
 /*!
-\cgalAdvanced Inserts point `p` into the triangulation and returns a handle to the
+\cgalAdvancedBegin
+Inserts point `p` into the triangulation and returns a handle to the
 `Vertex` at that position. The action taken depends on the value of
 `loc_type`:
 
@@ -498,11 +502,13 @@ of `loc_type`, using the full cell `c`.
 </DL>
 
 This method is used internally by the other `insert()` methods.
+\cgalAdvancedEnd
 */
 Vertex_handle insert(const Point p, Locate_type loc_type, Face & f, Facet & ft, Full_cell_handle c);
 
 /*!
-\cgalAdvanced The full cells in the range \f$ C=\f$`[s, e)` are removed, 
+\cgalAdvancedBegin
+The full cells in the range \f$ C=\f$`[s, e)` are removed, 
 thus forming a hole. A `Vertex` is
 inserted at position `p` and connected to the boundary of the hole in
 order to ``fill it''. A `Vertex_handle` to the new `Vertex` is
@@ -514,49 +520,62 @@ interior and not contain any vertex all of whose incident full cells are in
 \f$C\f$ . (This implies that `t.current_dimension()`\f$ \geq 2\f$ if
 \f$|C|>1\f$ .) The boundary of \f$C\f$ must be a triangulation of the sphere
 \f$ \mathcal S ^k-1\f$.
+\cgalAdvancedEnd
 */
 template < typename ForwardIterator, typename OutputIterator >
 Vertex_handle insert_in_hole(const Point & p, ForwardIterator s,
 ForwardIterator e, const Facet & ft, OutputIterator out);
 
 /*!
-\cgalAdvanced Same as above, but the newly created full cells are not
+\cgalAdvancedBegin
+Same as above, but the newly created full cells are not
 retrieved.
+\cgalAdvancedEnd
 */
 template < typename ForwardIterator > Vertex_handle
 insert_in_hole(const Point & p, ForwardIterator s, ForwardIterator e, const
 Facet & ft);
 
 /*!
-\cgalAdvanced Inserts point `p` in the triangulation.
+\cgalAdvancedBegin
+Inserts point `p` in the triangulation.
 \pre `p` must lie in the relative interior of `f`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_in_face(const Point & p, const Face & f);
 
 /*!
-\cgalAdvanced Inserts point `p` in the triangulation.
+\cgalAdvancedBegin
+Inserts point `p` in the triangulation.
 \pre `p` must lie in the relative interior of `ft`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_in_facet(const Point & p, const Facet & ft);
 
 /*!
-\cgalAdvanced Inserts point `p` in the triangulation. \pre `p` must lie in the
+\cgalAdvancedBegin
+Inserts point `p` in the triangulation. \pre `p` must lie in the
 interior of `c`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_in_full_cell(const Point & p, Full_cell_handle
 c);
 
 /*!
-\cgalAdvanced Inserts point `p` in the triangulation.
+\cgalAdvancedBegin
+Inserts point `p` in the triangulation.
 \pre `p` must lie outside the convex hull of `tr`. The half-space
 defined by the infinite full cell `c` must contain `p`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_convex_hull(const Point &,
 Full_cell_handle c);
 
 /*!
-\cgalAdvanced Inserts point `p` in the triangulation.
+\cgalAdvancedBegin
+Inserts point `p` in the triangulation.
 \pre `p` must lie outside the affine hull of `tr`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_affine_hull(const Point &);
 

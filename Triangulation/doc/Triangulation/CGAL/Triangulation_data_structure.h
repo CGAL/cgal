@@ -81,10 +81,12 @@ bool is_valid(bool verbose = true) const;
 /// @{
 
 /*! 
-\cgalAdvanced A data member of type `Full_cell_data` is stored in every full cell
+\cgalAdvancedBegin
+A data member of type `Full_cell_data` is stored in every full cell
 (models of the concept `TriangulationDSFullCell`). It is used to mark
 some full cells, during modifications of the triangulation data
 structure.
+\cgalAdvancedEnd
 */ 
 typedef Hidden_type Full_cell_data; 
 
@@ -93,14 +95,16 @@ typedef Hidden_type Full_cell_data;
 /// \name Vertex insertion 
 /// @{
 
-/*! 
-\cgalAdvanced A set `C` of full cells satisfying the same condition as in method 
+/*!
+\cgalAdvancedBegin
+A set `C` of full cells satisfying the same condition as in method 
 `Triangulation_data_structure::insert_in_hole()` is assumed to be marked. This 
 method creates new full cells from vertex `v` to the boundary of `C`. 
 The boundary is recognized by checking the mark of the full cells. 
 This method is used by `Triangulation_data_structure::insert_in_hole()`. 
 s
 \pre same as `Triangulation_data_structure::insert_in_hole()` 
+\cgalAdvancedEnd
 
 */ 
 template< OutputIterator > Full_cell_handle insert_in_tagged_hole( 

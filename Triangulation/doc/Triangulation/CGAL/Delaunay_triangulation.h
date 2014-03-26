@@ -103,7 +103,8 @@ Same as above but uses a vertex as starting place for the search.
 Vertex_handle insert(const Point & p, Vertex_handle hint);
 
 /*!
-\cgalAdvanced Inserts the point `p` in the Delaunay triangulation
+\cgalAdvancedBegin
+Inserts the point `p` in the Delaunay triangulation
 and ensures that the empty-ball property is preserved.
 Returns a handle to the
 (possibly newly created) vertex at that position. The behavior depends on the
@@ -124,24 +125,29 @@ The parameters `lt`, `f`, `ft`
 and `c` must be consistent with the localization of point `p` in the
 Delaunay triangulation e.g. by a call to
 `c = locate(p, lt, f, ft)`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert(const Point & p, const Locate_type lt,
 const Face & f, const Facet & ft, const Full_cell_handle c);
 
 /*!
-\cgalAdvanced Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
+\cgalAdvancedBegin
+Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position. \pre The point `p`
 must lie outside the affine hull of the Delaunay triangulation. This implies that
 `dt`.`current_dimension()` must be less that
 `dt`.`maximal_dimension()`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_outside_affine_hull(const Point & p);
 
 /*!
-\cgalAdvanced Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
+\cgalAdvancedBegin
+Inserts the point `p` in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position.
 \pre The point `p`
 must be in conflict with the full cell `c`.
+\cgalAdvancedEnd
 */
 Vertex_handle insert_in_conflicting_cell(const Point & p, const
 Full_cell_handle c);
@@ -161,7 +167,8 @@ bool is_in_conflict(const Point & p, Full_cell_const_handle c)
 const;
 
 /*!
-\cgalAdvanced Outputs handles to the full cells in confict with
+\cgalAdvancedBegin
+Outputs handles to the full cells in confict with
 point `p` into the `OutputIterator out`. The full cell `c` is used
 as a starting point for gathering the full cells in conflict with
 `p`.
@@ -170,7 +177,7 @@ A facet `(cc,i)` on the boundary of the conflict zone with
 \pre `c` is in conflict
 with `p`.
 `dt`.`current_dimension()`\f$ \geq2\f$.
-
+\cgalAdvancedEnd
 */
 template< typename OutputIterator >
 Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
