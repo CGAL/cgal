@@ -63,14 +63,15 @@ typedef TriangulationDataStructure::Full_cell_data
 TDS_data;
 
 /*!
-This nested template class has to define a type `Other` which is the
-<I>rebound</I> vertex, that is, the one whose `Triangulation_data_structure`
-will be the actually used one. The `Other` type will be the real base
-class of `Triangulation_data_structure::Full_cell`.
+This nested template class has to define a type `Rebind_TDS<TDS2>::%Other` 
+which is the <I>rebound</I> vertex, that is, the one 
+that will be actually used by `Triangulation_data_structure`.
+The `Rebind_TDS<TDS2>::%Other` type will be the real 
+base class of `Triangulation_data_structure::Full_cell`.
+\note It can be implemented using a nested template class.
 */
-typedef Hidden_type
-template <typename TDS2>
-Rebind_TDS;
+template <typename TDS2> 
+using Rebind_TDS = unspecified_type; 
 
 /// @}
 
