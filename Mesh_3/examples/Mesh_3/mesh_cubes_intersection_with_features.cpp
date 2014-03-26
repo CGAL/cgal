@@ -152,8 +152,11 @@ int main()
   v.push_back(f1);
   v.push_back(f2);
 
+  std::vector<std::string> vps;
+  vps.push_back("--");
+
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain_with_features domain(Function_wrapper(v, "--"), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
+  Mesh_domain_with_features domain(Function_wrapper(v, vps), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
   Polylines polylines;
   create_polylines(polylines);
   domain.add_features(polylines.begin(),polylines.end());

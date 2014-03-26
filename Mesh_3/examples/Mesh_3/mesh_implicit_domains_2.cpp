@@ -52,8 +52,11 @@ int main()
   v.push_back(f1);
   v.push_back(f2);
 
+  std::vector<std::string> vps;
+  vps.push_back("--");
+
   // Domain (Warning: Sphere_3 constructor uses square radius !)
-  Mesh_domain domain(Function_wrapper(v, "--"), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
+  Mesh_domain domain(Function_wrapper(v, vps), K::Sphere_3(CGAL::ORIGIN, 5.*5.));
 
   // Set mesh criteria
   Facet_criteria facet_criteria(30, 0.2, 0.02); // angle, size, approximation

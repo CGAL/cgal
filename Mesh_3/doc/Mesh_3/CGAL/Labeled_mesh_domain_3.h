@@ -8,6 +8,7 @@ Labeling function f must take its values into N.
 Let p be a Point.
  - f(p)=0 means that p is outside domain.
  - f(p)=a, a!=0 means that p is inside subdomain a.
+
 This class is a model of concept `MeshDomain_3`.
 
 Any boundary facet is labeled <a,b>, a<b, where a and b are the
@@ -18,10 +19,10 @@ This class includes a function that provides, the subdomain index of any
 query point. An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with different
 values of subdomain indices. The intersection is then constructed by bisection.
-The bisection stops when the query segment is shorter than a given error bound
-`e`. This error bound is given by `e=d`\f$ \times\f$`error_bound` where `d` is the
+The bisection stops when the query segment is shorter than an error bound
+`e` given by the product of the
 length of the diagonal of the bounding box (in world coordinates), or the radius of the bounding sphere, and
-`error_bound` is the argument passed to the constructor of `Labeled_mesh_domain_3`.
+a relative error bound passed as argument to the constructor of `Labeled_mesh_domain_3`.
 
 
 \tparam Labeling_function is the type of the input function.
@@ -46,40 +47,40 @@ public:
 /// @{
 
 /*!
-\brief Construction from a labeling function and a Sphere as bounding space.
+\brief Construction from a labeling function, a bounding Sphere and a relative error bound.
 \param f the labeling function.
 \param bounding_sphere the bounding sphere of the meshable space.
-\param error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
-bisection is stopped when the length of the intersected segment is less than the product of `bound` by the radius of
+\param relative_error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
+bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the radius of
 `bounding_sphere`.
 */ 
 Labeled_mesh_domain_3(const Labeling_function& f,
                        const Sphere_3& bounding_sphere,
-                       const FT& error_bound = FT(1e-3));
+                       const FT& relative_error_bound = FT(1e-3));
 
 /*!
-\brief Construction from a labeling function and a Bbox_3 as bounding space.
+\brief Construction from a labeling function, a bounding box and a relative error bound.
 \param f the labeling function.
 \param bbox the bounding box of the meshable space.
-\param error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
-bisection is stopped when the length of the intersected segment is less than the product of `bound` by the diagonal of
+\param relative_error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
+bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the diagonal of
 `bounding_box`.
 */
 Labeled_mesh_domain_3(const Labeling_function& f,
                        const Bbox_3& bbox,
-                       const FT& error_bound = FT(1e-3));
+                       const FT& relative_error_bound = FT(1e-3));
 
 /*!
-\brief Construction from a function and an Iso_cuboid_3 as bounding space.
+\brief Construction from a function, a bounding Iso_cuboid_3 and a relative error bound.
 \param f the function.
 \param bbox the bounding box of the meshable space.
-\param error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
-bisection is stopped when the length of the intersected segment is less than the product of `bound` by the diagonal of
+\param relative_error_bound is the relative error bound used to compute intersection points between the implicit surface and query segments. The
+bisection is stopped when the length of the intersected segment is less than the product of `relative_error_bound` by the diagonal of
 `bounding_box`.
 */
 Labeled_mesh_domain_3(const Labeling_function& f,
                        const Iso_cuboid_3& bbox,
-                       const FT& error_bound = FT(1e-3));
+                       const FT& relative_error_bound = FT(1e-3));
 
 /// @}
 
