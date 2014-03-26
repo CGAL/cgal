@@ -49,7 +49,7 @@
 //OPTIMIZATIONS
 //  --cdt: try using intervals? in that case, only points inside the face should be considered
 //         and points on edge should be handled by hand (simply start using the point opposite to the edge)
-//  --filtered_order_around_edge: can be done using the original supporting planes
+//  --sorted_around_edge_filtered: can be done using the original supporting planes
 //  --in intersection_of_Polyhedra_3: upon call to Triangle_segment_intersection_point::add_new_node, interval and exact nodes are
 //    inserted into a vector. Since we do not know the final size of vector this lead to reallocation of data.   
 //  --in Triangle_segment_intersection_point, try using EPEC instead of Interval_nt+SC<Gmpq>

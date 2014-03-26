@@ -40,7 +40,7 @@ namespace Corefinement{
 //  O_prime,O,P1,Q are not coplanar or coplanar_orientation(O,O_prime,P1,Q)==NEGATIVE
 //  O_prime,O,P2,Q are not coplanar or coplanar_orientation(O,O_prime,P2,Q)==NEGATIVE
 template <class Kernel>
-bool  is_in_interior_of_object(
+bool  sorted_around_edge(
   const typename Kernel::Point_3& O_prime,const typename Kernel::Point_3& O,
   const typename Kernel::Point_3& P1,const typename Kernel::Point_3& P2,
   const typename Kernel::Point_3& Q)
@@ -79,19 +79,19 @@ bool  is_in_interior_of_object(
 }
 
 template <class PolyhedronPointPMap,class Nodes_vector, class Vertex_handle>
-bool filtered_order_around_edge(int O_prime_index,
-                                int O_index,
-                                int P1_index,
-                                int P2_index,
-                                int Q_index,
-                                Vertex_handle P1,
-                                Vertex_handle P2,
-                                Vertex_handle Q,
-                                const Nodes_vector& nodes,
-                                PolyhedronPointPMap ppmap)
+bool sorted_around_edge_filtered( int O_prime_index,
+                                  int O_index,
+                                  int P1_index,
+                                  int P2_index,
+                                  int Q_index,
+                                  Vertex_handle P1,
+                                  Vertex_handle P2,
+                                  Vertex_handle Q,
+                                  const Nodes_vector& nodes,
+                                  PolyhedronPointPMap ppmap)
 {
   try {
-    return is_in_interior_of_object<typename Nodes_vector::Ikernel>(
+    return sorted_around_edge<typename Nodes_vector::Ikernel>(
              nodes.interval_node(O_prime_index),
              nodes.interval_node(O_index),
              P1_index == -1 ? nodes.to_interval(get(ppmap,P1))
@@ -102,7 +102,7 @@ bool filtered_order_around_edge(int O_prime_index,
                             : nodes.interval_node(Q_index )
            );
   } catch(Uncertain_conversion_exception&) {
-    return is_in_interior_of_object<typename Nodes_vector::Exact_kernel>(
+    return sorted_around_edge<typename Nodes_vector::Exact_kernel>(
              nodes.exact_node(O_prime_index),
              nodes.exact_node(O_index),
              P1_index == -1 ? nodes.to_exact(get(ppmap,P1))
