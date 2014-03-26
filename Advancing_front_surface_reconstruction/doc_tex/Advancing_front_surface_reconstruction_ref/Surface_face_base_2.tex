@@ -1,0 +1,39 @@
+\begin{ccRefClass}{AFSR::Surface_face_base_2<Kernel, Facet, Fb_2 >}
+
+\ccDefinition
+  
+The class \ccRefName\ is the face class used in the triangulation data structure 
+that describes the reconstructed surface. A face is either part of this
+surface, or it is not part of the surface but adjacent to the boundary of the surface. 
+
+The face class stores a facet of the 3D Delaunay triangulation, if it
+is part of the surface.
+
+\ccInclude{CGAL/AFSR/Surface_face_base_2.h}
+
+
+%\ccTypes
+
+%\ccTypedef{typedef Kernel::FT FT;}{The number type.}
+
+%\ccCreation
+\ccCreationVariable{f}
+
+%\ccConstructor{Surface_face_base_2();}{Default constructor}
+
+\ccOperations
+
+\ccMemberFunction{Facet facet() const;}{Returns the facet in the 3D Delaunay triangulation.}
+
+\ccMemberFunction{bool is_on_surface() const;}{Returns \ccc{true}, iff the face is on the surface.}
+
+%\ccSeeAlso
+
+%\ccRefIdfierPage{}  
+
+\end{ccRefClass}
+
+
+
+
+
