@@ -182,7 +182,14 @@ Computing density weights for each point is an optional preprocessing. For examp
 
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
-Comparison between with and without density: Left: input. Middle: "need_compute_density = false". Right: "need_compute_density = true". It's tested on an i7-4700HQ@2.40GHz machine. 
+Comparison between with and without density: Left: input. Middle: "need_compute_density = false". Right: "need_compute_density = true". 
+\cgalFigureEnd
+
+\subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance: 
+We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+
+\cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
+Parallel WLOP speed-up, compared to the sequential version of the algorithm. 
 \cgalFigureEnd
 
 \section Point_set_processing_3Smoothing Smoothing
@@ -216,6 +223,12 @@ The following example reads a set of points with normals and smooths them via bi
 Comparison for two smoothing methods: Left: Input, 250K points, normal-color mapping. Middle: Jet smoothing result, 197 seconds. Right: Bilateral smoothing result, 110 seconds.
 \cgalFigureEnd
 
+\subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel Performance: 
+We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+
+\cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
+Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 
+\cgalFigureEnd
 
 \section Point_set_processing_3NormalEstimation Normal Estimation
 
