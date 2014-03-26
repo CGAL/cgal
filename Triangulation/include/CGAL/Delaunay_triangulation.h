@@ -48,32 +48,6 @@ class Delaunay_triangulation
                                                     Side_of_oriented_sphere_d;
     typedef typename DCTraits::Orientation_d        Orientation_d;
 
-    //*** Side_of_oriented_subsphere_d ***
-    using Base::Flat_orientation_d;
-    using Base::Construct_flat_orientation_d;
-    typedef typename DCTraits::In_flat_side_of_oriented_sphere_d In_flat_side_of_oriented_sphere_d;
-    // Wrapper
-    struct Side_of_oriented_subsphere_d
-    {
-      boost::optional<Flat_orientation_d>* fop;
-      Construct_flat_orientation_d cfo;
-      In_flat_side_of_oriented_sphere_d ifsoos;
-
-      Side_of_oriented_subsphere_d(
-        boost::optional<Flat_orientation_d>& x, 
-        Construct_flat_orientation_d const&y, 
-        In_flat_side_of_oriented_sphere_d const&z)
-      : fop(&x), cfo(y), ifsoos(z) {}
-      
-      template<class Iter> 
-      CGAL::Orientation operator()(Iter a, Iter b, const Point & p)const
-      {
-        if(!*fop)
-          *fop=cfo(a,b);
-        return ifsoos(fop->get(),a,b,p);
-      }
-    };
-
 public: // PUBLIC NESTED TYPES
 
     typedef DCTraits                                Geom_traits;
@@ -137,6 +111,34 @@ public:
     using Base::vertices_end;
     // using Base::
     
+private:
+    //*** Side_of_oriented_subsphere_d ***
+    typedef typename Base::Flat_orientation_d Flat_orientation_d;
+    typedef typename Base::Construct_flat_orientation_d Construct_flat_orientation_d;
+    typedef typename DCTraits::In_flat_side_of_oriented_sphere_d In_flat_side_of_oriented_sphere_d;
+    // Wrapper
+    struct Side_of_oriented_subsphere_d
+    {
+      boost::optional<Flat_orientation_d>* fop;
+      Construct_flat_orientation_d cfo;
+      In_flat_side_of_oriented_sphere_d ifsoos;
+
+      Side_of_oriented_subsphere_d(
+        boost::optional<Flat_orientation_d>& x,
+        Construct_flat_orientation_d const&y,
+        In_flat_side_of_oriented_sphere_d const&z)
+      : fop(&x), cfo(y), ifsoos(z) {}
+
+      template<class Iter>
+      CGAL::Orientation operator()(Iter a, Iter b, const Point & p)const
+      {
+        if(!*fop)
+          *fop=cfo(a,b);
+        return ifsoos(fop->get(),a,b,p);
+      }
+    };
+public:
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
 
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
@@ -327,7 +329,7 @@ public:
 
 private:
     // Some internal types to shorten notation
-    using Base::Coaffine_orientation_d;
+    using typename Base::Coaffine_orientation_d;
     using Base::flat_orientation_;
     typedef Conflict_predicate<Coaffine_orientation_d, Side_of_oriented_subsphere_d>
             Conflict_pred_in_subspace;
