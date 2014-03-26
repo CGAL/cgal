@@ -272,8 +272,7 @@ The following example reads a point set from a file, upsamples it to get a much 
 
 \subsubsection Point_set_processing_3Upsample_Parameter1 Parameter: edge_sensitivity
 This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp edges.
-
-TODO: on sharp creases only? or more generally on sharp features? (tips, darts, cusps, creases and corners)
+For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when "edge_sensitivity = 0".
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
 Upsample results for different edge-sensitivity parameter values. The input containing 850 points is upsampled to 1,500 points in all cases depicted.
