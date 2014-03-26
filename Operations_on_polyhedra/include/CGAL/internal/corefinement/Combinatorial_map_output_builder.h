@@ -23,6 +23,7 @@
 
 #include <CGAL/internal/corefinement/Combinatorial_map_for_corefinement.h>
 #include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/internal/corefinement/predicates.h>
 #include <CGAL/Point_inside_polyhedron_3.h>
 #include <CGAL/Triangle_accessor_with_ppmap_3.h>
 #include <CGAL/Default.h>
@@ -313,97 +314,6 @@ typename Map::Dart_handle import_from_polyhedron_subset(
   }
 
   return first_dart;
-}
-
-
-//Considering the plane with normal vector [O_prime,O] and containing O.
-//We define the counterclockwise order around O when looking from
-//the side of the plane into which the vector [O_prime,O] is pointing.
-//We consider the portion of the plane defined by rotating a ray starting at O
-//from the planar projection of P1 to the planar projection of P2 in
-//counterclockwise order.
-//The predicates indicates whether the planar projection of point Q lies in this
-//portion of the plane.
-//Preconditions:
-//  O_prime,O,P1 are not collinear
-//  O_prime,O,P2 are not collinear
-//  O_prime,O,Q are not collinear
-//  O_prime,O,P1,Q are not coplanar or coplanar_orientation(O,O_prime,P1,Q)==NEGATIVE
-//  O_prime,O,P2,Q are not coplanar or coplanar_orientation(O,O_prime,P2,Q)==NEGATIVE
-template <class Kernel>
-bool  is_in_interior_of_object(
-  const typename Kernel::Point_3& O_prime,const typename Kernel::Point_3& O,
-  const typename Kernel::Point_3& P1,const typename Kernel::Point_3& P2,
-  const typename Kernel::Point_3& Q)
-{
-  //guarantee to have non-flat triangles
-  CGAL_precondition( !collinear(O_prime,O,P1) );
-  CGAL_precondition( !collinear(O_prime,O,P2) );
-  CGAL_precondition( !collinear(O_prime,O,Q)  );
-
-  //no two triangles are coplanar and on the same side of their common edge
-  CGAL_precondition( !coplanar(O_prime,O,P1,Q)
-                     || coplanar_orientation(O,O_prime,P1,Q)==NEGATIVE );
-  CGAL_precondition( !coplanar(O_prime,O,P2,Q)
-                     || coplanar_orientation(O,O_prime,P2,Q)==NEGATIVE );
-
-  Sign s0 = sign( determinant(O-O_prime,P1-O,P2-O) );
-
-  if ( s0==ZERO ) {
-    //O, O_prime, P1 and P2 are coplanar
-    Orientation o=orientation(O_prime,O,P1,Q);
-    CGAL_precondition(o!=COPLANAR);
-    return o==POSITIVE;
-  }
-
-  //O, O_prime, P1 and P2 are not coplanar
-  Sign s1 = sign( determinant(O-O_prime,P1-O,Q -O) );
-  Sign s2 = sign( determinant(O-O_prime,Q -O,P2-O) );
-
-  if (s0 == POSITIVE) // the angle P1,O,P2 is smaller that Pi.
-    return ( s1 == POSITIVE )
-           && ( s2 ==POSITIVE ); //true if the angles P1,O,Q and Q,O,P2 are smaller than Pi
-  else
-    return ( s1 != NEGATIVE )
-           || ( s2 !=
-                NEGATIVE ); //true if the angle P1,O,Q or the angle Q,O,P2 is smaller than or equal to Pi
-}
-
-template <class PolyhedronPointPMap,class Nodes_vector, class Vertex_handle>
-bool filtered_order_around_edge(int O_prime_index,
-                                int O_index,
-                                int P1_index,
-                                int P2_index,
-                                int Q_index,
-                                Vertex_handle P1,
-                                Vertex_handle P2,
-                                Vertex_handle Q,
-                                const Nodes_vector& nodes,
-                                PolyhedronPointPMap ppmap)
-{
-  try {
-    return is_in_interior_of_object<typename Nodes_vector::Ikernel>(
-             nodes.interval_node(O_prime_index),
-             nodes.interval_node(O_index),
-             P1_index == -1 ? nodes.to_interval(get(ppmap,P1))
-                            : nodes.interval_node(P1_index),
-             P2_index == -1 ? nodes.to_interval(get(ppmap,P2))
-                            : nodes.interval_node(P2_index),
-             Q_index  == -1 ? nodes.to_interval(get(ppmap,Q))
-                            : nodes.interval_node(Q_index )
-           );
-  } catch(Uncertain_conversion_exception&) {
-    return is_in_interior_of_object<typename Nodes_vector::Exact_kernel>(
-             nodes.exact_node(O_prime_index),
-             nodes.exact_node(O_index),
-             P1_index == -1 ? nodes.to_exact(get(ppmap,P1))
-                            : nodes.exact_node(P1_index),
-             P2_index == -1 ? nodes.to_exact(get(ppmap,P2))
-                            : nodes.exact_node(P2_index),
-             Q_index  == -1 ? nodes.to_exact(get(ppmap,Q))
-                            : nodes.exact_node(Q_index )
-           );
-  }
 }
 
 template <class Halfedge_const_handle, class Border_halfedges_map>
