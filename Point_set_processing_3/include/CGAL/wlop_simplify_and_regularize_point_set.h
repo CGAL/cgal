@@ -148,8 +148,8 @@ compute_update_sample_point(
     int sample_index = std::distance(sample_first_iter, *iter);
 
     FT dist2 = CGAL::squared_distance(query, np);
+    if (dist2 < 1e-10) continue;
     FT dist = std::sqrt(dist2);
-    if (dist < 1e-10) continue;
     
     weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2);
    
@@ -227,6 +227,8 @@ compute_density_weight_for_original_point(
   {
     Point& np = *(*iter);
     FT dist2 = CGAL::squared_distance(query, np);
+    if (dist2 < 1e-8) continue;
+    
     density_weight += std::exp(dist2 * iradius16);
   }
 
@@ -438,6 +440,7 @@ wlop_simplify_and_regularize_point_set(
 #ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
+      original_density_weights.assign(number_of_original, FT(1.0));
       tbb::parallel_for(
         tbb::blocked_range<size_t>(0, number_of_original),
         [&](const tbb::blocked_range<size_t>& r)
@@ -457,7 +460,7 @@ wlop_simplify_and_regularize_point_set(
                                              orignal_aabb_tree, 
                                              radius2);
 
-          original_density_weights.push_back(density);
+          original_density_weights[i] = density;
         }
       }
       );
@@ -490,21 +493,17 @@ wlop_simplify_and_regularize_point_set(
     // Compute sample density weight for sample points
     std::vector<FT> sample_density_weights;
 
-    if (need_compute_density)
+    for (sample_iter = sample_points.begin();
+         sample_iter != sample_points.end(); ++sample_iter)
     {
-      for (sample_iter = sample_points.begin();
-           sample_iter != sample_points.end(); ++sample_iter)
-      {
-        FT density = simplify_and_regularize_internal::
-          compute_density_weight_for_sample_point<Kernel, AABB_Tree>
-          (*sample_iter, 
-          sample_aabb_tree, 
-          radius2);
+      FT density = simplify_and_regularize_internal::
+                   compute_density_weight_for_sample_point<Kernel, AABB_Tree>
+                   (*sample_iter, 
+                    sample_aabb_tree, 
+                    radius2);
 
-        sample_density_weights.push_back(density);
-      }
+      sample_density_weights.push_back(density);
     }
-
     
 
     std::vector<Point>::iterator update_iter = update_sample_points.begin();
@@ -630,7 +629,7 @@ wlop_simplify_and_regularize_point_set(
   const double retain_percentage = 5, ///< percentage of points to retain
   double neighbor_radius = -1, ///< size of neighbors.
   const unsigned int max_iter_number = 35, ///< number of iterations.
-  const bool need_compute_density = true ///< if needed to compute density to   
+  const bool need_compute_density = false ///< if needed to compute density to   
                                           /// generate more uniform result. 
 )
 {

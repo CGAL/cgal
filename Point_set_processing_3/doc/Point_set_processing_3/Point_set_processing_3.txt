@@ -178,12 +178,11 @@ Comparison for three simplification methods: Left: Random simplification result.
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3WLOP_Parameter Parameter: need_compute_density
-Computing density weights for each point is an optional preprocessing. It can deal with nonuniform distribution inputs, at the expense of computational time.
+Computing density weights for each point is an optional preprocessing. For example, as shown in the following figure, if "need_compute_density = false", WLOP preserves the intrinsic non-uniform sampling of the original points; if "need_compute_density = true", WLOP is resilient to non-uniform sampling and generate sample points with more uniform distribution, at the expense of computational time.
 
-TODO: explain what it means to deal with - are you resilient to non-uniform sampling? or do you preserve non-uniform sampling.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
-Comparison between with and without density: Left: "need_compute_density = false", 14 seconds. Right: "need_compute_density = true", 18 seconds.
+Comparison between with and without density: Left: input. Middle: "need_compute_density = false". Right: "need_compute_density = true". It's tested on an i7-4700HQ@2.40GHz machine. 
 \cgalFigureEnd
 
 \section Point_set_processing_3Smoothing Smoothing

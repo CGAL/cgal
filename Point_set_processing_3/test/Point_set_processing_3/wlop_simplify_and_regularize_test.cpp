@@ -59,11 +59,6 @@ void test_wlop_simplify_and_regularize(
 
   output.clear();
   // Run algorithm 
-  //CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
-  //  points.begin(), 
-  //  points.end(),
-  //  back_inserter(output));
-
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
                                                points.begin(), 
                                                points.end(), 

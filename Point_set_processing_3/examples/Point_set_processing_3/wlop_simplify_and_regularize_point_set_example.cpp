@@ -2,12 +2,12 @@
 #include <CGAL/wlop_simplify_and_regularize_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
-#include <CGAL/tags.h>
+#include <CGAL/Timer.h>#include <CGAL/tags.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <vector>
 #include <fstream>
-
+#include <time.h>
 // types
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -28,9 +28,10 @@ int main(void)
     return EXIT_FAILURE;
   }
 
-  //Algorithm parameters
-  const double retain_percentage = 2;   // percentage of points to retain.
-  std::vector<Point> output;
+
+  CGAL::Timer task_timer;
+  task_timer.start();
+  std::cout << "Run algorithm example: " << std::endl;  std::vector<Point> output;
 
   //with default parameters begins
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
@@ -40,9 +41,13 @@ int main(void)
   //with default parameters ends
 
   //with all parameters begins
-  /*const double neighbor_radius = 0.03;   // neighbors size.
-  const unsigned int iter_number = 30;     // number of iterations.
-  const bool need_compute_density = false;  // if needed to compute density.
+  
+  //Algorithm parameters
+  /*
+  const double retain_percentage = 2;       // percentage of points to retain.
+  const double neighbor_radius = 0.03;      // neighbors size.
+  const unsigned int iter_number = 30;      // number of iterations.
+  const bool need_compute_density = true;  // if needed to compute density.
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
                                                points.begin(),
                                                points.end(),
@@ -50,10 +55,13 @@ int main(void)
                                                retain_percentage, 
                                                neighbor_radius,
                                                iter_number,
-                                               need_compute_density);*/
+                                               need_compute_density);
+  */
   //with all parameters ends
 
-  std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
+  long memory = CGAL::Memory_sizer().virtual_size();
+  std::cout << "total done: " << task_timer.time() << " seconds, " 
+            << (memory>>20) << " Mb allocated" << std::endl;    std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
   if (!out ||
     !CGAL::write_xyz_points(
     out, output.begin(), output.end()))
