@@ -32,14 +32,14 @@ int main(void)
   const double retain_percentage = 2;   // percentage of points to retain.
   std::vector<Point> output;
 
-  //way 1 begins
+  //with default parameters begins
   CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag>(
                                                points.begin(), 
                                                points.end(),
                                                back_inserter(output));
-  //way 1 ends
+  //with default parameters ends
 
-  //way 2 begins
+  //with all parameters begins
   /*const double neighbor_radius = 0.03;   // neighbors size.
   const unsigned int iter_number = 30;     // number of iterations.
   const bool need_compute_density = false;  // if needed to compute density.
@@ -51,7 +51,7 @@ int main(void)
                                                neighbor_radius,
                                                iter_number,
                                                need_compute_density);*/
-  //way 2 ends
+  //with all parameters ends
 
   std::ofstream out(INPUT_FILENAME_WITHOUT_EXT + "_WLOPED.xyz");  
   if (!out ||
