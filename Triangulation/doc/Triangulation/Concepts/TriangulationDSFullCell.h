@@ -153,18 +153,29 @@ a vertex of the `c`.
 */
 int index(Vertex_handle v) const;
 
+
+/// \name Internal
+/// \cgalAdvancedBegin
+/// These functions are used internally by the triangulation data
+/// structure. The user is not encouraged to use them directly as they
+/// may change in the future.
+/// \cgalAdvancedEnd
+/// @{
+
 /*!
 Returns the data member of
 type `TDS_data`. It is typically used to mark the full cell as <I>visited</I>
 during operations on a `TriangulationDataStructure`.
 */
-const TDS_data & get_tds_data() const;
+const TDS_data & tds_data() const;
 
 /*!
 Same as above, but returns a reference to
 a non-`const` object.
 */
-TDS_data & get_tds_data();
+TDS_data & tds_data();
+
+/// @}
 
 /*!
 \cgalAdvanced Returns a handle to the mirror vertex of the `i`-th vertex of full cell

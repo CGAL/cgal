@@ -201,8 +201,8 @@ public:
         combinatorics_.swap_vertices(d1, d2);
     }
 
-    const TDS_data & get_tds_data() const { return tds_data_; } /* Concept */
-    TDS_data & get_tds_data() { return tds_data_; } /* Concept */
+    const TDS_data & tds_data() const { return tds_data_; } /* Concept */
+    TDS_data & tds_data() { return tds_data_; } /* Concept */
 
     void*   for_compact_container() const { return combinatorics_.for_compact_container(); }
     void* & for_compact_container() { return combinatorics_.for_compact_container(); }

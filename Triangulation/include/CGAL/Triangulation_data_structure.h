@@ -398,7 +398,7 @@ private:
     template< typename FCH > // FCH = Full_cell_[const_]handle
     bool get_visited(FCH c) const
     {
-        return c->get_tds_data().is_visited();
+        return c->tds_data().is_visited();
     }
 
     // NOT DOCUMENTED
@@ -406,9 +406,9 @@ private:
     void set_visited(FCH c, bool m) const
     {
         if( m )
-            c->get_tds_data().mark_visited();
+            c->tds_data().mark_visited();
         else
-            c->get_tds_data().clear_visited();
+            c->tds_data().clear_visited();
     }
 
 public:
