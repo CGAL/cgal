@@ -490,17 +490,21 @@ wlop_simplify_and_regularize_point_set(
     // Compute sample density weight for sample points
     std::vector<FT> sample_density_weights;
 
-    for (sample_iter = sample_points.begin();
-         sample_iter != sample_points.end(); ++sample_iter)
+    if (need_compute_density)
     {
-      FT density = simplify_and_regularize_internal::
-                   compute_density_weight_for_sample_point<Kernel, AABB_Tree>
-                   (*sample_iter, 
-                    sample_aabb_tree, 
-                    radius2);
+      for (sample_iter = sample_points.begin();
+           sample_iter != sample_points.end(); ++sample_iter)
+      {
+        FT density = simplify_and_regularize_internal::
+          compute_density_weight_for_sample_point<Kernel, AABB_Tree>
+          (*sample_iter, 
+          sample_aabb_tree, 
+          radius2);
 
-      sample_density_weights.push_back(density);
+        sample_density_weights.push_back(density);
+      }
     }
+
     
 
     std::vector<Point>::iterator update_iter = update_sample_points.begin();
